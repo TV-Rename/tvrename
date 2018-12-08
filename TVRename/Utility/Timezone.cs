@@ -68,10 +68,7 @@ namespace TVRename
             // HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones\Eastern Standard Time
             RegistryKey rk = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones\\" + name);
 
-            if (rk == null)
-                return null;
-            else
-                return new TimeZone((byte[]) rk.GetValue("TZI"));
+            return rk == null ? null : new TimeZone((byte[]) rk.GetValue("TZI"));
         }
 
         public static string DefaultTimeZone()
@@ -90,7 +87,7 @@ namespace TVRename
             return DefaultTimeZone();
         }
 
-        public static DateTime AdjustTZTimeToLocalTime(DateTime dt, TimeZone theirTimeZone) // set tz to 0 to not correct for timezone
+        public static DateTime AdjustTzTimeToLocalTime(DateTime dt, TimeZone theirTimeZone) // set tz to 0 to not correct for timezone
         {
             if (theirTimeZone == null)
                 return dt;
@@ -106,32 +103,27 @@ namespace TVRename
             int thisYear = DateTime.Now.Year;
 
             // some timezones don't observe any DST.  the changeover dates seem to be all zeroes in that case.
-            bool theyHaveDST = !((theirTimeZone.DaylightDate.wMonth == 0) && (theirTimeZone.DaylightDate.wDay == 0) && (theirTimeZone.DaylightDate.wHour == 0) && (theirTimeZone.DaylightDate.wMinute == 0) && (theirTimeZone.DaylightDate.wSecond == 0) && (theirTimeZone.DaylightDate.wMilliseconds == 0) && (theirTimeZone.StandardDate.wMonth == 0) && (theirTimeZone.StandardDate.wDay == 0) && (theirTimeZone.StandardDate.wHour == 0) && (theirTimeZone.StandardDate.wMinute == 0) && (theirTimeZone.StandardDate.wSecond == 0) && (theirTimeZone.StandardDate.wMilliseconds == 0));
+            bool theyHaveDst = !((theirTimeZone.DaylightDate.wMonth == 0) && (theirTimeZone.DaylightDate.wDay == 0) && (theirTimeZone.DaylightDate.wHour == 0) && (theirTimeZone.DaylightDate.wMinute == 0) && (theirTimeZone.DaylightDate.wSecond == 0) && (theirTimeZone.DaylightDate.wMilliseconds == 0) && (theirTimeZone.StandardDate.wMonth == 0) && (theirTimeZone.StandardDate.wDay == 0) && (theirTimeZone.StandardDate.wHour == 0) && (theirTimeZone.StandardDate.wMinute == 0) && (theirTimeZone.StandardDate.wSecond == 0) && (theirTimeZone.StandardDate.wMilliseconds == 0));
 
             DateTime themNow = DateTime.UtcNow.AddMinutes(-theirTimeZone.Bias); // tz->bias in minutes. +300 = 5 hours _behind_ UTC
 
-            if (theyHaveDST)
+            if (theyHaveDst)
             {
-                DateTime theirDSTStart = new DateTime(thisYear, theirTimeZone.DaylightDate.wMonth, theirTimeZone.DaylightDate.wDay, theirTimeZone.DaylightDate.wHour, theirTimeZone.DaylightDate.wMinute, theirTimeZone.DaylightDate.wSecond);
-                DateTime theirDSTEnd = new DateTime(thisYear, theirTimeZone.StandardDate.wMonth, theirTimeZone.StandardDate.wDay, theirTimeZone.StandardDate.wHour, theirTimeZone.StandardDate.wMinute, theirTimeZone.StandardDate.wSecond);
+                DateTime theirDstStart = new DateTime(thisYear, theirTimeZone.DaylightDate.wMonth, theirTimeZone.DaylightDate.wDay, theirTimeZone.DaylightDate.wHour, theirTimeZone.DaylightDate.wMinute, theirTimeZone.DaylightDate.wSecond);
+                DateTime theirDstEnd = new DateTime(thisYear, theirTimeZone.StandardDate.wMonth, theirTimeZone.StandardDate.wDay, theirTimeZone.StandardDate.wHour, theirTimeZone.StandardDate.wMinute, theirTimeZone.StandardDate.wSecond);
 
-                if (theirDSTEnd.CompareTo(theirDSTStart) < 0)
-                    theirDSTStart -= new TimeSpan(365, 0, 0, 0, 0);
+                if (theirDstEnd.CompareTo(theirDstStart) < 0)
+                    theirDstStart -= new TimeSpan(365, 0, 0, 0, 0);
 
-                if (themNow.CompareTo(theirDSTStart) > 0)
+                if (themNow.CompareTo(theirDstStart) > 0)
                     themNow = themNow.AddMinutes(-theirTimeZone.DaylightBias);
-                if (themNow.CompareTo(theirDSTEnd) > 0)
+                if (themNow.CompareTo(theirDstEnd) > 0)
                     themNow = themNow.AddMinutes(theirTimeZone.DaylightBias);
             }
 
             TimeSpan tweakTime = DateTime.Now.Subtract(themNow);
 
             return dt.Add(tweakTime);
-        }
-
-        public static long Epoch() // unix epoch time for now (seconds since midnight 1 jan 1970 UTC)
-        {
-            return (long) (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
         }
 
         public static long Epoch(DateTime dt)

@@ -30,7 +30,6 @@ namespace TVRename
     // right click commands
     public enum RightClickCommands
     {
-        none = 0,
         kEpisodeGuideForShow = 1,
         kVisitTvdbEpisode,
         kVisitTvdbSeason,
@@ -136,7 +135,7 @@ namespace TVRename
 
             lvWhenToWatch.ListViewItemSorter = new DateSorterWTW();
 
-            if (mDoc.Args.Hide)
+            if (mDoc.Args.Hide || !showUi)
             {
                 WindowState = FormWindowState.Minimized;
                 Visible = false;
@@ -360,7 +359,7 @@ namespace TVRename
 
         private bool LoadWidths(XElement xml)
         {
-            string forwho = xml.Attribute("For").Value;
+            string forwho = xml.Attribute("For")?.Value;
 
             ListView lv = ListViewByName(forwho);
             if (lv == null)
@@ -422,8 +421,8 @@ namespace TVRename
 
         private void SetSplitter(XElement x)
         {
-            splitContainer1.SplitterDistance = int.Parse(x.Attribute("Distance").Value);
-            splitContainer1.Panel2Collapsed = bool.Parse(x.Attribute("HTMLCollapsed").Value);
+            splitContainer1.SplitterDistance = int.Parse(x.Attribute("Distance")?.Value??"100");
+            splitContainer1.Panel2Collapsed = bool.Parse(x.Attribute("HTMLCollapsed")?.Value ?? "false");
             if (splitContainer1.Panel2Collapsed)
                 bnHideHTMLPanel.ImageKey = "FillLeft.bmp";
         }
@@ -2002,21 +2001,21 @@ namespace TVRename
             else
                 lvi.Group = lvWhenToWatch.Groups["futureEps"];
 
-            int n = 1;
+            int n = 0;
             lvi.Text = pe.Show.ShowName;
-            lvi.SubItems[n++].Text =
+            lvi.SubItems[++n].Text =
                 pe.AppropriateSeasonNumber != 0 ? pe.AppropriateSeasonNumber.ToString() : "Special";
 
             string estr = pe.AppropriateEpNum > 0 ? pe.AppropriateEpNum.ToString() : "";
             if (pe.AppropriateEpNum > 0 && pe.EpNum2 != pe.AppropriateEpNum && pe.EpNum2 > 0)
                 estr += "-" + pe.EpNum2;
 
-            lvi.SubItems[n++].Text = estr;
-            lvi.SubItems[n++].Text = dt.ToShortDateString();
-            lvi.SubItems[n++].Text = dt.ToString("t");
-            lvi.SubItems[n++].Text = dt.ToString("ddd");
-            lvi.SubItems[n++].Text = pe.HowLong();
-            lvi.SubItems[n++].Text = pe.Name;
+            lvi.SubItems[++n].Text = estr;
+            lvi.SubItems[++n].Text = dt.ToShortDateString();
+            lvi.SubItems[++n].Text = dt.ToString("t");
+            lvi.SubItems[++n].Text = dt.ToString("ddd");
+            lvi.SubItems[++n].Text = pe.HowLong();
+            lvi.SubItems[++n].Text = pe.Name;
 
             // icon..
 
@@ -3212,11 +3211,7 @@ namespace TVRename
 
             Logger.Warn(update.LogMessage());
 
-            if (inSilentMode) return;
-
-#if DEBUG
-            return;
-#endif
+            if (inSilentMode || Debugger.IsAttached) return;
 
             UpdateNotification unForm = new UpdateNotification(update);
             unForm.ShowDialog();

@@ -104,7 +104,7 @@ namespace TVRename
             DateTime? dt = GetAirDateDt();
             if (dt == null) return null;
 
-            return TimeZone.AdjustTZTimeToLocalTime(dt.Value, tz);
+            return TimeZone.AdjustTzTimeToLocalTime(dt.Value, tz);
         }
 
         public Episode(XElement r)

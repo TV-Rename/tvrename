@@ -170,7 +170,7 @@ namespace TVRename
             foreach (ProcessedEpisode ep in GetBestEpisodes(si,s))
             {
                 List<FileInfo> fl = dfc.FindEpOnDisk(ep);
-                sb.AppendEpisode(ep,fl,col,includeDirectoryLinks);
+                sb.AppendEpisode(ep,fl,col);
             }
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
@@ -227,7 +227,7 @@ namespace TVRename
             return string.Empty;
         }
 
-        private static void AppendEpisode(this StringBuilder sb, ProcessedEpisode ep, IReadOnlyCollection<FileInfo> fl,Color backgroundColour, bool includeDirectoryLinks)
+        private static void AppendEpisode(this StringBuilder sb, ProcessedEpisode ep, IReadOnlyCollection<FileInfo> fl,Color backgroundColour)
         {
             string stars = StarRating(ep.EpisodeRating);
             string episodeUrl = TheTVDB.Instance.WebsiteUrl(ep.SeriesId, ep.SeasonId, ep.EpisodeId);
