@@ -766,6 +766,8 @@ namespace TVRename
             // 
             // label61
             // 
+            this.label61.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label61.AutoSize = true;
             this.label61.Location = new System.Drawing.Point(7, 7);
             this.label61.Name = "label61";
@@ -1353,8 +1355,10 @@ namespace TVRename
             // 
             // label65
             // 
+            this.label65.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label65.AutoSize = true;
-            this.label65.Location = new System.Drawing.Point(6, 4);
+            this.label65.Location = new System.Drawing.Point(6, 6);
             this.label65.Name = "label65";
             this.label65.Size = new System.Drawing.Size(299, 26);
             this.label65.TabIndex = 44;
@@ -1799,6 +1803,9 @@ namespace TVRename
             // 
             // label67
             // 
+            this.label67.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label67.AutoEllipsis = true;
             this.label67.AutoSize = true;
             this.label67.Location = new System.Drawing.Point(6, 6);
             this.label67.Name = "label67";
@@ -3076,6 +3083,8 @@ namespace TVRename
             // 
             // label66
             // 
+            this.label66.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label66.AutoSize = true;
             this.label66.Location = new System.Drawing.Point(6, 7);
             this.label66.Name = "label66";
@@ -3461,6 +3470,8 @@ namespace TVRename
             // 
             // label60
             // 
+            this.label60.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label60.AutoSize = true;
             this.label60.Location = new System.Drawing.Point(6, 6);
             this.label60.Name = "label60";

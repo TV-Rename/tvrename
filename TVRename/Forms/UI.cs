@@ -143,6 +143,8 @@ namespace TVRename
                 Hide();
             }
 
+            tmrPeriodicScan.Enabled = false;
+
             UpdateSplashStatus(splash, "Filling Shows");
             FillMyShows();
             UpdateSearchButtons();
@@ -753,7 +755,6 @@ namespace TVRename
             }
 
             TheTVDB.Instance.Unlock("FillEpGuideHTML");
-
         }
 
         private static void SetHtmlBody(WebBrowser web, string body)
