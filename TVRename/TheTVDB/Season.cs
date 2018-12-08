@@ -70,7 +70,7 @@ namespace TVRename
                 : UISeasonWord(snum);
         }
 
-        public SeasonStatus Status(TimeZone tz)
+        public SeasonStatus Status(TimeZoneInfo tz)
         {
             if (HasEpisodes)
             {
@@ -132,7 +132,7 @@ namespace TVRename
 
         public int SeasonIndex => TheSeries.GetSeasonIndex(SeasonNumber,type);
 
-        private bool HasUnairedEpisodes(TimeZone tz)
+        private bool HasUnairedEpisodes(TimeZoneInfo tz)
         {
             if (!HasEpisodes) return false;
 
@@ -148,7 +148,7 @@ namespace TVRename
             return false;
         }
 
-        private bool HasAiredEpisodes(TimeZone tz)
+        private bool HasAiredEpisodes(TimeZoneInfo tz)
         {
             if (!HasEpisodes) return false;
 

@@ -22,17 +22,17 @@ namespace TVRename
 
         public enum VideoComparison
         {
-            FirstFileBetter,
-            SecondFileBetter,
-            Similar,
-            CantTell,
-            Same
+            firstFileBetter,
+            secondFileBetter,
+            similar,
+            cantTell,
+            same
         }
 
         public static VideoComparison BetterQualityFile(FileInfo encumbantFile, FileInfo newFile)
         {
-            if (!newFile.IsMovieFile()) return VideoComparison.FirstFileBetter;
-            if (!encumbantFile.IsMovieFile()) return VideoComparison.SecondFileBetter;
+            if (!newFile.IsMovieFile()) return VideoComparison.firstFileBetter;
+            if (!encumbantFile.IsMovieFile()) return VideoComparison.secondFileBetter;
 
             int encumbantLength = encumbantFile.GetFilmLength();
             int newFileLength = newFile.GetFilmLength();
@@ -42,10 +42,10 @@ namespace TVRename
             bool newFileContainsTerm =
                 TVSettings.Instance.PriorityReplaceTermsArray.Any(term => newFile.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
 
-            if (encumbantLength == -1) return VideoComparison.CantTell;
-            if (newFileLength == -1) return VideoComparison.CantTell;
-            if (encumbantFrameWidth == -1) return VideoComparison.CantTell;
-            if (newFileFrameWidth == -1) return VideoComparison.CantTell;
+            if (encumbantLength == -1) return VideoComparison.cantTell;
+            if (newFileLength == -1) return VideoComparison.cantTell;
+            if (encumbantFrameWidth == -1) return VideoComparison.cantTell;
+            if (newFileFrameWidth == -1) return VideoComparison.cantTell;
 
             float percentMargin = TVSettings.Instance.replaceMargin;
             float marginMultiplier = (percentMargin + 100) / 100;
@@ -56,18 +56,18 @@ namespace TVRename
             bool newFileIsBetterQuality = encumbantFrameWidth * marginMultiplier < newFileFrameWidth;
             bool encumbantFileIsBetterQuality = encumbantFrameWidth > newFileFrameWidth * marginMultiplier;
 
-            if (encumbantFileIsMuchLonger) return VideoComparison.FirstFileBetter;  //exting file is longer
-            if (encumbantFileIsBetterQuality) return VideoComparison.FirstFileBetter;  //exting file is better quality
+            if (encumbantFileIsMuchLonger) return VideoComparison.firstFileBetter;  //exting file is longer
+            if (encumbantFileIsBetterQuality) return VideoComparison.firstFileBetter;  //exting file is better quality
 
-            if (newFileIsBetterQuality) return VideoComparison.SecondFileBetter;
-            if (newFileIsMuchLonger) return VideoComparison.SecondFileBetter;
+            if (newFileIsBetterQuality) return VideoComparison.secondFileBetter;
+            if (newFileIsMuchLonger) return VideoComparison.secondFileBetter;
 
-            if (newFileContainsTerm) return VideoComparison.SecondFileBetter;
+            if (newFileContainsTerm) return VideoComparison.secondFileBetter;
 
             if (encumbantLength == newFileLength && encumbantFrameWidth == newFileFrameWidth &&
-                newFile.Length == encumbantFile.Length) return VideoComparison.Same;
+                newFile.Length == encumbantFile.Length) return VideoComparison.same;
 
-            return VideoComparison.Similar;
+            return VideoComparison.similar;
         }
 
         public static int GetFrameHeight(this FileInfo movieFile)
@@ -103,7 +103,7 @@ namespace TVRename
             return false;
         }
 
-        public static string URLPathFullName(this FileInfo baseFile)
+        public static string UrlPathFullName(this FileInfo baseFile)
         {
             //TODO
             return baseFile.FullName;
@@ -146,7 +146,7 @@ namespace TVRename
             return string.Compare(directoryPath1.NormalizePath().TrimEnd('\\'), directoryPath2.NormalizePath().TrimEnd('\\'), StringComparison.InvariantCultureIgnoreCase) == 0;
         }
 
-        public static string NormalizePath(this string path)
+        private static string NormalizePath(this string path)
         {
             //https://stackoverflow.com/questions/2281531/how-can-i-compare-directory-paths-in-c
             return Path.GetFullPath(new Uri(path).LocalPath)

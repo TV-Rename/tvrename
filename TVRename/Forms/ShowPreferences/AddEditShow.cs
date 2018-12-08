@@ -145,7 +145,7 @@ namespace TVRename
         {
             cbTimeZone.BeginUpdate();
             cbTimeZone.Items.Clear();
-            foreach (string s in TimeZone.ZoneNames())
+            foreach (string s in TimeZoneHelper.ZoneNames())
                 cbTimeZone.Items.Add(s);
             cbTimeZone.EndUpdate();
             cbTimeZone.Text = si.ShowTimeZone;
@@ -208,7 +208,7 @@ namespace TVRename
                 selectedShow.CustomLanguageCode = TheTVDB.Instance.LanguageList
                     .GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString())?.Abbreviation ??TVSettings.Instance.PreferredLanguageCode;
             }
-            selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TimeZone.DefaultTimeZone();
+            selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TimeZoneHelper.DefaultTimeZone();
             selectedShow.ShowNextAirdate = chkShowNextAirdate.Checked;
             selectedShow.TvdbCode = code;
             selectedShow.CountSpecials = chkSpecialsCount.Checked;

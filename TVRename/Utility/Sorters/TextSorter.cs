@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
-    public class TextSorter : IComparer
+    public sealed class TextSorter : IComparer
     {
         private readonly int col;
 
@@ -24,11 +24,11 @@ namespace TVRename
 
         #region IComparer Members
 
-        public virtual int Compare(object x, object y)
+        public int Compare(object x, object y)
         {
             ListViewItem lvi1 = x as ListViewItem;
             ListViewItem lvi2 = y as ListViewItem;
-            return string.CompareOrdinal( lvi1.SubItems[col].Text, lvi2.SubItems[col].Text);
+            return string.CompareOrdinal( lvi1?.SubItems[col].Text, lvi2?.SubItems[col].Text);
         }
         #endregion
     }

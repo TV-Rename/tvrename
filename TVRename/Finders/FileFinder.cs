@@ -43,13 +43,12 @@ namespace TVRename
             int totalN = ActionList.Count+1;
             UpdateStatus(currentItem,totalN, "Starting searching through files");
 
-
             foreach (ItemMissing me in ActionList.MissingItems())
             {
                 if (settings.Token.IsCancellationRequested)
                     return;
 
-                UpdateStatus(currentItem, totalN, me.Filename);
+                UpdateStatus(currentItem++, totalN, me.Filename);
 
                 ItemList thisRound = new ItemList();
                 List<DirCacheEntry> matchedFiles = FindMatchedFiles(settings, dirCache, me, thisRound);
@@ -184,7 +183,7 @@ namespace TVRename
                 {
                     if (matchedFile.TheFile.FullName == compareAgainst.TheFile.FullName) continue;
                     if (FileHelper.BetterQualityFile(matchedFile.TheFile, compareAgainst.TheFile) !=
-                        FileHelper.VideoComparison.FirstFileBetter)
+                        FileHelper.VideoComparison.firstFileBetter)
                     {
                         betterThanAllTheRest = false;
                     }
