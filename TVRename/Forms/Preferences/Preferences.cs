@@ -623,8 +623,6 @@ namespace TVRename
             tbPreferredRSSTerms.Text = s.GetPreferredRSSSearchTermsString();
 
             cbKeepTogether.Checked = s.KeepTogether;
-            cbKeepTogether_CheckedChanged(null, null);
-
             cbLeadingZero.Checked = s.LeadingZeroOnSeason;
             chkShowInTaskbar.Checked = s.ShowInTaskbar;
             cbTxtToSub.Checked = s.RenameTxtToSub;
@@ -699,9 +697,6 @@ namespace TVRename
             cbShrinkLarge.Checked = s.ShrinkLargeMede8erImages;
             cbFantArtJpg.Checked = s.FanArtJpg;
 
-#if DEBUG
-            System.Diagnostics.Debug.Assert(s.Tidyup != null);
-#endif
             cbDeleteEmpty.Checked = s.Tidyup.DeleteEmpty;
             cbRecycleNotDelete.Checked = s.Tidyup.DeleteEmptyIsRecycle;
             cbEmptyIgnoreWords.Checked = s.Tidyup.EmptyIgnoreWords;
@@ -719,6 +714,23 @@ namespace TVRename
 
             tbPriorityOverrideTerms.Text = s.PriorityReplaceTerms;
 
+            PopulateFromEnums(s);
+
+            FillSearchFolderList();
+            FillFolderStringLists();
+
+            foreach (string row in s.RSSURLs)
+                AddNewRssRow(row);
+
+            PopulateShowStatusColours(s);
+
+            FillTreeViewColoringShowStatusTypeCombobox();
+
+            EnableDisable(null, null);
+        }
+
+        private void PopulateFromEnums(TVSettings s)
+        {
             switch (s.WTWDoubleClick)
             {
                 case TVSettings.WTWDoubleClickAction.Search:
@@ -755,15 +767,6 @@ namespace TVRename
                     break;
             }
 
-            EnableDisable(null, null);
-            ScanOptEnableDisable();
-
-            FillSearchFolderList();
-            FillFolderStringLists();
-
-            foreach (string row in s.RSSURLs)
-                AddNewRssRow(row);
-
             switch (s.FolderJpgIs)
             {
                 case TVSettings.FolderJpgIsType.FanArt:
@@ -792,10 +795,6 @@ namespace TVRename
                     rdoFullScan.Checked = true;
                     break;
             }
-
-            PopulateShowStatusColours(s);
-
-            FillTreeViewColoringShowStatusTypeCombobox();
         }
 
         private void FillSearchFolderList()
