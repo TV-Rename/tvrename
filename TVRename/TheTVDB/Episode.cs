@@ -99,12 +99,12 @@ namespace TVRename
             return new DateTime(fa.Year, fa.Month, fa.Day, airs?.Hour ?? 20, airs?.Minute ?? 0, 0, 0);
         }
 
-        public DateTime? GetAirDateDt(TimeZone tz)
+        public DateTime? GetAirDateDt(TimeZoneInfo tz)
         {
             DateTime? dt = GetAirDateDt();
             if (dt == null) return null;
 
-            return TimeZone.AdjustTzTimeToLocalTime(dt.Value, tz);
+            return TimeZoneHelper.AdjustTzTimeToLocalTime(dt.Value, tz);
         }
 
         public Episode(XElement r)

@@ -98,10 +98,10 @@ namespace TVRename
             return r;
         }
 
-        public string GetTargetEpisodeName(ShowItem show, Episode ep, TimeZone tz, bool dvdOrder)
+        public string GetTargetEpisodeName(ShowItem show, Episode ep, TimeZoneInfo tz, bool dvdOrder)
             => GetTargetEpisodeName(show, ep,  tz, dvdOrder, false);
 
-        private string GetTargetEpisodeName(ShowItem show, Episode ep, TimeZone tz, bool dvdOrder, bool urlEncode)
+        private string GetTargetEpisodeName(ShowItem show, Episode ep, TimeZoneInfo tz, bool dvdOrder, bool urlEncode)
         {
             //note this is for an Episode and not a ProcessedEpisode
             string name = StyleString;

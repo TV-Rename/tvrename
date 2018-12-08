@@ -138,8 +138,8 @@ namespace TVRename.App
                 string newTimeZone = tvdb.GetSeries(si.TvdbCode)?.TempTimeZone;
 
                 if (string.IsNullOrWhiteSpace(newTimeZone)) continue;
-                if ( newTimeZone == TimeZone.DefaultTimeZone() ) continue;
-                if (si.ShowTimeZone != TimeZone.DefaultTimeZone()) continue;
+                if ( newTimeZone == TimeZoneHelper.DefaultTimeZone() ) continue;
+                if (si.ShowTimeZone != TimeZoneHelper.DefaultTimeZone()) continue;
 
                 si.ShowTimeZone = newTimeZone;
                 doc.SetDirty();
