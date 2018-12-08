@@ -1299,7 +1299,7 @@ namespace TVRename
             }
         }
 
-        private void MenuFolders(LVResults lvr)
+        private void MenuFolders(LvResults lvr)
         {
             if (mLastShowsClicked == null || mLastShowsClicked.Count != 1)
                 return;
@@ -2625,10 +2625,10 @@ namespace TVRename
         private void ActionAction(bool checkedNotSelected)
         {
             mDoc.PreventAutoScan("Action Selected Items");
-            LVResults lvr = new LVResults(lvAction, checkedNotSelected);
+            LvResults lvr = new LvResults(lvAction, checkedNotSelected);
             mDoc.DoActions(lvr.FlatList);
             // remove items from master list, unless it had an error
-            foreach (Item i2 in new LVResults(lvAction, checkedNotSelected).FlatList)
+            foreach (Item i2 in new LvResults(lvAction, checkedNotSelected).FlatList)
             {
                 if (i2 != null && !lvr.FlatList.Contains(i2))
                     mDoc.TheActionList.Remove(i2);
@@ -2641,7 +2641,7 @@ namespace TVRename
 
         private void Revert(bool checkedNotSelected)
         {
-            foreach (Item item in new LVResults(lvAction, checkedNotSelected).FlatList)
+            foreach (Item item in new LvResults(lvAction, checkedNotSelected).FlatList)
             {
                 Action revertAction = (Action) item;
                 ItemMissing m2 = revertAction.UndoItemMissing;
@@ -2699,7 +2699,7 @@ namespace TVRename
                 return;
 
             // build the right click menu for the _selected_ items, and types of items
-            LVResults lvr = new LVResults(lvAction, false);
+            LvResults lvr = new LvResults(lvAction, false);
 
             if (lvr.Count == 0)
                 return; // nothing selected
@@ -2751,7 +2751,7 @@ namespace TVRename
         {
             UpdateSearchButtons();
 
-            LVResults lvr = new LVResults(lvAction, false);
+            LvResults lvr = new LvResults(lvAction, false);
 
             if (lvr.Count == 0)
             {
@@ -2818,8 +2818,8 @@ namespace TVRename
             if (internalCheckChange)
                 return;
 
-            LVResults all = new LVResults(lvAction, LVResults.WhichResults.All);
-            LVResults chk = new LVResults(lvAction, LVResults.WhichResults.Checked);
+            LvResults all = new LvResults(lvAction, LvResults.WhichResults.All);
+            LvResults chk = new LvResults(lvAction, LvResults.WhichResults.Checked);
 
             if (chk.Rename.Count == 0)
                 cbRename.CheckState = CheckState.Unchecked;
@@ -3031,7 +3031,7 @@ namespace TVRename
         private void lvAction_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             // double-click on an item will search for missing, do nothing (for now) for anything else
-            foreach (ItemMissing miss in new LVResults(lvAction, false).Missing)
+            foreach (ItemMissing miss in new LvResults(lvAction, false).Missing)
             {
                 if (miss.Episode != null)
                     TVDoc.SearchForEpisode(miss.Episode);
@@ -3040,7 +3040,7 @@ namespace TVRename
 
         private void bnActionBTSearch_Click(object sender, EventArgs e)
         {
-            LVResults lvr = new LVResults(lvAction, false);
+            LvResults lvr = new LvResults(lvAction, false);
 
             if (lvr.Count == 0)
                 return;
@@ -3056,7 +3056,7 @@ namespace TVRename
 
         private void IgnoreSelected()
         {
-            LVResults lvr = new LVResults(lvAction, false);
+            LvResults lvr = new LvResults(lvAction, false);
             bool added = false;
             foreach (Item action in lvr.FlatList)
             {
