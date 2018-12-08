@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
@@ -29,17 +30,17 @@ namespace TVRename
             return html;
         }
 
-        public static string GetShowHtmlOverview(this ShowItem si)
+        public static async Task<string> GetShowHtmlOverview(this ShowItem si,bool includeDirectoryLinks)
         {
             Color col = Color.FromName("ButtonFace");
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(HTMLHeader(10,col));
-            sb.AppendShow(si,col);
+            sb.AppendShow(si,col,includeDirectoryLinks);
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
         }
 
-        private static void AppendShow(this StringBuilder sb,ShowItem si, Color backgroundColour)
+        private static void AppendShow(this StringBuilder sb,ShowItem si, Color backgroundColour, bool includeDirectoryLinks)
         {
             if (si == null) return;
 
@@ -63,8 +64,12 @@ namespace TVRename
             string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : "http://www.tv.com/show/" + ser.SeriesId+ "/summary.html";
             string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : "http://www.imdb.com/title/" + ser.Imdb;
 
-            string urlFilename = Uri.EscapeDataString(si.GetBestFolderLocationToOpen());
-            string explorerButton = CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
+            string urlFilename = includeDirectoryLinks
+                ? Uri.EscapeDataString(si.GetBestFolderLocationToOpen())
+                : string.Empty;
+            string explorerButton = includeDirectoryLinks
+                ? CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder")
+                : string.Empty;
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                 <div class=""text-center"">
@@ -155,23 +160,23 @@ namespace TVRename
             return $"<img class=\"rounded w-100\" src=\"{TheTVDB.GetImageURL(ei.Filename)}\" alt=\"{ei.Name} Screenshot\">";
         }
 
-        public static string GetSeasonHtmlOverview(this ShowItem si, Season s)
+        public static async Task<string> GetSeasonHtmlOverview(this ShowItem si, Season s, bool includeDirectoryLinks)
         {
             StringBuilder sb = new StringBuilder();
             DirFilesCache dfc = new DirFilesCache();
             Color col = Color.FromName("ButtonFace");
             sb.AppendLine(HTMLHeader(10,col));
-            sb.AppendSeason(s,si,col);
+            sb.AppendSeason(s,si,col,includeDirectoryLinks);
             foreach (ProcessedEpisode ep in GetBestEpisodes(si,s))
             {
                 List<FileInfo> fl = dfc.FindEpOnDisk(ep);
-                sb.AppendEpisode(ep,fl,col);
+                sb.AppendEpisode(ep,fl,col,includeDirectoryLinks);
             }
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
         }
 
-        private static void AppendSeason(this StringBuilder sb, Season s, ShowItem si,Color backgroundColour)
+        private static async void AppendSeason(this StringBuilder sb, Season s, ShowItem si,Color backgroundColour, bool includeDirectoryLinks)
         {
             if (si == null)
                 return;
@@ -181,7 +186,9 @@ namespace TVRename
             string showLink = TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true);
             string urlFilename = Uri.EscapeDataString(si.GetBestFolderLocationToOpen(s));
 
-            string explorerButton = CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
+            string explorerButton = includeDirectoryLinks
+                ? CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder")
+                : string.Empty;
             string tvdbButton = CreateButton(seasonLink, "TVDB.com", "View on TVDB");
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
@@ -220,7 +227,7 @@ namespace TVRename
             return string.Empty;
         }
 
-        private static void AppendEpisode(this StringBuilder sb, ProcessedEpisode ep, IReadOnlyCollection<FileInfo> fl,Color backgroundColour)
+        private static void AppendEpisode(this StringBuilder sb, ProcessedEpisode ep, IReadOnlyCollection<FileInfo> fl,Color backgroundColour, bool includeDirectoryLinks)
         {
             string stars = StarRating(ep.EpisodeRating);
             string episodeUrl = TheTVDB.Instance.WebsiteUrl(ep.SeriesId, ep.SeasonId, ep.EpisodeId);

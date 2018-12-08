@@ -195,8 +195,8 @@ namespace TVRename
 
         private void ClearInfoWindows(string defaultText)
         {
-            SetHtmlBody(ShowHtmlHelper.CreateOldPage(defaultText), webImages);
-            SetHtmlBody(ShowHtmlHelper.CreateOldPage(defaultText), webInformation);
+            SetHtmlBody( webImages, ShowHtmlHelper.CreateOldPage(defaultText));
+            SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(defaultText));
         }
 
         private static int BgdlLongInterval() => 1000 * 60 * 60; // one hour
@@ -705,7 +705,7 @@ namespace TVRename
             FillEpGuideHtml(TreeNodeToShowItem(n), -1);
         }
 
-        private void FillEpGuideHtml(ShowItem si, int snum)
+        private async void FillEpGuideHtml(ShowItem si, int snum)
         {
             if (tabControl1.SelectedTab != tbMyShows)
                 return;
@@ -727,34 +727,36 @@ namespace TVRename
                 return;
             }
 
-            string infoPaneBody;
-            string imagesPaneBody;
-
             if (si.DvdOrder && snum >= 0 && ser.DvdSeasons.ContainsKey(snum))
             {
                 Season s = ser.DvdSeasons[snum];
-                infoPaneBody = si.GetSeasonHtmlOverview(s);
-                imagesPaneBody = ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s));
+                SetHtmlBody(webInformation, await si.GetSeasonHtmlOverview(s, false));
+                SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
+
+                SetHtmlBody(webInformation, await si.GetSeasonHtmlOverview(s, true));
             }
             else if (!si.DvdOrder && snum >= 0 && ser.AiredSeasons.ContainsKey(snum))
             {
                 Season s = ser.AiredSeasons[snum];
-                infoPaneBody = si.GetSeasonHtmlOverview(s);
-                imagesPaneBody = ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s));
+                SetHtmlBody(webInformation, await si.GetSeasonHtmlOverview(s, false));
+                SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
+
+                SetHtmlBody(webInformation, await si.GetSeasonHtmlOverview(s, true));
             }
             else
             {
                 // no epnum specified, just show an overview
-                infoPaneBody = si.GetShowHtmlOverview();
-                imagesPaneBody = ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview());
+                SetHtmlBody(webInformation, await si.GetShowHtmlOverview(false));
+                SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
+
+                SetHtmlBody(webInformation, await si.GetShowHtmlOverview(true));
             }
 
             TheTVDB.Instance.Unlock("FillEpGuideHTML");
-            SetHtmlBody(imagesPaneBody, webImages);
-            SetHtmlBody(infoPaneBody, webInformation);
+
         }
 
-        private static void SetHtmlBody(string body, WebBrowser web)
+        private static void SetHtmlBody(WebBrowser web, string body)
         {
             try
             {
@@ -765,6 +767,7 @@ namespace TVRename
                 //Fail gracefully - no RHS episode guide is not too big of a problem.
                 Logger.Error(ex);
             }
+            Application.DoEvents();
         }
 
         private static void TvdbFor(ProcessedEpisode e)
