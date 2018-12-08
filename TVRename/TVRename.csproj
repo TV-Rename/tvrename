@@ -458,6 +458,7 @@
     <Compile Include="Utility\UpdateVersion.cs" />
     <Compile Include="Utility\VersionUpdater.cs" />
     <Compile Include="Utility\Helper\XMLHelper.cs" />
+    <None Include="Resources\iconfinder_Info_Circle_Symbol_Information_Letter_1396823.ico" />
     <EmbeddedResource Include="Forms\ShowPreferences\QuickLocate.resx">
       <DependentUpon>QuickLocate.cs</DependentUpon>
     </EmbeddedResource>

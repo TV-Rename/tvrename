@@ -58,7 +58,7 @@ namespace TVRename
             cntfw = null;
 
             if (goToScanOpts)
-                tcTabs.SelectedTab = tpScanOptions;
+                tcTabs.SelectedTab = tbGeneral;
         }
 
         private void ValidateExtensions(TextBox validateField, TabPage focusTabPage)
@@ -342,7 +342,7 @@ namespace TVRename
         {
             ValidateExtensions(txtEmptyIgnoreExtensions, tbFolderDeleting);
             ValidateExtensions(txtVideoExtensions, tbFilesAndFolders);
-            ValidateExtensions(txtSubtitleExtensions, tpSubtitles);
+            ValidateExtensions(txtSubtitleExtensions, tbFilesAndFolders);
             ValidateExtensions(txtOtherExtensions, tbFilesAndFolders);
             ValidateExtensions(txtKeepTogether, tbFilesAndFolders);
         }
@@ -676,21 +676,6 @@ namespace TVRename
             cboShowStatus.DisplayMember = "Text";
         }
 
-        private void Browse(TextBox txt, string defaultExt, int filterIndex)
-        {
-            //rss =1, XML = 2, CSV = 3, TXT=4, HTML = 5
-            saveFile.FileName = txt.Text;
-            saveFile.DefaultExt = defaultExt;
-            saveFile.FilterIndex = filterIndex;
-            if (saveFile.ShowDialog() == DialogResult.OK)
-                txt.Text = saveFile.FileName;
-        }
-
-        private void bnBrowseWTWXML_Click(object sender, EventArgs e)
-        {
-            Browse(txtWTWXML,"xml",2);
-        }
-
         private void TxtNumberOnlyKeyPress(object sender, KeyPressEventArgs e)
         {
             // digits only
@@ -703,119 +688,31 @@ namespace TVRename
             Close();
         }
 
-        private void cbNotificationIcon_CheckedChanged(object sender, EventArgs e)
+        #region PopupBrowseDialog
+        private void bnBrowseWTWRSS_Click(object sender, EventArgs e) => Browse(txtWTWRSS, "rss", 1);
+        private void bnBrowseMissingXML_Click(object sender, EventArgs e) => Browse(txtMissingXML, "xml", 2);
+        private void bnBrowseRenamingXML_Click(object sender, EventArgs e) => Browse(txtRenamingXML, "xml", 2);
+        private void bnBrowseFOXML_Click(object sender, EventArgs e) => Browse(txtFOXML, "xml", 2);
+        private void bnBrowseWTWXML_Click(object sender, EventArgs e) => Browse(txtWTWXML, "xml", 2);
+        private void bnBrowseMissingCSV_Click(object sender, EventArgs e) => Browse(txtMissingCSV, "csv", 3);
+        private void bnBrowseShowsTXT_Click(object sender, EventArgs e) => Browse(txtShowsTXTTo, "txt", 4);
+        private void bnBrowseShowsHTML_Click(object sender, EventArgs e) => Browse(txtShowsHTMLTo, "html", 5);
+        private void bnBrowseWTWICAL_Click(object sender, EventArgs e) => Browse(txtWTWICAL, "iCal", 6);
+        private void bnBrowseXSPF_Click(object sender, EventArgs e) => Browse(txtXSPF, "xspf", 7);
+        private void bnBrowseM3U_Click(object sender, EventArgs e) => Browse(txtM3U, "m3u8", 8);
+        private void bnBrowseASX_Click(object sender, EventArgs e) => Browse(txtASX, "asx", 9);
+        private void bnBrowseWPL_Click(object sender, EventArgs e) => Browse(txtWPL, "wpl", 10);
+
+        private void Browse(TextBox txt, string defaultExt, int filterIndex)
         {
-            if (!cbNotificationIcon.Checked)
-                chkShowInTaskbar.Checked = true;
+            //rss =1, XML = 2, CSV = 3, TXT=4, HTML = 5
+            saveFile.FileName = txt.Text;
+            saveFile.DefaultExt = defaultExt;
+            saveFile.FilterIndex = filterIndex;
+            if (saveFile.ShowDialog() == DialogResult.OK)
+                txt.Text = saveFile.FileName;
         }
-
-        private void chkShowInTaskbar_CheckedChanged(object sender, EventArgs e)
-        {
-            if (!chkShowInTaskbar.Checked)
-                cbNotificationIcon.Checked = true;
-        }
-
-        private void cbKeepTogether_CheckedChanged(object sender, EventArgs e)
-        {
-            cbTxtToSub.Enabled = cbKeepTogether.Checked;
-            txtKeepTogether.Enabled = (cbKeepTogether.Checked && cbKeepTogetherMode.Text != "All");
-            cbKeepTogetherMode.Enabled = cbKeepTogether.Checked;
-            label39.Enabled = cbKeepTogether.Checked;
-        }
-
-        private void bnBrowseMissingCSV_Click(object sender, EventArgs e)
-        {
-            Browse(txtMissingCSV,"csv",3);
-        }
-
-        private void bnBrowseWTWRSS_Click(object sender, EventArgs e)
-        {
-            Browse(txtWTWRSS, "rss", 1);
-        }
-
-        private void bnBrowseMissingXML_Click(object sender, EventArgs e)
-        {
-            Browse(txtMissingXML,"xml",2);
-        }
-
-        private void bnBrowseShowsTXT_Click(object sender, EventArgs e)
-        {
-            Browse(txtShowsTXTTo, "txt", 4);
-        }
-
-        private void bnBrowseShowsHTML_Click(object sender, EventArgs e)
-        {
-            Browse(txtShowsHTMLTo, "html", 5);
-        }
-
-        private void bnBrowseRenamingXML_Click(object sender, EventArgs e)
-        {
-            Browse(txtRenamingXML,"xml",2);
-        }
-
-        private void bnBrowseFOXML_Click(object sender, EventArgs e)
-        {
-            Browse(txtFOXML,"xml",2);
-        }
-
-        private void EnableDisable(object sender, EventArgs e)
-        {
-            txtWTWRSS.Enabled = cbWTWRSS.Checked;
-            bnBrowseWTWRSS.Enabled = cbWTWRSS.Checked;
-
-            txtWTWXML.Enabled = cbWTWXML.Checked;
-            bnBrowseWTWXML.Enabled = cbWTWXML.Checked;
-
-            txtWTWICAL.Enabled = cbWTWICAL.Checked;
-            bnBrowseWTWICAL.Enabled = cbWTWICAL.Checked;
-
-            txtM3U.Enabled = cbM3U.Checked;
-            bnBrowseM3U.Enabled = cbM3U.Checked;
-            txtXSPF.Enabled = cbXSPF.Checked;
-            bnBrowseXSPF.Enabled = cbXSPF.Checked;
-            txtASX.Enabled = cbASX.Checked;
-            bnBrowseASX.Enabled = cbASX.Checked;
-            txtWPL.Enabled = cbWPL.Checked;
-            bnBrowseWPL.Enabled = cbWPL.Checked;
-
-            bool wtw;
-            if ((cbWTWRSS.Checked) || (cbWTWXML.Checked) || (cbWTWICAL.Checked))
-                wtw = true;
-            else
-                wtw = false;
-
-            label4.Enabled = wtw;
-            label15.Enabled = wtw;
-            label16.Enabled = wtw;
-            label17.Enabled = wtw;
-            txtExportRSSMaxDays.Enabled = wtw;
-            txtExportRSSMaxShows.Enabled = wtw;
-            txtExportRSSDaysPast.Enabled = wtw;
-
-            bool fo = cbFOXML.Checked;
-            txtFOXML.Enabled = fo;
-            bnBrowseFOXML.Enabled = fo;
-
-            bool stxt = cbShowsTXT.Checked;
-            txtShowsTXTTo.Enabled = stxt;
-            bnBrowseShowsTXT.Enabled = stxt;
-
-            bool shtml = cbShowsHTML.Checked;
-            txtShowsHTMLTo.Enabled = shtml;
-            bnBrowseShowsHTML.Enabled = shtml;
-
-            bool ren = cbRenamingXML.Checked;
-            txtRenamingXML.Enabled = ren;
-            bnBrowseRenamingXML.Enabled = ren;
-
-            bool misx = cbMissingXML.Checked;
-            txtMissingXML.Enabled = misx;
-            bnBrowseMissingXML.Enabled = misx;
-
-            bool misc = cbMissingCSV.Checked;
-            txtMissingCSV.Enabled = misc;
-            bnBrowseMissingCSV.Enabled = misc;
-        }
+        #endregion PopupBrowseDialog
 
         private void bnAddSearchFolder_Click(object sender, EventArgs e)
         {
@@ -901,11 +798,11 @@ namespace TVRename
         private void SetupReplacementsGrid()
         {
             SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
-                                                         {
-                                                             BackColor = Color.SteelBlue,
-                                                             ForeColor = Color.White,
-                                                             TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
-                                                         };
+            {
+                BackColor = Color.SteelBlue,
+                ForeColor = Color.White,
+                TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+            };
 
             ReplacementsGrid.Columns.Clear();
             ReplacementsGrid.Rows.Clear();
@@ -931,22 +828,22 @@ namespace TVRename
             //////////////////////////////////////////////////////////////////////
             // header row
 
-            ColumnHeader h = new ColumnHeader("Search") {AutomaticSortEnabled = false};
+            ColumnHeader h = new ColumnHeader("Search") { AutomaticSortEnabled = false };
             ReplacementsGrid[0, 0] = h;
             ReplacementsGrid[0, 0].View = titleModel;
 
-            h = new ColumnHeader("Replace") {AutomaticSortEnabled = false};
+            h = new ColumnHeader("Replace") { AutomaticSortEnabled = false };
             ReplacementsGrid[0, 1] = h;
             ReplacementsGrid[0, 1].View = titleModel;
 
-            h = new ColumnHeader("Case Ins.") {AutomaticSortEnabled = false};
+            h = new ColumnHeader("Case Ins.") { AutomaticSortEnabled = false };
             ReplacementsGrid[0, 2] = h;
             ReplacementsGrid[0, 2].View = titleModel;
         }
 
         private void AddNewReplacementRow(string from, string to, bool ins)
         {
-            SourceGrid.Cells.Views.Cell roModel = new SourceGrid.Cells.Views.Cell {ForeColor = Color.Gray};
+            SourceGrid.Cells.Views.Cell roModel = new SourceGrid.Cells.Views.Cell { ForeColor = Color.Gray };
 
             int r = ReplacementsGrid.RowsCount;
             ReplacementsGrid.RowsCount = r + 1;
@@ -963,11 +860,11 @@ namespace TVRename
         private void SetupRssGrid()
         {
             SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
-                                                         {
-                                                             BackColor = Color.SteelBlue,
-                                                             ForeColor = Color.White,
-                                                             TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
-                                                         };
+            {
+                BackColor = Color.SteelBlue,
+                ForeColor = Color.White,
+                TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+            };
 
             RSSGrid.Columns.Clear();
             RSSGrid.Rows.Clear();
@@ -985,7 +882,7 @@ namespace TVRename
 
             //////////////////////////////////////////////////////////////////////
             // header row
-            ColumnHeader h = new ColumnHeader("URL") {AutomaticSortEnabled = false};
+            ColumnHeader h = new ColumnHeader("URL") { AutomaticSortEnabled = false };
             RSSGrid[0, 0] = h;
             RSSGrid[0, 0].View = titleModel;
         }
@@ -1016,7 +913,7 @@ namespace TVRename
             int[] rowsIndex = RSSGrid.Selection.GetSelectionRegion().GetRowsIndex();
 
             if (rowsIndex.Length > 0)
-                Helpers.SysOpen((string) (RSSGrid[rowsIndex[0], 0].Value));
+                Helpers.SysOpen((string)(RSSGrid[rowsIndex[0], 0].Value));
         }
 
         private void SetupLanguages()
@@ -1033,7 +930,7 @@ namespace TVRename
 
         private void LoadLanguage()
         {
-            TheTVDB.Instance.GetLock ("Preferences-LoadLanguages");
+            TheTVDB.Instance.GetLock("Preferences-LoadLanguages");
             bool aborted = false;
             try
             {
@@ -1048,7 +945,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                Logger.Fatal(e,"Unhandled Exception in LoadLanguages");
+                Logger.Fatal(e, "Unhandled Exception in LoadLanguages");
                 aborted = true;
             }
             TheTVDB.Instance.Unlock("Preferences-LoadLanguages");
@@ -1063,7 +960,7 @@ namespace TVRename
 
         private void FillLanguageList()
         {
-            TheTVDB.Instance.GetLock( "Preferences-FLL");
+            TheTVDB.Instance.GetLock("Preferences-FLL");
             cbLanguages.BeginUpdate();
             cbLanguages.Items.Clear();
 
@@ -1081,10 +978,98 @@ namespace TVRename
 
             TheTVDB.Instance.Unlock("Preferences-FLL");
         }
+        #region enable and disable settings as appropriate
+        private void cbNotificationIcon_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
+        private void chkShowInTaskbar_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
+        private void cbKeepTogether_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
+        private void cbMissing_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
+        private void cbSearchLocally_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
+        private void cbMeta_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
+        private void cbKeepTogetherMode_SelectedIndexChanged(object sender, EventArgs e) => EnableDisable(sender, e);
+        private void cbSearchRSS_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
+        private void cbSearchJSON_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
+        private void lvwDefinedColors_SelectedIndexChanged(object sender, EventArgs e) => EnableDisable(sender, e);
 
-        private void cbMissing_CheckedChanged(object sender, EventArgs e)
+        private void EnableDisable(object sender, EventArgs e)
         {
+            bnRemoveDefinedColor.Enabled = lvwDefinedColors.SelectedItems.Count == 1;
+            txtKeepTogether.Enabled = (cbKeepTogether.Checked && cbKeepTogetherMode.Text != "All");
+            gbRSS.Enabled = cbSearchRSS.Checked;
+            gbJSON.Enabled = cbSearchJSON.Checked;
+
+            if (!cbNotificationIcon.Checked)
+                chkShowInTaskbar.Checked = true;
+
+            if (!chkShowInTaskbar.Checked)
+                cbNotificationIcon.Checked = true;
+
+            cbTxtToSub.Enabled = cbKeepTogether.Checked;
+            txtKeepTogether.Enabled = (cbKeepTogether.Checked && cbKeepTogetherMode.Text != "All");
+            cbKeepTogetherMode.Enabled = cbKeepTogether.Checked;
+            label39.Enabled = cbKeepTogether.Checked;
+
+            ExportersOptEnableDisable();
+
             ScanOptEnableDisable();
+        }
+
+        private void ExportersOptEnableDisable()
+        {
+            txtWTWRSS.Enabled = cbWTWRSS.Checked;
+            bnBrowseWTWRSS.Enabled = cbWTWRSS.Checked;
+
+            txtWTWXML.Enabled = cbWTWXML.Checked;
+            bnBrowseWTWXML.Enabled = cbWTWXML.Checked;
+
+            txtWTWICAL.Enabled = cbWTWICAL.Checked;
+            bnBrowseWTWICAL.Enabled = cbWTWICAL.Checked;
+
+            txtM3U.Enabled = cbM3U.Checked;
+            bnBrowseM3U.Enabled = cbM3U.Checked;
+            txtXSPF.Enabled = cbXSPF.Checked;
+            bnBrowseXSPF.Enabled = cbXSPF.Checked;
+            txtASX.Enabled = cbASX.Checked;
+            bnBrowseASX.Enabled = cbASX.Checked;
+            txtWPL.Enabled = cbWPL.Checked;
+            bnBrowseWPL.Enabled = cbWPL.Checked;
+
+            bool wtw;
+            if ((cbWTWRSS.Checked) || (cbWTWXML.Checked) || (cbWTWICAL.Checked))
+                wtw = true;
+            else
+                wtw = false;
+
+            label4.Enabled = wtw;
+            label15.Enabled = wtw;
+            label16.Enabled = wtw;
+            label17.Enabled = wtw;
+            txtExportRSSMaxDays.Enabled = wtw;
+            txtExportRSSMaxShows.Enabled = wtw;
+            txtExportRSSDaysPast.Enabled = wtw;
+
+            bool fo = cbFOXML.Checked;
+            txtFOXML.Enabled = fo;
+            bnBrowseFOXML.Enabled = fo;
+
+            bool stxt = cbShowsTXT.Checked;
+            txtShowsTXTTo.Enabled = stxt;
+            bnBrowseShowsTXT.Enabled = stxt;
+
+            bool shtml = cbShowsHTML.Checked;
+            txtShowsHTMLTo.Enabled = shtml;
+            bnBrowseShowsHTML.Enabled = shtml;
+
+            bool ren = cbRenamingXML.Checked;
+            txtRenamingXML.Enabled = ren;
+            bnBrowseRenamingXML.Enabled = ren;
+
+            bool misx = cbMissingXML.Checked;
+            txtMissingXML.Enabled = misx;
+            bnBrowseMissingXML.Enabled = misx;
+
+            bool misc = cbMissingCSV.Checked;
+            txtMissingCSV.Enabled = misc;
+            bnBrowseMissingCSV.Enabled = misc;
         }
 
         private void ScanOptEnableDisable()
@@ -1092,24 +1077,22 @@ namespace TVRename
             bool e = cbMissing.Checked;
             tbMediaCenter.Enabled = e;
 
+            cbIgnorePreviouslySeen.Enabled = e;
             cbSearchRSS.Enabled = e;
             cbSearchLocally.Enabled = e;
             cbCheckuTorrent.Enabled = e;
+            cbCheckSABnzbd.Enabled = e;
+            cbCheckqBitTorrent.Enabled = e;
+            cbSearchJSON.Enabled = e;
 
-            bool e2 = e && cbSearchLocally.Checked;
-            cbLeaveOriginals.Enabled = e2;
-            cbCheckSABnzbd.Enabled = e2;
+            cbSearchJSONManualScanOnly.Enabled = cbSearchJSON.Checked && e;
+            cbSearchRSSManualScanOnly.Enabled = cbSearchRSS.Checked && e;
+
+            cbLeaveOriginals.Enabled = e && cbSearchLocally.Checked;
+            
         }
 
-        private void cbSearchLocally_CheckedChanged(object sender, EventArgs e)
-        {
-            ScanOptEnableDisable();
-        }
-
-        private void cbMeta_CheckedChanged(object sender, EventArgs e)
-        {
-            ScanOptEnableDisable();
-        }
+        #endregion enable and disable settings as appropriate
 
         private void bnReplaceAdd_Click(object sender, EventArgs e)
         {
@@ -1187,11 +1170,6 @@ namespace TVRename
         private void bnRemoveDefinedColor_Click(object sender, EventArgs e)
         {
             RemoveSelectedDefinedColor();
-        }
-
-        private void lvwDefinedColors_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            bnRemoveDefinedColor.Enabled = lvwDefinedColors.SelectedItems.Count == 1;
         }
 
         private void RemoveSelectedDefinedColor()
@@ -1302,19 +1280,9 @@ namespace TVRename
             cmDefaults.Show(pt);
         }
 
-        private void cbKeepTogetherMode_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            txtKeepTogether.Enabled = (cbKeepTogether.Checked && cbKeepTogetherMode.Text != "All");
-        }
-
         private void domainUpDown1_KeyDown(object sender, KeyEventArgs e)
         {
                 e.SuppressKeyPress = true;
-        }
-
-        private void bnBrowseWTWICAL_Click(object sender, EventArgs e)
-        {
-            Browse(txtWTWICAL, "iCal", 6);
         }
 
         private void bnTags_Click(object sender, EventArgs e)
@@ -1322,16 +1290,6 @@ namespace TVRename
             cntfw = new CustomNameTagsFloatingWindow(sampleSeason);
             cntfw.Show(this);
             Focus();
-        }
-
-        private void cbSearchRSS_CheckedChanged(object sender, EventArgs e)
-        {
-            gbRSS.Enabled = cbSearchRSS.Checked;
-        }
-
-        private void cbSearchJSON_CheckedChanged(object sender, EventArgs e)
-        {
-            gbJSON.Enabled = cbSearchJSON.Checked;
         }
 
         private void tpSearch_DrawItem(object sender, DrawItemEventArgs e)
@@ -1359,26 +1317,25 @@ namespace TVRename
             g.DrawString(tabPage.Text, tcTabs.Font, Brushes.Black, tabBounds, new StringFormat(stringFlags));
         }
 
-        private void bnBrowseXSPF_Click(object sender, EventArgs e)
+        private void FillSearchFolderList()
         {
-            Browse(txtXSPF, "xspf", 7);
+            lbSearchFolders.Items.Clear();
+            TVSettings.Instance.DownloadFolders.Sort();
+            foreach (string efi in TVSettings.Instance.DownloadFolders)
+                lbSearchFolders.Items.Add(efi);
         }
 
-        private void bnBrowseM3U_Click(object sender, EventArgs e)
+        #region FolderMonitorOptions
+        private void bnRemoveMonFolder_Click(object sender, EventArgs e)
         {
-            Browse(txtM3U, "m3u8", 8);
+            for (int i = lstFMMonitorFolders.SelectedIndices.Count - 1; i >= 0; i--)
+            {
+                int n = lstFMMonitorFolders.SelectedIndices[i];
+                TVSettings.Instance.LibraryFolders.RemoveAt(n);
+            }
+            mDoc.SetDirty();
+            FillFolderStringLists();
         }
-
-        private void bnBrowseASX_Click(object sender, EventArgs e)
-        {
-            Browse(txtASX, "asx", 9);
-        }
-
-        private void bnBrowseWPL_Click(object sender, EventArgs e)
-        {
-            Browse(txtWPL, "wpl", 10);
-        }
-
         private void bnAddMonFolder_Click(object sender, EventArgs e)
         {
             FolderBrowserDialogEx searchFolderBrowser = new FolderBrowserDialogEx
@@ -1417,26 +1374,6 @@ namespace TVRename
                 lstFMMonitorFolders.Items.Add(folder);
 
             lstFMMonitorFolders.EndUpdate();
-        }
-
-
-        private void FillSearchFolderList()
-        {
-            lbSearchFolders.Items.Clear();
-            TVSettings.Instance.DownloadFolders.Sort();
-            foreach (string efi in TVSettings.Instance.DownloadFolders)
-                lbSearchFolders.Items.Add(efi);
-        }
-
-        private void bnRemoveMonFolder_Click(object sender, EventArgs e)
-        {
-            for (int i = lstFMMonitorFolders.SelectedIndices.Count - 1; i >= 0; i--)
-            {
-                int n = lstFMMonitorFolders.SelectedIndices[i];
-                TVSettings.Instance.LibraryFolders.RemoveAt(n);
-            }
-            mDoc.SetDirty();
-            FillFolderStringLists();
         }
 
         private void bnOpenMonFolder_Click(object sender, EventArgs e)
@@ -1487,5 +1424,24 @@ namespace TVRename
             bnRemoveSearchFolder.Enabled = (lbSearchFolders.SelectedIndices.Count > 0);
             bnOpenSearchFolder.Enabled = (lbSearchFolders.SelectedIndices.Count > 0);
         }
+        #endregion FolderMonitorOptions
+
+        #region HelpWindows
+        private void pbGeneral_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-general-tab");
+        private void pbDisplay_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-display-tab");
+        private void pbSearchFolders_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-search-folders-tab");
+        private void pbRSSJSONSearch_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-rss--json-search-tab");
+        private void pbFilesAndFolders_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-files-and-folders-tab");
+        private void pbFolderDeleting_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-folder-deleting-tab");
+        private void pictureBox7_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-media-center-tab");
+        private void pictureBox1_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-torrents--nzb-tab");
+        private void pbLibraryFolders_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-library-folders-tab");
+
+        private static void OpenInfoWindow(string page)
+        {
+            Helpers.SysOpen($"https://www.tvrename.com/manual/options{page}");
+        }
+
+        #endregion
     }
 }
