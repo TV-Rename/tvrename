@@ -235,13 +235,15 @@ namespace TVRename
             return n.Trim();
         }
 
-        public static string CompareName(string n)
+        public static string CompareName( this string n)
         {
             //TODO consider whether merge with above
             n = RemoveDiacritics(n);
             n = Regex.Replace(n, "[^\\w ]", "");
             return SimplifyName(n);
         }
+
+        public static string RemoveDot(this string s) => s.Replace(".", " ");
 
         public static string GetCommonStartString(List<string> testValues)
         {
@@ -305,7 +307,7 @@ namespace TVRename
             return builder.ToString();
         }
 
-        public static string RemoveDiacritics(string stIn)
+        public static string RemoveDiacritics(this string stIn)
         {
             // From http://blogs.msdn.com/b/michkap/archive/2007/05/14/2629747.aspx
             string stFormD = stIn.Normalize(NormalizationForm.FormD);
