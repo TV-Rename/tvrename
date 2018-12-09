@@ -6,7 +6,6 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Collections.Generic;
 
@@ -91,26 +90,12 @@ namespace TVRename
 
             lvMatches.BeginUpdate();
 
-            string what = txtFindThis.Text;
-            what = Helpers.RemoveDiacritics(what);
-            what = what.Replace(".", " ");
+            string what = txtFindThis.Text.RemoveDiacritics().RemoveDot().ToLower();
 
             lvMatches.Items.Clear();
             if (!string.IsNullOrEmpty(what))
             {
-                what = what.ToLower();
-
-                bool numeric = Regex.Match(what, "^[0-9]+$").Success;
-                int matchnum = 0;
-                try
-                {
-                    matchnum = numeric ? int.Parse(what) : -1;
-                }
-                catch (OverflowException)
-                {
-                }
-
-                what = Helpers.RemoveDiacritics(what);
+                bool numeric = int.TryParse(what, out int matchnum);
 
                 if (!TheTVDB.Instance.GetLock("DoFind"))
                     return;
@@ -118,26 +103,17 @@ namespace TVRename
                 foreach (KeyValuePair<int, SeriesInfo> kvp in TheTVDB.Instance.GetSeriesDict())
                 {
                     int num = kvp.Key;
-                    string show = kvp.Value.Name;
-                    show = Helpers.RemoveDiacritics(show);
-                    string s = num + " " + show.Replace(".", " "); 
+                    string show = kvp.Value.Name.RemoveDiacritics();
+                    string s = num + " " + show.RemoveDot(); 
 
-                    string simpleS = Regex.Replace(s.ToLower(), "[^\\w ]", "");
+                    string simpleS = s.ToLower().CompareName();
 
                     bool numberMatch = numeric && num == matchnum;
-                    string searchTerm = Regex.Replace(what, "[^\\w ]", "");
-                    searchTerm = searchTerm.Trim();
+                    string searchTerm = what.CompareName();
+
                     if (numberMatch || (!numeric && (simpleS.Contains(searchTerm))) || (numeric && show.Contains(what)))
                     {
-                        ListViewItem lvi = new ListViewItem();
-                        lvi.Text = num.ToString();
-                        lvi.SubItems.Add(show);
-                        lvi.SubItems.Add(kvp.Value.FirstAired != null ? kvp.Value.FirstAired.Value.Year.ToString() : "");
-
-                        lvi.Tag = kvp.Value;
-                        if (numberMatch)
-                            lvi.Selected = true;
-                        lvMatches.Items.Add(lvi);
+                        lvMatches.Items.Add(NewLvi(kvp.Value, num, show, numberMatch));
                     }
                 }
                 TheTVDB.Instance.Unlock("DoFind");
@@ -155,6 +131,18 @@ namespace TVRename
 
             if ((lvMatches.Items.Count == 1) && chooseOnlyMatch)
                 lvMatches.Items[0].Selected = true;
+        }
+
+        private static ListViewItem NewLvi(SeriesInfo si, int num, string show, bool numberMatch)
+        {
+            ListViewItem lvi = new ListViewItem {Text = num.ToString()};
+            lvi.SubItems.Add(show);
+            lvi.SubItems.Add(si.FirstAired != null ? si.FirstAired.Value.Year.ToString() : "");
+
+            lvi.Tag = si;
+            if (numberMatch)
+                lvi.Selected = true;
+            return lvi;
         }
 
         private void bnGoSearch_Click(object sender, EventArgs e)

@@ -5,11 +5,15 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
+using System;
+using System.Linq;
+
 namespace TVRename
 {
     using System.Windows.Forms;
 
-    public class LVResults
+    public class LvResults
     {
         #region WhichResults enum
 
@@ -32,17 +36,17 @@ namespace TVRename
         public System.Collections.Generic.List<ActionTDownload> RSS;
         public System.Collections.Generic.List<ActionCopyMoveRename> Rename;
 
-        public LVResults(ListView lv, bool isChecked) // if not checked, then selected items
+        public LvResults(ListView lv, bool isChecked) // if not checked, then selected items
         {
             Go(lv, isChecked ? WhichResults.Checked : WhichResults.Selected);
         }
 
-        public LVResults(ListView lv, WhichResults which)
+        public LvResults(ListView lv, WhichResults which)
         {
             Go(lv, which);
         }
 
-        public void Go(ListView lv, WhichResults which)
+        private void Go(ListView lv, WhichResults which)
         {
             Missing = new System.Collections.Generic.List<ItemMissing>();
             RSS = new System.Collections.Generic.List<ActionTDownload>();
@@ -54,57 +58,62 @@ namespace TVRename
             FlatList = new ItemList();
 
             System.Collections.Generic.List<ListViewItem> sel = new System.Collections.Generic.List<ListViewItem>();
-            if (which == WhichResults.Checked)
-            {
-                ListView.CheckedListViewItemCollection ss = lv.CheckedItems;
-                foreach (ListViewItem lvi in ss)
-                    sel.Add(lvi);
-            }
-            else if (which == WhichResults.Selected)
-            {
-                ListView.SelectedListViewItemCollection ss = lv.SelectedItems;
-                foreach (ListViewItem lvi in ss)
-                    sel.Add(lvi);
-            }
-            else // all
-            {
-                foreach (ListViewItem lvi in lv.Items)
-                    sel.Add(lvi);
-            }
+            sel.AddRange(GetSelectionCollection(lv, which));
 
             Count = sel.Count;
 
             if (sel.Count == 0)
                 return;
 
-            System.Type firstType = ((Item) (sel[0].Tag)).GetType();
-
             foreach (ListViewItem lvi in sel)
             {
                 if (lvi == null)
                     continue;
 
-                Item action = (Item) (lvi.Tag);
+                Item action = (Item)(lvi.Tag);
                 if (action != null)
                     FlatList.Add(action);
 
-                if (action is ActionCopyMoveRename cmr)
+                switch (action)
                 {
-                    if (cmr.Operation == ActionCopyMoveRename.Op.rename)
+                    case ActionCopyMoveRename cmr when cmr.Operation == ActionCopyMoveRename.Op.rename:
                         Rename.Add(cmr);
-                    else // copy/move
+                        break;
+                    // copy/move
+                    case ActionCopyMoveRename cmr:
                         CopyMove.Add(cmr);
+                        break;
+                    case ActionDownloadImage item:
+                        Download.Add(item);
+                        break;
+                    case ActionTDownload rss:
+                        RSS.Add(rss);
+                        break;
+                    case ItemMissing missing:
+                        Missing.Add(missing);
+                        break;
+                    case ActionNfo nfo:
+                        NFO.Add(nfo);
+                        break;
+                    case ActionPyTivoMeta meta:
+                        PyTivoMeta.Add(meta);
+                        break;
                 }
-                else if (action is ActionDownloadImage item)
-                    Download.Add(item);
-                else if (action is ActionTDownload rss)
-                    RSS.Add(rss);
-                else if (action is ItemMissing missing)
-                    Missing.Add(missing);
-                else if (action is ActionNfo nfo)
-                    NFO.Add(nfo);
-                else if (action is ActionPyTivoMeta meta)
-                    PyTivoMeta.Add(meta);
+            }
+        }
+
+        private static System.Collections.Generic.IEnumerable<ListViewItem> GetSelectionCollection(ListView lv, WhichResults which)
+        {
+            switch (which)
+            {
+                case WhichResults.Checked:
+                    return lv.CheckedItems.Cast<ListViewItem>();
+                case WhichResults.Selected:
+                    return lv.SelectedItems.Cast<ListViewItem>();
+                case WhichResults.All:
+                    return lv.Items.Cast<ListViewItem>();
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(which), which, null);
             }
         }
     }
