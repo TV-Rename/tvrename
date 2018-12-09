@@ -184,7 +184,7 @@ namespace TVRename
 
                 foreach (FileInfo fiTemp in files)
                 {
-                    if (!TVSettings.Instance.UsefulExtension(fiTemp.Extension, false))
+                    if (!fiTemp.IsMovieFile())
                         continue; // move on
 
                     if (!FindSeasEp(fiTemp, out int seasFound, out int epFound, out int _, si)) continue;

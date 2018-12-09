@@ -20,8 +20,8 @@ namespace TVRename
         public enum WhichResults
         {
             Checked,
-            Selected,
-            All
+            selected,
+            all
         }
 
         #endregion
@@ -31,14 +31,14 @@ namespace TVRename
         public System.Collections.Generic.List<ActionDownloadImage> Download;
         public ItemList FlatList;
         public System.Collections.Generic.List<ItemMissing> Missing;
-        public System.Collections.Generic.List<ActionNfo> NFO;
+        public System.Collections.Generic.List<ActionNfo> Nfo;
         public System.Collections.Generic.List<ActionPyTivoMeta> PyTivoMeta;
-        public System.Collections.Generic.List<ActionTDownload> RSS;
+        public System.Collections.Generic.List<ActionTDownload> Rss;
         public System.Collections.Generic.List<ActionCopyMoveRename> Rename;
 
         public LvResults(ListView lv, bool isChecked) // if not checked, then selected items
         {
-            Go(lv, isChecked ? WhichResults.Checked : WhichResults.Selected);
+            Go(lv, isChecked ? WhichResults.Checked : WhichResults.selected);
         }
 
         public LvResults(ListView lv, WhichResults which)
@@ -49,11 +49,11 @@ namespace TVRename
         private void Go(ListView lv, WhichResults which)
         {
             Missing = new System.Collections.Generic.List<ItemMissing>();
-            RSS = new System.Collections.Generic.List<ActionTDownload>();
+            Rss = new System.Collections.Generic.List<ActionTDownload>();
             CopyMove = new System.Collections.Generic.List<ActionCopyMoveRename>();
             Rename = new System.Collections.Generic.List<ActionCopyMoveRename>();
             Download = new System.Collections.Generic.List<ActionDownloadImage>();
-            NFO = new System.Collections.Generic.List<ActionNfo>();
+            Nfo = new System.Collections.Generic.List<ActionNfo>();
             PyTivoMeta = new System.Collections.Generic.List<ActionPyTivoMeta>();
             FlatList = new ItemList();
 
@@ -87,13 +87,13 @@ namespace TVRename
                         Download.Add(item);
                         break;
                     case ActionTDownload rss:
-                        RSS.Add(rss);
+                        Rss.Add(rss);
                         break;
                     case ItemMissing missing:
                         Missing.Add(missing);
                         break;
                     case ActionNfo nfo:
-                        NFO.Add(nfo);
+                        Nfo.Add(nfo);
                         break;
                     case ActionPyTivoMeta meta:
                         PyTivoMeta.Add(meta);
@@ -108,9 +108,9 @@ namespace TVRename
             {
                 case WhichResults.Checked:
                     return lv.CheckedItems.Cast<ListViewItem>();
-                case WhichResults.Selected:
+                case WhichResults.selected:
                     return lv.SelectedItems.Cast<ListViewItem>();
-                case WhichResults.All:
+                case WhichResults.all:
                     return lv.Items.Cast<ListViewItem>();
                 default:
                     throw new ArgumentOutOfRangeException(nameof(which), which, null);

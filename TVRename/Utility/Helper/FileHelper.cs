@@ -306,7 +306,7 @@ namespace TVRename
 
         public static bool IgnoreFile(this FileInfo fi)
         {
-            if (!TVSettings.Instance.UsefulExtension(fi.Extension, false))
+            if (!fi.IsMovieFile())
                 return true; // move on
 
             if (TVSettings.Instance.IgnoreSamples &&

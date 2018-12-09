@@ -35,7 +35,7 @@ namespace TVRename
         [XmlIgnoreAttribute] public int NS_NumberOfEpisodesExpected = 0;
         [XmlIgnoreAttribute] public int NS_NumberOfSeasons = 0;
         [XmlIgnoreAttribute] public int NS_NumberOfShows = 0;
-        [XmlIgnoreAttribute] private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        [XmlIgnoreAttribute] private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static TVRenameStats Load()
         {
@@ -56,7 +56,7 @@ namespace TVRename
                 return null;
 
             XmlReaderSettings settings = new XmlReaderSettings {IgnoreComments = true, IgnoreWhitespace = true};
-            TVRenameStats sc = null;
+            TVRenameStats sc;
 
             try
             {
@@ -69,7 +69,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-               logger.Fatal(e);
+               Logger.Fatal(e);
                return new TVRenameStats(); 
             }
 
@@ -79,6 +79,11 @@ namespace TVRename
         private void SaveToFile(string toFile)
         {
             System.IO.DirectoryInfo di = new System.IO.FileInfo(toFile).Directory;
+            if (di == null)
+            {
+                Logger.Error($"Failed to save Statistics XML to {toFile}");
+                return;
+            }
             if (!di.Exists)
                 di.Create();
 

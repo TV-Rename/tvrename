@@ -1,35 +1,28 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// 
+
 using System;
 using System.Collections;
 using System.Windows.Forms;
 
 namespace TVRename
 {
-    public sealed class DateSorterWTW : IComparer
+    public sealed class DateSorterWtw : IComparer
     {
         #region IComparer Members
 
         public int Compare(object x, object y)
         {
-            DateTime? d1;
-            DateTime? d2;
+            if (!(x is ListViewItem lvix)) throw new InvalidOperationException();
+            if (!(y is ListViewItem lviy)) throw new InvalidOperationException();
 
-            try
-            {
-                d1 = ((ProcessedEpisode) ((x as ListViewItem).Tag)).GetAirDateDt(true);
-            }
-            catch
-            {
-                d1 = DateTime.Now;
-            }
-
-            try
-            {
-                d2 = ((ProcessedEpisode) ((y as ListViewItem).Tag)).GetAirDateDt(true);
-            }
-            catch
-            {
-                d2 = DateTime.Now;
-            }
+            DateTime? d1 = GetDate(lvix);
+            DateTime? d2 = GetDate(lviy);
 
             if ((d1 == null) && (d2 == null))
                 return 0;
@@ -38,6 +31,18 @@ namespace TVRename
             if (d2 == null)
                 return 1;
             return d1.Value.CompareTo(d2.Value);
+        }
+
+        private static DateTime? GetDate(ListViewItem lvi)
+        {
+            try
+            {
+                return ((ProcessedEpisode)(lvi.Tag)).GetAirDateDt(true);
+            }
+            catch
+            {
+                return DateTime.Now;
+            }
         }
 
         #endregion

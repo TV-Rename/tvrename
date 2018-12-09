@@ -168,7 +168,7 @@ namespace TVRename
                             }
                         }
 
-                        if (missCheck && TVSettings.Instance.UsefulExtension(fi.Extension, false))
+                        if (missCheck && fi.IsMovieFile())
                         // == MISSING CHECK part 1/2 ==
                         {
                             // first pass of missing check is to tally up the episodes we do have

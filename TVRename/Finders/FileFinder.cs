@@ -218,13 +218,8 @@ namespace TVRename
             // base name, but different extensions
            ItemList extras = new ItemList();
 
-            foreach (Item action1 in actionlist)
+            foreach (ActionCopyMoveRename action in actionlist.CopyMoveItems())
             {
-                if (!(action1 is ActionCopyMoveRename))
-                    continue;
-
-                ActionCopyMoveRename action = (ActionCopyMoveRename)(action1);
-
                 try
                 {
                     DirectoryInfo sfdi = action.From.Directory;

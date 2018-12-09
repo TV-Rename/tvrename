@@ -549,7 +549,6 @@ namespace TVRename
                     Logger.Warn(ex);
                     Say("");
                     LastError = ex.Message;
-                    moreUpdates = false;
                     return false;
                 }
 
