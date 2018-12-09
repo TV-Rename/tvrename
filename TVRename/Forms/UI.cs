@@ -332,7 +332,7 @@ namespace TVRename
             }
         }
 
-        private void flushCacheToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void flushCacheToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (busy != 0)
             {
@@ -351,7 +351,7 @@ namespace TVRename
             {
                 TheTVDB.Instance.ForgetEverything();
                 FillMyShows();
-                FillEpGuideHtml();
+                await FillEpGuideHtml();
                 FillWhenToWatchList();
                 BGDownloadTimer_QuickFire();
             }
@@ -630,14 +630,14 @@ namespace TVRename
             webImages.Navigate(QuickStartGuide());
         }
 
-        private void FillEpGuideHtml()
+        private async Task FillEpGuideHtml()
         {
             if (MyShowTree.Nodes.Count == 0)
                 ShowQuickStartGuide();
             else
             {
                 TreeNode n = MyShowTree.SelectedNode;
-                FillEpGuideHtml(n);
+                await FillEpGuideHtml(n);
             }
         }
 
@@ -668,7 +668,7 @@ namespace TVRename
             return seas;
         }
 
-        private void FillEpGuideHtml(TreeNode n)
+        private async Task FillEpGuideHtml(TreeNode n)
         {
             if (n == null)
             {
@@ -678,7 +678,7 @@ namespace TVRename
 
             if (n.Tag is ProcessedEpisode pe)
             {
-                FillEpGuideHtml(pe.Show, pe.AppropriateSeasonNumber);
+                await FillEpGuideHtml(pe.Show, pe.AppropriateSeasonNumber);
                 return;
             }
 
@@ -689,13 +689,10 @@ namespace TVRename
                 if (seas.Episodes.Count > 0)
                 {
                     int tvdbcode = seas.TheSeries.TvdbCode;
-                    foreach (ShowItem si in mDoc.Library.Values)
+                    foreach (ShowItem si in mDoc.Library.Values.Where(si=>si.TvdbCode == tvdbcode))
                     {
-                        if (si.TvdbCode == tvdbcode)
-                        {
-                            FillEpGuideHtml(si, seas.SeasonNumber);
-                            return;
-                        }
+                        await FillEpGuideHtml(si, seas.SeasonNumber);
+                        return;
                     }
                 }
 
@@ -703,10 +700,10 @@ namespace TVRename
                 return;
             }
 
-            FillEpGuideHtml(TreeNodeToShowItem(n), -1);
+            await FillEpGuideHtml(TreeNodeToShowItem(n), -1);
         }
 
-        private async void FillEpGuideHtml(ShowItem si, int snum)
+        private async Task FillEpGuideHtml(ShowItem si, int snum)
         {
             if (tabControl1.SelectedTab != tbMyShows)
                 return;
@@ -2029,7 +2026,7 @@ namespace TVRename
             }
         }
 
-        private void SelectSeason(Season seas)
+        private async Task SelectSeason(Season seas)
         {
             foreach (TreeNode n in MyShowTree.Nodes)
             {
@@ -2044,10 +2041,10 @@ namespace TVRename
                 }
             }
 
-            FillEpGuideHtml(null);
+            await FillEpGuideHtml(null);
         }
 
-        private void SelectShow(ShowItem si)
+        private async Task SelectShow(ShowItem si)
         {
             foreach (TreeNode n in MyShowTree.Nodes)
             {
@@ -2060,7 +2057,7 @@ namespace TVRename
                 }
             }
 
-            FillEpGuideHtml(null);
+            await FillEpGuideHtml(null);
         }
 
         private void bnMyShowsAdd_Click(object sender, EventArgs e)
@@ -2249,9 +2246,9 @@ namespace TVRename
             }
         }
 
-        private void MyShowTree_AfterSelect(object sender, TreeViewEventArgs e)
+        private async void MyShowTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            FillEpGuideHtml(e.Node);
+            await FillEpGuideHtml(e.Node);
             bool showSelected = MyShowTree.SelectedNode != null;
             bnMyShowsEdit.Enabled = showSelected;
             bnMyShowsDelete.Enabled = showSelected;

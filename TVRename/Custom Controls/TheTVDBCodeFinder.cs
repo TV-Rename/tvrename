@@ -6,7 +6,6 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Collections.Generic;
 

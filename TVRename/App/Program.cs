@@ -113,16 +113,13 @@ namespace TVRename.App
                 return;
             }
 
-#if !DEBUG
             try
             {
-#endif
-            Logger.Info("Starting new instance");
+                Logger.Info("Starting new instance");
 
-            new ApplicationBase().Run(args);
+                new ApplicationBase().Run(args);
 
-            GC.KeepAlive(mutex);
-#if !DEBUG
+                GC.KeepAlive(mutex);
             }
             catch (Exception ex)
             {
@@ -132,7 +129,6 @@ namespace TVRename.App
 
 	            Environment.Exit(1);
             }
-#endif
 
             Logger.Info("Application exiting");
         }

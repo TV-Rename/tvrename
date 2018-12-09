@@ -3748,8 +3748,7 @@ namespace TVRename
             this.ResumeLayout(false);
 
         }
-
-
+        
         #endregion
 
         private System.Windows.Forms.Button OKButton;
