@@ -767,7 +767,7 @@ namespace TVRename
                 //Fail gracefully - no RHS episode guide is not too big of a problem.
                 Logger.Error(ex);
             }
-            Application.DoEvents();
+            web.Update();
         }
 
         private static void TvdbFor(ProcessedEpisode e)

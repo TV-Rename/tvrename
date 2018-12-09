@@ -5,6 +5,10 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
+using System;
+using System.Linq;
+
 namespace TVRename
 {
     using System.Windows.Forms;
@@ -53,7 +57,8 @@ namespace TVRename
             PyTivoMeta = new System.Collections.Generic.List<ActionPyTivoMeta>();
             FlatList = new ItemList();
 
-            System.Collections.Generic.List<ListViewItem> sel = GetSelections(lv, which);
+            System.Collections.Generic.List<ListViewItem> sel = new System.Collections.Generic.List<ListViewItem>();
+            sel.AddRange(GetSelectionCollection(lv, which));
 
             Count = sel.Count;
 
@@ -97,36 +102,19 @@ namespace TVRename
             }
         }
 
-        private static System.Collections.Generic.List<ListViewItem> GetSelections(ListView lv, WhichResults which)
+        private static System.Collections.Generic.IEnumerable<ListViewItem> GetSelectionCollection(ListView lv, WhichResults which)
         {
-            System.Collections.Generic.List<ListViewItem> sel = new System.Collections.Generic.List<ListViewItem>();
             switch (which)
             {
                 case WhichResults.Checked:
-                {
-                    ListView.CheckedListViewItemCollection ss = lv.CheckedItems;
-                    foreach (ListViewItem lvi in ss)
-                        sel.Add(lvi);
-
-                    break;
-                }
-                // all
+                    return lv.CheckedItems.Cast<ListViewItem>();
                 case WhichResults.Selected:
-                {
-                    ListView.SelectedListViewItemCollection ss = lv.SelectedItems;
-                    foreach (ListViewItem lvi in ss)
-                        sel.Add(lvi);
-
-                    break;
-                }
+                    return lv.SelectedItems.Cast<ListViewItem>();
+                case WhichResults.All:
+                    return lv.Items.Cast<ListViewItem>();
                 default:
-                    foreach (ListViewItem lvi in lv.Items)
-                        sel.Add(lvi);
-
-                    break;
+                    throw new ArgumentOutOfRangeException(nameof(which), which, null);
             }
-
-            return sel;
         }
     }
 }
