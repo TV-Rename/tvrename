@@ -55,10 +55,10 @@ namespace TVRename
 
             StartBgDownloadThread(true, shows);
 
-            const int delayStep = 100;
-            int count = 1000 / delayStep; // one second
+            const int DELAY_STEP = 100;
+            int count = 1000 / DELAY_STEP; // one second
             while ((count-- > 0) && (!DownloadDone))
-                Thread.Sleep(delayStep);
+                Thread.Sleep(DELAY_STEP);
 
             if (!DownloadDone && showProgress) // downloading still going on, so time to show the dialog if we're not in /hide mode
             {

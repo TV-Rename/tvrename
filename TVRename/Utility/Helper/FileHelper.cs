@@ -202,15 +202,15 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public static string GBMB(this long value, int decimalPlaces = 2)
         {
-            const long oneKb = 1024;
-            const long oneMb = oneKb * 1024;
-            const long oneGb = oneMb * 1024;
-            const long oneTb = oneGb * 1024;
+            const long ONE_KB = 1024;
+            const long ONE_MB = ONE_KB * 1024;
+            const long ONE_GB = ONE_MB * 1024;
+            const long ONE_TB = ONE_GB * 1024;
 
-            double asTb = Math.Round((double)value / oneTb, decimalPlaces);
-            double asGb = Math.Round((double)value / oneGb, decimalPlaces);
-            double asMb = Math.Round((double)value / oneMb, decimalPlaces);
-            double asKb = Math.Round((double)value / oneKb, decimalPlaces);
+            double asTb = Math.Round((double)value / ONE_TB, decimalPlaces);
+            double asGb = Math.Round((double)value / ONE_GB, decimalPlaces);
+            double asMb = Math.Round((double)value / ONE_MB, decimalPlaces);
+            double asKb = Math.Round((double)value / ONE_KB, decimalPlaces);
             double asB  = Math.Round((double)value, decimalPlaces);
             string chosenValue = asTb >= 1 ? $"{asTb:G3} TB"
                 : asGb >= 1 ? $"{asGb:G3} GB"

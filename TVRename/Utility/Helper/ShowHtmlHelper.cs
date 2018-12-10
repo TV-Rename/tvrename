@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
@@ -30,7 +29,7 @@ namespace TVRename
             return html;
         }
 
-        public static async Task<string> GetShowHtmlOverview(this ShowItem si,bool includeDirectoryLinks)
+        public static string GetShowHtmlOverview(this ShowItem si,bool includeDirectoryLinks)
         {
             Color col = Color.FromName("ButtonFace");
             StringBuilder sb = new StringBuilder();
@@ -103,7 +102,7 @@ namespace TVRename
                    </div>
                   </div>
                  </div>");
-            //Ideally we'f have <div class=""row align-items-bottom flex-grow-1""> in there as it looks better, but a bug in IE prevents it from looking correct
+            //Ideally we'd have <div class=""row align-items-bottom flex-grow-1""> in there as it looks better, but a bug in IE prevents it from looking correct
         }
 
         private static string ParseAirsTime(SeriesInfo ser)
@@ -164,7 +163,7 @@ namespace TVRename
             return $"<img class=\"rounded w-100\" src=\"{TheTVDB.GetImageURL(ei.Filename)}\" alt=\"{ei.Name} Screenshot\">";
         }
 
-        public static async Task<string> GetSeasonHtmlOverview(this ShowItem si, Season s, bool includeDirectoryLinks)
+        public static string GetSeasonHtmlOverview(this ShowItem si, Season s, bool includeDirectoryLinks)
         {
             StringBuilder sb = new StringBuilder();
             DirFilesCache dfc = new DirFilesCache();
@@ -180,7 +179,7 @@ namespace TVRename
             return sb.ToString();
         }
 
-        private static async void AppendSeason(this StringBuilder sb, Season s, ShowItem si,Color backgroundColour, bool includeDirectoryLinks)
+        private static void AppendSeason(this StringBuilder sb, Season s, ShowItem si,Color backgroundColour, bool includeDirectoryLinks)
         {
             if (si == null)
                 return;
@@ -427,10 +426,10 @@ namespace TVRename
                 "Talk Show", "Thriller", "Travel", "War", "Western"
             };
 
-            const string root = "https://www.tvrename.com/assets/images/GenreIcons/";
+            const string ROOT = "https://www.tvrename.com/assets/images/GenreIcons/";
 
             return availbleIcons.Contains(genre)
-                ? $@"<img width=""30"" height=""30"" src=""{root}{genre}.svg"" alt=""{genre}"">"
+                ? $@"<img width=""30"" height=""30"" src=""{ROOT}{genre}.svg"" alt=""{genre}"">"
                 : "";
         }
 
@@ -458,13 +457,13 @@ namespace TVRename
 
         internal static string StarRating(float f)
         {
-            const string star = @"<i class=""fas fa-star""></i>";
-            const string halfstar = @"<i class=""fas fa-star-half""></i>";
+            const string STAR = @"<i class=""fas fa-star""></i>";
+            const string HALFSTAR = @"<i class=""fas fa-star-half""></i>";
 
             if (f < .25) return "";
-            if (f <= .75) return halfstar;
-            if (f > 1) return star + StarRating(f - 1);
-            return star;
+            if (f <= .75) return HALFSTAR;
+            if (f > 1) return STAR + StarRating(f - 1);
+            return STAR;
         }
 
         // ReSharper disable once InconsistentNaming

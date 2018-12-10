@@ -29,7 +29,6 @@ namespace TVRename
 
         private static volatile TVSettings instance;
         private static readonly object syncRoot = new object();
-        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static TVSettings Instance
         {
@@ -923,51 +922,49 @@ namespace TVRename
         {
             SetToDefaults();
             BGDownload = xmlSettings.ExtractBool("BGDownload") ?? false;
-            OfflineMode = xmlSettings.ExtractBool("OfflineMode")??false;
+            OfflineMode = xmlSettings.ExtractBool("OfflineMode") ?? false;
             DetailedRSSJSONLogging = xmlSettings.ExtractBool("DetailedRSSJSONLogging") ?? false;
-            ReplaceWithBetterQuality = xmlSettings.ExtractBool("ReplaceWithBetterQuality")??false;
+            ReplaceWithBetterQuality = xmlSettings.ExtractBool("ReplaceWithBetterQuality") ?? false;
             ExportWTWRSSTo = xmlSettings.ExtractString("ExportWTWRSSTo");
-            ExportWTWXML = xmlSettings.ExtractBool("ExportWTWXML")??false;
+            ExportWTWXML = xmlSettings.ExtractBool("ExportWTWXML") ?? false;
             ExportWTWXMLTo = xmlSettings.ExtractString("ExportWTWXMLTo");
-            ExportWTWICAL = xmlSettings.ExtractBool("ExportWTWICAL")??false;
+            ExportWTWICAL = xmlSettings.ExtractBool("ExportWTWICAL") ?? false;
             ExportWTWICALTo = xmlSettings.ExtractString("ExportWTWICALTo");
-            WTWRecentDays = xmlSettings.ExtractInt("WTWRecentDays")??7;
+            WTWRecentDays = xmlSettings.ExtractInt("WTWRecentDays") ?? 7;
             StartupTab = TabNumberFromName(xmlSettings.ExtractString("StartupTab2"));
             NamingStyle.StyleString = xmlSettings.ExtractString("NamingStyle") ??
                                       CustomEpisodeName.OldNStyle(
-                                          xmlSettings.ExtractInt("DefaultNamingStyle")??1); // old naming style
+                                          xmlSettings.ExtractInt("DefaultNamingStyle") ?? 1); // old naming style
             NotificationAreaIcon = xmlSettings.ExtractBool("NotificationAreaIcon") ?? false;
             VideoExtensionsString = xmlSettings.ExtractString("VideoExtensions",
                                     xmlSettings.ExtractString("GoodExtensions",
                                         ".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm;.m4v;.webm;.vob;.ovg;.ogg;.mov;.m4p;.3gp"));
             OtherExtensionsString = xmlSettings.ExtractString("OtherExtensions", ".srt;.nfo;.txt;.tbn");
             subtitleExtensionsString = xmlSettings.ExtractString("SubtitleExtensions", ".srt;.sub;.sbv;.idx");
-            ExportRSSMaxDays = xmlSettings.ExtractInt("ExportRSSMaxDays")??7;
-            ExportRSSMaxShows = xmlSettings.ExtractInt("ExportRSSMaxShows")??10;
-            ExportRSSDaysPast = xmlSettings.ExtractInt("ExportRSSDaysPast")??0;
-            KeepTogether = xmlSettings.ExtractBool("KeepTogether")??true;
-            LeadingZeroOnSeason = xmlSettings.ExtractBool("LeadingZeroOnSeason")??false;
-            ShowInTaskbar = xmlSettings.ExtractBool("ShowInTaskbar")??true;
-            RenameTxtToSub = xmlSettings.ExtractBool("RenameTxtToSub")??false;
-            ShowEpisodePictures = xmlSettings.ExtractBool("ShowEpisodePictures")??true;
+            ExportRSSMaxDays = xmlSettings.ExtractInt("ExportRSSMaxDays") ?? 7;
+            ExportRSSMaxShows = xmlSettings.ExtractInt("ExportRSSMaxShows") ?? 10;
+            ExportRSSDaysPast = xmlSettings.ExtractInt("ExportRSSDaysPast") ?? 0;
+            KeepTogether = xmlSettings.ExtractBool("KeepTogether") ?? true;
+            LeadingZeroOnSeason = xmlSettings.ExtractBool("LeadingZeroOnSeason") ?? false;
+            ShowInTaskbar = xmlSettings.ExtractBool("ShowInTaskbar") ?? true;
+            RenameTxtToSub = xmlSettings.ExtractBool("RenameTxtToSub") ?? false;
+            ShowEpisodePictures = xmlSettings.ExtractBool("ShowEpisodePictures") ?? true;
             HideWtWSpoilers = xmlSettings.ExtractBool("HideWtWSpoilers") ?? false;
             HideMyShowsSpoilers = xmlSettings.ExtractBool("HideMyShowsSpoilers") ?? false;
             AutoCreateFolders = xmlSettings.ExtractBool("AutoCreateFolders") ?? false;
-            AutoSelectShowInMyShows = xmlSettings.ExtractBool("AutoSelectShowInMyShows")??true;
+            AutoSelectShowInMyShows = xmlSettings.ExtractBool("AutoSelectShowInMyShows") ?? true;
             SpecialsFolderName = xmlSettings.ExtractString("SpecialsFolderName", "Specials");
             SeasonFolderFormat = xmlSettings.ExtractString("SeasonFolderFormat");
             SearchJSONURL = xmlSettings.ExtractString("SearchJSONURL", "https://eztv.ag/api/get-torrents?imdb_id=");
             SearchJSONRootNode = xmlSettings.ExtractString("SearchJSONRootNode", "torrents");
-            SearchJSONFilenameToken = xmlSettings.ExtractString("SearchJSONFilenameToken","filename");
+            SearchJSONFilenameToken = xmlSettings.ExtractString("SearchJSONFilenameToken", "filename");
             SearchJSONURLToken = xmlSettings.ExtractString("SearchJSONURLToken", "torrent_url");
             SearchJSONFileSizeToken = xmlSettings.ExtractString("SearchJSONFileSizeToken", "size_bytes");
             SABAPIKey = xmlSettings.ExtractString("SABAPIKey");
-            CheckSABnzbd = xmlSettings.ExtractBool("CheckSABnzbd")??false;
+            CheckSABnzbd = xmlSettings.ExtractBool("CheckSABnzbd") ?? false;
             SABHostPort = xmlSettings.ExtractString("SABHostPort");
-            PreferredLanguageCode = xmlSettings.ExtractString("PreferredLanguage","en");
-            WTWDoubleClick = xmlSettings.ExtractInt("WTWDoubleClick") ==null
-                ? WTWDoubleClickAction.Scan
-                : (WTWDoubleClickAction) xmlSettings.ExtractInt("WTWDoubleClick");
+            PreferredLanguageCode = xmlSettings.ExtractString("PreferredLanguage", "en");
+            WTWDoubleClick = xmlSettings.ExtractEnum("WTWDoubleClick",WTWDoubleClickAction.Scan);
             ExportMissingXML = xmlSettings.ExtractBool("ExportMissingXML") ?? false;
             ExportMissingXMLTo = xmlSettings.ExtractString("ExportMissingXMLTo");
             ExportRecentXSPF = xmlSettings.ExtractBool("ExportRecentXSPF") ?? false;
@@ -988,17 +985,17 @@ namespace TVRename
             ExportShowsTXTTo = xmlSettings.ExtractString("ExportShowsTXTTo");
             ExportShowsHTML = xmlSettings.ExtractBool("ExportShowsHTML") ?? false;
             ExportShowsHTMLTo = xmlSettings.ExtractString("ExportShowsHTMLTo");
-            ForceLowercaseFilenames = xmlSettings.ExtractBool("ForceLowercaseFilenames")??false;
+            ForceLowercaseFilenames = xmlSettings.ExtractBool("ForceLowercaseFilenames") ?? false;
             IgnoreSamples = xmlSettings.ExtractBool("IgnoreSamples") ?? true;
-            SampleFileMaxSizeMB = xmlSettings.ExtractInt("SampleFileMaxSizeMB")??50;
-            ParallelDownloads = xmlSettings.ExtractInt("ParallelDownloads")??4;
+            SampleFileMaxSizeMB = xmlSettings.ExtractInt("SampleFileMaxSizeMB") ?? 50;
+            ParallelDownloads = xmlSettings.ExtractInt("ParallelDownloads") ?? 4;
             uTorrentPath = xmlSettings.ExtractString("uTorrentPath");
             ResumeDatPath = xmlSettings.ExtractString("ResumeDatPath");
             SearchRSS = xmlSettings.ExtractBool("SearchRSS") ?? false;
             SearchJSON = xmlSettings.ExtractBool("SearchJSON") ?? false;
             SearchRSSManualScanOnly = xmlSettings.ExtractBool("SearchRSSManualScanOnly") ?? true;
             SearchJSONManualScanOnly = xmlSettings.ExtractBool("SearchJSONManualScanOnly") ?? true;
-            EpTBNs = xmlSettings.ExtractBool("EpImgs")??false;
+            EpTBNs = xmlSettings.ExtractBool("EpImgs") ?? false;
             NFOShows = xmlSettings.ExtractBool("NFOShows") ?? xmlSettings.ExtractBool("NFOs") ?? false;
             NFOEpisodes = xmlSettings.ExtractBool("NFOEpisodes") ?? xmlSettings.ExtractBool("NFOs") ?? false;
             KODIImages = xmlSettings.ExtractBool("KODIImages") ??
@@ -1007,36 +1004,32 @@ namespace TVRename
             wdLiveTvMeta = xmlSettings.ExtractBool("wdLiveTvMeta") ?? false;
             pyTivoMetaSubFolder = xmlSettings.ExtractBool("pyTivoMetaSubFolder") ?? false;
             FolderJpg = xmlSettings.ExtractBool("FolderJpg") ?? false;
-            FolderJpgIs = xmlSettings.ExtractInt("FolderJpgIs")==null
-                ? FolderJpgIsType.Poster
-                : (FolderJpgIsType) xmlSettings.ExtractInt("FolderJpgIs");
-            MonitoredFoldersScanType = xmlSettings.ExtractInt("MonitoredFoldersScanType")==null
-                ? ScanType.Full
-                : (ScanType) xmlSettings.ExtractInt("MonitoredFoldersScanType");
+            FolderJpgIs = xmlSettings.ExtractEnum("FolderJpgIs", FolderJpgIsType.Poster);
+            MonitoredFoldersScanType = xmlSettings.ExtractEnum("MonitoredFoldersScanType",ScanType.Full);
             RenameCheck = xmlSettings.ExtractBool("RenameCheck") ?? true;
             PreventMove = xmlSettings.ExtractBool("PreventMove") ?? false;
             CheckuTorrent = xmlSettings.ExtractBool("CheckuTorrent") ?? false;
             CheckqBitTorrent = xmlSettings.ExtractBool("CheckqBitTorrent") ?? false;
             qBitTorrentHost = xmlSettings.ExtractString("qBitTorrentHost", "localhost");
             qBitTorrentPort = xmlSettings.ExtractString("qBitTorrentPort", "8080");
-            MissingCheck = xmlSettings.ExtractBool("MissingCheck")??true;
-            CorrectFileDates = xmlSettings.ExtractBool("UpdateFileDates")??false;
-            SearchLocally = xmlSettings.ExtractBool("SearchLocally")??true;
+            MissingCheck = xmlSettings.ExtractBool("MissingCheck") ?? true;
+            CorrectFileDates = xmlSettings.ExtractBool("UpdateFileDates") ?? false;
+            SearchLocally = xmlSettings.ExtractBool("SearchLocally") ?? true;
             IgnorePreviouslySeen = xmlSettings.ExtractBool("IgnorePreviouslySeen") ?? false;
-            LeaveOriginals = xmlSettings.ExtractBool("LeaveOriginals")??false;
+            LeaveOriginals = xmlSettings.ExtractBool("LeaveOriginals") ?? false;
             AutoSearchForDownloadedFiles = xmlSettings.ExtractBool("AutoSearchForDownloadedFiles") ?? false;
-            LookForDateInFilename = xmlSettings.ExtractBool("LookForDateInFilename")??false;
-            AutoMergeDownloadEpisodes = xmlSettings.ExtractBool("AutoMergeEpisodes")??false;
+            LookForDateInFilename = xmlSettings.ExtractBool("LookForDateInFilename") ?? false;
+            AutoMergeDownloadEpisodes = xmlSettings.ExtractBool("AutoMergeEpisodes") ?? false;
             AutoMergeLibraryEpisodes = xmlSettings.ExtractBool("AutoMergeLibraryEpisodes") ?? false;
-            RetainLanguageSpecificSubtitles = xmlSettings.ExtractBool("RetainLanguageSpecificSubtitles")??true;
-            ForceBulkAddToUseSettingsOnly = xmlSettings.ExtractBool("ForceBulkAddToUseSettingsOnly")??false;
+            RetainLanguageSpecificSubtitles = xmlSettings.ExtractBool("RetainLanguageSpecificSubtitles") ?? true;
+            ForceBulkAddToUseSettingsOnly = xmlSettings.ExtractBool("ForceBulkAddToUseSettingsOnly") ?? false;
             MonitorFolders = xmlSettings.ExtractBool("MonitorFolders") ?? false;
             runStartupCheck = xmlSettings.ExtractBool("StartupScan") ?? false;
             runPeriodicCheck = xmlSettings.ExtractBool("PeriodicScan") ?? false;
-            periodCheckHours = xmlSettings.ExtractInt("PeriodicScanHours")??1;
+            periodCheckHours = xmlSettings.ExtractInt("PeriodicScanHours") ?? 1;
             RemoveDownloadDirectoriesFiles = xmlSettings.ExtractBool("RemoveDownloadDirectoriesFiles") ?? false;
             DoBulkAddInScan = xmlSettings.ExtractBool("DoBulkAddInScan") ?? false;
-            DeleteShowFromDisk = xmlSettings.ExtractBool("DeleteShowFromDisk")??true;
+            DeleteShowFromDisk = xmlSettings.ExtractBool("DeleteShowFromDisk") ?? true;
             EpJPGs = xmlSettings.ExtractBool("EpJPGs") ?? false;
             SeriesJpg = xmlSettings.ExtractBool("SeriesJpg") ?? false;
             Mede8erXML = xmlSettings.ExtractBool("Mede8erXML") ?? false;
@@ -1047,17 +1040,13 @@ namespace TVRename
             AutoAddMovieTerms = xmlSettings.ExtractString("AutoAddMovieTerms", "dvdrip;camrip;screener;dvdscr;r5;bluray");
             AutoAddIgnoreSuffixes = xmlSettings.ExtractString("AutoAddIgnoreSuffixes", "1080p;720p");
             PriorityReplaceTerms = xmlSettings.ExtractString("PriorityReplaceTerms", "PROPER;REPACK;RERIP");
-            mode = xmlSettings.ExtractInt("BetaMode")==null
-                ? BetaMode.ProductionOnly
-                : (BetaMode) xmlSettings.ExtractInt("BetaMode");
-            upgradeDirtyPercent = xmlSettings.ExtractFloat("PercentDirtyUpgrade")??20;
-            replaceMargin = xmlSettings.ExtractFloat("PercentBetter")??10;
+            mode= xmlSettings.ExtractEnum("BetaMode", BetaMode.ProductionOnly);
+            upgradeDirtyPercent = xmlSettings.ExtractFloat("PercentDirtyUpgrade") ?? 20;
+            replaceMargin = xmlSettings.ExtractFloat("PercentBetter") ?? 10;
             defaultSeasonWord = xmlSettings.ExtractString("BaseSeasonName", "Season");
             searchSeasonWordsString = xmlSettings.ExtractString("SearchSeasonNames", "Season;Series;Saison;Temporada;Seizoen");
             preferredRSSSearchTermsString = xmlSettings.ExtractString("PreferredRSSSearchTerms", "720p;1080p");
-            keepTogetherMode = xmlSettings.ExtractInt("KeepTogetherType") == null
-                ? KeepTogetherModes.All
-                : (KeepTogetherModes) xmlSettings.ExtractInt("KeepTogetherType");
+            keepTogetherMode = xmlSettings.ExtractEnum("KeepTogetherType", KeepTogetherModes.All);
             keepTogetherExtensionsString = xmlSettings.ExtractString("KeepTogetherExtensions", ".srt;.nfo;.txt;.tbn");
             ExportWTWRSS = xmlSettings.ExtractBool("ExportWTWRSS") ?? false;
 
@@ -1075,7 +1064,7 @@ namespace TVRename
             foreach (XElement rep in xmlSettings.Descendants("FNPRegexs").First().Descendants("Regex"))
             {
                 FNPRegexs.Add(new FilenameProcessorRE(
-                    XmlConvert.ToBoolean(rep.Attribute("Enabled")?.Value??"false"),
+                    XmlConvert.ToBoolean(rep.Attribute("Enabled")?.Value ?? "false"),
                     rep.Attribute("RE")?.Value,
                     XmlConvert.ToBoolean(rep.Attribute("UseFullPath")?.Value ?? "false"),
                     rep.Attribute("Notes")?.Value
@@ -1086,8 +1075,8 @@ namespace TVRename
             foreach (XElement rep in xmlSettings.Descendants("ShowStatusTVWColors").First().Descendants("ShowStatusTVWColor"))
             {
                 string showStatus = rep.Attribute("ShowStatus")?.Value;
-                bool isMeta = bool.Parse(rep.Attribute("IsMeta")?.Value??"false");
-                bool isShowLevel = bool.Parse(rep.Attribute("IsShowLevel")?.Value??"true");
+                bool isMeta = bool.Parse(rep.Attribute("IsMeta")?.Value ?? "false");
+                bool isShowLevel = bool.Parse(rep.Attribute("IsShowLevel")?.Value ?? "true");
                 ShowStatusColoringType type = new ShowStatusColoringType(isMeta, isShowLevel, showStatus);
                 string color = rep.Attribute("Color")?.Value;
                 if (string.IsNullOrEmpty(color)) continue;

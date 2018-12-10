@@ -38,11 +38,11 @@ namespace TVRename
             txtFAOD.Text = stats.FindAndOrganisesDone.ToString();
             txtAAS.Text = stats.AutoAddedShows.ToString();
             txtTM.Text = stats.TorrentsMatched.ToString();
-            txtNOS.Text = stats.NS_NumberOfShows.ToString();
-            txtNOSeas.Text = stats.NS_NumberOfSeasons.ToString();
-            int noe = stats.NS_NumberOfEpisodes;
+            txtNOS.Text = stats.NsNumberOfShows.ToString();
+            txtNOSeas.Text = stats.NsNumberOfSeasons.ToString();
+            int noe = stats.NsNumberOfEpisodes;
             txtEOD.Text = ((noe == -1) ? "?" : noe.ToString());
-            txtTE.Text = stats.NS_NumberOfEpisodesExpected.ToString();
+            txtTE.Text = stats.NsNumberOfEpisodesExpected.ToString();
         }
 
         private void button1_Click(object sender, System.EventArgs e)
