@@ -363,8 +363,8 @@ namespace TVRename
 
         private class DataArr
         {
-            private int AllocC;
-            private int AllocR;
+            private int allocC;
+            private int allocR;
             public readonly List<string> Cols;
             public bool?[][] Data;
             public int DataC;
@@ -375,11 +375,11 @@ namespace TVRename
             {
                 Rows = new List<string>();
                 Cols = new List<string>();
-                AllocR = rowCountPreAlloc;
-                AllocC = rowCountPreAlloc * 10;
-                Data = new bool?[AllocR][];
-                for (int i = 0; i < AllocR; i++)
-                    Data[i] = new bool?[AllocC];
+                allocR = rowCountPreAlloc;
+                allocC = rowCountPreAlloc * 10;
+                Data = new bool?[allocR][];
+                for (int i = 0; i < allocR; i++)
+                    Data[i] = new bool?[allocC];
                 DataR = DataC = 0;
             }
 
@@ -414,7 +414,7 @@ namespace TVRename
                 int t = 0;
                 for (int c = 0; c < DataC; c++)
                 {
-                    if (((Data[r][c] != null) && ((onlyCols == null) || onlyCols[c])) && Data[r][c].HasValue)
+                    if (((Data[r][c] != null) && ((onlyCols == null) || onlyCols[c])))
                         t++;
                 }
                 return t;
@@ -425,7 +425,7 @@ namespace TVRename
                 int t = 0;
                 for (int r = 0; r < DataR; r++)
                 {
-                    if ((Data[r][c] != null) && Data[r][c].HasValue)
+                    if ((Data[r][c] != null))
                         t++;
                 }
                 return t;
@@ -435,15 +435,15 @@ namespace TVRename
             {
                 int newr = Rows.Count;
                 int newc = Cols.Count;
-                if ((newr > AllocR) || (newc > AllocC)) // need to enlarge array
+                if ((newr > allocR) || (newc > allocC)) // need to enlarge array
                 {
-                    if (newr > AllocR)
-                        AllocR = newr * 2;
-                    if (newc > AllocC)
-                        AllocC = newc * 2;
-                    bool?[][] newarr = new bool?[AllocR][];
-                    for (int i = 0; i < AllocR; i++)
-                        newarr[i] = new bool?[AllocC];
+                    if (newr > allocR)
+                        allocR = newr * 2;
+                    if (newc > allocC)
+                        allocC = newc * 2;
+                    bool?[][] newarr = new bool?[allocR][];
+                    for (int i = 0; i < allocR; i++)
+                        newarr[i] = new bool?[allocC];
 
                     for (int r = 0; r < DataR; r++)
                     {
@@ -528,8 +528,8 @@ namespace TVRename
                 Cols.RemoveRange(countC, Cols.Count - countC);
 
                 Data = newarr;
-                AllocR = DataR = countR;
-                AllocC = DataC = countC;
+                allocR = DataR = countR;
+                allocC = DataC = countC;
             }
 
             public void Set(string row, string col, bool isActor) // isActor = false means guest star
@@ -563,7 +563,7 @@ namespace TVRename
                         }
                         else
                         {
-                            if ((maxat == -1) || (Cols[c].CompareTo(topword) < 0))
+                            if ((maxat == -1) || (String.Compare(Cols[c], topword, StringComparison.Ordinal) < 0))
                             {
                                 maxat = c;
                                 topword = Cols[c];
@@ -635,7 +635,7 @@ namespace TVRename
                         }
                         else
                         {
-                            if ((maxat == -1) || (Rows[r].CompareTo(topword) < 0))
+                            if ((maxat == -1) || (String.Compare(Rows[r], topword, StringComparison.Ordinal) < 0))
                             {
                                 maxat = r;
                                 topword = Rows[r];
@@ -695,21 +695,21 @@ namespace TVRename
 
         private class SideClickEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private readonly ActorsGrid G;
-            private readonly string Show;
+            private readonly ActorsGrid g;
+            private readonly string show;
 
             public SideClickEvent(ActorsGrid g, string show)
             {
-                Show = show;
-                G = g;
+                this.show = show;
+                this.g = g;
             }
 
             public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
             {
-                if (Show == null)
-                    G.DoSort();
+                if (show == null)
+                    g.DoSort();
                 else
-                    G.ShowToTop(Show);
+                    g.ShowToTop(show);
             }
         }
 
@@ -719,16 +719,16 @@ namespace TVRename
 
         private class SortColsByCountEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private readonly ActorsGrid G;
+            private readonly ActorsGrid g;
 
             public SortColsByCountEvent(ActorsGrid g)
             {
-                G = g;
+                this.g = g;
             }
 
             public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
             {
-                G.SortColsByCount();
+                g.SortColsByCount();
             }
         }
 
@@ -757,18 +757,18 @@ namespace TVRename
 
         private class TopClickEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private readonly string Actor;
-            private readonly ActorsGrid G;
+            private readonly string actor;
+            private readonly ActorsGrid g;
 
             public TopClickEvent(ActorsGrid g, string act)
             {
-                G = g;
-                Actor = act;
+                this.g = g;
+                actor = act;
             }
 
             public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
             {
-                G.ActorToTop(Actor);
+                g.ActorToTop(actor);
             }
         }
 

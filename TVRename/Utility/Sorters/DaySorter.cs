@@ -17,13 +17,16 @@ namespace TVRename
 
         public int Compare(object x, object y)
         {
+            if (!(x is ListViewItem lvix)) throw new InvalidOperationException();
+            if (!(y is ListViewItem lviy)) throw new InvalidOperationException();
+
             int d1 = 8;
             int d2 = 8;
 
             try
             {
-                string t1 = (x as ListViewItem).SubItems[col].Text;
-                string t2 = (y as ListViewItem).SubItems[col].Text;
+                string t1 = lvix.SubItems[col].Text;
+                string t2 = lviy.SubItems[col].Text;
 
                 DateTime now = DateTime.Now;
 

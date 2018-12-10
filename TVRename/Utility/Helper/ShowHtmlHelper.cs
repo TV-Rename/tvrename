@@ -92,7 +92,10 @@ namespace TVRename
 			         {CreateButton(imdbLink, "IMDB.com", "View on IMDB")}
 			         {CreateButton(tvLink, "TV.com", "View on TV.com")}
 			        </div>
-		            <div class=""row align-items-bottom flex-grow-1"">
+		            <div>
+                        &nbsp;
+			        </div>
+		            <div class=""row align-items-bottom"">
                      <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}{AddRatingCount(ser.SiteRatingVotes)}</div>
                      <div class=""col-md-4 align-self-end text-center"">{si.TheSeries().ContentRating}<br>{si.TheSeries().Network}, {dayTime}</div>
                      <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{string.Join(", ", si.TheSeries().Genres())}</div>
@@ -100,6 +103,7 @@ namespace TVRename
                    </div>
                   </div>
                  </div>");
+            //Ideally we'f have <div class=""row align-items-bottom flex-grow-1""> in there as it looks better, but a bug in IE prevents it from looking correct
         }
 
         private static string ParseAirsTime(SeriesInfo ser)

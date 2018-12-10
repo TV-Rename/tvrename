@@ -246,8 +246,7 @@ namespace TVRename
 
         private static bool HasFilmFiles(DirectoryInfo directory)
         {
-            return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly)
-                .Any(file => TVSettings.Instance.UsefulExtension(file.Extension, false));
+            return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
         }
 
         private void CheckFolderForShows(DirectoryInfo di, CancellationToken token,bool fullLogging)

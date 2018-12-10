@@ -6,6 +6,7 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System;
 using System.Collections;
 using System.Windows.Forms;
 
@@ -26,9 +27,9 @@ namespace TVRename
 
         public int Compare(object x, object y)
         {
-            ListViewItem lvi1 = x as ListViewItem;
-            ListViewItem lvi2 = y as ListViewItem;
-            return string.CompareOrdinal( lvi1?.SubItems[col].Text, lvi2?.SubItems[col].Text);
+            if (!(x is ListViewItem lvix)) throw new InvalidOperationException();
+            if (!(y is ListViewItem lviy)) throw new InvalidOperationException();
+            return string.CompareOrdinal( lvix.SubItems[col].Text, lviy.SubItems[col].Text);
         }
         #endregion
     }

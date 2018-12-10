@@ -133,7 +133,7 @@ namespace TVRename
                 Logger.Info(e, "Error loading layout XML");
             }
 
-            lvWhenToWatch.ListViewItemSorter = new DateSorterWTW();
+            lvWhenToWatch.ListViewItemSorter = new DateSorterWtw();
 
             if (mDoc.Args.Hide || !showUi)
             {
@@ -868,12 +868,12 @@ namespace TVRename
 
             if (col == 6) // straight sort by date
             {
-                lvWhenToWatch.ListViewItemSorter = new DateSorterWTW();
+                lvWhenToWatch.ListViewItemSorter = new DateSorterWtw();
                 lvWhenToWatch.ShowGroups = false;
             }
             else if (col == 3 || col == 4)
             {
-                lvWhenToWatch.ListViewItemSorter = new DateSorterWTW();
+                lvWhenToWatch.ListViewItemSorter = new DateSorterWtw();
                 lvWhenToWatch.ShowGroups = true;
             }
             else
@@ -2726,7 +2726,7 @@ namespace TVRename
                 }
             }
 
-            if (lvr.CopyMove.Count > 0||lvr.RSS.Count>0)
+            if (lvr.CopyMove.Count > 0||lvr.Rss.Count>0)
             {
                 showRightClickMenu.Items.Add(new ToolStripSeparator());
                 AddRcMenuItem("Revert to Missing", RightClickCommands.kActionRevert);
@@ -2815,7 +2815,7 @@ namespace TVRename
             if (internalCheckChange)
                 return;
 
-            LvResults all = new LvResults(lvAction, LvResults.WhichResults.All);
+            LvResults all = new LvResults(lvAction, LvResults.WhichResults.all);
             LvResults chk = new LvResults(lvAction, LvResults.WhichResults.Checked);
 
             if (chk.Rename.Count == 0)
@@ -2832,11 +2832,11 @@ namespace TVRename
                     ? CheckState.Checked
                     : CheckState.Indeterminate;
 
-            if (chk.RSS.Count == 0)
+            if (chk.Rss.Count == 0)
                 cbRSS.CheckState = CheckState.Unchecked;
             else
                 cbRSS.CheckState =
-                    chk.RSS.Count == all.RSS.Count ? CheckState.Checked : CheckState.Indeterminate;
+                    chk.Rss.Count == all.Rss.Count ? CheckState.Checked : CheckState.Indeterminate;
 
             if (chk.Download.Count == 0)
                 cbDownload.CheckState = CheckState.Unchecked;
@@ -2845,11 +2845,11 @@ namespace TVRename
                     ? CheckState.Checked
                     : CheckState.Indeterminate;
 
-            if (chk.NFO.Count == 0)
+            if (chk.Nfo.Count == 0)
                 cbNFO.CheckState = CheckState.Unchecked;
             else
                 cbNFO.CheckState =
-                    chk.NFO.Count == all.NFO.Count ? CheckState.Checked : CheckState.Indeterminate;
+                    chk.Nfo.Count == all.Nfo.Count ? CheckState.Checked : CheckState.Indeterminate;
 
             if (chk.PyTivoMeta.Count == 0)
                 cbMeta.CheckState = CheckState.Unchecked;
@@ -2858,10 +2858,10 @@ namespace TVRename
                     ? CheckState.Checked
                     : CheckState.Indeterminate;
 
-            int total1 = all.Rename.Count + all.CopyMove.Count + all.RSS.Count + all.Download.Count + all.NFO.Count +
+            int total1 = all.Rename.Count + all.CopyMove.Count + all.Rss.Count + all.Download.Count + all.Nfo.Count +
                          all.PyTivoMeta.Count;
 
-            int total2 = chk.Rename.Count + chk.CopyMove.Count + chk.RSS.Count + chk.Download.Count + chk.NFO.Count +
+            int total2 = chk.Rename.Count + chk.CopyMove.Count + chk.Rss.Count + chk.Download.Count + chk.Nfo.Count +
                          chk.PyTivoMeta.Count;
 
             if (total2 == 0)
