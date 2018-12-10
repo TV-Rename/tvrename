@@ -7,6 +7,7 @@
 // 
 
 using System;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 
 namespace TVRename
@@ -98,6 +99,8 @@ namespace TVRename
                     case ActionPyTivoMeta meta:
                         PyTivoMeta.Add(meta);
                         break;
+                    default:
+                        throw new InvalidOperationException("Unexpected value of action " + action?.GetType());
                 }
             }
         }

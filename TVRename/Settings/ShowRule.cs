@@ -57,7 +57,8 @@ namespace TVRename
         private void SetToDefaults()
         {
             DoWhatNow = RuleAction.kIgnoreEp;
-            First = Second = -1;
+            First = -1;
+            Second = -1;
             UserSuppliedText = "";
         }
 

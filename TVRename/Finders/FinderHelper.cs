@@ -224,6 +224,7 @@ namespace TVRename
             }
             return true;
         }
+
         public static string SimplifyFilename(string filename, string showNameHint)
         {
             // Look at showNameHint and try to remove the first occurance of it from filename
@@ -272,7 +273,8 @@ namespace TVRename
         {
             string showNameHint = (si != null) ? si.ShowName : "";
             maxEp = -1;
-            seas = ep = -1;
+            seas = -1;
+            ep = -1;
             rex = null;
 
             filename = SimplifyFilename(filename, showNameHint);

@@ -439,18 +439,16 @@ namespace TVRename
 
         private void SetLocation(XElement x)
         {
-            XAttribute valueX = x.Attribute("X") ;
+            XAttribute valueX = x.Attribute("X");
             XAttribute valueY = x.Attribute("Y");
 
             if (valueX == null)
             {
                 Logger.Error($"Missing X from {x}");
-
             }
             if ( valueY==null)
             {
                 Logger.Error($"Missing Y from {x}");
-
             }
 
             int xloc = (valueX ==null) ? 100 : int.Parse(valueX.Value);
@@ -467,12 +465,10 @@ namespace TVRename
             if (valueX == null)
             {
                 Logger.Error($"Missing Width from {x}");
-
             }
             if (valueY == null)
             {
                 Logger.Error($"Missing Height from {x}");
-
             }
 
             int xsize = (valueX == null) ? 100 : int.Parse(valueX.Value);
