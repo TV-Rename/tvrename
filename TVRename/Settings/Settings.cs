@@ -964,7 +964,7 @@ namespace TVRename
             CheckSABnzbd = xmlSettings.ExtractBool("CheckSABnzbd") ?? false;
             SABHostPort = xmlSettings.ExtractString("SABHostPort");
             PreferredLanguageCode = xmlSettings.ExtractString("PreferredLanguage", "en");
-            WTWDoubleClick = GetEnum(xmlSettings, "WTWDoubleClick",WTWDoubleClickAction.Scan);
+            WTWDoubleClick = xmlSettings.ExtractEnum("WTWDoubleClick",WTWDoubleClickAction.Scan);
             ExportMissingXML = xmlSettings.ExtractBool("ExportMissingXML") ?? false;
             ExportMissingXMLTo = xmlSettings.ExtractString("ExportMissingXMLTo");
             ExportRecentXSPF = xmlSettings.ExtractBool("ExportRecentXSPF") ?? false;
@@ -1004,8 +1004,8 @@ namespace TVRename
             wdLiveTvMeta = xmlSettings.ExtractBool("wdLiveTvMeta") ?? false;
             pyTivoMetaSubFolder = xmlSettings.ExtractBool("pyTivoMetaSubFolder") ?? false;
             FolderJpg = xmlSettings.ExtractBool("FolderJpg") ?? false;
-            FolderJpgIs = GetEnum(xmlSettings,"FolderJpgIs",FolderJpgIsType.Poster);
-            MonitoredFoldersScanType = GetEnum(xmlSettings, "MonitoredFoldersScanType",ScanType.Full);
+            FolderJpgIs = xmlSettings.ExtractEnum("FolderJpgIs", FolderJpgIsType.Poster);
+            MonitoredFoldersScanType = xmlSettings.ExtractEnum("MonitoredFoldersScanType",ScanType.Full);
             RenameCheck = xmlSettings.ExtractBool("RenameCheck") ?? true;
             PreventMove = xmlSettings.ExtractBool("PreventMove") ?? false;
             CheckuTorrent = xmlSettings.ExtractBool("CheckuTorrent") ?? false;
@@ -1040,13 +1040,13 @@ namespace TVRename
             AutoAddMovieTerms = xmlSettings.ExtractString("AutoAddMovieTerms", "dvdrip;camrip;screener;dvdscr;r5;bluray");
             AutoAddIgnoreSuffixes = xmlSettings.ExtractString("AutoAddIgnoreSuffixes", "1080p;720p");
             PriorityReplaceTerms = xmlSettings.ExtractString("PriorityReplaceTerms", "PROPER;REPACK;RERIP");
-            mode= GetEnum(xmlSettings, "BetaMode", BetaMode.ProductionOnly);
+            mode= xmlSettings.ExtractEnum("BetaMode", BetaMode.ProductionOnly);
             upgradeDirtyPercent = xmlSettings.ExtractFloat("PercentDirtyUpgrade") ?? 20;
             replaceMargin = xmlSettings.ExtractFloat("PercentBetter") ?? 10;
             defaultSeasonWord = xmlSettings.ExtractString("BaseSeasonName", "Season");
             searchSeasonWordsString = xmlSettings.ExtractString("SearchSeasonNames", "Season;Series;Saison;Temporada;Seizoen");
             preferredRSSSearchTermsString = xmlSettings.ExtractString("PreferredRSSSearchTerms", "720p;1080p");
-            keepTogetherMode = GetEnum(xmlSettings, "KeepTogetherType", KeepTogetherModes.All);
+            keepTogetherMode = xmlSettings.ExtractEnum("KeepTogetherType", KeepTogetherModes.All);
             keepTogetherExtensionsString = xmlSettings.ExtractString("KeepTogetherExtensions", ".srt;.nfo;.txt;.tbn");
             ExportWTWRSS = xmlSettings.ExtractBool("ExportWTWRSS") ?? false;
 
@@ -1108,21 +1108,6 @@ namespace TVRename
                 //this has not been set from the XML, so we should give it an appropriate default value
                 SeasonFolderFormat = defaultSeasonWord.Trim() + " " + (LeadingZeroOnSeason ? "{Season:2}" : "{Season}");
             }
-        }
-
-        private static T GetEnum<T>(XElement xmlSettings,string tag,T defaultVal)
-        {
-            if (!typeof(T).IsEnum) throw new ArgumentException("T must be an enumerated type");
-
-            int? val = xmlSettings.ExtractInt(tag);
-
-            if (val == null) return defaultVal;
-
-            if (typeof(T).IsEnumDefined(val))
-            {
-                return (T)Enum.Parse(typeof(T), val.ToString(), true);
-            }
-            return defaultVal;
         }
     }
 }

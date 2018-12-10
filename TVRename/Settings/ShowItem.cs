@@ -139,18 +139,18 @@ namespace TVRename
                                                  || xmlSettings.Descendants("FolderPerSeason").Any()
                                                  || xmlSettings.Descendants("SeasonFolderName").Any()
                                                  || xmlSettings.Descendants("PadSeasonToTwoDigits").Any();
-            bool TEMP_AutoAddNewSeasons = xmlSettings.ExtractBool("AutoAddNewSeasons") ?? true;
-            bool TEMP_AutoAdd_FolderPerSeason = xmlSettings.ExtractBool("FolderPerSeason") ?? true;
-            string TEMP_AutoAdd_SeasonFolderName = xmlSettings.ExtractString("SeasonFolderName");
-            bool TEMP_PadSeasonToTwoDigits = xmlSettings.ExtractBool("PadSeasonToTwoDigits") ?? true;
+            bool tempAutoAddNewSeasons = xmlSettings.ExtractBool("AutoAddNewSeasons") ?? true;
+            bool tempAutoAddFolderPerSeason = xmlSettings.ExtractBool("FolderPerSeason") ?? true;
+            string tempAutoAddSeasonFolderName = xmlSettings.ExtractString("SeasonFolderName");
+            bool tempPadSeasonToTwoDigits = xmlSettings.ExtractBool("PadSeasonToTwoDigits") ?? true;
 
             if (upgradeFromOldAutoAddFunction)
             {
-                if (TEMP_AutoAddNewSeasons)
+                if (tempAutoAddNewSeasons)
                 {
-                    if (TEMP_AutoAdd_FolderPerSeason)
+                    if (tempAutoAddFolderPerSeason)
                     {
-                        AutoAddCustomFolderFormat = TEMP_AutoAdd_SeasonFolderName + ((TEMP_PadSeasonToTwoDigits || TVSettings.Instance.LeadingZeroOnSeason) ? "{Season:2}" : "{Season}");
+                        AutoAddCustomFolderFormat = tempAutoAddSeasonFolderName + ((tempPadSeasonToTwoDigits || TVSettings.Instance.LeadingZeroOnSeason) ? "{Season:2}" : "{Season}");
                         AutoAddType = (AutoAddCustomFolderFormat == TVSettings.Instance.SeasonFolderFormat)
                             ? AutomaticFolderType.libraryDefault
                             : AutomaticFolderType.custom;
@@ -189,7 +189,9 @@ namespace TVRename
         {
             foreach (XElement rulesSet in xmlSettings.Descendants("Rules"))
             {
-                int snum = int.Parse(rulesSet.Attribute("SeasonNumber")?.Value);
+                XAttribute value = rulesSet.Attribute("SeasonNumber");
+                if (value == null) continue;
+                int snum = int.Parse(value.Value);
                 SeasonRules[snum] = new List<ShowRule>();
 
                 foreach (XElement ruleData in rulesSet.Descendants("Rule"))
@@ -203,7 +205,10 @@ namespace TVRename
         {
             foreach (XElement seasonFolder in xmlSettings.Descendants("SeasonFolders"))
             {
-                int snum = int.Parse(seasonFolder.Attribute("SeasonNumber")?.Value);
+                XAttribute value = seasonFolder.Attribute("SeasonNumber");
+                if (value == null) continue;
+                int snum = int.Parse(value.Value);
+
                 ManualFolderLocations[snum] = new List<string>();
 
                 foreach (XElement folderData in seasonFolder.Descendants("Folder"))
@@ -565,6 +570,7 @@ namespace TVRename
             return pel;
         }
 
+        // ReSharper disable once UnusedMember.Global
         public Dictionary<int, List<ProcessedEpisode>> GetDvdSeasons()
         {
             //We will create this on the fly
@@ -590,7 +596,7 @@ namespace TVRename
 
         public Dictionary<int, List<string>> AllFolderLocations(bool manualToo)=> AllFolderLocations(manualToo,true);
 
-        public Dictionary<int, List<string>> AllFolderLocations(bool manualToo,bool checkExist)
+        private Dictionary<int, List<string>> AllFolderLocations(bool manualToo,bool checkExist)
         {
             Dictionary<int, List<string>> fld = new Dictionary<int, List<string>>();
 

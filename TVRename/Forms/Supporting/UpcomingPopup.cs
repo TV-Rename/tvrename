@@ -50,16 +50,15 @@ namespace TVRename
             lvUpcoming.BeginUpdate();
             lvUpcoming.Items.Clear();
 
-            const int kN = 5;
+            const int N = 5;
 
-            List<ProcessedEpisode> next5 = mDoc.Library.NextNShows(kN, 0, 9999);
+            List<ProcessedEpisode> next5 = mDoc.Library.NextNShows(N, 0, 9999);
 
             if (next5 != null)
             {
                 foreach (ProcessedEpisode ei in next5)
                 {
-                    ListViewItem lvi = new ListViewItem();
-                    lvi.Text = ei.HowLong();
+                    ListViewItem lvi = new ListViewItem {Text = ei.HowLong()};
                     lvi.SubItems.Add(ei.DayOfWeek());
                     lvi.SubItems.Add(ei.TimeOfDay());
                     lvi.SubItems.Add(TVSettings.Instance.NamingStyle.NameFor(ei));

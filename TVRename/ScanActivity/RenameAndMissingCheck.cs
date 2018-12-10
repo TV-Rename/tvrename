@@ -234,7 +234,7 @@ namespace TVRename
                             }
                             else
                             {
-                                if (settings.Type == TVSettings.ScanType.Full) Doc.CurrentStats.NS_NumberOfEpisodes++;
+                                if (settings.Type == TVSettings.ScanType.Full) Doc.CurrentStats.NsNumberOfEpisodes++;
 
                                 // do NFO and thumbnail checks if required
                                 FileInfo

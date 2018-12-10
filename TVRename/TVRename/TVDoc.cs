@@ -75,16 +75,16 @@ namespace TVRename
 
         public TVRenameStats Stats()
         {
-            CurrentStats.NS_NumberOfShows = Library.Count;
-            CurrentStats.NS_NumberOfSeasons = 0;
-            CurrentStats.NS_NumberOfEpisodesExpected = 0;
+            CurrentStats.NsNumberOfShows = Library.Count;
+            CurrentStats.NsNumberOfSeasons = 0;
+            CurrentStats.NsNumberOfEpisodesExpected = 0;
 
             foreach (ShowItem si in Library.Shows)
             {
                 foreach (List<ProcessedEpisode> k in si.SeasonEpisodes.Values)
-                    CurrentStats.NS_NumberOfEpisodesExpected += k.Count;
+                    CurrentStats.NsNumberOfEpisodesExpected += k.Count;
 
-                CurrentStats.NS_NumberOfSeasons += si.SeasonEpisodes.Count;
+                CurrentStats.NsNumberOfSeasons += si.SeasonEpisodes.Count;
             }
 
             return CurrentStats;

@@ -30,7 +30,7 @@ namespace TVRename
 
         public static void WriteElementToXml(XmlWriter writer, string elementName, string value,bool ignoreifBlank = false)
         {
-            if (ignoreifBlank && string.IsNullOrEmpty(value)) return;
+            if (ignoreifBlank && String.IsNullOrEmpty(value)) return;
 
             writer.WriteStartElement(elementName);
             writer.WriteValue(value??"");
@@ -108,10 +108,10 @@ namespace TVRename
 
         public static void WriteInfo(XmlWriter writer, string elemName, string attribute, string attributeVal, string value)
         {
-            if (!string.IsNullOrEmpty(value))
+            if (!String.IsNullOrEmpty(value))
             {
                 writer.WriteStartElement(elemName);
-                if (!string.IsNullOrEmpty(attribute) && !string.IsNullOrEmpty(attributeVal))
+                if (!String.IsNullOrEmpty(attribute) && !String.IsNullOrEmpty(attributeVal))
                 {
                     writer.WriteAttributeString(attribute, attributeVal);
                 }
@@ -122,10 +122,10 @@ namespace TVRename
 
         public static void WriteInfo(XmlWriter writer, string elemName, string attribute, string attributeVal)
         {
-            if (!string.IsNullOrEmpty(attributeVal))
+            if (!String.IsNullOrEmpty(attributeVal))
             {
                 writer.WriteStartElement(elemName);
-                if (!string.IsNullOrEmpty(attribute) && !string.IsNullOrEmpty(attributeVal))
+                if (!String.IsNullOrEmpty(attribute) && !String.IsNullOrEmpty(attributeVal))
                 {
                     writer.WriteAttributeString(attribute, attributeVal);
                 }
@@ -160,14 +160,14 @@ namespace TVRename
             if (xmlSettings.Descendants(elementName).Any())
             {
                 string textVersion=(string)(xmlSettings.Descendants(elementName).First());
-                if (string.IsNullOrWhiteSpace(textVersion)) return null;
+                if (String.IsNullOrWhiteSpace(textVersion)) return null;
                 return XmlConvert.ToDateTime(textVersion,XmlDateTimeSerializationMode.Utc);
             }
             return null;
         }
         public static string ExtractString(this XElement xmlSettings, string elementName)
         {
-            return ExtractString(xmlSettings, elementName, string.Empty);
+            return ExtractString(xmlSettings, elementName, String.Empty);
         }
         public static string ExtractString(this XElement xmlSettings, string elementName,string defaultValue)
         {
@@ -178,7 +178,7 @@ namespace TVRename
         }
         public static int? ExtractInt(this XElement xmlSettings, string elementName)
         {
-            if(xmlSettings.Descendants(elementName).Any() && !string.IsNullOrWhiteSpace((string)(xmlSettings.Descendants(elementName).First())))
+            if(xmlSettings.Descendants(elementName).Any() && !String.IsNullOrWhiteSpace((string)(xmlSettings.Descendants(elementName).First())))
                 return XmlConvert.ToInt32((string)(xmlSettings.Descendants(elementName).First()));
 
             return null;
@@ -191,6 +191,22 @@ namespace TVRename
 
             return null;
         }
+
+        public static T ExtractEnum<T>(this XElement xmlSettings, string elementName, T defaultVal)
+        {
+            if (!typeof(T).IsEnum) throw new ArgumentException("T must be an enumerated type");
+
+            int? val = xmlSettings.ExtractInt(elementName);
+
+            if (val == null) return defaultVal;
+
+            if (typeof(T).IsEnumDefined(val))
+            {
+                return (T)Enum.Parse(typeof(T), val.ToString(), true);
+            }
+            return defaultVal;
+        }
+
         public static float? ExtractFloat(this XElement xmlSettings, string elementName)
         {
             if (xmlSettings.Descendants(elementName).Any())

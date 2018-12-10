@@ -439,15 +439,45 @@ namespace TVRename
 
         private void SetLocation(XElement x)
         {
-            int xloc = int.Parse(x.Attribute("X").Value);
-            int yloc = int.Parse(x.Attribute("Y").Value);
+            XAttribute valueX = x.Attribute("X") ;
+            XAttribute valueY = x.Attribute("Y");
+
+            if (valueX == null)
+            {
+                Logger.Error($"Missing X from {x}");
+
+            }
+            if ( valueY==null)
+            {
+                Logger.Error($"Missing Y from {x}");
+
+            }
+
+            int xloc = (valueX ==null) ? 100 : int.Parse(valueX.Value);
+            int yloc = (valueY == null) ? 100 : int.Parse(valueY.Value);
+
             Location = new Point(xloc, yloc);
         }
 
         private void SetSize(XElement x)
         {
-            int xsize = int.Parse(x.Attribute("Width").Value );
-            int ysize = int.Parse(x.Attribute("Height").Value);
+            XAttribute valueX = x.Attribute("Width");
+            XAttribute valueY = x.Attribute("Height");
+
+            if (valueX == null)
+            {
+                Logger.Error($"Missing Width from {x}");
+
+            }
+            if (valueY == null)
+            {
+                Logger.Error($"Missing Height from {x}");
+
+            }
+
+            int xsize = (valueX == null) ? 100 : int.Parse(valueX.Value);
+            int ysize = (valueY == null) ? 100 : int.Parse(valueY.Value);
+
             Size = new Size(xsize, ysize);
         }
 

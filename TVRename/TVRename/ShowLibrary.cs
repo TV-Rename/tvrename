@@ -235,7 +235,7 @@ namespace TVRename
                 // merge specials in
                 foreach (Episode ep in seasonsToUse[0].Episodes.Values)
                 {
-                    if (!ep.AirsAfterSeason.HasValue) continue;
+                    if (!ep.AirsBeforeSeason.HasValue) continue;
                     if (!ep.AirsBeforeEpisode.HasValue) continue;
 
                     int sease = ep.AirsBeforeSeason.Value;

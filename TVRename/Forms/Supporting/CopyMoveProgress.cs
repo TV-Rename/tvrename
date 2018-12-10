@@ -171,7 +171,7 @@ namespace TVRename
             if (toUncRoot != null)
             {
                 FileSystemProperties driveStats = FileHelper.GetProperties(toUncRoot.ToString());
-                if (driveStats != null)
+                if (driveStats?.AvailableBytes != null && driveStats.TotalBytes.HasValue)
                 {
                     int pct = (int)((1000 * driveStats.AvailableBytes) / driveStats.TotalBytes);
                     diskValue = 1000 - pct;
