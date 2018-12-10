@@ -7,6 +7,7 @@
 // 
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TVRename
 {
@@ -26,7 +27,7 @@ namespace TVRename
                 LOGGER.Info("Searching RSS Feeds is cancelled as this is an unattended scan");
                 return;
             }
-            int c = ActionList.Count + 2;
+            int c = ActionList.MissingItems().Count() + 2;
             int n = 1;
             UpdateStatus(n, c, "Searching on RSS Feed...");
 
@@ -45,7 +46,7 @@ namespace TVRename
                 if (settings.Token.IsCancellationRequested)
                     return;
 
-                UpdateStatus(n, c, action.Filename);
+                UpdateStatus(n++, c, action.Filename);
 
                 ProcessedEpisode pe = action.Episode;
                 string simpleShowName = Helpers.SimplifyName(pe.Show.ShowName);

@@ -63,10 +63,9 @@ namespace TVRename.Forms
                     }
                 }
 
-                string HTML_HEAD =
-                    "<html><head><style type=\"text/css\">* {font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"; font-size:90%}</style></head><body>";
+                const string HTML_HEAD = "<html><head><style type=\"text/css\">* {font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"; font-size:90%}</style></head><body>";
 
-                string HTML_FOOTER = "</body></html>";
+                const string HTML_FOOTER = "</body></html>";
 
                 webReleaseNotes.DocumentText = HTML_HEAD + result + HTML_FOOTER;
             }
@@ -83,6 +82,12 @@ namespace TVRename.Forms
         private void btnDownloadNow_Click(object sender, EventArgs e)
         {
             Helpers.SysOpen(newVersion.DownloadUrl);
+        }
+
+        private void btnDownloadNowAndQuit_Click(object sender, EventArgs e)
+        {
+            Helpers.SysOpen(newVersion.DownloadUrl);
+            DialogResult = DialogResult.Abort;
         }
 
         private void NavigateTo(object sender, WebBrowserNavigatingEventArgs e)

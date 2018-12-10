@@ -53,7 +53,7 @@ namespace TVRename.SAB
         protected void RaisePropertyChanged(string propertyName)
         {
             System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
-            if ((propertyChanged != null))
+            if (propertyChanged != null)
             {
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }

@@ -3212,6 +3212,12 @@ namespace TVRename
 
             UpdateNotification unForm = new UpdateNotification(update);
             unForm.ShowDialog();
+            if (unForm.DialogResult == DialogResult.Abort)
+            {
+                Logger.Info("Downloading New Release and Quiting");
+                //We need to quit!
+                this.Close();
+            }
             btnUpdateAvailable.Visible = true;
         }
 

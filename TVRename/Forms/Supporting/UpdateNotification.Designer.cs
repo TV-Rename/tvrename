@@ -36,6 +36,7 @@ namespace TVRename.Forms
             this.tbReleaseNotes = new System.Windows.Forms.TextBox();
             this.lblStatus = new System.Windows.Forms.Label();
             this.webReleaseNotes = new System.Windows.Forms.WebBrowser();
+            this.btnDownloadNowAndQuit = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -62,9 +63,9 @@ namespace TVRename.Forms
             // 
             this.btnDownloadNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDownloadNow.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnDownloadNow.Location = new System.Drawing.Point(288, 460);
+            this.btnDownloadNow.Location = new System.Drawing.Point(273, 431);
             this.btnDownloadNow.Name = "btnDownloadNow";
-            this.btnDownloadNow.Size = new System.Drawing.Size(120, 23);
+            this.btnDownloadNow.Size = new System.Drawing.Size(135, 23);
             this.btnDownloadNow.TabIndex = 2;
             this.btnDownloadNow.Text = "Download Now";
             this.btnDownloadNow.UseVisualStyleBackColor = true;
@@ -73,7 +74,7 @@ namespace TVRename.Forms
             // bnReleaseNotes
             // 
             this.bnReleaseNotes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnReleaseNotes.Location = new System.Drawing.Point(288, 431);
+            this.bnReleaseNotes.Location = new System.Drawing.Point(126, 460);
             this.bnReleaseNotes.Name = "bnReleaseNotes";
             this.bnReleaseNotes.Size = new System.Drawing.Size(120, 23);
             this.bnReleaseNotes.TabIndex = 3;
@@ -126,6 +127,18 @@ namespace TVRename.Forms
             this.webReleaseNotes.Visible = false;
             this.webReleaseNotes.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
             // 
+            // btnDownloadNowAndQuit
+            // 
+            this.btnDownloadNowAndQuit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDownloadNowAndQuit.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.btnDownloadNowAndQuit.Location = new System.Drawing.Point(273, 460);
+            this.btnDownloadNowAndQuit.Name = "btnDownloadNowAndQuit";
+            this.btnDownloadNowAndQuit.Size = new System.Drawing.Size(135, 23);
+            this.btnDownloadNowAndQuit.TabIndex = 8;
+            this.btnDownloadNowAndQuit.Text = "Download Now and Quit";
+            this.btnDownloadNowAndQuit.UseVisualStyleBackColor = true;
+            this.btnDownloadNowAndQuit.Click += new System.EventHandler(this.btnDownloadNowAndQuit_Click);
+            // 
             // UpdateNotification
             // 
             this.AcceptButton = this.btnDownloadNow;
@@ -133,6 +146,7 @@ namespace TVRename.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(420, 496);
+            this.Controls.Add(this.btnDownloadNowAndQuit);
             this.Controls.Add(this.webReleaseNotes);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.tbReleaseNotes);
@@ -165,5 +179,6 @@ namespace TVRename.Forms
         private System.Windows.Forms.TextBox tbReleaseNotes;
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.WebBrowser webReleaseNotes;
-        }
+        private System.Windows.Forms.Button btnDownloadNowAndQuit;
+    }
 }
