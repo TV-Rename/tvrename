@@ -7,6 +7,7 @@
 // 
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using Newtonsoft.Json.Linq;
 
@@ -28,7 +29,7 @@ namespace TVRename
                 LOGGER.Info("Searching JSON Wepages is cancelled as this is an unattended scan");
                 return;
             }
-            int c = ActionList.Count + 1;
+            int c = ActionList.MissingItems().Count() + 1;
             int n = 0;
             UpdateStatus(n,c, "Searching on JSON Page...");
 
@@ -41,7 +42,7 @@ namespace TVRename
                     if (settings.Token.IsCancellationRequested)
                         return;
 
-                    UpdateStatus(n, c, action.Filename);
+                    UpdateStatus(n++, c, action.Filename);
 
                     ProcessedEpisode pe = action.Episode;
                     string simpleShowName = Helpers.SimplifyName(action.Episode.Show.ShowName);

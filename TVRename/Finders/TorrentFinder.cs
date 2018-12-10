@@ -8,6 +8,7 @@
 
 using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TVRename
 {
@@ -27,7 +28,7 @@ namespace TVRename
         {
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
-            int c = ActionList.Count + 2;
+            int c = ActionList.MissingItems().Count() + 2;
             int n = 1;
             UpdateStatus(n, c, "Searhcing torrent queue...");
             foreach (ItemMissing action in ActionList.MissingItems())
@@ -35,7 +36,7 @@ namespace TVRename
                 if (settings.Token.IsCancellationRequested)
                     return;
 
-                UpdateStatus(n, c, action.Filename);
+                UpdateStatus(n++, c, action.Filename);
 
                 foreach (TorrentEntry te in downloading)
                 {

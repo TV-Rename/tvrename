@@ -41,6 +41,7 @@ namespace TVRename
             }
         }
 
+        // ReSharper disable once ConvertToConstant.Local
         private static readonly string WebsiteRoot = "http://thetvdb.com";
 
         private FileInfo cacheFile;
@@ -64,6 +65,7 @@ namespace TVRename
         private long srvTime; // only update this after a 100% successful download
         private readonly TvDbTokenProvider tvDbTokenProvider = new TvDbTokenProvider();
 
+        // ReSharper disable once ConvertToConstant.Local
         private static readonly string DefaultLanguageCode = "en"; //Default backup language
 
         private CommandLineArgs args;
@@ -655,7 +657,7 @@ namespace TVRename
                 }
 
                 float percentDirty = 100;
-                if (totaldirty > 0 || totaleps > 0) percentDirty = 100 * totaldirty / totaleps;
+                if (totaldirty > 0 || totaleps > 0) percentDirty = 100 * totaldirty / (float)totaleps;
                 if ((totaleps > 0) && ((percentDirty) >= TVSettings.Instance.PercentDirtyUpgrade())) // 10%
                 {
                     kvp.Value.Dirty = true;
@@ -1326,7 +1328,13 @@ namespace TVRename
                     }
                     else
                     {
-                        ProcessEpisode(code,episodeId, prefLangEpisode, defltLangEpisode);
+                        bool success = ProcessEpisode(code,episodeId, prefLangEpisode, defltLangEpisode);
+                        if (!success)
+                        {
+                            Logger.Error("Could not process Episode from {0}.", EpisodeUri(code));
+                            Logger.Error(prefLangEpisode?.ToString());
+                            Logger.Error(defltLangEpisode?.ToString());
+                        }
                     }
                 }
                 catch (InvalidCastException ex)

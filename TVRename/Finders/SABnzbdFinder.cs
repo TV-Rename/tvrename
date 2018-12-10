@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
@@ -72,7 +73,7 @@ namespace TVRename
 
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
-            int c = ActionList.Count + 2;
+            int c = ActionList.MissingItems().Count() + 2;
             int n = 1;
 
             foreach (ItemMissing action in ActionList.MissingItems())
@@ -80,7 +81,7 @@ namespace TVRename
                 if (settings.Token.IsCancellationRequested)
                     return;
 
-                UpdateStatus(n, c, action.Filename);
+                UpdateStatus(n++, c, action.Filename);
 
                 string showname = Helpers.SimplifyName(action.Episode.Show.ShowName);
 

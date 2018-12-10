@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 // ReSharper disable InconsistentNaming
 // ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable All
 
 namespace DaveChambers.FolderBrowserDialogEx
 {

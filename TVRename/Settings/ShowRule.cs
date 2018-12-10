@@ -42,10 +42,7 @@ namespace TVRename
             SetToDefaults();
             if (xmlSettings != null)
             {
-                DoWhatNow = xmlSettings.ExtractInt("DoWhatNow") == null
-                    ? RuleAction.kIgnoreEp
-                    : (RuleAction) xmlSettings.ExtractInt("DoWhatNow");
-
+                DoWhatNow = xmlSettings.ExtractEnum("DoWhatNow",RuleAction.kIgnoreEp);
                 First = xmlSettings.ExtractInt("First") ?? -1;
                 Second = xmlSettings.ExtractInt("Second") ?? -1;
                 UserSuppliedText = xmlSettings.ExtractString("Text");
@@ -60,7 +57,8 @@ namespace TVRename
         private void SetToDefaults()
         {
             DoWhatNow = RuleAction.kIgnoreEp;
-            First = Second = -1;
+            First = -1;
+            Second = -1;
             UserSuppliedText = "";
         }
 

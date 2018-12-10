@@ -27,7 +27,7 @@ namespace TVRename
             if (settings.Type == TVSettings.ScanType.Full)
             {
                 // only do episode count if we're doing all shows and seasons
-                MDoc.CurrentStats.NS_NumberOfEpisodes = 0;
+                MDoc.CurrentStats.NsNumberOfEpisodes = 0;
                 showList = MDoc.Library.Values;
             }
 

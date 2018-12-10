@@ -1,5 +1,6 @@
 using System.IO;
 using System.Xml.Serialization;
+// ReSharper disable All
 
 namespace TVRename.SAB
 {
@@ -53,7 +54,7 @@ namespace TVRename.SAB
         protected void RaisePropertyChanged(string propertyName)
         {
             System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
-            if ((propertyChanged != null))
+            if (propertyChanged != null)
             {
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
