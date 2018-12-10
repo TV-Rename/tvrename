@@ -1,5 +1,6 @@
 using System.IO;
 using System.Xml.Serialization;
+// ReSharper disable All
 
 namespace TVRename.SAB
 {

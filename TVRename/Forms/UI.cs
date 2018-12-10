@@ -3216,7 +3216,7 @@ namespace TVRename
             {
                 Logger.Info("Downloading New Release and Quiting");
                 //We need to quit!
-                this.Close();
+                Close();
             }
             btnUpdateAvailable.Visible = true;
         }
