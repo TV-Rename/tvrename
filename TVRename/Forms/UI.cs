@@ -332,7 +332,7 @@ namespace TVRename
             }
         }
 
-        private async void flushCacheToolStripMenuItem_Click(object sender, EventArgs e)
+        private void flushCacheToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (busy != 0)
             {
@@ -351,7 +351,7 @@ namespace TVRename
             {
                 TheTVDB.Instance.ForgetEverything();
                 FillMyShows();
-                await FillEpGuideHtml();
+                FillEpGuideHtml();
                 FillWhenToWatchList();
                 BGDownloadTimer_QuickFire();
             }
@@ -630,14 +630,14 @@ namespace TVRename
             webImages.Navigate(QuickStartGuide());
         }
 
-        private async Task FillEpGuideHtml()
+        private void FillEpGuideHtml()
         {
             if (MyShowTree.Nodes.Count == 0)
                 ShowQuickStartGuide();
             else
             {
                 TreeNode n = MyShowTree.SelectedNode;
-                await FillEpGuideHtml(n);
+                FillEpGuideHtml(n);
             }
         }
 
@@ -668,7 +668,7 @@ namespace TVRename
             return seas;
         }
 
-        private async Task FillEpGuideHtml(TreeNode n)
+        private void FillEpGuideHtml(TreeNode n)
         {
             if (n == null)
             {
@@ -678,7 +678,7 @@ namespace TVRename
 
             if (n.Tag is ProcessedEpisode pe)
             {
-                await FillEpGuideHtml(pe.Show, pe.AppropriateSeasonNumber);
+                FillEpGuideHtml(pe.Show, pe.AppropriateSeasonNumber);
                 return;
             }
 
@@ -691,7 +691,7 @@ namespace TVRename
                     int tvdbcode = seas.TheSeries.TvdbCode;
                     foreach (ShowItem si in mDoc.Library.Values.Where(si=>si.TvdbCode == tvdbcode))
                     {
-                        await FillEpGuideHtml(si, seas.SeasonNumber);
+                        FillEpGuideHtml(si, seas.SeasonNumber);
                         return;
                     }
                 }
@@ -700,10 +700,10 @@ namespace TVRename
                 return;
             }
 
-            await FillEpGuideHtml(TreeNodeToShowItem(n), -1);
+            FillEpGuideHtml(TreeNodeToShowItem(n), -1);
         }
 
-        private async Task FillEpGuideHtml(ShowItem si, int snum)
+        private void FillEpGuideHtml(ShowItem si, int snum)
         {
             if (tabControl1.SelectedTab != tbMyShows)
                 return;
@@ -728,26 +728,26 @@ namespace TVRename
             if (si.DvdOrder && snum >= 0 && ser.DvdSeasons.ContainsKey(snum))
             {
                 Season s = ser.DvdSeasons[snum];
-                SetHtmlBody(webInformation, await si.GetSeasonHtmlOverview(s, false));
+                SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, false));
                 SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
 
-                SetHtmlBody(webInformation, await si.GetSeasonHtmlOverview(s, true));
+                SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, true));
             }
             else if (!si.DvdOrder && snum >= 0 && ser.AiredSeasons.ContainsKey(snum))
             {
                 Season s = ser.AiredSeasons[snum];
-                SetHtmlBody(webInformation, await si.GetSeasonHtmlOverview(s, false));
+                SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, false));
                 SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
 
-                SetHtmlBody(webInformation, await si.GetSeasonHtmlOverview(s, true));
+                SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, true));
             }
             else
             {
                 // no epnum specified, just show an overview
-                SetHtmlBody(webInformation, await si.GetShowHtmlOverview(false));
+                SetHtmlBody(webInformation, si.GetShowHtmlOverview(false));
                 SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
 
-                SetHtmlBody(webInformation, await si.GetShowHtmlOverview(true));
+                SetHtmlBody(webInformation, si.GetShowHtmlOverview(true));
             }
 
             TheTVDB.Instance.Unlock("FillEpGuideHTML");
@@ -2026,7 +2026,7 @@ namespace TVRename
             }
         }
 
-        private async Task SelectSeason(Season seas)
+        private void SelectSeason(Season seas)
         {
             foreach (TreeNode n in MyShowTree.Nodes)
             {
@@ -2041,10 +2041,10 @@ namespace TVRename
                 }
             }
 
-            await FillEpGuideHtml(null);
+            FillEpGuideHtml(null);
         }
 
-        private async Task SelectShow(ShowItem si)
+        private void SelectShow(ShowItem si)
         {
             foreach (TreeNode n in MyShowTree.Nodes)
             {
@@ -2057,7 +2057,7 @@ namespace TVRename
                 }
             }
 
-            await FillEpGuideHtml(null);
+            FillEpGuideHtml(null);
         }
 
         private void bnMyShowsAdd_Click(object sender, EventArgs e)
@@ -2246,9 +2246,9 @@ namespace TVRename
             }
         }
 
-        private async void MyShowTree_AfterSelect(object sender, TreeViewEventArgs e)
+        private void MyShowTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            await FillEpGuideHtml(e.Node);
+            FillEpGuideHtml(e.Node);
             bool showSelected = MyShowTree.SelectedNode != null;
             bnMyShowsEdit.Enabled = showSelected;
             bnMyShowsDelete.Enabled = showSelected;

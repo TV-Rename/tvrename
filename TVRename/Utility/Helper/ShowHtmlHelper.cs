@@ -30,7 +30,7 @@ namespace TVRename
             return html;
         }
 
-        public static async Task<string> GetShowHtmlOverview(this ShowItem si,bool includeDirectoryLinks)
+        public static string GetShowHtmlOverview(this ShowItem si,bool includeDirectoryLinks)
         {
             Color col = Color.FromName("ButtonFace");
             StringBuilder sb = new StringBuilder();
@@ -40,7 +40,7 @@ namespace TVRename
             return sb.ToString();
         }
 
-        private static void AppendShow(this StringBuilder sb,ShowItem si, Color backgroundColour, bool includeDirectoryLinks)
+        private static async Task AppendShow(this StringBuilder sb,ShowItem si, Color backgroundColour, bool includeDirectoryLinks)
         {
             if (si == null) return;
 
@@ -164,7 +164,7 @@ namespace TVRename
             return $"<img class=\"rounded w-100\" src=\"{TheTVDB.GetImageURL(ei.Filename)}\" alt=\"{ei.Name} Screenshot\">";
         }
 
-        public static async Task<string> GetSeasonHtmlOverview(this ShowItem si, Season s, bool includeDirectoryLinks)
+        public static string GetSeasonHtmlOverview(this ShowItem si, Season s, bool includeDirectoryLinks)
         {
             StringBuilder sb = new StringBuilder();
             DirFilesCache dfc = new DirFilesCache();
