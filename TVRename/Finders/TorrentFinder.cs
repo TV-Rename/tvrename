@@ -40,7 +40,7 @@ namespace TVRename
                 foreach (TorrentEntry te in downloading)
                 {
                     FileInfo file = new FileInfo(te.DownloadingTo);
-                    if (!TVSettings.Instance.UsefulExtension(file.Extension, false)) // not a usefile file extension
+                    if (!file.IsMovieFile()) // not a usefile file extension
                         continue;
 
                     //do any of the possible names for the series match the filename?

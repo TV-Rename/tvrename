@@ -408,7 +408,7 @@ namespace TVRename
             TvdbCode = -1;
             AutoAddFolderBase = "";
             AutoAddCustomFolderFormat = CustomSeasonName.DefaultStyle();
-            AutoAddType = ShowItem.AutomaticFolderType.libraryDefault;
+            AutoAddType = AutomaticFolderType.libraryDefault;
             DoRename = true;
             DoMissingCheck = true;
             CountSpecials = false;
@@ -438,7 +438,7 @@ namespace TVRename
             if (!r.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
                 r += System.IO.Path.DirectorySeparatorChar.ToString();
 
-            if (AutoAddType == ShowItem.AutomaticFolderType.none)
+            if (AutoAddType == AutomaticFolderType.none)
             {
                 return r;
             }

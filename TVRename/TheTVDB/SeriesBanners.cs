@@ -48,28 +48,23 @@ namespace TVRename
 
         public void MergeBanners(SeriesBanners o)
         {
-            if ((o.seasonBanners != null) && (o.seasonBanners.Count != 0))
-                seasonBanners = o.seasonBanners;
+            if (o is null) return;
 
-            if ((o.seasonLangBanners != null) && (o.seasonLangBanners.Count != 0))
-                seasonLangBanners = o.seasonLangBanners;
+            if (WorthUdating(o.seasonBanners)) seasonBanners = o.seasonBanners;
+            if (WorthUdating(o.seasonLangBanners)) seasonLangBanners = o.seasonLangBanners;
+            if (WorthUdating(o.seasonLangWideBanners)) seasonLangWideBanners = o.seasonLangWideBanners;
+            if (WorthUdating(o.seasonWideBanners)) seasonWideBanners = o.seasonWideBanners;
+            if (WorthUdating(o.AllBanners)) AllBanners = o.AllBanners;
 
-            if ((o.seasonLangWideBanners != null) && (o.seasonLangWideBanners.Count != 0))
-                seasonLangWideBanners = o.seasonLangWideBanners;
-
-            if ((o.seasonWideBanners != null) && (o.seasonWideBanners.Count != 0))
-                seasonWideBanners = o.seasonWideBanners;
-
-            if ((o.AllBanners != null) && (o.AllBanners.Count != 0))
-                AllBanners = o.AllBanners;
-
-            if ((o.bestSeriesPosterId != -1)) bestSeriesPosterId = o.bestSeriesPosterId;
-            if ((o.bestSeriesBannerId != -1)) bestSeriesBannerId = o.bestSeriesBannerId;
-            if ((o.bestSeriesFanartId != -1)) bestSeriesFanartId = o.bestSeriesFanartId;
-            if ((o.bestSeriesLangPosterId != -1)) bestSeriesLangPosterId = o.bestSeriesLangPosterId;
-            if ((o.bestSeriesLangBannerId != -1)) bestSeriesLangBannerId = o.bestSeriesLangBannerId;
-            if ((o.bestSeriesLangFanartId != -1)) bestSeriesLangFanartId = o.bestSeriesLangFanartId;
+            if (o.bestSeriesPosterId != -1) bestSeriesPosterId = o.bestSeriesPosterId;
+            if (o.bestSeriesBannerId != -1) bestSeriesBannerId = o.bestSeriesBannerId;
+            if (o.bestSeriesFanartId != -1) bestSeriesFanartId = o.bestSeriesFanartId;
+            if (o.bestSeriesLangPosterId != -1) bestSeriesLangPosterId = o.bestSeriesLangPosterId;
+            if (o.bestSeriesLangBannerId != -1) bestSeriesLangBannerId = o.bestSeriesLangBannerId;
+            if (o.bestSeriesLangFanartId != -1) bestSeriesLangFanartId = o.bestSeriesLangFanartId;
         }
+
+        private static bool WorthUdating(Dictionary<int, Banner> b) => b != null && b.Count > 0;
 
         public string GetSeasonBannerPath(int snum)
         {

@@ -63,7 +63,7 @@ namespace TVRename
                         if (settings.Token.IsCancellationRequested)
                             throw new TVRenameOperationInteruptedException();
 
-                        if (!TVSettings.Instance.UsefulExtension(fi.Extension, false))
+                        if (!fi.IsMovieFile())
                             continue; //not a video file, so ignore
 
                         if (!FinderHelper.FindSeasEp(fi, out int seasNum, out int epNum, out int maxEp, si,

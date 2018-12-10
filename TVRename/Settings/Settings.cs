@@ -176,39 +176,37 @@ namespace TVRename
         public bool BulkAddCompareNoVideoFolders = false;
 
         public string AutoAddMovieTerms = "dvdrip;camrip;screener;dvdscr;r5;bluray";
-        public string[] AutoAddMovieTermsArray => AutoAddMovieTerms.Split(';');
+        public IEnumerable<string> AutoAddMovieTermsArray => AutoAddMovieTerms.Split(';');
 
         public string PriorityReplaceTerms = "PROPER;REPACK;RERIP";
-        public string[] PriorityReplaceTermsArray => PriorityReplaceTerms.Split(';');
+        public IEnumerable<string> PriorityReplaceTermsArray => PriorityReplaceTerms.Split(';');
 
         public string AutoAddIgnoreSuffixes = "1080p;720p";
-        public string[] AutoAddIgnoreSuffixesArray => AutoAddIgnoreSuffixes.Split(';');
+        public IEnumerable<string> AutoAddIgnoreSuffixesArray => AutoAddIgnoreSuffixes.Split(';');
 
-        public string[] keepTogetherExtensionsArray => keepTogetherExtensionsString.Split(';');
         public string keepTogetherExtensionsString = "";
+        public IEnumerable<string> keepTogetherExtensionsArray => keepTogetherExtensionsString.Split(';');
 
-        public string[] subtitleExtensionsArray => subtitleExtensionsString.Split(';');
         public string subtitleExtensionsString = "";
-
-        public string defaultSeasonWord = "Season";
-
-        public string[] searchSeasonWordsArray => searchSeasonWordsString.Split(';');
-        public string[] PreferredRSSSearchTerms() => preferredRSSSearchTermsString.Split(';');
+        public IEnumerable<string> subtitleExtensionsArray => subtitleExtensionsString.Split(';');
 
         public string searchSeasonWordsString = "Season;Series;Saison;Temporada;Seizoen";
+        public IEnumerable<string> searchSeasonWordsArray => searchSeasonWordsString.Split(';');
+
         public string preferredRSSSearchTermsString = "720p;1080p";
+        public string[] PreferredRSSSearchTerms() => preferredRSSSearchTermsString.Split(';');
+
+        public string OtherExtensionsString = "";
+        private IEnumerable<string> OtherExtensionsArray => OtherExtensionsString.Split(';');
 
         internal bool IncludeBetaUpdates()
         {
             return (mode == BetaMode.BetaToo);
         }
 
-        public string OtherExtensionsString = "";
+        public string defaultSeasonWord = "Season";
         public ShowFilter Filter = new ShowFilter();
         public SeasonFilter SeasonFilter = new SeasonFilter();
-
-        private IEnumerable<string> OtherExtensionsArray => OtherExtensionsString.Split(';');
-
         public int ParallelDownloads =4;
         public List<string> RSSURLs = DefaultRSSURLList();
         public bool RenameCheck = true;
@@ -649,21 +647,6 @@ namespace TVRename
             return r;
         }
 
-        public bool UsefulExtension(string sn, bool otherExtensionsToo)
-        {
-            if (VideoExtensionsArray.Any(s => string.Equals(sn, s, StringComparison.CurrentCultureIgnoreCase)))
-            {
-                return true;
-            }
-
-            if (otherExtensionsToo)
-            {
-                return OtherExtensionsArray.Any(s => string.Equals(sn, s, StringComparison.CurrentCultureIgnoreCase));
-            }
-
-            return false;
-        }
-
         public bool FileHasUsefulExtension(FileInfo file, bool otherExtensionsToo, out string extension)
         {
             foreach (string s in VideoExtensionsArray)
@@ -684,20 +667,6 @@ namespace TVRename
             }
 
             extension = string.Empty;
-            return false;
-        }
-
-        public bool KeepExtensionTogether(string extension)
-        {
-            if (KeepTogether == false) return false;
-
-            if (keepTogetherMode == KeepTogetherModes.All) return true;
-
-            if (keepTogetherMode == KeepTogetherModes.Just) return keepTogetherExtensionsArray.Contains(extension);
-
-            if (keepTogetherMode == KeepTogetherModes.AllBut) return !keepTogetherExtensionsArray.Contains(extension);
-
-            logger.Error("INVALID USE OF KEEP EXTENSION");
             return false;
         }
 
@@ -754,9 +723,9 @@ namespace TVRename
                 case KeepTogetherModes.All: return true;
                 case KeepTogetherModes.Just: return keepTogetherExtensionsArray.Contains(fileExtension);
                 case KeepTogetherModes.AllBut: return !keepTogetherExtensionsArray.Contains(fileExtension);
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-
-            return true;
         }
 
         public class TidySettings

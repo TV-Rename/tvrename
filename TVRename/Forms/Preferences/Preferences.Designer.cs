@@ -1753,7 +1753,7 @@ namespace TVRename
             this.groupBox8.Size = new System.Drawing.Size(406, 100);
             this.groupBox8.TabIndex = 40;
             this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "Upgrade when better quality files found";
+            this.groupBox8.Text = "Upgrade Shows when better quality files found";
             // 
             // label53
             // 
@@ -1779,6 +1779,7 @@ namespace TVRename
             this.tbPercentBetter.Name = "tbPercentBetter";
             this.tbPercentBetter.Size = new System.Drawing.Size(28, 20);
             this.tbPercentBetter.TabIndex = 37;
+            this.tbPercentBetter.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // tbPriorityOverrideTerms
             // 
@@ -3123,6 +3124,8 @@ namespace TVRename
             this.txtKeepTogether.Name = "txtKeepTogether";
             this.txtKeepTogether.Size = new System.Drawing.Size(204, 20);
             this.txtKeepTogether.TabIndex = 23;
+            this.toolTip1.SetToolTip(this.txtKeepTogether, "Which file extensions should be copied from the Search\r\nFolders into the library?" +
+        "");
             // 
             // txtMaxSampleSize
             // 
@@ -3141,6 +3144,8 @@ namespace TVRename
             this.txtOtherExtensions.Name = "txtOtherExtensions";
             this.txtOtherExtensions.Size = new System.Drawing.Size(309, 20);
             this.txtOtherExtensions.TabIndex = 7;
+            this.toolTip1.SetToolTip(this.txtOtherExtensions, "Which file extensions in the library should be renamed along\r\nwith the video file" +
+        "s?");
             // 
             // txtVideoExtensions
             // 
@@ -3271,9 +3276,9 @@ namespace TVRename
             this.cbKeepTogether.AutoSize = true;
             this.cbKeepTogether.Location = new System.Drawing.Point(6, 285);
             this.cbKeepTogether.Name = "cbKeepTogether";
-            this.cbKeepTogether.Size = new System.Drawing.Size(251, 17);
+            this.cbKeepTogether.Size = new System.Drawing.Size(348, 17);
             this.cbKeepTogether.TabIndex = 8;
-            this.cbKeepTogether.Text = "&Copy/Move files with same base name as video";
+            this.cbKeepTogether.Text = "&Copy/Move files with same base name as video from Search Folders";
             this.cbKeepTogether.UseVisualStyleBackColor = true;
             this.cbKeepTogether.CheckedChanged += new System.EventHandler(this.cbKeepTogether_CheckedChanged);
             // 
@@ -3525,6 +3530,7 @@ namespace TVRename
             this.tbPercentDirty.Name = "tbPercentDirty";
             this.tbPercentDirty.Size = new System.Drawing.Size(28, 20);
             this.tbPercentDirty.TabIndex = 21;
+            this.tbPercentDirty.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // txtParallelDownloads
             // 
@@ -3824,8 +3830,7 @@ namespace TVRename
             this.ResumeLayout(false);
 
         }
-
-
+        
         #endregion
 
         private System.Windows.Forms.Button OKButton;

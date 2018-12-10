@@ -7,6 +7,7 @@
 // 
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Security;
 using Alphaleonis.Win32.Filesystem;
 using Microsoft.Win32;
@@ -23,6 +24,7 @@ namespace TVRename
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         private enum BrowserEmulationVersion
         {
             Default = 0,

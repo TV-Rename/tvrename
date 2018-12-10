@@ -139,13 +139,15 @@ namespace TVRename
 
         private void ActionProcessor(object queuesIn)
         {
-#if DEBUG
-            System.Diagnostics.Debug.Assert(queuesIn is ActionQueue[]);
-#endif
             try
             {
                 if (!(queuesIn is ActionQueue[] queues))
-                    return;
+                {
+                    string message =
+                        $"Action Processor called with object that is not a ActionQueue[], instead called with a {queuesIn.GetType().FullName}";
+                    Logger.Error(message);
+                    throw new ArgumentException(message);
+                }
 
                 SetupQueues(queues);
 
@@ -299,9 +301,6 @@ namespace TVRename
                 {
                     Logger.Error("No action type found for {0}, Please follow up with a developer.", action.GetType());
                     queues[3].Actions.Add(action); // put it in this queue by default
-#if DEBUG
-                    System.Diagnostics.Debug.Fail("Unknown action type for making processing queue");
-#endif
                 }
             }
             return queues;

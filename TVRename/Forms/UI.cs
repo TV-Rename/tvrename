@@ -133,7 +133,7 @@ namespace TVRename
                 Logger.Info(e, "Error loading layout XML");
             }
 
-            lvWhenToWatch.ListViewItemSorter = new DateSorterWTW();
+            lvWhenToWatch.ListViewItemSorter = new DateSorterWtw();
 
             if (mDoc.Args.Hide || !showUi)
             {
@@ -332,7 +332,7 @@ namespace TVRename
             }
         }
 
-        private void flushCacheToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void flushCacheToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (busy != 0)
             {
@@ -351,7 +351,7 @@ namespace TVRename
             {
                 TheTVDB.Instance.ForgetEverything();
                 FillMyShows();
-                FillEpGuideHtml();
+                await FillEpGuideHtml();
                 FillWhenToWatchList();
                 BGDownloadTimer_QuickFire();
             }
@@ -630,14 +630,14 @@ namespace TVRename
             webImages.Navigate(QuickStartGuide());
         }
 
-        private void FillEpGuideHtml()
+        private async Task FillEpGuideHtml()
         {
             if (MyShowTree.Nodes.Count == 0)
                 ShowQuickStartGuide();
             else
             {
                 TreeNode n = MyShowTree.SelectedNode;
-                FillEpGuideHtml(n);
+                await FillEpGuideHtml(n);
             }
         }
 
@@ -668,7 +668,7 @@ namespace TVRename
             return seas;
         }
 
-        private void FillEpGuideHtml(TreeNode n)
+        private async Task FillEpGuideHtml(TreeNode n)
         {
             if (n == null)
             {
@@ -678,7 +678,7 @@ namespace TVRename
 
             if (n.Tag is ProcessedEpisode pe)
             {
-                FillEpGuideHtml(pe.Show, pe.AppropriateSeasonNumber);
+                await FillEpGuideHtml(pe.Show, pe.AppropriateSeasonNumber);
                 return;
             }
 
@@ -689,13 +689,10 @@ namespace TVRename
                 if (seas.Episodes.Count > 0)
                 {
                     int tvdbcode = seas.TheSeries.TvdbCode;
-                    foreach (ShowItem si in mDoc.Library.Values)
+                    foreach (ShowItem si in mDoc.Library.Values.Where(si=>si.TvdbCode == tvdbcode))
                     {
-                        if (si.TvdbCode == tvdbcode)
-                        {
-                            FillEpGuideHtml(si, seas.SeasonNumber);
-                            return;
-                        }
+                        await FillEpGuideHtml(si, seas.SeasonNumber);
+                        return;
                     }
                 }
 
@@ -703,10 +700,10 @@ namespace TVRename
                 return;
             }
 
-            FillEpGuideHtml(TreeNodeToShowItem(n), -1);
+            await FillEpGuideHtml(TreeNodeToShowItem(n), -1);
         }
 
-        private async void FillEpGuideHtml(ShowItem si, int snum)
+        private async Task FillEpGuideHtml(ShowItem si, int snum)
         {
             if (tabControl1.SelectedTab != tbMyShows)
                 return;
@@ -767,7 +764,7 @@ namespace TVRename
                 //Fail gracefully - no RHS episode guide is not too big of a problem.
                 Logger.Error(ex);
             }
-            Application.DoEvents();
+            web.Update();
         }
 
         private static void TvdbFor(ProcessedEpisode e)
@@ -871,12 +868,12 @@ namespace TVRename
 
             if (col == 6) // straight sort by date
             {
-                lvWhenToWatch.ListViewItemSorter = new DateSorterWTW();
+                lvWhenToWatch.ListViewItemSorter = new DateSorterWtw();
                 lvWhenToWatch.ShowGroups = false;
             }
             else if (col == 3 || col == 4)
             {
-                lvWhenToWatch.ListViewItemSorter = new DateSorterWTW();
+                lvWhenToWatch.ListViewItemSorter = new DateSorterWtw();
                 lvWhenToWatch.ShowGroups = true;
             }
             else
@@ -1299,7 +1296,7 @@ namespace TVRename
             }
         }
 
-        private void MenuFolders(LVResults lvr)
+        private void MenuFolders(LvResults lvr)
         {
             if (mLastShowsClicked == null || mLastShowsClicked.Count != 1)
                 return;
@@ -2029,7 +2026,7 @@ namespace TVRename
             }
         }
 
-        private void SelectSeason(Season seas)
+        private async Task SelectSeason(Season seas)
         {
             foreach (TreeNode n in MyShowTree.Nodes)
             {
@@ -2044,10 +2041,10 @@ namespace TVRename
                 }
             }
 
-            FillEpGuideHtml(null);
+            await FillEpGuideHtml(null);
         }
 
-        private void SelectShow(ShowItem si)
+        private async Task SelectShow(ShowItem si)
         {
             foreach (TreeNode n in MyShowTree.Nodes)
             {
@@ -2060,7 +2057,7 @@ namespace TVRename
                 }
             }
 
-            FillEpGuideHtml(null);
+            await FillEpGuideHtml(null);
         }
 
         private void bnMyShowsAdd_Click(object sender, EventArgs e)
@@ -2249,9 +2246,9 @@ namespace TVRename
             }
         }
 
-        private void MyShowTree_AfterSelect(object sender, TreeViewEventArgs e)
+        private async void MyShowTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            FillEpGuideHtml(e.Node);
+            await FillEpGuideHtml(e.Node);
             bool showSelected = MyShowTree.SelectedNode != null;
             bnMyShowsEdit.Enabled = showSelected;
             bnMyShowsDelete.Enabled = showSelected;
@@ -2625,10 +2622,10 @@ namespace TVRename
         private void ActionAction(bool checkedNotSelected)
         {
             mDoc.PreventAutoScan("Action Selected Items");
-            LVResults lvr = new LVResults(lvAction, checkedNotSelected);
+            LvResults lvr = new LvResults(lvAction, checkedNotSelected);
             mDoc.DoActions(lvr.FlatList);
             // remove items from master list, unless it had an error
-            foreach (Item i2 in new LVResults(lvAction, checkedNotSelected).FlatList)
+            foreach (Item i2 in new LvResults(lvAction, checkedNotSelected).FlatList)
             {
                 if (i2 != null && !lvr.FlatList.Contains(i2))
                     mDoc.TheActionList.Remove(i2);
@@ -2641,7 +2638,7 @@ namespace TVRename
 
         private void Revert(bool checkedNotSelected)
         {
-            foreach (Item item in new LVResults(lvAction, checkedNotSelected).FlatList)
+            foreach (Item item in new LvResults(lvAction, checkedNotSelected).FlatList)
             {
                 Action revertAction = (Action) item;
                 ItemMissing m2 = revertAction.UndoItemMissing;
@@ -2699,7 +2696,7 @@ namespace TVRename
                 return;
 
             // build the right click menu for the _selected_ items, and types of items
-            LVResults lvr = new LVResults(lvAction, false);
+            LvResults lvr = new LvResults(lvAction, false);
 
             if (lvr.Count == 0)
                 return; // nothing selected
@@ -2729,7 +2726,7 @@ namespace TVRename
                 }
             }
 
-            if (lvr.CopyMove.Count > 0||lvr.RSS.Count>0)
+            if (lvr.CopyMove.Count > 0||lvr.Rss.Count>0)
             {
                 showRightClickMenu.Items.Add(new ToolStripSeparator());
                 AddRcMenuItem("Revert to Missing", RightClickCommands.kActionRevert);
@@ -2751,7 +2748,7 @@ namespace TVRename
         {
             UpdateSearchButtons();
 
-            LVResults lvr = new LVResults(lvAction, false);
+            LvResults lvr = new LvResults(lvAction, false);
 
             if (lvr.Count == 0)
             {
@@ -2818,8 +2815,8 @@ namespace TVRename
             if (internalCheckChange)
                 return;
 
-            LVResults all = new LVResults(lvAction, LVResults.WhichResults.All);
-            LVResults chk = new LVResults(lvAction, LVResults.WhichResults.Checked);
+            LvResults all = new LvResults(lvAction, LvResults.WhichResults.all);
+            LvResults chk = new LvResults(lvAction, LvResults.WhichResults.Checked);
 
             if (chk.Rename.Count == 0)
                 cbRename.CheckState = CheckState.Unchecked;
@@ -2835,11 +2832,11 @@ namespace TVRename
                     ? CheckState.Checked
                     : CheckState.Indeterminate;
 
-            if (chk.RSS.Count == 0)
+            if (chk.Rss.Count == 0)
                 cbRSS.CheckState = CheckState.Unchecked;
             else
                 cbRSS.CheckState =
-                    chk.RSS.Count == all.RSS.Count ? CheckState.Checked : CheckState.Indeterminate;
+                    chk.Rss.Count == all.Rss.Count ? CheckState.Checked : CheckState.Indeterminate;
 
             if (chk.Download.Count == 0)
                 cbDownload.CheckState = CheckState.Unchecked;
@@ -2848,11 +2845,11 @@ namespace TVRename
                     ? CheckState.Checked
                     : CheckState.Indeterminate;
 
-            if (chk.NFO.Count == 0)
+            if (chk.Nfo.Count == 0)
                 cbNFO.CheckState = CheckState.Unchecked;
             else
                 cbNFO.CheckState =
-                    chk.NFO.Count == all.NFO.Count ? CheckState.Checked : CheckState.Indeterminate;
+                    chk.Nfo.Count == all.Nfo.Count ? CheckState.Checked : CheckState.Indeterminate;
 
             if (chk.PyTivoMeta.Count == 0)
                 cbMeta.CheckState = CheckState.Unchecked;
@@ -2861,10 +2858,10 @@ namespace TVRename
                     ? CheckState.Checked
                     : CheckState.Indeterminate;
 
-            int total1 = all.Rename.Count + all.CopyMove.Count + all.RSS.Count + all.Download.Count + all.NFO.Count +
+            int total1 = all.Rename.Count + all.CopyMove.Count + all.Rss.Count + all.Download.Count + all.Nfo.Count +
                          all.PyTivoMeta.Count;
 
-            int total2 = chk.Rename.Count + chk.CopyMove.Count + chk.RSS.Count + chk.Download.Count + chk.NFO.Count +
+            int total2 = chk.Rename.Count + chk.CopyMove.Count + chk.Rss.Count + chk.Download.Count + chk.Nfo.Count +
                          chk.PyTivoMeta.Count;
 
             if (total2 == 0)
@@ -3031,7 +3028,7 @@ namespace TVRename
         private void lvAction_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             // double-click on an item will search for missing, do nothing (for now) for anything else
-            foreach (ItemMissing miss in new LVResults(lvAction, false).Missing)
+            foreach (ItemMissing miss in new LvResults(lvAction, false).Missing)
             {
                 if (miss.Episode != null)
                     TVDoc.SearchForEpisode(miss.Episode);
@@ -3040,7 +3037,7 @@ namespace TVRename
 
         private void bnActionBTSearch_Click(object sender, EventArgs e)
         {
-            LVResults lvr = new LVResults(lvAction, false);
+            LvResults lvr = new LvResults(lvAction, false);
 
             if (lvr.Count == 0)
                 return;
@@ -3056,7 +3053,7 @@ namespace TVRename
 
         private void IgnoreSelected()
         {
-            LVResults lvr = new LVResults(lvAction, false);
+            LvResults lvr = new LvResults(lvAction, false);
             bool added = false;
             foreach (Item action in lvr.FlatList)
             {

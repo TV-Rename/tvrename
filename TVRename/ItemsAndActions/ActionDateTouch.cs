@@ -56,10 +56,7 @@ namespace TVRename
             {
                 if (whereFile != null)
                 {
-                    bool priorFileReadonly = whereFile.IsReadOnly;
-                    if (priorFileReadonly) whereFile.IsReadOnly = false;
-                    System.IO.File.SetLastWriteTimeUtc(whereFile.FullName, updateTime);
-                    if (priorFileReadonly) whereFile.IsReadOnly = true;
+                    ProcessFile(whereFile,updateTime);
                 }
                 if (whereDirectory != null)
                 {
@@ -76,6 +73,14 @@ namespace TVRename
 
             Done = true;
             return true;
+        }
+
+        private static void ProcessFile(FileInfo whereFile, DateTime updateTime)
+        {
+            bool priorFileReadonly = whereFile.IsReadOnly;
+            if (priorFileReadonly) whereFile.IsReadOnly = false;
+            System.IO.File.SetLastWriteTimeUtc(whereFile.FullName, updateTime);
+            if (priorFileReadonly) whereFile.IsReadOnly = true;
         }
 
         #endregion

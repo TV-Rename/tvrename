@@ -289,7 +289,7 @@ namespace TVRename
             DirectoryInfo d = new DirectoryInfo(txtFolder.Text);
             foreach (FileInfo fi in d.GetFiles())
             {
-                if (!TVSettings.Instance.UsefulExtension(fi.Extension, true))
+                if (!TVSettings.Instance.FileHasUsefulExtension(fi, true,out string _))
                     continue; // move on
 
                 ShowItem si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;

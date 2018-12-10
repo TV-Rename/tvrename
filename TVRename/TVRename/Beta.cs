@@ -163,7 +163,7 @@ namespace TVRename
                 List<int> otherMovieLengths = new List<int>();
                 foreach (FileInfo file in possibleDupFile.Directory.EnumerateFiles())
                 {
-                    if (TVSettings.Instance.UsefulExtension(file.Extension, false))
+                    if (file.IsMovieFile())
                     {
                         otherMovieLengths.Add(file.GetFilmLength());
                     }
