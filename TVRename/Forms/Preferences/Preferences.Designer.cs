@@ -59,6 +59,8 @@ namespace TVRename
             this.tbMovieTerms = new System.Windows.Forms.TextBox();
             this.chkScheduledScan = new System.Windows.Forms.CheckBox();
             this.chkScanOnStartup = new System.Windows.Forms.CheckBox();
+            this.txtKeepTogether = new System.Windows.Forms.TextBox();
+            this.txtOtherExtensions = new System.Windows.Forms.TextBox();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.cmDefaults = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.KODIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -285,9 +287,7 @@ namespace TVRename
             this.chkRetainLanguageSpecificSubtitles = new System.Windows.Forms.CheckBox();
             this.label66 = new System.Windows.Forms.Label();
             this.pbFilesAndFolders = new System.Windows.Forms.PictureBox();
-            this.txtKeepTogether = new System.Windows.Forms.TextBox();
             this.txtMaxSampleSize = new System.Windows.Forms.TextBox();
-            this.txtOtherExtensions = new System.Windows.Forms.TextBox();
             this.txtVideoExtensions = new System.Windows.Forms.TextBox();
             this.bnTags = new System.Windows.Forms.Button();
             this.label39 = new System.Windows.Forms.Label();
@@ -575,6 +575,28 @@ namespace TVRename
             this.chkScanOnStartup.Text = "&Scan on Startup";
             this.toolTip1.SetToolTip(this.chkScanOnStartup, "If checked the system will automatically scan and complete actions on startup");
             this.chkScanOnStartup.UseVisualStyleBackColor = true;
+            // 
+            // txtKeepTogether
+            // 
+            this.txtKeepTogether.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtKeepTogether.Location = new System.Drawing.Point(204, 311);
+            this.txtKeepTogether.Name = "txtKeepTogether";
+            this.txtKeepTogether.Size = new System.Drawing.Size(204, 20);
+            this.txtKeepTogether.TabIndex = 23;
+            this.toolTip1.SetToolTip(this.txtKeepTogether, "Which file extensions should be copied from the Search\r\nFolders into the library?" +
+        "");
+            // 
+            // txtOtherExtensions
+            // 
+            this.txtOtherExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtOtherExtensions.Location = new System.Drawing.Point(99, 259);
+            this.txtOtherExtensions.Name = "txtOtherExtensions";
+            this.txtOtherExtensions.Size = new System.Drawing.Size(309, 20);
+            this.txtOtherExtensions.TabIndex = 7;
+            this.toolTip1.SetToolTip(this.txtOtherExtensions, "Which file extensions in the library should be renamed along\r\nwith the video file" +
+        "s?");
             // 
             // cmDefaults
             // 
@@ -3109,17 +3131,6 @@ namespace TVRename
             this.pbFilesAndFolders.TabStop = false;
             this.pbFilesAndFolders.Click += new System.EventHandler(this.pbFilesAndFolders_Click);
             // 
-            // txtKeepTogether
-            // 
-            this.txtKeepTogether.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtKeepTogether.Location = new System.Drawing.Point(204, 311);
-            this.txtKeepTogether.Name = "txtKeepTogether";
-            this.txtKeepTogether.Size = new System.Drawing.Size(204, 20);
-            this.txtKeepTogether.TabIndex = 23;
-            this.toolTip1.SetToolTip(this.txtKeepTogether, "Which file extensions should be copied from the Search\r\nFolders into the library?" +
-        "");
-            // 
             // txtMaxSampleSize
             // 
             this.txtMaxSampleSize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -3128,17 +3139,6 @@ namespace TVRename
             this.txtMaxSampleSize.Size = new System.Drawing.Size(53, 20);
             this.txtMaxSampleSize.TabIndex = 14;
             this.txtMaxSampleSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
-            // 
-            // txtOtherExtensions
-            // 
-            this.txtOtherExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtOtherExtensions.Location = new System.Drawing.Point(99, 259);
-            this.txtOtherExtensions.Name = "txtOtherExtensions";
-            this.txtOtherExtensions.Size = new System.Drawing.Size(309, 20);
-            this.txtOtherExtensions.TabIndex = 7;
-            this.toolTip1.SetToolTip(this.txtOtherExtensions, "Which file extensions in the library should be renamed along\r\nwith the video file" +
-        "s?");
             // 
             // txtVideoExtensions
             // 
@@ -3380,7 +3380,7 @@ namespace TVRename
             // lblScanAction
             // 
             this.lblScanAction.AutoSize = true;
-            this.lblScanAction.Location = new System.Drawing.Point(9, 31);
+            this.lblScanAction.Location = new System.Drawing.Point(9, 30);
             this.lblScanAction.Name = "lblScanAction";
             this.lblScanAction.Size = new System.Drawing.Size(121, 13);
             this.lblScanAction.TabIndex = 43;

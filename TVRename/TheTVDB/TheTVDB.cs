@@ -141,13 +141,13 @@ namespace TVRename
         {
             Dictionary<int, SeriesInfo> matchingSeries = new Dictionary<int, SeriesInfo>();
 
-            testShowName = Helpers.CompareName(testShowName);
+            testShowName = testShowName.CompareName();
 
             if (string.IsNullOrEmpty(testShowName)) return matchingSeries;
 
             foreach (KeyValuePair<int, SeriesInfo> kvp in series)
             {
-                string show = Helpers.CompareName(kvp.Value.Name);
+                string show = kvp.Value.Name.CompareName();
 
                 if (show.Contains(testShowName, StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -945,7 +945,7 @@ namespace TVRename
                 }
                 else
                 {
-                    Logger.Error($"Banners were found for series {seriesId} - Ignoring them");
+                    Logger.Error($"Banners were found for series {seriesId} - Ignoring them {bannersXml}");
                 }
             }
         }
@@ -1633,7 +1633,7 @@ namespace TVRename
                 return;
             }
 
-            text = Helpers.RemoveDiacritics(text); // API doesn't like accented characters
+            text = text.RemoveDiacritics(); // API doesn't like accented characters
 
             bool isNumber = Regex.Match(text, "^[0-9]+$").Success;
             if (isNumber)

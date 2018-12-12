@@ -7,13 +7,12 @@
 // 
 
 using System;
-using System.Diagnostics.Eventing.Reader;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace TVRename
 {
-    using System.Windows.Forms;
-
     public class LvResults
     {
         #region WhichResults enum
@@ -27,15 +26,17 @@ namespace TVRename
 
         #endregion
 
-        public System.Collections.Generic.List<ActionCopyMoveRename> CopyMove;
         public int Count;
-        public System.Collections.Generic.List<ActionDownloadImage> Download;
         public ItemList FlatList;
-        public System.Collections.Generic.List<ItemMissing> Missing;
-        public System.Collections.Generic.List<ActionNfo> Nfo;
-        public System.Collections.Generic.List<ActionPyTivoMeta> PyTivoMeta;
-        public System.Collections.Generic.List<ActionTDownload> Rss;
-        public System.Collections.Generic.List<ActionCopyMoveRename> Rename;
+        public List<ActionCopyMoveRename> CopyMove;
+        public List<ActionCopyMoveRename> Rename;
+        public List<ActionDownloadImage> SaveImages;
+        public List<ActionWriteMetadata> WriteMetadatas;
+        public List<ActionFileMetaData> ModifyMetadatas;
+        public List<ActionTDownload> DownloadTorrents;
+        public List<ActionDelete> Deletes;
+        public List<ItemMissing> Missing;
+        public List<ItemDownloading> Downloading;
 
         public LvResults(ListView lv, bool isChecked) // if not checked, then selected items
         {
@@ -49,16 +50,18 @@ namespace TVRename
 
         private void Go(ListView lv, WhichResults which)
         {
-            Missing = new System.Collections.Generic.List<ItemMissing>();
-            Rss = new System.Collections.Generic.List<ActionTDownload>();
-            CopyMove = new System.Collections.Generic.List<ActionCopyMoveRename>();
-            Rename = new System.Collections.Generic.List<ActionCopyMoveRename>();
-            Download = new System.Collections.Generic.List<ActionDownloadImage>();
-            Nfo = new System.Collections.Generic.List<ActionNfo>();
-            PyTivoMeta = new System.Collections.Generic.List<ActionPyTivoMeta>();
+            Missing = new List<ItemMissing>();
+            WriteMetadatas = new List<ActionWriteMetadata>();
+            CopyMove = new List<ActionCopyMoveRename>();
+            Rename = new List<ActionCopyMoveRename>();
+            SaveImages = new List<ActionDownloadImage>();
+            DownloadTorrents = new List<ActionTDownload>();
+            Downloading = new List<ItemDownloading>();
+            ModifyMetadatas = new List<ActionFileMetaData>();
+            Deletes = new List<ActionDelete>();
             FlatList = new ItemList();
 
-            System.Collections.Generic.List<ListViewItem> sel = new System.Collections.Generic.List<ListViewItem>();
+            List<ListViewItem> sel = new List<ListViewItem>();
             sel.AddRange(GetSelectionCollection(lv, which));
 
             Count = sel.Count;
@@ -71,7 +74,7 @@ namespace TVRename
                 if (lvi == null)
                     continue;
 
-                Item action = (Item)(lvi.Tag);
+                Item action = (Item)lvi.Tag;
                 if (action != null)
                     FlatList.Add(action);
 
@@ -85,19 +88,25 @@ namespace TVRename
                         CopyMove.Add(cmr);
                         break;
                     case ActionDownloadImage item:
-                        Download.Add(item);
+                        SaveImages.Add(item);
                         break;
                     case ActionTDownload rss:
-                        Rss.Add(rss);
+                        DownloadTorrents.Add(rss);
                         break;
                     case ItemMissing missing:
                         Missing.Add(missing);
                         break;
-                    case ActionNfo nfo:
-                        Nfo.Add(nfo);
+                    case ActionWriteMetadata nfo:
+                        WriteMetadatas.Add(nfo);
                         break;
-                    case ActionPyTivoMeta meta:
-                        PyTivoMeta.Add(meta);
+                    case ActionFileMetaData meta:
+                        ModifyMetadatas.Add(meta);
+                        break;
+                    case ActionDelete delete:
+                        Deletes.Add(delete);
+                        break;
+                    case ItemDownloading down:
+                        Downloading.Add(down);
                         break;
                     default:
                         throw new InvalidOperationException("Unexpected value of action " + action?.GetType());
@@ -105,7 +114,7 @@ namespace TVRename
             }
         }
 
-        private static System.Collections.Generic.IEnumerable<ListViewItem> GetSelectionCollection(ListView lv, WhichResults which)
+        private static IEnumerable<ListViewItem> GetSelectionCollection(ListView lv, WhichResults which)
         {
             switch (which)
             {
