@@ -2494,7 +2494,7 @@ namespace TVRename
             mDoc.Scan(shows, unattended, st);
             LessBusy();
 
-            if (mDoc.ShowProblems.Any())
+            if (mDoc.ShowProblems.Any() && !unattended)
             {
                 string message = mDoc.ShowProblems.Count>1
                     ? $"Shows with Id { string.Join(",",mDoc.ShowProblems)} are not found on TVDB. Please update them"
