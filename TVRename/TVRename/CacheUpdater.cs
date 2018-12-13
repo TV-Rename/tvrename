@@ -72,7 +72,7 @@ namespace TVRename
 
             WaitForBgDownloadDone();
 
-            TheTVDB.Instance.SaveCache();
+            //TheTVDB.Instance.SaveCache();
 
             if (!downloadOk)
             {
