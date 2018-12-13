@@ -364,6 +364,8 @@ namespace TVRename
             ExportShowInfo(); //Save shows list to disk
         }
 
+        public ICollection<int> ShowProblems => cacheManager.Problems;
+
         public void Scan(List<ShowItem> shows, bool unattended, TVSettings.ScanType st)
         {
             try
@@ -804,6 +806,13 @@ namespace TVRename
             ExportShowInfo();
             WriteUpcoming();
             WriteRecent();
+        }
+
+        public void ClearShowProblems() => cacheManager.ClearProblems();
+
+        public void ReindexLibrary()
+        {
+            Library.ReIndex();
         }
     }
 }

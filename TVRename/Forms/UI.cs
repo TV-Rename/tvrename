@@ -2116,6 +2116,7 @@ namespace TVRename
         {
             mDoc.SetDirty();
             RefreshWTW(download);
+            mDoc.ReindexLibrary();
             FillMyShows();
 
             mDoc.ExportShowInfo(); //Save shows list to disk
@@ -2492,6 +2493,25 @@ namespace TVRename
             MoreBusy();
             mDoc.Scan(shows, unattended, st);
             LessBusy();
+
+            if (mDoc.ShowProblems.Any())
+            {
+                string message = mDoc.ShowProblems.Count>1
+                    ? $"Shows with Id { string.Join(",",mDoc.ShowProblems)} are not found on TVDB. Please update them"
+                    : $"Show with Id {mDoc.ShowProblems.First()} is not found on TVDB. Please Update";
+
+                DialogResult result = MessageBox.Show(message,"Series No Longer Found", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+
+                if (result != DialogResult.Cancel)
+                {
+                    foreach (int seriesId in mDoc.ShowProblems)
+                    {
+                        EditShow(mDoc.Library.ShowItem(seriesId));
+                    }
+                }
+
+                mDoc.ClearShowProblems();
+            }
 
             FillMyShows(); // scanning can download more info to be displayed in my shows
             FillActionList();

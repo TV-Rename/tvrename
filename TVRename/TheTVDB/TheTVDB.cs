@@ -1089,6 +1089,15 @@ namespace TVRename
             }
             catch (WebException ex)
             {
+                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse resp &&
+                    resp.StatusCode == HttpStatusCode.NotFound)
+                {
+                    Logger.Warn($"Show with Id {code} is no longer available from TVDB (got a 404). {uri}");
+                    Say("");
+                    LastError = ex.Message;
+                    throw new ShowNotFoundException();
+                }
+
                 Logger.Error("Error obtaining {0}", uri);
                 Logger.Error(ex);
                 Say("");
@@ -1636,9 +1645,16 @@ namespace TVRename
             text = text.RemoveDiacritics(); // API doesn't like accented characters
 
             bool isNumber = Regex.Match(text, "^[0-9]+$").Success;
-            if (isNumber)
-                DownloadSeriesNow(int.Parse(text), false, false,false, TVSettings.Instance.PreferredLanguageCode);
-
+            try
+            {
+                if (isNumber)
+                    DownloadSeriesNow(int.Parse(text), false, false, false, TVSettings.Instance.PreferredLanguageCode);
+            }
+            catch (ShowNotFoundException)
+            {
+                //not really an issue so we can continue
+            }
+        
             // but, the number could also be a name, so continue searching as usual
             //text = text.Replace(".", " ");
 
@@ -1798,5 +1814,9 @@ namespace TVRename
             Unlock("TheTVDB");
             SaveCache();
         }
+    }
+
+    internal class ShowNotFoundException : Exception
+    {
     }
 }

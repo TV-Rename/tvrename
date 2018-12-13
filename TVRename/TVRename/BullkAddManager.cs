@@ -38,12 +38,20 @@ namespace TVRename
             if (tvdbId != -1)
             {
                 TheTVDB.Instance.Unlock("GuessShowItem");
-                SeriesInfo series = TheTVDB.Instance.GetSeriesAndDownload(tvdbId);
-                if (series != null)
+                try
                 {
-                    ai.TVDBCode = tvdbId;
-                    return;
+                    SeriesInfo series = TheTVDB.Instance.GetSeriesAndDownload(tvdbId);
+                    if (series != null)
+                    {
+                        ai.TVDBCode = tvdbId;
+                        return;
+                    }
                 }
+                catch (ShowNotFoundException)
+                {
+                    //continue to try the next method
+                }
+
             }
 
             SeriesInfo ser = TheTVDB.Instance.GetSeries(showName);
