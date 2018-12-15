@@ -542,7 +542,6 @@ namespace TVRename
             int minYear = si.TheSeries().MinYear;
             int maxYear = si.TheSeries().MaxYear;
             string yearRange = (minYear == maxYear) ? minYear.ToString() : minYear + "-" + maxYear;
-            string episodeSummary = si.TheSeries().AiredSeasons.Sum(pair => pair.Value.Episodes.Count).ToString();
             string siteRating = si.TheSeries().SiteRating > 0 ? si.TheSeries().SiteRating + "/10" : "";
             string tvdbLink = TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true);
 
@@ -576,12 +575,9 @@ namespace TVRename
                 body += "<img width=758 height=140 src=\"" + TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath()) +
                         "\"><br/>";
 
-            List<ProcessedEpisode> eis;
-            // int snum = s.SeasonNumber;
-            if (si.SeasonEpisodes.ContainsKey(snum))
-                eis = si.SeasonEpisodes[snum]; // use processed episodes if they are available
-            else
-                eis = ShowItem.ProcessedListFromEpisodes(s.Episodes.Values, si);
+            List<ProcessedEpisode> eis = si.SeasonEpisodes.ContainsKey(snum) ?
+                si.SeasonEpisodes[snum] :
+                ShowItem.ProcessedListFromEpisodes(s.Episodes.Values, si);
 
             string seasText = SeasonName(si, snum);
 
@@ -662,7 +658,6 @@ namespace TVRename
             overviewString += GetOverviewPart("Guest Stars", ei.EpisodeGuestStars);
             overviewString += GetOverviewPart("Production Code", ei.ProductionCode);
             overviewString += GetOverviewPart("Writer", ei.Writer);
-            //todo - add some more information
 
             if (!string.IsNullOrWhiteSpace(overviewString))
                 return GetOverviewString(ei) + "<table border=0>" + overviewString + "</table>";
