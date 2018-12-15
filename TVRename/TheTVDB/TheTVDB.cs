@@ -1094,8 +1094,12 @@ namespace TVRename
                 {
                     Logger.Warn($"Show with Id {code} is no longer available from TVDB (got a 404). {uri}");
                     Say("");
-                    LastError = ex.Message;
-                    throw new ShowNotFoundException();
+
+                    if (TvdbIsUp())
+                    {
+                        LastError = ex.Message;
+                        throw new ShowNotFoundException();
+                    }
                 }
 
                 Logger.Error("Error obtaining {0}", uri);
@@ -1312,6 +1316,38 @@ namespace TVRename
             forceReloadOn.Remove(code);
 
             return (series.ContainsKey(code)) ? series[code] : null;
+        }
+
+        private bool TvdbIsUp()
+        {
+            JObject jsonResponse;
+            try
+            {
+                jsonResponse = HttpHelper.JsonHttpGetRequest(TvDbTokenProvider.TVDB_API_URL, null,null);
+            }
+            catch (WebException ex)
+            {
+                //we expect an Unauthorised response - so we know the site is up
+
+                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse resp)
+                {
+                    switch (resp.StatusCode)
+                    {
+                        case HttpStatusCode.Unauthorized:
+                            return true;
+                        case HttpStatusCode.Forbidden:
+                            return true;
+                        case HttpStatusCode.NotFound:
+                            return false;
+                    }
+                }
+
+                return false;
+            }
+
+            if (!jsonResponse.HasValues) return false;
+
+            return true;
         }
 
         private void ReloadEpisodes(int code, bool useCustomLangCode, string langCode)
