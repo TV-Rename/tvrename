@@ -751,6 +751,31 @@ namespace TVRename
                 return;
             }
 
+            if (TVSettings.Instance.OfflineMode)
+            {
+                if (si.DvdOrder && snum >= 0 && ser.DvdSeasons.ContainsKey(snum))
+                {
+                    Season s = ser.DvdSeasons[snum];
+                    SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(si.GetSeasonHtmlOverviewOffline(s)));
+                    SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
+                }
+                else if (!si.DvdOrder && snum >= 0 && ser.AiredSeasons.ContainsKey(snum))
+                {
+                    Season s = ser.AiredSeasons[snum];
+                    SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(si.GetSeasonHtmlOverviewOffline(s)));
+                    SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
+                }
+                else
+                {
+                    // no epnum specified, just show an overview
+                    SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(si.GetShowHtmlOverviewOffline()));
+                    SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
+                }
+
+                TheTVDB.Instance.Unlock("FillEpGuideHTML");
+                return;
+            }
+
             if (si.DvdOrder && snum >= 0 && ser.DvdSeasons.ContainsKey(snum))
             {
                 Season s = ser.DvdSeasons[snum];
