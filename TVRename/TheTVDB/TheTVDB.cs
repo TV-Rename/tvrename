@@ -1851,8 +1851,4 @@ namespace TVRename
             SaveCache();
         }
     }
-
-    internal class ShowNotFoundException : Exception
-    {
-    }
 }

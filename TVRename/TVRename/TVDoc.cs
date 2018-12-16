@@ -463,10 +463,7 @@ namespace TVRename
             PreventAutoScan("Do all actions");
             ItemList theList = new ItemList();
 
-            foreach (Action action in TheActionList.Actions())
-            {
-                    theList.Add(action);
-            }
+            theList.AddRange(TheActionList.Actions());
 
             DoActions(theList);
             AllowAutoScan();

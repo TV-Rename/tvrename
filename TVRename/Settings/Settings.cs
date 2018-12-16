@@ -682,20 +682,14 @@ namespace TVRename
 
         public string FilenameFriendly(string fn)
         {
-            if (string.IsNullOrWhiteSpace(fn)) return "";
+            if (string.IsNullOrWhiteSpace(fn)) return string.Empty;
 
             foreach (Replacement rep in Replacements)
             {
-                if (rep.CaseInsensitive)
-                    fn = Regex.Replace(fn, Regex.Escape(rep.This), Regex.Escape(rep.That), RegexOptions.IgnoreCase);
-                else
-                    fn = fn.Replace(rep.This, rep.That);
+                fn = rep.DoReplace(fn);
             }
 
-            if (ForceLowercaseFilenames)
-                fn = fn.ToLower();
-
-            return fn;
+            return ForceLowercaseFilenames ? fn.ToLower() : fn;
         }
 
         public bool NeedToDownloadBannerFile()
@@ -770,6 +764,11 @@ namespace TVRename
                 This = a;
                 That = b;
                 CaseInsensitive = insens;
+            }
+
+            public string DoReplace(string fn)
+            {
+                return CaseInsensitive ? Regex.Replace(fn, Regex.Escape(This), Regex.Escape(That), RegexOptions.IgnoreCase) : fn.Replace(This, That);
             }
         }
 
