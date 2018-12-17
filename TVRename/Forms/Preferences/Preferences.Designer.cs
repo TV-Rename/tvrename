@@ -331,6 +331,7 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
+            this.cbCopyFutureDatedEps = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -489,7 +490,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbSearchFolders.FormattingEnabled = true;
-            this.lbSearchFolders.Location = new System.Drawing.Point(5, 176);
+            this.lbSearchFolders.Location = new System.Drawing.Point(5, 207);
             this.lbSearchFolders.Name = "lbSearchFolders";
             this.lbSearchFolders.ScrollAlwaysVisible = true;
             this.lbSearchFolders.Size = new System.Drawing.Size(405, 95);
@@ -1733,6 +1734,7 @@ namespace TVRename
             // 
             // tbSearchFolders
             // 
+            this.tbSearchFolders.Controls.Add(this.cbCopyFutureDatedEps);
             this.tbSearchFolders.Controls.Add(this.groupBox8);
             this.tbSearchFolders.Controls.Add(this.label67);
             this.tbSearchFolders.Controls.Add(this.pbSearchFolders);
@@ -1763,7 +1765,7 @@ namespace TVRename
             this.groupBox8.Controls.Add(this.tbPriorityOverrideTerms);
             this.groupBox8.Controls.Add(this.label52);
             this.groupBox8.Controls.Add(this.cbHigherQuality);
-            this.groupBox8.Location = new System.Drawing.Point(6, 426);
+            this.groupBox8.Location = new System.Drawing.Point(6, 457);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Size = new System.Drawing.Size(406, 100);
             this.groupBox8.TabIndex = 40;
@@ -1859,7 +1861,7 @@ namespace TVRename
             this.gbAutoAdd.Controls.Add(this.label44);
             this.gbAutoAdd.Controls.Add(this.tbIgnoreSuffixes);
             this.gbAutoAdd.Controls.Add(this.tbMovieTerms);
-            this.gbAutoAdd.Location = new System.Drawing.Point(6, 313);
+            this.gbAutoAdd.Location = new System.Drawing.Point(6, 344);
             this.gbAutoAdd.Name = "gbAutoAdd";
             this.gbAutoAdd.Size = new System.Drawing.Size(407, 107);
             this.gbAutoAdd.TabIndex = 36;
@@ -1931,7 +1933,7 @@ namespace TVRename
             // 
             this.bnOpenSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnOpenSearchFolder.Enabled = false;
-            this.bnOpenSearchFolder.Location = new System.Drawing.Point(166, 277);
+            this.bnOpenSearchFolder.Location = new System.Drawing.Point(166, 308);
             this.bnOpenSearchFolder.Name = "bnOpenSearchFolder";
             this.bnOpenSearchFolder.Size = new System.Drawing.Size(75, 23);
             this.bnOpenSearchFolder.TabIndex = 4;
@@ -1943,7 +1945,7 @@ namespace TVRename
             // 
             this.bnRemoveSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnRemoveSearchFolder.Enabled = false;
-            this.bnRemoveSearchFolder.Location = new System.Drawing.Point(85, 277);
+            this.bnRemoveSearchFolder.Location = new System.Drawing.Point(85, 308);
             this.bnRemoveSearchFolder.Name = "bnRemoveSearchFolder";
             this.bnRemoveSearchFolder.Size = new System.Drawing.Size(75, 23);
             this.bnRemoveSearchFolder.TabIndex = 3;
@@ -1954,7 +1956,7 @@ namespace TVRename
             // bnAddSearchFolder
             // 
             this.bnAddSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnAddSearchFolder.Location = new System.Drawing.Point(6, 277);
+            this.bnAddSearchFolder.Location = new System.Drawing.Point(6, 308);
             this.bnAddSearchFolder.Name = "bnAddSearchFolder";
             this.bnAddSearchFolder.Size = new System.Drawing.Size(75, 23);
             this.bnAddSearchFolder.TabIndex = 2;
@@ -1966,7 +1968,7 @@ namespace TVRename
             // 
             this.label23.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(6, 160);
+            this.label23.Location = new System.Drawing.Point(6, 191);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(78, 13);
             this.label23.TabIndex = 0;
@@ -3649,6 +3651,18 @@ namespace TVRename
             this.tcTabs.TabIndex = 0;
             this.tcTabs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tpSearch_DrawItem);
             // 
+            // cbCopyFutureDatedEps
+            // 
+            this.cbCopyFutureDatedEps.AutoSize = true;
+            this.cbCopyFutureDatedEps.Location = new System.Drawing.Point(5, 163);
+            this.cbCopyFutureDatedEps.Name = "cbCopyFutureDatedEps";
+            this.cbCopyFutureDatedEps.Size = new System.Drawing.Size(270, 17);
+            this.cbCopyFutureDatedEps.TabIndex = 41;
+            this.cbCopyFutureDatedEps.Text = "Copy future dated episodes found in Search Folders";
+            this.toolTip1.SetToolTip(this.cbCopyFutureDatedEps, "If the contents of any of these folder change, then automatically do a \"Scan\" and" +
+        " \"Do\".");
+            this.cbCopyFutureDatedEps.UseVisualStyleBackColor = true;
+            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -4048,5 +4062,6 @@ namespace TVRename
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.CheckBox cbRenameCheck;
         private System.Windows.Forms.CheckBox cbMissing;
+        private System.Windows.Forms.CheckBox cbCopyFutureDatedEps;
     }
 }

@@ -201,6 +201,7 @@ namespace TVRename
             s.AutoMergeLibraryEpisodes = chkAutoMergeLibraryEpisodes.Checked;
             s.RetainLanguageSpecificSubtitles = chkRetainLanguageSpecificSubtitles.Checked;
             s.ForceBulkAddToUseSettingsOnly = chkForceBulkAddToUseSettingsOnly.Checked;
+            s.CopyFutureDatedEpsFromSearchFolders = cbCopyFutureDatedEps.Checked;
 
             s.SearchJSON = cbSearchJSON.Checked;
             s.SearchJSONManualScanOnly = cbSearchJSONManualScanOnly.Checked;
@@ -681,6 +682,7 @@ namespace TVRename
             SetDropdownValue(domainUpDown1, s.periodCheckHours);
             cbCleanUpDownloadDir.Checked = s.RemoveDownloadDirectoriesFiles;
             cbDeleteShowFromDisk.Checked = s.DeleteShowFromDisk;
+            cbCopyFutureDatedEps.Checked = s.CopyFutureDatedEpsFromSearchFolders;
 
             cbMissing.Checked = s.MissingCheck;
             cbxUpdateAirDate.Checked = s.CorrectFileDates;

@@ -27,6 +27,7 @@ namespace TVRename
             startPosition = startpct;
             endPosition = totPct;
             progressDelegate = prog;
+            progressDelegate.Invoke(startPosition, string.Empty);
             Check(prog, showList,settings);
             progressDelegate.Invoke(endPosition , string.Empty);
         }

@@ -33,6 +33,7 @@ namespace TVRename
         {
             DownloadDone = true;
             downloadOk = true;
+            problematicSeriesIds = new List<int>();
         }
 
         public void StartBgDownloadThread(bool stopOnError, ICollection<SeriesSpecifier> shows)
@@ -45,7 +46,7 @@ namespace TVRename
             downloadOk = true;
 
             downloadIds = shows;
-            problematicSeriesIds = new List<int>();
+            problematicSeriesIds.Clear();
             mDownloaderThread = new Thread(Downloader) { Name = "Downloader" };
             mDownloaderThread.Start();
         }
