@@ -6,6 +6,7 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,7 +19,6 @@ using System.Web;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using NLog;
 using TVRename.Forms;
 using TVRename.Ipc;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
@@ -747,6 +747,31 @@ namespace TVRename
             if (ser == null)
             {
                 ClearInfoWindows("Not downloaded, or not available");
+                TheTVDB.Instance.Unlock("FillEpGuideHTML");
+                return;
+            }
+
+            if (TVSettings.Instance.OfflineMode)
+            {
+                if (si.DvdOrder && snum >= 0 && ser.DvdSeasons.ContainsKey(snum))
+                {
+                    Season s = ser.DvdSeasons[snum];
+                    SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(si.GetSeasonHtmlOverviewOffline(s)));
+                    SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
+                }
+                else if (!si.DvdOrder && snum >= 0 && ser.AiredSeasons.ContainsKey(snum))
+                {
+                    Season s = ser.AiredSeasons[snum];
+                    SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(si.GetSeasonHtmlOverviewOffline(s)));
+                    SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
+                }
+                else
+                {
+                    // no epnum specified, just show an overview
+                    SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(si.GetShowHtmlOverviewOffline()));
+                    SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
+                }
+
                 TheTVDB.Instance.Unlock("FillEpGuideHTML");
                 return;
             }
@@ -2116,6 +2141,7 @@ namespace TVRename
         {
             mDoc.SetDirty();
             RefreshWTW(download);
+            mDoc.ReindexLibrary();
             FillMyShows();
 
             mDoc.ExportShowInfo(); //Save shows list to disk
@@ -2493,6 +2519,25 @@ namespace TVRename
             mDoc.Scan(shows, unattended, st);
             LessBusy();
 
+            if (mDoc.ShowProblems.Any() && !unattended)
+            {
+                string message = mDoc.ShowProblems.Count>1
+                    ? $"Shows with Id { string.Join(",",mDoc.ShowProblems)} are not found on TVDB. Please update them"
+                    : $"Show with Id {mDoc.ShowProblems.First()} is not found on TVDB. Please Update";
+
+                DialogResult result = MessageBox.Show(message,"Series No Longer Found", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+
+                if (result != DialogResult.Cancel)
+                {
+                    foreach (int seriesId in mDoc.ShowProblems)
+                    {
+                        EditShow(mDoc.Library.ShowItem(seriesId));
+                    }
+                }
+
+                mDoc.ClearShowProblems();
+            }
+
             FillMyShows(); // scanning can download more info to be displayed in my shows
             FillActionList();
         }
@@ -2752,7 +2797,7 @@ namespace TVRename
                 }
             }
 
-            if (lvr.CopyMove.Count > 0||lvr.Rss.Count>0)
+            if (lvr.CopyMove.Count > 0||lvr.DownloadTorrents.Count>0)
             {
                 showRightClickMenu.Items.Add(new ToolStripSeparator());
                 AddRcMenuItem("Revert to Missing", RightClickCommands.kActionRevert);
@@ -2783,7 +2828,7 @@ namespace TVRename
                 return;
             }
 
-            bnActionBTSearch.Enabled = lvr.Download.Count <= 0;
+            bnActionBTSearch.Enabled = lvr.SaveImages.Count <= 0;
 
             mLastShowsClicked = null;
             mLastEpClicked = null;
@@ -2844,56 +2889,33 @@ namespace TVRename
             LvResults all = new LvResults(lvAction, LvResults.WhichResults.all);
             LvResults chk = new LvResults(lvAction, LvResults.WhichResults.Checked);
 
-            if (chk.Rename.Count == 0)
-                cbRename.CheckState = CheckState.Unchecked;
-            else
-                cbRename.CheckState = chk.Rename.Count == all.Rename.Count
-                    ? CheckState.Checked
-                    : CheckState.Indeterminate;
+            SetCheckbox(cbRename, all.Rename, chk.Rename);
+            SetCheckbox(cbCopyMove, all.CopyMove, chk.CopyMove);
+            SetCheckbox(cbDeleteFiles, all.Deletes, chk.Deletes);
+            SetCheckbox(cbSaveImages,all.SaveImages,chk.SaveImages);
+            SetCheckbox(cbWriteMetadata, all.WriteMetadatas, chk.WriteMetadatas);
+            SetCheckbox(cbModifyMetadata, all.ModifyMetadatas, chk.ModifyMetadatas);
+            SetCheckbox(cbDownload, all.DownloadTorrents, chk.DownloadTorrents);
 
-            if (chk.CopyMove.Count == 0)
-                cbCopyMove.CheckState = CheckState.Unchecked;
-            else
-                cbCopyMove.CheckState = chk.CopyMove.Count == all.CopyMove.Count
-                    ? CheckState.Checked
-                    : CheckState.Indeterminate;
+            int total1 = all.FlatList.Count-all.Downloading.Count-all.Missing.Count;
 
-            if (chk.Rss.Count == 0)
-                cbRSS.CheckState = CheckState.Unchecked;
-            else
-                cbRSS.CheckState =
-                    chk.Rss.Count == all.Rss.Count ? CheckState.Checked : CheckState.Indeterminate;
-
-            if (chk.Download.Count == 0)
-                cbDownload.CheckState = CheckState.Unchecked;
-            else
-                cbDownload.CheckState = chk.Download.Count == all.Download.Count
-                    ? CheckState.Checked
-                    : CheckState.Indeterminate;
-
-            if (chk.Nfo.Count == 0)
-                cbNFO.CheckState = CheckState.Unchecked;
-            else
-                cbNFO.CheckState =
-                    chk.Nfo.Count == all.Nfo.Count ? CheckState.Checked : CheckState.Indeterminate;
-
-            if (chk.PyTivoMeta.Count == 0)
-                cbMeta.CheckState = CheckState.Unchecked;
-            else
-                cbMeta.CheckState = chk.PyTivoMeta.Count == all.PyTivoMeta.Count
-                    ? CheckState.Checked
-                    : CheckState.Indeterminate;
-
-            int total1 = all.Rename.Count + all.CopyMove.Count + all.Rss.Count + all.Download.Count + all.Nfo.Count +
-                         all.PyTivoMeta.Count;
-
-            int total2 = chk.Rename.Count + chk.CopyMove.Count + chk.Rss.Count + chk.Download.Count + chk.Nfo.Count +
-                         chk.PyTivoMeta.Count;
+            int total2 = chk.FlatList.Count - chk.Downloading.Count - chk.Missing.Count;
 
             if (total2 == 0)
                 cbAll.CheckState = CheckState.Unchecked;
             else
                 cbAll.CheckState = total2 == total1 ? CheckState.Checked : CheckState.Indeterminate;
+        }
+
+        private static void SetCheckbox(CheckBox box,IEnumerable<Item> all, IEnumerable<Item> chk)
+        {
+            IEnumerable<Item> enumerable = chk.ToList();
+            if (!enumerable.Any())
+                box.CheckState = CheckState.Unchecked;
+            else
+                box.CheckState = enumerable.Count() == all.Count()
+                    ? CheckState.Checked
+                    : CheckState.Indeterminate;
         }
 
         private void cbActionAllNone_Click(object sender, EventArgs e)
@@ -2908,6 +2930,27 @@ namespace TVRename
             internalCheckChange = true;
             foreach (ListViewItem lvi in lvAction.Items)
                 lvi.Checked = cs == CheckState.Checked;
+
+            internalCheckChange = false;
+            UpdateActionCheckboxes();
+        }
+
+        private void cbDeletes_Click(object sender, EventArgs e)
+        {
+            CheckState cs = cbDeleteFiles.CheckState;
+            if (cs == CheckState.Indeterminate)
+            {
+                cbDeleteFiles.CheckState = CheckState.Unchecked;
+                cs = CheckState.Unchecked;
+            }
+
+            internalCheckChange = true;
+            foreach (ListViewItem lvi in lvAction.Items)
+            {
+                Item i = (Item)lvi.Tag;
+                if (i is ActionDelete )
+                    lvi.Checked = cs == CheckState.Checked;
+            }
 
             internalCheckChange = false;
             UpdateActionCheckboxes();
@@ -2957,10 +3000,10 @@ namespace TVRename
 
         private void cbActionNFO_Click(object sender, EventArgs e)
         {
-            CheckState cs = cbNFO.CheckState;
+            CheckState cs = cbWriteMetadata.CheckState;
             if (cs == CheckState.Indeterminate)
             {
-                cbNFO.CheckState = CheckState.Unchecked;
+                cbWriteMetadata.CheckState = CheckState.Unchecked;
                 cs = CheckState.Unchecked;
             }
 
@@ -2968,7 +3011,7 @@ namespace TVRename
             foreach (ListViewItem lvi in lvAction.Items)
             {
                 Item i = (Item) lvi.Tag;
-                if (i is ActionNfo)
+                if (i is ActionWriteMetadata)
                     lvi.Checked = cs == CheckState.Checked;
             }
 
@@ -2976,12 +3019,12 @@ namespace TVRename
             UpdateActionCheckboxes();
         }
 
-        private void cbActionPyTivoMeta_Click(object sender, EventArgs e)
+        private void cbActionModifyMetaData_Click(object sender, EventArgs e)
         {
-            CheckState cs = cbMeta.CheckState;
+            CheckState cs = cbModifyMetadata.CheckState;
             if (cs == CheckState.Indeterminate)
             {
-                cbMeta.CheckState = CheckState.Unchecked;
+                cbModifyMetadata.CheckState = CheckState.Unchecked;
                 cs = CheckState.Unchecked;
             }
 
@@ -2989,7 +3032,7 @@ namespace TVRename
             foreach (ListViewItem lvi in lvAction.Items)
             {
                 Item i = (Item) lvi.Tag;
-                if (i is ActionPyTivoMeta)
+                if (i is ActionFileMetaData)
                     lvi.Checked = cs == CheckState.Checked;
             }
 
@@ -2999,10 +3042,10 @@ namespace TVRename
 
         private void cbActionRSS_Click(object sender, EventArgs e)
         {
-            CheckState cs = cbRSS.CheckState;
+            CheckState cs = cbDownload.CheckState;
             if (cs == CheckState.Indeterminate)
             {
-                cbRSS.CheckState = CheckState.Unchecked;
+                cbDownload.CheckState = CheckState.Unchecked;
                 cs = CheckState.Unchecked;
             }
 
@@ -3020,10 +3063,10 @@ namespace TVRename
 
         private void cbActionDownloads_Click(object sender, EventArgs e)
         {
-            CheckState cs = cbDownload.CheckState;
+            CheckState cs = cbSaveImages.CheckState;
             if (cs == CheckState.Indeterminate)
             {
-                cbDownload.CheckState = CheckState.Unchecked;
+                cbSaveImages.CheckState = CheckState.Unchecked;
                 cs = CheckState.Unchecked;
             }
 

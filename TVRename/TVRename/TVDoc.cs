@@ -364,6 +364,8 @@ namespace TVRename
             ExportShowInfo(); //Save shows list to disk
         }
 
+        public ICollection<int> ShowProblems => cacheManager.Problems;
+
         public void Scan(List<ShowItem> shows, bool unattended, TVSettings.ScanType st)
         {
             try
@@ -461,10 +463,7 @@ namespace TVRename
             PreventAutoScan("Do all actions");
             ItemList theList = new ItemList();
 
-            foreach (Action action in TheActionList.Actions())
-            {
-                    theList.Add(action);
-            }
+            theList.AddRange(TheActionList.Actions());
 
             DoActions(theList);
             AllowAutoScan();
@@ -804,6 +803,13 @@ namespace TVRename
             ExportShowInfo();
             WriteUpcoming();
             WriteRecent();
+        }
+
+        public void ClearShowProblems() => cacheManager.ClearProblems();
+
+        public void ReindexLibrary()
+        {
+            Library.ReIndex();
         }
     }
 }

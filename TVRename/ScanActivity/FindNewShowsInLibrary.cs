@@ -21,26 +21,8 @@ namespace TVRename
         protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
             BulkAddManager bam = new BulkAddManager(MDoc);
-            bam.CheckFolders(settings.Token, prog,false);
-            foreach (FoundFolder folder in bam.AddItems)
-            {
-                if (settings.Token.IsCancellationRequested)
-                    break;
-
-                if (folder.CodeKnown)
-                    continue;
-
-                BulkAddManager.GuessShowItem(folder, MDoc.Library);
-
-                if (folder.CodeKnown)
-                    continue;
-
-                FolderMonitorEdit ed = new FolderMonitorEdit(folder);
-                if ((ed.ShowDialog() != DialogResult.OK) || (ed.Code == -1))
-                    continue;
-
-                folder.TVDBCode = ed.Code;
-            }
+            bam.CheckFolders(settings.Token, prog, false);
+            AskUserAboutShows(settings, bam);
 
             if (!bam.AddItems.Any(s => s.CodeKnown)) return;
 
@@ -53,6 +35,33 @@ namespace TVRename
 
             MDoc.WriteUpcoming();
             MDoc.WriteRecent();
+        }
+
+        private void AskUserAboutShows(TVDoc.ScanSettings settings, BulkAddManager bam)
+        {
+            foreach (FoundFolder folder in bam.AddItems)
+            {
+                if (settings.Token.IsCancellationRequested)
+                    break;
+                AskUserAboutShow(folder);
+            }
+        }
+
+        private void AskUserAboutShow(FoundFolder folder)
+        {
+            if (folder.CodeKnown)
+                return;
+
+            BulkAddManager.GuessShowItem(folder, MDoc.Library);
+
+            if (folder.CodeKnown)
+                return;
+
+            FolderMonitorEdit ed = new FolderMonitorEdit(folder);
+            if ((ed.ShowDialog() != DialogResult.OK) || (ed.Code == -1))
+                return;
+
+            folder.TVDBCode = ed.Code;
         }
 
         public override bool Active() => TVSettings.Instance.DoBulkAddInScan;

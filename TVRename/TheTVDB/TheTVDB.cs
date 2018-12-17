@@ -141,13 +141,13 @@ namespace TVRename
         {
             Dictionary<int, SeriesInfo> matchingSeries = new Dictionary<int, SeriesInfo>();
 
-            testShowName = Helpers.CompareName(testShowName);
+            testShowName = testShowName.CompareName();
 
             if (string.IsNullOrEmpty(testShowName)) return matchingSeries;
 
             foreach (KeyValuePair<int, SeriesInfo> kvp in series)
             {
-                string show = Helpers.CompareName(kvp.Value.Name);
+                string show = kvp.Value.Name.CompareName();
 
                 if (show.Contains(testShowName, StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -945,7 +945,7 @@ namespace TVRename
                 }
                 else
                 {
-                    Logger.Error($"Banners were found for series {seriesId} - Ignoring them");
+                    Logger.Error($"Banners were found for series {seriesId} - Ignoring them {bannersXml}");
                 }
             }
         }
@@ -1089,6 +1089,19 @@ namespace TVRename
             }
             catch (WebException ex)
             {
+                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse resp &&
+                    resp.StatusCode == HttpStatusCode.NotFound)
+                {
+                    Logger.Warn($"Show with Id {code} is no longer available from TVDB (got a 404). {uri}");
+                    Say("");
+
+                    if (TvdbIsUp())
+                    {
+                        LastError = ex.Message;
+                        throw new ShowNotFoundException();
+                    }
+                }
+
                 Logger.Error("Error obtaining {0}", uri);
                 Logger.Error(ex);
                 Say("");
@@ -1303,6 +1316,38 @@ namespace TVRename
             forceReloadOn.Remove(code);
 
             return (series.ContainsKey(code)) ? series[code] : null;
+        }
+
+        private bool TvdbIsUp()
+        {
+            JObject jsonResponse;
+            try
+            {
+                jsonResponse = HttpHelper.JsonHttpGetRequest(TvDbTokenProvider.TVDB_API_URL, null,null);
+            }
+            catch (WebException ex)
+            {
+                //we expect an Unauthorised response - so we know the site is up
+
+                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse resp)
+                {
+                    switch (resp.StatusCode)
+                    {
+                        case HttpStatusCode.Unauthorized:
+                            return true;
+                        case HttpStatusCode.Forbidden:
+                            return true;
+                        case HttpStatusCode.NotFound:
+                            return false;
+                    }
+                }
+
+                return false;
+            }
+
+            if (!jsonResponse.HasValues) return false;
+
+            return true;
         }
 
         private void ReloadEpisodes(int code, bool useCustomLangCode, string langCode)
@@ -1633,12 +1678,19 @@ namespace TVRename
                 return;
             }
 
-            text = Helpers.RemoveDiacritics(text); // API doesn't like accented characters
+            text = text.RemoveDiacritics(); // API doesn't like accented characters
 
             bool isNumber = Regex.Match(text, "^[0-9]+$").Success;
-            if (isNumber)
-                DownloadSeriesNow(int.Parse(text), false, false,false, TVSettings.Instance.PreferredLanguageCode);
-
+            try
+            {
+                if (isNumber)
+                    DownloadSeriesNow(int.Parse(text), false, false, false, TVSettings.Instance.PreferredLanguageCode);
+            }
+            catch (ShowNotFoundException)
+            {
+                //not really an issue so we can continue
+            }
+        
             // but, the number could also be a name, so continue searching as usual
             //text = text.Replace(".", " ");
 

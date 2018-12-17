@@ -1,3 +1,11 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// 
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,11 +46,18 @@ namespace TVRename
             if (tvdbId != -1)
             {
                 TheTVDB.Instance.Unlock("GuessShowItem");
-                SeriesInfo series = TheTVDB.Instance.GetSeriesAndDownload(tvdbId);
-                if (series != null)
+                try
                 {
-                    ai.TVDBCode = tvdbId;
-                    return;
+                    SeriesInfo series = TheTVDB.Instance.GetSeriesAndDownload(tvdbId);
+                    if (series != null)
+                    {
+                        ai.TVDBCode = tvdbId;
+                        return;
+                    }
+                }
+                catch (ShowNotFoundException)
+                {
+                    //continue to try the next method
                 }
             }
 
