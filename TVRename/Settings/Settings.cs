@@ -236,6 +236,8 @@ namespace TVRename
         public string SearchJSONFileSizeToken = "size_bytes";
 
         public string[] VideoExtensionsArray => VideoExtensionsString.Split(';');
+
+        public bool CopyFutureDatedEpsFromSearchFolders = false;
         public bool ForceBulkAddToUseSettingsOnly = false;
         public bool RetainLanguageSpecificSubtitles = true;
         public bool AutoMergeDownloadEpisodes = false;
@@ -441,6 +443,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "SearchJSONURLToken", SearchJSONURLToken);
             XmlHelper.WriteElementToXml(writer, "SearchJSONFileSizeToken", SearchJSONFileSizeToken);
             XmlHelper.WriteElementToXml(writer, "PriorityReplaceTerms", PriorityReplaceTerms);
+            XmlHelper.WriteElementToXml(writer, "CopyFutureDatedEpsFromSearchFolders", CopyFutureDatedEpsFromSearchFolders);
 
             TheSearchers.WriteXml(writer);
             writer.WriteStartElement("Replacements");
@@ -682,20 +685,14 @@ namespace TVRename
 
         public string FilenameFriendly(string fn)
         {
-            if (string.IsNullOrWhiteSpace(fn)) return "";
+            if (string.IsNullOrWhiteSpace(fn)) return string.Empty;
 
             foreach (Replacement rep in Replacements)
             {
-                if (rep.CaseInsensitive)
-                    fn = Regex.Replace(fn, Regex.Escape(rep.This), Regex.Escape(rep.That), RegexOptions.IgnoreCase);
-                else
-                    fn = fn.Replace(rep.This, rep.That);
+                fn = rep.DoReplace(fn);
             }
 
-            if (ForceLowercaseFilenames)
-                fn = fn.ToLower();
-
-            return fn;
+            return ForceLowercaseFilenames ? fn.ToLower() : fn;
         }
 
         public bool NeedToDownloadBannerFile()
@@ -770,6 +767,11 @@ namespace TVRename
                 This = a;
                 That = b;
                 CaseInsensitive = insens;
+            }
+
+            public string DoReplace(string fn)
+            {
+                return CaseInsensitive ? Regex.Replace(fn, Regex.Escape(This), Regex.Escape(That), RegexOptions.IgnoreCase) : fn.Replace(This, That);
             }
         }
 
@@ -1049,6 +1051,7 @@ namespace TVRename
             keepTogetherMode = xmlSettings.ExtractEnum("KeepTogetherType", KeepTogetherModes.All);
             keepTogetherExtensionsString = xmlSettings.ExtractString("KeepTogetherExtensions", ".srt;.nfo;.txt;.tbn");
             ExportWTWRSS = xmlSettings.ExtractBool("ExportWTWRSS") ?? false;
+            CopyFutureDatedEpsFromSearchFolders = xmlSettings.ExtractBool("CopyFutureDatedEpsFromSearchFolders") ?? false;
 
             Tidyup.load(xmlSettings);
             RSSURLs = xmlSettings.Descendants("RSSURLs").First().ReadStringsFromXml("URL");

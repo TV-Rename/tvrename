@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Web;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
@@ -497,6 +498,184 @@ namespace TVRename
                 </body>
                 </html>
                 ";
+        }
+
+        public static string GetShowHtmlOverviewOffline(this ShowItem si)
+        {
+            string body = "";
+            SeriesInfo ser = si.TheSeries();
+
+            if ((!string.IsNullOrEmpty(ser.GetSeriesWideBannerPath())) &&
+                (!string.IsNullOrEmpty(TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath()))))
+                body += "<img width=758 height=140 src=\"" + TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath()) +
+                        "\"><br/>";
+
+            body += $"<h1><A HREF=\"{TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true)}\">{si.ShowName}</A> </h1>";
+
+            body += "<h2>Overview</h2>" + ser.Overview; //get overview in either format
+
+            bool first = true;
+            foreach (Actor aa in ser.GetActors())
+            {
+                if (string.IsNullOrEmpty(aa.ActorName)) continue;
+                if (!first)
+                    body += ", ";
+                else
+                    body += "<h2>Actors</h2>";
+
+                body += "<A HREF=\"http://www.imdb.com/find?s=nm&q=" + aa.ActorName + "\">" + aa.ActorName + $"</a> as {aa.ActorRole}";
+                first = false;
+            }
+
+            string airsTime = ser.AirsTime.PrettyPrint();
+            string airsDay = ser.AirsDay;
+            if ((!String.IsNullOrEmpty(airsTime)) && (!String.IsNullOrEmpty(airsDay)))
+            {
+                body += "<h2>Airs</h2> " + airsTime + " " + airsDay;
+                string net = ser.Network;
+                if (!String.IsNullOrEmpty(net))
+                {
+                    body += ", " + net;
+                }
+            }
+
+            int minYear = si.TheSeries().MinYear;
+            int maxYear = si.TheSeries().MaxYear;
+            string yearRange = (minYear == maxYear) ? minYear.ToString() : minYear + "-" + maxYear;
+            string siteRating = si.TheSeries().SiteRating > 0 ? si.TheSeries().SiteRating + "/10" : "";
+            string tvdbLink = TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true);
+
+            string tableHtml = string.Empty;
+
+            tableHtml += GetOverviewPart("thetvdb.com", $"<A HREF=\"{tvdbLink}\">Visit</a>");
+            tableHtml += GetOverviewPart("imdb.com", "<A HREF=\"http://www.imdb.com/title/" + ser.Imdb + "\">Visit</a>");
+            tableHtml += GetOverviewPart("tv.com", "<A HREF=\"http://www.tv.com/show/" + ser.SeriesId + "/summary.html\">Visit</a>");
+            tableHtml += GetOverviewPart("Runtime", ser.Runtime);
+            tableHtml += GetOverviewPart("Aliases", string.Join(", ", ser.Aliases()));
+            tableHtml += GetOverviewPart("Genres", string.Join(", ", ser.Genres()));
+            tableHtml += GetOverviewPart("Rating", ser.ContentRating);
+            tableHtml += GetOverviewPart("User Rating", $"{siteRating}{AddRatingCount(ser.SiteRatingVotes)}");
+            tableHtml += GetOverviewPart("Active From", yearRange);
+            tableHtml += GetOverviewPart("Status", ser.Status);
+
+            if (!string.IsNullOrWhiteSpace(tableHtml))
+                body += "<h2>Information<table border=0>"+tableHtml+"</table>";
+
+            return body;
+        }
+
+        public static string GetSeasonHtmlOverviewOffline(this ShowItem si, Season s)
+        {
+            SeriesInfo ser = s.TheSeries;
+            int snum = s.SeasonNumber;
+            string body = "";
+
+            if (!String.IsNullOrEmpty(ser.GetSeriesWideBannerPath()) &&
+                !String.IsNullOrEmpty(TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath())))
+                body += "<img width=758 height=140 src=\"" + TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath()) +
+                        "\"><br/>";
+
+            List<ProcessedEpisode> eis = si.SeasonEpisodes.ContainsKey(snum) ?
+                si.SeasonEpisodes[snum] :
+                ShowItem.ProcessedListFromEpisodes(s.Episodes.Values, si);
+
+            string seasText = SeasonName(si, snum);
+
+            if ((eis.Count > 0) && (eis[0].SeasonId > 0))
+                seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteUrl(ser.TvdbCode, eis[0].SeasonId, false) + "\">" +
+                           seasText + "</a>";
+            else
+                seasText = " - " + seasText;
+
+            body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true) + "\">" + si.ShowName +
+                    "</A>" + seasText + "</h1>";
+
+            DirFilesCache dfc = new DirFilesCache();
+            foreach (ProcessedEpisode ei in eis)
+            {
+                string epl = ei.NumsAsString();
+
+                string episodeUrl = TheTVDB.Instance.WebsiteUrl(ei.SeriesId, ei.SeasonId, ei.EpisodeId);
+
+                body += "<A href=\"" + episodeUrl + "\" name=\"ep" + epl + "\">"; // anchor
+                if (si.DvdOrder && snum == 0)
+                {
+                    body += "<b>" + ei.Name + "</b>";
+                }
+                else
+                    body += "<b>" + HttpUtility.HtmlEncode(CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(6))) +
+                            "</b>";
+
+                body += "</A>"; // anchor
+                if (si.UseSequentialMatch && (ei.OverallNumber != -1))
+                    body += " (#" + ei.OverallNumber + ")";
+
+                List<FileInfo> fl = dfc.FindEpOnDisk(ei);
+                if (fl != null)
+                {
+                    foreach (FileInfo fi in fl)
+                    {
+                        string urlFilename = HttpUtility.UrlEncode(fi.FullName);
+                        body += $" <A HREF=\"watch://{urlFilename}\" class=\"search\">Watch</A>";
+                        body += $" <A HREF=\"explore://{urlFilename}\" class=\"search\">Show in Explorer</A>";
+                    }
+                }
+                else body += " <A HREF=\"" + TVSettings.Instance.BTSearchURL(ei) + "\" class=\"search\">Search</A>";
+
+                DateTime? dt = ei.GetAirDateDt(true);
+                if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
+                    body += "<p>" + dt.Value.ToShortDateString() + " (" + ei.HowLong() + ")";
+
+                body += "<p><p>";
+
+                if ((TVSettings.Instance.ShowEpisodePictures) ||
+                    (TVSettings.Instance.HideMyShowsSpoilers && ei.HowLong() != "Aired"))
+                {
+                    body += "<table><tr>";
+                    body += "<td width=100% valign=top>" + GetOverview(ei) + "</td><td width=300 height=225>";
+                    // 300x168 / 300x225
+                    if (!String.IsNullOrEmpty(ei.Filename))
+                        body += "<img src=" + TheTVDB.GetImageURL(ei.Filename) + ">";
+
+                    body += "</td></tr></table>";
+                }
+                else
+                    body += GetOverview(ei);
+
+                body += "<p><hr><p>";
+            } // for each episode in this season
+
+            return body;
+        }
+
+        private static string GetOverview(ProcessedEpisode ei)
+        {
+            string overviewString=string.Empty;
+
+            overviewString += GetOverviewPart("imdb.com", "<A HREF=\"http://www.imdb.com/title/" + ei.ImdbCode + "\">Visit</a>");
+            overviewString += GetOverviewPart("Link", "<A HREF=\"" +ei.ShowUrl+ "\">Visit</a>");
+            overviewString += GetOverviewPart("Director", ei.EpisodeDirector);
+            overviewString += GetOverviewPart("Guest Stars", ei.EpisodeGuestStars);
+            overviewString += GetOverviewPart("Production Code", ei.ProductionCode);
+            overviewString += GetOverviewPart("Writer", ei.Writer);
+
+            if (!string.IsNullOrWhiteSpace(overviewString))
+                return GetOverviewString(ei) + "<table border=0>" + overviewString + "</table>";
+
+            return GetOverviewString(ei);
+        }
+
+        private static string GetOverviewString(ProcessedEpisode ei)
+        {
+            if (TVSettings.Instance.HideMyShowsSpoilers && ei.HowLong() != "Aired")
+                return "[Spoilers Hidden]";
+
+            return ei.Overview;
+        }
+
+        private static string GetOverviewPart(string name, string value)
+        {
+            return string.IsNullOrWhiteSpace(value)? string.Empty: "<tr><td width=120px>" + name + "</td><td>" + value + "</td></tr>";
         }
     }
 }

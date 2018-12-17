@@ -189,5 +189,17 @@ namespace TVRename
             TimeSpan ts = dt.Value.Subtract(DateTime.Now);
             return (ts.TotalHours >= (-24 * days)) && (ts.TotalHours <= 0);
         }
+
+        public bool IsInFuture()
+        {
+            DateTime? airsdt = GetAirDateDt(true);
+            if (airsdt == null)
+                return false;
+
+            DateTime dt = (DateTime)airsdt;
+
+            TimeSpan ts = dt.Subtract(DateTime.Now); // how long...
+            return ts.TotalHours > 0;
+        }
     }
 }

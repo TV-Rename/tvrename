@@ -482,12 +482,6 @@ namespace TVRename
             return max;
         }
 
-        //StringNiceName(int season)
-        //{
-        //    // something like "Simpsons (S3)"
-        //    return String.Concat(ShowName," (S",season,")");
-        //}
-
         public void WriteXmlSettings(XmlWriter writer)
         {
             writer.WriteStartElement("ShowItem");

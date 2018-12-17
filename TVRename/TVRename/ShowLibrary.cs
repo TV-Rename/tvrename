@@ -759,5 +759,16 @@ namespace TVRename
 
             return episodes;
         }
+
+        public void ReIndex()
+        {
+            List<int> toReIndex = this.Where(x => (x.Key != x.Value.TvdbCode)).Select(x=>x.Key).ToList();
+
+            foreach (int x in toReIndex)
+            {
+                TryRemove(x,out ShowItem si);
+                Add(si);
+            }
+        }
     }
 }

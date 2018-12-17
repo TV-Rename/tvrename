@@ -8,7 +8,7 @@ namespace TVRename
     internal class CleanDownloadDirectory:ScanActivity
     {
         // ReSharper disable once InconsistentNaming
-        private IEnumerable<Action> Go(ICollection<ShowItem> showList, bool unattended)
+        private IEnumerable<Item> Go(ICollection<ShowItem> showList, bool unattended)
         {
             //for each directory in settings directory
             //for each file in directory
@@ -17,7 +17,7 @@ namespace TVRename
             //if so add show to list of files to be removed
 
             DirFilesCache dfc = new DirFilesCache();
-            List<Action> returnActions =new List<Action>();
+            List<Item> returnActions =new List<Item>();
 
             int totalDownloadFolders = TVSettings.Instance.DownloadFolders.Count;
             int c = 1;
@@ -113,9 +113,9 @@ namespace TVRename
             return new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup);
         }
 
-        private static IEnumerable<Action> ReviewFilesInDownloadDirectory(ICollection<ShowItem> showList, bool unattended, DirFilesCache dfc, string dirPath, List<FileInfo> filesThatMayBeNeeded)
+        private static IEnumerable<Item> ReviewFilesInDownloadDirectory(ICollection<ShowItem> showList, bool unattended, DirFilesCache dfc, string dirPath, List<FileInfo> filesThatMayBeNeeded)
         {
-            List<Action> returnActions = new List<Action>();
+            List<Item> returnActions = new List<Item>();
             try
             {
                 foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
@@ -143,10 +143,10 @@ namespace TVRename
             return returnActions;
         }
 
-        private static List<Action> ReviewFileInDownloadDirectory(bool unattended, DirFilesCache dfc, ICollection<FileInfo> filesThatMayBeNeeded, FileInfo fi, List<ShowItem> matchingShows)
+        private static List<Item> ReviewFileInDownloadDirectory(bool unattended, DirFilesCache dfc, ICollection<FileInfo> filesThatMayBeNeeded, FileInfo fi, List<ShowItem> matchingShows)
         {
             bool fileCanBeDeleted = TVSettings.Instance.RemoveDownloadDirectoriesFiles;
-            List<Action> returnActions = new List<Action>();
+            List<Item> returnActions = new List<Item>();
             ProcessedEpisode firstMatchingPep = null;
 
             foreach (ShowItem si in matchingShows)
@@ -166,6 +166,30 @@ namespace TVRename
                     {
                         //File is needed as there are no files for that series/episode
                         fileCanBeDeleted = false;
+
+                        //This episode may be a future dated one - process it now if the settings request that we do and it wont be picked up in a full scan
+                        if (TVSettings.Instance.CopyFutureDatedEpsFromSearchFolders && !si.ForceCheckFuture && si.DoMissingCheck && TVSettings.Instance.MissingCheck && !TVSettings.Instance.PreventMove)
+                        {
+                            if (pep.IsInFuture())
+                            {
+                                LOGGER.Info(
+                                    $"Identified that {fi.FullName} matches S{seasF}E{epF} of show {si.ShowName}, that it's not already present and airs in the future. Copying across.");
+
+                                string filename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pep));
+                                List<string> folders = si.AllFolderLocations()[seasF];
+                                foreach (string folder in folders)
+                                {
+                                    FileInfo targetFile = new FileInfo(folder + System.IO.Path.DirectorySeparatorChar + filename + fi.Extension);
+
+                                    if (fi.FullName == targetFile.FullName) continue;
+
+                                    returnActions.Add(new ActionCopyMoveRename(fi, targetFile, pep));
+
+                                    // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
+                                    returnActions.AddRange(new DownloadIdentifiersController().ProcessEpisode(pep, targetFile));
+                                }
+                            }
+                        }
                     }
                     else
                     {

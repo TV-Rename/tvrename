@@ -59,6 +59,8 @@ namespace TVRename
             this.tbMovieTerms = new System.Windows.Forms.TextBox();
             this.chkScheduledScan = new System.Windows.Forms.CheckBox();
             this.chkScanOnStartup = new System.Windows.Forms.CheckBox();
+            this.txtKeepTogether = new System.Windows.Forms.TextBox();
+            this.txtOtherExtensions = new System.Windows.Forms.TextBox();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.cmDefaults = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.KODIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -285,9 +287,7 @@ namespace TVRename
             this.chkRetainLanguageSpecificSubtitles = new System.Windows.Forms.CheckBox();
             this.label66 = new System.Windows.Forms.Label();
             this.pbFilesAndFolders = new System.Windows.Forms.PictureBox();
-            this.txtKeepTogether = new System.Windows.Forms.TextBox();
             this.txtMaxSampleSize = new System.Windows.Forms.TextBox();
-            this.txtOtherExtensions = new System.Windows.Forms.TextBox();
             this.txtVideoExtensions = new System.Windows.Forms.TextBox();
             this.bnTags = new System.Windows.Forms.Button();
             this.label39 = new System.Windows.Forms.Label();
@@ -331,6 +331,7 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
+            this.cbCopyFutureDatedEps = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -489,7 +490,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbSearchFolders.FormattingEnabled = true;
-            this.lbSearchFolders.Location = new System.Drawing.Point(5, 176);
+            this.lbSearchFolders.Location = new System.Drawing.Point(5, 207);
             this.lbSearchFolders.Name = "lbSearchFolders";
             this.lbSearchFolders.ScrollAlwaysVisible = true;
             this.lbSearchFolders.Size = new System.Drawing.Size(405, 95);
@@ -575,6 +576,28 @@ namespace TVRename
             this.chkScanOnStartup.Text = "&Scan on Startup";
             this.toolTip1.SetToolTip(this.chkScanOnStartup, "If checked the system will automatically scan and complete actions on startup");
             this.chkScanOnStartup.UseVisualStyleBackColor = true;
+            // 
+            // txtKeepTogether
+            // 
+            this.txtKeepTogether.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtKeepTogether.Location = new System.Drawing.Point(204, 311);
+            this.txtKeepTogether.Name = "txtKeepTogether";
+            this.txtKeepTogether.Size = new System.Drawing.Size(204, 20);
+            this.txtKeepTogether.TabIndex = 23;
+            this.toolTip1.SetToolTip(this.txtKeepTogether, "Which file extensions should be copied from the Search\r\nFolders into the library?" +
+        "");
+            // 
+            // txtOtherExtensions
+            // 
+            this.txtOtherExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtOtherExtensions.Location = new System.Drawing.Point(99, 259);
+            this.txtOtherExtensions.Name = "txtOtherExtensions";
+            this.txtOtherExtensions.Size = new System.Drawing.Size(309, 20);
+            this.txtOtherExtensions.TabIndex = 7;
+            this.toolTip1.SetToolTip(this.txtOtherExtensions, "Which file extensions in the library should be renamed along\r\nwith the video file" +
+        "s?");
             // 
             // cmDefaults
             // 
@@ -1711,6 +1734,7 @@ namespace TVRename
             // 
             // tbSearchFolders
             // 
+            this.tbSearchFolders.Controls.Add(this.cbCopyFutureDatedEps);
             this.tbSearchFolders.Controls.Add(this.groupBox8);
             this.tbSearchFolders.Controls.Add(this.label67);
             this.tbSearchFolders.Controls.Add(this.pbSearchFolders);
@@ -1741,7 +1765,7 @@ namespace TVRename
             this.groupBox8.Controls.Add(this.tbPriorityOverrideTerms);
             this.groupBox8.Controls.Add(this.label52);
             this.groupBox8.Controls.Add(this.cbHigherQuality);
-            this.groupBox8.Location = new System.Drawing.Point(6, 426);
+            this.groupBox8.Location = new System.Drawing.Point(6, 457);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Size = new System.Drawing.Size(406, 100);
             this.groupBox8.TabIndex = 40;
@@ -1837,7 +1861,7 @@ namespace TVRename
             this.gbAutoAdd.Controls.Add(this.label44);
             this.gbAutoAdd.Controls.Add(this.tbIgnoreSuffixes);
             this.gbAutoAdd.Controls.Add(this.tbMovieTerms);
-            this.gbAutoAdd.Location = new System.Drawing.Point(6, 313);
+            this.gbAutoAdd.Location = new System.Drawing.Point(6, 344);
             this.gbAutoAdd.Name = "gbAutoAdd";
             this.gbAutoAdd.Size = new System.Drawing.Size(407, 107);
             this.gbAutoAdd.TabIndex = 36;
@@ -1909,7 +1933,7 @@ namespace TVRename
             // 
             this.bnOpenSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnOpenSearchFolder.Enabled = false;
-            this.bnOpenSearchFolder.Location = new System.Drawing.Point(166, 277);
+            this.bnOpenSearchFolder.Location = new System.Drawing.Point(166, 308);
             this.bnOpenSearchFolder.Name = "bnOpenSearchFolder";
             this.bnOpenSearchFolder.Size = new System.Drawing.Size(75, 23);
             this.bnOpenSearchFolder.TabIndex = 4;
@@ -1921,7 +1945,7 @@ namespace TVRename
             // 
             this.bnRemoveSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnRemoveSearchFolder.Enabled = false;
-            this.bnRemoveSearchFolder.Location = new System.Drawing.Point(85, 277);
+            this.bnRemoveSearchFolder.Location = new System.Drawing.Point(85, 308);
             this.bnRemoveSearchFolder.Name = "bnRemoveSearchFolder";
             this.bnRemoveSearchFolder.Size = new System.Drawing.Size(75, 23);
             this.bnRemoveSearchFolder.TabIndex = 3;
@@ -1932,7 +1956,7 @@ namespace TVRename
             // bnAddSearchFolder
             // 
             this.bnAddSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnAddSearchFolder.Location = new System.Drawing.Point(6, 277);
+            this.bnAddSearchFolder.Location = new System.Drawing.Point(6, 308);
             this.bnAddSearchFolder.Name = "bnAddSearchFolder";
             this.bnAddSearchFolder.Size = new System.Drawing.Size(75, 23);
             this.bnAddSearchFolder.TabIndex = 2;
@@ -1944,7 +1968,7 @@ namespace TVRename
             // 
             this.label23.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(6, 160);
+            this.label23.Location = new System.Drawing.Point(6, 191);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(78, 13);
             this.label23.TabIndex = 0;
@@ -3109,17 +3133,6 @@ namespace TVRename
             this.pbFilesAndFolders.TabStop = false;
             this.pbFilesAndFolders.Click += new System.EventHandler(this.pbFilesAndFolders_Click);
             // 
-            // txtKeepTogether
-            // 
-            this.txtKeepTogether.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtKeepTogether.Location = new System.Drawing.Point(204, 311);
-            this.txtKeepTogether.Name = "txtKeepTogether";
-            this.txtKeepTogether.Size = new System.Drawing.Size(204, 20);
-            this.txtKeepTogether.TabIndex = 23;
-            this.toolTip1.SetToolTip(this.txtKeepTogether, "Which file extensions should be copied from the Search\r\nFolders into the library?" +
-        "");
-            // 
             // txtMaxSampleSize
             // 
             this.txtMaxSampleSize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -3128,17 +3141,6 @@ namespace TVRename
             this.txtMaxSampleSize.Size = new System.Drawing.Size(53, 20);
             this.txtMaxSampleSize.TabIndex = 14;
             this.txtMaxSampleSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
-            // 
-            // txtOtherExtensions
-            // 
-            this.txtOtherExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtOtherExtensions.Location = new System.Drawing.Point(99, 259);
-            this.txtOtherExtensions.Name = "txtOtherExtensions";
-            this.txtOtherExtensions.Size = new System.Drawing.Size(309, 20);
-            this.txtOtherExtensions.TabIndex = 7;
-            this.toolTip1.SetToolTip(this.txtOtherExtensions, "Which file extensions in the library should be renamed along\r\nwith the video file" +
-        "s?");
             // 
             // txtVideoExtensions
             // 
@@ -3380,7 +3382,7 @@ namespace TVRename
             // lblScanAction
             // 
             this.lblScanAction.AutoSize = true;
-            this.lblScanAction.Location = new System.Drawing.Point(9, 31);
+            this.lblScanAction.Location = new System.Drawing.Point(9, 30);
             this.lblScanAction.Name = "lblScanAction";
             this.lblScanAction.Size = new System.Drawing.Size(121, 13);
             this.lblScanAction.TabIndex = 43;
@@ -3648,6 +3650,18 @@ namespace TVRename
             this.tcTabs.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tcTabs.TabIndex = 0;
             this.tcTabs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tpSearch_DrawItem);
+            // 
+            // cbCopyFutureDatedEps
+            // 
+            this.cbCopyFutureDatedEps.AutoSize = true;
+            this.cbCopyFutureDatedEps.Location = new System.Drawing.Point(5, 163);
+            this.cbCopyFutureDatedEps.Name = "cbCopyFutureDatedEps";
+            this.cbCopyFutureDatedEps.Size = new System.Drawing.Size(270, 17);
+            this.cbCopyFutureDatedEps.TabIndex = 41;
+            this.cbCopyFutureDatedEps.Text = "Copy future dated episodes found in Search Folders";
+            this.toolTip1.SetToolTip(this.cbCopyFutureDatedEps, "If the contents of any of these folder change, then automatically do a \"Scan\" and" +
+        " \"Do\".");
+            this.cbCopyFutureDatedEps.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -4048,5 +4062,6 @@ namespace TVRename
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.CheckBox cbRenameCheck;
         private System.Windows.Forms.CheckBox cbMissing;
+        private System.Windows.Forms.CheckBox cbCopyFutureDatedEps;
     }
 }

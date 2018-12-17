@@ -93,7 +93,7 @@ namespace TVRename
             ValidateExtensions(txtKeepTogether, tbFilesAndFolders);
         }
 
-        private void ValidateExtensions(TextBox validateField, TabPage focusTabPage)
+        private void ValidateExtensions(Control validateField, TabPage focusTabPage)
         {
             if (TVSettings.OKExtensionsString(validateField.Text)) return;
 
@@ -201,6 +201,7 @@ namespace TVRename
             s.AutoMergeLibraryEpisodes = chkAutoMergeLibraryEpisodes.Checked;
             s.RetainLanguageSpecificSubtitles = chkRetainLanguageSpecificSubtitles.Checked;
             s.ForceBulkAddToUseSettingsOnly = chkForceBulkAddToUseSettingsOnly.Checked;
+            s.CopyFutureDatedEpsFromSearchFolders = cbCopyFutureDatedEps.Checked;
 
             s.SearchJSON = cbSearchJSON.Checked;
             s.SearchJSONManualScanOnly = cbSearchJSONManualScanOnly.Checked;
@@ -681,6 +682,7 @@ namespace TVRename
             SetDropdownValue(domainUpDown1, s.periodCheckHours);
             cbCleanUpDownloadDir.Checked = s.RemoveDownloadDirectoriesFiles;
             cbDeleteShowFromDisk.Checked = s.DeleteShowFromDisk;
+            cbCopyFutureDatedEps.Checked = s.CopyFutureDatedEpsFromSearchFolders;
 
             cbMissing.Checked = s.MissingCheck;
             cbxUpdateAirDate.Checked = s.CorrectFileDates;
@@ -900,7 +902,6 @@ namespace TVRename
                 e.Handled = true;
         }
 
-
         #region PopupBrowseDialog
 
         private void bnBrowseWTWRSS_Click(object sender, EventArgs e) => Browse(txtWTWRSS, "rss", 1);
@@ -917,7 +918,7 @@ namespace TVRename
         private void bnBrowseASX_Click(object sender, EventArgs e) => Browse(txtASX, "asx", 9);
         private void bnBrowseWPL_Click(object sender, EventArgs e) => Browse(txtWPL, "wpl", 10);
 
-        private void Browse(TextBox txt, string defaultExt, int filterIndex)
+        private void Browse(Control txt, string defaultExt, int filterIndex)
         {
             //rss =1, XML = 2, CSV = 3, TXT=4, HTML = 5
             saveFile.FileName = txt.Text;

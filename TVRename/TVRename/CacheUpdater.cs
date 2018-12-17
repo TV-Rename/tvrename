@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -23,6 +24,7 @@ namespace TVRename
         private List<Thread> workers;
         private Thread mDownloaderThread;
         private ICollection<SeriesSpecifier> downloadIds;
+        private ICollection<int> problematicSeriesIds;
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private static readonly NLog.Logger Threadslogger = NLog.LogManager.GetLogger("threads");
@@ -31,6 +33,7 @@ namespace TVRename
         {
             DownloadDone = true;
             downloadOk = true;
+            problematicSeriesIds = new List<int>();
         }
 
         public void StartBgDownloadThread(bool stopOnError, ICollection<SeriesSpecifier> shows)
@@ -43,6 +46,7 @@ namespace TVRename
             downloadOk = true;
 
             downloadIds = shows;
+            problematicSeriesIds.Clear();
             mDownloaderThread = new Thread(Downloader) { Name = "Downloader" };
             mDownloaderThread.Start();
         }
@@ -69,7 +73,7 @@ namespace TVRename
 
             WaitForBgDownloadDone();
 
-            TheTVDB.Instance.SaveCache();
+            //TheTVDB.Instance.SaveCache();
 
             if (!downloadOk)
             {
@@ -91,6 +95,8 @@ namespace TVRename
             mDownloaderThread = null;
         }
 
+        public ICollection<int> Problems => problematicSeriesIds;
+
         private void GetThread(object codeIn)
         {
             System.Diagnostics.Debug.Assert(workerSemaphore != null);
@@ -104,7 +110,18 @@ namespace TVRename
                 bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
 
                 Threadslogger.Trace("  Downloading " + series.SeriesId);
-                bool r = TheTVDB.Instance.EnsureUpdated(series.SeriesId, bannersToo,series.UseCustomLanguage,series.CustomLanguageCode);
+                bool r;
+                try
+                {
+                    r = TheTVDB.Instance.EnsureUpdated(series.SeriesId, bannersToo, series.UseCustomLanguage,
+                        series.CustomLanguageCode);
+                }
+                catch (ShowNotFoundException)
+                {
+                    r = true;
+                    problematicSeriesIds.Add(series.SeriesId);
+                }
+                
                 Threadslogger.Trace("  Finished " + series.SeriesId);
                 if (!r)
                 {
@@ -236,6 +253,7 @@ namespace TVRename
                 if (workerSemaphore != null) workerSemaphore.Dispose();
             }
         }
+
         private void ReleaseUnmanagedResources()
         {
             StopBgDownloadThread();
@@ -245,6 +263,18 @@ namespace TVRename
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public void ClearProblems()
+        {
+            List<SeriesSpecifier> toRemove = (from sid in problematicSeriesIds from ss in downloadIds where ss.SeriesId == sid select ss).ToList();
+
+            foreach (SeriesSpecifier s in toRemove)
+            {
+                downloadIds.Remove(s);
+            }
+
+            problematicSeriesIds.Clear();
         }
     }
 }
