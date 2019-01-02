@@ -1072,7 +1072,6 @@ namespace TVRename
         private void ScanOptEnableDisable()
         {
             bool e = cbMissing.Checked;
-            tbMediaCenter.Enabled = e;
 
             cbIgnorePreviouslySeen.Enabled = e;
             cbSearchRSS.Enabled = e;
@@ -1086,7 +1085,6 @@ namespace TVRename
             cbSearchRSSManualScanOnly.Enabled = cbSearchRSS.Checked && e;
 
             cbLeaveOriginals.Enabled = e && cbSearchLocally.Checked;
-
         }
 
         #endregion enable and disable settings as appropriate
