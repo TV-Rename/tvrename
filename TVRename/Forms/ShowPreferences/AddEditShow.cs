@@ -193,6 +193,16 @@ namespace TVRename
                 
                 return false;
             }
+            if (chkAutoFolders.Checked && string.IsNullOrWhiteSpace(txtBaseFolder.Text))
+            {
+                MessageBox.Show("Please enter base folder for this show or turn off automatic folders", "TVRename Add/Edit Show",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                Folders.SelectedTab = tabPage5;
+                txtBaseFolder.Focus();
+
+                return false;
+            }
             return true;
         }
 
