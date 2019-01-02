@@ -48,7 +48,17 @@ namespace TVRename
         }
 
         protected virtual string SeriesName => Episode?.TheSeries?.Name ?? string.Empty;
-        protected virtual string SeasonNumber => Episode?.AppropriateSeasonNumber.ToString() ?? string.Empty;
+
+        protected virtual string SeasonNumber
+        {
+            get
+            {
+                if (Episode?.AppropriateSeasonNumber.ToString() == null) return string.Empty;
+                if (Episode?.AppropriateSeasonNumber == 0) return "Special";
+                return Episode?.AppropriateSeasonNumber.ToString();
+            }
+        }
+
         protected virtual string EpisodeNumber => Episode?.NumsAsString() ?? string.Empty;
         protected virtual string AirDate => Episode?.GetAirDateDt(true).PrettyPrint() ?? string.Empty;
         protected abstract string DestinationFolder { get; }
