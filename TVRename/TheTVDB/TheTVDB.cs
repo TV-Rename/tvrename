@@ -882,20 +882,30 @@ namespace TVRename
                         tvDbTokenProvider.GetToken(),lang);
 
                     episodeResponses.Add(jsonEpisodeResponse);
-                    int numberOfResponses = ((JArray)jsonEpisodeResponse["data"]).Count;
-                    JToken x = jsonEpisodeResponse["links"]["next"];
-                    bool moreResponses = !string.IsNullOrWhiteSpace(x.ToString());
-                    Logger.Info(
-                        $"Page {pageNumber} of {GetSeries(id)?.Name} had {numberOfResponses} episodes listed in {lang} with {(moreResponses?"":"no ")}more to come");
-
-                    if (numberOfResponses < 100 || !moreResponses)
+                    try
                     {
+                        int numberOfResponses = ((JArray) jsonEpisodeResponse["data"]).Count;
+                        JToken x = jsonEpisodeResponse["links"]["next"];
+                        bool moreResponses = !string.IsNullOrWhiteSpace(x.ToString());
+                        Logger.Info(
+                            $"Page {pageNumber} of {GetSeries(id)?.Name} had {numberOfResponses} episodes listed in {lang} with {(moreResponses ? "" : "no ")}more to come");
+
+                        if (numberOfResponses < 100 || !moreResponses)
+                        {
+                            morePages = false;
+                        }
+                        else
+                        {
+                            pageNumber++;
+                        }
+                    }
+                    catch (NullReferenceException nre)
+                    {
+                        Logger.Error(nre,
+                            $"Error obtaining page {pageNumber} of {episodeUri} in lang {lang} using url {episodeUri}: Response was {jsonEpisodeResponse}");
                         morePages = false;
                     }
-                    else
-                    {
-                        pageNumber++;
-                    }
+
                 }
                 catch (WebException ex)
                 {
