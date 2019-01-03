@@ -113,7 +113,7 @@ namespace TVRename
                 if (TVSettings.Instance.LibraryFolders.Count == 0)
                 {
                     MessageBox.Show(
-                        "Please add some monitor (library) folders under 'Bulk Add Shows'to use the 'Auto Add' functionity (Alternatively you can turn it off in settings).",
+                        "Please add some monitor (library) folders under 'Bulk Add Shows' to use the 'Auto Add' functionity (Alternatively you can add them or turn it off in settings).",
                         "Can't Auto Add Show", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                     return;
