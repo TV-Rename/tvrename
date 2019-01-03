@@ -905,7 +905,6 @@ namespace TVRename
                             $"Error obtaining page {pageNumber} of {episodeUri} in lang {lang} using url {episodeUri}: Response was {jsonEpisodeResponse}");
                         morePages = false;
                     }
-
                 }
                 catch (WebException ex)
                 {

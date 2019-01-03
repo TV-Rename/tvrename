@@ -387,7 +387,7 @@ namespace TVRename
 
                 Thread actionWork = new Thread(ScanWorker) {Name = "ActionWork"};
                 CancellationTokenSource cts = new CancellationTokenSource();
-                actionWork.SetApartmentState(ApartmentState.STA);//needed to allow DragDrop on any UI this thread creates
+                actionWork.SetApartmentState(ApartmentState.STA); //needed to allow DragDrop on any UI this thread creates
 
                 SetupScanUi();
 
