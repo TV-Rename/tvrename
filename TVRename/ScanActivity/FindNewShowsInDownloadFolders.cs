@@ -151,6 +151,12 @@ namespace TVRename
             MDoc.Library.AddRange(addedShows);
             MDoc.ShowAddedOrEdited(true);
             LOGGER.Info("Added new shows called: {0}", string.Join(",", addedShows.Select(s => s.ShowName)));
+
+            //add each new show into the shows being scanned
+            foreach (ShowItem si in addedShows)
+            {
+                showList.Add(si);
+            }
         }
 
         public override bool Active() => TVSettings.Instance.AutoSearchForDownloadedFiles;

@@ -31,6 +31,13 @@ namespace TVRename
 
             MDoc.SetDirty();
             MDoc.DoDownloadsFG();
+
+            //add each new show into the shows being scanned
+            foreach (ShowItem si in bam.AddItems.Where(s => s.CodeKnown).Select(s => MDoc.Library.ShowItem(s.TVDBCode)))
+            {
+                showList.Add(si);
+            }
+
             MDoc.DoWhenToWatch(true);
 
             MDoc.WriteUpcoming();
