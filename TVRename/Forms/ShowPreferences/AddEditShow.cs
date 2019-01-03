@@ -445,7 +445,6 @@ namespace TVRename
 
         private void bnQuickLocate_Click(object sender, EventArgs e)
         {
-
             //If there are no LibraryFolders then we cant use the simplified UI
             if (TVSettings.Instance.LibraryFolders.Count == 0)
             {
