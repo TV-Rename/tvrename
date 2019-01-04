@@ -61,6 +61,7 @@ namespace TVRename
             this.chkScanOnStartup = new System.Windows.Forms.CheckBox();
             this.txtKeepTogether = new System.Windows.Forms.TextBox();
             this.txtOtherExtensions = new System.Windows.Forms.TextBox();
+            this.cbCopyFutureDatedEps = new System.Windows.Forms.CheckBox();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.cmDefaults = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.KODIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -331,7 +332,7 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
-            this.cbCopyFutureDatedEps = new System.Windows.Forms.CheckBox();
+            this.chkMoveLibraryFiles = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -598,6 +599,18 @@ namespace TVRename
             this.txtOtherExtensions.TabIndex = 7;
             this.toolTip1.SetToolTip(this.txtOtherExtensions, "Which file extensions in the library should be renamed along\r\nwith the video file" +
         "s?");
+            // 
+            // cbCopyFutureDatedEps
+            // 
+            this.cbCopyFutureDatedEps.AutoSize = true;
+            this.cbCopyFutureDatedEps.Location = new System.Drawing.Point(5, 163);
+            this.cbCopyFutureDatedEps.Name = "cbCopyFutureDatedEps";
+            this.cbCopyFutureDatedEps.Size = new System.Drawing.Size(270, 17);
+            this.cbCopyFutureDatedEps.TabIndex = 41;
+            this.cbCopyFutureDatedEps.Text = "Copy future dated episodes found in Search Folders";
+            this.toolTip1.SetToolTip(this.cbCopyFutureDatedEps, "If the contents of any of these folder change, then automatically do a \"Scan\" and" +
+        " \"Do\".");
+            this.cbCopyFutureDatedEps.UseVisualStyleBackColor = true;
             // 
             // cmDefaults
             // 
@@ -1784,11 +1797,11 @@ namespace TVRename
             // label54
             // 
             this.label54.AutoSize = true;
-            this.label54.Location = new System.Drawing.Point(175, 72);
+            this.label54.Location = new System.Drawing.Point(173, 71);
             this.label54.Name = "label54";
             this.label54.Size = new System.Drawing.Size(129, 13);
             this.label54.TabIndex = 38;
-            this.label54.Text = "% higher resulution/longer";
+            this.label54.Text = "% higher resolution/longer";
             // 
             // tbPercentBetter
             // 
@@ -3330,6 +3343,7 @@ namespace TVRename
             this.groupBox17.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox17.Controls.Add(this.chkMoveLibraryFiles);
             this.groupBox17.Controls.Add(this.label1);
             this.groupBox17.Controls.Add(this.domainUpDown1);
             this.groupBox17.Controls.Add(this.chkScheduledScan);
@@ -3651,17 +3665,17 @@ namespace TVRename
             this.tcTabs.TabIndex = 0;
             this.tcTabs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tpSearch_DrawItem);
             // 
-            // cbCopyFutureDatedEps
+            // chkMoveLibraryFiles
             // 
-            this.cbCopyFutureDatedEps.AutoSize = true;
-            this.cbCopyFutureDatedEps.Location = new System.Drawing.Point(5, 163);
-            this.cbCopyFutureDatedEps.Name = "cbCopyFutureDatedEps";
-            this.cbCopyFutureDatedEps.Size = new System.Drawing.Size(270, 17);
-            this.cbCopyFutureDatedEps.TabIndex = 41;
-            this.cbCopyFutureDatedEps.Text = "Copy future dated episodes found in Search Folders";
-            this.toolTip1.SetToolTip(this.cbCopyFutureDatedEps, "If the contents of any of these folder change, then automatically do a \"Scan\" and" +
-        " \"Do\".");
-            this.cbCopyFutureDatedEps.UseVisualStyleBackColor = true;
+            this.chkMoveLibraryFiles.AutoSize = true;
+            this.chkMoveLibraryFiles.Checked = true;
+            this.chkMoveLibraryFiles.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkMoveLibraryFiles.Location = new System.Drawing.Point(10, 251);
+            this.chkMoveLibraryFiles.Name = "chkMoveLibraryFiles";
+            this.chkMoveLibraryFiles.Size = new System.Drawing.Size(212, 17);
+            this.chkMoveLibraryFiles.TabIndex = 48;
+            this.chkMoveLibraryFiles.Text = "Move Files within Library to Keep it Tidy";
+            this.chkMoveLibraryFiles.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -4063,5 +4077,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbRenameCheck;
         private System.Windows.Forms.CheckBox cbMissing;
         private System.Windows.Forms.CheckBox cbCopyFutureDatedEps;
+        private System.Windows.Forms.CheckBox chkMoveLibraryFiles;
     }
 }

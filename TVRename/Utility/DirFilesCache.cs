@@ -7,7 +7,9 @@
 // 
 
 using System.Collections.Generic;
-using Alphaleonis.Win32.Filesystem;
+using System.IO;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 // Will cache the file lists of contents of single directories.  Will return the cached
 // data, or read cache and return it.
@@ -19,7 +21,11 @@ namespace TVRename
         private readonly Dictionary<string, FileInfo[]> cache = new Dictionary<string, FileInfo[]>();
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public FileInfo[] Get(string folder)
+        public FileInfo[] GetFilesIncludeSubDirs(string folder) => Get(folder, true);
+
+        public FileInfo[] GetFiles(string folder) => Get(folder, false);
+
+        private FileInfo[] Get(string folder,bool includeSubs)
         {
             if (cache.ContainsKey(folder))
             {
@@ -43,10 +49,10 @@ namespace TVRename
             }
             
             try {
-                FileInfo[] files = di.GetFiles();
+                FileInfo[] files = includeSubs ? di.GetFiles("*",SearchOption.AllDirectories): di.GetFiles();
                 cache[folder] = files;
                 return files;
-            } catch (System.IO.IOException) {
+            } catch (IOException) {
                Logger.Error ("IOException occurred trying to access " + folder);
                 return null;
             }

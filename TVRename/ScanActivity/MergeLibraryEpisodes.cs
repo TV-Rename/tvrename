@@ -54,7 +54,7 @@ namespace TVRename
                     if (settings.Token.IsCancellationRequested)
                         throw new TVRenameOperationInteruptedException();
 
-                    FileInfo[] files = dfc.Get(folder);
+                    FileInfo[] files = dfc.GetFiles(folder);
                     if (files == null)
                         continue;
 

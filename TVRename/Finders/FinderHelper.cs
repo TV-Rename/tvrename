@@ -178,7 +178,7 @@ namespace TVRename
 
             foreach (string folder in dirs[snum])
             {
-                FileInfo[] files = dfc.Get(folder);
+                FileInfo[] files = dfc.GetFiles(folder);
                 if (files == null)
                     continue;
 

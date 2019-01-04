@@ -149,10 +149,12 @@
     <Compile Include="Exporter\UpcomingiCAL.cs" />
     <Compile Include="Finders\DownloadFinder.cs" />
     <Compile Include="Finders\FinderHelper.cs" />
+    <Compile Include="Finders\LibraryFolderFileFinder.cs" />
     <Compile Include="Finders\qBitTorrentFinder.cs" />
     <Compile Include="Finders\JSONWebpageFinder.cs" />
     <Compile Include="Finders\RSSItem.cs" />
     <Compile Include="Finders\RSSItemList.cs" />
+    <Compile Include="Finders\SearchFolderFileFinder.cs" />
     <Compile Include="Finders\TorrentFinder.cs" />
     <Compile Include="Forms\ShowPreferences\AutoAddShow.cs">
       <SubType>Form</SubType>
