@@ -653,6 +653,7 @@ namespace TVRename
         {
             foreach (string s in VideoExtensionsArray)
             {
+                if (string.IsNullOrWhiteSpace(s)) continue;
                 if (!file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase)) continue;
                 extension = s;
                 return true;
@@ -662,6 +663,7 @@ namespace TVRename
             {
                 foreach (string s in OtherExtensionsArray)
                 {
+                    if (string.IsNullOrWhiteSpace(s)) continue;
                     if (!file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase)) continue;
                     extension = s;
                     return true;
