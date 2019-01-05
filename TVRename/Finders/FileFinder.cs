@@ -130,7 +130,7 @@ namespace TVRename
             return false;
         }
 
-        protected void KeepTogether(ItemList actionlist)
+        protected void KeepTogether(ItemList actionlist, bool fromLibrary)
         {
             // for each of the items in rcl, do the same copy/move if for other items with the same
             // base name, but different extensions
@@ -153,7 +153,10 @@ namespace TVRename
                     foreach (FileInfo fi in flist)
                     {
                         //check to see whether the file is one of the types we do/don't want to include
-                        if (!TVSettings.Instance.KeepTogetherFilesWithType(fi.Extension)) continue;
+                        //If we are copying from outside the library we use the 'Keep Togther' Logic
+                        if (!fromLibrary && !TVSettings.Instance.KeepTogetherFilesWithType(fi.Extension)) continue;
+                        //If we are with in the library we use the 'Other Extensions'
+                        if (fromLibrary && !TVSettings.Instance.FileHasUsefulExtension(fi,true,out string _)) continue;
 
                         // do case insensitive replace
                         string n = fi.Name;

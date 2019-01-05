@@ -48,7 +48,7 @@ namespace TVRename
             }
 
             if (TVSettings.Instance.KeepTogether)
-                KeepTogether(newList);
+                KeepTogether(newList,true);
 
             ReorganiseToLeaveOriginals(newList);
 
