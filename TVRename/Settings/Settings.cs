@@ -152,6 +152,7 @@ namespace TVRename
         public bool LeaveOriginals = false;
         public bool LookForDateInFilename = false;
         public bool MissingCheck = true;
+        public bool MoveLibraryFiles = true;
         public bool CorrectFileDates = false;
         public bool NFOShows = false;
         public bool NFOEpisodes = false;
@@ -393,6 +394,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "RenameCheck", RenameCheck);
             XmlHelper.WriteElementToXml(writer, "PreventMove", PreventMove);
             XmlHelper.WriteElementToXml(writer, "MissingCheck", MissingCheck);
+            XmlHelper.WriteElementToXml(writer, "MoveLibraryFiles", MoveLibraryFiles);
             XmlHelper.WriteElementToXml(writer, "AutoSearchForDownloadedFiles", AutoSearchForDownloadedFiles);
             XmlHelper.WriteElementToXml(writer, "UpdateFileDates", CorrectFileDates);
             XmlHelper.WriteElementToXml(writer, "SearchLocally", SearchLocally);
@@ -1017,6 +1019,7 @@ namespace TVRename
             qBitTorrentHost = xmlSettings.ExtractString("qBitTorrentHost", "localhost");
             qBitTorrentPort = xmlSettings.ExtractString("qBitTorrentPort", "8080");
             MissingCheck = xmlSettings.ExtractBool("MissingCheck") ?? true;
+            MoveLibraryFiles = xmlSettings.ExtractBool("MoveLibraryFiles") ?? true;
             CorrectFileDates = xmlSettings.ExtractBool("UpdateFileDates") ?? false;
             SearchLocally = xmlSettings.ExtractBool("SearchLocally") ?? true;
             IgnorePreviouslySeen = xmlSettings.ExtractBool("IgnorePreviouslySeen") ?? false;

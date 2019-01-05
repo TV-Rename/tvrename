@@ -47,6 +47,7 @@ namespace TVRename
                     ProcessedEpisode pe = action.Episode;
                     string simpleShowName = Helpers.SimplifyName(action.Episode.Show.ShowName);
                     string simpleSeriesName = Helpers.SimplifyName(action.Episode.TheSeries.Name);
+                    ItemList newItemsForThisMissingEpisode = new ItemList();
 
                     string imdbId = action.Episode.TheSeries.GetImdbNumber();
 
@@ -108,9 +109,9 @@ namespace TVRename
                                     if (ep != pe.AppropriateEpNum) continue;
 
                                     LOGGER.Info(
-                                        $"Adding {itemUrl} as it appears to be match for {pe.Show.ShowName} S{pe.AppropriateSeasonNumber}E{pe.AppropriateEpNum}");
+                                        $"Adding {itemUrl} from JSON page as it appears to be match for {pe.Show.ShowName} S{pe.AppropriateSeasonNumber}E{pe.AppropriateEpNum}");
 
-                                    newItems.Add(new ActionTDownload(itemName,itemSizeBytes, itemUrl, action.TheFileNoExt, pe,action));
+                                    newItemsForThisMissingEpisode.Add(new ActionTDownload(itemName,itemSizeBytes, itemUrl, action.TheFileNoExt, pe,action));
                                     toRemove.Add(action);
                                 }
                                 else
@@ -126,15 +127,16 @@ namespace TVRename
                         LOGGER.Info(
                             $"{TVSettings.Instance.SearchJSONRootNode} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.Episode.TheSeries.Name}");
                     }
+                    foreach (ActionTDownload x in FindDuplicates(newItemsForThisMissingEpisode))
+                        newItemsForThisMissingEpisode.Remove(x);
+
+                    newItems.AddNullableRange(newItemsForThisMissingEpisode);
                 }
             }
             catch (WebException ex)
             {
                 LOGGER.Info(ex,$"Failed to Access {TVSettings.Instance.SearchJSONURL}");
             }
-
-            foreach (ActionTDownload x in FindDuplicates(newItems))
-                newItems.Remove(x);
 
             foreach (Item i in toRemove)
                 ActionList.Remove(i);

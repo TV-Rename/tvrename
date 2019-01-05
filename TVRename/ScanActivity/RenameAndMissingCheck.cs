@@ -81,7 +81,7 @@ namespace TVRename
                     if (settings.Token.IsCancellationRequested)
                         return;
 
-                    FileInfo[] files = dfc.Get(folder);
+                    FileInfo[] files = dfc.GetFiles(folder);
                     if (files == null)
                         continue;
 

@@ -113,7 +113,7 @@ namespace TVRename
                 if (TVSettings.Instance.LibraryFolders.Count == 0)
                 {
                     MessageBox.Show(
-                        "Please add some monitor (library) folders under 'Bulk Add Shows'to use the 'Auto Add' functionity (Alternatively you can turn it off in settings).",
+                        "Please add some monitor (library) folders under 'Bulk Add Shows' to use the 'Auto Add' functionity (Alternatively you can add them or turn it off in settings).",
                         "Can't Auto Add Show", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                     return;
@@ -151,6 +151,12 @@ namespace TVRename
             MDoc.Library.AddRange(addedShows);
             MDoc.ShowAddedOrEdited(true);
             LOGGER.Info("Added new shows called: {0}", string.Join(",", addedShows.Select(s => s.ShowName)));
+
+            //add each new show into the shows being scanned
+            foreach (ShowItem si in addedShows)
+            {
+                showList.Add(si);
+            }
         }
 
         public override bool Active() => TVSettings.Instance.AutoSearchForDownloadedFiles;

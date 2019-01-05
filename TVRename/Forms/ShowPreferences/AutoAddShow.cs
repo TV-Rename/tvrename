@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -24,7 +25,7 @@ namespace TVRename
             cbDirectory.Items.Clear();
             foreach (string folder in TVSettings.Instance.LibraryFolders)
             {
-                cbDirectory.Items.Add(folder);
+                cbDirectory.Items.Add(folder.TrimEnd(Path.DirectorySeparatorChar.ToString()));
             }
             cbDirectory.SelectedIndex = 0;
             cbDirectory.ResumeLayout();

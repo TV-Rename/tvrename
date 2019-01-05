@@ -26,11 +26,22 @@ namespace TVRename
 
             if (!bam.AddItems.Any(s => s.CodeKnown)) return;
 
+            List<int> idsToAdd = bam.AddItems.Where(s => s.CodeKnown).Select(folder => folder.TVDBCode).ToList();
+            
             bam.AddAllToMyShows();
-            LOGGER.Info("Added new shows called: {0}", string.Join(",", bam.AddItems.Where(s => s.CodeKnown).Select(s => s.Folder)));
 
             MDoc.SetDirty();
             MDoc.DoDownloadsFG();
+
+            List<ShowItem> addedShows = idsToAdd.Select(s => MDoc.Library.ShowItem(s)).ToList();
+
+            //add each new show into the shows being scanned
+            foreach (ShowItem si in addedShows)
+            {
+                showList.Add(si);
+            }
+            LOGGER.Info("Added new shows called: {0}", string.Join(",", addedShows.Select(si => si.ShowName)));
+
             MDoc.DoWhenToWatch(true);
 
             MDoc.WriteUpcoming();

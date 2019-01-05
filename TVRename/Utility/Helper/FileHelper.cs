@@ -56,11 +56,11 @@ namespace TVRename
             bool newFileIsBetterQuality = encumbantFrameWidth * marginMultiplier < newFileFrameWidth;
             bool encumbantFileIsBetterQuality = encumbantFrameWidth > newFileFrameWidth * marginMultiplier;
 
-            if (encumbantFileIsMuchLonger) return VideoComparison.firstFileBetter;  //exting file is longer
-            if (encumbantFileIsBetterQuality) return VideoComparison.firstFileBetter;  //exting file is better quality
+            if (encumbantFileIsBetterQuality && !newFileIsMuchLonger) return VideoComparison.firstFileBetter;  //exting file is better quality
+            if (encumbantFileIsMuchLonger && !newFileIsBetterQuality) return VideoComparison.firstFileBetter;  //exting file is longer
 
-            if (newFileIsBetterQuality) return VideoComparison.secondFileBetter;
-            if (newFileIsMuchLonger) return VideoComparison.secondFileBetter;
+            if (newFileIsBetterQuality && !encumbantFileIsMuchLonger) return VideoComparison.secondFileBetter;
+            if (newFileIsMuchLonger && !encumbantFileIsBetterQuality) return VideoComparison.secondFileBetter;
 
             if (newFileContainsTerm) return VideoComparison.secondFileBetter;
 

@@ -94,7 +94,7 @@ namespace TVRename
             }
         }
 
-        private static void MissingFolderAction_DragOver(object sender, DragEventArgs e)
+        private void MissingFolderAction_DragOver(object sender, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
