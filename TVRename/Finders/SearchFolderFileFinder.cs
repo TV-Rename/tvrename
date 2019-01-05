@@ -53,15 +53,7 @@ namespace TVRename
                 ReorganiseToLeaveOriginals(newList);
             }
 
-            foreach (Item i in toRemove)
-            {
-                ActionList.Remove(i);
-            }
-
-            foreach (Item i in newList)
-            {
-                ActionList.Add(i);
-            }
+            ActionList.Replace(toRemove, newList);
         }
 
         private List<FileInfo> FindMatchedFiles(TVDoc.ScanSettings settings, DirCache dirCache, ItemMissing me, ItemList thisRound)

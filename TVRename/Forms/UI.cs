@@ -2744,7 +2744,7 @@ namespace TVRename
                 }
 
                 //Remove all similar items
-                foreach (Item i in toRemove) mDoc.TheActionList.Remove(i);
+                mDoc.TheActionList.Remove(toRemove);
             }
 
             FillActionList();

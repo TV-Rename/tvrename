@@ -52,11 +52,7 @@ namespace TVRename
 
             ReorganiseToLeaveOriginals(newList);
 
-            foreach (Item i in toRemove)
-                ActionList.Remove(i);
-
-            foreach (Item i in newList)
-                ActionList.Add(i);
+            ActionList.Replace(toRemove,newList);
         }
     }
 }
