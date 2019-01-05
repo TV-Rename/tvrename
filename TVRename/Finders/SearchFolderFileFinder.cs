@@ -55,8 +55,7 @@ namespace TVRename
 
             foreach (Item i in toRemove)
             {
-
-            ActionList.Remove(i);
+                ActionList.Remove(i);
             }
 
             foreach (Item i in newList)
