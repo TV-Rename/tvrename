@@ -332,7 +332,18 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
+
             this.chkMoveLibraryFiles = new System.Windows.Forms.CheckBox();
+
+            this.cbCopyFutureDatedEps = new System.Windows.Forms.CheckBox();
+            this.cbScanIncludesBulkAdd = new System.Windows.Forms.CheckBox();
+            this.cbSearchRSSManualScanOnly = new System.Windows.Forms.CheckBox();
+            this.cbSearchJSONManualScanOnly = new System.Windows.Forms.CheckBox();
+            this.label55 = new System.Windows.Forms.Label();
+            this.tbJSONFilesizeToken = new System.Windows.Forms.TextBox();
+            this.cbIgnorePreviouslySeen = new System.Windows.Forms.CheckBox();
+            this.cbShowCollections = new System.Windows.Forms.CheckBox();
+
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -3317,6 +3328,7 @@ namespace TVRename
             this.tbGeneral.Controls.Add(this.groupBox17);
             this.tbGeneral.Controls.Add(this.label60);
             this.tbGeneral.Controls.Add(this.pbGeneral);
+            this.tbGeneral.Controls.Add(this.cbShowCollections);
             this.tbGeneral.Controls.Add(this.label37);
             this.tbGeneral.Controls.Add(this.label38);
             this.tbGeneral.Controls.Add(this.tbPercentDirty);
@@ -3667,6 +3679,7 @@ namespace TVRename
             // 
             // chkMoveLibraryFiles
             // 
+
             this.chkMoveLibraryFiles.AutoSize = true;
             this.chkMoveLibraryFiles.Checked = true;
             this.chkMoveLibraryFiles.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -3676,6 +3689,85 @@ namespace TVRename
             this.chkMoveLibraryFiles.TabIndex = 48;
             this.chkMoveLibraryFiles.Text = "Move Files within Library to Keep it Tidy";
             this.chkMoveLibraryFiles.UseVisualStyleBackColor = true;
+
+            this.cbCopyFutureDatedEps.AutoSize = true;
+            this.cbCopyFutureDatedEps.Location = new System.Drawing.Point(5, 163);
+            this.cbCopyFutureDatedEps.Name = "cbCopyFutureDatedEps";
+            this.cbCopyFutureDatedEps.Size = new System.Drawing.Size(270, 17);
+            this.cbCopyFutureDatedEps.TabIndex = 41;
+            this.cbCopyFutureDatedEps.Text = "Copy future dated episodes found in Search Folders";
+            this.toolTip1.SetToolTip(this.cbCopyFutureDatedEps, "If the contents of any of these folder change, then automatically do a \"Scan\" and" +
+        " \"Do\".");
+            this.cbCopyFutureDatedEps.UseVisualStyleBackColor = true;
+            //
+            // cbScanIncludesBulkAdd
+            // 
+            this.cbScanIncludesBulkAdd.AutoSize = true;
+            this.cbScanIncludesBulkAdd.Location = new System.Drawing.Point(9, 433);
+            this.cbScanIncludesBulkAdd.Name = "cbScanIncludesBulkAdd";
+            this.cbScanIncludesBulkAdd.Size = new System.Drawing.Size(159, 17);
+            this.cbScanIncludesBulkAdd.TabIndex = 19;
+            this.cbScanIncludesBulkAdd.Text = "Do Bulk-Add as part of scan";
+            this.cbScanIncludesBulkAdd.UseVisualStyleBackColor = true;
+            //
+            // cbShowCollections
+            // 
+            this.cbShowCollections.AutoSize = true;
+            this.cbShowCollections.Location = new System.Drawing.Point(14, 157);
+            this.cbShowCollections.Name = "cbShowCollections";
+            this.cbShowCollections.Size = new System.Drawing.Size(145, 17);
+            this.cbShowCollections.TabIndex = 24;
+            this.cbShowCollections.Text = "Multiple Show collections";
+            this.cbShowCollections.UseVisualStyleBackColor = true;
+            // 
+            // cbSearchRSSManualScanOnly
+            // 
+            this.cbSearchRSSManualScanOnly.AutoSize = true;
+            this.cbSearchRSSManualScanOnly.Location = new System.Drawing.Point(204, 228);
+            this.cbSearchRSSManualScanOnly.Name = "cbSearchRSSManualScanOnly";
+            this.cbSearchRSSManualScanOnly.Size = new System.Drawing.Size(130, 17);
+            this.cbSearchRSSManualScanOnly.TabIndex = 20;
+            this.cbSearchRSSManualScanOnly.Text = "Only on manual scans";
+            this.cbSearchRSSManualScanOnly.UseVisualStyleBackColor = true;
+            // 
+            // cbSearchJSONManualScanOnly
+            // 
+            this.cbSearchJSONManualScanOnly.AutoSize = true;
+            this.cbSearchJSONManualScanOnly.Location = new System.Drawing.Point(204, 251);
+            this.cbSearchJSONManualScanOnly.Name = "cbSearchJSONManualScanOnly";
+            this.cbSearchJSONManualScanOnly.Size = new System.Drawing.Size(130, 17);
+            this.cbSearchJSONManualScanOnly.TabIndex = 21;
+            this.cbSearchJSONManualScanOnly.Text = "Only on manual scans";
+            this.cbSearchJSONManualScanOnly.UseVisualStyleBackColor = true;
+            // 
+            // label55
+            // 
+            this.label55.AutoSize = true;
+            this.label55.Location = new System.Drawing.Point(6, 120);
+            this.label55.Name = "label55";
+            this.label55.Size = new System.Drawing.Size(64, 13);
+            this.label55.TabIndex = 39;
+            this.label55.Text = "Size Token:";
+            // 
+            // tbJSONFilesizeToken
+            // 
+            this.tbJSONFilesizeToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbJSONFilesizeToken.Location = new System.Drawing.Point(97, 117);
+            this.tbJSONFilesizeToken.Name = "tbJSONFilesizeToken";
+            this.tbJSONFilesizeToken.Size = new System.Drawing.Size(305, 20);
+            this.tbJSONFilesizeToken.TabIndex = 38;
+            // 
+            // cbIgnorePreviouslySeen
+            // 
+            this.cbIgnorePreviouslySeen.AutoSize = true;
+            this.cbIgnorePreviouslySeen.Location = new System.Drawing.Point(40, 96);
+            this.cbIgnorePreviouslySeen.Name = "cbIgnorePreviouslySeen";
+            this.cbIgnorePreviouslySeen.Size = new System.Drawing.Size(181, 17);
+            this.cbIgnorePreviouslySeen.TabIndex = 22;
+            this.cbIgnorePreviouslySeen.Text = "Ignore Episodes Previously Seen";
+            this.cbIgnorePreviouslySeen.UseVisualStyleBackColor = true;
+
             // 
             // Preferences
             // 
@@ -4078,5 +4170,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbMissing;
         private System.Windows.Forms.CheckBox cbCopyFutureDatedEps;
         private System.Windows.Forms.CheckBox chkMoveLibraryFiles;
+        private System.Windows.Forms.CheckBox cbShowCollections;
     }
 }
