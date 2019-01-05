@@ -190,6 +190,7 @@ namespace TVRename
             s.RenameCheck = cbRenameCheck.Checked;
             s.PreventMove = chkPreventMove.Checked;
             s.MissingCheck = cbMissing.Checked;
+            s.MoveLibraryFiles = chkMoveLibraryFiles.Checked;
             s.CorrectFileDates = cbxUpdateAirDate.Checked;
             s.SearchLocally = cbSearchLocally.Checked;
             s.IgnorePreviouslySeen = cbIgnorePreviouslySeen.Checked;
@@ -685,6 +686,7 @@ namespace TVRename
             cbCopyFutureDatedEps.Checked = s.CopyFutureDatedEpsFromSearchFolders;
 
             cbMissing.Checked = s.MissingCheck;
+            chkMoveLibraryFiles.Checked = s.MoveLibraryFiles;
             cbxUpdateAirDate.Checked = s.CorrectFileDates;
             chkAutoSearchForDownloadedFiles.Checked = s.AutoSearchForDownloadedFiles;
             cbSearchLocally.Checked = s.SearchLocally;
@@ -1072,7 +1074,6 @@ namespace TVRename
         private void ScanOptEnableDisable()
         {
             bool e = cbMissing.Checked;
-            tbMediaCenter.Enabled = e;
 
             cbIgnorePreviouslySeen.Enabled = e;
             cbSearchRSS.Enabled = e;
@@ -1086,7 +1087,6 @@ namespace TVRename
             cbSearchRSSManualScanOnly.Enabled = cbSearchRSS.Checked && e;
 
             cbLeaveOriginals.Enabled = e && cbSearchLocally.Checked;
-
         }
 
         #endregion enable and disable settings as appropriate

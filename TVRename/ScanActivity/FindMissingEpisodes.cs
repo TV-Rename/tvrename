@@ -11,7 +11,8 @@ namespace TVRename
         {
             finders = new List<Finder> //These should be in order
             {
-                new FileFinder(doc),
+                new LibraryFolderFileFinder(doc),
+                new SearchFolderFileFinder(doc),
                 new uTorrentFinder(doc),
                 new qBitTorrentFinder(doc),
                 new SABnzbdFinder(doc),

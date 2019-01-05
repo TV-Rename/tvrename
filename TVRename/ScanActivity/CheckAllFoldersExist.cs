@@ -110,18 +110,26 @@ namespace TVRename
                     }
                     else if (whatToDo == FaResult.kfaCreate)
                     {
-                        try
+                        if (string.IsNullOrWhiteSpace(folder))
                         {
-                            LOGGER.Info("Creating directory as it is missing: {0}", folder);
-                            Directory.CreateDirectory(folder);
+                            LOGGER.Warn($"Folder is not specified for {sn} {text}");
+                            goAgain = true;
                         }
-                        catch (Exception ioe)
+                        else
                         {
-                            LOGGER.Info("Could not directory: {0}", folder);
-                            LOGGER.Info(ioe);
-                        }
+                            try
+                            {
+                                LOGGER.Info("Creating directory as it is missing: {0}", folder);
+                                Directory.CreateDirectory(folder);
+                            }
+                            catch (Exception ioe)
+                            {
+                                LOGGER.Info("Could not directory: {0}", folder);
+                                LOGGER.Info(ioe);
+                            }
 
-                        goAgain = true;
+                            goAgain = true;
+                        }
                     }
                     else if (whatToDo == FaResult.kfaIgnoreAlways)
                     {

@@ -193,6 +193,16 @@ namespace TVRename
                 
                 return false;
             }
+            if (chkAutoFolders.Checked && string.IsNullOrWhiteSpace(txtBaseFolder.Text))
+            {
+                MessageBox.Show("Please enter base folder for this show or turn off automatic folders", "TVRename Add/Edit Show",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                Folders.SelectedTab = tabPage5;
+                txtBaseFolder.Focus();
+
+                return false;
+            }
             return true;
         }
 
@@ -435,7 +445,17 @@ namespace TVRename
 
         private void bnQuickLocate_Click(object sender, EventArgs e)
         {
-            string showName = codeFinderForm.SelectedShow()?.Name ?? txtCustomShowName.Text?? "New Folder";
+            //If there are no LibraryFolders then we cant use the simplified UI
+            if (TVSettings.Instance.LibraryFolders.Count == 0)
+            {
+                MessageBox.Show(
+                    "Please add some library folders in the Preferences to use this.",
+                    "Can't Auto Add Show", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                
+                return;
+            }
+
+            string showName = codeFinderForm.SelectedShow()?.Name ?? txtCustomShowName.Text ?? "New Folder";
             QuickLocateForm f = new QuickLocateForm(showName);
 
             if (f.ShowDialog() == DialogResult.OK)
