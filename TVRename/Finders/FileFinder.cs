@@ -95,9 +95,10 @@ namespace TVRename
                     !TVSettings.Instance.DownloadFolders.Any(folder =>
                         folder.SameDirectoryLocation(fi.Directory.FullName));
 
-                if (dce.FullName != fi.FullName)
+                if ((dce.FullName != fi.FullName) && (!FindExistingActionFor(addTo,dce))){
                     addTo.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.copy, dce, fi, me.Episode, doTidyup,
                         me));
+                }
 
                 if (doExtraFiles)
                 {
@@ -127,6 +128,18 @@ namespace TVRename
                 }
                 LOGGER.Warn(t);
             }
+            return false;
+        }
+
+        private static bool FindExistingActionFor(ItemList addTo, FileInfo fi)
+        {
+            foreach (ActionCopyMoveRename existingFileOperation in addTo.CopyMoveItems())
+            {
+                if (string.Compare(existingFileOperation.From.FullName, fi.FullName,
+                        StringComparison.OrdinalIgnoreCase) == 0)
+                    return true;
+            }
+
             return false;
         }
 

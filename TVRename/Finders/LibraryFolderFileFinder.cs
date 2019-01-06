@@ -36,10 +36,10 @@ namespace TVRename
                     foreach (string folderName in seriesFolders.Value)
                     {
                         foreach (FileInfo testFile in dfc.GetFilesIncludeSubDirs(folderName))
-                        {
+                         {
                             if (!ReviewFile(me, thisRound, testFile, settings,false,false,false)) continue;
 
-                            matchedFiles.Add(testFile);
+                            if (!matchedFiles.Contains(testFile)) matchedFiles.Add(testFile);
                         }
                     }
                 }
