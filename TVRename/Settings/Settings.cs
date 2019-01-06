@@ -1100,7 +1100,7 @@ namespace TVRename
             SeasonFilter = new SeasonFilter
             {
                 HideIgnoredSeasons = XmlConvert.ToBoolean(xmlSettings.Descendants("SeasonFilters")
-                    .Descendants("SeasonIgnoredFilter").First().Value)
+                    .Descendants("SeasonIgnoredFilter").FirstOrDefault()?.Value ??"false" )
             };
 
             Filter = new ShowFilter

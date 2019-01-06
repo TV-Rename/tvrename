@@ -230,13 +230,13 @@ namespace TVRename
                 TVSettings.Instance.load(x.Descendants("Settings").First());
                 Library.LoadFromXml(x.Descendants("MyShows").First());
                 TVSettings.Instance.IgnoreFolders =
-                    x.Descendants("IgnoreFolders").First().ReadStringsFromXml("Folder");
+                    x.Descendants("IgnoreFolders").FirstOrDefault()?.ReadStringsFromXml("Folder") ??new List<string>();
                 TVSettings.Instance.DownloadFolders =
-                    x.Descendants("FinderSearchFolders").First().ReadStringsFromXml("Folder");
+                    x.Descendants("FinderSearchFolders").FirstOrDefault()?.ReadStringsFromXml("Folder") ?? new List<string>();
                 TVSettings.Instance.IgnoredAutoAddHints =
-                    x.Descendants("IgnoredAutoAddHints").First().ReadStringsFromXml("Hint");
+                    x.Descendants("IgnoredAutoAddHints").FirstOrDefault()?.ReadStringsFromXml("Hint") ?? new List<string>();
                 TVSettings.Instance.Ignore =
-                    x.Descendants("IgnoreItems").First().ReadIiFromXml("Ignore");
+                    x.Descendants("IgnoreItems").FirstOrDefault()?.ReadIiFromXml("Ignore") ??new List<IgnoreItem>();
                 TVSettings.Instance.PreviouslySeenEpisodes = new PreviouslySeenEpisodes(x.Descendants("PreviouslySeenEpisodes").FirstOrDefault());
 
                 //MonitorFolders are a little more complex as there is a parameter named the same which we need to ignore
