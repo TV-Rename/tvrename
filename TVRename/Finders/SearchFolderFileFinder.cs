@@ -9,7 +9,8 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.SearchLocally;
 
-        protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
+        protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList,
+            TVDoc.ScanSettings settings)
         {
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
@@ -26,8 +27,8 @@ namespace TVRename
             }
 
             int currentItem = 0;
-            int totalN = ActionList.Count+1;
-            UpdateStatus(currentItem,totalN, "Starting searching through files");
+            int totalN = ActionList.Count + 1;
+            UpdateStatus(currentItem, totalN, "Starting searching through files");
 
             foreach (ItemMissing me in ActionList.MissingItems())
             {
@@ -43,18 +44,16 @@ namespace TVRename
             }
 
             if (TVSettings.Instance.KeepTogether)
-                KeepTogether(newList);
+            {
+                KeepTogether(newList, false);
+            }
 
             if (!TVSettings.Instance.LeaveOriginals)
             {
                 ReorganiseToLeaveOriginals(newList);
             }
 
-            foreach (Item i in toRemove)
-                ActionList.Remove(i);
-
-            foreach (Item i in newList)
-                ActionList.Add(i);
+            ActionList.Replace(toRemove, newList);
         }
 
         private List<FileInfo> FindMatchedFiles(TVDoc.ScanSettings settings, DirCache dirCache, ItemMissing me, ItemList thisRound)

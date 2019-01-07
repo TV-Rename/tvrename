@@ -176,28 +176,33 @@ namespace TVRename
         public bool BulkAddCompareNoVideoFolders = false;
 
         public string AutoAddMovieTerms = "dvdrip;camrip;screener;dvdscr;r5;bluray";
-        public IEnumerable<string> AutoAddMovieTermsArray => AutoAddMovieTerms.Split(';');
+        public IEnumerable<string> AutoAddMovieTermsArray => Convert(AutoAddMovieTerms);
 
         public string PriorityReplaceTerms = "PROPER;REPACK;RERIP";
-        public IEnumerable<string> PriorityReplaceTermsArray => PriorityReplaceTerms.Split(';');
+        public IEnumerable<string> PriorityReplaceTermsArray => Convert(PriorityReplaceTerms);
 
         public string AutoAddIgnoreSuffixes = "1080p;720p";
-        public IEnumerable<string> AutoAddIgnoreSuffixesArray => AutoAddIgnoreSuffixes.Split(';');
+        public IEnumerable<string> AutoAddIgnoreSuffixesArray => Convert(AutoAddIgnoreSuffixes);
 
         public string keepTogetherExtensionsString = "";
-        public IEnumerable<string> keepTogetherExtensionsArray => keepTogetherExtensionsString.Split(';');
+        public IEnumerable<string> keepTogetherExtensionsArray => Convert(keepTogetherExtensionsString);
 
         public string subtitleExtensionsString = "";
-        public IEnumerable<string> subtitleExtensionsArray => subtitleExtensionsString.Split(';');
+        public IEnumerable<string> subtitleExtensionsArray => Convert(subtitleExtensionsString);
 
         public string searchSeasonWordsString = "Season;Series;Saison;Temporada;Seizoen";
-        public IEnumerable<string> searchSeasonWordsArray => searchSeasonWordsString.Split(';');
+        public IEnumerable<string> searchSeasonWordsArray => Convert(searchSeasonWordsString);
 
         public string preferredRSSSearchTermsString = "720p;1080p";
-        public string[] PreferredRSSSearchTerms() => preferredRSSSearchTermsString.Split(';');
+        public string[] PreferredRSSSearchTerms() => Convert(preferredRSSSearchTermsString);
 
         public string OtherExtensionsString = "";
-        private IEnumerable<string> OtherExtensionsArray => OtherExtensionsString.Split(';');
+        private IEnumerable<string> OtherExtensionsArray => Convert(OtherExtensionsString);
+
+        private static string[] Convert(string propertyString)
+        {
+            return string.IsNullOrWhiteSpace(propertyString) ? new string[0] : propertyString.Split(';');
+        }
 
         internal bool IncludeBetaUpdates()
         {
@@ -237,7 +242,7 @@ namespace TVRename
         public string SearchJSONURLToken = "torrent_url";
         public string SearchJSONFileSizeToken = "size_bytes";
 
-        public string[] VideoExtensionsArray => VideoExtensionsString.Split(';');
+        public string[] VideoExtensionsArray => Convert(VideoExtensionsString);
 
         public bool CopyFutureDatedEpsFromSearchFolders = false;
         public bool ForceBulkAddToUseSettingsOnly = false;
@@ -655,6 +660,7 @@ namespace TVRename
         {
             foreach (string s in VideoExtensionsArray)
             {
+                if (string.IsNullOrWhiteSpace(s)) continue;
                 if (!file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase)) continue;
                 extension = s;
                 return true;
@@ -664,6 +670,7 @@ namespace TVRename
             {
                 foreach (string s in OtherExtensionsArray)
                 {
+                    if (string.IsNullOrWhiteSpace(s)) continue;
                     if (!file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase)) continue;
                     extension = s;
                     return true;
@@ -739,8 +746,8 @@ namespace TVRename
             // ReSharper disable once InconsistentNaming
             public int EmptyMaxSizeMB = 100;
 
-            public IEnumerable<string> EmptyIgnoreExtensionsArray => EmptyIgnoreExtensionList.Split(';');
-            public IEnumerable<string> EmptyIgnoreWordsArray => EmptyIgnoreWordList.Split(';');
+            public IEnumerable<string> EmptyIgnoreExtensionsArray => Convert(EmptyIgnoreExtensionList);
+            public IEnumerable<string> EmptyIgnoreWordsArray => Convert(EmptyIgnoreWordList);
 
             public void load(XElement xmlSettings)
             {
@@ -1096,7 +1103,7 @@ namespace TVRename
             SeasonFilter = new SeasonFilter
             {
                 HideIgnoredSeasons = XmlConvert.ToBoolean(xmlSettings.Descendants("SeasonFilters")
-                    .Descendants("SeasonIgnoredFilter").First().Value)
+                    .Descendants("SeasonIgnoredFilter").FirstOrDefault()?.Value ??"false" )
             };
 
             Filter = new ShowFilter
