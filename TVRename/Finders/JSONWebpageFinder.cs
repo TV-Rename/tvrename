@@ -137,12 +137,7 @@ namespace TVRename
             {
                 LOGGER.Info(ex,$"Failed to Access {TVSettings.Instance.SearchJSONURL}");
             }
-
-            foreach (Item i in toRemove)
-                ActionList.Remove(i);
-
-            foreach (Item action in newItems)
-                ActionList.Add(action);
+            ActionList.Replace(toRemove,newItems);
         }
     }
 }

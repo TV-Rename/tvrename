@@ -27,5 +27,20 @@ namespace TVRename
         public IEnumerable<ItemMissing> MissingItems() => this.OfType<ItemMissing>();
 
         public IEnumerable<ActionCopyMoveRename> CopyMoveItems() => this.OfType<ActionCopyMoveRename>();
+
+        public void Replace(ItemList toRemove, ItemList newList)
+        {
+            Remove(toRemove);
+            Add(newList);
+        }
+
+        internal void Remove(List<Item> toRemove)
+        {
+            if (toRemove == null) return;
+            foreach (Item sli in toRemove)
+            {
+                Remove(sli);
+            }
+        }
     }
 }

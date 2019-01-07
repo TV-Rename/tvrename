@@ -76,12 +76,7 @@ namespace TVRename
 
                 newItems.AddNullableRange(newItemsForThisMissingEpisode);
             }
-
-            foreach (Item i in toRemove)
-                ActionList.Remove(i);
-
-            foreach (Item action in newItems)
-                ActionList.Add(action);
+            ActionList.Replace(toRemove,newItems);
         }
     }
 }

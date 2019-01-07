@@ -97,12 +97,7 @@ namespace TVRename
                     break;
                 }
             }
-
-            foreach (Item i in toRemove)
-                ActionList.Remove(i);
-
-            foreach (Item action in newList)
-                ActionList.Add(action);
+            ActionList.Replace(toRemove,newList);
         }
 
         private static byte[] DownloadPage(string theUrl)
