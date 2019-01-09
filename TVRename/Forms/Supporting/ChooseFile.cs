@@ -7,14 +7,18 @@
 // 
 
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
-using Alphaleonis.Win32.Filesystem;
 using Humanizer;
+using NLog;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
     public partial class ChooseFile : Form
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public enum ChooseFileDialogResult
         {
             left,right,ignore
@@ -35,7 +39,7 @@ namespace TVRename
             txtDimensionsLeft.Text = "Dimensions: " + (leftFrameUnknown ? "Unknown" : leftFrameWidth + "x" + left.GetFrameHeight());
             int leftFilmLength = left.GetFilmLength();
             txtLengthLeft.Text = "Length: " + ((leftFilmLength == -1) ? "Unknown" : leftFilmLength.Seconds().Humanize(2));
-            txtSizeLeft.Text = left.Length.Bytes().Humanize("#.#");
+            txtSizeLeft.Text = GetFileSize(left);
             txtPathLeft.Text = left.DirectoryName;
 
             rightFile = right;
@@ -45,7 +49,7 @@ namespace TVRename
             lblDimensionsRight.Text = "Dimensions: " + (rightFrameUnknown ? "Unknown" : rightFrameWidth + "x" + right.GetFrameHeight());
             int rightFilmLength = right.GetFilmLength();
             lblLengthRight.Text = "Length: " + ((rightFilmLength == -1) ? "Unknown" : rightFilmLength.Seconds().Humanize(2));
-            lblSizeRight.Text = right.Length.Bytes().Humanize("#.#");
+            lblSizeRight.Text = GetFileSize(right);
             txtPathRight.Text = right.DirectoryName;
 
             SetBoldFileSize(left, right);
@@ -55,6 +59,19 @@ namespace TVRename
             if (rightFrameUnknown || leftFrameUnknown) return;
 
             SetBoldFrameWidth(leftFrameWidth, rightFrameWidth);
+        }
+
+        private static string GetFileSize(FileInfo file)
+        {
+            try
+            {
+                return file.Length.Bytes().Humanize("#.#");
+            }
+            catch (FileNotFoundException fnfex)
+            {
+                Logger.Fatal($"Can't find File in ChooseFile called {file.Name}");
+                return "Unknown";
+            }
         }
 
         private void SetBoldFileSize(FileInfo left, FileInfo right)
