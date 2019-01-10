@@ -17,8 +17,10 @@ namespace TVRename
             DirFilesCache dfc = new DirFilesCache();
 
             int currentItem = 0;
-            int totalN = ActionList.Count + 1;
+            int totalN = ActionList.MissingItems().Count() + 1;
             UpdateStatus(currentItem, totalN, "Starting searching through library looking for files");
+
+            LOGGER.Info("Starting to look for missing items in the library");
 
             foreach (ItemMissing me in ActionList.MissingItems())
             {
@@ -29,7 +31,16 @@ namespace TVRename
 
                 ItemList thisRound = new ItemList();
 
-                List<FileInfo> matchedFiles = dfc.GetFilesIncludeSubDirs(me.Episode.Show.AutoAddFolderBase).Where(testFile => ReviewFile(me, thisRound, testFile, settings,false,false,false)).ToList();
+                if (me.Episode?.Show == null)
+                {
+                    LOGGER.Info($"Not looking for {me.Filename} in the library as the show/episode is null");
+                    continue;
+                }
+
+                string baseFolder = me.Episode.Show.AutoAddFolderBase;
+                LOGGER.Info($"Starting to look for {me.Filename} in the library: {baseFolder}");
+
+                List<FileInfo> matchedFiles = dfc.GetFilesIncludeSubDirs(baseFolder).Where(testFile => ReviewFile(me, thisRound, testFile, settings,false,false,false)).ToList();
 
                 foreach (KeyValuePair<int, List<string>> seriesFolders in me.Episode.Show.AllFolderLocationsEpCheck(false))
                 {

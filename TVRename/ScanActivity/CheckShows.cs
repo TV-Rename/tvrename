@@ -7,6 +7,7 @@
 // 
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TVRename
 {
@@ -35,7 +36,7 @@ namespace TVRename
 
             int c = 0;
             UpdateStatus(c,showList.Count, "Checking shows");
-            foreach (ShowItem si in showList)
+            foreach (ShowItem si in showList.OrderBy(item => item.ShowName ))
             {
                 UpdateStatus(c++ ,showList.Count, si.ShowName);
                 if (settings.Token.IsCancellationRequested)

@@ -42,11 +42,6 @@ namespace TVRename
             bool newFileContainsTerm =
                 TVSettings.Instance.PriorityReplaceTermsArray.Any(term => newFile.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
 
-            if (encumbantLength == -1) return VideoComparison.cantTell;
-            if (newFileLength == -1) return VideoComparison.cantTell;
-            if (encumbantFrameWidth == -1) return VideoComparison.cantTell;
-            if (newFileFrameWidth == -1) return VideoComparison.cantTell;
-
             float percentMargin = TVSettings.Instance.replaceMargin;
             float marginMultiplier = (percentMargin + 100) / 100;
 
@@ -56,6 +51,14 @@ namespace TVRename
             bool newFileIsBetterQuality = encumbantFrameWidth * marginMultiplier < newFileFrameWidth;
             bool encumbantFileIsBetterQuality = encumbantFrameWidth > newFileFrameWidth * marginMultiplier;
 
+            if (encumbantLength == newFileLength && encumbantFrameWidth == newFileFrameWidth &&
+                newFile.Length == encumbantFile.Length) return VideoComparison.same;
+            
+            if (encumbantLength == -1) return VideoComparison.cantTell;
+            if (newFileLength == -1) return VideoComparison.cantTell;
+            if (encumbantFrameWidth == -1) return VideoComparison.cantTell;
+            if (newFileFrameWidth == -1) return VideoComparison.cantTell;
+            
             if (encumbantFileIsBetterQuality && !newFileIsMuchLonger) return VideoComparison.firstFileBetter;  //exting file is better quality
             if (encumbantFileIsMuchLonger && !newFileIsBetterQuality) return VideoComparison.firstFileBetter;  //exting file is longer
 
@@ -63,9 +66,6 @@ namespace TVRename
             if (newFileIsMuchLonger && !encumbantFileIsBetterQuality) return VideoComparison.secondFileBetter;
 
             if (newFileContainsTerm) return VideoComparison.secondFileBetter;
-
-            if (encumbantLength == newFileLength && encumbantFrameWidth == newFileFrameWidth &&
-                newFile.Length == encumbantFile.Length) return VideoComparison.same;
 
             return VideoComparison.similar;
         }
