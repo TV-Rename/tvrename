@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
@@ -27,7 +28,7 @@ namespace TVRename
             }
 
             int currentItem = 0;
-            int totalN = ActionList.Count + 1;
+            int totalN = ActionList.MissingItems().Count() + 1;
             UpdateStatus(currentItem, totalN, "Starting searching through files");
 
             foreach (ItemMissing me in ActionList.MissingItems())
