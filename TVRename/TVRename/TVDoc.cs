@@ -81,7 +81,7 @@ namespace TVRename
             if (TVSettings.Instance.mode==TVSettings.BetaMode.BetaToo || TVSettings.Instance.ShareLogs) SetupLogging();
         }
 
-        private void SetupLogging()
+        private static void SetupLogging()
         {
             NLog.Config.ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.Load("NLog.Targets.Syslog"));
 
@@ -99,9 +99,9 @@ namespace TVRename
 
             config.AddTarget("syslog", syslog);
 
-            syslog.Layout = "${date} | ${message}";
+            syslog.Layout = "${date:format=yyyy-MM-dd HH\\:mm\\:ss} |${level:uppercase=true}| ${message} ${exception:format=toString,Data}";
 
-            LoggingRule rule = new LoggingRule("*", LogLevel.Error, syslog);
+            LoggingRule rule = new LoggingRule("*", LogLevel.Info, syslog);
             config.LoggingRules.Add(rule);
 
             LogManager.Configuration = config;
