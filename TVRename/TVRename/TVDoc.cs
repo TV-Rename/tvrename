@@ -101,7 +101,7 @@ namespace TVRename
 
             syslog.Layout = "${date} | ${message}";
 
-            LoggingRule rule = new LoggingRule("*", LogLevel.Warn, syslog);
+            LoggingRule rule = new LoggingRule("*", LogLevel.Error, syslog);
             config.LoggingRules.Add(rule);
 
             LogManager.Configuration = config;
