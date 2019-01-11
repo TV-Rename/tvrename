@@ -305,6 +305,7 @@ namespace TVRename
             this.cbIgnoreSamples = new System.Windows.Forms.CheckBox();
             this.tbGeneral = new System.Windows.Forms.TabPage();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
+            this.chkMoveLibraryFiles = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.domainUpDown1 = new System.Windows.Forms.DomainUpDown();
             this.lblScanAction = new System.Windows.Forms.Label();
@@ -332,7 +333,7 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
-            this.chkMoveLibraryFiles = new System.Windows.Forms.CheckBox();
+            this.chkShareCriticalLogs = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -3314,6 +3315,7 @@ namespace TVRename
             // 
             // tbGeneral
             // 
+            this.tbGeneral.Controls.Add(this.chkShareCriticalLogs);
             this.tbGeneral.Controls.Add(this.groupBox17);
             this.tbGeneral.Controls.Add(this.label60);
             this.tbGeneral.Controls.Add(this.pbGeneral);
@@ -3357,12 +3359,24 @@ namespace TVRename
             this.groupBox17.Controls.Add(this.label28);
             this.groupBox17.Controls.Add(this.cbRenameCheck);
             this.groupBox17.Controls.Add(this.cbMissing);
-            this.groupBox17.Location = new System.Drawing.Point(6, 221);
+            this.groupBox17.Location = new System.Drawing.Point(6, 249);
             this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(405, 344);
+            this.groupBox17.Size = new System.Drawing.Size(405, 316);
             this.groupBox17.TabIndex = 41;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Scan Options";
+            // 
+            // chkMoveLibraryFiles
+            // 
+            this.chkMoveLibraryFiles.AutoSize = true;
+            this.chkMoveLibraryFiles.Checked = true;
+            this.chkMoveLibraryFiles.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkMoveLibraryFiles.Location = new System.Drawing.Point(10, 251);
+            this.chkMoveLibraryFiles.Name = "chkMoveLibraryFiles";
+            this.chkMoveLibraryFiles.Size = new System.Drawing.Size(212, 17);
+            this.chkMoveLibraryFiles.TabIndex = 48;
+            this.chkMoveLibraryFiles.Text = "Move Files within Library to Keep it Tidy";
+            this.chkMoveLibraryFiles.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
@@ -3665,17 +3679,15 @@ namespace TVRename
             this.tcTabs.TabIndex = 0;
             this.tcTabs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tpSearch_DrawItem);
             // 
-            // chkMoveLibraryFiles
+            // chkShareCriticalLogs
             // 
-            this.chkMoveLibraryFiles.AutoSize = true;
-            this.chkMoveLibraryFiles.Checked = true;
-            this.chkMoveLibraryFiles.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkMoveLibraryFiles.Location = new System.Drawing.Point(10, 251);
-            this.chkMoveLibraryFiles.Name = "chkMoveLibraryFiles";
-            this.chkMoveLibraryFiles.Size = new System.Drawing.Size(212, 17);
-            this.chkMoveLibraryFiles.TabIndex = 48;
-            this.chkMoveLibraryFiles.Text = "Move Files within Library to Keep it Tidy";
-            this.chkMoveLibraryFiles.UseVisualStyleBackColor = true;
+            this.chkShareCriticalLogs.AutoSize = true;
+            this.chkShareCriticalLogs.Location = new System.Drawing.Point(13, 212);
+            this.chkShareCriticalLogs.Name = "chkShareCriticalLogs";
+            this.chkShareCriticalLogs.Size = new System.Drawing.Size(207, 17);
+            this.chkShareCriticalLogs.TabIndex = 42;
+            this.chkShareCriticalLogs.Text = "Share critical Logs to help defeat bugs";
+            this.chkShareCriticalLogs.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -4078,5 +4090,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbMissing;
         private System.Windows.Forms.CheckBox cbCopyFutureDatedEps;
         private System.Windows.Forms.CheckBox chkMoveLibraryFiles;
+        private System.Windows.Forms.CheckBox chkShareCriticalLogs;
     }
 }

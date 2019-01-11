@@ -203,6 +203,7 @@ namespace TVRename
             s.RetainLanguageSpecificSubtitles = chkRetainLanguageSpecificSubtitles.Checked;
             s.ForceBulkAddToUseSettingsOnly = chkForceBulkAddToUseSettingsOnly.Checked;
             s.CopyFutureDatedEpsFromSearchFolders = cbCopyFutureDatedEps.Checked;
+            s.ShareLogs = chkShareCriticalLogs.Checked;
 
             s.SearchJSON = cbSearchJSON.Checked;
             s.SearchJSONManualScanOnly = cbSearchJSONManualScanOnly.Checked;
@@ -684,6 +685,7 @@ namespace TVRename
             cbCleanUpDownloadDir.Checked = s.RemoveDownloadDirectoriesFiles;
             cbDeleteShowFromDisk.Checked = s.DeleteShowFromDisk;
             cbCopyFutureDatedEps.Checked = s.CopyFutureDatedEpsFromSearchFolders;
+            chkShareCriticalLogs.Checked = s.ShareLogs;
 
             cbMissing.Checked = s.MissingCheck;
             chkMoveLibraryFiles.Checked = s.MoveLibraryFiles;
