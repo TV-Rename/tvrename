@@ -15,11 +15,17 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
+using System.Reflection;
 using System.Xml;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using System.Xml.Linq;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
+using NLog.Targets.Syslog;
+using NLog.Targets.Syslog.Settings;
 using NodaTime.Extensions;
 using File = Alphaleonis.Win32.Filesystem.File;
 
@@ -71,6 +77,34 @@ namespace TVRename
             downloadIdentifiers = new DownloadIdentifiersController();
 
             LoadOk = (settingsFile == null || LoadXMLSettings(settingsFile)) && TheTVDB.Instance.LoadOk;
+
+            if (TVSettings.Instance.mode==TVSettings.BetaMode.BetaToo || TVSettings.Instance.ShareLogs) SetupLogging();
+        }
+
+        private static void SetupLogging()
+        {
+            NLog.Config.ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.Load("NLog.Targets.Syslog"));
+
+            LoggingConfiguration config = LogManager.Configuration;
+
+            SyslogTarget syslog = new SyslogTarget
+            {
+                MessageCreation = {Facility = Facility.Local7},
+                MessageSend =
+                {
+                    Protocol = ProtocolType.Tcp,
+                    Tcp = {Server = "logs7.papertrailapp.com", Port = 13236, Tls = {Enabled = true}}
+                }
+            };
+
+            config.AddTarget("syslog", syslog);
+
+            syslog.Layout = "${date:format=yyyy-MM-dd HH\\:mm\\:ss} |${level:uppercase=true}| ${message} ${exception:format=toString,Data}";
+
+            LoggingRule rule = new LoggingRule("*", LogLevel.Error, syslog);
+            config.LoggingRules.Add(rule);
+
+            LogManager.Configuration = config;
         }
 
         public TVRenameStats Stats()

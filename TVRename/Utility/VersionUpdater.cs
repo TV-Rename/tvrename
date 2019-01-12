@@ -64,7 +64,7 @@ namespace TVRename
                     }
                     catch (NullReferenceException ex)
                     {
-                        Logger.Warn("Looks like the JSON payload from GitHub has changed");
+                        Logger.Error("Looks like the JSON payload from GitHub has changed");
                         Logger.Debug(ex, gitHubReleaseJson.ToString());
                     }
                     catch (ArgumentOutOfRangeException ex)
