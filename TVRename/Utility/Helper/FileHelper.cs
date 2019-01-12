@@ -10,6 +10,8 @@ namespace TVRename
 {
     public static class FileHelper
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public static int GetFrameWidth(this FileInfo movieFile)
         {
             using (ShellObject shell = ShellObject.FromParsingName(movieFile.FullName))
@@ -126,10 +128,17 @@ namespace TVRename
             }
 
             if (string.IsNullOrWhiteSpace(duration)) return -1;
-
-            return (3600 * int.Parse(duration.Split(':')[0]))
-                   + (60 * int.Parse(duration.Split(':')[1]))
-                   + int.Parse(duration.Split(':')[2]);
+            try
+            {
+                return (3600 * int.Parse(duration.Split(':')[0]))
+                       + (60 * int.Parse(duration.Split(':')[1]))
+                       + int.Parse(duration.Split(':')[2]);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Unable to parse string {duration} as part of GetFilmLength",e);
+                return -1;
+            }
         }
 
         public static bool FileExistsCaseSensitive(string filename)

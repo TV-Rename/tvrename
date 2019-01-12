@@ -244,6 +244,7 @@ namespace TVRename
 
         public string[] VideoExtensionsArray => Convert(VideoExtensionsString);
 
+        public bool ShareLogs = true;
         public bool CopyFutureDatedEpsFromSearchFolders = false;
         public bool ForceBulkAddToUseSettingsOnly = false;
         public bool RetainLanguageSpecificSubtitles = true;
@@ -453,6 +454,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "SearchJSONFileSizeToken", SearchJSONFileSizeToken);
             XmlHelper.WriteElementToXml(writer, "PriorityReplaceTerms", PriorityReplaceTerms);
             XmlHelper.WriteElementToXml(writer, "CopyFutureDatedEpsFromSearchFolders", CopyFutureDatedEpsFromSearchFolders);
+            XmlHelper.WriteElementToXml(writer, "ShareLogs", ShareLogs);
 
             TheSearchers.WriteXml(writer);
             writer.WriteStartElement("Replacements");
@@ -1065,6 +1067,7 @@ namespace TVRename
             keepTogetherExtensionsString = xmlSettings.ExtractString("KeepTogetherExtensions", ".srt;.nfo;.txt;.tbn");
             ExportWTWRSS = xmlSettings.ExtractBool("ExportWTWRSS") ?? false;
             CopyFutureDatedEpsFromSearchFolders = xmlSettings.ExtractBool("CopyFutureDatedEpsFromSearchFolders") ?? false;
+            ShareLogs = xmlSettings.ExtractBool("ShareLogs") ?? true;
 
             Tidyup.load(xmlSettings);
             RSSURLs = xmlSettings.Descendants("RSSURLs").First().ReadStringsFromXml("URL");
