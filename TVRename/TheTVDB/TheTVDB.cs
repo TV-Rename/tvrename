@@ -970,7 +970,7 @@ namespace TVRename
             }
         }
 
-        private int GetLanguageId() => LanguageList.GetLanguageFromCode(TVSettings.Instance.PreferredLanguageCode).Id;
+        private int GetLanguageId() => LanguageList.GetLanguageFromCode(TVSettings.Instance.PreferredLanguageCode)?.Id ?? 7;
 
         private int GetDefaultLanguageId() => LanguageList.GetLanguageFromCode(DefaultLanguageCode).Id;
         
