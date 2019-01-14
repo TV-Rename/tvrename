@@ -134,7 +134,7 @@ namespace TVRename
                        + (60 * int.Parse(duration.Split(':')[1]))
                        + int.Parse(duration.Split(':')[2]);
             }
-            catch (FormatException _)
+            catch (FormatException)
             {
                 //Need this section as we get random text back sometimes
 //              Unable to parse string Unbekannt as part of GetFilmLength System

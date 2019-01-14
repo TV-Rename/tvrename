@@ -6,16 +6,16 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Windows.Forms;
-using Newtonsoft.Json.Linq;
-using System.Xml;
-using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Linq;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
@@ -785,7 +785,7 @@ namespace TVRename
             }
             catch (InvalidCastException ex)
             {
-                Logger.Error("Did not recieve the expected format of json from {0}.", uri);
+                Logger.Error("Did not receive the expected format of json from {0}.", uri);
                 Logger.Error(ex);
                 Logger.Error(jsonResponse["data"].ToString());
             }
@@ -908,8 +908,19 @@ namespace TVRename
                 }
                 catch (WebException ex)
                 {
-                    Logger.Error(ex, $"Error obtaining page {pageNumber} of {episodeUri} in lang {lang} using url {ex.Response.ResponseUri.AbsoluteUri}");
-                    morePages = false;
+                    if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse resp &&
+                        resp.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        Logger.Warn($"Show with Id {id} is no longer available from TVDB (got a 404). Error obtaining page { pageNumber} of { episodeUri} in lang {lang} using url { ex.Response.ResponseUri.AbsoluteUri}");
+
+                        if (TvdbIsUp())
+                        {
+                            throw new ShowNotFoundException();
+                        }
+                    }
+
+                    Logger.Error(ex, "Error obtaining {episodeUri}");
+                    return null;
                 }
             }
 
@@ -1257,7 +1268,7 @@ namespace TVRename
                 }
                 catch (InvalidCastException ex)
                 {
-                    Logger.Error("Did not recieve the expected format of json from {0}.", uri);
+                    Logger.Error("Did not receive the expected format of json from {0}.", uri);
                     Logger.Error(ex);
                     Logger.Error(jsonResponse["data"].ToString());
                 }
@@ -1280,7 +1291,7 @@ namespace TVRename
                 }
                 catch (InvalidCastException ex)
                 {
-                    Logger.Error("Did not recieve the expected format of json from {0}.", uri);
+                    Logger.Error("Did not receive the expected format of json from {0}.", uri);
                     Logger.Error(ex);
                     Logger.Error(jsonResponse["data"].ToString());
                 }
@@ -1784,7 +1795,7 @@ namespace TVRename
             }
             catch (InvalidCastException ex)
             {
-                Logger.Error("Did not recieve the expected format of json from {0}.", uri);
+                Logger.Error("Did not receive the expected format of json from {0}.", uri);
                 Logger.Error(ex);
                 Logger.Error(jsonResponse["data"].ToString());
             }
