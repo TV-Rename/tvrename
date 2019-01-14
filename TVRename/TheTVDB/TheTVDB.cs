@@ -757,7 +757,7 @@ namespace TVRename
                             }
                             catch (InvalidCastException ex)
                             {
-                                Logger.Error("Did not recieve the expected format of episode json from {0}.", uri);
+                                Logger.Error("Did not receive the expected format of episode json from {0}.", uri);
                                 Logger.Error(ex);
                                 Logger.Error(jsonResponse["data"].ToString());
                             }

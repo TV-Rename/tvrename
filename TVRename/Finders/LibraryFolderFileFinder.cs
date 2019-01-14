@@ -46,11 +46,16 @@ namespace TVRename
                 {
                     foreach (string folderName in seriesFolders.Value)
                     {
+                        LOGGER.Info($"Starting to look for {me.Filename} in the library folder: {folderName}");
                         foreach (FileInfo testFile in dfc.GetFilesIncludeSubDirs(folderName))
                          {
                             if (!ReviewFile(me, thisRound, testFile, settings,false,false,false)) continue;
 
-                            if (!matchedFiles.Contains(testFile)) matchedFiles.Add(testFile);
+                            if (!matchedFiles.Contains(testFile))
+                            {
+                                matchedFiles.Add(testFile);
+                                LOGGER.Info($"Found {me.Filename} at: {testFile}");
+                            }
                         }
                     }
                 }
