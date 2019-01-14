@@ -100,7 +100,7 @@ namespace TVRename
 
             syslog.Layout = "${date:format=yyyy-MM-dd HH\\:mm\\:ss} ${assembly-version} |${level:uppercase=true}| ${message} ${exception:format=toString,Data}";
 
-            LoggingRule rule = new LoggingRule("*", LogLevel.Warn, syslog);
+            LoggingRule rule = new LoggingRule("*", LogLevel.Error, syslog);
             config.LoggingRules.Add(rule);
 
             LogManager.Configuration = config;
