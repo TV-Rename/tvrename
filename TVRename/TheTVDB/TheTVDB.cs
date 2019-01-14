@@ -527,7 +527,7 @@ namespace TVRename
 
             while (moreUpdates)
             {
-                JObject jsonUdpateResponse;
+                JObject jsonUpdateResponse;
 
                 //If this date is in the last week then this needs to be the last call to the update
                 DateTime requestedTime = Helpers.FromUnixTime(epochTime).ToUniversalTime();
@@ -539,7 +539,7 @@ namespace TVRename
 
                 try
                 {
-                    jsonUdpateResponse = HttpHelper.JsonHttpGetRequest(uri,
+                    jsonUpdateResponse = HttpHelper.JsonHttpGetRequest(uri,
                         new Dictionary<string, string> { { "fromTime", epochTime.ToString() } },
                         tvDbTokenProvider.GetToken(), TVSettings.Instance.PreferredLanguageCode);
                 }
@@ -557,7 +557,7 @@ namespace TVRename
                 int numberOfResponses;
                 try
                 {
-                    JToken dataToken = jsonUdpateResponse["data"];
+                    JToken dataToken = jsonUpdateResponse["data"];
 
                     numberOfResponses = !dataToken.HasValues ? 0 : ((JArray)dataToken).Count;
                 }
@@ -583,9 +583,9 @@ namespace TVRename
                     return true;
                 }
 
-                updatesResponses.Add(jsonUdpateResponse);
+                updatesResponses.Add(jsonUpdateResponse);
                 numberofCallsMade++;
-                long maxUpdateTime = GetUpdateTime(jsonUdpateResponse);
+                long maxUpdateTime = GetUpdateTime(jsonUpdateResponse);
 
                 if (maxUpdateTime > 0)
                 {

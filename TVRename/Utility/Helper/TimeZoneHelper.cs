@@ -38,7 +38,7 @@ namespace TVRename
                     ? theirDateTime
                     : TimeZoneInfo.ConvertTime(theirDateTime, theirTimeZone, TimeZoneInfo.Local);
             }
-            catch (ArgumentException ae)
+            catch (ArgumentException)
             {
                 Logger.Error($"Could not convert {theirDateTime.ToLongDateString()} in {theirTimeZone?.DisplayName} into {TimeZoneInfo.Local.DisplayName} in TimeZoneHelper.AdjustTzTimeToLocalTime");
                 return theirDateTime;
