@@ -23,7 +23,6 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using System.Xml.Linq;
 using NLog;
 using NLog.Config;
-using NLog.Targets;
 using NLog.Targets.Syslog;
 using NLog.Targets.Syslog.Settings;
 using NodaTime.Extensions;
@@ -39,7 +38,7 @@ namespace TVRename
         public readonly CommandLineArgs Args;
         internal TVRenameStats CurrentStats;
         public ItemList TheActionList;
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly ActionEngine actionManager;
         private readonly CacheUpdater cacheManager;
         private readonly FindMissingEpisodes localFinders;
@@ -83,7 +82,7 @@ namespace TVRename
 
         private static void SetupLogging()
         {
-            NLog.Config.ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.Load("NLog.Targets.Syslog"));
+            ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.Load("NLog.Targets.Syslog"));
 
             LoggingConfiguration config = LogManager.Configuration;
 

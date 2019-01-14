@@ -10,6 +10,7 @@ using System;
 using Alphaleonis.Win32.Filesystem;
 using System.Xml;
 using System.Xml.Serialization;
+// ReSharper disable RedundantDefaultMemberInitializer
 
 // Keeps count of some statistics.
 

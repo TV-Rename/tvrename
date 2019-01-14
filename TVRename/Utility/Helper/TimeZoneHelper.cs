@@ -13,6 +13,8 @@ namespace TVRename
 {
     public static class TimeZoneHelper
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public static IEnumerable<string> ZoneNames() => TimeZoneInfo.GetSystemTimeZones().Select(x=>x.StandardName);
 
         public static string DefaultTimeZone() => "Eastern Standard Time";
@@ -30,7 +32,17 @@ namespace TVRename
 
         public static DateTime AdjustTzTimeToLocalTime(DateTime theirDateTime, TimeZoneInfo theirTimeZone)
         {
-            return theirTimeZone == null ? theirDateTime : TimeZoneInfo.ConvertTime(theirDateTime,theirTimeZone,TimeZoneInfo.Local);
+            try
+            {
+                return theirTimeZone == null
+                    ? theirDateTime
+                    : TimeZoneInfo.ConvertTime(theirDateTime, theirTimeZone, TimeZoneInfo.Local);
+            }
+            catch (ArgumentException ae)
+            {
+                Logger.Error($"Could not convert {theirDateTime.ToLongDateString()} in {theirTimeZone?.DisplayName} into {TimeZoneInfo.Local.DisplayName} in TimeZoneHelper.AdjustTzTimeToLocalTime");
+                return theirDateTime;
+            }
         }
 
         public static double Epoch(DateTime dt)
