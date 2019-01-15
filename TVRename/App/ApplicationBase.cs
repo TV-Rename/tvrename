@@ -154,7 +154,7 @@ namespace TVRename.App
             }
         }
 
-        private static void SetupLogging()
+        private void SetupLogging()
         {
             ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.Load("NLog.Targets.Syslog"));
 
@@ -178,6 +178,8 @@ namespace TVRename.App
             config.LoggingRules.Add(rule);
 
             LogManager.Configuration = config;
+
+            Logger.Info($"TV Rename {Helpers.DisplayVersion} logging started with args: {string.Join(" ", CommandLineArgs)}");
         }
     }
 }
