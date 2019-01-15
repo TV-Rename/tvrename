@@ -586,7 +586,11 @@ namespace TVRename
                 searchFinders.CheckIfActive((scanProgDlg == null)? noProgress : scanProgDlg.ToBeDownloadedProg, specific, settings);
 
                 if (settings.Token.IsCancellationRequested)
+                {
+                    TheActionList.Clear();
+                    LastScanComplete = false;
                     return;
+                }
 
                 // sort Action list by type
                 TheActionList.Sort(new ActionItemSorter()); // was new ActionSorter()
@@ -597,7 +601,8 @@ namespace TVRename
             }
             catch (TVRenameOperationInteruptedException e)
             {
-                Logger.Warn(e, "Scan cancelled by user");
+                Logger.Warn("Scan cancelled by user");
+                TheActionList.Clear();
                 LastScanComplete = false;
             }
             catch (Exception e)

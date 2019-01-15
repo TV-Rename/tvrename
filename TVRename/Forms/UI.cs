@@ -2539,10 +2539,7 @@ namespace TVRename
             }
 
             FillMyShows(); // scanning can download more info to be displayed in my shows
-            if (mDoc.LastScanComplete)
-            {
-                FillActionList();
-            }
+            FillActionList();
         }
 
         private ListViewItem LviForItem(Item item)
