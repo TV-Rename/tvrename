@@ -53,7 +53,7 @@ namespace TVRename
                 cache[folder] = files;
                 return files;
             } catch (IOException) {
-               Logger.Error ("IOException occurred trying to access " + folder);
+               Logger.Warn("IOException occurred trying to access " + folder);
                return new FileInfo[0];
             }
         }

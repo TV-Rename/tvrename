@@ -141,7 +141,7 @@ namespace TVRename
                     return true;
                 }
 
-                Logger.Error($"Could not access {BROWSER_EMULATION_KEY}");
+                Logger.Warn($"Could not access {BROWSER_EMULATION_KEY}");
             }
             catch (SecurityException se)
             {

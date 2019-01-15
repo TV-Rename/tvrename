@@ -757,14 +757,12 @@ namespace TVRename
                             }
                             catch (InvalidCastException ex)
                             {
-                                Logger.Error("Did not receive the expected format of episode json from {0}.", uri);
-                                Logger.Error(ex);
+                                Logger.Error(ex,"Did not receive the expected format of episode json from {0}.", uri);
                                 Logger.Error(jsonResponse["data"].ToString());
                             }
                             catch (OverflowException ex)
                             {
-                                Logger.Error("Could not parse the episode json from {0}.", uri);
-                                Logger.Error(ex);
+                                Logger.Error(ex,"Could not parse the episode json from {0}.", uri);
                                 Logger.Error(jsonResponse["data"].ToString());
                             }
 
@@ -965,7 +963,7 @@ namespace TVRename
                 }
                 else
                 {
-                    Logger.Error($"Banners were found for series {seriesId} - Ignoring them {bannersXml}");
+                    Logger.Warn($"Banners were found for series {seriesId} - Ignoring them {bannersXml}");
                 }
             }
         }
@@ -1268,8 +1266,7 @@ namespace TVRename
                 }
                 catch (InvalidCastException ex)
                 {
-                    Logger.Error("Did not receive the expected format of json from {0}.", uri);
-                    Logger.Error(ex);
+                    Logger.Error(ex,"Did not receive the expected format of json from {0}.", uri);
                     Logger.Error(jsonResponse["data"].ToString());
                 }
             }
@@ -1291,8 +1288,7 @@ namespace TVRename
                 }
                 catch (InvalidCastException ex)
                 {
-                    Logger.Error("Did not receive the expected format of json from {0}.", uri);
-                    Logger.Error(ex);
+                    Logger.Error(ex,"Did not receive the expected format of json from {0}.", uri);
                     Logger.Error(jsonResponse["data"].ToString());
                 }
             }

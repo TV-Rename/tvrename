@@ -405,13 +405,13 @@ namespace TVRename
             {
                 PreventAutoScan("Scan "+st.PrettyPrint());
 
-                //Get the defult set of shows defined by the specified type
+                //Get the default set of shows defined by the specified type
                 if (shows == null) shows = GetShowList(st);
 
                 //If still null then return
                 if (shows == null)
                 {
-                    Logger.Error("No Shows Provided to Scan");
+                    Logger.Warn("No Shows Provided to Scan");
                     return;
                 }
 
@@ -443,7 +443,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                Logger.Fatal(e, "Unhandled Exception in ScanWorker");
+                Logger.Fatal(e, "Unhandled Exception in Scan");
             }
             finally
             {
