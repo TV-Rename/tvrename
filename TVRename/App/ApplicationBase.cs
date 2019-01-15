@@ -1,7 +1,12 @@
 using System;
+using System.Reflection;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using Microsoft.VisualBasic.ApplicationServices;
+using NLog;
+using NLog.Config;
+using NLog.Targets.Syslog;
+using NLog.Targets.Syslog.Settings;
 using TVRename.Ipc;
 
 namespace TVRename.App
@@ -12,7 +17,7 @@ namespace TVRename.App
     /// <seealso cref="WindowsFormsApplicationBase" />
     internal class ApplicationBase : WindowsFormsApplicationBase
     {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Initializes the splash screen.
@@ -95,6 +100,8 @@ namespace TVRename.App
                 if (!TheTVDB.Instance.LoadOk && !string.IsNullOrEmpty(TheTVDB.Instance.LoadErr)) recoverText += $"{Environment.NewLine}{TheTVDB.Instance.LoadErr}";
             } while (recover);
 
+            if (TVSettings.Instance.mode == TVSettings.BetaMode.BetaToo || TVSettings.Instance.ShareLogs) SetupLogging();
+
             ConvertSeriesTimeZones(doc, TheTVDB.Instance);
 
             // Show user interface
@@ -130,7 +137,7 @@ namespace TVRename.App
         private static void ConvertSeriesTimeZones(TVDoc doc, TheTVDB tvdb)
         {
             //this is just to convert timezones in the TheTVDB into the TVDOC where they should be:
-            //itshould only do anything the first time it is run and then be entirely begign
+            //it should only do anything the first time it is run and then be entirely benign
             //can be removed after 1/1/19
 
             foreach (ShowItem si in doc.Library.GetShowItems())
@@ -145,6 +152,32 @@ namespace TVRename.App
                 doc.SetDirty();
                 Logger.Info("Copied timezone:{0} onto series {1}", newTimeZone, si.ShowName);
             }
+        }
+
+        private static void SetupLogging()
+        {
+            ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.Load("NLog.Targets.Syslog"));
+
+            LoggingConfiguration config = LogManager.Configuration;
+
+            SyslogTarget syslog = new SyslogTarget
+            {
+                MessageCreation = { Facility = Facility.Local7 },
+                MessageSend =
+                {
+                    Protocol = ProtocolType.Tcp,
+                    Tcp = {Server = "logs7.papertrailapp.com", Port = 13236, Tls = {Enabled = true}}
+                }
+            };
+
+            config.AddTarget("syslog", syslog);
+
+            syslog.Layout = "${date:format=yyyy-MM-dd HH\\:mm\\:ss} ${assembly-version} |${level:uppercase=true}| ${message} ${exception:format=toString,Data}";
+
+            LoggingRule rule = new LoggingRule("*", LogLevel.Error, syslog);
+            config.LoggingRules.Add(rule);
+
+            LogManager.Configuration = config;
         }
     }
 }

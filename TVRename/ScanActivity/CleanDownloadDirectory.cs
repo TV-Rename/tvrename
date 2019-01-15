@@ -8,7 +8,7 @@ namespace TVRename
     internal class CleanDownloadDirectory:ScanActivity
     {
         // ReSharper disable once InconsistentNaming
-        private IEnumerable<Item> Go(ICollection<ShowItem> showList, bool unattended)
+        private IEnumerable<Item> Go(ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
             //for each directory in settings directory
             //for each file in directory
@@ -29,16 +29,17 @@ namespace TVRename
                 if (!Directory.Exists(dirPath)) continue;
 
                 List<FileInfo> filesThatMayBeNeeded = new List<FileInfo>();
-                returnActions.AddNullableRange(ReviewFilesInDownloadDirectory(showList, unattended, dfc, dirPath, filesThatMayBeNeeded));
+                returnActions.AddNullableRange(ReviewFilesInDownloadDirectory(showList, dfc, dirPath, filesThatMayBeNeeded, settings));
 
-                returnActions.AddNullableRange(ReviewDirsInDownloadDirectory(showList, dfc, dirPath, filesThatMayBeNeeded));
+                returnActions.AddNullableRange(ReviewDirsInDownloadDirectory(showList, dfc, dirPath, filesThatMayBeNeeded, settings));
             }
 
             return returnActions;
         }
 
-        private static IEnumerable<Action> ReviewDirsInDownloadDirectory(ICollection<ShowItem> showList, DirFilesCache dfc, string dirPath, List<FileInfo> filesThatMayBeNeeded)
+        private static IEnumerable<Action> ReviewDirsInDownloadDirectory(ICollection<ShowItem> showList, DirFilesCache dfc, string dirPath, List<FileInfo> filesThatMayBeNeeded, TVDoc.ScanSettings settings)
         {
+            List<Action> returnActions = new List<Action>();
             try
             {
                 foreach (string subDirPath in Directory.GetDirectories(dirPath, "*",
@@ -46,7 +47,10 @@ namespace TVRename
                 {
                     if (!Directory.Exists(subDirPath)) continue;
 
-                    return ReviewDirInDownloadDirectory(showList, dfc, filesThatMayBeNeeded, subDirPath);
+                    if (settings.Token.IsCancellationRequested)
+                        return new List<Action>();
+
+                    returnActions.AddNullableRange(ReviewDirInDownloadDirectory(showList, dfc, filesThatMayBeNeeded, subDirPath));
                 }
             }
             catch (UnauthorizedAccessException ex)
@@ -54,7 +58,7 @@ namespace TVRename
                 LOGGER.Warn(ex, $"Could not access subdirectories of {dirPath}");
             }
 
-            return null;
+            return returnActions;
         }
 
         private static IEnumerable<Action> ReviewDirInDownloadDirectory(ICollection<ShowItem> showList, DirFilesCache dfc, List<FileInfo> filesThatMayBeNeeded, string subDirPath)
@@ -113,7 +117,7 @@ namespace TVRename
             return new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup);
         }
 
-        private static IEnumerable<Item> ReviewFilesInDownloadDirectory(ICollection<ShowItem> showList, bool unattended, DirFilesCache dfc, string dirPath, List<FileInfo> filesThatMayBeNeeded)
+        private static IEnumerable<Item> ReviewFilesInDownloadDirectory(ICollection<ShowItem> showList, DirFilesCache dfc, string dirPath, List<FileInfo> filesThatMayBeNeeded, TVDoc.ScanSettings settings)
         {
             List<Item> returnActions = new List<Item>();
             try
@@ -121,6 +125,9 @@ namespace TVRename
                 foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
                 {
                     if (!File.Exists(filePath)) continue;
+
+                    if (settings.Token.IsCancellationRequested)
+                        return new List<Item>();
 
                     FileInfo fi = new FileInfo(filePath);
 
@@ -130,7 +137,7 @@ namespace TVRename
 
                     if (matchingShows.Any())
                     {
-                        returnActions.AddNullableRange(ReviewFileInDownloadDirectory(unattended, dfc, filesThatMayBeNeeded, fi,
+                        returnActions.AddNullableRange(ReviewFileInDownloadDirectory(settings.Unattended, dfc, filesThatMayBeNeeded, fi,
                             matchingShows));
                     }
                 }
@@ -331,7 +338,7 @@ namespace TVRename
 
         protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
-            MDoc.TheActionList.AddNullableRange(Go(MDoc.Library.GetShowItems(),settings.Unattended));
+            MDoc.TheActionList.AddNullableRange(Go(MDoc.Library.GetShowItems(),settings));
         }
 
         public override bool Active() => TVSettings.Instance.RemoveDownloadDirectoriesFiles ||

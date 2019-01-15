@@ -53,7 +53,7 @@ namespace TVRename
         // ReSharper disable once RedundantDefaultMemberInitializer
         private bool currentlyBusy = false; // This is set to true when scanning and indicates to other objects not to commence a scan of their own
         private DateTime busySince;
-        private bool lastScanComplete;
+        public bool LastScanComplete { get; private set; }
         private TVSettings.ScanType lastScanType;
 
         public TVDoc(FileInfo settingsFile, CommandLineArgs args)
@@ -76,34 +76,6 @@ namespace TVRename
             downloadIdentifiers = new DownloadIdentifiersController();
 
             LoadOk = (settingsFile == null || LoadXMLSettings(settingsFile)) && TheTVDB.Instance.LoadOk;
-
-            if (TVSettings.Instance.mode==TVSettings.BetaMode.BetaToo || TVSettings.Instance.ShareLogs) SetupLogging();
-        }
-
-        private static void SetupLogging()
-        {
-            ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.Load("NLog.Targets.Syslog"));
-
-            LoggingConfiguration config = LogManager.Configuration;
-
-            SyslogTarget syslog = new SyslogTarget
-            {
-                MessageCreation = {Facility = Facility.Local7},
-                MessageSend =
-                {
-                    Protocol = ProtocolType.Tcp,
-                    Tcp = {Server = "logs7.papertrailapp.com", Port = 13236, Tls = {Enabled = true}}
-                }
-            };
-
-            config.AddTarget("syslog", syslog);
-
-            syslog.Layout = "${date:format=yyyy-MM-dd HH\\:mm\\:ss} ${assembly-version} |${level:uppercase=true}| ${message} ${exception:format=toString,Data}";
-
-            LoggingRule rule = new LoggingRule("*", LogLevel.Error, syslog);
-            config.LoggingRules.Add(rule);
-
-            LogManager.Configuration = config;
         }
 
         public TVRenameStats Stats()
@@ -312,7 +284,7 @@ namespace TVRename
 
         private void OutputActionFiles()
         {
-            if (!lastScanComplete) return;
+            if (!LastScanComplete) return;
             // ReSharper disable once InconsistentNaming
             List<ActionListExporter> ALExpoters = new List<ActionListExporter>
             {
@@ -429,16 +401,12 @@ namespace TVRename
                 if (scanProgDlg != null && scanProgDlg.ShowDialog() == DialogResult.Cancel)
                 {
                     cts.Cancel();
-                    actionWork.Interrupt();
                 }
                 else
                 {
                     actionWork.Join();
                 }
-
                 downloadIdentifiers.Reset();
-                lastScanComplete = true;
-                lastScanType = st;
                 OutputActionFiles(); //Save missing shows to XML (and others)
             }
             catch (Exception e)
@@ -624,14 +592,18 @@ namespace TVRename
                 TheActionList.Sort(new ActionItemSorter()); // was new ActionSorter()
 
                 Stats().FindAndOrganisesDone++;
+                lastScanType = settings.Type;
+                LastScanComplete = true;
             }
             catch (TVRenameOperationInteruptedException e)
             {
                 Logger.Warn(e, "Scan cancelled by user");
+                LastScanComplete = false;
             }
             catch (Exception e)
             {
                 Logger.Fatal(e, "Unhandled Exception in ScanWorker");
+                LastScanComplete = false;
             }
             finally
             {
