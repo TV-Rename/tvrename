@@ -917,7 +917,7 @@ namespace TVRename
                         }
                     }
 
-                    Logger.Error(ex, "Error obtaining {episodeUri}");
+                    Logger.Error(ex, $"Error obtaining {ex.Response.ResponseUri}");
                     return null;
                 }
             }
@@ -1120,8 +1120,7 @@ namespace TVRename
                     }
                 }
 
-                Logger.Error("Error obtaining {0}", uri);
-                Logger.Error(ex);
+                Logger.Error(ex,"Error obtaining {0}", uri);
                 Say("");
                 LastError = ex.Message;
                 return null;
@@ -1694,6 +1693,12 @@ namespace TVRename
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                Say("Please Search for a Show Name");
+                return;
+            }
+
             text = text.RemoveDiacritics(); // API doesn't like accented characters
 
             bool isNumber = Regex.Match(text, "^[0-9]+$").Success;
@@ -1727,7 +1732,7 @@ namespace TVRename
                 }
                 else
                 {
-                    Logger.Error("Error obtaining " + uri + ": " + ex.Message);
+                    Logger.Error($"Error obtaining {ex.Response.ResponseUri} for search term '{text}': {ex.Message}");
                     LastError = ex.Message;
                     Say("");
                 }
