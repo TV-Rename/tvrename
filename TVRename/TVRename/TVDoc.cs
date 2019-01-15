@@ -15,16 +15,12 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
-using System.Reflection;
 using System.Xml;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using System.Xml.Linq;
 using NLog;
-using NLog.Config;
-using NLog.Targets.Syslog;
-using NLog.Targets.Syslog.Settings;
 using NodaTime.Extensions;
 using File = Alphaleonis.Win32.Filesystem.File;
 
@@ -599,7 +595,7 @@ namespace TVRename
                 lastScanType = settings.Type;
                 LastScanComplete = true;
             }
-            catch (TVRenameOperationInteruptedException e)
+            catch (TVRenameOperationInteruptedException)
             {
                 Logger.Warn("Scan cancelled by user");
                 TheActionList.Clear();

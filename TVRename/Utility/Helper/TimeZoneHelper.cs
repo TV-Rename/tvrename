@@ -7,6 +7,7 @@
 // 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace TVRename
@@ -42,8 +43,9 @@ namespace TVRename
             {
                 try
                 {
+                    Debug.Assert(theirTimeZone != null, nameof(theirTimeZone) + " != null");
                     DateTime returnValue = TimeZoneInfo.ConvertTime(theirDateTime.AddHours(1), theirTimeZone, TimeZoneInfo.Local);
-                    Logger.Warn($"Could not convert {theirDateTime.ToShortDateString()} {theirDateTime.ToShortTimeString()} {theirDateTime.Kind} in {theirTimeZone?.StandardName} into {TimeZoneInfo.Local.StandardName} in TimeZoneHelper.AdjustTzTimeToLocalTime (added one hour and it worked ok to account for daylight savings)");
+                    Logger.Warn($"Could not convert {theirDateTime.ToShortDateString()} {theirDateTime.ToShortTimeString()} {theirDateTime.Kind} in {theirTimeZone.StandardName} into {TimeZoneInfo.Local.StandardName} in TimeZoneHelper.AdjustTzTimeToLocalTime (added one hour and it worked ok to account for daylight savings)");
                     return returnValue;
                 }
                 catch (ArgumentException ae)
