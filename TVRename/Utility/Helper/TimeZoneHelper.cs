@@ -40,8 +40,17 @@ namespace TVRename
             }
             catch (ArgumentException)
             {
-                Logger.Error($"Could not convert {theirDateTime.ToLongDateString()} in {theirTimeZone?.DisplayName} into {TimeZoneInfo.Local.DisplayName} in TimeZoneHelper.AdjustTzTimeToLocalTime");
-                return theirDateTime;
+                try
+                {
+                    DateTime returnValue = TimeZoneInfo.ConvertTime(theirDateTime.AddHours(1), theirTimeZone, TimeZoneInfo.Local);
+                    Logger.Warn($"Could not convert {theirDateTime.ToShortDateString()} {theirDateTime.ToShortTimeString()} {theirDateTime.Kind} in {theirTimeZone?.StandardName} into {TimeZoneInfo.Local.StandardName} in TimeZoneHelper.AdjustTzTimeToLocalTime (added one hour and it worked ok to account for daylight savings)");
+                    return returnValue;
+                }
+                catch (ArgumentException ae)
+                {
+                    Logger.Error($"Could not convert {theirDateTime.ToShortDateString()} {theirDateTime.ToShortTimeString()} {theirDateTime.Kind} in {theirTimeZone?.StandardName} into {TimeZoneInfo.Local.StandardName} in TimeZoneHelper.AdjustTzTimeToLocalTime (tried adding one hour too so that we account for daylight saving): {ae.Message}");
+                    return theirDateTime;
+                }
             }
         }
 
