@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
@@ -29,53 +30,72 @@ namespace TVRename
                 if (settings.Token.IsCancellationRequested)
                     return;
 
-                if (me is null) return;
-                
-                UpdateStatus(currentItem++, totalN, me.Filename);
-
-                ItemList thisRound = new ItemList();
-
-                if (me.Episode?.Show == null)
+                try
                 {
-                    LOGGER.Info($"Not looking for {me.Filename} in the library as the show/episode is null");
-                    continue;
-                }
+                    if (me is null) return;
 
-                string baseFolder = me.Episode.Show.AutoAddFolderBase;
-                LOGGER.Info($"Starting to look for {me.Filename} in the library: {baseFolder}");
+                    UpdateStatus(currentItem++, totalN, me.Filename);
 
-                List<FileInfo> matchedFiles = string.IsNullOrWhiteSpace(baseFolder)
-                    ? new List<FileInfo>()
-                    : dfc.GetFilesIncludeSubDirs(baseFolder).Where(testFile => ReviewFile(me, thisRound, testFile, settings, false, false, false)).ToList();
+                    ItemList thisRound = new ItemList();
 
-                foreach (KeyValuePair<int, List<string>> seriesFolders in me.Episode.Show.AllFolderLocationsEpCheck(false))
-                {
-                    foreach (string folderName in seriesFolders.Value)
+                    if (me.Episode?.Show == null)
                     {
-                        if (string.IsNullOrWhiteSpace(folderName)) continue;
-                        LOGGER.Info($"Starting to look for {me.Filename} in the library folder: {folderName}");
-                        foreach (FileInfo testFile in dfc.GetFilesIncludeSubDirs(folderName))
-                         {
-                            if (!ReviewFile(me, thisRound, testFile, settings,false,false,false)) continue;
+                        LOGGER.Info($"Not looking for {me.Filename} in the library as the show/episode is null");
+                        continue;
+                    }
 
-                            if (!matchedFiles.Contains(testFile))
+                    string baseFolder = me.Episode.Show.AutoAddFolderBase;
+                    LOGGER.Info($"Starting to look for {me.Filename} in the library: {baseFolder}");
+
+                    List<FileInfo> matchedFiles = string.IsNullOrWhiteSpace(baseFolder)
+                        ? new List<FileInfo>()
+                        : dfc.GetFilesIncludeSubDirs(baseFolder).Where(testFile =>
+                            ReviewFile(me, thisRound, testFile, settings, false, false, false)).ToList();
+
+                    foreach (KeyValuePair<int, List<string>> seriesFolders in me.Episode.Show.AllFolderLocationsEpCheck(
+                        false))
+                    {
+                        if (seriesFolders.Value == null) continue;
+
+                        foreach (string folderName in seriesFolders.Value)
+                        {
+                            if (string.IsNullOrWhiteSpace(folderName)) continue;
+                            LOGGER.Info($"Starting to look for {me.Filename} in the library folder: {folderName}");
+                            foreach (FileInfo testFile in dfc.GetFiles(folderName))
                             {
-                                matchedFiles.Add(testFile);
-                                LOGGER.Info($"Found {me.Filename} at: {testFile}");
+                                if (!ReviewFile(me, thisRound, testFile, settings, false, false, false)) continue;
+
+                                if (!matchedFiles.Contains(testFile))
+                                {
+                                    matchedFiles.Add(testFile);
+                                    LOGGER.Info($"Found {me.Filename} at: {testFile}");
+                                }
                             }
                         }
                     }
-                }
 
-                ProcessMissingItem(settings, newList, toRemove, me, thisRound, matchedFiles);
+                    ProcessMissingItem(settings, newList, toRemove, me, thisRound, matchedFiles);
+                }
+                catch (NullReferenceException nre)
+                {
+                    LOGGER.Error(nre,
+                        $"NullReferenceException fired in LibraryFolderFileFinder.Check whilst looking for {me.Filename}");
+                }
             }
 
-            if (TVSettings.Instance.KeepTogether)
-                KeepTogether(newList,true);
+            try
+            {
+                if (TVSettings.Instance.KeepTogether)
+                    KeepTogether(newList, true);
 
-            ReorganiseToLeaveOriginals(newList);
+                ReorganiseToLeaveOriginals(newList);
 
-            ActionList.Replace(toRemove,newList);
+                ActionList.Replace(toRemove, newList);
+            }
+            catch (NullReferenceException nre)
+            {
+                LOGGER.Error(nre, "NullReferenceException fired in LibraryFolderFileFinder.Check whilst tidying up.");
+            }
         }
     }
 }
