@@ -23,7 +23,7 @@ namespace TVRename
 
         protected bool ReviewFile(ItemMissing me, ItemList addTo, FileInfo dce, TVDoc.ScanSettings settings, bool addMergeRules,bool preventMove,bool doExtraFiles)
         {
-            if (settings.Token.IsCancellationRequested) return true;
+            if (settings.Token.IsCancellationRequested) return false;
 
             int season = me.Episode.AppropriateSeasonNumber;
             int epnum = me.Episode.AppropriateEpNum;

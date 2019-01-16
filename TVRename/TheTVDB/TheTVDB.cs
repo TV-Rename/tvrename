@@ -1808,15 +1808,15 @@ namespace TVRename
             // Season 3: http://www.thetvdb.com/?tab=season&seriesid=75340&seasonid=28289&lid=7
 
             if (summaryPage || (seasonId <= 0) || !series.ContainsKey(seriesId))
-                return WebsiteRoot + "/?tab=series&id=" + seriesId;
+                return $"{WebsiteRoot}/?tab=series&id={seriesId}";
             else
-                return WebsiteRoot + "/?tab=season&seriesid=" + seriesId + "&seasonid=" + seasonId;
+                return $"{WebsiteRoot}/?tab=season&seriesid={seriesId}&seasonid={seasonId}";
         }
 
         public string WebsiteUrl(int seriesId, int seasonId, int episodeId)
         {
             // http://www.thetvdb.com/?tab=episode&seriesid=73141&seasonid=5356&id=108303&lid=7
-            return WebsiteRoot + "/?tab=episode&seriesid=" + seriesId + "&seasonid=" + seasonId + "&id=" + episodeId;
+            return $"{WebsiteRoot}/?tab=episode&seriesid={seriesId}&seasonid={seasonId}&id={episodeId}";
         }
 
         // Next episode to air of a given show		

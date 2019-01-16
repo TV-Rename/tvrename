@@ -172,7 +172,7 @@ namespace TVRename.App
 
             config.AddTarget("syslog", syslog);
 
-            syslog.Layout = "${date:format=yyyy-MM-dd HH\\:mm\\:ss} ${assembly-version} |${level:uppercase=true}| ${message} ${exception:format=toString,Data}";
+            syslog.Layout = "${date:format=yyyy-MM-dd HH\\:mm\\:ss} "+ Helpers.DisplayVersion + " |${level:uppercase=true}| ${message} ${exception:format=toString,Data}";
 
             LoggingRule rule = new LoggingRule("*", LogLevel.Error, syslog);
             config.LoggingRules.Add(rule);

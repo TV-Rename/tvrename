@@ -22,11 +22,15 @@ namespace TVRename
 
             LOGGER.Info("Starting to look for missing items in the library");
 
+            if (ActionList is null) return;
+
             foreach (ItemMissing me in ActionList.MissingItems())
             {
                 if (settings.Token.IsCancellationRequested)
                     return;
 
+                if (me is null) return;
+                
                 UpdateStatus(currentItem++, totalN, me.Filename);
 
                 ItemList thisRound = new ItemList();
@@ -40,12 +44,15 @@ namespace TVRename
                 string baseFolder = me.Episode.Show.AutoAddFolderBase;
                 LOGGER.Info($"Starting to look for {me.Filename} in the library: {baseFolder}");
 
-                List<FileInfo> matchedFiles = dfc.GetFilesIncludeSubDirs(baseFolder).Where(testFile => ReviewFile(me, thisRound, testFile, settings,false,false,false)).ToList();
+                List<FileInfo> matchedFiles = string.IsNullOrWhiteSpace(baseFolder)
+                    ? new List<FileInfo>()
+                    : dfc.GetFilesIncludeSubDirs(baseFolder).Where(testFile => ReviewFile(me, thisRound, testFile, settings, false, false, false)).ToList();
 
                 foreach (KeyValuePair<int, List<string>> seriesFolders in me.Episode.Show.AllFolderLocationsEpCheck(false))
                 {
                     foreach (string folderName in seriesFolders.Value)
                     {
+                        if (string.IsNullOrWhiteSpace(folderName)) continue;
                         LOGGER.Info($"Starting to look for {me.Filename} in the library folder: {folderName}");
                         foreach (FileInfo testFile in dfc.GetFilesIncludeSubDirs(folderName))
                          {

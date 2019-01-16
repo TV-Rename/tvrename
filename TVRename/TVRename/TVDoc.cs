@@ -415,7 +415,7 @@ namespace TVRename
             }
         }
 
-        public class ScanSettings
+        public struct ScanSettings
         {
             public readonly bool Unattended;
             public readonly TVSettings.ScanType Type;
