@@ -696,23 +696,25 @@ namespace TVRename
                         //now we wish to see if any episodes from the series have been updated. If so then mark them as dirty too
                         List<JObject> episodeDefaultLangResponses = null;
                         string requestedLanguageCode = series[id].UseCustomLanguage ? series[id].TargetLanguageCode: TVSettings.Instance.PreferredLanguageCode;
-                        List<JObject> episodeResponses = GetEpisodes(id, requestedLanguageCode);
-                        if (IsNotDefaultLanguage(requestedLanguageCode)) episodeDefaultLangResponses = GetEpisodes(id, DefaultLanguageCode);
-
-                        Dictionary<int, Tuple<JToken, JToken>> episodesResponses =
-                            MergeEpisodeResponses(episodeResponses, episodeDefaultLangResponses);
-
-                        int numberOfNewEpisodes = 0;
-                        int numberOfUpdatedEpisodes = 0;
-
-                        ICollection<int> oldEpisodeIds = new List<int>();
-                        foreach (KeyValuePair<int, Season> kvp2 in GetSeries(id)?.AiredSeasons ?? new Dictionary<int, Season>())
+                        try
                         {
-                            foreach (Episode ep in kvp2.Value.Episodes.Values)
+                            List<JObject> episodeResponses = GetEpisodes(id, requestedLanguageCode);
+                            if (IsNotDefaultLanguage(requestedLanguageCode)) episodeDefaultLangResponses = GetEpisodes(id, DefaultLanguageCode);
+
+                            Dictionary<int, Tuple<JToken, JToken>> episodesResponses =
+                                MergeEpisodeResponses(episodeResponses, episodeDefaultLangResponses);
+
+                            int numberOfNewEpisodes = 0;
+                            int numberOfUpdatedEpisodes = 0;
+
+                            ICollection<int> oldEpisodeIds = new List<int>();
+                            foreach (KeyValuePair<int, Season> kvp2 in GetSeries(id)?.AiredSeasons ?? new Dictionary<int, Season>())
                             {
-                                oldEpisodeIds.Add(ep.EpisodeId);
+                                foreach (Episode ep in kvp2.Value.Episodes.Values)
+                                {
+                                    oldEpisodeIds.Add(ep.EpisodeId);
+                                }
                             }
-                        }
 
                             try
                             {
@@ -757,27 +759,32 @@ namespace TVRename
                             }
                             catch (InvalidCastException ex)
                             {
-                                Logger.Error(ex,"Did not receive the expected format of episode json from {0}.", uri);
+                                Logger.Error(ex, "Did not receive the expected format of episode json from {0}.", uri);
                                 Logger.Error(jsonResponse["data"].ToString());
                             }
                             catch (OverflowException ex)
                             {
-                                Logger.Error(ex,"Could not parse the episode json from {0}.", uri);
+                                Logger.Error(ex, "Could not parse the episode json from {0}.", uri);
                                 Logger.Error(jsonResponse["data"].ToString());
                             }
 
-                        Logger.Info(series[id].Name + " had " + numberOfUpdatedEpisodes +
-                                    " episodes updated and " + numberOfNewEpisodes + " new episodes ");
+                            Logger.Info(series[id].Name + " had " + numberOfUpdatedEpisodes +
+                                        " episodes updated and " + numberOfNewEpisodes + " new episodes ");
 
-                        if (oldEpisodeIds.Count > 0)
-                            Logger.Warn(series[id].Name + " had " + oldEpisodeIds.Count +
-                                        " episodes deleted: " + string.Join(",", oldEpisodeIds));
+                            if (oldEpisodeIds.Count > 0)
+                                Logger.Warn(series[id].Name + " had " + oldEpisodeIds.Count +
+                                            " episodes deleted: " + string.Join(",", oldEpisodeIds));
 
-                        LockRemoveEpisodes();
-                        foreach (int episodeId in oldEpisodeIds)
-                            removeEpisodeIds.Add(new ExtraEp(id, episodeId));
+                            LockRemoveEpisodes();
+                            foreach (int episodeId in oldEpisodeIds)
+                                removeEpisodeIds.Add(new ExtraEp(id, episodeId));
 
-                        UnlockRemoveEpisodes();
+                            UnlockRemoveEpisodes();
+                        }
+                        catch (ShowNotFoundException ex)
+                        {
+                            Logger.Error($"Episodes were not found for {ex.showId}:{series[id].Name} in languange {requestedLanguageCode} or {DefaultLanguageCode}");
+                        }
                     }
                 }
             }
@@ -913,7 +920,7 @@ namespace TVRename
 
                         if (TvdbIsUp())
                         {
-                            throw new ShowNotFoundException();
+                            throw new ShowNotFoundException(id);
                         }
                     }
 
@@ -1116,7 +1123,7 @@ namespace TVRename
                     if (TvdbIsUp())
                     {
                         LastError = ex.Message;
-                        throw new ShowNotFoundException();
+                        throw new ShowNotFoundException(code);
                     }
                 }
 
