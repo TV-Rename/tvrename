@@ -46,11 +46,25 @@ namespace TVRename
 
                     string baseFolder = me.Episode.Show.AutoAddFolderBase;
                     LOGGER.Info($"Starting to look for {me.Filename} in the library: {baseFolder}");
+                    
+                    List<FileInfo> matchedFiles;
 
-                    List<FileInfo> matchedFiles = string.IsNullOrWhiteSpace(baseFolder)
-                        ? new List<FileInfo>()
-                        : dfc.GetFilesIncludeSubDirs(baseFolder).Where(testFile =>
-                            ReviewFile(me, thisRound, testFile, settings, false, false, false)).ToList();
+                    if (string.IsNullOrWhiteSpace(baseFolder))
+                    {
+                        matchedFiles = new List<FileInfo>();
+                    }
+                    else
+                    {
+                        FileInfo[] testFiles = dfc.GetFilesIncludeSubDirs(baseFolder);
+                        if (testFiles is null)
+                        {
+                            matchedFiles = new List<FileInfo>();
+                        }
+                        else
+                        {
+                            matchedFiles = testFiles.Where(testFile => ReviewFile(me, thisRound, testFile, settings, false, false, false)).ToList();
+                        }
+                    }
 
                     foreach (KeyValuePair<int, List<string>> seriesFolders in me.Episode.Show.AllFolderLocationsEpCheck(
                         false))
@@ -61,7 +75,10 @@ namespace TVRename
                         {
                             if (string.IsNullOrWhiteSpace(folderName)) continue;
                             LOGGER.Info($"Starting to look for {me.Filename} in the library folder: {folderName}");
-                            foreach (FileInfo testFile in dfc.GetFiles(folderName))
+                            FileInfo[] files = dfc.GetFiles(folderName);
+                            if (files is null) continue;
+
+                            foreach (FileInfo testFile in files)
                             {
                                 if (!ReviewFile(me, thisRound, testFile, settings, false, false, false)) continue;
 
