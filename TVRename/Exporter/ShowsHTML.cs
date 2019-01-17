@@ -19,6 +19,12 @@ namespace TVRename
         {
             if (!Active()) return;
 
+            if (string.IsNullOrWhiteSpace(Location()))
+            {
+                LOGGER.Warn("Please open settings and update Export Shows (HTML) Filename");
+                return;
+            }
+
             try
             {
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))

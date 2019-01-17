@@ -27,6 +27,12 @@ namespace TVRename
         {
             if (Active())
             {
+                if (string.IsNullOrWhiteSpace(Location()))
+                {
+                    LOGGER.Warn("Please open settings and update Export Recent Shows Filename");
+                    return;
+                }
+
                 try
                 {
                     //Create the directory if needed
