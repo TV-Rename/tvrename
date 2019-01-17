@@ -7,6 +7,8 @@
 // 
 
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 using NLog;
 
 namespace TVRename
@@ -49,8 +51,19 @@ namespace TVRename
             if (Active())
             {
                  Check(prog, showList, settings);
+                 LogActionListSummary();
             }
         }
+
+        private void LogActionListSummary()
+        {
+            LOGGER.Info($"Summary of known actions after check: {Checkname()}");
+            LOGGER.Info($"   Missing Items: {MDoc.TheActionList.MissingItems().Count()}");
+            LOGGER.Info($"   Copy/Move Items: {MDoc.TheActionList.CopyMoveItems().Count()}");
+            LOGGER.Info($"   Total Actions: {MDoc.TheActionList.Actions().Count()}");
+        }
+
+        protected abstract string Checkname();
 
         internal void CheckIfActive(SetProgressDelegate prog, int startpct, int totPct, List<ShowItem> showList, TVDoc.ScanSettings settings)
         {

@@ -11,6 +11,8 @@ namespace TVRename
 {
     internal class CleanDownloadDirectory:ScanActivity
     {
+        protected override string Checkname() => "Cleaned up and files in download directory that are not needed";
+
         // ReSharper disable once InconsistentNaming
         private IEnumerable<Item> Go(ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {

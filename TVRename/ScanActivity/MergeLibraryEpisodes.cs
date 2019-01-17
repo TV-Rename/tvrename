@@ -14,6 +14,7 @@ namespace TVRename
     class MergeLibraryEpisodes : ScanShowActivity
     {
         public MergeLibraryEpisodes(TVDoc doc) : base(doc) {}
+        protected override string Checkname() => "Created Merge Rules for episodes in the library";
 
         protected override void Check(ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
