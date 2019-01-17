@@ -119,7 +119,7 @@ namespace TVRename
                 catch (ShowNotFoundException snfe)
                 {
                     r = true;
-                    problematicSeriesIds.Add(snfe.showId);
+                    problematicSeriesIds.Add(snfe.ShowId);
                 }
                 
                 Threadslogger.Trace("  Finished " + series.SeriesId);

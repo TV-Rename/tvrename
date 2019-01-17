@@ -12,11 +12,11 @@ namespace TVRename
 {
     internal class ShowNotFoundException : Exception
     {
-        public int showId;
+        public readonly int ShowId;
 
         public ShowNotFoundException(int id)
         {
-            showId = id;
+            ShowId = id;
         }
     }
 }

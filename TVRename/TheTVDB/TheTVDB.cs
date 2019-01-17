@@ -783,7 +783,7 @@ namespace TVRename
                         }
                         catch (ShowNotFoundException ex)
                         {
-                            Logger.Error($"Episodes were not found for {ex.showId}:{series[id].Name} in languange {requestedLanguageCode} or {DefaultLanguageCode}");
+                            Logger.Error($"Episodes were not found for {ex.ShowId}:{series[id].Name} in languange {requestedLanguageCode} or {DefaultLanguageCode}");
                         }
                     }
                 }
