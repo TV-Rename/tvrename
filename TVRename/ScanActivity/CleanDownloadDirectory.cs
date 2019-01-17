@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using Alphaleonis.Win32.Filesystem;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
@@ -43,7 +47,7 @@ namespace TVRename
             try
             {
                 foreach (string subDirPath in Directory.GetDirectories(dirPath, "*",
-                System.IO.SearchOption.AllDirectories))
+                SearchOption.AllDirectories))
                 {
                     if (!Directory.Exists(subDirPath)) continue;
 
@@ -57,7 +61,14 @@ namespace TVRename
             {
                 LOGGER.Warn(ex, $"Could not access subdirectories of {dirPath}");
             }
-
+            catch (DirectoryNotFoundException ex)
+            {
+                LOGGER.Warn(ex, $"Could not access subdirectories of {dirPath}");
+            }
+            catch (IOException ex)
+            {
+                LOGGER.Warn(ex, $"Could not access subdirectories of {dirPath}");
+            }
             return returnActions;
         }
 
@@ -122,7 +133,7 @@ namespace TVRename
             List<Item> returnActions = new List<Item>();
             try
             {
-                foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                foreach (string filePath in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories))
                 {
                     if (!File.Exists(filePath)) continue;
 
@@ -146,7 +157,10 @@ namespace TVRename
             {
                 LOGGER.Warn(ex, $"Could not access files in {dirPath}");
             }
-
+            catch (DirectoryNotFoundException ex)
+            {
+                LOGGER.Warn(ex, $"Could not access files in {dirPath}");
+            }
             return returnActions;
         }
 
@@ -186,7 +200,7 @@ namespace TVRename
                                 List<string> folders = si.AllFolderLocations()[seasF];
                                 foreach (string folder in folders)
                                 {
-                                    FileInfo targetFile = new FileInfo(folder + System.IO.Path.DirectorySeparatorChar + filename + fi.Extension);
+                                    FileInfo targetFile = new FileInfo(folder + Path.DirectorySeparatorChar + filename + fi.Extension);
 
                                     if (fi.FullName == targetFile.FullName) continue;
 
