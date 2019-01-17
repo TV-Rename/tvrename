@@ -83,7 +83,7 @@ namespace TVRename
                         return;
 
                     FileInfo[] files = dfc.GetFiles(folder);
-                    if (files == null || files.Length ==0)
+                    if (files == null)
                         continue;
 
                     if (TVSettings.Instance.NeedToDownloadBannerFile() && timeForBannerUpdate)
