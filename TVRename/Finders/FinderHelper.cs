@@ -9,6 +9,8 @@ namespace TVRename
 {
     internal static class FinderHelper
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem si,
     out TVSettings.FilenameProcessorRE re)
         {
@@ -233,25 +235,31 @@ namespace TVRename
             // Also, shows like "24" can cause confusion
 
             //TODO: More replacement of non useful characters - MarkSummerville
-            filename = filename.Replace(".", " "); // turn dots into spaces
+            string returnFilename = filename.Replace(".", " "); // turn dots into spaces
 
             if (string.IsNullOrEmpty(showNameHint))
-                return filename;
+                return returnFilename;
 
             bool nameIsNumber = (Regex.Match(showNameHint, "^[0-9]+$").Success);
 
-            int p = filename.IndexOf(showNameHint, StringComparison.Ordinal);
-
-            if (p == 0)
+            int p = returnFilename.IndexOf(showNameHint, StringComparison.Ordinal);
+            try
             {
-                filename = filename.Remove(0, showNameHint.Length);
-                return filename;
+                if (p == 0)
+                {
+                    returnFilename = returnFilename.Remove(0, showNameHint.Length);
+                    return returnFilename;
+                }
+
+                if (nameIsNumber) // e.g. "24", or easy exact match of show name at start of filename
+                {
+                    returnFilename = returnFilename.Remove(0, showNameHint.Length);
+                    return returnFilename;
+                }
             }
-
-            if (nameIsNumber) // e.g. "24", or easy exact match of show name at start of filename
+            catch (ArgumentOutOfRangeException ex)
             {
-                filename = filename.Remove(0, showNameHint.Length);
-                return filename;
+                Logger.Error($"Error in SimplifyFilename for {filename} and {showNameHint}, got {returnFilename} with error {ex.Message}");
             }
 
             foreach (Match m in Regex.Matches(showNameHint, "(?:^|[^a-z]|\\b)([0-9]{3,})")
@@ -260,12 +268,12 @@ namespace TVRename
                 if (m.Groups.Count > 1) // just in case
                 {
                     string number = m.Groups[1].Value;
-                    filename = Regex.Replace(filename, "(^|\\W)" + number + "\\b",
-                        ""); // remove any occurances of that number in the filename
+                    returnFilename = Regex.Replace(returnFilename, "(^|\\W)" + number + "\\b",
+                        ""); // remove any occurrences of that number in the filename
                 }
             }
 
-            return filename;
+            return returnFilename;
         }
 
         public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, out int maxEp,
