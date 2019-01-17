@@ -51,6 +51,8 @@ namespace TVRename
         private TimeZoneInfo seriesTimeZone;
         private string lastFiguredTz;
 
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public DateTime? BannersLastUpdatedOnDisk { get; set; }
 
         #region AutomaticFolderType enum
@@ -81,7 +83,17 @@ namespace TVRename
             if (string.IsNullOrEmpty(tzstr))
                 tzstr = TimeZoneHelper.DefaultTimeZone();
 
-            seriesTimeZone = TimeZoneInfo.FindSystemTimeZoneById(tzstr);
+            try
+            {
+                seriesTimeZone = TimeZoneInfo.FindSystemTimeZoneById(tzstr);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex,$"Could not work out what timezone '{tzstr}' is, using the default.");
+                tzstr = TimeZoneHelper.DefaultTimeZone();
+                seriesTimeZone = TimeZoneInfo.FindSystemTimeZoneById(tzstr);
+            }
+
             lastFiguredTz = tzstr;
         }
 

@@ -69,7 +69,7 @@ namespace TVRename
 
             foreach (KeyValuePair<string,string>  item in parameters)
             {
-                sb.Append($"{item.Key}={item.Value}&");
+                sb.Append($"{item.Key}={WebUtility.UrlEncode(item.Value)}&");
             }
             string finalUrl = sb.ToString();
             return finalUrl.Remove(finalUrl.LastIndexOf("&", StringComparison.Ordinal));

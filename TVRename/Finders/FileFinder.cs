@@ -23,7 +23,7 @@ namespace TVRename
 
         protected bool ReviewFile(ItemMissing me, ItemList addTo, FileInfo dce, TVDoc.ScanSettings settings, bool addMergeRules,bool preventMove,bool doExtraFiles)
         {
-            if (settings.Token.IsCancellationRequested) return true;
+            if (settings.Token.IsCancellationRequested) return false;
 
             int season = me.Episode.AppropriateSeasonNumber;
             int epnum = me.Episode.AppropriateEpNum;
@@ -113,7 +113,7 @@ namespace TVRename
             catch (System.IO.PathTooLongException e)
             {
                 string t = "Path too long. " + dce.FullName + ", " + e.Message;
-                LOGGER.Warn(e, "Path too long. " + dce.FullName);
+                LOGGER.Error(e, "Path too long. " + dce.FullName);
 
                 t += ".  More information is available in the log file";
                 if ((!MDoc.Args.Unattended) && (!MDoc.Args.Hide))

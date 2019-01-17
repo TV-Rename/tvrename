@@ -47,7 +47,7 @@ namespace TVRename
             }
             catch (Exception  e)
             {
-                Logger.Error(e,$"Cound not access {url}");
+                Logger.Error(e,$"Cound not parse RSS page at:{url}");
                 return false;
             }
             finally
@@ -67,7 +67,7 @@ namespace TVRename
             string title = itemElement.ExtractString("title");
             string link = itemElement.ExtractString("link");
             string description = itemElement.ExtractString("description");
-            string enclosureLink = itemElement.Descendants("enclosure").First(enclosure => enclosure.Attribute("type")?.Value == "application/x-bittorrent").Attribute("url")?.Value;
+            string enclosureLink = itemElement.Descendants("enclosure").FirstOrDefault(enclosure => enclosure.Attribute("type")?.Value == "application/x-bittorrent")?.Attribute("url")?.Value;
 
             if (TVSettings.Instance.DetailedRSSJSONLogging)
             {

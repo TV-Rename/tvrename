@@ -21,6 +21,12 @@ namespace TVRename
                     NewLineOnAttributes = true
                 };
 
+                if (string.IsNullOrWhiteSpace(Location()))
+                {
+                    LOGGER.Warn("Please open settings and ensure filenames are provided for each exporter you have enabled");
+                    return;
+                }
+
                 using (XmlWriter writer = XmlWriter.Create(Location(), settings))
                 {
                     writer.WriteStartDocument();

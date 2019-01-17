@@ -116,10 +116,10 @@ namespace TVRename
                     r = TheTVDB.Instance.EnsureUpdated(series.SeriesId, bannersToo, series.UseCustomLanguage,
                         series.CustomLanguageCode);
                 }
-                catch (ShowNotFoundException)
+                catch (ShowNotFoundException snfe)
                 {
                     r = true;
-                    problematicSeriesIds.Add(series.SeriesId);
+                    problematicSeriesIds.Add(snfe.ShowId);
                 }
                 
                 Threadslogger.Trace("  Finished " + series.SeriesId);

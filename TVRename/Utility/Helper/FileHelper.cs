@@ -134,9 +134,17 @@ namespace TVRename
                        + (60 * int.Parse(duration.Split(':')[1]))
                        + int.Parse(duration.Split(':')[2]);
             }
-            catch (Exception e)
+            catch (FormatException)
             {
-                Logger.Error($"Unable to parse string {duration} as part of GetFilmLength",e);
+                //Need this section as we get random text back sometimes
+//              Unable to parse string Unbekannt as part of GetFilmLength System
+//              Unable to parse string Text hinzufügen as part of GetFilmLength System
+//              Unable to parse string Add text as part of GetFilmLength System
+//              Unable to parse string Unknown as part of GetFilmLength System
+//              Unable to parse string Okänt as part of GetFilmLength System
+//              Unable to parse string Lägg till text as part of GetFilmLength System
+
+                Logger.Warn($"Unable to parse string '{duration}' as part of GetFilmLength for {movieFile.FullName}");
                 return -1;
             }
         }

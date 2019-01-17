@@ -72,8 +72,7 @@ namespace TVRename
             string port = TVSettings.Instance.qBitTorrentPort;
             if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(port))
             {
-                LOGGER.Error(
-                    $"Could not download {torrentUrl} via qBitTorrent as settings are not entered for host and port");
+                LOGGER.Warn($"Could not download {torrentUrl} via qBitTorrent as settings are not entered for host and port");
                 return;
             }
 

@@ -56,6 +56,13 @@ namespace TVRename
             {
                 try
                 {
+
+                    if (string.IsNullOrWhiteSpace(Location()))
+                    {
+                        LOGGER.Warn("Please open settings and ensure filenames are provided for each exporter you have enabled");
+                        return;
+                    }
+
                     //Create the directory if needed
                     Directory.CreateDirectory(Path.GetDirectoryName(Location()) ?? "");
                     string contents = Produce();

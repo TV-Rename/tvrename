@@ -6,16 +6,16 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Windows.Forms;
-using Newtonsoft.Json.Linq;
-using System.Xml;
-using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Linq;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
@@ -527,7 +527,7 @@ namespace TVRename
 
             while (moreUpdates)
             {
-                JObject jsonUdpateResponse;
+                JObject jsonUpdateResponse;
 
                 //If this date is in the last week then this needs to be the last call to the update
                 DateTime requestedTime = Helpers.FromUnixTime(epochTime).ToUniversalTime();
@@ -539,7 +539,7 @@ namespace TVRename
 
                 try
                 {
-                    jsonUdpateResponse = HttpHelper.JsonHttpGetRequest(uri,
+                    jsonUpdateResponse = HttpHelper.JsonHttpGetRequest(uri,
                         new Dictionary<string, string> { { "fromTime", epochTime.ToString() } },
                         tvDbTokenProvider.GetToken(), TVSettings.Instance.PreferredLanguageCode);
                 }
@@ -557,7 +557,7 @@ namespace TVRename
                 int numberOfResponses;
                 try
                 {
-                    JToken dataToken = jsonUdpateResponse["data"];
+                    JToken dataToken = jsonUpdateResponse["data"];
 
                     numberOfResponses = !dataToken.HasValues ? 0 : ((JArray)dataToken).Count;
                 }
@@ -583,9 +583,9 @@ namespace TVRename
                     return true;
                 }
 
-                updatesResponses.Add(jsonUdpateResponse);
+                updatesResponses.Add(jsonUpdateResponse);
                 numberofCallsMade++;
-                long maxUpdateTime = GetUpdateTime(jsonUdpateResponse);
+                long maxUpdateTime = GetUpdateTime(jsonUpdateResponse);
 
                 if (maxUpdateTime > 0)
                 {
@@ -696,23 +696,25 @@ namespace TVRename
                         //now we wish to see if any episodes from the series have been updated. If so then mark them as dirty too
                         List<JObject> episodeDefaultLangResponses = null;
                         string requestedLanguageCode = series[id].UseCustomLanguage ? series[id].TargetLanguageCode: TVSettings.Instance.PreferredLanguageCode;
-                        List<JObject> episodeResponses = GetEpisodes(id, requestedLanguageCode);
-                        if (IsNotDefaultLanguage(requestedLanguageCode)) episodeDefaultLangResponses = GetEpisodes(id, DefaultLanguageCode);
-
-                        Dictionary<int, Tuple<JToken, JToken>> episodesResponses =
-                            MergeEpisodeResponses(episodeResponses, episodeDefaultLangResponses);
-
-                        int numberOfNewEpisodes = 0;
-                        int numberOfUpdatedEpisodes = 0;
-
-                        ICollection<int> oldEpisodeIds = new List<int>();
-                        foreach (KeyValuePair<int, Season> kvp2 in GetSeries(id)?.AiredSeasons ?? new Dictionary<int, Season>())
+                        try
                         {
-                            foreach (Episode ep in kvp2.Value.Episodes.Values)
+                            List<JObject> episodeResponses = GetEpisodes(id, requestedLanguageCode);
+                            if (IsNotDefaultLanguage(requestedLanguageCode)) episodeDefaultLangResponses = GetEpisodes(id, DefaultLanguageCode);
+
+                            Dictionary<int, Tuple<JToken, JToken>> episodesResponses =
+                                MergeEpisodeResponses(episodeResponses, episodeDefaultLangResponses);
+
+                            int numberOfNewEpisodes = 0;
+                            int numberOfUpdatedEpisodes = 0;
+
+                            ICollection<int> oldEpisodeIds = new List<int>();
+                            foreach (KeyValuePair<int, Season> kvp2 in GetSeries(id)?.AiredSeasons ?? new Dictionary<int, Season>())
                             {
-                                oldEpisodeIds.Add(ep.EpisodeId);
+                                foreach (Episode ep in kvp2.Value.Episodes.Values)
+                                {
+                                    oldEpisodeIds.Add(ep.EpisodeId);
+                                }
                             }
-                        }
 
                             try
                             {
@@ -757,35 +759,38 @@ namespace TVRename
                             }
                             catch (InvalidCastException ex)
                             {
-                                Logger.Error("Did not recieve the expected format of episode json from {0}.", uri);
-                                Logger.Error(ex);
+                                Logger.Error(ex, "Did not receive the expected format of episode json from {0}.", uri);
                                 Logger.Error(jsonResponse["data"].ToString());
                             }
                             catch (OverflowException ex)
                             {
-                                Logger.Error("Could not parse the episode json from {0}.", uri);
-                                Logger.Error(ex);
+                                Logger.Error(ex, "Could not parse the episode json from {0}.", uri);
                                 Logger.Error(jsonResponse["data"].ToString());
                             }
 
-                        Logger.Info(series[id].Name + " had " + numberOfUpdatedEpisodes +
-                                    " episodes updated and " + numberOfNewEpisodes + " new episodes ");
+                            Logger.Info(series[id].Name + " had " + numberOfUpdatedEpisodes +
+                                        " episodes updated and " + numberOfNewEpisodes + " new episodes ");
 
-                        if (oldEpisodeIds.Count > 0)
-                            Logger.Warn(series[id].Name + " had " + oldEpisodeIds.Count +
-                                        " episodes deleted: " + string.Join(",", oldEpisodeIds));
+                            if (oldEpisodeIds.Count > 0)
+                                Logger.Warn(series[id].Name + " had " + oldEpisodeIds.Count +
+                                            " episodes deleted: " + string.Join(",", oldEpisodeIds));
 
-                        LockRemoveEpisodes();
-                        foreach (int episodeId in oldEpisodeIds)
-                            removeEpisodeIds.Add(new ExtraEp(id, episodeId));
+                            LockRemoveEpisodes();
+                            foreach (int episodeId in oldEpisodeIds)
+                                removeEpisodeIds.Add(new ExtraEp(id, episodeId));
 
-                        UnlockRemoveEpisodes();
+                            UnlockRemoveEpisodes();
+                        }
+                        catch (ShowNotFoundException ex)
+                        {
+                            Logger.Error($"Episodes were not found for {ex.ShowId}:{series[id].Name} in languange {requestedLanguageCode} or {DefaultLanguageCode}");
+                        }
                     }
                 }
             }
             catch (InvalidCastException ex)
             {
-                Logger.Error("Did not recieve the expected format of json from {0}.", uri);
+                Logger.Error("Did not receive the expected format of json from {0}.", uri);
                 Logger.Error(ex);
                 Logger.Error(jsonResponse["data"].ToString());
             }
@@ -908,8 +913,19 @@ namespace TVRename
                 }
                 catch (WebException ex)
                 {
-                    Logger.Error(ex, $"Error obtaining page {pageNumber} of {episodeUri} in lang {lang} using url {ex.Response.ResponseUri.AbsoluteUri}");
-                    morePages = false;
+                    if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse resp &&
+                        resp.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        Logger.Warn($"Show with Id {id} is no longer available from TVDB (got a 404). Error obtaining page { pageNumber} of { episodeUri} in lang {lang} using url { ex.Response.ResponseUri.AbsoluteUri}");
+
+                        if (TvdbIsUp())
+                        {
+                            throw new ShowNotFoundException(id);
+                        }
+                    }
+
+                    Logger.Error(ex, $"Error obtaining {ex.Response.ResponseUri}");
+                    return null;
                 }
             }
 
@@ -954,12 +970,12 @@ namespace TVRename
                 }
                 else
                 {
-                    Logger.Error($"Banners were found for series {seriesId} - Ignoring them {bannersXml}");
+                    Logger.Warn($"Banners were found for series {seriesId} - Ignoring them {bannersXml}");
                 }
             }
         }
 
-        private int GetLanguageId() => LanguageList.GetLanguageFromCode(TVSettings.Instance.PreferredLanguageCode).Id;
+        private int GetLanguageId() => LanguageList.GetLanguageFromCode(TVSettings.Instance.PreferredLanguageCode)?.Id ?? 7;
 
         private int GetDefaultLanguageId() => LanguageList.GetLanguageFromCode(DefaultLanguageCode).Id;
         
@@ -1107,12 +1123,11 @@ namespace TVRename
                     if (TvdbIsUp())
                     {
                         LastError = ex.Message;
-                        throw new ShowNotFoundException();
+                        throw new ShowNotFoundException(code);
                     }
                 }
 
-                Logger.Error("Error obtaining {0}", uri);
-                Logger.Error(ex);
+                Logger.Error(ex,"Error obtaining {0}", uri);
                 Say("");
                 LastError = ex.Message;
                 return null;
@@ -1257,8 +1272,7 @@ namespace TVRename
                 }
                 catch (InvalidCastException ex)
                 {
-                    Logger.Error("Did not recieve the expected format of json from {0}.", uri);
-                    Logger.Error(ex);
+                    Logger.Error(ex,"Did not receive the expected format of json from {0}.", uri);
                     Logger.Error(jsonResponse["data"].ToString());
                 }
             }
@@ -1280,8 +1294,7 @@ namespace TVRename
                 }
                 catch (InvalidCastException ex)
                 {
-                    Logger.Error("Did not recieve the expected format of json from {0}.", uri);
-                    Logger.Error(ex);
+                    Logger.Error(ex,"Did not receive the expected format of json from {0}.", uri);
                     Logger.Error(jsonResponse["data"].ToString());
                 }
             }
@@ -1687,6 +1700,12 @@ namespace TVRename
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                Say("Please Search for a Show Name");
+                return;
+            }
+
             text = text.RemoveDiacritics(); // API doesn't like accented characters
 
             bool isNumber = Regex.Match(text, "^[0-9]+$").Success;
@@ -1720,7 +1739,7 @@ namespace TVRename
                 }
                 else
                 {
-                    Logger.Error("Error obtaining " + uri + ": " + ex.Message);
+                    Logger.Error($"Error obtaining {ex.Response.ResponseUri} for search term '{text}': {ex.Message}");
                     LastError = ex.Message;
                     Say("");
                 }
@@ -1784,7 +1803,7 @@ namespace TVRename
             }
             catch (InvalidCastException ex)
             {
-                Logger.Error("Did not recieve the expected format of json from {0}.", uri);
+                Logger.Error("Did not receive the expected format of json from {0}.", uri);
                 Logger.Error(ex);
                 Logger.Error(jsonResponse["data"].ToString());
             }
@@ -1796,15 +1815,15 @@ namespace TVRename
             // Season 3: http://www.thetvdb.com/?tab=season&seriesid=75340&seasonid=28289&lid=7
 
             if (summaryPage || (seasonId <= 0) || !series.ContainsKey(seriesId))
-                return WebsiteRoot + "/?tab=series&id=" + seriesId;
+                return $"{WebsiteRoot}/?tab=series&id={seriesId}";
             else
-                return WebsiteRoot + "/?tab=season&seriesid=" + seriesId + "&seasonid=" + seasonId;
+                return $"{WebsiteRoot}/?tab=season&seriesid={seriesId}&seasonid={seasonId}";
         }
 
         public string WebsiteUrl(int seriesId, int seasonId, int episodeId)
         {
             // http://www.thetvdb.com/?tab=episode&seriesid=73141&seasonid=5356&id=108303&lid=7
-            return WebsiteRoot + "/?tab=episode&seriesid=" + seriesId + "&seasonid=" + seasonId + "&id=" + episodeId;
+            return $"{WebsiteRoot}/?tab=episode&seriesid={seriesId}&seasonid={seasonId}&id={episodeId}";
         }
 
         // Next episode to air of a given show		

@@ -146,7 +146,7 @@ namespace TVRename
                         folder = otherFolder;
                         di = new DirectoryInfo(folder);
                         goAgain = !di.Exists;
-                        if (di.Exists && (si.AutoFolderNameForSeason(snum).ToLower() != folder.ToLower()))
+                        if (di.Exists && (!string.Equals(si.AutoFolderNameForSeason(snum), folder, StringComparison.CurrentCultureIgnoreCase)))
                         {
                             if (!si.ManualFolderLocations.ContainsKey(snum))
                                 si.ManualFolderLocations[snum] = new List<string>();
