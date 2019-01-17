@@ -12,7 +12,6 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.RenameCheck && TVSettings.Instance.MissingCheck && TVSettings.Instance.MoveLibraryFiles;
         protected override string Checkname() => "Looked in the library for the missing files";
 
-
         protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
             ItemList newList = new ItemList();
