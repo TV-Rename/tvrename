@@ -7,12 +7,15 @@
 // 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace TVRename
 {
     public static class TimeZoneHelper
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public static IEnumerable<string> ZoneNames() => TimeZoneInfo.GetSystemTimeZones().Select(x=>x.StandardName);
 
         public static string DefaultTimeZone() => "Eastern Standard Time";
@@ -30,7 +33,27 @@ namespace TVRename
 
         public static DateTime AdjustTzTimeToLocalTime(DateTime theirDateTime, TimeZoneInfo theirTimeZone)
         {
-            return theirTimeZone == null ? theirDateTime : TimeZoneInfo.ConvertTime(theirDateTime,theirTimeZone,TimeZoneInfo.Local);
+            try
+            {
+                return theirTimeZone == null
+                    ? theirDateTime
+                    : TimeZoneInfo.ConvertTime(theirDateTime, theirTimeZone, TimeZoneInfo.Local);
+            }
+            catch (ArgumentException)
+            {
+                try
+                {
+                    Debug.Assert(theirTimeZone != null, nameof(theirTimeZone) + " != null");
+                    DateTime returnValue = TimeZoneInfo.ConvertTime(theirDateTime.AddHours(1), theirTimeZone, TimeZoneInfo.Local);
+                    Logger.Warn($"Could not convert {theirDateTime.ToShortDateString()} {theirDateTime.ToShortTimeString()} {theirDateTime.Kind} in {theirTimeZone.StandardName} into {TimeZoneInfo.Local.StandardName} in TimeZoneHelper.AdjustTzTimeToLocalTime (added one hour and it worked ok to account for daylight savings)");
+                    return returnValue;
+                }
+                catch (ArgumentException ae)
+                {
+                    Logger.Error($"Could not convert {theirDateTime.ToShortDateString()} {theirDateTime.ToShortTimeString()} {theirDateTime.Kind} in {theirTimeZone?.StandardName} into {TimeZoneInfo.Local.StandardName} in TimeZoneHelper.AdjustTzTimeToLocalTime (tried adding one hour too so that we account for daylight saving): {ae.Message}");
+                    return theirDateTime;
+                }
+            }
         }
 
         public static double Epoch(DateTime dt)

@@ -21,6 +21,12 @@ namespace TVRename
         {
             if (!Active()) return;
 
+            if (string.IsNullOrWhiteSpace(Location()))
+            {
+                LOGGER.Warn("Please open settings and ensure filenames are provided for each exporter you have enabled");
+                return;
+            }
+
             try
             {
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))

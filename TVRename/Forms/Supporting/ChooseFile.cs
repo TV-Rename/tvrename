@@ -10,7 +10,6 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Humanizer;
-using NLog;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -69,7 +68,7 @@ namespace TVRename
             }
             catch (FileNotFoundException fnfex)
             {
-                Logger.Fatal($"Can't find File in ChooseFile called {file.Name}");
+                Logger.Fatal(fnfex,$"Can't find File in ChooseFile called {file.Name}");
                 return "Unknown";
             }
         }

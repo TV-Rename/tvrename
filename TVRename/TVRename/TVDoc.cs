@@ -15,17 +15,12 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
-using System.Reflection;
 using System.Xml;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using System.Xml.Linq;
 using NLog;
-using NLog.Config;
-using NLog.Targets;
-using NLog.Targets.Syslog;
-using NLog.Targets.Syslog.Settings;
 using NodaTime.Extensions;
 using File = Alphaleonis.Win32.Filesystem.File;
 
@@ -39,7 +34,7 @@ namespace TVRename
         public readonly CommandLineArgs Args;
         internal TVRenameStats CurrentStats;
         public ItemList TheActionList;
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly ActionEngine actionManager;
         private readonly CacheUpdater cacheManager;
         private readonly FindMissingEpisodes localFinders;
@@ -54,7 +49,7 @@ namespace TVRename
         // ReSharper disable once RedundantDefaultMemberInitializer
         private bool currentlyBusy = false; // This is set to true when scanning and indicates to other objects not to commence a scan of their own
         private DateTime busySince;
-        private bool lastScanComplete;
+        public bool LastScanComplete { get; private set; }
         private TVSettings.ScanType lastScanType;
 
         public TVDoc(FileInfo settingsFile, CommandLineArgs args)
@@ -77,34 +72,6 @@ namespace TVRename
             downloadIdentifiers = new DownloadIdentifiersController();
 
             LoadOk = (settingsFile == null || LoadXMLSettings(settingsFile)) && TheTVDB.Instance.LoadOk;
-
-            if (TVSettings.Instance.mode==TVSettings.BetaMode.BetaToo || TVSettings.Instance.ShareLogs) SetupLogging();
-        }
-
-        private static void SetupLogging()
-        {
-            NLog.Config.ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.Load("NLog.Targets.Syslog"));
-
-            LoggingConfiguration config = LogManager.Configuration;
-
-            SyslogTarget syslog = new SyslogTarget
-            {
-                MessageCreation = {Facility = Facility.Local7},
-                MessageSend =
-                {
-                    Protocol = ProtocolType.Tcp,
-                    Tcp = {Server = "logs7.papertrailapp.com", Port = 13236, Tls = {Enabled = true}}
-                }
-            };
-
-            config.AddTarget("syslog", syslog);
-
-            syslog.Layout = "${date:format=yyyy-MM-dd HH\\:mm\\:ss} |${level:uppercase=true}| ${message} ${exception:format=toString,Data}";
-
-            LoggingRule rule = new LoggingRule("*", LogLevel.Error, syslog);
-            config.LoggingRules.Add(rule);
-
-            LogManager.Configuration = config;
         }
 
         public TVRenameStats Stats()
@@ -313,7 +280,7 @@ namespace TVRename
 
         private void OutputActionFiles()
         {
-            if (!lastScanComplete) return;
+            if (!LastScanComplete) return;
             // ReSharper disable once InconsistentNaming
             List<ActionListExporter> ALExpoters = new List<ActionListExporter>
             {
@@ -406,13 +373,13 @@ namespace TVRename
             {
                 PreventAutoScan("Scan "+st.PrettyPrint());
 
-                //Get the defult set of shows defined by the specified type
+                //Get the default set of shows defined by the specified type
                 if (shows == null) shows = GetShowList(st);
 
                 //If still null then return
                 if (shows == null)
                 {
-                    Logger.Error("No Shows Provided to Scan");
+                    Logger.Warn("No Shows Provided to Scan");
                     return;
                 }
 
@@ -430,21 +397,17 @@ namespace TVRename
                 if (scanProgDlg != null && scanProgDlg.ShowDialog() == DialogResult.Cancel)
                 {
                     cts.Cancel();
-                    actionWork.Interrupt();
                 }
                 else
                 {
                     actionWork.Join();
                 }
-
                 downloadIdentifiers.Reset();
-                lastScanComplete = true;
-                lastScanType = st;
                 OutputActionFiles(); //Save missing shows to XML (and others)
             }
             catch (Exception e)
             {
-                Logger.Fatal(e, "Unhandled Exception in ScanWorker");
+                Logger.Fatal(e, "Unhandled Exception in Scan");
             }
             finally
             {
@@ -452,7 +415,7 @@ namespace TVRename
             }
         }
 
-        public class ScanSettings
+        public struct ScanSettings
         {
             public readonly bool Unattended;
             public readonly TVSettings.ScanType Type;
@@ -619,20 +582,29 @@ namespace TVRename
                 searchFinders.CheckIfActive((scanProgDlg == null)? noProgress : scanProgDlg.ToBeDownloadedProg, specific, settings);
 
                 if (settings.Token.IsCancellationRequested)
+                {
+                    TheActionList.Clear();
+                    LastScanComplete = false;
                     return;
+                }
 
                 // sort Action list by type
                 TheActionList.Sort(new ActionItemSorter()); // was new ActionSorter()
 
                 Stats().FindAndOrganisesDone++;
+                lastScanType = settings.Type;
+                LastScanComplete = true;
             }
-            catch (TVRenameOperationInteruptedException e)
+            catch (TVRenameOperationInteruptedException)
             {
-                Logger.Warn(e, "Scan cancelled by user");
+                Logger.Warn("Scan cancelled by user");
+                TheActionList.Clear();
+                LastScanComplete = false;
             }
             catch (Exception e)
             {
                 Logger.Fatal(e, "Unhandled Exception in ScanWorker");
+                LastScanComplete = false;
             }
             finally
             {

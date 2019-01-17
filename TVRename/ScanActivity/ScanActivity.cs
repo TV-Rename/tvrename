@@ -54,7 +54,7 @@ namespace TVRename
 
         internal void CheckIfActive(SetProgressDelegate prog, int startpct, int totPct, List<ShowItem> showList, TVDoc.ScanSettings settings)
         {
-            if (Active())
+            if (Active() && !settings.Token.IsCancellationRequested)
             {
                 Check(prog,startpct,totPct, showList, settings);
             }

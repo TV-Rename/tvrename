@@ -145,7 +145,7 @@ namespace TVRename
                 {
                     string message =
                         $"Action Processor called with object that is not a ActionQueue[], instead called with a {queuesIn.GetType().FullName}";
-                    Logger.Error(message);
+                    Logger.Fatal(message);
                     throw new ArgumentException(message);
                 }
 
@@ -299,7 +299,7 @@ namespace TVRename
                     queues[0].Actions.Add(action); // add them after the slow move/reanems (ie last)
                 else
                 {
-                    Logger.Error("No action type found for {0}, Please follow up with a developer.", action.GetType());
+                    Logger.Fatal("No action type found for {0}, Please follow up with a developer.", action.GetType());
                     queues[3].Actions.Add(action); // put it in this queue by default
                 }
             }
