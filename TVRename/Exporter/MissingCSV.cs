@@ -11,7 +11,7 @@ namespace TVRename
         protected override string Location() => TVSettings.Instance.ExportMissingCSVTo;
         public override bool ApplicableFor(TVSettings.ScanType st) => (st==TVSettings.ScanType.Full );
 
-        internal override void Do()
+        protected override void Do()
         {
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
             {

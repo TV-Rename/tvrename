@@ -50,7 +50,7 @@ namespace TVRename
             return string.Empty;
         }
 
-        internal override void Do()
+        protected override void Do()
         {
             string contents = Produce();
 

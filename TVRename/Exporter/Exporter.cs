@@ -13,7 +13,7 @@ namespace TVRename
 {
     internal abstract class Exporter
     {
-        public abstract bool Active();
+        protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
         public void Run()
         {
@@ -30,12 +30,12 @@ namespace TVRename
             }
             if (Location().StartsWith("http://") || Location().StartsWith("https://"))
             {
-                LOGGER.Warn($"TV Rename cannot export file to {Location()}, please update in the setttings");
+                LOGGER.Warn($"TV Rename cannot export file to a web location: {Location()}, please update in the setttings");
                 return;
             }
 
             //Create the directory if needed
-            Directory.CreateDirectory(Path.GetDirectoryName(Location()) ?? "");
+            Directory.CreateDirectory(Path.GetDirectoryName(Location()) ?? string.Empty);
 
             try
             {
@@ -44,18 +44,20 @@ namespace TVRename
             }
             catch (NotSupportedException e)
             {
-                LOGGER.Warn(e, "Output File must be a local file: {0}", Location());
+                LOGGER.Warn($"Output File must be a local file: {Location()} {e.Message}");
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                LOGGER.Warn($"Could not access File/Directory at: {Location()} {e.Message}");
             }
             catch (Exception e)
             {
                 LOGGER.Error(e, "Failed to Output File to: {0}", Location());
             }
-
         }
 
+        public abstract bool Active();
         protected abstract string Location();
-        protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
-
-        internal abstract void Do();
+        protected abstract void Do();
     }
 }

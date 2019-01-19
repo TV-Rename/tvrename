@@ -21,7 +21,7 @@ namespace TVRename
         public override bool Active() =>TVSettings.Instance.ExportShowsTXT;
         protected override string Location() =>TVSettings.Instance.ExportShowsTXTTo;
 
-        internal override void Do()
+        protected override void Do()
         {
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
             {

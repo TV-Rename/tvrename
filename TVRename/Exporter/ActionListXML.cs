@@ -8,7 +8,7 @@ namespace TVRename
         {
         }
 
-        internal override void Do()
+        protected override void Do()
         {
             XmlWriterSettings settings = new XmlWriterSettings
             {

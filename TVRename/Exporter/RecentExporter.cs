@@ -22,7 +22,7 @@ namespace TVRename
             this.doc = doc;
         }
 
-        internal override void Do()
+        protected override void Do()
         {
             List<ProcessedEpisode> lpe = doc.Library.RecentEpisodes(TVSettings.Instance.WTWRecentDays);
             DirFilesCache dfc = new DirFilesCache();

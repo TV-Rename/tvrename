@@ -23,7 +23,7 @@ namespace TVRename
         protected override string Location() =>TVSettings.Instance.ExportMissingXMLTo;
         public override bool ApplicableFor(TVSettings.ScanType st) => (st == TVSettings.ScanType.Full);
 
-        internal override void Do()
+        protected override void Do()
         {
             XmlWriterSettings settings = new XmlWriterSettings
             {
