@@ -229,7 +229,7 @@ namespace TVRename
 
         public static string SimplifyFilename(string filename, string showNameHint)
         {
-            // Look at showNameHint and try to remove the first occurance of it from filename
+            // Look at showNameHint and try to remove the first occurrence of it from filename
             // This is very helpful if the showname has a >= 4 digit number in it, as that
             // would trigger the 1302 -> 13,02 matcher
             // Also, shows like "24" can cause confusion
@@ -240,21 +240,18 @@ namespace TVRename
             if (string.IsNullOrEmpty(showNameHint))
                 return returnFilename;
 
-            bool nameIsNumber = (Regex.Match(showNameHint, "^[0-9]+$").Success);
-
-            int p = returnFilename.IndexOf(showNameHint, StringComparison.Ordinal);
             try
             {
-                if (p == 0)
+                if (returnFilename.StartsWith(showNameHint))
                 {
-                    returnFilename = returnFilename.Remove(0, showNameHint.Length);
-                    return returnFilename;
+                    return returnFilename.Remove(0, showNameHint.Length);
                 }
 
-                if (nameIsNumber) // e.g. "24", or easy exact match of show name at start of filename
+                bool nameIsNumber = (Regex.Match(showNameHint, "^[0-9]+$").Success);
+
+                if (nameIsNumber && returnFilename.Contains(showNameHint)) // e.g. "24", or easy exact match of show name at start of filename
                 {
-                    returnFilename = returnFilename.Remove(0, showNameHint.Length);
-                    return returnFilename;
+                    return Regex.Replace(returnFilename, "(^|\\W)" + showNameHint + "\\b", string.Empty);
                 }
             }
             catch (ArgumentOutOfRangeException ex)
