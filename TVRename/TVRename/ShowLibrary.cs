@@ -286,9 +286,14 @@ namespace TVRename
 
             if (TryAdd(found.TvdbCode, found)) return;
 
-            Logger.Error(ContainsKey(found.TvdbCode)
-                ? $"Failed to Add {found.ShowName} with TVDBId={found.TvdbCode} to library, but it's already present"
-                : $"Failed to Add {found.ShowName} with TVDBId={found.TvdbCode} to library");
+            if (ContainsKey(found.TvdbCode))
+            {
+                Logger.Warn($"Failed to Add {found.ShowName} with TVDBId={found.TvdbCode} to library, but it's already present");
+            }
+            else
+            {
+                Logger.Error($"Failed to Add {found.ShowName} with TVDBId={found.TvdbCode} to library");
+            }
         }
 
         public static void ApplyRules(List<ProcessedEpisode> eis, List<ShowRule> rules, ShowItem si)

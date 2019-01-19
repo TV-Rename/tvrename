@@ -56,7 +56,6 @@ namespace TVRename
             {
                 try
                 {
-
                     if (string.IsNullOrWhiteSpace(Location()))
                     {
                         LOGGER.Warn("Please open settings and ensure filenames are provided for each exporter you have enabled");
@@ -75,6 +74,10 @@ namespace TVRename
 
                     LOGGER.Info("Output File to: {0}", Location());
                     LOGGER.Trace("contents of File are: {0}", contents);
+                }
+                catch (NotSupportedException e)
+                {
+                    LOGGER.Warn(e, "Output File must be a local file: {0}", Location());
                 }
                 catch (Exception e)
                 {

@@ -17,6 +17,7 @@ namespace TVRename
         public FindNewShowsInLibrary(TVDoc doc) : base(doc)
         {
         }
+        protected override string Checkname() => "Looked in the library for any new shows to be added (bulk add)";
 
         protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {

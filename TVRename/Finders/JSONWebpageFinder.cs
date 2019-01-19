@@ -19,6 +19,7 @@ namespace TVRename
         public JSONFinder(TVDoc i) : base(i) { }
 
         public override bool Active() => TVSettings.Instance.SearchJSON;
+        protected override string Checkname() => "Check JSON links for the missing files";
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.search;
 

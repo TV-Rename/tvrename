@@ -6,6 +6,8 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System.Linq;
+
 namespace TVRename
 {
     public abstract class ScanShowActivity
@@ -24,7 +26,18 @@ namespace TVRename
             if (Active())
             {
                 Check(si,dfc,settings);
+                LogActionListSummary();
             }
         }
+
+        private void LogActionListSummary()
+        {
+            LOGGER.Debug($"   Summary of known actions after check: {Checkname()}");
+            LOGGER.Debug($"      Missing Items: {Doc.TheActionList.MissingItems().Count()}");
+            LOGGER.Debug($"      Copy/Move Items: {Doc.TheActionList.CopyMoveItems().Count()}");
+            LOGGER.Debug($"      Total Actions: {Doc.TheActionList.Actions().Count()}");
+        }
+
+        protected abstract string Checkname();
     }
 }

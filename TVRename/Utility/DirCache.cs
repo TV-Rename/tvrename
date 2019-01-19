@@ -5,9 +5,13 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
-using Alphaleonis.Win32.Filesystem;
+
 using System;
+using System.IO;
 using System.Linq;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 // Recursively reads and caches files and folders, and info about them, as this is way faster
 // than repeatedly hitting the filesystem.
@@ -31,20 +35,46 @@ namespace TVRename
             if (!Directory.Exists(folder))
                 return n;
 
+            DirectoryInfo di = new DirectoryInfo(folder);
             try
             {
-                DirectoryInfo di = new DirectoryInfo(folder);
                 n = di.GetFiles().Length;
-
-                if (subFolders)
-                {
-                    DirectoryInfo[] dirs = di.GetDirectories();
-                    n += dirs.Sum(di2 => CountFiles(di2.FullName, true));
-                }
+            }
+            catch (NotSupportedException)
+            {
             }
             catch (UnauthorizedAccessException)
             {
             }
+            catch (DirectoryNotFoundException)
+            {
+            }
+            catch (IOException)
+            {
+            }
+
+            if (!subFolders) return n;
+
+            DirectoryInfo[] dirs =new DirectoryInfo[0];
+            try
+            {
+                dirs = di.GetDirectories();
+            }
+            catch (NotSupportedException)
+            {
+            }
+            catch (UnauthorizedAccessException)
+            {
+            }
+            catch (DirectoryNotFoundException)
+            {
+            }
+            catch (IOException)
+            {
+            }
+
+            n += dirs.Sum(di2 => CountFiles(di2.FullName, true));
+
             return n;
         }
 

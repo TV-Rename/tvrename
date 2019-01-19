@@ -9,7 +9,8 @@ namespace TVRename
     {
         public LibraryFolderFileFinder(TVDoc i) : base(i) { }
 
-        public override bool Active() => TVSettings.Instance.RenameCheck && TVSettings.Instance.MissingCheck && TVSettings.Instance.MoveLibraryFiles; 
+        public override bool Active() => TVSettings.Instance.RenameCheck && TVSettings.Instance.MissingCheck && TVSettings.Instance.MoveLibraryFiles;
+        protected override string Checkname() => "Looked in the library for the missing files";
 
         protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
@@ -56,24 +57,21 @@ namespace TVRename
                     else
                     {
                         FileInfo[] testFiles = dfc.GetFilesIncludeSubDirs(baseFolder);
-                        if (testFiles is null)
-                        {
-                            matchedFiles = new List<FileInfo>();
-                        }
-                        else
-                        {
-                            matchedFiles = testFiles.Where(testFile => ReviewFile(me, thisRound, testFile, settings, false, false, false)).ToList();
-                        }
+                        matchedFiles = testFiles is null
+                            ? new List<FileInfo>()
+                            : testFiles.Where(testFile => ReviewFile(me, thisRound, testFile, settings, false, false, false)).ToList();
                     }
 
-                    foreach (KeyValuePair<int, List<string>> seriesFolders in me.Episode.Show.AllFolderLocationsEpCheck(
-                        false))
+                    foreach (KeyValuePair<int, List<string>> seriesFolders in me.Episode.Show.AllFolderLocationsEpCheck(false))
                     {
                         if (seriesFolders.Value == null) continue;
+                        if (me.Episode.AppropriateSeason.SeasonNumber != seriesFolders.Key) continue;
 
                         foreach (string folderName in seriesFolders.Value)
                         {
-                            if (string.IsNullOrWhiteSpace(folderName)) continue;
+                            if (string.IsNullOrWhiteSpace(folderName)) continue; //No point looking here
+                            if (folderName == baseFolder) continue; //Already looked here
+
                             LOGGER.Info($"Starting to look for {me.Filename} in the library folder: {folderName}");
                             FileInfo[] files = dfc.GetFiles(folderName);
                             if (files is null) continue;

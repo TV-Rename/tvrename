@@ -9,6 +9,7 @@ namespace TVRename
     {
         private readonly DownloadIdentifiersController downloadIdentifiers;
 
+        protected override string Checkname() => "Rename & Missing Check";
         public RenameAndMissingCheck(TVDoc doc) : base(doc)
         {
             downloadIdentifiers = new DownloadIdentifiersController();
@@ -82,7 +83,7 @@ namespace TVRename
                         return;
 
                     FileInfo[] files = dfc.GetFiles(folder);
-                    if (files == null || files.Length ==0)
+                    if (files == null)
                         continue;
 
                     if (TVSettings.Instance.NeedToDownloadBannerFile() && timeForBannerUpdate)
@@ -183,7 +184,7 @@ namespace TVRename
                     {
                         // second part of missing check is to see what is missing!
 
-                        // look at the offical list of episodes, and look to see if we have any gaps
+                        // look at the official list of episodes, and look to see if we have any gaps
 
                         DateTime today = DateTime.Now;
                         TheTVDB.Instance.GetLock("UpToDateCheck");

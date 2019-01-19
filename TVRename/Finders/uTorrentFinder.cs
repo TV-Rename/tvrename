@@ -8,6 +8,7 @@ namespace TVRename
     {
         public uTorrentFinder(TVDoc i) : base(i) { }
         public override bool Active() => TVSettings.Instance.CheckuTorrent;
+        protected override string Checkname() => "Looked in the uTorrent queue for the missing files";
 
         protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
         {
