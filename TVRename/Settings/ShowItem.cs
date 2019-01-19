@@ -89,16 +89,9 @@ namespace TVRename
             }
             catch (Exception ex)
             {
-                Logger.Error(ex,$"Could not work out what timezone '{tzstr}' is, using the default.");
+                Logger.Warn(ex,$"Could not work out what timezone '{ShowName}' has. In the settings it uses '{tzstr}', but that is not valid. Please update. Using the default timezone {TimeZoneHelper.DefaultTimeZone()} for the show instead.");
                 tzstr = TimeZoneHelper.DefaultTimeZone();
                 seriesTimeZone = TimeZoneInfo.FindSystemTimeZoneById(tzstr);
-
-
-                xx
-                //Mitteleuropäische Zeit
-                //Paris, Madrid
-
-
             }
 
             lastFiguredTz = tzstr;
