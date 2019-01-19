@@ -64,6 +64,10 @@ namespace TVRename
 
                     LOGGER.Info("Output File to: {0}", Location());
                 }
+                catch (NotSupportedException e)
+                {
+                    LOGGER.Warn(e, "Output File must be a local file: {0}", Location());
+                }
                 catch (Exception e)
                 {
                     LOGGER.Error(e, "Failed to Output File to: {0}", Location());

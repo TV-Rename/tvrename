@@ -45,9 +45,14 @@ namespace TVRename
                 if (!ReadChannel(x.Descendants("channel").First()))
                     return false;
             }
-            catch (Exception  e)
+            catch (WebException  e)
             {
-                Logger.Error(e,$"Cound not parse RSS page at:{url}");
+                Logger.Warn($"Cound not download RSS page at:{url} got the following message: {e.Status} {e.Message}");
+                return false;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Cound not parse RSS page at:{url}");
                 return false;
             }
             finally
