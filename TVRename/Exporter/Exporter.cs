@@ -46,6 +46,10 @@ namespace TVRename
             {
                 LOGGER.Warn($"Output File must be a local file: {Location()} {e.Message}");
             }
+            catch (DirectoryNotFoundException e)
+            {
+                LOGGER.Warn($"Could not find File/Directory at: {Location()} {e.Message}");
+            }
             catch (UnauthorizedAccessException e)
             {
                 LOGGER.Warn($"Could not access File/Directory at: {Location()} {e.Message}");
