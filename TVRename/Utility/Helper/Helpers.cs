@@ -11,6 +11,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -211,6 +212,11 @@ namespace TVRename
             {
                 Process.Start(what, arguments);
                 return true;
+            }
+            catch (Win32Exception e)
+            {
+                Logger.Warn(e);
+                return false;
             }
             catch (Exception e)
             {
