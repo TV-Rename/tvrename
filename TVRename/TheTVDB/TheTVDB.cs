@@ -485,8 +485,8 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                Say("ERROR OBTAINING LANGUAGES FROM TVDB");
-                Logger.Error(ex, "ERROR OBTAINING LANGUAGES FROM TVDB");
+                Say("Could not connect to TVDB");
+                Logger.Error(ex, "Error obtaining Languages from TVDB");
                 LastError = ex.Message;
                 return false;
             }
