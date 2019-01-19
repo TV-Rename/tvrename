@@ -68,37 +68,53 @@ namespace TVRename
                 return;
             }
 
-            System.Diagnostics.Debug.Assert(sq != null); // shouldn't happen
-            if (sq.slots == null || sq.slots.Length == 0) // empty queue
-                return;
-
-            ItemList newList = new ItemList();
-            ItemList toRemove = new ItemList();
-            int c = ActionList.MissingItems().Count() + 2;
-            int n = 1;
-
-            foreach (ItemMissing action in ActionList.MissingItems())
+            try
             {
-                if (settings.Token.IsCancellationRequested)
+                System.Diagnostics.Debug.Assert(sq != null); // shouldn't happen
+                if (sq.slots == null || sq.slots.Length == 0) // empty queue
                     return;
 
-                UpdateStatus(n++, c, action.Filename);
+                ItemList newList = new ItemList();
+                ItemList toRemove = new ItemList();
+                int c = ActionList.MissingItems().Count() + 2;
+                int n = 1;
 
-                string showname = Helpers.SimplifyName(action.Episode.Show.ShowName);
-
-                foreach (SAB.QueueSlotsSlot te in sq.slots)
+                foreach (ItemMissing action in ActionList.MissingItems())
                 {
-                    FileInfo file = new FileInfo(te.filename);
+                    if (settings.Token.IsCancellationRequested)
+                        return;
 
-                    if (!FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false)) continue;
-                    if (!FinderHelper.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) ||
-                        (seasF != action.Episode.AppropriateSeasonNumber) || (epF != action.Episode.AppropriateEpNum)) continue;
-                    toRemove.Add(action);
-                    newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt, DownloadApp.SABnzbd));
-                    break;
+                    UpdateStatus(n++, c, action.Filename);
+
+                    if (action.Episode?.Show is null) continue;
+
+                    string showname = Helpers.SimplifyName(action.Episode.Show.ShowName);
+
+                    foreach (SAB.QueueSlotsSlot te in sq.slots)
+                    {
+                        if (te.filename is null) continue;
+
+                        FileInfo file = new FileInfo(te.filename);
+
+                        if (!FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false)) continue;
+
+                        if (!FinderHelper.FindSeasEp(file, out int seasF, out int epF, out int _,
+                                action.Episode.Show) ||
+                            (seasF != action.Episode.AppropriateSeasonNumber) ||
+                            (epF != action.Episode.AppropriateEpNum)) continue;
+
+                        toRemove.Add(action);
+                        newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt, DownloadApp.SABnzbd));
+                        break;
+                    }
                 }
+
+                ActionList.Replace(toRemove, newList);
             }
-            ActionList.Replace(toRemove,newList);
+            catch (NullReferenceException nre)
+            {
+                LOGGER.Error(nre,$"Null Reference in SAB - {r}");
+            }
         }
 
         private static byte[] DownloadPage(string theUrl)

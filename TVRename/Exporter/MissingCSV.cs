@@ -5,48 +5,24 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     internal class MissingCSV : ActionListExporter
     {
-        public MissingCSV(ItemList theActionList) : base(theActionList)
-        {
-        }
+        public MissingCSV(ItemList theActionList) : base(theActionList) {}
 
         public override bool Active() => TVSettings.Instance.ExportMissingCSV;
         protected override string Location() => TVSettings.Instance.ExportMissingCSVTo;
+        public override bool ApplicableFor(TVSettings.ScanType st) => (st==TVSettings.ScanType.Full );
 
-        public override bool ApplicableFor(TVSettings.ScanType st)
+        internal override void Do()
         {
-            return (st==TVSettings.ScanType.Full );
-        }
-
-        public override void Run()
-        {
-            if (!Active()) return;
-
-            if (string.IsNullOrWhiteSpace(Location()))
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
             {
-                LOGGER.Warn("Please open settings and ensure filenames are provided for each exporter you have enabled");
-                return;
-            }
+                file.WriteLine("Show Name,Season,Episode,Episode Name,Air Date,Folder,Nice Name,thetvdb.com Code");
 
-            try
-            {
-                using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
+                foreach (ItemMissing im in TheActionList.MissingItems())
                 {
-                    file.WriteLine("Show Name,Season,Episode,Episode Name,Air Date,Folder,Nice Name,thetvdb.com Code");
-
-                    foreach (Item action in TheActionList)
-                    {
-                        if (action is ItemMissing im)
-                        {
-                            ProcessedEpisode pe = im.Episode;
-                            DateTime? dt = pe.GetAirDateDt(true);
-                            file.WriteLine($"\"{pe.TheSeries.Name}\",{pe.AppropriateSeasonNumber},{pe.NumsAsString()},\"{pe.Name}\",{dt:G},\"{action.TargetFolder}\",\"{im.Filename }\",{pe.SeriesId}");
-                        }
-                    }
+                    ProcessedEpisode pe = im.Episode;
+                    DateTime? dt = pe.GetAirDateDt(true);
+                    file.WriteLine($"\"{pe.TheSeries.Name}\",{pe.AppropriateSeasonNumber},{pe.NumsAsString()},\"{pe.Name}\",{dt:G},\"{im.TargetFolder}\",\"{im.Filename }\",{pe.SeriesId}");
                 }
-            }
-            catch (Exception e)
-            {
-                LOGGER.Error(e);
             }
         }
     }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -15,32 +14,17 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.ExportShowsHTML;
         protected override string Location() => TVSettings.Instance.ExportShowsHTMLTo;
 
-        public override void Run()
+        internal override void Do()
         {
-            if (!Active()) return;
-
-            if (string.IsNullOrWhiteSpace(Location()))
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
             {
-                LOGGER.Warn("Please open settings and update Export Shows (HTML) Filename");
-                return;
-            }
-
-            try
-            {
-                using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
+                file.WriteLine(ShowHtmlHelper.HTMLHeader(8, Color.White));
+                foreach (ShowItem si in Shows)
                 {
-                    file.WriteLine(ShowHtmlHelper.HTMLHeader(8, Color.White));
-                    foreach (ShowItem si in Shows)
-                    {
-                        file.WriteLine(CreateHtml(si));
-                    }
-
-                    file.WriteLine(ShowHtmlHelper.HTMLFooter());
+                    file.WriteLine(CreateHtml(si));
                 }
-            }
-            catch (Exception e)
-            {
-                LOGGER.Error(e);
+
+                file.WriteLine(ShowHtmlHelper.HTMLFooter());
             }
         }
 

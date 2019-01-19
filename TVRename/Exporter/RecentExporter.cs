@@ -6,7 +6,6 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,59 +22,30 @@ namespace TVRename
             this.doc = doc;
         }
 
-        public override void Run()
+        internal override void Do()
         {
-            if (Active())
+            List<ProcessedEpisode> lpe = doc.Library.RecentEpisodes(TVSettings.Instance.WTWRecentDays);
+            DirFilesCache dfc = new DirFilesCache();
+
+            //Write Contents to file
+            using (StreamWriter file = new StreamWriter(Location()))
             {
-                if (string.IsNullOrWhiteSpace(Location()))
+                file.WriteLine(GenerateHeader());
+                foreach (ProcessedEpisode episode in lpe)
                 {
-                    LOGGER.Warn("Please open settings and update Export Recent Shows Filename");
-                    return;
-                }
+                    List<FileInfo> files =  dfc.FindEpOnDisk(episode, false);
 
-                try
-                {
-                    //Create the directory if needed
-                    Directory.CreateDirectory(Path.GetDirectoryName(Location()) ?? "");
-
-                    List<ProcessedEpisode> lpe = doc.Library.RecentEpisodes(TVSettings.Instance.WTWRecentDays);
-                    DirFilesCache dfc = new DirFilesCache();
-
-                    //Write Contents to file
-                    using (StreamWriter file = new StreamWriter(Location()))
+                    if (!files.Any())
                     {
-                        file.WriteLine(GenerateHeader());
-                        foreach (ProcessedEpisode episode in lpe)
-                        {
-                            List<FileInfo> files =  dfc.FindEpOnDisk(episode, false);
-
-                            if (!files.Any())
-                            {
-                                continue;
-                            }
-
-                            string name = TVSettings.Instance.NamingStyle.NameFor(episode);
-                            int length = files.First().GetFilmLength();
-
-                            file.WriteLine(GenerateRecord(episode, files.First(), name,length));
-                        }
-                        file.WriteLine(GenerateFooter());
+                        continue;
                     }
 
-                    LOGGER.Info("Output File to: {0}", Location());
+                    string name = TVSettings.Instance.NamingStyle.NameFor(episode);
+                    int length = files.First().GetFilmLength();
+
+                    file.WriteLine(GenerateRecord(episode, files.First(), name,length));
                 }
-                catch (NotSupportedException e)
-                {
-                    LOGGER.Warn(e, "Output File must be a local file: {0}", Location());
-                }
-                catch (Exception e)
-                {
-                    LOGGER.Error(e, "Failed to Output File to: {0}", Location());
-                }
-            }
-            else
-            {
-                LOGGER.Trace("Skipped (Disabled) Output File to: {0}", Location());
+                file.WriteLine(GenerateFooter());
             }
         }
 

@@ -92,6 +92,13 @@ namespace TVRename
                 Logger.Error(ex,$"Could not work out what timezone '{tzstr}' is, using the default.");
                 tzstr = TimeZoneHelper.DefaultTimeZone();
                 seriesTimeZone = TimeZoneInfo.FindSystemTimeZoneById(tzstr);
+
+
+                xx
+                //Mitteleuropäische Zeit
+                //Paris, Madrid
+
+
             }
 
             lastFiguredTz = tzstr;

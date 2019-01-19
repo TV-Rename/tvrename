@@ -47,47 +47,21 @@ namespace TVRename
                 LOGGER.Error(e, "Failed to produce records to put into Export file at: {0}", Location());
             }
 
-            return "";
+            return string.Empty;
         }
 
-        public override void Run()
+        internal override void Do()
         {
-            if (Active())
+            string contents = Produce();
+
+            //Write Contents to file
+            using (StreamWriter file = new StreamWriter(Location()))
             {
-                try
-                {
-                    if (string.IsNullOrWhiteSpace(Location()))
-                    {
-                        LOGGER.Warn("Please open settings and ensure filenames are provided for each exporter you have enabled");
-                        return;
-                    }
-
-                    //Create the directory if needed
-                    Directory.CreateDirectory(Path.GetDirectoryName(Location()) ?? "");
-                    string contents = Produce();
-
-                    //Write Contents to file
-                    using (StreamWriter file = new StreamWriter(Location()))
-                    {
-                        file.Write(contents);
-                    }
-
-                    LOGGER.Info("Output File to: {0}", Location());
-                    LOGGER.Trace("contents of File are: {0}", contents);
-                }
-                catch (NotSupportedException e)
-                {
-                    LOGGER.Warn(e, "Output File must be a local file: {0}", Location());
-                }
-                catch (Exception e)
-                {
-                    LOGGER.Error(e, "Failed to Output File to: {0}", Location());
-                }
+                file.Write(contents);
             }
-            else
-            {
-                LOGGER.Trace("Skipped (Disabled) Output File to: {0}", Location());
-            }
+            
+            LOGGER.Trace("contents of File are: {0}", contents);
+
         }
 
         protected abstract bool Generate(Stream str, List<ProcessedEpisode> elist);
