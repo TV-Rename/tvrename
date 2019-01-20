@@ -199,9 +199,14 @@ namespace TVRename
                                     $"Identified that {fi.FullName} matches S{seasF}E{epF} of show {si.ShowName}, that it's not already present and airs in the future. Copying across.");
 
                                 string filename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pep));
-                                List<string> folders = si.AllFolderLocations()[seasF];
+                                List<string> folders = si.AllProposedFolderLocations()[seasF];
                                 foreach (string folder in folders)
                                 {
+                                    if (!Directory.Exists(folder))
+                                    {
+                                        LOGGER.Warn($"Want to copy {fi.FullName} to {folder}, but it doesn't exist yet");
+                                        continue;
+                                    }
                                     FileInfo targetFile = new FileInfo(folder + Path.DirectorySeparatorChar + filename + fi.Extension);
 
                                     if (fi.FullName == targetFile.FullName) continue;

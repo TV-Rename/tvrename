@@ -516,7 +516,7 @@ namespace TVRename
             Logger.Info("*******************************");
             Logger.Info("Force Update Images: " + si.ShowName);
 
-            Dictionary<int, List<string>> allFolders = si.AllFolderLocations();
+            Dictionary<int, List<string>> allFolders = si.AllExistngFolderLocations();
 
             if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (allFolders.Any()))
             {

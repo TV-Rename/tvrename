@@ -596,7 +596,8 @@ namespace TVRename
             return returnValue;
         }
 
-        public Dictionary<int, List<string>> AllFolderLocations() => AllFolderLocations( true);
+        public Dictionary<int, List<string>> AllExistngFolderLocations() => AllFolderLocations( true,true);
+        public Dictionary<int, List<string>> AllProposedFolderLocations() => AllFolderLocations(true,false);
 
         public Dictionary<int, List<string>> AllFolderLocationsEpCheck(bool checkExist) => AllFolderLocations(true, checkExist);
 

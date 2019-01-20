@@ -1362,7 +1362,7 @@ namespace TVRename
 
             if (ep != null)
             {
-                Dictionary<int, List<string>> afl = ep.Show.AllFolderLocations();
+                Dictionary<int, List<string>> afl = ep.Show.AllExistngFolderLocations();
                 if (afl.ContainsKey(ep.AppropriateSeasonNumber))
                 {
                     int n = mFoldersToOpen.Count;
@@ -1375,7 +1375,7 @@ namespace TVRename
             }
             else if (seas != null && si != null)
             {
-                Dictionary<int, List<string>> folders = si.AllFolderLocations();
+                Dictionary<int, List<string>> folders = si.AllExistngFolderLocations();
 
                 if (folders.ContainsKey(seas.SeasonNumber))
                 {
@@ -1393,7 +1393,7 @@ namespace TVRename
                 int n = mFoldersToOpen.Count;
                 bool first = true;
 
-                foreach (KeyValuePair<int, List<string>> kvp in si.AllFolderLocations())
+                foreach (KeyValuePair<int, List<string>> kvp in si.AllExistngFolderLocations())
                 {
                     foreach (string folder in kvp.Value)
                     {
@@ -2431,7 +2431,7 @@ namespace TVRename
         {
             if (currentShow == null) return string.Empty;
 
-            foreach (List<string> folders in currentShow.AllFolderLocations().Values)
+            foreach (List<string> folders in currentShow.AllExistngFolderLocations().Values)
             {
                 foreach (string folder in folders)
                 {

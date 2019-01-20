@@ -93,10 +93,10 @@ namespace TVRename
                     foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
                     {
                         int snum = kvp.Key;
-                        if (((snum == 0) && (si.CountSpecials)) || !si.AllFolderLocations().ContainsKey(snum))
+                        if (((snum == 0) && (si.CountSpecials)) || !si.AllExistngFolderLocations().ContainsKey(snum))
                             continue; // skip specials
 
-                        foreach (string folder in si.AllFolderLocations()[snum])
+                        foreach (string folder in si.AllExistngFolderLocations()[snum])
                         {
                             txt.AppendLine(si.TvdbCode + " : " + si.ShowName + " : S" + snum );
                             txt.AppendLine("Folder: " + folder);
