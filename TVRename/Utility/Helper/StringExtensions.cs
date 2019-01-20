@@ -26,9 +26,13 @@ namespace TVRename
             );
         }
 
+        public static bool ContainsAnyCharctersFrom(this string source, char[] possibleChars)
+        {
+            return possibleChars.Any(testChar => source.Contains(testChar.ToString()));
+        }
         public static bool ContainsAnyCharctersFrom(this string source, string possibleChars)
         {
-            return possibleChars.ToCharArray().Any(testChar => source.Contains(testChar.ToString()));
+            return ContainsAnyCharctersFrom(source,possibleChars.ToCharArray());
         }
     }
 }
