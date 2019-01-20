@@ -933,7 +933,6 @@ namespace TVRename
                     Logger.Warn(ex, "Connection to TVDB Failed whilst loading episode with Id {0}.", id);
                     return null;
                 }
-
             }
 
             return episodeResponses;

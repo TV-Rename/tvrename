@@ -23,7 +23,6 @@ namespace TVRename
             }
 
             try
-
             {
                 Calendar calendar = new Calendar {ProductId = "Upcoming Shows Exported by TV Rename http://www.tvrename.com"};
                 

@@ -569,7 +569,6 @@ namespace TVRename
             return true;
         }
 
-
         public static string CompulsoryReplacements()
         {
             return "*?<>:/\\|\""; // invalid filename characters, must be in the list!
@@ -583,7 +582,6 @@ namespace TVRename
             (char)21, (char)22, (char)23, (char)24, (char)25, (char)26, (char)27, (char)28, (char)29, (char)30,
             (char)31
         };
-
 
         public static List<FilenameProcessorRE> DefaultFNPList()
         {
@@ -925,9 +923,6 @@ namespace TVRename
                     if (IsShowLevel)
                     {
                         //Convert from old style values if needed
-
-
-
                         ShowItem.ShowAirStatus status =
                             (ShowItem.ShowAirStatus) Enum.Parse(typeof(ShowItem.ShowAirStatus), value, true);
 
