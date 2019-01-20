@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -809,6 +810,11 @@ namespace TVRename
             try
             {
                 web.DocumentText = body;
+            }
+            catch (COMException ex)
+            {
+                //Fail gracefully - no RHS episode guide is not too big of a problem.
+                Logger.Warn(ex,"Could not update UI for the show/series information pane");
             }
             catch (Exception ex)
             {
