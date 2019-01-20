@@ -3325,6 +3325,9 @@ namespace TVRename
 
         private void timezoneInconsistencyLOGToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //Show Log Pane
+            logToolStripMenuItem_Click(sender,e);
+
             TimeZoneTracker results = new TimeZoneTracker();
             foreach (ShowItem si in mDoc.Library.GetShowItems())
             {
@@ -3384,6 +3387,9 @@ namespace TVRename
 
         private void episodeFileQualitySummaryLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //Show Log Pane
+            logToolStripMenuItem_Click(sender, e);
+
             Beta.LogShowEpisodeSizes(mDoc);
         }
     }

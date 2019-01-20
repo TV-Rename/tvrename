@@ -352,7 +352,7 @@ namespace TVRename
         {
         }
 
-        protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
             MDoc.TheActionList.AddNullableRange(Go(MDoc.Library.GetShowItems(),settings));
         }

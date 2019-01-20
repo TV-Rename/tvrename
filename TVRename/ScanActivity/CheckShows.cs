@@ -17,7 +17,7 @@ namespace TVRename
 
         protected override string Checkname() => "Looked in the library to find missing files";
 
-        protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
             MDoc.TheActionList = new ItemList();
 
