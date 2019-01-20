@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace TVRename
@@ -23,6 +24,11 @@ namespace TVRename
                 replacement.Replace("$", "$$"),
                 RegexOptions.IgnoreCase
             );
+        }
+
+        public static bool ContainsAnyCharctersFrom(this string source, string possibleChars)
+        {
+            return possibleChars.ToCharArray().Any(testChar => source.Contains(testChar.ToString()));
         }
     }
 }

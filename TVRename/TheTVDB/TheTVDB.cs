@@ -1091,21 +1091,7 @@ namespace TVRename
         {
             bool forceReload = DoWeForceReloadFor(code);
 
-            string txt;
-            if (series.ContainsKey(code))
-                txt = series[code].Name;
-            else
-                txt = "Code " + code;
-
-            if (episodesToo)
-                txt += " (Everything)";
-            else
-                txt += " Overview";
-
-            if (bannersToo)
-                txt += " plus banners";
-
-            Say(txt);
+            Say(GenerateMessage(code, episodesToo, bannersToo));
 
             string uri = TvDbTokenProvider.TVDB_API_URL + "/series/" + code;
             JObject jsonResponse;
@@ -1345,6 +1331,25 @@ namespace TVRename
             forceReloadOn.Remove(code);
 
             return (series.ContainsKey(code)) ? series[code] : null;
+        }
+
+        private string GenerateMessage(int code, bool episodesToo, bool bannersToo)
+        {
+            string txt;
+            if (series.ContainsKey(code))
+                txt = series[code].Name;
+            else
+                txt = "Code " + code;
+
+            if (episodesToo)
+                txt += " (Everything)";
+            else
+                txt += " Overview";
+
+            if (bannersToo)
+                txt += " plus banners";
+
+            return txt;
         }
 
         private bool TvdbIsUp()

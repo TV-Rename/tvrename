@@ -553,6 +553,21 @@ namespace TVRename
             return true;
         }
 
+        public static bool OKExporterLocation(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+                return false;
+
+            if (s.StartsWith("http://")) return false;
+            if (s.StartsWith("https://")) return false;
+            if (s.StartsWith("ftp://")) return false;
+
+            if (s.ContainsAnyCharctersFrom(CompulsoryReplacements())) return false;
+
+            return true;
+        }
+
+
         public static string CompulsoryReplacements()
         {
             return "*?<>:/\\|\""; // invalid filename characters, must be in the list!
