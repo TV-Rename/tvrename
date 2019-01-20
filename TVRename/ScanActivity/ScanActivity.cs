@@ -46,7 +46,6 @@ namespace TVRename
                     DoCheck(prog, showList, settings);
                     LogActionListSummary();
                 }
-
             }
             catch (Exception e)
             {
