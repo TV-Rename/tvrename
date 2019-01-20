@@ -764,7 +764,7 @@ namespace TVRename
 
         public class Replacement
         {
-            // used for invalid (and general) character (and string) replacements in filenames
+            // used for invalid (and general) character (and string) replacements in file names
 
             public readonly bool CaseInsensitive;
             public readonly string That;
@@ -1012,7 +1012,7 @@ namespace TVRename
             NFOShows = xmlSettings.ExtractBool("NFOShows") ?? xmlSettings.ExtractBool("NFOs") ?? false;
             NFOEpisodes = xmlSettings.ExtractBool("NFOEpisodes") ?? xmlSettings.ExtractBool("NFOs") ?? false;
             KODIImages = xmlSettings.ExtractBool("KODIImages") ??
-                            xmlSettings.ExtractBool("XBMCImages") ?? false; //Backward Compatibilty
+                            xmlSettings.ExtractBool("XBMCImages") ?? false; //Backward Compatibility
             pyTivoMeta = xmlSettings.ExtractBool("pyTivoMeta") ?? false;
             wdLiveTvMeta = xmlSettings.ExtractBool("wdLiveTvMeta") ?? false;
             pyTivoMetaSubFolder = xmlSettings.ExtractBool("pyTivoMetaSubFolder") ?? false;
@@ -1067,17 +1067,17 @@ namespace TVRename
             ShareLogs = xmlSettings.ExtractBool("ShareLogs") ?? true;
 
             Tidyup.load(xmlSettings);
-            RSSURLs = xmlSettings.Descendants("RSSURLs").First().ReadStringsFromXml("URL");
-            TheSearchers = new Searchers(xmlSettings.Descendants("TheSearchers").First());
+            RSSURLs = xmlSettings.Descendants("RSSURLs").FirstOrDefault()?.ReadStringsFromXml("URL");
+            TheSearchers = new Searchers(xmlSettings.Descendants("TheSearchers").FirstOrDefault());
 
             Replacements.Clear();
-            foreach (XElement rep in xmlSettings.Descendants("Replacements").First().Descendants("Replace"))
+            foreach (XElement rep in xmlSettings.Descendants("Replacements").FirstOrDefault()?.Descendants("Replace")??new List<XElement>())
             {
                 Replacements.Add(new Replacement(rep.Attribute("This")?.Value, rep.Attribute("That")?.Value, rep.Attribute("CaseInsensitive")?.Value == "Y"));
             }
 
             FNPRegexs.Clear();
-            foreach (XElement rep in xmlSettings.Descendants("FNPRegexs").First().Descendants("Regex"))
+            foreach (XElement rep in xmlSettings.Descendants("FNPRegexs").FirstOrDefault()?.Descendants("Regex")??new List<XElement>())
             {
                 FNPRegexs.Add(new FilenameProcessorRE(
                     XmlConvert.ToBoolean(rep.Attribute("Enabled")?.Value ?? "false"),
@@ -1088,7 +1088,7 @@ namespace TVRename
             }
 
             ShowStatusColors = new ShowStatusColoringTypeList();
-            foreach (XElement rep in xmlSettings.Descendants("ShowStatusTVWColors").First().Descendants("ShowStatusTVWColor"))
+            foreach (XElement rep in xmlSettings.Descendants("ShowStatusTVWColors").FirstOrDefault()?.Descendants("ShowStatusTVWColor")??new List<XElement>())
             {
                 string showStatus = rep.Attribute("ShowStatus")?.Value;
                 bool isMeta = bool.Parse(rep.Attribute("IsMeta")?.Value ?? "false");
