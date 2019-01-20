@@ -47,6 +47,10 @@ namespace TVRename
                     LogActionListSummary();
                 }
             }
+            catch(TVRenameOperationInteruptedException ex)
+            {
+                throw;
+            }
             catch (Exception e)
             {
                 LOGGER.Fatal(e, $"Failed to run Scan for ");
