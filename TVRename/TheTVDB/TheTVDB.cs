@@ -1316,7 +1316,11 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                if (((HttpWebResponse) ex.Response).StatusCode == HttpStatusCode.NotFound)
+                if (ex.Response is null) //probably a timeout
+                {
+                    Logger.Error(ex, "Unble to obtain actors for {0}", series[si.TvdbCode].Name);
+                }
+                else if(((HttpWebResponse) ex.Response).StatusCode == HttpStatusCode.NotFound)
                 {
                     Logger.Info($"No actors found for {series[si.TvdbCode].Name} using url {ex.Response.ResponseUri.AbsoluteUri}");
                 }
@@ -1748,7 +1752,13 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                if (((HttpWebResponse) ex.Response).StatusCode == HttpStatusCode.NotFound)
+                if (ex.Response is null) //probably a timeout
+                {
+                    Logger.Error($"Error obtaining {ex.Response.ResponseUri} for search term '{text}': {ex.Message}");
+                    LastError = ex.Message;
+                    Say("");
+                }
+                else if(((HttpWebResponse) ex.Response).StatusCode == HttpStatusCode.NotFound)
                 {
                     Logger.Info(
                         $"Could not find any search results for {text} in {TVSettings.Instance.PreferredLanguageCode}");
@@ -1770,10 +1780,16 @@ namespace TVRename
                 }
                 catch (WebException ex)
                 {
-                    if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
+                    if (ex.Response is null) //probably a timeout
+                    {
+                        Logger.Error("Error obtaining " + uri + ": " + ex.Message);
+                        LastError = ex.Message;
+                        Say("");
+                    }
+                    else if(((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
                     {
                         Logger.Info(
-                            $"Could not find any earch results for {text} in {DefaultLanguageCode}");
+                            $"Could not find any search results for {text} in {DefaultLanguageCode}");
                     }
                     else
                     {

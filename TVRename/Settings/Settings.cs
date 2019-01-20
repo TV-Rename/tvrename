@@ -915,11 +915,21 @@ namespace TVRename
                     {
                         return Status;
                     }
+                    string value = Status.Equals("PartiallyAired") ? "partiallyAired"
+                        : Status.Equals("NoneAired") ? "noneAired"
+                        : Status.Equals("Aired") ? "aired"
+                        : Status.Equals("NoEpisodesOrSeasons") ? "noEpisodesOrSeasons"
+                        : Status.Equals("NoEpisodes") ? "noEpisodes"
+                        : Status;
 
                     if (IsShowLevel)
                     {
+                        //Convert from old style values if needed
+
+
+
                         ShowItem.ShowAirStatus status =
-                            (ShowItem.ShowAirStatus) Enum.Parse(typeof(ShowItem.ShowAirStatus), Status, true);
+                            (ShowItem.ShowAirStatus) Enum.Parse(typeof(ShowItem.ShowAirStatus), value, true);
 
                         switch (status)
                         {
@@ -938,7 +948,7 @@ namespace TVRename
                     else
                     {
                         Season.SeasonStatus status =
-                            (Season.SeasonStatus) Enum.Parse(typeof(Season.SeasonStatus), Status);
+                            (Season.SeasonStatus) Enum.Parse(typeof(Season.SeasonStatus), value);
 
                         switch (status)
                         {
