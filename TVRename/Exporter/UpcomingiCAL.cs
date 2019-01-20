@@ -18,9 +18,12 @@ namespace TVRename
         protected override bool Generate(System.IO.Stream str, List<ProcessedEpisode> elist)
         {
             if (elist == null)
+            {
                 return false;
+            }
 
             try
+
             {
                 Calendar calendar = new Calendar {ProductId = "Upcoming Shows Exported by TV Rename http://www.tvrename.com"};
                 

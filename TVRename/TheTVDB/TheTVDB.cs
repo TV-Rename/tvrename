@@ -9,6 +9,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -721,7 +722,7 @@ namespace TVRename
                                 foreach (KeyValuePair<int, Tuple<JToken, JToken>> episodeData in episodesResponses)
                                 {
                                     JToken episodeToUse = (episodeData.Value.Item1 ?? episodeData.Value.Item2);
-                                    long serverUpdateTime = (long)episodeToUse["lastUpdated"];
+                                    long serverUpdateTime = (long) episodeToUse["lastUpdated"];
                                     int serverEpisodeId = episodeData.Key;
 
                                     bool found = false;
@@ -927,6 +928,12 @@ namespace TVRename
                     Logger.Error(ex, $"Error obtaining {ex.Response.ResponseUri}");
                     return null;
                 }
+                catch (IOException ex)
+                {
+                    Logger.Warn(ex, "Connection to TVDB Failed whilst loading episode with Id {0}.", id);
+                    return null;
+                }
+
             }
 
             return episodeResponses;
@@ -1424,11 +1431,12 @@ namespace TVRename
             Dictionary<int, Tuple<JToken, JToken>> episodeIds = new Dictionary<int, Tuple<JToken, JToken>>();
 
             if(episodeResponses!=null)
+            {
                 foreach (JObject epResponse in episodeResponses)
                 {
                     foreach (JToken episodeData in epResponse["data"])
                     {
-                        int x = (int)episodeData["id"];
+                        int x = (int) episodeData["id"];
                         if (x > 0)
                         {
                             if (episodeIds.ContainsKey(x))
@@ -1439,27 +1447,30 @@ namespace TVRename
                         }
                     }
                 }
+            }
 
-            if (episodeDefaultLangResponses != null) foreach (JObject epResponse in episodeDefaultLangResponses)
+            if (episodeDefaultLangResponses != null)
             {
-                foreach (JToken episodeData in epResponse["data"])
+                foreach (JObject epResponse in episodeDefaultLangResponses)
                 {
-                    int x = (int)episodeData["id"];
-                    if (x > 0)
+                    foreach (JToken episodeData in epResponse["data"])
                     {
-                        if (episodeIds.ContainsKey(x))
+                        int x = (int) episodeData["id"];
+                        if (x > 0)
                         {
-                            JToken old = episodeIds[x].Item1;
-                            episodeIds[x] = new Tuple<JToken, JToken>(old, episodeData);
-                        }
-                        else
-                        {
-                            episodeIds.Add(x, new Tuple<JToken, JToken>(null, episodeData));
+                            if (episodeIds.ContainsKey(x))
+                            {
+                                JToken old = episodeIds[x].Item1;
+                                episodeIds[x] = new Tuple<JToken, JToken>(old, episodeData);
+                            }
+                            else
+                            {
+                                episodeIds.Add(x, new Tuple<JToken, JToken>(null, episodeData));
+                            }
                         }
                     }
                 }
             }
-
             return episodeIds;
         }
 
