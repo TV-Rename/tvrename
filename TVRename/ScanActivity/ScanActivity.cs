@@ -40,12 +40,10 @@ namespace TVRename
             try
             {
                 if (settings.Token.IsCancellationRequested) return;
+                if (!Active()) return;
 
-                if (Active())
-                {
-                    DoCheck(prog, showList, settings);
-                    LogActionListSummary();
-                }
+                DoCheck(prog, showList, settings);
+                LogActionListSummary();
             }
             catch(TVRenameOperationInteruptedException ex)
             {
@@ -53,7 +51,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                LOGGER.Fatal(e, $"Failed to run Scan for ");
+                LOGGER.Fatal(e, $"Failed to run Scan for {Checkname()}");
             }
             finally
             {
