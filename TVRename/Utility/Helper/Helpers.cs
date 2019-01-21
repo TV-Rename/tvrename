@@ -11,8 +11,10 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -207,10 +209,22 @@ namespace TVRename
 
         public static bool SysOpen(string what, string arguments = null)
         {
+            if (string.IsNullOrWhiteSpace(what)) return false;
+
             try
             {
                 Process.Start(what, arguments);
                 return true;
+            }
+            catch (Win32Exception e)
+            {
+                Logger.Warn(e);
+                return false;
+            }
+            catch (FileNotFoundException e)
+            {
+                Logger.Warn(e);
+                return false;
             }
             catch (Exception e)
             {

@@ -6,7 +6,6 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
-using System;
 using System.Collections.Generic;
 
 namespace TVRename
@@ -21,29 +20,14 @@ namespace TVRename
         public override bool Active() =>TVSettings.Instance.ExportShowsTXT;
         protected override string Location() =>TVSettings.Instance.ExportShowsTXTTo;
 
-        public override void Run()
+        protected override void Do()
         {
-            if (!Active()) return;
-
-            if (string.IsNullOrWhiteSpace(Location()))
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
             {
-                LOGGER.Warn("Please open settings and update Export Shows (TXT) Filename");
-                return;
-            }
-
-            try
-            {
-                using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
+                foreach (ShowItem si in Shows)
                 {
-                    foreach (ShowItem si in Shows)
-                    {
-                        file.WriteLine(si.ShowName);
-                    }
+                    file.WriteLine(si.ShowName);
                 }
-            }
-            catch (Exception e)
-            {
-                LOGGER.Error(e);
             }
         }
     }

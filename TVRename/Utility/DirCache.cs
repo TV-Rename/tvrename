@@ -99,7 +99,28 @@ namespace TVRename
                 DirectoryInfo di = new DirectoryInfo(folder);
                 if (!di.Exists)
                     return count;
-                FileInfo[] f2 = di.GetFiles();
+                FileInfo[] f2 = new FileInfo[0];
+                try
+                {
+                    f2= di.GetFiles();
+                }
+                catch (NotSupportedException e)
+                {
+                    Logger.Info(e);
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    Logger.Info(e);
+                }
+                catch (DirectoryNotFoundException e)
+                {
+                    Logger.Info(e);
+                }
+                catch (IOException e)
+                {
+                    Logger.Info(e);
+                }
+
                 foreach (FileInfo ff in f2)
                 {
                     count++;
@@ -110,14 +131,31 @@ namespace TVRename
 
                 if (subFolders)
                 {
-                    DirectoryInfo[] dirs = di.GetDirectories();
+                    DirectoryInfo[] dirs = new DirectoryInfo[0];
+                    try
+                    {
+                        dirs = di.GetDirectories();
+                    }
+                    catch (NotSupportedException e)
+                    {
+                        Logger.Info(e);
+                    }
+                    catch (UnauthorizedAccessException e)
+                    {
+                        Logger.Info(e);
+                    }
+                    catch (DirectoryNotFoundException e)
+                    {
+                        Logger.Info(e);
+                    }
+                    catch (IOException e)
+                    {
+                        Logger.Info(e);
+                    }
+
                     foreach (DirectoryInfo di2 in dirs)
                         count += BuildDirCache(prog, count, totalFiles, di2.FullName, true);
                 }
-            }
-            catch (UnauthorizedAccessException e)
-            {
-                Logger.Info(e);
             }
             catch (Exception exception)
             {

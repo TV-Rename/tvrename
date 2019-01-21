@@ -1,4 +1,3 @@
-using System;
 using System.Xml;
 
 namespace TVRename
@@ -9,58 +8,43 @@ namespace TVRename
         {
         }
 
-        public override void Run()
+        protected override void Do()
         {
-            if (!Active()) return;
-
-            try
+            XmlWriterSettings settings = new XmlWriterSettings
             {
-                XmlWriterSettings settings = new XmlWriterSettings
-                {
-                    Indent = true,
-                    NewLineOnAttributes = true
-                };
+                Indent = true,
+                NewLineOnAttributes = true
+            };
 
-                if (string.IsNullOrWhiteSpace(Location()))
-                {
-                    LOGGER.Warn("Please open settings and ensure filenames are provided for each exporter you have enabled");
-                    return;
-                }
-
-                using (XmlWriter writer = XmlWriter.Create(Location(), settings))
-                {
-                    writer.WriteStartDocument();
-
-                    writer.WriteStartElement("TVRename");
-                    XmlHelper.WriteAttributeToXml(writer, "Version", "2.1");
-                    writer.WriteStartElement(MainXmlElementName());
-
-                    foreach (Item action in TheActionList)
-                    {
-                        if (!IsOutput(action)) continue;
-
-                        ActionCopyMoveRename acmr = (ActionCopyMoveRename)action;
-                        writer.WriteStartElement("Item");
-
-                        XmlHelper.WriteAttributeToXml(writer, "Operation", acmr.Name);
-                        XmlHelper.WriteAttributeToXml(writer, "FromFolder", acmr.From.DirectoryName);
-                        XmlHelper.WriteAttributeToXml(writer, "FromName", acmr.From.Name);
-                        XmlHelper.WriteAttributeToXml(writer, "ToFolder", acmr.To.DirectoryName);
-                        XmlHelper.WriteAttributeToXml(writer, "ToName", acmr.To.Name);
-                        XmlHelper.WriteAttributeToXml(writer, "ShowName", acmr.Episode.TheSeries.Name);
-                        XmlHelper.WriteAttributeToXml(writer, "Season", acmr.Episode.AppropriateSeasonNumber);
-                        XmlHelper.WriteAttributeToXml(writer, "Episode", acmr.Episode.NumsAsString());
-
-                        writer.WriteEndElement(); //Item                                
-                    }
-                    writer.WriteEndElement(); // Name
-                    writer.WriteEndElement(); // tvrename
-                    writer.WriteEndDocument();
-                }
-            }
-            catch (Exception e)
+            using (XmlWriter writer = XmlWriter.Create(Location(), settings))
             {
-                LOGGER.Error(e);
+                writer.WriteStartDocument();
+
+                writer.WriteStartElement("TVRename");
+                XmlHelper.WriteAttributeToXml(writer, "Version", "2.1");
+                writer.WriteStartElement(MainXmlElementName());
+
+                foreach (Item action in TheActionList)
+                {
+                    if (!IsOutput(action)) continue;
+
+                    ActionCopyMoveRename acmr = (ActionCopyMoveRename)action;
+                    writer.WriteStartElement("Item");
+
+                    XmlHelper.WriteAttributeToXml(writer, "Operation", acmr.Name);
+                    XmlHelper.WriteAttributeToXml(writer, "FromFolder", acmr.From.DirectoryName);
+                    XmlHelper.WriteAttributeToXml(writer, "FromName", acmr.From.Name);
+                    XmlHelper.WriteAttributeToXml(writer, "ToFolder", acmr.To.DirectoryName);
+                    XmlHelper.WriteAttributeToXml(writer, "ToName", acmr.To.Name);
+                    XmlHelper.WriteAttributeToXml(writer, "ShowName", acmr.Episode.TheSeries.Name);
+                    XmlHelper.WriteAttributeToXml(writer, "Season", acmr.Episode.AppropriateSeasonNumber);
+                    XmlHelper.WriteAttributeToXml(writer, "Episode", acmr.Episode.NumsAsString());
+
+                    writer.WriteEndElement(); //Item                                
+                }
+                writer.WriteEndElement(); // Name
+                writer.WriteEndElement(); // tvrename
+                writer.WriteEndDocument();
             }
         }
         protected abstract bool IsOutput(Item a);

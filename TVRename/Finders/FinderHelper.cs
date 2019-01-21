@@ -276,7 +276,7 @@ namespace TVRename
         public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, out int maxEp,
             ShowItem si, List<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE rex)
         {
-            string showNameHint = (si != null) ? si.ShowName : "";
+            string showNameHint = (si != null) ? si.ShowName : string.Empty;
             maxEp = -1;
             seas = -1;
             ep = -1;
@@ -303,13 +303,13 @@ namespace TVRename
 
                     if (m.Success)
                     {
-                        if (!Int32.TryParse(m.Groups["s"].ToString(), out seas))
+                        if (!int.TryParse(m.Groups["s"].ToString(), out seas))
                             seas = -1;
 
-                        if (!Int32.TryParse(m.Groups["e"].ToString(), out ep))
+                        if (!int.TryParse(m.Groups["e"].ToString(), out ep))
                             ep = -1;
 
-                        if (!Int32.TryParse(m.Groups["f"].ToString(), out maxEp))
+                        if (!int.TryParse(m.Groups["f"].ToString(), out maxEp))
                             maxEp = -1;
 
                         rex = re;

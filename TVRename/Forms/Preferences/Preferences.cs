@@ -91,6 +91,42 @@ namespace TVRename
             ValidateExtensions(txtSubtitleExtensions, tbFilesAndFolders);
             ValidateExtensions(txtOtherExtensions, tbFilesAndFolders);
             ValidateExtensions(txtKeepTogether, tbFilesAndFolders);
+            ValidateExporterLocations();
+        }
+
+        private void ValidateExporterLocations()
+        {
+            ValidateExporterLocation(cbWTWRSS, txtWTWRSS);
+            ValidateExporterLocation(cbWTWXML, txtWTWXML);
+            ValidateExporterLocation(cbWTWICAL, txtWTWICAL);
+
+            ValidateExporterLocation(cbMissingXML , txtMissingXML);
+            ValidateExporterLocation(cbMissingCSV, txtMissingCSV);
+
+            ValidateExporterLocation(cbShowsTXT, txtShowsTXTTo);
+            ValidateExporterLocation(cbShowsHTML, txtShowsHTMLTo);
+
+            ValidateExporterLocation(cbRenamingXML, txtRenamingXML);
+            ValidateExporterLocation(cbFOXML, txtFOXML);
+
+            ValidateExporterLocation(cbXSPF, txtXSPF);
+            ValidateExporterLocation(cbM3U, txtM3U);
+            ValidateExporterLocation(cbASX, txtASX);
+            ValidateExporterLocation(cbWPL, txtWPL);
+        }
+
+        private void ValidateExporterLocation(CheckBox controlCheckbox,TextBox validationField)
+        {
+            if (!controlCheckbox.Checked) return;
+            if (TVSettings.OKExporterLocation(validationField.Text)) return;
+
+            MessageBox.Show(
+                "Exporters can only export to the local filesystem and must be a valid file/folder name",
+                "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            tcTabs.SelectedTab = tbAutoExport;
+            validationField.Focus();
+            throw new FailedValidationException();
         }
 
         private void ValidateExtensions(Control validateField, TabPage focusTabPage)

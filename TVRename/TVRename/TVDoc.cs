@@ -516,7 +516,7 @@ namespace TVRename
             Logger.Info("*******************************");
             Logger.Info("Force Update Images: " + si.ShowName);
 
-            Dictionary<int, List<string>> allFolders = si.AllFolderLocations();
+            Dictionary<int, List<string>> allFolders = si.AllExistngFolderLocations();
 
             if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (allFolders.Any()))
             {
@@ -571,15 +571,15 @@ namespace TVRename
 
                 if (!settings.Unattended && settings.Type != TVSettings.ScanType.SingleShow)
                 {
-                    new FindNewShowsInDownloadFolders(this).CheckIfActive((scanProgDlg == null) ? noProgress : scanProgDlg.AddNewProg, 0, 50, specific, settings);
-                    new FindNewShowsInLibrary(this).CheckIfActive((scanProgDlg == null) ? noProgress : scanProgDlg.AddNewProg, 50, 100, specific, settings);
+                    new FindNewShowsInDownloadFolders(this).Check((scanProgDlg == null) ? noProgress : scanProgDlg.AddNewProg, 0, 50, specific, settings);
+                    new FindNewShowsInLibrary(this).Check((scanProgDlg == null) ? noProgress : scanProgDlg.AddNewProg, 50, 100, specific, settings);
                 }
                 
-                new CheckShows(this).CheckIfActive((scanProgDlg == null) ? noProgress : scanProgDlg.MediaLibProg, specific, settings);
-                new CleanDownloadDirectory(this).CheckIfActive((scanProgDlg == null) ? noProgress : scanProgDlg.DownloadFolderProg, specific, settings);
-                localFinders.CheckIfActive((scanProgDlg == null) ? noProgress : scanProgDlg.LocalSearchProg, specific, settings);
-                downloadFinders.CheckIfActive((scanProgDlg == null) ? noProgress : scanProgDlg.DownloadingProg, specific, settings);
-                searchFinders.CheckIfActive((scanProgDlg == null)? noProgress : scanProgDlg.ToBeDownloadedProg, specific, settings);
+                new CheckShows(this).Check((scanProgDlg == null) ? noProgress : scanProgDlg.MediaLibProg, specific, settings);
+                new CleanDownloadDirectory(this).Check((scanProgDlg == null) ? noProgress : scanProgDlg.DownloadFolderProg, specific, settings);
+                localFinders.Check((scanProgDlg == null) ? noProgress : scanProgDlg.LocalSearchProg, specific, settings);
+                downloadFinders.Check((scanProgDlg == null) ? noProgress : scanProgDlg.DownloadingProg, specific, settings);
+                searchFinders.Check((scanProgDlg == null)? noProgress : scanProgDlg.ToBeDownloadedProg, specific, settings);
 
                 if (settings.Token.IsCancellationRequested)
                 {

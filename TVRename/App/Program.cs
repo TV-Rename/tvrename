@@ -123,7 +123,7 @@ namespace TVRename.App
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "Application exiting with error");
+                Logger.Fatal(ex, "Application exiting with error");
 
                 new ShowException(ex).ShowDialog();
 

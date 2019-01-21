@@ -553,10 +553,35 @@ namespace TVRename
             return true;
         }
 
+        public static bool OKExporterLocation(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+                return false;
+
+            if (s.StartsWith("http://")) return false;
+            if (s.StartsWith("https://")) return false;
+            if (s.StartsWith("ftp://")) return false;
+
+            if (s.ContainsAnyCharctersFrom(CompulsoryReplacements())) return false;
+
+            if (s.ContainsAnyCharctersFrom(InvalidPathChars)) return false;
+
+            return true;
+        }
+
         public static string CompulsoryReplacements()
         {
             return "*?<>:/\\|\""; // invalid filename characters, must be in the list!
         }
+
+        internal static readonly char[] InvalidPathChars =
+        {
+            '\"', '<', '>', '|', '\0',
+            (char)1, (char)2, (char)3, (char)4, (char)5, (char)6, (char)7, (char)8, (char)9, (char)10,
+            (char)11, (char)12, (char)13, (char)14, (char)15, (char)16, (char)17, (char)18, (char)19, (char)20,
+            (char)21, (char)22, (char)23, (char)24, (char)25, (char)26, (char)27, (char)28, (char)29, (char)30,
+            (char)31
+        };
 
         public static List<FilenameProcessorRE> DefaultFNPList()
         {
@@ -764,7 +789,7 @@ namespace TVRename
 
         public class Replacement
         {
-            // used for invalid (and general) character (and string) replacements in filenames
+            // used for invalid (and general) character (and string) replacements in file names
 
             public readonly bool CaseInsensitive;
             public readonly string That;
@@ -888,11 +913,18 @@ namespace TVRename
                     {
                         return Status;
                     }
+                    string value = Status.Equals("PartiallyAired") ? "partiallyAired"
+                        : Status.Equals("NoneAired") ? "noneAired"
+                        : Status.Equals("Aired") ? "aired"
+                        : Status.Equals("NoEpisodesOrSeasons") ? "noEpisodesOrSeasons"
+                        : Status.Equals("NoEpisodes") ? "noEpisodes"
+                        : Status;
 
                     if (IsShowLevel)
                     {
+                        //Convert from old style values if needed
                         ShowItem.ShowAirStatus status =
-                            (ShowItem.ShowAirStatus) Enum.Parse(typeof(ShowItem.ShowAirStatus), Status, true);
+                            (ShowItem.ShowAirStatus) Enum.Parse(typeof(ShowItem.ShowAirStatus), value, true);
 
                         switch (status)
                         {
@@ -911,7 +943,7 @@ namespace TVRename
                     else
                     {
                         Season.SeasonStatus status =
-                            (Season.SeasonStatus) Enum.Parse(typeof(Season.SeasonStatus), Status);
+                            (Season.SeasonStatus) Enum.Parse(typeof(Season.SeasonStatus), value);
 
                         switch (status)
                         {
@@ -1012,7 +1044,7 @@ namespace TVRename
             NFOShows = xmlSettings.ExtractBool("NFOShows") ?? xmlSettings.ExtractBool("NFOs") ?? false;
             NFOEpisodes = xmlSettings.ExtractBool("NFOEpisodes") ?? xmlSettings.ExtractBool("NFOs") ?? false;
             KODIImages = xmlSettings.ExtractBool("KODIImages") ??
-                            xmlSettings.ExtractBool("XBMCImages") ?? false; //Backward Compatibilty
+                            xmlSettings.ExtractBool("XBMCImages") ?? false; //Backward Compatibility
             pyTivoMeta = xmlSettings.ExtractBool("pyTivoMeta") ?? false;
             wdLiveTvMeta = xmlSettings.ExtractBool("wdLiveTvMeta") ?? false;
             pyTivoMetaSubFolder = xmlSettings.ExtractBool("pyTivoMetaSubFolder") ?? false;
@@ -1067,17 +1099,17 @@ namespace TVRename
             ShareLogs = xmlSettings.ExtractBool("ShareLogs") ?? true;
 
             Tidyup.load(xmlSettings);
-            RSSURLs = xmlSettings.Descendants("RSSURLs").First().ReadStringsFromXml("URL");
-            TheSearchers = new Searchers(xmlSettings.Descendants("TheSearchers").First());
+            RSSURLs = xmlSettings.Descendants("RSSURLs").FirstOrDefault()?.ReadStringsFromXml("URL");
+            TheSearchers = new Searchers(xmlSettings.Descendants("TheSearchers").FirstOrDefault());
 
             Replacements.Clear();
-            foreach (XElement rep in xmlSettings.Descendants("Replacements").First().Descendants("Replace"))
+            foreach (XElement rep in xmlSettings.Descendants("Replacements").FirstOrDefault()?.Descendants("Replace")??new List<XElement>())
             {
                 Replacements.Add(new Replacement(rep.Attribute("This")?.Value, rep.Attribute("That")?.Value, rep.Attribute("CaseInsensitive")?.Value == "Y"));
             }
 
             FNPRegexs.Clear();
-            foreach (XElement rep in xmlSettings.Descendants("FNPRegexs").First().Descendants("Regex"))
+            foreach (XElement rep in xmlSettings.Descendants("FNPRegexs").FirstOrDefault()?.Descendants("Regex")??new List<XElement>())
             {
                 FNPRegexs.Add(new FilenameProcessorRE(
                     XmlConvert.ToBoolean(rep.Attribute("Enabled")?.Value ?? "false"),
@@ -1088,7 +1120,7 @@ namespace TVRename
             }
 
             ShowStatusColors = new ShowStatusColoringTypeList();
-            foreach (XElement rep in xmlSettings.Descendants("ShowStatusTVWColors").First().Descendants("ShowStatusTVWColor"))
+            foreach (XElement rep in xmlSettings.Descendants("ShowStatusTVWColors").FirstOrDefault()?.Descendants("ShowStatusTVWColor")??new List<XElement>())
             {
                 string showStatus = rep.Attribute("ShowStatus")?.Value;
                 bool isMeta = bool.Parse(rep.Attribute("IsMeta")?.Value ?? "false");

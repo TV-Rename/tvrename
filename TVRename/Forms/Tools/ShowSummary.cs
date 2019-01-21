@@ -352,7 +352,7 @@ namespace TVRename
                     GenerateMenu(gridSummary.showRightClickMenu, "Visit thetvdb.com",
                         RightClickCommands.kVisitTvdbSeason);
 
-                    Dictionary<int, List<string>> afl = show.AllFolderLocations();
+                    Dictionary<int, List<string>> afl = show.AllExistngFolderLocations();
 
                     if (afl.ContainsKey(seas.SeasonNumber))
                     {
@@ -383,7 +383,7 @@ namespace TVRename
                     int n = gridSummary.mFoldersToOpen.Count;
                     bool first = true;
 
-                    foreach (KeyValuePair<int, List<string>> kvp in show.AllFolderLocations())
+                    foreach (KeyValuePair<int, List<string>> kvp in show.AllExistngFolderLocations())
                     {
                         foreach (string folder in kvp.Value)
                         {

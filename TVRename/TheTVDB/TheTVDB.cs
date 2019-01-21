@@ -9,6 +9,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -485,8 +486,8 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                Say("ERROR OBTAINING LANGUAGES FROM TVDB");
-                Logger.Error(ex, "ERROR OBTAINING LANGUAGES FROM TVDB");
+                Say("Could not connect to TVDB");
+                Logger.Error(ex, "Error obtaining Languages from TVDB");
                 LastError = ex.Message;
                 return false;
             }
@@ -721,7 +722,7 @@ namespace TVRename
                                 foreach (KeyValuePair<int, Tuple<JToken, JToken>> episodeData in episodesResponses)
                                 {
                                     JToken episodeToUse = (episodeData.Value.Item1 ?? episodeData.Value.Item2);
-                                    long serverUpdateTime = (long)episodeToUse["lastUpdated"];
+                                    long serverUpdateTime = (long) episodeToUse["lastUpdated"];
                                     int serverEpisodeId = episodeData.Key;
 
                                     bool found = false;
@@ -927,6 +928,11 @@ namespace TVRename
                     Logger.Error(ex, $"Error obtaining {ex.Response.ResponseUri}");
                     return null;
                 }
+                catch (IOException ex)
+                {
+                    Logger.Warn(ex, "Connection to TVDB Failed whilst loading episode with Id {0}.", id);
+                    return null;
+                }
             }
 
             return episodeResponses;
@@ -1084,21 +1090,7 @@ namespace TVRename
         {
             bool forceReload = DoWeForceReloadFor(code);
 
-            string txt;
-            if (series.ContainsKey(code))
-                txt = series[code].Name;
-            else
-                txt = "Code " + code;
-
-            if (episodesToo)
-                txt += " (Everything)";
-            else
-                txt += " Overview";
-
-            if (bannersToo)
-                txt += " plus banners";
-
-            Say(txt);
+            Say(GenerateMessage(code, episodesToo, bannersToo));
 
             string uri = TvDbTokenProvider.TVDB_API_URL + "/series/" + code;
             JObject jsonResponse;
@@ -1323,7 +1315,11 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                if (((HttpWebResponse) ex.Response).StatusCode == HttpStatusCode.NotFound)
+                if (ex.Response is null) //probably a timeout
+                {
+                    Logger.Error(ex, "Unble to obtain actors for {0}", series[si.TvdbCode].Name);
+                }
+                else if(((HttpWebResponse) ex.Response).StatusCode == HttpStatusCode.NotFound)
                 {
                     Logger.Info($"No actors found for {series[si.TvdbCode].Name} using url {ex.Response.ResponseUri.AbsoluteUri}");
                 }
@@ -1338,6 +1334,25 @@ namespace TVRename
             forceReloadOn.Remove(code);
 
             return (series.ContainsKey(code)) ? series[code] : null;
+        }
+
+        private string GenerateMessage(int code, bool episodesToo, bool bannersToo)
+        {
+            string txt;
+            if (series.ContainsKey(code))
+                txt = series[code].Name;
+            else
+                txt = "Code " + code;
+
+            if (episodesToo)
+                txt += " (Everything)";
+            else
+                txt += " Overview";
+
+            if (bannersToo)
+                txt += " plus banners";
+
+            return txt;
         }
 
         private bool TvdbIsUp()
@@ -1424,11 +1439,12 @@ namespace TVRename
             Dictionary<int, Tuple<JToken, JToken>> episodeIds = new Dictionary<int, Tuple<JToken, JToken>>();
 
             if(episodeResponses!=null)
+            {
                 foreach (JObject epResponse in episodeResponses)
                 {
                     foreach (JToken episodeData in epResponse["data"])
                     {
-                        int x = (int)episodeData["id"];
+                        int x = (int) episodeData["id"];
                         if (x > 0)
                         {
                             if (episodeIds.ContainsKey(x))
@@ -1439,27 +1455,30 @@ namespace TVRename
                         }
                     }
                 }
+            }
 
-            if (episodeDefaultLangResponses != null) foreach (JObject epResponse in episodeDefaultLangResponses)
+            if (episodeDefaultLangResponses != null)
             {
-                foreach (JToken episodeData in epResponse["data"])
+                foreach (JObject epResponse in episodeDefaultLangResponses)
                 {
-                    int x = (int)episodeData["id"];
-                    if (x > 0)
+                    foreach (JToken episodeData in epResponse["data"])
                     {
-                        if (episodeIds.ContainsKey(x))
+                        int x = (int) episodeData["id"];
+                        if (x > 0)
                         {
-                            JToken old = episodeIds[x].Item1;
-                            episodeIds[x] = new Tuple<JToken, JToken>(old, episodeData);
-                        }
-                        else
-                        {
-                            episodeIds.Add(x, new Tuple<JToken, JToken>(null, episodeData));
+                            if (episodeIds.ContainsKey(x))
+                            {
+                                JToken old = episodeIds[x].Item1;
+                                episodeIds[x] = new Tuple<JToken, JToken>(old, episodeData);
+                            }
+                            else
+                            {
+                                episodeIds.Add(x, new Tuple<JToken, JToken>(null, episodeData));
+                            }
                         }
                     }
                 }
             }
-
             return episodeIds;
         }
 
@@ -1732,7 +1751,13 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                if (((HttpWebResponse) ex.Response).StatusCode == HttpStatusCode.NotFound)
+                if (ex.Response is null) //probably a timeout
+                {
+                    Logger.Error($"Error obtaining {ex.Response.ResponseUri} for search term '{text}': {ex.Message}");
+                    LastError = ex.Message;
+                    Say("");
+                }
+                else if(((HttpWebResponse) ex.Response).StatusCode == HttpStatusCode.NotFound)
                 {
                     Logger.Info(
                         $"Could not find any search results for {text} in {TVSettings.Instance.PreferredLanguageCode}");
@@ -1754,10 +1779,16 @@ namespace TVRename
                 }
                 catch (WebException ex)
                 {
-                    if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
+                    if (ex.Response is null) //probably a timeout
+                    {
+                        Logger.Error("Error obtaining " + uri + ": " + ex.Message);
+                        LastError = ex.Message;
+                        Say("");
+                    }
+                    else if(((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
                     {
                         Logger.Info(
-                            $"Could not find any earch results for {text} in {DefaultLanguageCode}");
+                            $"Could not find any search results for {text} in {DefaultLanguageCode}");
                     }
                     else
                     {
