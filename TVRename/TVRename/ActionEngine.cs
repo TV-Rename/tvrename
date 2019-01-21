@@ -214,8 +214,9 @@ namespace TVRename
             catch (Exception e)
             {
                 Logger.Fatal(e, "Unhandled Exception in ActionProcessor");
-                foreach (Thread t in actionWorkers)
-                    t.Abort();
+                if (!(actionWorkers is null))
+                    foreach (Thread t in actionWorkers)
+                        t.Abort();
             }
 
             WaitForAllActionThreadsAndTidyUp();
