@@ -17,7 +17,7 @@ namespace TVRename
 
         protected override void Check(ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
-            Dictionary<int, List<string>> allFolders = si.AllFolderLocations();
+            Dictionary<int, List<string>> allFolders = si.AllExistngFolderLocations();
             if (allFolders.Count == 0) // no folders defined for this show
                 return; // so, nothing to do.
 

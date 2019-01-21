@@ -18,7 +18,9 @@ namespace TVRename
         protected override bool Generate(System.IO.Stream str, List<ProcessedEpisode> elist)
         {
             if (elist == null)
+            {
                 return false;
+            }
 
             try
             {

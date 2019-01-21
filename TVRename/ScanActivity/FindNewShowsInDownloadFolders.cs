@@ -27,7 +27,7 @@ namespace TVRename
 
         protected override string Checkname() => "Looked in the Search Folders for any new shows that need to be added to the library";
 
-        protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
         {
             //for each directory in settings directory
             //for each file in directory

@@ -10,7 +10,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.CheckuTorrent;
         protected override string Checkname() => "Looked in the uTorrent queue for the missing files";
 
-        protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
         {
             // get list of files being downloaded by uTorrent
             string resDatFile = TVSettings.Instance.ResumeDatPath;

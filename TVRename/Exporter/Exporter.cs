@@ -6,13 +6,62 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System;
+using System.IO;
+
 namespace TVRename
 {
     internal abstract class Exporter
     {
-        public abstract bool Active();
-        public abstract void Run();
-        protected abstract string Location();
         protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
+
+        public void Run()
+        {
+            if (!Active())
+            {
+                LOGGER.Trace("Skipped (Disabled) Output File to: {0}", Location());
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(Location()))
+            {
+                LOGGER.Warn("Please open settings and ensure filenames are provided for each exporter you have enabled");
+                return;
+            }
+            if (Location().StartsWith("http://") || Location().StartsWith("https://"))
+            {
+                LOGGER.Warn($"TV Rename cannot export file to a web location: {Location()}, please update in the setttings");
+                return;
+            }
+
+            //Create the directory if needed
+            Directory.CreateDirectory(Path.GetDirectoryName(Location()) ?? string.Empty);
+
+            try
+            {
+                Do();
+                LOGGER.Info("Output File to: {0}", Location());
+            }
+            catch (NotSupportedException e)
+            {
+                LOGGER.Warn($"Output File must be a local file: {Location()} {e.Message}");
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                LOGGER.Warn($"Could not find File/Directory at: {Location()} {e.Message}");
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                LOGGER.Warn($"Could not access File/Directory at: {Location()} {e.Message}");
+            }
+            catch (Exception e)
+            {
+                LOGGER.Error(e, "Failed to Output File to: {0}", Location());
+            }
+        }
+
+        public abstract bool Active();
+        protected abstract string Location();
+        protected abstract void Do();
     }
 }

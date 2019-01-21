@@ -13,7 +13,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.CheckqBitTorrent;
         protected override string Checkname() => "Looked in the qBitTorrent for the missing files to see if they are being downloaded";
 
-        protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
         {
             List<TorrentEntry> downloading = GetqBitTorrentDownloads();
             SearchForAppropriateDownloads(downloading, DownloadApp.qBitTorrent,settings);

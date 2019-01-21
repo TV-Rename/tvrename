@@ -23,7 +23,7 @@ namespace TVRename
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.search;
 
-        protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
         {
             if (TVSettings.Instance.SearchJSONManualScanOnly && settings.Unattended)
             {

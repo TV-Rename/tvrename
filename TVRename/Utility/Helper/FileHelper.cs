@@ -1,10 +1,15 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Alphaleonis.Win32.Filesystem;
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Path = Alphaleonis.Win32.Filesystem.Path;
 
 namespace TVRename
 {
@@ -145,6 +150,11 @@ namespace TVRename
 //              Unable to parse string Lägg till text as part of GetFilmLength System
 
                 Logger.Warn($"Unable to parse string '{duration}' as part of GetFilmLength for {movieFile.FullName}");
+                return -1;
+            }
+            catch (FileNotFoundException)
+            {
+                Logger.Warn($"Unable to find file as part of GetFilmLength for {movieFile.FullName}");
                 return -1;
             }
         }

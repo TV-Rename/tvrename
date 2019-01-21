@@ -52,7 +52,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Cound not parse RSS page at:{url}");
+                Logger.Error(e, $"Could not parse RSS page at:{url}");
                 return false;
             }
             finally

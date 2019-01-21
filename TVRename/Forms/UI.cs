@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -808,7 +809,12 @@ namespace TVRename
         {
             try
             {
-                web.DocumentText = body;
+                web.DocumentText = body; 
+            }
+            catch (COMException ex)
+            {
+                //Fail gracefully - no RHS episode guide is not too big of a problem.
+                Logger.Warn(ex,"Could not update UI for the show/series information pane");
             }
             catch (Exception ex)
             {
@@ -1362,7 +1368,7 @@ namespace TVRename
 
             if (ep != null)
             {
-                Dictionary<int, List<string>> afl = ep.Show.AllFolderLocations();
+                Dictionary<int, List<string>> afl = ep.Show.AllExistngFolderLocations();
                 if (afl.ContainsKey(ep.AppropriateSeasonNumber))
                 {
                     int n = mFoldersToOpen.Count;
@@ -1375,7 +1381,7 @@ namespace TVRename
             }
             else if (seas != null && si != null)
             {
-                Dictionary<int, List<string>> folders = si.AllFolderLocations();
+                Dictionary<int, List<string>> folders = si.AllExistngFolderLocations();
 
                 if (folders.ContainsKey(seas.SeasonNumber))
                 {
@@ -1393,7 +1399,7 @@ namespace TVRename
                 int n = mFoldersToOpen.Count;
                 bool first = true;
 
-                foreach (KeyValuePair<int, List<string>> kvp in si.AllFolderLocations())
+                foreach (KeyValuePair<int, List<string>> kvp in si.AllExistngFolderLocations())
                 {
                     foreach (string folder in kvp.Value)
                     {
@@ -2431,7 +2437,7 @@ namespace TVRename
         {
             if (currentShow == null) return string.Empty;
 
-            foreach (List<string> folders in currentShow.AllFolderLocations().Values)
+            foreach (List<string> folders in currentShow.AllExistngFolderLocations().Values)
             {
                 foreach (string folder in folders)
                 {
@@ -3325,6 +3331,9 @@ namespace TVRename
 
         private void timezoneInconsistencyLOGToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //Show Log Pane
+            logToolStripMenuItem_Click(sender,e);
+
             TimeZoneTracker results = new TimeZoneTracker();
             foreach (ShowItem si in mDoc.Library.GetShowItems())
             {
@@ -3384,6 +3393,9 @@ namespace TVRename
 
         private void episodeFileQualitySummaryLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //Show Log Pane
+            logToolStripMenuItem_Click(sender, e);
+
             Beta.LogShowEpisodeSizes(mDoc);
         }
     }

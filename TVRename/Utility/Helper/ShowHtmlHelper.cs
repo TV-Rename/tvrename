@@ -116,7 +116,7 @@ namespace TVRename
             if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && Directory.Exists(si.AutoAddFolderBase))
                 return si.AutoAddFolderBase;
 
-            Dictionary<int, List<string>> afl = si.AllFolderLocations();
+            Dictionary<int, List<string>> afl = si.AllExistngFolderLocations();
 
             foreach (KeyValuePair<int, List<string>> season in afl)
             {
@@ -210,7 +210,7 @@ namespace TVRename
 
         private static string GetBestFolderLocationToOpen(this ShowItem si,Season s )
         {
-            Dictionary<int, List<string>> afl = si.AllFolderLocations();
+            Dictionary<int, List<string>> afl = si.AllExistngFolderLocations();
             int[] keys = new int[afl.Count];
             afl.Keys.CopyTo(keys, 0);
 

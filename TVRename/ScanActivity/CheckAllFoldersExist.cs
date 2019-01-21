@@ -15,7 +15,7 @@ namespace TVRename
             if (!si.DoMissingCheck && !si.DoRename)
                 return; // skip
 
-            Dictionary<int, List<string>> flocs = si.AllFolderLocations();
+            Dictionary<int, List<string>> flocs = si.AllProposedFolderLocations();
 
             int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
             si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
@@ -25,10 +25,10 @@ namespace TVRename
                 // throw Exception if user cancels
 
                 if (si.IgnoreSeasons.Contains(snum))
-                    return; // ignore this season
+                    continue; // ignore this season
 
                 if ((snum == 0) && (si.CountSpecials))
-                    return; // no specials season, they're merged into the seasons themselves
+                    continue; // no specials season, they're merged into the seasons themselves
 
                 List<string> folders = new List<string>();
 
@@ -36,7 +36,7 @@ namespace TVRename
                     folders = flocs[snum];
 
                 if ((folders.Count == 0) && (!si.AutoAddNewSeasons()))
-                    return; // no folders defined or found, autoadd off, so onto the next
+                    continue; // no folders defined or found, autoadd off, so onto the next
 
                 if (folders.Count == 0)
                 {

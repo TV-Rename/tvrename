@@ -6,6 +6,7 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
@@ -22,6 +23,13 @@ namespace TVRename
 
         protected ScanActivity(TVDoc doc) => MDoc = doc;
 
+        protected abstract string Checkname();
+        public abstract bool Active();
+        protected abstract void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings);
+
+        public void Check(SetProgressDelegate prog, List<ShowItem> showList, TVDoc.ScanSettings settings) =>
+            Check(prog, 0, 100, showList, settings);
+
         public void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList,
             TVDoc.ScanSettings settings)
         {
@@ -29,29 +37,31 @@ namespace TVRename
             endPosition = totPct;
             progressDelegate = prog;
             progressDelegate.Invoke(startPosition, string.Empty);
-            Check(prog, showList,settings);
-            progressDelegate.Invoke(endPosition , string.Empty);
-        }
+            try
+            {
+                if (settings.Token.IsCancellationRequested) return;
+                if (!Active()) return;
 
-        protected abstract void Check(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings);
+                DoCheck(prog, showList, settings);
+                LogActionListSummary();
+            }
+            catch(TVRenameOperationInteruptedException ex)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                LOGGER.Fatal(e, $"Failed to run Scan for {Checkname()}");
+            }
+            finally
+            {
+                progressDelegate.Invoke(endPosition, string.Empty);
+            }
+        }
 
         protected void UpdateStatus(int recordNumber,int totalRecords, string message)
         {
             progressDelegate.Invoke(startPosition + ((endPosition - startPosition) * recordNumber / (totalRecords+1)), message);
-        }
-
-        public abstract bool Active();
-
-        private void Check(SetProgressDelegate prog, List<ShowItem> showList, TVDoc.ScanSettings settings) =>
-            Check(prog, 0, 100, showList, settings);
-
-        public void CheckIfActive(SetProgressDelegate prog, List<ShowItem> showList,TVDoc.ScanSettings settings)
-        {
-            if (Active())
-            {
-                 Check(prog, showList, settings);
-                 LogActionListSummary();
-            }
         }
 
         private void LogActionListSummary()
@@ -60,16 +70,6 @@ namespace TVRename
             LOGGER.Info($"   Missing Items: {MDoc.TheActionList.MissingItems().Count()}");
             LOGGER.Info($"   Copy/Move Items: {MDoc.TheActionList.CopyMoveItems().Count()}");
             LOGGER.Info($"   Total Actions: {MDoc.TheActionList.Actions().Count()}");
-        }
-
-        protected abstract string Checkname();
-
-        internal void CheckIfActive(SetProgressDelegate prog, int startpct, int totPct, List<ShowItem> showList, TVDoc.ScanSettings settings)
-        {
-            if (Active() && !settings.Token.IsCancellationRequested)
-            {
-                Check(prog,startpct,totPct, showList, settings);
-            }
         }
     }
 }
