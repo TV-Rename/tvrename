@@ -74,10 +74,16 @@ namespace TVRename
             filename = filename.Replace(" ", "-");
 
             Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DvdSeasons : ser.AiredSeasons;
+            if (seasonsToUse is null)
+            {
+                return false;
+            }
 
             foreach (KeyValuePair<int, Season> kvp in seasonsToUse)
             {
-                if (si.IgnoreSeasons.Contains(kvp.Value.SeasonNumber))
+                if (kvp.Value?.Episodes?.Values is null) continue;
+
+                if (!(si.IgnoreSeasons is null) && (si.IgnoreSeasons.Contains(kvp.Value.SeasonNumber)))
                     continue;
 
                 foreach (Episode epi in kvp.Value.Episodes.Values)
@@ -91,10 +97,12 @@ namespace TVRename
                     foreach (string dateFormat in dateFormats)
                     {
                         string datestr = dt.Value.ToString(dateFormat);
+
                         if (filename.Contains(datestr) && DateTime.TryParseExact(datestr, dateFormat,
                                 new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime dtInFilename))
                         {
                             TimeSpan timeAgo = DateTime.Now.Subtract(dtInFilename);
+
                             if (timeAgo < closestDate)
                             {
                                 seas = (si.DvdOrder ? epi.DvdSeasonNumber : epi.AiredSeasonNumber);
