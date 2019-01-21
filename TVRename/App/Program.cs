@@ -136,7 +136,7 @@ namespace TVRename.App
     static void GlobalExceptionHandler(object sender, UnhandledExceptionEventArgs args)
     {
         Exception e = (Exception) args.ExceptionObject;
-        Logger.Fatal(e,"UNHANDLED ERROR");
+        Logger.Fatal(e,"UNHANDLED ERROR - GLobalExceptionHandler");
         Environment.Exit(1);
         }
     }
