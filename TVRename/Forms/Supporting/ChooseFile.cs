@@ -11,13 +11,14 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Humanizer;
+using NLog;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
     public partial class ChooseFile : Form
     {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public enum ChooseFileDialogResult
         {
@@ -43,7 +44,7 @@ namespace TVRename
                 txtLengthLeft.Text =
                     "Length: " + ((leftFilmLength == -1) ? "Unknown" : leftFilmLength.Seconds().Humanize(2));
             }
-            catch (ArgumentException) //bug in Humanizer causes this is polish
+            catch (ArgumentException) //bug in Humanizer causes this in Polish
             {
                 txtLengthLeft.Text =
                     "Length: " + ((leftFilmLength == -1) ? "Unknown" : leftFilmLength.Seconds()+" s");
@@ -59,7 +60,7 @@ namespace TVRename
             lblDimensionsRight.Text = "Dimensions: " + (rightFrameUnknown ? "Unknown" : rightFrameWidth + "x" + right.GetFrameHeight());
             int rightFilmLength = right.GetFilmLength();
             try{lblLengthRight.Text = "Length: " + ((rightFilmLength == -1) ? "Unknown" : rightFilmLength.Seconds().Humanize(2));}
-            catch (ArgumentException) //bug in Humanizer causes this is polish
+            catch (ArgumentException) //bug in Humanizer causes this in Polish
             {
                 lblLengthRight.Text = "Length: " + ((rightFilmLength == -1) ? "Unknown" : rightFilmLength.Seconds() + " s");
             }
@@ -156,19 +157,19 @@ namespace TVRename
             Helpers.SysOpen(rightFile.DirectoryName);
         }
 
-        private void btnLeft_Click(object sender, System.EventArgs e)
+        private void btnLeft_Click(object sender, EventArgs e)
         {
             Answer = ChooseFileDialogResult.left;
             Close();
         }
 
-        private void Ignore_Click(object sender, System.EventArgs e)
+        private void Ignore_Click(object sender, EventArgs e)
         {
             Answer = ChooseFileDialogResult.ignore;
             Close();
         }
 
-        private void btnKeepRight_Click(object sender, System.EventArgs e)
+        private void btnKeepRight_Click(object sender, EventArgs e)
         {
             Answer = ChooseFileDialogResult.right;
             Close();
