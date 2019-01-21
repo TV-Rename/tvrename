@@ -6,6 +6,7 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -37,7 +38,17 @@ namespace TVRename
             bool leftFrameUnknown = leftFrameWidth == -1;
             txtDimensionsLeft.Text = "Dimensions: " + (leftFrameUnknown ? "Unknown" : leftFrameWidth + "x" + left.GetFrameHeight());
             int leftFilmLength = left.GetFilmLength();
-            txtLengthLeft.Text = "Length: " + ((leftFilmLength == -1) ? "Unknown" : leftFilmLength.Seconds().Humanize(2));
+            try
+            {
+                txtLengthLeft.Text =
+                    "Length: " + ((leftFilmLength == -1) ? "Unknown" : leftFilmLength.Seconds().Humanize(2));
+            }
+            catch (ArgumentException) //bug in Humanizer causes this is polish
+            {
+                txtLengthLeft.Text =
+                    "Length: " + ((leftFilmLength == -1) ? "Unknown" : leftFilmLength.Seconds()+" s");
+            }
+
             txtSizeLeft.Text = GetFileSize(left);
             txtPathLeft.Text = left.DirectoryName;
 
@@ -47,7 +58,12 @@ namespace TVRename
             bool rightFrameUnknown = rightFrameWidth == -1;
             lblDimensionsRight.Text = "Dimensions: " + (rightFrameUnknown ? "Unknown" : rightFrameWidth + "x" + right.GetFrameHeight());
             int rightFilmLength = right.GetFilmLength();
-            lblLengthRight.Text = "Length: " + ((rightFilmLength == -1) ? "Unknown" : rightFilmLength.Seconds().Humanize(2));
+            try{lblLengthRight.Text = "Length: " + ((rightFilmLength == -1) ? "Unknown" : rightFilmLength.Seconds().Humanize(2));}
+            catch (ArgumentException) //bug in Humanizer causes this is polish
+            {
+                lblLengthRight.Text = "Length: " + ((rightFilmLength == -1) ? "Unknown" : rightFilmLength.Seconds() + " s");
+            }
+
             lblSizeRight.Text = GetFileSize(right);
             txtPathRight.Text = right.DirectoryName;
 
