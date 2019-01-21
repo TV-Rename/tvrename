@@ -741,14 +741,15 @@ namespace TVRename
                 return;
             }
 
-            TheTVDB.Instance.GetLock("FillEpGuideHTML");
-
-            SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
+            SeriesInfo ser;
+            lock (TheTVDB.SERIES_LOCK)
+            {
+                ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
+            }
 
             if (ser == null)
             {
                 ClearInfoWindows("Not downloaded, or not available");
-                TheTVDB.Instance.Unlock("FillEpGuideHTML");
                 return;
             }
 
@@ -773,7 +774,6 @@ namespace TVRename
                     SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
                 }
 
-                TheTVDB.Instance.Unlock("FillEpGuideHTML");
                 return;
             }
 
@@ -801,8 +801,6 @@ namespace TVRename
 
                 SetHtmlBody(webInformation, si.GetShowHtmlOverview(true));
             }
-
-            TheTVDB.Instance.Unlock("FillEpGuideHTML");
         }
 
         private static void SetHtmlBody(WebBrowser web, string body)
@@ -1950,10 +1948,13 @@ namespace TVRename
 
         private TreeNode AddShowItemToTree(ShowItem si)
         {
-            TheTVDB.Instance.GetLock("AddShowItemToTree");
             string name = si.ShowName;
 
-            SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
+            SeriesInfo ser;
+            lock (TheTVDB.SERIES_LOCK)
+            {
+                ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
+            }
 
             if (string.IsNullOrEmpty(name))
             {
@@ -2021,8 +2022,6 @@ namespace TVRename
             }
 
             MyShowTree.Nodes.Add(n);
-
-            TheTVDB.Instance.Unlock("AddShowItemToTree");
 
             return n;
         }
@@ -2124,20 +2123,22 @@ namespace TVRename
             MoreBusy();
             mDoc.PreventAutoScan("Add Show");
             ShowItem si = new ShowItem();
-            TheTVDB.Instance.GetLock("AddShow");
-            AddEditShow aes = new AddEditShow(si);
-            DialogResult dr = aes.ShowDialog();
-            TheTVDB.Instance.Unlock("AddShow");
-            if (dr == DialogResult.OK)
+
+            lock (TheTVDB.SERIES_LOCK)
             {
-                mDoc.Library.Add(si);
+                AddEditShow aes = new AddEditShow(si);
+                DialogResult dr = aes.ShowDialog();
+                if (dr == DialogResult.OK)
+                {
+                    mDoc.Library.Add(si);
 
-                ShowAddedOrEdited(true);
-                SelectShow(si);
+                    ShowAddedOrEdited(true);
+                    SelectShow(si);
 
-                Logger.Info("Added new show called {0}", si.ShowName);
+                    Logger.Info("Added new show called {0}", si.ShowName);
+                }
+                else Logger.Info("Cancelled adding new show");
             }
-            else Logger.Info("Cancelled adding new show");
 
             LessBusy();
             mDoc.AllowAutoScan();
@@ -2221,20 +2222,22 @@ namespace TVRename
         {
             MoreBusy();
             mDoc.PreventAutoScan("Edit Season");
-            TheTVDB.Instance.GetLock("EditSeason");
 
-            SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
-            List<ProcessedEpisode> pel = ShowLibrary.GenerateEpisodes(si, ser, seasnum, false);
-
-            EditRules er = new EditRules(si, pel, seasnum, TVSettings.Instance.NamingStyle);
-            DialogResult dr = er.ShowDialog();
-            TheTVDB.Instance.Unlock("EditSeason");
-            if (dr == DialogResult.OK)
+            lock (TheTVDB.SERIES_LOCK)
             {
-                ShowAddedOrEdited(false);
-                Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DvdSeasons : ser.AiredSeasons;
-                SelectSeason(seasonsToUse[seasnum]);
+                SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
+                List<ProcessedEpisode> pel = ShowLibrary.GenerateEpisodes(si, ser, seasnum, false);
+
+                EditRules er = new EditRules(si, pel, seasnum, TVSettings.Instance.NamingStyle);
+                DialogResult dr = er.ShowDialog();
+                if (dr == DialogResult.OK)
+                {
+                    ShowAddedOrEdited(false);
+                    Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DvdSeasons : ser.AiredSeasons;
+                    SelectSeason(seasonsToUse[seasnum]);
+                }
             }
+
             mDoc.AllowAutoScan();
             LessBusy();
         }
@@ -2242,7 +2245,6 @@ namespace TVRename
         internal void EditShow(ShowItem si)
         {
             MoreBusy();
-            TheTVDB.Instance.GetLock("EditShow");
             mDoc.PreventAutoScan("Edit Show");
 
             int oldCode = si.TvdbCode;
@@ -2250,8 +2252,6 @@ namespace TVRename
             AddEditShow aes = new AddEditShow(si);
 
             DialogResult dr = aes.ShowDialog();
-
-            TheTVDB.Instance.Unlock("EditShow");
 
             if (dr == DialogResult.OK)
             {

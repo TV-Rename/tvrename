@@ -143,62 +143,61 @@ namespace TVRename
 
         public static bool GenerateEpisodeDict(ShowItem si)
         {
-            si.SeasonEpisodes.Clear();
-
             // copy data from tvdb
             // process as per rules
             // done!
 
-            TheTVDB.Instance.GetLock("GenerateEpisodeDict");
-
-            SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
-
-            if (ser == null)
-            {
-                TheTVDB.Instance.Unlock("GenerateEpisodeDict");
-                return false; // TODO: warn user
-            }
-
             bool r = true;
-            Dictionary<int, Season> seasonsToUse = si.DvdOrder
-                ? ser.DvdSeasons
-                : ser.AiredSeasons;
 
-            foreach (KeyValuePair<int, Season> kvp in seasonsToUse)
+            lock (TheTVDB.SERIES_LOCK)
             {
-                List<ProcessedEpisode> pel = GenerateEpisodes(si, ser, kvp.Key, true);
-                si.SeasonEpisodes[kvp.Key] = pel;
-                if (pel == null)
-                    r = false;
-            }
+                si.SeasonEpisodes.Clear();
 
-            List<int> theKeys = new List<int>();
-            // now, go through and number them all sequentially
-            foreach (int snum in seasonsToUse.Keys)
-                theKeys.Add(snum);
+                SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
 
-            theKeys.Sort();
-
-            int overallCount = 1;
-            foreach (int snum in theKeys)
-            {
-                if (snum == 0) continue;
-
-                foreach (ProcessedEpisode pe in si.SeasonEpisodes[snum])
+                if (ser == null)
                 {
-                    pe.OverallNumber = overallCount;
-                    if (si.DvdOrder)
+                    return false; // TODO: warn user
+                }
+
+                Dictionary<int, Season> seasonsToUse = si.DvdOrder
+                    ? ser.DvdSeasons
+                    : ser.AiredSeasons;
+
+                foreach (KeyValuePair<int, Season> kvp in seasonsToUse)
+                {
+                    List<ProcessedEpisode> pel = GenerateEpisodes(si, ser, kvp.Key, true);
+                    si.SeasonEpisodes[kvp.Key] = pel;
+                    if (pel == null)
+                        r = false;
+                }
+
+                List<int> theKeys = new List<int>();
+                // now, go through and number them all sequentially
+                foreach (int snum in seasonsToUse.Keys)
+                    theKeys.Add(snum);
+
+                theKeys.Sort();
+
+                int overallCount = 1;
+                foreach (int snum in theKeys)
+                {
+                    if (snum == 0) continue;
+
+                    foreach (ProcessedEpisode pe in si.SeasonEpisodes[snum])
                     {
-                        overallCount += 1 + pe.EpNum2 - pe.DvdEpNum;
-                    }
-                    else
-                    {
-                        overallCount += 1 + pe.EpNum2 - pe.AiredEpNum;
+                        pe.OverallNumber = overallCount;
+                        if (si.DvdOrder)
+                        {
+                            overallCount += 1 + pe.EpNum2 - pe.DvdEpNum;
+                        }
+                        else
+                        {
+                            overallCount += 1 + pe.EpNum2 - pe.AiredEpNum;
+                        }
                     }
                 }
             }
-
-            TheTVDB.Instance.Unlock("GenerateEpisodeDict");
 
             return r;
         }

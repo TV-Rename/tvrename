@@ -171,15 +171,18 @@ namespace TVRename
 
         private ShowSummaryData AddShowDetails(ShowItem si)
         {
-            TheTVDB db = TheTVDB.Instance;
-            db.GetLock("ShowSummary");
-            SeriesInfo ser = db.GetSeries(si.TvdbCode);
+            SeriesInfo ser;
+
+            lock (TheTVDB.SERIES_LOCK)
+            {
+                ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
+            }
 
             ShowSummaryData showSummary = new ShowSummaryData
-            {
-                ShowName = si.ShowName,
-                ShowItem = si
-            };
+                {
+                    ShowName = si.ShowName,
+                    ShowItem = si
+                };
 
             if (ser != null)
             {
@@ -189,7 +192,6 @@ namespace TVRename
                     showSummary.AddSeason(seasonData);
                 }
             }
-            db.Unlock("ShowSummary");
             return showSummary;
         }
 
