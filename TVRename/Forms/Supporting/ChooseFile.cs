@@ -32,41 +32,12 @@ namespace TVRename
         public ChooseFile(FileInfo left, FileInfo right)
         {
             InitializeComponent();
-
+            
             leftFile = left;
-            txtNameLeft.Text = left.Name;
-            int leftFrameWidth = left.GetFrameWidth();
-            bool leftFrameUnknown = leftFrameWidth == -1;
-            txtDimensionsLeft.Text = "Dimensions: " + (leftFrameUnknown ? "Unknown" : leftFrameWidth + "x" + left.GetFrameHeight());
-            int leftFilmLength = left.GetFilmLength();
-            try
-            {
-                txtLengthLeft.Text =
-                    "Length: " + ((leftFilmLength == -1) ? "Unknown" : leftFilmLength.Seconds().Humanize(2));
-            }
-            catch (ArgumentException) //bug in Humanizer causes this in Polish
-            {
-                txtLengthLeft.Text =
-                    "Length: " + ((leftFilmLength == -1) ? "Unknown" : leftFilmLength.Seconds()+" s");
-            }
-
-            txtSizeLeft.Text = GetFileSize(left);
-            txtPathLeft.Text = left.DirectoryName;
-
             rightFile = right;
-            lblNameRight.Text = right.Name;
-            int rightFrameWidth = right.GetFrameWidth();
-            bool rightFrameUnknown = rightFrameWidth == -1;
-            lblDimensionsRight.Text = "Dimensions: " + (rightFrameUnknown ? "Unknown" : rightFrameWidth + "x" + right.GetFrameHeight());
-            int rightFilmLength = right.GetFilmLength();
-            try{lblLengthRight.Text = "Length: " + ((rightFilmLength == -1) ? "Unknown" : rightFilmLength.Seconds().Humanize(2));}
-            catch (ArgumentException) //bug in Humanizer causes this in Polish
-            {
-                lblLengthRight.Text = "Length: " + ((rightFilmLength == -1) ? "Unknown" : rightFilmLength.Seconds() + " s");
-            }
 
-            lblSizeRight.Text = GetFileSize(right);
-            txtPathRight.Text = right.DirectoryName;
+            (int leftFilmLength,bool leftFrameUnknown,int leftFrameWidth) = UpdateFields(left, txtNameLeft, txtDimensionsLeft, txtLengthLeft, txtSizeLeft, txtPathLeft);
+            (int rightFilmLength, bool rightFrameUnknown, int rightFrameWidth) = UpdateFields(right, lblNameRight, lblDimensionsRight, lblLengthRight, lblSizeRight, txtPathRight);
 
             SetBoldFileSize(left, right);
 
@@ -75,6 +46,30 @@ namespace TVRename
             if (rightFrameUnknown || leftFrameUnknown) return;
 
             SetBoldFrameWidth(leftFrameWidth, rightFrameWidth);
+        }
+
+        private static (int,bool,int) UpdateFields(FileInfo file, Label nameLabel, Label dimensionsLabel, Label lengthLabel, Label sizeLabel, Label pathLabel)
+        {
+            nameLabel.Text = file.Name;
+            int leftFrameWidth = file.GetFrameWidth();
+            bool leftFrameUnknown = leftFrameWidth == -1;
+            dimensionsLabel.Text = "Dimensions: " + (leftFrameUnknown ? "Unknown" : leftFrameWidth + "x" + file.GetFrameHeight());
+            int leftFilmLength = file.GetFilmLength();
+            try
+            {
+                lengthLabel.Text =
+                    "Length: " + ((leftFilmLength == -1) ? "Unknown" : leftFilmLength.Seconds().Humanize(2));
+            }
+            catch (ArgumentException) //bug in Humanizer causes this in Polish
+            {
+                lengthLabel.Text =
+                    "Length: " + ((leftFilmLength == -1) ? "Unknown" : leftFilmLength.Seconds() + " s");
+            }
+
+            sizeLabel.Text = GetFileSize(file);
+            pathLabel.Text = file.DirectoryName;
+
+            return (leftFrameWidth, leftFrameUnknown, leftFilmLength);
         }
 
         private static string GetFileSize(FileInfo file)

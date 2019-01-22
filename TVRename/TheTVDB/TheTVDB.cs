@@ -196,8 +196,6 @@ namespace TVRename
         {
             Logger.Info("Saving Cache to: {0}", cacheFile.FullName);
 
-            lock (SERIES_LOCK) { 
-
             RotateCacheFiles();
 
             // write ourselves to disc for next time.  use same structure as thetvdb.com (limited fields, though)
@@ -208,63 +206,64 @@ namespace TVRename
                 NewLineOnAttributes = true
             };
 
-            using (XmlWriter writer = XmlWriter.Create(cacheFile.FullName, settings))
-            {
-                writer.WriteStartDocument();
-                writer.WriteStartElement("Data");
-                XmlHelper.WriteAttributeToXml(writer, "time", srvTime);
-
-                foreach (KeyValuePair<int, SeriesInfo> kvp in series)
+            lock (SERIES_LOCK)
+            { 
+                using (XmlWriter writer = XmlWriter.Create(cacheFile.FullName, settings))
                 {
-                    if (kvp.Value.SrvLastUpdated != 0)
+                    writer.WriteStartDocument();
+                    writer.WriteStartElement("Data");
+                    XmlHelper.WriteAttributeToXml(writer, "time", srvTime);
+
+                    foreach (KeyValuePair<int, SeriesInfo> kvp in series)
                     {
-                        kvp.Value.WriteXml(writer);
-                        foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
-                        //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
+                        if (kvp.Value.SrvLastUpdated != 0)
                         {
-                            Season seas = kvp2.Value;
-                            foreach (Episode e in seas.Episodes.Values)
-                                e.WriteXml(writer);
+                            kvp.Value.WriteXml(writer);
+                            foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
+                            //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
+                            {
+                                Season seas = kvp2.Value;
+                                foreach (Episode e in seas.Episodes.Values)
+                                    e.WriteXml(writer);
+                            }
                         }
                     }
-                }
 
-                //
-                // <BannersCache>
-                //      <BannersItem>
-                //          <SeriesId>123</SeriesId>
-                //          <Banners>
-                //              <Banner>
+                    //
+                    // <BannersCache>
+                    //      <BannersItem>
+                    //          <SeriesId>123</SeriesId>
+                    //          <Banners>
+                    //              <Banner>
 
-                writer.WriteStartElement("BannersCache");
+                    writer.WriteStartElement("BannersCache");
 
-                foreach (KeyValuePair<int, SeriesInfo> kvp in series)
-                {
-                    writer.WriteStartElement("BannersItem");
-
-                    XmlHelper.WriteElementToXml(writer, "SeriesId", kvp.Key);
-
-                    writer.WriteStartElement("Banners");
-
-                    //We need to write out all banners that we have in any of the collections. 
-
-                    foreach (KeyValuePair<int, Banner> kvp3 in kvp.Value.AllBanners)
+                    foreach (KeyValuePair<int, SeriesInfo> kvp in series)
                     {
-                         Banner ban = kvp3.Value;
-                        ban.WriteXml(writer);
+                        writer.WriteStartElement("BannersItem");
+
+                        XmlHelper.WriteElementToXml(writer, "SeriesId", kvp.Key);
+
+                        writer.WriteStartElement("Banners");
+
+                        //We need to write out all banners that we have in any of the collections. 
+
+                        foreach (KeyValuePair<int, Banner> kvp3 in kvp.Value.AllBanners)
+                        {
+                             Banner ban = kvp3.Value;
+                            ban.WriteXml(writer);
+                        }
+
+                        writer.WriteEndElement(); //Banners
+                        writer.WriteEndElement(); //BannersItem
                     }
 
-                    writer.WriteEndElement(); //Banners
-                    writer.WriteEndElement(); //BannersItem
+                    writer.WriteEndElement(); // BannersCache
+
+                    writer.WriteEndElement(); // data
+
+                    writer.WriteEndDocument();
                 }
-
-                writer.WriteEndElement(); // BannersCache
-
-                writer.WriteEndElement(); // data
-
-                writer.WriteEndDocument();
-            }
-
             }
         }
 
