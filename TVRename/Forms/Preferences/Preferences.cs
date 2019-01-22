@@ -240,6 +240,7 @@ namespace TVRename
             s.ForceBulkAddToUseSettingsOnly = chkForceBulkAddToUseSettingsOnly.Checked;
             s.CopyFutureDatedEpsFromSearchFolders = cbCopyFutureDatedEps.Checked;
             s.ShareLogs = chkShareCriticalLogs.Checked;
+            s.PostpendThe = chkPostpendThe.Checked;
 
             s.SearchJSON = cbSearchJSON.Checked;
             s.SearchJSONManualScanOnly = cbSearchJSONManualScanOnly.Checked;
@@ -722,6 +723,7 @@ namespace TVRename
             cbDeleteShowFromDisk.Checked = s.DeleteShowFromDisk;
             cbCopyFutureDatedEps.Checked = s.CopyFutureDatedEpsFromSearchFolders;
             chkShareCriticalLogs.Checked = s.ShareLogs;
+            chkPostpendThe.Checked = s.PostpendThe;
 
             cbMissing.Checked = s.MissingCheck;
             chkMoveLibraryFiles.Checked = s.MoveLibraryFiles;

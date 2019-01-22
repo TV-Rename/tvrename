@@ -1948,23 +1948,13 @@ namespace TVRename
 
         private TreeNode AddShowItemToTree(ShowItem si)
         {
-            string name = si.ShowName;
-
             SeriesInfo ser;
             lock (TheTVDB.SERIES_LOCK)
             {
                 ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
             }
 
-            if (string.IsNullOrEmpty(name))
-            {
-                if (ser != null)
-                    name = ser.Name;
-                else
-                    name += "-- Unknown : " + si.TvdbCode + " --";
-            }
-
-            TreeNode n = new TreeNode(name) {Tag = si};
+            TreeNode n = new TreeNode(GenerateShowUIName(ser,si)) {Tag = si};
 
             if (ser != null)
             {
@@ -2024,6 +2014,26 @@ namespace TVRename
             MyShowTree.Nodes.Add(n);
 
             return n;
+        }
+
+        private string GenerateShowUIName(SeriesInfo ser, ShowItem si)
+        {
+            string name = si.ShowName;
+
+            if (string.IsNullOrEmpty(name))
+            {
+                if (ser != null)
+                    name = ser.Name;
+                else
+                    name += "-- Unknown : " + si.TvdbCode + " --";
+            }
+
+            if (TVSettings.Instance.PostpendThe && name.StartsWith("The "))
+            {
+                return name.Substring(4) + ", The";
+            }
+
+            return name;
         }
 
         private void UpdateWtw(DirFilesCache dfc, ProcessedEpisode pe, ListViewItem lvi)
