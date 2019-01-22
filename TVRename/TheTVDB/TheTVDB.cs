@@ -1078,7 +1078,7 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse resp &&
+                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response !=null && ex.Response is HttpWebResponse resp &&
                     resp.StatusCode == HttpStatusCode.NotFound)
                 {
                     Logger.Warn($"Show with Id {code} is no longer available from TVDB (got a 404). {uri}");
@@ -1097,20 +1097,37 @@ namespace TVRename
                 return null;
             }
 
-            SeriesInfo si;
+            if (jsonResponse is null)
+            {
+                Logger.Error("Error obtaining - no response available {0}", uri);
+                Say("");
+                return null;
+            }
+
+            SeriesInfo si = null;
             JObject seriesData = (JObject) jsonResponse["data"];
 
             if (IsNotDefaultLanguage(requestedLanguageCode))
             {
-                JObject seriesDataDefaultLang = (JObject) jsonDefaultLangResponse["data"];
-                si = new SeriesInfo(seriesData, seriesDataDefaultLang, GetLanguageId());
+                if (jsonDefaultLangResponse != null)
+                {
+                    JObject seriesDataDefaultLang = (JObject) jsonDefaultLangResponse["data"];
+                    si = new SeriesInfo(seriesData, seriesDataDefaultLang, GetLanguageId());
+                }
             }
             else
             {
                 si = new SeriesInfo(seriesData, GetLanguageId());
             }
 
-            lock(SERIES_LOCK)
+            if (si is null)
+            {
+                Logger.Error("Error obtaining {0} - no cound not generate a series from the responses", uri);
+                Say("");
+                return null;
+            }
+
+            lock (SERIES_LOCK)
             {
                 if (series.ContainsKey(si.TvdbCode))
                     series[si.TvdbCode].Merge(si, GetLanguageId());
@@ -1127,152 +1144,21 @@ namespace TVRename
             {
                 ReloadEpisodes(code,useCustomLangCode,langCode);
             }
-
-            List<JObject> bannerResponses = new List<JObject>();
-            List<JObject> bannerDefaultLangResponses = new List<JObject>();
             if (bannersToo || forceReload)
             {
-                // get /series/id/images if the bannersToo is set - may need to make multiple calls to for each image type
-                List<string> imageTypes = new List<string>();
-
-                try
-                {
-                    JObject jsonEpisodeSearchResponse = HttpHelper.JsonHttpGetRequest(
-                        TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images", null, tvDbTokenProvider.GetToken(),
-                        requestedLanguageCode);
-
-                    JObject a = (JObject) jsonEpisodeSearchResponse["data"];
-
-                    foreach (KeyValuePair<string, JToken> imageType in a)
-                    {
-                        if ((int) imageType.Value > 0) imageTypes.Add(imageType.Key);
-                    }
-                }
-                catch (WebException ex)
-                {
-                    //no images for chosen language
-                    Logger.Warn(ex,
-                        $"No images found for {TvDbTokenProvider.TVDB_API_URL }/series/{code}/images in language {requestedLanguageCode}");
-                }
-
-                foreach (string imageType in imageTypes)
-                {
-                    try
-                    {
-                        JObject jsonImageResponse = HttpHelper.JsonHttpGetRequest(
-                            TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images/query",
-                            new Dictionary<string, string> {{"keyType", imageType}}, tvDbTokenProvider.GetToken(),
-                            requestedLanguageCode);
-
-                        bannerResponses.Add(jsonImageResponse);
-                    }
-                    catch (WebException webEx)
-                    {
-                        Logger.Info("Looking for " + imageType +
-                                    " images (in local language), but none found for seriesId " + code);
-
-                        Logger.Info(webEx);
-                    }
-                }
-
-                if (IsNotDefaultLanguage(requestedLanguageCode))
-                {
-                    List<string> imageDefaultLangTypes = new List<string>();
-
-                    try
-                    {
-                        JObject jsonEpisodeSearchDefaultLangResponse = HttpHelper.JsonHttpGetRequest(
-                            TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images", null, tvDbTokenProvider.GetToken(),
-                            DefaultLanguageCode);
-
-                        JObject adl = (JObject) jsonEpisodeSearchDefaultLangResponse["data"];
-
-                        foreach (KeyValuePair<string, JToken> imageType in adl)
-                        {
-                            if ((int) imageType.Value > 0) imageDefaultLangTypes.Add(imageType.Key);
-                        }
-                    }
-                    catch (WebException ex)
-                    {
-                        Logger.Info("Looking for images, but none found for seriesId {0} in {1}", code,
-                            DefaultLanguageCode);
-
-                        Logger.Info(ex);
-
-                        //no images for chosen language
-                    }
-
-                    foreach (string imageType in imageDefaultLangTypes)
-                    {
-                        try
-                        {
-                            JObject jsonImageDefaultLangResponse = HttpHelper.JsonHttpGetRequest(
-                                TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images/query",
-                                new Dictionary<string, string> {{"keyType", imageType}}, tvDbTokenProvider.GetToken(),
-                                DefaultLanguageCode);
-
-                            bannerDefaultLangResponses.Add(jsonImageDefaultLangResponse);
-                        }
-                        catch (WebException webEx)
-                        {
-                            Logger.Info(webEx,
-                                "Looking for " + imageType + " images, but none found for seriesId " + code);
-                        }
-                    }
-                }
+                DownloadSeriesBanners(code, si, requestedLanguageCode);
             }
 
-            foreach (JObject response in bannerResponses)
-            {
-                try
-                {
-                    foreach (JToken jToken in response["data"])
-                    {
-                        JObject bannerData = (JObject) jToken;
-                        Banner b = new Banner(si.TvdbCode, bannerData, GetLanguageId());
-                        lock (SERIES_LOCK)
-                        {
-                            if (!series.ContainsKey(b.SeriesId))
-                                throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
+            DownloadSeriesActors(code,si);
 
-                            SeriesInfo ser = series[b.SeriesId];
-                            ser.AddOrUpdateBanner(b);
-                        }
-                    }
-                }
-                catch (InvalidCastException ex)
-                {
-                    Logger.Error(ex,"Did not receive the expected format of json from {0}.", uri);
-                    Logger.Error(jsonResponse["data"].ToString());
-                }
-            }
+            forceReloadOn.TryRemove(code, out _);
 
-            foreach (JObject response in bannerDefaultLangResponses)
-            {
-                try
-                {
-                    foreach (JToken jToken in response["data"])
-                    {
-                        JObject bannerData = (JObject) jToken;
-                        Banner b = new Banner(si.TvdbCode, bannerData, GetDefaultLanguageId());
-                        lock (SERIES_LOCK)
-                        {
-                            if (!series.ContainsKey(b.SeriesId))
-                                throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
+            series.TryGetValue(code, out SeriesInfo returnValue);
+            return returnValue;
+        }
 
-                            SeriesInfo ser = series[b.SeriesId];
-                            ser.AddOrUpdateBanner(b);
-                        }                    }
-                }
-                catch (InvalidCastException ex)
-                {
-                    Logger.Error(ex,"Did not receive the expected format of json from {0}.", uri);
-                    Logger.Error(jsonResponse["data"].ToString());
-                }
-            }
-
-            series[si.TvdbCode].BannersLoaded = true;
-
+        private void DownloadSeriesActors(int code,SeriesInfo si)
+        {
             //Get the actors too then well need another call for that
             try
             {
@@ -1283,7 +1169,7 @@ namespace TVRename
                 foreach (JToken jsonActor in jsonActorsResponse["data"])
                 {
                     int actorId = (int)jsonActor["id"];
-                    string actorImage = (string) jsonActor["image"];
+                    string actorImage = (string)jsonActor["image"];
                     string actorName = (string)jsonActor["name"];
                     string actorRole = (string)jsonActor["role"];
                     int actorSeriesId = (int)jsonActor["seriesId"];
@@ -1299,7 +1185,7 @@ namespace TVRename
                 {
                     Logger.Error(ex, "Unble to obtain actors for {0}", series[si.TvdbCode].Name);
                 }
-                else if(((HttpWebResponse) ex.Response).StatusCode == HttpStatusCode.NotFound)
+                else if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
                 {
                     Logger.Info($"No actors found for {series[si.TvdbCode].Name} using url {ex.Response.ResponseUri.AbsoluteUri}");
                 }
@@ -1310,11 +1196,154 @@ namespace TVRename
 
                 LastError = ex.Message;
             }
+        }
 
-            forceReloadOn.TryRemove(code, out _);
+        private void DownloadSeriesBanners(int code, SeriesInfo si,string requestedLanguageCode)
+        {
+            List<JObject> bannerResponses = new List<JObject>();
+            List<JObject> bannerDefaultLangResponses = new List<JObject>();
 
-            series.TryGetValue(code, out SeriesInfo returnValue);
-            return returnValue;
+            // get /series/id/images if the bannersToo is set - may need to make multiple calls to for each image type
+            List<string> imageTypes = new List<string>();
+            string uriImages = TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images";
+            string uriImagesQuery = TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images/query";
+
+            try
+            {
+                JObject jsonEpisodeSearchResponse = HttpHelper.JsonHttpGetRequest(
+                    uriImages, null, tvDbTokenProvider.GetToken(),
+                    requestedLanguageCode);
+
+                JObject a = (JObject)jsonEpisodeSearchResponse["data"];
+
+                foreach (KeyValuePair<string, JToken> imageType in a)
+                {
+                    if ((int)imageType.Value > 0) imageTypes.Add(imageType.Key);
+                }
+            }
+            catch (WebException ex)
+            {
+                //no images for chosen language
+                Logger.Warn(ex,
+                    $"No images found for {uriImages} in language {requestedLanguageCode}");
+            }
+
+            foreach (string imageType in imageTypes)
+            {
+                try
+                {
+                    JObject jsonImageResponse = HttpHelper.JsonHttpGetRequest(
+                        uriImagesQuery,
+                        new Dictionary<string, string> { { "keyType", imageType } }, tvDbTokenProvider.GetToken(),
+                        requestedLanguageCode);
+
+                    bannerResponses.Add(jsonImageResponse);
+                }
+                catch (WebException webEx)
+                {
+                    Logger.Info("Looking for " + imageType +
+                                " images (in local language), but none found for seriesId " + code);
+
+                    Logger.Info(webEx);
+                }
+            }
+
+            if (IsNotDefaultLanguage(requestedLanguageCode))
+            {
+                List<string> imageDefaultLangTypes = new List<string>();
+
+                try
+                {
+                    JObject jsonEpisodeSearchDefaultLangResponse = HttpHelper.JsonHttpGetRequest(
+                        uriImages, null, tvDbTokenProvider.GetToken(),
+                        DefaultLanguageCode);
+
+                    JObject adl = (JObject)jsonEpisodeSearchDefaultLangResponse["data"];
+
+                    foreach (KeyValuePair<string, JToken> imageType in adl)
+                    {
+                        if ((int)imageType.Value > 0) imageDefaultLangTypes.Add(imageType.Key);
+                    }
+                }
+                catch (WebException ex)
+                {
+                    Logger.Info("Looking for images, but none found for seriesId {0} in {1}", code,
+                        DefaultLanguageCode);
+
+                    Logger.Info(ex);
+
+                    //no images for chosen language
+                }
+
+                foreach (string imageType in imageDefaultLangTypes)
+                {
+                    try
+                    {
+                        JObject jsonImageDefaultLangResponse = HttpHelper.JsonHttpGetRequest(uriImagesQuery,
+                            new Dictionary<string, string> { { "keyType", imageType } }, tvDbTokenProvider.GetToken(),
+                            DefaultLanguageCode);
+
+                        bannerDefaultLangResponses.Add(jsonImageDefaultLangResponse);
+                    }
+                    catch (WebException webEx)
+                    {
+                        Logger.Info(webEx,
+                            "Looking for " + imageType + " images, but none found for seriesId " + code);
+                    }
+                }
+            }
+
+            foreach (JObject response in bannerResponses)
+            {
+                try
+                {
+                    foreach (JToken jToken in response["data"])
+                    {
+                        JObject bannerData = (JObject)jToken;
+                        Banner b = new Banner(si.TvdbCode, bannerData, GetLanguageId());
+                        lock (SERIES_LOCK)
+                        {
+                            if (!series.ContainsKey(b.SeriesId))
+                                throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
+
+                            SeriesInfo ser = series[b.SeriesId];
+                            ser.AddOrUpdateBanner(b);
+                        }
+                    }
+                }
+                catch (InvalidCastException ex)
+                {
+                    Logger.Error(ex, "Did not receive the expected format of json from {0}.", uriImagesQuery);
+                    Logger.Error(response["data"].ToString());
+                }
+            }
+
+            foreach (JObject response in bannerDefaultLangResponses)
+            {
+                try
+                {
+                    foreach (JToken jToken in response["data"])
+                    {
+                        JObject bannerData = (JObject)jToken;
+                        Banner b = new Banner(si.TvdbCode, bannerData, GetDefaultLanguageId());
+                        lock (SERIES_LOCK)
+                        {
+                            if (!series.ContainsKey(b.SeriesId))
+                                throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
+
+                            SeriesInfo ser = series[b.SeriesId];
+                            ser.AddOrUpdateBanner(b);
+                        }
+                    }
+                }
+                catch (InvalidCastException ex)
+                {
+                    Logger.Error(ex, "Did not receive the expected format of json from {0}.", uriImagesQuery);
+                    Logger.Error(response["data"].ToString());
+                }
+            }
+
+            series[si.TvdbCode].BannersLoaded = true;
         }
 
         private string GenerateMessage(int code, bool episodesToo, bool bannersToo)
