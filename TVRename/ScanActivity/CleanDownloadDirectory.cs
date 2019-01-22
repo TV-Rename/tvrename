@@ -26,7 +26,7 @@ namespace TVRename
             List<Item> returnActions =new List<Item>();
 
             int totalDownloadFolders = TVSettings.Instance.DownloadFolders.Count;
-            int c = 1;
+            int c = 0;
 
             foreach (string dirPath in TVSettings.Instance.DownloadFolders.ToList())
             {

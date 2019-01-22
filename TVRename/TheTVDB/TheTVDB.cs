@@ -1241,10 +1241,8 @@ namespace TVRename
                 }
                 catch (WebException webEx)
                 {
-                    Logger.Info("Looking for " + imageType +
-                                " images (in local language), but none found for seriesId " + code);
-
-                    Logger.Info(webEx);
+                    Logger.Info(webEx,
+                        $"Looking for {imageType} images (in local language), but none found for seriesId {code}");
                 }
             }
 
@@ -1267,11 +1265,7 @@ namespace TVRename
                 }
                 catch (WebException ex)
                 {
-                    Logger.Info("Looking for images, but none found for seriesId {0} in {1}", code,
-                        DefaultLanguageCode);
-
-                    Logger.Info(ex);
-
+                    Logger.Info(ex, $"Looking for images, but none found for seriesId {code} in {DefaultLanguageCode}");
                     //no images for chosen language
                 }
 
@@ -1288,7 +1282,7 @@ namespace TVRename
                     catch (WebException webEx)
                     {
                         Logger.Info(webEx,
-                            "Looking for " + imageType + " images, but none found for seriesId " + code);
+                            $"Looking for {imageType} images in {DefaultLanguageCode}, but none found for seriesId {code}");
                     }
                 }
             }
