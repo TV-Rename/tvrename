@@ -123,21 +123,22 @@ namespace TVRename
 
         public static int GetFilmLength(this FileInfo movieFile)
         {
-            string duration;
-            using (ShellObject shell = ShellObject.FromParsingName(movieFile.FullName))
-            {
-                // alternatively: shell.Properties.GetProperty("System.Media.Duration");
-                IShellProperty prop = shell.Properties.System.Media.Duration;
-                // Duration will be formatted as 00:44:08
-                duration = prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
-            }
-
-            if (string.IsNullOrWhiteSpace(duration)) return -1;
+            string duration =string.Empty;
             try
             {
-                return (3600 * int.Parse(duration.Split(':')[0]))
-                       + (60 * int.Parse(duration.Split(':')[1]))
-                       + int.Parse(duration.Split(':')[2]);
+                using (ShellObject shell = ShellObject.FromParsingName(movieFile.FullName))
+                {
+                    // alternatively: shell.Properties.GetProperty("System.Media.Duration");
+                    IShellProperty prop = shell.Properties.System.Media.Duration;
+                    // Duration will be formatted as 00:44:08
+                    duration = prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
+                }
+
+                if (string.IsNullOrWhiteSpace(duration)) return -1;
+
+                    return (3600 * int.Parse(duration.Split(':')[0]))
+                           + (60 * int.Parse(duration.Split(':')[1]))
+                           + int.Parse(duration.Split(':')[2]);
             }
             catch (FormatException)
             {

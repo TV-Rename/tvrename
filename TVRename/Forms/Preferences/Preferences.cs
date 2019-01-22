@@ -240,6 +240,7 @@ namespace TVRename
             s.ForceBulkAddToUseSettingsOnly = chkForceBulkAddToUseSettingsOnly.Checked;
             s.CopyFutureDatedEpsFromSearchFolders = cbCopyFutureDatedEps.Checked;
             s.ShareLogs = chkShareCriticalLogs.Checked;
+            s.PostpendThe = chkPostpendThe.Checked;
 
             s.SearchJSON = cbSearchJSON.Checked;
             s.SearchJSONManualScanOnly = cbSearchJSONManualScanOnly.Checked;
@@ -425,26 +426,27 @@ namespace TVRename
 
         private void LoadLanguage()
         {
-            TheTVDB.Instance.GetLock("Preferences-LoadLanguages");
             bool aborted = false;
-            try
+            lock (TheTVDB.LANGUAGE_LOCK)
             {
-                if (!TheTVDB.Instance.Connected)
+                try
                 {
-                    TheTVDB.Instance.Connect();
+                    if (!TheTVDB.Instance.Connected)
+                    {
+                        TheTVDB.Instance.Connect();
+                    }
+                }
+                catch (ThreadAbortException)
+                {
+                    aborted = true;
+                }
+                catch (Exception e)
+                {
+                    Logger.Fatal(e, "Unhandled Exception in LoadLanguages");
+                    aborted = true;
                 }
             }
-            catch (ThreadAbortException)
-            {
-                aborted = true;
-            }
-            catch (Exception e)
-            {
-                Logger.Fatal(e, "Unhandled Exception in LoadLanguages");
-                aborted = true;
-            }
 
-            TheTVDB.Instance.Unlock("Preferences-LoadLanguages");
             if (!aborted)
                 BeginInvoke(loadLanguageDone);
         }
@@ -456,24 +458,23 @@ namespace TVRename
 
         private void FillLanguageList()
         {
-            TheTVDB.Instance.GetLock("Preferences-FLL");
             cbLanguages.BeginUpdate();
             cbLanguages.Items.Clear();
 
             string pref = "";
-            foreach (Language l in TheTVDB.Instance.LanguageList)
+            lock(TheTVDB.LANGUAGE_LOCK)
             {
-                cbLanguages.Items.Add(l.Name);
+                foreach (Language l in TheTVDB.Instance.LanguageList)
+                {
+                    cbLanguages.Items.Add(l.Name);
 
-                if (enterPreferredLanguage == l.Abbreviation)
-                    pref = l.Name;
+                    if (enterPreferredLanguage == l.Abbreviation)
+                        pref = l.Name;
+                }
             }
-
             cbLanguages.EndUpdate();
             cbLanguages.Text = pref;
             cbLanguages.Enabled = true;
-
-            TheTVDB.Instance.Unlock("Preferences-FLL");
         }
 
         private void SetupReplacementsGrid()
@@ -724,6 +725,7 @@ namespace TVRename
             cbDeleteShowFromDisk.Checked = s.DeleteShowFromDisk;
             cbCopyFutureDatedEps.Checked = s.CopyFutureDatedEpsFromSearchFolders;
             chkShareCriticalLogs.Checked = s.ShareLogs;
+            chkPostpendThe.Checked = s.PostpendThe;
 
             cbMissing.Checked = s.MissingCheck;
             chkMoveLibraryFiles.Checked = s.MoveLibraryFiles;

@@ -119,7 +119,7 @@ namespace TVRename
             }
             catch (NullReferenceException nre)
             {
-                LOGGER.Error(nre,$"Null Reference in SAB - {r}");
+                LOGGER.Error(nre,$"Null Reference in SAB - {System.Text.Encoding.Default.GetString(r)}");
             }
         }
 
