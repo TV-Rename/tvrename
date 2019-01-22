@@ -35,14 +35,21 @@ namespace TVRename
                 if (flocs.ContainsKey(snum))
                     folders = flocs[snum];
 
-                if ((folders.Count == 0) && (!si.AutoAddNewSeasons()))
-                    continue; // no folders defined or found, autoadd off, so onto the next
+                //if ((folders.Count == 0) && (!si.AutoAddNewSeasons()))
+                    //continue; // no folders defined or found, autoadd off, so onto the next
 
-                if (folders.Count == 0)
+                if (folders.Count == 0 && si.AutoAddNewSeasons())
                 {
                     // no folders defined for this season, and autoadd didn't find any, so suggest the autoadd folder name instead
                     folders.Add(si.AutoFolderNameForSeason(snum));
                 }
+
+                if ((folders.Count == 0) && (!si.AutoAddNewSeasons()))
+                {
+                    // no folders defined for this season, and autoadd didn't find any, so suggest the autoadd folder name instead
+                    folders.Add(string.Empty);
+                }
+
 
                 CreateSeasonFolders(si, snum, folders);
             } // for each snum
