@@ -304,6 +304,7 @@ namespace TVRename
             this.cbForceLower = new System.Windows.Forms.CheckBox();
             this.cbIgnoreSamples = new System.Windows.Forms.CheckBox();
             this.tbGeneral = new System.Windows.Forms.TabPage();
+            this.chkShareCriticalLogs = new System.Windows.Forms.CheckBox();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.chkMoveLibraryFiles = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -333,7 +334,7 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
-            this.chkShareCriticalLogs = new System.Windows.Forms.CheckBox();
+            this.chkPostpendThe = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -654,6 +655,7 @@ namespace TVRename
             // 
             // tpDisplay
             // 
+            this.tpDisplay.Controls.Add(this.chkPostpendThe);
             this.tpDisplay.Controls.Add(this.groupBox11);
             this.tpDisplay.Controls.Add(this.label61);
             this.tpDisplay.Controls.Add(this.pbDisplay);
@@ -858,7 +860,7 @@ namespace TVRename
             // chkHideWtWSpoilers
             // 
             this.chkHideWtWSpoilers.AutoSize = true;
-            this.chkHideWtWSpoilers.Location = new System.Drawing.Point(10, 216);
+            this.chkHideWtWSpoilers.Location = new System.Drawing.Point(220, 193);
             this.chkHideWtWSpoilers.Name = "chkHideWtWSpoilers";
             this.chkHideWtWSpoilers.Size = new System.Drawing.Size(182, 17);
             this.chkHideWtWSpoilers.TabIndex = 35;
@@ -951,7 +953,7 @@ namespace TVRename
             // chkShowInTaskbar
             // 
             this.chkShowInTaskbar.AutoSize = true;
-            this.chkShowInTaskbar.Location = new System.Drawing.Point(170, 147);
+            this.chkShowInTaskbar.Location = new System.Drawing.Point(220, 147);
             this.chkShowInTaskbar.Name = "chkShowInTaskbar";
             this.chkShowInTaskbar.Size = new System.Drawing.Size(102, 17);
             this.chkShowInTaskbar.TabIndex = 31;
@@ -3340,6 +3342,16 @@ namespace TVRename
             this.tbGeneral.Text = "General";
             this.tbGeneral.UseVisualStyleBackColor = true;
             // 
+            // chkShareCriticalLogs
+            // 
+            this.chkShareCriticalLogs.AutoSize = true;
+            this.chkShareCriticalLogs.Location = new System.Drawing.Point(13, 212);
+            this.chkShareCriticalLogs.Name = "chkShareCriticalLogs";
+            this.chkShareCriticalLogs.Size = new System.Drawing.Size(207, 17);
+            this.chkShareCriticalLogs.TabIndex = 42;
+            this.chkShareCriticalLogs.Text = "Share critical Logs to help defeat bugs";
+            this.chkShareCriticalLogs.UseVisualStyleBackColor = true;
+            // 
             // groupBox17
             // 
             this.groupBox17.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -3679,15 +3691,15 @@ namespace TVRename
             this.tcTabs.TabIndex = 0;
             this.tcTabs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tpSearch_DrawItem);
             // 
-            // chkShareCriticalLogs
+            // chkPostpendThe
             // 
-            this.chkShareCriticalLogs.AutoSize = true;
-            this.chkShareCriticalLogs.Location = new System.Drawing.Point(13, 212);
-            this.chkShareCriticalLogs.Name = "chkShareCriticalLogs";
-            this.chkShareCriticalLogs.Size = new System.Drawing.Size(207, 17);
-            this.chkShareCriticalLogs.TabIndex = 42;
-            this.chkShareCriticalLogs.Text = "Share critical Logs to help defeat bugs";
-            this.chkShareCriticalLogs.UseVisualStyleBackColor = true;
+            this.chkPostpendThe.AutoSize = true;
+            this.chkPostpendThe.Location = new System.Drawing.Point(10, 216);
+            this.chkPostpendThe.Name = "chkPostpendThe";
+            this.chkPostpendThe.Size = new System.Drawing.Size(204, 17);
+            this.chkPostpendThe.TabIndex = 42;
+            this.chkPostpendThe.Text = "Move \'The\' to the end of show names";
+            this.chkPostpendThe.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -4091,5 +4103,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbCopyFutureDatedEps;
         private System.Windows.Forms.CheckBox chkMoveLibraryFiles;
         private System.Windows.Forms.CheckBox chkShareCriticalLogs;
+        private System.Windows.Forms.CheckBox chkPostpendThe;
     }
 }

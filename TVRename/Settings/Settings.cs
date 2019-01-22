@@ -243,6 +243,7 @@ namespace TVRename
 
         public string[] VideoExtensionsArray => Convert(VideoExtensionsString);
 
+        public bool PostpendThe = false;
         public bool ShareLogs = true;
         public bool CopyFutureDatedEpsFromSearchFolders = false;
         public bool ForceBulkAddToUseSettingsOnly = false;
@@ -453,6 +454,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "PriorityReplaceTerms", PriorityReplaceTerms);
             XmlHelper.WriteElementToXml(writer, "CopyFutureDatedEpsFromSearchFolders", CopyFutureDatedEpsFromSearchFolders);
             XmlHelper.WriteElementToXml(writer, "ShareLogs", ShareLogs);
+            XmlHelper.WriteElementToXml(writer, "PostpendThe", PostpendThe);
 
             TheSearchers.WriteXml(writer);
             writer.WriteStartElement("Replacements");
@@ -1097,6 +1099,7 @@ namespace TVRename
             ExportWTWRSS = xmlSettings.ExtractBool("ExportWTWRSS") ?? false;
             CopyFutureDatedEpsFromSearchFolders = xmlSettings.ExtractBool("CopyFutureDatedEpsFromSearchFolders") ?? false;
             ShareLogs = xmlSettings.ExtractBool("ShareLogs") ?? true;
+            PostpendThe = xmlSettings.ExtractBool("PostpendThe") ?? false;
 
             Tidyup.load(xmlSettings);
             RSSURLs = xmlSettings.Descendants("RSSURLs").FirstOrDefault()?.ReadStringsFromXml("URL");

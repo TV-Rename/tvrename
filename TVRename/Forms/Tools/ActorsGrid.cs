@@ -45,37 +45,38 @@ namespace TVRename
         private void BuildData()
         {
             // find actors that have been in more than one thing
-            // Dictionary<String^, List<String> ^> ^whoInWhat = gcnew Dictionary<String^, List<String> ^>;
-            TheTVDB.Instance.GetLock("Actors");
-            theData = new DataArr(mDoc.Library.Count);
-            foreach (ShowItem ser in mDoc.Library.Shows)
+            lock(TheTVDB.SERIES_LOCK)
             {
-                SeriesInfo si = TheTVDB.Instance.GetSeries(ser.TvdbCode);
-                foreach (Actor act in si.GetActors())
+                theData = new DataArr(mDoc.Library.Count);
+                foreach (ShowItem ser in mDoc.Library.Shows)
                 {
-                    string aa = act.ActorName.Trim();
-                    if (!string.IsNullOrEmpty(aa))
-                        theData.Set(si.Name, aa, true);
-                }
-
-                if (cbGuestStars.Checked)
-                {
-                    foreach (KeyValuePair<int, Season> kvp in si.AiredSeasons) //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
+                    SeriesInfo si = TheTVDB.Instance.GetSeries(ser.TvdbCode);
+                    foreach (Actor act in si.GetActors())
                     {
-                        foreach (Episode ep in kvp.Value.Episodes.Values)
+                        string aa = act.ActorName.Trim();
+                        if (!string.IsNullOrEmpty(aa))
+                            theData.Set(si.Name, aa, true);
+                    }
+
+                    if (cbGuestStars.Checked)
+                    {
+                        foreach (KeyValuePair<int, Season> kvp in si.AiredSeasons
+                        ) //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
                         {
-                            foreach (string g in ep.GuestStars)
+                            foreach (Episode ep in kvp.Value.Episodes.Values)
                             {
-                                string aa = g.Trim();
-                                if (!string.IsNullOrEmpty(aa))
-                                    theData.Set(si.Name, aa, false);
+                                foreach (string g in ep.GuestStars)
+                                {
+                                    string aa = g.Trim();
+                                    if (!string.IsNullOrEmpty(aa))
+                                        theData.Set(si.Name, aa, false);
+                                }
                             }
                         }
                     }
                 }
             }
 
-            TheTVDB.Instance.Unlock("Actors");
             theData.RemoveEmpties();
         }
 

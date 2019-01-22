@@ -97,26 +97,26 @@ namespace TVRename
             {
                 bool numeric = int.TryParse(what, out int matchnum);
 
-                if (!TheTVDB.Instance.GetLock("DoFind"))
-                    return;
-
-                foreach (KeyValuePair<int, SeriesInfo> kvp in TheTVDB.Instance.GetSeriesDict())
+                lock (TheTVDB.SERIES_LOCK)
                 {
-                    int num = kvp.Key;
-                    string show = kvp.Value.Name.RemoveDiacritics();
-                    string s = num + " " + show.RemoveDot(); 
-
-                    string simpleS = s.ToLower().CompareName();
-
-                    bool numberMatch = numeric && num == matchnum;
-                    string searchTerm = what.CompareName();
-
-                    if (numberMatch || (!numeric && (simpleS.Contains(searchTerm))) || (numeric && show.Contains(what)))
+                    foreach (KeyValuePair<int, SeriesInfo> kvp in TheTVDB.Instance.GetSeriesDict())
                     {
-                        lvMatches.Items.Add(NewLvi(kvp.Value, num, show, numberMatch));
+                        int num = kvp.Key;
+                        string show = kvp.Value.Name.RemoveDiacritics();
+                        string s = num + " " + show.RemoveDot();
+
+                        string simpleS = s.ToLower().CompareName();
+
+                        bool numberMatch = numeric && num == matchnum;
+                        string searchTerm = what.CompareName();
+
+                        if (numberMatch || (!numeric && (simpleS.Contains(searchTerm))) ||
+                            (numeric && show.Contains(what)))
+                        {
+                            lvMatches.Items.Add(NewLvi(kvp.Value, num, show, numberMatch));
+                        }
                     }
                 }
-                TheTVDB.Instance.Unlock("DoFind");
 
                 if ((lvMatches.Items.Count == 1) && numeric)
                     lvMatches.Items[0].Selected = true;

@@ -124,12 +124,10 @@ namespace TVRename
                 LOGGER.Info("****************");
                 LOGGER.Info("Auto Adding New Show");
 
-                TheTVDB.Instance.GetLock("AutoAddShow");
                 //popup dialog
                 AutoAddShow askForMatch = new AutoAddShow(refinedHint);
 
                 DialogResult dr = askForMatch.ShowDialog();
-                TheTVDB.Instance.Unlock("AutoAddShow");
                 if (dr == DialogResult.OK)
                 {
                     //If added add show to collection
@@ -150,8 +148,12 @@ namespace TVRename
 
             if (addedShows.Count <= 0) return;
 
-            MDoc.Library.AddRange(addedShows);
-            MDoc.ShowAddedOrEdited(true);
+            lock (TheTVDB.SERIES_LOCK)
+            {
+                MDoc.Library.AddRange(addedShows);
+                MDoc.ShowAddedOrEdited(true);
+            }
+
             LOGGER.Info("Added new shows called: {0}", string.Join(",", addedShows.Select(s => s.ShowName)));
 
             //add each new show into the shows being scanned

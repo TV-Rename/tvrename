@@ -42,11 +42,12 @@ namespace TVRename
 
         public static bool FindSeasEpDateCheck(FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem si)
         {
+            ep = -1;
+            seas = -1;
+            maxEp = -1;
+
             if (fi == null || si == null)
             {
-                seas = -1;
-                ep = -1;
-                maxEp = -1;
                 return false;
             }
 
@@ -54,22 +55,35 @@ namespace TVRename
             // check for YMD, DMY, and MDY
             // only check against airdates we expect for the given show
             SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
-            string[] dateFormats = new[] { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy", "MM-dd-yy" };
+
+            if (ser is null)
+            {
+                return false;
+            }
+
+            string[] dateFormats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy", "MM-dd-yy" };
             string filename = fi.Name;
+            if (filename is null)
+            {
+                return false;
+            }
             // force possible date separators to a dash
             filename = filename.Replace("/", "-");
             filename = filename.Replace(".", "-");
             filename = filename.Replace(",", "-");
             filename = filename.Replace(" ", "-");
 
-            ep = -1;
-            seas = -1;
-            maxEp = -1;
             Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DvdSeasons : ser.AiredSeasons;
+            if (seasonsToUse is null)
+            {
+                return false;
+            }
 
             foreach (KeyValuePair<int, Season> kvp in seasonsToUse)
             {
-                if (si.IgnoreSeasons.Contains(kvp.Value.SeasonNumber))
+                if (kvp.Value?.Episodes?.Values is null) continue;
+
+                if (!(si.IgnoreSeasons is null) && (si.IgnoreSeasons.Contains(kvp.Value.SeasonNumber)))
                     continue;
 
                 foreach (Episode epi in kvp.Value.Episodes.Values)
@@ -83,10 +97,12 @@ namespace TVRename
                     foreach (string dateFormat in dateFormats)
                     {
                         string datestr = dt.Value.ToString(dateFormat);
+
                         if (filename.Contains(datestr) && DateTime.TryParseExact(datestr, dateFormat,
                                 new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime dtInFilename))
                         {
                             TimeSpan timeAgo = DateTime.Now.Subtract(dtInFilename);
+
                             if (timeAgo < closestDate)
                             {
                                 seas = (si.DvdOrder ? epi.DvdSeasonNumber : epi.AiredSeasonNumber);

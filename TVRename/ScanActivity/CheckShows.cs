@@ -6,6 +6,7 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -45,10 +46,20 @@ namespace TVRename
                     return;
 
                 LOGGER.Info("Rename and missing check: " + si.ShowName);
-
-                new CheckAllFoldersExist(MDoc).CheckIfActive(si, dfc, settings);
-                new MergeLibraryEpisodes(MDoc).CheckIfActive(si, dfc, settings);
-                new RenameAndMissingCheck(MDoc).CheckIfActive(si, dfc, settings);
+                try
+                {
+                    new CheckAllFoldersExist(MDoc).CheckIfActive(si, dfc, settings);
+                    new MergeLibraryEpisodes(MDoc).CheckIfActive(si, dfc, settings);
+                    new RenameAndMissingCheck(MDoc).CheckIfActive(si, dfc, settings);
+                }
+                catch (TVRenameOperationInteruptedException ex)
+                {
+                    throw;
+                }
+                catch (Exception e)
+                {
+                    LOGGER.Error(e,$"Failed to scan {si.ShowName}. Please double check settings for this show: {si.TvdbCode}: {si.AutoAddFolderBase}");
+                }
             } // for each show
 
             MDoc.RemoveIgnored();

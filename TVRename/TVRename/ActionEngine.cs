@@ -66,6 +66,7 @@ namespace TVRename
 
                 actionSemaphores[info.SemaphoreNumber].Release(1);
             }
+            catch (ThreadAbortException) { }
             catch (Exception e)
             {
                 Logger.Fatal(e, "Unhandled Exception in Process Single Action");
@@ -208,14 +209,17 @@ namespace TVRename
                     WaitForAllActionThreadsAndTidyUp();
                 }
             }
+            catch (ThreadAbortException)
+            { }
             catch (Exception e)
             {
                 Logger.Fatal(e, "Unhandled Exception in ActionProcessor");
-                foreach (Thread t in actionWorkers)
-                    t.Abort();
-
-                WaitForAllActionThreadsAndTidyUp();
+                if (!(actionWorkers is null))
+                    foreach (Thread t in actionWorkers)
+                        t.Abort();
             }
+
+            WaitForAllActionThreadsAndTidyUp();
         }
 
         private void SetupQueues(ActionQueue[] queues)

@@ -6,17 +6,19 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Humanizer;
+using NLog;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
     public partial class ChooseFile : Form
     {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public enum ChooseFileDialogResult
         {
@@ -30,26 +32,12 @@ namespace TVRename
         public ChooseFile(FileInfo left, FileInfo right)
         {
             InitializeComponent();
-
+            
             leftFile = left;
-            txtNameLeft.Text = left.Name;
-            int leftFrameWidth = left.GetFrameWidth();
-            bool leftFrameUnknown = leftFrameWidth == -1;
-            txtDimensionsLeft.Text = "Dimensions: " + (leftFrameUnknown ? "Unknown" : leftFrameWidth + "x" + left.GetFrameHeight());
-            int leftFilmLength = left.GetFilmLength();
-            txtLengthLeft.Text = "Length: " + ((leftFilmLength == -1) ? "Unknown" : leftFilmLength.Seconds().Humanize(2));
-            txtSizeLeft.Text = GetFileSize(left);
-            txtPathLeft.Text = left.DirectoryName;
-
             rightFile = right;
-            lblNameRight.Text = right.Name;
-            int rightFrameWidth = right.GetFrameWidth();
-            bool rightFrameUnknown = rightFrameWidth == -1;
-            lblDimensionsRight.Text = "Dimensions: " + (rightFrameUnknown ? "Unknown" : rightFrameWidth + "x" + right.GetFrameHeight());
-            int rightFilmLength = right.GetFilmLength();
-            lblLengthRight.Text = "Length: " + ((rightFilmLength == -1) ? "Unknown" : rightFilmLength.Seconds().Humanize(2));
-            lblSizeRight.Text = GetFileSize(right);
-            txtPathRight.Text = right.DirectoryName;
+
+            (int leftFilmLength,bool leftFrameUnknown,int leftFrameWidth) = UpdateFields(left, txtNameLeft, txtDimensionsLeft, txtLengthLeft, txtSizeLeft, txtPathLeft);
+            (int rightFilmLength, bool rightFrameUnknown, int rightFrameWidth) = UpdateFields(right, lblNameRight, lblDimensionsRight, lblLengthRight, lblSizeRight, txtPathRight);
 
             SetBoldFileSize(left, right);
 
@@ -58,6 +46,30 @@ namespace TVRename
             if (rightFrameUnknown || leftFrameUnknown) return;
 
             SetBoldFrameWidth(leftFrameWidth, rightFrameWidth);
+        }
+
+        private static (int,bool,int) UpdateFields(FileInfo file, Label nameLabel, Label dimensionsLabel, Label lengthLabel, Label sizeLabel, Label pathLabel)
+        {
+            nameLabel.Text = file.Name;
+            int leftFrameWidth = file.GetFrameWidth();
+            bool leftFrameUnknown = leftFrameWidth == -1;
+            dimensionsLabel.Text = "Dimensions: " + (leftFrameUnknown ? "Unknown" : leftFrameWidth + "x" + file.GetFrameHeight());
+            int leftFilmLength = file.GetFilmLength();
+            try
+            {
+                lengthLabel.Text =
+                    "Length: " + ((leftFilmLength == -1) ? "Unknown" : leftFilmLength.Seconds().Humanize(2));
+            }
+            catch (ArgumentException) //bug in Humanizer causes this in Polish
+            {
+                lengthLabel.Text =
+                    "Length: " + ((leftFilmLength == -1) ? "Unknown" : leftFilmLength.Seconds() + " s");
+            }
+
+            sizeLabel.Text = GetFileSize(file);
+            pathLabel.Text = file.DirectoryName;
+
+            return (leftFrameWidth, leftFrameUnknown, leftFilmLength);
         }
 
         private static string GetFileSize(FileInfo file)
@@ -140,19 +152,19 @@ namespace TVRename
             Helpers.SysOpen(rightFile.DirectoryName);
         }
 
-        private void btnLeft_Click(object sender, System.EventArgs e)
+        private void btnLeft_Click(object sender, EventArgs e)
         {
             Answer = ChooseFileDialogResult.left;
             Close();
         }
 
-        private void Ignore_Click(object sender, System.EventArgs e)
+        private void Ignore_Click(object sender, EventArgs e)
         {
             Answer = ChooseFileDialogResult.ignore;
             Close();
         }
 
-        private void btnKeepRight_Click(object sender, System.EventArgs e)
+        private void btnKeepRight_Click(object sender, EventArgs e)
         {
             Answer = ChooseFileDialogResult.right;
             Close();

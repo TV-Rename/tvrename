@@ -407,7 +407,7 @@ namespace TVRename
             get
             {
                 if (UseCustomLanguage) return TheTVDB.Instance.LanguageList.GetLanguageFromCode(CustomLanguageCode);
-                return TheTVDB.Instance.PreferredLanuage;
+                return TheTVDB.Instance.PreferredLanguage;
             }
         }
 

@@ -187,7 +187,6 @@ namespace TVRename
                         // look at the official list of episodes, and look to see if we have any gaps
 
                         DateTime today = DateTime.Now;
-                        TheTVDB.Instance.GetLock("UpToDateCheck");
                         foreach (ProcessedEpisode dbep in eps)
                         {
                             if ((dbep.AppropriateEpNum > maxEpNumFound) || (localEps[dbep.AppropriateEpNum] == null)
@@ -247,8 +246,6 @@ namespace TVRename
                                 TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(dbep);
                             }
                         } // up to date check, for each episode in thetvdb
-
-                        TheTVDB.Instance.Unlock("UpToDateCheck");
                     } // if doing missing check
                 } // for each folder for this season of this show
             } // for each season of this show
