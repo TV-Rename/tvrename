@@ -335,6 +335,7 @@ namespace TVRename
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
             this.chkPostpendThe = new System.Windows.Forms.CheckBox();
+            this.cbShowCollections = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -3321,6 +3322,7 @@ namespace TVRename
             this.tbGeneral.Controls.Add(this.groupBox17);
             this.tbGeneral.Controls.Add(this.label60);
             this.tbGeneral.Controls.Add(this.pbGeneral);
+            this.tbGeneral.Controls.Add(this.cbShowCollections);
             this.tbGeneral.Controls.Add(this.label37);
             this.tbGeneral.Controls.Add(this.label38);
             this.tbGeneral.Controls.Add(this.tbPercentDirty);
@@ -3700,6 +3702,16 @@ namespace TVRename
             this.chkPostpendThe.TabIndex = 42;
             this.chkPostpendThe.Text = "Move \'The\' to the end of show names";
             this.chkPostpendThe.UseVisualStyleBackColor = true;
+            //
+            // cbShowCollections
+            // 
+            this.cbShowCollections.AutoSize = true;
+            this.cbShowCollections.Location = new System.Drawing.Point(14, 157);
+            this.cbShowCollections.Name = "cbShowCollections";
+            this.cbShowCollections.Size = new System.Drawing.Size(145, 17);
+            this.cbShowCollections.TabIndex = 24;
+            this.cbShowCollections.Text = "Multiple Show collections";
+            this.cbShowCollections.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -4104,5 +4116,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkMoveLibraryFiles;
         private System.Windows.Forms.CheckBox chkShareCriticalLogs;
         private System.Windows.Forms.CheckBox chkPostpendThe;
+        private System.Windows.Forms.CheckBox cbShowCollections;
     }
 }
