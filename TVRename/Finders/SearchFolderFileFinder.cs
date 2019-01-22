@@ -20,7 +20,7 @@ namespace TVRename
             int fileCount = CountFilesInDownloadDirs();
 
             DirCache dirCache = new DirCache();
-            foreach (string s in TVSettings.Instance.DownloadFolders)
+            foreach (string s in TVSettings.Instance.DownloadFolders.ToList())
             {
                 if (settings.Token.IsCancellationRequested)
                     return;
