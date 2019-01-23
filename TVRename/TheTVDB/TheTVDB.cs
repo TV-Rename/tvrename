@@ -882,7 +882,7 @@ namespace TVRename
                 }
                 catch (WebException ex)
                 {
-                    if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse resp &&
+                    if (ex.Status == WebExceptionStatus.ProtocolError && !(ex.Response is null) && ex.Response is HttpWebResponse resp &&
                         resp.StatusCode == HttpStatusCode.NotFound)
                     {
                         Logger.Warn($"Show with Id {id} is no longer available from TVDB (got a 404). Error obtaining page { pageNumber} of { episodeUri} in lang {lang} using url { ex.Response.ResponseUri.AbsoluteUri}");
@@ -893,7 +893,7 @@ namespace TVRename
                         }
                     }
 
-                    Logger.Error(ex, $"Error obtaining {ex.Response.ResponseUri}");
+                    Logger.Error(ex, $"Error obtaining {episodeUri}");
                     return null;
                 }
                 catch (IOException ex)
@@ -1369,7 +1369,7 @@ namespace TVRename
             {
                 //we expect an Unauthorised response - so we know the site is up
 
-                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse resp)
+                if (ex.Status == WebExceptionStatus.ProtocolError && !(ex.Response is null) && ex.Response is HttpWebResponse resp)
                 {
                     switch (resp.StatusCode)
                     {
@@ -1728,7 +1728,7 @@ namespace TVRename
             {
                 if (ex.Response is null) //probably a timeout
                 {
-                    Logger.Error($"Error obtaining {ex.Response.ResponseUri} for search term '{text}': {ex.Message}");
+                    Logger.Error($"Error obtaining {uri} for search term '{text}': {ex.Message}");
                     LastError = ex.Message;
                     Say("");
                 }
