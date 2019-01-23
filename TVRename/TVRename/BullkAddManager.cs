@@ -161,7 +161,7 @@ namespace TVRename
             }
 
             // assume last folder element is the show name
-            showName = showName.Substring(showName.LastIndexOf(System.IO.Path.DirectorySeparatorChar.ToString(),
+            showName = showName.Substring(showName.LastIndexOf(Path.DirectorySeparatorChar.ToString(),
                                               StringComparison.Ordinal) + 1);
 
             return showName;
@@ -285,7 +285,7 @@ namespace TVRename
 
         private static bool HasFilmFiles(DirectoryInfo directory)
         {
-            return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
+            return directory.GetFiles("*", SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
         }
 
         private void CheckFolderForShows(DirectoryInfo di, CancellationToken token,bool fullLogging)

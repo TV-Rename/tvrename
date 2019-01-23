@@ -2142,13 +2142,15 @@ namespace TVRename
                 {
                     mDoc.Library.Add(si);
 
-                    ShowAddedOrEdited(true);
+                    ShowAddedOrEdited(false);
                     SelectShow(si);
 
                     Logger.Info("Added new show called {0}", si.ShowName);
                 }
                 else Logger.Info("Cancelled adding new show");
             }
+
+            ShowAddedOrEdited(true);
 
             LessBusy();
             mDoc.AllowAutoScan();
