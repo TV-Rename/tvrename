@@ -22,7 +22,6 @@ namespace TVRename
                 LOGGER.Trace("Skipped (Disabled) Output File to: {0}", Location());
                 return;
             }
-
             if (string.IsNullOrWhiteSpace(Location()))
             {
                 LOGGER.Warn("Please open settings and ensure filenames are provided for each exporter you have enabled");
@@ -34,11 +33,10 @@ namespace TVRename
                 return;
             }
 
-            //Create the directory if needed
-            Directory.CreateDirectory(Path.GetDirectoryName(Location()) ?? string.Empty);
-
             try
             {
+                //Create the directory if needed
+                Directory.CreateDirectory(Path.GetDirectoryName(Location()) ?? string.Empty);
                 Do();
                 LOGGER.Info("Output File to: {0}", Location());
             }
