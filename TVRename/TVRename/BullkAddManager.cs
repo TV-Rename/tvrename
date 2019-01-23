@@ -8,11 +8,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
-using Alphaleonis.Win32.Filesystem;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
@@ -82,14 +84,29 @@ namespace TVRename
             List<string> possibleFilenames = new List<string> {"series.xml", "tvshow.nfo"};
             foreach (string fileName in possibleFilenames)
             {
-                IEnumerable<FileInfo> files = ai.Folder.EnumerateFiles(fileName).ToList();
-                if (files.Any())
+                try
                 {
-                    foreach (FileInfo file in files)
+                    IEnumerable<FileInfo> files = ai.Folder.EnumerateFiles(fileName).ToList();
+                    if (files.Any())
                     {
-                        int x = FindShowCode(file);
-                        if (x != -1) return x;
+                        foreach (FileInfo file in files)
+                        {
+                            int x = FindShowCode(file);
+                            if (x != -1) return x;
+                        }
                     }
+                }
+                catch (DirectoryNotFoundException e)
+                {
+                    Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.Message}");
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.Message}");
+                }
+                catch (NotSupportedException e)
+                {
+                    Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.Message}");
                 }
             }
             //Can't find it
@@ -98,17 +115,25 @@ namespace TVRename
 
         private static int FindShowCode(FileInfo file)
         {
-            using (XmlReader reader = XmlReader.Create(file.OpenText()))
+            try
             {
-                while (reader.Read())
+                using (XmlReader reader = XmlReader.Create(file.OpenText()))
                 {
-                    if ((reader.Name == "tvdbid") && reader.IsStartElement())
+                    while (reader.Read())
                     {
-                        int x = reader.ReadElementContentAsInt();
-                        if (x != -1) return x;
+                        if ((reader.Name == "tvdbid") && reader.IsStartElement())
+                        {
+                            int x = reader.ReadElementContentAsInt();
+                            if (x != -1) return x;
+                        }
                     }
                 }
             }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
+
             return -1;
         }
 
@@ -136,7 +161,7 @@ namespace TVRename
             }
 
             // assume last folder element is the show name
-            showName = showName.Substring(showName.LastIndexOf(System.IO.Path.DirectorySeparatorChar.ToString(),
+            showName = showName.Substring(showName.LastIndexOf(Path.DirectorySeparatorChar.ToString(),
                                               StringComparison.Ordinal) + 1);
 
             return showName;
@@ -260,7 +285,7 @@ namespace TVRename
 
         private static bool HasFilmFiles(DirectoryInfo directory)
         {
-            return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
+            return directory.GetFiles("*", SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
         }
 
         private void CheckFolderForShows(DirectoryInfo di, CancellationToken token,bool fullLogging)
