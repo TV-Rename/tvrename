@@ -322,10 +322,10 @@ namespace TVRename
             {
                 foreach (KeyValuePair<int, SeriesInfo> kvp in series.ToList())
                 {
-                    foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
+                    foreach (KeyValuePair<int, Season> kvp2 in kvp.Value?.AiredSeasons??new Dictionary<int, Season>())
                         //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
                     {
-                        if (kvp2.Value.Episodes.ContainsKey(id))
+                        if (kvp2.Value?.Episodes?.ContainsKey(id)??false)
                         {
                             return kvp2.Value.Episodes[id];
                         }
