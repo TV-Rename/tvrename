@@ -227,12 +227,14 @@ namespace TVRename
             selectedShow.AutoAddCustomFolderFormat = txtSeasonFormat.Text;
             selectedShow.AutoAddFolderBase = txtBaseFolder.Text;
 
-            if (rdoFolderCustom.Checked)
-                selectedShow.AutoAddType = ShowItem.AutomaticFolderType.custom;
-            else if (rdoFolderBaseOnly.Checked)
-                selectedShow.AutoAddType = ShowItem.AutomaticFolderType.baseOnly;
-            else if (rdoFolderLibraryDefault.Checked)
-                selectedShow.AutoAddType = ShowItem.AutomaticFolderType.libraryDefault;
+            if (chkAutoFolders.Checked){
+                if (rdoFolderCustom.Checked)
+                    selectedShow.AutoAddType = ShowItem.AutomaticFolderType.custom;
+                else if (rdoFolderBaseOnly.Checked)
+                    selectedShow.AutoAddType = ShowItem.AutomaticFolderType.baseOnly;
+                else if (rdoFolderLibraryDefault.Checked)
+                    selectedShow.AutoAddType = ShowItem.AutomaticFolderType.libraryDefault;
+            }
             else
                 selectedShow.AutoAddType = ShowItem.AutomaticFolderType.none;
 

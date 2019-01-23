@@ -157,7 +157,8 @@ namespace TVRename
 
                 if (ser == null)
                 {
-                    return false; // TODO: warn user
+                    Logger.Error($"Asked to generate episodes for  {si.ShowName}, but this has not yet been downloaded from TVDB {Environment.StackTrace}");
+                    return false;
                 }
 
                 Dictionary<int, Season> seasonsToUse = si.DvdOrder

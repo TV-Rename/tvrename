@@ -158,6 +158,11 @@ namespace TVRename
                 Logger.Warn($"Unable to find file as part of GetFilmLength for {movieFile.FullName}");
                 return -1;
             }
+            catch (ShellException)
+            {
+                Logger.Warn($"Unable to use shell to access file as part of GetFilmLength for {movieFile.FullName}");
+                return -1;
+            }
         }
 
         public static bool FileExistsCaseSensitive(string filename)

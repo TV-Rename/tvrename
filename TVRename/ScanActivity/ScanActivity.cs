@@ -45,7 +45,7 @@ namespace TVRename
                 DoCheck(prog, showList, settings);
                 LogActionListSummary();
             }
-            catch(TVRenameOperationInteruptedException ex)
+            catch(TVRenameOperationInteruptedException)
             {
                 throw;
             }
