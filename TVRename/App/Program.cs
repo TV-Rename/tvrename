@@ -31,6 +31,8 @@ namespace TVRename.App
         private static void Main(string[] args)
         {
             Logger.Info($"TV Rename {Helpers.DisplayVersion} started with args: {string.Join(" ", args)}");
+            Logger.Info($"Copyright (C) {DateTime.Now.Year} TV Rename");
+            Logger.Info("This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions");
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

@@ -21,6 +21,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using TVRename.Forms;
+using TVRename.Forms.Utilities;
 using TVRename.Ipc;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using File = Alphaleonis.Win32.Filesystem.File;
@@ -3409,6 +3410,12 @@ namespace TVRename
             logToolStripMenuItem_Click(sender, e);
 
             Beta.LogShowEpisodeSizes(mDoc);
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LicenceInfoForm form = new LicenceInfoForm();
+            form.ShowDialog();
         }
     }
 }
