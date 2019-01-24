@@ -101,7 +101,7 @@ namespace TVRename
 
         private void ValidateFilePath(TextBox validationField,TabPage errorPage)
         {
-            if (TVSettings.OKExporterLocation(validationField.Text)) return;
+            if (TVSettings.OKPath(validationField.Text)) return;
 
             MessageBox.Show(
                 "Please check that the proposed location/path is a valid one and has no invalid characters",
