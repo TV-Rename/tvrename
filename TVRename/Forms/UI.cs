@@ -3347,16 +3347,18 @@ namespace TVRename
             //Show Log Pane
             logToolStripMenuItem_Click(sender,e);
 
-            TimeZoneTracker results = new TimeZoneTracker();
-            foreach (ShowItem si in mDoc.Library.GetShowItems())
-            {
-                SeriesInfo ser = si.TheSeries();
+            Task.Run(() => {
+                TimeZoneTracker results = new TimeZoneTracker();
+                foreach (ShowItem si in mDoc.Library.GetShowItems())
+                {
+                    SeriesInfo ser = si.TheSeries();
 
-                //si.ShowTimeZone = TimeZone.TimeZoneForNetwork(ser.getNetwork());
+                    //si.ShowTimeZone = TimeZone.TimeZoneForNetwork(ser.getNetwork());
 
-                results.Add(ser.Network, si.ShowTimeZone, si.ShowName);
-            }
-            Logger.Info(results.PrintVersion());
+                    results.Add(ser.Network, si.ShowTimeZone, si.ShowName);
+                }
+                Logger.Info(results.PrintVersion());
+            });
         }
 
         private class TimeZoneTracker
@@ -3409,7 +3411,9 @@ namespace TVRename
             //Show Log Pane
             logToolStripMenuItem_Click(sender, e);
 
-            Beta.LogShowEpisodeSizes(mDoc);
+            Task.Run(() => {
+                Beta.LogShowEpisodeSizes(mDoc);
+            });
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
