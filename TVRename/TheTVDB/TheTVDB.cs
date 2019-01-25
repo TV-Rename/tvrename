@@ -1059,6 +1059,11 @@ namespace TVRename
 
         private SeriesInfo DownloadSeriesNow(int code, bool episodesToo, bool bannersToo, bool useCustomLangCode, string langCode)
         {
+            if (code == 0)
+            {
+                Say("");
+                return null;
+            }
             bool forceReload = DoWeForceReloadFor(code);
 
             Say(GenerateMessage(code, episodesToo, bannersToo));
@@ -1491,6 +1496,13 @@ namespace TVRename
 
         private bool DownloadEpisodeNow(int seriesId, int episodeId, bool dvdOrder = false)
         {
+            if (episodeId == 0)
+            {
+                Logger.Warn($"Asked to download episodeId = 0 for series {seriesId}");
+                Say("");
+                return true;
+            }
+
             string requestLangCode;
             if (series.ContainsKey(seriesId))
             {
@@ -1556,6 +1568,12 @@ namespace TVRename
         private bool ProcessEpisode(int seriesId,int episodeId, JToken prefLangEpisodeData, JToken defLangEpisodeData,
             bool dvdOrder = false)
         {
+            if (episodeId == 0)
+            {
+                Logger.Warn($"Asked to download episodeId = 0 for series {seriesId}");
+                Say("");
+                return true;
+            }
             if (prefLangEpisodeData == null) return ProcessEpisode(seriesId, defLangEpisodeData, dvdOrder);
             if (defLangEpisodeData == null) return ProcessEpisode(seriesId, prefLangEpisodeData, dvdOrder);
 
@@ -1593,6 +1611,13 @@ namespace TVRename
             if (series.ContainsKey(seriesId))
             {
                 int episodeId = (int)episodeData["id"];
+
+                if (episodeId == 0)
+                {
+                    Logger.Warn($"Asked to download episodeId = 0 for series {seriesId}");
+                    Say("");
+                    return true;
+                }
 
                 Episode ep = FindEpisodeById(episodeId);
                 string eptxt = EpisodeDescription(dvdOrder, episodeId, ep);
