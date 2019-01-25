@@ -180,6 +180,8 @@ namespace TVRename.App
             LogManager.Configuration = config;
 
             Logger.Info($"TV Rename {Helpers.DisplayVersion} logging started with args: {string.Join(" ", CommandLineArgs)}");
+            Logger.Info($"Copyright (C) {DateTime.Now.Year} TV Rename");
+            Logger.Info("This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions");
         }
     }
 }

@@ -568,7 +568,7 @@ namespace TVRename
                             Math.Max(maxUpdateTime,
                                 srvTime)); // just in case the new update time is no better than the prior one
 
-                    Logger.Info("Obtianed " + numberOfResponses + " responses from lastupdated query #" +
+                    Logger.Info("Obtained " + numberOfResponses + " responses from lastupdated query #" +
                                 numberofCallsMade + " - since (local) " +
                                 Helpers.FromUnixTime(epochTime).ToLocalTime() + " - to (local) " +
                                 Helpers.FromUnixTime(newSrvTime).ToLocalTime());
@@ -1706,7 +1706,13 @@ namespace TVRename
             try
             {
                 if (isNumber)
-                    DownloadSeriesNow(int.Parse(text), false, false, false, TVSettings.Instance.PreferredLanguageCode);
+                {
+                    if (int.TryParse(text,out int textAsInt))
+                    {
+                        DownloadSeriesNow(textAsInt, false, false, false,
+                            TVSettings.Instance.PreferredLanguageCode);
+                    }
+                }
             }
             catch (ShowNotFoundException)
             {

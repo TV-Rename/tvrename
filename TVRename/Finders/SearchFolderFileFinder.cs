@@ -75,7 +75,7 @@ namespace TVRename
         private static int CountFilesInDownloadDirs()
         {
             int fileCount = 0;
-            foreach (string s in TVSettings.Instance.DownloadFolders)
+            foreach (string s in TVSettings.Instance.DownloadFolders.ToArray())
                 fileCount += DirCache.CountFiles(s, true);
             return fileCount;
         }

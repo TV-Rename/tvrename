@@ -40,7 +40,7 @@ namespace TVRename
                 return;
             }
 
-            //Dont support unattended mode
+            //Don't support unattended mode
             if (settings.Unattended)
             {
                 LOGGER.Info("Not looking for new shows as app is unattended");
@@ -49,7 +49,7 @@ namespace TVRename
 
             List<string> possibleShowNames = new List<string>();
 
-            foreach (string dirPath in TVSettings.Instance.DownloadFolders)
+            foreach (string dirPath in TVSettings.Instance.DownloadFolders.ToArray())
             {
                 LOGGER.Info("Parsing {0} for new shows", dirPath);
                 if (!Directory.Exists(dirPath)) continue;

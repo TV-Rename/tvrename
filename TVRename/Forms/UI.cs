@@ -21,6 +21,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using TVRename.Forms;
+using TVRename.Forms.Utilities;
 using TVRename.Ipc;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using File = Alphaleonis.Win32.Filesystem.File;
@@ -2134,21 +2135,21 @@ namespace TVRename
             mDoc.PreventAutoScan("Add Show");
             ShowItem si = new ShowItem();
 
-            lock (TheTVDB.SERIES_LOCK)
-            {
                 AddEditShow aes = new AddEditShow(si);
                 DialogResult dr = aes.ShowDialog();
                 if (dr == DialogResult.OK)
                 {
+                    lock (TheTVDB.SERIES_LOCK)
+                    {
                     mDoc.Library.Add(si);
+                    }
 
-                    ShowAddedOrEdited(false);
+                ShowAddedOrEdited(false);
                     SelectShow(si);
 
                     Logger.Info("Added new show called {0}", si.ShowName);
                 }
                 else Logger.Info("Cancelled adding new show");
-            }
 
             ShowAddedOrEdited(true);
 
@@ -3346,16 +3347,18 @@ namespace TVRename
             //Show Log Pane
             logToolStripMenuItem_Click(sender,e);
 
-            TimeZoneTracker results = new TimeZoneTracker();
-            foreach (ShowItem si in mDoc.Library.GetShowItems())
-            {
-                SeriesInfo ser = si.TheSeries();
+            Task.Run(() => {
+                TimeZoneTracker results = new TimeZoneTracker();
+                foreach (ShowItem si in mDoc.Library.GetShowItems())
+                {
+                    SeriesInfo ser = si.TheSeries();
 
-                //si.ShowTimeZone = TimeZone.TimeZoneForNetwork(ser.getNetwork());
+                    //si.ShowTimeZone = TimeZone.TimeZoneForNetwork(ser.getNetwork());
 
-                results.Add(ser.Network, si.ShowTimeZone, si.ShowName);
-            }
-            Logger.Info(results.PrintVersion());
+                    results.Add(ser.Network, si.ShowTimeZone, si.ShowName);
+                }
+                Logger.Info(results.PrintVersion());
+            });
         }
 
         private class TimeZoneTracker
@@ -3408,7 +3411,15 @@ namespace TVRename
             //Show Log Pane
             logToolStripMenuItem_Click(sender, e);
 
-            Beta.LogShowEpisodeSizes(mDoc);
+            Task.Run(() => {
+                Beta.LogShowEpisodeSizes(mDoc);
+            });
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LicenceInfoForm form = new LicenceInfoForm();
+            form.ShowDialog();
         }
     }
 }

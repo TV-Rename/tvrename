@@ -548,7 +548,7 @@ namespace TVRename
             string[] t = s.Split(';');
             foreach (string s2 in t)
             {
-                if ((string.IsNullOrEmpty(s2)) || (!s2.StartsWith(".")))
+                if ((string.IsNullOrEmpty(s2)) || (!s2.StartsWith(".")) || s2.ContainsAnyCharctersFrom(CompulsoryReplacements()) || s2.ContainsAnyCharctersFrom(Path.GetInvalidFileNameChars()))
                     return false;
             }
 
@@ -566,7 +566,21 @@ namespace TVRename
 
             if (s.ContainsAnyCharctersFrom(CompulsoryReplacements())) return false;
 
-            if (s.ContainsAnyCharctersFrom(InvalidPathChars)) return false;
+            if (s.ContainsAnyCharctersFrom(Path.GetInvalidPathChars())) return false;
+
+            return true;
+        }
+
+        public static bool OKPath(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+                return false;
+
+            if (s.StartsWith("http://")) return false;
+            if (s.StartsWith("https://")) return false;
+            if (s.StartsWith("ftp://")) return false;
+
+            if (s.ContainsAnyCharctersFrom(Path.GetInvalidPathChars())) return false;
 
             return true;
         }
@@ -575,15 +589,6 @@ namespace TVRename
         {
             return "*?<>:/\\|\""; // invalid filename characters, must be in the list!
         }
-
-        internal static readonly char[] InvalidPathChars =
-        {
-            '\"', '<', '>', '|', '\0',
-            (char)1, (char)2, (char)3, (char)4, (char)5, (char)6, (char)7, (char)8, (char)9, (char)10,
-            (char)11, (char)12, (char)13, (char)14, (char)15, (char)16, (char)17, (char)18, (char)19, (char)20,
-            (char)21, (char)22, (char)23, (char)24, (char)25, (char)26, (char)27, (char)28, (char)29, (char)30,
-            (char)31
-        };
 
         public static List<FilenameProcessorRE> DefaultFNPList()
         {

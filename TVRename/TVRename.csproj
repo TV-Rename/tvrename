@@ -163,7 +163,7 @@
     <Compile Include="Finders\RSSItem.cs" />
     <Compile Include="Finders\RSSItemList.cs" />
     <Compile Include="Finders\SearchFolderFileFinder.cs" />
-    <Compile Include="Finders\TorrentFinder.cs" />
+    <Compile Include="Finders\DownloadingFinder.cs" />
     <Compile Include="Forms\ShowPreferences\AutoAddShow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -194,6 +194,12 @@
     </Compile>
     <Compile Include="Forms\Supporting\UpdateNotification.Designer.cs">
       <DependentUpon>UpdateNotification.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Utilities\LicenceInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Utilities\LicenceInfo.Designer.cs">
+      <DependentUpon>LicenceInfo.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Utilities\LogViewer.cs">
       <SubType>Form</SubType>
@@ -307,7 +313,6 @@
     <Compile Include="Utility\NativeMethods.cs" />
     <Compile Include="Utility\DownloadInformation.cs" />
     <Compile Include="Utility\Sorters\NumberAsTextSorter.cs" />
-    <Compile Include="Utility\SAB\NewDataSet.cs" />
     <Compile Include="Utility\PossibleDuplicateEpisode.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
     <Compile Include="Forms\Tools\ActorsGrid.cs">
@@ -462,10 +467,8 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utility\SAB\QueueCategories.cs" />
     <Compile Include="Utility\SAB\QueueSlotsSlot.cs" />
     <Compile Include="Utility\Helper\RegistryHelper.cs" />
-    <Compile Include="Utility\SAB\Result.cs" />
     <Compile Include="Utility\SetProgressDelegate.cs" />
     <Compile Include="Utility\Helper\StringExtensions.cs" />
     <Compile Include="Utility\Helper\TimeZoneHelper.cs" />
@@ -576,6 +579,9 @@
     <EmbeddedResource Include="Forms\Supporting\TVRenameSplash.resx">
       <DependentUpon>TVRenameSplash.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Utilities\LicenceInfo.resx">
+      <DependentUpon>LicenceInfo.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Utilities\LogViewer.resx">
       <DependentUpon>LogViewer.cs</DependentUpon>
     </EmbeddedResource>
@@ -634,7 +640,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Settings\ShowRule.cs" />
-    <Compile Include="Utility\SAB\Queue.cs" />
     <Compile Include="Utility\Sorters\TextSorter.cs" />
     <Compile Include="Settings\Statistics.cs" />
     <Compile Include="Forms\Utilities\StatsWindow.cs">

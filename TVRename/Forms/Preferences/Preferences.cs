@@ -86,12 +86,39 @@ namespace TVRename
 
         private void ValidateForm()
         {
+            ValidateFileExtensions();
+            ValidateExporterLocations();
+            ValidateFilePaths();
+        }
+
+        private void ValidateFilePaths()
+        {
+            ValidateFilePath(txtSpecialsFolderName,tpLibraryFolders);
+            ValidateFilePath(txtSeasonFolderName, tpLibraryFolders);
+            ValidateFilePath(txtUTResumeDatPath, tbuTorrentNZB);
+            ValidateFilePath(txtRSSuTorrentPath, tbuTorrentNZB);
+        }
+
+        private void ValidateFilePath(TextBox validationField,TabPage errorPage)
+        {
+            if (TVSettings.OKPath(validationField.Text)) return;
+
+            MessageBox.Show(
+                "Please check that the proposed location/path is a valid one and has no invalid characters",
+                "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            tcTabs.SelectedTab = errorPage;
+            validationField.Focus();
+            throw new FailedValidationException();
+        }
+
+        private void ValidateFileExtensions()
+        {
             ValidateExtensions(txtEmptyIgnoreExtensions, tbFolderDeleting);
             ValidateExtensions(txtVideoExtensions, tbFilesAndFolders);
             ValidateExtensions(txtSubtitleExtensions, tbFilesAndFolders);
             ValidateExtensions(txtOtherExtensions, tbFilesAndFolders);
             ValidateExtensions(txtKeepTogether, tbFilesAndFolders);
-            ValidateExporterLocations();
         }
 
         private void ValidateExporterLocations()
