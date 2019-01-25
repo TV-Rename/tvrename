@@ -203,6 +203,17 @@ namespace TVRename
 
                 return false;
             }
+            if (chkAutoFolders.Checked && !TVSettings.OKPath(txtBaseFolder.Text))
+            {
+                MessageBox.Show("Please check the base folder is a valid one and has no invalid characters"
+                    , "TVRename Add/Edit Show",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                Folders.SelectedTab = tabPage5;
+                txtBaseFolder.Focus();
+
+                return false;
+            }
             return true;
         }
 
