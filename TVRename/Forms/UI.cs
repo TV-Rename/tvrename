@@ -2135,21 +2135,21 @@ namespace TVRename
             mDoc.PreventAutoScan("Add Show");
             ShowItem si = new ShowItem();
 
-            lock (TheTVDB.SERIES_LOCK)
-            {
                 AddEditShow aes = new AddEditShow(si);
                 DialogResult dr = aes.ShowDialog();
                 if (dr == DialogResult.OK)
                 {
+                    lock (TheTVDB.SERIES_LOCK)
+                    {
                     mDoc.Library.Add(si);
+                    }
 
-                    ShowAddedOrEdited(false);
+                ShowAddedOrEdited(false);
                     SelectShow(si);
 
                     Logger.Info("Added new show called {0}", si.ShowName);
                 }
                 else Logger.Info("Cancelled adding new show");
-            }
 
             ShowAddedOrEdited(true);
 

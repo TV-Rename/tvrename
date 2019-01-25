@@ -157,7 +157,7 @@ namespace TVRename
 
                 if (ser == null)
                 {
-                    Logger.Warn($"Asked to generate episodes for  {si.ShowName}, but this has not yet been downloaded from TVDB");
+                    Logger.Warn($"Asked to generate episodes for {si.ShowName}, but this has not yet been downloaded from TVDB");
                     return false;
                 }
 
