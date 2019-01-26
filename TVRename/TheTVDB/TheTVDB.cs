@@ -1011,6 +1011,10 @@ namespace TVRename
                         {
                             AddOrUpdateEpisode(e);
                         }
+                        else
+                        {
+                            Logger.Error($"problem with XML recieved {episodeXml}");
+                        }
                     }
 
                     foreach (XElement banners in x.Descendants("BannersCache"))
@@ -1327,7 +1331,7 @@ namespace TVRename
                         lock (SERIES_LOCK)
                         {
                             if (!series.ContainsKey(b.SeriesId))
-                                throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
+                                throw new TVDBException($"Can't find the series to add the banner to (TheTVDB). Bannner.SeriesId = {b.SeriesId}, series = {si.Name} ({si.SeriesId}), code = {code}");
 
                             SeriesInfo ser = series[b.SeriesId];
                             ser.AddOrUpdateBanner(b);
@@ -1553,6 +1557,10 @@ namespace TVRename
                 {
                     AddOrUpdateEpisode(e);
                 }
+                else
+                {
+                    Logger.Error($"problem with JSON recieved {jsonResponseData}");
+                }
             }
             catch (TVDBException e)
             {
@@ -1594,6 +1602,10 @@ namespace TVRename
                 {
                     AddOrUpdateEpisode(e);
                 }
+                else
+                {
+                    Logger.Error($"problem with JSON recieved {prefLangEpisodeData},{defLangEpisodeData}");
+                }
             }
             catch (TVDBException e)
             {
@@ -1634,6 +1646,10 @@ namespace TVRename
                 if (e.Ok())
                 {
                     AddOrUpdateEpisode(e);
+                }
+                else
+                {
+                    Logger.Error($"Problem Processing episode data: {episodeData}");
                 }
             }
             catch (TVDBException e)

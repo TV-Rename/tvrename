@@ -209,13 +209,15 @@ namespace TVRename
             {
                 EpisodeId = (int) r["id"];
 
+                if(EpisodeId==0) return;
+
                 if ((string) r["airedSeasonID"] != null)
                 {
                     SeasonId = (int) r["airedSeasonID"];
                 }
                 else
                 {
-                    Logger.Error("Issue with episode " + EpisodeId + " for series " + seriesId + " no airedSeasonID ");
+                    Logger.Error("Issue with episode (loadJSON) " + EpisodeId + " for series " + seriesId + " no airedSeasonID ");
                     Logger.Error(r.ToString());
                 }
 
@@ -325,7 +327,7 @@ namespace TVRename
 
             if (!returnVal)
             {
-                Logger.Warn("Issue with episode " + EpisodeId + " for series " + SeriesId + " for EpNum " + AiredEpNum +
+                Logger.Error("Issue with episode " + EpisodeId + " for series " + SeriesId + " for EpNum " + AiredEpNum +
                             " for SeasonID " + SeasonId + " for ReadSeasonNum " + ReadAiredSeasonNum +
                             " for DVDSeasonNum " + ReadDvdSeasonNum);
             }
