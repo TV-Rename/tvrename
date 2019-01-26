@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace TVRename
 {
@@ -31,10 +32,13 @@ namespace TVRename
 
             string url = $"http://{host}:{port}/query/";
 
+            JToken settings = null;
+            JArray currentDownloads = null;
+
             try
             {
-                JToken settings = JsonHelper.ObtainToken(url + "preferences");
-                JArray currentDownloads = JsonHelper.ObtainArray(url + "torrents?filter=all");
+                settings = JsonHelper.ObtainToken(url + "preferences");
+                currentDownloads = JsonHelper.ObtainArray(url + "torrents?filter=all");
 
                 foreach (JToken torrent in currentDownloads.Children())
                 {
@@ -52,16 +56,24 @@ namespace TVRename
                         ret.Add(
                             new TorrentEntry(
                                 torrent["name"].ToString()
-                                ,TVSettings.Instance.FilenameFriendly(settings["save_path"] + torrent["name"].ToString()) + TVSettings.Instance.VideoExtensionsArray[0]
+                                , TVSettings.Instance.FilenameFriendly(
+                                      settings["save_path"] + torrent["name"].ToString()) +
+                                  TVSettings.Instance.VideoExtensionsArray[0]
                                 , 0
-                                )
-                            );
+                            )
+                        );
                     }
                 }
             }
             catch (WebException)
             {
-                LOGGER.Warn($"Could not connect to {url}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
+                LOGGER.Warn(
+                    $"Could not connect to {url}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
+            }
+            catch (JsonReaderException ex)
+            {
+                LOGGER.Error(ex,
+                    $"Could not parse data recieved from to {url}, {settings} {currentDownloads}");
             }
 
             return ret;
