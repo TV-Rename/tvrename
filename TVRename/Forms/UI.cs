@@ -631,6 +631,7 @@ namespace TVRename
                         tvn.Expand();
                 }
             }
+            MyShowTree.Sort();
 
             foreach (ShowItem si in expanded)
             {
