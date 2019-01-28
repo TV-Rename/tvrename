@@ -1303,14 +1303,11 @@ namespace TVRename
                     {
                         JObject bannerData = (JObject)jToken;
                         Banner b = new Banner(si.TvdbCode, bannerData, GetLanguageId());
-                        lock (SERIES_LOCK)
-                        {
-                            if (!series.ContainsKey(b.SeriesId))
-                                throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
-
-                            SeriesInfo ser = series[b.SeriesId];
-                            ser.AddOrUpdateBanner(b);
-                        }
+                         //   if (!series.ContainsKey(b.SeriesId))
+                         //       throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
+                         //   SeriesInfo ser = series[b.SeriesId];
+                         //   ser.AddOrUpdateBanner(b);
+                         si.AddOrUpdateBanner(b);
                     }
                 }
                 catch (InvalidCastException ex)
