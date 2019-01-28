@@ -163,6 +163,10 @@ namespace TVRename
             {
                 LOGGER.Warn(ex, $"Could not access files in {dirPath}");
             }
+            catch (IOException ex)
+            {
+                LOGGER.Warn(ex, $"Could not access files in {dirPath}");
+            }
             return returnActions;
         }
 
