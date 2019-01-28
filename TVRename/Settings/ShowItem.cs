@@ -46,6 +46,7 @@ namespace TVRename
         public readonly List<string> AliasNames = new List<string>();
         public bool UseCustomSearchUrl;
         public string CustomSearchUrl;
+        public bool ManualFoldersReplaceAutomatic;
 
         public string ShowTimeZone;
         private TimeZoneInfo seriesTimeZone;
@@ -89,9 +90,17 @@ namespace TVRename
             }
             catch (Exception ex)
             {
-                Logger.Warn(ex,$"Could not work out what timezone '{ShowName}' has. In the settings it uses '{tzstr}', but that is not valid. Please update. Using the default timezone {TimeZoneHelper.DefaultTimeZone()} for the show instead.");
-                tzstr = TimeZoneHelper.DefaultTimeZone();
-                seriesTimeZone = TimeZoneInfo.FindSystemTimeZoneById(tzstr);
+                Logger.Warn(ex, $"Could not work out what timezone '{ShowName}' has. In the settings it uses '{tzstr}', but that is not valid. Please update. Using the default timezone {TimeZoneHelper.DefaultTimeZone()} for the show instead.");
+                try
+                {
+                    tzstr = TimeZoneHelper.DefaultTimeZone();
+                    seriesTimeZone = TimeZoneInfo.FindSystemTimeZoneById(tzstr);
+                }
+                catch (Exception)
+                {
+                    Logger.Warn(ex, $"Could not work out what timezone '{ShowName}' has. In the settings it uses '{tzstr}', but that is not valid. Tried to use the default timezone {TimeZoneHelper.DefaultTimeZone()} for the show instead - also invalid.  Please update.");
+                    seriesTimeZone = TimeZoneInfo.Local;
+                }
             }
 
             lastFiguredTz = tzstr;
@@ -131,6 +140,7 @@ namespace TVRename
             AutoAddType = GetAutoAddType(xmlSettings.ExtractInt("AutoAddType"));
             BannersLastUpdatedOnDisk = xmlSettings.ExtractDateTime("BannersLastUpdatedOnDisk");
             UseSequentialMatch = xmlSettings.ExtractBool("UseSequentialMatch",false);
+            ManualFoldersReplaceAutomatic = xmlSettings.ExtractBool("ManualFoldersReplaceAutomatic", false);
 
             SetupIgnoreRules(xmlSettings);
             SetupAliases(xmlSettings);
@@ -434,6 +444,7 @@ namespace TVRename
             UseCustomSearchUrl = false;
             ForceCheckNoAirdate = false;
             ForceCheckFuture = false;
+            ManualFoldersReplaceAutomatic = false;
             BannersLastUpdatedOnDisk = null; //assume that the baners are old and have expired
             ShowTimeZone = TimeZoneHelper.DefaultTimeZone(); // default, is correct for most shows
             lastFiguredTz = "";
@@ -516,6 +527,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "AutoAddType", (int)AutoAddType );
             XmlHelper.WriteElementToXml(writer, "BannersLastUpdatedOnDisk", BannersLastUpdatedOnDisk);
             XmlHelper.WriteElementToXml(writer, "TimeZone", ShowTimeZone);
+            XmlHelper.WriteElementToXml(writer, "ManualFoldersReplaceAutomatic",ManualFoldersReplaceAutomatic);
 
             writer.WriteStartElement("IgnoreSeasons");
             foreach (int i in IgnoreSeasons)
@@ -624,11 +636,14 @@ namespace TVRename
                 {
                     if (IgnoreSeasons.Contains(i)) continue;
 
+                    if (ManualFoldersReplaceAutomatic && fld.ContainsKey(i)) continue;
+
                     string newName = AutoFolderNameForSeason(i);
                     if (string.IsNullOrEmpty(newName)) continue;
 
                     if (checkExist && !Directory.Exists(newName)) continue;
 
+                    //Now we can add the automated one
                     if (!fld.ContainsKey(i)) fld[i] = new List<string>();
 
                     if (!fld[i].Contains(newName)) fld[i].Add(newName.TrimSlash());

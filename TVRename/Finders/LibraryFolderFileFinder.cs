@@ -26,7 +26,7 @@ namespace TVRename
 
             if (ActionList is null) return;
 
-            foreach (ItemMissing me in ActionList.MissingItems())
+            foreach (ItemMissing me in ActionList.MissingItems().ToList())
             {
                 if (settings.Token.IsCancellationRequested)
                     return;

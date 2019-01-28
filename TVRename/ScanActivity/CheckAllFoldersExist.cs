@@ -50,7 +50,6 @@ namespace TVRename
                     folders.Add(string.Empty);
                 }
 
-
                 CreateSeasonFolders(si, snum, folders);
             } // for each snum
         }

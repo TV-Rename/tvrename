@@ -32,7 +32,7 @@ namespace TVRename
             int totalN = ActionList.MissingItems().Count() + 1;
             UpdateStatus(currentItem, totalN, "Starting searching through files");
 
-            foreach (ItemMissing me in ActionList.MissingItems())
+            foreach (ItemMissing me in ActionList.MissingItems().ToList())
             {
                 if (settings.Token.IsCancellationRequested)
                     return;

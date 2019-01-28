@@ -93,10 +93,13 @@ namespace TVRename
 
         private void ValidateFilePaths()
         {
-            ValidateFilePath(txtSpecialsFolderName,tpLibraryFolders);
+            ValidateFilePath(txtSpecialsFolderName, tpLibraryFolders);
             ValidateFilePath(txtSeasonFolderName, tpLibraryFolders);
-            ValidateFilePath(txtUTResumeDatPath, tbuTorrentNZB);
-            ValidateFilePath(txtRSSuTorrentPath, tbuTorrentNZB);
+            if (cbCheckuTorrent.Checked)
+            {
+                ValidateFilePath(txtUTResumeDatPath, tbuTorrentNZB);
+                ValidateFilePath(txtRSSuTorrentPath, tbuTorrentNZB);
+            }
         }
 
         private void ValidateFilePath(TextBox validationField,TabPage errorPage)

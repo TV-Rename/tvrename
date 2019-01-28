@@ -195,75 +195,81 @@ namespace TVRename
         public void SaveCache()
         {
             Logger.Info("Saving Cache to: {0}", cacheFile.FullName);
-
-            RotateCacheFiles();
-
-            // write ourselves to disc for next time.  use same structure as thetvdb.com (limited fields, though)
-            // to make loading easy
-            XmlWriterSettings settings = new XmlWriterSettings
+            try
             {
-                Indent = true,
-                NewLineOnAttributes = true
-            };
+                RotateCacheFiles();
 
-            lock (SERIES_LOCK)
-            { 
-                using (XmlWriter writer = XmlWriter.Create(cacheFile.FullName, settings))
+                // write ourselves to disc for next time.  use same structure as thetvdb.com (limited fields, though)
+                // to make loading easy
+                XmlWriterSettings settings = new XmlWriterSettings
                 {
-                    writer.WriteStartDocument();
-                    writer.WriteStartElement("Data");
-                    XmlHelper.WriteAttributeToXml(writer, "time", srvTime);
+                    Indent = true,
+                    NewLineOnAttributes = true
+                };
 
-                    foreach (KeyValuePair<int, SeriesInfo> kvp in series)
+                lock (SERIES_LOCK)
+                {
+                    using (XmlWriter writer = XmlWriter.Create(cacheFile.FullName, settings))
                     {
-                        if (kvp.Value.SrvLastUpdated != 0)
+                        writer.WriteStartDocument();
+                        writer.WriteStartElement("Data");
+                        XmlHelper.WriteAttributeToXml(writer, "time", srvTime);
+
+                        foreach (KeyValuePair<int, SeriesInfo> kvp in series)
                         {
-                            kvp.Value.WriteXml(writer);
-                            foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
-                            //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
+                            if (kvp.Value.SrvLastUpdated != 0)
                             {
-                                Season seas = kvp2.Value;
-                                foreach (Episode e in seas.Episodes.Values)
-                                    e.WriteXml(writer);
+                                kvp.Value.WriteXml(writer);
+                                foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
+                                    //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
+                                {
+                                    Season seas = kvp2.Value;
+                                    foreach (Episode e in seas.Episodes.Values)
+                                        e.WriteXml(writer);
+                                }
                             }
                         }
-                    }
 
-                    //
-                    // <BannersCache>
-                    //      <BannersItem>
-                    //          <SeriesId>123</SeriesId>
-                    //          <Banners>
-                    //              <Banner>
+                        //
+                        // <BannersCache>
+                        //      <BannersItem>
+                        //          <SeriesId>123</SeriesId>
+                        //          <Banners>
+                        //              <Banner>
 
-                    writer.WriteStartElement("BannersCache");
+                        writer.WriteStartElement("BannersCache");
 
-                    foreach (KeyValuePair<int, SeriesInfo> kvp in series)
-                    {
-                        writer.WriteStartElement("BannersItem");
-
-                        XmlHelper.WriteElementToXml(writer, "SeriesId", kvp.Key);
-
-                        writer.WriteStartElement("Banners");
-
-                        //We need to write out all banners that we have in any of the collections. 
-
-                        foreach (KeyValuePair<int, Banner> kvp3 in kvp.Value.AllBanners)
+                        foreach (KeyValuePair<int, SeriesInfo> kvp in series)
                         {
-                             Banner ban = kvp3.Value;
-                            ban.WriteXml(writer);
+                            writer.WriteStartElement("BannersItem");
+
+                            XmlHelper.WriteElementToXml(writer, "SeriesId", kvp.Key);
+
+                            writer.WriteStartElement("Banners");
+
+                            //We need to write out all banners that we have in any of the collections. 
+
+                            foreach (KeyValuePair<int, Banner> kvp3 in kvp.Value.AllBanners)
+                            {
+                                Banner ban = kvp3.Value;
+                                ban.WriteXml(writer);
+                            }
+
+                            writer.WriteEndElement(); //Banners
+                            writer.WriteEndElement(); //BannersItem
                         }
 
-                        writer.WriteEndElement(); //Banners
-                        writer.WriteEndElement(); //BannersItem
+                        writer.WriteEndElement(); // BannersCache
+
+                        writer.WriteEndElement(); // data
+
+                        writer.WriteEndDocument();
                     }
-
-                    writer.WriteEndElement(); // BannersCache
-
-                    writer.WriteEndElement(); // data
-
-                    writer.WriteEndDocument();
                 }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Failed to save Cache");
             }
         }
 
@@ -1011,6 +1017,10 @@ namespace TVRename
                         {
                             AddOrUpdateEpisode(e);
                         }
+                        else
+                        {
+                            Logger.Error($"problem with XML recieved {episodeXml}");
+                        }
                     }
 
                     foreach (XElement banners in x.Descendants("BannersCache"))
@@ -1059,6 +1069,11 @@ namespace TVRename
 
         private SeriesInfo DownloadSeriesNow(int code, bool episodesToo, bool bannersToo, bool useCustomLangCode, string langCode)
         {
+            if (code == 0)
+            {
+                Say("");
+                return null;
+            }
             bool forceReload = DoWeForceReloadFor(code);
 
             Say(GenerateMessage(code, episodesToo, bannersToo));
@@ -1182,7 +1197,7 @@ namespace TVRename
             {
                 if (ex.Response is null) //probably a timeout
                 {
-                    Logger.Error(ex, "Unble to obtain actors for {0}", series[si.TvdbCode].Name);
+                    Logger.Error($"Unble to obtain actors for {series[si.TvdbCode].Name} {ex.Message}" );
                 }
                 else if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
                 {
@@ -1190,7 +1205,7 @@ namespace TVRename
                 }
                 else
                 {
-                    Logger.Error(ex, "Unble to obtain actors for {0}", series[si.TvdbCode].Name);
+                    Logger.Error($"Unble to obtain actors for {series[si.TvdbCode].Name} {ex.Message}");
                 }
 
                 LastError = ex.Message;
@@ -1294,14 +1309,11 @@ namespace TVRename
                     {
                         JObject bannerData = (JObject)jToken;
                         Banner b = new Banner(si.TvdbCode, bannerData, GetLanguageId());
-                        lock (SERIES_LOCK)
-                        {
-                            if (!series.ContainsKey(b.SeriesId))
-                                throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
-
-                            SeriesInfo ser = series[b.SeriesId];
-                            ser.AddOrUpdateBanner(b);
-                        }
+                         //   if (!series.ContainsKey(b.SeriesId))
+                         //       throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
+                         //   SeriesInfo ser = series[b.SeriesId];
+                         //   ser.AddOrUpdateBanner(b);
+                         si.AddOrUpdateBanner(b);
                     }
                 }
                 catch (InvalidCastException ex)
@@ -1322,7 +1334,7 @@ namespace TVRename
                         lock (SERIES_LOCK)
                         {
                             if (!series.ContainsKey(b.SeriesId))
-                                throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
+                                throw new TVDBException($"Can't find the series to add the banner to (TheTVDB). Bannner.SeriesId = {b.SeriesId}, series = {si.Name} ({si.SeriesId}), code = {code}");
 
                             SeriesInfo ser = series[b.SeriesId];
                             ser.AddOrUpdateBanner(b);
@@ -1491,6 +1503,13 @@ namespace TVRename
 
         private bool DownloadEpisodeNow(int seriesId, int episodeId, bool dvdOrder = false)
         {
+            if (episodeId == 0)
+            {
+                Logger.Warn($"Asked to download episodeId = 0 for series {seriesId}");
+                Say("");
+                return true;
+            }
+
             string requestLangCode;
             if (series.ContainsKey(seriesId))
             {
@@ -1541,6 +1560,10 @@ namespace TVRename
                 {
                     AddOrUpdateEpisode(e);
                 }
+                else
+                {
+                    Logger.Error($"problem with JSON recieved {jsonResponseData}");
+                }
             }
             catch (TVDBException e)
             {
@@ -1556,6 +1579,12 @@ namespace TVRename
         private bool ProcessEpisode(int seriesId,int episodeId, JToken prefLangEpisodeData, JToken defLangEpisodeData,
             bool dvdOrder = false)
         {
+            if (episodeId == 0)
+            {
+                Logger.Warn($"Asked to download episodeId = 0 for series {seriesId}");
+                Say("");
+                return true;
+            }
             if (prefLangEpisodeData == null) return ProcessEpisode(seriesId, defLangEpisodeData, dvdOrder);
             if (defLangEpisodeData == null) return ProcessEpisode(seriesId, prefLangEpisodeData, dvdOrder);
 
@@ -1576,6 +1605,10 @@ namespace TVRename
                 {
                     AddOrUpdateEpisode(e);
                 }
+                else
+                {
+                    Logger.Error($"problem with JSON recieved {prefLangEpisodeData},{defLangEpisodeData}");
+                }
             }
             catch (TVDBException e)
             {
@@ -1594,6 +1627,13 @@ namespace TVRename
             {
                 int episodeId = (int)episodeData["id"];
 
+                if (episodeId == 0)
+                {
+                    Logger.Warn($"Asked to download episodeId = 0 for series {seriesId}");
+                    Say("");
+                    return true;
+                }
+
                 Episode ep = FindEpisodeById(episodeId);
                 string eptxt = EpisodeDescription(dvdOrder, episodeId, ep);
 
@@ -1609,6 +1649,10 @@ namespace TVRename
                 if (e.Ok())
                 {
                     AddOrUpdateEpisode(e);
+                }
+                else
+                {
+                    Logger.Error($"Problem Processing episode data: {episodeData}");
                 }
             }
             catch (TVDBException e)

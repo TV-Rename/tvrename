@@ -95,6 +95,7 @@ namespace TVRename
             chkDVDOrder.Checked = si.DvdOrder;
             cbIncludeFuture.Checked = si.ForceCheckFuture;
             cbIncludeNoAirdate.Checked = si.ForceCheckNoAirdate;
+            chkReplaceAutoFolders.Checked = si.ManualFoldersReplaceAutomatic;
 
             bool first = true;
             si.IgnoreSeasons.Sort();
@@ -254,6 +255,7 @@ namespace TVRename
             selectedShow.ForceCheckNoAirdate = cbIncludeNoAirdate.Checked;
             selectedShow.UseCustomSearchUrl = cbUseCustomSearch.Checked;
             selectedShow.CustomSearchUrl = txtSearchURL.Text;
+            selectedShow.ManualFoldersReplaceAutomatic = chkReplaceAutoFolders.Checked;
 
             selectedShow.UseSequentialMatch = cbSequentialMatching.Checked;
 

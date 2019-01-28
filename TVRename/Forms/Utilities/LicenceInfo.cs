@@ -18,7 +18,6 @@ namespace TVRename.Forms.Utilities
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-
         }
     }
 }

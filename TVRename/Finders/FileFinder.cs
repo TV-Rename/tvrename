@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
@@ -86,7 +87,7 @@ namespace TVRename
                 if (preventMove)
                 {
                     //We do not want to move the file, just rename it
-                    fi = new FileInfo(dce.DirectoryName + System.IO.Path.DirectorySeparatorChar + me.Filename +
+                    fi = new FileInfo(dce.DirectoryName + Path.DirectorySeparatorChar + me.Filename +
                                       dce.Extension);
                 }
 
@@ -110,7 +111,7 @@ namespace TVRename
 
             return true;
             }
-            catch (System.IO.PathTooLongException e)
+            catch (PathTooLongException e)
             {
                 string t = "Path too long. " + dce.FullName + ", " + e.Message;
                 LOGGER.Error(e, "Path too long. " + dce.FullName);
@@ -162,32 +163,46 @@ namespace TVRename
                     int l2 = toname.Length;
                     toname = toname.Substring(0, l2 - action.To.Extension.Length);
 
-                    FileInfo[] flist = sfdi.GetFiles(basename + ".*");
-                    foreach (FileInfo fi in flist)
+                    try
                     {
-                        //check to see whether the file is one of the types we do/don't want to include
-                        //If we are copying from outside the library we use the 'Keep Togther' Logic
-                        if (!fromLibrary && !TVSettings.Instance.KeepTogetherFilesWithType(fi.Extension)) continue;
-                        //If we are with in the library we use the 'Other Extensions'
-                        if (fromLibrary && !TVSettings.Instance.FileHasUsefulExtension(fi,true,out string _)) continue;
+                        FileInfo[] flist = sfdi.GetFiles(basename + ".*");
+                        foreach (FileInfo fi in flist)
+                        {
+                            //check to see whether the file is one of the types we do/don't want to include
+                            //If we are copying from outside the library we use the 'Keep Togther' Logic
+                            if (!fromLibrary && !TVSettings.Instance.KeepTogetherFilesWithType(fi.Extension)) continue;
+                            //If we are with in the library we use the 'Other Extensions'
+                            if (fromLibrary && !TVSettings.Instance.FileHasUsefulExtension(fi, true, out string _))
+                                continue;
 
-                        // do case insensitive replace
-                        string n = fi.Name;
-                        int p = n.IndexOf(basename, StringComparison.OrdinalIgnoreCase);
-                        string newName = n.Substring(0, p) + toname + n.Substring(p + basename.Length);
-                        if ((TVSettings.Instance.RenameTxtToSub) && (newName.EndsWith(".txt")))
-                            newName = newName.Substring(0, newName.Length - 4) + ".sub";
+                            // do case insensitive replace
+                            string n = fi.Name;
+                            int p = n.IndexOf(basename, StringComparison.OrdinalIgnoreCase);
+                            string newName = n.Substring(0, p) + toname + n.Substring(p + basename.Length);
+                            if ((TVSettings.Instance.RenameTxtToSub) && (newName.EndsWith(".txt")))
+                                newName = newName.Substring(0, newName.Length - 4) + ".sub";
 
-                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(action.Operation, fi, FileHelper.FileInFolder(action.To.Directory, newName), action.Episode, false, null); // tidyup on main action, not this
+                            ActionCopyMoveRename newitem = new ActionCopyMoveRename(action.Operation, fi,
+                                FileHelper.FileInFolder(action.To.Directory, newName), action.Episode, false,
+                                null); // tidyup on main action, not this
 
-                        // check this item isn't already in our to-do list
-                        if (ActionListContains(actionlist, newitem)) continue;
+                            // check this item isn't already in our to-do list
+                            if (ActionListContains(actionlist, newitem)) continue;
 
-                        if (!newitem.SameAs(action)) // don't re-add ourself
-                            extras.Add(newitem);
+                            if (!newitem.SameAs(action)) // don't re-add ourself
+                                extras.Add(newitem);
+                        }
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        LOGGER.Warn("Could not access: " + action.From.FullName);
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        LOGGER.Warn("Could not find: " + action.From.FullName);
                     }
                 }
-                catch (System.IO.PathTooLongException e)
+                catch (PathTooLongException e)
                 {
                     string t = "Path or filename too long. " + action.From.FullName + ", " + e.Message;
                     LOGGER.Warn(e, "Path or filename too long. " + action.From.FullName);
