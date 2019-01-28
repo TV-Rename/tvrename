@@ -2437,6 +2437,11 @@ namespace TVRename
             ShowItem currentShow = TreeNodeToShowItem(MyShowTree.SelectedNode);
             string theFolder = GetFolderForShow(currentShow);
 
+            if (string.IsNullOrWhiteSpace(theFolder) && TVSettings.Instance.DownloadFolders.Count>0)
+            {
+                theFolder = TVSettings.Instance.DownloadFolders.First();
+            }
+
             AddEditSeasEpFinders d = new AddEditSeasEpFinders(TVSettings.Instance.FNPRegexs, mDoc.Library.GetShowItems(), currentShow, theFolder);
 
             DialogResult dr = d.ShowDialog();

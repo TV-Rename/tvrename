@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using MediaInfo;
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
@@ -19,29 +20,34 @@ namespace TVRename
 
         public static int GetFrameWidth(this FileInfo movieFile)
         {
-            try { 
-            using (ShellObject shell = ShellObject.FromParsingName(movieFile.FullName))
-            {
-                IShellProperty prop = shell.Properties.System.Video.FrameWidth;
-                string returnValue = prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
-                return int.TryParse(returnValue, out int value) ? value : -1;
-            }
+            try
+            { 
+                using (ShellObject shell = ShellObject.FromParsingName(movieFile.FullName))
+                {
+                    IShellProperty prop = shell.Properties.System.Video.FrameWidth;
+                    string returnValue = prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
+                    if (int.TryParse(returnValue, out int value)) return  value ;
+                }
             }
             catch (FileNotFoundException)
             {
                 Logger.Warn($"Unable to find file as part of GetFrameWidth for {movieFile.FullName}");
-                return -1;
             }
             catch (ShellException)
             {
-                Logger.Warn($"Unable to use shell to access file as part of GetFrameWidth for {movieFile.FullName}");
-                return -1;
+                Logger.Info($"Unable to use shell to access file as part of GetFrameWidth for {movieFile.FullName}");
             }
             catch (Exception e)
             {
                 Logger.Error(e,$"Unable to use shell to access file as part of GetFrameWidth for {movieFile.FullName}");
-                return -1;
             }
+
+            MediaInfoWrapper mw = new MediaInfoWrapper(movieFile.FullName);
+            int returnVal = mw.Width;
+
+            if (returnVal != 0) return returnVal;
+
+            return -1;
         }
 
         public enum VideoComparison
@@ -101,24 +107,28 @@ namespace TVRename
             {
                 IShellProperty prop = shell.Properties.System.Video.FrameHeight;
                 string returnValue = prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
-                return (int.TryParse(returnValue, out int value)) ? value : -1;
-            }
+                if (int.TryParse(returnValue, out int value)) return value;
+                }
             }
             catch (FileNotFoundException)
             {
                 Logger.Warn($"Unable to find file as part of GetFrameHeight for {movieFile.FullName}");
-                return -1;
             }
             catch (ShellException)
             {
                 Logger.Warn($"Unable to use shell to access file as part of GetFrameHeight for {movieFile.FullName}");
-                return -1;
             }
             catch (Exception e)
             {
                 Logger.Error(e, $"Unable to use shell to access file as part of GetFrameHeight for {movieFile.FullName}");
-                return -1;
             }
+
+            MediaInfoWrapper mw = new MediaInfoWrapper(movieFile.FullName);
+            int returnVal = mw.Height;
+
+            if (returnVal != 0) return returnVal;
+
+            return -1;
         }
 
         public static bool IsMovieFile(this FileInfo file)
@@ -168,8 +178,7 @@ namespace TVRename
                     duration = prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
                 }
 
-                if (string.IsNullOrWhiteSpace(duration)) return -1;
-
+                if (! string.IsNullOrWhiteSpace(duration)) 
                     return (3600 * int.Parse(duration.Split(':')[0]))
                            + (60 * int.Parse(duration.Split(':')[1]))
                            + int.Parse(duration.Split(':')[2]);
@@ -185,7 +194,6 @@ namespace TVRename
 //              Unable to parse string Lägg till text as part of GetFilmLength System
 
                 Logger.Warn($"Unable to parse string '{duration}' as part of GetFilmLength for {movieFile.FullName}");
-                return -1;
             }
             catch (FileNotFoundException)
             {
@@ -195,8 +203,18 @@ namespace TVRename
             catch (ShellException)
             {
                 Logger.Warn($"Unable to use shell to access file as part of GetFilmLength for {movieFile.FullName}");
-                return -1;
             }
+
+        MediaInfoWrapper mw = new MediaInfoWrapper(movieFile.FullName);
+        int returnVal = mw.Duration;
+
+        if (returnVal != 0)
+        {
+            float ret = returnVal / 1000f;
+            return (int) Math.Round(ret);
+        }
+
+        return -1;
         }
 
         public static bool FileExistsCaseSensitive(string filename)
