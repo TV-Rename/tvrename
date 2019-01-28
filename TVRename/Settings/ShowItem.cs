@@ -96,7 +96,7 @@ namespace TVRename
                     tzstr = TimeZoneHelper.DefaultTimeZone();
                     seriesTimeZone = TimeZoneInfo.FindSystemTimeZoneById(tzstr);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Logger.Warn(ex, $"Could not work out what timezone '{ShowName}' has. In the settings it uses '{tzstr}', but that is not valid. Tried to use the default timezone {TimeZoneHelper.DefaultTimeZone()} for the show instead - also invalid.  Please update.");
                     seriesTimeZone = TimeZoneInfo.Local;
