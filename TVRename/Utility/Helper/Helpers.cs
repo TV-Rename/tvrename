@@ -53,63 +53,6 @@ namespace TVRename
             }
         }
 
-        public static string RemoveSeriesEpisodeIndicators(string hint, IEnumerable<string> seasonWords)
-        {
-            string hint2 = RemoveDiacritics(hint);
-            hint2 = RemoveSe(hint2);
-            hint2 = hint2.ToLower();
-            hint2 = hint2.Replace("'", "");
-            hint2 = hint2.Replace("&", "and");
-            hint2 = Regex.Replace(hint2, "[_\\W]+", " ");
-            foreach (string term in TVSettings.Instance.AutoAddIgnoreSuffixesArray)
-            {
-                hint2 = hint2.RemoveAfter(term);
-            }
-
-            foreach (string seasonWord in seasonWords)
-            {
-                hint2 = hint2.RemoveAfter(seasonWord);
-            }
-
-            hint2 = hint2.Trim();
-            return hint2;
-        }
-
-        private static string RemoveSe(string hint)
-        {
-            foreach (TVSettings.FilenameProcessorRE re in TVSettings.Instance.FNPRegexs)
-            {
-                if (!re.Enabled)
-                    continue;
-
-                try
-                {
-                    Match m = Regex.Match(hint, re.RegExpression, RegexOptions.IgnoreCase);
-                    if (m.Success)
-                    {
-                        if (!Int32.TryParse(m.Groups["s"].ToString(), out int seas))
-                            seas = -1;
-
-                        if (!Int32.TryParse(m.Groups["e"].ToString(), out int ep))
-                            ep = -1;
-
-                        int p = Math.Min(m.Groups["s"].Index, m.Groups["e"].Index);
-                        int p2 = Math.Min(p, hint.IndexOf(m.Groups.SyncRoot.ToString(), StringComparison.Ordinal));
-
-                        if (seas != -1 && ep != -1) return hint.Remove(p2 != -1 ? p2 : p);
-                    }
-                }
-                catch (FormatException)
-                {
-                }
-                catch (ArgumentException)
-                {
-                }
-            }
-
-            return hint;
-        }
-
         public static void Swap<T>(
             this IList<T> list,
             int firstIndex,
