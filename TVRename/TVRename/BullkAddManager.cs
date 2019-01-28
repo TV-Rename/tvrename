@@ -129,6 +129,10 @@ namespace TVRename
                     }
                 }
             }
+            catch (XmlException)
+            {
+                return -1;
+            }
             catch (Exception e)
             {
                 Logger.Error(e);
