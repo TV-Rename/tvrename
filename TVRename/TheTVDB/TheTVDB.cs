@@ -1191,7 +1191,7 @@ namespace TVRename
             {
                 if (ex.Response is null) //probably a timeout
                 {
-                    Logger.Error(ex, "Unble to obtain actors for {0}", series[si.TvdbCode].Name);
+                    Logger.Error($"Unble to obtain actors for {series[si.TvdbCode].Name} {ex.Message}" );
                 }
                 else if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
                 {
@@ -1199,7 +1199,7 @@ namespace TVRename
                 }
                 else
                 {
-                    Logger.Error(ex, "Unble to obtain actors for {0}", series[si.TvdbCode].Name);
+                    Logger.Error($"Unble to obtain actors for {series[si.TvdbCode].Name} {ex.Message}");
                 }
 
                 LastError = ex.Message;
