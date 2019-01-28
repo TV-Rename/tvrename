@@ -6,6 +6,7 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
@@ -52,9 +53,15 @@ namespace TVRename
                 FileInfo[] files = includeSubs ? di.GetFiles("*",SearchOption.AllDirectories): di.GetFiles();
                 cache[folder] = files;
                 return files;
-            } catch (IOException) {
+            }
+            catch (IOException) {
                Logger.Warn("IOException occurred trying to access " + folder);
                return null;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Logger.Warn("IOException occurred trying to access " + folder);
+                return null;
             }
         }
     }
