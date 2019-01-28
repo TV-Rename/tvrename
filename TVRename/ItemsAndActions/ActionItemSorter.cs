@@ -30,11 +30,25 @@ namespace TVRename
                 return 3;
             if (a is ActionDownloadImage)
                 return 4;
-            if (a is ActionNfo)
+            if (a is ActionMede8erViewXML)
                 return 5;
-            if (a is ItemDownloading)
+            if (a is ActionMede8erXML)
                 return 6;
-            return 7;
+            if (a is ActionNfo)
+                return 7;
+            if (a is ActionPyTivoMeta)
+                return 8;
+            if (a is ActionWdtvMeta)
+                return 9;
+            if (a is ItemDownloading)
+                return 10;
+            if (a is ActionDeleteFile)
+                return 11;
+            if (a is ActionDeleteDirectory)
+                return 12;
+            if (a is ActionDateTouch)
+                return 13;
+            return 14;
         }
     }
 }
