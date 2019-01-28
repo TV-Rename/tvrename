@@ -30,7 +30,14 @@ Var STARTMENU_FOLDER
 !define MUI_FINISHPAGE_LINK "Visit the TV Rename site for the latest news and support"
 !define MUI_FINISHPAGE_LINK_LOCATION "http://www.tvrename.com/"
 
+!define MUI_TEXT_LICENSE_TITLE "End-User License Agreement"
+!define MUI_TEXT_LICENSE_SUBTITLE "Please read the following license agreement carefully"
+!define MUI_LICENSEPAGE_TEXT_TOP "Please read the following license agreement carefully"
+!define MUI_LICENSEPAGE_BUTTON Accept
+!define MUI_LICENSEPAGE_CHECKBOX
+
 !insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "Licence.rtf"
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
 !insertmacro MUI_PAGE_INSTFILES
