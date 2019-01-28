@@ -90,6 +90,7 @@ namespace TVRename
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.chkAutoFolders = new System.Windows.Forms.CheckBox();
             this.gbAutoFolders = new System.Windows.Forms.GroupBox();
+            this.bnQuickLocate = new System.Windows.Forms.Button();
             this.txtSeasonFormat = new System.Windows.Forms.TextBox();
             this.bnTags = new System.Windows.Forms.Button();
             this.lblSeasonWordPreview = new System.Windows.Forms.Label();
@@ -99,7 +100,7 @@ namespace TVRename
             this.txtBaseFolder = new System.Windows.Forms.TextBox();
             this.bnBrowse = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.bnQuickLocate = new System.Windows.Forms.Button();
+            this.chkReplaceAutoFolders = new System.Windows.Forms.CheckBox();
             this.Folders.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -528,6 +529,7 @@ namespace TVRename
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.chkReplaceAutoFolders);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.bnRemove);
@@ -673,6 +675,17 @@ namespace TVRename
             this.gbAutoFolders.TabIndex = 11;
             this.gbAutoFolders.TabStop = false;
             // 
+            // bnQuickLocate
+            // 
+            this.bnQuickLocate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.bnQuickLocate.Location = new System.Drawing.Point(348, 48);
+            this.bnQuickLocate.Name = "bnQuickLocate";
+            this.bnQuickLocate.Size = new System.Drawing.Size(75, 23);
+            this.bnQuickLocate.TabIndex = 29;
+            this.bnQuickLocate.Text = "&Create...";
+            this.bnQuickLocate.UseVisualStyleBackColor = true;
+            this.bnQuickLocate.Click += new System.EventHandler(this.bnQuickLocate_Click);
+            // 
             // txtSeasonFormat
             // 
             this.txtSeasonFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -766,16 +779,16 @@ namespace TVRename
             this.label3.Text = "Base &Folder";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // bnQuickLocate
+            // chkReplaceAutoFolders
             // 
-            this.bnQuickLocate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnQuickLocate.Location = new System.Drawing.Point(348, 48);
-            this.bnQuickLocate.Name = "bnQuickLocate";
-            this.bnQuickLocate.Size = new System.Drawing.Size(75, 23);
-            this.bnQuickLocate.TabIndex = 29;
-            this.bnQuickLocate.Text = "&Create...";
-            this.bnQuickLocate.UseVisualStyleBackColor = true;
-            this.bnQuickLocate.Click += new System.EventHandler(this.bnQuickLocate_Click);
+            this.chkReplaceAutoFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkReplaceAutoFolders.AutoSize = true;
+            this.chkReplaceAutoFolders.Location = new System.Drawing.Point(270, 18);
+            this.chkReplaceAutoFolders.Name = "chkReplaceAutoFolders";
+            this.chkReplaceAutoFolders.Size = new System.Drawing.Size(153, 17);
+            this.chkReplaceAutoFolders.TabIndex = 11;
+            this.chkReplaceAutoFolders.Text = "Replace Automatic Folders";
+            this.chkReplaceAutoFolders.UseVisualStyleBackColor = true;
             // 
             // AddEditShow
             // 
@@ -877,5 +890,6 @@ namespace TVRename
         private System.Windows.Forms.ComboBox cbLanguage;
         private System.Windows.Forms.CheckBox chkCustomLanguage;
         private System.Windows.Forms.Button bnQuickLocate;
+        private System.Windows.Forms.CheckBox chkReplaceAutoFolders;
     }
 }

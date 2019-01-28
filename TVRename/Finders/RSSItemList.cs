@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Linq;
 using NLog;
 
@@ -26,6 +27,7 @@ namespace TVRename
         public bool DownloadRSS(string url, List<TVSettings.FilenameProcessorRE> rexps)
         {
             regxps = rexps;
+            string response = null;
 
             try
             {
@@ -33,7 +35,7 @@ namespace TVRename
                 client.Headers.Add("user-agent",
                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-                string response = client.DownloadString(url);
+                response = client.DownloadString(url);
 
                 XElement x = XElement.Load(new StringReader(response));
 
@@ -48,6 +50,11 @@ namespace TVRename
             catch (WebException  e)
             {
                 Logger.Warn($"Cound not download RSS page at:{url} got the following message: {e.Status} {e.Message}");
+                return false;
+            }
+            catch (XmlException e)
+            {
+                Logger.Error($"Could not parse RSS page at:{url} {e.Message} {response}");
                 return false;
             }
             catch (Exception e)

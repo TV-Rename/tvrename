@@ -7,13 +7,13 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TV Rename")]
 [assembly: AssemblyProduct("TV Rename")]
-[assembly: AssemblyCopyright("Copyright © 2007-2018")]
+[assembly: AssemblyCopyright("Copyright © 2007-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 [assembly: Guid("3b5746c1-a5f7-48c2-a8de-95619489049b")]
 [assembly: NeutralResourcesLanguageAttribute("")]
 
-[assembly: AssemblyVersion("2.6.3.0")]
-[assembly: AssemblyFileVersion("2.6.3")]
-[assembly: AssemblyInformationalVersion("2.6.3")] // Display version
+[assembly: AssemblyVersion("2.6.10.0")]
+[assembly: AssemblyFileVersion("2.6.10")]
+[assembly: AssemblyInformationalVersion("2.6.10")] // Display version
