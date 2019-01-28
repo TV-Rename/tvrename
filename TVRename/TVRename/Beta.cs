@@ -32,9 +32,9 @@ namespace TVRename
             DirFilesCache dfc = new DirFilesCache();
             foreach (ShowItem si in doc.Library.Values)
             {
-                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
+                foreach (List<ProcessedEpisode> episodes in si.SeasonEpisodes.Values.ToList())
                 {
-                    foreach (ProcessedEpisode pep in kvp.Value)
+                    foreach (ProcessedEpisode pep in episodes)
                     {
                         List<FileInfo> files = dfc.FindEpOnDisk(pep);
                         foreach (FileInfo file in files)
