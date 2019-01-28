@@ -103,7 +103,7 @@ namespace TVRename
                 string refinedHint = Regex.Replace(hint, @"\(\d{4}\)", "");
 
                 //Remove anything we can from hint to make it cleaner and hence more likely to match
-                refinedHint = Helpers.RemoveSeriesEpisodeIndicators(refinedHint, MDoc.Library.SeasonWords());
+                refinedHint = FinderHelper.RemoveSeriesEpisodeIndicators(refinedHint, MDoc.Library.SeasonWords());
 
                 if (string.IsNullOrWhiteSpace(refinedHint))
                 {
