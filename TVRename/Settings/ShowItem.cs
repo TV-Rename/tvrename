@@ -632,7 +632,7 @@ namespace TVRename
 
             if (AutoAddNewSeasons() && (!string.IsNullOrEmpty(AutoAddFolderBase)))
             {
-                foreach (int i in SeasonEpisodes.Keys)
+                foreach (int i in SeasonEpisodes.Keys.ToList())
                 {
                     if (IgnoreSeasons.Contains(i)) continue;
 
