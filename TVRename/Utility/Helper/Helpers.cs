@@ -161,17 +161,17 @@ namespace TVRename
             }
             catch (Win32Exception e)
             {
-                Logger.Warn(e);
+                Logger.Warn(e, $"Could not open {what}");
                 return false;
             }
             catch (FileNotFoundException e)
             {
-                Logger.Warn(e);
+                Logger.Warn(e, $"Could not open {what}");
                 return false;
             }
             catch (Exception e)
             {
-                Logger.Error(e);
+                Logger.Error(e, $"Could not open {what}");
                 return false;
             }
         }

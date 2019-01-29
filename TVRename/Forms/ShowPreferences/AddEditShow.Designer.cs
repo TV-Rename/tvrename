@@ -78,6 +78,7 @@ namespace TVRename
             this.cbUseCustomSearch = new System.Windows.Forms.CheckBox();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkReplaceAutoFolders = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.bnRemove = new System.Windows.Forms.Button();
@@ -100,7 +101,8 @@ namespace TVRename
             this.txtBaseFolder = new System.Windows.Forms.TextBox();
             this.bnBrowse = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.chkReplaceAutoFolders = new System.Windows.Forms.CheckBox();
+            this.lbSearchExample = new System.Windows.Forms.Label();
+            this.llCustomSearchPreview = new System.Windows.Forms.LinkLabel();
             this.Folders.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -451,6 +453,8 @@ namespace TVRename
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.llCustomSearchPreview);
+            this.tabPage4.Controls.Add(this.lbSearchExample);
             this.tabPage4.Controls.Add(this.txtSearchURL);
             this.tabPage4.Controls.Add(this.txtTagList);
             this.tabPage4.Controls.Add(this.lbTags);
@@ -468,28 +472,29 @@ namespace TVRename
             // 
             this.txtSearchURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSearchURL.Location = new System.Drawing.Point(65, 33);
+            this.txtSearchURL.Location = new System.Drawing.Point(82, 33);
             this.txtSearchURL.Name = "txtSearchURL";
-            this.txtSearchURL.Size = new System.Drawing.Size(369, 20);
+            this.txtSearchURL.Size = new System.Drawing.Size(352, 20);
             this.txtSearchURL.TabIndex = 2;
+            this.txtSearchURL.TextChanged += new System.EventHandler(this.txtSearchURL_TextChanged);
             // 
             // txtTagList
             // 
-            this.txtTagList.Location = new System.Drawing.Point(47, 83);
+            this.txtTagList.Location = new System.Drawing.Point(47, 109);
             this.txtTagList.Name = "txtTagList";
-            this.txtTagList.Size = new System.Drawing.Size(361, 267);
+            this.txtTagList.Size = new System.Drawing.Size(361, 243);
             this.txtTagList.TabIndex = 1;
             this.txtTagList.Text = "<tags>";
             // 
             // lbTags
             // 
             this.lbTags.AutoSize = true;
-            this.lbTags.Location = new System.Drawing.Point(27, 63);
+            this.lbTags.Location = new System.Drawing.Point(27, 89);
             this.lbTags.Name = "lbTags";
-            this.lbTags.Size = new System.Drawing.Size(34, 13);
+            this.lbTags.Size = new System.Drawing.Size(80, 13);
             this.lbTags.TabIndex = 1;
             this.lbTags.Tag = "";
-            this.lbTags.Text = "Tags:";
+            this.lbTags.Text = "Available Tags:";
             // 
             // lbSearchURL
             // 
@@ -544,6 +549,17 @@ namespace TVRename
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Manual/Additional Folders";
+            // 
+            // chkReplaceAutoFolders
+            // 
+            this.chkReplaceAutoFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkReplaceAutoFolders.AutoSize = true;
+            this.chkReplaceAutoFolders.Location = new System.Drawing.Point(270, 18);
+            this.chkReplaceAutoFolders.Name = "chkReplaceAutoFolders";
+            this.chkReplaceAutoFolders.Size = new System.Drawing.Size(153, 17);
+            this.chkReplaceAutoFolders.TabIndex = 11;
+            this.chkReplaceAutoFolders.Text = "Replace Automatic Folders";
+            this.chkReplaceAutoFolders.UseVisualStyleBackColor = true;
             // 
             // label7
             // 
@@ -779,16 +795,23 @@ namespace TVRename
             this.label3.Text = "Base &Folder";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // chkReplaceAutoFolders
+            // lbSearchExample
             // 
-            this.chkReplaceAutoFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.chkReplaceAutoFolders.AutoSize = true;
-            this.chkReplaceAutoFolders.Location = new System.Drawing.Point(270, 18);
-            this.chkReplaceAutoFolders.Name = "chkReplaceAutoFolders";
-            this.chkReplaceAutoFolders.Size = new System.Drawing.Size(153, 17);
-            this.chkReplaceAutoFolders.TabIndex = 11;
-            this.chkReplaceAutoFolders.Text = "Replace Automatic Folders";
-            this.chkReplaceAutoFolders.UseVisualStyleBackColor = true;
+            this.lbSearchExample.AutoSize = true;
+            this.lbSearchExample.Location = new System.Drawing.Point(27, 62);
+            this.lbSearchExample.Name = "lbSearchExample";
+            this.lbSearchExample.Size = new System.Drawing.Size(50, 13);
+            this.lbSearchExample.TabIndex = 3;
+            this.lbSearchExample.Text = "Example:";
+            // 
+            // llCustomSearchPreview
+            // 
+            this.llCustomSearchPreview.AutoSize = true;
+            this.llCustomSearchPreview.Location = new System.Drawing.Point(82, 61);
+            this.llCustomSearchPreview.Name = "llCustomSearchPreview";
+            this.llCustomSearchPreview.Size = new System.Drawing.Size(0, 13);
+            this.llCustomSearchPreview.TabIndex = 4;
+            this.llCustomSearchPreview.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.llCustomSearchPreview_LinkClicked);
             // 
             // AddEditShow
             // 
@@ -891,5 +914,7 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkCustomLanguage;
         private System.Windows.Forms.Button bnQuickLocate;
         private System.Windows.Forms.CheckBox chkReplaceAutoFolders;
+        private System.Windows.Forms.LinkLabel llCustomSearchPreview;
+        private System.Windows.Forms.Label lbSearchExample;
     }
 }

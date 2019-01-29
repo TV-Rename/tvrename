@@ -887,7 +887,7 @@ namespace TVRename
                 if (dt != null) bolded.Add(dt.Value);
 
                 ListViewItem lvi = new ListViewItem {Text = ""};
-                for (int i = 0; i < 7; i++) lvi.SubItems.Add("");
+                for (int i = 0; i < 8; i++) lvi.SubItems.Add("");
 
                 UpdateWtw(dfc, ei, lvi);
 
@@ -2080,6 +2080,7 @@ namespace TVRename
             lvi.SubItems[++n].Text = dt.ToString("t");
             lvi.SubItems[++n].Text = dt.ToString("ddd");
             lvi.SubItems[++n].Text = pe.HowLong();
+            lvi.SubItems[++n].Text = pe.TheSeries.Network;
             lvi.SubItems[++n].Text = pe.Name;
 
             // icon..
