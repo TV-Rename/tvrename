@@ -352,7 +352,6 @@ namespace TVRename
             return ((seas != -1) && (ep != -1));
         }
 
-
         public static string RemoveSeriesEpisodeIndicators(string hint, IEnumerable<string> seasonWords)
         {
             string hint2 = hint.RemoveDiacritics();
