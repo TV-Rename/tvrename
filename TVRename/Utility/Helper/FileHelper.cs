@@ -89,8 +89,8 @@ namespace TVRename
             if (encumbantFrameWidth == -1) return VideoComparison.cantTell;
             if (newFileFrameWidth == -1) return VideoComparison.cantTell;
             
-            if (encumbantFileIsBetterQuality && !newFileIsMuchLonger) return VideoComparison.firstFileBetter;  //exting file is better quality
-            if (encumbantFileIsMuchLonger && !newFileIsBetterQuality) return VideoComparison.firstFileBetter;  //exting file is longer
+            if (encumbantFileIsBetterQuality && !newFileIsMuchLonger) return VideoComparison.firstFileBetter;  //existing file is better quality
+            if (encumbantFileIsMuchLonger && !newFileIsBetterQuality) return VideoComparison.firstFileBetter;  //existing file is longer
 
             if (newFileIsBetterQuality && !encumbantFileIsMuchLonger) return VideoComparison.secondFileBetter;
             if (newFileIsMuchLonger && !encumbantFileIsBetterQuality) return VideoComparison.secondFileBetter;

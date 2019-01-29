@@ -689,6 +689,19 @@ namespace TVRename
             return null;
         }
 
+        public ProcessedEpisode GetFirstAvailableEpisode()
+        {
+            foreach (List<ProcessedEpisode> season in SeasonEpisodes.Values)
+            {
+                foreach (ProcessedEpisode pe in season)
+                {
+                    if (!(pe is null)) return pe;
+                }
+            }
+
+            return null;
+        }
+
         public bool InOneFolder()
         {
             return (AutoAddType == AutomaticFolderType.baseOnly);

@@ -70,7 +70,7 @@ namespace TVRename
 
             string response = null;
 
-            RetryOnException(3, pauseBetweenFailures, url, () => {
+            RetryOnException(3, pauseBetweenFailures, fullUrl, () => {
                 response = HttpRequest("GET", fullUrl, null, "application/json", authToken, lang);
             });
 
