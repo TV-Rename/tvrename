@@ -31,11 +31,13 @@ namespace TVRename
         private readonly TheTvdbCodeFinder codeFinderForm;
         private CustomNameTagsFloatingWindow cntfw;
         private readonly Season sampleSeason;
+        private readonly ProcessedEpisode sampleEpisode;
 
         public AddEditShow(ShowItem si)
         {
             selectedShow = si;
             sampleSeason = si.GetFirstAvailableSeason();
+            sampleEpisode = si.GetFirstAvailableEpisode();
             InitializeComponent();
 
             lblSeasonWordPreview.Text = TVSettings.Instance.SeasonFolderFormat + "-(" + CustomSeasonName.NameFor(si.GetFirstAvailableSeason(), TVSettings.Instance.SeasonFolderFormat) + ")";
@@ -133,8 +135,9 @@ namespace TVRename
 
             foreach (string s in CustomEpisodeName.TAGS)
             {
-                tl.AppendLine(s);
+                tl.AppendLine(s + (sampleEpisode != null ? " - " + CustomEpisodeName.NameForNoExt(sampleEpisode, s): string.Empty));
             }
+
             txtTagList.Text = tl.ToString();
 
             cbUseCustomSearch.Checked = si.UseCustomSearchUrl && !string.IsNullOrWhiteSpace(si.CustomSearchUrl);
@@ -427,6 +430,8 @@ namespace TVRename
             txtSearchURL.Enabled = en;
             lbTags.Enabled = en;
             txtTagList.Enabled = en;
+            llCustomSearchPreview.Enabled = en;
+            lbSearchExample.Enabled = en;
         }
 
         private void tbShowAlias_TextChanged(object sender, EventArgs e)
@@ -477,6 +482,16 @@ namespace TVRename
             {
                 txtBaseFolder.Text = f.DirectoryFullPath;
             }
+        }
+
+        private void txtSearchURL_TextChanged(object sender, EventArgs e)
+        {
+            llCustomSearchPreview.Text = CustomEpisodeName.NameForNoExt(sampleEpisode, txtSearchURL.Text, true);
+        }
+
+        private void llCustomSearchPreview_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Helpers.SysOpen(llCustomSearchPreview.Text);
         }
     }
 }

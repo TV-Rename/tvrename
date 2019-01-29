@@ -129,13 +129,14 @@ namespace TVRename
                     }
                 }
             }
-            catch (XmlException)
+            catch (XmlException xe)
             {
+                Logger.Warn( $"Could not parse {file.Name} to try and see whether there is any TVDBs inside, got {xe.Message}");
                 return -1;
             }
             catch (Exception e)
             {
-                Logger.Error(e);
+                Logger.Error(e,$"Could not parse {file.Name} to try and see whether there is any TVDBs inside.");
             }
 
             return -1;

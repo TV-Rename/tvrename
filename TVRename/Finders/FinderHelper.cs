@@ -338,7 +338,7 @@ namespace TVRename
                             maxEp = -1;
 
                         rex = re;
-                        if ((seas != -1) || (ep != -1)) return true;
+                        if ((seas != -1) && (ep != -1)) return true;
                     }
                 }
                 catch (FormatException)
@@ -349,9 +349,8 @@ namespace TVRename
                 }
             }
 
-            return ((seas != -1) || (ep != -1));
+            return ((seas != -1) && (ep != -1));
         }
-
 
         public static string RemoveSeriesEpisodeIndicators(string hint, IEnumerable<string> seasonWords)
         {

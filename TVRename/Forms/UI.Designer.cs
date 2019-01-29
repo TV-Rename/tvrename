@@ -101,6 +101,7 @@ namespace TVRename
             this.checkForNewVersionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tbMyShows = new System.Windows.Forms.TabPage();
             this.btnFilter = new System.Windows.Forms.Button();
@@ -162,6 +163,7 @@ namespace TVRename
             this.columnHeader36 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader33 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader34 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader35 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.pbProgressBarx = new System.Windows.Forms.ProgressBar();
@@ -191,7 +193,6 @@ namespace TVRename
             this.tmrPeriodicScan = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btnUpdateAvailable = new System.Windows.Forms.Button();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
@@ -538,6 +539,13 @@ namespace TVRename
             this.logToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.logToolStripMenuItem.Text = "Log";
             this.logToolStripMenuItem.Click += new System.EventHandler(this.logToolStripMenuItem_Click);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // tabControl1
             // 
@@ -1266,6 +1274,7 @@ namespace TVRename
             this.columnHeader36,
             this.columnHeader33,
             this.columnHeader34,
+            this.columnHeader1,
             this.columnHeader35});
             this.lvWhenToWatch.FullRowSelect = true;
             listViewGroup11.Header = "Recently Aired";
@@ -1283,6 +1292,7 @@ namespace TVRename
             listViewGroup12,
             listViewGroup13,
             listViewGroup14});
+            this.lvWhenToWatch.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lvWhenToWatch.HideSelection = false;
             this.lvWhenToWatch.Location = new System.Drawing.Point(0, 35);
             this.lvWhenToWatch.Name = "lvWhenToWatch";
@@ -1330,6 +1340,11 @@ namespace TVRename
             // 
             this.columnHeader34.Text = "How Long";
             this.columnHeader34.Width = 69;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Network";
+            this.columnHeader1.Width = 100;
             // 
             // columnHeader35
             // 
@@ -1518,13 +1533,6 @@ namespace TVRename
             this.btnUpdateAvailable.Visible = false;
             this.btnUpdateAvailable.Click += new System.EventHandler(this.btnUpdateAvailable_Click);
             // 
-            // aboutToolStripMenuItem
-            // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
-            this.aboutToolStripMenuItem.Text = "About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1705,5 +1713,6 @@ namespace TVRename
         private ToolStripMenuItem episodeFileQualitySummaryLogToolStripMenuItem;
         private CheckBox cbDeleteFiles;
         private ToolStripMenuItem aboutToolStripMenuItem;
+        private ColumnHeader columnHeader1;
     }
 }

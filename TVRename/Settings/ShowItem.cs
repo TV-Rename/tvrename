@@ -632,7 +632,7 @@ namespace TVRename
 
             if (AutoAddNewSeasons() && (!string.IsNullOrEmpty(AutoAddFolderBase)))
             {
-                foreach (int i in SeasonEpisodes.Keys)
+                foreach (int i in SeasonEpisodes.Keys.ToList())
                 {
                     if (IgnoreSeasons.Contains(i)) continue;
 
@@ -676,7 +676,7 @@ namespace TVRename
         {
             SeriesInfo s = TheSeries();
             if (s==null)return new Dictionary<int, Season>();
-            return DvdOrder ? TheSeries().DvdSeasons : TheSeries().AiredSeasons;
+            return DvdOrder ? s.DvdSeasons : s.AiredSeasons;
         }
 
         public Season GetFirstAvailableSeason()
@@ -684,6 +684,19 @@ namespace TVRename
             foreach (KeyValuePair<int, Season> x in AppropriateSeasons())
             {
                 return x.Value;
+            }
+
+            return null;
+        }
+
+        public ProcessedEpisode GetFirstAvailableEpisode()
+        {
+            foreach (List<ProcessedEpisode> season in SeasonEpisodes.Values)
+            {
+                foreach (ProcessedEpisode pe in season)
+                {
+                    if (!(pe is null)) return pe;
+                }
             }
 
             return null;
