@@ -564,8 +564,6 @@ namespace TVRename
             if (s.StartsWith("https://")) return false;
             if (s.StartsWith("ftp://")) return false;
 
-            if (s.ContainsAnyCharctersFrom(CompulsoryReplacements())) return false;
-
             if (s.ContainsAnyCharctersFrom(Path.GetInvalidPathChars())) return false;
 
             return true;
