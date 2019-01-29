@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using NLog;
 
@@ -45,18 +47,33 @@ namespace TVRename
             return result;
         }
 
-        public static JObject JsonHttpPostRequest( string url, JObject request)
-        {
-            string response = HttpRequest("POST",url, request.ToString(), "application/json");
-            return JObject.Parse(response);
-        }
-
         public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, string authToken) =>
             JsonHttpGetRequest(url, parameters, authToken, string.Empty);
 
+        public static JObject JsonHttpPostRequest( string url, JObject request)
+        {
+            TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
+
+            string response=null;
+
+            RetryOnException(3, pauseBetweenFailures,url, () => {
+                response = HttpRequest("POST", url, request.ToString(), "application/json");
+            });
+            
+            return JObject.Parse(response);
+        }
+
         public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, string authToken, string lang)
         {
-            string response = HttpRequest("GET", url + GetHttpParameters(parameters), null, "application/json", authToken,lang);
+            TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
+            string fullUrl = url + GetHttpParameters(parameters);
+
+            string response = null;
+
+            RetryOnException(3, pauseBetweenFailures, url, () => {
+                response = HttpRequest("GET", fullUrl, null, "application/json", authToken, lang);
+            });
+
             return JObject.Parse(response);
         }
 
@@ -73,6 +90,62 @@ namespace TVRename
             }
             string finalUrl = sb.ToString();
             return finalUrl.Remove(finalUrl.LastIndexOf("&", StringComparison.Ordinal));
+        }
+
+        private static void RetryOnException(int times,TimeSpan delay,string url, [NotNull] System.Action operation)
+        {
+            if (times <= 0)
+                throw new ArgumentOutOfRangeException(nameof(times));
+
+            if (operation == null) throw new ArgumentNullException(nameof(operation));
+
+            int attempts = 0;
+            do
+            {
+                try
+                {
+                    attempts++;
+                    operation();
+                    break; // Success! Lets exit the loop!
+                }
+                catch (Exception ex)
+                {
+                    if (attempts == times)
+                        throw;
+
+                    Logger.Error($"Exception caught on attempt {attempts} of {times} to get {url} - will retry after delay {delay}: {ex.Message}");
+
+                    Task.Delay(delay).Wait();
+                }
+            } while (true);
+        }
+
+        public static async Task RetryOnExceptionAsync<TException>(int times, TimeSpan delay, string url, Func<Task> operation) where TException : Exception
+        {
+            if (times <= 0)
+                throw new ArgumentOutOfRangeException(nameof(times));
+
+            if (operation == null) throw new ArgumentNullException(nameof(operation));
+
+            int attempts = 0;
+            do
+            {
+                try
+                {
+                    attempts++;
+                    await operation();
+                    break;
+                }
+                catch (TException ex)
+                {
+                    if (attempts == times)
+                        throw;
+
+                    Logger.Error($"Exception caught on attempt {attempts} of {times} to get {url} - will retry after delay {delay}: {ex.Message}");
+
+                    await Task.Delay(delay);
+                }
+            } while (true);
         }
     }
 }
