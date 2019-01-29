@@ -69,6 +69,7 @@ namespace TVRename
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tpDisplay = new System.Windows.Forms.TabPage();
+            this.chkPostpendThe = new System.Windows.Forms.CheckBox();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
             this.label7 = new System.Windows.Forms.Label();
             this.cboShowStatus = new System.Windows.Forms.ComboBox();
@@ -320,6 +321,7 @@ namespace TVRename
             this.cbMissing = new System.Windows.Forms.CheckBox();
             this.label60 = new System.Windows.Forms.Label();
             this.pbGeneral = new System.Windows.Forms.PictureBox();
+            this.cbShowCollections = new System.Windows.Forms.CheckBox();
             this.label37 = new System.Windows.Forms.Label();
             this.label38 = new System.Windows.Forms.Label();
             this.tbPercentDirty = new System.Windows.Forms.TextBox();
@@ -334,8 +336,6 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
-            this.chkPostpendThe = new System.Windows.Forms.CheckBox();
-            this.cbShowCollections = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -681,6 +681,16 @@ namespace TVRename
             this.tpDisplay.TabIndex = 13;
             this.tpDisplay.Text = "Display";
             this.tpDisplay.UseVisualStyleBackColor = true;
+            // 
+            // chkPostpendThe
+            // 
+            this.chkPostpendThe.AutoSize = true;
+            this.chkPostpendThe.Location = new System.Drawing.Point(10, 216);
+            this.chkPostpendThe.Name = "chkPostpendThe";
+            this.chkPostpendThe.Size = new System.Drawing.Size(204, 17);
+            this.chkPostpendThe.TabIndex = 42;
+            this.chkPostpendThe.Text = "Move \'The\' to the end of show names";
+            this.chkPostpendThe.UseVisualStyleBackColor = true;
             // 
             // groupBox11
             // 
@@ -3542,6 +3552,16 @@ namespace TVRename
             this.pbGeneral.TabStop = false;
             this.pbGeneral.Click += new System.EventHandler(this.pbGeneral_Click);
             // 
+            // cbShowCollections
+            // 
+            this.cbShowCollections.AutoSize = true;
+            this.cbShowCollections.Location = new System.Drawing.Point(13, 230);
+            this.cbShowCollections.Name = "cbShowCollections";
+            this.cbShowCollections.Size = new System.Drawing.Size(145, 17);
+            this.cbShowCollections.TabIndex = 24;
+            this.cbShowCollections.Text = "Multiple Show collections";
+            this.cbShowCollections.UseVisualStyleBackColor = true;
+            // 
             // label37
             // 
             this.label37.AutoSize = true;
@@ -3692,26 +3712,6 @@ namespace TVRename
             this.tcTabs.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tcTabs.TabIndex = 0;
             this.tcTabs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tpSearch_DrawItem);
-            // 
-            // chkPostpendThe
-            // 
-            this.chkPostpendThe.AutoSize = true;
-            this.chkPostpendThe.Location = new System.Drawing.Point(10, 216);
-            this.chkPostpendThe.Name = "chkPostpendThe";
-            this.chkPostpendThe.Size = new System.Drawing.Size(204, 17);
-            this.chkPostpendThe.TabIndex = 42;
-            this.chkPostpendThe.Text = "Move \'The\' to the end of show names";
-            this.chkPostpendThe.UseVisualStyleBackColor = true;
-            //
-            // cbShowCollections
-            // 
-            this.cbShowCollections.AutoSize = true;
-            this.cbShowCollections.Location = new System.Drawing.Point(14, 157);
-            this.cbShowCollections.Name = "cbShowCollections";
-            this.cbShowCollections.Size = new System.Drawing.Size(145, 17);
-            this.cbShowCollections.TabIndex = 24;
-            this.cbShowCollections.Text = "Multiple Show collections";
-            this.cbShowCollections.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
