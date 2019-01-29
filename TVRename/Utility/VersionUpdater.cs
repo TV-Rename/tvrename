@@ -39,11 +39,21 @@ namespace TVRename
 
             try
             {
-                WebClient client = new WebClient();
-                client.Headers.Add("user-agent",
-                    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
-                Task<string> response = client.DownloadStringTaskAsync(GITHUB_RELEASES_API_URL);
-                JArray gitHubInfo = JArray.Parse(await response.ConfigureAwait(false));
+                JArray gitHubInfo = null;
+
+                await HttpHelper.RetryOnExceptionAsync<Exception>
+                (3, TimeSpan.FromSeconds(2), GITHUB_RELEASES_API_URL, async () => {
+                    WebClient client = new WebClient();
+                    client.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+                    Task<string> response = client.DownloadStringTaskAsync(GITHUB_RELEASES_API_URL);
+                    gitHubInfo = JArray.Parse(await response.ConfigureAwait(false));
+                });
+
+                if (gitHubInfo is null)
+                {
+                    Logger.Error("Failed to contact GitHub to identify new releases - no exception raised");
+                    return null;
+                }
 
                 foreach (JObject gitHubReleaseJson in gitHubInfo.Children<JObject>())
                 {
@@ -75,12 +85,12 @@ namespace TVRename
                 }
                 if (latestVersion == null)
                 {
-                    Logger.Error("Could not find latest version information from GitHub: {0}", response);
+                    Logger.Error("Could not find latest version information from GitHub: {0}", gitHubInfo.ToString());
                     return null;
                 }
                 if (latestBetaVersion == null)
                 {
-                    Logger.Error("Could not find latest beta version information from GitHub: {0}", response);
+                    Logger.Error("Could not find latest beta version information from GitHub: {0}", gitHubInfo.ToString());
                     return null;
                 }
             }
