@@ -524,7 +524,7 @@ namespace TVRename
                 return defaultName;
 
             char[] charsToTrim = {',', '.', ';', ':', '-', '('};
-            string[] wordsToTrim = {"part", "episode"};
+            string[] wordsToTrim = {"part", "episode","pt","chapter"};
 
             return root.Trim().TrimEnd(wordsToTrim).Trim().TrimEnd(charsToTrim).Trim();
         }
