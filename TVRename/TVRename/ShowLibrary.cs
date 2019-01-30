@@ -517,14 +517,14 @@ namespace TVRename
             int shortestEpisodeName = episodeNames.Min(x => x.Length);
             int longestEpisodeName = episodeNames.Max(x => x.Length);
             bool namesSameLength = (shortestEpisodeName == longestEpisodeName);
-            bool rootIsIgnored = root.Trim().Equals("Episode", StringComparison.OrdinalIgnoreCase) ||
-                                 root.Trim().Equals("Part", StringComparison.OrdinalIgnoreCase);
+            bool rootIsIgnored = root.Trim().StartsWith("Episode", StringComparison.OrdinalIgnoreCase) ||
+                                 root.Trim().StartsWith("Part", StringComparison.OrdinalIgnoreCase);
 
             if (!namesSameLength || rootIsIgnored || root.Length <= 3 || root.Length <= shortestEpisodeName / 2)
                 return defaultName;
 
             char[] charsToTrim = {',', '.', ';', ':', '-', '('};
-            string[] wordsToTrim = {"part", "episode"};
+            string[] wordsToTrim = {"part", "episode","pt","chapter"};
 
             return root.Trim().TrimEnd(wordsToTrim).Trim().TrimEnd(charsToTrim).Trim();
         }
