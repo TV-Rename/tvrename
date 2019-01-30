@@ -90,15 +90,7 @@ namespace TVRename
                     string theFolder = folder;
                     string otherFolder = null;
 
-                    FaResult whatToDo = FaResult.kfaNotSet;
-
-                    if (Doc.Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.create)
-                        whatToDo = FaResult.kfaCreate;
-                    else if (Doc.Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.ignore)
-                        whatToDo = FaResult.kfaIgnoreOnce;
-
-                    if (Doc.Args.Hide && (whatToDo == FaResult.kfaNotSet))
-                        whatToDo = FaResult.kfaIgnoreOnce; // default in /hide mode is to ignore
+                    FaResult whatToDo = GetDefaultAction();
 
                     if (TVSettings.Instance.AutoCreateFolders && firstAttempt)
                     {
@@ -135,8 +127,7 @@ namespace TVRename
                             }
                             catch (Exception ioe)
                             {
-                                LOGGER.Info("Could not directory: {0}", folder);
-                                LOGGER.Info(ioe);
+                                LOGGER.Warn($"Could not create directory: {folder} Error Message: {ioe.Message}");
                             }
 
                             goAgain = true;
@@ -168,6 +159,22 @@ namespace TVRename
                     }
                 } while (goAgain);
             } // for each folder
+        }
+
+        private FaResult GetDefaultAction()
+        {
+            switch (Doc.Args.MissingFolder)
+            {
+                case CommandLineArgs.MissingFolderBehavior.create:
+                    return FaResult.kfaCreate;
+                case CommandLineArgs.MissingFolderBehavior.ignore:
+                    return FaResult.kfaIgnoreOnce;
+            }
+
+            if (Doc.Args.Hide)
+                return FaResult.kfaIgnoreOnce; // default in /hide mode is to ignore
+
+            return FaResult.kfaNotSet;
         }
 
         protected override bool Active() => TVSettings.Instance.MissingCheck;
