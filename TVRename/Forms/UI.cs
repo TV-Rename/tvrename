@@ -620,6 +620,16 @@ namespace TVRename
 
             MyShowTree.Nodes.Clear();
             List<ShowItem> sil = mDoc.Library.GetShowItems();
+            lock (TheTVDB.SERIES_LOCK)
+            {
+                sil.Sort((a, b) =>
+                {
+                    SeriesInfo serA = TheTVDB.Instance.GetSeries(a.TvdbCode);
+                    SeriesInfo serB = TheTVDB.Instance.GetSeries(b.TvdbCode);
+                    return string.Compare(GenerateShowUIName(serA, a), GenerateShowUIName(serB, b), StringComparison.Ordinal);
+                });
+            }
+
             ShowFilter filter = TVSettings.Instance.Filter;
             foreach (ShowItem si in sil)
             {
@@ -631,7 +641,6 @@ namespace TVRename
                         tvn.Expand();
                 }
             }
-            MyShowTree.Sort();
 
             foreach (ShowItem si in expanded)
             {
@@ -1989,6 +1998,8 @@ namespace TVRename
 
                     //Ignore the season if it is filtered out
                     if (!sf.Filter(si, s)) continue;
+
+                    if (snum == 0 && TVSettings.Instance.IgnoreAllSpecials) continue;
 
                     string nodeTitle = ShowHtmlHelper.SeasonName(si, snum);
 
