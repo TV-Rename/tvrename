@@ -43,40 +43,37 @@ namespace TVRename
             if (string.IsNullOrEmpty(showName)  && tvdbId == -1)
                 return;
 
-            lock (TheTVDB.SERIES_LOCK)
+            if (tvdbId != -1)
             {
-                if (tvdbId != -1)
+                try
                 {
-                    try
+                    SeriesInfo series = TheTVDB.Instance.GetSeriesAndDownload(tvdbId);
+                    if (series != null)
                     {
-                        SeriesInfo series = TheTVDB.Instance.GetSeriesAndDownload(tvdbId);
-                        if (series != null)
-                        {
-                            ai.TVDBCode = tvdbId;
-                            return;
-                        }
-                    }
-                    catch (ShowNotFoundException)
-                    {
-                        //continue to try the next method
+                        ai.TVDBCode = tvdbId;
+                        return;
                     }
                 }
-
-                SeriesInfo ser = TheTVDB.Instance.GetSeries(showName);
-                if (ser != null)
+                catch (ShowNotFoundException)
                 {
-                    ai.TVDBCode = ser.TvdbCode;
-                    return;
+                    //continue to try the next method
                 }
-
-                //Try removing any year
-                string showNameNoYear =
-                    showName == null ? string.Empty : Regex.Replace(showName, @"\(\d{4}\)", "").Trim();
-
-                ser = TheTVDB.Instance.GetSeries(showNameNoYear);
-                if (ser != null)
-                    ai.TVDBCode = ser.TvdbCode;
             }
+
+            SeriesInfo ser = TheTVDB.Instance.GetSeries(showName);
+            if (ser != null)
+            {
+                ai.TVDBCode = ser.TvdbCode;
+                return;
+            }
+
+            //Try removing any year
+            string showNameNoYear =
+                showName == null ? string.Empty : Regex.Replace(showName, @"\(\d{4}\)", "").Trim();
+
+            ser = TheTVDB.Instance.GetSeries(showNameNoYear);
+            if (ser != null)
+                ai.TVDBCode = ser.TvdbCode;
         }
 
         private static int FindShowCode(FoundFolder ai)

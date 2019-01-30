@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JetBrains.Annotations;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
@@ -182,6 +183,9 @@ namespace TVRename
                         out TVSettings.FilenameProcessorRE re);
 
                 SeriesInfo s = si.TheSeries();
+
+                if (s is null) continue;
+
                 try
                 {
                     Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
@@ -194,34 +198,7 @@ namespace TVRename
                         //File is needed as there are no files for that series/episode
                         fileCanBeDeleted = false;
 
-                        //This episode may be a future dated one - process it now if the settings request that we do and it wont be picked up in a full scan
-                        if (TVSettings.Instance.CopyFutureDatedEpsFromSearchFolders && !si.ForceCheckFuture && si.DoMissingCheck && TVSettings.Instance.MissingCheck && !TVSettings.Instance.PreventMove)
-                        {
-                            if (pep.IsInFuture())
-                            {
-                                LOGGER.Info(
-                                    $"Identified that {fi.FullName} matches S{seasF}E{epF} of show {si.ShowName}, that it's not already present and airs in the future. Copying across.");
-
-                                string filename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pep));
-                                List<string> folders = si.AllProposedFolderLocations()[seasF];
-                                foreach (string folder in folders)
-                                {
-                                    if (!Directory.Exists(folder))
-                                    {
-                                        LOGGER.Warn($"Want to copy {fi.FullName} to {folder}, but it doesn't exist yet");
-                                        continue;
-                                    }
-                                    FileInfo targetFile = new FileInfo(folder + Path.DirectorySeparatorChar + filename + fi.Extension);
-
-                                    if (fi.FullName == targetFile.FullName) continue;
-
-                                    returnActions.Add(new ActionCopyMoveRename(fi, targetFile, pep));
-
-                                    // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
-                                    returnActions.AddRange(new DownloadIdentifiersController().ProcessEpisode(pep, targetFile));
-                                }
-                            }
-                        }
+                        returnActions.AddRange(CopyFutureDatedFile(fi, pep));
                     }
                     else
                     {
@@ -234,84 +211,7 @@ namespace TVRename
                                 continue;
                             }
 
-                            FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, fi);
-                            switch (result)
-                            {
-                                case FileHelper.VideoComparison.secondFileBetter:
-                                    fileCanBeDeleted = false;
-
-                                    if (TVSettings.Instance.ReplaceWithBetterQuality)
-                                    {
-                                        if (matchingShows.Count > 1)
-                                        {
-                                            LOGGER.Warn(
-                                                $"Keeping {fi.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({string.Join(", ", matchingShows.Select(item => item.ShowName))}) that match.");
-                                        }
-                                        else
-                                        {
-                                            returnActions.AddNullableRange(UpgradeFile(fi, pep, existingFile));
-                                        }
-                                    }
-                                    else
-                                    {
-                                        LOGGER.Warn(
-                                            $"Keeping {fi.FullName} as it is better quality than some of the current files for that show (Auto Replace with better quality files is turned off)");
-                                    }
-
-                                    break;
-                                case FileHelper.VideoComparison.cantTell:
-                                case FileHelper.VideoComparison.similar:
-                                    if (unattended)
-                                    {
-                                        fileCanBeDeleted = false;
-                                        LOGGER.Info(
-                                            $"Keeping {fi.FullName} as it might be better quality than {existingFile.FullName}");
-                                    }
-                                    else
-                                    {
-                                        if (matchingShows.Count > 1)
-                                        {
-                                            LOGGER.Warn(
-                                                $"Keeping {fi.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({string.Join(", ", matchingShows.Select(item => item.ShowName))}) that match.");
-                                            fileCanBeDeleted = false;
-                                        }
-                                        else
-                                        {
-                                            ChooseFile question = new ChooseFile(existingFile, fi);
-                                            question.ShowDialog();
-
-                                            switch (question.Answer)
-                                            {
-                                                case ChooseFile.ChooseFileDialogResult.ignore:
-                                                    fileCanBeDeleted = false;
-                                                    LOGGER.Info(
-                                                        $"Keeping {fi.FullName} as it might be better quality than {existingFile.FullName}");
-
-                                                    break;
-                                                case ChooseFile.ChooseFileDialogResult.left:
-                                                    LOGGER.Info(
-                                                        $"User has elected to remove {fi.FullName} as it is not as good quality than {existingFile.FullName}");
-
-                                                    break;
-                                                case ChooseFile.ChooseFileDialogResult.right:
-                                                    returnActions.AddNullableRange(UpgradeFile(fi, pep, existingFile));
-                                                    fileCanBeDeleted = false;
-                                                    break;
-                                                default:
-                                                    throw new ArgumentOutOfRangeException();
-                                            }
-                                        }
-                                    }
-
-                                    break;
-                                //the other cases of the files being the same or the existing file being better are not enough to save the file
-                                case FileHelper.VideoComparison.firstFileBetter:
-                                    break;
-                                case FileHelper.VideoComparison.same:
-                                    break;
-                                default:
-                                    throw new ArgumentOutOfRangeException();
-                            }
+                            fileCanBeDeleted = ReviewFile(unattended, fi, matchingShows, existingFile, fileCanBeDeleted, returnActions, pep);
                         }
                     }
                 }
@@ -332,6 +232,139 @@ namespace TVRename
             else
             {
                 filesThatMayBeNeeded.Add(fi);
+            }
+
+            return returnActions;
+        }
+
+        private static bool ReviewFile(bool unattended, [NotNull] FileInfo fi, [NotNull] List<ShowItem> matchingShows, [NotNull] FileInfo existingFile,
+            bool fileCanBeDeleted, [NotNull] List<Item> returnActions, [NotNull] ProcessedEpisode pep)
+        {
+            FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, fi);
+            switch (result)
+            {
+                case FileHelper.VideoComparison.secondFileBetter:
+                    fileCanBeDeleted = false;
+
+                    if (TVSettings.Instance.ReplaceWithBetterQuality)
+                    {
+                        if (matchingShows.Count > 1)
+                        {
+                            LOGGER.Warn(
+                                $"Keeping {fi.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({string.Join(", ", matchingShows.Select(item => item.ShowName))}) that match.");
+                        }
+                        else
+                        {
+                            returnActions.AddNullableRange(UpgradeFile(fi, pep, existingFile));
+                        }
+                    }
+                    else
+                    {
+                        LOGGER.Warn(
+                            $"Keeping {fi.FullName} as it is better quality than some of the current files for that show (Auto Replace with better quality files is turned off)");
+                    }
+
+                    break;
+                case FileHelper.VideoComparison.cantTell:
+                case FileHelper.VideoComparison.similar:
+                    if (unattended)
+                    {
+                        fileCanBeDeleted = false;
+                        LOGGER.Info(
+                            $"Keeping {fi.FullName} as it might be better quality than {existingFile.FullName}");
+                    }
+                    else
+                    {
+                        if (matchingShows.Count > 1)
+                        {
+                            LOGGER.Warn(
+                                $"Keeping {fi.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({string.Join(", ", matchingShows.Select(item => item.ShowName))}) that match.");
+
+                            fileCanBeDeleted = false;
+                        }
+                        else
+                        {
+                            fileCanBeDeleted = AskUserAboutFileReplacement(fi, existingFile, returnActions, pep, fileCanBeDeleted);
+                        }
+                    }
+
+                    break;
+                //the other cases of the files being the same or the existing file being better are not enough to save the file
+                case FileHelper.VideoComparison.firstFileBetter:
+                    break;
+                case FileHelper.VideoComparison.same:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return fileCanBeDeleted;
+        }
+
+        private static bool AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] List<Item> returnActions,[NotNull] ProcessedEpisode pep, bool fileCanBeDeleted)
+        {
+            ChooseFile question = new ChooseFile(existingFile, newFile);
+            question.ShowDialog();
+
+            switch (question.Answer)
+            {
+                case ChooseFile.ChooseFileDialogResult.ignore:
+                    fileCanBeDeleted = false;
+                    LOGGER.Info(
+                        $"Keeping {newFile.FullName} as it might be better quality than {existingFile.FullName}");
+
+                    break;
+                case ChooseFile.ChooseFileDialogResult.left:
+                    LOGGER.Info(
+                        $"User has elected to remove {newFile.FullName} as it is not as good quality than {existingFile.FullName}");
+
+                    break;
+                case ChooseFile.ChooseFileDialogResult.right:
+                    returnActions.AddNullableRange(UpgradeFile(newFile, pep, existingFile));
+                    fileCanBeDeleted = false;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return fileCanBeDeleted;
+        }
+
+        private static List<Item> CopyFutureDatedFile(FileInfo fi, ProcessedEpisode pep)
+        {
+            ShowItem si = pep.Show;
+            int seasF = pep.AppropriateSeasonNumber;
+            int epF = pep.AppropriateEpNum;
+
+            //This episode may be a future dated one - process it now if the settings request that we do and it wont be picked up in a full scan
+            if (!TVSettings.Instance.CopyFutureDatedEpsFromSearchFolders || si.ForceCheckFuture || !si.DoMissingCheck ||
+                !TVSettings.Instance.MissingCheck || TVSettings.Instance.PreventMove) return new List<Item>();
+
+            if (!pep.IsInFuture()) return new List<Item>();
+
+            LOGGER.Info(
+                $"Identified that {fi.FullName} matches S{seasF}E{epF} of show {si.ShowName}, that it's not already present and airs in the future. Copying across.");
+
+            string filename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pep));
+            List<string> folders = si.AllProposedFolderLocations()[seasF];
+            List<Item> returnActions = new List<Item>();
+
+            foreach (string folder in folders)
+            {
+                if (!Directory.Exists(folder))
+                {
+                    LOGGER.Warn($"Want to copy {fi.FullName} to {folder}, but it doesn't exist yet");
+                    continue;
+                }
+
+                FileInfo targetFile = new FileInfo(folder + Path.DirectorySeparatorChar + filename + fi.Extension);
+
+                if (fi.FullName == targetFile.FullName) continue;
+
+                returnActions.Add(new ActionCopyMoveRename(fi, targetFile, pep));
+
+                // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
+                returnActions.AddRange(new DownloadIdentifiersController().ProcessEpisode(pep, targetFile));
             }
 
             return returnActions;
