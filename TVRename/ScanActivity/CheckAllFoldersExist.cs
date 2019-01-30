@@ -30,6 +30,9 @@ namespace TVRename
                 if ((snum == 0) && (si.CountSpecials))
                     continue; // no specials season, they're merged into the seasons themselves
 
+                if ((snum == 0) && TVSettings.Instance.IgnoreAllSpecials)
+                    continue;
+
                 List<string> folders = new List<string>();
 
                 if (flocs.ContainsKey(snum))

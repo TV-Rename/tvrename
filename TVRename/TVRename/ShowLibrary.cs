@@ -230,7 +230,7 @@ namespace TVRename
             else
                 eis.Sort(ProcessedEpisode.EpNumberSorter);
 
-            if (si.CountSpecials && seasonsToUse.ContainsKey(0))
+            if (si.CountSpecials && seasonsToUse.ContainsKey(0) && !TVSettings.Instance.IgnoreAllSpecials)
             {
                 // merge specials in
                 foreach (Episode ep in seasonsToUse[0].Episodes.Values)
@@ -568,6 +568,8 @@ namespace TVRename
                     if (si.IgnoreSeasons.Contains(kvp.Key))
                         continue; // ignore this season
 
+                    if (kvp.Key == 0 && TVSettings.Instance.IgnoreAllSpecials) continue;
+
                     List<ProcessedEpisode> eis = kvp.Value;
 
                     foreach (ProcessedEpisode ei in eis)
@@ -601,6 +603,8 @@ namespace TVRename
                     {
                         if (si.IgnoreSeasons.Contains(v.Key))
                             continue; // ignore this season
+
+                        if (v.Key == 0 && TVSettings.Instance.IgnoreAllSpecials) continue;
 
                         foreach (ProcessedEpisode ei in v.Value)
                         {
@@ -692,6 +696,8 @@ namespace TVRename
                     if (si.IgnoreSeasons.Contains(kvp.Key))
                         continue; // ignore this season
 
+                    if (kvp.Key == 0 && TVSettings.Instance.IgnoreAllSpecials) continue;
+
                     List<ProcessedEpisode> eis = kvp.Value;
 
                     bool nextToAirFound = false;
@@ -754,6 +760,8 @@ namespace TVRename
                 {
                     if (si.IgnoreSeasons.Contains(kvp.Key))
                         continue; // ignore this season
+
+                    if (kvp.Key == 0 && TVSettings.Instance.IgnoreAllSpecials) continue;
 
                     foreach (ProcessedEpisode ei in kvp.Value)
                     {

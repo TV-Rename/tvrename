@@ -270,6 +270,7 @@ namespace TVRename
         public bool runStartupCheck = false;
         public bool DoBulkAddInScan = false;
         public PreviouslySeenEpisodes PreviouslySeenEpisodes;
+        public bool IgnoreAllSpecials = false;
 
         private TVSettings()
         {
@@ -455,6 +456,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "CopyFutureDatedEpsFromSearchFolders", CopyFutureDatedEpsFromSearchFolders);
             XmlHelper.WriteElementToXml(writer, "ShareLogs", ShareLogs);
             XmlHelper.WriteElementToXml(writer, "PostpendThe", PostpendThe);
+            XmlHelper.WriteElementToXml(writer, "IgnoreAllSpecials", IgnoreAllSpecials);
 
             TheSearchers.WriteXml(writer);
             writer.WriteStartElement("Replacements");
@@ -1103,6 +1105,7 @@ namespace TVRename
             CopyFutureDatedEpsFromSearchFolders = xmlSettings.ExtractBool("CopyFutureDatedEpsFromSearchFolders") ?? false;
             ShareLogs = xmlSettings.ExtractBool("ShareLogs") ?? true;
             PostpendThe = xmlSettings.ExtractBool("PostpendThe") ?? false;
+            IgnoreAllSpecials = xmlSettings.ExtractBool("IgnoreAllSpecials") ?? false;
 
             Tidyup.load(xmlSettings);
             RSSURLs = xmlSettings.Descendants("RSSURLs").FirstOrDefault()?.ReadStringsFromXml("URL");

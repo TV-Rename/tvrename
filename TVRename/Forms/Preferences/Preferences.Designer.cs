@@ -69,6 +69,7 @@ namespace TVRename
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tpDisplay = new System.Windows.Forms.TabPage();
+            this.chkPostpendThe = new System.Windows.Forms.CheckBox();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
             this.label7 = new System.Windows.Forms.Label();
             this.cboShowStatus = new System.Windows.Forms.ComboBox();
@@ -334,7 +335,8 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
-            this.chkPostpendThe = new System.Windows.Forms.CheckBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.chkIgnoreAllSpecials = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -680,6 +682,16 @@ namespace TVRename
             this.tpDisplay.TabIndex = 13;
             this.tpDisplay.Text = "Display";
             this.tpDisplay.UseVisualStyleBackColor = true;
+            // 
+            // chkPostpendThe
+            // 
+            this.chkPostpendThe.AutoSize = true;
+            this.chkPostpendThe.Location = new System.Drawing.Point(10, 216);
+            this.chkPostpendThe.Name = "chkPostpendThe";
+            this.chkPostpendThe.Size = new System.Drawing.Size(204, 17);
+            this.chkPostpendThe.TabIndex = 42;
+            this.chkPostpendThe.Text = "Move \'The\' to the end of show names";
+            this.chkPostpendThe.UseVisualStyleBackColor = true;
             // 
             // groupBox11
             // 
@@ -1301,6 +1313,8 @@ namespace TVRename
             // 
             this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox6.Controls.Add(this.chkIgnoreAllSpecials);
+            this.groupBox6.Controls.Add(this.button1);
             this.groupBox6.Controls.Add(this.txtSeasonFormat);
             this.groupBox6.Controls.Add(this.txtSpecialsFolderName);
             this.groupBox6.Controls.Add(this.label47);
@@ -1318,7 +1332,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSeasonFormat.Location = new System.Drawing.Point(124, 53);
             this.txtSeasonFormat.Name = "txtSeasonFormat";
-            this.txtSeasonFormat.Size = new System.Drawing.Size(271, 20);
+            this.txtSeasonFormat.Size = new System.Drawing.Size(203, 20);
             this.txtSeasonFormat.TabIndex = 30;
             // 
             // txtSpecialsFolderName
@@ -3691,15 +3705,27 @@ namespace TVRename
             this.tcTabs.TabIndex = 0;
             this.tcTabs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tpSearch_DrawItem);
             // 
-            // chkPostpendThe
+            // button1
             // 
-            this.chkPostpendThe.AutoSize = true;
-            this.chkPostpendThe.Location = new System.Drawing.Point(10, 216);
-            this.chkPostpendThe.Name = "chkPostpendThe";
-            this.chkPostpendThe.Size = new System.Drawing.Size(204, 17);
-            this.chkPostpendThe.TabIndex = 42;
-            this.chkPostpendThe.Text = "Move \'The\' to the end of show names";
-            this.chkPostpendThe.UseVisualStyleBackColor = true;
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(333, 52);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(62, 23);
+            this.button1.TabIndex = 31;
+            this.button1.Text = "Tags...";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // chkIgnoreAllSpecials
+            // 
+            this.chkIgnoreAllSpecials.AutoSize = true;
+            this.chkIgnoreAllSpecials.Location = new System.Drawing.Point(9, 79);
+            this.chkIgnoreAllSpecials.Name = "chkIgnoreAllSpecials";
+            this.chkIgnoreAllSpecials.Size = new System.Drawing.Size(165, 17);
+            this.chkIgnoreAllSpecials.TabIndex = 32;
+            this.chkIgnoreAllSpecials.Text = "Ignore Specials  for all Shows";
+            this.toolTip1.SetToolTip(this.chkIgnoreAllSpecials, "Ignores \'specials\' season for all shows");
+            this.chkIgnoreAllSpecials.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -4104,5 +4130,7 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkMoveLibraryFiles;
         private System.Windows.Forms.CheckBox chkShareCriticalLogs;
         private System.Windows.Forms.CheckBox chkPostpendThe;
+        private System.Windows.Forms.CheckBox chkIgnoreAllSpecials;
+        private System.Windows.Forms.Button button1;
     }
 }

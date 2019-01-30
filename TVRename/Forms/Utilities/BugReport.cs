@@ -96,6 +96,9 @@ namespace TVRename
                         if (((snum == 0) && (si.CountSpecials)) || !si.AllExistngFolderLocations().ContainsKey(snum))
                             continue; // skip specials
 
+                        if ((snum == 0) && TVSettings.Instance.IgnoreAllSpecials)
+                            continue;
+
                         foreach (string folder in si.AllExistngFolderLocations()[snum])
                         {
                             txt.AppendLine(si.TvdbCode + " : " + si.ShowName + " : S" + snum );
