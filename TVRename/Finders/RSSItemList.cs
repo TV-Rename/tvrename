@@ -54,7 +54,8 @@ namespace TVRename
             }
             catch (XmlException e)
             {
-                Logger.Error($"Could not parse RSS page at:{url} {e.Message} {response}");
+                Logger.Warn($"Could not parse RSS page at:{url} Message was: {e.Message}");
+                Logger.Info(response);
                 return false;
             }
             catch (Exception e)
