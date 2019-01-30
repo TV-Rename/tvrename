@@ -43,6 +43,9 @@ namespace TVRename
                 if ((snum == 0) && (si.CountSpecials))
                     continue; // don't process the specials season, as they're merged into the seasons themselves
 
+                if ((snum == 0) && TVSettings.Instance.IgnoreAllSpecials)
+                    continue;
+
                 // all the folders for this particular season
                 List<string> folders = allFolders[snum];
 

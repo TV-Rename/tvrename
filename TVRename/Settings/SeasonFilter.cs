@@ -14,6 +14,7 @@ namespace TVRename
 
         public bool Filter(ShowItem si, Season sea)
         {
+            if (sea.SeasonNumber == 0 && TVSettings.Instance.IgnoreAllSpecials) return true;
             return !HideIgnoredSeasons || !si.IgnoreSeasons.Contains(sea.SeasonNumber);
         }
     }

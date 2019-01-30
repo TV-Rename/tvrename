@@ -362,6 +362,9 @@ namespace TVRename
                 {
                     if(IgnoreSeasons.Contains(s.Key))
                         continue;
+
+                    if (TVSettings.Instance.IgnoreAllSpecials && s.Key == 0) continue;
+
                     if (s.Value.Episodes != null && s.Value.Episodes.Count > 0)
                     {
                         return true;
@@ -381,6 +384,9 @@ namespace TVRename
                 {
                     if (IgnoreSeasons.Contains(s.Key))
                         continue;
+
+                    if (TVSettings.Instance.IgnoreAllSpecials && s.Key == 0) continue;
+
                     if (s.Value.Status(GetTimeZone()) == Season.SeasonStatus.noneAired ||
                         s.Value.Status(GetTimeZone()) == Season.SeasonStatus.partiallyAired)
                     {
@@ -401,6 +407,9 @@ namespace TVRename
                     {
                         if(IgnoreSeasons.Contains(s.Key))
                             continue;
+
+                        if (TVSettings.Instance.IgnoreAllSpecials && s.Key == 0) continue;
+
                         if (s.Value.Status(GetTimeZone()) == Season.SeasonStatus.partiallyAired || s.Value.Status(GetTimeZone()) == Season.SeasonStatus.aired)
                         {
                             return true;
@@ -412,14 +421,7 @@ namespace TVRename
 
         public IEnumerable<string> Genres => TheSeries()?.Genres();
 
-        public Language  PreferredLanguage
-        {
-            get
-            {
-                if (UseCustomLanguage) return TheTVDB.Instance.LanguageList.GetLanguageFromCode(CustomLanguageCode);
-                return TheTVDB.Instance.PreferredLanguage;
-            }
-        }
+        public Language  PreferredLanguage => UseCustomLanguage ? TheTVDB.Instance.LanguageList.GetLanguageFromCode(CustomLanguageCode) : TheTVDB.Instance.PreferredLanguage;
 
         private void SetDefaults()
         {
@@ -635,6 +637,8 @@ namespace TVRename
                 foreach (int i in SeasonEpisodes.Keys.ToList())
                 {
                     if (IgnoreSeasons.Contains(i)) continue;
+
+                    if (i == 0 && TVSettings.Instance.IgnoreAllSpecials) continue;
 
                     if (ManualFoldersReplaceAutomatic && fld.ContainsKey(i)) continue;
 

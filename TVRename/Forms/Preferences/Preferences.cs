@@ -5,16 +5,16 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+using Alphaleonis.Win32.Filesystem;
+using DaveChambers.FolderBrowserDialogEx;
 using System;
-using System.Threading;
-using System.Windows.Forms;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using Alphaleonis.Win32.Filesystem;
-using DaveChambers.FolderBrowserDialogEx;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using System.Threading;
+using System.Windows.Forms;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 namespace TVRename
 {
@@ -287,6 +287,7 @@ namespace TVRename
             s.RemoveDownloadDirectoriesFiles = cbCleanUpDownloadDir.Checked;
             s.DeleteShowFromDisk = cbDeleteShowFromDisk.Checked;
             s.DoBulkAddInScan = cbScanIncludesBulkAdd.Checked;
+            s.IgnoreAllSpecials = chkIgnoreAllSpecials.Checked;
 
             s.EpJPGs = cbEpThumbJpg.Checked;
             s.SeriesJpg = cbSeriesJpg.Checked;
@@ -764,6 +765,7 @@ namespace TVRename
             cbLeaveOriginals.Checked = s.LeaveOriginals;
             enterPreferredLanguage = s.PreferredLanguageCode;
             cbScanIncludesBulkAdd.Checked = s.DoBulkAddInScan;
+            chkIgnoreAllSpecials.Checked = s.IgnoreAllSpecials;
 
             cbEpThumbJpg.Checked = s.EpJPGs;
             cbSeriesJpg.Checked = s.SeriesJpg;
@@ -1577,5 +1579,14 @@ namespace TVRename
         }
 
         #endregion
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Season t = null;
+            // ReSharper disable once ExpressionIsAlwaysNull
+            cntfw = new CustomNameTagsFloatingWindow(pe: t);
+            cntfw.Show(this);
+            Focus();
+        }
     }
 }
