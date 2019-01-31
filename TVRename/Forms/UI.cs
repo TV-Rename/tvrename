@@ -2636,7 +2636,7 @@ namespace TVRename
                 lvAction.BeginUpdate();
                 lvAction.Items.Clear();
 
-                foreach (Item item in mDoc.TheActionList)
+                foreach (Item item in mDoc.TheActionList.ToList())
                 {
                     ListViewItem lvi = LviForItem(item);
                     lvAction.Items.Add(lvi);
