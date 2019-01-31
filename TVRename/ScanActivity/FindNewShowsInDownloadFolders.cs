@@ -151,8 +151,9 @@ namespace TVRename
             lock (TheTVDB.SERIES_LOCK)
             {
                 MDoc.Library.AddRange(addedShows);
-                MDoc.ShowAddedOrEdited(true);
+                MDoc.ShowAddedOrEdited(false);
             }
+            MDoc.ShowAddedOrEdited(true);
 
             LOGGER.Info("Added new shows called: {0}", string.Join(",", addedShows.Select(s => s.ShowName)));
 

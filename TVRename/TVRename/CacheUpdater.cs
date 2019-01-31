@@ -109,7 +109,7 @@ namespace TVRename
 
                 bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
 
-                Threadslogger.Trace("  Downloading " + series.SeriesId);
+                Threadslogger.Trace("  Downloading " + series.Name);
                 bool r;
                 try
                 {
@@ -194,7 +194,7 @@ namespace TVRename
                     workerSemaphore.WaitOne(); // blocks until there is an available slot
                     Thread t = new Thread(GetThread);
                     workers.Add(t);
-                    t.Name = "GetThread:" + code;
+                    t.Name = "GetThread:" + code.Name;
                     t.Start(code); // will grab the semaphore as soon as we make it available
                     int nfr = workerSemaphore
                         .Release(1); // release our hold on the semaphore, so that worker can grab it
