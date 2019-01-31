@@ -13,12 +13,14 @@ namespace TVRename
         public readonly int SeriesId;
         public readonly bool UseCustomLanguage;
         public readonly string CustomLanguageCode;
+        public readonly string Name;
 
-        public SeriesSpecifier(int key, bool useCustomLanguage, string customLanguageCode)
+        public SeriesSpecifier(int key, bool useCustomLanguage, string customLanguageCode,string name)
         {
             SeriesId = key;
             UseCustomLanguage = useCustomLanguage;
             CustomLanguageCode = customLanguageCode;
+            Name = name;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace TVRename
                 List<SeriesSpecifier> value = new List<SeriesSpecifier>();
                 foreach (KeyValuePair<int, ShowItem> series in this)
                 {
-                    value.Add(new SeriesSpecifier(series.Key,series.Value.UseCustomLanguage,series.Value.CustomLanguageCode));
+                    value.Add(new SeriesSpecifier(series.Key,series.Value.UseCustomLanguage,series.Value.CustomLanguageCode,series.Value.ShowName));
                 }
 
                 return value;
