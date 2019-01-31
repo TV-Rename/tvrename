@@ -209,7 +209,7 @@ namespace TVRename
             }
 
             //validation Rules
-            if (!mSeason.ContainsEpisode(int.Parse(txtValue1.Text), mdvdOrder))
+            if (!mSeason.ContainsEpisode(mRule.First, mdvdOrder))
             {
                 MessageBox.Show("First episode number is not valid for the selected season", "Modify Rules",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -218,9 +218,9 @@ namespace TVRename
                 return;
             }
 
-            //these 3 tpyes only have one episode cited
+            //these 3 types only have one episode cited
             if (!(mRule.DoWhatNow == RuleAction.kRename || mRule.DoWhatNow == RuleAction.kInsert || mRule.DoWhatNow == RuleAction.kSplit) &&
-                !mSeason.ContainsEpisode(int.Parse(txtValue2.Text), mdvdOrder))
+                !mSeason.ContainsEpisode(mRule.Second, mdvdOrder))
             {
                 MessageBox.Show("Second episode number is not valid for the selected season", "Modify Rules",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -229,9 +229,9 @@ namespace TVRename
                 return;
             }
 
-            //these 3 tpyes only have one episode cited - others must be in order
+            //these 3 types only have one episode cited - others must be in order
             if (!(mRule.DoWhatNow == RuleAction.kRename || mRule.DoWhatNow == RuleAction.kInsert || mRule.DoWhatNow == RuleAction.kSplit) &&
-                int.Parse(txtValue2.Text) < int.Parse(txtValue1.Text))
+                mRule.First < mRule.Second)
             {
                 MessageBox.Show("Second episode number must be before the first episode number", "Modify Rules",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
