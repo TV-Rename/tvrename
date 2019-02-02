@@ -30,7 +30,7 @@ namespace TVRename
 
         public static string Obtain(string url)
         {
-            string responseText = String.Empty;
+            string responseText = string.Empty;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
