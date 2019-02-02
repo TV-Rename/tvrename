@@ -303,31 +303,38 @@ namespace TVRename
 
         private static bool AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] List<Item> returnActions,[NotNull] ProcessedEpisode pep, bool fileCanBeDeleted)
         {
-            ChooseFile question = new ChooseFile(existingFile, newFile);
-            question.ShowDialog();
-
-            switch (question.Answer)
+            try
             {
-                case ChooseFile.ChooseFileDialogResult.ignore:
-                    fileCanBeDeleted = false;
-                    LOGGER.Info(
-                        $"Keeping {newFile.FullName} as it might be better quality than {existingFile.FullName}");
+                ChooseFile question = new ChooseFile(existingFile, newFile);
+                question.ShowDialog();
 
-                    break;
-                case ChooseFile.ChooseFileDialogResult.left:
-                    LOGGER.Info(
-                        $"User has elected to remove {newFile.FullName} as it is not as good quality than {existingFile.FullName}");
+                switch (question.Answer)
+                {
+                    case ChooseFile.ChooseFileDialogResult.ignore:
+                        fileCanBeDeleted = false;
+                        LOGGER.Info(
+                            $"Keeping {newFile.FullName} as it might be better quality than {existingFile.FullName}");
 
-                    break;
-                case ChooseFile.ChooseFileDialogResult.right:
-                    returnActions.AddNullableRange(UpgradeFile(newFile, pep, existingFile));
-                    fileCanBeDeleted = false;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                        break;
+                    case ChooseFile.ChooseFileDialogResult.left:
+                        LOGGER.Info(
+                            $"User has elected to remove {newFile.FullName} as it is not as good quality than {existingFile.FullName}");
+
+                        break;
+                    case ChooseFile.ChooseFileDialogResult.right:
+                        returnActions.AddNullableRange(UpgradeFile(newFile, pep, existingFile));
+                        fileCanBeDeleted = false;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                return fileCanBeDeleted;
             }
-
-            return fileCanBeDeleted;
+            catch (FileNotFoundException)
+            {
+                return false;
+            }
         }
 
         private static List<Item> CopyFutureDatedFile(FileInfo fi, ProcessedEpisode pep)

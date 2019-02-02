@@ -74,15 +74,7 @@ namespace TVRename
 
         private static string GetFileSize(FileInfo file)
         {
-            try
-            {
                 return file.Length.Bytes().Humanize("#.#");
-            }
-            catch (FileNotFoundException fnfex)
-            {
-                Logger.Fatal(fnfex,$"Can't find File in ChooseFile called {file.Name}");
-                return "Unknown";
-            }
         }
 
         private void SetBoldFileSize(FileInfo left, FileInfo right)
