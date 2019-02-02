@@ -164,11 +164,15 @@ namespace TVRename
                         int which = -1;
                         for (int i = 0; i < queues.Length; i++)
                         {
+                            ActionQueue currentQueue = queues[i];
+
+                            if (currentQueue is null) continue;
                             // something to do in this queue, and semaphore is available
-                            if (queues[i].ActionPosition < queues[i].Actions.Count)
+                            if (currentQueue.ActionPosition < currentQueue.Actions.Count)
                             {
                                 allDone = false;
-                                if (actionSemaphores[i].WaitOne(20, false))
+                                Semaphore currentSemaphore = actionSemaphores[i];
+                                if (currentSemaphore.WaitOne(20, false))
                                 {
                                     which = i;
                                     break;
@@ -204,7 +208,7 @@ namespace TVRename
                 catch (ThreadAbortException)
                 {
                     foreach (Thread t in actionWorkers)
-                        t.Abort();
+                        t?.Abort();
 
                     WaitForAllActionThreadsAndTidyUp();
                 }
@@ -216,7 +220,7 @@ namespace TVRename
                 Logger.Fatal(e, "Unhandled Exception in ActionProcessor");
                 if (!(actionWorkers is null))
                     foreach (Thread t in actionWorkers)
-                        t.Abort();
+                        t?.Abort();
             }
 
             WaitForAllActionThreadsAndTidyUp();

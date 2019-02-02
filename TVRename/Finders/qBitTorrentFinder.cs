@@ -73,7 +73,7 @@ namespace TVRename
             catch (JsonReaderException ex)
             {
                 LOGGER.Error(ex,
-                    $"Could not parse data recieved from to {url}, {settings} {currentDownloads}");
+                    $"Could not parse data recieved from {url}, {settings} {currentDownloads}");
             }
 
             return ret;
