@@ -119,7 +119,9 @@ namespace TVRename.App
             {
                 Logger.Info("Starting new instance");
 
-                new ApplicationBase().Run(args);
+                ApplicationBase s = new ApplicationBase();
+
+                 s?.Run(args);
 
                 GC.KeepAlive(mutex);
             }

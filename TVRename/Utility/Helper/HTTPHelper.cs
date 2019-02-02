@@ -47,32 +47,43 @@ namespace TVRename
             return result;
         }
 
-        public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, string authToken) =>
-            JsonHttpGetRequest(url, parameters, authToken, string.Empty);
+        public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, string authToken, bool retry) =>
+            JsonHttpGetRequest(url, parameters, authToken, string.Empty,retry);
 
-        public static JObject JsonHttpPostRequest( string url, JObject request)
+        public static JObject JsonHttpPostRequest( string url, JObject request, bool retry)
         {
             TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
 
             string response=null;
-
-            RetryOnException(3, pauseBetweenFailures,url, () => {
+            if (retry)
+            {
+                RetryOnException(3, pauseBetweenFailures, url,
+                    () => { response = HttpRequest("POST", url, request.ToString(), "application/json"); });
+            }
+            else
+            {
                 response = HttpRequest("POST", url, request.ToString(), "application/json");
-            });
-            
+            }
+
             return JObject.Parse(response);
         }
 
-        public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, string authToken, string lang)
+        public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, string authToken, string lang, bool retry)
         {
             TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
             string fullUrl = url + GetHttpParameters(parameters);
 
             string response = null;
 
-            RetryOnException(3, pauseBetweenFailures, fullUrl, () => {
+            if (retry)
+            {
+                RetryOnException(3, pauseBetweenFailures, fullUrl,
+                    () => { response = HttpRequest("GET", fullUrl, null, "application/json", authToken, lang); });
+            }
+            else
+            {
                 response = HttpRequest("GET", fullUrl, null, "application/json", authToken, lang);
-            });
+            }
 
             return JObject.Parse(response);
         }
@@ -111,9 +122,12 @@ namespace TVRename
                 catch (Exception ex)
                 {
                     if (attempts == times)
+                    {
+                        Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - cancelling: {ex.Message}");
                         throw;
+                    }
 
-                    Logger.Error($"Exception caught on attempt {attempts} of {times} to get {url} - will retry after delay {delay}: {ex.Message}");
+                    Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - will retry after delay {delay}: {ex.Message}");
 
                     Task.Delay(delay).Wait();
                 }
@@ -139,9 +153,12 @@ namespace TVRename
                 catch (TException ex)
                 {
                     if (attempts == times)
+                    {
+                        Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - cancelling: {ex.Message}");
                         throw;
+                    }
 
-                    Logger.Error($"Exception caught on attempt {attempts} of {times} to get {url} - will retry after delay {delay}: {ex.Message}");
+                    Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - will retry after delay {delay}: {ex.Message}");
 
                     await Task.Delay(delay);
                 }
