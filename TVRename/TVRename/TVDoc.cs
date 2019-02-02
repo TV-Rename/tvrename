@@ -689,7 +689,7 @@ namespace TVRename
                 if (!Directory.Exists(dirPath)) continue;
 
                 try{ 
-                    string[] x = Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories);
+                    string[] x = Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories);
                     Logger.Info($"Processing {x.Length} files for shows that need to be scanned");
 
                     foreach (string filePath in x)
@@ -730,7 +730,7 @@ namespace TVRename
                     Logger.Error($"Please update 'Download Folders' {dirPath} is not supported {ex.Message}");
                 }
                 try { 
-                    string[] directories = Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories);
+                    string[] directories = Directory.GetDirectories(dirPath, "*", SearchOption.AllDirectories);
                     Logger.Info($"Processing {directories.Length} directories for shows that need to be scanned");
 
                     foreach (string subDirPath in directories)
