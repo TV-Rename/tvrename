@@ -154,54 +154,7 @@ namespace TVRename
 
                 try
                 {
-                    while (true)
-                    {
-                        while (actionPause)
-                            Thread.Sleep(100);
-
-                        // look through the list of semaphores to see if there is one waiting for some work to do
-                        bool allDone = true;
-                        int which = -1;
-                        for (int i = 0; i < queues.Length; i++)
-                        {
-                            ActionQueue currentQueue = queues[i];
-
-                            if (currentQueue is null) continue;
-                            // something to do in this queue, and semaphore is available
-                            if (currentQueue.ActionPosition < currentQueue.Actions.Count)
-                            {
-                                allDone = false;
-                                Semaphore currentSemaphore = actionSemaphores[i];
-                                if (currentSemaphore.WaitOne(20, false))
-                                {
-                                    which = i;
-                                    break;
-                                }
-                            }
-                        }
-
-                        if ((which == -1) && (allDone))
-                            break; // all done!
-
-                        if (which == -1)
-                            continue; // no semaphores available yet, try again for one
-
-                        ActionQueue q = queues[which];
-                        Action act = q.Actions[q.ActionPosition++];
-
-                        if (act == null)
-                            continue;
-
-                        if (!act.Done)
-                        {
-                            StartThread(which, act);
-                        }
-
-                        while (actionStarting) // wait for thread to get the semaphore
-                            Thread.Sleep(10); // allow the other thread a chance to run and grab
-
-                        TidyDeadWorkers();
-                    }
+                    ExecuteQueues(queues);
 
                     WaitForAllActionThreadsAndTidyUp();
                 }
@@ -224,6 +177,66 @@ namespace TVRename
             }
 
             WaitForAllActionThreadsAndTidyUp();
+        }
+
+        private void ExecuteQueues(ActionQueue[] queues)
+        {
+            while (true)
+            {
+                while (actionPause)
+                    Thread.Sleep(100);
+
+                (bool allDone, int which)= ReviewQueues(queues);
+
+                if ((which == -1) && (allDone))
+                    break; // all done!
+
+                if (which == -1)
+                    continue; // no semaphores available yet, try again for one
+
+                ActionQueue q = queues[which];
+                Action act = q.Actions[q.ActionPosition++];
+
+                if (act == null)
+                    continue;
+
+                if (!act.Done)
+                {
+                    StartThread(which, act);
+                }
+
+                while (actionStarting) // wait for thread to get the semaphore
+                    Thread.Sleep(10); // allow the other thread a chance to run and grab
+
+                TidyDeadWorkers();
+            }
+        }
+
+        private (bool,int) ReviewQueues(ActionQueue[] queues)
+        {
+            // look through the list of semaphores to see if there is one waiting for some work to do
+            bool allDone = true;
+            int which = -1;
+            for (int i = 0; i < queues.Length; i++)
+            {
+                ActionQueue currentQueue = queues[i];
+
+                if (currentQueue is null) continue;
+                // something to do in this queue, and semaphore is available
+
+                if (currentQueue.ActionPosition < currentQueue.Actions.Count)
+                {
+                    allDone = false;
+                    Semaphore currentSemaphore = actionSemaphores[i];
+                    if (currentSemaphore.WaitOne(20, false))
+                    {
+                        which = i;
+                        break;
+                    }
+                }
+            }
+
+            return (allDone,which);
         }
 
         private void SetupQueues(ActionQueue[] queues)
