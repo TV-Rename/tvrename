@@ -1126,7 +1126,7 @@ namespace TVRename
                 if (jsonDefaultLangResponse != null)
                 {
                     JObject seriesDataDefaultLang = (JObject) jsonDefaultLangResponse["data"];
-                    si = new SeriesInfo(seriesData, seriesDataDefaultLang, GetLanguageId());
+                    si = new SeriesInfo(seriesData, seriesDataDefaultLang, LanguageList.GetLanguageFromCode(requestedLanguageCode).Id);
                 }
             }
             else
@@ -1144,7 +1144,7 @@ namespace TVRename
             lock (SERIES_LOCK)
             {
                 if (series.ContainsKey(si.TvdbCode))
-                    series[si.TvdbCode].Merge(si, GetLanguageId());
+                    series[si.TvdbCode].Merge(si, LanguageList.GetLanguageFromCode(requestedLanguageCode).Id);
                 else
                     series[si.TvdbCode] = si;
             }
