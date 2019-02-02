@@ -52,6 +52,10 @@ namespace TVRename
             {
                 LOGGER.Warn($"Could not access File/Directory at: {Location()} {e.Message}");
             }
+            catch (IOException e)
+            {
+                LOGGER.Warn($"Could not access File/Directory at: {Location()} {e.Message}");
+            }
             catch (Exception e)
             {
                 LOGGER.Error(e, "Failed to Output File to: {0}", Location());

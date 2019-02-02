@@ -728,6 +728,8 @@ namespace TVRename
             return CustomEpisodeName.NameForNoExt(epi, url, true);
         }
 
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public string FilenameFriendly(string fn)
         {
             if (string.IsNullOrWhiteSpace(fn)) return string.Empty;
@@ -735,6 +737,11 @@ namespace TVRename
             foreach (Replacement rep in Replacements)
             {
                 fn = rep.DoReplace(fn);
+            }
+
+            if (fn.ContainsAnyCharctersFrom(Path.GetInvalidFileNameChars()))
+            {
+                Logger.Error($"Need to remove some characters from {fn} in {Environment.StackTrace}");
             }
 
             return ForceLowercaseFilenames ? fn.ToLower() : fn;
