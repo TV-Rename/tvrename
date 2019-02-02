@@ -28,11 +28,7 @@ namespace TVRename
             return string.Join(delimiter, values);
         }
 
-        internal static JArray ObtainArray(string url) => JArray.Parse(Obtain(url));
-
-        internal static JToken ObtainToken(string url) => JToken.Parse(Obtain(url));
-
-        private static string Obtain(string url)
+        public static string Obtain(string url)
         {
             string responseText = String.Empty;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);

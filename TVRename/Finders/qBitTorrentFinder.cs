@@ -31,18 +31,22 @@ namespace TVRename
                 return ret;
 
             string url = $"http://{host}:{port}/query/";
-
-            JToken settings = null;
-            JArray currentDownloads = null;
+            string settingsString = null;
+            string downloadsString = null;
+            string torrentDetailsString = null;
 
             try
             {
-                settings = JsonHelper.ObtainToken(url + "preferences");
-                currentDownloads = JsonHelper.ObtainArray(url + "torrents?filter=all");
+                settingsString= JsonHelper.Obtain(url + "preferences");
+                downloadsString = JsonHelper.Obtain(url + "torrents?filter=all");
+
+                JToken settings = JToken.Parse(settingsString);
+                JArray currentDownloads = JArray.Parse(downloadsString);
 
                 foreach (JToken torrent in currentDownloads.Children())
                 {
-                    JArray stuff2 = JsonHelper.ObtainArray(url + "propertiesFiles/" + torrent["hash"]);
+                    torrentDetailsString = JsonHelper.Obtain(url + "propertiesFiles/" + torrent["hash"]);
+                    JArray stuff2 = JArray.Parse(torrentDetailsString);
 
                     foreach (JToken file in stuff2.Children())
                     {
@@ -73,7 +77,7 @@ namespace TVRename
             catch (JsonReaderException ex)
             {
                 LOGGER.Error(ex,
-                    $"Could not parse data recieved from {url}, {settings} {currentDownloads}");
+                    $"Could not parse data recieved from {url}, {settingsString} {downloadsString} {torrentDetailsString}");
             }
 
             return ret;
