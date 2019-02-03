@@ -180,6 +180,7 @@ namespace TVRename
 
             UpdateReplacement(s);
 
+            s.ShowBasicShowDetails = chkBasicShowDetails.Checked;
             s.DetailedRSSJSONLogging = cbDetailedRSSJSONLogging.Checked;
             s.ExportWTWRSS = cbWTWRSS.Checked;
             s.ExportWTWRSSTo = txtWTWRSS.Text;
@@ -649,6 +650,7 @@ namespace TVRename
 
             txtMaxSampleSize.Text = s.SampleFileMaxSizeMB.ToString();
 
+            chkBasicShowDetails.Checked = s.ShowBasicShowDetails;
             cbDetailedRSSJSONLogging.Checked = s.DetailedRSSJSONLogging;
             cbWTWRSS.Checked = s.ExportWTWRSS;
             txtWTWRSS.Text = s.ExportWTWRSSTo;

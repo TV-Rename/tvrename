@@ -128,12 +128,17 @@ namespace TVRename
             }
             catch (XmlException xe)
             {
-                Logger.Warn( $"Could not parse {file.Name} to try and see whether there is any TVDBs inside, got {xe.Message}");
+                Logger.Warn( $"Could not parse {file.Name} to try and see whether there is any TVDB Ids inside, got {xe.Message}");
+                return -1;
+            }
+            catch (IOException xe)
+            {
+                Logger.Warn($"Could not parse {file.Name} to try and see whether there is any TVDB Ids inside, got {xe.Message}");
                 return -1;
             }
             catch (Exception e)
             {
-                Logger.Error(e,$"Could not parse {file.Name} to try and see whether there is any TVDBs inside.");
+                Logger.Error(e,$"Could not parse {file.Name} to try and see whether there is any TVDB Ids inside.");
             }
 
             return -1;

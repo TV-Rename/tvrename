@@ -764,7 +764,7 @@ namespace TVRename
                 return;
             }
 
-            if (TVSettings.Instance.OfflineMode)
+            if (TVSettings.Instance.OfflineMode || TVSettings.Instance.ShowBasicShowDetails)
             {
                 if (si.DvdOrder && snum >= 0 && ser.DvdSeasons.ContainsKey(snum))
                 {
