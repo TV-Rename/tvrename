@@ -121,7 +121,7 @@ namespace TVRename.App
 
                 ApplicationBase s = new ApplicationBase();
 
-                 s?.Run(args);
+                 s.Run(args);
 
                 GC.KeepAlive(mutex);
             }

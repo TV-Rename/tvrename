@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -9,6 +10,17 @@ namespace TVRename
         public static string ItemItems(this int n)
         {
             return n == 1 ? "Item" : "Items";
+        }
+
+        public static string RemoveCharactersFrom(this string source, IEnumerable<char> badChars)
+        {
+            string returnValue = source;
+            foreach (char x in badChars)
+            {
+                returnValue = returnValue.Replace(x.ToString(), string.Empty);
+            }
+
+            return returnValue;
         }
 
         public static bool Contains(this string source, string toCheck, StringComparison comp)
