@@ -337,6 +337,7 @@ namespace TVRename
             this.tcTabs = new System.Windows.Forms.TabControl();
             this.button1 = new System.Windows.Forms.Button();
             this.chkIgnoreAllSpecials = new System.Windows.Forms.CheckBox();
+            this.chkBasicShowDetails = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -657,6 +658,7 @@ namespace TVRename
             // 
             // tpDisplay
             // 
+            this.tpDisplay.Controls.Add(this.chkBasicShowDetails);
             this.tpDisplay.Controls.Add(this.chkPostpendThe);
             this.tpDisplay.Controls.Add(this.groupBox11);
             this.tpDisplay.Controls.Add(this.label61);
@@ -706,9 +708,9 @@ namespace TVRename
             this.groupBox11.Controls.Add(this.bnRemoveDefinedColor);
             this.groupBox11.Controls.Add(this.btnAddShowStatusColoring);
             this.groupBox11.Controls.Add(this.lvwDefinedColors);
-            this.groupBox11.Location = new System.Drawing.Point(6, 311);
+            this.groupBox11.Location = new System.Drawing.Point(6, 334);
             this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(402, 254);
+            this.groupBox11.Size = new System.Drawing.Size(402, 231);
             this.groupBox11.TabIndex = 41;
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "Show Colouring";
@@ -717,7 +719,7 @@ namespace TVRename
             // 
             this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(2, 202);
+            this.label7.Location = new System.Drawing.Point(2, 179);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(40, 13);
             this.label7.TabIndex = 16;
@@ -728,7 +730,7 @@ namespace TVRename
             this.cboShowStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cboShowStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboShowStatus.FormattingEnabled = true;
-            this.cboShowStatus.Location = new System.Drawing.Point(50, 199);
+            this.cboShowStatus.Location = new System.Drawing.Point(50, 176);
             this.cboShowStatus.Name = "cboShowStatus";
             this.cboShowStatus.Size = new System.Drawing.Size(346, 21);
             this.cboShowStatus.TabIndex = 15;
@@ -737,7 +739,7 @@ namespace TVRename
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(3, 233);
+            this.label5.Location = new System.Drawing.Point(3, 210);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(58, 13);
             this.label5.TabIndex = 14;
@@ -746,7 +748,7 @@ namespace TVRename
             // txtShowStatusColor
             // 
             this.txtShowStatusColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtShowStatusColor.Location = new System.Drawing.Point(67, 226);
+            this.txtShowStatusColor.Location = new System.Drawing.Point(67, 203);
             this.txtShowStatusColor.Name = "txtShowStatusColor";
             this.txtShowStatusColor.Size = new System.Drawing.Size(100, 20);
             this.txtShowStatusColor.TabIndex = 13;
@@ -755,7 +757,7 @@ namespace TVRename
             // btnSelectColor
             // 
             this.btnSelectColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSelectColor.Location = new System.Drawing.Point(173, 225);
+            this.btnSelectColor.Location = new System.Drawing.Point(173, 202);
             this.btnSelectColor.Name = "btnSelectColor";
             this.btnSelectColor.Size = new System.Drawing.Size(75, 23);
             this.btnSelectColor.TabIndex = 12;
@@ -767,7 +769,7 @@ namespace TVRename
             // 
             this.bnRemoveDefinedColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnRemoveDefinedColor.Enabled = false;
-            this.bnRemoveDefinedColor.Location = new System.Drawing.Point(3, 170);
+            this.bnRemoveDefinedColor.Location = new System.Drawing.Point(3, 147);
             this.bnRemoveDefinedColor.Name = "bnRemoveDefinedColor";
             this.bnRemoveDefinedColor.Size = new System.Drawing.Size(75, 23);
             this.bnRemoveDefinedColor.TabIndex = 10;
@@ -778,7 +780,7 @@ namespace TVRename
             // btnAddShowStatusColoring
             // 
             this.btnAddShowStatusColoring.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddShowStatusColoring.Location = new System.Drawing.Point(321, 225);
+            this.btnAddShowStatusColoring.Location = new System.Drawing.Point(321, 202);
             this.btnAddShowStatusColoring.Name = "btnAddShowStatusColoring";
             this.btnAddShowStatusColoring.Size = new System.Drawing.Size(75, 23);
             this.btnAddShowStatusColoring.TabIndex = 11;
@@ -798,7 +800,7 @@ namespace TVRename
             this.lvwDefinedColors.Location = new System.Drawing.Point(6, 19);
             this.lvwDefinedColors.MultiSelect = false;
             this.lvwDefinedColors.Name = "lvwDefinedColors";
-            this.lvwDefinedColors.Size = new System.Drawing.Size(390, 145);
+            this.lvwDefinedColors.Size = new System.Drawing.Size(390, 122);
             this.lvwDefinedColors.TabIndex = 9;
             this.lvwDefinedColors.UseCompatibleStateImageBehavior = false;
             this.lvwDefinedColors.View = System.Windows.Forms.View.Details;
@@ -3727,6 +3729,16 @@ namespace TVRename
             this.toolTip1.SetToolTip(this.chkIgnoreAllSpecials, "Ignores \'specials\' season for all shows");
             this.chkIgnoreAllSpecials.UseVisualStyleBackColor = true;
             // 
+            // chkBasicShowDetails
+            // 
+            this.chkBasicShowDetails.AutoSize = true;
+            this.chkBasicShowDetails.Location = new System.Drawing.Point(10, 311);
+            this.chkBasicShowDetails.Name = "chkBasicShowDetails";
+            this.chkBasicShowDetails.Size = new System.Drawing.Size(147, 17);
+            this.chkBasicShowDetails.TabIndex = 43;
+            this.chkBasicShowDetails.Text = "Show Basic Show Details";
+            this.chkBasicShowDetails.UseVisualStyleBackColor = true;
+            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -4132,5 +4144,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkPostpendThe;
         private System.Windows.Forms.CheckBox chkIgnoreAllSpecials;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.CheckBox chkBasicShowDetails;
     }
 }

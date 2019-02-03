@@ -164,6 +164,7 @@ namespace TVRename
         public bool NotificationAreaIcon = false;
         public bool OfflineMode = false;
         public bool DetailedRSSJSONLogging = false;
+        public bool ShowBasicShowDetails = false;
 
         public BetaMode mode = BetaMode.ProductionOnly;
         public float upgradeDirtyPercent = 20;
@@ -324,6 +325,7 @@ namespace TVRename
             writer.WriteStartElement("Settings");
             XmlHelper.WriteElementToXml(writer, "BGDownload", BGDownload);
             XmlHelper.WriteElementToXml(writer, "OfflineMode", OfflineMode);
+            XmlHelper.WriteElementToXml(writer, "ShowBasicShowDetails", ShowBasicShowDetails);
             XmlHelper.WriteElementToXml(writer, "DetailedRSSJSONLogging", DetailedRSSJSONLogging);
             XmlHelper.WriteElementToXml(writer, "ReplaceWithBetterQuality", ReplaceWithBetterQuality);
             XmlHelper.WriteElementToXml(writer, "ExportWTWRSS", ExportWTWRSS);
@@ -982,6 +984,7 @@ namespace TVRename
             SetToDefaults();
             BGDownload = xmlSettings.ExtractBool("BGDownload") ?? false;
             OfflineMode = xmlSettings.ExtractBool("OfflineMode") ?? false;
+            ShowBasicShowDetails = xmlSettings.ExtractBool("ShowBasicShowDetails") ?? false;
             DetailedRSSJSONLogging = xmlSettings.ExtractBool("DetailedRSSJSONLogging") ?? false;
             ReplaceWithBetterQuality = xmlSettings.ExtractBool("ReplaceWithBetterQuality") ?? false;
             ExportWTWRSSTo = xmlSettings.ExtractString("ExportWTWRSSTo");
