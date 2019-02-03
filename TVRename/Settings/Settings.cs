@@ -742,6 +742,7 @@ namespace TVRename
             if (fn.ContainsAnyCharctersFrom(Path.GetInvalidFileNameChars()))
             {
                 Logger.Error($"Need to remove some characters from {fn} in {Environment.StackTrace}");
+                fn = fn.RemoveCharactersFrom(Path.GetInvalidFileNameChars()).RemoveCharactersFrom("/t".ToCharArray());
             }
 
             return ForceLowercaseFilenames ? fn.ToLower() : fn;
