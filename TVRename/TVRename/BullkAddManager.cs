@@ -71,7 +71,17 @@ namespace TVRename
             string showNameNoYear =
                 showName == null ? string.Empty : Regex.Replace(showName, @"\(\d{4}\)", "").Trim();
 
-            ser = TheTVDB.Instance.GetSeries(showNameNoYear);
+            //Remove anything we can from hint to make it cleaner and hence more likely to match
+            string refinedHint = FinderHelper.RemoveSeriesEpisodeIndicators(showNameNoYear, library.SeasonWords());
+
+            if (string.IsNullOrWhiteSpace(refinedHint))
+            {
+                Logger.Info($"Ignoring {showName} as it refines to nothing.");
+            }
+
+            ser = TheTVDB.Instance.GetSeries(refinedHint);
+
+            ai.RefinedHint = refinedHint;
             if (ser != null)
                 ai.TVDBCode = ser.TvdbCode;
         }

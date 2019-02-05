@@ -66,7 +66,9 @@ namespace TVRename
 
                 actionSemaphores[info.SemaphoreNumber].Release(1);
             }
-            catch (ThreadAbortException) { }
+            catch (ThreadAbortException)
+            {
+            }
             catch (Exception e)
             {
                 Logger.Fatal(e, "Unhandled Exception in Process Single Action");

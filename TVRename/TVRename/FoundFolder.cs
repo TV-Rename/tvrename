@@ -18,10 +18,11 @@ namespace TVRename
         public int TVDBCode;
         public readonly bool HasSeasonFoldersGuess;
         public readonly string SeasonFolderFormat;
+        public string RefinedHint;
 
         public bool CodeKnown => !CodeUnknown;
         public bool CodeUnknown => TVDBCode == -1;
-
+        
         public FoundFolder(DirectoryInfo directory, bool seasonFolders, string folderFormat)
         {
             Folder = directory;
