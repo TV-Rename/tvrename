@@ -40,7 +40,8 @@ namespace TVRename
             "{SeasonNumber}",
             "{SeasonNumber:2}",
             "{StartYear}",
-            "{EndYear}"
+            "{EndYear}",
+            "{ShowImdb}"
         };
 
         public static List<string> ExamplePresets(Season s)
@@ -75,6 +76,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{SeasonNumber:2}", s.SeasonIndex.ToString("00"));
             name = name.ReplaceInsensitive("{StartYear}", s.MinYear().ToString());
             name = name.ReplaceInsensitive("{EndYear}", s.MaxYear().ToString());
+            name = name.ReplaceInsensitive("{ShowImdb}", s.TheSeries.Imdb);
 
             return name.Trim();
         }

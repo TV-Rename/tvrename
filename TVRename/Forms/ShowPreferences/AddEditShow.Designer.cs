@@ -71,6 +71,8 @@ namespace TVRename
             this.tbShowAlias = new System.Windows.Forms.TextBox();
             this.lbShowAlias = new System.Windows.Forms.ListBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.llCustomSearchPreview = new System.Windows.Forms.LinkLabel();
+            this.lbSearchExample = new System.Windows.Forms.Label();
             this.txtSearchURL = new System.Windows.Forms.TextBox();
             this.txtTagList = new System.Windows.Forms.Label();
             this.lbTags = new System.Windows.Forms.Label();
@@ -101,8 +103,6 @@ namespace TVRename
             this.txtBaseFolder = new System.Windows.Forms.TextBox();
             this.bnBrowse = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.lbSearchExample = new System.Windows.Forms.Label();
-            this.llCustomSearchPreview = new System.Windows.Forms.LinkLabel();
             this.Folders.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -468,6 +468,24 @@ namespace TVRename
             this.tabPage4.Text = "Search";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
+            // llCustomSearchPreview
+            // 
+            this.llCustomSearchPreview.AutoSize = true;
+            this.llCustomSearchPreview.Location = new System.Drawing.Point(82, 61);
+            this.llCustomSearchPreview.Name = "llCustomSearchPreview";
+            this.llCustomSearchPreview.Size = new System.Drawing.Size(0, 13);
+            this.llCustomSearchPreview.TabIndex = 4;
+            this.llCustomSearchPreview.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.llCustomSearchPreview_LinkClicked);
+            // 
+            // lbSearchExample
+            // 
+            this.lbSearchExample.AutoSize = true;
+            this.lbSearchExample.Location = new System.Drawing.Point(27, 62);
+            this.lbSearchExample.Name = "lbSearchExample";
+            this.lbSearchExample.Size = new System.Drawing.Size(50, 13);
+            this.lbSearchExample.TabIndex = 3;
+            this.lbSearchExample.Text = "Example:";
+            // 
             // txtSearchURL
             // 
             this.txtSearchURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -480,9 +498,12 @@ namespace TVRename
             // 
             // txtTagList
             // 
+            this.txtTagList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtTagList.Location = new System.Drawing.Point(47, 109);
             this.txtTagList.Name = "txtTagList";
-            this.txtTagList.Size = new System.Drawing.Size(361, 243);
+            this.txtTagList.Size = new System.Drawing.Size(361, 259);
             this.txtTagList.TabIndex = 1;
             this.txtTagList.Text = "<tags>";
             // 
@@ -794,24 +815,6 @@ namespace TVRename
             this.label3.TabIndex = 0;
             this.label3.Text = "Base &Folder";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // lbSearchExample
-            // 
-            this.lbSearchExample.AutoSize = true;
-            this.lbSearchExample.Location = new System.Drawing.Point(27, 62);
-            this.lbSearchExample.Name = "lbSearchExample";
-            this.lbSearchExample.Size = new System.Drawing.Size(50, 13);
-            this.lbSearchExample.TabIndex = 3;
-            this.lbSearchExample.Text = "Example:";
-            // 
-            // llCustomSearchPreview
-            // 
-            this.llCustomSearchPreview.AutoSize = true;
-            this.llCustomSearchPreview.Location = new System.Drawing.Point(82, 61);
-            this.llCustomSearchPreview.Name = "llCustomSearchPreview";
-            this.llCustomSearchPreview.Size = new System.Drawing.Size(0, 13);
-            this.llCustomSearchPreview.TabIndex = 4;
-            this.llCustomSearchPreview.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.llCustomSearchPreview_LinkClicked);
             // 
             // AddEditShow
             // 
