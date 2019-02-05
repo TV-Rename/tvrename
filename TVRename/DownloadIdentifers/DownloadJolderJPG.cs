@@ -17,25 +17,25 @@ namespace TVRename
 
         public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
-            if (!TVSettings.Instance.FolderJpg) return null;
-
             ItemList theActionList = new ItemList();
+
+            if (!TVSettings.Instance.FolderJpg) return theActionList;
+
+            if (si is null) return theActionList;
+            
             FileInfo fi = FileHelper.FileInFolder(si.AutoAddFolderBase, DEFAULT_FILE_NAME);
             bool fileDoesntExist = !doneFolderJpg.Contains(fi.FullName) && !fi.Exists;
 
             if (forceRefresh || fileDoesntExist)
             {
-                string downloadPath;
+                SeriesInfo series = si.TheSeries();
 
-                if (TVSettings.Instance.SeasonSpecificFolderJPG())
-                {
-                    //default to poster when we want season posters for the season specific folders
-                    downloadPath = si.TheSeries().GetSeriesPosterPath();
-                }
-                else
-                {
-                    downloadPath = si.TheSeries().GetImage(TVSettings.Instance.ItemForFolderJpg());
-                }
+                if (series == null) return theActionList;
+
+                //default to poster when we want season posters for the season specific folders
+                string downloadPath = TVSettings.Instance.SeasonSpecificFolderJPG()
+                    ? series.GetSeriesPosterPath()
+                    : series.GetImage(TVSettings.Instance.ItemForFolderJpg());
 
                 if (!string.IsNullOrEmpty(downloadPath))
                     theActionList.Add(new ActionDownloadImage(si, null, fi, downloadPath, false));
