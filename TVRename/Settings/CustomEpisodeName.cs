@@ -70,7 +70,9 @@ namespace TVRename
             "{YMDDate}",
             "{AllEpisodes}",
             "{Year}",
-            "{SeasonYear}"
+            "{SeasonYear}",
+            "{Imdb}",
+            "{ShowImdb}"
         };
 
         public string NameFor(ProcessedEpisode pe) => NameFor(pe,string.Empty,0);
@@ -135,6 +137,8 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Number:3}", "");
             name = name.ReplaceInsensitive("{Year}", show.TheSeries().MinYear.ToString());
             name = name.ReplaceInsensitive("{SeasonYear}", show.GetSeason(dvdOrder ? ep.DvdSeasonNumber : ep.AiredSeasonNumber).MinYear().ToString());
+            name = name.ReplaceInsensitive("{Imdb}", ep.ImdbCode);
+            name = name.ReplaceInsensitive("{ShowImdb}", show.TheSeries().Imdb);
 
             name = ReplaceDates(urlEncode, name, ep.GetAirDateDt(tz));
 
@@ -205,6 +209,8 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Number:3}", pe.OverallNumber.ToString("000"));
             name = name.ReplaceInsensitive("{Year}", pe.TheSeries.MinYear.ToString());
             name = name.ReplaceInsensitive("{SeasonYear}", pe.AppropriateSeason.MinYear().ToString());
+            name = name.ReplaceInsensitive("{Imdb}", pe.ImdbCode);
+            name = name.ReplaceInsensitive("{ShowImdb}", pe.Show.TheSeries().Imdb);
 
             name = ReplaceDates(urlEncode, name, pe.GetAirDateDt(false));
 
