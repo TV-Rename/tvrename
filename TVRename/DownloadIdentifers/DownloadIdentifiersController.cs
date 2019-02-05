@@ -41,7 +41,8 @@ namespace TVRename
 
         public ItemList ProcessShow(ShowItem si)
         {
-            ItemList theActionList = new ItemList(); 
+            ItemList theActionList = new ItemList();
+            if (si is null) return theActionList;
             foreach (DownloadIdentifier di in identifiers)
             {
                 theActionList.Add(di.ProcessShow(si));
@@ -51,7 +52,8 @@ namespace TVRename
 
         public ItemList ProcessSeason(ShowItem si, string folder, int snum)
         {
-            ItemList theActionList = new ItemList(); 
+            ItemList theActionList = new ItemList();
+            if (si is null) return theActionList;
             foreach (DownloadIdentifier di in identifiers)
             {
                 theActionList.Add(di.ProcessSeason (si,folder,snum));
@@ -62,6 +64,7 @@ namespace TVRename
         public ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo)
         {
             ItemList theActionList = new ItemList();
+            if (dbep is null) return theActionList;
             foreach (DownloadIdentifier di in identifiers)
             {
                 theActionList.Add(di.ProcessEpisode(dbep,filo));
@@ -79,6 +82,7 @@ namespace TVRename
         public ItemList ForceUpdateShow(DownloadIdentifier.DownloadType dt, ShowItem si)
         {
             ItemList theActionList = new ItemList();
+            if (si is null) return theActionList;
             foreach (DownloadIdentifier di in identifiers)
             {
                 if (dt == di.GetDownloadType())
@@ -90,6 +94,7 @@ namespace TVRename
         public ItemList ForceUpdateSeason(DownloadIdentifier.DownloadType dt, ShowItem si, string folder, int snum)
         {
             ItemList theActionList = new ItemList();
+            if (si is null) return theActionList;
             foreach (DownloadIdentifier di in identifiers)
             {
                 if (dt == di.GetDownloadType())
@@ -101,6 +106,7 @@ namespace TVRename
         public ItemList ForceUpdateEpisode(DownloadIdentifier.DownloadType dt, ProcessedEpisode dbep, FileInfo filo)
         {
             ItemList theActionList = new ItemList();
+            if (dbep is null) return theActionList;
             foreach (DownloadIdentifier di in identifiers)
             {
                 if (dt == di.GetDownloadType())
