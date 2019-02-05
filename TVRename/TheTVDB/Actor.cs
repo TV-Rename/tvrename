@@ -20,11 +20,6 @@ namespace TVRename
         public int ActorSeriesId { get; }
         public int ActorSortOrder { get; }
 
-        public Actor(string name)
-        {
-            ActorName = name;
-        }
-
         public Actor(int actorId, string actorImage, string actorName, string actorRole, int actorSeriesId, int actorSortOrder)
         {
             ActorId = actorId;

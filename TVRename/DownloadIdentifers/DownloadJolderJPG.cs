@@ -13,10 +13,7 @@ namespace TVRename
             Reset();
         }
 
-        public override DownloadType GetDownloadType()
-        {
-            return DownloadType.downloadImage;
-        }
+        public override DownloadType GetDownloadType() => DownloadType.downloadImage;
 
         public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {

@@ -743,7 +743,7 @@ namespace TVRename
 
             if (fn.ContainsAnyCharctersFrom(Path.GetInvalidFileNameChars()))
             {
-                Logger.Error($"Need to remove some characters from {fn} in {Environment.StackTrace}");
+                Logger.Warn($"Need to remove some characters from {fn} as the episode name contains characters that cannot be in the filename.");
                 fn = fn.RemoveCharactersFrom(Path.GetInvalidFileNameChars()).RemoveCharactersFrom("/t".ToCharArray());
             }
 

@@ -209,12 +209,9 @@ namespace TVRename
             {
                 season = seasons[snum];
 
-                List<ProcessedEpisode> eis;
-
-                if (si.SeasonEpisodes.ContainsKey(snum))
-                    eis = si.SeasonEpisodes[snum]; // use processed episodes if they are available
-                else
-                    eis = ShowItem.ProcessedListFromEpisodes(season.Episodes.Values, si);
+                List<ProcessedEpisode> eis = si.SeasonEpisodes.ContainsKey(snum)
+                    ? si.SeasonEpisodes[snum] // use processed episodes if they are available
+                    : ShowItem.ProcessedListFromEpisodes(season.Episodes.Values, si);
 
                 foreach (ProcessedEpisode ei in eis)
                 {

@@ -655,11 +655,11 @@ namespace TVRename
 
         public class RotatedText : DevAge.Drawing.VisualElements.TextGDI
         {
-            public float Angle;
+            private readonly float angle;
 
             public RotatedText(float angle)
             {
-                Angle = angle;
+                this.angle = angle;
             }
 
             protected override void OnDraw(DevAge.Drawing.GraphicsCache graphics, RectangleF area)
@@ -676,7 +676,7 @@ namespace TVRename
                     //Move the origin to the center of the cell (for a more easy rotation)
                     graphics.Graphics.TranslateTransform(area.X + width2, area.Y + height2);
 
-                    graphics.Graphics.RotateTransform(Angle);
+                    graphics.Graphics.RotateTransform(angle);
                     graphics.Graphics.TranslateTransform(-height2, 0); //-(area.Y + height2));
 
                     StringFormat.Alignment = StringAlignment.Near;
