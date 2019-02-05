@@ -20,8 +20,7 @@ namespace TVRename
         {
             InitializeComponent();
 
-            codeFinderControl = new TheTvdbCodeFinder("");
-            codeFinderControl.Dock = DockStyle.Fill;
+            codeFinderControl = new TheTvdbCodeFinder("") {Dock = DockStyle.Fill};
             codeFinderControl.SelectionChanged += CodeChanged;
             codeFinderControl.lvMatches.DoubleClick += MatchDoubleClick;
 

@@ -269,7 +269,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Failed to save Cache");
+                Logger.Error(e, $"Failed to save Cache to {cacheFile.FullName}");
             }
         }
 
@@ -1147,6 +1147,8 @@ namespace TVRename
                     series[si.TvdbCode].Merge(si, LanguageList.GetLanguageFromCode(requestedLanguageCode).Id);
                 else
                     series[si.TvdbCode] = si;
+
+                si = GetSeries(code);
             }
 
             //Now deal with obtaining any episodes for the series (we then group them into seasons)
@@ -1348,7 +1350,7 @@ namespace TVRename
                 }
             }
 
-            series[si.TvdbCode].BannersLoaded = true;
+            si.BannersLoaded = true;
         }
 
         private string GenerateMessage(int code, bool episodesToo, bool bannersToo)
