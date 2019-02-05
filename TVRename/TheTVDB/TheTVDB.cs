@@ -314,10 +314,11 @@ namespace TVRename
 
             showName = showName.ToLower();
 
-            foreach (KeyValuePair<int, SeriesInfo> ser in GetSeriesDictMatching(showName))
-            {
-                return ser.Value;
-            }
+            List<SeriesInfo> matchingShows = GetSeriesDictMatching(showName).Values.ToList();
+
+            if (matchingShows.Count == 0) return null;
+
+            if (matchingShows.Count == 1) return matchingShows.First();
 
             return null;
         }
