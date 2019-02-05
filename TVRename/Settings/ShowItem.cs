@@ -623,7 +623,7 @@ namespace TVRename
 
             if (manualToo)
             {
-                foreach (KeyValuePair<int, List<string>> kvp in ManualFolderLocations)
+                foreach (KeyValuePair<int, List<string>> kvp in ManualFolderLocations.ToList())
                 {
                     if (!fld.ContainsKey(kvp.Key))
                         fld[kvp.Key] = new List<string>();
