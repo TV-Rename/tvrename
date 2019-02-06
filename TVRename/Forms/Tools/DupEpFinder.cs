@@ -177,7 +177,7 @@ namespace TVRename.Forms
                         break;
                     case RightClickCommands.kForceRefreshSeries:
                         if (si != null)
-                            mainUi.ForceRefresh(new List<ShowItem> {si});
+                            mainUi.ForceRefresh(new List<ShowItem> {si},false);
                         Close();
                         break;
                     case RightClickCommands.kEditShow:
