@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using TVRename.Forms.Utilities;
 
 namespace TVRename
 {
@@ -82,7 +83,15 @@ namespace TVRename
             {
                 Logger.Warn(TheTVDB.Instance.LastError);
                 if (showErrorMsgBox)
-                    MessageBox.Show(TheTVDB.Instance.LastError, "Error while downloading", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                {
+                    CannotConnectForm ccform = new CannotConnectForm("Error while downloading", TheTVDB.Instance.LastError);
+                    DialogResult ccresult = ccform.ShowDialog();
+                    if (ccresult == DialogResult.Abort)
+                    {
+                        TVSettings.Instance.OfflineMode = true;
+                    }
+                }
+
                 TheTVDB.Instance.LastError = "";
             }
 

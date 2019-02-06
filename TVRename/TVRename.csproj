@@ -203,6 +203,12 @@
     <Compile Include="Forms\Supporting\UpdateNotification.Designer.cs">
       <DependentUpon>UpdateNotification.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Utilities\CannotConnectForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Utilities\CannotConnectForm.Designer.cs">
+      <DependentUpon>CannotConnectForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Utilities\LicenceInfo.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -586,6 +592,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Supporting\TVRenameSplash.resx">
       <DependentUpon>TVRenameSplash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Utilities\CannotConnectForm.resx">
+      <DependentUpon>CannotConnectForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Utilities\LicenceInfo.resx">
       <DependentUpon>LicenceInfo.cs</DependentUpon>
