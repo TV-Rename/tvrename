@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -24,7 +25,7 @@ namespace TVRename
         private List<Thread> workers;
         private Thread mDownloaderThread;
         private ICollection<SeriesSpecifier> downloadIds;
-        private ICollection<int> problematicSeriesIds;
+        private readonly ConcurrentBag<int> problematicSeriesIds;
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private static readonly NLog.Logger Threadslogger = NLog.LogManager.GetLogger("threads");
@@ -33,7 +34,7 @@ namespace TVRename
         {
             DownloadDone = true;
             downloadOk = true;
-            problematicSeriesIds = new List<int>();
+            problematicSeriesIds = new ConcurrentBag<int>();
         }
 
         public void StartBgDownloadThread(bool stopOnError, ICollection<SeriesSpecifier> shows)
@@ -46,7 +47,9 @@ namespace TVRename
             downloadOk = true;
 
             downloadIds = shows;
-            problematicSeriesIds.Clear();
+
+            ClearProblematicSeriesIds();
+
             mDownloaderThread = new Thread(Downloader) { Name = "Downloader" };
             mDownloaderThread.Start();
         }
@@ -95,7 +98,7 @@ namespace TVRename
             mDownloaderThread = null;
         }
 
-        public ICollection<int> Problems => problematicSeriesIds;
+        public ConcurrentBag<int> Problems => problematicSeriesIds;
 
         private void GetThread(object codeIn)
         {
@@ -174,7 +177,7 @@ namespace TVRename
                     return;
                 }
 
-                // for eachs of the ShowItems, make sure we've got downloaded data for it
+                // for each of the ShowItems, make sure we've got downloaded data for it
 
                 int totalItems = downloadIds.Count;
                 int n = 0;
@@ -274,7 +277,15 @@ namespace TVRename
                 downloadIds.Remove(s);
             }
 
-            problematicSeriesIds.Clear();
+            ClearProblematicSeriesIds();
+        }
+
+        private void ClearProblematicSeriesIds()
+        {
+            while (!problematicSeriesIds.IsEmpty)
+            {
+                problematicSeriesIds.TryTake(out int _);
+            }
         }
     }
 }

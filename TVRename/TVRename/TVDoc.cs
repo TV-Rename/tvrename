@@ -10,6 +10,7 @@
 // Means we can run TVRename and do useful stuff, without showing any UI. (i.e. text mode / console app)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -366,7 +367,7 @@ namespace TVRename
             ExportShowInfo(); //Save shows list to disk
         }
 
-        public ICollection<int> ShowProblems => cacheManager.Problems;
+        public ConcurrentBag<int> ShowProblems => cacheManager.Problems;
 
         public void Scan(List<ShowItem> shows, bool unattended, TVSettings.ScanType st)
         {
