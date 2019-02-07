@@ -32,7 +32,7 @@ namespace TVRename
             bam.AddAllToMyShows();
 
             MDoc.SetDirty();
-            MDoc.DoDownloadsFG();
+            MDoc.DoDownloadsFG(settings.Unattended);
 
             List<ShowItem> addedShows = idsToAdd.Select(s => MDoc.Library.ShowItem(s)).ToList();
 
@@ -43,7 +43,7 @@ namespace TVRename
             }
             LOGGER.Info("Added new shows called: {0}", string.Join(",", addedShows.Select(si => si.ShowName)));
 
-            MDoc.DoWhenToWatch(true);
+            MDoc.DoWhenToWatch(true,settings.Unattended);
 
             MDoc.WriteUpcoming();
             MDoc.WriteRecent();

@@ -231,7 +231,7 @@ namespace TVRename
 
             //these 3 types only have one episode cited - others must be in order
             if (!(mRule.DoWhatNow == RuleAction.kRename || mRule.DoWhatNow == RuleAction.kInsert || mRule.DoWhatNow == RuleAction.kSplit) &&
-                mRule.First < mRule.Second)
+                mRule.First > mRule.Second)
             {
                 MessageBox.Show("Second episode number must be before the first episode number", "Modify Rules",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);

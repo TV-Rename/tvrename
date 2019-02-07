@@ -299,7 +299,7 @@ namespace TVRename
         {
             if (si != null)
                 TheTVDB.Instance.ForgetShow(si.TvdbCode, true,si.UseCustomLanguage,si.CustomLanguageCode);
-            mDoc.DoDownloadsFG();
+            mDoc.DoDownloadsFG(false);
         }
 
         #region Nested type: ShowClickEvent

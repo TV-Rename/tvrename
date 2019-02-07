@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using TVRename.Forms.Utilities;
 
 namespace TVRename
 {
@@ -24,7 +26,7 @@ namespace TVRename
         private List<Thread> workers;
         private Thread mDownloaderThread;
         private ICollection<SeriesSpecifier> downloadIds;
-        private ICollection<int> problematicSeriesIds;
+        private readonly ConcurrentBag<int> problematicSeriesIds;
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private static readonly NLog.Logger Threadslogger = NLog.LogManager.GetLogger("threads");
@@ -33,7 +35,7 @@ namespace TVRename
         {
             DownloadDone = true;
             downloadOk = true;
-            problematicSeriesIds = new List<int>();
+            problematicSeriesIds = new ConcurrentBag<int>();
         }
 
         public void StartBgDownloadThread(bool stopOnError, ICollection<SeriesSpecifier> shows)
@@ -46,7 +48,9 @@ namespace TVRename
             downloadOk = true;
 
             downloadIds = shows;
-            problematicSeriesIds.Clear();
+
+            ClearProblematicSeriesIds();
+
             mDownloaderThread = new Thread(Downloader) { Name = "Downloader" };
             mDownloaderThread.Start();
         }
@@ -79,7 +83,15 @@ namespace TVRename
             {
                 Logger.Warn(TheTVDB.Instance.LastError);
                 if (showErrorMsgBox)
-                    MessageBox.Show(TheTVDB.Instance.LastError, "Error while downloading", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                {
+                    CannotConnectForm ccform = new CannotConnectForm("Error while downloading", TheTVDB.Instance.LastError);
+                    DialogResult ccresult = ccform.ShowDialog();
+                    if (ccresult == DialogResult.Abort)
+                    {
+                        TVSettings.Instance.OfflineMode = true;
+                    }
+                }
+
                 TheTVDB.Instance.LastError = "";
             }
 
@@ -95,7 +107,7 @@ namespace TVRename
             mDownloaderThread = null;
         }
 
-        public ICollection<int> Problems => problematicSeriesIds;
+        public ConcurrentBag<int> Problems => problematicSeriesIds;
 
         private void GetThread(object codeIn)
         {
@@ -174,7 +186,7 @@ namespace TVRename
                     return;
                 }
 
-                // for eachs of the ShowItems, make sure we've got downloaded data for it
+                // for each of the ShowItems, make sure we've got downloaded data for it
 
                 int totalItems = downloadIds.Count;
                 int n = 0;
@@ -274,7 +286,15 @@ namespace TVRename
                 downloadIds.Remove(s);
             }
 
-            problematicSeriesIds.Clear();
+            ClearProblematicSeriesIds();
+        }
+
+        private void ClearProblematicSeriesIds()
+        {
+            while (!problematicSeriesIds.IsEmpty)
+            {
+                problematicSeriesIds.TryTake(out int _);
+            }
         }
     }
 }

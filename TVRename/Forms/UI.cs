@@ -152,7 +152,7 @@ namespace TVRename
             ClearInfoWindows();
             UpdateSplashPercent(splash, 10);
             UpdateSplashStatus(splash, "Updating WTW");
-            mDoc.DoWhenToWatch(true);
+            mDoc.DoWhenToWatch(true,true);
             UpdateSplashPercent(splash, 40);
             FillWhenToWatchList();
             UpdateSplashPercent(splash, 60);
@@ -863,7 +863,7 @@ namespace TVRename
             UpdateSearchButtons();
         }
 
-        private void bnWhenToWatchCheck_Click(object sender, EventArgs e) => RefreshWTW(true);
+        private void bnWhenToWatchCheck_Click(object sender, EventArgs e) => RefreshWTW(true,false);
 
         private void FillWhenToWatchList()
         {
@@ -1053,16 +1053,16 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        private void RefreshWTW(bool doDownloads)
+        private void RefreshWTW(bool doDownloads,bool unattended)
         {
             if (doDownloads)
             {
-                if (!mDoc.DoDownloadsFG())
+                if (!mDoc.DoDownloadsFG(unattended))
                     return;
             }
 
             mInternalChange++;
-            mDoc.DoWhenToWatch(true);
+            mDoc.DoWhenToWatch(true,unattended);
             FillMyShows();
             FillWhenToWatchList();
             mInternalChange--;
@@ -1074,7 +1074,7 @@ namespace TVRename
         private void refreshWTWTimer_Tick(object sender, EventArgs e)
         {
             if (busy == 0)
-                RefreshWTW(false);
+                RefreshWTW(false,true);
         }
 
         // ReSharper disable once InconsistentNaming
@@ -1535,7 +1535,7 @@ namespace TVRename
                     }
                 case RightClickCommands.kForceRefreshSeries:
                     if (si != null)
-                        ForceRefresh(mLastShowsClicked);
+                        ForceRefresh(mLastShowsClicked,false);
 
                     break;
                 case RightClickCommands.kUpdateImages:
@@ -1573,7 +1573,7 @@ namespace TVRename
 
                     break;
                 case RightClickCommands.kActionAction:
-                    ActionAction(false);
+                    ActionAction(false,false);
                     break;
                 case RightClickCommands.kActionRevert:
                     Revert(false);
@@ -1770,7 +1770,7 @@ namespace TVRename
                 FillEpGuideHtml();
                 mAutoFolderMonitor.SettingsChanged(TVSettings.Instance.MonitorFolders);
                 betaToolsToolStripMenuItem.Visible = TVSettings.Instance.IncludeBetaUpdates();
-                ForceRefresh(null);
+                ForceRefresh(null,false);
             }
 
             mDoc.AllowAutoScan();
@@ -1839,7 +1839,7 @@ namespace TVRename
                 {
                     // we've just finished a bunch of background downloads
                     TheTVDB.Instance.SaveCache();
-                    RefreshWTW(false);
+                    RefreshWTW(false,true);
 
                     backgroundDownloadNowToolStripMenuItem.Enabled = true;
                 }
@@ -2157,23 +2157,23 @@ namespace TVRename
                     mDoc.Library.Add(si);
                     }
 
-                ShowAddedOrEdited(false);
+                    ShowAddedOrEdited(false,false);
                     SelectShow(si);
 
                     Logger.Info("Added new show called {0}", si.ShowName);
                 }
                 else Logger.Info("Cancelled adding new show");
 
-            ShowAddedOrEdited(true);
+            ShowAddedOrEdited(true,false);
 
             LessBusy();
             mDoc.AllowAutoScan();
         }
 
-        private void ShowAddedOrEdited(bool download)
+        private void ShowAddedOrEdited(bool download,bool unattended)
         {
             mDoc.SetDirty();
-            RefreshWTW(download);
+            RefreshWTW(download,unattended);
             mDoc.ReindexLibrary();
             FillMyShows();
 
@@ -2218,7 +2218,7 @@ namespace TVRename
 
             Logger.Info($"User asked to remove {si.ShowName} - removing now");
             mDoc.Library.Remove(si);
-            ShowAddedOrEdited(false);
+            ShowAddedOrEdited(false,false);
         }
 
         private void bnMyShowsEdit_Click(object sender, EventArgs e)
@@ -2258,7 +2258,7 @@ namespace TVRename
                 DialogResult dr = er.ShowDialog();
                 if (dr == DialogResult.OK)
                 {
-                    ShowAddedOrEdited(false);
+                    ShowAddedOrEdited(false,false);
                     Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DvdSeasons : ser.AiredSeasons;
                     SelectSeason(seasonsToUse[seasnum]);
                 }
@@ -2281,7 +2281,7 @@ namespace TVRename
 
             if (dr == DialogResult.OK)
             {
-                ShowAddedOrEdited(si.TvdbCode != oldCode);
+                ShowAddedOrEdited(si.TvdbCode != oldCode,false);
                 SelectShow(si);
 
                 Logger.Info("Modified show called {0}", si.ShowName);
@@ -2291,19 +2291,19 @@ namespace TVRename
             LessBusy();
         }
 
-        internal void ForceRefresh(List<ShowItem> sis)
+        internal void ForceRefresh(List<ShowItem> sis, bool unattended)
         {
-            mDoc.ForceRefresh(sis);
+            mDoc.ForceRefresh(sis,unattended);
             FillMyShows();
             FillEpGuideHtml();
-            RefreshWTW(false);
+            RefreshWTW(false, unattended);
         }
 
         private void UpdateImages(List<ShowItem> sis)
         {
             if (sis != null)
             {
-                ForceRefresh(sis);
+                ForceRefresh(sis,false);
 
                 foreach (ShowItem si in sis)
                 {
@@ -2322,11 +2322,11 @@ namespace TVRename
                 // nuke currently selected show to force getting it fresh
                 TreeNode n = MyShowTree.SelectedNode;
                 ShowItem si = TreeNodeToShowItem(n);
-                ForceRefresh(new List<ShowItem> {si});
+                ForceRefresh(new List<ShowItem> {si},false);
             }
             else
             {
-                ForceRefresh(null);
+                ForceRefresh(null,false);
             }
         }
 
@@ -2723,11 +2723,11 @@ namespace TVRename
             return $"{name} ({PrettyPrint(number)}, {filesize.GBMB(1)})";
         }
 
-        private void bnActionAction_Click(object sender, EventArgs e) => ProcessAll();
+        private void bnActionAction_Click(object sender, EventArgs e) => ActionAction(true,false);
 
-        public void ProcessAll() => ActionAction(true);
+        public void ProcessAll() => ActionAction(true,true);
 
-        private void ActionAction(bool checkedNotSelected)
+        private void ActionAction(bool checkedNotSelected, bool unattended)
         {
             mDoc.PreventAutoScan("Action Selected Items");
             LvResults lvr = new LvResults(lvAction, checkedNotSelected);
@@ -2740,7 +2740,7 @@ namespace TVRename
             }
 
             FillActionList();
-            RefreshWTW(false);
+            RefreshWTW(false,unattended);
             mDoc.AllowAutoScan();
         }
 
@@ -2785,7 +2785,7 @@ namespace TVRename
             }
 
             FillActionList();
-            RefreshWTW(false);
+            RefreshWTW(false,false);
         }
 
         private void folderMonitorToolStripMenuItem_Click(object sender, EventArgs e)
