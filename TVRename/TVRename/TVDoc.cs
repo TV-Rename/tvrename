@@ -10,6 +10,7 @@
 // Means we can run TVRename and do useful stuff, without showing any UI. (i.e. text mode / console app)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -102,10 +103,10 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        public bool DoDownloadsFG()
+        public bool DoDownloadsFG(bool unattended)
         {
             ICollection<SeriesSpecifier> shows = Library.SeriesSpecifiers;
-            bool returnValue = cacheManager.DoDownloadsFg((!Args.Hide), (!Args.Unattended) && (!Args.Hide), shows);
+            bool returnValue = cacheManager.DoDownloadsFg((!Args.Hide), !unattended && (!Args.Unattended) && (!Args.Hide), shows);
             Library.GenDict();
             return returnValue;
         }
@@ -148,9 +149,9 @@ namespace TVRename
             Helpers.SysOpen(TVSettings.Instance.BTSearchURL(ep));
         }
 
-        public void DoWhenToWatch(bool cachedOnly)
+        public void DoWhenToWatch(bool cachedOnly,bool unattended)
         {
-            if (!cachedOnly && !DoDownloadsFG())
+            if (!cachedOnly && !DoDownloadsFG(unattended))
                 return;
 
             if (cachedOnly)
@@ -349,16 +350,16 @@ namespace TVRename
             }
         }
 
-        internal void ShowAddedOrEdited(bool download)
+        internal void ShowAddedOrEdited(bool download, bool unattended)
         {
             SetDirty();
             if (download)
             {
-                if (!DoDownloadsFG())
+                if (!DoDownloadsFG(unattended))
                     return;
             }
 
-            DoWhenToWatch(true);
+            DoWhenToWatch(true, unattended);
 
             WriteUpcoming();
             WriteRecent();
@@ -366,7 +367,7 @@ namespace TVRename
             ExportShowInfo(); //Save shows list to disk
         }
 
-        public ICollection<int> ShowProblems => cacheManager.Problems;
+        public ConcurrentBag<int> ShowProblems => cacheManager.Problems;
 
         public void Scan(List<ShowItem> shows, bool unattended, TVSettings.ScanType st)
         {
@@ -384,7 +385,7 @@ namespace TVRename
                     return;
                 }
 
-                if (!DoDownloadsFG())
+                if (!DoDownloadsFG(unattended))
                     return;
 
                 Thread actionWork = new Thread(ScanWorker) {Name = "ActionWork"};
@@ -772,7 +773,7 @@ namespace TVRename
             return showsToScan;
         }
 
-        internal void ForceRefresh(List<ShowItem> sis)
+        internal void ForceRefresh(List<ShowItem> sis, bool unattended)
         {
             PreventAutoScan("Force Refresh");
             if (sis != null)
@@ -783,7 +784,7 @@ namespace TVRename
                 }
             }
 
-            DoDownloadsFG();
+            DoDownloadsFG(unattended);
             AllowAutoScan();
         }
 
