@@ -1431,17 +1431,17 @@ namespace TVRename
                         bool success = ProcessEpisode(code,episodeId, prefLangEpisode, defltLangEpisode);
                         if (!success)
                         {
-                            Logger.Error($"Could not process Episode from {EpisodeUri(code)}. {prefLangEpisode?.ToString()} ::: {defltLangEpisode?.ToString()}");
+                            Logger.Error($"<TVDB ISSUE?>: Could not process Episode from {EpisodeUri(code)}. {prefLangEpisode?.ToString()} ::: {defltLangEpisode?.ToString()}");
                         }
                     }
                 }
                 catch (InvalidCastException ex)
                 {
-                    Logger.Error($"Did not recieve the expected format of json from {EpisodeUri(code)}. {prefLangEpisode?.ToString()} ::: {defltLangEpisode?.ToString()}");
+                    Logger.Error($"<TVDB ISSUE?>: Did not recieve the expected format of json from {EpisodeUri(code)}. {prefLangEpisode?.ToString()} ::: {defltLangEpisode?.ToString()}");
                 }
                 catch (OverflowException ex)
                 {
-                    Logger.Error($"Could not parse the episode json from {EpisodeUri(code)}. {prefLangEpisode?.ToString()} ::: {defltLangEpisode?.ToString()}");
+                    Logger.Error($"<TVDB ISSUE?>: Could not parse the episode json from {EpisodeUri(code)}. {prefLangEpisode?.ToString()} ::: {defltLangEpisode?.ToString()}");
                 }
             });
         }
@@ -1559,12 +1559,12 @@ namespace TVRename
                 }
                 else
                 {
-                    Logger.Error($"problem with JSON recieved {jsonResponseData}");
+                    Logger.Error($"<TVDB ISSUE?>: problem with JSON recieved {jsonResponseData}");
                 }
             }
             catch (TVDBException e)
             {
-                Logger.Error("Could not parse TVDB Response " + e.Message);
+                Logger.Error("<TVDB ISSUE?>: Could not parse TVDB Response " + e.Message);
                 LastError = e.Message;
                 Say("");
                 return false;
@@ -1604,12 +1604,12 @@ namespace TVRename
                 }
                 else
                 {
-                    Logger.Error($"problem with JSON recieved {prefLangEpisodeData},{defLangEpisodeData}");
+                    Logger.Error($"<TVDB ISSUE?>: problem with JSON recieved {prefLangEpisodeData},{defLangEpisodeData}");
                 }
             }
             catch (TVDBException e)
             {
-                Logger.Error("Could not parse TVDB Response " + e.Message);
+                Logger.Error("<TVDB ISSUE?>: Could not parse TVDB Response " + e.Message);
                 LastError = e.Message;
                 Say("");
                 return false;
@@ -1649,12 +1649,12 @@ namespace TVRename
                 }
                 else
                 {
-                    Logger.Error($"Problem Processing episode data: {episodeData}");
+                    Logger.Error($"<TVDB ISSUE?>: Problem Processing episode data: {episodeData}");
                 }
             }
             catch (TVDBException e)
             {
-                Logger.Error("Could not parse TVDB Response " + e.Message);
+                Logger.Error("<TVDB ISSUE?>: Could not parse TVDB Response " + e.Message);
                 LastError = e.Message;
                 Say("");
                 return false;
@@ -1854,7 +1854,7 @@ namespace TVRename
             }
             catch (InvalidCastException ex)
             {
-                Logger.Error("Did not receive the expected format of json from {0}.", uri);
+                Logger.Error("<TVDB ISSUE?>: Did not receive the expected format of json from {0}.", uri);
                 Logger.Error(ex);
                 Logger.Error(jsonResponse["data"].ToString());
             }
