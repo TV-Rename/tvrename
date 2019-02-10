@@ -219,17 +219,26 @@ namespace TVRename
             // look through the list of semaphores to see if there is one waiting for some work to do
             bool allDone = true;
             int which = -1;
+            if (queues is null)
+            {
+                return (true, -1);
+            }
+
             for (int i = 0; i < queues.Length; i++)
             {
                 ActionQueue currentQueue = queues[i];
 
-                if (currentQueue is null) continue;
+                if (currentQueue?.Actions is null) continue;
+
                 // something to do in this queue, and semaphore is available
 
                 if (currentQueue.ActionPosition < currentQueue.Actions.Count)
                 {
                     allDone = false;
                     Semaphore currentSemaphore = actionSemaphores[i];
+
+                    if (currentSemaphore is null) continue;
+
                     if (currentSemaphore.WaitOne(20, false))
                     {
                         which = i;
@@ -266,6 +275,13 @@ namespace TVRename
                 Name = "ProcessSingleAction(" + act.Name + ":" + act.ProgressText + ")"
             };
 
+            if (actionWorkers is null || actionSemaphores is null)
+            {
+                Logger.Error(
+                    $"Asked to start for {act.Name}, but actionWorkers has been removed, please restart TV Rename and contact help if this recurrs.");
+                return;
+            }
+
             actionWorkers.Add(t);
             actionStarting = true; // set to false in thread after it has the semaphore
             t.Start(new ProcessActionInfo(which, act));
@@ -278,9 +294,13 @@ namespace TVRename
 
         private void TidyDeadWorkers()
         {
+            if (actionWorkers is null) return;
+
             // tidy up any finished workers
             for (int i = actionWorkers.Count - 1; i >= 0; i--)
             {
+                if (actionWorkers[i] is null) continue;
+
                 if (!actionWorkers[i].IsAlive)
                     actionWorkers.RemoveAt(i); // remove dead worker
             }
