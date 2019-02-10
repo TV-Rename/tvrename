@@ -1431,23 +1431,17 @@ namespace TVRename
                         bool success = ProcessEpisode(code,episodeId, prefLangEpisode, defltLangEpisode);
                         if (!success)
                         {
-                            Logger.Error("Could not process Episode from {0}.", EpisodeUri(code));
-                            Logger.Error(prefLangEpisode?.ToString());
-                            Logger.Error(defltLangEpisode?.ToString());
+                            Logger.Error($"Could not process Episode from {EpisodeUri(code)}. {prefLangEpisode?.ToString()} ::: {defltLangEpisode?.ToString()}");
                         }
                     }
                 }
                 catch (InvalidCastException ex)
                 {
-                    Logger.Error(ex,"Did not recieve the expected format of json from {0}.", EpisodeUri(code));
-                    Logger.Error(prefLangEpisode?.ToString());
-                    Logger.Error(defltLangEpisode?.ToString());
+                    Logger.Error($"Did not recieve the expected format of json from {EpisodeUri(code)}. {prefLangEpisode?.ToString()} ::: {defltLangEpisode?.ToString()}");
                 }
                 catch (OverflowException ex)
                 {
-                    Logger.Error(ex,"Could not parse the episode json from {0}.", EpisodeUri(code));
-                    Logger.Error(prefLangEpisode?.ToString());
-                    Logger.Error(defltLangEpisode?.ToString());
+                    Logger.Error($"Could not parse the episode json from {EpisodeUri(code)}. {prefLangEpisode?.ToString()} ::: {defltLangEpisode?.ToString()}");
                 }
             });
         }

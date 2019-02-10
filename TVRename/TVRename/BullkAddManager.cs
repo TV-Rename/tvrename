@@ -130,8 +130,9 @@ namespace TVRename
                     {
                         if ((reader.Name == "tvdbid") && reader.IsStartElement())
                         {
-                            int x = reader.ReadElementContentAsInt();
-                            if (x != -1) return x;
+                            string s = reader.ReadElementContentAsString();
+                            bool success = int.TryParse(s,out int x);
+                            if (success && x != -1) return x;
                         }
                     }
                 }
@@ -217,7 +218,24 @@ namespace TVRename
 
                 subDirs = null;
             }
-            folderFormat=string.Empty;
+            catch (DirectoryNotFoundException)
+            {
+                // e.g. recycle bin, system volume information
+                Logger.Warn(
+                    "Could not access {0} (or a subdir), it is no longer found",
+                    di.FullName);
+
+                subDirs = null;
+            }
+            catch (IOException)
+            {
+                Logger.Warn(
+                    "Could not access {0} (or a subdir), got an IO Exception",
+                    di.FullName);
+
+                subDirs = null;
+            }
+            folderFormat =string.Empty;
             return false;
         }
 
