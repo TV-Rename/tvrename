@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -28,8 +29,14 @@ namespace TVRename
             return source.IndexOf(toCheck, comp) >= 0;
         }
 
-        public static string ReplaceInsensitive(this string source, string search, string replacement)
+        public static string ReplaceInsensitive([NotNull] this string source, [NotNull] string search, [NotNull] string replacement)
         {
+            if (string.IsNullOrEmpty(replacement )) return Regex.Replace(
+                source,
+                Regex.Escape(search),
+                string.Empty,
+                RegexOptions.IgnoreCase
+            );
             return Regex.Replace(
                 source,
                 Regex.Escape(search),
