@@ -185,13 +185,18 @@ namespace TVRename
 
         private static void UpdateSplashStatus(TVRenameSplash splashScreen, string text)
         {
-            Logger.Info($"Splash Screen Updated with: {text}");
-            splashScreen.Invoke((System.Action) delegate { splashScreen.UpdateStatus(text); });
+            if (splashScreen.IsHandleCreated) {
+                Logger.Info($"Splash Screen Updated with: {text}");
+                splashScreen.Invoke((System.Action)delegate { splashScreen.UpdateStatus(text); });
+            }
         }
 
         private static void UpdateSplashPercent(TVRenameSplash splashScreen, int num)
         {
-            splashScreen.Invoke((System.Action) delegate { splashScreen.UpdateProgress(num); });
+            if (splashScreen.IsHandleCreated)
+            {
+                splashScreen.Invoke((System.Action) delegate { splashScreen.UpdateProgress(num); });
+            }
         }
 
         private void ClearInfoWindows() => ClearInfoWindows("");
