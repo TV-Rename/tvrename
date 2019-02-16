@@ -115,11 +115,11 @@ namespace TVRename
         {
             System.Diagnostics.Debug.Assert(workerSemaphore != null);
 
+            SeriesSpecifier series = (SeriesSpecifier)(codeIn);
+
             try
             {
                 workerSemaphore.WaitOne(); // don't start until we're allowed to
-
-                SeriesSpecifier series = (SeriesSpecifier)(codeIn);
 
                 bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
 
@@ -148,7 +148,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                Logger.Fatal(e, "Unhandled Exception in GetThread");
+                Logger.Fatal(e, $"Unhandled Exception in GetThread for {series.Name} id={series.SeriesId} and lang={series.CustomLanguageCode}");
             }
         }
 
