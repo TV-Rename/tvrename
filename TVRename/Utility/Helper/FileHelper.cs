@@ -204,8 +204,12 @@ namespace TVRename
             {
                 Logger.Warn($"Unable to use shell to access file as part of GetFilmLength for {movieFile.FullName}");
             }
+            catch (PlatformNotSupportedException pe)
+            {
+                Logger.Error($"Unable to use shell to access file as part of GetFilmLength for {movieFile.FullName}. Platform is not supported: {pe.Message}");
+            }
 
-        MediaInfoWrapper mw = new MediaInfoWrapper(movieFile.FullName);
+            MediaInfoWrapper mw = new MediaInfoWrapper(movieFile.FullName);
         int returnVal = mw.Duration;
 
         if (returnVal != 0)
