@@ -3,7 +3,7 @@
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
 using System;
@@ -57,6 +57,12 @@ namespace TVRename
                                 writer.WriteValue("true");
                             else if (ei.Show.DoMissingCheck)
                                 writer.WriteValue("false");
+                            else
+                                writer.WriteValue("no missing check");
+                        }
+                        else
+                        {
+                            writer.WriteValue("future");
                         }
                         
                         writer.WriteEndElement();

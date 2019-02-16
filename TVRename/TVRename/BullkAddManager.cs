@@ -3,7 +3,7 @@
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
 using System;
@@ -34,7 +34,7 @@ namespace TVRename
             mDoc = doc;
         }
 
-        public static void GuessShowItem(FoundFolder ai, ShowLibrary library)
+        public static void GuessShowItem(FoundFolder ai, ShowLibrary library, bool showErrorMsgBox)
         {
             string showName = GuessShowName(ai, library);
 
@@ -60,7 +60,7 @@ namespace TVRename
                 }
             }
 
-            SeriesInfo ser = TheTVDB.Instance.GetSeries(showName);
+            SeriesInfo ser = TheTVDB.Instance.GetSeries(showName,showErrorMsgBox);
             if (ser != null)
             {
                 ai.TVDBCode = ser.TvdbCode;
@@ -79,7 +79,7 @@ namespace TVRename
                 Logger.Info($"Ignoring {showName} as it refines to nothing.");
             }
 
-            ser = TheTVDB.Instance.GetSeries(refinedHint);
+            ser = TheTVDB.Instance.GetSeries(refinedHint,showErrorMsgBox);
 
             ai.RefinedHint = refinedHint;
             if (ser != null)
@@ -139,17 +139,17 @@ namespace TVRename
             }
             catch (XmlException xe)
             {
-                Logger.Warn( $"Could not parse {file.Name} to try and see whether there is any TVDB Ids inside, got {xe.Message}");
+                Logger.Warn( $"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside, got {xe.Message}");
                 return -1;
             }
             catch (IOException xe)
             {
-                Logger.Warn($"Could not parse {file.Name} to try and see whether there is any TVDB Ids inside, got {xe.Message}");
+                Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside, got {xe.Message}");
                 return -1;
             }
             catch (Exception e)
             {
-                Logger.Error(e,$"Could not parse {file.Name} to try and see whether there is any TVDB Ids inside.");
+                Logger.Error(e,$"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside.");
             }
 
             return -1;
@@ -239,7 +239,7 @@ namespace TVRename
             return false;
         }
 
-        public bool CheckFolderForShows(DirectoryInfo di2, bool andGuess, out DirectoryInfo[] subDirs,bool  fullLogging )
+        public bool CheckFolderForShows(DirectoryInfo di2, bool andGuess, out DirectoryInfo[] subDirs,bool  fullLogging, bool showErrorMsgBox)
         {
             // ..and not already a folder for one of our shows
             string theFolder = di2.FullName.ToLower();
@@ -305,7 +305,7 @@ namespace TVRename
                     AddItems.Add(ai);
                     Logger.Info("Adding {0} as a new folder", theFolder);
                     if (andGuess)
-                        GuessShowItem(ai, mDoc.Library);
+                        GuessShowItem(ai, mDoc.Library,showErrorMsgBox);
                 }
             }
             catch (UnauthorizedAccessException)
@@ -323,7 +323,7 @@ namespace TVRename
             return directory.GetFiles("*", SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
         }
 
-        private void CheckFolderForShows(DirectoryInfo di, CancellationToken token,bool fullLogging)
+        private void CheckFolderForShows(DirectoryInfo di, CancellationToken token,bool fullLogging, bool showErrorMsgBox)
         {
             if (!di.Exists)
                 return;
@@ -338,7 +338,7 @@ namespace TVRename
                 return;
             }
 
-            if (CheckFolderForShows(di, false, out DirectoryInfo[] subDirs,fullLogging))
+            if (CheckFolderForShows(di, false, out DirectoryInfo[] subDirs,fullLogging,showErrorMsgBox))
                 return; // done.
 
             if (subDirs == null) return; //indication we could not access the subdirectory
@@ -347,7 +347,7 @@ namespace TVRename
 
             foreach (DirectoryInfo di2 in subDirs)
             {
-                CheckFolderForShows(di2, token,fullLogging); // not a season folder.. recurse!
+                CheckFolderForShows(di2, token,fullLogging,showErrorMsgBox); // not a season folder.. recurse!
             } // for each directory
         }
 
@@ -390,7 +390,7 @@ namespace TVRename
             mDoc.ExportShowInfo();
         }
 
-        public void CheckFolders(CancellationToken token, SetProgressDelegate prog,bool detailedLogging)
+        public void CheckFolders(CancellationToken token, SetProgressDelegate prog,bool detailedLogging, bool showErrorMsgBox)
         {
             // Check the  folder list, and build up a new "AddItems" list.
             // guessing what the shows actually are isn't done here.  That is done by
@@ -408,7 +408,7 @@ namespace TVRename
                 prog.Invoke(100 * c2++ / c,folder);
                 DirectoryInfo di = new DirectoryInfo(folder);
 
-                CheckFolderForShows(di,token, detailedLogging);
+                CheckFolderForShows(di,token, detailedLogging,showErrorMsgBox);
 
                 if (token.IsCancellationRequested)
                     break;

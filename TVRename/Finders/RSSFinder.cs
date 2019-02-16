@@ -3,7 +3,7 @@
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
 using System.Collections.Generic;
@@ -62,10 +62,19 @@ namespace TVRename
                             string.IsNullOrEmpty(rss.ShowName) &&
                             FileHelper.SimplifyAndCheckFilename(rss.Title, simpleSeriesName, true, false)
                          )
-                       ) continue;
+                       )
+                    {
+                        continue;
+                    }
 
-                    if (rss.Season != pe.AppropriateSeasonNumber) continue;
-                    if (rss.Episode != pe.AppropriateEpNum) continue;
+                    if (rss.Season != pe.AppropriateSeasonNumber)
+                    {
+                        continue;
+                    }
+                    if (rss.Episode != pe.AppropriateEpNum)
+                    {
+                        continue;
+                    }
 
                     LOGGER.Info($"Adding {rss.URL} from RSS feed as it appears to be match for {action.Episode.Show.ShowName} S{action.Episode.AppropriateSeasonNumber}E{action.Episode.AppropriateEpNum}");
                     newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action.TheFileNoExt, pe,action));

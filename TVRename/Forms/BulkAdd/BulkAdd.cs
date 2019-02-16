@@ -3,7 +3,7 @@
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
 using System.Collections.Generic;
@@ -214,7 +214,7 @@ namespace TVRename
                 Thread.Sleep(10);
             }
 
-            engine.CheckFolders(cts.Token, UpdateProgress,true);
+            engine.CheckFolders(cts.Token, UpdateProgress,true,true);
             cts.Cancel();
             FillNewShowList(false);
         }
@@ -249,7 +249,7 @@ namespace TVRename
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
                     {
-                        engine.CheckFolderForShows(di, true, out DirectoryInfo[] _,true);
+                        engine.CheckFolderForShows(di, true, out DirectoryInfo[] _,true,true);
                         FillNewShowList(true);
                     }
                 }
@@ -329,7 +329,7 @@ namespace TVRename
                 if (ai.CodeKnown)
                     continue;
 
-                BulkAddManager.GuessShowItem(ai,mDoc.Library);
+                BulkAddManager.GuessShowItem(ai,mDoc.Library,true);
                 
                 // update our display
                 UpdateListItem(ai, true);
