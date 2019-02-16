@@ -31,18 +31,11 @@ namespace TVRename
 
         public static string ReplaceInsensitive([NotNull] this string source, [NotNull] string search, [NotNull] string replacement)
         {
-            if (string.IsNullOrEmpty(replacement )) return Regex.Replace(
-                source,
-                Regex.Escape(search),
-                string.Empty,
-                RegexOptions.IgnoreCase
-            );
             return Regex.Replace(
                 source,
                 Regex.Escape(search),
-                replacement.Replace("$", "$$"),
-                RegexOptions.IgnoreCase
-            );
+                string.IsNullOrEmpty(replacement ) ? string.Empty : replacement.Replace("$", "$$"),
+                RegexOptions.IgnoreCase);
         }
 
         public static bool ContainsAnyCharctersFrom(this string source, char[] possibleChars)
