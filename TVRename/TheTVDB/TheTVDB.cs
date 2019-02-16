@@ -3,7 +3,7 @@
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
 using Newtonsoft.Json.Linq;
@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
+using TVRename.Forms.Utilities;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
@@ -305,9 +306,9 @@ namespace TVRename
             }
         }
 
-        public SeriesInfo GetSeries(string showName)
+        public SeriesInfo GetSeries(string showName, bool showErrorMsgBox)
         {
-            Search(showName);
+            Search(showName,showErrorMsgBox);
 
             if (string.IsNullOrEmpty(showName))
                 return null;
@@ -342,9 +343,9 @@ namespace TVRename
             return null;
         }
 
-        public bool Connect()
+        public bool Connect(bool showErrorMsgBox)
         {
-            Connected = UpdateLanguages();
+            Connected = UpdateLanguages(showErrorMsgBox);
             return Connected;
         }
 
@@ -439,17 +440,17 @@ namespace TVRename
                 }
             }
         }
-        private bool UpdateLanguages()
+        private bool UpdateLanguages(bool showErrorMsgBox)
         {
             Say("TheTVDB Languages");
             try
             {
-                JObject jsonResponse =
+                JObject jsonLanguagesResponse =
                     HttpHelper.JsonHttpGetRequest(TvDbTokenProvider.TVDB_API_URL + "/languages", null, tvDbTokenProvider.GetToken(),true);
 
                 LanguageList.Clear();
 
-                foreach (JToken jToken in jsonResponse["data"])
+                foreach (JToken jToken in jsonLanguagesResponse["data"])
                 {
                     JObject languageJson = (JObject) jToken;
                     int id = (int) languageJson["id"];
@@ -469,15 +470,28 @@ namespace TVRename
                 Say("Could not connect to TVDB");
                 Logger.Error(ex, "Error obtaining Languages from TVDB");
                 LastError = ex.Message;
+
+                if (showErrorMsgBox)
+                {
+                    CannotConnectForm ccform = new CannotConnectForm("Error while downloading languages from TVDB", ex.Message);
+                    DialogResult ccresult = ccform.ShowDialog();
+                    if (ccresult == DialogResult.Abort)
+                    {
+                        TVSettings.Instance.OfflineMode = true;
+                    }
+                }
+
+                LastError = "";
+
                 return false;
             }
         }
 
-        public bool GetUpdates()
+        public bool GetUpdates(bool showErrorMsgBox)
         {
             Say("Updates list");
 
-            if (!Connected && !Connect())
+            if (!Connected && !Connect(showErrorMsgBox))
             {
                 Say("");
                 return false;
@@ -526,10 +540,9 @@ namespace TVRename
                 }
                 catch (WebException ex)
                 {
-                    Logger.Warn("Error obtaining " + uri + ": from lastupdated query -since(local) " +
+                    Logger.Error(ex,"Error obtaining " + uri + ": from lastupdated query -since(local) " +
                                 Helpers.FromUnixTime(epochTime).ToLocalTime());
 
-                    Logger.Warn(ex);
                     Say("");
                     LastError = ex.Message;
                     return false;
@@ -1079,66 +1092,15 @@ namespace TVRename
 
             Say(GenerateMessage(code, episodesToo, bannersToo));
 
-            string uri = TvDbTokenProvider.TVDB_API_URL + "/series/" + code;
-            JObject jsonResponse;
-            JObject jsonDefaultLangResponse = new JObject();
             string requestedLanguageCode = useCustomLangCode ? langCode : TVSettings.Instance.PreferredLanguageCode;
+
+            SeriesInfo si;
             try
             {
-                jsonResponse = HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider.GetToken(),requestedLanguageCode,true);
-
-                if (IsNotDefaultLanguage(requestedLanguageCode))
-                    jsonDefaultLangResponse =
-                        HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider.GetToken(), DefaultLanguageCode,true);
+                si = DownloadSeriesInfo(code, requestedLanguageCode);
             }
-            catch (WebException ex)
+            catch (TvdbSeriesDownloadException)
             {
-                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response !=null && ex.Response is HttpWebResponse resp &&
-                    resp.StatusCode == HttpStatusCode.NotFound)
-                {
-                    Logger.Warn($"Show with Id {code} is no longer available from TVDB (got a 404). {uri}");
-                    Say("");
-
-                    if (TvdbIsUp())
-                    {
-                        LastError = ex.Message;
-                        throw new ShowNotFoundException(code);
-                    }
-                }
-
-                Logger.Error(ex,"Error obtaining {0}", uri);
-                Say("");
-                LastError = ex.Message;
-                return null;
-            }
-
-            if (jsonResponse is null)
-            {
-                Logger.Error("Error obtaining - no response available {0}", uri);
-                Say("");
-                return null;
-            }
-
-            SeriesInfo si = null;
-            JObject seriesData = (JObject) jsonResponse["data"];
-
-            if (IsNotDefaultLanguage(requestedLanguageCode))
-            {
-                if (jsonDefaultLangResponse != null)
-                {
-                    JObject seriesDataDefaultLang = (JObject) jsonDefaultLangResponse["data"];
-                    si = new SeriesInfo(seriesData, seriesDataDefaultLang, LanguageList.GetLanguageFromCode(requestedLanguageCode).Id);
-                }
-            }
-            else
-            {
-                si = new SeriesInfo(seriesData, GetLanguageId());
-            }
-
-            if (si is null)
-            {
-                Logger.Error("Error obtaining {0} - no cound not generate a series from the responses", uri);
-                Say("");
                 return null;
             }
 
@@ -1172,6 +1134,103 @@ namespace TVRename
 
             series.TryGetValue(code, out SeriesInfo returnValue);
             return returnValue;
+        }
+
+        private SeriesInfo DownloadSeriesInfo(int code, string requestedLanguageCode)
+        {
+            bool isNotDefaultLanguage = IsNotDefaultLanguage(requestedLanguageCode);
+            string uri = TvDbTokenProvider.TVDB_API_URL + "/series/" + code;
+
+            (JObject jsonResponse, JObject jsonDefaultLangResponse) = DownloadSeriesJson(code, requestedLanguageCode, uri, isNotDefaultLanguage);
+
+            SeriesInfo si = GenerateSeriesInfo(jsonResponse, jsonDefaultLangResponse, isNotDefaultLanguage, requestedLanguageCode);
+
+            if (si is null)
+            {
+                Logger.Error("Error obtaining {0} - no cound not generate a series from the responses", uri);
+                Say("");
+                throw new TvdbSeriesDownloadException();
+            }
+
+            return si;
+        }
+
+        private SeriesInfo GenerateSeriesInfo(JObject jsonResponse, JObject jsonDefaultLangResponse, bool isNotDefaultLanguage,
+            string requestedLanguageCode)
+        {
+            JObject seriesData = (JObject) jsonResponse["data"];
+            SeriesInfo si = null;
+            if (isNotDefaultLanguage)
+            {
+                if (jsonDefaultLangResponse != null)
+                {
+                    JObject seriesDataDefaultLang = (JObject) jsonDefaultLangResponse["data"];
+                    int requestedLangId = LanguageList.GetLanguageFromCode(requestedLanguageCode).Id;
+
+                    si = new SeriesInfo(seriesData, seriesDataDefaultLang, requestedLangId);
+                }
+            }
+            else
+            {
+                si = new SeriesInfo(seriesData, GetLanguageId());
+            }
+
+            return si;
+        }
+
+        private (JObject jsonResponse, JObject jsonDefaultLangResponse) DownloadSeriesJson(int code,
+            string requestedLanguageCode, string uri, bool isNotDefaultLanguage)
+        {
+            JObject jsonDefaultLangResponse = new JObject();
+
+            JObject jsonResponse = DownloadSeriesJson(code, requestedLanguageCode, uri);
+
+            if (isNotDefaultLanguage)
+            {
+                jsonDefaultLangResponse = DownloadSeriesJson(code, DefaultLanguageCode, uri);
+            }
+
+            if (jsonResponse is null)
+            {
+                Logger.Error("Error obtaining - no response available {0}", uri);
+                Say("");
+                throw new TvdbSeriesDownloadException();
+            }
+
+            return (jsonResponse, jsonDefaultLangResponse);
+        }
+
+        private JObject DownloadSeriesJson(int code, string requestedLanguageCode, string uri)
+        {
+            JObject jsonResponse;
+            try
+            {
+                jsonResponse =
+                    HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider.GetToken(), requestedLanguageCode, true);
+            }
+            catch (WebException ex)
+            {
+                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response != null &&
+                    ex.Response is HttpWebResponse resp &&
+                    resp.StatusCode == HttpStatusCode.NotFound)
+                {
+                    Logger.Warn($"Show with Id {code} is no longer available from TVDB (got a 404). {uri}");
+                    Say("");
+
+                    if (TvdbIsUp())
+                    {
+                        LastError = ex.Message;
+                        throw new ShowNotFoundException(code);
+                    }
+                }
+
+                Logger.Error(ex, $"Error obtaining {uri} in {requestedLanguageCode}");
+                Say("");
+                LastError = ex.Message;
+                throw new TvdbSeriesDownloadException();
+            }
+
+            return jsonResponse;
         }
 
         private void DownloadSeriesActors(int code,SeriesInfo si)
@@ -1727,9 +1786,9 @@ namespace TVRename
             return ok;
         }
 
-        public void Search(string text)
+        public void Search(string text, bool showErrorMsgBox)
         {
-            if (!Connected && !Connect())
+            if (!Connected && !Connect(showErrorMsgBox))
             {
                 Say("Failed to Connect");
                 return;

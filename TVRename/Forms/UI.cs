@@ -3,7 +3,7 @@
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
 using NLog;
@@ -176,7 +176,7 @@ namespace TVRename
 
             UpdateSplashStatus(splash, "Starting Monitor");
             if (TVSettings.Instance.MonitorFolders)
-                mAutoFolderMonitor.StartMonitor();
+                mAutoFolderMonitor.Start();
 
             tmrPeriodicScan.Enabled = TVSettings.Instance.RunPeriodicCheck();
 
@@ -185,13 +185,18 @@ namespace TVRename
 
         private static void UpdateSplashStatus(TVRenameSplash splashScreen, string text)
         {
-            Logger.Info($"Splash Screen Updated with: {text}");
-            splashScreen.Invoke((System.Action) delegate { splashScreen.UpdateStatus(text); });
+            if (splashScreen.IsHandleCreated) {
+                Logger.Info($"Splash Screen Updated with: {text}");
+                splashScreen.Invoke((System.Action)delegate { splashScreen.UpdateStatus(text); });
+            }
         }
 
         private static void UpdateSplashPercent(TVRenameSplash splashScreen, int num)
         {
-            splashScreen.Invoke((System.Action) delegate { splashScreen.UpdateProgress(num); });
+            if (splashScreen.IsHandleCreated)
+            {
+                splashScreen.Invoke((System.Action) delegate { splashScreen.UpdateProgress(num); });
+            }
         }
 
         private void ClearInfoWindows() => ClearInfoWindows("");

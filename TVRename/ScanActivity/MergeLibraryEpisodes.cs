@@ -3,7 +3,7 @@
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
 using System.Collections.Generic;
@@ -65,23 +65,33 @@ namespace TVRename
                     foreach (FileInfo fi in files)
                     {
                         if (settings.Token.IsCancellationRequested)
+                        {
                             throw new TVRenameOperationInteruptedException();
+                        }
 
                         if (!fi.IsMovieFile())
+                        {
                             continue; //not a video file, so ignore
+                        }
 
                         if (!FinderHelper.FindSeasEp(fi, out int seasNum, out int epNum, out int maxEp, si,
                             out TVSettings.FilenameProcessorRE _))
+                        {
                             continue; // can't find season & episode, so this file is of no interest to us
+                        }
 
                         if (seasNum == -1)
+                        {
                             seasNum = snum;
+                        }
 
                         int epIdx = eps.FindIndex(x =>
                             ((x.AppropriateEpNum == epNum) && (x.AppropriateSeasonNumber == seasNum)));
 
                         if (epIdx == -1)
+                        {
                             continue; // season+episode number don't correspond to any episode we know of from thetvdb
+                        }
 
                         ProcessedEpisode ep = eps[epIdx];
 

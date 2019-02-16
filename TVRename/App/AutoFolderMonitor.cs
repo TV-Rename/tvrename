@@ -28,33 +28,46 @@ namespace TVRename
         {
             if (monitor)
             {
-                StopMonitor();
-                StartMonitor();
+                Stop();
+                Start();
             }
             else
-                StopMonitor();
+                Stop();
         }
 
-        public void StartMonitor()
+        public void Start()
         {
-            foreach (string efi in TVSettings.Instance.DownloadFolders )
+            foreach (string efi in TVSettings.Instance.DownloadFolders)
             {
                 if (!Directory.Exists(efi)) //Does not exist
+                {
+                    Logger.Warn($"Could not watch {efi} as it does not exist.");
                     continue;
+                }
 
                 if ((File.GetAttributes(efi) & FileAttributes.Directory) != (FileAttributes.Directory))  // not a folder
+                {
+                    Logger.Warn($"Could not watch {efi} as it is not a file.");
                     continue;
+                }
 
-                FileSystemWatcher watcher = new FileSystemWatcher(efi);
-                watcher.Changed += watcher_Changed;
-                watcher.Created += watcher_Changed;
-                watcher.Renamed += watcher_Changed;
-                //watcher.Deleted += new FileSystemEventHandler(watcher_Changed);
-                //watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.CreationTime;
-                watcher.IncludeSubdirectories = true;
-                watcher.EnableRaisingEvents = true;
-                watchers.Add(watcher);
-                Logger.Trace("Starting logger for {0}", efi);
+                try
+                {
+                    FileSystemWatcher watcher = new FileSystemWatcher(efi);
+                    watcher.Changed += watcher_Changed;
+                    watcher.Created += watcher_Changed;
+                    watcher.Renamed += watcher_Changed;
+                    //watcher.Deleted += new FileSystemEventHandler(watcher_Changed);
+                    //watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.CreationTime;
+                    watcher.IncludeSubdirectories = true;
+                    watcher.EnableRaisingEvents = true;
+                    watchers.Add(watcher);
+                    Logger.Info("Starting logger for {0}", efi);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Warn(ex, $"Failed to start logger for {efi}");
+                }
             }
         }
 
@@ -68,7 +81,7 @@ namespace TVRename
         void mScanDelayTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             mScanDelayTimer.Stop();
-            StopMonitor();
+            Stop();
 
             //We only wish to do a scan now if we are not already undertaking one
             if (mDoc.AutoScanCanRun())
@@ -99,10 +112,10 @@ namespace TVRename
             {
                Logger.Info("Auto scan cancelled as the system is already busy");
             }
-            StartMonitor();
+            Start();
         }
 
-        public void StopMonitor()
+        private void Stop()
         {
             foreach (FileSystemWatcher watcher in watchers)
             {

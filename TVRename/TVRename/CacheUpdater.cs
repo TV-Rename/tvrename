@@ -22,6 +22,7 @@ namespace TVRename
 
         private bool downloadOk;
         private bool downloadStopOnError;
+        private bool showErrorMsgBox;
         private Semaphore workerSemaphore;
         private List<Thread> workers;
         private Thread mDownloaderThread;
@@ -38,11 +39,12 @@ namespace TVRename
             problematicSeriesIds = new ConcurrentBag<int>();
         }
 
-        public void StartBgDownloadThread(bool stopOnError, ICollection<SeriesSpecifier> shows)
+        public void StartBgDownloadThread(bool stopOnError, ICollection<SeriesSpecifier> shows, bool showMsgBox)
         {
             if (!DownloadDone)
                 return;
             downloadStopOnError = stopOnError;
+            showErrorMsgBox = showMsgBox;
             DownloadPct = 0;
             DownloadDone = false;
             downloadOk = true;
@@ -55,13 +57,13 @@ namespace TVRename
             mDownloaderThread.Start();
         }
 
-        public bool DoDownloadsFg(bool showProgress, bool showErrorMsgBox, ICollection<SeriesSpecifier> shows)
+        public bool DoDownloadsFg(bool showProgress, bool showMsgBox, ICollection<SeriesSpecifier> shows)
         {
             if (TVSettings.Instance.OfflineMode)
                 return true; // don't do internet in offline mode!
             Logger.Info("Doing downloads in the foreground...");
 
-            StartBgDownloadThread(true, shows);
+            StartBgDownloadThread(true, shows,showMsgBox);
 
             const int DELAY_STEP = 100;
             int count = 1000 / DELAY_STEP; // one second
@@ -113,11 +115,11 @@ namespace TVRename
         {
             System.Diagnostics.Debug.Assert(workerSemaphore != null);
 
+            SeriesSpecifier series = (SeriesSpecifier)(codeIn);
+
             try
             {
                 workerSemaphore.WaitOne(); // don't start until we're allowed to
-
-                SeriesSpecifier series = (SeriesSpecifier)(codeIn);
 
                 bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
 
@@ -146,7 +148,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                Logger.Fatal(e, "Unhandled Exception in GetThread");
+                Logger.Fatal(e, $"Unhandled Exception in GetThread for {series.Name} id={series.SeriesId} and lang={series.CustomLanguageCode}");
             }
         }
 
@@ -179,7 +181,7 @@ namespace TVRename
                     return;
                 }
 
-                if (!TheTVDB.Instance.GetUpdates())
+                if (!TheTVDB.Instance.GetUpdates(showErrorMsgBox))
                 {
                     DownloadDone = true;
                     downloadOk = false;

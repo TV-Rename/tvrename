@@ -3,7 +3,7 @@
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using Alphaleonis.Win32.Filesystem;
 using DaveChambers.FolderBrowserDialogEx;
@@ -401,13 +401,19 @@ namespace TVRename
         private TVSettings.FolderJpgIsType FolderJpgMode()
         {
             if (rbFolderFanArt.Checked)
+            {
                 return TVSettings.FolderJpgIsType.FanArt;
+            }
 
             if (rbFolderBanner.Checked)
+            {
                 return TVSettings.FolderJpgIsType.Banner;
+            }
 
             if (rbFolderSeasonPoster.Checked)
+            {
                 return TVSettings.FolderJpgIsType.SeasonPoster;
+            }
 
             return TVSettings.FolderJpgIsType.Poster;
         }
@@ -465,7 +471,7 @@ namespace TVRename
                 {
                     if (!TheTVDB.Instance.Connected)
                     {
-                        TheTVDB.Instance.Connect();
+                        TheTVDB.Instance.Connect(true);
                     }
                 }
                 catch (ThreadAbortException)

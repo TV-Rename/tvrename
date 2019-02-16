@@ -1,3 +1,10 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+//
 using System;
 using System.IO;
 using System.Linq;
@@ -204,8 +211,12 @@ namespace TVRename
             {
                 Logger.Warn($"Unable to use shell to access file as part of GetFilmLength for {movieFile.FullName}");
             }
+            catch (PlatformNotSupportedException pe)
+            {
+                Logger.Error($"Unable to use shell to access file as part of GetFilmLength for {movieFile.FullName}. Platform is not supported: {pe.Message}");
+            }
 
-        MediaInfoWrapper mw = new MediaInfoWrapper(movieFile.FullName);
+            MediaInfoWrapper mw = new MediaInfoWrapper(movieFile.FullName);
         int returnVal = mw.Duration;
 
         if (returnVal != 0)

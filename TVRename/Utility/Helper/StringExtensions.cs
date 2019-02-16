@@ -1,3 +1,10 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+//
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,18 +38,11 @@ namespace TVRename
 
         public static string ReplaceInsensitive([NotNull] this string source, [NotNull] string search, [NotNull] string replacement)
         {
-            if (string.IsNullOrEmpty(replacement )) return Regex.Replace(
-                source,
-                Regex.Escape(search),
-                string.Empty,
-                RegexOptions.IgnoreCase
-            );
             return Regex.Replace(
                 source,
                 Regex.Escape(search),
-                replacement.Replace("$", "$$"),
-                RegexOptions.IgnoreCase
-            );
+                string.IsNullOrEmpty(replacement ) ? string.Empty : replacement.Replace("$", "$$"),
+                RegexOptions.IgnoreCase);
         }
 
         public static bool ContainsAnyCharctersFrom(this string source, char[] possibleChars)

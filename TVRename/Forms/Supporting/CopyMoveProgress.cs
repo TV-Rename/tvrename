@@ -3,7 +3,7 @@
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
 namespace TVRename
@@ -35,23 +35,29 @@ namespace TVRename
             diskSpaceTimer.Start();
         }
 
+        private int normalise(double x)
+        {
+            if (x < 0)
+            {
+                return 0;
+            }
+
+            if (x > 100)
+            {
+                return 1000;
+            }
+
+            return (int)Math.Round(x);
+        }
+
         private void SetPercentages(double file, double group)
         {
-            if (file > 100)
-                file = 100;
-            if (group > 100)
-                group = 100;
-            if (file < 0)
-                file = 0;
-            if (group < 0)
-                group = 0;
+            txtFile.Text = (normalise(file)) + "% Done";
+            txtTotal.Text = (normalise(group)) + "% Done";
 
-            txtFile.Text = ((int) Math.Round(file)) + "% Done";
-            txtTotal.Text = ((int) Math.Round(group)) + "% Done";
-
-            // progress bars go 0 to 1000
-            pbFile.Value = (int) (10.0 * file);
-            pbGroup.Value = (int) (10.0 * group);
+            // progress bars go 0 to 1000            
+            pbFile.Value = 10*normalise(file);
+            pbGroup.Value = 10*normalise(group);
             pbFile.Update();
             pbGroup.Update();
             txtFile.Update();
