@@ -351,7 +351,7 @@ namespace TVRename
         private bool OtherActionsMatch(FileInfo matchedFile, Item me, TVDoc.ScanSettings settings)
         //This is used to check whether the selected file may match any other files we are looking for
         {
-            foreach (ItemMissing testMissingAction in ActionList.MissingItems())
+            foreach (ItemMissing testMissingAction in ActionList.MissingItems().ToList())
             {
                 if (testMissingAction.SameAs(me)) continue;
 
