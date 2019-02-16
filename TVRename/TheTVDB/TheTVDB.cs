@@ -1099,7 +1099,7 @@ namespace TVRename
             {
                 si = DownloadSeriesInfo(code, requestedLanguageCode);
             }
-            catch (TVDBSeriesDownloadException)
+            catch (TvdbSeriesDownloadException)
             {
                 return null;
             }
@@ -1149,7 +1149,7 @@ namespace TVRename
             {
                 Logger.Error("Error obtaining {0} - no cound not generate a series from the responses", uri);
                 Say("");
-                throw new TVDBSeriesDownloadException();
+                throw new TvdbSeriesDownloadException();
             }
 
             return si;
@@ -1194,7 +1194,7 @@ namespace TVRename
             {
                 Logger.Error("Error obtaining - no response available {0}", uri);
                 Say("");
-                throw new TVDBSeriesDownloadException();
+                throw new TvdbSeriesDownloadException();
             }
 
             return (jsonResponse, jsonDefaultLangResponse);
@@ -1227,7 +1227,7 @@ namespace TVRename
                 Logger.Error(ex, $"Error obtaining {uri} in {requestedLanguageCode}");
                 Say("");
                 LastError = ex.Message;
-                throw new TVDBSeriesDownloadException();
+                throw new TvdbSeriesDownloadException();
             }
 
             return jsonResponse;
@@ -1989,9 +1989,5 @@ namespace TVRename
 
             SaveCache();
         }
-    }
-
-    internal class TVDBSeriesDownloadException : Exception
-    {
     }
 }
