@@ -3,7 +3,7 @@
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
 using System;
@@ -301,7 +301,8 @@ namespace TVRename
                         $"Ignoring potential match with file {matchedFiles[0]?.FullName} as there are multiple actions for that file");
                 }
             }
-            else if (matchedFiles.Count > 1)
+
+            if (matchedFiles.Count > 1)
             {
                 List<FileInfo> bestMatchedFiles = IdentifyBestMatches(matchedFiles);
 

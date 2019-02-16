@@ -3,7 +3,7 @@
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using Newtonsoft.Json.Linq;
 using System;
@@ -29,12 +29,12 @@ namespace TVRename
                 AcquireToken();
             }
             //If we have logged in but the token has expired so logon again
-            else if (!TokenIsValid())
+            if (!TokenIsValid())
             {
                 AcquireToken();
             }
             //If we have logged on and have a valid token that is nearing its use-by date then refresh
-            else if (ShouldRefreshToken())
+            if (ShouldRefreshToken())
             {
                  RefreshToken();
             }

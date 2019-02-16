@@ -3,7 +3,7 @@
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
 using Newtonsoft.Json.Linq;
@@ -445,12 +445,12 @@ namespace TVRename
             Say("TheTVDB Languages");
             try
             {
-                JObject jsonResponse =
+                JObject jsonLanguagesResponse =
                     HttpHelper.JsonHttpGetRequest(TvDbTokenProvider.TVDB_API_URL + "/languages", null, tvDbTokenProvider.GetToken(),true);
 
                 LanguageList.Clear();
 
-                foreach (JToken jToken in jsonResponse["data"])
+                foreach (JToken jToken in jsonLanguagesResponse["data"])
                 {
                     JObject languageJson = (JObject) jToken;
                     int id = (int) languageJson["id"];
