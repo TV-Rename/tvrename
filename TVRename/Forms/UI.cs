@@ -176,7 +176,7 @@ namespace TVRename
 
             UpdateSplashStatus(splash, "Starting Monitor");
             if (TVSettings.Instance.MonitorFolders)
-                mAutoFolderMonitor.StartMonitor();
+                mAutoFolderMonitor.Start();
 
             tmrPeriodicScan.Enabled = TVSettings.Instance.RunPeriodicCheck();
 

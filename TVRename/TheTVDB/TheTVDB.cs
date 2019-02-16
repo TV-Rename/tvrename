@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
+using TVRename.Forms.Utilities;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
@@ -305,9 +306,9 @@ namespace TVRename
             }
         }
 
-        public SeriesInfo GetSeries(string showName)
+        public SeriesInfo GetSeries(string showName, bool showErrorMsgBox)
         {
-            Search(showName);
+            Search(showName,showErrorMsgBox);
 
             if (string.IsNullOrEmpty(showName))
                 return null;
@@ -342,9 +343,9 @@ namespace TVRename
             return null;
         }
 
-        public bool Connect()
+        public bool Connect(bool showErrorMsgBox)
         {
-            Connected = UpdateLanguages();
+            Connected = UpdateLanguages(showErrorMsgBox);
             return Connected;
         }
 
@@ -439,7 +440,7 @@ namespace TVRename
                 }
             }
         }
-        private bool UpdateLanguages()
+        private bool UpdateLanguages(bool showErrorMsgBox)
         {
             Say("TheTVDB Languages");
             try
@@ -469,15 +470,28 @@ namespace TVRename
                 Say("Could not connect to TVDB");
                 Logger.Error(ex, "Error obtaining Languages from TVDB");
                 LastError = ex.Message;
+
+                if (showErrorMsgBox)
+                {
+                    CannotConnectForm ccform = new CannotConnectForm("Error while downloading languages from TVDB", ex.Message);
+                    DialogResult ccresult = ccform.ShowDialog();
+                    if (ccresult == DialogResult.Abort)
+                    {
+                        TVSettings.Instance.OfflineMode = true;
+                    }
+                }
+
+                LastError = "";
+
                 return false;
             }
         }
 
-        public bool GetUpdates()
+        public bool GetUpdates(bool showErrorMsgBox)
         {
             Say("Updates list");
 
-            if (!Connected && !Connect())
+            if (!Connected && !Connect(showErrorMsgBox))
             {
                 Say("");
                 return false;
@@ -526,10 +540,9 @@ namespace TVRename
                 }
                 catch (WebException ex)
                 {
-                    Logger.Warn("Error obtaining " + uri + ": from lastupdated query -since(local) " +
+                    Logger.Error(ex,"Error obtaining " + uri + ": from lastupdated query -since(local) " +
                                 Helpers.FromUnixTime(epochTime).ToLocalTime());
 
-                    Logger.Warn(ex);
                     Say("");
                     LastError = ex.Message;
                     return false;
@@ -1727,9 +1740,9 @@ namespace TVRename
             return ok;
         }
 
-        public void Search(string text)
+        public void Search(string text, bool showErrorMsgBox)
         {
-            if (!Connected && !Connect())
+            if (!Connected && !Connect(showErrorMsgBox))
             {
                 Say("Failed to Connect");
                 return;

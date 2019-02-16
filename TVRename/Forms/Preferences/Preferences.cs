@@ -463,7 +463,7 @@ namespace TVRename
                 {
                     if (!TheTVDB.Instance.Connected)
                     {
-                        TheTVDB.Instance.Connect();
+                        TheTVDB.Instance.Connect(true);
                     }
                 }
                 catch (ThreadAbortException)

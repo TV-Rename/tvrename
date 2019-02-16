@@ -115,7 +115,7 @@ namespace TVRename
         public void DoDownloadsBG()
         {
             ICollection<SeriesSpecifier> shows = Library.SeriesSpecifiers;
-            cacheManager.StartBgDownloadThread(false, shows);
+            cacheManager.StartBgDownloadThread(false, shows,false);
         }
 
         public int DownloadsRemaining() =>

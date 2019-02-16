@@ -15,14 +15,14 @@ namespace TVRename
     public interface iTVSource
     {
         void Setup(FileInfo loadFrom, FileInfo cacheFile, CommandLineArgs args);
-        bool Connect();
+        bool Connect(bool showErrorMsgBox);
         void SaveCache();
 
         bool EnsureUpdated(int code, bool bannersToo, bool useCustomLangCode, string langCode);
-        bool GetUpdates();
+        bool GetUpdates(bool showErrorMsgBox);
         void UpdatesDoneOk();
 
-        SeriesInfo GetSeries(string showName);
+        SeriesInfo GetSeries(string showName, bool showErrorMsgBox);
         SeriesInfo GetSeries(int id);
         bool HasSeries(int id);
 

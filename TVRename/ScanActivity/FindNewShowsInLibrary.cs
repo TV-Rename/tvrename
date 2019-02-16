@@ -22,7 +22,7 @@ namespace TVRename
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
             BulkAddManager bam = new BulkAddManager(MDoc);
-            bam.CheckFolders(settings.Token, prog, false);
+            bam.CheckFolders(settings.Token, prog, false,!settings.Unattended);
             AskUserAboutShows(settings, bam);
 
             if (!bam.AddItems.Any(s => s.CodeKnown)) return;
@@ -64,7 +64,7 @@ namespace TVRename
             if (folder.CodeKnown)
                 return;
 
-            BulkAddManager.GuessShowItem(folder, MDoc.Library);
+            BulkAddManager.GuessShowItem(folder, MDoc.Library,true);
 
             if (folder.CodeKnown)
                 return;

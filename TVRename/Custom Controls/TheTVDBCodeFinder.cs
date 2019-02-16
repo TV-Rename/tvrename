@@ -45,7 +45,7 @@ namespace TVRename
             mInternal = true;
             txtFindThis.Text = s;
             mInternal = false;
-            Search();
+            Search(true);
             DoFind(true);
         }
 
@@ -147,10 +147,10 @@ namespace TVRename
 
         private void bnGoSearch_Click(object sender, EventArgs e)
         {
-            Search();
+            Search(true);
         }
 
-        private void Search()
+        private void Search(bool showErrorMsgBox)
         {
             // search on thetvdb.com site
             txtSearchStatus.Text = "Searching on TheTVDB.com";
@@ -158,7 +158,7 @@ namespace TVRename
 
             if (!string.IsNullOrEmpty(txtFindThis.Text))
             {
-                TheTVDB.Instance.Search(txtFindThis.Text);
+                TheTVDB.Instance.Search(txtFindThis.Text,showErrorMsgBox);
                 DoFind(true);
             }
         }
