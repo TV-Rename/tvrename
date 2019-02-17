@@ -70,6 +70,8 @@ Section "Install"
     File "TVRename\bin\Release\Microsoft.WindowsAPICodePack.ShellExtensions.dll"
     File "TVRename\bin\Release\NLog.Targets.Syslog.dll"
     File "TVRename\bin\Release\MediaInfo.Wrapper.dll"
+    File "TVRename\bin\Release\x64\MediaInfo.dll"
+    File "TVRename\bin\Release\x86\MediaInfo.dll"
 
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -112,6 +114,8 @@ Section "Uninstall"
     Delete "$INSTDIR\Microsoft.WindowsAPICodePack.ShellExtensions.dll"
     Delete "$INSTDIR\Uninstall.exe"
     Delete "$INSTDIR\MediaInfo.Wrapper.dll"
+    Delete "$INSTDIR\x64\MediaInfo.dll"
+    Delete "$INSTDIR\x86\MediaInfo.dll"
     RmDir "$INSTDIR"
 
     !insertmacro MUI_STARTMENU_GETFOLDER Application $STARTMENU_FOLDER
