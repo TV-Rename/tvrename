@@ -1496,11 +1496,11 @@ namespace TVRename
                 }
                 catch (InvalidCastException ex)
                 {
-                    Logger.Error($"<TVDB ISSUE?>: Did not recieve the expected format of json from {EpisodeUri(code)}. {prefLangEpisode?.ToString()} ::: {defltLangEpisode?.ToString()}");
+                    Logger.Error(ex,$"<TVDB ISSUE?>: Did not recieve the expected format of json from {EpisodeUri(code)}. {prefLangEpisode?.ToString()} ::: {defltLangEpisode?.ToString()}");
                 }
                 catch (OverflowException ex)
                 {
-                    Logger.Error($"<TVDB ISSUE?>: Could not parse the episode json from {EpisodeUri(code)}. {prefLangEpisode?.ToString()} ::: {defltLangEpisode?.ToString()}");
+                    Logger.Error(ex, $"<TVDB ISSUE?>: Could not parse the episode json from {EpisodeUri(code)}. {prefLangEpisode?.ToString()} ::: {defltLangEpisode?.ToString()}");
                 }
             });
         }
