@@ -571,7 +571,7 @@ namespace TVRename
 
                     Logger.Warn(ex, msg);
 
-                    if ((!args.Unattended) && (!args.Hide))
+                    if ((!args.Unattended) && (!args.Hide) && Environment.UserInteractive)
                         MessageBox.Show(msg, "Error obtaining updates from TVDB", MessageBoxButtons.OK,
                             MessageBoxIcon.Warning);
 
@@ -609,7 +609,7 @@ namespace TVRename
                         "If the dates keep getting more recent then let the system keep getting 10 week blocks of updates, otherwise consider a 'Force Refresh All'";
 
                     Logger.Warn(errorMessage);
-                    if ((!args.Unattended) && (!args.Hide))
+                    if ((!args.Unattended) && (!args.Hide) && Environment.UserInteractive)
                         MessageBox.Show(errorMessage, "Long Running Update", MessageBoxButtons.OK,
                             MessageBoxIcon.Warning);
                 }
