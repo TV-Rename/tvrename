@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -47,7 +48,7 @@ namespace TVRename
         /// Processes an Action by running it.
         /// </summary>
         /// <param name="infoIn">A ProcessActionInfo to be processed. It will contain the Action to be processed</param>
-        public void ProcessSingleAction(object infoIn)
+        private void ProcessSingleAction(object infoIn)
         {
             try
             {
@@ -250,8 +251,10 @@ namespace TVRename
             return (allDone,which);
         }
 
-        private void SetupQueues(ActionQueue[] queues)
+        private void SetupQueues([NotNull] ActionQueue[] queues)
         {
+            if (queues == null) throw new ArgumentNullException(nameof(queues));
+
             int n = queues.Length;
 
             actionWorkers = new List<Thread>();
@@ -268,8 +271,10 @@ namespace TVRename
             }
         }
 
-        private void StartThread(int which, Action act)
+        private void StartThread(int which, [NotNull] Action act)
         {
+            if (act == null) throw new ArgumentNullException(nameof(act));
+
             Thread t = new Thread(ProcessSingleAction)
             {
                 Name = "ProcessSingleAction(" + act.Name + ":" + act.ProgressText + ")"

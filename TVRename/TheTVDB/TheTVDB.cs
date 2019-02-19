@@ -1163,16 +1163,15 @@ namespace TVRename
             if (requestedLanguageCode == null) throw new ArgumentNullException(nameof(requestedLanguageCode));
 
             JObject seriesData = (JObject) jsonResponse["data"];
-            SeriesInfo si = null;
+            SeriesInfo si;
             if (isNotDefaultLanguage)
             {
-                if (jsonDefaultLangResponse != null)
-                {
-                    JObject seriesDataDefaultLang = (JObject) jsonDefaultLangResponse["data"];
-                    int requestedLangId = LanguageList.GetLanguageFromCode(requestedLanguageCode).Id;
+                if (jsonDefaultLangResponse == null) throw new ArgumentNullException(nameof(jsonDefaultLangResponse));
 
-                    si = new SeriesInfo(seriesData, seriesDataDefaultLang, requestedLangId);
-                }
+                JObject seriesDataDefaultLang = (JObject) jsonDefaultLangResponse["data"];
+                int requestedLangId = LanguageList.GetLanguageFromCode(requestedLanguageCode).Id;
+
+                si = new SeriesInfo(seriesData, seriesDataDefaultLang, requestedLangId);
             }
             else
             {
