@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 using TVRename.Forms.Utilities;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
@@ -1155,9 +1156,12 @@ namespace TVRename
             return si;
         }
 
-        private SeriesInfo GenerateSeriesInfo(JObject jsonResponse, JObject jsonDefaultLangResponse, bool isNotDefaultLanguage,
-            string requestedLanguageCode)
+        private SeriesInfo GenerateSeriesInfo([NotNull] JObject jsonResponse, JObject jsonDefaultLangResponse, bool isNotDefaultLanguage,
+            [NotNull] string requestedLanguageCode)
         {
+            if (jsonResponse == null) throw new ArgumentNullException(nameof(jsonResponse));
+            if (requestedLanguageCode == null) throw new ArgumentNullException(nameof(requestedLanguageCode));
+
             JObject seriesData = (JObject) jsonResponse["data"];
             SeriesInfo si = null;
             if (isNotDefaultLanguage)
