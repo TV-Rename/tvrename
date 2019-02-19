@@ -1,9 +1,15 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+//
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -15,10 +21,9 @@ namespace TVRename
         private Thread actionProcessorThread;
         private bool actionPause;
         private List<Thread> actionWorkers;
-        private Semaphore[] actionSemaphores;
         private bool actionStarting;
 
-        private readonly TVRenameStats mStats; //reference to the main TVRenameStats, so we can udpate the counts
+        private readonly TVRenameStats mStats; //reference to the main TVRenameStats, so we can update the counts
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private static readonly NLog.Logger Threadslogger = NLog.LogManager.GetLogger("threads");
@@ -55,7 +60,7 @@ namespace TVRename
                 if (!(infoIn is ProcessActionInfo info))
                     return;
 
-                actionSemaphores[info.SemaphoreNumber].WaitOne(); // don't start until we're allowed to
+                info.Sem.WaitOne(); // don't start until we're allowed to
                 actionStarting = false; // let our creator know we're started ok
 
                 Action action = info.TheAction;
@@ -65,7 +70,7 @@ namespace TVRename
                     action.Go(ref actionPause, mStats);
                 }
 
-                actionSemaphores[info.SemaphoreNumber].Release(1);
+                info.Sem.Release(1);
             }
             catch (ThreadAbortException)
             {
@@ -88,7 +93,6 @@ namespace TVRename
             }
 
             actionWorkers = null;
-            actionSemaphores = null;
         }
 
         /// <summary>
@@ -153,7 +157,12 @@ namespace TVRename
                     throw new ArgumentException(message);
                 }
 
-                SetupQueues(queues);
+                actionWorkers = new List<Thread>();
+
+                foreach (ActionQueue queue in queues)
+                {
+                    Logger.Info($"Setting up '{queue.Name}' worker, with {queue.ParallelLimit} threads.");
+                }
 
                 try
                 {
@@ -189,15 +198,14 @@ namespace TVRename
                 while (actionPause)
                     Thread.Sleep(100);
 
-                (bool allDone, int which)= ReviewQueues(queues);
+                (bool allDone, ActionQueue q) = ReviewQueues(queues);
 
-                if ((which == -1) && (allDone))
+                if ((q is null) && (allDone))
                     break; // all done!
 
-                if (which == -1)
+                if (q is null)
                     continue; // no semaphores available yet, try again for one
 
-                ActionQueue q = queues[which];
                 Action act = q.Actions[q.ActionPosition++];
 
                 if (act == null)
@@ -205,7 +213,7 @@ namespace TVRename
 
                 if (!act.Done)
                 {
-                    StartThread(which, act);
+                    StartThread(q.Sem, act);
                 }
 
                 while (actionStarting) // wait for thread to get the semaphore
@@ -215,63 +223,34 @@ namespace TVRename
             }
         }
 
-        private (bool,int) ReviewQueues(ActionQueue[] queues)
+        private (bool,ActionQueue) ReviewQueues(ActionQueue[] queues)
         {
             // look through the list of semaphores to see if there is one waiting for some work to do
-            bool allDone = true;
-            int which = -1;
             if (queues is null)
             {
-                return (true, -1);
+                return (true, null);
             }
 
-            for (int i = 0; i < queues.Length; i++)
+            bool allDone = true;
+            foreach (ActionQueue currentQueue in queues)
             {
-                ActionQueue currentQueue = queues[i];
-
                 if (currentQueue?.Actions is null) continue;
 
+                if (currentQueue.ActionPosition >= currentQueue.Actions.Count) continue;
+
                 // something to do in this queue, and semaphore is available
+                allDone = false;
 
-                if (currentQueue.ActionPosition < currentQueue.Actions.Count)
+                if (currentQueue.Sem.WaitOne(20, false))
                 {
-                    allDone = false;
-                    Semaphore currentSemaphore = actionSemaphores[i];
-
-                    if (currentSemaphore is null) continue;
-
-                    if (currentSemaphore.WaitOne(20, false))
-                    {
-                        which = i;
-                        break;
-                    }
+                    return(false,currentQueue);
                 }
             }
 
-            return (allDone,which);
+            return (allDone,null);
         }
 
-        private void SetupQueues([NotNull] ActionQueue[] queues)
-        {
-            if (queues == null) throw new ArgumentNullException(nameof(queues));
-
-            int n = queues.Length;
-
-            actionWorkers = new List<Thread>();
-            actionSemaphores = new Semaphore[n];
-
-            for (int i = 0; i < n; i++)
-            {
-                actionSemaphores[i] =
-                    new Semaphore(queues[i].ParallelLimit,
-                        queues[i].ParallelLimit); // allow up to numWorkers working at once
-
-                Logger.Info("Setting up '{0}' worker, with {1} threads in position {2}.", queues[i].Name,
-                    queues[i].ParallelLimit, i);
-            }
-        }
-
-        private void StartThread(int which, [NotNull] Action act)
+        private void StartThread(Semaphore sem, Action act)
         {
             if (act == null) throw new ArgumentNullException(nameof(act));
 
@@ -280,7 +259,7 @@ namespace TVRename
                 Name = "ProcessSingleAction(" + act.Name + ":" + act.ProgressText + ")"
             };
 
-            if (actionWorkers is null || actionSemaphores is null)
+            if (actionWorkers is null)
             {
                 Logger.Error(
                     $"Asked to start for {act.Name}, but actionWorkers has been removed, please restart TV Rename and contact help if this recurrs.");
@@ -289,12 +268,11 @@ namespace TVRename
 
             actionWorkers.Add(t);
             actionStarting = true; // set to false in thread after it has the semaphore
-            t.Start(new ProcessActionInfo(which, act));
+            t.Start(new ProcessActionInfo(sem, act));
 
-            int nfr = actionSemaphores[which]
-                .Release(1); // release our hold on the semaphore, so that worker can grab it
+            int nfr = sem.Release(1); // release our hold on the semaphore, so that worker can grab it
 
-            Threadslogger.Trace("ActionProcessor[" + which + "] pool has " + nfr + " free");
+            Threadslogger.Trace("ActionProcessor[" + sem + "] pool has " + nfr + " free");
         }
 
         private void TidyDeadWorkers()
@@ -357,12 +335,12 @@ namespace TVRename
 
         private class ProcessActionInfo
         {
-            public readonly int SemaphoreNumber;
+            public readonly Semaphore Sem;
             public readonly Action TheAction;
 
-            public ProcessActionInfo(int n, Action a)
+            public ProcessActionInfo(Semaphore s, Action a)
             {
-                SemaphoreNumber = n;
+                Sem = s;
                 TheAction = a;
             }
         }
