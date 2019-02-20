@@ -447,7 +447,7 @@ namespace TVRename
             try
             {
                 JObject jsonLanguagesResponse =
-                    HttpHelper.JsonHttpGetRequest(TvDbTokenProvider.TVDB_API_URL + "/languages", null, tvDbTokenProvider.GetToken(),true);
+                    HttpHelper.JsonHttpGetRequest(TvDbTokenProvider.TVDB_API_URL + "/languages", null, tvDbTokenProvider,true);
 
                 LanguageList.Clear();
 
@@ -537,7 +537,7 @@ namespace TVRename
                 {
                     jsonUpdateResponse = HttpHelper.JsonHttpGetRequest(uri,
                         new Dictionary<string, string> { { "fromTime", epochTime.ToString() } },
-                        tvDbTokenProvider.GetToken(), TVSettings.Instance.PreferredLanguageCode,true);
+                        tvDbTokenProvider, TVSettings.Instance.PreferredLanguageCode,true);
                 }
                 catch (WebException ex)
                 {
@@ -874,7 +874,7 @@ namespace TVRename
                 {
                     JObject jsonEpisodeResponse = HttpHelper.JsonHttpGetRequest(episodeUri,
                         new Dictionary<string, string> { { "page", pageNumber.ToString() } },
-                        tvDbTokenProvider.GetToken(),lang,true);
+                        tvDbTokenProvider,lang,true);
 
                     episodeResponses.Add(jsonEpisodeResponse);
                     try
@@ -1209,7 +1209,7 @@ namespace TVRename
             try
             {
                 jsonResponse =
-                    HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider.GetToken(), requestedLanguageCode, true);
+                    HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider, requestedLanguageCode, true);
             }
             catch (WebException ex)
             {
@@ -1242,7 +1242,7 @@ namespace TVRename
             try
             {
                 JObject jsonActorsResponse = HttpHelper.JsonHttpGetRequest(TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/actors",
-                    null, tvDbTokenProvider.GetToken(),true);
+                    null, tvDbTokenProvider,true);
 
                 GetSeries(si.TvdbCode)?.ClearActors();
                 foreach (JToken jsonActor in jsonActorsResponse["data"])
@@ -1290,7 +1290,7 @@ namespace TVRename
             try
             {
                 JObject jsonEpisodeSearchResponse = HttpHelper.JsonHttpGetRequest(
-                    uriImages, null, tvDbTokenProvider.GetToken(),
+                    uriImages, null, tvDbTokenProvider,
                     requestedLanguageCode,false);
 
                 JObject a = (JObject)jsonEpisodeSearchResponse["data"];
@@ -1313,7 +1313,7 @@ namespace TVRename
                 {
                     JObject jsonImageResponse = HttpHelper.JsonHttpGetRequest(
                         uriImagesQuery,
-                        new Dictionary<string, string> { { "keyType", imageType } }, tvDbTokenProvider.GetToken(),
+                        new Dictionary<string, string> { { "keyType", imageType } }, tvDbTokenProvider,
                         requestedLanguageCode,false);
 
                     bannerResponses.Add(jsonImageResponse);
@@ -1332,7 +1332,7 @@ namespace TVRename
                 try
                 {
                     JObject jsonEpisodeSearchDefaultLangResponse = HttpHelper.JsonHttpGetRequest(
-                        uriImages, null, tvDbTokenProvider.GetToken(),
+                        uriImages, null, tvDbTokenProvider,
                         DefaultLanguageCode,false);
 
                     JObject adl = (JObject)jsonEpisodeSearchDefaultLangResponse["data"];
@@ -1353,7 +1353,7 @@ namespace TVRename
                     try
                     {
                         JObject jsonImageDefaultLangResponse = HttpHelper.JsonHttpGetRequest(uriImagesQuery,
-                            new Dictionary<string, string> { { "keyType", imageType } }, tvDbTokenProvider.GetToken(),
+                            new Dictionary<string, string> { { "keyType", imageType } }, tvDbTokenProvider,
                             DefaultLanguageCode,false);
 
                         bannerDefaultLangResponses.Add(jsonImageDefaultLangResponse);
@@ -1586,11 +1586,11 @@ namespace TVRename
 
             try
             {
-                jsonEpisodeResponse = HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider.GetToken(), requestLangCode,true);
+                jsonEpisodeResponse = HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider, requestLangCode,true);
 
                 if (IsNotDefaultLanguage(requestLangCode))
                     jsonEpisodeDefaultLangResponse =
-                        HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider.GetToken(), DefaultLanguageCode,true);
+                        HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider, DefaultLanguageCode,true);
             }
             catch (WebException ex)
             {
@@ -1831,7 +1831,7 @@ namespace TVRename
             try
             {
                 jsonSearchResponse = HttpHelper.JsonHttpGetRequest(uri, new Dictionary<string, string> {{"name", text}},
-                    tvDbTokenProvider.GetToken(), TVSettings.Instance.PreferredLanguageCode,false);
+                    tvDbTokenProvider, TVSettings.Instance.PreferredLanguageCode,false);
             }
             catch (WebException ex)
             {
@@ -1859,7 +1859,7 @@ namespace TVRename
                 try
                 {
                     jsonSearchDefaultLangResponse = HttpHelper.JsonHttpGetRequest(uri,
-                        new Dictionary<string, string> {{"name", text}}, tvDbTokenProvider.GetToken(), DefaultLanguageCode,false);
+                        new Dictionary<string, string> {{"name", text}}, tvDbTokenProvider, DefaultLanguageCode,false);
                 }
                 catch (WebException ex)
                 {
