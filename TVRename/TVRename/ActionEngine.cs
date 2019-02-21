@@ -55,11 +55,11 @@ namespace TVRename
         /// <param name="infoIn">A ProcessActionInfo to be processed. It will contain the Action to be processed</param>
         private void ProcessSingleAction(object infoIn)
         {
+            if (!(infoIn is ProcessActionInfo info))
+                return;
+
             try
             {
-                if (!(infoIn is ProcessActionInfo info))
-                    return;
-
                 info.Sem.WaitOne(); // don't start until we're allowed to
                 actionStarting = false; // let our creator know we're started ok
 
@@ -69,8 +69,6 @@ namespace TVRename
                     Logger.Trace("Triggering Action: {0} - {1} - {2}", action.Name, action.Produces, action.ToString());
                     action.Go(ref actionPause, mStats);
                 }
-
-                info.Sem.Release(1);
             }
             catch (ThreadAbortException)
             {
@@ -78,6 +76,10 @@ namespace TVRename
             catch (Exception e)
             {
                 Logger.Fatal(e, "Unhandled Exception in Process Single Action");
+            }
+            finally
+            {
+                info.Sem.Release(1);
             }
         }
 
@@ -213,7 +215,7 @@ namespace TVRename
 
                 if (!act.Done)
                 {
-                    StartThread(q.Sem, act);
+                    StartThread(new ProcessActionInfo(q.Sem, act));
                 }
 
                 while (actionStarting) // wait for thread to get the semaphore
@@ -250,29 +252,29 @@ namespace TVRename
             return (allDone,null);
         }
 
-        private void StartThread(Semaphore sem, Action act)
+        private void StartThread(ProcessActionInfo pai)
         {
-            if (act == null) throw new ArgumentNullException(nameof(act));
+            if (pai == null) throw new ArgumentNullException(nameof(pai));
 
             Thread t = new Thread(ProcessSingleAction)
             {
-                Name = "ProcessSingleAction(" + act.Name + ":" + act.ProgressText + ")"
+                Name = "ProcessSingleAction(" + pai.TheAction.Name + ":" + pai.TheAction.ProgressText + ")"
             };
 
             if (actionWorkers is null)
             {
                 Logger.Error(
-                    $"Asked to start for {act.Name}, but actionWorkers has been removed, please restart TV Rename and contact help if this recurrs.");
+                    $"Asked to start for {pai.TheAction.Name}, but actionWorkers has been removed, please restart TV Rename and contact help if this recurrs.");
                 return;
             }
 
             actionWorkers.Add(t);
             actionStarting = true; // set to false in thread after it has the semaphore
-            t.Start(new ProcessActionInfo(sem, act));
+            t.Start(pai);
 
-            int nfr = sem.Release(1); // release our hold on the semaphore, so that worker can grab it
+            int nfr = pai.Sem.Release(1); // release our hold on the semaphore, so that worker can grab it
 
-            Threadslogger.Trace("ActionProcessor[" + sem + "] pool has " + nfr + " free");
+            Threadslogger.Trace("ActionProcessor[" + pai.Sem + "] pool has " + nfr + " free");
         }
 
         private void TidyDeadWorkers()

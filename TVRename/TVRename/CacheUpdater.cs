@@ -143,12 +143,14 @@ namespace TVRename
                     if (downloadStopOnError)
                         DownloadDone = true;
                 }
-
-                workerSemaphore.Release(1);
             }
             catch (Exception e)
             {
                 Logger.Fatal(e, $"Unhandled Exception in GetThread for {series.Name} id={series.SeriesId} and lang={series.CustomLanguageCode}");
+            }
+            finally
+            {
+                workerSemaphore.Release(1);
             }
         }
 
