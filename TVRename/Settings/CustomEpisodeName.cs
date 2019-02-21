@@ -75,19 +75,11 @@ namespace TVRename
             "{ShowImdb}"
         };
 
-        public string NameFor(ProcessedEpisode pe) => NameFor(pe,string.Empty,0);
+        public string NameFor(ProcessedEpisode pe) => NameFor(pe,string.Empty);
 
-        public string NameFor(ProcessedEpisode pe, string extension , int folderNameLength)
+        public string NameFor(ProcessedEpisode pe, string extension)
         {
-            // set folderNameLength to have the filename truncated if the total path length is too long
-
             string r = NameForNoExt(pe, StyleString);
-
-            int maxLenOk = 200 - (folderNameLength + (extension?.Length ?? 0));
-            if (r.Length > maxLenOk)
-            {
-                r = r.Substring(0, maxLenOk);
-            }
 
             if (string.IsNullOrEmpty(extension))
             {

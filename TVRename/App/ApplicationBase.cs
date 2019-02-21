@@ -27,7 +27,7 @@ namespace TVRename.App
             SplashScreen = new TVRenameSplash();
 
             CommandLineArgs clargs = new CommandLineArgs(CommandLineArgs);
-            if (clargs.Hide) SplashScreen.Visible  = false;
+            if (clargs.Hide || !Environment.UserInteractive) SplashScreen.Visible  = false;
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace TVRename.App
         protected override void OnCreateMainForm()
         {
             CommandLineArgs clargs = new CommandLineArgs(CommandLineArgs);
-            if (clargs.Hide)
+            if (clargs.Hide || !Environment.UserInteractive)
                 SplashScreen.SafeInvoke(
                     () => ((TVRenameSplash)SplashScreen).Visible = false, true);
 
@@ -105,7 +105,7 @@ namespace TVRename.App
             ConvertSeriesTimeZones(doc, TheTVDB.Instance);
 
             // Show user interface
-            UI ui = new UI(doc, (TVRenameSplash)SplashScreen, !clargs.Unattended && !clargs.Hide);
+            UI ui = new UI(doc, (TVRenameSplash)SplashScreen, !clargs.Unattended && !clargs.Hide && Environment.UserInteractive);
             ui.Text = ui.Text + " " + Helpers.DisplayVersion;
 
             // Bind IPC actions to the form, this allows another instance to trigger form actions
@@ -125,7 +125,7 @@ namespace TVRename.App
                 }
                 catch (Exception ex)
                 {
-                    if (!clargs.Unattended && !clargs.Hide) MessageBox.Show($"Error while setting the User-Defined File Path:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    if (!clargs.Unattended && !clargs.Hide && Environment.UserInteractive) MessageBox.Show($"Error while setting the User-Defined File Path:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                     Logger.Error(ex, $"Error while setting the User-Defined File Path - EXITING: {clargs.UserFilePath}");
 

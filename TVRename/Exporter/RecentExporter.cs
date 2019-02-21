@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,17 +34,24 @@ namespace TVRename
                 file.WriteLine(GenerateHeader());
                 foreach (ProcessedEpisode episode in lpe)
                 {
-                    List<FileInfo> files =  dfc.FindEpOnDisk(episode, false);
-
-                    if (!files.Any())
+                    try
                     {
-                        continue;
+                        List<FileInfo> files = dfc.FindEpOnDisk(episode, false);
+
+                        if (!files.Any())
+                        {
+                            continue;
+                        }
+
+                        string name = TVSettings.Instance.NamingStyle.NameFor(episode);
+                        int length = files.First().GetFilmLength();
+
+                        file.WriteLine(GenerateRecord(episode, files.First(), name, length));
                     }
-
-                    string name = TVSettings.Instance.NamingStyle.NameFor(episode);
-                    int length = files.First().GetFilmLength();
-
-                    file.WriteLine(GenerateRecord(episode, files.First(), name,length));
+                    catch(Exception ex)
+                    {
+                        LOGGER.Error(ex,$"Had to skip saving {episode?.Show?.ShowName} S{episode?.AppropriateSeasonNumber}E{episode?.AppropriateEpNum} saving to {Location()}");
+                    }
                 }
                 file.WriteLine(GenerateFooter());
             }

@@ -28,7 +28,7 @@ namespace TVRename
                 Doc.TheActionList.Add(downloadIdentifiers.ProcessShow(si));
             }
 
-            //MS_TODO Put the bannerrefresh period into the settings file, we'll default to 3 months
+            //MS_TODO Put the banner refresh period into the settings file, we'll default to 3 months
             DateTime cutOff = DateTime.Now.AddMonths(-3);
             DateTime lastUpdate = si.BannersLastUpdatedOnDisk ?? DateTime.Now.AddMonths(-4);
             bool timeForBannerUpdate = (cutOff.CompareTo(lastUpdate) == 1);
@@ -136,15 +136,14 @@ namespace TVRename
                         if (renCheck && TVSettings.Instance.FileHasUsefulExtension(fi, true, out string otherExtension)) // == RENAMING CHECK ==
                         {
                             string newName = TVSettings.Instance.FilenameFriendly(
-                                TVSettings.Instance.NamingStyle.NameFor(ep, otherExtension, folder.Length));
+                                TVSettings.Instance.NamingStyle.NameFor(ep, otherExtension));
 
                             if (TVSettings.Instance.RetainLanguageSpecificSubtitles &&
                                 fi.IsLanguageSpecificSubtitle(out string subtitleExtension) &&
                                 actualFile.Name != newName)
                             {
                                 newName = TVSettings.Instance.FilenameFriendly(
-                                    TVSettings.Instance.NamingStyle.NameFor(ep, subtitleExtension,
-                                        folder.Length));
+                                    TVSettings.Instance.NamingStyle.NameFor(ep, subtitleExtension));
                             }
 
                             FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
@@ -163,7 +162,7 @@ namespace TVRename
                                         newFile, ep, false, null));
 
                                     //The following section informs the DownloadIdentifers that we already plan to
-                                    //copy a file inthe appropriate place and they do not need to worry about downloading 
+                                    //copy a file in the appropriate place and they do not need to worry about downloading 
                                     //one for that purpose
                                     downloadIdentifiers.NotifyComplete(newFile);
 
@@ -232,7 +231,7 @@ namespace TVRename
                                     // then add it as officially missing
                                     Doc.TheActionList.Add(new ItemMissing(dbep, folder,
                                         TVSettings.Instance.FilenameFriendly(
-                                            TVSettings.Instance.NamingStyle.NameFor(dbep, null, folder.Length))));
+                                            TVSettings.Instance.NamingStyle.NameFor(dbep, null))));
                                 }
                             }
                             else

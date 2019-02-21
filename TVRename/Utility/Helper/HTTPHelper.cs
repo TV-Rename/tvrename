@@ -14,13 +14,18 @@ namespace TVRename
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private static string HttpRequest(string method, string url,string json, string contentType,string authToken = "", string lang = "") {
-            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+        private static string HttpRequest(string method, string url, string json, string contentType,
+            TvDbTokenProvider authToken, string lang = "")
+            => HttpRequest(method, url, json, contentType, authToken?.GetToken(), lang);
+
+        private static string HttpRequest(string method, string url, string json, string contentType, string token, string lang = "")
+            {
+                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.ContentType = contentType;
             httpWebRequest.Method = method;
-            if (authToken != "")
+            if (!string.IsNullOrWhiteSpace(token))
             {
-                httpWebRequest.Headers.Add("Authorization", "Bearer " + authToken);
+                httpWebRequest.Headers.Add("Authorization", "Bearer " + token);
             }
             if (lang != "")
             {
@@ -47,8 +52,11 @@ namespace TVRename
             return result;
         }
 
-        public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, string authToken, bool retry) =>
+        public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, TvDbTokenProvider  authToken, bool retry) =>
             JsonHttpGetRequest(url, parameters, authToken, string.Empty,retry);
+
+        public static JObject JsonHttpGetRequest(string url, string authToken) =>
+            JObject.Parse(HttpRequest("GET",url, null, "application/json", authToken,string.Empty));
 
         public static JObject JsonHttpPostRequest( string url, JObject request, bool retry)
         {
@@ -58,17 +66,18 @@ namespace TVRename
             if (retry)
             {
                 RetryOnException(3, pauseBetweenFailures, url,
-                    () => { response = HttpRequest("POST", url, request.ToString(), "application/json"); });
+                    () => { response = HttpRequest("POST", url, request.ToString(), "application/json",string.Empty); },
+                    null);
             }
             else
             {
-                response = HttpRequest("POST", url, request.ToString(), "application/json");
+                response = HttpRequest("POST", url, request.ToString(), "application/json", string.Empty);
             }
 
             return JObject.Parse(response);
         }
 
-        public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, string authToken, string lang, bool retry)
+        public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, TvDbTokenProvider authToken, string lang, bool retry)
         {
             TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
             string fullUrl = url + GetHttpParameters(parameters);
@@ -78,7 +87,8 @@ namespace TVRename
             if (retry)
             {
                 RetryOnException(3, pauseBetweenFailures, fullUrl,
-                    () => { response = HttpRequest("GET", fullUrl, null, "application/json", authToken, lang); });
+                    () => { response = HttpRequest("GET", fullUrl, null, "application/json", authToken, lang); },
+                    authToken.AcquireToken);
             }
             else
             {
@@ -103,7 +113,7 @@ namespace TVRename
             return finalUrl.Remove(finalUrl.LastIndexOf("&", StringComparison.Ordinal));
         }
 
-        private static void RetryOnException(int times,TimeSpan delay,string url, [NotNull] System.Action operation)
+        private static void RetryOnException(int times,TimeSpan delay,string url, [NotNull] System.Action operation, System.Action updateOperation)
         {
             if (times <= 0)
                 throw new ArgumentOutOfRangeException(nameof(times));
@@ -130,6 +140,8 @@ namespace TVRename
                     Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - will retry after delay {delay}: {ex.Message}");
 
                     Task.Delay(delay).Wait();
+
+                    updateOperation?.Invoke();
                 }
             } while (true);
         }

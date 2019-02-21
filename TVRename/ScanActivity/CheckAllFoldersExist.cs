@@ -171,7 +171,7 @@ namespace TVRename
                     return FaResult.kfaIgnoreOnce;
             }
 
-            if (Doc.Args.Hide)
+            if (Doc.Args.Hide || !Environment.UserInteractive)
                 return FaResult.kfaIgnoreOnce; // default in /hide mode is to ignore
 
             return FaResult.kfaNotSet;

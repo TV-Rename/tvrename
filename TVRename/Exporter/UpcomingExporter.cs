@@ -14,11 +14,11 @@ namespace TVRename
 {
     internal abstract class UpcomingExporter : Exporter
     {
-        protected readonly TVDoc Doc;
+        private readonly TVDoc doc;
 
         protected UpcomingExporter(TVDoc doc)
         {
-            Doc = doc;
+            this.doc = doc;
         }
 
         private string Produce()
@@ -32,14 +32,24 @@ namespace TVRename
 
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    List<ProcessedEpisode> lpe = Doc.Library.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
+                    List<ProcessedEpisode> lpe = doc.Library.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
                         TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
 
                     if (lpe != null)
+                    {
                         if (Generate(ms, lpe))
                         {
                             return System.Text.Encoding.ASCII.GetString(ms.ToArray());
                         }
+                        else
+                        {
+                            LOGGER.Error("Failed to generate records to put into Export file at: {0}", Location());
+                        }
+                    }
+                    else
+                    {
+                        LOGGER.Error("Failed to produce records to put into Export file at: {0}", Location());
+                    }
                 }
             }
             catch (Exception e)

@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using System.Windows.Forms;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -25,71 +24,62 @@ namespace TVRename
         protected override bool  Generate(System.IO.Stream str, List<ProcessedEpisode> elist)
         {
             DirFilesCache dfc = new DirFilesCache();
-            try
+            XmlWriterSettings settings = new XmlWriterSettings
             {
-                XmlWriterSettings settings = new XmlWriterSettings
-                {
-                    Indent = true,
-                    NewLineOnAttributes = true,
-                    Encoding = System.Text.Encoding.ASCII
-                };
-                using (XmlWriter writer = XmlWriter.Create(str, settings))
-                {
-                    writer.WriteStartDocument();
-                    writer.WriteStartElement("WhenToWatch");
+                Indent = true,
+                NewLineOnAttributes = true,
+                Encoding = System.Text.Encoding.ASCII
+            };
+            using (XmlWriter writer = XmlWriter.Create(str, settings))
+            {
+                writer.WriteStartDocument();
+                writer.WriteStartElement("WhenToWatch");
 
-                    foreach (ProcessedEpisode ei in elist)
+                foreach (ProcessedEpisode ei in elist)
+                {
+                    writer.WriteStartElement("item");
+                    XmlHelper.WriteElementToXml(writer,"id",ei.TheSeries.TvdbCode);
+                    XmlHelper.WriteElementToXml(writer,"SeriesName",ei.TheSeries.Name);
+                    XmlHelper.WriteElementToXml(writer,"SeasonNumber",Helpers.Pad(ei.AppropriateSeasonNumber));
+                    XmlHelper.WriteElementToXml(writer, "EpisodeNumber", Helpers.Pad(ei.AppropriateEpNum));
+                    XmlHelper.WriteElementToXml(writer,"EpisodeName",ei.Name);
+
+                    writer.WriteStartElement("available");
+                    DateTime? airdt = ei.GetAirDateDt(true);
+
+                    if (airdt.HasValue && airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
                     {
-                        writer.WriteStartElement("item");
-                        XmlHelper.WriteElementToXml(writer,"id",ei.TheSeries.TvdbCode);
-                        XmlHelper.WriteElementToXml(writer,"SeriesName",ei.TheSeries.Name);
-                        XmlHelper.WriteElementToXml(writer,"SeasonNumber",Helpers.Pad(ei.AppropriateSeasonNumber));
-                        XmlHelper.WriteElementToXml(writer, "EpisodeNumber", Helpers.Pad(ei.AppropriateEpNum));
-                        XmlHelper.WriteElementToXml(writer,"EpisodeName",ei.Name);
-  
-                        writer.WriteStartElement("available");
-                        DateTime? airdt = ei.GetAirDateDt(true);
-
-                        if (airdt.HasValue && airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
-                        {
-                            List<FileInfo> fl = dfc.FindEpOnDisk(ei);
-                            if ((fl != null) && (fl.Count > 0))
-                                writer.WriteValue("true");
-                            else if (ei.Show.DoMissingCheck)
-                                writer.WriteValue("false");
-                            else
-                                writer.WriteValue("no missing check");
-                        }
+                        List<FileInfo> fl = dfc.FindEpOnDisk(ei);
+                        if ((fl != null) && (fl.Count > 0))
+                            writer.WriteValue("true");
+                        else if (ei.Show.DoMissingCheck)
+                            writer.WriteValue("false");
                         else
-                        {
-                            writer.WriteValue("future");
-                        }
-                        
-                        writer.WriteEndElement();
-                        XmlHelper.WriteElementToXml( writer,"Overview",ei.Overview);
-                        
-                        writer.WriteStartElement("FirstAired");
-                        DateTime? dt = ei.GetAirDateDt(true);
-                        if (dt != null)
-                            writer.WriteValue(dt.Value.ToString("F"));
-                        writer.WriteEndElement();
-                        
-                        XmlHelper.WriteElementToXml( writer,"Rating",ei.EpisodeRating);
-                        XmlHelper.WriteElementToXml( writer,"filename",ei.Filename);
-
-                        writer.WriteEndElement(); // item
+                            writer.WriteValue("no missing check");
                     }
+                    else
+                    {
+                        writer.WriteValue("future");
+                    }
+                    
                     writer.WriteEndElement();
-                    writer.WriteEndDocument();
+                    XmlHelper.WriteElementToXml( writer,"Overview",ei.Overview);
+                    
+                    writer.WriteStartElement("FirstAired");
+                    DateTime? dt = ei.GetAirDateDt(true);
+                    if (dt != null)
+                        writer.WriteValue(dt.Value.ToString("F"));
+                    writer.WriteEndElement();
+                    
+                    XmlHelper.WriteElementToXml( writer,"Rating",ei.EpisodeRating);
+                    XmlHelper.WriteElementToXml( writer,"filename",ei.Filename);
+
+                    writer.WriteEndElement(); // item
                 }
-                return true;
-            } // try
-            catch (Exception e)
-            {
-                if ((!Doc.Args.Unattended) && (!Doc.Args.Hide)) MessageBox.Show(e.Message);
-                LOGGER.Error(e);
-                return false;
+                writer.WriteEndElement();
+                writer.WriteEndDocument();
             }
+            return true;
         }
     }
 }

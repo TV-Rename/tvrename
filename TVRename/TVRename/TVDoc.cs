@@ -99,14 +99,17 @@ namespace TVRename
 
         public void DoActions(ItemList theList)
         {
-            actionManager.DoActions(theList, !Args.Hide);
+            actionManager.DoActions(theList, !Args.Hide && Environment.UserInteractive);
         }
 
         // ReSharper disable once InconsistentNaming
         public bool DoDownloadsFG(bool unattended)
         {
             ICollection<SeriesSpecifier> shows = Library.SeriesSpecifiers;
-            bool returnValue = cacheManager.DoDownloadsFg((!Args.Hide), !unattended && (!Args.Unattended) && (!Args.Hide), shows);
+            bool showProgress = (!Args.Hide) && Environment.UserInteractive;
+            bool showMsgBox = !unattended && (!Args.Unattended) && (!Args.Hide) && Environment.UserInteractive;
+
+            bool returnValue = cacheManager.DoDownloadsFg(showProgress, showMsgBox, shows);
             Library.GenDict();
             return returnValue;
         }
@@ -435,7 +438,7 @@ namespace TVRename
 
         private void SetupScanUi()
         {
-            if (!Args.Hide)
+            if (!Args.Hide && Environment.UserInteractive)
             {
                 scanProgDlg = new ScanProgress(
                     TVSettings.Instance.DoBulkAddInScan, 
@@ -568,7 +571,7 @@ namespace TVRename
                 //When doing a fullscan the showlist is null indicating that all shows should be checked
                 List <ShowItem> specific = settings.Shows ?? Library.Values.ToList();
 
-                while (!Args.Hide && ((scanProgDlg == null) || (!scanProgDlg.Ready)))
+                while (!Args.Hide && Environment.UserInteractive && ((scanProgDlg == null) || (!scanProgDlg.Ready)))
                     Thread.Sleep(10); // wait for thread to create the dialog
 
                 TheActionList = new ItemList();
