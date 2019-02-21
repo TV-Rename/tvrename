@@ -66,7 +66,8 @@ namespace TVRename
             if (retry)
             {
                 RetryOnException(3, pauseBetweenFailures, url,
-                    () => { response = HttpRequest("POST", url, request.ToString(), "application/json",string.Empty); });
+                    () => { response = HttpRequest("POST", url, request.ToString(), "application/json",string.Empty); },
+                    null);
             }
             else
             {
@@ -86,7 +87,8 @@ namespace TVRename
             if (retry)
             {
                 RetryOnException(3, pauseBetweenFailures, fullUrl,
-                    () => { response = HttpRequest("GET", fullUrl, null, "application/json", authToken, lang); });
+                    () => { response = HttpRequest("GET", fullUrl, null, "application/json", authToken, lang); },
+                    authToken.AcquireToken);
             }
             else
             {
@@ -111,7 +113,7 @@ namespace TVRename
             return finalUrl.Remove(finalUrl.LastIndexOf("&", StringComparison.Ordinal));
         }
 
-        private static void RetryOnException(int times,TimeSpan delay,string url, [NotNull] System.Action operation)
+        private static void RetryOnException(int times,TimeSpan delay,string url, [NotNull] System.Action operation, System.Action updateOperation)
         {
             if (times <= 0)
                 throw new ArgumentOutOfRangeException(nameof(times));
@@ -138,6 +140,8 @@ namespace TVRename
                     Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - will retry after delay {delay}: {ex.Message}");
 
                     Task.Delay(delay).Wait();
+
+                    updateOperation?.Invoke();
                 }
             } while (true);
         }
