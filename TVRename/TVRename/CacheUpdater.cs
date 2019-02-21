@@ -124,25 +124,17 @@ namespace TVRename
                 bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
 
                 Threadslogger.Trace("  Downloading " + series.Name);
-                bool r;
-                try
-                {
-                    r = TheTVDB.Instance.EnsureUpdated(series.SeriesId, bannersToo, series.UseCustomLanguage,
-                        series.CustomLanguageCode);
-                }
-                catch (ShowNotFoundException snfe)
-                {
-                    r = true;
-                    problematicSeriesIds.Add(snfe.ShowId);
-                }
-                
-                Threadslogger.Trace("  Finished " + series.SeriesId);
-                if (!r)
-                {
-                    downloadOk = false;
-                    if (downloadStopOnError)
-                        DownloadDone = true;
-                }
+
+                if (TheTVDB.Instance.EnsureUpdated(series.SeriesId, bannersToo, series.UseCustomLanguage,
+                        series.CustomLanguageCode)) return;
+
+                downloadOk = false;
+                if (downloadStopOnError)
+                    DownloadDone = true;
+            }
+            catch (ShowNotFoundException snfe)
+            {
+                problematicSeriesIds.Add(snfe.ShowId);
             }
             catch (Exception e)
             {
@@ -150,6 +142,7 @@ namespace TVRename
             }
             finally
             {
+                Threadslogger.Trace("  Finished " + series.SeriesId);
                 workerSemaphore.Release(1);
             }
         }
