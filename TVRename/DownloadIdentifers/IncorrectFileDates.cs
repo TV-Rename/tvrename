@@ -27,7 +27,15 @@ namespace TVRename
             DateTime newUpdateTime = Helpers.GetMinWindowsTime(updateTime.Value);
 
             DirectoryInfo di = new DirectoryInfo(si.AutoAddFolderBase);
-            if ((di.LastWriteTimeUtc != newUpdateTime)&&(!doneFilesAndFolders.Contains(di.FullName)))
+            try
+            {
+                if ((di.LastWriteTimeUtc != newUpdateTime) && (!doneFilesAndFolders.Contains(di.FullName)))
+                {
+                    doneFilesAndFolders.Add(di.FullName);
+                    return new ItemList() {new ActionDateTouch(di, si, newUpdateTime)};
+                }
+            }
+            catch (Exception e)
             {
                 doneFilesAndFolders.Add(di.FullName);
                 return new ItemList() { new ActionDateTouch(di, si, newUpdateTime) };
@@ -44,11 +52,20 @@ namespace TVRename
             DateTime newUpdateTime = Helpers.GetMinWindowsTime(updateTime.Value);
 
             DirectoryInfo di = new DirectoryInfo(folder);
-            if ((di.LastWriteTimeUtc != newUpdateTime) &&(!doneFilesAndFolders.Contains(di.FullName)))
+            try
+            {
+                if ((di.LastWriteTimeUtc != newUpdateTime) && (!doneFilesAndFolders.Contains(di.FullName)))
+                {
+                    doneFilesAndFolders.Add(di.FullName);
+                    return new ItemList() {new ActionDateTouch(di, si, newUpdateTime)};
+                }
+            }
+            catch (Exception e)
             {
                 doneFilesAndFolders.Add(di.FullName);
                 return new ItemList() { new ActionDateTouch(di, si, newUpdateTime) };
             }
+
             return null;
         }
 
@@ -58,10 +75,18 @@ namespace TVRename
 
             DateTime newUpdateTime = Helpers.GetMinWindowsTime(dbep.FirstAired.Value);
 
-            if ((filo.LastWriteTimeUtc != newUpdateTime) && (!doneFilesAndFolders.Contains(filo.FullName)))
+            try
+            {
+                if ((filo.LastWriteTimeUtc != newUpdateTime) && (!doneFilesAndFolders.Contains(filo.FullName)))
+                {
+                    doneFilesAndFolders.Add(filo.FullName);
+                    return new ItemList() { new ActionDateTouch(filo, dbep, newUpdateTime) };
+                }
+            }
+            catch (Exception e)
             {
                 doneFilesAndFolders.Add(filo.FullName);
-                return  new ItemList() { new ActionDateTouch(filo,dbep, newUpdateTime) };
+                return new ItemList() { new ActionDateTouch(filo, dbep, newUpdateTime) };
             }
             return null;
         }
