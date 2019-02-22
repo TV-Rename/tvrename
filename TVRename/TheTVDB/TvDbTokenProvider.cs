@@ -42,7 +42,7 @@ namespace TVRename
             return lastKnownToken;
         }
 
-        private void AcquireToken()
+        public void AcquireToken()
         {
             Logger.Info("Acquire a TheTVDB token... ");
             JObject request = new JObject(new JProperty("apikey", TVDB_API_KEY));
@@ -56,7 +56,7 @@ namespace TVRename
         private void RefreshToken()
         {
             Logger.Info("Refreshing TheTVDB token... ");
-            JObject jsonResponse = HttpHelper.JsonHttpGetRequest($"{TVDB_API_URL}/refresh_token", null, lastKnownToken,true);
+            JObject jsonResponse = HttpHelper.JsonHttpGetRequest($"{TVDB_API_URL}/refresh_token", lastKnownToken);
 
             UpdateToken((string)jsonResponse["token"]);
             Logger.Info("refreshed token at " + DateTime.UtcNow);

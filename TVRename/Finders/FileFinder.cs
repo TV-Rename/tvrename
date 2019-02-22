@@ -117,7 +117,7 @@ namespace TVRename
                 LOGGER.Error(e, "Path too long. " + dce.FullName);
 
                 t += ".  More information is available in the log file";
-                if ((!MDoc.Args.Unattended) && (!MDoc.Args.Hide))
+                if ((!MDoc.Args.Unattended) && (!MDoc.Args.Hide) && Environment.UserInteractive)
                     MessageBox.Show(t, "Path too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
                 t = "DirectoryName " + dce.DirectoryName + ", File name: " + dce.Name;
@@ -207,7 +207,7 @@ namespace TVRename
                     string t = "Path or filename too long. " + action.From.FullName + ", " + e.Message;
                     LOGGER.Warn(e, "Path or filename too long. " + action.From.FullName);
 
-                    if ((!MDoc.Args.Unattended) && (!MDoc.Args.Hide)) MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    if ((!MDoc.Args.Unattended) && (!MDoc.Args.Hide) && Environment.UserInteractive) MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
             }
 
