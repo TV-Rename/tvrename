@@ -35,7 +35,7 @@ namespace TVRename
                     return new ItemList() {new ActionDateTouch(di, si, newUpdateTime)};
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 doneFilesAndFolders.Add(di.FullName);
                 return new ItemList() { new ActionDateTouch(di, si, newUpdateTime) };
@@ -60,7 +60,7 @@ namespace TVRename
                     return new ItemList() {new ActionDateTouch(di, si, newUpdateTime)};
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 doneFilesAndFolders.Add(di.FullName);
                 return new ItemList() { new ActionDateTouch(di, si, newUpdateTime) };
@@ -83,7 +83,7 @@ namespace TVRename
                     return new ItemList() { new ActionDateTouch(filo, dbep, newUpdateTime) };
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 doneFilesAndFolders.Add(filo.FullName);
                 return new ItemList() { new ActionDateTouch(filo, dbep, newUpdateTime) };
