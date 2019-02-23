@@ -182,7 +182,6 @@ namespace TVRename
             return -1;
         }
 
-
         public static int GetFilmLength(this FileInfo movieFile)
         {
             return GetMetaDetails(movieFile, o => o.Properties.System.Media.Duration, ParseDuration,
