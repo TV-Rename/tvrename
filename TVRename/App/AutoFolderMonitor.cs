@@ -62,7 +62,7 @@ namespace TVRename
                     watcher.IncludeSubdirectories = true;
                     watcher.EnableRaisingEvents = true;
                     watchers.Add(watcher);
-                    Logger.Info("Starting logger for {0}", efi);
+                    Logger.Info("Starting FileSystemWatcher for {0}", efi);
                 }
                 catch (Exception ex)
                 {
