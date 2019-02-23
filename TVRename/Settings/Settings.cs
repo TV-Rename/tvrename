@@ -575,9 +575,9 @@ namespace TVRename
             return true;
         }
 
-        public static bool OKPath(string s)
+        public static bool OKPath(string s,bool EmptyOK)
         {
-            if (string.IsNullOrEmpty(s))
+            if (!EmptyOK && string.IsNullOrEmpty(s))
                 return false;
 
             if (s.StartsWith("http://")) return false;

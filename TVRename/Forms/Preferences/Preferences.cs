@@ -93,18 +93,18 @@ namespace TVRename
 
         private void ValidateFilePaths()
         {
-            ValidateFilePath(txtSpecialsFolderName, tpLibraryFolders);
-            ValidateFilePath(txtSeasonFolderName, tpLibraryFolders);
+            ValidateFilePath(txtSpecialsFolderName, tpLibraryFolders,true);
+            ValidateFilePath(txtSeasonFormat, tpLibraryFolders, true);
             if (cbCheckuTorrent.Checked)
             {
-                ValidateFilePath(txtUTResumeDatPath, tbuTorrentNZB);
-                ValidateFilePath(txtRSSuTorrentPath, tbuTorrentNZB);
+                ValidateFilePath(txtUTResumeDatPath, tbuTorrentNZB,false);
+                ValidateFilePath(txtRSSuTorrentPath, tbuTorrentNZB,false);
             }
         }
 
-        private void ValidateFilePath(TextBox validationField,TabPage errorPage)
+        private void ValidateFilePath(TextBox validationField,TabPage errorPage,bool emptyOk)
         {
-            if (TVSettings.OKPath(validationField.Text)) return;
+            if (TVSettings.OKPath(validationField.Text,emptyOk)) return;
 
             MessageBox.Show(
                 "Please check that the proposed location/path is a valid one and has no invalid characters",
