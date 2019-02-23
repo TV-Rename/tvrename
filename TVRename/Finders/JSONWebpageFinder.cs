@@ -135,7 +135,7 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                LOGGER.Warn(ex,$"Failed to Access {ex.Response.ResponseUri}");
+                LOGGER.Warn(ex,$"Failed to Access {TVSettings.Instance.SearchJSONURL}");
             }
             ActionList.Replace(toRemove,newItems);
         }

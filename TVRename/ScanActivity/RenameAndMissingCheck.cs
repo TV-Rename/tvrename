@@ -166,7 +166,10 @@ namespace TVRename
                                     //one for that purpose
                                     downloadIdentifiers.NotifyComplete(newFile);
 
-                                    localEps[epNum] = newFile;
+                                    if (newFile.IsMovieFile())
+                                    {
+                                        localEps[epNum] = newFile;
+                                    }
                                 }
                             }
                         }
