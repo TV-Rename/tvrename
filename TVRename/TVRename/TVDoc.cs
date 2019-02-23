@@ -51,7 +51,7 @@ namespace TVRename
         // ReSharper disable once RedundantDefaultMemberInitializer
         private bool currentlyBusy = false; // This is set to true when scanning and indicates to other objects not to commence a scan of their own
         private DateTime busySince;
-        public bool LastScanComplete { get; private set; }
+        private bool LastScanComplete { get; set; }
         private TVSettings.ScanType lastScanType;
 
         public TVDoc(FileInfo settingsFile, CommandLineArgs args)
@@ -187,7 +187,7 @@ namespace TVRename
                 foreach (ShowItem si in Library.Values)
                     si.WriteXmlSettings(writer);
 
-                writer.WriteEndElement(); // myshows
+                writer.WriteEndElement(); // MyShows
 
                 XmlHelper.WriteStringsToXml(TVSettings.Instance.LibraryFolders, writer, "MonitorFolders", "Folder");
                 XmlHelper.WriteStringsToXml(TVSettings.Instance.IgnoreFolders, writer, "IgnoreFolders", "Folder");
@@ -568,7 +568,7 @@ namespace TVRename
             {
                 ScanSettings settings = (ScanSettings) o;
 
-                //When doing a fullscan the showlist is null indicating that all shows should be checked
+                //When doing a full scan the show list is null indicating that all shows should be checked
                 List <ShowItem> specific = settings.Shows ?? Library.Values.ToList();
 
                 while (!Args.Hide && Environment.UserInteractive && ((scanProgDlg == null) || (!scanProgDlg.Ready)))

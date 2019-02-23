@@ -79,17 +79,23 @@ namespace TVRename
 
         public string NameFor(ProcessedEpisode pe, string extension)
         {
+            const int MAX_LENGTH = 250;
+
             string r = NameForNoExt(pe, StyleString);
 
             if (string.IsNullOrEmpty(extension))
             {
-                return r;
+                return r.Substring(0,Math.Min(MAX_LENGTH,r.Length));
             }
 
-            if (!extension.StartsWith("."))
-                r += ".";
-            r += extension;
-            return r;
+            bool needsSpacer = (!extension.StartsWith("."));
+
+            if (needsSpacer)
+            {
+                return r.Substring(0, Math.Min(r.Length,MAX_LENGTH - extension.Length - 1)) + "." + extension;
+            }
+
+            return r.Substring(0, Math.Min(r.Length, MAX_LENGTH - extension.Length)) + extension;
         }
 
         public string GetTargetEpisodeName(ShowItem show, Episode ep, TimeZoneInfo tz, bool dvdOrder)

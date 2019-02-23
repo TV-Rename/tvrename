@@ -51,7 +51,8 @@ namespace TVRename
         kUpdateImages,
         kActionRevert,
         kWatchBase = 1000,
-        kOpenFolderBase = 2000
+        kOpenFolderBase = 2000,
+        kSearchForBase =3000
     }
 
     ///  <summary>
@@ -1338,31 +1339,38 @@ namespace TVRename
             }
             else if (seas != null && si != null && mLastShowsClicked != null && mLastShowsClicked.Count == 1)
             {
+                ToolStripMenuItem tsis = new ToolStripMenuItem("Watch Epsiodes");
+
                 // for each episode in season, find it on disk
-                bool first = true;
                 foreach (ProcessedEpisode epds in si.SeasonEpisodes[seas.SeasonNumber])
                 {
                     List<FileInfo> fl = FinderHelper.FindEpOnDisk(null, epds);
                     if (fl != null && fl.Count > 0)
                     {
-                        if (first)
-                        {
-                            showRightClickMenu.Items.Add(new ToolStripSeparator());
-                            first = false;
-                        }
-
                         int n = mLastFl.Count;
                         foreach (FileInfo fi in fl)
                         {
                             mLastFl.Add(fi);
-                            tsi = new ToolStripMenuItem("Watch: " + fi.FullName)
+                            ToolStripMenuItem tsisi = new ToolStripMenuItem("Watch: " + fi.FullName)
                             {
                                 Tag = (int) RightClickCommands.kWatchBase + n
                             };
 
-                            showRightClickMenu.Items.Add(tsi);
+                            int n1 = n;
+                            tsisi.Click += (s, ev) => {
+                                WatchEpisode(n1); 
+                            };
+
+                            n++;
+                            tsis.DropDownItems.Add(tsisi);
                         }
                     }
+                }
+
+                if (tsis.DropDownItems.Count > 0)
+                {
+                    showRightClickMenu.Items.Add(new ToolStripSeparator());
+                    showRightClickMenu.Items.Add(tsis);
                 }
             }
         }
@@ -1385,12 +1393,7 @@ namespace TVRename
                 Dictionary<int, List<string>> afl = ep.Show.AllExistngFolderLocations();
                 if (afl.ContainsKey(ep.AppropriateSeasonNumber))
                 {
-                    int n = mFoldersToOpen.Count;
-                    bool first = true;
-                    foreach (string folder in afl[ep.AppropriateSeasonNumber])
-                    {
-                        AddFolder(added, ref n, ref first, folder);
-                    }
+                    AddFolders(afl[ep.AppropriateSeasonNumber], added);
                 }
             }
             else if (seas != null && si != null)
@@ -1399,57 +1402,71 @@ namespace TVRename
 
                 if (folders.ContainsKey(seas.SeasonNumber))
                 {
-                    int n = mFoldersToOpen.Count;
-                    bool first = true;
-                    foreach (string folder in folders[seas.SeasonNumber])
-                    {
-                        AddFolder(added, ref n, ref first, folder);
-                    }
+                    AddFolders(folders[seas.SeasonNumber], added);
                 }
             }
 
             if (si != null)
             {
-                int n = mFoldersToOpen.Count;
-                bool first = true;
-
-                foreach (KeyValuePair<int, List<string>> kvp in si.AllExistngFolderLocations())
-                {
-                    foreach (string folder in kvp.Value)
-                    {
-                        AddFolder(added, ref n, ref first, folder);
-                    }
-                }
+                AddFoldersSubMenu(si.AllExistngFolderLocations().Values.SelectMany(l => l).ToList(), added);
             }
 
             if (lvr == null) return;
             {
-                int n = mFoldersToOpen.Count;
-                bool first = true;
+                AddFoldersSubMenu(lvr.FlatList.Select(sli =>sli.TargetFolder),added);
+            }
+        }
 
-                foreach (Item sli in lvr.FlatList)
+        private void AddFolders(IEnumerable<string> foldersList, List<string> alreadyAdded)
+        {
+            int n = mFoldersToOpen.Count;
+            bool first = true;
+            foreach (string folder in foldersList)
+            {
+                if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !alreadyAdded.Contains(folder))
                 {
-                    string folder = sli.TargetFolder;
-                    AddFolder(added, ref n, ref first, folder);
+                    alreadyAdded.Add(folder); // don't show the same folder more than once
+                    if (first)
+                    {
+                        showRightClickMenu.Items.Add(new ToolStripSeparator());
+                        first = false;
+                    }
+
+                    ToolStripMenuItem tsi = new ToolStripMenuItem("Open: " + folder);
+                    mFoldersToOpen.Add(folder);
+                    tsi.Tag = (int)RightClickCommands.kOpenFolderBase + n;
+                    n++;
+                    showRightClickMenu.Items.Add(tsi);
                 }
             }
         }
 
-        private void AddFolder(List<string> added, ref int n, ref bool first, string folder)
+        private void AddFoldersSubMenu(IEnumerable<string> foldersList, List<string> alreadyAdded)
         {
-            if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !added.Contains(folder))
-            {
-                added.Add(folder); // don't show the same folder more than once
-                if (first)
-                {
-                    showRightClickMenu.Items.Add(new ToolStripSeparator());
-                    first = false;
-                }
+            int n = mFoldersToOpen.Count;
 
-                ToolStripMenuItem tsi = new ToolStripMenuItem("Open: " + folder);
-                mFoldersToOpen.Add(folder);
-                tsi.Tag = (int)RightClickCommands.kOpenFolderBase + n;
-                n++;
+            ToolStripMenuItem tsi = new ToolStripMenuItem("Open Other Folders" );
+
+            foreach (string folder in foldersList)
+            {
+                if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !alreadyAdded.Contains(folder))
+                {
+                    alreadyAdded.Add(folder); // don't show the same folder more than once
+                    ToolStripMenuItem tssi = new ToolStripMenuItem("Open: " + folder);
+                    mFoldersToOpen.Add(folder);
+                    tssi.Tag = (int)RightClickCommands.kOpenFolderBase + n;
+                    int n1 = n;
+                    tssi.Click += (s, ev) => {
+                        OpenFolderForShow(n1); 
+                    };
+                    n++;
+                    tsi.DropDownItems.Add(tssi);
+                }
+            }
+
+            if (tsi.DropDownItems.Count > 0)
+            {
+                showRightClickMenu.Items.Add(new ToolStripSeparator());
                 showRightClickMenu.Items.Add(tsi);
             }
         }
@@ -1608,18 +1625,23 @@ namespace TVRename
                     break;
                 default:
                 {
-                    //The entries immedately above WatchBase are the Watchxx commands and the paths are stored in mLastFL
+                    //The entries immediately above WatchBase are the Watchxx commands and the paths are stored in mLastFL
                     if (n >= RightClickCommands.kWatchBase && n < RightClickCommands.kOpenFolderBase)
                     {
                         WatchEpisode(n - RightClickCommands.kWatchBase);
                     }
-                    else if (n >= RightClickCommands.kOpenFolderBase)
+                    else if (n >= RightClickCommands.kOpenFolderBase && n < RightClickCommands.kSearchForBase)
                     {
                         OpenFolderForShow(n - RightClickCommands.kOpenFolderBase);
                         return;
                     }
+                    else if (n >= RightClickCommands.kSearchForBase)
+                    {
+                        SearchFor(n - RightClickCommands.kSearchForBase);
+                        return;
+                    }
                     else
-                        Debug.Fail("Unknown right-click action " + n);
+                            Debug.Fail("Unknown right-click action " + n);
                     break;
                 }
             }
@@ -1665,6 +1687,17 @@ namespace TVRename
                 if (Directory.Exists(folder))
                     Helpers.SysOpen(folder);
             }
+        }
+
+        private void SearchFor(int num)
+        {
+            ProcessedEpisode epi = mLastEpClicked;
+            if (epi == null)
+                return;
+
+            string url =  TVSettings.Instance.TheSearchers.Url(num);
+
+            Helpers.SysOpen(CustomEpisodeName.NameForNoExt(epi, url, true));
         }
 
         private void WatchEpisode(int wn)
@@ -2831,7 +2864,16 @@ namespace TVRename
             if (lvr.Count == lvr.Missing.Count) // only missing items selected?
             {
                 showRightClickMenu.Items.Add(new ToolStripSeparator());
-                AddRcMenuItem("Search", RightClickCommands.kBtSearchFor);
+
+                ToolStripMenuItem tsi = new ToolStripMenuItem("Search") { Tag = (int)RightClickCommands.kBtSearchFor };
+                for (int i = 0; i < TVDoc.GetSearchers().Count(); i++)
+                {
+                    ToolStripMenuItem tssi = new ToolStripMenuItem(TVDoc.GetSearchers().Name(i)) { Tag = (int)RightClickCommands.kSearchForBase + i };
+                    int i1 = i;
+                    tssi.Click += (s, ev) => { SearchFor(i1); };
+                    tsi.DropDownItems.Add(tssi);
+                }
+                showRightClickMenu.Items.Add(tsi);
 
                 if (lvr.Count == 1) // only one selected
                 {
