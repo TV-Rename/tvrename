@@ -207,7 +207,7 @@ namespace TVRename
 
                 return false;
             }
-            if (chkAutoFolders.Checked && !TVSettings.OKPath(txtBaseFolder.Text))
+            if (chkAutoFolders.Checked && !TVSettings.OKPath(txtBaseFolder.Text,false))
             {
                 MessageBox.Show("Please check the base folder is a valid one and has no invalid characters"
                     , "TVRename Add/Edit Show",

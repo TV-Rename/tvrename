@@ -1691,13 +1691,24 @@ namespace TVRename
 
         private void SearchFor(int num)
         {
+            string url = TVSettings.Instance.TheSearchers.Url(num);
+
             ProcessedEpisode epi = mLastEpClicked;
-            if (epi == null)
+            if (epi != null)
+            {
+                Helpers.SysOpen(CustomEpisodeName.NameForNoExt(epi, url, true));
                 return;
+            }
 
-            string url =  TVSettings.Instance.TheSearchers.Url(num);
+            LvResults lvr = new LvResults(lvAction, false);
 
-            Helpers.SysOpen(CustomEpisodeName.NameForNoExt(epi, url, true));
+            foreach (Item i in lvr.FlatList)
+            {
+                if (i is ItemMissing miss)
+                {
+                    Helpers.SysOpen(CustomEpisodeName.NameForNoExt(miss.Episode, url, true));
+                }
+            }
         }
 
         private void WatchEpisode(int wn)
@@ -2870,7 +2881,10 @@ namespace TVRename
                 {
                     ToolStripMenuItem tssi = new ToolStripMenuItem(TVDoc.GetSearchers().Name(i)) { Tag = (int)RightClickCommands.kSearchForBase + i };
                     int i1 = i;
-                    tssi.Click += (s, ev) => { SearchFor(i1); };
+                    tssi.Click += (s, ev) =>
+                    {
+                        SearchFor(i1);
+                    };
                     tsi.DropDownItems.Add(tssi);
                 }
                 showRightClickMenu.Items.Add(tsi);
