@@ -291,8 +291,17 @@ namespace TVRename
             {
                 if (!OtherActionsMatch(matchedFiles[0], me, settings))
                 {
-                    toRemove.Add(me);
-                    newList.AddRange(thisRound);
+                    if (!BetterShowsMatch(matchedFiles[0], me.Episode.Show))
+                    {
+                        toRemove.Add(me);
+                        newList.AddRange(thisRound);
+                    }
+                    else
+                    {
+                        LOGGER.Warn($"Ignoring potential match for {me.Episode.Show.ShowName} S{me.Episode.AppropriateSeasonNumber} E{me.Episode.AppropriateEpNum}: with file {matchedFiles[0]?.FullName} as there are multiple shows that match for that file");
+                        me.AddComment(
+                            $"Ignoring potential match with file {matchedFiles[0]?.FullName} as there are multiple shows for that file");
+                    }
                 }
                 else
                 {
@@ -324,6 +333,14 @@ namespace TVRename
                     }
                 }
             }
+        }
+
+        private bool BetterShowsMatch(FileInfo matchedFile, ShowItem currentlyMatchedShow)
+        {
+            return MDoc.Library.Shows
+                .Where(item => item.NameMatch(matchedFile))
+                .Where(item => item.TvdbCode != currentlyMatchedShow.TvdbCode)
+                .Any(testShow => testShow.ShowName.Contains(currentlyMatchedShow.ShowName));
         }
 
         private static List<FileInfo> IdentifyBestMatches(List<FileInfo> matchedFiles)
