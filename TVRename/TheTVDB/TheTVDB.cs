@@ -1167,6 +1167,9 @@ namespace TVRename
             if (isNotDefaultLanguage)
             {
                 if (jsonDefaultLangResponse == null) throw new ArgumentNullException(nameof(jsonDefaultLangResponse));
+                if (LanguageList == null) throw new ArgumentException("LanguageList not Setup",nameof(LanguageList));
+                if (LanguageList.GetLanguageFromCode(requestedLanguageCode) == null)
+                    throw new ArgumentException($"Requested language ({requestedLanguageCode}) not found in Language Cache, cache has ({string.Join(",",LanguageList.Select(language => language.Abbreviation))})", requestedLanguageCode);
 
                 JObject seriesDataDefaultLang = (JObject) jsonDefaultLangResponse["data"];
                 int requestedLangId = LanguageList.GetLanguageFromCode(requestedLanguageCode).Id;
