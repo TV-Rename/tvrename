@@ -59,7 +59,7 @@ namespace TVRename
                         FileInfo[] testFiles = dfc.GetFilesIncludeSubDirs(baseFolder);
                         matchedFiles = testFiles is null
                             ? new List<FileInfo>()
-                            : testFiles.Where(testFile => ReviewFile(me, thisRound, testFile, settings, false, false, false)).ToList();
+                            : testFiles.Where(testFile => ReviewFile(me, thisRound, testFile, settings, false, false, false,TVSettings.Instance.UseFullPathNameToMatchLibraryFolders)).ToList();
                     }
 
                     foreach (KeyValuePair<int, List<string>> seriesFolders in me.Episode.Show.AllFolderLocationsEpCheck(false))
@@ -78,7 +78,7 @@ namespace TVRename
 
                             foreach (FileInfo testFile in files)
                             {
-                                if (!ReviewFile(me, thisRound, testFile, settings, false, false, false)) continue;
+                                if (!ReviewFile(me, thisRound, testFile, settings, false, false, false,TVSettings.Instance.UseFullPathNameToMatchLibraryFolders)) continue;
 
                                 if (!matchedFiles.Contains(testFile))
                                 {
@@ -89,7 +89,7 @@ namespace TVRename
                         }
                     }
 
-                    ProcessMissingItem(settings, newList, toRemove, me, thisRound, matchedFiles);
+                    ProcessMissingItem(settings, newList, toRemove, me, thisRound, matchedFiles,TVSettings.Instance.UseFullPathNameToMatchLibraryFolders);
                 }
                 catch (NullReferenceException nre)
                 {

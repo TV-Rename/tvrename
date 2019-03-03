@@ -184,7 +184,7 @@ namespace TVRename
 
         private static bool LookForSeries(FileSystemInfo test, IEnumerable<ShowItem> shows)
         {
-            return shows.Any(si => si.NameMatch(test));
+            return shows.Any(si => si.NameMatch(test, TVSettings.Instance.UseFullPathNameToMatchSearchFolders));
         }
 
         private static bool LookForSeries(string test, IEnumerable<ShowItem> shows)

@@ -710,7 +710,7 @@ namespace TVRename
                         {
                             if (showsToScan.Contains(si)) continue;
 
-                            if (si.NameMatch(fi))
+                            if (si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
                             {
                                 showsToScan.Add(si);
                             }
@@ -749,7 +749,7 @@ namespace TVRename
                         {
                             if (showsToScan.Contains(si)) continue;
 
-                            if (si.NameMatch(di))
+                            if (si.NameMatch(di,TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
                             {
                                 showsToScan.Add(si);
                             }

@@ -189,8 +189,7 @@ namespace TVRename
         public static List<FileInfo> FindEpOnDisk(DirFilesCache dfc, ShowItem si, Episode epi,
             bool checkDirectoryExist = true)
         {
-            if (dfc == null)
-                dfc = new DirFilesCache();
+            DirFilesCache cache = dfc ?? new DirFilesCache();
 
             List<FileInfo> ret = new List<FileInfo>();
 
@@ -206,7 +205,7 @@ namespace TVRename
 
             foreach (string folder in dirs[snum])
             {
-                FileInfo[] files = dfc.GetFiles(folder);
+                FileInfo[] files = cache.GetFiles(folder);
                 if (files == null)
                     continue;
 
@@ -314,7 +313,6 @@ namespace TVRename
                 directory + Path.DirectorySeparatorChar +
                 filename; // construct full path with sanitised filename
 
-            filename = filename.ToLower() + " ";
             fullPath = fullPath.ToLower() + " ";
 
             foreach (TVSettings.FilenameProcessorRE re in rexps)
@@ -324,8 +322,9 @@ namespace TVRename
 
                 try
                 {
-                    Match m = Regex.Match(re.UseFullPath ? fullPath : filename, re.RegExpression,
-                        RegexOptions.IgnoreCase);
+                    string pathToTest = re.UseFullPath ? fullPath : filename.ToLower() + " ";
+
+                    Match m = Regex.Match(pathToTest, re.RegExpression,RegexOptions.IgnoreCase);
 
                     if (m.Success)
                     {

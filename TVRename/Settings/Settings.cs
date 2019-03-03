@@ -244,6 +244,9 @@ namespace TVRename
 
         public string[] VideoExtensionsArray => Convert(VideoExtensionsString);
 
+        public bool UseFullPathNameToMatchSearchFolders = false;
+        public bool UseFullPathNameToMatchLibraryFolders = false;
+
         public bool PostpendThe = false;
         public bool ShareLogs = true;
         public bool CopyFutureDatedEpsFromSearchFolders = false;
@@ -459,6 +462,8 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "ShareLogs", ShareLogs);
             XmlHelper.WriteElementToXml(writer, "PostpendThe", PostpendThe);
             XmlHelper.WriteElementToXml(writer, "IgnoreAllSpecials", IgnoreAllSpecials);
+            XmlHelper.WriteElementToXml(writer, "UseFullPathNameToMatchLibraryFolders", UseFullPathNameToMatchLibraryFolders);
+            XmlHelper.WriteElementToXml(writer, "UseFullPathNameToMatchSearchFolders", UseFullPathNameToMatchSearchFolders);
 
             TheSearchers.WriteXml(writer);
             writer.WriteStartElement("Replacements");
@@ -1117,6 +1122,8 @@ namespace TVRename
             ShareLogs = xmlSettings.ExtractBool("ShareLogs") ?? true;
             PostpendThe = xmlSettings.ExtractBool("PostpendThe") ?? false;
             IgnoreAllSpecials = xmlSettings.ExtractBool("IgnoreAllSpecials") ?? false;
+            UseFullPathNameToMatchLibraryFolders = xmlSettings.ExtractBool("UseFullPathNameToMatchLibraryFolders") ?? false;
+            UseFullPathNameToMatchSearchFolders = xmlSettings.ExtractBool("UseFullPathNameToMatchSearchFolders") ?? false;
 
             Tidyup.load(xmlSettings);
             RSSURLs = xmlSettings.Descendants("RSSURLs").FirstOrDefault()?.ReadStringsFromXml("URL");

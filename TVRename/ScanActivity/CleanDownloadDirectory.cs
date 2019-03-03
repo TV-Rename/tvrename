@@ -86,7 +86,7 @@ namespace TVRename
 
             DirectoryInfo di = new DirectoryInfo(subDirPath);
 
-            List<ShowItem> matchingShows = showList.Where(si => si.NameMatch(di)).ToList();
+            List<ShowItem> matchingShows = showList.Where(si => si.NameMatch(di,TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
 
             if (matchingShows.Any())
             {
@@ -147,7 +147,7 @@ namespace TVRename
 
                     if (fi.IgnoreFile()) continue;
 
-                    List<ShowItem> matchingShows = showList.Where(si => si.NameMatch(fi)).ToList();
+                    List<ShowItem> matchingShows = showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
 
                     if (matchingShows.Any())
                     {
