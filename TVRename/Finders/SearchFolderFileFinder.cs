@@ -42,7 +42,7 @@ namespace TVRename
                 ItemList thisRound = new ItemList();
                 List<FileInfo> matchedFiles = FindMatchedFiles(settings, dirCache, me, thisRound);
 
-                ProcessMissingItem(settings, newList, toRemove, me, thisRound, matchedFiles);
+                ProcessMissingItem(settings, newList, toRemove, me, thisRound, matchedFiles,TVSettings.Instance.UseFullPathNameToMatchSearchFolders);
             }
 
             if (TVSettings.Instance.KeepTogether)
@@ -64,7 +64,7 @@ namespace TVRename
 
             foreach (DirCacheEntry dce in dirCache)
             {
-                if (!ReviewFile(me, thisRound, dce.TheFile, settings, TVSettings.Instance.AutoMergeDownloadEpisodes, TVSettings.Instance.PreventMove,true)) continue;
+                if (!ReviewFile(me, thisRound, dce.TheFile, settings, TVSettings.Instance.AutoMergeDownloadEpisodes, TVSettings.Instance.PreventMove,true, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)) continue;
 
                 matchedFiles.Add(dce.TheFile);
             }

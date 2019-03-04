@@ -8,9 +8,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -29,7 +28,7 @@ namespace TVRename
             DirFilesCache dfc = new DirFilesCache();
 
             //Write Contents to file
-            using (StreamWriter file = new StreamWriter(Location()))
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
             {
                 file.WriteLine(GenerateHeader());
                 foreach (ProcessedEpisode episode in lpe)

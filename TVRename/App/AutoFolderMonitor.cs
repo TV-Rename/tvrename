@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using File = Alphaleonis.Win32.Filesystem.File;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -10,7 +8,7 @@ namespace TVRename
     {
         private readonly TVDoc mDoc;
         private readonly UI mainForm;
-        private readonly List<FileSystemWatcher> watchers = new List<FileSystemWatcher>();
+        private readonly List<System.IO.FileSystemWatcher> watchers = new List<System.IO.FileSystemWatcher>();
         private readonly System.Timers.Timer mScanDelayTimer;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -45,7 +43,7 @@ namespace TVRename
                     continue;
                 }
 
-                if ((File.GetAttributes(efi) & FileAttributes.Directory) != (FileAttributes.Directory))  // not a folder
+                if ((File.GetAttributes(efi) & System.IO.FileAttributes.Directory) != (System.IO.FileAttributes.Directory))  // not a folder
                 {
                     Logger.Warn($"Could not watch {efi} as it is not a file.");
                     continue;
@@ -53,7 +51,7 @@ namespace TVRename
 
                 try
                 {
-                    FileSystemWatcher watcher = new FileSystemWatcher(efi);
+                    System.IO.FileSystemWatcher watcher = new System.IO.FileSystemWatcher(efi);
                     watcher.Changed += watcher_Changed;
                     watcher.Created += watcher_Changed;
                     watcher.Renamed += watcher_Changed;
@@ -71,7 +69,7 @@ namespace TVRename
             }
         }
 
-        void watcher_Changed(object sender, FileSystemEventArgs e)
+        void watcher_Changed(object sender, System.IO.FileSystemEventArgs e)
         {
             Logger.Trace("Restarted delay timer");
             mScanDelayTimer.Stop();
@@ -117,7 +115,7 @@ namespace TVRename
 
         private void Stop()
         {
-            foreach (FileSystemWatcher watcher in watchers)
+            foreach (System.IO.FileSystemWatcher watcher in watchers)
             {
                 watcher.EnableRaisingEvents = false;
                 watcher.Dispose();

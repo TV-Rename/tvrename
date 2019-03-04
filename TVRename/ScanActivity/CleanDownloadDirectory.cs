@@ -1,12 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using File = Alphaleonis.Win32.Filesystem.File;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -50,7 +46,7 @@ namespace TVRename
             try
             {
                 foreach (string subDirPath in Directory.GetDirectories(dirPath, "*",
-                SearchOption.AllDirectories))
+                    System.IO.SearchOption.AllDirectories))
                 {
                     if (!Directory.Exists(subDirPath)) continue;
 
@@ -64,11 +60,11 @@ namespace TVRename
             {
                 LOGGER.Warn(ex, $"Could not access subdirectories of {dirPath}");
             }
-            catch (DirectoryNotFoundException ex)
+            catch (System.IO.DirectoryNotFoundException ex)
             {
                 LOGGER.Warn(ex, $"Could not access subdirectories of {dirPath}");
             }
-            catch (IOException ex)
+            catch (System.IO.IOException ex)
             {
                 LOGGER.Warn(ex, $"Could not access subdirectories of {dirPath}");
             }
@@ -86,7 +82,7 @@ namespace TVRename
 
             DirectoryInfo di = new DirectoryInfo(subDirPath);
 
-            List<ShowItem> matchingShows = showList.Where(si => si.NameMatch(di)).ToList();
+            List<ShowItem> matchingShows = showList.Where(si => si.NameMatch(di,TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
 
             if (matchingShows.Any())
             {
@@ -136,7 +132,7 @@ namespace TVRename
             List<Item> returnActions = new List<Item>();
             try
             {
-                foreach (string filePath in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories))
+                foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
                 {
                     if (!File.Exists(filePath)) continue;
 
@@ -147,7 +143,7 @@ namespace TVRename
 
                     if (fi.IgnoreFile()) continue;
 
-                    List<ShowItem> matchingShows = showList.Where(si => si.NameMatch(fi)).ToList();
+                    List<ShowItem> matchingShows = showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
 
                     if (matchingShows.Any())
                     {
@@ -160,11 +156,11 @@ namespace TVRename
             {
                 LOGGER.Warn(ex, $"Could not access files in {dirPath}");
             }
-            catch (DirectoryNotFoundException ex)
+            catch (System.IO.DirectoryNotFoundException ex)
             {
                 LOGGER.Warn(ex, $"Could not access files in {dirPath}");
             }
-            catch (IOException ex)
+            catch (System.IO.IOException ex)
             {
                 LOGGER.Warn(ex, $"Could not access files in {dirPath}");
             }
@@ -331,7 +327,7 @@ namespace TVRename
 
                 return fileCanBeDeleted;
             }
-            catch (FileNotFoundException)
+            catch (System.IO.FileNotFoundException)
             {
                 return false;
             }
@@ -352,7 +348,6 @@ namespace TVRename
             LOGGER.Info(
                 $"Identified that {fi.FullName} matches S{seasF}E{epF} of show {si.ShowName}, that it's not already present and airs in the future. Copying across.");
 
-            string filename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pep));
             List<string> folders = si.AllProposedFolderLocations()[seasF];
             List<Item> returnActions = new List<Item>();
 
@@ -363,8 +358,9 @@ namespace TVRename
                     LOGGER.Warn($"Want to copy {fi.FullName} to {folder}, but it doesn't exist yet");
                     continue;
                 }
+                string filename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pep,fi.Extension,folder.Length));
 
-                FileInfo targetFile = new FileInfo(folder + Path.DirectorySeparatorChar + filename + fi.Extension);
+                FileInfo targetFile = new FileInfo(folder + Path.DirectorySeparatorChar + filename);
 
                 if (fi.FullName == targetFile.FullName) continue;
 

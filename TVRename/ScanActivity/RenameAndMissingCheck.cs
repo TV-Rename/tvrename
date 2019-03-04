@@ -136,14 +136,14 @@ namespace TVRename
                         if (renCheck && TVSettings.Instance.FileHasUsefulExtension(fi, true, out string otherExtension)) // == RENAMING CHECK ==
                         {
                             string newName = TVSettings.Instance.FilenameFriendly(
-                                TVSettings.Instance.NamingStyle.NameFor(ep, otherExtension));
+                                TVSettings.Instance.NamingStyle.NameFor(ep, otherExtension,folder.Length));
 
                             if (TVSettings.Instance.RetainLanguageSpecificSubtitles &&
                                 fi.IsLanguageSpecificSubtitle(out string subtitleExtension) &&
                                 actualFile.Name != newName)
                             {
                                 newName = TVSettings.Instance.FilenameFriendly(
-                                    TVSettings.Instance.NamingStyle.NameFor(ep, subtitleExtension));
+                                    TVSettings.Instance.NamingStyle.NameFor(ep, subtitleExtension, folder.Length));
                             }
 
                             FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
@@ -232,9 +232,7 @@ namespace TVRename
                                     (si.ForceCheckNoAirdate && !dtOk))
                                 {
                                     // then add it as officially missing
-                                    Doc.TheActionList.Add(new ItemMissing(dbep, folder,
-                                        TVSettings.Instance.FilenameFriendly(
-                                            TVSettings.Instance.NamingStyle.NameFor(dbep, null))));
+                                    Doc.TheActionList.Add(new ItemMissing(dbep, folder));
                                 }
                             }
                             else

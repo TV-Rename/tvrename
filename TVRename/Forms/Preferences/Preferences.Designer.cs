@@ -62,6 +62,7 @@ namespace TVRename
             this.txtKeepTogether = new System.Windows.Forms.TextBox();
             this.txtOtherExtensions = new System.Windows.Forms.TextBox();
             this.cbCopyFutureDatedEps = new System.Windows.Forms.CheckBox();
+            this.chkIgnoreAllSpecials = new System.Windows.Forms.CheckBox();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.cmDefaults = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.KODIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,6 +70,7 @@ namespace TVRename
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tpDisplay = new System.Windows.Forms.TabPage();
+            this.chkBasicShowDetails = new System.Windows.Forms.CheckBox();
             this.chkPostpendThe = new System.Windows.Forms.CheckBox();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -126,6 +128,7 @@ namespace TVRename
             this.bnRSSAdd = new System.Windows.Forms.Button();
             this.tpLibraryFolders = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.txtSeasonFormat = new System.Windows.Forms.TextBox();
             this.txtSpecialsFolderName = new System.Windows.Forms.TextBox();
             this.label47 = new System.Windows.Forms.Label();
@@ -336,9 +339,8 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
-            this.button1 = new System.Windows.Forms.Button();
-            this.chkIgnoreAllSpecials = new System.Windows.Forms.CheckBox();
-            this.chkBasicShowDetails = new System.Windows.Forms.CheckBox();
+            this.chkUseLibraryFullPathWhenMatchingShows = new System.Windows.Forms.CheckBox();
+            this.chkUseSearchFullPathWhenMatchingShows = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -461,7 +463,7 @@ namespace TVRename
             // cbMonitorFolder
             // 
             this.cbMonitorFolder.AutoSize = true;
-            this.cbMonitorFolder.Location = new System.Drawing.Point(5, 140);
+            this.cbMonitorFolder.Location = new System.Drawing.Point(6, 127);
             this.cbMonitorFolder.Name = "cbMonitorFolder";
             this.cbMonitorFolder.Size = new System.Drawing.Size(342, 17);
             this.cbMonitorFolder.TabIndex = 5;
@@ -609,7 +611,7 @@ namespace TVRename
             // cbCopyFutureDatedEps
             // 
             this.cbCopyFutureDatedEps.AutoSize = true;
-            this.cbCopyFutureDatedEps.Location = new System.Drawing.Point(5, 163);
+            this.cbCopyFutureDatedEps.Location = new System.Drawing.Point(6, 150);
             this.cbCopyFutureDatedEps.Name = "cbCopyFutureDatedEps";
             this.cbCopyFutureDatedEps.Size = new System.Drawing.Size(270, 17);
             this.cbCopyFutureDatedEps.TabIndex = 41;
@@ -617,6 +619,17 @@ namespace TVRename
             this.toolTip1.SetToolTip(this.cbCopyFutureDatedEps, "If the contents of any of these folder change, then automatically do a \"Scan\" and" +
         " \"Do\".");
             this.cbCopyFutureDatedEps.UseVisualStyleBackColor = true;
+            // 
+            // chkIgnoreAllSpecials
+            // 
+            this.chkIgnoreAllSpecials.AutoSize = true;
+            this.chkIgnoreAllSpecials.Location = new System.Drawing.Point(9, 79);
+            this.chkIgnoreAllSpecials.Name = "chkIgnoreAllSpecials";
+            this.chkIgnoreAllSpecials.Size = new System.Drawing.Size(165, 17);
+            this.chkIgnoreAllSpecials.TabIndex = 32;
+            this.chkIgnoreAllSpecials.Text = "Ignore Specials  for all Shows";
+            this.toolTip1.SetToolTip(this.chkIgnoreAllSpecials, "Ignores \'specials\' season for all shows");
+            this.chkIgnoreAllSpecials.UseVisualStyleBackColor = true;
             // 
             // cmDefaults
             // 
@@ -685,6 +698,16 @@ namespace TVRename
             this.tpDisplay.TabIndex = 13;
             this.tpDisplay.Text = "Display";
             this.tpDisplay.UseVisualStyleBackColor = true;
+            // 
+            // chkBasicShowDetails
+            // 
+            this.chkBasicShowDetails.AutoSize = true;
+            this.chkBasicShowDetails.Location = new System.Drawing.Point(10, 311);
+            this.chkBasicShowDetails.Name = "chkBasicShowDetails";
+            this.chkBasicShowDetails.Size = new System.Drawing.Size(147, 17);
+            this.chkBasicShowDetails.TabIndex = 43;
+            this.chkBasicShowDetails.Text = "Show Basic Show Details";
+            this.chkBasicShowDetails.UseVisualStyleBackColor = true;
             // 
             // chkPostpendThe
             // 
@@ -1329,6 +1352,17 @@ namespace TVRename
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Default Library Folder Format";
             // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(333, 52);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(62, 23);
+            this.button1.TabIndex = 31;
+            this.button1.Text = "Tags...";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // txtSeasonFormat
             // 
             this.txtSeasonFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -1767,6 +1801,7 @@ namespace TVRename
             // 
             // tbSearchFolders
             // 
+            this.tbSearchFolders.Controls.Add(this.chkUseSearchFullPathWhenMatchingShows);
             this.tbSearchFolders.Controls.Add(this.cbCopyFutureDatedEps);
             this.tbSearchFolders.Controls.Add(this.groupBox8);
             this.tbSearchFolders.Controls.Add(this.label67);
@@ -1867,7 +1902,7 @@ namespace TVRename
             this.label67.AutoSize = true;
             this.label67.Location = new System.Drawing.Point(6, 6);
             this.label67.Name = "label67";
-            this.label67.Size = new System.Drawing.Size(302, 52);
+            this.label67.Size = new System.Drawing.Size(331, 39);
             this.label67.TabIndex = 39;
             this.label67.Text = resources.GetString("label67.Text");
             // 
@@ -1932,7 +1967,7 @@ namespace TVRename
             // cbLeaveOriginals
             // 
             this.cbLeaveOriginals.AutoSize = true;
-            this.cbLeaveOriginals.Location = new System.Drawing.Point(16, 94);
+            this.cbLeaveOriginals.Location = new System.Drawing.Point(17, 81);
             this.cbLeaveOriginals.Name = "cbLeaveOriginals";
             this.cbLeaveOriginals.Size = new System.Drawing.Size(129, 17);
             this.cbLeaveOriginals.TabIndex = 35;
@@ -1944,7 +1979,7 @@ namespace TVRename
             this.cbSearchLocally.AutoSize = true;
             this.cbSearchLocally.Checked = true;
             this.cbSearchLocally.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbSearchLocally.Location = new System.Drawing.Point(5, 71);
+            this.cbSearchLocally.Location = new System.Drawing.Point(6, 58);
             this.cbSearchLocally.Name = "cbSearchLocally";
             this.cbSearchLocally.Size = new System.Drawing.Size(218, 17);
             this.cbSearchLocally.TabIndex = 34;
@@ -1955,7 +1990,7 @@ namespace TVRename
             // chkAutoMergeDownloadEpisodes
             // 
             this.chkAutoMergeDownloadEpisodes.AutoSize = true;
-            this.chkAutoMergeDownloadEpisodes.Location = new System.Drawing.Point(5, 117);
+            this.chkAutoMergeDownloadEpisodes.Location = new System.Drawing.Point(6, 104);
             this.chkAutoMergeDownloadEpisodes.Name = "chkAutoMergeDownloadEpisodes";
             this.chkAutoMergeDownloadEpisodes.Size = new System.Drawing.Size(331, 17);
             this.chkAutoMergeDownloadEpisodes.TabIndex = 32;
@@ -3058,6 +3093,7 @@ namespace TVRename
             // 
             // tbFilesAndFolders
             // 
+            this.tbFilesAndFolders.Controls.Add(this.chkUseLibraryFullPathWhenMatchingShows);
             this.tbFilesAndFolders.Controls.Add(this.groupBox9);
             this.tbFilesAndFolders.Controls.Add(this.label66);
             this.tbFilesAndFolders.Controls.Add(this.pbFilesAndFolders);
@@ -3094,7 +3130,7 @@ namespace TVRename
             this.groupBox9.Controls.Add(this.label46);
             this.groupBox9.Controls.Add(this.txtSubtitleExtensions);
             this.groupBox9.Controls.Add(this.chkRetainLanguageSpecificSubtitles);
-            this.groupBox9.Location = new System.Drawing.Point(6, 394);
+            this.groupBox9.Location = new System.Drawing.Point(6, 422);
             this.groupBox9.Name = "groupBox9";
             this.groupBox9.Size = new System.Drawing.Size(408, 100);
             this.groupBox9.TabIndex = 40;
@@ -3719,37 +3755,27 @@ namespace TVRename
             this.tcTabs.TabIndex = 0;
             this.tcTabs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tpSearch_DrawItem);
             // 
-            // button1
+            // chkUseLibraryFullPathWhenMatchingShows
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(333, 52);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(62, 23);
-            this.button1.TabIndex = 31;
-            this.button1.Text = "Tags...";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.chkUseLibraryFullPathWhenMatchingShows.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkUseLibraryFullPathWhenMatchingShows.AutoSize = true;
+            this.chkUseLibraryFullPathWhenMatchingShows.Location = new System.Drawing.Point(2, 394);
+            this.chkUseLibraryFullPathWhenMatchingShows.Name = "chkUseLibraryFullPathWhenMatchingShows";
+            this.chkUseLibraryFullPathWhenMatchingShows.Size = new System.Drawing.Size(413, 17);
+            this.chkUseLibraryFullPathWhenMatchingShows.TabIndex = 41;
+            this.chkUseLibraryFullPathWhenMatchingShows.Text = "Use name of Library Folder when searching for a match between a file and a show";
+            this.chkUseLibraryFullPathWhenMatchingShows.UseVisualStyleBackColor = true;
             // 
-            // chkIgnoreAllSpecials
+            // chkUseSearchFullPathWhenMatchingShows
             // 
-            this.chkIgnoreAllSpecials.AutoSize = true;
-            this.chkIgnoreAllSpecials.Location = new System.Drawing.Point(9, 79);
-            this.chkIgnoreAllSpecials.Name = "chkIgnoreAllSpecials";
-            this.chkIgnoreAllSpecials.Size = new System.Drawing.Size(165, 17);
-            this.chkIgnoreAllSpecials.TabIndex = 32;
-            this.chkIgnoreAllSpecials.Text = "Ignore Specials  for all Shows";
-            this.toolTip1.SetToolTip(this.chkIgnoreAllSpecials, "Ignores \'specials\' season for all shows");
-            this.chkIgnoreAllSpecials.UseVisualStyleBackColor = true;
-            // 
-            // chkBasicShowDetails
-            // 
-            this.chkBasicShowDetails.AutoSize = true;
-            this.chkBasicShowDetails.Location = new System.Drawing.Point(10, 311);
-            this.chkBasicShowDetails.Name = "chkBasicShowDetails";
-            this.chkBasicShowDetails.Size = new System.Drawing.Size(147, 17);
-            this.chkBasicShowDetails.TabIndex = 43;
-            this.chkBasicShowDetails.Text = "Show Basic Show Details";
-            this.chkBasicShowDetails.UseVisualStyleBackColor = true;
+            this.chkUseSearchFullPathWhenMatchingShows.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkUseSearchFullPathWhenMatchingShows.AutoSize = true;
+            this.chkUseSearchFullPathWhenMatchingShows.Location = new System.Drawing.Point(6, 171);
+            this.chkUseSearchFullPathWhenMatchingShows.Name = "chkUseSearchFullPathWhenMatchingShows";
+            this.chkUseSearchFullPathWhenMatchingShows.Size = new System.Drawing.Size(416, 17);
+            this.chkUseSearchFullPathWhenMatchingShows.TabIndex = 42;
+            this.chkUseSearchFullPathWhenMatchingShows.Text = "Use name of Search Folder when searching for a match between a file and a show";
+            this.chkUseSearchFullPathWhenMatchingShows.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -4157,6 +4183,8 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkIgnoreAllSpecials;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox chkBasicShowDetails;
+        private System.Windows.Forms.CheckBox chkUseSearchFullPathWhenMatchingShows;
+        private System.Windows.Forms.CheckBox chkUseLibraryFullPathWhenMatchingShows;
         private System.Windows.Forms.CheckBox cbShowCollections;
     }
 }

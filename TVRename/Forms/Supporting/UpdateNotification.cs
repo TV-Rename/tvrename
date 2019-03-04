@@ -7,7 +7,6 @@
 // 
 
 using System;
-using System.IO;
 using System.Net;
 using System.Windows.Forms;
 using Newtonsoft.Json.Linq;
@@ -46,7 +45,7 @@ namespace TVRename.Forms
                     {"context", "TV-Rename/tvrename"}
                 };
 
-                using (StreamWriter writer = new StreamWriter(req.GetRequestStream()))
+                using (System.IO.StreamWriter writer = new System.IO.StreamWriter(req.GetRequestStream()))
                 {
                     writer.Write(request.ToString());
                 }
@@ -56,8 +55,8 @@ namespace TVRename.Forms
                 {
                     if (resp != null)
                     {
-                        StreamReader reader =
-                            new StreamReader(resp.GetResponseStream() ?? throw new InvalidOperationException());
+                        System.IO.StreamReader reader =
+                            new System.IO.StreamReader(resp.GetResponseStream() ?? throw new InvalidOperationException());
 
                         result = reader.ReadToEnd();
                     }

@@ -83,7 +83,7 @@ namespace TVRename
         {
             try
             {
-                //we use a temp name just in case we are interruted or some other problem occurs
+                //we use a temp name just in case we are interrupted or some other problem occurs
                 string tempName = TempFor(To);
 
                 // If both full filenames are the same then we want to move it away and back
@@ -114,6 +114,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
+                LOGGER.Warn(e,$"Error occurred while {Name}: {From.FullName} to {To.FullName } ");
                 Done = true;
                 Error = true;
                 ErrorText = e.Message;

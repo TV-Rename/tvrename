@@ -8,10 +8,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows.Forms;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using Alphaleonis.Win32.Filesystem;
 using System.Linq;
 
 namespace TVRename
@@ -22,7 +20,7 @@ namespace TVRename
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.local;
 
-        protected bool ReviewFile(ItemMissing me, ItemList addTo, FileInfo dce, TVDoc.ScanSettings settings, bool addMergeRules,bool preventMove,bool doExtraFiles)
+        protected bool ReviewFile(ItemMissing me, ItemList addTo, FileInfo dce, TVDoc.ScanSettings settings, bool addMergeRules,bool preventMove,bool doExtraFiles,bool useFullPath)
         {
             if (settings.Token.IsCancellationRequested) return false;
 
@@ -35,7 +33,7 @@ namespace TVRename
                 if (dce.IgnoreFile()) return false;
 
                 //do any of the possible names for the series match the filename?
-                matched = me.Episode.Show.NameMatch(dce);
+                matched = me.Episode.Show.NameMatch(dce,useFullPath);
 
                 if (!matched) return false;
 
@@ -78,8 +76,7 @@ namespace TVRename
                         if (pe.AppropriateEpNum == epF && pe.EpNum2 == maxEp) newPE = pe;
                     }
 
-                    me = new ItemMissing(newPE, me.TargetFolder,
-                        TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(newPE)));
+                    me = new ItemMissing(newPE, me.TargetFolder);
                 }
 
                 FileInfo fi = new FileInfo(me.TheFileNoExt + dce.Extension);
@@ -111,7 +108,7 @@ namespace TVRename
 
             return true;
             }
-            catch (PathTooLongException e)
+            catch (System.IO.PathTooLongException e)
             {
                 string t = "Path too long. " + dce.FullName + ", " + e.Message;
                 LOGGER.Error(e, "Path too long. " + dce.FullName);
@@ -197,12 +194,12 @@ namespace TVRename
                     {
                         LOGGER.Warn("Could not access: " + action.From.FullName);
                     }
-                    catch (DirectoryNotFoundException)
+                    catch (System.IO.DirectoryNotFoundException)
                     {
                         LOGGER.Warn("Could not find: " + action.From.FullName);
                     }
                 }
-                catch (PathTooLongException e)
+                catch (System.IO.PathTooLongException e)
                 {
                     string t = "Path or filename too long. " + action.From.FullName + ", " + e.Message;
                     LOGGER.Warn(e, "Path or filename too long. " + action.From.FullName);
@@ -285,14 +282,23 @@ namespace TVRename
             return actionlist.CopyMoveItems().Any(cmAction => cmAction.SameSource(newitem));
         }
 
-        protected void ProcessMissingItem(TVDoc.ScanSettings settings, ItemList newList, ItemList toRemove, ItemMissing me, ItemList thisRound, List<FileInfo> matchedFiles)
+        protected void ProcessMissingItem(TVDoc.ScanSettings settings, ItemList newList, ItemList toRemove, ItemMissing me, ItemList thisRound, List<FileInfo> matchedFiles,bool useFullPath)
         {
             if (matchedFiles.Count == 1)
             {
-                if (!OtherActionsMatch(matchedFiles[0], me, settings))
+                if (!OtherActionsMatch(matchedFiles[0], me, settings,useFullPath))
                 {
-                    toRemove.Add(me);
-                    newList.AddRange(thisRound);
+                    if (!BetterShowsMatch(matchedFiles[0], me.Episode.Show,useFullPath))
+                    {
+                        toRemove.Add(me);
+                        newList.AddRange(thisRound);
+                    }
+                    else
+                    {
+                        LOGGER.Warn($"Ignoring potential match for {me.Episode.Show.ShowName} S{me.Episode.AppropriateSeasonNumber} E{me.Episode.AppropriateEpNum}: with file {matchedFiles[0]?.FullName} as there are multiple shows that match for that file");
+                        me.AddComment(
+                            $"Ignoring potential match with file {matchedFiles[0]?.FullName} as there are multiple shows for that file");
+                    }
                 }
                 else
                 {
@@ -326,6 +332,14 @@ namespace TVRename
             }
         }
 
+        private bool BetterShowsMatch(FileInfo matchedFile, ShowItem currentlyMatchedShow, bool useFullPath)
+        {
+            return MDoc.Library.Shows
+                .Where(item => item.NameMatch(matchedFile, useFullPath))
+                .Where(item => item.TvdbCode != currentlyMatchedShow.TvdbCode)
+                .Any(testShow => testShow.ShowName.Contains(currentlyMatchedShow.ShowName));
+        }
+
         private static List<FileInfo> IdentifyBestMatches(List<FileInfo> matchedFiles)
         {
             //See whether there are any of the matched files that stand out
@@ -349,14 +363,14 @@ namespace TVRename
             return bestMatchedFiles;
         }
 
-        private bool OtherActionsMatch(FileInfo matchedFile, Item me, TVDoc.ScanSettings settings)
+        private bool OtherActionsMatch(FileInfo matchedFile, Item me, TVDoc.ScanSettings settings,bool useFullPath)
         //This is used to check whether the selected file may match any other files we are looking for
         {
             foreach (ItemMissing testMissingAction in ActionList.MissingItems().ToList())
             {
                 if (testMissingAction.SameAs(me)) continue;
 
-                if (ReviewFile(testMissingAction, new ItemList(), matchedFile, settings,false,false,false))
+                if (ReviewFile(testMissingAction, new ItemList(), matchedFile, settings,false,false,false,useFullPath))
                 {
                     //We have 2 options that match  me and testAction - See whether one is subset of the other
                     if (me.Episode.Show.ShowName.Contains(testMissingAction.Episode.Show.ShowName)) continue; //'me' is a better match, so don't worry about the new one

@@ -75,27 +75,34 @@ namespace TVRename
             "{ShowImdb}"
         };
 
-        public string NameFor(ProcessedEpisode pe) => NameFor(pe,string.Empty);
+        public string NameFor(ProcessedEpisode pe) => NameFor(pe,string.Empty,0);
 
-        public string NameFor(ProcessedEpisode pe, string extension)
+        public string NameFor(ProcessedEpisode pe, string extension,int folderNameLength)
         {
-            const int MAX_LENGTH = 250;
+            const int MAX_LENGTH = 260;
+            int maxFilenameLength = MAX_LENGTH - 1 - folderNameLength - (extension?.Length ?? 5); //Assume a max 5 character extension
+
+            if (maxFilenameLength <= 12)//assume we need space for a 8.3 length filename at least
+            {
+                throw new System.IO.PathTooLongException(
+                    $"Cannot create files as path is too long - please review settings for {pe.Show.ShowName}");
+            }
 
             string r = NameForNoExt(pe, StyleString);
 
             if (string.IsNullOrEmpty(extension))
             {
-                return r.Substring(0,Math.Min(MAX_LENGTH,r.Length));
+                return r.Substring(0,Math.Min(maxFilenameLength, r.Length));
             }
 
             bool needsSpacer = (!extension.StartsWith("."));
 
             if (needsSpacer)
             {
-                return r.Substring(0, Math.Min(r.Length,MAX_LENGTH - extension.Length - 1)) + "." + extension;
+                return r.Substring(0, Math.Min(r.Length, maxFilenameLength)) + "." + extension;
             }
 
-            return r.Substring(0, Math.Min(r.Length, MAX_LENGTH - extension.Length)) + extension;
+            return r.Substring(0, Math.Min(r.Length, maxFilenameLength)) + extension;
         }
 
         public string GetTargetEpisodeName(ShowItem show, Episode ep, TimeZoneInfo tz, bool dvdOrder)

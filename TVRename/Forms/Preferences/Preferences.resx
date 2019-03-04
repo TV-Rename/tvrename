@@ -156,10 +156,9 @@ Folders' below.</value>
     <value>544, 17</value>
   </metadata>
   <data name="label67.Text" xml:space="preserve">
-    <value>TV Rename considers 2 sets of folders. Search Folders are the
-base folders for unsorted files that may need to be copied into
-your sorted library folders. They should not overlap the library
-folders.
+    <value>TV Rename considers 2 sets of folders. Search Folders are the base 
+folders for unsorted files that may need to be copied into your sorted
+library folders. They should not overlap the library folders.
 </value>
   </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
