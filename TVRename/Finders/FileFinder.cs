@@ -8,10 +8,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows.Forms;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using Alphaleonis.Win32.Filesystem;
 using System.Linq;
 
 namespace TVRename
@@ -78,8 +76,7 @@ namespace TVRename
                         if (pe.AppropriateEpNum == epF && pe.EpNum2 == maxEp) newPE = pe;
                     }
 
-                    me = new ItemMissing(newPE, me.TargetFolder,
-                        TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(newPE)));
+                    me = new ItemMissing(newPE, me.TargetFolder);
                 }
 
                 FileInfo fi = new FileInfo(me.TheFileNoExt + dce.Extension);
@@ -111,7 +108,7 @@ namespace TVRename
 
             return true;
             }
-            catch (PathTooLongException e)
+            catch (System.IO.PathTooLongException e)
             {
                 string t = "Path too long. " + dce.FullName + ", " + e.Message;
                 LOGGER.Error(e, "Path too long. " + dce.FullName);
@@ -197,12 +194,12 @@ namespace TVRename
                     {
                         LOGGER.Warn("Could not access: " + action.From.FullName);
                     }
-                    catch (DirectoryNotFoundException)
+                    catch (System.IO.DirectoryNotFoundException)
                     {
                         LOGGER.Warn("Could not find: " + action.From.FullName);
                     }
                 }
-                catch (PathTooLongException e)
+                catch (System.IO.PathTooLongException e)
                 {
                     string t = "Path or filename too long. " + action.From.FullName + ", " + e.Message;
                     LOGGER.Warn(e, "Path or filename too long. " + action.From.FullName);

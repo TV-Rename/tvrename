@@ -8,13 +8,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -103,7 +101,7 @@ namespace TVRename
                         }
                     }
                 }
-                catch (DirectoryNotFoundException e)
+                catch (System.IO.DirectoryNotFoundException e)
                 {
                     Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.Message}");
                 }
@@ -142,7 +140,7 @@ namespace TVRename
                 Logger.Warn( $"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside, got {xe.Message}");
                 return -1;
             }
-            catch (IOException xe)
+            catch (System.IO.IOException xe)
             {
                 Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside, got {xe.Message}");
                 return -1;
@@ -218,7 +216,7 @@ namespace TVRename
 
                 subDirs = null;
             }
-            catch (DirectoryNotFoundException)
+            catch (System.IO.DirectoryNotFoundException)
             {
                 // e.g. recycle bin, system volume information
                 Logger.Warn(
@@ -227,7 +225,7 @@ namespace TVRename
 
                 subDirs = null;
             }
-            catch (IOException)
+            catch (System.IO.IOException)
             {
                 Logger.Warn(
                     "Could not access {0} (or a subdir), got an IO Exception",
@@ -320,7 +318,7 @@ namespace TVRename
 
         private static bool HasFilmFiles(DirectoryInfo directory)
         {
-            return directory.GetFiles("*", SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
+            return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
         }
 
         private void CheckFolderForShows(DirectoryInfo di, CancellationToken token,bool fullLogging, bool showErrorMsgBox)

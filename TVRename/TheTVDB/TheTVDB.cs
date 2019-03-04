@@ -10,7 +10,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -20,8 +19,7 @@ using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
 using TVRename.Forms.Utilities;
-using File = Alphaleonis.Win32.Filesystem.File;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 // Talk to the TheTVDB web API, and get tv series info
 
@@ -917,7 +915,7 @@ namespace TVRename
                     Logger.Error(ex, $"Error obtaining {episodeUri}");
                     return null;
                 }
-                catch (IOException ex)
+                catch (System.IO.IOException ex)
                 {
                     Logger.Warn(ex, "Connection to TVDB Failed whilst loading episode with Id {0}.", id);
                     return null;

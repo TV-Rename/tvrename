@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,7 +34,7 @@ namespace TVRename
             Logger.Trace("Obtaining {0}", url);
 
             if (method == "POST") { 
-                using (StreamWriter streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                using (System.IO.StreamWriter streamWriter = new System.IO.StreamWriter(httpWebRequest.GetRequestStream()))
                 {
                     streamWriter.Write(json);
                     streamWriter.Flush();
@@ -44,7 +43,7 @@ namespace TVRename
 
             string result;
             HttpWebResponse httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            using (StreamReader streamReader = new StreamReader(httpResponse.GetResponseStream() ?? throw new InvalidOperationException()))
+            using (System.IO.StreamReader streamReader = new System.IO.StreamReader(httpResponse.GetResponseStream() ?? throw new InvalidOperationException()))
             {
                 result = streamReader.ReadToEnd();
             }

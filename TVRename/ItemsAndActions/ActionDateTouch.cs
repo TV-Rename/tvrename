@@ -5,11 +5,12 @@
 // 
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
+using Alphaleonis.Win32.Filesystem;
+
 namespace TVRename
 {
     using System;
-    using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
     public class ActionDateTouch : ActionFileMetaData
     {
@@ -79,7 +80,7 @@ namespace TVRename
         {
             bool priorFileReadonly = whereFile.IsReadOnly;
             if (priorFileReadonly) whereFile.IsReadOnly = false;
-            System.IO.File.SetLastWriteTimeUtc(whereFile.FullName, updateTime);
+            File.SetLastWriteTimeUtc(whereFile.FullName, updateTime);
             if (priorFileReadonly) whereFile.IsReadOnly = true;
         }
 

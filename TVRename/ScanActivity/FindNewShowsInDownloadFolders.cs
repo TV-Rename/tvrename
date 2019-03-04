@@ -8,14 +8,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using File = Alphaleonis.Win32.Filesystem.File;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -55,7 +51,7 @@ namespace TVRename
                 if (!Directory.Exists(dirPath)) continue;
                 try
                 {
-                    foreach (string filePath in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories))
+                    foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
                     {
                         if (!File.Exists(filePath)) continue;
 
@@ -70,11 +66,11 @@ namespace TVRename
                 {
                     LOGGER.Warn(ex, $"Could not access files in {dirPath}");
                 }
-                catch (DirectoryNotFoundException ex)
+                catch (System.IO.DirectoryNotFoundException ex)
                 {
                     LOGGER.Warn(ex, $"Could not access files in {dirPath}");
                 }
-                catch (IOException ex)
+                catch (System.IO.IOException ex)
                 {
                     LOGGER.Warn(ex, $"Could not access files in {dirPath}");
                 }

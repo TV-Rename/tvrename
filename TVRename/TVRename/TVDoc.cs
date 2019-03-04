@@ -12,19 +12,15 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
 using System.Xml;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 using System.Xml.Linq;
 using NLog;
 using NodaTime.Extensions;
-using File = Alphaleonis.Win32.Filesystem.File;
 
 namespace TVRename
 {
@@ -693,7 +689,7 @@ namespace TVRename
                 if (!Directory.Exists(dirPath)) continue;
 
                 try{ 
-                    string[] x = Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories);
+                    string[] x = Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories);
                     Logger.Info($"Processing {x.Length} files for shows that need to be scanned");
 
                     foreach (string filePath in x)
@@ -721,11 +717,11 @@ namespace TVRename
                 {
                     Logger.Warn($"Could not access files in {dirPath} {ex.Message}");
                 }
-                catch (DirectoryNotFoundException  ex)
+                catch (System.IO.DirectoryNotFoundException  ex)
                 {
                     Logger.Warn($"Could not access files in {dirPath} {ex.Message}");
                 }
-                catch (IOException ex)
+                catch (System.IO.IOException ex)
                 {
                     Logger.Warn($"Could not access files in {dirPath} {ex.Message}");
                 }
@@ -734,7 +730,7 @@ namespace TVRename
                     Logger.Error($"Please update 'Download Folders' {dirPath} is not supported {ex.Message}");
                 }
                 try { 
-                    string[] directories = Directory.GetDirectories(dirPath, "*", SearchOption.AllDirectories);
+                    string[] directories = Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories);
                     Logger.Info($"Processing {directories.Length} directories for shows that need to be scanned");
 
                     foreach (string subDirPath in directories)
@@ -760,11 +756,11 @@ namespace TVRename
                 {
                     Logger.Warn($"Could not access sub-directories in {dirPath} {ex.Message}");
                 }
-                catch (DirectoryNotFoundException ex)
+                catch (System.IO.DirectoryNotFoundException ex)
                 {
                     Logger.Warn($"Could not access sub-directories in {dirPath} {ex.Message}");
                 }
-                catch (IOException ex)
+                catch (System.IO.IOException ex)
                 {
                     Logger.Warn($"Could not access sub-directories in {dirPath} {ex.Message}");
                 }
