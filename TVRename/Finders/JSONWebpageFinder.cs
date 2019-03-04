@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace TVRename
@@ -75,13 +76,14 @@ namespace TVRename
                                 long itemSizeBytes;
                                 try
                                 {
-                                    itemSizeBytes = (long)item[TVSettings.Instance.SearchJSONFileSizeToken];
+                                    itemSizeBytes = (long) item[TVSettings.Instance.SearchJSONFileSizeToken];
                                 }
                                 catch
                                 {
                                     //-1 as size is not available (empty string or other)
                                     itemSizeBytes = -1;
                                 }
+
                                 if (TVSettings.Instance.DetailedRSSJSONLogging)
                                 {
                                     LOGGER.Info("Processing JSON Item");
@@ -112,7 +114,9 @@ namespace TVRename
                                 LOGGER.Info(
                                     $"Adding {itemUrl} from JSON page as it appears to be match for {pe.Show.ShowName} S{pe.AppropriateSeasonNumber}E{pe.AppropriateEpNum}");
 
-                                newItemsForThisMissingEpisode.Add(new ActionTDownload(itemName,itemSizeBytes, itemUrl, action.TheFileNoExt, pe,action));
+                                newItemsForThisMissingEpisode.Add(new ActionTDownload(itemName, itemSizeBytes, itemUrl,
+                                    action.TheFileNoExt, pe, action));
+
                                 toRemove.Add(action);
                             }
                             else
@@ -127,6 +131,7 @@ namespace TVRename
                         LOGGER.Info(
                             $"{TVSettings.Instance.SearchJSONRootNode} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.Episode.TheSeries.Name}");
                     }
+
                     foreach (ActionTDownload x in FindDuplicates(newItemsForThisMissingEpisode))
                         newItemsForThisMissingEpisode.Remove(x);
 
@@ -135,7 +140,11 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                LOGGER.Warn(ex,$"Failed to Access {TVSettings.Instance.SearchJSONURL}");
+                LOGGER.Warn(ex, $"Failed to Access {TVSettings.Instance.SearchJSONURL}");
+            }
+            catch (JsonReaderException ex)
+            {
+                LOGGER.Warn(ex, $"Failed to Parse {TVSettings.Instance.SearchJSONURL} into JSON - Please check that the URL is valid JSON format.");
             }
             ActionList.Replace(toRemove,newItems);
         }

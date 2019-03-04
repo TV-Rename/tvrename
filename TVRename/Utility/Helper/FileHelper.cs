@@ -6,18 +6,13 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 using System;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using MediaInfo;
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using File = Alphaleonis.Win32.Filesystem.File;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using Path = Alphaleonis.Win32.Filesystem.Path;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -147,7 +142,7 @@ namespace TVRename
                     }
                 }
             }
-            catch (FileNotFoundException)
+            catch (System.IO.FileNotFoundException)
             {
                 Logger.Warn($"Unable to find file as part of {operation} for {movieFile.FullName}");
                 return -1;

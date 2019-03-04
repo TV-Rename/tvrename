@@ -16,12 +16,12 @@ namespace TVRename
         private readonly string folder;
         public readonly string Filename;
 
-        public ItemMissing(ProcessedEpisode pe, string whereItShouldBeFolder, string expectedFilenameNoExt)
+        public ItemMissing(ProcessedEpisode pe, string whereItShouldBeFolder)
         {
             Episode = pe;
-            TheFileNoExt = whereItShouldBeFolder + System.IO.Path.DirectorySeparatorChar + expectedFilenameNoExt;
+            Filename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pe, null, whereItShouldBeFolder.Length));
+            TheFileNoExt = whereItShouldBeFolder + System.IO.Path.DirectorySeparatorChar + Filename;
             folder = whereItShouldBeFolder;
-            Filename = expectedFilenameNoExt;
         }
 
         #region Item Members

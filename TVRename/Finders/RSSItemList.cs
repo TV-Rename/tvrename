@@ -8,7 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -37,7 +36,7 @@ namespace TVRename
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                 response = client.DownloadString(url);
 
-                XElement x = XElement.Load(new StringReader(response));
+                XElement x = XElement.Load(new System.IO.StringReader(response));
 
                 if (x.Name.LocalName != "rss")
                 {

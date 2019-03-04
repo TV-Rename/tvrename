@@ -45,7 +45,7 @@ namespace TVRename
                         continue;
 
                     //do any of the possible names for the series match the filename?
-                    bool matched = action.Episode.Show.NameMatch(file);
+                    bool matched = action.Episode.Show.NameMatch(file,true);
 
                     if (!matched) continue;
 

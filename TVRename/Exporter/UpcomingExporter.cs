@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace TVRename
 {
@@ -39,12 +40,10 @@ namespace TVRename
                     {
                         if (Generate(ms, lpe))
                         {
-                            return System.Text.Encoding.ASCII.GetString(ms.ToArray());
+                            return Encoding.ASCII.GetString(ms.ToArray());
                         }
-                        else
-                        {
-                            LOGGER.Error("Failed to generate records to put into Export file at: {0}", Location());
-                        }
+
+                        LOGGER.Error("Failed to generate records to put into Export file at: {0}", Location());
                     }
                     else
                     {

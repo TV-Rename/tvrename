@@ -7,11 +7,8 @@
 // 
 
 using System;
-using System.IO;
 using System.Linq;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 // Recursively reads and caches files and folders, and info about them, as this is way faster
 // than repeatedly hitting the filesystem.
@@ -46,10 +43,10 @@ namespace TVRename
             catch (UnauthorizedAccessException)
             {
             }
-            catch (DirectoryNotFoundException)
+            catch (System.IO.DirectoryNotFoundException)
             {
             }
-            catch (IOException)
+            catch (System.IO.IOException)
             {
             }
 
@@ -66,10 +63,10 @@ namespace TVRename
             catch (UnauthorizedAccessException)
             {
             }
-            catch (DirectoryNotFoundException)
+            catch (System.IO.DirectoryNotFoundException)
             {
             }
-            catch (IOException)
+            catch (System.IO.IOException)
             {
             }
 
@@ -112,11 +109,11 @@ namespace TVRename
                 {
                     Logger.Info(e);
                 }
-                catch (DirectoryNotFoundException e)
+                catch (System.IO.DirectoryNotFoundException e)
                 {
                     Logger.Info(e);
                 }
-                catch (IOException e)
+                catch (System.IO.IOException e)
                 {
                     Logger.Info(e);
                 }
@@ -144,11 +141,11 @@ namespace TVRename
                     {
                         Logger.Info(e);
                     }
-                    catch (DirectoryNotFoundException e)
+                    catch (System.IO.DirectoryNotFoundException e)
                     {
                         Logger.Info(e);
                     }
-                    catch (IOException e)
+                    catch (System.IO.IOException e)
                     {
                         Logger.Info(e);
                     }

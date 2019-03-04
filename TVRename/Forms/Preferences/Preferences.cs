@@ -272,6 +272,8 @@ namespace TVRename
             s.CopyFutureDatedEpsFromSearchFolders = cbCopyFutureDatedEps.Checked;
             s.ShareLogs = chkShareCriticalLogs.Checked;
             s.PostpendThe = chkPostpendThe.Checked;
+            s.UseFullPathNameToMatchLibraryFolders = chkUseLibraryFullPathWhenMatchingShows.Checked;
+            s.UseFullPathNameToMatchSearchFolders = chkUseSearchFullPathWhenMatchingShows.Checked;
 
             s.SearchJSON = cbSearchJSON.Checked;
             s.SearchJSONManualScanOnly = cbSearchJSONManualScanOnly.Checked;
@@ -763,6 +765,8 @@ namespace TVRename
             cbCopyFutureDatedEps.Checked = s.CopyFutureDatedEpsFromSearchFolders;
             chkShareCriticalLogs.Checked = s.ShareLogs;
             chkPostpendThe.Checked = s.PostpendThe;
+            chkUseLibraryFullPathWhenMatchingShows.Checked = s.UseFullPathNameToMatchLibraryFolders;
+            chkUseSearchFullPathWhenMatchingShows.Checked= s.UseFullPathNameToMatchSearchFolders;
 
             cbMissing.Checked = s.MissingCheck;
             chkMoveLibraryFiles.Checked = s.MoveLibraryFiles;

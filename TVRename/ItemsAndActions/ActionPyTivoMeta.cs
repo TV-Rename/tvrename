@@ -8,10 +8,8 @@
 namespace TVRename
 {
     using System;
-    using System.IO;
-    using Directory = Alphaleonis.Win32.Filesystem.Directory;
-    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-
+    using Alphaleonis.Win32.Filesystem;
+    
     public class ActionPyTivoMeta : ActionWriteMetadata
     {
         public ActionPyTivoMeta(FileInfo nfo, ProcessedEpisode pe) :base(nfo,null)
@@ -32,7 +30,7 @@ namespace TVRename
                     Directory.CreateDirectory(Where.Directory.FullName);
 
                 using (
-                    StreamWriter writer = new StreamWriter(Where.FullName, false,
+                    System.IO.StreamWriter writer = new System.IO.StreamWriter(Where.FullName, false,
                         System.Text.Encoding.GetEncoding(1252)))
                 {
                     // See: http://pytivo.sourceforge.net/wiki/index.php/Metadata
@@ -51,7 +49,7 @@ namespace TVRename
                     WriteEntries(writer, "vWriter", Episode.Writer);
                     WriteEntries(writer, "vActor", string.Join("|", Episode.Show.TheSeries().GetActorNames()));
                     WriteEntries(writer, "vGuestStar",
-                        Episode.EpisodeGuestStars); // not worring about actors being repeated
+                        Episode.EpisodeGuestStars); // not worrying about actors being repeated
                     WriteEntries(writer, "vProgramGenre", string.Join("|", Episode.Show.TheSeries().Genres()));
                 }
 
@@ -67,7 +65,7 @@ namespace TVRename
             }
         }
     
-        private static void WriteEntries(TextWriter writer, string heading, string entries)
+        private static void WriteEntries(System.IO.TextWriter writer, string heading, string entries)
         {
             if (string.IsNullOrEmpty(entries))
                 return;

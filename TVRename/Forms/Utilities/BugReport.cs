@@ -9,8 +9,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Text;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -48,7 +47,7 @@ namespace TVRename
                 txt.AppendLine();
                 try
                 {
-                    using (StreamReader sr = new StreamReader(PathManager.TVDocSettingsFile.FullName))
+                    using (System.IO.StreamReader sr = new System.IO.StreamReader(PathManager.TVDocSettingsFile.FullName))
                         txt.AppendLine(sr.ReadToEnd());
                 }
                 catch

@@ -16,11 +16,8 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
-    using System.IO;
-    using File = Alphaleonis.Win32.Filesystem.File;
-    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-    using Path = Alphaleonis.Win32.Filesystem.Path;
-
+    using Alphaleonis.Win32.Filesystem;
+    
     public enum BTChunk
     {
         kError,
@@ -80,7 +77,7 @@ namespace TVRename
             tn.Add(n);
         }
 
-        public abstract void Write(Stream sw);
+        public abstract void Write(System.IO.Stream sw);
     }
 
     public class BTString : BTItem
@@ -145,7 +142,7 @@ namespace TVRename
             tn.Add(n);
         }
 
-        public override void Write(Stream sw)
+        public override void Write(System.IO.Stream sw)
         {
             // Byte strings are encoded as follows: <string length encoded in base ten ASCII>:<string data>
 
@@ -163,7 +160,7 @@ namespace TVRename
         {
         }
 
-        public override void Write(Stream sw)
+        public override void Write(System.IO.Stream sw)
         {
         }
     }
@@ -189,7 +186,7 @@ namespace TVRename
             tn.Add(n);
         }
 
-        public override void Write(Stream sw)
+        public override void Write(System.IO.Stream sw)
         {
         }
     }
@@ -201,7 +198,7 @@ namespace TVRename
         {
         }
 
-        public override void Write(Stream sw)
+        public override void Write(System.IO.Stream sw)
         {
             sw.WriteByte((byte) 'e');
         }
@@ -249,7 +246,7 @@ namespace TVRename
             }
         }
 
-        public override void Write(Stream sw)
+        public override void Write(System.IO.Stream sw)
         {
             new BTString(Key).Write(sw);
             Data.Write(sw);
@@ -306,7 +303,7 @@ namespace TVRename
             return null;
         }
 
-        public override void Write(Stream sw)
+        public override void Write(System.IO.Stream sw)
         {
             sw.WriteByte((byte) 'd');
             foreach (BTDictionaryItem i in Items)
@@ -339,7 +336,7 @@ namespace TVRename
                 t.Tree(n.Nodes);
         }
 
-        public override void Write(Stream sw)
+        public override void Write(System.IO.Stream sw)
         {
             sw.WriteByte((byte) 'l');
             foreach (BTItem i in Items)
@@ -376,7 +373,7 @@ namespace TVRename
             tn.Add(n);
         }
 
-        public override void Write(Stream sw)
+        public override void Write(System.IO.Stream sw)
         {
             sw.WriteByte((byte) 'i');
             byte[] b = System.Text.Encoding.ASCII.GetBytes(Value.ToString());
@@ -471,7 +468,7 @@ namespace TVRename
             return btd.GetItem(key, ignoreCase);
         }
 
-        public void Write(Stream sw)
+        public void Write(System.IO.Stream sw)
         {
             foreach (BTItem i in Items)
                 i.Write(sw);
@@ -496,9 +493,9 @@ namespace TVRename
 
     public class BEncodeLoader
     {
-        public BTItem ReadString(Stream sr, long length)
+        public BTItem ReadString(System.IO.Stream sr, long length)
         {
-            BinaryReader br = new BinaryReader(sr);
+            System.IO.BinaryReader br = new System.IO.BinaryReader(sr);
 
             byte[] c = br.ReadBytes((int) length);
 
@@ -507,7 +504,7 @@ namespace TVRename
             return bts;
         }
 
-        public static BTItem ReadInt(FileStream sr)
+        public static BTItem ReadInt(System.IO.FileStream sr)
         {
             long r = 0;
             int c;
@@ -527,7 +524,7 @@ namespace TVRename
             return bti;
         }
 
-        public BTItem ReadDictionary(FileStream sr)
+        public BTItem ReadDictionary(System.IO.FileStream sr)
         {
             BTDictionary d = new BTDictionary();
             for (;;)
@@ -553,7 +550,7 @@ namespace TVRename
             }
         }
 
-        public BTItem ReadList(FileStream sr)
+        public BTItem ReadList(System.IO.FileStream sr)
         {
             BTList ll = new BTList();
             for (;;)
@@ -566,7 +563,7 @@ namespace TVRename
             }
         }
 
-        public BTItem ReadNext(FileStream sr)
+        public BTItem ReadNext(System.IO.FileStream sr)
         {
             if (sr.Length == sr.Position)
                 return new BTEOF();
@@ -607,10 +604,10 @@ namespace TVRename
         {
             BTFile f = new BTFile();
 
-            FileStream sr;
+            System.IO.FileStream sr;
             try
             {
-                sr = new FileStream(filename, FileMode.Open, FileAccess.Read);
+                sr = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read);
             }
             catch (Exception e)
             {
@@ -677,10 +674,10 @@ namespace TVRename
                 if (theHash == null)
                 {
                     // not cached, figure it out ourselves
-                    FileStream sr;
+                    System.IO.FileStream sr;
                     try
                     {
-                        sr = new FileStream(fiTemp.FullName, FileMode.Open);
+                        sr = new System.IO.FileStream(fiTemp.FullName, System.IO.FileMode.Open);
                     }
                     catch
                     {
@@ -688,7 +685,7 @@ namespace TVRename
                     }
 
                     byte[] thePiece = new byte[pieceSize];
-                    sr.Seek(whereInFile, SeekOrigin.Begin);
+                    sr.Seek(whereInFile, System.IO.SeekOrigin.Begin);
                     int n = sr.Read(thePiece, 0, (int) pieceSize);
                     sr.Close();
 
@@ -1032,7 +1029,7 @@ namespace TVRename
                             TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent);
                             r.Add(te);
                         }
-                        catch (PathTooLongException ptle)
+                        catch (System.IO.PathTooLongException ptle)
                         {
                             //this is not the file we are looking for
                             logger.Debug(ptle);
@@ -1177,7 +1174,7 @@ namespace TVRename
             // finally, fix up ".fileguard"
             // this is the SHA1 of the entire file, without the .fileguard
             ResumeDat.GetDict().RemoveItem(".fileguard");
-            MemoryStream ms = new MemoryStream();
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
             ResumeDat.Write(ms);
             System.Security.Cryptography.SHA1Managed sha1 = new System.Security.Cryptography.SHA1Managed();
             byte[] theHash = sha1.ComputeHash(ms.GetBuffer(), 0, (int) ms.Length);
@@ -1251,7 +1248,7 @@ namespace TVRename
                 File.Delete(to);
 
             File.Move(ResumeDatPath, to);
-            Stream s = File.Create(ResumeDatPath);
+            System.IO.Stream s = File.Create(ResumeDatPath);
             ResumeDat.Write(s);
             s.Close();
         }

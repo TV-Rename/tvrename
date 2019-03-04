@@ -7,7 +7,7 @@
 // 
 
 using System;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -44,7 +44,7 @@ namespace TVRename
             {
                 LOGGER.Warn($"Output File must be a local file: {Location()} {e.Message}");
             }
-            catch (DirectoryNotFoundException e)
+            catch (System.IO.DirectoryNotFoundException e)
             {
                 LOGGER.Warn($"Could not find File/Directory at: {Location()} {e.Message}");
             }
@@ -52,7 +52,7 @@ namespace TVRename
             {
                 LOGGER.Warn($"Could not access File/Directory at: {Location()} {e.Message}");
             }
-            catch (IOException e)
+            catch (System.IO.IOException e)
             {
                 LOGGER.Warn($"Could not access File/Directory at: {Location()} {e.Message}");
             }

@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
-using System.IO;
 using System.Net;
 using Newtonsoft.Json.Linq;
 
@@ -33,9 +32,9 @@ namespace TVRename
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            using (Stream stream = response.GetResponseStream())
+            using (System.IO.Stream stream = response.GetResponseStream())
                 if (stream != null)
-                    using (StreamReader reader = new StreamReader(stream))
+                    using (System.IO.StreamReader reader = new System.IO.StreamReader(stream))
                         {
                             responseText = reader.ReadToEnd();
                         }

@@ -13,8 +13,7 @@ using System.Drawing.Imaging;
 namespace TVRename
 {
     using System;
-    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-    using System.IO;
+    using Alphaleonis.Win32.Filesystem;
 
     public class ActionDownloadImage : ActionDownload
     {
@@ -97,14 +96,14 @@ namespace TVRename
             if (shrinkLargeMede8ErImage)
             {
                 // shrink images down to a maximum size of 156x232
-                Image im = new Bitmap(new MemoryStream(theData));
+                Image im = new Bitmap(new System.IO.MemoryStream(theData));
                 if (Episode == null)
                 {
                     if ((im.Width > 156) || (im.Height > 232))
                     {
                         im = MaxSize(im, 156, 232);
 
-                        using (MemoryStream m = new MemoryStream())
+                        using (System.IO.MemoryStream m = new System.IO.MemoryStream())
                         {
                             im.Save(m, ImageFormat.Jpeg);
                             theData = m.ToArray();
@@ -116,7 +115,7 @@ namespace TVRename
                     {
                         im = MaxSize(im, 232, 156);
 
-                        using (MemoryStream m = new MemoryStream())
+                        using (System.IO.MemoryStream m = new System.IO.MemoryStream())
                         {
                             im.Save(m, ImageFormat.Jpeg);
                             theData = m.ToArray();
@@ -127,7 +126,7 @@ namespace TVRename
 
             try
             {
-                FileStream fs = new FileStream(destination.FullName, FileMode.Create);
+                System.IO.FileStream fs = new System.IO.FileStream(destination.FullName, System.IO.FileMode.Create);
                 fs.Write(theData, 0, theData.Length);
                 fs.Close();
             }

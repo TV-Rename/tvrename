@@ -284,16 +284,8 @@ namespace TVRename
             return possibles;
         }
 
-        public bool NameMatch(FileSystemInfo file)
-        {
-            return GetSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(file.Name, name));
-        }
-
-        public bool NameMatch(DirCacheEntry file)
-        {
-            return GetSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(file.SimplifiedFullName, name));
-        }
-
+        public bool NameMatch(FileSystemInfo file,bool useFullPath) => NameMatch(useFullPath ? file.FullName: file.Name);
+        
         public bool NameMatch(string text)
         {
             return GetSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(text, name));

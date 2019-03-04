@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -164,7 +163,7 @@ namespace TVRename
                 Logger.Warn(e, $"Could not open {what}");
                 return false;
             }
-            catch (FileNotFoundException e)
+            catch (System.IO.FileNotFoundException e)
             {
                 Logger.Warn(e, $"Could not open {what}");
                 return false;
