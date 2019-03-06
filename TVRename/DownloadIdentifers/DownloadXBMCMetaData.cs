@@ -6,9 +6,9 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
-using System;
 using System.Collections.Generic;
 using System.Globalization;
+using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -21,7 +21,7 @@ namespace TVRename
 
         public override DownloadType GetDownloadType() => DownloadType.downloadMetaData;
 
-        public override void NotifyComplete(FileInfo file)
+        public override void NotifyComplete([NotNull] FileInfo file)
         {
             if (file.FullName.EndsWith(".nfo", true, new CultureInfo("en")))
             {
@@ -38,10 +38,10 @@ namespace TVRename
                 ItemList theActionList = new ItemList();
                 FileInfo tvshownfo = FileHelper.FileInFolder(si.AutoAddFolderBase, "tvshow.nfo");
 
+                SeriesInfo seriesInfo = si.TheSeries();
                 bool needUpdate = !tvshownfo.Exists ||
-                                  (si.TheSeries().SrvLastUpdated > TimeZoneHelper.Epoch(tvshownfo.LastWriteTime)) ||
-                    // was it written before we fixed the bug in <episodeguideurl> ?
-                                  (tvshownfo.LastWriteTime.ToUniversalTime().CompareTo(new DateTime(2009, 9, 13, 7, 30, 0, 0, DateTimeKind.Utc)) < 0);
+                                  seriesInfo is null ||
+                                  seriesInfo.SrvLastUpdated > TimeZoneHelper.Epoch(tvshownfo.LastWriteTime);
 
                 bool alreadyOnTheList = DoneNfo.Contains(tvshownfo.FullName);
 
@@ -57,16 +57,24 @@ namespace TVRename
 
         public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo,bool forceRefresh)
         {
-            if (!TVSettings.Instance.NFOEpisodes) return null;
+            if (!TVSettings.Instance.NFOEpisodes)
+            {
+                return null;
+            }
 
             string fn = filo.RemoveExtension() + ".nfo";
             FileInfo nfo = FileHelper.FileInFolder(filo.Directory, fn);
 
             if (nfo.Exists && (dbep.SrvLastUpdated <= TimeZoneHelper.Epoch(nfo.LastWriteTime)) && !forceRefresh)
+            {
                 return new ItemList();
+            }
 
             //If we do not already have plans to put the file into place
-            if (DoneNfo.Contains(nfo.FullName)) return new ItemList();
+            if (DoneNfo.Contains(nfo.FullName))
+            {
+                return new ItemList();
+            }
 
             DoneNfo.Add(nfo.FullName);
             return new ItemList { new ActionNfo(nfo, dbep) };

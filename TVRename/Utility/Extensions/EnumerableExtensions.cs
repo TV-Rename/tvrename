@@ -7,14 +7,18 @@
 // 
 
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
     public static class EnumerableExtensions
     {
-        public static void AddNullableRange<T>(this List<T> source, IEnumerable<T> items)
+        public static void AddNullableRange<T>(this List<T> source, [CanBeNull] IEnumerable<T> items)
         {
-            if (items != null) source.AddRange(items);
+            if (items != null)
+            {
+                source.AddRange(items);
+            }
         }
     }
 }

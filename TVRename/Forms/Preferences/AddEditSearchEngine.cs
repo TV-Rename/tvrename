@@ -107,7 +107,9 @@ namespace TVRename
             // multiselection is off, so we can cheat...
             int[] rowsIndex = grid1.Selection.GetSelectionRegion().GetRowsIndex();
             if (rowsIndex.Length > 0)
+            {
                 grid1.Rows.Remove(rowsIndex[0]);
+            }
         }
 
         private void bnOK_Click(object sender, EventArgs e)
@@ -118,7 +120,9 @@ namespace TVRename
                 string name = (string) (grid1[i, 0].Value);
                 string url = (string) (grid1[i, 1].Value);
                 if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(url))
+                {
                     mSearchers.Add(name, url);
+                }
             }
         }
 

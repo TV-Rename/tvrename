@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 
 // This builds the filenames to rename to, for any given episode (or multi-episode episode)
 
@@ -33,7 +34,9 @@ namespace TVRename
         {
             // for now, this maps onto the presets
             if ((n >= 0) && (n < 9))
+            {
                 return PRESETS[n];
+            }
 
             return DefaultStyle();
         }
@@ -75,9 +78,11 @@ namespace TVRename
             "{ShowImdb}"
         };
 
-        public string NameFor(ProcessedEpisode pe) => NameFor(pe,string.Empty,0);
+        [NotNull]
+        public string NameFor([NotNull] ProcessedEpisode pe) => NameFor(pe,string.Empty,0);
 
-        public string NameFor(ProcessedEpisode pe, string extension,int folderNameLength)
+        [NotNull]
+        public string NameFor([NotNull] ProcessedEpisode pe, [CanBeNull] string extension,int folderNameLength)
         {
             const int MAX_LENGTH = 260;
             int maxFilenameLength = MAX_LENGTH - 1 - folderNameLength - (extension?.Length ?? 5); //Assume a max 5 character extension
@@ -95,7 +100,7 @@ namespace TVRename
                 return r.Substring(0,Math.Min(maxFilenameLength, r.Length));
             }
 
-            bool needsSpacer = (!extension.StartsWith("."));
+            bool needsSpacer = (!extension.StartsWith(".", StringComparison.Ordinal));
 
             if (needsSpacer)
             {
@@ -105,10 +110,12 @@ namespace TVRename
             return r.Substring(0, Math.Min(r.Length, maxFilenameLength)) + extension;
         }
 
-        public string GetTargetEpisodeName(ShowItem show, Episode ep, TimeZoneInfo tz, bool dvdOrder)
+        [NotNull]
+        public string GetTargetEpisodeName([NotNull] ShowItem show, [NotNull] Episode ep, TimeZoneInfo tz, bool dvdOrder)
             => GetTargetEpisodeName(show, ep,  tz, dvdOrder, false);
 
-        private string GetTargetEpisodeName(ShowItem show, Episode ep, TimeZoneInfo tz, bool dvdOrder, bool urlEncode)
+        [NotNull]
+        private string GetTargetEpisodeName([NotNull] ShowItem show, [NotNull] Episode ep, TimeZoneInfo tz, bool dvdOrder, bool urlEncode)
         {
             //note this is for an Episode and not a ProcessedEpisode
             string name = StyleString;
@@ -140,10 +147,14 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Number}", "");
             name = name.ReplaceInsensitive("{Number:2}", "");
             name = name.ReplaceInsensitive("{Number:3}", "");
-            name = name.ReplaceInsensitive("{Year}", show.TheSeries().MinYear.ToString());
-            name = name.ReplaceInsensitive("{SeasonYear}", show.GetSeason(dvdOrder ? ep.DvdSeasonNumber : ep.AiredSeasonNumber).MinYear().ToString());
             name = name.ReplaceInsensitive("{Imdb}", ep.ImdbCode);
-            name = name.ReplaceInsensitive("{ShowImdb}", show.TheSeries().Imdb);
+
+            SeriesInfo si = show.TheSeries();
+            name = name.ReplaceInsensitive("{ShowImdb}", si?.Imdb??string.Empty);
+            name = name.ReplaceInsensitive("{Year}", si?.MinYear.ToString() ?? string.Empty);
+
+            Season selectedSeason = show.GetSeason(dvdOrder ? ep.DvdSeasonNumber : ep.AiredSeasonNumber);
+            name = name.ReplaceInsensitive("{SeasonYear}", selectedSeason != null ? selectedSeason.MinYear().ToString() : string.Empty);
 
             name = ReplaceDates(urlEncode, name, ep.GetAirDateDt(tz));
 
@@ -155,6 +166,7 @@ namespace TVRename
             return name.Trim();
         }
 
+        [NotNull]
         private static string ReplaceDates(bool urlEncode, string name, DateTime? airdt)
         {
             string ymd;
@@ -173,15 +185,20 @@ namespace TVRename
                 ymd = "----/--/--";
             }
             if (urlEncode)
+            {
                 ymd = Uri.EscapeDataString(ymd);
+            }
+
             name = name.ReplaceInsensitive("{YMDDate}", ymd);
 
             return name;
         }
 
-        public static string NameForNoExt(ProcessedEpisode pe, string styleString) => NameForNoExt(pe, styleString, false);
+        [NotNull]
+        public static string NameForNoExt([NotNull] ProcessedEpisode pe, string styleString) => NameForNoExt(pe, styleString, false);
 
-        public static string NameForNoExt(ProcessedEpisode pe, string styleString, bool urlEncode)
+        [NotNull]
+        public static string NameForNoExt([NotNull] ProcessedEpisode pe, string styleString, bool urlEncode)
         {
             string name = styleString;
 
@@ -215,19 +232,26 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Year}", pe.TheSeries.MinYear.ToString());
             name = name.ReplaceInsensitive("{SeasonYear}", pe.AppropriateSeason.MinYear().ToString());
             name = name.ReplaceInsensitive("{Imdb}", pe.ImdbCode);
-            name = name.ReplaceInsensitive("{ShowImdb}", pe.Show.TheSeries().Imdb);
+            name = name.ReplaceInsensitive("{ShowImdb}", pe.Show?.TheSeries()?.Imdb??string.Empty);
 
             name = ReplaceDates(urlEncode, name, pe.GetAirDateDt(false));
 
             string allEps = "";
             for (int i = pe.AppropriateEpNum; i <= pe.EpNum2; i++)
+            {
                 allEps += "E" + i.ToString("00");
+            }
+
             name = Regex.Replace(name, "{AllEpisodes}", allEps, RegexOptions.IgnoreCase);
 
             if (pe.EpNum2 == pe.AppropriateEpNum)
+            {
                 name = Regex.Replace(name, "([^\\\\])\\[.*?[^\\\\]\\]", "$1"); // remove optional parts
+            }
             else
+            {
                 name = Regex.Replace(name, "([^\\\\])\\[(.*?[^\\\\])\\]", "$1$2"); // remove just the brackets
+            }
 
             name = name.Replace("\\[", "[");
             name = name.Replace("\\]", "]");

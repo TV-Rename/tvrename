@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -19,10 +20,12 @@ namespace TVRename
         public override bool Active() =>TVSettings.Instance.ExportWTWRSS;
         protected override string Location() => TVSettings.Instance.ExportWTWRSSTo;
 
-        protected override bool Generate(System.IO.Stream str, List<ProcessedEpisode> elist)
+        protected override bool Generate(System.IO.Stream str, [CanBeNull] List<ProcessedEpisode> elist)
         {
             if (elist == null)
+            {
                 return false;
+            }
 
             try
             {
@@ -55,7 +58,10 @@ namespace TVRename
                         writer.WriteStartElement("pubDate");
                         DateTime? dt = ei.GetAirDateDt(true);
                         if (dt != null)
+                        {
                             writer.WriteValue(dt.Value.ToString("r"));
+                        }
+
                         writer.WriteEndElement(); //pubDate
                         
                         writer.WriteEndElement(); // item

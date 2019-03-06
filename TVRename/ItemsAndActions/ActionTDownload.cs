@@ -4,6 +4,9 @@
 // 
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
+using JetBrains.Annotations;
+
 namespace TVRename
 {
     using System;
@@ -28,7 +31,7 @@ namespace TVRename
             this.sizeBytes = sizeBytes;
         }
 
-        public ActionTDownload(RSSItem rss, string theFileNoExt, ProcessedEpisode pe, ItemMissing me)
+        public ActionTDownload([NotNull] RSSItem rss, string theFileNoExt, ProcessedEpisode pe, ItemMissing me)
         {
             SourceName = rss.Title;
             url = rss.URL;
@@ -40,6 +43,7 @@ namespace TVRename
         #region Action Members
 
         public override string ProgressText => SourceName;
+        [NotNull]
         public override string Name => "Get Torrent";
         public override long SizeOfWork => 1000000;
         public override string Produces => url;
@@ -72,7 +76,9 @@ namespace TVRename
                 }
                 
                 if (TVSettings.Instance.CheckqBitTorrent)
+                {
                     qBitTorrentFinder.StartTorrentDownload(url);
+                }
 
                 Done = true;
                 return true;
@@ -86,11 +92,15 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         private static string SaveDownloadedData(byte[] r,string name)
         {
             string saveTemp = Path.GetTempPath() + Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(name);
             if (new FileInfo(saveTemp).Extension.ToLower() != "torrent")
+            {
                 saveTemp += ".torrent";
+            }
+
             File.WriteAllBytes(saveTemp, r);
             return saveTemp;
         }
@@ -113,16 +123,23 @@ namespace TVRename
 
         #region Item Members
 
+        [CanBeNull]
         public override IgnoreItem Ignore => GenerateIgnore(theFileNoExt);
 
+        [CanBeNull]
         protected override string DestinationFolder => TargetFolder;
+        [CanBeNull]
         protected override string DestinationFile => TargetFilename;
+
         protected override string SourceDetails => $"{SourceName} ({(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())})";
 
+        [CanBeNull]
         public override string TargetFolder => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).DirectoryName;
 
+        [CanBeNull]
         private string TargetFilename => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).Name;
 
+        [NotNull]
         public override string ScanListViewGroup => "lvgActionDownloadRSS";
 
         public override int IconNumber => 6;

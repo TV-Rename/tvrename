@@ -17,6 +17,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 using NLog;
 
 // Helpful functions and classes
@@ -35,6 +36,7 @@ namespace TVRename
         /// </value>
         public static bool OnMono => Type.GetType("Mono.Runtime") != null;
 
+        [NotNull]
         public static string PrettyPrint(this TVSettings.ScanType st)
         {
             switch (st)
@@ -70,7 +72,7 @@ namespace TVRename
             list[secondIndex] = temp;
         }
         
-        public static void SafeInvoke(this Control uiElement, System.Action updater, bool forceSynchronous)
+        public static void SafeInvoke([NotNull] this Control uiElement, System.Action updater, bool forceSynchronous)
         {
             if (uiElement == null)
             {
@@ -105,6 +107,7 @@ namespace TVRename
         /// <value>
         /// The application display version.
         /// </value>
+        [NotNull]
         public static string DisplayVersion
         {
             get
@@ -117,6 +120,7 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         public static string Pad(int i)
         {
             if (i.ToString().Length > 1)
@@ -129,10 +133,13 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         public static string PrettyPrint(this DateTime? dt)
         {
             if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
+            {
                 return dt.Value.ToShortDateString();
+            }
 
             return string.Empty;
         }
@@ -149,9 +156,12 @@ namespace TVRename
         private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private static readonly DateTime WindowsStartDateTime = new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        public static bool SysOpen(string what, string arguments = null)
+        public static bool SysOpen([CanBeNull] string what, [CanBeNull] string arguments = null)
         {
-            if (string.IsNullOrWhiteSpace(what)) return false;
+            if (string.IsNullOrWhiteSpace(what))
+            {
+                return false;
+            }
 
             try
             {
@@ -177,10 +187,12 @@ namespace TVRename
 
         public static Color WarningColor() => Color.FromArgb(255, 210, 210);
 
-        public static bool Contains(string source, string toCheck, StringComparison comp) => source.IndexOf(toCheck, comp) >= 0;
+        public static bool Contains([NotNull] string source, [NotNull] string toCheck, StringComparison comp) => source.IndexOf(toCheck, comp) >= 0;
         
+        [NotNull]
         public static string TranslateColorToHtml(Color c) => $"#{c.R:X2}{c.G:X2}{c.B:X2}";
         
+        [NotNull]
         public static string SimplifyName(string n)
         {
             n = n.ToLower();
@@ -191,6 +203,7 @@ namespace TVRename
             return n.Trim();
         }
 
+        [NotNull]
         public static string CompareName( this string n)
         {
             //TODO consider whether merge with above
@@ -199,9 +212,10 @@ namespace TVRename
             return SimplifyName(n);
         }
 
-        public static string RemoveDot(this string s) => s.Replace(".", " ");
+        [NotNull]
+        public static string RemoveDot([NotNull] this string s) => s.Replace(".", " ");
 
-        public static string GetCommonStartString(List<string> testValues)
+        public static string GetCommonStartString([NotNull] List<string> testValues)
         {
             string root = string.Empty;
             bool first = true;
@@ -220,21 +234,29 @@ namespace TVRename
             return root;
         }
 
-        public static string TrimEnd(this string root, string ending)
+        [NotNull]
+        public static string TrimEnd([NotNull] this string root, [NotNull] string ending)
         {
-            if (!root.EndsWith(ending,StringComparison.OrdinalIgnoreCase)) return root;
+            if (!root.EndsWith(ending,StringComparison.OrdinalIgnoreCase))
+            {
+                return root;
+            }
 
             return root.Substring(0, root.Length - ending.Length);
         }
 
-        public static string RemoveAfter(this string root, string ending)
+        [NotNull]
+        public static string RemoveAfter([NotNull] this string root, [NotNull] string ending)
         {
             if (root.IndexOf(ending, StringComparison.OrdinalIgnoreCase) !=-1)
+            {
                 return   root.Substring(0, root.IndexOf(ending,StringComparison.OrdinalIgnoreCase));
+            }
+
             return root;
         }
 
-        public static string TrimEnd(this string root, string[] endings)
+        public static string TrimEnd(this string root, [NotNull] string[] endings)
         {
             string trimmedString = root;
             foreach (string ending in endings)
@@ -244,7 +266,8 @@ namespace TVRename
             return trimmedString;
         }
 
-        public static string GetCommonStartString(string first, string second)
+        [NotNull]
+        public static string GetCommonStartString([NotNull] string first, [NotNull] string second)
         {
             StringBuilder builder = new StringBuilder();
             
@@ -263,7 +286,8 @@ namespace TVRename
             return builder.ToString();
         }
 
-        public static string RemoveDiacritics(this string stIn)
+        [NotNull]
+        public static string RemoveDiacritics([NotNull] this string stIn)
         {
             // From http://blogs.msdn.com/b/michkap/archive/2007/05/14/2629747.aspx
             string stFormD = stIn.Normalize(NormalizationForm.FormD);
@@ -280,7 +304,7 @@ namespace TVRename
             return (sb.ToString().Normalize(NormalizationForm.FormC));
         }
 
-        public static bool ContainsOneOf(this string source, IEnumerable<string> terms)
+        public static bool ContainsOneOf([NotNull] this string source, [NotNull] IEnumerable<string> terms)
         {
             return terms.Any(source.Contains);
         }

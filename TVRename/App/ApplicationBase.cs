@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 using Microsoft.VisualBasic.ApplicationServices;
 using NLog;
 using NLog.Config;
@@ -27,7 +28,10 @@ namespace TVRename.App
             SplashScreen = new TVRenameSplash();
 
             CommandLineArgs clargs = new CommandLineArgs(CommandLineArgs);
-            if (clargs.Hide || !Environment.UserInteractive) SplashScreen.Visible  = false;
+            if (clargs.Hide || !Environment.UserInteractive)
+            {
+                SplashScreen.Visible  = false;
+            }
         }
 
         /// <summary>
@@ -38,8 +42,10 @@ namespace TVRename.App
         {
             CommandLineArgs clargs = new CommandLineArgs(CommandLineArgs);
             if (clargs.Hide || !Environment.UserInteractive)
+            {
                 SplashScreen.SafeInvoke(
                     () => ((TVRenameSplash)SplashScreen).Visible = false, true);
+            }
 
             // Update splash screen
             SplashScreen.SafeInvoke(
@@ -88,19 +94,36 @@ namespace TVRename.App
                 // Try loading settings file
                 doc = new TVDoc(settingsFile, clargs);
 
-                if (recover) doc.SetDirty();
+                if (recover)
+                {
+                    doc.SetDirty();
+                }
+
                 recover = !doc.LoadOk;
 
                 // Continue if correctly loaded
-                if (!recover) continue;
+                if (!recover)
+                {
+                    continue;
+                }
 
                 // Set recover message
                 recoverText = string.Empty;
-                if (!doc.LoadOk && !string.IsNullOrEmpty(doc.LoadErr)) recoverText = doc.LoadErr;
-                if (!TheTVDB.Instance.LoadOk && !string.IsNullOrEmpty(TheTVDB.Instance.LoadErr)) recoverText += $"{Environment.NewLine}{TheTVDB.Instance.LoadErr}";
+                if (!doc.LoadOk && !string.IsNullOrEmpty(doc.LoadErr))
+                {
+                    recoverText = doc.LoadErr;
+                }
+
+                if (!TheTVDB.Instance.LoadOk && !string.IsNullOrEmpty(TheTVDB.Instance.LoadErr))
+                {
+                    recoverText += $"{Environment.NewLine}{TheTVDB.Instance.LoadErr}";
+                }
             } while (recover);
 
-            if (TVSettings.Instance.mode == TVSettings.BetaMode.BetaToo || TVSettings.Instance.ShareLogs) SetupLogging();
+            if (TVSettings.Instance.mode == TVSettings.BetaMode.BetaToo || TVSettings.Instance.ShareLogs)
+            {
+                SetupLogging();
+            }
 
             ConvertSeriesTimeZones(doc, TheTVDB.Instance);
 
@@ -114,7 +137,7 @@ namespace TVRename.App
             MainForm = ui;
         }
 
-        private static void SetupCustomSettings(CommandLineArgs clargs)
+        private static void SetupCustomSettings([NotNull] CommandLineArgs clargs)
         {
             // Check arguments for custom settings path
             if (!string.IsNullOrEmpty(clargs.UserFilePath))
@@ -125,7 +148,10 @@ namespace TVRename.App
                 }
                 catch (Exception ex)
                 {
-                    if (!clargs.Unattended && !clargs.Hide && Environment.UserInteractive) MessageBox.Show($"Error while setting the User-Defined File Path:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    if (!clargs.Unattended && !clargs.Hide && Environment.UserInteractive)
+                    {
+                        MessageBox.Show($"Error while setting the User-Defined File Path:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
 
                     Logger.Error(ex, $"Error while setting the User-Defined File Path - EXITING: {clargs.UserFilePath}");
 
@@ -134,7 +160,7 @@ namespace TVRename.App
             }
         }
 
-        private static void ConvertSeriesTimeZones(TVDoc doc, TheTVDB tvdb)
+        private static void ConvertSeriesTimeZones([NotNull] TVDoc doc, TheTVDB tvdb)
         {
             //this is just to convert timezones in the TheTVDB into the TVDOC where they should be:
             //it should only do anything the first time it is run and then be entirely benign
@@ -144,9 +170,20 @@ namespace TVRename.App
             {
                 string newTimeZone = tvdb.GetSeries(si.TvdbCode)?.TempTimeZone;
 
-                if (string.IsNullOrWhiteSpace(newTimeZone)) continue;
-                if ( newTimeZone == TimeZoneHelper.DefaultTimeZone() ) continue;
-                if (si.ShowTimeZone != TimeZoneHelper.DefaultTimeZone()) continue;
+                if (string.IsNullOrWhiteSpace(newTimeZone))
+                {
+                    continue;
+                }
+
+                if ( newTimeZone == TimeZoneHelper.DefaultTimeZone() )
+                {
+                    continue;
+                }
+
+                if (si.ShowTimeZone != TimeZoneHelper.DefaultTimeZone())
+                {
+                    continue;
+                }
 
                 si.ShowTimeZone = newTimeZone;
                 doc.SetDirty();

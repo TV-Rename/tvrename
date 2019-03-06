@@ -5,6 +5,9 @@
 // 
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
+using JetBrains.Annotations;
+
 namespace TVRename
 {
     using System;
@@ -13,15 +16,14 @@ namespace TVRename
     public class ItemMissing : Item
     {
         public readonly string TheFileNoExt;
-        private readonly string folder;
         public readonly string Filename;
 
-        public ItemMissing(ProcessedEpisode pe, string whereItShouldBeFolder)
+        public ItemMissing([NotNull] ProcessedEpisode pe, [NotNull] string whereItShouldBeFolder)
         {
             Episode = pe;
             Filename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pe, null, whereItShouldBeFolder.Length));
             TheFileNoExt = whereItShouldBeFolder + System.IO.Path.DirectorySeparatorChar + Filename;
-            folder = whereItShouldBeFolder;
+            DestinationFolder = whereItShouldBeFolder;
         }
 
         #region Item Members
@@ -31,7 +33,7 @@ namespace TVRename
             return (o is ItemMissing missing) && (string.CompareOrdinal(missing.TheFileNoExt, TheFileNoExt) == 0);
         }
 
-        public override int Compare(Item o)
+        public override int Compare([CanBeNull] Item o)
         {
             //return (o == null || miss == null) ? 0 : (this.TheFileNoExt + this.Episode.Name).CompareTo(miss.TheFileNoExt + miss.Episode.Name);
             if (o == null || !(o is ItemMissing miss))
@@ -56,13 +58,17 @@ namespace TVRename
 
         #region Item Members
 
+        [CanBeNull]
         public override IgnoreItem Ignore => GenerateIgnore(TheFileNoExt);
         
-        protected override string DestinationFolder => folder;
+        protected override string DestinationFolder { get; }
+
         protected override string DestinationFile => Filename;
+        [NotNull]
         public override string ScanListViewGroup => "lvgActionMissing";
 
-        public override string TargetFolder => string.IsNullOrEmpty(TheFileNoExt) ? null : new FileInfo(TheFileNoExt).DirectoryName;
+        [NotNull]
+        public override string TargetFolder => new FileInfo(TheFileNoExt).DirectoryName;
 
         public override int IconNumber => 1;
 

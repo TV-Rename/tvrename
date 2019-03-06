@@ -103,7 +103,9 @@ namespace TVRename
             UpdateProg();
             timer1.Start();
             if (finished)
+            {
                 Close();
+            }
         }
 
         public void Done()

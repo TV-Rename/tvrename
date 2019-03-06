@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using JetBrains.Annotations;
+
 namespace TVRename
 {
     using System.Windows.Forms;
@@ -20,11 +22,13 @@ namespace TVRename
         public abstract int Compare(Item o); // for sorting items in scan list (ActionItemSorter)
         public abstract bool SameAs(Item o); // are we the same thing as that other one?
 
-        protected static IgnoreItem GenerateIgnore(string file)
+        [CanBeNull]
+        protected static IgnoreItem GenerateIgnore([CanBeNull] string file)
         {
             return string.IsNullOrEmpty(file) ? null : new IgnoreItem(file);
         }
 
+        [NotNull]
         public ListViewItem ScanListViewItem // to add to Scan ListView
         {
             get
@@ -39,7 +43,9 @@ namespace TVRename
                 lvi.SubItems.Add(SourceDetails);
 
                 if (InError)
+                {
                     lvi.BackColor = Helpers.WarningColor();
+                }
 
                 lvi.Tag = this;
 
@@ -47,22 +53,35 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         protected virtual string SeriesName => Episode?.TheSeries?.Name ?? string.Empty;
 
+        [NotNull]
         protected virtual string SeasonNumber
         {
             get
             {
-                if (Episode?.AppropriateSeasonNumber.ToString() == null) return string.Empty;
-                if (Episode?.AppropriateSeasonNumber == 0) return "Special";
+                if (Episode?.AppropriateSeasonNumber.ToString() == null)
+                {
+                    return string.Empty;
+                }
+
+                if (Episode?.AppropriateSeasonNumber == 0)
+                {
+                    return "Special";
+                }
+
                 return Episode?.AppropriateSeasonNumber.ToString();
             }
         }
 
+        [NotNull]
         protected virtual string EpisodeNumber => Episode?.NumsAsString() ?? string.Empty;
+        [NotNull]
         protected virtual string AirDate => Episode?.GetAirDateDt(true).PrettyPrint() ?? string.Empty;
         protected abstract string DestinationFolder { get; }
         protected abstract string DestinationFile { get; }
+        [NotNull]
         protected virtual string SourceDetails => string.Empty;
         protected virtual bool InError => false;
         public string ErrorText { get; protected set; } // Human-readable error message, for when Error is true

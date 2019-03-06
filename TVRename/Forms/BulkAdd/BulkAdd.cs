@@ -12,6 +12,7 @@ using System.Threading;
 using Alphaleonis.Win32.Filesystem;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using DaveChambers.FolderBrowserDialogEx;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -86,7 +87,9 @@ namespace TVRename
             lstFMMonitorFolders.Items.Clear();
             
             foreach (string folder in TVSettings.Instance.LibraryFolders)
+            {
                 lstFMMonitorFolders.Items.Add(folder);
+            }
 
             lstFMMonitorFolders.EndUpdate();
 
@@ -94,7 +97,9 @@ namespace TVRename
             lstFMIgnoreFolders.Items.Clear();
 
             foreach (string folder in TVSettings.Instance.IgnoreFolders)
+            {
                 lstFMIgnoreFolders.Items.Add(folder);
+            }
 
             lstFMIgnoreFolders.EndUpdate();
         }
@@ -174,13 +179,17 @@ namespace TVRename
         private void bnOpenMonFolder_Click(object sender, System.EventArgs e)
         {
             if (lstFMMonitorFolders.SelectedIndex != -1)
+            {
                 Helpers.SysOpen(TVSettings.Instance.LibraryFolders[lstFMMonitorFolders.SelectedIndex]);
+            }
         }
 
         private void bnOpenIgFolder_Click(object sender, System.EventArgs e)
         {
             if (lstFMIgnoreFolders.SelectedIndex != -1)
+            {
                 Helpers.SysOpen(TVSettings.Instance.LibraryFolders[lstFMIgnoreFolders.SelectedIndex]);
+            }
         }
 
         private void lstFMMonitorFolders_DoubleClick(object sender, System.EventArgs e)
@@ -224,22 +233,22 @@ namespace TVRename
             FmpPercent = percent;
         }
 
-        private static void lstFMMonitorFolders_DragOver(object _, DragEventArgs e)
+        private static void lstFMMonitorFolders_DragOver(object _, [NotNull] DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private static void lstFMIgnoreFolders_DragOver(object _, DragEventArgs e)
+        private static void lstFMIgnoreFolders_DragOver(object _, [NotNull] DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void lstFMMonitorFolders_DragDrop(object _, DragEventArgs e)
+        private void lstFMMonitorFolders_DragDrop(object _, [NotNull] DragEventArgs e)
         {
             AddDraggedFiles(e, TVSettings.Instance.LibraryFolders);
         }
 
-        private void lvFMNewShows_DragDrop(object _, DragEventArgs e)
+        private void lvFMNewShows_DragDrop(object _, [NotNull] DragEventArgs e)
         {
             string[] files = (string[])(e.Data.GetData(DataFormats.FileDrop));
             foreach (string path in files)
@@ -260,12 +269,12 @@ namespace TVRename
             }
         }
 
-        private void lstFMIgnoreFolders_DragDrop(object _, DragEventArgs e)
+        private void lstFMIgnoreFolders_DragDrop(object _, [NotNull] DragEventArgs e)
         {
             AddDraggedFiles(e, TVSettings.Instance.IgnoreFolders);
         }
 
-        private void AddDraggedFiles(DragEventArgs e, List<string> strings)
+        private void AddDraggedFiles([NotNull] DragEventArgs e, List<string> strings)
         {
             string[] files = (string[])(e.Data.GetData(DataFormats.FileDrop));
             foreach (string path in files)
@@ -274,7 +283,9 @@ namespace TVRename
                 {
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
+                    {
                         strings.Add(path.ToLower());
+                    }
                 }
                 catch
                 {
@@ -285,22 +296,28 @@ namespace TVRename
             FillFolderStringLists();
         }
 
-        private void lstFMMonitorFolders_KeyDown(object _, KeyEventArgs e)
+        private void lstFMMonitorFolders_KeyDown(object _, [NotNull] KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
+            {
                 bnRemoveMonFolder_Click(null, null);
+            }
         }
 
-        private void lstFMIgnoreFolders_KeyDown(object _, KeyEventArgs e)
+        private void lstFMIgnoreFolders_KeyDown(object _, [NotNull] KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
+            {
                 bnRemoveIgFolder_Click(null, null);
+            }
         }
 
         private void bnFullAuto_Click(object _, System.EventArgs e)
         {
             if (engine.AddItems.Count == 0)
+            {
                 return;
+            }
 
             CancellationTokenSource cts = new CancellationTokenSource();
             TokenSource = cts;
@@ -324,12 +341,16 @@ namespace TVRename
                 FmpPercent = 100 * n++ / n2;
 
                if (cts.IsCancellationRequested)
+               {
                    break;
+               }
 
-                if (ai.CodeKnown)
-                    continue;
+               if (ai.CodeKnown)
+               {
+                   continue;
+               }
 
-                BulkAddManager.GuessShowItem(ai,mDoc.Library,true);
+               BulkAddManager.GuessShowItem(ai,mDoc.Library,true);
                 
                 // update our display
                 UpdateListItem(ai, true);
@@ -342,7 +363,10 @@ namespace TVRename
         private void bnRemoveNewFolder_Click(object _, System.EventArgs e)
         {
             if (lvFMNewShows.SelectedItems.Count == 0)
+            {
                 return;
+            }
+
             foreach (ListViewItem lvi in lvFMNewShows.SelectedItems)
             {
                 FoundFolder ai = (FoundFolder)(lvi.Tag);
@@ -354,11 +378,15 @@ namespace TVRename
         private void bnIgnoreNewFolder_Click(object _, System.EventArgs e)
         {
             if (lvFMNewShows.SelectedItems.Count == 0)
+            {
                 return;
+            }
 
             DialogResult res = MessageBox.Show("Add selected folders to the 'Bulk Add Shows' ignore folders list?", "Bulk Add Shows", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (res != DialogResult.Yes)
+            {
                 return;
+            }
 
             foreach (ListViewItem lvi in lvFMNewShows.SelectedItems)
             {
@@ -371,12 +399,12 @@ namespace TVRename
             FillFolderStringLists();
         }
 
-        private void lvFMNewShows_DragOver(object _, DragEventArgs e)
+        private void lvFMNewShows_DragOver(object _, [NotNull] DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void lvFMNewShows_KeyDown(object sender, KeyEventArgs e)
+        private void lvFMNewShows_KeyDown(object sender, [NotNull] KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
@@ -403,7 +431,9 @@ namespace TVRename
             if (keepSel)
             {
                 foreach (int i in lvFMNewShows.SelectedIndices)
+                {
                     sel.Add(i);
+                }
             }
 
             lvFMNewShows.BeginUpdate();
@@ -422,7 +452,9 @@ namespace TVRename
                 foreach (int i in sel)
                 {
                     if (i < lvFMNewShows.Items.Count)
+                    {
                         lvFMNewShows.Items[i].Selected = true;
+                    }
                 }
             }
 
@@ -430,7 +462,7 @@ namespace TVRename
             lvFMNewShows.Update();
         }
 
-        private void UpdateResultEntry(FoundFolder ai, ListViewItem lvi)
+        private void UpdateResultEntry([NotNull] FoundFolder ai, [NotNull] ListViewItem lvi)
         {
             lvi.SubItems.Clear();
             lvi.Text = ai.Folder.FullName;
@@ -446,12 +478,16 @@ namespace TVRename
             foreach (ListViewItem lvi in lvFMNewShows.Items)
             {
                 if (lvi.Tag != ai) // haven't found the entry yet
+                {
                     continue;
+                }
 
                 UpdateResultEntry(ai, lvi);
 
                 if (makevis)
+                {
                     lvi.EnsureVisible();
+                }
 
                 break;
             }
@@ -463,7 +499,9 @@ namespace TVRename
             {
                 DialogResult res = MessageBox.Show("Add identified shows to \"My Shows\"?", "Bulk Add Shows", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (res != DialogResult.Yes)
+                {
                     return;
+                }
 
                 engine.AddAllToMyShows();
             }
@@ -474,15 +512,21 @@ namespace TVRename
         private void bnVisitTVcom_Click(object sender, System.EventArgs e)
         {
             if (lvFMNewShows.SelectedItems.Count == 0)
+            {
                 return;
+            }
 
             FoundFolder fme = lvFMNewShows.SelectedItems[0].Tag as FoundFolder;
             if (fme == null)
+            {
                 return;
+            }
 
             int code = fme.TVDBCode;
             if (code != -1)
+            {
                 Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(code, -1, false));
+            }
         }
 
         private void bnCheck2_Click(object sender, System.EventArgs e)
@@ -498,18 +542,25 @@ namespace TVRename
         private void bnEditEntry_Click(object sender, System.EventArgs e)
         {
             if (lvFMNewShows.SelectedItems.Count == 0)
+            {
                 return;
+            }
 
             FoundFolder fme = lvFMNewShows.SelectedItems[0].Tag as FoundFolder;
-            EditEntry(fme);
-            UpdateListItem(fme, true);
+            if (fme != null)
+            {
+                EditEntry(fme);
+                UpdateListItem(fme, true);
+            }
         }
 
-        private void EditEntry(FoundFolder fme)
+        private void EditEntry([NotNull] FoundFolder fme)
         {
             FolderMonitorEdit ed = new FolderMonitorEdit(fme);
             if ((ed.ShowDialog() != DialogResult.OK )|| (ed.Code == -1))
+            {
                 return;
+            }
 
             fme.TVDBCode = ed.Code;
         }

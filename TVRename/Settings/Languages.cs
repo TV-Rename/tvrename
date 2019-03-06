@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Serialization;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -14,6 +15,7 @@ namespace TVRename
     {
         [XmlIgnoreAttribute] private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
+        [CanBeNull]
         public static Languages Load()
         {
             string fn = PathManager.LanguagesFile.FullName;
@@ -26,10 +28,13 @@ namespace TVRename
             SaveToFile(PathManager.LanguagesFile.FullName);
         }
 
+        [CanBeNull]
         private static Languages LoadFrom(string filename)
         {
             if (!File.Exists(filename))
+            {
                 return null;
+            }
 
             XmlReaderSettings settings = new XmlReaderSettings { IgnoreComments = true, IgnoreWhitespace = true };
             Languages sc;
@@ -52,7 +57,7 @@ namespace TVRename
             return sc;
         }
 
-        private void SaveToFile(string toFile)
+        private void SaveToFile([NotNull] string toFile)
         {
             System.IO.DirectoryInfo di = new System.IO.FileInfo(toFile).Directory;
             if (di == null)
@@ -62,7 +67,9 @@ namespace TVRename
             }
 
             if (!di.Exists)
+            {
                 di.Create();
+            }
 
             XmlWriterSettings settings = new XmlWriterSettings { Indent = true, NewLineOnAttributes = true };
             using (XmlWriter writer = XmlWriter.Create(toFile, settings))
@@ -72,30 +79,42 @@ namespace TVRename
             }
         }
 
+        [CanBeNull]
         public Language GetLanguageFromCode(string languageAbbreviation)
         {
             foreach (Language l in this)
             {
-                if (l.Abbreviation == languageAbbreviation) return l;
+                if (l.Abbreviation == languageAbbreviation)
+                {
+                    return l;
+                }
             }
             return null;
         }
 
+        [CanBeNull]
         public Language GetLanguageFromLocalName(string language)
         {
             foreach (Language l in this)
             {
-                if (l.Name == language) return l;
+                if (l.Name == language)
+                {
+                    return l;
+                }
             }
             return null;
         }
 
         // ReSharper disable once UnusedMember.Global
+        [CanBeNull]
         public Language GetLanguageFromId(int languageId)
         {
             foreach (Language l in this)
             {
-                if (l.Id == languageId) return l;
+                if (l.Id == languageId)
+                {
+                    return l;
+                }
             }
             return null;
         }

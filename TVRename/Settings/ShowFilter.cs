@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -20,8 +21,20 @@ namespace TVRename
         public string ShowNetwork { get; set; }
         public string ShowRating { get; set; }
 
-        public bool Filter(ShowItem show)
+        public bool Filter([NotNull] ShowItem show)
         {
+            bool IsNetworkOk(ShowItem showItem)
+            {
+                SeriesInfo seriesInfo = showItem.TheSeries();
+                return seriesInfo == null || seriesInfo.Network.Equals(ShowNetwork);
+            }
+
+            bool IsRatingOk(ShowItem showItem)
+            {
+                SeriesInfo seriesInfo = showItem.TheSeries();
+                return seriesInfo == null || seriesInfo.ContentRating.Equals(ShowRating);
+            }
+
             //Filter on show name
             bool isNameOk = (ShowName == null) || show.ShowName.Contains(ShowName, StringComparison.OrdinalIgnoreCase);
 
@@ -29,10 +42,10 @@ namespace TVRename
             bool isStatusOk = (ShowStatus == null) || show.ShowStatus.Equals(ShowStatus);
 
             //Filter on show network
-            bool isNetworkOk = (ShowNetwork == null) || (show.TheSeries() == null) || show.TheSeries().Network.Equals(ShowNetwork);
+            bool isNetworkOk = (ShowNetwork == null) || IsNetworkOk(show);
 
             //Filter on show rating
-            bool isRatingOk = (ShowRating == null) || (show.TheSeries() == null) || show.TheSeries().ContentRating.Equals(ShowRating);
+            bool isRatingOk = ShowRating == null || IsRatingOk(show);
 
             //Filter on show genres
             bool areGenresIgnored = (Genres.Count == 0);
@@ -41,10 +54,8 @@ namespace TVRename
             return isNameOk && isStatusOk && isNetworkOk && isRatingOk && (areGenresIgnored || doAnyGenresMatch);
         }
 
-        private bool FindMatchingGenres(ShowItem show)
+        private bool FindMatchingGenres([NotNull] ShowItem show)
         {
-            if (show.Genres == null) return false;
-
             return show.Genres.Any(showGenre => Genres.Contains(showGenre));
         }
     }

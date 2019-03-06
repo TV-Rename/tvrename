@@ -14,15 +14,21 @@ namespace TVRename
 
         public override ItemList ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
         {
-            if (!TVSettings.Instance.SeriesJpg) return null;
+            if (!TVSettings.Instance.SeriesJpg)
+            {
+                return null;
+            }
 
             ItemList theActionList = new ItemList();
             FileInfo fi = FileHelper.FileInFolder(folder, DEFAULT_FILE_NAME);
             if (forceRefresh ||(!doneJpg.Contains(fi.FullName) && !fi.Exists))
             {
-                string bannerPath = si.TheSeries().GetSeasonBannerPath(snum);
+                string bannerPath = si.TheSeries()?.GetSeasonBannerPath(snum);
                 if (!string.IsNullOrEmpty(bannerPath))
+                {
                     theActionList.Add(new ActionDownloadImage(si, null, fi, bannerPath, TVSettings.Instance.ShrinkLargeMede8erImages));
+                }
+
                 doneJpg.Add(fi.FullName);
             }
             return theActionList;

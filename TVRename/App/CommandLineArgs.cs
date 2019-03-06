@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -37,7 +38,7 @@ namespace TVRename
         /// Initializes a new instance populated with values parsed from the command line arguments.
         /// </summary>
         /// <param name="args">The command line arguments.</param>
-        public CommandLineArgs(ReadOnlyCollection<string> args)
+        public CommandLineArgs([NotNull] ReadOnlyCollection<string> args)
         {
             Help = args.Contains("/?", StringComparer.OrdinalIgnoreCase);
             Hide = args.Contains("/hide", StringComparer.OrdinalIgnoreCase);
@@ -66,6 +67,7 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         public static string Helptext()
         {
             StringBuilder output = new StringBuilder();

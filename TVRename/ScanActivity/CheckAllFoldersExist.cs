@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -8,12 +9,15 @@ namespace TVRename
     {
         public CheckAllFoldersExist(TVDoc doc) : base(doc) {}
 
+        [NotNull]
         protected override string Checkname() => "Checked All Folders Exist";
 
-        protected override void Check(ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+        protected override void Check([NotNull] ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
             if (!si.DoMissingCheck && !si.DoRename)
+            {
                 return; // skip
+            }
 
             Dictionary<int, List<string>> flocs = si.AllProposedFolderLocations();
 
@@ -25,18 +29,26 @@ namespace TVRename
                 // throw Exception if user cancels
 
                 if (si.IgnoreSeasons.Contains(snum))
+                {
                     continue; // ignore this season
+                }
 
                 if ((snum == 0) && (si.CountSpecials))
+                {
                     continue; // no specials season, they're merged into the seasons themselves
+                }
 
                 if ((snum == 0) && TVSettings.Instance.IgnoreAllSpecials)
+                {
                     continue;
+                }
 
                 List<string> folders = new List<string>();
 
                 if (flocs.ContainsKey(snum))
+                {
                     folders = flocs[snum];
+                }
 
                 //if ((folders.Count == 0) && (!si.AutoAddNewSeasons()))
                     //continue; // no folders defined or found, autoadd off, so onto the next
@@ -83,7 +95,10 @@ namespace TVRename
                         }
                     }
 
-                    if (di != null && di.Exists) continue;
+                    if (di != null && di.Exists)
+                    {
+                        continue;
+                    }
 
                     string sn = si.ShowName;
                     string text = snum + " of " + si.MaxSeason();
@@ -140,9 +155,13 @@ namespace TVRename
                         break;
                     }
                     else if (whatToDo == FaResult.kfaIgnoreOnce)
+                    {
                         break;
+                    }
                     else if (whatToDo == FaResult.kfaRetry)
+                    {
                         goAgain = true;
+                    }
                     else if (whatToDo == FaResult.kfaDifferentFolder)
                     {
                         folder = otherFolder;
@@ -151,7 +170,9 @@ namespace TVRename
                         if (di.Exists && (!string.Equals(si.AutoFolderNameForSeason(snum), folder, StringComparison.CurrentCultureIgnoreCase)))
                         {
                             if (!si.ManualFolderLocations.ContainsKey(snum))
+                            {
                                 si.ManualFolderLocations[snum] = new List<string>();
+                            }
 
                             si.ManualFolderLocations[snum].Add(folder);
                             Doc.SetDirty();
@@ -172,7 +193,9 @@ namespace TVRename
             }
 
             if (Doc.Args.Hide || !Environment.UserInteractive)
+            {
                 return FaResult.kfaIgnoreOnce; // default in /hide mode is to ignore
+            }
 
             return FaResult.kfaNotSet;
         }

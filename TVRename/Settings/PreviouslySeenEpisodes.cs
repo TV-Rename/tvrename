@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -18,9 +19,13 @@ namespace TVRename
         {
         }
 
-        public PreviouslySeenEpisodes(XElement xml)
+        public PreviouslySeenEpisodes([CanBeNull] XElement xml)
         {
-            if (xml == null) return;
+            if (xml == null)
+            {
+                return;
+            }
+
             foreach (XElement n in xml.Descendants("Episode"))
             {
                 EnsureAdded(XmlConvert.ToInt32(n.Value));
@@ -29,13 +34,17 @@ namespace TVRename
 
         private void EnsureAdded(int epId)
         {
-            if (Contains(epId)) return;
+            if (Contains(epId))
+            {
+                return;
+            }
+
             Add(epId);
         }
 
-        public void EnsureAdded(ProcessedEpisode dbep) => EnsureAdded(dbep.EpisodeId);
+        public void EnsureAdded([NotNull] ProcessedEpisode dbep) => EnsureAdded(dbep.EpisodeId);
 
-        public bool Includes(Item item)
+        public bool Includes([NotNull] Item item)
         {
             return item.Episode != null && Contains(item.Episode.EpisodeId);
         }

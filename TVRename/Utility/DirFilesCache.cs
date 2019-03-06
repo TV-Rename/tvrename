@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 // Will cache the file lists of contents of single directories.  Will return the cached
 // data, or read cache and return it.
@@ -20,11 +21,11 @@ namespace TVRename
         private readonly Dictionary<string, FileInfo[]> cache = new Dictionary<string, FileInfo[]>();
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public FileInfo[] GetFilesIncludeSubDirs(string folder) => Get(folder, true);
+        public FileInfo[] GetFilesIncludeSubDirs([NotNull] string folder) => Get(folder, true);
 
-        public FileInfo[] GetFiles(string folder) => Get(folder, false);
+        public FileInfo[] GetFiles([NotNull] string folder) => Get(folder, false);
 
-        private FileInfo[] Get(string folder,bool includeSubs)
+        private FileInfo[] Get([NotNull] string folder,bool includeSubs)
         {
             if (cache.ContainsKey(folder))
             {

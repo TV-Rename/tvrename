@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -28,7 +29,7 @@ namespace TVRename
         private readonly ShowItem show;
         private readonly int mSeasonNumber;
 
-        public EditRules(ShowItem si, List<ProcessedEpisode> originalEpList, int seasonNumber, CustomEpisodeName style)
+        public EditRules([NotNull] ShowItem si, List<ProcessedEpisode> originalEpList, int seasonNumber, CustomEpisodeName style)
         {
             nameStyle = style;
             InitializeComponent();
@@ -38,9 +39,13 @@ namespace TVRename
             mSeasonNumber = seasonNumber;
 
             if (si.SeasonRules.ContainsKey(seasonNumber))
+            {
                 workingRuleSet = new List<ShowRule>(si.SeasonRules[seasonNumber]);
+            }
             else
+            {
                 workingRuleSet = new List<ShowRule>();
+            }
 
             txtShowName.Text = si.ShowName;
             txtSeasonNumber.Text = seasonNumber.ToString();
@@ -55,7 +60,9 @@ namespace TVRename
 
             bool res = ar.ShowDialog() == DialogResult.OK;
             if (res)
+            {
                 workingRuleSet.Add(sr);
+            }
 
             FillRuleList(false, 0);
         }
@@ -66,7 +73,9 @@ namespace TVRename
             if (keepSel)
             {
                 foreach (int i in lvRuleList.SelectedIndices)
+                {
                     sel.Add(i);
+                }
             }
 
             lvRuleList.Items.Clear();
@@ -89,7 +98,9 @@ namespace TVRename
                     {
                         int n = i + adj;
                         if ((n >= 0) && (n < lvRuleList.Items.Count))
+                        {
                             lvRuleList.Items[n].Selected = true;
+                        }
                     }
                 }
             }
@@ -100,7 +111,10 @@ namespace TVRename
         private void bnEdit_Click(object sender, System.EventArgs e)
         {
             if (lvRuleList.SelectedItems.Count == 0)
+            {
                 return;
+            }
+
             ShowRule sr = (ShowRule) (lvRuleList.SelectedItems[0].Tag);
             AddModifyRule ar = new AddModifyRule(sr,show.GetSeason(mSeasonNumber),show.DvdOrder);
             ar.ShowDialog(); // modifies rule in-place if OK'd
@@ -110,7 +124,10 @@ namespace TVRename
         private void bnDelRule_Click(object sender, System.EventArgs e)
         {
             if (lvRuleList.SelectedItems.Count == 0)
+            {
                 return;
+            }
+
             ShowRule sr = (ShowRule) (lvRuleList.SelectedItems[0].Tag);
 
             workingRuleSet.Remove(sr);
@@ -120,10 +137,15 @@ namespace TVRename
         private void bnRuleUp_Click(object sender, System.EventArgs e)
         {
             if (lvRuleList.SelectedIndices.Count != 1)
+            {
                 return;
+            }
+
             int p = lvRuleList.SelectedIndices[0];
             if (p <= 0)
+            {
                 return;
+            }
 
             ShowRule sr = workingRuleSet[p];
             workingRuleSet.RemoveAt(p);
@@ -135,10 +157,15 @@ namespace TVRename
         private void bnRuleDown_Click(object sender, System.EventArgs e)
         {
             if (lvRuleList.SelectedIndices.Count != 1)
+            {
                 return;
+            }
+
             int p = lvRuleList.SelectedIndices[0];
             if (p >= (lvRuleList.Items.Count - 1))
+            {
                 return;
+            }
 
             ShowRule sr = workingRuleSet[p];
             workingRuleSet.RemoveAt(p);
@@ -169,7 +196,9 @@ namespace TVRename
             if (mOriginalEps != null)
             {
                 foreach (ProcessedEpisode pe in mOriginalEps)
+                {
                     pel.Add(new ProcessedEpisode(pe));
+                }
 
                 ShowLibrary.ApplyRules(pel, workingRuleSet, show);
             }
@@ -177,7 +206,10 @@ namespace TVRename
             lbEpsPreview.BeginUpdate();
             lbEpsPreview.Items.Clear();
             foreach (ProcessedEpisode pe in pel)
+            {
                 lbEpsPreview.Items.Add(nameStyle.NameFor(pe));
+            }
+
             lbEpsPreview.EndUpdate();
         }
     }

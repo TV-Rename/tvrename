@@ -46,7 +46,10 @@ namespace TVRename
         protected override void OnItemSelectionChanged(ListViewItemSelectionChangedEventArgs e)
         {
             if (onMouseDown)
+            {
                 checkEnable = false;
+            }
+
             base.OnItemSelectionChanged(e);
         }
 
@@ -75,15 +78,21 @@ namespace TVRename
         protected override void OnKeyDown(KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Space)
+            {
                 keyCheck = true;
+            }
             else
+            {
                 base.OnKeyDown(e);
+            }
         }
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Space)
+            {
                 keyCheck = false;
+            }
         }
 
         // The 'TopItem' function doesn't work in a ListView if groups are enabled. This is meant to be a workaround.

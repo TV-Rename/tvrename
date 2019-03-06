@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace TVRename
@@ -19,6 +20,7 @@ namespace TVRename
     {
         public qBitTorrentFinder(TVDoc i) : base(i) { }
         public override bool Active() => TVSettings.Instance.CheckqBitTorrent;
+        [NotNull]
         protected override string Checkname() => "Looked in the qBitTorrent for the missing files to see if they are being downloaded";
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
@@ -27,6 +29,7 @@ namespace TVRename
             SearchForAppropriateDownloads(downloading, DownloadApp.qBitTorrent,settings);
         }
 
+        [NotNull]
         private static List<TorrentEntry> GetqBitTorrentDownloads()
         {
             List < TorrentEntry >  ret = new List<TorrentEntry>();
@@ -35,7 +38,9 @@ namespace TVRename
             string host = TVSettings.Instance.qBitTorrentHost;
             string port = TVSettings.Instance.qBitTorrentPort;
             if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(port))
+            {
                 return ret;
+            }
 
             string url = $"http://{host}:{port}/query/";
             string settingsString = null;

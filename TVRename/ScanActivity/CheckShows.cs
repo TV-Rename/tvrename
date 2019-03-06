@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -16,6 +17,7 @@ namespace TVRename
     {
         public CheckShows(TVDoc doc) : base(doc) {}
 
+        [NotNull]
         protected override string Checkname() => "Looked in the library to find missing files";
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
@@ -23,10 +25,14 @@ namespace TVRename
             MDoc.TheActionList = new ItemList();
 
             if (TVSettings.Instance.RenameCheck)
+            {
                 MDoc.Stats().RenameChecksDone++;
+            }
 
             if (TVSettings.Instance.MissingCheck)
+            {
                 MDoc.Stats().MissingChecksDone++;
+            }
 
             if (settings.Type == TVSettings.ScanType.Full)
             {
@@ -43,7 +49,9 @@ namespace TVRename
             {
                 UpdateStatus(c++ ,showList.Count, si.ShowName);
                 if (settings.Token.IsCancellationRequested)
+                {
                     return;
+                }
 
                 LOGGER.Info("Rename and missing check: " + si.ShowName);
                 try

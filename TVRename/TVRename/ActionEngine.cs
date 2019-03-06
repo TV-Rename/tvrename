@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -56,7 +57,9 @@ namespace TVRename
         private void ProcessSingleAction(object infoIn)
         {
             if (!(infoIn is ProcessActionInfo info))
+            {
                 return;
+            }
 
             try
             {
@@ -90,7 +93,9 @@ namespace TVRename
                 foreach (Thread t in actionWorkers)
                 {
                     if (t.IsAlive)
+                    {
                         t.Join();
+                    }
                 }
             }
 
@@ -102,7 +107,7 @@ namespace TVRename
         /// </summary>
         /// <param name="theList">An ItemList to be processed.</param>
         /// <param name="showUi">Whether or not we should display a UI to inform the user about progress.</param>
-        public void DoActions(ItemList theList, bool showUi)
+        public void DoActions([CanBeNull] ItemList theList, bool showUi)
         {
             if (theList == null)
             {
@@ -122,7 +127,9 @@ namespace TVRename
 
             CopyMoveProgress cmp = null;
             if (showUi)
+            {
                 cmp = new CopyMoveProgress(this, queues);
+            }
 
             actionProcessorThread = new Thread(ActionProcessor)
             {
@@ -132,8 +139,10 @@ namespace TVRename
             actionProcessorThread.Start(queues);
 
             if ((cmp != null) && (cmp.ShowDialog() == DialogResult.Cancel))
+            {
                 actionProcessorThread.Abort();
-            
+            }
+
             actionProcessorThread.Join();
 
             theList.RemoveAll(x => (x is Action action) && action.Done && !action.Error);
@@ -175,7 +184,9 @@ namespace TVRename
                 catch (ThreadAbortException)
                 {
                     foreach (Thread t in actionWorkers)
+                    {
                         t?.Abort();
+                    }
 
                     WaitForAllActionThreadsAndTidyUp();
                 }
@@ -186,8 +197,12 @@ namespace TVRename
             {
                 Logger.Fatal(e, "Unhandled Exception in ActionProcessor");
                 if (!(actionWorkers is null))
+                {
                     foreach (Thread t in actionWorkers)
+                    {
                         t?.Abort();
+                    }
+                }
             }
 
             WaitForAllActionThreadsAndTidyUp();
@@ -198,20 +213,28 @@ namespace TVRename
             while (true)
             {
                 while (actionPause)
+                {
                     Thread.Sleep(100);
+                }
 
                 (bool allDone, ActionQueue q) = ReviewQueues(queues);
 
                 if ((q is null) && (allDone))
+                {
                     break; // all done!
+                }
 
                 if (q is null)
+                {
                     continue; // no semaphores available yet, try again for one
+                }
 
                 Action act = q.Actions[q.ActionPosition++];
 
                 if (act == null)
+                {
                     continue;
+                }
 
                 if (!act.Done)
                 {
@@ -219,13 +242,15 @@ namespace TVRename
                 }
 
                 while (actionStarting) // wait for thread to get the semaphore
+                {
                     Thread.Sleep(10); // allow the other thread a chance to run and grab
+                }
 
                 TidyDeadWorkers();
             }
         }
 
-        private (bool,ActionQueue) ReviewQueues(ActionQueue[] queues)
+        private (bool,ActionQueue) ReviewQueues([CanBeNull] ActionQueue[] queues)
         {
             // look through the list of semaphores to see if there is one waiting for some work to do
             if (queues is null)
@@ -236,9 +261,15 @@ namespace TVRename
             bool allDone = true;
             foreach (ActionQueue currentQueue in queues)
             {
-                if (currentQueue?.Actions is null) continue;
+                if (currentQueue?.Actions is null)
+                {
+                    continue;
+                }
 
-                if (currentQueue.ActionPosition >= currentQueue.Actions.Count) continue;
+                if (currentQueue.ActionPosition >= currentQueue.Actions.Count)
+                {
+                    continue;
+                }
 
                 // something to do in this queue, and semaphore is available
                 allDone = false;
@@ -252,9 +283,12 @@ namespace TVRename
             return (allDone,null);
         }
 
-        private void StartThread(ProcessActionInfo pai)
+        private void StartThread([NotNull] ProcessActionInfo pai)
         {
-            if (pai == null) throw new ArgumentNullException(nameof(pai));
+            if (pai == null)
+            {
+                throw new ArgumentNullException(nameof(pai));
+            }
 
             Thread t = new Thread(ProcessSingleAction)
             {
@@ -279,19 +313,28 @@ namespace TVRename
 
         private void TidyDeadWorkers()
         {
-            if (actionWorkers is null) return;
+            if (actionWorkers is null)
+            {
+                return;
+            }
 
             // tidy up any finished workers
             for (int i = actionWorkers.Count - 1; i >= 0; i--)
             {
-                if (actionWorkers[i] is null) continue;
+                if (actionWorkers[i] is null)
+                {
+                    continue;
+                }
 
                 if (!actionWorkers[i].IsAlive)
+                {
                     actionWorkers.RemoveAt(i); // remove dead worker
+                }
             }
         }
 
-        private static ActionQueue[] ActionProcessorMakeQueues(ItemList theList)
+        [NotNull]
+        private static ActionQueue[] ActionProcessorMakeQueues([NotNull] ItemList theList)
         {
             // Take a single list
             // Return an array of "ActionQueue" items.
@@ -313,18 +356,30 @@ namespace TVRename
             foreach (Item sli in theList)
             {
                 if (!(sli is Action action))
+                {
                     continue; // skip non-actions
+                }
 
                 if (action is ActionWriteMetadata) // base interface that all metadata actions are derived from
+                {
                     queues[2].Actions.Add(action);
+                }
                 else if ((action is ActionDownloadImage) || (action is ActionTDownload))
+                {
                     queues[3].Actions.Add(action);
+                }
                 else if (action is ActionCopyMoveRename rename)
+                {
                     queues[rename.QuickOperation() ? 1 : 0].Actions.Add(rename);
+                }
                 else if ((action is ActionDeleteFile) || (action is ActionDeleteDirectory))
+                {
                     queues[1].Actions.Add(action);
+                }
                 else if (action is ActionDateTouch)
+                {
                     queues[0].Actions.Add(action); // add them after the slow move/reanems (ie last)
+                }
                 else
                 {
                     Logger.Fatal("No action type found for {0}, Please follow up with a developer.", action.GetType());

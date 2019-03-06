@@ -27,8 +27,16 @@ namespace TVRename
 
         public int Compare(object x, object y)
         {
-            if (!(x is ListViewItem lvix)) throw new InvalidOperationException();
-            if (!(y is ListViewItem lviy)) throw new InvalidOperationException();
+            if (!(x is ListViewItem lvix))
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (!(y is ListViewItem lviy))
+            {
+                throw new InvalidOperationException();
+            }
+
             return string.CompareOrdinal( lvix.SubItems[col].Text, lviy.SubItems[col].Text);
         }
         #endregion

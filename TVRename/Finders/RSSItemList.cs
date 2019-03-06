@@ -13,6 +13,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 using NLog;
 
 namespace TVRename
@@ -23,7 +24,7 @@ namespace TVRename
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         // ReSharper disable once InconsistentNaming
-        public bool DownloadRSS(string url, List<TVSettings.FilenameProcessorRE> rexps)
+        public bool DownloadRSS([NotNull] string url, List<TVSettings.FilenameProcessorRE> rexps)
         {
             regxps = rexps;
             string response = null;
@@ -44,7 +45,9 @@ namespace TVRename
                 }
 
                 if (!ReadChannel(x.Descendants("channel").First()))
+                {
                     return false;
+                }
             }
             catch (WebException  e)
             {
@@ -69,12 +72,12 @@ namespace TVRename
             return true;
         }
 
-        private bool ReadChannel(XElement x)
+        private bool ReadChannel([NotNull] XElement x)
         {
             return x.Descendants("item").All(ReadItem);
         }
 
-        private bool ReadItem(XElement itemElement)
+        private bool ReadItem([NotNull] XElement itemElement)
         {
             string title = itemElement.ExtractString("title");
             string link = itemElement.ExtractString("link");
@@ -95,7 +98,9 @@ namespace TVRename
             link = (string.IsNullOrWhiteSpace(enclosureLink))?link:enclosureLink;
 
             if ((string.IsNullOrEmpty(title)) || (string.IsNullOrEmpty(link)))
+            {
                 return false;
+            }
 
             string showName = "";
 
@@ -111,13 +116,21 @@ namespace TVRename
             {
                 Match m = Regex.Match(description, "Show Name: (.*?)[;|$]", RegexOptions.IgnoreCase);
                 if (m.Success)
+                {
                     showName = m.Groups[1].ToString();
+                }
+
                 m = Regex.Match(description, "Season: ([0-9]+)", RegexOptions.IgnoreCase);
                 if (m.Success)
+                {
                     season = int.Parse(m.Groups[1].ToString());
+                }
+
                 m = Regex.Match(description, "Episode: ([0-9]+)", RegexOptions.IgnoreCase);
                 if (m.Success)
+                {
                     episode = int.Parse(m.Groups[1].ToString());
+                }
             }
             catch
             {
@@ -132,7 +145,9 @@ namespace TVRename
             }
 
             if ((season != -1) && (episode != -1))
+            {
                 Add(new RSSItem(link, title, season, episode, showName));
+            }
 
             return true;
         }

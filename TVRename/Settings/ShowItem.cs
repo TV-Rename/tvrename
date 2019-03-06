@@ -11,6 +11,7 @@ using System.Xml;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 
 // These are what is used when processing folders for missing episodes, renaming, etc. of files.
 
@@ -82,7 +83,9 @@ namespace TVRename
             string tzstr = ShowTimeZone;
 
             if (string.IsNullOrEmpty(tzstr))
+            {
                 tzstr = TimeZoneHelper.DefaultTimeZone();
+            }
 
             try
             {
@@ -115,7 +118,7 @@ namespace TVRename
             return seriesTimeZone;
         }
 
-        public ShowItem(XElement xmlSettings)
+        public ShowItem([NotNull] XElement xmlSettings)
         {
             SetDefaults();
 
@@ -154,7 +157,7 @@ namespace TVRename
             return value == null? AutomaticFolderType.libraryDefault: (AutomaticFolderType)value;
         }
 
-        private void UpgradeFromOldSeasonFormat(XElement xmlSettings)
+        private void UpgradeFromOldSeasonFormat([NotNull] XElement xmlSettings)
         {
             //These variables have been discontinued (JULY 2018).  If we have any then we should migrate to the new values
             bool upgradeFromOldAutoAddFunction = xmlSettings.Descendants("AutoAddNewSeasons").Any()
@@ -191,7 +194,7 @@ namespace TVRename
             }
         }
 
-        private void SetupIgnoreRules(XElement xmlSettings)
+        private void SetupIgnoreRules([NotNull] XElement xmlSettings)
         {
             foreach (XElement ig in xmlSettings.Descendants("IgnoreSeasons").Descendants("Ignore"))
             {
@@ -199,7 +202,7 @@ namespace TVRename
             }
         }
 
-        private void SetupAliases(XElement xmlSettings)
+        private void SetupAliases([NotNull] XElement xmlSettings)
         {
             foreach (XElement alias in xmlSettings.Descendants("AliasNames").Descendants("Alias"))
             {
@@ -207,12 +210,16 @@ namespace TVRename
             }
         }
 
-        private void SetupSeasonRules(XElement xmlSettings)
+        private void SetupSeasonRules([NotNull] XElement xmlSettings)
         {
             foreach (XElement rulesSet in xmlSettings.Descendants("Rules"))
             {
                 XAttribute value = rulesSet.Attribute("SeasonNumber");
-                if (value == null) continue;
+                if (value == null)
+                {
+                    continue;
+                }
+
                 int snum = int.Parse(value.Value);
                 SeasonRules[snum] = new List<ShowRule>();
 
@@ -223,12 +230,16 @@ namespace TVRename
             }
         }
 
-        private void SetupSeasonFolders(XElement xmlSettings)
+        private void SetupSeasonFolders([NotNull] XElement xmlSettings)
         {
             foreach (XElement seasonFolder in xmlSettings.Descendants("SeasonFolders"))
             {
                 XAttribute value = seasonFolder.Attribute("SeasonNumber");
-                if (value == null) continue;
+                if (value == null)
+                {
+                    continue;
+                }
+
                 int snum = int.Parse(value.Value);
 
                 ManualFolderLocations[snum] = new List<string>();
@@ -246,6 +257,7 @@ namespace TVRename
 
         internal bool UsesManualFolders() => ManualFolderLocations.Count > 0;
 
+        [CanBeNull]
         public SeriesInfo TheSeries() => TheTVDB.Instance.GetSeries(TvdbCode);
 
         public string ShowName
@@ -253,14 +265,21 @@ namespace TVRename
             get
             {
                 if (UseCustomShowName)
+                {
                     return CustomShowName;
+                }
+
                 SeriesInfo ser = TheSeries();
                 if (ser != null)
+                {
                     return ser.Name;
+                }
+
                 return "<" + TvdbCode + " not downloaded>";
             }
         }
 
+        [NotNull]
         private IEnumerable<string> GetSimplifiedPossibleShowNames()
         {
             List<string> possibles = new List<string>();
@@ -284,7 +303,7 @@ namespace TVRename
             return possibles;
         }
 
-        public bool NameMatch(FileSystemInfo file,bool useFullPath) => NameMatch(useFullPath ? file.FullName: file.Name);
+        public bool NameMatch([NotNull] FileSystemInfo file,bool useFullPath) => NameMatch(useFullPath ? file.FullName: file.Name);
         
         public bool NameMatch(string text)
         {
@@ -300,7 +319,11 @@ namespace TVRename
         {
             get{
                 SeriesInfo ser = TheSeries();
-                if (ser != null ) return ser.Status;
+                if (ser != null )
+                {
+                    return ser.Status;
+                }
+
                 return "Unknown";
             }
         }
@@ -348,14 +371,23 @@ namespace TVRename
         {
             get {
                 //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
-                if (TheSeries() == null || TheSeries().AiredSeasons == null || TheSeries().AiredSeasons.Count <= 0)
+                SeriesInfo seriesInfo = TheSeries();
+                if (seriesInfo == null || seriesInfo.AiredSeasons == null || seriesInfo.AiredSeasons.Count <= 0)
+                {
                     return false;
-                foreach (KeyValuePair<int, Season> s in TheSeries().AiredSeasons)
+                }
+
+                foreach (KeyValuePair<int, Season> s in seriesInfo.AiredSeasons)
                 {
                     if(IgnoreSeasons.Contains(s.Key))
+                    {
                         continue;
+                    }
 
-                    if (TVSettings.Instance.IgnoreAllSpecials && s.Key == 0) continue;
+                    if (TVSettings.Instance.IgnoreAllSpecials && s.Key == 0)
+                    {
+                        continue;
+                    }
 
                     if (s.Value.Episodes != null && s.Value.Episodes.Count > 0)
                     {
@@ -370,14 +402,28 @@ namespace TVRename
         {
             get
             {
-                if (!HasSeasonsAndEpisodes) return false;
+                if (!HasSeasonsAndEpisodes)
+                {
+                    return false;
+                }
 
-                foreach (KeyValuePair<int, Season> s in TheSeries().AiredSeasons)
+                SeriesInfo seriesInfo = TheSeries();
+                if (seriesInfo is null)
+                {
+                    return true;
+                }
+
+                foreach (KeyValuePair<int, Season> s in seriesInfo.AiredSeasons)
                 {
                     if (IgnoreSeasons.Contains(s.Key))
+                    {
                         continue;
+                    }
 
-                    if (TVSettings.Instance.IgnoreAllSpecials && s.Key == 0) continue;
+                    if (TVSettings.Instance.IgnoreAllSpecials && s.Key == 0)
+                    {
+                        continue;
+                    }
 
                     if (s.Value.Status(GetTimeZone()) == Season.SeasonStatus.noneAired ||
                         s.Value.Status(GetTimeZone()) == Season.SeasonStatus.partiallyAired)
@@ -393,14 +439,28 @@ namespace TVRename
         private bool HasAiredEpisodes
         {
                 get{
-                    if (!HasSeasonsAndEpisodes) return false;
+                    if (!HasSeasonsAndEpisodes)
+                    {
+                        return false;
+                    }
 
-                    foreach (KeyValuePair<int, Season> s in TheSeries().AiredSeasons)
+                    SeriesInfo seriesInfo = TheSeries();
+                    if (seriesInfo is null)
+                    {
+                        return false;
+                    }
+
+                foreach (KeyValuePair<int, Season> s in seriesInfo.AiredSeasons)
                     {
                         if(IgnoreSeasons.Contains(s.Key))
+                        {
                             continue;
+                        }
 
-                        if (TVSettings.Instance.IgnoreAllSpecials && s.Key == 0) continue;
+                        if (TVSettings.Instance.IgnoreAllSpecials && s.Key == 0)
+                        {
+                            continue;
+                        }
 
                         if (s.Value.Status(GetTimeZone()) == Season.SeasonStatus.partiallyAired || s.Value.Status(GetTimeZone()) == Season.SeasonStatus.aired)
                         {
@@ -410,9 +470,14 @@ namespace TVRename
                     return false;
              }
         }
+        
+        [NotNull]
+        public IEnumerable<string> Genres => TheSeries()?.Genres()??new List<string>();
 
-        public IEnumerable<string> Genres => TheSeries()?.Genres();
+        [NotNull]
+        public IEnumerable<Actor> Actors => TheSeries()?.GetActors() ?? new List<Actor>();
 
+        [CanBeNull]
         public Language  PreferredLanguage => UseCustomLanguage ? TheTVDB.Instance.LanguageList.GetLanguageFromCode(CustomLanguageCode) : TheTVDB.Instance.PreferredLanguage;
 
         private void SetDefaults()
@@ -444,21 +509,30 @@ namespace TVRename
             lastFiguredTz = "";
         }
 
+        [CanBeNull]
         public List<ShowRule> RulesForSeason(int n)
         {
             return SeasonRules.ContainsKey(n) ? SeasonRules[n] : null;
         }
 
+        [NotNull]
         private string AutoFolderNameForSeason(Season s)
         {
             string r = AutoAddFolderBase;
             if (string.IsNullOrEmpty(r))
+            {
                 return string.Empty;
+            }
 
-            if (s == null) return string.Empty;
+            if (s == null)
+            {
+                return string.Empty;
+            }
 
-            if (!r.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
+            if (!r.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
+            {
                 r += System.IO.Path.DirectorySeparatorChar.ToString();
+            }
 
             if (AutoAddType == AutomaticFolderType.none)
             {
@@ -494,12 +568,14 @@ namespace TVRename
             foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in SeasonEpisodes)
             {
                 if (kvp.Key > max)
+                {
                     max = kvp.Key;
+                }
             }
             return max;
         }
 
-        public void WriteXmlSettings(XmlWriter writer)
+        public void WriteXmlSettings([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("ShowItem");
 
@@ -548,7 +624,9 @@ namespace TVRename
                     XmlHelper.WriteAttributeToXml(writer ,"SeasonNumber",kvp.Key);
 
                     foreach (ShowRule r in kvp.Value)
+                    {
                         r.WriteXml(writer);
+                    }
 
                     writer.WriteEndElement(); // Rules
                 }
@@ -574,15 +652,20 @@ namespace TVRename
             writer.WriteEndElement(); // ShowItem
         }
 
-        public static List<ProcessedEpisode> ProcessedListFromEpisodes(IEnumerable<Episode> el, ShowItem si)
+        [NotNull]
+        public static List<ProcessedEpisode> ProcessedListFromEpisodes([NotNull] IEnumerable<Episode> el, ShowItem si)
         {
             List<ProcessedEpisode> pel = new List<ProcessedEpisode>();
             foreach (Episode e in el)
+            {
                 pel.Add(new ProcessedEpisode(e, si));
+            }
+
             return pel;
         }
 
         // ReSharper disable once UnusedMember.Global
+        [NotNull]
         public Dictionary<int, List<ProcessedEpisode>> GetDvdSeasons()
         {
             //We will create this on the fly
@@ -602,13 +685,18 @@ namespace TVRename
             return returnValue;
         }
 
+        [NotNull]
         public Dictionary<int, List<string>> AllExistngFolderLocations() => AllFolderLocations( true,true);
+        [NotNull]
         public Dictionary<int, List<string>> AllProposedFolderLocations() => AllFolderLocations(true,false);
 
+        [NotNull]
         public Dictionary<int, List<string>> AllFolderLocationsEpCheck(bool checkExist) => AllFolderLocations(true, checkExist);
 
+        [NotNull]
         public Dictionary<int, List<string>> AllFolderLocations(bool manualToo)=> AllFolderLocations(manualToo,true);
 
+        [NotNull]
         private Dictionary<int, List<string>> AllFolderLocations(bool manualToo,bool checkExist)
         {
             Dictionary<int, List<string>> fld = new Dictionary<int, List<string>>();
@@ -618,9 +706,14 @@ namespace TVRename
                 foreach (KeyValuePair<int, List<string>> kvp in ManualFolderLocations.ToList())
                 {
                     if (!fld.ContainsKey(kvp.Key))
+                    {
                         fld[kvp.Key] = new List<string>();
+                    }
+
                     foreach (string s in kvp.Value)
+                    {
                         fld[kvp.Key].Add(s.TrimSlash());
+                    }
                 }
             }
 
@@ -628,33 +721,55 @@ namespace TVRename
             {
                 foreach (int i in SeasonEpisodes.Keys.ToList())
                 {
-                    if (IgnoreSeasons.Contains(i)) continue;
+                    if (IgnoreSeasons.Contains(i))
+                    {
+                        continue;
+                    }
 
-                    if (i == 0 && TVSettings.Instance.IgnoreAllSpecials) continue;
+                    if (i == 0 && TVSettings.Instance.IgnoreAllSpecials)
+                    {
+                        continue;
+                    }
 
-                    if (ManualFoldersReplaceAutomatic && fld.ContainsKey(i)) continue;
+                    if (ManualFoldersReplaceAutomatic && fld.ContainsKey(i))
+                    {
+                        continue;
+                    }
 
                     string newName = AutoFolderNameForSeason(i);
-                    if (string.IsNullOrEmpty(newName)) continue;
+                    if (string.IsNullOrEmpty(newName))
+                    {
+                        continue;
+                    }
 
-                    if (checkExist && !Directory.Exists(newName)) continue;
+                    if (checkExist && !Directory.Exists(newName))
+                    {
+                        continue;
+                    }
 
                     //Now we can add the automated one
-                    if (!fld.ContainsKey(i)) fld[i] = new List<string>();
+                    if (!fld.ContainsKey(i))
+                    {
+                        fld[i] = new List<string>();
+                    }
 
-                    if (!fld[i].Contains(newName)) fld[i].Add(newName.TrimSlash());
+                    if (!fld[i].Contains(newName))
+                    {
+                        fld[i].Add(newName.TrimSlash());
+                    }
                 }
             }
             return fld;
         }
 
-        public static int CompareShowItemNames(ShowItem one, ShowItem two)
+        public static int CompareShowItemNames([NotNull] ShowItem one, [NotNull] ShowItem two)
         {
             string ones = one.ShowName; 
             string twos = two.ShowName; 
             return string.Compare(ones, twos, StringComparison.Ordinal);
         }
 
+        [CanBeNull]
         public Season GetSeason(int snum)
         {
             Dictionary<int, Season> ssn = AppropriateSeasons();
@@ -663,7 +778,10 @@ namespace TVRename
 
         public void AddSeasonRule(int snum, ShowRule sr)
         {
-            if (!SeasonRules.ContainsKey(snum)) SeasonRules[snum] = new List<ShowRule>();
+            if (!SeasonRules.ContainsKey(snum))
+            {
+                SeasonRules[snum] = new List<ShowRule>();
+            }
 
             SeasonRules[snum].Add(sr);
         }
@@ -671,7 +789,11 @@ namespace TVRename
         public Dictionary<int,Season> AppropriateSeasons()
         {
             SeriesInfo s = TheSeries();
-            if (s==null)return new Dictionary<int, Season>();
+            if (s==null)
+            {
+                return new Dictionary<int, Season>();
+            }
+
             return DvdOrder ? s.DvdSeasons : s.AiredSeasons;
         }
 
@@ -685,29 +807,34 @@ namespace TVRename
             return null;
         }
 
+        [CanBeNull]
         public ProcessedEpisode GetFirstAvailableEpisode()
         {
             foreach (List<ProcessedEpisode> season in SeasonEpisodes.Values)
             {
                 foreach (ProcessedEpisode pe in season)
                 {
-                    if (!(pe is null)) return pe;
+                    if (!(pe is null))
+                    {
+                        return pe;
+                    }
                 }
             }
 
             return null;
         }
 
-        public bool InOneFolder()
-        {
-            return (AutoAddType == AutomaticFolderType.baseOnly);
-        }
+        public bool InOneFolder() => (AutoAddType == AutomaticFolderType.baseOnly);
 
+        [NotNull]
         public string AutoFolderNameForSeason(int snum) => AutoFolderNameForSeason(GetSeason(snum));
 
-        public bool AutoAddNewSeasons()
+        public bool AutoAddNewSeasons() => (AutoAddType != AutomaticFolderType.none);
+
+        [NotNull]
+        public IEnumerable<string> GetActorNames()
         {
-            return (AutoAddType != AutomaticFolderType.none);
+            return Actors.Select(x => x.ActorName);
         }
     }
 }

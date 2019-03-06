@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -21,6 +22,7 @@ namespace TVRename
         {
         }
 
+        [NotNull]
         protected override string Checkname() => "Looked in the Search Folders for any new shows that need to be added to the library";
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
@@ -48,18 +50,31 @@ namespace TVRename
             foreach (string dirPath in TVSettings.Instance.DownloadFolders.ToArray())
             {
                 LOGGER.Info("Parsing {0} for new shows", dirPath);
-                if (!Directory.Exists(dirPath)) continue;
+                if (!Directory.Exists(dirPath))
+                {
+                    continue;
+                }
+
                 try
                 {
                     foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
                     {
-                        if (!File.Exists(filePath)) continue;
+                        if (!File.Exists(filePath))
+                        {
+                            continue;
+                        }
 
                         FileInfo fi = new FileInfo(filePath);
 
-                        if (fi.IgnoreFile()) continue;
+                        if (fi.IgnoreFile())
+                        {
+                            continue;
+                        }
 
-                        if (!LookForSeries(fi)) possibleShowNames.Add(fi.RemoveExtension() + ".");
+                        if (!LookForSeries(fi))
+                        {
+                            possibleShowNames.Add(fi.RemoveExtension() + ".");
+                        }
                     }
                 }
                 catch (UnauthorizedAccessException ex)
@@ -147,10 +162,16 @@ namespace TVRename
                     LOGGER.Info($"Permenantly Ignoring 'Auto Add' for: {hint}");
                     TVSettings.Instance.IgnoredAutoAddHints.Add(hint);
                 }
-                else LOGGER.Info($"Cancelled Auto adding new show {hint}");
+                else
+                {
+                    LOGGER.Info($"Cancelled Auto adding new show {hint}");
+                }
             }
 
-            if (addedShows.Count <= 0) return;
+            if (addedShows.Count <= 0)
+            {
+                return;
+            }
 
             lock (TheTVDB.SERIES_LOCK)
             {
@@ -178,12 +199,12 @@ namespace TVRename
 
         private bool LookForSeries(FileSystemInfo name) => LookForSeries(name, MDoc.Library.Values);
 
-        private static bool LookForSeries(FileSystemInfo test, IEnumerable<ShowItem> shows)
+        private static bool LookForSeries(FileSystemInfo test, [NotNull] IEnumerable<ShowItem> shows)
         {
             return shows.Any(si => si.NameMatch(test, TVSettings.Instance.UseFullPathNameToMatchSearchFolders));
         }
 
-        private static bool LookForSeries(string test, IEnumerable<ShowItem> shows)
+        private static bool LookForSeries(string test, [NotNull] IEnumerable<ShowItem> shows)
         {
             return shows.Any(si => si.NameMatch(test));
         }

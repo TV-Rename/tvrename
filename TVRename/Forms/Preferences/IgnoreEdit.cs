@@ -29,7 +29,9 @@ namespace TVRename
             ignore = new System.Collections.Generic.List<IgnoreItem>();
 
             foreach (IgnoreItem ii in TVSettings.Instance.Ignore)
+            {
                 ignore.Add(ii);
+            }
 
             InitializeComponent();
 
@@ -47,11 +49,14 @@ namespace TVRename
         {
             foreach (int i in lbItems.SelectedIndices)
                 foreach (IgnoreItem iitest in ignore)
+                {
                     if (lbItems.Items[i].ToString().Equals(iitest.FileAndPath))
                     {
                         ignore.Remove(iitest);
                         break;
                     }
+                }
+
             FillList();
         }
 

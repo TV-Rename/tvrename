@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -15,14 +16,21 @@ namespace TVRename
 
         public override DownloadType GetDownloadType() => DownloadType.downloadImage;
 
+        [NotNull]
         public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
             ItemList theActionList = new ItemList();
 
-            if (!TVSettings.Instance.FolderJpg) return theActionList;
+            if (!TVSettings.Instance.FolderJpg)
+            {
+                return theActionList;
+            }
 
-            if (si is null) return theActionList;
-            
+            if (si is null)
+            {
+                return theActionList;
+            }
+
             FileInfo fi = FileHelper.FileInFolder(si.AutoAddFolderBase, DEFAULT_FILE_NAME);
             bool fileDoesntExist = !doneFolderJpg.Contains(fi.FullName) && !fi.Exists;
 
@@ -30,7 +38,10 @@ namespace TVRename
             {
                 SeriesInfo series = si.TheSeries();
 
-                if (series == null) return theActionList;
+                if (series == null)
+                {
+                    return theActionList;
+                }
 
                 //default to poster when we want season posters for the season specific folders
                 string downloadPath = TVSettings.Instance.SeasonSpecificFolderJPG()
@@ -38,7 +49,10 @@ namespace TVRename
                     : series.GetImage(TVSettings.Instance.ItemForFolderJpg());
 
                 if (!string.IsNullOrEmpty(downloadPath))
+                {
                     theActionList.Add(new ActionDownloadImage(si, null, fi, downloadPath, false));
+                }
+
                 doneFolderJpg.Add(fi.FullName);
             }
             return theActionList;
@@ -46,7 +60,10 @@ namespace TVRename
 
         public override ItemList ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
         {
-            if (!TVSettings.Instance.FolderJpg) return null;
+            if (!TVSettings.Instance.FolderJpg)
+            {
+                return null;
+            }
 
             // season folders JPGs
             ItemList theActionList = new ItemList();
@@ -55,21 +72,16 @@ namespace TVRename
             if (!doneFolderJpg.Contains(fi.FullName) && (!fi.Exists|| forceRefresh))
                 // some folders may come up multiple times
             {
-                string bannerPath;
+                string bannerPath = TVSettings.Instance.SeasonSpecificFolderJPG()
+                    ? si.TheSeries()?.GetSeasonBannerPath(snum)
+                    : si.TheSeries()?.GetImage(TVSettings.Instance.ItemForFolderJpg());
 
-                if (TVSettings.Instance.SeasonSpecificFolderJPG())
-                {
-                    //We are getting a Series Level image
-                    bannerPath = si.TheSeries().GetSeasonBannerPath(snum);
-                }
-                else
-                {
-                    //We are getting a Show Level image
-                    bannerPath = si.TheSeries().GetImage(TVSettings.Instance.ItemForFolderJpg());
-                }
                 if (!string.IsNullOrEmpty(bannerPath))
+                {
                     theActionList.Add(new ActionDownloadImage(si, null, fi, bannerPath,
                         TVSettings.Instance.ShrinkLargeMede8erImages));
+                }
+
                 doneFolderJpg.Add(fi.FullName);
             }
             return theActionList;

@@ -8,6 +8,7 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace TVRename.Forms
 {
@@ -15,7 +16,7 @@ namespace TVRename.Forms
     {
         private readonly TVDoc doc;
 
-        public Filters(TVDoc doc)
+        public Filters([NotNull] TVDoc doc)
         {
             this.doc = doc;
             InitializeComponent();

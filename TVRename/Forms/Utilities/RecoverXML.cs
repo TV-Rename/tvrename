@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System.Windows.Forms;
+using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -27,13 +28,15 @@ namespace TVRename
         public FileInfo SettingsFile;
         private FileInfo[] settingsList;
 
-        public RecoverXML(string hint)
+        public RecoverXML([CanBeNull] string hint)
         {
             InitializeComponent();
             SettingsFile = null;
             DbFile = null;
             if (!string.IsNullOrEmpty(hint))
+            {
                 lbHint.Text = hint + "\r\n ";
+            }
         }
 
         private void RecoverXML_Load(object sender, System.EventArgs e)
@@ -45,7 +48,10 @@ namespace TVRename
             if ((settingsList != null) && settingsList.Length > 0)
             {
                 foreach (FileInfo fi in settingsList)
+                {
                     lbSettings.Items.Add(fi.LastWriteTime.ToString("g"));
+                }
+
                 lbSettings.SelectedIndex = 0;
             }
 
@@ -53,7 +59,10 @@ namespace TVRename
             if ((availableFiles != null) && availableFiles.Length > 0)
             {
                 foreach (FileInfo fi in availableFiles)
+                {
                     lbDB.Items.Add(fi.LastWriteTime.ToString("g"));
+                }
+
                 lbDB.SelectedIndex = 0;
             }
         }
@@ -64,12 +73,18 @@ namespace TVRename
 
             int n = lbDB.SelectedIndex;
             if (n == -1)
+            {
                 n = 0;
+            }
+
             DbFile = (n == 0) ? null : availableFiles[n - 1];
 
             n = lbSettings.SelectedIndex;
             if (n == -1)
+            {
                 n = 0;
+            }
+
             SettingsFile = (n == 0) ? null : settingsList[n];
 
             DialogResult = DialogResult.OK;

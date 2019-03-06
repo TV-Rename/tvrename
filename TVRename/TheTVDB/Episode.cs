@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -51,7 +52,7 @@ namespace TVRename
         private string mName;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        protected Episode(Episode o)
+        protected Episode([NotNull] Episode o)
         {
             EpisodeId = o.EpisodeId;
             SeriesId = o.SeriesId;
@@ -91,7 +92,9 @@ namespace TVRename
         public DateTime? GetAirDateDt()
         {
             if (FirstAired == null)
+            {
                 return null;
+            }
 
             DateTime fa = (DateTime) FirstAired;
             DateTime? airs = TheSeries.AirsTime;
@@ -102,12 +105,15 @@ namespace TVRename
         public DateTime? GetAirDateDt(TimeZoneInfo tz)
         {
             DateTime? dt = GetAirDateDt();
-            if (dt == null) return null;
+            if (dt == null)
+            {
+                return null;
+            }
 
             return TimeZoneHelper.AdjustTzTimeToLocalTime(dt.Value, tz);
         }
 
-        public Episode(XElement r)
+        public Episode([NotNull] XElement r)
         {
             // <Episode>
             //  <id>...</id>
@@ -148,7 +154,7 @@ namespace TVRename
             FirstAired = ParseAired(r.ExtractString("FirstAired"));
         }
 
-        private static DateTime? ParseAired(string contents)
+        private static DateTime? ParseAired([CanBeNull] string contents)
         {
             try
             {
@@ -164,13 +170,13 @@ namespace TVRename
             }
         }
 
-        public Episode(int seriesId, JObject json, JObject jsonInDefaultLang)
+        public Episode(int seriesId, [NotNull] JObject json, JObject jsonInDefaultLang)
         {
             SetDefaults(null, null, null);
             LoadJson(seriesId, json, jsonInDefaultLang);
         }
 
-        public Episode(int seriesId, JObject r)
+        public Episode(int seriesId, [NotNull] JObject r)
         {
             // <Episode>
             //  <id>...</id>
@@ -182,7 +188,7 @@ namespace TVRename
             LoadJson(seriesId, r);
         }
 
-        private void LoadJson(int seriesId, JObject bestLanguageR, JObject backupLanguageR)
+        private void LoadJson(int seriesId, [NotNull] JObject bestLanguageR, JObject backupLanguageR)
         {
             //Here we have two pieces of JSON. One in local language and one in the default language (English). 
             //We will populate with the best language frst and then fillin any gaps with the backup Language
@@ -202,14 +208,17 @@ namespace TVRename
             }
         }
 
-        private void LoadJson(int seriesId, JObject r)
+        private void LoadJson(int seriesId, [NotNull] JObject r)
         {
             SeriesId = seriesId;
             try
             {
                 EpisodeId = (int) r["id"];
 
-                if(EpisodeId==0) return;
+                if(EpisodeId==0)
+                {
+                    return;
+                }
 
                 if ((string) r["airedSeasonID"] != null)
                 {
@@ -225,8 +234,14 @@ namespace TVRename
 
                 string dvdEpNumString = (string) r["dvdEpisodeNumber"];
 
-                if (string.IsNullOrWhiteSpace(dvdEpNumString)) DvdEpNum = 0;
-                else if (!int.TryParse(dvdEpNumString, out DvdEpNum)) DvdEpNum = 0;
+                if (string.IsNullOrWhiteSpace(dvdEpNumString))
+                {
+                    DvdEpNum = 0;
+                }
+                else if (!int.TryParse(dvdEpNumString, out DvdEpNum))
+                {
+                    DvdEpNum = 0;
+                }
 
                 SrvLastUpdated = (long) r["lastUpdated"];
                 Overview = System.Web.HttpUtility.HtmlDecode((string)r["overview"]);
@@ -257,8 +272,14 @@ namespace TVRename
                 }
 
                 string dsn = (string) r["dvdSeason"];
-                if (string.IsNullOrWhiteSpace(dsn)) ReadDvdSeasonNum = 0;
-                else if (!int.TryParse(dsn, out ReadDvdSeasonNum)) ReadDvdSeasonNum = 0;
+                if (string.IsNullOrWhiteSpace(dsn))
+                {
+                    ReadDvdSeasonNum = 0;
+                }
+                else if (!int.TryParse(dsn, out ReadDvdSeasonNum))
+                {
+                    ReadDvdSeasonNum = 0;
+                }
 
                 EpisodeGuestStars = JsonHelper.Flatten(r["guestStars"], "|");
                 EpisodeDirector = JsonHelper.Flatten(r["directors"], "|");
@@ -289,12 +310,15 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         public string Name
         {
             get
             {
                 if (string.IsNullOrEmpty(mName))
+                {
                     return "Aired Episode " + AiredEpNum;
+                }
 
                 return mName;
             }
@@ -309,15 +333,18 @@ namespace TVRename
 
         public int DvdSeasonIndex => TheDvdSeason?.SeasonIndex ?? -1;
 
-        public bool SameAs(Episode o)
+        public bool SameAs([NotNull] Episode o)
         {
             return (EpisodeId == o.EpisodeId);
         }
 
+        [NotNull]
         public IEnumerable<string> GuestStars => string.IsNullOrEmpty(EpisodeGuestStars) ? new string[] { } : EpisodeGuestStars.Split('|');
 
+        [NotNull]
         public IEnumerable<string> Writers => string.IsNullOrEmpty(Writer) ? new string[] { } : Writer.Split('|');
 
+        [NotNull]
         public IEnumerable<string> Directors => string.IsNullOrEmpty(EpisodeDirector) ? new string[] { } : EpisodeDirector.Split('|');
 
         public bool Ok()
@@ -366,7 +393,7 @@ namespace TVRename
             TheSeries = ser;
         }
 
-        public void WriteXml(XmlWriter writer)
+        public void WriteXml([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("Episode");
 

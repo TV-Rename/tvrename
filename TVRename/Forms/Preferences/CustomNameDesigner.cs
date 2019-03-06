@@ -34,7 +34,10 @@ namespace TVRename
             InitializeComponent();
 
             if (eps == null)
+            {
                 lvTest.Enabled = false;
+            }
+
             txtTemplate.Text = this.cn.StyleString;
 
             FillExamples();
@@ -47,15 +50,22 @@ namespace TVRename
             cbPresets.Items.Clear();
             ProcessedEpisode pe;
             if (lvTest.SelectedItems.Count == 0)
+            {
                 pe = ((eps != null) && (eps.Count > 0)) ? eps[0] : null;
+            }
             else
+            {
                 pe = (ProcessedEpisode) (lvTest.SelectedItems[0].Tag);
+            }
 
             foreach (string s in CustomEpisodeName.TAGS)
             {
                 string txt = s;
                 if (pe != null)
+                {
                     txt += " - " + CustomEpisodeName.NameForNoExt(pe, s);
+                }
+
                 cbTags.Items.Add(txt);
             }
 
@@ -68,7 +78,9 @@ namespace TVRename
         private void FillExamples()
         {
             if (eps == null)
+            {
                 return;
+            }
 
             lvTest.Items.Clear();
             foreach (ProcessedEpisode pe in eps)
@@ -89,7 +101,10 @@ namespace TVRename
                 lvi.Tag = pe;
 
                 if (!ok || !ok1 || !ok2)
+                {
                     lvi.BackColor = Helpers.WarningColor();
+                }
+
                 lvTest.Items.Add(lvi);
             }
         }
@@ -98,7 +113,9 @@ namespace TVRename
         {
             int n = cbPresets.SelectedIndex;
             if (n == -1)
+            {
                 return;
+            }
 
             txtTemplate.Text = CustomEpisodeName.PRESETS[n];
             cbPresets.SelectedIndex = -1;
@@ -114,7 +131,9 @@ namespace TVRename
         {
             int n = cbTags.SelectedIndex;
             if (n == -1)
+            {
                 return;
+            }
 
             int p = txtTemplate.SelectionStart;
             string s = txtTemplate.Text;

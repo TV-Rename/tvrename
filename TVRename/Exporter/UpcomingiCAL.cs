@@ -12,6 +12,7 @@ using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -22,7 +23,7 @@ namespace TVRename
         public override bool Active() =>TVSettings.Instance.ExportWTWICAL;
         protected override string Location() => TVSettings.Instance.ExportWTWICALTo;
 
-        protected override bool Generate(System.IO.Stream str, List<ProcessedEpisode> elist)
+        protected override bool Generate(System.IO.Stream str, [CanBeNull] List<ProcessedEpisode> elist)
         {
             if (elist == null)
             {
@@ -38,11 +39,14 @@ namespace TVRename
                     string niceName = TVSettings.Instance.NamingStyle.NameFor(ei);
                     DateTime? stTime = ei.GetAirDateDt(true);
 
-                    if (!stTime.HasValue) continue;
+                    if (!stTime.HasValue)
+                    {
+                        continue;
+                    }
 
                     DateTime startTime = stTime.Value;
-                    string s = ei.Show.TheSeries().Runtime;
-                    DateTime endTime = stTime.Value.AddMinutes(int.Parse(s));
+                    string s = ei.Show.TheSeries()?.Runtime;
+                    DateTime endTime = stTime.Value.AddMinutes(s==null?0:int.Parse(s));
 
                     CalendarEvent e = new CalendarEvent
                     {

@@ -39,9 +39,13 @@ namespace TVRename
         private void tmrUpdate_Tick(object sender, System.EventArgs e)
         {
             if (mDoc.DownloadDone)
+            {
                 Close();
+            }
             else
+            {
                 UpdateStuff();
+            }
         }
 
         private void DownloadProgress_Load(object sender, System.EventArgs e)

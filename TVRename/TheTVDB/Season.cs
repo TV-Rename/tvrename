@@ -7,6 +7,7 @@
 // 
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -42,6 +43,7 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
+        [NotNull]
         public static string UISeasonWord(int season)
         {
             if ((TVSettings.Instance.defaultSeasonWord.Length > 1) && (TVSettings.Instance.LeadingZeroOnSeason))
@@ -106,9 +108,16 @@ namespace TVRename
             foreach (Episode e in Episodes.Values)
             {
                 DateTime? adt = e.GetAirDateDt();
-                if (!adt.HasValue) continue;
+                if (!adt.HasValue)
+                {
+                    continue;
+                }
+
                 DateTime airDateTime = adt.Value;
-                if (airDateTime.Year < min) min = airDateTime.Year;
+                if (airDateTime.Year < min)
+                {
+                    min = airDateTime.Year;
+                }
             }
 
             return min;
@@ -121,9 +130,16 @@ namespace TVRename
             foreach (Episode e in Episodes.Values)
             {
                 DateTime? adt = e.GetAirDateDt();
-                if (!adt.HasValue) continue;
+                if (!adt.HasValue)
+                {
+                    continue;
+                }
+
                 DateTime airDateTime = adt.Value;
-                if (airDateTime.Year > max) max = airDateTime.Year;
+                if (airDateTime.Year > max)
+                {
+                    max = airDateTime.Year;
+                }
             }
             return max;
         }
@@ -134,15 +150,24 @@ namespace TVRename
 
         private bool HasUnairedEpisodes(TimeZoneInfo tz)
         {
-            if (!HasEpisodes) return false;
+            if (!HasEpisodes)
+            {
+                return false;
+            }
 
             foreach (Episode e in Episodes.Values)
             {
                 DateTime? adt = e.GetAirDateDt(tz);
-                if (!adt.HasValue) continue;
+                if (!adt.HasValue)
+                {
+                    continue;
+                }
+
                 DateTime airDateTime = adt.Value;
                 if (airDateTime > DateTime.Now)
+                {
                     return true;
+                }
             }
 
             return false;
@@ -150,15 +175,24 @@ namespace TVRename
 
         private bool HasAiredEpisodes(TimeZoneInfo tz)
         {
-            if (!HasEpisodes) return false;
+            if (!HasEpisodes)
+            {
+                return false;
+            }
 
             foreach (Episode e in Episodes.Values)
             {
                 DateTime? adt = e.GetAirDateDt(tz);
-                if (!adt.HasValue) continue;
+                if (!adt.HasValue)
+                {
+                    continue;
+                }
+
                 DateTime airDateTime = adt.Value;
                 if (airDateTime < DateTime.Now)
+                {
                     return true;
+                }
             }
 
             return false;
@@ -172,16 +206,27 @@ namespace TVRename
                 DateTime? episodeAirDate = a.FirstAired;
 
                 //ignore episode if has no date
-                if (!episodeAirDate.HasValue) continue;
+                if (!episodeAirDate.HasValue)
+                {
+                    continue;
+                }
 
                 //ignore episode if it's in the future
-                if (DateTime.Compare(episodeAirDate.Value.ToUniversalTime(), DateTime.UtcNow) > 0) continue;
+                if (DateTime.Compare(episodeAirDate.Value.ToUniversalTime(), DateTime.UtcNow) > 0)
+                {
+                    continue;
+                }
 
                 //If we don't have a best offer yet
-                if (!returnValue.HasValue) returnValue = episodeAirDate.Value;
+                if (!returnValue.HasValue)
+                {
+                    returnValue = episodeAirDate.Value;
+                }
                 //else the currently tested date is better than the current value
                 else if (DateTime.Compare(episodeAirDate.Value, returnValue.Value) > 0)
+                {
                     returnValue = episodeAirDate.Value;
+                }
             }
 
             return returnValue;
@@ -191,7 +236,7 @@ namespace TVRename
 
         public string GetWideBannerPath() => TheSeries.GetSeasonWideBannerPath(SeasonNumber);
 
-        public void AddUpdateEpisode(Episode newEpisode)
+        public void AddUpdateEpisode([NotNull] Episode newEpisode)
         {
             if (Episodes.ContainsKey(newEpisode.EpisodeId))
             {
@@ -207,8 +252,15 @@ namespace TVRename
         {
             foreach (Episode ep in Episodes.Values)
             {
-                if (dvdOrder && ep.DvdEpNum == episodeNumber) return true;
-                if (!dvdOrder && ep.AiredEpNum == episodeNumber) return true;
+                if (dvdOrder && ep.DvdEpNum == episodeNumber)
+                {
+                    return true;
+                }
+
+                if (!dvdOrder && ep.AiredEpNum == episodeNumber)
+                {
+                    return true;
+                }
             }
 
             return false;

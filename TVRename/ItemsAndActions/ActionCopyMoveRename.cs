@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Security.AccessControl;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -42,6 +43,7 @@ namespace TVRename
 
         #region Action Members
 
+        [NotNull]
         public override string Name => IsMoveRename() ? "Move" : "Copy";
 
         public override string ProgressText => To.Name;
@@ -67,7 +69,10 @@ namespace TVRename
             // set NTFS permissions
             try
             {
-                if (security != null) To.SetAccessControl(security);
+                if (security != null)
+                {
+                    To.SetAccessControl(security);
+                }
             }
             catch
             {
@@ -92,7 +97,10 @@ namespace TVRename
                 {
                     // This step could be slow, so report progress
                     CopyMoveResult moveResult = File.Move(From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
-                    if (moveResult.ErrorCode != 0) throw new Exception(moveResult.ErrorMessage);
+                    if (moveResult.ErrorCode != 0)
+                    {
+                        throw new Exception(moveResult.ErrorMessage);
+                    }
                 }
                 else
                 {
@@ -101,7 +109,10 @@ namespace TVRename
 
                     // This step could be slow, so report progress
                     CopyMoveResult copyResult = File.Copy(From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null);
-                    if (copyResult.ErrorCode != 0) throw new Exception(copyResult.ErrorMessage);
+                    if (copyResult.ErrorCode != 0)
+                    {
+                        throw new Exception(copyResult.ErrorMessage);
+                    }
                 }
 
                 // Copying the temp file into the correct name is very quick, so no progress reporting		
@@ -121,7 +132,7 @@ namespace TVRename
             }
         }
 
-        private void UpdateStats(TVRenameStats stats)
+        private void UpdateStats([NotNull] TVRenameStats stats)
         {
             switch (Operation)
             {
@@ -174,7 +185,9 @@ namespace TVRename
                 || To.Directory == null
                 || cmr.From.Directory == null
                 ||cmr.To.Directory == null)
+            {
                 return 0;
+            }
 
             string s1 = From.FullName + (From.Directory.Root.FullName != To.Directory.Root.FullName ? "0" : "1");
             string s2 = cmr.From.FullName +
@@ -187,8 +200,10 @@ namespace TVRename
         #endregion
 
         #region Item Members
+        [CanBeNull]
         public override IgnoreItem Ignore => To == null ? null : new IgnoreItem(To.FullName);
 
+        [NotNull]
         public override string ScanListViewGroup
         {
             get
@@ -207,23 +222,27 @@ namespace TVRename
             }
         }
 
+        [CanBeNull]
         public override  string TargetFolder => To?.DirectoryName;
 
         #endregion
 
-        private static string TempFor(FileSystemInfo f) => f.FullName + ".tvrenametemp";
+        [NotNull]
+        private static string TempFor([NotNull] FileSystemInfo f) => f.FullName + ".tvrenametemp";
 
         public bool QuickOperation()
         {
             if ((From == null) || (To == null) || (From.Directory == null) || (To.Directory == null))
+            {
                 return false;
+            }
 
             return IsMoveRename() &&
                    string.Equals(From.Directory.Root.FullName, To.Directory.Root.FullName,
                        StringComparison.InvariantCultureIgnoreCase); // same device ... TODO: UNC paths?
         }
 
-        private static void KeepTimestamps(FileSystemInfo from, FileSystemInfo to)
+        private static void KeepTimestamps([NotNull] FileSystemInfo from, [NotNull] FileSystemInfo to)
         {
             to.CreationTime = from.CreationTime;
             to.CreationTimeUtc = from.CreationTimeUtc;
@@ -243,7 +262,7 @@ namespace TVRename
         private bool IsMoveRename() // same thing to the OS
             => (Operation == Op.move) || (Operation == Op.rename);
 
-        public bool SameSource(ActionCopyMoveRename o) => FileHelper.Same(From, o.From);
+        public bool SameSource([NotNull] ActionCopyMoveRename o) => FileHelper.Same(From, o.From);
 
         private long SourceFileSize()
         {

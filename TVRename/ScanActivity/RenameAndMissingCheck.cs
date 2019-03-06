@@ -2,24 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class RenameAndMissingCheck : ScanShowActivity
+    internal class RenameAndMissingCheck : ScanShowActivity
     {
         private readonly DownloadIdentifiersController downloadIdentifiers;
 
+        [NotNull]
         protected override string Checkname() => "Rename & Missing Check";
+
         public RenameAndMissingCheck(TVDoc doc) : base(doc)
         {
             downloadIdentifiers = new DownloadIdentifiersController();
         }
 
-        protected override void Check(ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+        protected override void Check([NotNull] ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
             Dictionary<int, List<string>> allFolders = si.AllExistngFolderLocations();
             if (allFolders.Count == 0) // no folders defined for this show
+            {
                 return; // so, nothing to do.
+            }
 
             //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
             //it has all the required files for that show
@@ -52,23 +57,33 @@ namespace TVRename
             foreach (int snum in numbers)
             {
                 if (settings.Token.IsCancellationRequested)
+                {
                     return;
+                }
 
-                if ((si.IgnoreSeasons.Contains(snum)) || (!allFolders.ContainsKey(snum)))
+                if (si.IgnoreSeasons.Contains(snum) || !allFolders.ContainsKey(snum))
+                {
                     continue; // ignore/skip this season
+                }
 
                 if ((snum == 0) && (si.CountSpecials))
+                {
                     continue; // don't process the specials season, as they're merged into the seasons themselves
+                }
 
                 if ((snum == 0) && TVSettings.Instance.IgnoreAllSpecials)
+                {
                     continue;
+                }
 
                 // all the folders for this particular season
                 List<string> folders = allFolders[snum];
 
                 bool folderNotDefined = (folders.Count == 0);
                 if (folderNotDefined && (TVSettings.Instance.MissingCheck && !si.AutoAddNewSeasons()))
+                {
                     continue; // folder for the season is not defined, and we're not auto-adding it
+                }
 
                 List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
                 int maxEpisodeNumber = GetMaxEpisodeNumber(eps);
@@ -83,11 +98,15 @@ namespace TVRename
                 foreach (string folder in folders)
                 {
                     if (settings.Token.IsCancellationRequested)
+                    {
                         return;
+                    }
 
                     FileInfo[] files = dfc.GetFiles(folder);
                     if (files == null)
+                    {
                         continue;
+                    }
 
                     if (TVSettings.Instance.NeedToDownloadBannerFile() && timeForBannerUpdate)
                     {
@@ -110,25 +129,35 @@ namespace TVRename
 
                     int maxEpNumFound = 0;
                     if (!renCheck && !missCheck)
+                    {
                         continue;
+                    }
 
                     foreach (FileInfo fi in files)
                     {
                         if (settings.Token.IsCancellationRequested)
+                        {
                             return;
+                        }
 
                         if (!FinderHelper.FindSeasEp(fi, out int seasNum, out int epNum, out int _, si,
                             out TVSettings.FilenameProcessorRE _))
+                        {
                             continue; // can't find season & episode, so this file is of no interest to us
+                        }
 
                         if (seasNum == -1)
+                        {
                             seasNum = snum;
+                        }
 
                         int epIdx = eps.FindIndex(x =>
                             ((x.AppropriateEpNum == epNum) && (x.AppropriateSeasonNumber == seasNum)));
 
                         if (epIdx == -1)
+                        {
                             continue; // season+episode number don't correspond to any episode we know of from thetvdb
+                        }
 
                         ProcessedEpisode ep = eps[epIdx];
                         FileInfo actualFile = fi;
@@ -178,10 +207,15 @@ namespace TVRename
                         // == MISSING CHECK part 1/2 ==
                         {
                             // first pass of missing check is to tally up the episodes we do have
-                            if (localEps[epNum] is null) localEps[epNum] = actualFile;
+                            if (localEps[epNum] is null)
+                            {
+                                localEps[epNum] = actualFile;
+                            }
 
                             if (epNum > maxEpNumFound)
+                            {
                                 maxEpNumFound = epNum;
+                            }
                         }
                     } // foreach file in folder
 
@@ -204,7 +238,7 @@ namespace TVRename
                                     (dtOk && (dt.Value.CompareTo(today) < 0)); // isn't an episode yet to be aired
 
                                 bool noAirdatesUntilNow = true;
-                                // for specials "season", see if any season has any airdates
+                                // for specials "season", see if any season has any aired dates
                                 // otherwise, check only up to the season we are considering
                                 for (int i = 1; i <= ((snum == 0) ? lastSeason : snum); i++)
                                 {
@@ -225,8 +259,8 @@ namespace TVRename
 
                                 // only add to the missing list if, either:
                                 // - force check is on
-                                // - there are no airdates at all, for up to and including this season
-                                // - there is an airdate, and it isn't in the future
+                                // - there are no aired dates at all, for up to and including this season
+                                // - there is an aired date, and it isn't in the future
                                 if (noAirdatesUntilNow ||
                                     ((si.ForceCheckFuture || notFuture) && dtOk) ||
                                     (si.ForceCheckNoAirdate && !dtOk))
@@ -237,7 +271,10 @@ namespace TVRename
                             }
                             else
                             {
-                                if (settings.Type == TVSettings.ScanType.Full) Doc.CurrentStats.NsNumberOfEpisodes++;
+                                if (settings.Type == TVSettings.ScanType.Full)
+                                {
+                                    Doc.CurrentStats.NsNumberOfEpisodes++;
+                                }
 
                                 // do NFO and thumbnail checks if required
                                 FileInfo
@@ -254,13 +291,15 @@ namespace TVRename
             } // for each season of this show
         }
 
-        private static int GetMaxEpisodeNumber(List<ProcessedEpisode> eps)
+        private static int GetMaxEpisodeNumber([NotNull] IEnumerable<ProcessedEpisode> eps)
         {
             int maxEpisodeNumber = 0;
             foreach (ProcessedEpisode episode in eps)
             {
                 if (episode.AppropriateEpNum > maxEpisodeNumber)
+                {
                     maxEpisodeNumber = episode.AppropriateEpNum;
+                }
             }
 
             return maxEpisodeNumber;

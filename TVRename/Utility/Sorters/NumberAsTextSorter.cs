@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -17,16 +18,26 @@ namespace TVRename
 
         public int Compare(object x, object y)
         {
-            if (!(x is ListViewItem lvix)) throw new InvalidOperationException();
-            if (!(y is ListViewItem lviy)) throw new InvalidOperationException();
+            if (!(x is ListViewItem lvix))
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (!(y is ListViewItem lviy))
+            {
+                throw new InvalidOperationException();
+            }
 
             return ParseAsInt(lvix.SubItems[col].Text) - ParseAsInt(lviy.SubItems[col].Text);
         }
 
-        private static int ParseAsInt(string text)
+        private static int ParseAsInt([CanBeNull] string text)
         {
             if (string.IsNullOrEmpty(text))
+            {
                 return -1;
+            }
+
             try
             {
                 return Convert.ToInt32(text);

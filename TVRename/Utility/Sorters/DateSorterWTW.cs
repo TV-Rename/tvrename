@@ -18,18 +18,34 @@ namespace TVRename
 
         public int Compare(object x, object y)
         {
-            if (!(x is ListViewItem lvix)) throw new InvalidOperationException();
-            if (!(y is ListViewItem lviy)) throw new InvalidOperationException();
+            if (!(x is ListViewItem lvix))
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (!(y is ListViewItem lviy))
+            {
+                throw new InvalidOperationException();
+            }
 
             DateTime? d1 = GetDate(lvix);
             DateTime? d2 = GetDate(lviy);
 
             if ((d1 == null) && (d2 == null))
+            {
                 return 0;
+            }
+
             if (d1 == null)
+            {
                 return -1;
+            }
+
             if (d2 == null)
+            {
                 return 1;
+            }
+
             return d1.Value.CompareTo(d2.Value);
         }
 

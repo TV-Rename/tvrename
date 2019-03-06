@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -10,6 +11,7 @@ namespace TVRename
         public LibraryFolderFileFinder(TVDoc i) : base(i) { }
 
         public override bool Active() => TVSettings.Instance.RenameCheck && TVSettings.Instance.MissingCheck && TVSettings.Instance.MoveLibraryFiles;
+        [NotNull]
         protected override string Checkname() => "Looked in the library for the missing files";
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
@@ -24,16 +26,24 @@ namespace TVRename
 
             LOGGER.Info("Starting to look for missing items in the library");
 
-            if (ActionList is null) return;
+            if (ActionList is null)
+            {
+                return;
+            }
 
             foreach (ItemMissing me in ActionList.MissingItems().ToList())
             {
                 if (settings.Token.IsCancellationRequested)
+                {
                     return;
+                }
 
                 try
                 {
-                    if (me is null) return;
+                    if (me is null)
+                    {
+                        return;
+                    }
 
                     UpdateStatus(currentItem++, totalN, me.Filename);
 
@@ -64,21 +74,41 @@ namespace TVRename
 
                     foreach (KeyValuePair<int, List<string>> seriesFolders in me.Episode.Show.AllFolderLocationsEpCheck(false))
                     {
-                        if (seriesFolders.Value == null) continue;
-                        if (me.Episode.AppropriateSeason.SeasonNumber != seriesFolders.Key) continue;
+                        if (seriesFolders.Value == null)
+                        {
+                            continue;
+                        }
+
+                        if (me.Episode.AppropriateSeason.SeasonNumber != seriesFolders.Key)
+                        {
+                            continue;
+                        }
 
                         foreach (string folderName in seriesFolders.Value)
                         {
-                            if (string.IsNullOrWhiteSpace(folderName)) continue; //No point looking here
-                            if (folderName == baseFolder) continue; //Already looked here
+                            if (string.IsNullOrWhiteSpace(folderName))
+                            {
+                                continue; //No point looking here
+                            }
+
+                            if (folderName == baseFolder)
+                            {
+                                continue; //Already looked here
+                            }
 
                             LOGGER.Info($"Starting to look for {me.Filename} in the library folder: {folderName}");
                             FileInfo[] files = dfc.GetFiles(folderName);
-                            if (files is null) continue;
+                            if (files is null)
+                            {
+                                continue;
+                            }
 
                             foreach (FileInfo testFile in files)
                             {
-                                if (!ReviewFile(me, thisRound, testFile, settings, false, false, false,TVSettings.Instance.UseFullPathNameToMatchLibraryFolders)) continue;
+                                if (!ReviewFile(me, thisRound, testFile, settings, false, false, false,TVSettings.Instance.UseFullPathNameToMatchLibraryFolders))
+                                {
+                                    continue;
+                                }
 
                                 if (!matchedFiles.Contains(testFile))
                                 {
@@ -101,7 +131,9 @@ namespace TVRename
             try
             {
                 if (TVSettings.Instance.KeepTogether)
+                {
                     KeepTogether(newList, true);
+                }
 
                 ReorganiseToLeaveOriginals(newList);
 

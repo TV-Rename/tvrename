@@ -17,8 +17,15 @@ namespace TVRename
 
         public int Compare(object x, object y)
         {
-            if (!(x is ListViewItem lvix)) throw new InvalidOperationException();
-            if (!(y is ListViewItem lviy)) throw new InvalidOperationException();
+            if (!(x is ListViewItem lvix))
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (!(y is ListViewItem lviy))
+            {
+                throw new InvalidOperationException();
+            }
 
             int d1 = 8;
             int d2 = 8;
@@ -33,9 +40,14 @@ namespace TVRename
                 for (int i = 0; i < 7; i++)
                 {
                     if ((now + new TimeSpan(i, 0, 0, 0)).ToString("ddd") == t1)
+                    {
                         d1 = i;
+                    }
+
                     if ((now + new TimeSpan(i, 0, 0, 0)).ToString("ddd") == t2)
+                    {
                         d2 = i;
+                    }
                 }
             }
             catch

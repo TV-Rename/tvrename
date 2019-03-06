@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 using TVRename.Ipc;
 
 namespace TVRename.App
@@ -28,7 +29,7 @@ namespace TVRename.App
         /// </summary>
         /// <param name="args">The command line arguments.</param>
         [STAThread]
-        private static void Main(string[] args)
+        private static void Main([NotNull] string[] args)
         {
             Logger.Info($"TV Rename {Helpers.DisplayVersion} started with args: {string.Join(" ", args)}");
             Logger.Info($"Copyright (C) {DateTime.Now.Year} TV Rename");
@@ -100,13 +101,30 @@ namespace TVRename.App
 
                 // TODO: Unify command line handling between here and in UI.cs (ProcessArgs). Just send in clargs via IPC?
                 
-                if (clargs.Scan) ipc.Scan();
-                if (clargs.QuickScan) ipc.QuickScan();
-                if (clargs.RecentScan) ipc.RecentScan();
+                if (clargs.Scan)
+                {
+                    ipc.Scan();
+                }
 
-                if (clargs.DoAll) ipc.ProcessAll();
+                if (clargs.QuickScan)
+                {
+                    ipc.QuickScan();
+                }
 
-                if (clargs.Quit) ipc.Quit();
+                if (clargs.RecentScan)
+                {
+                    ipc.RecentScan();
+                }
+
+                if (clargs.DoAll)
+                {
+                    ipc.ProcessAll();
+                }
+
+                if (clargs.Quit)
+                {
+                    ipc.Quit();
+                }
 
                 // TODO: Necessary?
                 ipc.RenameBehavior = previousRenameBehavior;

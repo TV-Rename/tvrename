@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace TVRename
@@ -52,23 +51,18 @@ namespace TVRename
 
             const int N = 5;
 
-            List<ProcessedEpisode> next5 = mDoc.Library.NextNShows(N, 0, 9999);
-
-            if (next5 != null)
+            foreach (ProcessedEpisode ei in mDoc.Library.NextNShows(N, 0, 9999))
             {
-                foreach (ProcessedEpisode ei in next5)
-                {
-                    ListViewItem lvi = new ListViewItem {Text = ei.HowLong()};
-                    lvi.SubItems.Add(ei.DayOfWeek());
-                    lvi.SubItems.Add(ei.TimeOfDay());
-                    lvi.SubItems.Add(TVSettings.Instance.NamingStyle.NameFor(ei));
-                    lvUpcoming.Items.Add(lvi);
-                }
-                if (lvUpcoming.Items.Count > 0)
-                {
-                    int h1 = lvUpcoming.Items[0].GetBounds(ItemBoundsPortion.Entire).Height + 6;
-                    Height = (h1 * lvUpcoming.Items.Count);
-                }
+                ListViewItem lvi = new ListViewItem {Text = ei.HowLong()};
+                lvi.SubItems.Add(ei.DayOfWeek());
+                lvi.SubItems.Add(ei.TimeOfDay());
+                lvi.SubItems.Add(TVSettings.Instance.NamingStyle.NameFor(ei));
+                lvUpcoming.Items.Add(lvi);
+            }
+            if (lvUpcoming.Items.Count > 0)
+            {
+                int h1 = lvUpcoming.Items[0].GetBounds(ItemBoundsPortion.Entire).Height + 6;
+                Height = (h1 * lvUpcoming.Items.Count);
             }
 
             int w = 0;

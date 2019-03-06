@@ -23,10 +23,13 @@ namespace TVRename
                 bool doesntExist =  !fi.Exists;
                 if ((forceRefresh ||doesntExist) &&(!DoneFanartJpg.Contains(fi.FullName)))
                 {
-                    string bannerPath = si.TheSeries().GetSeriesFanartPath();
+                    string bannerPath = si.TheSeries()?.GetSeriesFanartPath();
 
                     if (!string.IsNullOrEmpty(bannerPath))
+                    {
                         theActionList.Add(new ActionDownloadImage(si, null, fi, bannerPath, false));
+                    }
+
                     DoneFanartJpg.Add(fi.FullName);
                 }
                 return theActionList;

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -18,7 +19,7 @@ namespace TVRename
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        internal static void LogShowEpisodeSizes(TVDoc doc)
+        internal static void LogShowEpisodeSizes([NotNull] TVDoc doc)
         {
             doc.PreventAutoScan("Show File Sizes");
             StringBuilder output = new StringBuilder();
@@ -57,7 +58,8 @@ namespace TVRename
             doc.AllowAutoScan();
         }
 
-        internal static List<PossibleDuplicateEpisode> FindDoubleEps(TVDoc doc)
+        [NotNull]
+        internal static List<PossibleDuplicateEpisode> FindDoubleEps([NotNull] TVDoc doc)
         {
             doc.PreventAutoScan("Find Double Episodes");
             StringBuilder output = new StringBuilder();
@@ -74,14 +76,19 @@ namespace TVRename
                 foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
                 {
                     //Ignore specials seasons
-                    if (kvp.Key == 0) continue;
+                    if (kvp.Key == 0)
+                    {
+                        continue;
+                    }
 
                     //Ignore seasons that all aired on same date
                     DateTime? seasonMinAirDate = (from pep in kvp.Value select pep.FirstAired).Min();
                     DateTime? seasonMaxAirDate = (from pep in kvp.Value select pep.FirstAired).Max();
                     if ((seasonMaxAirDate.HasValue) && seasonMinAirDate.HasValue &&
                         seasonMaxAirDate == seasonMinAirDate)
+                    {
                         continue;
+                    }
 
                     //Search through each pair of episodes for the same season
                     foreach (ProcessedEpisode pep in kvp.Value)
@@ -100,7 +107,7 @@ namespace TVRename
             return returnValue;
         }
 
-        private static void SearchForDuplicates(ProcessedEpisode pep, StringBuilder output, ShowItem si, int seasonId, List<ProcessedEpisode> seasonEpisodes, DirFilesCache dfc, List<PossibleDuplicateEpisode> returnValue)
+        private static void SearchForDuplicates([NotNull] ProcessedEpisode pep, StringBuilder output, ShowItem si, int seasonId, [NotNull] IEnumerable<ProcessedEpisode> seasonEpisodes, DirFilesCache dfc, List<PossibleDuplicateEpisode> returnValue)
         {
             if (pep.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
             {
@@ -114,35 +121,34 @@ namespace TVRename
                 }
             }
 
-            foreach (ProcessedEpisode comparePep in seasonEpisodes)
+            foreach (ProcessedEpisode comparePep in seasonEpisodes.Where(comparePep => EpisodesMatch(pep, comparePep)))
             {
-                if (pep.FirstAired.HasValue && comparePep.FirstAired.HasValue &&
-                    pep.FirstAired == comparePep.FirstAired && pep.EpisodeId < comparePep.EpisodeId)
+                // Tell user about this possibility
+                output.AppendLine($"{si.ShowName} - Season: {seasonId} - {pep.FirstAired.ToString()} - {pep.AiredEpNum}({pep.Name}) - {comparePep.AiredEpNum}({comparePep.Name})");
+
+                //do the 'name' test
+                string root = Helpers.GetCommonStartString(pep.Name, comparePep.Name);
+                bool sameLength = (pep.Name.Length == comparePep.Name.Length);
+                bool sameName = (!root.Trim().Equals("Episode") && sameLength && root.Length > 3 && root.Length > pep.Name.Length / 2);
+
+                bool oneFound = false;
+                bool largerFileSize = false;
+                if (sameName)
                 {
-                    // Tell user about this possibility
-                    output.AppendLine(
-                        $"{si.ShowName} - Season: {seasonId} - {pep.FirstAired.ToString()} - {pep.AiredEpNum}({pep.Name}) - {comparePep.AiredEpNum}({comparePep.Name})");
-
-                    //do the 'name' test
-                    string root = Helpers.GetCommonStartString(pep.Name, comparePep.Name);
-                    bool sameLength = (pep.Name.Length == comparePep.Name.Length);
-                    bool sameName = (!root.Trim().Equals("Episode") && sameLength && root.Length > 3 &&
-                                     root.Length > pep.Name.Length / 2);
-
-                    bool oneFound = false;
-                    bool largerFileSize = false;
-                    if (sameName)
-                    {
-                        oneFound = IsOneFound(output, dfc, pep, comparePep, ref largerFileSize);
-                    }
-
-                    returnValue.Add(new PossibleDuplicateEpisode(pep, comparePep, seasonId, true, sameName,
-                        oneFound, largerFileSize));
+                    oneFound = IsOneFound(output, dfc, pep, comparePep, ref largerFileSize);
                 }
+
+                returnValue.Add(new PossibleDuplicateEpisode(pep, comparePep, seasonId, true, sameName, oneFound, largerFileSize));
             }
         }
 
-        private static bool IsOneFound(StringBuilder output, DirFilesCache dfc, ProcessedEpisode pep, ProcessedEpisode comparePep, ref bool largerFileSize)
+        private static bool EpisodesMatch([NotNull] ProcessedEpisode pep, ProcessedEpisode comparePep)
+        {
+            return pep.FirstAired.HasValue && comparePep.FirstAired.HasValue &&
+                   pep.FirstAired == comparePep.FirstAired && pep.EpisodeId < comparePep.EpisodeId;
+        }
+
+        private static bool IsOneFound([NotNull] StringBuilder output, DirFilesCache dfc, [NotNull] ProcessedEpisode pep, [NotNull] ProcessedEpisode comparePep, ref bool largerFileSize)
         {
             output.AppendLine("####### POSSIBLE DUPLICATE DUE TO NAME##########");
 
