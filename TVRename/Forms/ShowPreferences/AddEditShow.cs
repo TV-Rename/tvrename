@@ -266,6 +266,22 @@ namespace TVRename
             return true;
         }
 
+
+        #region HelpWindows
+
+        private void pbBasics_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-basics-tab");
+        private void pbAdvanced_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-advanced-tab");
+        private void pbSearch_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-search-tab");
+        private void pbAliases_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-show-aliases-tab");
+        private void pbFolders_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-folders-tab");
+
+        private static void OpenInfoWindow(string page)
+        {
+            Helpers.SysOpen($"https://www.tvrename.com/manual/user{page}");
+        }
+
+        #endregion
+
         private void SetShow()
         {
             int code = codeFinderForm.SelectedCode();
