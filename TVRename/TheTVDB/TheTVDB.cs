@@ -753,20 +753,22 @@ namespace TVRename
                 return;
             }
 
-            if (time > series[id].SrvLastUpdated) // newer version on the server
+            SeriesInfo selectedSeriesInfo = this.series[id];
+
+            if (time > selectedSeriesInfo.SrvLastUpdated) // newer version on the server
             {
-                series[id].Dirty = true; // mark as dirty, so it'll be fetched again later
+                selectedSeriesInfo.Dirty = true; // mark as dirty, so it'll be fetched again later
             }
             else
             {
-                Logger.Info(series[id].Name + " has a lastupdated of  " +
+                Logger.Info(selectedSeriesInfo.Name + " has a lastupdated of  " +
                             Helpers.FromUnixTime(series[id].SrvLastUpdated) + " server says " +
                             Helpers.FromUnixTime(time));
             }
 
             //now we wish to see if any episodes from the series have been updated. If so then mark them as dirty too
             List<JObject> episodeDefaultLangResponses = null;
-            string requestedLanguageCode = series[id].UseCustomLanguage
+            string requestedLanguageCode = selectedSeriesInfo.UseCustomLanguage
                 ? series[id].TargetLanguageCode
                 : TVSettings.Instance.PreferredLanguageCode;
 
@@ -786,7 +788,7 @@ namespace TVRename
             catch (ShowNotFoundException ex)
             {
                 Logger.Warn(
-                    $"Episodes were not found for {ex.ShowId}:{series[id].Name} in languange {requestedLanguageCode} or {DefaultLanguageCode}");
+                    $"Episodes were not found for {ex.ShowId}:{selectedSeriesInfo.Name} in languange {requestedLanguageCode} or {DefaultLanguageCode}");
             }
         }
 

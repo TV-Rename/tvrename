@@ -290,7 +290,6 @@ namespace TVRename
             }
 
             return returnValue;
-
         }
 
         private static DateTime? GetFirstAired(JObject r)
