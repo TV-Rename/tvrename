@@ -63,7 +63,7 @@ namespace TVRename
 
         public static readonly object SERIES_LOCK = new object();
         // TODO: make this private or a property. have online/offline state that controls auto downloading of needed info.
-        private readonly Dictionary<int, SeriesInfo> series = new Dictionary<int, SeriesInfo>();
+        private readonly ConcurrentDictionary<int, SeriesInfo> series = new ConcurrentDictionary<int, SeriesInfo>();
 
         public static readonly object LANGUAGE_LOCK = new object();
 
@@ -138,7 +138,7 @@ namespace TVRename
         [CanBeNull]
         public SeriesInfo GetSeriesAndDownload(int id) => HasSeries(id) ? series[id] : DownloadSeriesNow(id,false,false,false,TVSettings.Instance.PreferredLanguageCode);
 
-        public Dictionary<int, SeriesInfo> GetSeriesDict() => series;
+        public ConcurrentDictionary<int, SeriesInfo> GetSeriesDict() => series;
 
         [NotNull]
         private Dictionary<int, SeriesInfo> GetSeriesDictMatching(string testShowName)
@@ -449,8 +449,8 @@ namespace TVRename
             {
                 if (series.ContainsKey(id))
                 {
-                    string name = series[id].Name;
-                    series.Remove(id);
+                    series.TryRemove(id,out SeriesInfo oldSeries);
+                    string name = oldSeries.Name;
                     if (makePlaceholder)
                     {
                         if (useCustomLanguage)
@@ -474,7 +474,7 @@ namespace TVRename
             {
                 if (series.ContainsKey(id))
                 {
-                    series.Remove(id);
+                    series.TryRemove(id,out _);
                 }
             }
         }
@@ -753,7 +753,7 @@ namespace TVRename
                 return;
             }
 
-            SeriesInfo selectedSeriesInfo = this.series[id];
+            SeriesInfo selectedSeriesInfo = series[id];
 
             if (time > selectedSeriesInfo.SrvLastUpdated) // newer version on the server
             {
@@ -762,14 +762,14 @@ namespace TVRename
             else
             {
                 Logger.Info(selectedSeriesInfo.Name + " has a lastupdated of  " +
-                            Helpers.FromUnixTime(series[id].SrvLastUpdated) + " server says " +
+                            Helpers.FromUnixTime(selectedSeriesInfo.SrvLastUpdated) + " server says " +
                             Helpers.FromUnixTime(time));
             }
 
             //now we wish to see if any episodes from the series have been updated. If so then mark them as dirty too
             List<JObject> episodeDefaultLangResponses = null;
             string requestedLanguageCode = selectedSeriesInfo.UseCustomLanguage
-                ? series[id].TargetLanguageCode
+                ? selectedSeriesInfo.TargetLanguageCode
                 : TVSettings.Instance.PreferredLanguageCode;
 
             try
