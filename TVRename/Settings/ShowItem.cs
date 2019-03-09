@@ -196,17 +196,17 @@ namespace TVRename
 
         private void SetupIgnoreRules([NotNull] XElement xmlSettings)
         {
-            foreach (XElement ig in xmlSettings.Descendants("IgnoreSeasons").Descendants("Ignore"))
+            foreach (int seasonNumber in xmlSettings.Descendants("IgnoreSeasons").Descendants("Ignore").Select(ig => XmlConvert.ToInt32(ig.Value)).Distinct())
             {
-                IgnoreSeasons.Add(XmlConvert.ToInt32(ig.Value));
+                IgnoreSeasons.Add(seasonNumber);
             }
         }
 
         private void SetupAliases([NotNull] XElement xmlSettings)
         {
-            foreach (XElement alias in xmlSettings.Descendants("AliasNames").Descendants("Alias"))
+            foreach (string alias in xmlSettings.Descendants("AliasNames").Descendants("Alias").Select(alias=> alias.Value).Distinct())
             {
-                AliasNames.Add(alias.Value);
+                AliasNames.Add(alias);
             }
         }
 
@@ -244,9 +244,10 @@ namespace TVRename
 
                 ManualFolderLocations[snum] = new List<string>();
 
-                foreach (XElement folderData in seasonFolder.Descendants("Folder"))
+                foreach (string ff in seasonFolder.Descendants("Folder")
+                    .Select(folderData => folderData.Attribute("Location")?.Value)
+                    .Distinct())
                 {
-                    string ff = folderData.Attribute("Location")?.Value;
                     if (!string.IsNullOrWhiteSpace(ff) && AutoFolderNameForSeason(snum) != ff)
                     {
                         ManualFolderLocations[snum].Add(ff);
