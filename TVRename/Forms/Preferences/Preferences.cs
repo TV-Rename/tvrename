@@ -190,6 +190,7 @@ namespace TVRename
 
         #region Update Settings
 
+        // ReSharper disable once FunctionComplexityOverflow
         private void UpdateSettings()
         {
             TVSettings s = TVSettings.Instance;
@@ -684,11 +685,12 @@ namespace TVRename
                 bool ins = (bool) (ReplacementsGrid[i, 2].Value);
                 if (!string.IsNullOrEmpty(from))
                 {
-                    s.Replacements.Add(new TVSettings.Replacement(@from, to, ins));
+                    s.Replacements.Add(new TVSettings.Replacement(from, to, ins));
                 }
             }
         }
 
+        // ReSharper disable once FunctionComplexityOverflow
         private void Preferences_Load(object sender, EventArgs e)
         {
             SetupLanguages();
@@ -1194,29 +1196,19 @@ namespace TVRename
             txtExportRSSMaxShows.Enabled = wtw;
             txtExportRSSDaysPast.Enabled = wtw;
 
-            bool fo = cbFOXML.Checked;
-            txtFOXML.Enabled = fo;
-            bnBrowseFOXML.Enabled = fo;
+            SetEnabled(cbFOXML, txtFOXML, bnBrowseFOXML);
+            SetEnabled(cbShowsTXT, txtShowsTXTTo, bnBrowseShowsTXT);
+            SetEnabled(cbShowsHTML, txtShowsHTMLTo, bnBrowseShowsHTML);
+            SetEnabled(cbRenamingXML, txtRenamingXML, bnBrowseRenamingXML);
+            SetEnabled(cbMissingXML, txtMissingXML, bnBrowseMissingXML);
+            SetEnabled(cbMissingCSV, txtMissingCSV, bnBrowseMissingCSV);
+        }
 
-            bool stxt = cbShowsTXT.Checked;
-            txtShowsTXTTo.Enabled = stxt;
-            bnBrowseShowsTXT.Enabled = stxt;
-
-            bool shtml = cbShowsHTML.Checked;
-            txtShowsHTMLTo.Enabled = shtml;
-            bnBrowseShowsHTML.Enabled = shtml;
-
-            bool ren = cbRenamingXML.Checked;
-            txtRenamingXML.Enabled = ren;
-            bnBrowseRenamingXML.Enabled = ren;
-
-            bool misx = cbMissingXML.Checked;
-            txtMissingXML.Enabled = misx;
-            bnBrowseMissingXML.Enabled = misx;
-
-            bool misc = cbMissingCSV.Checked;
-            txtMissingCSV.Enabled = misc;
-            bnBrowseMissingCSV.Enabled = misc;
+        private static void SetEnabled([NotNull] CheckBox checkBox, [NotNull] TextBox txtMissingCsv, [NotNull] Button bnBrowseMissingCsv)
+        {
+            bool status = checkBox.Checked;
+            txtMissingCsv.Enabled = status;
+            bnBrowseMissingCsv.Enabled = status;
         }
 
         private void ScanOptEnableDisable()

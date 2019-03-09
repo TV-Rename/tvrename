@@ -191,10 +191,10 @@ namespace TVRename
         private void LoadJson(int seriesId, [NotNull] JObject bestLanguageR, JObject backupLanguageR)
         {
             //Here we have two pieces of JSON. One in local language and one in the default language (English). 
-            //We will populate with the best language frst and then fillin any gaps with the backup Language
+            //We will populate with the best language first and then fill in any gaps with the backup Language
             LoadJson(seriesId, bestLanguageR);
 
-            //backupLanguageR should be a series of name/value pairs (ie a JArray of JPropertes)
+            //backupLanguageR should be a series of name/value pairs (ie a JArray of JProperties)
             //TVDB asserts that name and overview are the fields that are localised
 
             if (string.IsNullOrWhiteSpace(mName) && (string) backupLanguageR["episodeName"] != null)
@@ -232,17 +232,6 @@ namespace TVRename
 
                 AiredEpNum = (int) r["airedEpisodeNumber"];
 
-                string dvdEpNumString = (string) r["dvdEpisodeNumber"];
-
-                if (string.IsNullOrWhiteSpace(dvdEpNumString))
-                {
-                    DvdEpNum = 0;
-                }
-                else if (!int.TryParse(dvdEpNumString, out DvdEpNum))
-                {
-                    DvdEpNum = 0;
-                }
-
                 SrvLastUpdated = (long) r["lastUpdated"];
                 Overview = System.Web.HttpUtility.HtmlDecode((string)r["overview"]);
                 EpisodeRating = (string) r["siteRating"];
@@ -271,42 +260,56 @@ namespace TVRename
                     int.TryParse(sn, out ReadAiredSeasonNum);
                 }
 
-                string dsn = (string) r["dvdSeason"];
-                if (string.IsNullOrWhiteSpace(dsn))
-                {
-                    ReadDvdSeasonNum = 0;
-                }
-                else if (!int.TryParse(dsn, out ReadDvdSeasonNum))
-                {
-                    ReadDvdSeasonNum = 0;
-                }
+                DvdEpNum = ExtractStringToInt(r,"dvdEpisodeNumber");
+                ReadDvdSeasonNum = ExtractStringToInt(r, "dvdSeason");
 
                 EpisodeGuestStars = JsonHelper.Flatten(r["guestStars"], "|");
                 EpisodeDirector = JsonHelper.Flatten(r["directors"], "|");
                 Writer = JsonHelper.Flatten(r["writers"], "|");
 
-                try
-                {
-                    string contents = (string) r["firstAired"];
-                    if (string.IsNullOrEmpty(contents))
-                    {
-                        FirstAired = null;
-                    }
-                    else
-                    {
-                        FirstAired = DateTime.ParseExact(contents, "yyyy-MM-dd",
-                            new System.Globalization.CultureInfo(""));
-                    }
-                }
-                catch (Exception e)
-                {
-                    Logger.Debug(e, "Failed to parse firstAired");
-                    FirstAired = null;
-                }
+                FirstAired = GetFirstAired(r);
             }
             catch (Exception e)
             {
                 Logger.Error(e, $"Failed to parse : {r}");
+            }
+        }
+
+        private int ExtractStringToInt([NotNull] JObject r,[NotNull] string key)
+        {
+            string valueAsString = (string)r[key];
+
+            if (string.IsNullOrWhiteSpace(valueAsString))
+            {
+                return 0;
+            }
+
+            if (!int.TryParse(valueAsString, out int returnValue))
+            {
+                return 0;
+            }
+
+            return returnValue;
+
+        }
+
+        private static DateTime? GetFirstAired(JObject r)
+        {
+            try
+            {
+                string contents = (string) r["firstAired"];
+                if (string.IsNullOrEmpty(contents))
+                {
+                    return null;
+                }
+
+                return DateTime.ParseExact(contents, "yyyy-MM-dd",
+                    new System.Globalization.CultureInfo(""));
+            }
+            catch (Exception e)
+            {
+                Logger.Debug(e, "Failed to parse firstAired");
+                return null;
             }
         }
 

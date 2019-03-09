@@ -337,6 +337,7 @@ namespace TVRename
             ResumeDatPath = f2.Exists ? f2.FullName : "";
         }
 
+        // ReSharper disable once FunctionComplexityOverflow
         public void WriteXML([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("Settings");
@@ -1076,6 +1077,7 @@ namespace TVRename
             }
         }
 
+        // ReSharper disable once FunctionComplexityOverflow
         public void load([NotNull] XElement xmlSettings)
         {
             SetToDefaults();
@@ -1220,25 +1222,50 @@ namespace TVRename
             RSSURLs = xmlSettings.Descendants("RSSURLs").FirstOrDefault()?.ReadStringsFromXml("URL");
             TheSearchers = new Searchers(xmlSettings.Descendants("TheSearchers").FirstOrDefault());
 
-            Replacements.Clear();
-            foreach (XElement rep in xmlSettings.Descendants("Replacements").FirstOrDefault()?.Descendants("Replace")??new List<XElement>())
+            UpdateReplacements(xmlSettings);
+            UpdateRegExs(xmlSettings);
+            UpdateShowStatus(xmlSettings);
+            UpdateFiters(xmlSettings);
+        }
+
+        private void UpdateFiters([NotNull] XElement xmlSettings)
+        {
+            SeasonFilter = new SeasonFilter
             {
-                Replacements.Add(new Replacement(rep.Attribute("This")?.Value, rep.Attribute("That")?.Value, rep.Attribute("CaseInsensitive")?.Value == "Y"));
+                HideIgnoredSeasons = XmlConvert.ToBoolean(xmlSettings.Descendants("SeasonFilters")
+                                                              .Descendants("SeasonIgnoredFilter").FirstOrDefault()?.Value ??
+                                                          "false")
+            };
+
+            Filter = new ShowFilter
+            {
+                ShowName = xmlSettings.Descendants("ShowFilters").Descendants("ShowNameFilter").Attributes("ShowName")
+                    .FirstOrDefault()?.Value,
+                ShowStatus = xmlSettings.Descendants("ShowFilters").Descendants("ShowStatusFilter").Attributes("ShowStatus")
+                    .FirstOrDefault()?.Value,
+                ShowRating = xmlSettings.Descendants("ShowFilters").Descendants("ShowRatingFilter").Attributes("ShowRating")
+                    .FirstOrDefault()?.Value,
+                ShowNetwork = xmlSettings.Descendants("ShowFilters").Descendants("ShowNetworkFilter").Attributes("ShowNetwork")
+                    .FirstOrDefault()?.Value,
+            };
+
+            foreach (XAttribute rep in xmlSettings.Descendants("ShowFilters").Descendants("GenreFilter").Attributes("Genre"))
+            {
+                Filter.Genres.Add(rep.Value);
             }
 
-            FNPRegexs.Clear();
-            foreach (XElement rep in xmlSettings.Descendants("FNPRegexs").FirstOrDefault()?.Descendants("Regex")??new List<XElement>())
+            if (SeasonFolderFormat == string.Empty)
             {
-                FNPRegexs.Add(new FilenameProcessorRE(
-                    XmlConvert.ToBoolean(rep.Attribute("Enabled")?.Value ?? "false"),
-                    rep.Attribute("RE")?.Value,
-                    XmlConvert.ToBoolean(rep.Attribute("UseFullPath")?.Value ?? "false"),
-                    rep.Attribute("Notes")?.Value
-                    ));
+                //this has not been set from the XML, so we should give it an appropriate default value
+                SeasonFolderFormat = defaultSeasonWord.Trim() + " " + (LeadingZeroOnSeason ? "{Season:2}" : "{Season}");
             }
+        }
 
+        private void UpdateShowStatus([NotNull] XElement xmlSettings)
+        {
             ShowStatusColors = new ShowStatusColoringTypeList();
-            foreach (XElement rep in xmlSettings.Descendants("ShowStatusTVWColors").FirstOrDefault()?.Descendants("ShowStatusTVWColor")??new List<XElement>())
+            foreach (XElement rep in xmlSettings.Descendants("ShowStatusTVWColors").FirstOrDefault()
+                                         ?.Descendants("ShowStatusTVWColor") ?? new List<XElement>())
             {
                 string showStatus = rep.Attribute("ShowStatus")?.Value;
                 bool isMeta = bool.Parse(rep.Attribute("IsMeta")?.Value ?? "false");
@@ -1253,30 +1280,31 @@ namespace TVRename
                 System.Drawing.Color c = System.Drawing.ColorTranslator.FromHtml(color);
                 ShowStatusColors.Add(type, c);
             }
+        }
 
-            SeasonFilter = new SeasonFilter
+        private void UpdateRegExs([NotNull] XElement xmlSettings)
+        {
+            FNPRegexs.Clear();
+            foreach (XElement rep in xmlSettings.Descendants("FNPRegexs").FirstOrDefault()?.Descendants("Regex") ??
+                                     new List<XElement>())
             {
-                HideIgnoredSeasons = XmlConvert.ToBoolean(xmlSettings.Descendants("SeasonFilters")
-                    .Descendants("SeasonIgnoredFilter").FirstOrDefault()?.Value ??"false" )
-            };
-
-            Filter = new ShowFilter
-            {
-                ShowName = xmlSettings.Descendants("ShowFilters").Descendants("ShowNameFilter").Attributes("ShowName").FirstOrDefault()?.Value,
-                ShowStatus = xmlSettings.Descendants("ShowFilters").Descendants("ShowStatusFilter").Attributes("ShowStatus").FirstOrDefault()?.Value,
-                ShowRating = xmlSettings.Descendants("ShowFilters").Descendants("ShowRatingFilter").Attributes("ShowRating").FirstOrDefault()?.Value,
-                ShowNetwork = xmlSettings.Descendants("ShowFilters").Descendants("ShowNetworkFilter").Attributes("ShowNetwork").FirstOrDefault()?.Value,
-            };
-
-            foreach (XAttribute rep in xmlSettings.Descendants("ShowFilters").Descendants("GenreFilter").Attributes("Genre"))
-            {
-                Filter.Genres.Add(rep.Value);
+                FNPRegexs.Add(new FilenameProcessorRE(
+                    XmlConvert.ToBoolean(rep.Attribute("Enabled")?.Value ?? "false"),
+                    rep.Attribute("RE")?.Value,
+                    XmlConvert.ToBoolean(rep.Attribute("UseFullPath")?.Value ?? "false"),
+                    rep.Attribute("Notes")?.Value
+                ));
             }
+        }
 
-            if (SeasonFolderFormat == string.Empty)
+        private void UpdateReplacements([NotNull] XElement xmlSettings)
+        {
+            Replacements.Clear();
+            foreach (XElement rep in xmlSettings.Descendants("Replacements").FirstOrDefault()?.Descendants("Replace") ??
+                                     new List<XElement>())
             {
-                //this has not been set from the XML, so we should give it an appropriate default value
-                SeasonFolderFormat = defaultSeasonWord.Trim() + " " + (LeadingZeroOnSeason ? "{Season:2}" : "{Season}");
+                Replacements.Add(new Replacement(rep.Attribute("This")?.Value, rep.Attribute("That")?.Value,
+                    rep.Attribute("CaseInsensitive")?.Value == "Y"));
             }
         }
     }

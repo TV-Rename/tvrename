@@ -69,7 +69,7 @@ namespace TVRename
             } // for each snum
         }
 
-        private void CreateSeasonFolders(ShowItem si, int snum, List<string> folders)
+        private void CreateSeasonFolders(ShowItem si, int snum, [NotNull] List<string> folders)
         {
             foreach (string folderExists in folders)
             {
@@ -128,25 +128,8 @@ namespace TVRename
                     }
                     else if (whatToDo == FaResult.kfaCreate)
                     {
-                        if (string.IsNullOrWhiteSpace(folder))
-                        {
-                            LOGGER.Warn($"Folder is not specified for {sn} {text}");
-                            goAgain = true;
-                        }
-                        else
-                        {
-                            try
-                            {
-                                LOGGER.Info("Creating directory as it is missing: {0}", folder);
-                                Directory.CreateDirectory(folder);
-                            }
-                            catch (Exception ioe)
-                            {
-                                LOGGER.Warn($"Could not create directory: {folder} Error Message: {ioe.Message}");
-                            }
-
-                            goAgain = true;
-                        }
+                        TryCreateDirectory(folder, sn, text);
+                        goAgain = true;
                     }
                     else if (whatToDo == FaResult.kfaIgnoreAlways)
                     {
@@ -165,21 +148,49 @@ namespace TVRename
                     else if (whatToDo == FaResult.kfaDifferentFolder)
                     {
                         folder = otherFolder;
-                        di = new DirectoryInfo(folder);
-                        goAgain = !di.Exists;
-                        if (di.Exists && (!string.Equals(si.AutoFolderNameForSeason(snum), folder, StringComparison.CurrentCultureIgnoreCase)))
-                        {
-                            if (!si.ManualFolderLocations.ContainsKey(snum))
-                            {
-                                si.ManualFolderLocations[snum] = new List<string>();
-                            }
-
-                            si.ManualFolderLocations[snum].Add(folder);
-                            Doc.SetDirty();
-                        }
+                        goAgain = UpdateDirectory(si, snum, folder);
                     }
                 } while (goAgain);
             } // for each folder
+        }
+
+        private  bool  UpdateDirectory(ShowItem si, int snum, string folder)
+        {
+            DirectoryInfo di = new DirectoryInfo(folder);
+            bool goAgain = !di.Exists;
+            if (di.Exists &&
+                (!string.Equals(si.AutoFolderNameForSeason(snum), folder, StringComparison.CurrentCultureIgnoreCase)))
+            {
+                if (!si.ManualFolderLocations.ContainsKey(snum))
+                {
+                    si.ManualFolderLocations[snum] = new List<string>();
+                }
+
+                si.ManualFolderLocations[snum].Add(folder);
+                Doc.SetDirty();
+            }
+
+            return goAgain;
+        }
+
+        private static void TryCreateDirectory([CanBeNull] string folder, string sn, string text)
+        {
+            if (string.IsNullOrWhiteSpace(folder))
+            {
+                LOGGER.Warn($"Folder is not specified for {sn} {text}");
+            }
+            else
+            {
+                try
+                {
+                    LOGGER.Info("Creating directory as it is missing: {0}", folder);
+                    Directory.CreateDirectory(folder);
+                }
+                catch (Exception ioe)
+                {
+                    LOGGER.Warn($"Could not create directory: {folder} Error Message: {ioe.Message}");
+                }
+            }
         }
 
         private FaResult GetDefaultAction()

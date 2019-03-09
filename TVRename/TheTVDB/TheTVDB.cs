@@ -719,125 +719,14 @@ namespace TVRename
             }
         }
 
-        private void ProcessUpdate(JObject jsonResponse, string uri)
+        private void ProcessUpdate([NotNull] JObject jsonResponse, string uri)
         {
             // if updatetime > localtime for item, then remove it, so it will be downloaded later
             try
             {
-                foreach (JToken jToken in jsonResponse["data"])
+                foreach (JObject seriesResponse in jsonResponse["data"].Cast<JObject>())
                 {
-                    JObject seriesResponse = (JObject) jToken;
-                    int id = (int)seriesResponse["id"];
-                    long time = (long)seriesResponse["lastUpdated"];
-
-                    if (series.ContainsKey(id)) // this is a series we have
-                    {
-                        if (time > series[id].SrvLastUpdated) // newer version on the server
-                        {
-                            series[id].Dirty = true; // mark as dirty, so it'll be fetched again later
-                        }
-                        else
-                        {
-                            Logger.Info(series[id].Name + " has a lastupdated of  " +
-                                        Helpers.FromUnixTime(series[id].SrvLastUpdated) + " server says " +
-                                        Helpers.FromUnixTime(time));
-                        }
-
-                        //now we wish to see if any episodes from the series have been updated. If so then mark them as dirty too
-                        List<JObject> episodeDefaultLangResponses = null;
-                        string requestedLanguageCode = series[id].UseCustomLanguage ? series[id].TargetLanguageCode: TVSettings.Instance.PreferredLanguageCode;
-                        try
-                        {
-                            List<JObject> episodeResponses = GetEpisodes(id, requestedLanguageCode);
-                            if (IsNotDefaultLanguage(requestedLanguageCode))
-                            {
-                                episodeDefaultLangResponses = GetEpisodes(id, DefaultLanguageCode);
-                            }
-
-                            Dictionary<int, Tuple<JToken, JToken>> episodesResponses =
-                                MergeEpisodeResponses(episodeResponses, episodeDefaultLangResponses);
-
-                            int numberOfNewEpisodes = 0;
-                            int numberOfUpdatedEpisodes = 0;
-
-                            ICollection<int> oldEpisodeIds = new List<int>();
-                            foreach (KeyValuePair<int, Season> kvp2 in GetSeries(id)?.AiredSeasons ?? new Dictionary<int, Season>())
-                            {
-                                foreach (Episode ep in kvp2.Value.Episodes.Values)
-                                {
-                                    oldEpisodeIds.Add(ep.EpisodeId);
-                                }
-                            }
-
-                            try
-                            {
-                                foreach (KeyValuePair<int, Tuple<JToken, JToken>> episodeData in episodesResponses)
-                                {
-                                    JToken episodeToUse = (episodeData.Value.Item1 ?? episodeData.Value.Item2);
-                                    long serverUpdateTime = (long) episodeToUse["lastUpdated"];
-                                    int serverEpisodeId = episodeData.Key;
-
-                                    bool found = false;
-                                    foreach (KeyValuePair<int, Season> kvp2 in series[id].AiredSeasons)
-                                    {
-                                        Season seas = kvp2.Value;
-
-                                        foreach (Episode ep in seas.Episodes.Values)
-                                        {
-                                            if (ep.EpisodeId == serverEpisodeId)
-                                            {
-                                                oldEpisodeIds.Remove(serverEpisodeId);
-
-                                                if (ep.SrvLastUpdated < serverUpdateTime)
-                                                {
-                                                    ep.Dirty = true; // mark episode as dirty.
-                                                    numberOfUpdatedEpisodes++;
-                                                }
-
-                                                found = true;
-                                                break;
-                                            }
-                                        }
-                                    }
-
-                                    if (!found)
-                                    {
-                                        // must be a new episode
-                                        extraEpisodes.TryAdd(serverEpisodeId, new ExtraEp(id, serverEpisodeId));
-                                        numberOfNewEpisodes++;
-                                    }
-                                }
-                            }
-                            catch (InvalidCastException ex)
-                            {
-                                Logger.Error(ex, "Did not receive the expected format of episode json from {0}.", uri);
-                                Logger.Error(jsonResponse["data"].ToString());
-                            }
-                            catch (OverflowException ex)
-                            {
-                                Logger.Error(ex, "Could not parse the episode json from {0}.", uri);
-                                Logger.Error(jsonResponse["data"].ToString());
-                            }
-
-                            Logger.Info(series[id].Name + " had " + numberOfUpdatedEpisodes +
-                                        " episodes updated and " + numberOfNewEpisodes + " new episodes ");
-
-                            if (oldEpisodeIds.Count > 0)
-                            {
-                                Logger.Warn(series[id].Name + " had " + oldEpisodeIds.Count +
-                                            " episodes deleted: " + string.Join(",", oldEpisodeIds));
-                            }
-
-                            foreach (int episodeId in oldEpisodeIds)
-                            {
-                                removeEpisodeIds.TryAdd(episodeId,new ExtraEp(id, episodeId));
-                            }
-                        }
-                        catch (ShowNotFoundException ex)
-                        {
-                            Logger.Warn($"Episodes were not found for {ex.ShowId}:{series[id].Name} in languange {requestedLanguageCode} or {DefaultLanguageCode}");
-                        }
-                    }
+                    ProcessSeriesUpdate(seriesResponse);
                 }
             }
             catch (InvalidCastException ex)
@@ -854,17 +743,163 @@ namespace TVRename
             }
         }
 
-        private static long GetUpdateTime([NotNull] JObject jsonUdpateResponse)
+        private void ProcessSeriesUpdate([NotNull] JObject seriesResponse)
+        {
+            int id = (int) seriesResponse["id"];
+            long time = (long) seriesResponse["lastUpdated"];
+
+            if (!series.ContainsKey(id))
+            {
+                return;
+            }
+
+            if (time > series[id].SrvLastUpdated) // newer version on the server
+            {
+                series[id].Dirty = true; // mark as dirty, so it'll be fetched again later
+            }
+            else
+            {
+                Logger.Info(series[id].Name + " has a lastupdated of  " +
+                            Helpers.FromUnixTime(series[id].SrvLastUpdated) + " server says " +
+                            Helpers.FromUnixTime(time));
+            }
+
+            //now we wish to see if any episodes from the series have been updated. If so then mark them as dirty too
+            List<JObject> episodeDefaultLangResponses = null;
+            string requestedLanguageCode = series[id].UseCustomLanguage
+                ? series[id].TargetLanguageCode
+                : TVSettings.Instance.PreferredLanguageCode;
+
+            try
+            {
+                List<JObject> episodeResponses = GetEpisodes(id, requestedLanguageCode);
+                if (IsNotDefaultLanguage(requestedLanguageCode))
+                {
+                    episodeDefaultLangResponses = GetEpisodes(id, DefaultLanguageCode);
+                }
+
+                Dictionary<int, Tuple<JToken, JToken>> episodesResponses =
+                    MergeEpisodeResponses(episodeResponses, episodeDefaultLangResponses);
+
+                ProcessEpisodes(id, episodesResponses);
+            }
+            catch (ShowNotFoundException ex)
+            {
+                Logger.Warn(
+                    $"Episodes were not found for {ex.ShowId}:{series[id].Name} in languange {requestedLanguageCode} or {DefaultLanguageCode}");
+            }
+        }
+
+        private void ProcessEpisodes(int id, [NotNull] Dictionary<int, Tuple<JToken, JToken>> episodesResponses)
+        {
+            int numberOfNewEpisodes = 0;
+            int numberOfUpdatedEpisodes = 0;
+
+            ICollection<int> oldEpisodeIds = GetOldEpisodeIds(id);
+
+            foreach (KeyValuePair<int, Tuple<JToken, JToken>> episodeData in episodesResponses)
+            {
+                try
+                    {
+                    JToken episodeToUse = (episodeData.Value.Item1 ?? episodeData.Value.Item2);
+                    long serverUpdateTime = (long) episodeToUse["lastUpdated"];
+                    (int newEps, int updatedEps) = ProcessEpisode(serverUpdateTime, episodeData, id, oldEpisodeIds);
+                    numberOfNewEpisodes += newEps;
+                    numberOfUpdatedEpisodes += updatedEps;
+                }
+                catch (InvalidCastException ex)
+                {
+                    Logger.Error(ex, "Did not recieve the expected format of episode json:");
+                    Logger.Error(episodeData.Value.Item1?.ToString());
+                    Logger.Error(episodeData.Value.Item2.ToString());
+                }
+                catch (OverflowException ex)
+                {
+                    Logger.Error(ex, "Did not recieve the expected format of episode json:");
+                    Logger.Error(episodeData.Value.Item1?.ToString());
+                    Logger.Error(episodeData.Value.Item2.ToString());
+                }
+            }
+
+            Logger.Info(series[id].Name + " had " + numberOfUpdatedEpisodes +
+                        " episodes updated and " + numberOfNewEpisodes + " new episodes ");
+
+            if (oldEpisodeIds.Count > 0)
+            {
+                Logger.Warn($"{series[id].Name} had {oldEpisodeIds.Count} episodes deleted: {string.Join(",", oldEpisodeIds)}");
+            }
+
+            foreach (int episodeId in oldEpisodeIds)
+            {
+                removeEpisodeIds.TryAdd(episodeId, new ExtraEp(id, episodeId));
+            }
+        }
+
+        private (int newEps, int updatedEps) ProcessEpisode(long serverUpdateTime, KeyValuePair<int, Tuple<JToken, JToken>> episodeData, int id, ICollection<int> oldEpisodeIds)
+        {
+            int newEpisodeCount=0;
+            int updatedEpisodeCount=0;
+            int serverEpisodeId = episodeData.Key;
+
+            bool found = false;
+            foreach (KeyValuePair<int, Season> kvp2 in series[id].AiredSeasons)
+            {
+                Season seas = kvp2.Value;
+
+                foreach (Episode ep in seas.Episodes.Values)
+                {
+                    if (ep.EpisodeId == serverEpisodeId)
+                    {
+                        oldEpisodeIds.Remove(serverEpisodeId);
+
+                        if (ep.SrvLastUpdated < serverUpdateTime)
+                        {
+                            ep.Dirty = true; // mark episode as dirty.
+                            updatedEpisodeCount++;
+                        }
+
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!found)
+            {
+                // must be a new episode
+                extraEpisodes.TryAdd(serverEpisodeId, new ExtraEp(id, serverEpisodeId));
+                newEpisodeCount++;
+            }
+
+            return (newEpisodeCount,updatedEpisodeCount);
+        }
+
+        [NotNull]
+        private ICollection<int> GetOldEpisodeIds(int seriesId)
+        {
+            ICollection<int> oldEpisodeIds = new List<int>();
+            foreach (KeyValuePair<int, Season> kvp2 in GetSeries(seriesId)?.AiredSeasons ?? new Dictionary<int, Season>())
+            {
+                foreach (Episode ep in kvp2.Value.Episodes.Values)
+                {
+                    oldEpisodeIds.Add(ep.EpisodeId);
+                }
+            }
+
+            return oldEpisodeIds;
+        }
+
+        private static long GetUpdateTime([NotNull] JObject jsonUpdateResponse)
         {
             long maxUpdateTime;
             try
             {
-                IEnumerable<long> updateTimes = from a in jsonUdpateResponse["data"] select (long)a["lastUpdated"];
+                IEnumerable<long> updateTimes = from a in jsonUpdateResponse["data"] select (long)a["lastUpdated"];
                 maxUpdateTime = updateTimes.DefaultIfEmpty(0).Max();
             }
             catch (Exception e)
             {
-                Logger.Error(e, jsonUdpateResponse.ToString());
+                Logger.Error(e, jsonUpdateResponse.ToString());
                 maxUpdateTime = 0;
             }
 
@@ -1396,117 +1431,26 @@ namespace TVRename
 
         private void DownloadSeriesBanners(int code, [NotNull] SeriesInfo si,string requestedLanguageCode)
         {
-            List<JObject> bannerResponses = new List<JObject>();
-            List<JObject> bannerDefaultLangResponses = new List<JObject>();
-
-            // get /series/id/images if the bannersToo is set - may need to make multiple calls to for each image type
-            List<string> imageTypes = new List<string>();
-            string uriImages = TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images";
-            string uriImagesQuery = TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images/query";
-
-            try
-            {
-                JObject jsonEpisodeSearchResponse = HttpHelper.JsonHttpGetRequest(
-                    uriImages, null, tvDbTokenProvider,
-                    requestedLanguageCode,false);
-
-                JObject a = (JObject)jsonEpisodeSearchResponse["data"];
-
-                foreach (KeyValuePair<string, JToken> imageType in a)
-                {
-                    if ((int)imageType.Value > 0)
-                    {
-                        imageTypes.Add(imageType.Key);
-                    }
-                }
-            }
-            catch (WebException ex)
-            {
-                //no images for chosen language
-                Logger.Warn(ex,
-                    $"No images found for {uriImages} in language {requestedLanguageCode}");
-            }
-
-            foreach (string imageType in imageTypes)
-            {
-                try
-                {
-                    JObject jsonImageResponse = HttpHelper.JsonHttpGetRequest(
-                        uriImagesQuery,
-                        new Dictionary<string, string> { { "keyType", imageType } }, tvDbTokenProvider,
-                        requestedLanguageCode,false);
-
-                    bannerResponses.Add(jsonImageResponse);
-                }
-                catch (WebException webEx)
-                {
-                    Logger.Info(webEx,
-                        $"Looking for {imageType} images (in local language), but none found for seriesId {code}");
-                }
-            }
-
-            if (IsNotDefaultLanguage(requestedLanguageCode))
-            {
-                List<string> imageDefaultLangTypes = new List<string>();
-
-                try
-                {
-                    JObject jsonEpisodeSearchDefaultLangResponse = HttpHelper.JsonHttpGetRequest(
-                        uriImages, null, tvDbTokenProvider,
-                        DefaultLanguageCode,false);
-
-                    JObject adl = (JObject)jsonEpisodeSearchDefaultLangResponse["data"];
-
-                    foreach (KeyValuePair<string, JToken> imageType in adl)
-                    {
-                        if ((int)imageType.Value > 0)
-                        {
-                            imageDefaultLangTypes.Add(imageType.Key);
-                        }
-                    }
-                }
-                catch (WebException ex)
-                {
-                    Logger.Info(ex, $"Looking for images, but none found for seriesId {code} in {DefaultLanguageCode}");
-                    //no images for chosen language
-                }
-
-                foreach (string imageType in imageDefaultLangTypes)
-                {
-                    try
-                    {
-                        JObject jsonImageDefaultLangResponse = HttpHelper.JsonHttpGetRequest(uriImagesQuery,
-                            new Dictionary<string, string> { { "keyType", imageType } }, tvDbTokenProvider,
-                            DefaultLanguageCode,false);
-
-                        bannerDefaultLangResponses.Add(jsonImageDefaultLangResponse);
-                    }
-                    catch (WebException webEx)
-                    {
-                        Logger.Info(webEx,
-                            $"Looking for {imageType} images in {DefaultLanguageCode}, but none found for seriesId {code}");
-                    }
-                }
-            }
+            (List<JObject> bannerDefaultLangResponses, List<JObject> bannerResponses) = DownloadBanners(code, requestedLanguageCode);
 
             foreach (JObject response in bannerResponses)
             {
                 try
                 {
-                    foreach (JToken jToken in response["data"])
+                    foreach (Banner b in response["data"]
+                        .Cast<JObject>()
+                        .Select(bannerData => new Banner(si.TvdbCode, bannerData, GetLanguageId())))
                     {
-                        JObject bannerData = (JObject)jToken;
-                        Banner b = new Banner(si.TvdbCode, bannerData, GetLanguageId());
-                         //   if (!series.ContainsKey(b.SeriesId))
-                         //       throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
-                         //   SeriesInfo ser = series[b.SeriesId];
-                         //   ser.AddOrUpdateBanner(b);
-                         si.AddOrUpdateBanner(b);
+                        //   if (!series.ContainsKey(b.SeriesId))
+                        //       throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
+                        //   SeriesInfo ser = series[b.SeriesId];
+                        //   ser.AddOrUpdateBanner(b);
+                        si.AddOrUpdateBanner(b);
                     }
                 }
                 catch (InvalidCastException ex)
                 {
-                    Logger.Error(ex, "Did not receive the expected format of json from {0}.", uriImagesQuery);
+                    Logger.Error(ex, $"Did not receive the expected format of json from when downloading banners for series {code} in {requestedLanguageCode}");
                     Logger.Error(response["data"].ToString());
                 }
             }
@@ -1533,12 +1477,92 @@ namespace TVRename
                 }
                 catch (InvalidCastException ex)
                 {
-                    Logger.Error(ex, "Did not receive the expected format of json from {0}.", uriImagesQuery);
+                    Logger.Error(ex, $"Did not receive the expected format of json from when downloading banners for series {code} in {DefaultLanguageCode}");
                     Logger.Error(response["data"].ToString());
                 }
             }
 
             si.BannersLoaded = true;
+        }
+
+        private (List<JObject> bannerDefaultLangResponses, List<JObject> bannerResponses) DownloadBanners(int code,
+            string requestedLanguageCode)
+        {
+            // get /series/id/images if the bannersToo is set - may need to make multiple calls to for each image type
+            string uriImages = TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images";
+            string uriImagesQuery = TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images/query";
+
+            List<string> imageTypes = GetImageTypes(uriImages, requestedLanguageCode, code);
+
+            List<JObject> bannerResponses =
+                GetBanners(code, requestedLanguageCode, imageTypes, uriImagesQuery, tvDbTokenProvider);
+
+            if (!IsNotDefaultLanguage(requestedLanguageCode))
+            {
+                return (new List<JObject>(), bannerResponses);
+            }
+
+            List<string> imageDefaultLangTypes = GetImageTypes(uriImages, DefaultLanguageCode, code);
+
+            List<JObject> bannerDefaultLangResponses = GetBanners(code, DefaultLanguageCode, imageDefaultLangTypes, uriImagesQuery,
+                tvDbTokenProvider);
+
+            return (bannerDefaultLangResponses, bannerResponses);
+        }
+
+        [NotNull]
+        private static List<JObject> GetBanners(int code, string languageCode, [NotNull] List<string> imageTypes, string query, TvDbTokenProvider prov)
+        {
+            List<JObject> returnList = new List<JObject>();
+            foreach (string imageType in imageTypes)
+            {
+                try
+                {
+                    JObject jsonImageResponse = HttpHelper.JsonHttpGetRequest(
+                        query,
+                        new Dictionary<string, string> {{"keyType", imageType}}, prov,
+                        languageCode, false);
+
+                    returnList.Add(jsonImageResponse);
+                }
+                catch (WebException webEx)
+                {
+                    Logger.Info(webEx,
+                        $"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}");
+                }
+            }
+
+            return returnList;
+        }
+
+        [NotNull]
+        private List<string> GetImageTypes(string uriImages, string requestedLanguageCode, int code)
+        {
+            List<string> imageTypes = new List<string>();
+            try
+            {
+                JObject jsonEpisodeSearchResponse = HttpHelper.JsonHttpGetRequest(
+                    uriImages, null, tvDbTokenProvider,
+                    requestedLanguageCode, false);
+
+                JObject a = (JObject) jsonEpisodeSearchResponse["data"];
+
+                foreach (KeyValuePair<string, JToken> imageType in a)
+                {
+                    if ((int) imageType.Value > 0)
+                    {
+                        imageTypes.Add(imageType.Key);
+                    }
+                }
+            }
+            catch (WebException ex)
+            {
+                //no images for chosen language
+                Logger.Warn(ex,
+                    $"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}");
+            }
+
+            return imageTypes;
         }
 
         [NotNull]

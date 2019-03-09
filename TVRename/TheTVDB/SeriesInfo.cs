@@ -116,14 +116,14 @@ namespace TVRename
 
         public SeriesInfo(string name, int id)
         {
-            SetToDefauts();
+            SetToDefaults();
             Name = name;
             TvdbCode = id;
         }
 
         public SeriesInfo(string name, int id, string langCode)
         {
-            SetToDefauts();
+            SetToDefaults();
             TargetLanguageCode = langCode;
             Name = name;
             TvdbCode = id;
@@ -131,13 +131,13 @@ namespace TVRename
 
         public SeriesInfo([NotNull] XElement seriesXml)
         {
-            SetToDefauts();
+            SetToDefaults();
             LoadXml(seriesXml);
         }
 
         public SeriesInfo([NotNull] JObject json,int langId)
         {
-            SetToDefauts();
+            SetToDefaults();
             LanguageId = langId;
             LoadJson(json);
 
@@ -150,7 +150,7 @@ namespace TVRename
 
         public SeriesInfo([NotNull] JObject json, JObject jsonInDefaultLang, int langId)
         {
-            SetToDefauts();
+            SetToDefaults();
             LanguageId = langId;
             LoadJson(json,jsonInDefaultLang);
             if (string.IsNullOrEmpty(Name)            ){
@@ -167,7 +167,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> GetActorNames() => GetActors().Select(x => x.ActorName);
 
-        private void SetToDefauts()
+        private void SetToDefaults()
         {
             AiredSeasons = new Dictionary<int, Season>();
             DvdSeasons = new Dictionary<int, Season>();
@@ -185,6 +185,7 @@ namespace TVRename
             BannersLoaded = false;
         }
 
+        // ReSharper disable once FunctionComplexityOverflow
         public void Merge([NotNull] SeriesInfo o, int preferredLanguageId)
         {
             if (o.TvdbCode != TvdbCode)

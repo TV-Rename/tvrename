@@ -21,14 +21,14 @@ namespace TVRename
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem si,
-    out TVSettings.FilenameProcessorRE re)
+    [CanBeNull] out TVSettings.FilenameProcessorRE re)
         {
             return FindSeasEp(fi, out seas, out ep, out maxEp, si, TVSettings.Instance.FNPRegexs,
                 TVSettings.Instance.LookForDateInFilename, out re);
         }
 
         public static bool FindSeasEp([CanBeNull] FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem si,
-            List<TVSettings.FilenameProcessorRE> rexps, bool doDateCheck, out TVSettings.FilenameProcessorRE re)
+            List<TVSettings.FilenameProcessorRE> rexps, bool doDateCheck, [CanBeNull] out TVSettings.FilenameProcessorRE re)
         {
             re = null;
             if (fi == null)
@@ -141,7 +141,7 @@ namespace TVRename
         }
 
         public static bool FindSeasEp([CanBeNull] DirectoryInfo di, out int seas, out int ep, ShowItem si,
-            out TVSettings.FilenameProcessorRE re)
+            [CanBeNull] out TVSettings.FilenameProcessorRE re)
         {
             List<TVSettings.FilenameProcessorRE> rexps = TVSettings.Instance.FNPRegexs;
             re = null;
@@ -157,7 +157,7 @@ namespace TVRename
         }
 
         public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, out int maxEp,
-            ShowItem si, List<TVSettings.FilenameProcessorRE> rexps)
+            ShowItem si, [NotNull] List<TVSettings.FilenameProcessorRE> rexps)
         {
             return FindSeasEp(directory, filename, out seas, out ep, out maxEp, si, rexps, out TVSettings.FilenameProcessorRE _);
         }
@@ -360,7 +360,7 @@ namespace TVRename
         }
 
         public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, out int maxEp,
-            ShowItem si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE rex)
+            [CanBeNull] ShowItem si, [NotNull] IEnumerable<TVSettings.FilenameProcessorRE> rexps, [CanBeNull] out TVSettings.FilenameProcessorRE rex)
         {
             string showNameHint = (si != null) ? si.ShowName : string.Empty;
             maxEp = -1;
@@ -386,27 +386,7 @@ namespace TVRename
 
                     if (m.Success)
                     {
-                        if (!int.TryParse(m.Groups["s"].ToString(), out seas))
-                        {
-                            if (!re.RegExpression.Contains("<s>") && si?.AppropriateSeasons()?.Count == 1)
-                            {
-                                seas = 1;
-                            }
-                            else
-                            {
-                                seas = -1;
-                            }
-                        }
-
-                        if (!int.TryParse(m.Groups["e"].ToString(), out ep))
-                        {
-                            ep = -1;
-                        }
-
-                        if (!int.TryParse(m.Groups["f"].ToString(), out maxEp))
-                        {
-                            maxEp = -1;
-                        }
+                        (seas, ep, maxEp) = IdentifyEpisode(si, m, re);
 
                         rex = re;
                         if ((seas != -1) && (ep != -1))
@@ -424,6 +404,33 @@ namespace TVRename
             }
 
             return ((seas != -1) && (ep != -1));
+        }
+
+        private static (int seas, int ep, int maxEp) IdentifyEpisode(ShowItem si, [NotNull] Match m, TVSettings.FilenameProcessorRE re)
+        {
+            if (!int.TryParse(m.Groups["s"].ToString(), out int seas))
+            {
+                if (!re.RegExpression.Contains("<s>") && si.AppropriateSeasons()?.Count == 1)
+                {
+                    seas = 1;
+                }
+                else
+                {
+                    seas = -1;
+                }
+            }
+
+            if (!int.TryParse(m.Groups["e"].ToString(), out int ep))
+            {
+                ep = -1;
+            }
+
+            if (!int.TryParse(m.Groups["f"].ToString(), out int maxEp))
+            {
+                maxEp = -1;
+            }
+
+            return (seas, ep, maxEp);
         }
 
         [NotNull]

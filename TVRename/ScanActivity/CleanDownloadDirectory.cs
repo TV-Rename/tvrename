@@ -190,7 +190,8 @@ namespace TVRename
             return returnActions;
         }
 
-        private static IEnumerable<Item> ReviewFileInDownloadDirectory(bool unattended, DirFilesCache dfc, ICollection<FileInfo> filesThatMayBeNeeded, FileInfo fi, List<ShowItem> matchingShows)
+        [NotNull]
+        private static IEnumerable<Item> ReviewFileInDownloadDirectory(bool unattended, DirFilesCache dfc, ICollection<FileInfo> filesThatMayBeNeeded, FileInfo fi, [NotNull] List<ShowItem> matchingShows)
         {
             bool fileCanBeDeleted = TVSettings.Instance.RemoveDownloadDirectoriesFiles;
             List<Item> returnActions = new List<Item>();
@@ -208,40 +209,7 @@ namespace TVRename
                     continue;
                 }
 
-                try
-                {
-                    Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
-                    ProcessedEpisode pep = new ProcessedEpisode(ep, si);
-                    firstMatchingPep = pep;
-                    List<FileInfo> encumbants = dfc.FindEpOnDisk(pep, false);
-
-                    if (encumbants.Count == 0)
-                    {
-                        //File is needed as there are no files for that series/episode
-                        fileCanBeDeleted = false;
-
-                        returnActions.AddRange(CopyFutureDatedFile(fi, pep));
-                    }
-                    else
-                    {
-                        foreach (FileInfo existingFile in encumbants)
-                        {
-                            if (existingFile.FullName.Equals(fi.FullName,StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                //the user has put the search folder and the download folder in the same place - DO NOT DELETE
-                                fileCanBeDeleted = false;
-                                continue;
-                            }
-
-                            fileCanBeDeleted = ReviewFile(unattended, fi, matchingShows, existingFile, fileCanBeDeleted, returnActions, pep);
-                        }
-                    }
-                }
-                catch (SeriesInfo.EpisodeNotFoundException)
-                {
-                    LOGGER.Info($"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}'");
-                    fileCanBeDeleted = false;
-                }
+                (firstMatchingPep, fileCanBeDeleted) = FirstMatchingPep(unattended, dfc, fi, matchingShows, s, seasF, epF, si, firstMatchingPep, returnActions, re, fileCanBeDeleted);
             }
 
             if (fileCanBeDeleted)
@@ -257,6 +225,51 @@ namespace TVRename
             }
 
             return returnActions;
+        }
+
+        private static (ProcessedEpisode firstMatchingPep, bool fileCanBeDeleted) FirstMatchingPep(bool unattended,
+            DirFilesCache dfc, FileInfo fi, List<ShowItem> matchingShows, SeriesInfo s, int seasF, int epF, ShowItem si,
+            ProcessedEpisode firstMatchingPep, List<Item> returnActions, [CanBeNull] TVSettings.FilenameProcessorRE re, bool fileCanBeDeleted)
+        {
+            try
+            {
+                Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
+                ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+                firstMatchingPep = pep;
+                List<FileInfo> encumbants = dfc.FindEpOnDisk(pep, false);
+
+                if (encumbants.Count == 0)
+                {
+                    //File is needed as there are no files for that series/episode
+                    fileCanBeDeleted = false;
+
+                    returnActions.AddRange(CopyFutureDatedFile(fi, pep));
+                }
+                else
+                {
+                    foreach (FileInfo existingFile in encumbants)
+                    {
+                        if (existingFile.FullName.Equals(fi.FullName, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            //the user has put the search folder and the download folder in the same place - DO NOT DELETE
+                            fileCanBeDeleted = false;
+                            continue;
+                        }
+
+                        fileCanBeDeleted = ReviewFile(unattended, fi, matchingShows, existingFile, fileCanBeDeleted,
+                            returnActions, pep);
+                    }
+                }
+            }
+            catch (SeriesInfo.EpisodeNotFoundException)
+            {
+                LOGGER.Info(
+                    $"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}'");
+
+                fileCanBeDeleted = false;
+            }
+
+            return (firstMatchingPep, fileCanBeDeleted);
         }
 
         private static bool ReviewFile(bool unattended, [NotNull] FileInfo fi, [NotNull] List<ShowItem> matchingShows, [NotNull] FileInfo existingFile,
