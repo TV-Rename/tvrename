@@ -56,8 +56,7 @@ namespace TVRename.Forms
                 {
                     if (resp != null)
                     {
-                        System.IO.StreamReader reader =
-                            new System.IO.StreamReader(resp.GetResponseStream() ?? throw new InvalidOperationException());
+                        System.IO.StreamReader reader = new System.IO.StreamReader(resp.GetResponseStream() ?? throw new InvalidOperationException());
 
                         result = reader.ReadToEnd();
                     }

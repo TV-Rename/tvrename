@@ -292,7 +292,10 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string RemoveExtension([NotNull] this FileInfo file, bool useFullPath = false)
+        public static string RemoveExtension([NotNull] this FileInfo file) => RemoveExtension(file, false);
+
+        [NotNull]
+        public static string RemoveExtension([NotNull] this FileInfo file, bool useFullPath)
         {
             string root = useFullPath ? file.FullName : file.Name;
             return root.Substring(0, root.Length - file.Extension.Length);
@@ -341,7 +344,11 @@ namespace TVRename
 
         // ReSharper disable once InconsistentNaming
         [NotNull]
-        public static string GBMB(this long value, int decimalPlaces = 2)
+        public static string GBMB(this long value) => GBMB(value, 2);
+
+        // ReSharper disable once InconsistentNaming
+        [NotNull]
+        public static string GBMB(this long value, int decimalPlaces)
         {
             const long ONE_KB = 1024;
             const long ONE_MB = ONE_KB * 1024;

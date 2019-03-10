@@ -399,7 +399,9 @@ namespace TVRename
             return mirr + "banners/" + url;
         }
 
-        public byte[] GetTvdbDownload(string url, bool forceReload = false)
+        public byte[] GetTvdbDownload(string url) => GetTvdbDownload(url, false);
+
+        private byte[] GetTvdbDownload(string url, bool forceReload)
         {
             string theUrl = GetImageURL(url);
 
