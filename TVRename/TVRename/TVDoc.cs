@@ -653,7 +653,7 @@ namespace TVRename
                 lastScanType = settings.Type;
                 LastScanComplete = true;
             }
-            catch (TVRenameOperationInteruptedException)
+            catch (TVRenameOperationInterruptedException)
             {
                 Logger.Warn("Scan cancelled by user");
                 TheActionList.Clear();

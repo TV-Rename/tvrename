@@ -137,7 +137,7 @@ namespace TVRename
                 Logger.Info(e, "Error loading layout XML");
             }
 
-            lvWhenToWatch.ListViewItemSorter = new DateSorterWtw();
+            lvWhenToWatch.ListViewItemSorter = new DateSorterWtw(0);
 
             if (mDoc.Args.Hide || !showUi)
             {
@@ -1038,7 +1038,7 @@ namespace TVRename
                 case 4:
                 case 5:
                 case 6:
-                    lvWhenToWatch.ListViewItemSorter = new DateSorterWtw();
+                    lvWhenToWatch.ListViewItemSorter = new DateSorterWtw(col);
                     lvWhenToWatch.ShowGroups = true;
                     break;
                 case 1:
@@ -3717,28 +3717,29 @@ namespace TVRename
             }
 
             // Check at least one file was being dragged, and that dragged-to item is a "Missing Item" item.
-            if ((files.Length > 0) & lvi.Tag is ItemMissing)
+            if (files.Length <= 0 || !(lvi.Tag is ItemMissing mi))
             {
-                // Only want the first file if multiple files were dragged across.
-                FileInfo from = new FileInfo(files[0]);
-                ItemMissing mi = (ItemMissing) lvi.Tag;
-                FileInfo to = new FileInfo(mi.TheFileNoExt + from.Extension);
-
-                mDoc.TheActionList.Add(
-                    new ActionCopyMoveRename(
-                        TVSettings.Instance.LeaveOriginals
-                            ? ActionCopyMoveRename.Op.copy
-                            : ActionCopyMoveRename.Op.move, from, to
-                        , mi.Episode, true, mi));
-
-                // and remove old Missing item
-                mDoc.TheActionList.Remove(mi);
-                DownloadIdentifiersController di = new DownloadIdentifiersController();
-
-                // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
-                mDoc.TheActionList.Add(di.ProcessEpisode(mi.Episode, to));
-                FillActionList();
+                return;
             }
+
+            // Only want the first file if multiple files were dragged across.
+            FileInfo from = new FileInfo(files[0]);
+            FileInfo to = new FileInfo(mi.TheFileNoExt + @from.Extension);
+
+            mDoc.TheActionList.Add(
+                new ActionCopyMoveRename(
+                    TVSettings.Instance.LeaveOriginals
+                        ? ActionCopyMoveRename.Op.copy
+                        : ActionCopyMoveRename.Op.move, @from, to
+                    , mi.Episode, true, mi));
+
+            // and remove old Missing item
+            mDoc.TheActionList.Remove(mi);
+            DownloadIdentifiersController di = new DownloadIdentifiersController();
+
+            // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
+            mDoc.TheActionList.Add(di.ProcessEpisode(mi.Episode, to));
+            FillActionList();
         }
 
         private void lvAction_DragEnter(object sender, [NotNull] DragEventArgs e)

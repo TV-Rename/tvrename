@@ -30,7 +30,12 @@ namespace TVRename
             return res;
         }
 
-        public static void WriteElementToXml(XmlWriter writer, string elementName, [CanBeNull] string value,bool ignoreifBlank = false)
+        public static void WriteElementToXml(XmlWriter writer, string elementName, [CanBeNull] string value)
+        {
+            WriteElementToXml(writer, elementName, value, false);
+        }
+
+        public static void WriteElementToXml(XmlWriter writer, string elementName, [CanBeNull] string value,bool ignoreifBlank)
         {
             if (ignoreifBlank && string.IsNullOrEmpty(value))
             {
@@ -41,7 +46,13 @@ namespace TVRename
             writer.WriteValue(value??"");
             writer.WriteEndElement();
         }
-        public static void WriteElementToXml([NotNull] XmlWriter writer, [NotNull] string elementName, double value,[CanBeNull] string format= null)
+
+        public static void WriteElementToXml([NotNull] XmlWriter writer, [NotNull] string elementName, double value)
+        {
+            WriteElementToXml(writer, elementName, value, null);
+        }
+
+        public static void WriteElementToXml([NotNull] XmlWriter writer, [NotNull] string elementName, double value,[CanBeNull] string format)
         {
             writer.WriteStartElement(elementName);
             if (format is null)
@@ -54,7 +65,13 @@ namespace TVRename
             }
             writer.WriteEndElement();
         }
-        public static void WriteElementToXml(XmlWriter writer, string elementName, int value,bool ignoreZero=false)
+
+        public static void WriteElementToXml(XmlWriter writer, string elementName, int value)
+        {
+            WriteElementToXml(writer, elementName, value, false);
+        }
+
+        public static void WriteElementToXml(XmlWriter writer, string elementName, int value,bool ignoreZero)
         {
             if (ignoreZero && value == 0)
             {

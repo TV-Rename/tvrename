@@ -23,7 +23,7 @@ namespace TVRename
         {
             if (settings.Token.IsCancellationRequested)
             {
-                throw new TVRenameOperationInteruptedException();
+                throw new TVRenameOperationInterruptedException();
             }
 
             if (!TVSettings.Instance.AutoMergeLibraryEpisodes)
@@ -46,7 +46,7 @@ namespace TVRename
             {
                 if (settings.Token.IsCancellationRequested)
                 {
-                    throw new TVRenameOperationInteruptedException();
+                    throw new TVRenameOperationInterruptedException();
                 }
 
                 if ((si.IgnoreSeasons.Contains(snum)) || (!allFolders.ContainsKey(snum)))
@@ -75,7 +75,7 @@ namespace TVRename
                 {
                     if (settings.Token.IsCancellationRequested)
                     {
-                        throw new TVRenameOperationInteruptedException();
+                        throw new TVRenameOperationInterruptedException();
                     }
 
                     FileInfo[] files = dfc.GetFiles(folder);
@@ -88,7 +88,7 @@ namespace TVRename
                     {
                         if (settings.Token.IsCancellationRequested)
                         {
-                            throw new TVRenameOperationInteruptedException();
+                            throw new TVRenameOperationInterruptedException();
                         }
 
                         if (!fi.IsMovieFile())

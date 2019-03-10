@@ -60,7 +60,7 @@ namespace TVRename
                     new MergeLibraryEpisodes(MDoc).CheckIfActive(si, dfc, settings);
                     new RenameAndMissingCheck(MDoc).CheckIfActive(si, dfc, settings);
                 }
-                catch (TVRenameOperationInteruptedException)
+                catch (TVRenameOperationInterruptedException)
                 {
                     throw;
                 }

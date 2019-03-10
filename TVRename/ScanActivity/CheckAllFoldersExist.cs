@@ -50,9 +50,6 @@ namespace TVRename
                     folders = flocs[snum];
                 }
 
-                //if ((folders.Count == 0) && (!si.AutoAddNewSeasons()))
-                    //continue; // no folders defined or found, autoadd off, so onto the next
-
                 if (folders.Count == 0 && si.AutoAddNewSeasons())
                 {
                     // no folders defined for this season, and autoadd didn't find any, so suggest the autoadd folder name instead
@@ -124,7 +121,7 @@ namespace TVRename
 
                     if (whatToDo == FaResult.kfaCancel)
                     {
-                        throw new TVRenameOperationInteruptedException();
+                        throw new TVRenameOperationInterruptedException();
                     }
                     else if (whatToDo == FaResult.kfaCreate)
                     {

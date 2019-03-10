@@ -15,7 +15,7 @@ namespace TVRename
     {
         public NumberAsTextSorter(int column) : base(column) {}
 
-        protected override int CompareListViewItem(ListViewItem x, ListViewItem y) => ParseAsInt(x.SubItems[Col].Text) - ParseAsInt(y.SubItems[Col].Text);
+        protected override int CompareListViewItem([NotNull] ListViewItem x, [NotNull] ListViewItem y) => ParseAsInt(x.SubItems[Col].Text) - ParseAsInt(y.SubItems[Col].Text);
 
         private static int ParseAsInt([CanBeNull] string text)
         {
