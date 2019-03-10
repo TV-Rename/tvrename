@@ -126,19 +126,7 @@ namespace TVRename
         [CanBeNull]
         public ShowItem ShowItem(int id) => ContainsKey(id) ? this[id] : null;
 
-        public bool GenDict()
-        {
-            bool res = true;
-            foreach (ShowItem si in Values)
-            {
-                if (!GenerateEpisodeDict(si))
-                {
-                    res = false;
-                }
-            }
-
-            return res;
-        }
+        public bool GenDict() => Values.All(GenerateEpisodeDict);
 
         public static bool GenerateEpisodeDict([NotNull] ShowItem si)
         {
@@ -246,50 +234,7 @@ namespace TVRename
             if (si.CountSpecials && seasonsToUse.ContainsKey(0) && !TVSettings.Instance.IgnoreAllSpecials)
             {
                 // merge specials in
-                foreach (Episode ep in seasonsToUse[0].Episodes.Values)
-                {
-                    if (!ep.AirsBeforeSeason.HasValue)
-                    {
-                        continue;
-                    }
-
-                    if (!ep.AirsBeforeEpisode.HasValue)
-                    {
-                        continue;
-                    }
-
-                    int sease = ep.AirsBeforeSeason.Value;
-                    if (sease != snum)
-                    {
-                        continue;
-                    }
-
-                    int epnum = ep.AirsBeforeEpisode.Value;
-                    for (int i = 0; i < eis.Count; i++)
-                    {
-                        if ((eis[i].AppropriateSeasonNumber == sease) && (eis[i].AppropriateEpNum == epnum))
-                        {
-                            ProcessedEpisode pe = new ProcessedEpisode(ep, si)
-                            {
-                                TheAiredSeason = eis[i].TheAiredSeason,
-                                TheDvdSeason = eis[i].TheDvdSeason,
-                                SeasonId = eis[i].SeasonId
-                            };
-
-                            eis.Insert(i, pe);
-                            break;
-                        }
-                    }
-                }
-
-                // renumber to allow for specials
-                int epnumr = 1;
-                foreach (ProcessedEpisode t in eis)
-                {
-                    t.EpNum2 = epnumr + (t.EpNum2 - t.AppropriateEpNum);
-                    t.AppropriateEpNum = epnumr;
-                    epnumr++;
-                }
+                MergeSpecialsIn(si, snum, seasonsToUse, eis);
             }
 
             if (applyRules)
@@ -302,6 +247,59 @@ namespace TVRename
             }
 
             return eis;
+        }
+
+        private static void MergeSpecialsIn(ShowItem si, int snum, [NotNull] Dictionary<int, Season> seasonsToUse, [NotNull] List<ProcessedEpisode> eis)
+        {
+            foreach (Episode ep in seasonsToUse[0].Episodes.Values)
+            {
+                MergeEpisode(si, snum, ep, eis);
+            }
+
+            // renumber to allow for specials
+            int epnumr = 1;
+            foreach (ProcessedEpisode t in eis)
+            {
+                t.EpNum2 = epnumr + (t.EpNum2 - t.AppropriateEpNum);
+                t.AppropriateEpNum = epnumr;
+                epnumr++;
+            }
+        }
+
+        private static void MergeEpisode(ShowItem si, int snum, [NotNull] Episode ep, IList<ProcessedEpisode> eis)
+        {
+            if (!ep.AirsBeforeSeason.HasValue)
+            {
+                return;
+            }
+
+            if (!ep.AirsBeforeEpisode.HasValue)
+            {
+                return;
+            }
+
+            int sease = ep.AirsBeforeSeason.Value;
+            if (sease != snum)
+            {
+                return;
+            }
+
+            int epnum = ep.AirsBeforeEpisode.Value;
+            for (int i = 0; i < eis.Count; i++)
+            {
+                if ((eis[i].AppropriateSeasonNumber == sease) && (eis[i].AppropriateEpNum == epnum))
+                {
+                    ProcessedEpisode pe = new ProcessedEpisode(ep, si)
+                    {
+                        TheAiredSeason = eis[i].TheAiredSeason,
+                        TheDvdSeason = eis[i].TheDvdSeason,
+                        SeasonId = eis[i].SeasonId
+                    };
+
+                    eis.Insert(i, pe);
+                    break;
+                }
+            }
         }
 
         internal void Add([NotNull] ShowItem found)
@@ -332,27 +330,11 @@ namespace TVRename
             {
                 int nn1 = sr.First;
                 int nn2 = sr.Second;
+                string txt = sr.UserSuppliedText;
 
-                int n1 = -1;
-                int n2 = -1;
                 // turn nn1 and nn2 from ep number into position in array
-                for (int i = 0; i < eis.Count; i++)
-                {
-                    if (eis[i].AppropriateEpNum == nn1)
-                    {
-                        n1 = i;
-                        break;
-                    }
-                }
-
-                for (int i = 0; i < eis.Count; i++)
-                {
-                    if (eis[i].AppropriateEpNum == nn2)
-                    {
-                        n2 = i;
-                        break;
-                    }
-                }
+                int n1 = FindIndex(eis, nn1);
+                int n2 = FindIndex(eis,nn2);
 
                 if (sr.DoWhatNow == RuleAction.kInsert)
                 {
@@ -362,70 +344,43 @@ namespace TVRename
                         n1 = eis.Count;
                     }
                 }
-
-                string txt = sr.UserSuppliedText;
-                int ec = eis.Count;
-
+                
                 switch (sr.DoWhatNow)
                 {
                     case RuleAction.kRename:
-                    {
-                        if ((n1 < ec) && (n1 >= 0))
                         {
-                            eis[n1].Name = txt;
+                            RenameEpisode(eis, n1, txt);
+                            break;
                         }
-
-                        break;
-                    }
                     case RuleAction.kRemove:
-                    {
-                        if ((n1 < ec) && (n1 >= 0) && (n2 < ec) && (n2 >= 0))
                         {
-                            eis.RemoveRange(n1, 1 + n2 - n1);
+                            RemoveEpisode(eis, n1, n2);
+                            break;
                         }
-                        else if ((n1 < ec) && (n1 >= 0) && (n2 == -1))
-                        {
-                            eis.RemoveAt(n1);
-                        }
-
-                        break;
-                    }
                     case RuleAction.kIgnoreEp:
-                    {
-                        if (n2 == -1)
                         {
-                            n2 = n1;
+                            IgnoreEpisodes(eis, n2, n1);
+                            break;
                         }
-
-                        for (int i = n1; i <= n2; i++)
-                        {
-                            if ((i < ec) && (i >= 0))
-                            {
-                                eis[i].Ignore = true;
-                            }
-                        }
-
-                        break;
-                    }
                     case RuleAction.kSplit:
                         {
-                            SplitEpisode(eis, si, nn2, n1, ec);
+                            SplitEpisode(eis, si, nn2, n1);
                             break;
                         }
                     case RuleAction.kMerge:
                     case RuleAction.kCollapse:
                         {
-                            RemoveEpisode(eis, si, sr, n1, n2, txt, ec);
+                            RemoveEpisode(eis, si, sr, n1, n2, txt);
                             break;
                         }
                     case RuleAction.kSwap:
                         {
-                            SwapEpisode(eis, n1, n2, ec);
+                            SwapEpisode(eis, n1, n2);
                             break;
                         }
                     case RuleAction.kInsert:
                         {
-                            InsertEpisode(eis, si, n1, txt, ec);
+                            InsertEpisode(eis, si, n1, txt);
                             break;
                         }
                     default:
@@ -445,8 +400,60 @@ namespace TVRename
             }
         }
 
-        private static void SplitEpisode(List<ProcessedEpisode> eis, ShowItem si, int nn2, int n1, int ec)
+        private static int FindIndex([NotNull] IReadOnlyList<ProcessedEpisode> eis, int episodeNumber)
         {
+            for (int i = 0; i < eis.Count; i++)
+            {
+                if (eis[i].AppropriateEpNum == episodeNumber)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        private static void IgnoreEpisodes([NotNull] List<ProcessedEpisode> eis, int n2, int n1)
+        {
+            int ec = eis.Count;
+            if (n2 == -1)
+            {
+                n2 = n1;
+            }
+
+            for (int i = n1; i <= n2; i++)
+            {
+                if ((i < ec) && (i >= 0))
+                {
+                    eis[i].Ignore = true;
+                }
+            }
+        }
+
+        private static void RemoveEpisode([NotNull] List<ProcessedEpisode> eis, int n1, int n2)
+        {
+            int ec = eis.Count;
+            if ((n1 < ec) && (n1 >= 0) && (n2 < ec) && (n2 >= 0))
+            {
+                eis.RemoveRange(n1, 1 + n2 - n1);
+            }
+            else if ((n1 < ec) && (n1 >= 0) && (n2 == -1))
+            {
+                eis.RemoveAt(n1);
+            }
+        }
+
+        private static void RenameEpisode([NotNull] List<ProcessedEpisode> eis, int n1,string txt)
+        {
+            int ec = eis.Count;
+            if ((n1 < ec) && (n1 >= 0))
+            {
+                eis[n1].Name = txt;
+            }
+        }
+
+        private static void SplitEpisode([NotNull] List<ProcessedEpisode> eis, ShowItem si, int nn2, int n1)
+        {
+            int ec = eis.Count;
             // split one episode into a multi-parter
             if ((n1 < ec) && (n1 >= 0))
             {
@@ -469,8 +476,9 @@ namespace TVRename
             }
         }
 
-        private static void RemoveEpisode(List<ProcessedEpisode> eis, ShowItem si, ShowRule sr, int n1, int n2, [CanBeNull] string txt, int ec)
+        private static void RemoveEpisode([NotNull] List<ProcessedEpisode> eis, ShowItem si, ShowRule sr, int n1, int n2, [CanBeNull] string txt)
         {
+            int ec = eis.Count;
             if ((n1 != -1) && (n2 != -1) && (n1 < ec) && (n2 < ec) && (n1 < n2))
             {
                 ProcessedEpisode oldFirstEi = eis[n1];
@@ -518,8 +526,9 @@ namespace TVRename
             }
         }
 
-        private static void InsertEpisode([NotNull] List<ProcessedEpisode> eis, ShowItem si, int n1, string txt, int ec)
+        private static void InsertEpisode([NotNull] List<ProcessedEpisode> eis, ShowItem si, int n1, string txt)
         {
+            int ec = eis.Count;
             if ((n1 < ec) && (n1 >= 0))
             {
                 ProcessedEpisode t = eis[n1];
@@ -548,8 +557,9 @@ namespace TVRename
             }
         }
 
-        private static void SwapEpisode(List<ProcessedEpisode> eis, int n1, int n2, int ec)
+        private static void SwapEpisode([NotNull] List<ProcessedEpisode> eis, int n1, int n2)
         {
+            int ec = eis.Count;
             if ((n1 != -1) && (n2 != -1) && (n1 < ec) && (n2 < ec))
             {
                 ProcessedEpisode t = eis[n1];
