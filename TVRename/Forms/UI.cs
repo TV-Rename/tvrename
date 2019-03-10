@@ -1026,36 +1026,28 @@ namespace TVRename
         private void lvWhenToWatch_ColumnClick(object sender, [NotNull] ColumnClickEventArgs e)
         {
             int col = e.Column;
-            // 3 4, or 6 = do date sort on 3
+            // 3 - 6 = do date sort on 3
             // 1 or 2 = number sort
-            // 5 = day sort
             // all others, text sort
 
-            if (col == 6) // straight sort by date
+            lvWhenToWatch.ShowGroups = false;
+
+            switch (col)
             {
-                lvWhenToWatch.ListViewItemSorter = new DateSorterWtw();
-                lvWhenToWatch.ShowGroups = false;
-            }
-            else if (col == 3 || col == 4)
-            {
-                lvWhenToWatch.ListViewItemSorter = new DateSorterWtw();
-                lvWhenToWatch.ShowGroups = true;
-            }
-            else
-            {
-                lvWhenToWatch.ShowGroups = false;
-                if (col == 1 || col == 2)
-                {
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    lvWhenToWatch.ListViewItemSorter = new DateSorterWtw();
+                    lvWhenToWatch.ShowGroups = true;
+                    break;
+                case 1:
+                case 2:
                     lvWhenToWatch.ListViewItemSorter = new NumberAsTextSorter(col);
-                }
-                else if (col == 5)
-                {
-                    lvWhenToWatch.ListViewItemSorter = new DaySorter(col);
-                }
-                else
-                {
+                    break;
+                default:
                     lvWhenToWatch.ListViewItemSorter = new TextSorter(col);
-                }
+                    break;
             }
 
             lvWhenToWatch.Sort();
