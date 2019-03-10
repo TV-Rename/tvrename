@@ -27,7 +27,7 @@ namespace TVRename
                 LOGGER.Warn("Please open settings and ensure filenames are provided for each exporter you have enabled");
                 return;
             }
-            if (Location().StartsWith("http://") || Location().StartsWith("https://"))
+            if (Location().IsWebLink())
             {
                 LOGGER.Warn($"TV Rename cannot export file to a web location: {Location()}, please update in the setttings");
                 return;

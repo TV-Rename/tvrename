@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -17,15 +18,19 @@ namespace TVRename
         public FindNewShowsInLibrary(TVDoc doc) : base(doc)
         {
         }
+        [NotNull]
         protected override string Checkname() => "Looked in the library for any new shows to be added (bulk add)";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
+        protected override void DoCheck([NotNull] SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
             BulkAddManager bam = new BulkAddManager(MDoc);
             bam.CheckFolders(settings.Token, prog, false,!settings.Unattended);
             AskUserAboutShows(settings, bam);
 
-            if (!bam.AddItems.Any(s => s.CodeKnown)) return;
+            if (!bam.AddItems.Any(s => s.CodeKnown))
+            {
+                return;
+            }
 
             List<int> idsToAdd = bam.AddItems.Where(s => s.CodeKnown).Select(folder => folder.TVDBCode).ToList();
             
@@ -49,29 +54,38 @@ namespace TVRename
             MDoc.WriteRecent();
         }
 
-        private void AskUserAboutShows(TVDoc.ScanSettings settings, BulkAddManager bam)
+        private void AskUserAboutShows(TVDoc.ScanSettings settings, [NotNull] BulkAddManager bam)
         {
             foreach (FoundFolder folder in bam.AddItems)
             {
                 if (settings.Token.IsCancellationRequested)
+                {
                     break;
+                }
+
                 AskUserAboutShow(folder);
             }
         }
 
-        private void AskUserAboutShow(FoundFolder folder)
+        private void AskUserAboutShow([NotNull] FoundFolder folder)
         {
             if (folder.CodeKnown)
+            {
                 return;
+            }
 
             BulkAddManager.GuessShowItem(folder, MDoc.Library,true);
 
             if (folder.CodeKnown)
+            {
                 return;
+            }
 
             FolderMonitorEdit ed = new FolderMonitorEdit(folder);
             if ((ed.ShowDialog() != DialogResult.OK) || (ed.Code == -1))
+            {
                 return;
+            }
 
             folder.TVDBCode = ed.Code;
         }

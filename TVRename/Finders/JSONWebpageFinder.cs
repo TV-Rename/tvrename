@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -20,6 +21,7 @@ namespace TVRename
         public JSONFinder(TVDoc i) : base(i) { }
 
         public override bool Active() => TVSettings.Instance.SearchJSON;
+        [NotNull]
         protected override string Checkname() => "Check JSON links for the missing files";
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.search;
@@ -42,100 +44,13 @@ namespace TVRename
                 foreach (ItemMissing action in ActionList.MissingItems())
                 {
                     if (settings.Token.IsCancellationRequested)
+                    {
                         return;
+                    }
 
                     UpdateStatus(n++, c, action.Filename);
 
-                    ProcessedEpisode pe = action.Episode;
-                    string simpleShowName = Helpers.SimplifyName(action.Episode.Show.ShowName);
-                    string simpleSeriesName = Helpers.SimplifyName(action.Episode.TheSeries.Name);
-                    ItemList newItemsForThisMissingEpisode = new ItemList();
-
-                    string imdbId = action.Episode.TheSeries.GetImdbNumber();
-
-                    if (string.IsNullOrWhiteSpace(imdbId)) continue;
-
-                    WebClient client = new WebClient();
-                    client.Headers.Add("user-agent",
-                        "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
-
-                    string response = client.DownloadString($"{TVSettings.Instance.SearchJSONURL}{imdbId}");
-
-                    JObject jsonResponse = JObject.Parse(response);
-                    if (jsonResponse.ContainsKey(TVSettings.Instance.SearchJSONRootNode))
-                    {
-                        foreach (JToken item in jsonResponse[TVSettings.Instance.SearchJSONRootNode])
-                        {
-                            if (item == null || !(item is JObject episodeResponse)) continue;
-
-                            if (episodeResponse.ContainsKey(TVSettings.Instance.SearchJSONFilenameToken) &&
-                                episodeResponse.ContainsKey(TVSettings.Instance.SearchJSONURLToken))
-                            {
-                                string itemName = (string) item[TVSettings.Instance.SearchJSONFilenameToken];
-                                string itemUrl = (string) item[TVSettings.Instance.SearchJSONURLToken];
-                                long itemSizeBytes;
-                                try
-                                {
-                                    itemSizeBytes = (long) item[TVSettings.Instance.SearchJSONFileSizeToken];
-                                }
-                                catch
-                                {
-                                    //-1 as size is not available (empty string or other)
-                                    itemSizeBytes = -1;
-                                }
-
-                                if (TVSettings.Instance.DetailedRSSJSONLogging)
-                                {
-                                    LOGGER.Info("Processing JSON Item");
-                                    LOGGER.Info(episodeResponse.ToString);
-                                    LOGGER.Info("Extracted");
-                                    LOGGER.Info($"Name:        {itemName}");
-                                    LOGGER.Info($"URL:         {itemUrl}");
-                                    LOGGER.Info($"Size:        {itemSizeBytes}");
-                                }
-
-                                if (!FileHelper.SimplifyAndCheckFilename(itemName, simpleShowName, true, false) &&
-                                    !FileHelper.SimplifyAndCheckFilename(itemName, simpleSeriesName, true, false))
-                                    continue;
-
-                                if (!FinderHelper.FindSeasEp(itemName, out int seas, out int ep, out int _,
-                                    action.Episode.Show))
-                                    continue;
-
-                                if (TVSettings.Instance.DetailedRSSJSONLogging)
-                                {
-                                    LOGGER.Info($"Season:      {seas}");
-                                    LOGGER.Info($"Episode:     {ep}");
-                                }
-
-                                if (seas != pe.AppropriateSeasonNumber) continue;
-                                if (ep != pe.AppropriateEpNum) continue;
-
-                                LOGGER.Info(
-                                    $"Adding {itemUrl} from JSON page as it appears to be match for {pe.Show.ShowName} S{pe.AppropriateSeasonNumber}E{pe.AppropriateEpNum}");
-
-                                newItemsForThisMissingEpisode.Add(new ActionTDownload(itemName, itemSizeBytes, itemUrl,
-                                    action.TheFileNoExt, pe, action));
-
-                                toRemove.Add(action);
-                            }
-                            else
-                            {
-                                LOGGER.Info(
-                                    $"{TVSettings.Instance.SearchJSONFilenameToken} or {TVSettings.Instance.SearchJSONURLToken} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.Episode.TheSeries.Name}");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        LOGGER.Info(
-                            $"{TVSettings.Instance.SearchJSONRootNode} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.Episode.TheSeries.Name}");
-                    }
-
-                    foreach (ActionTDownload x in FindDuplicates(newItemsForThisMissingEpisode))
-                        newItemsForThisMissingEpisode.Remove(x);
-
-                    newItems.AddNullableRange(newItemsForThisMissingEpisode);
+                    FindMissingEpisode(action, toRemove, newItems);
                 }
             }
             catch (WebException ex)
@@ -147,6 +62,118 @@ namespace TVRename
                 LOGGER.Warn(ex, $"Failed to Parse {TVSettings.Instance.SearchJSONURL} into JSON - Please check that the URL is valid JSON format.");
             }
             ActionList.Replace(toRemove,newItems);
+        }
+
+        private static void FindMissingEpisode([NotNull] ItemMissing action, ItemList toRemove, ItemList newItems)
+        {
+            ProcessedEpisode pe = action.Episode;
+            string simpleShowName = Helpers.SimplifyName(pe.Show.ShowName);
+            string simpleSeriesName = Helpers.SimplifyName(pe.TheSeries.Name);
+            ItemList newItemsForThisMissingEpisode = new ItemList();
+
+            string imdbId = pe.TheSeries.GetImdbNumber();
+
+            if (string.IsNullOrWhiteSpace(imdbId))
+            {
+                return;
+            }
+
+            WebClient client = new WebClient();
+            client.Headers.Add("user-agent",
+                "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+
+            string response = client.DownloadString($"{TVSettings.Instance.SearchJSONURL}{imdbId}");
+
+            JObject jsonResponse = JObject.Parse(response);
+            if (jsonResponse.ContainsKey(TVSettings.Instance.SearchJSONRootNode))
+            {
+                foreach (JToken item in jsonResponse[TVSettings.Instance.SearchJSONRootNode])
+                {
+                    if (item == null || !(item is JObject episodeResponse))
+                    {
+                        continue;
+                    }
+
+                    if (episodeResponse.ContainsKey(TVSettings.Instance.SearchJSONFilenameToken) &&
+                        episodeResponse.ContainsKey(TVSettings.Instance.SearchJSONURLToken))
+                    {
+                        string itemName = (string) item[TVSettings.Instance.SearchJSONFilenameToken];
+                        string itemUrl = (string) item[TVSettings.Instance.SearchJSONURLToken];
+                        long itemSizeBytes;
+                        try
+                        {
+                            itemSizeBytes = (long) item[TVSettings.Instance.SearchJSONFileSizeToken];
+                        }
+                        catch
+                        {
+                            //-1 as size is not available (empty string or other)
+                            itemSizeBytes = -1;
+                        }
+
+                        if (TVSettings.Instance.DetailedRSSJSONLogging)
+                        {
+                            LOGGER.Info("Processing JSON Item");
+                            LOGGER.Info(episodeResponse.ToString);
+                            LOGGER.Info("Extracted");
+                            LOGGER.Info($"Name:        {itemName}");
+                            LOGGER.Info($"URL:         {itemUrl}");
+                            LOGGER.Info($"Size:        {itemSizeBytes}");
+                        }
+
+                        if (!FileHelper.SimplifyAndCheckFilename(itemName, simpleShowName, true, false) &&
+                            !FileHelper.SimplifyAndCheckFilename(itemName, simpleSeriesName, true, false))
+                        {
+                            continue;
+                        }
+
+                        if (!FinderHelper.FindSeasEp(itemName, out int seas, out int ep, out int _, pe.Show))
+                        {
+                            continue;
+                        }
+
+                        if (TVSettings.Instance.DetailedRSSJSONLogging)
+                        {
+                            LOGGER.Info($"Season:      {seas}");
+                            LOGGER.Info($"Episode:     {ep}");
+                        }
+
+                        if (seas != pe.AppropriateSeasonNumber)
+                        {
+                            continue;
+                        }
+
+                        if (ep != pe.AppropriateEpNum)
+                        {
+                            continue;
+                        }
+
+                        LOGGER.Info(
+                            $"Adding {itemUrl} from JSON page as it appears to be match for {pe.Show.ShowName} S{pe.AppropriateSeasonNumber}E{pe.AppropriateEpNum}");
+
+                        newItemsForThisMissingEpisode.Add(new ActionTDownload(itemName, itemSizeBytes, itemUrl,
+                            action.TheFileNoExt, pe, action));
+
+                        toRemove.Add(action);
+                    }
+                    else
+                    {
+                        LOGGER.Info(
+                            $"{TVSettings.Instance.SearchJSONFilenameToken} or {TVSettings.Instance.SearchJSONURLToken} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.Episode.TheSeries.Name}");
+                    }
+                }
+            }
+            else
+            {
+                LOGGER.Info(
+                    $"{TVSettings.Instance.SearchJSONRootNode} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.Episode.TheSeries.Name}");
+            }
+
+            foreach (ActionTDownload x in FindDuplicates(newItemsForThisMissingEpisode))
+            {
+                newItemsForThisMissingEpisode.Remove(x);
+            }
+
+            newItems.AddNullableRange(newItemsForThisMissingEpisode);
         }
     }
 }

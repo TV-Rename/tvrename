@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -8,6 +9,7 @@ namespace TVRename
     {
         public uTorrentFinder(TVDoc i) : base(i) { }
         public override bool Active() => TVSettings.Instance.CheckuTorrent;
+        [NotNull]
         protected override string Checkname() => "Looked in the uTorrent queue for the missing files";
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
@@ -15,11 +17,15 @@ namespace TVRename
             // get list of files being downloaded by uTorrent
             string resDatFile = TVSettings.Instance.ResumeDatPath;
             if (string.IsNullOrEmpty(resDatFile) || !File.Exists(resDatFile))
+            {
                 return;
+            }
 
             BTResume btr = new BTResume(prog, resDatFile);
             if (!btr.LoadResumeDat())
+            {
                 return;
+            }
 
             List<TorrentEntry> downloading = btr.AllFilesBeingDownloaded();
 

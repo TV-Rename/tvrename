@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -16,22 +17,36 @@ namespace TVRename
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
+        [NotNull]
         public static IEnumerable<string> ZoneNames() => TimeZoneInfo.GetSystemTimeZones().Select(x=>x.StandardName);
 
+        [NotNull]
         public static string DefaultTimeZone() => "Eastern Standard Time";
 
-        public static string TimeZoneForNetwork(string network)
+        [NotNull]
+        public static string TimeZoneForNetwork([CanBeNull] string network)
         {
             string[] uktv = { "Sky Atlantic (UK)", "BBC One", "Sky1", "BBC Two", "ITV", "Nick Jr.", "BBC Three", "Channel 4", "CBeebies", "Sky Box Office", "Watch", "ITV2", "National Geographic (UK)", "V", "ITV Encore", "ITV1", "BBC", "E4", "Channel 5 (UK)", "BBC Four", "ITVBe" };
             string[] ausTv = { "ABC4Kids", "Stan", "Showcase (AU)", "PBS Kids Sprout", "SBS (AU)", "Nine Network", "ABC1", "ABC (AU)" };
-            if (string.IsNullOrWhiteSpace(network)) return DefaultTimeZone();
-            if (uktv.Contains(network)) return "GMT Standard Time";
-            if (ausTv.Contains(network)) return "AUS Eastern Standard Time";
+            if (string.IsNullOrWhiteSpace(network))
+            {
+                return DefaultTimeZone();
+            }
+
+            if (uktv.Contains(network))
+            {
+                return "GMT Standard Time";
+            }
+
+            if (ausTv.Contains(network))
+            {
+                return "AUS Eastern Standard Time";
+            }
 
             return DefaultTimeZone();
         }
 
-        public static DateTime AdjustTzTimeToLocalTime(DateTime theirDateTime, TimeZoneInfo theirTimeZone)
+        public static DateTime AdjustTzTimeToLocalTime(DateTime theirDateTime, [CanBeNull] TimeZoneInfo theirTimeZone)
         {
             try
             {

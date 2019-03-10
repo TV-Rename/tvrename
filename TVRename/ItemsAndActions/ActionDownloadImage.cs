@@ -9,6 +9,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -35,6 +36,7 @@ namespace TVRename
 
         #region Action Members
 
+        [NotNull]
         public override string Name => "Download";
 
         public override string ProgressText => destination.Name;
@@ -45,7 +47,8 @@ namespace TVRename
         public override long SizeOfWork => 1000000;
 
         // http://www.codeproject.com/Articles/2941/Resizing-a-Photographic-image-with-GDI-for-NET
-        private static Image MaxSize(Image imgPhoto, int width, int height)
+        [NotNull]
+        private static Image MaxSize([NotNull] Image imgPhoto, int width, int height)
         {
             int sourceWidth = imgPhoto.Width;
             int sourceHeight = imgPhoto.Height;
@@ -162,16 +165,20 @@ namespace TVRename
 
         public override int IconNumber => 5;
 
+        [CanBeNull]
         public override IgnoreItem Ignore => GenerateIgnore(destination?.FullName);
 
         protected override string SeriesName =>
             (Episode != null) ? Episode.Show.ShowName : ((si != null) ? si.ShowName : "");
 
+        [CanBeNull]
         protected override string DestinationFolder => TargetFolder;
         protected override string DestinationFile => destination.Name;
         protected override string SourceDetails => path;
         protected override bool InError => string.IsNullOrEmpty(path);
+        [NotNull]
         public override string ScanListViewGroup => "lvgActionDownload";
+        [CanBeNull]
         public override string TargetFolder => destination == null ? null : destination.DirectoryName;
         #endregion
     }

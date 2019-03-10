@@ -10,7 +10,7 @@ using System;
 
 namespace TVRename
 {
-    internal class ShowNotFoundException : Exception
+    public class ShowNotFoundException : Exception
     {
         public readonly int ShowId;
 

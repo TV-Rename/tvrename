@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -89,15 +90,25 @@ namespace TVRename
                 {
                     DateTime? seasonLastAirDate = s.LastAiredDate();
 
-                    if (!seasonLastAirDate.HasValue) continue;
+                    if (!seasonLastAirDate.HasValue)
+                    {
+                        continue;
+                    }
 
-                    if (!returnValue.HasValue) returnValue = seasonLastAirDate.Value;
-                    else if (DateTime.Compare(seasonLastAirDate.Value, returnValue.Value) > 0) returnValue = seasonLastAirDate.Value;
+                    if (!returnValue.HasValue)
+                    {
+                        returnValue = seasonLastAirDate.Value;
+                    }
+                    else if (DateTime.Compare(seasonLastAirDate.Value, returnValue.Value) > 0)
+                    {
+                        returnValue = seasonLastAirDate.Value;
+                    }
                 }
                 return returnValue;
             }
         }
 
+        [NotNull]
         public string Year => FirstAired != null ? FirstAired.Value.ToString("yyyy") : string.Empty;
 
         // note: "SeriesID" in a <Series> is the tv.com code,
@@ -105,28 +116,28 @@ namespace TVRename
 
         public SeriesInfo(string name, int id)
         {
-            SetToDefauts();
+            SetToDefaults();
             Name = name;
             TvdbCode = id;
         }
 
         public SeriesInfo(string name, int id, string langCode)
         {
-            SetToDefauts();
+            SetToDefaults();
             TargetLanguageCode = langCode;
             Name = name;
             TvdbCode = id;
         }
 
-        public SeriesInfo(XElement seriesXml)
+        public SeriesInfo([NotNull] XElement seriesXml)
         {
-            SetToDefauts();
+            SetToDefaults();
             LoadXml(seriesXml);
         }
 
-        public SeriesInfo(JObject json,int langId)
+        public SeriesInfo([NotNull] JObject json,int langId)
         {
-            SetToDefauts();
+            SetToDefaults();
             LanguageId = langId;
             LoadJson(json);
 
@@ -137,9 +148,9 @@ namespace TVRename
             }
         }
 
-        public SeriesInfo(JObject json, JObject jsonInDefaultLang, int langId)
+        public SeriesInfo([NotNull] JObject json, JObject jsonInDefaultLang, int langId)
         {
-            SetToDefauts();
+            SetToDefaults();
             LanguageId = langId;
             LoadJson(json,jsonInDefaultLang);
             if (string.IsNullOrEmpty(Name)            ){
@@ -153,9 +164,10 @@ namespace TVRename
 
         public IEnumerable<string> Aliases() => aliases;
 
+        [NotNull]
         public IEnumerable<string> GetActorNames() => GetActors().Select(x => x.ActorName);
 
-        private void SetToDefauts()
+        private void SetToDefaults()
         {
             AiredSeasons = new Dictionary<int, Season>();
             DvdSeasons = new Dictionary<int, Season>();
@@ -173,12 +185,18 @@ namespace TVRename
             BannersLoaded = false;
         }
 
-        public void Merge(SeriesInfo o, int preferredLanguageId)
+        // ReSharper disable once FunctionComplexityOverflow
+        public void Merge([NotNull] SeriesInfo o, int preferredLanguageId)
         {
             if (o.TvdbCode != TvdbCode)
+            {
                 return; // that's not us!
+            }
+
             if (o.SrvLastUpdated != 0 && o.SrvLastUpdated < SrvLastUpdated)
+            {
                 return; // older!?
+            }
 
             bool currentLanguageNotSet = o.LanguageId == -1;
             bool newLanguageBetter = o.LanguageId == preferredLanguageId && LanguageId != preferredLanguageId;
@@ -189,7 +207,9 @@ namespace TVRename
             // take the best bits of "o"
             // "o" is always newer/better than us, if there is a choice
             if ((!string.IsNullOrEmpty(o.Name)) && betterLanguage)
+            {
                 Name = o.Name;
+            }
 
             AirsDay = ChooseBetter(AirsDay, betterLanguage, o.AirsDay);
             Imdb = ChooseBetter(Imdb, betterLanguage, o.Imdb);
@@ -202,47 +222,76 @@ namespace TVRename
             ContentRating = ChooseBetter(ContentRating, betterLanguage, o.ContentRating);
 
             if (betterLanguage && o.FirstAired.HasValue)
+            {
                 FirstAired = o.FirstAired;
+            }
 
             if (!FirstAired.HasValue && o.FirstAired.HasValue)
+            {
                 FirstAired = o.FirstAired;
+            }
 
             if (betterLanguage && o.SiteRating > 0)
+            {
                 SiteRating = o.SiteRating;
+            }
 
             if (betterLanguage && o.SiteRatingVotes > 0)
+            {
                 SiteRatingVotes = o.SiteRatingVotes;
+            }
 
             if (!aliases.Any() || (o.aliases.Any() && betterLanguage))
+            {
                 aliases = o.aliases;
+            }
 
             if (!genres.Any() || (o.genres.Any() && betterLanguage))
+            {
                 genres = o.genres;
+            }
 
             if (o.AirsTime != null)
+            {
                 AirsTime = o.AirsTime;
+            }
 
             if ((o.AiredSeasons != null) && (o.AiredSeasons.Count != 0))
+            {
                 AiredSeasons = o.AiredSeasons;
+            }
+
             if ((o.DvdSeasons != null) && (o.DvdSeasons.Count != 0))
+            {
                 DvdSeasons = o.DvdSeasons;
+            }
 
             banners.MergeBanners(o.banners);
 
             if (betterLanguage)
+            {
                 LanguageId = o.LanguageId;
+            }
 
             Dirty = o.Dirty;
         }
 
-        private static string ChooseBetter(string encumbant, bool betterLanguage, string newValue)
+        private static string ChooseBetter([CanBeNull] string encumbant, bool betterLanguage, string newValue)
         {
-            if (string.IsNullOrEmpty(encumbant)) return newValue;
-            if (string.IsNullOrEmpty(newValue)) return encumbant;
+            if (string.IsNullOrEmpty(encumbant))
+            {
+                return newValue;
+            }
+
+            if (string.IsNullOrEmpty(newValue))
+            {
+                return encumbant;
+            }
+
             return betterLanguage?newValue:encumbant;
         }
 
-        private void LoadXml(XElement seriesXml)
+        private void LoadXml([NotNull] XElement seriesXml)
         {
             //<Data>
             // <Series>
@@ -327,9 +376,14 @@ namespace TVRename
             {
                 string message = "Error processing data from TheTVDB for a show.";
                 if (TvdbCode != -1)
+                {
                     message += "\r\nTheTVDB Code: " + TvdbCode;
+                }
+
                 if (!string.IsNullOrEmpty(Name))
+                {
                     message += "\r\nName: " + Name;
+                }
 
                 message += "\r\nLanguage: \"" + LanguageId + "\"";
 
@@ -341,7 +395,7 @@ namespace TVRename
             }
         }
 
-        private static DateTime? ParseAirTime(string theTime)
+        private static DateTime? ParseAirTime([CanBeNull] string theTime)
         {
             try
             {
@@ -349,7 +403,9 @@ namespace TVRename
                 {
                     if (DateTime.TryParse(theTime, out DateTime airsTime) ||
                         DateTime.TryParse(theTime.Replace('.', ':'), out airsTime))
+                    {
                         return airsTime;
+                    }
                 }
             }
             catch (FormatException)
@@ -359,7 +415,7 @@ namespace TVRename
             return DateTime.Parse("20:00");
         }
 
-        private void LoadJson(JObject r)
+        private void LoadJson([NotNull] JObject r)
         {
             AirsDay = (string)r["airsDayOfWeek"];
             airsTimeString = (string) r["airsTime"];
@@ -385,7 +441,9 @@ namespace TVRename
             }
 
             if (r.ContainsKey("genre"))
+            {
                 genres = r["genre"]?.Select(x => x.Value<string>()).ToList();
+            }
 
             TvdbCode = (int)r["id"];
             Imdb = (string)r["imdbId"];
@@ -401,9 +459,13 @@ namespace TVRename
             Status = (string) r["status"];
 
             if (long.TryParse((string)r["lastUpdated"], out long updateTime) )
+            {
                 SrvLastUpdated = updateTime;
+            }
             else
+            {
                 SrvLastUpdated = 0;
+            }
 
             string siteRatingString = (string) r["siteRating"];
             float.TryParse(siteRatingString, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out SiteRating);
@@ -412,7 +474,7 @@ namespace TVRename
             int.TryParse(siteRatingVotesString, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out SiteRatingVotes);
         }
 
-        private void LoadJson(JObject bestLanguageR, JObject backupLanguageR)
+        private void LoadJson([NotNull] JObject bestLanguageR, JObject backupLanguageR)
         {
             //Here we have two pieces of JSON. One in local language and one in the default language (English). 
             //We will populate with the best language frst and then fill in any gaps with the backup Language
@@ -449,7 +511,7 @@ namespace TVRename
 
         public IEnumerable<string> Genres() => genres;
 
-        public void WriteXml(XmlWriter writer)
+        public void WriteXml([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("Series");
 
@@ -502,7 +564,9 @@ namespace TVRename
         public Season GetOrAddAiredSeason(int num, int seasonId)
         {
             if (AiredSeasons.ContainsKey(num))
+            {
                 return AiredSeasons[num];
+            }
 
             Season s = new Season(this, num, seasonId,Season.SeasonType.aired);
             AiredSeasons[num] = s;
@@ -513,7 +577,9 @@ namespace TVRename
         public Season GetOrAddDvdSeason(int num, int seasonId)
         {
             if (DvdSeasons.ContainsKey(num))
+            {
                 return DvdSeasons[num];
+            }
 
             Season s = new Season(this, num, seasonId,Season.SeasonType.dvd);
             DvdSeasons[num] = s;
@@ -521,6 +587,7 @@ namespace TVRename
             return s;
         }
 
+        [NotNull]
         internal Episode GetEpisode(int seasF, int epF,bool dvdOrder)
         {
             if (dvdOrder)
@@ -531,7 +598,10 @@ namespace TVRename
                     {
                         foreach (Episode pe in s.Episodes.Values)
                         {
-                            if (pe.DvdEpNum == epF) return pe;
+                            if (pe.DvdEpNum == epF)
+                            {
+                                return pe;
+                            }
                         }
                     }
                 }
@@ -544,7 +614,10 @@ namespace TVRename
                     {
                         foreach (Episode pe in s.Episodes.Values)
                         {
-                            if (pe.AiredEpNum == epF) return pe;
+                            if (pe.AiredEpNum == epF)
+                            {
+                                return pe;
+                            }
                         }
                     }
                 }
@@ -580,10 +653,8 @@ namespace TVRename
             actors.Add(actor);
         }
 
-        public string GetImdbNumber()
-        {
-            return Imdb.StartsWith("tt") ? Imdb.Substring(2): Imdb;
-        }
+        [NotNull]
+        public string GetImdbNumber() => Imdb.StartsWith("tt", StringComparison.Ordinal) ? Imdb.Substring(2): Imdb;
 
         public int GetSeasonIndex(int seasonNumber, Season.SeasonType type)
         {
@@ -592,7 +663,10 @@ namespace TVRename
             List<int> seasonNumbers = new List<int>();
             foreach (KeyValuePair<int, Season> sn in appropriateSeasons)
             {
-                if (sn.Value.IsSpecial()) continue;
+                if (sn.Value.IsSpecial())
+                {
+                    continue;
+                }
 
                 seasonNumbers.Add(sn.Value.SeasonNumber);
             }
@@ -608,6 +682,6 @@ namespace TVRename
         public string GetSeasonBannerPath(int snum) => banners.GetSeasonBannerPath(snum);
         public string GetSeriesWideBannerPath() => banners.GetSeriesWideBannerPath();
         public string GetSeasonWideBannerPath(int snum) => banners.GetSeasonWideBannerPath(snum);
-        public void AddOrUpdateBanner(Banner banner) => banners.AddOrUpdateBanner(banner);
+        public void AddOrUpdateBanner([NotNull] Banner banner) => banners.AddOrUpdateBanner(banner);
     }
 }

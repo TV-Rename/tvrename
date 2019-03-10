@@ -10,19 +10,27 @@ namespace TVRename
 
         public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
         {
-            if (!TVSettings.Instance.EpJPGs) return null;
+            if (!TVSettings.Instance.EpJPGs)
+            {
+                return null;
+            }
 
             ItemList theActionList = new ItemList();
 
             string ban = dbep.Filename;
-            if (string.IsNullOrEmpty(ban)) return null;
+            if (string.IsNullOrEmpty(ban))
+            {
+                return null;
+            }
 
             string basefn = filo.RemoveExtension();
 
             FileInfo imgjpg = FileHelper.FileInFolder(filo.Directory, basefn + DEFAULT_EXTENSION);
 
             if (forceRefresh || !imgjpg.Exists)
+            {
                 theActionList.Add(new ActionDownloadImage(dbep.Show, dbep, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8erImages));
+            }
 
             return theActionList;
         }

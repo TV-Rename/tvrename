@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -32,6 +33,7 @@ namespace TVRename
             LargeFileSize = largeFileSize;
         }
 
+        [NotNull]
         public ListViewItem PresentationView
         {
             get
@@ -59,6 +61,7 @@ namespace TVRename
         public ShowItem ShowItem => episodeTwo.Show;
         public ProcessedEpisode Episode => episodeOne;
 
+        [NotNull]
         public ShowRule GenerateRule()
         {
             return new ShowRule

@@ -1,32 +1,29 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+//
 using System;
-using System.Collections;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
-    public sealed class NumberAsTextSorter : IComparer
+    public sealed class NumberAsTextSorter : ListViewItemSorter
     {
-        private readonly int col;
+        public NumberAsTextSorter(int column) : base(column) {}
 
-        public NumberAsTextSorter(int column)
-        {
-            col = column;
-        }
+        protected override int CompareListViewItem([NotNull] ListViewItem x, [NotNull] ListViewItem y) => ParseAsInt(x.SubItems[Col].Text) - ParseAsInt(y.SubItems[Col].Text);
 
-        #region IComparer Members
-
-        public int Compare(object x, object y)
-        {
-            if (!(x is ListViewItem lvix)) throw new InvalidOperationException();
-            if (!(y is ListViewItem lviy)) throw new InvalidOperationException();
-
-            return ParseAsInt(lvix.SubItems[col].Text) - ParseAsInt(lviy.SubItems[col].Text);
-        }
-
-        private static int ParseAsInt(string text)
+        private static int ParseAsInt([CanBeNull] string text)
         {
             if (string.IsNullOrEmpty(text))
+            {
                 return -1;
+            }
+
             try
             {
                 return Convert.ToInt32(text);
@@ -36,6 +33,5 @@ namespace TVRename
                 return 0;
             }
         }
-        #endregion
     }
 }

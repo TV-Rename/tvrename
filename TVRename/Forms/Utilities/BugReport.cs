@@ -48,7 +48,9 @@ namespace TVRename
                 try
                 {
                     using (System.IO.StreamReader sr = new System.IO.StreamReader(PathManager.TVDocSettingsFile.FullName))
+                    {
                         txt.AppendLine(sr.ReadToEnd());
+                    }
                 }
                 catch
                 {
@@ -61,7 +63,10 @@ namespace TVRename
             {
                 txt.AppendLine("==== Filename processors ====");
                 foreach (TVSettings.FilenameProcessorRE s in TVSettings.Instance.FNPRegexs)
+                {
                     txt.AppendLine((s.Enabled ? "Enabled" : "Disabled") + " \"" + s.RegExpression + "\" " + (s.UseFullPath ? "(FullPath)" : "") );
+                }
+
                 txt.AppendLine();
             }
 
@@ -72,7 +77,9 @@ namespace TVRename
 
                 DirCache dirC = new DirCache();
                 foreach (string efi in TVSettings.Instance.DownloadFolders)
+                {
                     dirC.AddFolder(null, 0, 0, efi, true);
+                }
 
                 foreach (DirCacheEntry fi in dirC)
                 {
@@ -93,10 +100,14 @@ namespace TVRename
                     {
                         int snum = kvp.Key;
                         if (((snum == 0) && (si.CountSpecials)) || !si.AllExistngFolderLocations().ContainsKey(snum))
+                        {
                             continue; // skip specials
+                        }
 
                         if ((snum == 0) && TVSettings.Instance.IgnoreAllSpecials)
+                        {
                             continue;
+                        }
 
                         foreach (string folder in si.AllExistngFolderLocations()[snum])
                         {
@@ -105,7 +116,10 @@ namespace TVRename
                             
                             DirCache files = new DirCache();
                             if (Directory.Exists(folder))
+                            {
                                 files.AddFolder(null, 0, 0, folder, true);
+                            }
+
                             foreach (DirCacheEntry fi in files)
                             {
                                 bool r = FinderHelper.FindSeasEp(fi.TheFile, out int seas, out int ep, out int maxEp, si);

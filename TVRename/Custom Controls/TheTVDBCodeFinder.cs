@@ -8,6 +8,7 @@
 using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 // Control for searching for a tvdb code, checking against local cache and
 // searching on thetvdb
@@ -22,7 +23,7 @@ namespace TVRename
     {
         private bool mInternal;
 
-        public TheTvdbCodeFinder(string initialHint)
+        public TheTvdbCodeFinder([CanBeNull] string initialHint)
         {
             mInternal = false;
 
@@ -54,7 +55,9 @@ namespace TVRename
             try
             {
                 if (lvMatches.SelectedItems.Count == 0)
+                {
                     return int.Parse(txtFindThis.Text);
+                }
 
                 return (int.Parse(lvMatches.SelectedItems[0].SubItems[0].Text));
             }
@@ -68,7 +71,10 @@ namespace TVRename
         {
             try
             {
-                if (lvMatches.SelectedItems.Count == 0) return null;
+                if (lvMatches.SelectedItems.Count == 0)
+                {
+                    return null;
+                }
 
                 return ((SeriesInfo)(lvMatches.SelectedItems[0].Tag));
             }
@@ -80,13 +86,17 @@ namespace TVRename
         private void txtFindThis_TextChanged(object sender, EventArgs e)
         {
             if (!mInternal)
+            {
                 DoFind(false);
+            }
         }
 
         private void DoFind(bool chooseOnlyMatch)
         {
             if (mInternal)
+            {
                 return;
+            }
 
             lvMatches.BeginUpdate();
 
@@ -119,21 +129,28 @@ namespace TVRename
                 }
 
                 if ((lvMatches.Items.Count == 1) && numeric)
+                {
                     lvMatches.Items[0].Selected = true;
+                }
 
                 int n = lvMatches.Items.Count;
                 txtSearchStatus.Text = "Found " + n + " show" + ((n != 1) ? "s" : "");
             }
             else
+            {
                 txtSearchStatus.Text = "";
+            }
 
             lvMatches.EndUpdate();
 
             if ((lvMatches.Items.Count == 1) && chooseOnlyMatch)
+            {
                 lvMatches.Items[0].Selected = true;
+            }
         }
 
-        private static ListViewItem NewLvi(SeriesInfo si, int num, string show, bool numberMatch)
+        [NotNull]
+        private static ListViewItem NewLvi([NotNull] SeriesInfo si, int num, string show, bool numberMatch)
         {
             ListViewItem lvi = new ListViewItem {Text = num.ToString()};
             lvi.SubItems.Add(show);
@@ -141,7 +158,10 @@ namespace TVRename
 
             lvi.Tag = si;
             if (numberMatch)
+            {
                 lvi.Selected = true;
+            }
+
             return lvi;
         }
 
@@ -174,7 +194,7 @@ namespace TVRename
             txtFindThis.Focus();
         }
 
-        private void txtFindThis_KeyDown(object sender, KeyEventArgs e)
+        private void txtFindThis_KeyDown(object sender, [NotNull] KeyEventArgs e)
         {
             if ((e.KeyCode == Keys.Enter) || (e.KeyCode == Keys.Return))
             {
@@ -183,12 +203,17 @@ namespace TVRename
             }
         }
 
-        private void lvMatches_ColumnClick(object sender, ColumnClickEventArgs e)
+        private void lvMatches_ColumnClick(object sender, [NotNull] ColumnClickEventArgs e)
         {
             if (e.Column == 0 || e.Column == 2) // code or year
+            {
                 lvMatches.ListViewItemSorter = new NumberAsTextSorter(e.Column);
+            }
             else
+            {
                 lvMatches.ListViewItemSorter = new TextSorter(e.Column);
+            }
+
             lvMatches.Sort();
         }
     }

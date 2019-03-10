@@ -7,6 +7,7 @@
 //
 using System.Collections.Generic;
 using System.Globalization;
+using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -22,7 +23,7 @@ namespace TVRename
         
         public override DownloadType GetDownloadType() => DownloadType.downloadImage;
         
-        public override void NotifyComplete(FileInfo file)
+        public override void NotifyComplete([NotNull] FileInfo file)
         {
             if (file.Name.EndsWith(".tbn", true, new CultureInfo("en")))
             {
@@ -52,7 +53,7 @@ namespace TVRename
 
                     if ((forceRefresh || (!posterJpg.Exists)) && (!donePosterJpg.Contains(si.AutoAddFolderBase)))
                     {
-                        string path = si.TheSeries().GetSeriesPosterPath();
+                        string path = si.TheSeries()?.GetSeriesPosterPath();
                         if (!string.IsNullOrEmpty(path))
                         {
                             theActionList.Add(new ActionDownloadImage(si, null, posterJpg, path, false));
@@ -62,7 +63,7 @@ namespace TVRename
 
                     if ((forceRefresh || (!bannerJpg.Exists)) && (!doneBannerJpg.Contains(si.AutoAddFolderBase)))
                     {
-                        string path = si.TheSeries().GetSeriesWideBannerPath();
+                        string path = si.TheSeries()?.GetSeriesWideBannerPath();
                         if (!string.IsNullOrEmpty(path))
                         {
                             theActionList.Add(new ActionDownloadImage(si, null, bannerJpg, path, false));
@@ -72,7 +73,7 @@ namespace TVRename
 
                     if ((forceRefresh || (!fanartJpg.Exists)) && (!doneFanartJpg.Contains(si.AutoAddFolderBase)))
                     {
-                        string path = si.TheSeries().GetSeriesFanartPath();
+                        string path = si.TheSeries()?.GetSeriesFanartPath();
                         if (!string.IsNullOrEmpty(path))
                         {
                             theActionList.Add(new ActionDownloadImage(si, null, fanartJpg, path));
@@ -105,26 +106,39 @@ namespace TVRename
 
                     filenamePrefix = "season";
 
-                    if (snum == 0) filenamePrefix += "-specials";
-                    else if (snum < 10) filenamePrefix += "0" + snum;
-                    else filenamePrefix += snum;
+                    if (snum == 0)
+                    {
+                        filenamePrefix += "-specials";
+                    }
+                    else if (snum < 10)
+                    {
+                        filenamePrefix += "0" + snum;
+                    }
+                    else
+                    {
+                        filenamePrefix += snum;
+                    }
 
                     filenamePrefix += "-";
                 }
                 FileInfo posterJpg = FileHelper.FileInFolder(folder, filenamePrefix + "poster.jpg");
                 if (forceRefresh || !posterJpg.Exists)
                 {
-                    string path = si.TheSeries().GetSeasonBannerPath(snum);
+                    string path = si.TheSeries()?.GetSeasonBannerPath(snum);
                     if (!string.IsNullOrEmpty(path))
+                    {
                         theActionList.Add(new ActionDownloadImage(si, null, posterJpg, path));
+                    }
                 }
 
                 FileInfo bannerJpg = FileHelper.FileInFolder(folder, filenamePrefix + "banner.jpg");
                 if (forceRefresh || !bannerJpg.Exists)
                 {
-                    string path = si.TheSeries().GetSeasonWideBannerPath(snum);
+                    string path = si.TheSeries()?.GetSeasonWideBannerPath(snum);
                     if (!string.IsNullOrEmpty(path))
+                    {
                         theActionList.Add(new ActionDownloadImage(si, null, bannerJpg, path));
+                    }
                 }
                 return theActionList;
             }
@@ -146,29 +160,45 @@ namespace TVRename
                             TVSettings.Instance.FilenameFriendly(
                                 TVSettings.Instance.NamingStyle.GetTargetEpisodeName(dbep.Show,sourceEp,dbep.Show.GetTimeZone(), dbep.Show.DvdOrder));
                         ActionDownloadImage b = DoEpisode(dbep.Show,sourceEp,new FileInfo(foldername+"/"+filename), ".jpg", forceRefresh);
-                        if (b != null) theActionList.Add(b);
+                        if (b != null)
+                        {
+                            theActionList.Add(b);
+                        }
                     }
                 }
                 else
                 {
                     ActionDownloadImage a = DoEpisode(dbep.Show, dbep, filo, ".tbn", forceRefresh);
-                    if (a != null) theActionList.Add(a);
+                    if (a != null)
+                    {
+                        theActionList.Add(a);
+                    }
                 }
                 return theActionList;
             }
             return base.ProcessEpisode(dbep, filo, forceRefresh);
         }
 
-        private ActionDownloadImage DoEpisode(ShowItem si, Episode ep, FileInfo filo,string extension, bool forceRefresh)
+        [CanBeNull]
+        private ActionDownloadImage DoEpisode(ShowItem si, [NotNull] Episode ep, FileInfo filo,string extension, bool forceRefresh)
         {
             string ban = ep.Filename;
-            if (string.IsNullOrEmpty(ban)) return null;
+            if (string.IsNullOrEmpty(ban))
+            {
+                return null;
+            }
 
             string basefn = filo.RemoveExtension();
             FileInfo imgtbn = FileHelper.FileInFolder(filo.Directory, basefn + extension);
-            if (imgtbn.Exists && !forceRefresh) return null;
+            if (imgtbn.Exists && !forceRefresh)
+            {
+                return null;
+            }
 
-            if (doneTbn.Contains(imgtbn.FullName)) return null;
+            if (doneTbn.Contains(imgtbn.FullName))
+            {
+                return null;
+            }
 
             doneTbn.Add(imgtbn.FullName);
             return new ActionDownloadImage(si, ep is ProcessedEpisode episode ? episode  : new ProcessedEpisode(ep,si ), imgtbn, ban);

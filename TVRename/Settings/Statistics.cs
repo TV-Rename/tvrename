@@ -10,6 +10,8 @@ using System;
 using Alphaleonis.Win32.Filesystem;
 using System.Xml;
 using System.Xml.Serialization;
+using JetBrains.Annotations;
+
 // ReSharper disable RedundantDefaultMemberInitializer
 
 // Keeps count of some statistics.
@@ -39,11 +41,15 @@ namespace TVRename
         [XmlIgnoreAttribute] public int NsNumberOfShows = 0;
         [XmlIgnoreAttribute] private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
+        [CanBeNull]
         public static TVRenameStats Load()
         {
             string fn = PathManager.StatisticsFile.FullName;
             if (!File.Exists(fn))
+            {
                 return new TVRenameStats();
+            }
+
             return LoadFrom(fn);
         }
 
@@ -52,10 +58,13 @@ namespace TVRename
             SaveToFile(PathManager.StatisticsFile.FullName);
         }
 
+        [CanBeNull]
         private static TVRenameStats LoadFrom(string filename)
         {
             if (!File.Exists(filename))
+            {
                 return null;
+            }
 
             XmlReaderSettings settings = new XmlReaderSettings {IgnoreComments = true, IgnoreWhitespace = true};
             TVRenameStats sc;
@@ -78,7 +87,7 @@ namespace TVRename
             return sc;
         }
 
-        private void SaveToFile(string toFile)
+        private void SaveToFile([NotNull] string toFile)
         {
             System.IO.DirectoryInfo di = new System.IO.FileInfo(toFile).Directory;
             if (di == null)
@@ -87,7 +96,9 @@ namespace TVRename
                 return;
             }
             if (!di.Exists)
+            {
                 di.Create();
+            }
 
             XmlWriterSettings settings = new XmlWriterSettings {Indent = true, NewLineOnAttributes = true};
             using (XmlWriter writer = XmlWriter.Create(toFile, settings))

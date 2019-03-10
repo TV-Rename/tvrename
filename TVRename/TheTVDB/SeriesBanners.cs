@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -53,25 +54,70 @@ namespace TVRename
             bestSeriesLangFanartId = -1;
         }
 
-        public void MergeBanners(SeriesBanners o)
+        public void MergeBanners([CanBeNull] SeriesBanners o)
         {
-            if (o is null) return;
+            if (o is null)
+            {
+                return;
+            }
 
-            if (WorthUdating(o.seasonBanners)) seasonBanners = o.seasonBanners;
-            if (WorthUdating(o.seasonLangBanners)) seasonLangBanners = o.seasonLangBanners;
-            if (WorthUdating(o.seasonLangWideBanners)) seasonLangWideBanners = o.seasonLangWideBanners;
-            if (WorthUdating(o.seasonWideBanners)) seasonWideBanners = o.seasonWideBanners;
-            if (WorthUdating(o.AllBanners)) AllBanners = o.AllBanners;
+            if (WorthUdating(o.seasonBanners))
+            {
+                seasonBanners = o.seasonBanners;
+            }
 
-            if (o.bestSeriesPosterId != -1) bestSeriesPosterId = o.bestSeriesPosterId;
-            if (o.bestSeriesBannerId != -1) bestSeriesBannerId = o.bestSeriesBannerId;
-            if (o.bestSeriesFanartId != -1) bestSeriesFanartId = o.bestSeriesFanartId;
-            if (o.bestSeriesLangPosterId != -1) bestSeriesLangPosterId = o.bestSeriesLangPosterId;
-            if (o.bestSeriesLangBannerId != -1) bestSeriesLangBannerId = o.bestSeriesLangBannerId;
-            if (o.bestSeriesLangFanartId != -1) bestSeriesLangFanartId = o.bestSeriesLangFanartId;
+            if (WorthUdating(o.seasonLangBanners))
+            {
+                seasonLangBanners = o.seasonLangBanners;
+            }
+
+            if (WorthUdating(o.seasonLangWideBanners))
+            {
+                seasonLangWideBanners = o.seasonLangWideBanners;
+            }
+
+            if (WorthUdating(o.seasonWideBanners))
+            {
+                seasonWideBanners = o.seasonWideBanners;
+            }
+
+            if (WorthUdating(o.AllBanners))
+            {
+                AllBanners = o.AllBanners;
+            }
+
+            if (o.bestSeriesPosterId != -1)
+            {
+                bestSeriesPosterId = o.bestSeriesPosterId;
+            }
+
+            if (o.bestSeriesBannerId != -1)
+            {
+                bestSeriesBannerId = o.bestSeriesBannerId;
+            }
+
+            if (o.bestSeriesFanartId != -1)
+            {
+                bestSeriesFanartId = o.bestSeriesFanartId;
+            }
+
+            if (o.bestSeriesLangPosterId != -1)
+            {
+                bestSeriesLangPosterId = o.bestSeriesLangPosterId;
+            }
+
+            if (o.bestSeriesLangBannerId != -1)
+            {
+                bestSeriesLangBannerId = o.bestSeriesLangBannerId;
+            }
+
+            if (o.bestSeriesLangFanartId != -1)
+            {
+                bestSeriesLangFanartId = o.bestSeriesLangFanartId;
+            }
         }
 
-        private static bool WorthUdating(Dictionary<int, Banner> b) => b != null && b.Count > 0;
+        private static bool WorthUdating([CanBeNull] Dictionary<int, Banner> b) => b != null && b.Count > 0;
 
         public string GetSeasonBannerPath(int snum)
         {
@@ -82,10 +128,14 @@ namespace TVRename
             System.Diagnostics.Debug.Assert(series.BannersLoaded);
 
             if (seasonLangBanners.ContainsKey(snum))
+            {
                 return seasonLangBanners[snum].BannerPath;
+            }
 
             if (seasonBanners.ContainsKey(snum))
+            {
                 return seasonBanners[snum].BannerPath;
+            }
 
             //if there is a problem then return the non-season specific poster by default
             return GetSeriesPosterPath();
@@ -94,13 +144,22 @@ namespace TVRename
         public string GetSeriesWideBannerPath()
         {
             //ry the best one we've found with the correct language
-            if (bestSeriesLangBannerId != -1) return AllBanners[bestSeriesLangBannerId].BannerPath;
+            if (bestSeriesLangBannerId != -1)
+            {
+                return AllBanners[bestSeriesLangBannerId].BannerPath;
+            }
 
             //if there are none with the right language then try one from another language
-            if (bestSeriesBannerId != -1) return AllBanners[bestSeriesBannerId].BannerPath;
+            if (bestSeriesBannerId != -1)
+            {
+                return AllBanners[bestSeriesBannerId].BannerPath;
+            }
 
             //then choose the one the TVDB recommended _LOWERED IN PRIORITY AFTER LEVERAGE issue - https://github.com/TV-Rename/tvrename/issues/285
-            if (!string.IsNullOrEmpty(series.BannerString)) return series.BannerString;
+            if (!string.IsNullOrEmpty(series.BannerString))
+            {
+                return series.BannerString;
+            }
 
             //give up
             return "";
@@ -109,10 +168,16 @@ namespace TVRename
         public string GetSeriesPosterPath()
         {
             //then try the best one we've found with the correct language
-            if (bestSeriesLangPosterId != -1) return AllBanners[bestSeriesLangPosterId].BannerPath;
+            if (bestSeriesLangPosterId != -1)
+            {
+                return AllBanners[bestSeriesLangPosterId].BannerPath;
+            }
 
             //if there are none with the righ tlanguage then try one from another language
-            if (bestSeriesPosterId != -1) return AllBanners[bestSeriesPosterId].BannerPath;
+            if (bestSeriesPosterId != -1)
+            {
+                return AllBanners[bestSeriesPosterId].BannerPath;
+            }
 
             //give up
             return "";
@@ -121,10 +186,16 @@ namespace TVRename
         public string GetSeriesFanartPath()
         {
             //then try the best one we've found with the correct language
-            if (bestSeriesLangFanartId != -1) return AllBanners[bestSeriesLangFanartId].BannerPath;
+            if (bestSeriesLangFanartId != -1)
+            {
+                return AllBanners[bestSeriesLangFanartId].BannerPath;
+            }
 
             //if there are none with the righ tlanguage then try one from another language
-            if (bestSeriesFanartId != -1) return AllBanners[bestSeriesFanartId].BannerPath;
+            if (bestSeriesFanartId != -1)
+            {
+                return AllBanners[bestSeriesFanartId].BannerPath;
+            }
 
             //give up
             return "";
@@ -139,16 +210,20 @@ namespace TVRename
             System.Diagnostics.Debug.Assert(series.BannersLoaded);
 
             if (seasonLangWideBanners.ContainsKey(snum))
+            {
                 return seasonLangWideBanners[snum].BannerPath;
+            }
 
             if (seasonWideBanners.ContainsKey(snum))
+            {
                 return seasonWideBanners[snum].BannerPath;
+            }
 
             //if there is a problem then return the non-season specific poster by default
             return GetSeriesWideBannerPath();
         }
 
-        public void AddOrUpdateBanner(Banner banner)
+        public void AddOrUpdateBanner([NotNull] Banner banner)
         {
             if (AllBanners.ContainsKey(banner.BannerId))
             {
@@ -159,24 +234,56 @@ namespace TVRename
                 AllBanners.Add(banner.BannerId, banner);
             }
 
-            if (banner.IsSeasonPoster()) AddOrUpdateSeasonPoster(banner);
-            if (banner.IsSeasonBanner()) AddOrUpdateWideSeason(banner);
+            if (banner.IsSeasonPoster())
+            {
+                AddOrUpdateSeasonPoster(banner);
+            }
 
-            if (banner.IsSeriesPoster()) bestSeriesPosterId = GetBestBannerId(banner, bestSeriesPosterId);
-            if (banner.IsSeriesBanner()) bestSeriesBannerId = GetBestBannerId(banner, bestSeriesBannerId);
-            if (banner.IsFanart()) bestSeriesFanartId = GetBestBannerId(banner, bestSeriesFanartId);
+            if (banner.IsSeasonBanner())
+            {
+                AddOrUpdateWideSeason(banner);
+            }
+
+            if (banner.IsSeriesPoster())
+            {
+                bestSeriesPosterId = GetBestBannerId(banner, bestSeriesPosterId);
+            }
+
+            if (banner.IsSeriesBanner())
+            {
+                bestSeriesBannerId = GetBestBannerId(banner, bestSeriesBannerId);
+            }
+
+            if (banner.IsFanart())
+            {
+                bestSeriesFanartId = GetBestBannerId(banner, bestSeriesFanartId);
+            }
 
             if (banner.LanguageId == series.LanguageId)
             {
-                if (banner.IsSeriesPoster()) bestSeriesLangPosterId = GetBestBannerId(banner, bestSeriesLangPosterId);
-                if (banner.IsSeriesBanner()) bestSeriesLangBannerId = GetBestBannerId(banner, bestSeriesLangBannerId);
-                if (banner.IsFanart()) bestSeriesLangFanartId = GetBestBannerId(banner, bestSeriesLangFanartId);
+                if (banner.IsSeriesPoster())
+                {
+                    bestSeriesLangPosterId = GetBestBannerId(banner, bestSeriesLangPosterId);
+                }
+
+                if (banner.IsSeriesBanner())
+                {
+                    bestSeriesLangBannerId = GetBestBannerId(banner, bestSeriesLangBannerId);
+                }
+
+                if (banner.IsFanart())
+                {
+                    bestSeriesLangFanartId = GetBestBannerId(banner, bestSeriesLangFanartId);
+                }
             }
         }
 
-        private int GetBestBannerId(Banner selectedBanner, int bestBannerId)
+        private int GetBestBannerId([NotNull] Banner selectedBanner, int bestBannerId)
         {
-            if (bestBannerId == -1) return selectedBanner.BannerId;
+            if (bestBannerId == -1)
+            {
+                return selectedBanner.BannerId;
+            }
 
             if (AllBanners[bestBannerId].Rating < selectedBanner.Rating)
             {
@@ -187,17 +294,17 @@ namespace TVRename
             return bestBannerId;
         }
 
-        private void AddOrUpdateSeasonPoster(Banner banner)
+        private void AddOrUpdateSeasonPoster([NotNull] Banner banner)
         {
             AddUpdateIntoCollections(banner, seasonBanners, seasonLangBanners);
         }
 
-        private void AddOrUpdateWideSeason(Banner banner)
+        private void AddOrUpdateWideSeason([NotNull] Banner banner)
         {
             AddUpdateIntoCollections(banner, seasonWideBanners, seasonLangWideBanners);
         }
 
-        private void AddUpdateIntoCollections(Banner banner, IDictionary<int, Banner> coll, IDictionary<int, Banner> langColl)
+        private void AddUpdateIntoCollections([NotNull] Banner banner, [NotNull] IDictionary<int, Banner> coll, IDictionary<int, Banner> langColl)
         {
             //update language specific cache if appropriate
             if (banner.LanguageId == series.LanguageId)
@@ -208,7 +315,7 @@ namespace TVRename
             AddUpdateIntoCollection(banner, coll);
         }
 
-        private static void AddUpdateIntoCollection(Banner banner, IDictionary<int, Banner> coll)
+        private static void AddUpdateIntoCollection([NotNull] Banner banner, [NotNull] IDictionary<int, Banner> coll)
         {
             int seasonOfNewBanner = banner.SeasonId;
 
@@ -222,7 +329,9 @@ namespace TVRename
                 }
             }
             else
+            {
                 coll.Add(seasonOfNewBanner, banner);
+            }
         }
 
         public string GetImage(TVSettings.FolderJpgIsType type)

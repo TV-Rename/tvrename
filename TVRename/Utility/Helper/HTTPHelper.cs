@@ -13,11 +13,13 @@ namespace TVRename
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private static string HttpRequest(string method, string url, string json, string contentType,
-            TvDbTokenProvider authToken, string lang = "")
+        [NotNull]
+        private static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType,
+            [CanBeNull] TvDbTokenProvider authToken, string lang = "")
             => HttpRequest(method, url, json, contentType, authToken?.GetToken(), lang);
 
-        private static string HttpRequest(string method, string url, string json, string contentType, string token, string lang = "")
+        [NotNull]
+        private static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType, [CanBeNull] string token, string lang = "")
             {
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.ContentType = contentType;
@@ -54,7 +56,7 @@ namespace TVRename
         public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, TvDbTokenProvider  authToken, bool retry) =>
             JsonHttpGetRequest(url, parameters, authToken, string.Empty,retry);
 
-        public static JObject JsonHttpGetRequest(string url, string authToken) =>
+        public static JObject JsonHttpGetRequest([NotNull] string url, string authToken) =>
             JObject.Parse(HttpRequest("GET",url, null, "application/json", authToken,string.Empty));
 
         public static JObject JsonHttpPostRequest( string url, JObject request, bool retry)
@@ -97,9 +99,13 @@ namespace TVRename
             return JObject.Parse(response);
         }
 
-        private static string GetHttpParameters(Dictionary<string, string> parameters)
+        [NotNull]
+        private static string GetHttpParameters([CanBeNull] Dictionary<string, string> parameters)
         {
-            if (parameters == null) return string.Empty;
+            if (parameters == null)
+            {
+                return string.Empty;
+            }
 
             StringBuilder sb = new StringBuilder();
             sb.Append("?");
@@ -112,12 +118,17 @@ namespace TVRename
             return finalUrl.Remove(finalUrl.LastIndexOf("&", StringComparison.Ordinal));
         }
 
-        private static void RetryOnException(int times,TimeSpan delay,string url, [NotNull] System.Action operation, System.Action updateOperation)
+        private static void RetryOnException(int times,TimeSpan delay,string url, [NotNull] System.Action operation, [CanBeNull] System.Action updateOperation)
         {
             if (times <= 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(times));
+            }
 
-            if (operation == null) throw new ArgumentNullException(nameof(operation));
+            if (operation == null)
+            {
+                throw new ArgumentNullException(nameof(operation));
+            }
 
             int attempts = 0;
             do
@@ -145,12 +156,17 @@ namespace TVRename
             } while (true);
         }
 
-        public static async Task RetryOnExceptionAsync<TException>(int times, TimeSpan delay, string url, Func<Task> operation) where TException : Exception
+        public static async Task RetryOnExceptionAsync<TException>(int times, TimeSpan delay, string url, [NotNull] Func<Task> operation) where TException : Exception
         {
             if (times <= 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(times));
+            }
 
-            if (operation == null) throw new ArgumentNullException(nameof(operation));
+            if (operation == null)
+            {
+                throw new ArgumentNullException(nameof(operation));
+            }
 
             int attempts = 0;
             do

@@ -70,7 +70,10 @@ namespace TVRename
 
         private bool OkToClose()
         {
-            if (TheTVDB.Instance.HasSeries(codeFinder.SelectedCode())) return true;
+            if (TheTVDB.Instance.HasSeries(codeFinder.SelectedCode()))
+            {
+                return true;
+            }
 
             DialogResult dr = MessageBox.Show("tvdb code unknown, close anyway?", "TVRename Auto Add Show",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning);

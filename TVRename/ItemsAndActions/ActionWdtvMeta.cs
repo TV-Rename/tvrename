@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using JetBrains.Annotations;
+
 namespace TVRename
 {
     using System;
@@ -25,6 +27,7 @@ namespace TVRename
         }
         #region Action Members
 
+        [NotNull]
         public override string Name => "Write WD TV Live Hub Meta";
 
         public override bool Go(ref bool pause, TVRenameStats stats)
@@ -37,9 +40,15 @@ namespace TVRename
                 return false;
             }
 
-            if (Episode != null) return WriteEpisodeMetaDataFile();
-            
-            if (SelectedShow != null) return WriteSeriesXml();
+            if (Episode != null)
+            {
+                return WriteEpisodeMetaDataFile();
+            }
+
+            if (SelectedShow != null)
+            {
+                return WriteSeriesXml();
+            }
 
             ErrorText = "No details available to write - Development Error";
             Error = true;
@@ -64,32 +73,35 @@ namespace TVRename
 
                     XmlHelper.WriteElementToXml(writer, "title", SelectedShow.ShowName);
 
-                    foreach (string genre in SelectedShow.TheSeries().Genres())
+                    foreach (string genre in SelectedShow.Genres)
                     {
                         XmlHelper.WriteElementToXml(writer, "genre", genre);
                     }
 
-                    XmlHelper.WriteElementToXml(writer, "premiered", SelectedShow.TheSeries().FirstAired);
-                    XmlHelper.WriteElementToXml(writer, "year", SelectedShow.TheSeries().Year);
+                    XmlHelper.WriteElementToXml(writer, "premiered", SelectedShow.TheSeries()?.FirstAired);
+                    XmlHelper.WriteElementToXml(writer, "year", SelectedShow.TheSeries()?.Year);
 
-                    float siteRating =SelectedShow.TheSeries().SiteRating * 10;
+                    float siteRating =SelectedShow.TheSeries()?.SiteRating??0 * 10;
 
                     int intSiteRating = (int)siteRating;
-                    if (intSiteRating > 0) XmlHelper.WriteElementToXml(writer, "rating", intSiteRating);
+                    if (intSiteRating > 0)
+                    {
+                        XmlHelper.WriteElementToXml(writer, "rating", intSiteRating);
+                    }
 
-                    XmlHelper.WriteElementToXml(writer, "status", SelectedShow.TheSeries().Status);
+                    XmlHelper.WriteElementToXml(writer, "status", SelectedShow.TheSeries()?.Status);
 
-                    XmlHelper.WriteElementToXml(writer, "mpaa", SelectedShow.TheSeries().ContentRating);
-                    XmlHelper.WriteInfo(writer, "moviedb", "imdb", "id", SelectedShow.TheSeries().Imdb);
-                    XmlHelper.WriteElementToXml(writer, "tvdbid", SelectedShow.TheSeries().TvdbCode);
+                    XmlHelper.WriteElementToXml(writer, "mpaa", SelectedShow.TheSeries()?.ContentRating);
+                    XmlHelper.WriteInfo(writer, "moviedb", "imdb", "id", SelectedShow.TheSeries()?.Imdb);
+                    XmlHelper.WriteElementToXml(writer, "tvdbid", SelectedShow.TheSeries()?.TvdbCode);
 
-                    string rt = SelectedShow.TheSeries().Runtime;
+                    string rt = SelectedShow.TheSeries()?.Runtime;
                     if (!string.IsNullOrEmpty(rt))
                     {
                         XmlHelper.WriteElementToXml(writer, "runtime", rt + " min");
                     }
 
-                    XmlHelper.WriteElementToXml(writer, "plot", SelectedShow.TheSeries().Overview);
+                    XmlHelper.WriteElementToXml(writer, "plot", SelectedShow.TheSeries()?.Overview);
 
                     writer.WriteEndElement(); // show
                     writer.WriteEndElement(); // tvshow
@@ -153,7 +165,10 @@ namespace TVRename
                     // actors...
                     foreach (Actor aa in Episode.TheSeries.GetActors())
                     {
-                        if (string.IsNullOrEmpty(aa.ActorName)) continue;
+                        if (string.IsNullOrEmpty(aa.ActorName))
+                        {
+                            continue;
+                        }
 
                         writer.WriteStartElement("actor");
                         XmlHelper.WriteElementToXml(writer, "name", aa.ActorName);
@@ -195,9 +210,15 @@ namespace TVRename
             ActionWdtvMeta nfo = o as ActionWdtvMeta;
 
             if (Episode == null)
+            {
                 return 1;
+            }
+
             if (nfo?.Episode == null)
+            {
                 return -1;
+            }
+
             return string.Compare((Where.FullName + Episode.Name), nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
         #endregion

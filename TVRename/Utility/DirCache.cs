@@ -30,7 +30,9 @@ namespace TVRename
         {
             int n = 0;
             if (!Directory.Exists(folder))
+            {
                 return n;
+            }
 
             DirectoryInfo di = new DirectoryInfo(folder);
             try
@@ -50,7 +52,10 @@ namespace TVRename
             {
             }
 
-            if (!subFolders) return n;
+            if (!subFolders)
+            {
+                return n;
+            }
 
             DirectoryInfo[] dirs =new DirectoryInfo[0];
             try
@@ -95,7 +100,10 @@ namespace TVRename
             {
                 DirectoryInfo di = new DirectoryInfo(folder);
                 if (!di.Exists)
+                {
                     return count;
+                }
+
                 FileInfo[] f2 = new FileInfo[0];
                 try
                 {
@@ -123,7 +131,9 @@ namespace TVRename
                     count++;
                     Add(new DirCacheEntry(ff));
                     if ((prog != null) && (totalFiles != 0))
+                    {
                         prog.Invoke(100 * (count) / totalFiles, string.Empty);
+                    }
                 }
 
                 if (subFolders)
@@ -151,7 +161,9 @@ namespace TVRename
                     }
 
                     foreach (DirectoryInfo di2 in dirs)
+                    {
                         count += BuildDirCache(prog, count, totalFiles, di2.FullName, true);
+                    }
                 }
             }
             catch (Exception exception)

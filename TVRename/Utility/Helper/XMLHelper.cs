@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
     public static class XmlHelper
     {
-        public static void WriteStringsToXml(IEnumerable<string> strings, XmlWriter writer, string elementName, string stringName)
+        public static void WriteStringsToXml([NotNull] IEnumerable<string> strings, [NotNull] XmlWriter writer, [NotNull] string elementName, string stringName)
         {
             writer.WriteStartElement(elementName);
             foreach (string ss in strings)
@@ -20,7 +21,8 @@ namespace TVRename
             writer.WriteEndElement();
         }
 
-        public static string ReadStringFixQuotesAndSpaces(string s)
+        [NotNull]
+        public static string ReadStringFixQuotesAndSpaces([NotNull] string s)
         {
             string res = s.Replace("\\'", "'");
             res = res.Replace("\\\"", "\"");
@@ -28,15 +30,29 @@ namespace TVRename
             return res;
         }
 
-        public static void WriteElementToXml(XmlWriter writer, string elementName, string value,bool ignoreifBlank = false)
+        public static void WriteElementToXml(XmlWriter writer, string elementName, [CanBeNull] string value)
         {
-            if (ignoreifBlank && String.IsNullOrEmpty(value)) return;
+            WriteElementToXml(writer, elementName, value, false);
+        }
+
+        public static void WriteElementToXml(XmlWriter writer, string elementName, [CanBeNull] string value,bool ignoreifBlank)
+        {
+            if (ignoreifBlank && string.IsNullOrEmpty(value))
+            {
+                return;
+            }
 
             writer.WriteStartElement(elementName);
             writer.WriteValue(value??"");
             writer.WriteEndElement();
         }
-        public static void WriteElementToXml(XmlWriter writer, string elementName, double value,string format= null)
+
+        public static void WriteElementToXml([NotNull] XmlWriter writer, [NotNull] string elementName, double value)
+        {
+            WriteElementToXml(writer, elementName, value, null);
+        }
+
+        public static void WriteElementToXml([NotNull] XmlWriter writer, [NotNull] string elementName, double value,[CanBeNull] string format)
         {
             writer.WriteStartElement(elementName);
             if (format is null)
@@ -49,69 +65,88 @@ namespace TVRename
             }
             writer.WriteEndElement();
         }
-        public static void WriteElementToXml(XmlWriter writer, string elementName, int value,bool ignoreZero=false)
+
+        public static void WriteElementToXml(XmlWriter writer, string elementName, int value)
         {
-            if (ignoreZero && value == 0) return;
+            WriteElementToXml(writer, elementName, value, false);
+        }
+
+        public static void WriteElementToXml(XmlWriter writer, string elementName, int value,bool ignoreZero)
+        {
+            if (ignoreZero && value == 0)
+            {
+                return;
+            }
+
             writer.WriteStartElement(elementName);
             writer.WriteValue(value);
             writer.WriteEndElement();
         }
-        public static void WriteElementToXml(XmlWriter writer, string elementName, bool value)
+        public static void WriteElementToXml([NotNull] XmlWriter writer, [NotNull] string elementName, bool value)
         {
             writer.WriteStartElement(elementName);
             writer.WriteValue(value);
             writer.WriteEndElement();
         }
-        public static void WriteElementToXml(XmlWriter writer, string elementName, DateTime? value)
+        public static void WriteElementToXml([NotNull] XmlWriter writer, [NotNull] string elementName, DateTime? value)
         {
             writer.WriteStartElement(elementName);
             if (value != null)
+            {
                 writer.WriteValue(value);
+            }
+
             writer.WriteEndElement();
         }
 
-        public static void WriteAttributeToXml(XmlWriter writer, string attributeName, string value)
+        public static void WriteAttributeToXml([NotNull] XmlWriter writer, [NotNull] string attributeName, [NotNull] string value)
         {
             writer.WriteStartAttribute(attributeName);
             writer.WriteValue(value);
             writer.WriteEndAttribute();
         }
-        public static void WriteAttributeToXml(XmlWriter writer, string attributeName, DateTime?  value)
+        public static void WriteAttributeToXml([NotNull] XmlWriter writer, [NotNull] string attributeName, DateTime?  value)
         {
             writer.WriteStartAttribute(attributeName);
             if (value != null)
+            {
                 writer.WriteValue(value);
+            }
+
             writer.WriteEndAttribute();
         }
         internal static void WriteElementToXml(XmlWriter writer, string attributeName, int? value)
         {
-            if (value.HasValue) WriteElementToXml(writer,attributeName,value.Value);
+            if (value.HasValue)
+            {
+                WriteElementToXml(writer,attributeName,value.Value);
+            }
         }
-        public static void WriteAttributeToXml(XmlWriter writer, string attributeName, int value)
+        public static void WriteAttributeToXml([NotNull] XmlWriter writer, [NotNull] string attributeName, int value)
         {
             writer.WriteStartAttribute(attributeName);
             writer.WriteValue(value);
             writer.WriteEndAttribute();
         }
-        public static void WriteAttributeToXml(XmlWriter writer, string attributeName, bool value)
+        public static void WriteAttributeToXml([NotNull] XmlWriter writer, [NotNull] string attributeName, bool value)
         {
             writer.WriteStartAttribute(attributeName);
             writer.WriteValue(value);
             writer.WriteEndAttribute();
         }
-        public static void WriteAttributeToXml(XmlWriter writer, string attributeName, long value)
+        public static void WriteAttributeToXml([NotNull] XmlWriter writer, [NotNull] string attributeName, long value)
         {
             writer.WriteStartAttribute(attributeName);
             writer.WriteValue(value);
             writer.WriteEndAttribute();
         }
 
-        public static void WriteInfo(XmlWriter writer, string elemName, string attribute, string attributeVal, string value)
+        public static void WriteInfo(XmlWriter writer, string elemName, [CanBeNull] string attribute, [CanBeNull] string attributeVal, [CanBeNull] string value)
         {
-            if (!String.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(value))
             {
                 writer.WriteStartElement(elemName);
-                if (!String.IsNullOrEmpty(attribute) && !String.IsNullOrEmpty(attributeVal))
+                if (!string.IsNullOrEmpty(attribute) && !string.IsNullOrEmpty(attributeVal))
                 {
                     writer.WriteAttributeString(attribute, attributeVal);
                 }
@@ -120,12 +155,12 @@ namespace TVRename
             }
         }
 
-        public static void WriteInfo(XmlWriter writer, string elemName, string attribute, string attributeVal)
+        public static void WriteInfo(XmlWriter writer, string elemName, [CanBeNull] string attribute, [CanBeNull] string attributeVal)
         {
-            if (!String.IsNullOrEmpty(attributeVal))
+            if (!string.IsNullOrEmpty(attributeVal))
             {
                 writer.WriteStartElement(elemName);
-                if (!String.IsNullOrEmpty(attribute) && !String.IsNullOrEmpty(attributeVal))
+                if (!string.IsNullOrEmpty(attribute) && !string.IsNullOrEmpty(attributeVal))
                 {
                     writer.WriteAttributeString(attribute, attributeVal);
                 }
@@ -133,72 +168,92 @@ namespace TVRename
             }
         }
 
-        public static bool? ExtractBool(this XElement xmlSettings, string elementName)
+        public static bool? ExtractBool([NotNull] this XElement xmlSettings, string elementName)
         {
             if (xmlSettings.Descendants(elementName).Any())
+            {
                 return XmlConvert.ToBoolean((string)(xmlSettings.Descendants(elementName).First()));
+            }
 
             return null;
         }
 
-        public static bool ExtractBool(this XElement xmlSettings, string elementName,bool defaultValue)
+        public static bool ExtractBool([NotNull] this XElement xmlSettings, string elementName,bool defaultValue)
         {
             if (xmlSettings.Descendants(elementName).Any())
+            {
                 return XmlConvert.ToBoolean((string)(xmlSettings.Descendants(elementName).First()));
+            }
 
             return defaultValue;
         }
-        public static bool ExtractBoolBackupDefault(this XElement xmlSettings, string elementName, string backupElementName,bool defaultValue)
+        public static bool ExtractBoolBackupDefault([NotNull] this XElement xmlSettings, string elementName, string backupElementName,bool defaultValue)
         {
             return xmlSettings.ExtractBool(elementName)
                 ?? xmlSettings.ExtractBool(backupElementName)
                 ?? defaultValue;
         }
 
-        public static DateTime? ExtractDateTime(this XElement xmlSettings, string elementName)
+        public static DateTime? ExtractDateTime([NotNull] this XElement xmlSettings, string elementName)
         {
             if (xmlSettings.Descendants(elementName).Any())
             {
                 string textVersion=(string)(xmlSettings.Descendants(elementName).First());
-                if (String.IsNullOrWhiteSpace(textVersion)) return null;
+                if (string.IsNullOrWhiteSpace(textVersion))
+                {
+                    return null;
+                }
+
                 return XmlConvert.ToDateTime(textVersion,XmlDateTimeSerializationMode.Utc);
             }
             return null;
         }
-        public static string ExtractString(this XElement xmlSettings, string elementName)
+        public static string ExtractString([NotNull] this XElement xmlSettings, string elementName)
         {
-            return ExtractString(xmlSettings, elementName, String.Empty);
+            return ExtractString(xmlSettings, elementName, string.Empty);
         }
-        public static string ExtractString(this XElement xmlSettings, string elementName,string defaultValue)
+        public static string ExtractString([NotNull] this XElement xmlSettings, string elementName,string defaultValue)
         {
             if (xmlSettings.Descendants(elementName).Any())
+            {
                 return (string)(xmlSettings.Descendants(elementName).First());
+            }
 
             return defaultValue;
         }
-        public static int? ExtractInt(this XElement xmlSettings, string elementName)
+        public static int? ExtractInt([NotNull] this XElement xmlSettings, string elementName)
         {
-            if(xmlSettings.Descendants(elementName).Any() && !String.IsNullOrWhiteSpace((string)(xmlSettings.Descendants(elementName).First())))
+            if(xmlSettings.Descendants(elementName).Any() && !string.IsNullOrWhiteSpace((string)(xmlSettings.Descendants(elementName).First())))
+            {
                 return XmlConvert.ToInt32((string)(xmlSettings.Descendants(elementName).First()));
+            }
 
             return null;
         }
 
-        public static long? ExtractLong(this XElement xmlSettings, string elementName)
+        public static long? ExtractLong([NotNull] this XElement xmlSettings, string elementName)
         {
             if (xmlSettings.Descendants(elementName).Any())
+            {
                 return XmlConvert.ToInt64((string)(xmlSettings.Descendants(elementName).First()));
+            }
 
             return null;
         }
 
-        public static T ExtractEnum<T>(this XElement xmlSettings, string elementName, T defaultVal)
+        public static T ExtractEnum<T>([NotNull] this XElement xmlSettings, string elementName, T defaultVal)
         {
-            if (!typeof(T).IsEnum) throw new ArgumentException("T must be an enumerated type");
+            if (!typeof(T).IsEnum)
+            {
+                throw new ArgumentException("T must be an enumerated type");
+            }
 
             int? val = xmlSettings.ExtractInt(elementName);
 
-            if (val == null) return defaultVal;
+            if (val == null)
+            {
+                return defaultVal;
+            }
 
             if (typeof(T).IsEnumDefined(val))
             {
@@ -207,24 +262,28 @@ namespace TVRename
             return defaultVal;
         }
 
-        public static float? ExtractFloat(this XElement xmlSettings, string elementName)
+        public static float? ExtractFloat([NotNull] this XElement xmlSettings, string elementName)
         {
             if (xmlSettings.Descendants(elementName).Any())
+            {
                 return XmlConvert.ToSingle((string)(xmlSettings.Descendants(elementName).First()));
+            }
 
             return null;
         }
 
-        internal static List<string> ReadStringsFromXml(this XElement rootElement, string token)
+        [NotNull]
+        internal static List<string> ReadStringsFromXml([NotNull] this XElement rootElement, string token)
         {
             return rootElement.Descendants(token).Select(n=>n.Value).ToList();
         }
-        internal static List<IgnoreItem> ReadIiFromXml(this XElement rootElement, string token)
+        [NotNull]
+        internal static List<IgnoreItem> ReadIiFromXml([NotNull] this XElement rootElement, string token)
         {
             return rootElement.Descendants(token).Select(n => new IgnoreItem(n.Value)).ToList();
         }
 
-        internal static void WriteStringsToXml(IEnumerable<IgnoreItem> ignores, XmlWriter writer, string elementName, string stringName)
+        internal static void WriteStringsToXml([NotNull] IEnumerable<IgnoreItem> ignores, [NotNull] XmlWriter writer, [NotNull] string elementName, string stringName)
         {
             writer.WriteStartElement(elementName);
             foreach (IgnoreItem ss in ignores)
@@ -236,7 +295,7 @@ namespace TVRename
             writer.WriteEndElement();
         }
 
-        internal static void WriteStringsToXml(PreviouslySeenEpisodes previouslySeenEpisodes, XmlWriter writer, string elementName, string stringName)
+        internal static void WriteStringsToXml([NotNull] PreviouslySeenEpisodes previouslySeenEpisodes, [NotNull] XmlWriter writer, [NotNull] string elementName, string stringName)
         {
             writer.WriteStartElement(elementName);
             foreach (int ep in previouslySeenEpisodes)

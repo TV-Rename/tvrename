@@ -26,7 +26,10 @@ namespace TVRename
 
                 foreach (Item action in TheActionList)
                 {
-                    if (!IsOutput(action)) continue;
+                    if (!IsOutput(action))
+                    {
+                        continue;
+                    }
 
                     ActionCopyMoveRename acmr = (ActionCopyMoveRename)action;
                     writer.WriteStartElement("Item");

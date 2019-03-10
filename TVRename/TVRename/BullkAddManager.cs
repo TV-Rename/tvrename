@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -32,14 +33,16 @@ namespace TVRename
             mDoc = doc;
         }
 
-        public static void GuessShowItem(FoundFolder ai, ShowLibrary library, bool showErrorMsgBox)
+        public static void GuessShowItem([NotNull] FoundFolder ai, [NotNull] ShowLibrary library, bool showErrorMsgBox)
         {
             string showName = GuessShowName(ai, library);
 
             int tvdbId = FindShowCode(ai);
 
             if (string.IsNullOrEmpty(showName)  && tvdbId == -1)
+            {
                 return;
+            }
 
             if (tvdbId != -1)
             {
@@ -67,7 +70,7 @@ namespace TVRename
 
             //Try removing any year
             string showNameNoYear =
-                showName == null ? string.Empty : Regex.Replace(showName, @"\(\d{4}\)", "").Trim();
+                Regex.Replace(showName, @"\(\d{4}\)", "").Trim();
 
             //Remove anything we can from hint to make it cleaner and hence more likely to match
             string refinedHint = FinderHelper.RemoveSeriesEpisodeIndicators(showNameNoYear, library.SeasonWords());
@@ -81,7 +84,9 @@ namespace TVRename
 
             ai.RefinedHint = refinedHint;
             if (ser != null)
+            {
                 ai.TVDBCode = ser.TvdbCode;
+            }
         }
 
         private static int FindShowCode(FoundFolder ai)
@@ -94,10 +99,9 @@ namespace TVRename
                     IEnumerable<FileInfo> files = ai.Folder.EnumerateFiles(fileName).ToList();
                     if (files.Any())
                     {
-                        foreach (FileInfo file in files)
+                        foreach (int x in files.Select(FindShowCode).Where(x => x != -1))
                         {
-                            int x = FindShowCode(file);
-                            if (x != -1) return x;
+                            return x;
                         }
                     }
                 }
@@ -118,7 +122,7 @@ namespace TVRename
             return -1;
         }
 
-        private static int FindShowCode(FileInfo file)
+        private static int FindShowCode([NotNull] FileInfo file)
         {
             try
             {
@@ -130,7 +134,10 @@ namespace TVRename
                         {
                             string s = reader.ReadElementContentAsString();
                             bool success = int.TryParse(s,out int x);
-                            if (success && x != -1) return x;
+                            if (success && x != -1)
+                            {
+                                return x;
+                            }
                         }
                     }
                 }
@@ -153,7 +160,8 @@ namespace TVRename
             return -1;
         }
 
-        private static string GuessShowName(FoundFolder ai, ShowLibrary library)
+        [NotNull]
+        private static string GuessShowName([NotNull] FoundFolder ai, [NotNull] ShowLibrary library)
         {
             // see if we can guess a season number and show name, too
             // Assume is blah\blah\blah\show\season X
@@ -163,7 +171,9 @@ namespace TVRename
             {
                 string seasonFinder = ".*" + seasonWord + "[ _\\.]+([0-9]+).*";
                 if (Regex.Matches(showName, seasonFinder, RegexOptions.IgnoreCase).Count == 0)
+                {
                     continue;
+                }
 
                 try
                 {
@@ -183,7 +193,7 @@ namespace TVRename
             return showName;
         }
 
-        private bool HasSeasonFolders(DirectoryInfo di, out DirectoryInfo[] subDirs, out string folderFormat)
+        private bool HasSeasonFolders([NotNull] DirectoryInfo di, [CanBeNull] out DirectoryInfo[] subDirs, [NotNull] out string folderFormat)
         {
             try
             {
@@ -195,10 +205,13 @@ namespace TVRename
                     {
                         string regex = "^(?<folderName>" + sw + "\\s*)(?<number>\\d+)$";
                         Match m = Regex.Match(subDir.Name, regex, RegexOptions.IgnoreCase);
-                        if (!m.Success) continue;
+                        if (!m.Success)
+                        {
+                            continue;
+                        }
 
                         //We have a match!
-                        folderFormat = m.Groups["folderName"] + (m.Groups["number"].ToString().StartsWith("0") ? "{Season:2}" : "{Season}");
+                        folderFormat = m.Groups["folderName"] + (m.Groups["number"].ToString().StartsWith("0", StringComparison.Ordinal) ? "{Season:2}" : "{Season}");
 
                         Logger.Info("Assuming {0} contains a show because pattern '{1}' is found in subdirectory {2}",
                             di.FullName, folderFormat, subDir.FullName);
@@ -237,7 +250,7 @@ namespace TVRename
             return false;
         }
 
-        public bool CheckFolderForShows(DirectoryInfo di2, bool andGuess, out DirectoryInfo[] subDirs,bool  fullLogging, bool showErrorMsgBox)
+        public bool CheckFolderForShows([NotNull] DirectoryInfo di2, bool andGuess, [CanBeNull] out DirectoryInfo[] subDirs,bool  fullLogging, bool showErrorMsgBox)
         {
             // ..and not already a folder for one of our shows
             string theFolder = di2.FullName.ToLower();
@@ -247,7 +260,11 @@ namespace TVRename
                     theFolder.IsSubfolderOf(si.AutoAddFolderBase))
                 {
                     // we're looking at a folder that is a subfolder of an existing show
-                    if (fullLogging) Logger.Info("Rejecting {0} as it's already part of {1}.", theFolder, si.ShowName);
+                    if (fullLogging)
+                    {
+                        Logger.Info("Rejecting {0} as it's already part of {1}.", theFolder, si.ShowName);
+                    }
+
                     subDirs = null;
                     return true;
                 }
@@ -260,10 +277,15 @@ namespace TVRename
                         foreach (string folder in kvp.Value)
                         {
                             if (!string.Equals(theFolder, folder, StringComparison.CurrentCultureIgnoreCase))
+                            {
                                 continue;
+                            }
 
-                            if (fullLogging) Logger.Info("Rejecting {0} as it's already part of {1}:{2}.", theFolder, si.ShowName,
-                                folder);
+                            if (fullLogging)
+                            {
+                                Logger.Info("Rejecting {0} as it's already part of {1}:{2}.", theFolder, si.ShowName,
+                                    folder);
+                            }
 
                             subDirs = null;
                             return true;
@@ -281,20 +303,30 @@ namespace TVRename
                 subDirs = subDirectories;
 
                 //This is an indication that something is wrong
-                if (subDirectories is null) return false;
+                if (subDirectories is null)
+                {
+                    return false;
+                }
 
                 bool hasSubFolders = subDirectories.Length > 0;
                 if (!hasSubFolders || hasSeasonFolders)
                 {
-                    if (TVSettings.Instance.BulkAddCompareNoVideoFolders && !HasFilmFiles(di2)) return false;
+                    if (TVSettings.Instance.BulkAddCompareNoVideoFolders && !HasFilmFiles(di2))
+                    {
+                        return false;
+                    }
 
                     if (TVSettings.Instance.BulkAddIgnoreRecycleBin &&
                         di2.FullName.Contains("$RECYCLE.BIN", StringComparison.OrdinalIgnoreCase))
+                    {
                         return true;
+                    }
 
                     if (TVSettings.Instance.BulkAddIgnoreRecycleBin &&
                         di2.FullName.Contains("\\@Recycle\\", StringComparison.OrdinalIgnoreCase))
+                    {
                         return true;
+                    }
 
                     // ....its good!
                     FoundFolder ai =
@@ -303,7 +335,9 @@ namespace TVRename
                     AddItems.Add(ai);
                     Logger.Info("Adding {0} as a new folder", theFolder);
                     if (andGuess)
+                    {
                         GuessShowItem(ai, mDoc.Library,showErrorMsgBox);
+                    }
                 }
             }
             catch (UnauthorizedAccessException)
@@ -316,30 +350,43 @@ namespace TVRename
             return hasSeasonFolders;
         }
 
-        private static bool HasFilmFiles(DirectoryInfo directory)
+        private static bool HasFilmFiles([NotNull] DirectoryInfo directory)
         {
             return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
         }
 
-        private void CheckFolderForShows(DirectoryInfo di, CancellationToken token,bool fullLogging, bool showErrorMsgBox)
+        private void CheckFolderForShows([NotNull] DirectoryInfo di, CancellationToken token,bool fullLogging, bool showErrorMsgBox)
         {
             if (!di.Exists)
+            {
                 return;
+            }
 
             if (token.IsCancellationRequested)
+            {
                 return;
+            }
 
             // is it on the ''Bulk Add Shows' ignore list?
             if (TVSettings.Instance.IgnoreFolders.Contains(di.FullName.ToLower()))
             {
-                if (fullLogging) Logger.Info("Rejecting {0} as it's on the ignore list.", di.FullName);
+                if (fullLogging)
+                {
+                    Logger.Info("Rejecting {0} as it's on the ignore list.", di.FullName);
+                }
+
                 return;
             }
 
             if (CheckFolderForShows(di, false, out DirectoryInfo[] subDirs,fullLogging,showErrorMsgBox))
+            {
                 return; // done.
+            }
 
-            if (subDirs == null) return; //indication we could not access the subdirectory
+            if (subDirs == null)
+            {
+                return; //indication we could not access the sub-directory
+            }
 
             // recursively check a folder for new shows
 
@@ -354,7 +401,9 @@ namespace TVRename
             foreach (FoundFolder ai in AddItems)
             {
                 if (ai.CodeUnknown)
+                {
                     continue; // skip
+                }
 
                 // see if there is a matching show item
                 ShowItem found = mDoc.Library.ShowItem(ai.TVDBCode);
@@ -388,7 +437,7 @@ namespace TVRename
             mDoc.ExportShowInfo();
         }
 
-        public void CheckFolders(CancellationToken token, SetProgressDelegate prog,bool detailedLogging, bool showErrorMsgBox)
+        public void CheckFolders(CancellationToken token, [NotNull] SetProgressDelegate prog,bool detailedLogging, bool showErrorMsgBox)
         {
             // Check the  folder list, and build up a new "AddItems" list.
             // guessing what the shows actually are isn't done here.  That is done by
@@ -409,7 +458,9 @@ namespace TVRename
                 CheckFolderForShows(di,token, detailedLogging,showErrorMsgBox);
 
                 if (token.IsCancellationRequested)
+                {
                     break;
+                }
             }
             prog.Invoke(100 , string.Empty);
         }

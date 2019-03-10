@@ -7,29 +7,34 @@
 // 
 
 using System;
-using System.Collections;
 using System.Windows.Forms;
 
 namespace TVRename
 {
-    public sealed class DateSorterWtw : IComparer
+    public sealed class DateSorterWtw : ListViewItemSorter
     {
-        #region IComparer Members
+        public DateSorterWtw(int column) : base(column) { }
 
-        public int Compare(object x, object y)
+        protected override int CompareListViewItem(ListViewItem x, ListViewItem y)
         {
-            if (!(x is ListViewItem lvix)) throw new InvalidOperationException();
-            if (!(y is ListViewItem lviy)) throw new InvalidOperationException();
-
-            DateTime? d1 = GetDate(lvix);
-            DateTime? d2 = GetDate(lviy);
+            DateTime? d1 = GetDate(x);
+            DateTime? d2 = GetDate(y);
 
             if ((d1 == null) && (d2 == null))
+            {
                 return 0;
+            }
+
             if (d1 == null)
+            {
                 return -1;
+            }
+
             if (d2 == null)
+            {
                 return 1;
+            }
+
             return d1.Value.CompareTo(d2.Value);
         }
 
@@ -44,7 +49,5 @@ namespace TVRename
                 return DateTime.Now;
             }
         }
-
-        #endregion
     }
 }

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 using TVRename.SAB;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
@@ -22,6 +23,7 @@ namespace TVRename
         public SABnzbdFinder(TVDoc i) : base(i) { }
 
         public override bool Active() => TVSettings.Instance.CheckSABnzbd;
+        [NotNull]
         protected override string Checkname() => "Looked in the listed SABnz queue to see if the episode is already being downloaded";
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
@@ -76,29 +78,46 @@ namespace TVRename
                 foreach (ItemMissing action in ActionList.MissingItems())
                 {
                     if (settings.Token.IsCancellationRequested)
+                    {
                         return;
+                    }
 
                     UpdateStatus(n++, c, action.Filename);
 
-                    if (action.Episode?.Show is null) continue;
+                    if (action.Episode?.Show is null)
+                    {
+                        continue;
+                    }
 
                     string simpleShowName = Helpers.SimplifyName(action.Episode.Show.ShowName);
 
-                    if (string.IsNullOrWhiteSpace(simpleShowName)) continue;
+                    if (string.IsNullOrWhiteSpace(simpleShowName))
+                    {
+                        continue;
+                    }
 
                     foreach (XElement slot in x.Descendants("slots"))
                     {
                         string filename = slot.Attribute("filename")?.Value;
-                        if (string.IsNullOrWhiteSpace(filename)) continue;
+                        if (string.IsNullOrWhiteSpace(filename))
+                        {
+                            continue;
+                        }
 
                         FileInfo file = new FileInfo(filename);
 
-                        if (!FileHelper.SimplifyAndCheckFilename(file.FullName, simpleShowName, true, false)) continue;
+                        if (!FileHelper.SimplifyAndCheckFilename(file.FullName, simpleShowName, true, false))
+                        {
+                            continue;
+                        }
 
                         if (!FinderHelper.FindSeasEp(file, out int seasF, out int epF, out int _,
                                 action.Episode.Show) ||
                             (seasF != action.Episode.AppropriateSeasonNumber) ||
-                            (epF != action.Episode.AppropriateEpNum)) continue;
+                            (epF != action.Episode.AppropriateEpNum))
+                        {
+                            continue;
+                        }
 
                         QueueSlotsSlot te = new QueueSlotsSlot
                         {

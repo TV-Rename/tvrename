@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
+using JetBrains.Annotations;
 using SourceGrid;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
@@ -46,7 +47,9 @@ namespace TVRename
             {
                 cbShowList.Items.Add(si.ShowName);
                 if (si == initialShow)
+                {
                     cbShowList.SelectedIndex = cbShowList.Items.Count - 1;
+                }
             }
 
             txtFolder.Text = initialFolder;
@@ -132,13 +135,17 @@ namespace TVRename
 
             ChangedCont changed = new ChangedCont(this);
             for (int c = 0; c < 4; c++)
+            {
                 Grid1[r, c].AddController(changed);
+            }
         }
 
-        private void FillGrid(List<TVSettings.FilenameProcessorRE> list)
+        private void FillGrid([NotNull] List<TVSettings.FilenameProcessorRE> list)
         {
             while (Grid1.Rows.Count > 1) // leave header row
+            {
                 Grid1.Rows.Remove(1);
+            }
 
             Grid1.RowsCount = list.Count + 1;
 
@@ -153,7 +160,9 @@ namespace TVRename
                 ChangedCont changed = new ChangedCont(this);
 
                 for (int c = 0; c < 4; c++)
+                {
                     Grid1[i, c].AddController(changed);
+                }
 
                 i++;
             }
@@ -161,10 +170,13 @@ namespace TVRename
             StartTimer();
         }
 
+        [CanBeNull]
         private TVSettings.FilenameProcessorRE RegExForRow(int i)
         {
             if ((i < 1) || (i >= Grid1.RowsCount)) // row 0 is header
+            {
                 return null;
+            }
 
             bool en = (bool) (Grid1[i, 0].Value);
             string regex = (string) (Grid1[i, 1].Value);
@@ -181,7 +193,9 @@ namespace TVRename
             {
                 TVSettings.FilenameProcessorRE re = RegExForRow(i);
                 if (re != null)
+                {
                     OutputRegularExpressions.Add(re);
+                }
             }
         }
 
@@ -197,7 +211,9 @@ namespace TVRename
             // multiselection is off, so we can cheat...
             int[] rowsIndex = Grid1.Selection.GetSelectionRegion().GetRowsIndex();
             if (rowsIndex.Length > 0)
+            {
                 Grid1.Rows.Remove(rowsIndex[0]);
+            }
 
             StartTimer();
         }
@@ -205,10 +221,14 @@ namespace TVRename
         private void bnBrowse_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(txtFolder.Text))
+            {
                 folderBrowser.SelectedPath = txtFolder.Text;
+            }
 
             if (folderBrowser.ShowDialog() == DialogResult.OK)
+            {
                 txtFolder.Text = folderBrowser.SelectedPath;
+            }
 
             StartTimer();
         }
@@ -249,10 +269,14 @@ namespace TVRename
                 return;
             }
             else
+            {
                 txtFolder.BackColor = SystemColors.Window;
+            }
 
             if (Grid1.RowsCount <= 1) // 1 for header
+            {
                 return; // empty
+            }
 
             lvPreview.Enabled = true;
 
@@ -264,20 +288,28 @@ namespace TVRename
                 {
                     TVSettings.FilenameProcessorRE re = RegExForRow(i);
                     if (re != null)
+                    {
                         rel.Add(re);
+                    }
                 }
             }
             else
             {
                 int[] rowsIndex = Grid1.Selection.GetSelectionRegion().GetRowsIndex();
                 if (rowsIndex.Length == 0)
+                {
                     return;
+                }
 
                 TVSettings.FilenameProcessorRE re2 = RegExForRow(rowsIndex[0]);
                 if (re2 != null)
+                {
                     rel.Add(re2);
+                }
                 else
+                {
                     return;
+                }
             }
 
             UpdatePreview(rel);
@@ -290,7 +322,9 @@ namespace TVRename
             foreach (FileInfo fi in d.GetFiles())
             {
                 if (!TVSettings.Instance.FileHasUsefulExtension(fi, true,out string _))
+                {
                     continue; // move on
+                }
 
                 ShowItem si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
                 bool r = FinderHelper.FindSeasEp(fi, out int seas, out int ep, out int maxEp, si, rel, false,
@@ -301,7 +335,9 @@ namespace TVRename
                 lvi.SubItems.Add((ep == -1) ? "-" : ep + ((maxEp != -1) ? "-" + maxEp : ""));
                 lvi.SubItems.Add((matchRex == null) ? "-" : matchRex.Notes);
                 if (!r)
+                {
                     lvi.BackColor = Helpers.WarningColor();
+                }
 
                 lvPreview.Items.Add(lvi);
             }
@@ -315,7 +351,9 @@ namespace TVRename
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (dr == DialogResult.Yes)
+            {
                 FillGrid(TVSettings.DefaultFNPList());
+            }
         }
 
         #region Nested type: ChangedCont
@@ -342,11 +380,17 @@ namespace TVRename
             // multiselection is off, so we can cheat...
             int[] rowsIndex = Grid1.Selection.GetSelectionRegion().GetRowsIndex();
 
-            if (rowsIndex.Length == 0) return;
+            if (rowsIndex.Length == 0)
+            {
+                return;
+            }
 
             int recordToMoveUp = rowsIndex[0];
 
-            if (recordToMoveUp < 2) return;
+            if (recordToMoveUp < 2)
+            {
+                return;
+            }
 
             Grid1.Rows.Swap(recordToMoveUp, recordToMoveUp - 1);
             Grid1.Selection.Focus(new Position(recordToMoveUp - 1, 1), true);
@@ -358,11 +402,17 @@ namespace TVRename
             // multiselection is off, so we can cheat...
             int[] rowsIndex = Grid1.Selection.GetSelectionRegion().GetRowsIndex();
 
-            if (rowsIndex.Length == 0) return;
+            if (rowsIndex.Length == 0)
+            {
+                return;
+            }
 
             int recordToMoveDown = rowsIndex[0];
 
-            if (recordToMoveDown > Grid1.RowsCount - 2) return;
+            if (recordToMoveDown > Grid1.RowsCount - 2)
+            {
+                return;
+            }
 
             Grid1.Rows.Swap(recordToMoveDown, recordToMoveDown + 1);
             Grid1.Selection.Focus(new Position(recordToMoveDown + 1, 1), true);

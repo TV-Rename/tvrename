@@ -23,14 +23,19 @@ namespace TVRename
 
         public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
         {
-            if (!TVSettings.Instance.wdLiveTvMeta) return null;
+            if (!TVSettings.Instance.wdLiveTvMeta)
+            {
+                return null;
+            }
 
             ItemList theActionList = new ItemList();
             string fn = filo.RemoveExtension() + ".xml";
             FileInfo nfo = FileHelper.FileInFolder(filo.Directory, fn);
 
             if (forceRefresh || !nfo.Exists || (dbep.SrvLastUpdated > TimeZoneHelper.Epoch(nfo.LastWriteTime)))
+            {
                 theActionList.Add(new ActionWdtvMeta(nfo, dbep));
+            }
 
             return theActionList;
         }
@@ -41,8 +46,12 @@ namespace TVRename
             {
                 ItemList theActionList = new ItemList();
                 FileInfo tvshowxml = FileHelper.FileInFolder(si.AutoAddFolderBase, "series.xml");
+
+                SeriesInfo seriesInfo = si.TheSeries();
                 bool needUpdate = !tvshowxml.Exists ||
-                                  (si.TheSeries().SrvLastUpdated > TimeZoneHelper.Epoch(tvshowxml.LastWriteTime));
+                                  seriesInfo is null ||
+                                  seriesInfo.SrvLastUpdated > TimeZoneHelper.Epoch(tvshowxml.LastWriteTime);
+
                 if ((forceRefresh || needUpdate) && (!doneFiles.Contains(tvshowxml.FullName)))
                 {
                     doneFiles.Add(tvshowxml.FullName);

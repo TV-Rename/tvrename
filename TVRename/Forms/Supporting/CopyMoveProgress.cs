@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using JetBrains.Annotations;
+
 namespace TVRename
 {
     using System;
@@ -81,12 +83,16 @@ namespace TVRename
             foreach (ActionQueue aq in mToDo)
             {
                 if (aq.Actions.Count == 0)
+                {
                     continue;
+                }
 
                 foreach (Action action in aq.Actions)
                 {
                     if (!action.Done)
+                    {
                         allDone = false;
+                    }
 
                     long size = action.SizeOfWork;
                     workDone += (long) (size * action.PercentDone / 100);
@@ -103,9 +109,15 @@ namespace TVRename
             }
 
             if (top >= lvProgress.Items.Count)
+            {
                 top = lvProgress.Items.Count - 1;
+            }
+
             if (top >= 0)
+            {
                 lvProgress.TopItem = lvProgress.Items[top];
+            }
+
             lvProgress.EndUpdate();
 
             if (activeCmAction != null)
@@ -130,7 +142,9 @@ namespace TVRename
                 Close();
             }
             else
+            {
                 copyTimer.Start();
+            }
         }
 
         private void diskSpaceTimer_Tick(object sender, EventArgs e)
@@ -147,10 +161,13 @@ namespace TVRename
 
             ActionCopyMoveRename activeCmAction = GetActiveCmAction();
 
-            if (activeCmAction is null) return;
+            if (activeCmAction is null)
+            {
+                return;
+            }
 
             string folder = activeCmAction.TargetFolder;
-            DirectoryInfo toRoot = (!string.IsNullOrEmpty(folder) && !folder.StartsWith("\\\\")) ? new DirectoryInfo(folder).Root : null;
+            DirectoryInfo toRoot = (!string.IsNullOrEmpty(folder) && !folder.StartsWith("\\\\", StringComparison.Ordinal)) ? new DirectoryInfo(folder).Root : null;
 
             if (toRoot != null)
             {
@@ -173,11 +190,11 @@ namespace TVRename
                 }
             }
 
-            DirectoryInfo toUncRoot = (!string.IsNullOrEmpty(folder) && folder.StartsWith("\\\\")) ? new DirectoryInfo(folder).Root : null;
+            DirectoryInfo toUncRoot = (!string.IsNullOrEmpty(folder) && folder.StartsWith("\\\\", StringComparison.Ordinal)) ? new DirectoryInfo(folder).Root : null;
             if (toUncRoot != null)
             {
                 FileSystemProperties driveStats = FileHelper.GetProperties(toUncRoot.ToString());
-                if (driveStats?.AvailableBytes != null && driveStats.TotalBytes.HasValue)
+                if (driveStats.AvailableBytes != null && driveStats.TotalBytes.HasValue)
                 {
                     int pct = (int)((1000 * driveStats.AvailableBytes) / driveStats.TotalBytes);
                     diskValue = 1000 - pct;
@@ -189,19 +206,24 @@ namespace TVRename
             txtDiskSpace.Text = diskText;
         }
 
+        [CanBeNull]
         private ActionCopyMoveRename GetActiveCmAction()
         {
             foreach (ActionQueue aq in mToDo)
             {
                 if (aq.Actions.Count == 0)
+                {
                     continue;
+                }
 
                 foreach (Action action in aq.Actions)
                 {
                     if ((!action.Done) && (action.PercentDone > 0))
                     {
                         if (action is ActionCopyMoveRename cmAction )
+                        {
                             return cmAction;
+                        }
                     }
                 }
             }
@@ -218,9 +240,13 @@ namespace TVRename
         private void cbPause_CheckedChanged(object sender, EventArgs e)
         {
             if (cbPause.Checked)
+            {
                 mDoc.Pause();
+            }
             else
+            {
                 mDoc.Unpause();
+            }
 
             bool en = !(cbPause.Checked);
             pbFile.Enabled = en;

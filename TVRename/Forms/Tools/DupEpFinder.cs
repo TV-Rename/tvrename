@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace TVRename.Forms
 {
@@ -49,7 +50,9 @@ namespace TVRename.Forms
                 bool passesSizeTest = (chkFilesizeTest.Checked == false || item.LargeFileSize);
 
                 if (passesSizeTest && passesAirDateTest && passesNameTest && passesMissingTest)
+                {
                     lvDuplicates.Items.Add(possible);
+                }
             }
 
             lvDuplicates.EndUpdate();
@@ -69,10 +72,25 @@ namespace TVRename.Forms
 
         private void UpdateCheckboxes()
         {
-            if (chkFilesizeTest.Checked) chkMIssingTest.Checked = true;
-            if (chkMIssingTest.Checked) chkNameTest.Checked = true;
-            if (chkNameTest.Checked == false) chkMIssingTest.Checked = false;
-            if (chkMIssingTest.Checked == false) chkFilesizeTest.Checked = false;
+            if (chkFilesizeTest.Checked)
+            {
+                chkMIssingTest.Checked = true;
+            }
+
+            if (chkMIssingTest.Checked)
+            {
+                chkNameTest.Checked = true;
+            }
+
+            if (chkNameTest.Checked == false)
+            {
+                chkMIssingTest.Checked = false;
+            }
+
+            if (chkMIssingTest.Checked == false)
+            {
+                chkFilesizeTest.Checked = false;
+            }
 
             UpdateUI();
         }
@@ -91,9 +109,14 @@ namespace TVRename.Forms
         private void chkMIssingTest_CheckedChanged(object sender, EventArgs e)
         {
             if (!chkMIssingTest.Checked)
+            {
                 chkFilesizeTest.Checked = false;
+            }
+
             if (chkMIssingTest.Checked)
+            {
                 chkNameTest.Checked = true;
+            }
 
             UpdateUI();
         }
@@ -109,12 +132,17 @@ namespace TVRename.Forms
             UpdateUI();
         }
 
-        private void lvDuplicates_MouseClick(object sender, MouseEventArgs e)
+        private void lvDuplicates_MouseClick(object sender, [NotNull] MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Right)
+            {
                 return;
+            }
+
             if (lvDuplicates.SelectedItems.Count == 0)
+            {
                 return;
+            }
 
             mlastSelected = (PossibleDuplicateEpisode) lvDuplicates.SelectedItems[0].Tag;
             mlastClicked = lvDuplicates.SelectedItems[0];
@@ -153,7 +181,7 @@ namespace TVRename.Forms
         }
 
         private void duplicateRightClickMenu_ItemClicked(object sender,
-            ToolStripItemClickedEventArgs e)
+            [NotNull] ToolStripItemClickedEventArgs e)
         {
             duplicateRightClickMenu.Close();
 
@@ -167,27 +195,40 @@ namespace TVRename.Forms
                 {
                     case RightClickCommands.kEpisodeGuideForShow: // epguide
                         if (mlastSelected != null)
+                        {
                             mainUi.GotoEpguideFor(mlastSelected.Episode, true);
+                        }
                         else
                         {
                             if (si != null)
+                            {
                                 mainUi.GotoEpguideFor(si, true);
+                            }
                         }
                         Close();
                         break;
                     case RightClickCommands.kForceRefreshSeries:
                         if (si != null)
+                        {
                             mainUi.ForceRefresh(new List<ShowItem> {si},false);
+                        }
+
                         Close();
                         break;
                     case RightClickCommands.kEditShow:
                         if (si != null)
+                        {
                             mainUi.EditShow(si);
+                        }
+
                         break;
 
                     case RightClickCommands.kEditSeason:
                         if (si != null)
+                        {
                             mainUi.EditSeason(si, mlastSelected.SeasonNumber);
+                        }
+
                         break;
                     case RightClickCommands.kAddRule:
                         if (mlastSelected != null)

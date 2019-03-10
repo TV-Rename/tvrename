@@ -7,6 +7,7 @@
 // 
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -94,12 +95,12 @@ namespace TVRename
             }
         }
 
-        private void MissingFolderAction_DragOver(object sender, DragEventArgs e)
+        private void MissingFolderAction_DragOver(object sender, [NotNull] DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void MissingFolderAction_DragDrop(object sender, DragEventArgs e)
+        private void MissingFolderAction_DragDrop(object sender, [NotNull] DragEventArgs e)
         {
             string[] files = (string[]) (e.Data.GetData(DataFormats.FileDrop));
             foreach (string path in files)

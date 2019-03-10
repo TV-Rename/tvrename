@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -9,6 +10,7 @@ namespace TVRename
         public SearchFolderFileFinder(TVDoc i) : base(i) { }
 
         public override bool Active() => TVSettings.Instance.SearchLocally;
+        [NotNull]
         protected override string Checkname() => "Looked in the search folders for the missing files";
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,
@@ -23,7 +25,9 @@ namespace TVRename
             foreach (string s in TVSettings.Instance.DownloadFolders.ToList())
             {
                 if (settings.Token.IsCancellationRequested)
+                {
                     return;
+                }
 
                 dirCache.AddFolder(prog, 0, fileCount, s, true);
             }
@@ -35,7 +39,9 @@ namespace TVRename
             foreach (ItemMissing me in ActionList.MissingItems().ToList())
             {
                 if (settings.Token.IsCancellationRequested)
+                {
                     return;
+                }
 
                 UpdateStatus(currentItem++, totalN, me.Filename);
 
@@ -58,13 +64,17 @@ namespace TVRename
             ActionList.Replace(toRemove, newList);
         }
 
-        private List<FileInfo> FindMatchedFiles(TVDoc.ScanSettings settings, DirCache dirCache, ItemMissing me, ItemList thisRound)
+        [NotNull]
+        private List<FileInfo> FindMatchedFiles(TVDoc.ScanSettings settings, [NotNull] DirCache dirCache, ItemMissing me, ItemList thisRound)
         {
             List<FileInfo> matchedFiles = new List<FileInfo>();
 
             foreach (DirCacheEntry dce in dirCache)
             {
-                if (!ReviewFile(me, thisRound, dce.TheFile, settings, TVSettings.Instance.AutoMergeDownloadEpisodes, TVSettings.Instance.PreventMove,true, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)) continue;
+                if (!ReviewFile(me, thisRound, dce.TheFile, settings, TVSettings.Instance.AutoMergeDownloadEpisodes, TVSettings.Instance.PreventMove,true, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
+                {
+                    continue;
+                }
 
                 matchedFiles.Add(dce.TheFile);
             }
@@ -76,7 +86,10 @@ namespace TVRename
         {
             int fileCount = 0;
             foreach (string s in TVSettings.Instance.DownloadFolders.ToArray())
+            {
                 fileCount += DirCache.CountFiles(s, true);
+            }
+
             return fileCount;
         }
     }

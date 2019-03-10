@@ -9,6 +9,7 @@
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 
 public class Release : IComparable
 {
@@ -24,9 +25,12 @@ public class Release : IComparable
 
     public enum VersionType { semantic, friendly }
 
-    public Release(string version, VersionType type)
+    public Release([NotNull] string version, VersionType type)
     {
-        if (string.IsNullOrWhiteSpace(version)) throw new ArgumentException("The provided version string is invalid.", nameof(version));
+        if (string.IsNullOrWhiteSpace(version))
+        {
+            throw new ArgumentException("The provided version string is invalid.", nameof(version));
+        }
 
         string matchString = (type == VersionType.semantic)
             ? @"^(?<major>[0-9]+)((\.(?<minor>[0-9]+))(\.(?<patch>[0-9]+))?)?(\-(?<pre>[0-9A-Za-z\-\.]+|[*]))?(\+(?<build>[0-9A-Za-z\-\.]+|[*]))?$"
@@ -35,8 +39,15 @@ public class Release : IComparable
         Regex regex = new Regex(matchString, RegexOptions.ExplicitCapture);
         Match match = regex.Match(version);
 
-        if (!match.Success || !match.Groups["major"].Success || !match.Groups["minor"].Success) throw new ArgumentException("The provided version string is invalid.", nameof(version));
-        if (type == VersionType.semantic && !match.Groups["patch"].Success) throw new ArgumentException("The provided version string is invalid semantic version.", nameof(version));
+        if (!match.Success || !match.Groups["major"].Success || !match.Groups["minor"].Success)
+        {
+            throw new ArgumentException("The provided version string is invalid.", nameof(version));
+        }
+
+        if (type == VersionType.semantic && !match.Groups["patch"].Success)
+        {
+            throw new ArgumentException("The provided version string is invalid semantic version.", nameof(version));
+        }
 
         VersionNumber = new Version(int.Parse(match.Groups["major"].Value),
             int.Parse(match.Groups["minor"].Value),
@@ -46,22 +57,42 @@ public class Release : IComparable
         Build = match.Groups["build"].Value;
     }
 
-    public int CompareTo(object obj)
+    public int CompareTo([CanBeNull] object obj)
     {
         //Returns 1 if this > object, 0 if this=object and -1 if this< object
-        if (obj == null) return 1;
-        if (!(obj is Release otherUpdateVersion)) throw new ArgumentException("Object is not a UpdateVersion");
+        if (obj == null)
+        {
+            return 1;
+        }
+
+        if (!(obj is Release otherUpdateVersion))
+        {
+            throw new ArgumentException("Object is not a UpdateVersion");
+        }
 
         //Extract Version Numbers and then compare them
-        if (VersionNumber.CompareTo(otherUpdateVersion.VersionNumber) != 0) return VersionNumber.CompareTo(otherUpdateVersion.VersionNumber);
+        if (VersionNumber.CompareTo(otherUpdateVersion.VersionNumber) != 0)
+        {
+            return VersionNumber.CompareTo(otherUpdateVersion.VersionNumber);
+        }
 
         //We have the same version - now we have to get tricky and look at the extension (rc1, beta2 etc)
         //if both have no extension then they are the same
-        if (string.IsNullOrWhiteSpace(Prerelease) && string.IsNullOrWhiteSpace(otherUpdateVersion.Prerelease)) return 0;
+        if (string.IsNullOrWhiteSpace(Prerelease) && string.IsNullOrWhiteSpace(otherUpdateVersion.Prerelease))
+        {
+            return 0;
+        }
 
         //If either are not present then you can assume they are FINAL versions and trump any rx1 verisons
-        if (string.IsNullOrWhiteSpace(Prerelease)) return 1;
-        if (string.IsNullOrWhiteSpace(otherUpdateVersion.Prerelease)) return -1;
+        if (string.IsNullOrWhiteSpace(Prerelease))
+        {
+            return 1;
+        }
+
+        if (string.IsNullOrWhiteSpace(otherUpdateVersion.Prerelease))
+        {
+            return -1;
+        }
 
         //We have 2 suffixes
         //Compare alphabetically alpha1 < alpha2 < beta1 < beta2 < rc1 < rc2 etc
@@ -74,11 +105,20 @@ public class Release : IComparable
     {
         StringBuilder sb = new StringBuilder();
         sb.Append(VersionNumber);
-        if (!string.IsNullOrWhiteSpace(Prerelease)) sb.Append("-" + Prerelease);
-        if (!string.IsNullOrWhiteSpace(Build)) sb.Append("-(" + Build + ")");
+        if (!string.IsNullOrWhiteSpace(Prerelease))
+        {
+            sb.Append("-" + Prerelease);
+        }
+
+        if (!string.IsNullOrWhiteSpace(Build))
+        {
+            sb.Append("-(" + Build + ")");
+        }
+
         return sb.ToString();
     }
 
+    [NotNull]
     public string LogMessage()
     {
         StringBuilder sb = new StringBuilder();
