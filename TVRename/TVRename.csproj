@@ -330,6 +330,7 @@
     <Compile Include="Utility\Helper\JSONHelper.cs" />
     <Compile Include="Utility\NativeMethods.cs" />
     <Compile Include="Utility\DownloadInformation.cs" />
+    <Compile Include="Utility\Sorters\ListViewItemSorter.cs" />
     <Compile Include="Utility\Sorters\NumberAsTextSorter.cs" />
     <Compile Include="Utility\PossibleDuplicateEpisode.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
