@@ -1027,52 +1027,63 @@ namespace TVRename
                     {
                         return Status;
                     }
-                    string value = Status.Equals("PartiallyAired") ? "partiallyAired"
-                        : Status.Equals("NoneAired") ? "noneAired"
-                        : Status.Equals("Aired") ? "aired"
-                        : Status.Equals("NoEpisodesOrSeasons") ? "noEpisodesOrSeasons"
-                        : Status.Equals("NoEpisodes") ? "noEpisodes"
-                        : Status;
+                    string value = ConvertFromOldStyle();
 
-                    if (IsShowLevel)
-                    {
-                        //Convert from old style values if needed
-                        ShowItem.ShowAirStatus status =
-                            (ShowItem.ShowAirStatus) Enum.Parse(typeof(ShowItem.ShowAirStatus), value, true);
+                    return IsShowLevel ? ShowLevelStatusText(value) : SeasonLevelStatusText(value);
+                }
+            }
 
-                        switch (status)
-                        {
-                            case ShowItem.ShowAirStatus.aired:
-                                return "All aired";
-                            case ShowItem.ShowAirStatus.noEpisodesOrSeasons:
-                                return "No Seasons or Episodes in Seasons";
-                            case ShowItem.ShowAirStatus.noneAired:
-                                return "None aired";
-                            case ShowItem.ShowAirStatus.partiallyAired:
-                                return "Partially aired";
-                            default:
-                                return Status;
-                        }
-                    }
-                    else
-                    {
-                        Season.SeasonStatus status =
-                            (Season.SeasonStatus) Enum.Parse(typeof(Season.SeasonStatus), value);
+            [NotNull]
+            private string ConvertFromOldStyle()
+            {
+                string value = Status.Equals("PartiallyAired") ? "partiallyAired"
+                    : Status.Equals("NoneAired") ? "noneAired"
+                    : Status.Equals("Aired") ? "aired"
+                    : Status.Equals("NoEpisodesOrSeasons") ? "noEpisodesOrSeasons"
+                    : Status.Equals("NoEpisodes") ? "noEpisodes"
+                    : Status;
 
-                        switch (status)
-                        {
-                            case Season.SeasonStatus.aired:
-                                return "All aired";
-                            case Season.SeasonStatus.noEpisodes:
-                                return "No Episodes";
-                            case Season.SeasonStatus.noneAired:
-                                return "None aired";
-                            case Season.SeasonStatus.partiallyAired:
-                                return "Partially aired";
-                            default:
-                                return Status;
-                        }
-                    }
+                return value;
+            }
+
+            private string SeasonLevelStatusText([NotNull] string value)
+            {
+                Season.SeasonStatus status =
+                    (Season.SeasonStatus) Enum.Parse(typeof(Season.SeasonStatus), value);
+
+                switch (status)
+                {
+                    case Season.SeasonStatus.aired:
+                        return "All aired";
+                    case Season.SeasonStatus.noEpisodes:
+                        return "No Episodes";
+                    case Season.SeasonStatus.noneAired:
+                        return "None aired";
+                    case Season.SeasonStatus.partiallyAired:
+                        return "Partially aired";
+                    default:
+                        return Status;
+                }
+            }
+
+            private string ShowLevelStatusText([NotNull] string value)
+            {
+                //Convert from old style values if needed
+                ShowItem.ShowAirStatus status =
+                    (ShowItem.ShowAirStatus) Enum.Parse(typeof(ShowItem.ShowAirStatus), value, true);
+
+                switch (status)
+                {
+                    case ShowItem.ShowAirStatus.aired:
+                        return "All aired";
+                    case ShowItem.ShowAirStatus.noEpisodesOrSeasons:
+                        return "No Seasons or Episodes in Seasons";
+                    case ShowItem.ShowAirStatus.noneAired:
+                        return "None aired";
+                    case ShowItem.ShowAirStatus.partiallyAired:
+                        return "Partially aired";
+                    default:
+                        return Status;
                 }
             }
         }

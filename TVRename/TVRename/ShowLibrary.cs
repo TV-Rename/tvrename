@@ -359,7 +359,7 @@ namespace TVRename
                         }
                     case RuleAction.kIgnoreEp:
                         {
-                            IgnoreEpisodes(eis, n2, n1);
+                            IgnoreEpisodes(eis, n1, n2);
                             break;
                         }
                     case RuleAction.kSplit:
@@ -412,15 +412,12 @@ namespace TVRename
             return -1;
         }
 
-        private static void IgnoreEpisodes([NotNull] List<ProcessedEpisode> eis, int n2, int n1)
+        private static void IgnoreEpisodes([NotNull] List<ProcessedEpisode> eis, int n1, int n2)
         {
             int ec = eis.Count;
-            if (n2 == -1)
-            {
-                n2 = n1;
-            }
+            int maxIndex = (n2 == -1)? n1:n2;
 
-            for (int i = n1; i <= n2; i++)
+            for (int i = n1; i <= maxIndex; i++)
             {
                 if ((i < ec) && (i >= 0))
                 {
@@ -442,12 +439,12 @@ namespace TVRename
             }
         }
 
-        private static void RenameEpisode([NotNull] List<ProcessedEpisode> eis, int n1,string txt)
+        private static void RenameEpisode([NotNull] List<ProcessedEpisode> eis, int index,string txt)
         {
             int ec = eis.Count;
-            if ((n1 < ec) && (n1 >= 0))
+            if ((index < ec) && (index >= 0))
             {
-                eis[n1].Name = txt;
+                eis[index].Name = txt;
             }
         }
 
