@@ -10,6 +10,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -18,9 +19,13 @@ namespace TVRename
         protected TVSettings.TidySettings Tidyup;
         protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
-        protected void DeleteOrRecycleFile(FileInfo file)
+        protected void DeleteOrRecycleFile([CanBeNull] FileInfo file)
         {
-            if (file == null) return;
+            if (file == null)
+            {
+                return;
+            }
+
             if (Tidyup is null ||  Tidyup.DeleteEmptyIsRecycle)
             {
                 LOGGER.Info($"Recycling {file.FullName}");
@@ -35,9 +40,13 @@ namespace TVRename
             }
         }
 
-        protected void DeleteOrRecycleFolder(DirectoryInfo di)
+        protected void DeleteOrRecycleFolder([CanBeNull] DirectoryInfo di)
         {
-            if (di == null) return;
+            if (di == null)
+            {
+                return;
+            }
+
             if (Tidyup ==null ||Tidyup.DeleteEmptyIsRecycle)
             {
                 LOGGER.Info($"Recycling {di.FullName}");
@@ -52,7 +61,7 @@ namespace TVRename
             }
         }
 
-        protected void DoTidyup(DirectoryInfo di)
+        protected void DoTidyup([CanBeNull] DirectoryInfo di)
         {
 #if DEBUG
             Debug.Assert(Tidyup != null);
@@ -63,7 +72,9 @@ namespace TVRename
 #endif
             // See if we should now delete the folder we just moved that file from.
             if (di == null)
+            {
                 return;
+            }
 
             //if there are sub-directories then we shouldn't remove this one
             DirectoryInfo[] directories = di.GetDirectories();
@@ -73,17 +84,23 @@ namespace TVRename
                     subdi.Name.Contains(word, StringComparison.OrdinalIgnoreCase));
 
                 if (!okToDelete)
+                {
                     return;
+                }
             }
             //we know that each subfolder is OK to delete
 
             //if the directory is the root download folder do not delete
             if (TVSettings.Instance.DownloadFolders.Contains(di.FullName))
+            {
                 return;
+            }
 
             // Do not delete any monitor folders either
             if (TVSettings.Instance.LibraryFolders.Contains(di.FullName))
+            {
                 return;
+            }
 
             FileInfo[] files = di.GetFiles();
             if (files.Length == 0)
@@ -94,7 +111,9 @@ namespace TVRename
             }
 
             if (Tidyup.EmptyIgnoreExtensions && !Tidyup.EmptyIgnoreWords)
+            {
                 return; // nope
+            }
 
             foreach (FileInfo fi in files)
             {
@@ -102,15 +121,21 @@ namespace TVRename
                                   Tidyup.EmptyIgnoreExtensionsArray.Contains(fi.Extension);
 
                 if (okToDelete)
+                {
                     continue; // onto the next file
+                }
 
                 // look in the filename
                 if (Tidyup.EmptyIgnoreWordsArray.Any(word =>
                     fi.Name.Contains(word, StringComparison.OrdinalIgnoreCase)))
+                {
                     okToDelete = true;
+                }
 
                 if (!okToDelete)
+                {
                     return;
+                }
             }
 
             if (Tidyup.EmptyMaxSizeCheck)
@@ -119,7 +144,9 @@ namespace TVRename
                 long totalBytes = files.Sum(fi => fi.Length);
 
                 if (totalBytes / (1024 * 1024) > Tidyup.EmptyMaxSizeMB)
+                {
                     return; // too much
+                }
             }
 
             DeleteOrRecycleFolder(di);

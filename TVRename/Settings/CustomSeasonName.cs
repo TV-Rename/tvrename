@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 // This builds the foldernames to create/find, for any given season
 
@@ -44,6 +45,7 @@ namespace TVRename
             "{ShowImdb}"
         };
 
+        [NotNull]
         public static List<string> ExamplePresets(Season s)
         {
             List<string> possibleExamples = new List<string>();
@@ -55,13 +57,18 @@ namespace TVRename
             return possibleExamples;
         }
 
+        [NotNull]
         public static string NameFor(Season s, string styleString) => NameFor(s, styleString, false);
 
-        private static string NameFor(Season s, string styleString, bool urlEncode)
+        [NotNull]
+        private static string NameFor([CanBeNull] Season s, string styleString, bool urlEncode)
         {
             string name = styleString;
 
-            if (s == null) return string.Empty;
+            if (s == null)
+            {
+                return string.Empty;
+            }
 
             string showname = s.TheSeries.Name;
             if (urlEncode)
@@ -81,6 +88,7 @@ namespace TVRename
             return name.Trim();
         }
 
+        [NotNull]
         public static string GetTextFromPattern(string styleString)
         {
             string name = styleString;

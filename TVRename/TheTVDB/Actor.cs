@@ -8,6 +8,7 @@
 
 using System.Xml;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -30,7 +31,7 @@ namespace TVRename
             ActorSortOrder = actorSortOrder;
         }
 
-        public Actor(XElement r)
+        public Actor([NotNull] XElement r)
         {
             ActorId = r.ExtractInt("Id") ?? throw new TheTVDB.TVDBException("Error Extracting Id for Actor");
             ActorImage = r.ExtractString("Image");
@@ -40,7 +41,7 @@ namespace TVRename
             ActorSortOrder = r.ExtractInt("SortOrder") ?? -1; 
         }
 
-        public void WriteXml(XmlWriter writer)
+        public void WriteXml([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("Actor");
             XmlHelper.WriteElementToXml(writer, "Id", ActorId);

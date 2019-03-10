@@ -78,9 +78,14 @@ namespace TVRename
 
             txtUserText.Text = mRule.UserSuppliedText;
             if (mRule.First != -1)
+            {
                 txtValue1.Text = mRule.First.ToString();
+            }
+
             if (mRule.Second != -1)
+            {
                 txtValue2.Text = mRule.Second.ToString();
+            }
 
             EnableDisableAndLabels();
         }
@@ -171,21 +176,37 @@ namespace TVRename
             RuleAction dwn = RuleAction.kIgnoreEp;
 
             if (rbIgnore.Checked)
+            {
                 dwn = RuleAction.kIgnoreEp;
+            }
             else if (rbSwap.Checked)
+            {
                 dwn = RuleAction.kSwap;
+            }
             else if (rbMerge.Checked)
+            {
                 dwn = RuleAction.kMerge;
+            }
             else if (rbInsert.Checked)
+            {
                 dwn = RuleAction.kInsert;
+            }
             else if (rbRemove.Checked)
+            {
                 dwn = RuleAction.kRemove;
+            }
             else if (rbCollapse.Checked)
+            {
                 dwn = RuleAction.kCollapse;
+            }
             else if (rbRename.Checked)
+            {
                 dwn = RuleAction.kRename;
+            }
             else if (rbSplit.Checked)
+            {
                 dwn = RuleAction.kSplit;
+            }
 
             mRule.DoWhatNow = dwn;
             mRule.UserSuppliedText = txtUserText.Enabled ? txtUserText.Text : "";

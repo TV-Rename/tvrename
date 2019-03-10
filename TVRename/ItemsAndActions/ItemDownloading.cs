@@ -8,6 +8,7 @@
 
 using Alphaleonis.Win32.Filesystem;
 using System;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -16,14 +17,18 @@ namespace TVRename
         private readonly IDownloadInformation entry;
         public readonly string DesiredLocationNoExt;
 
+        [CanBeNull]
         public override IgnoreItem Ignore => GenerateIgnore(DesiredLocationNoExt);
+        [NotNull]
         public override string ScanListViewGroup => "lvgDownloading";
 
+        [CanBeNull]
         protected override string DestinationFolder => TargetFolder;
         protected override string DestinationFile => entry.FileIdentifier;
         protected override string SourceDetails => entry.RemainingText;
 
         public override int IconNumber { get; }
+        [CanBeNull]
         public override string TargetFolder => string.IsNullOrEmpty(entry.Destination) ? null : new FileInfo(entry.Destination).DirectoryName;
 
         public ItemDownloading(IDownloadInformation dl, ProcessedEpisode pe, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp)

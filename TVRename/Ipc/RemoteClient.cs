@@ -61,7 +61,10 @@ namespace TVRename.Ipc
             get => Engine?.Args.MissingFolder ?? CommandLineArgs.MissingFolderBehavior.ask;
             set
             {
-                if (Engine != null) Engine.Args.MissingFolder = value;
+                if (Engine != null)
+                {
+                    Engine.Args.MissingFolder = value;
+                }
             }
         }
 
@@ -76,7 +79,10 @@ namespace TVRename.Ipc
             get => Engine != null && TVSettings.Instance.RenameCheck;
             set
             {
-                if (Engine != null) TVSettings.Instance.RenameCheck = value;
+                if (Engine != null)
+                {
+                    TVSettings.Instance.RenameCheck = value;
+                }
             }
         }
 

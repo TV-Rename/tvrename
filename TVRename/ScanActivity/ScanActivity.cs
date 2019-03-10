@@ -39,13 +39,20 @@ namespace TVRename
             progressDelegate.Invoke(startPosition, string.Empty);
             try
             {
-                if (settings.Token.IsCancellationRequested) return;
-                if (!Active()) return;
+                if (settings.Token.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                if (!Active())
+                {
+                    return;
+                }
 
                 DoCheck(prog, showList, settings);
                 LogActionListSummary();
             }
-            catch(TVRenameOperationInteruptedException)
+            catch(TVRenameOperationInterruptedException)
             {
                 throw;
             }

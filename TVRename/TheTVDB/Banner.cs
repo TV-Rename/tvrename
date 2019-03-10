@@ -12,6 +12,7 @@ using System.Globalization;
 using Newtonsoft.Json.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -28,7 +29,7 @@ namespace TVRename
         public int SeriesId;
         private string thumbnailPath;
 
-        public Banner(int seriesId, XElement r)
+        public Banner(int seriesId, [NotNull] XElement r)
         {
             // <Banner>
             //        <id>708811</id>
@@ -57,7 +58,7 @@ namespace TVRename
                 thumbnailPath = r.ExtractString("ThumbnailPath");
         }
 
-        public Banner(int seriesId, JObject json, int langId)
+        public Banner(int seriesId, [NotNull] JObject json, int langId)
         {
             SetDefaults();
             // {
@@ -89,7 +90,7 @@ namespace TVRename
             thumbnailPath = (string)json["thumbnail"];
         }
 
-        public bool SameAs(Banner  o) => (BannerId == o.BannerId);
+        public bool SameAs([NotNull] Banner  o) => (BannerId == o.BannerId);
 
         public bool IsSeriesPoster() => (bannerType == "poster");
 
@@ -116,7 +117,7 @@ namespace TVRename
             thumbnailPath = "";
         }
 
-        public void WriteXml(XmlWriter writer)
+        public void WriteXml([NotNull] XmlWriter writer)
         {
             // <Banner>
             //        <id>708811</id>

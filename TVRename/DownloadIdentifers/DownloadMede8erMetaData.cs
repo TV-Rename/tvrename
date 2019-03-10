@@ -25,8 +25,10 @@ namespace TVRename
 
                 FileInfo tvshowxml = FileHelper.FileInFolder(si.AutoAddFolderBase, "series.xml");
 
+                SeriesInfo seriesInfo = si.TheSeries();
                 bool needUpdate = !tvshowxml.Exists ||
-                                  (si.TheSeries().SrvLastUpdated > TimeZoneHelper.Epoch(tvshowxml.LastWriteTime));
+                                  seriesInfo is null ||
+                                  seriesInfo.SrvLastUpdated > TimeZoneHelper.Epoch(tvshowxml.LastWriteTime);
 
                 if ((forceRefresh || needUpdate) && (!doneFiles.Contains(tvshowxml.FullName)))
                 {
@@ -50,26 +52,38 @@ namespace TVRename
 
         public override ItemList ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
         {
-            if (!TVSettings.Instance.Mede8erXML) return null;
+            if (!TVSettings.Instance.Mede8erXML)
+            {
+                return null;
+            }
+
             ItemList theActionList = new ItemList();
 
             //Updates requested by zakwaan@gmail.com on 18/4/2013
             FileInfo viewxml = FileHelper.FileInFolder(folder, "View.xml");
-            if (!viewxml.Exists) theActionList.Add(new ActionMede8erViewXML(viewxml, si, snum));
+            if (!viewxml.Exists)
+            {
+                theActionList.Add(new ActionMede8erViewXML(viewxml, si, snum));
+            }
 
             return theActionList;
         }
 
         public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
         {
-            if (!TVSettings.Instance.Mede8erXML) return null;
+            if (!TVSettings.Instance.Mede8erXML)
+            {
+                return null;
+            }
 
             ItemList theActionList = new ItemList();
             string fn = filo.RemoveExtension() + ".xml";
             FileInfo nfo = FileHelper.FileInFolder(filo.Directory, fn);
 
             if (forceRefresh || !nfo.Exists || (dbep.SrvLastUpdated > TimeZoneHelper.Epoch(nfo.LastWriteTime)))
+            {
                 theActionList.Add(new ActionMede8erXML(nfo, dbep));
+            }
 
             return theActionList;
         }

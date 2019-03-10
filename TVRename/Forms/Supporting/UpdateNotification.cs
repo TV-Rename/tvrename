@@ -9,6 +9,7 @@
 using System;
 using System.Net;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 
 namespace TVRename.Forms
@@ -18,7 +19,7 @@ namespace TVRename.Forms
         private readonly Release newVersion;
         private const string GITHUB_CONVERSION_URL = "https://api.github.com/markdown";
 
-        public UpdateNotification(Release update)
+        public UpdateNotification([NotNull] Release update)
         {
             newVersion = update;
             InitializeComponent();
@@ -55,8 +56,7 @@ namespace TVRename.Forms
                 {
                     if (resp != null)
                     {
-                        System.IO.StreamReader reader =
-                            new System.IO.StreamReader(resp.GetResponseStream() ?? throw new InvalidOperationException());
+                        System.IO.StreamReader reader = new System.IO.StreamReader(resp.GetResponseStream() ?? throw new InvalidOperationException());
 
                         result = reader.ReadToEnd();
                     }
@@ -89,14 +89,16 @@ namespace TVRename.Forms
             DialogResult = DialogResult.Abort;
         }
 
-        private void NavigateTo(object sender, WebBrowserNavigatingEventArgs e)
+        private void NavigateTo(object sender, [NotNull] WebBrowserNavigatingEventArgs e)
         {
             string url = e.Url.AbsoluteUri;
 
             if (url.Contains(@"ieframe.dll"))
+            {
                 url = e.Url.Fragment.Substring(1);
+            }
 
-            if (url.StartsWith("http://") || url.StartsWith("https://"))
+            if (url.IsWebLink())
             {
                 e.Cancel = true;
                 Helpers.SysOpen(e.Url.AbsoluteUri);

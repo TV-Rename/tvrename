@@ -30,7 +30,9 @@ namespace TVRename
                 Start();
             }
             else
+            {
                 Stop();
+            }
         }
 
         public void Start()
@@ -126,7 +128,10 @@ namespace TVRename
         public void Dispose()
         {
             // ReSharper disable once UseNullPropagation
-            if (mScanDelayTimer != null) mScanDelayTimer.Dispose();
+            if (mScanDelayTimer != null)
+            {
+                mScanDelayTimer.Dispose();
+            }
         }
     }
 }

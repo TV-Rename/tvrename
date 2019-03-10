@@ -5,6 +5,9 @@
 // 
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
+using JetBrains.Annotations;
+
 namespace TVRename
 {
     using System;
@@ -16,7 +19,7 @@ namespace TVRename
 
         private readonly TheTvdbCodeFinder codeFinderControl;
 
-        public FolderMonitorEdit(FoundFolder hint)
+        public FolderMonitorEdit([NotNull] FoundFolder hint)
         {
             InitializeComponent();
 
@@ -29,7 +32,9 @@ namespace TVRename
             pnlCF.ResumeLayout();
 
             if (hint.CodeKnown)
+            {
                 codeFinderControl.SetHint(hint.TVDBCode.ToString());
+            }
             else
             {
                 string s = hint.Folder.FullName;

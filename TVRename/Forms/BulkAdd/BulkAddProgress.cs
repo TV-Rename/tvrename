@@ -30,7 +30,9 @@ namespace TVRename
         private void timer1_Tick(object sender, System.EventArgs e)
         {
             if (mainForm == null)
+            {
                 return;
+            }
 
             timer1.Stop();
 
@@ -40,7 +42,9 @@ namespace TVRename
             lbMessage.Text = mainForm.FmpUpto;
             
             if (mainForm.TokenSource.IsCancellationRequested)
+            {
                 Close();
+            }
 
             timer1.Start();
         }

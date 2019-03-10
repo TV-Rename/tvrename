@@ -8,9 +8,11 @@ namespace TVRename
 {
     internal class CleanDownloadDirectory:ScanActivity
     {
+        [NotNull]
         protected override string Checkname() => "Cleaned up and files in download directory that are not needed";
 
         // ReSharper disable once InconsistentNaming
+        [NotNull]
         private IEnumerable<Item> Go(ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
             //for each directory in settings directory
@@ -29,7 +31,10 @@ namespace TVRename
             {
                 UpdateStatus(c++ , totalDownloadFolders,dirPath);
 
-                if (!Directory.Exists(dirPath)) continue;
+                if (!Directory.Exists(dirPath))
+                {
+                    continue;
+                }
 
                 List<FileInfo> filesThatMayBeNeeded = new List<FileInfo>();
 
@@ -40,18 +45,19 @@ namespace TVRename
             return returnActions;
         }
 
+        [NotNull]
         private static IEnumerable<Action> ReviewDirsInDownloadDirectory(ICollection<ShowItem> showList, DirFilesCache dfc, string dirPath, List<FileInfo> filesThatMayBeNeeded, TVDoc.ScanSettings settings)
         {
             List<Action> returnActions = new List<Action>();
             try
             {
                 foreach (string subDirPath in Directory.GetDirectories(dirPath, "*",
-                    System.IO.SearchOption.AllDirectories))
+                    System.IO.SearchOption.AllDirectories).Where(Directory.Exists))
                 {
-                    if (!Directory.Exists(subDirPath)) continue;
-
                     if (settings.Token.IsCancellationRequested)
+                    {
                         return new List<Action>();
+                    }
 
                     returnActions.AddNullableRange(ReviewDirInDownloadDirectory(showList, dfc, filesThatMayBeNeeded, subDirPath));
                 }
@@ -71,14 +77,21 @@ namespace TVRename
             return returnActions;
         }
 
+        [CanBeNull]
         private static IEnumerable<Action> ReviewDirInDownloadDirectory(ICollection<ShowItem> showList, DirFilesCache dfc, List<FileInfo> filesThatMayBeNeeded, string subDirPath)
         {
             List<Action> returnActions = new List<Action>();
 
             //we are not checking for any file updates, so can return
-            if (!TVSettings.Instance.RemoveDownloadDirectoriesFiles) return null;
+            if (!TVSettings.Instance.RemoveDownloadDirectoriesFiles)
+            {
+                return null;
+            }
 
-            if (!Directory.Exists(subDirPath)) return null;
+            if (!Directory.Exists(subDirPath))
+            {
+                return null;
+            }
 
             DirectoryInfo di = new DirectoryInfo(subDirPath);
 
@@ -114,11 +127,17 @@ namespace TVRename
             return returnActions;
         }
 
-        private static Action SetupDirectoryRemoval(DirectoryInfo di, List<ShowItem> matchingShows)
+        [NotNull]
+        private static Action SetupDirectoryRemoval([NotNull] DirectoryInfo di, [NotNull] IReadOnlyList<ShowItem> matchingShows)
         {
             ShowItem si = matchingShows[0]; //Choose the first series
             FinderHelper.FindSeasEp(di, out int seasF, out int epF, si, out TVSettings.FilenameProcessorRE _);
             SeriesInfo s = si.TheSeries();
+            if (s is null)
+            {
+                throw new ArgumentNullException(nameof(s));
+            }
+
             Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
             ProcessedEpisode pep = new ProcessedEpisode(ep, si);
             LOGGER.Info(
@@ -127,21 +146,25 @@ namespace TVRename
             return new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup);
         }
 
-        private static IEnumerable<Item> ReviewFilesInDownloadDirectory(ICollection<ShowItem> showList, DirFilesCache dfc, string dirPath, List<FileInfo> filesThatMayBeNeeded, TVDoc.ScanSettings settings)
+        [NotNull]
+        private static IEnumerable<Item> ReviewFilesInDownloadDirectory(ICollection<ShowItem> showList, DirFilesCache dfc, string dirPath, ICollection<FileInfo> filesThatMayBeNeeded, TVDoc.ScanSettings settings)
         {
             List<Item> returnActions = new List<Item>();
             try
             {
-                foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories).Where(File.Exists))
                 {
-                    if (!File.Exists(filePath)) continue;
-
                     if (settings.Token.IsCancellationRequested)
+                    {
                         return new List<Item>();
+                    }
 
                     FileInfo fi = new FileInfo(filePath);
 
-                    if (fi.IgnoreFile()) continue;
+                    if (fi.IgnoreFile())
+                    {
+                        continue;
+                    }
 
                     List<ShowItem> matchingShows = showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
 
@@ -167,7 +190,8 @@ namespace TVRename
             return returnActions;
         }
 
-        private static List<Item> ReviewFileInDownloadDirectory(bool unattended, DirFilesCache dfc, ICollection<FileInfo> filesThatMayBeNeeded, FileInfo fi, List<ShowItem> matchingShows)
+        [NotNull]
+        private static IEnumerable<Item> ReviewFileInDownloadDirectory(bool unattended, DirFilesCache dfc, ICollection<FileInfo> filesThatMayBeNeeded, FileInfo fi, [NotNull] List<ShowItem> matchingShows)
         {
             bool fileCanBeDeleted = TVSettings.Instance.RemoveDownloadDirectoriesFiles;
             List<Item> returnActions = new List<Item>();
@@ -180,42 +204,12 @@ namespace TVRename
 
                 SeriesInfo s = si.TheSeries();
 
-                if (s is null) continue;
-
-                try
+                if (s is null)
                 {
-                    Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
-                    ProcessedEpisode pep = new ProcessedEpisode(ep, si);
-                    firstMatchingPep = pep;
-                    List<FileInfo> encumbants = dfc.FindEpOnDisk(pep, false);
-
-                    if (encumbants.Count == 0)
-                    {
-                        //File is needed as there are no files for that series/episode
-                        fileCanBeDeleted = false;
-
-                        returnActions.AddRange(CopyFutureDatedFile(fi, pep));
-                    }
-                    else
-                    {
-                        foreach (FileInfo existingFile in encumbants)
-                        {
-                            if (existingFile.FullName.Equals(fi.FullName,StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                //the user has put the search folder and the download folder in the same place - DO NOT DELETE
-                                fileCanBeDeleted = false;
-                                continue;
-                            }
-
-                            fileCanBeDeleted = ReviewFile(unattended, fi, matchingShows, existingFile, fileCanBeDeleted, returnActions, pep);
-                        }
-                    }
+                    continue;
                 }
-                catch (SeriesInfo.EpisodeNotFoundException)
-                {
-                    LOGGER.Info($"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}'");
-                    fileCanBeDeleted = false;
-                }
+
+                (firstMatchingPep, fileCanBeDeleted) = FirstMatchingPep(unattended, dfc, fi, matchingShows, s, seasF, epF, si, firstMatchingPep, returnActions, re, fileCanBeDeleted);
             }
 
             if (fileCanBeDeleted)
@@ -231,6 +225,51 @@ namespace TVRename
             }
 
             return returnActions;
+        }
+
+        private static (ProcessedEpisode firstMatchingPep, bool fileCanBeDeleted) FirstMatchingPep(bool unattended,
+            DirFilesCache dfc, FileInfo fi, List<ShowItem> matchingShows, SeriesInfo s, int seasF, int epF, ShowItem si,
+            ProcessedEpisode firstMatchingPep, List<Item> returnActions, [CanBeNull] TVSettings.FilenameProcessorRE re, bool fileCanBeDeleted)
+        {
+            try
+            {
+                Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
+                ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+                firstMatchingPep = pep;
+                List<FileInfo> encumbants = dfc.FindEpOnDisk(pep, false);
+
+                if (encumbants.Count == 0)
+                {
+                    //File is needed as there are no files for that series/episode
+                    fileCanBeDeleted = false;
+
+                    returnActions.AddRange(CopyFutureDatedFile(fi, pep));
+                }
+                else
+                {
+                    foreach (FileInfo existingFile in encumbants)
+                    {
+                        if (existingFile.FullName.Equals(fi.FullName, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            //the user has put the search folder and the download folder in the same place - DO NOT DELETE
+                            fileCanBeDeleted = false;
+                            continue;
+                        }
+
+                        fileCanBeDeleted = ReviewFile(unattended, fi, matchingShows, existingFile, fileCanBeDeleted,
+                            returnActions, pep);
+                    }
+                }
+            }
+            catch (SeriesInfo.EpisodeNotFoundException)
+            {
+                LOGGER.Info(
+                    $"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}'");
+
+                fileCanBeDeleted = false;
+            }
+
+            return (firstMatchingPep, fileCanBeDeleted);
         }
 
         private static bool ReviewFile(bool unattended, [NotNull] FileInfo fi, [NotNull] List<ShowItem> matchingShows, [NotNull] FileInfo existingFile,
@@ -333,7 +372,8 @@ namespace TVRename
             }
         }
 
-        private static List<Item> CopyFutureDatedFile(FileInfo fi, ProcessedEpisode pep)
+        [NotNull]
+        private static IEnumerable<Item> CopyFutureDatedFile(FileInfo fi, [NotNull] ProcessedEpisode pep)
         {
             ShowItem si = pep.Show;
             int seasF = pep.AppropriateSeasonNumber;
@@ -341,9 +381,15 @@ namespace TVRename
 
             //This episode may be a future dated one - process it now if the settings request that we do and it wont be picked up in a full scan
             if (!TVSettings.Instance.CopyFutureDatedEpsFromSearchFolders || si.ForceCheckFuture || !si.DoMissingCheck ||
-                !TVSettings.Instance.MissingCheck || TVSettings.Instance.PreventMove) return new List<Item>();
+                !TVSettings.Instance.MissingCheck || TVSettings.Instance.PreventMove)
+            {
+                return new List<Item>();
+            }
 
-            if (!pep.IsInFuture()) return new List<Item>();
+            if (!pep.IsInFuture())
+            {
+                return new List<Item>();
+            }
 
             LOGGER.Info(
                 $"Identified that {fi.FullName} matches S{seasF}E{epF} of show {si.ShowName}, that it's not already present and airs in the future. Copying across.");
@@ -362,7 +408,10 @@ namespace TVRename
 
                 FileInfo targetFile = new FileInfo(folder + Path.DirectorySeparatorChar + filename);
 
-                if (fi.FullName == targetFile.FullName) continue;
+                if (fi.FullName == targetFile.FullName)
+                {
+                    continue;
+                }
 
                 returnActions.Add(new ActionCopyMoveRename(fi, targetFile, pep));
 
@@ -373,7 +422,8 @@ namespace TVRename
             return returnActions;
         }
 
-        private static IEnumerable<Action> UpgradeFile(FileInfo fi, ProcessedEpisode pep, FileInfo existingFile)
+        [NotNull]
+        private static IEnumerable<Action> UpgradeFile([NotNull] FileInfo fi, ProcessedEpisode pep, [NotNull] FileInfo existingFile)
         {
             List<Action> returnActions = new List<Action>();
 

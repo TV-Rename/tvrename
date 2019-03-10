@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -22,7 +23,7 @@ namespace TVRename
             merged
         }
 
-        public ProcessedEpisode(SeriesInfo ser, Season airseas, Season dvdseas, ShowItem si)
+        public ProcessedEpisode(SeriesInfo ser, Season airseas, Season dvdseas, [NotNull] ShowItem si)
             : base(ser, airseas, dvdseas)
         {
             NextToAir = false;
@@ -33,7 +34,7 @@ namespace TVRename
             Type = ProcessedEpisodeType.single;
         }
 
-        public ProcessedEpisode(ProcessedEpisode o)
+        public ProcessedEpisode([NotNull] ProcessedEpisode o)
             : base(o)
         {
             NextToAir = o.NextToAir;
@@ -44,7 +45,7 @@ namespace TVRename
             Type = o.Type;
         }
 
-        public ProcessedEpisode(Episode e, ShowItem si)
+        public ProcessedEpisode([NotNull] Episode e, [NotNull] ShowItem si)
             : base(e)
         {
             OverallNumber = -1;
@@ -55,7 +56,7 @@ namespace TVRename
             Type = ProcessedEpisodeType.single;
         }
 
-        public ProcessedEpisode(Episode e, ShowItem si, ProcessedEpisodeType t)
+        public ProcessedEpisode([NotNull] Episode e, [NotNull] ShowItem si, ProcessedEpisodeType t)
             : base(e)
         {
             OverallNumber = -1;
@@ -66,7 +67,7 @@ namespace TVRename
             Type = t;
         }
 
-        public ProcessedEpisode(Episode e, ShowItem si, List<Episode> episodes)
+        public ProcessedEpisode([NotNull] Episode e, [NotNull] ShowItem si, List<Episode> episodes)
             : base(e)
         {
             OverallNumber = -1;
@@ -88,22 +89,33 @@ namespace TVRename
             get => Show.DvdOrder ? DvdEpNum : AiredEpNum;
             set
             {
-                if (Show.DvdOrder) DvdEpNum = value;
-                else AiredEpNum = value;
+                if (Show.DvdOrder)
+                {
+                    DvdEpNum = value;
+                }
+                else
+                {
+                    AiredEpNum = value;
+                }
             }
         }
 
+        [NotNull]
         public string NumsAsString()
         {
             if (AppropriateEpNum == EpNum2)
+            {
                 return AppropriateEpNum.ToString();
+            }
             else
+            {
                 return AppropriateEpNum + "-" + EpNum2;
+            }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design",
             "CA1011:ConsiderPassingBaseTypesAsParameters")]
-        public static int EpNumberSorter(ProcessedEpisode e1, ProcessedEpisode e2)
+        public static int EpNumberSorter([NotNull] ProcessedEpisode e1, [NotNull] ProcessedEpisode e2)
         {
             int ep1 = e1.AiredEpNum;
             int ep2 = e2.AiredEpNum;
@@ -114,7 +126,7 @@ namespace TVRename
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design",
             "CA1011:ConsiderPassingBaseTypesAsParameters")]
         // ReSharper disable once InconsistentNaming
-        public static int DVDOrderSorter(ProcessedEpisode e1, ProcessedEpisode e2)
+        public static int DVDOrderSorter([NotNull] ProcessedEpisode e1, [NotNull] ProcessedEpisode e2)
         {
             int ep1 = e1.DvdEpNum;
             int ep2 = e2.DvdEpNum;
@@ -125,44 +137,57 @@ namespace TVRename
         public DateTime? GetAirDateDt(bool inLocalTime)
         {
             if (!inLocalTime)
+            {
                 return GetAirDateDt();
+            }
 
             // do timezone adjustment
             return GetAirDateDt(Show.GetTimeZone());
         }
 
+        [NotNull]
         public string HowLong()
         {
             DateTime? airsdt = GetAirDateDt(true);
             if (airsdt == null)
+            {
                 return "";
+            }
 
             DateTime dt = (DateTime) airsdt;
 
             TimeSpan ts = dt.Subtract(DateTime.Now); // how long...
             if (ts.TotalHours < 0)
+            {
                 return "Aired";
+            }
             else
             {
                 int h = ts.Hours;
                 if (ts.TotalHours >= 1)
                 {
                     if (ts.Minutes >= 30)
+                    {
                         h += 1;
+                    }
 
                     return ts.Days + "d " + h + "h";
                 }
                 else
+                {
                     return Math.Round(ts.TotalMinutes) + "min";
+                }
             }
         }
 
+        [NotNull]
         public string DayOfWeek()
         {
             DateTime? dt = GetAirDateDt(true);
             return (dt != null) ? dt.Value.ToString("ddd") : "-";
         }
 
+        [NotNull]
         public string TimeOfDay()
         {
             DateTime? dt = GetAirDateDt(true);
@@ -173,7 +198,9 @@ namespace TVRename
         {
             DateTime? airsdt = GetAirDateDt(true);
             if (airsdt == null)
+            {
                 return false;
+            }
 
             DateTime dt = (DateTime) airsdt;
 
@@ -184,7 +211,10 @@ namespace TVRename
         public bool WithinDays(int days)
         {
             DateTime? dt = GetAirDateDt(true);
-            if ((dt == null) || (dt.Value.CompareTo(DateTime.MaxValue) == 0)) return false;
+            if ((dt == null) || (dt.Value.CompareTo(DateTime.MaxValue) == 0))
+            {
+                return false;
+            }
 
             TimeSpan ts = dt.Value.Subtract(DateTime.Now);
             return (ts.TotalHours >= (-24 * days)) && (ts.TotalHours <= 0);
@@ -194,7 +224,9 @@ namespace TVRename
         {
             DateTime? airsdt = GetAirDateDt(true);
             if (airsdt == null)
+            {
                 return false;
+            }
 
             DateTime dt = (DateTime)airsdt;
 

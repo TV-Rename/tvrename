@@ -7,6 +7,7 @@
 // 
 using System.Xml;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 
 // Per-season sets of rules for manipulating episodes from thetvdb into multi-episode files,
 // removing, adding, swapping them around, etc.
@@ -37,7 +38,7 @@ namespace TVRename
             SetToDefaults();
         }
 
-        public ShowRule(XElement xmlSettings)
+        public ShowRule([CanBeNull] XElement xmlSettings)
         {
             SetToDefaults();
             if (xmlSettings != null)
@@ -62,7 +63,7 @@ namespace TVRename
             UserSuppliedText = "";
         }
 
-        public void WriteXml(XmlWriter writer)
+        public void WriteXml([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("Rule");
             XmlHelper.WriteElementToXml(writer,"DoWhatNow",(int) DoWhatNow);
@@ -72,6 +73,7 @@ namespace TVRename
             writer.WriteEndElement(); // Rule
         }
 
+        [NotNull]
         public string ActionInWords()
         {
             switch (DoWhatNow)

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -38,17 +39,17 @@ namespace TVRename
         public List<ItemMissing> Missing;
         public List<ItemDownloading> Downloading;
 
-        public LvResults(ListView lv, bool isChecked) // if not checked, then selected items
+        public LvResults([NotNull] ListView lv, bool isChecked) // if not checked, then selected items
         {
             Go(lv, isChecked ? WhichResults.Checked : WhichResults.selected);
         }
 
-        public LvResults(ListView lv, WhichResults which)
+        public LvResults([NotNull] ListView lv, WhichResults which)
         {
             Go(lv, which);
         }
 
-        private void Go(ListView lv, WhichResults which)
+        private void Go([NotNull] ListView lv, WhichResults which)
         {
             Missing = new List<ItemMissing>();
             WriteMetadatas = new List<ActionWriteMetadata>();
@@ -67,16 +68,22 @@ namespace TVRename
             Count = sel.Count;
 
             if (sel.Count == 0)
+            {
                 return;
+            }
 
             foreach (ListViewItem lvi in sel)
             {
                 if (lvi == null)
+                {
                     continue;
+                }
 
                 Item action = (Item)lvi.Tag;
                 if (action != null)
+                {
                     FlatList.Add(action);
+                }
 
                 switch (action)
                 {
@@ -114,7 +121,8 @@ namespace TVRename
             }
         }
 
-        private static IEnumerable<ListViewItem> GetSelectionCollection(ListView lv, WhichResults which)
+        [NotNull]
+        private static IEnumerable<ListViewItem> GetSelectionCollection([NotNull] ListView lv, WhichResults which)
         {
             switch (which)
             {

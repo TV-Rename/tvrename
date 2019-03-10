@@ -5,6 +5,9 @@
 // 
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
+using JetBrains.Annotations;
+
 namespace TVRename
 {
     using System;
@@ -19,6 +22,7 @@ namespace TVRename
 
         #region Action Members
 
+        [NotNull]
         public override string Name => "Write pyTivo Meta";
 
         public override bool Go(ref bool pause, TVRenameStats stats)
@@ -27,7 +31,9 @@ namespace TVRename
             {
                 // create folder if it does not exist. (Only really applies when .meta\ folder is being used.)
                 if (!Where.Directory.Exists)
+                {
                     Directory.CreateDirectory(Where.Directory.FullName);
+                }
 
                 using (
                     System.IO.StreamWriter writer = new System.IO.StreamWriter(Where.FullName, false,
@@ -42,15 +48,18 @@ namespace TVRename
                     writer.WriteLine("isEpisode : true");
                     writer.WriteLine($"description : {Episode.Overview}");
                     if (Episode.FirstAired != null)
+                    {
                         writer.WriteLine($"originalAirDate : {Episode.FirstAired.Value:yyyy-MM-dd}T00:00:00Z");
-                    writer.WriteLine($"callsign : {Episode.Show.TheSeries().Network}");
+                    }
+
+                    writer.WriteLine($"callsign : {Episode.Show.TheSeries()?.Network}");
 
                     WriteEntries(writer, "vDirector", Episode.EpisodeDirector);
                     WriteEntries(writer, "vWriter", Episode.Writer);
-                    WriteEntries(writer, "vActor", string.Join("|", Episode.Show.TheSeries().GetActorNames()));
+                    WriteEntries(writer, "vActor", string.Join("|", Episode.Show.GetActorNames()));
                     WriteEntries(writer, "vGuestStar",
                         Episode.EpisodeGuestStars); // not worrying about actors being repeated
-                    WriteEntries(writer, "vProgramGenre", string.Join("|", Episode.Show.TheSeries().Genres()));
+                    WriteEntries(writer, "vProgramGenre", string.Join("|", Episode.Show.Genres));
                 }
 
                 Done = true;
@@ -65,17 +74,26 @@ namespace TVRename
             }
         }
     
-        private static void WriteEntries(System.IO.TextWriter writer, string heading, string entries)
+        private static void WriteEntries(System.IO.TextWriter writer, string heading, [CanBeNull] string entries)
         {
             if (string.IsNullOrEmpty(entries))
+            {
                 return;
+            }
+
             if (!entries.Contains("|"))
+            {
                 writer.WriteLine($"{heading} : {entries}");
+            }
             else
             {
                 foreach (string entry in entries.Split('|'))
+                {
                     if (!string.IsNullOrEmpty(entry))
+                    {
                         writer.WriteLine($"{heading} : {entry}");
+                    }
+                }
             }
         }
 
@@ -93,9 +111,15 @@ namespace TVRename
             ActionPyTivoMeta nfo = o as ActionPyTivoMeta;
 
             if (Episode == null)
+            {
                 return 1;
+            }
+
             if (nfo?.Episode == null)
+            {
                 return -1;
+            }
+
             return string.Compare((Where.FullName + Episode.Name), nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
 

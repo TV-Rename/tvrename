@@ -9,6 +9,7 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 
 namespace TVRename
@@ -17,6 +18,7 @@ namespace TVRename
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
+        [ItemCanBeNull]
         public static async Task<Release> CheckForUpdatesAsync()
         {
             // ReSharper disable once InconsistentNaming
@@ -59,17 +61,26 @@ namespace TVRename
                 {
                     try
                     {
-                        if (!gitHubReleaseJson["assets"].HasValues) continue; //we have no files for this release, so ignore
+                        if (!gitHubReleaseJson["assets"].HasValues)
+                        {
+                            continue; //we have no files for this release, so ignore
+                        }
 
                         Release testVersion = ParseFromJson(gitHubReleaseJson);
 
                         //all versions want to be considered if you are in the beta stream
-                        if (testVersion.NewerThan(latestBetaVersion)) latestBetaVersion = testVersion;
+                        if (testVersion.NewerThan(latestBetaVersion))
+                        {
+                            latestBetaVersion = testVersion;
+                        }
 
                         //If the latest version is a production one then update the latest production version
                         if (!testVersion.IsBeta)
                         {
-                            if (testVersion.NewerThan(latestVersion)) latestVersion = testVersion;
+                            if (testVersion.NewerThan(latestVersion))
+                            {
+                                latestVersion = testVersion;
+                            }
                         }
                     }
                     catch (NullReferenceException ex)
@@ -101,16 +112,22 @@ namespace TVRename
             }
 
             if ((TVSettings.Instance.mode == TVSettings.BetaMode.ProductionOnly) &&
-                (latestVersion.NewerThan(currentVersion))) return latestVersion;
+                (latestVersion.NewerThan(currentVersion)))
+            {
+                return latestVersion;
+            }
 
             if ((TVSettings.Instance.mode == TVSettings.BetaMode.BetaToo) &&
                 (latestBetaVersion.NewerThan(currentVersion)))
+            {
                 return latestBetaVersion;
+            }
 
             return null;
         }
 
-        private static Release ParseFromJson(JObject gitHubReleaseJson)
+        [NotNull]
+        private static Release ParseFromJson([NotNull] JObject gitHubReleaseJson)
         {
             DateTime.TryParse(gitHubReleaseJson["published_at"].ToString(), out DateTime releaseDate);
             Release testVersion = new Release(gitHubReleaseJson["tag_name"].ToString(),
@@ -125,15 +142,18 @@ namespace TVRename
             return testVersion;
         }
 
+        [NotNull]
         private static Release ObtainCurrentVersion()
         {
             string currentVersionString = Helpers.DisplayVersion;
 
-            bool inDebug = currentVersionString.EndsWith(" ** Debug Build **");
+            bool inDebug = currentVersionString.EndsWith(" ** Debug Build **", StringComparison.Ordinal);
             //remove debug stuff
             if (inDebug)
+            {
                 currentVersionString = currentVersionString.Substring(0,
                     currentVersionString.LastIndexOf(" ** Debug Build **", StringComparison.Ordinal));
+            }
 
             return new Release(currentVersionString, Release.VersionType.friendly);
         }

@@ -13,6 +13,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 using SourceGrid;
 using SourceGrid.Cells.Controllers;
 using SourceGrid.Cells.Views;
@@ -116,13 +117,22 @@ namespace TVRename
             foreach (ShowSummaryData show in showList)
             {
                 //Ignore shows with no missing episodes
-                if (chkHideComplete.Checked && !show.HasMssingEpisodes(chkHideSpecials.Checked, chkHideIgnored.Checked)) continue;
+                if (chkHideComplete.Checked && !show.HasMssingEpisodes(chkHideSpecials.Checked, chkHideIgnored.Checked))
+                {
+                    continue;
+                }
 
                 //Ignore shows with no missing aired episodes
-                if (chkHideUnaired.Checked && !show.HasAiredMssingEpisodes(chkHideSpecials.Checked, chkHideIgnored.Checked)) continue;
+                if (chkHideUnaired.Checked && !show.HasAiredMssingEpisodes(chkHideSpecials.Checked, chkHideIgnored.Checked))
+                {
+                    continue;
+                }
 
                 //Ignore shows which do not have the missing check
-                if (chkHideNotScanned.Checked && !show.ShowItem.DoMissingCheck) continue;
+                if (chkHideNotScanned.Checked && !show.ShowItem.DoMissingCheck)
+                {
+                    continue;
+                }
 
                 RowHeader rh = new RowHeader(show.ShowName)
                 {
@@ -140,10 +150,16 @@ namespace TVRename
                     ShowSummaryData.SummaryOutput output = seasonData.GetOuput();
 
                     //Ignore Season if checkbox is checked
-                    if ((chkHideSpecials.Checked) && output.Special) continue;
+                    if ((chkHideSpecials.Checked) && output.Special)
+                    {
+                        continue;
+                    }
 
                     //Ignore Season if checkbox is checked
-                    if ((chkHideIgnored.Checked) && output.Ignored) continue;
+                    if ((chkHideIgnored.Checked) && output.Ignored)
+                    {
+                        continue;
+                    }
 
                     grid1[r + 1, seasonData.SeasonNumber + 1] =
                         new SourceGrid.Cells.Cell(output.Details, typeof(string))
@@ -164,12 +180,13 @@ namespace TVRename
             grid1.AutoSizeCells();
         }
 
-        private static int GetMaxSeason(IEnumerable<ShowSummaryData> shows)
+        private static int GetMaxSeason([NotNull] IEnumerable<ShowSummaryData> shows)
         {
             return shows.Select(x => x.MaxSeason).DefaultIfEmpty(0).Max();
         }
 
-        private ShowSummaryData AddShowDetails(ShowItem si)
+        [NotNull]
+        private ShowSummaryData AddShowDetails([NotNull] ShowItem si)
         {
             SeriesInfo ser;
 
@@ -195,7 +212,8 @@ namespace TVRename
             return showSummary;
         }
 
-        private ShowSummaryData.ShowSummarySeasonData getSeasonDetails(ShowItem si, SeriesInfo ser, int snum)
+        [NotNull]
+        private ShowSummaryData.ShowSummarySeasonData getSeasonDetails([NotNull] ShowItem si, [NotNull] SeriesInfo ser, int snum)
         {
             int epCount = 0;
             int epGotCount = 0;
@@ -219,20 +237,21 @@ namespace TVRename
 
                     // if has air date and has been aired in the past
                     if (ei.FirstAired != null && ei.FirstAired < DateTime.Now)
+                    {
                         epAiredCount++;
+                    }
 
                     List<FileInfo> fl = dfc.FindEpOnDisk(ei,false);
-                    if (fl != null)
+                    if (fl.Count != 0)
                     {
-                        if (fl.Count != 0)
-                            epGotCount++;
+                        epGotCount++;
                     }
                 }
             }
             return new ShowSummaryData.ShowSummarySeasonData(snum, epCount, epAiredCount, epGotCount, season,si.IgnoreSeasons.Contains(snum));
         }
 
-        private void showRightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void showRightClickMenu_ItemClicked(object sender, [NotNull] ToolStripItemClickedEventArgs e)
         {
             showRightClickMenu.Close();
             RightClickCommands n = (RightClickCommands)e.ClickedItem.Tag;
@@ -258,7 +277,9 @@ namespace TVRename
                         {
                             int wn = n - RightClickCommands.kWatchBase;
                             if ((mLastFileList != null) && (wn >= 0) && (wn < mLastFileList.Count))
+                            {
                                 Helpers.SysOpen(mLastFileList[wn].FullName);
+                            }
                         }
                         else if (n >= RightClickCommands.kOpenFolderBase)
                         {
@@ -269,36 +290,48 @@ namespace TVRename
                                 string folder = mFoldersToOpen[fnum];
 
                                 if (Directory.Exists(folder))
+                                {
                                     Helpers.SysOpen(folder);
+                                }
                             }
                         }
                         else
+                        {
                             Debug.Fail("Unknown right-click action " + n);
+                        }
+
                         break;
                     }
             }
         }
 
-        private void TVDBFor(Season seas)
+        private void TVDBFor([CanBeNull] Season seas)
         {
             if (seas == null)
+            {
                 return;
+            }
 
             Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(seas.TheSeries.TvdbCode, seas.SeasonId, false));
         }
 
-        private void TVDBFor(ShowItem si)
+        private void TVDBFor([CanBeNull] ShowItem si)
         {
             if (si == null)
+            {
                 return;
+            }
 
             Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, false));
         }
 
-        private void ForceRefresh(ShowItem si)
+        private void ForceRefresh([CanBeNull] ShowItem si)
         {
             if (si != null)
+            {
                 TheTVDB.Instance.ForgetShow(si.TvdbCode, true,si.UseCustomLanguage,si.CustomLanguageCode);
+            }
+
             mDoc.DoDownloadsFG(false);
         }
 
@@ -323,10 +356,13 @@ namespace TVRename
                 this.gridSummary = gridSummary;
             }
 
-            public override void OnMouseDown(CellContext sender, MouseEventArgs e)
+            public override void OnMouseDown(CellContext sender, [NotNull] MouseEventArgs e)
             {
                 if (e.Button != MouseButtons.Right)
+                {
                     return;
+                }
+
                 gridSummary.showRightClickMenu.Items.Clear();
 
                 Season seas = season;
@@ -411,7 +447,7 @@ namespace TVRename
                     foreach (ProcessedEpisode epds in show.SeasonEpisodes[seas.SeasonNumber])
                     {
                         List<FileInfo> fl = dfc.FindEpOnDisk(epds,false);
-                        if ((fl != null) && (fl.Count > 0))
+                        if (fl.Count > 0)
                         {
                             if (first)
                             {
@@ -434,18 +470,18 @@ namespace TVRename
                 gridSummary.showRightClickMenu.Show(sender.Grid.PointToScreen(pt));
             }
 
-            private void GenerateMenu(ContextMenuStrip showRightClickMenu, string menuName, RightClickCommands rightClickCommand)
+            private void GenerateMenu([NotNull] ContextMenuStrip showRightClickMenu, string menuName, RightClickCommands rightClickCommand)
             {
                 GenerateMenu(showRightClickMenu, menuName, (int)rightClickCommand);
             }
 
-            private void GenerateMenu(ContextMenuStrip showRightClickMenu, string menuName, int rightClickCommand)
+            private void GenerateMenu([NotNull] ContextMenuStrip showRightClickMenu, string menuName, int rightClickCommand)
             {
                 ToolStripMenuItem tsi = new ToolStripMenuItem(menuName) {Tag = rightClickCommand};
                 showRightClickMenu.Items.Add(tsi);
             }
 
-            private void GenerateSeparator(ContextMenuStrip showRightClickMenu)
+            private void GenerateSeparator([NotNull] ContextMenuStrip showRightClickMenu)
             {
                 ToolStripSeparator tss = new ToolStripSeparator();
                 showRightClickMenu.Items.Add(tss);
@@ -463,13 +499,15 @@ namespace TVRename
             public ShowItem ShowItem;
             public string ShowName;
 
-            public void AddSeason(ShowSummarySeasonData seasonData)
+            public void AddSeason([NotNull] ShowSummarySeasonData seasonData)
             {
                 SeasonDataList.Add(seasonData);
 
                 // set the max season number
                 if (seasonData.SeasonNumber >= MaxSeason)
+                {
                     MaxSeason = seasonData.SeasonNumber;
+                }
             }
 
             #region Nested type: ShowSummarySeasonData
@@ -495,6 +533,7 @@ namespace TVRename
 
                 public bool IsSpecial => SeasonNumber == 0;
 
+                [NotNull]
                 public SummaryOutput GetOuput()
                 {
                     SummaryOutput output = new SummaryOutput
@@ -507,13 +546,21 @@ namespace TVRename
                     {
                         output.Details = $"{episodeGotCount} / {episodeCount}";
                         if (Ignored)
+                        {
                             output.Color = Color.LightSlateGray;
+                        }
                         else if (episodeGotCount == episodeCount)
+                        {
                             output.Color = Color.Green;
+                        }
                         else if (episodeGotCount == 0)
+                        {
                             output.Color = Color.Red;
+                        }
                         else
+                        {
                             output.Color = Color.Orange;
+                        }
                     }
                     else
                     {
@@ -521,14 +568,22 @@ namespace TVRename
                         output.Details = $"{episodeGotCount} / {episodeAiredCount}";
                         // show amount of unaired eps
                         if (episodeCount > episodeAiredCount)
+                        {
                             output.Details += $" ({episodeCount - episodeAiredCount})";
+                        }
 
                         if (Ignored)
+                        {
                             output.Color = Color.LightSlateGray;
+                        }
                         else if (episodeGotCount == episodeAiredCount)
+                        {
                             output.Color = (episodeCount - episodeAiredCount) == 0 ? Color.Green : Color.GreenYellow;
+                        }
                         else
+                        {
                             output.Color = episodeGotCount == 0 ? Color.Red : Color.Orange;
+                        }
                     }
                     return output;
                 }
@@ -561,9 +616,20 @@ namespace TVRename
             {
                 foreach (ShowSummarySeasonData ssn in SeasonDataList)
                 {
-                    if (ignoreIgnoredSeasons && ssn.Ignored) continue;
-                    if (ignoreSpecials && ssn.IsSpecial) continue;
-                    if (ssn.HasMissingEpisodes()) return true;
+                    if (ignoreIgnoredSeasons && ssn.Ignored)
+                    {
+                        continue;
+                    }
+
+                    if (ignoreSpecials && ssn.IsSpecial)
+                    {
+                        continue;
+                    }
+
+                    if (ssn.HasMissingEpisodes())
+                    {
+                        return true;
+                    }
                 }
 
                 return false;
@@ -573,9 +639,20 @@ namespace TVRename
             {
                 foreach (ShowSummarySeasonData ssn in SeasonDataList)
                 {
-                    if (ignoreIgnoredSeasons && ssn.Ignored) continue;
-                    if (ignoreSpecials && ssn.IsSpecial) continue;
-                    if (ssn.HasAiredMssingEpisodes()) return true;
+                    if (ignoreIgnoredSeasons && ssn.Ignored)
+                    {
+                        continue;
+                    }
+
+                    if (ignoreSpecials && ssn.IsSpecial)
+                    {
+                        continue;
+                    }
+
+                    if (ssn.HasAiredMssingEpisodes())
+                    {
+                        return true;
+                    }
                 }
 
                 return false;

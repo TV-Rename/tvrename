@@ -45,10 +45,14 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         private static string CreateHtml([NotNull] ShowItem si)
         {
             SeriesInfo series = si.TheSeries();
-            if (series is null) return string.Empty;
+            if (series is null)
+            {
+                return string.Empty;
+            }
 
             string posterUrl = TheTVDB.GetImageURL(series.GetImage(TVSettings.FolderJpgIsType.Poster));
             int minYear = series.MinYear;

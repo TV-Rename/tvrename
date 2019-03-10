@@ -8,7 +8,9 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -51,14 +53,12 @@ namespace TVRename
                 foreach (ShowItem ser in mDoc.Library.Shows)
                 {
                     SeriesInfo si = TheTVDB.Instance.GetSeries(ser.TvdbCode);
-                    foreach (Actor act in si.GetActors())
+                    foreach (string aa in ser.Actors.Select(act => act.ActorName.Trim()).Where(aa => !string.IsNullOrEmpty(aa)))
                     {
-                        string aa = act.ActorName.Trim();
-                        if (!string.IsNullOrEmpty(aa))
-                            theData.Set(si.Name, aa, true);
+                        theData.Set(si?.Name, aa, true);
                     }
 
-                    if (cbGuestStars.Checked)
+                    if (cbGuestStars.Checked && si != null)
                     {
                         foreach (KeyValuePair<int, Season> kvp in si.AiredSeasons
                         ) //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
@@ -69,7 +69,9 @@ namespace TVRename
                                 {
                                     string aa = g.Trim();
                                     if (!string.IsNullOrEmpty(aa))
+                                    {
                                         theData.Set(si.Name, aa, false);
+                                    }
                                 }
                             }
                         }
@@ -127,7 +129,10 @@ namespace TVRename
             // also move the shows they've been in to the top, too
             int c = theData.Cols.IndexOf(a);
             if (c != 0)
+            {
                 return; // uh oh!
+            }
+
             int end = 0;
             for (int r = theData.DataR - 1; r >= end; r--)
             {
@@ -151,7 +156,10 @@ namespace TVRename
             // also move the actors in this show to the top, too
             int r = theData.Rows.IndexOf(s);
             if (r != 0)
+            {
                 return; // uh oh!
+            }
+
             int end = 0;
             for (int c = theData.DataC - 1; c >= end; c--)
             {
@@ -212,7 +220,9 @@ namespace TVRename
             {
                 grid1.Columns[i].AutoSizeMode = i == 0 ? SourceGrid.AutoSizeMode.Default : SourceGrid.AutoSizeMode.MinimumSize;
                 if (i > 0)
+                {
                     grid1.Columns[i].Width = 24;
+                }
             }
 
             grid1.Rows[0].AutoSizeMode = SourceGrid.AutoSizeMode.MinimumSize;
@@ -280,15 +290,21 @@ namespace TVRename
                         grid1[r + 1, c + 1].AddController(new CellClickEvent(theData.Cols[c]));
                     }
                     else
+                    {
                         grid1[r + 1, c + 1] = new Cell("");
+                    }
                 }
             }
 
             for (int c = 0; c < theData.DataC; c++)
+            {
                 grid1[rows - 1, c + 1] = new Cell(theData.ColScore(c));
+            }
 
             for (int r = 0; r < theData.DataR; r++)
+            {
                 grid1[r + 1, cols - 1] = new Cell(theData.RowScore(r, null));
+            }
 
             grid1[theData.DataR + 1, theData.DataC + 1] = new Cell("");
 
@@ -311,7 +327,9 @@ namespace TVRename
         {
             saveFile.Filter = "PNG Files (*.png)|*.png|All Files (*.*)|*.*";
             if (saveFile.ShowDialog() != DialogResult.OK)
+            {
                 return;
+            }
 
             SourceGrid.Exporter.Image image = new SourceGrid.Exporter.Image();
             Bitmap b = image.Export(grid1, grid1.CompleteRange);
@@ -321,23 +339,34 @@ namespace TVRename
         private void DoSort()
         {
             if (rbTotals.Checked)
+            {
                 SortByTotals();
+            }
             else
+            {
                 SortByName(); // will check name for us, too
+            }
+
             FillGrid();
         }
 
         private void rbName_CheckedChanged(object sender, EventArgs e)
         {
             if (Internal != 0)
+            {
                 return;
+            }
+
             DoSort();
         }
 
         private void rbTotals_CheckedChanged(object sender, EventArgs e)
         {
             if (Internal != 0)
+            {
                 return;
+            }
+
             DoSort();
         }
 
@@ -380,7 +409,10 @@ namespace TVRename
                 allocC = rowCountPreAlloc * 10;
                 Data = new bool?[allocR][];
                 for (int i = 0; i < allocR; i++)
+                {
                     Data[i] = new bool?[allocC];
+                }
+
                 DataR = DataC = 0;
             }
 
@@ -410,13 +442,15 @@ namespace TVRename
                 Rows[r2] = t2;
             }
 
-            public int RowScore(int r, bool[] onlyCols)
+            public int RowScore(int r, [CanBeNull] bool[] onlyCols)
             {
                 int t = 0;
                 for (int c = 0; c < DataC; c++)
                 {
                     if (((Data[r][c] != null) && ((onlyCols == null) || onlyCols[c])))
+                    {
                         t++;
+                    }
                 }
                 return t;
             }
@@ -427,7 +461,9 @@ namespace TVRename
                 for (int r = 0; r < DataR; r++)
                 {
                     if ((Data[r][c] != null))
+                    {
                         t++;
+                    }
                 }
                 return t;
             }
@@ -439,19 +475,29 @@ namespace TVRename
                 if ((newr > allocR) || (newc > allocC)) // need to enlarge array
                 {
                     if (newr > allocR)
+                    {
                         allocR = newr * 2;
+                    }
+
                     if (newc > allocC)
+                    {
                         allocC = newc * 2;
+                    }
+
                     bool?[][] newarr = new bool?[allocR][];
                     for (int i = 0; i < allocR; i++)
+                    {
                         newarr[i] = new bool?[allocC];
+                    }
 
                     for (int r = 0; r < DataR; r++)
                     {
                         for (int c = 0; c < DataC; c++)
                         {
                             if ((r < newr) && (c < newc))
+                            {
                                 newarr[r][c] = Data[r][c];
+                            }
                         }
                     }
                     Data = newarr;
@@ -508,7 +554,9 @@ namespace TVRename
                         for (int c = 0, newC = 0; c < DataC; c++)
                         {
                             if (keepR[r] && keepC[c])
+                            {
                                 newarr[newR][newC++] = Data[r][c];
+                            }
                         }
                         newR++;
                     }
@@ -517,12 +565,16 @@ namespace TVRename
                 for (int r = 0, newR = 0; r < DataR; r++)
                 {
                     if (keepR[r])
+                    {
                         Rows[newR++] = Rows[r];
+                    }
                 }
                 for (int c = 0, newC = 0; c < DataC; c++)
                 {
                     if (keepC[c])
+                    {
                         Cols[newC++] = Cols[c];
+                    }
                 }
 
                 Rows.RemoveRange(countR, Rows.Count - countR);
@@ -538,9 +590,15 @@ namespace TVRename
                 int r = Rows.IndexOf(row);
                 int c = Cols.IndexOf(col);
                 if (r == -1)
+                {
                     r = AddRow(row);
+                }
+
                 if (c == -1)
+                {
                     c = AddCol(col);
+                }
+
                 Data[r][c] = isActor;
             }
 
@@ -564,7 +622,7 @@ namespace TVRename
                         }
                         else
                         {
-                            if ((maxat == -1) || (String.Compare(Cols[c], topword, StringComparison.Ordinal) < 0))
+                            if ((maxat == -1) || (string.Compare(Cols[c], topword, StringComparison.Ordinal) < 0))
                             {
                                 maxat = c;
                                 topword = Cols[c];
@@ -572,7 +630,9 @@ namespace TVRename
                         }
                     }
                     if (maxat != c2)
+                    {
                         SwapCols(c2, maxat);
+                    }
                 }
             }
 
@@ -580,19 +640,27 @@ namespace TVRename
             {
                 int n = Cols.IndexOf(col);
                 if (n == -1)
+                {
                     return;
+                }
 
                 for (int r = 0; r < DataR; r++)
                 {
                     bool? t = Data[r][n];
                     for (int c = n; c > 0; c--)
+                    {
                         Data[r][c] = Data[r][c - 1];
+                    }
+
                     Data[r][0] = t;
                 }
 
                 string t2 = Cols[n];
                 for (int c = n; c > 0; c--)
+                {
                     Cols[c] = Cols[c - 1];
+                }
+
                 Cols[0] = t2;
             }
 
@@ -600,19 +668,27 @@ namespace TVRename
             {
                 int n = Rows.IndexOf(row);
                 if (n == -1)
+                {
                     return;
+                }
 
                 for (int c = 0; c < DataC; c++)
                 {
                     bool? t = Data[n][c];
                     for (int r = n; r > 0; r--)
+                    {
                         Data[r][c] = Data[r - 1][c];
+                    }
+
                     Data[0][c] = t;
                 }
 
                 string t2 = Rows[n];
                 for (int r = n; r > 0; r--)
+                {
                     Rows[r] = Rows[r - 1];
+                }
+
                 Rows[0] = t2;
             }
 
@@ -636,7 +712,7 @@ namespace TVRename
                         }
                         else
                         {
-                            if ((maxat == -1) || (String.Compare(Rows[r], topword, StringComparison.Ordinal) < 0))
+                            if ((maxat == -1) || (string.Compare(Rows[r], topword, StringComparison.Ordinal) < 0))
                             {
                                 maxat = r;
                                 topword = Rows[r];
@@ -644,7 +720,9 @@ namespace TVRename
                         }
                     }
                     if (maxat != r2)
+                    {
                         SwapRows(r2, maxat);
+                    }
                 }
             }
         }
@@ -662,7 +740,7 @@ namespace TVRename
                 this.angle = angle;
             }
 
-            protected override void OnDraw(DevAge.Drawing.GraphicsCache graphics, RectangleF area)
+            protected override void OnDraw([NotNull] DevAge.Drawing.GraphicsCache graphics, RectangleF area)
             {
                 System.Drawing.Drawing2D.GraphicsState state = graphics.Graphics.Save();
                 try
@@ -708,9 +786,13 @@ namespace TVRename
             public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
             {
                 if (show == null)
+                {
                     g.DoSort();
+                }
                 else
+                {
                     g.ShowToTop(show);
+                }
             }
         }
 

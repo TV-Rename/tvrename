@@ -42,7 +42,10 @@ namespace TVRename
         public void StartBgDownloadThread(bool stopOnError, ICollection<SeriesSpecifier> shows, bool showMsgBox)
         {
             if (!DownloadDone)
+            {
                 return;
+            }
+
             downloadStopOnError = stopOnError;
             showErrorMsgBox = showMsgBox;
             DownloadPct = 0;
@@ -60,7 +63,10 @@ namespace TVRename
         public bool DoDownloadsFg(bool showProgress, bool showMsgBox, ICollection<SeriesSpecifier> shows)
         {
             if (TVSettings.Instance.OfflineMode)
+            {
                 return true; // don't do internet in offline mode!
+            }
+
             Logger.Info("Doing downloads in the foreground...");
 
             StartBgDownloadThread(true, shows,showMsgBox);
@@ -68,7 +74,9 @@ namespace TVRename
             const int DELAY_STEP = 100;
             int count = 1000 / DELAY_STEP; // one second
             while ((count-- > 0) && (!DownloadDone))
+            {
                 Thread.Sleep(DELAY_STEP);
+            }
 
             if (!DownloadDone && showProgress) // downloading still going on, so time to show the dialog if we're not in /hide mode
             {
@@ -102,7 +110,10 @@ namespace TVRename
 
         public void StopBgDownloadThread()
         {
-            if (mDownloaderThread == null) return;
+            if (mDownloaderThread == null)
+            {
+                return;
+            }
 
             DownloadDone = true;
             mDownloaderThread.Join();
@@ -126,11 +137,16 @@ namespace TVRename
                 Threadslogger.Trace("  Downloading " + series.Name);
 
                 if (TheTVDB.Instance.EnsureUpdated(series.SeriesId, bannersToo, series.UseCustomLanguage,
-                        series.CustomLanguageCode)) return;
+                        series.CustomLanguageCode))
+                {
+                    return;
+                }
 
                 downloadOk = false;
                 if (downloadStopOnError)
+                {
                     DownloadDone = true;
+                }
             }
             catch (ShowNotFoundException snfe)
             {
@@ -154,7 +170,9 @@ namespace TVRename
                 foreach (Thread t in workers)
                 {
                     if (t.IsAlive)
+                    {
                         t.Join();
+                    }
                 }
             }
 
@@ -214,11 +232,15 @@ namespace TVRename
                     for (int i = workers.Count - 1; i >= 0; i--)
                     {
                         if (!workers[i].IsAlive)
+                        {
                             workers.RemoveAt(i); // remove dead worker
+                        }
                     }
 
                     if (DownloadDone)
+                    {
                         break;
+                    }
                 }
 
                 WaitForAllThreadsAndTidyUp();
@@ -249,7 +271,10 @@ namespace TVRename
         private void WaitForBgDownloadDone()
         {
             if ((mDownloaderThread != null) && (mDownloaderThread.IsAlive))
+            {
                 mDownloaderThread.Join();
+            }
+
             mDownloaderThread = null;
         }
 
@@ -259,7 +284,10 @@ namespace TVRename
             if (disposing)
             {
                 // ReSharper disable once UseNullPropagation
-                if (workerSemaphore != null) workerSemaphore.Dispose();
+                if (workerSemaphore != null)
+                {
+                    workerSemaphore.Dispose();
+                }
             }
         }
 

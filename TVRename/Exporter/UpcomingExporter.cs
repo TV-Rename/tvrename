@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -22,6 +23,7 @@ namespace TVRename
             this.doc = doc;
         }
 
+        [NotNull]
         private string Produce()
         {
             try
@@ -36,19 +38,12 @@ namespace TVRename
                     List<ProcessedEpisode> lpe = doc.Library.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
                         TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
 
-                    if (lpe != null)
+                    if (Generate(ms, lpe))
                     {
-                        if (Generate(ms, lpe))
-                        {
-                            return Encoding.ASCII.GetString(ms.ToArray());
-                        }
+                        return Encoding.ASCII.GetString(ms.ToArray());
+                    }
 
-                        LOGGER.Error("Failed to generate records to put into Export file at: {0}", Location());
-                    }
-                    else
-                    {
-                        LOGGER.Error("Failed to produce records to put into Export file at: {0}", Location());
-                    }
+                    LOGGER.Error("Failed to generate records to put into Export file at: {0}", Location());
                 }
             }
             catch (Exception e)

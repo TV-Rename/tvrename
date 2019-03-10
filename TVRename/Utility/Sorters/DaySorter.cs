@@ -1,41 +1,35 @@
 using System;
-using System.Collections;
 using System.Windows.Forms;
 
 namespace TVRename
 {
-    public sealed class DaySorter : IComparer
+    public sealed class DaySorter : ListViewItemSorter
     {
-        private readonly int col;
+        public DaySorter(int column) : base(column) { }
 
-        public DaySorter(int column)
+        protected override int CompareListViewItem(ListViewItem x, ListViewItem y)
         {
-            col = column;
-        }
-
-        #region IComparer Members
-
-        public int Compare(object x, object y)
-        {
-            if (!(x is ListViewItem lvix)) throw new InvalidOperationException();
-            if (!(y is ListViewItem lviy)) throw new InvalidOperationException();
-
             int d1 = 8;
             int d2 = 8;
 
             try
             {
-                string t1 = lvix.SubItems[col].Text;
-                string t2 = lviy.SubItems[col].Text;
+                string t1 = x.SubItems[Col].Text;
+                string t2 = y.SubItems[Col].Text;
 
                 DateTime now = DateTime.Now;
 
                 for (int i = 0; i < 7; i++)
                 {
                     if ((now + new TimeSpan(i, 0, 0, 0)).ToString("ddd") == t1)
+                    {
                         d1 = i;
+                    }
+
                     if ((now + new TimeSpan(i, 0, 0, 0)).ToString("ddd") == t2)
+                    {
                         d2 = i;
+                    }
                 }
             }
             catch
@@ -45,7 +39,5 @@ namespace TVRename
 
             return d1 - d2;
         }
-
-        #endregion
     }
 }

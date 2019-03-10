@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using JetBrains.Annotations;
+
 namespace TVRename
 {
     internal class CopyMoveXml : ActionListXml
@@ -23,6 +25,7 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.ExportFOXML;
         protected override string Location() => TVSettings.Instance.ExportFOXMLTo;
+        [NotNull]
         protected override string MainXmlElementName() => "FindingAndOrganising";
     }
 }

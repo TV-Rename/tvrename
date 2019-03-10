@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -19,6 +20,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.SearchRSS;
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.search;
+        [NotNull]
         protected override string Checkname() => "Looked in the listed RSS URLs for download links for the missing files";
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
@@ -45,7 +47,9 @@ namespace TVRename
             foreach (ItemMissing action in ActionList.MissingItems())
             {
                 if (settings.Token.IsCancellationRequested)
+                {
                     return;
+                }
 
                 UpdateStatus(n++, c, action.Filename);
 
@@ -82,7 +86,9 @@ namespace TVRename
                 }
 
                 foreach (ActionTDownload x in FindDuplicates(newItemsForThisMissingEpisode))
+                {
                     newItemsForThisMissingEpisode.Remove(x);
+                }
 
                 newItems.AddNullableRange(newItemsForThisMissingEpisode);
             }

@@ -7,6 +7,7 @@
 // 
 
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -16,7 +17,8 @@ namespace TVRename
         {
         }
 
-        protected static IEnumerable<ActionTDownload> FindDuplicates(ItemList newItems)
+        [NotNull]
+        protected static IEnumerable<ActionTDownload> FindDuplicates([NotNull] ItemList newItems)
         {
             //We now want to rationlise the newItems - just in case we've added duplicates
             List<ActionTDownload> duplicateActionRss = new List<ActionTDownload>();
@@ -24,12 +26,21 @@ namespace TVRename
             foreach (Item x in newItems)
             {
                 if (!(x is ActionTDownload testActionRssOne))
+                {
                     continue;
+                }
+
                 foreach (Item y in newItems)
                 {
                     if (!(y is ActionTDownload testActionRssTwo))
+                    {
                         continue;
-                    if (x.Equals(y)) continue;
+                    }
+
+                    if (x.Equals(y))
+                    {
+                        continue;
+                    }
 
                     string[] preferredTerms = TVSettings.Instance.PreferredRSSSearchTerms();
 

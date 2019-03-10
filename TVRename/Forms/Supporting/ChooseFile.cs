@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Humanizer;
+using JetBrains.Annotations;
 using NLog;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
@@ -29,7 +30,7 @@ namespace TVRename
         private readonly FileInfo leftFile;
         private readonly FileInfo rightFile;
 
-        public ChooseFile(FileInfo left, FileInfo right)
+        public ChooseFile([NotNull] FileInfo left, [NotNull] FileInfo right)
         {
             InitializeComponent();
             
@@ -43,12 +44,15 @@ namespace TVRename
 
             SetBoldFilmLength(leftFilmLength, rightFilmLength);
 
-            if (rightFrameUnknown || leftFrameUnknown) return;
+            if (rightFrameUnknown || leftFrameUnknown)
+            {
+                return;
+            }
 
             SetBoldFrameWidth(leftFrameWidth, rightFrameWidth);
         }
 
-        private static (int,bool,int) UpdateFields(FileInfo file, Label nameLabel, Label dimensionsLabel, Label lengthLabel, Label sizeLabel, Label pathLabel)
+        private static (int,bool,int) UpdateFields([NotNull] FileInfo file, [NotNull] Label nameLabel, [NotNull] Label dimensionsLabel, [NotNull] Label lengthLabel, [NotNull] Label sizeLabel, [NotNull] Label pathLabel)
         {
             nameLabel.Text = file.Name;
             int leftFrameWidth = file.GetFrameWidth();
@@ -72,12 +76,12 @@ namespace TVRename
             return (leftFrameWidth, leftFrameUnknown, leftFilmLength);
         }
 
-        private static string GetFileSize(FileInfo file)
+        private static string GetFileSize([NotNull] FileInfo file)
         {
                 return file.Length.Bytes().Humanize("#.#");
         }
 
-        private void SetBoldFileSize(FileInfo left, FileInfo right)
+        private void SetBoldFileSize([NotNull] FileInfo left, [NotNull] FileInfo right)
         {
             try
             {

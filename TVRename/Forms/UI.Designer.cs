@@ -1292,7 +1292,6 @@ namespace TVRename
             listViewGroup12,
             listViewGroup13,
             listViewGroup14});
-            this.lvWhenToWatch.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lvWhenToWatch.HideSelection = false;
             this.lvWhenToWatch.Location = new System.Drawing.Point(0, 35);
             this.lvWhenToWatch.Name = "lvWhenToWatch";

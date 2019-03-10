@@ -7,6 +7,7 @@
 // 
 
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -41,12 +42,15 @@ namespace TVRename
             updateTime = date;
         }
 
+        [CanBeNull]
         public override string Produces => whereFile?.FullName?? whereDirectory?.FullName;
 
         #region Action Members
 
+        [NotNull]
         public override string Name => "Update Timestamp";
 
+        [CanBeNull]
         public override string ProgressText => whereFile?.Name??whereDirectory?.Name;
 
         public override long SizeOfWork => 100;
@@ -76,12 +80,19 @@ namespace TVRename
             return true;
         }
 
-        private static void ProcessFile(FileInfo whereFile, DateTime updateTime)
+        private static void ProcessFile([NotNull] FileInfo whereFile, DateTime updateTime)
         {
             bool priorFileReadonly = whereFile.IsReadOnly;
-            if (priorFileReadonly) whereFile.IsReadOnly = false;
+            if (priorFileReadonly)
+            {
+                whereFile.IsReadOnly = false;
+            }
+
             File.SetLastWriteTimeUtc(whereFile.FullName, updateTime);
-            if (priorFileReadonly) whereFile.IsReadOnly = true;
+            if (priorFileReadonly)
+            {
+                whereFile.IsReadOnly = true;
+            }
         }
 
         #endregion
@@ -98,11 +109,20 @@ namespace TVRename
             ActionDateTouch nfo = o as ActionDateTouch;
 
             if (Episode == null)
+            {
                 return 1;
+            }
+
             if (nfo?.Episode == null)
+            {
                 return -1;
+            }
+
             if (whereFile != null)
+            {
                 return string.Compare((whereFile.FullName + Episode.Name), nfo.whereFile.FullName + nfo.Episode.Name, StringComparison.Ordinal);
+            }
+
             return string.Compare((whereDirectory.FullName + Episode.Name), nfo.whereDirectory.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
 
@@ -110,6 +130,7 @@ namespace TVRename
 
         #region Item Members
 
+        [CanBeNull]
         public override IgnoreItem Ignore => whereFile == null ? null : new IgnoreItem(whereFile.FullName);
 
         protected override string SeriesName => (Episode != null) ? Episode.Show.ShowName :
@@ -118,9 +139,13 @@ namespace TVRename
             (season != null) ? season.SeasonNumber.ToString() : string.Empty;
         protected override string AirDate =>
             (updateTime.CompareTo(DateTime.MaxValue)) != 0 ? updateTime.ToShortDateString() : "";
+        [CanBeNull]
         protected override string DestinationFolder => whereFile?.DirectoryName ?? whereDirectory?.FullName;
+        [CanBeNull]
         protected override string DestinationFile => whereFile?.Name ?? whereDirectory?.Name;
+        [CanBeNull]
         public override string TargetFolder => whereFile?.DirectoryName??whereDirectory?.Name;
+        [NotNull]
         public override string ScanListViewGroup => "lvgUpdateFileDates";
         public override int IconNumber => 7;
 

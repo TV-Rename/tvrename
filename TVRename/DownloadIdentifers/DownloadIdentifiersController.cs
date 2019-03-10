@@ -7,6 +7,7 @@
 // 
 
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -39,10 +40,15 @@ namespace TVRename
             }
         }
 
-        public ItemList ProcessShow(ShowItem si)
+        [NotNull]
+        public ItemList ProcessShow([CanBeNull] ShowItem si)
         {
             ItemList theActionList = new ItemList();
-            if (si is null) return theActionList;
+            if (si is null)
+            {
+                return theActionList;
+            }
+
             foreach (DownloadIdentifier di in identifiers)
             {
                 theActionList.Add(di.ProcessShow(si));
@@ -50,10 +56,15 @@ namespace TVRename
             return theActionList;
         }
 
-        public ItemList ProcessSeason(ShowItem si, string folder, int snum)
+        [NotNull]
+        public ItemList ProcessSeason([CanBeNull] ShowItem si, string folder, int snum)
         {
             ItemList theActionList = new ItemList();
-            if (si is null) return theActionList;
+            if (si is null)
+            {
+                return theActionList;
+            }
+
             foreach (DownloadIdentifier di in identifiers)
             {
                 theActionList.Add(di.ProcessSeason (si,folder,snum));
@@ -61,10 +72,15 @@ namespace TVRename
             return theActionList;
         }
 
-        public ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo)
+        [NotNull]
+        public ItemList ProcessEpisode([CanBeNull] ProcessedEpisode dbep, FileInfo filo)
         {
             ItemList theActionList = new ItemList();
-            if (dbep is null) return theActionList;
+            if (dbep is null)
+            {
+                return theActionList;
+            }
+
             foreach (DownloadIdentifier di in identifiers)
             {
                 theActionList.Add(di.ProcessEpisode(dbep,filo));
@@ -79,38 +95,59 @@ namespace TVRename
             }
         }
 
-        public ItemList ForceUpdateShow(DownloadIdentifier.DownloadType dt, ShowItem si)
+        [NotNull]
+        public ItemList ForceUpdateShow(DownloadIdentifier.DownloadType dt, [CanBeNull] ShowItem si)
         {
             ItemList theActionList = new ItemList();
-            if (si is null) return theActionList;
+            if (si is null)
+            {
+                return theActionList;
+            }
+
             foreach (DownloadIdentifier di in identifiers)
             {
                 if (dt == di.GetDownloadType())
+                {
                     theActionList.Add(di.ProcessShow(si,true));
+                }
             }
             return theActionList;
         }
 
-        public ItemList ForceUpdateSeason(DownloadIdentifier.DownloadType dt, ShowItem si, string folder, int snum)
+        [NotNull]
+        public ItemList ForceUpdateSeason(DownloadIdentifier.DownloadType dt, [CanBeNull] ShowItem si, string folder, int snum)
         {
             ItemList theActionList = new ItemList();
-            if (si is null) return theActionList;
+            if (si is null)
+            {
+                return theActionList;
+            }
+
             foreach (DownloadIdentifier di in identifiers)
             {
                 if (dt == di.GetDownloadType())
+                {
                     theActionList.Add(di.ProcessSeason(si, folder,snum, true));
+                }
             }
             return theActionList;
         }
 
-        public ItemList ForceUpdateEpisode(DownloadIdentifier.DownloadType dt, ProcessedEpisode dbep, FileInfo filo)
+        [NotNull]
+        public ItemList ForceUpdateEpisode(DownloadIdentifier.DownloadType dt, [CanBeNull] ProcessedEpisode dbep, FileInfo filo)
         {
             ItemList theActionList = new ItemList();
-            if (dbep is null) return theActionList;
+            if (dbep is null)
+            {
+                return theActionList;
+            }
+
             foreach (DownloadIdentifier di in identifiers)
             {
                 if (dt == di.GetDownloadType())
+                {
                     theActionList.Add(di.ProcessEpisode(dbep,filo, true));
+                }
             }
             return theActionList;
         }

@@ -7,6 +7,7 @@
 //
 using System;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -61,7 +62,8 @@ namespace TVRename
             UserDefinedBasePath = path;
         }
 
-        private static FileInfo GetFileInfo(string path, string file)
+        [NotNull]
+        private static FileInfo GetFileInfo([NotNull] string path, [NotNull] string file)
         {
             Directory.CreateDirectory(path);
 
@@ -119,6 +121,7 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
+        [NotNull]
         public static FileInfo UILayoutFile
         {
             get
@@ -135,6 +138,7 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
+        [NotNull]
         public static FileInfo TVDBFile
         {
             get
@@ -151,6 +155,7 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
+        [NotNull]
         public static FileInfo TVDocSettingsFile
         {
             get
@@ -166,6 +171,7 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         public static FileInfo LanguagesFile
         {
             get

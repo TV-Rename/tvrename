@@ -8,25 +8,35 @@
 
 using System.Collections.Generic;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class MergeLibraryEpisodes : ScanShowActivity
+    internal class MergeLibraryEpisodes : ScanShowActivity
     {
         public MergeLibraryEpisodes(TVDoc doc) : base(doc) {}
+
+        [NotNull]
         protected override string Checkname() => "Created Merge Rules for episodes in the library";
 
         protected override void Check(ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
             if (settings.Token.IsCancellationRequested)
-                throw new TVRenameOperationInteruptedException();
+            {
+                throw new TVRenameOperationInterruptedException();
+            }
 
-            if (!TVSettings.Instance.AutoMergeLibraryEpisodes) return;
+            if (!TVSettings.Instance.AutoMergeLibraryEpisodes)
+            {
+                return;
+            }
 
             Dictionary<int, List<string>> allFolders = si.AllExistngFolderLocations();
 
             if (allFolders.Count == 0) // no folders defined for this show
+            {
                 return; // so, nothing to do.
+            }
 
             int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
             si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
@@ -35,16 +45,24 @@ namespace TVRename
             foreach (int snum in numbers)
             {
                 if (settings.Token.IsCancellationRequested)
-                    throw new TVRenameOperationInteruptedException();
+                {
+                    throw new TVRenameOperationInterruptedException();
+                }
 
                 if ((si.IgnoreSeasons.Contains(snum)) || (!allFolders.ContainsKey(snum)))
+                {
                     continue; // ignore/skip this season
+                }
 
                 if ((snum == 0) && (si.CountSpecials))
+                {
                     continue; // don't process the specials season, as they're merged into the seasons themselves
+                }
 
                 if ((snum == 0) && TVSettings.Instance.IgnoreAllSpecials)
+                {
                     continue;
+                }
 
                 // all the folders for this particular season
                 List<string> folders = allFolders[snum];
@@ -56,17 +74,21 @@ namespace TVRename
                 foreach (string folder in folders)
                 {
                     if (settings.Token.IsCancellationRequested)
-                        throw new TVRenameOperationInteruptedException();
+                    {
+                        throw new TVRenameOperationInterruptedException();
+                    }
 
                     FileInfo[] files = dfc.GetFiles(folder);
                     if (files == null)
+                    {
                         continue;
+                    }
 
                     foreach (FileInfo fi in files)
                     {
                         if (settings.Token.IsCancellationRequested)
                         {
-                            throw new TVRenameOperationInteruptedException();
+                            throw new TVRenameOperationInterruptedException();
                         }
 
                         if (!fi.IsMovieFile())

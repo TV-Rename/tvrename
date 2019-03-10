@@ -34,7 +34,9 @@ namespace TVRename
             foreach (ItemMissing action in ActionList.MissingItems())
             {
                 if (settings.Token.IsCancellationRequested)
+                {
                     return;
+                }
 
                 UpdateStatus(n++, c, action.Filename);
 
@@ -42,12 +44,17 @@ namespace TVRename
                 {
                     FileInfo file = new FileInfo(te.DownloadingTo);
                     if (!file.IsMovieFile()) // not a usefile file extension
+                    {
                         continue;
+                    }
 
                     //do any of the possible names for the series match the filename?
                     bool matched = action.Episode.Show.NameMatch(file,true);
 
-                    if (!matched) continue;
+                    if (!matched)
+                    {
+                        continue;
+                    }
 
                     if (FinderHelper.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) && (seasF == action.Episode.AppropriateSeasonNumber) && (epF == action.Episode.AppropriateEpNum))
                     {

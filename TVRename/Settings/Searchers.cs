@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 
 // Things like bittorrent search engines, etc.  Manages a URL template that is fed through
 // CustomName.cs to generate a final URL.
@@ -37,10 +38,13 @@ namespace TVRename
             currentSearch = "Google";
         }
         
-        public Searchers(XElement settings)
+        public Searchers([CanBeNull] XElement settings)
         {
             choices = new List<Choice>();
-            if (settings is null) return;
+            if (settings is null)
+            {
+                return;
+            }
 
             currentSearch = settings.ExtractString("Current");
 
@@ -48,7 +52,9 @@ namespace TVRename
             {
                 string url = x.Attribute("URL")?.Value;
                 if (url == null)
+                {
                     url = x.Attribute("URL2")?.Value;
+                }
                 else
                 {
                     // old-style URL, replace "!" with "{ShowName}+{Season}+{Episode}"
@@ -70,7 +76,9 @@ namespace TVRename
             for (int i = 0; i < choices.Count; i++)
             {
                 if (choices[i].Name == srch)
+                {
                     return i;
+                }
             }
             return 0;
         }
@@ -80,7 +88,7 @@ namespace TVRename
             return choices.Count == 0 ? "" : choices[CurrentSearchNum()].Url2;
         }
 
-        public void WriteXml(XmlWriter writer)
+        public void WriteXml([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("TheSearchers");
             XmlHelper.WriteElementToXml(writer,"Current",currentSearch);
@@ -106,18 +114,28 @@ namespace TVRename
         public string Name(int n)
         {
             if (n >= choices.Count)
+            {
                 n = choices.Count - 1;
+            }
             else if (n < 0)
+            {
                 n = 0;
+            }
+
             return choices[n].Name;
         }
 
         public string Url(int n)
         {
             if (n >= choices.Count)
+            {
                 n = choices.Count - 1;
+            }
             else if (n < 0)
+            {
                 n = 0;
+            }
+
             return choices[n].Url2;
         }
     }

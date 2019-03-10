@@ -8,24 +8,32 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
     public class ItemList : List<Item>
     {
-        public void Add(ItemList slil)
+        public void Add([CanBeNull] ItemList slil)
         {
-            if (slil == null) return;
+            if (slil == null)
+            {
+                return;
+            }
+
             foreach (Item sli in slil)
             {
                 Add(sli);
             }
         }
 
+        [NotNull]
         public IEnumerable<Action> Actions( ) => this.OfType<Action>();
 
+        [NotNull]
         public IEnumerable<ItemMissing> MissingItems() => this.OfType<ItemMissing>();
 
+        [NotNull]
         public IEnumerable<ActionCopyMoveRename> CopyMoveItems() => this.OfType<ActionCopyMoveRename>();
 
         public void Replace(ItemList toRemove, ItemList newList)
@@ -34,9 +42,13 @@ namespace TVRename
             Add(newList);
         }
 
-        internal void Remove(List<Item> toRemove)
+        internal void Remove([CanBeNull] List<Item> toRemove)
         {
-            if (toRemove == null) return;
+            if (toRemove == null)
+            {
+                return;
+            }
+
             foreach (Item sli in toRemove)
             {
                 Remove(sli);
