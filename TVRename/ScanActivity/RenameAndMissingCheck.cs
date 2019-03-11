@@ -63,17 +63,17 @@ namespace TVRename
 
                 if (si.IgnoreSeasons.Contains(snum) || !allFolders.ContainsKey(snum))
                 {
-                    return;
+                    continue;
                 }
 
                 if ((snum == 0) && (si.CountSpecials))
                 {
-                    return;
+                    continue;
                 }
 
                 if ((snum == 0) && TVSettings.Instance.IgnoreAllSpecials)
                 {
-                    return;
+                    continue;
                 }
 
                 // all the folders for this particular season
@@ -224,25 +224,7 @@ namespace TVRename
                         bool notFuture =
                             (dtOk && (dt.Value.CompareTo(today) < 0)); // isn't an episode yet to be aired
 
-                        bool noAirdatesUntilNow = true;
-                        // for specials "season", see if any season has any aired dates
-                        // otherwise, check only up to the season we are considering
-                        for (int i = 1; i <= ((snum == 0) ? lastSeason : snum); i++)
-                        {
-                            if (ShowLibrary.HasAnyAirdates(si, i))
-                            {
-                                noAirdatesUntilNow = false;
-                                break;
-                            }
-                            else
-                            {
-                                //If the show is in its first season and no episodes have air dates
-                                if (lastSeason == 1)
-                                {
-                                    noAirdatesUntilNow = false;
-                                }
-                            }
-                        }
+                        bool noAirdatesUntilNow = NoAirdatesUntilNow(si, snum, lastSeason);
 
                         // only add to the missing list if, either:
                         // - force check is on
@@ -274,6 +256,27 @@ namespace TVRename
                     }
                 } // up to date check, for each episode in thetvdb
             } // if doing missing check
+        }
+
+        private static bool NoAirdatesUntilNow(ShowItem si, int snum, int lastSeason)
+        {
+            // for specials "season", see if any season has any aired dates
+            // otherwise, check only up to the season we are considering
+            for (int i = 1; i <= ((snum == 0) ? lastSeason : snum); i++)
+            {
+                if (ShowLibrary.HasAnyAirdates(si, i))
+                {
+                    return false;
+                }
+
+                //If the show is in its first season and no episodes have air dates
+                if (lastSeason == 1)
+                {
+                   return false;
+                }
+            }
+
+            return true;
         }
 
         [CanBeNull]

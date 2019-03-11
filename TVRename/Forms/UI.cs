@@ -1038,8 +1038,8 @@ namespace TVRename
                 case 4:
                 case 5:
                 case 6:
-                    lvWhenToWatch.ListViewItemSorter = new DateSorterWtw(col);
                     lvWhenToWatch.ShowGroups = true;
+                    lvWhenToWatch.ListViewItemSorter = new DateSorterWtw(col);
                     break;
                 case 1:
                 case 2:

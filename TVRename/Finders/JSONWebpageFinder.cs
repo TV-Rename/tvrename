@@ -41,7 +41,7 @@ namespace TVRename
             ItemList toRemove = new ItemList();
             try
             {
-                foreach (ItemMissing action in ActionList.MissingItems())
+                foreach (ItemMissing action in ActionList.MissingItems().ToList())
                 {
                     if (settings.Token.IsCancellationRequested)
                     {
@@ -99,16 +99,7 @@ namespace TVRename
                     {
                         string itemName = (string) item[TVSettings.Instance.SearchJSONFilenameToken];
                         string itemUrl = (string) item[TVSettings.Instance.SearchJSONURLToken];
-                        long itemSizeBytes;
-                        try
-                        {
-                            itemSizeBytes = (long) item[TVSettings.Instance.SearchJSONFileSizeToken];
-                        }
-                        catch
-                        {
-                            //-1 as size is not available (empty string or other)
-                            itemSizeBytes = -1;
-                        }
+                        long itemSizeBytes = CalculateItemSizeBytes(item);
 
                         if (TVSettings.Instance.DetailedRSSJSONLogging)
                         {
@@ -168,12 +159,30 @@ namespace TVRename
                     $"{TVSettings.Instance.SearchJSONRootNode} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.Episode.TheSeries.Name}");
             }
 
+            RemoveDuplicates(newItemsForThisMissingEpisode);
+
+            newItems.AddNullableRange(newItemsForThisMissingEpisode);
+        }
+
+        private static void RemoveDuplicates([NotNull] ItemList newItemsForThisMissingEpisode)
+        {
             foreach (ActionTDownload x in FindDuplicates(newItemsForThisMissingEpisode))
             {
                 newItemsForThisMissingEpisode.Remove(x);
             }
+        }
 
-            newItems.AddNullableRange(newItemsForThisMissingEpisode);
+        private static long CalculateItemSizeBytes(JToken item)
+        {
+            try
+            {
+                return (long) item[TVSettings.Instance.SearchJSONFileSizeToken];
+            }
+            catch
+            {
+                //-1 as size is not available (empty string or other)
+                return -1;
+            }
         }
     }
 }

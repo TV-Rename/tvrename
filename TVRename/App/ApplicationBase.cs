@@ -54,6 +54,28 @@ namespace TVRename.App
             // Update RegVersion to bring the WebBrowser up to speed
             RegistryHelper.UpdateBrowserEmulationVersion();
 
+            TVDoc doc = LoadSettings(clargs);
+
+            if (TVSettings.Instance.mode == TVSettings.BetaMode.BetaToo || TVSettings.Instance.ShareLogs)
+            {
+                SetupLogging();
+            }
+
+            ConvertSeriesTimeZones(doc, TheTVDB.Instance);
+
+            // Show user interface
+            UI ui = new UI(doc, (TVRenameSplash)SplashScreen, !clargs.Unattended && !clargs.Hide && Environment.UserInteractive);
+            ui.Text = ui.Text + " " + Helpers.DisplayVersion;
+
+            // Bind IPC actions to the form, this allows another instance to trigger form actions
+            RemoteClient.Bind(ui, doc);
+
+            MainForm = ui;
+        }
+
+        [NotNull]
+        private static TVDoc LoadSettings([NotNull] CommandLineArgs clargs)
+        {
             bool recover = false;
             string recoverText = string.Empty;
 
@@ -83,8 +105,8 @@ namespace TVRename.App
                     }
                     else
                     {
-                        // TODO: Throw an error
-                        return;
+                        Logger.Error("User requested no recovery");
+                        throw new TVRenameOperationInterruptedException();
                     }
                 }
 
@@ -120,21 +142,7 @@ namespace TVRename.App
                 }
             } while (recover);
 
-            if (TVSettings.Instance.mode == TVSettings.BetaMode.BetaToo || TVSettings.Instance.ShareLogs)
-            {
-                SetupLogging();
-            }
-
-            ConvertSeriesTimeZones(doc, TheTVDB.Instance);
-
-            // Show user interface
-            UI ui = new UI(doc, (TVRenameSplash)SplashScreen, !clargs.Unattended && !clargs.Hide && Environment.UserInteractive);
-            ui.Text = ui.Text + " " + Helpers.DisplayVersion;
-
-            // Bind IPC actions to the form, this allows another instance to trigger form actions
-            RemoteClient.Bind(ui, doc);
-
-            MainForm = ui;
+            return doc;
         }
 
         private static void SetupCustomSettings([NotNull] CommandLineArgs clargs)

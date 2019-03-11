@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Text;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -45,28 +46,14 @@ namespace TVRename
                 txt.AppendLine();
                 txt.AppendLine("---- TVRenameSettings.xml" );
                 txt.AppendLine();
-                try
-                {
-                    using (System.IO.StreamReader sr = new System.IO.StreamReader(PathManager.TVDocSettingsFile.FullName))
-                    {
-                        txt.AppendLine(sr.ReadToEnd());
-                    }
-                }
-                catch
-                {
-                    txt.AppendLine("Error reading TVRenameSettings.xml");
-                }
+                OutputSettingsFile(txt);
                 txt.AppendLine("");
             }
 
             if (cbFOScan.Checked || cbFolderScan.Checked)
             {
                 txt.AppendLine("==== Filename processors ====");
-                foreach (TVSettings.FilenameProcessorRE s in TVSettings.Instance.FNPRegexs)
-                {
-                    txt.AppendLine((s.Enabled ? "Enabled" : "Disabled") + " \"" + s.RegExpression + "\" " + (s.UseFullPath ? "(FullPath)" : "") );
-                }
-
+                OutputFilenameProcessors(txt);
                 txt.AppendLine();
             }
 
@@ -74,67 +61,103 @@ namespace TVRename
             {
                 txt.AppendLine( "==== Finding & Organising Directory Scan ====");
                 txt.AppendLine();
-
-                DirCache dirC = new DirCache();
-                foreach (string efi in TVSettings.Instance.DownloadFolders)
-                {
-                    dirC.AddFolder(null, 0, 0, efi, true);
-                }
-
-                foreach (DirCacheEntry fi in dirC)
-                {
-                    bool r = FinderHelper.FindSeasEp(fi.TheFile, out int seas, out int ep, out int maxEp, null);
-                    bool useful = fi.TheFile.IsMovieFile();
-                    txt.AppendLine(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + "," + maxEp + " " + (useful ? fi.TheFile.Extension : "-") + ")" );
-                }
+                ExtractDownloadFolders(txt);
                 txt.AppendLine();
             }
 
             if (cbFolderScan.Checked)
             {
                 txt.AppendLine("==== Media Folders Directory Scan ====" );
-
-                foreach (ShowItem si in mDoc.Library.GetShowItems() )
-                {
-                    foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
-                    {
-                        int snum = kvp.Key;
-                        if (((snum == 0) && (si.CountSpecials)) || !si.AllExistngFolderLocations().ContainsKey(snum))
-                        {
-                            continue; // skip specials
-                        }
-
-                        if ((snum == 0) && TVSettings.Instance.IgnoreAllSpecials)
-                        {
-                            continue;
-                        }
-
-                        foreach (string folder in si.AllExistngFolderLocations()[snum])
-                        {
-                            txt.AppendLine(si.TvdbCode + " : " + si.ShowName + " : S" + snum );
-                            txt.AppendLine("Folder: " + folder);
-                            
-                            DirCache files = new DirCache();
-                            if (Directory.Exists(folder))
-                            {
-                                files.AddFolder(null, 0, 0, folder, true);
-                            }
-
-                            foreach (DirCacheEntry fi in files)
-                            {
-                                bool r = FinderHelper.FindSeasEp(fi.TheFile, out int seas, out int ep, out int maxEp, si);
-                                bool useful = fi.TheFile.IsMovieFile();
-                                txt.AppendLine(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + "," + maxEp + " " + (useful ? fi.TheFile.Extension : "-") + ")" );
-                            }
-                            txt.AppendLine();
-                        }
-                    }
-                    txt.AppendLine();
-                }
+                ExtractShowDetails(txt);
                 txt.AppendLine();
             }
 
             txtEmailText.Text = txt.ToString();
+        }
+
+        private void ExtractShowDetails(StringBuilder txt)
+        {
+            foreach (ShowItem si in mDoc.Library.GetShowItems())
+            {
+                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
+                {
+                    int snum = kvp.Key;
+                    if (((snum == 0) && (si.CountSpecials)) || !si.AllExistngFolderLocations().ContainsKey(snum))
+                    {
+                        continue; // skip specials
+                    }
+
+                    if ((snum == 0) && TVSettings.Instance.IgnoreAllSpecials)
+                    {
+                        continue;
+                    }
+
+                    foreach (string folder in si.AllExistngFolderLocations()[snum])
+                    {
+                        txt.AppendLine(si.TvdbCode + " : " + si.ShowName + " : S" + snum);
+                        txt.AppendLine("Folder: " + folder);
+
+                        DirCache files = new DirCache();
+                        if (Directory.Exists(folder))
+                        {
+                            files.AddFolder(null, 0, 0, folder, true);
+                        }
+
+                        foreach (DirCacheEntry fi in files)
+                        {
+                            bool r = FinderHelper.FindSeasEp(fi.TheFile, out int seas, out int ep, out int maxEp, si);
+                            bool useful = fi.TheFile.IsMovieFile();
+                            txt.AppendLine(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + "," +
+                                           maxEp + " " + (useful ? fi.TheFile.Extension : "-") + ")");
+                        }
+
+                        txt.AppendLine();
+                    }
+                }
+
+                txt.AppendLine();
+            }
+        }
+
+        private static void ExtractDownloadFolders(StringBuilder txt)
+        {
+            DirCache dirC = new DirCache();
+            foreach (string efi in TVSettings.Instance.DownloadFolders)
+            {
+                dirC.AddFolder(null, 0, 0, efi, true);
+            }
+
+            foreach (DirCacheEntry fi in dirC)
+            {
+                bool r = FinderHelper.FindSeasEp(fi.TheFile, out int seas, out int ep, out int maxEp, null);
+                bool useful = fi.TheFile.IsMovieFile();
+                txt.AppendLine(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + "," + maxEp + " " +
+                               (useful ? fi.TheFile.Extension : "-") + ")");
+            }
+        }
+
+        private static void OutputFilenameProcessors(StringBuilder txt)
+        {
+            foreach (TVSettings.FilenameProcessorRE s in TVSettings.Instance.FNPRegexs)
+            {
+                txt.AppendLine((s.Enabled ? "Enabled" : "Disabled") + " \"" + s.RegExpression + "\" " +
+                               (s.UseFullPath ? "(FullPath)" : ""));
+            }
+        }
+
+        private static void OutputSettingsFile([NotNull] StringBuilder txt)
+        {
+            try
+            {
+                using (System.IO.StreamReader sr = new System.IO.StreamReader(PathManager.TVDocSettingsFile.FullName))
+                {
+                    txt.AppendLine(sr.ReadToEnd());
+                }
+            }
+            catch
+            {
+                txt.AppendLine("Error reading TVRenameSettings.xml");
+            }
         }
 
         private void bnCopy_Click(object sender, System.EventArgs e)

@@ -75,7 +75,7 @@ namespace TVRename
 
             try
             {
-                foreach (ItemMissing action in ActionList.MissingItems())
+                foreach (ItemMissing action in ActionList.MissingItems().ToList())
                 {
                     if (settings.Token.IsCancellationRequested)
                     {
