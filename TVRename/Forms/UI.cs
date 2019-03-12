@@ -686,7 +686,7 @@ namespace TVRename
                 {
                     SeriesInfo serA = TheTVDB.Instance.GetSeries(a.TvdbCode);
                     SeriesInfo serB = TheTVDB.Instance.GetSeries(b.TvdbCode);
-                    return string.Compare(GenerateShowUIName(serA, a), GenerateShowUIName(serB, b), StringComparison.Ordinal);
+                    return string.Compare(GenerateShowUIName(serA, a), GenerateShowUIName(serB, b), StringComparison.OrdinalIgnoreCase);
                 });
             }
 
