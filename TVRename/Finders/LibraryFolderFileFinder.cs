@@ -15,6 +15,11 @@ namespace TVRename
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
+            if (ActionList is null)
+            {
+                return;
+            }
+
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
             DirFilesCache dfc = new DirFilesCache();
@@ -25,19 +30,9 @@ namespace TVRename
 
             LOGGER.Info("Starting to look for missing items in the library");
 
-            if (ActionList is null)
-            {
-                return;
-            }
-
             foreach (ItemMissing me in ActionList.MissingItems().ToList())
             {
                 if (settings.Token.IsCancellationRequested)
-                {
-                    return;
-                }
-
-                if (me is null)
                 {
                     return;
                 }
@@ -55,44 +50,16 @@ namespace TVRename
                 string baseFolder = me.Episode.Show.AutoAddFolderBase;
                 LOGGER.Info($"Starting to look for {me.Filename} in the library: {baseFolder}");
                 
-                List<FileInfo> matchedFiles;
+                List<FileInfo> matchedFiles = GetMatchingFilesFromFolder(baseFolder, dfc, me, settings, thisRound);
 
-                if (string.IsNullOrWhiteSpace(baseFolder))
+                foreach (KeyValuePair<int, List<string>> seriesFolders in me.Episode.Show.AllFolderLocationsEpCheck(false)
+                    .Where(folders => folders.Value!=null)
+                    .Where(folders => folders.Key==me.Episode.AppropriateSeason.SeasonNumber))
                 {
-                    matchedFiles = new List<FileInfo>();
-                }
-                else
-                {
-                    FileInfo[] testFiles = dfc.GetFilesIncludeSubDirs(baseFolder);
-                    matchedFiles = testFiles is null
-                        ? new List<FileInfo>()
-                        : testFiles.Where(testFile => ReviewFile(me, thisRound, testFile, settings, false, false, false,TVSettings.Instance.UseFullPathNameToMatchLibraryFolders)).ToList();
-                }
-
-                foreach (KeyValuePair<int, List<string>> seriesFolders in me.Episode.Show.AllFolderLocationsEpCheck(false))
-                {
-                    if (seriesFolders.Value == null)
+                    foreach (string folderName in seriesFolders.Value
+                        .Where(f => !string.IsNullOrWhiteSpace(f)) //No point looking here
+                        .Where(f=> f!=baseFolder)) //Already looked here
                     {
-                        continue;
-                    }
-
-                    if (me.Episode.AppropriateSeason.SeasonNumber != seriesFolders.Key)
-                    {
-                        continue;
-                    }
-
-                    foreach (string folderName in seriesFolders.Value)
-                    {
-                        if (string.IsNullOrWhiteSpace(folderName))
-                        {
-                            continue; //No point looking here
-                        }
-
-                        if (folderName == baseFolder)
-                        {
-                            continue; //Already looked here
-                        }
-
                         ProcessFolder(settings, me, folderName, dfc, thisRound, matchedFiles);
                     }
                 }
@@ -108,6 +75,28 @@ namespace TVRename
             ReorganiseToLeaveOriginals(newList);
 
             ActionList.Replace(toRemove, newList);
+        }
+
+        [NotNull]
+        private List<FileInfo> GetMatchingFilesFromFolder([CanBeNull] string baseFolder, DirFilesCache dfc, ItemMissing me, TVDoc.ScanSettings settings,
+            ItemList thisRound)
+        {
+            List<FileInfo> matchedFiles;
+
+            if (string.IsNullOrWhiteSpace(baseFolder))
+            {
+                matchedFiles = new List<FileInfo>();
+            }
+            else
+            {
+                FileInfo[] testFiles = dfc.GetFilesIncludeSubDirs(baseFolder);
+                matchedFiles = testFiles is null
+                    ? new List<FileInfo>()
+                    : testFiles.Where(testFile => ReviewFile(me, thisRound, testFile, settings, false, false, false,
+                        TVSettings.Instance.UseFullPathNameToMatchLibraryFolders)).ToList();
+            }
+
+            return matchedFiles;
         }
 
         private void ProcessFolder(TVDoc.ScanSettings settings, [NotNull] ItemMissing me, [NotNull] string folderName, [NotNull] DirFilesCache dfc,
