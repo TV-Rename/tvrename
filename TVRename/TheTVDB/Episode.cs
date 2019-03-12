@@ -121,17 +121,14 @@ namespace TVRename
             // </Episode>
 
             SetDefaults(null, null, null);
-            EpisodeId = r.ExtractInt("id") ?? -1;
-            SeriesId = r.ExtractInt("seriesid") ?? -1; // thetvdb series id
-            SeasonId = r.ExtractInt("airedSeasonID") ?? r.ExtractInt("seasonid") ?? -1;
-            AiredEpNum = r.ExtractInt("airedEpisodeNumber") ?? r.ExtractInt("EpisodeNumber") ?? -1;
-            string den = r.ExtractString("dvdEpisodeNumber");
-            int.TryParse(den, out DvdEpNum);
-            string sn = r.ExtractString("SeasonNumber");
-            int.TryParse(sn, out ReadAiredSeasonNum);
-            string dsn = r.ExtractString("dvdSeason");
-            int.TryParse(dsn, out ReadDvdSeasonNum);
-            SrvLastUpdated = r.ExtractLong("lastupdated") ?? -1;
+            EpisodeId = r.ExtractInt("id",-1);
+            SeriesId = r.ExtractInt("seriesid",-1); // thetvdb series id
+            SeasonId = r.ExtractInt("airedSeasonID") ?? r.ExtractInt("seasonid",-1);
+            AiredEpNum = r.ExtractInt("airedEpisodeNumber") ?? r.ExtractInt("EpisodeNumber",-1);
+            DvdEpNum = ExtractAndParse(r, "dvdEpisodeNumber");
+            ReadAiredSeasonNum = ExtractAndParse(r, "SeasonNumber");
+            ReadDvdSeasonNum = ExtractAndParse(r,"dvdSeason");
+            SrvLastUpdated = r.ExtractLong("lastupdated",-1);
             Overview = System.Web.HttpUtility.HtmlDecode(XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("Overview")));
             EpisodeRating = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("Rating"));
             EpisodeGuestStars = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("GuestStars"));
@@ -152,6 +149,13 @@ namespace TVRename
             SiteRatingCount = r.ExtractInt("SiteRatingCount") ?? r.ExtractInt("siteRatingCount");
             AbsoluteNumber = r.ExtractInt("AbsoluteNumber");
             FirstAired = ParseAired(r.ExtractString("FirstAired"));
+        }
+
+        private static int ExtractAndParse([NotNull] XElement r, string key)
+        {
+            string value = r.ExtractString(key);
+            int.TryParse(value, out int intValue);
+            return intValue;
         }
 
         private static DateTime? ParseAired([CanBeNull] string contents)

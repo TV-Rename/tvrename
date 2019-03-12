@@ -221,7 +221,7 @@ namespace TVRename
                         }
 
                         //If we are with in the library we use the 'Other Extensions'
-                        if (fromLibrary && !TVSettings.Instance.FileHasUsefulExtension(fi, true, out string _))
+                        if (fromLibrary && !TVSettings.Instance.FileHasUsefulExtension(fi, true))
                         {
                             continue;
                         }

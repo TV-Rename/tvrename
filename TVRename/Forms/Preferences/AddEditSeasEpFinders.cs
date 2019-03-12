@@ -321,7 +321,7 @@ namespace TVRename
             DirectoryInfo d = new DirectoryInfo(txtFolder.Text);
             foreach (FileInfo fi in d.GetFiles())
             {
-                if (!TVSettings.Instance.FileHasUsefulExtension(fi, true,out string _))
+                if (!TVSettings.Instance.FileHasUsefulExtension(fi, true))
                 {
                     continue; // move on
                 }

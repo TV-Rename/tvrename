@@ -177,10 +177,10 @@ namespace TVRename
                 FileInfo actualFile = fi;
 
                 // == RENAMING CHECK ==
-                if (renCheck && TVSettings.Instance.FileHasUsefulExtension(fi, true, out string otherExtension)) 
+                if (renCheck && TVSettings.Instance.FileHasUsefulExtension(fi, true))
                 {
                     string newName = TVSettings.Instance.FilenameFriendly(
-                        TVSettings.Instance.NamingStyle.NameFor(ep, otherExtension, folder.Length));
+                        TVSettings.Instance.NamingStyle.NameFor(ep, fi.Extension, folder.Length));
 
                     FileInfo fileWorthAdding = CheckFile(folder, fi, actualFile, newName, ep, files);
 

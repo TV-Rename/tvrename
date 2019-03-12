@@ -44,8 +44,8 @@ namespace TVRename
             if (xmlSettings != null)
             {
                 DoWhatNow = xmlSettings.ExtractEnum("DoWhatNow",RuleAction.kIgnoreEp);
-                First = xmlSettings.ExtractInt("First") ?? -1;
-                Second = xmlSettings.ExtractInt("Second") ?? -1;
+                First = xmlSettings.ExtractInt("First",-1);
+                Second = xmlSettings.ExtractInt("Second",-1);
                 UserSuppliedText = xmlSettings.ExtractString("Text");
             }
         }

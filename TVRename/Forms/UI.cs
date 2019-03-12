@@ -483,7 +483,7 @@ namespace TVRename
             SetSize(x.Descendants("Size").First());
             SetLocation(x.Descendants("Location").First());
 
-            WindowState = (x.ExtractBool("Maximized") ?? false)
+            WindowState = (x.ExtractBool("Maximized",false))
                 ? FormWindowState.Maximized
                 : FormWindowState.Normal;
         }
@@ -1051,6 +1051,7 @@ namespace TVRename
             }
 
             lvWhenToWatch.Sort();
+            lvWhenToWatch.Refresh();
         }
 
         private void lvWhenToWatch_Click(object sender, EventArgs e)
