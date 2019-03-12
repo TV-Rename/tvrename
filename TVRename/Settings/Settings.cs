@@ -1096,7 +1096,7 @@ namespace TVRename
             ExportWTWRSSTo = xmlSettings.ExtractString("ExportWTWRSSTo");
             ExportWTWXML = xmlSettings.ExtractBool("ExportWTWXML",false);
             ExportWTWXMLTo = xmlSettings.ExtractString("ExportWTWXMLTo");
-            ExportWTWICAL = xmlSettings.ExtractBool("ExportWTWICAL",false) ;
+            ExportWTWICAL = xmlSettings.ExtractBool("ExportWTWICAL",false);
             ExportWTWICALTo = xmlSettings.ExtractString("ExportWTWICALTo");
             WTWRecentDays = xmlSettings.ExtractInt("WTWRecentDays",7);
             StartupTab = TabNumberFromName(xmlSettings.ExtractString("StartupTab2"));

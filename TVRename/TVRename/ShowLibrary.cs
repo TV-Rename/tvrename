@@ -666,64 +666,7 @@ namespace TVRename
             
             for (int i = 0; i < nShows; i++)
             {
-                ProcessedEpisode nextAfterThat = null;
-                TimeSpan howClose = TimeSpan.MaxValue;
-                foreach (ShowItem si in GetShowItems().ToList())
-                {
-                    if (!si.ShowNextAirdate)
-                    {
-                        continue;
-                    }
-
-                    foreach (KeyValuePair<int, List<ProcessedEpisode>> v in si.SeasonEpisodes.ToList())
-                    {
-                        if (si.IgnoreSeasons.Contains(v.Key))
-                        {
-                            continue; // ignore this season
-                        }
-
-                        if (v.Key == 0 && TVSettings.Instance.IgnoreAllSpecials)
-                        {
-                            continue;
-                        }
-
-                        foreach (ProcessedEpisode ei in v.Value)
-                        {
-                            if (found.Contains(ei))
-                            {
-                                continue;
-                            }
-
-                            DateTime? airdt = ei.GetAirDateDt(true);
-
-                            if ((airdt == null) || (airdt == DateTime.MaxValue))
-                            {
-                                continue;
-                            }
-
-                            DateTime dt = airdt.Value;
-
-                            TimeSpan timeUntil = dt.Subtract(DateTime.Now);
-                            if (timeUntil.TotalDays > nDaysFuture)
-                            {
-                                continue; //episode is too far in the future
-                            }
-
-                            TimeSpan ts = dt.Subtract(notBefore);
-                            if (ts.TotalSeconds<0)
-                            {
-                                continue; //episode is too far in the past
-                            }
-
-                            //if we have a closer match
-                            if (TimeSpan.Compare(ts,howClose)<0)
-                            {
-                                howClose = ts;
-                                nextAfterThat = ei;
-                            }
-                        }
-                    }
-                }
+                ProcessedEpisode nextAfterThat = GetNextMostRecentProcessedEpisode(nDaysFuture, found, notBefore);
 
                 if (nextAfterThat == null)
                 {
@@ -739,6 +682,71 @@ namespace TVRename
             }
 
             return found;
+        }
+
+        [CanBeNull]
+        private ProcessedEpisode GetNextMostRecentProcessedEpisode(int nDaysFuture, ICollection<ProcessedEpisode> found, DateTime notBefore)
+        {
+            ProcessedEpisode nextAfterThat = null;
+            TimeSpan howClose = TimeSpan.MaxValue;
+            foreach (ShowItem si in GetShowItems().ToList())
+            {
+                if (!si.ShowNextAirdate)
+                {
+                    continue;
+                }
+
+                foreach (KeyValuePair<int, List<ProcessedEpisode>> v in si.SeasonEpisodes.ToList())
+                {
+                    if (si.IgnoreSeasons.Contains(v.Key))
+                    {
+                        continue; // ignore this season
+                    }
+
+                    if (v.Key == 0 && TVSettings.Instance.IgnoreAllSpecials)
+                    {
+                        continue;
+                    }
+
+                    foreach (ProcessedEpisode ei in v.Value)
+                    {
+                        if (found.Contains(ei))
+                        {
+                            continue;
+                        }
+
+                        DateTime? airdt = ei.GetAirDateDt(true);
+
+                        if ((airdt == null) || (airdt == DateTime.MaxValue))
+                        {
+                            continue;
+                        }
+
+                        DateTime dt = airdt.Value;
+
+                        TimeSpan timeUntil = dt.Subtract(DateTime.Now);
+                        if (timeUntil.TotalDays > nDaysFuture)
+                        {
+                            continue; //episode is too far in the future
+                        }
+
+                        TimeSpan ts = dt.Subtract(notBefore);
+                        if (ts.TotalSeconds < 0)
+                        {
+                            continue; //episode is too far in the past
+                        }
+
+                        //if we have a closer match
+                        if (TimeSpan.Compare(ts, howClose) < 0)
+                        {
+                            howClose = ts;
+                            nextAfterThat = ei;
+                        }
+                    }
+                }
+            }
+
+            return nextAfterThat;
         }
 
         public void AddRange([NotNull] IEnumerable<ShowItem> addedShows)
