@@ -77,7 +77,6 @@ namespace TVRename
             }
 
             ActionList.Replace(toRemove, newList);
-
         }
 
         [CanBeNull]
