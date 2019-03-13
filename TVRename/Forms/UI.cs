@@ -261,6 +261,9 @@ namespace TVRename
         {
             string name = TVDoc.GetSearchers().Name(TVSettings.Instance.TheSearchers.CurrentSearchNum());
 
+            bnWTWBTSearch.Enabled = string.IsNullOrWhiteSpace(name);
+            bnActionBTSearch.Enabled = string.IsNullOrWhiteSpace(name);
+
             bnWTWBTSearch.Text = UseCustom(lvWhenToWatch) ? "Search" : name;
             bnActionBTSearch.Text = UseCustom(lvAction) ? "Search" : name;
 
@@ -640,8 +643,12 @@ namespace TVRename
             menuSearchSites.Items.Clear();
             for (int i = 0; i < TVDoc.GetSearchers().Count(); i++)
             {
-                ToolStripMenuItem tsi = new ToolStripMenuItem(TVDoc.GetSearchers().Name(i)) {Tag = i};
-                menuSearchSites.Items.Add(tsi);
+                string name = TVDoc.GetSearchers().Name(i);
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    ToolStripMenuItem tsi = new ToolStripMenuItem(name) {Tag = i};
+                    menuSearchSites.Items.Add(tsi);
+                }
             }
 
             return menuSearchSites;
@@ -739,7 +746,7 @@ namespace TVRename
 
         private void FillEpGuideHtml()
         {
-            if (MyShowTree.Nodes.Count == 0)
+            if (MyShowTree.Nodes.Count == 0) 
             {
                 ShowQuickStartGuide();
             }
@@ -3245,13 +3252,16 @@ namespace TVRename
                 ToolStripMenuItem tsi = new ToolStripMenuItem("Search") { Tag = (int)RightClickCommands.kBtSearchFor };
                 for (int i = 0; i < TVDoc.GetSearchers().Count(); i++)
                 {
-                    ToolStripMenuItem tssi = new ToolStripMenuItem(TVDoc.GetSearchers().Name(i)) { Tag = (int)RightClickCommands.kSearchForBase + i };
-                    int i1 = i;
-                    tssi.Click += (s, ev) =>
+                    string name = TVDoc.GetSearchers().Name(i);
+                    if (!string.IsNullOrWhiteSpace(name))
                     {
-                        SearchFor(i1);
-                    };
-                    tsi.DropDownItems.Add(tssi);
+                        ToolStripMenuItem tssi = new ToolStripMenuItem(name)
+                            {Tag = (int) RightClickCommands.kSearchForBase + i};
+
+                        int i1 = i;
+                        tssi.Click += (s, ev) => { SearchFor(i1); };
+                        tsi.DropDownItems.Add(tssi);
+                    }
                 }
                 showRightClickMenu.Items.Add(tsi);
 
