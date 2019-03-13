@@ -335,6 +335,8 @@ namespace TVRename
 
             s.mode = cbMode.Text == "Beta" ? TVSettings.BetaMode.BetaToo : TVSettings.BetaMode.ProductionOnly;
 
+            s.ShowCollections = cbShowCollections.Checked;
+
             s.keepTogetherMode = KeepTogetherMode();
 
             s.PreferredLanguageCode =
@@ -847,6 +849,8 @@ namespace TVRename
 
             tbPriorityOverrideTerms.Text = s.PriorityReplaceTerms;
 
+            cbShowCollections.Checked = s.ShowCollections;
+
             PopulateFromEnums(s);
 
             FillSearchFolderList();
@@ -876,7 +880,7 @@ namespace TVRename
                     rbWTWScan.Checked = true;
                     break;
             }
-
+            
             switch (s.keepTogetherMode)
             {
                 case TVSettings.KeepTogetherModes.All:
