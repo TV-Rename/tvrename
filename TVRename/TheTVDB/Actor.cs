@@ -37,8 +37,8 @@ namespace TVRename
             ActorImage = r.ExtractString("Image");
             ActorName = r.ExtractString("Name");
             ActorRole = r.ExtractString("Role");
-            ActorSeriesId = r.ExtractInt("SeriesId") ?? -1;
-            ActorSortOrder = r.ExtractInt("SortOrder") ?? -1; 
+            ActorSeriesId = r.ExtractInt("SeriesId",-1);
+            ActorSortOrder = r.ExtractInt("SortOrder",-1); 
         }
 
         public void WriteXml([NotNull] XmlWriter writer)

@@ -7,6 +7,7 @@
 // 
 
 using System;
+using System.Linq;
 using System.Text;
 using System.Xml;
 
@@ -40,7 +41,7 @@ namespace TVRename
                 XmlHelper.WriteAttributeToXml(writer,"Version","2.1");
                 writer.WriteStartElement("MissingItems");
 
-                foreach (ItemMissing missing in TheActionList.MissingItems())
+                foreach (ItemMissing missing in TheActionList.MissingItems().ToList())
                 {
                     writer.WriteStartElement("MissingItem");
 

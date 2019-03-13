@@ -315,7 +315,7 @@ namespace TVRename
                 Name = System.Web.HttpUtility.HtmlDecode(
                     XmlHelper.ReadStringFixQuotesAndSpaces(seriesXml.ExtractString("SeriesName") ?? seriesXml.ExtractString("seriesName")));
 
-                SrvLastUpdated = seriesXml.ExtractLong("lastupdated")??seriesXml.ExtractLong("lastUpdated") ??0;
+                SrvLastUpdated = seriesXml.ExtractLong("lastupdated")??seriesXml.ExtractLong("lastUpdated",0);
                 LanguageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId") ?? throw new TheTVDB.TVDBException("Error Extracting Language for Series");
                 TempTimeZone = seriesXml.ExtractString("TimeZone");
 
@@ -331,67 +331,92 @@ namespace TVRename
                 Runtime = seriesXml.ExtractString("runtime") ?? seriesXml.ExtractString("Runtime");
                 SeriesId = seriesXml.ExtractString("seriesId") ?? seriesXml.ExtractString("SeriesID");
                 Status = seriesXml.ExtractString("status") ?? seriesXml.ExtractString("Status");
-                string siteRatingString = seriesXml.ExtractString("siteRating") ?? seriesXml.ExtractString("SiteRating");
-                float.TryParse(siteRatingString, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out SiteRating);
-                SiteRatingVotes = seriesXml.ExtractInt("siteRatingCount") ?? seriesXml.ExtractInt("SiteRatingCount")??0;
+                SiteRatingVotes = seriesXml.ExtractInt("siteRatingCount") ?? seriesXml.ExtractInt("SiteRatingCount",0);
 
-                string theDate = seriesXml.ExtractString("FirstAired")?? seriesXml.ExtractString("firstAired");
-                if (!string.IsNullOrWhiteSpace(theDate))
-                {
-                    try
-                    {
-                        FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd",new CultureInfo(""));
-                    }
-                    catch
-                    {
-                        Logger.Trace("Failed to parse date: {0} ", theDate);
-                        FirstAired = null;
-                    }
-                }
-                else
-                {
-                    FirstAired = null;
-                }
+                SiteRating = GetSiteRating(seriesXml);
+                FirstAired = ExtractFirstAired(seriesXml);
 
-                ClearActors();
-                foreach (XElement actorXml in seriesXml.Descendants("Actors").Descendants("Actor"))
-                {
-                    Actor a = new Actor(actorXml);
-                    AddActor(a);
-                }
-
-                aliases = new List<string>();
-                foreach (XElement aliasXml in seriesXml.Descendants("Aliases").Descendants("Alias"))
-                {
-                    aliases.Add(aliasXml.Value);
-                }
-
-                genres = new List<string>();
-                foreach (XElement g in seriesXml.Descendants("Genres").Descendants("Genre"))
-                {
-                    genres.Add(g.Value);
-                }
+                LoadActors(seriesXml);
+                LoadAliases(seriesXml);
+                LoadGenres(seriesXml);
             }
             catch (TheTVDB.TVDBException e)
             {
-                string message = "Error processing data from TheTVDB for a show.";
-                if (TvdbCode != -1)
-                {
-                    message += "\r\nTheTVDB Code: " + TvdbCode;
-                }
-
-                if (!string.IsNullOrEmpty(Name))
-                {
-                    message += "\r\nName: " + Name;
-                }
-
-                message += "\r\nLanguage: \"" + LanguageId + "\"";
-
-                message += "\r\n" + e.Message;
-
-                Logger.Error(e, message);
-
+                Logger.Error(e, GenerateErrorMessage());
                 throw new TheTVDB.TVDBException(e.Message);
+            }
+        }
+
+        private static float GetSiteRating([NotNull] XElement seriesXml)
+        {
+            string siteRatingString = seriesXml.ExtractString("siteRating") ?? seriesXml.ExtractString("SiteRating");
+            float.TryParse(siteRatingString,
+                NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite,
+                CultureInfo.CreateSpecificCulture("en-US"), out float x);
+
+            return x;
+        }
+
+        [NotNull]
+        private string GenerateErrorMessage()
+        {
+            string message = "Error processing data from TheTVDB for a show.";
+            if (TvdbCode != -1)
+            {
+                message += "\r\nTheTVDB Code: " + TvdbCode;
+            }
+
+            if (!string.IsNullOrEmpty(Name))
+            {
+                message += "\r\nName: " + Name;
+            }
+
+            message += "\r\nLanguage: \"" + LanguageId + "\"";
+            return message;
+        }
+
+        private static DateTime? ExtractFirstAired([NotNull] XElement seriesXml)
+        {
+            string theDate = seriesXml.ExtractString("FirstAired") ?? seriesXml.ExtractString("firstAired");
+            if (!string.IsNullOrWhiteSpace(theDate))
+            {
+                try
+                {
+                    return DateTime.ParseExact(theDate, "yyyy-MM-dd", new CultureInfo(""));
+                }
+                catch
+                {
+                    Logger.Trace("Failed to parse date: {0} ", theDate);
+                }
+            }
+
+            return null;
+        }
+
+        private void LoadActors([NotNull] XElement seriesXml)
+        {
+            ClearActors();
+            foreach (Actor a in seriesXml.Descendants("Actors").Descendants("Actor").Select(actorXml => new Actor(actorXml)))
+            {
+                AddActor(a);
+            }
+        }
+
+        private void LoadAliases([NotNull] XElement seriesXml)
+        {
+            aliases = new List<string>();
+            foreach (XElement aliasXml in seriesXml.Descendants("Aliases").Descendants("Alias"))
+            {
+                aliases.Add(aliasXml.Value);
+            }
+        }
+
+        private void LoadGenres([NotNull] XElement seriesXml)
+        {
+            genres = new List<string>();
+            foreach (XElement g in seriesXml.Descendants("Genres").Descendants("Genre"))
+            {
+                genres.Add(g.Value);
             }
         }
 

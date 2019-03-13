@@ -373,101 +373,126 @@ namespace TVRename
                 gridSummary.mLastShowClicked = show;
                 gridSummary.mLastSeasonClicked = season;
 
+                if (show == null)
+                {
+                    return;
+                }
+
+                if (seas == null)
+                {
+                    GenerateMenu(gridSummary.showRightClickMenu, "Force Refresh",
+                        RightClickCommands.kForceRefreshSeries);
+
+                    GenerateSeparator(gridSummary.showRightClickMenu);
+                }
+
+                GenerateMenu(gridSummary.showRightClickMenu, "Visit thetvdb.com",
+                    seas == null ? RightClickCommands.kVisitTvdbSeries : RightClickCommands.kVisitTvdbSeason);
+
                 List<string> added = new List<string>();
 
-                if (show != null && seas == null)
+                if (seas != null)
                 {
-                    GenerateMenu(gridSummary.showRightClickMenu, "Force Refresh", RightClickCommands.kForceRefreshSeries);
-                    GenerateSeparator(gridSummary.showRightClickMenu);
-                    GenerateMenu(gridSummary.showRightClickMenu, "Visit thetvdb.com", RightClickCommands.kVisitTvdbSeries);
+                    GenerateOpenMenu(seas, added);
                 }
 
-                if (show != null && seas != null)
+                GenerateRightClickOpenMenu(added);
+
+                if (seas != null)
                 {
-                    GenerateMenu(gridSummary.showRightClickMenu, "Visit thetvdb.com",
-                        RightClickCommands.kVisitTvdbSeason);
+                    GenerateRightClickWatchMenu(seas);
+                }
 
-                    Dictionary<int, List<string>> afl = show.AllExistngFolderLocations();
+                Point pt = new Point(e.X, e.Y);
+                gridSummary.showRightClickMenu.Show(sender.Grid.PointToScreen(pt));
+            }
 
-                    if (afl.ContainsKey(seas.SeasonNumber))
+            private void GenerateOpenMenu([NotNull] Season seas, ICollection<string> added)
+            {
+                Dictionary<int, List<string>> afl = show.AllExistngFolderLocations();
+
+                if (!afl.ContainsKey(seas.SeasonNumber))
+                {
+                    return;
+                }
+
+                int n = gridSummary.mFoldersToOpen.Count;
+                bool first = true;
+                foreach (string folder in afl[seas.SeasonNumber])
+                {
+                    if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder) && !added.Contains(folder))
                     {
-                        int n = gridSummary.mFoldersToOpen.Count;
-                        bool first = true;
-                        foreach (string folder in afl[seas.SeasonNumber])
+                        added.Add(folder); // don't show the same folder more than once
+                        if (first)
                         {
-                            if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder) && !added.Contains(folder))
-                            {
-                                added.Add(folder); // don't show the same folder more than once
-                                if (first)
-                                {
-                                    GenerateSeparator(gridSummary.showRightClickMenu);
-                                    first = false;
-                                }
-
-                                GenerateMenu(gridSummary.showRightClickMenu, "Open: " + folder,
-                                    (int) RightClickCommands.kOpenFolderBase + n);
-
-                                gridSummary.mFoldersToOpen.Add(folder);
-                                n++;
-                            }
+                            GenerateSeparator(gridSummary.showRightClickMenu);
+                            first = false;
                         }
+
+                        GenerateMenu(gridSummary.showRightClickMenu, "Open: " + folder,
+                            (int) RightClickCommands.kOpenFolderBase + n);
+
+                        gridSummary.mFoldersToOpen.Add(folder);
+                        n++;
                     }
                 }
-                if (show != null)
+            }
+
+            private void GenerateRightClickOpenMenu(ICollection<string> added)
+            {
+                int n = gridSummary.mFoldersToOpen.Count;
+                bool first = true;
+
+                foreach (KeyValuePair<int, List<string>> kvp in show.AllExistngFolderLocations())
                 {
-                    int n = gridSummary.mFoldersToOpen.Count;
-                    bool first = true;
-
-                    foreach (KeyValuePair<int, List<string>> kvp in show.AllExistngFolderLocations())
+                    foreach (string folder in kvp.Value)
                     {
-                        foreach (string folder in kvp.Value)
+                        if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder) && !added.Contains(folder))
                         {
-                            if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder) && !added.Contains(folder))
-                            {
-                                added.Add(folder); // don't show the same folder more than once
-                                if (first)
-                                {
-                                    GenerateSeparator(gridSummary.showRightClickMenu);
-                                    first = false;
-                                }
-
-                                GenerateMenu(gridSummary.showRightClickMenu, "Open: " + folder, (int)RightClickCommands.kOpenFolderBase + n);
-                                gridSummary.mFoldersToOpen.Add(folder);
-                                n++;
-                            }
-                        }
-                    }
-                }
-
-                if (seas != null && show != null)
-                {
-                    // for each episode in season, find it on disk
-                    bool first = true;
-                    DirFilesCache dfc = new DirFilesCache();
-                    foreach (ProcessedEpisode epds in show.SeasonEpisodes[seas.SeasonNumber])
-                    {
-                        List<FileInfo> fl = dfc.FindEpOnDisk(epds,false);
-                        if (fl.Count > 0)
-                        {
+                            added.Add(folder); // don't show the same folder more than once
                             if (first)
                             {
                                 GenerateSeparator(gridSummary.showRightClickMenu);
                                 first = false;
                             }
 
-                            int n = gridSummary.mLastFileList.Count;
-                            foreach (FileInfo fi in fl)
-                            {
-                                GenerateMenu(gridSummary.showRightClickMenu, "Watch: " + fi.FullName, (int)RightClickCommands.kWatchBase + n);
-                                gridSummary.mLastFileList.Add(fi);
-                                n++;
-                            }
+                            GenerateMenu(gridSummary.showRightClickMenu, "Open: " + folder,
+                                (int) RightClickCommands.kOpenFolderBase + n);
+
+                            gridSummary.mFoldersToOpen.Add(folder);
+                            n++;
                         }
                     }
                 }
+            }
 
-                Point pt = new Point(e.X, e.Y);
-                gridSummary.showRightClickMenu.Show(sender.Grid.PointToScreen(pt));
+            private void GenerateRightClickWatchMenu([NotNull] Season seas)
+            {
+                // for each episode in season, find it on disk
+                bool first = true;
+                DirFilesCache dfc = new DirFilesCache();
+                foreach (ProcessedEpisode epds in show.SeasonEpisodes[seas.SeasonNumber])
+                {
+                    List<FileInfo> fl = dfc.FindEpOnDisk(epds, false);
+                    if (fl.Count > 0)
+                    {
+                        if (first)
+                        {
+                            GenerateSeparator(gridSummary.showRightClickMenu);
+                            first = false;
+                        }
+
+                        int n = gridSummary.mLastFileList.Count;
+                        foreach (FileInfo fi in fl)
+                        {
+                            GenerateMenu(gridSummary.showRightClickMenu, "Watch: " + fi.FullName,
+                                (int) RightClickCommands.kWatchBase + n);
+
+                            gridSummary.mLastFileList.Add(fi);
+                            n++;
+                        }
+                    }
+                }
             }
 
             private void GenerateMenu([NotNull] ContextMenuStrip showRightClickMenu, string menuName, RightClickCommands rightClickCommand)

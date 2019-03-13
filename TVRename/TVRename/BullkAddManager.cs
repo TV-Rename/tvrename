@@ -252,53 +252,21 @@ namespace TVRename
 
         public bool CheckFolderForShows([NotNull] DirectoryInfo di2, bool andGuess, [CanBeNull] out DirectoryInfo[] subDirs,bool  fullLogging, bool showErrorMsgBox)
         {
-            // ..and not already a folder for one of our shows
-            string theFolder = di2.FullName.ToLower();
-            foreach (ShowItem si in mDoc.Library.GetShowItems())
-            {
-                if (si.AutoAddNewSeasons() && !string.IsNullOrEmpty(si.AutoAddFolderBase) &&
-                    theFolder.IsSubfolderOf(si.AutoAddFolderBase))
-                {
-                    // we're looking at a folder that is a subfolder of an existing show
-                    if (fullLogging)
-                    {
-                        Logger.Info("Rejecting {0} as it's already part of {1}.", theFolder, si.ShowName);
-                    }
-
-                    subDirs = null;
-                    return true;
-                }
-
-                if (si.UsesManualFolders())
-                {
-                    Dictionary<int, List<string>> afl = si.AllExistngFolderLocations();
-                    foreach (KeyValuePair<int, List<string>> kvp in afl)
-                    {
-                        foreach (string folder in kvp.Value)
-                        {
-                            if (!string.Equals(theFolder, folder, StringComparison.CurrentCultureIgnoreCase))
-                            {
-                                continue;
-                            }
-
-                            if (fullLogging)
-                            {
-                                Logger.Info("Rejecting {0} as it's already part of {1}:{2}.", theFolder, si.ShowName,
-                                    folder);
-                            }
-
-                            subDirs = null;
-                            return true;
-                        }
-                    }
-                }
-            } // for each showitem
-
-            //We don't have it already
-            bool hasSeasonFolders;
             try
             {
-                hasSeasonFolders = HasSeasonFolders(di2, out DirectoryInfo[] subDirectories, out string folderFormat);
+                // ..and not already a folder for one of our shows
+                string theFolder = di2.FullName.ToLower();
+                foreach (ShowItem si in mDoc.Library.GetShowItems())
+                {
+                    if (RejectFolderIfIncludedInShow(fullLogging, si, theFolder))
+                    {
+                        subDirs = null;
+                        return true;
+                    }
+                } // for each showitem
+
+                //We don't have it already
+                bool hasSeasonFolders = HasSeasonFolders(di2, out DirectoryInfo[] subDirectories, out string folderFormat);
 
                 subDirs = subDirectories;
 
@@ -339,6 +307,7 @@ namespace TVRename
                         GuessShowItem(ai, mDoc.Library,showErrorMsgBox);
                     }
                 }
+                return hasSeasonFolders;
             }
             catch (UnauthorizedAccessException)
             {
@@ -346,8 +315,46 @@ namespace TVRename
                 subDirs = null;
                 return true;
             }
+        }
 
-            return hasSeasonFolders;
+        private static bool RejectFolderIfIncludedInShow(bool fullLogging, [NotNull] ShowItem si,string theFolder)
+        {
+            if (si.AutoAddNewSeasons() && !string.IsNullOrEmpty(si.AutoAddFolderBase) &&
+                theFolder.IsSubfolderOf(si.AutoAddFolderBase))
+            {
+                // we're looking at a folder that is a subfolder of an existing show
+                if (fullLogging)
+                {
+                    Logger.Info("Rejecting {0} as it's already part of {1}.", theFolder, si.ShowName);
+                }
+
+                return true;
+            }
+
+            if (si.UsesManualFolders())
+            {
+                Dictionary<int, List<string>> afl = si.AllExistngFolderLocations();
+                foreach (KeyValuePair<int, List<string>> kvp in afl)
+                {
+                    foreach (string folder in kvp.Value)
+                    {
+                        if (!string.Equals(theFolder, folder, StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            continue;
+                        }
+
+                        if (fullLogging)
+                        {
+                            Logger.Info("Rejecting {0} as it's already part of {1}:{2}.", theFolder, si.ShowName,
+                                folder);
+                        }
+
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         private static bool HasFilmFiles([NotNull] DirectoryInfo directory)

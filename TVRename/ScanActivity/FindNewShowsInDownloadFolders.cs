@@ -45,52 +45,33 @@ namespace TVRename
                 return;
             }
 
-            List<string> possibleShowNames = new List<string>();
+            List<string> possibleShowNames = GetPossibleShowNameStrings();
+            List<ShowItem> addedShows = FindShows(possibleShowNames);
 
-            foreach (string dirPath in TVSettings.Instance.DownloadFolders.ToArray())
+            if (addedShows.Count <= 0)
             {
-                LOGGER.Info("Parsing {0} for new shows", dirPath);
-                if (!Directory.Exists(dirPath))
-                {
-                    continue;
-                }
-
-                try
-                {
-                    foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
-                    {
-                        if (!File.Exists(filePath))
-                        {
-                            continue;
-                        }
-
-                        FileInfo fi = new FileInfo(filePath);
-
-                        if (fi.IgnoreFile())
-                        {
-                            continue;
-                        }
-
-                        if (!LookForSeries(fi))
-                        {
-                            possibleShowNames.Add(fi.RemoveExtension() + ".");
-                        }
-                    }
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    LOGGER.Warn(ex, $"Could not access files in {dirPath}");
-                }
-                catch (System.IO.DirectoryNotFoundException ex)
-                {
-                    LOGGER.Warn(ex, $"Could not access files in {dirPath}");
-                }
-                catch (System.IO.IOException ex)
-                {
-                    LOGGER.Warn(ex, $"Could not access files in {dirPath}");
-                }
+                return;
             }
 
+            lock (TheTVDB.SERIES_LOCK)
+            {
+                MDoc.Library.AddRange(addedShows);
+                MDoc.ShowAddedOrEdited(false,false);
+            }
+            MDoc.ShowAddedOrEdited(true,false);
+
+            LOGGER.Info("Added new shows called: {0}", string.Join(",", addedShows.Select(s => s.ShowName)));
+
+            //add each new show into the shows being scanned
+            foreach (ShowItem si in addedShows)
+            {
+                showList.Add(si);
+            }
+        }
+
+        [NotNull]
+        private List<ShowItem> FindShows([NotNull] List<string> possibleShowNames)
+        {
             List<ShowItem> addedShows = new List<ShowItem>();
 
             foreach (string hint in possibleShowNames)
@@ -137,7 +118,7 @@ namespace TVRename
                         "Please add some monitor (library) folders under 'Bulk Add Shows' to use the 'Auto Add' functionity (Alternatively you can add them or turn it off in settings).",
                         "Can't Auto Add Show", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                    return;
+                    continue;
                 }
 
                 LOGGER.Info("****************");
@@ -168,25 +149,59 @@ namespace TVRename
                 }
             }
 
-            if (addedShows.Count <= 0)
+            return addedShows;
+        }
+
+        [NotNull]
+        private List<string> GetPossibleShowNameStrings()
+        {
+            List<string> possibleShowNames = new List<string>();
+
+            foreach (string dirPath in TVSettings.Instance.DownloadFolders.ToArray())
             {
-                return;
+                LOGGER.Info("Parsing {0} for new shows", dirPath);
+                if (!Directory.Exists(dirPath))
+                {
+                    continue;
+                }
+
+                try
+                {
+                    foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                    {
+                        if (!File.Exists(filePath))
+                        {
+                            continue;
+                        }
+
+                        FileInfo fi = new FileInfo(filePath);
+
+                        if (fi.IgnoreFile())
+                        {
+                            continue;
+                        }
+
+                        if (!LookForSeries(fi))
+                        {
+                            possibleShowNames.Add(fi.RemoveExtension() + ".");
+                        }
+                    }
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    LOGGER.Warn(ex, $"Could not access files in {dirPath}");
+                }
+                catch (System.IO.DirectoryNotFoundException ex)
+                {
+                    LOGGER.Warn(ex, $"Could not access files in {dirPath}");
+                }
+                catch (System.IO.IOException ex)
+                {
+                    LOGGER.Warn(ex, $"Could not access files in {dirPath}");
+                }
             }
 
-            lock (TheTVDB.SERIES_LOCK)
-            {
-                MDoc.Library.AddRange(addedShows);
-                MDoc.ShowAddedOrEdited(false,false);
-            }
-            MDoc.ShowAddedOrEdited(true,false);
-
-            LOGGER.Info("Added new shows called: {0}", string.Join(",", addedShows.Select(s => s.ShowName)));
-
-            //add each new show into the shows being scanned
-            foreach (ShowItem si in addedShows)
-            {
-                showList.Add(si);
-            }
+            return possibleShowNames;
         }
 
         public override bool Active() => TVSettings.Instance.AutoSearchForDownloadedFiles;

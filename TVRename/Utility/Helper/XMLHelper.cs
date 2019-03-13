@@ -231,6 +231,8 @@ namespace TVRename
             return null;
         }
 
+        public static int ExtractInt([NotNull] this XElement xmlSettings, string elementName, int defaultValue) => ExtractInt(xmlSettings,elementName)??defaultValue;
+
         public static long? ExtractLong([NotNull] this XElement xmlSettings, string elementName)
         {
             if (xmlSettings.Descendants(elementName).Any())
@@ -240,6 +242,8 @@ namespace TVRename
 
             return null;
         }
+
+        public static long ExtractLong([NotNull] this XElement xmlSettings, string elementName, int defaultValue) => ExtractLong(xmlSettings, elementName) ?? defaultValue;
 
         public static T ExtractEnum<T>([NotNull] this XElement xmlSettings, string elementName, T defaultVal)
         {
@@ -261,6 +265,8 @@ namespace TVRename
             }
             return defaultVal;
         }
+
+        public static float ExtractFloat([NotNull] this XElement xmlSettings, string elementName, int defaultValue) => ExtractFloat(xmlSettings, elementName) ?? defaultValue;
 
         public static float? ExtractFloat([NotNull] this XElement xmlSettings, string elementName)
         {
