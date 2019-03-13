@@ -16,13 +16,12 @@ namespace TVRename
 {
     public static class VersionUpdater
     {
+        const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/TV-Rename/tvrename/releases";
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         [ItemCanBeNull]
         public static async Task<Release> CheckForUpdatesAsync()
         {
-            // ReSharper disable once InconsistentNaming
-            const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/TV-Rename/tvrename/releases";
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             Release currentVersion;
 
@@ -36,80 +35,7 @@ namespace TVRename
                 return null;
             }
 
-            Release latestVersion = null;
-            Release latestBetaVersion = null;
-
-            try
-            {
-                JArray gitHubInfo = null;
-
-                await HttpHelper.RetryOnExceptionAsync<Exception>
-                (3, TimeSpan.FromSeconds(2), GITHUB_RELEASES_API_URL, async () => {
-                    WebClient client = new WebClient();
-                    client.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
-                    Task<string> response = client.DownloadStringTaskAsync(GITHUB_RELEASES_API_URL);
-                    gitHubInfo = JArray.Parse(await response.ConfigureAwait(false));
-                });
-
-                if (gitHubInfo is null)
-                {
-                    Logger.Error("Failed to contact GitHub to identify new releases - no exception raised");
-                    return null;
-                }
-
-                foreach (JObject gitHubReleaseJson in gitHubInfo.Children<JObject>())
-                {
-                    try
-                    {
-                        if (!gitHubReleaseJson["assets"].HasValues)
-                        {
-                            continue; //we have no files for this release, so ignore
-                        }
-
-                        Release testVersion = ParseFromJson(gitHubReleaseJson);
-
-                        //all versions want to be considered if you are in the beta stream
-                        if (testVersion.NewerThan(latestBetaVersion))
-                        {
-                            latestBetaVersion = testVersion;
-                        }
-
-                        //If the latest version is a production one then update the latest production version
-                        if (!testVersion.IsBeta)
-                        {
-                            if (testVersion.NewerThan(latestVersion))
-                            {
-                                latestVersion = testVersion;
-                            }
-                        }
-                    }
-                    catch (NullReferenceException ex)
-                    {
-                        Logger.Error("Looks like the JSON payload from GitHub has changed");
-                        Logger.Debug(ex, gitHubReleaseJson.ToString());
-                    }
-                    catch (ArgumentOutOfRangeException ex)
-                    {
-                        Logger.Debug("Generally happens because the release did not have an exe attached");
-                        Logger.Debug(ex, gitHubReleaseJson.ToString());
-                    }
-                }
-                if (latestVersion == null)
-                {
-                    Logger.Error("Could not find latest version information from GitHub: {0}", gitHubInfo.ToString());
-                    return null;
-                }
-                if (latestBetaVersion == null)
-                {
-                    Logger.Error("Could not find latest beta version information from GitHub: {0}", gitHubInfo.ToString());
-                    return null;
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Failed to contact GitHub to identify new releases");
-                return null;
-            }
+            (Release latestVersion, Release latestBetaVersion) = await GetLatestReleases();
 
             if ((TVSettings.Instance.mode == TVSettings.BetaMode.ProductionOnly) &&
                 (latestVersion.NewerThan(currentVersion)))
@@ -124,6 +50,99 @@ namespace TVRename
             }
 
             return null;
+        }
+
+        private static async Task<(Release latestVersion, Release latestBetaVersion)> GetLatestReleases()
+        {
+            Release latestVersion = null;
+            Release latestBetaVersion = null;
+
+            try
+            {
+                JArray gitHubInfo = null;
+
+                await HttpHelper.RetryOnExceptionAsync<Exception>
+                (3, TimeSpan.FromSeconds(2), GITHUB_RELEASES_API_URL, async () =>
+                {
+                    WebClient client = new WebClient();
+                    client.Headers.Add("user-agent",
+                        "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+
+                    Task<string> response = client.DownloadStringTaskAsync(GITHUB_RELEASES_API_URL);
+                    gitHubInfo = JArray.Parse(await response.ConfigureAwait(false));
+                });
+
+                if (gitHubInfo is null)
+                {
+                    Logger.Error("Failed to contact GitHub to identify new releases - no exception raised");
+                    return (null, null);
+                }
+
+                foreach (JObject gitHubReleaseJson in gitHubInfo.Children<JObject>())
+                {
+                    try
+                    {
+                        if (!gitHubReleaseJson["assets"].HasValues)
+                        {
+                            continue; //we have no files for this release, so ignore
+                        }
+
+                        Release testVersion = ParseFromJson(gitHubReleaseJson);
+
+                        (latestBetaVersion, latestVersion) = UpdateLatest(testVersion, latestBetaVersion, latestVersion);
+                    }
+                    catch (NullReferenceException ex)
+                    {
+                        Logger.Error("Looks like the JSON payload from GitHub has changed");
+                        Logger.Debug(ex, gitHubReleaseJson.ToString());
+                    }
+                    catch (ArgumentOutOfRangeException ex)
+                    {
+                        Logger.Debug("Generally happens because the release did not have an exe attached");
+                        Logger.Debug(ex, gitHubReleaseJson.ToString());
+                    }
+                }
+
+                if (latestVersion == null)
+                {
+                    Logger.Error("Could not find latest version information from GitHub: {0}", gitHubInfo.ToString());
+                    return (null, latestBetaVersion);
+                }
+
+                if (latestBetaVersion == null)
+                {
+                    Logger.Error("Could not find latest beta version information from GitHub: {0}", gitHubInfo.ToString());
+                    return (latestVersion, null);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Failed to contact GitHub to identify new releases");
+                return (latestVersion, latestBetaVersion);
+            }
+
+            return (latestVersion, latestBetaVersion);
+        }
+
+        private static (Release latestBetaVersion, Release latestVersion) UpdateLatest([NotNull] Release testVersion,
+            Release latestBetaVersion, Release latestVersion)
+        {
+//all versions want to be considered if you are in the beta stream
+            if (testVersion.NewerThan(latestBetaVersion))
+            {
+                latestBetaVersion = testVersion;
+            }
+
+            //If the latest version is a production one then update the latest production version
+            if (!testVersion.IsBeta)
+            {
+                if (testVersion.NewerThan(latestVersion))
+                {
+                    latestVersion = testVersion;
+                }
+            }
+
+            return (latestBetaVersion, latestVersion);
         }
 
         [NotNull]

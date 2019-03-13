@@ -266,7 +266,6 @@ namespace TVRename
             return true;
         }
 
-
         #region HelpWindows
 
         private void pbBasics_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-basics-tab");

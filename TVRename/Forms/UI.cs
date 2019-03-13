@@ -483,7 +483,7 @@ namespace TVRename
             SetSize(x.Descendants("Size").First());
             SetLocation(x.Descendants("Location").First());
 
-            WindowState = (x.ExtractBool("Maximized") ?? false)
+            WindowState = (x.ExtractBool("Maximized",false))
                 ? FormWindowState.Maximized
                 : FormWindowState.Normal;
         }
@@ -686,7 +686,7 @@ namespace TVRename
                 {
                     SeriesInfo serA = TheTVDB.Instance.GetSeries(a.TvdbCode);
                     SeriesInfo serB = TheTVDB.Instance.GetSeries(b.TvdbCode);
-                    return string.Compare(GenerateShowUIName(serA, a), GenerateShowUIName(serB, b), StringComparison.Ordinal);
+                    return string.Compare(GenerateShowUIName(serA, a), GenerateShowUIName(serB, b), StringComparison.OrdinalIgnoreCase);
                 });
             }
 
@@ -1038,8 +1038,8 @@ namespace TVRename
                 case 4:
                 case 5:
                 case 6:
-                    lvWhenToWatch.ListViewItemSorter = new DateSorterWtw(col);
                     lvWhenToWatch.ShowGroups = true;
+                    lvWhenToWatch.ListViewItemSorter = new DateSorterWtw(col);
                     break;
                 case 1:
                 case 2:
@@ -1051,6 +1051,7 @@ namespace TVRename
             }
 
             lvWhenToWatch.Sort();
+            lvWhenToWatch.Refresh();
         }
 
         private void lvWhenToWatch_Click(object sender, EventArgs e)

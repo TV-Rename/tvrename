@@ -173,61 +173,10 @@ namespace TVRename
 
         private void bnOK_Click(object sender, EventArgs e)
         {
-            RuleAction dwn = RuleAction.kIgnoreEp;
-
-            if (rbIgnore.Checked)
-            {
-                dwn = RuleAction.kIgnoreEp;
-            }
-            else if (rbSwap.Checked)
-            {
-                dwn = RuleAction.kSwap;
-            }
-            else if (rbMerge.Checked)
-            {
-                dwn = RuleAction.kMerge;
-            }
-            else if (rbInsert.Checked)
-            {
-                dwn = RuleAction.kInsert;
-            }
-            else if (rbRemove.Checked)
-            {
-                dwn = RuleAction.kRemove;
-            }
-            else if (rbCollapse.Checked)
-            {
-                dwn = RuleAction.kCollapse;
-            }
-            else if (rbRename.Checked)
-            {
-                dwn = RuleAction.kRename;
-            }
-            else if (rbSplit.Checked)
-            {
-                dwn = RuleAction.kSplit;
-            }
-
-            mRule.DoWhatNow = dwn;
+            mRule.DoWhatNow = Action;
             mRule.UserSuppliedText = txtUserText.Enabled ? txtUserText.Text : "";
-
-            try
-            {
-                mRule.First = txtValue1.Enabled ? Convert.ToInt32(txtValue1.Text) : -1;
-            }
-            catch
-            {
-                mRule.First = -1;
-            }
-
-            try
-            {
-                mRule.Second = txtValue2.Enabled ? Convert.ToInt32(txtValue2.Text) : -1;
-            }
-            catch
-            {
-                mRule.Second = -1;
-            }
+            mRule.First = ParseTextValue(txtValue1);
+            mRule.Second = ParseTextValue(txtValue2);
 
             //validation Rules
             if (!mSeason.ContainsEpisode(mRule.First, mdvdOrder))
@@ -269,6 +218,61 @@ namespace TVRename
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtValue2.Focus();
                 DialogResult = DialogResult.None;
+            }
+        }
+
+        private static int ParseTextValue(Control txtValue)
+        {
+            try
+            {
+                return txtValue.Enabled ? Convert.ToInt32(txtValue.Text) : -1;
+            }
+            catch
+            {
+                return -1;
+            }
+        }
+
+        private RuleAction Action
+        {
+            get
+            {
+                RuleAction dwn = RuleAction.kIgnoreEp;
+
+                if (rbIgnore.Checked)
+                {
+                    dwn = RuleAction.kIgnoreEp;
+                }
+                else if (rbSwap.Checked)
+                {
+                    dwn = RuleAction.kSwap;
+                }
+                else if (rbMerge.Checked)
+                {
+                    dwn = RuleAction.kMerge;
+                }
+                else if (rbInsert.Checked)
+                {
+                    dwn = RuleAction.kInsert;
+                }
+                else if (rbRemove.Checked)
+                {
+                    dwn = RuleAction.kRemove;
+                }
+                else if (rbCollapse.Checked)
+                {
+                    dwn = RuleAction.kCollapse;
+                }
+                else if (rbRename.Checked)
+                {
+                    dwn = RuleAction.kRename;
+                }
+                else if (rbSplit.Checked)
+                {
+                    dwn = RuleAction.kSplit;
+                }
+
+                return dwn;
             }
         }
     }

@@ -46,15 +46,15 @@ namespace TVRename
 
                 BannerId = r.ExtractInt("id")??-1;
                 SeriesId = r.ExtractInt("seriesid")?? seriesId; // thetvdb series id
-                SeasonId = r.ExtractInt("seasonid") ?? -1;
+                SeasonId = r.ExtractInt("seasonid",-1);
                 BannerPath = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("BannerPath"));
                 bannerType = r.ExtractString("BannerType");
-                LanguageId = r.ExtractInt("LanguageId") ?? -1;
+                LanguageId = r.ExtractInt("LanguageId",-1);
                 resolution = r.ExtractString("Resolution");
                 string sn = r.ExtractString("Rating");
                 double.TryParse(sn, out Rating);
-                ratingCount  = r.ExtractInt("RatingCount") ?? -1;
-                SeasonId = r.ExtractInt("Season") ?? -1;
+                ratingCount  = r.ExtractInt("RatingCount",-1);
+                SeasonId = r.ExtractInt("Season",-1);
                 thumbnailPath = r.ExtractString("ThumbnailPath");
         }
 

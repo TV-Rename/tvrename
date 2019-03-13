@@ -127,7 +127,7 @@ namespace TVRename
             UseCustomLanguage = xmlSettings.ExtractBool("UseCustomLanguage",false);
             CustomLanguageCode = xmlSettings.ExtractString("CustomLanguageCode");
             CustomShowName = xmlSettings.ExtractString("CustomShowName");
-            TvdbCode = xmlSettings.ExtractInt("TVDBID") ?? -1;
+            TvdbCode = xmlSettings.ExtractInt("TVDBID",-1);
             CountSpecials = xmlSettings.ExtractBool("CountSpecials",false);
             ShowNextAirdate = xmlSettings.ExtractBool("ShowNextAirdate",true);
             AutoAddFolderBase = xmlSettings.ExtractString("FolderBase");
@@ -164,10 +164,10 @@ namespace TVRename
                                                  || xmlSettings.Descendants("FolderPerSeason").Any()
                                                  || xmlSettings.Descendants("SeasonFolderName").Any()
                                                  || xmlSettings.Descendants("PadSeasonToTwoDigits").Any();
-            bool tempAutoAddNewSeasons = xmlSettings.ExtractBool("AutoAddNewSeasons") ?? true;
-            bool tempAutoAddFolderPerSeason = xmlSettings.ExtractBool("FolderPerSeason") ?? true;
+            bool tempAutoAddNewSeasons = xmlSettings.ExtractBool("AutoAddNewSeasons",true);
+            bool tempAutoAddFolderPerSeason = xmlSettings.ExtractBool("FolderPerSeason",true);
             string tempAutoAddSeasonFolderName = xmlSettings.ExtractString("SeasonFolderName");
-            bool tempPadSeasonToTwoDigits = xmlSettings.ExtractBool("PadSeasonToTwoDigits") ?? true;
+            bool tempPadSeasonToTwoDigits = xmlSettings.ExtractBool("PadSeasonToTwoDigits",true);
 
             if (upgradeFromOldAutoAddFunction)
             {

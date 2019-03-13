@@ -15,18 +15,18 @@ namespace TVRename
     {
         public NumberAsTextSorter(int column) : base(column) {}
 
-        protected override int CompareListViewItem([NotNull] ListViewItem x, [NotNull] ListViewItem y) => ParseAsInt(x.SubItems[Col].Text) - ParseAsInt(y.SubItems[Col].Text);
+        protected override int CompareListViewItem([NotNull] ListViewItem x, [NotNull] ListViewItem y) => ParseAsInt(x) - ParseAsInt(y);
 
-        private static int ParseAsInt([CanBeNull] string text)
+        private int ParseAsInt( [NotNull] ListViewItem cellItem)
         {
-            if (string.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(cellItem.SubItems[Col].Text))
             {
                 return -1;
             }
 
             try
             {
-                return Convert.ToInt32(text);
+                return Convert.ToInt32(cellItem.SubItems[Col].Text);
             }
             catch
             {
