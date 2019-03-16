@@ -620,6 +620,18 @@ namespace TVRename
                             break;
                         case DialogResult.No:
                             break;
+                        case DialogResult.None:
+                            break;
+                        case DialogResult.OK:
+                            break;
+                        case DialogResult.Abort:
+                            break;
+                        case DialogResult.Retry:
+                            break;
+                        case DialogResult.Ignore:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
                 }
 
@@ -664,6 +676,10 @@ namespace TVRename
             else if (n == 0)
             {
                 sm.Show(bnActionWhichSearch, new Point(0, 0));
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -1426,7 +1442,6 @@ namespace TVRename
 
             Season seas = mLastSeasonClicked;
             ProcessedEpisode ep = mLastEpClicked;
-            ToolStripMenuItem tsi;
 
             if (si != null)
             {
@@ -1466,7 +1481,7 @@ namespace TVRename
                 foreach (FileInfo fi in fl)
                 {
                     mLastFl.Add(fi);
-                    tsi = new ToolStripMenuItem("Watch: " + fi.FullName)
+                    ToolStripMenuItem tsi = new ToolStripMenuItem("Watch: " + fi.FullName)
                     {
                         Tag = (int) RightClickCommands.kWatchBase + n
                     };
@@ -1976,6 +1991,10 @@ namespace TVRename
             {
                 bnActionRecentCheck_Click(null, null);
             }
+            else
+            {
+                throw new ArgumentOutOfRangeException();
+            }
         }
 
         private void folderRightClickMenu_ItemClicked(object sender,
@@ -2409,6 +2428,10 @@ namespace TVRename
                 else if (pe.Show.DoMissingCheck)
                 {
                     lvi.ImageIndex = 1;
+                }
+                else
+                {
+                    //We don't use an image in this case
                 }
             }
         }

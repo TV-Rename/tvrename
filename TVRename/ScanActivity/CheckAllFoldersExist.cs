@@ -198,6 +198,10 @@ namespace TVRename
                     return FaResult.kfaCreate;
                 case CommandLineArgs.MissingFolderBehavior.ignore:
                     return FaResult.kfaIgnoreOnce;
+                case CommandLineArgs.MissingFolderBehavior.ask:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             if (Doc.Args.Hide || !Environment.UserInteractive)
