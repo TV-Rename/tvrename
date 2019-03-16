@@ -179,8 +179,11 @@ namespace TVRename
                 // == RENAMING CHECK ==
                 if (renCheck && TVSettings.Instance.FileHasUsefulExtension(fi, true))
                 {
+                    // Note that the extension of the file may not be fi.extension as users can put ".mkv.t" for example as an extension
+                    string otherExtension = TVSettings.Instance.FileHasUsefulExtensionDetails(fi, true);
+
                     string newName = TVSettings.Instance.FilenameFriendly(
-                        TVSettings.Instance.NamingStyle.NameFor(ep, fi.Extension, folder.Length));
+                        TVSettings.Instance.NamingStyle.NameFor(ep, otherExtension, folder.Length));
 
                     FileInfo fileWorthAdding = CheckFile(folder, fi, actualFile, newName, ep, files);
 
