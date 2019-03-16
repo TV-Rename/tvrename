@@ -15,8 +15,10 @@ namespace TVRename
         public readonly List<Action> Actions; // The contents of this queue
         public readonly int ParallelLimit; // Number of tasks in the queue than can be run at once
         public readonly string Name; // Name of this queue
-        public int ActionPosition; // Position in the queue list of the next item to process
         public readonly Semaphore Sem;
+
+        // Position in the queue list of the next item to process
+        public int ActionPosition { get; set; }
 
         public ActionQueue(string name, int parallelLimit)
         {

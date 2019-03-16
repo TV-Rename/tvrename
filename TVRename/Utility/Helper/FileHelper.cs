@@ -135,12 +135,9 @@ namespace TVRename
             return -1;
         }
 
-        public static bool IsMovieFile(this FileInfo file)
-        {
-            return TVSettings.Instance.FileHasUsefulExtension(file, false);
-        }
-        
-        public static bool IsLanguageSpecificSubtitle(this FileInfo file, [NotNull] out string extension)
+        public static bool IsMovieFile(this FileInfo file) => TVSettings.Instance.FileHasUsefulExtension(file, false);
+
+        public static (bool found,string extension)  IsLanguageSpecificSubtitle(this FileInfo file)
         {
             foreach (string subExtension in TVSettings.Instance.subtitleExtensionsArray)
             {
@@ -153,12 +150,10 @@ namespace TVRename
                     continue;
                 }
 
-                extension = m.Groups["ext"].ToString();
-                return true;
+                return (true,m.Groups["ext"].ToString());
             }
 
-            extension = string.Empty;
-            return false;
+            return (false, string.Empty);
         }
 
         public static string UrlPathFullName([NotNull] this FileInfo baseFile)

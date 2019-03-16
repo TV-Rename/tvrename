@@ -2154,7 +2154,7 @@ namespace TVRename
             UpdateTimer.Stop();
 
             Task<Release> tuv = VersionUpdater.CheckForUpdatesAsync();
-            NotifyUpdates(await tuv, false);
+            NotifyUpdates(await tuv.ConfigureAwait(false), false);
         }
 
         private void BGDownloadTimer_Tick(object sender, EventArgs e)
@@ -3698,7 +3698,7 @@ namespace TVRename
         {
             UseWaitCursor = true;
             ShowSummary f = new ShowSummary(mDoc);
-            await Task.Run(() => f.GenerateData());
+            await Task.Run(() => f.GenerateData()).ConfigureAwait(false);
             f.PopulateGrid();
             UseWaitCursor = false;
             f.Show();
@@ -3811,7 +3811,7 @@ namespace TVRename
         private async void checkForNewVersionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Task<Release> uv = VersionUpdater.CheckForUpdatesAsync();
-            NotifyUpdates(await uv, true);
+            NotifyUpdates(await uv.ConfigureAwait(false), true);
         }
 
         private void NotifyUpdates([CanBeNull] Release update, bool showNoUpdateRequiredDialog, bool inSilentMode = false)
@@ -3856,7 +3856,7 @@ namespace TVRename
         {
             btnUpdateAvailable.Visible = false;
             Task<Release> uv = VersionUpdater.CheckForUpdatesAsync();
-            NotifyUpdates(await uv, true);
+            NotifyUpdates(await uv.ConfigureAwait(false), true);
         }
 
         private void tmrPeriodicScan_Tick(object sender, EventArgs e) => RunAutoScan("Periodic Scan");
