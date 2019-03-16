@@ -19,7 +19,6 @@ namespace TVRename
     /// </summary>
     public class ActionEngine
     {
-        private Thread actionProcessorThread;
         private bool actionPause;
         private List<Thread> actionWorkers;
         private bool actionStarting;
@@ -131,7 +130,7 @@ namespace TVRename
                 cmp = new CopyMoveProgress(this, queues);
             }
 
-            actionProcessorThread = new Thread(ActionProcessor)
+            Thread actionProcessorThread = new Thread(ActionProcessor)
             {
                 Name = "ActionProcessorThread"
             };
@@ -224,12 +223,7 @@ namespace TVRename
                     break; // all done!
                 }
 
-                if (q is null)
-                {
-                    continue; // no semaphores available yet, try again for one
-                }
-
-                Action act = q.Actions[q.ActionPosition++];
+                Action act = q?.Actions[q.ActionPosition++];
 
                 if (act == null)
                 {
@@ -259,18 +253,10 @@ namespace TVRename
             }
 
             bool allDone = true;
-            foreach (ActionQueue currentQueue in queues)
+            foreach (ActionQueue currentQueue in queues
+                .Where(currentQueue => !(currentQueue?.Actions is null))
+                .Where(currentQueue => currentQueue.ActionPosition < currentQueue.Actions.Count))
             {
-                if (currentQueue?.Actions is null)
-                {
-                    continue;
-                }
-
-                if (currentQueue.ActionPosition >= currentQueue.Actions.Count)
-                {
-                    continue;
-                }
-
                 // something to do in this queue, and semaphore is available
                 allDone = false;
 

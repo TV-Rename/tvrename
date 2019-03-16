@@ -597,6 +597,7 @@ namespace TVRename
                 XmlHelper.WriteElementToXml(writer, "Width", lvc.Width);
             }
 
+            // ReSharper disable once CommentTypo
             writer.WriteEndElement(); // columnwidths
         }
 
@@ -1253,7 +1254,7 @@ namespace TVRename
 
             if (url == QuickStartGuide())
             {
-                return; // let the quickstartguide be shown
+                return; // let the quick-start guide be shown
             }
 
             if (url.Contains(@"ieframe.dll"))
@@ -1288,7 +1289,7 @@ namespace TVRename
 
         private void notifyIcon1_Click(object sender, MouseEventArgs e)
         {
-            // double-click of notification icon causes a click then doubleclick event, 
+            // double-click of notification icon causes a click then double-click event, 
             // so we need to do a timeout before showing the single click's popup
             tmrShowUpcomingPopup.Start();
         }
@@ -1399,10 +1400,7 @@ namespace TVRename
                 return; // nothing or multiple selected
             }
 
-            ShowItem si = mLastShowsClicked != null && mLastShowsClicked.Count > 0
-                ? mLastShowsClicked[0]
-                : null;
-
+            ShowItem si = mLastShowsClicked[0];
             Season seas = mLastSeasonClicked;
             ProcessedEpisode ep = mLastEpClicked;
 
@@ -1431,6 +1429,10 @@ namespace TVRename
             {
                 AddRcMenuItem("Episode Guide", RightClickCommands.kEpisodeGuideForShow);
                 AddRcMenuItem("Visit thetvdb.com", RightClickCommands.kVisitTvdbSeries);
+            }
+            else
+            {
+                //nothing to add
             }
         }
 
@@ -1607,21 +1609,18 @@ namespace TVRename
 
             ToolStripMenuItem tsi = new ToolStripMenuItem("Open Other Folders" );
 
-            foreach (string folder in foldersList)
+            foreach (string folder in foldersList.Where(folder => !string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !alreadyAdded.Contains(folder)))
             {
-                if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !alreadyAdded.Contains(folder))
-                {
-                    alreadyAdded.Add(folder); // don't show the same folder more than once
-                    ToolStripMenuItem tssi = new ToolStripMenuItem("Open: " + folder);
-                    mFoldersToOpen.Add(folder);
-                    tssi.Tag = (int)RightClickCommands.kOpenFolderBase + n;
-                    int n1 = n;
-                    tssi.Click += (s, ev) => {
-                        OpenFolderForShow(n1); 
-                    };
-                    n++;
-                    tsi.DropDownItems.Add(tssi);
-                }
+                alreadyAdded.Add(folder); // don't show the same folder more than once
+                ToolStripMenuItem tssi = new ToolStripMenuItem("Open: " + folder);
+                mFoldersToOpen.Add(folder);
+                tssi.Tag = (int)RightClickCommands.kOpenFolderBase + n;
+                int n1 = n;
+                tssi.Click += (s, ev) => {
+                    OpenFolderForShow(n1); 
+                };
+                n++;
+                tsi.DropDownItems.Add(tssi);
             }
 
             if (tsi.DropDownItems.Count > 0)
@@ -3758,13 +3757,13 @@ namespace TVRename
 
             // Only want the first file if multiple files were dragged across.
             FileInfo from = new FileInfo(files[0]);
-            FileInfo to = new FileInfo(mi.TheFileNoExt + @from.Extension);
+            FileInfo to = new FileInfo(mi.TheFileNoExt + from.Extension);
 
             mDoc.TheActionList.Add(
                 new ActionCopyMoveRename(
                     TVSettings.Instance.LeaveOriginals
                         ? ActionCopyMoveRename.Op.copy
-                        : ActionCopyMoveRename.Op.move, @from, to
+                        : ActionCopyMoveRename.Op.move, from, to
                     , mi.Episode, true, mi));
 
             // and remove old Missing item
@@ -3781,7 +3780,7 @@ namespace TVRename
             e.Effect = DragDropEffects.All;
             Point localPoint = lvAction.PointToClient(new Point(e.X, e.Y));
             ListViewItem lvi = lvAction.GetItemAt(localPoint.X, localPoint.Y);
-            // If we're not draging over a "ItemMissing" entry, or if we're not dragging a list of files, then change the DragDropEffect
+            // If we're not dragging over a "ItemMissing" entry, or if we're not dragging a list of files, then change the DragDropEffect
             if (!(lvi?.Tag is ItemMissing) || !e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.None;
