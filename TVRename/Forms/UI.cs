@@ -261,8 +261,8 @@ namespace TVRename
         {
             string name = TVDoc.GetSearchers().Name(TVSettings.Instance.TheSearchers.CurrentSearchNum());
 
-            bnWTWBTSearch.Enabled = string.IsNullOrWhiteSpace(name);
-            bnActionBTSearch.Enabled = string.IsNullOrWhiteSpace(name);
+            bnWTWBTSearch.Enabled = !string.IsNullOrWhiteSpace(name);
+            bnActionBTSearch.Enabled = !string.IsNullOrWhiteSpace(name);
 
             bnWTWBTSearch.Text = UseCustom(lvWhenToWatch) ? "Search" : name;
             bnActionBTSearch.Text = UseCustom(lvAction) ? "Search" : name;
@@ -2402,7 +2402,7 @@ namespace TVRename
             if (airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
             {
                 List<FileInfo> fl = dfc.FindEpOnDisk(pe);
-                if (fl.Count > 0)
+                if (fl.Count > 0 && fl.All(file => file.Name.StartsWith(TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pe)), StringComparison.OrdinalIgnoreCase)))
                 {
                     lvi.ImageIndex = 0;
                 }
