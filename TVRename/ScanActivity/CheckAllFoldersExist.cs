@@ -119,33 +119,32 @@ namespace TVRename
                         otherFolder = mfa.FolderName;
                     }
 
-                    if (whatToDo == FaResult.kfaCancel)
+                    switch (whatToDo)
                     {
-                        throw new TVRenameOperationInterruptedException();
-                    }
-                    else if (whatToDo == FaResult.kfaCreate)
-                    {
-                        TryCreateDirectory(folder, sn, text);
-                        goAgain = true;
-                    }
-                    else if (whatToDo == FaResult.kfaIgnoreAlways)
-                    {
-                        si.IgnoreSeasons.Add(snum);
-                        Doc.SetDirty();
-                        break;
-                    }
-                    else if (whatToDo == FaResult.kfaIgnoreOnce)
-                    {
-                        break;
-                    }
-                    else if (whatToDo == FaResult.kfaRetry)
-                    {
-                        goAgain = true;
-                    }
-                    else if (whatToDo == FaResult.kfaDifferentFolder)
-                    {
-                        folder = otherFolder;
-                        goAgain = UpdateDirectory(si, snum, folder);
+                        case FaResult.kfaRetry:
+                            goAgain = true;
+                            break;
+                        case FaResult.kfaDifferentFolder:
+                            folder = otherFolder;
+                            goAgain = UpdateDirectory(si, snum, folder);
+                            break;
+                        case FaResult.kfaNotSet:
+                            break;
+                        case FaResult.kfaCancel:
+                            throw new TVRenameOperationInterruptedException();
+                            break;
+                        case FaResult.kfaCreate:
+                            TryCreateDirectory(folder, sn, text);
+                            goAgain = true;
+                            break;
+                        case FaResult.kfaIgnoreOnce:
+                            break;
+                        case FaResult.kfaIgnoreAlways:
+                            si.IgnoreSeasons.Add(snum);
+                            Doc.SetDirty();
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
                 } while (goAgain);
             } // for each folder
@@ -198,6 +197,10 @@ namespace TVRename
                     return FaResult.kfaCreate;
                 case CommandLineArgs.MissingFolderBehavior.ignore:
                     return FaResult.kfaIgnoreOnce;
+                case CommandLineArgs.MissingFolderBehavior.ask:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             if (Doc.Args.Hide || !Environment.UserInteractive)

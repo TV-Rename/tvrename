@@ -261,6 +261,9 @@ namespace TVRename
         {
             string name = TVDoc.GetSearchers().Name(TVSettings.Instance.TheSearchers.CurrentSearchNum());
 
+            bnWTWBTSearch.Enabled = !string.IsNullOrWhiteSpace(name);
+            bnActionBTSearch.Enabled = !string.IsNullOrWhiteSpace(name);
+
             bnWTWBTSearch.Text = UseCustom(lvWhenToWatch) ? "Search" : name;
             bnActionBTSearch.Text = UseCustom(lvAction) ? "Search" : name;
 
@@ -594,6 +597,7 @@ namespace TVRename
                 XmlHelper.WriteElementToXml(writer, "Width", lvc.Width);
             }
 
+            // ReSharper disable once CommentTypo
             writer.WriteEndElement(); // columnwidths
         }
 
@@ -617,6 +621,18 @@ namespace TVRename
                             break;
                         case DialogResult.No:
                             break;
+                        case DialogResult.None:
+                            break;
+                        case DialogResult.OK:
+                            break;
+                        case DialogResult.Abort:
+                            break;
+                        case DialogResult.Retry:
+                            break;
+                        case DialogResult.Ignore:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
                 }
 
@@ -640,8 +656,12 @@ namespace TVRename
             menuSearchSites.Items.Clear();
             for (int i = 0; i < TVDoc.GetSearchers().Count(); i++)
             {
-                ToolStripMenuItem tsi = new ToolStripMenuItem(TVDoc.GetSearchers().Name(i)) {Tag = i};
-                menuSearchSites.Items.Add(tsi);
+                string name = TVDoc.GetSearchers().Name(i);
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    ToolStripMenuItem tsi = new ToolStripMenuItem(name) {Tag = i};
+                    menuSearchSites.Items.Add(tsi);
+                }
             }
 
             return menuSearchSites;
@@ -657,6 +677,10 @@ namespace TVRename
             else if (n == 0)
             {
                 sm.Show(bnActionWhichSearch, new Point(0, 0));
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -739,7 +763,7 @@ namespace TVRename
 
         private void FillEpGuideHtml()
         {
-            if (MyShowTree.Nodes.Count == 0)
+            if (MyShowTree.Nodes.Count == 0) 
             {
                 ShowQuickStartGuide();
             }
@@ -1230,7 +1254,7 @@ namespace TVRename
 
             if (url == QuickStartGuide())
             {
-                return; // let the quickstartguide be shown
+                return; // let the quick-start guide be shown
             }
 
             if (url.Contains(@"ieframe.dll"))
@@ -1265,7 +1289,7 @@ namespace TVRename
 
         private void notifyIcon1_Click(object sender, MouseEventArgs e)
         {
-            // double-click of notification icon causes a click then doubleclick event, 
+            // double-click of notification icon causes a click then double-click event, 
             // so we need to do a timeout before showing the single click's popup
             tmrShowUpcomingPopup.Start();
         }
@@ -1376,10 +1400,7 @@ namespace TVRename
                 return; // nothing or multiple selected
             }
 
-            ShowItem si = mLastShowsClicked != null && mLastShowsClicked.Count > 0
-                ? mLastShowsClicked[0]
-                : null;
-
+            ShowItem si = mLastShowsClicked[0];
             Season seas = mLastSeasonClicked;
             ProcessedEpisode ep = mLastEpClicked;
 
@@ -1409,6 +1430,10 @@ namespace TVRename
                 AddRcMenuItem("Episode Guide", RightClickCommands.kEpisodeGuideForShow);
                 AddRcMenuItem("Visit thetvdb.com", RightClickCommands.kVisitTvdbSeries);
             }
+            else
+            {
+                //nothing to add
+            }
         }
 
         private void MenuShowAndEpisodes()
@@ -1419,7 +1444,6 @@ namespace TVRename
 
             Season seas = mLastSeasonClicked;
             ProcessedEpisode ep = mLastEpClicked;
-            ToolStripMenuItem tsi;
 
             if (si != null)
             {
@@ -1459,7 +1483,7 @@ namespace TVRename
                 foreach (FileInfo fi in fl)
                 {
                     mLastFl.Add(fi);
-                    tsi = new ToolStripMenuItem("Watch: " + fi.FullName)
+                    ToolStripMenuItem tsi = new ToolStripMenuItem("Watch: " + fi.FullName)
                     {
                         Tag = (int) RightClickCommands.kWatchBase + n
                     };
@@ -1585,21 +1609,18 @@ namespace TVRename
 
             ToolStripMenuItem tsi = new ToolStripMenuItem("Open Other Folders" );
 
-            foreach (string folder in foldersList)
+            foreach (string folder in foldersList.Where(folder => !string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !alreadyAdded.Contains(folder)))
             {
-                if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !alreadyAdded.Contains(folder))
-                {
-                    alreadyAdded.Add(folder); // don't show the same folder more than once
-                    ToolStripMenuItem tssi = new ToolStripMenuItem("Open: " + folder);
-                    mFoldersToOpen.Add(folder);
-                    tssi.Tag = (int)RightClickCommands.kOpenFolderBase + n;
-                    int n1 = n;
-                    tssi.Click += (s, ev) => {
-                        OpenFolderForShow(n1); 
-                    };
-                    n++;
-                    tsi.DropDownItems.Add(tssi);
-                }
+                alreadyAdded.Add(folder); // don't show the same folder more than once
+                ToolStripMenuItem tssi = new ToolStripMenuItem("Open: " + folder);
+                mFoldersToOpen.Add(folder);
+                tssi.Tag = (int)RightClickCommands.kOpenFolderBase + n;
+                int n1 = n;
+                tssi.Click += (s, ev) => {
+                    OpenFolderForShow(n1); 
+                };
+                n++;
+                tsi.DropDownItems.Add(tssi);
             }
 
             if (tsi.DropDownItems.Count > 0)
@@ -1969,6 +1990,10 @@ namespace TVRename
             {
                 bnActionRecentCheck_Click(null, null);
             }
+            else
+            {
+                throw new ArgumentOutOfRangeException();
+            }
         }
 
         private void folderRightClickMenu_ItemClicked(object sender,
@@ -2129,7 +2154,7 @@ namespace TVRename
             UpdateTimer.Stop();
 
             Task<Release> tuv = VersionUpdater.CheckForUpdatesAsync();
-            NotifyUpdates(await tuv, false);
+            NotifyUpdates(await tuv.ConfigureAwait(false), false);
         }
 
         private void BGDownloadTimer_Tick(object sender, EventArgs e)
@@ -2395,13 +2420,17 @@ namespace TVRename
             if (airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
             {
                 List<FileInfo> fl = dfc.FindEpOnDisk(pe);
-                if (fl.Count > 0)
+                if (fl.Count > 0 && fl.All(file => file.Name.StartsWith(TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pe)), StringComparison.OrdinalIgnoreCase)))
                 {
                     lvi.ImageIndex = 0;
                 }
                 else if (pe.Show.DoMissingCheck)
                 {
                     lvi.ImageIndex = 1;
+                }
+                else
+                {
+                    //We don't use an image in this case
                 }
             }
         }
@@ -3245,13 +3274,16 @@ namespace TVRename
                 ToolStripMenuItem tsi = new ToolStripMenuItem("Search") { Tag = (int)RightClickCommands.kBtSearchFor };
                 for (int i = 0; i < TVDoc.GetSearchers().Count(); i++)
                 {
-                    ToolStripMenuItem tssi = new ToolStripMenuItem(TVDoc.GetSearchers().Name(i)) { Tag = (int)RightClickCommands.kSearchForBase + i };
-                    int i1 = i;
-                    tssi.Click += (s, ev) =>
+                    string name = TVDoc.GetSearchers().Name(i);
+                    if (!string.IsNullOrWhiteSpace(name))
                     {
-                        SearchFor(i1);
-                    };
-                    tsi.DropDownItems.Add(tssi);
+                        ToolStripMenuItem tssi = new ToolStripMenuItem(name)
+                            {Tag = (int) RightClickCommands.kSearchForBase + i};
+
+                        int i1 = i;
+                        tssi.Click += (s, ev) => { SearchFor(i1); };
+                        tsi.DropDownItems.Add(tssi);
+                    }
                 }
                 showRightClickMenu.Items.Add(tsi);
 
@@ -3666,7 +3698,7 @@ namespace TVRename
         {
             UseWaitCursor = true;
             ShowSummary f = new ShowSummary(mDoc);
-            await Task.Run(() => f.GenerateData());
+            await Task.Run(() => f.GenerateData()).ConfigureAwait(false);
             f.PopulateGrid();
             UseWaitCursor = false;
             f.Show();
@@ -3725,13 +3757,13 @@ namespace TVRename
 
             // Only want the first file if multiple files were dragged across.
             FileInfo from = new FileInfo(files[0]);
-            FileInfo to = new FileInfo(mi.TheFileNoExt + @from.Extension);
+            FileInfo to = new FileInfo(mi.TheFileNoExt + from.Extension);
 
             mDoc.TheActionList.Add(
                 new ActionCopyMoveRename(
                     TVSettings.Instance.LeaveOriginals
                         ? ActionCopyMoveRename.Op.copy
-                        : ActionCopyMoveRename.Op.move, @from, to
+                        : ActionCopyMoveRename.Op.move, from, to
                     , mi.Episode, true, mi));
 
             // and remove old Missing item
@@ -3748,7 +3780,7 @@ namespace TVRename
             e.Effect = DragDropEffects.All;
             Point localPoint = lvAction.PointToClient(new Point(e.X, e.Y));
             ListViewItem lvi = lvAction.GetItemAt(localPoint.X, localPoint.Y);
-            // If we're not draging over a "ItemMissing" entry, or if we're not dragging a list of files, then change the DragDropEffect
+            // If we're not dragging over a "ItemMissing" entry, or if we're not dragging a list of files, then change the DragDropEffect
             if (!(lvi?.Tag is ItemMissing) || !e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.None;
@@ -3779,7 +3811,7 @@ namespace TVRename
         private async void checkForNewVersionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Task<Release> uv = VersionUpdater.CheckForUpdatesAsync();
-            NotifyUpdates(await uv, true);
+            NotifyUpdates(await uv.ConfigureAwait(false), true);
         }
 
         private void NotifyUpdates([CanBeNull] Release update, bool showNoUpdateRequiredDialog, bool inSilentMode = false)
@@ -3824,7 +3856,7 @@ namespace TVRename
         {
             btnUpdateAvailable.Visible = false;
             Task<Release> uv = VersionUpdater.CheckForUpdatesAsync();
-            NotifyUpdates(await uv, true);
+            NotifyUpdates(await uv.ConfigureAwait(false), true);
         }
 
         private void tmrPeriodicScan_Tick(object sender, EventArgs e) => RunAutoScan("Periodic Scan");

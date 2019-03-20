@@ -179,8 +179,11 @@ namespace TVRename
                 // == RENAMING CHECK ==
                 if (renCheck && TVSettings.Instance.FileHasUsefulExtension(fi, true))
                 {
+                    // Note that the extension of the file may not be fi.extension as users can put ".mkv.t" for example as an extension
+                    string otherExtension = TVSettings.Instance.FileHasUsefulExtensionDetails(fi, true);
+
                     string newName = TVSettings.Instance.FilenameFriendly(
-                        TVSettings.Instance.NamingStyle.NameFor(ep, fi.Extension, folder.Length));
+                        TVSettings.Instance.NamingStyle.NameFor(ep, otherExtension, folder.Length));
 
                     FileInfo fileWorthAdding = CheckFile(folder, fi, actualFile, newName, ep, files);
 
@@ -280,15 +283,17 @@ namespace TVRename
         }
 
         [CanBeNull]
-        private FileInfo CheckFile([NotNull] string folder, FileInfo fi, [NotNull] FileInfo actualFile, string newName, ProcessedEpisode ep,
-            FileInfo[] files)
+        private FileInfo CheckFile([NotNull] string folder, FileInfo fi, [NotNull] FileInfo actualFile, string newName, ProcessedEpisode ep,FileInfo[] files)
         {
-            if (TVSettings.Instance.RetainLanguageSpecificSubtitles &&
-                fi.IsLanguageSpecificSubtitle(out string subtitleExtension) &&
-                actualFile.Name != newName)
+            if (TVSettings.Instance.RetainLanguageSpecificSubtitles)
             {
-                newName = TVSettings.Instance.FilenameFriendly(
-                    TVSettings.Instance.NamingStyle.NameFor(ep, subtitleExtension, folder.Length));
+                (bool isSubtitleFile, string subtitleExtension) = fi.IsLanguageSpecificSubtitle();
+
+                if (isSubtitleFile && actualFile.Name != newName)
+                {
+                    newName = TVSettings.Instance.FilenameFriendly(
+                        TVSettings.Instance.NamingStyle.NameFor(ep, subtitleExtension, folder.Length));
+                }
             }
 
             FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
