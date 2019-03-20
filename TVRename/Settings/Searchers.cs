@@ -113,6 +113,11 @@ namespace TVRename
 
         public string Name(int n)
         {
+            if (choices.Count == 0)
+            {
+                return string.Empty;
+            }
+
             if (n >= choices.Count)
             {
                 n = choices.Count - 1;
@@ -127,6 +132,10 @@ namespace TVRename
 
         public string Url(int n)
         {
+            if (choices.Count == 0)
+            {
+                return string.Empty;
+            }
             if (n >= choices.Count)
             {
                 n = choices.Count - 1;

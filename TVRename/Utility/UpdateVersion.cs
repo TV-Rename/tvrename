@@ -11,14 +11,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 
-public class Release : IComparable
+public class Release
 {
     public string DownloadUrl { get; set; }
     public string ReleaseNotesText { get; set; }
     public string ReleaseNotesUrl { get; set; }
     public bool IsBeta { get; set; }
     public DateTime ReleaseDate { get; set; }
-
     public Version VersionNumber { get; }
     public string Prerelease { get; }
     public string Build { get; }
@@ -57,7 +56,7 @@ public class Release : IComparable
         Build = match.Groups["build"].Value;
     }
 
-    public int CompareTo([CanBeNull] object obj)
+    private int CompareTo([CanBeNull] object obj)
     {
         //Returns 1 if this > object, 0 if this=object and -1 if this< object
         if (obj == null)

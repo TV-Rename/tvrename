@@ -195,10 +195,10 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string NameForNoExt([NotNull] ProcessedEpisode pe, string styleString) => NameForNoExt(pe, styleString, false);
+        public static string NameForNoExt([NotNull] ProcessedEpisode pe, [NotNull]  string styleString) => NameForNoExt(pe, styleString, false);
 
         [NotNull]
-        public static string NameForNoExt([NotNull] ProcessedEpisode pe, string styleString, bool urlEncode)
+        public static string NameForNoExt([NotNull] ProcessedEpisode pe, [NotNull]  string styleString, bool urlEncode)
         {
             string name = styleString;
 

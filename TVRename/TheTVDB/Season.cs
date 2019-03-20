@@ -74,31 +74,28 @@ namespace TVRename
 
         public SeasonStatus Status(TimeZoneInfo tz)
         {
-            if (HasEpisodes)
-            {
-                if (HasAiredEpisodes(tz) && !HasUnairedEpisodes(tz))
-                {
-                    return SeasonStatus.aired;
-                }
-                else if (HasAiredEpisodes(tz) && HasUnairedEpisodes(tz))
-                {
-                    return SeasonStatus.partiallyAired;
-                }
-                else if (!HasAiredEpisodes(tz) && HasUnairedEpisodes(tz))
-                {
-                    return SeasonStatus.noneAired;
-                }
-                else
-                {
-                    // Can happen if a Season has Episodes WITHOUT Airdates. 
-                    //System.Diagnostics.Debug.Assert(false, string.Format("That is weird ... we have 'episodes' in '{0}' Season {1}, but none are aired, nor unaired. That case shouldn't actually occur !", this.TheSeries.Name,SeasonNumber));
-                    return SeasonStatus.noEpisodes;
-                }
-            }
-            else
+            if (!HasEpisodes)
             {
                 return SeasonStatus.noEpisodes;
             }
+
+            if (HasAiredEpisodes(tz) && !HasUnairedEpisodes(tz))
+            {
+                return SeasonStatus.aired;
+            }
+
+            if (HasAiredEpisodes(tz) && HasUnairedEpisodes(tz))
+            {
+                return SeasonStatus.partiallyAired;
+            }
+
+            if (!HasAiredEpisodes(tz) && HasUnairedEpisodes(tz))
+            {
+                return SeasonStatus.noneAired;
+            }
+
+            // Can happen if a Season has Episodes WITHOUT Airdates. 
+            return SeasonStatus.noEpisodes;
         }
 
         internal int MinYear()
@@ -274,9 +271,6 @@ namespace TVRename
             }
         }
 
-        public bool IsSpecial()
-        {
-            return (SeasonNumber == 0);
-        }
+        public bool IsSpecial() => (SeasonNumber == 0);
     }
 }

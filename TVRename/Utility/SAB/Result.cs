@@ -8,7 +8,7 @@ namespace TVRename.SAB
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [XmlType(AnonymousType = true)]
-    public class Result : object, System.ComponentModel.INotifyPropertyChanged
+    public class Result : System.ComponentModel.INotifyPropertyChanged
     {
         public static Result Deserialize(byte[] data)
         {

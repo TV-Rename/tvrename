@@ -998,22 +998,28 @@ namespace TVRename
             {
                 get
                 {
-                    if (IsShowLevel && IsMetaType)
+                    if (IsMetaType)
                     {
-                        return $"Show Seasons Status: {StatusTextForDisplay}";
+                        if (IsShowLevel)
+                        {
+                            return $"Show Seasons Status: {StatusTextForDisplay}";
+                        }
+                        else
+                        {
+                            return $"Season Status: {StatusTextForDisplay}";
+                        }
                     }
-
-                    if (!IsShowLevel && IsMetaType)
+                    else
                     {
-                        return $"Season Status: {StatusTextForDisplay}";
+                        if (IsShowLevel)
+                        {
+                            return $"Show Status: {StatusTextForDisplay}";
+                        }
+                        else
+                        {
+                            return string.Empty;
+                        }
                     }
-
-                    if (IsShowLevel && !IsMetaType)
-                    {
-                        return $"Show Status: {StatusTextForDisplay}";
-                    }
-
-                    return "";
                 }
             }
 

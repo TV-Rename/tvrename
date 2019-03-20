@@ -237,7 +237,7 @@ namespace TVRename
         {
             get
             {
-                RuleAction dwn = RuleAction.kIgnoreEp;
+                RuleAction dwn;
 
                 if (rbIgnore.Checked)
                 {
@@ -270,6 +270,10 @@ namespace TVRename
                 else if (rbSplit.Checked)
                 {
                     dwn = RuleAction.kSplit;
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException();
                 }
 
                 return dwn;

@@ -284,7 +284,8 @@ namespace TVRename
                 SeriesInfo s = si.TheSeries();
                 if (s == null)
                 {
-                    throw new ArgumentNullException(nameof(s));
+                    //We have not downloaded the series, so have to assume that we need the episode/file
+                    return true;
                 }
 
                 Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);

@@ -1204,6 +1204,8 @@ namespace TVRename
                     case ItemDownloading actionIp:
                         name = actionIp.DesiredLocationNoExt;
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
 
                 if ((m == null) || string.IsNullOrEmpty(name))

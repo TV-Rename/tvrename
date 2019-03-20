@@ -413,7 +413,8 @@ namespace TVRename
                     Data[i] = new bool?[allocC];
                 }
 
-                DataR = DataC = 0;
+                DataR = 0;
+                DataC = 0;
             }
 
             private void SwapCols(int c1, int c2)
@@ -581,8 +582,10 @@ namespace TVRename
                 Cols.RemoveRange(countC, Cols.Count - countC);
 
                 Data = newarr;
-                allocR = DataR = countR;
-                allocC = DataC = countC;
+                allocR = countR;
+                DataR = countR;
+                allocC = countC;
+                DataC = countC;
             }
 
             public void Set(string row, string col, bool isActor) // isActor = false means guest star

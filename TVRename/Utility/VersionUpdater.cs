@@ -35,7 +35,7 @@ namespace TVRename
                 return null;
             }
 
-            (Release latestVersion, Release latestBetaVersion) = await GetLatestReleases();
+            (Release latestVersion, Release latestBetaVersion) = await GetLatestReleases().ConfigureAwait(false);
 
             if ((TVSettings.Instance.mode == TVSettings.BetaMode.ProductionOnly) &&
                 (latestVersion.NewerThan(currentVersion)))
@@ -70,7 +70,7 @@ namespace TVRename
 
                     Task<string> response = client.DownloadStringTaskAsync(GITHUB_RELEASES_API_URL);
                     gitHubInfo = JArray.Parse(await response.ConfigureAwait(false));
-                });
+                }).ConfigureAwait(false);
 
                 if (gitHubInfo is null)
                 {

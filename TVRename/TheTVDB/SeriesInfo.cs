@@ -679,7 +679,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public string GetImdbNumber() => Imdb.StartsWith("tt", StringComparison.Ordinal) ? Imdb.Substring(2): Imdb;
+        public string GetImdbNumber() => Imdb is null? string.Empty: Imdb.StartsWith("tt", StringComparison.Ordinal) ? Imdb?.Substring(2): Imdb;
 
         public int GetSeasonIndex(int seasonNumber, Season.SeasonType type)
         {

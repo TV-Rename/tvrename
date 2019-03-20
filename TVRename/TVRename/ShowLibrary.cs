@@ -429,20 +429,26 @@ namespace TVRename
         private static void RemoveEpisode([NotNull] List<ProcessedEpisode> eis, int n1, int n2)
         {
             int ec = eis.Count;
-            if ((n1 < ec) && (n1 >= 0) && (n2 < ec) && (n2 >= 0))
+            if (ValidIndex(n1, ec) && ValidIndex(n2, ec))
             {
                 eis.RemoveRange(n1, 1 + n2 - n1);
             }
-            else if ((n1 < ec) && (n1 >= 0) && (n2 == -1))
+            else if (ValidIndex(n1, ec) && (n2 == -1))
             {
                 eis.RemoveAt(n1);
             }
+            else
+            {
+                //arguments are not consistent, so we'll do nothing
+            }
         }
+
+        private static bool ValidIndex(int index, int maxIndex) => (index < maxIndex) && (index >= 0);
 
         private static void RenameEpisode([NotNull] List<ProcessedEpisode> eis, int index,string txt)
         {
             int ec = eis.Count;
-            if ((index < ec) && (index >= 0))
+            if (ValidIndex(index, ec))
             {
                 eis[index].Name = txt;
             }
@@ -452,7 +458,7 @@ namespace TVRename
         {
             int ec = eis.Count;
             // split one episode into a multi-parter
-            if ((n1 < ec) && (n1 >= 0))
+            if (ValidIndex(n1, ec))
             {
                 ProcessedEpisode ei = eis[n1];
                 string nameBase = ei.Name;
@@ -476,7 +482,7 @@ namespace TVRename
         private static void RemoveEpisode([NotNull] List<ProcessedEpisode> eis, ShowItem si, ShowRule sr, int n1, int n2, [CanBeNull] string txt)
         {
             int ec = eis.Count;
-            if ((n1 != -1) && (n2 != -1) && (n1 < ec) && (n2 < ec) && (n1 < n2))
+            if (ValidIndex(n1, ec) && ValidIndex(n2, ec) && (n1 < n2))
             {
                 ProcessedEpisode oldFirstEi = eis[n1];
                 List<string> episodeNames = new List<string> { eis[n1].Name };
@@ -526,7 +532,7 @@ namespace TVRename
         private static void InsertEpisode([NotNull] List<ProcessedEpisode> eis, ShowItem si, int n1, string txt)
         {
             int ec = eis.Count;
-            if ((n1 < ec) && (n1 >= 0))
+            if (ValidIndex(n1, ec))
             {
                 ProcessedEpisode t = eis[n1];
                 ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheAiredSeason, t.TheDvdSeason, si)
@@ -552,12 +558,16 @@ namespace TVRename
 
                 eis.Add(n);
             }
+            else
+            {
+                //Parameters are invalid, so we'll do nothing
+            }
         }
 
         private static void SwapEpisode([NotNull] List<ProcessedEpisode> eis, int n1, int n2)
         {
             int ec = eis.Count;
-            if ((n1 != -1) && (n2 != -1) && (n1 < ec) && (n2 < ec))
+            if (ValidIndex(n1, ec) && ValidIndex(n2, ec))
             {
                 ProcessedEpisode t = eis[n1];
                 eis[n1] = eis[n2];
