@@ -391,6 +391,14 @@ namespace TVRename
                 return new List<Item>();
             }
 
+            Dictionary<int, List<string>> foldersLocations = si.AllProposedFolderLocations();
+            if (!foldersLocations.ContainsKey(seasF))
+            {
+                LOGGER.Info(
+                    $"Identified that {fi.FullName} matches S{seasF}E{epF} of show {si.ShowName}, but can't tell where to copy it. Not copying across.");
+                return new List<Item>();
+            }
+
             LOGGER.Info(
                 $"Identified that {fi.FullName} matches S{seasF}E{epF} of show {si.ShowName}, that it's not already present and airs in the future. Copying across.");
 
