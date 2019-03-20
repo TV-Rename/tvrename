@@ -88,7 +88,7 @@ namespace TVRename
             }
             catch (JsonReaderException ex)
             {
-                LOGGER.Error(ex,
+                LOGGER.Warn(ex,
                     $"Could not parse data recieved from {url}, {settingsString} {downloadsString} {torrentDetailsString}");
             }
 
