@@ -136,8 +136,7 @@ namespace TVRename
 
                 Threadslogger.Trace("  Downloading " + series.Name);
 
-                if (TheTVDB.Instance.EnsureUpdated(series.SeriesId, bannersToo, series.UseCustomLanguage,
-                        series.CustomLanguageCode))
+                if (TheTVDB.Instance.EnsureUpdated(series, bannersToo))
                 {
                     return;
                 }

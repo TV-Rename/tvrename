@@ -18,7 +18,7 @@ namespace TVRename
         bool Connect(bool showErrorMsgBox);
         void SaveCache();
 
-        bool EnsureUpdated(int code, bool bannersToo, bool useCustomLangCode, string langCode);
+        bool EnsureUpdated(SeriesSpecifier s, bool bannersToo);
         bool GetUpdates(bool showErrorMsgBox);
         void UpdatesDoneOk();
 

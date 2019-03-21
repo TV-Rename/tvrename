@@ -1202,6 +1202,11 @@ namespace TVRename
         }
 
         [CanBeNull]
+        private SeriesInfo DownloadSeriesNow([NotNull] SeriesSpecifier deets, bool episodesToo, bool bannersToo) =>
+            DownloadSeriesNow(deets.SeriesId, episodesToo, bannersToo, deets.UseCustomLanguage,
+                deets.CustomLanguageCode);
+
+        [CanBeNull]
         private SeriesInfo DownloadSeriesNow(int code, bool episodesToo, bool bannersToo, bool useCustomLangCode, string langCode)
         {
             if (code == 0)
@@ -1945,18 +1950,19 @@ namespace TVRename
             series[code] = new SeriesInfo(name ?? "", code, customLanguageCode) { Dirty = true };
         }
 
-        public bool EnsureUpdated(int code, bool bannersToo, bool useCustomLangCode, string langCode)
+        public bool EnsureUpdated([NotNull] SeriesSpecifier seriesd, bool bannersToo)
         {
+            int code = seriesd.SeriesId;
             if (DoWeForceReloadFor(code) || (series[code].AiredSeasons.Count == 0))
             {
-                return DownloadSeriesNow(code, true, bannersToo, useCustomLangCode, langCode) != null; // the whole lot!
+                return DownloadSeriesNow(seriesd, true, bannersToo) != null; // the whole lot!
             }
 
             bool ok = true;
 
             if ((series[code].Dirty) || (bannersToo && !series[code].BannersLoaded))
             {
-                ok = (DownloadSeriesNow(code, false, bannersToo, useCustomLangCode, langCode) != null);
+                ok = (DownloadSeriesNow(seriesd, false, bannersToo) != null);
             }
 
             foreach (KeyValuePair<int, Season> kvp in GetSeries(code)?.AiredSeasons ?? new Dictionary<int, Season>())
