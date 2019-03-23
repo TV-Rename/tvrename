@@ -89,9 +89,10 @@ namespace TVRename
             SetDefaults(ser, airSeason, dvdSeason);
         }
 
+        [CanBeNull]
         public DateTime? GetAirDateDt()
         {
-            if (FirstAired == null)
+            if (FirstAired == null || TheSeries == null)
             {
                 return null;
             }
@@ -102,6 +103,7 @@ namespace TVRename
             return new DateTime(fa.Year, fa.Month, fa.Day, airs?.Hour ?? 20, airs?.Minute ?? 0, 0, 0);
         }
 
+        [CanBeNull]
         public DateTime? GetAirDateDt(TimeZoneInfo tz)
         {
             DateTime? dt = GetAirDateDt();
