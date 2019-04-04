@@ -775,33 +775,6 @@ namespace TVRename
             }
         }
 
-        public static bool HasAnyAirdates([NotNull] ShowItem si, int snum)
-        {
-            SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
-
-            if (ser == null)
-            {
-                return false;
-            }
-
-            Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DvdSeasons : ser.AiredSeasons;
-
-            if (!seasonsToUse.ContainsKey(snum))
-            {
-                return false;
-            }
-
-            foreach (Episode e in seasonsToUse[snum].Episodes.Values)
-            {
-                if (e.FirstAired != null)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         [NotNull]
         public IEnumerable<ProcessedEpisode> GetRecentAndFutureEps(int days)
         {

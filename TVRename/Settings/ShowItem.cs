@@ -57,6 +57,8 @@ namespace TVRename
 
         public DateTime? BannersLastUpdatedOnDisk { get; set; }
 
+        public Season.SeasonType Order => DvdOrder ? Season.SeasonType.dvd : Season.SeasonType.aired;
+
         #region AutomaticFolderType enum
         public enum AutomaticFolderType
         {
@@ -836,6 +838,38 @@ namespace TVRename
         public IEnumerable<string> GetActorNames()
         {
             return Actors.Select(x => x.ActorName);
+        }
+
+        public bool NoAirdatesUntilNow(int snum)
+        {
+            int lastPossibleSeason = SeasonEpisodes.Keys.DefaultIfEmpty(0).Max();
+
+            SeriesInfo ser = TheTVDB.Instance.GetSeries(TvdbCode);
+
+            if (ser == null)
+            {
+                return true;
+            }
+
+            // for specials "season", see if any season has any aired dates
+            // otherwise, check only up to the season we are considering
+            int maxSeasonToUse = snum == 0 ? lastPossibleSeason : snum;
+
+            foreach (int i in Enumerable.Range(1, maxSeasonToUse))
+            {
+                if (ser.HasAnyAirdates(i, Order))
+                {
+                    return false;
+                }
+
+                //If the show is in its first season and no episodes have air dates
+                if (lastPossibleSeason == 1)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

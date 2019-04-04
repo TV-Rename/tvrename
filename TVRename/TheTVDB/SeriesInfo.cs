@@ -708,5 +708,12 @@ namespace TVRename
         public string GetSeriesWideBannerPath() => banners.GetSeriesWideBannerPath();
         public string GetSeasonWideBannerPath(int snum) => banners.GetSeasonWideBannerPath(snum);
         public void AddOrUpdateBanner([NotNull] Banner banner) => banners.AddOrUpdateBanner(banner);
+
+        public bool HasAnyAirdates(int snum, Season.SeasonType type)
+        {
+            Dictionary<int, Season> seasonsToUse = type==Season.SeasonType.dvd ? DvdSeasons : AiredSeasons;
+
+            return seasonsToUse.ContainsKey(snum) && seasonsToUse[snum].Episodes.Values.Any(e => e.FirstAired != null);
+        }
     }
 }
