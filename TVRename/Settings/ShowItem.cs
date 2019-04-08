@@ -23,7 +23,7 @@ namespace TVRename
 {
     public class ShowItem
     {
-        public string AutoAddFolderBase; // TODO: use magical renaming tokens here
+        public string AutoAddFolderBase;
         public string AutoAddCustomFolderFormat;
         public AutomaticFolderType AutoAddType;
 
@@ -248,12 +248,10 @@ namespace TVRename
 
                 foreach (string ff in seasonFolder.Descendants("Folder")
                     .Select(folderData => folderData.Attribute("Location")?.Value)
-                    .Distinct())
+                    .Distinct()
+                    .Where(ff => !string.IsNullOrWhiteSpace(ff) && AutoFolderNameForSeason(snum) != ff))
                 {
-                    if (!string.IsNullOrWhiteSpace(ff) && AutoFolderNameForSeason(snum) != ff)
-                    {
-                        ManualFolderLocations[snum].Add(ff);
-                    }
+                    ManualFolderLocations[snum].Add(ff);
                 }
             }
         }
@@ -375,7 +373,7 @@ namespace TVRename
             get {
                 //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
                 SeriesInfo seriesInfo = TheSeries();
-                if (seriesInfo == null || seriesInfo.AiredSeasons == null || seriesInfo.AiredSeasons.Count <= 0)
+                if (seriesInfo?.AiredSeasons == null || seriesInfo.AiredSeasons.Count <= 0)
                 {
                     return false;
                 }
@@ -507,7 +505,7 @@ namespace TVRename
             ForceCheckNoAirdate = false;
             ForceCheckFuture = false;
             ManualFoldersReplaceAutomatic = false;
-            BannersLastUpdatedOnDisk = null; //assume that the baners are old and have expired
+            BannersLastUpdatedOnDisk = null; //assume that the banners are old and have expired
             ShowTimeZone = TimeZoneHelper.DefaultTimeZone(); // default, is correct for most shows
             lastFiguredTz = "";
         }
