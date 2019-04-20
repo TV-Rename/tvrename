@@ -239,13 +239,8 @@ namespace TVRename
                     continue;
                 }
 
-                foreach (FileInfo fiTemp in files)
+                foreach (FileInfo fiTemp in files.Where(fiTemp => fiTemp.IsMovieFile()))
                 {
-                    if (!fiTemp.IsMovieFile())
-                    {
-                        continue; // move on
-                    }
-
                     if (!FindSeasEp(fiTemp, out int seasFound, out int epFound, out int _, si))
                     {
                         continue;
