@@ -206,14 +206,16 @@ namespace TVRename
 
             if (!seasonsToUse.ContainsKey(snum))
             {
-                return null; // todo.. something?
+                Logger.Error($"Asked to update season {snum} of {si.ShowName}, but it does not exist");
+                return null;
             }
 
             Season seas = seasonsToUse[snum];
 
             if (seas == null)
             {
-                return null; // TODO: warn user
+                Logger.Error($"Asked to update season {snum} of {si.ShowName}, whilst it exists, it has no contents");
+                return null; 
             }
 
             foreach (Episode e in seas.Episodes.Values)
@@ -445,7 +447,7 @@ namespace TVRename
 
         private static bool ValidIndex(int index, int maxIndex) => (index < maxIndex) && (index >= 0);
 
-        private static void RenameEpisode([NotNull] List<ProcessedEpisode> eis, int index,string txt)
+        private static void RenameEpisode([NotNull] IReadOnlyList<ProcessedEpisode> eis, int index,string txt)
         {
             int ec = eis.Count;
             if (ValidIndex(index, ec))
@@ -454,7 +456,7 @@ namespace TVRename
             }
         }
 
-        private static void SplitEpisode([NotNull] List<ProcessedEpisode> eis, ShowItem si, int nn2, int n1)
+        private static void SplitEpisode([NotNull] IList<ProcessedEpisode> eis, ShowItem si, int nn2, int n1)
         {
             int ec = eis.Count;
             // split one episode into a multi-parter
@@ -714,6 +716,11 @@ namespace TVRename
                     }
 
                     if (v.Key == 0 && TVSettings.Instance.IgnoreAllSpecials)
+                    {
+                        continue;
+                    }
+
+                    if (v.Value is null)
                     {
                         continue;
                     }
