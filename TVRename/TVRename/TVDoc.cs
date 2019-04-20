@@ -395,10 +395,7 @@ namespace TVRename
                 PreventAutoScan("Scan "+st.PrettyPrint());
 
                 //Get the default set of shows defined by the specified type
-                if (shows == null)
-                {
-                    shows = GetShowList(st);
-                }
+                shows ??= GetShowList(st);
 
                 //If still null then return
                 if (shows == null)
