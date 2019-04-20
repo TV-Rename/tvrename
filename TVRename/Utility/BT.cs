@@ -965,7 +965,12 @@ namespace TVRename
                 if ((dictitem.Key == ".fileguard") || (dictitem.Data.Type != BTChunk.kDictionary))
                     continue;
 
-                string torrentFile = dictitem.Key;
+                if  (dictitem.Data is BTError err)
+                {
+                    logger.Error($"Error finding BT items: {err.Message}");
+                    return r;
+                }
+
                 BTDictionary d2 = (BTDictionary) (dictitem.Data);
 
                 BTItem p = d2.GetItem("prio");
@@ -975,6 +980,7 @@ namespace TVRename
                 BTString prioString = (BTString) (p);
                 string directoryName = Path.GetDirectoryName(ResumeDatPath) + System.IO.Path.DirectorySeparatorChar;
 
+                string torrentFile = dictitem.Key;
                 if (!File.Exists(torrentFile)) // if the torrent file doesn't exist
                     torrentFile = directoryName + torrentFile; // ..try prepending the resume.dat folder's path to it.
 
