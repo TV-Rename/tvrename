@@ -113,7 +113,7 @@ namespace TVRename
 
         public TimeZoneInfo GetTimeZone()
         {
-            if (seriesTimeZone == null || lastFiguredTz != ShowTimeZone)
+            if (seriesTimeZone is null || lastFiguredTz != ShowTimeZone)
             {
                 FigureOutTimeZone();
             }
@@ -156,7 +156,7 @@ namespace TVRename
 
         private static AutomaticFolderType GetAutoAddType(int? value)
         {
-            return value == null? AutomaticFolderType.libraryDefault: (AutomaticFolderType)value;
+            return value is null? AutomaticFolderType.libraryDefault: (AutomaticFolderType)value;
         }
 
         private void UpgradeFromOldSeasonFormat([NotNull] XElement xmlSettings)
@@ -217,7 +217,7 @@ namespace TVRename
             foreach (XElement rulesSet in xmlSettings.Descendants("Rules"))
             {
                 XAttribute value = rulesSet.Attribute("SeasonNumber");
-                if (value == null)
+                if (value is null)
                 {
                     continue;
                 }
@@ -237,7 +237,7 @@ namespace TVRename
             foreach (XElement seasonFolder in xmlSettings.Descendants("SeasonFolders"))
             {
                 XAttribute value = seasonFolder.Attribute("SeasonNumber");
-                if (value == null)
+                if (value is null)
                 {
                     continue;
                 }
@@ -373,7 +373,7 @@ namespace TVRename
             get {
                 //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
                 SeriesInfo seriesInfo = TheSeries();
-                if (seriesInfo?.AiredSeasons == null || seriesInfo.AiredSeasons.Count <= 0)
+                if (seriesInfo?.AiredSeasons is null || seriesInfo.AiredSeasons.Count <= 0)
                 {
                     return false;
                 }
@@ -525,7 +525,7 @@ namespace TVRename
                 return string.Empty;
             }
 
-            if (s == null)
+            if (s is null)
             {
                 return string.Empty;
             }
@@ -844,7 +844,7 @@ namespace TVRename
 
             SeriesInfo ser = TheTVDB.Instance.GetSeries(TvdbCode);
 
-            if (ser == null)
+            if (ser is null)
             {
                 return true;
             }

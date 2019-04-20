@@ -448,7 +448,7 @@ namespace TVRename
                 int t = 0;
                 for (int c = 0; c < DataC; c++)
                 {
-                    if (((Data[r][c] != null) && ((onlyCols == null) || onlyCols[c])))
+                    if (((Data[r][c] != null) && ((onlyCols is null) || onlyCols[c])))
                     {
                         t++;
                     }
@@ -788,7 +788,7 @@ namespace TVRename
 
             public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
             {
-                if (show == null)
+                if (show is null)
                 {
                     g.DoSort();
                 }

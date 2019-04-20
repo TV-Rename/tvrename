@@ -63,7 +63,7 @@ namespace TVRename
                 if (TVSettings.Instance.CheckuTorrent)
                 {
                     byte[] r = new System.Net.WebClient().DownloadData(url);
-                    if ((r == null) || (r.Length == 0))
+                    if ((r is null) || (r.Length == 0))
                     {
                         Error = true;
                         ErrorText = "No data downloaded";

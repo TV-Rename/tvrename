@@ -396,17 +396,17 @@ namespace TVRename
             List<string> r = new List<string>();
 
             BTItem bti = GetItem("info");
-            if ((bti == null) || (bti.Type != BTChunk.kDictionary))
+            if ((bti is null) || (bti.Type != BTChunk.kDictionary))
                 return null;
 
             BTDictionary infoDict = (BTDictionary) (bti);
 
             bti = infoDict.GetItem("files");
 
-            if (bti == null) // single file torrent
+            if (bti is null) // single file torrent
             {
                 bti = infoDict.GetItem("name");
-                if ((bti == null) || (bti.Type != BTChunk.kString))
+                if ((bti is null) || (bti.Type != BTChunk.kString))
                     return null;
 
                 r.Add(((BTString) bti).AsString());
@@ -671,7 +671,7 @@ namespace TVRename
                     continue;
 
                 byte[] theHash = CheckCache(fiTemp.FullName, whereInFile, pieceSize, fileSize);
-                if (theHash == null)
+                if (theHash is null)
                 {
                     // not cached, figure it out ourselves
                     System.IO.FileStream sr;
@@ -738,7 +738,7 @@ namespace TVRename
 
         protected void BuildFileCache(string folder, bool subFolders)
         {
-            if ((FileCache == null) || (FileCacheIsFor == null) || (FileCacheIsFor != folder) ||
+            if ((FileCache is null) || (FileCacheIsFor is null) || (FileCacheIsFor != folder) ||
                 (FileCacheWithSubFolders != subFolders))
             {
                 FileCache = new DirCache(null, folder, subFolders);
@@ -758,33 +758,33 @@ namespace TVRename
             BEncodeLoader bel = new BEncodeLoader();
             BTFile btFile = bel.Load(torrentFile);
 
-            if (btFile == null)
+            if (btFile is null)
                 return false;
 
             BTItem bti = btFile.GetItem("info");
-            if ((bti == null) || (bti.Type != BTChunk.kDictionary))
+            if ((bti is null) || (bti.Type != BTChunk.kDictionary))
                 return false;
 
             BTDictionary infoDict = (BTDictionary) (bti);
 
             bti = infoDict.GetItem("piece length");
-            if ((bti == null) || (bti.Type != BTChunk.kInteger))
+            if ((bti is null) || (bti.Type != BTChunk.kInteger))
                 return false;
 
             long pieceSize = ((BTInteger) bti).Value;
 
             bti = infoDict.GetItem("pieces");
-            if ((bti == null) || (bti.Type != BTChunk.kString))
+            if ((bti is null) || (bti.Type != BTChunk.kString))
                 return false;
 
             BTString torrentPieces = (BTString) (bti);
 
             bti = infoDict.GetItem("files");
 
-            if (bti == null) // single file torrent
+            if (bti is null) // single file torrent
             {
                 bti = infoDict.GetItem("name");
-                if ((bti == null) || (bti.Type != BTChunk.kString))
+                if ((bti is null) || (bti.Type != BTChunk.kString))
                     return false;
 
                 BTString di = (BTString) (bti);
@@ -924,7 +924,7 @@ namespace TVRename
             // find dictionary for the specified torrent file
 
             BTItem it = ResumeDat.GetDict().GetItem(torrentFile, true);
-            if ((it == null) || (it.Type != BTChunk.kDictionary))
+            if ((it is null) || (it.Type != BTChunk.kDictionary))
                 return null;
 
             BTDictionary dict = (BTDictionary) (it);
@@ -969,7 +969,7 @@ namespace TVRename
                 BTDictionary d2 = (BTDictionary) (dictitem.Data);
 
                 BTItem p = d2.GetItem("prio");
-                if ((p == null) || (p.Type != BTChunk.kString))
+                if ((p is null) || (p.Type != BTChunk.kString))
                     continue;
 
                 BTString prioString = (BTString) (p);
@@ -982,16 +982,16 @@ namespace TVRename
                     continue; // can't find it.  give up!
 
                 BTFile tor = bel.Load(torrentFile);
-                if (tor == null)
+                if (tor is null)
                     continue;
 
                 List<string> a = tor.AllFilesInTorrent();
-                if (a == null) continue;
+                if (a is null) continue;
 
                 int c = 0;
 
                 p = d2.GetItem("path");
-                if ((p == null) || (p.Type != BTChunk.kString))
+                if ((p is null) || (p.Type != BTChunk.kString))
                     continue;
 
                 string defaultFolder = ((BTString) p).AsString();
@@ -1046,11 +1046,11 @@ namespace TVRename
         public string GetResumePrio(string torrentFile, int fileNum)
         {
             BTDictionary dict = GetTorrentDict(torrentFile);
-            if (dict == null)
+            if (dict is null)
                 return "";
 
             BTItem p = dict.GetItem("prio");
-            if ((p == null) || (p.Type != BTChunk.kString))
+            if ((p is null) || (p.Type != BTChunk.kString))
                 return "";
 
             BTString prioString = (BTString) (p);
@@ -1078,7 +1078,7 @@ namespace TVRename
             BTDictionary dict = GetTorrentDict(torrentFile);
 
             BTItem p = dict?.GetItem("prio");
-            if (p == null || (p.Type != BTChunk.kString))
+            if (p is null || (p.Type != BTChunk.kString))
                 return;
 
             BTString prioString = (BTString) (p);
@@ -1096,7 +1096,7 @@ namespace TVRename
             toHere = RemoveUT(toHere);
 
             BTDictionary dict = GetTorrentDict(torrentFile);
-            if (dict == null)
+            if (dict is null)
                 return;
 
             Altered = true;
@@ -1104,7 +1104,7 @@ namespace TVRename
             if (fileNum == -1) // single file torrent
             {
                 BTItem p = dict.GetItem("path");
-                if (p == null)
+                if (p is null)
                     dict.Items.Add(new BTDictionaryItem("path", new BTString(toHere)));
                 else
                 {
@@ -1119,7 +1119,7 @@ namespace TVRename
                 // multiple file torrent, uses a list called "targets"
                 BTItem p = dict.GetItem("targets");
                 BTList theList = null;
-                if (p == null)
+                if (p is null)
                 {
                     theList = new BTList();
                     dict.Items.Add(new BTDictionaryItem("targets", theList));
@@ -1132,7 +1132,7 @@ namespace TVRename
                     theList = (BTList) (p);
                 }
 
-                if (theList == null)
+                if (theList is null)
                     return;
 
                 // the list contains two element lists, of integer/string which are filenumber/path
@@ -1157,7 +1157,7 @@ namespace TVRename
                     }
                 }
 
-                if (thisFileList == null) // didn't find it
+                if (thisFileList is null) // didn't find it
                 {
                     thisFileList = new BTList();
                     thisFileList.Items.Add(new BTInteger(fileNum));
@@ -1208,7 +1208,7 @@ namespace TVRename
                         throw new ArgumentOutOfRangeException();
                 }
 
-                if ((m == null) || string.IsNullOrEmpty(name))
+                if ((m is null) || string.IsNullOrEmpty(name))
                     continue;
 
                 // see if the show name matches...
@@ -1334,7 +1334,7 @@ namespace TVRename
             if (hashSearch && string.IsNullOrEmpty(searchFolder))
                 return false;
 
-            if (matchMissing && ((missingList == null) || (rexps == null)))
+            if (matchMissing && ((missingList is null) || (rexps is null)))
                 return false;
 
             MissingList = missingList;
@@ -1378,7 +1378,7 @@ namespace TVRename
 
         private void AddResult(string type, string torrent, string num, string prio, string location)
         {
-            if (Results == null)
+            if (Results is null)
                 return;
 
             int p = torrent.LastIndexOf(System.IO.Path.DirectorySeparatorChar.ToString());

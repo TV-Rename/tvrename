@@ -92,7 +92,7 @@ namespace TVRename
         [CanBeNull]
         public DateTime? GetAirDateDt()
         {
-            if (FirstAired == null || TheSeries == null)
+            if (FirstAired is null || TheSeries is null)
             {
                 return null;
             }
@@ -107,7 +107,7 @@ namespace TVRename
         public DateTime? GetAirDateDt(TimeZoneInfo tz)
         {
             DateTime? dt = GetAirDateDt();
-            if (dt == null)
+            if (dt is null)
             {
                 return null;
             }
@@ -256,7 +256,7 @@ namespace TVRename
                 DvdDiscId = (string)r["dvdDiscid"];
 
                 string sn = (string) r["airedSeason"];
-                if (sn == null)
+                if (sn is null)
                 {
                     Logger.Error("Issue with episode " + EpisodeId + " for series " + seriesId + " airedSeason = null");
                     Logger.Error(r.ToString());

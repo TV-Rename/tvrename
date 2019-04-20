@@ -29,10 +29,10 @@ namespace TVRename
         public override long SizeOfWork => 10000;
 
         [CanBeNull]
-        public override string TargetFolder => Where == null ? null : Where.DirectoryName;
+        public override string TargetFolder => Where is null ? null : Where.DirectoryName;
 
         [CanBeNull]
-        public override IgnoreItem Ignore => Where == null ? null : new IgnoreItem(Where.FullName);
+        public override IgnoreItem Ignore => Where is null ? null : new IgnoreItem(Where.FullName);
 
         [NotNull]
         public override string ScanListViewGroup => "lvgActionMeta";

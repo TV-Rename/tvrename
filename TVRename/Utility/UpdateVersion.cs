@@ -59,7 +59,7 @@ public class Release
     private int CompareTo([CanBeNull] object obj)
     {
         //Returns 1 if this > object, 0 if this=object and -1 if this< object
-        if (obj == null)
+        if (obj is null)
         {
             return 1;
         }

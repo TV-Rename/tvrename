@@ -36,11 +36,11 @@ namespace TVRename
         {
             get
             {
-                if (instance == null)
+                if (instance is null)
                 {
                     lock (syncRoot)
                     {
-                        if (instance == null)
+                        if (instance is null)
                         {
                             instance = new TVSettings();
                         }
@@ -797,7 +797,7 @@ namespace TVRename
         public string BTSearchURL([CanBeNull] ProcessedEpisode epi)
         {
             SeriesInfo s = epi?.TheSeries;
-            if (s == null)
+            if (s is null)
             {
                 return "";
             }
@@ -903,7 +903,7 @@ namespace TVRename
 
             public Replacement(string a, string b, bool insens)
             {
-                if (b == null)
+                if (b is null)
                 {
                     b = "";
                 }

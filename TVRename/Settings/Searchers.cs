@@ -51,7 +51,7 @@ namespace TVRename
             foreach (XElement x in settings.Descendants("Choice"))
             {
                 string url = x.Attribute("URL")?.Value;
-                if (url == null)
+                if (url is null)
                 {
                     url = x.Attribute("URL2")?.Value;
                 }

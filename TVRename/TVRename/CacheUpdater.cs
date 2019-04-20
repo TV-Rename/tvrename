@@ -110,7 +110,7 @@ namespace TVRename
 
         public void StopBgDownloadThread()
         {
-            if (mDownloaderThread == null)
+            if (mDownloaderThread is null)
             {
                 return;
             }

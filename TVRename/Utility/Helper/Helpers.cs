@@ -74,7 +74,7 @@ namespace TVRename
         
         public static void SafeInvoke([NotNull] this Control uiElement, System.Action updater, bool forceSynchronous)
         {
-            if (uiElement == null)
+            if (uiElement is null)
             {
                 throw new ArgumentNullException(nameof(uiElement));
             }

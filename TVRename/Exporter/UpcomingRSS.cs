@@ -22,7 +22,7 @@ namespace TVRename
 
         protected override bool Generate(System.IO.Stream str, [CanBeNull] List<ProcessedEpisode> elist)
         {
-            if (elist == null)
+            if (elist is null)
             {
                 return false;
             }

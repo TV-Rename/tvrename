@@ -90,7 +90,7 @@ namespace TVRename
         private void SaveToFile([NotNull] string toFile)
         {
             System.IO.DirectoryInfo di = new System.IO.FileInfo(toFile).Directory;
-            if (di == null)
+            if (di is null)
             {
                 Logger.Error($"Failed to save Statistics XML to {toFile}");
                 return;

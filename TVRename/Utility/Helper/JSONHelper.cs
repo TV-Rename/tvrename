@@ -20,7 +20,7 @@ namespace TVRename
         [NotNull]
         public static string Flatten([CanBeNull] JToken ja,string delimiter)
         {
-            if (ja == null)
+            if (ja is null)
             {
                 return "";
             }

@@ -70,7 +70,7 @@ namespace TVRename
 
             downloadIdentifiers = new DownloadIdentifiersController();
 
-            LoadOk = (settingsFile == null || LoadXMLSettings(settingsFile)) && TheTVDB.Instance.LoadOk;
+            LoadOk = (settingsFile is null || LoadXMLSettings(settingsFile)) && TheTVDB.Instance.LoadOk;
         }
 
         [NotNull]
@@ -146,7 +146,7 @@ namespace TVRename
 
         public static void SearchForEpisode([CanBeNull] ProcessedEpisode ep)
         {
-            if (ep == null)
+            if (ep is null)
             {
                 return;
             }
@@ -217,7 +217,7 @@ namespace TVRename
         private bool LoadXMLSettings([CanBeNull] FileInfo from)
         {
             Logger.Info("Loading Settings from {0}", from?.FullName);
-            if (from == null)
+            if (from is null)
             {
                 return true;
             }
@@ -398,7 +398,7 @@ namespace TVRename
                 shows ??= GetShowList(st);
 
                 //If still null then return
-                if (shows == null)
+                if (shows is null)
                 {
                     Logger.Warn("No Shows Provided to Scan");
                     return;
@@ -616,7 +616,7 @@ namespace TVRename
                 //When doing a full scan the show list is null indicating that all shows should be checked
                 List <ShowItem> specific = settings.Shows ?? Library.Values.ToList();
 
-                while (!Args.Hide && Environment.UserInteractive && ((scanProgDlg == null) || (!scanProgDlg.Ready)))
+                while (!Args.Hide && Environment.UserInteractive && ((scanProgDlg is null) || (!scanProgDlg.Ready)))
                 {
                     Thread.Sleep(10); // wait for thread to create the dialog
                 }
@@ -626,15 +626,15 @@ namespace TVRename
 
                 if (!settings.Unattended && settings.Type != TVSettings.ScanType.SingleShow)
                 {
-                    new FindNewShowsInDownloadFolders(this).Check((scanProgDlg == null) ? noProgress : scanProgDlg.AddNewProg, 0, 50, specific, settings);
-                    new FindNewShowsInLibrary(this).Check((scanProgDlg == null) ? noProgress : scanProgDlg.AddNewProg, 50, 100, specific, settings);
+                    new FindNewShowsInDownloadFolders(this).Check((scanProgDlg is null) ? noProgress : scanProgDlg.AddNewProg, 0, 50, specific, settings);
+                    new FindNewShowsInLibrary(this).Check((scanProgDlg is null) ? noProgress : scanProgDlg.AddNewProg, 50, 100, specific, settings);
                 }
                 
-                new CheckShows(this).Check((scanProgDlg == null) ? noProgress : scanProgDlg.MediaLibProg, specific, settings);
-                new CleanDownloadDirectory(this).Check((scanProgDlg == null) ? noProgress : scanProgDlg.DownloadFolderProg, specific, settings);
-                localFinders.Check((scanProgDlg == null) ? noProgress : scanProgDlg.LocalSearchProg, specific, settings);
-                downloadFinders.Check((scanProgDlg == null) ? noProgress : scanProgDlg.DownloadingProg, specific, settings);
-                searchFinders.Check((scanProgDlg == null)? noProgress : scanProgDlg.ToBeDownloadedProg, specific, settings);
+                new CheckShows(this).Check((scanProgDlg is null) ? noProgress : scanProgDlg.MediaLibProg, specific, settings);
+                new CleanDownloadDirectory(this).Check((scanProgDlg is null) ? noProgress : scanProgDlg.DownloadFolderProg, specific, settings);
+                localFinders.Check((scanProgDlg is null) ? noProgress : scanProgDlg.LocalSearchProg, specific, settings);
+                downloadFinders.Check((scanProgDlg is null) ? noProgress : scanProgDlg.DownloadingProg, specific, settings);
+                searchFinders.Check((scanProgDlg is null)? noProgress : scanProgDlg.ToBeDownloadedProg, specific, settings);
 
                 if (settings.Token.IsCancellationRequested)
                 {

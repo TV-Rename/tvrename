@@ -142,7 +142,7 @@ namespace TVRename
 
                 SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
 
-                if (ser == null)
+                if (ser is null)
                 {
                     Logger.Warn($"Asked to generate episodes for {si.ShowName}, but this has not yet been downloaded from TVDB");
                     return false;
@@ -156,7 +156,7 @@ namespace TVRename
                 {
                     List<ProcessedEpisode> pel = GenerateEpisodes(si, ser, kvp.Key, true);
                     si.SeasonEpisodes[kvp.Key] = pel;
-                    if (pel == null)
+                    if (pel is null)
                     {
                         r = false;
                     }
@@ -212,7 +212,7 @@ namespace TVRename
 
             Season seas = seasonsToUse[snum];
 
-            if (seas == null)
+            if (seas is null)
             {
                 Logger.Error($"Asked to update season {snum} of {si.ShowName}, whilst it exists, it has no contents");
                 return null; 
@@ -680,7 +680,7 @@ namespace TVRename
             {
                 ProcessedEpisode nextAfterThat = GetNextMostRecentProcessedEpisode(nDaysFuture, found, notBefore);
 
-                if (nextAfterThat == null)
+                if (nextAfterThat is null)
                 {
                     return found;
                 }
@@ -734,7 +734,7 @@ namespace TVRename
 
                         DateTime? airdt = ei.GetAirDateDt(true);
 
-                        if ((airdt == null) || (airdt == DateTime.MaxValue))
+                        if ((airdt is null) || (airdt == DateTime.MaxValue))
                         {
                             continue;
                         }

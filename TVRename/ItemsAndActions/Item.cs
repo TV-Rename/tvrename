@@ -61,7 +61,7 @@ namespace TVRename
         {
             get
             {
-                if (Episode?.AppropriateSeasonNumber.ToString() == null)
+                if (Episode?.AppropriateSeasonNumber.ToString() is null)
                 {
                     return string.Empty;
                 }

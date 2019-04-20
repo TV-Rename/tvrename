@@ -307,7 +307,7 @@ namespace TVRename
 
         private void TVDBFor([CanBeNull] Season seas)
         {
-            if (seas == null)
+            if (seas is null)
             {
                 return;
             }
@@ -317,7 +317,7 @@ namespace TVRename
 
         private void TVDBFor([CanBeNull] ShowItem si)
         {
-            if (si == null)
+            if (si is null)
             {
                 return;
             }
@@ -373,12 +373,12 @@ namespace TVRename
                 gridSummary.mLastShowClicked = show;
                 gridSummary.mLastSeasonClicked = season;
 
-                if (show == null)
+                if (show is null)
                 {
                     return;
                 }
 
-                if (seas == null)
+                if (seas is null)
                 {
                     GenerateMenu(gridSummary.showRightClickMenu, "Force Refresh",
                         RightClickCommands.kForceRefreshSeries);
@@ -387,7 +387,7 @@ namespace TVRename
                 }
 
                 GenerateMenu(gridSummary.showRightClickMenu, "Visit thetvdb.com",
-                    seas == null ? RightClickCommands.kVisitTvdbSeries : RightClickCommands.kVisitTvdbSeason);
+                    seas is null ? RightClickCommands.kVisitTvdbSeries : RightClickCommands.kVisitTvdbSeason);
 
                 List<string> added = new List<string>();
 

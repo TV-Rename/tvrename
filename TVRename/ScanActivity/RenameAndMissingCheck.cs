@@ -120,7 +120,7 @@ namespace TVRename
             Doc.TheActionList.Add(downloadIdentifiers.ProcessSeason(si, folder, snum));
 
             FileInfo[] files = dfc.GetFiles(folder);
-            if (files == null)
+            if (files is null)
             {
                 return;
             }

@@ -33,7 +33,7 @@ namespace TVRename
 
             InitializeComponent();
 
-            if (eps == null)
+            if (eps is null)
             {
                 lvTest.Enabled = false;
             }
@@ -77,7 +77,7 @@ namespace TVRename
 
         private void FillExamples()
         {
-            if (eps == null)
+            if (eps is null)
             {
                 return;
             }
