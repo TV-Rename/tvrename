@@ -405,13 +405,8 @@ namespace TVRename
 
         public void AddAllToMyShows()
         {
-            foreach (FoundFolder ai in AddItems)
+            foreach (FoundFolder ai in AddItems.Where(ai=>!ai.CodeUnknown))
             {
-                if (ai.CodeUnknown)
-                {
-                    continue; // skip
-                }
-
                 // see if there is a matching show item
                 ShowItem found = mDoc.Library.ShowItem(ai.TVDBCode);
                 if (found is null)
