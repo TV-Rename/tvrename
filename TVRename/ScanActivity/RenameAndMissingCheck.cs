@@ -106,7 +106,6 @@ namespace TVRename
             {
                 return;
             }
-            List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
 
             if (TVSettings.Instance.NeedToDownloadBannerFile() && timeForBannerUpdate)
             {
@@ -137,8 +136,14 @@ namespace TVRename
             }
 
             Dictionary<int,FileInfo> localEps = new Dictionary<int, FileInfo>();
-
             int maxEpNumFound = 0;
+
+            if (!si.SeasonEpisodes.ContainsKey(snum))
+            {
+                return;
+            }
+
+            List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
 
             foreach (FileInfo fi in files)
             {
