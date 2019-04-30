@@ -3772,6 +3772,13 @@ namespace TVRename
 
             // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
             mDoc.TheActionList.Add(di.ProcessEpisode(mi.Episode, to));
+
+            //If keep together is active then we may want to copy over related files too
+            if (TVSettings.Instance.KeepTogether)
+            {
+                FileFinder.KeepTogether(mDoc.TheActionList,false,true);
+            }
+
             FillActionList();
         }
 
