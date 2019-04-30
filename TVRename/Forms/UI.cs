@@ -3969,5 +3969,27 @@ namespace TVRename
             LicenceInfoForm form = new LicenceInfoForm();
             form.ShowDialog();
         }
+
+        private void LvAction_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            int col = e.Column;
+
+            switch (col)
+            {
+                case 3:
+                    lvAction.ListViewItemSorter = new DateSorterScan(col);
+                    break;
+                case 1:
+                case 2:
+                    lvAction.ListViewItemSorter = new NumberAsTextSorter(col);
+                    break;
+                default:
+                    lvAction.ListViewItemSorter = new TextSorter(col);
+                    break;
+            }
+
+            lvAction.Sort();
+            lvAction.Refresh();
+        }
     }
 }

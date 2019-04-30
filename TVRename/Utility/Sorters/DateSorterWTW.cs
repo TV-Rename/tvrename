@@ -11,9 +11,9 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
-    public sealed class DateSorterWtw : ListViewItemSorter
+    public abstract class ListViewItemDateSorter : ListViewItemSorter
     {
-        public DateSorterWtw(int column) : base(column) { }
+        public ListViewItemDateSorter(int column) : base(column) { }
 
         protected override int CompareListViewItem(ListViewItem x, ListViewItem y)
         {
@@ -37,12 +37,37 @@ namespace TVRename
 
             return d1.Value.CompareTo(d2.Value);
         }
+        protected abstract DateTime? GetDate(ListViewItem lvi);
+    }
 
-        private static DateTime? GetDate(ListViewItem lvi)
+    public class DateSorterWtw : ListViewItemDateSorter
+    {
+        public DateSorterWtw(int column) : base(column) { }
+
+        protected override DateTime? GetDate(ListViewItem lvi)
         {
             try
             {
                 return ((ProcessedEpisode)(lvi.Tag)).GetAirDateDt(true);
+            }
+            catch
+            {
+                return DateTime.Now;
+            }
+        }
+    }
+
+    public class DateSorterScan : ListViewItemDateSorter
+    {
+        public DateSorterScan(int column) : base(column) { }
+        protected override DateTime? GetDate(ListViewItem lvi)
+        {
+            try
+            {
+                ProcessedEpisode e = ((Item)(lvi.Tag)).Episode;
+                if (e is null) return DateTime.Now;
+
+                return e.GetAirDateDt(true);
             }
             catch
             {
