@@ -62,9 +62,13 @@ namespace TVRename
 
                     foreach (JToken file in stuff2.Children())
                     {
-                        ret.Add(new TorrentEntry(torrent["name"].ToString(),
-                            settings["save_path"] + file["name"].ToString(),
-                            (int) (100 * file["progress"].ToObject<float>())));
+                        string downloadedFilename = file["name"].ToString();
+                        if (!downloadedFilename.Contains(".!qB\\.unwanted\\"))
+                        {
+                            ret.Add(new TorrentEntry(torrent["name"].ToString(),
+                                settings["save_path"] + downloadedFilename,
+                                (int)(100 * file["progress"].ToObject<float>())));
+                        }
                     }
 
                     if (!stuff2.Children().Any())
