@@ -18,6 +18,6 @@ namespace TVRename
         public TextSorter(int column) : base(column) { }
 
         protected override int CompareListViewItem([NotNull] ListViewItem x, [NotNull] ListViewItem y) =>
-            string.CompareOrdinal(x.SubItems[Col].Text, y.SubItems[Col].Text);
+            string.Compare(x.SubItems[Col].Text, y.SubItems[Col].Text);
     }
 }

@@ -180,8 +180,11 @@ namespace TVRename
 
             return false;
         }
+        protected void KeepTogether([NotNull] ItemList actionlist, bool fromLibrary) {
+            KeepTogether(actionlist, fromLibrary, (!MDoc.Args.Unattended) && (!MDoc.Args.Hide));
+                }
 
-        protected void KeepTogether([NotNull] ItemList actionlist, bool fromLibrary)
+        public static void KeepTogether([NotNull] ItemList actionlist, bool fromLibrary,bool showErrors)
         {
             // for each of the items in rcl, do the same copy/move if for other items with the same
             // base name, but different extensions
@@ -189,13 +192,13 @@ namespace TVRename
 
             foreach (ActionCopyMoveRename action in actionlist.CopyMoveItems())
             {
-                KeepTogetherForItem(actionlist, fromLibrary, action, extras);
+                KeepTogetherForItem(actionlist, fromLibrary, action, extras,showErrors);
             }
 
             UpdateActionList(actionlist, extras);
         }
 
-        private void KeepTogetherForItem(ItemList actionlist, bool fromLibrary, [NotNull] ActionCopyMoveRename action, ItemList extras)
+        private static void KeepTogetherForItem(ItemList actionlist, bool fromLibrary, [NotNull] ActionCopyMoveRename action, ItemList extras,bool showErrors)
         {
             try
             {
@@ -258,7 +261,7 @@ namespace TVRename
                 string t = "Path or filename too long. " + action.From.FullName + ", " + e.Message;
                 LOGGER.Warn(e, "Path or filename too long. " + action.From.FullName);
 
-                if ((!MDoc.Args.Unattended) && (!MDoc.Args.Hide) && Environment.UserInteractive)
+                if (showErrors && Environment.UserInteractive)
                 {
                     MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }

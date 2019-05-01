@@ -142,7 +142,7 @@ namespace TVRename
 
                 SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
 
-                if (ser == null)
+                if (ser is null)
                 {
                     Logger.Warn($"Asked to generate episodes for {si.ShowName}, but this has not yet been downloaded from TVDB");
                     return false;
@@ -156,7 +156,7 @@ namespace TVRename
                 {
                     List<ProcessedEpisode> pel = GenerateEpisodes(si, ser, kvp.Key, true);
                     si.SeasonEpisodes[kvp.Key] = pel;
-                    if (pel == null)
+                    if (pel is null)
                     {
                         r = false;
                     }
@@ -206,14 +206,16 @@ namespace TVRename
 
             if (!seasonsToUse.ContainsKey(snum))
             {
-                return null; // todo.. something?
+                Logger.Error($"Asked to update season {snum} of {si.ShowName}, but it does not exist");
+                return null;
             }
 
             Season seas = seasonsToUse[snum];
 
-            if (seas == null)
+            if (seas is null)
             {
-                return null; // TODO: warn user
+                Logger.Error($"Asked to update season {snum} of {si.ShowName}, whilst it exists, it has no contents");
+                return null; 
             }
 
             foreach (Episode e in seas.Episodes.Values)
@@ -445,7 +447,7 @@ namespace TVRename
 
         private static bool ValidIndex(int index, int maxIndex) => (index < maxIndex) && (index >= 0);
 
-        private static void RenameEpisode([NotNull] List<ProcessedEpisode> eis, int index,string txt)
+        private static void RenameEpisode([NotNull] IReadOnlyList<ProcessedEpisode> eis, int index,string txt)
         {
             int ec = eis.Count;
             if (ValidIndex(index, ec))
@@ -454,7 +456,7 @@ namespace TVRename
             }
         }
 
-        private static void SplitEpisode([NotNull] List<ProcessedEpisode> eis, ShowItem si, int nn2, int n1)
+        private static void SplitEpisode([NotNull] IList<ProcessedEpisode> eis, ShowItem si, int nn2, int n1)
         {
             int ec = eis.Count;
             // split one episode into a multi-parter
@@ -678,7 +680,7 @@ namespace TVRename
             {
                 ProcessedEpisode nextAfterThat = GetNextMostRecentProcessedEpisode(nDaysFuture, found, notBefore);
 
-                if (nextAfterThat == null)
+                if (nextAfterThat is null)
                 {
                     return found;
                 }
@@ -718,6 +720,11 @@ namespace TVRename
                         continue;
                     }
 
+                    if (v.Value is null)
+                    {
+                        continue;
+                    }
+
                     foreach (ProcessedEpisode ei in v.Value)
                     {
                         if (found.Contains(ei))
@@ -727,7 +734,7 @@ namespace TVRename
 
                         DateTime? airdt = ei.GetAirDateDt(true);
 
-                        if ((airdt == null) || (airdt == DateTime.MaxValue))
+                        if ((airdt is null) || (airdt == DateTime.MaxValue))
                         {
                             continue;
                         }
@@ -773,33 +780,6 @@ namespace TVRename
             {
                 Logger.Error($"Failed to remove {si.ShowName} from the library with TVDBId={si.TvdbCode}");
             }
-        }
-
-        public static bool HasAnyAirdates([NotNull] ShowItem si, int snum)
-        {
-            SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
-
-            if (ser == null)
-            {
-                return false;
-            }
-
-            Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DvdSeasons : ser.AiredSeasons;
-
-            if (!seasonsToUse.ContainsKey(snum))
-            {
-                return false;
-            }
-
-            foreach (Episode e in seasonsToUse[snum].Episodes.Values)
-            {
-                if (e.FirstAired != null)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         [NotNull]

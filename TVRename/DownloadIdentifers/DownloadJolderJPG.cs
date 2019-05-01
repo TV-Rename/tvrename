@@ -38,7 +38,7 @@ namespace TVRename
             {
                 SeriesInfo series = si.TheSeries();
 
-                if (series == null)
+                if (series is null)
                 {
                     return theActionList;
                 }

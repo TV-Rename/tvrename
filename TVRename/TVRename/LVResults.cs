@@ -74,7 +74,7 @@ namespace TVRename
 
             foreach (ListViewItem lvi in sel)
             {
-                if (lvi == null)
+                if (lvi is null)
                 {
                     continue;
                 }

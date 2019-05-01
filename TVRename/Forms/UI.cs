@@ -408,7 +408,7 @@ namespace TVRename
             }
 
             ListView lv = ListViewByName(forwho);
-            if (lv == null)
+            if (lv is null)
             {
                 return true;
             }
@@ -496,7 +496,7 @@ namespace TVRename
             XAttribute valueX = x.Attribute("X");
             XAttribute valueY = x.Attribute("Y");
 
-            if (valueX == null)
+            if (valueX is null)
             {
                 Logger.Error($"Missing X from {x}");
             }
@@ -506,7 +506,7 @@ namespace TVRename
             }
 
             int xloc = (valueX ==null) ? 100 : int.Parse(valueX.Value);
-            int yloc = (valueY == null) ? 100 : int.Parse(valueY.Value);
+            int yloc = (valueY is null) ? 100 : int.Parse(valueY.Value);
 
             Location = new Point(xloc, yloc);
         }
@@ -516,17 +516,17 @@ namespace TVRename
             XAttribute valueX = x.Attribute("Width");
             XAttribute valueY = x.Attribute("Height");
 
-            if (valueX == null)
+            if (valueX is null)
             {
                 Logger.Error($"Missing Width from {x}");
             }
-            if (valueY == null)
+            if (valueY is null)
             {
                 Logger.Error($"Missing Height from {x}");
             }
 
-            int xsize = (valueX == null) ? 100 : int.Parse(valueX.Value);
-            int ysize = (valueY == null) ? 100 : int.Parse(valueY.Value);
+            int xsize = (valueX is null) ? 100 : int.Parse(valueX.Value);
+            int ysize = (valueY is null) ? 100 : int.Parse(valueY.Value);
 
             Size = new Size(xsize, ysize);
         }
@@ -585,7 +585,7 @@ namespace TVRename
         private void WriteColWidthsXml([NotNull] string thingName, XmlWriter writer)
         {
             ListView lv = ListViewByName(thingName);
-            if (lv == null)
+            if (lv is null)
             {
                 return;
             }
@@ -776,7 +776,7 @@ namespace TVRename
 
         private ShowItem TreeNodeToShowItem([CanBeNull] TreeNode n)
         {
-            if (n == null)
+            if (n is null)
             {
                 return null;
             }
@@ -813,7 +813,7 @@ namespace TVRename
 
         private void FillEpGuideHtml([CanBeNull] TreeNode n)
         {
-            if (n == null)
+            if (n is null)
             {
                 FillEpGuideHtml(null, -1);
                 return;
@@ -853,7 +853,7 @@ namespace TVRename
                 return;
             }
 
-            if (si == null)
+            if (si is null)
             {
                 ClearInfoWindows();
                 return;
@@ -865,7 +865,7 @@ namespace TVRename
                 ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
             }
 
-            if (ser == null)
+            if (ser is null)
             {
                 ClearInfoWindows("Not downloaded, or not available");
                 return;
@@ -1240,7 +1240,7 @@ namespace TVRename
 
         private void NavigateTo(object sender, [NotNull] WebBrowserNavigatingEventArgs e)
         {
-            if (e.Url == null)
+            if (e.Url is null)
             {
                 return;
             }
@@ -1395,7 +1395,7 @@ namespace TVRename
 
         private void MenuGuideAndTvdb(bool addSep)
         {
-            if (mLastShowsClicked == null || mLastShowsClicked.Count != 1)
+            if (mLastShowsClicked is null || mLastShowsClicked.Count != 1)
             {
                 return; // nothing or multiple selected
             }
@@ -1533,7 +1533,7 @@ namespace TVRename
 
         private void MenuFolders(LvResults lvr)
         {
-            if (mLastShowsClicked == null || mLastShowsClicked.Count != 1)
+            if (mLastShowsClicked is null || mLastShowsClicked.Count != 1)
             {
                 return;
             }
@@ -1569,7 +1569,7 @@ namespace TVRename
                 AddFoldersSubMenu(si.AllExistngFolderLocations().Values.SelectMany(l => l).ToList(), added);
             }
 
-            if (lvr == null)
+            if (lvr is null)
             {
                 return;
             }
@@ -1647,7 +1647,7 @@ namespace TVRename
         {
             showRightClickMenu.Close();
 
-            if (e.ClickedItem.Tag == null)
+            if (e.ClickedItem.Tag is null)
             {
                 mLastEpClicked = null;
                 return;
@@ -1828,7 +1828,7 @@ namespace TVRename
 
         private void BrowseForMissingItem([CanBeNull] ItemMissing mi)
         {
-            if (mi == null)
+            if (mi is null)
             {
                 return;
             }
@@ -1912,7 +1912,7 @@ namespace TVRename
                 foreach (Item ai in mLastActionsClicked)
                 {
                     Item er = ai;
-                    if (er?.Episode == null)
+                    if (er?.Episode is null)
                     {
                         continue;
                     }
@@ -1929,7 +1929,7 @@ namespace TVRename
                     foreach (Item action in mDoc.TheActionList)
                     {
                         Item er2 = action;
-                        if (er2?.Episode == null)
+                        if (er2?.Episode is null)
                         {
                             continue;
                         }
@@ -2369,7 +2369,7 @@ namespace TVRename
             //       2 = future / unknown
 
             DateTime? airdt = pe.GetAirDateDt(true);
-            if (airdt == null)
+            if (airdt is null)
             {
                 // TODO: something!
                 return;
@@ -2516,7 +2516,7 @@ namespace TVRename
         {
             TreeNode n = MyShowTree.SelectedNode;
             ShowItem si = TreeNodeToShowItem(n);
-            if (si == null)
+            if (si is null)
             {
                 return;
             }
@@ -2560,7 +2560,7 @@ namespace TVRename
         private void bnMyShowsEdit_Click(object sender, EventArgs e)
         {
             TreeNode n = MyShowTree.SelectedNode;
-            if (n == null)
+            if (n is null)
             {
                 return;
             }
@@ -2697,7 +2697,7 @@ namespace TVRename
             Point pt = MyShowTree.PointToScreen(new Point(e.X, e.Y));
             TreeNode n = MyShowTree.SelectedNode;
 
-            if (n == null)
+            if (n is null)
             {
                 return;
             }
@@ -2832,7 +2832,7 @@ namespace TVRename
         [NotNull]
         private static string GetFolderForShow([CanBeNull] ShowItem currentShow)
         {
-            if (currentShow == null)
+            if (currentShow is null)
             {
                 return string.Empty;
             }
@@ -2980,7 +2980,7 @@ namespace TVRename
         private ListViewItem LviForItem(Item item)
         {
             Item sli = item;
-            if (sli == null)
+            if (sli is null)
             {
                 return new ListViewItem();
             }
@@ -3179,7 +3179,7 @@ namespace TVRename
                 Action revertAction = (Action) item;
                 ItemMissing m2 = revertAction.UndoItemMissing;
 
-                if (m2 == null)
+                if (m2 is null)
                 {
                     continue;
                 }
@@ -3342,7 +3342,7 @@ namespace TVRename
                 mLastActionsClicked.Add(ai);
             }
 
-            if (lvr.Count != 1 || lvAction.FocusedItem?.Tag == null)
+            if (lvr.Count != 1 || lvAction.FocusedItem?.Tag is null)
             {
                 return;
             }
@@ -3744,7 +3744,7 @@ namespace TVRename
             // Establish item in list being dragged to, and exit if no item matched
             Point localPoint = lvAction.PointToClient(new Point(e.X, e.Y));
             ListViewItem lvi = lvAction.GetItemAt(localPoint.X, localPoint.Y);
-            if (lvi == null)
+            if (lvi is null)
             {
                 return;
             }
@@ -3772,6 +3772,13 @@ namespace TVRename
 
             // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
             mDoc.TheActionList.Add(di.ProcessEpisode(mi.Episode, to));
+
+            //If keep together is active then we may want to copy over related files too
+            if (TVSettings.Instance.KeepTogether)
+            {
+                FileFinder.KeepTogether(mDoc.TheActionList,false,true);
+            }
+
             FillActionList();
         }
 
@@ -3968,6 +3975,28 @@ namespace TVRename
         {
             LicenceInfoForm form = new LicenceInfoForm();
             form.ShowDialog();
+        }
+
+        private void LvAction_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            int col = e.Column;
+
+            switch (col)
+            {
+                case 3:
+                    lvAction.ListViewItemSorter = new DateSorterScan(col);
+                    break;
+                case 1:
+                case 2:
+                    lvAction.ListViewItemSorter = new NumberAsTextSorter(col);
+                    break;
+                default:
+                    lvAction.ListViewItemSorter = new TextSorter(col);
+                    break;
+            }
+
+            lvAction.Sort();
+            lvAction.Refresh();
         }
     }
 }

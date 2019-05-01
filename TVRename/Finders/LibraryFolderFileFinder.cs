@@ -41,7 +41,7 @@ namespace TVRename
 
                 ItemList thisRound = new ItemList();
 
-                if (me.Episode?.Show == null)
+                if (me.Episode?.Show is null)
                 {
                     LOGGER.Info($"Not looking for {me.Filename} in the library as the show/episode is null");
                     continue;

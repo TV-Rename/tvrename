@@ -108,12 +108,12 @@ namespace TVRename
         {
             ActionDateTouch nfo = o as ActionDateTouch;
 
-            if (Episode == null)
+            if (Episode is null)
             {
                 return 1;
             }
 
-            if (nfo?.Episode == null)
+            if (nfo?.Episode is null)
             {
                 return -1;
             }
@@ -131,7 +131,7 @@ namespace TVRename
         #region Item Members
 
         [CanBeNull]
-        public override IgnoreItem Ignore => whereFile == null ? null : new IgnoreItem(whereFile.FullName);
+        public override IgnoreItem Ignore => whereFile is null ? null : new IgnoreItem(whereFile.FullName);
 
         protected override string SeriesName => (Episode != null) ? Episode.Show.ShowName :
             (season != null) ? season.TheSeries.Name : show.ShowName;

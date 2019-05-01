@@ -29,7 +29,7 @@ namespace TVRename
 
         private void timer1_Tick(object sender, System.EventArgs e)
         {
-            if (mainForm == null)
+            if (mainForm is null)
             {
                 return;
             }

@@ -181,10 +181,10 @@ namespace TVRename
         public override int Compare(Item o)
         {
             if (!(o is ActionCopyMoveRename cmr)
-                || From.Directory == null
-                || To.Directory == null
-                || cmr.From.Directory == null
-                ||cmr.To.Directory == null)
+                || From.Directory is null
+                || To.Directory is null
+                || cmr.From.Directory is null
+                ||cmr.To.Directory is null)
             {
                 return 0;
             }
@@ -201,7 +201,7 @@ namespace TVRename
 
         #region Item Members
         [CanBeNull]
-        public override IgnoreItem Ignore => To == null ? null : new IgnoreItem(To.FullName);
+        public override IgnoreItem Ignore => To is null ? null : new IgnoreItem(To.FullName);
 
         [NotNull]
         public override string ScanListViewGroup
@@ -232,7 +232,7 @@ namespace TVRename
 
         public bool QuickOperation()
         {
-            if ((From == null) || (To == null) || (From.Directory == null) || (To.Directory == null))
+            if ((From is null) || (To is null) || (From.Directory is null) || (To.Directory is null))
             {
                 return false;
             }

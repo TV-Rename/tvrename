@@ -1071,7 +1071,6 @@ namespace TVRename
             listViewGroup8,
             listViewGroup9,
             listViewGroup10});
-            this.lvAction.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lvAction.HideSelection = false;
             this.lvAction.Location = new System.Drawing.Point(0, 35);
             this.lvAction.Name = "lvAction";
@@ -1081,6 +1080,7 @@ namespace TVRename
             this.lvAction.TabIndex = 2;
             this.lvAction.UseCompatibleStateImageBehavior = false;
             this.lvAction.View = System.Windows.Forms.View.Details;
+            this.lvAction.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.LvAction_ColumnClick);
             this.lvAction.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lvAction_ItemCheck);
             this.lvAction.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lvAction_ItemChecked);
             this.lvAction.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.lvAction_RetrieveVirtualItem);

@@ -26,26 +26,26 @@ namespace TVRename
             bool IsNetworkOk(ShowItem showItem)
             {
                 SeriesInfo seriesInfo = showItem.TheSeries();
-                return seriesInfo == null || seriesInfo.Network.Equals(ShowNetwork);
+                return seriesInfo is null || seriesInfo.Network.Equals(ShowNetwork);
             }
 
             bool IsRatingOk(ShowItem showItem)
             {
                 SeriesInfo seriesInfo = showItem.TheSeries();
-                return seriesInfo == null || seriesInfo.ContentRating.Equals(ShowRating);
+                return seriesInfo is null || seriesInfo.ContentRating.Equals(ShowRating);
             }
 
             //Filter on show name
-            bool isNameOk = (ShowName == null) || show.ShowName.Contains(ShowName, StringComparison.OrdinalIgnoreCase);
+            bool isNameOk = (ShowName is null) || show.ShowName.Contains(ShowName, StringComparison.OrdinalIgnoreCase);
 
             //Filter on show status
-            bool isStatusOk = (ShowStatus == null) || show.ShowStatus.Equals(ShowStatus);
+            bool isStatusOk = (ShowStatus is null) || show.ShowStatus.Equals(ShowStatus);
 
             //Filter on show network
-            bool isNetworkOk = (ShowNetwork == null) || IsNetworkOk(show);
+            bool isNetworkOk = (ShowNetwork is null) || IsNetworkOk(show);
 
             //Filter on show rating
-            bool isRatingOk = ShowRating == null || IsRatingOk(show);
+            bool isRatingOk = ShowRating is null || IsRatingOk(show);
 
             //Filter on show genres
             bool areGenresIgnored = (Genres.Count == 0);

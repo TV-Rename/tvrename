@@ -6,7 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Linq;
 using JetBrains.Annotations;
 
 namespace TVRename
@@ -27,7 +28,7 @@ namespace TVRename
             aired
         }
 
-        public readonly Dictionary<int,Episode> Episodes;
+        public readonly ConcurrentDictionary<int,Episode> Episodes;
         public readonly int SeasonId;
         public readonly int SeasonNumber;
         public readonly SeriesInfo TheSeries;
@@ -38,7 +39,7 @@ namespace TVRename
             TheSeries = theSeries;
             SeasonNumber = number;
             SeasonId = seasonid;
-            Episodes = new Dictionary<int, Episode>();
+            Episodes = new ConcurrentDictionary<int, Episode>();
             type = t;
         }
 
@@ -100,45 +101,18 @@ namespace TVRename
 
         internal int MinYear()
         {
-            int min = 9999;
-
-            foreach (Episode e in Episodes.Values)
-            {
-                DateTime? adt = e.GetAirDateDt();
-                if (!adt.HasValue)
-                {
-                    continue;
-                }
-
-                DateTime airDateTime = adt.Value;
-                if (airDateTime.Year < min)
-                {
-                    min = airDateTime.Year;
-                }
-            }
-
-            return min;
+            return (Episodes.Values.Select(e => e.GetAirDateDt())
+                .Where(adt => adt.HasValue)
+                .Select(adt => adt.Value)
+                .Select(airDateTime => airDateTime.Year)).Concat(new[] {9999}).Min();
         }
 
         internal int MaxYear()
         {
-            int max = 0;
-
-            foreach (Episode e in Episodes.Values)
-            {
-                DateTime? adt = e.GetAirDateDt();
-                if (!adt.HasValue)
-                {
-                    continue;
-                }
-
-                DateTime airDateTime = adt.Value;
-                if (airDateTime.Year > max)
-                {
-                    max = airDateTime.Year;
-                }
-            }
-            return max;
+            return (Episodes.Values.Select(e => e.GetAirDateDt())
+                .Where(adt => adt.HasValue)
+                .Select(adt => adt.Value)
+                .Select(airDateTime => airDateTime.Year)).Concat(new[] {0}).Max();
         }
 
         private bool HasEpisodes => Episodes != null && Episodes.Count > 0;
@@ -235,14 +209,7 @@ namespace TVRename
 
         public void AddUpdateEpisode([NotNull] Episode newEpisode)
         {
-            if (Episodes.ContainsKey(newEpisode.EpisodeId))
-            {
-                Episodes[newEpisode.EpisodeId] = newEpisode;
-            }
-            else
-            {
-                Episodes.Add(newEpisode.EpisodeId,newEpisode);
-            }
+            Episodes.AddOrUpdate(newEpisode.EpisodeId,newEpisode,(i, episode) => newEpisode);
         }
 
         public bool ContainsEpisode(int episodeNumber, bool dvdOrder)
@@ -267,7 +234,7 @@ namespace TVRename
         {
             if (Episodes.ContainsKey(episodeId))
             {
-                Episodes.Remove(episodeId);
+                Episodes.TryRemove(episodeId,out _);
             }
         }
 

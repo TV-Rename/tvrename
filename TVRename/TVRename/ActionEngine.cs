@@ -108,7 +108,7 @@ namespace TVRename
         /// <param name="showUi">Whether or not we should display a UI to inform the user about progress.</param>
         public void DoActions([CanBeNull] ItemList theList, bool showUi)
         {
-            if (theList == null)
+            if (theList is null)
             {
                 Logger.Info("Asked to do actions, but none provided....");
                 return;
@@ -225,7 +225,7 @@ namespace TVRename
 
                 Action act = q?.Actions[q.ActionPosition++];
 
-                if (act == null)
+                if (act is null)
                 {
                     continue;
                 }
@@ -271,7 +271,7 @@ namespace TVRename
 
         private void StartThread([NotNull] ProcessActionInfo pai)
         {
-            if (pai == null)
+            if (pai is null)
             {
                 throw new ArgumentNullException(nameof(pai));
             }

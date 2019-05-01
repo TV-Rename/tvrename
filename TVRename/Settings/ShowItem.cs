@@ -23,7 +23,7 @@ namespace TVRename
 {
     public class ShowItem
     {
-        public string AutoAddFolderBase; // TODO: use magical renaming tokens here
+        public string AutoAddFolderBase;
         public string AutoAddCustomFolderFormat;
         public AutomaticFolderType AutoAddType;
 
@@ -56,6 +56,8 @@ namespace TVRename
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public DateTime? BannersLastUpdatedOnDisk { get; set; }
+
+        public Season.SeasonType Order => DvdOrder ? Season.SeasonType.dvd : Season.SeasonType.aired;
 
         #region AutomaticFolderType enum
         public enum AutomaticFolderType
@@ -111,7 +113,7 @@ namespace TVRename
 
         public TimeZoneInfo GetTimeZone()
         {
-            if (seriesTimeZone == null || lastFiguredTz != ShowTimeZone)
+            if (seriesTimeZone is null || lastFiguredTz != ShowTimeZone)
             {
                 FigureOutTimeZone();
             }
@@ -154,7 +156,7 @@ namespace TVRename
 
         private static AutomaticFolderType GetAutoAddType(int? value)
         {
-            return value == null? AutomaticFolderType.libraryDefault: (AutomaticFolderType)value;
+            return value is null? AutomaticFolderType.libraryDefault: (AutomaticFolderType)value;
         }
 
         private void UpgradeFromOldSeasonFormat([NotNull] XElement xmlSettings)
@@ -215,7 +217,7 @@ namespace TVRename
             foreach (XElement rulesSet in xmlSettings.Descendants("Rules"))
             {
                 XAttribute value = rulesSet.Attribute("SeasonNumber");
-                if (value == null)
+                if (value is null)
                 {
                     continue;
                 }
@@ -235,7 +237,7 @@ namespace TVRename
             foreach (XElement seasonFolder in xmlSettings.Descendants("SeasonFolders"))
             {
                 XAttribute value = seasonFolder.Attribute("SeasonNumber");
-                if (value == null)
+                if (value is null)
                 {
                     continue;
                 }
@@ -246,12 +248,10 @@ namespace TVRename
 
                 foreach (string ff in seasonFolder.Descendants("Folder")
                     .Select(folderData => folderData.Attribute("Location")?.Value)
-                    .Distinct())
+                    .Distinct()
+                    .Where(ff => !string.IsNullOrWhiteSpace(ff) && AutoFolderNameForSeason(snum) != ff))
                 {
-                    if (!string.IsNullOrWhiteSpace(ff) && AutoFolderNameForSeason(snum) != ff)
-                    {
-                        ManualFolderLocations[snum].Add(ff);
-                    }
+                    ManualFolderLocations[snum].Add(ff);
                 }
             }
         }
@@ -373,7 +373,7 @@ namespace TVRename
             get {
                 //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
                 SeriesInfo seriesInfo = TheSeries();
-                if (seriesInfo == null || seriesInfo.AiredSeasons == null || seriesInfo.AiredSeasons.Count <= 0)
+                if (seriesInfo?.AiredSeasons is null || seriesInfo.AiredSeasons.Count <= 0)
                 {
                     return false;
                 }
@@ -505,7 +505,7 @@ namespace TVRename
             ForceCheckNoAirdate = false;
             ForceCheckFuture = false;
             ManualFoldersReplaceAutomatic = false;
-            BannersLastUpdatedOnDisk = null; //assume that the baners are old and have expired
+            BannersLastUpdatedOnDisk = null; //assume that the banners are old and have expired
             ShowTimeZone = TimeZoneHelper.DefaultTimeZone(); // default, is correct for most shows
             lastFiguredTz = "";
         }
@@ -525,7 +525,7 @@ namespace TVRename
                 return string.Empty;
             }
 
-            if (s == null)
+            if (s is null)
             {
                 return string.Empty;
             }
@@ -836,6 +836,38 @@ namespace TVRename
         public IEnumerable<string> GetActorNames()
         {
             return Actors.Select(x => x.ActorName);
+        }
+
+        public bool NoAirdatesUntilNow(int snum)
+        {
+            int lastPossibleSeason = SeasonEpisodes.Keys.DefaultIfEmpty(0).Max();
+
+            SeriesInfo ser = TheTVDB.Instance.GetSeries(TvdbCode);
+
+            if (ser is null)
+            {
+                return true;
+            }
+
+            // for specials "season", see if any season has any aired dates
+            // otherwise, check only up to the season we are considering
+            int maxSeasonToUse = snum == 0 ? lastPossibleSeason : snum;
+
+            foreach (int i in Enumerable.Range(1, maxSeasonToUse))
+            {
+                if (ser.HasAnyAirdates(i, Order))
+                {
+                    return false;
+                }
+
+                //If the show is in its first season and no episodes have air dates
+                if (lastPossibleSeason == 1)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

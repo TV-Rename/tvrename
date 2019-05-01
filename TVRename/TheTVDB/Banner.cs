@@ -80,7 +80,7 @@ namespace TVRename
             BannerPath = (string)json["fileName"];
             BannerId = (int)json["id"];
             bannerType = (string)json["keyType"];
-            LanguageId = (json["languageId"] == null) ? langId  : (int)json["languageId"];
+            LanguageId = (json["languageId"] is null) ? langId  : (int)json["languageId"];
             
             double.TryParse((string)(json["ratingsInfo"]["average"]), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out Rating);
             ratingCount = (int)(json["ratingsInfo"]["count"]);

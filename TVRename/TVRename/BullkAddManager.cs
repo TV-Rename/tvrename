@@ -390,7 +390,7 @@ namespace TVRename
                 return; // done.
             }
 
-            if (subDirs == null)
+            if (subDirs is null)
             {
                 return; //indication we could not access the sub-directory
             }
@@ -405,16 +405,11 @@ namespace TVRename
 
         public void AddAllToMyShows()
         {
-            foreach (FoundFolder ai in AddItems)
+            foreach (FoundFolder ai in AddItems.Where(ai=>!ai.CodeUnknown))
             {
-                if (ai.CodeUnknown)
-                {
-                    continue; // skip
-                }
-
                 // see if there is a matching show item
                 ShowItem found = mDoc.Library.ShowItem(ai.TVDBCode);
-                if (found == null)
+                if (found is null)
                 {
                     // need to add a new showitem
                     found = new ShowItem(ai.TVDBCode);

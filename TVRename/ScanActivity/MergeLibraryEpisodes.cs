@@ -79,7 +79,7 @@ namespace TVRename
                     }
 
                     FileInfo[] files = dfc.GetFiles(folder);
-                    if (files == null)
+                    if (files is null)
                     {
                         continue;
                     }

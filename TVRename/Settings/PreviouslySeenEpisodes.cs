@@ -21,7 +21,7 @@ namespace TVRename
 
         public PreviouslySeenEpisodes([CanBeNull] XElement xml)
         {
-            if (xml == null)
+            if (xml is null)
             {
                 return;
             }

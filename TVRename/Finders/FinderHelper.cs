@@ -31,7 +31,7 @@ namespace TVRename
             List<TVSettings.FilenameProcessorRE> rexps, bool doDateCheck, [CanBeNull] out TVSettings.FilenameProcessorRE re)
         {
             re = null;
-            if (fi == null)
+            if (fi is null)
             {
                 seas = -1;
                 ep = -1;
@@ -57,7 +57,7 @@ namespace TVRename
             seas = -1;
             maxEp = -1;
 
-            if (fi == null || si == null)
+            if (fi is null || si is null)
             {
                 return false;
             }
@@ -110,7 +110,7 @@ namespace TVRename
                 foreach (Episode epi in kvp.Value.Episodes.Values)
                 {
                     DateTime? dt = epi.GetAirDateDt(); // file will have local timezone date, not ours
-                    if (dt == null)
+                    if (dt is null)
                     {
                         continue;
                     }
@@ -146,7 +146,7 @@ namespace TVRename
             List<TVSettings.FilenameProcessorRE> rexps = TVSettings.Instance.FNPRegexs;
             re = null;
 
-            if (di == null)
+            if (di is null)
             {
                 seas = -1;
                 ep = -1;
@@ -185,12 +185,12 @@ namespace TVRename
 
         public static bool FileNeeded([NotNull] DirectoryInfo di, [NotNull] ShowItem si, DirFilesCache dfc)
         {
-            if (di == null)
+            if (di is null)
             {
                 throw new ArgumentNullException(nameof(di));
             }
 
-            if (si == null)
+            if (si is null)
             {
                 throw new ArgumentNullException(nameof(si));
             }
@@ -234,18 +234,13 @@ namespace TVRename
             foreach (string folder in dirs[snum])
             {
                 FileInfo[] files = cache.GetFiles(folder);
-                if (files == null)
+                if (files is null)
                 {
                     continue;
                 }
 
-                foreach (FileInfo fiTemp in files)
+                foreach (FileInfo fiTemp in files.Where(fiTemp => fiTemp.IsMovieFile()))
                 {
-                    if (!fiTemp.IsMovieFile())
-                    {
-                        continue; // move on
-                    }
-
                     if (!FindSeasEp(fiTemp, out int seasFound, out int epFound, out int _, si))
                     {
                         continue;
@@ -269,12 +264,12 @@ namespace TVRename
         public static bool EpisodeNeeded([NotNull] ShowItem si, DirFilesCache dfc, int seasF, int epF,
             [NotNull] FileSystemInfo fi)
         {
-            if (si == null)
+            if (si is null)
             {
                 throw new ArgumentNullException(nameof(si));
             }
 
-            if (fi == null)
+            if (fi is null)
             {
                 throw new ArgumentNullException(nameof(fi));
             }
@@ -282,7 +277,7 @@ namespace TVRename
             try
             {
                 SeriesInfo s = si.TheSeries();
-                if (s == null)
+                if (s is null)
                 {
                     //We have not downloaded the series, so have to assume that we need the episode/file
                     return true;

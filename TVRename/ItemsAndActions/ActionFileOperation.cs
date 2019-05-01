@@ -21,7 +21,7 @@ namespace TVRename
 
         protected void DeleteOrRecycleFile([CanBeNull] FileInfo file)
         {
-            if (file == null)
+            if (file is null)
             {
                 return;
             }
@@ -42,7 +42,7 @@ namespace TVRename
 
         protected void DeleteOrRecycleFolder([CanBeNull] DirectoryInfo di)
         {
-            if (di == null)
+            if (di is null)
             {
                 return;
             }
@@ -67,11 +67,11 @@ namespace TVRename
             Debug.Assert(Tidyup != null);
             Debug.Assert(Tidyup.DeleteEmpty);
 #else
-            if (this.Tidyup == null || !this.Tidyup.DeleteEmpty)
+            if (this.Tidyup is null || !this.Tidyup.DeleteEmpty)
                 return;
 #endif
             // See if we should now delete the folder we just moved that file from.
-            if (di == null)
+            if (di is null)
             {
                 return;
             }

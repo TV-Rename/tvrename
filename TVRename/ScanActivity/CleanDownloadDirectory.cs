@@ -112,8 +112,9 @@ namespace TVRename
 
                 foreach (FileInfo neededFile in filesThatMayBeNeeded)
                 {
-                    if (di.FullName.Contains(neededFile.DirectoryName))
+                    if (neededFile.DirectoryName.Contains(di.FullName))
                     {
+                        LOGGER.Info($"Not removing {di.FullName} as it may be needed for {neededFile.FullName}");
                         dirCanBeRemoved = false;
                     }
                 }
@@ -461,6 +462,7 @@ namespace TVRename
         }
 
         public override bool Active() => TVSettings.Instance.RemoveDownloadDirectoriesFiles ||
-                                         TVSettings.Instance.ReplaceWithBetterQuality;
+                                         TVSettings.Instance.ReplaceWithBetterQuality ||
+                                         TVSettings.Instance.CopyFutureDatedEpsFromSearchFolders;
     }
 }

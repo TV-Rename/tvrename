@@ -110,7 +110,7 @@ namespace TVRename
 
         public void StopBgDownloadThread()
         {
-            if (mDownloaderThread == null)
+            if (mDownloaderThread is null)
             {
                 return;
             }
@@ -136,8 +136,7 @@ namespace TVRename
 
                 Threadslogger.Trace("  Downloading " + series.Name);
 
-                if (TheTVDB.Instance.EnsureUpdated(series.SeriesId, bannersToo, series.UseCustomLanguage,
-                        series.CustomLanguageCode))
+                if (TheTVDB.Instance.EnsureUpdated(series, bannersToo))
                 {
                     return;
                 }

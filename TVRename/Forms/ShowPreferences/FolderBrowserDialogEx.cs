@@ -456,7 +456,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             if (lpData == IntPtr.Zero)
                 return;
             object obj = Marshal.PtrToStructure(lpData, typeof(InitData));
-            if (obj == null)
+            if (obj is null)
                 return;
             InitData initdata = (InitData)obj;
 

@@ -218,7 +218,7 @@ namespace TVRename
             Thread fmpshower = new Thread(FmpShower){Name = "'Bulk Add Shows' Progress (Folder Check)"};
             fmpshower.Start();
 
-            while (progressDialog == null || !progressDialog.Ready)
+            while (progressDialog is null || !progressDialog.Ready)
             {
                 Thread.Sleep(10);
             }
@@ -328,7 +328,7 @@ namespace TVRename
             Thread fmpshower = new Thread(FmpShower) {Name = "Bulk Add Shows Progress (Full Auto)"};
             fmpshower.Start();
 
-            while ((progressDialog == null) || (!progressDialog.Ready))
+            while ((progressDialog is null) || (!progressDialog.Ready))
             {
                 Thread.Sleep(10);
             }
@@ -517,7 +517,7 @@ namespace TVRename
             }
 
             FoundFolder fme = lvFMNewShows.SelectedItems[0].Tag as FoundFolder;
-            if (fme == null)
+            if (fme is null)
             {
                 return;
             }

@@ -47,7 +47,7 @@ namespace TVRename
         {
             SeriesInfo ser = si?.TheSeries();
 
-            if (ser == null)
+            if (ser is null)
             {
                 return;
             }
@@ -222,7 +222,7 @@ namespace TVRename
 
         private static void AppendSeason(this StringBuilder sb, Season s, [CanBeNull] ShowItem si,Color backgroundColour, bool includeDirectoryLinks)
         {
-            if (si == null)
+            if (si is null)
             {
                 return;
             }
@@ -300,7 +300,7 @@ namespace TVRename
                 ? string.Empty
                 : "<br />";
 
-            string searchButton = (fl == null || fl.Count==0) && ep.HasAired()
+            string searchButton = (fl is null || fl.Count==0) && ep.HasAired()
                 ? CreateButton(TVSettings.Instance.BTSearchURL(ep), "<i class=\"fas fa-search\"></i>","Search for Torrent...")
                 : string.Empty;
 
