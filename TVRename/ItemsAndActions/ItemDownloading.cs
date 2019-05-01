@@ -55,12 +55,12 @@ namespace TVRename
                 return 0;
             }
 
-            if (Episode == null)
+            if (Episode is null)
             {
                 return 1;
             }
 
-            if (ut.Episode == null)
+            if (ut.Episode is null)
             {
                 return -1;
             }

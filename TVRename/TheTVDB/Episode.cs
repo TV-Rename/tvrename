@@ -89,9 +89,10 @@ namespace TVRename
             SetDefaults(ser, airSeason, dvdSeason);
         }
 
+        [CanBeNull]
         public DateTime? GetAirDateDt()
         {
-            if (FirstAired == null)
+            if (FirstAired is null || TheSeries is null)
             {
                 return null;
             }
@@ -102,10 +103,11 @@ namespace TVRename
             return new DateTime(fa.Year, fa.Month, fa.Day, airs?.Hour ?? 20, airs?.Minute ?? 0, 0, 0);
         }
 
+        [CanBeNull]
         public DateTime? GetAirDateDt(TimeZoneInfo tz)
         {
             DateTime? dt = GetAirDateDt();
-            if (dt == null)
+            if (dt is null)
             {
                 return null;
             }
@@ -254,7 +256,7 @@ namespace TVRename
                 DvdDiscId = (string)r["dvdDiscid"];
 
                 string sn = (string) r["airedSeason"];
-                if (sn == null)
+                if (sn is null)
                 {
                     Logger.Error("Issue with episode " + EpisodeId + " for series " + seriesId + " airedSeason = null");
                     Logger.Error(r.ToString());

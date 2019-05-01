@@ -88,7 +88,7 @@ namespace TVRename
         public override bool Go(ref bool pause, TVRenameStats stats)
         {
             byte[] theData = TheTVDB.Instance.GetTvdbDownload(path);
-            if ((theData == null) || (theData.Length == 0))
+            if ((theData is null) || (theData.Length == 0))
             {
                 ErrorText = "Unable to download " + path;
                 Error = true;
@@ -100,7 +100,7 @@ namespace TVRename
             {
                 // shrink images down to a maximum size of 156x232
                 Image im = new Bitmap(new System.IO.MemoryStream(theData));
-                if (Episode == null)
+                if (Episode is null)
                 {
                     if ((im.Width > 156) || (im.Height > 232))
                     {
@@ -179,7 +179,7 @@ namespace TVRename
         [NotNull]
         public override string ScanListViewGroup => "lvgActionDownload";
         [CanBeNull]
-        public override string TargetFolder => destination == null ? null : destination.DirectoryName;
+        public override string TargetFolder => destination is null ? null : destination.DirectoryName;
         #endregion
     }
 }

@@ -35,8 +35,8 @@ namespace TVRename
 
         public override int Compare([CanBeNull] Item o)
         {
-            //return (o == null || miss == null) ? 0 : (this.TheFileNoExt + this.Episode.Name).CompareTo(miss.TheFileNoExt + miss.Episode.Name);
-            if (o == null || !(o is ItemMissing miss))
+            //return (o is null || miss is null) ? 0 : (this.TheFileNoExt + this.Episode.Name).CompareTo(miss.TheFileNoExt + miss.Episode.Name);
+            if (o is null || !(o is ItemMissing miss))
             {
                 return 0;
             }

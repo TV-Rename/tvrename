@@ -103,13 +103,13 @@ namespace TVRename
                     }
                 }
 
-                if (latestVersion == null)
+                if (latestVersion is null)
                 {
                     Logger.Error("Could not find latest version information from GitHub: {0}", gitHubInfo.ToString());
                     return (null, latestBetaVersion);
                 }
 
-                if (latestBetaVersion == null)
+                if (latestBetaVersion is null)
                 {
                     Logger.Error("Could not find latest beta version information from GitHub: {0}", gitHubInfo.ToString());
                     return (latestVersion, null);

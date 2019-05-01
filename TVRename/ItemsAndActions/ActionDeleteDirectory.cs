@@ -27,7 +27,7 @@ namespace TVRename
         public override string ProgressText => toRemove.Name;
         public override string Produces => toRemove.FullName;
         [CanBeNull]
-        public override IgnoreItem Ignore => toRemove == null ? null : new IgnoreItem(toRemove.FullName);
+        public override IgnoreItem Ignore => toRemove is null ? null : new IgnoreItem(toRemove.FullName);
         [CanBeNull]
         public override string TargetFolder => toRemove?.Parent.FullName;
 
@@ -70,7 +70,7 @@ namespace TVRename
 
         public override int Compare(Item o)
         {
-            if (!(o is ActionDeleteDirectory cmr) || toRemove.Parent.FullName == null || cmr.toRemove.Parent.FullName == null)
+            if (!(o is ActionDeleteDirectory cmr) || toRemove.Parent.FullName is null || cmr.toRemove.Parent.FullName is null)
             {
                 return 0;
             }

@@ -16,7 +16,7 @@ namespace TVRename
     {
         public void Add([CanBeNull] ItemList slil)
         {
-            if (slil == null)
+            if (slil is null)
             {
                 return;
             }
@@ -44,7 +44,7 @@ namespace TVRename
 
         internal void Remove([CanBeNull] List<Item> toRemove)
         {
-            if (toRemove == null)
+            if (toRemove is null)
             {
                 return;
             }

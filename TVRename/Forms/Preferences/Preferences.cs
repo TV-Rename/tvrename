@@ -971,7 +971,7 @@ namespace TVRename
 
         private void PopulateShowStatusColours([NotNull] TVSettings s)
         {
-            if (s.ShowStatusColors == null)
+            if (s.ShowStatusColors is null)
             {
                 return;
             }
@@ -1271,7 +1271,7 @@ namespace TVRename
                     if (!ColorTranslator.FromHtml(txtShowStatusColor.Text).IsEmpty && ssct != null)
                     {
                         ListViewItem item = lvwDefinedColors.FindItemWithText(ssct.Text);
-                        if (item == null)
+                        if (item is null)
                         {
                             item = new ListViewItem();
                             item.SubItems.Add(txtShowStatusColor.Text);

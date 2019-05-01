@@ -169,29 +169,41 @@ namespace TVRename
         [NotNull]
         private static string ReplaceDates(bool urlEncode, string name, DateTime? airdt)
         {
-            string ymd;
-
-            if (airdt != null)
+            try
             {
-                DateTime dt = (DateTime)airdt;
-                name = name.ReplaceInsensitive("{ShortDate}", dt.ToString("d"));
-                name = name.ReplaceInsensitive("{LongDate}", dt.ToString("D"));
-                ymd = dt.ToString("yyyy/MM/dd");
-            }
-            else
-            {
-                name = name.ReplaceInsensitive("{ShortDate}", "---");
-                name = name.ReplaceInsensitive("{LongDate}", "------");
-                ymd = "----/--/--";
-            }
-            if (urlEncode)
-            {
-                ymd = Uri.EscapeDataString(ymd);
-            }
+                string ymd;
 
-            name = name.ReplaceInsensitive("{YMDDate}", ymd);
+                if (airdt != null)
+                {
+                    DateTime dt = (DateTime)airdt;
+                    name = name.ReplaceInsensitive("{ShortDate}", dt.ToString("d"));
+                    name = name.ReplaceInsensitive("{LongDate}", dt.ToString("D"));
+                    ymd = dt.ToString("yyyy/MM/dd");
+                }
+                else
+                {
+                    name = name.ReplaceInsensitive("{ShortDate}", "---");
+                    name = name.ReplaceInsensitive("{LongDate}", "------");
+                    ymd = "----/--/--";
+                }
+                if (urlEncode)
+                {
+                    ymd = Uri.EscapeDataString(ymd);
+                }
 
-            return name;
+                name = name.ReplaceInsensitive("{YMDDate}", ymd);
+
+                return name;
+            }
+            catch(ArgumentOutOfRangeException ex)
+            {
+                if (name.Contains("{ShortDate}") || name.Contains("{LongDate}") || name.Contains("{YMDDate}"))
+                {
+                    //We don't care that the date can't be parsed
+                    return name;
+                }
+                throw;
+            }
         }
 
         [NotNull]

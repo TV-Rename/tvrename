@@ -50,7 +50,7 @@ namespace TVRename
         {
             try
             {
-                return theirTimeZone == null
+                return theirTimeZone is null
                     ? theirDateTime
                     : TimeZoneInfo.ConvertTime(theirDateTime, theirTimeZone, TimeZoneInfo.Local);
             }

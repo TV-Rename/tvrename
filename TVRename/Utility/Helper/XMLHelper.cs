@@ -254,7 +254,7 @@ namespace TVRename
 
             int? val = xmlSettings.ExtractInt(elementName);
 
-            if (val == null)
+            if (val is null)
             {
                 return defaultVal;
             }

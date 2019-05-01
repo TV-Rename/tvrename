@@ -32,7 +32,7 @@ namespace TVRename
 
         public override bool Go(ref bool pause, TVRenameStats stats)
         {
-            if (Where == null)
+            if (Where is null)
             {
                 ErrorText = "No file location specified - Development Error";
                 Error = true;
@@ -209,12 +209,12 @@ namespace TVRename
         {
             ActionWdtvMeta nfo = o as ActionWdtvMeta;
 
-            if (Episode == null)
+            if (Episode is null)
             {
                 return 1;
             }
 
-            if (nfo?.Episode == null)
+            if (nfo?.Episode is null)
             {
                 return -1;
             }

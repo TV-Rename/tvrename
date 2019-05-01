@@ -145,7 +145,7 @@ namespace TVRename
         public string HowLong()
         {
             DateTime? airsdt = GetAirDateDt(true);
-            if (airsdt == null)
+            if (airsdt is null)
             {
                 return "";
             }
@@ -193,7 +193,7 @@ namespace TVRename
         public bool HasAired()
         {
             DateTime? airsdt = GetAirDateDt(true);
-            if (airsdt == null)
+            if (airsdt is null)
             {
                 return false;
             }
@@ -207,7 +207,7 @@ namespace TVRename
         public bool WithinDays(int days)
         {
             DateTime? dt = GetAirDateDt(true);
-            if ((dt == null) || (dt.Value.CompareTo(DateTime.MaxValue) == 0))
+            if ((dt is null) || (dt.Value.CompareTo(DateTime.MaxValue) == 0))
             {
                 return false;
             }
@@ -219,7 +219,7 @@ namespace TVRename
         public bool IsInFuture()
         {
             DateTime? airsdt = GetAirDateDt(true);
-            if (airsdt == null)
+            if (airsdt is null)
             {
                 return false;
             }

@@ -49,12 +49,7 @@ namespace TVRename
 
             // process each folder for each season...
 
-            int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
-            si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
-
-            int lastSeason = numbers.DefaultIfEmpty(0).Max();
-
-            foreach (int snum in numbers)
+            foreach (int snum in si.SeasonEpisodes.Keys.ToList())
             {
                 if (settings.Token.IsCancellationRequested)
                 {
@@ -79,21 +74,17 @@ namespace TVRename
                 // all the folders for this particular season
                 List<string> folders = allFolders[snum];
 
-                CheckSeason(si, dfc, settings, snum, folders, timeForBannerUpdate, lastSeason);
+                CheckSeason(si, dfc, settings, snum, folders, timeForBannerUpdate);
             } // for each season of this show
         }
 
-        private void CheckSeason([NotNull] ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum, [NotNull] List<string> folders,
-            bool timeForBannerUpdate, int lastSeason)
+        private void CheckSeason([NotNull] ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum, [NotNull] IReadOnlyCollection<string> folders, bool timeForBannerUpdate)
         {
             bool folderNotDefined = (folders.Count == 0);
             if (folderNotDefined && (TVSettings.Instance.MissingCheck && !si.AutoAddNewSeasons()))
             {
                 return;
             }
-
-            List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
-            int maxEpisodeNumber = GetMaxEpisodeNumber(eps);
 
             // base folder:
             if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (si.AutoAddType != ShowItem.AutomaticFolderType.none))
@@ -104,20 +95,14 @@ namespace TVRename
 
             foreach (string folder in folders)
             {
-                CheckSeasonFolder(si, dfc, settings, snum, timeForBannerUpdate, lastSeason, folder, maxEpisodeNumber, eps);
+                CheckSeasonFolder(si, dfc, settings, snum, timeForBannerUpdate, folder);
             } // for each folder for this season of this show
         }
 
         private void CheckSeasonFolder(ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum,
-            bool timeForBannerUpdate, int lastSeason, string folder, int maxEpisodeNumber, List<ProcessedEpisode> eps)
+            bool timeForBannerUpdate, string folder)
         {
             if (settings.Token.IsCancellationRequested)
-            {
-                return;
-            }
-
-            FileInfo[] files = dfc.GetFiles(folder);
-            if (files == null)
             {
                 return;
             }
@@ -130,22 +115,35 @@ namespace TVRename
                         folder, snum));
             }
 
+            //Image series checks here
+            Doc.TheActionList.Add(downloadIdentifiers.ProcessSeason(si, folder, snum));
+
+            FileInfo[] files = dfc.GetFiles(folder);
+            if (files is null)
+            {
+                return;
+            }
+
             bool renCheck =
                 TVSettings.Instance.RenameCheck && si.DoRename &&
                 Directory.Exists(folder); // renaming check needs the folder to exist
 
             bool missCheck = TVSettings.Instance.MissingCheck && si.DoMissingCheck;
 
-            //Image series checks here
-            Doc.TheActionList.Add(downloadIdentifiers.ProcessSeason(si, folder, snum));
-
-            FileInfo[] localEps = new FileInfo[maxEpisodeNumber + 1];
-
-            int maxEpNumFound = 0;
             if (!renCheck && !missCheck)
             {
                 return;
             }
+
+            Dictionary<int,FileInfo> localEps = new Dictionary<int, FileInfo>();
+            int maxEpNumFound = 0;
+
+            if (!si.SeasonEpisodes.ContainsKey(snum))
+            {
+                return;
+            }
+
+            List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
 
             foreach (FileInfo fi in files)
             {
@@ -165,15 +163,13 @@ namespace TVRename
                     seasNum = snum;
                 }
 
-                int epIdx = eps.FindIndex(x =>
-                    ((x.AppropriateEpNum == epNum) && (x.AppropriateSeasonNumber == seasNum)));
+                ProcessedEpisode ep = eps.Find(x => x.AppropriateEpNum == epNum && x.AppropriateSeasonNumber == seasNum);
 
-                if (epIdx == -1)
+                if (ep is null)
                 {
                     continue; // season+episode number don't correspond to any episode we know of from thetvdb
                 }
 
-                ProcessedEpisode ep = eps[epIdx];
                 FileInfo actualFile = fi;
 
                 // == RENAMING CHECK ==
@@ -197,7 +193,7 @@ namespace TVRename
                 if (missCheck && fi.IsMovieFile())
                 {
                     // first pass of missing check is to tally up the episodes we do have
-                    if (localEps[epNum] is null)
+                    if (!localEps.ContainsKey(epNum))
                     {
                         localEps[epNum] = actualFile;
                     }
@@ -218,8 +214,7 @@ namespace TVRename
                 DateTime today = DateTime.Now;
                 foreach (ProcessedEpisode dbep in eps)
                 {
-                    if ((dbep.AppropriateEpNum > maxEpNumFound) || (localEps[dbep.AppropriateEpNum] == null)
-                    ) // not here locally
+                    if (!localEps.ContainsKey(dbep.AppropriateEpNum)) // not here locally
                     {
                         DateTime? dt = dbep.GetAirDateDt(true);
                         bool dtOk = dt != null;
@@ -227,13 +222,12 @@ namespace TVRename
                         bool notFuture =
                             (dtOk && (dt.Value.CompareTo(today) < 0)); // isn't an episode yet to be aired
 
-                        bool noAirdatesUntilNow = NoAirdatesUntilNow(si, snum, lastSeason);
 
                         // only add to the missing list if, either:
                         // - force check is on
                         // - there are no aired dates at all, for up to and including this season
                         // - there is an aired date, and it isn't in the future
-                        if (noAirdatesUntilNow ||
+                        if (si.NoAirdatesUntilNow(snum) ||
                             ((si.ForceCheckFuture || notFuture) && dtOk) ||
                             (si.ForceCheckNoAirdate && !dtOk))
                         {
@@ -259,27 +253,6 @@ namespace TVRename
                     }
                 } // up to date check, for each episode in thetvdb
             } // if doing missing check
-        }
-
-        private static bool NoAirdatesUntilNow(ShowItem si, int snum, int lastSeason)
-        {
-            // for specials "season", see if any season has any aired dates
-            // otherwise, check only up to the season we are considering
-            for (int i = 1; i <= ((snum == 0) ? lastSeason : snum); i++)
-            {
-                if (ShowLibrary.HasAnyAirdates(si, i))
-                {
-                    return false;
-                }
-
-                //If the show is in its first season and no episodes have air dates
-                if (lastSeason == 1)
-                {
-                   return false;
-                }
-            }
-
-            return true;
         }
 
         [CanBeNull]
@@ -325,11 +298,6 @@ namespace TVRename
             }
 
             return null;
-        }
-
-        private static int GetMaxEpisodeNumber([NotNull] IEnumerable<ProcessedEpisode> eps)
-        {
-            return eps.Select(episode => episode.AppropriateEpNum).Concat(new[] {0}).Max();
         }
 
         protected override bool Active() => true;

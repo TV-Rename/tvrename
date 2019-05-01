@@ -87,11 +87,11 @@ namespace TVRename
         {
             get
             {
-                if (IntenalInstance == null)
+                if (IntenalInstance is null)
                 {
                     lock (SyncRoot)
                     {
-                        if (IntenalInstance == null)
+                        if (IntenalInstance is null)
                         {
                             IntenalInstance = new TheTVDB();
                         }
@@ -125,7 +125,7 @@ namespace TVRename
 
             srvTime = 0;
 
-            LoadOk = (loadFrom == null) || LoadCache(loadFrom);
+            LoadOk = (loadFrom is null) || LoadCache(loadFrom);
 
             forceReloadOn = new ConcurrentDictionary<int, int>();
         }
@@ -1116,7 +1116,7 @@ namespace TVRename
                 try
                 {
                     string time = x.Attribute("time")?.Value;
-                    newSrvTime = (time == null) ? 0 : long.Parse(time);
+                    newSrvTime = (time is null) ? 0 : long.Parse(time);
 
                     foreach (XElement seriesXml in x.Descendants("Series"))
                     {
@@ -1202,6 +1202,11 @@ namespace TVRename
         }
 
         [CanBeNull]
+        private SeriesInfo DownloadSeriesNow([NotNull] SeriesSpecifier deets, bool episodesToo, bool bannersToo) =>
+            DownloadSeriesNow(deets.SeriesId, episodesToo, bannersToo, deets.UseCustomLanguage,
+                deets.CustomLanguageCode);
+
+        [CanBeNull]
         private SeriesInfo DownloadSeriesNow(int code, bool episodesToo, bool bannersToo, bool useCustomLangCode, string langCode)
         {
             if (code == 0)
@@ -1226,7 +1231,7 @@ namespace TVRename
             }
 
             Language languageFromCode = LanguageList.GetLanguageFromCode(requestedLanguageCode);
-            if (languageFromCode == null)
+            if (languageFromCode is null)
             {
                 throw new ArgumentException($"Requested language ({requestedLanguageCode}) not found in Language Cache, cache has ({string.Join(",", LanguageList.Select(language => language.Abbreviation))})", requestedLanguageCode);
             }
@@ -1294,12 +1299,12 @@ namespace TVRename
         private SeriesInfo GenerateSeriesInfo([NotNull] JObject jsonResponse, JObject jsonDefaultLangResponse, bool isNotDefaultLanguage,
             [NotNull] string requestedLanguageCode)
         {
-            if (jsonResponse == null)
+            if (jsonResponse is null)
             {
                 throw new ArgumentNullException(nameof(jsonResponse));
             }
 
-            if (requestedLanguageCode == null)
+            if (requestedLanguageCode is null)
             {
                 throw new ArgumentNullException(nameof(requestedLanguageCode));
             }
@@ -1308,18 +1313,18 @@ namespace TVRename
             SeriesInfo si;
             if (isNotDefaultLanguage)
             {
-                if (jsonDefaultLangResponse == null)
+                if (jsonDefaultLangResponse is null)
                 {
                     throw new ArgumentNullException(nameof(jsonDefaultLangResponse));
                 }
 
-                if (LanguageList == null)
+                if (LanguageList is null)
                 {
                     throw new ArgumentException("LanguageList not Setup",nameof(LanguageList));
                 }
 
                 Language languageFromCode = LanguageList.GetLanguageFromCode(requestedLanguageCode);
-                if (languageFromCode == null)
+                if (languageFromCode is null)
                 {
                     throw new ArgumentException($"Requested language ({requestedLanguageCode}) not found in Language Cache, cache has ({string.Join(",",LanguageList.Select(language => language.Abbreviation))})", requestedLanguageCode);
                 }
@@ -1822,12 +1827,12 @@ namespace TVRename
                 Say("");
                 return true;
             }
-            if (prefLangEpisodeData == null)
+            if (prefLangEpisodeData is null)
             {
                 return ProcessEpisode(seriesId, defLangEpisodeData, dvdOrder);
             }
 
-            if (defLangEpisodeData == null)
+            if (defLangEpisodeData is null)
             {
                 return ProcessEpisode(seriesId, prefLangEpisodeData, dvdOrder);
             }
@@ -1945,18 +1950,19 @@ namespace TVRename
             series[code] = new SeriesInfo(name ?? "", code, customLanguageCode) { Dirty = true };
         }
 
-        public bool EnsureUpdated(int code, bool bannersToo, bool useCustomLangCode, string langCode)
+        public bool EnsureUpdated([NotNull] SeriesSpecifier seriesd, bool bannersToo)
         {
+            int code = seriesd.SeriesId;
             if (DoWeForceReloadFor(code) || (series[code].AiredSeasons.Count == 0))
             {
-                return DownloadSeriesNow(code, true, bannersToo, useCustomLangCode, langCode) != null; // the whole lot!
+                return DownloadSeriesNow(seriesd, true, bannersToo) != null; // the whole lot!
             }
 
             bool ok = true;
 
             if ((series[code].Dirty) || (bannersToo && !series[code].BannersLoaded))
             {
-                ok = (DownloadSeriesNow(code, false, bannersToo, useCustomLangCode, langCode) != null);
+                ok = (DownloadSeriesNow(seriesd, false, bannersToo) != null);
             }
 
             foreach (KeyValuePair<int, Season> kvp in GetSeries(code)?.AiredSeasons ?? new Dictionary<int, Season>())
@@ -2174,7 +2180,7 @@ namespace TVRename
                 foreach (Episode e in s.Episodes.Values)
                 {
                     DateTime? adt = e.GetAirDateDt();
-                    if (adt == null)
+                    if (adt is null)
                     {
                         continue;
                     }

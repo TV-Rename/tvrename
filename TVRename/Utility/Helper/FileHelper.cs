@@ -304,7 +304,7 @@ namespace TVRename
                 StringBuilder sb = new StringBuilder();
                 foreach (IShellProperty prop in properties)
                 {
-                    string value = (prop.ValueAsObject == null)
+                    string value = (prop.ValueAsObject is null)
                         ? ""
                         : prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
                     sb.AppendLine($"{prop.CanonicalName} = {value}" );

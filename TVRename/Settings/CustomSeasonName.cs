@@ -65,7 +65,7 @@ namespace TVRename
         {
             string name = styleString;
 
-            if (s == null)
+            if (s is null)
             {
                 return string.Empty;
             }

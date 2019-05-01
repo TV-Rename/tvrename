@@ -333,7 +333,7 @@ namespace TVRename
                 ListViewItem lvi = new ListViewItem { Text = fi.Name };
                 lvi.SubItems.Add((seas == -1) ? "-" : seas.ToString());
                 lvi.SubItems.Add((ep == -1) ? "-" : ep + ((maxEp != -1) ? "-" + maxEp : ""));
-                lvi.SubItems.Add((matchRex == null) ? "-" : matchRex.Notes);
+                lvi.SubItems.Add((matchRex is null) ? "-" : matchRex.Notes);
                 if (!r)
                 {
                     lvi.BackColor = Helpers.WarningColor();

@@ -89,7 +89,7 @@ namespace TVRename
             {
                 foreach (JToken item in jsonResponse[TVSettings.Instance.SearchJSONRootNode])
                 {
-                    if (item == null || !(item is JObject episodeResponse))
+                    if (item is null || !(item is JObject episodeResponse))
                     {
                         continue;
                     }

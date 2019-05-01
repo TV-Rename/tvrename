@@ -250,12 +250,12 @@ namespace TVRename
         {
             ActionNfo nfo = o as ActionNfo;
 
-            if (Episode == null)
+            if (Episode is null)
             {
                 return 1;
             }
 
-            if (nfo?.Episode == null)
+            if (nfo?.Episode is null)
             {
                 return -1;
             }

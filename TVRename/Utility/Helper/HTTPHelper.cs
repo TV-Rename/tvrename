@@ -102,7 +102,7 @@ namespace TVRename
         [NotNull]
         private static string GetHttpParameters([CanBeNull] Dictionary<string, string> parameters)
         {
-            if (parameters == null)
+            if (parameters is null)
             {
                 return string.Empty;
             }
@@ -125,7 +125,7 @@ namespace TVRename
                 throw new ArgumentOutOfRangeException(nameof(times));
             }
 
-            if (operation == null)
+            if (operation is null)
             {
                 throw new ArgumentNullException(nameof(operation));
             }
@@ -163,7 +163,7 @@ namespace TVRename
                 throw new ArgumentOutOfRangeException(nameof(times));
             }
 
-            if (operation == null)
+            if (operation is null)
             {
                 throw new ArgumentNullException(nameof(operation));
             }
