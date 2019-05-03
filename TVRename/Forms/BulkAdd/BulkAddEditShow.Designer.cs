@@ -91,7 +91,7 @@ namespace TVRename
             this.MinimizeBox = false;
             this.Name = "FolderMonitorEdit";
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Bulk Add - Edit Show";
             this.ResumeLayout(false);
             this.PerformLayout();

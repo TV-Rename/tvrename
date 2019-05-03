@@ -37,20 +37,20 @@ namespace TVRename
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = (new System.ComponentModel.ComponentResourceManager(typeof(MissingFolderAction)));
-            this.label1 = (new System.Windows.Forms.Label());
-            this.label2 = (new System.Windows.Forms.Label());
-            this.label3 = (new System.Windows.Forms.Label());
-            this.bnIgnoreOnce = (new System.Windows.Forms.Button());
-            this.bnIgnoreAlways = (new System.Windows.Forms.Button());
-            this.bnCreate = (new System.Windows.Forms.Button());
-            this.txtShow = (new System.Windows.Forms.Label());
-            this.txtSeason = (new System.Windows.Forms.Label());
-            this.txtFolder = (new System.Windows.Forms.Label());
-            this.bnRetry = (new System.Windows.Forms.Button());
-            this.bnCancel = (new System.Windows.Forms.Button());
-            this.bnBrowse = (new System.Windows.Forms.Button());
-            this.folderBrowser = (new System.Windows.Forms.FolderBrowserDialog());
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MissingFolderAction));
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.bnIgnoreOnce = new System.Windows.Forms.Button();
+            this.bnIgnoreAlways = new System.Windows.Forms.Button();
+            this.bnCreate = new System.Windows.Forms.Button();
+            this.txtShow = new System.Windows.Forms.Label();
+            this.txtSeason = new System.Windows.Forms.Label();
+            this.txtFolder = new System.Windows.Forms.Label();
+            this.bnRetry = new System.Windows.Forms.Button();
+            this.bnCancel = new System.Windows.Forms.Button();
+            this.bnBrowse = new System.Windows.Forms.Button();
+            this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.SuspendLayout();
             // 
             // label1
@@ -88,7 +88,7 @@ namespace TVRename
             this.bnIgnoreOnce.TabIndex = 7;
             this.bnIgnoreOnce.Text = "Ig&nore Once";
             this.bnIgnoreOnce.UseVisualStyleBackColor = true;
-            this.bnIgnoreOnce.Click += new System.EventHandler(bnIgnoreOnce_Click);
+            this.bnIgnoreOnce.Click += new System.EventHandler(this.bnIgnoreOnce_Click);
             // 
             // bnIgnoreAlways
             // 
@@ -98,7 +98,7 @@ namespace TVRename
             this.bnIgnoreAlways.TabIndex = 8;
             this.bnIgnoreAlways.Text = "Ignore &Always";
             this.bnIgnoreAlways.UseVisualStyleBackColor = true;
-            this.bnIgnoreAlways.Click += new System.EventHandler(bnIgnoreAlways_Click);
+            this.bnIgnoreAlways.Click += new System.EventHandler(this.bnIgnoreAlways_Click);
             // 
             // bnCreate
             // 
@@ -108,11 +108,12 @@ namespace TVRename
             this.bnCreate.TabIndex = 9;
             this.bnCreate.Text = "&Create";
             this.bnCreate.UseVisualStyleBackColor = true;
-            this.bnCreate.Click += new System.EventHandler(bnCreate_Click);
+            this.bnCreate.Click += new System.EventHandler(this.bnCreate_Click);
             // 
             // txtShow
             // 
-            this.txtShow.Anchor = (System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.txtShow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtShow.Location = new System.Drawing.Point(70, 9);
             this.txtShow.Name = "txtShow";
             this.txtShow.Size = new System.Drawing.Size(431, 13);
@@ -121,7 +122,8 @@ namespace TVRename
             // 
             // txtSeason
             // 
-            this.txtSeason.Anchor = (System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.txtSeason.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSeason.Location = new System.Drawing.Point(70, 31);
             this.txtSeason.Name = "txtSeason";
             this.txtSeason.Size = new System.Drawing.Size(431, 13);
@@ -130,7 +132,8 @@ namespace TVRename
             // 
             // txtFolder
             // 
-            this.txtFolder.Anchor = (System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.txtFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFolder.Location = new System.Drawing.Point(70, 55);
             this.txtFolder.Name = "txtFolder";
             this.txtFolder.Size = new System.Drawing.Size(331, 13);
@@ -145,7 +148,7 @@ namespace TVRename
             this.bnRetry.TabIndex = 10;
             this.bnRetry.Text = "&Retry";
             this.bnRetry.UseVisualStyleBackColor = true;
-            this.bnRetry.Click += new System.EventHandler(bnRetry_Click);
+            this.bnRetry.Click += new System.EventHandler(this.bnRetry_Click);
             // 
             // bnCancel
             // 
@@ -156,7 +159,7 @@ namespace TVRename
             this.bnCancel.TabIndex = 11;
             this.bnCancel.Text = "Canc&el";
             this.bnCancel.UseVisualStyleBackColor = true;
-            this.bnCancel.Click += new System.EventHandler(bnCancel_Click);
+            this.bnCancel.Click += new System.EventHandler(this.bnCancel_Click);
             // 
             // bnBrowse
             // 
@@ -166,12 +169,12 @@ namespace TVRename
             this.bnBrowse.TabIndex = 6;
             this.bnBrowse.Text = "&Browse...";
             this.bnBrowse.UseVisualStyleBackColor = true;
-            this.bnBrowse.Click += new System.EventHandler(bnBrowse_Click);
+            this.bnBrowse.Click += new System.EventHandler(this.bnBrowse_Click);
             // 
             // MissingFolderAction
             // 
             this.AllowDrop = true;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6, 13);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
             this.ClientSize = new System.Drawing.Size(516, 121);
@@ -191,10 +194,10 @@ namespace TVRename
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MissingFolderAction";
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Missing Folder";
-            this.DragDrop += new System.Windows.Forms.DragEventHandler(MissingFolderAction_DragDrop);
-            this.DragOver += new System.Windows.Forms.DragEventHandler(MissingFolderAction_DragOver);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MissingFolderAction_DragDrop);
+            this.DragOver += new System.Windows.Forms.DragEventHandler(this.MissingFolderAction_DragOver);
             this.ResumeLayout(false);
             this.PerformLayout();
 
