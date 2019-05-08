@@ -3977,7 +3977,7 @@ namespace TVRename
             form.ShowDialog();
         }
 
-        private void LvAction_ColumnClick(object sender, ColumnClickEventArgs e)
+        private void LvAction_ColumnClick(object sender, [NotNull] ColumnClickEventArgs e)
         {
             int col = e.Column;
 

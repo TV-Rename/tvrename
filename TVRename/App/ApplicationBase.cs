@@ -96,7 +96,7 @@ namespace TVRename.App
             {
                 if (recover) // Recovery required, prompt user
                 {
-                    RecoverXML recoveryForm = new RecoverXML(recoverText);
+                    RecoverXml recoveryForm = new RecoverXml(recoverText);
 
                     if (recoveryForm.ShowDialog() == DialogResult.OK)
                     {

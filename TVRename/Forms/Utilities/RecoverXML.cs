@@ -20,7 +20,7 @@ namespace TVRename
     ///          the designers will not be able to interact properly with localized
     ///          resources associated with this form.
     /// </summary>
-    public partial class RecoverXML : Form
+    public partial class RecoverXml : Form
     {
         public FileInfo DbFile;
         private FileInfo[] availableFiles;
@@ -28,7 +28,7 @@ namespace TVRename
         public FileInfo SettingsFile;
         private FileInfo[] settingsList;
 
-        public RecoverXML([CanBeNull] string hint)
+        public RecoverXml([CanBeNull] string hint)
         {
             InitializeComponent();
             SettingsFile = null;
