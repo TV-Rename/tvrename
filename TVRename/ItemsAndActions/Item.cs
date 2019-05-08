@@ -71,7 +71,7 @@ namespace TVRename
                     return "Special";
                 }
 
-                return Episode?.AppropriateSeasonNumber.ToString();
+                return Episode?.AppropriateSeasonNumber.ToString() ?? string.Empty;
             }
         }
 
