@@ -310,6 +310,10 @@ namespace TVRename
         {
             return GetSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(text, name));
         }
+        public bool NameMatchInitial(string text)
+        {
+            return GetSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(text, name));
+        }
 
         public bool NameMatchFilters(string text)
         {

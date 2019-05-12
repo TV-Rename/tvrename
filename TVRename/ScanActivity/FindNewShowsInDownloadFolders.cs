@@ -9,8 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 
@@ -46,7 +44,7 @@ namespace TVRename
             }
 
             List<string> possibleShowNames = GetPossibleShowNameStrings();
-            List<ShowItem> addedShows = FindShows(possibleShowNames);
+            List<ShowItem> addedShows = FinderHelper.FindShows(possibleShowNames,MDoc);
 
             if (addedShows.Count <= 0)
             {
@@ -67,89 +65,6 @@ namespace TVRename
             {
                 showList.Add(si);
             }
-        }
-
-        [NotNull]
-        private List<ShowItem> FindShows([NotNull] List<string> possibleShowNames)
-        {
-            List<ShowItem> addedShows = new List<ShowItem>();
-
-            foreach (string hint in possibleShowNames)
-            {
-                //if hint doesn't match existing added shows
-                if (LookForSeries(hint, addedShows))
-                {
-                    LOGGER.Info($"Ignoring {hint} as it matches existing shows.");
-                    continue;
-                }
-
-                //If the hint contains certain terms then we'll ignore it
-                if (IgnoreHint(hint))
-                {
-                    LOGGER.Info($"Ignoring {hint} as it is in the ignore list (from Settings).");
-                    continue;
-                }
-
-                //If the hint contains certain terms then we'll ignore it
-                if (TVSettings.Instance.IgnoredAutoAddHints.Contains(hint))
-                {
-                    LOGGER.Info(
-                        $"Ignoring {hint} as it is in the list of ignored terms the user has selected to ignore from prior Auto Adds.");
-
-                    continue;
-                }
-
-                //Remove any (nnnn) in the hint - probably a year
-                string refinedHint = Regex.Replace(hint, @"\(\d{4}\)", "");
-
-                //Remove anything we can from hint to make it cleaner and hence more likely to match
-                refinedHint = FinderHelper.RemoveSeriesEpisodeIndicators(refinedHint, MDoc.Library.SeasonWords());
-
-                if (string.IsNullOrWhiteSpace(refinedHint))
-                {
-                    LOGGER.Info($"Ignoring {hint} as it refines to nothing.");
-                    continue;
-                }
-
-                //If there are no LibraryFolders then we cant use the simplified UI
-                if (TVSettings.Instance.LibraryFolders.Count == 0)
-                {
-                    MessageBox.Show(
-                        "Please add some monitor (library) folders under 'Bulk Add Shows' to use the 'Auto Add' functionity (Alternatively you can add them or turn it off in settings).",
-                        "Can't Auto Add Show", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                    continue;
-                }
-
-                LOGGER.Info("****************");
-                LOGGER.Info("Auto Adding New Show");
-
-                //popup dialog
-                AutoAddShow askForMatch = new AutoAddShow(refinedHint);
-
-                DialogResult dr = askForMatch.ShowDialog();
-                if (dr == DialogResult.OK)
-                {
-                    //If added add show to collection
-                    addedShows.Add(askForMatch.ShowItem);
-                }
-                else if (dr == DialogResult.Abort)
-                {
-                    LOGGER.Info("Skippng Auto Add Process");
-                    break;
-                }
-                else if (dr == DialogResult.Ignore)
-                {
-                    LOGGER.Info($"Permenantly Ignoring 'Auto Add' for: {hint}");
-                    TVSettings.Instance.IgnoredAutoAddHints.Add(hint);
-                }
-                else
-                {
-                    LOGGER.Info($"Cancelled Auto adding new show {hint}");
-                }
-            }
-
-            return addedShows;
         }
 
         [NotNull]
@@ -206,22 +121,11 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.AutoSearchForDownloadedFiles;
 
-        private static bool IgnoreHint(string hint)
-        {
-            return TVSettings.Instance.AutoAddMovieTermsArray.Any(term =>
-                hint.Contains(term, StringComparison.OrdinalIgnoreCase));
-        }
-
         private bool LookForSeries(FileSystemInfo name) => LookForSeries(name, MDoc.Library.Values);
 
         private static bool LookForSeries(FileSystemInfo test, [NotNull] IEnumerable<ShowItem> shows)
         {
             return shows.Any(si => si.NameMatch(test, TVSettings.Instance.UseFullPathNameToMatchSearchFolders));
-        }
-
-        private static bool LookForSeries(string test, [NotNull] IEnumerable<ShowItem> shows)
-        {
-            return shows.Any(si => si.NameMatch(test));
         }
     }
 }

@@ -247,9 +247,6 @@ namespace TVRename
                             filo = localEps[dbep.AppropriateEpNum]; // filename (or future filename) of the file
 
                         Doc.TheActionList.Add(downloadIdentifiers.ProcessEpisode(dbep, filo));
-
-                        //Record this episode as seen
-                        TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(dbep);
                     }
                 } // up to date check, for each episode in thetvdb
             } // if doing missing check
@@ -282,6 +279,7 @@ namespace TVRename
                 }
                 else
                 {
+                    LOGGER.Info($"Identified that {actualFile.FullName} should be renamed to {newName}.");
                     Doc.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
                         newFile, ep, false, null));
 
@@ -295,6 +293,13 @@ namespace TVRename
                         return newFile;
                     }
                 }
+            }
+            else
+            {
+                //File is correct name
+                LOGGER.Info($"Identified that {actualFile.FullName} is in the right place. Marking it as 'seen'.");
+                //Record this episode as seen
+                TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(ep);
             }
 
             return null;

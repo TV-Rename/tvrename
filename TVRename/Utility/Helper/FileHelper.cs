@@ -440,6 +440,15 @@ namespace TVRename
             return Regex.Match(simplifyfilename ? Helpers.SimplifyName(filename) : filename, "\\b" + (simplifyshowname ? Helpers.SimplifyName(showname) : showname) + "\\b", RegexOptions.IgnoreCase).Success;
         }
 
+        public static bool SimplifyAndCheckFilenameAtStart(string filename, string showname) =>
+            SimplifyAndCheckFilenameAtStart(filename, showname,true,true);
+
+        private static bool SimplifyAndCheckFilenameAtStart(string filename, string showname, bool simplifyfilename, bool simplifyshowname)
+        {
+            string showPattern = (simplifyshowname ? Helpers.SimplifyName(showname) : showname);
+
+            return (simplifyfilename ? Helpers.SimplifyName(filename) : filename).StartsWith( showPattern, StringComparison.CurrentCultureIgnoreCase);
+        }
         public static bool SimplifyAndCheckFilename(string filename, string showname)
         {
             return SimplifyAndCheckFilename(filename, showname,true,true);

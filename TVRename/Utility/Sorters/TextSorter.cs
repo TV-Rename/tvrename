@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 
@@ -18,6 +19,6 @@ namespace TVRename
         public TextSorter(int column) : base(column) { }
 
         protected override int CompareListViewItem([NotNull] ListViewItem x, [NotNull] ListViewItem y) =>
-            string.Compare(x.SubItems[Col].Text, y.SubItems[Col].Text);
+            string.Compare(x.SubItems[Col].Text, y.SubItems[Col].Text,StringComparison.OrdinalIgnoreCase);
     }
 }
