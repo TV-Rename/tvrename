@@ -23,10 +23,7 @@ namespace TVRename
         public abstract bool SameAs(Item o); // are we the same thing as that other one?
 
         [CanBeNull]
-        protected static IgnoreItem GenerateIgnore([CanBeNull] string file)
-        {
-            return string.IsNullOrEmpty(file) ? null : new IgnoreItem(file);
-        }
+        protected static IgnoreItem GenerateIgnore([CanBeNull] string file) => string.IsNullOrEmpty(file) ? null : new IgnoreItem(file);
 
         [NotNull]
         public ListViewItem ScanListViewItem // to add to Scan ListView
@@ -57,23 +54,10 @@ namespace TVRename
         protected virtual string SeriesName => Episode?.TheSeries?.Name ?? string.Empty;
 
         [NotNull]
-        protected virtual string SeasonNumber
-        {
-            get
-            {
-                if (Episode?.AppropriateSeasonNumber.ToString() is null)
-                {
-                    return string.Empty;
-                }
-
-                if (Episode?.AppropriateSeasonNumber == 0)
-                {
-                    return "Special";
-                }
-
-                return Episode?.AppropriateSeasonNumber.ToString() ?? string.Empty;
-            }
-        }
+        protected virtual string SeasonNumber =>
+              Episode is null ? string.Empty
+            : Episode.AppropriateSeasonNumber == 0 ? "Special"
+            : Episode.AppropriateSeasonNumber.ToString();
 
         [NotNull]
         protected virtual string EpisodeNumber => Episode?.NumsAsString() ?? string.Empty;

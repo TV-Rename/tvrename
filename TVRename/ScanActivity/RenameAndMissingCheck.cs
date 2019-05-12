@@ -282,6 +282,7 @@ namespace TVRename
                 }
                 else
                 {
+                    LOGGER.Info($"Identified that {actualFile.FullName} should be renamed to {newName}.");
                     Doc.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
                         newFile, ep, false, null));
 

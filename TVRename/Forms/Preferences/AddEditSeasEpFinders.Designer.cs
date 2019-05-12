@@ -48,6 +48,7 @@ namespace TVRename
             this.bnAdd = new System.Windows.Forms.Button();
             this.lvPreview = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -115,6 +116,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvPreview.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
+            this.columnHeader5,
             this.columnHeader2,
             this.columnHeader3,
             this.columnHeader4});
@@ -131,6 +133,11 @@ namespace TVRename
             // 
             this.columnHeader1.Text = "Filename";
             this.columnHeader1.Width = 335;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Show(s)";
+            this.columnHeader5.Width = 175;
             // 
             // columnHeader2
             // 
@@ -233,7 +240,6 @@ namespace TVRename
             this.Grid1.TabIndex = 15;
             this.Grid1.TabStop = true;
             this.Grid1.ToolTipText = "";
-            this.Grid1.Selection.SelectionChanged += SelectionOnSelectionChanged;
             // 
             // bnDown
             // 
@@ -315,5 +321,6 @@ namespace TVRename
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.Button bnDown;
         private System.Windows.Forms.Button bnUp;
+        private System.Windows.Forms.ColumnHeader columnHeader5;
     }
 }

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 using Path = System.IO.Path;
@@ -452,6 +453,20 @@ namespace TVRename
             return hint2;
         }
 
+        [NotNull]
+        public static IEnumerable<ShowItem> FindMatchingShows(FileInfo fi, [NotNull] IEnumerable<ShowItem> sil)
+        {
+            return sil.Where(item => item.NameMatch(fi, false));
+        }
+
+        public static bool BetterShowsMatch(FileInfo matchedFile, ShowItem currentlyMatchedShow, bool useFullPath, [NotNull] TVDoc doc)
+        {
+            return doc.Library.Shows
+                .Where(item => item.NameMatch(matchedFile, useFullPath))
+                .Where(item => item.TvdbCode != currentlyMatchedShow.TvdbCode)
+                .Any(testShow => testShow.ShowName.Contains(currentlyMatchedShow.ShowName));
+        }
+
         private static string RemoveSe(string hint)
         {
             foreach (TVSettings.FilenameProcessorRE re in TVSettings.Instance.FNPRegexs)
@@ -494,6 +509,119 @@ namespace TVRename
             }
 
             return hint;
+        }
+
+        private static bool LookForSeries(string test, [NotNull] IEnumerable<ShowItem> shows)
+        {
+            return shows.Any(si => si.NameMatch(test));
+        }
+        private static bool IgnoreHint(string hint)
+        {
+            return TVSettings.Instance.AutoAddMovieTermsArray.Any(term =>
+                hint.Contains(term, StringComparison.OrdinalIgnoreCase));
+        }
+
+        [NotNull]
+        public static List<ShowItem> FindShows([NotNull] List<string> possibleShowNames, TVDoc doc)
+        {
+            List<ShowItem> addedShows = new List<ShowItem>();
+
+            foreach (string hint in possibleShowNames)
+            {
+                //if hint doesn't match existing added shows
+                if (LookForSeries(hint, addedShows))
+                {
+                    Logger.Info($"Ignoring {hint} as it matches existing shows.");
+                    continue;
+                }
+
+                //If the hint contains certain terms then we'll ignore it
+                if (IgnoreHint(hint))
+                {
+                    Logger.Info($"Ignoring {hint} as it is in the ignore list (from Settings).");
+                    continue;
+                }
+
+                //If the hint contains certain terms then we'll ignore it
+                if (TVSettings.Instance.IgnoredAutoAddHints.Contains(hint))
+                {
+                    Logger.Info(
+                        $"Ignoring {hint} as it is in the list of ignored terms the user has selected to ignore from prior Auto Adds.");
+
+                    continue;
+                }
+
+                //Remove any (nnnn) in the hint - probably a year
+                string refinedHint = Regex.Replace(hint, @"\(\d{4}\)", "");
+
+                //Remove anything we can from hint to make it cleaner and hence more likely to match
+                refinedHint = RemoveSeriesEpisodeIndicators(refinedHint, doc.Library.SeasonWords());
+
+                if (string.IsNullOrWhiteSpace(refinedHint))
+                {
+                    Logger.Info($"Ignoring {hint} as it refines to nothing.");
+                    continue;
+                }
+
+                //If there are no LibraryFolders then we cant use the simplified UI
+                if (TVSettings.Instance.LibraryFolders.Count == 0)
+                {
+                    MessageBox.Show(
+                        "Please add some monitor (library) folders under 'Bulk Add Shows' to use the 'Auto Add' functionity (Alternatively you can add them or turn it off in settings).",
+                        "Can't Auto Add Show", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    continue;
+                }
+
+                Logger.Info("****************");
+                Logger.Info("Auto Adding New Show");
+
+                //popup dialog
+                AutoAddShow askForMatch = new AutoAddShow(refinedHint);
+
+                DialogResult dr = askForMatch.ShowDialog();
+                if (dr == DialogResult.OK)
+                {
+                    //If added add show to collection
+                    addedShows.Add(askForMatch.ShowItem);
+                }
+                else if (dr == DialogResult.Abort)
+                {
+                    Logger.Info("Skippng Auto Add Process");
+                    break;
+                }
+                else if (dr == DialogResult.Ignore)
+                {
+                    Logger.Info($"Permenantly Ignoring 'Auto Add' for: {hint}");
+                    TVSettings.Instance.IgnoredAutoAddHints.Add(hint);
+                }
+                else
+                {
+                    Logger.Info($"Cancelled Auto adding new show {hint}");
+                }
+            }
+
+            return addedShows;
+        }
+
+        public static ShowItem FindBestMatchingShow(FileInfo fi, [NotNull] IEnumerable<ShowItem> shows)
+        {
+            IEnumerable<ShowItem> showItems = shows as ShowItem[] ?? shows.ToArray();
+
+            IEnumerable<ShowItem> showsMatchAtStart = showItems
+                .Where(item => FileHelper.SimplifyAndCheckFilenameAtStart(fi.Name, item.ShowName));
+
+            IEnumerable<ShowItem> matchAtStart = showsMatchAtStart as ShowItem[] ?? showsMatchAtStart.ToArray();
+
+            if (matchAtStart.Any())
+            {
+                return matchAtStart.OrderByDescending(s => s.ShowName.Length).First();
+            }
+            else
+            {
+                IEnumerable<ShowItem> otherMatchingShows = FindMatchingShows(fi, showItems);
+                return otherMatchingShows.OrderByDescending(s => s.ShowName.Length).FirstOrDefault();
+            }
         }
     }
 }
