@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using System.Linq;
 using JetBrains.Annotations;
@@ -100,7 +101,7 @@ namespace TVRename
 
             return true;
             }
-            catch (System.IO.PathTooLongException e)
+            catch (PathTooLongException e)
             {
                 WarnPathTooLong(me, dce, e, matched, season, epnum);
             }
@@ -171,7 +172,7 @@ namespace TVRename
         {
             foreach (ActionCopyMoveRename existingFileOperation in addTo.CopyMoveItems())
             {
-                if (string.Compare(existingFileOperation.From.FullName, fi.FullName,
+                if (String.Compare(existingFileOperation.From.FullName, fi.FullName,
                         StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return true;
@@ -251,12 +252,12 @@ namespace TVRename
                 {
                     LOGGER.Warn("Could not access: " + action.From.FullName);
                 }
-                catch (System.IO.DirectoryNotFoundException)
+                catch (DirectoryNotFoundException)
                 {
                     LOGGER.Warn("Could not find: " + action.From.FullName);
                 }
             }
-            catch (System.IO.PathTooLongException e)
+            catch (PathTooLongException e)
             {
                 string t = "Path or filename too long. " + action.From.FullName + ", " + e.Message;
                 LOGGER.Warn(e, "Path or filename too long. " + action.From.FullName);
@@ -371,7 +372,7 @@ namespace TVRename
             {
                 if (!OtherActionsMatch(matchedFiles[0], me, settings,useFullPath))
                 {
-                    if (!BetterShowsMatch(matchedFiles[0], me.Episode.Show,useFullPath))
+                    if (!FinderHelper.BetterShowsMatch(matchedFiles[0], me.Episode.Show,useFullPath,MDoc))
                     {
                         toRemove.Add(me);
                         newList.AddRange(thisRound);
@@ -413,14 +414,6 @@ namespace TVRename
                     }
                 }
             }
-        }
-
-        private bool BetterShowsMatch(FileInfo matchedFile, ShowItem currentlyMatchedShow, bool useFullPath)
-        {
-            return MDoc.Library.Shows
-                .Where(item => item.NameMatch(matchedFile, useFullPath))
-                .Where(item => item.TvdbCode != currentlyMatchedShow.TvdbCode)
-                .Any(testShow => testShow.ShowName.Contains(currentlyMatchedShow.ShowName));
         }
 
         [NotNull]

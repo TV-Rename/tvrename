@@ -22,6 +22,7 @@ using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
 using TVRename.Forms;
+using TVRename.Forms.Tools;
 using TVRename.Forms.Utilities;
 using TVRename.Ipc;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
@@ -3026,7 +3027,7 @@ namespace TVRename
             e.Item = LviForItem(item);
         }
 
-        private void FillActionList()
+        public void FillActionList()
         {
             internalCheckChange = true;
 
@@ -3977,7 +3978,7 @@ namespace TVRename
             form.ShowDialog();
         }
 
-        private void LvAction_ColumnClick(object sender, ColumnClickEventArgs e)
+        private void LvAction_ColumnClick(object sender, [NotNull] ColumnClickEventArgs e)
         {
             int col = e.Column;
 
@@ -3997,6 +3998,12 @@ namespace TVRename
 
             lvAction.Sort();
             lvAction.Refresh();
+        }
+
+        private void QuickRenameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            QuickRename form = new QuickRename(mDoc, this);
+            form.Show();
         }
     }
 }

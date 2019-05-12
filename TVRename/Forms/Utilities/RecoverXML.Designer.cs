@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at https://github.com/TV-Rename/tvrename
@@ -9,7 +9,7 @@
 
 namespace TVRename
 {
-    partial class RecoverXML
+    partial class RecoverXml
     {
         /// <summary>
         /// Required designer variable.
@@ -37,7 +37,7 @@ namespace TVRename
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = (new System.ComponentModel.ComponentResourceManager(typeof(RecoverXML)));
+            System.ComponentModel.ComponentResourceManager resources = (new System.ComponentModel.ComponentResourceManager(typeof(RecoverXml)));
             this.bnOK = (new System.Windows.Forms.Button());
             this.lbSettings = (new System.Windows.Forms.ListBox());
             this.tableLayoutPanel1 = (new System.Windows.Forms.TableLayoutPanel());
@@ -198,7 +198,7 @@ namespace TVRename
             this.Controls.Add(this.bnOK);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "RecoverXML";
+            this.Name = "RecoverXml";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "TVRename Recover";
             this.Load += new System.EventHandler(RecoverXML_Load);

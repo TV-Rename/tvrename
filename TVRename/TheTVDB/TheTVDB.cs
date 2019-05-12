@@ -651,7 +651,7 @@ namespace TVRename
                         Helpers.FromUnixTime(newSrvTime).ToLocalTime() + Environment.NewLine + Environment.NewLine +
                         "If the dates keep getting more recent then let the system keep getting 10 week blocks of updates, otherwise consider a 'Force Refresh All'";
 
-                    Logger.Warn(errorMessage);
+                    Logger.Error(errorMessage);
                     if ((!args.Unattended) && (!args.Hide) && Environment.UserInteractive)
                     {
                         MessageBox.Show(errorMessage, "Long Running Update", MessageBoxButtons.OK,

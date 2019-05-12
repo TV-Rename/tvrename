@@ -52,16 +52,14 @@ namespace TVRename
                 
                 List<FileInfo> matchedFiles = GetMatchingFilesFromFolder(baseFolder, dfc, me, settings, thisRound);
 
-                foreach (KeyValuePair<int, List<string>> seriesFolders in me.Episode.Show.AllFolderLocationsEpCheck(false)
+                foreach (string folderName in me.Episode.Show.AllFolderLocationsEpCheck(false)
                     .Where(folders => folders.Value!=null)
-                    .Where(folders => folders.Key==me.Episode.AppropriateSeason.SeasonNumber))
-                {
-                    foreach (string folderName in seriesFolders.Value
+                    .Where(folders => folders.Key==me.Episode.AppropriateSeason.SeasonNumber)
+                    .SelectMany(seriesFolders => seriesFolders.Value
                         .Where(f => !string.IsNullOrWhiteSpace(f)) //No point looking here
-                        .Where(f=> f!=baseFolder)) //Already looked here
-                    {
-                        ProcessFolder(settings, me, folderName, dfc, thisRound, matchedFiles);
-                    }
+                        .Where(f=> f!=baseFolder)))
+                {
+                    ProcessFolder(settings, me, folderName, dfc, thisRound, matchedFiles);
                 }
 
                 ProcessMissingItem(settings, newList, toRemove, me, thisRound, matchedFiles,TVSettings.Instance.UseFullPathNameToMatchLibraryFolders);

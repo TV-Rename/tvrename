@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Linq;
 using JetBrains.Annotations;
 using SourceGrid;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
@@ -119,7 +120,7 @@ namespace TVRename
 
         private void SelectionChanged(object sender, RangeRegionChangedEventArgs e)
         {
-            SelectionOnSelectionChanged(sender, e);
+            SelectionOnSelectionChanged();
             StartTimer();
         }
 
@@ -330,7 +331,12 @@ namespace TVRename
                 bool r = FinderHelper.FindSeasEp(fi, out int seas, out int ep, out int maxEp, si, rel, false,
                     out TVSettings.FilenameProcessorRE matchRex);
 
+                IEnumerable<ShowItem> matchingShows = FinderHelper.FindMatchingShows(fi,shows);
+                string bestShowName = FinderHelper.FindBestMatchingShow(fi, shows).ShowName;
+                string otherShowNames = string.Join(", ", matchingShows.Select(item => item.ShowName).Where(s => s!=bestShowName ));
+
                 ListViewItem lvi = new ListViewItem { Text = fi.Name };
+                lvi.SubItems.Add(bestShowName+" - ("+otherShowNames+")");
                 lvi.SubItems.Add((seas == -1) ? "-" : seas.ToString());
                 lvi.SubItems.Add((ep == -1) ? "-" : ep + ((maxEp != -1) ? "-" + maxEp : ""));
                 lvi.SubItems.Add((matchRex is null) ? "-" : matchRex.Notes);
@@ -419,7 +425,7 @@ namespace TVRename
             StartTimer();
         }
 
-        private void SelectionOnSelectionChanged(object sender, RangeRegionChangedEventArgs rangeRegionChangedEventArgs)
+        private void SelectionOnSelectionChanged()
         {
             // multiselection is off, so we can cheat...
             int[] rowsIndex = Grid1.Selection.GetSelectionRegion().GetRowsIndex();
