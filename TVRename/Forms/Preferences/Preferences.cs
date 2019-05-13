@@ -291,6 +291,7 @@ namespace TVRename
             s.PostpendThe = chkPostpendThe.Checked;
             s.UseFullPathNameToMatchLibraryFolders = chkUseLibraryFullPathWhenMatchingShows.Checked;
             s.UseFullPathNameToMatchSearchFolders = chkUseSearchFullPathWhenMatchingShows.Checked;
+            s.AutoAddAsPartOfQuickRename = chkAutoAddAsPartOfQuickRename.Checked;
 
             s.SearchJSON = cbSearchJSON.Checked;
             s.SearchJSONManualScanOnly = cbSearchJSONManualScanOnly.Checked;
@@ -812,6 +813,7 @@ namespace TVRename
             chkPostpendThe.Checked = s.PostpendThe;
             chkUseLibraryFullPathWhenMatchingShows.Checked = s.UseFullPathNameToMatchLibraryFolders;
             chkUseSearchFullPathWhenMatchingShows.Checked= s.UseFullPathNameToMatchSearchFolders;
+            chkAutoAddAsPartOfQuickRename.Checked = s.AutoAddAsPartOfQuickRename;
 
             cbMissing.Checked = s.MissingCheck;
             chkMoveLibraryFiles.Checked = s.MoveLibraryFiles;

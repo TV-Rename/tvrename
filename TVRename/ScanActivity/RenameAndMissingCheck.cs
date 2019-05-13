@@ -297,7 +297,7 @@ namespace TVRename
             else
             {
                 //File is correct name
-                LOGGER.Info($"Identified that {actualFile.FullName} is in the right place. Marking it as 'seen'.");
+                LOGGER.Debug($"Identified that {actualFile.FullName} is in the right place. Marking it as 'seen'.");
                 //Record this episode as seen
                 TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(ep);
             }

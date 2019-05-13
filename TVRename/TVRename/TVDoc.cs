@@ -103,10 +103,10 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        public bool DoDownloadsFG(bool unattended)
+        public bool DoDownloadsFG(bool unattended,bool tvrMinimised)
         {
             ICollection<SeriesSpecifier> shows = Library.SeriesSpecifiers;
-            bool showProgress = (!Args.Hide) && Environment.UserInteractive;
+            bool showProgress = (!Args.Hide) && Environment.UserInteractive && !tvrMinimised;
             bool showMsgBox = !unattended && (!Args.Unattended) && (!Args.Hide) && Environment.UserInteractive;
 
             bool returnValue = cacheManager.DoDownloadsFg(showProgress, showMsgBox, shows);
@@ -154,9 +154,9 @@ namespace TVRename
             Helpers.SysOpen(TVSettings.Instance.BTSearchURL(ep));
         }
 
-        public void DoWhenToWatch(bool cachedOnly,bool unattended)
+        public void DoWhenToWatch(bool cachedOnly,bool unattended,bool hidden)
         {
-            if (!cachedOnly && !DoDownloadsFG(unattended))
+            if (!cachedOnly && !DoDownloadsFG(unattended,hidden))
             {
                 return;
             }
@@ -367,18 +367,18 @@ namespace TVRename
             }
         }
 
-        internal void ShowAddedOrEdited(bool download, bool unattended)
+        internal void ShowAddedOrEdited(bool download, bool unattended,bool hidden)
         {
             SetDirty();
             if (download)
             {
-                if (!DoDownloadsFG(unattended))
+                if (!DoDownloadsFG(unattended,hidden))
                 {
                     return;
                 }
             }
 
-            DoWhenToWatch(true, unattended);
+            DoWhenToWatch(true, unattended,hidden);
 
             WriteUpcoming();
             WriteRecent();
@@ -388,14 +388,17 @@ namespace TVRename
 
         public ConcurrentBag<int> ShowProblems => cacheManager.Problems;
 
-        public void Scan(List<ShowItem> shows, bool unattended, TVSettings.ScanType st)
+        public void Scan(List<ShowItem> shows, bool unattended, TVSettings.ScanType st, bool hidden)
         {
             try
             {
                 PreventAutoScan("Scan "+st.PrettyPrint());
 
                 //Get the default set of shows defined by the specified type
-                shows ??= GetShowList(st);
+                if (shows is null)
+                {
+                    shows = GetShowList(st);
+                }
 
                 //If still null then return
                 if (shows is null)
@@ -404,7 +407,7 @@ namespace TVRename
                     return;
                 }
 
-                if (!DoDownloadsFG(unattended))
+                if (!DoDownloadsFG(unattended,hidden))
                 {
                     return;
                 }
@@ -413,9 +416,9 @@ namespace TVRename
                 CancellationTokenSource cts = new CancellationTokenSource();
                 actionWork.SetApartmentState(ApartmentState.STA); //needed to allow DragDrop on any UI this thread creates
 
-                SetupScanUi();
+                SetupScanUi(hidden);
 
-                actionWork.Start(new ScanSettings(shows.ToList(),unattended,st,cts.Token));
+                actionWork.Start(new ScanSettings(shows.ToList(),unattended,hidden,st,cts.Token));
 
                 if (scanProgDlg != null && scanProgDlg.ShowDialog() == DialogResult.Cancel)
                 {
@@ -441,20 +444,22 @@ namespace TVRename
         public struct ScanSettings
         {
             public readonly bool Unattended;
+            public readonly bool Hidden;
             public readonly TVSettings.ScanType Type;
             public readonly List<ShowItem> Shows;
             public readonly CancellationToken Token;
 
-            public ScanSettings(List<ShowItem> list, bool unattended, TVSettings.ScanType st,CancellationToken tok)
+            public ScanSettings(List<ShowItem> list, bool unattended, bool hidden, TVSettings.ScanType st,CancellationToken tok)
             {
                 Shows = list;
                 Unattended = unattended;
+                Hidden = hidden;
                 Type = st;
                 Token = tok;
             }
         }
 
-        private void SetupScanUi()
+        private void SetupScanUi(bool hidden)
         {
             if (!Args.Hide && Environment.UserInteractive)
             {
@@ -466,6 +471,11 @@ namespace TVRename
                     downloadFinders.Active(),
                     searchFinders.Active()
                     );
+
+                if (hidden)
+                {
+                    scanProgDlg.WindowState = FormWindowState.Minimized;
+                }
             }
             else
             {
@@ -516,7 +526,7 @@ namespace TVRename
 
             if (doMissingRecents)
             {
-                List<ProcessedEpisode> lpe = GetMissingEps();
+                IEnumerable<ProcessedEpisode> lpe = GetMissingEps();
                 foreach (ProcessedEpisode pe in lpe)
                 {
                     if (!showsToScan.Contains(pe.Show))
@@ -694,7 +704,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private List<ProcessedEpisode> GetMissingEps()
+        private IEnumerable<ProcessedEpisode> GetMissingEps()
         {
             int dd = TVSettings.Instance.WTWRecentDays;
             DirFilesCache dfc = new DirFilesCache();
@@ -702,7 +712,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private List<ProcessedEpisode> GetMissingEps(DirFilesCache dfc, [NotNull] IEnumerable<ProcessedEpisode> lpe)
+        private IEnumerable<ProcessedEpisode> GetMissingEps(DirFilesCache dfc, [NotNull] IEnumerable<ProcessedEpisode> lpe)
         {
             List<ProcessedEpisode> missing = new List<ProcessedEpisode>();
 
@@ -848,7 +858,7 @@ namespace TVRename
             return showsToScan;
         }
 
-        internal void ForceRefresh([CanBeNull] List<ShowItem> sis, bool unattended)
+        internal void ForceRefresh([CanBeNull] List<ShowItem> sis, bool unattended,bool tvrMinimised)
         {
             PreventAutoScan("Force Refresh");
             if (sis != null)
@@ -859,7 +869,7 @@ namespace TVRename
                 }
             }
 
-            DoDownloadsFG(unattended);
+            DoDownloadsFG(unattended, tvrMinimised);
             AllowAutoScan();
         }
 

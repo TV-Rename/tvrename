@@ -170,6 +170,7 @@ namespace TVRename
             this.label26 = new System.Windows.Forms.Label();
             this.txtRSSuTorrentPath = new System.Windows.Forms.TextBox();
             this.tbSearchFolders = new System.Windows.Forms.TabPage();
+            this.chkUseSearchFullPathWhenMatchingShows = new System.Windows.Forms.CheckBox();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.label53 = new System.Windows.Forms.Label();
             this.label54 = new System.Windows.Forms.Label();
@@ -285,6 +286,7 @@ namespace TVRename
             this.txtExportRSSMaxDays = new System.Windows.Forms.TextBox();
             this.txtExportRSSMaxShows = new System.Windows.Forms.TextBox();
             this.tbFilesAndFolders = new System.Windows.Forms.TabPage();
+            this.chkUseLibraryFullPathWhenMatchingShows = new System.Windows.Forms.CheckBox();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.cbTxtToSub = new System.Windows.Forms.CheckBox();
             this.label46 = new System.Windows.Forms.Label();
@@ -338,8 +340,7 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
-            this.chkUseLibraryFullPathWhenMatchingShows = new System.Windows.Forms.CheckBox();
-            this.chkUseSearchFullPathWhenMatchingShows = new System.Windows.Forms.CheckBox();
+            this.chkAutoAddAsPartOfQuickRename = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -1822,6 +1823,17 @@ namespace TVRename
             this.tbSearchFolders.Text = "Search Folders";
             this.tbSearchFolders.UseVisualStyleBackColor = true;
             // 
+            // chkUseSearchFullPathWhenMatchingShows
+            // 
+            this.chkUseSearchFullPathWhenMatchingShows.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkUseSearchFullPathWhenMatchingShows.AutoSize = true;
+            this.chkUseSearchFullPathWhenMatchingShows.Location = new System.Drawing.Point(6, 171);
+            this.chkUseSearchFullPathWhenMatchingShows.Name = "chkUseSearchFullPathWhenMatchingShows";
+            this.chkUseSearchFullPathWhenMatchingShows.Size = new System.Drawing.Size(416, 17);
+            this.chkUseSearchFullPathWhenMatchingShows.TabIndex = 42;
+            this.chkUseSearchFullPathWhenMatchingShows.Text = "Use name of Search Folder when searching for a match between a file and a show";
+            this.chkUseSearchFullPathWhenMatchingShows.UseVisualStyleBackColor = true;
+            // 
             // groupBox8
             // 
             this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -3121,6 +3133,17 @@ namespace TVRename
             this.tbFilesAndFolders.Text = "Files and Folders";
             this.tbFilesAndFolders.UseVisualStyleBackColor = true;
             // 
+            // chkUseLibraryFullPathWhenMatchingShows
+            // 
+            this.chkUseLibraryFullPathWhenMatchingShows.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkUseLibraryFullPathWhenMatchingShows.AutoSize = true;
+            this.chkUseLibraryFullPathWhenMatchingShows.Location = new System.Drawing.Point(2, 394);
+            this.chkUseLibraryFullPathWhenMatchingShows.Name = "chkUseLibraryFullPathWhenMatchingShows";
+            this.chkUseLibraryFullPathWhenMatchingShows.Size = new System.Drawing.Size(413, 17);
+            this.chkUseLibraryFullPathWhenMatchingShows.TabIndex = 41;
+            this.chkUseLibraryFullPathWhenMatchingShows.Text = "Use name of Library Folder when searching for a match between a file and a show";
+            this.chkUseLibraryFullPathWhenMatchingShows.UseVisualStyleBackColor = true;
+            // 
             // groupBox9
             // 
             this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -3369,6 +3392,7 @@ namespace TVRename
             // 
             // tbGeneral
             // 
+            this.tbGeneral.Controls.Add(this.chkAutoAddAsPartOfQuickRename);
             this.tbGeneral.Controls.Add(this.chkShareCriticalLogs);
             this.tbGeneral.Controls.Add(this.groupBox17);
             this.tbGeneral.Controls.Add(this.label60);
@@ -3397,7 +3421,7 @@ namespace TVRename
             // chkShareCriticalLogs
             // 
             this.chkShareCriticalLogs.AutoSize = true;
-            this.chkShareCriticalLogs.Location = new System.Drawing.Point(13, 212);
+            this.chkShareCriticalLogs.Location = new System.Drawing.Point(13, 199);
             this.chkShareCriticalLogs.Name = "chkShareCriticalLogs";
             this.chkShareCriticalLogs.Size = new System.Drawing.Size(207, 17);
             this.chkShareCriticalLogs.TabIndex = 42;
@@ -3595,7 +3619,7 @@ namespace TVRename
             // label37
             // 
             this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(11, 117);
+            this.label37.Location = new System.Drawing.Point(11, 104);
             this.label37.Name = "label37";
             this.label37.Size = new System.Drawing.Size(114, 13);
             this.label37.TabIndex = 20;
@@ -3604,7 +3628,7 @@ namespace TVRename
             // label38
             // 
             this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(163, 117);
+            this.label38.Location = new System.Drawing.Point(163, 104);
             this.label38.Name = "label38";
             this.label38.Size = new System.Drawing.Size(132, 13);
             this.label38.TabIndex = 22;
@@ -3612,7 +3636,7 @@ namespace TVRename
             // 
             // tbPercentDirty
             // 
-            this.tbPercentDirty.Location = new System.Drawing.Point(128, 114);
+            this.tbPercentDirty.Location = new System.Drawing.Point(128, 101);
             this.tbPercentDirty.Name = "tbPercentDirty";
             this.tbPercentDirty.Size = new System.Drawing.Size(28, 20);
             this.tbPercentDirty.TabIndex = 21;
@@ -3620,7 +3644,7 @@ namespace TVRename
             // 
             // txtParallelDownloads
             // 
-            this.txtParallelDownloads.Location = new System.Drawing.Point(97, 90);
+            this.txtParallelDownloads.Location = new System.Drawing.Point(97, 77);
             this.txtParallelDownloads.Name = "txtParallelDownloads";
             this.txtParallelDownloads.Size = new System.Drawing.Size(28, 20);
             this.txtParallelDownloads.TabIndex = 12;
@@ -3628,7 +3652,7 @@ namespace TVRename
             // 
             // txtWTWDays
             // 
-            this.txtWTWDays.Location = new System.Drawing.Point(13, 64);
+            this.txtWTWDays.Location = new System.Drawing.Point(13, 51);
             this.txtWTWDays.Name = "txtWTWDays";
             this.txtWTWDays.Size = new System.Drawing.Size(28, 20);
             this.txtWTWDays.TabIndex = 1;
@@ -3641,7 +3665,7 @@ namespace TVRename
             this.cbMode.Items.AddRange(new object[] {
             "Beta",
             "Production"});
-            this.cbMode.Location = new System.Drawing.Point(117, 185);
+            this.cbMode.Location = new System.Drawing.Point(117, 172);
             this.cbMode.Name = "cbMode";
             this.cbMode.Size = new System.Drawing.Size(146, 21);
             this.cbMode.Sorted = true;
@@ -3650,7 +3674,7 @@ namespace TVRename
             // label34
             // 
             this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(11, 188);
+            this.label34.Location = new System.Drawing.Point(11, 175);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(37, 13);
             this.label34.TabIndex = 18;
@@ -3659,7 +3683,7 @@ namespace TVRename
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(11, 164);
+            this.label10.Location = new System.Drawing.Point(11, 151);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(100, 13);
             this.label10.TabIndex = 16;
@@ -3668,7 +3692,7 @@ namespace TVRename
             // cbLookForAirdate
             // 
             this.cbLookForAirdate.AutoSize = true;
-            this.cbLookForAirdate.Location = new System.Drawing.Point(14, 140);
+            this.cbLookForAirdate.Location = new System.Drawing.Point(14, 127);
             this.cbLookForAirdate.Name = "cbLookForAirdate";
             this.cbLookForAirdate.Size = new System.Drawing.Size(158, 17);
             this.cbLookForAirdate.TabIndex = 15;
@@ -3683,7 +3707,7 @@ namespace TVRename
             "My Shows",
             "Scan",
             "When to Watch"});
-            this.cbLanguages.Location = new System.Drawing.Point(117, 161);
+            this.cbLanguages.Location = new System.Drawing.Point(117, 148);
             this.cbLanguages.Name = "cbLanguages";
             this.cbLanguages.Size = new System.Drawing.Size(146, 21);
             this.cbLanguages.Sorted = true;
@@ -3692,7 +3716,7 @@ namespace TVRename
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(11, 93);
+            this.label21.Location = new System.Drawing.Point(11, 80);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(82, 13);
             this.label21.TabIndex = 11;
@@ -3701,7 +3725,7 @@ namespace TVRename
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(131, 93);
+            this.label20.Location = new System.Drawing.Point(131, 80);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(170, 13);
             this.label20.TabIndex = 13;
@@ -3710,7 +3734,7 @@ namespace TVRename
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(47, 67);
+            this.label2.Location = new System.Drawing.Point(47, 54);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(111, 13);
             this.label2.TabIndex = 2;
@@ -3743,27 +3767,15 @@ namespace TVRename
             this.tcTabs.TabIndex = 0;
             this.tcTabs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tpSearch_DrawItem);
             // 
-            // chkUseLibraryFullPathWhenMatchingShows
+            // chkAutoAddAsPartOfQuickRename
             // 
-            this.chkUseLibraryFullPathWhenMatchingShows.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkUseLibraryFullPathWhenMatchingShows.AutoSize = true;
-            this.chkUseLibraryFullPathWhenMatchingShows.Location = new System.Drawing.Point(2, 394);
-            this.chkUseLibraryFullPathWhenMatchingShows.Name = "chkUseLibraryFullPathWhenMatchingShows";
-            this.chkUseLibraryFullPathWhenMatchingShows.Size = new System.Drawing.Size(413, 17);
-            this.chkUseLibraryFullPathWhenMatchingShows.TabIndex = 41;
-            this.chkUseLibraryFullPathWhenMatchingShows.Text = "Use name of Library Folder when searching for a match between a file and a show";
-            this.chkUseLibraryFullPathWhenMatchingShows.UseVisualStyleBackColor = true;
-            // 
-            // chkUseSearchFullPathWhenMatchingShows
-            // 
-            this.chkUseSearchFullPathWhenMatchingShows.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkUseSearchFullPathWhenMatchingShows.AutoSize = true;
-            this.chkUseSearchFullPathWhenMatchingShows.Location = new System.Drawing.Point(6, 171);
-            this.chkUseSearchFullPathWhenMatchingShows.Name = "chkUseSearchFullPathWhenMatchingShows";
-            this.chkUseSearchFullPathWhenMatchingShows.Size = new System.Drawing.Size(416, 17);
-            this.chkUseSearchFullPathWhenMatchingShows.TabIndex = 42;
-            this.chkUseSearchFullPathWhenMatchingShows.Text = "Use name of Search Folder when searching for a match between a file and a show";
-            this.chkUseSearchFullPathWhenMatchingShows.UseVisualStyleBackColor = true;
+            this.chkAutoAddAsPartOfQuickRename.AutoSize = true;
+            this.chkAutoAddAsPartOfQuickRename.Location = new System.Drawing.Point(13, 222);
+            this.chkAutoAddAsPartOfQuickRename.Name = "chkAutoAddAsPartOfQuickRename";
+            this.chkAutoAddAsPartOfQuickRename.Size = new System.Drawing.Size(191, 17);
+            this.chkAutoAddAsPartOfQuickRename.TabIndex = 43;
+            this.chkAutoAddAsPartOfQuickRename.Text = "Auto-Add as part of Quick Rename";
+            this.chkAutoAddAsPartOfQuickRename.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -4173,5 +4185,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkBasicShowDetails;
         private System.Windows.Forms.CheckBox chkUseSearchFullPathWhenMatchingShows;
         private System.Windows.Forms.CheckBox chkUseLibraryFullPathWhenMatchingShows;
+        private System.Windows.Forms.CheckBox chkAutoAddAsPartOfQuickRename;
     }
 }

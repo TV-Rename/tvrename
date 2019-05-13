@@ -155,7 +155,7 @@ namespace TVRename
             ClearInfoWindows();
             UpdateSplashPercent(splash, 10);
             UpdateSplashStatus(splash, "Updating WTW");
-            mDoc.DoWhenToWatch(true,true);
+            mDoc.DoWhenToWatch(true,true,WindowState==FormWindowState.Minimized);
             UpdateSplashPercent(splash, 40);
             FillWhenToWatchList();
             UpdateSplashPercent(splash, 60);
@@ -1188,14 +1188,14 @@ namespace TVRename
         {
             if (doDownloads)
             {
-                if (!mDoc.DoDownloadsFG(unattended))
+                if (!mDoc.DoDownloadsFG(unattended,WindowState==FormWindowState.Minimized))
                 {
                     return;
                 }
             }
 
             mInternalChange++;
-            mDoc.DoWhenToWatch(true,unattended);
+            mDoc.DoWhenToWatch(true,unattended,WindowState==FormWindowState.Minimized);
             FillMyShows();
             FillWhenToWatchList();
             mInternalChange--;
@@ -2641,7 +2641,7 @@ namespace TVRename
 
         internal void ForceRefresh(List<ShowItem> sis, bool unattended)
         {
-            mDoc.ForceRefresh(sis,unattended);
+            mDoc.ForceRefresh(sis,unattended,WindowState==FormWindowState.Minimized);
             FillMyShows();
             FillEpGuideHtml();
             RefreshWTW(false, unattended);
@@ -2947,7 +2947,7 @@ namespace TVRename
             Logger.Info($"Starting {desc}{scantype} Scan for {showsdesc} shows...");
 
             MoreBusy();
-            mDoc.Scan(shows, unattended, st);
+            mDoc.Scan(shows, unattended, st,WindowState==FormWindowState.Minimized);
             LessBusy();
 
             if (mDoc.ShowProblems.Any() && !unattended)
@@ -4004,6 +4004,11 @@ namespace TVRename
         {
             QuickRename form = new QuickRename(mDoc, this);
             form.Show();
+        }
+
+        public void FocusOnScanResults()
+        {
+            tabControl1.SelectedTab = tbAllInOne;
         }
     }
 }

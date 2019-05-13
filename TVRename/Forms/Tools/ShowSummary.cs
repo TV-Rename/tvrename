@@ -332,7 +332,7 @@ namespace TVRename
                 TheTVDB.Instance.ForgetShow(si.TvdbCode, true,si.UseCustomLanguage,si.CustomLanguageCode);
             }
 
-            mDoc.DoDownloadsFG(false);
+            mDoc.DoDownloadsFG(false,false);
         }
 
         #region Nested type: ShowClickEvent
