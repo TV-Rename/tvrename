@@ -37,7 +37,7 @@ namespace TVRename
             }
 
             //Don't support unattended mode
-            if (settings.Unattended)
+            if (settings.Unattended || settings.Hidden)
             {
                 LOGGER.Info("Not looking for new shows as app is unattended");
                 return;
@@ -54,9 +54,9 @@ namespace TVRename
             lock (TheTVDB.SERIES_LOCK)
             {
                 MDoc.Library.AddRange(addedShows);
-                MDoc.ShowAddedOrEdited(false,false);
+                MDoc.ShowAddedOrEdited(false,false,false);
             }
-            MDoc.ShowAddedOrEdited(true,false);
+            MDoc.ShowAddedOrEdited(true,false,false);
 
             LOGGER.Info("Added new shows called: {0}", string.Join(",", addedShows.Select(s => s.ShowName)));
 
