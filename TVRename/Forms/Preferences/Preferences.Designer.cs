@@ -326,6 +326,7 @@ namespace TVRename
             this.cbMissing = new System.Windows.Forms.CheckBox();
             this.label60 = new System.Windows.Forms.Label();
             this.pbGeneral = new System.Windows.Forms.PictureBox();
+            this.cbShowCollections = new System.Windows.Forms.CheckBox();
             this.label37 = new System.Windows.Forms.Label();
             this.label38 = new System.Windows.Forms.Label();
             this.tbPercentDirty = new System.Windows.Forms.TextBox();
@@ -3397,6 +3398,7 @@ namespace TVRename
             this.tbGeneral.Controls.Add(this.groupBox17);
             this.tbGeneral.Controls.Add(this.label60);
             this.tbGeneral.Controls.Add(this.pbGeneral);
+            this.tbGeneral.Controls.Add(this.cbShowCollections);
             this.tbGeneral.Controls.Add(this.label37);
             this.tbGeneral.Controls.Add(this.label38);
             this.tbGeneral.Controls.Add(this.tbPercentDirty);
@@ -3615,6 +3617,16 @@ namespace TVRename
             this.pbGeneral.TabIndex = 23;
             this.pbGeneral.TabStop = false;
             this.pbGeneral.Click += new System.EventHandler(this.pbGeneral_Click);
+            // 
+            // cbShowCollections
+            // 
+            this.cbShowCollections.AutoSize = true;
+            this.cbShowCollections.Location = new System.Drawing.Point(13, 230);
+            this.cbShowCollections.Name = "cbShowCollections";
+            this.cbShowCollections.Size = new System.Drawing.Size(145, 17);
+            this.cbShowCollections.TabIndex = 24;
+            this.cbShowCollections.Text = "Multiple Show collections";
+            this.cbShowCollections.UseVisualStyleBackColor = true;
             // 
             // label37
             // 
@@ -4186,5 +4198,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkUseSearchFullPathWhenMatchingShows;
         private System.Windows.Forms.CheckBox chkUseLibraryFullPathWhenMatchingShows;
         private System.Windows.Forms.CheckBox chkAutoAddAsPartOfQuickRename;
+        private System.Windows.Forms.CheckBox cbShowCollections;
     }
 }
