@@ -395,7 +395,10 @@ namespace TVRename
                 PreventAutoScan("Scan "+st.PrettyPrint());
 
                 //Get the default set of shows defined by the specified type
-                shows ??= GetShowList(st);
+                if (shows is null)
+                {
+                    shows = GetShowList(st);
+                }
 
                 //If still null then return
                 if (shows is null)
@@ -523,7 +526,7 @@ namespace TVRename
 
             if (doMissingRecents)
             {
-                List<ProcessedEpisode> lpe = GetMissingEps();
+                IEnumerable<ProcessedEpisode> lpe = GetMissingEps();
                 foreach (ProcessedEpisode pe in lpe)
                 {
                     if (!showsToScan.Contains(pe.Show))
@@ -701,7 +704,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private List<ProcessedEpisode> GetMissingEps()
+        private IEnumerable<ProcessedEpisode> GetMissingEps()
         {
             int dd = TVSettings.Instance.WTWRecentDays;
             DirFilesCache dfc = new DirFilesCache();
@@ -709,7 +712,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private List<ProcessedEpisode> GetMissingEps(DirFilesCache dfc, [NotNull] IEnumerable<ProcessedEpisode> lpe)
+        private IEnumerable<ProcessedEpisode> GetMissingEps(DirFilesCache dfc, [NotNull] IEnumerable<ProcessedEpisode> lpe)
         {
             List<ProcessedEpisode> missing = new List<ProcessedEpisode>();
 
