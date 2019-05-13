@@ -657,6 +657,13 @@ namespace TVRename
                         MessageBox.Show(errorMessage, "Long Running Update", MessageBoxButtons.OK,
                             MessageBoxIcon.Warning);
                     }
+
+                    if (srvTime == newSrvTime)
+                    {
+                        //Probably some issue has occurred with TVRename, so we increment by a millisecond to try and avoid the problematic series
+                        newSrvTime++;
+                        Logger.Error("Moving forward one millisend to compensate");
+                    }
                 }
             }
 
@@ -804,7 +811,7 @@ namespace TVRename
             foreach (KeyValuePair<int, Tuple<JToken, JToken>> episodeData in episodesResponses)
             {
                 try
-                    {
+                {
                     JToken episodeToUse = (episodeData.Value.Item1 ?? episodeData.Value.Item2);
                     long serverUpdateTime = (long) episodeToUse["lastUpdated"];
                     (int newEps, int updatedEps) = ProcessEpisode(serverUpdateTime, episodeData, id, oldEpisodeIds);
@@ -850,21 +857,18 @@ namespace TVRename
             {
                 Season seas = kvp2.Value;
 
-                foreach (Episode ep in seas.Episodes.Values)
+                foreach (Episode ep in seas.Episodes.Values.Where(ep => ep.EpisodeId == serverEpisodeId))
                 {
-                    if (ep.EpisodeId == serverEpisodeId)
+                    oldEpisodeIds.Remove(serverEpisodeId);
+
+                    if (ep.SrvLastUpdated < serverUpdateTime)
                     {
-                        oldEpisodeIds.Remove(serverEpisodeId);
-
-                        if (ep.SrvLastUpdated < serverUpdateTime)
-                        {
-                            ep.Dirty = true; // mark episode as dirty.
-                            updatedEpisodeCount++;
-                        }
-
-                        found = true;
-                        break;
+                        ep.Dirty = true; // mark episode as dirty.
+                        updatedEpisodeCount++;
                     }
+
+                    found = true;
+                    break;
                 }
             }
 
@@ -1118,7 +1122,7 @@ namespace TVRename
                     string time = x.Attribute("time")?.Value;
                     newSrvTime = (time is null) ? 0 : long.Parse(time);
 
-                    foreach (XElement seriesXml in x.Descendants("Series"))
+                    foreach (SeriesInfo si in x.Descendants("Series").Select(seriesXml => new SeriesInfo(seriesXml)))
                     {
                         // The <series> returned by GetSeries have
                         // less info than other results from
@@ -1127,9 +1131,7 @@ namespace TVRename
                         // info on it (depending on which one came
                         // first).
 
-                        SeriesInfo si = new SeriesInfo(seriesXml);
-
-                        lock(SERIES_LOCK)
+                        lock (SERIES_LOCK)
                         {
                             if (series.ContainsKey(si.TvdbCode))
                             {
@@ -1968,13 +1970,8 @@ namespace TVRename
             foreach (KeyValuePair<int, Season> kvp in GetSeries(code)?.AiredSeasons ?? new Dictionary<int, Season>())
             {
                 Season seas = kvp.Value;
-                foreach (Episode e in seas.Episodes.Values)
+                foreach (Episode e in seas.Episodes.Values.Where(e => e.Dirty && e.EpisodeId > 0))
                 {
-                    if (!e.Dirty || e.EpisodeId <= 0)
-                    {
-                        continue;
-                    }
-
                     extraEpisodes.TryAdd(e.EpisodeId,new ExtraEp(e.SeriesId, e.EpisodeId));
                 }
             }

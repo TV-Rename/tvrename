@@ -527,12 +527,9 @@ namespace TVRename
             if (doMissingRecents)
             {
                 IEnumerable<ProcessedEpisode> lpe = GetMissingEps();
-                foreach (ProcessedEpisode pe in lpe)
+                foreach (ProcessedEpisode pe in lpe.Where(pe => !showsToScan.Contains(pe.Show)))
                 {
-                    if (!showsToScan.Contains(pe.Show))
-                    {
-                        showsToScan.Add(pe.Show);
-                    }
+                    showsToScan.Add(pe.Show);
                 }
             }
             return showsToScan;

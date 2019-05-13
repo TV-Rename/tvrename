@@ -2484,7 +2484,7 @@ namespace TVRename
                 {
                     lock (TheTVDB.SERIES_LOCK)
                     {
-                    mDoc.Library.Add(si);
+                        mDoc.Library.Add(si);
                     }
 
                     ShowAddedOrEdited(false,false);
