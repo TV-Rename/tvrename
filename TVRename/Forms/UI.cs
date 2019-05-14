@@ -18,6 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
+using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
@@ -2154,10 +2155,14 @@ namespace TVRename
         {
             UpdateTimer.Stop();
 
-            Task<Release> tuv = VersionUpdater.CheckForUpdatesAsync();
-            NotifyUpdates(await tuv.ConfigureAwait(false), false);
-        }
+            Dispatcher uiDisp = Dispatcher.CurrentDispatcher;
 
+            Task<Release> tuv = VersionUpdater.CheckForUpdatesAsync();
+            Release result = await tuv.ConfigureAwait(false);
+
+            uiDisp.Invoke(() => NotifyUpdates(result, false));
+        }
+        
         private void BGDownloadTimer_Tick(object sender, EventArgs e)
         {
             if (busy != 0)
@@ -3818,8 +3823,12 @@ namespace TVRename
 
         private async void checkForNewVersionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Task<Release> uv = VersionUpdater.CheckForUpdatesAsync();
-            NotifyUpdates(await uv.ConfigureAwait(false), true);
+            Dispatcher uiDisp = Dispatcher.CurrentDispatcher;
+
+            Task<Release> tuv = VersionUpdater.CheckForUpdatesAsync();
+            Release result = await tuv.ConfigureAwait(false);
+
+            uiDisp.Invoke(() => NotifyUpdates(result, true));
         }
 
         private void NotifyUpdates([CanBeNull] Release update, bool showNoUpdateRequiredDialog, bool inSilentMode = false)
@@ -3839,7 +3848,7 @@ namespace TVRename
 
             if (inSilentMode || Debugger.IsAttached)
             {
-                return;
+               //return;
             }
 
             UpdateNotification unForm = new UpdateNotification(update);
@@ -3863,8 +3872,13 @@ namespace TVRename
         private async void btnUpdateAvailable_Click(object sender, EventArgs e)
         {
             btnUpdateAvailable.Visible = false;
-            Task<Release> uv = VersionUpdater.CheckForUpdatesAsync();
-            NotifyUpdates(await uv.ConfigureAwait(false), true);
+
+            Dispatcher uiDisp = Dispatcher.CurrentDispatcher;
+
+            Task<Release> tuv = VersionUpdater.CheckForUpdatesAsync();
+            Release result = await tuv.ConfigureAwait(false);
+
+            uiDisp.Invoke(() => NotifyUpdates(result, true));
         }
 
         private void tmrPeriodicScan_Tick(object sender, EventArgs e) => RunAutoScan("Periodic Scan");
