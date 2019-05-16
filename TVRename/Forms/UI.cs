@@ -3848,7 +3848,7 @@ namespace TVRename
 
             if (inSilentMode || Debugger.IsAttached)
             {
-               //return;
+               return;
             }
 
             UpdateNotification unForm = new UpdateNotification(update);
