@@ -776,17 +776,11 @@ namespace TVRename
                             continue;
                         }
 
-                        foreach (ShowItem si in Library.Shows)
+                        foreach (ShowItem si in Library.Shows
+                            .Where(si => !showsToScan.Contains(si))
+                            .Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)))
                         {
-                            if (showsToScan.Contains(si))
-                            {
-                                continue;
-                            }
-
-                            if (si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
-                            {
-                                showsToScan.Add(si);
-                            }
+                            showsToScan.Add(si);
                         }
                     }
                 }
