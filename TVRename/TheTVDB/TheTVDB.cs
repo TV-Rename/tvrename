@@ -42,6 +42,49 @@ namespace TVRename
             }
         }
 
+        class UpdateTimeTracker
+        {
+            private long newSrvTime; //tme from the latest update
+            private long srvTime; // only update this after a 100% successful download
+
+            public bool HasIncreased => srvTime < newSrvTime;
+            public void Reset()
+            {
+                newSrvTime = DateTime.UtcNow.ToUnixTime();
+                srvTime = newSrvTime;
+            }
+
+            public void Initialise()
+            {
+                newSrvTime = 0;
+                srvTime = 0;
+            }
+
+            public override string ToString() => $"{Helpers.FromUnixTime(newSrvTime).ToLocalTime()}";
+            public void RecordSuccessfulUpdate()
+            {
+                srvTime = newSrvTime;
+            }
+
+            public long LastSuccessfulServerUpdateTimecode() => srvTime;
+
+            public DateTime LastSuccessfulServerUpdateDateTime() => Helpers.FromUnixTime(srvTime).ToLocalTime();
+
+            public void Load([CanBeNull] string time)
+            {
+                newSrvTime = (time is null) ? 0 : long.Parse(time);
+                srvTime = newSrvTime;
+            }
+
+            public void RegisterServerUpdate(long maxUpdateTime)
+            {
+                newSrvTime =
+                    Math.Max(newSrvTime,
+                        Math.Max(maxUpdateTime,
+                            srvTime)); // just in case the new update time is no better than the prior one
+            }
+        }
+
         // ReSharper disable once ConvertToConstant.Local
         private static readonly string WebsiteRoot = "http://thetvdb.com";
 
@@ -59,15 +102,13 @@ namespace TVRename
         public string LastError;
         public string LoadErr;
         public bool LoadOk;
-        private long newSrvTime;
-
+        private UpdateTimeTracker latestUpdateTime;
         public static readonly object SERIES_LOCK = new object();
         // TODO: make this private or a property. have online/offline state that controls auto downloading of needed info.
         private readonly ConcurrentDictionary<int, SeriesInfo> series = new ConcurrentDictionary<int, SeriesInfo>();
 
         public static readonly object LANGUAGE_LOCK = new object();
 
-        private long srvTime; // only update this after a 100% successful download
         private readonly TvDbTokenProvider tvDbTokenProvider = new TvDbTokenProvider();
 
         // ReSharper disable once ConvertToConstant.Local
@@ -121,9 +162,10 @@ namespace TVRename
 
             //assume that the data is up to date (this will be overridden by the value in the XML if we have a prior install)
             //If we have no prior install then the app has no shows and is by definition up-to-date
-            newSrvTime = DateTime.UtcNow.ToUnixTime();
+            latestUpdateTime = new UpdateTimeTracker();
+            latestUpdateTime.Initialise();
+            Logger.Info($"Assumed we have updates until {latestUpdateTime}");
 
-            srvTime = 0;
 
             LoadOk = (loadFrom is null) || LoadCache(loadFrom);
 
@@ -203,7 +245,7 @@ namespace TVRename
         {
             // call when all downloading and updating is done.  updates local Srv_Time with the tentative
             // new_srv_time value.
-            srvTime = newSrvTime;
+            latestUpdateTime.RecordSuccessfulUpdate();
         }
 
         public void SaveCache()
@@ -227,7 +269,7 @@ namespace TVRename
                     {
                         writer.WriteStartDocument();
                         writer.WriteStartElement("Data");
-                        XmlHelper.WriteAttributeToXml(writer, "time", srvTime);
+                        XmlHelper.WriteAttributeToXml(writer, "time", latestUpdateTime.LastSuccessfulServerUpdateTimecode());
 
                         foreach (KeyValuePair<int, SeriesInfo> kvp in series)
                         {
@@ -442,7 +484,8 @@ namespace TVRename
             SaveCache();
 
             //All series will be forgotten and will be fully refreshed, so we'll only need updates after this point
-            newSrvTime = DateTime.UtcNow.ToUnixTime();
+            latestUpdateTime.Reset(); 
+            Logger.Info($"Forget everything, so we assume we have updates until {latestUpdateTime}");
         }
 
         public void ForgetShow(int id, bool makePlaceholder,bool useCustomLanguage, string customLanguageCode)
@@ -539,17 +582,20 @@ namespace TVRename
                 return false;
             }
 
-            long theTime = GetUpdateTime();
+            long updateFromEpochTime = latestUpdateTime.LastSuccessfulServerUpdateTimecode();
+
+            if (updateFromEpochTime == 0)
+            {
+                updateFromEpochTime = GetUpdateTimeFromShows();
+            }
 
             MarkPlaceholdersDirty();
 
-            if (theTime == 0)
+            if (updateFromEpochTime == 0)
             {
                 Say("");
                 return true; // that's it for now
             }
-
-            long epochTime = theTime;
 
             string uri = TvDbTokenProvider.TVDB_API_URL + "/updated/query";
 
@@ -567,7 +613,7 @@ namespace TVRename
                 JObject jsonUpdateResponse;
 
                 //If this date is in the last week then this needs to be the last call to the update
-                DateTime requestedTime = Helpers.FromUnixTime(epochTime).ToUniversalTime();
+                DateTime requestedTime = Helpers.FromUnixTime(updateFromEpochTime).ToUniversalTime();
                 DateTime now = DateTime.UtcNow;
                 if ((now - requestedTime).TotalDays < 7)
                 {
@@ -577,13 +623,13 @@ namespace TVRename
                 try
                 {
                     jsonUpdateResponse = HttpHelper.JsonHttpGetRequest(uri,
-                        new Dictionary<string, string> { { "fromTime", epochTime.ToString() } },
+                        new Dictionary<string, string> { { "fromTime", updateFromEpochTime.ToString() } },
                         tvDbTokenProvider, TVSettings.Instance.PreferredLanguageCode,true);
                 }
                 catch (WebException ex)
                 {
                     Logger.Error(ex,"Error obtaining " + uri + ": from lastupdated query -since(local) " +
-                                Helpers.FromUnixTime(epochTime).ToLocalTime());
+                                Helpers.FromUnixTime(updateFromEpochTime).ToLocalTime());
 
                     Say("");
                     LastError = ex.Message;
@@ -603,12 +649,12 @@ namespace TVRename
                     LastError = ex.Message;
 
                     string msg = "Unable to get latest updates from TVDB " + Environment.NewLine +
-                                 "Trying to get updates since " + Helpers.FromUnixTime(epochTime).ToLocalTime() +
+                                 "Trying to get updates since " + Helpers.FromUnixTime(updateFromEpochTime).ToLocalTime() +
                                  Environment.NewLine + Environment.NewLine +
                                  "If the date is very old, please consider a full refresh";
 
                     Logger.Warn("Error obtaining " + uri + ": from lastupdated query -since(local) " +
-                                Helpers.FromUnixTime(epochTime).ToLocalTime());
+                                Helpers.FromUnixTime(updateFromEpochTime).ToLocalTime());
 
                     Logger.Warn(ex, msg);
 
@@ -627,29 +673,21 @@ namespace TVRename
 
                 if (maxUpdateTime > 0)
                 {
-                    newSrvTime =
-                        Math.Max(newSrvTime,
-                            Math.Max(maxUpdateTime,
-                                srvTime)); // just in case the new update time is no better than the prior one
+                    latestUpdateTime.RegisterServerUpdate(maxUpdateTime);
 
-                    Logger.Info("Obtained " + numberOfResponses + " responses from lastupdated query #" +
-                                numberofCallsMade + " - since (local) " +
-                                Helpers.FromUnixTime(epochTime).ToLocalTime() + " - to (local) " +
-                                Helpers.FromUnixTime(newSrvTime).ToLocalTime());
+                    Logger.Info(
+                        $"Obtained {numberOfResponses} responses from lastupdated query #{numberofCallsMade} - since (local) {Helpers.FromUnixTime(updateFromEpochTime).ToLocalTime()} - to (local) {latestUpdateTime}");
 
-                    epochTime = newSrvTime;
+                    updateFromEpochTime = maxUpdateTime;
                 }
 
-                //As a safety measure we check that no more than 10 calls are made
-                if (numberofCallsMade > 10)
+                //As a safety measure we check that no more than 52 calls are made
+                const int MaxNumberOfCalls = 52;
+                if (numberofCallsMade > MaxNumberOfCalls)
                 {
                     moreUpdates = false;
                     string errorMessage =
-                        "We have run 10 weeks of updates and we are not up to date.  The system will need to check again once this set of updates have been processed." +
-                        Environment.NewLine + "Last Updated time was " + Helpers.FromUnixTime(srvTime).ToLocalTime() +
-                        Environment.NewLine + "New Last Updated time is " +
-                        Helpers.FromUnixTime(newSrvTime).ToLocalTime() + Environment.NewLine + Environment.NewLine +
-                        "If the dates keep getting more recent then let the system keep getting 10 week blocks of updates, otherwise consider a 'Force Refresh All'";
+                        $"We have run {MaxNumberOfCalls} weeks of updates and we are not up to date.  The system will need to check again once this set of updates have been processed.{Environment.NewLine}Last Updated time was {latestUpdateTime.LastSuccessfulServerUpdateDateTime()}{Environment.NewLine}New Last Updated time is {latestUpdateTime}{Environment.NewLine}{Environment.NewLine}If the dates keep getting more recent then let the system keep getting {MaxNumberOfCalls} week blocks of updates, otherwise consider a 'Force Refresh All'";
 
                     Logger.Error(errorMessage);
                     if ((!args.Unattended) && (!args.Hide) && Environment.UserInteractive)
@@ -658,11 +696,11 @@ namespace TVRename
                             MessageBoxIcon.Warning);
                     }
 
-                    if (srvTime == newSrvTime)
+                    if (!latestUpdateTime.HasIncreased)
                     {
-                        //Probably some issue has occurred with TVRename, so we increment by a millisecond to try and avoid the problematic series
-                        newSrvTime++;
-                        Logger.Error("Moving forward one millisend to compensate");
+                        //Probably some issue has occurred with TVRename, so we need to restart the cache
+                        Logger.Error("Update times did not increase - need to refresh all series");
+                        ForgetEverything();
                     }
                 }
             }
@@ -678,11 +716,6 @@ namespace TVRename
             Say("");
 
             return true;
-        }
-
-        private long GetUpdateTime()
-        {
-            return srvTime == 0 ? GetUpdateTimeFromShows(0) : srvTime;
         }
 
         private void UpgradeDirtyLocks()
@@ -914,28 +947,27 @@ namespace TVRename
             return maxUpdateTime;
         }
 
-        private long GetUpdateTimeFromShows(long theTime)
+        private long GetUpdateTimeFromShows()
         {
+            long theTime = long.MaxValue;
+
             // we can use the oldest thing we have locally.  It isn't safe to use the newest thing.
             // This will only happen the first time we do an update, so a false _all update isn't too bad.
-            foreach (KeyValuePair<int, SeriesInfo> kvp in series)
+            foreach (SeriesInfo ser in series.Values)
             {
-                SeriesInfo ser = kvp.Value;
-                if ((theTime == 0) || ((ser.SrvLastUpdated != 0) && (ser.SrvLastUpdated < theTime)))
+                if (((ser.SrvLastUpdated != 0) && (ser.SrvLastUpdated < theTime)))
                 {
                     theTime = ser.SrvLastUpdated;
                 }
 
                 //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
-                foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
+                foreach (Season seas in ser.AiredSeasons.Values)
                 {
-                    Season seas = kvp2.Value;
-
-                    foreach (Episode e in seas.Episodes.Values)
+                    foreach (long seasonUpdateTime in seas.Episodes.Values.Select(episode => episode.SrvLastUpdated).Where(l => l>0))
                     {
-                        if ((theTime == 0) || ((e.SrvLastUpdated != 0) && (e.SrvLastUpdated < theTime)))
+                        if ((seasonUpdateTime < theTime))
                         {
-                            theTime = e.SrvLastUpdated;
+                            theTime = seasonUpdateTime;
                         }
                     }
                 }
@@ -1120,7 +1152,8 @@ namespace TVRename
                 try
                 {
                     string time = x.Attribute("time")?.Value;
-                    newSrvTime = (time is null) ? 0 : long.Parse(time);
+                    latestUpdateTime.Load(time);
+                    Logger.Info($"Loaded file with updates until {latestUpdateTime}");
 
                     foreach (SeriesInfo si in x.Descendants("Series").Select(seriesXml => new SeriesInfo(seriesXml)))
                     {
