@@ -32,41 +32,39 @@ namespace TVRename
                 NewLineOnAttributes = true,
                 Encoding = Encoding.ASCII
             };
-        
-            using (XmlWriter writer = XmlWriter.Create(Location(), settings))
-            {
-                writer.WriteStartDocument();
+
+            using XmlWriter writer = XmlWriter.Create(Location(), settings);
+            writer.WriteStartDocument();
                 
-                writer.WriteStartElement("TVRename");
-                XmlHelper.WriteAttributeToXml(writer,"Version","2.1");
-                writer.WriteStartElement("MissingItems");
+            writer.WriteStartElement("TVRename");
+            XmlHelper.WriteAttributeToXml(writer,"Version","2.1");
+            writer.WriteStartElement("MissingItems");
 
-                foreach (ItemMissing missing in TheActionList.MissingItems().ToList())
+            foreach (ItemMissing missing in TheActionList.MissingItems().ToList())
+            {
+                writer.WriteStartElement("MissingItem");
+
+                XmlHelper.WriteElementToXml(writer,"id",missing.Episode.Show.TvdbCode);
+                XmlHelper.WriteElementToXml(writer, "title",missing.Episode.TheSeries.Name);
+                XmlHelper.WriteElementToXml(writer, "season", Helpers.Pad(missing.Episode.AppropriateSeasonNumber));
+                XmlHelper.WriteElementToXml(writer, "episode", Helpers.Pad(missing.Episode.AppropriateEpNum));
+                XmlHelper.WriteElementToXml(writer, "episodeName",missing.Episode.Name);
+                XmlHelper.WriteElementToXml(writer, "description",missing.Episode.Overview);
+
+                writer.WriteStartElement("pubDate");
+                DateTime? dt = missing.Episode.GetAirDateDt(true);
+                if (dt != null)
                 {
-                    writer.WriteStartElement("MissingItem");
-
-                    XmlHelper.WriteElementToXml(writer,"id",missing.Episode.Show.TvdbCode);
-                    XmlHelper.WriteElementToXml(writer, "title",missing.Episode.TheSeries.Name);
-                    XmlHelper.WriteElementToXml(writer, "season", Helpers.Pad(missing.Episode.AppropriateSeasonNumber));
-                    XmlHelper.WriteElementToXml(writer, "episode", Helpers.Pad(missing.Episode.AppropriateEpNum));
-                    XmlHelper.WriteElementToXml(writer, "episodeName",missing.Episode.Name);
-                    XmlHelper.WriteElementToXml(writer, "description",missing.Episode.Overview);
-
-                    writer.WriteStartElement("pubDate");
-                    DateTime? dt = missing.Episode.GetAirDateDt(true);
-                    if (dt != null)
-                    {
-                        writer.WriteValue(dt.Value.ToString("F"));
-                    }
-
-                    writer.WriteEndElement();
-                        
-                    writer.WriteEndElement(); // MissingItem
+                    writer.WriteValue(dt.Value.ToString("F"));
                 }
-                writer.WriteEndElement(); // MissingItems
-                writer.WriteEndElement(); // tvrename
-                writer.WriteEndDocument();
+
+                writer.WriteEndElement();
+                        
+                writer.WriteEndElement(); // MissingItem
             }
+            writer.WriteEndElement(); // MissingItems
+            writer.WriteEndElement(); // tvrename
+            writer.WriteEndDocument();
         }
     }
 }

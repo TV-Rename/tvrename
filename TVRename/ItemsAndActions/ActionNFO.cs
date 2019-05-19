@@ -160,72 +160,70 @@ namespace TVRename
             try
             {
                 // "try" and silently fail.  eg. when file is use by other...
-                using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
+                using XmlWriter writer = XmlWriter.Create(Where.FullName, settings);
+                if (Episode != null) // specific episode
                 {
-                    if (Episode != null) // specific episode
+                    if (Episode.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
                     {
-                        if (Episode.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
+                        foreach (Episode ep in Episode.SourceEpisodes)
                         {
-                            foreach (Episode ep in Episode.SourceEpisodes)
-                            {
-                                WriteEpisodeDetailsFor(ep, writer, true, Episode.Show.DvdOrder);
-                            }
-                        }
-                        else
-                        {
-                            WriteEpisodeDetailsFor(Episode, writer, false, Episode.Show.DvdOrder);
+                            WriteEpisodeDetailsFor(ep, writer, true, Episode.Show.DvdOrder);
                         }
                     }
-                    else if (SelectedShow != null) // show overview (tvshow.nfo)
+                    else
                     {
-                        // http://www.xbmc.org/wiki/?title=Import_-_Export_Library#TV_Shows
-                        writer.WriteStartElement("tvshow");
-
-                        XmlHelper.WriteElementToXml(writer, "title", SelectedShow.ShowName);
-
-                        string lang = TVSettings.Instance.PreferredLanguageCode;
-                        if (SelectedShow.UseCustomLanguage && SelectedShow.PreferredLanguage != null)
-                        {
-                            lang = SelectedShow.PreferredLanguage.Abbreviation;
-                        }
-                        XmlHelper.WriteElementToXml(writer, "episodeguideurl",TheTVDB.BuildUrl(SelectedShow.TvdbCode,lang));
-
-                        XmlHelper.WriteElementToXml(writer, "plot", SelectedShow.TheSeries()?.Overview);
-
-                        string genre = string.Join(" / ", SelectedShow.Genres);
-                        if (!string.IsNullOrEmpty(genre))
-                        {
-                            XmlHelper.WriteElementToXml(writer, "genre", genre);
-                        }
-
-                        XmlHelper.WriteElementToXml(writer, "premiered", SelectedShow.TheSeries()?.FirstAired);
-                        XmlHelper.WriteElementToXml(writer, "year", SelectedShow.TheSeries()?.Year);
-                        XmlHelper.WriteElementToXml(writer, "rating", SelectedShow.TheSeries()?.ContentRating);
-                        XmlHelper.WriteElementToXml(writer, "status", SelectedShow.TheSeries()?.Status);
-
-                        // actors...
-                        foreach (Actor aa in SelectedShow.Actors.Where(aa => !string.IsNullOrEmpty(aa.ActorName)))
-                        {
-                            writer.WriteStartElement("actor");
-                            XmlHelper.WriteElementToXml(writer, "name", aa.ActorName);
-                            XmlHelper.WriteElementToXml(writer, "role", aa.ActorRole);
-                            XmlHelper.WriteElementToXml(writer, "order", aa.ActorSortOrder);
-                            XmlHelper.WriteElementToXml(writer, "thumb", aa.ActorImage);
-                            writer.WriteEndElement(); // actor
-                        }
-
-                        XmlHelper.WriteElementToXml(writer, "mpaa", SelectedShow.TheSeries()?.ContentRating);
-                        XmlHelper.WriteInfo(writer, "id", "moviedb", "imdb", SelectedShow.TheSeries()?.Imdb);
-
-                        XmlHelper.WriteElementToXml(writer, "tvdbid", SelectedShow.TheSeries()?.TvdbCode);
-
-                        string rt = SelectedShow.TheSeries()?.Runtime;
-                        if (!string.IsNullOrEmpty(rt))
-                        {
-                            XmlHelper.WriteElementToXml(writer, "runtime", rt + " minutes");
-                        }
-                        writer.WriteEndElement(); // tvshow
+                        WriteEpisodeDetailsFor(Episode, writer, false, Episode.Show.DvdOrder);
                     }
+                }
+                else if (SelectedShow != null) // show overview (tvshow.nfo)
+                {
+                    // http://www.xbmc.org/wiki/?title=Import_-_Export_Library#TV_Shows
+                    writer.WriteStartElement("tvshow");
+
+                    XmlHelper.WriteElementToXml(writer, "title", SelectedShow.ShowName);
+
+                    string lang = TVSettings.Instance.PreferredLanguageCode;
+                    if (SelectedShow.UseCustomLanguage && SelectedShow.PreferredLanguage != null)
+                    {
+                        lang = SelectedShow.PreferredLanguage.Abbreviation;
+                    }
+                    XmlHelper.WriteElementToXml(writer, "episodeguideurl",TheTVDB.BuildUrl(SelectedShow.TvdbCode,lang));
+
+                    XmlHelper.WriteElementToXml(writer, "plot", SelectedShow.TheSeries()?.Overview);
+
+                    string genre = string.Join(" / ", SelectedShow.Genres);
+                    if (!string.IsNullOrEmpty(genre))
+                    {
+                        XmlHelper.WriteElementToXml(writer, "genre", genre);
+                    }
+
+                    XmlHelper.WriteElementToXml(writer, "premiered", SelectedShow.TheSeries()?.FirstAired);
+                    XmlHelper.WriteElementToXml(writer, "year", SelectedShow.TheSeries()?.Year);
+                    XmlHelper.WriteElementToXml(writer, "rating", SelectedShow.TheSeries()?.ContentRating);
+                    XmlHelper.WriteElementToXml(writer, "status", SelectedShow.TheSeries()?.Status);
+
+                    // actors...
+                    foreach (Actor aa in SelectedShow.Actors.Where(aa => !string.IsNullOrEmpty(aa.ActorName)))
+                    {
+                        writer.WriteStartElement("actor");
+                        XmlHelper.WriteElementToXml(writer, "name", aa.ActorName);
+                        XmlHelper.WriteElementToXml(writer, "role", aa.ActorRole);
+                        XmlHelper.WriteElementToXml(writer, "order", aa.ActorSortOrder);
+                        XmlHelper.WriteElementToXml(writer, "thumb", aa.ActorImage);
+                        writer.WriteEndElement(); // actor
+                    }
+
+                    XmlHelper.WriteElementToXml(writer, "mpaa", SelectedShow.TheSeries()?.ContentRating);
+                    XmlHelper.WriteInfo(writer, "id", "moviedb", "imdb", SelectedShow.TheSeries()?.Imdb);
+
+                    XmlHelper.WriteElementToXml(writer, "tvdbid", SelectedShow.TheSeries()?.TvdbCode);
+
+                    string rt = SelectedShow.TheSeries()?.Runtime;
+                    if (!string.IsNullOrEmpty(rt))
+                    {
+                        XmlHelper.WriteElementToXml(writer, "runtime", rt + " minutes");
+                    }
+                    writer.WriteEndElement(); // tvshow
                 }
             }
             catch (Exception e)

@@ -265,63 +265,61 @@ namespace TVRename
 
                 lock (SERIES_LOCK)
                 {
-                    using (XmlWriter writer = XmlWriter.Create(cacheFile.FullName, settings))
-                    {
-                        writer.WriteStartDocument();
-                        writer.WriteStartElement("Data");
-                        XmlHelper.WriteAttributeToXml(writer, "time", latestUpdateTime.LastSuccessfulServerUpdateTimecode());
+                    using XmlWriter writer = XmlWriter.Create(cacheFile.FullName, settings);
+                    writer.WriteStartDocument();
+                    writer.WriteStartElement("Data");
+                    XmlHelper.WriteAttributeToXml(writer, "time", latestUpdateTime.LastSuccessfulServerUpdateTimecode());
 
-                        foreach (KeyValuePair<int, SeriesInfo> kvp in series)
+                    foreach (KeyValuePair<int, SeriesInfo> kvp in series)
+                    {
+                        if (kvp.Value.SrvLastUpdated != 0)
                         {
-                            if (kvp.Value.SrvLastUpdated != 0)
+                            kvp.Value.WriteXml(writer);
+                            foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
+                                //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
                             {
-                                kvp.Value.WriteXml(writer);
-                                foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
-                                    //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
+                                Season seas = kvp2.Value;
+                                foreach (Episode e in seas.Episodes.Values)
                                 {
-                                    Season seas = kvp2.Value;
-                                    foreach (Episode e in seas.Episodes.Values)
-                                    {
-                                        e.WriteXml(writer);
-                                    }
+                                    e.WriteXml(writer);
                                 }
                             }
                         }
+                    }
 
-                        //
-                        // <BannersCache>
-                        //      <BannersItem>
-                        //          <SeriesId>123</SeriesId>
-                        //          <Banners>
-                        //              <Banner>
+                    //
+                    // <BannersCache>
+                    //      <BannersItem>
+                    //          <SeriesId>123</SeriesId>
+                    //          <Banners>
+                    //              <Banner>
 
-                        writer.WriteStartElement("BannersCache");
+                    writer.WriteStartElement("BannersCache");
 
-                        foreach (KeyValuePair<int, SeriesInfo> kvp in series)
+                    foreach (KeyValuePair<int, SeriesInfo> kvp in series)
+                    {
+                        writer.WriteStartElement("BannersItem");
+
+                        XmlHelper.WriteElementToXml(writer, "SeriesId", kvp.Key);
+
+                        writer.WriteStartElement("Banners");
+
+                        //We need to write out all banners that we have in any of the collections. 
+
+                        foreach (Banner ban in kvp.Value.AllBanners.Select(kvp3 => kvp3.Value))
                         {
-                            writer.WriteStartElement("BannersItem");
-
-                            XmlHelper.WriteElementToXml(writer, "SeriesId", kvp.Key);
-
-                            writer.WriteStartElement("Banners");
-
-                            //We need to write out all banners that we have in any of the collections. 
-
-                            foreach (Banner ban in kvp.Value.AllBanners.Select(kvp3 => kvp3.Value))
-                            {
-                                ban.WriteXml(writer);
-                            }
-
-                            writer.WriteEndElement(); //Banners
-                            writer.WriteEndElement(); //BannersItem
+                            ban.WriteXml(writer);
                         }
 
-                        writer.WriteEndElement(); // BannersCache
-
-                        writer.WriteEndElement(); // data
-
-                        writer.WriteEndDocument();
+                        writer.WriteEndElement(); //Banners
+                        writer.WriteEndElement(); //BannersItem
                     }
+
+                    writer.WriteEndElement(); // BannersCache
+
+                    writer.WriteEndElement(); // data
+
+                    writer.WriteEndDocument();
                 }
             }
             catch (Exception e)
@@ -682,12 +680,12 @@ namespace TVRename
                 }
 
                 //As a safety measure we check that no more than 52 calls are made
-                const int MaxNumberOfCalls = 52;
-                if (numberofCallsMade > MaxNumberOfCalls)
+                const int MAX_NUMBER_OF_CALLS = 52;
+                if (numberofCallsMade > MAX_NUMBER_OF_CALLS)
                 {
                     moreUpdates = false;
                     string errorMessage =
-                        $"We have run {MaxNumberOfCalls} weeks of updates and we are not up to date.  The system will need to check again once this set of updates have been processed.{Environment.NewLine}Last Updated time was {latestUpdateTime.LastSuccessfulServerUpdateDateTime()}{Environment.NewLine}New Last Updated time is {latestUpdateTime}{Environment.NewLine}{Environment.NewLine}If the dates keep getting more recent then let the system keep getting {MaxNumberOfCalls} week blocks of updates, otherwise consider a 'Force Refresh All'";
+                        $"We have run {MAX_NUMBER_OF_CALLS} weeks of updates and we are not up to date.  The system will need to check again once this set of updates have been processed.{Environment.NewLine}Last Updated time was {latestUpdateTime.LastSuccessfulServerUpdateDateTime()}{Environment.NewLine}New Last Updated time is {latestUpdateTime}{Environment.NewLine}{Environment.NewLine}If the dates keep getting more recent then let the system keep getting {MAX_NUMBER_OF_CALLS} week blocks of updates, otherwise consider a 'Force Refresh All'";
 
                     Logger.Error(errorMessage);
                     if ((!args.Unattended) && (!args.Hide) && Environment.UserInteractive)

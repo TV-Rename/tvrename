@@ -149,10 +149,8 @@ namespace TVRename
         {
             try
             {
-                using (System.IO.StreamReader sr = new System.IO.StreamReader(PathManager.TVDocSettingsFile.FullName))
-                {
-                    txt.AppendLine(sr.ReadToEnd());
-                }
+                using System.IO.StreamReader sr = new System.IO.StreamReader(PathManager.TVDocSettingsFile.FullName);
+                txt.AppendLine(sr.ReadToEnd());
             }
             catch
             {

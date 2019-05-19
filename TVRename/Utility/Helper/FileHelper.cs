@@ -299,19 +299,17 @@ namespace TVRename
         [NotNull]
         public static string GetFilmDetails([NotNull] this FileInfo movieFile)
         {
-            using (ShellPropertyCollection properties = new ShellPropertyCollection(movieFile.FullName))
+            using ShellPropertyCollection properties = new ShellPropertyCollection(movieFile.FullName);
+            StringBuilder sb = new StringBuilder();
+            foreach (IShellProperty prop in properties)
             {
-                StringBuilder sb = new StringBuilder();
-                foreach (IShellProperty prop in properties)
-                {
-                    string value = (prop.ValueAsObject is null)
-                        ? ""
-                        : prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
-                    sb.AppendLine($"{prop.CanonicalName} = {value}" );
-                }
-
-                return sb.ToString();
+                string value = (prop.ValueAsObject is null)
+                    ? ""
+                    : prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
+                sb.AppendLine($"{prop.CanonicalName} = {value}" );
             }
+
+            return sb.ToString();
         }
 
         public static bool IsSubfolderOf(this string thisOne, string ofThat)

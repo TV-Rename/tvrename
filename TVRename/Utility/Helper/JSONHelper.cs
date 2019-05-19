@@ -46,10 +46,8 @@ namespace TVRename
             {
                 if (stream != null)
                 {
-                    using (System.IO.StreamReader reader = new System.IO.StreamReader(stream))
-                    {
-                        responseText = reader.ReadToEnd();
-                    }
+                    using System.IO.StreamReader reader = new System.IO.StreamReader(stream);
+                    responseText = reader.ReadToEnd();
                 }
             }
 

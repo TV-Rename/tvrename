@@ -114,21 +114,19 @@ namespace TVRename
 
             try
             {
-                using (HttpClient client = new HttpClient())
+                using HttpClient client = new HttpClient();
+                Dictionary<string, string> values = new Dictionary<string, string> {{"urls", torrentUrl}};
+                FormUrlEncodedContent content = new FormUrlEncodedContent(values);
+                HttpResponseMessage response = client.PostAsync(url, content).Result;
+                if (!response.IsSuccessStatusCode)
                 {
-                    Dictionary<string, string> values = new Dictionary<string, string> {{"urls", torrentUrl}};
-                    FormUrlEncodedContent content = new FormUrlEncodedContent(values);
-                    HttpResponseMessage response = client.PostAsync(url, content).Result;
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        LOGGER.Warn(
-                            $"Tried to download {torrentUrl} from qBitTorrent via {url}. Got following response {response.StatusCode}");
-                    }
-                    else
-                    {
-                        LOGGER.Info(
-                            $"Started download of {torrentUrl} via qBitTorrent using {url}. Got following response {response.StatusCode}");
-                    }
+                    LOGGER.Warn(
+                        $"Tried to download {torrentUrl} from qBitTorrent via {url}. Got following response {response.StatusCode}");
+                }
+                else
+                {
+                    LOGGER.Info(
+                        $"Started download of {torrentUrl} via qBitTorrent using {url}. Got following response {response.StatusCode}");
                 }
             }
             catch (WebException)

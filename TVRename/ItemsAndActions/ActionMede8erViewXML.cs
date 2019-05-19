@@ -44,13 +44,11 @@ namespace TVRename
 
             try
             {
-                using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
-                {
-                    writer.WriteStartElement("FolderTag");
-                    XmlHelper.WriteElementToXml(writer, "ViewMode", "Movie");
-                    XmlHelper.WriteElementToXml(writer, "ViewType", "Video");
-                    writer.WriteEndElement();
-                }
+                using XmlWriter writer = XmlWriter.Create(Where.FullName, settings);
+                writer.WriteStartElement("FolderTag");
+                XmlHelper.WriteElementToXml(writer, "ViewMode", "Movie");
+                XmlHelper.WriteElementToXml(writer, "ViewType", "Video");
+                writer.WriteEndElement();
             }
             catch (Exception e)
             {

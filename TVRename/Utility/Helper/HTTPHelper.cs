@@ -35,12 +35,11 @@ namespace TVRename
 
             Logger.Trace("Obtaining {0}", url);
 
-            if (method == "POST") { 
-                using (System.IO.StreamWriter streamWriter = new System.IO.StreamWriter(httpWebRequest.GetRequestStream()))
-                {
-                    streamWriter.Write(json);
-                    streamWriter.Flush();
-                }
+            if (method == "POST")
+            {
+                using System.IO.StreamWriter streamWriter = new System.IO.StreamWriter(httpWebRequest.GetRequestStream());
+                streamWriter.Write(json);
+                streamWriter.Flush();
             }
 
             string result;
