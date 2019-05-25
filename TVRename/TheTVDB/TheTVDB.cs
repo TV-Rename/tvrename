@@ -1288,7 +1288,7 @@ namespace TVRename
             //We push the results into a bag to use later
             //If there is a problem with the while method then we can be proactive by using /series/{id}/episodes/summary to get the total
 
-            if (episodesToo || forceReload)
+            if ((si?.Status != "Upcoming" && episodesToo) || forceReload)
             {
                 ReloadEpisodes(code,useCustomLangCode,langCode);
             }
