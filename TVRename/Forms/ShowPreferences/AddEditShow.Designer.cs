@@ -130,26 +130,27 @@ namespace TVRename
             // 
             // txtCustomShowName
             // 
-            this.txtCustomShowName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtCustomShowName.Location = new System.Drawing.Point(133, 241);
+            this.txtCustomShowName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtCustomShowName.Location = new System.Drawing.Point(134, 333);
             this.txtCustomShowName.Name = "txtCustomShowName";
             this.txtCustomShowName.Size = new System.Drawing.Size(303, 20);
             this.txtCustomShowName.TabIndex = 2;
             // 
             // cbTimeZone
             // 
+            this.cbTimeZone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbTimeZone.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTimeZone.FormattingEnabled = true;
-            this.cbTimeZone.Location = new System.Drawing.Point(101, 269);
+            this.cbTimeZone.Location = new System.Drawing.Point(102, 361);
             this.cbTimeZone.Name = "cbTimeZone";
             this.cbTimeZone.Size = new System.Drawing.Size(200, 21);
             this.cbTimeZone.TabIndex = 4;
             // 
             // label6
             // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 272);
+            this.label6.Location = new System.Drawing.Point(7, 364);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(87, 13);
             this.label6.TabIndex = 3;
@@ -160,7 +161,7 @@ namespace TVRename
             // 
             this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancel.Location = new System.Drawing.Point(351, 458);
+            this.bnCancel.Location = new System.Drawing.Point(361, 478);
             this.bnCancel.Name = "bnCancel";
             this.bnCancel.Size = new System.Drawing.Size(75, 23);
             this.bnCancel.TabIndex = 2;
@@ -172,7 +173,7 @@ namespace TVRename
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(270, 458);
+            this.buttonOK.Location = new System.Drawing.Point(280, 478);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 1;
@@ -202,11 +203,12 @@ namespace TVRename
             // 
             // pnlCF
             // 
-            this.pnlCF.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.pnlCF.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlCF.Location = new System.Drawing.Point(3, 52);
             this.pnlCF.Name = "pnlCF";
-            this.pnlCF.Size = new System.Drawing.Size(434, 183);
+            this.pnlCF.Size = new System.Drawing.Size(444, 275);
             this.pnlCF.TabIndex = 0;
             // 
             // cbDoRenaming
@@ -232,8 +234,9 @@ namespace TVRename
             // 
             // label5
             // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 299);
+            this.label5.Location = new System.Drawing.Point(7, 391);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(84, 13);
             this.label5.TabIndex = 5;
@@ -242,7 +245,8 @@ namespace TVRename
             // 
             // txtIgnoreSeasons
             // 
-            this.txtIgnoreSeasons.Location = new System.Drawing.Point(101, 296);
+            this.txtIgnoreSeasons.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtIgnoreSeasons.Location = new System.Drawing.Point(102, 388);
             this.txtIgnoreSeasons.Name = "txtIgnoreSeasons";
             this.txtIgnoreSeasons.Size = new System.Drawing.Size(156, 20);
             this.txtIgnoreSeasons.TabIndex = 6;
@@ -269,8 +273,9 @@ namespace TVRename
             // 
             // chkCustomShowName
             // 
+            this.chkCustomShowName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkCustomShowName.AutoSize = true;
-            this.chkCustomShowName.Location = new System.Drawing.Point(9, 243);
+            this.chkCustomShowName.Location = new System.Drawing.Point(10, 335);
             this.chkCustomShowName.Name = "chkCustomShowName";
             this.chkCustomShowName.Size = new System.Drawing.Size(121, 17);
             this.chkCustomShowName.TabIndex = 1;
@@ -291,7 +296,7 @@ namespace TVRename
             this.Folders.Location = new System.Drawing.Point(-4, 2);
             this.Folders.Name = "Folders";
             this.Folders.SelectedIndex = 0;
-            this.Folders.Size = new System.Drawing.Size(448, 450);
+            this.Folders.Size = new System.Drawing.Size(458, 470);
             this.Folders.TabIndex = 0;
             // 
             // tabPage1
@@ -311,7 +316,7 @@ namespace TVRename
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(440, 424);
+            this.tabPage1.Size = new System.Drawing.Size(450, 444);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Basics";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -333,7 +338,7 @@ namespace TVRename
             this.pbBasics.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbBasics.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbBasics.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbBasics.Location = new System.Drawing.Point(391, 6);
+            this.pbBasics.Location = new System.Drawing.Point(401, 6);
             this.pbBasics.Name = "pbBasics";
             this.pbBasics.Size = new System.Drawing.Size(43, 40);
             this.pbBasics.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -343,17 +348,19 @@ namespace TVRename
             // 
             // cbLanguage
             // 
+            this.cbLanguage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLanguage.FormattingEnabled = true;
-            this.cbLanguage.Location = new System.Drawing.Point(133, 320);
+            this.cbLanguage.Location = new System.Drawing.Point(134, 412);
             this.cbLanguage.Name = "cbLanguage";
             this.cbLanguage.Size = new System.Drawing.Size(200, 21);
             this.cbLanguage.TabIndex = 9;
             // 
             // chkCustomLanguage
             // 
+            this.chkCustomLanguage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkCustomLanguage.AutoSize = true;
-            this.chkCustomLanguage.Location = new System.Drawing.Point(9, 324);
+            this.chkCustomLanguage.Location = new System.Drawing.Point(10, 416);
             this.chkCustomLanguage.Name = "chkCustomLanguage";
             this.chkCustomLanguage.Size = new System.Drawing.Size(115, 17);
             this.chkCustomLanguage.TabIndex = 8;
@@ -363,8 +370,9 @@ namespace TVRename
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(260, 299);
+            this.label2.Location = new System.Drawing.Point(261, 391);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(162, 13);
             this.label2.TabIndex = 7;
@@ -974,7 +982,7 @@ namespace TVRename
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
-            this.ClientSize = new System.Drawing.Size(446, 493);
+            this.ClientSize = new System.Drawing.Size(456, 513);
             this.ControlBox = false;
             this.Controls.Add(this.Folders);
             this.Controls.Add(this.bnCancel);

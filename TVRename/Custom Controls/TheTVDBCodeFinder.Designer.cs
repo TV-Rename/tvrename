@@ -41,16 +41,18 @@ namespace TVRename
             this.bnGoSearch = new System.Windows.Forms.Button();
             this.txtFindThis = new System.Windows.Forms.TextBox();
             this.lvMatches = new System.Windows.Forms.ListView();
-            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label3 = new System.Windows.Forms.Label();
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // txtSearchStatus
             // 
-            this.txtSearchStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSearchStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSearchStatus.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.txtSearchStatus.Location = new System.Drawing.Point(2, 153);
             this.txtSearchStatus.Name = "txtSearchStatus";
@@ -71,8 +73,8 @@ namespace TVRename
             // 
             // txtFindThis
             // 
-            this.txtFindThis.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFindThis.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFindThis.Location = new System.Drawing.Point(90, 3);
             this.txtFindThis.Name = "txtFindThis";
             this.txtFindThis.Size = new System.Drawing.Size(228, 20);
@@ -82,13 +84,15 @@ namespace TVRename
             // 
             // lvMatches
             // 
-            this.lvMatches.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvMatches.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lvMatches.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
-            this.columnHeader3});
+            this.columnHeader3,
+            this.columnHeader4,
+            this.columnHeader5});
             this.lvMatches.FullRowSelect = true;
             this.lvMatches.HideSelection = false;
             this.lvMatches.Location = new System.Drawing.Point(1, 30);
@@ -100,8 +104,8 @@ namespace TVRename
             this.lvMatches.TabIndex = 3;
             this.lvMatches.UseCompatibleStateImageBehavior = false;
             this.lvMatches.View = System.Windows.Forms.View.Details;
-            this.lvMatches.SelectedIndexChanged += new System.EventHandler(this.lvMatches_SelectedIndexChanged);
             this.lvMatches.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvMatches_ColumnClick);
+            this.lvMatches.SelectedIndexChanged += new System.EventHandler(this.lvMatches_SelectedIndexChanged);
             // 
             // columnHeader1
             // 
@@ -111,12 +115,12 @@ namespace TVRename
             // columnHeader2
             // 
             this.columnHeader2.Text = "Show Name";
-            this.columnHeader2.Width = 268;
+            this.columnHeader2.Width = 209;
             // 
             // columnHeader3
             // 
             this.columnHeader3.Text = "Year";
-            this.columnHeader3.Width = 49;
+            this.columnHeader3.Width = 39;
             // 
             // label3
             // 
@@ -128,7 +132,17 @@ namespace TVRename
             this.label3.Text = "TheTVDB &code:";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // TheTVDBCodeFinder
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Network";
+            this.columnHeader4.Width = 52;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Rating";
+            this.columnHeader5.Width = 47;
+            // 
+            // TheTvdbCodeFinder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -155,5 +169,7 @@ namespace TVRename
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ColumnHeader columnHeader5;
     }
 }

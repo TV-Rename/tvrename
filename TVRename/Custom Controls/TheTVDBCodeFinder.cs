@@ -54,12 +54,9 @@ namespace TVRename
         {
             try
             {
-                if (lvMatches.SelectedItems.Count == 0)
-                {
-                    return int.Parse(txtFindThis.Text);
-                }
-
-                return (int.Parse(lvMatches.SelectedItems[0].SubItems[0].Text));
+                return lvMatches.SelectedItems.Count == 0
+                    ? int.Parse(txtFindThis.Text)
+                    : int.Parse(lvMatches.SelectedItems[0].SubItems[0].Text);
             }
             catch
             {
@@ -154,8 +151,11 @@ namespace TVRename
         {
             ListViewItem lvi = new ListViewItem {Text = num.ToString()};
             lvi.SubItems.Add(show);
-            lvi.SubItems.Add(si.FirstAired != null ? si.FirstAired.Value.Year.ToString() : "");
+            lvi.SubItems.Add(si.Year);
+            lvi.SubItems.Add(si.Network ?? string.Empty);
+            lvi.SubItems.Add(si.ContentRating);
 
+            lvi.ToolTipText = si.Overview;
             lvi.Tag = si;
             if (numberMatch)
             {
