@@ -123,13 +123,8 @@ namespace TVRename
                 string epDirector = Episode.EpisodeDirector;
                 if (!string.IsNullOrEmpty(epDirector))
                 {
-                    foreach (string daa in epDirector.Split('|'))
+                    foreach (string daa in epDirector.Split('|').Where(daa => !string.IsNullOrEmpty(daa)))
                     {
-                        if (string.IsNullOrEmpty(daa))
-                        {
-                            continue;
-                        }
-
                         XmlHelper.WriteElementToXml(writer, "director", daa);
                     }
                 }
@@ -150,13 +145,8 @@ namespace TVRename
             // actors...
             if (Episode.Show != null)
             {
-                foreach (string aa in Episode.Show.TheSeries()?.GetActorNames()??new string[]{})
+                foreach (string aa in (Episode.Show.TheSeries()?.GetActorNames()??new string[]{}).Where(aa => !string.IsNullOrEmpty(aa)))
                 {
-                    if (string.IsNullOrEmpty(aa))
-                    {
-                        continue;
-                    }
-
                     XmlHelper.WriteElementToXml(writer, "actor", aa);
                 }
             }
