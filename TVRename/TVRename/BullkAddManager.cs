@@ -126,16 +126,18 @@ namespace TVRename
         {
             try
             {
-                using XmlReader reader = XmlReader.Create(file.OpenText());
-                while (reader.Read())
+                using (XmlReader reader = XmlReader.Create(file.OpenText()))
                 {
-                    if ((reader.Name == "tvdbid") && reader.IsStartElement())
+                    while (reader.Read())
                     {
-                        string s = reader.ReadElementContentAsString();
-                        bool success = int.TryParse(s,out int x);
-                        if (success && x != -1)
+                        if ((reader.Name == "tvdbid") && reader.IsStartElement())
                         {
-                            return x;
+                            string s = reader.ReadElementContentAsString();
+                            bool success = int.TryParse(s, out int x);
+                            if (success && x != -1)
+                            {
+                                return x;
+                            }
                         }
                     }
                 }

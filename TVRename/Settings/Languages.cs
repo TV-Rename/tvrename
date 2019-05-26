@@ -41,9 +41,12 @@ namespace TVRename
 
             try
             {
-                using XmlReader reader = XmlReader.Create(filename, settings);
-                XmlSerializer xs = new XmlSerializer(typeof(Languages));
-                sc = (Languages)xs.Deserialize(reader);
+                using (XmlReader reader = XmlReader.Create(filename, settings))
+                {
+                    XmlSerializer xs = new XmlSerializer(typeof(Languages));
+                    sc = (Languages) xs.Deserialize(reader);
+                }
+
                 System.Diagnostics.Debug.Assert(sc != null);
             }
             catch (Exception e)
@@ -70,9 +73,11 @@ namespace TVRename
             }
 
             XmlWriterSettings settings = new XmlWriterSettings { Indent = true, NewLineOnAttributes = true };
-            using XmlWriter writer = XmlWriter.Create(toFile, settings);
-            XmlSerializer xs = new XmlSerializer(typeof(Languages));
-            xs.Serialize(writer, this);
+            using (XmlWriter writer = XmlWriter.Create(toFile, settings))
+            {
+                XmlSerializer xs = new XmlSerializer(typeof(Languages));
+                xs.Serialize(writer, this);
+            }
         }
 
         [CanBeNull]

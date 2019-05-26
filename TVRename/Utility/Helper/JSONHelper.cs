@@ -38,20 +38,21 @@ namespace TVRename
         [NotNull]
         public static string Obtain([NotNull] string url)
         {
-            string responseText = string.Empty;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
             using (System.IO.Stream stream = response.GetResponseStream())
             {
-                if (stream != null)
+                if (stream == null)
                 {
-                    using System.IO.StreamReader reader = new System.IO.StreamReader(stream);
-                    responseText = reader.ReadToEnd();
+                    return string.Empty;
+                }
+
+                using (System.IO.StreamReader reader = new System.IO.StreamReader(stream))
+                {
+                    return reader.ReadToEnd();
                 }
             }
-
-            return responseText;
         }
     }
 }

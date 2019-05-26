@@ -26,21 +26,24 @@ namespace TVRename
 
         protected override void Do()
         {
-            using System.IO.StreamWriter file = new System.IO.StreamWriter(Location());
-            file.WriteLine(ShowHtmlHelper.HTMLHeader(8, Color.White));
-            foreach (ShowItem si in Shows)
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
             {
-                try
+                file.WriteLine(ShowHtmlHelper.HTMLHeader(8, Color.White));
+                foreach (ShowItem si in Shows)
                 {
-                    file.WriteLine(CreateHtml(si));
+                    try
+                    {
+                        file.WriteLine(CreateHtml(si));
+                    }
+                    catch (Exception ex)
+                    {
+                        LOGGER.Error(ex,
+                            $"Skipped adding {si.ShowName} to the outpur HTML as it is missing some data. Please try checking the settings and doing a force refresh on the show.");
+                    }
                 }
-                catch (Exception ex)
-                {
-                    LOGGER.Error(ex,$"Skipped adding {si.ShowName} to the outpur HTML as it is missing some data. Please try checking the settings and doing a force refresh on the show.");
-                }
-            }
 
-            file.WriteLine(ShowHtmlHelper.HTMLFooter());
+                file.WriteLine(ShowHtmlHelper.HTMLFooter());
+            }
         }
 
         [NotNull]

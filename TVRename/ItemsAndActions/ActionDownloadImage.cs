@@ -106,9 +106,11 @@ namespace TVRename
                     {
                         im = MaxSize(im, 156, 232);
 
-                        using System.IO.MemoryStream m = new System.IO.MemoryStream();
-                        im.Save(m, ImageFormat.Jpeg);
-                        theData = m.ToArray();
+                        using (System.IO.MemoryStream m = new System.IO.MemoryStream())
+                        {
+                            im.Save(m, ImageFormat.Jpeg);
+                            theData = m.ToArray();
+                        }
                     }
                 }
                 else {
@@ -116,9 +118,11 @@ namespace TVRename
                     {
                         im = MaxSize(im, 232, 156);
 
-                        using System.IO.MemoryStream m = new System.IO.MemoryStream();
-                        im.Save(m, ImageFormat.Jpeg);
-                        theData = m.ToArray();
+                        using (System.IO.MemoryStream m = new System.IO.MemoryStream())
+                        {
+                            im.Save(m, ImageFormat.Jpeg);
+                            theData = m.ToArray();
+                        }
                     }
                 }
             }

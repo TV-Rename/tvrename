@@ -37,9 +37,12 @@ namespace TVRename
 
             if (method == "POST")
             {
-                using System.IO.StreamWriter streamWriter = new System.IO.StreamWriter(httpWebRequest.GetRequestStream());
-                streamWriter.Write(json);
-                streamWriter.Flush();
+                using (System.IO.StreamWriter streamWriter =
+                    new System.IO.StreamWriter(httpWebRequest.GetRequestStream()))
+                {
+                    streamWriter.Write(json);
+                    streamWriter.Flush();
+                }
             }
 
             string result;

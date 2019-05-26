@@ -28,30 +28,34 @@ namespace TVRename
             DirFilesCache dfc = new DirFilesCache();
 
             //Write Contents to file
-            using System.IO.StreamWriter file = new System.IO.StreamWriter(Location());
-            file.WriteLine(GenerateHeader());
-            foreach (ProcessedEpisode episode in lpe)
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
             {
-                try
+                file.WriteLine(GenerateHeader());
+                foreach (ProcessedEpisode episode in lpe)
                 {
-                    List<FileInfo> files = dfc.FindEpOnDisk(episode, false);
-
-                    if (!files.Any())
+                    try
                     {
-                        continue;
+                        List<FileInfo> files = dfc.FindEpOnDisk(episode, false);
+
+                        if (!files.Any())
+                        {
+                            continue;
+                        }
+
+                        string name = TVSettings.Instance.NamingStyle.NameFor(episode);
+                        int length = files.First().GetFilmLength();
+
+                        file.WriteLine(GenerateRecord(episode, files.First(), name, length));
                     }
-
-                    string name = TVSettings.Instance.NamingStyle.NameFor(episode);
-                    int length = files.First().GetFilmLength();
-
-                    file.WriteLine(GenerateRecord(episode, files.First(), name, length));
+                    catch (Exception ex)
+                    {
+                        LOGGER.Error(ex,
+                            $"Had to skip saving {episode?.Show?.ShowName} S{episode?.AppropriateSeasonNumber}E{episode?.AppropriateEpNum} saving to {Location()}");
+                    }
                 }
-                catch(Exception ex)
-                {
-                    LOGGER.Error(ex,$"Had to skip saving {episode?.Show?.ShowName} S{episode?.AppropriateSeasonNumber}E{episode?.AppropriateEpNum} saving to {Location()}");
-                }
+
+                file.WriteLine(GenerateFooter());
             }
-            file.WriteLine(GenerateFooter());
         }
 
         protected abstract string GenerateHeader();

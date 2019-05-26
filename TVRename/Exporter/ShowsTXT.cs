@@ -22,10 +22,12 @@ namespace TVRename
 
         protected override void Do()
         {
-            using System.IO.StreamWriter file = new System.IO.StreamWriter(Location());
-            foreach (ShowItem si in Shows)
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
             {
-                file.WriteLine(si.ShowName);
+                foreach (ShowItem si in Shows)
+                {
+                    file.WriteLine(si.ShowName);
+                }
             }
         }
     }
