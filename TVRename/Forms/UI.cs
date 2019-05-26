@@ -1782,7 +1782,6 @@ namespace TVRename
                     {
                         BrowseForMissingItem((ItemMissing)mLastActionsClicked[0]);
                         mLastActionsClicked = null;
-                        FillActionList();
                     }
                     break;
                 case RightClickCommands.kActionIgnore:
@@ -1846,15 +1845,20 @@ namespace TVRename
                 return;
             }
 
+            ManuallyAddFileForItem(mi, openFile.FileName);
+        }
+
+        private void ManuallyAddFileForItem([NotNull] ItemMissing mi, string fileName)
+        {
             // make new Item for copying/moving to specified location
-            FileInfo from = new FileInfo(openFile.FileName);
+            FileInfo from = new FileInfo(fileName);
             FileInfo to = new FileInfo(mi.TheFileNoExt + from.Extension);
             mDoc.TheActionList.Add(
                 new ActionCopyMoveRename(
                     TVSettings.Instance.LeaveOriginals
                         ? ActionCopyMoveRename.Op.copy
                         : ActionCopyMoveRename.Op.move, from, to
-                    , mi.Episode,true, mi));
+                    , mi.Episode, true, mi));
 
             // and remove old Missing item
             mDoc.TheActionList.Remove(mi);
@@ -1862,13 +1866,21 @@ namespace TVRename
             // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
             DownloadIdentifiersController di = new DownloadIdentifiersController();
             mDoc.TheActionList.Add(di.ProcessEpisode(mi.Episode, to));
+
+            //If keep together is active then we may want to copy over related files too
+            if (TVSettings.Instance.KeepTogether)
+            {
+                FileFinder.KeepTogether(mDoc.TheActionList, false, true);
+            }
+
+            FillActionList();
         }
 
-        private void OpenFolderForShow(int fnum)
+        private void OpenFolderForShow(int foldernum)
         {
-            if (mFoldersToOpen != null && fnum >= 0 && fnum < mFoldersToOpen.Count)
+            if (mFoldersToOpen != null && foldernum >= 0 && foldernum < mFoldersToOpen.Count)
             {
-                string folder = mFoldersToOpen[fnum];
+                string folder = mFoldersToOpen[foldernum];
 
                 if (Directory.Exists(folder))
                 {
@@ -3762,30 +3774,7 @@ namespace TVRename
             }
 
             // Only want the first file if multiple files were dragged across.
-            FileInfo from = new FileInfo(files[0]);
-            FileInfo to = new FileInfo(mi.TheFileNoExt + from.Extension);
-
-            mDoc.TheActionList.Add(
-                new ActionCopyMoveRename(
-                    TVSettings.Instance.LeaveOriginals
-                        ? ActionCopyMoveRename.Op.copy
-                        : ActionCopyMoveRename.Op.move, from, to
-                    , mi.Episode, true, mi));
-
-            // and remove old Missing item
-            mDoc.TheActionList.Remove(mi);
-            DownloadIdentifiersController di = new DownloadIdentifiersController();
-
-            // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
-            mDoc.TheActionList.Add(di.ProcessEpisode(mi.Episode, to));
-
-            //If keep together is active then we may want to copy over related files too
-            if (TVSettings.Instance.KeepTogether)
-            {
-                FileFinder.KeepTogether(mDoc.TheActionList,false,true);
-            }
-
-            FillActionList();
+            ManuallyAddFileForItem(mi, files[0]);
         }
 
         private void lvAction_DragEnter(object sender, [NotNull] DragEventArgs e)

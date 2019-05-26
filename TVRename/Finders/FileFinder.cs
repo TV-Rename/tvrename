@@ -57,10 +57,11 @@ namespace TVRename
                     seasF == season &&
                     epF == epnum;
 
-                bool sequentialMatch = me.Episode.Show.UseSequentialMatch &&
-                                       TVDoc.MatchesSequentialNumber(dce.Name, ref seasF, ref epF, me.Episode) &&
-                                       seasF == season &&
-                                       epF == epnum;
+                bool sequentialMatch =
+                    me.Episode.Show.UseSequentialMatch &&
+                    TVDoc.MatchesSequentialNumber(dce.Name, ref seasF, ref epF, me.Episode) &&
+                    seasF == season &&
+                    epF == epnum;
 
                 if (!regularMatch && !sequentialMatch)
                 {
@@ -99,7 +100,7 @@ namespace TVRename
                     addTo.Add(di.ProcessEpisode(me.Episode, fi));
                 }
 
-            return true;
+                return true;
             }
             catch (PathTooLongException e)
             {

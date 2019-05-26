@@ -166,7 +166,6 @@ namespace TVRename
             latestUpdateTime.Initialise();
             Logger.Info($"Assumed we have updates until {latestUpdateTime}");
 
-
             LoadOk = (loadFrom is null) || LoadCache(loadFrom);
 
             forceReloadOn = new ConcurrentDictionary<int, int>();
