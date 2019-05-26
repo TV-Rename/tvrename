@@ -405,37 +405,37 @@ namespace TVRename
         {
             writer.WriteStartElement("Episode");
 
-            XmlHelper.WriteElementToXml(writer, "id", EpisodeId);
-            XmlHelper.WriteElementToXml(writer, "seriesid", SeriesId);
-            XmlHelper.WriteElementToXml(writer, "airedSeasonID", SeasonId);
-            XmlHelper.WriteElementToXml(writer, "airedEpisodeNumber", AiredEpNum);
-            XmlHelper.WriteElementToXml(writer, "SeasonNumber", AiredSeasonNumber);
-            XmlHelper.WriteElementToXml(writer, "dvdEpisodeNumber", DvdEpNum,true);
-            XmlHelper.WriteElementToXml(writer, "dvdSeason", DvdSeasonNumber, true);
-            XmlHelper.WriteElementToXml(writer, "lastupdated", SrvLastUpdated);
-            XmlHelper.WriteElementToXml(writer, "Overview", Overview?.Trim());
-            XmlHelper.WriteElementToXml(writer, "Rating", EpisodeRating);
-            XmlHelper.WriteElementToXml(writer, "GuestStars", EpisodeGuestStars, true);
-            XmlHelper.WriteElementToXml(writer, "EpisodeDirector", EpisodeDirector, true);
-            XmlHelper.WriteElementToXml(writer, "Writer", Writer, true);
-            XmlHelper.WriteElementToXml(writer, "EpisodeName", mName, true);
+            writer.WriteElement("id", EpisodeId);
+            writer.WriteElement("seriesid", SeriesId);
+            writer.WriteElement("airedSeasonID", SeasonId);
+            writer.WriteElement("airedEpisodeNumber", AiredEpNum);
+            writer.WriteElement("SeasonNumber", AiredSeasonNumber);
+            writer.WriteElement("dvdEpisodeNumber", DvdEpNum,true);
+            writer.WriteElement("dvdSeason", DvdSeasonNumber, true);
+            writer.WriteElement("lastupdated", SrvLastUpdated);
+            writer.WriteElement("Overview", Overview?.Trim());
+            writer.WriteElement("Rating", EpisodeRating);
+            writer.WriteElement("GuestStars", EpisodeGuestStars, true);
+            writer.WriteElement("EpisodeDirector", EpisodeDirector, true);
+            writer.WriteElement("Writer", Writer, true);
+            writer.WriteElement("EpisodeName", mName, true);
 
             if (FirstAired != null)
             {
-                XmlHelper.WriteElementToXml(writer, "FirstAired", FirstAired.Value.ToString("yyyy-MM-dd"));
+                writer.WriteElement("FirstAired", FirstAired.Value.ToString("yyyy-MM-dd"));
             }
 
-            XmlHelper.WriteElementToXml(writer, "DvdChapter", DvdChapter);
-            XmlHelper.WriteElementToXml(writer, "DvdDiscId", DvdDiscId,true);
-            XmlHelper.WriteElementToXml(writer, "AirsBeforeSeason", AirsBeforeSeason);
-            XmlHelper.WriteElementToXml(writer, "AirsBeforeEpisode", AirsBeforeEpisode);
-            XmlHelper.WriteElementToXml(writer, "AirsAfterSeason", AirsAfterSeason);
-            XmlHelper.WriteElementToXml(writer, "SiteRatingCount", SiteRatingCount);
-            XmlHelper.WriteElementToXml(writer, "AbsoluteNumber", AbsoluteNumber);
-            XmlHelper.WriteElementToXml(writer, "ProductionCode", ProductionCode, true);
-            XmlHelper.WriteElementToXml(writer, "ImdbCode", ImdbCode,true);
-            XmlHelper.WriteElementToXml(writer, "ShowUrl", ShowUrl,true);
-            XmlHelper.WriteElementToXml(writer, "Filename", Filename, true);
+            writer.WriteElement("DvdChapter", DvdChapter);
+            writer.WriteElement("DvdDiscId", DvdDiscId,true);
+            writer.WriteElement("AirsBeforeSeason", AirsBeforeSeason);
+            writer.WriteElement("AirsBeforeEpisode", AirsBeforeEpisode);
+            writer.WriteElement("AirsAfterSeason", AirsAfterSeason);
+            writer.WriteElement("SiteRatingCount", SiteRatingCount);
+            writer.WriteElement("AbsoluteNumber", AbsoluteNumber);
+            writer.WriteElement("ProductionCode", ProductionCode, true);
+            writer.WriteElement("ImdbCode", ImdbCode,true);
+            writer.WriteElement("ShowUrl", ShowUrl,true);
+            writer.WriteElement("Filename", Filename, true);
 
             writer.WriteEndElement(); //Episode
         }

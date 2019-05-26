@@ -584,49 +584,49 @@ namespace TVRename
         {
             writer.WriteStartElement("ShowItem");
 
-            XmlHelper.WriteElementToXml(writer,"UseCustomShowName",UseCustomShowName);
-            XmlHelper.WriteElementToXml(writer,"CustomShowName",CustomShowName);
-            XmlHelper.WriteElementToXml(writer, "UseCustomLanguage", UseCustomLanguage);
-            XmlHelper.WriteElementToXml(writer, "CustomLanguageCode", CustomLanguageCode);
-            XmlHelper.WriteElementToXml(writer,"ShowNextAirdate",ShowNextAirdate);
-            XmlHelper.WriteElementToXml(writer,"TVDBID",TvdbCode);
-            XmlHelper.WriteElementToXml(writer, "FolderBase", AutoAddFolderBase);
-            XmlHelper.WriteElementToXml(writer,"DoRename",DoRename);
-            XmlHelper.WriteElementToXml(writer,"DoMissingCheck",DoMissingCheck);
-            XmlHelper.WriteElementToXml(writer,"CountSpecials",CountSpecials);
-            XmlHelper.WriteElementToXml(writer,"DVDOrder",DvdOrder);
-            XmlHelper.WriteElementToXml(writer,"ForceCheckNoAirdate",ForceCheckNoAirdate);
-            XmlHelper.WriteElementToXml(writer,"ForceCheckFuture",ForceCheckFuture);
-            XmlHelper.WriteElementToXml(writer,"UseSequentialMatch",UseSequentialMatch);
-            XmlHelper.WriteElementToXml(writer, "CustomFolderFormat", AutoAddCustomFolderFormat);
-            XmlHelper.WriteElementToXml(writer, "AutoAddType", (int)AutoAddType );
-            XmlHelper.WriteElementToXml(writer, "BannersLastUpdatedOnDisk", BannersLastUpdatedOnDisk);
-            XmlHelper.WriteElementToXml(writer, "TimeZone", ShowTimeZone);
-            XmlHelper.WriteElementToXml(writer, "ManualFoldersReplaceAutomatic",ManualFoldersReplaceAutomatic);
+            writer.WriteElement("UseCustomShowName",UseCustomShowName);
+            writer.WriteElement("CustomShowName",CustomShowName);
+            writer.WriteElement("UseCustomLanguage", UseCustomLanguage);
+            writer.WriteElement("CustomLanguageCode", CustomLanguageCode);
+            writer.WriteElement("ShowNextAirdate",ShowNextAirdate);
+            writer.WriteElement("TVDBID",TvdbCode);
+            writer.WriteElement("FolderBase", AutoAddFolderBase);
+            writer.WriteElement("DoRename",DoRename);
+            writer.WriteElement("DoMissingCheck",DoMissingCheck);
+            writer.WriteElement("CountSpecials",CountSpecials);
+            writer.WriteElement("DVDOrder",DvdOrder);
+            writer.WriteElement("ForceCheckNoAirdate",ForceCheckNoAirdate);
+            writer.WriteElement("ForceCheckFuture",ForceCheckFuture);
+            writer.WriteElement("UseSequentialMatch",UseSequentialMatch);
+            writer.WriteElement("CustomFolderFormat", AutoAddCustomFolderFormat);
+            writer.WriteElement("AutoAddType", (int)AutoAddType );
+            writer.WriteElement("BannersLastUpdatedOnDisk", BannersLastUpdatedOnDisk);
+            writer.WriteElement("TimeZone", ShowTimeZone);
+            writer.WriteElement("ManualFoldersReplaceAutomatic",ManualFoldersReplaceAutomatic);
 
             writer.WriteStartElement("IgnoreSeasons");
             foreach (int i in IgnoreSeasons)
             {
-                XmlHelper.WriteElementToXml(writer,"Ignore",i);
+                writer.WriteElement("Ignore",i);
             }
             writer.WriteEndElement();
 
             writer.WriteStartElement("AliasNames");
             foreach (string str in AliasNames)
             {
-                XmlHelper.WriteElementToXml(writer,"Alias",str);
+                writer.WriteElement("Alias",str);
             }
             writer.WriteEndElement();
 
-            XmlHelper.WriteElementToXml(writer, "UseCustomSearchURL", UseCustomSearchUrl);
-            XmlHelper.WriteElementToXml(writer, "CustomSearchURL",CustomSearchUrl);
+            writer.WriteElement("UseCustomSearchURL", UseCustomSearchUrl);
+            writer.WriteElement("CustomSearchURL",CustomSearchUrl);
 
             foreach (KeyValuePair<int, List<ShowRule>> kvp in SeasonRules)
             {
                 if (kvp.Value.Count > 0)
                 {
                     writer.WriteStartElement("Rules");
-                    XmlHelper.WriteAttributeToXml(writer ,"SeasonNumber",kvp.Key);
+                    writer.WriteAttributeToXml("SeasonNumber",kvp.Key);
 
                     foreach (ShowRule r in kvp.Value)
                     {
@@ -642,12 +642,12 @@ namespace TVRename
                 {
                     writer.WriteStartElement("SeasonFolders");
 
-                    XmlHelper.WriteAttributeToXml(writer,"SeasonNumber",kvp.Key);
+                    writer.WriteAttributeToXml("SeasonNumber",kvp.Key);
 
                     foreach (string s in kvp.Value)
                     {
                         writer.WriteStartElement("Folder");
-                        XmlHelper.WriteAttributeToXml(writer,"Location",s);
+                        writer.WriteAttributeToXml("Location",s);
                         writer.WriteEndElement(); // Folder
                     }
 

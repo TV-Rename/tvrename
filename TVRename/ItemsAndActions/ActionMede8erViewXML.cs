@@ -47,8 +47,8 @@ namespace TVRename
                 using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
                 {
                     writer.WriteStartElement("FolderTag");
-                    XmlHelper.WriteElementToXml(writer, "ViewMode", "Movie");
-                    XmlHelper.WriteElementToXml(writer, "ViewType", "Video");
+                    writer.WriteElement("ViewMode", "Movie");
+                    writer.WriteElement("ViewType", "Video");
                     writer.WriteEndElement();
                 }
             }

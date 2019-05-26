@@ -66,10 +66,10 @@ namespace TVRename
         public void WriteXml([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("Rule");
-            XmlHelper.WriteElementToXml(writer,"DoWhatNow",(int) DoWhatNow);
-            XmlHelper.WriteElementToXml(writer,"First",First);
-            XmlHelper.WriteElementToXml(writer,"Second",Second);           
-            XmlHelper.WriteElementToXml(writer,"Text",UserSuppliedText);
+            writer.WriteElement("DoWhatNow",(int) DoWhatNow);
+            writer.WriteElement("First",First);
+            writer.WriteElement("Second",Second);           
+            writer.WriteElement("Text",UserSuppliedText);
             writer.WriteEndElement(); // Rule
         }
 

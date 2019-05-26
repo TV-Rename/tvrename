@@ -44,12 +44,12 @@ namespace TVRename
         public void WriteXml([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("Actor");
-            XmlHelper.WriteElementToXml(writer, "Id", ActorId);
-            XmlHelper.WriteElementToXml(writer, "Image", ActorImage);
-            XmlHelper.WriteElementToXml(writer, "Name", ActorName);
-            XmlHelper.WriteElementToXml(writer, "Role", ActorRole);
-            XmlHelper.WriteElementToXml(writer, "SeriesId", ActorSeriesId);
-            XmlHelper.WriteElementToXml(writer, "SortOrder", ActorSortOrder);
+            writer.WriteElement("Id", ActorId);
+            writer.WriteElement("Image", ActorImage);
+            writer.WriteElement("Name", ActorName);
+            writer.WriteElement("Role", ActorRole);
+            writer.WriteElement("SeriesId", ActorSeriesId);
+            writer.WriteElement("SortOrder", ActorSortOrder);
             writer.WriteEndElement();
         }
     }

@@ -9,16 +9,21 @@ namespace TVRename
 {
     public static class XmlHelper
     {
-        public static void WriteStringsToXml([NotNull] IEnumerable<string> strings, [NotNull] XmlWriter writer, [NotNull] string elementName, string stringName)
+        public static void WriteStringsToXml([NotNull] IEnumerable<string> strings, [NotNull] XmlWriter writer, [NotNull] string elementName, [NotNull] string stringName)
         {
             writer.WriteStartElement(elementName);
+            writer.WriteStringsToXml(stringName,strings);
+            writer.WriteEndElement();
+        }
+
+        public static void WriteStringsToXml(this XmlWriter writer,  [NotNull] string elementName, [NotNull] IEnumerable<string> strings)
+        {
             foreach (string ss in strings)
             {
-                writer.WriteStartElement(stringName);
+                writer.WriteStartElement(elementName);
                 writer.WriteValue(ss);
                 writer.WriteEndElement();
             }
-            writer.WriteEndElement();
         }
 
         [NotNull]
@@ -30,29 +35,29 @@ namespace TVRename
             return res;
         }
 
-        public static void WriteElementToXml(XmlWriter writer, string elementName, [CanBeNull] string value)
+        public static void WriteElement(this XmlWriter writer, string elementName, [CanBeNull] string value)
         {
-            WriteElementToXml(writer, elementName, value, false);
+            WriteElement(writer, elementName, value, false);
         }
 
-        public static void WriteElementToXml(XmlWriter writer, string elementName, [CanBeNull] string value,bool ignoreifBlank)
+        public static void WriteElement(this XmlWriter writer, string elementName, [CanBeNull] string value,bool ignoreIfBlank)
         {
-            if (ignoreifBlank && string.IsNullOrEmpty(value))
+            if (ignoreIfBlank && string.IsNullOrEmpty(value))
             {
                 return;
             }
 
             writer.WriteStartElement(elementName);
-            writer.WriteValue(value??"");
+            writer.WriteValue(value??string.Empty);
             writer.WriteEndElement();
         }
 
-        public static void WriteElementToXml([NotNull] XmlWriter writer, [NotNull] string elementName, double value)
+        public static void WriteElement([NotNull] this XmlWriter writer, [NotNull] string elementName, double value)
         {
-            WriteElementToXml(writer, elementName, value, null);
+            WriteElement(writer, elementName, value, null);
         }
 
-        public static void WriteElementToXml([NotNull] XmlWriter writer, [NotNull] string elementName, double value,[CanBeNull] string format)
+        public static void WriteElement([NotNull] this XmlWriter writer, [NotNull] string elementName, double value,[CanBeNull] string format)
         {
             writer.WriteStartElement(elementName);
             if (format is null)
@@ -66,12 +71,12 @@ namespace TVRename
             writer.WriteEndElement();
         }
 
-        public static void WriteElementToXml(XmlWriter writer, string elementName, int value)
+        public static void WriteElement(this XmlWriter writer, string elementName, int value)
         {
-            WriteElementToXml(writer, elementName, value, false);
+            WriteElement(writer, elementName, value, false);
         }
 
-        public static void WriteElementToXml(XmlWriter writer, string elementName, int value,bool ignoreZero)
+        public static void WriteElement(this XmlWriter writer, string elementName, int value,bool ignoreZero)
         {
             if (ignoreZero && value == 0)
             {
@@ -82,13 +87,13 @@ namespace TVRename
             writer.WriteValue(value);
             writer.WriteEndElement();
         }
-        public static void WriteElementToXml([NotNull] XmlWriter writer, [NotNull] string elementName, bool value)
+        public static void WriteElement([NotNull] this XmlWriter writer, [NotNull] string elementName, bool value)
         {
             writer.WriteStartElement(elementName);
             writer.WriteValue(value);
             writer.WriteEndElement();
         }
-        public static void WriteElementToXml([NotNull] XmlWriter writer, [NotNull] string elementName, DateTime? value)
+        public static void WriteElement([NotNull] this XmlWriter writer, [NotNull] string elementName, DateTime? value)
         {
             writer.WriteStartElement(elementName);
             if (value != null)
@@ -99,13 +104,13 @@ namespace TVRename
             writer.WriteEndElement();
         }
 
-        public static void WriteAttributeToXml([NotNull] XmlWriter writer, [NotNull] string attributeName, [NotNull] string value)
+        public static void WriteAttributeToXml([NotNull] this XmlWriter writer, [NotNull] string attributeName, [NotNull] string value)
         {
             writer.WriteStartAttribute(attributeName);
             writer.WriteValue(value);
             writer.WriteEndAttribute();
         }
-        public static void WriteAttributeToXml([NotNull] XmlWriter writer, [NotNull] string attributeName, DateTime?  value)
+        public static void WriteAttributeToXml([NotNull] this XmlWriter writer, [NotNull] string attributeName, DateTime?  value)
         {
             writer.WriteStartAttribute(attributeName);
             if (value != null)
@@ -115,33 +120,33 @@ namespace TVRename
 
             writer.WriteEndAttribute();
         }
-        internal static void WriteElementToXml(XmlWriter writer, string elementName, int? value)
+        internal static void WriteElement(this XmlWriter writer, string elementName, int? value)
         {
             if (value.HasValue)
             {
-                WriteElementToXml(writer, elementName, value.Value);
+                WriteElement(writer, elementName, value.Value);
             }
         }
-        public static void WriteAttributeToXml([NotNull] XmlWriter writer, [NotNull] string attributeName, int value)
+        public static void WriteAttributeToXml([NotNull] this XmlWriter writer, [NotNull] string attributeName, int value)
         {
             writer.WriteStartAttribute(attributeName);
             writer.WriteValue(value);
             writer.WriteEndAttribute();
         }
-        public static void WriteAttributeToXml([NotNull] XmlWriter writer, [NotNull] string attributeName, bool value)
+        public static void WriteAttributeToXml([NotNull] this XmlWriter writer, [NotNull] string attributeName, bool value)
         {
             writer.WriteStartAttribute(attributeName);
             writer.WriteValue(value);
             writer.WriteEndAttribute();
         }
-        public static void WriteAttributeToXml([NotNull] XmlWriter writer, [NotNull] string attributeName, long value)
+        public static void WriteAttributeToXml([NotNull] this XmlWriter writer, [NotNull] string attributeName, long value)
         {
             writer.WriteStartAttribute(attributeName);
             writer.WriteValue(value);
             writer.WriteEndAttribute();
         }
 
-        public static void WriteInfo(XmlWriter writer, string elemName, [CanBeNull] string attribute, [CanBeNull] string attributeVal, [CanBeNull] string value)
+        public static void WriteInfo(this XmlWriter writer, string elemName, [CanBeNull] string attribute, [CanBeNull] string attributeVal, [CanBeNull] string value)
         {
             if (!string.IsNullOrEmpty(value))
             {
@@ -155,7 +160,7 @@ namespace TVRename
             }
         }
 
-        public static void WriteInfo(XmlWriter writer, string elemName, [CanBeNull] string attribute, [CanBeNull] string attributeVal)
+        public static void WriteInfo(this XmlWriter writer, string elemName, [CanBeNull] string attribute, [CanBeNull] string attributeVal)
         {
             if (!string.IsNullOrEmpty(attributeVal))
             {
@@ -289,7 +294,7 @@ namespace TVRename
             return rootElement.Descendants(token).Select(n => new IgnoreItem(n.Value)).ToList();
         }
 
-        internal static void WriteStringsToXml([NotNull] IEnumerable<IgnoreItem> ignores, [NotNull] XmlWriter writer, [NotNull] string elementName, string stringName)
+        internal static void WriteStringsToXml([NotNull] this XmlWriter writer, [NotNull] IEnumerable<IgnoreItem> ignores, [NotNull] string elementName, string stringName)
         {
             writer.WriteStartElement(elementName);
             foreach (IgnoreItem ss in ignores)
@@ -301,7 +306,7 @@ namespace TVRename
             writer.WriteEndElement();
         }
 
-        internal static void WriteStringsToXml([NotNull] PreviouslySeenEpisodes previouslySeenEpisodes, [NotNull] XmlWriter writer, [NotNull] string elementName, string stringName)
+        internal static void WriteStringsToXml([NotNull] this XmlWriter writer, [NotNull] PreviouslySeenEpisodes previouslySeenEpisodes, [NotNull] string elementName, string stringName)
         {
             writer.WriteStartElement(elementName);
             foreach (int ep in previouslySeenEpisodes)

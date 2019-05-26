@@ -133,15 +133,15 @@ namespace TVRename
 
             writer.WriteStartElement("Banner");
 
-            XmlHelper.WriteElementToXml(writer,"id",BannerId);
-            XmlHelper.WriteElementToXml(writer,"BannerPath",BannerPath);
-            XmlHelper.WriteElementToXml(writer,"BannerType",bannerType);
-            XmlHelper.WriteElementToXml(writer, "LanguageId", LanguageId);
-            XmlHelper.WriteElementToXml(writer,"Resolution",resolution);
-            XmlHelper.WriteElementToXml(writer,"Rating",Rating);
-            XmlHelper.WriteElementToXml(writer,"RatingCount",ratingCount);
-            XmlHelper.WriteElementToXml(writer,"Season",SeasonId);  
-            XmlHelper.WriteElementToXml(writer,"ThumbnailPath",thumbnailPath);
+            writer.WriteElement("id",BannerId);
+            writer.WriteElement("BannerPath",BannerPath);
+            writer.WriteElement("BannerType",bannerType);
+            writer.WriteElement("LanguageId", LanguageId);
+            writer.WriteElement("Resolution",resolution);
+            writer.WriteElement("Rating",Rating);
+            writer.WriteElement("RatingCount",ratingCount);
+            writer.WriteElement("Season",SeasonId);  
+            writer.WriteElement("ThumbnailPath",thumbnailPath);
 
             writer.WriteEndElement(); //Banner
         }

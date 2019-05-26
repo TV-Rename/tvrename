@@ -550,21 +550,21 @@ namespace TVRename
             {
                 writer.WriteStartDocument();
                 writer.WriteStartElement("TVRename");
-                XmlHelper.WriteAttributeToXml(writer, "Version", "2.1");
+                writer.WriteAttributeToXml("Version", "2.1");
                 writer.WriteStartElement("Layout");
                 writer.WriteStartElement("Window");
 
                 writer.WriteStartElement("Size");
-                XmlHelper.WriteAttributeToXml(writer, "Width", mLastNonMaximizedSize.Width);
-                XmlHelper.WriteAttributeToXml(writer, "Height", mLastNonMaximizedSize.Height);
+                writer.WriteAttributeToXml("Width", mLastNonMaximizedSize.Width);
+                writer.WriteAttributeToXml("Height", mLastNonMaximizedSize.Height);
                 writer.WriteEndElement(); // size
 
                 writer.WriteStartElement("Location");
-                XmlHelper.WriteAttributeToXml(writer, "X", mLastNonMaximizedLocation.X);
-                XmlHelper.WriteAttributeToXml(writer, "Y", mLastNonMaximizedLocation.Y);
+                writer.WriteAttributeToXml("X", mLastNonMaximizedLocation.X);
+                writer.WriteAttributeToXml("Y", mLastNonMaximizedLocation.Y);
                 writer.WriteEndElement(); // Location
 
-                XmlHelper.WriteElementToXml(writer, "Maximized", WindowState == FormWindowState.Maximized);
+                writer.WriteElement("Maximized", WindowState == FormWindowState.Maximized);
 
                 writer.WriteEndElement(); // window
 
@@ -572,8 +572,8 @@ namespace TVRename
                 WriteColWidthsXml("AllInOne", writer);
 
                 writer.WriteStartElement("Splitter");
-                XmlHelper.WriteAttributeToXml(writer, "Distance", splitContainer1.SplitterDistance);
-                XmlHelper.WriteAttributeToXml(writer, "HTMLCollapsed", splitContainer1.Panel2Collapsed);
+                writer.WriteAttributeToXml("Distance", splitContainer1.SplitterDistance);
+                writer.WriteAttributeToXml("HTMLCollapsed", splitContainer1.Panel2Collapsed);
                 writer.WriteEndElement(); // splitter
 
                 writer.WriteEndElement(); // Layout
@@ -593,10 +593,10 @@ namespace TVRename
             }
 
             writer.WriteStartElement("ColumnWidths");
-            XmlHelper.WriteAttributeToXml(writer, "For", thingName);
+            writer.WriteAttributeToXml("For", thingName);
             foreach (ColumnHeader lvc in lv.Columns)
             {
-                XmlHelper.WriteElementToXml(writer, "Width", lvc.Width);
+                writer.WriteElement("Width", lvc.Width);
             }
 
             // ReSharper disable once CommentTypo

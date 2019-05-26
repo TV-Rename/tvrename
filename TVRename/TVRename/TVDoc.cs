@@ -185,7 +185,7 @@ namespace TVRename
                 writer.WriteStartDocument();
                 writer.WriteStartElement("TVRename");
 
-                XmlHelper.WriteAttributeToXml(writer, "Version", "2.1");
+                writer.WriteAttributeToXml("Version", "2.1");
 
                 TVSettings.Instance.WriteXML(writer); // <Settings>
 
@@ -201,8 +201,8 @@ namespace TVRename
                 XmlHelper.WriteStringsToXml(TVSettings.Instance.IgnoreFolders, writer, "IgnoreFolders", "Folder");
                 XmlHelper.WriteStringsToXml(TVSettings.Instance.DownloadFolders, writer, "FinderSearchFolders","Folder");
                 XmlHelper.WriteStringsToXml(TVSettings.Instance.IgnoredAutoAddHints, writer, "IgnoredAutoAddHints","Hint");
-                XmlHelper.WriteStringsToXml(TVSettings.Instance.Ignore, writer, "IgnoreItems","Ignore");
-                XmlHelper.WriteStringsToXml(TVSettings.Instance.PreviouslySeenEpisodes, writer, "PreviouslySeenEpisodes", "Episode");
+                writer.WriteStringsToXml(TVSettings.Instance.Ignore, "IgnoreItems","Ignore");
+                writer.WriteStringsToXml(TVSettings.Instance.PreviouslySeenEpisodes, "PreviouslySeenEpisodes", "Episode");
 
                 writer.WriteEndElement(); // tvrename
                 writer.WriteEndDocument();

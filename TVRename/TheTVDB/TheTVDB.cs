@@ -268,7 +268,7 @@ namespace TVRename
                     {
                         writer.WriteStartDocument();
                         writer.WriteStartElement("Data");
-                        XmlHelper.WriteAttributeToXml(writer, "time",
+                        writer.WriteAttributeToXml("time",
                             latestUpdateTime.LastSuccessfulServerUpdateTimecode());
 
                         foreach (KeyValuePair<int, SeriesInfo> kvp in series)
@@ -301,7 +301,7 @@ namespace TVRename
                         {
                             writer.WriteStartElement("BannersItem");
 
-                            XmlHelper.WriteElementToXml(writer, "SeriesId", kvp.Key);
+                            writer.WriteElement("SeriesId", kvp.Key);
 
                             writer.WriteStartElement("Banners");
 
@@ -1602,8 +1602,7 @@ namespace TVRename
             catch (WebException ex)
             {
                 //no images for chosen language
-                Logger.Warn(ex,
-                    $"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}");
+                Logger.Warn($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}");
             }
 
             return imageTypes;
