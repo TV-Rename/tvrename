@@ -115,11 +115,11 @@ namespace TVRename
 
             writer.WriteEndAttribute();
         }
-        internal static void WriteElementToXml(XmlWriter writer, string attributeName, int? value)
+        internal static void WriteElementToXml(XmlWriter writer, string elementName, int? value)
         {
             if (value.HasValue)
             {
-                WriteElementToXml(writer,attributeName,value.Value);
+                WriteElementToXml(writer, elementName, value.Value);
             }
         }
         public static void WriteAttributeToXml([NotNull] XmlWriter writer, [NotNull] string attributeName, int value)

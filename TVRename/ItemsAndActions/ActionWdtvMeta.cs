@@ -72,14 +72,17 @@ namespace TVRename
                     writer.WriteStartElement("show");
 
                     XmlHelper.WriteElementToXml(writer, "title", SelectedShow.ShowName);
+                    XmlHelper.WriteElementToXml(writer, "premiered", SelectedShow.TheSeries()?.FirstAired);
+                    XmlHelper.WriteElementToXml(writer, "year", SelectedShow.TheSeries()?.Year);
+                    XmlHelper.WriteElementToXml(writer, "status", SelectedShow.TheSeries()?.Status);
+                    XmlHelper.WriteElementToXml(writer, "mpaa", SelectedShow.TheSeries()?.ContentRating);
+                    XmlHelper.WriteElementToXml(writer, "tvdbid", SelectedShow.TheSeries()?.TvdbCode);
+                    XmlHelper.WriteElementToXml(writer, "plot", SelectedShow.TheSeries()?.Overview);
 
                     foreach (string genre in SelectedShow.Genres)
                     {
                         XmlHelper.WriteElementToXml(writer, "genre", genre);
                     }
-
-                    XmlHelper.WriteElementToXml(writer, "premiered", SelectedShow.TheSeries()?.FirstAired);
-                    XmlHelper.WriteElementToXml(writer, "year", SelectedShow.TheSeries()?.Year);
 
                     float siteRating =SelectedShow.TheSeries()?.SiteRating??0 * 10;
 
@@ -89,19 +92,13 @@ namespace TVRename
                         XmlHelper.WriteElementToXml(writer, "rating", intSiteRating);
                     }
 
-                    XmlHelper.WriteElementToXml(writer, "status", SelectedShow.TheSeries()?.Status);
-
-                    XmlHelper.WriteElementToXml(writer, "mpaa", SelectedShow.TheSeries()?.ContentRating);
                     XmlHelper.WriteInfo(writer, "moviedb", "imdb", "id", SelectedShow.TheSeries()?.Imdb);
-                    XmlHelper.WriteElementToXml(writer, "tvdbid", SelectedShow.TheSeries()?.TvdbCode);
 
                     string rt = SelectedShow.TheSeries()?.Runtime;
                     if (!string.IsNullOrEmpty(rt))
                     {
                         XmlHelper.WriteElementToXml(writer, "runtime", rt + " min");
                     }
-
-                    XmlHelper.WriteElementToXml(writer, "plot", SelectedShow.TheSeries()?.Overview);
 
                     writer.WriteEndElement(); // show
                     writer.WriteEndElement(); // tvshow
