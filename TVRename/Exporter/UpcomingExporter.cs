@@ -33,13 +33,15 @@ namespace TVRename
                 // windows explorer tends to lose explorer windows on shares when slept/resumed, too, so its not
                 // just me :P
 
-                using MemoryStream ms = new MemoryStream();
-                List<ProcessedEpisode> lpe = doc.Library.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
-                    TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
-
-                if (Generate(ms, lpe))
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    return Encoding.ASCII.GetString(ms.ToArray());
+                    List<ProcessedEpisode> lpe = doc.Library.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
+                        TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
+
+                    if (Generate(ms, lpe))
+                    {
+                        return Encoding.ASCII.GetString(ms.ToArray());
+                    }
                 }
 
                 LOGGER.Error("Failed to generate records to put into Export file at: {0}", Location());
