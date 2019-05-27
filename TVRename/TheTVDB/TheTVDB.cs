@@ -942,19 +942,24 @@ namespace TVRename
 
         private static long GetUpdateTime([NotNull] JObject jsonUpdateResponse)
         {
-            long maxUpdateTime;
             try
             {
                 IEnumerable<long> updateTimes = from a in jsonUpdateResponse["data"] select (long)a["lastUpdated"];
-                maxUpdateTime = updateTimes.DefaultIfEmpty(0).Max();
+                long maxUpdateTime = updateTimes.DefaultIfEmpty(0).Max();
+
+                //Add a day to take into account any timezone issues
+                if (maxUpdateTime > DateTime.UtcNow.ToUnixTime()+(24*60*60))
+                {
+                    Logger.Error($"Assuming up to date: Could not parse update time {maxUpdateTime} from: {jsonUpdateResponse}");
+                    return DateTime.UtcNow.ToUnixTime();
+                }
+                return maxUpdateTime;
             }
             catch (Exception e)
             {
                 Logger.Error(e, jsonUpdateResponse.ToString());
-                maxUpdateTime = 0;
+                return 0;
             }
-
-            return maxUpdateTime;
         }
 
         private long GetUpdateTimeFromShows()
