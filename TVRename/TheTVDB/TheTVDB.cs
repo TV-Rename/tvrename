@@ -42,46 +42,63 @@ namespace TVRename
             }
         }
 
-        class UpdateTimeTracker
+        private class UpdateTimeTracker
         {
+            public UpdateTimeTracker()
+            {
+                SetTimes(0);
+            }
+
             private long newSrvTime; //tme from the latest update
             private long srvTime; // only update this after a 100% successful download
 
             public bool HasIncreased => srvTime < newSrvTime;
             public void Reset()
             {
-                newSrvTime = DateTime.UtcNow.ToUnixTime();
+                SetTimes(DateTime.UtcNow.ToUnixTime());
+            }
+
+            private void SetTimes(long newTime)
+            {
+                newSrvTime = newTime;
                 srvTime = newSrvTime;
             }
 
-            public void Initialise()
-            {
-                newSrvTime = 0;
-                srvTime = 0;
-            }
-
-            public override string ToString() => $"{Helpers.FromUnixTime(newSrvTime).ToLocalTime()}";
+            public override string ToString() => $"System is up to date from: {srvTime} to {newSrvTime}. ie {LastSuccessfulServerUpdateDateTime()} to {ProposedServerUpdateDateTime()}";
             public void RecordSuccessfulUpdate()
             {
                 srvTime = newSrvTime;
             }
 
             public long LastSuccessfulServerUpdateTimecode() => srvTime;
-
             public DateTime LastSuccessfulServerUpdateDateTime() => Helpers.FromUnixTime(srvTime).ToLocalTime();
+            public DateTime ProposedServerUpdateDateTime() => Helpers.FromUnixTime(newSrvTime).ToLocalTime();
 
             public void Load([CanBeNull] string time)
             {
-                newSrvTime = (time is null) ? 0 : long.Parse(time);
-                srvTime = newSrvTime;
+                long newTime = (time is null) ? 0 : long.Parse(time);
+                if (newTime > DateTime.UtcNow.ToUnixTime() + (24 * 60 * 60))
+                {
+                    Logger.Error($"Asked to update time to: {newTime} by parsing {time}");
+                    newTime = DateTime.UtcNow.ToUnixTime();
+                }
+                SetTimes(newTime);
             }
 
             public void RegisterServerUpdate(long maxUpdateTime)
             {
-                newSrvTime =
-                    Math.Max(newSrvTime,
-                        Math.Max(maxUpdateTime,
-                            srvTime)); // just in case the new update time is no better than the prior one
+                if (maxUpdateTime > DateTime.UtcNow.ToUnixTime() + (24 * 60 * 60))
+                {
+                    Logger.Error($"Asked to update time to: {maxUpdateTime}");
+                    newSrvTime = DateTime.UtcNow.ToUnixTime();
+                }
+                else
+                { 
+                    newSrvTime =
+                        Math.Max(newSrvTime,
+                            Math.Max(maxUpdateTime,
+                                srvTime)); // just in case the new update time is no better than the prior one
+                }
             }
         }
 
@@ -163,7 +180,7 @@ namespace TVRename
             //assume that the data is up to date (this will be overridden by the value in the XML if we have a prior install)
             //If we have no prior install then the app has no shows and is by definition up-to-date
             latestUpdateTime = new UpdateTimeTracker();
-            latestUpdateTime.Initialise();
+
             Logger.Info($"Assumed we have updates until {latestUpdateTime}");
 
             LoadOk = (loadFrom is null) || LoadCache(loadFrom);
@@ -697,7 +714,7 @@ namespace TVRename
                 {
                     moreUpdates = false;
                     string errorMessage =
-                        $"We have run {MAX_NUMBER_OF_CALLS} weeks of updates and we are not up to date.  The system will need to check again once this set of updates have been processed.{Environment.NewLine}Last Updated time was {latestUpdateTime.LastSuccessfulServerUpdateDateTime()}{Environment.NewLine}New Last Updated time is {latestUpdateTime}{Environment.NewLine}{Environment.NewLine}If the dates keep getting more recent then let the system keep getting {MAX_NUMBER_OF_CALLS} week blocks of updates, otherwise consider a 'Force Refresh All'";
+                        $"We have run {MAX_NUMBER_OF_CALLS} weeks of updates and we are not up to date.  The system will need to check again once this set of updates have been processed.{Environment.NewLine}Last Updated time was {latestUpdateTime.LastSuccessfulServerUpdateDateTime()}{Environment.NewLine}New Last Updated time is {latestUpdateTime.ProposedServerUpdateDateTime()}{Environment.NewLine}{Environment.NewLine}If the dates keep getting more recent then let the system keep getting {MAX_NUMBER_OF_CALLS} week blocks of updates, otherwise consider a 'Force Refresh All'";
 
                     Logger.Error(errorMessage);
                     if ((!args.Unattended) && (!args.Hide) && Environment.UserInteractive)
@@ -1168,7 +1185,7 @@ namespace TVRename
                 {
                     string time = x.Attribute("time")?.Value;
                     latestUpdateTime.Load(time);
-                    Logger.Info($"Loaded file with updates until {latestUpdateTime}");
+                    Logger.Info($"Loaded file with updates until {latestUpdateTime.LastSuccessfulServerUpdateDateTime()}");
 
                     foreach (SeriesInfo si in x.Descendants("Series").Select(seriesXml => new SeriesInfo(seriesXml)))
                     {
