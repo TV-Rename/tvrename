@@ -146,7 +146,7 @@ namespace TVRename
 
         public static long ToUnixTime(this DateTime date) => Convert.ToInt64((date.ToUniversalTime() - Epoch).TotalSeconds);
 
-        public static DateTime FromUnixTime(long unixTime) => Epoch.AddSeconds(unixTime);
+        public static DateTime FromUnixTime(double unixTime) => Epoch.AddSeconds(unixTime);
 
         private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private static readonly DateTime WindowsStartDateTime = new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc);

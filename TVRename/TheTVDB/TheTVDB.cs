@@ -594,6 +594,7 @@ namespace TVRename
             if (updateFromEpochTime == 0)
             {
                 Say("");
+                Logger.Error($"Not updating as update time is 0. Need to do a Full Refresh. {latestUpdateTime}");
                 return true; // that's it for now
             }
 
@@ -601,7 +602,7 @@ namespace TVRename
 
             //We need to ask for updates in blocks of 7 days
             //We'll keep asking until we get to a date within 7 days of today 
-            //(up to a maximum of 10 - if you are this far behind then you may need multiple refreshes)
+            //(up to a maximum of 52 - if you are this far behind then you may need multiple refreshes)
 
             List<JObject> updatesResponses = new List<JObject>();
 
@@ -613,7 +614,17 @@ namespace TVRename
                 JObject jsonUpdateResponse;
 
                 //If this date is in the last week then this needs to be the last call to the update
-                DateTime requestedTime = Helpers.FromUnixTime(updateFromEpochTime).ToUniversalTime();
+                DateTime requestedTime;
+                try
+                {
+                    requestedTime = Helpers.FromUnixTime(updateFromEpochTime).ToUniversalTime();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, $"Could not get updates: LastSuccessFullServer {latestUpdateTime.LastSuccessfulServerUpdateTimecode()}: Series Time: {GetUpdateTimeFromShows()} {latestUpdateTime}");
+                    requestedTime = Helpers.FromUnixTime(0).ToUniversalTime();
+                }
+
                 DateTime now = DateTime.UtcNow;
                 if ((now - requestedTime).TotalDays < 7)
                 {
@@ -628,8 +639,7 @@ namespace TVRename
                 }
                 catch (WebException ex)
                 {
-                    Logger.Error(ex,"Error obtaining " + uri + ": from lastupdated query -since(local) " +
-                                Helpers.FromUnixTime(updateFromEpochTime).ToLocalTime());
+                    Logger.Error(ex,$"Error obtaining {uri}: from lastupdated query since (local) {requestedTime.ToLocalTime()}");
 
                     Say("");
                     LastError = ex.Message;
@@ -649,12 +659,11 @@ namespace TVRename
                     LastError = ex.Message;
 
                     string msg = "Unable to get latest updates from TVDB " + Environment.NewLine +
-                                 "Trying to get updates since " + Helpers.FromUnixTime(updateFromEpochTime).ToLocalTime() +
+                                 "Trying to get updates since " + requestedTime.ToLocalTime() +
                                  Environment.NewLine + Environment.NewLine +
                                  "If the date is very old, please consider a full refresh";
 
-                    Logger.Warn("Error obtaining " + uri + ": from lastupdated query -since(local) " +
-                                Helpers.FromUnixTime(updateFromEpochTime).ToLocalTime());
+                    Logger.Warn($"Error obtaining {uri}: from lastupdated query -since(local) {requestedTime.ToLocalTime()}");
 
                     Logger.Warn(ex, msg);
 
@@ -676,7 +685,7 @@ namespace TVRename
                     latestUpdateTime.RegisterServerUpdate(maxUpdateTime);
 
                     Logger.Info(
-                        $"Obtained {numberOfResponses} responses from lastupdated query #{numberofCallsMade} - since (local) {Helpers.FromUnixTime(updateFromEpochTime).ToLocalTime()} - to (local) {latestUpdateTime}");
+                        $"Obtained {numberOfResponses} responses from lastupdated query #{numberofCallsMade} - since (local) {requestedTime.ToLocalTime()} - to (local) {latestUpdateTime}");
 
                     updateFromEpochTime = maxUpdateTime;
                 }
