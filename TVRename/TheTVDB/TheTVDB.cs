@@ -621,7 +621,8 @@ namespace TVRename
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex, $"Could not get updates: LastSuccessFullServer {latestUpdateTime.LastSuccessfulServerUpdateTimecode()}: Series Time: {GetUpdateTimeFromShows()} {latestUpdateTime}");
+                    Logger.Error(ex, $"Could not get updates({numberofCallsMade}): LastSuccessFullServer {latestUpdateTime.LastSuccessfulServerUpdateTimecode()}: Series Time: {GetUpdateTimeFromShows()} {latestUpdateTime}, Tried to parse {updateFromEpochTime}");
+                    //Have to do something!!
                     requestedTime = Helpers.FromUnixTime(0).ToUniversalTime();
                 }
 
