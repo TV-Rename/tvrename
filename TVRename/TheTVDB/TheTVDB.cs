@@ -981,13 +981,13 @@ namespace TVRename
 
         private long GetUpdateTimeFromShows()
         {
-            long theTime = long.MaxValue;
+            long? theTime = null;
 
             // we can use the oldest thing we have locally.  It isn't safe to use the newest thing.
             // This will only happen the first time we do an update, so a false _all update isn't too bad.
             foreach (SeriesInfo ser in series.Values)
             {
-                if (((ser.SrvLastUpdated != 0) && (ser.SrvLastUpdated < theTime)))
+                if (((ser.SrvLastUpdated != 0) && (ser.SrvLastUpdated < (theTime??long.MaxValue))))
                 {
                     theTime = ser.SrvLastUpdated;
                 }
@@ -997,7 +997,7 @@ namespace TVRename
                 {
                     foreach (long seasonUpdateTime in seas.Episodes.Values.Select(episode => episode.SrvLastUpdated).Where(l => l>0))
                     {
-                        if ((seasonUpdateTime < theTime))
+                        if ((seasonUpdateTime < (theTime ?? long.MaxValue)))
                         {
                             theTime = seasonUpdateTime;
                         }
@@ -1005,7 +1005,7 @@ namespace TVRename
                 }
             }
 
-            return theTime;
+            return theTime??0;
         }
 
         private void MarkPlaceholdersDirty()
