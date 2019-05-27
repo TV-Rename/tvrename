@@ -307,7 +307,8 @@ namespace TVRename
                     string value = (prop.ValueAsObject is null)
                         ? ""
                         : prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
-                    sb.AppendLine($"{prop.CanonicalName} = {value}" );
+
+                    sb.AppendLine($"{prop.CanonicalName} = {value}");
                 }
 
                 return sb.ToString();

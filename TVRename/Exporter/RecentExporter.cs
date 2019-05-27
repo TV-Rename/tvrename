@@ -47,11 +47,13 @@ namespace TVRename
 
                         file.WriteLine(GenerateRecord(episode, files.First(), name, length));
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
-                        LOGGER.Error(ex,$"Had to skip saving {episode?.Show?.ShowName} S{episode?.AppropriateSeasonNumber}E{episode?.AppropriateEpNum} saving to {Location()}");
+                        LOGGER.Error(ex,
+                            $"Had to skip saving {episode?.Show?.ShowName} S{episode?.AppropriateSeasonNumber}E{episode?.AppropriateEpNum} saving to {Location()}");
                     }
                 }
+
                 file.WriteLine(GenerateFooter());
             }
         }

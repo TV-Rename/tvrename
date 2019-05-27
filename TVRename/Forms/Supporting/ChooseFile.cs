@@ -37,8 +37,8 @@ namespace TVRename
             leftFile = left;
             rightFile = right;
 
-            (int leftFilmLength,bool leftFrameUnknown,int leftFrameWidth) = UpdateFields(left, txtNameLeft, txtDimensionsLeft, txtLengthLeft, txtSizeLeft, txtPathLeft);
-            (int rightFilmLength, bool rightFrameUnknown, int rightFrameWidth) = UpdateFields(right, lblNameRight, lblDimensionsRight, lblLengthRight, lblSizeRight, txtPathRight);
+            (int leftFrameWidth, bool leftFrameUnknown,int leftFilmLength) = UpdateFields(left, txtNameLeft, txtDimensionsLeft, txtLengthLeft, txtSizeLeft, txtPathLeft);
+            (int rightFrameWidth, bool rightFrameUnknown, int rightFilmLength) = UpdateFields(right, lblNameRight, lblDimensionsRight, lblLengthRight, lblSizeRight, txtPathRight);
 
             SetBoldFileSize(left, right);
 

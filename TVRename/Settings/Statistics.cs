@@ -73,10 +73,11 @@ namespace TVRename
             {
                 using (XmlReader reader = XmlReader.Create(filename, settings))
                 {
-                    XmlSerializer xs = new XmlSerializer(typeof (TVRenameStats));
+                    XmlSerializer xs = new XmlSerializer(typeof(TVRenameStats));
                     sc = (TVRenameStats) xs.Deserialize(reader);
-                    System.Diagnostics.Debug.Assert(sc != null);
                 }
+
+                System.Diagnostics.Debug.Assert(sc != null);
             }
             catch (Exception e)
             {
@@ -103,7 +104,7 @@ namespace TVRename
             XmlWriterSettings settings = new XmlWriterSettings {Indent = true, NewLineOnAttributes = true};
             using (XmlWriter writer = XmlWriter.Create(toFile, settings))
             {
-                XmlSerializer xs = new XmlSerializer(typeof (TVRenameStats));
+                XmlSerializer xs = new XmlSerializer(typeof(TVRenameStats));
                 xs.Serialize(writer, this);
             }
         }

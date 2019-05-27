@@ -540,26 +540,26 @@ namespace TVRename
         {
             writer.WriteStartElement("Series");
 
-            XmlHelper.WriteElementToXml(writer, "id", TvdbCode);
-            XmlHelper.WriteElementToXml(writer, "SeriesName", Name);
-            XmlHelper.WriteElementToXml(writer, "lastupdated", SrvLastUpdated);
-            XmlHelper.WriteElementToXml(writer, "LanguageId", LanguageId);
-            XmlHelper.WriteElementToXml(writer, "airsDayOfWeek", AirsDay);
-            XmlHelper.WriteElementToXml(writer, "Airs_Time", airsTimeString );
-            XmlHelper.WriteElementToXml(writer, "banner", BannerString);
-            XmlHelper.WriteElementToXml(writer, "imdbId", Imdb);
-            XmlHelper.WriteElementToXml(writer, "network", Network);
-            XmlHelper.WriteElementToXml(writer, "overview", Overview);
-            XmlHelper.WriteElementToXml(writer, "rating", ContentRating);
-            XmlHelper.WriteElementToXml(writer, "runtime", Runtime);
-            XmlHelper.WriteElementToXml(writer, "seriesId", SeriesId);
-            XmlHelper.WriteElementToXml(writer, "status", Status);
-            XmlHelper.WriteElementToXml(writer, "siteRating", SiteRating,"0.##");
-            XmlHelper.WriteElementToXml(writer, "siteRatingCount", SiteRatingVotes);
+            writer.WriteElement("id", TvdbCode);
+            writer.WriteElement("SeriesName", Name);
+            writer.WriteElement("lastupdated", SrvLastUpdated);
+            writer.WriteElement("LanguageId", LanguageId);
+            writer.WriteElement("airsDayOfWeek", AirsDay);
+            writer.WriteElement("Airs_Time", airsTimeString );
+            writer.WriteElement("banner", BannerString);
+            writer.WriteElement("imdbId", Imdb);
+            writer.WriteElement("network", Network);
+            writer.WriteElement("overview", Overview);
+            writer.WriteElement("rating", ContentRating);
+            writer.WriteElement("runtime", Runtime);
+            writer.WriteElement("seriesId", SeriesId);
+            writer.WriteElement("status", Status);
+            writer.WriteElement("siteRating", SiteRating,"0.##");
+            writer.WriteElement("siteRatingCount", SiteRatingVotes);
 
             if (FirstAired != null)
             {
-                XmlHelper.WriteElementToXml(writer, "FirstAired", FirstAired.Value.ToString("yyyy-MM-dd"));
+                writer.WriteElement("FirstAired", FirstAired.Value.ToString("yyyy-MM-dd"));
             }
 
             writer.WriteStartElement("Actors");
@@ -572,14 +572,14 @@ namespace TVRename
             writer.WriteStartElement("Aliases");
             foreach (string a in aliases)
             {
-                XmlHelper.WriteElementToXml(writer, "Alias", a);
+                writer.WriteElement("Alias", a);
             }
             writer.WriteEndElement(); //Aliases
 
             writer.WriteStartElement("Genres");
             foreach (string a in genres)
             {
-                XmlHelper.WriteElementToXml(writer, "Genre", a);
+                writer.WriteElement("Genre", a);
             }
             writer.WriteEndElement(); //Genres
 

@@ -37,7 +37,8 @@ namespace TVRename
                     }
                     catch (Exception ex)
                     {
-                        LOGGER.Error(ex,$"Skipped adding {si.ShowName} to the outpur HTML as it is missing some data. Please try checking the settings and doing a force refresh on the show.");
+                        LOGGER.Error(ex,
+                            $"Skipped adding {si.ShowName} to the outpur HTML as it is missing some data. Please try checking the settings and doing a force refresh on the show.");
                     }
                 }
 

@@ -133,7 +133,7 @@ namespace TVRename
                         if ((reader.Name == "tvdbid") && reader.IsStartElement())
                         {
                             string s = reader.ReadElementContentAsString();
-                            bool success = int.TryParse(s,out int x);
+                            bool success = int.TryParse(s, out int x);
                             if (success && x != -1)
                             {
                                 return x;

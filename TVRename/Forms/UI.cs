@@ -18,6 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
+using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
@@ -549,21 +550,21 @@ namespace TVRename
             {
                 writer.WriteStartDocument();
                 writer.WriteStartElement("TVRename");
-                XmlHelper.WriteAttributeToXml(writer, "Version", "2.1");
+                writer.WriteAttributeToXml("Version", "2.1");
                 writer.WriteStartElement("Layout");
                 writer.WriteStartElement("Window");
 
                 writer.WriteStartElement("Size");
-                XmlHelper.WriteAttributeToXml(writer, "Width", mLastNonMaximizedSize.Width);
-                XmlHelper.WriteAttributeToXml(writer, "Height", mLastNonMaximizedSize.Height);
+                writer.WriteAttributeToXml("Width", mLastNonMaximizedSize.Width);
+                writer.WriteAttributeToXml("Height", mLastNonMaximizedSize.Height);
                 writer.WriteEndElement(); // size
 
                 writer.WriteStartElement("Location");
-                XmlHelper.WriteAttributeToXml(writer, "X", mLastNonMaximizedLocation.X);
-                XmlHelper.WriteAttributeToXml(writer, "Y", mLastNonMaximizedLocation.Y);
+                writer.WriteAttributeToXml("X", mLastNonMaximizedLocation.X);
+                writer.WriteAttributeToXml("Y", mLastNonMaximizedLocation.Y);
                 writer.WriteEndElement(); // Location
 
-                XmlHelper.WriteElementToXml(writer, "Maximized", WindowState == FormWindowState.Maximized);
+                writer.WriteElement("Maximized", WindowState == FormWindowState.Maximized);
 
                 writer.WriteEndElement(); // window
 
@@ -571,8 +572,8 @@ namespace TVRename
                 WriteColWidthsXml("AllInOne", writer);
 
                 writer.WriteStartElement("Splitter");
-                XmlHelper.WriteAttributeToXml(writer, "Distance", splitContainer1.SplitterDistance);
-                XmlHelper.WriteAttributeToXml(writer, "HTMLCollapsed", splitContainer1.Panel2Collapsed);
+                writer.WriteAttributeToXml("Distance", splitContainer1.SplitterDistance);
+                writer.WriteAttributeToXml("HTMLCollapsed", splitContainer1.Panel2Collapsed);
                 writer.WriteEndElement(); // splitter
 
                 writer.WriteEndElement(); // Layout
@@ -592,10 +593,10 @@ namespace TVRename
             }
 
             writer.WriteStartElement("ColumnWidths");
-            XmlHelper.WriteAttributeToXml(writer, "For", thingName);
+            writer.WriteAttributeToXml("For", thingName);
             foreach (ColumnHeader lvc in lv.Columns)
             {
-                XmlHelper.WriteElementToXml(writer, "Width", lvc.Width);
+                writer.WriteElement("Width", lvc.Width);
             }
 
             // ReSharper disable once CommentTypo
@@ -1781,7 +1782,6 @@ namespace TVRename
                     {
                         BrowseForMissingItem((ItemMissing)mLastActionsClicked[0]);
                         mLastActionsClicked = null;
-                        FillActionList();
                     }
                     break;
                 case RightClickCommands.kActionIgnore:
@@ -1845,15 +1845,20 @@ namespace TVRename
                 return;
             }
 
+            ManuallyAddFileForItem(mi, openFile.FileName);
+        }
+
+        private void ManuallyAddFileForItem([NotNull] ItemMissing mi, string fileName)
+        {
             // make new Item for copying/moving to specified location
-            FileInfo from = new FileInfo(openFile.FileName);
+            FileInfo from = new FileInfo(fileName);
             FileInfo to = new FileInfo(mi.TheFileNoExt + from.Extension);
             mDoc.TheActionList.Add(
                 new ActionCopyMoveRename(
                     TVSettings.Instance.LeaveOriginals
                         ? ActionCopyMoveRename.Op.copy
                         : ActionCopyMoveRename.Op.move, from, to
-                    , mi.Episode,true, mi));
+                    , mi.Episode, true, mi));
 
             // and remove old Missing item
             mDoc.TheActionList.Remove(mi);
@@ -1861,13 +1866,21 @@ namespace TVRename
             // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
             DownloadIdentifiersController di = new DownloadIdentifiersController();
             mDoc.TheActionList.Add(di.ProcessEpisode(mi.Episode, to));
+
+            //If keep together is active then we may want to copy over related files too
+            if (TVSettings.Instance.KeepTogether)
+            {
+                FileFinder.KeepTogether(mDoc.TheActionList, false, true);
+            }
+
+            FillActionList();
         }
 
-        private void OpenFolderForShow(int fnum)
+        private void OpenFolderForShow(int foldernum)
         {
-            if (mFoldersToOpen != null && fnum >= 0 && fnum < mFoldersToOpen.Count)
+            if (mFoldersToOpen != null && foldernum >= 0 && foldernum < mFoldersToOpen.Count)
             {
-                string folder = mFoldersToOpen[fnum];
+                string folder = mFoldersToOpen[foldernum];
 
                 if (Directory.Exists(folder))
                 {
@@ -2154,10 +2167,14 @@ namespace TVRename
         {
             UpdateTimer.Stop();
 
-            Task<Release> tuv = VersionUpdater.CheckForUpdatesAsync();
-            NotifyUpdates(await tuv.ConfigureAwait(false), false);
-        }
+            Dispatcher uiDisp = Dispatcher.CurrentDispatcher;
 
+            Task<Release> tuv = VersionUpdater.CheckForUpdatesAsync();
+            Release result = await tuv.ConfigureAwait(false);
+
+            uiDisp.Invoke(() => NotifyUpdates(result, false));
+        }
+        
         private void BGDownloadTimer_Tick(object sender, EventArgs e)
         {
             if (busy != 0)
@@ -2484,7 +2501,7 @@ namespace TVRename
                 {
                     lock (TheTVDB.SERIES_LOCK)
                     {
-                    mDoc.Library.Add(si);
+                        mDoc.Library.Add(si);
                     }
 
                     ShowAddedOrEdited(false,false);
@@ -3699,7 +3716,7 @@ namespace TVRename
         {
             UseWaitCursor = true;
             ShowSummary f = new ShowSummary(mDoc);
-            await Task.Run(() => f.GenerateData()).ConfigureAwait(false);
+            await Task.Run(() => f.GenerateData());
             f.PopulateGrid();
             UseWaitCursor = false;
             f.Show();
@@ -3757,30 +3774,7 @@ namespace TVRename
             }
 
             // Only want the first file if multiple files were dragged across.
-            FileInfo from = new FileInfo(files[0]);
-            FileInfo to = new FileInfo(mi.TheFileNoExt + from.Extension);
-
-            mDoc.TheActionList.Add(
-                new ActionCopyMoveRename(
-                    TVSettings.Instance.LeaveOriginals
-                        ? ActionCopyMoveRename.Op.copy
-                        : ActionCopyMoveRename.Op.move, from, to
-                    , mi.Episode, true, mi));
-
-            // and remove old Missing item
-            mDoc.TheActionList.Remove(mi);
-            DownloadIdentifiersController di = new DownloadIdentifiersController();
-
-            // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
-            mDoc.TheActionList.Add(di.ProcessEpisode(mi.Episode, to));
-
-            //If keep together is active then we may want to copy over related files too
-            if (TVSettings.Instance.KeepTogether)
-            {
-                FileFinder.KeepTogether(mDoc.TheActionList,false,true);
-            }
-
-            FillActionList();
+            ManuallyAddFileForItem(mi, files[0]);
         }
 
         private void lvAction_DragEnter(object sender, [NotNull] DragEventArgs e)
@@ -3818,8 +3812,12 @@ namespace TVRename
 
         private async void checkForNewVersionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Task<Release> uv = VersionUpdater.CheckForUpdatesAsync();
-            NotifyUpdates(await uv.ConfigureAwait(false), true);
+            Dispatcher uiDisp = Dispatcher.CurrentDispatcher;
+
+            Task<Release> tuv = VersionUpdater.CheckForUpdatesAsync();
+            Release result = await tuv.ConfigureAwait(false);
+
+            uiDisp.Invoke(() => NotifyUpdates(result, true));
         }
 
         private void NotifyUpdates([CanBeNull] Release update, bool showNoUpdateRequiredDialog, bool inSilentMode = false)
@@ -3839,7 +3837,7 @@ namespace TVRename
 
             if (inSilentMode || Debugger.IsAttached)
             {
-                return;
+               return;
             }
 
             UpdateNotification unForm = new UpdateNotification(update);
@@ -3863,8 +3861,13 @@ namespace TVRename
         private async void btnUpdateAvailable_Click(object sender, EventArgs e)
         {
             btnUpdateAvailable.Visible = false;
-            Task<Release> uv = VersionUpdater.CheckForUpdatesAsync();
-            NotifyUpdates(await uv.ConfigureAwait(false), true);
+
+            Dispatcher uiDisp = Dispatcher.CurrentDispatcher;
+
+            Task<Release> tuv = VersionUpdater.CheckForUpdatesAsync();
+            Release result = await tuv.ConfigureAwait(false);
+
+            uiDisp.Invoke(() => NotifyUpdates(result, true));
         }
 
         private void tmrPeriodicScan_Tick(object sender, EventArgs e) => RunAutoScan("Periodic Scan");

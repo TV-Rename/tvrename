@@ -39,11 +39,11 @@ namespace TVRename
                 foreach (ProcessedEpisode ei in elist)
                 {
                     writer.WriteStartElement("item");
-                    XmlHelper.WriteElementToXml(writer,"id",ei.TheSeries.TvdbCode);
-                    XmlHelper.WriteElementToXml(writer,"SeriesName",ei.TheSeries.Name);
-                    XmlHelper.WriteElementToXml(writer,"SeasonNumber",Helpers.Pad(ei.AppropriateSeasonNumber));
-                    XmlHelper.WriteElementToXml(writer, "EpisodeNumber", Helpers.Pad(ei.AppropriateEpNum));
-                    XmlHelper.WriteElementToXml(writer,"EpisodeName",ei.Name);
+                    writer.WriteElement("id",ei.TheSeries.TvdbCode);
+                    writer.WriteElement("SeriesName",ei.TheSeries.Name);
+                    writer.WriteElement("SeasonNumber",Helpers.Pad(ei.AppropriateSeasonNumber));
+                    writer.WriteElement("EpisodeNumber", Helpers.Pad(ei.AppropriateEpNum));
+                    writer.WriteElement("EpisodeName",ei.Name);
 
                     writer.WriteStartElement("available");
                     DateTime? airdt = ei.GetAirDateDt(true);
@@ -70,7 +70,7 @@ namespace TVRename
                     }
                     
                     writer.WriteEndElement();
-                    XmlHelper.WriteElementToXml( writer,"Overview",ei.Overview);
+                    writer.WriteElement( "Overview",ei.Overview);
                     
                     writer.WriteStartElement("FirstAired");
                     DateTime? dt = ei.GetAirDateDt(true);
@@ -81,8 +81,8 @@ namespace TVRename
 
                     writer.WriteEndElement();
                     
-                    XmlHelper.WriteElementToXml( writer,"Rating",ei.EpisodeRating);
-                    XmlHelper.WriteElementToXml( writer,"filename",ei.Filename);
+                    writer.WriteElement( "Rating",ei.EpisodeRating);
+                    writer.WriteElement( "filename",ei.Filename);
 
                     writer.WriteEndElement(); // item
                 }

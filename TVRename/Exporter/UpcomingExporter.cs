@@ -42,9 +42,9 @@ namespace TVRename
                     {
                         return Encoding.ASCII.GetString(ms.ToArray());
                     }
-
-                    LOGGER.Error("Failed to generate records to put into Export file at: {0}", Location());
                 }
+
+                LOGGER.Error("Failed to generate records to put into Export file at: {0}", Location());
             }
             catch (Exception e)
             {

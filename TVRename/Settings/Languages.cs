@@ -44,9 +44,10 @@ namespace TVRename
                 using (XmlReader reader = XmlReader.Create(filename, settings))
                 {
                     XmlSerializer xs = new XmlSerializer(typeof(Languages));
-                    sc = (Languages)xs.Deserialize(reader);
-                    System.Diagnostics.Debug.Assert(sc != null);
+                    sc = (Languages) xs.Deserialize(reader);
                 }
+
+                System.Diagnostics.Debug.Assert(sc != null);
             }
             catch (Exception e)
             {

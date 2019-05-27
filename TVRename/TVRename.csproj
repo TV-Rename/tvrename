@@ -328,6 +328,7 @@
     <Compile Include="TVRename\FolderMonitorEntryList.cs" />
     <Compile Include="TVRename\ShowLibrary.cs" />
     <Compile Include="TVRename\TVRenameOperationInteruptedException.cs" />
+    <Compile Include="Utility\Sorters\DateSorterScan.cs" />
     <Compile Include="Utility\Sorters\DateSorterWTW.cs" />
     <Compile Include="Utility\Sorters\DaySorter.cs" />
     <Compile Include="Utility\Extensions\EnumerableExtensions.cs" />
@@ -338,6 +339,7 @@
     <Compile Include="Utility\Helper\JSONHelper.cs" />
     <Compile Include="Utility\NativeMethods.cs" />
     <Compile Include="Utility\DownloadInformation.cs" />
+    <Compile Include="Utility\Sorters\ListViewItemDateSorter.cs" />
     <Compile Include="Utility\Sorters\ListViewItemSorter.cs" />
     <Compile Include="Utility\Sorters\NumberAsTextSorter.cs" />
     <Compile Include="Utility\PossibleDuplicateEpisode.cs" />

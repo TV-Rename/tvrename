@@ -39,11 +39,11 @@ namespace TVRename
                 {
                     writer.WriteStartDocument();
                     writer.WriteStartElement("rss");
-                    XmlHelper.WriteAttributeToXml(writer, "version", "2.0");
+                    writer.WriteAttributeToXml("version", "2.0");
                     writer.WriteStartElement("channel");
-                    XmlHelper.WriteElementToXml(writer, "title", "Upcoming Shows");
-                    XmlHelper.WriteElementToXml(writer, "title", "http://tvrename.com");
-                    XmlHelper.WriteElementToXml(writer, "description", "Upcoming shows, exported by TVRename");
+                    writer.WriteElement("title", "Upcoming Shows");
+                    writer.WriteElement("title", "http://tvrename.com");
+                    writer.WriteElement("description", "Upcoming shows, exported by TVRename");
 
                     foreach (ProcessedEpisode ei in elist)
                     {
@@ -51,9 +51,9 @@ namespace TVRename
 
                         writer.WriteStartElement("item");
                         
-                        XmlHelper.WriteElementToXml(writer,"title",ei.HowLong() + " " + ei.DayOfWeek() + " " + ei.TimeOfDay() + " " + ei.Show.ShowName + " " + niceName);
-                        XmlHelper.WriteElementToXml(writer, "link", TheTVDB.Instance.WebsiteUrl(ei.TheSeries.TvdbCode, ei.SeasonId, false));
-                        XmlHelper.WriteElementToXml(writer,"description", ei.Show.ShowName + "<br/>" + niceName + "<br/>" + ei.Overview);
+                        writer.WriteElement("title",ei.HowLong() + " " + ei.DayOfWeek() + " " + ei.TimeOfDay() + " " + ei.Show.ShowName + " " + niceName);
+                        writer.WriteElement("link", TheTVDB.Instance.WebsiteUrl(ei.TheSeries.TvdbCode, ei.SeasonId, false));
+                        writer.WriteElement("description", ei.Show.ShowName + "<br/>" + niceName + "<br/>" + ei.Overview);
 
                         writer.WriteStartElement("pubDate");
                         DateTime? dt = ei.GetAirDateDt(true);

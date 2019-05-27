@@ -133,7 +133,7 @@ namespace TVRename
                 SelectedPath = "",
                 Title = "Add New Monitor Folder...",
                 ShowEditbox = true,
-                StartPosition = FormStartPosition.CenterScreen
+                StartPosition = FormStartPosition.CenterParent
             };
 
             if (lstFMMonitorFolders.SelectedIndex != -1)

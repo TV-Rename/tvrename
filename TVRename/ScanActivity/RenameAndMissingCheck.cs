@@ -222,7 +222,6 @@ namespace TVRename
                         bool notFuture =
                             (dtOk && (dt.Value.CompareTo(today) < 0)); // isn't an episode yet to be aired
 
-
                         // only add to the missing list if, either:
                         // - force check is on
                         // - there are no aired dates at all, for up to and including this season

@@ -91,13 +91,13 @@ namespace TVRename
         public void WriteXml([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("TheSearchers");
-            XmlHelper.WriteElementToXml(writer,"Current",currentSearch);
+            writer.WriteElement("Current",currentSearch);
 
             for (int i = 0; i < Count(); i++)
             {
                 writer.WriteStartElement("Choice");
-                XmlHelper.WriteAttributeToXml(writer,"Name",choices[i].Name);
-                XmlHelper.WriteAttributeToXml(writer,"URL2",choices[i].Url2);
+                writer.WriteAttributeToXml("Name",choices[i].Name);
+                writer.WriteAttributeToXml("URL2",choices[i].Url2);
                 writer.WriteEndElement();
             }
             writer.WriteEndElement(); // TheSearchers

@@ -21,7 +21,7 @@ namespace TVRename
                 writer.WriteStartDocument();
 
                 writer.WriteStartElement("TVRename");
-                XmlHelper.WriteAttributeToXml(writer, "Version", "2.1");
+                writer.WriteAttributeToXml("Version", "2.1");
                 writer.WriteStartElement(MainXmlElementName());
 
                 foreach (Item action in TheActionList)
@@ -31,20 +31,21 @@ namespace TVRename
                         continue;
                     }
 
-                    ActionCopyMoveRename acmr = (ActionCopyMoveRename)action;
+                    ActionCopyMoveRename acmr = (ActionCopyMoveRename) action;
                     writer.WriteStartElement("Item");
 
-                    XmlHelper.WriteAttributeToXml(writer, "Operation", acmr.Name);
-                    XmlHelper.WriteAttributeToXml(writer, "FromFolder", acmr.From.DirectoryName);
-                    XmlHelper.WriteAttributeToXml(writer, "FromName", acmr.From.Name);
-                    XmlHelper.WriteAttributeToXml(writer, "ToFolder", acmr.To.DirectoryName);
-                    XmlHelper.WriteAttributeToXml(writer, "ToName", acmr.To.Name);
-                    XmlHelper.WriteAttributeToXml(writer, "ShowName", acmr.Episode.TheSeries.Name);
-                    XmlHelper.WriteAttributeToXml(writer, "Season", acmr.Episode.AppropriateSeasonNumber);
-                    XmlHelper.WriteAttributeToXml(writer, "Episode", acmr.Episode.NumsAsString());
+                    writer.WriteAttributeToXml("Operation", acmr.Name);
+                    writer.WriteAttributeToXml("FromFolder", acmr.From.DirectoryName);
+                    writer.WriteAttributeToXml("FromName", acmr.From.Name);
+                    writer.WriteAttributeToXml("ToFolder", acmr.To.DirectoryName);
+                    writer.WriteAttributeToXml("ToName", acmr.To.Name);
+                    writer.WriteAttributeToXml("ShowName", acmr.Episode.TheSeries.Name);
+                    writer.WriteAttributeToXml("Season", acmr.Episode.AppropriateSeasonNumber);
+                    writer.WriteAttributeToXml("Episode", acmr.Episode.NumsAsString());
 
                     writer.WriteEndElement(); //Item                                
                 }
+
                 writer.WriteEndElement(); // Name
                 writer.WriteEndElement(); // tvrename
                 writer.WriteEndDocument();
