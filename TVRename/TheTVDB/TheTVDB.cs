@@ -985,23 +985,11 @@ namespace TVRename
 
             // we can use the oldest thing we have locally.  It isn't safe to use the newest thing.
             // This will only happen the first time we do an update, so a false _all update isn't too bad.
-            foreach (SeriesInfo ser in series.Values)
+            foreach (SeriesInfo ser in series.Values.Where(ser => ser.SrvLastUpdated != 0))
             {
-                if (((ser.SrvLastUpdated != 0) && (ser.SrvLastUpdated < (theTime??long.MaxValue))))
+                if (ser.SrvLastUpdated < (theTime ?? long.MaxValue))
                 {
                     theTime = ser.SrvLastUpdated;
-                }
-
-                //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
-                foreach (Season seas in ser.AiredSeasons.Values)
-                {
-                    foreach (long seasonUpdateTime in seas.Episodes.Values.Select(episode => episode.SrvLastUpdated).Where(l => l>0))
-                    {
-                        if ((seasonUpdateTime < (theTime ?? long.MaxValue)))
-                        {
-                            theTime = seasonUpdateTime;
-                        }
-                    }
                 }
             }
 
