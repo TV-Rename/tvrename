@@ -182,13 +182,31 @@ namespace TVRename
                     }
                     else if (SelectedShow != null) // show overview (tvshow.nfo)
                     {
+                        SeriesInfo series = SelectedShow.TheSeries();
+
                         // http://www.xbmc.org/wiki/?title=Import_-_Export_Library#TV_Shows
                         writer.WriteStartElement("tvshow");
 
                         writer.WriteElement("title", SelectedShow.ShowName);
-                        writer.WriteElement("originaltitle", SelectedShow.TheSeries()?.Name);
+                        writer.WriteElement("originaltitle", series?.Name);
 
-                        writer.WriteElement("rating", SelectedShow.TheSeries()?.ContentRating);
+                        float? showRating = series?.SiteRating;
+                        if (showRating.HasValue)
+                        {
+                            writer.WriteStartElement("ratings");
+
+                            writer.WriteStartElement("rating");
+                            writer.WriteAttributeString("name", "tvdb");
+                            writer.WriteAttributeString("max", "10");
+                            writer.WriteAttributeString("default", "true");
+
+                            writer.WriteElement("value", showRating.Value);
+                            writer.WriteElement("votes", series.SiteRatingVotes, true);
+
+                            writer.WriteEndElement();//rating
+
+                            writer.WriteEndElement();//ratings
+                        }
 
                         string lang = TVSettings.Instance.PreferredLanguageCode;
                         if (SelectedShow.UseCustomLanguage && SelectedShow.PreferredLanguage != null)
@@ -199,21 +217,32 @@ namespace TVRename
                         writer.WriteElement("episodeguideurl",
                             TheTVDB.BuildUrl(SelectedShow.TvdbCode, lang));
 
-                        writer.WriteElement("plot", SelectedShow.TheSeries()?.Overview);
+                        if (!(series is null))
+                        {
+                            writer.WriteElement("id", series.SeriesId);
+                            writer.WriteElement("runtime", series.Runtime, true);
+                            writer.WriteElement("mpaa", series.ContentRating,true);
 
-                        writer.WriteElement("mpaa", SelectedShow.TheSeries()?.ContentRating);
+                            writer.WriteStartElement("uniqueid");
+                            writer.WriteAttributeString("type", "tvdb");
+                            writer.WriteAttributeString("default", "true");
+                            writer.WriteValue(series.TvdbCode);
+                            writer.WriteEndElement();
+
+                            writer.WriteStartElement("uniqueid");
+                            writer.WriteAttributeString("type", "imdb");
+                            writer.WriteAttributeString("default", "false");
+                            writer.WriteValue(series.Imdb);
+                            writer.WriteEndElement();
+
+                            writer.WriteElement("plot", series.Overview);
+
+                            writer.WriteElement("premiered", series.FirstAired);
+                            writer.WriteElement("year", series.Year);
+                            writer.WriteElement("status", series.Status);
+                        }
 
                         writer.WriteStringsToXml("genre", SelectedShow.Genres);
-
-                        writer.WriteElement("premiered", SelectedShow.TheSeries()?.FirstAired);
-                        writer.WriteElement("year", SelectedShow.TheSeries()?.Year);
-                        writer.WriteElement("status", SelectedShow.TheSeries()?.Status);
-
-                        writer.WriteInfo("id", "moviedb", "imdb", SelectedShow.TheSeries()?.Imdb);
-
-                        writer.WriteElement("tvdbid", SelectedShow.TheSeries()?.TvdbCode);
-
-                        writer.WriteElement("runtime", SelectedShow.TheSeries()?.Runtime, true);
 
                         // actors...
                         foreach (Actor aa in SelectedShow.Actors.Where(aa => !string.IsNullOrEmpty(aa.ActorName)))
