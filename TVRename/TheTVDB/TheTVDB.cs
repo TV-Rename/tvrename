@@ -965,9 +965,10 @@ namespace TVRename
                 long maxUpdateTime = updateTimes.DefaultIfEmpty(0).Max();
 
                 //Add a day to take into account any timezone issues
-                if (maxUpdateTime > DateTime.UtcNow.ToUnixTime()+(24*60*60))
+                long nowTime = DateTime.UtcNow.ToUnixTime() + (24 * 60 * 60);
+                if (maxUpdateTime > nowTime)
                 {
-                    Logger.Error($"Assuming up to date: Could not parse update time {maxUpdateTime} from: {jsonUpdateResponse}");
+                    Logger.Error($"Assuming up to date: Could not parse update time {maxUpdateTime} compared to {nowTime} from: {jsonUpdateResponse}");
                     return DateTime.UtcNow.ToUnixTime();
                 }
                 return maxUpdateTime;
