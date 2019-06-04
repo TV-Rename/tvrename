@@ -40,8 +40,27 @@ namespace TVRename
             writer.WriteStartElement("episodedetails");
 
             writer.WriteElement("title", episode.Name);
+            writer.WriteElement("originaltitle", Episode.Show.ShowName);
             writer.WriteElement("showtitle", Episode.Show.ShowName );
-            writer.WriteElement("rating", episode.EpisodeRating);
+
+            string showRating = Episode.EpisodeRating;
+            if (showRating !=null)
+            {
+                writer.WriteStartElement("ratings");
+
+                writer.WriteStartElement("rating");
+                writer.WriteAttributeString("name", "tvdb");
+                writer.WriteAttributeString("max", "10");
+                writer.WriteAttributeString("default", "true");
+
+                writer.WriteElement("value", showRating);
+                writer.WriteElement("votes", Episode.SiteRatingCount??0, true);
+
+                writer.WriteEndElement();//rating
+
+                writer.WriteEndElement();//ratings
+            }
+
             if (dvdOrder)
             {
                 writer.WriteElement("season", episode.DvdSeasonNumber);
