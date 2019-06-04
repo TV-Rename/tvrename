@@ -2438,7 +2438,11 @@ namespace TVRename
             if (airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
             {
                 List<FileInfo> fl = dfc.FindEpOnDisk(pe);
-                if (fl.Count > 0 && fl.All(file => file.Name.StartsWith(TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pe)), StringComparison.OrdinalIgnoreCase)))
+                bool appropriateFileNameFound = !TVSettings.Instance.RenameCheck
+                           || !pe.Show.DoRename
+                           || fl.All(file => file.Name.StartsWith(TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pe)), StringComparison.OrdinalIgnoreCase));
+
+                if (fl.Count > 0 && appropriateFileNameFound)
                 {
                     lvi.ImageIndex = 0;
                 }
