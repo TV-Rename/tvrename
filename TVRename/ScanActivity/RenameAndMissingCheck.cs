@@ -205,16 +205,16 @@ namespace TVRename
                 }
             } // foreach file in folder
 
-            if (missCheck) // == MISSING CHECK part 2/2 (includes NFO and Thumbnails) ==
+            // == MISSING CHECK part 2/2 (includes NFO and Thumbnails) ==
+            // look at the official list of episodes, and look to see if we have any gaps
+
+            DateTime today = DateTime.Now;
+            foreach (ProcessedEpisode dbep in eps)
             {
-                // second part of missing check is to see what is missing!
-
-                // look at the official list of episodes, and look to see if we have any gaps
-
-                DateTime today = DateTime.Now;
-                foreach (ProcessedEpisode dbep in eps)
+                if (!localEps.ContainsKey(dbep.AppropriateEpNum)) // not here locally
                 {
-                    if (!localEps.ContainsKey(dbep.AppropriateEpNum)) // not here locally
+                    // second part of missing check is to see what is missing!
+                    if (missCheck)
                     {
                         DateTime? dt = dbep.GetAirDateDt(true);
                         bool dtOk = dt != null;
@@ -233,22 +233,22 @@ namespace TVRename
                             // then add it as officially missing
                             Doc.TheActionList.Add(new ItemMissing(dbep, folder));
                         }
-                    }
-                    else
+                    }// if doing missing check
+                }
+                else
+                {
+                    if (settings.Type == TVSettings.ScanType.Full)
                     {
-                        if (settings.Type == TVSettings.ScanType.Full)
-                        {
-                            Doc.CurrentStats.NsNumberOfEpisodes++;
-                        }
-
-                        // do NFO and thumbnail checks if required
-                        FileInfo
-                            filo = localEps[dbep.AppropriateEpNum]; // filename (or future filename) of the file
-
-                        Doc.TheActionList.Add(downloadIdentifiers.ProcessEpisode(dbep, filo));
+                        Doc.CurrentStats.NsNumberOfEpisodes++;
                     }
-                } // up to date check, for each episode in thetvdb
-            } // if doing missing check
+
+                    // do NFO and thumbnail checks if required
+                    FileInfo
+                        filo = localEps[dbep.AppropriateEpNum]; // filename (or future filename) of the file
+
+                    Doc.TheActionList.Add(downloadIdentifiers.ProcessEpisode(dbep, filo));
+                }
+            } // up to date check, for each episode in thetvdb
         }
 
         [CanBeNull]
