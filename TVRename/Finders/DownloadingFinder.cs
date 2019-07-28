@@ -30,7 +30,7 @@ namespace TVRename
             ItemList toRemove = new ItemList();
             int c = ActionList.MissingItems().Count() + 2;
             int n = 1;
-            UpdateStatus(n, c, "Searhcing torrent queue...");
+            UpdateStatus(n, c, "Searching torrent queue...");
             foreach (ItemMissing action in ActionList.MissingItems().ToList())
             {
                 if (settings.Token.IsCancellationRequested)
