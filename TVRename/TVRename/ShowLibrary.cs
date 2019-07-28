@@ -102,6 +102,7 @@ namespace TVRename
                 .Select(si => si.TheSeries())
                 .Where(seriesInfo => seriesInfo?.Network != null)
                 .Select(seriesInfo => seriesInfo.Network)
+                .Distinct()
                 .OrderBy(s=>s);
         }
 
