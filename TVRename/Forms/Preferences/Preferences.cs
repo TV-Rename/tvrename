@@ -1476,15 +1476,36 @@ namespace TVRename
 
         private void bnAddSearchFolder_Click(object sender, EventArgs e)
         {
-            int n = lbSearchFolders.SelectedIndex;
-            folderBrowser.SelectedPath = n != -1 ? TVSettings.Instance.DownloadFolders[n] : "";
-
-            if (folderBrowser.ShowDialog() == DialogResult.OK)
+            //Setup the UI
+            FolderBrowserDialogEx searchFolderBrowser = new FolderBrowserDialogEx
             {
-                TVSettings.Instance.DownloadFolders.Add(folderBrowser.SelectedPath);
-                mDoc.SetDirty();
+                SelectedPath = "",
+                Title = "Add New Search Folder...",
+                ShowEditbox = true,
+                StartPosition = FormStartPosition.CenterScreen
+            };
+
+            //Populate the popup with the right path
+            if (lbSearchFolders.SelectedIndex != -1)
+            {
+                int n = lbSearchFolders.SelectedIndex;
+                searchFolderBrowser.SelectedPath = TVSettings.Instance.DownloadFolders[n];
             }
 
+            //Show dialog
+            if (searchFolderBrowser.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            //exit if nothing is selected
+            if (!Directory.Exists(searchFolderBrowser.SelectedPath))
+            {
+                return;
+            }
+
+            TVSettings.Instance.DownloadFolders.Add(searchFolderBrowser.SelectedPath);
+            mDoc.SetDirty();
             FillSearchFolderList();
         }
 
@@ -1566,7 +1587,7 @@ namespace TVRename
             FolderBrowserDialogEx searchFolderBrowser = new FolderBrowserDialogEx
             {
                 SelectedPath = "",
-                Title = "Add New Monitor Folder...",
+                Title = "Add New Library Folder...",
                 ShowEditbox = true,
                 StartPosition = FormStartPosition.CenterScreen
             };
