@@ -88,11 +88,11 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> GetStatuses()
         {
-            List<string> allStatuses = (Values.Where(si => si.ShowStatus != null).Select(si => si.ShowStatus)).ToList();
-
-            List<string> distinctStatuses = allStatuses.Distinct().ToList();
-            distinctStatuses.Sort();
-            return distinctStatuses;
+            return Values
+                .Where(s => !string.IsNullOrWhiteSpace(s?.ShowStatus))
+                .Select(s => s.ShowStatus)
+                .Distinct()
+                .OrderBy(s => s);
         }
 
         [NotNull]
@@ -100,7 +100,7 @@ namespace TVRename
         {
             return Values
                 .Select(si => si.TheSeries())
-                .Where(seriesInfo => seriesInfo?.Network != null)
+                .Where(seriesInfo => !string.IsNullOrWhiteSpace(seriesInfo?.Network))
                 .Select(seriesInfo => seriesInfo.Network)
                 .Distinct()
                 .OrderBy(s=>s);
@@ -110,7 +110,7 @@ namespace TVRename
         public IEnumerable<string> GetContentRatings()
         {
             return Values.Select(si => si.TheSeries())
-                .Where(s => s?.ContentRating != null)
+                .Where(s => !string.IsNullOrWhiteSpace(s?.ContentRating))
                 .Select(s => s.ContentRating)
                 .Distinct()
                 .OrderBy(s=>s);
