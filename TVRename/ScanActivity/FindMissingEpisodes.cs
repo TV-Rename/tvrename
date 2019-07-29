@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace TVRename
 {
-    abstract class FindMissingEpisodes : ScanActivity
+    internal abstract class FindMissingEpisodes : ScanActivity
     {
         private readonly List<Finder> finders;
 

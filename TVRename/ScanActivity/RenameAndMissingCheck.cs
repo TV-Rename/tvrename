@@ -267,7 +267,7 @@ namespace TVRename
 
             FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
 
-            if (newName != actualFile.Name)
+            if (newFile.FullName != actualFile.FullName)
             {
                 //Check that the file does not already exist
                 //if (FileHelper.FileExistsCaseSensitive(newFile.FullName))
@@ -298,6 +298,7 @@ namespace TVRename
                 //File is correct name
                 LOGGER.Debug($"Identified that {actualFile.FullName} is in the right place. Marking it as 'seen'.");
                 //Record this episode as seen
+
                 TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(ep);
             }
 
