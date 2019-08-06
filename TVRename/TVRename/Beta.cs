@@ -175,8 +175,9 @@ namespace TVRename
                     }
                 }
 
-                int averageMovieLength =
-                    (otherMovieLengths.Sum() - dupMovieLength) / (otherMovieLengths.Count - 1);
+                int averageMovieLength =(otherMovieLengths.Count ==1)
+                    ?otherMovieLengths.Sum()
+                    :(otherMovieLengths.Sum() - dupMovieLength) / (otherMovieLengths.Count - 1);
 
                 largerFileSize = (dupMovieLength > averageMovieLength * 1.4);
                 if (largerFileSize)
