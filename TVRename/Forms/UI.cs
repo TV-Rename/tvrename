@@ -2106,6 +2106,17 @@ namespace TVRename
             {
                 Hide();
             }
+
+            bool showCheckboxes = (this.Width > 1100);
+            label1.Visible = showCheckboxes;
+            cbAll.Visible = showCheckboxes;
+            cbCopyMove.Visible = showCheckboxes;
+            cbDeleteFiles.Visible = showCheckboxes;
+            cbDownload.Visible = showCheckboxes;
+            cbModifyMetadata.Visible = showCheckboxes;
+            cbRename.Visible = showCheckboxes;
+            cbSaveImages.Visible = showCheckboxes;
+            cbWriteMetadata.Visible = showCheckboxes;
         }
 
         private void UI_LocationChanged(object sender, EventArgs e)
