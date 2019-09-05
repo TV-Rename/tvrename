@@ -56,6 +56,9 @@ namespace TVRename
             bool newFileContainsTerm =
                 TVSettings.Instance.PriorityReplaceTermsArray.Any(term => newFile.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
 
+            bool encumbantFileContainsTerm =
+                TVSettings.Instance.PriorityReplaceTermsArray.Any(term => encumbantFile.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
+
             float percentMargin = TVSettings.Instance.replaceMargin;
             float marginMultiplier = (percentMargin + 100) / 100;
 
@@ -114,6 +117,11 @@ namespace TVRename
             if (newFileContainsTerm)
             {
                 return VideoComparison.secondFileBetter;
+            }
+
+            if (encumbantFileContainsTerm)
+            {
+                return VideoComparison.firstFileBetter;
             }
 
             return VideoComparison.similar;
