@@ -38,13 +38,13 @@ namespace TVRename
             (Release latestVersion, Release latestBetaVersion) = await GetLatestReleases().ConfigureAwait(false);
 
             if ((TVSettings.Instance.mode == TVSettings.BetaMode.ProductionOnly) &&
-                (latestVersion.NewerThan(currentVersion)))
+                (latestVersion?.NewerThan(currentVersion)?? false))
             {
                 return latestVersion;
             }
 
             if ((TVSettings.Instance.mode == TVSettings.BetaMode.BetaToo) &&
-                (latestBetaVersion.NewerThan(currentVersion)))
+                (latestBetaVersion?.NewerThan(currentVersion)??false))
             {
                 return latestBetaVersion;
             }
@@ -65,9 +65,7 @@ namespace TVRename
                 (3, TimeSpan.FromSeconds(2), GITHUB_RELEASES_API_URL, async () =>
                 {
                     WebClient client = new WebClient();
-                    client.Headers.Add("user-agent",
-                        "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
-
+                    client.Headers.Add("user-agent", TVSettings.Instance.USER_AGENT);
                     Task<string> response = client.DownloadStringTaskAsync(GITHUB_RELEASES_API_URL);
                     gitHubInfo = JArray.Parse(await response.ConfigureAwait(false));
                 }).ConfigureAwait(false);

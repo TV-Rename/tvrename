@@ -7,8 +7,10 @@
 // 
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using JetBrains.Annotations;
+using TVRename.Forms.ShowPreferences;
 
 namespace TVRename
 {
@@ -21,36 +23,74 @@ namespace TVRename
     ///          the designers will not be able to interact properly with localized
     ///          resources associated with this form.
     /// </summary>
-    public partial class EditRules : Form
+    public partial class EditSeason : Form
     {
         private readonly CustomEpisodeName nameStyle;
         private readonly List<ShowRule> workingRuleSet;
         private readonly List<ProcessedEpisode> mOriginalEps;
         private readonly ShowItem show;
         private readonly int mSeasonNumber;
+        private readonly List<ProcessedEpisode> episodesToAddToSeen;
+        private readonly List<ProcessedEpisode> episodesToRemoveFromSeen;
 
-        public EditRules([NotNull] ShowItem si, List<ProcessedEpisode> originalEpList, int seasonNumber, CustomEpisodeName style)
+        public EditSeason([NotNull] ShowItem si, List<ProcessedEpisode> originalEpList, int seasonNumber, CustomEpisodeName style)
         {
             nameStyle = style;
             InitializeComponent();
+
+            episodesToAddToSeen = new List<ProcessedEpisode>();
+            episodesToRemoveFromSeen = new List<ProcessedEpisode>();
 
             show = si;
             mOriginalEps = originalEpList;
             mSeasonNumber = seasonNumber;
 
-            if (si.SeasonRules.ContainsKey(seasonNumber))
-            {
-                workingRuleSet = new List<ShowRule>(si.SeasonRules[seasonNumber]);
-            }
-            else
-            {
-                workingRuleSet = new List<ShowRule>();
-            }
+            workingRuleSet = si.SeasonRules.ContainsKey(seasonNumber)
+                ? new List<ShowRule>(si.SeasonRules[seasonNumber])
+                : new List<ShowRule>();
 
             txtShowName.Text = si.ShowName;
             txtSeasonNumber.Text = seasonNumber.ToString();
 
             FillRuleList(false, 0);
+            FillSeenEpisodes(false);
+
+        }
+
+        private void FillSeenEpisodes(bool keepSel)
+        {
+            List<int> sel = new List<int>();
+            if (keepSel)
+            {
+                foreach (int i in lvSeenEpisodes.SelectedIndices)
+                {
+                    sel.Add(i);
+                }
+            }
+
+            lvSeenEpisodes.Items.Clear();
+            foreach (ProcessedEpisode ep in mOriginalEps.Where(ep => TVSettings.Instance.PreviouslySeenEpisodes.Contains(ep.EpisodeId)))
+            {
+                ListViewItem lvi = new ListViewItem { Text = ep.AppropriateEpNum.ToString() };
+                lvi.SubItems.Add(ep.Name);
+                lvi.Tag = ep;
+                lvSeenEpisodes.Items.Add(lvi);
+            }
+
+            if (keepSel)
+            {
+                foreach (int i in sel)
+                {
+                    if (i < lvSeenEpisodes.Items.Count)
+                    {
+                        int n = i;
+                        if ((n >= 0) && (n < lvSeenEpisodes.Items.Count))
+                        {
+                            lvSeenEpisodes.Items[n].Selected = true;
+                        }
+                    }
+                }
+            }
         }
 
         private void bnAddRule_Click(object sender, System.EventArgs e)
@@ -181,7 +221,21 @@ namespace TVRename
         private void bnOK_Click(object sender, System.EventArgs e)
         {
             show.SeasonRules[mSeasonNumber] = workingRuleSet;
+            ApplyChangesToSeenEpisodes();
             Close();
+        }
+
+        private void ApplyChangesToSeenEpisodes()
+        {
+            foreach (ProcessedEpisode epIdToRemove in episodesToRemoveFromSeen)
+            {
+                TVSettings.Instance.PreviouslySeenEpisodes.Remove(epIdToRemove.EpisodeId);
+            }
+
+            foreach (ProcessedEpisode epIdToAdd in episodesToAddToSeen)
+            {
+                TVSettings.Instance.PreviouslySeenEpisodes.Add(epIdToAdd.EpisodeId);
+            }
         }
 
         private void bnCancel_Click(object sender, System.EventArgs e)
@@ -211,6 +265,51 @@ namespace TVRename
             }
 
             lbEpsPreview.EndUpdate();
+        }
+
+        private void Button2_Click(object sender, System.EventArgs e)
+        {
+            List<ProcessedEpisode> possibleEpisodes = new List<ProcessedEpisode>();
+            foreach (ProcessedEpisode testEp in mOriginalEps)
+            {
+                if (TVSettings.Instance.PreviouslySeenEpisodes.Contains(testEp.EpisodeId)) continue;
+                if (episodesToAddToSeen.Contains(testEp)) continue;
+
+                possibleEpisodes.Add(testEp);
+            }
+            possibleEpisodes.AddRange(episodesToRemoveFromSeen);
+
+            NewSeenEpisode nse = new NewSeenEpisode(possibleEpisodes);
+            DialogResult dialogResult = nse.ShowDialog();
+            if (dialogResult == DialogResult.OK)
+            {
+                episodesToAddToSeen.Add(nse.ChosenEpisode);
+
+                ListViewItem lvi = new ListViewItem { Text = nse.ChosenEpisode.AppropriateEpNum.ToString() };
+                lvi.SubItems.Add(nse.ChosenEpisode.Name);
+                lvi.Tag = nse.ChosenEpisode;
+                lvSeenEpisodes.Items.Add(lvi);
+            }
+        }
+
+        private void Button1_Click(object sender, System.EventArgs e)
+        {
+            if (lvSeenEpisodes.SelectedItems.Count == 0)
+            {
+                return;
+            }
+
+            for (int index = 0; index < lvSeenEpisodes.SelectedItems.Count; index++)
+            {
+                ProcessedEpisode pe = (ProcessedEpisode)lvSeenEpisodes.SelectedItems[index].Tag;
+                episodesToRemoveFromSeen.Add(pe);
+                lvSeenEpisodes.Items.Remove(lvSeenEpisodes.SelectedItems[index]);
+            }
+        }
+
+        private void LvSeenEpisodes_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            bnRemoveSeen.Enabled = (lvSeenEpisodes.SelectedItems.Count > 0);
         }
     }
 }

@@ -64,7 +64,7 @@ namespace TVRename
             this.rbRemove.Location = new System.Drawing.Point(61, 58);
             this.rbRemove.Name = "rbRemove";
             this.rbRemove.Size = new System.Drawing.Size(236, 17);
-            this.rbRemove.TabIndex = 2;
+            this.rbRemove.TabIndex = 3;
             this.rbRemove.TabStop = true;
             this.rbRemove.Text = "R&emove : Remove episode(s) from the series";
             this.rbRemove.UseVisualStyleBackColor = true;
@@ -76,7 +76,7 @@ namespace TVRename
             this.rbSwap.Location = new System.Drawing.Point(61, 81);
             this.rbSwap.Name = "rbSwap";
             this.rbSwap.Size = new System.Drawing.Size(204, 17);
-            this.rbSwap.TabIndex = 3;
+            this.rbSwap.TabIndex = 4;
             this.rbSwap.TabStop = true;
             this.rbSwap.Text = "&Swap : Swap position of two episodes";
             this.rbSwap.UseVisualStyleBackColor = true;
@@ -88,7 +88,7 @@ namespace TVRename
             this.rbMerge.Location = new System.Drawing.Point(61, 104);
             this.rbMerge.Name = "rbMerge";
             this.rbMerge.Size = new System.Drawing.Size(239, 17);
-            this.rbMerge.TabIndex = 4;
+            this.rbMerge.TabIndex = 5;
             this.rbMerge.TabStop = true;
             this.rbMerge.Text = "&Merge : Merge episodes into multi-episode file";
             this.rbMerge.UseVisualStyleBackColor = true;
@@ -100,7 +100,7 @@ namespace TVRename
             this.rbInsert.Location = new System.Drawing.Point(61, 127);
             this.rbInsert.Name = "rbInsert";
             this.rbInsert.Size = new System.Drawing.Size(240, 17);
-            this.rbInsert.TabIndex = 5;
+            this.rbInsert.TabIndex = 6;
             this.rbInsert.TabStop = true;
             this.rbInsert.Text = "Inser&t : Insert another episode into the season";
             this.rbInsert.UseVisualStyleBackColor = true;
@@ -138,14 +138,14 @@ namespace TVRename
             this.txtValue1.Location = new System.Drawing.Point(80, 213);
             this.txtValue1.Name = "txtValue1";
             this.txtValue1.Size = new System.Drawing.Size(100, 20);
-            this.txtValue1.TabIndex = 7;
+            this.txtValue1.TabIndex = 9;
             // 
             // txtValue2
             // 
             this.txtValue2.Location = new System.Drawing.Point(80, 239);
             this.txtValue2.Name = "txtValue2";
             this.txtValue2.Size = new System.Drawing.Size(100, 20);
-            this.txtValue2.TabIndex = 9;
+            this.txtValue2.TabIndex = 10;
             // 
             // txtWithNameLabel
             // 
@@ -202,7 +202,7 @@ namespace TVRename
             this.rbRename.Location = new System.Drawing.Point(61, 35);
             this.rbRename.Name = "rbRename";
             this.rbRename.Size = new System.Drawing.Size(203, 17);
-            this.rbRename.TabIndex = 1;
+            this.rbRename.TabIndex = 2;
             this.rbRename.TabStop = true;
             this.rbRename.Text = "&Rename : Set episode name manually";
             this.rbRename.UseVisualStyleBackColor = true;
@@ -223,7 +223,7 @@ namespace TVRename
             this.rbSplit.Location = new System.Drawing.Point(61, 150);
             this.rbSplit.Name = "rbSplit";
             this.rbSplit.Size = new System.Drawing.Size(221, 17);
-            this.rbSplit.TabIndex = 5;
+            this.rbSplit.TabIndex = 7;
             this.rbSplit.TabStop = true;
             this.rbSplit.Text = "S&plit: Make one episode count as multiple";
             this.rbSplit.UseVisualStyleBackColor = true;
@@ -235,7 +235,7 @@ namespace TVRename
             this.rbCollapse.Location = new System.Drawing.Point(61, 173);
             this.rbCollapse.Name = "rbCollapse";
             this.rbCollapse.Size = new System.Drawing.Size(217, 17);
-            this.rbCollapse.TabIndex = 5;
+            this.rbCollapse.TabIndex = 8;
             this.rbCollapse.TabStop = true;
             this.rbCollapse.Text = "&Collapse: Merge episodes, and renumber";
             this.rbCollapse.UseVisualStyleBackColor = true;

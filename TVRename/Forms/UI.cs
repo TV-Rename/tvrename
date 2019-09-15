@@ -2107,7 +2107,7 @@ namespace TVRename
                 Hide();
             }
 
-            bool showCheckboxes = (this.Width > 1100);
+            bool showCheckboxes = Width > 1100;
             label1.Visible = showCheckboxes;
             cbAll.Visible = showCheckboxes;
             cbCopyMove.Visible = showCheckboxes;
@@ -2633,7 +2633,7 @@ namespace TVRename
                 {
                     List<ProcessedEpisode> pel = ShowLibrary.GenerateEpisodes(si, ser, seasnum, false);
 
-                    EditRules er = new EditRules(si, pel, seasnum, TVSettings.Instance.NamingStyle);
+                    EditSeason er = new EditSeason(si, pel, seasnum, TVSettings.Instance.NamingStyle);
                     DialogResult dr = er.ShowDialog();
                     if (dr == DialogResult.OK)
                     {

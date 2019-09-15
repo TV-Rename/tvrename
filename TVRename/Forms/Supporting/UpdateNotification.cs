@@ -36,8 +36,7 @@ namespace TVRename.Forms
             {
                 req.Method = "POST";
                 req.ContentType = "application/json";
-                req.UserAgent =
-                    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36";
+                req.UserAgent = TVSettings.Instance.USER_AGENT;
 
                 JObject request = new JObject
                 {

@@ -229,5 +229,7 @@ namespace TVRename
             TimeSpan ts = dt.Subtract(DateTime.Now); // how long...
             return ts.TotalHours > 0;
         }
+
+        public override string ToString() => $"S{AppropriateSeasonNumber:D2}E{AppropriateEpNum:D2} - {Name}";
     }
 }

@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at https://github.com/TV-Rename/tvrename
@@ -8,7 +8,7 @@
 
 namespace TVRename
 {
-    partial class EditRules
+    partial class EditSeason
     {
         /// <summary>
         /// Required designer variable.
@@ -36,7 +36,7 @@ namespace TVRename
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditRules));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditSeason));
             this.bnRuleUp = new System.Windows.Forms.Button();
             this.bnRuleDown = new System.Windows.Forms.Button();
             this.lvRuleList = new System.Windows.Forms.ListView();
@@ -56,11 +56,23 @@ namespace TVRename
             this.bnOK = new System.Windows.Forms.Button();
             this.txtShowName = new System.Windows.Forms.Label();
             this.txtSeasonNumber = new System.Windows.Forms.Label();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.Rules = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label5 = new System.Windows.Forms.Label();
+            this.lvSeenEpisodes = new System.Windows.Forms.ListView();
+            this.Episode = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.EpisodeName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.bnRemoveSeen = new System.Windows.Forms.Button();
+            this.bnAddSeen = new System.Windows.Forms.Button();
+            this.tabControl1.SuspendLayout();
+            this.Rules.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // bnRuleUp
             // 
-            this.bnRuleUp.Location = new System.Drawing.Point(255, 226);
+            this.bnRuleUp.Location = new System.Drawing.Point(250, 198);
             this.bnRuleUp.Name = "bnRuleUp";
             this.bnRuleUp.Size = new System.Drawing.Size(75, 23);
             this.bnRuleUp.TabIndex = 9;
@@ -70,7 +82,7 @@ namespace TVRename
             // 
             // bnRuleDown
             // 
-            this.bnRuleDown.Location = new System.Drawing.Point(336, 226);
+            this.bnRuleDown.Location = new System.Drawing.Point(331, 198);
             this.bnRuleDown.Name = "bnRuleDown";
             this.bnRuleDown.Size = new System.Drawing.Size(75, 23);
             this.bnRuleDown.TabIndex = 10;
@@ -80,6 +92,8 @@ namespace TVRename
             // 
             // lvRuleList
             // 
+            this.lvRuleList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lvRuleList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader3,
             this.columnHeader4,
@@ -87,10 +101,10 @@ namespace TVRename
             this.columnHeader6});
             this.lvRuleList.FullRowSelect = true;
             this.lvRuleList.HideSelection = false;
-            this.lvRuleList.Location = new System.Drawing.Point(12, 73);
+            this.lvRuleList.Location = new System.Drawing.Point(7, 19);
             this.lvRuleList.MultiSelect = false;
             this.lvRuleList.Name = "lvRuleList";
-            this.lvRuleList.Size = new System.Drawing.Size(400, 147);
+            this.lvRuleList.Size = new System.Drawing.Size(400, 172);
             this.lvRuleList.TabIndex = 5;
             this.lvRuleList.UseCompatibleStateImageBehavior = false;
             this.lvRuleList.View = System.Windows.Forms.View.Details;
@@ -115,7 +129,7 @@ namespace TVRename
             // 
             // bnDelRule
             // 
-            this.bnDelRule.Location = new System.Drawing.Point(174, 226);
+            this.bnDelRule.Location = new System.Drawing.Point(169, 198);
             this.bnDelRule.Name = "bnDelRule";
             this.bnDelRule.Size = new System.Drawing.Size(75, 23);
             this.bnDelRule.TabIndex = 8;
@@ -125,7 +139,7 @@ namespace TVRename
             // 
             // bnEdit
             // 
-            this.bnEdit.Location = new System.Drawing.Point(93, 226);
+            this.bnEdit.Location = new System.Drawing.Point(88, 198);
             this.bnEdit.Name = "bnEdit";
             this.bnEdit.Size = new System.Drawing.Size(75, 23);
             this.bnEdit.TabIndex = 7;
@@ -135,7 +149,7 @@ namespace TVRename
             // 
             // bnAddRule
             // 
-            this.bnAddRule.Location = new System.Drawing.Point(12, 226);
+            this.bnAddRule.Location = new System.Drawing.Point(7, 198);
             this.bnAddRule.Name = "bnAddRule";
             this.bnAddRule.Size = new System.Drawing.Size(75, 23);
             this.bnAddRule.TabIndex = 6;
@@ -146,7 +160,7 @@ namespace TVRename
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 54);
+            this.label1.Location = new System.Drawing.Point(6, 3);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(37, 13);
             this.label1.TabIndex = 4;
@@ -156,7 +170,7 @@ namespace TVRename
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(9, 6);
+            this.label2.Location = new System.Drawing.Point(4, 9);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(37, 13);
             this.label2.TabIndex = 0;
@@ -166,7 +180,7 @@ namespace TVRename
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(9, 29);
+            this.label3.Location = new System.Drawing.Point(4, 33);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(46, 13);
             this.label3.TabIndex = 2;
@@ -175,18 +189,21 @@ namespace TVRename
             // 
             // lbEpsPreview
             // 
+            this.lbEpsPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lbEpsPreview.FormattingEnabled = true;
-            this.lbEpsPreview.Location = new System.Drawing.Point(12, 276);
+            this.lbEpsPreview.Location = new System.Drawing.Point(6, 238);
             this.lbEpsPreview.Name = "lbEpsPreview";
             this.lbEpsPreview.ScrollAlwaysVisible = true;
             this.lbEpsPreview.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.lbEpsPreview.Size = new System.Drawing.Size(400, 160);
+            this.lbEpsPreview.Size = new System.Drawing.Size(405, 238);
             this.lbEpsPreview.TabIndex = 12;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(9, 257);
+            this.label4.Location = new System.Drawing.Point(6, 224);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(48, 13);
             this.label4.TabIndex = 11;
@@ -195,8 +212,9 @@ namespace TVRename
             // 
             // bnCancel
             // 
+            this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancel.Location = new System.Drawing.Point(337, 442);
+            this.bnCancel.Location = new System.Drawing.Point(353, 584);
             this.bnCancel.Name = "bnCancel";
             this.bnCancel.Size = new System.Drawing.Size(75, 23);
             this.bnCancel.TabIndex = 14;
@@ -206,8 +224,9 @@ namespace TVRename
             // 
             // bnOK
             // 
+            this.bnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.bnOK.Location = new System.Drawing.Point(256, 442);
+            this.bnOK.Location = new System.Drawing.Point(272, 584);
             this.bnOK.Name = "bnOK";
             this.bnOK.Size = new System.Drawing.Size(75, 23);
             this.bnOK.TabIndex = 13;
@@ -218,7 +237,7 @@ namespace TVRename
             // txtShowName
             // 
             this.txtShowName.AutoSize = true;
-            this.txtShowName.Location = new System.Drawing.Point(67, 6);
+            this.txtShowName.Location = new System.Drawing.Point(56, 9);
             this.txtShowName.Name = "txtShowName";
             this.txtShowName.Size = new System.Drawing.Size(16, 13);
             this.txtShowName.TabIndex = 1;
@@ -228,43 +247,146 @@ namespace TVRename
             // txtSeasonNumber
             // 
             this.txtSeasonNumber.AutoSize = true;
-            this.txtSeasonNumber.Location = new System.Drawing.Point(67, 29);
+            this.txtSeasonNumber.Location = new System.Drawing.Point(56, 33);
             this.txtSeasonNumber.Name = "txtSeasonNumber";
             this.txtSeasonNumber.Size = new System.Drawing.Size(16, 13);
             this.txtSeasonNumber.TabIndex = 3;
             this.txtSeasonNumber.Text = "---";
             this.txtSeasonNumber.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // EditRules
+            // tabControl1
+            // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.Rules);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Location = new System.Drawing.Point(3, 62);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(425, 516);
+            this.tabControl1.TabIndex = 15;
+            // 
+            // Rules
+            // 
+            this.Rules.Controls.Add(this.lbEpsPreview);
+            this.Rules.Controls.Add(this.label1);
+            this.Rules.Controls.Add(this.label4);
+            this.Rules.Controls.Add(this.bnRuleUp);
+            this.Rules.Controls.Add(this.bnRuleDown);
+            this.Rules.Controls.Add(this.lvRuleList);
+            this.Rules.Controls.Add(this.bnDelRule);
+            this.Rules.Controls.Add(this.bnAddRule);
+            this.Rules.Controls.Add(this.bnEdit);
+            this.Rules.Location = new System.Drawing.Point(4, 22);
+            this.Rules.Name = "Rules";
+            this.Rules.Padding = new System.Windows.Forms.Padding(3);
+            this.Rules.Size = new System.Drawing.Size(417, 490);
+            this.Rules.TabIndex = 0;
+            this.Rules.Text = "Rules";
+            this.Rules.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.label5);
+            this.tabPage2.Controls.Add(this.lvSeenEpisodes);
+            this.tabPage2.Controls.Add(this.bnRemoveSeen);
+            this.tabPage2.Controls.Add(this.bnAddSeen);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(417, 490);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Library Episodes";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(7, 7);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(355, 52);
+            this.label5.TabIndex = 12;
+            this.label5.Text = resources.GetString("label5.Text");
+            // 
+            // lvSeenEpisodes
+            // 
+            this.lvSeenEpisodes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvSeenEpisodes.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.Episode,
+            this.EpisodeName});
+            this.lvSeenEpisodes.FullRowSelect = true;
+            this.lvSeenEpisodes.HideSelection = false;
+            this.lvSeenEpisodes.Location = new System.Drawing.Point(6, 78);
+            this.lvSeenEpisodes.MultiSelect = false;
+            this.lvSeenEpisodes.Name = "lvSeenEpisodes";
+            this.lvSeenEpisodes.ShowGroups = false;
+            this.lvSeenEpisodes.Size = new System.Drawing.Size(405, 377);
+            this.lvSeenEpisodes.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.lvSeenEpisodes.TabIndex = 11;
+            this.lvSeenEpisodes.UseCompatibleStateImageBehavior = false;
+            this.lvSeenEpisodes.View = System.Windows.Forms.View.Details;
+            this.lvSeenEpisodes.SelectedIndexChanged += new System.EventHandler(this.LvSeenEpisodes_SelectedIndexChanged);
+            // 
+            // Episode
+            // 
+            this.Episode.Text = "Episode";
+            this.Episode.Width = 98;
+            // 
+            // EpisodeName
+            // 
+            this.EpisodeName.Text = "Name";
+            this.EpisodeName.Width = 260;
+            // 
+            // bnRemoveSeen
+            // 
+            this.bnRemoveSeen.Location = new System.Drawing.Point(336, 461);
+            this.bnRemoveSeen.Name = "bnRemoveSeen";
+            this.bnRemoveSeen.Size = new System.Drawing.Size(75, 23);
+            this.bnRemoveSeen.TabIndex = 10;
+            this.bnRemoveSeen.Text = "&Remove";
+            this.bnRemoveSeen.UseVisualStyleBackColor = true;
+            this.bnRemoveSeen.Click += new System.EventHandler(this.Button1_Click);
+            // 
+            // bnAddSeen
+            // 
+            this.bnAddSeen.Location = new System.Drawing.Point(255, 461);
+            this.bnAddSeen.Name = "bnAddSeen";
+            this.bnAddSeen.Size = new System.Drawing.Size(75, 23);
+            this.bnAddSeen.TabIndex = 9;
+            this.bnAddSeen.Text = "&Add";
+            this.bnAddSeen.UseVisualStyleBackColor = true;
+            this.bnAddSeen.Click += new System.EventHandler(this.Button2_Click);
+            // 
+            // EditSeason
             // 
             this.AcceptButton = this.bnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
-            this.ClientSize = new System.Drawing.Size(424, 478);
-            this.Controls.Add(this.lbEpsPreview);
+            this.ClientSize = new System.Drawing.Size(440, 619);
+            this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.bnOK);
-            this.Controls.Add(this.bnRuleUp);
             this.Controls.Add(this.bnCancel);
-            this.Controls.Add(this.bnRuleDown);
-            this.Controls.Add(this.lvRuleList);
-            this.Controls.Add(this.bnDelRule);
-            this.Controls.Add(this.bnEdit);
-            this.Controls.Add(this.bnAddRule);
-            this.Controls.Add(this.txtSeasonNumber);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.txtShowName);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtShowName);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.txtSeasonNumber);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "EditRules";
+            this.Name = "EditSeason";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Edit Season Rules";
+            this.Text = "Edit Season";
+            this.tabControl1.ResumeLayout(false);
+            this.Rules.ResumeLayout(false);
+            this.Rules.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -294,5 +416,14 @@ namespace TVRename
 
         private System.Windows.Forms.Label txtShowName;
         private System.Windows.Forms.Label txtSeasonNumber;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage Rules;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.ListView lvSeenEpisodes;
+        private System.Windows.Forms.Button bnRemoveSeen;
+        private System.Windows.Forms.Button bnAddSeen;
+        private System.Windows.Forms.ColumnHeader Episode;
+        private System.Windows.Forms.ColumnHeader EpisodeName;
+        private System.Windows.Forms.Label label5;
     }
 }

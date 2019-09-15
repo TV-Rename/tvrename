@@ -583,5 +583,10 @@ namespace TVRename
         {
             Helpers.SysOpen(llCustomSearchPreview.Text);
         }
+
+        private void CbTimeZone_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

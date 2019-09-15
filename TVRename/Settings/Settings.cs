@@ -258,6 +258,10 @@ namespace TVRename
         [NotNull]
         public string[] VideoExtensionsArray => Convert(VideoExtensionsString);
 
+        [NotNull]
+        public string USER_AGENT =>
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36";
+
         public bool AutoAddAsPartOfQuickRename = true;
         public bool UseFullPathNameToMatchSearchFolders = false;
         public bool UseFullPathNameToMatchLibraryFolders = false;
@@ -320,14 +324,10 @@ namespace TVRename
             guesses[2] = "c:\\Program Files (x86)\\uTorrent\\uTorrent.exe";
 
             uTorrentPath = "";
-            foreach (string g in guesses)
+            foreach (FileInfo f in guesses.Select(g => new FileInfo(g)).Where(f => f.Exists))
             {
-                FileInfo f = new FileInfo(g);
-                if (f.Exists)
-                {
-                    uTorrentPath = f.FullName;
-                    break;
-                }
+                uTorrentPath = f.FullName;
+                break;
             }
 
             // ResumeDatPath

@@ -53,9 +53,9 @@ namespace TVRename
                     FindMissingEpisode(action, toRemove, newItems);
                 }
             }
-            catch (WebException ex)
+            catch (WebException e)
             {
-                LOGGER.Warn(ex, $"Failed to Access {TVSettings.Instance.SearchJSONURL}");
+                LOGGER.Warn( $"Failed to access: {TVSettings.Instance.SearchJSONURL} got the following message: {e.Status} {e.Message}");
             }
             catch (JsonReaderException ex)
             {
@@ -79,8 +79,7 @@ namespace TVRename
             }
 
             WebClient client = new WebClient();
-            client.Headers.Add("user-agent",
-                "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+            client.Headers.Add("user-agent", TVSettings.Instance.USER_AGENT);
 
             string response = client.DownloadString($"{TVSettings.Instance.SearchJSONURL}{imdbId}");
 

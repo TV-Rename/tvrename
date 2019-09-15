@@ -1,0 +1,38 @@
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using JetBrains.Annotations;
+
+namespace TVRename.Forms.ShowPreferences
+{
+    public partial class NewSeenEpisode : Form
+    {
+        public ProcessedEpisode ChosenEpisode;
+        public NewSeenEpisode([NotNull] IEnumerable<ProcessedEpisode> eps)
+        {
+            InitializeComponent();
+
+            comboBox1.BeginUpdate();
+            comboBox1.Items.Clear();
+            foreach (ProcessedEpisode ep in eps)
+            {
+                comboBox1.Items.Add(ep);
+            }
+            
+            //comboBox1.DisplayMember = "Name";
+            comboBox1.EndUpdate();
+        }
+
+        private void BnOK_Click(object sender, EventArgs e)
+        {
+            ChosenEpisode = (ProcessedEpisode) comboBox1.SelectedItem;
+            this.DialogResult = DialogResult.OK;
+            Close();
+        }
+
+        private void BnCancel_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+    }
+}

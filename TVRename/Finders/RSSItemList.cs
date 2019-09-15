@@ -32,8 +32,7 @@ namespace TVRename
             try
             {
                 WebClient client = new WebClient();
-                client.Headers.Add("user-agent",
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
+                client.Headers.Add("user-agent",TVSettings.Instance.USER_AGENT);
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                 response = client.DownloadString(url);
 
@@ -51,7 +50,7 @@ namespace TVRename
             }
             catch (WebException  e)
             {
-                Logger.Warn($"Cound not download RSS page at:{url} got the following message: {e.Status} {e.Message}");
+                Logger.Warn($"Could not download RSS page at: {url} got the following message: {e.Status} {e.Message}");
                 return false;
             }
             catch (XmlException e)
