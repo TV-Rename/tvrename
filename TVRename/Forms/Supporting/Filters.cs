@@ -20,9 +20,16 @@ namespace TVRename.Forms
         {
             this.doc = doc;
             InitializeComponent();
+
             clbGenre.Items.AddRange(doc.Library.GetGenres().Cast<object>().ToArray());
+
+            cmbNetwork.Items.Add(string.Empty);
             cmbNetwork.Items.AddRange(doc.Library.GetNetworks().Cast<object>().ToArray());
+
+            cmbShowStatus.Items.Add(string.Empty);
             cmbShowStatus.Items.AddRange(doc.Library.GetStatuses().Cast<object>().ToArray());
+
+            cmbRating.Items.Add(string.Empty);
             cmbRating.Items.AddRange(doc.Library.GetContentRatings().Cast<object>().ToArray());
 
             SetButtonStates();
