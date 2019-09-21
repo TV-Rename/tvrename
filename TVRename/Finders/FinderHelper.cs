@@ -407,7 +407,7 @@ namespace TVRename
         {
             if (!int.TryParse(m.Groups["s"].ToString(), out int seas))
             {
-                if (!re.RegExpression.Contains("<s>") && si.AppropriateSeasons()?.Count == 1)
+                if (!re.RegExpression.Contains("<s>") && (si?.AppropriateSeasons()?.Count??0) == 1)
                 {
                     seas = 1;
                 }
