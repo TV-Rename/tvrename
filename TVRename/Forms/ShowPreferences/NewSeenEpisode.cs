@@ -26,7 +26,7 @@ namespace TVRename.Forms.ShowPreferences
         private void BnOK_Click(object sender, EventArgs e)
         {
             ChosenEpisode = (ProcessedEpisode) comboBox1.SelectedItem;
-            this.DialogResult = DialogResult.OK;
+            DialogResult = DialogResult.OK;
             Close();
         }
 

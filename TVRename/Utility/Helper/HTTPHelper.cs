@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using CloudFlareUtilities;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using NLog;
@@ -12,6 +14,42 @@ namespace TVRename
     public static class HttpHelper
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+
+        public static string GetUrl(string url, bool useCloudflareProtection)
+        {
+            if (useCloudflareProtection)
+            {
+                try
+                {
+                    // Create a HttpClient that uses the handler to bypass CloudFlare's JavaScript challange.
+                    HttpClient client = new HttpClient(new ClearanceHandler());
+
+                    // Use the HttpClient as usual. Any JS challenge will be solved automatically for you.
+                    Task<string> task = Task.Run(async () => await client.GetStringAsync(url));
+                    return task.Result;
+                }
+                catch (AggregateException ex) when (ex.InnerException is CloudFlareClearanceException)
+                {
+                    // After all retries, clearance still failed.
+                }
+                catch (AggregateException ex) when (ex.InnerException is TaskCanceledException)
+                {
+                    // Looks like we ran into a timeout. Too many clearance attempts?
+                    // Maybe you should increase client.Timeout as each attempt will take about five seconds.
+                }
+            }
+            else
+            {
+                WebClient client = new WebClient();
+                client.Headers.Add("user-agent", TVSettings.Instance.USER_AGENT);
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                return client.DownloadString(url);
+            }
+
+            return string.Empty;
+        }
+
 
         [NotNull]
         private static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType,

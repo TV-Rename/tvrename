@@ -78,10 +78,7 @@ namespace TVRename
                 return;
             }
 
-            WebClient client = new WebClient();
-            client.Headers.Add("user-agent", TVSettings.Instance.USER_AGENT);
-
-            string response = client.DownloadString($"{TVSettings.Instance.SearchJSONURL}{imdbId}");
+            string response = HttpHelper.GetUrl($"{TVSettings.Instance.SearchJSONURL}{imdbId}",true);//TODO
 
             JObject jsonResponse = JObject.Parse(response);
             if (jsonResponse.ContainsKey(TVSettings.Instance.SearchJSONRootNode))

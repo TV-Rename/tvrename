@@ -24,19 +24,16 @@ namespace TVRename
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         // ReSharper disable once InconsistentNaming
-        public bool DownloadRSS([NotNull] string url, List<TVSettings.FilenameProcessorRE> rexps)
+        public bool DownloadRSS([NotNull] string url, List<TVSettings.FilenameProcessorRE> rexps, bool useCloudflareProtection)
         {
             regxps = rexps;
             string response = null;
 
             try
             {
-                WebClient client = new WebClient();
-                client.Headers.Add("user-agent",TVSettings.Instance.USER_AGENT);
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-                response = client.DownloadString(url);
+                response = HttpHelper.GetUrl(url, useCloudflareProtection);
 
-                XElement x = XElement.Load(new System.IO.StringReader(response));
+                XElement x = XElement.Load(new System.IO.StringReader(response??""));
 
                 if (x.Name.LocalName != "rss")
                 {
@@ -70,6 +67,7 @@ namespace TVRename
             }
             return true;
         }
+
 
         private bool ReadChannel([NotNull] XElement x)
         {
