@@ -60,24 +60,26 @@ namespace TVRename
                     return false;
                 }
 
+                byte[] r = HttpHelper.GetUrlBytes(url,true);
+
+                if ((r is null) || (r.Length == 0))
+                {
+                    Error = true;
+                    ErrorText = "No data downloaded";
+                    Done = true;
+                    return false;
+                }
+
+                string saveTemp = SaveDownloadedData(r, SourceName);
+
                 if (TVSettings.Instance.CheckuTorrent)
                 {
-                    byte[] r = new System.Net.WebClient().DownloadData(url);
-                    if ((r is null) || (r.Length == 0))
-                    {
-                        Error = true;
-                        ErrorText = "No data downloaded";
-                        Done = true;
-                        return false;
-                    }
-
-                    string saveTemp = SaveDownloadedData(r, SourceName);
                     uTorrentFinder.StartTorrentDownload(saveTemp, theFileNoExt);
                 }
                 
                 if (TVSettings.Instance.CheckqBitTorrent)
                 {
-                    qBitTorrentFinder.StartTorrentDownload(url);
+                    qBitTorrentFinder.StartTorrentDownload(url,saveTemp, TVSettings.Instance.qBitTorrentDownloadFilesFirst);
                 }
 
                 Done = true;

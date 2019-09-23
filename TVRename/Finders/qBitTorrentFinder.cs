@@ -100,7 +100,7 @@ namespace TVRename
             return ret;
         }
 
-        internal static void StartTorrentDownload(string torrentUrl)
+        internal static void StartTorrentDownload(string torrentUrl, string torrentFileName, bool downloadFileFirst)
         {
             string host = TVSettings.Instance.qBitTorrentHost;
             string port = TVSettings.Instance.qBitTorrentPort;
@@ -110,8 +110,47 @@ namespace TVRename
                 return;
             }
 
-            string url = $"http://{host}:{port}/command/download";
 
+            if (downloadFileFirst)
+            {
+                AddFile(torrentFileName, $"http://{host}:{port}/api/v2/torrents/add");
+            }
+            else
+            {
+                DownloadUrl(torrentUrl, $"http://{host}:{port}/command/download");
+            }
+        }
+
+        private static void AddFile(string torrentName, string url)
+        {
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    MultipartFormDataContent m = new MultipartFormDataContent();
+                    m.AddFile("torrents", torrentName, "application/x-bittorrent");
+                    HttpResponseMessage response = client.PostAsync(url, m).Result;
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        LOGGER.Warn(
+                            $"Tried to download {torrentName} from file to qBitTorrent via {url}. Got following response {response.StatusCode}");
+                    }
+                    else
+                    {
+                        LOGGER.Info(
+                            $"Started download of {torrentName} via file to qBitTorrent using {url}. Got following response {response.StatusCode}");
+                    }
+                }
+            }
+            catch (WebException)
+            {
+                LOGGER.Warn(
+                    $"Could not connect to {url} to download {torrentName}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
+            }
+        }
+
+        private static void DownloadUrl(string torrentUrl, string url)
+        {
             try
             {
                 using (HttpClient client = new HttpClient())
@@ -133,7 +172,8 @@ namespace TVRename
             }
             catch (WebException)
             {
-                LOGGER.Warn($"Could not connect to {url} to downlaod {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
+                LOGGER.Warn(
+                    $"Could not connect to {url} to download {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
             }
         }
     }

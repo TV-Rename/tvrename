@@ -812,6 +812,9 @@ namespace TVRename
         }
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        public bool RSSUseCloudflare=true;//TODO Parameterise
+        public bool SearchJSONUseCloudflare = true;//TODO Parameterise
+        public bool qBitTorrentDownloadFilesFirst = true;//TODO Parameterise
 
         public string FilenameFriendly(string fn)
         {

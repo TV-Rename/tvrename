@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using CloudFlareUtilities;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using NLog;
+using System.IO;
+
 
 namespace TVRename
 {
@@ -15,6 +18,22 @@ namespace TVRename
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        [NotNull]
+        internal static MultipartFormDataContent AddFile([NotNull] this MultipartFormDataContent @this,
+            string name,
+            [NotNull] string path,
+            string contentType = "application/octet-stream")
+        {
+            FileStream stream = File.OpenRead(path);
+            string fileName = Path.GetFileName(path);
+            StreamContent content = new StreamContent(stream)
+            {
+                Headers = { ContentType = new MediaTypeHeaderValue(contentType) }
+            };
+            @this.Add(content, name, fileName);
+
+            return @this;
+        }
 
         public static string GetUrl(string url, bool useCloudflareProtection)
         {
@@ -50,6 +69,41 @@ namespace TVRename
             return string.Empty;
         }
 
+        public static byte[] GetUrlBytes(string url, bool useCloudflareProtection)
+        {
+            if (useCloudflareProtection)
+            {
+                try
+                {
+                    // Create a HttpClient that uses the handler to bypass CloudFlare's JavaScript challange.
+                    HttpClient client = new HttpClient(new ClearanceHandler());
+
+                    // Use the HttpClient as usual. Any JS challenge will be solved automatically for you.
+                    Task<byte[]> task = Task.Run(async () => await client.GetByteArrayAsync(url));
+                    return task.Result;
+                }
+                catch (AggregateException ex) when (ex.InnerException is CloudFlareClearanceException)
+                {
+                    // After all retries, clearance still failed.
+                }
+                catch (AggregateException ex) when (ex.InnerException is TaskCanceledException)
+                {
+                    // Looks like we ran into a timeout. Too many clearance attempts?
+                    // Maybe you should increase client.Timeout as each attempt will take about five seconds.
+                }
+            }
+            else
+            {
+                WebClient client = new WebClient();
+                client.Headers.Add("user-agent", TVSettings.Instance.USER_AGENT);
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                return client.DownloadData(url);
+            }
+
+            return new byte[]{};
+        }
+
+
 
         [NotNull]
         private static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType,
@@ -75,8 +129,8 @@ namespace TVRename
 
             if (method == "POST")
             {
-                using (System.IO.StreamWriter streamWriter =
-                    new System.IO.StreamWriter(httpWebRequest.GetRequestStream()))
+                using (StreamWriter streamWriter =
+                    new StreamWriter(httpWebRequest.GetRequestStream()))
                 {
                     streamWriter.Write(json);
                     streamWriter.Flush();
@@ -85,7 +139,7 @@ namespace TVRename
 
             string result;
             HttpWebResponse httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            using (System.IO.StreamReader streamReader = new System.IO.StreamReader(httpResponse.GetResponseStream() ?? throw new InvalidOperationException()))
+            using (StreamReader streamReader = new StreamReader(httpResponse.GetResponseStream() ?? throw new InvalidOperationException()))
             {
                 result = streamReader.ReadToEnd();
             }

@@ -78,7 +78,15 @@ namespace TVRename
                 return;
             }
 
-            string response = HttpHelper.GetUrl($"{TVSettings.Instance.SearchJSONURL}{imdbId}",true);//TODO
+            string response = HttpHelper.GetUrl($"{TVSettings.Instance.SearchJSONURL}{imdbId}",TVSettings.Instance.SearchJSONUseCloudflare);
+
+            if (string.IsNullOrWhiteSpace(response))
+            {
+                LOGGER.Warn(
+                    $"Got no response from {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.Episode.TheSeries.Name}");
+
+                return;
+            }
 
             JObject jsonResponse = JObject.Parse(response);
             if (jsonResponse.ContainsKey(TVSettings.Instance.SearchJSONRootNode))
