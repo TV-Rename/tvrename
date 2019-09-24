@@ -169,6 +169,9 @@ namespace TVRename
         public bool OfflineMode = false;
         public bool DetailedRSSJSONLogging = false;
         public bool ShowBasicShowDetails = false;
+        public bool RSSUseCloudflare = true;
+        public bool SearchJSONUseCloudflare = true;
+        public bool qBitTorrentDownloadFilesFirst = true;
 
         public BetaMode mode = BetaMode.ProductionOnly;
         public float upgradeDirtyPercent = 20;
@@ -346,6 +349,9 @@ namespace TVRename
             writer.WriteElement("OfflineMode", OfflineMode);
             writer.WriteElement("ShowBasicShowDetails", ShowBasicShowDetails);
             writer.WriteElement("DetailedRSSJSONLogging", DetailedRSSJSONLogging);
+            writer.WriteElement("RSSUseCloudflare", RSSUseCloudflare);
+            writer.WriteElement("SearchJSONUseCloudflare", SearchJSONUseCloudflare);
+            writer.WriteElement("qBitTorrentDownloadFilesFirst", qBitTorrentDownloadFilesFirst);
             writer.WriteElement("ReplaceWithBetterQuality", ReplaceWithBetterQuality);
             writer.WriteElement("ExportWTWRSS", ExportWTWRSS);
             writer.WriteElement("ExportWTWRSSTo", ExportWTWRSSTo);
@@ -812,9 +818,6 @@ namespace TVRename
         }
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        public bool RSSUseCloudflare=true;//TODO Parameterise
-        public bool SearchJSONUseCloudflare = true;//TODO Parameterise
-        public bool qBitTorrentDownloadFilesFirst = true;//TODO Parameterise
 
         public string FilenameFriendly(string fn)
         {
@@ -1099,6 +1102,9 @@ namespace TVRename
         public void load([NotNull] XElement xmlSettings)
         {
             SetToDefaults();
+            RSSUseCloudflare = xmlSettings.ExtractBool("RSSUseCloudflare", true);
+            SearchJSONUseCloudflare = xmlSettings.ExtractBool("SearchJSONUseCloudflare", true);
+            qBitTorrentDownloadFilesFirst = xmlSettings.ExtractBool("qBitTorrentDownloadFilesFirst", true);
             BGDownload = xmlSettings.ExtractBool("BGDownload",false);
             OfflineMode = xmlSettings.ExtractBool("OfflineMode",false);
             ShowBasicShowDetails = xmlSettings.ExtractBool("ShowBasicShowDetails",false);

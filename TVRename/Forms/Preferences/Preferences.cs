@@ -197,6 +197,9 @@ namespace TVRename
 
             UpdateReplacement(s);
 
+            s.RSSUseCloudflare = cbRSSCloudflareProtection.Checked;
+            s.SearchJSONUseCloudflare = cbJSONCloudflareProtection.Checked;
+            s.qBitTorrentDownloadFilesFirst = cbDownloadTorrentBeforeDownloading.Checked;
             s.ShowBasicShowDetails = chkBasicShowDetails.Checked;
             s.DetailedRSSJSONLogging = cbDetailedRSSJSONLogging.Checked;
             s.ExportWTWRSS = cbWTWRSS.Checked;
@@ -702,6 +705,9 @@ namespace TVRename
 
             txtMaxSampleSize.Text = s.SampleFileMaxSizeMB.ToString();
 
+            cbRSSCloudflareProtection.Checked= s.RSSUseCloudflare;
+            cbJSONCloudflareProtection.Checked= s.SearchJSONUseCloudflare;
+            cbDownloadTorrentBeforeDownloading.Checked= s.qBitTorrentDownloadFilesFirst;
             chkBasicShowDetails.Checked = s.ShowBasicShowDetails;
             cbDetailedRSSJSONLogging.Checked = s.DetailedRSSJSONLogging;
             cbWTWRSS.Checked = s.ExportWTWRSS;
@@ -1696,6 +1702,11 @@ namespace TVRename
             cntfw = new CustomNameTagsFloatingWindow(pe: t);
             cntfw.Show(this);
             Focus();
+        }
+
+        private void Label25_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

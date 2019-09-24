@@ -310,6 +310,7 @@ namespace TVRename
             this.cbForceLower = new System.Windows.Forms.CheckBox();
             this.cbIgnoreSamples = new System.Windows.Forms.CheckBox();
             this.tbGeneral = new System.Windows.Forms.TabPage();
+            this.chkAutoAddAsPartOfQuickRename = new System.Windows.Forms.CheckBox();
             this.chkShareCriticalLogs = new System.Windows.Forms.CheckBox();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.chkMoveLibraryFiles = new System.Windows.Forms.CheckBox();
@@ -340,7 +341,9 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
-            this.chkAutoAddAsPartOfQuickRename = new System.Windows.Forms.CheckBox();
+            this.cbDownloadTorrentBeforeDownloading = new System.Windows.Forms.CheckBox();
+            this.cbJSONCloudflareProtection = new System.Windows.Forms.CheckBox();
+            this.cbRSSCloudflareProtection = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -821,6 +824,7 @@ namespace TVRename
             this.colShowStatus,
             this.colColor});
             this.lvwDefinedColors.GridLines = true;
+            this.lvwDefinedColors.HideSelection = false;
             this.lvwDefinedColors.Location = new System.Drawing.Point(6, 19);
             this.lvwDefinedColors.MultiSelect = false;
             this.lvwDefinedColors.Name = "lvwDefinedColors";
@@ -1090,6 +1094,7 @@ namespace TVRename
             // 
             this.gbJSON.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbJSON.Controls.Add(this.cbJSONCloudflareProtection);
             this.gbJSON.Controls.Add(this.cbSearchJSONManualScanOnly);
             this.gbJSON.Controls.Add(this.label55);
             this.gbJSON.Controls.Add(this.tbJSONFilesizeToken);
@@ -1103,7 +1108,7 @@ namespace TVRename
             this.gbJSON.Controls.Add(this.tbJSONURL);
             this.gbJSON.Location = new System.Drawing.Point(6, 343);
             this.gbJSON.Name = "gbJSON";
-            this.gbJSON.Size = new System.Drawing.Size(408, 173);
+            this.gbJSON.Size = new System.Drawing.Size(408, 199);
             this.gbJSON.TabIndex = 33;
             this.gbJSON.TabStop = false;
             this.gbJSON.Text = "JSON Search";
@@ -1213,6 +1218,7 @@ namespace TVRename
             this.gbRSS.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbRSS.Controls.Add(this.cbRSSCloudflareProtection);
             this.gbRSS.Controls.Add(this.cbSearchRSSManualScanOnly);
             this.gbRSS.Controls.Add(this.label45);
             this.gbRSS.Controls.Add(this.tbPreferredRSSTerms);
@@ -1263,11 +1269,11 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.RSSGrid.BackColor = System.Drawing.SystemColors.Window;
             this.RSSGrid.EnableSort = true;
-            this.RSSGrid.Location = new System.Drawing.Point(6, 82);
+            this.RSSGrid.Location = new System.Drawing.Point(6, 112);
             this.RSSGrid.Name = "RSSGrid";
             this.RSSGrid.OptimizeMode = SourceGrid.CellOptimizeMode.ForRows;
             this.RSSGrid.SelectionMode = SourceGrid.GridSelectionMode.Cell;
-            this.RSSGrid.Size = new System.Drawing.Size(395, 107);
+            this.RSSGrid.Size = new System.Drawing.Size(395, 77);
             this.RSSGrid.TabIndex = 26;
             this.RSSGrid.TabStop = true;
             this.RSSGrid.ToolTipText = "";
@@ -1275,11 +1281,12 @@ namespace TVRename
             // label25
             // 
             this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(6, 66);
+            this.label25.Location = new System.Drawing.Point(3, 96);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(99, 13);
             this.label25.TabIndex = 25;
             this.label25.Text = "Torrent RSS URLs:";
+            this.label25.Click += new System.EventHandler(this.Label25_Click);
             // 
             // bnRSSRemove
             // 
@@ -1626,13 +1633,14 @@ namespace TVRename
             // 
             this.qBitTorrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.qBitTorrent.Controls.Add(this.cbDownloadTorrentBeforeDownloading);
             this.qBitTorrent.Controls.Add(this.tbqBitTorrentHost);
             this.qBitTorrent.Controls.Add(this.tbqBitTorrentPort);
             this.qBitTorrent.Controls.Add(this.label41);
             this.qBitTorrent.Controls.Add(this.label42);
             this.qBitTorrent.Location = new System.Drawing.Point(6, 308);
             this.qBitTorrent.Name = "qBitTorrent";
-            this.qBitTorrent.Size = new System.Drawing.Size(405, 81);
+            this.qBitTorrent.Size = new System.Drawing.Size(405, 101);
             this.qBitTorrent.TabIndex = 7;
             this.qBitTorrent.TabStop = false;
             this.qBitTorrent.Text = "qBitTorrent";
@@ -3418,6 +3426,16 @@ namespace TVRename
             this.tbGeneral.Text = "General";
             this.tbGeneral.UseVisualStyleBackColor = true;
             // 
+            // chkAutoAddAsPartOfQuickRename
+            // 
+            this.chkAutoAddAsPartOfQuickRename.AutoSize = true;
+            this.chkAutoAddAsPartOfQuickRename.Location = new System.Drawing.Point(13, 222);
+            this.chkAutoAddAsPartOfQuickRename.Name = "chkAutoAddAsPartOfQuickRename";
+            this.chkAutoAddAsPartOfQuickRename.Size = new System.Drawing.Size(191, 17);
+            this.chkAutoAddAsPartOfQuickRename.TabIndex = 43;
+            this.chkAutoAddAsPartOfQuickRename.Text = "Auto-Add as part of Quick Rename";
+            this.chkAutoAddAsPartOfQuickRename.UseVisualStyleBackColor = true;
+            // 
             // chkShareCriticalLogs
             // 
             this.chkShareCriticalLogs.AutoSize = true;
@@ -3767,15 +3785,35 @@ namespace TVRename
             this.tcTabs.TabIndex = 0;
             this.tcTabs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tpSearch_DrawItem);
             // 
-            // chkAutoAddAsPartOfQuickRename
+            // cbDownloadTorrentBeforeDownloading
             // 
-            this.chkAutoAddAsPartOfQuickRename.AutoSize = true;
-            this.chkAutoAddAsPartOfQuickRename.Location = new System.Drawing.Point(13, 222);
-            this.chkAutoAddAsPartOfQuickRename.Name = "chkAutoAddAsPartOfQuickRename";
-            this.chkAutoAddAsPartOfQuickRename.Size = new System.Drawing.Size(191, 17);
-            this.chkAutoAddAsPartOfQuickRename.TabIndex = 43;
-            this.chkAutoAddAsPartOfQuickRename.Text = "Auto-Add as part of Quick Rename";
-            this.chkAutoAddAsPartOfQuickRename.UseVisualStyleBackColor = true;
+            this.cbDownloadTorrentBeforeDownloading.AutoSize = true;
+            this.cbDownloadTorrentBeforeDownloading.Location = new System.Drawing.Point(75, 74);
+            this.cbDownloadTorrentBeforeDownloading.Name = "cbDownloadTorrentBeforeDownloading";
+            this.cbDownloadTorrentBeforeDownloading.Size = new System.Drawing.Size(227, 17);
+            this.cbDownloadTorrentBeforeDownloading.TabIndex = 20;
+            this.cbDownloadTorrentBeforeDownloading.Text = "Download .torrent files before downloading";
+            this.cbDownloadTorrentBeforeDownloading.UseVisualStyleBackColor = true;
+            // 
+            // cbJSONCloudflareProtection
+            // 
+            this.cbJSONCloudflareProtection.AutoSize = true;
+            this.cbJSONCloudflareProtection.Location = new System.Drawing.Point(98, 172);
+            this.cbJSONCloudflareProtection.Name = "cbJSONCloudflareProtection";
+            this.cbJSONCloudflareProtection.Size = new System.Drawing.Size(145, 17);
+            this.cbJSONCloudflareProtection.TabIndex = 40;
+            this.cbJSONCloudflareProtection.Text = "Use Cloudflare protection";
+            this.cbJSONCloudflareProtection.UseVisualStyleBackColor = true;
+            // 
+            // cbRSSCloudflareProtection
+            // 
+            this.cbRSSCloudflareProtection.AutoSize = true;
+            this.cbRSSCloudflareProtection.Location = new System.Drawing.Point(6, 69);
+            this.cbRSSCloudflareProtection.Name = "cbRSSCloudflareProtection";
+            this.cbRSSCloudflareProtection.Size = new System.Drawing.Size(145, 17);
+            this.cbRSSCloudflareProtection.TabIndex = 41;
+            this.cbRSSCloudflareProtection.Text = "Use Cloudflare protection";
+            this.cbRSSCloudflareProtection.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -4186,5 +4224,8 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkUseSearchFullPathWhenMatchingShows;
         private System.Windows.Forms.CheckBox chkUseLibraryFullPathWhenMatchingShows;
         private System.Windows.Forms.CheckBox chkAutoAddAsPartOfQuickRename;
+        private System.Windows.Forms.CheckBox cbJSONCloudflareProtection;
+        private System.Windows.Forms.CheckBox cbDownloadTorrentBeforeDownloading;
+        private System.Windows.Forms.CheckBox cbRSSCloudflareProtection;
     }
 }

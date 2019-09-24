@@ -316,7 +316,7 @@ namespace TVRename
             UpdatePreview(rel);
         }
 
-        private void UpdatePreview(List<TVSettings.FilenameProcessorRE> rel)
+        private void UpdatePreview([NotNull] List<TVSettings.FilenameProcessorRE> rel)
         {
             lvPreview.BeginUpdate();
 
