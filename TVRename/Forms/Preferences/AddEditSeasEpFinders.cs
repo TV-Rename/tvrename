@@ -319,6 +319,7 @@ namespace TVRename
         private void UpdatePreview(List<TVSettings.FilenameProcessorRE> rel)
         {
             lvPreview.BeginUpdate();
+
             DirectoryInfo d = new DirectoryInfo(txtFolder.Text);
             foreach (FileInfo fi in d.GetFiles())
             {
@@ -331,12 +332,15 @@ namespace TVRename
                 bool r = FinderHelper.FindSeasEp(fi, out int seas, out int ep, out int maxEp, si, rel, false,
                     out TVSettings.FilenameProcessorRE matchRex);
 
-                IEnumerable<ShowItem> matchingShows = FinderHelper.FindMatchingShows(fi,shows);
-                string bestShowName = FinderHelper.FindBestMatchingShow(fi, shows).ShowName;
-                string otherShowNames = string.Join(", ", matchingShows.Select(item => item.ShowName).Where(s => s!=bestShowName ));
-                string showDisplayString = otherShowNames.Any() ? bestShowName + " - (" + otherShowNames + ")" : bestShowName;
+                IEnumerable<ShowItem> matchingShows = FinderHelper.FindMatchingShows(fi, shows);
+                string bestShowName = FinderHelper.FindBestMatchingShow(fi, shows)?.ShowName;
+                string otherShowNames = string.Join(", ",
+                    matchingShows.Select(item => item.ShowName).Where(s => s != bestShowName));
 
-                ListViewItem lvi = new ListViewItem { Text = fi.Name };
+                string showDisplayString =
+                    otherShowNames.Any() ? bestShowName + " - (" + otherShowNames + ")" : bestShowName;
+
+                ListViewItem lvi = new ListViewItem {Text = fi.Name};
                 lvi.SubItems.Add(showDisplayString);
                 lvi.SubItems.Add((seas == -1) ? "-" : seas.ToString());
                 lvi.SubItems.Add((ep == -1) ? "-" : ep + ((maxEp != -1) ? "-" + maxEp : ""));
