@@ -1793,7 +1793,7 @@ namespace TVRename
                         IgnoreSelectedSeasons();
 
                         mLastActionsClicked = null;
-                        FillActionList();
+                        FillActionList(true);
                         break;
                     }
                 case RightClickCommands.kActionDelete:
@@ -1873,7 +1873,7 @@ namespace TVRename
                 FileFinder.KeepTogether(mDoc.TheActionList, false, true);
             }
 
-            FillActionList();
+            FillActionList(true);
         }
 
         private void OpenFolderForShow(int foldernum)
@@ -2691,7 +2691,7 @@ namespace TVRename
                     mDoc.ForceUpdateImages(si);
                 }
 
-                FillActionList();
+                FillActionList(false);
             }
         }
 
@@ -3006,7 +3006,7 @@ namespace TVRename
             }
 
             FillMyShows(); // scanning can download more info to be displayed in my shows
-            FillActionList();
+            FillActionList(false);
         }
 
         [NotNull]
@@ -3059,12 +3059,32 @@ namespace TVRename
             e.Item = LviForItem(item);
         }
 
-        public void FillActionList()
+        public void FillActionList(bool preserveExistingCheckboxes)
         {
             internalCheckChange = true;
 
             // Save where the list is currently scrolled too
             int currentTop = lvAction.GetScrollVerticalPos();
+
+            List<Item> selectedItems = new List<Item>();
+            List<Item> deSelectedItems = new List<Item>();
+            if (preserveExistingCheckboxes)
+            {
+                //get checkboxes
+                foreach (object index in lvAction.CheckedItems)
+                {
+                    selectedItems.Add((Item) ((ListViewItem) index).Tag);
+                }
+
+                foreach (object index in lvAction.Items)
+                {
+                    Item chosenItem = (Item)((ListViewItem)index).Tag;
+                    if (!selectedItems.Contains(chosenItem))
+                    {
+                        deSelectedItems.Add(chosenItem);
+                    }
+                }
+            }
 
             if (lvAction.VirtualMode)
             {
@@ -3078,6 +3098,23 @@ namespace TVRename
                 foreach (Item item in mDoc.TheActionList.ToList())
                 {
                     ListViewItem lvi = LviForItem(item);
+
+                    if (preserveExistingCheckboxes)
+                    {
+                        if (selectedItems.Contains(item))
+                        {
+                            lvi.Checked = true;
+                        }
+                        else if (deSelectedItems.Contains(item))
+                        {
+                            lvi.Checked = false;
+                        }
+                        else
+                        {
+                            //must be a newly added item, so leave with default checked status
+                        }
+                    }
+
                     lvAction.Items.Add(lvi);
                 }
 
@@ -3200,7 +3237,7 @@ namespace TVRename
                 }
             }
 
-            FillActionList();
+            FillActionList(true);
             RefreshWTW(false,unattended);
             mDoc.AllowAutoScan();
         }
@@ -3257,7 +3294,7 @@ namespace TVRename
                 mDoc.TheActionList.Remove(toRemove);
             }
 
-            FillActionList();
+            FillActionList(true);
             RefreshWTW(false,false);
         }
 
@@ -3411,7 +3448,7 @@ namespace TVRename
                 mDoc.TheActionList.Remove((Item) lvi.Tag);
             }
 
-            FillActionList();
+            FillActionList(true);
         }
 
         private void lvAction_KeyDown(object sender, [NotNull] KeyEventArgs e)
@@ -3717,7 +3754,7 @@ namespace TVRename
             {
                 mDoc.SetDirty();
                 mDoc.RemoveIgnored();
-                FillActionList();
+                FillActionList(true);
             }
         }
 

@@ -22,7 +22,7 @@ namespace TVRename.Forms.Tools
             InitializeComponent();
 
             mDoc.TheActionList.Clear();
-            parent.FillActionList();
+            parent.FillActionList(false);
 
             txtFileFormatPreview.Text = TVSettings.Instance.NamingStyle.StyleString;
             txtFileFormatPreview.Enabled = false;
@@ -48,7 +48,7 @@ namespace TVRename.Forms.Tools
                 ProcessUnknown(droppedFile);
             }
 
-            parent.FillActionList();
+            parent.FillActionList(true);
             parent.FocusOnScanResults();
             
             Logger.Info("Finished quick rename.");
