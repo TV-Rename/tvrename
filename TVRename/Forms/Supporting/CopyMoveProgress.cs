@@ -232,10 +232,12 @@ namespace TVRename
             if (cbPause.Checked)
             {
                 mDoc.Pause();
+                cbPause.Text = "Resume";
             }
             else
             {
                 mDoc.Unpause();
+                cbPause.Text = "Pause";
             }
 
             bool en = !(cbPause.Checked);
