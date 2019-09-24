@@ -265,7 +265,7 @@ namespace TVRename
                 try
                 {
                     attempts++;
-                    await operation();
+                    await operation().ConfigureAwait(false);
                     break;
                 }
                 catch (TException ex)
@@ -278,7 +278,7 @@ namespace TVRename
 
                     Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - will retry after delay {delay}: {ex.Message}");
 
-                    await Task.Delay(delay);
+                    await Task.Delay(delay).ConfigureAwait(false);
                 }
             } while (true);
         }

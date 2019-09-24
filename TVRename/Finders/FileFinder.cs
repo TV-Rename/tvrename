@@ -350,12 +350,9 @@ namespace TVRename
                     return true;
                 }
 
-                if ((action is Action a1) && (action2 is Action a2))
+                if ((action is Action a1) && (action2 is Action a2) && (a2.Produces == a1.Produces))
                 {
-                    if (a2.Produces == a1.Produces)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 

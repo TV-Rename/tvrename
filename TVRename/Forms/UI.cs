@@ -79,7 +79,7 @@ namespace TVRename
         #endregion
 
         private int busy;
-        private TVDoc mDoc;
+        private readonly TVDoc mDoc;
         private bool internalCheckChange;
         private int lastDlRemaining;
 
@@ -3731,7 +3731,7 @@ namespace TVRename
         {
             UseWaitCursor = true;
             ShowSummary f = new ShowSummary(mDoc);
-            await Task.Run(() => f.GenerateData());
+            await Task.Run(() => f.GenerateData()).ConfigureAwait(false);
             f.PopulateGrid();
             UseWaitCursor = false;
             f.Show();

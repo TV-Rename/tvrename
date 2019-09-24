@@ -1604,14 +1604,11 @@ namespace TVRename
                 searchFolderBrowser.SelectedPath = TVSettings.Instance.LibraryFolders[n];
             }
 
-            if (searchFolderBrowser.ShowDialog(this) == DialogResult.OK)
+            if (searchFolderBrowser.ShowDialog(this) == DialogResult.OK && Directory.Exists(searchFolderBrowser.SelectedPath))
             {
-                if (Directory.Exists(searchFolderBrowser.SelectedPath))
-                {
-                    TVSettings.Instance.LibraryFolders.Add(searchFolderBrowser.SelectedPath);
-                    mDoc.SetDirty();
-                    FillFolderStringLists();
-                }
+                TVSettings.Instance.LibraryFolders.Add(searchFolderBrowser.SelectedPath);
+                mDoc.SetDirty();
+                FillFolderStringLists();
             }
         }
 

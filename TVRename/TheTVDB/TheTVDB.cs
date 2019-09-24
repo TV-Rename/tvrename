@@ -1680,18 +1680,17 @@ namespace TVRename
                             return true;
                         case HttpStatusCode.NotFound:
                             return false;
+                        case HttpStatusCode.OK:
+                            return true;
+                        default:
+                            return false;
                     }
                 }
 
                 return false;
             }
 
-            if (!jsonResponse.HasValues)
-            {
-                return false;
-            }
-
-            return true;
+            return jsonResponse.HasValues;
         }
 
         private void ReloadEpisodes(int code, bool useCustomLangCode, string langCode)

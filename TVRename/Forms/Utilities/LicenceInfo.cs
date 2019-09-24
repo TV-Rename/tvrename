@@ -15,9 +15,5 @@ namespace TVRename.Forms.Utilities
         {
             Helpers.SysOpen("https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md");
         }
-
-        private void btnClose_Click(object sender, EventArgs e)
-        {
-        }
     }
 }

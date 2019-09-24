@@ -280,13 +280,9 @@ namespace TVRename
         private void Dispose(bool disposing)
         {
             ReleaseUnmanagedResources();
-            if (disposing)
+            if (disposing && workerSemaphore != null)
             {
-                // ReSharper disable once UseNullPropagation
-                if (workerSemaphore != null)
-                {
-                    workerSemaphore.Dispose();
-                }
+                workerSemaphore.Dispose();
             }
         }
 

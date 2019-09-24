@@ -169,7 +169,6 @@ namespace TVRename.Forms.Utilities
             this.btnClose.TabIndex = 12;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // LicenceInfoForm
             // 

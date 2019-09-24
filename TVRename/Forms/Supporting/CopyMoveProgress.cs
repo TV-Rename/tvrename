@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System.Linq;
 using JetBrains.Annotations;
 
 namespace TVRename
@@ -209,22 +210,11 @@ namespace TVRename
         [CanBeNull]
         private ActionCopyMoveRename GetActiveCmAction()
         {
-            foreach (ActionQueue aq in mToDo)
+            foreach (Action action in mToDo.Where(aq => aq.Actions.Count != 0).SelectMany(aq => aq.Actions))
             {
-                if (aq.Actions.Count == 0)
+                if (!action.Done && action.PercentDone > 0 && action is ActionCopyMoveRename cmAction)
                 {
-                    continue;
-                }
-
-                foreach (Action action in aq.Actions)
-                {
-                    if ((!action.Done) && (action.PercentDone > 0))
-                    {
-                        if (action is ActionCopyMoveRename cmAction )
-                        {
-                            return cmAction;
-                        }
-                    }
+                    return cmAction;
                 }
             }
 

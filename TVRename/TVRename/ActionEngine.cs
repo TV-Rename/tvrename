@@ -74,6 +74,7 @@ namespace TVRename
             }
             catch (ThreadAbortException)
             {
+                //Thread has been killed off
             }
             catch (Exception e)
             {

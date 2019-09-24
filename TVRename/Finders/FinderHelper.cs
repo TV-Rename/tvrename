@@ -502,9 +502,11 @@ namespace TVRename
                 }
                 catch (FormatException)
                 {
+                    //didn't work - just try the next one
                 }
                 catch (ArgumentException)
                 {
+                    //didn't work - just try the next one
                 }
             }
 
