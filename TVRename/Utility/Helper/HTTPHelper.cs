@@ -11,7 +11,6 @@ using Newtonsoft.Json.Linq;
 using NLog;
 using System.IO;
 
-
 namespace TVRename
 {
     public static class HttpHelper
@@ -102,8 +101,6 @@ namespace TVRename
 
             return new byte[]{};
         }
-
-
 
         [NotNull]
         private static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType,

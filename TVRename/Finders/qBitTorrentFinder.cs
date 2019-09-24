@@ -110,7 +110,6 @@ namespace TVRename
                 return;
             }
 
-
             if (downloadFileFirst)
             {
                 AddFile(torrentFileName, $"http://{host}:{port}/api/v2/torrents/add");

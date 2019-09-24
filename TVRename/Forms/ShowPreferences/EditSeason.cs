@@ -54,7 +54,6 @@ namespace TVRename
 
             FillRuleList(false, 0);
             FillSeenEpisodes(false);
-
         }
 
         private void FillSeenEpisodes(bool keepSel)

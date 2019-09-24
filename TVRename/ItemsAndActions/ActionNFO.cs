@@ -56,9 +56,9 @@ namespace TVRename
                 writer.WriteElement("value", showRating);
                 writer.WriteElement("votes", episode.SiteRatingCount??0, true);
 
-                writer.WriteEndElement();//rating
+                writer.WriteEndElement(); //rating
 
-                writer.WriteEndElement();//ratings
+                writer.WriteEndElement(); //ratings
             }
 
             if (dvdOrder)
@@ -228,9 +228,9 @@ namespace TVRename
                             writer.WriteElement("value", showRating.Value);
                             writer.WriteElement("votes", series.SiteRatingVotes, true);
 
-                            writer.WriteEndElement();//rating
+                            writer.WriteEndElement(); //rating
 
-                            writer.WriteEndElement();//ratings
+                            writer.WriteEndElement(); //ratings
                         }
 
                         string lang = TVSettings.Instance.PreferredLanguageCode;

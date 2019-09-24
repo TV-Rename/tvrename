@@ -68,11 +68,7 @@ namespace TVRename
             return true;
         }
 
-
-        private bool ReadChannel([NotNull] XElement x)
-        {
-            return x.Descendants("item").All(ReadItem);
-        }
+        private bool ReadChannel([NotNull] XElement x) => x.Descendants("item").All(ReadItem);
 
         private bool ReadItem([NotNull] XElement itemElement)
         {

@@ -145,7 +145,6 @@ namespace TVRename
             this.cbTimeZone.Name = "cbTimeZone";
             this.cbTimeZone.Size = new System.Drawing.Size(200, 21);
             this.cbTimeZone.TabIndex = 4;
-            this.cbTimeZone.SelectedIndexChanged += new System.EventHandler(this.CbTimeZone_SelectedIndexChanged);
             // 
             // label6
             // 
