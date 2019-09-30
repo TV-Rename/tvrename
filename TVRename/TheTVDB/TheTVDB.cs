@@ -1073,12 +1073,10 @@ namespace TVRename
                     if (ex.Status == WebExceptionStatus.ProtocolError && !(ex.Response is null) && ex.Response is HttpWebResponse resp &&
                         resp.StatusCode == HttpStatusCode.NotFound)
                     {
-                        Logger.Warn($"Show with Id {id} is no longer available from TVDB (got a 404). Error obtaining page { pageNumber} of { episodeUri} in lang {lang} using url { ex.Response.ResponseUri.AbsoluteUri}");
+                        Logger.Warn(
+                            $"Episodes were not found for {id} from TVDB (got a 404). Error obtaining page { pageNumber} of { episodeUri} in lang {lang} using url { ex.Response.ResponseUri.AbsoluteUri}");
 
-                        if (TvdbIsUp())
-                        {
-                            throw new ShowNotFoundException(id);
-                        }
+                        return null;
                     }
 
                     Logger.Error(ex, $"Error obtaining {episodeUri}");
