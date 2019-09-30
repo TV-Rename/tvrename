@@ -296,6 +296,12 @@ namespace TVRename
                         return true;
                     }
 
+                    if (TVSettings.Instance.BulkAddIgnoreRecycleBin &&
+                        di2.FullName.EndsWith("\\@Recycle", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+
                     // ....its good!
                     FoundFolder ai =
                         new FoundFolder(di2, hasSeasonFolders, folderFormat);
