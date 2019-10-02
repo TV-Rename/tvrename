@@ -72,6 +72,7 @@ Section "Install"
     File "TVRename\bin\Release\MediaInfo.Wrapper.dll"
     File "TVRename\bin\Release\x64\MediaInfo.dll"
     File "TVRename\bin\Release\x86\MediaInfo.dll"
+    File "TVRename\bin\Release\CloudFlareUtilities.dll"
 
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -116,6 +117,7 @@ Section "Uninstall"
     Delete "$INSTDIR\MediaInfo.Wrapper.dll"
     Delete "$INSTDIR\x64\MediaInfo.dll"
     Delete "$INSTDIR\x86\MediaInfo.dll"
+    Delete "$INSTDIR\CloudFlareUtilities.dll"
     RmDir "$INSTDIR"
 
     !insertmacro MUI_STARTMENU_GETFOLDER Application $STARTMENU_FOLDER
