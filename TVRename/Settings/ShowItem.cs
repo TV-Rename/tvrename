@@ -514,7 +514,7 @@ namespace TVRename
 
             AutoAddCustomFolderFormat = CustomSeasonName.DefaultStyle();
 
-            AutoAddFolderBase = //TODO - Make sure this continues to get set as a show is selected
+            AutoAddFolderBase =
                   !TVSettings.Instance.DefShowAutoFolders ? string.Empty
                 : !TVSettings.Instance.DefShowUseDefLocation ?string.Empty
                 :  TVSettings.Instance.DefShowLocation + Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(ShowName)); 
@@ -522,7 +522,7 @@ namespace TVRename
             AutoAddType =
                 !TVSettings.Instance.DefShowAutoFolders ? AutomaticFolderType.none
                 :TVSettings.Instance.DefShowUseBase ? AutomaticFolderType.baseOnly
-                :AutomaticFolderType.libraryDefault ;
+                :AutomaticFolderType.libraryDefault;
         }
 
         [CanBeNull]

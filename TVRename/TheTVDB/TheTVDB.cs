@@ -1618,7 +1618,7 @@ namespace TVRename
                     }
                 }
             }
-            catch (WebException ex)
+            catch (WebException)
             {
                 //no images for chosen language
                 Logger.Warn($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}");

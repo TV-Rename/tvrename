@@ -99,9 +99,9 @@ namespace TVRename.Forms.Tools
                 return;
             }
 
-            ShowItem bestShow = cbShowList.SelectedItem == "<Auto>"
+            ShowItem bestShow = (string)cbShowList.SelectedItem == "<Auto>"
                 ? FinderHelper.FindBestMatchingShow(droppedFile, mDoc.Library.Shows)
-                : mDoc.Library.Shows.FirstOrDefault(item => item.ShowName == cbShowList.SelectedItem);
+                : mDoc.Library.Shows.FirstOrDefault(item => item.ShowName == (string)cbShowList.SelectedItem);
 
             if (bestShow is null)
             {

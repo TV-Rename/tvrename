@@ -195,7 +195,7 @@ namespace TVRename
 
                 return name;
             }
-            catch(ArgumentOutOfRangeException ex)
+            catch(ArgumentOutOfRangeException)
             {
                 if (name.Contains("{ShortDate}") || name.Contains("{LongDate}") || name.Contains("{YMDDate}"))
                 {

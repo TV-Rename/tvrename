@@ -132,7 +132,6 @@ namespace TVRename
                             break;
                         case FaResult.kfaCancel:
                             throw new TVRenameOperationInterruptedException();
-                            break;
                         case FaResult.kfaCreate:
                             TryCreateDirectory(folder, sn, text);
                             goAgain = true;

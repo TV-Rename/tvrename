@@ -323,7 +323,6 @@ namespace TVRename
             {
                 return def;
             }
-
         }
 
         public static float ToPercent(this string text, float def)

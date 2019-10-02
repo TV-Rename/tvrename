@@ -68,7 +68,6 @@ namespace TVRename
                 if (min == 9999)
                 {
                     return null;
-
                 }
                 return min;
             }
