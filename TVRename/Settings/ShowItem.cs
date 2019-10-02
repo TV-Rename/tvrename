@@ -57,7 +57,7 @@ namespace TVRename
 
         public DateTime? BannersLastUpdatedOnDisk { get; set; }
 
-        public Season.SeasonType Order => DvdOrder ? Season.SeasonType.dvd : Season.SeasonType.aired;
+        private Season.SeasonType Order => DvdOrder ? Season.SeasonType.dvd : Season.SeasonType.aired;
 
         #region AutomaticFolderType enum
         public enum AutomaticFolderType
@@ -488,30 +488,41 @@ namespace TVRename
         private void SetDefaults()
         {
             ManualFolderLocations = new Dictionary<int, List<string>>();
-            IgnoreSeasons = new List<int>();
-            UseCustomShowName = false;
-            CustomShowName = "";
-            UseCustomLanguage = false;
-            UseSequentialMatch = false;
             SeasonRules = new Dictionary<int, List<ShowRule>>();
             SeasonEpisodes = new Dictionary<int, List<ProcessedEpisode>>();
-            ShowNextAirdate = true;
+            IgnoreSeasons = new List<int>();
+
+            UseCustomShowName = false;
+            CustomShowName = string.Empty;
+            UseCustomLanguage = false;
             TvdbCode = -1;
-            AutoAddFolderBase = "";
-            AutoAddCustomFolderFormat = CustomSeasonName.DefaultStyle();
-            AutoAddType = AutomaticFolderType.libraryDefault;
-            DoRename = true;
-            DoMissingCheck = true;
-            CountSpecials = false;
-            DvdOrder = false;
-            CustomSearchUrl = "";
             UseCustomSearchUrl = false;
-            ForceCheckNoAirdate = false;
-            ForceCheckFuture = false;
+            CustomSearchUrl = string.Empty;
             ManualFoldersReplaceAutomatic = false;
             BannersLastUpdatedOnDisk = null; //assume that the banners are old and have expired
             ShowTimeZone = TimeZoneHelper.DefaultTimeZone(); // default, is correct for most shows
-            lastFiguredTz = "";
+            lastFiguredTz = string.Empty;
+
+            UseSequentialMatch = TVSettings.Instance.DefShowSequentialMatching;
+            ShowNextAirdate = TVSettings.Instance.DefShowNextAirdate;
+            DoRename = TVSettings.Instance.DefShowDoRenaming;
+            DoMissingCheck = TVSettings.Instance.DefShowDoMissingCheck;
+            CountSpecials = TVSettings.Instance.DefShowSpecialsCount;
+            DvdOrder = TVSettings.Instance.DefShowDVDOrder;
+            ForceCheckNoAirdate = TVSettings.Instance.DefShowIncludeNoAirdate;
+            ForceCheckFuture = TVSettings.Instance.DefShowIncludeFuture;
+
+            AutoAddCustomFolderFormat = CustomSeasonName.DefaultStyle();
+
+            AutoAddFolderBase = //TODO - Make sure this continues to get set as a show is selected
+                  !TVSettings.Instance.DefShowAutoFolders ? string.Empty
+                : !TVSettings.Instance.DefShowUseDefLocation ?string.Empty
+                :  TVSettings.Instance.DefShowLocation + Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(ShowName)); 
+
+            AutoAddType =
+                !TVSettings.Instance.DefShowAutoFolders ? AutomaticFolderType.none
+                :TVSettings.Instance.DefShowUseBase ? AutomaticFolderType.baseOnly
+                :AutomaticFolderType.libraryDefault ;
         }
 
         [CanBeNull]

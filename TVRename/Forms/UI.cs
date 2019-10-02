@@ -1498,30 +1498,31 @@ namespace TVRename
                 ToolStripMenuItem tsis = new ToolStripMenuItem("Watch Epsiodes");
 
                 // for each episode in season, find it on disk
-                foreach (ProcessedEpisode epds in si.SeasonEpisodes[seas.SeasonNumber])
+                if (si.SeasonEpisodes.ContainsKey(seas.SeasonNumber))
                 {
-                    List<FileInfo> fl = FinderHelper.FindEpOnDisk(null, epds);
-                    if (fl.Count <= 0)
+                    foreach (ProcessedEpisode epds in si.SeasonEpisodes[seas.SeasonNumber])
                     {
-                        continue;
-                    }
-
-                    int n = mLastFl.Count;
-                    foreach (FileInfo fi in fl)
-                    {
-                        mLastFl.Add(fi);
-                        ToolStripMenuItem tsisi = new ToolStripMenuItem("Watch: " + fi.FullName)
+                        List<FileInfo> fl = FinderHelper.FindEpOnDisk(null, epds);
+                        if (fl.Count <= 0)
                         {
-                            Tag = (int) RightClickCommands.kWatchBase + n
-                        };
+                            continue;
+                        }
 
-                        int n1 = n;
-                        tsisi.Click += (s, ev) => {
-                            WatchEpisode(n1); 
-                        };
+                        int n = mLastFl.Count;
+                        foreach (FileInfo fi in fl)
+                        {
+                            mLastFl.Add(fi);
+                            ToolStripMenuItem tsisi = new ToolStripMenuItem("Watch: " + fi.FullName)
+                            {
+                                Tag = (int) RightClickCommands.kWatchBase + n
+                            };
 
-                        n++;
-                        tsis.DropDownItems.Add(tsisi);
+                            int n1 = n;
+                            tsisi.Click += (s, ev) => { WatchEpisode(n1); };
+
+                            n++;
+                            tsis.DropDownItems.Add(tsisi);
+                        }
                     }
                 }
 
@@ -2510,26 +2511,26 @@ namespace TVRename
             mDoc.PreventAutoScan("Add Show");
             ShowItem si = new ShowItem();
 
-                AddEditShow aes = new AddEditShow(si);
-                DialogResult dr = aes.ShowDialog();
-                if (dr == DialogResult.OK)
+            AddEditShow aes = new AddEditShow(si);
+            DialogResult dr = aes.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                lock (TheTVDB.SERIES_LOCK)
                 {
-                    lock (TheTVDB.SERIES_LOCK)
-                    {
-                        mDoc.Library.Add(si);
-                    }
-
-                    ShowAddedOrEdited(false,false);
-                    SelectShow(si);
-
-                    Logger.Info("Added new show called {0}", si.ShowName);
-                }
-                else
-                {
-                    Logger.Info("Cancelled adding new show");
+                    mDoc.Library.Add(si);
                 }
 
-                ShowAddedOrEdited(true,false);
+                ShowAddedOrEdited(false,false);
+                SelectShow(si);
+
+                Logger.Info("Added new show called {0}", si.ShowName);
+            }
+            else
+            {
+                Logger.Info("Cancelled adding new show");
+            }
+
+            ShowAddedOrEdited(true,false);
 
             LessBusy();
             mDoc.AllowAutoScan();

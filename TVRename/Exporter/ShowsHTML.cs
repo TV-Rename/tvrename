@@ -56,9 +56,7 @@ namespace TVRename
             }
 
             string posterUrl = TheTVDB.GetImageURL(series.GetImage(TVSettings.FolderJpgIsType.Poster));
-            int minYear = series.MinYear;
-            int maxYear = series.MaxYear;
-            string yearRange = (minYear == maxYear) ? minYear.ToString() : minYear + "-" + maxYear;
+            string yearRange = ShowHtmlHelper.YearRange(series);
             string episodeSummary = series.AiredSeasons.Sum(pair => pair.Value.Episodes.Count).ToString();
             string stars = ShowHtmlHelper.StarRating(series.SiteRating/2);
             string genreIcons = string.Join("&nbsp;", series.Genres().Select(ShowHtmlHelper.GenreIconHtml));

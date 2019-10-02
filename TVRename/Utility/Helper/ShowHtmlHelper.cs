@@ -53,9 +53,7 @@ namespace TVRename
             }
             string horizontalBanner = CreateHorizontalBannerHtml(ser);
             string poster = CreatePosterHtml(ser);
-            int minYear = ser.MinYear;
-            int maxYear = ser.MaxYear;
-            string yearRange = (minYear == maxYear) ? minYear.ToString() : minYear + "-" + maxYear;
+            string yearRange = YearRange(ser);
             string episodeSummary = ser.AiredSeasons.Sum(pair => pair.Value.Episodes.Count).ToString();
             string stars = StarRating(ser.SiteRating/2);
             string genreIcons = string.Join("&nbsp;", ser.Genres().Select(GenreIconHtml));
@@ -110,6 +108,30 @@ namespace TVRename
                   </div>
                  </div>");
             //Ideally we'd have <div class=""row align-items-bottom flex-grow-1""> in there as it looks better, but a bug in IE prevents it from looking correct
+        }
+
+        [NotNull]
+        public static string YearRange([NotNull] SeriesInfo ser)
+        {
+            int? minYear = ser.MinYear;
+            int? maxYear = ser.MaxYear;
+
+            if (minYear.HasValue && maxYear.HasValue)
+            {
+                return (minYear.Value == maxYear.Value) ? minYear.Value.ToString() : minYear.Value + "-" + maxYear.Value;
+            }
+
+            if (minYear.HasValue)
+            {
+                return minYear.Value + "-";
+            }
+
+            if (maxYear.HasValue)
+            {
+                return "-" + maxYear.Value;
+            }
+
+            return string.Empty;
         }
 
         [NotNull]
@@ -633,18 +655,7 @@ namespace TVRename
                 }
             }
 
-            string yearRange;
-            if (ser is null)
-            {
-                yearRange = string.Empty;
-            }
-            else
-            {
-                int minYear = ser.MinYear;
-                int maxYear = ser.MaxYear;
-
-                yearRange = (minYear == maxYear) ? minYear.ToString() : minYear + "-" + maxYear;
-            }
+            string yearRange = ser is null ? string.Empty : YearRange(ser);
 
             string siteRating = ser?.SiteRating > 0 ? ser.SiteRating + "/10" : "";
             string tvdbLink = TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true);

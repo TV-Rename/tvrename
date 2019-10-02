@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -170,7 +171,7 @@ namespace TVRename
                 Logger.Warn(e, $"Could not open {what}");
                 return false;
             }
-            catch (System.IO.FileNotFoundException e)
+            catch (FileNotFoundException e)
             {
                 Logger.Warn(e, $"Could not open {what}");
                 return false;
@@ -310,6 +311,68 @@ namespace TVRename
         {
             //Any series before 1980 will get 1980 as the timestamp
             return dateTime.CompareTo(WindowsStartDateTime) < 0 ? WindowsStartDateTime : dateTime;
+        }
+
+        public static int ToInt(this string text, int def)
+        {
+            try
+            {
+                return int.Parse(text);
+            }
+            catch
+            {
+                return def;
+            }
+
+        }
+
+        public static float ToPercent(this string text, float def)
+        {
+            float value;
+            try
+            {
+                value = float.Parse(text);
+            }
+            catch
+            {
+                return def;
+            }
+
+            if (value < 1)
+            {
+                return 1;
+            }
+
+            if (value > 100)
+            {
+                return 100;
+            }
+
+            return value;
+        }
+        public static int ToInt(this string text, int min, int def, int max)
+        {
+            int value;
+            try
+            {
+                value = int.Parse(text);
+            }
+            catch
+            {
+                return def;
+            }
+
+            if (value < min)
+            {
+                return min;
+            }
+
+            if (value > max)
+            {
+                return max;
+            }
+
+            return value;
         }
     }
 }

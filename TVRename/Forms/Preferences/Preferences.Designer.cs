@@ -106,6 +106,7 @@ namespace TVRename
             this.cbSearchRSS = new System.Windows.Forms.CheckBox();
             this.cbDetailedRSSJSONLogging = new System.Windows.Forms.CheckBox();
             this.gbJSON = new System.Windows.Forms.GroupBox();
+            this.cbJSONCloudflareProtection = new System.Windows.Forms.CheckBox();
             this.cbSearchJSONManualScanOnly = new System.Windows.Forms.CheckBox();
             this.label55 = new System.Windows.Forms.Label();
             this.tbJSONFilesizeToken = new System.Windows.Forms.TextBox();
@@ -118,6 +119,7 @@ namespace TVRename
             this.label48 = new System.Windows.Forms.Label();
             this.tbJSONURL = new System.Windows.Forms.TextBox();
             this.gbRSS = new System.Windows.Forms.GroupBox();
+            this.cbRSSCloudflareProtection = new System.Windows.Forms.CheckBox();
             this.cbSearchRSSManualScanOnly = new System.Windows.Forms.CheckBox();
             this.label45 = new System.Windows.Forms.Label();
             this.tbPreferredRSSTerms = new System.Windows.Forms.TextBox();
@@ -127,12 +129,6 @@ namespace TVRename
             this.bnRSSGo = new System.Windows.Forms.Button();
             this.bnRSSAdd = new System.Windows.Forms.Button();
             this.tpLibraryFolders = new System.Windows.Forms.TabPage();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.txtSeasonFormat = new System.Windows.Forms.TextBox();
-            this.txtSpecialsFolderName = new System.Windows.Forms.TextBox();
-            this.label47 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cbxUpdateAirDate = new System.Windows.Forms.CheckBox();
             this.cbAutoCreateFolders = new System.Windows.Forms.CheckBox();
@@ -153,6 +149,7 @@ namespace TVRename
             this.cbCheckSABnzbd = new System.Windows.Forms.CheckBox();
             this.cbCheckuTorrent = new System.Windows.Forms.CheckBox();
             this.qBitTorrent = new System.Windows.Forms.GroupBox();
+            this.cbDownloadTorrentBeforeDownloading = new System.Windows.Forms.CheckBox();
             this.tbqBitTorrentHost = new System.Windows.Forms.TextBox();
             this.tbqBitTorrentPort = new System.Windows.Forms.TextBox();
             this.label41 = new System.Windows.Forms.Label();
@@ -341,9 +338,31 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
-            this.cbDownloadTorrentBeforeDownloading = new System.Windows.Forms.CheckBox();
-            this.cbJSONCloudflareProtection = new System.Windows.Forms.CheckBox();
-            this.cbRSSCloudflareProtection = new System.Windows.Forms.CheckBox();
+            this.tpShowDefaults = new System.Windows.Forms.TabPage();
+            this.label18 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.groupBox19 = new System.Windows.Forms.GroupBox();
+            this.rbDefShowUseSubFolders = new System.Windows.Forms.RadioButton();
+            this.rbDefShowUseBase = new System.Windows.Forms.RadioButton();
+            this.label12 = new System.Windows.Forms.Label();
+            this.cmbDefShowLocation = new System.Windows.Forms.ComboBox();
+            this.cbDefShowUseDefLocation = new System.Windows.Forms.CheckBox();
+            this.cbDefShowAutoFolders = new System.Windows.Forms.CheckBox();
+            this.groupBox18 = new System.Windows.Forms.GroupBox();
+            this.cbDefShowSpecialsCount = new System.Windows.Forms.CheckBox();
+            this.cbDefShowSequentialMatching = new System.Windows.Forms.CheckBox();
+            this.cbDefShowIncludeNoAirdate = new System.Windows.Forms.CheckBox();
+            this.cbDefShowDoMissingCheck = new System.Windows.Forms.CheckBox();
+            this.cbDefShowDVDOrder = new System.Windows.Forms.CheckBox();
+            this.cbDefShowIncludeFuture = new System.Windows.Forms.CheckBox();
+            this.cbDefShowDoRenaming = new System.Windows.Forms.CheckBox();
+            this.cbDefShowNextAirdate = new System.Windows.Forms.CheckBox();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.txtSeasonFormat = new System.Windows.Forms.TextBox();
+            this.txtSpecialsFolderName = new System.Windows.Forms.TextBox();
+            this.label47 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -353,7 +372,6 @@ namespace TVRename
             this.gbJSON.SuspendLayout();
             this.gbRSS.SuspendLayout();
             this.tpLibraryFolders.SuspendLayout();
-            this.groupBox6.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLibraryFolders)).BeginInit();
             this.gbBulkAdd.SuspendLayout();
@@ -390,6 +408,11 @@ namespace TVRename
             this.groupBox17.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbGeneral)).BeginInit();
             this.tcTabs.SuspendLayout();
+            this.tpShowDefaults.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.groupBox19.SuspendLayout();
+            this.groupBox18.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKButton
@@ -1113,6 +1136,16 @@ namespace TVRename
             this.gbJSON.TabStop = false;
             this.gbJSON.Text = "JSON Search";
             // 
+            // cbJSONCloudflareProtection
+            // 
+            this.cbJSONCloudflareProtection.AutoSize = true;
+            this.cbJSONCloudflareProtection.Location = new System.Drawing.Point(98, 172);
+            this.cbJSONCloudflareProtection.Name = "cbJSONCloudflareProtection";
+            this.cbJSONCloudflareProtection.Size = new System.Drawing.Size(145, 17);
+            this.cbJSONCloudflareProtection.TabIndex = 40;
+            this.cbJSONCloudflareProtection.Text = "Use Cloudflare protection";
+            this.cbJSONCloudflareProtection.UseVisualStyleBackColor = true;
+            // 
             // cbSearchJSONManualScanOnly
             // 
             this.cbSearchJSONManualScanOnly.AutoSize = true;
@@ -1234,6 +1267,16 @@ namespace TVRename
             this.gbRSS.TabStop = false;
             this.gbRSS.Text = "RSS Search";
             // 
+            // cbRSSCloudflareProtection
+            // 
+            this.cbRSSCloudflareProtection.AutoSize = true;
+            this.cbRSSCloudflareProtection.Location = new System.Drawing.Point(6, 69);
+            this.cbRSSCloudflareProtection.Name = "cbRSSCloudflareProtection";
+            this.cbRSSCloudflareProtection.Size = new System.Drawing.Size(145, 17);
+            this.cbRSSCloudflareProtection.TabIndex = 41;
+            this.cbRSSCloudflareProtection.Text = "Use Cloudflare protection";
+            this.cbRSSCloudflareProtection.UseVisualStyleBackColor = true;
+            // 
             // cbSearchRSSManualScanOnly
             // 
             this.cbSearchRSSManualScanOnly.AutoSize = true;
@@ -1286,7 +1329,6 @@ namespace TVRename
             this.label25.Size = new System.Drawing.Size(99, 13);
             this.label25.TabIndex = 25;
             this.label25.Text = "Torrent RSS URLs:";
-            this.label25.Click += new System.EventHandler(this.Label25_Click);
             // 
             // bnRSSRemove
             // 
@@ -1323,7 +1365,6 @@ namespace TVRename
             // 
             // tpLibraryFolders
             // 
-            this.tpLibraryFolders.Controls.Add(this.groupBox6);
             this.tpLibraryFolders.Controls.Add(this.groupBox1);
             this.tpLibraryFolders.Controls.Add(this.label65);
             this.tpLibraryFolders.Controls.Add(this.pbLibraryFolders);
@@ -1341,70 +1382,6 @@ namespace TVRename
             this.tpLibraryFolders.TabIndex = 10;
             this.tpLibraryFolders.Text = "Library Folders";
             this.tpLibraryFolders.UseVisualStyleBackColor = true;
-            // 
-            // groupBox6
-            // 
-            this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox6.Controls.Add(this.chkIgnoreAllSpecials);
-            this.groupBox6.Controls.Add(this.button1);
-            this.groupBox6.Controls.Add(this.txtSeasonFormat);
-            this.groupBox6.Controls.Add(this.txtSpecialsFolderName);
-            this.groupBox6.Controls.Add(this.label47);
-            this.groupBox6.Controls.Add(this.label13);
-            this.groupBox6.Location = new System.Drawing.Point(9, 450);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(401, 100);
-            this.groupBox6.TabIndex = 46;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Default Library Folder Format";
-            // 
-            // button1
-            // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(333, 52);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(62, 23);
-            this.button1.TabIndex = 31;
-            this.button1.Text = "Tags...";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // txtSeasonFormat
-            // 
-            this.txtSeasonFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSeasonFormat.Location = new System.Drawing.Point(124, 53);
-            this.txtSeasonFormat.Name = "txtSeasonFormat";
-            this.txtSeasonFormat.Size = new System.Drawing.Size(203, 20);
-            this.txtSeasonFormat.TabIndex = 30;
-            // 
-            // txtSpecialsFolderName
-            // 
-            this.txtSpecialsFolderName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSpecialsFolderName.Location = new System.Drawing.Point(124, 27);
-            this.txtSpecialsFolderName.Name = "txtSpecialsFolderName";
-            this.txtSpecialsFolderName.Size = new System.Drawing.Size(271, 20);
-            this.txtSpecialsFolderName.TabIndex = 28;
-            // 
-            // label47
-            // 
-            this.label47.AutoSize = true;
-            this.label47.Location = new System.Drawing.Point(6, 57);
-            this.label47.Name = "label47";
-            this.label47.Size = new System.Drawing.Size(112, 13);
-            this.label47.TabIndex = 29;
-            this.label47.Text = "&Seasons folder format:";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(6, 30);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(108, 13);
-            this.label13.TabIndex = 27;
-            this.label13.Text = "&Specials folder name:";
             // 
             // groupBox1
             // 
@@ -1644,6 +1621,16 @@ namespace TVRename
             this.qBitTorrent.TabIndex = 7;
             this.qBitTorrent.TabStop = false;
             this.qBitTorrent.Text = "qBitTorrent";
+            // 
+            // cbDownloadTorrentBeforeDownloading
+            // 
+            this.cbDownloadTorrentBeforeDownloading.AutoSize = true;
+            this.cbDownloadTorrentBeforeDownloading.Location = new System.Drawing.Point(75, 74);
+            this.cbDownloadTorrentBeforeDownloading.Name = "cbDownloadTorrentBeforeDownloading";
+            this.cbDownloadTorrentBeforeDownloading.Size = new System.Drawing.Size(227, 17);
+            this.cbDownloadTorrentBeforeDownloading.TabIndex = 20;
+            this.cbDownloadTorrentBeforeDownloading.Text = "Download .torrent files before downloading";
+            this.cbDownloadTorrentBeforeDownloading.UseVisualStyleBackColor = true;
             // 
             // tbqBitTorrentHost
             // 
@@ -3767,6 +3754,7 @@ namespace TVRename
             this.tcTabs.Controls.Add(this.tbGeneral);
             this.tcTabs.Controls.Add(this.tpDisplay);
             this.tcTabs.Controls.Add(this.tpLibraryFolders);
+            this.tcTabs.Controls.Add(this.tpShowDefaults);
             this.tcTabs.Controls.Add(this.tbFilesAndFolders);
             this.tcTabs.Controls.Add(this.tbSearchFolders);
             this.tcTabs.Controls.Add(this.tbFolderDeleting);
@@ -3785,35 +3773,288 @@ namespace TVRename
             this.tcTabs.TabIndex = 0;
             this.tcTabs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tpSearch_DrawItem);
             // 
-            // cbDownloadTorrentBeforeDownloading
+            // tpShowDefaults
             // 
-            this.cbDownloadTorrentBeforeDownloading.AutoSize = true;
-            this.cbDownloadTorrentBeforeDownloading.Location = new System.Drawing.Point(75, 74);
-            this.cbDownloadTorrentBeforeDownloading.Name = "cbDownloadTorrentBeforeDownloading";
-            this.cbDownloadTorrentBeforeDownloading.Size = new System.Drawing.Size(227, 17);
-            this.cbDownloadTorrentBeforeDownloading.TabIndex = 20;
-            this.cbDownloadTorrentBeforeDownloading.Text = "Download .torrent files before downloading";
-            this.cbDownloadTorrentBeforeDownloading.UseVisualStyleBackColor = true;
+            this.tpShowDefaults.Controls.Add(this.label18);
+            this.tpShowDefaults.Controls.Add(this.pictureBox1);
+            this.tpShowDefaults.Controls.Add(this.groupBox19);
+            this.tpShowDefaults.Controls.Add(this.groupBox18);
+            this.tpShowDefaults.Controls.Add(this.groupBox6);
+            this.tpShowDefaults.Location = new System.Drawing.Point(139, 4);
+            this.tpShowDefaults.Name = "tpShowDefaults";
+            this.tpShowDefaults.Padding = new System.Windows.Forms.Padding(3);
+            this.tpShowDefaults.Size = new System.Drawing.Size(417, 571);
+            this.tpShowDefaults.TabIndex = 14;
+            this.tpShowDefaults.Text = "Show Defaults";
+            this.tpShowDefaults.UseVisualStyleBackColor = true;
             // 
-            // cbJSONCloudflareProtection
+            // label18
             // 
-            this.cbJSONCloudflareProtection.AutoSize = true;
-            this.cbJSONCloudflareProtection.Location = new System.Drawing.Point(98, 172);
-            this.cbJSONCloudflareProtection.Name = "cbJSONCloudflareProtection";
-            this.cbJSONCloudflareProtection.Size = new System.Drawing.Size(145, 17);
-            this.cbJSONCloudflareProtection.TabIndex = 40;
-            this.cbJSONCloudflareProtection.Text = "Use Cloudflare protection";
-            this.cbJSONCloudflareProtection.UseVisualStyleBackColor = true;
+            this.label18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(7, 7);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(321, 39);
+            this.label18.TabIndex = 59;
+            this.label18.Text = "These settings control the defaults used to add a new show to the \r\nsystem. Once " +
+    "the show has been created, you will need to modify\r\nits configuration directly.";
             // 
-            // cbRSSCloudflareProtection
+            // pictureBox1
             // 
-            this.cbRSSCloudflareProtection.AutoSize = true;
-            this.cbRSSCloudflareProtection.Location = new System.Drawing.Point(6, 69);
-            this.cbRSSCloudflareProtection.Name = "cbRSSCloudflareProtection";
-            this.cbRSSCloudflareProtection.Size = new System.Drawing.Size(145, 17);
-            this.cbRSSCloudflareProtection.TabIndex = 41;
-            this.cbRSSCloudflareProtection.Text = "Use Cloudflare protection";
-            this.cbRSSCloudflareProtection.UseVisualStyleBackColor = true;
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pictureBox1.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pictureBox1.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pictureBox1.Location = new System.Drawing.Point(368, 6);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(43, 40);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox1.TabIndex = 58;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.Click += new System.EventHandler(this.PictureBox1_Click_1);
+            // 
+            // groupBox19
+            // 
+            this.groupBox19.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox19.Controls.Add(this.rbDefShowUseSubFolders);
+            this.groupBox19.Controls.Add(this.rbDefShowUseBase);
+            this.groupBox19.Controls.Add(this.label12);
+            this.groupBox19.Controls.Add(this.cmbDefShowLocation);
+            this.groupBox19.Controls.Add(this.cbDefShowUseDefLocation);
+            this.groupBox19.Controls.Add(this.cbDefShowAutoFolders);
+            this.groupBox19.Location = new System.Drawing.Point(6, 154);
+            this.groupBox19.Name = "groupBox19";
+            this.groupBox19.Size = new System.Drawing.Size(401, 141);
+            this.groupBox19.TabIndex = 57;
+            this.groupBox19.TabStop = false;
+            this.groupBox19.Text = "Default Show Settings";
+            // 
+            // rbDefShowUseSubFolders
+            // 
+            this.rbDefShowUseSubFolders.AutoSize = true;
+            this.rbDefShowUseSubFolders.Location = new System.Drawing.Point(175, 113);
+            this.rbDefShowUseSubFolders.Name = "rbDefShowUseSubFolders";
+            this.rbDefShowUseSubFolders.Size = new System.Drawing.Size(82, 17);
+            this.rbDefShowUseSubFolders.TabIndex = 5;
+            this.rbDefShowUseSubFolders.TabStop = true;
+            this.rbDefShowUseSubFolders.Text = "in sub-folder";
+            this.rbDefShowUseSubFolders.UseVisualStyleBackColor = true;
+            // 
+            // rbDefShowUseBase
+            // 
+            this.rbDefShowUseBase.AutoSize = true;
+            this.rbDefShowUseBase.Location = new System.Drawing.Point(29, 113);
+            this.rbDefShowUseBase.Name = "rbDefShowUseBase";
+            this.rbDefShowUseBase.Size = new System.Drawing.Size(88, 17);
+            this.rbDefShowUseBase.TabIndex = 4;
+            this.rbDefShowUseBase.TabStop = true;
+            this.rbDefShowUseBase.Text = "in base folder";
+            this.rbDefShowUseBase.UseVisualStyleBackColor = true;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(9, 96);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(114, 13);
+            this.label12.TabIndex = 3;
+            this.label12.Text = "Default series location:";
+            // 
+            // cmbDefShowLocation
+            // 
+            this.cmbDefShowLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbDefShowLocation.FormattingEnabled = true;
+            this.cmbDefShowLocation.Location = new System.Drawing.Point(29, 68);
+            this.cmbDefShowLocation.Name = "cmbDefShowLocation";
+            this.cmbDefShowLocation.Size = new System.Drawing.Size(366, 21);
+            this.cmbDefShowLocation.TabIndex = 2;
+            // 
+            // cbDefShowUseDefLocation
+            // 
+            this.cbDefShowUseDefLocation.AutoSize = true;
+            this.cbDefShowUseDefLocation.Location = new System.Drawing.Point(9, 43);
+            this.cbDefShowUseDefLocation.Name = "cbDefShowUseDefLocation";
+            this.cbDefShowUseDefLocation.Size = new System.Drawing.Size(126, 17);
+            this.cbDefShowUseDefLocation.TabIndex = 1;
+            this.cbDefShowUseDefLocation.Text = "Use Default Location";
+            this.cbDefShowUseDefLocation.UseVisualStyleBackColor = true;
+            this.cbDefShowUseDefLocation.CheckedChanged += new System.EventHandler(this.CbDefShowUseDefLocation_CheckedChanged);
+            // 
+            // cbDefShowAutoFolders
+            // 
+            this.cbDefShowAutoFolders.AutoSize = true;
+            this.cbDefShowAutoFolders.Location = new System.Drawing.Point(9, 20);
+            this.cbDefShowAutoFolders.Name = "cbDefShowAutoFolders";
+            this.cbDefShowAutoFolders.Size = new System.Drawing.Size(132, 17);
+            this.cbDefShowAutoFolders.TabIndex = 0;
+            this.cbDefShowAutoFolders.Text = "Use Automatic Folders";
+            this.cbDefShowAutoFolders.UseVisualStyleBackColor = true;
+            // 
+            // groupBox18
+            // 
+            this.groupBox18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox18.Controls.Add(this.cbDefShowSpecialsCount);
+            this.groupBox18.Controls.Add(this.cbDefShowSequentialMatching);
+            this.groupBox18.Controls.Add(this.cbDefShowIncludeNoAirdate);
+            this.groupBox18.Controls.Add(this.cbDefShowDoMissingCheck);
+            this.groupBox18.Controls.Add(this.cbDefShowDVDOrder);
+            this.groupBox18.Controls.Add(this.cbDefShowIncludeFuture);
+            this.groupBox18.Controls.Add(this.cbDefShowDoRenaming);
+            this.groupBox18.Controls.Add(this.cbDefShowNextAirdate);
+            this.groupBox18.Location = new System.Drawing.Point(6, 305);
+            this.groupBox18.Name = "groupBox18";
+            this.groupBox18.Size = new System.Drawing.Size(401, 189);
+            this.groupBox18.TabIndex = 56;
+            this.groupBox18.TabStop = false;
+            this.groupBox18.Text = "Default Advanced Settings";
+            // 
+            // cbDefShowSpecialsCount
+            // 
+            this.cbDefShowSpecialsCount.AutoSize = true;
+            this.cbDefShowSpecialsCount.Location = new System.Drawing.Point(9, 74);
+            this.cbDefShowSpecialsCount.Name = "cbDefShowSpecialsCount";
+            this.cbDefShowSpecialsCount.Size = new System.Drawing.Size(155, 17);
+            this.cbDefShowSpecialsCount.TabIndex = 50;
+            this.cbDefShowSpecialsCount.Text = "S&pecials count as episodes";
+            this.cbDefShowSpecialsCount.UseVisualStyleBackColor = true;
+            // 
+            // cbDefShowSequentialMatching
+            // 
+            this.cbDefShowSequentialMatching.AutoSize = true;
+            this.cbDefShowSequentialMatching.Location = new System.Drawing.Point(9, 166);
+            this.cbDefShowSequentialMatching.Name = "cbDefShowSequentialMatching";
+            this.cbDefShowSequentialMatching.Size = new System.Drawing.Size(324, 17);
+            this.cbDefShowSequentialMatching.TabIndex = 53;
+            this.cbDefShowSequentialMatching.Text = "Use sequential number matching (finding missing episodes only)";
+            this.cbDefShowSequentialMatching.UseVisualStyleBackColor = true;
+            // 
+            // cbDefShowIncludeNoAirdate
+            // 
+            this.cbDefShowIncludeNoAirdate.AutoSize = true;
+            this.cbDefShowIncludeNoAirdate.Location = new System.Drawing.Point(175, 143);
+            this.cbDefShowIncludeNoAirdate.Name = "cbDefShowIncludeNoAirdate";
+            this.cbDefShowIncludeNoAirdate.Size = new System.Drawing.Size(111, 17);
+            this.cbDefShowIncludeNoAirdate.TabIndex = 54;
+            this.cbDefShowIncludeNoAirdate.Text = "Include no airdate";
+            this.cbDefShowIncludeNoAirdate.UseVisualStyleBackColor = true;
+            // 
+            // cbDefShowDoMissingCheck
+            // 
+            this.cbDefShowDoMissingCheck.AutoSize = true;
+            this.cbDefShowDoMissingCheck.Location = new System.Drawing.Point(9, 120);
+            this.cbDefShowDoMissingCheck.Name = "cbDefShowDoMissingCheck";
+            this.cbDefShowDoMissingCheck.Size = new System.Drawing.Size(110, 17);
+            this.cbDefShowDoMissingCheck.TabIndex = 52;
+            this.cbDefShowDoMissingCheck.Text = "Do &missing check";
+            this.cbDefShowDoMissingCheck.UseVisualStyleBackColor = true;
+            // 
+            // cbDefShowDVDOrder
+            // 
+            this.cbDefShowDVDOrder.AutoSize = true;
+            this.cbDefShowDVDOrder.Location = new System.Drawing.Point(9, 28);
+            this.cbDefShowDVDOrder.Name = "cbDefShowDVDOrder";
+            this.cbDefShowDVDOrder.Size = new System.Drawing.Size(100, 17);
+            this.cbDefShowDVDOrder.TabIndex = 48;
+            this.cbDefShowDVDOrder.Text = "&Use DVD Order";
+            this.cbDefShowDVDOrder.UseVisualStyleBackColor = true;
+            // 
+            // cbDefShowIncludeFuture
+            // 
+            this.cbDefShowIncludeFuture.AutoSize = true;
+            this.cbDefShowIncludeFuture.Location = new System.Drawing.Point(29, 143);
+            this.cbDefShowIncludeFuture.Name = "cbDefShowIncludeFuture";
+            this.cbDefShowIncludeFuture.Size = new System.Drawing.Size(136, 17);
+            this.cbDefShowIncludeFuture.TabIndex = 55;
+            this.cbDefShowIncludeFuture.Text = "Include future episodes";
+            this.cbDefShowIncludeFuture.UseVisualStyleBackColor = true;
+            // 
+            // cbDefShowDoRenaming
+            // 
+            this.cbDefShowDoRenaming.AutoSize = true;
+            this.cbDefShowDoRenaming.Location = new System.Drawing.Point(9, 97);
+            this.cbDefShowDoRenaming.Name = "cbDefShowDoRenaming";
+            this.cbDefShowDoRenaming.Size = new System.Drawing.Size(86, 17);
+            this.cbDefShowDoRenaming.TabIndex = 51;
+            this.cbDefShowDoRenaming.Text = "Do &renaming";
+            this.cbDefShowDoRenaming.UseVisualStyleBackColor = true;
+            // 
+            // cbDefShowNextAirdate
+            // 
+            this.cbDefShowNextAirdate.AutoSize = true;
+            this.cbDefShowNextAirdate.Location = new System.Drawing.Point(9, 51);
+            this.cbDefShowNextAirdate.Name = "cbDefShowNextAirdate";
+            this.cbDefShowNextAirdate.Size = new System.Drawing.Size(201, 17);
+            this.cbDefShowNextAirdate.TabIndex = 49;
+            this.cbDefShowNextAirdate.Text = "Show &next airdate in When to Watch";
+            this.cbDefShowNextAirdate.UseVisualStyleBackColor = true;
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox6.Controls.Add(this.chkIgnoreAllSpecials);
+            this.groupBox6.Controls.Add(this.button1);
+            this.groupBox6.Controls.Add(this.txtSeasonFormat);
+            this.groupBox6.Controls.Add(this.txtSpecialsFolderName);
+            this.groupBox6.Controls.Add(this.label47);
+            this.groupBox6.Controls.Add(this.label13);
+            this.groupBox6.Location = new System.Drawing.Point(6, 52);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(401, 100);
+            this.groupBox6.TabIndex = 47;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Default Library Folder Format";
+            // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(333, 52);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(62, 23);
+            this.button1.TabIndex = 31;
+            this.button1.Text = "Tags...";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // txtSeasonFormat
+            // 
+            this.txtSeasonFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSeasonFormat.Location = new System.Drawing.Point(124, 53);
+            this.txtSeasonFormat.Name = "txtSeasonFormat";
+            this.txtSeasonFormat.Size = new System.Drawing.Size(203, 20);
+            this.txtSeasonFormat.TabIndex = 30;
+            // 
+            // txtSpecialsFolderName
+            // 
+            this.txtSpecialsFolderName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSpecialsFolderName.Location = new System.Drawing.Point(124, 27);
+            this.txtSpecialsFolderName.Name = "txtSpecialsFolderName";
+            this.txtSpecialsFolderName.Size = new System.Drawing.Size(271, 20);
+            this.txtSpecialsFolderName.TabIndex = 28;
+            // 
+            // label47
+            // 
+            this.label47.AutoSize = true;
+            this.label47.Location = new System.Drawing.Point(6, 57);
+            this.label47.Name = "label47";
+            this.label47.Size = new System.Drawing.Size(112, 13);
+            this.label47.TabIndex = 29;
+            this.label47.Text = "&Seasons folder format:";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(6, 30);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(108, 13);
+            this.label13.TabIndex = 27;
+            this.label13.Text = "&Specials folder name:";
             // 
             // Preferences
             // 
@@ -3852,8 +4093,6 @@ namespace TVRename
             this.gbRSS.PerformLayout();
             this.tpLibraryFolders.ResumeLayout(false);
             this.tpLibraryFolders.PerformLayout();
-            this.groupBox6.ResumeLayout(false);
-            this.groupBox6.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLibraryFolders)).EndInit();
@@ -3917,6 +4156,15 @@ namespace TVRename
             this.groupBox17.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbGeneral)).EndInit();
             this.tcTabs.ResumeLayout(false);
+            this.tpShowDefaults.ResumeLayout(false);
+            this.tpShowDefaults.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.groupBox19.ResumeLayout(false);
+            this.groupBox19.PerformLayout();
+            this.groupBox18.ResumeLayout(false);
+            this.groupBox18.PerformLayout();
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -4168,11 +4416,6 @@ namespace TVRename
         private System.Windows.Forms.Label label66;
         private System.Windows.Forms.Label label69;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.TextBox txtSeasonFormat;
-        private System.Windows.Forms.TextBox txtSpecialsFolderName;
-        private System.Windows.Forms.Label label47;
-        private System.Windows.Forms.Label label13;
         private System.Windows.Forms.GroupBox groupBox8;
         private System.Windows.Forms.Label label53;
         private System.Windows.Forms.Label label54;
@@ -4218,8 +4461,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkMoveLibraryFiles;
         private System.Windows.Forms.CheckBox chkShareCriticalLogs;
         private System.Windows.Forms.CheckBox chkPostpendThe;
-        private System.Windows.Forms.CheckBox chkIgnoreAllSpecials;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox chkBasicShowDetails;
         private System.Windows.Forms.CheckBox chkUseSearchFullPathWhenMatchingShows;
         private System.Windows.Forms.CheckBox chkUseLibraryFullPathWhenMatchingShows;
@@ -4227,5 +4468,31 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbJSONCloudflareProtection;
         private System.Windows.Forms.CheckBox cbDownloadTorrentBeforeDownloading;
         private System.Windows.Forms.CheckBox cbRSSCloudflareProtection;
+        private System.Windows.Forms.TabPage tpShowDefaults;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.CheckBox chkIgnoreAllSpecials;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox txtSeasonFormat;
+        private System.Windows.Forms.TextBox txtSpecialsFolderName;
+        private System.Windows.Forms.Label label47;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.GroupBox groupBox19;
+        private System.Windows.Forms.RadioButton rbDefShowUseSubFolders;
+        private System.Windows.Forms.RadioButton rbDefShowUseBase;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.ComboBox cmbDefShowLocation;
+        private System.Windows.Forms.CheckBox cbDefShowUseDefLocation;
+        private System.Windows.Forms.CheckBox cbDefShowAutoFolders;
+        private System.Windows.Forms.GroupBox groupBox18;
+        private System.Windows.Forms.CheckBox cbDefShowSpecialsCount;
+        private System.Windows.Forms.CheckBox cbDefShowSequentialMatching;
+        private System.Windows.Forms.CheckBox cbDefShowIncludeNoAirdate;
+        private System.Windows.Forms.CheckBox cbDefShowDoMissingCheck;
+        private System.Windows.Forms.CheckBox cbDefShowIncludeFuture;
+        private System.Windows.Forms.CheckBox cbDefShowDoRenaming;
+        private System.Windows.Forms.CheckBox cbDefShowNextAirdate;
+        private System.Windows.Forms.CheckBox cbDefShowDVDOrder;
     }
 }

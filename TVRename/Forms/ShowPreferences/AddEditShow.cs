@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 using TVRename.Forms.ShowPreferences;
 
@@ -34,12 +35,14 @@ namespace TVRename
         private CustomNameTagsFloatingWindow cntfw;
         private readonly Season sampleSeason;
         private readonly ProcessedEpisode sampleEpisode;
+        private bool addingNewShow;
 
         public AddEditShow([NotNull] ShowItem si)
         {
             selectedShow = si;
             sampleSeason = si.GetFirstAvailableSeason();
             sampleEpisode = si.GetFirstAvailableEpisode();
+            addingNewShow = (si.TvdbCode ==-1);
             InitializeComponent();
 
             lblSeasonWordPreview.Text = TVSettings.Instance.SeasonFolderFormat + "-(" + CustomSeasonName.NameFor(si.GetFirstAvailableSeason(), TVSettings.Instance.SeasonFolderFormat) + ")";
@@ -49,6 +52,7 @@ namespace TVRename
 
             codeFinderForm =
                 new TheTvdbCodeFinder(si.TvdbCode != -1 ? si.TvdbCode.ToString() : "") { Dock = DockStyle.Fill };
+            codeFinderForm.SelectionChanged += MTCCF_SelectionChanged;
 
             pnlCF.SuspendLayout();
             pnlCF.Controls.Add(codeFinderForm);
@@ -582,6 +586,17 @@ namespace TVRename
         private void llCustomSearchPreview_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Helpers.SysOpen(llCustomSearchPreview.Text);
+        }
+
+        private void MTCCF_SelectionChanged(object sender, EventArgs e)
+        {
+            if (addingNewShow && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation)
+            {
+                txtBaseFolder.Text =
+                    TVSettings.Instance.DefShowLocation
+                    + Path.DirectorySeparatorChar 
+                    + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(codeFinderForm.SelectedShow()?.Name));
+            }
         }
     }
 }

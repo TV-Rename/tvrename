@@ -58,6 +58,7 @@ namespace TVRename
             this.Folders = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.label60 = new System.Windows.Forms.Label();
+            this.pbBasics = new System.Windows.Forms.PictureBox();
             this.cbLanguage = new System.Windows.Forms.ComboBox();
             this.chkCustomLanguage = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -87,6 +88,7 @@ namespace TVRename
             this.txtBaseFolder = new System.Windows.Forms.TextBox();
             this.bnBrowse = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
+            this.pbFolders = new System.Windows.Forms.PictureBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.label10 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
@@ -94,6 +96,7 @@ namespace TVRename
             this.bnRemoveAlias = new System.Windows.Forms.Button();
             this.bnAddAlias = new System.Windows.Forms.Button();
             this.tbShowAlias = new System.Windows.Forms.TextBox();
+            this.pbAliases = new System.Windows.Forms.PictureBox();
             this.lbShowAlias = new System.Windows.Forms.ListBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.label11 = new System.Windows.Forms.Label();
@@ -104,27 +107,24 @@ namespace TVRename
             this.lbTags = new System.Windows.Forms.Label();
             this.lbSearchURL = new System.Windows.Forms.Label();
             this.cbUseCustomSearch = new System.Windows.Forms.CheckBox();
+            this.pbCustomSearch = new System.Windows.Forms.PictureBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.label9 = new System.Windows.Forms.Label();
             this.cbIncludeNoAirdate = new System.Windows.Forms.CheckBox();
             this.cbIncludeFuture = new System.Windows.Forms.CheckBox();
-            this.pbBasics = new System.Windows.Forms.PictureBox();
-            this.pbFolders = new System.Windows.Forms.PictureBox();
-            this.pbAliases = new System.Windows.Forms.PictureBox();
-            this.pbCustomSearch = new System.Windows.Forms.PictureBox();
             this.pbAdvanced = new System.Windows.Forms.PictureBox();
             this.Folders.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbBasics)).BeginInit();
             this.tabPage5.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.gbAutoFolders.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            this.tabPage4.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbBasics)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbFolders)).BeginInit();
+            this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbAliases)).BeginInit();
+            this.tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCustomSearch)).BeginInit();
+            this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbAdvanced)).BeginInit();
             this.SuspendLayout();
             // 
@@ -331,6 +331,20 @@ namespace TVRename
             this.label60.Size = new System.Drawing.Size(370, 13);
             this.label60.TabIndex = 40;
             this.label60.Text = "Use these settings to control the link to the show and what the show is called";
+            // 
+            // pbBasics
+            // 
+            this.pbBasics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbBasics.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pbBasics.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbBasics.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbBasics.Location = new System.Drawing.Point(401, 6);
+            this.pbBasics.Name = "pbBasics";
+            this.pbBasics.Size = new System.Drawing.Size(43, 40);
+            this.pbBasics.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbBasics.TabIndex = 39;
+            this.pbBasics.TabStop = false;
+            this.pbBasics.Click += new System.EventHandler(this.pbBasics_Click);
             // 
             // cbLanguage
             // 
@@ -659,6 +673,20 @@ namespace TVRename
             this.label3.Text = "Base &Folder";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
+            // pbFolders
+            // 
+            this.pbFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbFolders.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pbFolders.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbFolders.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbFolders.Location = new System.Drawing.Point(391, 6);
+            this.pbFolders.Name = "pbFolders";
+            this.pbFolders.Size = new System.Drawing.Size(43, 40);
+            this.pbFolders.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbFolders.TabIndex = 47;
+            this.pbFolders.TabStop = false;
+            this.pbFolders.Click += new System.EventHandler(this.pbFolders_Click);
+            // 
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.label10);
@@ -743,6 +771,20 @@ namespace TVRename
             this.tbShowAlias.TabIndex = 1;
             this.tbShowAlias.TextChanged += new System.EventHandler(this.tbShowAlias_TextChanged);
             this.tbShowAlias.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbShowAlias_KeyDown);
+            // 
+            // pbAliases
+            // 
+            this.pbAliases.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbAliases.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pbAliases.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbAliases.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbAliases.Location = new System.Drawing.Point(391, 6);
+            this.pbAliases.Name = "pbAliases";
+            this.pbAliases.Size = new System.Drawing.Size(43, 40);
+            this.pbAliases.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbAliases.TabIndex = 43;
+            this.pbAliases.TabStop = false;
+            this.pbAliases.Click += new System.EventHandler(this.pbAliases_Click);
             // 
             // lbShowAlias
             // 
@@ -856,6 +898,20 @@ namespace TVRename
             this.cbUseCustomSearch.UseVisualStyleBackColor = true;
             this.cbUseCustomSearch.CheckedChanged += new System.EventHandler(this.cbUseCustomSearch_CheckedChanged);
             // 
+            // pbCustomSearch
+            // 
+            this.pbCustomSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbCustomSearch.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pbCustomSearch.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbCustomSearch.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbCustomSearch.Location = new System.Drawing.Point(391, 6);
+            this.pbCustomSearch.Name = "pbCustomSearch";
+            this.pbCustomSearch.Size = new System.Drawing.Size(43, 40);
+            this.pbCustomSearch.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbCustomSearch.TabIndex = 45;
+            this.pbCustomSearch.TabStop = false;
+            this.pbCustomSearch.Click += new System.EventHandler(this.pbSearch_Click);
+            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.label9);
@@ -908,62 +964,6 @@ namespace TVRename
             this.cbIncludeFuture.Text = "Include future episodes";
             this.cbIncludeFuture.UseVisualStyleBackColor = true;
             // 
-            // pbBasics
-            // 
-            this.pbBasics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbBasics.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbBasics.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbBasics.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbBasics.Location = new System.Drawing.Point(401, 6);
-            this.pbBasics.Name = "pbBasics";
-            this.pbBasics.Size = new System.Drawing.Size(43, 40);
-            this.pbBasics.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbBasics.TabIndex = 39;
-            this.pbBasics.TabStop = false;
-            this.pbBasics.Click += new System.EventHandler(this.pbBasics_Click);
-            // 
-            // pbFolders
-            // 
-            this.pbFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbFolders.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbFolders.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbFolders.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbFolders.Location = new System.Drawing.Point(391, 6);
-            this.pbFolders.Name = "pbFolders";
-            this.pbFolders.Size = new System.Drawing.Size(43, 40);
-            this.pbFolders.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbFolders.TabIndex = 47;
-            this.pbFolders.TabStop = false;
-            this.pbFolders.Click += new System.EventHandler(this.pbFolders_Click);
-            // 
-            // pbAliases
-            // 
-            this.pbAliases.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbAliases.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbAliases.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbAliases.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbAliases.Location = new System.Drawing.Point(391, 6);
-            this.pbAliases.Name = "pbAliases";
-            this.pbAliases.Size = new System.Drawing.Size(43, 40);
-            this.pbAliases.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbAliases.TabIndex = 43;
-            this.pbAliases.TabStop = false;
-            this.pbAliases.Click += new System.EventHandler(this.pbAliases_Click);
-            // 
-            // pbCustomSearch
-            // 
-            this.pbCustomSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbCustomSearch.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbCustomSearch.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbCustomSearch.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbCustomSearch.Location = new System.Drawing.Point(391, 6);
-            this.pbCustomSearch.Name = "pbCustomSearch";
-            this.pbCustomSearch.Size = new System.Drawing.Size(43, 40);
-            this.pbCustomSearch.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbCustomSearch.TabIndex = 45;
-            this.pbCustomSearch.TabStop = false;
-            this.pbCustomSearch.Click += new System.EventHandler(this.pbSearch_Click);
-            // 
             // pbAdvanced
             // 
             this.pbAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -999,22 +999,22 @@ namespace TVRename
             this.Folders.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbBasics)).EndInit();
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.gbAutoFolders.ResumeLayout(false);
             this.gbAutoFolders.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbFolders)).EndInit();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbAliases)).EndInit();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCustomSearch)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbBasics)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbFolders)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbAliases)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbCustomSearch)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbAdvanced)).EndInit();
             this.ResumeLayout(false);
 
