@@ -44,9 +44,9 @@ namespace TVRename
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.label3 = new System.Windows.Forms.Label();
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // txtSearchStatus
@@ -115,12 +115,22 @@ namespace TVRename
             // columnHeader2
             // 
             this.columnHeader2.Text = "Show Name";
-            this.columnHeader2.Width = 209;
+            this.columnHeader2.Width = 188;
             // 
             // columnHeader3
             // 
             this.columnHeader3.Text = "Year";
             this.columnHeader3.Width = 39;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Network";
+            this.columnHeader4.Width = 52;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Status";
+            this.columnHeader5.Width = 58;
             // 
             // label3
             // 
@@ -131,16 +141,6 @@ namespace TVRename
             this.label3.TabIndex = 0;
             this.label3.Text = "TheTVDB &code:";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "Network";
-            this.columnHeader4.Width = 52;
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "Rating";
-            this.columnHeader5.Width = 47;
             // 
             // TheTvdbCodeFinder
             // 

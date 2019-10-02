@@ -153,7 +153,7 @@ namespace TVRename
             lvi.SubItems.Add(show);
             lvi.SubItems.Add(si.Year);
             lvi.SubItems.Add(si.Network ?? string.Empty);
-            lvi.SubItems.Add(si.ContentRating);
+            lvi.SubItems.Add(si.Status);
 
             lvi.ToolTipText = si.Overview;
             lvi.Tag = si;
