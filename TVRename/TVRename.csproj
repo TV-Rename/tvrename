@@ -116,6 +116,7 @@
     </Reference>
     <Reference Include="NodaTime, Version=2.4.7.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
       <HintPath>..\packages\NodaTime.2.4.7\lib\net45\NodaTime.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
