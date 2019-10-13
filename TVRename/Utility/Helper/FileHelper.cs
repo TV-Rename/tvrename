@@ -282,7 +282,17 @@ namespace TVRename
         public static bool SameDirectoryLocation([NotNull] this string directoryPath1, [NotNull] string directoryPath2)
         {
             // http://stackoverflow.com/questions/1794025/how-to-check-whether-2-directoryinfo-objects-are-pointing-to-the-same-directory
-            return string.Compare(directoryPath1.NormalizePath().TrimEnd('\\'), directoryPath2.NormalizePath().TrimEnd('\\'), StringComparison.InvariantCultureIgnoreCase) == 0;
+            try
+            {
+                return string.Compare(directoryPath1.NormalizePath().TrimEnd('\\'),
+                           directoryPath2.NormalizePath().TrimEnd('\\'), StringComparison.InvariantCultureIgnoreCase) ==
+                       0;
+            }
+            catch (UriFormatException e)
+            {
+                Logger.Error(e,$"Could not compare {directoryPath1} and {directoryPath2}, assuming they are not the same location");
+                return false;
+            }
         }
 
         [NotNull]
