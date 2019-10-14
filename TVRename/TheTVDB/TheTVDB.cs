@@ -1273,6 +1273,11 @@ namespace TVRename
             Say(GenerateMessage(code, episodesToo, bannersToo));
 
             string requestedLanguageCode = useCustomLangCode ? langCode : TVSettings.Instance.PreferredLanguageCode;
+            if (string.IsNullOrWhiteSpace(requestedLanguageCode))
+            {
+                Logger.Error($"An error has occurred and identified in DownloadSeriesNow and series {code} has a blank language code. Using the default instead for now: {TVSettings.Instance.PreferredLanguageCode}");
+                requestedLanguageCode = TVSettings.Instance.PreferredLanguageCode;
+            }
 
             SeriesInfo si;
             try
