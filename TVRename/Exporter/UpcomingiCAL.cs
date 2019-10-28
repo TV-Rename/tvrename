@@ -37,29 +37,37 @@ namespace TVRename
                 foreach (ProcessedEpisode ei in elist)
                 {
                     string niceName = TVSettings.Instance.NamingStyle.NameFor(ei);
-                    DateTime? stTime = ei.GetAirDateDt(true);
-
-                    if (!stTime.HasValue)
+                    try
                     {
-                        continue;
+                        DateTime? stTime = ei.GetAirDateDt(true);
+
+                        if (!stTime.HasValue)
+                        {
+                            continue;
+                        }
+
+                        DateTime startTime = stTime.Value;
+                        string s = ei.Show.TheSeries()?.Runtime;
+                        DateTime endTime = stTime.Value.AddMinutes(string.IsNullOrWhiteSpace(s) ? 0 : int.Parse(s));
+
+                        CalendarEvent e = new CalendarEvent
+                        {
+                            Start = new CalDateTime(startTime),
+                            End = new CalDateTime(endTime),
+                            Description = ei.Overview,
+                            Comments = new List<string> {ei.Overview},
+                            Summary = niceName,
+                            Location = ei.TheSeries.Network,
+                            Url = new Uri(TheTVDB.Instance.WebsiteUrl(ei.TheSeries.TvdbCode, ei.SeasonId, false)),
+                            Uid = ei.EpisodeId.ToString()
+                        };
+
+                        calendar.Events.Add(e);
                     }
-
-                    DateTime startTime = stTime.Value;
-                    string s = ei.Show.TheSeries()?.Runtime;
-                    DateTime endTime = stTime.Value.AddMinutes(s==null?0:int.Parse(s));
-
-                    CalendarEvent e = new CalendarEvent
+                    catch (Exception e)
                     {
-                        Start = new CalDateTime(startTime),
-                        End = new CalDateTime(endTime),
-                        Description = ei.Overview,
-                        Comments = new List<string>{ei.Overview},
-                        Summary = niceName,
-                        Location=ei.TheSeries.Network,
-                        Url = new Uri(TheTVDB.Instance.WebsiteUrl(ei.TheSeries.TvdbCode, ei.SeasonId, false)),
-                        Uid = ei.EpisodeId.ToString()
-                    };
-                    calendar.Events.Add(e);
+                        LOGGER.Error(e,$"Failed to create ics record for {niceName}");
+                    }
                 }
 
                 CalendarSerializer serializer = new CalendarSerializer();
