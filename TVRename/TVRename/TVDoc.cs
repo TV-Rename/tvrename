@@ -715,7 +715,8 @@ namespace TVRename
 
             foreach (ProcessedEpisode pe in lpe)
             {
-                bool foundOnDisk = dfc.FindEpOnDisk(pe).Any();
+                List<FileInfo> fl = dfc.FindEpOnDisk(pe);
+                bool foundOnDisk = fl.Any(file => file.Name.StartsWith(TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pe)), StringComparison.OrdinalIgnoreCase));
                 bool alreadyAired;
 
                 DateTime? airDate = pe.GetAirDateDt(true);

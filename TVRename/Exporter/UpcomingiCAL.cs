@@ -23,9 +23,9 @@ namespace TVRename
         public override bool Active() =>TVSettings.Instance.ExportWTWICAL;
         protected override string Location() => TVSettings.Instance.ExportWTWICALTo;
 
-        protected override bool Generate(System.IO.Stream str, [CanBeNull] List<ProcessedEpisode> elist)
+        protected override bool Generate(System.IO.Stream str, [CanBeNull] List<ProcessedEpisode> episodes)
         {
-            if (elist is null)
+            if (episodes is null)
             {
                 return false;
             }
@@ -34,40 +34,10 @@ namespace TVRename
             {
                 Calendar calendar = new Calendar {ProductId = "Upcoming Shows Exported by TV Rename http://www.tvrename.com"};
                 
-                foreach (ProcessedEpisode ei in elist)
+                foreach (ProcessedEpisode ei in episodes)
                 {
-                    string niceName = TVSettings.Instance.NamingStyle.NameFor(ei);
-                    try
-                    {
-                        DateTime? stTime = ei.GetAirDateDt(true);
-
-                        if (!stTime.HasValue)
-                        {
-                            continue;
-                        }
-
-                        DateTime startTime = stTime.Value;
-                        string s = ei.Show.TheSeries()?.Runtime;
-                        DateTime endTime = stTime.Value.AddMinutes(string.IsNullOrWhiteSpace(s) ? 0 : int.Parse(s));
-
-                        CalendarEvent e = new CalendarEvent
-                        {
-                            Start = new CalDateTime(startTime),
-                            End = new CalDateTime(endTime),
-                            Description = ei.Overview,
-                            Comments = new List<string> {ei.Overview},
-                            Summary = niceName,
-                            Location = ei.TheSeries.Network,
-                            Url = new Uri(TheTVDB.Instance.WebsiteUrl(ei.TheSeries.TvdbCode, ei.SeasonId, false)),
-                            Uid = ei.EpisodeId.ToString()
-                        };
-
-                        calendar.Events.Add(e);
-                    }
-                    catch (Exception e)
-                    {
-                        LOGGER.Error(e,$"Failed to create ics record for {niceName}");
-                    }
+                    CalendarEvent ev = CreateEvent(ei);
+                    if (!(ev is null)) {calendar.Events.Add(ev);}
                 }
 
                 CalendarSerializer serializer = new CalendarSerializer();
@@ -79,6 +49,42 @@ namespace TVRename
             {
                 LOGGER.Error(e);
                 return false;
+            }
+        }
+
+        [CanBeNull]
+        private static CalendarEvent CreateEvent([NotNull] ProcessedEpisode ei)
+        {
+            string niceName = TVSettings.Instance.NamingStyle.NameFor(ei);
+            try
+            {
+                DateTime? stTime = ei.GetAirDateDt(true);
+
+                if (!stTime.HasValue)
+                {
+                    return null;
+                }
+
+                DateTime startTime = stTime.Value;
+                string s = ei.Show.TheSeries()?.Runtime;
+                DateTime endTime = stTime.Value.AddMinutes(string.IsNullOrWhiteSpace(s) ? 0 : int.Parse(s));
+
+                return new CalendarEvent
+                {
+                    Start = new CalDateTime(startTime),
+                    End = new CalDateTime(endTime),
+                    Description = ei.Overview,
+                    Comments = new List<string> {ei.Overview},
+                    Summary = niceName,
+                    Location = ei.TheSeries.Network,
+                    Url = new Uri(TheTVDB.Instance.WebsiteUrl(ei.TheSeries.TvdbCode, ei.SeasonId, false)),
+                    Uid = ei.EpisodeId.ToString()
+                };
+            }
+            catch (Exception e)
+            {
+                LOGGER.Error(e, $"Failed to create ics record for {niceName}");
+                return null;
             }
         }
     }
