@@ -375,6 +375,19 @@ namespace TVRename
             }
         }
 
+        private void flushImageCacheToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (busy != 0)
+            {
+                MessageBox.Show("Can't refresh until background download is complete");
+                return;
+            }
+
+            UpdateImages(mDoc.Library.GetShowItems());
+            FillMyShows();
+            FillEpGuideHtml();
+        }
+
         private void flushCacheToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (busy != 0)
@@ -2680,20 +2693,21 @@ namespace TVRename
             RefreshWTW(false, unattended);
         }
 
-        private void UpdateImages([CanBeNull] List<ShowItem> sis)
+        private void UpdateImages([CanBeNull] IReadOnlyCollection<ShowItem> sis)
         {
-            if (sis != null)
+            if (sis == null)
             {
-                ForceRefresh(sis,false);
-
-                foreach (ShowItem si in sis)
-                {
-                    //update images for the showitem
-                    mDoc.ForceUpdateImages(si);
-                }
-
-                FillActionList(false);
+                return;
             }
+            //ForceRefresh(sis,false);
+
+            foreach (ShowItem si in sis)
+            {
+                //update images for the showitem
+                mDoc.ForceUpdateImages(si);
+            }
+
+            FillActionList(false);
         }
 
         private void bnMyShowsRefresh_Click(object sender, EventArgs e)
