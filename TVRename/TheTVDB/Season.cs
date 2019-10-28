@@ -239,5 +239,14 @@ namespace TVRename
         }
 
         public bool IsSpecial() => (SeasonNumber == 0);
+
+        public bool NextEpisodeIs(int episodeNumber, bool dvdOrder)
+        {
+            int maxEpNum = dvdOrder
+                ? (from ep in Episodes.Values select ep.DvdEpNum).Concat(new[] { 0 }).Max()
+                : (from ep in Episodes.Values select ep.AiredEpNum).Concat(new[] { 0 }).Max();
+
+            return (episodeNumber==maxEpNum+1);
+        }
     }
 }
