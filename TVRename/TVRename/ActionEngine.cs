@@ -149,7 +149,7 @@ namespace TVRename
 
             foreach (Action slia in theList.Actions())
             {
-                Logger.Warn("Failed to complete the following action: {0}, doing {1}. Error was {2}", slia.Name, slia.ToString(), slia.ErrorText);
+                Logger.Warn(slia.LastError,"Failed to complete the following action: {0}, doing {1}. Error was {2}", slia.Name, slia.ToString(), slia.ErrorText);
             }
 
             Logger.Info("Completed Selected Actions");

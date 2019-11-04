@@ -129,6 +129,7 @@ namespace TVRename
                 Done = true;
                 Error = true;
                 ErrorText = e.Message;
+                LastError = e;
             }
         }
 
@@ -165,6 +166,7 @@ namespace TVRename
                 Done = true;
                 Error = true;
                 ErrorText = e.Message;
+                LastError = e;
             }
         }
 

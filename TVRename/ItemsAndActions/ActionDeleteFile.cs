@@ -49,6 +49,7 @@ namespace TVRename
             {
                 Error = true;
                 ErrorText = e.Message;
+                LastError = e;
             }
             Done = true;
             return !Error;

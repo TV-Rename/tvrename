@@ -71,6 +71,7 @@ namespace TVRename
             catch (Exception e)
             {
                 ErrorText = e.Message;
+                LastError = e;
                 Error = true;
                 Done = true;
                 return false;
