@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 
 namespace TVRename
@@ -165,40 +166,42 @@ namespace TVRename
             return "";
         }
 
+        [NotNull]
         public string GetSeriesPosterPath()
         {
             //then try the best one we've found with the correct language
-            if (bestSeriesLangPosterId != -1)
+            if (bestSeriesLangPosterId != -1 && AllBanners.ContainsKey(bestSeriesLangPosterId))
             {
-                return AllBanners[bestSeriesLangPosterId].BannerPath;
+                return AllBanners[bestSeriesLangPosterId]?.BannerPath ?? string.Empty;
             }
 
             //if there are none with the righ tlanguage then try one from another language
-            if (bestSeriesPosterId != -1)
+            if (bestSeriesPosterId != -1 && AllBanners.ContainsKey(bestSeriesPosterId))
             {
-                return AllBanners[bestSeriesPosterId].BannerPath;
+                return AllBanners[bestSeriesPosterId]?.BannerPath ?? string.Empty;
             }
 
             //give up
-            return "";
+            return string.Empty;
         }
 
-        public string GetSeriesFanartPath()
+    [NotNull]
+    public string GetSeriesFanartPath()
         {
             //then try the best one we've found with the correct language
-            if (bestSeriesLangFanartId != -1)
+            if (bestSeriesLangFanartId != -1 && AllBanners.ContainsKey(bestSeriesLangFanartId))
             {
-                return AllBanners[bestSeriesLangFanartId].BannerPath;
+                return AllBanners[bestSeriesLangFanartId]?.BannerPath?? string.Empty;
             }
 
             //if there are none with the righ tlanguage then try one from another language
-            if (bestSeriesFanartId != -1)
+            if (bestSeriesFanartId != -1 && AllBanners.ContainsKey(bestSeriesFanartId))
             {
-                return AllBanners[bestSeriesFanartId].BannerPath;
+                return AllBanners[bestSeriesFanartId]?.BannerPath??string.Empty;
             }
 
             //give up
-            return "";
+            return string.Empty;
         }
 
         public string GetSeasonWideBannerPath(int snum)
@@ -346,6 +349,38 @@ namespace TVRename
                     return GetSeriesPosterPath();
                 default:
                     return GetSeriesPosterPath();
+            }
+        }
+
+        public void Remove(int removeBannerId)
+        {
+            AllBanners.Remove(removeBannerId);
+
+            if (bestSeriesPosterId == removeBannerId)
+            {
+                double maxRating = AllBanners.Where(pair => pair.Value.IsSeriesPoster())
+                    .Select(pair => pair.Value.Rating).Max();
+
+                bestSeriesPosterId = AllBanners.Where(pair => pair.Value.IsSeriesPoster())
+                    .First(pair => pair.Value.Rating == maxRating).Value.BannerId;
+            }
+
+            if (bestSeriesBannerId == removeBannerId)
+            {
+                double maxRating = AllBanners.Where(pair => pair.Value.IsSeriesBanner())
+                    .Select(pair => pair.Value.Rating).Max();
+
+                bestSeriesBannerId = AllBanners.Where(pair => pair.Value.IsSeriesBanner())
+                    .First(pair => pair.Value.Rating == maxRating).Value.BannerId;
+            }
+
+            if (bestSeriesFanartId == removeBannerId)
+            {
+                double maxRating = AllBanners.Where(pair => pair.Value.IsFanart())
+                    .Select(pair => pair.Value.Rating).Max();
+
+                bestSeriesFanartId = AllBanners.Where(pair => pair.Value.IsFanart())
+                    .First(pair => pair.Value.Rating == maxRating).Value.BannerId;
             }
         }
     }

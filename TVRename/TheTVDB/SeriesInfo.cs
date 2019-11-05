@@ -209,53 +209,45 @@ namespace TVRename
 
             bool currentLanguageNotSet = o.LanguageId == -1;
             bool newLanguageBetter = o.LanguageId == preferredLanguageId && LanguageId != preferredLanguageId;
-            bool betterLanguage = currentLanguageNotSet || newLanguageBetter;
+            bool newLanguageOptimal = o.LanguageId == preferredLanguageId;
+            bool useNewDataOverOld = currentLanguageNotSet || newLanguageBetter ||newLanguageOptimal;
 
             SrvLastUpdated = o.SrvLastUpdated;
 
             // take the best bits of "o"
             // "o" is always newer/better than us, if there is a choice
-            if ((!string.IsNullOrEmpty(o.Name)) && betterLanguage)
-            {
-                Name = o.Name;
-            }
+            Name = ChooseBetter(Name, useNewDataOverOld, o.Name);
+            AirsDay = ChooseBetter(AirsDay, useNewDataOverOld, o.AirsDay);
+            Imdb = ChooseBetter(Imdb, useNewDataOverOld, o.Imdb);
+            Overview = ChooseBetter(Overview, useNewDataOverOld, o.Overview);
+            BannerString = ChooseBetter(BannerString, useNewDataOverOld, o.BannerString);
+            Network = ChooseBetter(Network, useNewDataOverOld, o.Network);
+            Runtime = ChooseBetter(Runtime, useNewDataOverOld, o.Runtime);
+            SeriesId = ChooseBetter(SeriesId, useNewDataOverOld, o.SeriesId);
+            Status = ChooseBetter(Status, useNewDataOverOld, o.Status);
+            ContentRating = ChooseBetter(ContentRating, useNewDataOverOld, o.ContentRating);
 
-            AirsDay = ChooseBetter(AirsDay, betterLanguage, o.AirsDay);
-            Imdb = ChooseBetter(Imdb, betterLanguage, o.Imdb);
-            Overview = ChooseBetter(Overview, betterLanguage, o.Overview);
-            BannerString = ChooseBetter(BannerString, betterLanguage, o.BannerString);
-            Network = ChooseBetter(Network, betterLanguage, o.Network);
-            Runtime = ChooseBetter(Runtime, betterLanguage, o.Runtime);
-            SeriesId = ChooseBetter(SeriesId, betterLanguage, o.SeriesId);
-            Status = ChooseBetter(Status, betterLanguage, o.Status);
-            ContentRating = ChooseBetter(ContentRating, betterLanguage, o.ContentRating);
-
-            if (betterLanguage && o.FirstAired.HasValue)
+            if ( o.FirstAired.HasValue &&(useNewDataOverOld || !FirstAired.HasValue))
             {
                 FirstAired = o.FirstAired;
             }
 
-            if (!FirstAired.HasValue && o.FirstAired.HasValue)
-            {
-                FirstAired = o.FirstAired;
-            }
-
-            if (betterLanguage && o.SiteRating > 0)
+            if (useNewDataOverOld && o.SiteRating > 0)
             {
                 SiteRating = o.SiteRating;
             }
 
-            if (betterLanguage && o.SiteRatingVotes > 0)
+            if (useNewDataOverOld && o.SiteRatingVotes > 0)
             {
                 SiteRatingVotes = o.SiteRatingVotes;
             }
 
-            if (!aliases.Any() || (o.aliases.Any() && betterLanguage))
+            if (!aliases.Any() || (o.aliases.Any() && useNewDataOverOld))
             {
                 aliases = o.aliases;
             }
 
-            if (!genres.Any() || (o.genres.Any() && betterLanguage))
+            if (!genres.Any() || (o.genres.Any() && useNewDataOverOld))
             {
                 genres = o.genres;
             }
@@ -277,7 +269,7 @@ namespace TVRename
 
             banners.MergeBanners(o.banners);
 
-            if (betterLanguage)
+            if (useNewDataOverOld)
             {
                 LanguageId = o.LanguageId;
             }
@@ -456,23 +448,7 @@ namespace TVRename
             AirsTime = ParseAirTime(airsTimeString);
             aliases = r["aliases"].Select(x => x.Value<string>()).ToList();
             BannerString = (string)r["banner"];
-
-            string theDate = (string)r["firstAired"];
-            try
-            {
-                if (!string.IsNullOrEmpty(theDate))
-                {
-                    FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd", new CultureInfo(""));
-                }
-                else
-                {
-                    FirstAired = null;
-                }
-            }
-            catch
-            {
-                FirstAired = null;
-            }
+            FirstAired = ParseFirstAired((string)r["firstAired"]);
 
             if (r.ContainsKey("genre"))
             {
@@ -492,20 +468,30 @@ namespace TVRename
             }
             Status = (string) r["status"];
 
-            if (long.TryParse((string)r["lastUpdated"], out long updateTime) )
-            {
-                SrvLastUpdated = updateTime;
-            }
-            else
-            {
-                SrvLastUpdated = 0;
-            }
+            SrvLastUpdated = long.TryParse((string)r["lastUpdated"], out long updateTime) ? updateTime : 0;
 
             string siteRatingString = (string) r["siteRating"];
             float.TryParse(siteRatingString, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out SiteRating);
 
             string siteRatingVotesString =  (string) r["siteRatingCount"];
             int.TryParse(siteRatingVotesString, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out SiteRatingVotes);
+        }
+
+        private static DateTime? ParseFirstAired([CanBeNull] string theDate)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(theDate))
+                {
+                    return DateTime.ParseExact(theDate, "yyyy-MM-dd", new CultureInfo(""));
+                }
+
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         private void LoadJson([NotNull] JObject bestLanguageR, JObject backupLanguageR)
@@ -630,12 +616,9 @@ namespace TVRename
                 {
                     if (s.SeasonNumber == seasF)
                     {
-                        foreach (Episode pe in s.Episodes.Values)
+                        foreach (Episode pe in s.Episodes.Values.Where(pe => pe.DvdEpNum == epF))
                         {
-                            if (pe.DvdEpNum == epF)
-                            {
-                                return pe;
-                            }
+                            return pe;
                         }
                     }
                 }
@@ -707,7 +690,9 @@ namespace TVRename
             return seasonNumbers.IndexOf(seasonNumber) +1;
         }
 
+        [NotNull]
         public string GetSeriesFanartPath() => banners.GetSeriesFanartPath();
+        [NotNull]
         public string GetSeriesPosterPath() => banners.GetSeriesPosterPath();
         public string GetImage(TVSettings.FolderJpgIsType itemForFolderJpg) => banners.GetImage(itemForFolderJpg);
         public string GetSeasonBannerPath(int snum) => banners.GetSeasonBannerPath(snum);
@@ -720,6 +705,25 @@ namespace TVRename
             Dictionary<int, Season> seasonsToUse = type==Season.SeasonType.dvd ? DvdSeasons : AiredSeasons;
 
             return seasonsToUse.ContainsKey(snum) && seasonsToUse[snum].Episodes.Values.Any(e => e.FirstAired != null);
+        }
+
+        public void UpdateBanners(List<int> latestBannerIds)
+        {
+            List<int> bannersToRemove =new List<int>();
+            foreach (KeyValuePair<int, Banner> bannerKeyValuePair in AllBanners)
+            {
+                if (latestBannerIds.Contains(bannerKeyValuePair.Key))
+                {
+                    continue;
+                }
+
+                bannersToRemove.Add(bannerKeyValuePair.Key);
+            }
+
+            foreach (int removeBanner in bannersToRemove)
+            {
+                banners.Remove(removeBanner);
+            }
         }
     }
 }

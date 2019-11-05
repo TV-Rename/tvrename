@@ -1501,6 +1501,8 @@ namespace TVRename
         {
             (List<JObject> bannerDefaultLangResponses, List<JObject> bannerResponses) = DownloadBanners(code, requestedLanguageCode);
 
+            List<int> latestBannerIds = new List<int>();
+
             foreach (JObject response in bannerResponses)
             {
                 try
@@ -1514,6 +1516,7 @@ namespace TVRename
                         //   SeriesInfo ser = series[b.SeriesId];
                         //   ser.AddOrUpdateBanner(b);
                         si.AddOrUpdateBanner(b);
+                        latestBannerIds.Add(b.BannerId);
                     }
                 }
                 catch (InvalidCastException ex)
@@ -1540,6 +1543,8 @@ namespace TVRename
 
                             SeriesInfo ser = series[b.SeriesId];
                             ser.AddOrUpdateBanner(b);
+
+                            latestBannerIds.Add(b.BannerId);
                         }
                     }
                 }
@@ -1549,6 +1554,8 @@ namespace TVRename
                     Logger.Error(response["data"].ToString());
                 }
             }
+
+            si.UpdateBanners(latestBannerIds);
 
             si.BannersLoaded = true;
         }
