@@ -200,17 +200,9 @@ namespace TVRename
 
             foreach (ShowItem si in matchingShows)
             {
-                FinderHelper.FindSeasEp(fi, out int seasF, out int epF, out int _, si,
-                        out TVSettings.FilenameProcessorRE re);
+                FinderHelper.FindSeasEp(fi, out int seasF, out int epF, out int _, si, out TVSettings.FilenameProcessorRE re);
 
-                SeriesInfo s = si.TheSeries();
-
-                if (s is null)
-                {
-                    continue;
-                }
-
-                (firstMatchingPep, fileCanBeDeleted) = FirstMatchingPep(unattended, dfc, fi, matchingShows, s, seasF, epF, si, firstMatchingPep, returnActions, re, fileCanBeDeleted);
+                (firstMatchingPep, fileCanBeDeleted) = FirstMatchingPep(unattended, dfc, fi, matchingShows, seasF, epF, si, firstMatchingPep, returnActions, re, fileCanBeDeleted);
             }
 
             if (fileCanBeDeleted)
@@ -229,45 +221,41 @@ namespace TVRename
         }
 
         private static (ProcessedEpisode firstMatchingPep, bool fileCanBeDeleted) FirstMatchingPep(bool unattended,
-            DirFilesCache dfc, FileInfo fi, List<ShowItem> matchingShows, SeriesInfo s, int seasF, int epF, ShowItem si,
+            DirFilesCache dfc, FileInfo fi, List<ShowItem> matchingShows, int seasF, int epF, ShowItem si,
             ProcessedEpisode firstMatchingPep, List<Item> returnActions, [CanBeNull] TVSettings.FilenameProcessorRE re, bool fileCanBeDeleted)
         {
-            try
+            ProcessedEpisode pep = si.SeasonEpisodes[seasF].First(ep => ep.AppropriateEpNum == epF);
+
+            if (pep == null)
             {
-                Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
-                ProcessedEpisode pep = new ProcessedEpisode(ep, si);
-                firstMatchingPep = pep;
-                List<FileInfo> encumbants = dfc.FindEpOnDisk(pep, false);
-
-                if (encumbants.Count == 0)
-                {
-                    //File is needed as there are no files for that series/episode
-                    fileCanBeDeleted = false;
-
-                    returnActions.AddRange(CopyFutureDatedFile(fi, pep));
-                }
-                else
-                {
-                    foreach (FileInfo existingFile in encumbants)
-                    {
-                        if (existingFile.FullName.Equals(fi.FullName, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            //the user has put the search folder and the download folder in the same place - DO NOT DELETE
-                            fileCanBeDeleted = false;
-                            continue;
-                        }
-
-                        fileCanBeDeleted = ReviewFile(unattended, fi, matchingShows, existingFile, fileCanBeDeleted,
-                            returnActions, pep);
-                    }
-                }
+                LOGGER.Info($"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}'");
+                return (firstMatchingPep, false);
             }
-            catch (SeriesInfo.EpisodeNotFoundException)
-            {
-                LOGGER.Info(
-                    $"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}'");
 
+            firstMatchingPep = pep;
+            List<FileInfo> encumbants = dfc.FindEpOnDisk(pep, false);
+
+            if (encumbants.Count == 0)
+            {
+                //File is needed as there are no files for that series/episode
                 fileCanBeDeleted = false;
+
+                returnActions.AddRange(CopyFutureDatedFile(fi, pep));
+            }
+            else
+            {
+                foreach (FileInfo existingFile in encumbants)
+                {
+                    if (existingFile.FullName.Equals(fi.FullName, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        //the user has put the search folder and the download folder in the same place - DO NOT DELETE
+                        fileCanBeDeleted = false;
+                        continue;
+                    }
+
+                    fileCanBeDeleted = ReviewFile(unattended, fi, matchingShows, existingFile, fileCanBeDeleted,
+                        returnActions, pep);
+                }
             }
 
             return (firstMatchingPep, fileCanBeDeleted);
