@@ -387,7 +387,7 @@ namespace TVRename
                 return new List<Item>();
             }
 
-            if (!pep.IsInFuture())
+            if (!pep.IsInFuture(true))
             {
                 return new List<Item>();
             }

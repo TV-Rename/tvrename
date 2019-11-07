@@ -216,12 +216,12 @@ namespace TVRename
             return (ts.TotalHours >= (-24 * days)) && (ts.TotalHours <= 0);
         }
 
-        public bool IsInFuture()
+        public bool IsInFuture(bool def)
         {
             DateTime? airsdt = GetAirDateDt(true);
             if (airsdt is null)
             {
-                return false;
+                return def;
             }
 
             DateTime dt = (DateTime)airsdt;
