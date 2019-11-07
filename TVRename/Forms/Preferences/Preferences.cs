@@ -352,7 +352,7 @@ namespace TVRename
             s.SampleFileMaxSizeMB = txtMaxSampleSize.Text.ToInt(50);
             s.upgradeDirtyPercent = tbPercentDirty.Text.ToPercent(20);
             s.replaceMargin = tbPercentBetter.Text.ToPercent(10);
-            s.ParallelDownloads = txtMaxSampleSize.Text.ToInt( 1, 4, 8);
+            s.ParallelDownloads = txtParallelDownloads.Text.ToInt( 1, 4, 8);
 
             UpdateRSSURLs(s);
 
