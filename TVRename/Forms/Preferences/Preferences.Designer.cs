@@ -642,8 +642,8 @@ namespace TVRename
             this.cbCopyFutureDatedEps.Size = new System.Drawing.Size(270, 17);
             this.cbCopyFutureDatedEps.TabIndex = 41;
             this.cbCopyFutureDatedEps.Text = "Copy future dated episodes found in Search Folders";
-            this.toolTip1.SetToolTip(this.cbCopyFutureDatedEps, "If the contents of any of these folder change, then automatically do a \"Scan\" and" +
-        " \"Do\".");
+            this.toolTip1.SetToolTip(this.cbCopyFutureDatedEps, "If set then any episodes in the search folders will be copied into the library, e" +
+        "ven if they are yet to officially air.");
             this.cbCopyFutureDatedEps.UseVisualStyleBackColor = true;
             // 
             // chkIgnoreAllSpecials
