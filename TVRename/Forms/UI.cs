@@ -2197,7 +2197,7 @@ namespace TVRename
             Task<Release> tuv = VersionUpdater.CheckForUpdatesAsync();
             Release result = await tuv.ConfigureAwait(false);
 
-            uiDisp.Invoke(() => NotifyUpdates(result, false));
+            uiDisp.Invoke(() => NotifyUpdates(result, false,mDoc.Args.Unattended ||mDoc.Args.Hide));
         }
         
         private void BGDownloadTimer_Tick(object sender, EventArgs e)
