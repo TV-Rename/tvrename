@@ -54,9 +54,11 @@ namespace TVRename
 
             FillRuleList(false, 0);
             FillSeenEpisodes(false);
+            lvSeenEpisodes.ListViewItemSorter = new NumberAsTextSorter(0);
+            lvSeenEpisodes.Sort();
         }
 
-        private void FillSeenEpisodes(bool keepSel)
+private void FillSeenEpisodes(bool keepSel)
         {
             List<int> sel = new List<int>();
             if (keepSel)
@@ -309,6 +311,20 @@ namespace TVRename
         private void LvSeenEpisodes_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             bnRemoveSeen.Enabled = (lvSeenEpisodes.SelectedItems.Count > 0);
+        }
+
+        private void LvSeenEpisodes_ColumnClick(object sender, [NotNull] ColumnClickEventArgs e)
+        {
+            if (e.Column == 0) 
+            {
+                lvSeenEpisodes.ListViewItemSorter = new NumberAsTextSorter(e.Column);
+            }
+            else
+            {
+                lvSeenEpisodes.ListViewItemSorter = new TextSorter(e.Column);
+            }
+
+            lvSeenEpisodes.Sort();
         }
     }
 }

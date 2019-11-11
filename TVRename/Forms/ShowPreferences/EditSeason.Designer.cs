@@ -328,6 +328,7 @@ namespace TVRename
             this.lvSeenEpisodes.TabIndex = 11;
             this.lvSeenEpisodes.UseCompatibleStateImageBehavior = false;
             this.lvSeenEpisodes.View = System.Windows.Forms.View.Details;
+            this.lvSeenEpisodes.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.LvSeenEpisodes_ColumnClick);
             this.lvSeenEpisodes.SelectedIndexChanged += new System.EventHandler(this.LvSeenEpisodes_SelectedIndexChanged);
             // 
             // Episode
