@@ -5,6 +5,8 @@
 // 
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
@@ -288,6 +290,11 @@ namespace TVRename
                 return selectedBanner.BannerId;
             }
 
+            if (!AllBanners.ContainsKey(bestBannerId))
+            {
+                return selectedBanner.BannerId;
+            }
+
             if (AllBanners[bestBannerId].Rating < selectedBanner.Rating)
             {
                 //update banner - we have found a better one
@@ -362,7 +369,7 @@ namespace TVRename
                     .Select(pair => pair.Value.Rating).Max();
 
                 bestSeriesPosterId = AllBanners.Where(pair => pair.Value.IsSeriesPoster())
-                    .First(pair => pair.Value.Rating == maxRating).Value.BannerId;
+                    .First(pair => Math.Abs(pair.Value.Rating - maxRating) < 0.001).Value.BannerId;
             }
 
             if (bestSeriesBannerId == removeBannerId)
@@ -371,7 +378,7 @@ namespace TVRename
                     .Select(pair => pair.Value.Rating).Max();
 
                 bestSeriesBannerId = AllBanners.Where(pair => pair.Value.IsSeriesBanner())
-                    .First(pair => pair.Value.Rating == maxRating).Value.BannerId;
+                    .First(pair => Math.Abs(pair.Value.Rating - maxRating) < 0.001).Value.BannerId;
             }
 
             if (bestSeriesFanartId == removeBannerId)
@@ -380,7 +387,7 @@ namespace TVRename
                     .Select(pair => pair.Value.Rating).Max();
 
                 bestSeriesFanartId = AllBanners.Where(pair => pair.Value.IsFanart())
-                    .First(pair => pair.Value.Rating == maxRating).Value.BannerId;
+                    .First(pair => Math.Abs(pair.Value.Rating - maxRating) < 0.001).Value.BannerId;
             }
         }
     }
