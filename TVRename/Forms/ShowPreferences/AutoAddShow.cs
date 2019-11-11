@@ -27,7 +27,16 @@ namespace TVRename
             {
                 cbDirectory.Items.Add(folder.TrimEnd(Path.DirectorySeparatorChar.ToString()));
             }
-            cbDirectory.SelectedIndex = 0;
+
+            if (TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation)
+            {
+                cbDirectory.Text = TVSettings.Instance.DefShowLocation.TrimEnd(Path.DirectorySeparatorChar.ToString());
+            }
+            else
+            {
+                cbDirectory.SelectedIndex = 0;
+            }
+            
             cbDirectory.ResumeLayout();
 
             originalHint = hint;
@@ -46,7 +55,7 @@ namespace TVRename
 
             ShowItem.TvdbCode = code;
             ShowItem.AutoAddFolderBase = cbDirectory.Text+lblDirectoryName.Text;
-            ShowItem.AutoAddType = ShowItem.AutomaticFolderType.libraryDefault;
+
             //Set Default Timezone based on Network
             ShowItem.ShowTimeZone = TimeZoneHelper.TimeZoneForNetwork(codeFinder.SelectedShow()?.Network);
             if (!originalHint.Contains(codeFinder.SelectedShow().Name, StringComparison.OrdinalIgnoreCase))

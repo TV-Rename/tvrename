@@ -937,14 +937,14 @@ namespace TVRename
             PopulateAndSetDefShowLocation(oldValue);
         }
 
-        private void PopulateAndSetDefShowLocation([NotNull] string path)
+        private void PopulateAndSetDefShowLocation([CanBeNull] string path)
         {
             TVSettings.Instance.LibraryFolders.Sort();
 
             cmbDefShowLocation.BeginUpdate();
             cmbDefShowLocation.Items.Clear();
 
-            cmbDefShowLocation.Items.Add(path);
+            cmbDefShowLocation.Items.Add(path??string.Empty);
 
             foreach (string folder in TVSettings.Instance.LibraryFolders)
             {
