@@ -224,6 +224,12 @@ namespace TVRename
             DirFilesCache dfc, FileInfo fi, List<ShowItem> matchingShows, int seasF, int epF, [NotNull] ShowItem si,
             ProcessedEpisode firstMatchingPep, List<Item> returnActions, [CanBeNull] TVSettings.FilenameProcessorRE re, bool fileCanBeDeleted, TVDoc d)
         {
+            if (!si.SeasonEpisodes.ContainsKey(seasF))
+            {
+                LOGGER.Info($"Can't find the right season for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}'");
+                return (firstMatchingPep, false);
+            }
+
             ProcessedEpisode pep = si.SeasonEpisodes[seasF].First(ep => ep.AppropriateEpNum == epF);
 
             if (pep == null)
