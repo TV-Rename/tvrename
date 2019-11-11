@@ -38,7 +38,7 @@ namespace TVRename
 
                 List<FileInfo> filesThatMayBeNeeded = new List<FileInfo>();
 
-                returnActions.AddNullableRange(ReviewFilesInDownloadDirectory(showList, dfc, dirPath, filesThatMayBeNeeded, settings));
+                returnActions.AddNullableRange(ReviewFilesInDownloadDirectory(showList, dfc, dirPath, filesThatMayBeNeeded, settings,MDoc));
                 returnActions.AddNullableRange(ReviewDirsInDownloadDirectory(showList, dfc, dirPath, filesThatMayBeNeeded, settings));
             }
 
@@ -148,7 +148,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static IEnumerable<Item> ReviewFilesInDownloadDirectory(ICollection<ShowItem> showList, DirFilesCache dfc, string dirPath, ICollection<FileInfo> filesThatMayBeNeeded, TVDoc.ScanSettings settings)
+        private static IEnumerable<Item> ReviewFilesInDownloadDirectory(ICollection<ShowItem> showList, DirFilesCache dfc, string dirPath, ICollection<FileInfo> filesThatMayBeNeeded, TVDoc.ScanSettings settings, TVDoc d)
         {
             List<Item> returnActions = new List<Item>();
             try
@@ -172,7 +172,7 @@ namespace TVRename
                     if (matchingShows.Any())
                     {
                         returnActions.AddNullableRange(ReviewFileInDownloadDirectory(settings.Unattended, dfc, filesThatMayBeNeeded, fi,
-                            matchingShows));
+                            matchingShows,d));
                     }
                 }
             }
@@ -192,7 +192,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static IEnumerable<Item> ReviewFileInDownloadDirectory(bool unattended, DirFilesCache dfc, ICollection<FileInfo> filesThatMayBeNeeded, FileInfo fi, [NotNull] List<ShowItem> matchingShows)
+        private static IEnumerable<Item> ReviewFileInDownloadDirectory(bool unattended, DirFilesCache dfc, ICollection<FileInfo> filesThatMayBeNeeded, FileInfo fi, [NotNull] List<ShowItem> matchingShows, TVDoc d)
         {
             bool fileCanBeDeleted = TVSettings.Instance.RemoveDownloadDirectoriesFiles;
             List<Item> returnActions = new List<Item>();
@@ -202,7 +202,7 @@ namespace TVRename
             {
                 FinderHelper.FindSeasEp(fi, out int seasF, out int epF, out int _, si, out TVSettings.FilenameProcessorRE re);
 
-                (firstMatchingPep, fileCanBeDeleted) = FirstMatchingPep(unattended, dfc, fi, matchingShows, seasF, epF, si, firstMatchingPep, returnActions, re, fileCanBeDeleted);
+                (firstMatchingPep, fileCanBeDeleted) = FirstMatchingPep(unattended, dfc, fi, matchingShows, seasF, epF, si, firstMatchingPep, returnActions, re, fileCanBeDeleted,d);
             }
 
             if (fileCanBeDeleted)
@@ -221,8 +221,8 @@ namespace TVRename
         }
 
         private static (ProcessedEpisode firstMatchingPep, bool fileCanBeDeleted) FirstMatchingPep(bool unattended,
-            DirFilesCache dfc, FileInfo fi, List<ShowItem> matchingShows, int seasF, int epF, ShowItem si,
-            ProcessedEpisode firstMatchingPep, List<Item> returnActions, [CanBeNull] TVSettings.FilenameProcessorRE re, bool fileCanBeDeleted)
+            DirFilesCache dfc, FileInfo fi, List<ShowItem> matchingShows, int seasF, int epF, [NotNull] ShowItem si,
+            ProcessedEpisode firstMatchingPep, List<Item> returnActions, [CanBeNull] TVSettings.FilenameProcessorRE re, bool fileCanBeDeleted, TVDoc d)
         {
             ProcessedEpisode pep = si.SeasonEpisodes[seasF].First(ep => ep.AppropriateEpNum == epF);
 
@@ -240,7 +240,7 @@ namespace TVRename
                 //File is needed as there are no files for that series/episode
                 fileCanBeDeleted = false;
 
-                returnActions.AddRange(CopyFutureDatedFile(fi, pep));
+                returnActions.AddRange(CopyFutureDatedFile(fi, pep,d));
             }
             else
             {
@@ -254,7 +254,7 @@ namespace TVRename
                     }
 
                     fileCanBeDeleted = ReviewFile(unattended, fi, matchingShows, existingFile, fileCanBeDeleted,
-                        returnActions, pep);
+                        returnActions, pep,d);
                 }
             }
 
@@ -262,7 +262,7 @@ namespace TVRename
         }
 
         private static bool ReviewFile(bool unattended, [NotNull] FileInfo fi, [NotNull] List<ShowItem> matchingShows, [NotNull] FileInfo existingFile,
-            bool fileCanBeDeleted, [NotNull] List<Item> returnActions, [NotNull] ProcessedEpisode pep)
+            bool fileCanBeDeleted, [NotNull] List<Item> returnActions, [NotNull] ProcessedEpisode pep, TVDoc d)
         {
             FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, fi);
             switch (result)
@@ -279,7 +279,7 @@ namespace TVRename
                         }
                         else
                         {
-                            returnActions.AddNullableRange(UpgradeFile(fi, pep, existingFile));
+                            returnActions.AddNullableRange(UpgradeFile(fi, pep, existingFile,d));
                         }
                     }
                     else
@@ -308,7 +308,7 @@ namespace TVRename
                         }
                         else
                         {
-                            fileCanBeDeleted = AskUserAboutFileReplacement(fi, existingFile, returnActions, pep, fileCanBeDeleted);
+                            fileCanBeDeleted = AskUserAboutFileReplacement(fi, existingFile, returnActions, pep, fileCanBeDeleted,d);
                         }
                     }
 
@@ -325,7 +325,7 @@ namespace TVRename
             return fileCanBeDeleted;
         }
 
-        private static bool AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] List<Item> returnActions,[NotNull] ProcessedEpisode pep, bool fileCanBeDeleted)
+        private static bool AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] List<Item> returnActions,[NotNull] ProcessedEpisode pep, bool fileCanBeDeleted, TVDoc d)
         {
             try
             {
@@ -346,7 +346,7 @@ namespace TVRename
 
                         break;
                     case ChooseFile.ChooseFileDialogResult.right:
-                        returnActions.AddNullableRange(UpgradeFile(newFile, pep, existingFile));
+                        returnActions.AddNullableRange(UpgradeFile(newFile, pep, existingFile,d));
                         fileCanBeDeleted = false;
                         break;
                     default:
@@ -362,7 +362,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static IEnumerable<Item> CopyFutureDatedFile(FileInfo fi, [NotNull] ProcessedEpisode pep)
+        private static IEnumerable<Item> CopyFutureDatedFile(FileInfo fi, [NotNull] ProcessedEpisode pep,TVDoc d)
         {
             ShowItem si = pep.Show;
             int seasF = pep.AppropriateSeasonNumber;
@@ -410,7 +410,7 @@ namespace TVRename
                     continue;
                 }
 
-                returnActions.Add(new ActionCopyMoveRename(fi, targetFile, pep));
+                returnActions.Add(new ActionCopyMoveRename(fi, targetFile, pep,d));
 
                 // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
                 returnActions.AddRange(new DownloadIdentifiersController().ProcessEpisode(pep, targetFile));
@@ -420,18 +420,18 @@ namespace TVRename
         }
 
         [NotNull]
-        private static IEnumerable<Action> UpgradeFile([NotNull] FileInfo fi, ProcessedEpisode pep, [NotNull] FileInfo existingFile)
+        private static IEnumerable<Action> UpgradeFile([NotNull] FileInfo fi, ProcessedEpisode pep, [NotNull] FileInfo existingFile,TVDoc d)
         {
             List<Action> returnActions = new List<Action>();
 
             if (existingFile.Extension != fi.Extension)
             {
                 returnActions.Add(new ActionDeleteFile(existingFile, pep, null));
-                returnActions.Add(new ActionCopyMoveRename(fi, existingFile.WithExtension(fi.Extension), pep));
+                returnActions.Add(new ActionCopyMoveRename(fi, existingFile.WithExtension(fi.Extension), pep,d));
             }
             else
             {
-                returnActions.Add(new ActionCopyMoveRename(fi, existingFile, pep));
+                returnActions.Add(new ActionCopyMoveRename(fi, existingFile, pep,d));
             }
 
             LOGGER.Info(

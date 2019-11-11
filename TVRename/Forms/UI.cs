@@ -1872,7 +1872,7 @@ namespace TVRename
                     TVSettings.Instance.LeaveOriginals
                         ? ActionCopyMoveRename.Op.copy
                         : ActionCopyMoveRename.Op.move, from, to
-                    , mi.Episode, true, mi));
+                    , mi.Episode, true, mi,mDoc));
 
             // and remove old Missing item
             mDoc.TheActionList.Remove(mi);
@@ -1884,7 +1884,7 @@ namespace TVRename
             //If keep together is active then we may want to copy over related files too
             if (TVSettings.Instance.KeepTogether)
             {
-                FileFinder.KeepTogether(mDoc.TheActionList, false, true);
+                FileFinder.KeepTogether(mDoc.TheActionList, false, true,mDoc);
             }
 
             FillActionList(true);

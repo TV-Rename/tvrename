@@ -280,7 +280,7 @@ namespace TVRename
                 {
                     LOGGER.Info($"Identified that {actualFile.FullName} should be renamed to {newName}.");
                     Doc.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
-                        newFile, ep, false, null));
+                        newFile, ep, false, null,Doc));
 
                     //The following section informs the DownloadIdentifers that we already plan to
                     //copy a file in the appropriate place and they do not need to worry about downloading 
@@ -302,6 +302,7 @@ namespace TVRename
                     //Record this episode as seen
 
                     TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(ep);
+                    Doc.SetDirty();
                 }
             }
 

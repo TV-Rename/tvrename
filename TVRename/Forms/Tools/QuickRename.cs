@@ -155,7 +155,7 @@ namespace TVRename.Forms.Tools
                     return;
                 }
 
-                mDoc.TheActionList.Add(new ActionCopyMoveRename(droppedFile, targetFile, episode));
+                mDoc.TheActionList.Add(new ActionCopyMoveRename(droppedFile, targetFile, episode,mDoc));
 
                 // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
                 mDoc.TheActionList.AddRange(new DownloadIdentifiersController().ProcessEpisode(episode, targetFile));
@@ -163,7 +163,7 @@ namespace TVRename.Forms.Tools
                 //If keep together is active then we may want to copy over related files too
                 if (TVSettings.Instance.KeepTogether)
                 {
-                    FileFinder.KeepTogether(mDoc.TheActionList, false, true);
+                    FileFinder.KeepTogether(mDoc.TheActionList, false, true,mDoc);
                 }
             }
             catch (SeriesInfo.EpisodeNotFoundException)

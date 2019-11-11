@@ -89,7 +89,7 @@ namespace TVRename
                             folder.SameDirectoryLocation(fi.Directory.FullName));
 
                     addTo.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.copy, dce, fi, me.Episode, doTidyup,
-                        me));
+                        me,MDoc));
                 }
 
                 if (doExtraFiles)
@@ -183,10 +183,10 @@ namespace TVRename
             return false;
         }
         protected void KeepTogether([NotNull] ItemList actionlist, bool fromLibrary) {
-            KeepTogether(actionlist, fromLibrary, (!MDoc.Args.Unattended) && (!MDoc.Args.Hide));
+            KeepTogether(actionlist, fromLibrary, (!MDoc.Args.Unattended) && (!MDoc.Args.Hide),MDoc);
                 }
 
-        public static void KeepTogether([NotNull] ItemList actionlist, bool fromLibrary,bool showErrors)
+        public static void KeepTogether([NotNull] ItemList actionlist, bool fromLibrary,bool showErrors, TVDoc d)
         {
             // for each of the items in rcl, do the same copy/move if for other items with the same
             // base name, but different extensions
@@ -194,13 +194,13 @@ namespace TVRename
 
             foreach (ActionCopyMoveRename action in actionlist.CopyMoveItems())
             {
-                KeepTogetherForItem(actionlist, fromLibrary, action, extras,showErrors);
+                KeepTogetherForItem(actionlist, fromLibrary, action, extras,showErrors,d);
             }
 
             UpdateActionList(actionlist, extras);
         }
 
-        private static void KeepTogetherForItem(ItemList actionlist, bool fromLibrary, [NotNull] ActionCopyMoveRename action, ItemList extras,bool showErrors)
+        private static void KeepTogetherForItem(ItemList actionlist, bool fromLibrary, [NotNull] ActionCopyMoveRename action, ItemList extras,bool showErrors, TVDoc d)
         {
             try
             {
@@ -235,7 +235,7 @@ namespace TVRename
 
                         ActionCopyMoveRename newitem = new ActionCopyMoveRename(action.Operation, fi,
                             FileHelper.FileInFolder(action.To.Directory, newName), action.Episode, false,
-                            null); // tidy up on main action, not this
+                            null,d); // tidy up on main action, not this
 
                         // check this item isn't already in our to-do list
                         if (ActionListContains(actionlist, newitem))
