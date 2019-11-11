@@ -34,19 +34,14 @@ namespace TVRename
 
         private void EnsureAdded(int epId)
         {
-            if (Contains(epId))
+            if (!Contains(epId))
             {
-                return;
+                Add(epId);
             }
-
-            Add(epId);
         }
 
         public void EnsureAdded([NotNull] ProcessedEpisode dbep) => EnsureAdded(dbep.EpisodeId);
 
-        public bool Includes([NotNull] Item item)
-        {
-            return item.Episode != null && Contains(item.Episode.EpisodeId);
-        }
+        public bool Includes([NotNull] Item item) => item.Episode != null && Contains(item.Episode.EpisodeId);
     }
 }
