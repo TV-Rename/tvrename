@@ -147,13 +147,13 @@ namespace TVRename
         public string GetSeriesWideBannerPath()
         {
             //ry the best one we've found with the correct language
-            if (bestSeriesLangBannerId != -1)
+            if (bestSeriesLangBannerId != -1 && AllBanners.ContainsKey(bestSeriesLangBannerId))
             {
                 return AllBanners[bestSeriesLangBannerId].BannerPath;
             }
 
             //if there are none with the right language then try one from another language
-            if (bestSeriesBannerId != -1)
+            if (bestSeriesBannerId != -1 && AllBanners.ContainsKey(bestSeriesBannerId))
             {
                 return AllBanners[bestSeriesBannerId].BannerPath;
             }
@@ -165,7 +165,7 @@ namespace TVRename
             }
 
             //give up
-            return "";
+            return string.Empty;
         }
 
         [NotNull]
