@@ -69,7 +69,7 @@ namespace TVRename
                 if (action != null)
                 {
                     Logger.Trace("Triggering Action: {0} - {1} - {2}", action.Name, action.Produces, action.ToString());
-                    action.Go(ref actionPause, mStats);
+                    action.Go(mStats);
                 }
             }
             catch (ThreadAbortException)

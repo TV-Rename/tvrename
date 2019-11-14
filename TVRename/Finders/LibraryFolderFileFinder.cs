@@ -87,7 +87,7 @@ namespace TVRename
             }
             else
             {
-                FileInfo[] testFiles = dfc.GetFilesIncludeSubDirs(baseFolder);
+                IEnumerable<FileInfo> testFiles = dfc.GetFilesIncludeSubDirs(baseFolder);
                 matchedFiles = testFiles is null
                     ? new List<FileInfo>()
                     : testFiles.Where(testFile => ReviewFile(me, thisRound, testFile, settings, false, false, false,
@@ -115,11 +115,13 @@ namespace TVRename
                     continue;
                 }
 
-                if (!matchedFiles.Contains(testFile))
+                if (matchedFiles.Contains(testFile))
                 {
-                    matchedFiles.Add(testFile);
-                    LOGGER.Info($"Found {me.Filename} at: {testFile}");
+                    continue;
                 }
+
+                matchedFiles.Add(testFile);
+                LOGGER.Info($"Found {me.Filename} at: {testFile}");
             }
         }
     }

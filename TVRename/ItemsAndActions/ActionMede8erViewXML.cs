@@ -34,7 +34,7 @@ namespace TVRename
         [NotNull]
         public override string Name => "Write Mede8er View Data";
 
-        public override bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(TVRenameStats stats)
         {
             XmlWriterSettings settings = new XmlWriterSettings
             {

@@ -35,7 +35,7 @@ namespace TVRename
         private CustomNameTagsFloatingWindow cntfw;
         private readonly Season sampleSeason;
         private readonly ProcessedEpisode sampleEpisode;
-        private bool addingNewShow;
+        private readonly bool addingNewShow;
 
         public AddEditShow([NotNull] ShowItem si)
         {

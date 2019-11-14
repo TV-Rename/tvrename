@@ -330,9 +330,8 @@ namespace TVRename
             string explorerButton = string.Empty;
             if (fl != null)
             {
-                foreach (FileInfo fi in fl)
+                foreach (string urlFilename in fl.Select(fi => Uri.EscapeDataString(fi.FullName)))
                 {
-                    string urlFilename = Uri.EscapeDataString(fi.FullName);
                     viewButton += CreateButton($"{UI.WATCH_PROXY}{urlFilename}", "<i class=\"far fa-eye\"></i>","Watch Now");
                     explorerButton += CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>","Open Containing Folder");
                 }
@@ -436,7 +435,7 @@ namespace TVRename
             return string.IsNullOrEmpty(url) ? "" : $"<h2>{title}</h2><img width={width} height={height} src=\"{url}\"><br/>";
         }
 
-        private static List<ProcessedEpisode> GetBestEpisodes([NotNull] ShowItem si, [NotNull] Season s)
+        private static IEnumerable<ProcessedEpisode> GetBestEpisodes([NotNull] ShowItem si, [NotNull] Season s)
         {
             return si.SeasonEpisodes.ContainsKey(s.SeasonNumber)
                 ? si.SeasonEpisodes[s.SeasonNumber]

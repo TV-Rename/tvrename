@@ -58,21 +58,6 @@ namespace TVRename
 
         private void SetupGrid()
         {
-            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
-            {
-                BackColor = Color.SteelBlue,
-                ForeColor = Color.White,
-                TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
-            };
-
-            SourceGrid.Cells.Views.Cell titleModelC = new SourceGrid.Cells.Views.Cell
-            {
-                BackColor = Color.SteelBlue,
-                ForeColor = Color.White,
-                TextAlignment =
-                    DevAge.Drawing.ContentAlignment.MiddleCenter
-            };
-
             Grid1.Columns.Clear();
             Grid1.Rows.Clear();
 
@@ -97,23 +82,43 @@ namespace TVRename
 
             //////////////////////////////////////////////////////////////////////
             // header row
+            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
+            {
+                BackColor = Color.SteelBlue,
+                ForeColor = Color.White,
+                TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+            };
 
-            SourceGrid.Cells.ColumnHeader h;
-            h = new SourceGrid.Cells.ColumnHeader("Enabled") {AutomaticSortEnabled = false};
-            Grid1[0, 0] = h;
-            Grid1[0, 0].View = titleModelC;
+            SourceGrid.Cells.Views.Cell titleModelC = new SourceGrid.Cells.Views.Cell
+            {
+                BackColor = Color.SteelBlue,
+                ForeColor = Color.White,
+                TextAlignment = DevAge.Drawing.ContentAlignment.MiddleCenter
+            };
 
-            h = new SourceGrid.Cells.ColumnHeader("Regex") {AutomaticSortEnabled = false};
-            Grid1[0, 1] = h;
-            Grid1[0, 1].View = titleModel;
+            Grid1[0, 0] = new SourceGrid.Cells.ColumnHeader("Enabled")
+            {
+                AutomaticSortEnabled = false,
+                View = titleModelC
+            };
 
-            h = new SourceGrid.Cells.ColumnHeader("Full Path") {AutomaticSortEnabled = false};
-            Grid1[0, 2] = h;
-            Grid1[0, 2].View = titleModelC;
+            Grid1[0, 1] = new SourceGrid.Cells.ColumnHeader("Regex")
+            {
+                AutomaticSortEnabled = false,
+                View = titleModel
+            };
 
-            h = new SourceGrid.Cells.ColumnHeader("Notes") {AutomaticSortEnabled = false};
-            Grid1[0, 3] = h;
-            Grid1[0, 3].View = titleModel;
+            Grid1[0, 2] = new SourceGrid.Cells.ColumnHeader("Full Path")
+            {
+                AutomaticSortEnabled = false,
+                View = titleModelC
+            };
+
+            Grid1[0, 3] = new SourceGrid.Cells.ColumnHeader("Notes")
+            {
+                AutomaticSortEnabled = false,
+                View = titleModel
+            };
 
             Grid1.Selection.SelectionChanged += SelectionChanged;
         }
@@ -141,7 +146,7 @@ namespace TVRename
             }
         }
 
-        private void FillGrid([NotNull] List<TVSettings.FilenameProcessorRE> list)
+        private void FillGrid([NotNull] IReadOnlyCollection<TVSettings.FilenameProcessorRE> list)
         {
             while (Grid1.Rows.Count > 1) // leave header row
             {

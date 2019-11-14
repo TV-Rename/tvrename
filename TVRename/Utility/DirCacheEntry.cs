@@ -14,13 +14,11 @@ namespace TVRename
     public class DirCacheEntry
     {
         public readonly long Length;
-        public readonly string SimplifiedFullName;
         public readonly FileInfo TheFile;
 
         public DirCacheEntry([NotNull] FileInfo f)
         {
             TheFile = f;
-            SimplifiedFullName = Helpers.SimplifyName(f.FullName);
             Length = f.Length;
         }
     }

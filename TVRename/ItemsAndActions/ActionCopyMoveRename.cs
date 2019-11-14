@@ -53,7 +53,7 @@ namespace TVRename
         // 0.0 to 100.0
         public override long SizeOfWork => QuickOperation() ? 10000 : SourceFileSize();
 
-        public override bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(TVRenameStats stats)
         {
             // read NTFS permissions (if any)
             FileSecurity security = null;

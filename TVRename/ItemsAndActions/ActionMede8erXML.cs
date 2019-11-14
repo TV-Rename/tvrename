@@ -35,7 +35,7 @@ namespace TVRename
         [NotNull]
         public override string Name => "Write Mede8er Metadata";
 
-        public override bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(TVRenameStats stats)
         {
             try
             {

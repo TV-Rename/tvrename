@@ -546,8 +546,7 @@ namespace TVRename
                 return;
             }
 
-            FoundFolder fme = lvFMNewShows.SelectedItems[0].Tag as FoundFolder;
-            if (fme != null)
+            if (lvFMNewShows.SelectedItems[0].Tag is FoundFolder fme)
             {
                 EditEntry(fme);
                 UpdateListItem(fme, true);

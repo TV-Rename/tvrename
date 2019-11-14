@@ -19,7 +19,9 @@ namespace TVRename.SAB
             {
                 string txt = $"{Status}, {Sizeleft}% Complete";
                 if (Status == "Downloading")
-                    { txt += $", {Timeleft} left"; }
+                {
+                    txt += $", {Timeleft} left";
+                }
                 return txt;
             }
         }

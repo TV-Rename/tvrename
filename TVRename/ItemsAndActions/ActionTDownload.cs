@@ -48,7 +48,7 @@ namespace TVRename
         public override long SizeOfWork => 1000000;
         public override string Produces => url;
 
-        public override bool Go( ref bool pause, TVRenameStats stats)
+        public override bool Go( TVRenameStats stats)
         {
             try
             {

@@ -127,7 +127,7 @@ namespace TVRename.Forms
             {
                 chkNameTest.Checked = true;
                 chkMIssingTest.Checked = true;
-                }
+            }
 
             UpdateUI();
         }

@@ -85,7 +85,7 @@ namespace TVRename
             return bmPhoto;
         }
 
-        public override bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(TVRenameStats stats)
         {
             byte[] theData = TheTVDB.Instance.GetTvdbDownload(path);
             if ((theData is null) || (theData.Length == 0))
@@ -180,7 +180,7 @@ namespace TVRename
         [NotNull]
         public override string ScanListViewGroup => "lvgActionDownload";
         [CanBeNull]
-        public override string TargetFolder => destination is null ? null : destination.DirectoryName;
+        public override string TargetFolder => destination?.DirectoryName;
         #endregion
     }
 }

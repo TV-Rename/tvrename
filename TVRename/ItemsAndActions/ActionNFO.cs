@@ -171,7 +171,7 @@ namespace TVRename
             writer.WriteEndElement(); // episodedetails
         }
 
-        public override bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(TVRenameStats stats)
         {
             XmlWriterSettings settings = new XmlWriterSettings
             {

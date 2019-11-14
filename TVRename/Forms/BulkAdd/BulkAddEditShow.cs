@@ -39,14 +39,9 @@ namespace TVRename
             {
                 string s = hint.Folder.FullName;
                 int p = s.LastIndexOf(System.IO.Path.DirectorySeparatorChar);
-                if (string.IsNullOrWhiteSpace(hint.RefinedHint))
-                {
-                    codeFinderControl.SetHint(s.Substring(p + 1));
-                }
-                else
-                {
-                    codeFinderControl.SetHint(hint.RefinedHint);
-                }
+                codeFinderControl.SetHint(string.IsNullOrWhiteSpace(hint.RefinedHint)
+                    ? s.Substring(p + 1)
+                    : hint.RefinedHint);
             }
             Code = -1;
         }

@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System.Linq;
 using JetBrains.Annotations;
 
 namespace TVRename
@@ -30,7 +31,7 @@ namespace TVRename
         [NotNull]
         public override string Name => "Write WD TV Live Hub Meta";
 
-        public override bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(TVRenameStats stats)
         {
             if (Where is null)
             {
@@ -161,13 +162,8 @@ namespace TVRename
                     }
 
                     // actors...
-                    foreach (Actor aa in Episode.TheSeries.GetActors())
+                    foreach (Actor aa in Episode.TheSeries.GetActors().Where(aa => !string.IsNullOrEmpty(aa.ActorName)))
                     {
-                        if (string.IsNullOrEmpty(aa.ActorName))
-                        {
-                            continue;
-                        }
-
                         writer.WriteStartElement("actor");
                         writer.WriteElement("name", aa.ActorName);
                         writer.WriteElement("role", aa.ActorRole);

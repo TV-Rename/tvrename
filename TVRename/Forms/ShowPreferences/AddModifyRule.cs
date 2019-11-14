@@ -179,7 +179,7 @@ namespace TVRename
             mRule.Second = ParseTextValue(txtValue2);
 
             //validation Rules
-            if (!mSeason.ContainsEpisode(mRule.First, mdvdOrder) && !(mRule.DoWhatNow==RuleAction.kInsert))
+            if (!mSeason.ContainsEpisode(mRule.First, mdvdOrder) && mRule.DoWhatNow != RuleAction.kInsert)
             {
                 MessageBox.Show("First episode number is not valid for the selected season", "Modify Rules",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);

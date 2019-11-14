@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System.Linq;
 using JetBrains.Annotations;
 
 namespace TVRename
@@ -25,7 +26,7 @@ namespace TVRename
         [NotNull]
         public override string Name => "Write pyTivo Meta";
 
-        public override bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(TVRenameStats stats)
         {
             try
             {
@@ -88,12 +89,9 @@ namespace TVRename
             }
             else
             {
-                foreach (string entry in entries.Split('|'))
+                foreach (string entry in entries.Split('|').Where(entry => !string.IsNullOrEmpty(entry)))
                 {
-                    if (!string.IsNullOrEmpty(entry))
-                    {
-                        writer.WriteLine($"{heading} : {entry}");
-                    }
+                    writer.WriteLine($"{heading} : {entry}");
                 }
             }
         }

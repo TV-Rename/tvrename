@@ -55,7 +55,7 @@ namespace TVRename
 
         public override long SizeOfWork => 100;
 
-        public override bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(TVRenameStats stats)
         {
             try
             {

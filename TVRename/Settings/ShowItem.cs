@@ -455,7 +455,7 @@ namespace TVRename
                         return false;
                     }
 
-                foreach (KeyValuePair<int, Season> s in seriesInfo.AiredSeasons)
+                    foreach (KeyValuePair<int, Season> s in seriesInfo.AiredSeasons)
                     {
                         if(IgnoreSeasons.Contains(s.Key))
                         {

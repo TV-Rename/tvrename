@@ -38,9 +38,7 @@ namespace TVRename
             get;
         } // for file copy/move, number of bytes in file.  for simple tasks, 1, or something proportional to how slow it is to copy files around.
 
-        public abstract bool
-            Go(ref bool pause,
-                TVRenameStats stats); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false        
+        public abstract bool Go(TVRenameStats stats); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false        
 
         public abstract string Produces { get; } //What does this action produce? typically a filename
     }

@@ -51,15 +51,10 @@ namespace TVRename
             foreach (XElement x in settings.Descendants("Choice"))
             {
                 string url = x.Attribute("URL")?.Value;
-                if (url is null)
-                {
-                    url = x.Attribute("URL2")?.Value;
-                }
-                else
-                {
-                    // old-style URL, replace "!" with "{ShowName}+{Season}+{Episode}"
-                    url = url.Replace("!", "{ShowName}+S{Season:2}E{Episode}");
-                }
+                url = url is null
+                    ? x.Attribute("URL2")?.Value
+                    : url.Replace("!", "{ShowName}+S{Season:2}E{Episode}");
+
                 Add(x.Attribute("Name")?.Value,url);
             }
         }

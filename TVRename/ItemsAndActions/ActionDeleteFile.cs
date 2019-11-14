@@ -31,7 +31,7 @@ namespace TVRename
         [CanBeNull]
         public override string TargetFolder => toRemove?.DirectoryName;
 
-        public override bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(TVRenameStats stats)
         {
             try
             {

@@ -21,7 +21,7 @@ namespace TVRename
         private readonly Dictionary<string, FileInfo[]> cache = new Dictionary<string, FileInfo[]>();
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public FileInfo[] GetFilesIncludeSubDirs([NotNull] string folder) => Get(folder, true);
+        public IEnumerable<FileInfo> GetFilesIncludeSubDirs([NotNull] string folder) => Get(folder, true);
 
         public FileInfo[] GetFiles([NotNull] string folder) => Get(folder, false);
 

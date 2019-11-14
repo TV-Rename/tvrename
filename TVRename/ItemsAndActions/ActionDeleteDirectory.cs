@@ -31,7 +31,7 @@ namespace TVRename
         [CanBeNull]
         public override string TargetFolder => toRemove?.Parent.FullName;
 
-        public override bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(TVRenameStats stats)
         {
             //if the directory is the root download folder do not delete
             if (TVSettings.Instance.MonitorFolders &&
