@@ -183,6 +183,7 @@ namespace TVRename
                 }
                 catch (ArgumentException)
                 {
+                    //Ignore this Exception
                 }
             }
 

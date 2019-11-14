@@ -31,7 +31,7 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     public class TheTVDB : iTVSource
     {
-        [Serializable()]
+        [Serializable]
         // ReSharper disable once InconsistentNaming
         public class TVDBException : Exception
         {
@@ -2167,7 +2167,7 @@ namespace TVRename
                 {
                     if (ex.Response is null) //probably a timeout
                     {
-                        Logger.Error("Error obtaining " + uri + ": " + ex.Message);
+                        Logger.Error($"Error obtaining {uri} for search term '{text}' in {DefaultLanguageCode}: {ex.Message}");
                         LastError = ex.Message;
                         Say("");
                     }
@@ -2178,7 +2178,7 @@ namespace TVRename
                     }
                     else
                     {
-                        Logger.Error("Error obtaining " + uri + ": " + ex.Message);
+                        Logger.Error($"Error obtaining {ex.Response.ResponseUri} for search term '{text}' in {DefaultLanguageCode}: {ex.Message}");
                         LastError = ex.Message;
                         Say("");
                     }

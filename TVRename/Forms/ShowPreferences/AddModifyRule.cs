@@ -92,7 +92,7 @@ namespace TVRename
 
         private void EnableDisableAndLabels()
         {
-            if (rbRemove.Checked)
+            if (rbRemove.Checked || rbIgnore.Checked)
             {
                 txtLabel1.Text = "&From/Number:";
                 txtLabel2.Text = "T&o:";
@@ -136,17 +136,6 @@ namespace TVRename
                 txtUserText.Enabled = true;
                 txtWithNameLabel.Enabled = true;
             }
-            else if (rbIgnore.Checked)
-            {
-                txtLabel1.Text = "&From/Number:";
-                txtLabel2.Text = "T&o:";
-                txtLeaveBlank.Visible = false;
-                txtLabel2.Enabled = true;
-                txtValue1.Enabled = true;
-                txtValue2.Enabled = true;
-                txtUserText.Enabled = false;
-                txtWithNameLabel.Enabled = false;
-            }
             else if (rbRename.Checked)
             {
                 txtLabel1.Text = "&Number:";
@@ -173,7 +162,7 @@ namespace TVRename
 
         private void bnOK_Click(object sender, EventArgs e)
         {
-            mRule.DoWhatNow = Action;
+            mRule.DoWhatNow = Action();
             mRule.UserSuppliedText = txtUserText.Enabled ? txtUserText.Text : "";
             mRule.First = ParseTextValue(txtValue1);
             mRule.Second = ParseTextValue(txtValue2);
@@ -242,51 +231,48 @@ namespace TVRename
             }
         }
 
-        private RuleAction Action
+        private RuleAction Action ()
         {
-            get
+            RuleAction dwn;
+
+            if (rbIgnore.Checked)
             {
-                RuleAction dwn;
-
-                if (rbIgnore.Checked)
-                {
-                    dwn = RuleAction.kIgnoreEp;
-                }
-                else if (rbSwap.Checked)
-                {
-                    dwn = RuleAction.kSwap;
-                }
-                else if (rbMerge.Checked)
-                {
-                    dwn = RuleAction.kMerge;
-                }
-                else if (rbInsert.Checked)
-                {
-                    dwn = RuleAction.kInsert;
-                }
-                else if (rbRemove.Checked)
-                {
-                    dwn = RuleAction.kRemove;
-                }
-                else if (rbCollapse.Checked)
-                {
-                    dwn = RuleAction.kCollapse;
-                }
-                else if (rbRename.Checked)
-                {
-                    dwn = RuleAction.kRename;
-                }
-                else if (rbSplit.Checked)
-                {
-                    dwn = RuleAction.kSplit;
-                }
-                else
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
-
-                return dwn;
+                dwn = RuleAction.kIgnoreEp;
             }
+            else if (rbSwap.Checked)
+            {
+                dwn = RuleAction.kSwap;
+            }
+            else if (rbMerge.Checked)
+            {
+                dwn = RuleAction.kMerge;
+            }
+            else if (rbInsert.Checked)
+            {
+                dwn = RuleAction.kInsert;
+            }
+            else if (rbRemove.Checked)
+            {
+                dwn = RuleAction.kRemove;
+            }
+            else if (rbCollapse.Checked)
+            {
+                dwn = RuleAction.kCollapse;
+            }
+            else if (rbRename.Checked)
+            {
+                dwn = RuleAction.kRename;
+            }
+            else if (rbSplit.Checked)
+            {
+                dwn = RuleAction.kSplit;
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            return dwn;
         }
     }
 }

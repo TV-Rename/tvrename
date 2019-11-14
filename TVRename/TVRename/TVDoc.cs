@@ -441,7 +441,7 @@ namespace TVRename
             }
         }
 
-        public struct ScanSettings
+        public struct ScanSettings : IEquatable<ScanSettings>
         {
             public readonly bool Unattended;
             public readonly bool Hidden;
@@ -457,6 +457,8 @@ namespace TVRename
                 Type = st;
                 Token = tok;
             }
+
+            public bool Equals(ScanSettings other) => Shows==other.Shows && Unattended==other.Unattended && Hidden==other.Hidden && Type==other.Type && Token==other.Token;
         }
 
         private void SetupScanUi(bool hidden)
@@ -679,7 +681,7 @@ namespace TVRename
             //Nothing to do - Method is called if we have no UI
         }
 
-        public static bool MatchesSequentialNumber(string filename, ref int seas, ref int ep, [NotNull] ProcessedEpisode pe)
+        public static bool  MatchesSequentialNumber(string filename, [NotNull] ProcessedEpisode pe)
         {
             if (pe.OverallNumber == -1)
             {
@@ -693,11 +695,10 @@ namespace TVRename
 
             if (found)
             {
-                seas = pe.AppropriateSeasonNumber;
-                ep = pe.AppropriateEpNum;
+                return true;
             }
 
-            return found;
+            return false;
         }
 
         [NotNull]

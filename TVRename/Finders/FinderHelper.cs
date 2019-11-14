@@ -394,9 +394,11 @@ namespace TVRename
                 }
                 catch (FormatException)
                 {
+                    //Ignore this Exception
                 }
                 catch (ArgumentException)
                 {
+                    //Ignore this Exception
                 }
             }
 

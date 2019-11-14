@@ -36,13 +36,13 @@ namespace TVRename
                 if ((di.LastWriteTimeUtc != newUpdateTime) && (!doneFilesAndFolders.Contains(di.FullName)))
                 {
                     doneFilesAndFolders.Add(di.FullName);
-                    return new ItemList() {new ActionDateTouch(di, si, newUpdateTime)};
+                    return new ItemList {new ActionDateTouch(di, si, newUpdateTime)};
                 }
             }
             catch (Exception)
             {
                 doneFilesAndFolders.Add(di.FullName);
-                return new ItemList() { new ActionDateTouch(di, si, newUpdateTime) };
+                return new ItemList { new ActionDateTouch(di, si, newUpdateTime) };
             }
             return null;
         }
@@ -64,13 +64,13 @@ namespace TVRename
                 if ((di.LastWriteTimeUtc != newUpdateTime) && (!doneFilesAndFolders.Contains(di.FullName)))
                 {
                     doneFilesAndFolders.Add(di.FullName);
-                    return new ItemList() {new ActionDateTouch(di, si, newUpdateTime)};
+                    return new ItemList {new ActionDateTouch(di, si, newUpdateTime)};
                 }
             }
             catch (Exception)
             {
                 doneFilesAndFolders.Add(di.FullName);
-                return new ItemList() { new ActionDateTouch(di, si, newUpdateTime) };
+                return new ItemList { new ActionDateTouch(di, si, newUpdateTime) };
             }
 
             return null;
@@ -90,13 +90,13 @@ namespace TVRename
                 if ((filo.LastWriteTimeUtc != newUpdateTime) && (!doneFilesAndFolders.Contains(filo.FullName)))
                 {
                     doneFilesAndFolders.Add(filo.FullName);
-                    return new ItemList() { new ActionDateTouch(filo, dbep, newUpdateTime) };
+                    return new ItemList { new ActionDateTouch(filo, dbep, newUpdateTime) };
                 }
             }
             catch (Exception)
             {
                 doneFilesAndFolders.Add(filo.FullName);
-                return new ItemList() { new ActionDateTouch(filo, dbep, newUpdateTime) };
+                return new ItemList { new ActionDateTouch(filo, dbep, newUpdateTime) };
             }
             return null;
         }

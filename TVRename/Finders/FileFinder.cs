@@ -33,8 +33,6 @@ namespace TVRename
                 return false;
             }
 
-            int season = me.Episode.AppropriateSeasonNumber;
-            int epnum = me.Episode.AppropriateEpNum;
             bool matched = false;
 
             try
@@ -45,25 +43,16 @@ namespace TVRename
                 }
 
                 //do any of the possible names for the series match the filename?
-                matched = me.Episode.Show.NameMatch(dce,useFullPath);
+                matched = me.Episode.Show.NameMatch(dce, useFullPath);
 
                 if (!matched)
                 {
                     return false;
                 }
 
-                bool regularMatch =
-                    FinderHelper.FindSeasEp(dce, out int seasF, out int epF, out int maxEp, me.Episode.Show) &&
-                    seasF == season &&
-                    epF == epnum;
+                (bool identifySuccess,int seasF, int epF, int maxEp) = IdentifyFile(me, dce);
 
-                bool sequentialMatch =
-                    me.Episode.Show.UseSequentialMatch &&
-                    TVDoc.MatchesSequentialNumber(dce.Name, ref seasF, ref epF, me.Episode) &&
-                    seasF == season &&
-                    epF == epnum;
-
-                if (!regularMatch && !sequentialMatch)
+                if (!identifySuccess)
                 {
                     return false;
                 }
@@ -104,13 +93,44 @@ namespace TVRename
             }
             catch (PathTooLongException e)
             {
-                WarnPathTooLong(me, dce, e, matched, season, epnum);
+                WarnPathTooLong(me, dce, e, matched);
             }
             return false;
         }
 
-        private void WarnPathTooLong([NotNull] ItemMissing me, [NotNull] FileInfo dce, [NotNull] Exception e, bool matched, int season, int epnum)
+        private static (bool  identifysuccess, int seasF, int epF,  int maxEp)  IdentifyFile([NotNull] ItemMissing me, [NotNull] FileInfo dce)
         {
+            int season = me.Episode.AppropriateSeasonNumber;
+            int epnum = me.Episode.AppropriateEpNum;
+
+            bool regularMatch =
+                FinderHelper.FindSeasEp(dce, out int seasF, out int epF, out int maxEp, me.Episode.Show) &&
+                seasF == season &&
+                epF == epnum;
+
+            if (regularMatch)
+            {
+                return (true, seasF,  epF,  maxEp);
+            }
+
+            if (me.Episode.Show.UseSequentialMatch)
+            {
+                bool sequentialMatch = TVDoc.MatchesSequentialNumber(dce.Name, me.Episode);
+
+                if (sequentialMatch)
+                {
+                    return (true, season, epnum, me.Episode.EpNum2);
+                }
+            }
+
+            return (false, 0, 0, 0);
+        }
+
+        private void WarnPathTooLong([NotNull] ItemMissing me, [NotNull] FileInfo dce, [NotNull] Exception e, bool matched)
+        {
+            int season = me.Episode.AppropriateSeasonNumber;
+            int epnum = me.Episode.AppropriateEpNum;
+
             string t = "Path too long. " + dce.FullName + ", " + e.Message;
             LOGGER.Error(e, "Path too long. " + dce.FullName);
 

@@ -974,7 +974,7 @@ namespace TVRename
             }
         }
 
-        [Serializable()]
+        [Serializable]
         public class ShowStatusColoringTypeList : Dictionary<ShowStatusColoringType, System.Drawing.Color>
         {
             public ShowStatusColoringTypeList()

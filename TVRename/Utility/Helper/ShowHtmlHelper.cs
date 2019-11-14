@@ -111,8 +111,12 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string YearRange([NotNull] SeriesInfo ser)
+        public static string YearRange([CanBeNull] SeriesInfo ser)
         {
+            if (ser is null)
+            {
+                return string.Empty;
+            }
             int? minYear = ser.MinYear;
             int? maxYear = ser.MaxYear;
 
@@ -629,14 +633,7 @@ namespace TVRename
             bool first = true;
             foreach (Actor aa in si.Actors.Where(aa => !string.IsNullOrEmpty(aa.ActorName)))
             {
-                if (!first)
-                {
-                    body += ", ";
-                }
-                else
-                {
-                    body += "<h2>Actors</h2>";
-                }
+                body += first ? "<h2>Actors</h2>" : ", ";
 
                 body += "<A HREF=\"http://www.imdb.com/find?s=nm&q=" + aa.ActorName + "\">" + aa.ActorName + $"</a> as {aa.ActorRole}";
                 first = false;
@@ -654,9 +651,9 @@ namespace TVRename
                 }
             }
 
-            string yearRange = ser is null ? string.Empty : YearRange(ser);
+            string yearRange = YearRange(ser);
 
-            string siteRating = ser?.SiteRating > 0 ? ser.SiteRating + "/10" : "";
+            string siteRating = ser?.SiteRating > 0 ? ser.SiteRating + "/10" : string.Empty;
             string tvdbLink = TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true);
 
             string tableHtml = string.Empty;
