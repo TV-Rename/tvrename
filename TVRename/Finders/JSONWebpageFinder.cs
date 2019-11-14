@@ -67,16 +67,16 @@ namespace TVRename
         private static void FindMissingEpisode([NotNull] ItemMissing action, ItemList toRemove, ItemList newItems)
         {
             ProcessedEpisode pe = action.Episode;
-            string simpleShowName = Helpers.SimplifyName(pe.Show.ShowName);
-            string simpleSeriesName = Helpers.SimplifyName(pe.TheSeries.Name);
-            ItemList newItemsForThisMissingEpisode = new ItemList();
 
             string imdbId = pe.TheSeries.GetImdbNumber();
-
             if (string.IsNullOrWhiteSpace(imdbId))
             {
                 return;
             }
+
+            string simpleShowName = Helpers.SimplifyName(pe.Show.ShowName);
+            string simpleSeriesName = Helpers.SimplifyName(pe.TheSeries.Name);
+            ItemList newItemsForThisMissingEpisode = new ItemList();
 
             string response = HttpHelper.GetUrl($"{TVSettings.Instance.SearchJSONURL}{imdbId}",TVSettings.Instance.SearchJSONUseCloudflare);
 

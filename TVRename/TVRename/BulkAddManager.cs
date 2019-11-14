@@ -285,19 +285,11 @@ namespace TVRename
                     }
 
                     if (TVSettings.Instance.BulkAddIgnoreRecycleBin &&
-                        di2.FullName.Contains("$RECYCLE.BIN", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return true;
-                    }
-
-                    if (TVSettings.Instance.BulkAddIgnoreRecycleBin &&
-                        di2.FullName.Contains("\\@Recycle\\", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return true;
-                    }
-
-                    if (TVSettings.Instance.BulkAddIgnoreRecycleBin &&
-                        di2.FullName.EndsWith("\\@Recycle", StringComparison.OrdinalIgnoreCase))
+                        (
+                           di2.FullName.Contains("$RECYCLE.BIN", StringComparison.OrdinalIgnoreCase)
+                           || di2.FullName.Contains("\\@Recycle\\", StringComparison.OrdinalIgnoreCase)
+                           || di2.FullName.EndsWith("\\@Recycle", StringComparison.OrdinalIgnoreCase)
+                        ))
                     {
                         return true;
                     }

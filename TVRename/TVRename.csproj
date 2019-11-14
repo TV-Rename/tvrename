@@ -437,7 +437,7 @@
     <Compile Include="TheTVDB\TVSource.cs" />
     <Compile Include="TheTVDB\TvDbTokenProvider.cs" />
     <Compile Include="TVRename\ActionEngine.cs" />
-    <Compile Include="TVRename\BullkAddManager.cs" />
+    <Compile Include="TVRename\BulkAddManager.cs" />
     <Compile Include="TVRename\CacheUpdater.cs" />
     <Compile Include="TVRename\Beta.cs" />
     <Compile Include="ScanActivity\CleanDownloadDirectory.cs" />

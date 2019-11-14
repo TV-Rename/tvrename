@@ -16,7 +16,7 @@ namespace TVRename
         readonly DirFilesCache dfc = new DirFilesCache();
         private ICollection<ShowItem> showList;
         private TVDoc.ScanSettings currentSettings;
-        private List<Item> returnActions ;
+        private List<Item> returnActions;
 
         public override bool Active() => TVSettings.Instance.RemoveDownloadDirectoriesFiles ||
                                          TVSettings.Instance.ReplaceWithBetterQuality ||

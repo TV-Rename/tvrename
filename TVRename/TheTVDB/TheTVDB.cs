@@ -1040,7 +1040,7 @@ namespace TVRename
 
             int pageNumber = 1;
             bool morePages = true;
-            const PagingMethod method = PagingMethod.brute;
+            const PagingMethod METHOD = PagingMethod.brute;
 
             while (morePages)
             {
@@ -1054,11 +1054,11 @@ namespace TVRename
                     try
                     {
                         int numberOfResponses = ((JArray) jsonEpisodeResponse["data"]).Count;
-                        JToken x = jsonEpisodeResponse["links"]["next"];
                         bool moreResponses;
 
-                        if (method == PagingMethod.proper)
+                        if (METHOD == PagingMethod.proper)
                         {
+                            JToken x = jsonEpisodeResponse["links"]["next"];
                             moreResponses = !string.IsNullOrWhiteSpace(x.ToString());
                             Logger.Info(
                                 $"Page {pageNumber} of {GetSeries(id)?.Name} had {numberOfResponses} episodes listed in {lang} with {(moreResponses ? "" : "no ")}more to come");
@@ -1093,7 +1093,7 @@ namespace TVRename
                         ex.Response is HttpWebResponse resp &&
                         resp.StatusCode == HttpStatusCode.NotFound)
                     {
-                        if (pageNumber > 1 && method == PagingMethod.brute)
+                        if (pageNumber > 1 && METHOD == PagingMethod.brute)
                         {
                             Logger.Info(
                                 $"Have got to the end of episodes for this show: Episodes were not found for {id} from TVDB (got a 404). Error obtaining page {pageNumber} of {episodeUri} in lang {lang} using url {ex.Response.ResponseUri.AbsoluteUri}");

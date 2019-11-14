@@ -37,7 +37,10 @@ namespace TVRename
                 foreach (ProcessedEpisode ei in episodes)
                 {
                     CalendarEvent ev = CreateEvent(ei);
-                    if (!(ev is null)) {calendar.Events.Add(ev);}
+                    if (!(ev is null))
+                    {
+                        calendar.Events.Add(ev);
+                    }
                 }
 
                 CalendarSerializer serializer = new CalendarSerializer();
