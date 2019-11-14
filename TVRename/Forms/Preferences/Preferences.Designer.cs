@@ -3836,10 +3836,10 @@ namespace TVRename
             this.rbDefShowUseSubFolders.AutoSize = true;
             this.rbDefShowUseSubFolders.Location = new System.Drawing.Point(175, 113);
             this.rbDefShowUseSubFolders.Name = "rbDefShowUseSubFolders";
-            this.rbDefShowUseSubFolders.Size = new System.Drawing.Size(82, 17);
+            this.rbDefShowUseSubFolders.Size = new System.Drawing.Size(101, 17);
             this.rbDefShowUseSubFolders.TabIndex = 5;
             this.rbDefShowUseSubFolders.TabStop = true;
-            this.rbDefShowUseSubFolders.Text = "in sub-folder";
+            this.rbDefShowUseSubFolders.Text = "in subdirectories";
             this.rbDefShowUseSubFolders.UseVisualStyleBackColor = true;
             // 
             // rbDefShowUseBase
@@ -3858,9 +3858,9 @@ namespace TVRename
             this.label12.AutoSize = true;
             this.label12.Location = new System.Drawing.Point(9, 96);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(114, 13);
+            this.label12.Size = new System.Drawing.Size(121, 13);
             this.label12.TabIndex = 3;
-            this.label12.Text = "Default series location:";
+            this.label12.Text = "Default season location:";
             // 
             // cmbDefShowLocation
             // 

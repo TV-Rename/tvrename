@@ -1029,9 +1029,9 @@ namespace TVRename
             }
 
             // Seasons
-            foreach (string status in Enum.GetNames(typeof(Season.SeasonStatus)))
+            foreach (TVSettings.ShowStatusColoringType t in Enum.GetNames(typeof(Season.SeasonStatus))
+                .Select(status => new TVSettings.ShowStatusColoringType(true, false, status)))
             {
-                TVSettings.ShowStatusColoringType t = new TVSettings.ShowStatusColoringType(true, false, status);
                 cboShowStatus.Items.Add(t);
             }
 
