@@ -365,29 +365,50 @@ namespace TVRename
 
             if (bestSeriesPosterId == removeBannerId)
             {
-                double maxRating = AllBanners.Where(pair => pair.Value.IsSeriesPoster())
-                    .Select(pair => pair.Value.Rating).Max();
+                if (AllBanners.Any(pair => pair.Value.IsSeriesPoster()))
+                {
+                    double maxRating = AllBanners.Where(pair => pair.Value.IsSeriesPoster())
+                        .Select(pair => pair.Value.Rating).Max();
 
-                bestSeriesPosterId = AllBanners.Where(pair => pair.Value.IsSeriesPoster())
-                    .First(pair => Math.Abs(pair.Value.Rating - maxRating) < 0.001).Value.BannerId;
+                    bestSeriesPosterId = AllBanners.Where(pair => pair.Value.IsSeriesPoster())
+                        .First(pair => Math.Abs(pair.Value.Rating - maxRating) < 0.001).Value.BannerId;
+                }
+                else
+                {
+                    bestSeriesPosterId = -1;
+                }
             }
 
             if (bestSeriesBannerId == removeBannerId)
             {
-                double maxRating = AllBanners.Where(pair => pair.Value.IsSeriesBanner())
+                if (AllBanners.Any(pair => pair.Value.IsSeriesBanner()))
+                {
+                    double maxRating = AllBanners.Where(pair => pair.Value.IsSeriesBanner())
                     .Select(pair => pair.Value.Rating).Max();
 
                 bestSeriesBannerId = AllBanners.Where(pair => pair.Value.IsSeriesBanner())
                     .First(pair => Math.Abs(pair.Value.Rating - maxRating) < 0.001).Value.BannerId;
+                }
+                else
+                {
+                    bestSeriesBannerId = -1;
+                }
             }
 
             if (bestSeriesFanartId == removeBannerId)
             {
-                double maxRating = AllBanners.Where(pair => pair.Value.IsFanart())
+                if (AllBanners.Any(pair => pair.Value.IsFanart()))
+                {
+                    double maxRating = AllBanners.Where(pair => pair.Value.IsFanart())
                     .Select(pair => pair.Value.Rating).Max();
 
                 bestSeriesFanartId = AllBanners.Where(pair => pair.Value.IsFanart())
                     .First(pair => Math.Abs(pair.Value.Rating - maxRating) < 0.001).Value.BannerId;
+                }
+                else
+                {
+                    bestSeriesFanartId = -1;
+                }
             }
         }
     }

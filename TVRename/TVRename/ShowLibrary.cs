@@ -327,7 +327,7 @@ namespace TVRename
             }
         }
 
-        public static void ApplyRules([NotNull] List<ProcessedEpisode> eis, [NotNull] List<ShowRule> rules, ShowItem si)
+        public static void ApplyRules([NotNull] List<ProcessedEpisode> eis, [NotNull] List<ShowRule> rules, ShowItem show)
         {
             foreach (ShowRule sr in rules)
             {
@@ -367,13 +367,13 @@ namespace TVRename
                         }
                     case RuleAction.kSplit:
                         {
-                            SplitEpisode(eis, si, nn2, n1);
+                            SplitEpisode(eis, show, nn2, n1);
                             break;
                         }
                     case RuleAction.kMerge:
                     case RuleAction.kCollapse:
                         {
-                            RemoveEpisode(eis, si, sr, n1, n2, txt);
+                            MergeEpisodes(eis, show, sr, n1, n2, txt);
                             break;
                         }
                     case RuleAction.kSwap:
@@ -383,7 +383,7 @@ namespace TVRename
                         }
                     case RuleAction.kInsert:
                         {
-                            InsertEpisode(eis, si, n1, txt);
+                            InsertEpisode(eis, show, n1, txt);
                             break;
                         }
                     default:
@@ -415,30 +415,39 @@ namespace TVRename
             return -1;
         }
 
-        private static void IgnoreEpisodes([NotNull] List<ProcessedEpisode> eis, int n1, int n2)
+        private static void IgnoreEpisodes([NotNull] List<ProcessedEpisode> eis, int fromIndex, int toIndex)
         {
             int ec = eis.Count;
-            int maxIndex = (n2 == -1)? n1:n2;
 
-            for (int i = n1; i <= maxIndex; i++)
+            if (toIndex == -1)
             {
-                if ((i < ec) && (i >= 0))
+                if (ValidIndex( toIndex , ec))
                 {
-                    eis[i].Ignore = true;
+                    eis[toIndex].Ignore = true;
+                }
+            }
+            else
+            {
+                for (int i = fromIndex; i <= toIndex; i++)
+                {
+                    if (ValidIndex(i, ec))
+                    {
+                        eis[i].Ignore = true;
+                    }
                 }
             }
         }
 
-        private static void RemoveEpisode([NotNull] List<ProcessedEpisode> eis, int n1, int n2)
+        private static void RemoveEpisode([NotNull] List<ProcessedEpisode> eis, int fromIndex, int toIndex)
         {
             int ec = eis.Count;
-            if (ValidIndex(n1, ec) && ValidIndex(n2, ec))
+            if (ValidIndex(fromIndex, ec) && ValidIndex(toIndex, ec))
             {
-                eis.RemoveRange(n1, 1 + n2 - n1);
+                eis.RemoveRange(fromIndex, 1 + toIndex - fromIndex);
             }
-            else if (ValidIndex(n1, ec) && (n2 == -1))
+            else if (ValidIndex(fromIndex, ec) && (toIndex == -1))
             {
-                eis.RemoveAt(n1);
+                eis.RemoveAt(fromIndex);
             }
             else
             {
@@ -457,16 +466,18 @@ namespace TVRename
             }
         }
 
-        private static void SplitEpisode([NotNull] IList<ProcessedEpisode> eis, ShowItem si, int nn2, int n1)
+        private static void SplitEpisode([NotNull] IList<ProcessedEpisode> eis, ShowItem si, int numberOfNewParts, int index)
         {
             int ec = eis.Count;
             // split one episode into a multi-parter
-            if (ValidIndex(n1, ec))
+            if (ValidIndex(index, ec))
             {
-                ProcessedEpisode ei = eis[n1];
+                ProcessedEpisode ei = eis[index];
                 string nameBase = ei.Name;
-                eis.RemoveAt(n1); // remove old one
-                for (int i = 0; i < nn2; i++) // make n2 new parts
+                eis.RemoveAt(index); // remove old one
+
+                foreach (int i in Enumerable.Range(1,numberOfNewParts))
+                // make numberOfNewParts new parts
                 {
                     ProcessedEpisode pe2 =
                         new ProcessedEpisode(ei, si, ProcessedEpisode.ProcessedEpisodeType.split)
@@ -477,67 +488,59 @@ namespace TVRename
                             EpNum2 = -2
                         };
 
-                    eis.Insert(n1 + i, pe2);
+                    eis.Insert(index + i, pe2);
                 }
             }
         }
 
-        private static void RemoveEpisode([NotNull] List<ProcessedEpisode> eis, ShowItem si, ShowRule sr, int n1, int n2, [CanBeNull] string txt)
+        private static void MergeEpisodes([NotNull] List<ProcessedEpisode> eis, ShowItem si, ShowRule sr, int fromIndex, int toIndex, [CanBeNull] string newName)
         {
             int ec = eis.Count;
-            if (ValidIndex(n1, ec) && ValidIndex(n2, ec) && (n1 < n2))
+            if (ValidIndex(fromIndex, ec) && ValidIndex(toIndex, ec) && (fromIndex < toIndex))
             {
-                ProcessedEpisode oldFirstEi = eis[n1];
-                List<string> episodeNames = new List<string> { eis[n1].Name };
-                string defaultCombinedName = eis[n1].Name + " + ";
-                string combinedSummary = eis[n1].Overview + "<br/><br/>";
-                List<Episode> alleps = new List<Episode> {eis[n1]};
-                for (int i = n1 + 1; i <= n2; i++)
+                ProcessedEpisode oldFirstEi = eis[fromIndex];
+                List<string> episodeNames = new List<string> { eis[fromIndex].Name };
+                string defaultCombinedName = eis[fromIndex].Name + " + ";
+                string combinedSummary = eis[fromIndex].Overview + "<br/><br/>";
+                List<Episode> alleps = new List<Episode> {eis[fromIndex]};
+                for (int i = fromIndex + 1; i <= toIndex; i++)
                 {
                     episodeNames.Add(eis[i].Name);
                     defaultCombinedName += eis[i].Name;
                     combinedSummary += eis[i].Overview;
                     alleps.Add(eis[i]);
-                    if (i != n2)
+                    if (i != toIndex)
                     {
                         defaultCombinedName += " + ";
                         combinedSummary += "<br/><br/>";
                     }
                 }
 
-                eis.RemoveRange(n1, n2 - n1);
+                eis.RemoveRange(fromIndex, toIndex - fromIndex);
 
-                eis.RemoveAt(n1);
+                eis.RemoveAt(fromIndex);
 
                 string combinedName = GetBestNameFor(episodeNames, defaultCombinedName);
 
                 ProcessedEpisode pe2 = new ProcessedEpisode(oldFirstEi, si, alleps)
                 {
-                    Name = ((string.IsNullOrEmpty(txt)) ? combinedName : txt),
+                    Name = ((string.IsNullOrEmpty(newName)) ? combinedName : newName),
                     AiredEpNum = -2,
-                    DvdEpNum = -2
+                    DvdEpNum = -2,
+                    EpNum2 = sr.DoWhatNow == RuleAction.kMerge ? -2 + toIndex - fromIndex : -2,
+                    Overview = combinedSummary
                 };
 
-                if (sr.DoWhatNow == RuleAction.kMerge)
-                {
-                    pe2.EpNum2 = -2 + n2 - n1;
-                }
-                else
-                {
-                    pe2.EpNum2 = -2;
-                }
-
-                pe2.Overview = combinedSummary;
-                eis.Insert(n1, pe2);
+                eis.Insert(fromIndex, pe2);
             }
         }
 
-        private static void InsertEpisode([NotNull] List<ProcessedEpisode> eis, ShowItem si, int n1, string txt)
+        private static void InsertEpisode([NotNull] IList<ProcessedEpisode> eis, ShowItem si, int index, string txt)
         {
             int ec = eis.Count;
-            if (ValidIndex(n1, ec))
+            if (ValidIndex(index, ec))
             {
-                ProcessedEpisode t = eis[n1];
+                ProcessedEpisode t = eis[index];
                 ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheAiredSeason, t.TheDvdSeason, si)
                 {
                     Name = txt,
@@ -546,11 +549,11 @@ namespace TVRename
                     EpNum2 = -2
                 };
 
-                eis.Insert(n1, n);
+                eis.Insert(index, n);
             }
-            else if (n1 == eis.Count)
+            else if (index == ec)
             {
-                ProcessedEpisode t = eis[n1 - 1];
+                ProcessedEpisode t = eis[index - 1];
                 ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheAiredSeason, t.TheDvdSeason, si)
                 {
                     Name = txt,
