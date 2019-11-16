@@ -68,7 +68,7 @@ namespace TVRename
         [NotNull]
         internal IEnumerable<string> SeasonWords()
         {
-            return seasonWordsCache ??= GetSeasonWords();
+            return seasonWordsCache = seasonWordsCache ?? GetSeasonWords();
         }
 
         [NotNull]
