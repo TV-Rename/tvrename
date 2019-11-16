@@ -74,7 +74,8 @@ namespace TVRename
                 LOGGER.Debug($"Just copied {To.FullName} to the right place. Marking it as 'seen'.");
                 //Record this episode as seen
                 TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(Episode);
-                doc.SetDirty();
+
+                if (TVSettings.Instance.IgnorePreviouslySeen) { doc.SetDirty(); }
             }
 
             // set NTFS permissions

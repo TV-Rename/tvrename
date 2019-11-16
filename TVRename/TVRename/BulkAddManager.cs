@@ -433,7 +433,7 @@ namespace TVRename
             }
 
             mDoc.Library.GenDict();
-            mDoc.Dirty();
+            mDoc.SetDirty();
             AddItems.Clear();
             mDoc.ExportShowInfo();
         }

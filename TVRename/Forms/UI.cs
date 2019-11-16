@@ -620,7 +620,7 @@ namespace TVRename
         {
             try
             {
-                if (mDoc.Dirty())
+                if (mDoc.Dirty() && !mDoc.Args.Unattended && !mDoc.Args.Hide)
                 {
                     DialogResult res = MessageBox.Show(
                         "Your changes have not been saved.  Do you wish to save before quitting?", "Unsaved data",
@@ -649,6 +649,12 @@ namespace TVRename
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
+                }
+
+                if (mDoc.Dirty() && (mDoc.Args.Unattended || mDoc.Args.Hide))
+                {
+                    //We have to assume that they wanted to save any settings
+                    mDoc.WriteXMLSettings();
                 }
 
                 if (!e.Cancel)
