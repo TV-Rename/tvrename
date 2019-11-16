@@ -1472,7 +1472,7 @@ namespace TVRename
                     Logger.Warn($"Show with Id {code} is no longer available from TVDB (got a 404). {uri}");
                     Say("");
 
-                    if (TvdbIsUp())
+                    if (TvdbIsUp() && !CanFindEpisodesFor(code,requestedLanguageCode ))
                     {
                         LastError = ex.Message;
                         throw new ShowNotFoundException(code);
@@ -1486,6 +1486,28 @@ namespace TVRename
             }
 
             return jsonResponse;
+        }
+
+        private bool CanFindEpisodesFor(int code, string requestedLanguageCode)
+        {
+            string uri = TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/episodes";
+            JObject jsonResponse;
+            try
+            {
+                jsonResponse =
+                    HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider, requestedLanguageCode, true);
+            }
+            catch (WebException ex)
+            {
+                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response != null &&
+                    ex.Response is HttpWebResponse resp &&
+                    resp.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private void DownloadSeriesActors(int code)
