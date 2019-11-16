@@ -482,13 +482,13 @@ namespace TVRename
                     ProcessedEpisode pe2 =
                         new ProcessedEpisode(ei, si, ProcessedEpisode.ProcessedEpisodeType.split)
                         {
-                            Name = nameBase + " (Part " + (i + 1) + ")",
+                            Name = $"{nameBase} (Part {i})",
                             AiredEpNum = -2,
                             DvdEpNum = -2,
                             EpNum2 = -2
                         };
 
-                    eis.Insert(index + i, pe2);
+                    eis.Insert(index + i-1, pe2);
                 }
             }
         }
