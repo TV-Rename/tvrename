@@ -91,7 +91,7 @@ namespace TVRename
 
             try
             {
-                seriesTimeZone = TimeZoneInfo.FindSystemTimeZoneById(tzstr);
+                seriesTimeZone = TimeZoneInfo.GetSystemTimeZones().First(info => info.StandardName ==tzstr);
             }
             catch (Exception ex)
             {
