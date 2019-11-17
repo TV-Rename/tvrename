@@ -28,9 +28,17 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
+    public enum ApiVersion 
+    {
+        v2,
+        v3
+    }
+
     // ReSharper disable once InconsistentNaming
     public class TheTVDB : iTVSource
     {
+        public const ApiVersion VERS = ApiVersion.v2;
+
         [Serializable]
         // ReSharper disable once InconsistentNaming
         public class TVDBException : Exception
@@ -1491,11 +1499,9 @@ namespace TVRename
         private bool CanFindEpisodesFor(int code, string requestedLanguageCode)
         {
             string uri = TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/episodes";
-            JObject jsonResponse;
             try
             {
-                jsonResponse =
-                    HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider, requestedLanguageCode, true);
+                JObject _ = HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider, requestedLanguageCode, true);
             }
             catch (WebException ex)
             {

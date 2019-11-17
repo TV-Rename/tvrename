@@ -7,13 +7,29 @@
 // 
 using Newtonsoft.Json.Linq;
 using System;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
     public class TvDbTokenProvider
     {
-        //public static readonly string TVDB_API_URL = "https://api-dev.thetvdb.com";
-        public static readonly string TVDB_API_URL = "https://api.thetvdb.com";
+        [NotNull]
+        public static string TVDB_API_URL
+        {
+            get
+            {
+                if (TheTVDB.VERS == ApiVersion.v2)
+                {
+                    return "https://api.thetvdb.com";
+                }
+
+                if (TheTVDB.VERS == ApiVersion.v3)
+                {
+                    return "https://api-dev.thetvdb.com";
+                }
+            }
+        }
+
         public static readonly string TVDB_API_KEY = "5FEC454623154441";
 
         private string lastKnownToken = string.Empty;
