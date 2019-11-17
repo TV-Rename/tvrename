@@ -51,6 +51,7 @@ namespace TVRename
             InitializeComponent();
             loadLanguageDone += LoadLanguageDoneFunc;
 
+            SetupTimezoneDropdown();
             SetupRssGrid();
             SetupReplacementsGrid();
             FillFolderStringLists();
@@ -62,6 +63,18 @@ namespace TVRename
             {
                 tcTabs.SelectedTab = tbGeneral;
             }
+        }
+
+        private void SetupTimezoneDropdown()
+        {
+            cbTimeZone.BeginUpdate();
+            cbTimeZone.Items.Clear();
+            foreach (string s in TimeZoneHelper.ZoneNames())
+            {
+                cbTimeZone.Items.Add(s);
+            }
+
+            cbTimeZone.EndUpdate();
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
@@ -366,6 +379,7 @@ namespace TVRename
             s.DefShowDVDOrder = cbDefShowDVDOrder.Checked;
             s.DefShowAutoFolders = cbDefShowAutoFolders.Checked;
             s.DefShowLocation = (string)cmbDefShowLocation.SelectedItem;
+            s.DefaultShowTimezoneName = cbTimeZone.Text;
             s.DefShowSequentialMatching = cbDefShowSequentialMatching.Checked;
             s.DefShowSpecialsCount = cbDefShowSpecialsCount.Checked;
             s.DefShowUseBase = rbDefShowUseBase.Checked;
@@ -671,6 +685,8 @@ namespace TVRename
             txtExportRSSMaxDays.Text = s.ExportRSSMaxDays.ToString();
             txtExportRSSMaxShows.Text = s.ExportRSSMaxShows.ToString();
             txtExportRSSDaysPast.Text = s.ExportRSSDaysPast.ToString();
+
+            cbTimeZone.Text = s.DefaultShowTimezoneName;
 
             cbMissingXML.Checked = s.ExportMissingXML;
             txtMissingXML.Text = s.ExportMissingXMLTo;

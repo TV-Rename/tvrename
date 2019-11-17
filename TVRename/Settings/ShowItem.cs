@@ -500,7 +500,7 @@ namespace TVRename
             CustomSearchUrl = string.Empty;
             ManualFoldersReplaceAutomatic = false;
             BannersLastUpdatedOnDisk = null; //assume that the banners are old and have expired
-            ShowTimeZone = TimeZoneHelper.DefaultTimeZone(); // default, is correct for most shows
+            ShowTimeZone = TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.DefaultTimeZone(); // default, is correct for most shows
             lastFiguredTz = string.Empty;
 
             UseSequentialMatch = TVSettings.Instance.DefShowSequentialMatching;

@@ -24,13 +24,22 @@ namespace TVRename
         public static string DefaultTimeZone() => "Eastern Standard Time";
 
         [NotNull]
-        public static string TimeZoneForNetwork([CanBeNull] string network)
+        public static string TimeZoneForNetwork([CanBeNull] string network,string defaultTimeZone)
         {
             string[] uktv = { "Sky Atlantic (UK)", "BBC One", "Sky1", "BBC Two", "ITV", "Nick Jr.", "BBC Three", "Channel 4", "CBeebies", "Sky Box Office", "Watch", "ITV2", "National Geographic (UK)", "V", "ITV Encore", "ITV1", "BBC", "E4", "Channel 5 (UK)", "BBC Four", "ITVBe" };
-            string[] ausTv = { "ABC4Kids", "Stan", "Showcase (AU)", "PBS Kids Sprout", "SBS (AU)", "Nine Network", "ABC1", "ABC (AU)" };
+            string[] ausTv = { "ABC4Kids", "Stan", "Showcase (AU)", "PBS Kids Sprout", "SBS (AU)", "Nine Network", "ABC (AU)" };
+            string[] usTv =
+            {
+                "ABC (US)", "Amazon", "AMC", "BBC America", "Bravo", "Cartoon Network", "CBC (CA)", "CBS", "Cinemax",
+                "CNN", "Comedy Central", "Discovery Family", "Disney Channel", "Disney Junior", "Disney XD", "Disney+",
+                "ESPN", "FOX", "FX", "FXX", "HBO", "History", "Hulu", "IFC", "MTV", "National Geographic", "NBC",
+                "Netflix", "NHK", "PBS", "Showtime", "Starz", "Syfy", "TBS", "The CW", "TNT (US)", "Travel Channel",
+                "USA Network", "Yahoo! Screen", "YouTube", "YouTube Premium"
+            };
+
             if (string.IsNullOrWhiteSpace(network))
             {
-                return DefaultTimeZone();
+                return defaultTimeZone?? DefaultTimeZone();
             }
 
             if (uktv.Contains(network))
@@ -43,7 +52,12 @@ namespace TVRename
                 return "AUS Eastern Standard Time";
             }
 
-            return DefaultTimeZone();
+            if (usTv.Contains(network))
+            {
+                return "Eastern Standard Time";
+            }
+
+            return defaultTimeZone ??DefaultTimeZone();
         }
 
         public static DateTime AdjustTzTimeToLocalTime(DateTime theirDateTime, [CanBeNull] TimeZoneInfo theirTimeZone)

@@ -309,6 +309,7 @@ namespace TVRename
         public bool DefShowAutoFolders = true;
         public bool DefShowUseDefLocation = false;
         public string DefShowLocation;
+        public string DefaultShowTimezoneName;
         public bool DefShowUseBase = false;
         public bool DefShowUseSubFolders = true;
 
@@ -513,6 +514,7 @@ namespace TVRename
             writer.WriteElement("DefShowAutoFolders", DefShowAutoFolders);
             writer.WriteElement("DefShowUseDefLocation", DefShowUseDefLocation);
             writer.WriteElement("DefShowLocation", DefShowLocation);
+            writer.WriteElement("DefaultShowTimezoneName", DefaultShowTimezoneName);
             writer.WriteElement("DefShowUseBase", DefShowUseBase);
             writer.WriteElement("DefShowUseSubFolders", DefShowUseSubFolders);
 
@@ -1284,6 +1286,7 @@ namespace TVRename
             DefShowUseBase = xmlSettings.ExtractBool("DefShowUseBase", false);
             DefShowUseSubFolders = xmlSettings.ExtractBool("DefShowUseSubFolders", true);
             DefShowLocation = xmlSettings.ExtractString("DefShowLocation");
+            DefaultShowTimezoneName = xmlSettings.ExtractString("DefaultShowTimezoneName");
 
             Tidyup.load(xmlSettings);
             RSSURLs = xmlSettings.Descendants("RSSURLs").FirstOrDefault()?.ReadStringsFromXml("URL");

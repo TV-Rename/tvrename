@@ -363,6 +363,8 @@ namespace TVRename
             this.txtSpecialsFolderName = new System.Windows.Forms.TextBox();
             this.label47 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
+            this.label24 = new System.Windows.Forms.Label();
+            this.cbTimeZone = new System.Windows.Forms.ComboBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -3818,6 +3820,8 @@ namespace TVRename
             // 
             this.groupBox19.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox19.Controls.Add(this.label24);
+            this.groupBox19.Controls.Add(this.cbTimeZone);
             this.groupBox19.Controls.Add(this.rbDefShowUseSubFolders);
             this.groupBox19.Controls.Add(this.rbDefShowUseBase);
             this.groupBox19.Controls.Add(this.label12);
@@ -3826,7 +3830,7 @@ namespace TVRename
             this.groupBox19.Controls.Add(this.cbDefShowAutoFolders);
             this.groupBox19.Location = new System.Drawing.Point(6, 154);
             this.groupBox19.Name = "groupBox19";
-            this.groupBox19.Size = new System.Drawing.Size(401, 141);
+            this.groupBox19.Size = new System.Drawing.Size(401, 176);
             this.groupBox19.TabIndex = 57;
             this.groupBox19.TabStop = false;
             this.groupBox19.Text = "Default Show Settings";
@@ -3905,7 +3909,7 @@ namespace TVRename
             this.groupBox18.Controls.Add(this.cbDefShowIncludeFuture);
             this.groupBox18.Controls.Add(this.cbDefShowDoRenaming);
             this.groupBox18.Controls.Add(this.cbDefShowNextAirdate);
-            this.groupBox18.Location = new System.Drawing.Point(6, 305);
+            this.groupBox18.Location = new System.Drawing.Point(10, 336);
             this.groupBox18.Name = "groupBox18";
             this.groupBox18.Size = new System.Drawing.Size(401, 189);
             this.groupBox18.TabIndex = 56;
@@ -4055,6 +4059,28 @@ namespace TVRename
             this.label13.Size = new System.Drawing.Size(108, 13);
             this.label13.TabIndex = 27;
             this.label13.Text = "&Specials folder name:";
+            // 
+            // label24
+            // 
+            this.label24.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(9, 149);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(87, 13);
+            this.label24.TabIndex = 6;
+            this.label24.Text = "Airs in &Timezone:";
+            this.label24.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // cbTimeZone
+            // 
+            this.cbTimeZone.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbTimeZone.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbTimeZone.FormattingEnabled = true;
+            this.cbTimeZone.Location = new System.Drawing.Point(102, 141);
+            this.cbTimeZone.Name = "cbTimeZone";
+            this.cbTimeZone.Size = new System.Drawing.Size(293, 21);
+            this.cbTimeZone.TabIndex = 7;
             // 
             // Preferences
             // 
@@ -4494,5 +4520,7 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbDefShowDoRenaming;
         private System.Windows.Forms.CheckBox cbDefShowNextAirdate;
         private System.Windows.Forms.CheckBox cbDefShowDVDOrder;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.ComboBox cbTimeZone;
     }
 }
