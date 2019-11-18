@@ -43,7 +43,7 @@ namespace TVRename
                 IEnumerable<string> seasonWordsFromShows =
                     from si in Values select CustomSeasonName.GetTextFromPattern(si.AutoAddCustomFolderFormat);
 
-                results = seasonWordsFromShows.Distinct().ToList();
+                results.AddRange(seasonWordsFromShows.Distinct());
 
                 results.Add(TVSettings.Instance.defaultSeasonWord);
             }
