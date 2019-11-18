@@ -112,6 +112,7 @@ namespace TVRename
 
         // ReSharper disable once ConvertToConstant.Local
         private static readonly string WebsiteRoot = "http://thetvdb.com";
+        private static readonly string WebsiteImageRoot = "http://artworks.thetvdb.com";
 
         private FileInfo cacheFile;
         public bool Connected;
@@ -451,7 +452,7 @@ namespace TVRename
         [NotNull]
         public static string GetImageURL(string url)
         {
-            string mirr = WebsiteRoot;
+            string mirr = WebsiteImageRoot;
 
             if (url.StartsWith("/", StringComparison.Ordinal))
             {
@@ -463,7 +464,7 @@ namespace TVRename
                 mirr += "/";
             }
 
-            return mirr + "banners/" + url;
+            return (url.StartsWith("series/") ? mirr +  url : mirr + "banners/" + url); //needed to work around TVDB issue
         }
 
         public byte[] GetTvdbDownload(string url) => GetTvdbDownload(url, false);

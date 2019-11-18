@@ -64,27 +64,27 @@ namespace TVRename
                 return;
             }
 
-            if (WorthUdating(o.seasonBanners))
+            if (WorthUpdating(o.seasonBanners))
             {
                 seasonBanners = o.seasonBanners;
             }
 
-            if (WorthUdating(o.seasonLangBanners))
+            if (WorthUpdating(o.seasonLangBanners))
             {
                 seasonLangBanners = o.seasonLangBanners;
             }
 
-            if (WorthUdating(o.seasonLangWideBanners))
+            if (WorthUpdating(o.seasonLangWideBanners))
             {
                 seasonLangWideBanners = o.seasonLangWideBanners;
             }
 
-            if (WorthUdating(o.seasonWideBanners))
+            if (WorthUpdating(o.seasonWideBanners))
             {
                 seasonWideBanners = o.seasonWideBanners;
             }
 
-            if (WorthUdating(o.AllBanners))
+            if (WorthUpdating(o.AllBanners))
             {
                 AllBanners = o.AllBanners;
             }
@@ -120,7 +120,7 @@ namespace TVRename
             }
         }
 
-        private static bool WorthUdating([CanBeNull] Dictionary<int, Banner> b) => b != null && b.Count > 0;
+        private static bool WorthUpdating([CanBeNull] Dictionary<int, Banner> b) => b != null && b.Count > 0;
 
         public string GetSeasonBannerPath(int snum)
         {

@@ -48,7 +48,7 @@ namespace TVRename
                 results.Add(TVSettings.Instance.defaultSeasonWord);
             }
 
-            return results.Where(t => !string.IsNullOrWhiteSpace(t)).Distinct();
+            return results.Where(t => !string.IsNullOrWhiteSpace(t)).Select(s =>s.Trim() ).Distinct();
         }
 
         [NotNull]
