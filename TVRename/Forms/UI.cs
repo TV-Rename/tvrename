@@ -3789,7 +3789,7 @@ namespace TVRename
         {
             UseWaitCursor = true;
             ShowSummary f = new ShowSummary(mDoc);
-            await Task.Run(() => f.GenerateData()).ConfigureAwait(false);
+            await Task.Run(() => f.GenerateData()); //do not use configure await = false here as it causes UI to hang
             f.PopulateGrid();
             UseWaitCursor = false;
             f.Show();
