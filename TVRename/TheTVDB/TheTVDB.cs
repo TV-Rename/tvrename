@@ -112,6 +112,7 @@ namespace TVRename
 
         // ReSharper disable once ConvertToConstant.Local
         private static readonly string WebsiteRoot = "http://thetvdb.com";
+        // ReSharper disable once ConvertToConstant.Local
         private static readonly string WebsiteImageRoot = "http://artworks.thetvdb.com";
 
         private FileInfo cacheFile;
@@ -1049,7 +1050,7 @@ namespace TVRename
 
             int pageNumber = 1;
             bool morePages = true;
-            const PagingMethod METHOD = PagingMethod.brute;
+            const PagingMethod METHOD = PagingMethod.proper;
 
             while (morePages)
             {

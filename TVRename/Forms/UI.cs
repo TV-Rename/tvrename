@@ -919,7 +919,7 @@ namespace TVRename
             if (si.DvdOrder && snum >= 0 && ser.DvdSeasons.ContainsKey(snum))
             {
                 Season s = ser.DvdSeasons[snum];
-                SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, false));
+                //SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, false));
                 SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
 
                 SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, true));
@@ -927,7 +927,7 @@ namespace TVRename
             else if (!si.DvdOrder && snum >= 0 && ser.AiredSeasons.ContainsKey(snum))
             {
                 Season s = ser.AiredSeasons[snum];
-                SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, false));
+                //SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, false));
                 SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
 
                 SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, true));
@@ -935,7 +935,7 @@ namespace TVRename
             else
             {
                 // no epnum specified, just show an overview
-                SetHtmlBody(webInformation, si.GetShowHtmlOverview(false));
+                //SetHtmlBody(webInformation, si.GetShowHtmlOverview(false));
                 SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
 
                 SetHtmlBody(webInformation, si.GetShowHtmlOverview(true));

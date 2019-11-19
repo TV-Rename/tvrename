@@ -33,7 +33,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private IEnumerable<string> GetSeasonWords()
+        public IEnumerable<string> SeasonWords()
         {
             //See https://github.com/TV-Rename/tvrename/issues/241 for background
             List<string> results = TVSettings.Instance.searchSeasonWordsArray.ToList();
@@ -61,14 +61,6 @@ namespace TVRename
             results.AddRange(seasonWordsFromShows.Distinct().ToList());
 
             return results;
-        }
-
-        private IEnumerable<string> seasonWordsCache;
-
-        [NotNull]
-        internal IEnumerable<string> SeasonWords()
-        {
-            return seasonWordsCache = seasonWordsCache ?? GetSeasonWords();
         }
 
         [NotNull]
