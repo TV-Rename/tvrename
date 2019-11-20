@@ -205,12 +205,12 @@ namespace TVRename
 
             if (string.IsNullOrWhiteSpace(mName) && (string) backupLanguageR["episodeName"] != null)
             {
-                mName = System.Web.HttpUtility.HtmlDecode((string) backupLanguageR["episodeName"]);
+                mName = System.Web.HttpUtility.HtmlDecode((string) backupLanguageR["episodeName"])?.Trim();
             }
 
             if (string.IsNullOrWhiteSpace(Overview) && (string) backupLanguageR["overview"] != null)
             {
-                Overview = System.Web.HttpUtility.HtmlDecode((string)backupLanguageR["overview"]);
+                Overview = System.Web.HttpUtility.HtmlDecode((string)backupLanguageR["overview"])?.Trim();
             }
         }
 
@@ -239,8 +239,8 @@ namespace TVRename
                 AiredEpNum = (int) r["airedEpisodeNumber"];
 
                 SrvLastUpdated = (long) r["lastUpdated"];
-                Overview = System.Web.HttpUtility.HtmlDecode((string)r["overview"]);
-                EpisodeRating = (string) r["siteRating"];
+                Overview = System.Web.HttpUtility.HtmlDecode((string)r["overview"])?.Trim();
+                EpisodeRating = ((string) r["siteRating"]).Trim();
                 mName = System.Web.HttpUtility.HtmlDecode((string)r["episodeName"]);
 
                 AirsBeforeEpisode = (int?)r["airsBeforeEpisode"];
@@ -248,12 +248,12 @@ namespace TVRename
                 AirsAfterSeason = (int?)r["airsAfterSeason"];
                 SiteRatingCount = (int?)r["siteRatingCount"];
                 AbsoluteNumber = (int?)r["absoluteNumber"];
-                Filename = (string)r["filename"];
-                ImdbCode = (string)r["imdbId"];
-                ShowUrl = (string)r["showUrl"];
-                ProductionCode = (string)r["productionCode"];
+                Filename = ((string)r["filename"]).Trim();
+                ImdbCode = ((string)r["imdbId"]).Trim();
+                ShowUrl = ((string)r["showUrl"]).Trim();
+                ProductionCode = ((string)r["productionCode"]).Trim();
                 DvdChapter = (int?)r["dvdChapter"];
-                DvdDiscId = (string)r["dvdDiscid"];
+                DvdDiscId = ((string)r["dvdDiscid"]).Trim();
 
                 string sn = (string) r["airedSeason"];
                 if (sn is null)

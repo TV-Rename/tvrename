@@ -277,19 +277,20 @@ namespace TVRename
             Dirty = o.Dirty;
         }
 
-        private static string ChooseBetter([CanBeNull] string encumbant, bool betterLanguage, string newValue)
+        [NotNull]
+        private static string ChooseBetter([CanBeNull] string encumbant, bool betterLanguage, [CanBeNull] string newValue)
         {
             if (string.IsNullOrEmpty(encumbant))
             {
-                return newValue;
+                return newValue.Trim();
             }
 
             if (string.IsNullOrEmpty(newValue))
             {
-                return encumbant;
+                return encumbant.Trim();
             }
 
-            return betterLanguage?newValue:encumbant;
+            return betterLanguage?newValue.Trim():encumbant.Trim();
         }
 
         private void LoadXml([NotNull] XElement seriesXml)
@@ -443,7 +444,7 @@ namespace TVRename
 
         private void LoadJson([NotNull] JObject r)
         {
-            AirsDay = (string)r["airsDayOfWeek"];
+            AirsDay = ((string)r["airsDayOfWeek"]).Trim();
             airsTimeString = (string) r["airsTime"];
             AirsTime = ParseAirTime(airsTimeString);
             aliases = r["aliases"].Select(x => x.Value<string>()).ToList();
@@ -456,15 +457,15 @@ namespace TVRename
             }
 
             TvdbCode = (int)r["id"];
-            Imdb = (string)r["imdbId"];
-            Network =  (string) r["network"];
-            Overview = System.Web.HttpUtility.HtmlDecode((string)r["overview"]);
-            ContentRating = (string) r["rating"];
-            Runtime = (string) r["runtime"];
+            Imdb = ((string)r["imdbId"]).Trim();
+            Network =  ((string) r["network"]).Trim();
+            Overview = System.Web.HttpUtility.HtmlDecode((string)r["overview"])?.Trim();
+            ContentRating = ((string) r["rating"]).Trim();
+            Runtime = ((string) r["runtime"]).Trim();
             SeriesId = (string) r["seriesId"];
             if ((string)r["seriesName"] != null)
             {
-                Name = System.Web.HttpUtility.HtmlDecode((string)r["seriesName"]);
+                Name = System.Web.HttpUtility.HtmlDecode((string)r["seriesName"])?.Trim();
             }
             Status = (string) r["status"];
 
