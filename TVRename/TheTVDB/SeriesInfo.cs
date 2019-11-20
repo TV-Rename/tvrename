@@ -282,7 +282,7 @@ namespace TVRename
         {
             if (string.IsNullOrEmpty(encumbant))
             {
-                return newValue.Trim();
+                return newValue?.Trim()??string.Empty;
             }
 
             if (string.IsNullOrEmpty(newValue))
