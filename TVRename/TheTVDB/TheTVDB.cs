@@ -465,7 +465,7 @@ namespace TVRename
                 mirr += "/";
             }
 
-            return (url.StartsWith("series/") ? mirr +  url : mirr + "banners/" + url); //needed to work around TVDB issue
+            return  mirr + "banners/" + url;
         }
 
         public byte[] GetTvdbDownload(string url) => GetTvdbDownload(url, false);
