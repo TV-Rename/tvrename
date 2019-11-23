@@ -444,7 +444,7 @@ namespace TVRename
 
         private void LoadJson([NotNull] JObject r)
         {
-            AirsDay = ((string)r["airsDayOfWeek"]).Trim();
+            AirsDay = ((string)r["airsDayOfWeek"])?.Trim();
             airsTimeString = (string) r["airsTime"];
             AirsTime = ParseAirTime(airsTimeString);
             aliases = r["aliases"].Select(x => x.Value<string>()).ToList();
@@ -457,11 +457,11 @@ namespace TVRename
             }
 
             TvdbCode = (int)r["id"];
-            Imdb = ((string)r["imdbId"]).Trim();
-            Network =  ((string) r["network"]).Trim();
+            Imdb = ((string)r["imdbId"])?.Trim();
+            Network =  ((string) r["network"])?.Trim();
             Overview = System.Web.HttpUtility.HtmlDecode((string)r["overview"])?.Trim();
-            ContentRating = ((string) r["rating"]).Trim();
-            Runtime = ((string) r["runtime"]).Trim();
+            ContentRating = ((string) r["rating"])?.Trim();
+            Runtime = ((string) r["runtime"])?.Trim();
             SeriesId = (string) r["seriesId"];
             if ((string)r["seriesName"] != null)
             {
