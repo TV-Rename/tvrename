@@ -14,17 +14,22 @@ namespace TVRename
     public class TvDbTokenProvider
     {
         [NotNull]
+        // ReSharper disable once InconsistentNaming
         public static string TVDB_API_URL
         {
             get
             {
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 if (TheTVDB.VERS == ApiVersion.v2)
                 {
                     return "https://api.thetvdb.com";
                 }
 
+                // ReSharper disable once HeuristicUnreachableCode
                 if (TheTVDB.VERS == ApiVersion.v3)
+                    // ReSharper disable once HeuristicUnreachableCode
                 {
+                    // ReSharper disable once HeuristicUnreachableCode
                     return "https://api-dev.thetvdb.com";
                 }
             }

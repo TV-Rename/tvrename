@@ -207,90 +207,7 @@ namespace TVRename
                     }
                     else if (SelectedShow != null) // show overview (tvshow.nfo)
                     {
-                        SeriesInfo series = SelectedShow.TheSeries();
-
-                        // https://kodi.wiki/view/NFO_files/TV_shows
-                        writer.WriteStartElement("tvshow");
-
-                        writer.WriteElement("title", SelectedShow.ShowName);
-                        writer.WriteElement("originaltitle", series?.Name);
-                        writer.WriteElement("studio",series?.Network);
-                        float? showRating = series?.SiteRating;
-                        if (showRating.HasValue)
-                        {
-                            writer.WriteStartElement("ratings");
-
-                            writer.WriteStartElement("rating");
-                            writer.WriteAttributeString("name", "tvdb");
-                            writer.WriteAttributeString("max", "10");
-                            writer.WriteAttributeString("default", "true");
-
-                            writer.WriteElement("value", showRating.Value);
-                            writer.WriteElement("votes", series.SiteRatingVotes, true);
-
-                            writer.WriteEndElement(); //rating
-
-                            writer.WriteEndElement(); //ratings
-                        }
-
-                        string lang = TVSettings.Instance.PreferredLanguageCode;
-                        if (SelectedShow.UseCustomLanguage && SelectedShow.PreferredLanguage != null)
-                        {
-                            lang = SelectedShow.PreferredLanguage.Abbreviation;
-                        }
-
-                        //https://forum.kodi.tv/showthread.php?tid=323588
-                        //says that we need a format like this:
-                        //<episodeguide><url post="yes" cache="auth.json">https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json</url></episodeguide>
-
-                        writer.WriteStartElement("episodeguide");
-                        writer.WriteStartElement("url");
-                        writer.WriteAttributeString("post", "yes");
-                        writer.WriteAttributeString("cache", "auth.json");
-                        writer.WriteValue(TheTVDB.BuildUrl(SelectedShow.TvdbCode, lang));
-                        writer.WriteEndElement();//url
-                        writer.WriteEndElement();//episodeguide
-
-
-                        if (!(series is null))
-                        {
-                            writer.WriteElement("id", series.SeriesId);
-                            writer.WriteElement("runtime", series.Runtime, true);
-                            writer.WriteElement("mpaa", series.ContentRating,true);
-
-                            writer.WriteStartElement("uniqueid");
-                            writer.WriteAttributeString("type", "tvdb");
-                            writer.WriteAttributeString("default", "true");
-                            writer.WriteValue(series.TvdbCode);
-                            writer.WriteEndElement();
-
-                            writer.WriteStartElement("uniqueid");
-                            writer.WriteAttributeString("type", "imdb");
-                            writer.WriteAttributeString("default", "false");
-                            writer.WriteValue(series.Imdb);
-                            writer.WriteEndElement();
-
-                            writer.WriteElement("plot", series.Overview);
-
-                            writer.WriteElement("premiered", series.FirstAired);
-                            writer.WriteElement("year", series.Year);
-                            writer.WriteElement("status", series.Status);
-                        }
-
-                        writer.WriteStringsToXml("genre", SelectedShow.Genres);
-
-                        // actors...
-                        foreach (Actor aa in SelectedShow.Actors.Where(aa => !string.IsNullOrEmpty(aa.ActorName)))
-                        {
-                            writer.WriteStartElement("actor");
-                            writer.WriteElement("name", aa.ActorName);
-                            writer.WriteElement("role", aa.ActorRole);
-                            writer.WriteElement("order", aa.ActorSortOrder);
-                            writer.WriteElement("thumb", aa.ActorImage);
-                            writer.WriteEndElement(); // actor
-                        }
-
-                        writer.WriteEndElement(); // tvshow
+                        WriteSeriesXmlFile(writer);
                     }
                 }
             }
@@ -305,6 +222,94 @@ namespace TVRename
             Done = true;
             return true;
         }
+
+        private void WriteSeriesXmlFile([NotNull] XmlWriter writer)
+        {
+            SeriesInfo series = SelectedShow.TheSeries();
+
+            // https://kodi.wiki/view/NFO_files/TV_shows
+            writer.WriteStartElement("tvshow");
+
+            writer.WriteElement("title", SelectedShow.ShowName);
+            writer.WriteElement("originaltitle", series?.Name);
+            writer.WriteElement("studio", series?.Network);
+            float? showRating = series?.SiteRating;
+            if (showRating.HasValue)
+            {
+                writer.WriteStartElement("ratings");
+
+                writer.WriteStartElement("rating");
+                writer.WriteAttributeString("name", "tvdb");
+                writer.WriteAttributeString("max", "10");
+                writer.WriteAttributeString("default", "true");
+
+                writer.WriteElement("value", showRating.Value);
+                writer.WriteElement("votes", series.SiteRatingVotes, true);
+
+                writer.WriteEndElement(); //rating
+
+                writer.WriteEndElement(); //ratings
+            }
+
+            string lang = TVSettings.Instance.PreferredLanguageCode;
+            if (SelectedShow.UseCustomLanguage && SelectedShow.PreferredLanguage != null)
+            {
+                lang = SelectedShow.PreferredLanguage.Abbreviation;
+            }
+
+            //https://forum.kodi.tv/showthread.php?tid=323588
+            //says that we need a format like this:
+            //<episodeguide><url post="yes" cache="auth.json">https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json</url></episodeguide>
+
+            writer.WriteStartElement("episodeguide");
+            writer.WriteStartElement("url");
+            writer.WriteAttributeString("post", "yes");
+            writer.WriteAttributeString("cache", "auth.json");
+            writer.WriteValue(TheTVDB.BuildUrl(SelectedShow.TvdbCode, lang));
+            writer.WriteEndElement(); //url
+            writer.WriteEndElement(); //episodeguide
+
+            if (!(series is null))
+            {
+                writer.WriteElement("id", series.SeriesId);
+                writer.WriteElement("runtime", series.Runtime, true);
+                writer.WriteElement("mpaa", series.ContentRating, true);
+
+                writer.WriteStartElement("uniqueid");
+                writer.WriteAttributeString("type", "tvdb");
+                writer.WriteAttributeString("default", "true");
+                writer.WriteValue(series.TvdbCode);
+                writer.WriteEndElement();
+
+                writer.WriteStartElement("uniqueid");
+                writer.WriteAttributeString("type", "imdb");
+                writer.WriteAttributeString("default", "false");
+                writer.WriteValue(series.Imdb);
+                writer.WriteEndElement();
+
+                writer.WriteElement("plot", series.Overview);
+
+                writer.WriteElement("premiered", series.FirstAired);
+                writer.WriteElement("year", series.Year);
+                writer.WriteElement("status", series.Status);
+            }
+
+            writer.WriteStringsToXml("genre", SelectedShow.Genres);
+
+            // actors...
+            foreach (Actor aa in SelectedShow.Actors.Where(aa => !string.IsNullOrEmpty(aa.ActorName)))
+            {
+                writer.WriteStartElement("actor");
+                writer.WriteElement("name", aa.ActorName);
+                writer.WriteElement("role", aa.ActorRole);
+                writer.WriteElement("order", aa.ActorSortOrder);
+                writer.WriteElement("thumb", aa.ActorImage);
+                writer.WriteEndElement(); // actor
+            }
+
+            writer.WriteEndElement(); // tvshow
+        }
+
         #endregion
 
         #region Item Members

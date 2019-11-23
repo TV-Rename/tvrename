@@ -1072,6 +1072,7 @@ namespace TVRename
                         int numberOfResponses = ((JArray) jsonEpisodeResponse["data"]).Count;
                         bool moreResponses;
 
+                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                         if (METHOD == PagingMethod.proper)
                         {
                             JToken x = jsonEpisodeResponse["links"]["next"];
@@ -1080,7 +1081,9 @@ namespace TVRename
                                 $"Page {pageNumber} of {GetSeries(id)?.Name} had {numberOfResponses} episodes listed in {lang} with {(moreResponses ? "" : "no ")}more to come");
                         }
                         else
+                            // ReSharper disable once HeuristicUnreachableCode
                         {
+                            // ReSharper disable once HeuristicUnreachableCode
                             moreResponses = numberOfResponses > 0;
                             Logger.Info(
                                 $"Page {pageNumber} of {GetSeries(id)?.Name} had {numberOfResponses} episodes listed in {lang} with {(moreResponses ? "maybe " : "no ")}more to come");
@@ -1109,13 +1112,17 @@ namespace TVRename
                         ex.Response is HttpWebResponse resp &&
                         resp.StatusCode == HttpStatusCode.NotFound)
                     {
+                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                         if (pageNumber > 1 && METHOD == PagingMethod.brute)
+                            // ReSharper disable once HeuristicUnreachableCode
                         {
+                            // ReSharper disable once HeuristicUnreachableCode
                             Logger.Info(
                                 $"Have got to the end of episodes for this show: Episodes were not found for {id} from TVDB (got a 404). Error obtaining page {pageNumber} of {episodeUri} in lang {lang} using url {ex.Response.ResponseUri.AbsoluteUri}");
 
                             morePages = false;
                         }
+                        // ReSharper disable once RedundantIfElseBlock
                         else
                         {
                             Logger.Warn(
@@ -1124,6 +1131,7 @@ namespace TVRename
                             return null;
                         }
                     }
+                    // ReSharper disable once RedundantIfElseBlock
                     else
                     {
                         Logger.Error(ex, $"Error obtaining {episodeUri}");
