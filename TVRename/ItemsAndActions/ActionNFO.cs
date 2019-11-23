@@ -239,8 +239,18 @@ namespace TVRename
                             lang = SelectedShow.PreferredLanguage.Abbreviation;
                         }
 
-                        writer.WriteElement("episodeguideurl",
-                            TheTVDB.BuildUrl(SelectedShow.TvdbCode, lang));
+                        //https://forum.kodi.tv/showthread.php?tid=323588
+                        //says that we need a format like this:
+                        //<episodeguide><url post="yes" cache="auth.json">https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json</url></episodeguide>
+
+                        writer.WriteStartElement("episodeguide");
+                        writer.WriteStartElement("url");
+                        writer.WriteAttributeString("post", "yes");
+                        writer.WriteAttributeString("cache", "auth.json");
+                        writer.WriteValue(TheTVDB.BuildUrl(SelectedShow.TvdbCode, lang));
+                        writer.WriteEndElement();//url
+                        writer.WriteEndElement();//episodeguide
+
 
                         if (!(series is null))
                         {
