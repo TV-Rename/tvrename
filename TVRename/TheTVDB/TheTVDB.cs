@@ -471,7 +471,7 @@ namespace TVRename
                 mirr += "/";
             }
 
-            return  mirr + "banners/" + url;
+            return  url.StartsWith("banners/",StringComparison.Ordinal) ?mirr+url: mirr + "banners/" + url;
         }
 
         public byte[] GetTvdbDownload(string url) => GetTvdbDownload(url, false);
@@ -1149,10 +1149,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string EpisodeUri(int id)
-        {
-            return TvDbTokenProvider.TVDB_API_URL + "/series/" + id + "/episodes";
-        }
+        private static string EpisodeUri(int id) => $"{TvDbTokenProvider.TVDB_API_URL}/series/{id}/episodes";
 
         private void ProcessXmlBannerCache([NotNull] XElement r)
         {
@@ -1887,20 +1884,20 @@ namespace TVRename
                 return true;
             }
 
-            string requestLangCode;
-            if (series.ContainsKey(seriesId))
-            {
-                Episode ep = FindEpisodeById(episodeId);
-                string eptxt = EpisodeDescription(dvdOrder, episodeId, ep);
-                requestLangCode =  (series[seriesId].UseCustomLanguage)? series[seriesId].TargetLanguageCode: TVSettings.Instance.PreferredLanguageCode;
-                Say(series[seriesId].Name + " (" + eptxt + ")");
-            }
-            else
+            if (!series.ContainsKey(seriesId))
             {
                 return false; // shouldn't happen
             }
 
-            string uri = TvDbTokenProvider.TVDB_API_URL + "/episodes/" + episodeId;
+            Episode ep = FindEpisodeById(episodeId);
+            string eptxt = EpisodeDescription(dvdOrder, episodeId, ep);
+            string requestLangCode = (series[seriesId].UseCustomLanguage)
+                ? series[seriesId].TargetLanguageCode
+                : TVSettings.Instance.PreferredLanguageCode;
+
+            Say($"{series[seriesId].Name} ({eptxt}) in {requestLangCode}");
+
+            string uri = $"{TvDbTokenProvider.TVDB_API_URL}/episodes/{episodeId}";
             JObject jsonEpisodeResponse;
             JObject jsonEpisodeDefaultLangResponse = new JObject();
 

@@ -170,10 +170,11 @@ namespace TVRename
         [NotNull]
         private static string CreateHorizontalBannerHtml([NotNull] SeriesInfo ser)
         {
-            if ((!string.IsNullOrEmpty(ser.GetSeriesWideBannerPath())) &&
-                (!string.IsNullOrEmpty(TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath()))))
+            string path = ser.GetSeriesWideBannerPath();
+            if ((!string.IsNullOrEmpty(path)) &&
+                (!string.IsNullOrEmpty(TheTVDB.GetImageURL(path))))
             {
-                return  $"<img class=\"rounded\" src=\"{TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath())}\"><br/>&nbsp;";
+                return  $"<img class=\"rounded\" src=\"{TheTVDB.GetImageURL(path)}\"><br/>&nbsp;";
             }
 
             return string.Empty;
