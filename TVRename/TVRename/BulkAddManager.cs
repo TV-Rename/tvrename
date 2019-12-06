@@ -204,7 +204,7 @@ namespace TVRename
                 {
                     foreach (DirectoryInfo subDir in subDirs)
                     {
-                        string regex = "^(?<folderName>" + sw + "\\s*)(?<number>\\d+)$";
+                        string regex = "^(?<prefix>.*)(?<folderName>" + sw + "\\s*)(?<number>\\d+)$";
                         Match m = Regex.Match(subDir.Name, regex, RegexOptions.IgnoreCase);
                         if (!m.Success)
                         {
@@ -212,7 +212,7 @@ namespace TVRename
                         }
 
                         //We have a match!
-                        folderFormat = m.Groups["folderName"] + (m.Groups["number"].ToString().StartsWith("0", StringComparison.Ordinal) ? "{Season:2}" : "{Season}");
+                        folderFormat = m.Groups["prefix"].Value + m.Groups["folderName"] + (m.Groups["number"].ToString().StartsWith("0", StringComparison.Ordinal) ? "{Season:2}" : "{Season}");
 
                         Logger.Info("Assuming {0} contains a show because pattern '{1}' is found in subdirectory {2}",
                             di.FullName, folderFormat, subDir.FullName);
