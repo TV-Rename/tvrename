@@ -235,7 +235,7 @@ namespace TVRename
 
             foreach (ProcessedEpisode epIdToAdd in episodesToAddToSeen)
             {
-                TVSettings.Instance.PreviouslySeenEpisodes.Add(epIdToAdd.EpisodeId);
+                TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(epIdToAdd);
             }
         }
 
