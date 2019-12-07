@@ -180,7 +180,7 @@ namespace TVRename
             {
                 RetryOnException(3, pauseBetweenFailures, fullUrl,
                     () => { response = HttpRequest("GET", fullUrl, null, "application/json", authToken, lang); },
-                    authToken.AcquireToken);
+                    authToken.EnsureValid);
             }
             else
             {

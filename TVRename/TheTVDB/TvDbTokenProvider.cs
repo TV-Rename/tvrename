@@ -63,7 +63,12 @@ namespace TVRename
             return lastKnownToken;
         }
 
-        public void AcquireToken()
+        public void EnsureValid()
+        {
+            GetToken();
+        }
+
+        private void AcquireToken()
         {
             Logger.Info("Acquire a TheTVDB token... ");
             JObject request = new JObject(new JProperty("apikey", TVDB_API_KEY));
