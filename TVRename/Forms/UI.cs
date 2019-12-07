@@ -2515,7 +2515,7 @@ namespace TVRename
             {
                 if (TVSettings.Instance.IgnorePreviouslySeen && pe.PreviouslySeen)
                 {
-                    return 0; //Eyeballs
+                    return 9; //tick
                 }
 
                 if (pe.Show.DoMissingCheck)
