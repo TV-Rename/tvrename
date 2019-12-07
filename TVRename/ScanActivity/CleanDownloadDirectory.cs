@@ -16,7 +16,7 @@ namespace TVRename
         readonly DirFilesCache dfc = new DirFilesCache();
         private ICollection<ShowItem> showList;
         private TVDoc.ScanSettings currentSettings;
-        private List<Item> returnActions;
+        private ItemList returnActions;
 
         public override bool Active() => TVSettings.Instance.RemoveDownloadDirectoriesFiles ||
                                          TVSettings.Instance.ReplaceWithBetterQuality ||
@@ -26,7 +26,7 @@ namespace TVRename
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> shows, TVDoc.ScanSettings settings)
         {
-            returnActions = new List<Item>();
+            returnActions = new ItemList();
             showList = MDoc.Library.GetShowItems(); //We ignore the current set of shows being scanned to be secrure that no files are deleted for unscanned shows
             currentSettings = settings;
 
@@ -54,7 +54,20 @@ namespace TVRename
                 ReviewDirsInDownloadDirectory(dirPath);
             }
 
-            MDoc.TheActionList.AddNullableRange(returnActions);
+            ItemList removeActions = new ItemList();
+            //Remove any missing items we are planning to resolve
+            foreach (ActionCopyMoveRename acmr in returnActions.OfType<ActionCopyMoveRename>())
+            {
+                foreach (ItemMissing missingItem in MDoc.TheActionList.MissingItems())
+                {
+                    if (missingItem.Episode == acmr.Episode)
+                    {
+                        removeActions.Add(missingItem);
+                    }
+                }
+            }
+
+            MDoc.TheActionList.Replace(removeActions,returnActions);
         }
 
         private void ReviewDirsInDownloadDirectory(string dirPath)
