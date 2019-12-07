@@ -139,7 +139,7 @@ namespace TVRename
                     writer.WriteElement("name", aa.ActorName);
                     writer.WriteElement("role", aa.ActorRole);
                     writer.WriteElement("order", aa.ActorSortOrder);
-                    writer.WriteElement("thumb", aa.ActorImage);
+                    writer.WriteElement("thumb", TheTVDB.GetImageURL(aa.ActorImage),true);
                     writer.WriteEndElement(); // actor
                 }
             }
@@ -303,7 +303,7 @@ namespace TVRename
                 writer.WriteElement("name", aa.ActorName);
                 writer.WriteElement("role", aa.ActorRole);
                 writer.WriteElement("order", aa.ActorSortOrder);
-                writer.WriteElement("thumb", aa.ActorImage);
+                writer.WriteElement("thumb", TheTVDB.GetImageURL(aa.ActorImage),true);
                 writer.WriteEndElement(); // actor
             }
 

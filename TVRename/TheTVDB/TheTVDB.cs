@@ -459,6 +459,11 @@ namespace TVRename
         [NotNull]
         public static string GetImageURL(string url)
         {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                return string.Empty;
+            }
+
             string mirr = WebsiteImageRoot;
 
             if (url.StartsWith("/", StringComparison.Ordinal))
