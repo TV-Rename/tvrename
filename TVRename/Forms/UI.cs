@@ -2411,52 +2411,20 @@ namespace TVRename
 
         private void UpdateWtw(DirFilesCache dfc, [NotNull] ProcessedEpisode pe, [NotNull] ListViewItem lvi)
         {
-            lvi.Tag = pe;
-
-            // group 0 = just missed
-            //       1 = this week
-            //       2 = future / unknown
-
             DateTime? airdt = pe.GetAirDateDt(true);
             if (airdt is null)
             {
-                // TODO: something!
                 return;
             }
+            DateTime dt = airdt.Value;
 
-            DateTime dt = (DateTime) airdt;
-
-            double ttn = dt.Subtract(DateTime.Now).TotalHours;
-
-            if (ttn < 0)
-            {
-                lvi.Group = lvWhenToWatch.Groups["justPassed"];
-            }
-            else if (ttn < 7 * 24)
-            {
-                lvi.Group = lvWhenToWatch.Groups["next7days"];
-            }
-            else if (!pe.NextToAir)
-            {
-                lvi.Group = lvWhenToWatch.Groups["later"];
-            }
-            else
-            {
-                lvi.Group = lvWhenToWatch.Groups["futureEps"];
-            }
+            lvi.Group = lvWhenToWatch.Groups[CalculateWTWLVIGroup(pe, dt)];
+            lvi.Tag = pe;
+            lvi.Text = pe.Show.ShowName;
 
             int n = 0;
-            lvi.Text = pe.Show.ShowName;
-            lvi.SubItems[++n].Text =
-                pe.AppropriateSeasonNumber != 0 ? pe.AppropriateSeasonNumber.ToString() : "Special";
-
-            string estr = pe.AppropriateEpNum > 0 ? pe.AppropriateEpNum.ToString() : "";
-            if (pe.AppropriateEpNum > 0 && pe.EpNum2 != pe.AppropriateEpNum && pe.EpNum2 > 0)
-            {
-                estr += "-" + pe.EpNum2;
-            }
-
-            lvi.SubItems[++n].Text = estr;
+            lvi.SubItems[++n].Text = pe.SeasonNumberAsText;
+            lvi.SubItems[++n].Text = GetEpisodeNumber(pe);
             lvi.SubItems[++n].Text = dt.ToShortDateString();
             lvi.SubItems[++n].Text = dt.ToString("t");
             lvi.SubItems[++n].Text = dt.ToString("ddd");
@@ -2465,27 +2433,94 @@ namespace TVRename
             lvi.SubItems[++n].Text = pe.Name;
 
             // icon..
-
-            if (airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
+            int? iconNumbers = ChooseWtwIcon(dfc, pe, dt);
+            if (iconNumbers != null)
             {
-                List<FileInfo> fl = dfc.FindEpOnDisk(pe);
-                bool appropriateFileNameFound = !TVSettings.Instance.RenameCheck
-                           || !pe.Show.DoRename
-                           || fl.All(file => file.Name.StartsWith(TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pe)), StringComparison.OrdinalIgnoreCase));
+                lvi.ImageIndex = iconNumbers.Value;
+            }
 
-                if (fl.Count > 0 && appropriateFileNameFound)
+            if (TVSettings.Instance.UseColoursOnWtw)
+            {
+                (Color back,Color fore) = GetWtwColour(pe,dt);
+                lvi.BackColor = back;
+                lvi.ForeColor = fore;
+            }
+        }
+
+        private (Color, Color) GetWtwColour([NotNull] ProcessedEpisode ep, DateTime dt)
+        {
+            //any episodes that match "today's" date be highlighted in light gray so they stand out.
+            //Or, really fancy: any future dates are light gray background,
+            //past dates are light blue
+            //and "today" is yellow..
+            double ttn = dt.Subtract(DateTime.Now).TotalHours;
+
+            if (ep.IsInFuture(true))
+            {
+                return (Color.LightGray,Color.Black);
+            }
+
+            if (ttn < -24)
+            {
+                return (Color.LightBlue, Color.Black);
+            }
+
+            return (Color.LightYellow, Color.Black);
+        }
+
+        [NotNull]
+        private static string GetEpisodeNumber([NotNull] ProcessedEpisode pe)
+        {
+            if (pe.AppropriateEpNum > 0 && pe.EpNum2 != pe.AppropriateEpNum && pe.EpNum2 > 0)
+            {
+                return pe.AppropriateEpNum + "-" + pe.EpNum2;
+            }
+
+            return pe.AppropriateEpNum > 0 ? pe.AppropriateEpNum.ToString() : string.Empty;
+        }
+
+        [NotNull]
+        private string CalculateWTWLVIGroup(ProcessedEpisode pe, DateTime dt)
+        {
+            double ttn = dt.Subtract(DateTime.Now).TotalHours;
+
+            if (ttn < 0)
+            {
+                return "justPassed";
+            }
+            if (ttn < 7 * 24)
+            {
+                return "next7days";
+            }
+            return !pe.NextToAir ? "later" : "futureEps";
+        }
+
+        private static int? ChooseWtwIcon(DirFilesCache dfc, [NotNull] ProcessedEpisode pe, DateTime airdt)
+        {
+            List<FileInfo> fl = dfc.FindEpOnDisk(pe);
+            bool appropriateFileNameFound = !TVSettings.Instance.RenameCheck
+                                            || !pe.Show.DoRename
+                                            || fl.All(file => file.Name.StartsWith( TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pe)), StringComparison.OrdinalIgnoreCase));
+
+            if (fl.Count > 0 && appropriateFileNameFound)
+            {
+                return 0; //Disk
+            }
+
+            if (airdt.CompareTo(DateTime.Now) < 0) // has aired
+            {
+                if (TVSettings.Instance.IgnorePreviouslySeen && pe.PreviouslySeen)
                 {
-                    lvi.ImageIndex = 0;
+                    return 0; //Eyeballs
                 }
-                else if (pe.Show.DoMissingCheck)
+
+                if (pe.Show.DoMissingCheck)
                 {
-                    lvi.ImageIndex = 1;
-                }
-                else
-                {
-                    //We don't use an image in this case
+                    return 1; //Search
                 }
             }
+
+            return null;
         }
 
         private void SelectSeason(Season seas)

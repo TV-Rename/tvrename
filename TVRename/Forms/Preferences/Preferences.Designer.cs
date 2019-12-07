@@ -342,6 +342,8 @@ namespace TVRename
             this.label18 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox19 = new System.Windows.Forms.GroupBox();
+            this.label24 = new System.Windows.Forms.Label();
+            this.cbTimeZone = new System.Windows.Forms.ComboBox();
             this.rbDefShowUseSubFolders = new System.Windows.Forms.RadioButton();
             this.rbDefShowUseBase = new System.Windows.Forms.RadioButton();
             this.label12 = new System.Windows.Forms.Label();
@@ -363,8 +365,7 @@ namespace TVRename
             this.txtSpecialsFolderName = new System.Windows.Forms.TextBox();
             this.label47 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
-            this.label24 = new System.Windows.Forms.Label();
-            this.cbTimeZone = new System.Windows.Forms.ComboBox();
+            this.cbUseColoursOnWtw = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -700,6 +701,7 @@ namespace TVRename
             // 
             // tpDisplay
             // 
+            this.tpDisplay.Controls.Add(this.cbUseColoursOnWtw);
             this.tpDisplay.Controls.Add(this.chkBasicShowDetails);
             this.tpDisplay.Controls.Add(this.chkPostpendThe);
             this.tpDisplay.Controls.Add(this.groupBox11);
@@ -3835,6 +3837,28 @@ namespace TVRename
             this.groupBox19.TabStop = false;
             this.groupBox19.Text = "Default Show Settings";
             // 
+            // label24
+            // 
+            this.label24.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(9, 149);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(87, 13);
+            this.label24.TabIndex = 6;
+            this.label24.Text = "Airs in &Timezone:";
+            this.label24.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // cbTimeZone
+            // 
+            this.cbTimeZone.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbTimeZone.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbTimeZone.FormattingEnabled = true;
+            this.cbTimeZone.Location = new System.Drawing.Point(102, 141);
+            this.cbTimeZone.Name = "cbTimeZone";
+            this.cbTimeZone.Size = new System.Drawing.Size(293, 21);
+            this.cbTimeZone.TabIndex = 7;
+            // 
             // rbDefShowUseSubFolders
             // 
             this.rbDefShowUseSubFolders.AutoSize = true;
@@ -4060,27 +4084,15 @@ namespace TVRename
             this.label13.TabIndex = 27;
             this.label13.Text = "&Specials folder name:";
             // 
-            // label24
+            // cbUseColoursOnWtw
             // 
-            this.label24.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(9, 149);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(87, 13);
-            this.label24.TabIndex = 6;
-            this.label24.Text = "Airs in &Timezone:";
-            this.label24.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // cbTimeZone
-            // 
-            this.cbTimeZone.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbTimeZone.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbTimeZone.FormattingEnabled = true;
-            this.cbTimeZone.Location = new System.Drawing.Point(102, 141);
-            this.cbTimeZone.Name = "cbTimeZone";
-            this.cbTimeZone.Size = new System.Drawing.Size(293, 21);
-            this.cbTimeZone.TabIndex = 7;
+            this.cbUseColoursOnWtw.AutoSize = true;
+            this.cbUseColoursOnWtw.Location = new System.Drawing.Point(220, 311);
+            this.cbUseColoursOnWtw.Name = "cbUseColoursOnWtw";
+            this.cbUseColoursOnWtw.Size = new System.Drawing.Size(181, 17);
+            this.cbUseColoursOnWtw.TabIndex = 44;
+            this.cbUseColoursOnWtw.Text = "Use Colours on When To Watch";
+            this.cbUseColoursOnWtw.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -4522,5 +4534,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbDefShowDVDOrder;
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.ComboBox cbTimeZone;
+        private System.Windows.Forms.CheckBox cbUseColoursOnWtw;
     }
 }

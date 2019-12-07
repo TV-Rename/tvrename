@@ -265,7 +265,7 @@ namespace TVRename
             writer.WriteStartElement("url");
             writer.WriteAttributeString("post", "yes");
             writer.WriteAttributeString("cache", "auth.json");
-            writer.WriteValue(TheTVDB.BuildUrl(SelectedShow.TvdbCode, lang));
+            writer.WriteRaw(TheTVDB.BuildUrl(SelectedShow.TvdbCode, lang));
             writer.WriteEndElement(); //url
             writer.WriteEndElement(); //episodeguide
 

@@ -450,7 +450,7 @@ namespace TVRename
         //https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json
 
         {
-            return $"{WebsiteRoot}/login?"
+            return $"{TvDbTokenProvider.TVDB_API_URL}/login?"
                    + "{&quot;apikey&quot;:&quot;" + TvDbTokenProvider.TVDB_API_KEY + "&quot;,&quot;id&quot;:" + code + "}"
                    + "|Content-Type=application/json";
         }

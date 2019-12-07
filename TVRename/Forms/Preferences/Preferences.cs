@@ -233,6 +233,7 @@ namespace TVRename
             s.ExportShowsTXTTo = txtShowsTXTTo.Text;
             s.ExportShowsHTML = cbShowsHTML.Checked;
             s.ExportShowsHTMLTo = txtShowsHTMLTo.Text;
+            s.UseColoursOnWtw = cbUseColoursOnWtw.Checked;
 
             s.ExportRecentM3U = cbM3U.Checked;
             s.ExportRecentM3UTo = txtM3U.Text;
@@ -685,6 +686,7 @@ namespace TVRename
             txtExportRSSMaxDays.Text = s.ExportRSSMaxDays.ToString();
             txtExportRSSMaxShows.Text = s.ExportRSSMaxShows.ToString();
             txtExportRSSDaysPast.Text = s.ExportRSSDaysPast.ToString();
+            cbUseColoursOnWtw.Checked= s.UseColoursOnWtw ;
 
             cbTimeZone.Text = s.DefaultShowTimezoneName;
 

@@ -145,6 +145,7 @@ namespace TVRename
         public string ExportRecentASXTo = "";
         public bool ExportRecentWPL = false;
         public string ExportRecentWPLTo = "";
+        public bool UseColoursOnWtw = false;
         public List<FilenameProcessorRE> FNPRegexs = DefaultFNPList();
         public bool FolderJpg = false;
         public FolderJpgIsType FolderJpgIs = FolderJpgIsType.Poster;
@@ -360,6 +361,7 @@ namespace TVRename
         public void WriteXML([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("Settings");
+            writer.WriteElement("UseColoursOnWtw", UseColoursOnWtw);
             writer.WriteElement("BGDownload", BGDownload);
             writer.WriteElement("OfflineMode", OfflineMode);
             writer.WriteElement("ShowBasicShowDetails", ShowBasicShowDetails);
@@ -1132,6 +1134,7 @@ namespace TVRename
         public void load([NotNull] XElement xmlSettings)
         {
             SetToDefaults();
+            UseColoursOnWtw = xmlSettings.ExtractBool("UseColoursOnWtw", false);
             RSSUseCloudflare = xmlSettings.ExtractBool("RSSUseCloudflare", true);
             SearchJSONUseCloudflare = xmlSettings.ExtractBool("SearchJSONUseCloudflare", true);
             qBitTorrentDownloadFilesFirst = xmlSettings.ExtractBool("qBitTorrentDownloadFilesFirst", true);

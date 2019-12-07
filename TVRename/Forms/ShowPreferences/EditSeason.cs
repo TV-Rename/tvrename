@@ -58,7 +58,7 @@ namespace TVRename
             lvSeenEpisodes.Sort();
         }
 
-private void FillSeenEpisodes(bool keepSel)
+        private void FillSeenEpisodes(bool keepSel)
         {
             List<int> sel = new List<int>();
             if (keepSel)
@@ -70,7 +70,7 @@ private void FillSeenEpisodes(bool keepSel)
             }
 
             lvSeenEpisodes.Items.Clear();
-            foreach (ProcessedEpisode ep in mOriginalEps.Where(ep => TVSettings.Instance.PreviouslySeenEpisodes.Contains(ep.EpisodeId)))
+            foreach (ProcessedEpisode ep in mOriginalEps.Where(ep => ep.PreviouslySeen))
             {
                 ListViewItem lvi = new ListViewItem { Text = ep.AppropriateEpNum.ToString() };
                 lvi.SubItems.Add(ep.Name);
@@ -273,8 +273,15 @@ private void FillSeenEpisodes(bool keepSel)
             List<ProcessedEpisode> possibleEpisodes = new List<ProcessedEpisode>();
             foreach (ProcessedEpisode testEp in mOriginalEps)
             {
-                if (TVSettings.Instance.PreviouslySeenEpisodes.Contains(testEp.EpisodeId)) continue;
-                if (episodesToAddToSeen.Contains(testEp)) continue;
+                if (testEp.PreviouslySeen)
+                {
+                    continue;
+                }
+
+                if (episodesToAddToSeen.Contains(testEp))
+                {
+                    continue;
+                }
 
                 possibleEpisodes.Add(testEp);
             }

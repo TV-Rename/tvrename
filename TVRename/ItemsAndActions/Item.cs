@@ -53,13 +53,8 @@ namespace TVRename
 
         [NotNull]
         protected virtual string SeriesName => Episode?.TheSeries?.Name ?? string.Empty;
-
         [NotNull]
-        protected virtual string SeasonNumber =>
-              Episode is null ? string.Empty
-            : Episode.AppropriateSeasonNumber == 0 ? "Special"
-            : Episode.AppropriateSeasonNumber.ToString();
-
+        protected virtual string SeasonNumber => Episode?.SeasonNumberAsText ?? string.Empty;
         [NotNull]
         protected virtual string EpisodeNumber => Episode?.NumsAsString() ?? string.Empty;
         [NotNull]
