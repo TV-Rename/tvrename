@@ -1118,6 +1118,10 @@ namespace TVRename
             {
                 txtWhenToWatchSynopsis.Text = "[Spoilers Hidden]";
             }
+            else if (ei.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
+            {
+                txtWhenToWatchSynopsis.Text = string.Join(Environment.NewLine, ei.SourceEpisodes.Select(episode => episode.Overview));
+            }
             else
             {
                 txtWhenToWatchSynopsis.Text = ei.Overview;
