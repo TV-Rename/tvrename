@@ -323,66 +323,80 @@ namespace TVRename
         {
             foreach (ShowRule sr in rules)
             {
-                int nn1 = sr.First;
-                int nn2 = sr.Second;
-                string txt = sr.UserSuppliedText;
-
-                // turn nn1 and nn2 from ep number into position in array
-                int n1 = FindIndex(eis, nn1);
-                int n2 = FindIndex(eis,nn2);
-
-                if (sr.DoWhatNow == RuleAction.kInsert)
+                try
                 {
-                    // this only applies for inserting an episode, at the end of the list
-                    if (nn1 == eis[eis.Count - 1].AppropriateEpNum + 1) // after the last episode
+                    int nn1 = sr.First;
+                    int nn2 = sr.Second;
+                    string txt = sr.UserSuppliedText;
+
+                    // turn nn1 and nn2 from ep number into position in array
+                    int n1 = FindIndex(eis, nn1);
+                    int n2 = FindIndex(eis, nn2);
+
+                    if (sr.DoWhatNow == RuleAction.kInsert)
                     {
-                        n1 = eis.Count;
+                        // this only applies for inserting an episode, at the end of the list
+                        if (nn1 == eis[eis.Count - 1].AppropriateEpNum + 1) // after the last episode
+                        {
+                            n1 = eis.Count;
+                        }
                     }
-                }
-                
-                switch (sr.DoWhatNow)
-                {
-                    case RuleAction.kRename:
+
+                    switch (sr.DoWhatNow)
+                    {
+                        case RuleAction.kRename:
                         {
                             RenameEpisode(eis, n1, txt);
                             break;
                         }
-                    case RuleAction.kRemove:
+
+                        case RuleAction.kRemove:
                         {
                             RemoveEpisode(eis, n1, n2);
                             break;
                         }
-                    case RuleAction.kIgnoreEp:
+
+                        case RuleAction.kIgnoreEp:
                         {
                             IgnoreEpisodes(eis, n1, n2);
                             break;
                         }
-                    case RuleAction.kSplit:
+
+                        case RuleAction.kSplit:
                         {
                             SplitEpisode(eis, show, nn2, n1);
                             break;
                         }
-                    case RuleAction.kMerge:
-                    case RuleAction.kCollapse:
+
+                        case RuleAction.kMerge:
+                        case RuleAction.kCollapse:
                         {
                             MergeEpisodes(eis, show, sr, n1, n2, txt);
                             break;
                         }
-                    case RuleAction.kSwap:
+
+                        case RuleAction.kSwap:
                         {
                             SwapEpisode(eis, n1, n2);
                             break;
                         }
-                    case RuleAction.kInsert:
+
+                        case RuleAction.kInsert:
                         {
                             InsertEpisode(eis, show, n1, txt);
                             break;
                         }
-                    default:
-                        throw new ArgumentException("Inappropriate ruleType " + sr.DoWhatNow);
-                } // switch DoWhatNow
 
-                Renumber(eis);
+                        default:
+                            throw new ArgumentException("Inappropriate ruleType " + sr.DoWhatNow);
+                    } // switch DoWhatNow
+
+                    Renumber(eis);
+                }
+                catch (Exception e)
+                {
+                    Logger.Error($"Could not deal with rule for {show.ShowName}, {sr.DoWhatNow}:{sr.First}:{sr.Second}:{sr.UserSuppliedText}",e);
+                }
             } // for each rule
 
             // now, go through and remove the ignored ones (but don't renumber!!)
