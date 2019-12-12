@@ -100,6 +100,8 @@ namespace TVRename
         public void DoActions(ItemList theList)
         {
             actionManager.DoActions(theList, !Args.Hide && Environment.UserInteractive);
+
+            new CleanUpEmptyLibraryFolders(this).Check(null);
         }
 
         // ReSharper disable once InconsistentNaming
@@ -581,10 +583,7 @@ namespace TVRename
             }
 
             // process each folder for each season...
-            int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
-            si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
-
-            foreach (int snum in numbers)
+            foreach (int snum in si.GetSeasonKeys())
             {
                 if ((si.IgnoreSeasons.Contains(snum)) || (!allFolders.ContainsKey(snum)))
                 {

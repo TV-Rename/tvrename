@@ -43,5 +43,7 @@ namespace TVRename
         public void EnsureAdded([NotNull] ProcessedEpisode dbep) => EnsureAdded(dbep.EpisodeId);
 
         public bool Includes([NotNull] Item item) => item.Episode != null && item.Episode.EpisodeId >0 && Contains(item.Episode.EpisodeId);
+
+        public bool Includes([CanBeNull] ProcessedEpisode episode) => episode != null && episode.EpisodeId > 0 && Contains(episode.EpisodeId);
     }
 }
