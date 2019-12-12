@@ -139,9 +139,14 @@ namespace TVRename.App
 
                 ApplicationBase s = new ApplicationBase();
 
-                 s.Run(args);
+                s.Run(args);
 
                 GC.KeepAlive(mutex);
+            }
+            catch (TVRenameOperationInterruptedException)
+            {
+                Logger.Fatal("USER REQUESTED End: Application exiting with error");
+                Environment.Exit(1);
             }
             catch (Exception ex)
             {
