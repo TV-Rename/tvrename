@@ -884,5 +884,13 @@ namespace TVRename
 
             return true;
         }
+
+        [NotNull]
+        public IEnumerable<int> GetSeasonKeys()
+        {
+            int[] numbers = new int[SeasonEpisodes.Keys.Count];
+            SeasonEpisodes.Keys.CopyTo(numbers, 0);
+            return numbers;
+        }
     }
 }

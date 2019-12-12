@@ -38,11 +38,8 @@ namespace TVRename
                 return; // so, nothing to do.
             }
 
-            int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
-            si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
-
             // process each folder for each season...
-            foreach (int snum in numbers)
+            foreach (int snum in si.GetSeasonKeys())
             {
                 if (settings.Token.IsCancellationRequested)
                 {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 
@@ -21,9 +22,7 @@ namespace TVRename
 
             Dictionary<int, List<string>> flocs = si.AllProposedFolderLocations();
 
-            int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
-            si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
-            foreach (int snum in numbers)
+            foreach (int snum in si.GetSeasonKeys())
             {
                 // show MissingFolderAction for any folders that are missing
                 // throw Exception if user cancels
@@ -50,6 +49,12 @@ namespace TVRename
                     folders = flocs[snum];
                 }
 
+                if (si.SeasonEpisodes[snum].All(episode => !MightWeProcess(episode,folders)))
+                {
+                    //All episodes in this season are ignored
+                    continue;
+                }
+
                 if (folders.Count == 0 && si.AutoAddNewSeasons())
                 {
                     // no folders defined for this season, and autoadd didn't find any, so suggest the autoadd folder name instead
@@ -64,6 +69,37 @@ namespace TVRename
 
                 CreateSeasonFolders(si, snum, folders);
             } // for each snum
+        }
+
+        private bool MightWeProcess(ProcessedEpisode episode, [NotNull] List<string> folders)
+        {
+            foreach (string folder in folders)
+            {
+                if (TVSettings.Instance.Ignore.Any(ii => ii.MatchesEpisode(folder,episode)))
+                {
+                    return false;
+                }
+            }
+
+            if (TVSettings.Instance.IgnorePreviouslySeen)
+            {
+                if (TVSettings.Instance.PreviouslySeenEpisodes.Includes(episode))
+                {
+                    return false;
+                }
+            }
+
+            if (!episode.Show.ForceCheckFuture && episode.IsInFuture(false))
+            {
+                return false;
+            }
+
+            if (!episode.Show.ForceCheckNoAirdate && episode.GetAirDateDt(true)== null)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private void CreateSeasonFolders(ShowItem si, int snum, [NotNull] List<string> folders)
