@@ -39,6 +39,7 @@ namespace TVRename
 
             ItemList newItems = new ItemList();
             ItemList toRemove = new ItemList();
+            UrlCache cache = new UrlCache();
             try
             {
                 foreach (ItemMissing action in ActionList.MissingItems().ToList())
@@ -50,7 +51,7 @@ namespace TVRename
 
                     UpdateStatus(n++, c, action.Filename);
 
-                    FindMissingEpisode(action, toRemove, newItems);
+                    FindMissingEpisode(action, toRemove, newItems, cache);
                 }
             }
             catch (WebException e)
@@ -64,7 +65,7 @@ namespace TVRename
             ActionList.Replace(toRemove,newItems);
         }
 
-        private static void FindMissingEpisode([NotNull] ItemMissing action, ItemList toRemove, ItemList newItems)
+        private static void FindMissingEpisode([NotNull] ItemMissing action, ItemList toRemove, ItemList newItems, UrlCache cache)
         {
             ProcessedEpisode pe = action.Episode;
 
@@ -78,7 +79,7 @@ namespace TVRename
             string simpleSeriesName = Helpers.SimplifyName(pe.TheSeries.Name);
             ItemList newItemsForThisMissingEpisode = new ItemList();
 
-            string response = HttpHelper.GetUrl($"{TVSettings.Instance.SearchJSONURL}{imdbId}",TVSettings.Instance.SearchJSONUseCloudflare);
+            string response = cache.GetUrl($"{TVSettings.Instance.SearchJSONURL}{imdbId}",TVSettings.Instance.SearchJSONUseCloudflare);
 
             if (string.IsNullOrWhiteSpace(response))
             {
