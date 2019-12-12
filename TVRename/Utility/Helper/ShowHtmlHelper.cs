@@ -280,8 +280,6 @@ namespace TVRename
         private static string GetBestFolderLocationToOpen([NotNull] this ShowItem si,[NotNull] Season s )
         {
             Dictionary<int, List<string>> afl = si.AllExistngFolderLocations();
-            int[] keys = new int[afl.Count];
-            afl.Keys.CopyTo(keys, 0);
 
             if (afl.ContainsKey(s.SeasonNumber))
             {
