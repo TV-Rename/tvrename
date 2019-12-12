@@ -313,6 +313,10 @@ namespace TVRename
                                     }
                                 }
                             }
+                            else
+                            {
+                                Logger.Warn($"Cannot save {kvp.Value.TvdbCode} ({kvp.Value.Name}) as it has not been updated at all.");
+                            }
                         }
 
                         //
