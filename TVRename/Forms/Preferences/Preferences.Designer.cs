@@ -601,7 +601,8 @@ namespace TVRename
             this.chkScheduledScan.Size = new System.Drawing.Size(135, 17);
             this.chkScheduledScan.TabIndex = 45;
             this.chkScheduledScan.Text = "Sc&heduled scan every ";
-            this.toolTip1.SetToolTip(this.chkScheduledScan, "If checked the system will automatically scan and complete actions on startup");
+            this.toolTip1.SetToolTip(this.chkScheduledScan, "If checked the system will automatically scan and complete actions on a periodic " +
+        "schedule");
             this.chkScheduledScan.UseVisualStyleBackColor = true;
             // 
             // chkScanOnStartup
@@ -3483,6 +3484,8 @@ namespace TVRename
             this.label1.Size = new System.Drawing.Size(33, 13);
             this.label1.TabIndex = 47;
             this.label1.Text = "hours";
+            this.toolTip1.SetToolTip(this.label1, "If checked the system will automatically scan and complete actions on a periodic " +
+        "schedule");
             // 
             // domainUpDown1
             // 
@@ -3502,6 +3505,8 @@ namespace TVRename
             this.domainUpDown1.Size = new System.Drawing.Size(40, 20);
             this.domainUpDown1.TabIndex = 46;
             this.domainUpDown1.Text = "1";
+            this.toolTip1.SetToolTip(this.domainUpDown1, "If checked the system will automatically scan and complete actions on a periodic " +
+        "schedule");
             this.domainUpDown1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.domainUpDown1_KeyDown);
             // 
             // lblScanAction
