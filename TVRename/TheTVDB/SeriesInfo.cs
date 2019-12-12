@@ -155,6 +155,13 @@ namespace TVRename
                Logger.Warn("Issue with series " + TvdbCode );
                Logger.Warn(json.ToString());
             }
+
+            if (SrvLastUpdated==0)
+            {
+                Logger.Warn("Issue with series (update time is 0) " + TvdbCode);
+                Logger.Warn(json.ToString());
+                SrvLastUpdated = 100;
+            }
         }
 
         public SeriesInfo([NotNull] JObject json, JObject jsonInDefaultLang, int langId)
