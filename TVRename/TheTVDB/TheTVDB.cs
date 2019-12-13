@@ -111,9 +111,9 @@ namespace TVRename
         }
 
         // ReSharper disable once ConvertToConstant.Local
-        private static readonly string WebsiteRoot = "http://thetvdb.com";
+        private static readonly string WebsiteRoot = "https://thetvdb.com";
         // ReSharper disable once ConvertToConstant.Local
-        private static readonly string WebsiteImageRoot = "http://artworks.thetvdb.com";
+        private static readonly string WebsiteImageRoot = "https://artworks.thetvdb.com";
 
         private FileInfo cacheFile;
         public bool Connected;

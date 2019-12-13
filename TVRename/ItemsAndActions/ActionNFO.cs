@@ -43,6 +43,23 @@ namespace TVRename
             writer.WriteElement("originaltitle", show?.ShowName);
             writer.WriteElement("showtitle", show?.ShowName );
 
+            writer.WriteElement("id", episode.EpisodeId);
+
+            writer.WriteStartElement("uniqueid");
+            writer.WriteAttributeString("type", "tvdb");
+            writer.WriteAttributeString("default", "true");
+            writer.WriteValue(episode.EpisodeId);
+            writer.WriteEndElement();
+
+            if (!string.IsNullOrEmpty(episode.ImdbCode))
+            {
+                writer.WriteStartElement("uniqueid");
+                writer.WriteAttributeString("type", "imdb");
+                writer.WriteAttributeString("default", "false");
+                writer.WriteValue(episode.ImdbCode);
+                writer.WriteEndElement();
+            }
+
             string showRating = episode.EpisodeRating;
             if (showRating !=null)
             {
@@ -271,7 +288,7 @@ namespace TVRename
 
             if (!(series is null))
             {
-                writer.WriteElement("id", series.SeriesId);
+                writer.WriteElement("id", series.TvdbCode);
                 writer.WriteElement("runtime", series.Runtime, true);
                 writer.WriteElement("mpaa", series.ContentRating, true);
 
