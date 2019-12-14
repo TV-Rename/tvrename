@@ -132,5 +132,10 @@ namespace TVRename.Ipc
         {
             MainUi?.BeginInvoke((MethodInvoker)MainUi.Quit);
         }
+
+        public void ForceRefresh()
+        {
+            MainUi?.BeginInvoke((MethodInvoker)MainUi.ForceRefresh);
+        }
     }
 }

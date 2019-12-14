@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
@@ -31,6 +32,7 @@ namespace TVRename
         public bool QuickScan { get; }
         public bool RecentScan { get; }
         public bool DoAll { get; }
+        public bool ForceRefresh { get; }
         public bool Unattended { get; }
         public string UserFilePath { get; }
 
@@ -50,21 +52,24 @@ namespace TVRename
             QuickScan = args.Contains("/quickscan", StringComparer.OrdinalIgnoreCase);
             RecentScan = args.Contains("/recentscan", StringComparer.OrdinalIgnoreCase);
             Unattended = args.Contains("/unattended", StringComparer.OrdinalIgnoreCase);
+            ForceRefresh = args.Contains("/forcerefresh", StringComparer.OrdinalIgnoreCase);
 
             UserFilePath = args.Where(a => a.StartsWith("/userfilepath:", StringComparison.OrdinalIgnoreCase)).Select(a => a.Substring(a.IndexOf(":", StringComparison.Ordinal) + 1)).FirstOrDefault();
 
+            MissingFolder = DecodeMissingFolderType(args);
+        }
+
+        private MissingFolderBehavior DecodeMissingFolderType([NotNull] IReadOnlyCollection<string> args)
+        {
             if (args.Contains("/createmissing", StringComparer.OrdinalIgnoreCase))
             {
-                MissingFolder = MissingFolderBehavior.create;
+                return MissingFolderBehavior.create;
             }
-            else if (args.Contains("/ignoremissing", StringComparer.OrdinalIgnoreCase))
+            if (args.Contains("/ignoremissing", StringComparer.OrdinalIgnoreCase))
             {
-                MissingFolder = MissingFolderBehavior.ignore;
+                return MissingFolderBehavior.ignore;
             }
-            else
-            {
-                MissingFolder = MissingFolderBehavior.ask;
-            }
+            return MissingFolderBehavior.ask;
         }
 
         [NotNull]

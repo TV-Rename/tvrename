@@ -100,7 +100,11 @@ namespace TVRename.App
                 }
 
                 // TODO: Unify command line handling between here and in UI.cs (ProcessArgs). Just send in clargs via IPC?
-                
+                if (clargs.ForceRefresh)
+                {
+                    ipc.ForceRefresh();
+                }
+
                 if (clargs.Scan)
                 {
                     ipc.Scan();

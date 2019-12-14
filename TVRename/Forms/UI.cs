@@ -232,6 +232,10 @@ namespace TVRename
         private void ProcessArgs()
         {
             // TODO: Unify command line handling between here and in Program.cs
+            if (mDoc.Args.ForceRefresh)
+            {
+                ForceRefresh();
+            }
 
             if (mDoc.Args.Scan)
             {
@@ -4124,6 +4128,11 @@ namespace TVRename
         public void FocusOnScanResults()
         {
             tabControl1.SelectedTab = tbAllInOne;
+        }
+
+        public void ForceRefresh()
+        {
+            ForceRefresh(mDoc.Library.GetShowItems(),true);
         }
     }
 }
