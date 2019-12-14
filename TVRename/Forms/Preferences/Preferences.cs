@@ -309,6 +309,7 @@ namespace TVRename
             s.UseFullPathNameToMatchLibraryFolders = chkUseLibraryFullPathWhenMatchingShows.Checked;
             s.UseFullPathNameToMatchSearchFolders = chkUseSearchFullPathWhenMatchingShows.Checked;
             s.AutoAddAsPartOfQuickRename = chkAutoAddAsPartOfQuickRename.Checked;
+            s.CleanLibraryAfterActions = chkCleanLibraryAfterActions.Checked;
 
             s.SearchJSON = cbSearchJSON.Checked;
             s.SearchJSONManualScanOnly = cbSearchJSONManualScanOnly.Checked;
@@ -789,6 +790,7 @@ namespace TVRename
             chkUseLibraryFullPathWhenMatchingShows.Checked = s.UseFullPathNameToMatchLibraryFolders;
             chkUseSearchFullPathWhenMatchingShows.Checked= s.UseFullPathNameToMatchSearchFolders;
             chkAutoAddAsPartOfQuickRename.Checked = s.AutoAddAsPartOfQuickRename;
+            chkCleanLibraryAfterActions.Checked = s.CleanLibraryAfterActions;
 
             cbMissing.Checked = s.MissingCheck;
             chkMoveLibraryFiles.Checked = s.MoveLibraryFiles;

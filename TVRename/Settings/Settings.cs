@@ -266,6 +266,7 @@ namespace TVRename
         public string USER_AGENT =>
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36";
 
+        public bool CleanLibraryAfterActions = false;
         public bool AutoAddAsPartOfQuickRename = true;
         public bool UseFullPathNameToMatchSearchFolders = false;
         public bool UseFullPathNameToMatchLibraryFolders = false;
@@ -504,6 +505,7 @@ namespace TVRename
             writer.WriteElement("UseFullPathNameToMatchLibraryFolders", UseFullPathNameToMatchLibraryFolders);
             writer.WriteElement("UseFullPathNameToMatchSearchFolders", UseFullPathNameToMatchSearchFolders);
             writer.WriteElement("AutoAddAsPartOfQuickRename", AutoAddAsPartOfQuickRename);
+            writer.WriteElement("CleanLibraryAfterActions", CleanLibraryAfterActions);
 
             writer.WriteElement("DefShowIncludeNoAirdate", DefShowIncludeNoAirdate);
             writer.WriteElement("DefShowIncludeFuture", DefShowIncludeFuture);
@@ -1275,6 +1277,7 @@ namespace TVRename
             UseFullPathNameToMatchLibraryFolders = xmlSettings.ExtractBool("UseFullPathNameToMatchLibraryFolders",false);
             UseFullPathNameToMatchSearchFolders = xmlSettings.ExtractBool("UseFullPathNameToMatchSearchFolders",false);
             AutoAddAsPartOfQuickRename = xmlSettings.ExtractBool("AutoAddAsPartOfQuickRename", true);
+            CleanLibraryAfterActions = xmlSettings.ExtractBool("CleanLibraryAfterActions", false);
 
             DefShowIncludeNoAirdate = xmlSettings.ExtractBool("DefShowIncludeNoAirdate", false);
             DefShowIncludeFuture = xmlSettings.ExtractBool("DefShowIncludeFuture", false);

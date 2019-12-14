@@ -10,9 +10,9 @@ namespace TVRename
         public CleanUpEmptyLibraryFolders(TVDoc doc) : base(doc) {}
 
         [NotNull]
-        protected override string Checkname() => "Cleand up empty library folders";
+        protected override string Checkname() => "Cleaned up empty library folders";
 
-        public override bool Active() => true; //todo TVSettings.Instance.CleanLibraryAfterActions;
+        public override bool Active() => TVSettings.Instance.CleanLibraryAfterActions;
 
         protected override void DoCheck(SetProgressDelegate prog)
         {

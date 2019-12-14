@@ -63,6 +63,8 @@ namespace TVRename
             this.txtOtherExtensions = new System.Windows.Forms.TextBox();
             this.cbCopyFutureDatedEps = new System.Windows.Forms.CheckBox();
             this.chkIgnoreAllSpecials = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.domainUpDown1 = new System.Windows.Forms.DomainUpDown();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.cmDefaults = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.KODIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -70,6 +72,7 @@ namespace TVRename
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tpDisplay = new System.Windows.Forms.TabPage();
+            this.cbUseColoursOnWtw = new System.Windows.Forms.CheckBox();
             this.chkBasicShowDetails = new System.Windows.Forms.CheckBox();
             this.chkPostpendThe = new System.Windows.Forms.CheckBox();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
@@ -311,8 +314,6 @@ namespace TVRename
             this.chkShareCriticalLogs = new System.Windows.Forms.CheckBox();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.chkMoveLibraryFiles = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.domainUpDown1 = new System.Windows.Forms.DomainUpDown();
             this.lblScanAction = new System.Windows.Forms.Label();
             this.rdoQuickScan = new System.Windows.Forms.RadioButton();
             this.rdoRecentScan = new System.Windows.Forms.RadioButton();
@@ -365,7 +366,7 @@ namespace TVRename
             this.txtSpecialsFolderName = new System.Windows.Forms.TextBox();
             this.label47 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
-            this.cbUseColoursOnWtw = new System.Windows.Forms.CheckBox();
+            this.chkCleanLibraryAfterActions = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -661,6 +662,39 @@ namespace TVRename
             this.toolTip1.SetToolTip(this.chkIgnoreAllSpecials, "Ignores \'specials\' season for all shows");
             this.chkIgnoreAllSpecials.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(185, 108);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(33, 13);
+            this.label1.TabIndex = 47;
+            this.label1.Text = "hours";
+            this.toolTip1.SetToolTip(this.label1, "If checked the system will automatically scan and complete actions on a periodic " +
+        "schedule");
+            // 
+            // domainUpDown1
+            // 
+            this.domainUpDown1.Items.Add("96");
+            this.domainUpDown1.Items.Add("48");
+            this.domainUpDown1.Items.Add("24");
+            this.domainUpDown1.Items.Add("12");
+            this.domainUpDown1.Items.Add("8");
+            this.domainUpDown1.Items.Add("6");
+            this.domainUpDown1.Items.Add("5");
+            this.domainUpDown1.Items.Add("4");
+            this.domainUpDown1.Items.Add("3");
+            this.domainUpDown1.Items.Add("2");
+            this.domainUpDown1.Items.Add("1");
+            this.domainUpDown1.Location = new System.Drawing.Point(141, 106);
+            this.domainUpDown1.Name = "domainUpDown1";
+            this.domainUpDown1.Size = new System.Drawing.Size(40, 20);
+            this.domainUpDown1.TabIndex = 46;
+            this.domainUpDown1.Text = "1";
+            this.toolTip1.SetToolTip(this.domainUpDown1, "If checked the system will automatically scan and complete actions on a periodic " +
+        "schedule");
+            this.domainUpDown1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.domainUpDown1_KeyDown);
+            // 
             // cmDefaults
             // 
             this.cmDefaults.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -729,6 +763,16 @@ namespace TVRename
             this.tpDisplay.TabIndex = 13;
             this.tpDisplay.Text = "Display";
             this.tpDisplay.UseVisualStyleBackColor = true;
+            // 
+            // cbUseColoursOnWtw
+            // 
+            this.cbUseColoursOnWtw.AutoSize = true;
+            this.cbUseColoursOnWtw.Location = new System.Drawing.Point(220, 311);
+            this.cbUseColoursOnWtw.Name = "cbUseColoursOnWtw";
+            this.cbUseColoursOnWtw.Size = new System.Drawing.Size(181, 17);
+            this.cbUseColoursOnWtw.TabIndex = 44;
+            this.cbUseColoursOnWtw.Text = "Use Colours on When To Watch";
+            this.cbUseColoursOnWtw.UseVisualStyleBackColor = true;
             // 
             // chkBasicShowDetails
             // 
@@ -1392,12 +1436,13 @@ namespace TVRename
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.chkCleanLibraryAfterActions);
             this.groupBox1.Controls.Add(this.cbxUpdateAirDate);
             this.groupBox1.Controls.Add(this.cbAutoCreateFolders);
             this.groupBox1.Controls.Add(this.chkAutoMergeLibraryEpisodes);
             this.groupBox1.Location = new System.Drawing.Point(6, 209);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(404, 95);
+            this.groupBox1.Size = new System.Drawing.Size(404, 115);
             this.groupBox1.TabIndex = 45;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Additional Scan Options";
@@ -1463,7 +1508,7 @@ namespace TVRename
             this.cbScanIncludesBulkAdd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbScanIncludesBulkAdd.AutoSize = true;
-            this.cbScanIncludesBulkAdd.Location = new System.Drawing.Point(7, 310);
+            this.cbScanIncludesBulkAdd.Location = new System.Drawing.Point(7, 330);
             this.cbScanIncludesBulkAdd.Name = "cbScanIncludesBulkAdd";
             this.cbScanIncludesBulkAdd.Size = new System.Drawing.Size(159, 17);
             this.cbScanIncludesBulkAdd.TabIndex = 42;
@@ -1523,7 +1568,7 @@ namespace TVRename
             this.gbBulkAdd.Controls.Add(this.chkForceBulkAddToUseSettingsOnly);
             this.gbBulkAdd.Controls.Add(this.cbIgnoreRecycleBin);
             this.gbBulkAdd.Controls.Add(this.cbIgnoreNoVideoFolders);
-            this.gbBulkAdd.Location = new System.Drawing.Point(7, 333);
+            this.gbBulkAdd.Location = new System.Drawing.Point(7, 353);
             this.gbBulkAdd.Name = "gbBulkAdd";
             this.gbBulkAdd.Size = new System.Drawing.Size(404, 111);
             this.gbBulkAdd.TabIndex = 16;
@@ -3476,39 +3521,6 @@ namespace TVRename
             this.chkMoveLibraryFiles.Text = "Move Files within Library to Keep it Tidy";
             this.chkMoveLibraryFiles.UseVisualStyleBackColor = true;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(185, 108);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(33, 13);
-            this.label1.TabIndex = 47;
-            this.label1.Text = "hours";
-            this.toolTip1.SetToolTip(this.label1, "If checked the system will automatically scan and complete actions on a periodic " +
-        "schedule");
-            // 
-            // domainUpDown1
-            // 
-            this.domainUpDown1.Items.Add("96");
-            this.domainUpDown1.Items.Add("48");
-            this.domainUpDown1.Items.Add("24");
-            this.domainUpDown1.Items.Add("12");
-            this.domainUpDown1.Items.Add("8");
-            this.domainUpDown1.Items.Add("6");
-            this.domainUpDown1.Items.Add("5");
-            this.domainUpDown1.Items.Add("4");
-            this.domainUpDown1.Items.Add("3");
-            this.domainUpDown1.Items.Add("2");
-            this.domainUpDown1.Items.Add("1");
-            this.domainUpDown1.Location = new System.Drawing.Point(141, 106);
-            this.domainUpDown1.Name = "domainUpDown1";
-            this.domainUpDown1.Size = new System.Drawing.Size(40, 20);
-            this.domainUpDown1.TabIndex = 46;
-            this.domainUpDown1.Text = "1";
-            this.toolTip1.SetToolTip(this.domainUpDown1, "If checked the system will automatically scan and complete actions on a periodic " +
-        "schedule");
-            this.domainUpDown1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.domainUpDown1_KeyDown);
-            // 
             // lblScanAction
             // 
             this.lblScanAction.AutoSize = true;
@@ -4089,15 +4101,15 @@ namespace TVRename
             this.label13.TabIndex = 27;
             this.label13.Text = "&Specials folder name:";
             // 
-            // cbUseColoursOnWtw
+            // chkCleanLibraryAfterActions
             // 
-            this.cbUseColoursOnWtw.AutoSize = true;
-            this.cbUseColoursOnWtw.Location = new System.Drawing.Point(220, 311);
-            this.cbUseColoursOnWtw.Name = "cbUseColoursOnWtw";
-            this.cbUseColoursOnWtw.Size = new System.Drawing.Size(181, 17);
-            this.cbUseColoursOnWtw.TabIndex = 44;
-            this.cbUseColoursOnWtw.Text = "Use Colours on When To Watch";
-            this.cbUseColoursOnWtw.UseVisualStyleBackColor = true;
+            this.chkCleanLibraryAfterActions.AutoSize = true;
+            this.chkCleanLibraryAfterActions.Location = new System.Drawing.Point(6, 88);
+            this.chkCleanLibraryAfterActions.Name = "chkCleanLibraryAfterActions";
+            this.chkCleanLibraryAfterActions.Size = new System.Drawing.Size(182, 17);
+            this.chkCleanLibraryAfterActions.TabIndex = 42;
+            this.chkCleanLibraryAfterActions.Text = "&Remove Unused Season Folders";
+            this.chkCleanLibraryAfterActions.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -4540,5 +4552,6 @@ namespace TVRename
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.ComboBox cbTimeZone;
         private System.Windows.Forms.CheckBox cbUseColoursOnWtw;
+        private System.Windows.Forms.CheckBox chkCleanLibraryAfterActions;
     }
 }
