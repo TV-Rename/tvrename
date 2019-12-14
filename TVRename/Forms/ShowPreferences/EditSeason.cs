@@ -289,15 +289,22 @@ namespace TVRename
 
             NewSeenEpisode nse = new NewSeenEpisode(possibleEpisodes);
             DialogResult dialogResult = nse.ShowDialog();
-            if (dialogResult == DialogResult.OK)
-            {
-                episodesToAddToSeen.Add(nse.ChosenEpisode);
 
-                ListViewItem lvi = new ListViewItem { Text = nse.ChosenEpisode.AppropriateEpNum.ToString() };
-                lvi.SubItems.Add(nse.ChosenEpisode.Name);
-                lvi.Tag = nse.ChosenEpisode;
-                lvSeenEpisodes.Items.Add(lvi);
+            if (dialogResult != DialogResult.OK )
+            {
+                return;
             }
+            if (nse.ChosenEpisode is null)
+            {
+                return;
+            }
+
+            episodesToAddToSeen.Add(nse.ChosenEpisode);
+
+            ListViewItem lvi = new ListViewItem { Text = nse.ChosenEpisode.AppropriateEpNum.ToString() };
+            lvi.SubItems.Add(nse.ChosenEpisode.Name);
+            lvi.Tag = nse.ChosenEpisode;
+            lvSeenEpisodes.Items.Add(lvi);
         }
 
         private void Button1_Click(object sender, System.EventArgs e)
