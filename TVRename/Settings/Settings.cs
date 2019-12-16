@@ -521,6 +521,7 @@ namespace TVRename
             writer.WriteElement("DefaultShowTimezoneName", DefaultShowTimezoneName);
             writer.WriteElement("DefShowUseBase", DefShowUseBase);
             writer.WriteElement("DefShowUseSubFolders", DefShowUseSubFolders);
+            writer.WriteElement("SampleFileMaxSizeMB", SampleFileMaxSizeMB); 
 
             TheSearchers.WriteXml(writer);
             WriteReplacements(writer);
