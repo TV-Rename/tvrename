@@ -82,7 +82,7 @@ namespace TVRename
             }
             finally
             {
-                info.Sem.Release(1);
+                info.Sem.Release();
             }
         }
 
@@ -169,15 +169,15 @@ namespace TVRename
                     throw new ArgumentException(message);
                 }
 
-                actionWorkers = new List<Thread>();
-
                 foreach (ActionQueue queue in queues)
                 {
-                    Logger.Info($"Setting up '{queue.Name}' worker, with {queue.ParallelLimit} threads.");
+                    Logger.Info($"Setting up {queue}");
                 }
 
                 try
                 {
+                    actionWorkers = new List<Thread>();
+
                     ExecuteQueues(queues);
 
                     WaitForAllActionThreadsAndTidyUp();
@@ -220,23 +220,9 @@ namespace TVRename
                     Thread.Sleep(100);
                 }
 
-                (bool allDone, ActionQueue q) = ReviewQueues(queues);
-
-                if ((q is null) && (allDone))
+                if (ReviewQueues(queues))
                 {
                     break; // all done!
-                }
-
-                Action act = q?.Actions[q.ActionPosition++];
-
-                if (act is null)
-                {
-                    continue;
-                }
-
-                if (!act.Done)
-                {
-                    StartThread(new ProcessActionInfo(q.Sem, act));
                 }
 
                 while (actionStarting) // wait for thread to get the semaphore
@@ -248,57 +234,65 @@ namespace TVRename
             }
         }
 
-        private (bool,ActionQueue) ReviewQueues([CanBeNull] ActionQueue[] queues)
+        private bool ReviewQueues([CanBeNull] IEnumerable<ActionQueue> queues)
         {
             // look through the list of semaphores to see if there is one waiting for some work to do
             if (queues is null)
             {
-                return (true, null);
+                return true;
             }
 
             bool allDone = true;
-            foreach (ActionQueue currentQueue in queues
-                .Where(currentQueue => !(currentQueue?.Actions is null))
-                .Where(currentQueue => currentQueue.ActionPosition < currentQueue.Actions.Count))
+            foreach (ActionQueue currentQueue in queues.Where(currentQueue => currentQueue.HasCapacity))
             {
                 // something to do in this queue, and semaphore is available
                 allDone = false;
 
                 if (currentQueue.Sem.WaitOne(20, false))
                 {
-                    return(false,currentQueue);
+                    Action act = currentQueue.NextAction();
+
+                    if (act is null)
+                    {
+                        return false;
+                    }
+
+                    if (!act.Done)
+                    {
+                        StartThread(new ProcessActionInfo(currentQueue.Sem, act));
+                    }
                 }
             }
 
-            return (allDone,null);
+            return allDone;
         }
 
         private void StartThread([NotNull] ProcessActionInfo pai)
         {
-            if (pai is null)
+            try
             {
-                throw new ArgumentNullException(nameof(pai));
+                Thread t = new Thread(ProcessSingleAction)
+                {
+                    Name = "ProcessSingleAction(" + pai.TheAction.Name + ":" + pai.TheAction.ProgressText + ")"
+                };
+
+                if (actionWorkers is null)
+                {
+                    Logger.Error(
+                        $"Asked to start for {pai.TheAction.Name}, but actionWorkers has been removed, please restart TV Rename and contact help if this recurrs.");
+
+                    return;
+                }
+
+                actionWorkers.Add(t);
+                actionStarting = true; // set to false in thread after it has the semaphore
+                t.Start(pai);
             }
-
-            Thread t = new Thread(ProcessSingleAction)
+            finally
             {
-                Name = "ProcessSingleAction(" + pai.TheAction.Name + ":" + pai.TheAction.ProgressText + ")"
-            };
-
-            if (actionWorkers is null)
-            {
-                Logger.Error(
-                    $"Asked to start for {pai.TheAction.Name}, but actionWorkers has been removed, please restart TV Rename and contact help if this recurrs.");
-                return;
+                int nfr = pai.Sem.Release(); // release our hold on the semaphore, so that worker can grab it
+                Threadslogger.Trace("ActionProcessor[" + pai.Sem + "] pool has " + nfr + " free");
             }
-
-            actionWorkers.Add(t);
-            actionStarting = true; // set to false in thread after it has the semaphore
-            t.Start(pai);
-
-            int nfr = pai.Sem.Release(1); // release our hold on the semaphore, so that worker can grab it
-
-            Threadslogger.Trace("ActionProcessor[" + pai.Sem + "] pool has " + nfr + " free");
         }
 
         private void TidyDeadWorkers()

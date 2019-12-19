@@ -12,21 +12,23 @@ namespace TVRename
 {
     public class ActionQueue
     {
-        public readonly List<Action> Actions; // The contents of this queue
-        public readonly int ParallelLimit; // Number of tasks in the queue than can be run at once
-        public readonly string Name; // Name of this queue
+        public readonly List<Action> Actions = new List<Action>(); // The contents of this queue
         public readonly Semaphore Sem;
 
-        // Position in the queue list of the next item to process
-        public int ActionPosition { get; set; }
+        private readonly int parallelThreadLimit; // Number of tasks in the queue than can be run at once
+        private readonly string queueName; // Name of this queue
+        private int actionPosition; // Position in the queue list of the next item to process
 
+        public bool HasCapacity => actionPosition<Actions.Count;
+        public Action NextAction() => Actions[actionPosition++];
         public ActionQueue(string name, int parallelLimit)
         {
-            Name = name;
-            ParallelLimit = parallelLimit;
-            Actions = new List<Action>();
-            ActionPosition = 0;
-            Sem =new Semaphore(parallelLimit,parallelLimit,Name); // allow up to numWorkers working at once
+            queueName = name;
+            parallelThreadLimit = parallelLimit;
+            actionPosition = 0;
+            Sem =new Semaphore(parallelLimit,parallelLimit,name); // allow up to numWorkers working at once
         }
+
+        public override string ToString() => $"'{queueName}' worker, with {parallelThreadLimit} threads.";
     }
 }
