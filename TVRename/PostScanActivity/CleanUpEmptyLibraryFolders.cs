@@ -36,17 +36,21 @@ namespace TVRename
             }
         }
 
-        private void RemoveDirectory(string folderName)
+        private static void RemoveDirectory([NotNull] string folderName)
         {
             LOGGER.Info($"Removing {folderName} as part of the library clean up");
             foreach (string file in Directory.GetFiles(folderName))
             {
                 LOGGER.Info($"    Folder contains {file}");
             }
-            Directory.Delete(folderName,true);
+
+            LOGGER.Info($"Recycling {folderName}");
+            Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName,
+                Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
         }
 
-        private bool CanRemove(string folderName)
+        private static bool CanRemove(string folderName)
         {
             if (!Directory.Exists(folderName))
             {
