@@ -174,6 +174,14 @@ namespace TVRename
                Logger.Warn(json.ToString());
                Logger.Info(jsonInDefaultLang .ToString());
             }
+
+            if (SrvLastUpdated == 0)
+            {
+                Logger.Warn("Issue with series (update time is 0) " + TvdbCode);
+                Logger.Warn(json.ToString());
+                Logger.Info(jsonInDefaultLang.ToString());
+                SrvLastUpdated = 100;
+            }
         }
 
         public IEnumerable<Actor> GetActors() => actors;
