@@ -61,12 +61,21 @@ namespace TVRename
             {
                 if (whereFile != null)
                 {
-                    ProcessFile(whereFile,updateTime);
+                    ProcessFile(whereFile, updateTime);
                 }
+
                 if (whereDirectory != null)
                 {
-                    System.IO.Directory.SetLastWriteTimeUtc(whereDirectory.FullName, updateTime );
+                    System.IO.Directory.SetLastWriteTimeUtc(whereDirectory.FullName, updateTime);
                 }
+            }
+            catch (UnauthorizedAccessException uae)
+            {
+                ErrorText = uae.Message;
+                LastError = null;
+                Error = true;
+                Done = true;
+                return false;
             }
             catch (Exception e)
             {
