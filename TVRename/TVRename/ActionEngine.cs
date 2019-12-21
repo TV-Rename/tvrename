@@ -184,9 +184,12 @@ namespace TVRename
                 }
                 catch (ThreadAbortException)
                 {
-                    foreach (Thread t in actionWorkers)
+                    if (!(actionWorkers is null))
                     {
-                        t?.Abort();
+                        foreach (Thread t in actionWorkers)
+                        {
+                            t?.Abort();
+                        }
                     }
 
                     WaitForAllActionThreadsAndTidyUp();
