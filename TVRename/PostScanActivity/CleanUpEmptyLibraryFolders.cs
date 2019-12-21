@@ -38,16 +38,23 @@ namespace TVRename
 
         private static void RemoveDirectory([NotNull] string folderName)
         {
-            LOGGER.Info($"Removing {folderName} as part of the library clean up");
-            foreach (string file in Directory.GetFiles(folderName))
+            try
             {
-                LOGGER.Info($"    Folder contains {file}");
-            }
+                LOGGER.Info($"Removing {folderName} as part of the library clean up");
+                foreach (string file in Directory.GetFiles(folderName))
+                {
+                    LOGGER.Info($"    Folder contains {file}");
+                }
 
-            LOGGER.Info($"Recycling {folderName}");
-            Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName,
-                Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
-                Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                LOGGER.Info($"Recycling {folderName}");
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName,
+                    Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                    Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+            }
+            catch (FileReadOnlyException)
+            {
+                LOGGER.Info($"Could not recycle {folderName} as we got a FileReadOnlyException");
+            }
         }
 
         private static bool CanRemove(string folderName)
