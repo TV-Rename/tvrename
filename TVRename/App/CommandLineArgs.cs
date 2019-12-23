@@ -22,9 +22,8 @@ namespace TVRename
             create
         }
 
-        public bool Help { get; }
         public bool Hide { get; }
-        public MissingFolderBehavior MissingFolder { get; set; } // TODO: Make read only
+        public MissingFolderBehavior MissingFolder { get; private set; }
         public bool RenameCheck { get; }
         public bool Quit { get; }
         public bool ForceRecover { get; }
@@ -36,13 +35,14 @@ namespace TVRename
         public bool Unattended { get; }
         public string UserFilePath { get; }
 
+        MissingFolderBehavior previousMissingFolderBehavior;
+
         /// <summary>
         /// Initializes a new instance populated with values parsed from the command line arguments.
         /// </summary>
         /// <param name="args">The command line arguments.</param>
         public CommandLineArgs([NotNull] ReadOnlyCollection<string> args)
         {
-            Help = args.Contains("/?", StringComparer.OrdinalIgnoreCase);
             Hide = args.Contains("/hide", StringComparer.OrdinalIgnoreCase);
             RenameCheck = !args.Contains("/norenamecheck", StringComparer.OrdinalIgnoreCase);
             Quit = args.Contains("/quit", StringComparer.OrdinalIgnoreCase);
@@ -96,6 +96,23 @@ namespace TVRename
             output.AppendLine("Further information is available at http://www.tvrename.com/cmd-line");
 
             return output.ToString();
+        }
+
+        public void RevertFromTempUse()
+        {
+            MissingFolder = previousMissingFolderBehavior;
+        }
+
+        public void TemporarilyUse([NotNull] CommandLineArgs localArgs)
+        {
+            // Temporarily override behavior for missing folders
+            previousMissingFolderBehavior = MissingFolder;
+
+            if (localArgs.MissingFolder != MissingFolderBehavior.ask)
+            {
+                // Temporarily override behavior for missing folders
+                MissingFolder = localArgs.MissingFolder;
+            }
         }
     }
 }

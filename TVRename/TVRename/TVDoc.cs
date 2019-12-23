@@ -259,12 +259,9 @@ namespace TVRename
 
                 //MonitorFolders are a little more complex as there is a parameter named the same which we need to ignore
                 IEnumerable<XElement> mfs = x.Descendants("MonitorFolders");
-                foreach (XElement mf in mfs)
+                foreach (XElement mf in mfs.Where(mf => mf.Descendants("Folder").Any()))
                 {
-                    if (mf.Descendants("Folder").Any())
-                    {
-                        TVSettings.Instance.LibraryFolders = mf.ReadStringsFromXml("Folder");
-                    }
+                    TVSettings.Instance.LibraryFolders = mf.ReadStringsFromXml("Folder");
                 }
             }
             catch (Exception e)
@@ -816,17 +813,11 @@ namespace TVRename
 
                         DirectoryInfo di = new DirectoryInfo(subDirPath);
 
-                        foreach (ShowItem si in Library.Values)
+                        foreach (ShowItem si in Library.Values
+                            .Where(si => !showsToScan.Contains(si))
+                            .Where(si => si.NameMatch(di,TVSettings.Instance.UseFullPathNameToMatchSearchFolders)))
                         {
-                            if (showsToScan.Contains(si))
-                            {
-                                continue;
-                            }
-
-                            if (si.NameMatch(di,TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
-                            {
-                                showsToScan.Add(si);
-                            }
+                            showsToScan.Add(si);
                         }
                     }
                 }

@@ -1010,7 +1010,7 @@ namespace TVRename
             }
         }
 
-        private void SetDropdownValue([NotNull] DomainUpDown control, int sPeriodCheckHours)
+        private static void SetDropdownValue([NotNull] DomainUpDown control, int sPeriodCheckHours)
         {
             foreach (object item in control.Items)
             {

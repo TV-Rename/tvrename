@@ -197,34 +197,21 @@ namespace TVRename
         private void RecieveArguments([NotNull] string[] args)
         {
             // Send command-line arguments to already running instance
-            CommandLineArgs.MissingFolderBehavior previousMissingFolderBehavior = mDoc?.Args.MissingFolder ?? CommandLineArgs.MissingFolderBehavior.ask;
-            bool previousRenameBehavior = TVSettings.Instance.RenameCheck;
 
             // Parse command line arguments
             CommandLineArgs localArgs = new CommandLineArgs(new ReadOnlyCollection<string>(args));
 
-            if (localArgs.RenameCheck == false)
-            {
-                // Temporarily override behavior for renaming folders
-                TVSettings.Instance.RenameCheck = false;
-            }
-
-            if (localArgs.MissingFolder != CommandLineArgs.MissingFolderBehavior.ask)
-            {
-                // Temporarily override behavior for missing folders
-                if (!(mDoc is null))
-                {
-                    mDoc.Args.MissingFolder = localArgs.MissingFolder; 
-                }
-            }
+            bool previousRenameBehavior = TVSettings.Instance.RenameCheck;
+            // Temporarily override behavior for renaming folders
+            TVSettings.Instance.RenameCheck = localArgs.RenameCheck;
+            // Temporarily override behavior for missing folders
+            mDoc?.Args.TemporarilyUse(localArgs);
 
             ProcessArgs(localArgs);
 
+            //Revert the settings
             TVSettings.Instance.RenameCheck = previousRenameBehavior;
-            if (!(mDoc is null))
-            {
-                mDoc.Args.MissingFolder = previousMissingFolderBehavior;
-            }
+            mDoc?.Args.RevertFromTempUse();
         }
         private void ScanAndAction(TVSettings.ScanType type)
         {
@@ -3314,8 +3301,6 @@ namespace TVRename
 
         private void bnActionAction_Click(object sender, EventArgs e) => ActionAction(true,false);
 
-        public void ProcessAll() => ActionAction(true,true);
-
         private void ActionAction(bool checkedNotSelected, bool unattended)
         {
             mDoc.PreventAutoScan("Action Selected Items");
@@ -4158,7 +4143,7 @@ namespace TVRename
             tabControl1.SelectedTab = tbAllInOne;
         }
 
-        public void ForceRefresh()
+        private void ForceRefresh()
         {
             ForceRefresh(mDoc.Library.GetShowItems(),true);
         }
