@@ -219,7 +219,7 @@ namespace TVRename.Forms
             this.MinimumSize = new System.Drawing.Size(600, 400);
             this.Name = "DupEpFinder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Dupicate Episode Finder";
+            this.Text = "Duplicate Episode Finder";
             this.duplicateRightClickMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
