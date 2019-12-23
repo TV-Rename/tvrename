@@ -77,6 +77,7 @@ namespace TVRename
         {
             StringBuilder output = new StringBuilder();
             output.AppendLine();
+            output.AppendLine("/forcerefresh will refresh all TVDB information");
             output.AppendLine("/scan will Tell TV Rename to run a scan");
             output.AppendLine("/quickscan will scan shows most likely to need an update: http://www.tvrename.com/userguide#scan");
             output.AppendLine("/recentscan will scan recent shows: http://www.tvrename.com/userguide#scan");
