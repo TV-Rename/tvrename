@@ -642,7 +642,7 @@ namespace TVRename
             {
                 bool added = false;
 
-                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
+                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes.Clone())
                 {
                     if (added)
                     {
