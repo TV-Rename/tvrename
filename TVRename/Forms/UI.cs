@@ -9,6 +9,7 @@
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -74,7 +75,12 @@ namespace TVRename
 
         #region Delegates
 
-        public delegate void AutoFolderMonitorDelegate();
+        //public delegate void AutoFolderMonitorDelegate();
+        public delegate void ScanTypeDelegate(TVSettings.ScanType type);
+        public delegate void ArgumentDelagate(string[] args);
+
+        public readonly ScanTypeDelegate ScanAndDo;
+        public readonly ArgumentDelagate RecieveArgumentDelagate;
 
         #endregion
 
@@ -82,11 +88,6 @@ namespace TVRename
         private readonly TVDoc mDoc;
         private bool internalCheckChange;
         private int lastDlRemaining;
-
-        public AutoFolderMonitorDelegate AfmFullScan;
-        public AutoFolderMonitorDelegate AfmRecentScan;
-        public AutoFolderMonitorDelegate AfmQuickScan;
-        public AutoFolderMonitorDelegate AfmDoAll;
 
         private MyListView lvAction;
         private List<string> mFoldersToOpen;
@@ -104,6 +105,7 @@ namespace TVRename
         private List<ShowItem> mLastShowsClicked;
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private bool IsBusy => busy!=0;
 
         public UI(TVDoc doc, [NotNull] TVRenameSplash splash, bool showUi)
         {
@@ -123,7 +125,8 @@ namespace TVRename
 
             InitializeComponent();
 
-            SetupIpc();
+            ScanAndDo = ScanAndAction;
+            RecieveArgumentDelagate = RecieveArguments;
 
             try
             {
@@ -191,6 +194,44 @@ namespace TVRename
             UpdateSplashStatus(splash, "Running autoscan");
         }
 
+        private void RecieveArguments([NotNull] string[] args)
+        {
+            // Send command-line arguments to already running instance
+            CommandLineArgs.MissingFolderBehavior previousMissingFolderBehavior = mDoc?.Args.MissingFolder ?? CommandLineArgs.MissingFolderBehavior.ask;
+            bool previousRenameBehavior = TVSettings.Instance.RenameCheck;
+
+            // Parse command line arguments
+            CommandLineArgs localArgs = new CommandLineArgs(new ReadOnlyCollection<string>(args));
+
+            if (localArgs.RenameCheck == false)
+            {
+                // Temporarily override behavior for renaming folders
+                TVSettings.Instance.RenameCheck = false;
+            }
+
+            if (localArgs.MissingFolder != CommandLineArgs.MissingFolderBehavior.ask)
+            {
+                // Temporarily override behavior for missing folders
+                if (!(mDoc is null))
+                {
+                    mDoc.Args.MissingFolder = localArgs.MissingFolder; 
+                }
+            }
+
+            ProcessArgs(localArgs);
+
+            TVSettings.Instance.RenameCheck = previousRenameBehavior;
+            if (!(mDoc is null))
+            {
+                mDoc.Args.MissingFolder = previousMissingFolderBehavior;
+            }
+        }
+        private void ScanAndAction(TVSettings.ScanType type)
+        {
+            UiScan(null,true,type);
+            ActionAction(true,true);
+        }
+
         private static void UpdateSplashStatus([NotNull] TVRenameSplash splashScreen, string text)
         {
             if (splashScreen.IsHandleCreated) {
@@ -221,43 +262,36 @@ namespace TVRename
 
         private void LessBusy() => Interlocked.Decrement(ref busy);
 
-        private void SetupIpc()
+        private void ProcessArgs([NotNull] CommandLineArgs a)
         {
-            AfmFullScan += Scan;
-            AfmQuickScan += QuickScan;
-            AfmRecentScan += RecentScan;
-            AfmDoAll += ProcessAll;
-        }
+            const bool UNATTENDED = true;
 
-        private void ProcessArgs()
-        {
-            // TODO: Unify command line handling between here and in Program.cs
-            if (mDoc.Args.ForceRefresh)
+            if (a.ForceRefresh)
             {
                 ForceRefresh();
             }
 
-            if (mDoc.Args.Scan)
+            if (a.Scan)
             {
-                UiScan(null, true, TVSettings.ScanType.Full);
+                UiScan(null, UNATTENDED, TVSettings.ScanType.Full);
             }
 
-            if (mDoc.Args.QuickScan)
+            if (a.QuickScan)
             {
-                UiScan(null, true, TVSettings.ScanType.Quick);
+                UiScan(null, UNATTENDED, TVSettings.ScanType.Quick);
             }
 
-            if (mDoc.Args.RecentScan)
+            if (a.RecentScan)
             {
-                UiScan(null, true, TVSettings.ScanType.Recent);
+                UiScan(null, UNATTENDED, TVSettings.ScanType.Recent);
             }
 
-            if (mDoc.Args.DoAll)
+            if (a.DoAll)
             {
-                ProcessAll();
+                ActionAction(true, UNATTENDED);
             }
 
-            if (mDoc.Args.Quit || mDoc.Args.Hide)
+            if (a.Quit || a.Hide)
             {
                 Close();
             }
@@ -381,7 +415,7 @@ namespace TVRename
 
         private void flushImageCacheToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (busy != 0)
+            if (IsBusy)
             {
                 MessageBox.Show("Can't refresh until background download is complete");
                 return;
@@ -394,7 +428,7 @@ namespace TVRename
 
         private void flushCacheToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (busy != 0)
+            if (IsBusy)
             {
                 MessageBox.Show("Can't refresh until background download is complete");
                 return;
@@ -1234,10 +1268,12 @@ namespace TVRename
 
         private void refreshWTWTimer_Tick(object sender, EventArgs e)
         {
-            if (busy == 0)
+            if (IsBusy)
             {
-                RefreshWTW(false,true);
+                return;
             }
+
+            RefreshWTW(false,true);
         }
 
         // ReSharper disable once InconsistentNaming
@@ -1343,11 +1379,6 @@ namespace TVRename
             }
 
             Activate();
-        }
-
-        public void Scan()
-        {
-            UiScan(null, true, TVSettings.ScanType.Full);
         }
 
         private void notifyIcon1_DoubleClick(object sender, MouseEventArgs e)
@@ -2170,19 +2201,21 @@ namespace TVRename
                 txtDLStatusLabel.Text = "Background download: Idle";
             }
 
-            if (busy == 0)
+            if (IsBusy)
             {
-                if (n == 0 && lastDlRemaining > 0)
-                {
-                    // we've just finished a bunch of background downloads
-                    TheTVDB.Instance.SaveCache();
-                    RefreshWTW(false,true);
-
-                    backgroundDownloadNowToolStripMenuItem.Enabled = true;
-                }
-
-                lastDlRemaining = n;
+                return;
             }
+
+            if (n == 0 && lastDlRemaining > 0)
+            {
+                // we've just finished a bunch of background downloads
+                TheTVDB.Instance.SaveCache();
+                RefreshWTW(false,true);
+
+                backgroundDownloadNowToolStripMenuItem.Enabled = true;
+            }
+
+            lastDlRemaining = n;
         }
 
         private void backgroundDownloadToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2216,7 +2249,7 @@ namespace TVRename
         
         private void BGDownloadTimer_Tick(object sender, EventArgs e)
         {
-            if (busy != 0)
+            if (IsBusy)
             {
                 BGDownloadTimer.Interval = 10000; // come back in 10 seconds
                 BGDownloadTimer.Start();
@@ -2956,7 +2989,7 @@ namespace TVRename
         private void quickTimer_Tick(object sender, EventArgs e)
         {
             quickTimer.Stop();
-            ProcessArgs();
+            ProcessArgs(mDoc.Args);
         }
 
         private void bnMyShowsCollapse_Click(object sender, EventArgs e)
@@ -3029,10 +3062,6 @@ namespace TVRename
         }
 
         private void bnActionCheck_Click(object sender, EventArgs e) => UiScan(null, false, TVSettings.ScanType.Full);
-
-        public void QuickScan() => UiScan(null, true, TVSettings.ScanType.Quick);
-
-        public void RecentScan() => UiScan(mDoc.Library.GetRecentShows(), true, TVSettings.ScanType.Recent);
 
         private void UiScan([CanBeNull] List<ShowItem> shows, bool unattended, TVSettings.ScanType st)
         {
@@ -3995,8 +4024,7 @@ namespace TVRename
             {
                 Logger.Info("*******************************");
                 Logger.Info(scanType + " fired");
-                UiScan(null, true, TVSettings.Instance.MonitoredFoldersScanType);
-                ProcessAll();
+                ScanAndAction(TVSettings.Instance.MonitoredFoldersScanType);
                 Logger.Info(scanType + " complete");
             }
             else

@@ -7,7 +7,6 @@
 // 
 
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -76,63 +75,12 @@ namespace TVRename.App
                 if (args.Length == 0)
                 {
                     ipc.FocusWindow();
-
-                    return;
                 }
-
-                // Send command-line arguments to already running instance
-                CommandLineArgs.MissingFolderBehavior previousMissingFolderBehavior = ipc.MissingFolderBehavior;
-                bool previousRenameBehavior = ipc.RenameBehavior;
-
-                // Parse command line arguments
-                CommandLineArgs clargs = new CommandLineArgs(new ReadOnlyCollection<string>(args));
-
-                if (clargs.RenameCheck == false)
+                else
                 {
-                    // Temporarily override behavior for renaming folders
-                    ipc.RenameBehavior = false;
+                    Logger.Warn($"Sending {string.Join(" ", args)} to the running instance.");
+                    ipc.SendArgs(args);
                 }
-
-                if (clargs.MissingFolder != CommandLineArgs.MissingFolderBehavior.ask)
-                {
-                    // Temporarily override behavior for missing folders
-                    ipc.MissingFolderBehavior = clargs.MissingFolder;
-                }
-
-                // TODO: Unify command line handling between here and in UI.cs (ProcessArgs). Just send in clargs via IPC?
-                if (clargs.ForceRefresh)
-                {
-                    ipc.ForceRefresh();
-                }
-
-                if (clargs.Scan)
-                {
-                    ipc.Scan();
-                }
-
-                if (clargs.QuickScan)
-                {
-                    ipc.QuickScan();
-                }
-
-                if (clargs.RecentScan)
-                {
-                    ipc.RecentScan();
-                }
-
-                if (clargs.DoAll)
-                {
-                    ipc.ProcessAll();
-                }
-
-                if (clargs.Quit)
-                {
-                    ipc.Quit();
-                }
-
-                // TODO: Necessary?
-                ipc.RenameBehavior = previousRenameBehavior;
-                ipc.MissingFolderBehavior = previousMissingFolderBehavior;
 
                 return;
             }
@@ -163,8 +111,8 @@ namespace TVRename.App
 
             Logger.Info("Application exiting");
         }
-    
-    static void GlobalExceptionHandler(object sender, UnhandledExceptionEventArgs args)
+
+        static void GlobalExceptionHandler(object sender, UnhandledExceptionEventArgs args)
     {
         Exception e = (Exception) args.ExceptionObject;
         Logger.Fatal(e,"UNHANDLED ERROR - GLobalExceptionHandler");

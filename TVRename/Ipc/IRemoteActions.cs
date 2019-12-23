@@ -20,26 +20,6 @@ namespace TVRename.Ipc
         void FocusWindow();
 
         /// <summary>
-        /// Scans all files.
-        /// </summary>
-        void Scan();
-
-        /// <summary>
-        /// Scans all files.
-        /// </summary>
-        void QuickScan();
-
-        /// <summary>
-        /// Scans all files.
-        /// </summary>
-        void RecentScan();
-
-        /// <summary>
-        /// Processes all file tasks.
-        /// </summary>
-        void ProcessAll();
-
-        /// <summary>
         /// Quits the application.
         /// </summary>
         void Quit();

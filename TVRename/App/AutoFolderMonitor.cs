@@ -90,22 +90,11 @@ namespace TVRename
                 Logger.Info("Auto scan fired");
                 if (mainForm != null)
                 {
-                    switch (TVSettings.Instance.MonitoredFoldersScanType)
+                    if (TVSettings.Instance.MonitoredFoldersScanType == TVSettings.ScanType.SingleShow)
                     {
-                        case TVSettings.ScanType.Full:
-                            mainForm.Invoke(mainForm.AfmFullScan);
-                            break;
-                        case TVSettings.ScanType.Recent:
-                            mainForm.Invoke(mainForm.AfmRecentScan);
-                            break;
-                        case TVSettings.ScanType.Quick:
-                            mainForm.Invoke(mainForm.AfmQuickScan);
-                            break;
-                        case TVSettings.ScanType.SingleShow:
-                        default:
-                            throw new ArgumentException("Inappropriate action for auto-scan " + TVSettings.Instance.MonitoredFoldersScanType);
+                        throw new ArgumentException("Inappropriate action for auto-scan " + TVSettings.Instance.MonitoredFoldersScanType);
                     }
-                    mainForm.Invoke(mainForm.AfmDoAll);
+                    mainForm.BeginInvoke(mainForm.ScanAndDo,TVSettings.Instance.MonitoredFoldersScanType);
                 }
             }
             else

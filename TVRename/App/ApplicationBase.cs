@@ -68,7 +68,7 @@ namespace TVRename.App
             ui.Text = ui.Text + " " + Helpers.DisplayVersion;
 
             // Bind IPC actions to the form, this allows another instance to trigger form actions
-            RemoteClient.Bind(ui, doc);
+            RemoteClient.Bind(ui);
 
             MainForm = ui;
         }
