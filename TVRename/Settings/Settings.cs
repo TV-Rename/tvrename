@@ -51,6 +51,13 @@ namespace TVRename
             }
         }
 
+        const string VideoExtensionsStringDEFAULT =
+        ".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm;.m4v;.webm;.vob;.ovg;.ogg;.mov;.m4p;.3gp;.wtv;.ts";
+
+        const string OtherExtensionsStringDEFAULT = ".srt;.nfo;.txt;.tbn";
+        const string keepTogetherExtensionsStringDEFAULT = ".srt;.nfo;.txt;.tbn";
+        const string subtitleExtensionsStringDEFAULT = ".srt;.sub;.sbv;.idx";
+
         #region FolderJpgIsType enum
 
         public enum FolderJpgIsType
@@ -330,12 +337,10 @@ namespace TVRename
             LibraryFolders = new List<string>();
             IgnoredAutoAddHints = new List<string>();
 
-            VideoExtensionsString =
-                ".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm;.m4v;.webm;.vob;.ovg;.ogg;.mov;.m4p;.3gp";
-
-            OtherExtensionsString = ".srt;.nfo;.txt;.tbn";
-            keepTogetherExtensionsString = ".srt;.nfo;.txt;.tbn";
-            subtitleExtensionsString = ".srt;.sub;.sbv;.idx";
+            VideoExtensionsString = VideoExtensionsStringDEFAULT;
+            OtherExtensionsString = OtherExtensionsStringDEFAULT;
+            keepTogetherExtensionsString = keepTogetherExtensionsStringDEFAULT;
+            subtitleExtensionsString = subtitleExtensionsStringDEFAULT;
 
             // have a guess at utorrent's path
             string[] guesses = new string[3];
@@ -1158,10 +1163,9 @@ namespace TVRename
                                           xmlSettings.ExtractInt("DefaultNamingStyle",1)); // old naming style
             NotificationAreaIcon = xmlSettings.ExtractBool("NotificationAreaIcon",false);
             VideoExtensionsString = xmlSettings.ExtractString("VideoExtensions",
-                                    xmlSettings.ExtractString("GoodExtensions",
-                                        ".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm;.m4v;.webm;.vob;.ovg;.ogg;.mov;.m4p;.3gp"));
-            OtherExtensionsString = xmlSettings.ExtractString("OtherExtensions", ".srt;.nfo;.txt;.tbn");
-            subtitleExtensionsString = xmlSettings.ExtractString("SubtitleExtensions", ".srt;.sub;.sbv;.idx");
+                                    xmlSettings.ExtractString("GoodExtensions",VideoExtensionsStringDEFAULT));
+            OtherExtensionsString = xmlSettings.ExtractString("OtherExtensions",OtherExtensionsStringDEFAULT);
+            subtitleExtensionsString = xmlSettings.ExtractString("SubtitleExtensions", subtitleExtensionsStringDEFAULT);
             ExportRSSMaxDays = xmlSettings.ExtractInt("ExportRSSMaxDays",7);
             ExportRSSMaxShows = xmlSettings.ExtractInt("ExportRSSMaxShows",10);
             ExportRSSDaysPast = xmlSettings.ExtractInt("ExportRSSDaysPast",0);
@@ -1269,7 +1273,7 @@ namespace TVRename
             searchSeasonWordsString = xmlSettings.ExtractString("SearchSeasonNames", "Season;Series;Saison;Temporada;Seizoen");
             preferredRSSSearchTermsString = xmlSettings.ExtractString("PreferredRSSSearchTerms", "720p;1080p");
             keepTogetherMode = xmlSettings.ExtractEnum("KeepTogetherType", KeepTogetherModes.All);
-            keepTogetherExtensionsString = xmlSettings.ExtractString("KeepTogetherExtensions", ".srt;.nfo;.txt;.tbn");
+            keepTogetherExtensionsString = xmlSettings.ExtractString("KeepTogetherExtensions", keepTogetherExtensionsStringDEFAULT);
             ExportWTWRSS = xmlSettings.ExtractBool("ExportWTWRSS",false);
             CopyFutureDatedEpsFromSearchFolders = xmlSettings.ExtractBool("CopyFutureDatedEpsFromSearchFolders",false);
             ShareLogs = xmlSettings.ExtractBool("ShareLogs",true);
