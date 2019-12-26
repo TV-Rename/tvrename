@@ -62,12 +62,12 @@ namespace TVRename
             try
             {
                 lengthLabel.Text =
-                    "Length: " + ((leftFilmLength == -1) ? "Unknown" : leftFilmLength.Seconds().Humanize(2));
+                    "Length: " + (leftFilmLength == -1 ? "Unknown" : leftFilmLength.Seconds().Humanize(2));
             }
             catch (ArgumentException) //bug in Humanizer causes this in Polish
             {
                 lengthLabel.Text =
-                    "Length: " + ((leftFilmLength == -1) ? "Unknown" : leftFilmLength.Seconds() + " s");
+                    "Length: " + (leftFilmLength == -1 ? "Unknown" : leftFilmLength.Seconds() + " s");
             }
 
             sizeLabel.Text = GetFileSize(file);
@@ -76,10 +76,7 @@ namespace TVRename
             return (leftFrameWidth, leftFrameUnknown, leftFilmLength);
         }
 
-        private static string GetFileSize([NotNull] FileInfo file)
-        {
-                return file.Length.Bytes().Humanize("#.#");
-        }
+        private static string GetFileSize([NotNull] FileInfo file) => file.Length.Bytes().Humanize("#.#");
 
         private void SetBoldFileSize([NotNull] FileInfo left, [NotNull] FileInfo right)
         {

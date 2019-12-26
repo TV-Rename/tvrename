@@ -85,7 +85,7 @@ namespace TVRename
                     if (i < lvSeenEpisodes.Items.Count)
                     {
                         int n = i;
-                        if ((n >= 0) && (n < lvSeenEpisodes.Items.Count))
+                        if (n >= 0 && n < lvSeenEpisodes.Items.Count)
                         {
                             lvSeenEpisodes.Items[n].Selected = true;
                         }
@@ -138,7 +138,7 @@ namespace TVRename
                     if (i < lvRuleList.Items.Count)
                     {
                         int n = i + adj;
-                        if ((n >= 0) && (n < lvRuleList.Items.Count))
+                        if (n >= 0 && n < lvRuleList.Items.Count)
                         {
                             lvRuleList.Items[n].Selected = true;
                         }
@@ -156,7 +156,7 @@ namespace TVRename
                 return;
             }
 
-            ShowRule sr = (ShowRule) (lvRuleList.SelectedItems[0].Tag);
+            ShowRule sr = (ShowRule) lvRuleList.SelectedItems[0].Tag;
             AddModifyRule ar = new AddModifyRule(sr,show.GetSeason(mSeasonNumber),show.DvdOrder);
             ar.ShowDialog(); // modifies rule in-place if OK'd
             FillRuleList(false, 0);
@@ -169,7 +169,7 @@ namespace TVRename
                 return;
             }
 
-            ShowRule sr = (ShowRule) (lvRuleList.SelectedItems[0].Tag);
+            ShowRule sr = (ShowRule) lvRuleList.SelectedItems[0].Tag;
 
             workingRuleSet.Remove(sr);
             FillRuleList(false, 0);
@@ -203,7 +203,7 @@ namespace TVRename
             }
 
             int p = lvRuleList.SelectedIndices[0];
-            if (p >= (lvRuleList.Items.Count - 1))
+            if (p >= lvRuleList.Items.Count - 1)
             {
                 return;
             }
@@ -324,7 +324,7 @@ namespace TVRename
 
         private void LvSeenEpisodes_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            bnRemoveSeen.Enabled = (lvSeenEpisodes.SelectedItems.Count > 0);
+            bnRemoveSeen.Enabled = lvSeenEpisodes.SelectedItems.Count > 0;
         }
 
         private void LvSeenEpisodes_ColumnClick(object sender, [NotNull] ColumnClickEventArgs e)

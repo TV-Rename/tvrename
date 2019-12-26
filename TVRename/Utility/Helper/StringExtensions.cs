@@ -16,10 +16,7 @@ namespace TVRename
     public static class StringExtensions
     {
         [NotNull]
-        public static string ItemItems(this int n)
-        {
-            return n == 1 ? "Item" : "Items";
-        }
+        public static string ItemItems(this int n) => n == 1 ? "Item" : "Items";
 
         public static bool IsWebLink([NotNull] this string s)
         {

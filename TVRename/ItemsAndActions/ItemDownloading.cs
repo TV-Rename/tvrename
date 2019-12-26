@@ -36,16 +36,16 @@ namespace TVRename
             Episode = pe;
             DesiredLocationNoExt = desiredLocationNoExt;
             entry = dl;
-            IconNumber = (tApp == DownloadingFinder.DownloadApp.uTorrent) ? 2 :
-                         (tApp == DownloadingFinder.DownloadApp.SABnzbd)  ? 8 :
-                         (tApp == DownloadingFinder.DownloadApp.qBitTorrent) ? 10 : 0;
+            IconNumber = tApp == DownloadingFinder.DownloadApp.uTorrent ? 2 :
+                         tApp == DownloadingFinder.DownloadApp.SABnzbd  ? 8 :
+                         tApp == DownloadingFinder.DownloadApp.qBitTorrent ? 10 : 0;
         }
 
         #region Item Members
 
         public override bool SameAs(Item o)
         {
-            return (o is ItemDownloading torrenting) && entry == torrenting.entry;
+            return o is ItemDownloading torrenting && entry == torrenting.entry;
         }
 
         public override int Compare(Item o)
@@ -65,7 +65,7 @@ namespace TVRename
                 return -1;
             }
 
-            return string.Compare((DesiredLocationNoExt), ut.DesiredLocationNoExt, StringComparison.Ordinal);
+            return string.Compare(DesiredLocationNoExt, ut.DesiredLocationNoExt, StringComparison.Ordinal);
         }
         #endregion
     }

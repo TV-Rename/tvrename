@@ -130,7 +130,7 @@ namespace TVRename
                 {
                     while (reader.Read())
                     {
-                        if ((reader.Name == "tvdbid") && reader.IsStartElement())
+                        if (reader.Name == "tvdbid" && reader.IsStartElement())
                         {
                             string s = reader.ReadElementContentAsString();
                             bool success = int.TryParse(s, out int x);
@@ -419,7 +419,7 @@ namespace TVRename
 
                 if (ai.HasSeasonFoldersGuess)
                 {
-                    found.AutoAddType = (ai.SeasonFolderFormat == TVSettings.Instance.SeasonFolderFormat)
+                    found.AutoAddType = ai.SeasonFolderFormat == TVSettings.Instance.SeasonFolderFormat
                         ? ShowItem.AutomaticFolderType.libraryDefault
                         : ShowItem.AutomaticFolderType.custom;
 

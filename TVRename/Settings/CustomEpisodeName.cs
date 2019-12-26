@@ -33,7 +33,7 @@ namespace TVRename
         public static string OldNStyle(int n)
         {
             // for now, this maps onto the presets
-            if ((n >= 0) && (n < 9))
+            if (n >= 0 && n < 9)
             {
                 return PRESETS[n];
             }
@@ -100,7 +100,7 @@ namespace TVRename
                 return r.Substring(0,Math.Min(maxFilenameLength, r.Length));
             }
 
-            bool needsSpacer = (!extension.StartsWith(".", StringComparison.Ordinal));
+            bool needsSpacer = !extension.StartsWith(".", StringComparison.Ordinal);
 
             if (needsSpacer)
             {

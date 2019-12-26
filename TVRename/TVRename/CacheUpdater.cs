@@ -73,7 +73,7 @@ namespace TVRename
 
             const int DELAY_STEP = 100;
             int count = 1000 / DELAY_STEP; // one second
-            while ((count-- > 0) && (!DownloadDone))
+            while (count-- > 0 && !DownloadDone)
             {
                 Thread.Sleep(DELAY_STEP);
             }
@@ -126,7 +126,7 @@ namespace TVRename
         {
             System.Diagnostics.Debug.Assert(workerSemaphore != null);
 
-            SeriesSpecifier series = (SeriesSpecifier)(codeIn);
+            SeriesSpecifier series = (SeriesSpecifier)codeIn;
 
             try
             {
@@ -269,7 +269,7 @@ namespace TVRename
 
         private void WaitForBgDownloadDone()
         {
-            if ((mDownloaderThread != null) && (mDownloaderThread.IsAlive))
+            if (mDownloaderThread != null && mDownloaderThread.IsAlive)
             {
                 mDownloaderThread.Join();
             }
@@ -280,9 +280,9 @@ namespace TVRename
         private void Dispose(bool disposing)
         {
             ReleaseUnmanagedResources();
-            if (disposing && workerSemaphore != null)
+            if (disposing)
             {
-                workerSemaphore.Dispose();
+                workerSemaphore?.Dispose();
             }
         }
 

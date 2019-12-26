@@ -31,7 +31,7 @@ public class Release
             throw new ArgumentException("The provided version string is invalid.", nameof(version));
         }
 
-        string matchString = (type == VersionType.semantic)
+        string matchString = type == VersionType.semantic
             ? @"^(?<major>[0-9]+)((\.(?<minor>[0-9]+))(\.(?<patch>[0-9]+))?)?(\-(?<pre>[0-9A-Za-z\-\.]+|[*]))?(\+(?<build>[0-9A-Za-z\-\.]+|[*]))?$"
             : @"^(?<major>[0-9]+)((\.(?<minor>[0-9]+))(\.(?<patch>[0-9]+))?)?( (?<pre>[0-9A-Za-z\- \.]+))?$";
 
@@ -95,10 +95,10 @@ public class Release
 
         //We have 2 suffixes
         //Compare alphabetically alpha1 < alpha2 < beta1 < beta2 < rc1 < rc2 etc
-        return (string.Compare(Prerelease, otherUpdateVersion.Prerelease, StringComparison.OrdinalIgnoreCase));
+        return string.Compare(Prerelease, otherUpdateVersion.Prerelease, StringComparison.OrdinalIgnoreCase);
     }
 
-    public bool NewerThan(Release compare) => (CompareTo(compare) > 0);
+    public bool NewerThan(Release compare) => CompareTo(compare) > 0;
 
     public override string ToString()
     {

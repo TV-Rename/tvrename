@@ -41,7 +41,7 @@ namespace TVRename
 
             string plannedFilename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(episode));
 
-            return (FileAndPath.EndsWith(plannedFilename,StringComparison.OrdinalIgnoreCase));
+            return FileAndPath.EndsWith(plannedFilename,StringComparison.OrdinalIgnoreCase);
         }
     }
 }

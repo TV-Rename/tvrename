@@ -346,7 +346,7 @@ namespace TVRename
             };
 
             filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width,
-                ((filterTextBox.ClientSize.Height - 16) / 2) + 1);
+                (filterTextBox.ClientSize.Height - 16) / 2 + 1);
 
             filterButton.Click += filterButton_Click;
             filterTextBox.Controls.Add(filterButton);
@@ -526,7 +526,7 @@ namespace TVRename
             SetSize(x.Descendants("Size").First());
             SetLocation(x.Descendants("Location").First());
 
-            WindowState = (x.ExtractBool("Maximized",false))
+            WindowState = x.ExtractBool("Maximized",false)
                 ? FormWindowState.Maximized
                 : FormWindowState.Normal;
         }
@@ -545,8 +545,8 @@ namespace TVRename
                 Logger.Error($"Missing Y from {x}");
             }
 
-            int xloc = (valueX ==null) ? 100 : int.Parse(valueX.Value);
-            int yloc = (valueY is null) ? 100 : int.Parse(valueY.Value);
+            int xloc = valueX ==null ? 100 : int.Parse(valueX.Value);
+            int yloc = valueY is null ? 100 : int.Parse(valueY.Value);
 
             Location = new Point(xloc, yloc);
         }
@@ -565,8 +565,8 @@ namespace TVRename
                 Logger.Error($"Missing Height from {x}");
             }
 
-            int xsize = (valueX is null) ? 100 : int.Parse(valueX.Value);
-            int ysize = (valueY is null) ? 100 : int.Parse(valueY.Value);
+            int xsize = valueX is null ? 100 : int.Parse(valueX.Value);
+            int ysize = valueY is null ? 100 : int.Parse(valueY.Value);
 
             Size = new Size(xsize, ysize);
         }
@@ -716,17 +716,18 @@ namespace TVRename
         private void ChooseSiteMenu(int n)
         {
             ContextMenuStrip sm = BuildSearchMenu();
-            if (n == 1)
+            switch (n)
             {
-                sm.Show(bnWTWChooseSite, new Point(0, 0));
-            }
-            else if (n == 0)
-            {
-                sm.Show(bnActionWhichSearch, new Point(0, 0));
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException();
+                case 1:
+                    sm.Show(bnWTWChooseSite, new Point(0, 0));
+                    break;
+
+                case 0:
+                    sm.Show(bnActionWhichSearch, new Point(0, 0));
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -827,27 +828,23 @@ namespace TVRename
                 return null;
             }
 
-            if (n.Tag is ShowItem si)
+            switch (n.Tag)
             {
-                return si;
-            }
+                case ShowItem si:
+                    return si;
 
-            if (n.Tag is ProcessedEpisode pe)
-            {
-                return pe.Show;
-            }
+                case ProcessedEpisode pe:
+                    return pe.Show;
 
-            if (n.Tag is Season seas)
-            {
-                if (seas.Episodes.Count == 0)
-                {
+                case Season seas when seas.Episodes.Count == 0:
                     return null;
-                }
 
-                return mDoc.Library.ShowItem(seas.TheSeries.TvdbCode);
+                case Season seas:
+                    return mDoc.Library.ShowItem(seas.TheSeries.TvdbCode);
+
+                default:
+                    return null;
             }
-
-            return null;
         }
 
         [CanBeNull]
@@ -2446,7 +2443,7 @@ namespace TVRename
             }
             DateTime dt = airdt.Value;
 
-            lvi.Group = lvWhenToWatch.Groups[CalculateWTWLVIGroup(pe, dt)];
+            lvi.Group = lvWhenToWatch.Groups[CalculateWtwlviGroup(pe, dt)];
             lvi.Tag = pe;
             lvi.Text = pe.Show.ShowName;
 
@@ -2475,7 +2472,7 @@ namespace TVRename
             }
         }
 
-        private (Color, Color) GetWtwColour([NotNull] ProcessedEpisode ep, DateTime dt)
+        private static (Color, Color) GetWtwColour([NotNull] ProcessedEpisode ep, DateTime dt)
         {
             //any episodes that match "today's" date be highlighted in light gray so they stand out.
             //Or, really fancy: any future dates are light gray background,
@@ -2508,7 +2505,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private string CalculateWTWLVIGroup(ProcessedEpisode pe, DateTime dt)
+        private static string CalculateWtwlviGroup(ProcessedEpisode pe, DateTime dt)
         {
             double ttn = dt.Subtract(DateTime.Now).TotalHours;
 
@@ -2651,7 +2648,7 @@ namespace TVRename
                 return;
             }
 
-            if ((Directory.Exists(si.AutoAddFolderBase)) && TVSettings.Instance.DeleteShowFromDisk)
+            if (Directory.Exists(si.AutoAddFolderBase) && TVSettings.Instance.DeleteShowFromDisk)
             {
                 DialogResult res3 = MessageBox.Show(
                     $"Remove folder \"{si.AutoAddFolderBase}\" from disk?",
@@ -3346,24 +3343,30 @@ namespace TVRename
 
                 foreach (Item a in mDoc.TheActionList)
                 {
-                    if (a is ItemMissing)
+                    switch (a)
                     {
-                        continue;
-                    }
+                        case ItemMissing _:
+                            continue;
 
-                    if (a is ActionCopyMoveRename i1)
-                    {
-                        if (i1.From.RemoveExtension(true).StartsWith(i2.From.RemoveExtension(true), StringComparison.Ordinal))
+                        case ActionCopyMoveRename i1:
                         {
-                            toRemove.Add(i1);
+                            if (i1.From.RemoveExtension(true).StartsWith(i2.From.RemoveExtension(true), StringComparison.Ordinal))
+                            {
+                                toRemove.Add(i1);
+                            }
+
+                            break;
                         }
-                    }
-                    else if (a is Item ad)
-                    {
-                        if (ad.Episode?.AppropriateEpNum == i2.Episode?.AppropriateEpNum &&
-                            ad.Episode?.AppropriateSeasonNumber == i2.Episode?.AppropriateSeasonNumber)
+
+                        case Item ad:
                         {
-                            toRemove.Add(a);
+                            if (ad.Episode?.AppropriateEpNum == i2.Episode?.AppropriateEpNum &&
+                                ad.Episode?.AppropriateSeasonNumber == i2.Episode?.AppropriateSeasonNumber)
+                            {
+                                toRemove.Add(a);
+                            }
+
+                            break;
                         }
                     }
                 }
@@ -3928,7 +3931,7 @@ namespace TVRename
             {
                 Control filterButton = filterTextBox.Controls["Clear"];
                 filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width,
-                    ((filterTextBox.ClientSize.Height - 16) / 2 ) + 1);
+                    (filterTextBox.ClientSize.Height - 16) / 2 + 1);
 
                 // Send EM_SETMARGINS to prevent text from disappearing underneath the button
                 NativeMethods.SendMessage(filterTextBox.Handle, 0xd3, (IntPtr) 2, (IntPtr) (filterButton.Width << 16));

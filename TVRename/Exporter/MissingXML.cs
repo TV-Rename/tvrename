@@ -22,7 +22,7 @@ namespace TVRename
 
         public override bool Active() =>TVSettings.Instance.ExportMissingXML;
         protected override string Location() =>TVSettings.Instance.ExportMissingXMLTo;
-        public override bool ApplicableFor(TVSettings.ScanType st) => (st == TVSettings.ScanType.Full);
+        public override bool ApplicableFor(TVSettings.ScanType st) => st == TVSettings.ScanType.Full;
 
         protected override void Do()
         {

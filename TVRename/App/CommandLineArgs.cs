@@ -35,7 +35,7 @@ namespace TVRename
         public bool Unattended { get; }
         public string UserFilePath { get; }
 
-        MissingFolderBehavior previousMissingFolderBehavior;
+        private MissingFolderBehavior previousMissingFolderBehavior;
 
         /// <summary>
         /// Initializes a new instance populated with values parsed from the command line arguments.
@@ -59,7 +59,7 @@ namespace TVRename
             MissingFolder = DecodeMissingFolderType(args);
         }
 
-        private MissingFolderBehavior DecodeMissingFolderType([NotNull] IReadOnlyCollection<string> args)
+        private static MissingFolderBehavior DecodeMissingFolderType([NotNull] IReadOnlyCollection<string> args)
         {
             if (args.Contains("/createmissing", StringComparer.OrdinalIgnoreCase))
             {

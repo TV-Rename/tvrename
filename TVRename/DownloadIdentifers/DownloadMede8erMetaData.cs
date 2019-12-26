@@ -7,15 +7,9 @@ namespace TVRename
     internal class DownloadMede8erMetaData : DownloadIdentifier
     {
         private List<string> doneFiles;
-        public DownloadMede8erMetaData()
-        {
-            Reset();
-        }
+        public DownloadMede8erMetaData() => Reset();
 
-        public override DownloadType GetDownloadType()
-        {
-            return DownloadType.downloadMetaData;
-        }
+        public override DownloadType GetDownloadType() => DownloadType.downloadMetaData;
 
         public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
@@ -30,7 +24,7 @@ namespace TVRename
                                   seriesInfo is null ||
                                   seriesInfo.SrvLastUpdated > TimeZoneHelper.Epoch(tvshowxml.LastWriteTime);
 
-                if ((forceRefresh || needUpdate) && (!doneFiles.Contains(tvshowxml.FullName)))
+                if ((forceRefresh || needUpdate) && !doneFiles.Contains(tvshowxml.FullName))
                 {
                     doneFiles.Add(tvshowxml.FullName);
                     theActionList.Add(new ActionMede8erXML(tvshowxml, si));
@@ -38,7 +32,7 @@ namespace TVRename
 
                 //Updates requested by zakwaan@gmail.com on 18/4/2013
                 FileInfo viewxml = FileHelper.FileInFolder(si.AutoAddFolderBase, "View.xml");
-                if ((!viewxml.Exists) && (!doneFiles.Contains(viewxml.FullName)))
+                if (!viewxml.Exists && !doneFiles.Contains(viewxml.FullName))
                 {
                     doneFiles.Add(viewxml.FullName);
                     theActionList.Add(new ActionMede8erViewXML(viewxml, si));
@@ -80,7 +74,7 @@ namespace TVRename
             string fn = filo.RemoveExtension() + ".xml";
             FileInfo nfo = FileHelper.FileInFolder(filo.Directory, fn);
 
-            if (forceRefresh || !nfo.Exists || (dbep.SrvLastUpdated > TimeZoneHelper.Epoch(nfo.LastWriteTime)))
+            if (forceRefresh || !nfo.Exists || dbep.SrvLastUpdated > TimeZoneHelper.Epoch(nfo.LastWriteTime))
             {
                 theActionList.Add(new ActionMede8erXML(nfo, dbep));
             }

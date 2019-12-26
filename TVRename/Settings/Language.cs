@@ -21,9 +21,9 @@ namespace TVRename
             EnglishName = englishName;
         }
 
-        public int Id { get; set; }
-        public string Abbreviation { get; set; }
-        public string Name { get; set; }
-        public string EnglishName { get; set; }
+        public int Id { get; }
+        public string Abbreviation { get;}
+        public string Name { get;}
+        public string EnglishName { get;}
     }
 }

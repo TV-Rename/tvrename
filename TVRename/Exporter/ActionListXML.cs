@@ -2,7 +2,7 @@ using System.Xml;
 
 namespace TVRename
 {
-    abstract class ActionListXml : ActionListExporter
+    internal abstract class ActionListXml : ActionListExporter
     {
         protected ActionListXml(ItemList theActionList) : base(theActionList)
         {

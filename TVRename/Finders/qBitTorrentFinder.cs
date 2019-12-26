@@ -63,7 +63,7 @@ namespace TVRename
                     foreach (JToken file in stuff2.Children())
                     {
                         string downloadedFilename = file["name"].ToString();
-                        bool isOnHold = (file["priority"].Value<int>() == 0);
+                        bool isOnHold = file["priority"].Value<int>() == 0;
                         if (!downloadedFilename.Contains(".!qB\\.unwanted\\") && !isOnHold)
                         {
                             ret.Add(new TorrentEntry(torrent["name"].ToString(),

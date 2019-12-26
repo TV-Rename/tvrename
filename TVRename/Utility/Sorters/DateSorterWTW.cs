@@ -19,7 +19,7 @@ namespace TVRename
         {
             try
             {
-                return ((ProcessedEpisode)(lvi.Tag)).GetAirDateDt(true);
+                return ((ProcessedEpisode)lvi.Tag).GetAirDateDt(true);
             }
             catch
             {

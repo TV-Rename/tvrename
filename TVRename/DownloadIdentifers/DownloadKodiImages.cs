@@ -12,7 +12,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
-    class DownloadKodiImages : DownloadIdentifier
+    internal class DownloadKodiImages : DownloadIdentifier
     {
         private List<string> donePosterJpg;
         private List<string> doneBannerJpg;
@@ -45,13 +45,13 @@ namespace TVRename
             {
                 ItemList theActionList = new ItemList();
                 // base folder:
-                if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (si.AllFolderLocations(false).Count > 0))
+                if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && si.AllFolderLocations(false).Count > 0)
                 {
                     FileInfo posterJpg = FileHelper.FileInFolder(si.AutoAddFolderBase, "poster.jpg");
                     FileInfo bannerJpg = FileHelper.FileInFolder(si.AutoAddFolderBase, "banner.jpg");
                     FileInfo fanartJpg = FileHelper.FileInFolder(si.AutoAddFolderBase, "fanart.jpg");
 
-                    if ((forceRefresh || (!posterJpg.Exists)) && (!donePosterJpg.Contains(si.AutoAddFolderBase)))
+                    if ((forceRefresh || !posterJpg.Exists) && !donePosterJpg.Contains(si.AutoAddFolderBase))
                     {
                         string path = si.TheSeries()?.GetSeriesPosterPath();
                         if (!string.IsNullOrEmpty(path))
@@ -61,7 +61,7 @@ namespace TVRename
                         }
                     }
 
-                    if ((forceRefresh || (!bannerJpg.Exists)) && (!doneBannerJpg.Contains(si.AutoAddFolderBase)))
+                    if ((forceRefresh || !bannerJpg.Exists) && !doneBannerJpg.Contains(si.AutoAddFolderBase))
                     {
                         string path = si.TheSeries()?.GetSeriesWideBannerPath();
                         if (!string.IsNullOrEmpty(path))
@@ -71,7 +71,7 @@ namespace TVRename
                         }
                     }
 
-                    if ((forceRefresh || (!fanartJpg.Exists)) && (!doneFanartJpg.Contains(si.AutoAddFolderBase)))
+                    if ((forceRefresh || !fanartJpg.Exists) && !doneFanartJpg.Contains(si.AutoAddFolderBase))
                     {
                         string path = si.TheSeries()?.GetSeriesFanartPath();
                         if (!string.IsNullOrEmpty(path))

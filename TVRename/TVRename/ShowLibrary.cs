@@ -282,7 +282,7 @@ namespace TVRename
             int epnum = ep.AirsBeforeEpisode.Value;
             for (int i = 0; i < eis.Count; i++)
             {
-                if ((eis[i].AppropriateSeasonNumber == sease) && (eis[i].AppropriateEpNum == epnum))
+                if (eis[i].AppropriateSeasonNumber == sease && eis[i].AppropriateEpNum == epnum)
                 {
                     ProcessedEpisode pe = new ProcessedEpisode(ep, si)
                     {
@@ -449,7 +449,7 @@ namespace TVRename
             {
                 eis.RemoveRange(fromIndex, 1 + toIndex - fromIndex);
             }
-            else if (ValidIndex(fromIndex, ec) && (toIndex == -1))
+            else if (ValidIndex(fromIndex, ec) && toIndex == -1)
             {
                 eis.RemoveAt(fromIndex);
             }
@@ -459,7 +459,7 @@ namespace TVRename
             }
         }
 
-        private static bool ValidIndex(int index, int maxIndex) => (index < maxIndex) && (index >= 0);
+        private static bool ValidIndex(int index, int maxIndex) => index < maxIndex && index >= 0;
 
         private static void RenameEpisode([NotNull] IReadOnlyList<ProcessedEpisode> eis, int index,string txt)
         {
@@ -500,7 +500,7 @@ namespace TVRename
         private static void MergeEpisodes([NotNull] List<ProcessedEpisode> eis, ShowItem si, ShowRule sr, int fromIndex, int toIndex, [CanBeNull] string newName)
         {
             int ec = eis.Count;
-            if (ValidIndex(fromIndex, ec) && ValidIndex(toIndex, ec) && (fromIndex < toIndex))
+            if (ValidIndex(fromIndex, ec) && ValidIndex(toIndex, ec) && fromIndex < toIndex)
             {
                 ProcessedEpisode oldFirstEi = eis[fromIndex];
                 List<string> episodeNames = new List<string> { eis[fromIndex].Name };
@@ -528,7 +528,7 @@ namespace TVRename
 
                 ProcessedEpisode pe2 = new ProcessedEpisode(oldFirstEi, si, alleps)
                 {
-                    Name = ((string.IsNullOrEmpty(newName)) ? combinedName : newName),
+                    Name = string.IsNullOrEmpty(newName) ? combinedName : newName,
                     AiredEpNum = -2,
                     DvdEpNum = -2,
                     EpNum2 = sr.DoWhatNow == RuleAction.kMerge ? -2 + toIndex - fromIndex : -2,
@@ -590,7 +590,7 @@ namespace TVRename
             string root = Helpers.GetCommonStartString(episodeNames);
             int shortestEpisodeName = episodeNames.Min(x => x.Length);
             int longestEpisodeName = episodeNames.Max(x => x.Length);
-            bool namesSameLength = (shortestEpisodeName == longestEpisodeName);
+            bool namesSameLength = shortestEpisodeName == longestEpisodeName;
             bool rootIsIgnored = root.Trim().StartsWith("Episode", StringComparison.OrdinalIgnoreCase) ||
                                  root.Trim().StartsWith("Part", StringComparison.OrdinalIgnoreCase);
 
@@ -614,7 +614,7 @@ namespace TVRename
 
             // renumber 
             // pay attention to specials etc.
-            int n = (eis[0].AppropriateEpNum == 0) ? 0 : 1;
+            int n = eis[0].AppropriateEpNum == 0 ? 0 : 1;
 
             foreach (ProcessedEpisode t in eis)
             {
@@ -742,7 +742,7 @@ namespace TVRename
 
                         DateTime? airdt = ei.GetAirDateDt(true);
 
-                        if ((airdt is null) || (airdt == DateTime.MaxValue))
+                        if (airdt is null || airdt == DateTime.MaxValue)
                         {
                             continue;
                         }
@@ -821,12 +821,12 @@ namespace TVRename
                     foreach (ProcessedEpisode ei in eis)
                     {
                         DateTime? dt = ei.GetAirDateDt(true);
-                        if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
+                        if (dt != null && dt.Value.CompareTo(DateTime.MaxValue) != 0)
                         {
                             TimeSpan ts = dt.Value.Subtract(DateTime.Now);
-                            if (ts.TotalHours >= (-24 * days)) // in the future (or fairly recent)
+                            if (ts.TotalHours >= -24 * days) // in the future (or fairly recent)
                             {
-                                if ((ts.TotalHours >= 0) && (!nextToAirFound))
+                                if (ts.TotalHours >= 0 && !nextToAirFound)
                                 {
                                     nextToAirFound = true;
                                     ei.NextToAir = true;
@@ -853,7 +853,7 @@ namespace TVRename
                 if (si.UseCustomShowName) // see if custom show name is actually the real show name
                 {
                     SeriesInfo ser = si.TheSeries();
-                    if ((ser != null) && (si.CustomShowName == ser.Name))
+                    if (ser != null && si.CustomShowName == ser.Name)
                     {
                         // then, turn it off
                         si.CustomShowName = "";
@@ -900,7 +900,7 @@ namespace TVRename
 
         public void ReIndex()
         {
-            List<int> toReIndex = this.Where(x => (x.Key != x.Value.TvdbCode)).Select(x=>x.Key).ToList();
+            List<int> toReIndex = this.Where(x => x.Key != x.Value.TvdbCode).Select(x=>x.Key).ToList();
 
             foreach (int x in toReIndex)
             {

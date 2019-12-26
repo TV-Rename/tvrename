@@ -42,7 +42,7 @@ namespace TVRename
             Add(newList);
         }
 
-        internal void Remove([CanBeNull] List<Item> toRemove)
+        internal void Remove([CanBeNull] IEnumerable<Item> toRemove)
         {
             if (toRemove is null)
             {

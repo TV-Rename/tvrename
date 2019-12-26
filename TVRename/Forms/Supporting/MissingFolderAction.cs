@@ -102,7 +102,7 @@ namespace TVRename
 
         private void MissingFolderAction_DragDrop(object sender, [NotNull] DragEventArgs e)
         {
-            string[] files = (string[]) (e.Data.GetData(DataFormats.FileDrop));
+            string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)
             {
                 try

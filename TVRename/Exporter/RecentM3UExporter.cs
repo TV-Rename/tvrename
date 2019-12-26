@@ -12,7 +12,7 @@ using JetBrains.Annotations;
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
-    class RecentM3UExporter : RecentExporter
+    internal class RecentM3UExporter : RecentExporter
     {
         public RecentM3UExporter(TVDoc doc) : base(doc)
         {
@@ -22,10 +22,7 @@ namespace TVRename
         protected override string Location() => TVSettings.Instance.ExportRecentM3UTo;
 
         [NotNull]
-        protected override string GenerateHeader()
-        {
-            return "#EXTM3U";
-        }
+        protected override string GenerateHeader() => "#EXTM3U";
 
         [NotNull]
         protected override string GenerateRecord(ProcessedEpisode ep, [NotNull] FileInfo file, string name, int length)
@@ -34,9 +31,6 @@ namespace TVRename
         }
 
         [NotNull]
-        protected override string GenerateFooter()
-        {
-            return string.Empty;
-        }
+        protected override string GenerateFooter() => string.Empty;
     }
 }

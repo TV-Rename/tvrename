@@ -111,7 +111,7 @@ namespace TVRename
 
         public override bool SameAs(Item o)
         {
-            return (o is ActionDateTouch touch) && (touch.whereFile == whereFile) && (touch.whereDirectory == whereDirectory);
+            return o is ActionDateTouch touch && touch.whereFile == whereFile && touch.whereDirectory == whereDirectory;
         }
 
         public override int Compare(Item o)
@@ -130,10 +130,10 @@ namespace TVRename
 
             if (whereFile != null)
             {
-                return string.Compare((whereFile.FullName + Episode.Name), nfo.whereFile.FullName + nfo.Episode.Name, StringComparison.Ordinal);
+                return string.Compare(whereFile.FullName + Episode.Name, nfo.whereFile.FullName + nfo.Episode.Name, StringComparison.Ordinal);
             }
 
-            return string.Compare((whereDirectory.FullName + Episode.Name), nfo.whereDirectory.FullName + nfo.Episode.Name, StringComparison.Ordinal);
+            return string.Compare(whereDirectory.FullName + Episode.Name, nfo.whereDirectory.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
 
         #endregion
@@ -143,12 +143,12 @@ namespace TVRename
         [CanBeNull]
         public override IgnoreItem Ignore => whereFile is null ? null : new IgnoreItem(whereFile.FullName);
 
-        protected override string SeriesName => (Episode != null) ? Episode.Show.ShowName :
-            (season != null) ? season.TheSeries.Name : show.ShowName;
-        protected override string SeasonNumber => (Episode != null) ? Episode.AppropriateSeasonNumber.ToString() :
-            (season != null) ? season.SeasonNumber.ToString() : string.Empty;
+        protected override string SeriesName => Episode != null ? Episode.Show.ShowName :
+            season != null ? season.TheSeries.Name : show.ShowName;
+        protected override string SeasonNumber => Episode != null ? Episode.AppropriateSeasonNumber.ToString() :
+            season != null ? season.SeasonNumber.ToString() : string.Empty;
         protected override string AirDate =>
-            (updateTime.CompareTo(DateTime.MaxValue)) != 0 ? updateTime.ToShortDateString() : "";
+            updateTime.CompareTo(DateTime.MaxValue) != 0 ? updateTime.ToShortDateString() : "";
         [CanBeNull]
         protected override string DestinationFolder => whereFile?.DirectoryName ?? whereDirectory?.FullName;
         [CanBeNull]

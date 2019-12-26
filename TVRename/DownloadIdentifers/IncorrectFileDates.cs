@@ -33,7 +33,7 @@ namespace TVRename
             DirectoryInfo di = new DirectoryInfo(si.AutoAddFolderBase);
             try
             {
-                if ((di.LastWriteTimeUtc != newUpdateTime) && (!doneFilesAndFolders.Contains(di.FullName)))
+                if (di.LastWriteTimeUtc != newUpdateTime && !doneFilesAndFolders.Contains(di.FullName))
                 {
                     doneFilesAndFolders.Add(di.FullName);
                     return new ItemList {new ActionDateTouch(di, si, newUpdateTime)};
@@ -61,7 +61,7 @@ namespace TVRename
             DirectoryInfo di = new DirectoryInfo(folder);
             try
             {
-                if ((di.LastWriteTimeUtc != newUpdateTime) && (!doneFilesAndFolders.Contains(di.FullName)))
+                if (di.LastWriteTimeUtc != newUpdateTime && !doneFilesAndFolders.Contains(di.FullName))
                 {
                     doneFilesAndFolders.Add(di.FullName);
                     return new ItemList {new ActionDateTouch(di, si, newUpdateTime)};
@@ -87,7 +87,7 @@ namespace TVRename
 
             try
             {
-                if ((filo.LastWriteTimeUtc != newUpdateTime) && (!doneFilesAndFolders.Contains(filo.FullName)))
+                if (filo.LastWriteTimeUtc != newUpdateTime && !doneFilesAndFolders.Contains(filo.FullName))
                 {
                     doneFilesAndFolders.Add(filo.FullName);
                     return new ItemList { new ActionDateTouch(filo, dbep, newUpdateTime) };

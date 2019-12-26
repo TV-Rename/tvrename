@@ -46,17 +46,17 @@ namespace TVRename
                     throw new TVRenameOperationInterruptedException();
                 }
 
-                if ((si.IgnoreSeasons.Contains(snum)) || (!allFolders.ContainsKey(snum)))
+                if (si.IgnoreSeasons.Contains(snum) || !allFolders.ContainsKey(snum))
                 {
                     continue; // ignore/skip this season
                 }
 
-                if ((snum == 0) && (si.CountSpecials))
+                if (snum == 0 && si.CountSpecials)
                 {
                     continue; // don't process the specials season, as they're merged into the seasons themselves
                 }
 
-                if ((snum == 0) && TVSettings.Instance.IgnoreAllSpecials)
+                if (snum == 0 && TVSettings.Instance.IgnoreAllSpecials)
                 {
                     continue;
                 }
@@ -105,7 +105,7 @@ namespace TVRename
                         }
 
                         int epIdx = eps.FindIndex(x =>
-                            ((x.AppropriateEpNum == epNum) && (x.AppropriateSeasonNumber == seasNum)));
+                            x.AppropriateEpNum == epNum && x.AppropriateSeasonNumber == seasNum);
 
                         if (epIdx == -1)
                         {

@@ -82,7 +82,7 @@ namespace TVRename
             }
 
             FolderMonitorEdit ed = new FolderMonitorEdit(folder);
-            if ((ed.ShowDialog() != DialogResult.OK) || (ed.Code == -1))
+            if (ed.ShowDialog() != DialogResult.OK || ed.Code == -1)
             {
                 return;
             }

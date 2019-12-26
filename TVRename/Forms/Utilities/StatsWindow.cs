@@ -41,7 +41,7 @@ namespace TVRename
             txtNOS.Text = stats.NsNumberOfShows.ToString();
             txtNOSeas.Text = stats.NsNumberOfSeasons.ToString();
             int noe = stats.NsNumberOfEpisodes;
-            txtEOD.Text = ((noe == -1) ? "?" : noe.ToString());
+            txtEOD.Text = noe == -1 ? "?" : noe.ToString();
             txtTE.Text = stats.NsNumberOfEpisodesExpected.ToString();
         }
 

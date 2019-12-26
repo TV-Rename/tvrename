@@ -70,7 +70,6 @@ namespace TVRename
                     rbInsert.Checked = true;
                     break;
 
-                default:
                 case RuleAction.kIgnoreEp:
                     rbIgnore.Checked = true;
                     break;
@@ -210,7 +209,7 @@ namespace TVRename
 
             //Swap, merge and collapse can't be done on the same episode numbers
             if ((mRule.DoWhatNow == RuleAction.kSwap || mRule.DoWhatNow == RuleAction.kMerge || mRule.DoWhatNow == RuleAction.kCollapse) &&
-                (txtValue2.Text.Equals(txtValue1.Text)))
+                txtValue2.Text.Equals(txtValue1.Text))
             {
                 MessageBox.Show("Episode Numbers must be different", "Modify Rules",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);

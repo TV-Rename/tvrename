@@ -44,10 +44,10 @@ namespace TVRename.Forms
             {
                 ListViewItem possible = item.PresentationView;
 
-                bool passesAirDateTest = (chkAirDateTest.Checked == false || item.AirDatesMatch);
-                bool passesNameTest = (chkNameTest.Checked == false || item.SimilarNames);
-                bool passesMissingTest = (chkMIssingTest.Checked == false || item.OneFound);
-                bool passesSizeTest = (chkFilesizeTest.Checked == false || item.LargeFileSize);
+                bool passesAirDateTest = chkAirDateTest.Checked == false || item.AirDatesMatch;
+                bool passesNameTest = chkNameTest.Checked == false || item.SimilarNames;
+                bool passesMissingTest = chkMIssingTest.Checked == false || item.OneFound;
+                bool passesSizeTest = chkFilesizeTest.Checked == false || item.LargeFileSize;
 
                 if (passesSizeTest && passesAirDateTest && passesNameTest && passesMissingTest)
                 {
@@ -150,9 +150,7 @@ namespace TVRename.Forms
 
             duplicateRightClickMenu.Items.Clear();
 
-            //kEpisodeGuideForShow = 1,
-            ToolStripMenuItem tsi;
-            tsi = new ToolStripMenuItem("Episode Guide") {Tag = (int) RightClickCommands.kEpisodeGuideForShow};
+            ToolStripMenuItem tsi = new ToolStripMenuItem("Episode Guide") {Tag = (int) RightClickCommands.kEpisodeGuideForShow};
             duplicateRightClickMenu.Items.Add(tsi);
 
             //kForceRefreshSeries,

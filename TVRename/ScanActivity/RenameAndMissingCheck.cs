@@ -28,7 +28,7 @@ namespace TVRename
 
             //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
             //it has all the required files for that show
-            if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (allFolders.Any()))
+            if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && allFolders.Any())
             {
                 Doc.TheActionList.Add(downloadIdentifiers.ProcessShow(si));
             }
@@ -36,7 +36,7 @@ namespace TVRename
             //MS_TODO Put the banner refresh period into the settings file, we'll default to 3 months
             DateTime cutOff = DateTime.Now.AddMonths(-3);
             DateTime lastUpdate = si.BannersLastUpdatedOnDisk ?? DateTime.Now.AddMonths(-4);
-            bool timeForBannerUpdate = (cutOff.CompareTo(lastUpdate) == 1);
+            bool timeForBannerUpdate = cutOff.CompareTo(lastUpdate) == 1;
 
             if (TVSettings.Instance.NeedToDownloadBannerFile() && timeForBannerUpdate)
             {
@@ -61,12 +61,12 @@ namespace TVRename
                     continue;
                 }
 
-                if ((snum == 0) && (si.CountSpecials))
+                if (snum == 0 && si.CountSpecials)
                 {
                     continue;
                 }
 
-                if ((snum == 0) && TVSettings.Instance.IgnoreAllSpecials)
+                if (snum == 0 && TVSettings.Instance.IgnoreAllSpecials)
                 {
                     continue;
                 }
@@ -80,14 +80,14 @@ namespace TVRename
 
         private void CheckSeason([NotNull] ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum, [NotNull] IReadOnlyCollection<string> folders, bool timeForBannerUpdate)
         {
-            bool folderNotDefined = (folders.Count == 0);
-            if (folderNotDefined && (TVSettings.Instance.MissingCheck && !si.AutoAddNewSeasons()))
+            bool folderNotDefined = folders.Count == 0;
+            if (folderNotDefined && TVSettings.Instance.MissingCheck && !si.AutoAddNewSeasons())
             {
                 return;
             }
 
             // base folder:
-            if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (si.AutoAddType != ShowItem.AutomaticFolderType.none))
+            if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && si.AutoAddType != ShowItem.AutomaticFolderType.none)
             {
                 // main image for the folder itself
                 Doc.TheActionList.Add(downloadIdentifiers.ProcessShow(si));
@@ -220,15 +220,15 @@ namespace TVRename
                         bool dtOk = dt != null;
 
                         bool notFuture =
-                            (dtOk && (dt.Value.CompareTo(today) < 0)); // isn't an episode yet to be aired
+                            dtOk && dt.Value.CompareTo(today) < 0; // isn't an episode yet to be aired
 
                         // only add to the missing list if, either:
                         // - force check is on
                         // - there are no aired dates at all, for up to and including this season
                         // - there is an aired date, and it isn't in the future
                         if (si.NoAirdatesUntilNow(snum) ||
-                            ((si.ForceCheckFuture || notFuture) && dtOk) ||
-                            (si.ForceCheckNoAirdate && !dtOk))
+                            (si.ForceCheckFuture || notFuture) && dtOk ||
+                            si.ForceCheckNoAirdate && !dtOk)
                         {
                             // then add it as officially missing
                             Doc.TheActionList.Add(new ItemMissing(dbep, folder));

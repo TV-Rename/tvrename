@@ -53,8 +53,8 @@ namespace TVRename
             int sourceWidth = imgPhoto.Width;
             int sourceHeight = imgPhoto.Height;
 
-            float nPercentW = (width / (float)sourceWidth);
-            float nPercentH = (height / (float)sourceHeight);
+            float nPercentW = width / (float)sourceWidth;
+            float nPercentH = height / (float)sourceHeight;
 
             int destWidth, destHeight;
 
@@ -88,7 +88,7 @@ namespace TVRename
         public override bool Go(TVRenameStats stats)
         {
             byte[] theData = TheTVDB.Instance.GetTvdbDownload(path);
-            if ((theData is null) || (theData.Length == 0))
+            if (theData is null || theData.Length == 0)
             {
                 ErrorText = "Unable to download " + path;
                 Error = true;
@@ -129,7 +129,7 @@ namespace TVRename
                 Image im = new Bitmap(new System.IO.MemoryStream(theData));
                 if (Episode is null)
                 {
-                    if ((im.Width > 156) || (im.Height > 232))
+                    if (im.Width > 156 || im.Height > 232)
                     {
                         im = MaxSize(im, 156, 232);
 
@@ -142,7 +142,7 @@ namespace TVRename
                 }
                 else
                 {
-                    if ((im.Width > 232) || (im.Height > 156))
+                    if (im.Width > 232 || im.Height > 156)
                     {
                         im = MaxSize(im, 232, 156);
 
@@ -167,7 +167,7 @@ namespace TVRename
 
         public override bool SameAs(Item o)
         {
-            return (o is ActionDownloadImage image) && (image.destination == destination);
+            return o is ActionDownloadImage image && image.destination == destination;
         }
 
         public override int Compare(Item o)
@@ -185,7 +185,7 @@ namespace TVRename
         public override IgnoreItem Ignore => GenerateIgnore(destination?.FullName);
 
         protected override string SeriesName =>
-            (Episode != null) ? Episode.Show.ShowName : ((si != null) ? si.ShowName : "");
+            Episode != null ? Episode.Show.ShowName : si != null ? si.ShowName : "";
 
         [CanBeNull]
         protected override string DestinationFolder => TargetFolder;
@@ -195,7 +195,7 @@ namespace TVRename
         [NotNull]
         public override string ScanListViewGroup => "lvgActionDownload";
         [CanBeNull]
-        public override string TargetFolder => destination is null ? null : destination.DirectoryName;
+        public override string TargetFolder => destination?.DirectoryName;
         #endregion
     }
 }

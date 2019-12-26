@@ -42,7 +42,7 @@ namespace TVRename
             selectedShow = si;
             sampleSeason = si.GetFirstAvailableSeason();
             sampleEpisode = si.GetFirstAvailableEpisode();
-            addingNewShow = (si.TvdbCode ==-1);
+            addingNewShow = si.TvdbCode ==-1;
             InitializeComponent();
 
             lblSeasonWordPreview.Text = TVSettings.Instance.SeasonFolderFormat + "-(" + CustomSeasonName.NameFor(si.GetFirstAvailableSeason(), TVSettings.Instance.SeasonFolderFormat) + ")";
@@ -164,7 +164,6 @@ namespace TVRename
                     rdoFolderCustom.Checked = true;
                     break;
                 case ShowItem.AutomaticFolderType.libraryDefault:
-                default:
                     chkAutoFolders.Checked = true;
                     rdoFolderLibraryDefault.Checked = true;
                     break;
@@ -446,7 +445,7 @@ namespace TVRename
         private void CheckToEnableAddButton()
         {
             bool isNumber = Regex.Match(txtSeasonNumber.Text, "^[0-9]+$").Success;
-            bnAdd.Enabled = isNumber && (!string.IsNullOrEmpty(txtSeasonNumber.Text));
+            bnAdd.Enabled = isNumber && !string.IsNullOrEmpty(txtSeasonNumber.Text);
         }
 
         private void txtFolder_TextChanged()

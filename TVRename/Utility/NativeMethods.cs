@@ -9,7 +9,7 @@ namespace TVRename
         internal static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out ulong lpFreeBytesAvailable, out ulong lpTotalNumberOfBytes, out ulong lpTotalNumberOfFreeBytes);
 
         [DllImport("kernel32.dll")]
-        static extern bool AttachConsole(uint dwProcessId);
+        private static extern bool AttachConsole(uint dwProcessId);
         private const uint ATTACH_PARENT_PROCESS = 0xFFFFFFFF;
 
         // Attach to console window – this may modify the standard handles

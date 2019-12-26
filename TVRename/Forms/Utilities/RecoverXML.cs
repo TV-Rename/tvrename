@@ -45,7 +45,7 @@ namespace TVRename
             availableFiles = PathManager.GetPossibleTvdbHistory();
 
             lbSettings.Items.Add("Default settings");
-            if ((settingsList != null) && settingsList.Length > 0)
+            if (settingsList != null && settingsList.Length > 0)
             {
                 foreach (FileInfo fi in settingsList)
                 {
@@ -56,7 +56,7 @@ namespace TVRename
             }
 
             lbDB.Items.Add("None");
-            if ((availableFiles != null) && availableFiles.Length > 0)
+            if (availableFiles != null && availableFiles.Length > 0)
             {
                 foreach (FileInfo fi in availableFiles)
                 {
@@ -77,7 +77,7 @@ namespace TVRename
                 n = 0;
             }
 
-            DbFile = (n == 0) ? null : availableFiles[n - 1];
+            DbFile = n == 0 ? null : availableFiles[n - 1];
 
             n = lbSettings.SelectedIndex;
             if (n == -1)
@@ -85,7 +85,7 @@ namespace TVRename
                 n = 0;
             }
 
-            SettingsFile = (n == 0) ? null : settingsList[n];
+            SettingsFile = n == 0 ? null : settingsList[n];
 
             DialogResult = DialogResult.OK;
             Close();

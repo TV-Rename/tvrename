@@ -126,18 +126,16 @@ namespace TVRename
         {
             if (i.ToString().Length > 1)
             {
-                return (i.ToString());
+                return i.ToString();
             }
-            else
-            {
-                return ("0" + i);
-            }
+
+            return "0" + i;
         }
 
         [NotNull]
         public static string PrettyPrint(this DateTime? dt)
         {
-            if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
+            if (dt != null && dt.Value.CompareTo(DateTime.MaxValue) != 0)
             {
                 return dt.Value.ToShortDateString();
             }
@@ -299,7 +297,7 @@ namespace TVRename
                     sb.Append(t);
                 }
             }
-            return (sb.ToString().Normalize(NormalizationForm.FormC));
+            return sb.ToString().Normalize(NormalizationForm.FormC);
         }
 
         public static bool ContainsOneOf([NotNull] this string source, [NotNull] IEnumerable<string> terms)

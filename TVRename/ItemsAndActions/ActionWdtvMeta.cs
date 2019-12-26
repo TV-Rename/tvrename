@@ -125,7 +125,7 @@ namespace TVRename
                 XmlWriterSettings settings = new XmlWriterSettings
                 {
                     Indent = true,
-                    NewLineOnAttributes = true,
+                    NewLineOnAttributes = true
                 };
 
                 using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
@@ -198,7 +198,7 @@ namespace TVRename
 
         #region Item Members
 
-        public override bool SameAs(Item o) => (o is ActionWdtvMeta meta) && (meta.Where == Where);
+        public override bool SameAs(Item o) => o is ActionWdtvMeta meta && meta.Where == Where;
 
         public override int Compare(Item o)
         {
@@ -214,7 +214,7 @@ namespace TVRename
                 return -1;
             }
 
-            return string.Compare((Where.FullName + Episode.Name), nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
+            return string.Compare(Where.FullName + Episode.Name, nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
         #endregion
     }

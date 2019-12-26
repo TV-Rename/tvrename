@@ -18,7 +18,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
-    class SABnzbdFinder : DownloadingFinder
+    internal class SABnzbdFinder : DownloadingFinder
     {
         public SABnzbdFinder(TVDoc i) : base(i) { }
 
@@ -135,8 +135,8 @@ namespace TVRename
 
             if (!FinderHelper.FindSeasEp(file, out int seasF, out int epF, out int _,
                     action.Episode.Show) ||
-                (seasF != action.Episode.AppropriateSeasonNumber) ||
-                (epF != action.Episode.AppropriateEpNum))
+                seasF != action.Episode.AppropriateSeasonNumber ||
+                epF != action.Episode.AppropriateEpNum)
             {
                 return null;
             }

@@ -80,27 +80,27 @@ namespace TVRename
             BannerPath = (string)json["fileName"];
             BannerId = (int)json["id"];
             bannerType = (string)json["keyType"];
-            LanguageId = (json["languageId"] is null) ? langId  : (int)json["languageId"];
+            LanguageId = json["languageId"] is null ? langId  : (int)json["languageId"];
             
-            double.TryParse((string)(json["ratingsInfo"]["average"]), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out Rating);
-            ratingCount = (int)(json["ratingsInfo"]["count"]);
+            double.TryParse((string)json["ratingsInfo"]["average"], NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out Rating);
+            ratingCount = (int)json["ratingsInfo"]["count"];
 
             resolution = (string)json["resolution"];
             int.TryParse((string)json["subKey"], out SeasonId);
             thumbnailPath = (string)json["thumbnail"];
         }
 
-        public bool SameAs([NotNull] Banner  o) => (BannerId == o.BannerId);
+        public bool SameAs([NotNull] Banner  o) => BannerId == o.BannerId;
 
-        public bool IsSeriesPoster() => (bannerType == "poster");
+        public bool IsSeriesPoster() => bannerType == "poster";
 
-        public bool IsSeriesBanner() => (bannerType == "series");
+        public bool IsSeriesBanner() => bannerType == "series";
 
-        public bool IsSeasonPoster() => (bannerType == "season");
+        public bool IsSeasonPoster() => bannerType == "season";
 
-        public bool IsSeasonBanner() => (bannerType == "seasonwide" );
+        public bool IsSeasonBanner() => bannerType == "seasonwide";
 
-        public bool IsFanart() => (bannerType == "fanart");
+        public bool IsFanart() => bannerType == "fanart";
 
         private void SetDefaults()
         {

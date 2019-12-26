@@ -16,7 +16,7 @@ namespace TVRename
 {
     public static class VersionUpdater
     {
-        const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/TV-Rename/tvrename/releases";
+        private const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/TV-Rename/tvrename/releases";
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         [ItemCanBeNull]
@@ -37,19 +37,17 @@ namespace TVRename
 
             (Release latestVersion, Release latestBetaVersion) = await GetLatestReleases().ConfigureAwait(false);
 
-            if ((TVSettings.Instance.mode == TVSettings.BetaMode.ProductionOnly) &&
-                (latestVersion?.NewerThan(currentVersion)?? false))
+            switch (TVSettings.Instance.mode)
             {
-                return latestVersion;
-            }
+                case TVSettings.BetaMode.ProductionOnly when latestVersion?.NewerThan(currentVersion)?? false:
+                    return latestVersion;
 
-            if ((TVSettings.Instance.mode == TVSettings.BetaMode.BetaToo) &&
-                (latestBetaVersion?.NewerThan(currentVersion)??false))
-            {
-                return latestBetaVersion;
-            }
+                case TVSettings.BetaMode.BetaToo when latestBetaVersion?.NewerThan(currentVersion)??false:
+                    return latestBetaVersion;
 
-            return null;
+                default:
+                    return null;
+            }
         }
 
         private static async Task<(Release latestVersion, Release latestBetaVersion)> GetLatestReleases()
@@ -154,7 +152,7 @@ namespace TVRename
                 ReleaseNotesText = gitHubReleaseJson["body"].ToString(),
                 ReleaseNotesUrl = gitHubReleaseJson["html_url"].ToString(),
                 ReleaseDate = releaseDate,
-                IsBeta = (gitHubReleaseJson["prerelease"].ToString() == "True")
+                IsBeta = gitHubReleaseJson["prerelease"].ToString() == "True"
             };
             return testVersion;
         }

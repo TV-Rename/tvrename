@@ -12,7 +12,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
-    class DownloadIdentifiersController
+    internal class DownloadIdentifiersController
     {
         private readonly List<DownloadIdentifier> identifiers;
         

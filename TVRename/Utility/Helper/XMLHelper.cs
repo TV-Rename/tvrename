@@ -177,7 +177,7 @@ namespace TVRename
         {
             if (xmlSettings.Descendants(elementName).Any())
             {
-                return XmlConvert.ToBoolean((string)(xmlSettings.Descendants(elementName).First()));
+                return XmlConvert.ToBoolean((string)xmlSettings.Descendants(elementName).First());
             }
 
             return null;
@@ -187,7 +187,7 @@ namespace TVRename
         {
             if (xmlSettings.Descendants(elementName).Any())
             {
-                return XmlConvert.ToBoolean((string)(xmlSettings.Descendants(elementName).First()));
+                return XmlConvert.ToBoolean((string)xmlSettings.Descendants(elementName).First());
             }
 
             return defaultValue;
@@ -203,7 +203,7 @@ namespace TVRename
         {
             if (xmlSettings.Descendants(elementName).Any())
             {
-                string textVersion=(string)(xmlSettings.Descendants(elementName).First());
+                string textVersion=(string)xmlSettings.Descendants(elementName).First();
                 if (string.IsNullOrWhiteSpace(textVersion))
                 {
                     return null;
@@ -221,16 +221,16 @@ namespace TVRename
         {
             if (xmlSettings.Descendants(elementName).Any())
             {
-                return (string)(xmlSettings.Descendants(elementName).First());
+                return (string)xmlSettings.Descendants(elementName).First();
             }
 
             return defaultValue;
         }
         public static int? ExtractInt([NotNull] this XElement xmlSettings, string elementName)
         {
-            if(xmlSettings.Descendants(elementName).Any() && !string.IsNullOrWhiteSpace((string)(xmlSettings.Descendants(elementName).First())))
+            if(xmlSettings.Descendants(elementName).Any() && !string.IsNullOrWhiteSpace((string)xmlSettings.Descendants(elementName).First()))
             {
-                return XmlConvert.ToInt32((string)(xmlSettings.Descendants(elementName).First()));
+                return XmlConvert.ToInt32((string)xmlSettings.Descendants(elementName).First());
             }
 
             return null;
@@ -242,7 +242,7 @@ namespace TVRename
         {
             if (xmlSettings.Descendants(elementName).Any())
             {
-                return XmlConvert.ToInt64((string)(xmlSettings.Descendants(elementName).First()));
+                return XmlConvert.ToInt64((string)xmlSettings.Descendants(elementName).First());
             }
 
             return null;
@@ -277,7 +277,7 @@ namespace TVRename
         {
             if (xmlSettings.Descendants(elementName).Any())
             {
-                return XmlConvert.ToSingle((string)(xmlSettings.Descendants(elementName).First()));
+                return XmlConvert.ToSingle((string)xmlSettings.Descendants(elementName).First());
             }
 
             return null;

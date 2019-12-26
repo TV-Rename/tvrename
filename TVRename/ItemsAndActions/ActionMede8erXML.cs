@@ -222,7 +222,7 @@ namespace TVRename
 
         public override bool SameAs(Item o)
         {
-            return (o is ActionMede8erXML xml) && (xml.Where == Where);
+            return o is ActionMede8erXML xml && xml.Where == Where;
         }
 
         public override int Compare(Item o)
@@ -239,7 +239,7 @@ namespace TVRename
                 return -1;
             }
 
-            return string.Compare((Where.FullName + Episode.Name), nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
+            return string.Compare(Where.FullName + Episode.Name, nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
 
         #endregion

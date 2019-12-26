@@ -266,12 +266,12 @@ namespace TVRename
                     int.TryParse(sn, out ReadAiredSeasonNum);
                 }
 
-                DvdEpNum = ExtractStringToInt(r,"dvdEpisodeNumber");
-                ReadDvdSeasonNum = ExtractStringToInt(r, "dvdSeason");
+                DvdEpNum = r.ExtractStringToInt("dvdEpisodeNumber");
+                ReadDvdSeasonNum = r.ExtractStringToInt("dvdSeason");
 
-                EpisodeGuestStars = JsonHelper.Flatten(r["guestStars"], "|");
-                EpisodeDirector = JsonHelper.Flatten(r["directors"], "|");
-                Writer = JsonHelper.Flatten(r["writers"], "|");
+                EpisodeGuestStars = r["guestStars"].Flatten("|");
+                EpisodeDirector = r["directors"].Flatten("|");
+                Writer = r["writers"].Flatten("|");
 
                 FirstAired = GetFirstAired(r);
             }
@@ -279,23 +279,6 @@ namespace TVRename
             {
                 Logger.Error(e, $"Failed to parse : {r}");
             }
-        }
-
-        private int ExtractStringToInt([NotNull] JObject r,[NotNull] string key)
-        {
-            string valueAsString = (string)r[key];
-
-            if (string.IsNullOrWhiteSpace(valueAsString))
-            {
-                return 0;
-            }
-
-            if (!int.TryParse(valueAsString, out int returnValue))
-            {
-                return 0;
-            }
-
-            return returnValue;
         }
 
         private static DateTime? GetFirstAired(JObject r)
@@ -343,7 +326,7 @@ namespace TVRename
 
         public bool SameAs([NotNull] Episode o)
         {
-            return (EpisodeId == o.EpisodeId);
+            return EpisodeId == o.EpisodeId;
         }
 
         [NotNull]
@@ -357,8 +340,8 @@ namespace TVRename
 
         public bool Ok()
         {
-            bool returnVal = (SeriesId != -1) && (EpisodeId != -1) && (AiredEpNum != -1) && (SeasonId != -1) &&
-                             (ReadAiredSeasonNum != -1);
+            bool returnVal = SeriesId != -1 && EpisodeId != -1 && AiredEpNum != -1 && SeasonId != -1 &&
+                             ReadAiredSeasonNum != -1;
 
             if (!returnVal)
             {

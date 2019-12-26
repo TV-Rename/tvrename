@@ -216,13 +216,13 @@ namespace DaveChambers.FolderBrowserDialogEx
                 return true;
             }
 
-            public static readonly int GWL_WNDPROC = (-4);
-            public static readonly int GWL_HINSTANCE = (-6);
-            public static readonly int GWL_HWNDPARENT = (-8);
-            public static readonly int GWL_STYLE = (-16);
-            public static readonly int GWL_EXSTYLE = (-20);
-            public static readonly int GWL_USERDATA = (-21);
-            public static readonly int GWL_ID = (-12);
+            public static readonly int GWL_WNDPROC = -4;
+            public static readonly int GWL_HINSTANCE = -6;
+            public static readonly int GWL_HWNDPARENT = -8;
+            public static readonly int GWL_STYLE = -16;
+            public static readonly int GWL_EXSTYLE = -20;
+            public static readonly int GWL_USERDATA = -21;
+            public static readonly int GWL_ID = -12;
             public static readonly int DS_CONTEXTHELP = 0x2000;
             public static readonly int WS_EX_CONTEXTHELP = 0x00000400;
 
@@ -510,7 +510,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             rcDlg.Right += 40;
             rcDlg.Bottom += 30;
             if (hEdit != IntPtr.Zero)
-                rcDlg.Bottom += (rcEdit.Height + 5);
+                rcDlg.Bottom += rcEdit.Height + 5;
             Win32.MoveWindow(hDlg, rcDlg, true);
             Win32.GetClientRect(hDlg, out rcDlg);
 
@@ -581,7 +581,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             if (hEdit != IntPtr.Zero)
             {
                 int xEdit = hMargin;
-                int cxEdit = rcDlg.Width - (2 * hMargin);
+                int cxEdit = rcDlg.Width - 2 * hMargin;
                 IntPtr hLabel = Win32.GetDlgItem(hDlg, CtlIds.TITLE);
                 if (hLabel != IntPtr.Zero)
                 {
@@ -599,7 +599,7 @@ namespace DaveChambers.FolderBrowserDialogEx
                     Win32.ReleaseDC(hLabel, hdc);
 
                     Win32.RECT rcLabel = new Win32.RECT(hMargin,
-                                                        vMargin + ((rcEdit.Height - szLabel.Height) / 2),
+                                                        vMargin + (rcEdit.Height - szLabel.Height) / 2,
                                                         szLabel.Width,
                                                         szLabel.Height);
                     Win32.MoveWindow(hLabel, rcLabel, false);
@@ -620,8 +620,8 @@ namespace DaveChambers.FolderBrowserDialogEx
 
             Win32.RECT rcTree = new Win32.RECT(hMargin,
                 treeTop,
-                rcDlg.Width - (2 * hMargin),
-                rcDlg.Bottom - (treeTop + (2 * vMargin) + rcOK.Height));
+                rcDlg.Width - 2 * hMargin,
+                rcDlg.Bottom - (treeTop + 2 * vMargin + rcOK.Height));
 
             Win32.MoveWindow(hTree, rcTree, false);
         }

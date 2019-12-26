@@ -103,10 +103,7 @@ namespace TVRename
         private const int LVM_FIRST = 0x1000;
         private const int LVM_SCROLL = LVM_FIRST + 20;
 
-        public int GetScrollVerticalPos()
-        {
-            return NativeMethods.GetScrollPos(Handle, SB_VERT);
-        }
+        public int GetScrollVerticalPos() => NativeMethods.GetScrollPos(Handle, SB_VERT);
 
         public void SetScrollVerticalPos(int position)
         {

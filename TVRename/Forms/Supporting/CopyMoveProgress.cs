@@ -38,7 +38,7 @@ namespace TVRename
             diskSpaceTimer.Start();
         }
 
-        private int normalise(double x)
+        private static int Normalise(double x)
         {
             if (x < 0)
             {
@@ -55,12 +55,12 @@ namespace TVRename
 
         private void SetPercentages(double file, double group)
         {
-            txtFile.Text = (normalise(file)) + "% Done";
-            txtTotal.Text = (normalise(group)) + "% Done";
+            txtFile.Text = Normalise(file) + "% Done";
+            txtTotal.Text = Normalise(group) + "% Done";
 
             // progress bars go 0 to 1000            
-            pbFile.Value = 10*normalise(file);
-            pbGroup.Value = 10*normalise(group);
+            pbFile.Value = 10*Normalise(file);
+            pbGroup.Value = 10*Normalise(group);
             pbFile.Update();
             pbGroup.Update();
             txtFile.Update();
@@ -124,7 +124,7 @@ namespace TVRename
             if (activeCmAction != null)
             {
                 txtFilename.Text = activeCmAction.ProgressText;
-                SetPercentages(activeCmAction.PercentDone, totalWork == 0 ? 0.0 : (workDone * 100.0 / totalWork));
+                SetPercentages(activeCmAction.PercentDone, totalWork == 0 ? 0.0 : workDone * 100.0 / totalWork);
             }
 
             return allDone;
@@ -168,7 +168,7 @@ namespace TVRename
             }
 
             string folder = activeCmAction.TargetFolder;
-            DirectoryInfo toRoot = (!string.IsNullOrEmpty(folder) && !folder.StartsWith("\\\\", StringComparison.Ordinal)) ? new DirectoryInfo(folder).Root : null;
+            DirectoryInfo toRoot = !string.IsNullOrEmpty(folder) && !folder.StartsWith("\\\\", StringComparison.Ordinal) ? new DirectoryInfo(folder).Root : null;
 
             if (toRoot != null)
             {
@@ -185,19 +185,19 @@ namespace TVRename
 
                 if (di != null)
                 {
-                    int pct = (int)((1000 * di.TotalFreeSpace) / di.TotalSize);
+                    int pct = (int)(1000 * di.TotalFreeSpace / di.TotalSize);
                     diskValue = 1000 - pct;
                     diskText = di.TotalFreeSpace.GBMB(1) + " free";
                 }
             }
 
-            DirectoryInfo toUncRoot = (!string.IsNullOrEmpty(folder) && folder.StartsWith("\\\\", StringComparison.Ordinal)) ? new DirectoryInfo(folder).Root : null;
+            DirectoryInfo toUncRoot = !string.IsNullOrEmpty(folder) && folder.StartsWith("\\\\", StringComparison.Ordinal) ? new DirectoryInfo(folder).Root : null;
             if (toUncRoot != null)
             {
                 FileSystemProperties driveStats = FileHelper.GetProperties(toUncRoot.ToString());
                 if (driveStats.AvailableBytes != null && driveStats.TotalBytes.HasValue)
                 {
-                    int pct = (int)((1000 * driveStats.AvailableBytes) / driveStats.TotalBytes);
+                    int pct = (int)(1000 * driveStats.AvailableBytes / driveStats.TotalBytes);
                     diskValue = 1000 - pct;
                     diskText = (driveStats.AvailableBytes??0).GBMB(1) + " free";
                 }
@@ -240,7 +240,7 @@ namespace TVRename
                 cbPause.Text = "Pause";
             }
 
-            bool en = !(cbPause.Checked);
+            bool en = !cbPause.Checked;
             pbFile.Enabled = en;
             pbGroup.Enabled = en;
             pbDiskSpace.Enabled = en;

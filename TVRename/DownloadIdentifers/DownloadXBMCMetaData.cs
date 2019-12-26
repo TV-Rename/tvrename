@@ -65,7 +65,7 @@ namespace TVRename
             string fn = filo.RemoveExtension() + ".nfo";
             FileInfo nfo = FileHelper.FileInFolder(filo.Directory, fn);
 
-            if (nfo.Exists && (dbep.SrvLastUpdated <= TimeZoneHelper.Epoch(nfo.LastWriteTime)) && !forceRefresh)
+            if (nfo.Exists && dbep.SrvLastUpdated <= TimeZoneHelper.Epoch(nfo.LastWriteTime) && !forceRefresh)
             {
                 return new ItemList();
             }

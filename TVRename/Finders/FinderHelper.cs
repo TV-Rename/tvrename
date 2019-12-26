@@ -29,7 +29,7 @@ namespace TVRename
         }
 
         public static bool FindSeasEp([CanBeNull] FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem si,
-            List<TVSettings.FilenameProcessorRE> rexps, bool doDateCheck, [CanBeNull] out TVSettings.FilenameProcessorRE re)
+            IEnumerable<TVSettings.FilenameProcessorRE> rexps, bool doDateCheck, [CanBeNull] out TVSettings.FilenameProcessorRE re)
         {
             re = null;
             if (fi is null)
@@ -52,7 +52,7 @@ namespace TVRename
             return FindSeasEp(fi.Directory.FullName, filename, out seas, out ep, out maxEp, si, rexps, out re);
         }
 
-        public static bool FindSeasEpDateCheck([CanBeNull] FileInfo fi, out int seas, out int ep, out int maxEp, [CanBeNull] ShowItem si)
+        private static bool FindSeasEpDateCheck([CanBeNull] FileInfo fi, out int seas, out int ep, out int maxEp, [CanBeNull] ShowItem si)
         {
             ep = -1;
             seas = -1;
@@ -98,12 +98,12 @@ namespace TVRename
                     continue;
                 }
 
-                if (!(si.IgnoreSeasons is null) && (si.IgnoreSeasons.Contains(kvp.Value.SeasonNumber)))
+                if (!(si.IgnoreSeasons is null) && si.IgnoreSeasons.Contains(kvp.Value.SeasonNumber))
                 {
                     continue;
                 }
 
-                if ((kvp.Value.SeasonNumber == 0) && TVSettings.Instance.IgnoreAllSpecials)
+                if (kvp.Value.SeasonNumber == 0 && TVSettings.Instance.IgnoreAllSpecials)
                 {
                     continue;
                 }
@@ -129,7 +129,7 @@ namespace TVRename
 
                             if (timeAgo < closestDate)
                             {
-                                seas = (si.DvdOrder ? epi.DvdSeasonNumber : epi.AiredSeasonNumber);
+                                seas = si.DvdOrder ? epi.DvdSeasonNumber : epi.AiredSeasonNumber;
                                 ep = si.DvdOrder ? epi.DvdEpNum : epi.AiredEpNum;
                                 closestDate = timeAgo;
                             }
@@ -138,7 +138,7 @@ namespace TVRename
                 }
             }
 
-            return ((ep != -1) && (seas != -1));
+            return ep != -1 && seas != -1;
         }
 
         public static bool FindSeasEp([CanBeNull] DirectoryInfo di, out int seas, out int ep, ShowItem si,
@@ -158,7 +158,7 @@ namespace TVRename
         }
 
         public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, out int maxEp,
-            ShowItem si, [NotNull] List<TVSettings.FilenameProcessorRE> rexps)
+            ShowItem si, [NotNull] IEnumerable<TVSettings.FilenameProcessorRE> rexps)
         {
             return FindSeasEp(directory, filename, out seas, out ep, out maxEp, si, rexps, out TVSettings.FilenameProcessorRE _);
         }
@@ -252,7 +252,7 @@ namespace TVRename
                         seasFound = seasWanted;
                     }
 
-                    if ((seasFound == seasWanted) && (epFound == epWanted))
+                    if (seasFound == seasWanted && epFound == epWanted)
                     {
                         ret.Add(fiTemp);
                     }
@@ -330,7 +330,7 @@ namespace TVRename
                     return returnFilename.Remove(0, showNameHint.Length);
                 }
 
-                bool nameIsNumber = (Regex.Match(showNameHint, "^[0-9]+$").Success);
+                bool nameIsNumber = Regex.Match(showNameHint, "^[0-9]+$").Success;
 
                 if (nameIsNumber && returnFilename.Contains(showNameHint)) // e.g. "24", or easy exact match of show name at start of filename
                 {
@@ -359,7 +359,7 @@ namespace TVRename
         public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, out int maxEp,
             [CanBeNull] ShowItem si, [NotNull] IEnumerable<TVSettings.FilenameProcessorRE> rexps, [CanBeNull] out TVSettings.FilenameProcessorRE rex)
         {
-            string showNameHint = (si != null) ? si.ShowName : string.Empty;
+            string showNameHint = si != null ? si.ShowName : string.Empty;
             maxEp = -1;
             seas = -1;
             ep = -1;
@@ -386,7 +386,7 @@ namespace TVRename
                         (seas, ep, maxEp) = IdentifyEpisode(si, m, re);
 
                         rex = re;
-                        if ((seas != -1) && (ep != -1))
+                        if (seas != -1 && ep != -1)
                         {
                             return true;
                         }
@@ -402,7 +402,7 @@ namespace TVRename
                 }
             }
 
-            return ((seas != -1) && (ep != -1));
+            return seas != -1 && ep != -1;
         }
 
         private static (int seas, int ep, int maxEp) IdentifyEpisode([CanBeNull] ShowItem si, [NotNull] Match m, TVSettings.FilenameProcessorRE re)
@@ -621,11 +621,9 @@ namespace TVRename
             {
                 return matchAtStart.OrderByDescending(s => s.ShowName.Length).First();
             }
-            else
-            {
-                IEnumerable<ShowItem> otherMatchingShows = FindMatchingShows(fi, showItems);
-                return otherMatchingShows.OrderByDescending(s => s.ShowName.Length).FirstOrDefault();
-            }
+
+            IEnumerable<ShowItem> otherMatchingShows = FindMatchingShows(fi, showItems);
+            return otherMatchingShows.OrderByDescending(s => s.ShowName.Length).FirstOrDefault();
         }
     }
 }

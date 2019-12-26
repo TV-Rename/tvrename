@@ -36,19 +36,19 @@ namespace TVRename
             }
 
             //Filter on show name
-            bool isNameOk = (ShowName is null) || show.ShowName.Contains(ShowName, StringComparison.OrdinalIgnoreCase);
+            bool isNameOk = ShowName is null || show.ShowName.Contains(ShowName, StringComparison.OrdinalIgnoreCase);
 
             //Filter on show status
-            bool isStatusOk = (ShowStatus is null) || show.ShowStatus.Equals(ShowStatus);
+            bool isStatusOk = ShowStatus is null || show.ShowStatus.Equals(ShowStatus);
 
             //Filter on show network
-            bool isNetworkOk = (ShowNetwork is null) || IsNetworkOk(show);
+            bool isNetworkOk = ShowNetwork is null || IsNetworkOk(show);
 
             //Filter on show rating
             bool isRatingOk = ShowRating is null || IsRatingOk(show);
 
             //Filter on show genres
-            bool areGenresIgnored = (Genres.Count == 0);
+            bool areGenresIgnored = Genres.Count == 0;
             bool doAnyGenresMatch = FindMatchingGenres(show);
 
             return isNameOk && isStatusOk && isNetworkOk && isRatingOk && (areGenresIgnored || doAnyGenresMatch);

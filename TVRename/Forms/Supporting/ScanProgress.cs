@@ -47,17 +47,17 @@ namespace TVRename
 
         private void UpdateProg()
         {
-            pbBulkAutoAdd.Value = ((pctAutoBulkAdd < 0) ? 0 : ((pctAutoBulkAdd > 100) ? 100 : pctAutoBulkAdd));
+            pbBulkAutoAdd.Value = pctAutoBulkAdd < 0 ? 0 : pctAutoBulkAdd > 100 ? 100 : pctAutoBulkAdd;
             pbBulkAutoAdd.Update();
-            pbMediaLib.Value = ((pctMediaLib < 0) ? 0 : ((pctMediaLib > 100) ? 100 : pctMediaLib));
+            pbMediaLib.Value = pctMediaLib < 0 ? 0 : pctMediaLib > 100 ? 100 : pctMediaLib;
             pbMediaLib.Update();
-            pbDownloadFolder.Value = ((pctDownloadFolder< 0) ? 0 : ((pctDownloadFolder > 100) ? 100 : pctDownloadFolder));
+            pbDownloadFolder.Value = pctDownloadFolder< 0 ? 0 : pctDownloadFolder > 100 ? 100 : pctDownloadFolder;
             pbDownloadFolder.Update();
-            pbLocalSearch.Value = ((pctLocalSearch < 0) ? 0 : ((pctLocalSearch > 100) ? 100 : pctLocalSearch));
+            pbLocalSearch.Value = pctLocalSearch < 0 ? 0 : pctLocalSearch > 100 ? 100 : pctLocalSearch;
             pbLocalSearch.Update();
-            pbRSS.Value = ((pctDownloading < 0) ? 0 : ((pctDownloading > 100) ? 100 : pctDownloading));
+            pbRSS.Value = pctDownloading < 0 ? 0 : pctDownloading > 100 ? 100 : pctDownloading;
             pbRSS.Update();
-            pbDownloading.Value = ((pctuTorrent < 0) ? 0 : ((pctuTorrent > 100) ? 100 : pctuTorrent));
+            pbDownloading.Value = pctuTorrent < 0 ? 0 : pctuTorrent > 100 ? 100 : pctuTorrent;
             pbDownloading.Update();
             lblMessage.Text = msg;
         }

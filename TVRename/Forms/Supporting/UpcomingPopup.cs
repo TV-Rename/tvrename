@@ -62,7 +62,7 @@ namespace TVRename
             if (lvUpcoming.Items.Count > 0)
             {
                 int h1 = lvUpcoming.Items[0].GetBounds(ItemBoundsPortion.Entire).Height + 6;
-                Height = (h1 * lvUpcoming.Items.Count);
+                Height = h1 * lvUpcoming.Items.Count;
             }
 
             int w = 0;

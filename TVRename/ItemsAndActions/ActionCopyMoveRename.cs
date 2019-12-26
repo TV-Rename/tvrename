@@ -186,8 +186,8 @@ namespace TVRename
 
         public override bool SameAs(Item o)
         {
-            return (o is ActionCopyMoveRename cmr)
-                   && (Operation == cmr.Operation)
+            return o is ActionCopyMoveRename cmr
+                   && Operation == cmr.Operation
                    && FileHelper.Same(From, cmr.From)
                    && FileHelper.Same(To, cmr.To);
         }
@@ -246,7 +246,7 @@ namespace TVRename
 
         public bool QuickOperation()
         {
-            if ((From is null) || (To is null) || (From.Directory is null) || (To.Directory is null))
+            if (From is null || To is null || From.Directory is null || To.Directory is null)
             {
                 return false;
             }
@@ -274,7 +274,7 @@ namespace TVRename
         }
 
         private bool IsMoveRename() // same thing to the OS
-            => (Operation == Op.move) || (Operation == Op.rename);
+            => Operation == Op.move || Operation == Op.rename;
 
         public bool SameSource([NotNull] ActionCopyMoveRename o) => FileHelper.Same(From, o.From);
 

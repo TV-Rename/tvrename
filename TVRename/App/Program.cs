@@ -112,7 +112,7 @@ namespace TVRename.App
             Logger.Info("Application exiting");
         }
 
-        static void GlobalExceptionHandler(object sender, UnhandledExceptionEventArgs args)
+        private static void GlobalExceptionHandler(object sender, UnhandledExceptionEventArgs args)
     {
         Exception e = (Exception) args.ExceptionObject;
         Logger.Fatal(e,"UNHANDLED ERROR - GLobalExceptionHandler");

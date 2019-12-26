@@ -57,7 +57,7 @@ namespace TVRename
        
         public override bool SameAs(Item o)
         {
-            return (o is ActionDeleteFile cmr) && FileHelper.Same(toRemove , cmr.toRemove);
+            return o is ActionDeleteFile cmr && FileHelper.Same(toRemove , cmr.toRemove);
         }
 
         public override int Compare(Item o)

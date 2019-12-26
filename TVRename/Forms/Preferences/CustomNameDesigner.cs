@@ -51,11 +51,11 @@ namespace TVRename
             ProcessedEpisode pe;
             if (lvTest.SelectedItems.Count == 0)
             {
-                pe = ((eps != null) && (eps.Count > 0)) ? eps[0] : null;
+                pe = eps != null && eps.Count > 0 ? eps[0] : null;
             }
             else
             {
-                pe = (ProcessedEpisode) (lvTest.SelectedItems[0].Tag);
+                pe = (ProcessedEpisode) lvTest.SelectedItems[0].Tag;
             }
 
             foreach (string s in CustomEpisodeName.TAGS)
@@ -90,13 +90,13 @@ namespace TVRename
                 lvi.Text = fn;
 
                 bool ok = FinderHelper.FindSeasEp(new FileInfo(fn + ".avi"), out int seas, out int ep, out int maxEp, pe.Show);
-                bool ok1 = ok && (seas == pe.AppropriateSeasonNumber);
-                bool ok2 = ok && (ep == pe.AppropriateEpNum);
+                bool ok1 = ok && seas == pe.AppropriateSeasonNumber;
+                bool ok2 = ok && ep == pe.AppropriateEpNum;
                 string pre1 = ok1 ? "" : "* ";
                 string pre2 = ok2 ? "" : "* ";
 
-                lvi.SubItems.Add(pre1 + ((seas != -1) ? seas.ToString() : ""));
-                lvi.SubItems.Add(pre2 + ((ep != -1) ? ep.ToString() : "") + (maxEp != -1 ? "-" + maxEp : ""));
+                lvi.SubItems.Add(pre1 + (seas != -1 ? seas.ToString() : ""));
+                lvi.SubItems.Add(pre2 + (ep != -1 ? ep.ToString() : "") + (maxEp != -1 ? "-" + maxEp : ""));
                 
                 lvi.Tag = pe;
 

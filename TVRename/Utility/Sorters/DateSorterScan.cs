@@ -17,8 +17,11 @@ namespace TVRename
         {
             try
             {
-                ProcessedEpisode e = ((Item)(lvi.Tag)).Episode;
-                if (e is null) return DateTime.Now;
+                ProcessedEpisode e = ((Item)lvi.Tag).Episode;
+                if (e is null)
+                {
+                    return DateTime.Now;
+                }
 
                 return e.GetAirDateDt(true);
             }

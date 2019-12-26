@@ -51,7 +51,7 @@ namespace TVRename
             bnOK_Click(null, null);
         }
 
-        private void CodeChanged(object sender, EventArgs e)
+        private static void CodeChanged(object sender, EventArgs e)
         {
             //Nothing to do
         }

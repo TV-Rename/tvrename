@@ -21,7 +21,7 @@ namespace TVRename
 
             ItemList theActionList = new ItemList();
             FileInfo fi = FileHelper.FileInFolder(folder, DEFAULT_FILE_NAME);
-            if (forceRefresh ||(!doneJpg.Contains(fi.FullName) && !fi.Exists))
+            if (forceRefresh ||!doneJpg.Contains(fi.FullName) && !fi.Exists)
             {
                 string bannerPath = si.TheSeries()?.GetSeasonBannerPath(snum);
                 if (!string.IsNullOrEmpty(bannerPath))

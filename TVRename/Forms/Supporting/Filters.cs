@@ -42,19 +42,19 @@ namespace TVRename.Forms
             {
                 //Filter By Show Names
                 bool filterByShowNames = filter.ShowName != null;
-                tbShowName.Text = (filterByShowNames ? filter.ShowName : "");
+                tbShowName.Text = filterByShowNames ? filter.ShowName : "";
 
                 //Filter By Show Status
                 bool filterByShowStatus = filter.ShowStatus != null;
-                cmbShowStatus.SelectedItem = (filterByShowStatus ? filter.ShowStatus : "");
+                cmbShowStatus.SelectedItem = filterByShowStatus ? filter.ShowStatus : "";
 
                 //Filter By Show Rating
                 bool filterByShowRating = filter.ShowRating != null;
-                cmbRating.SelectedItem = (filterByShowRating ? filter.ShowRating : "");
+                cmbRating.SelectedItem = filterByShowRating ? filter.ShowRating : "";
 
                 //Filter By Show Network
                 bool filterByShowNetwork = filter.ShowNetwork != null;
-                cmbNetwork.SelectedItem = (filterByShowNetwork ? filter.ShowNetwork : "");
+                cmbNetwork.SelectedItem = filterByShowNetwork ? filter.ShowNetwork : "";
 
                 //Filter By Genre
                 foreach (string genre in filter.Genres)

@@ -24,7 +24,7 @@ namespace TVRename
 
             FileInfo meta = FileHelper.FileInFolder(folder, fn);
 
-            if (!meta.Exists || (dbep.SrvLastUpdated > TimeZoneHelper.Epoch(meta.LastWriteTime)))
+            if (!meta.Exists || dbep.SrvLastUpdated > TimeZoneHelper.Epoch(meta.LastWriteTime))
             {
                 theActionList.Add(new ActionPyTivoMeta(meta, dbep));
             }

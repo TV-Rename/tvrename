@@ -250,7 +250,7 @@ namespace TVRename
 
         private void lvFMNewShows_DragDrop(object _, [NotNull] DragEventArgs e)
         {
-            string[] files = (string[])(e.Data.GetData(DataFormats.FileDrop));
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)
             {
                 try
@@ -276,7 +276,7 @@ namespace TVRename
 
         private void AddDraggedFiles([NotNull] DragEventArgs e, List<string> strings)
         {
-            string[] files = (string[])(e.Data.GetData(DataFormats.FileDrop));
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)
             {
                 try
@@ -328,7 +328,7 @@ namespace TVRename
             Thread fmpshower = new Thread(FmpShower) {Name = "Bulk Add Shows Progress (Full Auto)"};
             fmpshower.Start();
 
-            while ((progressDialog is null) || (!progressDialog.Ready))
+            while (progressDialog is null || !progressDialog.Ready)
             {
                 Thread.Sleep(10);
             }
@@ -369,7 +369,7 @@ namespace TVRename
 
             foreach (ListViewItem lvi in lvFMNewShows.SelectedItems)
             {
-                FoundFolder ai = (FoundFolder)(lvi.Tag);
+                FoundFolder ai = (FoundFolder)lvi.Tag;
                 engine.AddItems.Remove(ai);
             }
             FillNewShowList(false);
@@ -390,7 +390,7 @@ namespace TVRename
 
             foreach (ListViewItem lvi in lvFMNewShows.SelectedItems)
             {
-                FoundFolder ai = (FoundFolder)(lvi.Tag);
+                FoundFolder ai = (FoundFolder)lvi.Tag;
                 TVSettings.Instance.IgnoreFolders.Add(ai.Folder.FullName.ToLower());
                 engine.AddItems.Remove(ai);
             }
@@ -462,7 +462,7 @@ namespace TVRename
             lvFMNewShows.Update();
         }
 
-        private void UpdateResultEntry([NotNull] FoundFolder ai, [NotNull] ListViewItem lvi)
+        private static void UpdateResultEntry([NotNull] FoundFolder ai, [NotNull] ListViewItem lvi)
         {
             lvi.SubItems.Clear();
             lvi.Text = ai.Folder.FullName;
@@ -470,7 +470,7 @@ namespace TVRename
             lvi.SubItems.Add(ai.HasSeasonFoldersGuess ? "Folder per season" : "Flat");
             lvi.SubItems.Add(ai.CodeKnown ? ai.TVDBCode.ToString() : "");
             lvi.Tag = ai;
-            lvi.ImageIndex=(ai.CodeKnown&&!string.IsNullOrWhiteSpace(ai.Folder.FullName))?1:0;
+            lvi.ImageIndex=ai.CodeKnown&&!string.IsNullOrWhiteSpace(ai.Folder.FullName)?1:0;
         }
 
         private void UpdateListItem(FoundFolder ai, bool makevis)
@@ -516,16 +516,14 @@ namespace TVRename
                 return;
             }
 
-            FoundFolder fme = lvFMNewShows.SelectedItems[0].Tag as FoundFolder;
-            if (fme is null)
+            if (!(lvFMNewShows.SelectedItems[0].Tag is FoundFolder fme))
             {
                 return;
             }
 
-            int code = fme.TVDBCode;
-            if (code != -1)
+            if (fme.TVDBCode != -1)
             {
-                Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(code, -1, false));
+                Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(fme.TVDBCode, -1, false));
             }
         }
 
@@ -553,10 +551,10 @@ namespace TVRename
             }
         }
 
-        private void EditEntry([NotNull] FoundFolder fme)
+        private static void EditEntry([NotNull] FoundFolder fme)
         {
             FolderMonitorEdit ed = new FolderMonitorEdit(fme);
-            if ((ed.ShowDialog() != DialogResult.OK )|| (ed.Code == -1))
+            if (ed.ShowDialog() != DialogResult.OK|| ed.Code == -1)
             {
                 return;
             }
@@ -566,19 +564,19 @@ namespace TVRename
 
         private void lstFMMonitorFolders_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            bnRemoveMonFolder.Enabled = (lstFMMonitorFolders.SelectedIndices.Count > 0);
-            bnOpenMonFolder.Enabled = (lstFMMonitorFolders.SelectedIndices.Count > 0);
+            bnRemoveMonFolder.Enabled = lstFMMonitorFolders.SelectedIndices.Count > 0;
+            bnOpenMonFolder.Enabled = lstFMMonitorFolders.SelectedIndices.Count > 0;
         }
 
         private void lstFMIgnoreFolders_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            bnRemoveIgFolder.Enabled = (lstFMIgnoreFolders.SelectedIndices.Count > 0);
-            bnOpenIgFolder.Enabled = (lstFMIgnoreFolders.SelectedIndices.Count > 0);
+            bnRemoveIgFolder.Enabled = lstFMIgnoreFolders.SelectedIndices.Count > 0;
+            bnOpenIgFolder.Enabled = lstFMIgnoreFolders.SelectedIndices.Count > 0;
         }
 
         private void lvFMNewShows_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            bool somethingSelected = (lvFMNewShows.SelectedItems.Count > 0);
+            bool somethingSelected = lvFMNewShows.SelectedItems.Count > 0;
             bnEditEntry.Enabled = somethingSelected;
             bnRemoveNewFolder.Enabled = somethingSelected;
             bnIgnoreNewFolder.Enabled = somethingSelected;

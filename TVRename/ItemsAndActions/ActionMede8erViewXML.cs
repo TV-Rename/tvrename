@@ -71,14 +71,14 @@ namespace TVRename
 
         public override bool SameAs(Item o)
         {
-            return (o is ActionMede8erViewXML xml) && (xml.Where == Where);
+            return o is ActionMede8erViewXML xml && xml.Where == Where;
         }
 
         public override int Compare(Item o)
         {
             ActionMede8erViewXML nfo = o as ActionMede8erViewXML;
 
-            return string.Compare((Where.FullName), nfo?.Where.FullName, StringComparison.Ordinal);
+            return string.Compare(Where.FullName, nfo?.Where.FullName, StringComparison.Ordinal);
         }
 
         #endregion

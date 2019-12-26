@@ -10,7 +10,7 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.ExportMissingCSV;
         protected override string Location() => TVSettings.Instance.ExportMissingCSVTo;
-        public override bool ApplicableFor(TVSettings.ScanType st) => (st==TVSettings.ScanType.Full );
+        public override bool ApplicableFor(TVSettings.ScanType st) => st==TVSettings.ScanType.Full;
 
         protected override void Do()
         {

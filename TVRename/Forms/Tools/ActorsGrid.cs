@@ -448,7 +448,7 @@ namespace TVRename
                 int t = 0;
                 for (int c = 0; c < DataC; c++)
                 {
-                    if (((Data[r][c] != null) && ((onlyCols is null) || onlyCols[c])))
+                    if (Data[r][c] != null && (onlyCols is null || onlyCols[c]))
                     {
                         t++;
                     }
@@ -461,7 +461,7 @@ namespace TVRename
                 int t = 0;
                 for (int r = 0; r < DataR; r++)
                 {
-                    if ((Data[r][c] != null))
+                    if (Data[r][c] != null)
                     {
                         t++;
                     }
@@ -473,7 +473,7 @@ namespace TVRename
             {
                 int newr = Rows.Count;
                 int newc = Cols.Count;
-                if ((newr > allocR) || (newc > allocC)) // need to enlarge array
+                if (newr > allocR || newc > allocC) // need to enlarge array
                 {
                     if (newr > allocR)
                     {
@@ -495,7 +495,7 @@ namespace TVRename
                     {
                         for (int c = 0; c < DataC; c++)
                         {
-                            if ((r < newr) && (c < newc))
+                            if (r < newr && c < newc)
                             {
                                 newarr[r][c] = Data[r][c];
                             }
@@ -607,7 +607,7 @@ namespace TVRename
 
             public void SortCols(bool score)
             {
-                for (int c2 = 0; c2 < (DataC - 1); c2++)
+                for (int c2 = 0; c2 < DataC - 1; c2++)
                 {
                     int topscore = 0;
                     string topword = "";
@@ -617,7 +617,7 @@ namespace TVRename
                         if (score)
                         {
                             int sc = ColScore(c);
-                            if ((maxat == -1) || (sc > topscore))
+                            if (maxat == -1 || sc > topscore)
                             {
                                 maxat = c;
                                 topscore = sc;
@@ -625,7 +625,7 @@ namespace TVRename
                         }
                         else
                         {
-                            if ((maxat == -1) || (string.Compare(Cols[c], topword, StringComparison.Ordinal) < 0))
+                            if (maxat == -1 || string.Compare(Cols[c], topword, StringComparison.Ordinal) < 0)
                             {
                                 maxat = c;
                                 topword = Cols[c];
@@ -697,7 +697,7 @@ namespace TVRename
 
             public void SortRows(bool score) 
             {
-                for (int r2 = 0; r2 < (DataR - 1); r2++)
+                for (int r2 = 0; r2 < DataR - 1; r2++)
                 {
                     int topscore = 0;
                     int maxat = -1;
@@ -707,7 +707,7 @@ namespace TVRename
                         if (score)
                         {
                             int sc = RowScore(r, null);
-                            if ((maxat == -1) || (sc > topscore))
+                            if (maxat == -1 || sc > topscore)
                             {
                                 maxat = r;
                                 topscore = sc;
@@ -715,7 +715,7 @@ namespace TVRename
                         }
                         else
                         {
-                            if ((maxat == -1) || (string.Compare(Rows[r], topword, StringComparison.Ordinal) < 0))
+                            if (maxat == -1 || string.Compare(Rows[r], topword, StringComparison.Ordinal) < 0)
                             {
                                 maxat = r;
                                 topword = Rows[r];

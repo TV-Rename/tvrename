@@ -366,7 +366,7 @@
     <Compile Include="DownloadIdentifers\DownloadFanartJPG.cs" />
     <Compile Include="DownloadIdentifers\DownloadIdentifier.cs" />
     <Compile Include="DownloadIdentifers\DownloadJolderJPG.cs" />
-    <Compile Include="DownloadIdentifers\DownloadXBMCImages.cs" />
+    <Compile Include="DownloadIdentifers\DownloadKodiImages.cs" />
     <Compile Include="Exporter\ShowsTXT.cs" />
     <Compile Include="Exporter\Exporter.cs" />
     <Compile Include="Exporter\MissingXML.cs" />

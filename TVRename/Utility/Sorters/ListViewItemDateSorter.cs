@@ -19,7 +19,7 @@ namespace TVRename
             DateTime? d1 = GetDate(x);
             DateTime? d2 = GetDate(y);
 
-            if ((d1 is null) && (d2 is null))
+            if (d1 is null && d2 is null)
             {
                 return 0;
             }

@@ -84,7 +84,7 @@ namespace TVRename
                     //Ignore seasons that all aired on same date
                     DateTime? seasonMinAirDate = (from pep in kvp.Value select pep.FirstAired).Min();
                     DateTime? seasonMaxAirDate = (from pep in kvp.Value select pep.FirstAired).Max();
-                    if ((seasonMaxAirDate.HasValue) && seasonMinAirDate.HasValue &&
+                    if (seasonMaxAirDate.HasValue && seasonMinAirDate.HasValue &&
                         seasonMaxAirDate == seasonMinAirDate)
                     {
                         continue;
@@ -128,8 +128,8 @@ namespace TVRename
 
                 //do the 'name' test
                 string root = Helpers.GetCommonStartString(pep.Name, comparePep.Name);
-                bool sameLength = (pep.Name.Length == comparePep.Name.Length);
-                bool sameName = (!root.Trim().Equals("Episode") && sameLength && root.Length > 3 && root.Length > pep.Name.Length / 2);
+                bool sameLength = pep.Name.Length == comparePep.Name.Length;
+                bool sameName = !root.Trim().Equals("Episode") && sameLength && root.Length > 3 && root.Length > pep.Name.Length / 2;
 
                 bool oneFound = false;
                 bool largerFileSize = false;
@@ -155,7 +155,7 @@ namespace TVRename
             //Do the missing Test (ie is one missing and not the other)
             bool pepFound = dfc.FindEpOnDisk(pep).Any();
             bool comparePepFound = dfc.FindEpOnDisk(comparePep).Any();
-            bool oneFound = (pepFound ^ comparePepFound);
+            bool oneFound = pepFound ^ comparePepFound;
             if (oneFound)
             {
                 output.AppendLine(
@@ -175,11 +175,11 @@ namespace TVRename
                     }
                 }
 
-                int averageMovieLength =(otherMovieLengths.Count ==1)
+                int averageMovieLength =otherMovieLengths.Count ==1
                     ?otherMovieLengths.Sum()
                     :(otherMovieLengths.Sum() - dupMovieLength) / (otherMovieLengths.Count - 1);
 
-                largerFileSize = (dupMovieLength > averageMovieLength * 1.4);
+                largerFileSize = dupMovieLength > averageMovieLength * 1.4;
                 if (largerFileSize)
                 {
                     {

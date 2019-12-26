@@ -73,7 +73,7 @@ namespace TVRename
                     return null;
                 }
 
-                return ((SeriesInfo)(lvMatches.SelectedItems[0].Tag));
+                return (SeriesInfo)lvMatches.SelectedItems[0].Tag;
             }
             catch
             {
@@ -117,21 +117,21 @@ namespace TVRename
                         bool numberMatch = numeric && num == matchnum;
                         string searchTerm = what.CompareName();
 
-                        if (numberMatch || (!numeric && (simpleS.Contains(searchTerm))) ||
-                            (numeric && show.Contains(what)))
+                        if (numberMatch || !numeric && simpleS.Contains(searchTerm) ||
+                            numeric && show.Contains(what))
                         {
                             lvMatches.Items.Add(NewLvi(kvp.Value, num, show, numberMatch));
                         }
                     }
                 }
 
-                if ((lvMatches.Items.Count == 1) && numeric)
+                if (lvMatches.Items.Count == 1 && numeric)
                 {
                     lvMatches.Items[0].Selected = true;
                 }
 
                 int n = lvMatches.Items.Count;
-                txtSearchStatus.Text = "Found " + n + " show" + ((n != 1) ? "s" : "");
+                txtSearchStatus.Text = "Found " + n + " show" + (n != 1 ? "s" : "");
             }
             else
             {
@@ -140,7 +140,7 @@ namespace TVRename
 
             lvMatches.EndUpdate();
 
-            if ((lvMatches.Items.Count == 1) && chooseOnlyMatch)
+            if (lvMatches.Items.Count == 1 && chooseOnlyMatch)
             {
                 lvMatches.Items[0].Selected = true;
             }
@@ -196,7 +196,7 @@ namespace TVRename
 
         private void txtFindThis_KeyDown(object sender, [NotNull] KeyEventArgs e)
         {
-            if ((e.KeyCode == Keys.Enter) || (e.KeyCode == Keys.Return))
+            if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return)
             {
                 bnGoSearch_Click(null, null);
                 e.Handled = true;

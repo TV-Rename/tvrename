@@ -19,7 +19,7 @@ namespace TVRename
             aired, // Season completely aired ... no further shows in this season scheduled to date
             partiallyAired, // Season partially aired ... there are further shows in this season which are unaired to date
             noneAired, // Season completely unaired ... no show of this season as aired yet
-            noEpisodes,
+            noEpisodes
         }
 
         public enum SeasonType
@@ -47,7 +47,7 @@ namespace TVRename
         [NotNull]
         public static string UISeasonWord(int season)
         {
-            if ((TVSettings.Instance.defaultSeasonWord.Length > 1) && (TVSettings.Instance.LeadingZeroOnSeason))
+            if (TVSettings.Instance.defaultSeasonWord.Length > 1 && TVSettings.Instance.LeadingZeroOnSeason)
             {
                 return TVSettings.Instance.defaultSeasonWord + " " + season.ToString("00");
             }
@@ -68,7 +68,7 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public static string UIFullSeasonWord(int snum)
         {
-            return (snum == 0)
+            return snum == 0
                 ? TVSettings.Instance.SpecialsFolderName
                 : UISeasonWord(snum);
         }
@@ -101,18 +101,18 @@ namespace TVRename
 
         internal int MinYear()
         {
-            return (Episodes.Values.Select(e => e.GetAirDateDt())
+            return Episodes.Values.Select(e => e.GetAirDateDt())
                 .Where(adt => adt.HasValue)
                 .Select(adt => adt.Value)
-                .Select(airDateTime => airDateTime.Year)).Concat(new[] {9999}).Min();
+                .Select(airDateTime => airDateTime.Year).Concat(new[] {9999}).Min();
         }
 
         internal int MaxYear()
         {
-            return (Episodes.Values.Select(e => e.GetAirDateDt())
+            return Episodes.Values.Select(e => e.GetAirDateDt())
                 .Where(adt => adt.HasValue)
                 .Select(adt => adt.Value)
-                .Select(airDateTime => airDateTime.Year)).Concat(new[] {0}).Max();
+                .Select(airDateTime => airDateTime.Year).Concat(new[] {0}).Max();
         }
 
         private bool HasEpisodes => Episodes != null && Episodes.Count > 0;
@@ -238,7 +238,7 @@ namespace TVRename
             }
         }
 
-        public bool IsSpecial() => (SeasonNumber == 0);
+        public bool IsSpecial() => SeasonNumber == 0;
 
         public bool NextEpisodeIs(int episodeNumber, bool dvdOrder)
         {
@@ -246,7 +246,7 @@ namespace TVRename
                 ? (from ep in Episodes.Values select ep.DvdEpNum).Concat(new[] { 0 }).Max()
                 : (from ep in Episodes.Values select ep.AiredEpNum).Concat(new[] { 0 }).Max();
 
-            return (episodeNumber==maxEpNum+1);
+            return episodeNumber==maxEpNum+1;
         }
     }
 }

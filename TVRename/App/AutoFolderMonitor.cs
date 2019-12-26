@@ -45,7 +45,7 @@ namespace TVRename
                     continue;
                 }
 
-                if ((File.GetAttributes(efi) & System.IO.FileAttributes.Directory) != (System.IO.FileAttributes.Directory))  // not a folder
+                if ((File.GetAttributes(efi) & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)  // not a folder
                 {
                     Logger.Warn($"Could not watch {efi} as it is not a file.");
                     continue;
@@ -71,14 +71,14 @@ namespace TVRename
             }
         }
 
-        void watcher_Changed(object sender, System.IO.FileSystemEventArgs e)
+        private void watcher_Changed(object sender, System.IO.FileSystemEventArgs e)
         {
             Logger.Trace("Restarted delay timer");
             mScanDelayTimer.Stop();
             mScanDelayTimer.Start();
         }
 
-        void mScanDelayTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void mScanDelayTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             mScanDelayTimer.Stop();
             Stop();

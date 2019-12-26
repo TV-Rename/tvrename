@@ -179,15 +179,15 @@ namespace TVRename
         [CanBeNull]
         private TVSettings.FilenameProcessorRE RegExForRow(int i)
         {
-            if ((i < 1) || (i >= Grid1.RowsCount)) // row 0 is header
+            if (i < 1 || i >= Grid1.RowsCount) // row 0 is header
             {
                 return null;
             }
 
-            bool en = (bool) (Grid1[i, 0].Value);
-            string regex = (string) (Grid1[i, 1].Value);
-            bool fullPath = (bool) (Grid1[i, 2].Value);
-            string notes = (string) (Grid1[i, 3].Value) ?? "";
+            bool en = (bool) Grid1[i, 0].Value;
+            string regex = (string) Grid1[i, 1].Value;
+            bool fullPath = (bool) Grid1[i, 2].Value;
+            string notes = (string) Grid1[i, 3].Value ?? "";
 
             return string.IsNullOrEmpty(regex) ? null : new TVSettings.FilenameProcessorRE(en, regex, fullPath, notes);
         }
@@ -269,15 +269,13 @@ namespace TVRename
         private void FillPreview()
         {
             lvPreview.Items.Clear();
-            if ((string.IsNullOrEmpty(txtFolder.Text)) || (!Directory.Exists(txtFolder.Text)))
+            if (string.IsNullOrEmpty(txtFolder.Text) || !Directory.Exists(txtFolder.Text))
             {
                 txtFolder.BackColor = Helpers.WarningColor();
                 return;
             }
-            else
-            {
-                txtFolder.BackColor = SystemColors.Window;
-            }
+
+            txtFolder.BackColor = SystemColors.Window;
 
             if (Grid1.RowsCount <= 1) // 1 for header
             {
@@ -347,9 +345,9 @@ namespace TVRename
 
                 ListViewItem lvi = new ListViewItem {Text = fi.Name};
                 lvi.SubItems.Add(showDisplayString);
-                lvi.SubItems.Add((seas == -1) ? "-" : seas.ToString());
-                lvi.SubItems.Add((ep == -1) ? "-" : ep + ((maxEp != -1) ? "-" + maxEp : ""));
-                lvi.SubItems.Add((matchRex is null) ? "-" : matchRex.Notes);
+                lvi.SubItems.Add(seas == -1 ? "-" : seas.ToString());
+                lvi.SubItems.Add(ep == -1 ? "-" : ep + (maxEp != -1 ? "-" + maxEp : ""));
+                lvi.SubItems.Add(matchRex is null ? "-" : matchRex.Notes);
                 if (!r)
                 {
                     lvi.BackColor = Helpers.WarningColor();
@@ -452,8 +450,8 @@ namespace TVRename
 
             bnDelete.Enabled = true;
 
-            bnUp.Enabled = (selectedRow > 1);
-            bnDown.Enabled = (selectedRow < Grid1.RowsCount - 1);
+            bnUp.Enabled = selectedRow > 1;
+            bnDown.Enabled = selectedRow < Grid1.RowsCount - 1;
         }
     }
 }

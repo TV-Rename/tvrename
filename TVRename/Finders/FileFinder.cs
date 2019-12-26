@@ -19,7 +19,7 @@ using Path = Alphaleonis.Win32.Filesystem.Path;
 
 namespace TVRename
 {
-    abstract class FileFinder : Finder
+    internal abstract class FileFinder : Finder
     {
         protected FileFinder(TVDoc i) : base(i) { }
 
@@ -71,7 +71,7 @@ namespace TVRename
                                       dce.Extension);
                 }
 
-                if ((dce.FullName != fi.FullName) && (!FindExistingActionFor(addTo,dce))){
+                if (dce.FullName != fi.FullName && !FindExistingActionFor(addTo,dce)){
                     // don't remove the base search folders
                     bool doTidyup =
                         !TVSettings.Instance.DownloadFolders.Any(folder =>
@@ -135,7 +135,7 @@ namespace TVRename
             LOGGER.Error(e, "Path too long. " + dce.FullName);
 
             t += ".  More information is available in the log file";
-            if ((!MDoc.Args.Unattended) && (!MDoc.Args.Hide) && Environment.UserInteractive)
+            if (!MDoc.Args.Unattended && !MDoc.Args.Hide && Environment.UserInteractive)
             {
                 MessageBox.Show(t, "Path too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
@@ -193,7 +193,7 @@ namespace TVRename
         {
             foreach (ActionCopyMoveRename existingFileOperation in addTo.CopyMoveItems())
             {
-                if (String.Compare(existingFileOperation.From.FullName, fi.FullName,
+                if (string.Compare(existingFileOperation.From.FullName, fi.FullName,
                         StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return true;
@@ -203,7 +203,7 @@ namespace TVRename
             return false;
         }
         protected void KeepTogether([NotNull] ItemList actionlist, bool fromLibrary) {
-            KeepTogether(actionlist, fromLibrary, (!MDoc.Args.Unattended) && (!MDoc.Args.Hide),MDoc);
+            KeepTogether(actionlist, fromLibrary, !MDoc.Args.Unattended && !MDoc.Args.Hide,MDoc);
                 }
 
         public static void KeepTogether([NotNull] ItemList actionlist, bool fromLibrary,bool showErrors, TVDoc d)
@@ -297,7 +297,7 @@ namespace TVRename
             int p = filename.IndexOf(basename, StringComparison.OrdinalIgnoreCase);
 
             string newName = filename.Substring(0, p) + toname + filename.Substring(p + basename.Length);
-            if ((TVSettings.Instance.RenameTxtToSub) && newName.EndsWith(".txt", StringComparison.Ordinal))
+            if (TVSettings.Instance.RenameTxtToSub && newName.EndsWith(".txt", StringComparison.Ordinal))
             {
                 return newName.Substring(0, newName.Length - 4) + ".sub";
             }
@@ -339,7 +339,7 @@ namespace TVRename
                     continue;
                 }
 
-                bool last = i == (newList.Count - 1);
+                bool last = i == newList.Count - 1;
                 ActionCopyMoveRename cmr2 = !last ? newList[i + 1] as ActionCopyMoveRename : null;
                 bool ok2 = cmr2 != null;
 
@@ -370,7 +370,7 @@ namespace TVRename
                     return true;
                 }
 
-                if ((action is Action a1) && (action2 is Action a2) && (a2.Produces == a1.Produces))
+                if (action is Action a1 && action2 is Action a2 && a2.Produces == a1.Produces)
                 {
                     return true;
                 }

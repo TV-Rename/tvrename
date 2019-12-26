@@ -95,7 +95,7 @@ namespace TVRename
             grid1[0, 0].View = topleftTitleModel;
 
             // Draw season
-            for (int c = (chkHideSpecials.Checked?1:0); c < maxSeason + 1; c++)
+            for (int c = chkHideSpecials.Checked?1:0; c < maxSeason + 1; c++)
             {
                 h = new ColumnHeader(Season.UIFullSeasonWord(c))
                 {
@@ -137,7 +137,7 @@ namespace TVRename
                 RowHeader rh = new RowHeader(show.ShowName)
                 {
                     ResizeEnabled = false,
-                    View = new Cell{ForeColor = (show.ShowItem.DoMissingCheck ? Color.Black : Color.Gray)}
+                    View = new Cell{ForeColor = show.ShowItem.DoMissingCheck ? Color.Black : Color.Gray}
                 };
 
                 //Gray if the show is not checked for missing episodes in the scan
@@ -150,13 +150,13 @@ namespace TVRename
                     ShowSummaryData.SummaryOutput output = seasonData.GetOuput();
 
                     //Ignore Season if checkbox is checked
-                    if ((chkHideSpecials.Checked) && output.Special)
+                    if (chkHideSpecials.Checked && output.Special)
                     {
                         continue;
                     }
 
                     //Ignore Season if checkbox is checked
-                    if ((chkHideIgnored.Checked) && output.Ignored)
+                    if (chkHideIgnored.Checked && output.Ignored)
                     {
                         continue;
                     }
@@ -223,7 +223,7 @@ namespace TVRename
 
             Dictionary<int, Season> seasons = si.DvdOrder ? ser.DvdSeasons : ser.AiredSeasons;
 
-            if ((snum >= 0) && (seasons.ContainsKey(snum)))
+            if (snum >= 0 && seasons.ContainsKey(snum))
             {
                 season = seasons[snum];
 
@@ -273,10 +273,10 @@ namespace TVRename
                     break;
                 default:
                     {
-                        if ((n >= RightClickCommands.kWatchBase) && (n < RightClickCommands.kOpenFolderBase))
+                        if (n >= RightClickCommands.kWatchBase && n < RightClickCommands.kOpenFolderBase)
                         {
                             int wn = n - RightClickCommands.kWatchBase;
-                            if ((mLastFileList != null) && (wn >= 0) && (wn < mLastFileList.Count))
+                            if (mLastFileList != null && wn >= 0 && wn < mLastFileList.Count)
                             {
                                 Helpers.SysOpen(mLastFileList[wn].FullName);
                             }
@@ -420,7 +420,7 @@ namespace TVRename
                 bool first = true;
                 foreach (string folder in afl[seas.SeasonNumber])
                 {
-                    if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder) && !added.Contains(folder))
+                    if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !added.Contains(folder))
                     {
                         added.Add(folder); // don't show the same folder more than once
                         if (first)
@@ -447,7 +447,7 @@ namespace TVRename
                 {
                     foreach (string folder in kvp.Value)
                     {
-                        if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder) && !added.Contains(folder))
+                        if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !added.Contains(folder))
                         {
                             added.Add(folder); // don't show the same folder more than once
                             if (first)
@@ -500,13 +500,13 @@ namespace TVRename
                 GenerateMenu(showRightClickMenu, menuName, (int)rightClickCommand);
             }
 
-            private void GenerateMenu([NotNull] ContextMenuStrip showRightClickMenu, string menuName, int rightClickCommand)
+            private static void GenerateMenu([NotNull] ContextMenuStrip showRightClickMenu, string menuName, int rightClickCommand)
             {
                 ToolStripMenuItem tsi = new ToolStripMenuItem(menuName) {Tag = rightClickCommand};
                 showRightClickMenu.Items.Add(tsi);
             }
 
-            private void GenerateSeparator([NotNull] ContextMenuStrip showRightClickMenu)
+            private static void GenerateSeparator([NotNull] ContextMenuStrip showRightClickMenu)
             {
                 ToolStripSeparator tss = new ToolStripSeparator();
                 showRightClickMenu.Items.Add(tss);
@@ -603,7 +603,7 @@ namespace TVRename
                         }
                         else if (episodeGotCount == episodeAiredCount)
                         {
-                            output.Color = (episodeCount - episodeAiredCount) == 0 ? Color.Green : Color.GreenYellow;
+                            output.Color = episodeCount - episodeAiredCount == 0 ? Color.Green : Color.GreenYellow;
                         }
                         else
                         {
@@ -613,15 +613,9 @@ namespace TVRename
                     return output;
                 }
 
-                public bool HasMissingEpisodes()
-                {
-                    return (episodeGotCount!=episodeCount);
-                }
+                public bool HasMissingEpisodes() => episodeGotCount!=episodeCount;
 
-                public bool HasAiredMssingEpisodes()
-                {
-                    return (episodeGotCount != episodeAiredCount);
-                }
+                public bool HasAiredMssingEpisodes() => episodeGotCount != episodeAiredCount;
             }
 
             #endregion

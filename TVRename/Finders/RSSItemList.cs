@@ -88,9 +88,9 @@ namespace TVRename
                 Logger.Info($"encLink:     {enclosureLink}");
             }
 
-            link = (string.IsNullOrWhiteSpace(enclosureLink))?link:enclosureLink;
+            link = string.IsNullOrWhiteSpace(enclosureLink)?link:enclosureLink;
 
-            if ((string.IsNullOrEmpty(title)) || (string.IsNullOrEmpty(link)))
+            if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(link))
             {
                 return false;
             }
@@ -137,7 +137,7 @@ namespace TVRename
                 Logger.Info($"Episode:     {episode}");
             }
 
-            if ((season != -1) && (episode != -1))
+            if (season != -1 && episode != -1)
             {
                 Add(new RSSItem(link, title, season, episode, showName));
             }

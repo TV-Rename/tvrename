@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -190,7 +191,7 @@ namespace TVRename
                 {
                     int returnValue = parseMethod(duration);
 
-                    if ((returnValue) > 0)
+                    if (returnValue > 0)
                     {
                         return returnValue;
                     }
@@ -223,10 +224,8 @@ namespace TVRename
             {
                 return meParseMethod(returnVal);
             }
-            else
-            {
-                Logger.Warn($"Could not {operation} for {movieFile.FullName} by using MediaInfo.");
-            }
+
+            Logger.Warn($"Could not {operation} for {movieFile.FullName} by using MediaInfo.");
 
             return -1;
         }
@@ -250,8 +249,8 @@ namespace TVRename
                 // Duration should be formatted as "00:44:08"
                 if (!string.IsNullOrWhiteSpace(duration))
                 {
-                    return (3600 * int.Parse(duration.Split(':')[0]))
-                           + (60 * int.Parse(duration.Split(':')[1]))
+                    return 3600 * int.Parse(duration.Split(':')[0])
+                           + 60 * int.Parse(duration.Split(':')[1])
                            + int.Parse(duration.Split(':')[2]);
                 }
             }
@@ -322,7 +321,7 @@ namespace TVRename
                 StringBuilder sb = new StringBuilder();
                 foreach (IShellProperty prop in properties)
                 {
-                    string value = (prop.ValueAsObject is null)
+                    string value = prop.ValueAsObject is null
                         ? ""
                         : prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
 
@@ -347,7 +346,7 @@ namespace TVRename
             }
 
             int l = ofThat.Length;
-            return ((thisOne.Length >= l) && (thisOne.Substring(0, l).ToLower() == ofThat.ToLower()));
+            return thisOne.Length >= l && string.Equals(thisOne.Substring(0, l), ofThat, StringComparison.CurrentCultureIgnoreCase);
         }
 
         [NotNull]
@@ -430,12 +429,12 @@ namespace TVRename
             string n2 = b.FullName;
             if (!n1.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
             {
-                n1 = n1 + Path.DirectorySeparatorChar;
+                n1 += Path.DirectorySeparatorChar;
             }
 
             if (!n2.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
             {
-                n2 = n2 + Path.DirectorySeparatorChar;
+                n2 += Path.DirectorySeparatorChar;
             }
 
             return string.Compare(n1, n2, StringComparison.OrdinalIgnoreCase) == 0; // true->ignore case
@@ -448,10 +447,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static FileInfo FileInFolder([NotNull] DirectoryInfo di, string fn)
-        {
-            return FileInFolder(di.FullName, fn);
-        }
+        public static FileInfo FileInFolder([NotNull] DirectoryInfo di, string fn) => FileInFolder(di.FullName, fn);
 
         // see if showname is somewhere in filename
         public static bool SimplifyAndCheckFilename(string filename, string showname, bool simplifyfilename, bool simplifyshowname)
@@ -464,7 +460,7 @@ namespace TVRename
 
         private static bool SimplifyAndCheckFilenameAtStart(string filename, string showname, bool simplifyfilename, bool simplifyshowname)
         {
-            string showPattern = (simplifyshowname ? Helpers.SimplifyName(showname) : showname);
+            string showPattern = simplifyshowname ? Helpers.SimplifyName(showname) : showname;
 
             return (simplifyfilename ? Helpers.SimplifyName(filename) : filename).StartsWith( showPattern, StringComparison.CurrentCultureIgnoreCase);
         }
@@ -500,12 +496,12 @@ namespace TVRename
 
             if (TVSettings.Instance.IgnoreSamples &&
                 Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) &&
-                ((fi.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
+                fi.Length / (1024 * 1024) < TVSettings.Instance.SampleFileMaxSizeMB)
             {
                 return true;
             }
 
-            if (fi.Name.StartsWith("-.", StringComparison.Ordinal) && (fi.Length / 1024 < 10))
+            if (fi.Name.StartsWith("-.", StringComparison.Ordinal) && fi.Length / 1024 < 10)
             {
                 return true;
             }
@@ -513,7 +509,7 @@ namespace TVRename
             return false;
         }
 
-        internal static bool FileExistsCaseSensitive([NotNull] FileInfo[] files, FileInfo newFile)
+        internal static bool FileExistsCaseSensitive([NotNull] IEnumerable<FileInfo> files, FileInfo newFile)
         {
             return files.Any(testFile => string.Equals(testFile.Name, newFile.Name, StringComparison.CurrentCulture));
         }

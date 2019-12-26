@@ -12,7 +12,7 @@ using JetBrains.Annotations;
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
-    class RecentWPLExporter : RecentExporter
+    internal class RecentWPLExporter : RecentExporter
     {
         public RecentWPLExporter(TVDoc doc) : base(doc)
         {
@@ -22,10 +22,7 @@ namespace TVRename
         protected override string Location() => TVSettings.Instance.ExportRecentWPLTo;
 
         [NotNull]
-        protected override string GenerateHeader()
-        {
-            return $"<?wpl version=\"1.0\"?>\r\n<smil>\r\n    <head>\r\n        <meta name=\"Generator\" content=\"TV Rename -- {Helpers.DisplayVersion}\"/>\r\n        <title>Recent ASX Export</title>\r\n    </head>\r\n    <body>\r\n        <seq>";
-        }
+        protected override string GenerateHeader() => $"<?wpl version=\"1.0\"?>\r\n<smil>\r\n    <head>\r\n        <meta name=\"Generator\" content=\"TV Rename -- {Helpers.DisplayVersion}\"/>\r\n        <title>Recent ASX Export</title>\r\n    </head>\r\n    <body>\r\n        <seq>";
 
         [NotNull]
         protected override string GenerateRecord(ProcessedEpisode ep, [NotNull] FileInfo file, string name, int length)
@@ -35,9 +32,6 @@ namespace TVRename
         }
 
         [NotNull]
-        protected override string GenerateFooter()
-        {
-            return "         </seq>\r\n    </body>\r\n</smil>";
-        }
+        protected override string GenerateFooter() => "         </seq>\r\n    </body>\r\n</smil>";
     }
 }

@@ -586,7 +586,7 @@ namespace TVRename
             ReplacementsGrid[r, 1] = new SourceGrid.Cells.Cell(to, typeof(string));
             ReplacementsGrid[r, 2] = new SourceGrid.Cells.CheckBox(null, ins);
             if (!string.IsNullOrEmpty(from) &&
-                (TVSettings.CompulsoryReplacements().IndexOf(from, StringComparison.Ordinal) != -1))
+                TVSettings.CompulsoryReplacements().IndexOf(from, StringComparison.Ordinal) != -1)
             {
                 ReplacementsGrid[r, 0].Editor.EnableEdit = false;
                 ReplacementsGrid[r, 0].View = roModel;
@@ -638,7 +638,7 @@ namespace TVRename
             s.RSSURLs.Clear();
             for (int i = 1; i < RSSGrid.RowsCount; i++)
             {
-                string url = (string) (RSSGrid[i, 0].Value);
+                string url = (string) RSSGrid[i, 0].Value;
                 if (!string.IsNullOrEmpty(url))
                 {
                     s.RSSURLs.Add(url);
@@ -651,9 +651,9 @@ namespace TVRename
             s.Replacements.Clear();
             for (int i = 1; i < ReplacementsGrid.RowsCount; i++)
             {
-                string from = (string) (ReplacementsGrid[i, 0].Value);
-                string to = (string) (ReplacementsGrid[i, 1].Value);
-                bool ins = (bool) (ReplacementsGrid[i, 2].Value);
+                string from = (string) ReplacementsGrid[i, 0].Value;
+                string to = (string) ReplacementsGrid[i, 1].Value;
+                bool ins = (bool) ReplacementsGrid[i, 2].Value;
                 if (!string.IsNullOrEmpty(from))
                 {
                     s.Replacements.Add(new TVSettings.Replacement(from, to, ins));
@@ -863,7 +863,6 @@ namespace TVRename
             switch (s.WTWDoubleClick)
             {
                 case TVSettings.WTWDoubleClickAction.Search:
-                default:
                     rbWTWSearch.Checked = true;
                     break;
                 case TVSettings.WTWDoubleClickAction.Scan:
@@ -874,7 +873,6 @@ namespace TVRename
             switch (s.keepTogetherMode)
             {
                 case TVSettings.KeepTogetherModes.All:
-                default:
                     cbKeepTogetherMode.Text = "All";
                     break;
                 case TVSettings.KeepTogetherModes.AllBut:
@@ -888,7 +886,6 @@ namespace TVRename
             switch (s.mode)
             {
                 case TVSettings.BetaMode.ProductionOnly:
-                default:
                     cbMode.Text = "Production";
                     break;
                 case TVSettings.BetaMode.BetaToo:
@@ -1063,7 +1060,7 @@ namespace TVRename
         private void TxtNumberOnlyKeyPress(object sender, [NotNull] KeyPressEventArgs e)
         {
             // digits only
-            if ((e.KeyChar >= 32) && (!char.IsDigit(e.KeyChar)))
+            if (e.KeyChar >= 32 && !char.IsDigit(e.KeyChar))
             {
                 e.Handled = true;
             }
@@ -1143,7 +1140,7 @@ namespace TVRename
 
             if (rowsIndex.Length > 0)
             {
-                Helpers.SysOpen((string) (RSSGrid[rowsIndex[0], 0].Value));
+                Helpers.SysOpen((string) RSSGrid[rowsIndex[0], 0].Value);
             }
         }
 
@@ -1165,7 +1162,7 @@ namespace TVRename
         private void EnableDisable(object sender, EventArgs e)
         {
             bnRemoveDefinedColor.Enabled = lvwDefinedColors.SelectedItems.Count == 1;
-            txtKeepTogether.Enabled = (cbKeepTogether.Checked && cbKeepTogetherMode.Text != "All");
+            txtKeepTogether.Enabled = cbKeepTogether.Checked && cbKeepTogetherMode.Text != "All";
             gbRSS.Enabled = cbSearchRSS.Checked;
             gbJSON.Enabled = cbSearchJSON.Checked;
 
@@ -1180,7 +1177,7 @@ namespace TVRename
             }
 
             cbTxtToSub.Enabled = cbKeepTogether.Checked;
-            txtKeepTogether.Enabled = (cbKeepTogether.Checked && cbKeepTogetherMode.Text != "All");
+            txtKeepTogether.Enabled = cbKeepTogether.Checked && cbKeepTogetherMode.Text != "All";
             cbKeepTogetherMode.Enabled = cbKeepTogether.Checked;
             label39.Enabled = cbKeepTogether.Checked;
 
@@ -1268,9 +1265,9 @@ namespace TVRename
             {
                 // don't delete compulsory items
                 int n = rowsIndex[0];
-                string from = (string) (ReplacementsGrid[n, 0].Value);
+                string from = (string) ReplacementsGrid[n, 0].Value;
                 if (string.IsNullOrEmpty(from) ||
-                    (TVSettings.CompulsoryReplacements().IndexOf(from, StringComparison.Ordinal) == -1))
+                    TVSettings.CompulsoryReplacements().IndexOf(from, StringComparison.Ordinal) == -1)
                 {
                     ReplacementsGrid.Rows.Remove(n);
                 }
@@ -1569,7 +1566,7 @@ namespace TVRename
 
         private void lbSearchFolders_DragDrop(object sender, [NotNull] DragEventArgs e)
         {
-            string[] files = (string[]) (e.Data.GetData(DataFormats.FileDrop));
+            string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)
             {
                 try
@@ -1651,7 +1648,7 @@ namespace TVRename
 
         private void lstFMMonitorFolders_DragDrop(object sender, [NotNull] DragEventArgs e)
         {
-            string[] files = (string[]) (e.Data.GetData(DataFormats.FileDrop));
+            string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)
             {
                 try
@@ -1674,14 +1671,14 @@ namespace TVRename
 
         private void lstFMMonitorFolders_SelectedIndexChanged(object sender, EventArgs e)
         {
-            bnRemoveMonFolder.Enabled = (lstFMMonitorFolders.SelectedIndices.Count > 0);
-            bnOpenMonFolder.Enabled = (lstFMMonitorFolders.SelectedIndices.Count > 0);
+            bnRemoveMonFolder.Enabled = lstFMMonitorFolders.SelectedIndices.Count > 0;
+            bnOpenMonFolder.Enabled = lstFMMonitorFolders.SelectedIndices.Count > 0;
         }
 
         private void lbSearchFolders_SelectedIndexChanged(object sender, EventArgs e)
         {
-            bnRemoveSearchFolder.Enabled = (lbSearchFolders.SelectedIndices.Count > 0);
-            bnOpenSearchFolder.Enabled = (lbSearchFolders.SelectedIndices.Count > 0);
+            bnRemoveSearchFolder.Enabled = lbSearchFolders.SelectedIndices.Count > 0;
+            bnOpenSearchFolder.Enabled = lbSearchFolders.SelectedIndices.Count > 0;
         }
 
         #endregion Folder Add & Remove
@@ -1713,7 +1710,7 @@ namespace TVRename
         {
             Season t = null;
             // ReSharper disable once ExpressionIsAlwaysNull
-            cntfw = new CustomNameTagsFloatingWindow(pe: t);
+            cntfw = new CustomNameTagsFloatingWindow(t);
             cntfw.Show(this);
             Focus();
         }

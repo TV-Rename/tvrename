@@ -22,10 +22,7 @@ namespace TVRename
         protected override string Location() => TVSettings.Instance.ExportRecentASXTo;
 
         [NotNull]
-        protected override string GenerateHeader()
-        {
-            return "<ASX version=\"3\">";
-        }
+        protected override string GenerateHeader() => "<ASX version=\"3\">";
 
         [NotNull]
         protected override string GenerateRecord(ProcessedEpisode ep, [NotNull] FileInfo file, string name, int length)
@@ -35,9 +32,6 @@ namespace TVRename
         }
 
         [NotNull]
-        protected override string GenerateFooter()
-        {
-            return "</ASX>";
-        }
+        protected override string GenerateFooter() => "</ASX>";
     }
 }

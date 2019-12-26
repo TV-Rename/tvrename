@@ -12,16 +12,16 @@ namespace TVRename
         /// <summary>
         /// Gets the total number of bytes on the drive.
         /// </summary>
-        public long? TotalBytes { get; private set; }
+        public long? TotalBytes { get; }
 
         /// <summary>
         /// Gets the number of bytes free on the drive.
         /// </summary>
-        public long? FreeBytes { get; private set; }
+        public long? FreeBytes { get; }
 
         /// <summary>
         /// Gets the number of bytes available on the drive (counts disk quotas).
         /// </summary>
-        public long? AvailableBytes { get; private set; }
+        public long? AvailableBytes { get; }
     }
 }

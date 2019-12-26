@@ -13,7 +13,7 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class SeriesBanners
+    internal class SeriesBanners
     {
         //All Banners
         public Dictionary<int, Banner> AllBanners; // All Banners linked by bannerId.

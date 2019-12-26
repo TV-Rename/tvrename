@@ -32,7 +32,7 @@ namespace TVRename
             string fn = filo.RemoveExtension() + ".xml";
             FileInfo nfo = FileHelper.FileInFolder(filo.Directory, fn);
 
-            if (forceRefresh || !nfo.Exists || (dbep.SrvLastUpdated > TimeZoneHelper.Epoch(nfo.LastWriteTime)))
+            if (forceRefresh || !nfo.Exists || dbep.SrvLastUpdated > TimeZoneHelper.Epoch(nfo.LastWriteTime))
             {
                 theActionList.Add(new ActionWdtvMeta(nfo, dbep));
             }
@@ -52,7 +52,7 @@ namespace TVRename
                                   seriesInfo is null ||
                                   seriesInfo.SrvLastUpdated > TimeZoneHelper.Epoch(tvshowxml.LastWriteTime);
 
-                if ((forceRefresh || needUpdate) && (!doneFiles.Contains(tvshowxml.FullName)))
+                if ((forceRefresh || needUpdate) && !doneFiles.Contains(tvshowxml.FullName))
                 {
                     doneFiles.Add(tvshowxml.FullName);
                     theActionList.Add(new ActionWdtvMeta(tvshowxml, si));

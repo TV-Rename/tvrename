@@ -56,7 +56,7 @@ namespace TVRename
                         continue;
                     }
 
-                    if (FinderHelper.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) && (seasF == action.Episode.AppropriateSeasonNumber) && (epF == action.Episode.AppropriateEpNum))
+                    if (FinderHelper.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) && seasF == action.Episode.AppropriateSeasonNumber && epF == action.Episode.AppropriateEpNum)
                     {
                         toRemove.Add(action);
                         newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt, tApp));

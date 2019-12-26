@@ -67,10 +67,8 @@ namespace TVRename
                 {
                     return GetFileInfo(UserDefinedBasePath, STATISTICS_FILE_NAME);
                 }
-                else
-                {
-                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), STATISTICS_FILE_NAME);
-                }
+
+                return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), STATISTICS_FILE_NAME);
             }
         }
 
@@ -84,10 +82,8 @@ namespace TVRename
                 {
                     return GetFileInfo(UserDefinedBasePath, UI_LAYOUT_FILE_NAME);
                 }
-                else
-                {
-                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), UI_LAYOUT_FILE_NAME);
-                }
+
+                return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), UI_LAYOUT_FILE_NAME);
             }
         }
 
@@ -101,10 +97,8 @@ namespace TVRename
                 {
                     return GetFileInfo(UserDefinedBasePath, TVDB_FILE_NAME);
                 }
-                else
-                {
-                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), TVDB_FILE_NAME);
-                }
+
+                return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), TVDB_FILE_NAME);
             }
         }
 
@@ -118,10 +112,8 @@ namespace TVRename
                 {
                     return GetFileInfo(UserDefinedBasePath, SETTINGS_FILE_NAME);
                 }
-                else
-                {
-                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), SETTINGS_FILE_NAME);
-                }
+
+                return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), SETTINGS_FILE_NAME);
             }
         }
 
@@ -134,10 +126,8 @@ namespace TVRename
                 {
                     return GetFileInfo(UserDefinedBasePath, LANGUAGES_FILE_NAME);
                 }
-                else
-                {
-                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), LANGUAGES_FILE_NAME);
-                }
+
+                return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), LANGUAGES_FILE_NAME);
             }
         }
     }

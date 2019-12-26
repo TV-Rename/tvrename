@@ -109,9 +109,9 @@ namespace TVRename
                 {
                     count++;
                     Add(new DirCacheEntry(ff));
-                    if ((prog != null) && (totalFiles != 0))
+                    if (prog != null && totalFiles != 0)
                     {
-                        prog.Invoke(100 * (count) / totalFiles, string.Empty);
+                        prog.Invoke(100 * count / totalFiles, string.Empty);
                     }
                 }
 

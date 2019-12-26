@@ -177,8 +177,8 @@ namespace TVRename
                 {
                     if (tempAutoAddFolderPerSeason)
                     {
-                        AutoAddCustomFolderFormat = tempAutoAddSeasonFolderName + ((tempPadSeasonToTwoDigits || TVSettings.Instance.LeadingZeroOnSeason) ? "{Season:2}" : "{Season}");
-                        AutoAddType = (AutoAddCustomFolderFormat == TVSettings.Instance.SeasonFolderFormat)
+                        AutoAddCustomFolderFormat = tempAutoAddSeasonFolderName + (tempPadSeasonToTwoDigits || TVSettings.Instance.LeadingZeroOnSeason ? "{Season:2}" : "{Season}");
+                        AutoAddType = AutoAddCustomFolderFormat == TVSettings.Instance.SeasonFolderFormat
                             ? AutomaticFolderType.libraryDefault
                             : AutomaticFolderType.custom;
                     }
@@ -345,30 +345,28 @@ namespace TVRename
         {
             get
             {
-                if (HasSeasonsAndEpisodes)
-                {
-                    if (HasAiredEpisodes && !HasUnairedEpisodes)
-                    {
-                        return ShowAirStatus.aired;
-                    }
-                    else if (HasUnairedEpisodes && !HasAiredEpisodes)
-                    {
-                        return ShowAirStatus.noneAired;
-                    }
-                    else if (HasAiredEpisodes && HasUnairedEpisodes)
-                    {
-                        return ShowAirStatus.partiallyAired;
-                    }
-                    else
-                    {
-                        //System.Diagnostics.Debug.Assert(false, "That is weird ... we have 'seasons and episodes' but none are aired, nor unaired. That case shouldn't actually occur !");
-                        return ShowAirStatus.noEpisodesOrSeasons;
-                    }
-                }
-                else
+                if (!HasSeasonsAndEpisodes)
                 {
                     return ShowAirStatus.noEpisodesOrSeasons;
                 }
+
+                if (HasAiredEpisodes && !HasUnairedEpisodes)
+                {
+                    return ShowAirStatus.aired;
+                }
+
+                if (HasUnairedEpisodes && !HasAiredEpisodes)
+                {
+                    return ShowAirStatus.noneAired;
+                }
+
+                if (HasAiredEpisodes && HasUnairedEpisodes)
+                {
+                    return ShowAirStatus.partiallyAired;
+                }
+
+                //System.Diagnostics.Debug.Assert(false, "That is weird ... we have 'seasons and episodes' but none are aired, nor unaired. That case shouldn't actually occur !");
+                return ShowAirStatus.noEpisodesOrSeasons;
             }
         }
 
@@ -733,7 +731,7 @@ namespace TVRename
                 }
             }
 
-            if (AutoAddNewSeasons() && (!string.IsNullOrEmpty(AutoAddFolderBase)))
+            if (AutoAddNewSeasons() && !string.IsNullOrEmpty(AutoAddFolderBase))
             {
                 foreach (int i in SeasonEpisodes.Keys.ToList())
                 {
@@ -840,12 +838,12 @@ namespace TVRename
             return null;
         }
 
-        public bool InOneFolder() => (AutoAddType == AutomaticFolderType.baseOnly);
+        public bool InOneFolder() => AutoAddType == AutomaticFolderType.baseOnly;
 
         [NotNull]
         public string AutoFolderNameForSeason(int snum) => AutoFolderNameForSeason(GetSeason(snum));
 
-        public bool AutoAddNewSeasons() => (AutoAddType != AutomaticFolderType.none);
+        public bool AutoAddNewSeasons() => AutoAddType != AutomaticFolderType.none;
 
         [NotNull]
         public IEnumerable<string> GetActorNames()

@@ -13,7 +13,7 @@ namespace TVRename
         }
 
         private List<FileInfo> filesThatMayBeNeeded;
-        readonly DirFilesCache dfc = new DirFilesCache();
+        private readonly DirFilesCache dfc = new DirFilesCache();
         private ICollection<ShowItem> showList;
         private TVDoc.ScanSettings currentSettings;
         private ItemList returnActions;
@@ -243,7 +243,7 @@ namespace TVRename
                         }
 
                         bool? deleteFile = ReviewFile(unattended, fi, matchingShows, existingFile, pep);
-                        if (deleteFile.HasValue && (deleteFile.Value==false))
+                        if (deleteFile.HasValue && deleteFile.Value==false)
                         {
                             fileCanBeDeleted = false;
                         }
@@ -299,17 +299,16 @@ namespace TVRename
                     }
                     else
                     {
-                        if (matchingShows.Count > 1)
-                        {
-                            LOGGER.Warn(
-                                $"Keeping {newFile.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({string.Join(", ", matchingShows.Select(item => item.ShowName))}) that match.");
-
-                            return false;
-                        }
-                        else
+                        if (matchingShows.Count <= 1)
                         {
                             return AskUserAboutFileReplacement(newFile, existingFile, pep);
                         }
+
+                        LOGGER.Warn(
+                            $"Keeping {newFile.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({string.Join(", ", matchingShows.Select(item => item.ShowName))}) that match.");
+
+                        return false;
+
                     }
 
                     break;

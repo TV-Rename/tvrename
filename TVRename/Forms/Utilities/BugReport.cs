@@ -82,12 +82,12 @@ namespace TVRename
                 foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
                 {
                     int snum = kvp.Key;
-                    if (((snum == 0) && (si.CountSpecials)) || !si.AllExistngFolderLocations().ContainsKey(snum))
+                    if (snum == 0 && si.CountSpecials || !si.AllExistngFolderLocations().ContainsKey(snum))
                     {
                         continue; // skip specials
                     }
 
-                    if ((snum == 0) && TVSettings.Instance.IgnoreAllSpecials)
+                    if (snum == 0 && TVSettings.Instance.IgnoreAllSpecials)
                     {
                         continue;
                     }

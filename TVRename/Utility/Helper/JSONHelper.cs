@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System.IO;
 using System.Net;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
@@ -15,19 +16,16 @@ namespace TVRename
     public static class JsonHelper
     {
         [NotNull]
-        public static string Flatten(JToken ja) => Flatten(ja, ",");
-
-        [NotNull]
-        public static string Flatten([CanBeNull] JToken ja,string delimiter)
+        public static string Flatten([CanBeNull]this JToken ja,string delimiter)
         {
             if (ja is null)
             {
-                return "";
+                return string.Empty;
             }
 
             if (ja.Type != JTokenType.Array)
             {
-                return "";
+                return string.Empty;
             }
 
             JArray ja2 = (JArray)ja;
@@ -41,18 +39,35 @@ namespace TVRename
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            using (System.IO.Stream stream = response.GetResponseStream())
+            using (Stream stream = response.GetResponseStream())
             {
                 if (stream == null)
                 {
                     return string.Empty;
                 }
 
-                using (System.IO.StreamReader reader = new System.IO.StreamReader(stream))
+                using (StreamReader reader = new StreamReader(stream))
                 {
                     return reader.ReadToEnd();
                 }
             }
+        }
+
+        public static int ExtractStringToInt([NotNull] this JObject r, [NotNull] string key)
+        {
+            string valueAsString = (string)r[key];
+
+            if (string.IsNullOrWhiteSpace(valueAsString))
+            {
+                return 0;
+            }
+
+            if (!int.TryParse(valueAsString, out int returnValue))
+            {
+                return 0;
+            }
+
+            return returnValue;
         }
     }
 }

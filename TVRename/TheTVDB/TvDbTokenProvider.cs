@@ -19,18 +19,17 @@ namespace TVRename
         {
             get
             {
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                if (TheTVDB.VERS == ApiVersion.v2)
+                switch (TheTVDB.VERS)
                 {
-                    return "https://api.thetvdb.com";
-                }
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    case ApiVersion.v2:
+                        return "https://api.thetvdb.com";
 
-                // ReSharper disable once HeuristicUnreachableCode
-                if (TheTVDB.VERS == ApiVersion.v3)
                     // ReSharper disable once HeuristicUnreachableCode
-                {
                     // ReSharper disable once HeuristicUnreachableCode
-                    return "https://api-dev.thetvdb.com";
+                    case ApiVersion.v3:
+                        // ReSharper disable once HeuristicUnreachableCode
+                        return "https://api-dev.thetvdb.com";
                 }
             }
         }
@@ -95,19 +94,10 @@ namespace TVRename
             lastRefreshTime = DateTime.Now;
         }
 
-        private bool ShouldRefreshToken()
-        {
-            return (DateTime.Now - lastRefreshTime) >= TimeSpan.FromHours(23);
-        }
+        private bool ShouldRefreshToken() => DateTime.Now - lastRefreshTime >= TimeSpan.FromHours(23);
 
-        private bool TokenIsValid()
-        {
-            return (DateTime.Now - lastRefreshTime) < (TimeSpan.FromDays(1) - TimeSpan.FromMinutes(1));
-        }
+        private bool TokenIsValid() => DateTime.Now - lastRefreshTime < TimeSpan.FromDays(1) - TimeSpan.FromMinutes(1);
 
-        private bool IsTokenAquired()
-        {
-            return lastKnownToken != string.Empty;
-        }
+        private bool IsTokenAquired() => lastKnownToken != string.Empty;
     }
 }

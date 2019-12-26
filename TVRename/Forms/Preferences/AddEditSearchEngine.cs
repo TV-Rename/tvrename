@@ -117,8 +117,8 @@ namespace TVRename
             mSearchers.Clear();
             for (int i = 1; i < grid1.RowsCount; i++) // skip header row
             {
-                string name = (string) (grid1[i, 0].Value);
-                string url = (string) (grid1[i, 1].Value);
+                string name = (string) grid1[i, 0].Value;
+                string url = (string) grid1[i, 1].Value;
                 if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(url))
                 {
                     mSearchers.Add(name, url);

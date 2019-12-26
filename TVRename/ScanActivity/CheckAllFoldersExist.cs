@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class CheckAllFoldersExist : ScanShowActivity
+    internal class CheckAllFoldersExist : ScanShowActivity
     {
         public CheckAllFoldersExist(TVDoc doc) : base(doc) {}
 
@@ -32,12 +32,12 @@ namespace TVRename
                     continue; // ignore this season
                 }
 
-                if ((snum == 0) && (si.CountSpecials))
+                if (snum == 0 && si.CountSpecials)
                 {
                     continue; // no specials season, they're merged into the seasons themselves
                 }
 
-                if ((snum == 0) && TVSettings.Instance.IgnoreAllSpecials)
+                if (snum == 0 && TVSettings.Instance.IgnoreAllSpecials)
                 {
                     continue;
                 }
@@ -61,7 +61,7 @@ namespace TVRename
                     folders.Add(si.AutoFolderNameForSeason(snum));
                 }
 
-                if ((folders.Count == 0) && (!si.AutoAddNewSeasons()))
+                if (folders.Count == 0 && !si.AutoAddNewSeasons())
                 {
                     // no folders defined for this season, and autoadd didn't find any, so suggest the autoadd folder name instead
                     folders.Add(string.Empty);
@@ -71,7 +71,7 @@ namespace TVRename
             } // for each snum
         }
 
-        private bool MightWeProcess(ProcessedEpisode episode, [NotNull] List<string> folders)
+        private static bool MightWeProcess(ProcessedEpisode episode, [NotNull] IEnumerable<string> folders)
         {
             foreach (string folder in folders)
             {
@@ -190,7 +190,7 @@ namespace TVRename
             DirectoryInfo di = new DirectoryInfo(folder);
             bool goAgain = !di.Exists;
             if (di.Exists &&
-                (!string.Equals(si.AutoFolderNameForSeason(snum), folder, StringComparison.CurrentCultureIgnoreCase)))
+                !string.Equals(si.AutoFolderNameForSeason(snum), folder, StringComparison.CurrentCultureIgnoreCase))
             {
                 if (!si.ManualFolderLocations.ContainsKey(snum))
                 {

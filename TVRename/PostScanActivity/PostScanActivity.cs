@@ -22,7 +22,7 @@ namespace TVRename
         protected PostScanActivity(TVDoc doc) => MDoc = doc;
 
         protected abstract string Checkname();
-        public abstract bool Active();
+        protected abstract bool Active();
         protected abstract void DoCheck(SetProgressDelegate prog);
 
         public void Check(SetProgressDelegate prog) =>
@@ -60,7 +60,7 @@ namespace TVRename
 
         protected void UpdateStatus(int recordNumber,int totalRecords, string message)
         {
-            progressDelegate?.Invoke(startPosition + ((endPosition - startPosition) * recordNumber / (totalRecords+1)), message);
+            progressDelegate?.Invoke(startPosition + (endPosition - startPosition) * recordNumber / (totalRecords+1), message);
         }
 
         private void LogActionListSummary()

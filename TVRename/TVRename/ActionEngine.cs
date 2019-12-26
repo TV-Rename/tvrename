@@ -138,14 +138,14 @@ namespace TVRename
 
             actionProcessorThread.Start(queues);
 
-            if ((cmp != null) && (cmp.ShowDialog() == DialogResult.Cancel))
+            if (cmp != null && cmp.ShowDialog() == DialogResult.Cancel)
             {
                 actionProcessorThread.Abort();
             }
 
             actionProcessorThread.Join();
 
-            theList.RemoveAll(x => (x is Action action) && action.Done && !action.Error);
+            theList.RemoveAll(x => x is Action action && action.Done && !action.Error);
 
             foreach (Action slia in theList.Actions())
             {
@@ -351,7 +351,7 @@ namespace TVRename
                 {
                     queues[2].Actions.Add(action);
                 }
-                else if ((action is ActionDownloadImage) || (action is ActionTDownload))
+                else if (action is ActionDownloadImage || action is ActionTDownload)
                 {
                     queues[3].Actions.Add(action);
                 }
@@ -359,7 +359,7 @@ namespace TVRename
                 {
                     queues[rename.QuickOperation() ? 1 : 0].Actions.Add(rename);
                 }
-                else if ((action is ActionDeleteFile) || (action is ActionDeleteDirectory))
+                else if (action is ActionDeleteFile || action is ActionDeleteDirectory)
                 {
                     queues[1].Actions.Add(action);
                 }
