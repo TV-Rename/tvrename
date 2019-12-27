@@ -87,8 +87,6 @@ namespace TVRename
 
             WaitForBgDownloadDone();
 
-            //TheTVDB.Instance.SaveCache();
-
             if (!downloadOk)
             {
                 Logger.Warn(TheTVDB.Instance.LastError);

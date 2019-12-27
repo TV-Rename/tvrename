@@ -387,17 +387,14 @@ namespace TVRename
 
         public ConcurrentBag<int> ShowProblems => cacheManager.Problems;
 
-        public void Scan(List<ShowItem> shows, bool unattended, TVSettings.ScanType st, bool hidden)
+        public void Scan([CanBeNull] List<ShowItem> passedShows, bool unattended, TVSettings.ScanType st, bool hidden)
         {
             try
             {
                 PreventAutoScan("Scan "+st.PrettyPrint());
 
                 //Get the default set of shows defined by the specified type
-                if (shows is null)
-                {
-                    shows = GetShowList(st);
-                }
+                List<ShowItem> shows = passedShows ?? GetShowList(st);
 
                 //If still null then return
                 if (shows is null)

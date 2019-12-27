@@ -165,7 +165,7 @@ namespace TVRename
             if (!string.IsNullOrEmpty(attributeVal))
             {
                 writer.WriteStartElement(elemName);
-                if (!string.IsNullOrEmpty(attribute) && !string.IsNullOrEmpty(attributeVal))
+                if (!string.IsNullOrEmpty(attribute))
                 {
                     writer.WriteAttributeString(attribute, attributeVal);
                 }

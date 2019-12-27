@@ -477,19 +477,15 @@ namespace TVRename
         {
             foreach (ListViewItem lvi in lvFMNewShows.Items)
             {
-                if (lvi.Tag != ai) // haven't found the entry yet
+                if (lvi.Tag == ai)
                 {
-                    continue;
+                    UpdateResultEntry(ai, lvi);
+
+                    if (makevis)
+                    {
+                        lvi.EnsureVisible();
+                    }
                 }
-
-                UpdateResultEntry(ai, lvi);
-
-                if (makevis)
-                {
-                    lvi.EnsureVisible();
-                }
-
-                break;
             }
         }
 

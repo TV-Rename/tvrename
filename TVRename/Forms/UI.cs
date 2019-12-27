@@ -1183,7 +1183,6 @@ namespace TVRename
 
             switch (TVSettings.Instance.WTWDoubleClick)
             {
-                default:
                 case TVSettings.WTWDoubleClickAction.Search:
                     bnWTWBTSearch_Click(null, null);
                     break;
@@ -1191,6 +1190,9 @@ namespace TVRename
                     UiScan(new List<ShowItem> {ei.Show}, false, TVSettings.ScanType.SingleShow);
                     tabControl1.SelectTab(tbAllInOne);
                     break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

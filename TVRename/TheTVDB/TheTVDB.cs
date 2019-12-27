@@ -37,7 +37,7 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     public class TheTVDB : iTVSource
     {
-        public const ApiVersion VERS = ApiVersion.v2;
+        public static readonly ApiVersion VERS = ApiVersion.v2;
 
         [Serializable]
         // ReSharper disable once InconsistentNaming

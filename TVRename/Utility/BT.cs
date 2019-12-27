@@ -1138,9 +1138,6 @@ namespace TVRename
                     theList = (BTList) (p);
                 }
 
-                if (theList is null)
-                    return;
-
                 // the list contains two element lists, of integer/string which are filenumber/path
 
                 BTList thisFileList = null;

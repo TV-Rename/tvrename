@@ -5,6 +5,8 @@
 // 
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
+using System;
 using System.Windows.Forms;
 
 namespace TVRename
@@ -38,14 +40,14 @@ namespace TVRename
             FillList();
         }
 
-        private void bnOK_Click(object sender, System.EventArgs e)
+        private void bnOK_Click(object sender, EventArgs e)
         {
             TVSettings.Instance.Ignore = ignore;
             mDoc.SetDirty();
             Close();
         }
 
-        private void bnRemove_Click(object sender, System.EventArgs e)
+        private void bnRemove_Click(object sender, EventArgs e)
         {
             foreach (int i in lbItems.SelectedIndices)
                 foreach (IgnoreItem iitest in ignore)
@@ -71,7 +73,7 @@ namespace TVRename
             foreach (IgnoreItem ii in ignore)
             {
                 string s = ii.FileAndPath;
-                if (all || s.ToLower().Contains(f))
+                if (all || s.Contains(f,StringComparison.CurrentCultureIgnoreCase))
                 {
                     lbItems.Items.Add(s);
                 }
@@ -80,12 +82,12 @@ namespace TVRename
             lbItems.EndUpdate();
         }
 
-        private void txtFilter_TextChanged(object sender, System.EventArgs e)
+        private void txtFilter_TextChanged(object sender, EventArgs e)
         {
             timer1.Start();
         }
 
-        private void timer1_Tick(object sender, System.EventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)
         {
             timer1.Stop();
             FillList();

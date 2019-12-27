@@ -32,7 +32,7 @@ namespace TVRename
                         return "https://api-dev.thetvdb.com";
 
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        throw new NotSupportedException();
                 }
             }
         }

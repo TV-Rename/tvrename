@@ -240,10 +240,10 @@ namespace TVRename.Forms
                         }
                         break;
                     default:
-                    {
+                        {
                             System.Diagnostics.Debug.Fail("Unknown right-click action " + n);
                             break;
-                    }
+                        }
                 }
             }
             mlastSelected = null;

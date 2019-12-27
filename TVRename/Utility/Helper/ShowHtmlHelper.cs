@@ -649,7 +649,7 @@ namespace TVRename
 
             string yearRange = YearRange(ser);
 
-            string siteRating = ser?.SiteRating > 0 ? ser.SiteRating + "/10" : string.Empty;
+            string siteRating = (ser?.SiteRating??0) > 0 ? ser.SiteRating + "/10" : string.Empty;
             string tvdbLink = TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true);
 
             string tableHtml = string.Empty;
