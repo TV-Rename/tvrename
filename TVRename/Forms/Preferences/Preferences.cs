@@ -868,6 +868,8 @@ namespace TVRename
                 case TVSettings.WTWDoubleClickAction.Scan:
                     rbWTWScan.Checked = true;
                     break;
+                default:
+                    throw new InvalidOperationException("Unexpected value s.WTWDoubleClick = " + s.WTWDoubleClick);
             }
 
             switch (s.keepTogetherMode)
@@ -881,6 +883,8 @@ namespace TVRename
                 case TVSettings.KeepTogetherModes.Just:
                     cbKeepTogetherMode.Text = "Just";
                     break;
+                default:
+                    throw new InvalidOperationException("Unexpected value s.keepTogetherMode = " + s.keepTogetherMode);
             }
 
             switch (s.mode)
@@ -891,6 +895,8 @@ namespace TVRename
                 case TVSettings.BetaMode.BetaToo:
                     cbMode.Text = "Beta";
                     break;
+                default:
+                    throw new InvalidOperationException("Unexpected value s.mode = " + s.mode);
             }
 
             switch (s.FolderJpgIs)
@@ -904,9 +910,11 @@ namespace TVRename
                 case TVSettings.FolderJpgIsType.SeasonPoster:
                     rbFolderSeasonPoster.Checked = true;
                     break;
-                default:
+                case TVSettings.FolderJpgIsType.Poster:
                     rbFolderPoster.Checked = true;
                     break;
+                default:
+                    throw new InvalidOperationException("Unexpected value s.FolderJpgIs = " + s.FolderJpgIs);
             }
 
             switch (s.MonitoredFoldersScanType)
@@ -917,8 +925,15 @@ namespace TVRename
                 case TVSettings.ScanType.Recent:
                     rdoRecentScan.Checked = true;
                     break;
-                default:
+                case TVSettings.ScanType.Full:
                     rdoFullScan.Checked = true;
+                    break;
+
+                case TVSettings.ScanType.SingleShow:
+                    throw new InvalidOperationException("Unexpected value s.MonitoredFoldersScanType = SingleShow");
+                    break;
+                default:
+                    throw new InvalidOperationException("Unexpected value s.MonitoredFoldersScanType = " + s.MonitoredFoldersScanType);
                     break;
             }
         }

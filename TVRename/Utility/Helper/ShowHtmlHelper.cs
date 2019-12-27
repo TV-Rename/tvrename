@@ -611,10 +611,11 @@ namespace TVRename
         [NotNull]
         public static string GetShowHtmlOverviewOffline([NotNull] this ShowItem si)
         {
-            string body = "";
+            string body = string.Empty;
             SeriesInfo ser = si.TheSeries();
 
-            if (!string.IsNullOrEmpty(ser?.GetSeriesWideBannerPath()) &&
+            if (!(ser is null) &&
+                !string.IsNullOrEmpty(ser.GetSeriesWideBannerPath()) &&
                 !string.IsNullOrEmpty(TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath())))
             {
                 body += "<img width=758 height=140 src=\"" + TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath()) +

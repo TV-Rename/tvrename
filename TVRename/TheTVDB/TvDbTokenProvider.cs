@@ -30,6 +30,9 @@ namespace TVRename
                     case ApiVersion.v3:
                         // ReSharper disable once HeuristicUnreachableCode
                         return "https://api-dev.thetvdb.com";
+
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
         }

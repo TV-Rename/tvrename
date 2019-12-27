@@ -1790,19 +1790,7 @@ namespace TVRename
                 JToken defltLangEpisode = episodeData.Value.Item2;
                 try
                 {
-                    //if (string.IsNullOrEmpty(prefLangEpisode?["filename"]?.ToString()) && string.IsNullOrEmpty(defltLangEpisode?["filename"]?.ToString()))
-                    //{
-                        //The episode does not contain enough data (specifically image filename), so we'll get the full version
-                        DownloadEpisodeNow(code, episodeId);
-                    //}
-                    //else
-                    //{
-                        //bool success = ProcessEpisode(code,episodeId, prefLangEpisode, defltLangEpisode);
-                        //if (!success)
-                        //{
-                            //Logger.Error($"<TVDB ISSUE?>: Could not process Episode from {EpisodeUri(code)}. {prefLangEpisode?.ToString()} ::: {defltLangEpisode?.ToString()}");
-                        //}
-                    //}
+                    DownloadEpisodeNow(code, episodeId);
                 }
                 catch (InvalidCastException ex)
                 {

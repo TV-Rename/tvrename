@@ -73,6 +73,8 @@ namespace TVRename
                 case RuleAction.kIgnoreEp:
                     rbIgnore.Checked = true;
                     break;
+                default:
+                    throw new InvalidOperationException("Unexpected value mRule.DoWhatNow = " + mRule.DoWhatNow);
             }
 
             txtUserText.Text = mRule.UserSuppliedText;

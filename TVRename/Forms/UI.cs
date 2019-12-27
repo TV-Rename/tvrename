@@ -75,7 +75,6 @@ namespace TVRename
 
         #region Delegates
 
-        //public delegate void AutoFolderMonitorDelegate();
         public delegate void ScanTypeDelegate(TVSettings.ScanType type);
         public delegate void ArgumentDelagate(string[] args);
 
