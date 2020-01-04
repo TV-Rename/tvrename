@@ -20,7 +20,6 @@ using System.Xml.Linq;
 using JetBrains.Annotations;
 using TVRename.Forms.Utilities;
 using Alphaleonis.Win32.Filesystem;
-using NodaTime;
 
 // Talk to the TheTVDB web API, and get tv series info
 

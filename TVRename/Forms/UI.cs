@@ -51,6 +51,8 @@ namespace TVRename
         kActionIgnoreSeason,
         kEditShow,
         kEditSeason,
+        kIgnoreSeason,
+        kIncludeSeason,
         kDeleteShow,
         kUpdateImages,
         kActionRevert,
@@ -1512,6 +1514,19 @@ namespace TVRename
             if (seas != null && mLastShowsClicked != null && mLastShowsClicked.Count == 1)
             {
                 AddRcMenuItem("Edit " + Season.UIFullSeasonWord(seas.SeasonNumber), RightClickCommands.kEditSeason);
+                if (si != null)
+                {
+                    if (si.IgnoreSeasons.Contains(seas.SeasonNumber))
+                    {
+                        AddRcMenuItem("Include " + Season.UIFullSeasonWord(seas.SeasonNumber),
+                            RightClickCommands.kIncludeSeason);
+                    }
+                    else
+                    {
+                        AddRcMenuItem("Ignore " + Season.UIFullSeasonWord(seas.SeasonNumber),
+                            RightClickCommands.kIgnoreSeason);
+                    }
+                }
             }
 
             if (ep != null && mLastShowsClicked != null && mLastShowsClicked.Count == 1)
@@ -1843,7 +1858,24 @@ namespace TVRename
                 case RightClickCommands.kActionDelete:
                     ActionDeleteSelected();
                     break;
-                default:
+
+                case RightClickCommands.kIgnoreSeason:
+                    if (si != null)
+                    {
+                        IgnoreSeason(si, mLastSeasonClicked.SeasonNumber);
+                    }
+                    break;
+
+                case RightClickCommands.kIncludeSeason:
+                    if (si != null)
+                    {
+                        IncludeSeason(si, mLastSeasonClicked.SeasonNumber);
+                    }
+                    break;
+
+                case RightClickCommands.kWatchBase:
+                case RightClickCommands.kOpenFolderBase:
+                case RightClickCommands.kSearchForBase:
                 {
                     //The entries immediately above WatchBase are the Watchxx commands and the paths are stored in mLastFL
                     if (n >= RightClickCommands.kWatchBase && n < RightClickCommands.kOpenFolderBase)
@@ -1870,6 +1902,19 @@ namespace TVRename
             }
             mLastEpClicked = null;
         }
+
+        private void IncludeSeason([NotNull] ShowItem si, int seasonNumber)
+        {
+            si.IgnoreSeasons.Remove(seasonNumber);
+            ShowAddedOrEdited(false, false);
+        }
+
+        private void IgnoreSeason([NotNull] ShowItem si, int seasonNumber)
+        {
+            si.IgnoreSeasons.Add(seasonNumber);
+            ShowAddedOrEdited(false, false);
+        }
+
 
         private void BrowseForMissingItem([CanBeNull] ItemMissing mi)
         {

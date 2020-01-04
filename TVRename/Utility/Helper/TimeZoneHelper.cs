@@ -70,8 +70,6 @@ namespace TVRename
         {
             try
             {
-                ZonedDateTime ltm = theirDateTime.InZoneLeniently(theirTimeZone);
-                DateTime x = ltm.ToDateTimeUtc().ToLocalTime();
                 return theirTimeZone is null
                     ? theirDateTime.ToDateTimeUnspecified()
                     //: TimeZoneInfo.ConvertTime(theirDateTime, theirTimeZone, TimeZoneInfo.Local);
