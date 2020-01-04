@@ -56,8 +56,6 @@ namespace TVRename
             Args = args;
 
             Library = new ShowLibrary();
-            CurrentStats = new TVRenameStats();
-            actionManager = new ActionEngine(CurrentStats);
             cacheManager = new CacheUpdater();
             localFinders = new FindMissingEpisodesLocally(this);
             downloadFinders = new FindMissingEpisodesDownloading(this);
@@ -71,6 +69,7 @@ namespace TVRename
             downloadIdentifiers = new DownloadIdentifiersController();
 
             LoadOk = (settingsFile is null || LoadXMLSettings(settingsFile)) && TheTVDB.Instance.LoadOk;
+            actionManager = new ActionEngine(CurrentStats);
         }
 
         [NotNull]
