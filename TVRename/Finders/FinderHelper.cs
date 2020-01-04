@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using NodaTime;
 using Path = System.IO.Path;
 
 namespace TVRename
@@ -110,7 +111,7 @@ namespace TVRename
 
                 foreach (Episode epi in kvp.Value.Episodes.Values)
                 {
-                    DateTime? dt = epi.GetAirDateDt(); // file will have local timezone date, not ours
+                    LocalDateTime? dt = epi.GetAirDateDt(); // file will have local timezone date, not ours
                     if (dt is null)
                     {
                         continue;
@@ -120,7 +121,7 @@ namespace TVRename
 
                     foreach (string dateFormat in dateFormats)
                     {
-                        string datestr = dt.Value.ToString(dateFormat);
+                        string datestr = dt.Value.ToString(dateFormat,CultureInfo.CurrentCulture);
 
                         if (filename.Contains(datestr) && DateTime.TryParseExact(datestr, dateFormat,
                                 new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime dtInFilename))

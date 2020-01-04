@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using NodaTime;
 
 namespace TVRename
 {
@@ -135,9 +136,16 @@ namespace TVRename
 
         public DateTime? GetAirDateDt(bool inLocalTime)
         {
+            LocalDateTime? x = GetAirDateDt();
+
+            if (!inLocalTime && x.HasValue)
+            {
+                return x.Value.ToDateTimeUnspecified();
+            }
+
             if (!inLocalTime)
             {
-                return GetAirDateDt();
+                return null;
             }
 
             // do timezone adjustment

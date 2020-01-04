@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
+using NodaTime;
 
 namespace TVRename
 {
@@ -90,7 +91,7 @@ namespace TVRename
         }
 
         [CanBeNull]
-        public DateTime? GetAirDateDt()
+        public LocalDateTime? GetAirDateDt()
         {
             if (FirstAired is null || TheSeries is null)
             {
@@ -100,13 +101,13 @@ namespace TVRename
             DateTime fa = (DateTime) FirstAired;
             DateTime? airs = TheSeries.AirsTime;
 
-            return new DateTime(fa.Year, fa.Month, fa.Day, airs?.Hour ?? 20, airs?.Minute ?? 0, 0, 0);
+            return new LocalDateTime(fa.Year, fa.Month, fa.Day, airs?.Hour ?? 20, airs?.Minute ?? 0);
         }
 
         [CanBeNull]
-        public DateTime? GetAirDateDt(TimeZoneInfo tz)
+        public DateTime? GetAirDateDt(DateTimeZone tz)
         {
-            DateTime? dt = GetAirDateDt();
+            LocalDateTime? dt = GetAirDateDt();
             if (dt is null)
             {
                 return null;

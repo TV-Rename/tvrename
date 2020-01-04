@@ -9,6 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using JetBrains.Annotations;
+using NodaTime;
 
 namespace TVRename
 {
@@ -73,7 +74,7 @@ namespace TVRename
                 : UISeasonWord(snum);
         }
 
-        public SeasonStatus Status(TimeZoneInfo tz)
+        public SeasonStatus Status(DateTimeZone tz)
         {
             if (!HasEpisodes)
             {
@@ -119,7 +120,7 @@ namespace TVRename
 
         public int SeasonIndex => TheSeries.GetSeasonIndex(SeasonNumber,type);
 
-        private bool HasUnairedEpisodes(TimeZoneInfo tz)
+        private bool HasUnairedEpisodes(DateTimeZone tz)
         {
             if (!HasEpisodes)
             {
@@ -144,7 +145,7 @@ namespace TVRename
             return false;
         }
 
-        private bool HasAiredEpisodes(TimeZoneInfo tz)
+        private bool HasAiredEpisodes(DateTimeZone tz)
         {
             if (!HasEpisodes)
             {

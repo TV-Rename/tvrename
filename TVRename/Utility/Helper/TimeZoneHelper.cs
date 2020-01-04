@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
+using NodaTime;
 
 namespace TVRename
 {
@@ -18,10 +19,12 @@ namespace TVRename
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         [NotNull]
-        public static IEnumerable<string> ZoneNames() => TimeZoneInfo.GetSystemTimeZones().Select(x=>x.StandardName);
+        //public static IEnumerable<string> ZoneNames() => TimeZoneInfo.GetSystemTimeZones().Select(x=>x.StandardName);
+        public static IEnumerable<string> ZoneNames() => DateTimeZoneProviders.Tzdb.Ids;
 
         [NotNull]
-        public static string DefaultTimeZone() => "Eastern Standard Time";
+        //public static string DefaultTimeZone() => "Eastern Standard Time";
+        public static string DefaultTimeZone() => "America/New_York";
 
         [NotNull]
         public static string TimeZoneForNetwork([CanBeNull] string network,string defaultTimeZone)
@@ -44,43 +47,49 @@ namespace TVRename
 
             if (uktv.Contains(network))
             {
-                return "GMT Standard Time";
+                //return "GMT Standard Time";
+                return "Europe/London";
             }
 
             if (ausTv.Contains(network))
             {
-                return "AUS Eastern Standard Time";
+                //return "AUS Eastern Standard Time";
+                return "Australia/Sydney";
             }
 
             if (usTv.Contains(network))
             {
-                return "Eastern Standard Time";
+                //return "Eastern Standard Time";
+                return "America/New_York";
             }
 
             return defaultTimeZone ??DefaultTimeZone();
         }
 
-        public static DateTime AdjustTzTimeToLocalTime(DateTime theirDateTime, [CanBeNull] TimeZoneInfo theirTimeZone)
+        public static DateTime AdjustTzTimeToLocalTime(LocalDateTime theirDateTime, [CanBeNull] DateTimeZone theirTimeZone)
         {
             try
             {
+                ZonedDateTime ltm = theirDateTime.InZoneLeniently(theirTimeZone);
+                DateTime x = ltm.ToDateTimeUtc().ToLocalTime();
                 return theirTimeZone is null
-                    ? theirDateTime
-                    : TimeZoneInfo.ConvertTime(theirDateTime, theirTimeZone, TimeZoneInfo.Local);
+                    ? theirDateTime.ToDateTimeUnspecified()
+                    //: TimeZoneInfo.ConvertTime(theirDateTime, theirTimeZone, TimeZoneInfo.Local);
+                    : theirDateTime.InZoneLeniently(theirTimeZone).ToDateTimeUtc().ToLocalTime();
             }
             catch (ArgumentException)
             {
                 try
                 {
                     Debug.Assert(theirTimeZone != null, nameof(theirTimeZone) + " != null");
-                    DateTime returnValue = TimeZoneInfo.ConvertTime(theirDateTime.AddHours(1), theirTimeZone, TimeZoneInfo.Local);
-                    Logger.Warn($"Could not convert {theirDateTime.ToShortDateString()} {theirDateTime.ToShortTimeString()} {theirDateTime.Kind} in {theirTimeZone.StandardName} into {TimeZoneInfo.Local.StandardName} in TimeZoneHelper.AdjustTzTimeToLocalTime (added one hour and it worked ok to account for daylight savings)");
+                    DateTime returnValue = theirDateTime.PlusHours(1).InZoneLeniently(theirTimeZone).ToDateTimeUtc().ToLocalTime();
+                    Logger.Warn($"Could not convert {theirDateTime} in {theirTimeZone.Id} into {TimeZoneInfo.Local.StandardName} in TimeZoneHelper.AdjustTzTimeToLocalTime (added one hour and it worked ok to account for daylight savings)");
                     return returnValue;
                 }
                 catch (ArgumentException ae)
                 {
-                    Logger.Error($"Could not convert {theirDateTime.ToShortDateString()} {theirDateTime.ToShortTimeString()} {theirDateTime.Kind} in {theirTimeZone?.StandardName} into {TimeZoneInfo.Local.StandardName} in TimeZoneHelper.AdjustTzTimeToLocalTime (tried adding one hour too so that we account for daylight saving): {ae.Message}");
-                    return theirDateTime;
+                    Logger.Error($"Could not convert {theirDateTime} in {theirTimeZone?.Id} into {TimeZoneInfo.Local.StandardName} in TimeZoneHelper.AdjustTzTimeToLocalTime (tried adding one hour too so that we account for daylight saving): {ae.Message}");
+                    return theirDateTime.ToDateTimeUnspecified();
                 }
             }
         }

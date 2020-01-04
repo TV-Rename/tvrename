@@ -20,6 +20,7 @@ using System.Xml.Linq;
 using JetBrains.Annotations;
 using TVRename.Forms.Utilities;
 using Alphaleonis.Win32.Filesystem;
+using NodaTime;
 
 // Talk to the TheTVDB web API, and get tv series info
 
@@ -2172,6 +2173,7 @@ namespace TVRename
         }
 
         // Next episode to air of a given show		
+/*
         [CanBeNull]
         public Episode NextAiring(int code)
         {
@@ -2191,13 +2193,13 @@ namespace TVRename
 
                 foreach (Episode e in s.Episodes.Values)
                 {
-                    DateTime? adt = e.GetAirDateDt();
+                    LocalDateTime? adt = e.GetAirDateDt();
                     if (adt is null)
                     {
                         continue;
                     }
 
-                    DateTime dt = (DateTime) adt;
+                    LocalDateTime dt = (LocalDateTime) adt;
                     if (dt.CompareTo(today) > 0 && (mostSoonAfterToday.CompareTo(new DateTime(0)) == 0 ||
                                                       dt.CompareTo(mostSoonAfterToday) < 0))
                     {
@@ -2209,6 +2211,7 @@ namespace TVRename
 
             return next;
         }
+*/
 
         public void Tidy(ICollection<ShowItem> libraryValues)
         {
