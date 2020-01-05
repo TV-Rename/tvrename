@@ -392,8 +392,16 @@ namespace TVRename
             {
                 if (!Directory.Exists(folder))
                 {
-                    LOGGER.Warn($"Want to copy {fi.FullName} to {folder}, but it doesn't exist yet");
-                    continue;
+                    if (TVSettings.Instance.AutoCreateFolders)
+                    {
+                        LOGGER.Info($"Want to copy {fi.FullName} to {folder}, but it doesn't exist yet, so creating it");
+                        Directory.CreateDirectory(folder);
+                    }
+                    else
+                    {
+                        LOGGER.Warn($"Want to copy {fi.FullName} to {folder}, but it doesn't exist yet");
+                        continue;
+                    }
                 }
                 string filename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pep,fi.Extension,folder.Length));
 
