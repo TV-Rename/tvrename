@@ -144,7 +144,7 @@ namespace TVRename
             LoadXml(seriesXml);
         }
 
-        public SeriesInfo([NotNull] JObject json,int langId)
+        public SeriesInfo([NotNull] JObject json,int langId,bool miniSeriesData)
         {
             SetToDefaults();
             LanguageId = langId;
@@ -156,7 +156,7 @@ namespace TVRename
                Logger.Warn(json.ToString());
             }
 
-            if (SrvLastUpdated==0)
+            if (SrvLastUpdated==0 && !miniSeriesData)
             {
                 Logger.Warn("Issue with series (update time is 0) " + TvdbCode);
                 Logger.Warn(json.ToString());

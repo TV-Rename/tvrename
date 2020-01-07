@@ -1444,7 +1444,7 @@ namespace TVRename
             }
             else
             {
-                si = new SeriesInfo(seriesData, GetLanguageId());
+                si = new SeriesInfo(seriesData, GetLanguageId(),false);
             }
 
             return si;
@@ -1531,7 +1531,7 @@ namespace TVRename
             try
             {
                 JObject jsonActorsResponse = HttpHelper.JsonHttpGetRequest(TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/actors",
-                    null, tvDbTokenProvider,true);
+                    null, tvDbTokenProvider,false);
 
                 GetSeries(code)?.ClearActors();
                 foreach (JToken jsonActor in jsonActorsResponse["data"])
@@ -2127,7 +2127,7 @@ namespace TVRename
             {
                 foreach (SeriesInfo si in jsonResponse["data"]
                     .Cast<JObject>()
-                    .Select(seriesResponse => new SeriesInfo(seriesResponse, languageId)))
+                    .Select(seriesResponse => new SeriesInfo(seriesResponse, languageId,true)))
                 {
                     lock(SERIES_LOCK)
                     {
