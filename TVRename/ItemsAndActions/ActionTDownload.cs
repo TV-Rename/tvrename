@@ -60,6 +60,13 @@ namespace TVRename
                     return false;
                 }
 
+                if (!TVSettings.Instance.qBitTorrentDownloadFilesFirst && TVSettings.Instance.CheckqBitTorrent)
+                {
+                    qBitTorrentFinder.StartTorrentDownload(url, null, false);
+                    Done = true;
+                    return true;
+                }
+
                 byte[] r = HttpHelper.GetUrlBytes(url,true);
 
                 if (r is null || r.Length == 0)

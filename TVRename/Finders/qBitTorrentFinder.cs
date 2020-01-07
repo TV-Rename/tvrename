@@ -165,7 +165,7 @@ namespace TVRename
                             return url + "api/v2/torrents/add";
 
                         case qBitTorrentAPIPath.addUrl:
-                            return url + "/api/v2/torrents/add";
+                            return url + "api/v2/torrents/add";
 
                             default:
                             throw new ArgumentOutOfRangeException(nameof(path), path, null);
