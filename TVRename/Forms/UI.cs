@@ -2524,19 +2524,18 @@ namespace TVRename
             //Or, really fancy: any future dates are light gray background,
             //past dates are light blue
             //and "today" is yellow..
-            double ttn = dt.Subtract(DateTime.Now).TotalHours;
+
+            if (dt.Date == DateTime.Today)
+            {
+                return (Color.LightYellow, Color.Black);
+            }
 
             if (ep.IsInFuture(true))
             {
                 return (Color.LightGray,Color.Black);
             }
 
-            if (ttn < -24)
-            {
-                return (Color.LightBlue, Color.Black);
-            }
-
-            return (Color.LightYellow, Color.Black);
+            return (Color.LightBlue, Color.Black);
         }
 
         [NotNull]
