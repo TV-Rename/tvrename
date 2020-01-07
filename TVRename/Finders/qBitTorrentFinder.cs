@@ -5,6 +5,8 @@
 // 
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
+
+using System;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,23 @@ using Newtonsoft.Json;
 
 namespace TVRename
 {
+    //See https://github.com/qbittorrent/qBittorrent/wiki/Web-API-Documentation for details
+    // ReSharper disable once InconsistentNaming
+    public enum qBitTorrentAPIVersion
+    {
+        v0, //Applies to qBittorrent up to v3.1.x
+        v1, //Applies to qBittorrent v3.2.0-v4.0.4
+        v2 //Applies to qBittorrent v4.1+ 
+    }
+    // ReSharper disable once InconsistentNaming
+    public enum qBitTorrentAPIPath
+    {
+        settings,
+        torrents,
+        torrentDetails,
+        addFile,
+        addUrl
+    }
     // ReSharper disable once InconsistentNaming
     internal class qBitTorrentFinder : DownloadingFinder
     {
@@ -35,29 +54,27 @@ namespace TVRename
             List < TorrentEntry >  ret = new List<TorrentEntry>();
 
             // get list of files being downloaded by qBitTorrentFinder
-            string host = TVSettings.Instance.qBitTorrentHost;
-            string port = TVSettings.Instance.qBitTorrentPort;
-            if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(port))
+
+            if (string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentHost) || string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentPort))
             {
                 return ret;
             }
-
-            string url = $"http://{host}:{port}/query/";
+            
             string settingsString = null;
             string downloadsString = null;
             string torrentDetailsString = null;
 
             try
             {
-                settingsString= JsonHelper.Obtain(url + "preferences");
-                downloadsString = JsonHelper.Obtain(url + "torrents?filter=all");
+                settingsString= JsonHelper.Obtain( GetApiUrl(qBitTorrentAPIPath.settings ) );
+                downloadsString = JsonHelper.Obtain(GetApiUrl(qBitTorrentAPIPath.torrents));
 
                 JToken settings = JToken.Parse(settingsString);
                 JArray currentDownloads = JArray.Parse(downloadsString);
 
                 foreach (JToken torrent in currentDownloads.Children())
                 {
-                    torrentDetailsString = JsonHelper.Obtain(url + "propertiesFiles/" + torrent["hash"]);
+                    torrentDetailsString = JsonHelper.Obtain(GetApiUrl(qBitTorrentAPIPath.torrentDetails) + torrent["hash"]);
                     JArray stuff2 = JArray.Parse(torrentDetailsString);
 
                     foreach (JToken file in stuff2.Children())
@@ -86,25 +103,85 @@ namespace TVRename
                     }
                 }
             }
-            catch (WebException)
+            catch (WebException wex)
             {
                 LOGGER.Warn(
-                    $"Could not connect to {url}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
+                    $"Could not connect to {wex.Response.ResponseUri}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections: {wex.Message}");
             }
             catch (JsonReaderException ex)
             {
                 LOGGER.Warn(ex,
-                    $"Could not parse data recieved from {url}, {settingsString} {downloadsString} {torrentDetailsString}");
+                    $"Could not parse data recieved from {settingsString} {downloadsString} {torrentDetailsString}");
             }
 
             return ret;
         }
 
+        [NotNull]
+        private static string GetApiUrl(qBitTorrentAPIPath path)
+        {
+            string url = $"http://{TVSettings.Instance.qBitTorrentHost}:{TVSettings.Instance.qBitTorrentPort}/";
+
+            switch (TVSettings.Instance.qBitTorrentAPIVersion)
+            {
+                case qBitTorrentAPIVersion.v1:
+                {
+                    switch (path)
+                    {
+                        case qBitTorrentAPIPath.settings:
+                            return url+"query/preferences";
+
+                        case qBitTorrentAPIPath.torrents:
+                            return url + "query/torrents?filter=all";
+
+                        case qBitTorrentAPIPath.torrentDetails:
+                            return url + "query/propertiesFiles/";
+
+                        case qBitTorrentAPIPath.addFile:
+                            return url + "command/upload";
+
+                        case qBitTorrentAPIPath.addUrl:
+                            return url + "command/download";
+
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(path), path, null);
+                    }
+                }
+
+                case qBitTorrentAPIVersion.v2:
+                {
+                    switch (path)
+                    {
+                        case qBitTorrentAPIPath.settings:
+                            return url + "api/v2/app/preferences";
+
+                        case qBitTorrentAPIPath.torrents:
+                            return url + "api/v2/torrents/info?filter=all";
+
+                        case qBitTorrentAPIPath.torrentDetails:
+                            return url + "api/v2/torrents/files?hash=";
+
+                        case qBitTorrentAPIPath.addFile:
+                            return url + "api/v2/torrents/add";
+
+                        case qBitTorrentAPIPath.addUrl:
+                            return url + "/api/v2/torrents/add";
+
+                            default:
+                            throw new ArgumentOutOfRangeException(nameof(path), path, null);
+                    }
+                }
+
+                case qBitTorrentAPIVersion.v0:
+                    throw new NotSupportedException("Only qBitTorrent API v1 and v2 are supported");
+            default:
+                    throw new ArgumentOutOfRangeException(nameof(TVSettings.Instance.qBitTorrentAPIVersion), TVSettings.Instance.qBitTorrentAPIVersion, null);
+            }
+        }
+
         internal static void StartTorrentDownload(string torrentUrl, string torrentFileName, bool downloadFileFirst)
         {
-            string host = TVSettings.Instance.qBitTorrentHost;
-            string port = TVSettings.Instance.qBitTorrentPort;
-            if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(port))
+            if (string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentHost) || string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentPort))
             {
                 LOGGER.Warn($"Could not download {torrentUrl} via qBitTorrent as settings are not entered for host and port");
                 return;
@@ -112,11 +189,11 @@ namespace TVRename
 
             if (downloadFileFirst)
             {
-                AddFile(torrentFileName, $"http://{host}:{port}/api/v2/torrents/add");
+                AddFile(torrentFileName,GetApiUrl(qBitTorrentAPIPath.addFile));
             }
             else
             {
-                DownloadUrl(torrentUrl, $"http://{host}:{port}/command/download");
+                DownloadUrl(torrentUrl, GetApiUrl(qBitTorrentAPIPath.addUrl));
             }
         }
 
@@ -141,10 +218,10 @@ namespace TVRename
                     }
                 }
             }
-            catch (WebException)
+            catch (WebException wex)
             {
                 LOGGER.Warn(
-                    $"Could not connect to {url} to download {torrentName}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
+                    $"Could not connect to {wex.Response.ResponseUri} to download {torrentName}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.Message}");
             }
         }
 
@@ -169,10 +246,10 @@ namespace TVRename
                     }
                 }
             }
-            catch (WebException)
+            catch (WebException wex)
             {
                 LOGGER.Warn(
-                    $"Could not connect to {url} to download {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
+                    $"Could not connect to {wex.Response.ResponseUri} to download {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.Message}");
             }
         }
     }

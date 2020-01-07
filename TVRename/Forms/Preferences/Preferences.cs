@@ -351,6 +351,7 @@ namespace TVRename
 
             s.FolderJpgIs = FolderJpgMode();
             s.MonitoredFoldersScanType = ScanTypeMode();
+            s.qBitTorrentAPIVersion = qBitTorrentAPIVersionMode();
 
             s.mode = cbMode.Text == "Beta" ? TVSettings.BetaMode.BetaToo : TVSettings.BetaMode.ProductionOnly;
 
@@ -404,6 +405,20 @@ namespace TVRename
             return TVSettings.ScanType.Full;
         }
 
+        // ReSharper disable once InconsistentNaming
+        private qBitTorrentAPIVersion qBitTorrentAPIVersionMode()
+        {
+            if (rdoqBitTorrentAPIVersionv0.Checked)
+            {
+                return qBitTorrentAPIVersion.v0;
+            }
+            if (rdoqBitTorrentAPIVersionv1.Checked)
+            {
+                return qBitTorrentAPIVersion.v1;
+            }
+
+            return qBitTorrentAPIVersion.v2;
+        }
         private TVSettings.FolderJpgIsType FolderJpgMode()
         {
             if (rbFolderFanArt.Checked)
@@ -915,6 +930,24 @@ namespace TVRename
                     break;
                 default:
                     throw new InvalidOperationException("Unexpected value s.FolderJpgIs = " + s.FolderJpgIs);
+            }
+
+            switch (s.qBitTorrentAPIVersion)
+            {
+                case qBitTorrentAPIVersion.v0:
+                    rdoqBitTorrentAPIVersionv0.Checked = true;
+                    break;
+
+                case qBitTorrentAPIVersion.v1:
+                    rdoqBitTorrentAPIVersionv1.Checked = true;
+                    break;
+
+                case qBitTorrentAPIVersion.v2:
+                    rdoqBitTorrentAPIVersionv2.Checked = true;
+                    break;
+
+                default:
+                    throw new InvalidOperationException("Unexpected value s.qBitTorrentAPIVersion = " + s.qBitTorrentAPIVersion);
             }
 
             switch (s.MonitoredFoldersScanType)
@@ -1733,6 +1766,11 @@ namespace TVRename
         private void CbDefShowUseDefLocation_CheckedChanged(object sender, EventArgs e)
         {
             cmbDefShowLocation.Enabled = cbDefShowUseDefLocation.Checked;
+        }
+
+        private void RadioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

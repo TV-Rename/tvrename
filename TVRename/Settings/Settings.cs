@@ -117,6 +117,7 @@ namespace TVRename
         public bool CheckqBitTorrent = false;
         public string qBitTorrentHost = "localhost";
         public string qBitTorrentPort = "8080";
+        public qBitTorrentAPIVersion qBitTorrentAPIVersion = qBitTorrentAPIVersion.v2;
         public bool EpTBNs = false;
         public bool EpJPGs = false;
         public bool SeriesJpg = false;
@@ -445,6 +446,7 @@ namespace TVRename
             writer.WriteElement("CheckqBitTorrent", CheckqBitTorrent);
             writer.WriteElement("qBitTorrentHost", qBitTorrentHost);
             writer.WriteElement("qBitTorrentPort", qBitTorrentPort);
+            writer.WriteElement("qBitTorrentAPIVersion", (int)qBitTorrentAPIVersion);
             writer.WriteElement("RenameCheck", RenameCheck);
             writer.WriteElement("PreventMove", PreventMove);
             writer.WriteElement("MissingCheck", MissingCheck);
@@ -1215,6 +1217,7 @@ namespace TVRename
             CheckqBitTorrent = xmlSettings.ExtractBool("CheckqBitTorrent",false);
             qBitTorrentHost = xmlSettings.ExtractString("qBitTorrentHost", "localhost");
             qBitTorrentPort = xmlSettings.ExtractString("qBitTorrentPort", "8080");
+            qBitTorrentAPIVersion = xmlSettings.ExtractEnum( "qBitTorrentAPIVersion", qBitTorrentAPIVersion.v2);
             MissingCheck = xmlSettings.ExtractBool("MissingCheck",true);
             MoveLibraryFiles = xmlSettings.ExtractBool("MoveLibraryFiles",true);
             CorrectFileDates = xmlSettings.ExtractBool("UpdateFileDates",false);

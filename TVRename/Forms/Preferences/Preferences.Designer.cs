@@ -133,6 +133,7 @@ namespace TVRename
             this.bnRSSAdd = new System.Windows.Forms.Button();
             this.tpLibraryFolders = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkCleanLibraryAfterActions = new System.Windows.Forms.CheckBox();
             this.cbxUpdateAirDate = new System.Windows.Forms.CheckBox();
             this.cbAutoCreateFolders = new System.Windows.Forms.CheckBox();
             this.chkAutoMergeLibraryEpisodes = new System.Windows.Forms.CheckBox();
@@ -366,7 +367,10 @@ namespace TVRename
             this.txtSpecialsFolderName = new System.Windows.Forms.TextBox();
             this.label47 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
-            this.chkCleanLibraryAfterActions = new System.Windows.Forms.CheckBox();
+            this.label29 = new System.Windows.Forms.Label();
+            this.rdoqBitTorrentAPIVersionv1 = new System.Windows.Forms.RadioButton();
+            this.rdoqBitTorrentAPIVersionv0 = new System.Windows.Forms.RadioButton();
+            this.rdoqBitTorrentAPIVersionv2 = new System.Windows.Forms.RadioButton();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -1447,6 +1451,16 @@ namespace TVRename
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Additional Scan Options";
             // 
+            // chkCleanLibraryAfterActions
+            // 
+            this.chkCleanLibraryAfterActions.AutoSize = true;
+            this.chkCleanLibraryAfterActions.Location = new System.Drawing.Point(6, 88);
+            this.chkCleanLibraryAfterActions.Name = "chkCleanLibraryAfterActions";
+            this.chkCleanLibraryAfterActions.Size = new System.Drawing.Size(182, 17);
+            this.chkCleanLibraryAfterActions.TabIndex = 42;
+            this.chkCleanLibraryAfterActions.Text = "&Remove Unused Season Folders";
+            this.chkCleanLibraryAfterActions.UseVisualStyleBackColor = true;
+            // 
             // cbxUpdateAirDate
             // 
             this.cbxUpdateAirDate.AutoSize = true;
@@ -1660,6 +1674,10 @@ namespace TVRename
             // 
             this.qBitTorrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.qBitTorrent.Controls.Add(this.rdoqBitTorrentAPIVersionv2);
+            this.qBitTorrent.Controls.Add(this.rdoqBitTorrentAPIVersionv1);
+            this.qBitTorrent.Controls.Add(this.rdoqBitTorrentAPIVersionv0);
+            this.qBitTorrent.Controls.Add(this.label29);
             this.qBitTorrent.Controls.Add(this.cbDownloadTorrentBeforeDownloading);
             this.qBitTorrent.Controls.Add(this.tbqBitTorrentHost);
             this.qBitTorrent.Controls.Add(this.tbqBitTorrentPort);
@@ -1667,7 +1685,7 @@ namespace TVRename
             this.qBitTorrent.Controls.Add(this.label42);
             this.qBitTorrent.Location = new System.Drawing.Point(6, 308);
             this.qBitTorrent.Name = "qBitTorrent";
-            this.qBitTorrent.Size = new System.Drawing.Size(405, 101);
+            this.qBitTorrent.Size = new System.Drawing.Size(405, 125);
             this.qBitTorrent.TabIndex = 7;
             this.qBitTorrent.TabStop = false;
             this.qBitTorrent.Text = "qBitTorrent";
@@ -1675,7 +1693,7 @@ namespace TVRename
             // cbDownloadTorrentBeforeDownloading
             // 
             this.cbDownloadTorrentBeforeDownloading.AutoSize = true;
-            this.cbDownloadTorrentBeforeDownloading.Location = new System.Drawing.Point(75, 74);
+            this.cbDownloadTorrentBeforeDownloading.Location = new System.Drawing.Point(75, 102);
             this.cbDownloadTorrentBeforeDownloading.Name = "cbDownloadTorrentBeforeDownloading";
             this.cbDownloadTorrentBeforeDownloading.Size = new System.Drawing.Size(227, 17);
             this.cbDownloadTorrentBeforeDownloading.TabIndex = 20;
@@ -4101,15 +4119,48 @@ namespace TVRename
             this.label13.TabIndex = 27;
             this.label13.Text = "&Specials folder name:";
             // 
-            // chkCleanLibraryAfterActions
+            // label29
             // 
-            this.chkCleanLibraryAfterActions.AutoSize = true;
-            this.chkCleanLibraryAfterActions.Location = new System.Drawing.Point(6, 88);
-            this.chkCleanLibraryAfterActions.Name = "chkCleanLibraryAfterActions";
-            this.chkCleanLibraryAfterActions.Size = new System.Drawing.Size(182, 17);
-            this.chkCleanLibraryAfterActions.TabIndex = 42;
-            this.chkCleanLibraryAfterActions.Text = "&Remove Unused Season Folders";
-            this.chkCleanLibraryAfterActions.UseVisualStyleBackColor = true;
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(11, 77);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(45, 13);
+            this.label29.TabIndex = 21;
+            this.label29.Text = "Version:";
+            // 
+            // rdoqBitTorrentAPIVersionv1
+            // 
+            this.rdoqBitTorrentAPIVersionv1.AutoSize = true;
+            this.rdoqBitTorrentAPIVersionv1.Location = new System.Drawing.Point(137, 75);
+            this.rdoqBitTorrentAPIVersionv1.Name = "rdoqBitTorrentAPIVersionv1";
+            this.rdoqBitTorrentAPIVersionv1.Size = new System.Drawing.Size(82, 17);
+            this.rdoqBitTorrentAPIVersionv1.TabIndex = 23;
+            this.rdoqBitTorrentAPIVersionv1.TabStop = true;
+            this.rdoqBitTorrentAPIVersionv1.Text = "v3.2 to v4.0";
+            this.rdoqBitTorrentAPIVersionv1.UseVisualStyleBackColor = true;
+            this.rdoqBitTorrentAPIVersionv1.CheckedChanged += new System.EventHandler(this.RadioButton1_CheckedChanged);
+            // 
+            // rdoqBitTorrentAPIVersionv0
+            // 
+            this.rdoqBitTorrentAPIVersionv0.AutoSize = true;
+            this.rdoqBitTorrentAPIVersionv0.Location = new System.Drawing.Point(76, 75);
+            this.rdoqBitTorrentAPIVersionv0.Name = "rdoqBitTorrentAPIVersionv0";
+            this.rdoqBitTorrentAPIVersionv0.Size = new System.Drawing.Size(55, 17);
+            this.rdoqBitTorrentAPIVersionv0.TabIndex = 22;
+            this.rdoqBitTorrentAPIVersionv0.TabStop = true;
+            this.rdoqBitTorrentAPIVersionv0.Text = "< v3.1";
+            this.rdoqBitTorrentAPIVersionv0.UseVisualStyleBackColor = true;
+            // 
+            // rdoqBitTorrentAPIVersionv2
+            // 
+            this.rdoqBitTorrentAPIVersionv2.AutoSize = true;
+            this.rdoqBitTorrentAPIVersionv2.Location = new System.Drawing.Point(225, 75);
+            this.rdoqBitTorrentAPIVersionv2.Name = "rdoqBitTorrentAPIVersionv2";
+            this.rdoqBitTorrentAPIVersionv2.Size = new System.Drawing.Size(52, 17);
+            this.rdoqBitTorrentAPIVersionv2.TabIndex = 24;
+            this.rdoqBitTorrentAPIVersionv2.TabStop = true;
+            this.rdoqBitTorrentAPIVersionv2.Text = "v4.1+";
+            this.rdoqBitTorrentAPIVersionv2.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -4553,5 +4604,9 @@ namespace TVRename
         private System.Windows.Forms.ComboBox cbTimeZone;
         private System.Windows.Forms.CheckBox cbUseColoursOnWtw;
         private System.Windows.Forms.CheckBox chkCleanLibraryAfterActions;
+        private System.Windows.Forms.RadioButton rdoqBitTorrentAPIVersionv1;
+        private System.Windows.Forms.RadioButton rdoqBitTorrentAPIVersionv0;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.RadioButton rdoqBitTorrentAPIVersionv2;
     }
 }
