@@ -99,6 +99,7 @@ namespace TVRename
             }
             catch (Exception ex)
             {
+                Logger.Info($"Could not work out what timezone '{ShowName}' has. In the settings it uses '{tzstr}', Testing to see whether it needs to be upgraded: {ex.Message}");
                 try
                 {
                     tzstr = TZConvert.WindowsToIana(tzstr);

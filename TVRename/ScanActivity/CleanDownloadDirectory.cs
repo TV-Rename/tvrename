@@ -311,7 +311,6 @@ namespace TVRename
 
                     }
 
-                    break;
                 //the other cases of the files being the same or the existing file being better are not enough to save the file
                 case FileHelper.VideoComparison.firstFileBetter:
                     break;
