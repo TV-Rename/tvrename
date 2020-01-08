@@ -329,60 +329,40 @@ namespace TVRename
                     int n1 = FindIndex(eis, sr.First);
                     int n2 = FindIndex(eis, sr.Second);
 
-                    switch (sr.DoWhatNow)
+                    if (sr.DoWhatNow == RuleAction.kRename)
                     {
-                        case RuleAction.kRename:
+                        RenameEpisode(eis, n1, sr.UserSuppliedText);
+                    }
+                    else if (sr.DoWhatNow == RuleAction.kRemove)
+                    {
+                        RemoveEpisode(eis, n1, n2);
+                    }
+                    else if (sr.DoWhatNow == RuleAction.kIgnoreEp)
+                    {
+                        IgnoreEpisodes(eis, n1, n2);
+                    }
+                    else if (sr.DoWhatNow == RuleAction.kSplit)
+                    {
+                        SplitEpisode(eis, show, sr.Second, n1);
+                    }
+                    else if (sr.DoWhatNow == RuleAction.kMerge || sr.DoWhatNow == RuleAction.kCollapse)
+                    {
+                        MergeEpisodes(eis, show, sr, n1, n2, sr.UserSuppliedText);
+                    }
+                    else if (sr.DoWhatNow == RuleAction.kSwap)
+                    {
+                        SwapEpisode(eis, n1, n2);
+                    }
+                    else if (sr.DoWhatNow == RuleAction.kInsert)
+                    {
+                        // this only applies for inserting an episode, at the end of the list
+                        if (sr.First == eis[eis.Count - 1].AppropriateEpNum + 1) // after the last episode
                         {
-                            RenameEpisode(eis, n1, sr.UserSuppliedText);
-                            break;
+                            n1 = eis.Count;
                         }
 
-                        case RuleAction.kRemove:
-                        {
-                            RemoveEpisode(eis, n1, n2);
-                            break;
-                        }
-
-                        case RuleAction.kIgnoreEp:
-                        {
-                            IgnoreEpisodes(eis, n1, n2);
-                            break;
-                        }
-
-                        case RuleAction.kSplit:
-                        {
-                            SplitEpisode(eis, show, sr.Second, n1);
-                            break;
-                        }
-
-                        case RuleAction.kMerge:
-                        case RuleAction.kCollapse:
-                        {
-                            MergeEpisodes(eis, show, sr, n1, n2, sr.UserSuppliedText);
-                            break;
-                        }
-
-                        case RuleAction.kSwap:
-                        {
-                            SwapEpisode(eis, n1, n2);
-                            break;
-                        }
-
-                        case RuleAction.kInsert:
-                        {
-                            // this only applies for inserting an episode, at the end of the list
-                            if (sr.First == eis[eis.Count - 1].AppropriateEpNum + 1) // after the last episode
-                            {
-                                n1 = eis.Count;
-                            }
-
-                            InsertEpisode(eis, show, n1, sr.UserSuppliedText);
-                            break;
-                        }
-
-                        default:
-                            throw new ArgumentException("Inappropriate ruleType " + sr.DoWhatNow);
-                    } // switch DoWhatNow
+                        InsertEpisode(eis, show, n1, sr.UserSuppliedText);
+                    }
 
                     Renumber(eis);
                 }
