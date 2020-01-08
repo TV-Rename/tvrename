@@ -1034,7 +1034,7 @@ namespace TVRename
             }
         }
 
-        private enum PagingMethod
+        public enum PagingMethod
         {
             proper, // uses the links/next method
             brute //keeps asking until we get a 0 length response
@@ -1052,7 +1052,6 @@ namespace TVRename
 
             int pageNumber = 1;
             bool morePages = true;
-            const PagingMethod METHOD = PagingMethod.proper;
 
             while (morePages)
             {
@@ -1068,8 +1067,7 @@ namespace TVRename
                         int numberOfResponses = ((JArray) jsonEpisodeResponse["data"]).Count;
                         bool moreResponses;
 
-                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                        if (METHOD == PagingMethod.proper)
+                        if (TVSettings.Instance.TVDBPagingMethod == PagingMethod.proper)
                         {
                             JToken x = jsonEpisodeResponse["links"]["next"];
                             moreResponses = !string.IsNullOrWhiteSpace(x.ToString());
@@ -1077,9 +1075,7 @@ namespace TVRename
                                 $"Page {pageNumber} of {GetSeries(id)?.Name} had {numberOfResponses} episodes listed in {lang} with {(moreResponses ? "" : "no ")}more to come");
                         }
                         else
-                            // ReSharper disable once HeuristicUnreachableCode
                         {
-                            // ReSharper disable once HeuristicUnreachableCode
                             moreResponses = numberOfResponses > 0;
                             Logger.Info(
                                 $"Page {pageNumber} of {GetSeries(id)?.Name} had {numberOfResponses} episodes listed in {lang} with {(moreResponses ? "maybe " : "no ")}more to come");
@@ -1109,7 +1105,7 @@ namespace TVRename
                         resp.StatusCode == HttpStatusCode.NotFound)
                     {
                         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                        if (pageNumber > 1 && METHOD == PagingMethod.brute)
+                        if (pageNumber > 1 && TVSettings.Instance.TVDBPagingMethod == PagingMethod.brute)
                             // ReSharper disable once HeuristicUnreachableCode
                         {
                             // ReSharper disable once HeuristicUnreachableCode

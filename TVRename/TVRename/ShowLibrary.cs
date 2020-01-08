@@ -388,7 +388,7 @@ namespace TVRename
                 }
                 catch (Exception e)
                 {
-                    Logger.Error($"Could not deal with rule for {show.ShowName}, {sr.DoWhatNow}:{sr.First}:{sr.Second}:{sr.UserSuppliedText}",e);
+                    Logger.Error(e,$"Could not deal with rule for {show.ShowName}, {sr.DoWhatNow}:{sr.First}:{sr.Second}:{sr.UserSuppliedText}");
                 }
             } // for each rule
 

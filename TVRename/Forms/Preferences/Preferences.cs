@@ -961,13 +961,10 @@ namespace TVRename
                 case TVSettings.ScanType.Full:
                     rdoFullScan.Checked = true;
                     break;
-
                 case TVSettings.ScanType.SingleShow:
                     throw new InvalidOperationException("Unexpected value s.MonitoredFoldersScanType = SingleShow");
-                    break;
                 default:
                     throw new InvalidOperationException("Unexpected value s.MonitoredFoldersScanType = " + s.MonitoredFoldersScanType);
-                    break;
             }
         }
 
