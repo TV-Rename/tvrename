@@ -75,6 +75,7 @@ Section "Install"
     File "TVRename\bin\Release\SourceGrid.dll"
     File "TVRename\bin\Release\System.ValueTuple.dll"
     File "TVRename\bin\Release\System.Net.Http.dll"
+    File "TVRename\bin\Release\System.Threading.Tasks.dll"
     File "TVRename\bin\Release\TimeZoneConverter.dll"
 
     File "TVRename\bin\Release\NLog.config"
