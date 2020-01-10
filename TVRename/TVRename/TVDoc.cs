@@ -69,7 +69,33 @@ namespace TVRename
             downloadIdentifiers = new DownloadIdentifiersController();
 
             LoadOk = (settingsFile is null || LoadXMLSettings(settingsFile)) && TheTVDB.Instance.LoadOk;
+            LoadLanguages();
+            LoadStats();
             actionManager = new ActionEngine(CurrentStats);
+        }
+
+        private void LoadStats()
+        {
+            try
+            {
+                CurrentStats = TVRenameStats.Load();
+            }
+            catch (Exception)
+            {
+                // not worried if stats loading fails
+            }
+        }
+
+        private void LoadLanguages()
+        {
+            try
+            {
+                TheTVDB.Instance.LanguageList = Languages.Load();
+            }
+            catch (Exception)
+            {
+                // not worried if language loading fails as we'll repopulate
+            }
         }
 
         [NotNull]
@@ -268,24 +294,6 @@ namespace TVRename
                 Logger.Warn(e, "Problem on Startup loading File");
                 LoadErr = from.Name + " : " + e.Message;
                 return false;
-            }
-
-            try
-            {
-                CurrentStats = TVRenameStats.Load();
-            }
-            catch (Exception)
-            {
-                // not worried if stats loading fails
-            }
-
-            try
-            {
-                TheTVDB.Instance.LanguageList = Languages.Load();
-            }
-            catch (Exception)
-            {
-                // not worried if language loading fails as we'll repopulate
             }
 
             return true;
