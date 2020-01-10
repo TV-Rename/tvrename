@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using TimeZoneConverter;
 
 namespace TVRename
 {
@@ -704,7 +705,19 @@ namespace TVRename
             txtExportRSSDaysPast.Text = s.ExportRSSDaysPast.ToString();
             cbUseColoursOnWtw.Checked= s.UseColoursOnWtw ;
 
-            cbTimeZone.Text = s.DefaultShowTimezoneName;
+            cbTimeZone.Text = s.DefaultShowTimezoneName+"s";
+            if (cbTimeZone.Text == string.Empty)
+            {
+                try
+                {
+                    Logger.Info($"Could not work out what timezone is the default. In the settings it uses '{s.DefaultShowTimezoneName}', Testing to see whether it needs to be upgraded.");
+                    cbTimeZone.Text = TZConvert.WindowsToIana(s.DefaultShowTimezoneName);
+                }
+                catch (Exception)
+                {
+                    Logger.Warn($"Could not work out what timezone is the default. In the settings it uses '{s.DefaultShowTimezoneName}', but could not work out what this is.");
+                }
+            }
 
             cbMissingXML.Checked = s.ExportMissingXML;
             txtMissingXML.Text = s.ExportMissingXMLTo;
