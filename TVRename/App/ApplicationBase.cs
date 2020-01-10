@@ -61,8 +61,6 @@ namespace TVRename.App
                 SetupLogging();
             }
 
-            ConvertSeriesTimeZones(doc, TheTVDB.Instance);
-
             // Show user interface
             UI ui = new UI(doc, (TVRenameSplash)SplashScreen, !clargs.Unattended && !clargs.Hide && Environment.UserInteractive);
             ui.Text = ui.Text + " " + Helpers.DisplayVersion;
@@ -165,37 +163,6 @@ namespace TVRename.App
 
                     Environment.Exit(1);
                 }
-            }
-        }
-
-        private static void ConvertSeriesTimeZones([NotNull] TVDoc doc, TheTVDB tvdb)
-        {
-            //this is just to convert timezones in the TheTVDB into the TVDOC where they should be:
-            //it should only do anything the first time it is run and then be entirely benign
-            //can be removed after 1/1/19
-
-            foreach (ShowItem si in doc.Library.GetShowItems())
-            {
-                string newTimeZone = tvdb.GetSeries(si.TvdbCode)?.TempTimeZone;
-
-                if (string.IsNullOrWhiteSpace(newTimeZone))
-                {
-                    continue;
-                }
-
-                if ( newTimeZone == TimeZoneHelper.DefaultTimeZone() )
-                {
-                    continue;
-                }
-
-                if (si.ShowTimeZone != TimeZoneHelper.DefaultTimeZone())
-                {
-                    continue;
-                }
-
-                si.ShowTimeZone = newTimeZone;
-                doc.SetDirty();
-                Logger.Info("Copied timezone:{0} onto series {1}", newTimeZone, si.ShowName);
             }
         }
 

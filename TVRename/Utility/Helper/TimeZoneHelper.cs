@@ -72,7 +72,6 @@ namespace TVRename
             {
                 return theirTimeZone is null
                     ? theirDateTime.ToDateTimeUnspecified()
-                    //: TimeZoneInfo.ConvertTime(theirDateTime, theirTimeZone, TimeZoneInfo.Local);
                     : theirDateTime.InZoneLeniently(theirTimeZone).ToDateTimeUtc().ToLocalTime();
             }
             catch (ArgumentException)

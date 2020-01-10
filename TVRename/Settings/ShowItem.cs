@@ -93,7 +93,6 @@ namespace TVRename
 
             try
             {
-                //seriesTimeZone = TimeZoneInfo.GetSystemTimeZones().First(info => info.StandardName ==tzstr);
                 seriesTimeZone = DateTimeZoneProviders.Tzdb[tzstr];
 
             }

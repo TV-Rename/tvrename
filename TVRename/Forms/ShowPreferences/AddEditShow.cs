@@ -190,7 +190,7 @@ namespace TVRename
         {
             cbTimeZone.BeginUpdate();
             cbTimeZone.Items.Clear();
-            foreach (string s in TimeZoneHelper.ZoneNames())
+            foreach (string s in TimeZoneHelper.ZoneNames().Where(s => !(s is null)))
             {
                 cbTimeZone.Items.Add(s);
             }
@@ -296,7 +296,7 @@ namespace TVRename
                 selectedShow.CustomLanguageCode = TheTVDB.Instance.LanguageList
                     .GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString())?.Abbreviation ??TVSettings.Instance.PreferredLanguageCode;
             }
-            selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TimeZoneHelper.DefaultTimeZone();
+            selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.DefaultTimeZone();
             selectedShow.ShowNextAirdate = chkShowNextAirdate.Checked;
             selectedShow.TvdbCode = code;
             selectedShow.CountSpecials = chkSpecialsCount.Checked;
@@ -316,6 +316,11 @@ namespace TVRename
 
             selectedShow.UseSequentialMatch = cbSequentialMatching.Checked;
 
+            SetupDropDowns();
+        }
+
+        private void SetupDropDowns()
+        {
             string slist = txtIgnoreSeasons.Text;
             selectedShow.IgnoreSeasons.Clear();
             foreach (Match match in Regex.Matches(slist, "\\b[0-9]+\\b"))
