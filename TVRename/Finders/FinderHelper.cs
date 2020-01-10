@@ -589,6 +589,7 @@ namespace TVRename
                 {
                     //If added add show to collection
                     addedShows.Add(askForMatch.ShowItem);
+                    doc.Stats().AutoAddedShows++;
                 }
                 else if (dr == DialogResult.Abort)
                 {
