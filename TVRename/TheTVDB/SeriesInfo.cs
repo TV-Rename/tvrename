@@ -443,8 +443,12 @@ namespace TVRename
             {
                 if (!string.IsNullOrEmpty(theTime))
                 {
-                    if (DateTime.TryParse(theTime, out DateTime airsTime) ||
-                        DateTime.TryParse(theTime.Replace('.', ':'), out airsTime))
+                    if (DateTime.TryParse(theTime, out DateTime airsTime) )
+                    {
+                        return airsTime;
+                    }
+
+                    if (DateTime.TryParse(theTime.Replace('.', ':'), out airsTime))
                     {
                         return airsTime;
                     }
@@ -556,7 +560,7 @@ namespace TVRename
             writer.WriteElement("lastupdated", SrvLastUpdated);
             writer.WriteElement("LanguageId", LanguageId);
             writer.WriteElement("airsDayOfWeek", AirsDay);
-            writer.WriteElement("Airs_Time", airsTimeString );
+            writer.WriteElement("Airs_Time", AirsTime?.ToString("hh:mm"),true);
             writer.WriteElement("banner", BannerString);
             writer.WriteElement("imdbId", Imdb);
             writer.WriteElement("network", Network);
