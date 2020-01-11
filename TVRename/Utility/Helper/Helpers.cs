@@ -115,11 +115,13 @@ namespace TVRename
             {
                 string v = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false).Cast<AssemblyInformationalVersionAttribute>().First().InformationalVersion;
 #if DEBUG
-                v += " ** Debug Build **";
+                v += DEBUG_TEXT;
 #endif
                 return v;
             }
         }
+
+        public static string DEBUG_TEXT => " ** Debug Build **";
 
         [NotNull]
         public static string Pad(int i)

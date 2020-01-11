@@ -162,12 +162,12 @@ namespace TVRename
         {
             string currentVersionString = Helpers.DisplayVersion;
 
-            bool inDebug = currentVersionString.EndsWith(" ** Debug Build **", StringComparison.Ordinal);
+            bool inDebug = currentVersionString.EndsWith(Helpers.DEBUG_TEXT, StringComparison.Ordinal);
             //remove debug stuff
             if (inDebug)
             {
                 currentVersionString = currentVersionString.Substring(0,
-                    currentVersionString.LastIndexOf(" ** Debug Build **", StringComparison.Ordinal));
+                    currentVersionString.LastIndexOf(Helpers.DEBUG_TEXT, StringComparison.Ordinal));
             }
 
             return new Release(currentVersionString, Release.VersionType.friendly);
