@@ -113,8 +113,8 @@ namespace TVRename
                     try
                     {
                         tzstr = TimeZoneHelper.DefaultTimeZone();
+                        ShowTimeZone = tzstr;
                         seriesTimeZone = DateTimeZoneProviders.Tzdb[tzstr];
-                        //TimeZoneInfo.FindSystemTimeZoneById(tzstr);
                     }
                     catch (Exception ex3)
                     {
@@ -122,6 +122,7 @@ namespace TVRename
                             $"Could not work out what timezone '{ShowName}' has. In the settings it uses '{tzstr}', but that is not valid. Tried to use the default timezone {TimeZoneHelper.DefaultTimeZone()} for the show instead - also invalid.  Please update.");
 
                         seriesTimeZone = DateTimeZoneProviders.Tzdb.GetSystemDefault(); // TimeZoneInfo.Local;
+                        ShowTimeZone = seriesTimeZone.Id;
                     }
                 }
             }
