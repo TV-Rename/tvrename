@@ -53,7 +53,27 @@ namespace TVRename
             }
             catch (FileReadOnlyException)
             {
-                LOGGER.Info($"Could not recycle {folderName} as we got a FileReadOnlyException");
+                LOGGER.Warn($"Could not recycle {folderName} as we got a FileReadOnlyException");
+            }
+            catch (DirectoryReadOnlyException)
+            {
+                LOGGER.Warn($"Could not recycle {folderName} as we got a DirectoryReadOnlyException");
+            }
+            catch (System.UnauthorizedAccessException)
+            {
+                LOGGER.Warn($"Could not recycle {folderName} as we got a UnauthorizedAccessException");
+            }
+            catch (System.IO.PathTooLongException)
+            {
+                LOGGER.Warn($"Could not recycle {folderName} as we got a PathTooLongException");
+            }
+            catch (System.IO.DirectoryNotFoundException)
+            {
+                LOGGER.Info($"Could not recycle {folderName} as we got a DirectoryNotFoundException");
+            }
+            catch (DirectoryNotEmptyException)
+            {
+                LOGGER.Warn($"Could not recycle {folderName} as we got a DirectoryNotEmptyException");
             }
         }
 
