@@ -198,20 +198,23 @@ namespace TVRename
             cbTimeZone.EndUpdate();
             cbTimeZone.Text = si.ShowTimeZone;
 
-            string pref = "";
-            cbLanguage.BeginUpdate();
-            cbLanguage.Items.Clear();
-            foreach (Language l in TheTVDB.Instance.LanguageList)
+            if (TheTVDB.Instance.LanguageList != null) //This means that language shave been loaded
             {
-                cbLanguage.Items.Add(l.Name);
-
-                if (si.CustomLanguageCode == l.Abbreviation)
+                string pref = "";
+                cbLanguage.BeginUpdate();
+                cbLanguage.Items.Clear();
+                foreach (Language l in TheTVDB.Instance.LanguageList.Where(l => !(l.Name is null)))
                 {
-                    pref = l.Name;
+                    cbLanguage.Items.Add(l.Name);
+
+                    if (si.CustomLanguageCode == l.Abbreviation)
+                    {
+                        pref = l.Name;
+                    }
                 }
+                cbLanguage.EndUpdate();
+                cbLanguage.Text = pref;
             }
-            cbLanguage.EndUpdate();
-            cbLanguage.Text = pref;
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
