@@ -452,6 +452,11 @@ namespace TVRename
                 return "[Spoilers Hidden]";
             }
 
+            if(ei.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
+            {
+                return string.Join("<p/><hr/><p class=\"lead\" />", ei.SourceEpisodes.Select(e => e.Overview));
+            }
+
             return ei.Overview;
         }
 
