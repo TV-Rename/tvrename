@@ -359,7 +359,7 @@ namespace TVRename
             s.keepTogetherMode = KeepTogetherMode();
 
             s.PreferredLanguageCode =
-                TheTVDB.Instance.LanguageList.First(l => l.Name == cbLanguages.Text)?.Abbreviation ??
+                TheTVDB.Instance.LanguageList.FirstOrDefault(l => l.Name == cbLanguages.Text)?.Abbreviation ??
                 s.PreferredLanguageCode;
 
             s.WTWDoubleClick = rbWTWScan.Checked
