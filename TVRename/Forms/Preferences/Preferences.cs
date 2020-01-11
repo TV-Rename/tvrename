@@ -705,8 +705,8 @@ namespace TVRename
             txtExportRSSDaysPast.Text = s.ExportRSSDaysPast.ToString();
             cbUseColoursOnWtw.Checked= s.UseColoursOnWtw ;
 
-            cbTimeZone.Text = s.DefaultShowTimezoneName+"s";
-            if (cbTimeZone.Text == string.Empty)
+            cbTimeZone.Text = s.DefaultShowTimezoneName;
+            if (cbTimeZone.Text == string.Empty&& !string.IsNullOrWhiteSpace(s.DefaultShowTimezoneName))
             {
                 try
                 {
