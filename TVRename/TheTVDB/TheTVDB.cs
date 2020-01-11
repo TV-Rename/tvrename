@@ -1503,7 +1503,7 @@ namespace TVRename
 
         private bool CanFindEpisodesFor(int code, string requestedLanguageCode)
         {
-            string uri = TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/episodes";
+            string uri = $"{TvDbTokenProvider.TVDB_API_URL}/series/{code}/episodes";
             try
             {
                 JObject _ = HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider, requestedLanguageCode, true);
@@ -1526,10 +1526,18 @@ namespace TVRename
             //Get the actors too then we'll need another call for that
             try
             {
-                JObject jsonActorsResponse = HttpHelper.JsonHttpGetRequest(TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/actors",
+                SeriesInfo si = GetSeries(code);
+
+                if (si is null)
+                {
+                    Logger.Warn($"Asked to get actors for series with id:{code}, but it can't be found");
+                    return;
+                }
+
+                JObject jsonActorsResponse = HttpHelper.JsonHttpGetRequest($"{TvDbTokenProvider.TVDB_API_URL}/series/{code}/actors",
                     null, tvDbTokenProvider,false);
 
-                GetSeries(code)?.ClearActors();
+                si.ClearActors();
                 foreach (JToken jsonActor in jsonActorsResponse["data"])
                 {
                     int actorId = (int)jsonActor["id"];
@@ -1539,7 +1547,7 @@ namespace TVRename
                     int actorSeriesId = (int)jsonActor["seriesId"];
                     int actorSortOrder = (int)jsonActor["sortOrder"];
 
-                    GetSeries(code)?.AddActor(new Actor(actorId, actorImage, actorName, actorRole, actorSeriesId,
+                    si.AddActor(new Actor(actorId, actorImage, actorName, actorRole, actorSeriesId,
                         actorSortOrder));
                 }
             }
