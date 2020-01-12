@@ -1104,17 +1104,13 @@ namespace TVRename
                         ex.Response is HttpWebResponse resp &&
                         resp.StatusCode == HttpStatusCode.NotFound)
                     {
-                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                         if (pageNumber > 1 && TVSettings.Instance.TVDBPagingMethod == PagingMethod.brute)
-                            // ReSharper disable once HeuristicUnreachableCode
                         {
-                            // ReSharper disable once HeuristicUnreachableCode
                             Logger.Info(
                                 $"Have got to the end of episodes for this show: Episodes were not found for {id} from TVDB (got a 404). Error obtaining page {pageNumber} of {episodeUri} in lang {lang} using url {ex.Response.ResponseUri.AbsoluteUri}");
 
                             morePages = false;
                         }
-                        // ReSharper disable once RedundantIfElseBlock
                         else
                         {
                             Logger.Warn(
@@ -1123,7 +1119,6 @@ namespace TVRename
                             return null;
                         }
                     }
-                    // ReSharper disable once RedundantIfElseBlock
                     else
                     {
                         Logger.Error(ex, $"Error obtaining {episodeUri}");
@@ -1555,7 +1550,14 @@ namespace TVRename
             {
                 if (ex.Response is null) //probably a timeout
                 {
-                    Logger.Error($"Unble to obtain actors for {series[code].Name} {ex.Message}" );
+                    if (ex.Status == WebExceptionStatus.Timeout)
+                    {
+                        Logger.Info($"Unble to obtain actors for {series[code].Name} {ex.Message}");
+                    }
+                    else
+                    {
+                        Logger.Error($"Unble to obtain actors for {series[code].Name} {ex.Message}");
+                    }
                 }
                 else if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
                 {
@@ -1640,7 +1642,7 @@ namespace TVRename
             string uriImages = TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images";
             string uriImagesQuery = TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images/query";
 
-            List<string> imageTypes = GetImageTypes(uriImages, requestedLanguageCode, code);
+            IEnumerable<string> imageTypes = GetImageTypes(uriImages, requestedLanguageCode, code);
 
             List<JObject> bannerResponses =
                 GetBanners(code, requestedLanguageCode, imageTypes, uriImagesQuery, tvDbTokenProvider);
@@ -1650,7 +1652,7 @@ namespace TVRename
                 return (new List<JObject>(), bannerResponses);
             }
 
-            List<string> imageDefaultLangTypes = GetImageTypes(uriImages, DefaultLanguageCode, code);
+            IEnumerable<string> imageDefaultLangTypes = GetImageTypes(uriImages, DefaultLanguageCode, code);
 
             List<JObject> bannerDefaultLangResponses = GetBanners(code, DefaultLanguageCode, imageDefaultLangTypes, uriImagesQuery,
                 tvDbTokenProvider);
@@ -1683,7 +1685,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private List<string> GetImageTypes(string uriImages, string requestedLanguageCode, int code)
+        private IEnumerable<string> GetImageTypes(string uriImages, string requestedLanguageCode, int code)
         {
             List<string> imageTypes = new List<string>();
             try
@@ -1901,7 +1903,14 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                Logger.Error("Error obtaining " + uri + ": " + ex.Message);
+                if (ex.Status == WebExceptionStatus.Timeout)
+                {
+                    Logger.Info("Error obtaining " + uri + ": " + ex.Message);
+                }
+                else
+                {
+                    Logger.Error("Error obtaining " + uri + ": " + ex.Message);
+                }
                 LastError = ex.Message;
                 Say("");
                 return false;
@@ -2067,7 +2076,15 @@ namespace TVRename
             {
                 if (ex.Response is null) //probably a timeout
                 {
-                    Logger.Error($"Error obtaining {uri} for search term '{text}': {ex.Message}");
+                    if (ex.Status == WebExceptionStatus.Timeout)
+                    {
+                        Logger.Info($"Error obtaining {uri} for search term '{text}': {ex.Message}");
+                    }
+                    else
+                    {
+                        Logger.Error($"Error obtaining {uri} for search term '{text}': {ex.Message}");
+                    }
+
                     LastError = ex.Message;
                     Say("");
                 }
@@ -2095,8 +2112,19 @@ namespace TVRename
                 {
                     if (ex.Response is null) //probably a timeout
                     {
-                        Logger.Error($"Error obtaining {uri} for search term '{text}' in {DefaultLanguageCode}: {ex.Message}");
-                        LastError = ex.Message;
+                        if (ex.Status == WebExceptionStatus.Timeout)
+                        {
+                            Logger.Info(
+                                $"Error obtaining {uri} for search term '{text}' in {DefaultLanguageCode}: {ex.Message}");
+                        }
+                        else
+                        { 
+                            Logger.Error(
+                            $"Error obtaining {uri} for search term '{text}' in {DefaultLanguageCode}: {ex.Message}");
+                        }
+
+
+                    LastError = ex.Message;
                         Say("");
                     }
                     else if(((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)

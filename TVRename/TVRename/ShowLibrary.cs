@@ -368,7 +368,9 @@ namespace TVRename
                 }
                 catch (Exception e)
                 {
-                    Logger.Error(e,$"Could not deal with rule for {show.ShowName}, {sr.DoWhatNow}:{sr.First}:{sr.Second}:{sr.UserSuppliedText}");
+                    Logger.Warn(
+                        $"Please review rules for {show.ShowName} season {eis.FirstOrDefault()?.AppropriateSeasonNumber}");
+                    Logger.Warn(e,$"Could not process rule for {show.ShowName}, {sr.DoWhatNow}:{sr.First}:{sr.Second}:{sr.UserSuppliedText}");
                 }
             } // for each rule
 

@@ -121,7 +121,8 @@ namespace TVRename
             }
         }
 
-        public static string DEBUG_TEXT => " ** Debug Build **";
+        [NotNull]
+        public const string DEBUG_TEXT = " ** Debug Build **";
 
         [NotNull]
         public static string Pad(int i)
