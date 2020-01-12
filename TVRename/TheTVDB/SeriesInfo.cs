@@ -560,7 +560,7 @@ namespace TVRename
             writer.WriteElement("lastupdated", SrvLastUpdated);
             writer.WriteElement("LanguageId", LanguageId);
             writer.WriteElement("airsDayOfWeek", AirsDay);
-            writer.WriteElement("Airs_Time", AirsTime?.ToString("hh:mm"),true);
+            writer.WriteElement("Airs_Time", AirsTime?.ToString("HH:mm"),true);
             writer.WriteElement("banner", BannerString);
             writer.WriteElement("imdbId", Imdb);
             writer.WriteElement("network", Network);
