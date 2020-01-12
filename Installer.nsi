@@ -77,6 +77,7 @@ Section "Install"
     File "TVRename\bin\Release\System.Net.Http.dll"
     File "TVRename\bin\Release\System.Threading.Tasks.dll"
     File "TVRename\bin\Release\TimeZoneConverter.dll"
+    File "TVRename\bin\Release\System.Runtime.InteropServices.RuntimeInformation.dll"
 
     File "TVRename\bin\Release\NLog.config"
     File "TVRename\bin\Release\TVRename.exe.config"
