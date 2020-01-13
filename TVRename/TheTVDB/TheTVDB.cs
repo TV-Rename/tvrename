@@ -682,7 +682,14 @@ namespace TVRename
                 }
                 catch (WebException ex)
                 {
-                    Logger.Error(ex,$"Error obtaining {uri}: from lastupdated query since (local) {requestedTime.ToLocalTime()}");
+                    if (IsUnimportant(ex))
+                    {
+                        Logger.Warn($"Error obtaining {uri}: from lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is {ex.Message}");
+                    }
+                    else
+                    {
+                        Logger.Error($"Error obtaining {uri}: from lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is {ex.Message}");
+                    }
 
                     Say("");
                     LastError = ex.Message;
@@ -1550,7 +1557,7 @@ namespace TVRename
             {
                 if (ex.Response is null) //probably a timeout
                 {
-                    if (ex.Status == WebExceptionStatus.Timeout)
+                    if (IsUnimportant(ex))
                     {
                         Logger.Info($"Unble to obtain actors for {series[code].Name} {ex.Message}");
                     }
@@ -1903,7 +1910,7 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                if (ex.Status == WebExceptionStatus.Timeout)
+                if (IsUnimportant(ex))
                 {
                     Logger.Info("Error obtaining " + uri + ": " + ex.Message);
                 }
@@ -2076,7 +2083,7 @@ namespace TVRename
             {
                 if (ex.Response is null) //probably a timeout
                 {
-                    if (ex.Status == WebExceptionStatus.Timeout)
+                    if (IsUnimportant(ex))
                     {
                         Logger.Info($"Error obtaining {uri} for search term '{text}': {ex.Message}");
                     }
@@ -2112,7 +2119,7 @@ namespace TVRename
                 {
                     if (ex.Response is null) //probably a timeout
                     {
-                        if (ex.Status == WebExceptionStatus.Timeout)
+                        if (IsUnimportant(ex))
                         {
                             Logger.Info(
                                 $"Error obtaining {uri} for search term '{text}' in {DefaultLanguageCode}: {ex.Message}");
@@ -2151,6 +2158,13 @@ namespace TVRename
             {
                 ProcessSearchResult(uri, jsonSearchDefaultLangResponse,GetDefaultLanguageId());
             }
+        }
+
+        private bool IsUnimportant(WebException ex)
+        {
+            if (ex.Status == WebExceptionStatus.Timeout) return true;
+            if (ex.Status == WebExceptionStatus.NameResolutionFailure) return true;
+            return false;
         }
 
         private void ProcessSearchResult(string uri, [NotNull] JObject jsonResponse, int languageId)
