@@ -267,7 +267,23 @@ namespace TVRename
         private bool? ReviewFile(bool unattended, [NotNull] FileInfo newFile, [NotNull] List<ShowItem> matchingShows, [NotNull] FileInfo existingFile,[NotNull] ProcessedEpisode pep)
         {
             FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, newFile);
-            switch (result)
+
+            FileHelper.VideoComparison newResult = result;
+
+            if (TVSettings.Instance.ReplaceWithBetterQuality && TVSettings.Instance.ForceSystemToDecideOnUpgradedFiles && (IsNotClearCut(result)))
+            {
+                //User has asked us to make a call
+                if(existingFile.Length >= newFile.Length)
+                {
+                    newResult = FileHelper.VideoComparison.firstFileBetter;
+                }
+                else
+                {
+                    newResult = FileHelper.VideoComparison.secondFileBetter;
+                }
+            }
+
+            switch (newResult)
             {
                 case FileHelper.VideoComparison.secondFileBetter:
                     if (TVSettings.Instance.ReplaceWithBetterQuality)
@@ -321,6 +337,17 @@ namespace TVRename
             }
 
             return null;
+        }
+
+        private bool IsNotClearCut(FileHelper.VideoComparison result)
+        {
+            switch (result)
+            {
+                case FileHelper.VideoComparison.cantTell: return true;
+                case FileHelper.VideoComparison.same: return true;
+                case FileHelper.VideoComparison.similar: return true;
+            }
+            return false;
         }
 
         private bool? AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] ProcessedEpisode pep)
