@@ -115,7 +115,7 @@ namespace TVRename
             catch (WebException wex)
             {
                 LOGGER.Warn(
-                    $"Could not connect to {wex.Response.ResponseUri}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections: {wex.Message}");
+                    $"Could not connect to {wex.Response.ResponseUri}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections: {wex.LoggableDetails()}");
             }
             catch (JsonReaderException ex)
             {
@@ -275,7 +275,7 @@ namespace TVRename
             catch (WebException wex)
             {
                 LOGGER.Warn(
-                    $"Could not connect to {wex.Response.ResponseUri} to download {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.Message}");
+                    $"Could not connect to {wex.Response.ResponseUri} to download {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.LoggableDetails()}");
             }
         }
     }

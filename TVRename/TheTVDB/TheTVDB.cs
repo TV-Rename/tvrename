@@ -595,7 +595,14 @@ namespace TVRename
             catch (WebException ex)
             {
                 Say("Could not connect to TVDB");
-                Logger.Error(ex, "Error obtaining Languages from TVDB");
+                if (ex.IsUnimportant())
+                {
+                    Logger.Error($"Error obtaining Languages from TVDB {ex.LoggableDetails()}");
+                }
+                else
+                {
+                    Logger.Warn($"Error obtaining Languages from TVDB {ex.LoggableDetails()}");
+                }
                 LastError = ex.Message;
 
                 if (showErrorMsgBox)
@@ -682,13 +689,13 @@ namespace TVRename
                 }
                 catch (WebException ex)
                 {
-                    if (IsUnimportant(ex))
+                    if (ex.IsUnimportant())
                     {
-                        Logger.Warn($"Error obtaining {uri}: from lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is {ex.Message}");
+                        Logger.Warn($"Error obtaining {uri}: from lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is {ex.LoggableDetails()}");
                     }
                     else
                     {
-                        Logger.Error($"Error obtaining {uri}: from lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is {ex.Message}");
+                        Logger.Error($"Error obtaining {uri}: from lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is {ex.LoggableDetails()}");
                     }
 
                     Say("");
@@ -1557,13 +1564,13 @@ namespace TVRename
             {
                 if (ex.Response is null) //probably a timeout
                 {
-                    if (IsUnimportant(ex))
+                    if (ex.IsUnimportant())
                     {
-                        Logger.Info($"Unble to obtain actors for {series[code].Name} {ex.Message}");
+                        Logger.Info($"Unble to obtain actors for {series[code].Name} {ex.LoggableDetails()}");
                     }
                     else
                     {
-                        Logger.Error($"Unble to obtain actors for {series[code].Name} {ex.Message}");
+                        Logger.Error($"Unble to obtain actors for {series[code].Name} {ex.LoggableDetails()}");
                     }
                 }
                 else if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
@@ -1572,7 +1579,7 @@ namespace TVRename
                 }
                 else
                 {
-                    Logger.Error($"Unble to obtain actors for {series[code].Name} {ex.Message}");
+                    Logger.Error($"Unble to obtain actors for {series[code].Name} {ex.LoggableDetails()}");
                 }
 
                 LastError = ex.Message;
@@ -1684,7 +1691,7 @@ namespace TVRename
                 }
                 catch (WebException webEx)
                 {
-                    Logger.Info($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}: {webEx.Message}");
+                    Logger.Info($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}: {webEx.LoggableDetails()}");
                 }
             }
 
@@ -1910,13 +1917,13 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                if (IsUnimportant(ex))
+                if (ex.IsUnimportant())
                 {
-                    Logger.Info("Error obtaining " + uri + ": " + ex.Message);
+                    Logger.Info("Error obtaining " + uri + ": " + ex.LoggableDetails());
                 }
                 else
                 {
-                    Logger.Error("Error obtaining " + uri + ": " + ex.Message);
+                    Logger.Error("Error obtaining " + uri + ": " + ex.LoggableDetails());
                 }
                 LastError = ex.Message;
                 Say("");
@@ -2083,13 +2090,13 @@ namespace TVRename
             {
                 if (ex.Response is null) //probably a timeout
                 {
-                    if (IsUnimportant(ex))
+                    if (ex.IsUnimportant())
                     {
-                        Logger.Info($"Error obtaining {uri} for search term '{text}': {ex.Message}");
+                        Logger.Info($"Error obtaining {uri} for search term '{text}': {ex.LoggableDetails()}");
                     }
                     else
                     {
-                        Logger.Error($"Error obtaining {uri} for search term '{text}': {ex.Message}");
+                        Logger.Error($"Error obtaining {uri} for search term '{text}': {ex.LoggableDetails()}");
                     }
 
                     LastError = ex.Message;
@@ -2102,7 +2109,7 @@ namespace TVRename
                 }
                 else
                 {
-                    Logger.Error($"Error obtaining {ex.Response.ResponseUri} for search term '{text}': {ex.Message}");
+                    Logger.Error($"Error obtaining {ex.Response.ResponseUri} for search term '{text}': {ex.LoggableDetails()}");
                     LastError = ex.Message;
                     Say("");
                 }
@@ -2119,15 +2126,15 @@ namespace TVRename
                 {
                     if (ex.Response is null) //probably a timeout
                     {
-                        if (IsUnimportant(ex))
+                        if (ex.IsUnimportant())
                         {
                             Logger.Info(
-                                $"Error obtaining {uri} for search term '{text}' in {DefaultLanguageCode}: {ex.Message}");
+                                $"Error obtaining {uri} for search term '{text}' in {DefaultLanguageCode}: {ex.LoggableDetails()}");
                         }
                         else
                         { 
                             Logger.Error(
-                            $"Error obtaining {uri} for search term '{text}' in {DefaultLanguageCode}: {ex.Message}");
+                            $"Error obtaining {uri} for search term '{text}' in {DefaultLanguageCode}: {ex.LoggableDetails()}");
                         }
 
 
@@ -2141,7 +2148,7 @@ namespace TVRename
                     }
                     else
                     {
-                        Logger.Error($"Error obtaining {ex.Response.ResponseUri} for search term '{text}' in {DefaultLanguageCode}: {ex.Message}");
+                        Logger.Error($"Error obtaining {ex.Response.ResponseUri} for search term '{text}' in {DefaultLanguageCode}: {ex.LoggableDetails()}");
                         LastError = ex.Message;
                         Say("");
                     }
@@ -2158,13 +2165,6 @@ namespace TVRename
             {
                 ProcessSearchResult(uri, jsonSearchDefaultLangResponse,GetDefaultLanguageId());
             }
-        }
-
-        private bool IsUnimportant(WebException ex)
-        {
-            if (ex.Status == WebExceptionStatus.Timeout) return true;
-            if (ex.Status == WebExceptionStatus.NameResolutionFailure) return true;
-            return false;
         }
 
         private void ProcessSearchResult(string uri, [NotNull] JObject jsonResponse, int languageId)

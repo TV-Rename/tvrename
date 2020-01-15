@@ -47,7 +47,7 @@ namespace TVRename
             }
             catch (WebException  e)
             {
-                Logger.Warn($"Could not download RSS page at: {url} got the following message: {e.Status} {e.Message}");
+                Logger.Warn($"Could not download RSS page at: {url} got the following message: {e.LoggableDetails()}");
                 return false;
             }
             catch (XmlException e)

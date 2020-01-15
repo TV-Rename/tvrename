@@ -111,10 +111,20 @@ namespace TVRename
                     return (latestVersion, null);
                 }
             }
+            catch (WebException wex)
+            {
+                if (wex.IsUnimportant())
+                {
+                    Logger.Error($"Failed to contact GitHub to identify new releases {wex.LoggableDetails()}");
+                }
+                else
+                {
+                    Logger.Warn($"Failed to contact GitHub to identify new releases {wex.LoggableDetails()}");
+                }
+            }
             catch (Exception e)
             {
                 Logger.Error(e, "Failed to contact GitHub to identify new releases");
-                return (latestVersion, latestBetaVersion);
             }
 
             return (latestVersion, latestBetaVersion);

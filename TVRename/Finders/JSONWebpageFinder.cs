@@ -56,7 +56,7 @@ namespace TVRename
             }
             catch (WebException e)
             {
-                LOGGER.Warn( $"Failed to access: {TVSettings.Instance.SearchJSONURL} got the following message: {e.Status} {e.Message}");
+                LOGGER.Warn( $"Failed to access: {TVSettings.Instance.SearchJSONURL} got the following message: {e.LoggableDetails()}");
             }
             catch (JsonReaderException ex)
             {

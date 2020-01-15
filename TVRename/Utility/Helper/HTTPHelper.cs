@@ -144,6 +144,35 @@ namespace TVRename
             return result;
         }
 
+        public static bool IsUnimportant(this WebException ex)
+        {
+            if (ex.Status == WebExceptionStatus.Timeout) return true;
+            if (ex.Status == WebExceptionStatus.NameResolutionFailure) return true;
+            return false;
+        }
+        public static string LoggableDetails(this WebException ex)
+        {
+            StringBuilder s = new StringBuilder();
+            s.Append($"WebException {ex.Status} obtained. {ex.Message}");
+            if (ex.Response == null)
+            {
+                s.Append(" with no response");
+            }
+            else
+            {
+                s.Append($" from {ex.Response.ResponseUri.OriginalString}");
+                if (((HttpWebResponse)ex.Response)?.StatusCode != null)
+                {
+                    s.Append($" {((HttpWebResponse)ex.Response)?.StatusCode}");
+                }
+            }
+            if (ex.InnerException != null)
+            {
+                s.Append($". Further details: {ex.InnerException.Message}");
+            }
+            return s.ToString();
+        }
+
         public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, TvDbTokenProvider  authToken, bool retry) =>
             JsonHttpGetRequest(url, parameters, authToken, string.Empty,retry);
 
