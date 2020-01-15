@@ -169,10 +169,11 @@ namespace TVRename.App
         private void SetupLogging()
         {
             ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.Load("NLog.Targets.Syslog"));
+            ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.Load("Timber.io.NLog"));
 
             LoggingConfiguration config = LogManager.Configuration;
 
-            SyslogTarget syslog = new SyslogTarget
+            SyslogTarget papertrail = new SyslogTarget
             {
                 MessageCreation = { Facility = Facility.Local7 },
                 MessageSend =
@@ -182,14 +183,46 @@ namespace TVRename.App
                 }
             };
 
-            config.AddTarget("syslog", syslog);
+            config.AddTarget("papertrail", papertrail);
 
-            syslog.Layout = "| " + Helpers.DisplayVersion + " |${level:uppercase=true}| ${message} ${exception:format=toString,Data}";
+            papertrail.Layout = "| " + Helpers.DisplayVersion + " |${level:uppercase=true}| ${message} ${exception:format=toString,Data}";
 
-            LoggingRule rule = new LoggingRule("*", LogLevel.Error, syslog);
+            LoggingRule rule = new LoggingRule("*", LogLevel.Error, papertrail);
             config.LoggingRules.Add(rule);
 
+
+            SyslogTarget sematext = new SyslogTarget
+            {
+                MessageCreation =
+                {
+                    Rfc5424 =
+                    {
+                        AppName = "0dcb3012-fa85-47c5-b6ca-cfd33609ac33"
+                    }
+                },
+                MessageSend =
+                {
+                    Protocol = ProtocolType.Tcp,
+                    Tcp = {Server = "logsene-syslog-receiver.sematext.com", Port = 514}
+                }
+            };
+            config.AddTarget("sema",sematext);
+            
+            LoggingRule semaRule = new LoggingRule("*", LogLevel.Warn, sematext);
+            config.LoggingRules.Add(semaRule);
+
+
+            Timber.io.NLog.TimberTarget timberTarget = new Timber.io.NLog.TimberTarget
+            {
+                Name = "timber",
+                Token = "31420_8ad675a678fcf84a:29b346e117a7b0a3a9fb881f1644dbd8485a36de2017676b459d682b8c0469e2"
+            };
+            config.AddTarget(timberTarget);
+            LoggingRule timberLoggingRule = new LoggingRule("*", LogLevel.Warn, timberTarget);
+            config.LoggingRules.Add(timberLoggingRule);
+
             LogManager.Configuration = config;
+
 
             Logger.Fatal($"TV Rename {Helpers.DisplayVersion} logging started on {Environment.OSVersion}, {(Environment.Is64BitOperatingSystem?"64 Bit OS":"")}, {(Environment.Is64BitProcess? "64 Bit Process":"")} {Environment.Version} {(Environment.UserInteractive?"Interactive":"")} with args: {string.Join(" ", CommandLineArgs)}");
             Logger.Info($"Copyright (C) {DateTime.Now.Year} TV Rename");

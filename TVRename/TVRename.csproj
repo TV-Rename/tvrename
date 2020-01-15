@@ -255,6 +255,9 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Timber.io.NLog, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Timber.io.NLog.1.0.2\lib\net462\Timber.io.NLog.dll</HintPath>
+    </Reference>
     <Reference Include="TimeZoneConverter, Version=3.2.0.0, Culture=neutral, PublicKeyToken=e20ab7d0d9479841, processorArchitecture=MSIL">
       <HintPath>..\packages\TimeZoneConverter.3.2.0\lib\net461\TimeZoneConverter.dll</HintPath>
     </Reference>
