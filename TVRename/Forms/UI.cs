@@ -4195,5 +4195,10 @@ namespace TVRename
         {
             ForceRefresh(mDoc.Library.GetShowItems(),true);
         }
+
+        private void AccuracyCheckLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TheTVDB.Instance.QuickRefresh();
+        }
     }
 }

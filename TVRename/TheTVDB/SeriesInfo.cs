@@ -497,6 +497,18 @@ namespace TVRename
             int.TryParse(siteRatingVotesString, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out SiteRatingVotes);
         }
 
+        internal Episode GetEpisode(long epId)
+        {
+            foreach (Season s in AiredSeasons.Values)
+            {
+                    foreach (Episode pe in s.Episodes.Values.Where(pe => pe.EpisodeId ==epId))
+                    {
+                        return pe;
+                    }
+            }
+            throw new EpisodeNotFoundException();
+        }
+
         private static DateTime? ParseFirstAired([CanBeNull] string theDate)
         {
             try

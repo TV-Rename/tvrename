@@ -421,6 +421,67 @@ namespace TVRename
             return null;
         }
 
+        internal void QuickRefresh()
+        {
+            List<string> issues = new List<string>();
+            lock (SERIES_LOCK)
+            {
+                foreach (SeriesInfo si in series.Values.ToList())
+                {
+                    int tvdbID = si.TvdbCode;
+
+                    SeriesInfo newSi = DownloadSeriesInfo(tvdbID, "en");
+                    if (newSi.SrvLastUpdated != si.SrvLastUpdated)
+                    {
+                        issues.Add($"{si.Name} is not up to date: Local is {si.SrvLastUpdated} server is {newSi.SrvLastUpdated}");
+                    }
+
+                    List<JObject> eps = GetEpisodes(tvdbID, "en");
+                    List<long> serverEpIds = new List<long>();
+
+                    foreach (var epJson in eps)
+                    {
+                        JToken episodeToUse = (JToken)epJson["data"];
+                        foreach (JToken t in episodeToUse.Children())
+                        {
+                            long serverUpdateTime = (long)t["lastUpdated"];
+                            long EpId = (long)t["id"];
+
+                            serverEpIds.Add(EpId);
+                            try
+                            {
+                                Episode ep = si.GetEpisode(EpId);
+
+                                if (serverUpdateTime != ep.SrvLastUpdated)
+                                {
+                                    issues.Add($"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is not up to date: Local is {ep.SrvLastUpdated} server is {serverUpdateTime}");
+                                }
+                            }
+                            catch (SeriesInfo.EpisodeNotFoundException)
+                            {
+                                issues.Add($"{si.Name} {EpId} is not found: Local is missing; server is {serverUpdateTime}");
+                            }
+                        }
+                    }
+
+                    //Look for episodes that are local, but not on server
+                    IEnumerable<int> localEps = si.AiredSeasons.Values.SelectMany(s => s.Episodes.Values).Select(ep=>ep.EpisodeId);
+                    foreach (int localEpId in localEps)
+                    {
+                        if (!serverEpIds.Contains(localEpId))
+                        {
+                            issues.Add($"{si.Name} {localEpId} should be removed: Server is missing.");
+                        }
+                    }
+                }
+            }
+
+            foreach(string issue in issues)
+            {
+                Logger.Error(issue);
+            }
+        }
+
         private Episode FindEpisodeById(int id)
         {
             lock(SERIES_LOCK)

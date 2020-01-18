@@ -193,6 +193,7 @@ namespace TVRename
             this.tmrPeriodicScan = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btnUpdateAvailable = new System.Windows.Forms.Button();
+            this.accuracyCheckLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
@@ -239,7 +240,7 @@ namespace TVRename
             // 
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
             this.exportToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.exportToolStripMenuItem.Text = "&Export";
             this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
             // 
@@ -248,20 +249,20 @@ namespace TVRename
             this.saveToolStripMenuItem.Image = global::TVRename.Properties.Resources.saveHS;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(145, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -360,19 +361,19 @@ namespace TVRename
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
             // 
-            // flushImageCacheToolStripMenuItem
-            // 
-            this.flushImageCacheToolStripMenuItem.Name = "flushImageCacheToolStripMenuItem";
-            this.flushImageCacheToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
-            this.flushImageCacheToolStripMenuItem.Text = "&Force Refesh All Images";
-            this.flushImageCacheToolStripMenuItem.Click += new System.EventHandler(this.flushImageCacheToolStripMenuItem_Click);
-            // 
             // flushCacheToolStripMenuItem
             // 
             this.flushCacheToolStripMenuItem.Name = "flushCacheToolStripMenuItem";
             this.flushCacheToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
             this.flushCacheToolStripMenuItem.Text = "&Force Refesh All";
             this.flushCacheToolStripMenuItem.Click += new System.EventHandler(this.flushCacheToolStripMenuItem_Click);
+            // 
+            // flushImageCacheToolStripMenuItem
+            // 
+            this.flushImageCacheToolStripMenuItem.Name = "flushImageCacheToolStripMenuItem";
+            this.flushImageCacheToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.flushImageCacheToolStripMenuItem.Text = "&Force Refesh All Images";
+            this.flushImageCacheToolStripMenuItem.Click += new System.EventHandler(this.flushImageCacheToolStripMenuItem_Click);
             // 
             // backgroundDownloadNowToolStripMenuItem
             // 
@@ -425,19 +426,19 @@ namespace TVRename
             // 
             this.statisticsToolStripMenuItem.Image = global::TVRename.Properties.Resources.graphhs;
             this.statisticsToolStripMenuItem.Name = "statisticsToolStripMenuItem";
-            this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.statisticsToolStripMenuItem.Text = "&Statistics...";
             this.statisticsToolStripMenuItem.Click += new System.EventHandler(this.statisticsToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(163, 6);
             // 
             // showSummaryToolStripMenuItem
             // 
             this.showSummaryToolStripMenuItem.Name = "showSummaryToolStripMenuItem";
-            this.showSummaryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showSummaryToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.showSummaryToolStripMenuItem.Text = "Show Summary...";
             this.showSummaryToolStripMenuItem.Click += new System.EventHandler(this.showSummaryToolStripMenuItem_Click);
             // 
@@ -445,7 +446,7 @@ namespace TVRename
             // 
             this.actorsToolStripMenuItem.Image = global::TVRename.Properties.Resources.TableHS;
             this.actorsToolStripMenuItem.Name = "actorsToolStripMenuItem";
-            this.actorsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.actorsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.actorsToolStripMenuItem.Text = "&Actors Grid...";
             this.actorsToolStripMenuItem.Click += new System.EventHandler(this.actorsToolStripMenuItem_Click);
             // 
@@ -453,7 +454,8 @@ namespace TVRename
             // 
             this.betaToolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.timezoneInconsistencyLOGToolStripMenuItem,
-            this.episodeFileQualitySummaryLogToolStripMenuItem});
+            this.episodeFileQualitySummaryLogToolStripMenuItem,
+            this.accuracyCheckLogToolStripMenuItem});
             this.betaToolsToolStripMenuItem.Name = "betaToolsToolStripMenuItem";
             this.betaToolsToolStripMenuItem.Size = new System.Drawing.Size(42, 20);
             this.betaToolsToolStripMenuItem.Text = "Beta";
@@ -1548,6 +1550,13 @@ namespace TVRename
             this.btnUpdateAvailable.Visible = false;
             this.btnUpdateAvailable.Click += new System.EventHandler(this.btnUpdateAvailable_Click);
             // 
+            // accuracyCheckLogToolStripMenuItem
+            // 
+            this.accuracyCheckLogToolStripMenuItem.Name = "accuracyCheckLogToolStripMenuItem";
+            this.accuracyCheckLogToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
+            this.accuracyCheckLogToolStripMenuItem.Text = "Accuracy Check (Log)";
+            this.accuracyCheckLogToolStripMenuItem.Click += new System.EventHandler(this.AccuracyCheckLogToolStripMenuItem_Click);
+            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1732,5 +1741,6 @@ namespace TVRename
         private ToolStripMenuItem aboutToolStripMenuItem;
         private ColumnHeader columnHeader1;
         private ToolStripMenuItem quickRenameToolStripMenuItem;
+        private ToolStripMenuItem accuracyCheckLogToolStripMenuItem;
     }
 }
