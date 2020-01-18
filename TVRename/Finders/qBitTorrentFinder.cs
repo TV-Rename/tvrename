@@ -82,48 +82,66 @@ namespace TVRename
 
                 foreach (JToken torrent in currentDownloads.Children())
                 {
-                    (string hashCode,string torrentName) = ExtractTorrentDetails(torrent);
-
-                    string url = GetApiUrl(qBitTorrentAPIPath.torrentDetails) + hashCode;
-                    torrentDetailsString = JsonHelper.Obtain(url);
-                    JArray torrentDetails = JArray.Parse(torrentDetailsString);
-
-                    if (torrentDetails is null)
-                    {
-                        LOGGER.Warn($"Could not get details of downloads from {url} from qBitTorrent: {torrentDetailsString}");
-                        continue;
-                    }
-
-                    foreach (JToken file in torrentDetails.Children())
-                    {
-                        (string downloadedFilename, bool isOnHold, int percentComplete) = ExtractTorrentFileDetails(file);
-
-                        if (!downloadedFilename.Contains(".!qB\\.unwanted\\") && !isOnHold)
-                        {
-                            ret.Add(new TorrentEntry(torrentName,savePath + downloadedFilename,percentComplete));
-                        }
-                    }
-
-                    if (!torrentDetails.Children().Any())
-                    {
-                        string proposedFilename = TVSettings.Instance.FilenameFriendly(savePath + torrentName) + TVSettings.Instance.VideoExtensionsArray[0];
-
-                        ret.Add(new TorrentEntry(torrentName, proposedFilename, 0));
-                    }
+                    AddFilesFromTorrent(ret, torrent, savePath);
                 }
             }
             catch (WebException wex)
             {
                 LOGGER.Warn(
-                    $"Could not connect to {wex.Response.ResponseUri}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections: {wex.LoggableDetails()}");
+                    $"Could not connect to local instance {TVSettings.Instance.qBitTorrentHost}:{TVSettings.Instance.qBitTorrentPort}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections: {wex.LoggableDetails()}");
             }
             catch (JsonReaderException ex)
             {
                 LOGGER.Warn(ex,
-                    $"Could not parse data recieved from {settingsString} {downloadsString} {torrentDetailsString}");
+                    $"Could not parse data recieved from {settingsString} {downloadsString}");
             }
 
             return ret;
+        }
+
+        private static void AddFilesFromTorrent(ICollection<TorrentEntry> ret, [NotNull] JToken torrent, string savePath)
+        {
+            string torrentDetailsString=string.Empty;
+            try
+            {
+                (string hashCode, string torrentName) = ExtractTorrentDetails(torrent);
+
+                string url = GetApiUrl(qBitTorrentAPIPath.torrentDetails) + hashCode;
+                torrentDetailsString = JsonHelper.Obtain(url);
+                JArray torrentDetails = JArray.Parse(torrentDetailsString);
+
+                if (torrentDetails is null)
+                {
+                    LOGGER.Warn(
+                        $"Could not get details of downloads from {url} from qBitTorrent: {torrentDetailsString}");
+
+                    return;
+                }
+
+                if (!torrentDetails.Children().Any())
+                {
+                    string proposedFilename = TVSettings.Instance.FilenameFriendly(savePath + torrentName) +
+                                              TVSettings.Instance.VideoExtensionsArray[0];
+
+                    ret.Add(new TorrentEntry(torrentName, proposedFilename, 0));
+                    return;
+                }
+
+                foreach (JToken file in torrentDetails.Children())
+                {
+                    (string downloadedFilename, bool isOnHold, int percentComplete) = ExtractTorrentFileDetails(file);
+
+                    if (!downloadedFilename.Contains(".!qB\\.unwanted\\") && !isOnHold)
+                    {
+                        ret.Add(new TorrentEntry(torrentName, savePath + downloadedFilename, percentComplete));
+                    }
+                }
+            }
+            catch (JsonReaderException ex)
+            {
+                LOGGER.Warn(ex,
+                    $"Could not parse data recieved from {torrentDetailsString}");
+            }
         }
 
         private static (string downloadedFilename, bool isOnHold, int percentComplete) ExtractTorrentFileDetails([NotNull] JToken file)
