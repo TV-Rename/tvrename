@@ -126,7 +126,7 @@ namespace TVRename
             return ret;
         }
 
-        private static (string downloadedFilename, bool isOnHold, int percentComplete) ExtractTorrentFileDetails(JToken file)
+        private static (string downloadedFilename, bool isOnHold, int percentComplete) ExtractTorrentFileDetails([NotNull] JToken file)
         {
             string downloadedFilename = file["name"].ToString();
             bool isOnHold = file["priority"].Value<int>() == 0;
@@ -135,7 +135,7 @@ namespace TVRename
             return (downloadedFilename, isOnHold, percentComplete);
         }
 
-        private static (string hashCode, string torrentName) ExtractTorrentDetails(JToken torrent)
+        private static (string hashCode, string torrentName) ExtractTorrentDetails([NotNull] JToken torrent)
         {
             string hashCode = (string)torrent["hash"];
             string torrentName = (string)torrent["name"];

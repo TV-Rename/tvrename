@@ -428,38 +428,43 @@ namespace TVRename
             {
                 foreach (SeriesInfo si in series.Values.ToList())
                 {
-                    int tvdbID = si.TvdbCode;
+                    int tvdbId = si.TvdbCode;
 
-                    SeriesInfo newSi = DownloadSeriesInfo(tvdbID, "en");
+                    SeriesInfo newSi = DownloadSeriesInfo(tvdbId, "en");
                     if (newSi.SrvLastUpdated != si.SrvLastUpdated)
                     {
                         issues.Add($"{si.Name} is not up to date: Local is {si.SrvLastUpdated} server is {newSi.SrvLastUpdated}");
                     }
 
-                    List<JObject> eps = GetEpisodes(tvdbID, "en");
+                    List<JObject> eps = GetEpisodes(tvdbId, "en");
                     List<long> serverEpIds = new List<long>();
 
-                    foreach (var epJson in eps)
+                    if (eps != null)
                     {
-                        JToken episodeToUse = (JToken)epJson["data"];
-                        foreach (JToken t in episodeToUse.Children())
+                        foreach (JObject epJson in eps)
                         {
-                            long serverUpdateTime = (long)t["lastUpdated"];
-                            long EpId = (long)t["id"];
-
-                            serverEpIds.Add(EpId);
-                            try
+                            JToken episodeToUse = epJson["data"];
+                            foreach (JToken t in episodeToUse.Children())
                             {
-                                Episode ep = si.GetEpisode(EpId);
+                                long serverUpdateTime = (long) t["lastUpdated"];
+                                long epId = (long) t["id"];
 
-                                if (serverUpdateTime != ep.SrvLastUpdated)
+                                serverEpIds.Add(epId);
+                                try
                                 {
-                                    issues.Add($"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is not up to date: Local is {ep.SrvLastUpdated} server is {serverUpdateTime}");
+                                    Episode ep = si.GetEpisode(epId);
+
+                                    if (serverUpdateTime != ep.SrvLastUpdated)
+                                    {
+                                        issues.Add(
+                                            $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is not up to date: Local is {ep.SrvLastUpdated} server is {serverUpdateTime}");
+                                    }
                                 }
-                            }
-                            catch (SeriesInfo.EpisodeNotFoundException)
-                            {
-                                issues.Add($"{si.Name} {EpId} is not found: Local is missing; server is {serverUpdateTime}");
+                                catch (SeriesInfo.EpisodeNotFoundException)
+                                {
+                                    issues.Add(
+                                        $"{si.Name} {epId} is not found: Local is missing; server is {serverUpdateTime}");
+                                }
                             }
                         }
                     }

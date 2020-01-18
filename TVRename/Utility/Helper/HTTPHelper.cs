@@ -144,13 +144,20 @@ namespace TVRename
             return result;
         }
 
-        public static bool IsUnimportant(this WebException ex)
+        public static bool IsUnimportant([NotNull] this WebException ex)
         {
-            if (ex.Status == WebExceptionStatus.Timeout) return true;
-            if (ex.Status == WebExceptionStatus.NameResolutionFailure) return true;
-            return false;
+            switch (ex.Status)
+            {
+                case WebExceptionStatus.Timeout:
+                case WebExceptionStatus.NameResolutionFailure:
+                    return true;
+
+                default:
+                    return false;
+            }
         }
-        public static string LoggableDetails(this WebException ex)
+        [NotNull]
+        public static string LoggableDetails([NotNull] this WebException ex)
         {
             StringBuilder s = new StringBuilder();
             s.Append($"WebException {ex.Status} obtained. {ex.Message}");
@@ -161,9 +168,9 @@ namespace TVRename
             else
             {
                 s.Append($" from {ex.Response.ResponseUri.OriginalString}");
-                if (((HttpWebResponse)ex.Response)?.StatusCode != null)
+                if (ex.Response is HttpWebResponse webResponse)
                 {
-                    s.Append($" {((HttpWebResponse)ex.Response)?.StatusCode}");
+                    s.Append($" {webResponse.StatusCode}");
                 }
             }
             if (ex.InnerException != null)

@@ -497,6 +497,7 @@ namespace TVRename
             int.TryParse(siteRatingVotesString, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out SiteRatingVotes);
         }
 
+        [NotNull]
         internal Episode GetEpisode(long epId)
         {
             foreach (Season s in AiredSeasons.Values)
