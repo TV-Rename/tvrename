@@ -115,11 +115,11 @@ namespace TVRename
             {
                 if (wex.IsUnimportant())
                 {
-                    Logger.Error($"Failed to contact GitHub to identify new releases {wex.LoggableDetails()}");
+                    Logger.Warn($"Failed to contact GitHub to identify new releases {wex.LoggableDetails()}");
                 }
                 else
                 {
-                    Logger.Warn($"Failed to contact GitHub to identify new releases {wex.LoggableDetails()}");
+                    Logger.Error($"Failed to contact GitHub to identify new releases {wex.LoggableDetails()}");
                 }
             }
             catch (Exception e)

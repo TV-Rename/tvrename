@@ -150,6 +150,8 @@ namespace TVRename
             {
                 case WebExceptionStatus.Timeout:
                 case WebExceptionStatus.NameResolutionFailure:
+                case WebExceptionStatus.ConnectFailure:
+                case WebExceptionStatus.ProtocolError:
                     return true;
 
                 default:
