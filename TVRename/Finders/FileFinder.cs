@@ -12,7 +12,6 @@ using System.IO;
 using System.Windows.Forms;
 using System.Linq;
 using JetBrains.Annotations;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
 using Path = Alphaleonis.Win32.Filesystem.Path;
@@ -224,59 +223,50 @@ namespace TVRename
         {
             try
             {
-                DirectoryInfo sfdi = action.From.Directory;
-                string basename = action.From.Name;
-                int l = basename.Length;
-                basename = basename.Substring(0, l - action.From.Extension.Length);
-
-                string toname = action.To.Name;
-                int l2 = toname.Length;
-                toname = toname.Substring(0, l2 - action.To.Extension.Length);
-
-                try
+                string basename = action.From.RemoveExtension();
+                string toname = action.To.RemoveExtension();
+                
+                FileInfo[] flist = action.From.Directory.GetFiles(basename + ".*");
+                foreach (FileInfo fi in flist)
                 {
-                    FileInfo[] flist = sfdi.GetFiles(basename + ".*");
-                    foreach (FileInfo fi in flist)
+                    //check to see whether the file is one of the types we do/don't want to include
+                    //If we are copying from outside the library we use the 'Keep Together' Logic
+                    if (!fromLibrary && !TVSettings.Instance.KeepTogetherFilesWithType(fi.Extension))
                     {
-                        //check to see whether the file is one of the types we do/don't want to include
-                        //If we are copying from outside the library we use the 'Keep Together' Logic
-                        if (!fromLibrary && !TVSettings.Instance.KeepTogetherFilesWithType(fi.Extension))
-                        {
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        //If we are with in the library we use the 'Other Extensions'
-                        if (fromLibrary && !TVSettings.Instance.FileHasUsefulExtension(fi, true))
-                        {
-                            continue;
-                        }
+                    //If we are with in the library we use the 'Other Extensions'
+                    if (fromLibrary && !TVSettings.Instance.FileHasUsefulExtension(fi, true))
+                    {
+                        continue;
+                    }
 
-                        string newName = GetFilename(fi.Name, basename, toname);
+                    string newName = GetFilename(fi.Name, basename, toname);
 
-                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(action.Operation, fi,
-                            FileHelper.FileInFolder(action.To.Directory, newName), action.Episode, false,
-                            null,d); // tidy up on main action, not this
+                    ActionCopyMoveRename newitem = new ActionCopyMoveRename(action.Operation, fi,
+                        FileHelper.FileInFolder(action.To.Directory, newName), action.Episode, false,
+                        null,d); // tidy up on main action, not this
 
-                        // check this item isn't already in our to-do list
-                        if (ActionListContains(actionlist, newitem))
-                        {
-                            continue;
-                        }
+                    // check this item isn't already in our to-do list
+                    if (ActionListContains(actionlist, newitem))
+                    {
+                        continue;
+                    }
 
-                        if (!newitem.SameAs(action)) // don't re-add ourself
-                        {
-                            extras.Add(newitem);
-                        }
+                    if (!newitem.SameAs(action)) // don't re-add ourself
+                    {
+                        extras.Add(newitem);
                     }
                 }
-                catch (UnauthorizedAccessException)
-                {
-                    LOGGER.Warn("Could not access: " + action.From.FullName);
-                }
-                catch (DirectoryNotFoundException)
-                {
-                    LOGGER.Warn("Could not find: " + action.From.FullName);
-                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                LOGGER.Warn("Could not access: " + action.From.FullName);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                LOGGER.Warn("Could not find: " + action.From.FullName);
             }
             catch (PathTooLongException e)
             {
@@ -287,6 +277,10 @@ namespace TVRename
                 {
                     MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
+            }
+            catch (IOException ioe)
+            {
+                LOGGER.Warn($"IOException Occured accessing: {action.From.FullName} nessage:{ioe.Message}");
             }
         }
 
