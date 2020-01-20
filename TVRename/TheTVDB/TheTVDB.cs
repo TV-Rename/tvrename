@@ -1214,7 +1214,7 @@ namespace TVRename
                         return null;
                     }
                 }
-                catch (System.IO.IOException ex)
+                catch (IOException ex)
                 {
                     Logger.Warn(ex, "Connection to TVDB Failed whilst loading episode with Id {0}.", id);
                     return null;
@@ -2234,8 +2234,7 @@ namespace TVRename
                             $"Error obtaining {uri} for search term '{text}' in {DefaultLanguageCode}: {ex.LoggableDetails()}");
                         }
 
-
-                    LastError = ex.Message;
+                        LastError = ex.Message;
                         Say("");
                     }
                     else if(((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
