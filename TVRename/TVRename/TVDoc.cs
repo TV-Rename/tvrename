@@ -197,6 +197,11 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public void WriteXMLSettings()
         {
+            DirectoryInfo di = PathManager.TVDocSettingsFile.Directory;
+            if (!di.Exists)
+            {
+                di.Create();
+            }
             // backup old settings before writing new ones
             FileHelper.Rotate(PathManager.TVDocSettingsFile.FullName);
             Logger.Info("Saving Settings to {0}", PathManager.TVDocSettingsFile.FullName);

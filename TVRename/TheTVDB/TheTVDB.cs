@@ -276,6 +276,12 @@ namespace TVRename
 
         public void SaveCache()
         {
+            DirectoryInfo di = cacheFile.Directory;
+            if (!di.Exists)
+            {
+                di.Create();
+            }
+
             Logger.Info("Saving Cache to: {0}", cacheFile.FullName);
             try
             {
