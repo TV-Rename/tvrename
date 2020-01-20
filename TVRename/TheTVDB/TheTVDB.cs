@@ -1566,14 +1566,22 @@ namespace TVRename
                     Logger.Warn($"Show with Id {code} is no longer available from TVDB (got a 404). {uri}");
                     Say("");
 
-                    if (TvdbIsUp() && !CanFindEpisodesFor(code,requestedLanguageCode ))
+                    if (TvdbIsUp() && !CanFindEpisodesFor(code, requestedLanguageCode))
                     {
                         LastError = ex.Message;
                         throw new ShowNotFoundException(code);
                     }
                 }
 
-                Logger.Error(ex, $"Error obtaining {uri} in {requestedLanguageCode}");
+                if (ex.IsUnimportant())
+                {
+                    Logger.Warn($"Error obtaining {uri} in {requestedLanguageCode}: {ex.LoggableDetails()}");
+                }
+                else
+                {
+                    Logger.Error(ex, $"Error obtaining {uri} in {requestedLanguageCode}");
+                }
+
                 Say("");
                 LastError = ex.Message;
                 throw new TvdbSeriesDownloadException();
