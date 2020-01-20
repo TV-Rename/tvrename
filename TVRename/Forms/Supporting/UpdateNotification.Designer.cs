@@ -160,7 +160,6 @@ namespace TVRename.Forms
             this.MinimumSize = new System.Drawing.Size(350, 350);
             this.Name = "UpdateNotification";
             this.ShowIcon = false;
-            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Available Update";
             this.TopMost = true;
