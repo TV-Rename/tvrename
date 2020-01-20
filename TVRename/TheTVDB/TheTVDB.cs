@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -19,7 +20,9 @@ using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
 using TVRename.Forms.Utilities;
-using Alphaleonis.Win32.Filesystem;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 // Talk to the TheTVDB web API, and get tv series info
 
@@ -1771,7 +1774,21 @@ namespace TVRename
                 }
                 catch (WebException webEx)
                 {
-                    Logger.Info($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}: {webEx.LoggableDetails()}");
+                    if (webEx.IsUnimportant())
+                    {
+                        Logger.Info(
+                            $"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}: {webEx.LoggableDetails()}");
+                    }
+                    else
+                    {
+                        Logger.Warn(
+                            $"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}: {webEx.LoggableDetails()}");
+                    }
+                }
+                catch (IOException ioe)
+                {
+                    Logger.Error(ioe,
+                        $"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}");
                 }
             }
 
