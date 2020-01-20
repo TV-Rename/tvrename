@@ -74,8 +74,8 @@ namespace TVRename
         private void watcher_Changed(object sender, System.IO.FileSystemEventArgs e)
         {
             Logger.Trace("Restarted delay timer");
-            mScanDelayTimer.Stop();
-            mScanDelayTimer.Start();
+            mScanDelayTimer?.Stop();
+            mScanDelayTimer?.Start();
         }
 
         private void mScanDelayTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)

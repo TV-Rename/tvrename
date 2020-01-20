@@ -97,7 +97,12 @@ namespace TVRename.App
             }
             catch (TVRenameOperationInterruptedException)
             {
-                Logger.Fatal("USER REQUESTED End: Application exiting with error");
+                Logger.Warn("USER REQUESTED End: Application exiting with error");
+                Environment.Exit(1);
+            }
+            catch (ObjectDisposedException)
+            {
+                Logger.Warn("ObjectDisposedError: Application exiting with error");
                 Environment.Exit(1);
             }
             catch (Exception ex)
