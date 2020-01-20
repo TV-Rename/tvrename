@@ -138,12 +138,6 @@ namespace TVRename
                 {
                     return;
                 }
-
-                downloadOk = false;
-                if (downloadStopOnError)
-                {
-                    DownloadDone = true;
-                }
             }
             catch (ShowNotFoundException snfe)
             {
@@ -157,6 +151,13 @@ namespace TVRename
             {
                 Threadslogger.Trace("  Finished " + series.SeriesId);
                 workerSemaphore.Release(1);
+            }
+
+            //If we get to here the download failed
+            downloadOk = false;
+            if (downloadStopOnError)
+            {
+                DownloadDone = true;
             }
         }
 
