@@ -1330,9 +1330,10 @@ namespace TVRename
                 return;
             }
 
-            if (string.Compare(url.Substring(0, 7), "http://", StringComparison.Ordinal) == 0 ||
-                string.Compare(url.Substring(0, 7), "file://", StringComparison.Ordinal) == 0 ||
-                string.Compare(url.Substring(0, 8), "https://", StringComparison.Ordinal) == 0)
+            if (url.StartsWith("http://", StringComparison.Ordinal) ||
+                url.StartsWith("file://", StringComparison.Ordinal) ||
+                url.StartsWith("https://", StringComparison.Ordinal) 
+                )
             {
                 e.Cancel = true;
                 Helpers.SysOpen(e.Url.AbsoluteUri);
