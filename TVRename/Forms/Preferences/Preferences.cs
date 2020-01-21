@@ -362,6 +362,11 @@ namespace TVRename
                 TheTVDB.Instance.LanguageList.FirstOrDefault(l => l.Name == cbLanguages.Text)?.Abbreviation ??
                 s.PreferredLanguageCode;
 
+            if (string.IsNullOrWhiteSpace(s.PreferredLanguageCode))
+            {
+                s.PreferredLanguageCode = "en";
+            }
+
             s.WTWDoubleClick = rbWTWScan.Checked
                 ? TVSettings.WTWDoubleClickAction.Scan
                 : TVSettings.WTWDoubleClickAction.Search;

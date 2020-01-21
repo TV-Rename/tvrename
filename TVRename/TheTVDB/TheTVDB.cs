@@ -1210,7 +1210,15 @@ namespace TVRename
                     }
                     else
                     {
-                        Logger.Error(ex, $"Error obtaining {episodeUri}");
+                        if (ex.IsUnimportant())
+                        {
+                            Logger.Warn($"Error obtaining {episodeUri}: details {ex.LoggableDetails()}");
+                        }
+                        else
+                        {
+                            Logger.Error($"Error obtaining {episodeUri}: details {ex.LoggableDetails()}");
+                        }
+
                         return null;
                     }
                 }
@@ -1406,6 +1414,10 @@ namespace TVRename
             {
                 Logger.Error($"An error has occurred and identified in DownloadSeriesNow and series {code} has a blank language code. Using the default instead for now: {TVSettings.Instance.PreferredLanguageCode}");
                 requestedLanguageCode = TVSettings.Instance.PreferredLanguageCode;
+                if (string.IsNullOrWhiteSpace(requestedLanguageCode))
+                {
+                    requestedLanguageCode = "en";
+                }
             }
 
             SeriesInfo si;
@@ -1582,7 +1594,7 @@ namespace TVRename
                 }
                 else
                 {
-                    Logger.Error(ex, $"Error obtaining {uri} in {requestedLanguageCode}");
+                    Logger.Error(ex, $"Error obtaining {uri} in {requestedLanguageCode}: {ex.LoggableDetails()}");
                 }
 
                 Say("");
@@ -2225,7 +2237,7 @@ namespace TVRename
                     {
                         if (ex.IsUnimportant())
                         {
-                            Logger.Info(
+                            Logger.Warn(
                                 $"Error obtaining {uri} for search term '{text}' in {DefaultLanguageCode}: {ex.LoggableDetails()}");
                         }
                         else
