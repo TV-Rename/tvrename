@@ -224,26 +224,20 @@ namespace TVRename
             catch (UnauthorizedAccessException)
             {
                 // e.g. recycle bin, system volume information
-                Logger.Warn(
-                    "Could not access {0} (or a subdir), may not be an issue as could be expected e.g. recycle bin, system volume information",
-                    di.FullName);
+                Logger.Warn($"Could not access {di.FullName} (or a subdir), may not be an issue as could be expected e.g. recycle bin, system volume information");
 
                 subDirs = null;
             }
             catch (System.IO.DirectoryNotFoundException)
             {
                 // e.g. recycle bin, system volume information
-                Logger.Warn(
-                    "Could not access {0} (or a subdir), it is no longer found",
-                    di.FullName);
+                Logger.Warn($"Could not access {di.FullName} (or a subdir), it is no longer found");
 
                 subDirs = null;
             }
             catch (System.IO.IOException)
             {
-                Logger.Warn(
-                    "Could not access {0} (or a subdir), got an IO Exception",
-                    di.FullName);
+                Logger.Warn($"Could not access {di.FullName} (or a subdir), got an IO Exception");
 
                 subDirs = null;
             }
