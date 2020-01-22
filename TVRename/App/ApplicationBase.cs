@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 using Microsoft.VisualBasic.ApplicationServices;
 using NLog;
 using NLog.Config;
+using NLog.Layouts;
 using NLog.Targets.Syslog;
 using NLog.Targets.Syslog.Settings;
 using TVRename.Ipc;
@@ -171,51 +172,110 @@ namespace TVRename.App
             ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.Load("NLog.Targets.Syslog"));
             ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.Load("Timber.io.NLog"));
 
+            SetupPapertrailLogging();
+            SetupSemaTextLogging();
+            SetupTimberLogging();
+
+            Logger.Fatal($"TV Rename {Helpers.DisplayVersion} logging started on {Environment.OSVersion}, {(Environment.Is64BitOperatingSystem?"64 Bit OS":"")}, {(Environment.Is64BitProcess? "64 Bit Process":"")} {Environment.Version} {(Environment.UserInteractive?"Interactive":"")} with args: {string.Join(" ", CommandLineArgs)}");
+            Logger.Info($"Copyright (C) {DateTime.Now.Year} TV Rename");
+            Logger.Info("This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions");
+        }
+
+        private static void SetupTimberLogging()
+        {
             try
             {
                 LoggingConfiguration config = LogManager.Configuration;
-                SyslogTarget papertrail = new SyslogTarget
+                Timber.io.NLog.TimberTarget timberTarget = new Timber.io.NLog.TimberTarget
                 {
-                    MessageCreation = { Facility = Facility.Local7 },
-                    MessageSend =
-                {
-                    Protocol = ProtocolType.Tcp,
-                    Tcp = {Server = "logs7.papertrailapp.com", Port = 13236, Tls = {Enabled = true}}
-                }
+                    Name = "timber",
+                    Token = "31420_8ad675a678fcf84a:29b346e117a7b0a3a9fb881f1644dbd8485a36de2017676b459d682b8c0469e2"
                 };
 
-                config.AddTarget("papertrail", papertrail);
+                config.AddTarget(timberTarget);
 
-                papertrail.Layout = "| " + Helpers.DisplayVersion + " |${level:uppercase=true}| ${message} ${exception:format=toString,Data}";
+                JsonLayout jsonLayout = new JsonLayout
+                {
+                    Attributes =
+                    {
+                        new JsonAttribute("exceptionType", "${exception:format=Type}"),
+                        new JsonAttribute("exceptionDetails", "${exception:format=toString,Data}"),
+                        new JsonAttribute("message", "${message}"),
+                        new JsonAttribute("exceptionMessage", "${exception:format=Message}"),
+                        new JsonAttribute("level", "${level:uppercase=true}"),
+                        new JsonAttribute("appVersion",Helpers.DisplayVersion),
+                        new JsonAttribute("innerException", new JsonLayout
+                            {
 
-                LoggingRule rule = new LoggingRule("*", LogLevel.Error, papertrail);
-                config.LoggingRules.Add(rule);
+                                Attributes =
+                                {
+                                    new JsonAttribute("type", "${exception:format=:innerFormat=Type:MaxInnerExceptionLevel=1:InnerExceptionSeparator=}"),
+                                    new JsonAttribute("message", "${exception:format=:innerFormat=Message:MaxInnerExceptionLevel=1:InnerExceptionSeparator=}"),
+                                }
+                            },
+                            //don't escape layout
+                            false)
+                    }
+                };
+
+                timberTarget.Layout = jsonLayout;
+
+                LoggingRule timberLoggingRule = new LoggingRule("*", LogLevel.Warn, timberTarget);
+                config.LoggingRules.Add(timberLoggingRule);
                 LogManager.Configuration = config;
             }
             catch
             {
-                Logger.Error("Failed to setup logging with papertrail");
+                Logger.Error("Failed to setup logging with Timber");
             }
+        }
 
+        private static void SetupSemaTextLogging()
+        {
             try
             {
                 LoggingConfiguration config = LogManager.Configuration;
                 SyslogTarget sematext = new SyslogTarget
                 {
                     MessageCreation =
-                {
-                    Rfc5424 =
                     {
-                        AppName = "0dcb3012-fa85-47c5-b6ca-cfd33609ac33"
-                    }
-                },
+                        Rfc5424 =
+                        {
+                            AppName = "0dcb3012-fa85-47c5-b6ca-cfd33609ac33"
+                        }
+                    },
                     MessageSend =
-                {
-                    Protocol = ProtocolType.Tcp,
-                    Tcp = {Server = "logsene-syslog-receiver.sematext.com", Port = 514}
-                }
+                    {
+                        Protocol = ProtocolType.Tcp,
+                        Tcp = {Server = "logsene-syslog-receiver.sematext.com", Port = 514}
+                    }
                 };
+
                 config.AddTarget("sema", sematext);
+                JsonLayout jsonLayout = new JsonLayout
+                {
+                    Attributes =
+                    {
+                        new JsonAttribute("exceptionType", "${exception:format=Type}"),
+                        new JsonAttribute("exceptionDetails", "${exception:format=toString,Data}"),
+                        new JsonAttribute("message", "${message}"),
+                        new JsonAttribute("exceptionMessage", "${exception:format=Message}"),
+                        new JsonAttribute("level", "${level:uppercase=true}"),
+                        new JsonAttribute("appVersion",Helpers.DisplayVersion),
+                        new JsonAttribute("innerException", new JsonLayout
+                            {
+
+                                Attributes =
+                                {
+                                    new JsonAttribute("type", "${exception:format=:innerFormat=Type:MaxInnerExceptionLevel=1:InnerExceptionSeparator=}"),
+                                    new JsonAttribute("message", "${exception:format=:innerFormat=Message:MaxInnerExceptionLevel=1:InnerExceptionSeparator=}"),
+                                }
+                            },
+                            //don't escape layout
+                            false)
+                    }
+                };
+                sematext.Layout = jsonLayout;
 
                 LoggingRule semaRule = new LoggingRule("*", LogLevel.Warn, sematext);
                 config.LoggingRules.Add(semaRule);
@@ -225,28 +285,36 @@ namespace TVRename.App
             {
                 Logger.Error("Failed to setup logging with sema");
             }
+        }
 
+        private static void SetupPapertrailLogging()
+        {
             try
             {
                 LoggingConfiguration config = LogManager.Configuration;
-                Timber.io.NLog.TimberTarget timberTarget = new Timber.io.NLog.TimberTarget
+                SyslogTarget papertrail = new SyslogTarget
                 {
-                    Name = "timber",
-                    Token = "31420_8ad675a678fcf84a:29b346e117a7b0a3a9fb881f1644dbd8485a36de2017676b459d682b8c0469e2"
+                    MessageCreation = {Facility = Facility.Local7},
+                    MessageSend =
+                    {
+                        Protocol = ProtocolType.Tcp,
+                        Tcp = {Server = "logs7.papertrailapp.com", Port = 13236, Tls = {Enabled = true}}
+                    }
                 };
-                config.AddTarget(timberTarget);
-                LoggingRule timberLoggingRule = new LoggingRule("*", LogLevel.Warn, timberTarget);
-                config.LoggingRules.Add(timberLoggingRule);
+
+                config.AddTarget("papertrail", papertrail);
+
+                papertrail.Layout = "| " + Helpers.DisplayVersion +
+                                    " |${level:uppercase=true}| ${message} ${exception:format=toString,Data}";
+
+                LoggingRule rule = new LoggingRule("*", LogLevel.Error, papertrail);
+                config.LoggingRules.Add(rule);
                 LogManager.Configuration = config;
             }
             catch
             {
-                Logger.Error("Failed to setup logging with Timber");
+                Logger.Error("Failed to setup logging with papertrail");
             }
-
-            Logger.Fatal($"TV Rename {Helpers.DisplayVersion} logging started on {Environment.OSVersion}, {(Environment.Is64BitOperatingSystem?"64 Bit OS":"")}, {(Environment.Is64BitProcess? "64 Bit Process":"")} {Environment.Version} {(Environment.UserInteractive?"Interactive":"")} with args: {string.Join(" ", CommandLineArgs)}");
-            Logger.Info($"Copyright (C) {DateTime.Now.Year} TV Rename");
-            Logger.Info("This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions");
         }
     }
 }
