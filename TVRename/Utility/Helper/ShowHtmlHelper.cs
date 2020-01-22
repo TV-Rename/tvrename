@@ -263,15 +263,17 @@ namespace TVRename
                 ? CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder")
                 : string.Empty;
             string tvdbButton = CreateButton(seasonLink, "TVDB.com", "View on TVDB");
+            string episodeText = s.Episodes.Count >0 ? $"<br/><small class=\"text-muted\">{s.Episodes.Count} Episodes</small>" :string.Empty;
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
 				{s.CreateHorizontalBannerHtml()}
 				<br/>
                 <div class=""row"">
                     <div class=""col-8""><h1><A HREF=""{showLink}"">{ser.Name}</A> - <A HREF=""{seasonLink}"">{SeasonName(si, s.SeasonNumber)}</a></h1></div>
-                    <div class=""col-4"">
+                    <div class=""col-4 text-right"">
                         {explorerButton}
                         {tvdbButton}
+                        {episodeText}
                     </div>
                 </div>
 				</div>");
