@@ -39,7 +39,6 @@ namespace TVRename
         public bool BannersLoaded;
         public long SrvLastUpdated;
         public int TvdbCode;
-        public string TempTimeZone;
 
         private List<Actor> actors;
         private List<string> genres;
@@ -334,7 +333,6 @@ namespace TVRename
 
                 SrvLastUpdated = seriesXml.ExtractLong("lastupdated")??seriesXml.ExtractLong("lastUpdated",0);
                 LanguageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId") ?? throw new TheTVDB.TVDBException("Error Extracting Language for Series");
-                TempTimeZone = seriesXml.ExtractString("TimeZone");
 
                 airsTimeString = seriesXml.ExtractString("Airs_Time")?? seriesXml.ExtractString("airsTime");
                 AirsTime = ParseAirTime(airsTimeString);

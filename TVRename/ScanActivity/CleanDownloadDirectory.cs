@@ -270,17 +270,10 @@ namespace TVRename
 
             FileHelper.VideoComparison newResult = result;
 
-            if (TVSettings.Instance.ReplaceWithBetterQuality && TVSettings.Instance.ForceSystemToDecideOnUpgradedFiles && (IsNotClearCut(result)))
+            if (TVSettings.Instance.ReplaceWithBetterQuality && TVSettings.Instance.ForceSystemToDecideOnUpgradedFiles && IsNotClearCut(result))
             {
                 //User has asked us to make a call
-                if(existingFile.Length >= newFile.Length)
-                {
-                    newResult = FileHelper.VideoComparison.firstFileBetter;
-                }
-                else
-                {
-                    newResult = FileHelper.VideoComparison.secondFileBetter;
-                }
+                newResult = existingFile.Length >= newFile.Length ? FileHelper.VideoComparison.firstFileBetter : FileHelper.VideoComparison.secondFileBetter;
             }
 
             switch (newResult)

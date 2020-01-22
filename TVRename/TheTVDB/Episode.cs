@@ -325,10 +325,7 @@ namespace TVRename
 
         public int DvdSeasonIndex => TheDvdSeason?.SeasonIndex ?? -1;
 
-        public bool SameAs([NotNull] Episode o)
-        {
-            return EpisodeId == o.EpisodeId;
-        }
+        public bool SameAs([NotNull] Episode o) => EpisodeId == o.EpisodeId;
 
         [NotNull]
         public IEnumerable<string> GuestStars => string.IsNullOrEmpty(EpisodeGuestStars) ? new string[] { } : EpisodeGuestStars.Split('|');

@@ -78,10 +78,7 @@ namespace TVRename
             return 0;
         }
 
-        public string CurrentSearchUrl()
-        {
-            return choices.Count == 0 ? "" : choices[CurrentSearchNum()].Url2;
-        }
+        public string CurrentSearchUrl() => choices.Count == 0 ? "" : choices[CurrentSearchNum()].Url2;
 
         public void WriteXml([NotNull] XmlWriter writer)
         {

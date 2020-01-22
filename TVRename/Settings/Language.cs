@@ -21,7 +21,7 @@ namespace TVRename
             EnglishName = englishName;
         }
 
-        //Note Keep the Setters on these properties as they are needed for XML Serialisartion (Codacity will complain though)
+        //Note Keep the Setters on these properties as they are needed for XML Serialisation (Codacity will complain though)
         public int Id { get; set; }
         public string Abbreviation { get; set; }
         public string Name { get; set; }

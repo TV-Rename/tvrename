@@ -45,12 +45,7 @@ namespace TVRename
         public static TVRenameStats Load()
         {
             string fn = PathManager.StatisticsFile.FullName;
-            if (!File.Exists(fn))
-            {
-                return new TVRenameStats();
-            }
-
-            return LoadFrom(fn);
+            return !File.Exists(fn) ? new TVRenameStats() : LoadFrom(fn);
         }
 
         public void Save()

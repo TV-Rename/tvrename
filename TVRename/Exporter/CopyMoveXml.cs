@@ -18,10 +18,7 @@ namespace TVRename
 
         public override bool ApplicableFor(TVSettings.ScanType st) => true;
 
-        protected override bool IsOutput(Item a)
-        {
-            return a is ActionCopyMoveRename cmr && cmr.Operation != ActionCopyMoveRename.Op.rename;
-        }
+        protected override bool IsOutput(Item a) => a is ActionCopyMoveRename cmr && cmr.Operation != ActionCopyMoveRename.Op.rename;
 
         public override bool Active() => TVSettings.Instance.ExportFOXML;
         protected override string Location() => TVSettings.Instance.ExportFOXMLTo;

@@ -105,15 +105,9 @@ namespace TVRename
             return BrowserEmulationVersion.Default;
         }
 
-        private static bool IsBrowserEmulationSet()
-        {
-            return GetBrowserEmulationVersion() != BrowserEmulationVersion.Default;
-        }
+        private static bool IsBrowserEmulationSet() => GetBrowserEmulationVersion() != BrowserEmulationVersion.Default;
 
-        private static bool UpgradeBrowserEmulationRequired()
-        {
-            return GetBrowserEmulationVersion() != GetInternetExplorerVersion();
-        }
+        private static bool UpgradeBrowserEmulationRequired() => GetBrowserEmulationVersion() != GetInternetExplorerVersion();
 
         private static bool SetBrowserEmulationVersion(BrowserEmulationVersion browserEmulationVersion)
         {
@@ -157,10 +151,7 @@ namespace TVRename
             return false;
         }
 
-        private static bool SetBrowserEmulationVersion()
-        {
-            return SetBrowserEmulationVersion(GetInternetExplorerVersion());
-        }
+        private static bool SetBrowserEmulationVersion() => SetBrowserEmulationVersion(GetInternetExplorerVersion());
 
         private static BrowserEmulationVersion GetInternetExplorerVersion()
         {

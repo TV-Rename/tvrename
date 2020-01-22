@@ -37,9 +37,6 @@ namespace TVRename
         }
 
         [NotNull]
-        protected override string GenerateFooter()
-        {
-            return "\t</trackList>\r\n</playlist>";
-        }
+        protected override string GenerateFooter() => "\t</trackList>\r\n</playlist>";
     }
 }
