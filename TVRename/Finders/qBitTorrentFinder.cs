@@ -62,7 +62,6 @@ namespace TVRename
             
             string settingsString = null;
             string downloadsString = null;
-            string torrentDetailsString = null;
 
             try
             {
