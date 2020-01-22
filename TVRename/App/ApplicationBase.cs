@@ -258,7 +258,7 @@ namespace TVRename.App
                     {
                         new JsonAttribute("exceptionType", "${exception:format=Type}"),
                         new JsonAttribute("exceptionDetails", "${exception:format=toString,Data}"),
-                        new JsonAttribute("message", "${message}"),
+                        new JsonAttribute("details", "${message}"),
                         new JsonAttribute("exceptionMessage", "${exception:format=Message}"),
                         new JsonAttribute("level", "${level:uppercase=true}"),
                         new JsonAttribute("appVersion",Helpers.DisplayVersion),
@@ -268,7 +268,7 @@ namespace TVRename.App
                                 Attributes =
                                 {
                                     new JsonAttribute("type", "${exception:format=:innerFormat=Type:MaxInnerExceptionLevel=1:InnerExceptionSeparator=}"),
-                                    new JsonAttribute("message", "${exception:format=:innerFormat=Message:MaxInnerExceptionLevel=1:InnerExceptionSeparator=}"),
+                                    new JsonAttribute("innerMessage", "${exception:format=:innerFormat=Message:MaxInnerExceptionLevel=1:InnerExceptionSeparator=}"),
                                 }
                             },
                             //don't escape layout
