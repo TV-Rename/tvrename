@@ -39,6 +39,7 @@ namespace TVRename
         public bool BannersLoaded;
         public long SrvLastUpdated;
         public int TvdbCode;
+        public bool IsStub;
 
         private List<Actor> actors;
         private List<string> genres;
@@ -127,20 +128,19 @@ namespace TVRename
             SetToDefaults();
             Name = name;
             TvdbCode = id;
+            IsStub = false;
         }
 
-        public SeriesInfo(string name, int id, string langCode)
+        public SeriesInfo(string name, int id, string langCode):this(name,id)
         {
-            SetToDefaults();
             TargetLanguageCode = langCode;
-            Name = name;
-            TvdbCode = id;
         }
 
         public SeriesInfo([NotNull] XElement seriesXml)
         {
             SetToDefaults();
             LoadXml(seriesXml);
+            IsStub = false;
         }
 
         public SeriesInfo([NotNull] JObject json,int langId,bool miniSeriesData)
@@ -148,6 +148,7 @@ namespace TVRename
             SetToDefaults();
             LanguageId = langId;
             LoadJson(json);
+            IsStub = miniSeriesData;
 
             if (string.IsNullOrEmpty(Name))
             {

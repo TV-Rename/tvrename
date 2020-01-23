@@ -4199,7 +4199,12 @@ namespace TVRename
 
         private void AccuracyCheckLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TheTVDB.Instance.QuickRefresh();
+            //Show Log Pane
+            logToolStripMenuItem_Click(sender, e);
+
+            Task.Run(() => {
+                TheTVDB.Instance.ServerAccuracyCheck();
+            });
         }
     }
 }

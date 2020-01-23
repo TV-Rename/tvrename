@@ -430,12 +430,12 @@ namespace TVRename
             return null;
         }
 
-        internal void QuickRefresh()
+        internal void ServerAccuracyCheck()
         {
             List<string> issues = new List<string>();
             lock (SERIES_LOCK)
             {
-                foreach (SeriesInfo si in series.Values.ToList())
+                foreach (SeriesInfo si in series.Values.Where(info => !info.IsStub).ToList())
                 {
                     int tvdbId = si.TvdbCode;
 
