@@ -688,6 +688,12 @@ namespace TVRename
                     SaveLayoutXml();
                     mDoc.TidyTvdb();
                     mDoc.Closing();
+                    mAutoFolderMonitor.Dispose();
+                    BGDownloadTimer.Dispose();
+                    UpdateTimer.Dispose();
+                    quickTimer.Dispose();
+                    refreshWTWTimer.Dispose();
+                    statusTimer.Dispose();
                 }
             }
             catch (Exception ex)
