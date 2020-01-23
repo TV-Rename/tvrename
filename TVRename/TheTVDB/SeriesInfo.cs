@@ -169,6 +169,7 @@ namespace TVRename
             SetToDefaults();
             LanguageId = langId;
             LoadJson(json,jsonInDefaultLang);
+            IsStub = false;
             if (string.IsNullOrEmpty(Name)            ){
                Logger.Warn("Issue with series " + TvdbCode );
                Logger.Warn(json.ToString());
@@ -222,6 +223,10 @@ namespace TVRename
                 return; // older!?
             }
 
+            if (!o.IsStub)
+            {
+                IsStub = false;
+            }
             bool currentLanguageNotSet = o.LanguageId == -1;
             bool newLanguageBetter = o.LanguageId == preferredLanguageId && LanguageId != preferredLanguageId;
             bool newLanguageOptimal = o.LanguageId == preferredLanguageId;

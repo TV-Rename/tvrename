@@ -492,7 +492,7 @@ namespace TVRename
 
             foreach(string issue in issues)
             {
-                Logger.Error(issue);
+                Logger.Warn(issue);
             }
         }
 
@@ -715,10 +715,17 @@ namespace TVRename
 
             MarkPlaceholdersDirty();
 
-            if (updateFromEpochTime == 0)
+            if (updateFromEpochTime == 0 && series.Values.Any(info => !info.IsStub))
             {
                 Say("");
                 Logger.Error($"Not updating as update time is 0. Need to do a Full Refresh. {latestUpdateTime}");
+                return true; // that's it for now
+            }
+
+            if (updateFromEpochTime == 0)
+            {
+                Say("");
+                Logger.Info($"We have no shows yet to get updates for. Not gatting latest updates.");
                 return true; // that's it for now
             }
 
@@ -808,9 +815,18 @@ namespace TVRename
                     return true;
                 }
 
-                updatesResponses.Add(jsonUpdateResponse);
-                numberofCallsMade++;
-                long maxUpdateTime = GetUpdateTime(jsonUpdateResponse);
+                long maxUpdateTime;
+
+                if (numberOfResponses == 0)
+                {
+                    maxUpdateTime = updateFromEpochTime + 7*24*60*60;
+                }
+                else
+                {
+                    updatesResponses.Add(jsonUpdateResponse);
+                    numberofCallsMade++;
+                    maxUpdateTime = GetUpdateTime(jsonUpdateResponse);
+                }
 
                 if (maxUpdateTime > 0)
                 {
@@ -819,7 +835,15 @@ namespace TVRename
                     Logger.Info(
                         $"Obtained {numberOfResponses} responses from lastupdated query #{numberofCallsMade} - since (local) {requestedTime.ToLocalTime()} - to (local) {latestUpdateTime}");
 
-                    updateFromEpochTime = maxUpdateTime;
+                    if (updateFromEpochTime == maxUpdateTime)
+                    {
+                        updateFromEpochTime++;
+                    }
+                    if (updateFromEpochTime < maxUpdateTime)
+                    {
+                        updateFromEpochTime = maxUpdateTime;
+                    }
+
                 }
 
                 //As a safety measure we check that no more than 52 calls are made
@@ -1098,7 +1122,7 @@ namespace TVRename
         {
             // we can use the oldest thing we have locally.  It isn't safe to use the newest thing.
             // This will only happen the first time we do an update, so a false _all update isn't too bad.
-            return series.Values.Select(info => info.SrvLastUpdated).Where(i => i > 0).DefaultIfEmpty(0).Min();
+            return series.Values.Where(info =>  !info.IsStub).Select(info => info.SrvLastUpdated).Where(i => i > 0).DefaultIfEmpty(0).Min();
         }
 
         private void MarkPlaceholdersDirty()
