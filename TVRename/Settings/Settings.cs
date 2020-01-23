@@ -884,7 +884,7 @@ namespace TVRename
         {
             // Return true iff we need to download season specific images
             // There are 4 possible reasons
-            return SeasonSpecificFolderJPG() || KODIImages || SeriesJpg || FanArtJpg;
+            return SeasonSpecificFolderJPG() || KODIImages || SeriesJpg || FanArtJpg || !ShowBasicShowDetails;
         }
 
         // ReSharper disable once InconsistentNaming
