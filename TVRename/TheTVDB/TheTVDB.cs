@@ -443,6 +443,7 @@ namespace TVRename
                     if (newSi.SrvLastUpdated != si.SrvLastUpdated)
                     {
                         issues.Add($"{si.Name} is not up to date: Local is {si.SrvLastUpdated} server is {newSi.SrvLastUpdated}");
+                        si.Dirty = true;
                     }
 
                     List<JObject> eps = GetEpisodes(tvdbId, "en");
@@ -672,11 +673,11 @@ namespace TVRename
                 Say("Could not connect to TVDB");
                 if (ex.IsUnimportant())
                 {
-                    Logger.Error($"Error obtaining Languages from TVDB {ex.LoggableDetails()}");
+                    Logger.Warn($"Error obtaining Languages from TVDB {ex.LoggableDetails()}");
                 }
                 else
                 {
-                    Logger.Warn($"Error obtaining Languages from TVDB {ex.LoggableDetails()}");
+                    Logger.Error($"Error obtaining Languages from TVDB {ex.LoggableDetails()}");
                 }
                 LastError = ex.Message;
 
