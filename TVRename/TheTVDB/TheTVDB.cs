@@ -469,6 +469,8 @@ namespace TVRename
                                     {
                                         issues.Add(
                                             $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is not up to date: Local is {ep.SrvLastUpdated} server is {serverUpdateTime}");
+
+                                        ep.Dirty = true;
                                     }
                                 }
                                 catch (SeriesInfo.EpisodeNotFoundException)
@@ -481,12 +483,14 @@ namespace TVRename
                     }
 
                     //Look for episodes that are local, but not on server
-                    IEnumerable<int> localEps = si.AiredSeasons.Values.SelectMany(s => s.Episodes.Values).Select(ep=>ep.EpisodeId);
-                    foreach (int localEpId in localEps)
+                    IEnumerable<Episode> localEps = si.AiredSeasons.Values.SelectMany(s => s.Episodes.Values);
+                    foreach (Episode localEp in localEps)
                     {
+                        int localEpId = localEp.EpisodeId;
                         if (!serverEpIds.Contains(localEpId))
                         {
                             issues.Add($"{si.Name} {localEpId} should be removed: Server is missing.");
+                            localEp.Dirty = true;
                         }
                     }
                 }
@@ -727,7 +731,7 @@ namespace TVRename
             if (updateFromEpochTime == 0)
             {
                 Say("");
-                Logger.Info($"We have no shows yet to get updates for. Not gatting latest updates.");
+                Logger.Warn($"We have no shows yet to get updates for. Not gatting latest updates.");
                 return true; // that's it for now
             }
 
@@ -1397,7 +1401,7 @@ namespace TVRename
             {
                 if (!series.ContainsKey(e.SeriesId))
                 {
-                    throw new TVDBException("Can't find the series to add the episode to (TheTVDB).");
+                    throw new TVDBException($"Can't find the series to add the episode to (TheTVDB). EpId:{e.EpisodeId} SeriesId:{e.SeriesId} {e.Name}");
                 }
 
                 SeriesInfo ser = series[e.SeriesId];
