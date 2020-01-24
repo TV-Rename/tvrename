@@ -14,6 +14,7 @@ using Alphaleonis.Win32.Filesystem;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using Humanizer;
 using JetBrains.Annotations;
 
 // ReSharper disable RedundantDefaultMemberInitializer
@@ -628,7 +629,7 @@ namespace TVRename
         public string GetKeepTogetherString() => keepTogetherExtensionsString;
 
         public bool RunPeriodicCheck() => runPeriodicCheck;
-        public int PeriodicCheckPeriod() => periodCheckHours * 60 * 60 * 1000;
+        public int PeriodicCheckPeriod() => periodCheckHours.Hours().Milliseconds;
         public bool RunOnStartUp() => runStartupCheck;
 
         public string GetSeasonSearchTermsString() => searchSeasonWordsString;

@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
+using Humanizer;
 using JetBrains.Annotations;
 using TVRename.Forms.Utilities;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
@@ -88,7 +89,7 @@ namespace TVRename
             public void Load([CanBeNull] string time)
             {
                 long newTime = time is null ? 0 : long.Parse(time);
-                if (newTime > DateTime.UtcNow.ToUnixTime() + 24 * 60 * 60)
+                if (newTime > DateTime.UtcNow.ToUnixTime() + 1.Days().Seconds)
                 {
                     Logger.Error($"Asked to update time to: {newTime} by parsing {time}");
                     newTime = DateTime.UtcNow.ToUnixTime();
@@ -98,7 +99,7 @@ namespace TVRename
 
             public void RegisterServerUpdate(long maxUpdateTime)
             {
-                if (maxUpdateTime > DateTime.UtcNow.ToUnixTime() + 24 * 60 * 60)
+                if (maxUpdateTime > DateTime.UtcNow.ToUnixTime() + 1.Days().Seconds)
                 {
                     Logger.Error($"Asked to update time to: {maxUpdateTime}");
                     newSrvTime = DateTime.UtcNow.ToUnixTime();
@@ -818,9 +819,9 @@ namespace TVRename
 
                 long maxUpdateTime;
 
-                if (numberOfResponses == 0)
+                if (numberOfResponses == 0 && (updateFromEpochTime + 7.Days().Seconds <DateTime.UtcNow.ToUnixTime()))
                 {
-                    maxUpdateTime = updateFromEpochTime + 7*24*60*60;
+                    maxUpdateTime = updateFromEpochTime + 7.Days().Seconds;
                 }
                 else
                 {
@@ -1103,7 +1104,7 @@ namespace TVRename
                 long maxUpdateTime = updateTimes.DefaultIfEmpty(0).Max();
 
                 //Add a day to take into account any timezone issues
-                long nowTime = DateTime.UtcNow.ToUnixTime() + 24 * 60 * 60;
+                long nowTime = DateTime.UtcNow.ToUnixTime() + 1.Days().Seconds;
                 if (maxUpdateTime > nowTime)
                 {
                     Logger.Error($"Assuming up to date: Could not parse update time {maxUpdateTime} compared to {nowTime} from: {jsonUpdateResponse}");

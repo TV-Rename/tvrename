@@ -22,6 +22,7 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
+using Humanizer;
 using JetBrains.Annotations;
 using TVRename.Forms;
 using TVRename.Forms.Tools;
@@ -244,7 +245,7 @@ namespace TVRename
             SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(defaultText));
         }
 
-        private static int BgdlLongInterval() => 1000 * 60 * 60; // one hour
+        private static int BgdlLongInterval() => 1.Hours().Milliseconds; // one hour
 
         private void MoreBusy() => Interlocked.Increment(ref busy);
 
