@@ -844,7 +844,6 @@ namespace TVRename
                     {
                         updateFromEpochTime = maxUpdateTime;
                     }
-
                 }
 
                 //As a safety measure we check that no more than 52 calls are made
@@ -2243,7 +2242,14 @@ namespace TVRename
                 }
                 else
                 {
-                    Logger.Error($"Error obtaining {ex.Response.ResponseUri} for search term '{text}': {ex.LoggableDetails()}");
+                    if (ex.IsUnimportant())
+                    {
+                        Logger.Info($"Error obtaining {uri} for search term '{text}': {ex.LoggableDetails()}");
+                    }
+                    else
+                    {
+                        Logger.Error($"Error obtaining {uri} for search term '{text}': {ex.LoggableDetails()}");
+                    }
                     LastError = ex.Message;
                     Say("");
                 }
