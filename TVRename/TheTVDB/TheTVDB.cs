@@ -724,14 +724,15 @@ namespace TVRename
             if (updateFromEpochTime == 0 && series.Values.Any(info => !info.IsStub))
             {
                 Say("");
-                Logger.Error($"Not updating as update time is 0. Need to do a Full Refresh. {latestUpdateTime}");
+                Logger.Error($"Not updating as update time is 0. Need to do a Full Refresh on {series.Values.Count(info => !info.IsStub)} shows. {latestUpdateTime}");
+                ForgetEverything();
                 return true; // that's it for now
             }
 
             if (updateFromEpochTime == 0)
             {
                 Say("");
-                Logger.Warn($"We have no shows yet to get updates for. Not gatting latest updates.");
+                Logger.Warn($"We have no shows yet to get updates for. Not getting latest updates.");
                 return true; // that's it for now
             }
 
