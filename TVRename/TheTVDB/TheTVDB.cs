@@ -135,7 +135,6 @@ namespace TVRename
         public bool LoadOk;
         private UpdateTimeTracker latestUpdateTime;
         public static readonly object SERIES_LOCK = new object();
-        // TODO: make this private or a property. have online/offline state that controls auto downloading of needed info.
         private readonly ConcurrentDictionary<int, SeriesInfo> series = new ConcurrentDictionary<int, SeriesInfo>();
 
         public static readonly object LANGUAGE_LOCK = new object();
@@ -432,7 +431,7 @@ namespace TVRename
         }
 
         [NotNull]
-        internal List<SeriesInfo> ServerAccuracyCheck()
+        internal IEnumerable<SeriesInfo> ServerAccuracyCheck()
         {
             List<string> issues = new List<string>();
             List<SeriesInfo> showsToUpdate = new List<SeriesInfo>();
@@ -474,7 +473,10 @@ namespace TVRename
                                             $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is not up to date: Local is {ep.SrvLastUpdated} server is {serverUpdateTime}");
 
                                         ep.Dirty = true;
-                                        if (!showsToUpdate.Contains(si)) showsToUpdate.Add(si);
+                                        if (!showsToUpdate.Contains(si))
+                                        {
+                                            showsToUpdate.Add(si);
+                                        }
                                     }
                                 }
                                 catch (SeriesInfo.EpisodeNotFoundException)
@@ -482,7 +484,10 @@ namespace TVRename
                                     issues.Add(
                                         $"{si.Name} {epId} is not found: Local is missing; server is {serverUpdateTime}");
                                     si.Dirty = true;
-                                    if (!showsToUpdate.Contains(si)) showsToUpdate.Add(si);
+                                    if (!showsToUpdate.Contains(si))
+                                    {
+                                        showsToUpdate.Add(si);
+                                    }
                                 }
                             }
                         }
@@ -498,7 +503,10 @@ namespace TVRename
                             issues.Add($"{si.Name} {localEpId} should be removed: Server is missing.");
                             localEp.Dirty = true;
                             si.Dirty = true;
-                            if (!showsToUpdate.Contains(si)) showsToUpdate.Add(si);
+                            if (!showsToUpdate.Contains(si))
+                            {
+                                showsToUpdate.Add(si);
+                            }
                         }
                     }
                 }
@@ -742,7 +750,7 @@ namespace TVRename
             if (updateFromEpochTime == 0)
             {
                 Say("");
-                Logger.Warn($"We have no shows yet to get updates for. Not getting latest updates.");
+                Logger.Warn("We have no shows yet to get updates for. Not getting latest updates.");
                 return true; // that's it for now
             }
 
@@ -834,7 +842,7 @@ namespace TVRename
 
                 long maxUpdateTime;
 
-                if (numberOfResponses == 0 && (updateFromEpochTime + 7.Days().TotalSeconds <DateTime.UtcNow.ToUnixTime()))
+                if (numberOfResponses == 0 && updateFromEpochTime + 7.Days().TotalSeconds <DateTime.UtcNow.ToUnixTime())
                 {
                     maxUpdateTime = updateFromEpochTime + (int)7.Days().TotalSeconds;
                 }

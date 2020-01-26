@@ -863,11 +863,11 @@ namespace TVRename
             AllowAutoScan();
         }
 
-        internal void ServerAccuracyCheck()
+        internal void ServerAccuracyCheck(bool unattended,bool hidden)
         {
-            List<SeriesInfo> seriesToUpdate = TheTVDB.Instance.ServerAccuracyCheck();
+            IEnumerable<SeriesInfo> seriesToUpdate = TheTVDB.Instance.ServerAccuracyCheck();
             IEnumerable<ShowItem> showsToUpdate = seriesToUpdate.Select(info => Library.ShowItem(info.TvdbCode));
-            ForceRefresh(showsToUpdate, false, false);
+            ForceRefresh(showsToUpdate, unattended, hidden);
             DoDownloadsBG();
         }
         

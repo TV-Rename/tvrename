@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
@@ -32,6 +31,7 @@ namespace TVRename
         public bool RecentScan { get; }
         public bool DoAll { get; }
         public bool ForceRefresh { get; }
+        public bool ForceUpdate { get; }
         public bool Unattended { get; }
         public string UserFilePath { get; }
 
@@ -41,7 +41,7 @@ namespace TVRename
         /// Initializes a new instance populated with values parsed from the command line arguments.
         /// </summary>
         /// <param name="args">The command line arguments.</param>
-        public CommandLineArgs([NotNull] ReadOnlyCollection<string> args)
+        public CommandLineArgs([NotNull] IReadOnlyCollection<string> args)
         {
             Hide = args.Contains("/hide", StringComparer.OrdinalIgnoreCase);
             RenameCheck = !args.Contains("/norenamecheck", StringComparer.OrdinalIgnoreCase);
@@ -53,6 +53,7 @@ namespace TVRename
             RecentScan = args.Contains("/recentscan", StringComparer.OrdinalIgnoreCase);
             Unattended = args.Contains("/unattended", StringComparer.OrdinalIgnoreCase);
             ForceRefresh = args.Contains("/forcerefresh", StringComparer.OrdinalIgnoreCase);
+            ForceUpdate = args.Contains("/forceupdate", StringComparer.OrdinalIgnoreCase);
 
             UserFilePath = args.Where(a => a.StartsWith("/userfilepath:", StringComparison.OrdinalIgnoreCase)).Select(a => a.Substring(a.IndexOf(":", StringComparison.Ordinal) + 1)).FirstOrDefault();
 
@@ -78,6 +79,7 @@ namespace TVRename
             StringBuilder output = new StringBuilder();
             output.AppendLine();
             output.AppendLine("/forcerefresh will refresh all TVDB information");
+            output.AppendLine("/forceupdate will verify TVDB information is up to date");
             output.AppendLine("/scan will Tell TV Rename to run a scan");
             output.AppendLine("/quickscan will scan shows most likely to need an update: http://www.tvrename.com/userguide#scan");
             output.AppendLine("/recentscan will scan recent shows: http://www.tvrename.com/userguide#scan");

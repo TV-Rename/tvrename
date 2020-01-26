@@ -28,9 +28,14 @@ using TVRename.Forms;
 using TVRename.Forms.Tools;
 using TVRename.Forms.Utilities;
 using TVRename.Ipc;
+using DataFormats = System.Windows.Forms.DataFormats;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using DragDropEffects = System.Windows.Forms.DragDropEffects;
+using DragEventArgs = System.Windows.Forms.DragEventArgs;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using MessageBox = System.Windows.Forms.MessageBox;
+using SystemColors = System.Drawing.SystemColors;
 
 namespace TVRename
 {
@@ -255,9 +260,19 @@ namespace TVRename
         {
             const bool UNATTENDED = true;
 
+            if (a.Hide)
+            {
+                WindowState = FormWindowState.Minimized;
+            }
+
+            if (a.ForceUpdate)
+            {
+                mDoc.ServerAccuracyCheck(UNATTENDED,WindowState==FormWindowState.Minimized);
+            }
+
             if (a.ForceRefresh)
             {
-                ForceRefresh();
+                ForceRefresh(mDoc.Library.GetShowItems(), UNATTENDED);
             }
 
             if (a.Scan)
@@ -4196,18 +4211,13 @@ namespace TVRename
             tabControl1.SelectedTab = tbAllInOne;
         }
 
-        private void ForceRefresh()
-        {
-            ForceRefresh(mDoc.Library.GetShowItems(),true);
-        }
-
         private void AccuracyCheckLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Show Log Pane
             logToolStripMenuItem_Click(sender, e);
 
             Cursor.Current = Cursors.WaitCursor;
-            mDoc.ServerAccuracyCheck();
+            mDoc.ServerAccuracyCheck(false,false);
             Cursor.Current = Cursors.Default;
         }
     }
