@@ -139,6 +139,17 @@ namespace TVRename
                                 return x;
                             }
                         }
+
+                        if (reader.Name == "uniqueid" && reader.IsStartElement() && reader.GetAttribute("type") == "tvdb")
+                        {
+                            string s = reader.ReadElementContentAsString();
+                            bool success = int.TryParse(s, out int x);
+                            if (success && x != -1)
+                            {
+                                return x;
+                            }
+                        }
+
                     }
                 }
             }
@@ -214,8 +225,7 @@ namespace TVRename
                         //We have a match!
                         folderFormat = m.Groups["prefix"].Value + m.Groups["folderName"] + (m.Groups["number"].ToString().StartsWith("0", StringComparison.Ordinal) ? "{Season:2}" : "{Season}");
 
-                        Logger.Info("Assuming {0} contains a show because pattern '{1}' is found in subdirectory {2}",
-                            di.FullName, folderFormat, subDir.FullName);
+                        Logger.Info($"Assuming {di.FullName} contains a show because pattern '{folderFormat}' is found in subdirectory { subDir.FullName}");
 
                         return true;
                     }
@@ -318,7 +328,7 @@ namespace TVRename
                 // we're looking at a folder that is a subfolder of an existing show
                 if (fullLogging)
                 {
-                    Logger.Info("Rejecting {0} as it's already part of {1}.", theFolder, si.ShowName);
+                    Logger.Info($"Rejecting {theFolder} as it's already part of {si.ShowName}.");
                 }
 
                 return true;
@@ -338,8 +348,7 @@ namespace TVRename
 
                         if (fullLogging)
                         {
-                            Logger.Info("Rejecting {0} as it's already part of {1}:{2}.", theFolder, si.ShowName,
-                                folder);
+                            Logger.Info($"Rejecting {theFolder} as it's already part of {si.ShowName}:{folder}.");
                         }
 
                         return true;
@@ -400,36 +409,42 @@ namespace TVRename
         {
             foreach (FoundFolder ai in AddItems.Where(ai=>!ai.CodeUnknown))
             {
-                // see if there is a matching show item
-                ShowItem found = mDoc.Library.ShowItem(ai.TVDBCode);
-                if (found is null)
-                {
-                    // need to add a new showitem
-                    found = new ShowItem(ai.TVDBCode);
-                    mDoc.Library.Add(found);
-                }
-
-                found.AutoAddFolderBase = ai.Folder.FullName;
-
-                if (ai.HasSeasonFoldersGuess)
-                {
-                    found.AutoAddType = ai.SeasonFolderFormat == TVSettings.Instance.SeasonFolderFormat
-                        ? ShowItem.AutomaticFolderType.libraryDefault
-                        : ShowItem.AutomaticFolderType.custom;
-
-                    found.AutoAddCustomFolderFormat = ai.SeasonFolderFormat;
-                }
-                else
-                {
-                    found.AutoAddType = ShowItem.AutomaticFolderType.baseOnly;
-                }
-                mDoc.Stats().AutoAddedShows++;
+                AddToLibrary(ai);
             }
 
             mDoc.Library.GenDict();
             mDoc.SetDirty();
             AddItems.Clear();
             mDoc.ExportShowInfo();
+        }
+
+        private void AddToLibrary([NotNull] FoundFolder ai)
+        {
+            // see if there is a matching show item
+            ShowItem found = mDoc.Library.ShowItem(ai.TVDBCode);
+            if (found is null)
+            {
+                // need to add a new showitem
+                found = new ShowItem(ai.TVDBCode);
+                mDoc.Library.Add(found);
+            }
+
+            found.AutoAddFolderBase = ai.Folder.FullName;
+
+            if (ai.HasSeasonFoldersGuess)
+            {
+                found.AutoAddType = ai.SeasonFolderFormat == TVSettings.Instance.SeasonFolderFormat
+                    ? ShowItem.AutomaticFolderType.libraryDefault
+                    : ShowItem.AutomaticFolderType.custom;
+
+                found.AutoAddCustomFolderFormat = ai.SeasonFolderFormat;
+            }
+            else
+            {
+                found.AutoAddType = ShowItem.AutomaticFolderType.baseOnly;
+            }
+
+            mDoc.Stats().AutoAddedShows++;
         }
 
         public void CheckFolders(CancellationToken token, [NotNull] SetProgressDelegate prog,bool detailedLogging, bool showErrorMsgBox)
