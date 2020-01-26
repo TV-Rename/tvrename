@@ -295,7 +295,7 @@ namespace TVRename
                 ActionAction(true, UNATTENDED);
             }
 
-            if (a.Quit || a.Hide)
+            if (a.Quit)
             {
                 Close();
             }
