@@ -245,7 +245,7 @@ namespace TVRename
             SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(defaultText));
         }
 
-        private static int BgdlLongInterval() => 1.Hours().Milliseconds; // one hour
+        private static int BgdlLongInterval() => (int) 1.Hours().TotalMilliseconds; // one hour
 
         private void MoreBusy() => Interlocked.Increment(ref busy);
 
@@ -4207,7 +4207,7 @@ namespace TVRename
             logToolStripMenuItem_Click(sender, e);
 
             Cursor.Current = Cursors.WaitCursor;
-            TheTVDB.Instance.ServerAccuracyCheck();
+            mDoc.ServerAccuracyCheck();
             Cursor.Current = Cursors.Default;
         }
     }

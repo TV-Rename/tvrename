@@ -89,7 +89,7 @@ namespace TVRename
             public void Load([CanBeNull] string time)
             {
                 long newTime = time is null ? 0 : long.Parse(time);
-                if (newTime > DateTime.UtcNow.ToUnixTime() + 1.Days().Seconds)
+                if (newTime > DateTime.UtcNow.ToUnixTime() + 1.Days().TotalSeconds)
                 {
                     Logger.Error($"Asked to update time to: {newTime} by parsing {time}");
                     newTime = DateTime.UtcNow.ToUnixTime();
@@ -99,7 +99,7 @@ namespace TVRename
 
             public void RegisterServerUpdate(long maxUpdateTime)
             {
-                if (maxUpdateTime > DateTime.UtcNow.ToUnixTime() + 1.Days().Seconds)
+                if (maxUpdateTime > DateTime.UtcNow.ToUnixTime() + 1.Days().TotalSeconds)
                 {
                     Logger.Error($"Asked to update time to: {maxUpdateTime}");
                     newSrvTime = DateTime.UtcNow.ToUnixTime();
@@ -431,9 +431,12 @@ namespace TVRename
             return null;
         }
 
-        internal void ServerAccuracyCheck()
+        [NotNull]
+        internal List<SeriesInfo> ServerAccuracyCheck()
         {
             List<string> issues = new List<string>();
+            List<SeriesInfo> showsToUpdate = new List<SeriesInfo>();
+
             lock (SERIES_LOCK)
             {
                 foreach (SeriesInfo si in series.Values.Where(info => !info.IsStub).ToList())
@@ -471,12 +474,15 @@ namespace TVRename
                                             $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is not up to date: Local is {ep.SrvLastUpdated} server is {serverUpdateTime}");
 
                                         ep.Dirty = true;
+                                        if (!showsToUpdate.Contains(si)) showsToUpdate.Add(si);
                                     }
                                 }
                                 catch (SeriesInfo.EpisodeNotFoundException)
                                 {
                                     issues.Add(
                                         $"{si.Name} {epId} is not found: Local is missing; server is {serverUpdateTime}");
+                                    si.Dirty = true;
+                                    if (!showsToUpdate.Contains(si)) showsToUpdate.Add(si);
                                 }
                             }
                         }
@@ -491,6 +497,8 @@ namespace TVRename
                         {
                             issues.Add($"{si.Name} {localEpId} should be removed: Server is missing.");
                             localEp.Dirty = true;
+                            si.Dirty = true;
+                            if (!showsToUpdate.Contains(si)) showsToUpdate.Add(si);
                         }
                     }
                 }
@@ -500,6 +508,8 @@ namespace TVRename
             {
                 Logger.Warn(issue);
             }
+
+            return showsToUpdate;
         }
 
         private Episode FindEpisodeById(int id)
@@ -824,9 +834,9 @@ namespace TVRename
 
                 long maxUpdateTime;
 
-                if (numberOfResponses == 0 && (updateFromEpochTime + 7.Days().Seconds <DateTime.UtcNow.ToUnixTime()))
+                if (numberOfResponses == 0 && (updateFromEpochTime + 7.Days().TotalSeconds <DateTime.UtcNow.ToUnixTime()))
                 {
-                    maxUpdateTime = updateFromEpochTime + 7.Days().Seconds;
+                    maxUpdateTime = updateFromEpochTime + (int)7.Days().TotalSeconds;
                 }
                 else
                 {
@@ -1109,7 +1119,7 @@ namespace TVRename
                 long maxUpdateTime = updateTimes.DefaultIfEmpty(0).Max();
 
                 //Add a day to take into account any timezone issues
-                long nowTime = DateTime.UtcNow.ToUnixTime() + 1.Days().Seconds;
+                long nowTime = DateTime.UtcNow.ToUnixTime() + (int) 1.Days().TotalSeconds;
                 if (maxUpdateTime > nowTime)
                 {
                     Logger.Error($"Assuming up to date: Could not parse update time {maxUpdateTime} compared to {nowTime} from: {jsonUpdateResponse}");

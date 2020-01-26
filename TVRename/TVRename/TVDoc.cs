@@ -848,7 +848,7 @@ namespace TVRename
             return showsToScan;
         }
 
-        internal void ForceRefresh([CanBeNull] List<ShowItem> sis, bool unattended,bool tvrMinimised)
+        internal void ForceRefresh([CanBeNull] IEnumerable<ShowItem> sis, bool unattended,bool tvrMinimised)
         {
             PreventAutoScan("Force Refresh");
             if (sis != null)
@@ -862,6 +862,15 @@ namespace TVRename
             DoDownloadsFG(unattended, tvrMinimised);
             AllowAutoScan();
         }
+
+        internal void ServerAccuracyCheck()
+        {
+            List<SeriesInfo> seriesToUpdate = TheTVDB.Instance.ServerAccuracyCheck();
+            IEnumerable<ShowItem> showsToUpdate = seriesToUpdate.Select(info => Library.ShowItem(info.TvdbCode));
+            ForceRefresh(showsToUpdate, false, false);
+            DoDownloadsBG();
+        }
+        
 
         private void ReleaseUnmanagedResources()
         {

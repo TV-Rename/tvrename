@@ -629,7 +629,7 @@ namespace TVRename
         public string GetKeepTogetherString() => keepTogetherExtensionsString;
 
         public bool RunPeriodicCheck() => runPeriodicCheck;
-        public int PeriodicCheckPeriod() => periodCheckHours.Hours().Milliseconds;
+        public int PeriodicCheckPeriod() => (int)periodCheckHours.Hours().TotalMilliseconds;
         public bool RunOnStartUp() => runStartupCheck;
 
         public string GetSeasonSearchTermsString() => searchSeasonWordsString;
