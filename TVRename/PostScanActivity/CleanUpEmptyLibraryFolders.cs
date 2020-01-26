@@ -84,18 +84,46 @@ namespace TVRename
                 return false;
             }
 
-            //nothing at all
-            if (Directory.GetFiles(folderName).Length == 0 && Directory.GetDirectories(folderName).Length == 0)
+            try
             {
-                return true;
+                //nothing at all
+                if (Directory.GetFiles(folderName).Length == 0 && Directory.GetDirectories(folderName).Length == 0)
+                {
+                    return true;
+                }
+
+                bool containsMovieFiles = Directory.GetFiles(folderName).ToList().Select(s => new FileInfo(s))
+                    .Any(info => info.IsMovieFile());
+
+                if (!containsMovieFiles)
+                {
+                    return true;
+                }
             }
 
-            bool containsMovieFiles = Directory.GetFiles(folderName).ToList().Select(s => new FileInfo(s))
-                .Any(info => info.IsMovieFile());
-
-            if (!containsMovieFiles)
+            catch (FileReadOnlyException)
             {
-                return true;
+                LOGGER.Warn($"Could not find {folderName} as we got a FileReadOnlyException");
+            }
+            catch (DirectoryReadOnlyException)
+            {
+                LOGGER.Warn($"Could not find {folderName} as we got a DirectoryReadOnlyException");
+            }
+            catch (System.UnauthorizedAccessException)
+            {
+                LOGGER.Warn($"Could not find {folderName} as we got a UnauthorizedAccessException");
+            }
+            catch (System.IO.PathTooLongException)
+            {
+                LOGGER.Warn($"Could not find {folderName} as we got a PathTooLongException");
+            }
+            catch (System.IO.DirectoryNotFoundException)
+            {
+                LOGGER.Info($"Could not find {folderName} as we got a DirectoryNotFoundException");
+            }
+            catch (DirectoryNotEmptyException)
+            {
+                LOGGER.Warn($"Could not find {folderName} as we got a DirectoryNotEmptyException");
             }
 
             return false;
