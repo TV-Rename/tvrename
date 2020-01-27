@@ -758,7 +758,7 @@ namespace TVRename
                     graphics.Graphics.TranslateTransform(area.X + width2, area.Y + height2);
 
                     graphics.Graphics.RotateTransform(angle);
-                    graphics.Graphics.TranslateTransform(-height2, 0); //-(area.Y + height2));
+                    graphics.Graphics.TranslateTransform(-height2, 0); //-(area.Y + height2))
 
                     StringFormat.Alignment = StringAlignment.Near;
                     StringFormat.LineAlignment = StringAlignment.Center;

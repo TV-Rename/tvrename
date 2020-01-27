@@ -172,12 +172,12 @@ namespace TVRename
         {
             string currentVersionString = Helpers.DisplayVersion;
 
-            bool inDebug = currentVersionString.EndsWith(Helpers.DEBUG_TEXT, StringComparison.Ordinal);
+            bool inDebug = currentVersionString.EndsWith(Helpers.DebugText, StringComparison.Ordinal);
             //remove debug stuff
             if (inDebug)
             {
                 currentVersionString = currentVersionString.Substring(0,
-                    currentVersionString.LastIndexOf(Helpers.DEBUG_TEXT, StringComparison.Ordinal));
+                    currentVersionString.LastIndexOf(Helpers.DebugText, StringComparison.Ordinal));
             }
 
             return new Release(currentVersionString, Release.VersionType.friendly);

@@ -167,6 +167,9 @@ namespace TVRename
                     chkAutoFolders.Checked = true;
                     rdoFolderLibraryDefault.Checked = true;
                     break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

@@ -258,7 +258,7 @@ namespace TVRename
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
                     {
-                        engine.CheckFolderForShows(di, true, out DirectoryInfo[] _,true,true);
+                        engine.CheckFolderForShows(di, true, true,true);
                         FillNewShowList(true);
                     }
                 }

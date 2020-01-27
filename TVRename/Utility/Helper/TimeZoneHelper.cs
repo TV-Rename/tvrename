@@ -19,11 +19,9 @@ namespace TVRename
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         [NotNull]
-        //public static IEnumerable<string> ZoneNames() => TimeZoneInfo.GetSystemTimeZones().Select(x=>x.StandardName);
         public static IEnumerable<string> ZoneNames() => DateTimeZoneProviders.Tzdb.Ids;
 
         [NotNull]
-        //public static string DefaultTimeZone() => "Eastern Standard Time";
         public static string DefaultTimeZone() => "America/New_York";
 
         [NotNull]
@@ -47,19 +45,16 @@ namespace TVRename
 
             if (uktv.Contains(network))
             {
-                //return "GMT Standard Time";
                 return "Europe/London";
             }
 
             if (ausTv.Contains(network))
             {
-                //return "AUS Eastern Standard Time";
                 return "Australia/Sydney";
             }
 
             if (usTv.Contains(network))
             {
-                //return "Eastern Standard Time";
                 return "America/New_York";
             }
 

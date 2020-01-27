@@ -348,7 +348,7 @@ namespace TVRename
         {
             ShowInTaskbar = TVSettings.Instance.ShowInTaskbar && !mDoc.Args.Hide;
 
-            foreach (TabPage tp in tabControl1.TabPages) // grr! TODO: why does it go white?
+            foreach (TabPage tp in tabControl1.TabPages) // grr! why does it go white?
             {
                 tp.BackColor = SystemColors.Control;
             }
@@ -964,7 +964,6 @@ namespace TVRename
             if (si.DvdOrder && snum >= 0 && ser.DvdSeasons.ContainsKey(snum))
             {
                 Season s = ser.DvdSeasons[snum];
-                //SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, false));
                 SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
 
                 SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, true));
@@ -972,7 +971,6 @@ namespace TVRename
             else if (!si.DvdOrder && snum >= 0 && ser.AiredSeasons.ContainsKey(snum))
             {
                 Season s = ser.AiredSeasons[snum];
-                //SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, false));
                 SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
 
                 SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, true));
@@ -980,7 +978,6 @@ namespace TVRename
             else
             {
                 // no epnum specified, just show an overview
-                //SetHtmlBody(webInformation, si.GetShowHtmlOverview(false));
                 SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
 
                 SetHtmlBody(webInformation, si.GetShowHtmlOverview(true));
@@ -1922,6 +1919,9 @@ namespace TVRename
 
                     break;
                 }
+
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             mLastEpClicked = null;
         }

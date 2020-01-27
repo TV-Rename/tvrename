@@ -334,11 +334,19 @@ namespace TVRename
         {
             switch (result)
             {
-                case FileHelper.VideoComparison.cantTell: return true;
-                case FileHelper.VideoComparison.same: return true;
-                case FileHelper.VideoComparison.similar: return true;
+                case FileHelper.VideoComparison.cantTell:
+                    return true;
+                case FileHelper.VideoComparison.same:
+                    return true;
+                case FileHelper.VideoComparison.similar:
+                    return true;
+                case FileHelper.VideoComparison.firstFileBetter:
+                    return false;
+                case FileHelper.VideoComparison.secondFileBetter:
+                    return false;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(result), result, null);
             }
-            return false;
         }
 
         private bool? AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] ProcessedEpisode pep)

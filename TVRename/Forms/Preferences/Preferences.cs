@@ -1083,14 +1083,11 @@ namespace TVRename
 
         private void FillTreeViewColoringShowStatusTypeCombobox()
         {
-            //System.Collections.Generic.KeyValuePair<string, object> item = new System.Collections.Generic.KeyValuePair<string, object>();
             // Shows
             foreach (string status in Enum.GetNames(typeof(ShowItem.ShowAirStatus)))
             {
                 TVSettings.ShowStatusColoringType t = new TVSettings.ShowStatusColoringType(true, true, status);
-                //System.Collections.Generic.KeyValuePair<string, object> item = new System.Collections.Generic.KeyValuePair<string, object>("Show Seasons Status: " + status, new ShowStatusColoringType(true, true, status));
                 cboShowStatus.Items.Add(t);
-                //this.cboShowStatus.Items.Add("Show Seasons Status: " + status);
             }
 
             System.Collections.Generic.List<string> showStatusList = new System.Collections.Generic.List<string>();
@@ -1781,11 +1778,6 @@ namespace TVRename
         private void CbDefShowUseDefLocation_CheckedChanged(object sender, EventArgs e)
         {
             cmbDefShowLocation.Enabled = cbDefShowUseDefLocation.Checked;
-        }
-
-        private void RadioButton1_CheckedChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }

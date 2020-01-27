@@ -120,7 +120,7 @@ namespace TVRename
                         Logger.Warn(ex3,
                             $"Could not work out what timezone '{ShowName}' has. In the settings it uses '{tzstr}', but that is not valid. Tried to use the default timezone {TimeZoneHelper.DefaultTimeZone()} for the show instead - also invalid.  Please update.");
 
-                        seriesTimeZone = DateTimeZoneProviders.Tzdb.GetSystemDefault(); // TimeZoneInfo.Local;
+                        seriesTimeZone = DateTimeZoneProviders.Tzdb.GetSystemDefault();
                         ShowTimeZone = seriesTimeZone.Id;
                     }
                 }
