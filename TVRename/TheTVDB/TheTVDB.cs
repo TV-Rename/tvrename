@@ -467,7 +467,7 @@ namespace TVRename
                                 {
                                     Episode ep = si.GetEpisode(epId);
 
-                                    if (serverUpdateTime != ep.SrvLastUpdated)
+                                    if (serverUpdateTime > ep.SrvLastUpdated)
                                     {
                                         issues.Add(
                                             $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is not up to date: Local is {ep.SrvLastUpdated} server is {serverUpdateTime}");
@@ -478,6 +478,14 @@ namespace TVRename
                                             showsToUpdate.Add(si);
                                         }
                                     }
+                                    if (serverUpdateTime < ep.SrvLastUpdated)
+                                    {
+                                        issues.Add(
+                                            $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is in the future: Local is {ep.SrvLastUpdated} server is {serverUpdateTime}");
+
+                                        ep.Dirty = true;
+                                    }
+
                                 }
                                 catch (SeriesInfo.EpisodeNotFoundException)
                                 {
