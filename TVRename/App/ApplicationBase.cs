@@ -174,62 +174,11 @@ namespace TVRename.App
 
             SetupPapertrailLogging();
             SetupSemaTextLogging();
-            SetupTimberLogging();
 
             Logger.Fatal($"TV Rename {Helpers.DisplayVersion} logging started on {Environment.OSVersion}, {(Environment.Is64BitOperatingSystem?"64 Bit OS":"")}, {(Environment.Is64BitProcess? "64 Bit Process":"")} {Environment.Version} {(Environment.UserInteractive?"Interactive":"")} with args: {string.Join(" ", CommandLineArgs)}");
             Logger.Info($"Copyright (C) {DateTime.Now.Year} TV Rename");
             Logger.Info("This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions");
         }
-
-        private static void SetupTimberLogging()
-        {
-            try
-            {
-                LoggingConfiguration config = LogManager.Configuration;
-                Timber.io.NLog.TimberTarget timberTarget = new Timber.io.NLog.TimberTarget
-                {
-                    Name = "timber",
-                    Token = "31420_8ad675a678fcf84a:29b346e117a7b0a3a9fb881f1644dbd8485a36de2017676b459d682b8c0469e2"
-                };
-
-                config.AddTarget(timberTarget);
-
-                JsonLayout jsonLayout = new JsonLayout
-                {
-                    Attributes =
-                    {
-                        new JsonAttribute("exceptionType", "${exception:format=Type}"),
-                        new JsonAttribute("exceptionDetails", "${exception:format=toString,Data}"),
-                        new JsonAttribute("message", "${message}"),
-                        new JsonAttribute("exceptionMessage", "${exception:format=Message}"),
-                        new JsonAttribute("level", "${level:uppercase=true}"),
-                        new JsonAttribute("appVersion",Helpers.DisplayVersion),
-                        new JsonAttribute("innerException", new JsonLayout
-                            {
-
-                                Attributes =
-                                {
-                                    new JsonAttribute("type", "${exception:format=:innerFormat=Type:MaxInnerExceptionLevel=1:InnerExceptionSeparator=}"),
-                                    new JsonAttribute("message", "${exception:format=:innerFormat=Message:MaxInnerExceptionLevel=1:InnerExceptionSeparator=}")
-                                }
-                            },
-                            //don't escape layout
-                            false)
-                    }
-                };
-
-                timberTarget.Layout = jsonLayout;
-
-                LoggingRule timberLoggingRule = new LoggingRule("*", LogLevel.Warn, timberTarget);
-                config.LoggingRules.Add(timberLoggingRule);
-                LogManager.Configuration = config;
-            }
-            catch
-            {
-                Logger.Error("Failed to setup logging with Timber");
-            }
-        }
-
         private static void SetupSemaTextLogging()
         {
             try
