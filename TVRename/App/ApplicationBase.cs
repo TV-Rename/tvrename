@@ -267,4 +267,3 @@ namespace TVRename.App
         }
     }
 }
-

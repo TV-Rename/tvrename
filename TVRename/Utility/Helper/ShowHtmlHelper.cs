@@ -320,10 +320,17 @@ namespace TVRename
             string writersHtml = string.IsNullOrWhiteSpace(ep.Writer) ? string.Empty : "<b>Writers:</b> " + string.Join(", ", ep.Writers);
             string directorsHtml = string.IsNullOrWhiteSpace(ep.EpisodeDirector) ? string.Empty : "<b>Directors:</b> " + string.Join(", ", ep.Directors);
             string guestHtml = string.IsNullOrWhiteSpace(ep.EpisodeGuestStars) ? string.Empty : "<b>Guest Stars:</b> " + string.Join(", ", ep.GuestStars);
-            string possibleBreak1 = string.IsNullOrWhiteSpace(writersHtml) || string.IsNullOrWhiteSpace(directorsHtml)
+
+            bool directorsIsBlank = string.IsNullOrWhiteSpace(directorsHtml);
+
+            bool writersIsBlank = string.IsNullOrWhiteSpace(writersHtml);
+
+            string possibleBreak1 = writersIsBlank || directorsIsBlank
                 ? string.Empty
                 : "<br />";
-            string possibleBreak2 = string.IsNullOrWhiteSpace(writersHtml)&&string.IsNullOrWhiteSpace(directorsHtml) || string.IsNullOrWhiteSpace(guestHtml)
+
+            bool writersAndDirectorsBlank = writersIsBlank && directorsIsBlank;
+            string possibleBreak2 = writersAndDirectorsBlank || string.IsNullOrWhiteSpace(guestHtml)
                 ? string.Empty
                 : "<br />";
 
@@ -760,8 +767,8 @@ namespace TVRename
 
                 body += "<p><p>";
 
-                if (TVSettings.Instance.ShowEpisodePictures ||
-                    TVSettings.Instance.HideMyShowsSpoilers && ei.HowLong() != "Aired")
+                bool hideMyShowsSpoilersNow = TVSettings.Instance.HideMyShowsSpoilers && ei.HowLong() != "Aired";
+                if (TVSettings.Instance.ShowEpisodePictures || hideMyShowsSpoilersNow)
                 {
                     body += "<table><tr>";
                     body += "<td width=100% valign=top>" + GetOverview(ei) + "</td><td width=300 height=225>";

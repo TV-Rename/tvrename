@@ -317,7 +317,6 @@ namespace TVRename
                             $"Keeping {newFile.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({string.Join(", ", matchingShows.Select(item => item.ShowName))}) that match.");
 
                         return false;
-
                     }
 
                 //the other cases of the files being the same or the existing file being better are not enough to save the file
@@ -328,7 +327,6 @@ namespace TVRename
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
             return null;
         }
 

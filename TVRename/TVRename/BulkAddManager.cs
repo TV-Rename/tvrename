@@ -149,7 +149,6 @@ namespace TVRename
                                 return x;
                             }
                         }
-
                     }
                 }
             }

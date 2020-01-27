@@ -94,7 +94,6 @@ namespace TVRename
             try
             {
                 seriesTimeZone = DateTimeZoneProviders.Tzdb[tzstr];
-
             }
             catch (Exception ex)
             {

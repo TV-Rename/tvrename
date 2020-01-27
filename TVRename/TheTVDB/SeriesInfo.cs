@@ -262,12 +262,14 @@ namespace TVRename
                 SiteRatingVotes = o.SiteRatingVotes;
             }
 
-            if (!aliases.Any() || o.aliases.Any() && useNewDataOverOld)
+            bool useNewAliases = o.aliases.Any() && useNewDataOverOld;
+            if (!aliases.Any() || useNewAliases)
             {
                 aliases = o.aliases;
             }
 
-            if (!genres.Any() || o.genres.Any() && useNewDataOverOld)
+            bool useNewGenres = o.genres.Any() && useNewDataOverOld;
+            if (!genres.Any() || useNewGenres)
             {
                 genres = o.genres;
             }

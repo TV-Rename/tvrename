@@ -77,7 +77,7 @@ namespace TVRename
                     return ret;
                 }
 
-                string savePath = (string)settings["save_path"]??string.Empty ;
+                string savePath = (string)settings["save_path"]??string.Empty;
 
                 foreach (JToken torrent in currentDownloads.Children())
                 {

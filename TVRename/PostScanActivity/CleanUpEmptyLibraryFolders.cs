@@ -100,7 +100,6 @@ namespace TVRename
                     return true;
                 }
             }
-
             catch (FileReadOnlyException)
             {
                 LOGGER.Warn($"Could not find {folderName} as we got a FileReadOnlyException");

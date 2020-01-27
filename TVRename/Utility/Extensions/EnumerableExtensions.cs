@@ -33,6 +33,5 @@ namespace TVRename
         {
             return listToClone.Select(item => item).ToList();
         }
-
     }
 }

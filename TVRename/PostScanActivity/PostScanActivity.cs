@@ -60,7 +60,8 @@ namespace TVRename
 
         protected void UpdateStatus(int recordNumber,int totalRecords, string message)
         {
-            progressDelegate?.Invoke(startPosition + (endPosition - startPosition) * recordNumber / (totalRecords+1), message);
+            int position = (endPosition - startPosition) * recordNumber / (totalRecords+1);
+            progressDelegate?.Invoke(startPosition + position, message);
         }
 
         private void LogActionListSummary()

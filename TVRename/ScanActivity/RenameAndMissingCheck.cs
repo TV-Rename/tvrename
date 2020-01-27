@@ -302,7 +302,10 @@ namespace TVRename
                     //Record this episode as seen
 
                     TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(ep);
-                    if (TVSettings.Instance.IgnorePreviouslySeen){Doc.SetDirty();}
+                    if (TVSettings.Instance.IgnorePreviouslySeen)
+                    {
+                        Doc.SetDirty();
+                    }
                 }
             }
 

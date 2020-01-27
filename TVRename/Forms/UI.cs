@@ -1938,7 +1938,6 @@ namespace TVRename
             ShowAddedOrEdited(false, false);
         }
 
-
         private void BrowseForMissingItem([CanBeNull] ItemMissing mi)
         {
             if (mi is null)

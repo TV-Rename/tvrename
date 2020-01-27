@@ -485,7 +485,6 @@ namespace TVRename
 
                                         ep.Dirty = true;
                                     }
-
                                 }
                                 catch (SeriesInfo.EpisodeNotFoundException)
                                 {
@@ -559,7 +558,6 @@ namespace TVRename
         //https://forum.kodi.tv/showthread.php?tid=323588
         //says that we need a format like this:
         //https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json
-
         {
             return $"{TvDbTokenProvider.TVDB_API_URL}/login?"
                    + "{&quot;apikey&quot;:&quot;" + TvDbTokenProvider.TVDB_API_KEY + "&quot;,&quot;id&quot;:" + code + "}"
@@ -2171,7 +2169,9 @@ namespace TVRename
 
             bool ok = true;
 
-            if (series[code].Dirty || bannersToo && !series[code].BannersLoaded)
+            bool seriesNeedsUpdating = series[code].Dirty;
+            bool bannersNeedUpdating = bannersToo && !series[code].BannersLoaded;
+            if ( seriesNeedsUpdating|| bannersNeedUpdating)
             {
                 ok = DownloadSeriesNow(seriesd, false, bannersToo) != null;
             }

@@ -871,7 +871,6 @@ namespace TVRename
             DoDownloadsBG();
         }
         
-
         private void ReleaseUnmanagedResources()
         {
             cacheManager.StopBgDownloadThread();
