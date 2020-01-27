@@ -226,9 +226,13 @@ namespace TVRename
                         // - force check is on
                         // - there are no aired dates at all, for up to and including this season
                         // - there is an aired date, and it isn't in the future
-                        if (si.NoAirdatesUntilNow(snum) ||
-                            (si.ForceCheckFuture || notFuture) && dtOk ||
-                            si.ForceCheckNoAirdate && !dtOk)
+                        bool noAirdatesUntilNow = si.NoAirdatesUntilNow(snum);
+                        bool siForceCheckFuture = (si.ForceCheckFuture || notFuture) && dtOk;
+                        bool siForceCheckNoAirdate = si.ForceCheckNoAirdate && !dtOk;
+
+                        if (noAirdatesUntilNow ||
+                            siForceCheckFuture ||
+                            siForceCheckNoAirdate)
                         {
                             // then add it as officially missing
                             Doc.TheActionList.Add(new ItemMissing(dbep, folder));

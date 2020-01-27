@@ -322,9 +322,7 @@ namespace TVRename
             string guestHtml = string.IsNullOrWhiteSpace(ep.EpisodeGuestStars) ? string.Empty : "<b>Guest Stars:</b> " + string.Join(", ", ep.GuestStars);
 
             bool directorsIsBlank = string.IsNullOrWhiteSpace(directorsHtml);
-
             bool writersIsBlank = string.IsNullOrWhiteSpace(writersHtml);
-
             string possibleBreak1 = writersIsBlank || directorsIsBlank
                 ? string.Empty
                 : "<br />";
@@ -809,7 +807,6 @@ namespace TVRename
 
             return ei.HiddenOverview();
         }
-
 
         [NotNull]
         private static string GetOverviewPart(string name, [CanBeNull] string value)

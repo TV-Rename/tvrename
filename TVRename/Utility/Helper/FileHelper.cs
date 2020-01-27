@@ -14,6 +14,7 @@ using MediaInfo;
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using Alphaleonis.Win32.Filesystem;
+using Humanizer;
 using JetBrains.Annotations;
 
 namespace TVRename
@@ -249,9 +250,11 @@ namespace TVRename
                 // Duration should be formatted as "00:44:08"
                 if (!string.IsNullOrWhiteSpace(duration))
                 {
-                    return 3600 * int.Parse(duration.Split(':')[0])
-                           + 60 * int.Parse(duration.Split(':')[1])
-                           + int.Parse(duration.Split(':')[2]);
+                    string[] timeParts = duration.Split(':');
+
+                    return (int)( int.Parse(timeParts[0]).Hours().TotalSeconds
+                                + int.Parse(timeParts[1]).Minutes().TotalSeconds
+                                + int.Parse(timeParts[2]).Seconds().TotalSeconds);
                 }
             }
             catch (FormatException)

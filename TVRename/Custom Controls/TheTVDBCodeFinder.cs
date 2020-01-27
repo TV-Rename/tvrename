@@ -110,15 +110,15 @@ namespace TVRename
                     {
                         int num = kvp.Key;
                         string show = kvp.Value.Name.RemoveDiacritics();
-                        string s = num + " " + show.RemoveDot();
 
+                        string s = num + " " + show.RemoveDot();
                         string simpleS = s.ToLower().CompareName();
+                        bool textMatch = !numeric && simpleS.Contains(what.CompareName());
 
                         bool numberMatch = numeric && num == matchnum;
-                        string searchTerm = what.CompareName();
+                        bool numberTextMatch = numeric && show.Contains(what);
 
-                        if (numberMatch || !numeric && simpleS.Contains(searchTerm) ||
-                            numeric && show.Contains(what))
+                        if (numberMatch || textMatch ||numberTextMatch)
                         {
                             lvMatches.Items.Add(NewLvi(kvp.Value, num, show, numberMatch));
                         }

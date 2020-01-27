@@ -362,8 +362,8 @@ namespace TVRename
                 Name = "Clear"
             };
 
-            filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width,
-                (filterTextBox.ClientSize.Height - 16) / 2 + 1);
+            int clientSizeHeight = (filterTextBox.ClientSize.Height - 16) / 2;
+            filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width, clientSizeHeight+1);
 
             filterButton.Click += filterButton_Click;
             filterTextBox.Controls.Add(filterButton);
@@ -3997,8 +3997,8 @@ namespace TVRename
             if (filterTextBox.Controls.ContainsKey("Clear"))
             {
                 Control filterButton = filterTextBox.Controls["Clear"];
-                filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width,
-                    (filterTextBox.ClientSize.Height - 16) / 2 + 1);
+                int clientSizeHeight = (filterTextBox.ClientSize.Height - 16) / 2;
+                filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width,clientSizeHeight + 1);
 
                 // Send EM_SETMARGINS to prevent text from disappearing underneath the button
                 NativeMethods.SendMessage(filterTextBox.Handle, 0xd3, (IntPtr) 2, (IntPtr) (filterButton.Width << 16));

@@ -581,7 +581,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             if (hEdit != IntPtr.Zero)
             {
                 int xEdit = hMargin;
-                int cxEdit = rcDlg.Width - 2 * hMargin;
+                int cxEdit = rcDlg.Width - (2 * hMargin);
                 IntPtr hLabel = Win32.GetDlgItem(hDlg, CtlIds.TITLE);
                 if (hLabel != IntPtr.Zero)
                 {
@@ -599,7 +599,7 @@ namespace DaveChambers.FolderBrowserDialogEx
                     Win32.ReleaseDC(hLabel, hdc);
 
                     Win32.RECT rcLabel = new Win32.RECT(hMargin,
-                                                        vMargin + (rcEdit.Height - szLabel.Height) / 2,
+                                                        vMargin + ((rcEdit.Height - szLabel.Height) / 2),
                                                         szLabel.Width,
                                                         szLabel.Height);
                     Win32.MoveWindow(hLabel, rcLabel, false);
@@ -620,8 +620,8 @@ namespace DaveChambers.FolderBrowserDialogEx
 
             Win32.RECT rcTree = new Win32.RECT(hMargin,
                 treeTop,
-                rcDlg.Width - 2 * hMargin,
-                rcDlg.Bottom - (treeTop + 2 * vMargin + rcOK.Height));
+                rcDlg.Width - (2 * hMargin),
+                rcDlg.Bottom - (treeTop + (2 * vMargin) + rcOK.Height));
 
             Win32.MoveWindow(hTree, rcTree, false);
         }

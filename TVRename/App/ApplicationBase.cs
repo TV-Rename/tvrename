@@ -213,7 +213,6 @@ namespace TVRename.App
                         new JsonAttribute("appVersion",Helpers.DisplayVersion),
                         new JsonAttribute("innerException", new JsonLayout
                             {
-
                                 Attributes =
                                 {
                                     new JsonAttribute("type", "${exception:format=:innerFormat=Type:MaxInnerExceptionLevel=1:InnerExceptionSeparator=}"),
