@@ -4138,7 +4138,6 @@ namespace TVRename
             this.rdoqBitTorrentAPIVersionv1.TabStop = true;
             this.rdoqBitTorrentAPIVersionv1.Text = "v3.2 to v4.0";
             this.rdoqBitTorrentAPIVersionv1.UseVisualStyleBackColor = true;
-            this.rdoqBitTorrentAPIVersionv1.CheckedChanged += new System.EventHandler(this.RadioButton1_CheckedChanged);
             // 
             // rdoqBitTorrentAPIVersionv0
             // 

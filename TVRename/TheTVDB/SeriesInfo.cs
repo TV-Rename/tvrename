@@ -25,7 +25,6 @@ namespace TVRename
         public readonly string TargetLanguageCode; //The Language Code we'd like the Series in ; null if we want to use the system setting
         public int LanguageId; //The actual language obtained
         public string Name;
-        public string Status="Unkonwn";
         public string AirsDay;
         public string Network;
         public string Overview;
@@ -120,7 +119,9 @@ namespace TVRename
       [NotNull]
       public string Year => FirstAired?.ToString("yyyy") ?? $"{MinYear}";
 
-        // note: "SeriesID" in a <Series> is the tv.com code,
+      public string Status { get; private set; } = "Unkonwn";
+
+      // note: "SeriesID" in a <Series> is the tv.com code,
         // "seriesid" in an <Episode> is the tvdb code!
 
         public SeriesInfo(string name, int id)

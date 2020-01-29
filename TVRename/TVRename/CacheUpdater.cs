@@ -89,10 +89,10 @@ namespace TVRename
 
             if (!downloadOk)
             {
-                Logger.Warn(TheTVDB.Instance.LastError);
+                Logger.Warn(TheTVDB.Instance.LastErrorMessage);
                 if (showErrorMsgBox)
                 {
-                    CannotConnectForm ccform = new CannotConnectForm("Error while downloading", TheTVDB.Instance.LastError);
+                    CannotConnectForm ccform = new CannotConnectForm("Error while downloading", TheTVDB.Instance.LastErrorMessage);
                     DialogResult ccresult = ccform.ShowDialog();
                     if (ccresult == DialogResult.Abort)
                     {
@@ -100,7 +100,7 @@ namespace TVRename
                     }
                 }
 
-                TheTVDB.Instance.LastError = "";
+                TheTVDB.Instance.LastErrorMessage = "";
             }
 
             return downloadOk;

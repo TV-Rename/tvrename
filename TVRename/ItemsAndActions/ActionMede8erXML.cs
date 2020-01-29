@@ -189,7 +189,7 @@ namespace TVRename
                     writer.WriteElement("rating", intSiteRating);
                 }
 
-                writer.WriteElement("status", SelectedShow.TheSeries()?.Status);
+                writer.WriteElement("status", SelectedShow?.TheSeries()?.Status);
                 writer.WriteElement("mpaa", SelectedShow.TheSeries()?.ContentRating);
                 writer.WriteInfo("moviedb", "imdb", "id", SelectedShow.TheSeries()?.Imdb);
                 writer.WriteElement("tvdbid", SelectedShow.TheSeries()?.TvdbCode);

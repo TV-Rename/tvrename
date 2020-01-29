@@ -7,6 +7,7 @@
 // 
 
 using System.Collections.Generic;
+using System.Threading;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 
@@ -26,7 +27,7 @@ namespace TVRename
                 throw new TVRenameOperationInterruptedException();
             }
 
-            if (!TVSettings.Instance.AutoMergeLibraryEpisodes)
+            if (!Active())
             {
                 return;
             }
@@ -48,98 +49,102 @@ namespace TVRename
 
                 if (si.IgnoreSeasons.Contains(snum) || !allFolders.ContainsKey(snum))
                 {
-                    continue; // ignore/skip this season
-                }
-
-                if (snum == 0 && si.CountSpecials)
-                {
-                    continue; // don't process the specials season, as they're merged into the seasons themselves
-                }
-
-                if (snum == 0 && TVSettings.Instance.IgnoreAllSpecials)
-                {
                     continue;
                 }
 
                 // all the folders for this particular season
-                List<string> folders = allFolders[snum];
+                MergeShowEpisodes(si, dfc, settings.Token, snum, allFolders[snum]);
 
-                List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
+            } // for each season of this show
+        }
 
-                List<ShowRule> rulesToAdd = new List<ShowRule>();
+        private static void MergeShowEpisodes([NotNull] ShowItem si, DirFilesCache dfc, CancellationToken token, int snum,IEnumerable<string> folders)
+        {
+            if (snum == 0 && si.CountSpecials)
+            {
+                return;
+            }
 
-                foreach (string folder in folders)
+            if (snum == 0 && TVSettings.Instance.IgnoreAllSpecials)
+            {
+                return;
+            }
+
+            List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
+
+            List<ShowRule> rulesToAdd = new List<ShowRule>();
+
+            foreach (string folder in folders)
+            {
+                if (token.IsCancellationRequested)
                 {
-                    if (settings.Token.IsCancellationRequested)
+                    throw new TVRenameOperationInterruptedException();
+                }
+
+                FileInfo[] files = dfc.GetFiles(folder);
+                if (files is null)
+                {
+                    continue;
+                }
+
+                foreach (FileInfo fi in files)
+                {
+                    if (token.IsCancellationRequested)
                     {
                         throw new TVRenameOperationInterruptedException();
                     }
 
-                    FileInfo[] files = dfc.GetFiles(folder);
-                    if (files is null)
+                    if (!fi.IsMovieFile())
                     {
-                        continue;
+                        continue; //not a video file, so ignore
                     }
 
-                    foreach (FileInfo fi in files)
+                    if (!FinderHelper.FindSeasEp(fi, out int seasNum, out int epNum, out int maxEp, si,
+                        out TVSettings.FilenameProcessorRE _))
                     {
-                        if (settings.Token.IsCancellationRequested)
+                        continue; // can't find season & episode, so this file is of no interest to us
+                    }
+
+                    if (seasNum == -1)
+                    {
+                        seasNum = snum;
+                    }
+
+                    int epIdx = eps.FindIndex(x =>
+                        x.AppropriateEpNum == epNum && x.AppropriateSeasonNumber == seasNum);
+
+                    if (epIdx == -1)
+                    {
+                        continue; // season+episode number don't correspond to any episode we know of from thetvdb
+                    }
+
+                    ProcessedEpisode ep = eps[epIdx];
+
+                    if (ep.Type != ProcessedEpisode.ProcessedEpisodeType.merged && maxEp != -1)
+                    {
+                        LOGGER.Info(
+                            $"Looking at {ep.Show.ShowName} and have identified that episode {epNum} and {maxEp} of season {seasNum} should be merged into one file {fi.FullName}");
+
+                        ShowRule sr = new ShowRule
                         {
-                            throw new TVRenameOperationInterruptedException();
-                        }
+                            DoWhatNow = RuleAction.kMerge,
+                            First = epNum,
+                            Second = maxEp
+                        };
 
-                        if (!fi.IsMovieFile())
-                        {
-                            continue; //not a video file, so ignore
-                        }
+                        rulesToAdd.Add(sr);
+                    }
+                } // foreach file in folder
+            } // for each folder for this season of this show
 
-                        if (!FinderHelper.FindSeasEp(fi, out int seasNum, out int epNum, out int maxEp, si,
-                            out TVSettings.FilenameProcessorRE _))
-                        {
-                            continue; // can't find season & episode, so this file is of no interest to us
-                        }
+            foreach (ShowRule sr in rulesToAdd)
+            {
+                si.AddSeasonRule(snum, sr);
+                LOGGER.Info($"Added new rule automatically for {sr}");
 
-                        if (seasNum == -1)
-                        {
-                            seasNum = snum;
-                        }
-
-                        int epIdx = eps.FindIndex(x =>
-                            x.AppropriateEpNum == epNum && x.AppropriateSeasonNumber == seasNum);
-
-                        if (epIdx == -1)
-                        {
-                            continue; // season+episode number don't correspond to any episode we know of from thetvdb
-                        }
-
-                        ProcessedEpisode ep = eps[epIdx];
-
-                        if (ep.Type != ProcessedEpisode.ProcessedEpisodeType.merged && maxEp != -1)
-                        {
-                            LOGGER.Info(
-                                $"Looking at {ep.Show.ShowName} and have identified that episode {epNum} and {maxEp} of season {seasNum} should be merged into one file {fi.FullName}");
-
-                            ShowRule sr = new ShowRule
-                            {
-                                DoWhatNow = RuleAction.kMerge,
-                                First = epNum,
-                                Second = maxEp
-                            };
-
-                            rulesToAdd.Add(sr);
-                        }
-                    } // foreach file in folder
-                } // for each folder for this season of this show
-
-                foreach (ShowRule sr in rulesToAdd)
-                {
-                    si.AddSeasonRule(snum, sr);
-                    LOGGER.Info($"Added new rule automatically for {sr}");
-
-                    //Regenerate the episodes with the new rule added
-                    ShowLibrary.GenerateEpisodeDict(si);
-                }
-            } // for each season of this show
+                //Regenerate the episodes with the new rule added
+                ShowLibrary.GenerateEpisodeDict(si);
+            }
         }
 
         protected override bool Active() => TVSettings.Instance.AutoMergeLibraryEpisodes;

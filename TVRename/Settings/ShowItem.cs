@@ -51,7 +51,7 @@ namespace TVRename
         public string CustomSearchUrl;
         public bool ManualFoldersReplaceAutomatic;
 
-        public string ShowTimeZone;
+        public string ShowTimeZone { get; internal set; }
         private DateTimeZone seriesTimeZone;
         private string lastFiguredTz;
 

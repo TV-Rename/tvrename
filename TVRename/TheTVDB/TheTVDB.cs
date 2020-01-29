@@ -120,7 +120,6 @@ namespace TVRename
         private static readonly string WebsiteImageRoot = "https://artworks.thetvdb.com";
 
         private FileInfo cacheFile;
-        public bool Connected;
 
         // ReSharper disable once InconsistentNaming
         public string CurrentDLTask;
@@ -130,7 +129,6 @@ namespace TVRename
 
         private ConcurrentDictionary<int,int> forceReloadOn;
         public Languages LanguageList;
-        public string LastError;
         public string LoadErr;
         public bool LoadOk;
         private UpdateTimeTracker latestUpdateTime;
@@ -176,6 +174,10 @@ namespace TVRename
         [CanBeNull]
         public Language PreferredLanguage => LanguageList.GetLanguageFromCode(TVSettings.Instance.PreferredLanguageCode);
 
+        public bool IsConnected { get; private set; }
+
+        public string LastErrorMessage { get; set; }
+
         public void Setup([CanBeNull] FileInfo loadFrom, [NotNull] FileInfo cache, CommandLineArgs cla)
         {
             args = cla;
@@ -183,8 +185,8 @@ namespace TVRename
             System.Diagnostics.Debug.Assert(cache != null);
             cacheFile = cache;
 
-            LastError = "";
-            Connected = false;
+            LastErrorMessage = "";
+            IsConnected = false;
             extraEpisodes = new ConcurrentDictionary<int, ExtraEp>(); 
             removeEpisodeIds = new ConcurrentDictionary<int, ExtraEp>();
 
@@ -548,8 +550,8 @@ namespace TVRename
 
         public bool Connect(bool showErrorMsgBox)
         {
-            Connected = UpdateLanguages(showErrorMsgBox);
-            return Connected;
+            IsConnected = UpdateLanguages(showErrorMsgBox);
+            return IsConnected;
         }
 
         [NotNull]
@@ -615,7 +617,7 @@ namespace TVRename
             catch (WebException e)
             {
                 Logger.Warn(CurrentDLTask + " : " + e.Message + " : " + theUrl);
-                LastError = CurrentDLTask + " : " + e.Message;
+                LastErrorMessage = CurrentDLTask + " : " + e.Message;
                 return null;
             }
         }
@@ -627,7 +629,7 @@ namespace TVRename
                 series.Clear();
             }
 
-            Connected = false;
+            IsConnected = false;
             SaveCache();
 
             //All series will be forgotten and will be fully refreshed, so we'll only need updates after this point
@@ -708,7 +710,7 @@ namespace TVRename
                 {
                     Logger.Error($"Error obtaining Languages from TVDB {ex.LoggableDetails()}");
                 }
-                LastError = ex.Message;
+                LastErrorMessage = ex.Message;
 
                 if (showErrorMsgBox)
                 {
@@ -720,7 +722,7 @@ namespace TVRename
                     }
                 }
 
-                LastError = "";
+                LastErrorMessage = "";
 
                 return false;
             }
@@ -730,7 +732,7 @@ namespace TVRename
         {
             Say("Updates list");
 
-            if (!Connected && !Connect(showErrorMsgBox))
+            if (!IsConnected && !Connect(showErrorMsgBox))
             {
                 Say("");
                 return false;
@@ -812,7 +814,7 @@ namespace TVRename
                     }
 
                     Say("");
-                    LastError = ex.Message;
+                    LastErrorMessage = ex.Message;
                     return false;
                 }
 
@@ -826,7 +828,7 @@ namespace TVRename
                 catch (InvalidCastException ex)
                 {
                     Say("");
-                    LastError = ex.Message;
+                    LastErrorMessage = ex.Message;
 
                     string msg = "Unable to get latest updates from TVDB " + Environment.NewLine +
                                  "Trying to get updates since " + requestedTime.ToLocalTime() +
@@ -1637,7 +1639,7 @@ namespace TVRename
 
                     if (TvdbIsUp() && !CanFindEpisodesFor(code, requestedLanguageCode))
                     {
-                        LastError = ex.Message;
+                        LastErrorMessage = ex.Message;
                         throw new ShowNotFoundException(code);
                     }
                 }
@@ -1652,7 +1654,7 @@ namespace TVRename
                 }
 
                 Say("");
-                LastError = ex.Message;
+                LastErrorMessage = ex.Message;
                 throw new TvdbSeriesDownloadException();
             }
 
@@ -1731,7 +1733,7 @@ namespace TVRename
                     Logger.Error($"Unble to obtain actors for {series[code].Name} {ex.LoggableDetails()}");
                 }
 
-                LastError = ex.Message;
+                LastErrorMessage = ex.Message;
             }
         }
 
@@ -2088,7 +2090,7 @@ namespace TVRename
                 {
                     Logger.Error("Error obtaining " + uri + ": " + ex.LoggableDetails());
                 }
-                LastError = ex.Message;
+                LastErrorMessage = ex.Message;
                 Say("");
                 return false;
             }
@@ -2120,7 +2122,7 @@ namespace TVRename
             catch (TVDBException e)
             {
                 Logger.Error("<TVDB ISSUE?>: Could not parse TVDB Response " + e.Message);
-                LastError = e.Message;
+                LastErrorMessage = e.Message;
                 Say("");
                 return false;
             }
@@ -2209,7 +2211,7 @@ namespace TVRename
 
         public void Search(string text, bool showErrorMsgBox)
         {
-            if (!Connected && !Connect(showErrorMsgBox))
+            if (!IsConnected && !Connect(showErrorMsgBox))
             {
                 Say("Failed to Connect");
                 return;
@@ -2264,7 +2266,7 @@ namespace TVRename
                         Logger.Error($"Error obtaining {uri} for search term '{text}': {ex.LoggableDetails()}");
                     }
 
-                    LastError = ex.Message;
+                    LastErrorMessage = ex.Message;
                     Say("");
                 }
                 else if(((HttpWebResponse) ex.Response).StatusCode == HttpStatusCode.NotFound)
@@ -2282,7 +2284,7 @@ namespace TVRename
                     {
                         Logger.Error($"Error obtaining {uri} for search term '{text}': {ex.LoggableDetails()}");
                     }
-                    LastError = ex.Message;
+                    LastErrorMessage = ex.Message;
                     Say("");
                 }
             }
@@ -2309,7 +2311,7 @@ namespace TVRename
                             $"Error obtaining {uri} for search term '{text}' in {DefaultLanguageCode}: {ex.LoggableDetails()}");
                         }
 
-                        LastError = ex.Message;
+                        LastErrorMessage = ex.Message;
                         Say("");
                     }
                     else if(((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
@@ -2320,7 +2322,7 @@ namespace TVRename
                     else
                     {
                         Logger.Error($"Error obtaining {ex.Response.ResponseUri} for search term '{text}' in {DefaultLanguageCode}: {ex.LoggableDetails()}");
-                        LastError = ex.Message;
+                        LastErrorMessage = ex.Message;
                         Say("");
                     }
                 }
