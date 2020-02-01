@@ -74,10 +74,17 @@ namespace TVRename
 
         private void LogActionListSummary()
         {
-            LOGGER.Info($"Summary of known actions after check: {Checkname()}");
-            LOGGER.Info($"   Missing Items: {MDoc.TheActionList.MissingItems().ToList().Count}");
-            LOGGER.Info($"   Copy/Move Items: {MDoc.TheActionList.CopyMoveItems().ToList().Count}");
-            LOGGER.Info($"   Total Actions: {MDoc.TheActionList.Actions().ToList().Count}");
+            try
+            {
+                LOGGER.Info($"Summary of known actions after check: {Checkname()}");
+                LOGGER.Info($"   Missing Items: {MDoc.TheActionList.MissingItems().ToList().Count}");
+                LOGGER.Info($"   Copy/Move Items: {MDoc.TheActionList.CopyMoveItems().ToList().Count}");
+                LOGGER.Info($"   Total Actions: {MDoc.TheActionList.Actions().ToList().Count}");
+            }
+            catch (InvalidOperationException)
+            {
+                //someties get this if enumeration updates
+            }
         }
     }
 }
