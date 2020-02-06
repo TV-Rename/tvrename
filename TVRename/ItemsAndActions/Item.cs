@@ -31,7 +31,7 @@ namespace TVRename
         {
             get
             {
-                ListViewItem lvi = new ListViewItem {Text = SeriesName};
+                ListViewItem lvi = new ListViewItem {Text = UI.PostpendTheIfNeeded(SeriesName)};
 
                 lvi.SubItems.Add(SeasonNumber);
                 lvi.SubItems.Add(EpisodeNumber);
@@ -52,7 +52,7 @@ namespace TVRename
         }
 
         [NotNull]
-        protected virtual string SeriesName => Episode?.TheSeries?.Name ?? string.Empty;
+        protected virtual string SeriesName => UI.GenerateShowUIName(Episode);
         [NotNull]
         protected virtual string SeasonNumber => Episode?.SeasonNumberAsText ?? string.Empty;
         [NotNull]

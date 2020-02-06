@@ -776,12 +776,7 @@ namespace TVRename
             List<ShowItem> sil = mDoc.Library.GetShowItems();
             lock (TheTVDB.SERIES_LOCK)
             {
-                sil.Sort((a, b) =>
-                {
-                    SeriesInfo serA = TheTVDB.Instance.GetSeries(a.TvdbCode);
-                    SeriesInfo serB = TheTVDB.Instance.GetSeries(b.TvdbCode);
-                    return string.Compare(GenerateShowUIName(serA, a), GenerateShowUIName(serB, b), StringComparison.OrdinalIgnoreCase);
-                });
+                sil.Sort((a, b) => string.Compare(GenerateShowUIName(a), GenerateShowUIName(b), StringComparison.OrdinalIgnoreCase));
             }
 
             ShowFilter filter = TVSettings.Instance.Filter;
@@ -2478,28 +2473,50 @@ namespace TVRename
             return n;
         }
 
-        private string GenerateShowUIName([CanBeNull] SeriesInfo ser, [NotNull] ShowItem si)
+        // ReSharper disable once InconsistentNaming
+        public static string GenerateShowUIName([CanBeNull] ProcessedEpisode episode) => GenerateShowUIName(episode?.TheSeries, episode?.Show);
+
+
+        // ReSharper disable once InconsistentNaming
+        private static string GenerateShowUIName([NotNull] ShowItem si)
         {
-            string name = si.ShowName;
+            SeriesInfo s = TheTVDB.Instance.GetSeries(si.TvdbCode);
+            return GenerateShowUIName(s,si);
+        }
 
-            if (string.IsNullOrEmpty(name))
-            {
-                if (ser != null)
-                {
-                    name = ser.Name;
-                }
-                else
-                {
-                    name += "-- Unknown : " + si.TvdbCode + " --";
-                }
-            }
+        // ReSharper disable once InconsistentNaming
+        private static string GenerateShowUIName([CanBeNull] SeriesInfo ser, [CanBeNull] ShowItem si)
+        {
+            string name = GenerateBestName(ser, si);
 
+            return PostpendTheIfNeeded(name);
+        }
+
+        public static string PostpendTheIfNeeded(string name)
+        {
             if (TVSettings.Instance.PostpendThe && name.StartsWith("The ", StringComparison.Ordinal))
             {
                 return name.Substring(4) + ", The";
             }
 
             return name;
+        }
+
+        private static string GenerateBestName([CanBeNull] SeriesInfo ser, [CanBeNull] ShowItem si)
+        {
+            string name = si?.ShowName;
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                return name;
+            }
+
+            if (ser != null)
+            {
+                return ser.Name;
+            }
+
+            return "-- Unknown : " + si?.TvdbCode + " --";
         }
 
         private void UpdateWtw(DirFilesCache dfc, [NotNull] ProcessedEpisode pe, [NotNull] ListViewItem lvi)
@@ -2513,7 +2530,7 @@ namespace TVRename
 
             lvi.Group = lvWhenToWatch.Groups[CalculateWtwlviGroup(pe, dt)];
             lvi.Tag = pe;
-            lvi.Text = pe.Show.ShowName;
+            lvi.Text = GenerateShowUIName(pe);
 
             int n = 0;
             lvi.SubItems[++n].Text = pe.SeasonNumberAsText;
