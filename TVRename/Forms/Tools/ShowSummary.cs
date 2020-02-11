@@ -203,9 +203,9 @@ namespace TVRename
 
             if (ser != null)
             {
-                foreach (int snum in si.DvdOrder? ser.DvdSeasons.Keys: ser.AiredSeasons.Keys)
+                foreach (int snum in si.AppropriateSeasons().Keys)
                 {
-                    ShowSummaryData.ShowSummarySeasonData seasonData = getSeasonDetails(si, ser, snum);
+                    ShowSummaryData.ShowSummarySeasonData seasonData = getSeasonDetails(si, snum);
                     showSummary.AddSeason(seasonData);
                 }
             }
@@ -213,7 +213,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private ShowSummaryData.ShowSummarySeasonData getSeasonDetails([NotNull] ShowItem si, [NotNull] SeriesInfo ser, int snum)
+        private ShowSummaryData.ShowSummarySeasonData getSeasonDetails([NotNull] ShowItem si, int snum)
         {
             int epCount = 0;
             int epGotCount = 0;
@@ -221,15 +221,13 @@ namespace TVRename
             DirFilesCache dfc = new DirFilesCache();
             Season season = null;
 
-            Dictionary<int, Season> seasons = si.DvdOrder ? ser.DvdSeasons : ser.AiredSeasons;
+            Dictionary<int, Season> seasons = si.AppropriateSeasons();
 
             if (snum >= 0 && seasons.ContainsKey(snum))
             {
                 season = seasons[snum];
 
-                List<ProcessedEpisode> eis = si.SeasonEpisodes.ContainsKey(snum)
-                    ? si.SeasonEpisodes[snum] // use processed episodes if they are available
-                    : ShowItem.ProcessedListFromEpisodes(season.Episodes.Values, si);
+                List<ProcessedEpisode> eis = si.SeasonEpisodes[snum] ;
 
                 foreach (ProcessedEpisode ei in eis)
                 {
@@ -312,7 +310,7 @@ namespace TVRename
                 return;
             }
 
-            Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(seas.TheSeries.TvdbCode, seas.SeasonId, false));
+            Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(seas.Show.TvdbCode, seas.SeasonId, false));
         }
 
         private void TVDBFor([CanBeNull] ShowItem si)

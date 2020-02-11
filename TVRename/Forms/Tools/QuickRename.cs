@@ -125,20 +125,9 @@ namespace TVRename.Forms.Tools
                 return;
             }
 
-            SeriesInfo s = bestShow.TheSeries();
-            if (s is null)
-            {
-                //We have not downloaded the series, so have to assume that we need the episode/file
-                Logger.Info(
-                    $"Can't rename file for {bestShow.ShowName} for {droppedFile.FullName}, as it has not been downloaded yet, ignoring this file.");
-
-                return;
-            }
-
             try
             {
-                Episode ep = s.GetEpisode(seasonNum, episodeNum, bestShow.DvdOrder);
-                ProcessedEpisode episode = new ProcessedEpisode(ep, bestShow);
+                ProcessedEpisode episode = bestShow.GetEpisode(seasonNum, episodeNum);
 
                 string filename = TVSettings.Instance.FilenameFriendly(
                     TVSettings.Instance.NamingStyle.NameFor(episode, droppedFile.Extension,
@@ -166,7 +155,7 @@ namespace TVRename.Forms.Tools
                     FileFinder.KeepTogether(mDoc.TheActionList, false, true,mDoc);
                 }
             }
-            catch (SeriesInfo.EpisodeNotFoundException)
+            catch (ShowItem.EpisodeNotFoundException)
             {
                 Logger.Info(
                     $"Can't rename file for {bestShow.ShowName} for {droppedFile.FullName}, as it does not have Episode {episodeNum} for Season {seasonNum}.");

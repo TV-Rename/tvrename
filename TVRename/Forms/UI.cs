@@ -858,7 +858,7 @@ namespace TVRename
                     return null;
 
                 case Season seas:
-                    return mDoc.Library.ShowItem(seas.TheSeries.TvdbCode);
+                    return seas.Show;
 
                 default:
                     return null;
@@ -892,12 +892,8 @@ namespace TVRename
                 // we have a TVDB season, but need to find the equivalent one in our local processed episode collection
                 if (seas.Episodes.Count > 0)
                 {
-                    int tvdbcode = seas.TheSeries.TvdbCode;
-                    foreach (ShowItem si in mDoc.Library.Values.Where(si=>si.TvdbCode == tvdbcode))
-                    {
-                        FillEpGuideHtml(si, seas.SeasonNumber);
-                        return;
-                    }
+                    FillEpGuideHtml(seas.Show, seas.SeasonNumber);
+                    return;
                 }
 
                 FillEpGuideHtml(null, -1);
@@ -934,15 +930,9 @@ namespace TVRename
 
             if (TVSettings.Instance.OfflineMode || TVSettings.Instance.ShowBasicShowDetails)
             {
-                if (si.DvdOrder && snum >= 0 && ser.DvdSeasons.ContainsKey(snum))
+                if (snum >= 0 && si.AppropriateSeasons().ContainsKey(snum))
                 {
-                    Season s = ser.DvdSeasons[snum];
-                    SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(si.GetSeasonHtmlOverviewOffline(s)));
-                    SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
-                }
-                else if (!si.DvdOrder && snum >= 0 && ser.AiredSeasons.ContainsKey(snum))
-                {
-                    Season s = ser.AiredSeasons[snum];
+                    Season s = si.AppropriateSeasons()[snum];
                     SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(si.GetSeasonHtmlOverviewOffline(s)));
                     SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
                 }
@@ -956,16 +946,9 @@ namespace TVRename
                 return;
             }
 
-            if (si.DvdOrder && snum >= 0 && ser.DvdSeasons.ContainsKey(snum))
+            if (snum >= 0 && si.AppropriateSeasons().ContainsKey(snum))
             {
-                Season s = ser.DvdSeasons[snum];
-                SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
-
-                SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, true));
-            }
-            else if (!si.DvdOrder && snum >= 0 && ser.AiredSeasons.ContainsKey(snum))
-            {
-                Season s = ser.AiredSeasons[snum];
+                Season s = si.AppropriateSeasons()[snum];
                 SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
 
                 SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, true));
@@ -1010,7 +993,7 @@ namespace TVRename
         {
             if (seas != null)
             {
-                Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(seas.TheSeries.TvdbCode, -1, false));
+                Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(seas.Show.TvdbCode, -1, false));
             }
         }
 
@@ -1426,7 +1409,7 @@ namespace TVRename
 
         private void RightClickOnMyShows([NotNull] Season seas, Point pt)
         {
-            mLastShowsClicked = new List<ShowItem> {mDoc.Library.ShowItem(seas.TheSeries.TvdbCode)};
+            mLastShowsClicked = new List<ShowItem> {seas.Show};
             mLastEpClicked = null;
             mLastSeasonClicked = seas;
             mLastActionsClicked = null;
@@ -2419,16 +2402,14 @@ namespace TVRename
                     }
                 }
 
-                List<int> theKeys = si.DvdOrder
-                    ? new List<int>(ser.DvdSeasons.Keys)
-                    : new List<int>(ser.AiredSeasons.Keys);
+                List<int> theKeys = si.AppropriateSeasons().Keys.ToList();
 
                 theKeys.Sort();
 
                 SeasonFilter sf = TVSettings.Instance.SeasonFilter;
                 foreach (int snum in theKeys)
                 {
-                    Season s = si.DvdOrder ? ser.DvdSeasons[snum] : ser.AiredSeasons[snum];
+                    Season s = si.AppropriateSeasons()[snum];
 
                     //Ignore the season if it is filtered out
                     if (!sf.Filter(si, s))
@@ -2788,23 +2769,12 @@ namespace TVRename
 
             lock (TheTVDB.SERIES_LOCK)
             {
-                SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
-                if (ser is null)
+                EditSeason er = new EditSeason(si, seasnum, TVSettings.Instance.NamingStyle);
+                DialogResult dr = er.ShowDialog();
+                if (dr == DialogResult.OK)
                 {
-                    Logger.Error($"Asked to edit season {seasnum} of {si.ShowName}, but the SeriesInfo doesn't exist");
-                }
-                else
-                {
-                    List<ProcessedEpisode> pel = ShowLibrary.GenerateEpisodes(si, ser, seasnum, false);
-
-                    EditSeason er = new EditSeason(si, pel, seasnum, TVSettings.Instance.NamingStyle);
-                    DialogResult dr = er.ShowDialog();
-                    if (dr == DialogResult.OK)
-                    {
-                        ShowAddedOrEdited(false, false);
-                        Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DvdSeasons : ser.AiredSeasons;
-                        SelectSeason(seasonsToUse[seasnum]);
-                    }
+                    ShowAddedOrEdited(false, false);
+                    SelectSeason(si.AppropriateSeasons()[seasnum]);
                 }
             }
 

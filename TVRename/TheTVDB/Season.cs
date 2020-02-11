@@ -32,14 +32,15 @@ namespace TVRename
         public readonly ConcurrentDictionary<int,Episode> Episodes;
         public readonly int SeasonId;
         public readonly int SeasonNumber;
-        public readonly SeriesInfo TheSeries;
+        public readonly ShowItem Show;
+        // ReSharper disable once NotAccessedField.Local
         private readonly SeasonType type;
 
-        public Season(SeriesInfo theSeries, int number, int seasonid, SeasonType t)
+        public Season(ShowItem theShow, int number, int seasonId, SeasonType t)
         {
-            TheSeries = theSeries;
+            Show = theShow;
             SeasonNumber = number;
-            SeasonId = seasonid;
+            SeasonId = seasonId;
             Episodes = new ConcurrentDictionary<int, Episode>();
             type = t;
         }
@@ -118,7 +119,7 @@ namespace TVRename
 
         private bool HasEpisodes => Episodes != null && Episodes.Count > 0;
 
-        public int SeasonIndex => TheSeries.GetSeasonIndex(SeasonNumber,type);
+        public int SeasonIndex => Show.GetSeasonIndex(SeasonNumber);
 
         private bool HasUnairedEpisodes(DateTimeZone tz)
         {
@@ -204,31 +205,20 @@ namespace TVRename
             return returnValue;
         }
 
-        public string GetBannerPath() => TheSeries.GetSeasonBannerPath(SeasonNumber);
+        [CanBeNull]
+        public string GetBannerPath() => Show.TheSeries()?.GetSeasonBannerPath(SeasonNumber);
 
-        public string GetWideBannerPath() => TheSeries.GetSeasonWideBannerPath(SeasonNumber);
+        [CanBeNull]
+        public string GetWideBannerPath() => Show.TheSeries()?.GetSeasonWideBannerPath(SeasonNumber);
 
         public void AddUpdateEpisode([NotNull] Episode newEpisode)
         {
             Episodes.AddOrUpdate(newEpisode.EpisodeId,newEpisode,(i, episode) => newEpisode);
         }
 
-        public bool ContainsEpisode(int episodeNumber, bool dvdOrder)
+        public bool ContainsEpisode(int episodeNumber, SeasonType order)
         {
-            foreach (Episode ep in Episodes.Values)
-            {
-                if (dvdOrder && ep.DvdEpNum == episodeNumber)
-                {
-                    return true;
-                }
-
-                if (!dvdOrder && ep.AiredEpNum == episodeNumber)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return Episodes.Values.Any(ep => ep.GetEpisodeNumber(order) == episodeNumber);
         }
 
         public void RemoveEpisode(int episodeId)
@@ -239,13 +229,11 @@ namespace TVRename
             }
         }
 
-        public bool IsSpecial() => SeasonNumber == 0;
+        public bool IsSpecial => SeasonNumber == 0;
 
-        public bool NextEpisodeIs(int episodeNumber, bool dvdOrder)
+        public bool NextEpisodeIs(int episodeNumber, SeasonType order)
         {
-            int maxEpNum = dvdOrder
-                ? (from ep in Episodes.Values select ep.DvdEpNum).Concat(new[] { 0 }).Max()
-                : (from ep in Episodes.Values select ep.AiredEpNum).Concat(new[] { 0 }).Max();
+            int maxEpNum = (from ep in Episodes.Values select ep.GetEpisodeNumber(order)).Concat(new[] {0}).Max();
 
             return episodeNumber==maxEpNum+1;
         }

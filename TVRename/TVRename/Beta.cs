@@ -111,7 +111,7 @@ namespace TVRename
         {
             if (pep.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
             {
-                output.AppendLine(si.ShowName + " - Season: " + seasonId + " - " + pep.NumsAsString() +
+                output.AppendLine(si.ShowName + " - Season: " + seasonId + " - " + pep.EpNumsAsString() +
                                   " - " + pep.Name + " is:");
 
                 foreach (Episode sourceEpisode in pep.SourceEpisodes)

@@ -54,7 +54,7 @@ namespace TVRename
             string horizontalBanner = CreateHorizontalBannerHtml(ser);
             string poster = CreatePosterHtml(ser);
             string yearRange = YearRange(ser);
-            string episodeSummary = ser.AiredSeasons.Sum(pair => pair.Value.Episodes.Count).ToString();
+            string episodeSummary = ser.Episodes.Count.ToString();
             string stars = StarRating(ser.SiteRating/2);
             string genreIcons = string.Join("&nbsp;", ser.Genres().Select(GenreIconHtml));
             string siteRating = ser.SiteRating > 0 ? ser.SiteRating+ "/10" : "";
@@ -238,7 +238,7 @@ namespace TVRename
             Color col = Color.FromName("ButtonFace");
             sb.AppendLine(HTMLHeader(10,col));
             sb.AppendSeason(s,si,col,includeDirectoryLinks);
-            foreach (ProcessedEpisode ep in GetBestEpisodes(si,s))
+            foreach (ProcessedEpisode ep in si.SeasonEpisodes[s.SeasonNumber])
             {
                 List<FileInfo> fl = dfc.FindEpOnDisk(ep);
                 sb.AppendEpisode(ep,fl,col);
@@ -254,8 +254,7 @@ namespace TVRename
                 return;
             }
 
-            SeriesInfo ser = s.TheSeries;
-            string seasonLink = TheTVDB.Instance.WebsiteUrl(ser.TvdbCode, s.SeasonId, false);
+            string seasonLink = TheTVDB.Instance.WebsiteUrl(si.TvdbCode, s.SeasonId, false);
             string showLink = TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true);
             string urlFilename = Uri.EscapeDataString(si.GetBestFolderLocationToOpen(s));
 
@@ -269,7 +268,7 @@ namespace TVRename
 				{s.CreateHorizontalBannerHtml()}
 				<br/>
                 <div class=""row"">
-                    <div class=""col-8""><h1><A HREF=""{showLink}"">{ser.Name}</A> - <A HREF=""{seasonLink}"">{SeasonName(si, s.SeasonNumber)}</a></h1></div>
+                    <div class=""col-8""><h1><A HREF=""{showLink}"">{si.ShowName}</A> - <A HREF=""{seasonLink}"">{SeasonName(si, s.SeasonNumber)}</a></h1></div>
                     <div class=""col-4 text-right"">
                         {explorerButton}
                         {tvdbButton}
@@ -445,13 +444,6 @@ namespace TVRename
             return string.IsNullOrEmpty(url) ? "" : $"<h2>{title}</h2><img width={width} height={height} src=\"{url}\"><br/>";
         }
 
-        private static IEnumerable<ProcessedEpisode> GetBestEpisodes([NotNull] ShowItem si, [NotNull] Season s)
-        {
-            return si.SeasonEpisodes.ContainsKey(s.SeasonNumber)
-                ? si.SeasonEpisodes[s.SeasonNumber]
-                : ShowItem.ProcessedListFromEpisodes(s.Episodes.Values, si);
-        }
-
         private static string HiddenOverview([NotNull] this ProcessedEpisode ei)
         {
             if (TVSettings.Instance.HideMyShowsSpoilers && ei.HowLong() != "Aired")
@@ -470,13 +462,10 @@ namespace TVRename
         [NotNull]
         public static string GetSeasonImagesHtmlOverview([NotNull] this ShowItem si, [NotNull] Season s)
         {
-            SeriesInfo ser = s.TheSeries;
             int snum = s.SeasonNumber;
             string body = "";
 
-            List<ProcessedEpisode> eis = si.SeasonEpisodes.ContainsKey(snum)
-                ? si.SeasonEpisodes[snum]
-                : ShowItem.ProcessedListFromEpisodes(s.Episodes.Values, si);
+            List<ProcessedEpisode> eis =si.SeasonEpisodes[snum];
 
             string seasText = Season.UIFullSeasonWord(snum);
 
@@ -495,8 +484,8 @@ namespace TVRename
 
             if (TVSettings.Instance.NeedToDownloadBannerFile())
             {
-                body += ImageSection("Series Banner", 758, 140, ser.GetSeasonWideBannerPath(snum));
-                body += ImageSection("Series Poster", 350, 500, ser.GetSeasonBannerPath(snum));
+                body += ImageSection("Series Banner", 758, 140, si.TheSeries()?.GetSeasonWideBannerPath(snum));
+                body += ImageSection("Series Poster", 350, 500, si.TheSeries()?.GetSeasonBannerPath(snum));
             }
             else
             {
@@ -688,26 +677,24 @@ namespace TVRename
         [NotNull]
         public static string GetSeasonHtmlOverviewOffline([NotNull] this ShowItem si, [NotNull] Season s)
         {
-            SeriesInfo ser = s.TheSeries;
+            SeriesInfo ser = si.TheSeries();
             int snum = s.SeasonNumber;
             string body = "";
 
-            if (!string.IsNullOrEmpty(ser.GetSeriesWideBannerPath()) &&
+            if (!string.IsNullOrEmpty(ser?.GetSeriesWideBannerPath()) &&
                 !string.IsNullOrEmpty(TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath())))
             {
                 body += "<img width=758 height=140 src=\"" + TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath()) +
                         "\"><br/>";
             }
 
-            List<ProcessedEpisode> eis = si.SeasonEpisodes.ContainsKey(snum) ?
-                si.SeasonEpisodes[snum] :
-                ShowItem.ProcessedListFromEpisodes(s.Episodes.Values, si);
+            List<ProcessedEpisode> eis = si.SeasonEpisodes[snum];
 
             string seasText = SeasonName(si, snum);
 
             if (eis.Count > 0 && eis[0].SeasonId > 0)
             {
-                seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteUrl(ser.TvdbCode, eis[0].SeasonId, false) + "\">" +
+                seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteUrl(si.TvdbCode, eis[0].SeasonId, false) + "\">" +
                            seasText + "</a>";
             }
             else
@@ -721,7 +708,7 @@ namespace TVRename
             DirFilesCache dfc = new DirFilesCache();
             foreach (ProcessedEpisode ei in eis)
             {
-                string epl = ei.NumsAsString();
+                string epl = ei.EpNumsAsString();
 
                 string episodeUrl = TheTVDB.WebsiteUrl(ei.SeriesId, ei.SeasonId, ei.EpisodeId);
 

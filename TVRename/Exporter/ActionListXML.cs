@@ -41,7 +41,7 @@ namespace TVRename
                     writer.WriteAttributeToXml("ToName", acmr.To.Name);
                     writer.WriteAttributeToXml("ShowName", acmr.Episode.TheSeries.Name);
                     writer.WriteAttributeToXml("Season", acmr.Episode.AppropriateSeasonNumber);
-                    writer.WriteAttributeToXml("Episode", acmr.Episode.NumsAsString());
+                    writer.WriteAttributeToXml("Episode", acmr.Episode.EpNumsAsString());
 
                     writer.WriteEndElement(); //Item                                
                 }

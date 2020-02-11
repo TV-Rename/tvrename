@@ -60,18 +60,14 @@ namespace TVRename
 
                     if (cbGuestStars.Checked && si != null)
                     {
-                        foreach (KeyValuePair<int, Season> kvp in si.AiredSeasons
-                        ) //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
+                        foreach (Episode ep in si.Episodes)
                         {
-                            foreach (Episode ep in kvp.Value.Episodes.Values)
+                            foreach (string g in ep.GuestStars)
                             {
-                                foreach (string g in ep.GuestStars)
+                                string aa = g.Trim();
+                                if (!string.IsNullOrEmpty(aa))
                                 {
-                                    string aa = g.Trim();
-                                    if (!string.IsNullOrEmpty(aa))
-                                    {
-                                        theData.Set(si.Name, aa, false);
-                                    }
+                                    theData.Set(si.Name, aa, false);
                                 }
                             }
                         }

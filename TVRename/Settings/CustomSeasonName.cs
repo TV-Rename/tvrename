@@ -70,7 +70,7 @@ namespace TVRename
                 return string.Empty;
             }
 
-            string showname = s.TheSeries.Name;
+            string showname = s.Show.ShowName;
             if (urlEncode)
             {
                 showname = Uri.EscapeDataString(showname);
@@ -83,7 +83,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{SeasonNumber:2}", s.SeasonIndex.ToString("00"));
             name = name.ReplaceInsensitive("{StartYear}", s.MinYear().ToString());
             name = name.ReplaceInsensitive("{EndYear}", s.MaxYear().ToString());
-            name = name.ReplaceInsensitive("{ShowImdb}", s.TheSeries.Imdb);
+            name = name.ReplaceInsensitive("{ShowImdb}", s.Show.TheSeries()?.Imdb??string.Empty);
 
             return name.Trim();
         }

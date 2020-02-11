@@ -22,7 +22,7 @@ namespace TVRename
 
         public override ItemList ProcessShow([NotNull] ShowItem si, bool forceRefresh)
         {
-            DateTime? updateTime = si.TheSeries()?.LastAiredDate;
+            DateTime? updateTime = si.LastAiredDate;
             if (!TVSettings.Instance.CorrectFileDates || !updateTime.HasValue)
             {
                 return null;

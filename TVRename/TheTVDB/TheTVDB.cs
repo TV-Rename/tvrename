@@ -314,14 +314,9 @@ namespace TVRename
                             if (kvp.Value.SrvLastUpdated != 0)
                             {
                                 kvp.Value.WriteXml(writer);
-                                foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
-                                    //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
+                                foreach (Episode e in kvp.Value.Episodes)
                                 {
-                                    Season seas = kvp2.Value;
-                                    foreach (Episode e in seas.Episodes.Values)
-                                    {
-                                        e.WriteXml(writer);
-                                    }
+                                    e.WriteXml(writer);
                                 }
                             }
                             else
@@ -462,7 +457,7 @@ namespace TVRename
                             foreach (JToken t in episodeToUse.Children())
                             {
                                 long serverUpdateTime = (long) t["lastUpdated"];
-                                long epId = (long) t["id"];
+                                int epId = (int) t["id"];
 
                                 serverEpIds.Add(epId);
                                 try
@@ -488,7 +483,7 @@ namespace TVRename
                                         ep.Dirty = true;
                                     }
                                 }
-                                catch (SeriesInfo.EpisodeNotFoundException)
+                                catch (ShowItem.EpisodeNotFoundException)
                                 {
                                     issues.Add(
                                         $"{si.Name} {epId} is not found: Local is missing; server is {serverUpdateTime}");
@@ -503,8 +498,7 @@ namespace TVRename
                     }
 
                     //Look for episodes that are local, but not on server
-                    IEnumerable<Episode> localEps = si.AiredSeasons.Values.SelectMany(s => s.Episodes.Values);
-                    foreach (Episode localEp in localEps)
+                    foreach (Episode localEp in si.Episodes)
                     {
                         int localEpId = localEp.EpisodeId;
                         if (!serverEpIds.Contains(localEpId))
@@ -529,19 +523,16 @@ namespace TVRename
             return showsToUpdate;
         }
 
+        [CanBeNull]
         private Episode FindEpisodeById(int id)
         {
             lock(SERIES_LOCK)
             {
                 foreach (KeyValuePair<int, SeriesInfo> kvp in series.ToList())
                 {
-                    foreach (KeyValuePair<int, Season> kvp2 in kvp.Value?.AiredSeasons??new Dictionary<int, Season>())
-                        //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
+                    foreach (Episode e in kvp.Value.Episodes.Where(e => e.EpisodeId==id))
                     {
-                        if (kvp2.Value?.Episodes?.ContainsKey(id)??false)
-                        {
-                            return kvp2.Value.Episodes[id];
-                        }
+                        return e;
                     }
                 }
             }
@@ -920,20 +911,8 @@ namespace TVRename
             // if more than x% of a show's episodes are marked as dirty, just download the entire show again
             foreach (KeyValuePair<int, SeriesInfo> kvp in series)
             {
-                int totaleps = 0;
-                int totaldirty = 0;
-                foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
-                {
-                    foreach (Episode ep in kvp2.Value.Episodes.Values)
-                    {
-                        if (ep.Dirty)
-                        {
-                            totaldirty++;
-                        }
-
-                        totaleps++;
-                    }
-                }
+                int totaleps = kvp.Value.Episodes.Count;
+                int totaldirty = kvp.Value.Episodes.Count(episode => episode.Dirty);
 
                 float percentDirty = 100;
                 if (totaldirty > 0 || totaleps > 0)
@@ -944,8 +923,7 @@ namespace TVRename
                 if (totaleps > 0 && percentDirty >= TVSettings.Instance.PercentDirtyUpgrade()) // 10%
                 {
                     kvp.Value.Dirty = true;
-                    kvp.Value.AiredSeasons.Clear();
-                    kvp.Value.DvdSeasons.Clear();
+                    kvp.Value.Episodes.Clear();
                     Logger.Info("Planning to download all of {0} as {1}% of the episodes need to be updated",
                         kvp.Value.Name, percentDirty);
                 }
@@ -1083,23 +1061,18 @@ namespace TVRename
             int serverEpisodeId = episodeData.Key;
 
             bool found = false;
-            foreach (KeyValuePair<int, Season> kvp2 in series[id].AiredSeasons)
+            foreach (Episode ep in series[id].Episodes.Where(ep => ep.EpisodeId == serverEpisodeId))
             {
-                Season seas = kvp2.Value;
+                oldEpisodeIds.Remove(serverEpisodeId);
 
-                foreach (Episode ep in seas.Episodes.Values.Where(ep => ep.EpisodeId == serverEpisodeId))
+                if (ep.SrvLastUpdated < serverUpdateTime)
                 {
-                    oldEpisodeIds.Remove(serverEpisodeId);
-
-                    if (ep.SrvLastUpdated < serverUpdateTime)
-                    {
-                        ep.Dirty = true; // mark episode as dirty.
-                        updatedEpisodeCount++;
-                    }
-
-                    found = true;
-                    break;
+                    ep.Dirty = true; // mark episode as dirty.
+                    updatedEpisodeCount++;
                 }
+
+                found = true;
+                break;
             }
 
             if (!found)
@@ -1116,12 +1089,9 @@ namespace TVRename
         private ICollection<int> GetOldEpisodeIds(int seriesId)
         {
             ICollection<int> oldEpisodeIds = new List<int>();
-            foreach (KeyValuePair<int, Season> kvp2 in GetSeries(seriesId)?.AiredSeasons ?? new Dictionary<int, Season>())
+            foreach (Episode ep in GetSeries(seriesId)?.Episodes ??new List<Episode>() )
             {
-                foreach (Episode ep in kvp2.Value.Episodes.Values)
-                {
-                    oldEpisodeIds.Add(ep.EpisodeId);
-                }
+                oldEpisodeIds.Add(ep.EpisodeId);
             }
 
             return oldEpisodeIds;
@@ -1164,17 +1134,14 @@ namespace TVRename
             foreach (KeyValuePair<int, SeriesInfo> kvp in series)
             {
                 SeriesInfo ser = kvp.Value;
-                if (ser.SrvLastUpdated == 0 || ser.AiredSeasons.Count == 0)
+                if (ser.SrvLastUpdated == 0 || ser.Episodes.Count == 0)
                 {
                     ser.Dirty = true;
                 }
 
-                foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
+                foreach (Episode ep in ser.Episodes.Where(ep => ep.SrvLastUpdated == 0))
                 {
-                    foreach (Episode ep in kvp2.Value.Episodes.Values.Where(ep => ep.SrvLastUpdated == 0))
-                    {
-                        ep.Dirty = true;
-                    }
+                    ep.Dirty = true;
                 }
             }
         }
@@ -1433,13 +1400,8 @@ namespace TVRename
 
                 SeriesInfo ser = series[e.SeriesId];
 
-                Season airedSeason = ser.GetOrAddAiredSeason(e.ReadAiredSeasonNum, e.SeasonId);
-                airedSeason.AddUpdateEpisode(e);
-
-                Season dvdSeason = ser.GetOrAddDvdSeason(e.ReadDvdSeasonNum, e.SeasonId);
-                dvdSeason.AddUpdateEpisode(e);
-
-                e.SetSeriesSeason(ser, airedSeason, dvdSeason);
+                ser.AddEpisode(e);
+                
             }
         }
 
@@ -2133,22 +2095,17 @@ namespace TVRename
         [NotNull]
         private static string EpisodeDescription(bool dvdOrder, int episodeId, [CanBeNull] Episode ep)
         {
-            string eptxt = "New Episode Id = " + episodeId;
-
-            if (ep != null)
+            if (ep == null)
             {
-                if (dvdOrder && ep.TheDvdSeason != null)
-                {
-                    eptxt = $"S{ep.TheDvdSeason.SeasonNumber:00}E{ep.DvdEpNum:00}";
-                }
-
-                if (!dvdOrder && ep.TheAiredSeason != null)
-                {
-                    eptxt = $"S{ep.TheAiredSeason.SeasonNumber:00}E{ep.AiredEpNum:00}";
-                }
+                return "New Episode Id = " + episodeId;
             }
 
-            return eptxt;
+            if (dvdOrder)
+            {
+                return $"S{ep.DvdSeasonNumber:00}E{ep.DvdEpNum:00}";
+            }
+
+            return  $"S{ep.AiredSeasonNumber:00}E{ep.AiredEpNum:00}";
         }
 
         private void AddPlaceholderSeries(int code, [CanBeNull] string name)
@@ -2164,7 +2121,7 @@ namespace TVRename
         public bool EnsureUpdated([NotNull] SeriesSpecifier seriesd, bool bannersToo)
         {
             int code = seriesd.SeriesId;
-            if (DoWeForceReloadFor(code) || series[code].AiredSeasons.Count == 0)
+            if (DoWeForceReloadFor(code) || series[code].Episodes.Count == 0)
             {
                 return DownloadSeriesNow(seriesd, true, bannersToo) != null; // the whole lot!
             }
@@ -2178,13 +2135,9 @@ namespace TVRename
                 ok = DownloadSeriesNow(seriesd, false, bannersToo) != null;
             }
 
-            foreach (KeyValuePair<int, Season> kvp in GetSeries(code)?.AiredSeasons ?? new Dictionary<int, Season>())
+            foreach (Episode e in series[code]?.Episodes.Where(e => e.Dirty && e.EpisodeId > 0))
             {
-                Season seas = kvp.Value;
-                foreach (Episode e in seas.Episodes.Values.Where(e => e.Dirty && e.EpisodeId > 0))
-                {
-                    extraEpisodes.TryAdd(e.EpisodeId,new ExtraEp(e.SeriesId, e.EpisodeId));
-                }
+                extraEpisodes.TryAdd(e.EpisodeId,new ExtraEp(e.SeriesId, e.EpisodeId));
             }
 
             Parallel.ForEach(extraEpisodes, ee =>

@@ -33,8 +33,10 @@ namespace TVRename
         private readonly List<ProcessedEpisode> episodesToAddToSeen;
         private readonly List<ProcessedEpisode> episodesToRemoveFromSeen;
 
-        public EditSeason([NotNull] ShowItem si, List<ProcessedEpisode> originalEpList, int seasonNumber, CustomEpisodeName style)
+        public EditSeason([NotNull] ShowItem si, int seasonNumber, CustomEpisodeName style)
         {
+            mOriginalEps = ShowLibrary.GenerateEpisodes(si, seasonNumber, false);
+
             nameStyle = style;
             InitializeComponent();
 
@@ -42,7 +44,6 @@ namespace TVRename
             episodesToRemoveFromSeen = new List<ProcessedEpisode>();
 
             show = si;
-            mOriginalEps = originalEpList;
             mSeasonNumber = seasonNumber;
 
             workingRuleSet = si.SeasonRules.ContainsKey(seasonNumber)
@@ -72,7 +73,7 @@ namespace TVRename
             lvSeenEpisodes.Items.Clear();
             foreach (ProcessedEpisode ep in mOriginalEps.Where(ep => ep.PreviouslySeen))
             {
-                ListViewItem lvi = new ListViewItem { Text = ep.AppropriateEpNum.ToString() };
+                ListViewItem lvi = new ListViewItem { Text = ep.EpNumsAsString() };
                 lvi.SubItems.Add(ep.Name);
                 lvi.Tag = ep;
                 lvSeenEpisodes.Items.Add(lvi);
@@ -97,7 +98,7 @@ namespace TVRename
         private void bnAddRule_Click(object sender, System.EventArgs e)
         {
             ShowRule sr = new ShowRule();
-            AddModifyRule ar = new AddModifyRule(sr, show.GetSeason(mSeasonNumber), show.DvdOrder);
+            AddModifyRule ar = new AddModifyRule(sr, show.GetSeason(mSeasonNumber), show.Order);
 
             bool res = ar.ShowDialog() == DialogResult.OK;
             if (res)
@@ -157,7 +158,7 @@ namespace TVRename
             }
 
             ShowRule sr = (ShowRule) lvRuleList.SelectedItems[0].Tag;
-            AddModifyRule ar = new AddModifyRule(sr,show.GetSeason(mSeasonNumber),show.DvdOrder);
+            AddModifyRule ar = new AddModifyRule(sr,show.GetSeason(mSeasonNumber),show.Order);
             ar.ShowDialog(); // modifies rule in-place if OK'd
             FillRuleList(false, 0);
         }

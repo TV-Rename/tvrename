@@ -86,7 +86,7 @@ namespace TVRename
             filename = filename.Replace(",", "-");
             filename = filename.Replace(" ", "-");
 
-            Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DvdSeasons : ser.AiredSeasons;
+            Dictionary<int, Season> seasonsToUse = si.AppropriateSeasons();
             if (seasonsToUse is null)
             {
                 return false;
@@ -221,8 +221,8 @@ namespace TVRename
 
             List<FileInfo> ret = new List<FileInfo>();
 
-            int seasWanted = si.DvdOrder ? epi.TheDvdSeason.SeasonNumber : epi.TheAiredSeason.SeasonNumber;
-            int epWanted = si.DvdOrder ? epi.DvdEpNum : epi.AiredEpNum;
+            int seasWanted = epi.AppropriateSeasonNumber;
+            int epWanted = epi.AppropriateEpNum;
 
             int snum = seasWanted;
 
@@ -285,8 +285,7 @@ namespace TVRename
                     return true;
                 }
 
-                Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
-                ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+                ProcessedEpisode pep = si.GetEpisode(seasF, epF);
 
                 foreach (FileInfo testFileInfo in FindEpOnDisk(dfc, si, pep))
                 {
@@ -300,7 +299,7 @@ namespace TVRename
                     return false;
                 }
             }
-            catch (SeriesInfo.EpisodeNotFoundException)
+            catch (ShowItem.EpisodeNotFoundException)
             {
                 //Ignore exception, we may need the file
                 return true;

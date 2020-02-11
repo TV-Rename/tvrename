@@ -7,6 +7,7 @@
 // 
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
@@ -120,20 +121,22 @@ namespace TVRename
 
                     ProcessedEpisode ep = eps[epIdx];
 
-                    if (ep.Type != ProcessedEpisode.ProcessedEpisodeType.merged && maxEp != -1)
+                    if (ep.Type == ProcessedEpisode.ProcessedEpisodeType.merged || maxEp == -1)
                     {
-                        LOGGER.Info(
-                            $"Looking at {ep.Show.ShowName} and have identified that episode {epNum} and {maxEp} of season {seasNum} should be merged into one file {fi.FullName}");
-
-                        ShowRule sr = new ShowRule
-                        {
-                            DoWhatNow = RuleAction.kMerge,
-                            First = epNum,
-                            Second = maxEp
-                        };
-
-                        rulesToAdd.Add(sr);
+                        continue;
                     }
+
+                    LOGGER.Info(
+                        $"Looking at {ep.Show.ShowName} and have identified that episode {epNum} and {maxEp} of season {seasNum} should be merged into one file {fi.FullName}");
+
+                    ShowRule sr = new ShowRule
+                    {
+                        DoWhatNow = RuleAction.kMerge,
+                        First = epNum,
+                        Second = maxEp
+                    };
+
+                    rulesToAdd.Add(sr);
                 } // foreach file in folder
             } // for each folder for this season of this show
 
@@ -141,7 +144,10 @@ namespace TVRename
             {
                 si.AddSeasonRule(snum, sr);
                 LOGGER.Info($"Added new rule automatically for {sr}");
+            }
 
+            if (rulesToAdd.Any())
+            { 
                 //Regenerate the episodes with the new rule added
                 ShowLibrary.GenerateEpisodeDict(si);
             }

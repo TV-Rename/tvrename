@@ -144,7 +144,7 @@ namespace TVRename
         public override IgnoreItem Ignore => whereFile is null ? null : new IgnoreItem(whereFile.FullName);
 
         protected override string SeriesName => Episode != null ? Episode.Show.ShowName :
-            season != null ? season.TheSeries.Name : show.ShowName;
+            season != null ? season.Show.ShowName : show.ShowName;
         protected override string SeasonNumber => Episode != null ? Episode.AppropriateSeasonNumber.ToString() :
             season != null ? season.SeasonNumber.ToString() : string.Empty;
         protected override string AirDate =>

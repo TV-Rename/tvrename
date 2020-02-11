@@ -41,14 +41,12 @@ namespace TVRename
         public string ShowUrl;
         public string Filename;
 
-        public int ReadAiredSeasonNum; // only use after loading to attach to the correct season!
-        public int ReadDvdSeasonNum; // only use after loading to attach to the correct season!
+        protected int ReadAiredSeasonNum; // only use after loading to attach to the correct season!
+        protected int ReadDvdSeasonNum; // only use after loading to attach to the correct season!
         public int SeasonId;
         public int SeriesId;
         public long SrvLastUpdated;
 
-        public Season TheAiredSeason;
-        public Season TheDvdSeason;
         public SeriesInfo TheSeries;
         private string mName;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
@@ -67,8 +65,6 @@ namespace TVRename
             EpisodeDirector = o.EpisodeDirector;
             Writer = o.Writer;
             mName = o.mName;
-            TheAiredSeason = o.TheAiredSeason;
-            TheDvdSeason = o.TheDvdSeason;
             TheSeries = o.TheSeries;
             SeasonId = o.SeasonId;
             Dirty = o.Dirty;
@@ -83,11 +79,13 @@ namespace TVRename
             ImdbCode = o.ImdbCode;
             ShowUrl = o.ShowUrl;
             Filename = o.Filename;
+            ReadAiredSeasonNum = o.ReadAiredSeasonNum;
+            ReadDvdSeasonNum = o.ReadDvdSeasonNum;
         }
 
-        protected Episode(SeriesInfo ser, Season airSeason, Season dvdSeason)
+        protected Episode(SeriesInfo ser)
         {
-            SetDefaults(ser, airSeason, dvdSeason);
+            SetDefaults(ser);
         }
 
         [CanBeNull]
@@ -123,7 +121,7 @@ namespace TVRename
             //  blah blah
             // </Episode>
 
-            SetDefaults(null, null, null);
+            SetDefaults(null);
             EpisodeId = r.ExtractInt("id",-1);
             SeriesId = r.ExtractInt("seriesid",-1); // thetvdb series id
             SeasonId = r.ExtractInt("airedSeasonID") ?? r.ExtractInt("seasonid",-1);
@@ -179,7 +177,7 @@ namespace TVRename
 
         public Episode(int seriesId, [NotNull] JObject json, JObject jsonInDefaultLang)
         {
-            SetDefaults(null, null, null);
+            SetDefaults(null);
             LoadJson(seriesId, json, jsonInDefaultLang);
         }
 
@@ -190,7 +188,7 @@ namespace TVRename
             //  blah blah
             // </Episode>
 
-            SetDefaults(null, null, null);
+            SetDefaults(null);
 
             LoadJson(seriesId, r);
         }
@@ -317,13 +315,9 @@ namespace TVRename
             set => mName = System.Web.HttpUtility.HtmlDecode(value);
         }
 
-        public int AiredSeasonNumber => TheAiredSeason?.SeasonNumber ?? -1;
+        public int AiredSeasonNumber => ReadAiredSeasonNum;
 
-        public int DvdSeasonNumber => TheDvdSeason?.SeasonNumber ?? -1;
-
-        public int AiredSeasonIndex => TheAiredSeason?.SeasonIndex ?? -1;
-
-        public int DvdSeasonIndex => TheDvdSeason?.SeasonIndex ?? -1;
+        public int DvdSeasonNumber => ReadDvdSeasonNum;
 
         public bool SameAs([NotNull] Episode o) => EpisodeId == o.EpisodeId;
 
@@ -351,11 +345,8 @@ namespace TVRename
             return returnVal;
         }
 
-        private void SetDefaults(SeriesInfo ser, Season airSeas, Season dvdSeason)
+        private void SetDefaults(SeriesInfo ser)
         {
-            TheAiredSeason = airSeas;
-            TheDvdSeason = dvdSeason;
-
             TheSeries = ser;
 
             Overview = "";
@@ -375,10 +366,8 @@ namespace TVRename
             Dirty = false;
         }
 
-        public void SetSeriesSeason(SeriesInfo ser, Season airedSeas, Season dvdSeason)
+        public void SetSeriesSeason(SeriesInfo ser)
         {
-            TheAiredSeason = airedSeas;
-            TheDvdSeason = dvdSeason;
             TheSeries = ser;
         }
 
@@ -419,6 +408,36 @@ namespace TVRename
             writer.WriteElement("Filename", Filename, true);
 
             writer.WriteEndElement(); //Episode
+        }
+
+        public int GetSeasonNumber(Season.SeasonType order)
+        {
+            switch (order)
+            {
+                case Season.SeasonType.dvd:
+                    return DvdSeasonNumber;
+
+                case Season.SeasonType.aired:
+                    return AiredSeasonNumber;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(order), order, null);
+            }
+        }
+
+        public int GetEpisodeNumber(Season.SeasonType order)
+        {
+            switch (order)
+            {
+                case Season.SeasonType.dvd:
+                    return DvdEpNum;
+
+                case Season.SeasonType.aired:
+                    return AiredEpNum;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(order), order, null);
+            }
         }
     }
 }

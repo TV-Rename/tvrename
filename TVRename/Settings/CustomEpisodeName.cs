@@ -124,12 +124,12 @@ namespace TVRename
             string epname = ep.Name;
 
             name = name.ReplaceInsensitive("{ShowName}", show.ShowName);
-            if (dvdOrder)
+            if (show.Order ==Season.SeasonType.dvd)
             {
                 name = name.ReplaceInsensitive("{Season}", ep.DvdSeasonNumber.ToString());
                 name = name.ReplaceInsensitive("{Season:2}", ep.DvdSeasonNumber.ToString("00"));
-                name = name.ReplaceInsensitive("{SeasonNumber}", ep.DvdSeasonIndex.ToString());
-                name = name.ReplaceInsensitive("{SeasonNumber:2}", ep.DvdSeasonIndex.ToString("00"));
+                name = name.ReplaceInsensitive("{SeasonNumber}", show.GetSeasonIndex(ep.DvdSeasonNumber).ToString());
+                name = name.ReplaceInsensitive("{SeasonNumber:2}", show.GetSeasonIndex(ep.DvdSeasonNumber).ToString("00"));
                 name = name.ReplaceInsensitive("{Episode}", ep.DvdEpNum.ToString("00"));
                 name = name.ReplaceInsensitive("{Episode2}", ep.DvdEpNum.ToString("00"));
                 name = Regex.Replace(name, "{AllEpisodes}", ep.DvdEpNum.ToString("00"));
@@ -138,8 +138,8 @@ namespace TVRename
             {
                 name = name.ReplaceInsensitive("{Season}", ep.AiredSeasonNumber.ToString());
                 name = name.ReplaceInsensitive("{Season:2}", ep.AiredSeasonNumber.ToString("00"));
-                name = name.ReplaceInsensitive("{SeasonNumber}", ep.AiredSeasonIndex.ToString());
-                name = name.ReplaceInsensitive("{SeasonNumber:2}", ep.AiredSeasonIndex.ToString("00"));
+                name = name.ReplaceInsensitive("{SeasonNumber}", show.GetSeasonIndex(ep.AiredSeasonNumber).ToString());
+                name = name.ReplaceInsensitive("{SeasonNumber:2}", show.GetSeasonIndex(ep.AiredSeasonNumber).ToString("00"));
                 name = name.ReplaceInsensitive("{Episode}", ep.AiredEpNum.ToString("00"));
                 name = name.ReplaceInsensitive("{Episode2}", ep.AiredEpNum.ToString("00"));
                 name = Regex.Replace(name, "{AllEpisodes}", ep.AiredEpNum.ToString("00"));

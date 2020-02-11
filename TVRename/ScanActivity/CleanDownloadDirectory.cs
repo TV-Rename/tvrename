@@ -148,8 +148,7 @@ namespace TVRename
                 throw new ArgumentNullException(nameof(s));
             }
 
-            Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
-            ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+            ProcessedEpisode pep = si.GetEpisode(seasF, epF);
             LOGGER.Info(
                 $"Removing {di.FullName} as it matches {matchingShows[0].ShowName} and no episodes are needed");
 

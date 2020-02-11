@@ -33,5 +33,9 @@ namespace TVRename
         {
             return listToClone.Select(item => item).ToList();
         }
+        public static void ForEach<T>([NotNull] this IEnumerable<T> source, Action<T> action)
+        {   
+            foreach (T item in source) { action(item); }
+        }
     }
 }
