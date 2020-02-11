@@ -130,8 +130,8 @@ namespace TVRename
 
                             if (timeAgo < closestDate)
                             {
-                                seas = si.DvdOrder ? epi.DvdSeasonNumber : epi.AiredSeasonNumber;
-                                ep = si.DvdOrder ? epi.DvdEpNum : epi.AiredEpNum;
+                                seas = epi.GetSeasonNumber(si.Order);
+                                ep = epi.GetEpisodeNumber(si.Order);
                                 closestDate = timeAgo;
                             }
                         }

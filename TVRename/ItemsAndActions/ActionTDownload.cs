@@ -105,7 +105,7 @@ namespace TVRename
         [NotNull]
         private static string SaveDownloadedData(byte[] r,string name)
         {
-            string saveTemp = Path.GetTempPath() + Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(name);
+            string saveTemp = Path.GetTempPath().EnsureEndsWithSeparator() + TVSettings.Instance.FilenameFriendly(name);
             if (new FileInfo(saveTemp).Extension.ToLower() != "torrent")
             {
                 saveTemp += ".torrent";

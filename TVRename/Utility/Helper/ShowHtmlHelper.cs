@@ -498,14 +498,19 @@ namespace TVRename
 
         public static string SeasonName([NotNull] ShowItem si, int snum)
         {
-            if (si.DvdOrder)
+            switch (si.Order)
             {
-                return snum == 0
-                    ? "Not Available on DVD"
-                    : "DVD " + Season.UISeasonWord(snum);
-            }
+                case Season.SeasonType.dvd:
+                    return snum == 0
+                        ? "Not Available on DVD"
+                        : "DVD " + Season.UISeasonWord(snum);
 
-            return Season.UIFullSeasonWord(snum);
+                case Season.SeasonType.aired:
+                    return Season.UIFullSeasonWord(snum);
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         [NotNull]
@@ -713,16 +718,7 @@ namespace TVRename
                 string episodeUrl = TheTVDB.WebsiteUrl(ei.SeriesId, ei.SeasonId, ei.EpisodeId);
 
                 body += "<A href=\"" + episodeUrl + "\" name=\"ep" + epl + "\">"; // anchor
-                if (si.DvdOrder && snum == 0)
-                {
-                    body += "<b>" + ei.Name + "</b>";
-                }
-                else
-                {
-                    body += "<b>" + HttpUtility.HtmlEncode(CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(6))) +
-                            "</b>";
-                }
-
+                body += "<b>" + EpisodeName(si, snum, ei) + "</b>";
                 body += "</A>"; // anchor
                 if (si.UseSequentialMatch && ei.OverallNumber != -1)
                 {
@@ -774,6 +770,16 @@ namespace TVRename
             } // for each episode in this season
 
             return body;
+        }
+
+        [NotNull]
+        private static string EpisodeName([NotNull] ShowItem si, int snum,  [NotNull] ProcessedEpisode ei)
+        {
+            if (si.Order == Season.SeasonType.dvd && snum == 0)
+            {
+                return ei.Name ;
+            }
+            return HttpUtility.HtmlEncode(CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(6)));
         }
 
         private static string GetOverview([NotNull] ProcessedEpisode ei)

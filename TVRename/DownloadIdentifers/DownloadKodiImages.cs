@@ -156,9 +156,7 @@ namespace TVRename
                     foreach (Episode sourceEp in dbep.SourceEpisodes)
                     {
                         string foldername = filo.DirectoryName;
-                        string filename =
-                            TVSettings.Instance.FilenameFriendly(
-                                TVSettings.Instance.NamingStyle.GetTargetEpisodeName(dbep.Show,sourceEp,dbep.Show.GetTimeZone(), dbep.Show.DvdOrder));
+                        string filename = TVSettings.Instance.FilenameFriendly(dbep.Show,sourceEp);
                         ActionDownloadImage b = DoEpisode(dbep.Show,sourceEp,new FileInfo(foldername+"/"+filename), ".jpg", forceRefresh);
                         if (b != null)
                         {

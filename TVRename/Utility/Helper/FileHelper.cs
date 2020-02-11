@@ -428,26 +428,24 @@ namespace TVRename
 
         public static bool Same([NotNull] DirectoryInfo a, [NotNull] DirectoryInfo b)
         {
-            string n1 = a.FullName;
-            string n2 = b.FullName;
-            if (!n1.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
-            {
-                n1 += Path.DirectorySeparatorChar;
-            }
+            string n1 = a.FullName.EnsureEndsWithSeparator();
+            string n2 = b.FullName.EnsureEndsWithSeparator();
 
-            if (!n2.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
-            {
-                n2 += Path.DirectorySeparatorChar;
-            }
-
-            return string.Compare(n1, n2, StringComparison.OrdinalIgnoreCase) == 0; // true->ignore case
+            return string.Compare(n1, n2, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
         [NotNull]
-        public static FileInfo FileInFolder([NotNull] string dir, string fn)
+        public static string EnsureEndsWithSeparator([NotNull] this string source)
         {
-            return new FileInfo(string.Concat(dir, dir.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal) ? "" : Path.DirectorySeparatorChar.ToString(), fn));
+            if (!source.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
+            {
+                return source.Trim();
+            }
+            return source.Trim() + Path.DirectorySeparatorChar;
         }
+
+        [NotNull]
+        public static FileInfo FileInFolder([NotNull] string dir, string fn) => new FileInfo(dir.EnsureEndsWithSeparator()+ fn);
 
         [NotNull]
         public static FileInfo FileInFolder([NotNull] DirectoryInfo di, string fn) => FileInFolder(di.FullName, fn);

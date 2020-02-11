@@ -62,16 +62,10 @@ namespace TVRename
         {
             get
             {
-                int min = Episodes.Select(e => e.GetAirDateDt())
+                return Episodes.Select(e => e.GetAirDateDt())
                         .Where(adt => adt.HasValue)
                         .Select(adt => adt.Value)
-                        .Select(airDateTime => airDateTime.Year).Concat(new[] { 9999 }).Min();
-
-                if (min == 9999)
-                {
-                    return null;
-                }
-                return min;
+                        .Min(airDateTime => (int?) airDateTime.Year);
             }
         }
 
@@ -79,16 +73,10 @@ namespace TVRename
         {
             get
             {
-                int max = Episodes.Select(e => e.GetAirDateDt())
+                return Episodes.Select(e => e.GetAirDateDt())
                     .Where(adt => adt.HasValue)
                     .Select(adt => adt.Value)
-                    .Select(airDateTime => airDateTime.Year).Concat(new[] {0}).Max();
-
-                if (max == 0)
-                {
-                    return null;
-                }
-                return max;
+                    .Max(airDateTime => (int?)airDateTime.Year);
             }
         }
 

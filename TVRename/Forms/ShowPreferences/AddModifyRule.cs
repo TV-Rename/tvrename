@@ -7,6 +7,7 @@
 // 
 using System;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -25,11 +26,11 @@ namespace TVRename
         private readonly Season mSeason;
         private readonly Season.SeasonType mOrder;
 
-        public AddModifyRule(ShowRule rule, Season season, Season.SeasonType order)
+        public AddModifyRule(ShowRule rule, [NotNull] ShowItem show, int seasonNumber)
         {
             mRule = rule;
-            mSeason = season;
-            mOrder= order;
+            mSeason = show.GetSeason(seasonNumber);
+            mOrder= show.Order;
 
             InitializeComponent();
 

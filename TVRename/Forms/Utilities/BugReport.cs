@@ -79,7 +79,7 @@ namespace TVRename
         {
             foreach (ShowItem si in mDoc.Library.GetShowItems())
             {
-                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
+                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.ActiveSeasons)
                 {
                     int snum = kvp.Key;
                     if (snum == 0 && !si.CountSpecials)

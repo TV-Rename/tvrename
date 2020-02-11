@@ -122,10 +122,8 @@ namespace TVRename
 
         public int GetSeasonIndex(int seasonNumber)
         {
-            Dictionary<int, Season> appropriateSeasons = Order == Season.SeasonType.aired ? airedSeasons : dvdSeasons;
-
             List<int> seasonNumbers = new List<int>();
-            foreach (KeyValuePair<int, Season> sn in appropriateSeasons)
+            foreach (KeyValuePair<int, Season> sn in AppropriateSeasons())
             {
                 if (sn.Value.IsSpecial)
                 {
@@ -145,9 +143,9 @@ namespace TVRename
         {
         }
 
-        public bool HasAnyAirdates(int snum, Season.SeasonType type)
+        private bool HasAnyAirdates(int snum)
         {
-            Dictionary<int, Season> seasonsToUse = type == Season.SeasonType.dvd ? dvdSeasons : airedSeasons;
+            Dictionary<int, Season> seasonsToUse = AppropriateSeasons();
 
             return seasonsToUse.ContainsKey(snum) && seasonsToUse[snum].Episodes.Values.Any(e => e.FirstAired != null);
         }
@@ -596,6 +594,18 @@ namespace TVRename
         [CanBeNull]
         public Language  PreferredLanguage => UseCustomLanguage ? TheTVDB.Instance.LanguageList.GetLanguageFromCode(CustomLanguageCode) : TheTVDB.Instance.PreferredLanguage;
 
+        [NotNull]
+        public IEnumerable<KeyValuePair<int, List<ProcessedEpisode>>> ActiveSeasons
+        {
+            get
+            {
+                return SeasonEpisodes
+                    .Where(pair => !IgnoreSeasons.Contains(pair.Key)) //not an ignored season
+                    .Where(pair => !(pair.Key == 0 && TVSettings.Instance.IgnoreAllSpecials)) //not a specials where all specials are ignored
+                    .Where(pair => !(pair.Key == 0 && CountSpecials)); //not a specials where this shows specials are ignored
+            }
+        }
+
         private void SetDefaults()
         {
             ManualFolderLocations = new Dictionary<int, List<string>>();
@@ -630,7 +640,7 @@ namespace TVRename
             AutoAddFolderBase =
                   !TVSettings.Instance.DefShowAutoFolders ? string.Empty
                 : !TVSettings.Instance.DefShowUseDefLocation ?string.Empty
-                :  TVSettings.Instance.DefShowLocation + Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(ShowName)); 
+                :  TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator() + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(ShowName)); 
 
             AutoAddType =
                 !TVSettings.Instance.DefShowAutoFolders ? AutomaticFolderType.none
@@ -836,18 +846,8 @@ namespace TVRename
 
             if (AutoAddNewSeasons() && !string.IsNullOrEmpty(AutoAddFolderBase))
             {
-                foreach (int i in SeasonEpisodes.Keys.ToList())
+                foreach (int i in ActiveSeasons.Keys())
                 {
-                    if (IgnoreSeasons.Contains(i))
-                    {
-                        continue;
-                    }
-
-                    if (i == 0 && TVSettings.Instance.IgnoreAllSpecials)
-                    {
-                        continue;
-                    }
-
                     if (ManualFoldersReplaceAutomatic && fld.ContainsKey(i))
                     {
                         continue;
@@ -945,17 +945,17 @@ namespace TVRename
             return Actors.Select(x => x.ActorName);
         }
 
-        public bool NoAirdatesUntilNow(int snum)
+        public bool NoAirdatesUntilNow(int maxSeasonNumber)
         {
             int lastPossibleSeason = SeasonEpisodes.Keys.DefaultIfEmpty(0).Max();
 
             // for specials "season", see if any season has any aired dates
             // otherwise, check only up to the season we are considering
-            int maxSeasonToUse = snum == 0 ? lastPossibleSeason : snum;
+            int maxSeasonToUse = maxSeasonNumber == 0 ? lastPossibleSeason : maxSeasonNumber;
 
-            foreach (int i in Enumerable.Range(1, maxSeasonToUse))
+            foreach (int snum in Enumerable.Range(1, maxSeasonToUse))
             {
-                if (HasAnyAirdates(i, Order))
+                if (HasAnyAirdates(snum))
                 {
                     return false;
                 }

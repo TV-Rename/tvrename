@@ -429,7 +429,7 @@ namespace TVRename
                 }
                 string filename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pep,fi.Extension,folder.Length));
 
-                FileInfo targetFile = new FileInfo(folder + Path.DirectorySeparatorChar + filename);
+                FileInfo targetFile = new FileInfo(folder.EnsureEndsWithSeparator() + filename);
 
                 if (fi.FullName == targetFile.FullName)
                 {

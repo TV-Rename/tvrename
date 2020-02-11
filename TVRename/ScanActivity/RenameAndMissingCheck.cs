@@ -49,24 +49,14 @@ namespace TVRename
 
             // process each folder for each season...
 
-            foreach (int snum in si.SeasonEpisodes.Keys.ToList())
+            foreach (int snum in si.ActiveSeasons.Keys())
             {
                 if (settings.Token.IsCancellationRequested)
                 {
                     return;
                 }
 
-                if (si.IgnoreSeasons.Contains(snum) || !allFolders.ContainsKey(snum))
-                {
-                    continue;
-                }
-
-                if (snum == 0 && si.CountSpecials)
-                {
-                    continue;
-                }
-
-                if (snum == 0 && TVSettings.Instance.IgnoreAllSpecials)
+                if (!allFolders.ContainsKey(snum))
                 {
                     continue;
                 }
@@ -230,9 +220,7 @@ namespace TVRename
                         bool siForceCheckFuture = (si.ForceCheckFuture || notFuture) && dtOk;
                         bool siForceCheckNoAirdate = si.ForceCheckNoAirdate && !dtOk;
 
-                        if (noAirdatesUntilNow ||
-                            siForceCheckFuture ||
-                            siForceCheckNoAirdate)
+                        if (noAirdatesUntilNow || siForceCheckFuture || siForceCheckNoAirdate)
                         {
                             // then add it as officially missing
                             Doc.TheActionList.Add(new ItemMissing(dbep, folder));

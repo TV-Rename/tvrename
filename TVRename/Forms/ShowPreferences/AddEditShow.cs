@@ -13,7 +13,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 using TVRename.Forms.ShowPreferences;
 
@@ -603,8 +602,7 @@ namespace TVRename
             if (addingNewShow && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation)
             {
                 txtBaseFolder.Text =
-                    TVSettings.Instance.DefShowLocation
-                    + Path.DirectorySeparatorChar 
+                    TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator()
                     + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(codeFinderForm.SelectedShow()?.Name));
             }
         }

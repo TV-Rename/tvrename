@@ -197,6 +197,12 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> AutoAddMovieTermsArray => Convert(AutoAddMovieTerms);
 
+        internal string FilenameFriendly([NotNull] ShowItem show, [NotNull] Episode sourceEp)
+        {
+            // ReSharper disable once ArrangeMethodOrOperatorBody
+            return FilenameFriendly(NamingStyle.GetTargetEpisodeName(show, sourceEp));
+        }
+
         public string PriorityReplaceTerms = "PROPER;REPACK;RERIP";
         [NotNull]
         public IEnumerable<string> PriorityReplaceTermsArray => Convert(PriorityReplaceTerms);

@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
-using NodaTime;
 
 // This builds the filenames to rename to, for any given episode (or multi-episode episode)
 
@@ -112,38 +111,44 @@ namespace TVRename
         }
 
         [NotNull]
-        public string GetTargetEpisodeName([NotNull] ShowItem show, [NotNull] Episode ep, DateTimeZone tz, bool dvdOrder)
-            => GetTargetEpisodeName(show, ep,  tz, dvdOrder, false);
+        public string GetTargetEpisodeName([NotNull] ShowItem show, [NotNull] Episode ep)
+            => GetTargetEpisodeName(show, ep, false);
 
         [NotNull]
-        private string GetTargetEpisodeName([NotNull] ShowItem show, [NotNull] Episode ep, DateTimeZone tz, bool dvdOrder, bool urlEncode)
+        private string GetTargetEpisodeName([NotNull] ShowItem show, [NotNull] Episode ep,bool urlEncode)
         {
+
             //note this is for an Episode and not a ProcessedEpisode
             string name = StyleString;
 
             string epname = ep.Name;
 
             name = name.ReplaceInsensitive("{ShowName}", show.ShowName);
-            if (show.Order ==Season.SeasonType.dvd)
+            switch (show.Order)
             {
-                name = name.ReplaceInsensitive("{Season}", ep.DvdSeasonNumber.ToString());
-                name = name.ReplaceInsensitive("{Season:2}", ep.DvdSeasonNumber.ToString("00"));
-                name = name.ReplaceInsensitive("{SeasonNumber}", show.GetSeasonIndex(ep.DvdSeasonNumber).ToString());
-                name = name.ReplaceInsensitive("{SeasonNumber:2}", show.GetSeasonIndex(ep.DvdSeasonNumber).ToString("00"));
-                name = name.ReplaceInsensitive("{Episode}", ep.DvdEpNum.ToString("00"));
-                name = name.ReplaceInsensitive("{Episode2}", ep.DvdEpNum.ToString("00"));
-                name = Regex.Replace(name, "{AllEpisodes}", ep.DvdEpNum.ToString("00"));
+                case Season.SeasonType.dvd:
+                    name = name.ReplaceInsensitive("{Season}", ep.DvdSeasonNumber.ToString());
+                    name = name.ReplaceInsensitive("{Season:2}", ep.DvdSeasonNumber.ToString("00"));
+                    name = name.ReplaceInsensitive("{SeasonNumber}", show.GetSeasonIndex(ep.DvdSeasonNumber).ToString());
+                    name = name.ReplaceInsensitive("{SeasonNumber:2}", show.GetSeasonIndex(ep.DvdSeasonNumber).ToString("00"));
+                    name = name.ReplaceInsensitive("{Episode}", ep.DvdEpNum.ToString("00"));
+                    name = name.ReplaceInsensitive("{Episode2}", ep.DvdEpNum.ToString("00"));
+                    name = Regex.Replace(name, "{AllEpisodes}", ep.DvdEpNum.ToString("00")); break;
+
+                case Season.SeasonType.aired:
+                    name = name.ReplaceInsensitive("{Season}", ep.AiredSeasonNumber.ToString());
+                    name = name.ReplaceInsensitive("{Season:2}", ep.AiredSeasonNumber.ToString("00"));
+                    name = name.ReplaceInsensitive("{SeasonNumber}", show.GetSeasonIndex(ep.AiredSeasonNumber).ToString());
+                    name = name.ReplaceInsensitive("{SeasonNumber:2}", show.GetSeasonIndex(ep.AiredSeasonNumber).ToString("00"));
+                    name = name.ReplaceInsensitive("{Episode}", ep.AiredEpNum.ToString("00"));
+                    name = name.ReplaceInsensitive("{Episode2}", ep.AiredEpNum.ToString("00"));
+                    name = Regex.Replace(name, "{AllEpisodes}", ep.AiredEpNum.ToString("00"));
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            else
-            {
-                name = name.ReplaceInsensitive("{Season}", ep.AiredSeasonNumber.ToString());
-                name = name.ReplaceInsensitive("{Season:2}", ep.AiredSeasonNumber.ToString("00"));
-                name = name.ReplaceInsensitive("{SeasonNumber}", show.GetSeasonIndex(ep.AiredSeasonNumber).ToString());
-                name = name.ReplaceInsensitive("{SeasonNumber:2}", show.GetSeasonIndex(ep.AiredSeasonNumber).ToString("00"));
-                name = name.ReplaceInsensitive("{Episode}", ep.AiredEpNum.ToString("00"));
-                name = name.ReplaceInsensitive("{Episode2}", ep.AiredEpNum.ToString("00"));
-                name = Regex.Replace(name, "{AllEpisodes}", ep.AiredEpNum.ToString("00"));
-            }
+
             name = name.ReplaceInsensitive("{EpisodeName}", epname);
             name = name.ReplaceInsensitive("{Number}", "");
             name = name.ReplaceInsensitive("{Number:2}", "");
@@ -154,10 +159,10 @@ namespace TVRename
             name = name.ReplaceInsensitive("{ShowImdb}", si?.Imdb??string.Empty);
             name = name.ReplaceInsensitive("{Year}", si?.MinYear.ToString() ?? string.Empty);
 
-            Season selectedSeason = show.GetSeason(dvdOrder ? ep.DvdSeasonNumber : ep.AiredSeasonNumber);
+            Season selectedSeason = show.GetSeason(ep.GetSeasonNumber(show.Order) );
             name = name.ReplaceInsensitive("{SeasonYear}", selectedSeason != null ? selectedSeason.MinYear().ToString() : string.Empty);
 
-            name = ReplaceDates(urlEncode, name, ep.GetAirDateDt(tz));
+            name = ReplaceDates(urlEncode, name, ep.GetAirDateDt(show.GetTimeZone()));
 
             name = Regex.Replace(name, "([^\\\\])\\[.*?[^\\\\]\\]", "$1"); // remove optional parts
 

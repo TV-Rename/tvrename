@@ -405,7 +405,7 @@ namespace TVRename
                 PreventAutoScan("Scan "+st.PrettyPrint());
 
                 //Get the default set of shows defined by the specified type
-                List<ShowItem> shows = passedShows ?? GetShowList(st);
+                IEnumerable<ShowItem> shows = passedShows ?? GetShowList(st);
 
                 //If still null then return
                 if (shows is null)
@@ -493,7 +493,7 @@ namespace TVRename
         }
 
         [CanBeNull]
-        private List<ShowItem> GetShowList(TVSettings.ScanType st)
+        private IEnumerable<ShowItem> GetShowList(TVSettings.ScanType st)
         {
             switch (st)
             {

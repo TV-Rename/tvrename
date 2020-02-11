@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using Path = Alphaleonis.Win32.Filesystem.Path;
 
 namespace TVRename.Forms.Tools
 {
@@ -134,7 +133,7 @@ namespace TVRename.Forms.Tools
                         droppedFile.DirectoryName.Length));
 
                 FileInfo targetFile =
-                    new FileInfo(droppedFile.DirectoryName + Path.DirectorySeparatorChar + filename);
+                    new FileInfo(droppedFile.DirectoryName.EnsureEndsWithSeparator() + filename);
 
                 if (droppedFile.FullName == targetFile.FullName)
                 {

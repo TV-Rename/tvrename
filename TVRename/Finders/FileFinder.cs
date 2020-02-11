@@ -14,7 +14,6 @@ using System.Linq;
 using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
-using Path = Alphaleonis.Win32.Filesystem.Path;
 
 namespace TVRename
 {
@@ -66,8 +65,7 @@ namespace TVRename
                 if (preventMove)
                 {
                     //We do not want to move the file, just rename it
-                    fi = new FileInfo(dce.DirectoryName + Path.DirectorySeparatorChar + me.Filename +
-                                      dce.Extension);
+                    fi = new FileInfo(dce.DirectoryName.EnsureEndsWithSeparator() + me.Filename + dce.Extension);
                 }
 
                 if (dce.FullName != fi.FullName && !FindExistingActionFor(addTo,dce)){

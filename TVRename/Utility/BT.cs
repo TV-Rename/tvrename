@@ -68,7 +68,7 @@ namespace TVRename
 
         public virtual string AsText()
         {
-            return string.Concat("Type =", Type.ToString());
+            return $"Type ={Type}";
         }
 
         public virtual void Tree(TreeNodeCollection tn)
@@ -138,7 +138,7 @@ namespace TVRename
 
         public override void Tree(TreeNodeCollection tn)
         {
-            TreeNode n = new TreeNode(string.Concat("String:", AsString()));
+            TreeNode n = new TreeNode($"String:{AsString()}");
             tn.Add(n);
         }
 
@@ -177,7 +177,7 @@ namespace TVRename
 
         public override string AsText()
         {
-            return string.Concat("Error:", Message);
+            return $"Error:{Message}";
         }
 
         public override void Tree(TreeNodeCollection tn)
@@ -226,7 +226,7 @@ namespace TVRename
             if ((Key == "pieces") && (Data.Type == BTChunk.kString))
                 return "<File hash data>";
 
-            return string.Concat(Key, "=>", Data.AsText());
+            return $"{Key}=>{Data.AsText()}";
         }
 
         public override void Tree(TreeNodeCollection tn)
@@ -594,7 +594,7 @@ namespace TVRename
 
             BTError e = new BTError
             {
-                Message = string.Concat("Error: unknown BEncode item type: ", c)
+                Message = $"Error: unknown BEncode item type: {c}"
             };
 
             return e;
@@ -1222,11 +1222,7 @@ namespace TVRename
                         m.Show, Rexps,
                         out TVSettings.FilenameProcessorRE rex);
 
-                    bool matchSeasonEpisode = m.Show.DvdOrder
-                        ? (seasF == m.AiredSeasonNumber) && (epF == m.AiredEpNum)
-                        : (seasF == m.DvdSeasonNumber) && (epF == m.DvdEpNum);
-
-                    if (findFile && matchSeasonEpisode)
+                    if (findFile && (seasF == m.AppropriateSeasonNumber) && (epF == m.AppropriateEpNum))
                     {
                         // match!
                         // get extension from nameInTorrent

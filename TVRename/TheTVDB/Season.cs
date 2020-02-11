@@ -106,7 +106,7 @@ namespace TVRename
             return Episodes.Values.Select(e => e.GetAirDateDt())
                 .Where(adt => adt.HasValue)
                 .Select(adt => adt.Value)
-                .Select(airDateTime => airDateTime.Year).Concat(new[] {9999}).Min();
+                .MinOrDefault(airDateTime => airDateTime.Year,9999);
         }
 
         internal int MaxYear()
@@ -114,7 +114,7 @@ namespace TVRename
             return Episodes.Values.Select(e => e.GetAirDateDt())
                 .Where(adt => adt.HasValue)
                 .Select(adt => adt.Value)
-                .Select(airDateTime => airDateTime.Year).Concat(new[] {0}).Max();
+                .MaxOrDefault(airDateTime => airDateTime.Year,0);
         }
 
         private bool HasEpisodes => Episodes != null && Episodes.Count > 0;
@@ -233,7 +233,7 @@ namespace TVRename
 
         public bool NextEpisodeIs(int episodeNumber, SeasonType order)
         {
-            int maxEpNum = (from ep in Episodes.Values select ep.GetEpisodeNumber(order)).Concat(new[] {0}).Max();
+            int maxEpNum = Episodes.Values.MaxOrDefault(ep => ep.GetEpisodeNumber(order),0);
 
             return episodeNumber==maxEpNum+1;
         }
