@@ -78,7 +78,6 @@ namespace TVRename
                 writer.WriteEndElement(); //ratings
             }
 
-
             writer.WriteElement("season", episode.GetSeasonNumber(show.Order));
             writer.WriteElement("episode", episode.GetEpisodeNumber(show.Order));
             writer.WriteElement("plot", episode.Overview);

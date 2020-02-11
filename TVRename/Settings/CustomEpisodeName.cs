@@ -115,9 +115,8 @@ namespace TVRename
             => GetTargetEpisodeName(show, ep, false);
 
         [NotNull]
-        private string GetTargetEpisodeName([NotNull] ShowItem show, [NotNull] Episode ep,bool urlEncode)
+        private string GetTargetEpisodeName([NotNull] ShowItem show, [NotNull] Episode ep, bool urlEncode)
         {
-
             //note this is for an Episode and not a ProcessedEpisode
             string name = StyleString;
 

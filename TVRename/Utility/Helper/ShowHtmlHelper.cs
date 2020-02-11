@@ -777,7 +777,7 @@ namespace TVRename
         {
             if (si.Order == Season.SeasonType.dvd && snum == 0)
             {
-                return ei.Name ;
+                return ei.Name;
             }
             return HttpUtility.HtmlEncode(CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(6)));
         }

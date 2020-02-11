@@ -1401,7 +1401,6 @@ namespace TVRename
                 SeriesInfo ser = series[e.SeriesId];
 
                 ser.AddEpisode(e);
-                
             }
         }
 

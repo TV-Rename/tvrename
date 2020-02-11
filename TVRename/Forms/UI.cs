@@ -2457,7 +2457,6 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public static string GenerateShowUIName([CanBeNull] ProcessedEpisode episode) => GenerateShowUIName(episode?.TheSeries, episode?.Show);
 
-
         // ReSharper disable once InconsistentNaming
         private static string GenerateShowUIName([NotNull] ShowItem si)
         {

@@ -227,7 +227,7 @@ namespace TVRename
             {
                 season = seasons[snum];
 
-                List<ProcessedEpisode> eis = si.SeasonEpisodes[snum] ;
+                List<ProcessedEpisode> eis = si.SeasonEpisodes[snum];
 
                 foreach (ProcessedEpisode ei in eis)
                 {

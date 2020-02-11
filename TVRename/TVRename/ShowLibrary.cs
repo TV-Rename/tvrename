@@ -745,11 +745,8 @@ namespace TVRename
                     continue;
                 }
 
-                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.ActiveSeasons)
+                foreach (List<ProcessedEpisode> eis in si.ActiveSeasons.Select(p => p.Value))
                 {
-
-                    List<ProcessedEpisode> eis = kvp.Value;
-
                     bool nextToAirFound = false;
 
                     foreach (ProcessedEpisode ei in eis)

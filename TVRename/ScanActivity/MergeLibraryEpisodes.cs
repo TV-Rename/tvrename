@@ -55,7 +55,6 @@ namespace TVRename
 
                 // all the folders for this particular season
                 MergeShowEpisodes(si, dfc, settings.Token, snum, allFolders[snum]);
-
             } // for each season of this show
         }
 
