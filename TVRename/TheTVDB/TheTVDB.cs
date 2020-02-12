@@ -2322,66 +2322,129 @@ namespace TVRename
         }
 
         [NotNull]
-        public string WebsiteUrl(int seriesId, int seasonId, bool summaryPage)
+        public static string WebsiteShowUrl([NotNull] ShowItem si)
         {
-            // Summary: http://www.thetvdb.com/?tab=series&id=75340&lid=7
-            // Season 3: http://www.thetvdb.com/?tab=season&seriesid=75340&seasonid=28289&lid=7
-
-            if (summaryPage || seasonId <= 0 || !series.ContainsKey(seriesId))
-            {
-                return $"{WebsiteRoot}/?tab=series&id={seriesId}";
-            }
-
-            return $"{WebsiteRoot}/?tab=season&seriesid={seriesId}&seasonid={seasonId}";
+            return string.IsNullOrWhiteSpace(si.TheSeries()?.Slug) ? WebsiteShowUrl(si.TvdbCode) : WebsiteShowUrl(si.TheSeries()?.Slug);
         }
 
         [NotNull]
-        public static string WebsiteUrl(int seriesId, int seasonId, int episodeId)
+        public static string WebsiteShowUrl(int seriesId)
+        {
+            //return $"{WebsiteRoot}/series/{seriesId}";
+            return $"{WebsiteRoot}/?tab=series&id={seriesId}";
+        }
+        [NotNull]
+        public static string WebsiteShowUrl(string slug)
+        {
+            return $"{WebsiteRoot}/series/{slug}";
+        }
+        [NotNull]
+        public static string WebsiteEpisodeUrl([NotNull] Episode ep)
+        {
+            if (ep.TheSeries != null)
+            {
+                return string.IsNullOrWhiteSpace(ep.TheSeries?.Slug)
+                    ? WebsiteEpisodeUrl(ep.TheSeries.TvdbCode, ep.EpisodeId)
+                    : WebsiteEpisodeUrl(ep.TheSeries.Slug, ep.EpisodeId);
+            }
+
+            return string.Empty;
+        }
+    [NotNull]
+        public static string WebsiteSeasonUrl([NotNull] Season s) 
+        {
+            return string.IsNullOrWhiteSpace(s.Show.TheSeries()?.Slug)
+                ? WebsiteSeasonUrl(s.Show.TvdbCode, s.Show.Order, s.SeasonNumber)
+                : WebsiteSeasonUrl(s.Show.TheSeries()?.Slug, s.Show.Order, s.SeasonNumber);
+        }
+
+        [NotNull]
+        // ReSharper disable once MemberCanBePrivate.Global
+        public static string WebsiteSeasonUrl(int seriesId, Season.SeasonType type,int seasonNumber)
+        {
+            //format: return $"{WebsiteRoot}/?tab=season&seriesid={seriesId}&seasonid={seasonId}";
+            switch (type)
+            {
+                case Season.SeasonType.dvd:
+                    return $"{WebsiteRoot}/series/{seriesId}/seasons/dvd/{seasonNumber}";
+                case Season.SeasonType.aired:
+                    return $"{WebsiteRoot}/series/{seriesId}/seasons/official/{seasonNumber}";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+        }
+
+        [NotNull]
+        // ReSharper disable once MemberCanBePrivate.Global
+        public static string WebsiteSeasonUrl(string slug, Season.SeasonType type, int seasonNumber)
+        {
+            //format: https://thetvdb.com/series/the-terror/seasons/official/2
+            switch (type)
+            {
+                case Season.SeasonType.dvd:
+                    return $"{WebsiteRoot}/series/{slug}/seasons/dvd/{seasonNumber}";
+                case Season.SeasonType.aired:
+                    return $"{WebsiteRoot}/series/{slug}/seasons/official/{seasonNumber}";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+        }
+        [NotNull]
+        // ReSharper disable once MemberCanBePrivate.Global
+        public static string WebsiteEpisodeUrl(int seriesId, int episodeId)
         {
             // http://www.thetvdb.com/?tab=episode&seriesid=73141&seasonid=5356&id=108303&lid=7
-            return $"{WebsiteRoot}/?tab=episode&seriesid={seriesId}&seasonid={seasonId}&id={episodeId}";
-        }
+            //return $"{WebsiteRoot}/?tab=episode&seriesid={seriesId}&seasonid={seasonId}&id={episodeId}";
 
-        // Next episode to air of a given show		
-/*
-        [CanBeNull]
-        public Episode NextAiring(int code)
+            //New format: https://thetvdb.com/series/the-terror/episodes/7124969
+            return $"{WebsiteRoot}/series/{seriesId}/episodes/{episodeId}";
+        }
+        [NotNull]
+        // ReSharper disable once MemberCanBePrivate.Global
+        public static string WebsiteEpisodeUrl(string slug, int episodeId)
         {
-            if (!series.ContainsKey(code) || series[code].AiredSeasons.Count == 0)
-            {
-                return null; // DownloadSeries(code, true);
-            }
-
-            Episode next = null;
-            DateTime today = DateTime.Now;
-            DateTime mostSoonAfterToday = new DateTime(0);
-
-            SeriesInfo ser = series[code];
-            foreach (KeyValuePair<int, Season> kvp2 in ser.AiredSeasons)
-            {
-                Season s = kvp2.Value;
-
-                foreach (Episode e in s.Episodes.Values)
-                {
-                    LocalDateTime? adt = e.GetAirDateDt();
-                    if (adt is null)
-                    {
-                        continue;
-                    }
-
-                    LocalDateTime dt = (LocalDateTime) adt;
-                    if (dt.CompareTo(today) > 0 && (mostSoonAfterToday.CompareTo(new DateTime(0)) == 0 ||
-                                                      dt.CompareTo(mostSoonAfterToday) < 0))
-                    {
-                        mostSoonAfterToday = dt;
-                        next = e;
-                    }
-                }
-            }
-
-            return next;
+            return $"{WebsiteRoot}/series/{slug}/episodes/{episodeId}";
         }
-*/
+        // Next episode to air of a given show		
+        /*
+                [CanBeNull]
+                public Episode NextAiring(int code)
+                {
+                    if (!series.ContainsKey(code) || series[code].AiredSeasons.Count == 0)
+                    {
+                        return null; // DownloadSeries(code, true);
+                    }
+
+                    Episode next = null;
+                    DateTime today = DateTime.Now;
+                    DateTime mostSoonAfterToday = new DateTime(0);
+
+                    SeriesInfo ser = series[code];
+                    foreach (KeyValuePair<int, Season> kvp2 in ser.AiredSeasons)
+                    {
+                        Season s = kvp2.Value;
+
+                        foreach (Episode e in s.Episodes.Values)
+                        {
+                            LocalDateTime? adt = e.GetAirDateDt();
+                            if (adt is null)
+                            {
+                                continue;
+                            }
+
+                            LocalDateTime dt = (LocalDateTime) adt;
+                            if (dt.CompareTo(today) > 0 && (mostSoonAfterToday.CompareTo(new DateTime(0)) == 0 ||
+                                                              dt.CompareTo(mostSoonAfterToday) < 0))
+                            {
+                                mostSoonAfterToday = dt;
+                                next = e;
+                            }
+                        }
+                    }
+
+                    return next;
+                }
+        */
 
         public void Tidy(ICollection<ShowItem> libraryValues)
         {

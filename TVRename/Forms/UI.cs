@@ -985,7 +985,7 @@ namespace TVRename
         {
             if (e != null)
             {
-                Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(e.Show.TvdbCode, e.SeasonId, false));
+                Helpers.SysOpen(TheTVDB.WebsiteEpisodeUrl(e));
             }
         }
 
@@ -993,7 +993,7 @@ namespace TVRename
         {
             if (seas != null)
             {
-                Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(seas.Show.TvdbCode, -1, false));
+                Helpers.SysOpen(TheTVDB.WebsiteSeasonUrl(seas));
             }
         }
 
@@ -1001,7 +1001,7 @@ namespace TVRename
         {
             if (si != null)
             {
-                Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, false));
+                Helpers.SysOpen(TheTVDB.WebsiteShowUrl(si));
             }
         }
 

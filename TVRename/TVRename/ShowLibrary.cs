@@ -448,6 +448,7 @@ namespace TVRename
             {
                 //arguments are not consistent, so we'll do nothing
             }
+            Renumber(eis);
         }
 
         private static bool ValidIndex(int index, int maxIndex) => index < maxIndex && index >= 0;
@@ -485,6 +486,7 @@ namespace TVRename
 
                     eis.Insert(index + i-1, pe2);
                 }
+
             }
         }
 

@@ -60,7 +60,7 @@ namespace TVRename
             string siteRating = ser.SiteRating > 0 ? ser.SiteRating+ "/10" : "";
             string runTimeHtml = string.IsNullOrWhiteSpace(ser.Runtime) ? string.Empty : $"<br/> {ser.Runtime} min";
             string actorLinks = string.Join(", ", ser.GetActors().Select(ActorLinkHtml));
-            string tvdbLink = TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true);
+            string tvdbLink = TheTVDB.WebsiteShowUrl(si);
             string airsTime = ParseAirsTime(ser);
             string airsDay = ser.AirsDay;
             string dayTime = $"{airsDay} {airsTime}";
@@ -254,8 +254,8 @@ namespace TVRename
                 return;
             }
 
-            string seasonLink = TheTVDB.Instance.WebsiteUrl(si.TvdbCode, s.SeasonId, false);
-            string showLink = TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true);
+            string seasonLink = TheTVDB.WebsiteSeasonUrl(s);
+            string showLink = TheTVDB.WebsiteShowUrl(si);
             string urlFilename = Uri.EscapeDataString(si.GetBestFolderLocationToOpen(s));
 
             string explorerButton = includeDirectoryLinks
@@ -304,7 +304,7 @@ namespace TVRename
         private static void AppendEpisode([NotNull] this StringBuilder sb, [NotNull] ProcessedEpisode ep, [CanBeNull] IReadOnlyCollection<FileInfo> fl,Color backgroundColour)
         {
             string stars = StarRating(ep.EpisodeRating);
-            string episodeUrl = TheTVDB.WebsiteUrl(ep.SeriesId, ep.SeasonId, ep.EpisodeId);
+            string episodeUrl = TheTVDB.WebsiteEpisodeUrl(ep);
             bool ratingIsNumber = float.TryParse(ep.EpisodeRating, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out float rating);
             string siteRating = ratingIsNumber && rating > 0
                 ? rating + "/10" + AddRatingCount(ep.SiteRatingCount??0)
@@ -417,7 +417,7 @@ namespace TVRename
         public static string GetShowImagesHtmlOverview([NotNull] this ShowItem si)
         {
             string body =
-                $"<h1><A HREF=\"{TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true)}\">{si.ShowName}</A> </h1>";
+                $"<h1><A HREF=\"{TheTVDB.WebsiteShowUrl(si)}\">{si.ShowName}</A> </h1>";
 
             SeriesInfo ser = si.TheSeries();
             if (ser is null)
@@ -471,15 +471,14 @@ namespace TVRename
 
             if (eis.Count > 0 && eis[0].SeasonId > 0)
             {
-                seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteUrl(si.TvdbCode, eis[0].SeasonId, false) + "\">" +
-                           seasText + "</a>";
+                seasText = " - <A HREF=\"" + TheTVDB.WebsiteSeasonUrl(s) + "\">" + seasText + "</a>";
             }
             else
             {
                 seasText = " - " + seasText;
             }
 
-            body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true) + "\">" + si.ShowName +
+            body += "<h1><A HREF=\"" + TheTVDB.WebsiteShowUrl(si) + "\">" + si.ShowName +
                     "</A>" + seasText + "</h1>";
 
             if (TVSettings.Instance.NeedToDownloadBannerFile())
@@ -628,7 +627,7 @@ namespace TVRename
                         "\"><br/>";
             }
 
-            body += $"<h1><A HREF=\"{TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true)}\">{si.ShowName}</A> </h1>";
+            body += $"<h1><A HREF=\"{TheTVDB.WebsiteShowUrl(si)}\">{si.ShowName}</A> </h1>";
 
             body += "<h2>Overview</h2>" + ser?.Overview; //get overview in either format
 
@@ -656,7 +655,7 @@ namespace TVRename
             string yearRange = YearRange(ser);
 
             string siteRating = (ser?.SiteRating??0) > 0 ? ser.SiteRating + "/10" : string.Empty;
-            string tvdbLink = TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true);
+            string tvdbLink = TheTVDB.WebsiteShowUrl(si);
 
             string tableHtml = string.Empty;
 
@@ -699,7 +698,7 @@ namespace TVRename
 
             if (eis.Count > 0 && eis[0].SeasonId > 0)
             {
-                seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteUrl(si.TvdbCode, eis[0].SeasonId, false) + "\">" +
+                seasText = " - <A HREF=\"" + TheTVDB.WebsiteSeasonUrl(s) + "\">" +
                            seasText + "</a>";
             }
             else
@@ -707,7 +706,7 @@ namespace TVRename
                 seasText = " - " + seasText;
             }
 
-            body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true) + "\">" + si.ShowName +
+            body += "<h1><A HREF=\"" + TheTVDB.WebsiteShowUrl(si) + "\">" + si.ShowName +
                     "</A>" + seasText + "</h1>";
 
             DirFilesCache dfc = new DirFilesCache();
@@ -715,7 +714,7 @@ namespace TVRename
             {
                 string epl = ei.EpNumsAsString();
 
-                string episodeUrl = TheTVDB.WebsiteUrl(ei.SeriesId, ei.SeasonId, ei.EpisodeId);
+                string episodeUrl = TheTVDB.WebsiteEpisodeUrl(ei);
 
                 body += "<A href=\"" + episodeUrl + "\" name=\"ep" + epl + "\">"; // anchor
                 body += "<b>" + EpisodeName(si, snum, ei) + "</b>";

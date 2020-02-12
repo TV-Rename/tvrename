@@ -519,7 +519,7 @@ namespace TVRename
 
             if (fme.TVDBCode != -1)
             {
-                Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(fme.TVDBCode, -1, false));
+                Helpers.SysOpen(TheTVDB.WebsiteShowUrl(fme.TVDBCode));
             }
         }
 

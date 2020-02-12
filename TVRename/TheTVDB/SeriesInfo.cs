@@ -40,6 +40,7 @@ namespace TVRename
         public long SrvLastUpdated;
         public int TvdbCode;
         public bool IsStub;
+        public string Slug;
 
         private List<Actor> actors;
         private List<string> genres;
@@ -210,6 +211,7 @@ namespace TVRename
             SeriesId = ChooseBetter(SeriesId, useNewDataOverOld, o.SeriesId);
             Status = ChooseBetter(Status, useNewDataOverOld, o.Status);
             ContentRating = ChooseBetter(ContentRating, useNewDataOverOld, o.ContentRating);
+            Slug = ChooseBetter(Slug, useNewDataOverOld, o.Slug);
 
             if ( o.FirstAired.HasValue &&(useNewDataOverOld || !FirstAired.HasValue))
             {
@@ -314,6 +316,7 @@ namespace TVRename
                 SeriesId = seriesXml.ExtractString("seriesId") ?? seriesXml.ExtractString("SeriesID");
                 Status = seriesXml.ExtractString("status") ?? seriesXml.ExtractString("Status");
                 SiteRatingVotes = seriesXml.ExtractInt("siteRatingCount") ?? seriesXml.ExtractInt("SiteRatingCount",0);
+                Slug = seriesXml.ExtractString("slug");
 
                 SiteRating = GetSiteRating(seriesXml);
                 FirstAired = ExtractFirstAired(seriesXml);
@@ -443,6 +446,7 @@ namespace TVRename
             TvdbCode = (int)r["id"];
             Imdb = ((string)r["imdbId"])?.Trim();
             Network =  ((string) r["network"])?.Trim();
+            Slug = ((string)r["slug"])?.Trim();
             Overview = System.Web.HttpUtility.HtmlDecode((string)r["overview"])?.Trim();
             ContentRating = ((string) r["rating"])?.Trim();
             Runtime = ((string) r["runtime"])?.Trim();
@@ -546,6 +550,7 @@ namespace TVRename
             writer.WriteElement("status", Status);
             writer.WriteElement("siteRating", SiteRating,"0.##");
             writer.WriteElement("siteRatingCount", SiteRatingVotes);
+            writer.WriteElement("slug",Slug);
 
             if (FirstAired != null)
             {
