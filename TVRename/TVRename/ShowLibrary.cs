@@ -486,7 +486,6 @@ namespace TVRename
 
                     eis.Insert(index + i-1, pe2);
                 }
-
             }
         }
 
@@ -654,63 +653,66 @@ namespace TVRename
         {
             ProcessedEpisode nextAfterThat = null;
             TimeSpan howClose = TimeSpan.MaxValue;
-            foreach (ShowItem si in GetShowItems().ToList())
+            lock (TheTVDB.SERIES_LOCK)
             {
-                if (!si.ShowNextAirdate)
+                foreach (ShowItem si in GetShowItems())
                 {
-                    continue;
-                }
-
-                foreach (KeyValuePair<int, List<ProcessedEpisode>> v in si.ActiveSeasons.ToList())
-                {
-                    if (si.IgnoreSeasons.Contains(v.Key))
-                    {
-                        continue; // ignore this season
-                    }
-
-                    if (v.Key == 0 && TVSettings.Instance.IgnoreAllSpecials)
+                    if (!si.ShowNextAirdate)
                     {
                         continue;
                     }
 
-                    if (v.Value is null)
+                    foreach (KeyValuePair<int, List<ProcessedEpisode>> v in si.ActiveSeasons.ToList())
                     {
-                        continue;
-                    }
+                        if (si.IgnoreSeasons.Contains(v.Key))
+                        {
+                            continue; // ignore this season
+                        }
 
-                    foreach (ProcessedEpisode ei in v.Value)
-                    {
-                        if (found.Contains(ei))
+                        if (v.Key == 0 && TVSettings.Instance.IgnoreAllSpecials)
                         {
                             continue;
                         }
 
-                        DateTime? airdt = ei.GetAirDateDt(true);
-
-                        if (airdt is null || airdt == DateTime.MaxValue)
+                        if (v.Value is null)
                         {
                             continue;
                         }
 
-                        DateTime dt = airdt.Value;
-
-                        TimeSpan timeUntil = dt.Subtract(DateTime.Now);
-                        if (timeUntil.TotalDays > nDaysFuture)
+                        foreach (ProcessedEpisode ei in v.Value)
                         {
-                            continue; //episode is too far in the future
-                        }
+                            if (found.Contains(ei))
+                            {
+                                continue;
+                            }
 
-                        TimeSpan ts = dt.Subtract(notBefore);
-                        if (ts.TotalSeconds < 0)
-                        {
-                            continue; //episode is too far in the past
-                        }
+                            DateTime? airdt = ei.GetAirDateDt(true);
 
-                        //if we have a closer match
-                        if (TimeSpan.Compare(ts, howClose) < 0)
-                        {
-                            howClose = ts;
-                            nextAfterThat = ei;
+                            if (airdt is null || airdt == DateTime.MaxValue)
+                            {
+                                continue;
+                            }
+
+                            DateTime dt = airdt.Value;
+
+                            TimeSpan timeUntil = dt.Subtract(DateTime.Now);
+                            if (timeUntil.TotalDays > nDaysFuture)
+                            {
+                                continue; //episode is too far in the future
+                            }
+
+                            TimeSpan ts = dt.Subtract(notBefore);
+                            if (ts.TotalSeconds < 0)
+                            {
+                                continue; //episode is too far in the past
+                            }
+
+                            //if we have a closer match
+                            if (TimeSpan.Compare(ts, howClose) < 0)
+                            {
+                                howClose = ts;
+                                nextAfterThat = ei;
+                            }
                         }
                     }
                 }
