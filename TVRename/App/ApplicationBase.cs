@@ -135,9 +135,9 @@ namespace TVRename.App
                     recoverText = doc.LoadErr;
                 }
 
-                if (!TheTVDB.Instance.LoadOk && !string.IsNullOrEmpty(TheTVDB.Instance.LoadErr))
+                if (!TheTVDB.Instance.LoadOk && !string.IsNullOrEmpty(TheTvdbCachePersistor.LoadErr))
                 {
-                    recoverText += $"{Environment.NewLine}{TheTVDB.Instance.LoadErr}";
+                    recoverText += $"{Environment.NewLine}{TheTvdbCachePersistor.LoadErr}";
                 }
             } while (recover);
 

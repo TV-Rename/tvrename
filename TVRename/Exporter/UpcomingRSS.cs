@@ -52,7 +52,7 @@ namespace TVRename
                         writer.WriteStartElement("item");
                         
                         writer.WriteElement("title",ei.HowLong() + " " + ei.DayOfWeek() + " " + ei.TimeOfDay() + " " + ei.Show.ShowName + " " + niceName);
-                        writer.WriteElement("link", TheTVDB.WebsiteEpisodeUrl(ei));
+                        writer.WriteElement("link", TheTVDBAPI.WebsiteEpisodeUrl(ei));
                         writer.WriteElement("description", ei.Show.ShowName + "<br/>" + niceName + "<br/>" + ei.Overview);
 
                         writer.WriteStartElement("pubDate");

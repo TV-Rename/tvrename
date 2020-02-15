@@ -310,7 +310,7 @@ namespace TVRename
                 return;
             }
 
-            Helpers.SysOpen(TheTVDB.WebsiteSeasonUrl(seas));
+            Helpers.SysOpen(TheTVDBAPI.WebsiteSeasonUrl(seas));
         }
 
         private void TVDBFor([CanBeNull] ShowItem si)
@@ -320,7 +320,7 @@ namespace TVRename
                 return;
             }
 
-            Helpers.SysOpen(TheTVDB.WebsiteShowUrl(si));
+            Helpers.SysOpen(TheTVDBAPI.WebsiteShowUrl(si));
         }
 
         private void ForceRefresh([CanBeNull] ShowItem si)

@@ -103,12 +103,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType,
-            [CanBeNull] TvDbTokenProvider authToken, string lang = "")
-            => HttpRequest(method, url, json, contentType, authToken?.GetToken(), lang);
-
-        [NotNull]
-        private static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType, [CanBeNull] string token, string lang = "")
+        public static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType, [CanBeNull] string token, string lang = "")
             {
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.ContentType = contentType;
@@ -183,9 +178,6 @@ namespace TVRename
             return s.ToString();
         }
 
-        public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, TvDbTokenProvider  authToken, bool retry) =>
-            JsonHttpGetRequest(url, parameters, authToken, string.Empty,retry);
-
         public static JObject JsonHttpGetRequest([NotNull] string url, string authToken) =>
             JObject.Parse(HttpRequest("GET",url, null, "application/json", authToken,string.Empty));
 
@@ -208,29 +200,8 @@ namespace TVRename
             return JObject.Parse(response);
         }
 
-        public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, TvDbTokenProvider authToken, string lang, bool retry)
-        {
-            TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
-            string fullUrl = url + GetHttpParameters(parameters);
-
-            string response = null;
-
-            if (retry)
-            {
-                RetryOnException(3, pauseBetweenFailures, fullUrl,
-                    () => { response = HttpRequest("GET", fullUrl, null, "application/json", authToken, lang); },
-                    authToken.EnsureValid);
-            }
-            else
-            {
-                response = HttpRequest("GET", fullUrl, null, "application/json", authToken, lang);
-            }
-
-            return JObject.Parse(response);
-        }
-
         [NotNull]
-        private static string GetHttpParameters([CanBeNull] Dictionary<string, string> parameters)
+        public static string GetHttpParameters([CanBeNull] Dictionary<string, string> parameters)
         {
             if (parameters is null)
             {
@@ -248,7 +219,7 @@ namespace TVRename
             return finalUrl.Remove(finalUrl.LastIndexOf("&", StringComparison.Ordinal));
         }
 
-        private static void RetryOnException(int times,TimeSpan delay,string url, [NotNull] System.Action operation, [CanBeNull] System.Action updateOperation)
+        public static void RetryOnException(int times,TimeSpan delay,string url, [NotNull] System.Action operation, [CanBeNull] System.Action updateOperation)
         {
             if (times <= 0)
             {

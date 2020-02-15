@@ -49,7 +49,12 @@ namespace TVRename
         private ConcurrentDictionary<int, Episode> sourceEpisodes;
 
         [NotNull]
-        public ICollection<Episode> Episodes => sourceEpisodes.Values; 
+        public ICollection<Episode> Episodes => sourceEpisodes.Values;
+
+        public void ClearEpisodes()
+        {
+            sourceEpisodes.Clear();
+        }
 
         private SeriesBanners banners;
 

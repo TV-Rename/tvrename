@@ -293,6 +293,8 @@
     <Compile Include="Finders\RSSItemList.cs" />
     <Compile Include="Finders\SearchFolderFileFinder.cs" />
     <Compile Include="Finders\DownloadingFinder.cs" />
+    <Compile Include="TheTVDB\TheTVDBAPI.cs" />
+    <Compile Include="TheTVDB\TheTVDBCachePersistor.cs" />
     <Compile Include="Utility\UrlCache.cs" />
     <Compile Include="Forms\ShowPreferences\AutoAddShow.cs">
       <SubType>Form</SubType>
@@ -444,7 +446,6 @@
     <Compile Include="TheTVDB\ShowNotFoundException.cs" />
     <Compile Include="TheTVDB\TVDBSeriesDownloadException.cs" />
     <Compile Include="TheTVDB\TVSource.cs" />
-    <Compile Include="TheTVDB\TvDbTokenProvider.cs" />
     <Compile Include="TVRename\ActionEngine.cs" />
     <Compile Include="TVRename\BulkAddManager.cs" />
     <Compile Include="TVRename\CacheUpdater.cs" />
