@@ -10,6 +10,7 @@ using NLog.Layouts;
 using NLog.Targets.Syslog;
 using NLog.Targets.Syslog.Settings;
 using TVRename.Ipc;
+using TVRename.TheTVDB;
 
 namespace TVRename.App
 {
@@ -110,7 +111,7 @@ namespace TVRename.App
                 }
 
                 // Try loading TheTVDB cache file
-                TheTVDB.Instance.Setup(tvdbFile, PathManager.TVDBFile, clargs);
+                LocalCache.Instance.Setup(tvdbFile, PathManager.TVDBFile, clargs);
 
                 // Try loading settings file
                 doc = new TVDoc(settingsFile, clargs);
@@ -135,7 +136,7 @@ namespace TVRename.App
                     recoverText = doc.LoadErr;
                 }
 
-                if (!TheTVDB.Instance.LoadOk && !string.IsNullOrEmpty(TheTvdbCachePersistor.LoadErr))
+                if (!LocalCache.Instance.LoadOk && !string.IsNullOrEmpty(TheTvdbCachePersistor.LoadErr))
                 {
                     recoverText += $"{Environment.NewLine}{TheTvdbCachePersistor.LoadErr}";
                 }

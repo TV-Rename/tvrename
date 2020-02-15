@@ -6,7 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 using TVRename.Forms.Utilities;
 
-namespace TVRename
+namespace TVRename.TheTVDB
 {
     /// <inheritdoc />
     /// <summary>
@@ -89,10 +89,10 @@ namespace TVRename
 
             if (!downloadOk)
             {
-                Logger.Warn(TheTVDB.Instance.LastErrorMessage);
+                Logger.Warn(LocalCache.Instance.LastErrorMessage);
                 if (showErrorMsgBox)
                 {
-                    CannotConnectForm ccform = new CannotConnectForm("Error while downloading", TheTVDB.Instance.LastErrorMessage);
+                    CannotConnectForm ccform = new CannotConnectForm("Error while downloading", LocalCache.Instance.LastErrorMessage);
                     DialogResult ccresult = ccform.ShowDialog();
                     if (ccresult == DialogResult.Abort)
                     {
@@ -100,7 +100,7 @@ namespace TVRename
                     }
                 }
 
-                TheTVDB.Instance.LastErrorMessage = "";
+                LocalCache.Instance.LastErrorMessage = "";
             }
 
             return downloadOk;
@@ -134,7 +134,7 @@ namespace TVRename
 
                 Threadslogger.Trace("  Downloading " + series.Name);
 
-                if (TheTVDB.Instance.EnsureUpdated(series, bannersToo))
+                if (LocalCache.Instance.EnsureUpdated(series, bannersToo))
                 {
                     return;
                 }
@@ -192,7 +192,7 @@ namespace TVRename
                     return;
                 }
 
-                if (!TheTVDB.Instance.GetUpdates(showErrorMsgBox))
+                if (!LocalCache.Instance.GetUpdates(showErrorMsgBox))
                 {
                     DownloadDone = true;
                     downloadOk = false;
@@ -243,7 +243,7 @@ namespace TVRename
 
                 WaitForAllThreadsAndTidyUp();
 
-                TheTVDB.Instance.UpdatesDoneOk();
+                LocalCache.Instance.UpdatesDoneOk();
                 DownloadDone = true;
                 downloadOk = true;
             }

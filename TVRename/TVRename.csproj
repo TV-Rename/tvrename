@@ -295,6 +295,8 @@
     <Compile Include="Finders\DownloadingFinder.cs" />
     <Compile Include="TheTVDB\TheTVDBAPI.cs" />
     <Compile Include="TheTVDB\TheTVDBCachePersistor.cs" />
+    <Compile Include="TheTVDB\TokenProvider.cs" />
+    <Compile Include="TheTVDB\TVDBException.cs" />
     <Compile Include="Utility\UrlCache.cs" />
     <Compile Include="Forms\ShowPreferences\AutoAddShow.cs">
       <SubType>Form</SubType>
@@ -811,7 +813,7 @@
     <Compile Include="Forms\Utilities\StatsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TheTVDB\TheTVDB.cs" />
+    <Compile Include="TheTVDB\LocalCache.cs" />
     <Compile Include="Custom Controls\TheTVDBCodeFinder.cs">
       <SubType>UserControl</SubType>
     </Compile>

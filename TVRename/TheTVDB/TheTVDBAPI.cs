@@ -7,10 +7,10 @@ using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using NLog;
 
-namespace TVRename
+namespace TVRename.TheTVDB
 {
     // ReSharper disable once InconsistentNaming
-    static class TheTVDBAPI
+    static class API
     {
         // ReSharper disable once ConvertToConstant.Local
         private static readonly string WebsiteRoot = "https://thetvdb.com";
@@ -20,7 +20,7 @@ namespace TVRename
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         // ReSharper disable once InconsistentNaming
-        private static readonly TvDbTokenProvider tvDbTokenProvider = new TvDbTokenProvider();
+        private static readonly TokenProvider TokenProvider = new TokenProvider();
 
         // ReSharper disable once InconsistentNaming
         [NotNull]
@@ -159,10 +159,10 @@ namespace TVRename
             return $"{WebsiteRoot}/series/{slug}/episodes/{episodeId}";
         }
 
-        private static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, TvDbTokenProvider authToken, bool retry) =>
+        private static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, TokenProvider authToken, bool retry) =>
             JsonHttpGetRequest(url, parameters, authToken, String.Empty, retry);
 
-        private static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, TvDbTokenProvider authToken, string lang, bool retry)
+        private static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, TokenProvider authToken, string lang, bool retry)
         {
             TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
             string fullUrl = url + HttpHelper.GetHttpParameters(parameters);
@@ -185,36 +185,36 @@ namespace TVRename
 
         public static JObject GetLanguages()
         {
-            return JsonHttpGetRequest(TvDbTokenProvider.TVDB_API_URL + "/languages", null, tvDbTokenProvider, true);
+            return JsonHttpGetRequest(TokenProvider.TVDB_API_URL + "/languages", null, TokenProvider, true);
         }
 
         [NotNull]
         private static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType,
-            [CanBeNull] TvDbTokenProvider authToken, string lang = "")
+            [CanBeNull] TokenProvider authToken, string lang = "")
             => HttpHelper.HttpRequest(method, url, json, contentType, authToken?.GetToken(), lang);
 
         public static JObject GetUpdatesSince(long time, string lang)
         {
-            string uri = TvDbTokenProvider.TVDB_API_URL + "/updated/query";
+            string uri = TokenProvider.TVDB_API_URL + "/updated/query";
 
             return JsonHttpGetRequest(uri,
                 new Dictionary<string, string> { { "fromTime", time.ToString() } },
-                tvDbTokenProvider, lang, true);
+                TokenProvider, lang, true);
         }
 
         public static JObject GetSeriesEpisodes(int seriesId, string languageCode, int pageNumber=0)
         {
-            string episodeUri = $"{TvDbTokenProvider.TVDB_API_URL}/series/{seriesId}/episodes";
+            string episodeUri = $"{TokenProvider.TVDB_API_URL}/series/{seriesId}/episodes";
             return JsonHttpGetRequest(episodeUri,
                 new Dictionary<string, string> { { "page", pageNumber.ToString() } },
-                tvDbTokenProvider, languageCode, true);
+                TokenProvider, languageCode, true);
 
         }
 
         public static JObject GetSeriesActors(int seriesId)
         {
-            return JsonHttpGetRequest($"{TvDbTokenProvider.TVDB_API_URL}/series/{seriesId}/actors",
-                null, tvDbTokenProvider, false);
+            return JsonHttpGetRequest($"{TokenProvider.TVDB_API_URL}/series/{seriesId}/actors",
+                null, TokenProvider, false);
         }
 
         [NotNull]
@@ -224,21 +224,21 @@ namespace TVRename
             //says that we need a format like this:
             //https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json
         {
-            return $"{TvDbTokenProvider.TVDB_API_URL}/login?"
-                   + "{&quot;apikey&quot;:&quot;" + TvDbTokenProvider.TVDB_API_KEY + "&quot;,&quot;id&quot;:" + apiKey + "}"
+            return $"{TokenProvider.TVDB_API_URL}/login?"
+                   + "{&quot;apikey&quot;:&quot;" + TokenProvider.TVDB_API_KEY + "&quot;,&quot;id&quot;:" + apiKey + "}"
                    + "|Content-Type=application/json";
         }
 
         [NotNull]
         public static IEnumerable<string> GetImageTypes(int code, string requestedLanguageCode)
         {
-            string uriImages = TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images";
+            string uriImages = TokenProvider.TVDB_API_URL + "/series/" + code + "/images";
 
             List<string> imageTypes = new List<string>();
             try
             {
                 JObject jsonEpisodeSearchResponse = JsonHttpGetRequest(
-                    uriImages, null, tvDbTokenProvider,
+                    uriImages, null, TokenProvider,
                     requestedLanguageCode, false);
 
                 JObject a = (JObject)jsonEpisodeSearchResponse["data"];
@@ -262,8 +262,8 @@ namespace TVRename
 
         public static JObject Search(string text, string defaultLanguageCode)
         {
-            string uri = TvDbTokenProvider.TVDB_API_URL + "/search/series";
-            return JsonHttpGetRequest(uri, new Dictionary<string, string> { { "name", text } }, tvDbTokenProvider, defaultLanguageCode, false);
+            string uri = TokenProvider.TVDB_API_URL + "/search/series";
+            return JsonHttpGetRequest(uri, new Dictionary<string, string> { { "name", text } }, TokenProvider, defaultLanguageCode, false);
         }
 
         public static bool TvdbIsUp()
@@ -272,7 +272,7 @@ namespace TVRename
             try
             {
                 //Deliberately send no authToken, so that it should fail if it's up
-                jsonResponse = JsonHttpGetRequest(TvDbTokenProvider.TVDB_API_URL, null, null, false);
+                jsonResponse = JsonHttpGetRequest(TokenProvider.TVDB_API_URL, null, null, false);
             }
             catch (WebException ex)
             {
@@ -304,7 +304,7 @@ namespace TVRename
         [NotNull]
         public static List<JObject> GetImages(int code, string languageCode, [NotNull] IEnumerable<string> imageTypes)
         {
-            string uriImagesQuery = TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images/query";
+            string uriImagesQuery = TokenProvider.TVDB_API_URL + "/series/" + code + "/images/query";
             List<JObject> returnList = new List<JObject>();
             foreach (string imageType in imageTypes)
             {
@@ -312,7 +312,7 @@ namespace TVRename
                 {
                     JObject jsonImageResponse = JsonHttpGetRequest(
                         uriImagesQuery,
-                        new Dictionary<string, string> { { "keyType", imageType } }, tvDbTokenProvider,
+                        new Dictionary<string, string> { { "keyType", imageType } }, TokenProvider,
                         languageCode, false);
 
                     returnList.Add(jsonImageResponse);
@@ -342,107 +342,14 @@ namespace TVRename
 
         public static JObject GetSeries(int code, string requestedLanguageCode)
         {
-            string uri = TvDbTokenProvider.TVDB_API_URL + "/series/" + code;
-            return JsonHttpGetRequest(uri, null, tvDbTokenProvider, requestedLanguageCode, true);
+            string uri = TokenProvider.TVDB_API_URL + "/series/" + code;
+            return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
         }
 
         public static JObject GetEpisode(int episodeId, string requestLangCode)
         {
-            string uri = $"{TvDbTokenProvider.TVDB_API_URL}/episodes/{episodeId}";
-            return JsonHttpGetRequest(uri, null, tvDbTokenProvider, requestLangCode, true);
+            string uri = $"{TokenProvider.TVDB_API_URL}/episodes/{episodeId}";
+            return JsonHttpGetRequest(uri, null, TokenProvider, requestLangCode, true);
         }
-    }
-
-    class TvDbTokenProvider
-    {
-        [NotNull]
-        // ReSharper disable once InconsistentNaming
-        public static string TVDB_API_URL
-        {
-            get
-            {
-                switch (TheTVDB.VERS)
-                {
-                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                    case ApiVersion.v2:
-                        return "https://api.thetvdb.com";
-
-                    // ReSharper disable once HeuristicUnreachableCode
-                    // ReSharper disable once HeuristicUnreachableCode
-                    case ApiVersion.v3:
-                        // ReSharper disable once HeuristicUnreachableCode
-                        return "https://api-dev.thetvdb.com";
-
-                    default:
-                        throw new NotSupportedException();
-                }
-            }
-        }
-
-        public static readonly string TVDB_API_KEY = "5FEC454623154441";
-
-        private string lastKnownToken = string.Empty;
-        private DateTime lastRefreshTime = DateTime.MinValue;
-
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        public string GetToken()
-        {
-            //If we have not logged on at all then logon
-            if (!IsTokenAquired())
-            {
-                AcquireToken();
-            }
-            //If we have logged in but the token has expired so logon again
-            if (!TokenIsValid())
-            {
-                AcquireToken();
-            }
-            //If we have logged on and have a valid token that is nearing its use-by date then refresh
-            if (ShouldRefreshToken())
-            {
-                RefreshToken();
-            }
-
-            return lastKnownToken;
-        }
-
-        public void EnsureValid()
-        {
-            GetToken();
-        }
-
-        private void AcquireToken()
-        {
-            Logger.Info("Acquire a TheTVDB token... ");
-            JObject request = new JObject(new JProperty("apikey", TVDB_API_KEY));
-            JObject jsonResponse = HttpHelper.JsonHttpPostRequest($"{TVDB_API_URL}/login", request, true);
-
-            UpdateToken((string)jsonResponse["token"]);
-            Logger.Info("Performed login at " + DateTime.UtcNow);
-            Logger.Info("New Token " + lastKnownToken);
-        }
-
-        private void RefreshToken()
-        {
-            Logger.Info("Refreshing TheTVDB token... ");
-            JObject jsonResponse = HttpHelper.JsonHttpGetRequest($"{TVDB_API_URL}/refresh_token", lastKnownToken);
-
-            UpdateToken((string)jsonResponse["token"]);
-            Logger.Info("refreshed token at " + DateTime.UtcNow);
-            Logger.Info("New Token " + lastKnownToken);
-        }
-
-        private void UpdateToken(string token)
-        {
-            lastKnownToken = token;
-            lastRefreshTime = DateTime.Now;
-        }
-
-        private bool ShouldRefreshToken() => DateTime.Now - lastRefreshTime >= TimeSpan.FromHours(23);
-
-        private bool TokenIsValid() => DateTime.Now - lastRefreshTime < TimeSpan.FromDays(1) - TimeSpan.FromMinutes(1);
-
-        private bool IsTokenAquired() => lastKnownToken != string.Empty;
     }
 }

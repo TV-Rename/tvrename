@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using JetBrains.Annotations;
+using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -129,11 +130,11 @@ namespace TVRename
 
             bool r = true;
 
-            lock (TheTVDB.SERIES_LOCK)
+            lock (LocalCache.SERIES_LOCK)
             {
                 si.ClearEpisodes();
 
-                SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
+                SeriesInfo ser = LocalCache.Instance.GetSeries(si.TvdbCode);
 
                 if (ser is null)
                 {
@@ -653,7 +654,7 @@ namespace TVRename
         {
             ProcessedEpisode nextAfterThat = null;
             TimeSpan howClose = TimeSpan.MaxValue;
-            lock (TheTVDB.SERIES_LOCK)
+            lock (LocalCache.SERIES_LOCK)
             {
                 foreach (ShowItem si in GetShowItems())
                 {

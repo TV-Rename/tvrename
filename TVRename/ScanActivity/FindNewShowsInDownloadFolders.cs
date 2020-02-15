@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -51,7 +52,7 @@ namespace TVRename
                 return;
             }
 
-            lock (TheTVDB.SERIES_LOCK)
+            lock (LocalCache.SERIES_LOCK)
             {
                 MDoc.Library.AddRange(addedShows);
                 MDoc.ShowAddedOrEdited(false,false,false);

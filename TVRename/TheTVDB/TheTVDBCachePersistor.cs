@@ -9,6 +9,7 @@ using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using NLog;
+using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -49,8 +50,6 @@ namespace TVRename
                 }
             }
         }
-
-
 
         public static void SaveCache(ConcurrentDictionary<int, SeriesInfo> series,[NotNull] FileInfo cacheFile, long timestamp)
         {
@@ -136,8 +135,7 @@ namespace TVRename
             }
         }
 
-
-        public static bool LoadCache([NotNull] FileInfo loadFrom,TheTVDB cache)
+        public static bool LoadCache([NotNull] FileInfo loadFrom,LocalCache cache)
         {
             Logger.Info("Loading Cache from: {0}", loadFrom.FullName);
             if (!loadFrom.Exists)
@@ -163,7 +161,8 @@ namespace TVRename
                 return false;
             }
         }
-        private static bool ProcessXml([NotNull] XElement x,[NotNull] TheTVDB cache)
+
+        private static bool ProcessXml([NotNull] XElement x,[NotNull] LocalCache cache)
         {
             // Will have one or more series, and episodes
             // all wrapped in <Data> </Data>
@@ -230,13 +229,12 @@ namespace TVRename
 
                 Logger.Error(message);
                 Logger.Error(x.ToString());
-                throw new TheTVDB.TVDBException(message);
+                throw new TVDBException(message);
             }
             return true;
         }
 
-
-        private static void ProcessXmlBannerCache([NotNull] XElement r,TheTVDB localCache)
+        private static void ProcessXmlBannerCache([NotNull] XElement r,LocalCache localCache)
         {
             //this is a wrapper that provides the seriesId and the Banners List as provided from the website
             //
@@ -255,6 +253,5 @@ namespace TVRename
                     .Select(banner => new Banner(seriesId, banner)));
             }
         }
-
     }
 }

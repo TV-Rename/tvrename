@@ -28,6 +28,7 @@ using TVRename.Forms;
 using TVRename.Forms.Tools;
 using TVRename.Forms.Utilities;
 using TVRename.Ipc;
+using TVRename.TheTVDB;
 using DataFormats = System.Windows.Forms.DataFormats;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
@@ -447,7 +448,7 @@ namespace TVRename
 
             if (res == DialogResult.Yes)
             {
-                TheTVDB.Instance.ForgetEverything();
+                LocalCache.Instance.ForgetEverything();
                 FillMyShows();
                 FillEpGuideHtml();
                 FillWhenToWatchList();
@@ -774,7 +775,7 @@ namespace TVRename
 
             MyShowTree.Nodes.Clear();
             List<ShowItem> sil = mDoc.Library.GetShowItems();
-            lock (TheTVDB.SERIES_LOCK)
+            lock (LocalCache.SERIES_LOCK)
             {
                 sil.Sort((a, b) => string.Compare(GenerateShowUIName(a), GenerateShowUIName(b), StringComparison.OrdinalIgnoreCase));
             }
@@ -917,9 +918,9 @@ namespace TVRename
             }
 
             SeriesInfo ser;
-            lock (TheTVDB.SERIES_LOCK)
+            lock (LocalCache.SERIES_LOCK)
             {
-                ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
+                ser = LocalCache.Instance.GetSeries(si.TvdbCode);
             }
 
             if (ser is null)
@@ -985,7 +986,7 @@ namespace TVRename
         {
             if (e != null)
             {
-                Helpers.SysOpen(TheTVDBAPI.WebsiteEpisodeUrl(e));
+                Helpers.SysOpen(API.WebsiteEpisodeUrl(e));
             }
         }
 
@@ -993,7 +994,7 @@ namespace TVRename
         {
             if (seas != null)
             {
-                Helpers.SysOpen(TheTVDBAPI.WebsiteSeasonUrl(seas));
+                Helpers.SysOpen(API.WebsiteSeasonUrl(seas));
             }
         }
 
@@ -1001,7 +1002,7 @@ namespace TVRename
         {
             if (si != null)
             {
-                Helpers.SysOpen(TheTVDBAPI.WebsiteShowUrl(si));
+                Helpers.SysOpen(API.WebsiteShowUrl(si));
             }
         }
 
@@ -2159,7 +2160,7 @@ namespace TVRename
             try
             {
                 mDoc.WriteXMLSettings();
-                TheTVDB.Instance.SaveCache();
+                LocalCache.Instance.SaveCache();
                 if (!SaveLayoutXml())
                 {
                     Logger.Error("Failed to Save Layout Configuration Files");
@@ -2223,7 +2224,7 @@ namespace TVRename
             txtDLStatusLabel.Visible = n != 0 || TVSettings.Instance.BGDownload;
             if (n != 0)
             {
-                txtDLStatusLabel.Text = "Background download: " + TheTVDB.Instance.CurrentDLTask;
+                txtDLStatusLabel.Text = "Background download: " + LocalCache.Instance.CurrentDLTask;
                 backgroundDownloadNowToolStripMenuItem.Enabled = false;
             }
             else
@@ -2239,7 +2240,7 @@ namespace TVRename
             if (n == 0 && lastDlRemaining > 0)
             {
                 // we've just finished a bunch of background downloads
-                TheTVDB.Instance.SaveCache();
+                LocalCache.Instance.SaveCache();
                 RefreshWTW(false,true);
 
                 backgroundDownloadNowToolStripMenuItem.Enabled = true;
@@ -2375,9 +2376,9 @@ namespace TVRename
         private TreeNode AddShowItemToTree([NotNull] ShowItem si)
         {
             SeriesInfo ser;
-            lock (TheTVDB.SERIES_LOCK)
+            lock (LocalCache.SERIES_LOCK)
             {
-                ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
+                ser = LocalCache.Instance.GetSeries(si.TvdbCode);
             }
 
             TreeNode n = new TreeNode(GenerateShowUIName(ser,si)) {Tag = si};
@@ -2460,7 +2461,7 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         private static string GenerateShowUIName([NotNull] ShowItem si)
         {
-            SeriesInfo s = TheTVDB.Instance.GetSeries(si.TvdbCode);
+            SeriesInfo s = LocalCache.Instance.GetSeries(si.TvdbCode);
             return GenerateShowUIName(s,si);
         }
 
@@ -2658,7 +2659,7 @@ namespace TVRename
             DialogResult dr = aes.ShowDialog();
             if (dr == DialogResult.OK)
             {
-                lock (TheTVDB.SERIES_LOCK)
+                lock (LocalCache.SERIES_LOCK)
                 {
                     mDoc.Library.Add(si);
                 }
@@ -2766,7 +2767,7 @@ namespace TVRename
             MoreBusy();
             mDoc.PreventAutoScan("Edit Season");
 
-            lock (TheTVDB.SERIES_LOCK)
+            lock (LocalCache.SERIES_LOCK)
             {
                 EditSeason er = new EditSeason(si, seasnum, TVSettings.Instance.NamingStyle);
                 DialogResult dr = er.ShowDialog();

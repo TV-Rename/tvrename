@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
+using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -80,7 +81,7 @@ namespace TVRename
 
         private bool OkToClose()
         {
-            if (TheTVDB.Instance.HasSeries(codeFinder.SelectedCode()))
+            if (LocalCache.Instance.HasSeries(codeFinder.SelectedCode()))
             {
                 return true;
             }

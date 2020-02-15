@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using TVRename.Forms.ShowPreferences;
+using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -69,7 +70,7 @@ namespace TVRename
             chkCustomLanguage.Checked = si.UseCustomLanguage;
             if (chkCustomLanguage.Checked)
             {
-                Language languageFromCode = TheTVDB.Instance.LanguageList.GetLanguageFromCode(si.CustomLanguageCode);
+                Language languageFromCode = LocalCache.Instance.LanguageList.GetLanguageFromCode(si.CustomLanguageCode);
                 if (languageFromCode != null)
                 {
                     cbLanguage.Text = languageFromCode.Name;
@@ -200,12 +201,12 @@ namespace TVRename
             cbTimeZone.EndUpdate();
             cbTimeZone.Text = si.ShowTimeZone;
 
-            if (TheTVDB.Instance.LanguageList != null) //This means that language shave been loaded
+            if (LocalCache.Instance.LanguageList != null) //This means that language shave been loaded
             {
                 string pref = "";
                 cbLanguage.BeginUpdate();
                 cbLanguage.Items.Clear();
-                foreach (Language l in TheTVDB.Instance.LanguageList.Where(l => !(l.Name is null)))
+                foreach (Language l in LocalCache.Instance.LanguageList.Where(l => !(l.Name is null)))
                 {
                     cbLanguage.Items.Add(l.Name);
 
@@ -234,7 +235,7 @@ namespace TVRename
 
         private bool OkToClose()
         {
-            if (!TheTVDB.Instance.HasSeries(codeFinderForm.SelectedCode()))
+            if (!LocalCache.Instance.HasSeries(codeFinderForm.SelectedCode()))
             {
                 DialogResult dr = MessageBox.Show("tvdb code unknown, close anyway?", "TVRename Add/Edit Show",
                                                   MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -298,7 +299,7 @@ namespace TVRename
             selectedShow.UseCustomLanguage = chkCustomLanguage.Checked;
             if (selectedShow.UseCustomLanguage)
             {
-                selectedShow.CustomLanguageCode = TheTVDB.Instance.LanguageList
+                selectedShow.CustomLanguageCode = LocalCache.Instance.LanguageList
                     .GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString())?.Abbreviation ??TVSettings.Instance.PreferredLanguageCode;
             }
             selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.DefaultTimeZone();

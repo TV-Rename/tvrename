@@ -22,6 +22,7 @@ using System.Xml.Linq;
 using JetBrains.Annotations;
 using NLog;
 using NodaTime.Extensions;
+using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -68,7 +69,7 @@ namespace TVRename
 
             downloadIdentifiers = new DownloadIdentifiersController();
 
-            LoadOk = (settingsFile is null || LoadXMLSettings(settingsFile)) && TheTVDB.Instance.LoadOk;
+            LoadOk = (settingsFile is null || LoadXMLSettings(settingsFile)) && LocalCache.Instance.LoadOk;
             LoadLanguages();
             LoadStats();
             actionManager = new ActionEngine(CurrentStats);
@@ -90,7 +91,7 @@ namespace TVRename
         {
             try
             {
-                TheTVDB.Instance.LanguageList = Languages.Load();
+                LocalCache.Instance.LanguageList = Languages.Load();
             }
             catch (Exception)
             {
@@ -160,14 +161,14 @@ namespace TVRename
 
         public void TidyTvdb()
         {
-            TheTVDB.Instance.Tidy(Library.Values);
+            LocalCache.Instance.Tidy(Library.Values);
         }
 
         public void Closing()
         {
             cacheManager.StopBgDownloadThread();
             Stats().Save();
-            TheTVDB.Instance.LanguageList.Save();
+            LocalCache.Instance.LanguageList.Save();
         }
 
         public static void SearchForEpisode([CanBeNull] ProcessedEpisode ep)
@@ -241,7 +242,7 @@ namespace TVRename
 
             mDirty = false;
             Stats().Save();
-            TheTVDB.Instance.LanguageList.Save();
+            LocalCache.Instance.LanguageList.Save();
         }
 
         // ReSharper disable once InconsistentNaming
@@ -854,7 +855,7 @@ namespace TVRename
             {
                 foreach (ShowItem si in sis)
                 {
-                    TheTVDB.Instance.ForgetShow(si.TvdbCode, true,si.UseCustomLanguage,si.CustomLanguageCode);
+                    LocalCache.Instance.ForgetShow(si.TvdbCode, true,si.UseCustomLanguage,si.CustomLanguageCode);
                 }
             }
 
@@ -864,7 +865,7 @@ namespace TVRename
 
         internal void ServerAccuracyCheck(bool unattended,bool hidden)
         {
-            IEnumerable<SeriesInfo> seriesToUpdate = TheTVDB.Instance.ServerAccuracyCheck();
+            IEnumerable<SeriesInfo> seriesToUpdate = LocalCache.Instance.ServerAccuracyCheck();
             IEnumerable<ShowItem> showsToUpdate = seriesToUpdate.Select(info => Library.ShowItem(info.TvdbCode));
             ForceRefresh(showsToUpdate, unattended, hidden);
             DoDownloadsBG();

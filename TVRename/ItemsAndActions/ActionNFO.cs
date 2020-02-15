@@ -139,7 +139,7 @@ namespace TVRename
                 writer.WriteElement("name", aa.ActorName);
                 writer.WriteElement("role", aa.ActorRole);
                 writer.WriteElement("order", aa.ActorSortOrder);
-                writer.WriteElement("thumb", TheTVDBAPI.GetImageURL(aa.ActorImage),true);
+                writer.WriteElement("thumb", TheTVDB.API.GetImageURL(aa.ActorImage),true);
                 writer.WriteEndElement(); // actor
             }
 
@@ -159,7 +159,7 @@ namespace TVRename
                 string thumbFilename = filename + ".jpg";
                 writer.WriteElement("thumb", thumbFilename);
                 //Should be able to do this using the local filename, but only seems to work if you provide a URL
-                //XMLHelper.WriteElementToXML(writer, "thumb", TheTVDB.Instance.GetTVDBDownloadURL(episode.GetFilename()))
+                //XMLHelper.WriteElementToXML(writer, "thumb", LocalCache.Instance.GetTVDBDownloadURL(episode.GetFilename()))
             }
             writer.WriteEndElement(); // episodedetails
         }
@@ -258,7 +258,7 @@ namespace TVRename
             writer.WriteStartElement("url");
             writer.WriteAttributeString("post", "yes");
             writer.WriteAttributeString("cache", "auth.json");
-            writer.WriteRaw(TheTVDBAPI.BuildUrl(SelectedShow.TvdbCode, lang));
+            writer.WriteRaw(TheTVDB.API.BuildUrl(SelectedShow.TvdbCode, lang));
             writer.WriteEndElement(); //url
             writer.WriteEndElement(); //episodeguide
 
@@ -296,7 +296,7 @@ namespace TVRename
                 writer.WriteElement("name", aa.ActorName);
                 writer.WriteElement("role", aa.ActorRole);
                 writer.WriteElement("order", aa.ActorSortOrder);
-                writer.WriteElement("thumb", TheTVDBAPI.GetImageURL(aa.ActorImage),true);
+                writer.WriteElement("thumb", TheTVDB.API.GetImageURL(aa.ActorImage),true);
                 writer.WriteEndElement(); // actor
             }
 

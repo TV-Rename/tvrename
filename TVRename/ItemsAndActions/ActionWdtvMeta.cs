@@ -176,9 +176,9 @@ namespace TVRename
                         writer.WriteElement("guest", guest);
                     }
 
-                    writer.WriteElement("thumbnail", TheTVDBAPI.GetImageURL(Episode.Filename));
-                    writer.WriteElement("banner", TheTVDBAPI.GetImageURL(Episode.AppropriateSeason.GetWideBannerPath()));
-                    writer.WriteElement("backdrop", TheTVDBAPI.GetImageURL(Episode.TheSeries.GetSeriesFanartPath()));
+                    writer.WriteElement("thumbnail", TheTVDB.API.GetImageURL(Episode.Filename));
+                    writer.WriteElement("banner", TheTVDB.API.GetImageURL(Episode.AppropriateSeason.GetWideBannerPath()));
+                    writer.WriteElement("backdrop", TheTVDB.API.GetImageURL(Episode.TheSeries.GetSeriesFanartPath()));
                     writer.WriteEndElement(); // details
                 }
                 Done = true;

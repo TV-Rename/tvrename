@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 using NodaTime;
+using TVRename.TheTVDB;
 using Path = System.IO.Path;
 
 namespace TVRename
@@ -67,7 +68,7 @@ namespace TVRename
             // look for a valid airdate in the filename
             // check for YMD, DMY, and MDY
             // only check against airdates we expect for the given show
-            SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
+            SeriesInfo ser = LocalCache.Instance.GetSeries(si.TvdbCode);
 
             if (ser is null)
             {

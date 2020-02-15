@@ -16,6 +16,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Humanizer;
 using JetBrains.Annotations;
+using TVRename.TheTVDB;
 
 // ReSharper disable RedundantDefaultMemberInitializer
 // ReSharper disable InconsistentNaming
@@ -279,7 +280,7 @@ namespace TVRename
         public string USER_AGENT =>
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36";
 
-        public TheTVDB.PagingMethod TVDBPagingMethod => TheTVDB.PagingMethod.proper;
+        public LocalCache.PagingMethod TVDBPagingMethod => LocalCache.PagingMethod.proper;
 
         public bool CleanLibraryAfterActions = false;
         public bool AutoAddAsPartOfQuickRename = true;

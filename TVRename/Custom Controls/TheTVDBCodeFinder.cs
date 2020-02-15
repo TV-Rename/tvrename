@@ -9,6 +9,7 @@ using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using TVRename.TheTVDB;
 
 // Control for searching for a tvdb code, checking against local cache and
 // searching on thetvdb
@@ -104,9 +105,9 @@ namespace TVRename
             {
                 bool numeric = int.TryParse(what, out int matchnum);
 
-                lock (TheTVDB.SERIES_LOCK)
+                lock (LocalCache.SERIES_LOCK)
                 {
-                    foreach (KeyValuePair<int, SeriesInfo> kvp in TheTVDB.Instance.GetSeriesDict())
+                    foreach (KeyValuePair<int, SeriesInfo> kvp in LocalCache.Instance.GetSeriesDict())
                     {
                         int num = kvp.Key;
                         string show = kvp.Value.Name.RemoveDiacritics();
@@ -178,7 +179,7 @@ namespace TVRename
 
             if (!string.IsNullOrEmpty(txtFindThis.Text))
             {
-                TheTVDB.Instance.Search(txtFindThis.Text,showErrorMsgBox);
+                LocalCache.Instance.Search(txtFindThis.Text,showErrorMsgBox);
                 DoFind(true);
             }
         }

@@ -15,6 +15,7 @@ using JetBrains.Annotations;
 using NLog;
 using NodaTime;
 using TimeZoneConverter;
+using TVRename.TheTVDB;
 
 // These are what is used when processing folders for missing episodes, renaming, etc. of files.
 
@@ -399,7 +400,7 @@ namespace TVRename
         internal bool UsesManualFolders() => ManualFolderLocations.Count > 0;
 
         [CanBeNull]
-        public SeriesInfo TheSeries() => TheTVDB.Instance.GetSeries(TvdbCode);
+        public SeriesInfo TheSeries() => LocalCache.Instance.GetSeries(TvdbCode);
 
         public string ShowName
         {
@@ -592,7 +593,7 @@ namespace TVRename
         public IEnumerable<Actor> Actors => TheSeries()?.GetActors() ?? new List<Actor>();
 
         [CanBeNull]
-        public Language  PreferredLanguage => UseCustomLanguage ? TheTVDB.Instance.LanguageList.GetLanguageFromCode(CustomLanguageCode) : TheTVDB.Instance.PreferredLanguage;
+        public Language  PreferredLanguage => UseCustomLanguage ? LocalCache.Instance.LanguageList.GetLanguageFromCode(CustomLanguageCode) : LocalCache.Instance.PreferredLanguage;
 
         [NotNull]
         public IEnumerable<KeyValuePair<int, List<ProcessedEpisode>>> ActiveSeasons

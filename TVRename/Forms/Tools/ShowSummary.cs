@@ -17,6 +17,7 @@ using JetBrains.Annotations;
 using SourceGrid;
 using SourceGrid.Cells.Controllers;
 using SourceGrid.Cells.Views;
+using TVRename.TheTVDB;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 using ContentAlignment = DevAge.Drawing.ContentAlignment;
 using Directory = System.IO.Directory;
@@ -190,9 +191,9 @@ namespace TVRename
         {
             SeriesInfo ser;
 
-            lock (TheTVDB.SERIES_LOCK)
+            lock (LocalCache.SERIES_LOCK)
             {
-                ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
+                ser = LocalCache.Instance.GetSeries(si.TvdbCode);
             }
 
             ShowSummaryData showSummary = new ShowSummaryData
@@ -310,7 +311,7 @@ namespace TVRename
                 return;
             }
 
-            Helpers.SysOpen(TheTVDBAPI.WebsiteSeasonUrl(seas));
+            Helpers.SysOpen(API.WebsiteSeasonUrl(seas));
         }
 
         private void TVDBFor([CanBeNull] ShowItem si)
@@ -320,14 +321,14 @@ namespace TVRename
                 return;
             }
 
-            Helpers.SysOpen(TheTVDBAPI.WebsiteShowUrl(si));
+            Helpers.SysOpen(API.WebsiteShowUrl(si));
         }
 
         private void ForceRefresh([CanBeNull] ShowItem si)
         {
             if (si != null)
             {
-                TheTVDB.Instance.ForgetShow(si.TvdbCode, true,si.UseCustomLanguage,si.CustomLanguageCode);
+                LocalCache.Instance.ForgetShow(si.TvdbCode, true,si.UseCustomLanguage,si.CustomLanguageCode);
             }
 
             mDoc.DoDownloadsFG(false,false);

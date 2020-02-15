@@ -55,7 +55,7 @@ namespace TVRename
                 return string.Empty;
             }
 
-            string posterUrl = TheTVDBAPI.GetImageURL(series.GetImage(TVSettings.FolderJpgIsType.Poster));
+            string posterUrl = TheTVDB.API.GetImageURL(series.GetImage(TVSettings.FolderJpgIsType.Poster));
             string yearRange = ShowHtmlHelper.YearRange(series);
             string episodeSummary = series.Episodes.Count.ToString();
             string stars = ShowHtmlHelper.StarRating(series.SiteRating/2);

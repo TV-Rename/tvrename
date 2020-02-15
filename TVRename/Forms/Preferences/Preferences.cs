@@ -17,6 +17,7 @@ using JetBrains.Annotations;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using TimeZoneConverter;
+using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -359,7 +360,7 @@ namespace TVRename
             s.keepTogetherMode = KeepTogetherMode();
 
             s.PreferredLanguageCode =
-                TheTVDB.Instance.LanguageList.FirstOrDefault(l => l.Name == cbLanguages.Text)?.Abbreviation ??
+                LocalCache.Instance.LanguageList.FirstOrDefault(l => l.Name == cbLanguages.Text)?.Abbreviation ??
                 s.PreferredLanguageCode;
 
             if (string.IsNullOrWhiteSpace(s.PreferredLanguageCode))
@@ -493,13 +494,13 @@ namespace TVRename
         private void LoadLanguage()
         {
             bool aborted = false;
-            lock (TheTVDB.LANGUAGE_LOCK)
+            lock (LocalCache.LANGUAGE_LOCK)
             {
                 try
                 {
-                    if (!TheTVDB.Instance.IsConnected)
+                    if (!LocalCache.Instance.IsConnected)
                     {
-                        TheTVDB.Instance.Connect(true);
+                        LocalCache.Instance.Connect(true);
                     }
                 }
                 catch (ThreadAbortException)
@@ -530,9 +531,9 @@ namespace TVRename
             cbLanguages.Items.Clear();
 
             string pref = "";
-            lock(TheTVDB.LANGUAGE_LOCK)
+            lock(LocalCache.LANGUAGE_LOCK)
             {
-                foreach (Language l in TheTVDB.Instance.LanguageList)
+                foreach (Language l in LocalCache.Instance.LanguageList)
                 {
                     cbLanguages.Items.Add(l.Name);
 

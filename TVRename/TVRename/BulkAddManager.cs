@@ -14,6 +14,7 @@ using System.Threading;
 using System.Xml;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -48,7 +49,7 @@ namespace TVRename
             {
                 try
                 {
-                    SeriesInfo series = TheTVDB.Instance.GetSeriesAndDownload(tvdbId);
+                    SeriesInfo series = LocalCache.Instance.GetSeriesAndDownload(tvdbId);
                     if (series != null)
                     {
                         ai.TVDBCode = tvdbId;
@@ -61,7 +62,7 @@ namespace TVRename
                 }
             }
 
-            SeriesInfo ser = TheTVDB.Instance.GetSeries(showName,showErrorMsgBox);
+            SeriesInfo ser = LocalCache.Instance.GetSeries(showName,showErrorMsgBox);
             if (ser != null)
             {
                 ai.TVDBCode = ser.TvdbCode;
@@ -80,7 +81,7 @@ namespace TVRename
                 Logger.Info($"Ignoring {showName} as it refines to nothing.");
             }
 
-            ser = TheTVDB.Instance.GetSeries(refinedHint,showErrorMsgBox);
+            ser = LocalCache.Instance.GetSeries(refinedHint,showErrorMsgBox);
 
             ai.RefinedHint = refinedHint;
             if (ser != null)

@@ -80,7 +80,7 @@ namespace TVRename
                     Comments = new List<string> {ei.Overview},
                     Summary = niceName,
                     Location = ei.TheSeries.Network,
-                    Url = new Uri(TheTVDBAPI.WebsiteEpisodeUrl(ei)),
+                    Url = new Uri(TheTVDB.API.WebsiteEpisodeUrl(ei)),
                     Uid = ei.EpisodeId.ToString()
                 };
             }
