@@ -1054,7 +1054,6 @@ namespace TVRename.TheTVDB
             return episodeResponses;
         }
 
-
         private int GetLanguageId() =>
             LanguageList.GetLanguageFromCode(TVSettings.Instance.PreferredLanguageCode)?.Id ?? 7;
 
@@ -1500,7 +1499,6 @@ namespace TVRename.TheTVDB
 
             return txt;
         }
-
 
         private void ReloadEpisodes(int code, bool useCustomLangCode, string langCode)
         {

@@ -46,7 +46,6 @@ namespace TVRename.TheTVDB
             return url.StartsWith("banners/", StringComparison.Ordinal) ? mirr + url : mirr + "banners/" + url;
         }
      
-
         public static byte[] GetTvdbDownload([NotNull] string url, bool forceReload)
         {
             string theUrl = GetImageURL(url);
@@ -208,7 +207,6 @@ namespace TVRename.TheTVDB
             return JsonHttpGetRequest(episodeUri,
                 new Dictionary<string, string> { { "page", pageNumber.ToString() } },
                 TokenProvider, languageCode, true);
-
         }
 
         public static JObject GetSeriesActors(int seriesId)
