@@ -75,6 +75,10 @@ namespace TVRename
             {
                 LOGGER.Warn($"Could not recycle {folderName} as we got a DirectoryNotEmptyException");
             }
+            catch (System.OperationCanceledException)
+            {
+                LOGGER.Info($"Could not recycle {folderName} as we got a OperationCanceledException");
+            }
         }
 
         private static bool CanRemove(string folderName)
@@ -123,6 +127,10 @@ namespace TVRename
             catch (DirectoryNotEmptyException)
             {
                 LOGGER.Warn($"Could not find {folderName} as we got a DirectoryNotEmptyException");
+            }
+            catch (System.OperationCanceledException)
+            {
+                LOGGER.Info($"Could not find {folderName} as we got a OperationCanceledException");
             }
 
             return false;
