@@ -18,6 +18,7 @@ using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using TimeZoneConverter;
 using TVRename.TheTVDB;
+using Control = System.Windows.Forms.Control;
 
 namespace TVRename
 {
@@ -894,96 +895,124 @@ namespace TVRename
 
         private void PopulateFromEnums([NotNull] TVSettings s)
         {
-            switch (s.WTWDoubleClick)
-            {
-                case TVSettings.WTWDoubleClickAction.Search:
-                    rbWTWSearch.Checked = true;
-                    break;
-                case TVSettings.WTWDoubleClickAction.Scan:
-                    rbWTWScan.Checked = true;
-                    break;
-                default:
-                    throw new InvalidOperationException("Unexpected value s.WTWDoubleClick = " + s.WTWDoubleClick);
-            }
+            cbKeepTogetherMode.Text = ConvertEnum(s.keepTogetherMode);
+            cbMode.Text = ConvertEnum(s.mode);
 
-            switch (s.keepTogetherMode)
-            {
-                case TVSettings.KeepTogetherModes.All:
-                    cbKeepTogetherMode.Text = "All";
-                    break;
-                case TVSettings.KeepTogetherModes.AllBut:
-                    cbKeepTogetherMode.Text = "All but these";
-                    break;
-                case TVSettings.KeepTogetherModes.Just:
-                    cbKeepTogetherMode.Text = "Just";
-                    break;
-                default:
-                    throw new InvalidOperationException("Unexpected value s.keepTogetherMode = " + s.keepTogetherMode);
-            }
+            ChooseRadioButton(s.WTWDoubleClick).Checked = true;
+            ChooseRadioButton(s.FolderJpgIs).Checked = true;
+            ChooseRadioButton(s.qBitTorrentAPIVersion).Checked = true;
+            ChooseRadioButton(s.MonitoredFoldersScanType).Checked = true;
+        }
 
-            switch (s.mode)
-            {
-                case TVSettings.BetaMode.ProductionOnly:
-                    cbMode.Text = "Production";
-                    break;
-                case TVSettings.BetaMode.BetaToo:
-                    cbMode.Text = "Beta";
-                    break;
-                default:
-                    throw new InvalidOperationException("Unexpected value s.mode = " + s.mode);
-            }
-
-            switch (s.FolderJpgIs)
-            {
-                case TVSettings.FolderJpgIsType.FanArt:
-                    rbFolderFanArt.Checked = true;
-                    break;
-                case TVSettings.FolderJpgIsType.Banner:
-                    rbFolderBanner.Checked = true;
-                    break;
-                case TVSettings.FolderJpgIsType.SeasonPoster:
-                    rbFolderSeasonPoster.Checked = true;
-                    break;
-                case TVSettings.FolderJpgIsType.Poster:
-                    rbFolderPoster.Checked = true;
-                    break;
-                default:
-                    throw new InvalidOperationException("Unexpected value s.FolderJpgIs = " + s.FolderJpgIs);
-            }
-
-            switch (s.qBitTorrentAPIVersion)
-            {
-                case qBitTorrentAPIVersion.v0:
-                    rdoqBitTorrentAPIVersionv0.Checked = true;
-                    break;
-
-                case qBitTorrentAPIVersion.v1:
-                    rdoqBitTorrentAPIVersionv1.Checked = true;
-                    break;
-
-                case qBitTorrentAPIVersion.v2:
-                    rdoqBitTorrentAPIVersionv2.Checked = true;
-                    break;
-
-                default:
-                    throw new InvalidOperationException("Unexpected value s.qBitTorrentAPIVersion = " + s.qBitTorrentAPIVersion);
-            }
-
-            switch (s.MonitoredFoldersScanType)
+        private RadioButton ChooseRadioButton(TVSettings.ScanType enumType)
+        {
+            switch (enumType)
             {
                 case TVSettings.ScanType.Quick:
-                    rdoQuickScan.Checked = true;
+                    return rdoQuickScan;
                     break;
                 case TVSettings.ScanType.Recent:
-                    rdoRecentScan.Checked = true;
+                    return rdoRecentScan;
                     break;
                 case TVSettings.ScanType.Full:
-                    rdoFullScan.Checked = true;
+                    return rdoFullScan;
                     break;
                 case TVSettings.ScanType.SingleShow:
                     throw new InvalidOperationException("Unexpected value s.MonitoredFoldersScanType = SingleShow");
                 default:
-                    throw new InvalidOperationException("Unexpected value s.MonitoredFoldersScanType = " + s.MonitoredFoldersScanType);
+                    throw new InvalidOperationException("Unexpected value s.MonitoredFoldersScanType = " + enumType);
+            }
+        }
+
+        private RadioButton ChooseRadioButton(qBitTorrentAPIVersion sQBitTorrentApiVersion)
+        {
+            switch (sQBitTorrentApiVersion)
+            {
+                case qBitTorrentAPIVersion.v0:
+                    return rdoqBitTorrentAPIVersionv0;
+                    break;
+
+                case qBitTorrentAPIVersion.v1:
+                    return rdoqBitTorrentAPIVersionv1;
+                    break;
+
+                case qBitTorrentAPIVersion.v2:
+                    return rdoqBitTorrentAPIVersionv2;
+                    break;
+
+                default:
+                    throw new InvalidOperationException("Unexpected value s.qBitTorrentAPIVersion = " + sQBitTorrentApiVersion);
+            }
+        }
+
+        private RadioButton ChooseRadioButton(TVSettings.FolderJpgIsType enumTyp)
+        {
+            switch (enumTyp)
+            {
+                case TVSettings.FolderJpgIsType.FanArt:
+                    return rbFolderFanArt;
+                    break;
+                case TVSettings.FolderJpgIsType.Banner:
+                    return rbFolderBanner;
+                    break;
+                case TVSettings.FolderJpgIsType.SeasonPoster:
+                    return rbFolderSeasonPoster;
+                    break;
+                case TVSettings.FolderJpgIsType.Poster:
+                    return rbFolderPoster;
+                    break;
+                default:
+                    throw new InvalidOperationException("Unexpected value s.FolderJpgIs = " + enumTyp);
+            }
+        }
+
+        private RadioButton ChooseRadioButton(TVSettings.WTWDoubleClickAction sWtwDoubleClick)
+        {
+            switch (sWtwDoubleClick)
+            {
+                case TVSettings.WTWDoubleClickAction.Search:
+                    return rbWTWSearch;
+                    break;
+                case TVSettings.WTWDoubleClickAction.Scan:
+                    return rbWTWScan;
+                    break;
+                default:
+                    throw new InvalidOperationException("Unexpected value s.WTWDoubleClick = " + sWtwDoubleClick);
+            }
+        }
+
+        [NotNull]
+        private static string ConvertEnum(TVSettings.BetaMode mode)
+        {
+            switch (mode)
+            {
+                case TVSettings.BetaMode.ProductionOnly:
+                    return "Production";
+                    break;
+                case TVSettings.BetaMode.BetaToo:
+                    return "Beta";
+                    break;
+                default:
+                    throw new InvalidOperationException("Unexpected value s.mode = " + mode);
+            }
+        }
+
+        [NotNull]
+        private static string ConvertEnum(TVSettings.KeepTogetherModes sKeepTogetherMode)
+        {
+            switch (sKeepTogetherMode)
+            {
+                case TVSettings.KeepTogetherModes.All:
+                    return "All";
+                    break;
+                case TVSettings.KeepTogetherModes.AllBut:
+                    return "All but these";
+                    break;
+                case TVSettings.KeepTogetherModes.Just:
+                    return "Just";
+                    break;
+                default:
+                    throw new InvalidOperationException("Unexpected value s.keepTogetherMode = " + sKeepTogetherMode);
             }
         }
 
