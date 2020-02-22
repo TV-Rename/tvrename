@@ -1116,8 +1116,7 @@ namespace TVRename
             // Shows
             foreach (string status in Enum.GetNames(typeof(ShowItem.ShowAirStatus)))
             {
-                TVSettings.ShowStatusColoringType t = new TVSettings.ShowStatusColoringType(true, true, status);
-                cboShowStatus.Items.Add(t);
+                cboShowStatus.Items.Add(new TVSettings.ShowStatusColoringType(true, true, status));
             }
 
             System.Collections.Generic.List<string> showStatusList = new System.Collections.Generic.List<string>();
