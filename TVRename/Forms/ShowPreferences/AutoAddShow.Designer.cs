@@ -37,6 +37,7 @@ namespace TVRename
             this.lblDirectoryName = new System.Windows.Forms.Label();
             this.btnIgnoreFile = new System.Windows.Forms.Button();
             this.btnSkipAutoAdd = new System.Windows.Forms.Button();
+            this.lblFileName = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // cbDirectory
@@ -78,9 +79,9 @@ namespace TVRename
             this.pnlCF.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlCF.Location = new System.Drawing.Point(10, 10);
+            this.pnlCF.Location = new System.Drawing.Point(10, 28);
             this.pnlCF.Name = "pnlCF";
-            this.pnlCF.Size = new System.Drawing.Size(462, 301);
+            this.pnlCF.Size = new System.Drawing.Size(462, 283);
             this.pnlCF.TabIndex = 3;
             // 
             // label1
@@ -126,12 +127,22 @@ namespace TVRename
             this.btnSkipAutoAdd.UseVisualStyleBackColor = true;
             this.btnSkipAutoAdd.Click += new System.EventHandler(this.btnSkipAutoAdd_Click);
             // 
+            // lblFileName
+            // 
+            this.lblFileName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblFileName.AutoSize = true;
+            this.lblFileName.Location = new System.Drawing.Point(13, 9);
+            this.lblFileName.Name = "lblFileName";
+            this.lblFileName.Size = new System.Drawing.Size(0, 13);
+            this.lblFileName.TabIndex = 8;
+            // 
             // AutoAddShow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(479, 385);
+            this.Controls.Add(this.lblFileName);
             this.Controls.Add(this.btnSkipAutoAdd);
             this.Controls.Add(this.btnIgnoreFile);
             this.Controls.Add(this.lblDirectoryName);
@@ -148,6 +159,7 @@ namespace TVRename
             this.Text = "New Show Detected...";
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
@@ -160,5 +172,6 @@ namespace TVRename
         private System.Windows.Forms.Label lblDirectoryName;
         private System.Windows.Forms.Button btnIgnoreFile;
         private System.Windows.Forms.Button btnSkipAutoAdd;
+        private System.Windows.Forms.Label lblFileName;
     }
 }

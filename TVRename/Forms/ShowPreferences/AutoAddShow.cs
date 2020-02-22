@@ -10,10 +10,11 @@ namespace TVRename
         private readonly TheTvdbCodeFinder codeFinder;
         private readonly string originalHint;
 
-        public AutoAddShow(string hint)
+        public AutoAddShow(string hint,string filename)
         {
             InitializeComponent();
             ShowItem = new ShowItem();
+            lblFileName.Text = "Filename: "+filename;
             codeFinder = new TheTvdbCodeFinder("") {Dock = DockStyle.Fill};
             codeFinder.SetHint(hint);
             codeFinder.SelectionChanged += MTCCF_SelectionChanged;

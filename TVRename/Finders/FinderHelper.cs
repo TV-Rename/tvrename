@@ -582,7 +582,7 @@ namespace TVRename
                 Logger.Info("Auto Adding New Show");
 
                 //popup dialog
-                AutoAddShow askForMatch = new AutoAddShow(refinedHint);
+                AutoAddShow askForMatch = new AutoAddShow(refinedHint,hint);
 
                 DialogResult dr = askForMatch.ShowDialog();
                 if (dr == DialogResult.OK)
