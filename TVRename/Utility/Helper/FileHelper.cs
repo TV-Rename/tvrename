@@ -76,22 +76,10 @@ namespace TVRename
                 return VideoComparison.same;
             }
 
-            if (encumbantLength == -1)
-            {
-                return VideoComparison.cantTell;
-            }
-
-            if (newFileLength == -1)
-            {
-                return VideoComparison.cantTell;
-            }
-
-            if (encumbantFrameWidth == -1)
-            {
-                return VideoComparison.cantTell;
-            }
-
-            if (newFileFrameWidth == -1)
+            if (   encumbantLength == -1
+                || newFileLength == -1
+                || encumbantFrameWidth == -1
+                || newFileFrameWidth == -1)
             {
                 return VideoComparison.cantTell;
             }
