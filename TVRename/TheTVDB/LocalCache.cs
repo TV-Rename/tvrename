@@ -556,81 +556,24 @@ namespace TVRename.TheTVDB
 
             while (moreUpdates)
             {
-                JObject jsonUpdateResponse;
-
                 //If this date is in the last week then this needs to be the last call to the update
-                DateTime requestedTime;
-                try
-                {
-                    requestedTime = Helpers.FromUnixTime(updateFromEpochTime).ToUniversalTime();
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(ex,
-                        $"Could not get updates({numberofCallsMade}): LastSuccessFullServer {LatestUpdateTime.LastSuccessfulServerUpdateTimecode()}: Series Time: {GetUpdateTimeFromShows()} {LatestUpdateTime}, Tried to parse {updateFromEpochTime}");
+                DateTime requestedTime = GetRequestedTime(updateFromEpochTime, numberofCallsMade);
 
-                    //Have to do something!!
-                    requestedTime = Helpers.FromUnixTime(0).ToUniversalTime();
-                }
-
-                DateTime now = DateTime.UtcNow;
-                if ((now - requestedTime).TotalDays < 7)
+                if ((DateTime.UtcNow - requestedTime).TotalDays < 7)
                 {
                     moreUpdates = false;
                 }
 
-                try
+                JObject jsonUpdateResponse  = GetUpdatesJson(updateFromEpochTime,requestedTime);
+                if (jsonUpdateResponse is null)
                 {
-                    long time = updateFromEpochTime;
-                    string lang = TVSettings.Instance.PreferredLanguageCode;
-                    jsonUpdateResponse = API.GetUpdatesSince(time, lang);
-                }
-                catch (WebException ex)
-                {
-                    if (ex.IsUnimportant())
-                    {
-                        Logger.Warn(
-                            $"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is {ex.LoggableDetails()}");
-                    }
-                    else
-                    {
-                        Logger.Error(
-                            $"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is {ex.LoggableDetails()}");
-                    }
-
-                    Say("");
-                    LastErrorMessage = ex.Message;
                     return false;
                 }
 
-                int numberOfResponses;
-                try
+                int? numberOfResponses = GetNumResponses(jsonUpdateResponse,requestedTime);
+                if (numberOfResponses is null)
                 {
-                    JToken dataToken = jsonUpdateResponse["data"];
-
-                    numberOfResponses = !dataToken.HasValues ? 0 : ((JArray) dataToken).Count;
-                }
-                catch (InvalidCastException ex)
-                {
-                    Say("");
-                    LastErrorMessage = ex.Message;
-
-                    string msg = "Unable to get latest updates from TVDB " + Environment.NewLine +
-                                 "Trying to get updates since " + requestedTime.ToLocalTime() +
-                                 Environment.NewLine + Environment.NewLine +
-                                 "If the date is very old, please consider a full refresh";
-
-                    Logger.Warn($"Error obtaining lastupdated query -since(local) {requestedTime.ToLocalTime()}");
-
-                    Logger.Warn(ex, msg);
-
-                    if (!args.Unattended && !args.Hide && Environment.UserInteractive)
-                    {
-                        MessageBox.Show(msg, "Error obtaining updates from TVDB", MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning);
-                    }
-
-                    return true;
+                    return false;
                 }
 
                 long maxUpdateTime;
@@ -700,6 +643,78 @@ namespace TVRename.TheTVDB
             Say("");
 
             return true;
+        }
+
+        private int? GetNumResponses(JObject jsonUpdateResponse,DateTime requestedTime)
+        {
+            try
+            {
+                JToken dataToken = jsonUpdateResponse["data"];
+
+                return !dataToken.HasValues ? 0 : ((JArray)dataToken).Count;
+            }
+            catch (InvalidCastException ex)
+            {
+                Say("");
+                LastErrorMessage = ex.Message;
+
+                string msg = "Unable to get latest updates from TVDB " + Environment.NewLine +
+                             "Trying to get updates since " + requestedTime.ToLocalTime() +
+                             Environment.NewLine + Environment.NewLine +
+                             "If the date is very old, please consider a full refresh";
+
+                Logger.Warn($"Error obtaining lastupdated query -since(local) {requestedTime.ToLocalTime()}");
+
+                Logger.Warn(ex, msg);
+
+                if (!args.Unattended && !args.Hide && Environment.UserInteractive)
+                {
+                    MessageBox.Show(msg, "Error obtaining updates from TVDB", MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                }
+
+                return null;
+            }
+        }
+
+        private JObject GetUpdatesJson(long updateFromEpochTime, DateTime requestedTime)
+        {
+            try
+            {
+                return API.GetUpdatesSince(updateFromEpochTime, TVSettings.Instance.PreferredLanguageCode);
+            }
+            catch (WebException ex)
+            {
+                if (ex.IsUnimportant())
+                {
+                    Logger.Warn(
+                        $"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is {ex.LoggableDetails()}");
+                }
+                else
+                {
+                    Logger.Error(
+                        $"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is {ex.LoggableDetails()}");
+                }
+
+                Say("");
+                LastErrorMessage = ex.Message;
+                return null;
+            }
+        }
+
+        private DateTime GetRequestedTime(long updateFromEpochTime, int numberofCallsMade)
+        {
+            try
+            {
+                return Helpers.FromUnixTime(updateFromEpochTime).ToUniversalTime();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex,
+                    $"Could not get updates({numberofCallsMade}): LastSuccessFullServer {LatestUpdateTime.LastSuccessfulServerUpdateTimecode()}: Series Time: {GetUpdateTimeFromShows()} {LatestUpdateTime}, Tried to parse {updateFromEpochTime}");
+            }
+            //Have to do something!!
+            return Helpers.FromUnixTime(0).ToUniversalTime();
         }
 
         private void UpgradeDirtyLocks()
