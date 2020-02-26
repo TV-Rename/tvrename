@@ -223,7 +223,7 @@ namespace TVRename.TheTVDB
             //https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json
         {
             return $"{TokenProvider.TVDB_API_URL}/login?"
-                   + "{&quot;apikey&quot;:&quot;" + TokenProvider.TVDB_API_KEY + "&quot;,&quot;id&quot;:" + apiKey + "}"
+                   + "{'apikey':'" + TokenProvider.TVDB_API_KEY + "','id':" + apiKey + "}"
                    + "|Content-Type=application/json";
         }
 

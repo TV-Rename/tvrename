@@ -26,7 +26,8 @@ namespace TVRename
         [NotNull]
         public override string Name => "Write pyTivo Meta";
 
-        public override bool Go(TVRenameStats stats)
+        [NotNull]
+        public override ActionOutcome Go(TVRenameStats stats)
         {
             try
             {
@@ -63,16 +64,11 @@ namespace TVRename
                     WriteEntries(writer, "vProgramGenre", string.Join("|", Episode.Show.Genres));
                 }
 
-                Done = true;
-                return true;
+                return ActionOutcome.Success();
             }
             catch (Exception e)
             {
-                ErrorText = e.Message;
-                LastError = e;
-                Error = true;
-                Done = true;
-                return false;
+                return new ActionOutcome(e);
             }
         }
     

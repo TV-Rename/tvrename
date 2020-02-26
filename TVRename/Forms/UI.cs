@@ -3167,7 +3167,7 @@ namespace TVRename
                 lvi.SubItems.Add(""); // pad our way to the error column
             }
 
-            if (item is Action act && act.Error)
+            if (item is Action act && act.Outcome.Error)
             {
                 lvi.BackColor = Helpers.WarningColor();
             }

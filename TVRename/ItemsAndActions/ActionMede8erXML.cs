@@ -35,29 +35,25 @@ namespace TVRename
         [NotNull]
         public override string Name => "Write Mede8er Metadata";
 
-        public override bool Go(TVRenameStats stats)
+        [NotNull]
+        public override ActionOutcome Go(TVRenameStats stats)
         {
             try
             {
-                    if (Episode != null) // specific episode
-                    {
-                        WriteEpisodeXml();
-                    }
-                    else if (SelectedShow != null) // show overview (Series.xml)
-                    {
-                        WriteSeriesXml();
-                    }
+                if (Episode != null) // specific episode
+                {
+                    WriteEpisodeXml();
+                }
+                else if (SelectedShow != null) // show overview (Series.xml)
+                {
+                    WriteSeriesXml();
+                }
 
-                    Done = true;
-                    return true;
+                return ActionOutcome.Success();
             }
             catch (Exception e)
             {
-                ErrorText = e.Message;
-                LastError = e;
-                Error = true;
-                Done = true;
-                return false;
+                return new ActionOutcome(e);
             }
         }
 

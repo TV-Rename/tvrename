@@ -53,7 +53,8 @@ namespace TVRename
         // 0.0 to 100.0
         public override long SizeOfWork => QuickOperation() ? 10000 : SourceFileSize();
 
-        public override bool Go(TVRenameStats stats)
+        [NotNull]
+        public override ActionOutcome Go(TVRenameStats stats)
         {
             // read NTFS permissions (if any)
             FileSecurity security = null;
@@ -66,28 +67,6 @@ namespace TVRename
                 // ignored
             }
 
-            DoCopyRename(stats);
-
-            // set NTFS permissions
-            try
-            {
-                if (security != null)
-                {
-                    To.SetAccessControl(security);
-                }
-            }
-            catch
-            {
-                // ignored
-            }
-
-            TidyUpIfNeeded();
-
-            return !Error;
-        }
-
-        private void DoCopyRename(TVRenameStats stats)
-        {
             try
             {
                 //we use a temp name just in case we are interrupted or some other problem occurs
@@ -121,8 +100,6 @@ namespace TVRename
                 File.Move(tempName, To.FullName, MoveOptions.ReplaceExisting);
                 LOGGER.Info($"{Name} completed: {From.FullName} to {To.FullName } ");
 
-                Done = true;
-
                 UpdateStats(stats);
 
                 if (To.IsMovieFile())
@@ -137,12 +114,37 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                LOGGER.Warn(e,$"Error occurred while {Name}: {From.FullName} to {To.FullName } ");
-                Done = true;
-                Error = true;
-                ErrorText = e.Message;
-                LastError = e;
+                LOGGER.Warn(e, $"Error occurred while {Name}: {From.FullName} to {To.FullName } ");
+                return new ActionOutcome(e);
             }
+
+            // set NTFS permissions
+            try
+            {
+                if (security != null)
+                {
+                    To.SetAccessControl(security);
+                }
+            }
+            catch
+            {
+                // ignored
+            }
+
+            try
+            {
+                if (Operation == Op.move && Tidyup != null && Tidyup.DeleteEmpty)
+                {
+                    LOGGER.Info($"Testing {From.Directory.FullName} to see whether it should be tidied up");
+                    DoTidyup(From.Directory);
+                }
+            }
+            catch (Exception e)
+            {
+                return new ActionOutcome(e);
+            }
+
+            return ActionOutcome.Success();
         }
 
         private void UpdateStats([NotNull] TVRenameStats stats)
@@ -160,25 +162,6 @@ namespace TVRename
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        private void TidyUpIfNeeded()
-        {
-            try
-            {
-                if (Operation == Op.move && Tidyup != null && Tidyup.DeleteEmpty)
-                {
-                    LOGGER.Info($"Testing {From.Directory.FullName} to see whether it should be tidied up");
-                    DoTidyup(From.Directory);
-                }
-            }
-            catch (Exception e)
-            {
-                Done = true;
-                Error = true;
-                ErrorText = e.Message;
-                LastError = e;
             }
         }
 

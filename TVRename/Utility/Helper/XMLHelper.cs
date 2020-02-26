@@ -42,13 +42,13 @@ namespace TVRename
 
         public static void WriteElement(this XmlWriter writer, string elementName, [CanBeNull] string value,bool ignoreIfBlank)
         {
-            if (ignoreIfBlank && string.IsNullOrEmpty(value))
+            if (ignoreIfBlank && String.IsNullOrEmpty(value))
             {
                 return;
             }
 
             writer.WriteStartElement(elementName);
-            writer.WriteValue(value??string.Empty);
+            writer.WriteValue(value??String.Empty);
             writer.WriteEndElement();
         }
 
@@ -110,6 +110,18 @@ namespace TVRename
             writer.WriteValue(value);
             writer.WriteEndAttribute();
         }
+
+        public static XElement GetOrCreateElement([NotNull] this XElement root, string elementName)
+        {
+            if (root.Elements(elementName).Any())
+            {
+                return root.Elements(elementName).Single();
+            }
+            XElement e = new XElement(elementName);
+            root.Add(e);
+            return e;
+        }
+
         public static void WriteAttributeToXml([NotNull] this XmlWriter writer, [NotNull] string attributeName, DateTime?  value)
         {
             writer.WriteStartAttribute(attributeName);
@@ -148,10 +160,10 @@ namespace TVRename
 
         public static void WriteInfo(this XmlWriter writer, string elemName, [CanBeNull] string attribute, [CanBeNull] string attributeVal, [CanBeNull] string value)
         {
-            if (!string.IsNullOrEmpty(value))
+            if (!String.IsNullOrEmpty(value))
             {
                 writer.WriteStartElement(elemName);
-                if (!string.IsNullOrEmpty(attribute) && !string.IsNullOrEmpty(attributeVal))
+                if (!String.IsNullOrEmpty(attribute) && !String.IsNullOrEmpty(attributeVal))
                 {
                     writer.WriteAttributeString(attribute, attributeVal);
                 }
@@ -160,12 +172,79 @@ namespace TVRename
             }
         }
 
+        public static void UpdateElement(this XElement root, string elementName, string value, bool ignoreIfBlank)
+        {
+            if (ignoreIfBlank && string.IsNullOrEmpty(value))
+            {
+                return;
+            }
+            UpdateElement(root, elementName, value);
+        }
+
+        public static void UpdateElement([NotNull] this XElement e, [NotNull] string elementName, string value)
+        {
+            if (e.Elements(elementName).Any())
+            {
+                e.Elements(elementName).Single().Value = value;
+            }
+            else
+            {
+                e.Add(new XElement(elementName, value));
+            }
+        }
+
+        public static void ReplaceElements([NotNull] this XElement root, string key, [NotNull] IEnumerable<string> values)
+        {
+            IEnumerable<XElement> elementsToRemove = root.Elements(key);
+            foreach (XElement oldValue in elementsToRemove)
+            {
+                oldValue.Remove();
+            }
+
+            foreach (string value in values)
+            {
+                root.Add(new XElement(key, value));
+            }
+        }
+
+        public static void UpdateElement([NotNull] this XElement e, [NotNull] string elementName, DateTime? value)
+        {
+            e.SetElementValue(elementName, value);
+        }
+
+        public static void UpdateElement(this XElement e, string elementName, int value, bool ignoreIfBlank)
+        {
+            if (ignoreIfBlank && value == 0)
+            {
+                return;
+            }
+            e.SetElementValue(elementName, value);
+        }
+
+        public static void UpdateElement([NotNull] this XElement e, [NotNull] string elementName, float value)
+        {
+            e.SetElementValue(elementName, value);
+        }
+
+        public static void UpdateAttribute([NotNull] this XElement element, string attributeName, [NotNull] string value)
+        {
+            XAttribute att = element.Attributes(attributeName).FirstOrDefault();
+            if (att is null)
+            {
+                element.Add(new XAttribute(attributeName, value));
+            }
+            else
+            {
+                att.Value = value;
+            }
+        }
+
         public static void WriteInfo(this XmlWriter writer, string elemName, [CanBeNull] string attribute, [CanBeNull] string attributeVal)
         {
-            if (!string.IsNullOrEmpty(attributeVal))
+            if (!String.IsNullOrEmpty(attributeVal))
             {
                 writer.WriteStartElement(elemName);
-                if (!string.IsNullOrEmpty(attribute))
+                if (!String.IsNullOrEmpty(attribute))
                 {
                     writer.WriteAttributeString(attribute, attributeVal);
                 }
@@ -181,6 +260,11 @@ namespace TVRename
             }
 
             return null;
+        }
+
+        public static bool HasAttribute([NotNull] this XElement node, string name, string value)
+        {
+            return node.Attributes().Any(testAttribute => testAttribute.Name == name && testAttribute.Value == value);
         }
 
         public static bool ExtractBool([NotNull] this XElement xmlSettings, string elementName,bool defaultValue)
@@ -204,7 +288,7 @@ namespace TVRename
             if (xmlSettings.Descendants(elementName).Any())
             {
                 string textVersion=(string)xmlSettings.Descendants(elementName).First();
-                if (string.IsNullOrWhiteSpace(textVersion))
+                if (String.IsNullOrWhiteSpace(textVersion))
                 {
                     return null;
                 }
@@ -215,7 +299,7 @@ namespace TVRename
         }
         public static string ExtractString([NotNull] this XElement xmlSettings, string elementName)
         {
-            return ExtractString(xmlSettings, elementName, string.Empty);
+            return ExtractString(xmlSettings, elementName, String.Empty);
         }
         public static string ExtractString([NotNull] this XElement xmlSettings, string elementName,string defaultValue)
         {
@@ -228,7 +312,7 @@ namespace TVRename
         }
         public static int? ExtractInt([NotNull] this XElement xmlSettings, string elementName)
         {
-            if(xmlSettings.Descendants(elementName).Any() && !string.IsNullOrWhiteSpace((string)xmlSettings.Descendants(elementName).First()))
+            if(xmlSettings.Descendants(elementName).Any() && !String.IsNullOrWhiteSpace((string)xmlSettings.Descendants(elementName).First()))
             {
                 return XmlConvert.ToInt32((string)xmlSettings.Descendants(elementName).First());
             }

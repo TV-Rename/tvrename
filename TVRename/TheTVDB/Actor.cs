@@ -41,6 +41,11 @@ namespace TVRename
             ActorSortOrder = r.ExtractInt("SortOrder",-1); 
         }
 
+        public Actor(string name)
+        {
+            ActorName = name;
+        }
+
         public void WriteXml([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("Actor");

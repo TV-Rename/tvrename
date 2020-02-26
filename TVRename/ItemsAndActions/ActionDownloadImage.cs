@@ -86,15 +86,13 @@ namespace TVRename
             return bmPhoto;
         }
 
-        public override bool Go(TVRenameStats stats)
+        [NotNull]
+        public override ActionOutcome Go(TVRenameStats stats)
         {
             byte[] theData = LocalCache.Instance.GetTvdbDownload(path);
             if (theData is null || theData.Length == 0)
             {
-                ErrorText = "Unable to download " + path;
-                Error = true;
-                Done = true;
-                return false;
+                return new ActionOutcome("Unable to download " + path);
             }
 
             if (shrinkLargeMede8ErImage)
@@ -110,15 +108,10 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                ErrorText = e.Message;
-                LastError = e;
-                Error = true;
-                Done = true;
-                return false;
+                return new ActionOutcome(e);
             }
 
-            Done = true;
-            return true;
+            return ActionOutcome.Success();
         }
 
         [NotNull]

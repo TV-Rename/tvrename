@@ -31,7 +31,8 @@ namespace TVRename
         [CanBeNull]
         public override string TargetFolder => toRemove?.DirectoryName;
 
-        public override bool Go(TVRenameStats stats)
+        [NotNull]
+        public override ActionOutcome Go(TVRenameStats stats)
         {
             try
             {
@@ -47,12 +48,9 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                Error = true;
-                ErrorText = e.Message;
-                LastError = e;
+                return new ActionOutcome(e);
             }
-            Done = true;
-            return !Error;
+            return ActionOutcome.Success();
         }
        
         public override bool SameAs(Item o)

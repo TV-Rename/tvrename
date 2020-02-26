@@ -55,7 +55,8 @@ namespace TVRename
 
         public override long SizeOfWork => 100;
 
-        public override bool Go(TVRenameStats stats)
+        [NotNull]
+        public override ActionOutcome Go(TVRenameStats stats)
         {
             try
             {
@@ -71,23 +72,14 @@ namespace TVRename
             }
             catch (UnauthorizedAccessException uae)
             {
-                ErrorText = uae.Message;
-                LastError = null;
-                Error = true;
-                Done = true;
-                return false;
+                return new ActionOutcome(uae);
             }
             catch (Exception e)
             {
-                ErrorText = e.Message;
-                LastError = e;
-                Error = true;
-                Done = true;
-                return false;
+                return new ActionOutcome(e);
             }
 
-            Done = true;
-            return true;
+            return ActionOutcome.Success();
         }
 
         private static void ProcessFile([NotNull] FileInfo whereFile, DateTime updateTime)

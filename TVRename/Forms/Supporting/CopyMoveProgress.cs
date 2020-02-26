@@ -90,7 +90,7 @@ namespace TVRename
 
                 foreach (Action action in aq.Actions)
                 {
-                    if (!action.Done)
+                    if (!action.Outcome.Done)
                     {
                         allDone = false;
                     }
@@ -99,7 +99,7 @@ namespace TVRename
                     workDone += (long) (size * action.PercentDone / 100);
                     totalWork += action.SizeOfWork;
 
-                    if (!action.Done)
+                    if (!action.Outcome.Done)
                     {
                         ListViewItem lvi = new ListViewItem(action.Name);
                         lvi.SubItems.Add(action.ProgressText);
@@ -212,7 +212,7 @@ namespace TVRename
         {
             foreach (Action action in mToDo.Where(aq => aq.Actions.Count != 0).SelectMany(aq => aq.Actions))
             {
-                if (!action.Done && action.PercentDone > 0 && action is ActionCopyMoveRename cmAction)
+                if (!action.Outcome.Done && action.PercentDone > 0 && action is ActionCopyMoveRename cmAction)
                 {
                     return cmAction;
                 }

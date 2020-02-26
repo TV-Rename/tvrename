@@ -34,7 +34,8 @@ namespace TVRename
         [NotNull]
         public override string Name => "Write Mede8er View Data";
 
-        public override bool Go(TVRenameStats stats)
+        [NotNull]
+        public override ActionOutcome Go(TVRenameStats stats)
         {
             XmlWriterSettings settings = new XmlWriterSettings
             {
@@ -54,15 +55,9 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                Error = true;
-                ErrorText = e.Message;
-                LastError = e;
-                Done = true;
-                return false;
+                return new ActionOutcome(e);
             }
-
-            Done = true;
-            return true;
+            return ActionOutcome.Success();
         }
 
         #endregion

@@ -66,10 +66,21 @@ namespace TVRename
                 actionStarting = false; // let our creator know we're started ok
 
                 Action action = info.TheAction;
-                if (action != null)
+                if (action == null)
                 {
-                    Logger.Trace("Triggering Action: {0} - {1} - {2}", action.Name, action.Produces, action.ToString());
-                    action.Go(mStats);
+                    return;
+                }
+
+                Logger.Trace("Triggering Action: {0} - {1} - {2}", action.Name, action.Produces, action.ToString());
+                action.Outcome = action.Go(mStats);
+                if (action.Outcome.Error)
+                {
+                    action.ErrorText = action.Outcome.LastError.Message;
+                }
+
+                if (!action.Outcome.Done)
+                {
+                    Logger.Error("Hlep");
                 }
             }
             catch (ThreadAbortException)
@@ -79,6 +90,7 @@ namespace TVRename
             catch (Exception e)
             {
                 Logger.Fatal(e, "Unhandled Exception in Process Single Action");
+                info.TheAction.Outcome = ActionOutcome.CompleteFail();
             }
             finally
             {
@@ -145,11 +157,11 @@ namespace TVRename
 
             actionProcessorThread.Join();
 
-            theList.RemoveAll(x => x is Action action && action.Done && !action.Error);
+            theList.RemoveAll(x => x is Action action && action.Outcome.Done && !action.Outcome.Error);
 
             foreach (Action slia in theList.Actions())
             {
-                Logger.Warn(slia.LastError,$"Failed to complete the following action: {slia.Name}, doing {slia}. Error was {slia.ErrorText}");
+                Logger.Warn(slia.Outcome.LastError,$"Failed to complete the following action: {slia.Name}, doing {slia}. Error was {slia.Outcome.LastError?.Message}");
             }
 
             Logger.Info("Completed Selected Actions");
@@ -260,7 +272,7 @@ namespace TVRename
                         return false;
                     }
 
-                    if (!act.Done)
+                    if (! (act.Outcome.Done))
                     {
                         StartThread(new ProcessActionInfo(currentQueue.Sem, act));
                     }

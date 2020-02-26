@@ -48,33 +48,27 @@ namespace TVRename
         public override long SizeOfWork => 1000000;
         public override string Produces => url;
 
-        public override bool Go( TVRenameStats stats)
+        [NotNull]
+        public override ActionOutcome Go( TVRenameStats stats)
         {
             try
             {
                 if (!(TVSettings.Instance.CheckuTorrent || TVSettings.Instance.CheckqBitTorrent))
                 {
-                    Error = true;
-                    ErrorText = "No torrent clients enabled to download RSS";
-                    Done = true;
-                    return false;
+                    return new ActionOutcome("No torrent clients enabled to download RSS");
                 }
 
                 if (!TVSettings.Instance.qBitTorrentDownloadFilesFirst && TVSettings.Instance.CheckqBitTorrent)
                 {
                     qBitTorrentFinder.StartTorrentDownload(url, null, false);
-                    Done = true;
-                    return true;
+                    return ActionOutcome.Success();
                 }
 
                 byte[] r = HttpHelper.GetUrlBytes(url,true);
 
                 if (r is null || r.Length == 0)
                 {
-                    Error = true;
-                    ErrorText = "No data downloaded";
-                    Done = true;
-                    return false;
+                    return new ActionOutcome($"No data downloaded from {url}");
                 }
 
                 string saveTemp = SaveDownloadedData(r, SourceName);
@@ -89,16 +83,11 @@ namespace TVRename
                     qBitTorrentFinder.StartTorrentDownload(url,saveTemp, TVSettings.Instance.qBitTorrentDownloadFilesFirst);
                 }
 
-                Done = true;
-                return true;
+                return ActionOutcome.Success();
             }
             catch (Exception e)
             {
-                ErrorText = e.Message;
-                LastError = e;
-                Error = true;
-                Done = true;
-                return false;
+                return new ActionOutcome(e);
             }
         }
 

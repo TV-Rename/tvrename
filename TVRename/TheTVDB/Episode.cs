@@ -9,6 +9,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
@@ -438,6 +439,21 @@ namespace TVRename
                 default:
                     throw new ArgumentOutOfRangeException(nameof(order), order, null);
             }
+        }
+
+        [NotNull]
+        public IEnumerable<Actor> AllActors([NotNull] SeriesInfo  si)
+        {
+            List<Actor> returnValue = si.GetActors().ToList();
+            foreach (string star in GuestStars.Where(s=>!string.IsNullOrWhiteSpace(s)))
+            {
+                if (si.GetActors().All(actor => actor.ActorName != star))
+                {
+                    returnValue.Add(new Actor(star));
+                }
+            }
+
+            return returnValue;
         }
     }
 }

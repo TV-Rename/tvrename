@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using JetBrains.Annotations;
+
 namespace TVRename
 {
     public abstract class Action : Item // Something we can do
@@ -14,21 +16,28 @@ namespace TVRename
 
         public abstract string Name { get; } // Name of this action, e.g. "Copy", "Move", "Download"
 
-        public bool
-            Done
-        {
-            get;
-            protected set;
-        } // All work has been completed for this item, and can be removed from to-do list.  set to true on completion, even on error.
-
-        public bool Error { get; protected set; } // Error state, after trying to do work?
         public abstract string ProgressText { get; } // shortish text to display to user while task is running
 
         private double percent;
 
+        [NotNull]
+        public ActionOutcome Outcome { get
+            {
+                if(internalOutcome is null)
+                {
+                    return ActionOutcome.NoOutcomeYet();
+                }
+
+                return internalOutcome;
+            }
+            set => internalOutcome = value;
+        }
+
+        private ActionOutcome internalOutcome;
+
         public double PercentDone // 0.0 to 100.0
         {
-            get => Done ? 100.0 : percent;
+            get => Outcome.Done ? 100.0 : percent;
             protected set => percent = value;
         }
 
@@ -38,7 +47,7 @@ namespace TVRename
             get;
         } // for file copy/move, number of bytes in file.  for simple tasks, 1, or something proportional to how slow it is to copy files around.
 
-        public abstract bool Go(TVRenameStats stats); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false        
+        public abstract ActionOutcome Go(TVRenameStats stats); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false        
 
         public abstract string Produces { get; } //What does this action produce? typically a filename
     }

@@ -31,14 +31,12 @@ namespace TVRename
         [NotNull]
         public override string Name => "Write WD TV Live Hub Meta";
 
-        public override bool Go(TVRenameStats stats)
+        [NotNull]
+        public override ActionOutcome Go(TVRenameStats stats)
         {
             if (Where is null)
             {
-                ErrorText = "No file location specified - Development Error";
-                Error = true;
-                Done = true;
-                return false;
+                return new ActionOutcome("No file location specified - Development Error");
             }
 
             if (Episode != null)
@@ -51,13 +49,11 @@ namespace TVRename
                 return WriteSeriesXml();
             }
 
-            ErrorText = "No details available to write - Development Error";
-            Error = true;
-            Done = true;
-            return false;
+            return new ActionOutcome("No details available to write - Development Error");
         }
 
-        private bool WriteSeriesXml()
+        [NotNull]
+        private ActionOutcome WriteSeriesXml()
         {
             try
             {
@@ -104,20 +100,16 @@ namespace TVRename
                     writer.WriteEndElement(); // show
                     writer.WriteEndElement(); // tvshow
                 }
-                Done = true;
-                return true;
+                return ActionOutcome.Success();
             }
             catch (Exception e)
             {
-                ErrorText = e.Message;
-                LastError = e;
-                Error = true;
-                Done = true;
-                return false;
+                return new ActionOutcome(e);
             }
         }
 
-        private bool WriteEpisodeMetaDataFile()
+        [NotNull]
+        private ActionOutcome WriteEpisodeMetaDataFile()
         {
             // "try" and silently fail.  eg. when file is use by other...
             try
@@ -181,16 +173,11 @@ namespace TVRename
                     writer.WriteElement("backdrop", TheTVDB.API.GetImageURL(Episode.TheSeries.GetSeriesFanartPath()));
                     writer.WriteEndElement(); // details
                 }
-                Done = true;
-                return true;
+                return ActionOutcome.Success();
             }
             catch (Exception e)
             {
-                ErrorText = e.Message;
-                LastError = e;
-                Error = true;
-                Done = true;
-                return false;
+                return new ActionOutcome(e);
             }
         }
 

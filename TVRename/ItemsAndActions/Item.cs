@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
-using System;
 using JetBrains.Annotations;
 
 namespace TVRename
@@ -64,7 +63,6 @@ namespace TVRename
         [NotNull]
         protected virtual string SourceDetails => string.Empty;
         protected virtual bool InError => false;
-        public string ErrorText { get; protected set; } // Human-readable error message, for when Error is true
-        public Exception LastError { get; protected set; }
+        public string ErrorText { get; protected internal set; } // Human-readable error message, for when Error is true
     }
 }

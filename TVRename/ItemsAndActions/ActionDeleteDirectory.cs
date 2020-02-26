@@ -31,15 +31,14 @@ namespace TVRename
         [CanBeNull]
         public override string TargetFolder => toRemove?.Parent.FullName;
 
-        public override bool Go(TVRenameStats stats)
+        [NotNull]
+        public override ActionOutcome Go(TVRenameStats stats)
         {
             //if the directory is the root download folder do not delete
             if (TVSettings.Instance.MonitorFolders &&
                 TVSettings.Instance.DownloadFolders.Contains(toRemove.FullName))
             {
-                Error = true;
-                ErrorText = $@"Not removing {toRemove.FullName} as it is a Search Folder";
-                return false;
+                return new ActionOutcome($@"Not removing {toRemove.FullName} as it is a Search Folder");
             }
 
             try
@@ -53,15 +52,12 @@ namespace TVRename
                         DoTidyup(toRemove.Parent);
                     }
                 }
+                return ActionOutcome.Success();
             }
             catch (Exception e)
             {
-                Error = true;
-                ErrorText = e.Message;
-                LastError = e;
+                return new ActionOutcome(e);
             }
-            Done = true;
-            return !Error;
         }
 
         public override bool SameAs(Item o)
