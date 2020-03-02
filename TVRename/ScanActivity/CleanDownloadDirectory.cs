@@ -175,9 +175,11 @@ namespace TVRename
 
                     List<ShowItem> matchingShows = showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
 
-                    if (matchingShows.Any())
+                    List<ShowItem> matchingShowsNoDupes = RemoveShortShows(matchingShows);
+
+                    if (matchingShowsNoDupes.Any())
                     {
-                        ReviewFileInDownloadDirectory(currentSettings.Unattended,  fi,matchingShows);
+                        ReviewFileInDownloadDirectory(currentSettings.Unattended,  fi, matchingShowsNoDupes);
                     }
                 }
             }
@@ -193,6 +195,24 @@ namespace TVRename
             {
                 LOGGER.Warn(ex, $"Could not access files in {dirPath}");
             }
+        }
+
+        [NotNull]
+        private static List<ShowItem> RemoveShortShows([NotNull] IReadOnlyCollection<ShowItem> matchingShows)
+        {
+            //Remove any shows from the list that are subsets of all the ohters
+            //so that a file does not match CSI and CSI: New York
+            return matchingShows.Where(testShow => !IsInferiorTo(testShow, matchingShows)).ToList();
+        }
+
+        private static bool IsInferiorTo(ShowItem testShow, [NotNull] IReadOnlyCollection<ShowItem> matchingShows)
+        {
+            return matchingShows.Any(compareShow => IsInferiorTo(testShow, compareShow));
+        }
+
+        private static bool IsInferiorTo([NotNull] ShowItem testShow, [NotNull] ShowItem compareShow)
+        {
+            return compareShow.ShowName.StartsWith(testShow.ShowName, StringComparison.Ordinal) && testShow.ShowName.Length < compareShow.ShowName.Length;
         }
 
         private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, [NotNull] List<ShowItem> matchingShows)
