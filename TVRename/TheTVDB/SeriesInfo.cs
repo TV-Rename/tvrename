@@ -281,6 +281,7 @@ namespace TVRename
             return betterLanguage?newValue.Trim():encumbant.Trim();
         }
 
+        [NotNull]
         private static string ChooseBetterStatus([CanBeNull] string encumbant, bool betterLanguage, [CanBeNull] string newValue)
         {
             if (string.IsNullOrEmpty(encumbant) || encumbant.Equals("Unknown")) 
