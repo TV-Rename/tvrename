@@ -214,7 +214,7 @@ namespace TVRename
             Network = ChooseBetter(Network, useNewDataOverOld, o.Network);
             Runtime = ChooseBetter(Runtime, useNewDataOverOld, o.Runtime);
             SeriesId = ChooseBetter(SeriesId, useNewDataOverOld, o.SeriesId);
-            Status = ChooseBetter(Status, useNewDataOverOld, o.Status);
+            Status = ChooseBetterStatus(Status, useNewDataOverOld, o.Status);
             ContentRating = ChooseBetter(ContentRating, useNewDataOverOld, o.ContentRating);
             Slug = ChooseBetter(Slug, useNewDataOverOld, o.Slug);
 
@@ -279,6 +279,21 @@ namespace TVRename
             }
 
             return betterLanguage?newValue.Trim():encumbant.Trim();
+        }
+
+        private static string ChooseBetterStatus([CanBeNull] string encumbant, bool betterLanguage, [CanBeNull] string newValue)
+        {
+            if (string.IsNullOrEmpty(encumbant) || encumbant.Equals("Unknown")) 
+            {
+                return newValue?.Trim() ?? string.Empty;
+            }
+
+            if (string.IsNullOrEmpty(newValue) || newValue.Equals("Unknown"))
+            {
+                return encumbant.Trim();
+            }
+
+            return betterLanguage ? newValue.Trim() : encumbant.Trim();
         }
 
         private void LoadXml([NotNull] XElement seriesXml)
