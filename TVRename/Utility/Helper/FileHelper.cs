@@ -123,7 +123,7 @@ namespace TVRename
                 wrapper => wrapper.Height, i => i);
         }
 
-        private static int Parse(string returnValue)
+        private static int Parse(string returnValue, FileInfo sourceFile)
         {
             if (int.TryParse(returnValue, out int value))
             {
@@ -166,7 +166,7 @@ namespace TVRename
             return new FileInfo(baseFile.RemoveExtension(true)+extension);
         }
 
-        private static int GetMetaDetails([NotNull] this FileInfo movieFile, Func<ShellObject, IShellProperty> extractMethod, Func<string,int> parseMethod,string operation, Func<MediaInfoWrapper,int> meExtractMethod,Func<int,int> meParseMethod)
+        private static int GetMetaDetails([NotNull] this FileInfo movieFile, Func<ShellObject, IShellProperty> extractMethod, Func<string,FileInfo,int> parseMethod,string operation, Func<MediaInfoWrapper,int> meExtractMethod,Func<int,int> meParseMethod)
         {
             try
             {
@@ -178,7 +178,7 @@ namespace TVRename
 
                 if (!string.IsNullOrWhiteSpace(duration))
                 {
-                    int returnValue = parseMethod(duration);
+                    int returnValue = parseMethod(duration, movieFile);
 
                     if (returnValue > 0)
                     {
@@ -231,7 +231,7 @@ namespace TVRename
             return (int)Math.Round(ret);
         }
 
-        private static int ParseDuration([CanBeNull] string duration)
+        private static int ParseDuration([CanBeNull] string duration,FileInfo sourceFile)
         {
             try
             {
@@ -255,7 +255,7 @@ namespace TVRename
                 //              Unable to parse string Okänt as part of GetFilmLength System
                 //              Unable to parse string Lägg till text as part of GetFilmLength System
 
-                Logger.Warn($"Unable to parse string '{duration}' as part of GetFilmLength");
+                Logger.Warn($"Unable to parse string '{duration}' as part of GetFilmLength for {sourceFile.FullName}");
             }
 
             return -1;
