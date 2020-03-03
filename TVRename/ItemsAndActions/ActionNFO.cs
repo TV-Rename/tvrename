@@ -40,12 +40,19 @@ namespace TVRename
         [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
-            if (!Where.Exists)
+            try
             {
-                CreateBlankFile();
-            }
+                if (!Where.Exists)
+                {
+                    CreateBlankFile();
+                }
 
-            return UpdateFile();
+                return UpdateFile();
+            }
+            catch (IOException ex)
+            {
+                return new ActionOutcome(ex);
+            }
         }
 
         private void CreateBlankFile()
