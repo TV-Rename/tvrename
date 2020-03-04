@@ -613,7 +613,10 @@ namespace TVRename
         }
 
         [NotNull]
-        public string GetImdbNumber() => Imdb is null? string.Empty: Imdb.StartsWith("tt", StringComparison.Ordinal) ? Imdb?.Substring(2): Imdb;
+        public string GetImdbNumber() =>
+              Imdb is null? string.Empty
+            : Imdb.StartsWith("tt", StringComparison.Ordinal) ? Imdb.RemoveFirst(2)
+            : Imdb;
 
         [NotNull]
         public string GetSeriesFanartPath() => banners.GetSeriesFanartPath();

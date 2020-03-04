@@ -57,7 +57,7 @@ namespace TVRename
         {
             string valueAsString = (string)r[key];
 
-            if (string.IsNullOrWhiteSpace(valueAsString))
+            if (valueAsString.IsNullOrWhitespace())
             {
                 return 0;
             }

@@ -214,77 +214,6 @@ namespace TVRename
         [NotNull]
         public static string RemoveDot([NotNull] this string s) => s.Replace(".", " ");
 
-        public static string GetCommonStartString([NotNull] List<string> testValues)
-        {
-            string root = string.Empty;
-            bool first = true;
-            foreach (string test in testValues)
-            {
-                if (first)
-                {
-                    root = test;
-                    first = false;
-                }
-                else
-                {
-                    root = GetCommonStartString(root, test);
-                }
-            }
-            return root;
-        }
-
-        [NotNull]
-        public static string TrimEnd([NotNull] this string root, [NotNull] string ending)
-        {
-            if (!root.EndsWith(ending,StringComparison.OrdinalIgnoreCase))
-            {
-                return root;
-            }
-
-            return root.Substring(0, root.Length - ending.Length);
-        }
-
-        [NotNull]
-        public static string RemoveAfter([NotNull] this string root, [NotNull] string ending)
-        {
-            if (root.IndexOf(ending, StringComparison.OrdinalIgnoreCase) !=-1)
-            {
-                return   root.Substring(0, root.IndexOf(ending,StringComparison.OrdinalIgnoreCase));
-            }
-
-            return root;
-        }
-
-        public static string TrimEnd(this string root, [NotNull] string[] endings)
-        {
-            string trimmedString = root;
-            foreach (string ending in endings)
-            {
-                trimmedString = trimmedString.TrimEnd(ending);
-            }
-            return trimmedString;
-        }
-
-        [NotNull]
-        public static string GetCommonStartString([NotNull] string first, [NotNull] string second)
-        {
-            StringBuilder builder = new StringBuilder();
-            
-            int minLength = Math.Min(first.Length, second.Length);
-            for (int i = 0; i < minLength; i++)
-            {
-                if (first[i].Equals(second[i]))
-                {
-                    builder.Append(first[i]);
-                }
-                else
-                {
-                    break;
-                }
-            }
-            return builder.ToString();
-        }
-
         [NotNull]
         public static string RemoveDiacritics([NotNull] this string stIn)
         {
@@ -301,11 +230,6 @@ namespace TVRename
                 }
             }
             return sb.ToString().Normalize(NormalizationForm.FormC);
-        }
-
-        public static bool ContainsOneOf([NotNull] this string source, [NotNull] IEnumerable<string> terms)
-        {
-            return terms.Any(source.Contains);
         }
 
         public static DateTime GetMinWindowsTime(DateTime dateTime)

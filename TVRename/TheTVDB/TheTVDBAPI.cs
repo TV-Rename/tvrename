@@ -35,7 +35,7 @@ namespace TVRename.TheTVDB
 
             if (url.StartsWith("/", StringComparison.Ordinal))
             {
-                url = url.Substring(1);
+                url = url.RemoveFirstCharacter();
             }
 
             if (!mirr.EndsWith("/", StringComparison.Ordinal))

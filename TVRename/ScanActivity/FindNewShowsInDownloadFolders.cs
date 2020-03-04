@@ -59,7 +59,7 @@ namespace TVRename
             }
             MDoc.ShowAddedOrEdited(true,false,false);
 
-            LOGGER.Info("Added new shows called: {0}", string.Join(",", addedShows.Select(s => s.ShowName)));
+            LOGGER.Info("Added new shows called: {0}", addedShows.Select(s => s.ShowName).ToCsv());
 
             //add each new show into the shows being scanned
             foreach (ShowItem si in addedShows)

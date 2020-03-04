@@ -174,7 +174,7 @@ namespace TVRename
 
         public static void UpdateElement(this XElement root, string elementName, string value, bool ignoreIfBlank)
         {
-            if (ignoreIfBlank && string.IsNullOrEmpty(value))
+            if (ignoreIfBlank && value.IsNullOrWhitespace())
             {
                 return;
             }

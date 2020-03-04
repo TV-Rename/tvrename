@@ -47,10 +47,8 @@ namespace TVRename
                 return true;
             }
 
-            string filename = fi.Name;
-            int l = filename.Length;
             int le = fi.Extension.Length;
-            filename = filename.Substring(0, l - le);
+            string filename = fi.Name.RemoveLast(le);
             return FindSeasEp(fi.Directory.FullName, filename, out seas, out ep, out maxEp, si, rexps, out re);
         }
 

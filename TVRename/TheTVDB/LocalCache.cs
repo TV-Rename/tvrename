@@ -1141,7 +1141,7 @@ namespace TVRename.TheTVDB
             if (languageFromCode is null)
             {
                 throw new ArgumentException(
-                    $"Requested language ({requestedLanguageCode}) not found in Language Cache, cache has ({string.Join(",", LanguageList.Select(language => language.Abbreviation))})",
+                    $"Requested language ({requestedLanguageCode}) not found in Language Cache, cache has ({LanguageList.Select(language => language.Abbreviation).ToCsv()})",
                     requestedLanguageCode);
             }
 
@@ -1239,7 +1239,7 @@ namespace TVRename.TheTVDB
                 if (languageFromCode is null)
                 {
                     throw new ArgumentException(
-                        $"Requested language ({requestedLanguageCode}) not found in Language Cache, cache has ({string.Join(",", LanguageList.Select(language => language.Abbreviation))})",
+                        $"Requested language ({requestedLanguageCode}) not found in Language Cache, cache has ({LanguageList.Select(language => language.Abbreviation).ToCsv()})",
                         requestedLanguageCode);
                 }
 

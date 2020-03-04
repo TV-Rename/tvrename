@@ -568,7 +568,7 @@ namespace TVRename
 
         public static string GetBestNameFor([NotNull] List<string> episodeNames, string defaultName)
         {
-            string root = Helpers.GetCommonStartString(episodeNames);
+            string root = StringExtensions.GetCommonStartString(episodeNames);
             int shortestEpisodeName = episodeNames.Min(x => x.Length);
             int longestEpisodeName = episodeNames.Max(x => x.Length);
             bool namesSameLength = shortestEpisodeName == longestEpisodeName;

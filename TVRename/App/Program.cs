@@ -78,7 +78,7 @@ namespace TVRename.App
                 }
                 else
                 {
-                    Logger.Warn($"Sending {string.Join(" ", args)} to the running instance.");
+                    Logger.Warn($"Sending {args.ToCsv()} to the running instance.");
                     ipc.SendArgs(args);
                 }
 

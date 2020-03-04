@@ -273,7 +273,7 @@ namespace TVRename
             if (fileCanBeDeleted)
             {
                 LOGGER.Info(
-                    $"Removing {fi.FullName} as it matches {string.Join(", ", matchingShows.Select(s => s.ShowName))} and no episodes are needed");
+                    $"Removing {fi.FullName} as it matches { matchingShows.Select(s => s.ShowName).ToCsv()} and no episodes are needed");
 
                 returnActions.Add(new ActionDeleteFile(fi, firstMatchingPep, TVSettings.Instance.Tidyup));
             }
@@ -303,7 +303,7 @@ namespace TVRename
                         if (matchingShows.Count > 1)
                         {
                             LOGGER.Warn(
-                                $"Keeping {newFile.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({string.Join(", ", matchingShows.Select(item => item.ShowName))}) that match.");
+                                $"Keeping {newFile.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({matchingShows.Select(item => item.ShowName).ToCsv()}) that match.");
                         }
                         else
                         {
@@ -333,7 +333,7 @@ namespace TVRename
                         }
 
                         LOGGER.Warn(
-                            $"Keeping {newFile.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({string.Join(", ", matchingShows.Select(item => item.ShowName))}) that match.");
+                            $"Keeping {newFile.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({matchingShows.Select(item => item.ShowName).ToCsv()}) that match.");
 
                         return false;
                     }

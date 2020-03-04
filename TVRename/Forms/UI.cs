@@ -2477,7 +2477,7 @@ namespace TVRename
         {
             if (TVSettings.Instance.PostpendThe && name.StartsWith("The ", StringComparison.Ordinal))
             {
-                return name.Substring(4) + ", The";
+                return name.RemoveFirst(4) + ", The";
             }
 
             return name;
@@ -4129,7 +4129,7 @@ namespace TVRename
                 {
                     foreach (KeyValuePair<string, List<string>> kvp2 in kvp.Value)
                     {
-                        sb.AppendLine($"{kvp.Key,-30}{kvp2.Key,-30}{string.Join(",", kvp2.Value)}");
+                        sb.AppendLine($"{kvp.Key,-30}{kvp2.Key,-30}{kvp2.Value.ToCsv()}");
                     }
                 }
 

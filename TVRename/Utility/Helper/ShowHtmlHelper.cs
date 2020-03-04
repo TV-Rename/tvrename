@@ -59,14 +59,14 @@ namespace TVRename
             string genreIcons = string.Join("&nbsp;", ser.Genres().Select(GenreIconHtml));
             string siteRating = ser.SiteRating > 0 ? ser.SiteRating+ "/10" : "";
             string runTimeHtml = string.IsNullOrWhiteSpace(ser.Runtime) ? string.Empty : $"<br/> {ser.Runtime} min";
-            string actorLinks = string.Join(", ", ser.GetActors().Select(ActorLinkHtml));
+            string actorLinks = ser.GetActors().Select(ActorLinkHtml).ToCsv();
             string tvdbLink = TheTVDB.API.WebsiteShowUrl(si);
             string airsTime = ParseAirsTime(ser);
             string airsDay = ser.AirsDay;
             string dayTime = $"{airsDay} {airsTime}";
 
-            string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : "http://www.tv.com/show/" + ser.SeriesId+ "/summary.html";
-            string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : "http://www.imdb.com/title/" + ser.Imdb;
+            string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : $"http://www.tv.com/show/{ser.SeriesId}/summary.html";
+            string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
 
             string urlFilename = includeDirectoryLinks
                 ? Uri.EscapeDataString(si.GetBestFolderLocationToOpen())
@@ -102,7 +102,7 @@ namespace TVRename
 		            <div class=""row align-items-bottom"">
                      <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}{AddRatingCount(ser.SiteRatingVotes)}</div>
                      <div class=""col-md-4 align-self-end text-center"">{ser.ContentRating}<br>{ser.Network}, {dayTime}</div>
-                     <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{string.Join(", ", ser.Genres())}</div>
+                     <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{ser.Genres().ToCsv()}</div>
                     </div>
                    </div>
                   </div>
@@ -316,9 +316,9 @@ namespace TVRename
                 : "Production Code <br/>" + ep.ProductionCode;
 
             string episodeDescriptor = CustomEpisodeName.NameForNoExt(ep, CustomEpisodeName.OldNStyle(6)); // may need to include (si.DVDOrder && snum == 0)? ep.Name:
-            string writersHtml = string.IsNullOrWhiteSpace(ep.Writer) ? string.Empty : "<b>Writers:</b> " + string.Join(", ", ep.Writers);
-            string directorsHtml = string.IsNullOrWhiteSpace(ep.EpisodeDirector) ? string.Empty : "<b>Directors:</b> " + string.Join(", ", ep.Directors);
-            string guestHtml = string.IsNullOrWhiteSpace(ep.EpisodeGuestStars) ? string.Empty : "<b>Guest Stars:</b> " + string.Join(", ", ep.GuestStars);
+            string writersHtml = string.IsNullOrWhiteSpace(ep.Writer) ? string.Empty : "<b>Writers:</b> " + ep.Writers.ToCsv();
+            string directorsHtml = string.IsNullOrWhiteSpace(ep.EpisodeDirector) ? string.Empty : "<b>Directors:</b> " + ep.Directors.ToCsv();
+            string guestHtml = string.IsNullOrWhiteSpace(ep.EpisodeGuestStars) ? string.Empty : "<b>Guest Stars:</b> " + ep.GuestStars.ToCsv();
 
             bool directorsIsBlank = string.IsNullOrWhiteSpace(directorsHtml);
             bool writersIsBlank = string.IsNullOrWhiteSpace(writersHtml);
@@ -663,8 +663,8 @@ namespace TVRename
             tableHtml += GetOverviewPart("imdb.com", "<A HREF=\"http://www.imdb.com/title/" + ser?.Imdb + "\">Visit</a>");
             tableHtml += GetOverviewPart("tv.com", "<A HREF=\"http://www.tv.com/show/" + ser?.SeriesId + "/summary.html\">Visit</a>");
             tableHtml += GetOverviewPart("Runtime", ser?.Runtime);
-            tableHtml += GetOverviewPart("Aliases", string.Join(", ", si.AliasNames));
-            tableHtml += GetOverviewPart("Genres", string.Join(", ", si.Genres));
+            tableHtml += GetOverviewPart("Aliases", si.AliasNames.ToCsv());
+            tableHtml += GetOverviewPart("Genres", si.Genres.ToCsv());
             tableHtml += GetOverviewPart("Rating", ser?.ContentRating);
             tableHtml += GetOverviewPart("User Rating", $"{siteRating}{AddRatingCount(ser?.SiteRatingVotes??0)}");
             tableHtml += GetOverviewPart("Active From", yearRange);

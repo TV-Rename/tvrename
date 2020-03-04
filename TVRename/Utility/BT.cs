@@ -265,7 +265,7 @@ namespace TVRename
 
         public override string AsText()
         {
-            return "Dictionary=[" + string.Join(",", Items.Select(x => x.AsText())) + "]";
+            return "Dictionary=[" + Items.Select(x => x.AsText()).ToCsv() + "]";
         }
 
         public override void Tree(TreeNodeCollection tn)
@@ -325,7 +325,7 @@ namespace TVRename
 
         public override string AsText()
         {
-            return "List={" + string.Join(",", Items.Select(x => x.AsText())) + "}";
+            return "List={" + Items.Select(x => x.AsText()).ToCsv() + "}";
         }
 
         public override void Tree(TreeNodeCollection tn)

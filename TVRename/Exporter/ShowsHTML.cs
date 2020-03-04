@@ -72,11 +72,11 @@ namespace TVRename
                     <div class=""col-md-4 text-right""><h6>{yearRange} ({series.Status})</h6><small class=""text-muted"">{episodeSummary} Episodes</small></div>
                 </div>
             <div><blockquote>{series.Overview}</blockquote></div>
-            <div><blockquote>{string.Join(", ", series.GetActorNames())}</blockquote></div>
+            <div><blockquote>{series.GetActorNames().ToCsv()}</blockquote></div>
             <div class=""row align-items-bottom flex-grow-1"">
                 <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}</div>
                 <div class=""col-md-4 align-self-end text-center"">{series.ContentRating}<br>{series.Network}</div>
-                <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{string.Join(", ", series.Genres())}</div>
+                <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{series.Genres().ToCsv()}</div>
             </div>
             </div></div></div>";
         }

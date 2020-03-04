@@ -147,10 +147,10 @@ namespace TVRename
 
         private void UpdateEpisodeFields([NotNull] Episode episode,[CanBeNull] ShowItem show, [NotNull] XElement root, bool isMultiPart)
         {
-            root.UpdateElement("title", episode.Name);
-            root.UpdateElement("id", episode.EpisodeId);
-            root.UpdateElement("plot", episode.Overview);
-            root.UpdateElement("studio", episode.TheSeries?.Network);
+            root.UpdateElement("title", episode.Name,true);
+            root.UpdateElement("id", episode.EpisodeId, true);
+            root.UpdateElement("plot", episode.Overview, true);
+            root.UpdateElement("studio", episode.TheSeries?.Network, true);
 
             UpdateId(root, "tvdb", "true", episode.EpisodeId);
             UpdateId(root, "imdb", "false", episode.ImdbCode);
@@ -163,10 +163,10 @@ namespace TVRename
 
             if (!(show is null))
             {
-                root.UpdateElement("originaltitle", show.ShowName);
-                root.UpdateElement("showtitle", show.ShowName);
-                root.UpdateElement("season", episode.GetSeasonNumber(show.Order));
-                root.UpdateElement("episode", episode.GetEpisodeNumber(show.Order));
+                root.UpdateElement("originaltitle", show.ShowName, true);
+                root.UpdateElement("showtitle", show.ShowName, true);
+                root.UpdateElement("season", episode.GetSeasonNumber(show.Order), true);
+                root.UpdateElement("episode", episode.GetEpisodeNumber(show.Order), true);
                 root.UpdateElement("mpaa", show.TheSeries()?.ContentRating, true);
 
                 //actor(s) and guest actor(s)
@@ -179,7 +179,7 @@ namespace TVRename
 
             if (episode.FirstAired.HasValue)
             {
-                root.UpdateElement("aired", episode.FirstAired.Value.ToString("yyyy-MM-dd"));
+                root.UpdateElement("aired", episode.FirstAired.Value.ToString("yyyy-MM-dd"), true);
             }
 
             //Director(s)
@@ -346,9 +346,9 @@ namespace TVRename
             }
         }
 
-        private void UpdateId([NotNull] XElement root, [NotNull] string type, [NotNull] string def, int code)
+        private void UpdateId([NotNull] XElement root, [NotNull] string idType, [NotNull] string defaultState, int idValue)
         {
-            UpdateId(root,type,def,code.ToString());
+            UpdateId(root,idType,defaultState,idValue.ToString());
         }
 
         #endregion

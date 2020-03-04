@@ -108,7 +108,7 @@ namespace TVRename
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.ContentType = contentType;
             httpWebRequest.Method = method;
-            if (!string.IsNullOrWhiteSpace(token))
+            if (!token.IsNullOrWhitespace())
             {
                 httpWebRequest.Headers.Add("Authorization", "Bearer " + token);
             }

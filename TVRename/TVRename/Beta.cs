@@ -121,7 +121,7 @@ namespace TVRename
                 output.AppendLine($"{si.ShowName} - Season: {seasonId} - {pep.FirstAired.ToString()} - {pep.AiredEpNum}({pep.Name}) - {comparePep.AiredEpNum}({comparePep.Name})");
 
                 //do the 'name' test
-                string root = Helpers.GetCommonStartString(pep.Name, comparePep.Name);
+                string root = StringExtensions.GetCommonStartString(pep.Name, comparePep.Name);
                 bool sameLength = pep.Name.Length == comparePep.Name.Length;
                 bool sameName = !root.Trim().Equals("Episode") && sameLength && root.Length > 3 && root.Length > pep.Name.Length / 2;
 

@@ -291,7 +291,7 @@ namespace TVRename
             string newName = filename.Substring(0, p) + toname + filename.Substring(p + basename.Length);
             if (TVSettings.Instance.RenameTxtToSub && newName.EndsWith(".txt", StringComparison.Ordinal))
             {
-                return newName.Substring(0, newName.Length - 4) + ".sub";
+                return newName.RemoveLast(4) + ".sub";
             }
 
             return newName;

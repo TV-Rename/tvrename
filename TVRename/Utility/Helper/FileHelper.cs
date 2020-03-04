@@ -176,7 +176,7 @@ namespace TVRename
                     duration = extractMethod(shell).FormatForDisplay(PropertyDescriptionFormatOptions.None);
                 }
 
-                if (!string.IsNullOrWhiteSpace(duration))
+                if (!duration.IsNullOrWhitespace())
                 {
                     int returnValue = parseMethod(duration, movieFile);
 
@@ -301,7 +301,7 @@ namespace TVRename
         public static string RemoveExtension([NotNull] this FileInfo file, bool useFullPath)
         {
             string root = useFullPath ? file.FullName : file.Name;
-            return root.Substring(0, root.Length - file.Extension.Length);
+            return root.RemoveLast(file.Extension.Length);
         }
 
         [NotNull]

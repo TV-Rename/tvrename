@@ -337,8 +337,7 @@ namespace TVRename
 
                 IEnumerable<ShowItem> matchingShows = FinderHelper.FindMatchingShows(fi, shows);
                 string bestShowName = FinderHelper.FindBestMatchingShow(fi, shows)?.ShowName;
-                string otherShowNames = string.Join(", ",
-                    matchingShows.Select(item => item.ShowName).Where(s => s != bestShowName));
+                string otherShowNames = matchingShows.Select(item => item.ShowName).Where(s => s != bestShowName).ToCsv();
 
                 string showDisplayString =
                     otherShowNames.Any() ? bestShowName + " - (" + otherShowNames + ")" : bestShowName;
