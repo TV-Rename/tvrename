@@ -53,6 +53,10 @@ namespace TVRename
             {
                 return new ActionOutcome(ex);
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                return new ActionOutcome(ex);
+            }
         }
 
         private void CreateBlankFile()
