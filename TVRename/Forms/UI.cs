@@ -1164,11 +1164,6 @@ namespace TVRename
             }
 
             mInternalChange--;
-
-            if (TVSettings.Instance.AutoSelectShowInMyShows)
-            {
-                GotoEpguideFor(mLastEpClicked, false);
-            }
         }
 
         private void lvWhenToWatch_DoubleClick(object sender, EventArgs e)
@@ -2355,6 +2350,10 @@ namespace TVRename
         {
             if (tabControl1.SelectedTab == tbMyShows)
             {
+                if (mLastEpClicked != null && TVSettings.Instance.AutoSelectShowInMyShows)
+                {
+                    GotoEpguideFor(mLastEpClicked, false);
+                }
                 FillEpGuideHtml();
             }
         }
@@ -3578,11 +3577,6 @@ namespace TVRename
             {
                 mLastSeasonClicked = null;
                 mLastShowsClicked = null;
-            }
-
-            if (mLastEpClicked != null && TVSettings.Instance.AutoSelectShowInMyShows)
-            {
-                GotoEpguideFor(mLastEpClicked, false);
             }
         }
 
