@@ -268,7 +268,9 @@ namespace TVRename
 
             if (a.ForceUpdate)
             {
+                txtDLStatusLabel.Text = "Background download: Accuracy Check running";
                 mDoc.ServerAccuracyCheck(UNATTENDED,WindowState==FormWindowState.Minimized);
+                txtDLStatusLabel.Text = "Background download: Idle";
             }
 
             if (a.ForceRefresh)
@@ -4208,7 +4210,11 @@ namespace TVRename
             logToolStripMenuItem_Click(sender, e);
 
             Cursor.Current = Cursors.WaitCursor;
-            mDoc.ServerAccuracyCheck(false,false);
+            txtDLStatusLabel.Text = "Background download: Accuracy Check running";
+
+            mDoc.ServerAccuracyCheck(false, false);
+
+            txtDLStatusLabel.Text = "Background download: Idle";
             Cursor.Current = Cursors.Default;
         }
     }
