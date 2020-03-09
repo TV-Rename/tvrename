@@ -5,7 +5,7 @@ using NLog;
 
 namespace TVRename.TheTVDB
 {
-    class TokenProvider
+    internal class TokenProvider
     {
         [NotNull]
         // ReSharper disable once InconsistentNaming

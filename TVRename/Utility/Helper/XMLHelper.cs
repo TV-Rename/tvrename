@@ -42,13 +42,13 @@ namespace TVRename
 
         public static void WriteElement(this XmlWriter writer, string elementName, [CanBeNull] string value,bool ignoreIfBlank)
         {
-            if (ignoreIfBlank && String.IsNullOrEmpty(value))
+            if (ignoreIfBlank && string.IsNullOrEmpty(value))
             {
                 return;
             }
 
             writer.WriteStartElement(elementName);
-            writer.WriteValue(value??String.Empty);
+            writer.WriteValue(value??string.Empty);
             writer.WriteEndElement();
         }
 
@@ -160,10 +160,10 @@ namespace TVRename
 
         public static void WriteInfo(this XmlWriter writer, string elemName, [CanBeNull] string attribute, [CanBeNull] string attributeVal, [CanBeNull] string value)
         {
-            if (!String.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(value))
             {
                 writer.WriteStartElement(elemName);
-                if (!String.IsNullOrEmpty(attribute) && !String.IsNullOrEmpty(attributeVal))
+                if (!string.IsNullOrEmpty(attribute) && !string.IsNullOrEmpty(attributeVal))
                 {
                     writer.WriteAttributeString(attribute, attributeVal);
                 }
@@ -241,10 +241,10 @@ namespace TVRename
 
         public static void WriteInfo(this XmlWriter writer, string elemName, [CanBeNull] string attribute, [CanBeNull] string attributeVal)
         {
-            if (!String.IsNullOrEmpty(attributeVal))
+            if (!string.IsNullOrEmpty(attributeVal))
             {
                 writer.WriteStartElement(elemName);
-                if (!String.IsNullOrEmpty(attribute))
+                if (!string.IsNullOrEmpty(attribute))
                 {
                     writer.WriteAttributeString(attribute, attributeVal);
                 }
@@ -288,7 +288,7 @@ namespace TVRename
             if (xmlSettings.Descendants(elementName).Any())
             {
                 string textVersion=(string)xmlSettings.Descendants(elementName).First();
-                if (String.IsNullOrWhiteSpace(textVersion))
+                if (string.IsNullOrWhiteSpace(textVersion))
                 {
                     return null;
                 }
@@ -299,7 +299,7 @@ namespace TVRename
         }
         public static string ExtractString([NotNull] this XElement xmlSettings, string elementName)
         {
-            return ExtractString(xmlSettings, elementName, String.Empty);
+            return ExtractString(xmlSettings, elementName, string.Empty);
         }
         public static string ExtractString([NotNull] this XElement xmlSettings, string elementName,string defaultValue)
         {
@@ -312,7 +312,7 @@ namespace TVRename
         }
         public static int? ExtractInt([NotNull] this XElement xmlSettings, string elementName)
         {
-            if(xmlSettings.Descendants(elementName).Any() && !String.IsNullOrWhiteSpace((string)xmlSettings.Descendants(elementName).First()))
+            if(xmlSettings.Descendants(elementName).Any() && !string.IsNullOrWhiteSpace((string)xmlSettings.Descendants(elementName).First()))
             {
                 return XmlConvert.ToInt32((string)xmlSettings.Descendants(elementName).First());
             }

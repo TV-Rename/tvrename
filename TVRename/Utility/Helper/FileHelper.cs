@@ -38,7 +38,7 @@ namespace TVRename
             same
         }
 
-        public static VideoComparison BetterQualityFile(FileInfo encumbantFile, FileInfo newFile)
+        public static VideoComparison BetterQualityFile(FileInfo encumbantFile, [NotNull] FileInfo newFile)
         {
             if (!newFile.IsMovieFile())
             {
@@ -133,7 +133,7 @@ namespace TVRename
             return -1;
         }
 
-        public static bool IsMovieFile(this FileInfo file) => TVSettings.Instance.FileHasUsefulExtension(file, false);
+        public static bool IsMovieFile([NotNull] this FileInfo file) => TVSettings.Instance.FileHasUsefulExtension(file, false);
 
         public static (bool found,string extension)  IsLanguageSpecificSubtitle(this FileInfo file)
         {
@@ -161,10 +161,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static FileInfo WithExtension([NotNull] this FileInfo baseFile, string extension)
-        {
-            return new FileInfo(baseFile.RemoveExtension(true)+extension);
-        }
+        public static FileInfo WithExtension([NotNull] this FileInfo baseFile, string extension) => new FileInfo(baseFile.RemoveExtension(true)+extension);
 
         private static int GetMetaDetails([NotNull] this FileInfo movieFile, Func<ShellObject, IShellProperty> extractMethod, Func<string,FileInfo,int> parseMethod,string operation, Func<MediaInfoWrapper,int> meExtractMethod,Func<int,int> meParseMethod)
         {
@@ -476,7 +473,7 @@ namespace TVRename
             return directoryName;
         }
 
-        public static bool IgnoreFile(this FileInfo fi)
+        public static bool IgnoreFile([NotNull] this FileInfo fi)
         {
             if (!fi.IsMovieFile())
             {

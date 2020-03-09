@@ -10,7 +10,7 @@ using NLog;
 namespace TVRename.TheTVDB
 {
     // ReSharper disable once InconsistentNaming
-    static class API
+    internal static class API
     {
         // ReSharper disable once ConvertToConstant.Local
         private static readonly string WebsiteRoot = "https://thetvdb.com";
@@ -26,9 +26,9 @@ namespace TVRename.TheTVDB
         [NotNull]
         public static string GetImageURL(string url)
         {
-            if (String.IsNullOrWhiteSpace(url))
+            if (string.IsNullOrWhiteSpace(url))
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             string mirr = WebsiteImageRoot;
@@ -70,7 +70,7 @@ namespace TVRename.TheTVDB
         [NotNull]
         public static string WebsiteShowUrl([NotNull] ShowItem si)
         {
-            return String.IsNullOrWhiteSpace(si.TheSeries()?.Slug) ? WebsiteShowUrl(si.TvdbCode) : WebsiteShowUrl(si.TheSeries()?.Slug);
+            return string.IsNullOrWhiteSpace(si.TheSeries()?.Slug) ? WebsiteShowUrl(si.TvdbCode) : WebsiteShowUrl(si.TheSeries()?.Slug);
         }
 
         [NotNull]
@@ -92,18 +92,18 @@ namespace TVRename.TheTVDB
         {
             if (ep.TheSeries != null)
             {
-                return String.IsNullOrWhiteSpace(ep.TheSeries?.Slug)
+                return string.IsNullOrWhiteSpace(ep.TheSeries?.Slug)
                     ? WebsiteEpisodeUrl(ep.TheSeries.TvdbCode, ep.EpisodeId)
                     : WebsiteEpisodeUrl(ep.TheSeries.Slug, ep.EpisodeId);
             }
 
-            return String.Empty;
+            return string.Empty;
         }
 
         [NotNull]
         public static string WebsiteSeasonUrl([NotNull] Season s)
         {
-            return String.IsNullOrWhiteSpace(s.Show.TheSeries()?.Slug)
+            return string.IsNullOrWhiteSpace(s.Show.TheSeries()?.Slug)
                 ? WebsiteSeasonUrl(s.Show.TvdbCode, s.Show.Order, s.SeasonNumber)
                 : WebsiteSeasonUrl(s.Show.TheSeries()?.Slug, s.Show.Order, s.SeasonNumber);
         }
@@ -159,7 +159,7 @@ namespace TVRename.TheTVDB
         }
 
         private static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, TokenProvider authToken, bool retry) =>
-            JsonHttpGetRequest(url, parameters, authToken, String.Empty, retry);
+            JsonHttpGetRequest(url, parameters, authToken, string.Empty, retry);
 
         private static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, TokenProvider authToken, string lang, bool retry)
         {

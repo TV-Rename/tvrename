@@ -27,8 +27,8 @@ namespace TVRename.TheTVDB
         private List<Thread> workers;
         private Thread mDownloaderThread;
         private ICollection<SeriesSpecifier> downloadIds;
-        private readonly ConcurrentBag<int> problematicSeriesIds;
-
+        public ConcurrentBag<int> Problems { get; }
+        
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private static readonly NLog.Logger Threadslogger = NLog.LogManager.GetLogger("threads");
 
@@ -36,7 +36,7 @@ namespace TVRename.TheTVDB
         {
             DownloadDone = true;
             downloadOk = true;
-            problematicSeriesIds = new ConcurrentBag<int>();
+            Problems = new ConcurrentBag<int>();
         }
 
         public void StartBgDownloadThread(bool stopOnError, ICollection<SeriesSpecifier> shows, bool showMsgBox)
@@ -117,9 +117,7 @@ namespace TVRename.TheTVDB
             mDownloaderThread.Join();
             mDownloaderThread = null;
         }
-
-        public ConcurrentBag<int> Problems => problematicSeriesIds;
-
+        
         private void GetThread(object codeIn)
         {
             System.Diagnostics.Debug.Assert(workerSemaphore != null);
@@ -141,7 +139,7 @@ namespace TVRename.TheTVDB
             }
             catch (ShowNotFoundException snfe)
             {
-                problematicSeriesIds.Add(snfe.ShowId);
+                Problems.Add(snfe.ShowId);
             }
             catch (Exception e)
             {
@@ -298,7 +296,7 @@ namespace TVRename.TheTVDB
 
         public void ClearProblems()
         {
-            List<SeriesSpecifier> toRemove = (from sid in problematicSeriesIds from ss in downloadIds where ss.SeriesId == sid select ss).ToList();
+            List<SeriesSpecifier> toRemove = (from sid in Problems from ss in downloadIds where ss.SeriesId == sid select ss).ToList();
 
             foreach (SeriesSpecifier s in toRemove)
             {
@@ -310,9 +308,9 @@ namespace TVRename.TheTVDB
 
         private void ClearProblematicSeriesIds()
         {
-            while (!problematicSeriesIds.IsEmpty)
+            while (!Problems.IsEmpty)
             {
-                problematicSeriesIds.TryTake(out int _);
+                Problems.TryTake(out int _);
             }
         }
     }

@@ -296,6 +296,12 @@ namespace TVRename
                 ActionAction(true, UNATTENDED);
             }
 
+            if (a.Save)
+            {
+                mDoc.WriteXMLSettings();
+                LocalCache.Instance.SaveCache();
+            }
+
             if (a.Quit)
             {
                 Close();
@@ -840,7 +846,7 @@ namespace TVRename
             }
         }
 
-        private ShowItem TreeNodeToShowItem([CanBeNull] TreeNode n)
+        private static ShowItem TreeNodeToShowItem([CanBeNull] TreeNode n)
         {
             if (n is null)
             {
@@ -1133,6 +1139,7 @@ namespace TVRename
             int n = lvWhenToWatch.SelectedIndices[0];
 
             ProcessedEpisode ei = (ProcessedEpisode) lvWhenToWatch.Items[n].Tag;
+            mLastEpClicked = ei;
 
             if (TVSettings.Instance.HideWtWSpoilers &&
                 (ei.HowLong() != "Aired" || lvWhenToWatch.Items[n].ImageIndex == 1))
@@ -1160,7 +1167,7 @@ namespace TVRename
 
             if (TVSettings.Instance.AutoSelectShowInMyShows)
             {
-                GotoEpguideFor(ei, false);
+                GotoEpguideFor(mLastEpClicked, false);
             }
         }
 
@@ -1328,10 +1335,7 @@ namespace TVRename
                 return;
             }
 
-            if (url.StartsWith("http://", StringComparison.Ordinal) ||
-                url.StartsWith("file://", StringComparison.Ordinal) ||
-                url.StartsWith("https://", StringComparison.Ordinal) 
-                )
+            if (url.IsHttpLink() || url.IsFileLink())
             {
                 e.Cancel = true;
                 Helpers.SysOpen(e.Url.AbsoluteUri);
@@ -2619,7 +2623,7 @@ namespace TVRename
             {
                 foreach (TreeNode n2 in n.Nodes)
                 {
-                    if (TreeNodeToSeason(n2) == seas)
+                    if (TreeNodeToSeason(n2)?.SeasonId == seas.SeasonId)
                     {
                         n2.EnsureVisible();
                         MyShowTree.SelectedNode = n2;
@@ -3355,12 +3359,19 @@ namespace TVRename
         private void ActionAction(bool checkedNotSelected, bool unattended)
         {
             mDoc.PreventAutoScan("Action Selected Items");
-            LvResults lvr = new LvResults(lvAction, checkedNotSelected);
-            mDoc.DoActions(lvr.FlatList);
+            ItemList lvr = new LvResults(lvAction, checkedNotSelected).FlatList;
+            foreach (Item i in lvr)
+            {
+                if (i is Action a)
+                {
+                    a.ResetOutcome();
+                }
+            }
+            mDoc.DoActions(lvr);
             // remove items from master list, unless it had an error
             foreach (Item i2 in new LvResults(lvAction, checkedNotSelected).FlatList)
             {
-                if (i2 != null && !lvr.FlatList.Contains(i2))
+                if (i2 != null && !lvr.Contains(i2))
                 {
                     mDoc.TheActionList.Remove(i2);
                 }

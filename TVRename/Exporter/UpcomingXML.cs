@@ -22,7 +22,7 @@ namespace TVRename
         public override bool Active()=> TVSettings.Instance.ExportWTWXML;
         protected override string Location() => TVSettings.Instance.ExportWTWXMLTo;
 
-        protected override bool  Generate([NotNull] System.IO.Stream str, [NotNull] List<ProcessedEpisode> elist)
+        protected override bool  Generate([NotNull] System.IO.Stream str, [NotNull] IEnumerable<ProcessedEpisode> elist)
         {
             DirFilesCache dfc = new DirFilesCache();
             XmlWriterSettings settings = new XmlWriterSettings

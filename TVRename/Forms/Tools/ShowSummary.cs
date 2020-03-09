@@ -187,7 +187,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private ShowSummaryData AddShowDetails([NotNull] ShowItem si)
+        private static ShowSummaryData AddShowDetails([NotNull] ShowItem si)
         {
             SeriesInfo ser;
 
@@ -206,7 +206,7 @@ namespace TVRename
             {
                 foreach (int snum in si.AppropriateSeasons().Keys)
                 {
-                    ShowSummaryData.ShowSummarySeasonData seasonData = getSeasonDetails(si, snum);
+                    ShowSummaryData.ShowSummarySeasonData seasonData = GetSeasonDetails(si, snum);
                     showSummary.AddSeason(seasonData);
                 }
             }
@@ -214,7 +214,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private ShowSummaryData.ShowSummarySeasonData getSeasonDetails([NotNull] ShowItem si, int snum)
+        private static ShowSummaryData.ShowSummarySeasonData GetSeasonDetails([NotNull] ShowItem si, int snum)
         {
             int epCount = 0;
             int epGotCount = 0;
@@ -258,13 +258,13 @@ namespace TVRename
             {
                 case RightClickCommands.kVisitTvdbSeason:
                     {
-                        TVDBFor(mLastSeasonClicked);
+                        TvdbFor(mLastSeasonClicked);
                         break;
                     }
 
                 case RightClickCommands.kVisitTvdbSeries:
                     {
-                        TVDBFor(mLastShowClicked);
+                        TvdbFor(mLastShowClicked);
                         break;
                     }
                 case RightClickCommands.kForceRefreshSeries:
@@ -304,7 +304,7 @@ namespace TVRename
             }
         }
 
-        private void TVDBFor([CanBeNull] Season seas)
+        private static void TvdbFor([CanBeNull] Season seas)
         {
             if (seas is null)
             {
@@ -314,7 +314,7 @@ namespace TVRename
             Helpers.SysOpen(API.WebsiteSeasonUrl(seas));
         }
 
-        private void TVDBFor([CanBeNull] ShowItem si)
+        private static void TvdbFor([CanBeNull] ShowItem si)
         {
             if (si is null)
             {
@@ -494,7 +494,7 @@ namespace TVRename
                 }
             }
 
-            private void GenerateMenu([NotNull] ContextMenuStrip showRightClickMenu, string menuName, RightClickCommands rightClickCommand)
+            private static void GenerateMenu([NotNull] ContextMenuStrip showRightClickMenu, string menuName, RightClickCommands rightClickCommand)
             {
                 GenerateMenu(showRightClickMenu, menuName, (int)rightClickCommand);
             }

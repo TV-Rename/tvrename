@@ -272,7 +272,7 @@ namespace TVRename
                         return false;
                     }
 
-                    if (! (act.Outcome.Done))
+                    if (!act.Outcome.Done)
                     {
                         StartThread(new ProcessActionInfo(currentQueue.Sem, act));
                     }
@@ -359,34 +359,41 @@ namespace TVRename
                     continue; // skip non-actions
                 }
 
-                if (action is ActionWriteMetadata) // base interface that all metadata actions are derived from
-                {
-                    queues[2].Actions.Add(action);
-                }
-                else if (action is ActionDownloadImage || action is ActionTDownload)
-                {
-                    queues[3].Actions.Add(action);
-                }
-                else if (action is ActionCopyMoveRename rename)
-                {
-                    queues[rename.QuickOperation() ? 1 : 0].Actions.Add(rename);
-                }
-                else if (action is ActionDeleteFile || action is ActionDeleteDirectory)
-                {
-                    queues[1].Actions.Add(action);
-                }
-                else if (action is ActionDateTouch)
-                {
-                    queues[0].Actions.Add(action); // add them after the slow move/reanems (ie last)
-                }
-                else
-                {
-                    Logger.Fatal("No action type found for {0}, Please follow up with a developer.", action.GetType());
-                    queues[3].Actions.Add(action); // put it in this queue by default
-                }
+                queues[GetQueueId(action)].Actions.Add(action);
             }
             return queues;
         }
+
+        private static int GetQueueId([NotNull] Action action)
+        {
+            switch (action)
+            {
+                // base interface that all metadata actions are derived from
+                case ActionWriteMetadata _:
+                    return 2;
+
+                case ActionDownloadImage _:
+                case ActionTDownload _:
+                    return 3;
+
+                case ActionCopyMoveRename rename:
+                    return rename.QuickOperation() ? 1 : 0;
+
+                case ActionDeleteFile _:
+                case ActionDeleteDirectory _:
+                    return 1;
+
+                case ActionDateTouch _:
+                    // add them after the slow move/reanems (ie last)
+                    return 0;
+
+                default:
+                    Logger.Fatal("No action type found for {0}, Please follow up with a developer.", action.GetType());
+                    // put it in this queue by default
+                    return 3;
+            }
+        }
+
         #region Nested type: ProcessActionInfo
 
         private class ProcessActionInfo

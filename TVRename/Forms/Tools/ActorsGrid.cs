@@ -65,11 +65,7 @@ namespace TVRename
                         {
                             foreach (string g in ep.GuestStars)
                             {
-                                string aa = g.Trim();
-                                if (!string.IsNullOrEmpty(aa))
-                                {
-                                    theData.Set(si.Name, aa, false);
-                                }
+                                theData.Set(si.Name, g.Trim(), false);
                             }
                         }
                     }

@@ -87,7 +87,7 @@ namespace TVRename
             }
         }
 
-        private void LoadLanguages()
+        private static void LoadLanguages()
         {
             try
             {
@@ -399,14 +399,14 @@ namespace TVRename
 
         public ConcurrentBag<int> ShowProblems => cacheManager.Problems;
 
-        public void Scan([CanBeNull] List<ShowItem> passedShows, bool unattended, TVSettings.ScanType st, bool hidden)
+        public void Scan([CanBeNull] IEnumerable<ShowItem> passedShows, bool unattended, TVSettings.ScanType st, bool hidden)
         {
             try
             {
                 PreventAutoScan("Scan "+st.PrettyPrint());
 
                 //Get the default set of shows defined by the specified type
-                IEnumerable<ShowItem> shows = passedShows ?? GetShowList(st);
+                IEnumerable<ShowItem> shows = GetShowList(st, passedShows);
 
                 //If still null then return
                 if (shows is null)
@@ -494,7 +494,7 @@ namespace TVRename
         }
 
         [CanBeNull]
-        private IEnumerable<ShowItem> GetShowList(TVSettings.ScanType st)
+        private IEnumerable<ShowItem> GetShowList(TVSettings.ScanType st, IEnumerable<ShowItem> passedShows)
         {
             switch (st)
             {
@@ -506,6 +506,9 @@ namespace TVRename
 
                 case TVSettings.ScanType.Recent:
                     return Library.GetRecentShows();
+
+                case TVSettings.ScanType.SingleShow:
+                    return passedShows;
 
                 default:
                     return null;
@@ -524,7 +527,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private List<ShowItem> GetQuickShowsToScan(bool doMissingRecents, bool doFilesInDownloadDir)
+        private IEnumerable<ShowItem> GetQuickShowsToScan(bool doMissingRecents, bool doFilesInDownloadDir)
         {
             List<ShowItem> showsToScan = new List<ShowItem>();
             if (doFilesInDownloadDir)

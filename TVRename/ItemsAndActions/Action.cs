@@ -21,15 +21,8 @@ namespace TVRename
         private double percent;
 
         [NotNull]
-        public ActionOutcome Outcome { get
-            {
-                if(internalOutcome is null)
-                {
-                    return ActionOutcome.NoOutcomeYet();
-                }
-
-                return internalOutcome;
-            }
+        public ActionOutcome Outcome {
+            get => internalOutcome ?? ActionOutcome.NoOutcomeYet();
             set => internalOutcome = value;
         }
 
@@ -50,5 +43,10 @@ namespace TVRename
         public abstract ActionOutcome Go(TVRenameStats stats); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false        
 
         public abstract string Produces { get; } //What does this action produce? typically a filename
+
+        public void ResetOutcome()
+        {
+            internalOutcome=null;
+        }
     }
 }

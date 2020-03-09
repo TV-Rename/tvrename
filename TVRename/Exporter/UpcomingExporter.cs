@@ -67,6 +67,6 @@ namespace TVRename
             LOGGER.Trace("contents of File are: {0}", contents);
         }
 
-        protected abstract bool Generate(Stream str, List<ProcessedEpisode> elist);
+        protected abstract bool Generate(Stream str, IEnumerable<ProcessedEpisode> elist);
     }
 }

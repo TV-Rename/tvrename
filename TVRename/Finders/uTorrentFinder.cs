@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
@@ -21,15 +22,40 @@ namespace TVRename
                 return;
             }
 
-            BTResume btr = new BTResume(prog, resDatFile);
-            if (!btr.LoadResumeDat())
+            try
             {
-                return;
+                BTResume btr = new BTResume(prog, resDatFile);
+                if (!btr.LoadResumeDat())
+                {
+                    return;
+                }
+
+                List<TorrentEntry> downloading = btr.AllFilesBeingDownloaded();
+
+                SearchForAppropriateDownloads(downloading, DownloadApp.uTorrent, settings);
+            }
+            catch (FormatException fex)
+            {
+                LOGGER.Error($"Got a format exception accessing {resDatFile}, message: {fex.Message}");
+            }
+        }
+
+        internal static IEnumerable<TorrentEntry> GetTorrentDownloads()
+        {
+            // get list of files being downloaded by uTorrent
+            string resDatFile = TVSettings.Instance.ResumeDatPath;
+            if (string.IsNullOrEmpty(resDatFile) || !File.Exists(resDatFile))
+            {
+                return null;
             }
 
-            List<TorrentEntry> downloading = btr.AllFilesBeingDownloaded();
+            BTResume btr = new BTResume((percent, message) => { }, resDatFile);
+            if (!btr.LoadResumeDat())
+            {
+                return null;
+            }
 
-            SearchForAppropriateDownloads(downloading, DownloadApp.uTorrent,settings);
+            return btr.AllFilesBeingDownloaded();
         }
 
         internal static void StartTorrentDownload(string torrentFileName, string directoryName = "")

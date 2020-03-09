@@ -205,7 +205,7 @@ namespace TVRename
             return matchingShows.Where(testShow => !IsInferiorTo(testShow, matchingShows)).ToList();
         }
 
-        private static bool IsInferiorTo(ShowItem testShow, [NotNull] IReadOnlyCollection<ShowItem> matchingShows)
+        private static bool IsInferiorTo(ShowItem testShow, [NotNull] IEnumerable<ShowItem> matchingShows)
         {
             return matchingShows.Any(compareShow => IsInferiorTo(testShow, compareShow));
         }

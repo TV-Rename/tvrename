@@ -264,17 +264,17 @@ namespace TVRename.TheTVDB
 
             List<SeriesInfo> matchingShows = GetSeriesDictMatching(showName).Values.ToList();
 
-            if (matchingShows.Count == 0)
+            switch (matchingShows.Count)
             {
-                return null;
-            }
+                case 0:
+                    return null;
 
-            if (matchingShows.Count == 1)
-            {
-                return matchingShows.First();
-            }
+                case 1:
+                    return matchingShows.First();
 
-            return null;
+                default:
+                    return null;
+            }
         }
 
         [NotNull]
@@ -685,16 +685,15 @@ namespace TVRename.TheTVDB
             }
             catch (WebException ex)
             {
-                if (ex.IsUnimportant())
-                {
-                    Logger.Warn(
-                        $"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is {ex.LoggableDetails()}");
-                }
-                else
-                {
-                    Logger.Error(
-                        $"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is {ex.LoggableDetails()}");
-                }
+                Logger.LogWebException($"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is",ex);
+                
+                Say("");
+                LastErrorMessage = ex.Message;
+                return null;
+            }
+            catch (AggregateException aex) when (aex.InnerException is WebException ex)
+            {
+                Logger.LogWebException($"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is", ex);
 
                 Say("");
                 LastErrorMessage = ex.Message;
@@ -993,7 +992,7 @@ namespace TVRename.TheTVDB
                         int numberOfResponses = ((JArray) jsonEpisodeResponse["data"]).Count;
                         bool moreResponses;
 
-                        if (TVSettings.Instance.TVDBPagingMethod == PagingMethod.proper)
+                        if (TVSettings.TVDBPagingMethod == PagingMethod.proper)
                         {
                             JToken x = jsonEpisodeResponse["links"]["next"];
                             moreResponses = !string.IsNullOrWhiteSpace(x.ToString());
@@ -1030,7 +1029,7 @@ namespace TVRename.TheTVDB
                         ex.Response is HttpWebResponse resp &&
                         resp.StatusCode == HttpStatusCode.NotFound)
                     {
-                        if (pageNumber > 1 && TVSettings.Instance.TVDBPagingMethod == PagingMethod.brute)
+                        if (pageNumber > 1 && TVSettings.TVDBPagingMethod == PagingMethod.brute)
                         {
                             Logger.Info(
                                 $"Have got to the end of episodes for this show: Episodes were not found for {id} from TVDB (got a 404). Error obtaining page {pageNumber} in lang {lang} using url {ex.Response.ResponseUri.AbsoluteUri}");
@@ -1319,7 +1318,7 @@ namespace TVRename.TheTVDB
             return jsonResponse;
         }
 
-        private bool CanFindEpisodesFor(int code, string requestedLanguageCode)
+        private static bool CanFindEpisodesFor(int code, string requestedLanguageCode)
         {
             try
             {
@@ -1463,7 +1462,7 @@ namespace TVRename.TheTVDB
             si.BannersLoaded = true;
         }
 
-        private (List<JObject> bannerDefaultLangResponses, List<JObject> bannerResponses) DownloadBanners(int code,
+        private static (List<JObject> bannerDefaultLangResponses, List<JObject> bannerResponses) DownloadBanners(int code,
             string requestedLanguageCode)
         {
             // get /series/id/images if the bannersToo is set - may need to make multiple calls to for each image type

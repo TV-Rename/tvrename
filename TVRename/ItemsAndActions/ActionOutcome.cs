@@ -6,10 +6,10 @@ namespace TVRename
     public class ActionOutcome
     {
         [NotNull]
-        public static ActionOutcome NoOutcomeYet() => new ActionOutcome(){Completed=false,Done=false,Error=false};
+        public static ActionOutcome NoOutcomeYet() => new ActionOutcome{Completed=false,Done=false,Error=false};
 
         [NotNull]
-        public static ActionOutcome Success() => new ActionOutcome() { Completed = true,Done=true,Error=false, };
+        public static ActionOutcome Success() => new ActionOutcome{ Completed = true,Done=true,Error=false };
 
         private ActionOutcome()
         {
@@ -40,5 +40,10 @@ namespace TVRename
 
         [NotNull]
         public static ActionOutcome CompleteFail() => new ActionOutcome("Complete Fail");
+
+        public void Reset()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

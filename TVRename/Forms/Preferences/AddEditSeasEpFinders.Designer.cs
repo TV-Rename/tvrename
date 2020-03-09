@@ -56,7 +56,6 @@ namespace TVRename
             this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.label1 = new System.Windows.Forms.Label();
             this.cbShowList = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.txtFolder = new System.Windows.Forms.TextBox();
             this.tmrFillPreview = new System.Windows.Forms.Timer(this.components);
             this.chkTestAll = new System.Windows.Forms.CheckBox();
@@ -64,6 +63,8 @@ namespace TVRename
             this.Grid1 = new SourceGrid.Grid();
             this.bnDown = new System.Windows.Forms.Button();
             this.bnUp = new System.Windows.Forms.Button();
+            this.rdoFileSystem = new System.Windows.Forms.RadioButton();
+            this.rdoTorrentQueue = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // bnOK
@@ -121,6 +122,7 @@ namespace TVRename
             this.columnHeader3,
             this.columnHeader4});
             this.lvPreview.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lvPreview.HideSelection = false;
             this.lvPreview.Location = new System.Drawing.Point(12, 326);
             this.lvPreview.Name = "lvPreview";
             this.lvPreview.Size = new System.Drawing.Size(885, 228);
@@ -181,15 +183,6 @@ namespace TVRename
             this.cbShowList.TabIndex = 11;
             this.cbShowList.SelectedIndexChanged += new System.EventHandler(this.cbShowList_SelectedIndexChanged);
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(322, 304);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(63, 13);
-            this.label2.TabIndex = 10;
-            this.label2.Text = "Test Folder:";
-            // 
             // txtFolder
             // 
             this.txtFolder.Location = new System.Drawing.Point(391, 301);
@@ -208,7 +201,7 @@ namespace TVRename
             this.chkTestAll.AutoSize = true;
             this.chkTestAll.Checked = true;
             this.chkTestAll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkTestAll.Location = new System.Drawing.Point(255, 303);
+            this.chkTestAll.Location = new System.Drawing.Point(12, 300);
             this.chkTestAll.Name = "chkTestAll";
             this.chkTestAll.Size = new System.Drawing.Size(61, 17);
             this.chkTestAll.TabIndex = 13;
@@ -263,6 +256,29 @@ namespace TVRename
             this.bnUp.UseVisualStyleBackColor = true;
             this.bnUp.Click += new System.EventHandler(this.bnUp_Click);
             // 
+            // rdoFileSystem
+            // 
+            this.rdoFileSystem.AutoSize = true;
+            this.rdoFileSystem.Checked = true;
+            this.rdoFileSystem.Location = new System.Drawing.Point(308, 303);
+            this.rdoFileSystem.Name = "rdoFileSystem";
+            this.rdoFileSystem.Size = new System.Drawing.Size(81, 17);
+            this.rdoFileSystem.TabIndex = 18;
+            this.rdoFileSystem.TabStop = true;
+            this.rdoFileSystem.Text = "Test Folder:";
+            this.rdoFileSystem.UseVisualStyleBackColor = true;
+            // 
+            // rdoTorrentQueue
+            // 
+            this.rdoTorrentQueue.AutoSize = true;
+            this.rdoTorrentQueue.Location = new System.Drawing.Point(211, 303);
+            this.rdoTorrentQueue.Name = "rdoTorrentQueue";
+            this.rdoTorrentQueue.Size = new System.Drawing.Size(94, 17);
+            this.rdoTorrentQueue.TabIndex = 19;
+            this.rdoTorrentQueue.Text = "Torrent Queue";
+            this.rdoTorrentQueue.UseVisualStyleBackColor = true;
+            this.rdoTorrentQueue.CheckedChanged += new System.EventHandler(this.RadioButton2_CheckedChanged);
+            // 
             // AddEditSeasEpFinders
             // 
             this.AcceptButton = this.bnOK;
@@ -270,6 +286,8 @@ namespace TVRename
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
             this.ClientSize = new System.Drawing.Size(909, 595);
+            this.Controls.Add(this.rdoTorrentQueue);
+            this.Controls.Add(this.rdoFileSystem);
             this.Controls.Add(this.bnDown);
             this.Controls.Add(this.bnUp);
             this.Controls.Add(this.Grid1);
@@ -277,7 +295,6 @@ namespace TVRename
             this.Controls.Add(this.chkTestAll);
             this.Controls.Add(this.txtFolder);
             this.Controls.Add(this.cbShowList);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.bnBrowse);
             this.Controls.Add(this.lvPreview);
@@ -297,8 +314,6 @@ namespace TVRename
 
 
         #endregion
-
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtFolder;
         private System.Windows.Forms.Timer tmrFillPreview;
 
@@ -322,5 +337,7 @@ namespace TVRename
         private System.Windows.Forms.Button bnDown;
         private System.Windows.Forms.Button bnUp;
         private System.Windows.Forms.ColumnHeader columnHeader5;
+        private System.Windows.Forms.RadioButton rdoFileSystem;
+        private System.Windows.Forms.RadioButton rdoTorrentQueue;
     }
 }

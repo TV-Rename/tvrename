@@ -21,24 +21,24 @@ namespace TVRename
 
         public static bool IsWebLink([NotNull] this string s)
         {
-            if(s.StartsWith("http://", StringComparison.Ordinal))
-            {
-                return true;
-            }
-
-            if (s.StartsWith("https://", StringComparison.Ordinal))
-            {
-                return true;
-            }
-
-            if (s.StartsWith("ftp://", StringComparison.Ordinal))
-            {
-                return true;
-            }
-
-            return false;
+            return s.IsHttpLink() || s.IsFtpLink();
         }
 
+        public static bool IsHttpLink([NotNull] this string s)
+        {
+            return  s.StartsWith("http://", StringComparison.Ordinal)
+                ||  s.StartsWith("https://", StringComparison.Ordinal);
+        }
+
+        public static bool IsFtpLink([NotNull] this string s)
+        {
+            return s.StartsWith("ftp://", StringComparison.Ordinal);
+        }
+
+        public static bool IsFileLink([NotNull] this string s)
+        {
+            return s.StartsWith("file://", StringComparison.Ordinal);
+        }
         public static string RemoveCharactersFrom(this string source, [NotNull] IEnumerable<char> badChars)
         {
             string returnValue = source;
@@ -54,6 +54,8 @@ namespace TVRename
         {
             return source.IndexOf(toCheck, comp) >= 0;
         }
+
+        public static bool HasValue([CanBeNull] this string s) => !string.IsNullOrWhiteSpace(s);
 
         [NotNull]
         public static string ReplaceInsensitive([NotNull] this string source, [NotNull] string search, [NotNull] string replacement)
@@ -97,7 +99,7 @@ namespace TVRename
             return instr.Substring(number);
         }
 
-        public static string GetCommonStartString([NotNull] List<string> testValues)
+        public static string GetCommonStartString([NotNull] IEnumerable<string> testValues)
         {
             string root = string.Empty;
             bool first = true;
@@ -138,7 +140,7 @@ namespace TVRename
             return root;
         }
 
-        public static string TrimEnd(this string root, [NotNull] string[] endings)
+        public static string TrimEnd(this string root, [NotNull] IEnumerable<string> endings)
         {
             string trimmedString = root;
             foreach (string ending in endings)

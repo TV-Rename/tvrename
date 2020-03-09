@@ -108,10 +108,7 @@ namespace TVRename
 
         #region Item Members
 
-        public override bool SameAs(Item o)
-        {
-            return o is ActionTDownload rss && rss.url == url;
-        }
+        public override bool SameAs(Item o) => o is ActionTDownload rss && rss.url == url;
 
         public override int Compare(Item o)
         {

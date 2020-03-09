@@ -27,6 +27,7 @@ namespace TVRename
         public bool Quit { get; }
         public bool ForceRecover { get; }
         public bool Scan { get; }
+        public bool Save { get; }
         public bool QuickScan { get; }
         public bool RecentScan { get; }
         public bool DoAll { get; }
@@ -54,6 +55,7 @@ namespace TVRename
             Unattended = args.Contains("/unattended", StringComparer.OrdinalIgnoreCase);
             ForceRefresh = args.Contains("/forcerefresh", StringComparer.OrdinalIgnoreCase);
             ForceUpdate = args.Contains("/forceupdate", StringComparer.OrdinalIgnoreCase);
+            Save = args.Contains("/save", StringComparer.OrdinalIgnoreCase);
 
             UserFilePath = args.Where(a => a.StartsWith("/userfilepath:", StringComparison.OrdinalIgnoreCase)).Select(a => a.Substring(a.IndexOf(":", StringComparison.Ordinal) + 1)).FirstOrDefault();
 

@@ -36,7 +36,7 @@ namespace TVRename.Forms
             {
                 req.Method = "POST";
                 req.ContentType = "application/json";
-                req.UserAgent = TVSettings.Instance.USER_AGENT;
+                req.UserAgent = TVSettings.USER_AGENT;
 
                 JObject request = new JObject
                 {

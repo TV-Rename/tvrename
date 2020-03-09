@@ -13,7 +13,7 @@ using TVRename.TheTVDB;
 
 namespace TVRename
 {
-    static class TheTvdbCachePersistor
+    internal static class TheTvdbCachePersistor
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public static string LoadErr;

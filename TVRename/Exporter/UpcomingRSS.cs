@@ -20,7 +20,7 @@ namespace TVRename
         public override bool Active() =>TVSettings.Instance.ExportWTWRSS;
         protected override string Location() => TVSettings.Instance.ExportWTWRSSTo;
 
-        protected override bool Generate(System.IO.Stream str, [CanBeNull] List<ProcessedEpisode> elist)
+        protected override bool Generate(System.IO.Stream str, [CanBeNull] IEnumerable<ProcessedEpisode> elist)
         {
             if (elist is null)
             {

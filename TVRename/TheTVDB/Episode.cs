@@ -323,13 +323,13 @@ namespace TVRename
         public bool SameAs([NotNull] Episode o) => EpisodeId == o.EpisodeId;
 
         [NotNull]
-        public IEnumerable<string> GuestStars => string.IsNullOrEmpty(EpisodeGuestStars) ? new string[] { } : EpisodeGuestStars.Split('|');
+        public IEnumerable<string> GuestStars => string.IsNullOrEmpty(EpisodeGuestStars) ? new string[] { } : EpisodeGuestStars.Split('|').Where(s => s.HasValue());
 
         [NotNull]
-        public IEnumerable<string> Writers => string.IsNullOrEmpty(Writer) ? new string[] { } : Writer.Split('|');
+        public IEnumerable<string> Writers => string.IsNullOrEmpty(Writer) ? new string[] { } : Writer.Split('|').Where(s => s.HasValue());
 
         [NotNull]
-        public IEnumerable<string> Directors => string.IsNullOrEmpty(EpisodeDirector) ? new string[] { } : EpisodeDirector.Split('|');
+        public IEnumerable<string> Directors => string.IsNullOrEmpty(EpisodeDirector) ? new string[] { } : EpisodeDirector.Split('|').Where(s => s.HasValue());
 
         public bool Ok()
         {
@@ -445,7 +445,7 @@ namespace TVRename
         public IEnumerable<Actor> AllActors([NotNull] SeriesInfo  si)
         {
             List<Actor> returnValue = si.GetActors().ToList();
-            foreach (string star in GuestStars.Where(s=>!string.IsNullOrWhiteSpace(s)))
+            foreach (string star in GuestStars)
             {
                 if (si.GetActors().All(actor => actor.ActorName != star))
                 {

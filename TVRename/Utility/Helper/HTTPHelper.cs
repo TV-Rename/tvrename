@@ -60,7 +60,7 @@ namespace TVRename
             else
             {
                 WebClient client = new WebClient();
-                client.Headers.Add("user-agent", TVSettings.Instance.USER_AGENT);
+                client.Headers.Add("user-agent", TVSettings.USER_AGENT);
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                 return client.DownloadString(url);
             }
@@ -94,7 +94,7 @@ namespace TVRename
             else
             {
                 WebClient client = new WebClient();
-                client.Headers.Add("user-agent", TVSettings.Instance.USER_AGENT);
+                client.Headers.Add("user-agent", TVSettings.USER_AGENT);
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                 return client.DownloadData(url);
             }
@@ -138,7 +138,17 @@ namespace TVRename
             Logger.Trace("Returned {0}", result);
             return result;
         }
-
+        public static void LogWebException([NotNull] this Logger l,string message, [NotNull] WebException wex)
+        {
+            if (wex.IsUnimportant())
+            {
+                l.Warn(message+" "+wex.LoggableDetails());
+            }
+            else
+            {
+                l.Error(message + " " + wex.LoggableDetails());
+            }
+        }
         public static bool IsUnimportant([NotNull] this WebException ex)
         {
             switch (ex.Status)

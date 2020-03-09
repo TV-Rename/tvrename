@@ -63,7 +63,7 @@ namespace TVRename
                 (3, TimeSpan.FromSeconds(2), GITHUB_RELEASES_API_URL, async () =>
                 {
                     WebClient client = new WebClient();
-                    client.Headers.Add("user-agent", TVSettings.Instance.USER_AGENT);
+                    client.Headers.Add("user-agent", TVSettings.USER_AGENT);
                     Task<string> response = client.DownloadStringTaskAsync(GITHUB_RELEASES_API_URL);
                     gitHubInfo = JArray.Parse(await response.ConfigureAwait(false));
                 }).ConfigureAwait(false);

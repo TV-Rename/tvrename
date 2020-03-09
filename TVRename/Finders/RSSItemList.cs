@@ -33,7 +33,7 @@ namespace TVRename
             {
                 response = HttpHelper.GetUrl(url, useCloudflareProtection);
 
-                XElement x = XElement.Load(new System.IO.StringReader(response??""));
+                XElement x = XElement.Load(new System.IO.StringReader(response ?? ""));
 
                 if (x.Name.LocalName != "rss")
                 {
@@ -45,15 +45,20 @@ namespace TVRename
                     return false;
                 }
             }
-            catch (WebException  e)
+            catch (WebException e)
             {
-                Logger.Warn($"Could not download RSS page at: {url} got the following message: {e.LoggableDetails()}");
+                Logger.LogWebException($"Could not download RSS page at: {url} got the following message:",e);
                 return false;
             }
             catch (XmlException e)
             {
                 Logger.Warn($"Could not parse RSS page at:{url} Message was: {e.Message}");
                 Logger.Info(response);
+                return false;
+            }
+            catch (AggregateException ex) when (ex.InnerException is WebException wex)
+            {
+                Logger.LogWebException($"Could not download RSS page at: {url} got the following message: ",wex);
                 return false;
             }
             catch (Exception e)

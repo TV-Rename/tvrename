@@ -85,7 +85,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{EndYear}", s.MaxYear().ToString());
             name = name.ReplaceInsensitive("{ShowImdb}", s.Show.TheSeries()?.Imdb??string.Empty);
 
-            return name.Trim();
+            return TVSettings.Instance.DirectoryFriendly(name.Trim());
         }
 
         [NotNull]

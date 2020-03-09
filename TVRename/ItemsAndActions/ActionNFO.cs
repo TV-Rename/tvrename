@@ -67,7 +67,7 @@ namespace TVRename
                 IndentChars = "    ",
                 Encoding = Encoding.UTF8,
                 NewLineChars = "\r\n",
-                NewLineOnAttributes = true,
+                NewLineOnAttributes = true
             };
 
             using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
@@ -276,7 +276,7 @@ namespace TVRename
             ReplaceActors(root, SelectedShow.Actors);
         }
 
-        private void UpdateRatings([NotNull] XElement root, string rating, int votes)
+        private static void UpdateRatings([NotNull] XElement root, string rating, int votes)
         {
             XElement ratingsNode = root.GetOrCreateElement("ratings");
 
@@ -290,7 +290,7 @@ namespace TVRename
             ratingNode.UpdateElement("votes", votes, true);
         }
 
-        private void UpdateId([NotNull] XElement root, string idType, [NotNull] string defaultState, string idValue)
+        private static void UpdateId([NotNull] XElement root, string idType, [NotNull] string defaultState, string idValue)
         {
             const string NODE_NAME = "uniqueid";
             const string NODE_ATTRIBUTE_TYPE = "type";
@@ -312,7 +312,7 @@ namespace TVRename
             }
         }
 
-        private void ReplaceActors([NotNull] XElement root, [NotNull] IEnumerable<Actor> selectedShowActors)
+        private static void ReplaceActors([NotNull] XElement root, [NotNull] IEnumerable<Actor> selectedShowActors)
         {
             IEnumerable<Actor> showActors = selectedShowActors as Actor[] ?? selectedShowActors.ToArray();
             if (! showActors.ToList().Any())

@@ -44,12 +44,12 @@ namespace TVRename
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
         {
-            List<TorrentEntry> downloading = GetqBitTorrentDownloads();
+            List<TorrentEntry> downloading = GetTorrentDownloads();
             SearchForAppropriateDownloads(downloading, DownloadApp.qBitTorrent,settings);
         }
 
         [NotNull]
-        private static List<TorrentEntry> GetqBitTorrentDownloads()
+        internal static List<TorrentEntry> GetTorrentDownloads()
         {
             List < TorrentEntry >  ret = new List<TorrentEntry>();
 

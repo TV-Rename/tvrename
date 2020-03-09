@@ -277,10 +277,10 @@ namespace TVRename
         public string[] VideoExtensionsArray => Convert(VideoExtensionsString);
 
         [NotNull]
-        public string USER_AGENT =>
+        public static string USER_AGENT =>
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36";
 
-        public LocalCache.PagingMethod TVDBPagingMethod => LocalCache.PagingMethod.proper;
+        public static LocalCache.PagingMethod TVDBPagingMethod => LocalCache.PagingMethod.proper;
 
         public bool CleanLibraryAfterActions = false;
         public bool AutoAddAsPartOfQuickRename = true;
@@ -812,18 +812,21 @@ namespace TVRename
             return r;
         }
 
-        public bool FileHasUsefulExtension(FileInfo file, bool otherExtensionsToo)
+        public bool FileHasUsefulExtension([NotNull] FileInfo file, bool otherExtensionsToo) =>
+            FileHasUsefulExtension(file.Name, otherExtensionsToo);
+
+        public bool FileHasUsefulExtension(string filename, bool otherExtensionsToo)
         {
             if (VideoExtensionsArray
                 .Where(s => !string.IsNullOrWhiteSpace(s))
-                .Any(s => file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase)))
+                .Any(s => filename.EndsWith(s, StringComparison.InvariantCultureIgnoreCase)))
             {
                 return true;
             }
 
             return otherExtensionsToo && OtherExtensionsArray
-                                            .Where(s => !string.IsNullOrWhiteSpace(s))
-                                            .Any(s => file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase));
+                       .Where(s => !string.IsNullOrWhiteSpace(s))
+                       .Any(s => filename.EndsWith(s, StringComparison.InvariantCultureIgnoreCase));
         }
 
         [NotNull]
@@ -886,6 +889,27 @@ namespace TVRename
             }
 
             return ForceLowercaseFilenames ? fn.ToLower() : fn;
+        }
+
+        public string DirectoryFriendly(string fn)
+        {
+            if (string.IsNullOrWhiteSpace(fn))
+            {
+                return string.Empty;
+            }
+
+            foreach (Replacement rep in Replacements)
+            {
+                fn = rep.DoReplace(fn);
+            }
+
+            if (fn.ContainsAnyCharctersFrom(Path.GetInvalidPathChars()))
+            {
+                Logger.Warn($"Need to remove some characters from {fn} as the directory name contains characters that cannot be in the path.");
+                fn = fn.RemoveCharactersFrom(Path.GetInvalidPathChars()).RemoveCharactersFrom("/t".ToCharArray());
+            }
+
+            return fn;
         }
 
         public bool NeedToDownloadBannerFile()

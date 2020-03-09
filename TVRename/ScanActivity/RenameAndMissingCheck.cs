@@ -244,7 +244,7 @@ namespace TVRename
         }
 
         [CanBeNull]
-        private FileInfo CheckFile([NotNull] string folder, FileInfo fi, [NotNull] FileInfo actualFile, string newName, ProcessedEpisode ep,FileInfo[] files)
+        private FileInfo CheckFile([NotNull] string folder, FileInfo fi, [NotNull] FileInfo actualFile, string newName, ProcessedEpisode ep,IEnumerable<FileInfo> files)
         {
             if (TVSettings.Instance.RetainLanguageSpecificSubtitles)
             {

@@ -23,7 +23,7 @@ namespace TVRename
         public override bool Active() =>TVSettings.Instance.ExportWTWICAL;
         protected override string Location() => TVSettings.Instance.ExportWTWICALTo;
 
-        protected override bool Generate(System.IO.Stream str, [CanBeNull] List<ProcessedEpisode> episodes)
+        protected override bool Generate(System.IO.Stream str, [CanBeNull] IEnumerable<ProcessedEpisode> episodes)
         {
             if (episodes is null)
             {
