@@ -910,13 +910,10 @@ namespace TVRename
             {
                 case TVSettings.ScanType.Quick:
                     return rdoQuickScan;
-                    break;
                 case TVSettings.ScanType.Recent:
                     return rdoRecentScan;
-                    break;
                 case TVSettings.ScanType.Full:
                     return rdoFullScan;
-                    break;
                 case TVSettings.ScanType.SingleShow:
                     throw new InvalidOperationException("Unexpected value s.MonitoredFoldersScanType = SingleShow");
                 default:
@@ -930,16 +927,10 @@ namespace TVRename
             {
                 case qBitTorrentAPIVersion.v0:
                     return rdoqBitTorrentAPIVersionv0;
-                    break;
-
                 case qBitTorrentAPIVersion.v1:
                     return rdoqBitTorrentAPIVersionv1;
-                    break;
-
                 case qBitTorrentAPIVersion.v2:
                     return rdoqBitTorrentAPIVersionv2;
-                    break;
-
                 default:
                     throw new InvalidOperationException("Unexpected value s.qBitTorrentAPIVersion = " + sQBitTorrentApiVersion);
             }
@@ -951,16 +942,12 @@ namespace TVRename
             {
                 case TVSettings.FolderJpgIsType.FanArt:
                     return rbFolderFanArt;
-                    break;
                 case TVSettings.FolderJpgIsType.Banner:
                     return rbFolderBanner;
-                    break;
                 case TVSettings.FolderJpgIsType.SeasonPoster:
                     return rbFolderSeasonPoster;
-                    break;
                 case TVSettings.FolderJpgIsType.Poster:
                     return rbFolderPoster;
-                    break;
                 default:
                     throw new InvalidOperationException("Unexpected value s.FolderJpgIs = " + enumTyp);
             }
@@ -972,10 +959,8 @@ namespace TVRename
             {
                 case TVSettings.WTWDoubleClickAction.Search:
                     return rbWTWSearch;
-                    break;
                 case TVSettings.WTWDoubleClickAction.Scan:
                     return rbWTWScan;
-                    break;
                 default:
                     throw new InvalidOperationException("Unexpected value s.WTWDoubleClick = " + sWtwDoubleClick);
             }
@@ -988,10 +973,8 @@ namespace TVRename
             {
                 case TVSettings.BetaMode.ProductionOnly:
                     return "Production";
-                    break;
                 case TVSettings.BetaMode.BetaToo:
                     return "Beta";
-                    break;
                 default:
                     throw new InvalidOperationException("Unexpected value s.mode = " + mode);
             }
@@ -1004,13 +987,10 @@ namespace TVRename
             {
                 case TVSettings.KeepTogetherModes.All:
                     return "All";
-                    break;
                 case TVSettings.KeepTogetherModes.AllBut:
                     return "All but these";
-                    break;
                 case TVSettings.KeepTogetherModes.Just:
                     return "Just";
-                    break;
                 default:
                     throw new InvalidOperationException("Unexpected value s.keepTogetherMode = " + sKeepTogetherMode);
             }
