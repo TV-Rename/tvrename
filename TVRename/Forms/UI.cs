@@ -108,6 +108,8 @@ namespace TVRename
 
         private ItemList mLastActionsClicked;
         private ProcessedEpisode mLastEpClicked;
+        private ProcessedEpisode mLastEpClickedWtw;
+        private ProcessedEpisode mLastEpClickedScan;
         private readonly string mLastFolderClicked;
         private Season mLastSeasonClicked;
         private List<ShowItem> mLastShowsClicked;
@@ -120,11 +122,6 @@ namespace TVRename
             mDoc = doc;
 
             busy = 0;
-            mLastEpClicked = null;
-            mLastFolderClicked = null;
-            mLastSeasonClicked = null;
-            mLastShowsClicked = null;
-            mLastActionsClicked = null;
 
             mInternalChange = 0;
             mFoldersToOpen = new List<string>();
@@ -1135,6 +1132,7 @@ namespace TVRename
             if (lvWhenToWatch.SelectedIndices.Count == 0)
             {
                 txtWhenToWatchSynopsis.Text = "";
+                mLastEpClickedWtw = null;
                 return;
             }
 
@@ -1142,6 +1140,7 @@ namespace TVRename
 
             ProcessedEpisode ei = (ProcessedEpisode) lvWhenToWatch.Items[n].Tag;
             mLastEpClicked = ei;
+            mLastEpClickedWtw = ei;
 
             if (TVSettings.Instance.HideWtWSpoilers &&
                 (ei.HowLong() != "Aired" || lvWhenToWatch.Items[n].ImageIndex == 1))
@@ -1434,6 +1433,8 @@ namespace TVRename
             }
 
             mLastEpClicked = ep;
+            mLastEpClickedWtw = ep;
+
             mLastShowsClicked = sis;
             mLastSeasonClicked = ep?.AppropriateSeason;
             mLastActionsClicked = null;
@@ -2357,6 +2358,14 @@ namespace TVRename
                     GotoEpguideFor(mLastEpClicked, false);
                 }
                 FillEpGuideHtml();
+            }
+            else if (tabControl1.SelectedTab == tbWTW)
+            {
+                mLastEpClicked = mLastEpClickedWtw; 
+            }
+            else if (tabControl1.SelectedTab == tbAllInOne)
+            {
+                mLastEpClicked = mLastEpClickedScan;
             }
         }
 
@@ -3570,6 +3579,8 @@ namespace TVRename
             }
 
             mLastEpClicked = action.Episode;
+            mLastEpClickedScan = mLastEpClicked;
+
             if (action.Episode != null)
             {
                 mLastSeasonClicked = action.Episode.AppropriateSeason;
