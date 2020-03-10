@@ -1400,50 +1400,28 @@ namespace TVRename.TheTVDB
 
             List<int> latestBannerIds = new List<int>();
 
+            ProcessBannerResponses(code, si, GetLanguageId(), requestedLanguageCode, bannerResponses, latestBannerIds);
+            ProcessBannerResponses(code, si, GetDefaultLanguageId(), DefaultLanguageCode, bannerDefaultLangResponses, latestBannerIds);
+
+            si.UpdateBanners(latestBannerIds);
+
+            si.BannersLoaded = true;
+        }
+
+        private static void ProcessBannerResponses(int code, SeriesInfo si, int languageId, string languageCode, [NotNull] List<JObject> bannerResponses,
+            ICollection<int> latestBannerIds)
+        {
             foreach (JObject response in bannerResponses)
             {
                 try
                 {
                     foreach (Banner b in response["data"]
                         .Cast<JObject>()
-                        .Select(bannerData => new Banner(si.TvdbCode, bannerData, GetLanguageId())))
-                    {
-                        //   if (!series.ContainsKey(b.SeriesId))
-                        //       throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
-                        //   SeriesInfo ser = series[b.SeriesId];
-                        //   ser.AddOrUpdateBanner(b);
-                        si.AddOrUpdateBanner(b);
-                        latestBannerIds.Add(b.BannerId);
-                    }
-                }
-                catch (InvalidCastException ex)
-                {
-                    Logger.Error(ex,
-                        $"Did not receive the expected format of json from when downloading banners for series {code} in {requestedLanguageCode}");
-
-                    Logger.Error(response["data"].ToString());
-                }
-            }
-
-            foreach (JObject response in bannerDefaultLangResponses)
-            {
-                try
-                {
-                    foreach (Banner b in response["data"]
-                        .Cast<JObject>()
-                        .Select(bannerData => new Banner(si.TvdbCode, bannerData, GetDefaultLanguageId())))
+                        .Select(bannerData => new Banner(si.TvdbCode, bannerData, languageId)))
                     {
                         lock (SERIES_LOCK)
                         {
-                            if (!series.ContainsKey(b.SeriesId))
-                            {
-                                throw new TVDBException(
-                                    $"Can't find the series to add the banner to (TheTVDB). Bannner.SeriesId = {b.SeriesId}, series = {si.Name} ({si.SeriesId}), code = {code}");
-                            }
-
-                            SeriesInfo ser = series[b.SeriesId];
-                            ser.AddOrUpdateBanner(b);
-
+                            si.AddOrUpdateBanner(b);
                             latestBannerIds.Add(b.BannerId);
                         }
                     }
@@ -1451,15 +1429,11 @@ namespace TVRename.TheTVDB
                 catch (InvalidCastException ex)
                 {
                     Logger.Error(ex,
-                        $"Did not receive the expected format of json from when downloading banners for series {code} in {DefaultLanguageCode}");
+                        $"Did not receive the expected format of json from when downloading banners for series {code} in {languageCode}");
 
                     Logger.Error(response["data"].ToString());
                 }
             }
-
-            si.UpdateBanners(latestBannerIds);
-
-            si.BannersLoaded = true;
         }
 
         private static (List<JObject> bannerDefaultLangResponses, List<JObject> bannerResponses) DownloadBanners(int code,
