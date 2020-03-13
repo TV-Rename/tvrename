@@ -7,6 +7,7 @@
 // 
 
 using System.Collections.Generic;
+using System.Threading;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
@@ -19,7 +20,7 @@ namespace TVRename
         void SaveCache();
 
         bool EnsureUpdated(SeriesSpecifier s, bool bannersToo);
-        bool GetUpdates(bool showErrorMsgBox);
+        bool GetUpdates(bool showErrorMsgBox,CancellationToken cts);
         void UpdatesDoneOk();
 
         SeriesInfo GetSeries(string showName, bool showErrorMsgBox);

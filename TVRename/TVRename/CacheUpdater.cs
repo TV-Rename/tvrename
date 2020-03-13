@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 using TVRename.Forms.Utilities;
 
 namespace TVRename.TheTVDB
@@ -39,7 +40,8 @@ namespace TVRename.TheTVDB
             Problems = new ConcurrentBag<int>();
         }
 
-        public void StartBgDownloadThread(bool stopOnError, ICollection<SeriesSpecifier> shows, bool showMsgBox)
+        public void StartBgDownloadThread(bool stopOnError, ICollection<SeriesSpecifier> shows, bool showMsgBox,
+            CancellationToken ctsToken)
         {
             if (!DownloadDone)
             {
@@ -57,7 +59,7 @@ namespace TVRename.TheTVDB
             ClearProblematicSeriesIds();
 
             mDownloaderThread = new Thread(Downloader) { Name = "Downloader" };
-            mDownloaderThread.Start();
+            mDownloaderThread.Start(ctsToken);
         }
 
         public bool DoDownloadsFg(bool showProgress, bool showMsgBox, ICollection<SeriesSpecifier> shows)
@@ -69,7 +71,8 @@ namespace TVRename.TheTVDB
 
             Logger.Info("Doing downloads in the foreground...");
 
-            StartBgDownloadThread(true, shows,showMsgBox);
+            CancellationTokenSource cts = new CancellationTokenSource();
+            StartBgDownloadThread(true, shows,showMsgBox,cts.Token);
 
             const int DELAY_STEP = 100;
             int count = 1000 / DELAY_STEP; // one second
@@ -81,8 +84,13 @@ namespace TVRename.TheTVDB
             if (!DownloadDone && showProgress) // downloading still going on, so time to show the dialog if we're not in /hide mode
             {
                 DownloadProgress dp = new DownloadProgress(this);
-                dp.ShowDialog();
-                dp.Update();
+                DialogResult result = dp.ShowDialog();
+                //dp.Update();  TODO - Check this can be ignored
+
+                if (result == DialogResult.Abort)
+                {
+                    cts.Cancel();
+                }
             }
 
             WaitForBgDownloadDone();
@@ -118,11 +126,21 @@ namespace TVRename.TheTVDB
             mDownloaderThread = null;
         }
         
-        private void GetThread(object codeIn)
+        private void GetThread([NotNull] object codeIn)
         {
             System.Diagnostics.Debug.Assert(workerSemaphore != null);
 
-            SeriesSpecifier series = (SeriesSpecifier)codeIn;
+            SeriesSpecifier series;
+
+            switch (codeIn)
+            {
+                case SeriesSpecifier ss:
+                    series = ss;
+                    break;
+
+                default:
+                    throw new Exception("GetThread started with invalid parameter");
+            }
 
             try
             {
@@ -176,11 +194,13 @@ namespace TVRename.TheTVDB
             workerSemaphore = null;
         }
 
-        private void Downloader()
+        private void Downloader([NotNull] object token)
         {
             // do background downloads of webpages
             Logger.Info("*******************************");
             Logger.Info("Starting Background Download...");
+
+            CancellationToken cts = (CancellationToken)token;
             try
             {
                 if (downloadIds.Count == 0)
@@ -190,7 +210,7 @@ namespace TVRename.TheTVDB
                     return;
                 }
 
-                if (!LocalCache.Instance.GetUpdates(showErrorMsgBox))
+                if (!LocalCache.Instance.GetUpdates(showErrorMsgBox,cts))
                 {
                     DownloadDone = true;
                     downloadOk = false;
@@ -210,6 +230,10 @@ namespace TVRename.TheTVDB
 
                 foreach (SeriesSpecifier code in downloadIds)
                 {
+                    if (cts.IsCancellationRequested)
+                    {
+                        break;
+                    }
                     DownloadPct = 100 * (n + 1) / (totalItems + 1);
                     DownloadsRemaining = totalItems - n;
                     n++;
@@ -241,19 +265,19 @@ namespace TVRename.TheTVDB
 
                 WaitForAllThreadsAndTidyUp();
 
-                LocalCache.Instance.UpdatesDoneOk();
-                DownloadDone = true;
+                if (!cts.IsCancellationRequested)
+                {
+                    LocalCache.Instance.UpdatesDoneOk();
+                }
                 downloadOk = true;
             }
             catch (ThreadAbortException taa)
             {
-                DownloadDone = true;
                 downloadOk = false;
                 Logger.Error(taa);
             }
             catch (Exception e)
             {
-                DownloadDone = true;
                 downloadOk = false;
                 Logger.Fatal(e, "UNHANDLED EXCEPTION IN DOWNLOAD THREAD");
             }
@@ -261,6 +285,7 @@ namespace TVRename.TheTVDB
             {
                 workers = null;
                 workerSemaphore = null;
+                DownloadDone = true;
             }
         }
 

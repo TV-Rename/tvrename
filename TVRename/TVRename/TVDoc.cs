@@ -145,7 +145,7 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public void DoDownloadsBG()
         {
-            cacheManager.StartBgDownloadThread(false, Library.SeriesSpecifiers,false);
+            cacheManager.StartBgDownloadThread(false, Library.SeriesSpecifiers,false, CancellationToken.None);
         }
 
         public int DownloadsRemaining() =>

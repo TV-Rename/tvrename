@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Humanizer;
@@ -287,85 +288,7 @@ namespace TVRename.TheTVDB
             {
                 foreach (SeriesInfo si in series.Values.Where(info => !info.IsStub).ToList())
                 {
-                    int tvdbId = si.TvdbCode;
-
-                    SeriesInfo newSi = DownloadSeriesInfo(tvdbId, "en");
-                    if (newSi.SrvLastUpdated != si.SrvLastUpdated)
-                    {
-                        issues.Add(
-                            $"{si.Name} is not up to date: Local is {si.SrvLastUpdated} server is {newSi.SrvLastUpdated}");
-
-                        si.Dirty = true;
-                    }
-
-                    List<JObject> eps = GetEpisodes(tvdbId, "en");
-                    List<long> serverEpIds = new List<long>();
-
-                    if (eps != null)
-                    {
-                        foreach (JObject epJson in eps)
-                        {
-                            JToken episodeToUse = epJson["data"];
-                            foreach (JToken t in episodeToUse.Children())
-                            {
-                                long serverUpdateTime = (long) t["lastUpdated"];
-                                int epId = (int) t["id"];
-
-                                serverEpIds.Add(epId);
-                                try
-                                {
-                                    Episode ep = si.GetEpisode(epId);
-
-                                    if (serverUpdateTime > ep.SrvLastUpdated)
-                                    {
-                                        issues.Add(
-                                            $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is not up to date: Local is {ep.SrvLastUpdated} server is {serverUpdateTime}");
-
-                                        ep.Dirty = true;
-                                        if (!showsToUpdate.Contains(si))
-                                        {
-                                            showsToUpdate.Add(si);
-                                        }
-                                    }
-
-                                    if (serverUpdateTime < ep.SrvLastUpdated)
-                                    {
-                                        issues.Add(
-                                            $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is in the future: Local is {ep.SrvLastUpdated} server is {serverUpdateTime}");
-
-                                        ep.Dirty = true;
-                                    }
-                                }
-                                catch (ShowItem.EpisodeNotFoundException)
-                                {
-                                    issues.Add(
-                                        $"{si.Name} {epId} is not found: Local is missing; server is {serverUpdateTime}");
-
-                                    si.Dirty = true;
-                                    if (!showsToUpdate.Contains(si))
-                                    {
-                                        showsToUpdate.Add(si);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    //Look for episodes that are local, but not on server
-                    foreach (Episode localEp in si.Episodes)
-                    {
-                        int localEpId = localEp.EpisodeId;
-                        if (!serverEpIds.Contains(localEpId))
-                        {
-                            issues.Add($"{si.Name} {localEpId} should be removed: Server is missing.");
-                            localEp.Dirty = true;
-                            si.Dirty = true;
-                            if (!showsToUpdate.Contains(si))
-                            {
-                                showsToUpdate.Add(si);
-                            }
-                        }
-                    }
+                    ServerAccuracyCheck(si, issues, showsToUpdate);
                 }
             }
 
@@ -375,6 +298,95 @@ namespace TVRename.TheTVDB
             }
 
             return showsToUpdate;
+        }
+
+        private void ServerAccuracyCheck(SeriesInfo si, List<string> issues, List<SeriesInfo> showsToUpdate)
+        {
+            int tvdbId = si.TvdbCode;
+            try
+            {
+                SeriesInfo newSi = DownloadSeriesInfo(tvdbId, "en");
+                if (newSi.SrvLastUpdated != si.SrvLastUpdated)
+                {
+                    issues.Add(
+                        $"{si.Name} is not up to date: Local is {si.SrvLastUpdated} server is {newSi.SrvLastUpdated}");
+
+                    si.Dirty = true;
+                }
+
+                List<JObject> eps = GetEpisodes(tvdbId, "en");
+                List<long> serverEpIds = new List<long>();
+
+                if (eps != null)
+                {
+                    foreach (JObject epJson in eps)
+                    {
+                        JToken episodeToUse = epJson["data"];
+                        foreach (JToken t in episodeToUse.Children())
+                        {
+                            long serverUpdateTime = (long) t["lastUpdated"];
+                            int epId = (int) t["id"];
+
+                            serverEpIds.Add(epId);
+                            try
+                            {
+                                Episode ep = si.GetEpisode(epId);
+
+                                if (serverUpdateTime > ep.SrvLastUpdated)
+                                {
+                                    issues.Add(
+                                        $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is not up to date: Local is {ep.SrvLastUpdated} server is {serverUpdateTime}");
+
+                                    ep.Dirty = true;
+                                    if (!showsToUpdate.Contains(si))
+                                    {
+                                        showsToUpdate.Add(si);
+                                    }
+                                }
+
+                                if (serverUpdateTime < ep.SrvLastUpdated)
+                                {
+                                    issues.Add(
+                                        $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is in the future: Local is {ep.SrvLastUpdated} server is {serverUpdateTime}");
+
+                                    ep.Dirty = true;
+                                }
+                            }
+                            catch (ShowItem.EpisodeNotFoundException)
+                            {
+                                issues.Add(
+                                    $"{si.Name} {epId} is not found: Local is missing; server is {serverUpdateTime}");
+
+                                si.Dirty = true;
+                                if (!showsToUpdate.Contains(si))
+                                {
+                                    showsToUpdate.Add(si);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                //Look for episodes that are local, but not on server
+                foreach (Episode localEp in si.Episodes)
+                {
+                    int localEpId = localEp.EpisodeId;
+                    if (!serverEpIds.Contains(localEpId))
+                    {
+                        issues.Add($"{si.Name} {localEpId} should be removed: Server is missing.");
+                        localEp.Dirty = true;
+                        si.Dirty = true;
+                        if (!showsToUpdate.Contains(si))
+                        {
+                            showsToUpdate.Add(si);
+                        }
+                    }
+                }
+            }
+            catch (TvdbSeriesDownloadException ex)
+            {
+                issues.Add($"Failed to compare {si.Name} as we could not download the series details.");
+            }
         }
 
         [CanBeNull]
@@ -509,7 +521,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        public bool GetUpdates(bool showErrorMsgBox)
+        public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts)
         {
             Say("Updates list");
 
@@ -556,6 +568,12 @@ namespace TVRename.TheTVDB
 
             while (moreUpdates)
             {
+                if (cts.IsCancellationRequested)
+                {
+                    Say(string.Empty);
+                    return true;
+                }
+
                 //If this date is in the last week then this needs to be the last call to the update
                 DateTime requestedTime = GetRequestedTime(updateFromEpochTime, numberofCallsMade);
 
@@ -612,6 +630,12 @@ namespace TVRename.TheTVDB
                 const int MAX_NUMBER_OF_CALLS = 52;
                 if (numberofCallsMade > MAX_NUMBER_OF_CALLS)
                 {
+                    if (cts.IsCancellationRequested)
+                    {
+                        Say(string.Empty);
+                        return false;
+                    }
+
                     moreUpdates = false;
                     string errorMessage =
                         $"We have run {MAX_NUMBER_OF_CALLS} weeks of updates and we are not up to date.  The system will need to check again once this set of updates have been processed.{Environment.NewLine}Last Updated time was {LatestUpdateTime.LastSuccessfulServerUpdateDateTime()}{Environment.NewLine}New Last Updated time is {LatestUpdateTime.ProposedServerUpdateDateTime()}{Environment.NewLine}{Environment.NewLine}If the dates keep getting more recent then let the system keep getting {MAX_NUMBER_OF_CALLS} week blocks of updates, otherwise consider a 'Force Refresh All'";
@@ -634,7 +658,7 @@ namespace TVRename.TheTVDB
 
             Say("Processing Updates from TVDB");
 
-            Parallel.ForEach(updatesResponses, ProcessUpdate);
+            Parallel.ForEach(updatesResponses, o => ProcessUpdate(o,cts) );
 
             Say("Upgrading dirty locks");
 
@@ -746,14 +770,17 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private void ProcessUpdate([NotNull] JObject jsonResponse)
+        private void ProcessUpdate([NotNull] JObject jsonResponse, CancellationToken cts)
         {
             // if updatetime > localtime for item, then remove it, so it will be downloaded later
             try
             {
                 foreach (JObject seriesResponse in jsonResponse["data"].Cast<JObject>())
                 {
-                    ProcessSeriesUpdate(seriesResponse);
+                    if (!cts.IsCancellationRequested)
+                    {
+                        ProcessSeriesUpdate(seriesResponse);
+                    }
                 }
             }
             catch (InvalidCastException ex)
