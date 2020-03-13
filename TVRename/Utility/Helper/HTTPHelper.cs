@@ -158,6 +158,8 @@ namespace TVRename
                 case WebExceptionStatus.ConnectFailure:
                 case WebExceptionStatus.ProtocolError:
                 case WebExceptionStatus.TrustFailure:
+                case WebExceptionStatus.RequestCanceled:
+                case WebExceptionStatus.PipelineFailure:
                     return true;
 
                 default:
