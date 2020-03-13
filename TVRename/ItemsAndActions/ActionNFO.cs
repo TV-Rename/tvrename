@@ -57,6 +57,12 @@ namespace TVRename
             {
                 return new ActionOutcome(ex);
             }
+            catch (XmlException xex)
+            {
+                //Assume that the file needs to be recreated
+                CreateBlankFile();
+                return Go(stats);
+            }
         }
 
         private void CreateBlankFile()
