@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using TVRename.Forms.Utilities;
 
-namespace TVRename.TheTVDB
+namespace TVRename
 {
     /// <inheritdoc />
     /// <summary>
@@ -85,7 +85,6 @@ namespace TVRename.TheTVDB
             {
                 DownloadProgress dp = new DownloadProgress(this);
                 DialogResult result = dp.ShowDialog();
-                //dp.Update();  TODO - Check this can be ignored
 
                 if (result == DialogResult.Abort)
                 {
@@ -95,12 +94,14 @@ namespace TVRename.TheTVDB
 
             WaitForBgDownloadDone();
 
+            //todo - make sure TVmaze is updated too
+
             if (!downloadOk)
             {
-                Logger.Warn(LocalCache.Instance.LastErrorMessage);
+                Logger.Warn(TheTVDB.LocalCache.Instance.LastErrorMessage + TVmaze.LocalCache.Instance.LastErrorMessage);
                 if (showErrorMsgBox)
                 {
-                    CannotConnectForm ccform = new CannotConnectForm("Error while downloading", LocalCache.Instance.LastErrorMessage);
+                    CannotConnectForm ccform = new CannotConnectForm("Error while downloading", TheTVDB.LocalCache.Instance.LastErrorMessage + TVmaze.LocalCache.Instance.LastErrorMessage);
                     DialogResult ccresult = ccform.ShowDialog();
                     if (ccresult == DialogResult.Abort)
                     {
@@ -108,7 +109,8 @@ namespace TVRename.TheTVDB
                     }
                 }
 
-                LocalCache.Instance.LastErrorMessage = "";
+                TheTVDB.LocalCache.Instance.LastErrorMessage = string.Empty;
+                TVmaze.LocalCache.Instance.LastErrorMessage = string.Empty;
             }
 
             return downloadOk;
@@ -149,23 +151,41 @@ namespace TVRename.TheTVDB
                 bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
 
                 Threadslogger.Trace("  Downloading " + series.Name);
-
-                if (LocalCache.Instance.EnsureUpdated(series, bannersToo))
+                switch (series.Provider)
                 {
-                    return;
+                    case ShowItem.ProviderType.TVmaze:
+                        if (TVmaze.LocalCache.Instance.EnsureUpdated(series, bannersToo))
+                        {
+                            return;
+                        }
+                        break;
+
+                    case ShowItem.ProviderType.TheTVDB:
+                        if (TheTVDB.LocalCache.Instance.EnsureUpdated(series, bannersToo))
+                        {
+                            return;
+                        }
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
             catch (ShowNotFoundException snfe)
             {
-                Problems.Add(snfe.ShowId);
+                Problems.Add(snfe.ShowId); //TODO rework for multi source ShowNotFoundException
+            }
+            catch (SourceConsistencyException sce)
+            {
+                Logger.Error(sce.Message);
             }
             catch (Exception e)
             {
-                Logger.Fatal(e, $"Unhandled Exception in GetThread for {series.Name} id={series.SeriesId} and lang={series.CustomLanguageCode}");
+                Logger.Fatal(e, $"Unhandled Exception in GetThread for {series}");
             }
             finally
             {
-                Threadslogger.Trace("  Finished " + series.SeriesId);
+                Threadslogger.Trace("  Finished " + series);
                 workerSemaphore.Release(1);
             }
 
@@ -210,7 +230,14 @@ namespace TVRename.TheTVDB
                     return;
                 }
 
-                if (!LocalCache.Instance.GetUpdates(showErrorMsgBox,cts))
+                if (!TVmaze.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,downloadIds.Where(specifier => specifier.Provider==ShowItem.ProviderType.TVmaze)))
+                {
+                    DownloadDone = true;
+                    downloadOk = false;
+                    return;
+                }
+
+                if (!TheTVDB.LocalCache.Instance.GetUpdates(showErrorMsgBox,cts, downloadIds.Where(specifier => specifier.Provider == ShowItem.ProviderType.TheTVDB)))
                 {
                     DownloadDone = true;
                     downloadOk = false;
@@ -223,7 +250,7 @@ namespace TVRename.TheTVDB
                 int n = 0;
 
                 int numWorkers = TVSettings.Instance.ParallelDownloads;
-                Logger.Info("Setting up {0} threads to download information from TVDB.com", numWorkers);
+                Logger.Info("Setting up {0} threads to download information from TheTVDB.com and MVMaze.com", numWorkers);
                 workers = new List<Thread>();
 
                 workerSemaphore = new Semaphore(numWorkers, numWorkers); // allow up to numWorkers working at once
@@ -267,7 +294,8 @@ namespace TVRename.TheTVDB
 
                 if (!cts.IsCancellationRequested)
                 {
-                    LocalCache.Instance.UpdatesDoneOk();
+                    TheTVDB.LocalCache.Instance.UpdatesDoneOk();
+                    TVmaze.LocalCache.Instance.UpdatesDoneOk();
                 }
                 downloadOk = true;
             }
@@ -321,7 +349,7 @@ namespace TVRename.TheTVDB
 
         public void ClearProblems()
         {
-            List<SeriesSpecifier> toRemove = (from sid in Problems from ss in downloadIds where ss.SeriesId == sid select ss).ToList();
+            List<SeriesSpecifier> toRemove = (from sid in Problems from ss in downloadIds where ss.TvdbSeriesId == sid select ss).ToList();
 
             foreach (SeriesSpecifier s in toRemove)
             {

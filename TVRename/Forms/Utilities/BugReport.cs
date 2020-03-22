@@ -77,7 +77,7 @@ namespace TVRename
 
         private void ExtractShowDetails(StringBuilder txt)
         {
-            foreach (ShowItem si in mDoc.Library.GetShowItems())
+            foreach (ShowItem si in mDoc.Library.GetSortedShowItems())
             {
                 foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.ActiveSeasons)
                 {

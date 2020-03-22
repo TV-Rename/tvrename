@@ -107,7 +107,7 @@ namespace TVRename
 
                 //Genres...taken from overall Series, not episode specific due to thetvdb
                 writer.WriteStartElement("genres");
-                string genre = string.Join(" / ", Episode.Show.TheSeries()?.Genres() ?? new string[] { });
+                string genre = string.Join(" / ", Episode.Show.TheSeries()?.Genres ?? new List<string>());
                 if (!string.IsNullOrEmpty(genre))
                 {
                     writer.WriteElement("genre", genre);
@@ -167,7 +167,7 @@ namespace TVRename
                 writer.WriteElement("title", SelectedShow.ShowName);
 
                 writer.WriteStartElement("genres");
-                string genre = string.Join(" / ", SelectedShow.TheSeries()?.Genres() ?? new List<string>());
+                string genre = string.Join(" / ", SelectedShow.TheSeries()?.Genres ?? new List<string>());
                 if (!string.IsNullOrEmpty(genre))
                 {
                     writer.WriteElement("genre", genre);

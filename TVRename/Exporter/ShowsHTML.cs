@@ -59,7 +59,7 @@ namespace TVRename
             string yearRange = ShowHtmlHelper.YearRange(series);
             string episodeSummary = series.Episodes.Count.ToString();
             string stars = ShowHtmlHelper.StarRating(series.SiteRating/2);
-            string genreIcons = string.Join("&nbsp;", series.Genres().Select(ShowHtmlHelper.GenreIconHtml));
+            string genreIcons = string.Join("&nbsp;", series.Genres.Select(ShowHtmlHelper.GenreIconHtml));
             string siteRating = series.SiteRating > 0 ? series.SiteRating + "/10" : "";
 
             return $@"<div class=""card card-body"">
@@ -76,7 +76,7 @@ namespace TVRename
             <div class=""row align-items-bottom flex-grow-1"">
                 <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}</div>
                 <div class=""col-md-4 align-self-end text-center"">{series.ContentRating}<br>{series.Network}</div>
-                <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{series.Genres().ToCsv()}</div>
+                <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{series.Genres.ToCsv()}</div>
             </div>
             </div></div></div>";
         }

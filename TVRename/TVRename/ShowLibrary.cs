@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using JetBrains.Annotations;
-using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -26,7 +25,7 @@ namespace TVRename
                 List<SeriesSpecifier> value = new List<SeriesSpecifier>();
                 foreach (KeyValuePair<int, ShowItem> series in this)
                 {
-                    value.Add(new SeriesSpecifier(series.Key,series.Value.UseCustomLanguage,series.Value.CustomLanguageCode,series.Value.ShowName));
+                    value.Add(new SeriesSpecifier(series.Value.TvdbCode, series.Value.TVmazeCode, series.Value.UseCustomLanguage, series.Value.CustomLanguageCode, series.Value.ShowName,series.Value.Provider,series.Value.TheSeries()?.Imdb));
                 }
 
                 return value;
@@ -89,6 +88,16 @@ namespace TVRename
         }
 
         [NotNull]
+        public IEnumerable<string> GetTypes()
+        {
+            return Values
+                .Select(s => s.TheSeries()?.Type)
+                .Distinct()
+                .Where(s => s.HasValue())
+                .OrderBy(s => s);
+        }
+
+        [NotNull]
         public IEnumerable<string> GetNetworks()
         {
             return Values
@@ -110,17 +119,23 @@ namespace TVRename
         }
 
         [NotNull]
-        public List<ShowItem> GetShowItems()
+        public List<ShowItem> GetSortedShowItems()
         {
-            List<ShowItem> returnList = Values.ToList();
-            returnList.Sort(TVRename.ShowItem.CompareShowItemNames);
+            List<ShowItem> returnList = Shows.ToList();
+            returnList.Sort(ShowItem.CompareShowItemNames);
             return returnList;
         }
 
         [CanBeNull]
-        public ShowItem ShowItem(int id) => ContainsKey(id) ? this[id] : null;
+        public ShowItem GetShowItem(int id) => ContainsKey(id) ? this[id] : null;
 
-        public bool GenDict() => Values.All(GenerateEpisodeDict);
+        public void GenDict()
+        {
+            foreach (ShowItem show in Values)
+            {
+                GenerateEpisodeDict(show);
+            }
+        }
 
         public static bool GenerateEpisodeDict([NotNull] ShowItem si)
         {
@@ -130,15 +145,19 @@ namespace TVRename
 
             bool r = true;
 
-            lock (LocalCache.SERIES_LOCK)
+            lock (si.Provider==ShowItem.ProviderType.TVmaze? TVmaze.LocalCache.SERIES_LOCK: TheTVDB.LocalCache.SERIES_LOCK)
             {
                 si.ClearEpisodes();
 
-                SeriesInfo ser = LocalCache.Instance.GetSeries(si.TvdbCode);
+                SeriesInfo ser = si.Provider == ShowItem.ProviderType.TVmaze
+                    ? TVmaze.LocalCache.Instance.GetSeries(si.TVmazeCode)
+                    : TheTVDB.LocalCache.Instance.GetSeries(si.TvdbCode)
+                    ;
 
                 if (ser is null)
                 {
-                    Logger.Warn($"Asked to generate episodes for {si.ShowName}, but this has not yet been downloaded from TVDB");
+                    string source = (si.Provider == ShowItem.ProviderType.TVmaze) ? "TVMaze" : "TVDB";
+                    Logger.Warn($"Asked to generate episodes for {si.ShowName}, but this has not yet been downloaded from {source}");
                     return false;
                 }
 
@@ -194,7 +213,7 @@ namespace TVRename
                 return null;
             }
 
-            Season seas = si.AppropriateSeasons()[snum];
+            ProcessedSeason seas = si.AppropriateSeasons()[snum];
 
             if (seas is null)
             {
@@ -206,13 +225,13 @@ namespace TVRename
 
             switch (si.Order)
             {
-                case Season.SeasonType.dvd:
+                case ProcessedSeason.SeasonType.dvd:
                     eis.Sort(ProcessedEpisode.DVDOrderSorter);
                     AutoMerge(eis, si);
                     Renumber(eis);
                     break;
 
-                case Season.SeasonType.aired:
+                case ProcessedSeason.SeasonType.aired:
                     eis.Sort(ProcessedEpisode.EpNumberSorter);
                     break;
 
@@ -291,8 +310,8 @@ namespace TVRename
                 {
                     ProcessedEpisode pe = new ProcessedEpisode(ep, si)
                     {
-                        TheAiredSeason = eis[i].TheAiredSeason,
-                        TheDvdSeason = eis[i].TheDvdSeason,
+                        TheAiredProcessedSeason = eis[i].TheAiredProcessedSeason,
+                        TheDvdProcessedSeason = eis[i].TheDvdProcessedSeason,
                         SeasonId = eis[i].SeasonId
                     };
 
@@ -605,7 +624,7 @@ namespace TVRename
                 }
 
                 int num = t.EpNum2 - t.AppropriateEpNum;
-                if((t.AppropriateEpNum!= n || t.EpNum2!=n+num) && !(t.Show.Order==Season.SeasonType.dvd && t.NotOnDvd()))
+                if((t.AppropriateEpNum!= n || t.EpNum2!=n+num) && !(t.Show.Order==ProcessedSeason.SeasonType.dvd && t.NotOnDvd()))
                 {
                     t.SetEpisodeNumbers(n, n + num);
                 }
@@ -614,7 +633,7 @@ namespace TVRename
         }
 
         [NotNull]
-        internal IEnumerable<ShowItem> GetRecentShows() => GetShowItems().Where(IsRecent);
+        internal IEnumerable<ShowItem> GetRecentShows() => GetSortedShowItems().Where(IsRecent);
 
         private static bool IsRecent([NotNull] ShowItem si)
         {
@@ -654,9 +673,9 @@ namespace TVRename
         {
             ProcessedEpisode nextAfterThat = null;
             TimeSpan howClose = TimeSpan.MaxValue;
-            lock (LocalCache.SERIES_LOCK)
+            foreach (ShowItem si in GetSortedShowItems())
             {
-                foreach (ShowItem si in GetShowItems())
+                lock (si.Provider==ShowItem.ProviderType.TVmaze ? TVmaze.LocalCache.SERIES_LOCK : TheTVDB.LocalCache.SERIES_LOCK)
                 {
                     if (!si.ShowNextAirdate)
                     {

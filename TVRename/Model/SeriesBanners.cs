@@ -183,6 +183,10 @@ namespace TVRename
                 return AllBanners[bestSeriesPosterId]?.BannerPath ?? string.Empty;
             }
 
+            if (!string.IsNullOrEmpty(series.PosterUrl))
+            {
+                return series.PosterUrl;
+            }
             //give up
             return string.Empty;
         }

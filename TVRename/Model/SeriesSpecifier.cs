@@ -12,15 +12,22 @@ namespace TVRename
 {
     public class SeriesSpecifier
     {
-        public readonly int SeriesId;
+        public readonly int TvdbSeriesId;
+        public readonly int TvMazeSeriesId;
         public readonly bool UseCustomLanguage;
         public readonly string CustomLanguageCode;
         public readonly string Name;
+        public readonly string ImdbCode;
+        public readonly ShowItem.ProviderType Provider;
 
-        public SeriesSpecifier(int key, bool useCustomLanguage, [CanBeNull] string customLanguageCode,string name)
+        public SeriesSpecifier(int tvdb, int tvmaze, bool useCustomLanguage, [CanBeNull] string customLanguageCode,
+            string name, ShowItem.ProviderType p, string imdb)
         {
-            SeriesId = key;
+            TvdbSeriesId = tvdb;
+            TvMazeSeriesId = tvmaze;
             Name = name;
+            ImdbCode = imdb;
+            Provider = p;
 
             if (string.IsNullOrWhiteSpace(customLanguageCode))
             {
@@ -33,5 +40,8 @@ namespace TVRename
                 CustomLanguageCode = customLanguageCode;
             }
         }
+
+        public override string ToString() =>
+            $"{Name}//tvdb={TvdbSeriesId}//tvmaze={TvMazeSeriesId} {Provider} and lang = {CustomLanguageCode}.";
     }
 }

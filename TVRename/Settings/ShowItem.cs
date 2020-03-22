@@ -15,7 +15,6 @@ using JetBrains.Annotations;
 using NLog;
 using NodaTime;
 using TimeZoneConverter;
-using TVRename.TheTVDB;
 
 // These are what is used when processing folders for missing episodes, renaming, etc. of files.
 
@@ -40,11 +39,13 @@ namespace TVRename
         public List<int> IgnoreSeasons;
         public Dictionary<int, List<string>> ManualFolderLocations;
         public Dictionary<int, List<ProcessedEpisode>> SeasonEpisodes; // built up by applying rules.
-        private Dictionary<int, Season> airedSeasons;
-        private Dictionary<int, Season> dvdSeasons;
+        private Dictionary<int, ProcessedSeason> airedSeasons;
+        private Dictionary<int, ProcessedSeason> dvdSeasons;
         public Dictionary<int, List<ShowRule>> SeasonRules;
         public bool ShowNextAirdate;
         public int TvdbCode;
+        // ReSharper disable once InconsistentNaming
+        public int TVmazeCode;
         public bool UseCustomShowName;
         public string CustomShowName;
         public bool UseCustomLanguage;
@@ -54,6 +55,7 @@ namespace TVRename
         public bool UseCustomSearchUrl;
         public string CustomSearchUrl;
         public bool ManualFoldersReplaceAutomatic;
+        protected internal ProviderType ConfigurationProvider;
 
         public string ShowTimeZone { get; internal set; }
         private DateTimeZone seriesTimeZone;
@@ -63,7 +65,7 @@ namespace TVRename
 
         public DateTime? BannersLastUpdatedOnDisk { get; set; }
 
-        public Season.SeasonType Order => DvdOrder ? Season.SeasonType.dvd : Season.SeasonType.aired;
+        public ProcessedSeason.SeasonType Order => DvdOrder ? ProcessedSeason.SeasonType.dvd : ProcessedSeason.SeasonType.aired;
 
         #region AutomaticFolderType enum
         public enum AutomaticFolderType
@@ -80,42 +82,54 @@ namespace TVRename
             SetDefaults();
         }
 
-        public ShowItem(int tvdbCode)
+        public ShowItem(int code, ProviderType type)
         {
             SetDefaults();
-            TvdbCode = tvdbCode;
+            switch (type)
+            {
+                case ProviderType.TVmaze:
+                    TVmazeCode = code;
+                    break;
+
+                case ProviderType.TheTVDB:
+                    TvdbCode = code;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
         }
 
         public void AddEpisode([NotNull] Episode e)
         {
-            Season airedSeason = GetOrAddAiredSeason(e.AiredSeasonNumber, e.SeasonId);
-            airedSeason.AddUpdateEpisode(e);
+            ProcessedSeason airedProcessedSeason = GetOrAddAiredSeason(e.AiredSeasonNumber, e.SeasonId);
+            airedProcessedSeason.AddUpdateEpisode(e);
 
-            Season dvdSeason = GetOrAddDvdSeason(e.DvdSeasonNumber, e.SeasonId);
-            dvdSeason.AddUpdateEpisode(e);
+            ProcessedSeason dvdProcessedSeason = GetOrAddDvdSeason(e.DvdSeasonNumber, e.SeasonId);
+            dvdProcessedSeason.AddUpdateEpisode(e);
         }
 
-        public Season GetOrAddAiredSeason(int num, int seasonId)
+        public ProcessedSeason GetOrAddAiredSeason(int num, int seasonId)
         {
             if (airedSeasons.ContainsKey(num))
             {
                 return airedSeasons[num];
             }
 
-            Season s = new Season(this, num, seasonId, Season.SeasonType.aired);
+            ProcessedSeason s = new ProcessedSeason(this, num, seasonId, ProcessedSeason.SeasonType.aired);
             airedSeasons[num] = s;
 
             return s;
         }
 
-        public Season GetOrAddDvdSeason(int num, int seasonId)
+        public ProcessedSeason GetOrAddDvdSeason(int num, int seasonId)
         {
             if (dvdSeasons.ContainsKey(num))
             {
                 return dvdSeasons[num];
             }
 
-            Season s = new Season(this, num, seasonId, Season.SeasonType.dvd);
+            ProcessedSeason s = new ProcessedSeason(this, num, seasonId, ProcessedSeason.SeasonType.dvd);
             dvdSeasons[num] = s;
 
             return s;
@@ -124,7 +138,7 @@ namespace TVRename
         public int GetSeasonIndex(int seasonNumber)
         {
             List<int> seasonNumbers = new List<int>();
-            foreach (KeyValuePair<int, Season> sn in AppropriateSeasons())
+            foreach (KeyValuePair<int, ProcessedSeason> sn in AppropriateSeasons())
             {
                 if (sn.Value.IsSpecial)
                 {
@@ -146,7 +160,7 @@ namespace TVRename
 
         private bool HasAnyAirdates(int snum)
         {
-            Dictionary<int, Season> seasonsToUse = AppropriateSeasons();
+            Dictionary<int, ProcessedSeason> seasonsToUse = AppropriateSeasons();
 
             return seasonsToUse.ContainsKey(snum) && seasonsToUse[snum].Episodes.Values.Any(e => e.FirstAired != null);
         }
@@ -183,7 +197,7 @@ namespace TVRename
             get
             {
                 DateTime? returnValue = null;
-                foreach (Season s in airedSeasons.Values) //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
+                foreach (ProcessedSeason s in airedSeasons.Values) //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
                 {
                     DateTime? seasonLastAirDate = s.LastAiredDate();
 
@@ -271,6 +285,7 @@ namespace TVRename
             CustomLanguageCode = xmlSettings.ExtractString("CustomLanguageCode");
             CustomShowName = xmlSettings.ExtractString("CustomShowName");
             TvdbCode = xmlSettings.ExtractInt("TVDBID",-1);
+            TVmazeCode = xmlSettings.ExtractInt("TVMAZEID", -1);
             CountSpecials = xmlSettings.ExtractBool("CountSpecials",false);
             ShowNextAirdate = xmlSettings.ExtractBool("ShowNextAirdate",true);
             AutoAddFolderBase = xmlSettings.ExtractString("FolderBase");
@@ -284,6 +299,8 @@ namespace TVRename
             ForceCheckNoAirdate = xmlSettings.ExtractBoolBackupDefault("ForceCheckNoAirdate","ForceCheckAll",false);
             AutoAddCustomFolderFormat = xmlSettings.ExtractString("CustomFolderFormat") ?? CustomSeasonName.DefaultStyle();
             AutoAddType = GetAutoAddType(xmlSettings.ExtractInt("AutoAddType"));
+            ConfigurationProvider = GetConfigurationProviderType(xmlSettings.ExtractInt("ConfigurationProvider"));
+
             BannersLastUpdatedOnDisk = xmlSettings.ExtractDateTime("BannersLastUpdatedOnDisk");
             UseSequentialMatch = xmlSettings.ExtractBool("UseSequentialMatch",false);
             ManualFoldersReplaceAutomatic = xmlSettings.ExtractBool("ManualFoldersReplaceAutomatic", false);
@@ -299,7 +316,10 @@ namespace TVRename
         {
             return value is null? AutomaticFolderType.libraryDefault: (AutomaticFolderType)value;
         }
-
+        private static ProviderType GetConfigurationProviderType(int? value)
+        {
+            return value is null ? ProviderType.libraryDefault : (ProviderType)value;
+        }
         private void UpgradeFromOldSeasonFormat([NotNull] XElement xmlSettings)
         {
             //These variables have been discontinued (JULY 2018).  If we have any then we should migrate to the new values
@@ -399,8 +419,13 @@ namespace TVRename
 
         internal bool UsesManualFolders() => ManualFolderLocations.Count > 0;
 
+        [NotNull]
+        private iTVSource LocalCache => Provider==ProviderType.TVmaze ? (iTVSource)TVmaze.LocalCache.Instance : TheTVDB.LocalCache.Instance;
+
         [CanBeNull]
-        public SeriesInfo TheSeries() => LocalCache.Instance.GetSeries(TvdbCode);
+        public SeriesInfo TheSeries() => LocalCache.GetSeries(Code);
+
+        private int Code => Provider == ProviderType.TVmaze ? TVmazeCode:TvdbCode;
 
         public string ShowName
         {
@@ -451,28 +476,14 @@ namespace TVRename
         {
             return GetSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(text, name));
         }
-        public bool NameMatchInitial(string text)
-        {
-            return GetSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(text, name));
-        }
 
         public bool NameMatchFilters(string text)
         {
                 return GetSimplifiedPossibleShowNames().Any(name => name.Contains(Helpers.SimplifyName(text), StringComparison.OrdinalIgnoreCase));
         }
 
-        public string ShowStatus
-        {
-            get{
-                SeriesInfo ser = TheSeries();
-                if (ser != null )
-                {
-                    return ser.Status;
-                }
-
-                return "Unknown";
-            }
-        }
+        [NotNull]
+        public string ShowStatus => TheSeries()?.Status ?? "Unknown";
 
         public enum ShowAirStatus
         {
@@ -534,7 +545,7 @@ namespace TVRename
                     return false;
                 }
 
-                foreach (KeyValuePair<int, Season> s in airedSeasons)
+                foreach (KeyValuePair<int, ProcessedSeason> s in airedSeasons)
                 {
                     if (IgnoreSeasons.Contains(s.Key))
                     {
@@ -546,8 +557,8 @@ namespace TVRename
                         continue;
                     }
 
-                    if (s.Value.Status(GetTimeZone()) == Season.SeasonStatus.noneAired ||
-                        s.Value.Status(GetTimeZone()) == Season.SeasonStatus.partiallyAired)
+                    if (s.Value.Status(GetTimeZone()) == ProcessedSeason.SeasonStatus.noneAired ||
+                        s.Value.Status(GetTimeZone()) == ProcessedSeason.SeasonStatus.partiallyAired)
                     {
                         return true;
                     }
@@ -565,7 +576,7 @@ namespace TVRename
                         return false;
                     }
 
-                    foreach (KeyValuePair<int, Season> s in airedSeasons)
+                    foreach (KeyValuePair<int, ProcessedSeason> s in airedSeasons)
                     {
                         if(IgnoreSeasons.Contains(s.Key))
                         {
@@ -577,7 +588,7 @@ namespace TVRename
                             continue;
                         }
 
-                        if (s.Value.Status(GetTimeZone()) == Season.SeasonStatus.partiallyAired || s.Value.Status(GetTimeZone()) == Season.SeasonStatus.aired)
+                        if (s.Value.Status(GetTimeZone()) == ProcessedSeason.SeasonStatus.partiallyAired || s.Value.Status(GetTimeZone()) == ProcessedSeason.SeasonStatus.aired)
                         {
                             return true;
                         }
@@ -587,13 +598,13 @@ namespace TVRename
         }
         
         [NotNull]
-        public IEnumerable<string> Genres => TheSeries()?.Genres()??new List<string>();
+        public IEnumerable<string> Genres => TheSeries()?.Genres??new List<string>();
 
         [NotNull]
         public IEnumerable<Actor> Actors => TheSeries()?.GetActors() ?? new List<Actor>();
 
         [CanBeNull]
-        public Language  PreferredLanguage => UseCustomLanguage ? LocalCache.Instance.LanguageList.GetLanguageFromCode(CustomLanguageCode) : LocalCache.Instance.PreferredLanguage;
+        public Language  PreferredLanguage => UseCustomLanguage ? LocalCache.GetLanguageFromCode(CustomLanguageCode) : LocalCache.PreferredLanguage;
 
         [NotNull]
         public IEnumerable<KeyValuePair<int, List<ProcessedEpisode>>> ActiveSeasons
@@ -607,19 +618,59 @@ namespace TVRename
             }
         }
 
+        public enum ProviderType
+        {
+            libraryDefault,
+            // ReSharper disable once InconsistentNaming
+            TVmaze,
+            // ReSharper disable once InconsistentNaming
+            TheTVDB
+        }
+
+
+        [CanBeNull]
+        public string WebsiteUrl
+        {
+            get
+            {
+                if (Provider==ProviderType.TheTVDB)
+                {
+                    return TheTVDB.API.WebsiteShowUrl(this);
+                }
+
+                return TheSeries()?.Slug;
+            }
+        }
+
+        public ProviderType Provider
+        {
+            get { switch(ConfigurationProvider)
+                {
+                    case ProviderType.libraryDefault:
+                        return TVSettings.Instance.DefaultProvider;
+                    case ProviderType.TVmaze:
+                    case ProviderType.TheTVDB:
+                        return ConfigurationProvider;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
         private void SetDefaults()
         {
             ManualFolderLocations = new Dictionary<int, List<string>>();
             SeasonRules = new Dictionary<int, List<ShowRule>>();
             SeasonEpisodes = new Dictionary<int, List<ProcessedEpisode>>();
-            airedSeasons = new Dictionary<int, Season>();
-            dvdSeasons = new Dictionary<int, Season>();
+            airedSeasons = new Dictionary<int, ProcessedSeason>();
+            dvdSeasons = new Dictionary<int, ProcessedSeason>();
             IgnoreSeasons = new List<int>();
 
             UseCustomShowName = false;
             CustomShowName = string.Empty;
             UseCustomLanguage = false;
             TvdbCode = -1;
+            TVmazeCode = -1;
             UseCustomSearchUrl = false;
             CustomSearchUrl = string.Empty;
             ManualFoldersReplaceAutomatic = false;
@@ -656,7 +707,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private string AutoFolderNameForSeason(Season s)
+        private string AutoFolderNameForSeason(ProcessedSeason s)
         {
             string r = AutoAddFolderBase;
             if (string.IsNullOrEmpty(r))
@@ -725,6 +776,7 @@ namespace TVRename
             writer.WriteElement("CustomLanguageCode", CustomLanguageCode);
             writer.WriteElement("ShowNextAirdate",ShowNextAirdate);
             writer.WriteElement("TVDBID",TvdbCode);
+            writer.WriteElement("TVMAZEID", TVmazeCode);
             writer.WriteElement("FolderBase", AutoAddFolderBase);
             writer.WriteElement("DoRename",DoRename);
             writer.WriteElement("DoMissingCheck",DoMissingCheck);
@@ -735,6 +787,7 @@ namespace TVRename
             writer.WriteElement("UseSequentialMatch",UseSequentialMatch);
             writer.WriteElement("CustomFolderFormat", AutoAddCustomFolderFormat);
             writer.WriteElement("AutoAddType", (int)AutoAddType );
+            writer.WriteElement("ConfigurationProvider", (int)ConfigurationProvider);
             writer.WriteElement("BannersLastUpdatedOnDisk", BannersLastUpdatedOnDisk);
             writer.WriteElement("TimeZone", ShowTimeZone);
             writer.WriteElement("ManualFoldersReplaceAutomatic",ManualFoldersReplaceAutomatic);
@@ -888,9 +941,9 @@ namespace TVRename
         }
 
         [CanBeNull]
-        public Season GetSeason(int snum)
+        public ProcessedSeason GetSeason(int snum)
         {
-            Dictionary<int, Season> ssn = AppropriateSeasons();
+            Dictionary<int, ProcessedSeason> ssn = AppropriateSeasons();
             return ssn.ContainsKey(snum) ? ssn[snum] : null;
         }
 
@@ -904,11 +957,11 @@ namespace TVRename
             SeasonRules[snum].Add(sr);
         }
 
-        public Dictionary<int, Season> AppropriateSeasons() => DvdOrder ? dvdSeasons : airedSeasons;
+        public Dictionary<int, ProcessedSeason> AppropriateSeasons() => DvdOrder ? dvdSeasons : airedSeasons;
 
-        public Season GetFirstAvailableSeason()
+        public ProcessedSeason GetFirstAvailableSeason()
         {
-            foreach (KeyValuePair<int, Season> x in AppropriateSeasons())
+            foreach (KeyValuePair<int, ProcessedSeason> x in AppropriateSeasons())
             {
                 return x.Value;
             }

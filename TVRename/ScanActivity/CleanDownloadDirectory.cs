@@ -27,7 +27,7 @@ namespace TVRename
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> shows, TVDoc.ScanSettings settings)
         {
             returnActions = new ItemList();
-            showList = MDoc.Library.GetShowItems(); //We ignore the current set of shows being scanned to be secrure that no files are deleted for unscanned shows
+            showList = MDoc.Library.GetSortedShowItems(); //We ignore the current set of shows being scanned to be secrure that no files are deleted for unscanned shows
             currentSettings = settings;
 
             //for each directory in settings directory

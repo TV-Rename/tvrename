@@ -9,11 +9,10 @@ using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using NLog;
-using TVRename.TheTVDB;
 
 namespace TVRename
 {
-    internal static class TheTvdbCachePersistor
+    internal static class CachePersistor
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public static string LoadErr;
@@ -135,7 +134,7 @@ namespace TVRename
             }
         }
 
-        public static bool LoadCache([NotNull] FileInfo loadFrom,LocalCache cache)
+        public static bool LoadCache([NotNull] FileInfo loadFrom,iTVSource cache)
         {
             Logger.Info("Loading Cache from: {0}", loadFrom.FullName);
             if (!loadFrom.Exists)
@@ -162,7 +161,7 @@ namespace TVRename
             }
         }
 
-        private static bool ProcessXml([NotNull] XElement x,[NotNull] LocalCache cache)
+        private static bool ProcessXml([NotNull] XElement x,[NotNull] iTVSource cache)
         {
             // Will have one or more series, and episodes
             // all wrapped in <Data> </Data>
@@ -187,8 +186,7 @@ namespace TVRename
             try
             {
                 string time = x.Attribute("time")?.Value;
-                cache.LatestUpdateTime.Load(time);
-                Logger.Info($"Loaded file with updates until {cache.LatestUpdateTime.LastSuccessfulServerUpdateDateTime()}");
+                cache.LatestUpdateTimeIs(time);
 
                 foreach (SeriesInfo si in x.Descendants("Series").Select(seriesXml => new SeriesInfo(seriesXml)))
                 {
@@ -223,18 +221,18 @@ namespace TVRename
             }
             catch (XmlException e)
             {
-                string message = "Error processing data from TheTVDB (top level).";
+                string message = "Error processing data from Cache (top level).";
                 message += "\r\n" + x;
                 message += "\r\n" + e.Message;
 
                 Logger.Error(message);
                 Logger.Error(x.ToString());
-                throw new TVDBException(message);
+                throw new CacheLoadException(message);
             }
             return true;
         }
 
-        private static void ProcessXmlBannerCache([NotNull] XElement r,LocalCache localCache)
+        private static void ProcessXmlBannerCache([NotNull] XElement r, iTVSource localCache)
         {
             //this is a wrapper that provides the seriesId and the Banners List as provided from the website
             //

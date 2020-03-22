@@ -20,7 +20,7 @@ namespace TVRename
         void SaveCache();
 
         bool EnsureUpdated(SeriesSpecifier s, bool bannersToo);
-        bool GetUpdates(bool showErrorMsgBox,CancellationToken cts);
+        bool GetUpdates(bool showErrorMsgBox,CancellationToken cts,IEnumerable<SeriesSpecifier> ss);
         void UpdatesDoneOk();
 
         SeriesInfo GetSeries(string showName, bool showErrorMsgBox);
@@ -31,6 +31,12 @@ namespace TVRename
 
         void ForgetEverything();
         void ForgetShow(int id);
-        void ForgetShow(int id, bool makePlaceholder,bool useCustomLanguage,string langCode);
+        void ForgetShow(int tvdb,int tvmaze, bool makePlaceholder,bool useCustomLanguage,string langCode);
+        void UpdateSeries(SeriesInfo si);
+        void AddOrUpdateEpisode(Episode episode);
+        void AddBanners(int seriesId, IEnumerable<Banner> @select);
+        void LatestUpdateTimeIs(string time);
+        Language PreferredLanguage { get;}
+        Language GetLanguageFromCode(string customLanguageCode);
     }
 }

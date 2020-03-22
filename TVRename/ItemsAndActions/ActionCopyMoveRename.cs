@@ -80,7 +80,7 @@ namespace TVRename
                     CopyMoveResult moveResult = File.Move(From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
                     if (moveResult.ErrorCode != 0)
                     {
-                        throw new TheTVDB.TVDBException(moveResult.ErrorMessage);
+                        throw new ActionFailedException(moveResult.ErrorMessage);
                     }
                 }
                 else
@@ -92,7 +92,7 @@ namespace TVRename
                     CopyMoveResult copyResult = File.Copy(From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null);
                     if (copyResult.ErrorCode != 0)
                     {
-                        throw new TheTVDB.TVDBException(copyResult.ErrorMessage);
+                        throw new ActionFailedException(copyResult.ErrorMessage);
                     }
                 }
 

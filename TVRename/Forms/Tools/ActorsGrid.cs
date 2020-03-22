@@ -11,7 +11,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using JetBrains.Annotations;
-using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -48,12 +47,12 @@ namespace TVRename
         private void BuildData()
         {
             // find actors that have been in more than one thing
-            lock(LocalCache.SERIES_LOCK)
+            lock(TheTVDB.LocalCache.SERIES_LOCK)
             {
                 theData = new DataArr(mDoc.Library.Count);
                 foreach (ShowItem ser in mDoc.Library.Shows)
                 {
-                    SeriesInfo si = LocalCache.Instance.GetSeries(ser.TvdbCode);
+                    SeriesInfo si = ser.TheSeries();
                     foreach (string aa in ser.Actors.Select(act => act.ActorName.Trim()).Where(aa => !string.IsNullOrEmpty(aa)))
                     {
                         theData.Set(si?.Name, aa, true);

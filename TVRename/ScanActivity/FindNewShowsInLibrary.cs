@@ -39,7 +39,7 @@ namespace TVRename
             MDoc.SetDirty();
             MDoc.DoDownloadsFG(settings.Unattended,settings.Hidden);
 
-            List<ShowItem> addedShows = idsToAdd.Select(s => MDoc.Library.ShowItem(s)).ToList();
+            List<ShowItem> addedShows = idsToAdd.Select(s => MDoc.Library.GetShowItem(s)).ToList();
 
             //add each new show into the shows being scanned
             foreach (ShowItem si in addedShows)

@@ -15,6 +15,7 @@ namespace TVRename
     public static class PathManager
     {
         private const string TVDB_FILE_NAME = "TheTVDB.xml";
+        private const string TVMAZE_FILE_NAME = "TVmaze.xml";
         private const string SETTINGS_FILE_NAME = "TVRenameSettings.xml";
         private const string UI_LAYOUT_FILE_NAME = "Layout.xml";
         private const string STATISTICS_FILE_NAME = "Statistics.xml";
@@ -25,6 +26,7 @@ namespace TVRename
         public static FileInfo[] GetPossibleSettingsHistory() => new DirectoryInfo(System.IO.Path.GetDirectoryName(TVDocSettingsFile.FullName)).GetFiles(SETTINGS_FILE_NAME + "*");
 
         public static FileInfo[] GetPossibleTvdbHistory() => new DirectoryInfo(System.IO.Path.GetDirectoryName(TVDocSettingsFile.FullName)).GetFiles(TVDB_FILE_NAME + "*");
+        public static FileInfo[] GetPossibleTvMazeHistory() => new DirectoryInfo(System.IO.Path.GetDirectoryName(TVDocSettingsFile.FullName)).GetFiles(TVMAZE_FILE_NAME + "*");
 
         public static void SetUserDefinedBasePath(string path)
         {
@@ -66,8 +68,12 @@ namespace TVRename
         public static FileInfo TVDBFile => GetFileInfo(TVDB_FILE_NAME);
         // ReSharper disable once InconsistentNaming
         [NotNull]
+        public static FileInfo TVmazeFile=> GetFileInfo(TVMAZE_FILE_NAME);
+        // ReSharper disable once InconsistentNaming
+        [NotNull]
         public static FileInfo TVDocSettingsFile => GetFileInfo(SETTINGS_FILE_NAME);
         [NotNull]
         public static FileInfo LanguagesFile => GetFileInfo(LANGUAGES_FILE_NAME);
     }
 }
+

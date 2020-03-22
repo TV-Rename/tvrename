@@ -14,7 +14,6 @@ using System.Threading;
 using System.Xml;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
-using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -49,7 +48,7 @@ namespace TVRename
             {
                 try
                 {
-                    SeriesInfo series = LocalCache.Instance.GetSeriesAndDownload(tvdbId);
+                    SeriesInfo series = TheTVDB.LocalCache.Instance.GetSeriesAndDownload(tvdbId);
                     if (series != null)
                     {
                         ai.TVDBCode = tvdbId;
@@ -62,7 +61,7 @@ namespace TVRename
                 }
             }
 
-            SeriesInfo ser = LocalCache.Instance.GetSeries(showName,showErrorMsgBox);
+            SeriesInfo ser = TheTVDB.LocalCache.Instance.GetSeries(showName,showErrorMsgBox);
             if (ser != null)
             {
                 ai.TVDBCode = ser.TvdbCode;
@@ -81,7 +80,7 @@ namespace TVRename
                 Logger.Info($"Ignoring {showName} as it refines to nothing.");
             }
 
-            ser = LocalCache.Instance.GetSeries(refinedHint,showErrorMsgBox);
+            ser = TheTVDB.LocalCache.Instance.GetSeries(refinedHint,showErrorMsgBox);
 
             ai.RefinedHint = refinedHint;
             if (ser != null)
@@ -261,7 +260,7 @@ namespace TVRename
             {
                 // ..and not already a folder for one of our shows
                 string theFolder = di2.FullName.ToLower();
-                foreach (ShowItem si in mDoc.Library.GetShowItems())
+                foreach (ShowItem si in mDoc.Library.GetSortedShowItems())
                 {
                     if (RejectFolderIfIncludedInShow(fullLogging, si, theFolder))
                     {
@@ -424,11 +423,11 @@ namespace TVRename
         private void AddToLibrary([NotNull] FoundFolder ai)
         {
             // see if there is a matching show item
-            ShowItem found = mDoc.Library.ShowItem(ai.TVDBCode);
+            ShowItem found = mDoc.Library.GetShowItem(ai.TVDBCode);
             if (found is null)
             {
                 // need to add a new showitem
-                found = new ShowItem(ai.TVDBCode);
+                found = new ShowItem(ai.TVDBCode,ShowItem.ProviderType.TheTVDB); //todo fix up for TVMAZE to allow searching vis TVMaze too (BulkAdd)
                 mDoc.Library.Add(found);
             }
 

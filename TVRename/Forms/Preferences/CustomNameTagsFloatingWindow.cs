@@ -37,7 +37,7 @@ namespace TVRename
             }
         }
 
-        public CustomNameTagsFloatingWindow([CanBeNull] Season pe)
+        public CustomNameTagsFloatingWindow([CanBeNull] ProcessedSeason pe)
         {
             InitializeComponent();
 

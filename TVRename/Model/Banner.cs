@@ -21,10 +21,10 @@ namespace TVRename
         public int BannerId;
         public int LanguageId;
         public string BannerPath;
-        private string bannerType;
+        public string BannerType;
         private string resolution;
         public double Rating;
-        private int ratingCount;
+        public int RatingCount;
         public int SeasonId;
         public int SeriesId;
         private string thumbnailPath;
@@ -48,12 +48,12 @@ namespace TVRename
                 SeriesId = r.ExtractInt("seriesid")?? seriesId; // thetvdb series id
                 SeasonId = r.ExtractInt("seasonid",-1);
                 BannerPath = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("BannerPath"));
-                bannerType = r.ExtractString("BannerType");
+                BannerType = r.ExtractString("BannerType");
                 LanguageId = r.ExtractInt("LanguageId",-1);
                 resolution = r.ExtractString("Resolution");
                 string sn = r.ExtractString("Rating");
                 double.TryParse(sn, out Rating);
-                ratingCount  = r.ExtractInt("RatingCount",-1);
+                RatingCount  = r.ExtractInt("RatingCount",-1);
                 SeasonId = r.ExtractInt("Season",-1);
                 thumbnailPath = r.ExtractString("ThumbnailPath");
         }
@@ -79,38 +79,43 @@ namespace TVRename
 
             BannerPath = (string)json["fileName"];
             BannerId = (int)json["id"];
-            bannerType = (string)json["keyType"];
+            BannerType = (string)json["keyType"];
             LanguageId = json["languageId"] is null ? langId  : (int)json["languageId"];
             
             double.TryParse((string)json["ratingsInfo"]["average"], NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out Rating);
-            ratingCount = (int)json["ratingsInfo"]["count"];
+            RatingCount = (int)json["ratingsInfo"]["count"];
 
             resolution = (string)json["resolution"];
             int.TryParse((string)json["subKey"], out SeasonId);
             thumbnailPath = (string)json["thumbnail"];
         }
 
+        public Banner(int seriesId)
+        {
+            SeriesId = seriesId;
+        }
+
         public bool SameAs([NotNull] Banner  o) => BannerId == o.BannerId;
 
-        public bool IsSeriesPoster() => bannerType == "poster";
+        public bool IsSeriesPoster() => BannerType == "poster";
 
-        public bool IsSeriesBanner() => bannerType == "series";
+        public bool IsSeriesBanner() => BannerType == "series";
 
-        public bool IsSeasonPoster() => bannerType == "season";
+        public bool IsSeasonPoster() => BannerType == "season";
 
-        public bool IsSeasonBanner() => bannerType == "seasonwide";
+        public bool IsSeasonBanner() => BannerType == "seasonwide";
 
-        public bool IsFanart() => bannerType == "fanart";
+        public bool IsFanart() => BannerType == "fanart";
 
         private void SetDefaults()
         {
             BannerId = -1;
             BannerPath = "";
-            bannerType = "";
+            BannerType = "";
             LanguageId = -1;
             resolution = "";
             Rating = -1;
-            ratingCount = 0;
+            RatingCount = 0;
             SeasonId = -1;
             SeriesId = -1;
 
@@ -135,11 +140,11 @@ namespace TVRename
 
             writer.WriteElement("id",BannerId);
             writer.WriteElement("BannerPath",BannerPath);
-            writer.WriteElement("BannerType",bannerType);
+            writer.WriteElement("BannerType",BannerType);
             writer.WriteElement("LanguageId", LanguageId);
             writer.WriteElement("Resolution",resolution);
             writer.WriteElement("Rating",Rating);
-            writer.WriteElement("RatingCount",ratingCount);
+            writer.WriteElement("RatingCount",RatingCount);
             writer.WriteElement("Season",SeasonId);  
             writer.WriteElement("ThumbnailPath",thumbnailPath);
 

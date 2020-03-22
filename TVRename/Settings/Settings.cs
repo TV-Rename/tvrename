@@ -16,7 +16,6 @@ using System.Xml;
 using System.Xml.Linq;
 using Humanizer;
 using JetBrains.Annotations;
-using TVRename.TheTVDB;
 
 // ReSharper disable RedundantDefaultMemberInitializer
 // ReSharper disable InconsistentNaming
@@ -183,6 +182,7 @@ namespace TVRename
         public bool RSSUseCloudflare = true;
         public bool SearchJSONUseCloudflare = true;
         public bool qBitTorrentDownloadFilesFirst = true;
+        public ShowItem.ProviderType DefaultProvider = ShowItem.ProviderType.TheTVDB;
 
         public BetaMode mode = BetaMode.ProductionOnly;
         public float upgradeDirtyPercent = 20;
@@ -280,7 +280,7 @@ namespace TVRename
         public static string USER_AGENT =>
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36";
 
-        public static LocalCache.PagingMethod TVDBPagingMethod => LocalCache.PagingMethod.proper;
+        public static TheTVDB.LocalCache.PagingMethod TVDBPagingMethod => TheTVDB.LocalCache.PagingMethod.proper;
 
         public bool CleanLibraryAfterActions = false;
         public bool AutoAddAsPartOfQuickRename = true;
@@ -454,6 +454,7 @@ namespace TVRename
             writer.WriteElement("FolderJpg", FolderJpg);
             writer.WriteElement("FolderJpgIs", (int) FolderJpgIs);
             writer.WriteElement("MonitoredFoldersScanType", (int) MonitoredFoldersScanType);
+            writer.WriteElement("DefaultProvider", (int)DefaultProvider);
             writer.WriteElement("CheckuTorrent", CheckuTorrent);
             writer.WriteElement("CheckqBitTorrent", CheckqBitTorrent);
             writer.WriteElement("qBitTorrentHost", qBitTorrentHost);
@@ -1114,18 +1115,18 @@ namespace TVRename
 
             private string SeasonLevelStatusText([NotNull] string value)
             {
-                Season.SeasonStatus status =
-                    (Season.SeasonStatus) Enum.Parse(typeof(Season.SeasonStatus), value);
+                ProcessedSeason.SeasonStatus status =
+                    (ProcessedSeason.SeasonStatus) Enum.Parse(typeof(ProcessedSeason.SeasonStatus), value);
 
                 switch (status)
                 {
-                    case Season.SeasonStatus.aired:
+                    case ProcessedSeason.SeasonStatus.aired:
                         return "All aired";
-                    case Season.SeasonStatus.noEpisodes:
+                    case ProcessedSeason.SeasonStatus.noEpisodes:
                         return "No Episodes";
-                    case Season.SeasonStatus.noneAired:
+                    case ProcessedSeason.SeasonStatus.noneAired:
                         return "None aired";
-                    case Season.SeasonStatus.partiallyAired:
+                    case ProcessedSeason.SeasonStatus.partiallyAired:
                         return "Partially aired";
                     default:
                         return Status;
@@ -1248,6 +1249,7 @@ namespace TVRename
             FolderJpg = xmlSettings.ExtractBool("FolderJpg",false);
             FolderJpgIs = xmlSettings.ExtractEnum("FolderJpgIs", FolderJpgIsType.Poster);
             MonitoredFoldersScanType = xmlSettings.ExtractEnum("MonitoredFoldersScanType",ScanType.Full);
+            DefaultProvider = xmlSettings.ExtractEnum("DefaultProvider", ShowItem.ProviderType.TheTVDB);
             RenameCheck = xmlSettings.ExtractBool("RenameCheck",true);
             PreventMove = xmlSettings.ExtractBool("PreventMove",false);
             CheckuTorrent = xmlSettings.ExtractBool("CheckuTorrent",false);

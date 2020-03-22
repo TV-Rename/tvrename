@@ -101,7 +101,7 @@ namespace TVRename.TheTVDB
         }
 
         [NotNull]
-        public static string WebsiteSeasonUrl([NotNull] Season s)
+        public static string WebsiteSeasonUrl([NotNull] ProcessedSeason s)
         {
             return string.IsNullOrWhiteSpace(s.Show.TheSeries()?.Slug)
                 ? WebsiteSeasonUrl(s.Show.TvdbCode, s.Show.Order, s.SeasonNumber)
@@ -110,14 +110,14 @@ namespace TVRename.TheTVDB
 
         [NotNull]
         // ReSharper disable once MemberCanBePrivate.Global
-        public static string WebsiteSeasonUrl(int seriesId, Season.SeasonType type, int seasonNumber)
+        public static string WebsiteSeasonUrl(int seriesId, ProcessedSeason.SeasonType type, int seasonNumber)
         {
             //format: return $"{WebsiteRoot}/?tab=season&seriesid={seriesId}&seasonid={seasonId}";
             switch (type)
             {
-                case Season.SeasonType.dvd:
+                case ProcessedSeason.SeasonType.dvd:
                     return $"{WebsiteRoot}/series/{seriesId}/seasons/dvd/{seasonNumber}";
-                case Season.SeasonType.aired:
+                case ProcessedSeason.SeasonType.aired:
                     return $"{WebsiteRoot}/series/{seriesId}/seasons/official/{seasonNumber}";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
@@ -126,14 +126,14 @@ namespace TVRename.TheTVDB
 
         [NotNull]
         // ReSharper disable once MemberCanBePrivate.Global
-        public static string WebsiteSeasonUrl(string slug, Season.SeasonType type, int seasonNumber)
+        public static string WebsiteSeasonUrl(string slug, ProcessedSeason.SeasonType type, int seasonNumber)
         {
             //format: https://thetvdb.com/series/the-terror/seasons/official/2
             switch (type)
             {
-                case Season.SeasonType.dvd:
+                case ProcessedSeason.SeasonType.dvd:
                     return $"{WebsiteRoot}/series/{slug}/seasons/dvd/{seasonNumber}";
-                case Season.SeasonType.aired:
+                case ProcessedSeason.SeasonType.aired:
                     return $"{WebsiteRoot}/series/{slug}/seasons/official/{seasonNumber}";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
@@ -171,6 +171,7 @@ namespace TVRename.TheTVDB
             if (retry)
             {
                 HttpHelper.RetryOnException(3, pauseBetweenFailures, fullUrl,
+                    exception => true,
                     () => { response = HttpRequest("GET", fullUrl, null, "application/json", authToken, lang); },
                     authToken.EnsureValid);
             }

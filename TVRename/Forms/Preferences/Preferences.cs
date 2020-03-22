@@ -17,7 +17,6 @@ using JetBrains.Annotations;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using TimeZoneConverter;
-using TVRename.TheTVDB;
 using Control = System.Windows.Forms.Control;
 
 namespace TVRename
@@ -40,7 +39,7 @@ namespace TVRename
         private string enterPreferredLanguage; // hold here until background language download task is done
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private CustomNameTagsFloatingWindow cntfw;
-        private readonly Season sampleSeason;
+        private readonly ProcessedSeason sampleProcessedSeason;
 
         private readonly LoadLanguageDoneDel loadLanguageDone;
 
@@ -48,9 +47,9 @@ namespace TVRename
         {
         }
 
-        public Preferences(TVDoc doc, bool goToScanOpts, Season s)
+        public Preferences(TVDoc doc, bool goToScanOpts, ProcessedSeason s)
         {
-            sampleSeason = s;
+            sampleProcessedSeason = s;
             InitializeComponent();
             loadLanguageDone += LoadLanguageDoneFunc;
 
@@ -355,13 +354,14 @@ namespace TVRename
             s.FolderJpgIs = FolderJpgMode();
             s.MonitoredFoldersScanType = ScanTypeMode();
             s.qBitTorrentAPIVersion = qBitTorrentAPIVersionMode();
+            s.DefaultProvider = ProviderMode();
 
             s.mode = cbMode.Text == "Beta" ? TVSettings.BetaMode.BetaToo : TVSettings.BetaMode.ProductionOnly;
 
             s.keepTogetherMode = KeepTogetherMode();
 
             s.PreferredLanguageCode =
-                LocalCache.Instance.LanguageList.FirstOrDefault(l => l.Name == cbLanguages.Text)?.Abbreviation ??
+                TheTVDB.LocalCache.Instance.LanguageList.FirstOrDefault(l => l.Name == cbLanguages.Text)?.Abbreviation ??
                 s.PreferredLanguageCode;
 
             if (string.IsNullOrWhiteSpace(s.PreferredLanguageCode))
@@ -426,6 +426,15 @@ namespace TVRename
             }
 
             return qBitTorrentAPIVersion.v2;
+        }
+
+        private ShowItem.ProviderType ProviderMode()
+        {
+            if (rdoTVMaze.Checked)
+            {
+                return ShowItem.ProviderType.TVmaze;
+            }
+            return ShowItem.ProviderType.TheTVDB;
         }
         private TVSettings.FolderJpgIsType FolderJpgMode()
         {
@@ -495,13 +504,13 @@ namespace TVRename
         private void LoadLanguage()
         {
             bool aborted = false;
-            lock (LocalCache.LANGUAGE_LOCK)
+            lock (TheTVDB.LocalCache.LANGUAGE_LOCK)
             {
                 try
                 {
-                    if (!LocalCache.Instance.IsConnected)
+                    if (!TheTVDB.LocalCache.Instance.IsConnected)
                     {
-                        LocalCache.Instance.Connect(true);
+                        TheTVDB.LocalCache.Instance.Connect(true);
                     }
                 }
                 catch (ThreadAbortException)
@@ -532,9 +541,9 @@ namespace TVRename
             cbLanguages.Items.Clear();
 
             string pref = "";
-            lock(LocalCache.LANGUAGE_LOCK)
+            lock(TheTVDB.LocalCache.LANGUAGE_LOCK)
             {
-                foreach (Language l in LocalCache.Instance.LanguageList)
+                foreach (Language l in TheTVDB.LocalCache.Instance.LanguageList)
                 {
                     cbLanguages.Items.Add(l.Name);
 
@@ -902,6 +911,7 @@ namespace TVRename
             ChooseRadioButton(s.FolderJpgIs).Checked = true;
             ChooseRadioButton(s.qBitTorrentAPIVersion).Checked = true;
             ChooseRadioButton(s.MonitoredFoldersScanType).Checked = true;
+            ChooseRadioButton(s.DefaultProvider).Checked = true;
         }
 
         private RadioButton ChooseRadioButton(TVSettings.ScanType enumType)
@@ -918,6 +928,24 @@ namespace TVRename
                     throw new InvalidOperationException("Unexpected value s.MonitoredFoldersScanType = SingleShow");
                 default:
                     throw new InvalidOperationException("Unexpected value s.MonitoredFoldersScanType = " + enumType);
+            }
+        }
+
+        private RadioButton ChooseRadioButton(ShowItem.ProviderType enumType)
+        {
+            switch (enumType)
+            {
+                case ShowItem.ProviderType.libraryDefault:
+                    return rdoTVDB;
+
+                case ShowItem.ProviderType.TVmaze:
+                    return rdoTVMaze;
+
+                case ShowItem.ProviderType.TheTVDB:
+                    return rdoTVDB;
+
+                default:
+                    throw new InvalidOperationException("Unexpected value s.DefaultProvider = " + enumType);
             }
         }
 
@@ -1100,7 +1128,7 @@ namespace TVRename
             }
 
             System.Collections.Generic.List<string> showStatusList = new System.Collections.Generic.List<string>();
-            foreach (ShowItem show in mDoc.Library.GetShowItems())
+            foreach (ShowItem show in mDoc.Library.GetSortedShowItems())
             {
                 if (!showStatusList.Contains(show.ShowStatus))
                 {
@@ -1115,7 +1143,7 @@ namespace TVRename
             }
 
             // Seasons
-            foreach (TVSettings.ShowStatusColoringType t in Enum.GetNames(typeof(Season.SeasonStatus))
+            foreach (TVSettings.ShowStatusColoringType t in Enum.GetNames(typeof(ProcessedSeason.SeasonStatus))
                 .Select(status => new TVSettings.ShowStatusColoringType(true, false, status)))
             {
                 cboShowStatus.Items.Add(t);
@@ -1528,7 +1556,7 @@ namespace TVRename
 
         private void bnTags_Click(object sender, EventArgs e)
         {
-            cntfw = new CustomNameTagsFloatingWindow(sampleSeason);
+            cntfw = new CustomNameTagsFloatingWindow(sampleProcessedSeason);
             cntfw.Show(this);
             Focus();
         }
@@ -1777,7 +1805,7 @@ namespace TVRename
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Season t = null;
+            ProcessedSeason t = null;
             // ReSharper disable once ExpressionIsAlwaysNull
             cntfw = new CustomNameTagsFloatingWindow(t);
             cntfw.Show(this);
@@ -1787,6 +1815,21 @@ namespace TVRename
         private void CbDefShowUseDefLocation_CheckedChanged(object sender, EventArgs e)
         {
             cmbDefShowLocation.Enabled = cbDefShowUseDefLocation.Checked;
+        }
+
+        private void Label20_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Label21_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void TxtTVDBParallelDownloads_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

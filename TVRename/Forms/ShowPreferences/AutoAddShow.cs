@@ -1,7 +1,6 @@
 using System;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
-using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -82,7 +81,7 @@ namespace TVRename
 
         private bool OkToClose()
         {
-            if (LocalCache.Instance.HasSeries(codeFinder.SelectedCode()))
+            if (TheTVDB.LocalCache.Instance.HasSeries(codeFinder.SelectedCode())) //todo Get add show to work with TVMAZE
             {
                 return true;
             }

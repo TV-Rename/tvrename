@@ -148,7 +148,7 @@ namespace TVRename
                         writer.WriteElement("writers", epwriter);
                     }
 
-                    foreach (string genre in Episode.TheSeries.Genres())
+                    foreach (string genre in Episode.TheSeries.Genres)
                     {
                         writer.WriteElement("genre", genre);
                     }
@@ -169,7 +169,7 @@ namespace TVRename
                     }
 
                     writer.WriteElement("thumbnail", TheTVDB.API.GetImageURL(Episode.Filename));
-                    writer.WriteElement("banner", TheTVDB.API.GetImageURL(Episode.AppropriateSeason.GetWideBannerPath()));
+                    writer.WriteElement("banner", TheTVDB.API.GetImageURL(Episode.AppropriateProcessedSeason.GetWideBannerPath()));
                     writer.WriteElement("backdrop", TheTVDB.API.GetImageURL(Episode.TheSeries.GetSeriesFanartPath()));
                     writer.WriteEndElement(); // details
                 }

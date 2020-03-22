@@ -22,7 +22,6 @@ using System.Xml.Linq;
 using JetBrains.Annotations;
 using NLog;
 using NodaTime.Extensions;
-using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -69,7 +68,7 @@ namespace TVRename
 
             downloadIdentifiers = new DownloadIdentifiersController();
 
-            LoadOk = (settingsFile is null || LoadXMLSettings(settingsFile)) && LocalCache.Instance.LoadOk;
+            LoadOk = (settingsFile is null || LoadXMLSettings(settingsFile)) && TheTVDB.LocalCache.Instance.LoadOk && TVmaze.LocalCache.Instance.LoadOk;
             LoadLanguages();
             LoadStats();
             actionManager = new ActionEngine(CurrentStats);
@@ -91,7 +90,7 @@ namespace TVRename
         {
             try
             {
-                LocalCache.Instance.LanguageList = Languages.Load();
+                TheTVDB.LocalCache.Instance.LanguageList = Languages.Load();
             }
             catch (Exception)
             {
@@ -119,6 +118,29 @@ namespace TVRename
             return CurrentStats;
         }
 
+        public void UpdateIdsFromCache()
+        {
+            lock (TVmaze.LocalCache.SERIES_LOCK)
+            {
+                foreach (SeriesInfo show in TVmaze.LocalCache.Instance.CachedData.Values)
+                {
+                    ShowItem showConfiguration = Library.GetShowItem(show.TvdbCode);
+                    if (showConfiguration is null)
+                    {
+                        continue;
+                    }
+                    if (showConfiguration.TVmazeCode == 0 || showConfiguration.TVmazeCode == -1)         
+                    {
+                        showConfiguration.TVmazeCode = show.TvMazeCode;
+                    }
+                    if(showConfiguration.TVmazeCode != show.TvMazeCode)
+                    {
+                        Logger.Error($"Issue with copy back of ids");
+                    }
+                }
+            }
+        }
+
         public void SetDirty() => mDirty = true;
 
         public bool Dirty() => mDirty;
@@ -138,6 +160,7 @@ namespace TVRename
             bool showMsgBox = !unattended && !Args.Unattended && !Args.Hide && Environment.UserInteractive;
 
             bool returnValue = cacheManager.DoDownloadsFg(showProgress, showMsgBox, shows);
+            UpdateIdsFromCache();
             Library.GenDict();
             return returnValue;
         }
@@ -159,16 +182,17 @@ namespace TVRename
 
         public static Searchers GetSearchers() => TVSettings.Instance.TheSearchers;
 
-        public void TidyTvdb()
+        public void TidyCaches()
         {
-            LocalCache.Instance.Tidy(Library.Values);
+            TheTVDB.LocalCache.Instance.Tidy(Library.Values);
+            TVmaze.LocalCache.Instance.Tidy(Library.Values);
         }
 
         public void Closing()
         {
             cacheManager.StopBgDownloadThread();
             Stats().Save();
-            LocalCache.Instance.LanguageList.Save();
+            TheTVDB.LocalCache.Instance.LanguageList.Save();
         }
 
         public static void SearchForEpisode([CanBeNull] ProcessedEpisode ep)
@@ -190,6 +214,7 @@ namespace TVRename
 
             if (cachedOnly)
             {
+                UpdateIdsFromCache();
                 Library.GenDict();
             }
         }
@@ -242,7 +267,7 @@ namespace TVRename
 
             mDirty = false;
             Stats().Save();
-            LocalCache.Instance.LanguageList.Save();
+            TheTVDB.LocalCache.Instance.LanguageList.Save();
         }
 
         // ReSharper disable once InconsistentNaming
@@ -334,13 +359,13 @@ namespace TVRename
             new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
-                new ShowsTXT(Library.GetShowItems()).Run();
+                new ShowsTXT(Library.GetSortedShowItems()).Run();
             }).Start();
 
             new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
-                new ShowsHTML(Library.GetShowItems()).Run();
+                new ShowsHTML(Library.GetSortedShowItems()).Run();
             }).Start();
         }
 
@@ -499,7 +524,7 @@ namespace TVRename
             switch (st)
             {
                 case TVSettings.ScanType.Full:
-                    return Library.GetShowItems();
+                    return Library.GetSortedShowItems();
 
                 case TVSettings.ScanType.Quick:
                     return GetQuickShowsToScan(true, true);
@@ -858,7 +883,19 @@ namespace TVRename
             {
                 foreach (ShowItem si in sis)
                 {
-                    LocalCache.Instance.ForgetShow(si.TvdbCode, true,si.UseCustomLanguage,si.CustomLanguageCode);
+                    switch (si.Provider)
+                    {
+                        case ShowItem.ProviderType.TVmaze:
+                            TVmaze.LocalCache.Instance.ForgetShow(si.TvdbCode, si.TVmazeCode, true, si.UseCustomLanguage, si.CustomLanguageCode);
+                            break;
+
+                        case ShowItem.ProviderType.TheTVDB:
+                            TheTVDB.LocalCache.Instance.ForgetShow(si.TvdbCode, si.TVmazeCode,true, si.UseCustomLanguage, si.CustomLanguageCode);
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
             }
 
@@ -866,10 +903,11 @@ namespace TVRename
             AllowAutoScan();
         }
 
-        internal void ServerAccuracyCheck(bool unattended,bool hidden)
+        // ReSharper disable once InconsistentNaming
+        internal void TVDBServerAccuracyCheck(bool unattended,bool hidden)
         {
-            IEnumerable<SeriesInfo> seriesToUpdate = LocalCache.Instance.ServerAccuracyCheck();
-            IEnumerable<ShowItem> showsToUpdate = seriesToUpdate.Select(info => Library.ShowItem(info.TvdbCode));
+            IEnumerable<SeriesInfo> seriesToUpdate = TheTVDB.LocalCache.Instance.ServerAccuracyCheck();
+            IEnumerable<ShowItem> showsToUpdate = seriesToUpdate.Select(info => Library.GetShowItem(info.TvdbCode));
             ForceRefresh(showsToUpdate, unattended, hidden);
             DoDownloadsBG();
         }

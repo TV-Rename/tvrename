@@ -10,7 +10,6 @@ using NLog.Layouts;
 using NLog.Targets.Syslog;
 using NLog.Targets.Syslog.Settings;
 using TVRename.Ipc;
-using TVRename.TheTVDB;
 
 namespace TVRename.App
 {
@@ -89,6 +88,7 @@ namespace TVRename.App
             SetupCustomSettings(clargs);
 
             FileInfo tvdbFile = PathManager.TVDBFile;
+            FileInfo tvmazeFile = PathManager.TVmazeFile;
             FileInfo settingsFile = PathManager.TVDocSettingsFile;
             TVDoc doc;
 
@@ -100,7 +100,8 @@ namespace TVRename.App
 
                     if (recoveryForm.ShowDialog() == DialogResult.OK)
                     {
-                        tvdbFile = recoveryForm.DbFile;
+                        tvdbFile = recoveryForm.TvDbFile;
+                        tvmazeFile = recoveryForm.TvMazeFile;
                         settingsFile = recoveryForm.SettingsFile;
                     }
                     else
@@ -111,7 +112,8 @@ namespace TVRename.App
                 }
 
                 // Try loading TheTVDB cache file
-                LocalCache.Instance.Setup(tvdbFile, PathManager.TVDBFile, clargs);
+                TheTVDB.LocalCache.Instance.Setup(tvdbFile, PathManager.TVDBFile, clargs);
+                TVmaze.LocalCache.Instance.Setup(tvmazeFile, PathManager.TVmazeFile, clargs); 
 
                 // Try loading settings file
                 doc = new TVDoc(settingsFile, clargs);
@@ -136,9 +138,12 @@ namespace TVRename.App
                     recoverText = doc.LoadErr;
                 }
 
-                if (!LocalCache.Instance.LoadOk && !string.IsNullOrEmpty(TheTvdbCachePersistor.LoadErr))
+                bool oneOfTheCacheFailedToLoad =
+                    !TheTVDB.LocalCache.Instance.LoadOk || !TVmaze.LocalCache.Instance.LoadOk;
+
+                if (oneOfTheCacheFailedToLoad && !string.IsNullOrEmpty(CachePersistor.LoadErr))
                 {
-                    recoverText += $"{Environment.NewLine}{TheTvdbCachePersistor.LoadErr}";
+                    recoverText += $"{Environment.NewLine}{CachePersistor.LoadErr}";
                 }
             } while (recover);
 

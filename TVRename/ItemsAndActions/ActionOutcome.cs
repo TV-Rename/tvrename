@@ -40,10 +40,5 @@ namespace TVRename
 
         [NotNull]
         public static ActionOutcome CompleteFail() => new ActionOutcome("Complete Fail");
-
-        public void Reset()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

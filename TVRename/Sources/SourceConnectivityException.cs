@@ -9,7 +9,13 @@ using System;
 
 namespace TVRename
 {
-    public class TvdbSeriesDownloadException : Exception
+    public class SourceConnectivityException : Exception
     {
+        public SourceConnectivityException(string message) : base(message)
+        {
+        }
+        public SourceConnectivityException()
+        {
+        }
     }
 }

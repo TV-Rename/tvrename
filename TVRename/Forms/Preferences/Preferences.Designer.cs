@@ -153,6 +153,10 @@ namespace TVRename
             this.cbCheckSABnzbd = new System.Windows.Forms.CheckBox();
             this.cbCheckuTorrent = new System.Windows.Forms.CheckBox();
             this.qBitTorrent = new System.Windows.Forms.GroupBox();
+            this.rdoqBitTorrentAPIVersionv2 = new System.Windows.Forms.RadioButton();
+            this.rdoqBitTorrentAPIVersionv1 = new System.Windows.Forms.RadioButton();
+            this.rdoqBitTorrentAPIVersionv0 = new System.Windows.Forms.RadioButton();
+            this.label29 = new System.Windows.Forms.Label();
             this.cbDownloadTorrentBeforeDownloading = new System.Windows.Forms.CheckBox();
             this.tbqBitTorrentHost = new System.Windows.Forms.TextBox();
             this.tbqBitTorrentPort = new System.Windows.Forms.TextBox();
@@ -329,15 +333,10 @@ namespace TVRename
             this.label37 = new System.Windows.Forms.Label();
             this.label38 = new System.Windows.Forms.Label();
             this.tbPercentDirty = new System.Windows.Forms.TextBox();
-            this.txtParallelDownloads = new System.Windows.Forms.TextBox();
             this.txtWTWDays = new System.Windows.Forms.TextBox();
             this.cbMode = new System.Windows.Forms.ComboBox();
             this.label34 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
             this.cbLookForAirdate = new System.Windows.Forms.CheckBox();
-            this.cbLanguages = new System.Windows.Forms.ComboBox();
-            this.label21 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
             this.tpShowDefaults = new System.Windows.Forms.TabPage();
@@ -367,10 +366,17 @@ namespace TVRename
             this.txtSpecialsFolderName = new System.Windows.Forms.TextBox();
             this.label47 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
-            this.label29 = new System.Windows.Forms.Label();
-            this.rdoqBitTorrentAPIVersionv1 = new System.Windows.Forms.RadioButton();
-            this.rdoqBitTorrentAPIVersionv0 = new System.Windows.Forms.RadioButton();
-            this.rdoqBitTorrentAPIVersionv2 = new System.Windows.Forms.RadioButton();
+            this.tpDataSources = new System.Windows.Forms.TabPage();
+            this.label33 = new System.Windows.Forms.Label();
+            this.rdoTVMaze = new System.Windows.Forms.RadioButton();
+            this.rdoTVDB = new System.Windows.Forms.RadioButton();
+            this.groupBox20 = new System.Windows.Forms.GroupBox();
+            this.groupBox21 = new System.Windows.Forms.GroupBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.cbLanguages = new System.Windows.Forms.ComboBox();
+            this.txtParallelDownloads = new System.Windows.Forms.TextBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -421,6 +427,8 @@ namespace TVRename
             this.groupBox19.SuspendLayout();
             this.groupBox18.SuspendLayout();
             this.groupBox6.SuspendLayout();
+            this.tpDataSources.SuspendLayout();
+            this.groupBox20.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKButton
@@ -1689,6 +1697,48 @@ namespace TVRename
             this.qBitTorrent.TabIndex = 7;
             this.qBitTorrent.TabStop = false;
             this.qBitTorrent.Text = "qBitTorrent";
+            // 
+            // rdoqBitTorrentAPIVersionv2
+            // 
+            this.rdoqBitTorrentAPIVersionv2.AutoSize = true;
+            this.rdoqBitTorrentAPIVersionv2.Location = new System.Drawing.Point(225, 75);
+            this.rdoqBitTorrentAPIVersionv2.Name = "rdoqBitTorrentAPIVersionv2";
+            this.rdoqBitTorrentAPIVersionv2.Size = new System.Drawing.Size(52, 17);
+            this.rdoqBitTorrentAPIVersionv2.TabIndex = 24;
+            this.rdoqBitTorrentAPIVersionv2.TabStop = true;
+            this.rdoqBitTorrentAPIVersionv2.Text = "v4.1+";
+            this.rdoqBitTorrentAPIVersionv2.UseVisualStyleBackColor = true;
+            // 
+            // rdoqBitTorrentAPIVersionv1
+            // 
+            this.rdoqBitTorrentAPIVersionv1.AutoSize = true;
+            this.rdoqBitTorrentAPIVersionv1.Location = new System.Drawing.Point(137, 75);
+            this.rdoqBitTorrentAPIVersionv1.Name = "rdoqBitTorrentAPIVersionv1";
+            this.rdoqBitTorrentAPIVersionv1.Size = new System.Drawing.Size(82, 17);
+            this.rdoqBitTorrentAPIVersionv1.TabIndex = 23;
+            this.rdoqBitTorrentAPIVersionv1.TabStop = true;
+            this.rdoqBitTorrentAPIVersionv1.Text = "v3.2 to v4.0";
+            this.rdoqBitTorrentAPIVersionv1.UseVisualStyleBackColor = true;
+            // 
+            // rdoqBitTorrentAPIVersionv0
+            // 
+            this.rdoqBitTorrentAPIVersionv0.AutoSize = true;
+            this.rdoqBitTorrentAPIVersionv0.Location = new System.Drawing.Point(76, 75);
+            this.rdoqBitTorrentAPIVersionv0.Name = "rdoqBitTorrentAPIVersionv0";
+            this.rdoqBitTorrentAPIVersionv0.Size = new System.Drawing.Size(55, 17);
+            this.rdoqBitTorrentAPIVersionv0.TabIndex = 22;
+            this.rdoqBitTorrentAPIVersionv0.TabStop = true;
+            this.rdoqBitTorrentAPIVersionv0.Text = "< v3.1";
+            this.rdoqBitTorrentAPIVersionv0.UseVisualStyleBackColor = true;
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(11, 77);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(45, 13);
+            this.label29.TabIndex = 21;
+            this.label29.Text = "Version:";
             // 
             // cbDownloadTorrentBeforeDownloading
             // 
@@ -3455,6 +3505,9 @@ namespace TVRename
             // 
             // tbGeneral
             // 
+            this.tbGeneral.Controls.Add(this.txtParallelDownloads);
+            this.tbGeneral.Controls.Add(this.label21);
+            this.tbGeneral.Controls.Add(this.label20);
             this.tbGeneral.Controls.Add(this.chkAutoAddAsPartOfQuickRename);
             this.tbGeneral.Controls.Add(this.chkShareCriticalLogs);
             this.tbGeneral.Controls.Add(this.groupBox17);
@@ -3463,15 +3516,10 @@ namespace TVRename
             this.tbGeneral.Controls.Add(this.label37);
             this.tbGeneral.Controls.Add(this.label38);
             this.tbGeneral.Controls.Add(this.tbPercentDirty);
-            this.tbGeneral.Controls.Add(this.txtParallelDownloads);
             this.tbGeneral.Controls.Add(this.txtWTWDays);
             this.tbGeneral.Controls.Add(this.cbMode);
             this.tbGeneral.Controls.Add(this.label34);
-            this.tbGeneral.Controls.Add(this.label10);
             this.tbGeneral.Controls.Add(this.cbLookForAirdate);
-            this.tbGeneral.Controls.Add(this.cbLanguages);
-            this.tbGeneral.Controls.Add(this.label21);
-            this.tbGeneral.Controls.Add(this.label20);
             this.tbGeneral.Controls.Add(this.label2);
             this.tbGeneral.Location = new System.Drawing.Point(139, 4);
             this.tbGeneral.Name = "tbGeneral";
@@ -3484,7 +3532,7 @@ namespace TVRename
             // chkAutoAddAsPartOfQuickRename
             // 
             this.chkAutoAddAsPartOfQuickRename.AutoSize = true;
-            this.chkAutoAddAsPartOfQuickRename.Location = new System.Drawing.Point(13, 222);
+            this.chkAutoAddAsPartOfQuickRename.Location = new System.Drawing.Point(13, 177);
             this.chkAutoAddAsPartOfQuickRename.Name = "chkAutoAddAsPartOfQuickRename";
             this.chkAutoAddAsPartOfQuickRename.Size = new System.Drawing.Size(191, 17);
             this.chkAutoAddAsPartOfQuickRename.TabIndex = 43;
@@ -3494,7 +3542,7 @@ namespace TVRename
             // chkShareCriticalLogs
             // 
             this.chkShareCriticalLogs.AutoSize = true;
-            this.chkShareCriticalLogs.Location = new System.Drawing.Point(13, 199);
+            this.chkShareCriticalLogs.Location = new System.Drawing.Point(13, 154);
             this.chkShareCriticalLogs.Name = "chkShareCriticalLogs";
             this.chkShareCriticalLogs.Size = new System.Drawing.Size(207, 17);
             this.chkShareCriticalLogs.TabIndex = 42;
@@ -3520,7 +3568,7 @@ namespace TVRename
             this.groupBox17.Controls.Add(this.label28);
             this.groupBox17.Controls.Add(this.cbRenameCheck);
             this.groupBox17.Controls.Add(this.cbMissing);
-            this.groupBox17.Location = new System.Drawing.Point(6, 249);
+            this.groupBox17.Location = new System.Drawing.Point(9, 226);
             this.groupBox17.Name = "groupBox17";
             this.groupBox17.Size = new System.Drawing.Size(405, 316);
             this.groupBox17.TabIndex = 41;
@@ -3663,7 +3711,7 @@ namespace TVRename
             // label37
             // 
             this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(11, 104);
+            this.label37.Location = new System.Drawing.Point(11, 80);
             this.label37.Name = "label37";
             this.label37.Size = new System.Drawing.Size(114, 13);
             this.label37.TabIndex = 20;
@@ -3672,7 +3720,7 @@ namespace TVRename
             // label38
             // 
             this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(163, 104);
+            this.label38.Location = new System.Drawing.Point(163, 80);
             this.label38.Name = "label38";
             this.label38.Size = new System.Drawing.Size(132, 13);
             this.label38.TabIndex = 22;
@@ -3680,19 +3728,11 @@ namespace TVRename
             // 
             // tbPercentDirty
             // 
-            this.tbPercentDirty.Location = new System.Drawing.Point(128, 101);
+            this.tbPercentDirty.Location = new System.Drawing.Point(128, 77);
             this.tbPercentDirty.Name = "tbPercentDirty";
             this.tbPercentDirty.Size = new System.Drawing.Size(28, 20);
             this.tbPercentDirty.TabIndex = 21;
             this.tbPercentDirty.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
-            // 
-            // txtParallelDownloads
-            // 
-            this.txtParallelDownloads.Location = new System.Drawing.Point(97, 77);
-            this.txtParallelDownloads.Name = "txtParallelDownloads";
-            this.txtParallelDownloads.Size = new System.Drawing.Size(28, 20);
-            this.txtParallelDownloads.TabIndex = 12;
-            this.txtParallelDownloads.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // txtWTWDays
             // 
@@ -3709,7 +3749,7 @@ namespace TVRename
             this.cbMode.Items.AddRange(new object[] {
             "Beta",
             "Production"});
-            this.cbMode.Location = new System.Drawing.Point(117, 172);
+            this.cbMode.Location = new System.Drawing.Point(117, 127);
             this.cbMode.Name = "cbMode";
             this.cbMode.Size = new System.Drawing.Size(146, 21);
             this.cbMode.Sorted = true;
@@ -3718,62 +3758,21 @@ namespace TVRename
             // label34
             // 
             this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(11, 175);
+            this.label34.Location = new System.Drawing.Point(11, 130);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(37, 13);
             this.label34.TabIndex = 18;
             this.label34.Text = "&Mode:";
             // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(11, 151);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(100, 13);
-            this.label10.TabIndex = 16;
-            this.label10.Text = "&Preferred language:";
-            // 
             // cbLookForAirdate
             // 
             this.cbLookForAirdate.AutoSize = true;
-            this.cbLookForAirdate.Location = new System.Drawing.Point(14, 127);
+            this.cbLookForAirdate.Location = new System.Drawing.Point(14, 103);
             this.cbLookForAirdate.Name = "cbLookForAirdate";
             this.cbLookForAirdate.Size = new System.Drawing.Size(158, 17);
             this.cbLookForAirdate.TabIndex = 15;
             this.cbLookForAirdate.Text = "&Look for airdate in filenames";
             this.cbLookForAirdate.UseVisualStyleBackColor = true;
-            // 
-            // cbLanguages
-            // 
-            this.cbLanguages.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbLanguages.FormattingEnabled = true;
-            this.cbLanguages.Items.AddRange(new object[] {
-            "My Shows",
-            "Scan",
-            "When to Watch"});
-            this.cbLanguages.Location = new System.Drawing.Point(117, 148);
-            this.cbLanguages.Name = "cbLanguages";
-            this.cbLanguages.Size = new System.Drawing.Size(146, 21);
-            this.cbLanguages.Sorted = true;
-            this.cbLanguages.TabIndex = 17;
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(11, 80);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(82, 13);
-            this.label21.TabIndex = 11;
-            this.label21.Text = "&Download up to";
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(131, 80);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(170, 13);
-            this.label20.TabIndex = 13;
-            this.label20.Text = "shows simultaneously from thetvdb";
             // 
             // label2
             // 
@@ -3792,6 +3791,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tcTabs.Controls.Add(this.tbGeneral);
             this.tcTabs.Controls.Add(this.tpDisplay);
+            this.tcTabs.Controls.Add(this.tpDataSources);
             this.tcTabs.Controls.Add(this.tpLibraryFolders);
             this.tcTabs.Controls.Add(this.tpShowDefaults);
             this.tcTabs.Controls.Add(this.tbFilesAndFolders);
@@ -4119,47 +4119,123 @@ namespace TVRename
             this.label13.TabIndex = 27;
             this.label13.Text = "&Specials folder name:";
             // 
-            // label29
+            // tpDataSources
             // 
-            this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(11, 77);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(45, 13);
-            this.label29.TabIndex = 21;
-            this.label29.Text = "Version:";
+            this.tpDataSources.Controls.Add(this.groupBox21);
+            this.tpDataSources.Controls.Add(this.groupBox20);
+            this.tpDataSources.Controls.Add(this.label33);
+            this.tpDataSources.Controls.Add(this.rdoTVMaze);
+            this.tpDataSources.Controls.Add(this.rdoTVDB);
+            this.tpDataSources.Location = new System.Drawing.Point(139, 4);
+            this.tpDataSources.Name = "tpDataSources";
+            this.tpDataSources.Size = new System.Drawing.Size(417, 571);
+            this.tpDataSources.TabIndex = 15;
+            this.tpDataSources.Text = "Data Sources";
+            this.tpDataSources.UseVisualStyleBackColor = true;
             // 
-            // rdoqBitTorrentAPIVersionv1
+            // label33
             // 
-            this.rdoqBitTorrentAPIVersionv1.AutoSize = true;
-            this.rdoqBitTorrentAPIVersionv1.Location = new System.Drawing.Point(137, 75);
-            this.rdoqBitTorrentAPIVersionv1.Name = "rdoqBitTorrentAPIVersionv1";
-            this.rdoqBitTorrentAPIVersionv1.Size = new System.Drawing.Size(82, 17);
-            this.rdoqBitTorrentAPIVersionv1.TabIndex = 23;
-            this.rdoqBitTorrentAPIVersionv1.TabStop = true;
-            this.rdoqBitTorrentAPIVersionv1.Text = "v3.2 to v4.0";
-            this.rdoqBitTorrentAPIVersionv1.UseVisualStyleBackColor = true;
+            this.label33.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label33.AutoSize = true;
+            this.label33.Location = new System.Drawing.Point(9, 17);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(81, 13);
+            this.label33.TabIndex = 47;
+            this.label33.Text = "Default Source:";
+            this.label33.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // rdoqBitTorrentAPIVersionv0
+            // rdoTVMaze
             // 
-            this.rdoqBitTorrentAPIVersionv0.AutoSize = true;
-            this.rdoqBitTorrentAPIVersionv0.Location = new System.Drawing.Point(76, 75);
-            this.rdoqBitTorrentAPIVersionv0.Name = "rdoqBitTorrentAPIVersionv0";
-            this.rdoqBitTorrentAPIVersionv0.Size = new System.Drawing.Size(55, 17);
-            this.rdoqBitTorrentAPIVersionv0.TabIndex = 22;
-            this.rdoqBitTorrentAPIVersionv0.TabStop = true;
-            this.rdoqBitTorrentAPIVersionv0.Text = "< v3.1";
-            this.rdoqBitTorrentAPIVersionv0.UseVisualStyleBackColor = true;
+            this.rdoTVMaze.AutoSize = true;
+            this.rdoTVMaze.Location = new System.Drawing.Point(181, 13);
+            this.rdoTVMaze.Name = "rdoTVMaze";
+            this.rdoTVMaze.Size = new System.Drawing.Size(64, 17);
+            this.rdoTVMaze.TabIndex = 46;
+            this.rdoTVMaze.TabStop = true;
+            this.rdoTVMaze.Text = "TVmaze";
+            this.rdoTVMaze.UseVisualStyleBackColor = true;
             // 
-            // rdoqBitTorrentAPIVersionv2
+            // rdoTVDB
             // 
-            this.rdoqBitTorrentAPIVersionv2.AutoSize = true;
-            this.rdoqBitTorrentAPIVersionv2.Location = new System.Drawing.Point(225, 75);
-            this.rdoqBitTorrentAPIVersionv2.Name = "rdoqBitTorrentAPIVersionv2";
-            this.rdoqBitTorrentAPIVersionv2.Size = new System.Drawing.Size(52, 17);
-            this.rdoqBitTorrentAPIVersionv2.TabIndex = 24;
-            this.rdoqBitTorrentAPIVersionv2.TabStop = true;
-            this.rdoqBitTorrentAPIVersionv2.Text = "v4.1+";
-            this.rdoqBitTorrentAPIVersionv2.UseVisualStyleBackColor = true;
+            this.rdoTVDB.AutoSize = true;
+            this.rdoTVDB.Location = new System.Drawing.Point(94, 13);
+            this.rdoTVDB.Name = "rdoTVDB";
+            this.rdoTVDB.Size = new System.Drawing.Size(76, 17);
+            this.rdoTVDB.TabIndex = 45;
+            this.rdoTVDB.TabStop = true;
+            this.rdoTVDB.Text = "The TVDB";
+            this.rdoTVDB.UseVisualStyleBackColor = true;
+            // 
+            // groupBox20
+            // 
+            this.groupBox20.Controls.Add(this.label10);
+            this.groupBox20.Controls.Add(this.cbLanguages);
+            this.groupBox20.Location = new System.Drawing.Point(12, 34);
+            this.groupBox20.Name = "groupBox20";
+            this.groupBox20.Size = new System.Drawing.Size(394, 100);
+            this.groupBox20.TabIndex = 48;
+            this.groupBox20.TabStop = false;
+            this.groupBox20.Text = "TheTVDB";
+            // 
+            // groupBox21
+            // 
+            this.groupBox21.Location = new System.Drawing.Point(12, 140);
+            this.groupBox21.Name = "groupBox21";
+            this.groupBox21.Size = new System.Drawing.Size(394, 100);
+            this.groupBox21.TabIndex = 49;
+            this.groupBox21.TabStop = false;
+            this.groupBox21.Text = "TVmaze";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(11, 22);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(100, 13);
+            this.label10.TabIndex = 18;
+            this.label10.Text = "&Preferred language:";
+            // 
+            // cbLanguages
+            // 
+            this.cbLanguages.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbLanguages.FormattingEnabled = true;
+            this.cbLanguages.Items.AddRange(new object[] {
+            "My Shows",
+            "Scan",
+            "When to Watch"});
+            this.cbLanguages.Location = new System.Drawing.Point(117, 19);
+            this.cbLanguages.Name = "cbLanguages";
+            this.cbLanguages.Size = new System.Drawing.Size(146, 21);
+            this.cbLanguages.Sorted = true;
+            this.cbLanguages.TabIndex = 19;
+            // 
+            // txtParallelDownloads
+            // 
+            this.txtParallelDownloads.Location = new System.Drawing.Point(95, 197);
+            this.txtParallelDownloads.Name = "txtParallelDownloads";
+            this.txtParallelDownloads.Size = new System.Drawing.Size(28, 20);
+            this.txtParallelDownloads.TabIndex = 45;
+            this.txtParallelDownloads.TextChanged += new System.EventHandler(this.TxtTVDBParallelDownloads_TextChanged);
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(9, 200);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(82, 13);
+            this.label21.TabIndex = 44;
+            this.label21.Text = "&Download up to";
+            this.label21.Click += new System.EventHandler(this.Label21_Click);
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(129, 200);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(146, 13);
+            this.label20.TabIndex = 46;
+            this.label20.Text = "shows/images simultaneously";
+            this.label20.Click += new System.EventHandler(this.Label20_Click);
             // 
             // Preferences
             // 
@@ -4270,6 +4346,10 @@ namespace TVRename
             this.groupBox18.PerformLayout();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
+            this.tpDataSources.ResumeLayout(false);
+            this.tpDataSources.PerformLayout();
+            this.groupBox20.ResumeLayout(false);
+            this.groupBox20.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -4443,15 +4523,10 @@ namespace TVRename
         private System.Windows.Forms.Label label37;
         private System.Windows.Forms.Label label38;
         private System.Windows.Forms.TextBox tbPercentDirty;
-        private System.Windows.Forms.TextBox txtParallelDownloads;
         private System.Windows.Forms.TextBox txtWTWDays;
         private System.Windows.Forms.ComboBox cbMode;
         private System.Windows.Forms.Label label34;
-        private System.Windows.Forms.Label label10;
         private System.Windows.Forms.CheckBox cbLookForAirdate;
-        private System.Windows.Forms.ComboBox cbLanguages;
-        private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TabControl tcTabs;
         private System.Windows.Forms.TextBox tbSeasonSearchTerms;
@@ -4607,5 +4682,16 @@ namespace TVRename
         private System.Windows.Forms.RadioButton rdoqBitTorrentAPIVersionv0;
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.RadioButton rdoqBitTorrentAPIVersionv2;
+        private System.Windows.Forms.TabPage tpDataSources;
+        private System.Windows.Forms.GroupBox groupBox21;
+        private System.Windows.Forms.GroupBox groupBox20;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.ComboBox cbLanguages;
+        private System.Windows.Forms.Label label33;
+        private System.Windows.Forms.RadioButton rdoTVMaze;
+        private System.Windows.Forms.RadioButton rdoTVDB;
+        private System.Windows.Forms.TextBox txtParallelDownloads;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.Label label20;
     }
 }

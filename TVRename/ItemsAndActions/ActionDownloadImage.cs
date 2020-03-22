@@ -10,7 +10,6 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using JetBrains.Annotations;
-using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -89,7 +88,10 @@ namespace TVRename
         [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
-            byte[] theData = LocalCache.Instance.GetTvdbDownload(path);
+            byte[] theData = (si.Provider == ShowItem.ProviderType.TheTVDB)
+                ? TheTVDB.LocalCache.Instance.GetTvdbDownload(path)
+                : HttpHelper.Download(path,false);
+                
             if (theData is null || theData.Length == 0)
             {
                 return new ActionOutcome("Unable to download " + path);

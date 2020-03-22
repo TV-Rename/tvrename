@@ -113,6 +113,10 @@ namespace TVRename
             this.cbIncludeNoAirdate = new System.Windows.Forms.CheckBox();
             this.cbIncludeFuture = new System.Windows.Forms.CheckBox();
             this.pbAdvanced = new System.Windows.Forms.PictureBox();
+            this.rdoDefault = new System.Windows.Forms.RadioButton();
+            this.rdoTVDB = new System.Windows.Forms.RadioButton();
+            this.rdoTVMaze = new System.Windows.Forms.RadioButton();
+            this.label13 = new System.Windows.Forms.Label();
             this.Folders.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbBasics)).BeginInit();
@@ -208,7 +212,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlCF.Location = new System.Drawing.Point(3, 52);
             this.pnlCF.Name = "pnlCF";
-            this.pnlCF.Size = new System.Drawing.Size(444, 275);
+            this.pnlCF.Size = new System.Drawing.Size(444, 244);
             this.pnlCF.TabIndex = 0;
             // 
             // cbDoRenaming
@@ -301,6 +305,10 @@ namespace TVRename
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.label13);
+            this.tabPage1.Controls.Add(this.rdoTVMaze);
+            this.tabPage1.Controls.Add(this.rdoTVDB);
+            this.tabPage1.Controls.Add(this.rdoDefault);
             this.tabPage1.Controls.Add(this.label60);
             this.tabPage1.Controls.Add(this.pbBasics);
             this.tabPage1.Controls.Add(this.cbLanguage);
@@ -978,6 +986,50 @@ namespace TVRename
             this.pbAdvanced.TabStop = false;
             this.pbAdvanced.Click += new System.EventHandler(this.pbAdvanced_Click);
             // 
+            // rdoDefault
+            // 
+            this.rdoDefault.AutoSize = true;
+            this.rdoDefault.Location = new System.Drawing.Point(67, 302);
+            this.rdoDefault.Name = "rdoDefault";
+            this.rdoDefault.Size = new System.Drawing.Size(93, 17);
+            this.rdoDefault.TabIndex = 41;
+            this.rdoDefault.TabStop = true;
+            this.rdoDefault.Text = "Library Default";
+            this.rdoDefault.UseVisualStyleBackColor = true;
+            // 
+            // rdoTVDB
+            // 
+            this.rdoTVDB.AutoSize = true;
+            this.rdoTVDB.Location = new System.Drawing.Point(162, 302);
+            this.rdoTVDB.Name = "rdoTVDB";
+            this.rdoTVDB.Size = new System.Drawing.Size(76, 17);
+            this.rdoTVDB.TabIndex = 42;
+            this.rdoTVDB.TabStop = true;
+            this.rdoTVDB.Text = "The TVDB";
+            this.rdoTVDB.UseVisualStyleBackColor = true;
+            // 
+            // rdoTVMaze
+            // 
+            this.rdoTVMaze.AutoSize = true;
+            this.rdoTVMaze.Location = new System.Drawing.Point(249, 302);
+            this.rdoTVMaze.Name = "rdoTVMaze";
+            this.rdoTVMaze.Size = new System.Drawing.Size(64, 17);
+            this.rdoTVMaze.TabIndex = 43;
+            this.rdoTVMaze.TabStop = true;
+            this.rdoTVMaze.Text = "TVmaze";
+            this.rdoTVMaze.UseVisualStyleBackColor = true;
+            // 
+            // label13
+            // 
+            this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(7, 304);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(44, 13);
+            this.label13.TabIndex = 44;
+            this.label13.Text = "Source:";
+            this.label13.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // AddEditShow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1096,5 +1148,9 @@ namespace TVRename
         private System.Windows.Forms.PictureBox pbCustomSearch;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.PictureBox pbAdvanced;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.RadioButton rdoTVMaze;
+        private System.Windows.Forms.RadioButton rdoTVDB;
+        private System.Windows.Forms.RadioButton rdoDefault;
     }
 }

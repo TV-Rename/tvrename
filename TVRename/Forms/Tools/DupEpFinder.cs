@@ -162,7 +162,7 @@ namespace TVRename.Forms
             duplicateRightClickMenu.Items.Add(tsi);
 
             //kEditSeason,
-            tsi = new ToolStripMenuItem("Edit " + Season.UIFullSeasonWord(mlastSelected.SeasonNumber))
+            tsi = new ToolStripMenuItem("Edit " + ProcessedSeason.UIFullSeasonWord(mlastSelected.SeasonNumber))
             {
                 Tag = (int) RightClickCommands.kEditSeason
             };

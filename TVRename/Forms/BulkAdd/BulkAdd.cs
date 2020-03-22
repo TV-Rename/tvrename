@@ -13,7 +13,6 @@ using Alphaleonis.Win32.Filesystem;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using DaveChambers.FolderBrowserDialogEx;
 using JetBrains.Annotations;
-using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -467,7 +466,7 @@ namespace TVRename
         {
             lvi.SubItems.Clear();
             lvi.Text = ai.Folder.FullName;
-            lvi.SubItems.Add(ai.CodeKnown ? LocalCache.Instance.GetSeries(ai.TVDBCode)?.Name : "");
+            lvi.SubItems.Add(ai.CodeKnown ? TheTVDB.LocalCache.Instance.GetSeries(ai.TVDBCode)?.Name : ""); //todo - get bulk add to work for TVmaze
             lvi.SubItems.Add(ai.HasSeasonFoldersGuess ? "Folder per season" : "Flat");
             lvi.SubItems.Add(ai.CodeKnown ? ai.TVDBCode.ToString() : "");
             lvi.Tag = ai;
@@ -520,7 +519,7 @@ namespace TVRename
 
             if (fme.TVDBCode != -1)
             {
-                Helpers.SysOpen(API.WebsiteShowUrl(fme.TVDBCode));
+                Helpers.SysOpen(TheTVDB.API.WebsiteShowUrl(fme.TVDBCode)); //todo - how will bulk add work for MTVmaze
             }
         }
 

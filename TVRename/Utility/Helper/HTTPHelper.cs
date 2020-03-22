@@ -166,6 +166,34 @@ namespace TVRename
                     return false;
             }
         }
+
+        public static bool Is404([NotNull] this WebException ex)
+        {
+            if (ex.Status != WebExceptionStatus.ProtocolError)
+            {
+                return false;
+            }
+
+            if (!(ex.Response is HttpWebResponse resp))
+            {
+                return false;
+            }
+
+            return resp.StatusCode == HttpStatusCode.NotFound;
+        }
+
+        public static byte[] Download([NotNull] string url, bool forceReload)
+        {
+            WebClient wc = new WebClient();
+
+            if (forceReload)
+            {
+                wc.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.Reload);
+            }
+
+            return wc.DownloadData(url);
+        }
+
         [NotNull]
         public static string LoggableDetails([NotNull] this WebException ex)
         {
@@ -200,7 +228,7 @@ namespace TVRename
             string response=null;
             if (retry)
             {
-                RetryOnException(3, pauseBetweenFailures, url,
+                RetryOnException(3, pauseBetweenFailures, url, exception => true,
                     () => { response = HttpRequest("POST", url, request.ToString(), "application/json",string.Empty); },
                     null);
             }
@@ -231,7 +259,8 @@ namespace TVRename
             return finalUrl.Remove(finalUrl.LastIndexOf("&", StringComparison.Ordinal));
         }
 
-        public static void RetryOnException(int times,TimeSpan delay,string url, [NotNull] System.Action operation, [CanBeNull] System.Action updateOperation)
+
+        public static void RetryOnException(int times,TimeSpan delay,string url, Func<Exception, bool> retryableException,[NotNull] System.Action operation, [CanBeNull] System.Action updateOperation)
         {
             if (times <= 0)
             {
@@ -254,7 +283,7 @@ namespace TVRename
                 }
                 catch (Exception ex)
                 {
-                    if (attempts == times)
+                    if (attempts == times || !retryableException(ex))
                     {
                         Logger.Warn($"Exception caught on attempt {attempts} of {times} to get {url} - cancelling: {ex.Message}");
                         throw;
@@ -303,6 +332,18 @@ namespace TVRename
                     await Task.Delay(delay).ConfigureAwait(false);
                 }
             } while (true);
+        }
+
+        public static JObject  HttpGetRequestWithRetry(string fullUrl, int times,int secondsGap) 
+        {
+            JObject response = null;
+            TimeSpan gap = TimeSpan.FromSeconds(secondsGap);
+            RetryOnException(times, gap, fullUrl,
+                exception => exception is WebException wex && !wex.Is404()
+                    ,() => { response = JsonHttpGetRequest(fullUrl, null); }
+                    ,null);
+
+            return response;
         }
     }
 }

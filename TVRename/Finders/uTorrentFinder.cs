@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using IOException = System.IO.IOException;
 
 namespace TVRename
 {
@@ -42,20 +43,28 @@ namespace TVRename
 
         internal static IEnumerable<TorrentEntry> GetTorrentDownloads()
         {
-            // get list of files being downloaded by uTorrent
-            string resDatFile = TVSettings.Instance.ResumeDatPath;
-            if (string.IsNullOrEmpty(resDatFile) || !File.Exists(resDatFile))
+            try
             {
+                // get list of files being downloaded by uTorrent
+                string resDatFile = TVSettings.Instance.ResumeDatPath;
+                if (string.IsNullOrEmpty(resDatFile) || !File.Exists(resDatFile))
+                {
+                    return null;
+                }
+
+                BTResume btr = new BTResume((percent, message) => { }, resDatFile);
+                if (!btr.LoadResumeDat())
+                {
+                    return null;
+                }
+
+                return btr.AllFilesBeingDownloaded();
+            }
+            catch (IOException i)
+            {
+                LOGGER.Warn($"Could not get downloads from uTorrent: {i.Message}");
                 return null;
             }
-
-            BTResume btr = new BTResume((percent, message) => { }, resDatFile);
-            if (!btr.LoadResumeDat())
-            {
-                return null;
-            }
-
-            return btr.AllFilesBeingDownloaded();
         }
 
         internal static void StartTorrentDownload(string torrentFileName, string directoryName = "")

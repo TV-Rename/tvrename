@@ -15,7 +15,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using TVRename.Forms.ShowPreferences;
-using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -33,14 +32,14 @@ namespace TVRename
         private readonly ShowItem selectedShow;
         private readonly TheTvdbCodeFinder codeFinderForm;
         private CustomNameTagsFloatingWindow cntfw;
-        private readonly Season sampleSeason;
+        private readonly ProcessedSeason sampleProcessedSeason;
         private readonly ProcessedEpisode sampleEpisode;
         private readonly bool addingNewShow;
 
         public AddEditShow([NotNull] ShowItem si)
         {
             selectedShow = si;
-            sampleSeason = si.GetFirstAvailableSeason();
+            sampleProcessedSeason = si.GetFirstAvailableSeason();
             sampleEpisode = si.GetFirstAvailableEpisode();
             addingNewShow = si.TvdbCode ==-1;
             InitializeComponent();
@@ -70,7 +69,7 @@ namespace TVRename
             chkCustomLanguage.Checked = si.UseCustomLanguage;
             if (chkCustomLanguage.Checked)
             {
-                Language languageFromCode = LocalCache.Instance.LanguageList.GetLanguageFromCode(si.CustomLanguageCode);
+                Language languageFromCode = TheTVDB.LocalCache.Instance.LanguageList.GetLanguageFromCode(si.CustomLanguageCode);
                 if (languageFromCode != null)
                 {
                     cbLanguage.Text = languageFromCode.Name;
@@ -89,6 +88,7 @@ namespace TVRename
             cbDoMissingCheck_CheckedChanged(null, null);
 
             SetAutoAdd(si);
+            SetProvider(si);
 
             txtSeasonFormat.Text = si.AutoAddCustomFolderFormat;
 
@@ -173,6 +173,27 @@ namespace TVRename
             }
         }
 
+        private void SetProvider([NotNull] ShowItem si)
+        {
+            switch (si.ConfigurationProvider)
+            {
+                case ShowItem.ProviderType.libraryDefault:
+                    rdoDefault.Checked = true;
+                    break;
+
+                case ShowItem.ProviderType.TVmaze:
+                    rdoTVMaze.Checked = true;
+                    break;
+
+                case ShowItem.ProviderType.TheTVDB:
+                    rdoTVDB.Checked = true;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         private void SetManualFolders([NotNull] ShowItem si)
         {
             foreach (KeyValuePair<int, List<string>> kvp in si.ManualFolderLocations)
@@ -201,12 +222,12 @@ namespace TVRename
             cbTimeZone.EndUpdate();
             cbTimeZone.Text = si.ShowTimeZone;
 
-            if (LocalCache.Instance.LanguageList != null) //This means that language shave been loaded
+            if (TheTVDB.LocalCache.Instance.LanguageList != null) //This means that language shave been loaded
             {
                 string pref = "";
                 cbLanguage.BeginUpdate();
                 cbLanguage.Items.Clear();
-                foreach (Language l in LocalCache.Instance.LanguageList.Where(l => !(l.Name is null)))
+                foreach (Language l in TheTVDB.LocalCache.Instance.LanguageList.Where(l => !(l.Name is null)))
                 {
                     cbLanguage.Items.Add(l.Name);
 
@@ -235,7 +256,7 @@ namespace TVRename
 
         private bool OkToClose()
         {
-            if (!LocalCache.Instance.HasSeries(codeFinderForm.SelectedCode()))
+            if (!TheTVDB.LocalCache.Instance.HasSeries(codeFinderForm.SelectedCode())) //todo Get add show to work with TVMAZE
             {
                 DialogResult dr = MessageBox.Show("tvdb code unknown, close anyway?", "TVRename Add/Edit Show",
                                                   MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -299,7 +320,7 @@ namespace TVRename
             selectedShow.UseCustomLanguage = chkCustomLanguage.Checked;
             if (selectedShow.UseCustomLanguage)
             {
-                selectedShow.CustomLanguageCode = LocalCache.Instance.LanguageList
+                selectedShow.CustomLanguageCode = TheTVDB.LocalCache.Instance.LanguageList
                     .GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString())?.Abbreviation ??TVSettings.Instance.PreferredLanguageCode;
             }
             selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.DefaultTimeZone();
@@ -312,6 +333,7 @@ namespace TVRename
             selectedShow.AutoAddFolderBase = txtBaseFolder.Text;
 
             selectedShow.AutoAddType = GetAutoAddType();
+            selectedShow.ConfigurationProvider = GetProviderType();
 
             selectedShow.DvdOrder = chkDVDOrder.Checked;
             selectedShow.ForceCheckFuture = cbIncludeFuture.Checked;
@@ -369,7 +391,6 @@ namespace TVRename
             {
                 return ShowItem.AutomaticFolderType.none;
             }
-
             if (rdoFolderCustom.Checked)
             {
                 return ShowItem.AutomaticFolderType.custom;
@@ -379,6 +400,23 @@ namespace TVRename
                 return ShowItem.AutomaticFolderType.baseOnly;
             }
             return ShowItem.AutomaticFolderType.libraryDefault;
+        }
+
+        private ShowItem.ProviderType GetProviderType()
+        {
+            if (rdoTVMaze.Checked)
+            {
+                return ShowItem.ProviderType.TVmaze;
+            }
+            if (rdoDefault.Checked)
+            {
+                return ShowItem.ProviderType.libraryDefault;
+            }
+            if (rdoTVDB.Checked)
+            {
+                return ShowItem.ProviderType.TheTVDB;
+            }
+            return ShowItem.ProviderType.TheTVDB;
         }
 
         private void bnCancel_Click(object sender, EventArgs e) => Close();
@@ -550,7 +588,7 @@ namespace TVRename
 
         private void bnTags_Click(object sender, EventArgs e)
         {
-                cntfw = new CustomNameTagsFloatingWindow(sampleSeason);
+                cntfw = new CustomNameTagsFloatingWindow(sampleProcessedSeason);
                 cntfw.Show(this);
                 Focus();
         }

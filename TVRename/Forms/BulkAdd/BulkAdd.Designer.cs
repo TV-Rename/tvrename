@@ -67,7 +67,7 @@ namespace TVRename
             this.tbResults = new System.Windows.Forms.TabPage();
             this.bnEditEntry = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
-            this.lvFMNewShows = new TVRename.ListViewFlickerFree();
+            this.lvFMNewShows = new ListViewFlickerFree();
             this.columnHeader42 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader43 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader44 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));

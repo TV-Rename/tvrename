@@ -294,10 +294,16 @@
     <Compile Include="Finders\SearchFolderFileFinder.cs" />
     <Compile Include="Finders\DownloadingFinder.cs" />
     <Compile Include="ItemsAndActions\ActionOutcome.cs" />
-    <Compile Include="TheTVDB\TheTVDBAPI.cs" />
-    <Compile Include="TheTVDB\TheTVDBCachePersistor.cs" />
-    <Compile Include="TheTVDB\TokenProvider.cs" />
-    <Compile Include="TheTVDB\TVDBException.cs" />
+    <Compile Include="Model\Season.cs" />
+    <Compile Include="Sources\SourceConsistencyException.cs" />
+    <Compile Include="TVRename\CacheLoadException.cs" />
+    <Compile Include="Sources\TheTVDB\TheTVDBAPI.cs" />
+    <Compile Include="Model\CachePersistor.cs" />
+    <Compile Include="Sources\TheTVDB\TokenProvider.cs" />
+    <Compile Include="ItemsAndActions\ActionFailedException.cs" />
+    <Compile Include="Sources\TVMAZE\LocalCache.cs" />
+    <Compile Include="Sources\TVMAZE\TVmazeAPI.cs" />
+    <Compile Include="TVRename\UpdateTimeTracker.cs" />
     <Compile Include="Utility\UrlCache.cs" />
     <Compile Include="Forms\ShowPreferences\AutoAddShow.cs">
       <SubType>Form</SubType>
@@ -443,12 +449,12 @@
     <Compile Include="Settings\SeasonFilter.cs" />
     <Compile Include="Settings\ShowFilter.cs" />
     <Compile Include="Settings\ShowItem.cs" />
-    <Compile Include="TheTVDB\Actor.cs" />
-    <Compile Include="TheTVDB\SeriesBanners.cs" />
-    <Compile Include="TheTVDB\SeriesSpecifier.cs" />
-    <Compile Include="TheTVDB\ShowNotFoundException.cs" />
-    <Compile Include="TheTVDB\TVDBSeriesDownloadException.cs" />
-    <Compile Include="TheTVDB\TVSource.cs" />
+    <Compile Include="Model\Actor.cs" />
+    <Compile Include="Model\SeriesBanners.cs" />
+    <Compile Include="Model\SeriesSpecifier.cs" />
+    <Compile Include="Model\ShowNotFoundException.cs" />
+    <Compile Include="Sources\SourceConnectivityException.cs" />
+    <Compile Include="Model\TVSource.cs" />
     <Compile Include="TVRename\ActionEngine.cs" />
     <Compile Include="TVRename\BulkAddManager.cs" />
     <Compile Include="TVRename\CacheUpdater.cs" />
@@ -561,11 +567,11 @@
       <DependentUpon>UpcomingPopup.cs</DependentUpon>
     </Compile>
     <Compile Include="ItemsAndActions\ActionPyTivoMeta.cs" />
-    <Compile Include="TheTVDB\Banner.cs" />
-    <Compile Include="TheTVDB\Episode.cs" />
-    <Compile Include="TheTVDB\ExtraEp.cs" />
-    <Compile Include="TheTVDB\Season.cs" />
-    <Compile Include="TheTVDB\SeriesInfo.cs" />
+    <Compile Include="Model\Banner.cs" />
+    <Compile Include="Model\Episode.cs" />
+    <Compile Include="Model\ExtraEp.cs" />
+    <Compile Include="Settings\ProcessedSeason.cs" />
+    <Compile Include="Model\SeriesInfo.cs" />
     <Compile Include="ItemsAndActions\ActionCopyMoveRename.cs" />
     <Compile Include="ItemsAndActions\ActionDownloadImage.cs" />
     <Compile Include="ItemsAndActions\Item.cs" />
@@ -814,7 +820,7 @@
     <Compile Include="Forms\Utilities\StatsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TheTVDB\LocalCache.cs" />
+    <Compile Include="Sources\TheTVDB\LocalCache.cs" />
     <Compile Include="Custom Controls\TheTVDBCodeFinder.cs">
       <SubType>UserControl</SubType>
     </Compile>

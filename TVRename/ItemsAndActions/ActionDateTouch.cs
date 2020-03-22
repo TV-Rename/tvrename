@@ -16,7 +16,7 @@ namespace TVRename
     public class ActionDateTouch : ActionFileMetaData
     {
         private readonly ShowItem show; // if for an entire show, rather than specific episode
-        private readonly Season season; // if for an entire show, rather than specific episode
+        private readonly ProcessedSeason processedSeason; // if for an entire show, rather than specific episode
         private readonly FileInfo whereFile;
         private readonly DirectoryInfo whereDirectory;
         private readonly DateTime updateTime;
@@ -28,9 +28,9 @@ namespace TVRename
             updateTime = date;
         }
 
-        public ActionDateTouch(DirectoryInfo dir, Season sn, DateTime date)
+        public ActionDateTouch(DirectoryInfo dir, ProcessedSeason sn, DateTime date)
         {
-            season = sn;
+            processedSeason = sn;
             whereDirectory = dir;
             updateTime = date;
         }
@@ -136,9 +136,9 @@ namespace TVRename
         public override IgnoreItem Ignore => whereFile is null ? null : new IgnoreItem(whereFile.FullName);
 
         protected override string SeriesName => Episode != null ? Episode.Show.ShowName :
-            season != null ? season.Show.ShowName : show.ShowName;
+            processedSeason != null ? processedSeason.Show.ShowName : show.ShowName;
         protected override string SeasonNumber => Episode != null ? Episode.AppropriateSeasonNumber.ToString() :
-            season != null ? season.SeasonNumber.ToString() : string.Empty;
+            processedSeason != null ? processedSeason.SeasonNumber.ToString() : string.Empty;
         protected override string AirDate =>
             updateTime.CompareTo(DateTime.MaxValue) != 0 ? updateTime.ToShortDateString() : "";
         [CanBeNull]

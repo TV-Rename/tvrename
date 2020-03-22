@@ -42,7 +42,7 @@ namespace TVRename
 
         public static void WriteElement(this XmlWriter writer, string elementName, [CanBeNull] string value,bool ignoreIfBlank)
         {
-            if (ignoreIfBlank && string.IsNullOrEmpty(value))
+            if (ignoreIfBlank && string.IsNullOrWhiteSpace(value))
             {
                 return;
             }

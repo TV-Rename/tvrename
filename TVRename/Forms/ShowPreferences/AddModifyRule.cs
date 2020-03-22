@@ -23,13 +23,13 @@ namespace TVRename
     public partial class AddModifyRule : Form
     {
         private readonly ShowRule mRule;
-        private readonly Season mSeason;
-        private readonly Season.SeasonType mOrder;
+        private readonly ProcessedSeason mProcessedSeason;
+        private readonly ProcessedSeason.SeasonType mOrder;
 
         public AddModifyRule(ShowRule rule, [NotNull] ShowItem show, int seasonNumber)
         {
             mRule = rule;
-            mSeason = show.GetSeason(seasonNumber);
+            mProcessedSeason = show.GetSeason(seasonNumber);
             mOrder= show.Order;
 
             InitializeComponent();
@@ -170,7 +170,7 @@ namespace TVRename
             mRule.Second = ParseTextValue(txtValue2);
 
             //validation Rules
-            if (!mSeason.ContainsEpisode(mRule.First, mOrder) && mRule.DoWhatNow != RuleAction.kInsert)
+            if (!mProcessedSeason.ContainsEpisode(mRule.First, mOrder) && mRule.DoWhatNow != RuleAction.kInsert)
             {
                 MessageBox.Show("First episode number is not valid for the selected season", "Modify Rules",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -179,7 +179,7 @@ namespace TVRename
                 return;
             }
 
-            if (mRule.DoWhatNow == RuleAction.kInsert && !(mSeason.NextEpisodeIs(mRule.First, mOrder)|| mSeason.ContainsEpisode(mRule.First, mOrder)))
+            if (mRule.DoWhatNow == RuleAction.kInsert && !(mProcessedSeason.NextEpisodeIs(mRule.First, mOrder)|| mProcessedSeason.ContainsEpisode(mRule.First, mOrder)))
             {
                 MessageBox.Show("First episode number is not valid for the selected season", "Modify Rules",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -190,7 +190,7 @@ namespace TVRename
 
             //these 3 types only have one episode cited
             if (!(mRule.DoWhatNow == RuleAction.kRename || mRule.DoWhatNow == RuleAction.kInsert || mRule.DoWhatNow == RuleAction.kSplit) &&
-                !mSeason.ContainsEpisode(mRule.Second, mOrder))
+                !mProcessedSeason.ContainsEpisode(mRule.Second, mOrder))
             {
                 MessageBox.Show("Second episode number is not valid for the selected season", "Modify Rules",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
