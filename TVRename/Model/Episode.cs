@@ -149,7 +149,7 @@ namespace TVRename
             mName = System.Web.HttpUtility.HtmlDecode(XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("EpisodeName")));
 
             AirStamp = r.ExtractDateTime("AirStamp");
-            AirTime = ParseAirTime(r.ExtractString("Airs_Time"));
+            AirTime = JsonHelper.ParseAirTime(r.ExtractString("Airs_Time"));
 
             DvdDiscId = r.ExtractString("DvdDiscId");
             Filename = r.ExtractString("Filename") ?? r.ExtractString("filename");
@@ -164,30 +164,6 @@ namespace TVRename
             SiteRatingCount = r.ExtractInt("SiteRatingCount") ?? r.ExtractInt("siteRatingCount");
             AbsoluteNumber = r.ExtractInt("AbsoluteNumber");
             FirstAired = ParseAired(r.ExtractString("FirstAired"));
-        }
-
-        private static DateTime? ParseAirTime([CanBeNull] string theTime)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(theTime))
-                {
-                    if (DateTime.TryParse(theTime, out DateTime airsTime))
-                    {
-                        return airsTime;
-                    }
-
-                    if (DateTime.TryParse(theTime.Replace('.', ':'), out airsTime))
-                    {
-                        return airsTime;
-                    }
-                }
-            }
-            catch (FormatException)
-            {
-                Logger.Info("Failed to parse time: {0} ", theTime);
-            }
-            return DateTime.Parse("20:00");
         }
 
         private static int ExtractAndParse([NotNull] XElement r, string key)

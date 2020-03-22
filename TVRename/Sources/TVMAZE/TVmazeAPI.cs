@@ -228,7 +228,7 @@ namespace TVRename.TVmaze
             {
                 IsStub = false,
                 AirsDay = days,
-                AirsTime = ParseAirTime((string)r["schedule"]["time"]),
+                AirsTime = JsonHelper.ParseAirTime((string)r["schedule"]["time"]),
                 FirstAired = ParseFirstAired((string)r["premiered"]),
                 TvdbCode = tvdb,
                 TvMazeCode = (int)(r["id"]??0),
@@ -310,30 +310,6 @@ namespace TVRename.TVmaze
             return s;
         }
 
-        private static DateTime? ParseAirTime([CanBeNull] string theTime)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(theTime))
-                {
-                    if (DateTime.TryParse(theTime, out DateTime airsTime))
-                    {
-                        return airsTime;
-                    }
-
-                    if (DateTime.TryParse(theTime.Replace('.', ':'), out airsTime))
-                    {
-                        return airsTime;
-                    }
-                }
-            }
-            catch (FormatException)
-            {
-                Logger.Info("Failed to parse time: {0} ", theTime);
-            }
-            return DateTime.Parse("20:00");
-        }
-
         [NotNull]
         private static Episode GenerateEpisode(int seriesId, [NotNull] List<string> writers, [NotNull] List<string> directors, [NotNull] JObject r)
         {
@@ -356,7 +332,7 @@ namespace TVRename.TVmaze
             Episode newEp =  new Episode(seriesId)
             {
                 FirstAired = ((string)r["airdate"]).HasValue()? (DateTime?)r["airdate"]:null,
-                AirTime = ParseAirTime((string?)r["airtime"]),
+                AirTime = JsonHelper.ParseAirTime((string?)r["airtime"]),
                 AirStamp = r["airstamp"].HasValues? (DateTime?)r["airstamp"] : null,
                 EpisodeId = (int)r["id"],
                 LinkUrl = ((string)r["url"])?.Trim(),

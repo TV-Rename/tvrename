@@ -6,15 +6,42 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System;
 using System.IO;
 using System.Net;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
+using NLog;
 
 namespace TVRename
 {
     public static class JsonHelper
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        public static DateTime? ParseAirTime([CanBeNull] string theTime)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(theTime))
+                {
+                    if (DateTime.TryParse(theTime, out DateTime airsTime))
+                    {
+                        return airsTime;
+                    }
+
+                    if (DateTime.TryParse(theTime.Replace('.', ':'), out airsTime))
+                    {
+                        return airsTime;
+                    }
+                }
+            }
+            catch (FormatException)
+            {
+                Logger.Error("Failed to parse time: {0} ", theTime);
+            }
+            return DateTime.Parse("20:00");
+        }
+
         [NotNull]
         public static string Flatten([CanBeNull]this JToken ja,string delimiter)
         {

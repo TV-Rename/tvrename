@@ -365,7 +365,7 @@ namespace TVRename
                 LanguageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId") ?? throw new SourceConsistencyException("Error Extracting Language for Series",ShowItem.ProviderType.TheTVDB);
 
                 airsTimeString = seriesXml.ExtractString("Airs_Time")?? seriesXml.ExtractString("airsTime");
-                AirsTime = ParseAirTime(airsTimeString);
+                AirsTime = JsonHelper.ParseAirTime(airsTimeString);
 
                 AirsDay = seriesXml.ExtractString("airsDayOfWeek") ?? seriesXml.ExtractString("Airs_DayOfWeek");
                 BannerString = seriesXml.ExtractString("banner") ?? seriesXml.ExtractString("Banner");
@@ -396,6 +396,7 @@ namespace TVRename
             catch (SourceConsistencyException e)
             {
                 Logger.Error(e, GenerateErrorMessage());
+                // ReSharper disable once PossibleIntendedRethrow
                 throw e;
             }
         }
@@ -466,35 +467,11 @@ namespace TVRename
             }
         }
 
-        private static DateTime? ParseAirTime([CanBeNull] string theTime)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(theTime))
-                {
-                    if (DateTime.TryParse(theTime, out DateTime airsTime) )
-                    {
-                        return airsTime;
-                    }
-
-                    if (DateTime.TryParse(theTime.Replace('.', ':'), out airsTime))
-                    {
-                        return airsTime;
-                    }
-                }
-            }
-            catch (FormatException)
-            {
-                Logger.Info("Failed to parse time: {0} ", theTime);
-            }
-            return DateTime.Parse("20:00");
-        }
-
         private void LoadJson([NotNull] JObject r)
         {
             AirsDay = ((string)r["airsDayOfWeek"])?.Trim();
             airsTimeString = (string) r["airsTime"];
-            AirsTime = ParseAirTime(airsTimeString);
+            AirsTime = JsonHelper.ParseAirTime(airsTimeString);
             aliases = r["aliases"].Select(x => x.Value<string>()).ToList();
             BannerString = (string)r["banner"];
             FirstAired = ParseFirstAired((string)r["firstAired"]);
