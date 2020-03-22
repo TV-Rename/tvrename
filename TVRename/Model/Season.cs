@@ -14,7 +14,6 @@ namespace TVRename
         public string URL { get; }
         public string ImageURL { get; }
 
-
         public Season([NotNull] XElement r)
         {
             SeasonId = r.ExtractInt("Id")??-1;

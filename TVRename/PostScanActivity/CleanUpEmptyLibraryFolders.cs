@@ -88,7 +88,6 @@ namespace TVRename
             {
                 LOGGER.Warn($"Could not find {folderName} as we got a OperationCanceledException: {i.Message}");
             }
-
         }
 
         private static bool CanRemove(string folderName)

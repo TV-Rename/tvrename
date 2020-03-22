@@ -44,7 +44,6 @@ namespace TVRename.TVmaze
                     if (!imdb.HasValue() && !tvdBimbd.HasValue())
                     {
                         throw new SourceConsistencyException($"Please add show {siTvdbCode} to tvMaze", ShowItem.ProviderType.TVmaze);
-
                     }
                     string imdbCode = imdb ?? tvdBimbd;
                     try
@@ -62,7 +61,6 @@ namespace TVRename.TVmaze
                         }
                         throw new SourceConnectivityException($"Can't find TVmaze series for IMDB={imdbCode} and tvdb={siTvdbCode} {wex.Message}");
                     }
-
                 }
                 throw new SourceConnectivityException($"Can't find TVmaze series for {siTvdbCode} {wex.Message}");
             }

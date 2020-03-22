@@ -83,7 +83,6 @@ namespace TVRename
 
                 lbTvMaze.SelectedIndex = 0;
             }
-
         }
 
         private void bnOK_Click(object sender, System.EventArgs e)
