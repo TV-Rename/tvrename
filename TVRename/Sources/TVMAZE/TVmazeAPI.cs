@@ -217,7 +217,6 @@ namespace TVRename.TVmaze
             }
         }
 
-
         [NotNull]
         private static SeriesInfo GenerateSeriesInfo([NotNull] JObject r)
         {

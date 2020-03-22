@@ -151,8 +151,7 @@ namespace TVRename
 
                 SeriesInfo ser = si.Provider == ShowItem.ProviderType.TVmaze
                     ? TVmaze.LocalCache.Instance.GetSeries(si.TVmazeCode)
-                    : TheTVDB.LocalCache.Instance.GetSeries(si.TvdbCode)
-                    ;
+                    : TheTVDB.LocalCache.Instance.GetSeries(si.TvdbCode);
 
                 if (ser is null)
                 {

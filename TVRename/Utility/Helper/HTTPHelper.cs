@@ -259,7 +259,6 @@ namespace TVRename
             return finalUrl.Remove(finalUrl.LastIndexOf("&", StringComparison.Ordinal));
         }
 
-
         public static void RetryOnException(int times,TimeSpan delay,string url, Func<Exception, bool> retryableException,[NotNull] System.Action operation, [CanBeNull] System.Action updateOperation)
         {
             if (times <= 0)

@@ -627,7 +627,6 @@ namespace TVRename
             TheTVDB
         }
 
-
         [CanBeNull]
         public string WebsiteUrl
         {

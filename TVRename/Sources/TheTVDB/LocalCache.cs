@@ -1619,7 +1619,6 @@ namespace TVRename.TheTVDB
             }
         }
 
-
         private bool UpdateEpisodeNow(int seriesId, JToken jsonResponseData, JToken seriesDataDefaultLang)
         {
             if (!series.ContainsKey(seriesId))

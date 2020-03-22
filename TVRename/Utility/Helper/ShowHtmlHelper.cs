@@ -744,7 +744,6 @@ namespace TVRename
             body += "<h1><A HREF=\"" + TheTVDB.API.WebsiteShowUrl(si) + "\">" + si.ShowName +
                     "</A>" + seasText + "</h1>";
 
-
             DirFilesCache dfc = new DirFilesCache();
             foreach (ProcessedEpisode ei in eis)
             {

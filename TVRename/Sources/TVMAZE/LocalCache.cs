@@ -107,7 +107,6 @@ namespace TVRename.TVmaze
 
                 lock (SERIES_LOCK)
                 {
-
                     AddSeriesToCache(downloadedSi);
                 }
             }

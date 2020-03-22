@@ -76,4 +76,3 @@ namespace TVRename
         public static FileInfo LanguagesFile => GetFileInfo(LANGUAGES_FILE_NAME);
     }
 }
-
