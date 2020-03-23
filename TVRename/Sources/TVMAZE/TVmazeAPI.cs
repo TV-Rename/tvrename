@@ -332,7 +332,7 @@ namespace TVRename.TVmaze
             Episode newEp =  new Episode(seriesId)
             {
                 FirstAired = ((string)r["airdate"]).HasValue()? (DateTime?)r["airdate"]:null,
-                AirTime = JsonHelper.ParseAirTime((string?)r["airtime"]),
+                AirTime = JsonHelper.ParseAirTime((string)r["airtime"]),
                 AirStamp = r["airstamp"].HasValues? (DateTime?)r["airstamp"] : null,
                 EpisodeId = (int)r["id"],
                 LinkUrl = ((string)r["url"])?.Trim(),
