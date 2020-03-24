@@ -386,7 +386,7 @@ namespace TVRename
                 Slug = seriesXml.ExtractString("slug");
 
                 SiteRating = GetSiteRating(seriesXml);
-                FirstAired = ExtractFirstAired(seriesXml);
+                FirstAired = JsonHelper.ParseFirstAired(seriesXml.ExtractString("FirstAired") ?? seriesXml.ExtractString("firstAired"));
 
                 LoadActors(seriesXml);
                 LoadAliases(seriesXml);
@@ -413,24 +413,6 @@ namespace TVRename
 
         [NotNull]
         private string GenerateErrorMessage() => "Error processing data from TheTVDB for a show. " + this + "\r\nLanguage: \"" + LanguageId + "\"";
-
-        private static DateTime? ExtractFirstAired([NotNull] XElement seriesXml)
-        {
-            string theDate = seriesXml.ExtractString("FirstAired") ?? seriesXml.ExtractString("firstAired");
-            if (!string.IsNullOrWhiteSpace(theDate))
-            {
-                try
-                {
-                    return DateTime.ParseExact(theDate, "yyyy-MM-dd", new CultureInfo(""));
-                }
-                catch
-                {
-                    Logger.Trace("Failed to parse date: {0} ", theDate);
-                }
-            }
-
-            return null;
-        }
 
         private void LoadActors([NotNull] XElement seriesXml)
         {
@@ -474,7 +456,7 @@ namespace TVRename
             AirsTime = JsonHelper.ParseAirTime(airsTimeString);
             aliases = r["aliases"].Select(x => x.Value<string>()).ToList();
             BannerString = (string)r["banner"];
-            FirstAired = ParseFirstAired((string)r["firstAired"]);
+            FirstAired = JsonHelper.ParseFirstAired((string)r["firstAired"]);
 
             if (r.ContainsKey("genre"))
             {
@@ -512,23 +494,6 @@ namespace TVRename
                 return returnValue;
             }
             throw new ShowItem.EpisodeNotFoundException();
-        }
-
-        private static DateTime? ParseFirstAired([CanBeNull] string theDate)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(theDate))
-                {
-                    return DateTime.ParseExact(theDate, "yyyy-MM-dd", new CultureInfo(""));
-                }
-
-                return null;
-            }
-            catch
-            {
-                return null;
-            }
         }
 
         private void LoadJson([NotNull] JObject bestLanguageR, JObject backupLanguageR)

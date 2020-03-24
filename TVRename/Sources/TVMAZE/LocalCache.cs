@@ -105,6 +105,14 @@ namespace TVRename.TVmaze
             {
                 SeriesInfo downloadedSi = API.GetSeriesDetails(s);
 
+                if (downloadedSi.TvMazeCode != s.TvMazeSeriesId && s.TvMazeSeriesId ==-1)
+                {
+                    lock (SERIES_LOCK)
+                    {
+                        series.TryRemove(-1, out _);
+                    }
+                }
+
                 lock (SERIES_LOCK)
                 {
                     AddSeriesToCache(downloadedSi);
@@ -296,6 +304,13 @@ namespace TVRename.TVmaze
                         }
 
                         forceReloadOn.TryAdd(tvmaze, tvmaze);
+                    }
+                }
+                else
+                {
+                    if (tvmaze > 0)
+                    {
+                        AddPlaceholderSeries(tvdb, tvmaze, "");
                     }
                 }
             }

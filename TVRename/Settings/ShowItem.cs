@@ -423,7 +423,7 @@ namespace TVRename
         private iTVSource LocalCache => Provider==ProviderType.TVmaze ? (iTVSource)TVmaze.LocalCache.Instance : TheTVDB.LocalCache.Instance;
 
         [CanBeNull]
-        public SeriesInfo TheSeries() => LocalCache.GetSeries(Code);
+        public SeriesInfo TheSeries() => Code >0?LocalCache.GetSeries(Code):null;
 
         private int Code => Provider == ProviderType.TVmaze ? TVmazeCode:TvdbCode;
 
@@ -1004,7 +1004,7 @@ namespace TVRename
 
             // for specials "season", see if any season has any aired dates
             // otherwise, check only up to the season we are considering
-            int maxSeasonToUse = maxSeasonNumber == 0 ? lastPossibleSeason : maxSeasonNumber;
+            int maxSeasonToUse = maxSeasonNumber <= 0 ? lastPossibleSeason : maxSeasonNumber;
 
             foreach (int snum in Enumerable.Range(1, maxSeasonToUse))
             {

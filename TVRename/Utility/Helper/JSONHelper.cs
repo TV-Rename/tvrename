@@ -7,6 +7,7 @@
 // 
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using JetBrains.Annotations;
@@ -96,5 +97,15 @@ namespace TVRename
 
             return returnValue;
         }
-    }
+
+        public static DateTime? ParseFirstAired([CanBeNull] string theDate)
+        {
+            if (DateTime.TryParseExact(theDate, new string[] { "yyyy-MM-dd", "yyyy-MM-d" }, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime output))
+            {
+                return output;
+            }
+
+            return null;
+        }
+   }
 }

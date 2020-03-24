@@ -135,7 +135,7 @@ namespace TVRename
                     }
                     if(showConfiguration.TVmazeCode != show.TvMazeCode)
                     {
-                        Logger.Error($"Issue with copy back of ids");
+                        Logger.Error($"Issue with copy back of ids {show.Name} {show.TvdbCode} {showConfiguration.TVmazeCode} {show.TvMazeCode} ");
                     }
                 }
             }

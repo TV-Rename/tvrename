@@ -50,7 +50,7 @@ namespace TVRename.TVmaze
                     {
                         JObject r = HttpHelper.HttpGetRequestWithRetry(APIRoot + "/lookup/shows?imdb=" + imdbCode, 3, 2);
                         int tvMazeId = (int)r["id"];
-                        Logger.Fatal($"TVMaze Data issue: {tvMazeId} has the wrong TVDB Id based on {imdbCode}.");
+                        Logger.Error($"TVMaze Data issue: {tvMazeId} has the wrong TVDB Id based on {imdbCode}.");
                         return tvMazeId;
                     }
                     catch (WebException wex2)
@@ -70,7 +70,7 @@ namespace TVRename.TVmaze
         {
             try
             {
-                return HttpHelper.HttpGetRequestWithRetry($"{APIRoot}/shows/{tvMazeId}?specials=1&embed[]=cast&embed[]=episodes&embed[]=crew&embed[]=akas&embed[]=seasons&embed[]=images", 3,2);
+                return HttpHelper.HttpGetRequestWithRetry($"{APIRoot}/shows/{tvMazeId}?specials=1&embed[]=cast&embed[]=episodes&embed[]=crew&embed[]=akas&embed[]=seasons&embed[]=images", 5,2);
             }
             catch (WebException wex)
             {
@@ -88,6 +88,7 @@ namespace TVRename.TVmaze
             JObject results =  ss.TvMazeSeriesId > 0
                 ? GetSeriesDetails(ss.TvMazeSeriesId)
                 : GetSeriesDetails(GetSeriesIdFromOtherCodes(ss.TvdbSeriesId,ss.ImdbCode));
+
 
             SeriesInfo downloadedSi = GenerateSeriesInfo(results);
             foreach (JToken akaJson in results["_embedded"]["akas"])
@@ -198,22 +199,6 @@ namespace TVRename.TVmaze
             return new Season(id,number,name,description,url,imageUrl,seriesId);
         }
 
-        private static DateTime? ParseFirstAired([CanBeNull] string theDate)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(theDate))
-                {
-                    return DateTime.ParseExact(theDate, "yyyy-MM-dd", new CultureInfo(""));
-                }
-
-                return null;
-            }
-            catch
-            {
-                return null;
-            }
-        }
 
         [NotNull]
         private static SeriesInfo GenerateSeriesInfo([NotNull] JObject r)
@@ -221,15 +206,16 @@ namespace TVRename.TVmaze
             string nw = GetKeySubKey(r,"network", "name"); 
             string wc = GetKeySubKey(r,"webChannel", "name");
             string days =  r["schedule"]["days"]?.Select(x => x.Value<string>()).ToCsv();
-            int tvdb = (int) (r["externals"]["thetvdb"] ?? 0);
-            int rage = r["externals"]["tvrage"].HasValues?(int) r["externals"]["tvrage"] : 0;
+            int tvdb = r["externals"]["thetvdb"].Type == JTokenType.Null ? -1 : (int)r["externals"]["thetvdb"]; 
+            int rage = r["externals"]["tvrage"].Type == JTokenType.Null ? -1 : (int)r["externals"]["tvrage"];
+
 
             SeriesInfo returnValue = new SeriesInfo
             {
                 IsStub = false,
                 AirsDay = days,
                 AirsTime = JsonHelper.ParseAirTime((string)r["schedule"]["time"]),
-                FirstAired = ParseFirstAired((string)r["premiered"]),
+                FirstAired = JsonHelper.ParseFirstAired((string)r["premiered"]),
                 TvdbCode = tvdb,
                 TvMazeCode = (int)(r["id"]??0),
                 TvRageCode = rage,
