@@ -398,13 +398,13 @@ namespace TVRename
                         }
                     }
                 }
-                catch (FormatException)
+                catch (FormatException fe)
                 {
-                    //Ignore this Exception
+                    Logger.Warn($"Please check for the regex {re.RegExpression} as it's causing an FormatException error {fe.Message}");
                 }
-                catch (ArgumentException)
+                catch (ArgumentException ae)
                 {
-                    //Ignore this Exception
+                    Logger.Warn($"Please check for the regex {re.RegExpression} as it's causing an ArgumentException error {ae.Message}");
                 }
             }
 

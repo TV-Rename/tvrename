@@ -233,6 +233,7 @@ namespace TVRename.TVmaze
                     long.TryParse((string)r["updated"], out long updateTime)
                         ? updateTime
                         : 0,
+                Dirty = false,
             };
 
             if (r.ContainsKey("genres"))

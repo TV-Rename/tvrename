@@ -100,6 +100,11 @@ namespace TVRename.TVmaze
             {
                 throw new SourceConsistencyException($"Asked to update {s.Name} from TV Maze, but the Id is not for TV maze.", ShowItem.ProviderType.TVmaze);
             }
+
+            if (!series[s.TvMazeSeriesId].Dirty)
+            {
+                return true;
+            }
             Say($"Downloading {s.Name} from TVmaze");
             try
             {
@@ -183,34 +188,25 @@ namespace TVRename.TVmaze
                     return false;
                 }
             }
-/*
 
-            foreach (SeriesInfo si in series.Values.Where(info => info.Dirty))
-            {
-                if (!cts.IsCancellationRequested)
-                {
-                    try
-                    {
-                        Say($"Downloading {si.Name} from TVmaze");
-                        SeriesInfo newSi = API.GenerateSeriesInfo(si);
-
-                        Say($"Downloading {newSi.Name} from TVmaze");
-                        si.Merge(newSi, -1);
-                    }
-                    catch (SourceConsistencyException sce)
-                    {
-                        Logger.Error(sce.Message);
-                    }
-                }
-                else
-                {
-                    SayNothing();
-                    return false;
-                }
-            }*/
+            MarkPlaceholdersDirty();
 
             SayNothing();
             return true;
+        }
+
+        private void MarkPlaceholdersDirty()
+        {
+            // anything with a srv_lastupdated of 0 should be marked as dirty
+            // typically, this'll be placeholder series
+            foreach (KeyValuePair<int, SeriesInfo> kvp in series)
+            {
+                SeriesInfo ser = kvp.Value;
+                if (ser.SrvLastUpdated == 0 || ser.Episodes.Count == 0)
+                {
+                    ser.Dirty = true;
+                }
+            }
         }
 
         private void AddPlaceholderSeries([NotNull] SeriesSpecifier ss)
