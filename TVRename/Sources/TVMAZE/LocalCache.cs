@@ -94,7 +94,7 @@ namespace TVRename.TVmaze
 
             lock (SERIES_LOCK)
             {
-                if (!series[s.TvMazeSeriesId].Dirty)
+                if (series.ContainsKey(s.TvMazeSeriesId) && !series[s.TvMazeSeriesId].Dirty)
                 {
                     return true;
                 }
