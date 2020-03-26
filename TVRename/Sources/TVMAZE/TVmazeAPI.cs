@@ -21,11 +21,23 @@ namespace TVRename.TVmaze
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         [NotNull]
-        public static IEnumerable<KeyValuePair<string,long>> GetShowUpdates()
+        public static IEnumerable<KeyValuePair<string,long>> GetUpdates()
         {
-            JObject updatesJson = HttpHelper.HttpGetRequestWithRetry(APIRoot + "/updates/shows", 3, 2);
+            try
+            {
+                JObject updatesJson = HttpHelper.HttpGetRequestWithRetry(APIRoot + "/updates/shows", 3, 2);
 
-            return updatesJson.Children<JProperty>().Select(t => new KeyValuePair<string, long>(t.Name, (long) t.Value));
+                return updatesJson.Children<JProperty>()
+                    .Select(t => new KeyValuePair<string, long>(t.Name, (long) t.Value));
+            }
+            catch (WebException ex)
+            {
+                if (!ex.IsUnimportant())
+                {
+                    Logger.Error($"Could not get updates from TV Maze due to {ex.LoggableDetails()}");
+                }
+                throw new SourceConnectivityException(ex.Message);
+            }
         }
 
         private static int GetSeriesIdFromOtherCodes(int siTvdbCode,string imdb)
@@ -43,7 +55,7 @@ namespace TVRename.TVmaze
                     string tvdBimbd = TheTVDB.LocalCache.Instance.GetSeries(siTvdbCode)?.Imdb;
                     if (!imdb.HasValue() && !tvdBimbd.HasValue())
                     {
-                        throw new SourceConsistencyException($"Please add show {siTvdbCode} to tvMaze", ShowItem.ProviderType.TVmaze);
+                        throw new ShowNotFoundException(siTvdbCode, $"Cant find a show with TVDB Id {siTvdbCode} on TV Maze, either add the show to TV Maze, find the show and update The TVDB Id or use TVDB for that show.", ShowItem.ProviderType.TheTVDB, ShowItem.ProviderType.TVmaze);
                     }
                     string imdbCode = imdb ?? tvdBimbd;
                     try
@@ -55,9 +67,9 @@ namespace TVRename.TVmaze
                     }
                     catch (WebException wex2)
                     {
-                        if (wex2.Is404())
+                        if (wex2.Is404() && TvMazeIsUp())
                         {
-                            throw new SourceConsistencyException($"Please add show with imdb={imdbCode} and tvdb={siTvdbCode} to tvMaze", ShowItem.ProviderType.TVmaze);
+                            throw new ShowNotFoundException(siTvdbCode,$"Please add show with imdb={imdbCode} and tvdb={siTvdbCode} to tvMaze, or use TVDB as the source for that show.", ShowItem.ProviderType.TheTVDB, ShowItem.ProviderType.TVmaze);
                         }
                         throw new SourceConnectivityException($"Can't find TVmaze series for IMDB={imdbCode} and tvdb={siTvdbCode} {wex.Message}");
                     }
@@ -74,11 +86,27 @@ namespace TVRename.TVmaze
             }
             catch (WebException wex)
             {
-                if (wex.Is404())
+                if (wex.Is404() && TvMazeIsUp())
                 {
-                    throw new SourceConsistencyException($"Please add show maze id {tvMazeId} to tvMaze", ShowItem.ProviderType.TVmaze);
+                    throw new ShowNotFoundException(tvMazeId,$"Please add show maze id {tvMazeId} to tvMaze", ShowItem.ProviderType.TVmaze, ShowItem.ProviderType.TVmaze);
+                }
+                if (!wex.IsUnimportant())
+                {
+                    Logger.Error($"Could not get show with id {tvMazeId} from TV Maze due to {wex.LoggableDetails()}");
                 }
                 throw new SourceConnectivityException($"Can't find TVmaze series for {tvMazeId} {wex.Message}");
+            }
+        }
+
+        private static bool TvMazeIsUp()
+        {
+            try
+            {
+                return HttpHelper.HttpGetRequestWithRetry(APIRoot + "/singlesearch/shows?q=girls", 5, 1).HasValues;
+            }
+            catch (WebException ex)
+            {
+                return false;
             }
         }
 
@@ -110,7 +138,7 @@ namespace TVRename.TVmaze
                 JToken imageNode = jsonSeason["image"];
                 if (jsonSeason["image"].HasValues)
                 {
-                    downloadedSi.AddOrUpdateBanner(GenerateBanner(ss.TvMazeSeriesId,(int)jsonSeason["id"], (int)jsonSeason["number"], (string)imageNode["original"]));
+                    downloadedSi.AddOrUpdateBanner(GenerateBanner(ss.TvMazeSeriesId, (int)jsonSeason["number"], (string)imageNode["original"]));
                 }
             }
 
@@ -160,7 +188,7 @@ namespace TVRename.TVmaze
         }
 
         [NotNull]
-        private static Banner GenerateBanner(int seriesId,int seasonId, int seasonNumber,[NotNull] string url)
+        private static Banner GenerateBanner(int seriesId, int seasonNumber,[NotNull] string url)
         {
             Banner newBanner = new Banner(seriesId)
             {
@@ -329,7 +357,9 @@ namespace TVRename.TVmaze
                 AiredEpNum = (int)r["number"],
                 SeasonId = (int)r["season"],
                 AiredSeasonNumber = (int)r["season"],
-                Filename = GetUrl(r, "medium")
+                Filename = GetUrl(r, "medium"),
+                ReadDvdSeasonNum = 0,
+                DvdEpNum = 0
             };
 
             newEp.SetWriters(writers);

@@ -248,13 +248,13 @@ namespace TVRename
             RightClickCommands n = (RightClickCommands)e.ClickedItem.Tag;
             switch (n)
             {
-                case RightClickCommands.kVisitTvdbSeason:
+                case RightClickCommands.kVisitTvSourceSeason:
                     {
                         TvdbFor(mLastProcessedSeasonClicked);
                         break;
                     }
 
-                case RightClickCommands.kVisitTvdbSeries:
+                case RightClickCommands.kVisitTvSourceSeries:
                     {
                         TvdbFor(mLastShowClicked);
                         break;
@@ -303,7 +303,7 @@ namespace TVRename
                 return;
             }
 
-            Helpers.SysOpen(seas.WebsiteUrl);
+            Helpers.SysOpen(seas.TVDBWebsiteUrl);
         }
 
         private static void TvdbFor([CanBeNull] ShowItem si)
@@ -373,7 +373,7 @@ namespace TVRename
                 }
 
                 GenerateMenu(gridSummary.showRightClickMenu, "Visit thetvdb.com",
-                    seas is null ? RightClickCommands.kVisitTvdbSeries : RightClickCommands.kVisitTvdbSeason);
+                    seas is null ? RightClickCommands.kVisitTvSourceSeries : RightClickCommands.kVisitTvSourceSeason);
 
                 List<string> added = new List<string>();
 

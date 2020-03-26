@@ -654,7 +654,7 @@ namespace TVRename
 
         public override string ToString() => $"TVDB:{TvdbCode}/Maze:{TvMazeCode}/{Name}";
 
-        List<Season> seasons = new List<Season>();
+        private List<Season> seasons = new List<Season>();
         public void AddSeason(Season generateSeason)
         {
             seasons.Add(generateSeason);

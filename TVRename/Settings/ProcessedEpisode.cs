@@ -19,7 +19,8 @@ namespace TVRename
         public ProcessedSeason TheAiredProcessedSeason;
         public ProcessedSeason TheDvdProcessedSeason;
         [NotNull]
-        public string WebsiteUrl => TheTVDB.API.WebsiteEpisodeUrl(this);
+        // ReSharper disable once InconsistentNaming
+        public string TVDBWebsiteUrl => TheTVDB.API.WebsiteEpisodeUrl(this);
 
         public enum ProcessedEpisodeType
         {
@@ -109,6 +110,19 @@ namespace TVRename
         [NotNull]
         public string SeasonNumberAsText => AppropriateSeasonNumber != 0 ? AppropriateSeasonNumber.ToString() : "Special";
 
+        [NotNull]
+        public string WebsiteUrl
+        {
+            get
+            {
+                if (Show.Provider == ShowItem.ProviderType.TheTVDB)
+                {
+                    return TVDBWebsiteUrl;
+                }
+
+                return LinkUrl;
+            }
+        }
         [NotNull]
         public string EpNumsAsString()
         {

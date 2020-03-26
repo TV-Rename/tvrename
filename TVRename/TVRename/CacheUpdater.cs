@@ -28,7 +28,7 @@ namespace TVRename
         private List<Thread> workers;
         private Thread mDownloaderThread;
         private ICollection<SeriesSpecifier> downloadIds;
-        public ConcurrentBag<int> Problems { get; }
+        public ConcurrentBag<ShowNotFoundException> Problems { get; }
         
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private static readonly NLog.Logger Threadslogger = NLog.LogManager.GetLogger("threads");
@@ -37,7 +37,7 @@ namespace TVRename
         {
             DownloadDone = true;
             downloadOk = true;
-            Problems = new ConcurrentBag<int>();
+            Problems = new ConcurrentBag<ShowNotFoundException>();
         }
 
         public void StartBgDownloadThread(bool stopOnError, ICollection<SeriesSpecifier> shows, bool showMsgBox,
@@ -94,14 +94,12 @@ namespace TVRename
 
             WaitForBgDownloadDone();
 
-            //todo - make sure TVmaze is updated too
-
             if (!downloadOk)
             {
-                Logger.Warn(TheTVDB.LocalCache.Instance.LastErrorMessage + TVmaze.LocalCache.Instance.LastErrorMessage);
+                Logger.Warn(TheTVDB.LocalCache.Instance.LastErrorMessage +" "+ TVmaze.LocalCache.Instance.LastErrorMessage);
                 if (showErrorMsgBox)
                 {
-                    CannotConnectForm ccform = new CannotConnectForm("Error while downloading", TheTVDB.LocalCache.Instance.LastErrorMessage + TVmaze.LocalCache.Instance.LastErrorMessage);
+                    CannotConnectForm ccform = new CannotConnectForm("Error while downloading", TheTVDB.LocalCache.Instance.LastErrorMessage + " " + TVmaze.LocalCache.Instance.LastErrorMessage);
                     DialogResult ccresult = ccform.ShowDialog();
                     if (ccresult == DialogResult.Abort)
                     {
@@ -158,6 +156,7 @@ namespace TVRename
                         {
                             return;
                         }
+
                         break;
 
                     case ShowItem.ProviderType.TheTVDB:
@@ -165,6 +164,7 @@ namespace TVRename
                         {
                             return;
                         }
+
                         break;
 
                     default:
@@ -173,7 +173,9 @@ namespace TVRename
             }
             catch (ShowNotFoundException snfe)
             {
-                Problems.Add(snfe.ShowId); //TODO rework for multi source ShowNotFoundException
+                Problems.Add(snfe);
+                //We don't want this to stop all other threads
+                return;
             }
             catch (SourceConsistencyException sce)
             {
@@ -251,6 +253,8 @@ namespace TVRename
 
                 int numWorkers = TVSettings.Instance.ParallelDownloads;
                 Logger.Info("Setting up {0} threads to download information from TheTVDB.com and MVMaze.com", numWorkers);
+                Logger.Info($"Working on {downloadIds.Count(s => s.Provider == ShowItem.ProviderType.TheTVDB)} TVDB and {downloadIds.Count(s => s.Provider == ShowItem.ProviderType.TVmaze)} TV Maze shows.");
+                Logger.Info($"Identified that {downloadIds.Count(s => s.Provider==ShowItem.ProviderType.TheTVDB && (TheTVDB.LocalCache.Instance.GetSeries(s.TvdbSeriesId)?.Dirty??true))} TVDB and {downloadIds.Count(s => s.Provider == ShowItem.ProviderType.TVmaze && (TVmaze.LocalCache.Instance.GetSeries(s.TvMazeSeriesId)?.Dirty ?? true))} TV Maze shows need to be updated");
                 workers = new List<Thread>();
 
                 workerSemaphore = new Semaphore(numWorkers, numWorkers); // allow up to numWorkers working at once
@@ -349,7 +353,22 @@ namespace TVRename
 
         public void ClearProblems()
         {
-            List<SeriesSpecifier> toRemove = (from sid in Problems from ss in downloadIds where ss.TvdbSeriesId == sid select ss).ToList();
+            List<SeriesSpecifier> toRemove = new List<SeriesSpecifier>();
+
+            foreach (ShowNotFoundException sid in Problems)
+            {
+                foreach (SeriesSpecifier ss in downloadIds)
+                {
+                    if (ss.TvdbSeriesId == sid.ShowId && sid.ShowIdProvider == ShowItem.ProviderType.TheTVDB)
+                    {
+                        toRemove.Add(ss);
+                    }
+                    if (ss.TvMazeSeriesId == sid.ShowId && sid.ShowIdProvider == ShowItem.ProviderType.TVmaze)
+                    {
+                        toRemove.Add(ss);
+                    }
+                }
+            }
 
             foreach (SeriesSpecifier s in toRemove)
             {
@@ -363,7 +382,7 @@ namespace TVRename
         {
             while (!Problems.IsEmpty)
             {
-                Problems.TryTake(out int _);
+                Problems.TryTake(out _);
             }
         }
     }

@@ -88,7 +88,7 @@ namespace TVRename
         [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
-            byte[] theData = (si.Provider == ShowItem.ProviderType.TheTVDB)
+            byte[] theData = si.Provider == ShowItem.ProviderType.TheTVDB
                 ? TheTVDB.LocalCache.Instance.GetTvdbDownload(path)
                 : HttpHelper.Download(path,false);
                 

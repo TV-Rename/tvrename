@@ -22,7 +22,7 @@ namespace TVRename
                                          TVSettings.Instance.ReplaceWithBetterQuality ||
                                          TVSettings.Instance.CopyFutureDatedEpsFromSearchFolders;
         [NotNull]
-        protected override string Checkname() => "Cleaned up and files in download directory that are not needed";
+        protected override string CheckName() => "Cleaned up and files in download directory that are not needed";
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> shows, TVDoc.ScanSettings settings)
         {
@@ -283,7 +283,7 @@ namespace TVRename
             }
         }
 
-        private bool? ReviewFile(bool unattended, [NotNull] FileInfo newFile, [NotNull] List<ShowItem> matchingShows, [NotNull] FileInfo existingFile,[NotNull] ProcessedEpisode pep)
+        private bool? ReviewFile(bool unattended, [NotNull] FileInfo newFile, [NotNull] IReadOnlyCollection<ShowItem> matchingShows, [NotNull] FileInfo existingFile,[NotNull] ProcessedEpisode pep)
         {
             FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, newFile);
 

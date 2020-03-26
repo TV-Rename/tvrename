@@ -45,7 +45,7 @@ namespace TVRename
         public string Filename;
 
         protected int ReadAiredSeasonNum; // only use after loading to attach to the correct season!
-        protected int ReadDvdSeasonNum; // only use after loading to attach to the correct season!
+        public int ReadDvdSeasonNum; // only use after loading to attach to the correct season!
         public int SeasonId;
         public int SeriesId;
         public long SrvLastUpdated;
@@ -94,7 +94,7 @@ namespace TVRename
 
         protected Episode([NotNull] SeriesInfo ser,ShowItem.ProviderType type)
         {
-            SetDefaults(ser,(type==ShowItem.ProviderType.TVmaze)?ser.TvMazeCode:ser.TvdbCode);
+            SetDefaults(ser,type==ShowItem.ProviderType.TVmaze?ser.TvMazeCode:ser.TvdbCode);
         }
 
         [CanBeNull]

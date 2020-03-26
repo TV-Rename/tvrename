@@ -232,8 +232,22 @@ namespace TVRename
         public bool IsSpecial => SeasonNumber == 0;
 
         [NotNull]
-        public string WebsiteUrl => TheTVDB.API.WebsiteSeasonUrl(this);
+        // ReSharper disable once InconsistentNaming
+        public string TVDBWebsiteUrl => TheTVDB.API.WebsiteSeasonUrl(this);
 
+        [CanBeNull]
+        public string WebsiteUrl
+        {
+            get
+            {
+                if (Show.Provider == ShowItem.ProviderType.TheTVDB)
+                {
+                    return TVDBWebsiteUrl;
+                }
+
+                return Show.TheSeries()?.Season(SeasonNumber)?.Url; //TODO - IMPROVE HOW TO GET THE SEASON URL
+            }
+        }
         public bool NextEpisodeIs(int episodeNumber, SeasonType order)
         {
             int maxEpNum = Episodes.Values.MaxOrDefault(ep => ep.GetEpisodeNumber(order),0);

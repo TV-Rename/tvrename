@@ -526,7 +526,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static List<ShowItem> FindShows([NotNull] List<string> possibleShowNames, TVDoc doc)
+        public static List<ShowItem> FindShows([NotNull] IEnumerable<string> possibleShowNames, TVDoc doc)
         {
             List<ShowItem> addedShows = new List<ShowItem>();
 

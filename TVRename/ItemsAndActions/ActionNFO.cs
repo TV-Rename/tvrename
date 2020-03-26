@@ -356,7 +356,7 @@ namespace TVRename
             }
         }
 
-        private void UpdateId([NotNull] XElement root, [NotNull] string idType, [NotNull] string defaultState, int idValue)
+        private static void UpdateId([NotNull] XElement root, [NotNull] string idType, [NotNull] string defaultState, int idValue)
         {
             UpdateId(root,idType,defaultState,idValue.ToString());
         }

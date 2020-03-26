@@ -153,34 +153,30 @@ namespace TVRename
         private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private static readonly DateTime WindowsStartDateTime = new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        public static bool SysOpen([CanBeNull] string what) => SysOpen(what, null);
+        public static void SysOpen([CanBeNull] string what) => SysOpen(what, null);
 
-        public static bool SysOpen([CanBeNull] string what, [CanBeNull] string arguments)
+        public static void SysOpen([CanBeNull] string what, [CanBeNull] string arguments)
         {
             if (string.IsNullOrWhiteSpace(what))
             {
-                return false;
+                return;
             }
 
             try
             {
                 Process.Start(what, arguments);
-                return true;
             }
             catch (Win32Exception e)
             {
                 Logger.Warn(e, $"Could not open {what}");
-                return false;
             }
             catch (FileNotFoundException e)
             {
                 Logger.Warn(e, $"Could not open {what}");
-                return false;
             }
             catch (Exception e)
             {
                 Logger.Error(e, $"Could not open {what}");
-                return false;
             }
         }
 
@@ -206,7 +202,7 @@ namespace TVRename
         [NotNull]
         public static string CompareName( this string n)
         {
-            //TODO consider whether merge with above
+            //TODO consider whether we should merge with above to refine characters updated
             n = RemoveDiacritics(n);
             n = Regex.Replace(n, "[^\\w ]", "");
             return SimplifyName(n);

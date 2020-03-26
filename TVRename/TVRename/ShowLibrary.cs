@@ -155,7 +155,7 @@ namespace TVRename
 
                 if (ser is null)
                 {
-                    string source = (si.Provider == ShowItem.ProviderType.TVmaze) ? "TVMaze" : "TVDB";
+                    string source = si.Provider == ShowItem.ProviderType.TVmaze ? "TVMaze" : "TVDB";
                     Logger.Warn($"Asked to generate episodes for {si.ShowName}, but this has not yet been downloaded from {source}");
                     return false;
                 }
@@ -429,7 +429,7 @@ namespace TVRename
             return -1;
         }
 
-        private static void IgnoreEpisodes([NotNull] List<ProcessedEpisode> eis, int fromIndex, int toIndex)
+        private static void IgnoreEpisodes([NotNull] IReadOnlyList<ProcessedEpisode> eis, int fromIndex, int toIndex)
         {
             int ec = eis.Count;
 

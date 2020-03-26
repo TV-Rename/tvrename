@@ -43,9 +43,9 @@ namespace TVRename
     public enum RightClickCommands
     {
         kEpisodeGuideForShow = 1,
-        kVisitTvdbEpisode,
-        kVisitTvdbSeason,
-        kVisitTvdbSeries,
+        kVisitTvSourceEpisode,
+        kVisitTvSourceSeason,
+        kVisitTvSourceSeries,
         kScanSpecificSeries,
         kWhenToWatchSeries,
         kForceRefreshSeries,
@@ -158,6 +158,7 @@ namespace TVRename
             tmrPeriodicScan.Enabled = false;
 
             UpdateSplashStatus(splash, "Filling Shows");
+            mDoc.Library.GenDict();
             FillMyShows();
             UpdateSearchButtons();
             ClearInfoWindows();
@@ -979,7 +980,7 @@ namespace TVRename
             web.Update();
         }
 
-        private static void TvdbFor([CanBeNull] ProcessedEpisode e)
+        private static void TvSourceFor([CanBeNull] ProcessedEpisode e)
         {
             if (e != null)
             {
@@ -987,7 +988,7 @@ namespace TVRename
             }
         }
 
-        private static void TvdbFor([CanBeNull] ProcessedSeason seas)
+        private static void TvSourceFor([CanBeNull] ProcessedSeason seas)
         {
             if (seas != null)
             {
@@ -995,7 +996,7 @@ namespace TVRename
             }
         }
 
-        private static void TvdbFor( [CanBeNull] ShowItem si)
+        private static void TvSourceFor( [CanBeNull] ShowItem si)
         {
             if (si != null)
             {
@@ -1455,7 +1456,11 @@ namespace TVRename
                 {
                     AddRcMenuItem("Episode Guide", RightClickCommands.kEpisodeGuideForShow);
                 }
-                AddRcMenuItem("Visit thetvdb.com", RightClickCommands.kVisitTvdbEpisode);
+
+                string label = ep.Show.Provider == ShowItem.ProviderType.TVmaze
+                    ? "Visit Tv Maze..."
+                    : "Visit thetvdb.com";
+                AddRcMenuItem(label, RightClickCommands.kVisitTvSourceEpisode);
             }
             else if (seas != null)
             {
@@ -1463,12 +1468,18 @@ namespace TVRename
                 {
                     AddRcMenuItem("Episode Guide", RightClickCommands.kEpisodeGuideForShow);
                 }
-                AddRcMenuItem("Visit thetvdb.com", RightClickCommands.kVisitTvdbSeason);
+                string label = seas.Show.Provider == ShowItem.ProviderType.TVmaze
+                    ? "Visit Tv Maze..."
+                    : "Visit thetvdb.com";
+                AddRcMenuItem(label, RightClickCommands.kVisitTvSourceSeason);
             }
             else if (si != null)
             {
                 AddRcMenuItem("Episode Guide", RightClickCommands.kEpisodeGuideForShow);
-                AddRcMenuItem("Visit thetvdb.com", RightClickCommands.kVisitTvdbSeries);
+                string label = si.Provider == ShowItem.ProviderType.TVmaze
+                    ? "Visit Tv Maze..."
+                    : "Visit thetvdb.com";
+                AddRcMenuItem(label, RightClickCommands.kVisitTvSourceSeries);
             }
             else
             {
@@ -1730,21 +1741,21 @@ namespace TVRename
 
                     break;
 
-                case RightClickCommands.kVisitTvdbEpisode: // thetvdb.com
+                case RightClickCommands.kVisitTvSourceEpisode: // thetvdb.com
                     {
-                        TvdbFor(mLastEpClicked);
+                        TvSourceFor(mLastEpClicked);
                         break;
                     }
 
-                case RightClickCommands.kVisitTvdbSeason:
+                case RightClickCommands.kVisitTvSourceSeason:
                     {
-                        TvdbFor(mLastProcessedSeasonClicked);
+                        TvSourceFor(mLastProcessedSeasonClicked);
                         break;
                     }
 
-                case RightClickCommands.kVisitTvdbSeries:
+                case RightClickCommands.kVisitTvSourceSeries:
                     {
-                        TvdbFor(si);
+                        TvSourceFor(si);
                         break;
                     }
                 case RightClickCommands.kScanSpecificSeries:
@@ -2224,6 +2235,7 @@ namespace TVRename
             else
             {
                 txtDLStatusLabel.Text = "Background download: Idle";
+                backgroundDownloadNowToolStripMenuItem.Enabled = true;
             }
 
             if (IsBusy)
@@ -2243,7 +2255,7 @@ namespace TVRename
             lastDlRemaining = n;
         }
 
-        private void SaveCaches()
+        private static void SaveCaches()
         {
             TheTVDB.LocalCache.Instance.SaveCache();
             TVmaze.LocalCache.Instance.SaveCache();
@@ -2823,7 +2835,7 @@ namespace TVRename
             LessBusy();
         }
 
-        internal void ForceRefresh(List<ShowItem> sis, bool unattended)
+        internal void ForceRefresh(IEnumerable<ShowItem> sis, bool unattended)
         {
             mDoc.ForceRefresh(sis,unattended,WindowState==FormWindowState.Minimized);
             FillMyShows();
@@ -3134,16 +3146,21 @@ namespace TVRename
             if (mDoc.ShowProblems.Any() && !unattended)
             {
                 string message = mDoc.ShowProblems.Count>1
-                    ? $"Shows with Id { string.Join(",",mDoc.ShowProblems)} are not found on TVDB. Please update them"
-                    : $"Show with Id {mDoc.ShowProblems.First()} is not found on TVDB. Please Update";
+                    ? $"Shows with Id { string.Join(",",mDoc.ShowProblems.Select(exception => exception.ShowId))} are not found on TVDB and TVMaze. Please update them"
+                    : $"Show with {StringFor(mDoc.ShowProblems.First().ShowIdProvider)} Id {mDoc.ShowProblems.First().ShowId} is not found on {StringFor(mDoc.ShowProblems.First().ErrorProvider)}. Please Update";
 
                 DialogResult result = MessageBox.Show(message,"Series No Longer Found", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
 
                 if (result != DialogResult.Cancel)
                 {
-                    foreach (int seriesId in mDoc.ShowProblems)
+                    foreach (ShowNotFoundException problem in mDoc.ShowProblems)
                     {
-                        ShowItem problemShow = mDoc.Library.GetShowItem(seriesId);
+                        if (mDoc.ShowProblems.Count > 1)
+                        {
+                            MessageBox.Show(problem.Message,"Issue With Series Setup",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                        }
+
+                        ShowItem problemShow = mDoc.Library.GetShowItem(problem.ShowId);
                         if (problemShow != null)
                         {
                             EditShow(problemShow);
@@ -3156,6 +3173,23 @@ namespace TVRename
 
             FillMyShows(); // scanning can download more info to be displayed in my shows
             FillActionList(false);
+        }
+
+        [NotNull]
+        private string StringFor(ShowItem.ProviderType i)
+        {
+            switch (i)
+            {
+                case ShowItem.ProviderType.TVmaze:
+                    return "TV Maze";
+
+                case ShowItem.ProviderType.TheTVDB:
+                    return "The TVDB";
+
+                case ShowItem.ProviderType.libraryDefault:
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(i), i, null);
+            }
         }
 
         [NotNull]

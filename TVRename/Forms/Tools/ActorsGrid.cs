@@ -435,7 +435,7 @@ namespace TVRename
                 Rows[r2] = t2;
             }
 
-            public int RowScore(int r, [CanBeNull] bool[] onlyCols)
+            public int RowScore(int r, [CanBeNull] IReadOnlyList<bool> onlyCols)
             {
                 int t = 0;
                 for (int c = 0; c < DataC; c++)

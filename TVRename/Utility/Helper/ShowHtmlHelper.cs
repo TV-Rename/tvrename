@@ -110,7 +110,7 @@ namespace TVRename
                    </div>
                   </div>
                  </div>");
-            //Ideally we'd have <div class=""row align-items-bottom flex-grow-1""> in there as it looks better, but a bug in IE prevents it from looking correct
+            //Ideally we'd have <div class=""row align-items-bottom flex-grow-1""> in there as it looks better, but a issue in IE prevents it from looking correct
         }
 
         [NotNull]
@@ -229,7 +229,7 @@ namespace TVRename
                 return string.Empty;
             }
 
-            string url = (ei.Show.Provider == ShowItem.ProviderType.TVmaze)
+            string url = ei.Show.Provider == ShowItem.ProviderType.TVmaze
                 ? ei.Filename
                 : TheTVDB.API.GetImageURL(ei.Filename);
 
@@ -274,7 +274,7 @@ namespace TVRename
             string tvdbButton = CreateButton(seasonLink, "TVDB.com", "View on TVDB");
             string episodeText = s.Episodes.Count >0 ? $"<br/><small class=\"text-muted\">{s.Episodes.Count} Episodes</small>" :string.Empty;
 
-            string seasonOverViewHTML = si.TheSeries()?.Season(s.SeasonNumber)?.SeasonName.HasValue() ??false
+            string seasonOverViewHtml = si.TheSeries()?.Season(s.SeasonNumber)?.SeasonName.HasValue() ??false
                 ?$"<h2>{si.TheSeries()?.Season(s.SeasonNumber)?.SeasonName}</h3><p>{si.TheSeries()?.Season(s.SeasonNumber)?.SeasonDescription}</p>"
                 :string.Empty;
 
@@ -283,7 +283,7 @@ namespace TVRename
 				<br/>
                 <div class=""row"">
                     <div class=""col-8""><h1><A HREF=""{showLink}"">{si.ShowName}</A> - <A HREF=""{seasonLink}"">{SeasonName(si, s.SeasonNumber)}</a></h1>
-                    {seasonOverViewHTML}
+                    {seasonOverViewHtml}
                     </div>
                     <div class=""col-4 text-right"">
                         {explorerButton}
@@ -320,7 +320,7 @@ namespace TVRename
         private static void AppendEpisode([NotNull] this StringBuilder sb, [NotNull] ProcessedEpisode ep, [CanBeNull] IReadOnlyCollection<FileInfo> fl,Color backgroundColour)
         {
             string stars = StarRating(ep.EpisodeRating);
-            string tvdbEpisodeUrl = (ep.Show.Provider == ShowItem.ProviderType.TheTVDB) ? ep.WebsiteUrl : string.Empty;
+            string tvdbEpisodeUrl = ep.Show.Provider == ShowItem.ProviderType.TheTVDB ? ep.TVDBWebsiteUrl : string.Empty;
             bool ratingIsNumber = float.TryParse(ep.EpisodeRating, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out float rating);
             string siteRating = ratingIsNumber && rating > 0
                 ? rating + "/10" + AddRatingCount(ep.SiteRatingCount??0)

@@ -110,7 +110,7 @@ namespace TVRename.TheTVDB
             System.Diagnostics.Debug.Assert(cache != null);
             cacheFile = cache;
 
-            LastErrorMessage = "";
+            LastErrorMessage = string.Empty;
             IsConnected = false;
             extraEpisodes = new ConcurrentDictionary<int, ExtraEp>();
             removeEpisodeIds = new ConcurrentDictionary<int, ExtraEp>();
@@ -462,7 +462,7 @@ namespace TVRename.TheTVDB
                     }
                 }
 
-                LastErrorMessage = "";
+                LastErrorMessage = string.Empty;
 
                 return false;
             }
@@ -1279,7 +1279,8 @@ namespace TVRename.TheTVDB
                     if (API.TvdbIsUp() && !CanFindEpisodesFor(code, requestedLanguageCode))
                     {
                         LastErrorMessage = ex.Message;
-                        throw new ShowNotFoundException(code);
+                        string msg = $"Show with TVDB Id {code} is no longer found on TVDB. Please Update";
+                        throw new ShowNotFoundException(code,msg,ShowItem.ProviderType.TheTVDB,ShowItem.ProviderType.TheTVDB);
                     }
                 }
 
@@ -1384,7 +1385,7 @@ namespace TVRename.TheTVDB
             si.BannersLoaded = true;
         }
 
-        private static void ProcessBannerResponses(int code, SeriesInfo si, int languageId, string languageCode, [NotNull] List<JObject> bannerResponses,
+        private static void ProcessBannerResponses(int code, SeriesInfo si, int languageId, string languageCode, [NotNull] IEnumerable<JObject> bannerResponses,
             ICollection<int> latestBannerIds)
         {
             foreach (JObject response in bannerResponses)

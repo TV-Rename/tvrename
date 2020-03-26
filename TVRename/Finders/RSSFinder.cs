@@ -21,7 +21,7 @@ namespace TVRename
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.search;
         [NotNull]
-        protected override string Checkname() => "Looked in the listed RSS URLs for download links for the missing files";
+        protected override string CheckName() => "Looked in the listed RSS URLs for download links for the missing files";
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
         {

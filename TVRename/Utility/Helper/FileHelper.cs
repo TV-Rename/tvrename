@@ -156,7 +156,7 @@ namespace TVRename
 
         public static string UrlPathFullName([NotNull] this FileInfo baseFile)
         {
-            //TODO
+            //TODO - Should we remove or add characters here to appear in the export files?
             return baseFile.FullName;
         }
 

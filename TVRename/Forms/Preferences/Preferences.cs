@@ -1816,20 +1816,5 @@ namespace TVRename
         {
             cmbDefShowLocation.Enabled = cbDefShowUseDefLocation.Checked;
         }
-
-        private void Label20_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Label21_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void TxtTVDBParallelDownloads_TextChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }

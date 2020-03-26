@@ -136,7 +136,7 @@ namespace TVRename
             }
         }
 
-        private static bool EpisodesMatch([NotNull] ProcessedEpisode pep, ProcessedEpisode comparePep)
+        private static bool EpisodesMatch([NotNull] Episode pep, Episode comparePep)
         {
             return pep.FirstAired.HasValue && comparePep.FirstAired.HasValue &&
                    pep.FirstAired == comparePep.FirstAired && pep.EpisodeId < comparePep.EpisodeId;

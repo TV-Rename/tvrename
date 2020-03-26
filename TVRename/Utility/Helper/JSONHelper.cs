@@ -100,7 +100,7 @@ namespace TVRename
 
         public static DateTime? ParseFirstAired([CanBeNull] string theDate)
         {
-            if (DateTime.TryParseExact(theDate, new string[] { "yyyy-MM-dd", "yyyy-MM-d" }, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime output))
+            if (DateTime.TryParseExact(theDate, new[] { "yyyy-MM-dd", "yyyy-MM-d" }, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime output))
             {
                 return output;
             }

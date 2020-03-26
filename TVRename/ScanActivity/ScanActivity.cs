@@ -23,7 +23,7 @@ namespace TVRename
 
         protected ScanActivity(TVDoc doc) => MDoc = doc;
 
-        protected abstract string Checkname();
+        protected abstract string CheckName();
         public abstract bool Active();
         protected abstract void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings);
 
@@ -58,7 +58,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                LOGGER.Fatal(e, $"Failed to run Scan for {Checkname()}");
+                LOGGER.Fatal(e, $"Failed to run Scan for {CheckName()}");
             }
             finally
             {
@@ -76,7 +76,7 @@ namespace TVRename
         {
             try
             {
-                LOGGER.Info($"Summary of known actions after check: {Checkname()}");
+                LOGGER.Info($"Summary of known actions after check: {CheckName()}");
                 LOGGER.Info($"   Missing Items: {MDoc.TheActionList.MissingItems().ToList().Count}");
                 LOGGER.Info($"   Copy/Move Items: {MDoc.TheActionList.CopyMoveItems().ToList().Count}");
                 LOGGER.Info($"   Total Actions: {MDoc.TheActionList.Actions().ToList().Count}");

@@ -19,7 +19,7 @@ namespace TVRename
         {
         }
         [NotNull]
-        protected override string Checkname() => "Looked in the library for any new shows to be added (bulk add)";
+        protected override string CheckName() => "Looked in the library for any new shows to be added (bulk add)";
 
         protected override void DoCheck([NotNull] SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
