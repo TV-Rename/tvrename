@@ -109,7 +109,6 @@ namespace TVRename
         private ProcessedEpisode mLastEpClicked;
         private ProcessedEpisode mLastEpClickedWtw;
         private ProcessedEpisode mLastEpClickedScan;
-        private readonly string mLastFolderClicked;
         private ProcessedSeason mLastProcessedSeasonClicked;
         private List<ShowItem> mLastShowsClicked;
 
@@ -2102,15 +2101,6 @@ namespace TVRename
             else
             {
                 throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        private void folderRightClickMenu_ItemClicked(object sender,
-            [NotNull] ToolStripItemClickedEventArgs e)
-        {
-            if ((int) e.ClickedItem.Tag == 0)
-            {
-                Helpers.SysOpen(mLastFolderClicked);
             }
         }
 

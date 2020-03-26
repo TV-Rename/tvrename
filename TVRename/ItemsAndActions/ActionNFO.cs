@@ -57,7 +57,7 @@ namespace TVRename
             {
                 return new ActionOutcome(ex);
             }
-            catch (XmlException xex)
+            catch (XmlException)
             {
                 //Assume that the file needs to be recreated
                 CreateBlankFile();

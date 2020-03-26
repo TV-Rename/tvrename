@@ -13,8 +13,6 @@ namespace TVRename.TVmaze
     internal static class API
     {
         // ReSharper disable once ConvertToConstant.Local
-        private static readonly string WebsiteRoot = "https://tvmaze.com";
-        // ReSharper disable once ConvertToConstant.Local
         // ReSharper disable once InconsistentNaming
         private static readonly string APIRoot = "http://api.tvmaze.com";
 
@@ -104,7 +102,7 @@ namespace TVRename.TVmaze
             {
                 return HttpHelper.HttpGetRequestWithRetry(APIRoot + "/singlesearch/shows?q=girls", 5, 1).HasValues;
             }
-            catch (WebException ex)
+            catch (WebException)
             {
                 return false;
             }

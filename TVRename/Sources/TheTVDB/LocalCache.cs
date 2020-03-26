@@ -286,7 +286,7 @@ namespace TVRename.TheTVDB
                     }
                 }
             }
-            catch (SourceConnectivityException ex)
+            catch (SourceConnectivityException)
             {
                 issues.Add($"Failed to compare {si.Name} as we could not download the series details.");
             }
