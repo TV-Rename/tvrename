@@ -122,6 +122,17 @@ namespace TVRename
             return e;
         }
 
+        public static XElement GetOrCreateElement([NotNull] this XElement root, string elementName, string name, string value)
+        {
+            if (root.Elements(elementName).Any(el => el.HasAttribute(name,value)))
+            {
+                return root.Elements(elementName).Single(el => el.HasAttribute(name,value));
+            }
+            XElement e = new XElement(elementName);
+            root.Add(e);
+            return e;
+        }
+
         public static void WriteAttributeToXml([NotNull] this XmlWriter writer, [NotNull] string attributeName, DateTime?  value)
         {
             writer.WriteStartAttribute(attributeName);

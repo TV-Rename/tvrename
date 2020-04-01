@@ -286,7 +286,7 @@ namespace TVRename
         {
             XElement ratingsNode = root.GetOrCreateElement("ratings");
 
-            XElement ratingNode = ratingsNode.GetOrCreateElement("rating");
+            XElement ratingNode = ratingsNode.GetOrCreateElement("rating","name","tvdb");
             ratingNode.UpdateAttribute("name", "tvdb");
 
             ratingNode.UpdateAttribute("max", "10");
