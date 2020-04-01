@@ -176,7 +176,7 @@ namespace TVRename.TVmaze
                             {
                                 if (x.SrvLastUpdated < showUpdateTime.Value)
                                 {
-                                    Logger.Info($"Identified that show with TVMaze Id {showId} {x.Name} should be updated as update time is now {showUpdateTime.Value} and cache has {x.SrvLastUpdated}.");
+                                    Logger.Info($"Identified that show with TVMaze Id {showId} {x.Name} should be updated as update time is now {showUpdateTime.Value} and cache has {x.SrvLastUpdated}. ie {Helpers.FromUnixTime(showUpdateTime.Value).ToLocalTime()} to {Helpers.FromUnixTime(x.SrvLastUpdated).ToLocalTime()}.");
                                     x.Dirty = true;
                                 }
                             }
