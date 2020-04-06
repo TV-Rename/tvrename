@@ -325,6 +325,8 @@ namespace TVRename
             s.runStartupCheck = chkScanOnStartup.Checked;
             s.runPeriodicCheck = chkScheduledScan.Checked;
             s.periodCheckHours = int.Parse(domainUpDown1.SelectedItem?.ToString() ?? "1");
+            s.periodUpdateCacheHours = int.Parse(domainUpDown2.SelectedItem?.ToString() ?? "1");
+
             s.RemoveDownloadDirectoriesFiles = cbCleanUpDownloadDir.Checked;
             s.DeleteShowFromDisk = cbDeleteShowFromDisk.Checked;
             s.DoBulkAddInScan = cbScanIncludesBulkAdd.Checked;
@@ -826,6 +828,7 @@ namespace TVRename
             chkScheduledScan.Checked = s.RunPeriodicCheck();
             chkScanOnStartup.Checked = s.RunOnStartUp();
             SetDropdownValue(domainUpDown1, s.periodCheckHours);
+            SetDropdownValue(domainUpDown2, s.periodUpdateCacheHours);
             cbCleanUpDownloadDir.Checked = s.RemoveDownloadDirectoriesFiles;
             cbDeleteShowFromDisk.Checked = s.DeleteShowFromDisk;
             cbCopyFutureDatedEps.Checked = s.CopyFutureDatedEpsFromSearchFolders;
@@ -1549,7 +1552,7 @@ namespace TVRename
             cmDefaults.Show(pt);
         }
 
-        private void domainUpDown1_KeyDown(object sender, [NotNull] KeyEventArgs e)
+        private void SuppressKeyPress(object _, [NotNull] KeyEventArgs e)
         {
             e.SuppressKeyPress = true;
         }

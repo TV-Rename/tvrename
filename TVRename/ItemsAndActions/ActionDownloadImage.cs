@@ -88,22 +88,22 @@ namespace TVRename
         [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
-            byte[] theData = si.Provider == ShowItem.ProviderType.TheTVDB
-                ? TheTVDB.LocalCache.Instance.GetTvdbDownload(path)
-                : HttpHelper.Download(path,false);
-                
-            if (theData is null || theData.Length == 0)
-            {
-                return new ActionOutcome("Unable to download " + path);
-            }
-
-            if (shrinkLargeMede8ErImage)
-            {
-                theData = ConvertBytes(theData);
-            }
-
             try
             {
+                byte[] theData = si.Provider == ShowItem.ProviderType.TheTVDB
+                    ? TheTVDB.LocalCache.Instance.GetTvdbDownload(path)
+                    : HttpHelper.Download(path,false);
+                
+                if (theData is null || theData.Length == 0)
+                {
+                    return new ActionOutcome("Unable to download " + path);
+                }
+
+                if (shrinkLargeMede8ErImage)
+                {
+                    theData = ConvertBytes(theData);
+                }
+
                 System.IO.FileStream fs = new System.IO.FileStream(destination.FullName, System.IO.FileMode.Create);
                 fs.Write(theData, 0, theData.Length);
                 fs.Close();

@@ -311,6 +311,7 @@ namespace TVRename
         public readonly TidySettings Tidyup = new TidySettings();
         public bool runPeriodicCheck = false;
         public int periodCheckHours = 1;
+        public int periodUpdateCacheHours = 1;
         public bool runStartupCheck = false;
         public bool DoBulkAddInScan = false;
         public PreviouslySeenEpisodes PreviouslySeenEpisodes;
@@ -478,6 +479,7 @@ namespace TVRename
             writer.WriteElement("StartupScan", runStartupCheck);
             writer.WriteElement("PeriodicScan", runPeriodicCheck);
             writer.WriteElement("PeriodicScanHours", periodCheckHours);
+            writer.WriteElement("PeriodicUpdateCacheHours", periodUpdateCacheHours);
             writer.WriteElement("RemoveDownloadDirectoriesFiles", RemoveDownloadDirectoriesFiles);
             writer.WriteElement("DoBulkAddInScan", DoBulkAddInScan);
             writer.WriteElement("DeleteShowFromDisk", DeleteShowFromDisk);
@@ -638,6 +640,7 @@ namespace TVRename
 
         public bool RunPeriodicCheck() => runPeriodicCheck;
         public int PeriodicCheckPeriod() => (int)periodCheckHours.Hours().TotalMilliseconds;
+        public int PeriodicUpdateCachePeriod() => (int)periodUpdateCacheHours.Hours().TotalMilliseconds;
         public bool RunOnStartUp() => runStartupCheck;
 
         public string GetSeasonSearchTermsString() => searchSeasonWordsString;
@@ -1273,6 +1276,7 @@ namespace TVRename
             runStartupCheck = xmlSettings.ExtractBool("StartupScan",false);
             runPeriodicCheck = xmlSettings.ExtractBool("PeriodicScan",false);
             periodCheckHours = xmlSettings.ExtractInt("PeriodicScanHours",1);
+            periodUpdateCacheHours = xmlSettings.ExtractInt("PeriodicUpdateCacheHours", 1);
             RemoveDownloadDirectoriesFiles = xmlSettings.ExtractBool("RemoveDownloadDirectoriesFiles",false);
             DoBulkAddInScan = xmlSettings.ExtractBool("DoBulkAddInScan",false);
             DeleteShowFromDisk = xmlSettings.ExtractBool("DeleteShowFromDisk",true);

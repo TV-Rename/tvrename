@@ -337,8 +337,14 @@ namespace TVRename
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
             this.tpDataSources = new System.Windows.Forms.TabPage();
+            this.txtParallelDownloads = new System.Windows.Forms.TextBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
             this.groupBox21 = new System.Windows.Forms.GroupBox();
             this.groupBox20 = new System.Windows.Forms.GroupBox();
+            this.label37 = new System.Windows.Forms.Label();
+            this.label38 = new System.Windows.Forms.Label();
+            this.tbPercentDirty = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.cbLanguages = new System.Windows.Forms.ComboBox();
             this.label33 = new System.Windows.Forms.Label();
@@ -371,12 +377,9 @@ namespace TVRename
             this.txtSpecialsFolderName = new System.Windows.Forms.TextBox();
             this.label47 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
-            this.txtParallelDownloads = new System.Windows.Forms.TextBox();
-            this.label21 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.label37 = new System.Windows.Forms.Label();
-            this.label38 = new System.Windows.Forms.Label();
-            this.tbPercentDirty = new System.Windows.Forms.TextBox();
+            this.label40 = new System.Windows.Forms.Label();
+            this.domainUpDown2 = new System.Windows.Forms.DomainUpDown();
+            this.label57 = new System.Windows.Forms.Label();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -705,7 +708,7 @@ namespace TVRename
             this.domainUpDown1.Text = "1";
             this.toolTip1.SetToolTip(this.domainUpDown1, "If checked the system will automatically scan and complete actions on a periodic " +
         "schedule");
-            this.domainUpDown1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.domainUpDown1_KeyDown);
+            this.domainUpDown1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SuppressKeyPress);
             // 
             // cmDefaults
             // 
@@ -3782,6 +3785,9 @@ namespace TVRename
             // 
             // tpDataSources
             // 
+            this.tpDataSources.Controls.Add(this.label57);
+            this.tpDataSources.Controls.Add(this.label40);
+            this.tpDataSources.Controls.Add(this.domainUpDown2);
             this.tpDataSources.Controls.Add(this.txtParallelDownloads);
             this.tpDataSources.Controls.Add(this.label21);
             this.tpDataSources.Controls.Add(this.label20);
@@ -3797,9 +3803,34 @@ namespace TVRename
             this.tpDataSources.Text = "Data Sources";
             this.tpDataSources.UseVisualStyleBackColor = true;
             // 
+            // txtParallelDownloads
+            // 
+            this.txtParallelDownloads.Location = new System.Drawing.Point(95, 40);
+            this.txtParallelDownloads.Name = "txtParallelDownloads";
+            this.txtParallelDownloads.Size = new System.Drawing.Size(28, 20);
+            this.txtParallelDownloads.TabIndex = 51;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(9, 43);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(82, 13);
+            this.label21.TabIndex = 50;
+            this.label21.Text = "&Download up to";
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(129, 43);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(146, 13);
+            this.label20.TabIndex = 52;
+            this.label20.Text = "shows/images simultaneously";
+            // 
             // groupBox21
             // 
-            this.groupBox21.Location = new System.Drawing.Point(12, 177);
+            this.groupBox21.Location = new System.Drawing.Point(12, 211);
             this.groupBox21.Name = "groupBox21";
             this.groupBox21.Size = new System.Drawing.Size(394, 100);
             this.groupBox21.TabIndex = 49;
@@ -3813,12 +3844,37 @@ namespace TVRename
             this.groupBox20.Controls.Add(this.tbPercentDirty);
             this.groupBox20.Controls.Add(this.label10);
             this.groupBox20.Controls.Add(this.cbLanguages);
-            this.groupBox20.Location = new System.Drawing.Point(12, 71);
+            this.groupBox20.Location = new System.Drawing.Point(12, 105);
             this.groupBox20.Name = "groupBox20";
             this.groupBox20.Size = new System.Drawing.Size(394, 100);
             this.groupBox20.TabIndex = 48;
             this.groupBox20.TabStop = false;
             this.groupBox20.Text = "TheTVDB";
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(10, 49);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(114, 13);
+            this.label37.TabIndex = 23;
+            this.label37.Text = "Refresh entire series  if";
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Location = new System.Drawing.Point(162, 49);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(132, 13);
+            this.label38.TabIndex = 25;
+            this.label38.Text = "% of episodes are updated";
+            // 
+            // tbPercentDirty
+            // 
+            this.tbPercentDirty.Location = new System.Drawing.Point(127, 46);
+            this.tbPercentDirty.Name = "tbPercentDirty";
+            this.tbPercentDirty.Size = new System.Drawing.Size(28, 20);
+            this.tbPercentDirty.TabIndex = 24;
             // 
             // label10
             // 
@@ -4183,55 +4239,46 @@ namespace TVRename
             this.label13.TabIndex = 27;
             this.label13.Text = "&Specials folder name:";
             // 
-            // txtParallelDownloads
+            // label40
             // 
-            this.txtParallelDownloads.Location = new System.Drawing.Point(95, 40);
-            this.txtParallelDownloads.Name = "txtParallelDownloads";
-            this.txtParallelDownloads.Size = new System.Drawing.Size(28, 20);
-            this.txtParallelDownloads.TabIndex = 51;
+            this.label40.AutoSize = true;
+            this.label40.Location = new System.Drawing.Point(161, 74);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(33, 13);
+            this.label40.TabIndex = 54;
+            this.label40.Text = "hours";
+            this.toolTip1.SetToolTip(this.label40, "If checked the system will automatically scan and complete actions on a periodic " +
+        "schedule");
             // 
-            // label21
+            // domainUpDown2
             // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(9, 43);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(82, 13);
-            this.label21.TabIndex = 50;
-            this.label21.Text = "&Download up to";
+            this.domainUpDown2.Items.Add("96");
+            this.domainUpDown2.Items.Add("48");
+            this.domainUpDown2.Items.Add("24");
+            this.domainUpDown2.Items.Add("12");
+            this.domainUpDown2.Items.Add("8");
+            this.domainUpDown2.Items.Add("6");
+            this.domainUpDown2.Items.Add("5");
+            this.domainUpDown2.Items.Add("4");
+            this.domainUpDown2.Items.Add("3");
+            this.domainUpDown2.Items.Add("2");
+            this.domainUpDown2.Items.Add("1");
+            this.domainUpDown2.Location = new System.Drawing.Point(117, 72);
+            this.domainUpDown2.Name = "domainUpDown2";
+            this.domainUpDown2.Size = new System.Drawing.Size(40, 20);
+            this.domainUpDown2.TabIndex = 53;
+            this.domainUpDown2.Text = "1";
+            this.toolTip1.SetToolTip(this.domainUpDown2, "How often should TV Rename update itself from upstream data sources?");
+            this.domainUpDown2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SuppressKeyPress);
             // 
-            // label20
+            // label57
             // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(129, 43);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(146, 13);
-            this.label20.TabIndex = 52;
-            this.label20.Text = "shows/images simultaneously";
-            // 
-            // label37
-            // 
-            this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(10, 49);
-            this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(114, 13);
-            this.label37.TabIndex = 23;
-            this.label37.Text = "Refresh entire series  if";
-            // 
-            // label38
-            // 
-            this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(162, 49);
-            this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(132, 13);
-            this.label38.TabIndex = 25;
-            this.label38.Text = "% of episodes are updated";
-            // 
-            // tbPercentDirty
-            // 
-            this.tbPercentDirty.Location = new System.Drawing.Point(127, 46);
-            this.tbPercentDirty.Name = "tbPercentDirty";
-            this.tbPercentDirty.Size = new System.Drawing.Size(28, 20);
-            this.tbPercentDirty.TabIndex = 24;
+            this.label57.AutoSize = true;
+            this.label57.Location = new System.Drawing.Point(9, 74);
+            this.label57.Name = "label57";
+            this.label57.Size = new System.Drawing.Size(104, 13);
+            this.label57.TabIndex = 55;
+            this.label57.Text = "Update cache every";
             // 
             // Preferences
             // 
@@ -4689,5 +4736,8 @@ namespace TVRename
         private System.Windows.Forms.Label label37;
         private System.Windows.Forms.Label label38;
         private System.Windows.Forms.TextBox tbPercentDirty;
+        private System.Windows.Forms.Label label57;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.DomainUpDown domainUpDown2;
     }
 }

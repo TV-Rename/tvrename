@@ -183,7 +183,10 @@ namespace TVRename.TheTVDB
         private void Say(string s)
         {
             CurrentDLTask = s;
-            Logger.Info("Status on screen updated: {0}", s);
+            if (s.HasValue())
+            {
+                Logger.Info("Status on screen updated: {0}", s);
+            }
         }
 
         public void UpdatesDoneOk()
@@ -1627,16 +1630,9 @@ namespace TVRename.TheTVDB
 
             try
             {
-                Episode e;
-
-                if (seriesDataDefaultLang !=null)
-                {
-                    e = new Episode(seriesId, (JObject)jsonResponseData, (JObject)seriesDataDefaultLang);
-                }
-                else
-                {
-                    e = new Episode(seriesId, (JObject)jsonResponseData);
-                }
+                Episode e = seriesDataDefaultLang !=null
+                    ? new Episode(seriesId, (JObject)jsonResponseData, (JObject)seriesDataDefaultLang)
+                    : new Episode(seriesId, (JObject)jsonResponseData);
 
                 if (e.Ok())
                 {

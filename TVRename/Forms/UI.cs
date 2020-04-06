@@ -22,7 +22,6 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
-using Humanizer;
 using JetBrains.Annotations;
 using TVRename.Forms;
 using TVRename.Forms.Tools;
@@ -247,8 +246,6 @@ namespace TVRename
             SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(defaultText));
         }
 
-        private static int BgdlLongInterval() => (int) 1.Hours().TotalMilliseconds; // one hour
-
         private void MoreBusy() => Interlocked.Increment(ref busy);
 
         private void LessBusy() => Interlocked.Decrement(ref busy);
@@ -260,6 +257,11 @@ namespace TVRename
             if (a.Hide)
             {
                 WindowState = FormWindowState.Minimized;
+            }
+
+            if (a.QuickUpdate)
+            {
+                mDoc.DoDownloadsFG(UNATTENDED, WindowState == FormWindowState.Minimized);
             }
 
             if (a.ForceUpdate)
@@ -2290,7 +2292,9 @@ namespace TVRename
                 return;
             }
 
-            BGDownloadTimer.Interval = BgdlLongInterval(); // after first time (10 seconds), put up to 60 minutes
+            // after first time (10 seconds), put up to user defined period (by default 60 minutes)
+            BGDownloadTimer.Interval = TVSettings.Instance.PeriodicUpdateCachePeriod();
+            
             BGDownloadTimer.Start();
 
             if (TVSettings.Instance.BGDownload && mDoc.DownloadsRemaining() == 0)
@@ -3070,52 +3074,47 @@ namespace TVRename
 
         private void UI_KeyDown(object sender, [NotNull] KeyEventArgs e)
         {
-            int t = -1;
-            if (e.Control && e.KeyCode == Keys.D1)
+            if (!e.Control)
             {
-                t = 0;
+                return;
             }
-            else if (e.Control && e.KeyCode == Keys.D2)
-            {
-                t = 1;
-            }
-            else if (e.Control && e.KeyCode == Keys.D3)
-            {
-                t = 2;
-            }
-            else if (e.Control && e.KeyCode == Keys.D4)
-            {
-                t = 3;
-            }
-            else if (e.Control && e.KeyCode == Keys.D5)
-            {
-                t = 4;
-            }
-            else if (e.Control && e.KeyCode == Keys.D6)
-            {
-                t = 5;
-            }
-            else if (e.Control && e.KeyCode == Keys.D7)
-            {
-                t = 6;
-            }
-            else if (e.Control && e.KeyCode == Keys.D8)
-            {
-                t = 7;
-            }
-            else if (e.Control && e.KeyCode == Keys.D9)
-            {
-                t = 8;
-            }
-            else if (e.Control && e.KeyCode == Keys.D0)
-            {
-                t = 9;
-            }
+
+            int t = GetIndex(e.KeyCode);
 
             if (t >= 0 && t < tabControl1.TabCount)
             {
                 tabControl1.SelectedIndex = t;
                 e.Handled = true;
+            }
+        }
+
+        private static int GetIndex(Keys e)
+        {
+            // ReSharper disable once SwitchStatementMissingSomeCases
+            switch (e)
+            {
+                case Keys.D1:
+                    return 0;
+                case Keys.D2:
+                    return 1;
+                case Keys.D3:
+                    return 2;
+                case Keys.D4:
+                    return 3;
+                case Keys.D5:
+                    return 4;
+                case Keys.D6:
+                    return 5;
+                case Keys.D7:
+                    return 6;
+                case Keys.D8:
+                    return 7;
+                case Keys.D9:
+                    return 8;
+                case Keys.D0:
+                    return 9;
+                default:
+                    return -1;
             }
         }
 
