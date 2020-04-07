@@ -137,7 +137,7 @@ namespace TVRename
             this.bnActionOptions = new System.Windows.Forms.Button();
             this.bnActionWhichSearch = new System.Windows.Forms.Button();
             this.bnActionBTSearch = new System.Windows.Forms.Button();
-            this.lvAction = new TVRename.MyListView();
+            this.lvAction = new MyListView();
             this.columnHeader48 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader49 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader51 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -156,7 +156,7 @@ namespace TVRename
             this.bnWhenToWatchCheck = new System.Windows.Forms.Button();
             this.txtWhenToWatchSynopsis = new System.Windows.Forms.TextBox();
             this.calCalendar = new System.Windows.Forms.MonthCalendar();
-            this.lvWhenToWatch = new TVRename.ListViewFlickerFree();
+            this.lvWhenToWatch = new ListViewFlickerFree();
             this.columnHeader29 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader30 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader31 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
