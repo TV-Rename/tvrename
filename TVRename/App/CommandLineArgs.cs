@@ -92,6 +92,7 @@ namespace TVRename
             output.AppendLine("/recentscan will scan recent shows: http://www.tvrename.com/userguide#scan");
             output.AppendLine("/doall Tell TV Rename execute all the actions it can.");
             output.AppendLine("/quit Tell a running TV Rename session to exit.");
+            output.AppendLine("/save Tell a running TV Rename session to save its caches.");
             output.AppendLine("");
             output.AppendLine("/hide will hide the UI for all UI elements");
             output.AppendLine("/unattended will hide the UI for all blocking UI elements");

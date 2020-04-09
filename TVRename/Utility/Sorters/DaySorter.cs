@@ -21,12 +21,12 @@ namespace TVRename
 
                 for (int i = 0; i < 7; i++)
                 {
-                    if ((now + new TimeSpan(i, 0, 0, 0)).ToString("ddd") == t1)
+                    if (now.AddDays(i).ToString("ddd") == t1)
                     {
                         d1 = i;
                     }
 
-                    if ((now + new TimeSpan(i, 0, 0, 0)).ToString("ddd") == t2)
+                    if (now.AddDays(i).ToString("ddd") == t2)
                     {
                         d2 = i;
                     }

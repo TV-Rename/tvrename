@@ -37,6 +37,16 @@ namespace TVRename
         /// </value>
         public static bool OnMono => Type.GetType("Mono.Runtime") != null;
 
+        public static bool In<T>(this T item, [NotNull] params T[] items)
+        {
+            if (items == null)
+            {
+                throw new ArgumentNullException("items");
+            }
+
+            return items.Contains(item);
+        }
+
         [NotNull]
         public static string PrettyPrint(this TVSettings.ScanType st)
         {

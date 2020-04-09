@@ -27,6 +27,7 @@ using TVRename.Forms;
 using TVRename.Forms.Tools;
 using TVRename.Forms.Utilities;
 using TVRename.Ipc;
+using TVRename.Properties;
 using DataFormats = System.Windows.Forms.DataFormats;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
@@ -97,6 +98,7 @@ namespace TVRename
 
         private MyListView lvAction;
         private List<string> mFoldersToOpen;
+        private TVSettings.ScanType uiScanType; 
         private int mInternalChange;
         private List<FileInfo> mLastFl;
         private Point mLastNonMaximizedLocation;
@@ -310,13 +312,14 @@ namespace TVRename
 
         private void UpdateSearchButtons()
         {
-            string name = TVDoc.GetSearchers().Name(TVSettings.Instance.TheSearchers.CurrentSearchNum());
+            string name = TVDoc.GetSearchers().CurrentSearch.Name;
+            bool enabled = name.HasValue();
 
-            bnWTWBTSearch.Enabled = !string.IsNullOrWhiteSpace(name);
-            bnActionBTSearch.Enabled = !string.IsNullOrWhiteSpace(name);
+            btnActionBTSearch.Enabled = enabled;
+            btnWTWBTSearch.Enabled = enabled;
 
-            bnWTWBTSearch.Text = UseCustom(lvWhenToWatch) ? "Search" : name;
-            bnActionBTSearch.Text = UseCustom(lvAction) ? "Search" : name;
+            btnWTWBTSearch.Text = UseCustom(lvWhenToWatch) ? "Search" : name;
+            btnActionBTSearch.Text = UseCustom(lvAction) ? "Search" : name;
 
             FillEpGuideHtml();
         }
@@ -365,7 +368,7 @@ namespace TVRename
             {
                 Size = new Size(16, 16),
                 Cursor = Cursors.Default,
-                Image = Properties.Resources.DeleteSmall,
+                Image = Resources.DeleteSmall,
                 Name = "Clear"
             };
 
@@ -382,13 +385,6 @@ namespace TVRename
             Show();
             UI_LocationChanged(null, null);
             UI_SizeChanged(null, null);
-
-            ToolTip tt = new ToolTip();
-            tt.SetToolTip(btnActionQuickScan,
-                "Scan shows with missing recent aired episodes and and shows that match files in the search folders");
-
-            tt.SetToolTip(bnActionRecentCheck, "Scan shows with recent aired episodes");
-            tt.SetToolTip(bnActionCheck, "Scan all shows");
 
             backgroundDownloadToolStripMenuItem.Checked = TVSettings.Instance.BGDownload;
             offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
@@ -542,7 +538,7 @@ namespace TVRename
             splitContainer1.Panel2Collapsed = bool.Parse(x.Attribute("HTMLCollapsed")?.Value ?? "false");
             if (splitContainer1.Panel2Collapsed)
             {
-                bnHideHTMLPanel.ImageKey = "FillLeft.bmp";
+                btnHideHTMLPanel.Image = Resources.FillLeft;
             }
         }
 
@@ -727,42 +723,17 @@ namespace TVRename
             }
         }
 
-        [NotNull]
-        private ContextMenuStrip BuildSearchMenu()
+        private static void ChooseSiteMenu([NotNull] ToolStripSplitButton btn)
         {
-            menuSearchSites.Items.Clear();
-            for (int i = 0; i < TVDoc.GetSearchers().Count(); i++)
+            btn.DropDownItems.Clear();
+
+            foreach (SearchEngine search in TVDoc.GetSearchers().Where(engine => engine.Name.HasValue()))
             {
-                string name = TVDoc.GetSearchers().Name(i);
-                if (!string.IsNullOrWhiteSpace(name))
-                {
-                    ToolStripMenuItem tsi = new ToolStripMenuItem(name) {Tag = i};
-                    menuSearchSites.Items.Add(tsi);
-                }
-            }
-
-            return menuSearchSites;
-        }
-
-        private void ChooseSiteMenu(int n)
-        {
-            ContextMenuStrip sm = BuildSearchMenu();
-            switch (n)
-            {
-                case 1:
-                    sm.Show(bnWTWChooseSite, new Point(0, 0));
-                    break;
-
-                case 0:
-                    sm.Show(bnActionWhichSearch, new Point(0, 0));
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
+                ToolStripMenuItem tsi = new ToolStripMenuItem(search.Name) { Tag = search };
+                tsi.Font = new Font(tsi.Font.FontFamily,9,FontStyle.Regular);
+                btn.DropDownItems.Add(tsi);
             }
         }
-
-        private void bnWTWChooseSite_Click(object sender, EventArgs e) => ChooseSiteMenu(1);
 
         private void FillMyShows()
         {
@@ -1007,7 +978,7 @@ namespace TVRename
 
         private void menuSearchSites_ItemClicked(object sender, [NotNull] ToolStripItemClickedEventArgs e)
         {
-            mDoc.SetSearcher((int) e.ClickedItem.Tag);
+            mDoc.SetSearcher((SearchEngine) e.ClickedItem.Tag);
             UpdateSearchButtons();
         }
 
@@ -1719,6 +1690,12 @@ namespace TVRename
                 return;
             }
 
+            if (e.ClickedItem.Tag is SearchEngine search)
+            {
+                SearchFor(search);
+                return;
+            }
+
             RightClickCommands n = (RightClickCommands) e.ClickedItem.Tag;
 
             ShowItem si = mLastShowsClicked != null && mLastShowsClicked.Count > 0
@@ -1892,11 +1869,6 @@ namespace TVRename
                         OpenFolderForShow(n - RightClickCommands.kOpenFolderBase);
                         return;
                     }
-                    else if (n >= RightClickCommands.kSearchForBase)
-                    {
-                        SearchFor(n - RightClickCommands.kSearchForBase);
-                        return;
-                    }
                     else
                     {
                         Debug.Fail("Unknown right-click action " + n);
@@ -1985,9 +1957,9 @@ namespace TVRename
             }
         }
 
-        private void SearchFor(int num)
+        private void SearchFor(SearchEngine s)
         {
-            string url = TVSettings.Instance.TheSearchers.Url(num);
+            string url = s.Url;
 
             ProcessedEpisode epi = mLastEpClicked;
             if (epi != null)
@@ -2098,7 +2070,7 @@ namespace TVRename
             }
             else if (tabControl1.SelectedTab == tbAllInOne)
             {
-                bnActionRecentCheck_Click(null, null);
+                BtnSearch_ButtonClick(null, null);
             }
             else
             {
@@ -2193,17 +2165,6 @@ namespace TVRename
             {
                 Hide();
             }
-
-            bool showCheckboxes = Width > 1100;
-            label1.Visible = showCheckboxes;
-            cbAll.Visible = showCheckboxes;
-            cbCopyMove.Visible = showCheckboxes;
-            cbDeleteFiles.Visible = showCheckboxes;
-            cbDownload.Visible = showCheckboxes;
-            cbModifyMetadata.Visible = showCheckboxes;
-            cbRename.Visible = showCheckboxes;
-            cbSaveImages.Visible = showCheckboxes;
-            cbWriteMetadata.Visible = showCheckboxes;
         }
 
         private void UI_LocationChanged(object sender, EventArgs e)
@@ -2873,8 +2834,8 @@ namespace TVRename
         {
             FillEpGuideHtml(e.Node);
             bool showSelected = MyShowTree.SelectedNode != null;
-            bnMyShowsEdit.Enabled = showSelected;
-            bnMyShowsDelete.Enabled = showSelected;
+            btnEditShow.Enabled = showSelected;
+            btnRemoveShow.Enabled = showSelected;
         }
 
         private void MyShowTree_MouseClick(object sender, [NotNull] MouseEventArgs e)
@@ -3054,24 +3015,6 @@ namespace TVRename
             ProcessArgs(mDoc.Args);
         }
 
-        private void bnMyShowsCollapse_Click(object sender, EventArgs e)
-        {
-            MyShowTree.BeginUpdate();
-            treeExpandCollapseToggle = !treeExpandCollapseToggle;
-            if (treeExpandCollapseToggle)
-            {
-                MyShowTree.CollapseAll();
-            }
-            else
-            {
-                MyShowTree.ExpandAll();
-            }
-
-            MyShowTree.SelectedNode?.EnsureVisible();
-
-            MyShowTree.EndUpdate();
-        }
-
         private void UI_KeyDown(object sender, [NotNull] KeyEventArgs e)
         {
             if (!e.Control)
@@ -3117,8 +3060,6 @@ namespace TVRename
                     return -1;
             }
         }
-
-        private void bnActionCheck_Click(object sender, EventArgs e) => UiScan(null, false, TVSettings.ScanType.Full);
 
         private void UiScan([CanBeNull] List<ShowItem> shows, bool unattended, TVSettings.ScanType st)
         {
@@ -3489,8 +3430,6 @@ namespace TVRename
             FillMyShows();
         }
 
-        private void bnActionWhichSearch_Click(object sender, EventArgs e) => ChooseSiteMenu(0);
-
         private void lvAction_MouseClick(object sender, [NotNull] MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Right)
@@ -3525,16 +3464,13 @@ namespace TVRename
                 showRightClickMenu.Items.Add(new ToolStripSeparator());
 
                 ToolStripMenuItem tsi = new ToolStripMenuItem("Search") { Tag = (int)RightClickCommands.kBtSearchFor };
-                for (int i = 0; i < TVDoc.GetSearchers().Count(); i++)
-                {
-                    string name = TVDoc.GetSearchers().Name(i);
-                    if (!string.IsNullOrWhiteSpace(name))
-                    {
-                        ToolStripMenuItem tssi = new ToolStripMenuItem(name)
-                            {Tag = (int) RightClickCommands.kSearchForBase + i};
 
-                        int i1 = i;
-                        tssi.Click += (s, ev) => { SearchFor(i1); };
+                foreach (SearchEngine se in TVDoc.GetSearchers())
+                {
+                    if (se.Name.HasValue())
+                    {
+                        ToolStripMenuItem tssi = new ToolStripMenuItem(se.Name){ Tag = se};
+                        tssi.Click += (s, ev) => { SearchFor(se); };
                         tsi.DropDownItems.Add(tssi);
                     }
                 }
@@ -3573,11 +3509,11 @@ namespace TVRename
             if (lvr.Count == 0)
             {
                 // disable everything
-                bnActionBTSearch.Enabled = false;
+                btnActionBTSearch.Enabled = false;
                 return;
             }
 
-            bnActionBTSearch.Enabled = lvr.SaveImages.Count <= 0;
+            btnActionBTSearch.Enabled = lvr.SaveImages.Count <= 0;
 
             mLastShowsClicked = null;
             mLastEpClicked = null;
@@ -3651,13 +3587,13 @@ namespace TVRename
             LvResults all = new LvResults(lvAction, LvResults.WhichResults.all);
             LvResults chk = new LvResults(lvAction, LvResults.WhichResults.Checked);
 
-            SetCheckbox(cbRename, all.Rename, chk.Rename);
-            SetCheckbox(cbCopyMove, all.CopyMove, chk.CopyMove);
-            SetCheckbox(cbDeleteFiles, all.Deletes, chk.Deletes);
-            SetCheckbox(cbSaveImages,all.SaveImages,chk.SaveImages);
-            SetCheckbox(cbWriteMetadata, all.WriteMetadatas, chk.WriteMetadatas);
-            SetCheckbox(cbModifyMetadata, all.ModifyMetadatas, chk.ModifyMetadatas);
-            SetCheckbox(cbDownload, all.DownloadTorrents, chk.DownloadTorrents);
+            SetCheckbox(mcbRename, all.Rename, chk.Rename);
+            SetCheckbox(mcbCopyMove, all.CopyMove, chk.CopyMove);
+            SetCheckbox(mcbDeleteFiles, all.Deletes, chk.Deletes);
+            SetCheckbox(mcbSaveImages,all.SaveImages,chk.SaveImages);
+            SetCheckbox(mcbWriteMetadata, all.WriteMetadatas, chk.WriteMetadatas);
+            SetCheckbox(mcbModifyMetadata, all.ModifyMetadatas, chk.ModifyMetadatas);
+            SetCheckbox(mcbDownload, all.DownloadTorrents, chk.DownloadTorrents);
 
             int total1 = all.FlatList.Count-all.Downloading.Count-all.Missing.Count;
 
@@ -3665,207 +3601,30 @@ namespace TVRename
 
             if (total2 == 0)
             {
-                cbAll.CheckState = CheckState.Unchecked;
+                mcbAll.CheckState = CheckState.Unchecked;
             }
             else
             {
-                cbAll.CheckState = total2 == total1 ? CheckState.Checked : CheckState.Indeterminate;
+                mcbAll.CheckState = total2 == total1 ? CheckState.Checked : CheckState.Indeterminate;
             }
         }
 
-        private static void SetCheckbox([NotNull] CheckBox box,IEnumerable<Item> all, [NotNull] IEnumerable<Item> chk)
+        private static void SetCheckbox([NotNull] ToolStripMenuItem box,[NotNull] IEnumerable<Item> all, [NotNull] IEnumerable<Item> chk)
         {
             IEnumerable<Item> enumerable = chk.ToList();
+            IEnumerable<Item> btn = all as Item[] ?? all.ToArray();
             if (!enumerable.Any())
             {
                 box.CheckState = CheckState.Unchecked;
             }
             else
             {
-                box.CheckState = enumerable.Count() == all.Count()
+                box.CheckState = enumerable.Count() == btn.Count()
                     ? CheckState.Checked
                     : CheckState.Indeterminate;
             }
-        }
 
-        private void cbActionAllNone_Click(object sender, EventArgs e)
-        {
-            CheckState cs = cbAll.CheckState;
-            if (cs == CheckState.Indeterminate)
-            {
-                cbAll.CheckState = CheckState.Unchecked;
-                cs = CheckState.Unchecked;
-            }
-
-            internalCheckChange = true;
-            foreach (ListViewItem lvi in lvAction.Items)
-            {
-                lvi.Checked = cs == CheckState.Checked;
-            }
-
-            internalCheckChange = false;
-            UpdateActionCheckboxes();
-        }
-
-        private void cbDeletes_Click(object sender, EventArgs e)
-        {
-            CheckState cs = cbDeleteFiles.CheckState;
-            if (cs == CheckState.Indeterminate)
-            {
-                cbDeleteFiles.CheckState = CheckState.Unchecked;
-                cs = CheckState.Unchecked;
-            }
-
-            internalCheckChange = true;
-            foreach (ListViewItem lvi in lvAction.Items)
-            {
-                Item i = (Item)lvi.Tag;
-                if (i is ActionDelete )
-                {
-                    lvi.Checked = cs == CheckState.Checked;
-                }
-            }
-
-            internalCheckChange = false;
-            UpdateActionCheckboxes();
-        }
-
-        private void cbActionRename_Click(object sender, EventArgs e)
-        {
-            CheckState cs = cbRename.CheckState;
-            if (cs == CheckState.Indeterminate)
-            {
-                cbRename.CheckState = CheckState.Unchecked;
-                cs = CheckState.Unchecked;
-            }
-
-            internalCheckChange = true;
-            foreach (ListViewItem lvi in lvAction.Items)
-            {
-                Item i = (Item) lvi.Tag;
-                if (i is ActionCopyMoveRename rename && rename.Operation == ActionCopyMoveRename.Op.rename)
-                {
-                    lvi.Checked = cs == CheckState.Checked;
-                }
-            }
-
-            internalCheckChange = false;
-            UpdateActionCheckboxes();
-        }
-
-        private void cbActionCopyMove_Click(object sender, EventArgs e)
-        {
-            CheckState cs = cbCopyMove.CheckState;
-            if (cs == CheckState.Indeterminate)
-            {
-                cbCopyMove.CheckState = CheckState.Unchecked;
-                cs = CheckState.Unchecked;
-            }
-
-            internalCheckChange = true;
-            foreach (ListViewItem lvi in lvAction.Items)
-            {
-                Item i = (Item) lvi.Tag;
-                if (i is ActionCopyMoveRename copymove && copymove.Operation != ActionCopyMoveRename.Op.rename)
-                {
-                    lvi.Checked = cs == CheckState.Checked;
-                }
-            }
-
-            internalCheckChange = false;
-            UpdateActionCheckboxes();
-        }
-
-        private void cbActionNFO_Click(object sender, EventArgs e)
-        {
-            CheckState cs = cbWriteMetadata.CheckState;
-            if (cs == CheckState.Indeterminate)
-            {
-                cbWriteMetadata.CheckState = CheckState.Unchecked;
-                cs = CheckState.Unchecked;
-            }
-
-            internalCheckChange = true;
-            foreach (ListViewItem lvi in lvAction.Items)
-            {
-                Item i = (Item) lvi.Tag;
-                if (i is ActionWriteMetadata)
-                {
-                    lvi.Checked = cs == CheckState.Checked;
-                }
-            }
-
-            internalCheckChange = false;
-            UpdateActionCheckboxes();
-        }
-
-        private void cbActionModifyMetaData_Click(object sender, EventArgs e)
-        {
-            CheckState cs = cbModifyMetadata.CheckState;
-            if (cs == CheckState.Indeterminate)
-            {
-                cbModifyMetadata.CheckState = CheckState.Unchecked;
-                cs = CheckState.Unchecked;
-            }
-
-            internalCheckChange = true;
-            foreach (ListViewItem lvi in lvAction.Items)
-            {
-                Item i = (Item) lvi.Tag;
-                if (i is ActionFileMetaData)
-                {
-                    lvi.Checked = cs == CheckState.Checked;
-                }
-            }
-
-            internalCheckChange = false;
-            UpdateActionCheckboxes();
-        }
-
-        private void cbActionRSS_Click(object sender, EventArgs e)
-        {
-            CheckState cs = cbDownload.CheckState;
-            if (cs == CheckState.Indeterminate)
-            {
-                cbDownload.CheckState = CheckState.Unchecked;
-                cs = CheckState.Unchecked;
-            }
-
-            internalCheckChange = true;
-            foreach (ListViewItem lvi in lvAction.Items)
-            {
-                Item i = (Item) lvi.Tag;
-                if (i is ActionTDownload)
-                {
-                    lvi.Checked = cs == CheckState.Checked;
-                }
-            }
-
-            internalCheckChange = false;
-            UpdateActionCheckboxes();
-        }
-
-        private void cbActionDownloads_Click(object sender, EventArgs e)
-        {
-            CheckState cs = cbSaveImages.CheckState;
-            if (cs == CheckState.Indeterminate)
-            {
-                cbSaveImages.CheckState = CheckState.Unchecked;
-                cs = CheckState.Unchecked;
-            }
-
-            internalCheckChange = true;
-            foreach (ListViewItem lvi in lvAction.Items)
-            {
-                Item i = (Item) lvi.Tag;
-                if (i is ActionDownloadImage)
-                {
-                    lvi.Checked = cs == CheckState.Checked;
-                }
-            }
-
-            internalCheckChange = false;
-            UpdateActionCheckboxes();
+            box.Enabled = btn.Any();
         }
 
         private void lvAction_ItemCheck(object sender, [NotNull] ItemCheckEventArgs e)
@@ -3955,26 +3714,6 @@ namespace TVRename
         }
 
         private void lvAction_ItemChecked(object sender, ItemCheckedEventArgs e) => UpdateActionCheckboxes();
-
-        private void bnHideHTMLPanel_Click(object sender, EventArgs e)
-        {
-            if (splitContainer1.Panel2Collapsed)
-            {
-                splitContainer1.Panel2Collapsed = false;
-                bnHideHTMLPanel.ImageKey = "FillRight.bmp";
-            }
-            else
-            {
-                splitContainer1.Panel2Collapsed = true;
-                bnHideHTMLPanel.ImageKey = "FillLeft.bmp";
-            }
-        }
-
-        private void bnActionRecentCheck_Click(object sender, EventArgs e) =>
-            UiScan(null, false, TVSettings.ScanType.Recent);
-
-        private void btnActionQuickScan_Click(object sender, EventArgs e) =>
-            UiScan(null, false, TVSettings.ScanType.Quick);
 
         private void btnFilter_Click(object sender, EventArgs e)
         {
@@ -4254,6 +3993,138 @@ namespace TVRename
 
             txtDLStatusLabel.Text = "Background download: Idle";
             Cursor.Current = Cursors.Default;
+        }
+
+        private void ToolStripButton5_Click(object sender, EventArgs e)
+        {
+            splitContainer1.Panel2Collapsed = !splitContainer1.Panel2Collapsed;
+            btnHideHTMLPanel.Image = splitContainer1.Panel2Collapsed ? Resources.FillRight : Resources.FillLeft;
+        }
+
+        private void BtnMyShowsCollapse_Click(object sender, EventArgs e)
+        {
+            MyShowTree.BeginUpdate();
+            treeExpandCollapseToggle = !treeExpandCollapseToggle;
+            if (treeExpandCollapseToggle)
+            {
+                MyShowTree.CollapseAll();
+            }
+            else
+            {
+                MyShowTree.ExpandAll();
+            }
+
+            MyShowTree.SelectedNode?.EnsureVisible();
+
+            MyShowTree.EndUpdate();
+        }
+
+        private void FullToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //TODO Persist scan type to settings
+            uiScanType = TVSettings.ScanType.Full;
+            btnScan.Text = "Full Scan";
+        }
+
+        private void RecentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            uiScanType = TVSettings.ScanType.Recent;
+            btnScan.Text = "Recent Scan";
+        }
+
+        private void QuickToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            uiScanType = TVSettings.ScanType.Quick;
+            btnScan.Text = "Quick Scan";
+        }
+
+        private void BtnActionBTSearch_DropDownOpening(object sender, EventArgs e)
+        {
+            ChooseSiteMenu(btnActionBTSearch);
+        }
+
+        private void ToolStripSplitButton1_DropDownOpening(object sender, EventArgs e)
+        {
+            ChooseSiteMenu(btnWTWBTSearch);
+        }
+
+        private void BtnSearch_ButtonClick(object sender, EventArgs e)
+        {
+            UiScan(null, false, uiScanType);
+        }
+
+        private void UpdateCheckboxGroup([NotNull] ToolStripMenuItem menuItem, [NotNull] Func<Item, bool> isValid)
+        {
+            switch (menuItem.CheckState) {
+                case CheckState.Unchecked:
+                    menuItem.CheckState = CheckState.Checked;
+                    break;
+
+                case CheckState.Checked:
+                    menuItem.CheckState = CheckState.Unchecked;
+                    break;
+
+                case CheckState.Indeterminate:
+                    menuItem.CheckState = CheckState.Unchecked;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            CheckState cs = menuItem.CheckState;
+
+            internalCheckChange = true;
+            foreach (ListViewItem lvi in lvAction.Items)
+            {
+                Item i = (Item)lvi.Tag;
+                if (isValid(i))
+                {
+                    lvi.Checked = cs == CheckState.Checked;
+                }
+            }
+
+            internalCheckChange = false;
+            UpdateActionCheckboxes();
+        }
+
+        private void McbAll_Click(object sender, EventArgs e)
+        {
+            UpdateCheckboxGroup(mcbAll, item => true);
+        }
+        private void McbRename_Click(object sender, EventArgs e)
+        {
+            UpdateCheckboxGroup(mcbRename, i => i is ActionCopyMoveRename rename && rename.Operation == ActionCopyMoveRename.Op.rename);
+        }
+
+        private void McbCopyMove_Click(object sender, EventArgs e)
+        {
+            UpdateCheckboxGroup(mcbCopyMove, i => i is ActionCopyMoveRename copymove && copymove.Operation != ActionCopyMoveRename.Op.rename);
+        }
+
+        private void McbDeleteFiles_Click(object sender, EventArgs e)
+        {
+            UpdateCheckboxGroup(mcbDeleteFiles,i => i is ActionDelete);
+        }
+
+        private void McbSaveImages_Click(object sender, EventArgs e)
+        {
+            UpdateCheckboxGroup(mcbSaveImages, i => i is ActionDownloadImage);
+        }
+
+        private void McbDownload_Click(object sender, EventArgs e)
+        {
+            UpdateCheckboxGroup(mcbDownload, i => i is ActionTDownload);
+        }
+
+        private void McbWriteMetadata_Click(object sender, EventArgs e)
+        {
+            UpdateCheckboxGroup(mcbWriteMetadata, i => i is ActionWriteMetadata);
+        }
+
+        private void McbModifyMetadata_Click(object sender, EventArgs e)
+        {
+            UpdateCheckboxGroup(mcbModifyMetadata, i => i is ActionFileMetaData);
         }
     }
 }

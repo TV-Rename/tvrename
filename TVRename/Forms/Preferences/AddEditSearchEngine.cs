@@ -42,11 +42,13 @@ namespace TVRename
             SetupGrid();
             mSearchers = s;
 
-            for (int i = 0; i < mSearchers.Count(); i++)
+            int row = 1;
+            foreach (SearchEngine engine in mSearchers)
             {
                 AddNewRow();
-                grid1[i + 1, 0].Value = mSearchers.Name(i);
-                grid1[i + 1, 1].Value = mSearchers.Url(i);
+                grid1[row, 0].Value = engine.Name;
+                grid1[row, 1].Value = engine.Url;
+                row++;
             }
         }
 
@@ -121,7 +123,7 @@ namespace TVRename
                 string url = (string) grid1[i, 1].Value;
                 if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(url))
                 {
-                    mSearchers.Add(name, url);
+                    mSearchers.Add(new SearchEngine{ Name=name,Url= url });
                 }
             }
         }

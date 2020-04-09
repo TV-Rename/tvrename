@@ -169,4 +169,73 @@
   <data name="iconfinder_Info_Circle_Symbol_Information_Letter_1396823" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\iconfinder_Info_Circle_Symbol_Information_Letter_1396823.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="AddShow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\226562-128 (1)1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AddSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\226562-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="add_Red" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\226562-1281.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CheckBoxSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\353430-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeleteShow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\616650-1281.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeleteShowSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\616650-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Do" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\5172493-1281.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DoSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\5172493-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EditShowInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\314251-1281.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EditShowSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\314251-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FillLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\image-FillLeft.bmp-161.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FillRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\image-FillRight.bmp-171.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FilterShows" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\4781834-128 (1)1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FilterSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\4781834-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PreferencesSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\2738302-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\134221-1281.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RefreshSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\134221-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Scan" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\322497-1281.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ScanSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\322497-48 (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SearchWeb" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\1587498-1281.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SearchWebSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\1587498-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SettingsSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\3855598-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TreeView" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\image-Control_TreeView.bmp-41.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

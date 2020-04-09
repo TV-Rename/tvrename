@@ -867,7 +867,7 @@ namespace TVRename
 
             string url = epi.Show.UseCustomSearchUrl && !string.IsNullOrWhiteSpace(epi.Show.CustomSearchUrl)
                 ? epi.Show.CustomSearchUrl
-                : TheSearchers.CurrentSearchUrl();
+                : TheSearchers.CurrentSearch.Url;
 
             return CustomEpisodeName.NameForNoExt(epi, url, true);
         }

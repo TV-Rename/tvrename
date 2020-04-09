@@ -185,7 +185,7 @@ namespace TVRename.TVmaze
                     else
                     {
                         SayNothing();
-                        return false;
+                        return true;
                     }
                 }
 

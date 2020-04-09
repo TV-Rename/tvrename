@@ -16,37 +16,38 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    public class Searchers
+    public struct SearchEngine
     {
-        private class Choice
-        {
-            public string Name;
-            public string Url2;
-        }
+        public string Name;
+        public string Url;
+    }
 
-        private string currentSearch;
-        private readonly List<Choice> choices = new List<Choice>();
+    public class Searchers:List<SearchEngine>
+    {
+        public SearchEngine CurrentSearch { get; set; }
 
         public Searchers()
         {
-            currentSearch = "";
+            SearchEngine google = new SearchEngine
+            {
+                Name = "Google", Url = "https://www.google.com/search?q={ShowName}+S{Season:2}E{Episode}"
+            };
+            Add(google);
+            Add(new SearchEngine {Name="Pirate Bay" ,Url= "https://thepiratebay.org/search/{ShowName} S{Season:2}E{Episode}"});
+            Add(new SearchEngine { Name = "binsearch", Url = "https://www.binsearch.info/?q={ShowName}+S{Season:2}E{Episode}"});
 
-            Add("Google", "https://www.google.com/search?q={ShowName}+S{Season:2}E{Episode}");
-            Add("Pirate Bay", "https://thepiratebay.org/search/{ShowName} S{Season:2}E{Episode}");
-            Add("binsearch", "https://www.binsearch.info/?q={ShowName}+S{Season:2}E{Episode}");
-
-            currentSearch = "Google";
+            CurrentSearch = google;
         }
         
         public Searchers([CanBeNull] XElement settings)
         {
-            choices = new List<Choice>();
+            Clear();
             if (settings is null)
             {
                 return;
             }
 
-            currentSearch = settings.ExtractString("Current");
+            string currentSearchString = settings.ExtractString("Current");
 
             foreach (XElement x in settings.Descendants("Choice"))
             {
@@ -55,63 +56,35 @@ namespace TVRename
                     ? x.Attribute("URL2")?.Value
                     : url.Replace("!", "{ShowName}+S{Season:2}E{Episode}");
 
-                Add(x.Attribute("Name")?.Value,url);
-            }
-        }
+                SearchEngine engine = new SearchEngine {Name= x.Attribute("Name")?.Value,Url=url };
 
-        public void SetToNumber(int n)
-        {
-            currentSearch = choices[n].Name;
-        }
-
-        public int CurrentSearchNum() => NumForName(currentSearch);
-
-        private int NumForName(string srch)
-        {
-            for (int i = 0; i < choices.Count; i++)
-            {
-                if (choices[i].Name == srch)
+                Add(engine);
+                if (engine.Name == currentSearchString)
                 {
-                    return i;
+                    CurrentSearch = engine;
                 }
             }
-            return 0;
         }
 
-        public string CurrentSearchUrl() => choices.Count == 0 ? "" : choices[CurrentSearchNum()].Url2;
+        public void SetSearchEngine(SearchEngine s)
+        {
+            CurrentSearch = s;
+        }
 
         public void WriteXml([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("TheSearchers");
-            writer.WriteElement("Current",currentSearch);
+            writer.WriteElement("Current",CurrentSearch.Name);
 
-            for (int i = 0; i < Count(); i++)
+            foreach (SearchEngine e in this)
             {
                 writer.WriteStartElement("Choice");
-                writer.WriteAttributeToXml("Name",choices[i].Name);
-                writer.WriteAttributeToXml("URL2",choices[i].Url2);
+                writer.WriteAttributeToXml("Name", e.Name);
+                writer.WriteAttributeToXml("URL2", e.Url);
                 writer.WriteEndElement();
             }
+
             writer.WriteEndElement(); // TheSearchers
-        }
-        public void Clear() => choices.Clear();
-
-        public void Add(string name, string url)
-        {
-            choices.Add(new Choice { Name = name, Url2 = url });
-        }
-
-        public int Count() => choices.Count;
-
-        public string Name(int n) => choices.Count == 0 ? string.Empty : choices[Between(n, 0, choices.Count - 1)].Name;
-
-        public string Url(int n) => choices.Count == 0 ? string.Empty : choices[Between(n,0,choices.Count - 1)].Url2;
-
-        private static int Between(int n, int min, int max)
-        {
-            return n < min ? min
-                : n > max ? max
-                : n;
         }
     }
 }
