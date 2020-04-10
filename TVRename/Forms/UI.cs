@@ -98,7 +98,6 @@ namespace TVRename
 
         private MyListView lvAction;
         private List<string> mFoldersToOpen;
-        private TVSettings.ScanType uiScanType; 
         private int mInternalChange;
         private List<FileInfo> mLastFl;
         private Point mLastNonMaximizedLocation;
@@ -161,6 +160,7 @@ namespace TVRename
             mDoc.Library.GenDict();
             FillMyShows();
             UpdateSearchButtons();
+            SetScan(TVSettings.Instance.UIScanType);
             ClearInfoWindows();
             UpdateSplashPercent(splash, 10);
             UpdateSplashStatus(splash, "Updating WTW");
@@ -3212,6 +3212,8 @@ namespace TVRename
                 {
                     ListViewItem lvi = LviForItem(item);
 
+                    bool hidecheckbox = (item is ItemMissing || item is ActionTDownload);
+
                     if (preserveExistingCheckboxes)
                     {
                         if (selectedItems.Contains(item))
@@ -4021,21 +4023,23 @@ namespace TVRename
 
         private void FullToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //TODO Persist scan type to settings
-            uiScanType = TVSettings.ScanType.Full;
-            btnScan.Text = "Full Scan";
+            SetScan(TVSettings.ScanType.Full);
+        }
+
+        private void SetScan(TVSettings.ScanType st)
+        {
+            btnScan.Text = st.PrettyPrint()+" Scan";
+            mDoc.SetDefaultScanType(st);
         }
 
         private void RecentToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            uiScanType = TVSettings.ScanType.Recent;
-            btnScan.Text = "Recent Scan";
+            SetScan(TVSettings.ScanType.Recent);
         }
 
         private void QuickToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            uiScanType = TVSettings.ScanType.Quick;
-            btnScan.Text = "Quick Scan";
+            SetScan(TVSettings.ScanType.Quick);
         }
 
         private void BtnActionBTSearch_DropDownOpening(object sender, EventArgs e)
@@ -4050,7 +4054,7 @@ namespace TVRename
 
         private void BtnSearch_ButtonClick(object sender, EventArgs e)
         {
-            UiScan(null, false, uiScanType);
+            UiScan(null, false, TVSettings.Instance.UIScanType);
         }
 
         private void UpdateCheckboxGroup([NotNull] ToolStripMenuItem menuItem, [NotNull] Func<Item, bool> isValid)

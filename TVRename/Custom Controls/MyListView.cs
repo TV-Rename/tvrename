@@ -7,7 +7,9 @@
 // 
 
 using System;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 // Starting from:
 // http://social.msdn.microsoft.com/Forums/ja-JP/csharpexpressja/thread/67475927-015c-4206-b5e7-d67504edb3a1
@@ -111,5 +113,39 @@ namespace TVRename
             int delta = -(currentPos - position);
             NativeMethods.SendMessage(Handle, LVM_SCROLL, IntPtr.Zero, (IntPtr)delta); // First param is horizontal scroll amount, second is vertical scroll amount
         }
+
+        public void HideCheckbox([NotNull] ListViewItem item)
+        {
+            Lvitem lviItem = new Lvitem
+            {
+                iItem = item.Index, mask = LVIF_STATE, stateMask = LVIS_STATEIMAGEMASK, state = 0
+            };
+
+            SendMessage(Handle, LVM_SETITEM, IntPtr.Zero, ref lviItem);
+        }
+
+        private const int LVIF_STATE = 0x8;
+        private const int LVIS_STATEIMAGEMASK = 0xF000;
+        private const int LVM_SETITEM = LVM_FIRST + 76;
+
+        // suppress warnings for interop
+#pragma warning disable 0649
+        private struct Lvitem
+        {
+            public int mask;
+            public int iItem;
+            public int iSubItem;
+            public int state;
+            public int stateMask;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public String lpszText;
+            public int cchTextMax;
+            public int iImage;
+            public IntPtr iParam;
+        }
+#pragma warning restore 0649
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, ref Lvitem lParam);
     }
 }

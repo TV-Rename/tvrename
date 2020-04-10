@@ -180,6 +180,12 @@ namespace TVRename
             SetDirty();
         }
 
+        public void SetDefaultScanType(TVSettings.ScanType s)
+        {
+            TVSettings.Instance.UIScanType = s;
+            SetDirty();
+        }
+
         public static Searchers GetSearchers() => TVSettings.Instance.TheSearchers;
 
         public void TidyCaches()

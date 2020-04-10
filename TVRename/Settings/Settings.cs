@@ -193,6 +193,7 @@ namespace TVRename
 
         public bool BulkAddIgnoreRecycleBin = false;
         public bool BulkAddCompareNoVideoFolders = false;
+        public ScanType UIScanType = ScanType.Full;
 
         public string AutoAddMovieTerms = "dvdrip;camrip;screener;dvdscr;r5;bluray";
         [NotNull]
@@ -425,6 +426,7 @@ namespace TVRename
             writer.WriteElement("ExportRSSDaysPast", ExportRSSDaysPast);
             writer.WriteElement("KeepTogether", KeepTogether);
             writer.WriteElement("KeepTogetherType", (int) keepTogetherMode);
+            writer.WriteElement("UIScanType", (int) UIScanType  );
             writer.WriteElement("KeepTogetherExtensions", keepTogetherExtensionsString);
             writer.WriteElement("LeadingZeroOnSeason", LeadingZeroOnSeason);
             writer.WriteElement("ShowInTaskbar", ShowInTaskbar);
@@ -1297,6 +1299,7 @@ namespace TVRename
             searchSeasonWordsString = xmlSettings.ExtractString("SearchSeasonNames", "Season;Series;Saison;Temporada;Seizoen");
             preferredRSSSearchTermsString = xmlSettings.ExtractString("PreferredRSSSearchTerms", "720p;1080p");
             keepTogetherMode = xmlSettings.ExtractEnum("KeepTogetherType", KeepTogetherModes.All);
+            UIScanType = xmlSettings.ExtractEnum("UIScanType", ScanType.Full);
             keepTogetherExtensionsString = xmlSettings.ExtractString("KeepTogetherExtensions", keepTogetherExtensionsStringDEFAULT);
             ExportWTWRSS = xmlSettings.ExtractBool("ExportWTWRSS",false);
             CopyFutureDatedEpsFromSearchFolders = xmlSettings.ExtractBool("CopyFutureDatedEpsFromSearchFolders",false);

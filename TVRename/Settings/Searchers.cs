@@ -24,7 +24,7 @@ namespace TVRename
 
     public class Searchers:List<SearchEngine>
     {
-        public SearchEngine CurrentSearch { get; set; }
+        public SearchEngine CurrentSearch { get; private set; }
 
         public Searchers()
         {
