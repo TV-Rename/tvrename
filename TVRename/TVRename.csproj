@@ -304,6 +304,7 @@
     <Compile Include="Sources\TVMAZE\LocalCache.cs" />
     <Compile Include="Sources\TVMAZE\TVmazeAPI.cs" />
     <Compile Include="TVRename\UpdateTimeTracker.cs" />
+    <Compile Include="Utility\ListViewNativeMethods.cs" />
     <Compile Include="Utility\UrlCache.cs" />
     <Compile Include="Forms\ShowPreferences\AutoAddShow.cs">
       <SubType>Form</SubType>

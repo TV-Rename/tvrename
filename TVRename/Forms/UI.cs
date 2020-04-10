@@ -28,6 +28,7 @@ using TVRename.Forms.Tools;
 using TVRename.Forms.Utilities;
 using TVRename.Ipc;
 using TVRename.Properties;
+using TVRename.Utility;
 using DataFormats = System.Windows.Forms.DataFormats;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
@@ -3212,7 +3213,7 @@ namespace TVRename
                 {
                     ListViewItem lvi = LviForItem(item);
 
-                    bool hidecheckbox = (item is ItemMissing || item is ActionTDownload);
+                    bool hidecheckbox = !(item is Action);
 
                     if (preserveExistingCheckboxes)
                     {
@@ -3231,6 +3232,10 @@ namespace TVRename
                     }
 
                     lvAction.Items.Add(lvi);
+                    if (hidecheckbox)
+                    {
+                        ListViewNativeMethods.HideCheckbox(lvAction,lvi);
+                    }
                 }
 
                 lvAction.EndUpdate();
@@ -3637,7 +3642,7 @@ namespace TVRename
             }
 
             Item action = (Item) lvAction.Items[e.Index].Tag;
-            if (action != null && (action is ItemMissing || action is ItemDownloading))
+            if (action != null && !(action is Action))
             {
                 e.NewValue = CheckState.Unchecked;
             }

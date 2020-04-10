@@ -182,6 +182,10 @@ namespace TVRename
 
         public void SetDefaultScanType(TVSettings.ScanType s)
         {
+            if (s == TVSettings.Instance.UIScanType)
+            {
+                return;
+            }
             TVSettings.Instance.UIScanType = s;
             SetDirty();
         }
