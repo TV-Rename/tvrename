@@ -87,7 +87,7 @@ namespace TVRename
             output.AppendLine("/forcerefresh will refresh all TVDB and TV Maze information");
             output.AppendLine("/forceupdate will verify TVDB information is up to date");
             output.AppendLine("/quickupdate will do a quick update from TVDB and TV Maze");
-            output.AppendLine("/scan will Tell TV Rename to run a scan");
+            output.AppendLine("/scan will Tell TV Rename to run a full scan");
             output.AppendLine("/quickscan will scan shows most likely to need an update: http://www.tvrename.com/userguide#scan");
             output.AppendLine("/recentscan will scan recent shows: http://www.tvrename.com/userguide#scan");
             output.AppendLine("/doall Tell TV Rename execute all the actions it can.");
@@ -103,7 +103,7 @@ namespace TVRename
             output.AppendLine("/ignoremissing will Ignore missing folders.");
             output.AppendLine("/norenamecheck requests an existing TV Rename session to scan without renaming.");
             output.AppendLine("");
-            output.AppendLine("Further information is available at http://www.tvrename.com/cmd-line");
+            output.AppendLine("Further information is available at https://www.tvrename.com/manual/cmd-line/");
 
             return output.ToString();
         }
