@@ -61,6 +61,11 @@ namespace TVRename
                 Logger.LogWebException($"Could not download RSS page at: {url} got the following message: ",wex);
                 return false;
             }
+            catch (AggregateException ex) when (ex.InnerException is System.Net.Http.HttpRequestException hex)
+            {
+                Logger.LogHttpRequestException($"Could not download RSS page at: {url} got the following message: ", hex);
+                return false;
+            }
             catch (Exception e)
             {
                 Logger.Error(e, $"Could not parse RSS page at:{url}");

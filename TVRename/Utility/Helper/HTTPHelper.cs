@@ -149,6 +149,19 @@ namespace TVRename
                 l.Error(message + " " + wex.LoggableDetails());
             }
         }
+
+        public static void LogHttpRequestException([NotNull] this Logger l, string message, [NotNull] HttpRequestException wex)
+        {
+            if (wex.IsUnimportant())
+            {
+                l.Warn(message + " " + wex.LoggableDetails());
+            }
+            else
+            {
+                l.Error(message + " " + wex.LoggableDetails());
+            }
+        }
+
         public static bool IsUnimportant([NotNull] this WebException ex)
         {
             switch (ex.Status)
@@ -160,11 +173,24 @@ namespace TVRename
                 case WebExceptionStatus.TrustFailure:
                 case WebExceptionStatus.RequestCanceled:
                 case WebExceptionStatus.PipelineFailure:
+                case WebExceptionStatus.ConnectionClosed:
+                case WebExceptionStatus.ReceiveFailure:
+                case WebExceptionStatus.SendFailure:
+                case WebExceptionStatus.SecureChannelFailure:
                     return true;
 
                 default:
                     return false;
             }
+        }
+
+        public static bool IsUnimportant([NotNull] this HttpRequestException ex)
+        {
+            if (ex.InnerException is WebException wex)
+            {
+                return wex.IsUnimportant();
+            }
+            return true;
         }
 
         public static bool Is404([NotNull] this WebException ex)
@@ -214,6 +240,28 @@ namespace TVRename
             if (ex.InnerException != null)
             {
                 s.Append($". Further details: {ex.InnerException.Message}");
+            }
+            return s.ToString();
+        }
+
+        [NotNull]
+        public static string LoggableDetails([NotNull] this HttpRequestException ex)
+        {
+            StringBuilder s = new StringBuilder();
+            s.Append($"HttpRequestException obtained. {ex.Message}");
+            {
+                s.Append($" from {ex.TargetSite}");
+            }
+            if (ex.InnerException != null)
+            {
+                if (ex.InnerException is WebException wex)
+                {
+                    s.Append(wex.LoggableDetails());
+                }
+                else
+                {
+                    s.Append($". Further details: {ex.InnerException.Message}");
+                }
             }
             return s.ToString();
         }

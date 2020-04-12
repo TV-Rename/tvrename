@@ -66,6 +66,10 @@ namespace TVRename
                 LOGGER.LogWebException(
                     $"Failed to access: {TVSettings.Instance.SearchJSONURL} got the following message:", ex);
             }
+            catch (AggregateException ex) when (ex.InnerException is HttpRequestException hex)
+            {
+                LOGGER.LogHttpRequestException($"Could not download RSS page at: {TVSettings.Instance.SearchJSONURL} got the following message: ", hex);
+            }
             catch (HttpRequestException htec) when (htec.InnerException is WebException ex)
             {
                 LOGGER.LogWebException(

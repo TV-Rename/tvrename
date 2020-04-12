@@ -916,10 +916,12 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         internal void TVDBServerAccuracyCheck(bool unattended,bool hidden)
         {
+            PreventAutoScan("TVDB Accuracy Check");
             IEnumerable<SeriesInfo> seriesToUpdate = TheTVDB.LocalCache.Instance.ServerAccuracyCheck();
             IEnumerable<ShowItem> showsToUpdate = seriesToUpdate.Select(info => Library.GetShowItem(info.TvdbCode));
             ForceRefresh(showsToUpdate, unattended, hidden);
             DoDownloadsBG();
+            AllowAutoScan();
         }
         
         private void ReleaseUnmanagedResources()

@@ -269,9 +269,7 @@ namespace TVRename
 
             if (a.ForceUpdate)
             {
-                txtDLStatusLabel.Text = "Background download: Accuracy Check running";
-                mDoc.TVDBServerAccuracyCheck(UNATTENDED,WindowState==FormWindowState.Minimized);
-                txtDLStatusLabel.Text = "Background download: Idle";
+                UIAccuracyCheck(UNATTENDED);
             }
 
             if (a.ForceRefresh)
@@ -309,6 +307,16 @@ namespace TVRename
             {
                 Close();
             }
+        }
+
+        // ReSharper disable once InconsistentNaming
+        private void UIAccuracyCheck(bool unattended)
+        {
+            MoreBusy();
+            Task.Run(
+                () => mDoc.TVDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized)
+            );
+            LessBusy();
         }
 
         private void UpdateSearchButtons()
@@ -2179,17 +2187,20 @@ namespace TVRename
         private void statusTimer_Tick(object sender, EventArgs e)
         {
             int n = mDoc.DownloadsRemaining();
+            bool somethingDownloading =
+                (TheTVDB.LocalCache.Instance.CurrentDLTask + TVmaze.LocalCache.Instance.CurrentDLTask).HasValue();
 
-            txtDLStatusLabel.Visible = n != 0 || TVSettings.Instance.BGDownload;
-            if (n != 0)
+            txtDLStatusLabel.Visible = n != 0 || TVSettings.Instance.BGDownload || somethingDownloading;
+
+            backgroundDownloadNowToolStripMenuItem.Enabled = n == 0;
+
+            if (somethingDownloading)
             {
-                txtDLStatusLabel.Text = "Background download: " + TheTVDB.LocalCache.Instance.CurrentDLTask +TVmaze.LocalCache.Instance.CurrentDLTask;
-                backgroundDownloadNowToolStripMenuItem.Enabled = false;
+                txtDLStatusLabel.Text = "Background download: " + TheTVDB.LocalCache.Instance.CurrentDLTask + TVmaze.LocalCache.Instance.CurrentDLTask;
             }
             else
             {
                 txtDLStatusLabel.Text = "Background download: Idle";
-                backgroundDownloadNowToolStripMenuItem.Enabled = true;
             }
 
             if (IsBusy)
@@ -3994,11 +4005,9 @@ namespace TVRename
             logToolStripMenuItem_Click(sender, e);
 
             Cursor.Current = Cursors.WaitCursor;
-            txtDLStatusLabel.Text = "Background download: Accuracy Check running";
 
-            mDoc.TVDBServerAccuracyCheck(false, false);
+            UIAccuracyCheck(false);
 
-            txtDLStatusLabel.Text = "Background download: Idle";
             Cursor.Current = Cursors.Default;
         }
 

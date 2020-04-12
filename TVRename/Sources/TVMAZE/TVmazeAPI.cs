@@ -60,7 +60,8 @@ namespace TVRename.TVmaze
                     {
                         JObject r = HttpHelper.HttpGetRequestWithRetry(APIRoot + "/lookup/shows?imdb=" + imdbCode, 3, 2);
                         int tvMazeId = (int)r["id"];
-                        Logger.Error($"TVMaze Data issue: {tvMazeId} has the wrong TVDB Id based on {imdbCode}.");
+                        int tvdb = r["externals"]["thetvdb"].Type == JTokenType.Null ? -1 : (int)r["externals"]["thetvdb"];
+                        Logger.Error($"TVMaze Data issue: {tvMazeId} has the wrong TVDB Id based on {imdbCode}. Should be {siTvdbCode}, currently is {tvdb}.");
                         return tvMazeId;
                     }
                     catch (WebException wex2)

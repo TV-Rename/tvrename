@@ -227,6 +227,7 @@ namespace TVRename.TheTVDB
         {
             List<string> issues = new List<string>();
             List<SeriesInfo> showsToUpdate = new List<SeriesInfo>();
+            Say("TVDB Accuracy Check running");
 
             lock (SERIES_LOCK)
             {
@@ -241,6 +242,7 @@ namespace TVRename.TheTVDB
                 Logger.Warn(issue);
             }
 
+            SayNothing();
             return showsToUpdate;
         }
 
@@ -676,6 +678,14 @@ namespace TVRename.TheTVDB
             catch (AggregateException aex) when (aex.InnerException is WebException ex)
             {
                 Logger.LogWebException($"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is", ex);
+
+                SayNothing();
+                LastErrorMessage = ex.Message;
+                return null;
+            }
+            catch (AggregateException aex) when (aex.InnerException is System.Net.Http.HttpRequestException ex)
+            {
+                Logger.LogHttpRequestException($"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is", ex);
 
                 SayNothing();
                 LastErrorMessage = ex.Message;
@@ -1640,7 +1650,7 @@ namespace TVRename.TheTVDB
                 }
                 else
                 {
-                    Logger.Error($"<TVDB ISSUE?>: problem with JSON recieved {jsonResponseData}");
+                    Logger.Error($"<TVDB ISSUE?>: problem with JSON received for episode {jsonResponseData}");
                 }
             }
             catch (SourceConsistencyException e)
@@ -1734,7 +1744,7 @@ namespace TVRename.TheTVDB
         {
             if (!IsConnected && !Connect(showErrorMsgBox))
             {
-                Say("Failed to Connect");
+                Say("Failed to Connect to TVDB");
                 return;
             }
 
