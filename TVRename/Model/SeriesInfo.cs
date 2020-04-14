@@ -14,6 +14,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
+using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -47,7 +48,7 @@ namespace TVRename
         public bool BannersLoaded;
         public long SrvLastUpdated;
         
-        public bool IsStub;
+        public bool IsSearchResultOnly;
         public string Slug;
 
         private List<Actor> actors;
@@ -64,7 +65,7 @@ namespace TVRename
             sourceEpisodes.Clear();
         }
 
-        private SeriesBanners banners;
+        private readonly SeriesBanners banners;
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -97,43 +98,53 @@ namespace TVRename
       [NotNull]
       public string Year => FirstAired?.ToString("yyyy") ?? $"{MinYear}";
 
-      public string Status { get; set; } = "Unkonwn";
+      public string Status { get; set; }
 
       // note: "SeriesID" in a <Series> is the tv.com code,
         // "seriesid" in an <Episode> is the tvdb code!
 
         public SeriesInfo()
         {
-            SetToDefaults();
+            sourceEpisodes = new ConcurrentDictionary<int, Episode>();
+            actors = new List<Actor>();
+            aliases = new List<string>();
+            Genres = new List<string>();
+            Dirty = false;
+            Name = string.Empty;
+            AirsTime = null;
+            TvdbCode = -1;
+            TvMazeCode = -1;
+            TvRageCode = 0;
+            LanguageId = -1;
+            Status = "Unknown";
+            banners = new SeriesBanners(this);
+            banners.ResetBanners();
+            BannersLoaded = false;
         }
 
-        public SeriesInfo(string name, int tvdb, int tvmaze)
+        public SeriesInfo(int tvdb, int tvmaze):this()
         {
-            SetToDefaults();
-            Name = name;
-            IsStub = false;
+            IsSearchResultOnly = false;
             TvMazeCode = tvmaze;
             TvdbCode = tvdb;
         }
 
-        public SeriesInfo(string name, int tvdb, int tvmaze, string langCode) :this(name,tvdb,tvmaze)
+        public SeriesInfo( int tvdb, int tvmaze, string langCode) :this(tvdb,tvmaze)
         {
             TargetLanguageCode = langCode;
         }
 
-        public SeriesInfo([NotNull] XElement seriesXml)
+        public SeriesInfo([NotNull] XElement seriesXml):this()
         {
-            SetToDefaults();
             LoadXml(seriesXml);
-            IsStub = false;
+            IsSearchResultOnly = false;
         }
 
-        public SeriesInfo([NotNull] JObject json,int langId,bool miniSeriesData)
+        public SeriesInfo([NotNull] JObject json,int langId,bool searchResult) : this()
         {
-            SetToDefaults();
             LanguageId = langId;
             LoadJson(json);
-            IsStub = miniSeriesData;
+            IsSearchResultOnly = searchResult;
 
             if (string.IsNullOrEmpty(Name))
             {
@@ -141,7 +152,7 @@ namespace TVRename
                Logger.Warn(json.ToString());
             }
 
-            if (SrvLastUpdated==0 && !miniSeriesData)
+            if (SrvLastUpdated==0 && !searchResult)
             {
                 Logger.Warn("Issue with series (update time is 0) " + this);
                 Logger.Warn(json.ToString());
@@ -149,12 +160,11 @@ namespace TVRename
             }
         }
 
-        public SeriesInfo([NotNull] JObject json, JObject jsonInDefaultLang, int langId)
+        public SeriesInfo([NotNull] JObject json, JObject jsonInDefaultLang, int langId):this()
         {
-            SetToDefaults();
             LanguageId = langId;
             LoadJson(json,jsonInDefaultLang);
-            IsStub = false;
+            IsSearchResultOnly = false;
             if (string.IsNullOrEmpty(Name)            ){
                Logger.Warn("Issue with series " + this );
                Logger.Warn(json.ToString());
@@ -177,27 +187,8 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> GetActorNames() => GetActors().Select(x => x.ActorName);
 
-        private void SetToDefaults()
-        {
-            sourceEpisodes = new ConcurrentDictionary<int, Episode>();
-            actors=new List<Actor>();
-            aliases = new List<string>();
-            Genres = new List<string>();
-            Dirty = false;
-            Name = string.Empty;
-            AirsTime = null;
-            TvdbCode = -1;
-            TvMazeCode = -1;
-            TvRageCode = 0;
-            LanguageId = -1;
-            Status = "Unknown";
-            banners = new SeriesBanners(this);
-            banners.ResetBanners();
-            BannersLoaded = false;
-        }
-
         // ReSharper disable once FunctionComplexityOverflow
-        public void Merge([NotNull] SeriesInfo o, int preferredLanguageId)
+        public void Merge([NotNull] SeriesInfo o)
         {
             if (o.TvdbCode != TvdbCode && o.TvMazeCode !=TvMazeCode) 
             {
@@ -219,14 +210,15 @@ namespace TVRename
                 return; // older!?
             }
 
-            if (!o.IsStub)
+            if (!o.IsSearchResultOnly)
             {
-                IsStub = false;
+                IsSearchResultOnly = false;
             }
-            bool currentLanguageNotSet = o.LanguageId == -1;
-            bool newLanguageBetter = o.LanguageId == preferredLanguageId && LanguageId != preferredLanguageId;
-            bool newLanguageOptimal = o.LanguageId == preferredLanguageId;
-            bool useNewDataOverOld = currentLanguageNotSet || newLanguageBetter ||newLanguageOptimal;
+            bool currentLanguageNotSet = LanguageId == -1;
+            string bestLanguageCode= TargetLanguageCode ?? TVSettings.Instance.PreferredLanguageCode;
+            Language optimaLanguage = LocalCache.Instance.GetLanguageFromCode(bestLanguageCode);
+            bool newLanguageOptimal = !(optimaLanguage is null) && o.LanguageId == optimaLanguage.Id;
+            bool useNewDataOverOld = currentLanguageNotSet || newLanguageOptimal;
 
             SrvLastUpdated = o.SrvLastUpdated;
 

@@ -175,21 +175,28 @@ namespace TVRename
 
         public Episode(int seriesId, [NotNull] JObject bestLanguageR, JObject jsonInDefaultLang) : this(seriesId)
         {
-            //Here we have two pieces of JSON. One in local language and one in the default language (English). 
-            //We will populate with the best language first and then fill in any gaps with the backup Language
-            LoadJson(bestLanguageR);
-
-            //backupLanguageR should be a series of name/value pairs (ie a JArray of JProperties)
-            //TVDB asserts that name and overview are the fields that are localised
-
-            if (string.IsNullOrWhiteSpace(mName) && (string)jsonInDefaultLang["episodeName"] != null)
+            if (bestLanguageR is null)
             {
-                mName = System.Web.HttpUtility.HtmlDecode((string)jsonInDefaultLang["episodeName"])?.Trim();
+                LoadJson(jsonInDefaultLang);
             }
-
-            if (string.IsNullOrWhiteSpace(Overview) && (string)jsonInDefaultLang["overview"] != null)
+            else
             {
-                Overview = System.Web.HttpUtility.HtmlDecode((string)jsonInDefaultLang["overview"])?.Trim();
+                //Here we have two pieces of JSON. One in local language and one in the default language (English). 
+                //We will populate with the best language first and then fill in any gaps with the backup Language
+                LoadJson(bestLanguageR);
+
+                //backupLanguageR should be a series of name/value pairs (ie a JArray of JProperties)
+                //TVDB asserts that name and overview are the fields that are localised
+
+                if (string.IsNullOrWhiteSpace(mName) && (string) jsonInDefaultLang["episodeName"] != null)
+                {
+                    mName = System.Web.HttpUtility.HtmlDecode((string) jsonInDefaultLang["episodeName"])?.Trim();
+                }
+
+                if (string.IsNullOrWhiteSpace(Overview) && (string) jsonInDefaultLang["overview"] != null)
+                {
+                    Overview = System.Web.HttpUtility.HtmlDecode((string) jsonInDefaultLang["overview"])?.Trim();
+                }
             }
         }
 

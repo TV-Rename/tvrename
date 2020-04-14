@@ -231,7 +231,7 @@ namespace TVRename.TheTVDB
 
             lock (SERIES_LOCK)
             {
-                foreach (SeriesInfo si in series.Values.Where(info => !info.IsStub).ToList())
+                foreach (SeriesInfo si in series.Values.Where(info => !info.IsSearchResultOnly).ToList())
                 {
                     ServerAccuracyCheck(si, issues, showsToUpdate);
                 }
@@ -390,11 +390,11 @@ namespace TVRename.TheTVDB
                     {
                         if (useCustomLanguage)
                         {
-                            AddPlaceholderSeries(tvdb,tvmaze, name, customLanguageCode);
+                            AddPlaceholderSeries(tvdb,tvmaze, customLanguageCode);
                         }
                         else
                         {
-                            AddPlaceholderSeries(tvdb,tvmaze, name);
+                            AddPlaceholderSeries(tvdb,tvmaze);
                         }
 
                         forceReloadOn.TryAdd(tvdb, tvdb);
@@ -473,7 +473,7 @@ namespace TVRename.TheTVDB
             }
         }
         private void AddPlaceholderSeries([NotNull] SeriesSpecifier ss)
-            => AddPlaceholderSeries(ss.TvdbSeriesId, ss.TvMazeSeriesId, ss.Name, ss.CustomLanguageCode);
+            => AddPlaceholderSeries(ss.TvdbSeriesId, ss.TvMazeSeriesId, ss.CustomLanguageCode);
 
         public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts,[NotNull] IEnumerable<SeriesSpecifier> ss)
         {
@@ -500,11 +500,11 @@ namespace TVRename.TheTVDB
 
             MarkPlaceholdersDirty();
 
-            if (updateFromEpochTime == 0 && series.Values.Any(info => !info.IsStub))
+            if (updateFromEpochTime == 0 && series.Values.Any(info => !info.IsSearchResultOnly))
             {
                 SayNothing();
                 Logger.Error(
-                    $"Not updating as update time is 0. Need to do a Full Refresh on {series.Values.Count(info => !info.IsStub)} shows. {LatestUpdateTime}");
+                    $"Not updating as update time is 0. Need to do a Full Refresh on {series.Values.Count(info => !info.IsSearchResultOnly)} shows. {LatestUpdateTime}");
 
                 ForgetEverything();
                 return true; // that's it for now
@@ -937,7 +937,7 @@ namespace TVRename.TheTVDB
         {
             // we can use the oldest thing we have locally.  It isn't safe to use the newest thing.
             // This will only happen the first time we do an update, so a false _all update isn't too bad.
-            return series.Values.Where(info => !info.IsStub).Select(info => info.SrvLastUpdated).Where(i => i > 0)
+            return series.Values.Where(info => !info.IsSearchResultOnly).Select(info => info.SrvLastUpdated).Where(i => i > 0)
                 .DefaultIfEmpty(0).Min();
         }
 
@@ -1148,7 +1148,7 @@ namespace TVRename.TheTVDB
             {
                 if (series.ContainsKey(si.TvdbCode))
                 {
-                    series[si.TvdbCode].Merge(si, languageFromCode.Id);
+                    series[si.TvdbCode].Merge(si);
                 }
                 else
                 {
@@ -1221,7 +1221,22 @@ namespace TVRename.TheTVDB
                 throw new ArgumentNullException(nameof(requestedLanguageCode));
             }
 
+            if (LanguageList is null)
+            {
+                throw new ArgumentException("LanguageList not Setup", nameof(LanguageList));
+            }
+
+            Language languageFromCode = LanguageList.GetLanguageFromCode(requestedLanguageCode);
+            if (languageFromCode is null)
+            {
+                throw new ArgumentException(
+                    $"Requested language ({requestedLanguageCode}) not found in Language Cache, cache has ({LanguageList.Select(language => language.Abbreviation).ToCsv()})",
+                    requestedLanguageCode);
+            }
+            int requestedLangId = languageFromCode.Id;
+
             JObject seriesData = (JObject) jsonResponse["data"];
+
             SeriesInfo si;
             if (isNotDefaultLanguage)
             {
@@ -1230,27 +1245,13 @@ namespace TVRename.TheTVDB
                     throw new ArgumentNullException(nameof(jsonDefaultLangResponse));
                 }
 
-                if (LanguageList is null)
-                {
-                    throw new ArgumentException("LanguageList not Setup", nameof(LanguageList));
-                }
-
-                Language languageFromCode = LanguageList.GetLanguageFromCode(requestedLanguageCode);
-                if (languageFromCode is null)
-                {
-                    throw new ArgumentException(
-                        $"Requested language ({requestedLanguageCode}) not found in Language Cache, cache has ({LanguageList.Select(language => language.Abbreviation).ToCsv()})",
-                        requestedLanguageCode);
-                }
-
                 JObject seriesDataDefaultLang = (JObject) jsonDefaultLangResponse["data"];
-                int requestedLangId = languageFromCode.Id;
 
                 si = new SeriesInfo(seriesData, seriesDataDefaultLang, requestedLangId);
             }
             else
             {
-                si = new SeriesInfo(seriesData, GetLanguageId(), false);
+                si = new SeriesInfo(seriesData, requestedLangId, false);
             }
 
             return si;
@@ -1655,7 +1656,7 @@ namespace TVRename.TheTVDB
                 }
                 else
                 {
-                    Logger.Error($"<TVDB ISSUE?>: problem with JSON received for episode {jsonResponseData}");
+                    Logger.Error($"<TVDB ISSUE?>: problem with JSON received for episode {jsonResponseData} - {seriesDataDefaultLang}");
                 }
             }
             catch (SourceConsistencyException e)
@@ -1685,14 +1686,14 @@ namespace TVRename.TheTVDB
             return $"S{ep.AiredSeasonNumber:00}E{ep.AiredEpNum:00}";
         }
 
-        private void AddPlaceholderSeries(int tvdb, int tvmaze, [CanBeNull] string name)
+        private void AddPlaceholderSeries(int tvdb, int tvmaze)
         {
-            series[tvdb] = new SeriesInfo(name ?? string.Empty, tvdb,tvmaze) {Dirty = true};
+            series[tvdb] = new SeriesInfo(tvdb,tvmaze) {Dirty = true};
         }
 
-        private void AddPlaceholderSeries(int tvdb, int tvmaze, [CanBeNull] string name, string customLanguageCode)
+        private void AddPlaceholderSeries(int tvdb, int tvmaze, string customLanguageCode)
         {
-            series[tvdb] = new SeriesInfo(name ?? string.Empty, tvdb,tvmaze, customLanguageCode) {Dirty = true};
+            series[tvdb] = new SeriesInfo(tvdb,tvmaze, customLanguageCode) {Dirty = true};
         }
 
         public bool EnsureUpdated([NotNull] SeriesSpecifier seriesd, bool bannersToo)
@@ -1888,7 +1889,7 @@ namespace TVRename.TheTVDB
                     {
                         if (series.ContainsKey(si.TvdbCode))
                         {
-                            series[si.TvdbCode].Merge(si, languageId);
+                            series[si.TvdbCode].Merge(si);
                         }
                         else
                         {
@@ -1985,7 +1986,7 @@ namespace TVRename.TheTVDB
             {
                 if (series.ContainsKey(si.TvdbCode))
                 {
-                    series[si.TvdbCode].Merge(si, GetLanguageId());
+                    series[si.TvdbCode].Merge(si);
                 }
                 else
                 {

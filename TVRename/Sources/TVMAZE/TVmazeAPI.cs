@@ -244,7 +244,7 @@ namespace TVRename.TVmaze
 
             SeriesInfo returnValue = new SeriesInfo
             {
-                IsStub = false,
+                IsSearchResultOnly = false,
                 AirsDay = days,
                 AirsTime = JsonHelper.ParseAirTime((string)r["schedule"]["time"]),
                 FirstAired = JsonHelper.ParseFirstAired((string)r["premiered"]),
