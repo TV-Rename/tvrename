@@ -35,7 +35,7 @@ namespace TVRename
         public bool ForceUpdate { get; }
         public bool Unattended { get; }
         public bool QuickUpdate { get; }
-      
+        public bool Export { get; }
         public string UserFilePath { get; }
 
         private MissingFolderBehavior previousMissingFolderBehavior;
@@ -58,7 +58,8 @@ namespace TVRename
             ForceRefresh = args.Contains("/forcerefresh", StringComparer.OrdinalIgnoreCase);
             ForceUpdate = args.Contains("/forceupdate", StringComparer.OrdinalIgnoreCase);
             QuickUpdate = args.Contains("/quickupdate", StringComparer.OrdinalIgnoreCase);
-                
+            Export = args.Contains("/export", StringComparer.OrdinalIgnoreCase);
+
             Save = args.Contains("/save", StringComparer.OrdinalIgnoreCase);
 
             UserFilePath = args.Where(a => a.StartsWith("/userfilepath:", StringComparison.OrdinalIgnoreCase)).Select(a => a.Substring(a.IndexOf(":", StringComparison.Ordinal) + 1)).FirstOrDefault();
@@ -91,6 +92,7 @@ namespace TVRename
             output.AppendLine("/quickscan will scan shows most likely to need an update: http://www.tvrename.com/userguide#scan");
             output.AppendLine("/recentscan will scan recent shows: http://www.tvrename.com/userguide#scan");
             output.AppendLine("/doall Tell TV Rename execute all the actions it can.");
+            output.AppendLine("/export Tell TV Rename do any configured exports.");
             output.AppendLine("/quit Tell a running TV Rename session to exit.");
             output.AppendLine("/save Tell a running TV Rename session to save its caches.");
             output.AppendLine("");

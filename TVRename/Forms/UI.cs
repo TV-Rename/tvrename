@@ -303,6 +303,11 @@ namespace TVRename
                 SaveCaches();
             }
 
+            if (a.Export)
+            {
+                mDoc.RunExporters();
+            }
+
             if (a.Quit)
             {
                 Close();

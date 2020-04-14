@@ -810,6 +810,11 @@ namespace TVRename.TheTVDB
                 Logger.Warn(
                     $"Episodes were not found for {ex.ShowId}:{selectedSeriesInfo.Name} in languange {requestedLanguageCode} or {DefaultLanguageCode}");
             }
+            catch (KeyNotFoundException kex)
+            {
+                //We assue this is due to the update being for a recently removed show.
+                Logger.Error(kex);
+            }
         }
 
         private void ProcessEpisodes(int id, [NotNull] Dictionary<int, Tuple<JToken, JToken>> episodesResponses)

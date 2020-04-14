@@ -36,6 +36,11 @@ namespace TVRename.TVmaze
                 }
                 throw new SourceConnectivityException(ex.Message);
             }
+            catch (System.IO.IOException iex)
+            {
+                Logger.Error($"Could not get updates from TV Maze due to {iex.Message}");
+                throw new SourceConnectivityException(iex.Message);
+            }
         }
 
         private static int GetSeriesIdFromOtherCodes(int siTvdbCode,string imdb)

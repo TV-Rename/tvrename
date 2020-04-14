@@ -11,10 +11,10 @@ namespace TVRename.Utility
         {
             Lvitem lviItem = new Lvitem
             {
-                iItem = item.Index,
-                mask = LVIF_STATE,
-                stateMask = LVIS_STATEIMAGEMASK,
-                state = 0
+                Item = item.Index,
+                Mask = LVIF_STATE,
+                StateMask = LVIS_STATEIMAGEMASK,
+                State = 0
             };
 
             SendMessage(list.Handle, LVM_SETITEM, IntPtr.Zero, ref lviItem);
@@ -26,16 +26,20 @@ namespace TVRename.Utility
 
         private struct Lvitem
         {
-            public int mask;
-            public int iItem;
-            public int iSubItem;
-            public int state;
-            public int stateMask;
+            // ReSharper disable once NotAccessedField.Local
+            public int Mask;
+            // ReSharper disable once NotAccessedField.Local
+            public int Item;
+            public int SubItem;
+            // ReSharper disable once NotAccessedField.Local
+            public int State;
+            // ReSharper disable once NotAccessedField.Local
+            public int StateMask;
             [MarshalAs(UnmanagedType.LPTStr)]
-            public String lpszText;
-            public int cchTextMax;
-            public int iImage;
-            public IntPtr iParam;
+            public string LpszText;
+            public int CchTextMax;
+            public int Image;
+            public IntPtr Param;
         }
 
         [DllImport("user32.dll")]
