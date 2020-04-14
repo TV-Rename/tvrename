@@ -542,7 +542,7 @@ namespace TVRename
             cbLanguages.BeginUpdate();
             cbLanguages.Items.Clear();
 
-            string pref = "";
+            string pref = string.Empty;
             lock(TheTVDB.LocalCache.LANGUAGE_LOCK)
             {
                 foreach (Language l in TheTVDB.LocalCache.Instance.LanguageList)

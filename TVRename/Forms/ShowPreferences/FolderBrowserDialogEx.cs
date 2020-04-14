@@ -370,7 +370,7 @@ namespace DaveChambers.FolderBrowserDialogEx
 
             if (Win32.SHGetSpecialFolderLocation(owner.Handle, (int)RootFolder, ref bi.pidlRoot)!=0)
                 bi.pidlRoot = IntPtr.Zero;
-            bi.lpszTitle = "";
+            bi.lpszTitle = string.Empty;
             bi.ulFlags = Win32.BIF_RETURNONLYFSDIRS;    // do NOT use BIF_NEWDIALOGSTYLE or BIF_STATUSTEXT
             if (ShowEditbox)
                 bi.ulFlags |= Win32.BIF_EDITBOX;

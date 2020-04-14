@@ -224,7 +224,7 @@ namespace TVRename
 
             if (TheTVDB.LocalCache.Instance.LanguageList != null) //This means that language shave been loaded
             {
-                string pref = "";
+                string pref = string.Empty;
                 cbLanguage.BeginUpdate();
                 cbLanguage.Items.Clear();
                 foreach (Language l in TheTVDB.LocalCache.Instance.LanguageList.Where(l => !(l.Name is null)))
@@ -460,8 +460,8 @@ namespace TVRename
 
             lvSeasonFolders.Items.Add(lvi);
 
-            txtSeasonNumber.Text = "";
-            txtFolder.Text = "";
+            txtSeasonNumber.Text = string.Empty;
+            txtFolder.Text = string.Empty;
 
             lvSeasonFolders.Sort();
         }
@@ -537,7 +537,7 @@ namespace TVRename
             {
                 lbShowAlias.Items.Add(aliasName);
             }
-            tbShowAlias.Text = "";
+            tbShowAlias.Text = string.Empty;
         }
 
         private void bnRemoveAlias_Click(object sender, EventArgs e)

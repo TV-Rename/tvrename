@@ -126,34 +126,34 @@ namespace TVRename
         public bool FanArtJpg = false;
         public bool Mede8erXML = false;
         public bool ExportFOXML = false;
-        public string ExportFOXMLTo = "";
+        public string ExportFOXMLTo = string.Empty;
         public bool ExportMissingCSV = false;
-        public string ExportMissingCSVTo = "";
+        public string ExportMissingCSVTo = string.Empty;
         public bool ExportMissingXML = false;
-        public string ExportMissingXMLTo = "";
+        public string ExportMissingXMLTo = string.Empty;
         public bool ExportShowsTXT = false;
-        public string ExportShowsTXTTo = "";
+        public string ExportShowsTXTTo = string.Empty;
         public bool ExportShowsHTML = false;
-        public string ExportShowsHTMLTo = "";
+        public string ExportShowsHTMLTo = string.Empty;
         public int ExportRSSMaxDays = 7;
         public int ExportRSSMaxShows = 10;
         public int ExportRSSDaysPast = 0;
         public bool ExportRenamingXML = false;
-        public string ExportRenamingXMLTo = "";
+        public string ExportRenamingXMLTo = string.Empty;
         public bool ExportWTWRSS = false;
-        public string ExportWTWRSSTo = "";
+        public string ExportWTWRSSTo = string.Empty;
         public bool ExportWTWXML = false;
-        public string ExportWTWXMLTo = "";
+        public string ExportWTWXMLTo = string.Empty;
         public bool ExportWTWICAL = false;
-        public string ExportWTWICALTo = "";
+        public string ExportWTWICALTo = string.Empty;
         public bool ExportRecentXSPF = false;
-        public string ExportRecentXSPFTo = "";
+        public string ExportRecentXSPFTo = string.Empty;
         public bool ExportRecentM3U = false;
-        public string ExportRecentM3UTo = "";
+        public string ExportRecentM3UTo = string.Empty;
         public bool ExportRecentASX = false;
-        public string ExportRecentASXTo = "";
+        public string ExportRecentASXTo = string.Empty;
         public bool ExportRecentWPL = false;
-        public string ExportRecentWPLTo = "";
+        public string ExportRecentWPLTo = string.Empty;
         public bool UseColoursOnWtw = false;
         public List<FilenameProcessorRE> FNPRegexs = DefaultFNPList();
         public bool FolderJpg = false;
@@ -213,11 +213,11 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> AutoAddIgnoreSuffixesArray => Convert(AutoAddIgnoreSuffixes);
 
-        public string keepTogetherExtensionsString = "";
+        public string keepTogetherExtensionsString = string.Empty;
         [NotNull]
         public IEnumerable<string> keepTogetherExtensionsArray => Convert(keepTogetherExtensionsString);
 
-        public string subtitleExtensionsString = "";
+        public string subtitleExtensionsString = string.Empty;
         [NotNull]
         public IEnumerable<string> subtitleExtensionsArray => Convert(subtitleExtensionsString);
 
@@ -229,7 +229,7 @@ namespace TVRename
         [NotNull]
         public string[] PreferredRSSSearchTerms() => Convert(preferredRSSSearchTermsString);
 
-        public string OtherExtensionsString = "";
+        public string OtherExtensionsString = string.Empty;
         [NotNull]
         private IEnumerable<string> OtherExtensionsArray => Convert(OtherExtensionsString);
 
@@ -303,8 +303,8 @@ namespace TVRename
         public bool DeleteShowFromDisk = true;
 
         public ShowStatusColoringTypeList ShowStatusColors = new ShowStatusColoringTypeList();
-        public string SABHostPort = "";
-        public string SABAPIKey = "";
+        public string SABHostPort = string.Empty;
+        public string SABAPIKey = string.Empty;
         public bool CheckSABnzbd = false;
         public string PreferredLanguageCode = "en";
         public WTWDoubleClickAction WTWDoubleClick = WTWDoubleClickAction.Scan;
@@ -359,7 +359,7 @@ namespace TVRename
             guesses[1] = "c:\\Program Files\\uTorrent\\uTorrent.exe";
             guesses[2] = "c:\\Program Files (x86)\\uTorrent\\uTorrent.exe";
 
-            uTorrentPath = "";
+            uTorrentPath = string.Empty;
             foreach (FileInfo f in guesses.Select(g => new FileInfo(g)).Where(f => f.Exists))
             {
                 uTorrentPath = f.FullName;
@@ -595,6 +595,10 @@ namespace TVRename
                 writer.WriteInfo("ShowStatusFilter", "ShowStatus", Filter.ShowStatus);
                 writer.WriteInfo("ShowNetworkFilter", "ShowNetwork", Filter.ShowNetwork);
                 writer.WriteInfo("ShowRatingFilter", "ShowRating", Filter.ShowRating);
+
+                writer.WriteInfo("ShowStatusFilter", "ShowStatusInclude", Filter.ShowStatusInclude);
+                writer.WriteInfo("ShowNetworkFilter", "ShowNetworkInclude", Filter.ShowNetworkInclude);
+                writer.WriteInfo("ShowRatingFilter", "ShowRatingInclude", Filter.ShowRatingInclude);
 
                 foreach (string genre in Filter.Genres)
                 {
@@ -991,7 +995,7 @@ namespace TVRename
             {
                 if (b is null)
                 {
-                    b = "";
+                    b = string.Empty;
                 }
 
                 This = a;
@@ -1349,12 +1353,20 @@ namespace TVRename
             {
                 ShowName = xmlSettings.Descendants("ShowFilters").Descendants("ShowNameFilter").Attributes("ShowName")
                     .FirstOrDefault()?.Value,
+
                 ShowStatus = xmlSettings.Descendants("ShowFilters").Descendants("ShowStatusFilter").Attributes("ShowStatus")
                     .FirstOrDefault()?.Value,
                 ShowRating = xmlSettings.Descendants("ShowFilters").Descendants("ShowRatingFilter").Attributes("ShowRating")
                     .FirstOrDefault()?.Value,
                 ShowNetwork = xmlSettings.Descendants("ShowFilters").Descendants("ShowNetworkFilter").Attributes("ShowNetwork")
-                    .FirstOrDefault()?.Value
+                    .FirstOrDefault()?.Value,
+
+                ShowStatusInclude = ((bool?) xmlSettings.Descendants("ShowFilters").Descendants("ShowStatusFilter").Attributes("ShowStatusInclude")
+                    .FirstOrDefault()) ?? true,
+                ShowRatingInclude = ((bool?)xmlSettings.Descendants("ShowFilters").Descendants("ShowRatingFilter").Attributes("ShowRatingInclude")
+                    .FirstOrDefault()) ?? true,
+                ShowNetworkInclude = ((bool?)xmlSettings.Descendants("ShowFilters").Descendants("ShowNetworkFilter").Attributes("ShowNetworkInclude")
+                    .FirstOrDefault()) ?? true
             };
 
             foreach (XAttribute rep in xmlSettings.Descendants("ShowFilters").Descendants("GenreFilter").Attributes("Genre"))

@@ -263,6 +263,16 @@ namespace TVRename
             }
         }
 
+        public static void WriteInfo([NotNull] this XmlWriter writer, [NotNull] string elemName, [CanBeNull] string attribute, bool attributeVal)
+        {
+            writer.WriteStartElement(elemName);
+            if (!string.IsNullOrEmpty(attribute))
+            {
+                writer.WriteAttributeString(attribute, XmlConvert.ToString(attributeVal));
+            }
+            writer.WriteEndElement();
+        }
+
         public static bool? ExtractBool([NotNull] this XElement xmlSettings, string elementName)
         {
             if (xmlSettings.Descendants(elementName).Any())

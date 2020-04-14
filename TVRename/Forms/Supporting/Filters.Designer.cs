@@ -44,11 +44,15 @@ namespace TVRename.Forms
             this.cmbNetwork = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.chkHideIgnoredSeasons = new System.Windows.Forms.CheckBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.cmbShowStatusType = new System.Windows.Forms.ComboBox();
+            this.cmbNetworkType = new System.Windows.Forms.ComboBox();
+            this.cmbRatingType = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // tbShowName
             // 
-            this.tbShowName.Location = new System.Drawing.Point(117, 13);
+            this.tbShowName.Location = new System.Drawing.Point(213, 13);
             this.tbShowName.Name = "tbShowName";
             this.tbShowName.Size = new System.Drawing.Size(172, 20);
             this.tbShowName.TabIndex = 3;
@@ -56,7 +60,7 @@ namespace TVRename.Forms
             // cmbShowStatus
             // 
             this.cmbShowStatus.FormattingEnabled = true;
-            this.cmbShowStatus.Location = new System.Drawing.Point(117, 39);
+            this.cmbShowStatus.Location = new System.Drawing.Point(213, 39);
             this.cmbShowStatus.Name = "cmbShowStatus";
             this.cmbShowStatus.Size = new System.Drawing.Size(172, 21);
             this.cmbShowStatus.TabIndex = 4;
@@ -71,14 +75,14 @@ namespace TVRename.Forms
             this.clbGenre.Location = new System.Drawing.Point(13, 132);
             this.clbGenre.MultiColumn = true;
             this.clbGenre.Name = "clbGenre";
-            this.clbGenre.Size = new System.Drawing.Size(276, 214);
+            this.clbGenre.Size = new System.Drawing.Size(374, 214);
             this.clbGenre.TabIndex = 5;
             // 
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(214, 398);
+            this.btnCancel.Location = new System.Drawing.Point(312, 398);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 6;
@@ -89,7 +93,7 @@ namespace TVRename.Forms
             // btnOk
             // 
             this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOk.Location = new System.Drawing.Point(133, 398);
+            this.btnOk.Location = new System.Drawing.Point(231, 398);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(75, 23);
             this.btnOk.TabIndex = 7;
@@ -138,7 +142,7 @@ namespace TVRename.Forms
             // cmbRating
             // 
             this.cmbRating.FormattingEnabled = true;
-            this.cmbRating.Location = new System.Drawing.Point(117, 68);
+            this.cmbRating.Location = new System.Drawing.Point(213, 68);
             this.cmbRating.Name = "cmbRating";
             this.cmbRating.Size = new System.Drawing.Size(172, 21);
             this.cmbRating.TabIndex = 12;
@@ -146,7 +150,7 @@ namespace TVRename.Forms
             // cmbNetwork
             // 
             this.cmbNetwork.FormattingEnabled = true;
-            this.cmbNetwork.Location = new System.Drawing.Point(117, 95);
+            this.cmbNetwork.Location = new System.Drawing.Point(213, 95);
             this.cmbNetwork.Name = "cmbNetwork";
             this.cmbNetwork.Size = new System.Drawing.Size(172, 21);
             this.cmbNetwork.TabIndex = 13;
@@ -171,11 +175,57 @@ namespace TVRename.Forms
             this.chkHideIgnoredSeasons.Text = "Filter Out Ignored Seasons";
             this.chkHideIgnoredSeasons.UseVisualStyleBackColor = true;
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(118, 16);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(47, 13);
+            this.label5.TabIndex = 16;
+            this.label5.Text = "contains";
+            // 
+            // cmbShowStatusType
+            // 
+            this.cmbShowStatusType.FormattingEnabled = true;
+            this.cmbShowStatusType.Items.AddRange(new object[] {
+            "is",
+            "is not"});
+            this.cmbShowStatusType.Location = new System.Drawing.Point(121, 39);
+            this.cmbShowStatusType.Name = "cmbShowStatusType";
+            this.cmbShowStatusType.Size = new System.Drawing.Size(74, 21);
+            this.cmbShowStatusType.TabIndex = 17;
+            // 
+            // cmbNetworkType
+            // 
+            this.cmbNetworkType.FormattingEnabled = true;
+            this.cmbNetworkType.Items.AddRange(new object[] {
+            "is",
+            "is not"});
+            this.cmbNetworkType.Location = new System.Drawing.Point(121, 95);
+            this.cmbNetworkType.Name = "cmbNetworkType";
+            this.cmbNetworkType.Size = new System.Drawing.Size(74, 21);
+            this.cmbNetworkType.TabIndex = 18;
+            // 
+            // cmbRatingType
+            // 
+            this.cmbRatingType.FormattingEnabled = true;
+            this.cmbRatingType.Items.AddRange(new object[] {
+            "is",
+            "is not"});
+            this.cmbRatingType.Location = new System.Drawing.Point(121, 68);
+            this.cmbRatingType.Name = "cmbRatingType";
+            this.cmbRatingType.Size = new System.Drawing.Size(74, 21);
+            this.cmbRatingType.TabIndex = 19;
+            // 
             // Filters
             // 
             this.AcceptButton = this.btnOk;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(306, 433);
+            this.ClientSize = new System.Drawing.Size(404, 433);
+            this.Controls.Add(this.cmbRatingType);
+            this.Controls.Add(this.cmbNetworkType);
+            this.Controls.Add(this.cmbShowStatusType);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.chkHideIgnoredSeasons);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.cmbNetwork);
@@ -217,5 +267,9 @@ namespace TVRename.Forms
         private System.Windows.Forms.ComboBox cmbNetwork;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.CheckBox chkHideIgnoredSeasons;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ComboBox cmbShowStatusType;
+        private System.Windows.Forms.ComboBox cmbNetworkType;
+        private System.Windows.Forms.ComboBox cmbRatingType;
     }
 }

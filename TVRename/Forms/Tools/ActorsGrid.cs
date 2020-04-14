@@ -602,7 +602,7 @@ namespace TVRename
                 for (int c2 = 0; c2 < DataC - 1; c2++)
                 {
                     int topscore = 0;
-                    string topword = "";
+                    string topword = string.Empty;
                     int maxat = -1;
                     for (int c = c2; c < DataC; c++)
                     {
@@ -693,7 +693,7 @@ namespace TVRename
                 {
                     int topscore = 0;
                     int maxat = -1;
-                    string topword = "";
+                    string topword = string.Empty;
                     for (int r = r2; r < DataR; r++)
                     {
                         if (score)

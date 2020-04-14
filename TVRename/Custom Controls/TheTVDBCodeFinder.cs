@@ -135,7 +135,7 @@ namespace TVRename
             }
             else
             {
-                txtSearchStatus.Text = "";
+                txtSearchStatus.Text = string.Empty;
             }
 
             lvMatches.EndUpdate();

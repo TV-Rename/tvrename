@@ -105,7 +105,7 @@ namespace TVRename
                 return false;
             }
 
-            string showName = "";
+            string showName = string.Empty;
 
             FinderHelper.FindSeasEp("", title, out int season, out int episode, out int _, null, regxps);
 

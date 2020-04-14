@@ -114,7 +114,7 @@ namespace TVRename
             this.grid1.Size = new System.Drawing.Size(664, 321);
             this.grid1.TabIndex = 4;
             this.grid1.TabStop = true;
-            this.grid1.ToolTipText = "";
+            this.grid1.ToolTipText = string.Empty;
             // 
             // AddEditSearchEngine
             // 

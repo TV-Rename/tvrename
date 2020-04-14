@@ -124,7 +124,7 @@ namespace TVRename
 
         public static string CharsToHex(byte[] data, int start, int n)
         {
-            string r = "";
+            string r = string.Empty;
             for (int i = 0; i < n; i++)
                 r += (data[start + i] < 16 ? "0" : "") + data[start + i].ToString("x").ToUpper();
 
@@ -172,7 +172,7 @@ namespace TVRename
         public BTError()
             : base(BTChunk.kError)
         {
-            Message = "";
+            Message = string.Empty;
         }
 
         public override string AsText()

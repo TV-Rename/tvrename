@@ -18,28 +18,51 @@ namespace TVRename
         public List<string> Genres { get; } = new List<string>();
         public string ShowName { get; set; } 
         public string ShowStatus { get; set; }
+        public bool ShowStatusInclude { get; set; }
         public string ShowNetwork { get; set; }
+        public bool ShowNetworkInclude { get; set; }
         public string ShowRating { get; set; }
+        public bool ShowRatingInclude { get; set; }
 
         public bool Filter([NotNull] ShowItem show)
         {
             bool IsNetworkOk(ShowItem showItem)
             {
                 SeriesInfo seriesInfo = showItem.TheSeries();
-                return seriesInfo is null || seriesInfo.Network.Equals(ShowNetwork);
+                if (seriesInfo is null)
+                {
+                    return true;
+                }
+                return ShowNetworkInclude
+                    ? seriesInfo.Network.Equals(ShowNetwork)
+                    : !seriesInfo.Network.Equals(ShowNetwork);
             }
 
             bool IsRatingOk(ShowItem showItem)
             {
                 SeriesInfo seriesInfo = showItem.TheSeries();
-                return seriesInfo is null || seriesInfo.ContentRating.Equals(ShowRating);
+                if (seriesInfo is null)
+                {
+                    return true;
+                }
+
+                return ShowRatingInclude
+                    ? seriesInfo.ContentRating.Equals(ShowRating)
+                    : !seriesInfo.ContentRating.Equals(ShowRating);
+            }
+
+            bool IsStatusOk(ShowItem showItem)
+            {
+                return ShowStatusInclude
+                    ? showItem.ShowStatus.Equals(ShowStatus)
+                    :!showItem.ShowStatus.Equals(ShowStatus);
             }
 
             //Filter on show name
             bool isNameOk = ShowName is null || show.ShowName.Contains(ShowName, StringComparison.OrdinalIgnoreCase);
 
             //Filter on show status
-            bool isStatusOk = ShowStatus is null || show.ShowStatus.Equals(ShowStatus);
+            bool isStatusOk = ShowStatus is null || IsStatusOk(show);
 
             //Filter on show network
             bool isNetworkOk = ShowNetwork is null || IsNetworkOk(show);

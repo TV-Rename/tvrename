@@ -60,7 +60,7 @@ namespace TVRename
             DoWhatNow = RuleAction.kIgnoreEp;
             First = -1;
             Second = -1;
-            UserSuppliedText = "";
+            UserSuppliedText = string.Empty;
         }
 
         public void WriteXml([NotNull] XmlWriter writer)

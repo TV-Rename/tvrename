@@ -253,7 +253,7 @@ namespace TVRename
 
             name = ReplaceDates(urlEncode, name, pe.GetAirDateDt(false));
 
-            string allEps = "";
+            string allEps = string.Empty;
             for (int i = pe.AppropriateEpNum; i <= pe.EpNum2; i++)
             {
                 allEps += "E" + i.ToString("00");

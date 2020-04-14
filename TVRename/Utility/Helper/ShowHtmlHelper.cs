@@ -494,7 +494,7 @@ namespace TVRename
         public static string GetSeasonImagesHtmlOverview([NotNull] this ShowItem si, [NotNull] ProcessedSeason s)
         {
             int snum = s.SeasonNumber;
-            string body = "";
+            string body = string.Empty;
 
             List<ProcessedEpisode> eis =si.SeasonEpisodes[snum];
 
@@ -718,7 +718,7 @@ namespace TVRename
         {
             SeriesInfo ser = si.TheSeries();
             int snum = s.SeasonNumber;
-            string body = "";
+            string body = string.Empty;
 
             if (!string.IsNullOrEmpty(ser?.GetSeriesWideBannerPath()) &&
                 !string.IsNullOrEmpty(TheTVDB.API.GetImageURL(ser.GetSeriesWideBannerPath())))

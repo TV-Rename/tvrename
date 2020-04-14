@@ -930,7 +930,7 @@ namespace TVRename
             this.lbTags.Name = "lbTags";
             this.lbTags.Size = new System.Drawing.Size(80, 13);
             this.lbTags.TabIndex = 1;
-            this.lbTags.Tag = "";
+            this.lbTags.Tag = string.Empty;
             this.lbTags.Text = "Available Tags:";
             // 
             // lbSearchURL

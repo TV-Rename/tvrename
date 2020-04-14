@@ -810,7 +810,7 @@ namespace TVRename
                     if (ser != null && si.CustomShowName == ser.Name)
                     {
                         // then, turn it off
-                        si.CustomShowName = "";
+                        si.CustomShowName = string.Empty;
                         si.UseCustomShowName = false;
                     }
                 }

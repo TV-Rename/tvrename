@@ -98,7 +98,7 @@ namespace TVRename
                 //banner
                 //fanart - we do not have the option in TVDB to get season specific fanart, so we'll leave that
 
-                string filenamePrefix = "";
+                string filenamePrefix = string.Empty;
 
                 if (si.InOneFolder())
                 {   // We have multiple seasons in the same folder

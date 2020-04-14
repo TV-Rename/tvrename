@@ -56,7 +56,7 @@ namespace TVRename
             this.grid1.Size = new System.Drawing.Size(965, 534);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = true;
-            this.grid1.ToolTipText = "";
+            this.grid1.ToolTipText = string.Empty;
             // 
             // showRightClickMenu
             // 

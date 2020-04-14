@@ -1105,7 +1105,7 @@ namespace TVRename
 
             if (lvWhenToWatch.SelectedIndices.Count == 0)
             {
-                txtWhenToWatchSynopsis.Text = "";
+                txtWhenToWatchSynopsis.Text = string.Empty;
                 mLastEpClickedWtw = null;
                 return;
             }

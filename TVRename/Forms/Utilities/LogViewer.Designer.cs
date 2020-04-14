@@ -42,7 +42,7 @@ namespace TVRename
             this.logData.Name = "logData";
             this.logData.Size = new System.Drawing.Size(800, 409);
             this.logData.TabIndex = 0;
-            this.logData.Text = "";
+            this.logData.Text = string.Empty;
             // 
             // btnFullLog
             // 

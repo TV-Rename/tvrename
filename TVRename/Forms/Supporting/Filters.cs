@@ -15,6 +15,8 @@ namespace TVRename.Forms
     public partial class Filters : Form
     {
         private readonly TVDoc doc;
+        private const string IS_NOT = "is not";
+        private const string IS = "is";
 
         public Filters([NotNull] TVDoc doc)
         {
@@ -42,19 +44,28 @@ namespace TVRename.Forms
             {
                 //Filter By Show Names
                 bool filterByShowNames = filter.ShowName != null;
-                tbShowName.Text = filterByShowNames ? filter.ShowName : "";
+                tbShowName.Text = filterByShowNames ? filter.ShowName : string.Empty;
 
                 //Filter By Show Status
                 bool filterByShowStatus = filter.ShowStatus != null;
-                cmbShowStatus.SelectedItem = filterByShowStatus ? filter.ShowStatus : "";
+                cmbShowStatus.SelectedItem = filterByShowStatus ? filter.ShowStatus : string.Empty;
 
                 //Filter By Show Rating
                 bool filterByShowRating = filter.ShowRating != null;
-                cmbRating.SelectedItem = filterByShowRating ? filter.ShowRating : "";
+                cmbRating.SelectedItem = filterByShowRating ? filter.ShowRating : string.Empty;
 
                 //Filter By Show Network
                 bool filterByShowNetwork = filter.ShowNetwork != null;
-                cmbNetwork.SelectedItem = filterByShowNetwork ? filter.ShowNetwork : "";
+                cmbNetwork.SelectedItem = filterByShowNetwork ? filter.ShowNetwork : string.Empty;
+
+                //Filter By Show Status
+                cmbShowStatusType.SelectedItem = filter.ShowStatusInclude ? IS : IS_NOT;
+
+                //Filter By Show Rating
+                cmbRatingType.SelectedItem = filter.ShowRatingInclude ? IS : IS_NOT;
+
+                //Filter By Show Network
+                cmbNetworkType.SelectedItem = filter.ShowNetworkInclude ? IS : IS_NOT;
 
                 //Filter By Genre
                 foreach (string genre in filter.Genres)
@@ -80,6 +91,10 @@ namespace TVRename.Forms
             filter.ShowNetwork  = string.IsNullOrEmpty(cmbNetwork.Text) ? null : cmbNetwork.SelectedItem.ToString();
             filter.ShowRating = string.IsNullOrEmpty(cmbRating.Text) ? null : cmbRating.SelectedItem.ToString();
 
+            filter.ShowStatusInclude = GetIncludeStatus(cmbShowStatusType);
+            filter.ShowNetworkInclude = GetIncludeStatus(cmbNetworkType);
+            filter.ShowRatingInclude = GetIncludeStatus(cmbRatingType);
+
             filter.Genres.Clear();
             foreach (string genre in clbGenre.CheckedItems)
             {
@@ -94,6 +109,21 @@ namespace TVRename.Forms
             Close();
         }
 
+        private static bool GetIncludeStatus([NotNull] ComboBox comboBox)
+        {
+            if (!comboBox.Text.HasValue())
+            {
+                return true;
+            }
+
+            if (comboBox.SelectedItem.ToString().Equals(IS_NOT))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         private void btnCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
@@ -102,10 +132,15 @@ namespace TVRename.Forms
 
         private void bnReset_Click(object sender, EventArgs e)
         {
-            tbShowName.Text = "";
-            cmbShowStatus.SelectedItem = "";
-            cmbNetwork.SelectedItem = "";
-            cmbRating.SelectedItem = "";
+            tbShowName.Text = string.Empty;
+            cmbShowStatus.SelectedItem = string.Empty;
+            cmbNetwork.SelectedItem = string.Empty;
+            cmbRating.SelectedItem = string.Empty;
+
+            cmbShowStatusType.SelectedItem = IS;
+            cmbNetworkType.SelectedItem = IS;
+            cmbRatingType.SelectedItem = IS;
+
             clbGenre.ClearSelected();
 
             for (int i = 0; i < clbGenre.Items.Count; i++)

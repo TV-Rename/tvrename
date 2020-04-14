@@ -184,7 +184,7 @@ namespace TVRename
             aliases = new List<string>();
             Genres = new List<string>();
             Dirty = false;
-            Name = "";
+            Name = string.Empty;
             AirsTime = null;
             TvdbCode = -1;
             TvMazeCode = -1;

@@ -327,12 +327,12 @@ namespace TVRename
             TheSeries = ser;
             SeriesId = seriesId;
 
-            Overview = "";
-            EpisodeRating = "";
-            EpisodeGuestStars = "";
-            EpisodeDirector = "";
-            Writer = "";
-            mName = "";
+            Overview = string.Empty;
+            EpisodeRating = string.Empty;
+            EpisodeGuestStars = string.Empty;
+            EpisodeDirector = string.Empty;
+            Writer = string.Empty;
+            mName = string.Empty;
             EpisodeId = -1;
             ReadAiredSeasonNum = -1;
             ReadDvdSeasonNum = -1;

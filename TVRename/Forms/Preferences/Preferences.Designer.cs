@@ -1415,7 +1415,7 @@ namespace TVRename
             this.RSSGrid.Size = new System.Drawing.Size(395, 77);
             this.RSSGrid.TabIndex = 26;
             this.RSSGrid.TabStop = true;
-            this.RSSGrid.ToolTipText = "";
+            this.RSSGrid.ToolTipText = string.Empty;
             // 
             // label25
             // 
@@ -3472,7 +3472,7 @@ namespace TVRename
             this.ReplacementsGrid.Size = new System.Drawing.Size(402, 114);
             this.ReplacementsGrid.TabIndex = 1;
             this.ReplacementsGrid.TabStop = true;
-            this.ReplacementsGrid.ToolTipText = "";
+            this.ReplacementsGrid.ToolTipText = string.Empty;
             // 
             // label19
             // 

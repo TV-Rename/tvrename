@@ -232,7 +232,7 @@ namespace TVRename
             this.Grid1.Size = new System.Drawing.Size(884, 247);
             this.Grid1.TabIndex = 15;
             this.Grid1.TabStop = true;
-            this.Grid1.ToolTipText = "";
+            this.Grid1.ToolTipText = string.Empty;
             // 
             // bnDown
             // 

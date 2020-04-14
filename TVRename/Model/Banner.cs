@@ -110,16 +110,16 @@ namespace TVRename
         private void SetDefaults()
         {
             BannerId = -1;
-            BannerPath = "";
-            BannerType = "";
+            BannerPath = string.Empty;
+            BannerType = string.Empty;
             LanguageId = -1;
-            resolution = "";
+            resolution = string.Empty;
             Rating = -1;
             RatingCount = 0;
             SeasonId = -1;
             SeriesId = -1;
 
-            thumbnailPath = "";
+            thumbnailPath = string.Empty;
         }
 
         public void WriteXml([NotNull] XmlWriter writer)
