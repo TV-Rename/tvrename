@@ -232,18 +232,26 @@ namespace TVRename
                     return;
                 }
 
-                if (!TVmaze.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,downloadIds.Where(specifier => specifier.Provider==ShowItem.ProviderType.TVmaze)))
+                if (downloadIds.Any(s => s.Provider == ShowItem.ProviderType.TVmaze))
                 {
-                    DownloadDone = true;
-                    downloadOk = false;
-                    return;
+                    if (!TVmaze.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
+                        downloadIds.Where(specifier => specifier.Provider == ShowItem.ProviderType.TVmaze)))
+                    {
+                        DownloadDone = true;
+                        downloadOk = false;
+                        return;
+                    }
                 }
 
-                if (!TheTVDB.LocalCache.Instance.GetUpdates(showErrorMsgBox,cts, downloadIds.Where(specifier => specifier.Provider == ShowItem.ProviderType.TheTVDB)))
+                if (downloadIds.Any(s => s.Provider == ShowItem.ProviderType.TheTVDB))
                 {
-                    DownloadDone = true;
-                    downloadOk = false;
-                    return;
+                    if (!TheTVDB.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
+                        downloadIds.Where(specifier => specifier.Provider == ShowItem.ProviderType.TheTVDB)))
+                    {
+                        DownloadDone = true;
+                        downloadOk = false;
+                        return;
+                    }
                 }
 
                 // for each of the ShowItems, make sure we've got downloaded data for it
