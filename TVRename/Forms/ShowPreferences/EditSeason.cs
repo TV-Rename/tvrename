@@ -57,6 +57,9 @@ namespace TVRename
             FillSeenEpisodes(false);
             lvSeenEpisodes.ListViewItemSorter = new NumberAsTextSorter(0);
             lvSeenEpisodes.Sort();
+
+            UpdatePreviouslySeenButtons();
+            UpdateRuleButtons();
         }
 
         private void FillSeenEpisodes(bool keepSel)
@@ -323,9 +326,19 @@ namespace TVRename
             }
         }
 
-        private void LvSeenEpisodes_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void UpdatePreviouslySeenButtons()
         {
             bnRemoveSeen.Enabled = lvSeenEpisodes.SelectedItems.Count > 0;
+        }
+
+        private void UpdateRuleButtons()
+        {
+            bool anythingSelected = lvRuleList.SelectedItems.Count > 0;
+
+            bnDelRule.Enabled = anythingSelected;
+            bnEdit.Enabled = anythingSelected;
+            bnRuleUp.Enabled = anythingSelected;
+            bnRuleDown.Enabled = anythingSelected;
         }
 
         private void LvSeenEpisodes_ColumnClick(object sender, [NotNull] ColumnClickEventArgs e)
@@ -340,6 +353,16 @@ namespace TVRename
             }
 
             lvSeenEpisodes.Sort();
+        }
+
+        private void LvRuleList_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            UpdateRuleButtons();
+        }
+
+        private void LvSeenEpisodes_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            UpdatePreviouslySeenButtons();
         }
     }
 }

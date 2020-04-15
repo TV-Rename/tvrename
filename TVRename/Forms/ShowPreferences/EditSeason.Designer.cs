@@ -108,6 +108,7 @@ namespace TVRename
             this.lvRuleList.TabIndex = 5;
             this.lvRuleList.UseCompatibleStateImageBehavior = false;
             this.lvRuleList.View = System.Windows.Forms.View.Details;
+            this.lvRuleList.SelectedIndexChanged += new System.EventHandler(this.LvRuleList_SelectedIndexChanged);
             this.lvRuleList.DoubleClick += new System.EventHandler(this.lvRuleList_DoubleClick);
             // 
             // columnHeader3

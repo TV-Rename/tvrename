@@ -83,7 +83,7 @@ namespace TVRename
         }
 
         public ProcessedEpisode([NotNull] ProcessedEpisode pe, ShowItem si, [NotNull] string name, int airedEpNum, int dvdEpNum, int epNum2)
-            : base(pe.TheSeries,pe.Show.Provider)
+            : base(pe)
         {
             NextToAir = false;
             OverallNumber = -1;
@@ -96,8 +96,8 @@ namespace TVRename
             Type = ProcessedEpisodeType.single;
             TheAiredProcessedSeason = pe.TheAiredProcessedSeason;
             TheDvdProcessedSeason = pe.TheDvdProcessedSeason;
-            ReadDvdSeasonNum = TheDvdProcessedSeason.SeasonNumber;
-            ReadAiredSeasonNum = TheDvdProcessedSeason.SeasonNumber;
+            //ReadDvdSeasonNum = TheDvdProcessedSeason.SeasonNumber;
+            //ReadAiredSeasonNum = TheDvdProcessedSeason.SeasonNumber;
         }
 
         public int AppropriateSeasonNumber => Show.Order==ProcessedSeason.SeasonType.dvd ? DvdSeasonNumber : AiredSeasonNumber;
