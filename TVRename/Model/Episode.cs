@@ -173,7 +173,7 @@ namespace TVRename
             return intValue;
         }
 
-        public Episode(int seriesId, [NotNull] JObject bestLanguageR, JObject jsonInDefaultLang) : this(seriesId)
+        public Episode(int seriesId,[CanBeNull] JObject bestLanguageR, JObject jsonInDefaultLang) : this(seriesId)
         {
             if (bestLanguageR is null)
             {

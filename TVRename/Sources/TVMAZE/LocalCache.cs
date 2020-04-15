@@ -313,8 +313,7 @@ namespace TVRename.TVmaze
             {
                 if (series.ContainsKey(tvmaze))
                 {
-                    series.TryRemove(tvmaze, out SeriesInfo oldSeries);
-                    string name = oldSeries.Name;
+                    series.TryRemove(tvmaze, out SeriesInfo _);
                     if (makePlaceholder)
                     {
                         if (useCustomLanguage)

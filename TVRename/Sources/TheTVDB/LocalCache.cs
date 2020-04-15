@@ -384,8 +384,8 @@ namespace TVRename.TheTVDB
             {
                 if (series.ContainsKey(tvdb))
                 {
-                    series.TryRemove(tvdb, out SeriesInfo oldSeries);
-                    string name = oldSeries.Name;
+                    series.TryRemove(tvdb, out SeriesInfo _);
+
                     if (makePlaceholder)
                     {
                         if (useCustomLanguage)
