@@ -277,7 +277,7 @@ namespace TVRename
             }
             catch (UriFormatException e)
             {
-                Logger.Error(e,$"Could not compare {directoryPath1} and {directoryPath2}, assuming they are not the same location");
+                Logger.Warn(e,$"Could not compare {directoryPath1} and {directoryPath2}, assuming they are not the same location");
                 return false;
             }
         }
