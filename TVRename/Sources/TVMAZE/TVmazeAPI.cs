@@ -121,7 +121,6 @@ namespace TVRename.TVmaze
                 ? GetSeriesDetails(ss.TvMazeSeriesId)
                 : GetSeriesDetails(GetSeriesIdFromOtherCodes(ss.TvdbSeriesId,ss.ImdbCode));
 
-
             SeriesInfo downloadedSi = GenerateSeriesInfo(results);
             foreach (JToken akaJson in results["_embedded"]["akas"])
             {
@@ -231,7 +230,6 @@ namespace TVRename.TVmaze
             return new Season(id,number,name,description,url,imageUrl,seriesId);
         }
 
-
         [NotNull]
         private static SeriesInfo GenerateSeriesInfo([NotNull] JObject r)
         {
@@ -240,7 +238,6 @@ namespace TVRename.TVmaze
             string days =  r["schedule"]["days"]?.Select(x => x.Value<string>()).ToCsv();
             int tvdb = r["externals"]["thetvdb"].Type == JTokenType.Null ? -1 : (int)r["externals"]["thetvdb"]; 
             int rage = r["externals"]["tvrage"].Type == JTokenType.Null ? -1 : (int)r["externals"]["tvrage"];
-
 
             SeriesInfo returnValue = new SeriesInfo
             {

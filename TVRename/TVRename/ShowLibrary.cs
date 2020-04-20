@@ -558,14 +558,12 @@ namespace TVRename
             {
                 ProcessedEpisode t = eis[index];
                 ProcessedEpisode n = new ProcessedEpisode(t, si, txt, t.AiredEpNum + 1, t.DvdEpNum + 1, t.EpNum2 + 1);
-
                 eis.Insert(index, n);
             }
             else if (index == ec)
             {
                 ProcessedEpisode t = eis[index - 1];
                 ProcessedEpisode n = new ProcessedEpisode(t, si,txt,t.AiredEpNum+1,t.DvdEpNum+1,t.EpNum2+1);
-                int x = n.AppropriateSeasonNumber;
                 eis.Add(n);
             }
             else

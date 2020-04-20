@@ -45,7 +45,6 @@ namespace TVRename.Utility
         [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, ref Lvitem lParam);
 
-
         // The 'TopItem' function doesn't work in a ListView if groups are enabled. This is meant to be a workaround.
         // Problem is, it just doesn't work and I don't know why!
         // ReSharper disable once UnusedMember.Local
@@ -62,6 +61,5 @@ namespace TVRename.Utility
             int delta = -(currentPos - position);
             NativeMethods.SendMessage(list.Handle, LVM_SCROLL, IntPtr.Zero, (IntPtr)delta); // First param is horizontal scroll amount, second is vertical scroll amount
         }
-
     }
 }

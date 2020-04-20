@@ -721,7 +721,7 @@ namespace TVRename
             txtExportRSSMaxDays.Text = s.ExportRSSMaxDays.ToString();
             txtExportRSSMaxShows.Text = s.ExportRSSMaxShows.ToString();
             txtExportRSSDaysPast.Text = s.ExportRSSDaysPast.ToString();
-            cbUseColoursOnWtw.Checked= s.UseColoursOnWtw ;
+            cbUseColoursOnWtw.Checked= s.UseColoursOnWtw;
 
             cbTimeZone.Text = s.DefaultShowTimezoneName;
             if (cbTimeZone.Text == string.Empty&& !string.IsNullOrWhiteSpace(s.DefaultShowTimezoneName))

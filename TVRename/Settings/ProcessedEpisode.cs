@@ -96,8 +96,6 @@ namespace TVRename
             Type = ProcessedEpisodeType.single;
             TheAiredProcessedSeason = pe.TheAiredProcessedSeason;
             TheDvdProcessedSeason = pe.TheDvdProcessedSeason;
-            //ReadDvdSeasonNum = TheDvdProcessedSeason.SeasonNumber;
-            //ReadAiredSeasonNum = TheDvdProcessedSeason.SeasonNumber;
         }
 
         public int AppropriateSeasonNumber => Show.Order==ProcessedSeason.SeasonType.dvd ? DvdSeasonNumber : AiredSeasonNumber;
