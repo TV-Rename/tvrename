@@ -103,9 +103,9 @@ namespace TVRename.Forms.Utilities
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(29, 452);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(192, 13);
+            this.label4.Size = new System.Drawing.Size(279, 13);
             this.label4.TabIndex = 6;
-            this.label4.Text = "TheTVDB.com for TV show information";
+            this.label4.Text = "TheTVDB.com and TVMaze.com for TV show information";
             // 
             // label5
             // 
@@ -133,7 +133,7 @@ namespace TVRename.Forms.Utilities
             this.lblCopyright.Name = "lblCopyright";
             this.lblCopyright.Size = new System.Drawing.Size(182, 13);
             this.lblCopyright.TabIndex = 9;
-            this.lblCopyright.Text = "Copyright (C) 2019 TV Rename";
+            this.lblCopyright.Text = "Copyright (C) 2020 TV Rename";
             // 
             // richTextBox3
             // 

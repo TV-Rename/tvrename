@@ -4149,5 +4149,10 @@ namespace TVRename
         {
             UpdateCheckboxGroup(mcbModifyMetadata, i => i is ActionFileMetaData);
         }
+
+        private void ThanksToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

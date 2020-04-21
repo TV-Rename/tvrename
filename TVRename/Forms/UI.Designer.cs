@@ -145,7 +145,7 @@ namespace TVRename
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
             this.btnActionAction = new System.Windows.Forms.ToolStripButton();
             this.btnPreferences = new System.Windows.Forms.ToolStripButton();
-            this.lvAction = new MyListView();
+            this.lvAction = new TVRename.MyListView();
             this.columnHeader48 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader49 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader51 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -161,7 +161,7 @@ namespace TVRename
             this.btnWTWBTSearch = new System.Windows.Forms.ToolStripSplitButton();
             this.txtWhenToWatchSynopsis = new System.Windows.Forms.TextBox();
             this.calCalendar = new System.Windows.Forms.MonthCalendar();
-            this.lvWhenToWatch = new ListViewFlickerFree();
+            this.lvWhenToWatch = new TVRename.ListViewFlickerFree();
             this.columnHeader29 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader30 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader31 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -198,6 +198,7 @@ namespace TVRename
             this.tmrPeriodicScan = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btnUpdateAvailable = new System.Windows.Forms.Button();
+            this.thanksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
@@ -501,6 +502,7 @@ namespace TVRename
             this.checkForNewVersionToolStripMenuItem,
             this.toolStripSeparator8,
             this.logToolStripMenuItem,
+            this.thanksToolStripMenuItem,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
@@ -802,7 +804,7 @@ namespace TVRename
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(692, 348);
+            this.tabPage2.Size = new System.Drawing.Size(735, 531);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Images";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -814,7 +816,7 @@ namespace TVRename
             this.webImages.Location = new System.Drawing.Point(3, 3);
             this.webImages.MinimumSize = new System.Drawing.Size(20, 20);
             this.webImages.Name = "webImages";
-            this.webImages.Size = new System.Drawing.Size(686, 342);
+            this.webImages.Size = new System.Drawing.Size(729, 525);
             this.webImages.TabIndex = 0;
             this.webImages.WebBrowserShortcutsEnabled = false;
             this.webImages.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
@@ -1541,6 +1543,13 @@ namespace TVRename
             this.btnUpdateAvailable.Visible = false;
             this.btnUpdateAvailable.Click += new System.EventHandler(this.btnUpdateAvailable_Click);
             // 
+            // thanksToolStripMenuItem
+            // 
+            this.thanksToolStripMenuItem.Name = "thanksToolStripMenuItem";
+            this.thanksToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.thanksToolStripMenuItem.Text = "Thanks";
+            this.thanksToolStripMenuItem.Click += new System.EventHandler(this.ThanksToolStripMenuItem_Click);
+            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1735,5 +1744,6 @@ namespace TVRename
         private ToolStripMenuItem mcbDownload;
         private ToolStripMenuItem mcbWriteMetadata;
         private ToolStripMenuItem mcbModifyMetadata;
+        private ToolStripMenuItem thanksToolStripMenuItem;
     }
 }
