@@ -4152,7 +4152,8 @@ namespace TVRename
 
         private void ThanksToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            ThanksForm form = new ThanksForm();
+            form.ShowDialog();
         }
     }
 }

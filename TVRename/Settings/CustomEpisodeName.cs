@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
+using NLog;
 
 // This builds the filenames to rename to, for any given episode (or multi-episode episode)
 
@@ -17,6 +18,7 @@ namespace TVRename
     public class CustomEpisodeName
     {
         public string StyleString;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public CustomEpisodeName(string s)
         {
@@ -217,63 +219,72 @@ namespace TVRename
         [NotNull]
         public static string NameForNoExt([NotNull] ProcessedEpisode pe, [NotNull]  string styleString, bool urlEncode)
         {
-            string name = styleString;
-
-            string showname = pe.Show.ShowName;
-            string epname = pe.Name;
-            if (urlEncode)
+            try
             {
-                showname = Uri.EscapeDataString(showname);
-                epname = Uri.EscapeDataString(epname);
+                string name = styleString;
+
+                string showname = pe.Show.ShowName;
+                string epname = pe.Name;
+                if (urlEncode)
+                {
+                    showname = Uri.EscapeDataString(showname);
+                    epname = Uri.EscapeDataString(epname);
+                }
+
+                name = name.ReplaceInsensitive("{ShowName}", showname);
+                name = name.ReplaceInsensitive("{Season}", pe.AppropriateSeasonNumber.ToString());
+                name = name.ReplaceInsensitive("{Season:2}", pe.AppropriateSeasonNumber.ToString("00"));
+                name = name.ReplaceInsensitive("{SeasonNumber}", pe.AppropriateSeasonIndex.ToString());
+                name = name.ReplaceInsensitive("{SeasonNumber:2}", pe.AppropriateSeasonIndex.ToString("00"));
+
+                string episodeFormat = pe.AppropriateProcessedSeason.Episodes.Count >= 100 ? "000" : "00";
+                name = name.ReplaceInsensitive("{Episode}", pe.AppropriateEpNum.ToString(episodeFormat));
+                name = name.ReplaceInsensitive("{Episode2}", pe.EpNum2.ToString(episodeFormat));
+
+                name = name.ReplaceInsensitive("{EpisodeName}", epname);
+                name = name.ReplaceInsensitive("{Number}", pe.OverallNumber.ToString());
+                name = name.ReplaceInsensitive("{Number:2}", pe.OverallNumber.ToString("00"));
+                name = name.ReplaceInsensitive("{Number:3}", pe.OverallNumber.ToString("000"));
+                name = name.ReplaceInsensitive("{Year}", pe.TheSeries.MinYear.ToString());
+                name = name.ReplaceInsensitive("{SeasonYear}", pe.AppropriateProcessedSeason.MinYear().ToString());
+                name = name.ReplaceInsensitive("{Imdb}", pe.ImdbCode);
+                name = name.ReplaceInsensitive("{ShowImdb}", pe.Show?.TheSeries()?.Imdb ?? string.Empty);
+
+                name = ReplaceDates(urlEncode, name, pe.GetAirDateDt(false));
+                name = Regex.Replace(name, "{AllEpisodes}", AllEpsText(pe), RegexOptions.IgnoreCase);
+
+                if (pe.EpNum2 == pe.AppropriateEpNum)
+                {
+                    name = Regex.Replace(name, "([^\\\\])\\[.*?[^\\\\]\\]", "$1"); // remove optional parts
+                }
+                else
+                {
+                    name = Regex.Replace(name, "([^\\\\])\\[(.*?[^\\\\])\\]", "$1$2"); // remove just the brackets
+                }
+
+                name = name.Replace("\\[", "[");
+                name = name.Replace("\\]", "]");
+
+                return name.Trim();
+            }
+            catch (ArgumentNullException ane)
+            {
+                Logger.Error($"Asked to update {styleString} with information from {pe.Show.ShowName}, {pe.SeasonNumberAsText}, {pe.EpNumsAsString()}");
             }
 
-            name = name.ReplaceInsensitive("{ShowName}", showname);
-            name = name.ReplaceInsensitive("{Season}", pe.AppropriateSeasonNumber.ToString());
-            name = name.ReplaceInsensitive("{Season:2}", pe.AppropriateSeasonNumber.ToString("00"));
-            name = name.ReplaceInsensitive("{SeasonNumber}", pe.AppropriateSeasonIndex.ToString());
-            name = name.ReplaceInsensitive("{SeasonNumber:2}", pe.AppropriateSeasonIndex.ToString("00"));
-            if (pe.AppropriateProcessedSeason.Episodes.Count >= 100)
-            {
-                name = name.ReplaceInsensitive("{Episode}", pe.AppropriateEpNum.ToString("000"));
-                name = name.ReplaceInsensitive("{Episode2}", pe.EpNum2.ToString("000"));
-            }
-            else
-            {
-                name = name.ReplaceInsensitive("{Episode}", pe.AppropriateEpNum.ToString("00"));
-                name = name.ReplaceInsensitive("{Episode2}", pe.EpNum2.ToString("00"));
-            }
-            name = name.ReplaceInsensitive("{EpisodeName}", epname);
-            name = name.ReplaceInsensitive("{Number}", pe.OverallNumber.ToString());
-            name = name.ReplaceInsensitive("{Number:2}", pe.OverallNumber.ToString("00"));
-            name = name.ReplaceInsensitive("{Number:3}", pe.OverallNumber.ToString("000"));
-            name = name.ReplaceInsensitive("{Year}", pe.TheSeries.MinYear.ToString());
-            name = name.ReplaceInsensitive("{SeasonYear}", pe.AppropriateProcessedSeason.MinYear().ToString());
-            name = name.ReplaceInsensitive("{Imdb}", pe.ImdbCode);
-            name = name.ReplaceInsensitive("{ShowImdb}", pe.Show?.TheSeries()?.Imdb??string.Empty);
+            return string.Empty;
+        }
 
-            name = ReplaceDates(urlEncode, name, pe.GetAirDateDt(false));
-
+        [NotNull]
+        private static string AllEpsText([NotNull] ProcessedEpisode pe)
+        {
             string allEps = string.Empty;
             for (int i = pe.AppropriateEpNum; i <= pe.EpNum2; i++)
             {
                 allEps += "E" + i.ToString("00");
             }
 
-            name = Regex.Replace(name, "{AllEpisodes}", allEps, RegexOptions.IgnoreCase);
-
-            if (pe.EpNum2 == pe.AppropriateEpNum)
-            {
-                name = Regex.Replace(name, "([^\\\\])\\[.*?[^\\\\]\\]", "$1"); // remove optional parts
-            }
-            else
-            {
-                name = Regex.Replace(name, "([^\\\\])\\[(.*?[^\\\\])\\]", "$1$2"); // remove just the brackets
-            }
-
-            name = name.Replace("\\[", "[");
-            name = name.Replace("\\]", "]");
-
-            return name.Trim();
+            return allEps;
         }
     }
 }

@@ -60,6 +60,11 @@ namespace TVRename
         [NotNull]
         public static string ReplaceInsensitive([NotNull] this string source, [NotNull] string search, [NotNull] string replacement)
         {
+            if (!source.HasValue())
+            {
+                return string.Empty;
+            }
+
             return Regex.Replace(
                 source,
                 Regex.Escape(search),

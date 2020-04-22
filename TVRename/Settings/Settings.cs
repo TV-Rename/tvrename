@@ -868,14 +868,14 @@ namespace TVRename
             SeriesInfo s = epi?.TheSeries;
             if (s is null)
             {
-                return "";
+                return string.Empty;
             }
 
             string url = epi.Show.UseCustomSearchUrl && !string.IsNullOrWhiteSpace(epi.Show.CustomSearchUrl)
                 ? epi.Show.CustomSearchUrl
                 : TheSearchers.CurrentSearch.Url;
 
-            return CustomEpisodeName.NameForNoExt(epi, url, true);
+            return !url.HasValue() ? string.Empty : CustomEpisodeName.NameForNoExt(epi, url, true);
         }
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();

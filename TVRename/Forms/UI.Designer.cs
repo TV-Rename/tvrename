@@ -145,7 +145,7 @@ namespace TVRename
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
             this.btnActionAction = new System.Windows.Forms.ToolStripButton();
             this.btnPreferences = new System.Windows.Forms.ToolStripButton();
-            this.lvAction = new TVRename.MyListView();
+            this.lvAction = new MyListView();
             this.columnHeader48 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader49 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader51 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -161,7 +161,7 @@ namespace TVRename
             this.btnWTWBTSearch = new System.Windows.Forms.ToolStripSplitButton();
             this.txtWhenToWatchSynopsis = new System.Windows.Forms.TextBox();
             this.calCalendar = new System.Windows.Forms.MonthCalendar();
-            this.lvWhenToWatch = new TVRename.ListViewFlickerFree();
+            this.lvWhenToWatch = new ListViewFlickerFree();
             this.columnHeader29 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader30 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader31 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
