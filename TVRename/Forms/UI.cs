@@ -4141,5 +4141,44 @@ namespace TVRename
             ThanksForm form = new ThanksForm();
             form.ShowDialog();
         }
+
+        private void TabControl1_DrawItem(object sender, [NotNull] DrawItemEventArgs e)
+        {
+            //Follow this advice https://docs.microsoft.com/en-us/dotnet/framework/winforms/controls/how-to-display-side-aligned-tabs-with-tabcontrol
+
+            Graphics g = e.Graphics;
+            TabControl tabCtrl = (TabControl)sender;
+
+            g.FillRectangle(e.State == DrawItemState.Selected ? Brushes.White : new SolidBrush(BackColor),e.Bounds);
+
+            // Get the item from the collection.
+            TabPage tabPage = tabCtrl.TabPages[e.Index];
+
+            // Get the real bounds for the tab rectangle.
+            Rectangle tabBounds = tabCtrl.GetTabRect(e.Index);
+
+            // Draw string. Center the text.
+            StringFormat stringFlags = new StringFormat
+            {
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            };
+            const int INDENT = 10;
+
+            //GetIcon
+            Image icon = tabCtrl.ImageList.Images[tabPage.ImageKey];
+            if (icon is null)
+            {
+                return;
+            }
+
+            float x = tabBounds.X + ((tabBounds.Width - icon.Width) / 2.0f);// - indent;
+            float y = tabBounds.Y + INDENT;
+            e.Graphics.DrawImage(icon, x, y);
+            Font labelFont = new Font("Segoe UI Semibold", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
+
+            Rectangle textarea = new Rectangle(tabBounds.X, tabBounds.Y + INDENT + icon.Height + INDENT,tabBounds.Width,tabBounds.Height-(INDENT + icon.Height + INDENT));
+            g.DrawString(tabPage.Text, labelFont, Brushes.Black,textarea,stringFlags );
+        }
     }
 }
