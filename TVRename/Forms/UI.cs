@@ -2379,19 +2379,9 @@ namespace TVRename
             {
                 if (TVSettings.Instance.ShowStatusColors != null)
                 {
-                    if (TVSettings.Instance.ShowStatusColors.IsShowStatusDefined(si.ShowStatus))
+                    if (TVSettings.Instance.ShowStatusColors.AppliesTo(si))
                     {
-                        n.ForeColor = TVSettings.Instance.ShowStatusColors.GetEntry(false, true, si.ShowStatus);
-                    }
-                    else
-                    {
-                        Color nodeColor =
-                            TVSettings.Instance.ShowStatusColors.GetEntry(true, true, si.SeasonsAirStatus.ToString());
-
-                        if (!nodeColor.IsEmpty)
-                        {
-                            n.ForeColor = nodeColor;
-                        }
+                        n.ForeColor = TVSettings.Instance.ShowStatusColors.GetColour(si);
                     }
                 }
 
@@ -2426,13 +2416,9 @@ namespace TVRename
                     {
                         if (TVSettings.Instance.ShowStatusColors != null)
                         {
-                            Color nodeColor =
-                                TVSettings.Instance.ShowStatusColors.GetEntry(true, false,
-                                    s.Status(si.GetTimeZone()).ToString());
-
-                            if (!nodeColor.IsEmpty)
+                            if (TVSettings.Instance.ShowStatusColors.AppliesTo(s))
                             {
-                                n2.ForeColor = nodeColor;
+                                n2.ForeColor = TVSettings.Instance.ShowStatusColors.GetColour(s);
                             }
                         }
                     }

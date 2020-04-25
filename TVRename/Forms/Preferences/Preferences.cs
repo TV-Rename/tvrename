@@ -8,6 +8,7 @@
 using Alphaleonis.Win32.Filesystem;
 using DaveChambers.FolderBrowserDialogEx;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -465,7 +466,7 @@ namespace TVRename
             foreach (ListViewItem item in lvwDefinedColors.Items)
             {
                 if (item.SubItems.Count > 1 && !string.IsNullOrEmpty(item.SubItems[1].Text) && item.Tag != null &&
-                    item.Tag is TVSettings.ShowStatusColoringType type)
+                    item.Tag is TVSettings.ColouringRule type)
                 {
                     returnValue.Add(type, ColorTranslator.FromHtml(item.SubItems[1].Text));
                 }
@@ -1096,7 +1097,7 @@ namespace TVRename
             }
 
             foreach (
-                System.Collections.Generic.KeyValuePair<TVSettings.ShowStatusColoringType, Color> showStatusColor in
+                KeyValuePair<TVSettings.ColouringRule, Color> showStatusColor in
                 s.ShowStatusColors)
             {
                 ListViewItem item = new ListViewItem
@@ -1122,34 +1123,29 @@ namespace TVRename
             }
         }
 
+        private static class EnumUtil
+        {
+            [NotNull]
+            public static IEnumerable<T> GetValues<T>() => Enum.GetValues(typeof(T)).Cast<T>();
+        }
+
         private void FillTreeViewColoringShowStatusTypeCombobox()
         {
             // Shows
-            foreach (string status in Enum.GetNames(typeof(ShowItem.ShowAirStatus)))
+            foreach (ShowItem.ShowAirStatus x in EnumUtil.GetValues< ShowItem.ShowAirStatus>())
             {
-                cboShowStatus.Items.Add(new TVSettings.ShowStatusColoringType(true, true, status));
+                cboShowStatus.Items.Add(new TVSettings.ShowAirStatusColouringRule(x));
             }
 
-            System.Collections.Generic.List<string> showStatusList = new System.Collections.Generic.List<string>();
-            foreach (ShowItem show in mDoc.Library.GetSortedShowItems())
+            foreach (string status in mDoc.Library.ShowStatuses)
             {
-                if (!showStatusList.Contains(show.ShowStatus))
-                {
-                    showStatusList.Add(show.ShowStatus);
-                }
-            }
-
-            foreach (string status in showStatusList)
-            {
-                TVSettings.ShowStatusColoringType t = new TVSettings.ShowStatusColoringType(false, true, status);
-                cboShowStatus.Items.Add(t);
+                cboShowStatus.Items.Add(new TVSettings.ShowStatusColouringRule(status));
             }
 
             // Seasons
-            foreach (TVSettings.ShowStatusColoringType t in Enum.GetNames(typeof(ProcessedSeason.SeasonStatus))
-                .Select(status => new TVSettings.ShowStatusColoringType(true, false, status)))
+            foreach (ProcessedSeason.SeasonStatus t in EnumUtil.GetValues< ProcessedSeason.SeasonStatus>())
             {
-                cboShowStatus.Items.Add(t);
+                cboShowStatus.Items.Add(new TVSettings.SeasonStatusColouringRule(t));
             }
 
             cboShowStatus.DisplayMember = "Text";
@@ -1380,8 +1376,8 @@ namespace TVRename
             {
                 try
                 {
-                    TVSettings.ShowStatusColoringType ssct =
-                        cboShowStatus.SelectedItem as TVSettings.ShowStatusColoringType;
+                    TVSettings.ColouringRule ssct =
+                        cboShowStatus.SelectedItem as TVSettings.ColouringRule;
 
                     if (!ColorTranslator.FromHtml(txtShowStatusColor.Text).IsEmpty && ssct != null)
                     {

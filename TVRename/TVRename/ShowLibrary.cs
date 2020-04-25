@@ -33,6 +33,9 @@ namespace TVRename
         }
 
         [NotNull]
+        public IEnumerable<string> ShowStatuses =>Shows.Select(item => item.ShowStatus).Distinct().OrderBy(s => s);
+
+        [NotNull]
         public IEnumerable<string> SeasonWords()
         {
             //See https://github.com/TV-Rename/tvrename/issues/241 for background
