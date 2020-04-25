@@ -35,8 +35,16 @@ namespace TVRename
 
             try
             {
+                string dir = Path.GetDirectoryName(Location()) ?? string.Empty;
+
+                if (dir.IsNullOrWhitespace())
+                {
+                    LOGGER.Warn($"Please open settings and ensure filenames are provided for each exporter you have enabled: {Location()} is invalid");
+                    return;
+                }
+
                 //Create the directory if needed
-                Directory.CreateDirectory(Path.GetDirectoryName(Location()) ?? string.Empty);
+                Directory.CreateDirectory(dir);
                 Do();
                 LOGGER.Info("Output File to: {0}", Location());
             }
