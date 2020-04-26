@@ -202,7 +202,7 @@ namespace TVRename
             this.chkShowNextAirdate.Name = "chkShowNextAirdate";
             this.chkShowNextAirdate.Size = new System.Drawing.Size(201, 17);
             this.chkShowNextAirdate.TabIndex = 1;
-            this.chkShowNextAirdate.Text = "Show &next airdate in When to Watch";
+            this.chkShowNextAirdate.Text = "Show &next airdate in 'Schedule'";
             this.chkShowNextAirdate.UseVisualStyleBackColor = true;
             // 
             // pnlCF

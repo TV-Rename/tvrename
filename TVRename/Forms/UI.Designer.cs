@@ -1215,7 +1215,7 @@ namespace TVRename
             this.tbWTW.Name = "tbWTW";
             this.tbWTW.Size = new System.Drawing.Size(931, 659);
             this.tbWTW.TabIndex = 4;
-            this.tbWTW.Text = "When to Watch";
+            this.tbWTW.Text = "Schedule";
             this.tbWTW.UseVisualStyleBackColor = true;
             // 
             // tsWtW

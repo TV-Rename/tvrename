@@ -1495,7 +1495,7 @@ namespace TVRename
 
                 if (mLastShowsClicked != null && mLastShowsClicked.Count == 1)
                 {
-                    AddRcMenuItem("When to Watch", RightClickCommands.kWhenToWatchSeries);
+                    AddRcMenuItem("Schedule", RightClickCommands.kWhenToWatchSeries);
                     AddRcMenuItem("Edit Show", RightClickCommands.kEditShow);
                     AddRcMenuItem("Delete Show", RightClickCommands.kDeleteShow);
                 }
@@ -1760,7 +1760,7 @@ namespace TVRename
                         break;
                     }
 
-                case RightClickCommands.kWhenToWatchSeries: // when to watch
+                case RightClickCommands.kWhenToWatchSeries: // when to watch /Schedule
                     {
                         int code = -1;
                         if (mLastEpClicked != null)
@@ -4163,7 +4163,7 @@ namespace TVRename
                 Alignment = StringAlignment.Center,
                 LineAlignment = StringAlignment.Center
             };
-            const int INDENT = 10;
+            const int INDENT = 15;
 
             //GetIcon
             Image icon = tabCtrl.ImageList.Images[tabPage.ImageKey];
@@ -4177,7 +4177,7 @@ namespace TVRename
             e.Graphics.DrawImage(icon, x, y);
             Font labelFont = new Font("Segoe UI Semibold", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
 
-            Rectangle textarea = new Rectangle(tabBounds.X, tabBounds.Y + INDENT + icon.Height + INDENT,tabBounds.Width,tabBounds.Height-(INDENT + icon.Height + INDENT));
+            Rectangle textarea = new Rectangle(tabBounds.X, tabBounds.Y + INDENT + icon.Height,tabBounds.Width,tabBounds.Height-(INDENT + icon.Height));
             g.DrawString(tabPage.Text, labelFont, Brushes.Black,textarea,stringFlags );
         }
     }
