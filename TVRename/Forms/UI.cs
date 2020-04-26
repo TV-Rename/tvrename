@@ -936,14 +936,14 @@ namespace TVRename
                 ProcessedSeason s = si.AppropriateSeasons()[snum];
                 SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
 
-                SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, true));
+                SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, false));
             }
             else
             {
                 // no epnum specified, just show an overview
                 SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
 
-                SetHtmlBody(webInformation, si.GetShowHtmlOverview(true));
+                SetHtmlBody(webInformation, si.GetShowHtmlOverview(false));
             }
         }
 

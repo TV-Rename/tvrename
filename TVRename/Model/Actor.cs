@@ -57,5 +57,7 @@ namespace TVRename
             writer.WriteElement("SortOrder", ActorSortOrder);
             writer.WriteEndElement();
         }
+
+        public bool AsSelf() => ActorName==ActorRole;
     }
 }
