@@ -948,7 +948,6 @@ namespace TVRename
                 if (!bwSeasonHTMLGenerator.IsBusy)
                 {
                     bwSeasonHTMLGenerator.RunWorkerAsync(s);
-
                 }
             }
             else
@@ -2493,7 +2492,6 @@ namespace TVRename
 
             return "-- Unknown : " + si?.TvdbCode + " --";
         }
-
 
         private static (Color, Color) GetWtwColour([NotNull] ProcessedEpisode ep, DateTime dt)
         {
@@ -4151,7 +4149,7 @@ namespace TVRename
                 return;
             }
 
-            float x = tabBounds.X + ((tabBounds.Width - icon.Width) / 2.0f);// - indent;
+            float x = tabBounds.X + (tabBounds.Width - icon.Width) / 2.0f; 
             float y = tabBounds.Y + INDENT;
             e.Graphics.DrawImage(icon, x, y);
             Font labelFont = new Font("Segoe UI Semibold", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
