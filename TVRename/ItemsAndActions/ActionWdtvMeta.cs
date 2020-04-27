@@ -187,7 +187,7 @@ namespace TVRename
 
         public override bool SameAs(Item o) => o is ActionWdtvMeta meta && meta.Where == Where;
 
-        public override int Compare(Item o)
+        public override int CompareTo(object o)
         {
             ActionWdtvMeta nfo = o as ActionWdtvMeta;
 

@@ -106,7 +106,7 @@ namespace TVRename
             return o is ActionDateTouch touch && touch.whereFile == whereFile && touch.whereDirectory == whereDirectory;
         }
 
-        public override int Compare(Item o)
+        public override int CompareTo(object o)
         {
             ActionDateTouch nfo = o as ActionDateTouch;
 

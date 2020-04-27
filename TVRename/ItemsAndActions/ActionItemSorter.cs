@@ -23,7 +23,7 @@ namespace TVRename
                 return 1;
             }
 
-            return x.GetType() == y.GetType() ? x.Compare(y) : TypeNumber(x) - TypeNumber(y);
+            return TypeNumber(x) == TypeNumber(y) ? x.CompareTo(y) : TypeNumber(x) - TypeNumber(y);
         }
 
         #endregion

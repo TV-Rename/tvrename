@@ -175,7 +175,7 @@ namespace TVRename
                    && FileHelper.Same(To, cmr.To);
         }
 
-        public override int Compare(Item o)
+        public override int CompareTo(object o)
         {
             if (!(o is ActionCopyMoveRename cmr)
                 || From.Directory is null

@@ -369,7 +369,7 @@ namespace TVRename
             return o is ActionNfo nfo && nfo.Where == Where;
         }
 
-        public override int Compare(Item o)
+        public override int CompareTo(object o)
         {
             ActionNfo nfo = o as ActionNfo;
 

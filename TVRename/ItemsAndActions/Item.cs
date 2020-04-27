@@ -6,20 +6,21 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System;
 using JetBrains.Annotations;
 
 namespace TVRename
 {
     using System.Windows.Forms;
 
-    public abstract class Item // something shown in the list on the Scan tab (not always an Action)
+    public abstract class Item :IComparable // something shown in the list on the Scan tab (not always an Action)
     {
         public abstract string TargetFolder { get; } // return a list of folders for right-click menu
         public abstract string ScanListViewGroup { get; } // which group name for the listview
         public abstract int IconNumber { get; } // which icon number to use in "ilIcons" (UI.cs). -1 for none
         public abstract IgnoreItem Ignore { get; } // what to add to the ignore list / compare against the ignore list
         public ProcessedEpisode Episode { get; protected set; } // associated episode
-        public abstract int Compare(Item o); // for sorting items in scan list (ActionItemSorter)
+        public abstract int CompareTo(Object o); // for sorting items in scan list (ActionItemSorter)
         public abstract bool SameAs(Item o); // are we the same thing as that other one?
 
         [CanBeNull]

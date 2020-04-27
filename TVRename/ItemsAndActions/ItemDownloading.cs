@@ -48,7 +48,7 @@ namespace TVRename
             return o is ItemDownloading torrenting && entry == torrenting.entry;
         }
 
-        public override int Compare(Item o)
+        public override int CompareTo(object o)
         {
             if (!(o is ItemDownloading ut))
             {

@@ -101,7 +101,7 @@ namespace TVRename
             return o is ActionPyTivoMeta meta && meta.Where == Where;
         }
 
-        public override int Compare(Item o)
+        public override int CompareTo(object o)
         {
             ActionPyTivoMeta nfo = o as ActionPyTivoMeta;
 
