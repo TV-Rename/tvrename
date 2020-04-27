@@ -60,6 +60,8 @@ namespace TVRename
         protected internal static readonly List<string> TAGS = new List<string>
         {
             "{ShowName}",
+            "{ShowNameInitial}",
+            "{ShowNameLower}",
             "{Season}",
             "{Season:2}",
             "{SeasonNumber}",
@@ -125,6 +127,8 @@ namespace TVRename
             string epname = ep.Name;
 
             name = name.ReplaceInsensitive("{ShowName}", show.ShowName);
+            name = name.ReplaceInsensitive("{ShowNameLower}", show.ShowName.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
+            name = name.ReplaceInsensitive("{ShowNameInitial}", show.ShowName.Initial().ToLower());
             switch (show.Order)
             {
                 case ProcessedSeason.SeasonType.dvd:
@@ -232,6 +236,8 @@ namespace TVRename
                 }
 
                 name = name.ReplaceInsensitive("{ShowName}", showname);
+                name = name.ReplaceInsensitive("{ShowNameLower}", pe.Show.ShowName.ToLower().Replace(' ','-').RemoveCharactersFrom("()[]{}&$:"));
+                name = name.ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower());
                 name = name.ReplaceInsensitive("{Season}", pe.AppropriateSeasonNumber.ToString());
                 name = name.ReplaceInsensitive("{Season:2}", pe.AppropriateSeasonNumber.ToString("00"));
                 name = name.ReplaceInsensitive("{SeasonNumber}", pe.AppropriateSeasonIndex.ToString());

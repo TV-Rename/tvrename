@@ -36,6 +36,8 @@ namespace TVRename
         internal static readonly List<string> TAGS = new List<string>
         {
             "{ShowName}",
+            "{ShowNameInitial}",
+            "{ShowNameLower}",
             "{Season}",
             "{Season:2}",
             "{SeasonNumber}",
@@ -77,6 +79,8 @@ namespace TVRename
             }
 
             name = name.ReplaceInsensitive("{ShowName}", showname);
+            name = name.ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower());
+            name = name.ReplaceInsensitive("{ShowNameLower}", s.Show.ShowName.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
             name = name.ReplaceInsensitive("{Season}", s.SeasonNumber.ToString());
             name = name.ReplaceInsensitive("{Season:2}", s.SeasonNumber.ToString("00"));
             name = name.ReplaceInsensitive("{SeasonNumber}", s.SeasonIndex.ToString());

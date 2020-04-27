@@ -88,6 +88,10 @@ namespace TVRename
         {
             return instr.Substring(0, instr.Length - 1);
         }
+
+        [NotNull]
+        public static string Initial([NotNull] this string str) => str.Substring(0, 1);
+
         [NotNull]
         public static string RemoveLast([NotNull] this string instr, int number)
         {
