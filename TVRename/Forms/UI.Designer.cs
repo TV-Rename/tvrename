@@ -200,6 +200,9 @@ namespace TVRename
             this.tmrPeriodicScan = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btnUpdateAvailable = new System.Windows.Forms.Button();
+            this.bwSeasonHTMLGenerator = new System.ComponentModel.BackgroundWorker();
+            this.bwUpdateSchedule = new System.ComponentModel.BackgroundWorker();
+            this.bwShowHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
@@ -229,7 +232,7 @@ namespace TVRename
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1039, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1046, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -605,7 +608,7 @@ namespace TVRename
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1039, 667);
+            this.tabControl1.Size = new System.Drawing.Size(1046, 532);
             this.tabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControl1.TabIndex = 0;
             this.tabControl1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.TabControl1_DrawItem);
@@ -620,13 +623,14 @@ namespace TVRename
             this.tbMyShows.Location = new System.Drawing.Point(104, 4);
             this.tbMyShows.Name = "tbMyShows";
             this.tbMyShows.Padding = new System.Windows.Forms.Padding(3);
-            this.tbMyShows.Size = new System.Drawing.Size(931, 659);
+            this.tbMyShows.Size = new System.Drawing.Size(938, 524);
             this.tbMyShows.TabIndex = 9;
             this.tbMyShows.Text = "My Shows";
             this.tbMyShows.UseVisualStyleBackColor = true;
             // 
             // tsMyShows
             // 
+            this.tsMyShows.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.tsMyShows.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnAddShow,
             this.btnEditShow,
@@ -638,44 +642,41 @@ namespace TVRename
             this.btnFilterMyShows});
             this.tsMyShows.Location = new System.Drawing.Point(3, 3);
             this.tsMyShows.Name = "tsMyShows";
-            this.tsMyShows.Size = new System.Drawing.Size(925, 72);
+            this.tsMyShows.Size = new System.Drawing.Size(932, 39);
             this.tsMyShows.TabIndex = 11;
             this.tsMyShows.Text = "toolStrip1";
             // 
             // btnAddShow
             // 
             this.btnAddShow.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAddShow.Image = global::TVRename.Properties.Resources.AddSmall;
+            this.btnAddShow.Image = global::TVRename.Properties.Resources._226562_32;
             this.btnAddShow.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnAddShow.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnAddShow.Name = "btnAddShow";
-            this.btnAddShow.Size = new System.Drawing.Size(52, 69);
+            this.btnAddShow.Size = new System.Drawing.Size(68, 36);
             this.btnAddShow.Text = "&Add";
-            this.btnAddShow.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnAddShow.Click += new System.EventHandler(this.bnMyShowsAdd_Click);
             // 
             // btnEditShow
             // 
             this.btnEditShow.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnEditShow.Image = global::TVRename.Properties.Resources.EditShowSmall;
+            this.btnEditShow.Image = global::TVRename.Properties.Resources._314251_32;
             this.btnEditShow.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnEditShow.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnEditShow.Name = "btnEditShow";
-            this.btnEditShow.Size = new System.Drawing.Size(52, 69);
+            this.btnEditShow.Size = new System.Drawing.Size(66, 36);
             this.btnEditShow.Text = "&Edit";
-            this.btnEditShow.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnEditShow.Click += new System.EventHandler(this.bnMyShowsEdit_Click);
             // 
             // btnRemoveShow
             // 
             this.btnRemoveShow.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRemoveShow.Image = global::TVRename.Properties.Resources.DeleteShowSmall;
+            this.btnRemoveShow.Image = global::TVRename.Properties.Resources._616650_32;
             this.btnRemoveShow.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnRemoveShow.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnRemoveShow.Name = "btnRemoveShow";
-            this.btnRemoveShow.Size = new System.Drawing.Size(52, 69);
+            this.btnRemoveShow.Size = new System.Drawing.Size(81, 36);
             this.btnRemoveShow.Text = "&Delete";
-            this.btnRemoveShow.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnRemoveShow.Click += new System.EventHandler(this.bnMyShowsDelete_Click);
             // 
             // btnHideHTMLPanel
@@ -686,7 +687,7 @@ namespace TVRename
             this.btnHideHTMLPanel.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnHideHTMLPanel.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnHideHTMLPanel.Name = "btnHideHTMLPanel";
-            this.btnHideHTMLPanel.Size = new System.Drawing.Size(23, 69);
+            this.btnHideHTMLPanel.Size = new System.Drawing.Size(23, 36);
             this.btnHideHTMLPanel.Text = "Hide Detals";
             this.btnHideHTMLPanel.Click += new System.EventHandler(this.ToolStripButton5_Click);
             // 
@@ -698,37 +699,35 @@ namespace TVRename
             this.btnMyShowsCollapse.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnMyShowsCollapse.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnMyShowsCollapse.Name = "btnMyShowsCollapse";
-            this.btnMyShowsCollapse.Size = new System.Drawing.Size(23, 69);
+            this.btnMyShowsCollapse.Size = new System.Drawing.Size(23, 36);
             this.btnMyShowsCollapse.Text = "Collapse";
             this.btnMyShowsCollapse.Click += new System.EventHandler(this.BtnMyShowsCollapse_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 72);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 39);
             // 
             // btnMyShowsRefresh
             // 
             this.btnMyShowsRefresh.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMyShowsRefresh.Image = global::TVRename.Properties.Resources.RefreshSmall;
+            this.btnMyShowsRefresh.Image = global::TVRename.Properties.Resources._134221_32;
             this.btnMyShowsRefresh.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnMyShowsRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnMyShowsRefresh.Name = "btnMyShowsRefresh";
-            this.btnMyShowsRefresh.Size = new System.Drawing.Size(56, 69);
+            this.btnMyShowsRefresh.Size = new System.Drawing.Size(88, 36);
             this.btnMyShowsRefresh.Text = "&Refresh";
-            this.btnMyShowsRefresh.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnMyShowsRefresh.Click += new System.EventHandler(this.bnMyShowsRefresh_Click);
             // 
             // btnFilterMyShows
             // 
             this.btnFilterMyShows.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnFilterMyShows.Image = global::TVRename.Properties.Resources.FilterSmall;
+            this.btnFilterMyShows.Image = global::TVRename.Properties.Resources._4781834_32;
             this.btnFilterMyShows.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnFilterMyShows.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnFilterMyShows.Name = "btnFilterMyShows";
-            this.btnFilterMyShows.Size = new System.Drawing.Size(52, 69);
+            this.btnFilterMyShows.Size = new System.Drawing.Size(72, 36);
             this.btnFilterMyShows.Text = "&Filter";
-            this.btnFilterMyShows.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnFilterMyShows.Click += new System.EventHandler(this.btnFilter_Click);
             // 
             // splitContainer1
@@ -738,7 +737,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 76);
+            this.splitContainer1.Location = new System.Drawing.Point(3, 43);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -751,7 +750,7 @@ namespace TVRename
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tabControl2);
             this.splitContainer1.Panel2MinSize = 100;
-            this.splitContainer1.Size = new System.Drawing.Size(931, 583);
+            this.splitContainer1.Size = new System.Drawing.Size(935, 478);
             this.splitContainer1.SplitterDistance = 280;
             this.splitContainer1.TabIndex = 8;
             // 
@@ -762,7 +761,7 @@ namespace TVRename
             this.MyShowTree.HideSelection = false;
             this.MyShowTree.Location = new System.Drawing.Point(0, 20);
             this.MyShowTree.Name = "MyShowTree";
-            this.MyShowTree.Size = new System.Drawing.Size(276, 559);
+            this.MyShowTree.Size = new System.Drawing.Size(276, 454);
             this.MyShowTree.TabIndex = 0;
             this.MyShowTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.MyShowTree_AfterSelect);
             this.MyShowTree.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MyShowTree_MouseClick);
@@ -786,7 +785,7 @@ namespace TVRename
             this.tabControl2.Location = new System.Drawing.Point(0, 0);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(643, 579);
+            this.tabControl2.Size = new System.Drawing.Size(647, 474);
             this.tabControl2.TabIndex = 7;
             // 
             // tabPage1
@@ -795,7 +794,7 @@ namespace TVRename
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(635, 550);
+            this.tabPage1.Size = new System.Drawing.Size(639, 445);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Information";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -807,7 +806,7 @@ namespace TVRename
             this.webInformation.Location = new System.Drawing.Point(3, 3);
             this.webInformation.MinimumSize = new System.Drawing.Size(20, 20);
             this.webInformation.Name = "webInformation";
-            this.webInformation.Size = new System.Drawing.Size(629, 544);
+            this.webInformation.Size = new System.Drawing.Size(633, 439);
             this.webInformation.TabIndex = 0;
             this.webInformation.WebBrowserShortcutsEnabled = false;
             this.webInformation.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
@@ -818,7 +817,7 @@ namespace TVRename
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(635, 550);
+            this.tabPage2.Size = new System.Drawing.Size(535, 679);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Images";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -830,7 +829,7 @@ namespace TVRename
             this.webImages.Location = new System.Drawing.Point(3, 3);
             this.webImages.MinimumSize = new System.Drawing.Size(20, 20);
             this.webImages.Name = "webImages";
-            this.webImages.Size = new System.Drawing.Size(629, 544);
+            this.webImages.Size = new System.Drawing.Size(529, 673);
             this.webImages.TabIndex = 0;
             this.webImages.WebBrowserShortcutsEnabled = false;
             this.webImages.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
@@ -843,13 +842,14 @@ namespace TVRename
             this.tbAllInOne.Location = new System.Drawing.Point(104, 4);
             this.tbAllInOne.Name = "tbAllInOne";
             this.tbAllInOne.Padding = new System.Windows.Forms.Padding(3);
-            this.tbAllInOne.Size = new System.Drawing.Size(931, 659);
+            this.tbAllInOne.Size = new System.Drawing.Size(938, 524);
             this.tbAllInOne.TabIndex = 11;
             this.tbAllInOne.Text = "Scan";
             this.tbAllInOne.UseVisualStyleBackColor = true;
             // 
             // tsScanResults
             // 
+            this.tsScanResults.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.tsScanResults.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnScan,
             this.toolStripSeparator11,
@@ -863,7 +863,7 @@ namespace TVRename
             this.btnPreferences});
             this.tsScanResults.Location = new System.Drawing.Point(3, 3);
             this.tsScanResults.Name = "tsScanResults";
-            this.tsScanResults.Size = new System.Drawing.Size(925, 70);
+            this.tsScanResults.Size = new System.Drawing.Size(932, 39);
             this.tsScanResults.TabIndex = 13;
             this.tsScanResults.Text = "toolStrip1";
             // 
@@ -874,11 +874,11 @@ namespace TVRename
             this.recentToolStripMenuItem,
             this.quickToolStripMenuItem});
             this.btnScan.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnScan.Image = global::TVRename.Properties.Resources.ScanSmall;
+            this.btnScan.Image = global::TVRename.Properties.Resources._322497_32;
             this.btnScan.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnScan.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnScan.Name = "btnScan";
-            this.btnScan.Size = new System.Drawing.Size(105, 67);
+            this.btnScan.Size = new System.Drawing.Size(89, 36);
             this.btnScan.Text = "Scan";
             this.btnScan.ButtonClick += new System.EventHandler(this.BtnSearch_ButtonClick);
             // 
@@ -915,16 +915,16 @@ namespace TVRename
             // toolStripSeparator11
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(6, 70);
+            this.toolStripSeparator11.Size = new System.Drawing.Size(6, 39);
             // 
             // btnActionBTSearch
             // 
             this.btnActionBTSearch.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnActionBTSearch.Image = global::TVRename.Properties.Resources.SearchWebSmall;
+            this.btnActionBTSearch.Image = global::TVRename.Properties.Resources._1587498_32;
             this.btnActionBTSearch.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnActionBTSearch.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnActionBTSearch.Name = "btnActionBTSearch";
-            this.btnActionBTSearch.Size = new System.Drawing.Size(139, 67);
+            this.btnActionBTSearch.Size = new System.Drawing.Size(123, 36);
             this.btnActionBTSearch.Text = "BT Search";
             this.btnActionBTSearch.ButtonClick += new System.EventHandler(this.bnActionBTSearch_Click);
             this.btnActionBTSearch.DropDownOpening += new System.EventHandler(this.BtnActionBTSearch_DropDownOpening);
@@ -933,7 +933,7 @@ namespace TVRename
             // toolStripSeparator9
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
-            this.toolStripSeparator9.Size = new System.Drawing.Size(6, 70);
+            this.toolStripSeparator9.Size = new System.Drawing.Size(6, 39);
             // 
             // btnIgnoreSelectedActions
             // 
@@ -941,7 +941,7 @@ namespace TVRename
             this.btnIgnoreSelectedActions.Image = ((System.Drawing.Image)(resources.GetObject("btnIgnoreSelectedActions.Image")));
             this.btnIgnoreSelectedActions.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnIgnoreSelectedActions.Name = "btnIgnoreSelectedActions";
-            this.btnIgnoreSelectedActions.Size = new System.Drawing.Size(63, 67);
+            this.btnIgnoreSelectedActions.Size = new System.Drawing.Size(63, 36);
             this.btnIgnoreSelectedActions.Text = "&Ignore Sel";
             this.btnIgnoreSelectedActions.Click += new System.EventHandler(this.cbActionIgnore_Click);
             // 
@@ -951,7 +951,7 @@ namespace TVRename
             this.btnRemoveSelActions.Image = ((System.Drawing.Image)(resources.GetObject("btnRemoveSelActions.Image")));
             this.btnRemoveSelActions.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnRemoveSelActions.Name = "btnRemoveSelActions";
-            this.btnRemoveSelActions.Size = new System.Drawing.Size(72, 67);
+            this.btnRemoveSelActions.Size = new System.Drawing.Size(72, 36);
             this.btnRemoveSelActions.Text = "&Remove Sel";
             this.btnRemoveSelActions.Click += new System.EventHandler(this.bnRemoveSel_Click);
             // 
@@ -966,11 +966,11 @@ namespace TVRename
             this.mcbDownload,
             this.mcbWriteMetadata,
             this.mcbModifyMetadata});
-            this.toolStripDropDownButton1.Image = global::TVRename.Properties.Resources.CheckBoxSmall;
+            this.toolStripDropDownButton1.Image = global::TVRename.Properties.Resources._353430_32;
             this.toolStripDropDownButton1.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(101, 67);
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(85, 36);
             this.toolStripDropDownButton1.Text = "Check";
             // 
             // mcbAll
@@ -1054,29 +1054,28 @@ namespace TVRename
             // toolStripSeparator10
             // 
             this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 70);
+            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 39);
             // 
             // btnActionAction
             // 
             this.btnActionAction.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnActionAction.Image = global::TVRename.Properties.Resources.DoSmall;
+            this.btnActionAction.Image = global::TVRename.Properties.Resources._5172493_32;
             this.btnActionAction.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnActionAction.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnActionAction.Name = "btnActionAction";
-            this.btnActionAction.Size = new System.Drawing.Size(143, 67);
+            this.btnActionAction.Size = new System.Drawing.Size(127, 36);
             this.btnActionAction.Text = "&Do Checked";
             this.btnActionAction.Click += new System.EventHandler(this.bnActionAction_Click);
             // 
             // btnPreferences
             // 
             this.btnPreferences.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.btnPreferences.Image = global::TVRename.Properties.Resources.PreferencesSmall;
+            this.btnPreferences.Image = global::TVRename.Properties.Resources._2738302_32;
             this.btnPreferences.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnPreferences.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnPreferences.Name = "btnPreferences";
-            this.btnPreferences.Size = new System.Drawing.Size(81, 67);
+            this.btnPreferences.Size = new System.Drawing.Size(113, 36);
             this.btnPreferences.Text = "&Preferences...";
-            this.btnPreferences.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnPreferences.Click += new System.EventHandler(this.bnActionOptions_Click);
             // 
             // lvAction
@@ -1128,10 +1127,10 @@ namespace TVRename
             listViewGroup9,
             listViewGroup10});
             this.lvAction.HideSelection = false;
-            this.lvAction.Location = new System.Drawing.Point(3, 76);
+            this.lvAction.Location = new System.Drawing.Point(3, 43);
             this.lvAction.Name = "lvAction";
             this.lvAction.ShowItemToolTips = true;
-            this.lvAction.Size = new System.Drawing.Size(925, 583);
+            this.lvAction.Size = new System.Drawing.Size(932, 475);
             this.lvAction.SmallImageList = this.ilIcons;
             this.lvAction.TabIndex = 2;
             this.lvAction.UseCompatibleStateImageBehavior = false;
@@ -1213,30 +1212,31 @@ namespace TVRename
             this.tbWTW.ImageKey = "115762-48.png";
             this.tbWTW.Location = new System.Drawing.Point(104, 4);
             this.tbWTW.Name = "tbWTW";
-            this.tbWTW.Size = new System.Drawing.Size(931, 659);
+            this.tbWTW.Size = new System.Drawing.Size(938, 524);
             this.tbWTW.TabIndex = 4;
             this.tbWTW.Text = "Schedule";
             this.tbWTW.UseVisualStyleBackColor = true;
             // 
             // tsWtW
             // 
+            this.tsWtW.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.tsWtW.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnWhenToWatchCheck,
             this.btnWTWBTSearch});
             this.tsWtW.Location = new System.Drawing.Point(0, 0);
             this.tsWtW.Name = "tsWtW";
-            this.tsWtW.Size = new System.Drawing.Size(931, 55);
+            this.tsWtW.Size = new System.Drawing.Size(938, 39);
             this.tsWtW.TabIndex = 6;
             this.tsWtW.Text = "toolStrip1";
             // 
             // btnWhenToWatchCheck
             // 
             this.btnWhenToWatchCheck.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnWhenToWatchCheck.Image = global::TVRename.Properties.Resources.RefreshSmall;
+            this.btnWhenToWatchCheck.Image = global::TVRename.Properties.Resources._134221_32;
             this.btnWhenToWatchCheck.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnWhenToWatchCheck.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnWhenToWatchCheck.Name = "btnWhenToWatchCheck";
-            this.btnWhenToWatchCheck.Size = new System.Drawing.Size(112, 52);
+            this.btnWhenToWatchCheck.Size = new System.Drawing.Size(96, 36);
             this.btnWhenToWatchCheck.Text = "&Refresh";
             this.btnWhenToWatchCheck.Click += new System.EventHandler(this.bnWhenToWatchCheck_Click);
             // 
@@ -1244,11 +1244,11 @@ namespace TVRename
             // 
             this.btnWTWBTSearch.DropDownButtonWidth = 20;
             this.btnWTWBTSearch.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnWTWBTSearch.Image = global::TVRename.Properties.Resources.SearchWebSmall;
+            this.btnWTWBTSearch.Image = global::TVRename.Properties.Resources._1587498_32;
             this.btnWTWBTSearch.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnWTWBTSearch.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnWTWBTSearch.Name = "btnWTWBTSearch";
-            this.btnWTWBTSearch.Size = new System.Drawing.Size(148, 52);
+            this.btnWTWBTSearch.Size = new System.Drawing.Size(132, 36);
             this.btnWTWBTSearch.Text = "BT Search";
             this.btnWTWBTSearch.ButtonClick += new System.EventHandler(this.bnWTWBTSearch_Click);
             this.btnWTWBTSearch.DropDownOpening += new System.EventHandler(this.ToolStripSplitButton1_DropDownOpening);
@@ -1259,18 +1259,18 @@ namespace TVRename
             this.txtWhenToWatchSynopsis.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWhenToWatchSynopsis.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtWhenToWatchSynopsis.Location = new System.Drawing.Point(3, 495);
+            this.txtWhenToWatchSynopsis.Location = new System.Drawing.Point(3, 360);
             this.txtWhenToWatchSynopsis.Multiline = true;
             this.txtWhenToWatchSynopsis.Name = "txtWhenToWatchSynopsis";
             this.txtWhenToWatchSynopsis.ReadOnly = true;
             this.txtWhenToWatchSynopsis.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtWhenToWatchSynopsis.Size = new System.Drawing.Size(697, 161);
+            this.txtWhenToWatchSynopsis.Size = new System.Drawing.Size(703, 161);
             this.txtWhenToWatchSynopsis.TabIndex = 4;
             // 
             // calCalendar
             // 
             this.calCalendar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.calCalendar.Location = new System.Drawing.Point(701, 494);
+            this.calCalendar.Location = new System.Drawing.Point(708, 359);
             this.calCalendar.MaxSelectionCount = 1;
             this.calCalendar.Name = "calCalendar";
             this.calCalendar.TabIndex = 5;
@@ -1308,10 +1308,10 @@ namespace TVRename
             listViewGroup13,
             listViewGroup14});
             this.lvWhenToWatch.HideSelection = false;
-            this.lvWhenToWatch.Location = new System.Drawing.Point(0, 58);
+            this.lvWhenToWatch.Location = new System.Drawing.Point(3, 43);
             this.lvWhenToWatch.Name = "lvWhenToWatch";
             this.lvWhenToWatch.ShowItemToolTips = true;
-            this.lvWhenToWatch.Size = new System.Drawing.Size(928, 431);
+            this.lvWhenToWatch.Size = new System.Drawing.Size(932, 312);
             this.lvWhenToWatch.SmallImageList = this.ilIcons;
             this.lvWhenToWatch.TabIndex = 3;
             this.lvWhenToWatch.UseCompatibleStateImageBehavior = false;
@@ -1411,20 +1411,20 @@ namespace TVRename
             this.tableLayoutPanel2.Controls.Add(this.txtDLStatusLabel, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.tsNextShowTxt, 0, 0);
             this.tableLayoutPanel2.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 693);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 558);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1027, 19);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(1034, 19);
             this.tableLayoutPanel2.TabIndex = 9;
             // 
             // pbProgressBarx
             // 
             this.pbProgressBarx.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbProgressBarx.Location = new System.Drawing.Point(875, 3);
+            this.pbProgressBarx.Location = new System.Drawing.Point(881, 3);
             this.pbProgressBarx.Name = "pbProgressBarx";
-            this.pbProgressBarx.Size = new System.Drawing.Size(149, 13);
+            this.pbProgressBarx.Size = new System.Drawing.Size(150, 13);
             this.pbProgressBarx.Step = 1;
             this.pbProgressBarx.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pbProgressBarx.TabIndex = 0;
@@ -1433,9 +1433,9 @@ namespace TVRename
             // 
             this.txtDLStatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtDLStatusLabel.Location = new System.Drawing.Point(465, 6);
+            this.txtDLStatusLabel.Location = new System.Drawing.Point(468, 6);
             this.txtDLStatusLabel.Name = "txtDLStatusLabel";
-            this.txtDLStatusLabel.Size = new System.Drawing.Size(404, 13);
+            this.txtDLStatusLabel.Size = new System.Drawing.Size(407, 13);
             this.txtDLStatusLabel.TabIndex = 1;
             this.txtDLStatusLabel.Text = "Background Download: ---";
             this.txtDLStatusLabel.Visible = false;
@@ -1446,7 +1446,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tsNextShowTxt.Location = new System.Drawing.Point(3, 6);
             this.tsNextShowTxt.Name = "tsNextShowTxt";
-            this.tsNextShowTxt.Size = new System.Drawing.Size(456, 13);
+            this.tsNextShowTxt.Size = new System.Drawing.Size(459, 13);
             this.tsNextShowTxt.TabIndex = 1;
             this.tsNextShowTxt.Text = "---";
             this.tsNextShowTxt.UseMnemonic = false;
@@ -1558,7 +1558,7 @@ namespace TVRename
             this.btnUpdateAvailable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUpdateAvailable.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.btnUpdateAvailable.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnUpdateAvailable.Location = new System.Drawing.Point(916, 0);
+            this.btnUpdateAvailable.Location = new System.Drawing.Point(923, 0);
             this.btnUpdateAvailable.Name = "btnUpdateAvailable";
             this.btnUpdateAvailable.Size = new System.Drawing.Size(116, 23);
             this.btnUpdateAvailable.TabIndex = 10;
@@ -1567,11 +1567,29 @@ namespace TVRename
             this.btnUpdateAvailable.Visible = false;
             this.btnUpdateAvailable.Click += new System.EventHandler(this.btnUpdateAvailable_Click);
             // 
+            // bwSeasonHTMLGenerator
+            // 
+            this.bwSeasonHTMLGenerator.WorkerSupportsCancellation = true;
+            this.bwSeasonHTMLGenerator.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BwSeasonHTMLGenerator_DoWork);
+            this.bwSeasonHTMLGenerator.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.UpdateWebInformation);
+            // 
+            // bwUpdateSchedule
+            // 
+            this.bwUpdateSchedule.WorkerSupportsCancellation = true;
+            this.bwUpdateSchedule.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BwUpdateSchedule_DoWork);
+            this.bwUpdateSchedule.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BwUpdateSchedule_RunWorkerCompleted);
+            // 
+            // bwShowHTMLGenerator
+            // 
+            this.bwShowHTMLGenerator.WorkerSupportsCancellation = true;
+            this.bwShowHTMLGenerator.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BwShowHTMLGenerator_DoWork);
+            this.bwShowHTMLGenerator.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.UpdateWebInformation);
+            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1039, 716);
+            this.ClientSize = new System.Drawing.Size(1046, 581);
             this.Controls.Add(this.btnUpdateAvailable);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.menuStrip1);
@@ -1763,5 +1781,8 @@ namespace TVRename
         private ToolStripMenuItem mcbModifyMetadata;
         private ToolStripMenuItem thanksToolStripMenuItem;
         private ImageList ilNewIcons;
+        private System.ComponentModel.BackgroundWorker bwSeasonHTMLGenerator;
+        private System.ComponentModel.BackgroundWorker bwUpdateSchedule;
+        private System.ComponentModel.BackgroundWorker bwShowHTMLGenerator;
     }
 }

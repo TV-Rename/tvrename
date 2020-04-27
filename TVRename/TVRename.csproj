@@ -646,6 +646,17 @@
     <Compile Include="Utility\UpdateVersion.cs" />
     <Compile Include="Utility\VersionUpdater.cs" />
     <Compile Include="Utility\Helper\XMLHelper.cs" />
+    <None Include="Resources\2738302-32.png" />
+    <None Include="Resources\5172493-32.png" />
+    <None Include="Resources\1587498-32.png" />
+    <None Include="Resources\616650-32.png" />
+    <None Include="Resources\4781834-32.png" />
+    <None Include="Resources\353430-32.png" />
+    <None Include="Resources\322497-321.png" />
+    <None Include="Resources\314251-32.png" />
+    <None Include="Resources\226562-32.png" />
+    <None Include="Resources\134221-32.png" />
+    <None Include="Resources\322497-32.png" />
     <None Include="Resources\tvdblogo2.png" />
     <None Include="Resources\tvdblogo1.png" />
     <None Include="Resources\tvm-header-logo.png" />
