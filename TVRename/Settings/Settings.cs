@@ -1461,7 +1461,6 @@ namespace TVRename
                         return new SeasonStatusColouringRule(ExtractEnum<ProcessedSeason.SeasonStatus>(showStatus));
                     case "ShowStatusColouringRule":
                         return new ShowStatusColouringRule(showStatus);
-                        break;
                     case "ShowAirStatusColouringRule":
                         return new ShowAirStatusColouringRule(ExtractEnum<ShowItem.ShowAirStatus>(showStatus));
                     default:

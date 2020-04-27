@@ -267,7 +267,7 @@ namespace TVRename
 
                 return name.Trim();
             }
-            catch (ArgumentNullException ane)
+            catch (ArgumentNullException)
             {
                 Logger.Error($"Asked to update {styleString} with information from {pe.Show.ShowName}, {pe.SeasonNumberAsText}, {pe.EpNumsAsString()}");
             }
