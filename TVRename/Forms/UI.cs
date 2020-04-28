@@ -4260,5 +4260,29 @@ namespace TVRename
             UpdateToolstripWTW();
             mInternalChange--;
         }
+
+        private void TbFullScan_Click(object sender, EventArgs e)
+        {
+            UiScan(null, false, TVSettings.ScanType.Full);
+        }
+
+        private void TpRecentScan_Click(object sender, EventArgs e)
+        {
+            UiScan(null, false, TVSettings.ScanType.Recent);
+        }
+
+        private void TbQuickScan_Click(object sender, EventArgs e)
+        {
+            UiScan(null, false, TVSettings.ScanType.Quick);
+        }
+
+        private void UI_Resize(object sender, EventArgs e)
+        {
+            bool isWide = (Width > 1100);
+            tpRecentScan.Visible = isWide;
+            tbQuickScan.Visible = isWide;
+            tbFullScan.Visible = isWide;
+            btnScan.Visible = !isWide;
+        }
     }
 }
