@@ -1131,7 +1131,7 @@ namespace TVRename
                     case ShowItem.ShowAirStatus.partiallyAired:
                         return "Show Season Status: Partially aired";
                     default:
-                        throw new NotImplementedException();
+                        throw new ArgumentOutOfRangeException();
                 }
             }
 
@@ -1171,7 +1171,7 @@ namespace TVRename
                         return "Season Status: Partially aired";
 
                     default:
-                        throw new NotImplementedException();
+                        throw new ArgumentOutOfRangeException();
                 }
             }
 
@@ -1439,39 +1439,33 @@ namespace TVRename
 
                 if (!isShowLevel)
                 {
+                    return new SeasonStatusColouringRule(ConvertToSeasonStatus(showStatus));
+                }
+
+                if (isMeta)
+                {
                     return new ShowAirStatusColouringRule(ConvertToShowAirStatus(showStatus));
                 }
-                else
-                {
-                    if (isMeta)
-                    {
-                        return new SeasonStatusColouringRule(ConvertToSeasonStatus(showStatus));
-                    }
-                    else
-                    {
-                        return new ShowStatusColouringRule(showStatus);
-                    }
-                }
+
+                return new ShowStatusColouringRule(showStatus);
             }
-            else
+
+            switch (type)
             {
-                switch (type)
-                {
-                    case "SeasonStatusColouringRule":
-                        return new SeasonStatusColouringRule(ExtractEnum<ProcessedSeason.SeasonStatus>(showStatus));
-                    case "ShowStatusColouringRule":
-                        return new ShowStatusColouringRule(showStatus);
-                    case "ShowAirStatusColouringRule":
-                        return new ShowAirStatusColouringRule(ExtractEnum<ShowItem.ShowAirStatus>(showStatus));
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                case "SeasonStatusColouringRule":
+                    return new SeasonStatusColouringRule(ExtractEnum<ProcessedSeason.SeasonStatus>(showStatus));
+                case "ShowStatusColouringRule":
+                    return new ShowStatusColouringRule(showStatus);
+                case "ShowAirStatusColouringRule":
+                    return new ShowAirStatusColouringRule(ExtractEnum<ShowItem.ShowAirStatus>(showStatus));
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
         [NotNull]
         // ReSharper disable once AnnotateNotNullParameter
-        private T ExtractEnum<T>(string value)
+        private static T ExtractEnum<T>(string value)
         {
             if (!typeof(T).IsEnum)
             {
