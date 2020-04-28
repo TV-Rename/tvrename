@@ -730,16 +730,17 @@ namespace TVRename
             }
 
             string num = pe.OverallNumber.ToString();
+            string matchText = "X" + filename + "X"; // need to pad to let it match non-numbers at start and end
 
-            bool found = Regex.Match("X" + filename + "X", "[^0-9]0*" + num + "[^0-9]")
-                .Success; // need to pad to let it match non-numbers at start and end
+            Match betterMatch = Regex.Match(matchText, @"(E|e|Ep|Episode) +0*(?<sequencenumber>\d+)\D");
 
-            if (found)
+            if (betterMatch.Success)
             {
-                return true;
+                int sequenceNUm = int.Parse(betterMatch.Groups["sequencenumber"]?.Value??"-2");
+                return sequenceNUm == pe.OverallNumber;
             }
 
-            return false;
+            return Regex.Match(matchText, @"\D0*" + num + @"\D").Success;
         }
 
         [NotNull]

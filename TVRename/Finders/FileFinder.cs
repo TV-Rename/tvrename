@@ -112,7 +112,7 @@ namespace TVRename
 
             if (me.Episode.Show.UseSequentialMatch)
             {
-                bool sequentialMatch = TVDoc.MatchesSequentialNumber(dce.Name, me.Episode);
+                bool sequentialMatch = TVDoc.MatchesSequentialNumber(dce.RemoveExtension(false), me.Episode);
 
                 if (sequentialMatch)
                 {
