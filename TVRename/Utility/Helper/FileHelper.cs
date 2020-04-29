@@ -464,7 +464,7 @@ namespace TVRename
         {
             if (string.IsNullOrWhiteSpace(input))
             {
-                return "";
+                return string.Empty;
             }
 
             string directoryName = input;
@@ -502,6 +502,16 @@ namespace TVRename
         internal static bool FileExistsCaseSensitive([NotNull] IEnumerable<FileInfo> files, FileInfo newFile)
         {
             return files.Any(testFile => string.Equals(testFile.Name, newFile.Name, StringComparison.CurrentCulture));
+        }
+
+        public static bool IsValidDirectory(this string directoryName)
+        {
+            if (directoryName.ContainsAnyCharctersFrom(Path.GetInvalidPathChars()))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

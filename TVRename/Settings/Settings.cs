@@ -697,12 +697,7 @@ namespace TVRename
                 return false;
             }
 
-            if (s.ContainsAnyCharctersFrom(Path.GetInvalidPathChars()))
-            {
-                return false;
-            }
-
-            return true;
+            return s.IsValidDirectory();
         }
 
         public static bool OKPath([NotNull] string s,bool EmptyOK)
@@ -717,12 +712,7 @@ namespace TVRename
                 return false;
             }
 
-            if (s.ContainsAnyCharctersFrom(Path.GetInvalidPathChars()))
-            {
-                return false;
-            }
-
-            return true;
+            return s.IsValidDirectory();
         }
 
         [NotNull]

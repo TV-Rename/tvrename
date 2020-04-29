@@ -51,6 +51,12 @@ namespace TVRename
                     continue;
                 }
 
+                if (!efi.IsValidDirectory())  // not a valid folder
+                {
+                    Logger.Error($"Could not watch {efi} as it is a path with invalid characters.");
+                    continue;
+                }
+
                 try
                 {
                     System.IO.FileSystemWatcher watcher = new System.IO.FileSystemWatcher(efi);
