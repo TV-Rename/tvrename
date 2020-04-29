@@ -732,7 +732,7 @@ namespace TVRename
             string num = pe.OverallNumber.ToString();
             string matchText = "X" + filename + "X"; // need to pad to let it match non-numbers at start and end
 
-            Match betterMatch = Regex.Match(matchText, @"(E|e|Ep|Episode) +0*(?<sequencenumber>\d+)\D");
+            Match betterMatch = Regex.Match(matchText, @"(E|e|Ep|Episode) ?0*(?<sequencenumber>\d+)\D");
 
             if (betterMatch.Success)
             {
