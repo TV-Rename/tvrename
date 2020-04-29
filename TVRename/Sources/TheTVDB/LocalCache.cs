@@ -795,9 +795,21 @@ namespace TVRename.TheTVDB
             try
             {
                 List<JObject> episodeResponses = GetEpisodes(id, requestedLanguageCode);
+                if (episodeResponses is null)
+                {
+                    //we got nothing good back from TVDB
+                    Logger.Warn($"Aborting updates for {selectedSeriesInfo.Name} ({id}) as there was an issue obtaining episodes");
+                    return;
+                }
                 if (IsNotDefaultLanguage(requestedLanguageCode))
                 {
                     episodeDefaultLangResponses = GetEpisodes(id, DefaultLanguageCode);
+                    if (episodeDefaultLangResponses is null)
+                    {
+                        //we got nothing good back from TVDB
+                        Logger.Warn($"Aborting updates for {selectedSeriesInfo.Name} ({id}) as there was an issue obtaining episodes in {DefaultLanguageCode}");
+                        return;
+                    }
                 }
 
                 Dictionary<int, Tuple<JToken, JToken>> episodesResponses =
