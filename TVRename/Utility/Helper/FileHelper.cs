@@ -511,6 +511,11 @@ namespace TVRename
                 return false;
             }
 
+            if (directoryName.ContainsAnyCharctersFrom("*?"))
+            {
+                return false;
+            }
+
             return true;
         }
     }

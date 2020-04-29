@@ -91,11 +91,6 @@ namespace TVRename
                 }
             }
 
-            if (!episode.Show.ForceCheckFuture && episode.IsInFuture(false))
-            {
-                return false;
-            }
-
             if (!episode.Show.ForceCheckNoAirdate && episode.GetAirDateDt(true)== null)
             {
                 return false;
@@ -131,8 +126,9 @@ namespace TVRename
                     {
                         di = new DirectoryInfo(folder);
                     }
-                    catch
+                    catch (Exception e)
                     {
+                        LOGGER.Warn($"Could not create Season Folder {folder} as {e.Message}.");
                         break;
                     }
                 }

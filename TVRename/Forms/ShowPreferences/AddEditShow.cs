@@ -293,6 +293,19 @@ namespace TVRename
 
                 return false;
             }
+
+            if (chkAutoFolders.Checked && rdoFolderCustom.Checked && !txtSeasonFormat.Text.IsValidDirectory())
+            {
+                MessageBox.Show("Please check the custom subdirectory is a valid one and has no invalid characters"
+                    , "TVRename Add/Edit Show",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                Folders.SelectedTab = tabPage5;
+                txtSeasonFormat.Focus();
+
+                return false;
+            }
+
             return true;
         }
 
