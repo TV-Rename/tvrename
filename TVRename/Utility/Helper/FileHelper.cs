@@ -422,6 +422,10 @@ namespace TVRename
         [NotNull]
         public static string EnsureEndsWithSeparator([NotNull] this string source)
         {
+            if (!source.HasValue())
+            {
+                return Path.DirectorySeparatorChar.ToString();
+            }
             if (source.Trim().EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
             {
                 return source.Trim();
