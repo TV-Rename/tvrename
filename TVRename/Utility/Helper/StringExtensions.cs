@@ -90,7 +90,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string Initial([NotNull] this string str) => str.Substring(0, 1);
+        public static string Initial([NotNull] this string str) => str.HasValue() ? str.Substring(0, 1): string.Empty;
 
         [NotNull]
         public static string RemoveLast([NotNull] this string instr, int number)
