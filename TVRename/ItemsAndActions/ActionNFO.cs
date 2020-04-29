@@ -60,8 +60,19 @@ namespace TVRename
             catch (XmlException)
             {
                 //Assume that the file needs to be recreated
-                CreateBlankFile();
-                return Go(stats);
+                try
+                {
+                    Where.Delete(true);
+                    return Go(stats);
+                }
+                catch (IOException ex)
+                {
+                    return new ActionOutcome(ex);
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    return new ActionOutcome(ex);
+                }
             }
         }
 
