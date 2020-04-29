@@ -160,7 +160,7 @@ namespace TVRename
             root.UpdateElement("title", episode.Name,true);
             root.UpdateElement("id", episode.EpisodeId, true);
             root.UpdateElement("plot", episode.Overview, true);
-            root.UpdateElement("studio", episode.TheSeries?.Network, true);
+            UpdateAmongstElements(root, "studio", episode.TheSeries?.Network);
 
             UpdateId(root, "tvdb", "true", episode.EpisodeId);
             UpdateId(root, "imdb", "false", episode.ImdbCode);
@@ -228,10 +228,32 @@ namespace TVRename
                 string filename = TVSettings.Instance.FilenameFriendly(show, episode);
 
                 string thumbFilename = filename + ".jpg";
-                root.UpdateElement("thumb", thumbFilename);
+                UpdateAmongstElements(root,"thumb", thumbFilename);
                 //Should be able to do this using the local filename, but only seems to work if you provide a URL
                 //XMLHelper.WriteElementToXML(writer, "thumb", LocalCache.Instance.GetTVDBDownloadURL(episode.GetFilename()))
             }
+        }
+
+        private void UpdateAmongstElements(XElement e, string elementName, string value)
+        {
+            if (!value.HasValue())
+            {
+                return;
+            }
+
+            if (!e.Elements(elementName).Any())
+            {
+                e.Add(new XElement(elementName, value));
+                return;
+            }
+
+            if (e.Elements(elementName).Any(element => element.Value == value))
+            {
+                //Element with this value exists
+                return;
+            }
+
+            e.Add(new XElement(elementName, value));
         }
 
         private void UpdateShowFields([NotNull] XElement root)

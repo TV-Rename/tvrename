@@ -321,7 +321,7 @@ namespace TVRename
             MoreBusy();
             Task.Run(
                 () => mDoc.TVDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized)
-            );
+            ).Wait();
             LessBusy();
         }
 
