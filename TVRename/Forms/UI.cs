@@ -321,7 +321,7 @@ namespace TVRename
             MoreBusy();
             Task.Run(
                 () => mDoc.TVDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized)
-            ).Wait();
+            );
             LessBusy();
         }
 
@@ -1632,6 +1632,10 @@ namespace TVRename
 
             if (si != null)
             {
+                if (si.AutoAddFolderBase.HasValue())
+                {
+                    AddFolders(new[] {si.AutoAddFolderBase}, added);
+                }
                 AddFoldersSubMenu(si.AllExistngFolderLocations().Values.SelectMany(l => l).ToList(), added);
             }
 
@@ -1884,9 +1888,7 @@ namespace TVRename
                     }
                     break;
 
-                case RightClickCommands.kWatchBase:
-                case RightClickCommands.kOpenFolderBase:
-                case RightClickCommands.kSearchForBase:
+                default:
                 {
                     //The entries immediately above WatchBase are the Watchxx commands and the paths are stored in mLastFL
                     if (n >= RightClickCommands.kWatchBase && n < RightClickCommands.kOpenFolderBase)
@@ -1896,7 +1898,6 @@ namespace TVRename
                     else if (n >= RightClickCommands.kOpenFolderBase && n < RightClickCommands.kSearchForBase)
                     {
                         OpenFolderForShow(n - RightClickCommands.kOpenFolderBase);
-                        return;
                     }
                     else
                     {
@@ -1905,9 +1906,6 @@ namespace TVRename
 
                     break;
                 }
-
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
             mLastEpClicked = null;
         }
