@@ -1558,7 +1558,7 @@ namespace TVRename
             }
             else if (seas != null && si != null && mLastShowsClicked != null && mLastShowsClicked.Count == 1)
             {
-                ToolStripMenuItem tsis = new ToolStripMenuItem("Watch Epsiodes");
+                ToolStripMenuItem tsis = new ToolStripMenuItem("Watch Episodes");
 
                 // for each episode in season, find it on disk
                 if (si.SeasonEpisodes.ContainsKey(seas.SeasonNumber))

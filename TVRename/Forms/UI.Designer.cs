@@ -691,7 +691,7 @@ namespace TVRename
             this.btnHideHTMLPanel.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnHideHTMLPanel.Name = "btnHideHTMLPanel";
             this.btnHideHTMLPanel.Size = new System.Drawing.Size(23, 36);
-            this.btnHideHTMLPanel.Text = "Hide Detals";
+            this.btnHideHTMLPanel.Text = "Hide Details";
             this.btnHideHTMLPanel.Click += new System.EventHandler(this.ToolStripButton5_Click);
             // 
             // btnMyShowsCollapse
