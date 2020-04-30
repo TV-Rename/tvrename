@@ -2629,7 +2629,7 @@ namespace TVRename
             mDoc.PreventAutoScan("Add Show");
             ShowItem si = new ShowItem();
 
-            AddEditShow aes = new AddEditShow(si);
+            AddEditShow aes = new AddEditShow(si,mDoc);
             DialogResult dr = aes.ShowDialog();
             if (dr == DialogResult.OK)
             {
@@ -2757,7 +2757,7 @@ namespace TVRename
 
             int oldCode = si.TvdbCode;
 
-            AddEditShow aes = new AddEditShow(si);
+            AddEditShow aes = new AddEditShow(si,mDoc);
 
             DialogResult dr = aes.ShowDialog();
 
@@ -3688,7 +3688,7 @@ namespace TVRename
 
         private void ignoreListToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            IgnoreEdit ie = new IgnoreEdit(mDoc);
+            IgnoreEdit ie = new IgnoreEdit(mDoc,string.Empty);
             ie.ShowDialog();
         }
 

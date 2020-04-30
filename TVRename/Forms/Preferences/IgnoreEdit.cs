@@ -25,7 +25,7 @@ namespace TVRename
         private readonly System.Collections.Generic.List<IgnoreItem> ignore;
         private readonly TVDoc mDoc;
 
-        public IgnoreEdit(TVDoc doc)
+        public IgnoreEdit(TVDoc doc,string defaultFilter)
         {
             mDoc = doc;
             ignore = new System.Collections.Generic.List<IgnoreItem>();
@@ -36,6 +36,11 @@ namespace TVRename
             }
 
             InitializeComponent();
+
+            if (defaultFilter.HasValue())
+            {
+                txtFilter.Text = defaultFilter;
+            }
 
             FillList();
         }

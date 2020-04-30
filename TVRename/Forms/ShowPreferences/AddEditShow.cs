@@ -35,10 +35,12 @@ namespace TVRename
         private readonly ProcessedSeason sampleProcessedSeason;
         private readonly ProcessedEpisode sampleEpisode;
         private readonly bool addingNewShow;
+        private readonly TVDoc mDoc;
 
-        public AddEditShow([NotNull] ShowItem si)
+        public AddEditShow([NotNull] ShowItem si,TVDoc doc)
         {
             selectedShow = si;
+            mDoc = doc;
             sampleProcessedSeason = si.GetFirstAvailableSeason();
             sampleEpisode = si.GetFirstAvailableEpisode();
             addingNewShow = si.TvdbCode ==-1;
@@ -657,6 +659,26 @@ namespace TVRename
                     TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator()
                     + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(codeFinderForm.SelectedShow()?.Name));
             }
+        }
+
+        private void BtnIgnoreList_Click(object sender, EventArgs e)
+        {
+            IgnoreEdit ie = new IgnoreEdit(mDoc, txtBaseFolder.Text);
+            ie.ShowDialog();
+            UpdateIgnore();
+        }
+
+        private void TxtBaseFolder_TextChanged(object sender, EventArgs e)
+        {
+            UpdateIgnore();
+        }
+
+        private void UpdateIgnore()
+        {
+            bool someIgnoredEps = txtBaseFolder.Text.HasValue() && TVSettings.Instance.Ignore.Any(item => item.FileAndPath.StartsWith(txtBaseFolder.Text, StringComparison.CurrentCultureIgnoreCase));
+
+            txtIgnoreList.Visible = someIgnoredEps;
+            btnIgnoreList.Visible = someIgnoredEps;
         }
     }
 }

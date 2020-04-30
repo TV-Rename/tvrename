@@ -117,6 +117,8 @@ namespace TVRename
             this.cbIncludeNoAirdate = new System.Windows.Forms.CheckBox();
             this.cbIncludeFuture = new System.Windows.Forms.CheckBox();
             this.pbAdvanced = new System.Windows.Forms.PictureBox();
+            this.btnIgnoreList = new System.Windows.Forms.Button();
+            this.txtIgnoreList = new System.Windows.Forms.Label();
             this.Folders.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbBasics)).BeginInit();
@@ -165,7 +167,7 @@ namespace TVRename
             // 
             this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancel.Location = new System.Drawing.Point(361, 478);
+            this.bnCancel.Location = new System.Drawing.Point(367, 502);
             this.bnCancel.Name = "bnCancel";
             this.bnCancel.Size = new System.Drawing.Size(75, 23);
             this.bnCancel.TabIndex = 2;
@@ -177,7 +179,7 @@ namespace TVRename
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(280, 478);
+            this.buttonOK.Location = new System.Drawing.Point(286, 502);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 1;
@@ -200,9 +202,9 @@ namespace TVRename
             this.chkShowNextAirdate.AutoSize = true;
             this.chkShowNextAirdate.Location = new System.Drawing.Point(8, 78);
             this.chkShowNextAirdate.Name = "chkShowNextAirdate";
-            this.chkShowNextAirdate.Size = new System.Drawing.Size(201, 17);
+            this.chkShowNextAirdate.Size = new System.Drawing.Size(174, 17);
             this.chkShowNextAirdate.TabIndex = 1;
-            this.chkShowNextAirdate.Text = "Show &next airdate in 'Schedule'";
+            this.chkShowNextAirdate.Text = "Show &next airdate in \'Schedule\'";
             this.chkShowNextAirdate.UseVisualStyleBackColor = true;
             // 
             // pnlCF
@@ -300,7 +302,7 @@ namespace TVRename
             this.Folders.Location = new System.Drawing.Point(-4, 2);
             this.Folders.Name = "Folders";
             this.Folders.SelectedIndex = 0;
-            this.Folders.Size = new System.Drawing.Size(458, 470);
+            this.Folders.Size = new System.Drawing.Size(464, 494);
             this.Folders.TabIndex = 0;
             // 
             // tabPage1
@@ -436,6 +438,8 @@ namespace TVRename
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.txtIgnoreList);
+            this.tabPage5.Controls.Add(this.btnIgnoreList);
             this.tabPage5.Controls.Add(this.label12);
             this.tabPage5.Controls.Add(this.groupBox1);
             this.tabPage5.Controls.Add(this.chkAutoFolders);
@@ -444,7 +448,7 @@ namespace TVRename
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(450, 444);
+            this.tabPage5.Size = new System.Drawing.Size(456, 468);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Folders";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -477,7 +481,7 @@ namespace TVRename
             this.groupBox1.Controls.Add(this.lvSeasonFolders);
             this.groupBox1.Location = new System.Drawing.Point(3, 189);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(431, 229);
+            this.groupBox1.Size = new System.Drawing.Size(437, 253);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Manual/Additional Folders";
@@ -486,7 +490,7 @@ namespace TVRename
             // 
             this.chkReplaceAutoFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkReplaceAutoFolders.AutoSize = true;
-            this.chkReplaceAutoFolders.Location = new System.Drawing.Point(270, 18);
+            this.chkReplaceAutoFolders.Location = new System.Drawing.Point(276, 18);
             this.chkReplaceAutoFolders.Name = "chkReplaceAutoFolders";
             this.chkReplaceAutoFolders.Size = new System.Drawing.Size(153, 17);
             this.chkReplaceAutoFolders.TabIndex = 11;
@@ -514,7 +518,7 @@ namespace TVRename
             // bnRemove
             // 
             this.bnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnRemove.Location = new System.Drawing.Point(348, 194);
+            this.bnRemove.Location = new System.Drawing.Point(354, 218);
             this.bnRemove.Name = "bnRemove";
             this.bnRemove.Size = new System.Drawing.Size(75, 23);
             this.bnRemove.TabIndex = 7;
@@ -525,7 +529,7 @@ namespace TVRename
             // bnAdd
             // 
             this.bnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnAdd.Location = new System.Drawing.Point(348, 48);
+            this.bnAdd.Location = new System.Drawing.Point(354, 48);
             this.bnAdd.Name = "bnAdd";
             this.bnAdd.Size = new System.Drawing.Size(75, 23);
             this.bnAdd.TabIndex = 5;
@@ -536,7 +540,7 @@ namespace TVRename
             // bnBrowseFolder
             // 
             this.bnBrowseFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseFolder.Location = new System.Drawing.Point(267, 48);
+            this.bnBrowseFolder.Location = new System.Drawing.Point(273, 48);
             this.bnBrowseFolder.Name = "bnBrowseFolder";
             this.bnBrowseFolder.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseFolder.TabIndex = 4;
@@ -550,7 +554,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFolder.Location = new System.Drawing.Point(61, 50);
             this.txtFolder.Name = "txtFolder";
-            this.txtFolder.Size = new System.Drawing.Size(200, 20);
+            this.txtFolder.Size = new System.Drawing.Size(206, 20);
             this.txtFolder.TabIndex = 3;
             this.txtFolder.TextChanged += new System.EventHandler(this.txtFolder_TextChanged);
             // 
@@ -575,7 +579,7 @@ namespace TVRename
             this.lvSeasonFolders.HideSelection = false;
             this.lvSeasonFolders.Location = new System.Drawing.Point(11, 77);
             this.lvSeasonFolders.Name = "lvSeasonFolders";
-            this.lvSeasonFolders.Size = new System.Drawing.Size(331, 140);
+            this.lvSeasonFolders.Size = new System.Drawing.Size(337, 164);
             this.lvSeasonFolders.TabIndex = 6;
             this.lvSeasonFolders.UseCompatibleStateImageBehavior = false;
             this.lvSeasonFolders.View = System.Windows.Forms.View.Details;
@@ -596,7 +600,7 @@ namespace TVRename
             this.chkAutoFolders.AutoSize = true;
             this.chkAutoFolders.Checked = true;
             this.chkAutoFolders.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAutoFolders.Location = new System.Drawing.Point(14, 54);
+            this.chkAutoFolders.Location = new System.Drawing.Point(14, 50);
             this.chkAutoFolders.Name = "chkAutoFolders";
             this.chkAutoFolders.Size = new System.Drawing.Size(110, 17);
             this.chkAutoFolders.TabIndex = 10;
@@ -618,16 +622,16 @@ namespace TVRename
             this.gbAutoFolders.Controls.Add(this.txtBaseFolder);
             this.gbAutoFolders.Controls.Add(this.bnBrowse);
             this.gbAutoFolders.Controls.Add(this.label3);
-            this.gbAutoFolders.Location = new System.Drawing.Point(3, 52);
+            this.gbAutoFolders.Location = new System.Drawing.Point(3, 49);
             this.gbAutoFolders.Name = "gbAutoFolders";
-            this.gbAutoFolders.Size = new System.Drawing.Size(431, 134);
+            this.gbAutoFolders.Size = new System.Drawing.Size(437, 134);
             this.gbAutoFolders.TabIndex = 11;
             this.gbAutoFolders.TabStop = false;
             // 
             // bnQuickLocate
             // 
             this.bnQuickLocate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnQuickLocate.Location = new System.Drawing.Point(348, 48);
+            this.bnQuickLocate.Location = new System.Drawing.Point(354, 48);
             this.bnQuickLocate.Name = "bnQuickLocate";
             this.bnQuickLocate.Size = new System.Drawing.Size(75, 23);
             this.bnQuickLocate.TabIndex = 29;
@@ -641,13 +645,13 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSeasonFormat.Location = new System.Drawing.Point(147, 94);
             this.txtSeasonFormat.Name = "txtSeasonFormat";
-            this.txtSeasonFormat.Size = new System.Drawing.Size(195, 20);
+            this.txtSeasonFormat.Size = new System.Drawing.Size(201, 20);
             this.txtSeasonFormat.TabIndex = 28;
             // 
             // bnTags
             // 
             this.bnTags.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnTags.Location = new System.Drawing.Point(348, 94);
+            this.bnTags.Location = new System.Drawing.Point(354, 94);
             this.bnTags.Name = "bnTags";
             this.bnTags.Size = new System.Drawing.Size(75, 23);
             this.bnTags.TabIndex = 27;
@@ -704,13 +708,14 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtBaseFolder.Location = new System.Drawing.Point(79, 31);
             this.txtBaseFolder.Name = "txtBaseFolder";
-            this.txtBaseFolder.Size = new System.Drawing.Size(263, 20);
+            this.txtBaseFolder.Size = new System.Drawing.Size(269, 20);
             this.txtBaseFolder.TabIndex = 1;
+            this.txtBaseFolder.TextChanged += new System.EventHandler(this.TxtBaseFolder_TextChanged);
             // 
             // bnBrowse
             // 
             this.bnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowse.Location = new System.Drawing.Point(348, 19);
+            this.bnBrowse.Location = new System.Drawing.Point(354, 19);
             this.bnBrowse.Name = "bnBrowse";
             this.bnBrowse.Size = new System.Drawing.Size(75, 23);
             this.bnBrowse.TabIndex = 2;
@@ -734,7 +739,7 @@ namespace TVRename
             this.pbFolders.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbFolders.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
             this.pbFolders.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbFolders.Location = new System.Drawing.Point(391, 6);
+            this.pbFolders.Location = new System.Drawing.Point(397, 6);
             this.pbFolders.Name = "pbFolders";
             this.pbFolders.Size = new System.Drawing.Size(43, 40);
             this.pbFolders.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -930,7 +935,7 @@ namespace TVRename
             this.lbTags.Name = "lbTags";
             this.lbTags.Size = new System.Drawing.Size(80, 13);
             this.lbTags.TabIndex = 1;
-            this.lbTags.Tag = string.Empty;
+            this.lbTags.Tag = "";
             this.lbTags.Text = "Available Tags:";
             // 
             // lbSearchURL
@@ -1033,12 +1038,36 @@ namespace TVRename
             this.pbAdvanced.TabStop = false;
             this.pbAdvanced.Click += new System.EventHandler(this.pbAdvanced_Click);
             // 
+            // btnIgnoreList
+            // 
+            this.btnIgnoreList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnIgnoreList.BackColor = System.Drawing.Color.Transparent;
+            this.btnIgnoreList.Location = new System.Drawing.Point(286, 442);
+            this.btnIgnoreList.Name = "btnIgnoreList";
+            this.btnIgnoreList.Size = new System.Drawing.Size(153, 23);
+            this.btnIgnoreList.TabIndex = 49;
+            this.btnIgnoreList.Text = "See Ignore List";
+            this.btnIgnoreList.UseVisualStyleBackColor = false;
+            this.btnIgnoreList.Click += new System.EventHandler(this.BtnIgnoreList_Click);
+            // 
+            // txtIgnoreList
+            // 
+            this.txtIgnoreList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtIgnoreList.AutoSize = true;
+            this.txtIgnoreList.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtIgnoreList.Location = new System.Drawing.Point(11, 447);
+            this.txtIgnoreList.Name = "txtIgnoreList";
+            this.txtIgnoreList.Size = new System.Drawing.Size(259, 13);
+            this.txtIgnoreList.TabIndex = 50;
+            this.txtIgnoreList.Text = "Note: Some files in these folders are ignored";
+            this.txtIgnoreList.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // AddEditShow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
-            this.ClientSize = new System.Drawing.Size(456, 513);
+            this.ClientSize = new System.Drawing.Size(462, 537);
             this.ControlBox = false;
             this.Controls.Add(this.Folders);
             this.Controls.Add(this.bnCancel);
@@ -1155,5 +1184,7 @@ namespace TVRename
         private System.Windows.Forms.RadioButton rdoTVMaze;
         private System.Windows.Forms.RadioButton rdoTVDB;
         private System.Windows.Forms.RadioButton rdoDefault;
+        private System.Windows.Forms.Label txtIgnoreList;
+        private System.Windows.Forms.Button btnIgnoreList;
     }
 }
