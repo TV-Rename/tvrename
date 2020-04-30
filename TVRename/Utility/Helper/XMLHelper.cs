@@ -4,11 +4,14 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
+using NLog;
 
 namespace TVRename
 {
     public static class XmlHelper
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public static void WriteStringsToXml([NotNull] IEnumerable<string> strings, [NotNull] XmlWriter writer, [NotNull] string elementName, [NotNull] string stringName)
         {
             writer.WriteStartElement(elementName);
@@ -196,7 +199,14 @@ namespace TVRename
         {
             if (e.Elements(elementName).Any())
             {
-                e.Elements(elementName).Single().Value = value;
+                try
+                {
+                    e.Elements(elementName).Single().Value = value;
+                }
+                catch (InvalidOperationException ex)
+                {
+                    Logger.Error($"COuld not update element {elementName} in {e}");
+                }
             }
             else
             {

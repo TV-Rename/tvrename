@@ -297,7 +297,7 @@ namespace TVRename
             if (!(series is null))
             {
                 root.UpdateElement("originaltitle", series.Name);
-                root.UpdateElement("studio", series.Network);
+                UpdateAmongstElements(root,"studio", series.Network);
                 root.UpdateElement("id", series.TvdbCode);
                 root.UpdateElement("runtime", series.Runtime, true);
                 root.UpdateElement("mpaa", series.ContentRating, true);
