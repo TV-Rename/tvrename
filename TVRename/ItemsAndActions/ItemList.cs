@@ -28,13 +28,13 @@ namespace TVRename
         }
 
         [NotNull]
-        public IEnumerable<Action> Actions( ) => this.OfType<Action>();
+        public IEnumerable<Action> Actions( ) => this.OfType<Action>().ToList();
 
         [NotNull]
-        public IEnumerable<ItemMissing> MissingItems() => this.OfType<ItemMissing>();
+        public IEnumerable<ItemMissing> MissingItems() => this.OfType<ItemMissing>().ToList();
 
         [NotNull]
-        public IEnumerable<ActionCopyMoveRename> CopyMoveItems() => this.OfType<ActionCopyMoveRename>();
+        public IEnumerable<ActionCopyMoveRename> CopyMoveItems() => this.OfType<ActionCopyMoveRename>().ToList();
 
         public void Replace(ItemList toRemove, ItemList newList)
         {
