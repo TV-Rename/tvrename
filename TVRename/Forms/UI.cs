@@ -972,6 +972,11 @@ namespace TVRename
 
         private static void SetHtmlBody([NotNull] WebBrowser web, string body)
         {
+            if (web.IsDisposed)
+            {
+                return;
+            }
+
             try
             {
                 web.DocumentText = body; 
