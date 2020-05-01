@@ -20,13 +20,11 @@ namespace TVRename
 {
     internal class RssItemList : List<RSSItem>
     {
-        private List<TVSettings.FilenameProcessorRE> regxps; // only trustable while in DownloadRSS or its called functions
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         // ReSharper disable once InconsistentNaming
-        public bool DownloadRSS([NotNull] string url, List<TVSettings.FilenameProcessorRE> rexps, bool useCloudflareProtection)
+        public bool DownloadRSS([NotNull] string url, bool useCloudflareProtection)
         {
-            regxps = rexps;
             string response = null;
 
             try
@@ -71,10 +69,7 @@ namespace TVRename
                 Logger.Error(e, $"Could not parse RSS page at:{url}");
                 return false;
             }
-            finally
-            {
-                regxps = null;
-            }
+
             return true;
         }
 
@@ -107,7 +102,7 @@ namespace TVRename
 
             string showName = string.Empty;
 
-            FinderHelper.FindSeasEp("", title, out int season, out int episode, out int _, null, regxps);
+            FinderHelper.FindSeasEp( title, out int season, out int episode, out int _, null);
 
             if (TVSettings.Instance.DetailedRSSJSONLogging)
             {
