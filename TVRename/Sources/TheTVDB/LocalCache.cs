@@ -815,7 +815,7 @@ namespace TVRename.TheTVDB
                 Dictionary<int, Tuple<JToken, JToken>> episodesResponses =
                     MergeEpisodeResponses(episodeResponses, episodeDefaultLangResponses);
 
-                ProcessEpisodes(id, episodesResponses);
+                ProcessEpisodes(selectedSeriesInfo, episodesResponses);
             }
             catch (ShowNotFoundException ex)
             {
@@ -829,12 +829,12 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private void ProcessEpisodes(int id, [NotNull] Dictionary<int, Tuple<JToken, JToken>> episodesResponses)
+        private void ProcessEpisodes([NotNull] SeriesInfo si, [NotNull] Dictionary<int, Tuple<JToken, JToken>> episodesResponses)
         {
             int numberOfNewEpisodes = 0;
             int numberOfUpdatedEpisodes = 0;
 
-            ICollection<int> oldEpisodeIds = GetOldEpisodeIds(id);
+            ICollection<int> oldEpisodeIds = GetOldEpisodeIds(si.TvdbCode);
 
             foreach (KeyValuePair<int, Tuple<JToken, JToken>> episodeData in episodesResponses)
             {
@@ -842,7 +842,7 @@ namespace TVRename.TheTVDB
                 {
                     JToken episodeToUse = episodeData.Value.Item1 ?? episodeData.Value.Item2;
                     long serverUpdateTime = (long) episodeToUse["lastUpdated"];
-                    (int newEps, int updatedEps) = ProcessEpisode(serverUpdateTime, episodeData, id, oldEpisodeIds);
+                    (int newEps, int updatedEps) = ProcessEpisode(serverUpdateTime, episodeData, si.TvdbCode, oldEpisodeIds);
                     numberOfNewEpisodes += newEps;
                     numberOfUpdatedEpisodes += updatedEps;
                 }
@@ -860,18 +860,18 @@ namespace TVRename.TheTVDB
                 }
             }
 
-            Logger.Info(series[id].Name + " had " + numberOfUpdatedEpisodes +
+            Logger.Info(si.Name + " had " + numberOfUpdatedEpisodes +
                         " episodes updated and " + numberOfNewEpisodes + " new episodes ");
 
             if (oldEpisodeIds.Count > 0)
             {
                 Logger.Warn(
-                    $"{series[id].Name} had {oldEpisodeIds.Count} episodes deleted: {string.Join(",", oldEpisodeIds)}");
+                    $"{si.Name} had {oldEpisodeIds.Count} episodes deleted: {string.Join(",", oldEpisodeIds)}");
             }
 
             foreach (int episodeId in oldEpisodeIds)
             {
-                removeEpisodeIds.TryAdd(episodeId, new ExtraEp(id, episodeId));
+                removeEpisodeIds.TryAdd(episodeId, new ExtraEp(si.TvdbCode, episodeId));
             }
         }
 
