@@ -293,6 +293,7 @@
     <Compile Include="Finders\RSSItemList.cs" />
     <Compile Include="Finders\SearchFolderFileFinder.cs" />
     <Compile Include="Finders\DownloadingFinder.cs" />
+    <Compile Include="Forms\ListViewColumnSorter.cs" />
     <Compile Include="Forms\Utilities\ThanksForm.cs">
       <SubType>Form</SubType>
     </Compile>

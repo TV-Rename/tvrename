@@ -106,7 +106,7 @@ namespace TVRename
         public bool PreviouslySeen => TVSettings.Instance.PreviouslySeenEpisodes.Contains(EpisodeId);
 
         [NotNull]
-        public string SeasonNumberAsText => AppropriateSeasonNumber != 0 ? AppropriateSeasonNumber.ToString() : "Special";
+        public string SeasonNumberAsText => AppropriateSeasonNumber != 0 ? AppropriateSeasonNumber.ToString() : TVSettings.Instance.SpecialsListViewName;
 
         [NotNull]
         public string WebsiteUrl

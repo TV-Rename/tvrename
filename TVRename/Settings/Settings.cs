@@ -283,6 +283,9 @@ namespace TVRename
 
         public static TheTVDB.LocalCache.PagingMethod TVDBPagingMethod => TheTVDB.LocalCache.PagingMethod.proper;
 
+        [NotNull]
+        public string SpecialsListViewName => "Special";
+        
         public bool CleanLibraryAfterActions = false;
         public bool AutoAddAsPartOfQuickRename = true;
         public bool UseFullPathNameToMatchSearchFolders = false;

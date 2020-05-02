@@ -113,6 +113,8 @@ namespace TVRename
         private ProcessedEpisode mLastEpClickedScan;
         private ProcessedSeason mLastProcessedSeasonClicked;
         private List<ShowItem> mLastShowsClicked;
+        private ListViewColumnSorter lvwActionColumnSorter;
+        private ListViewColumnSorter lvwScheduleColumnSorter;
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private bool IsBusy => busy!=0;
@@ -147,7 +149,8 @@ namespace TVRename
                 Logger.Info(e, "Error loading layout XML");
             }
 
-            lvWhenToWatch.ListViewItemSorter = new DateSorterWtw(0);
+            lvwScheduleColumnSorter=new ListViewColumnSorter( new DateSorterWtw(0));
+            lvWhenToWatch.ListViewItemSorter = lvwScheduleColumnSorter;
 
             if (mDoc.Args.Hide || !showUi)
             {
@@ -1100,6 +1103,7 @@ namespace TVRename
             // 1 or 2 = number sort
             // all others, text sort
 
+            lvwScheduleColumnSorter.ClickedOn(col);
             lvWhenToWatch.ShowGroups = false;
 
             switch (col)
@@ -1109,14 +1113,14 @@ namespace TVRename
                 case 5:
                 case 6:
                     lvWhenToWatch.ShowGroups = true;
-                    lvWhenToWatch.ListViewItemSorter = new DateSorterWtw(col);
+                    lvwScheduleColumnSorter.ListViewItemSorter = new DateSorterWtw(col);
                     break;
                 case 1:
                 case 2:
-                    lvWhenToWatch.ListViewItemSorter = new NumberAsTextSorter(col);
+                    lvwScheduleColumnSorter.ListViewItemSorter = new NumberAsTextSorter(col);
                     break;
                 default:
-                    lvWhenToWatch.ListViewItemSorter = new TextSorter(col);
+                    lvwScheduleColumnSorter.ListViewItemSorter = new TextSorter(col);
                     break;
             }
 
@@ -3940,20 +3944,23 @@ namespace TVRename
         private void LvAction_ColumnClick(object sender, [NotNull] ColumnClickEventArgs e)
         {
             int col = e.Column;
+            lvwActionColumnSorter.ClickedOn(col);
 
             switch (col)
             {
                 case 3:
-                    lvAction.ListViewItemSorter = new DateSorterScan(col);
+                    lvwActionColumnSorter.ListViewItemSorter = new DateSorterScan(col);
                     break;
                 case 1:
                 case 2:
-                    lvAction.ListViewItemSorter = new NumberAsTextSorter(col);
+                    lvwActionColumnSorter.ListViewItemSorter = new NumberAsTextSorter(col);
                     break;
                 default:
-                    lvAction.ListViewItemSorter = new TextSorter(col);
+                    lvwActionColumnSorter.ListViewItemSorter = new TextSorter(col);
                     break;
             }
+
+            lvAction.ListViewItemSorter = lvwActionColumnSorter;
 
             lvAction.Sort();
             lvAction.Refresh();

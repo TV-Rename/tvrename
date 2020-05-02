@@ -58,9 +58,7 @@ namespace TVRename
                 return true;
             }
 
-            int le = fi.Extension.Length;
-            string filename = fi.Name.RemoveLast(le);
-            return FindSeasEp(fi.Directory.FullName, filename, out seas, out ep, out maxEp, si, rexps, out re);
+            return FindSeasEp(fi.Directory.FullName, fi.RemoveExtension(), out seas, out ep, out maxEp, si, rexps, out re);
         }
 
         private static bool FindSeasEpDateCheck([CanBeNull] string filename, out int seas, out int ep, out int maxEp, [CanBeNull] ShowItem si)
@@ -162,12 +160,6 @@ namespace TVRename
             }
 
             return FindSeasEp(di.Parent.FullName, di.Name, out seas, out ep, out int _, si, rexps, out re);
-        }
-
-        public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, out int maxEp,
-            ShowItem si, [NotNull] IEnumerable<TVSettings.FilenameProcessorRE> rexps)
-        {
-            return FindSeasEp(directory, filename, out seas, out ep, out maxEp, si, rexps, out TVSettings.FilenameProcessorRE _);
         }
 
         public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowItem show)
@@ -373,9 +365,9 @@ namespace TVRename
 
             filename = SimplifyFilename(filename, showNameHint);
 
-            string fullPath =
-                directory + Path.DirectorySeparatorChar +
-                filename; // construct full path with sanitised filename
+            string fullPath = directory.HasValue()
+                ? directory + Path.DirectorySeparatorChar + filename
+                : filename; // construct full path with sanitised filename
 
             fullPath = fullPath.ToLower() + " ";
 

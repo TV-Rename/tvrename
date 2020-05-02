@@ -19,14 +19,21 @@ namespace TVRename
 
         private int ParseAsInt( [NotNull] ListViewItem cellItem)
         {
-            if (string.IsNullOrEmpty(cellItem.SubItems[Col].Text))
+            string value = cellItem.SubItems[Col].Text;
+
+            if (!value.HasValue())
             {
                 return -1;
             }
 
+            if (value == TVSettings.Instance.SpecialsListViewName)
+            {
+                return 0;
+            }
+
             try
             {
-                return Convert.ToInt32(cellItem.SubItems[Col].Text);
+                return Convert.ToInt32(value);
             }
             catch
             {
