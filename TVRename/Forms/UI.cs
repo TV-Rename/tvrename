@@ -152,6 +152,9 @@ namespace TVRename
             lvwScheduleColumnSorter=new ListViewColumnSorter( new DateSorterWtw(0));
             lvWhenToWatch.ListViewItemSorter = lvwScheduleColumnSorter;
 
+            lvwActionColumnSorter = new ListViewColumnSorter(new TextSorter(0));
+            lvAction.ListViewItemSorter = lvwActionColumnSorter;
+
             if (mDoc.Args.Hide || !showUi)
             {
                 WindowState = FormWindowState.Minimized;
@@ -3959,8 +3962,6 @@ namespace TVRename
                     lvwActionColumnSorter.ListViewItemSorter = new TextSorter(col);
                     break;
             }
-
-            lvAction.ListViewItemSorter = lvwActionColumnSorter;
 
             lvAction.Sort();
             lvAction.Refresh();
