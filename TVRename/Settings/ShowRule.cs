@@ -32,6 +32,7 @@ namespace TVRename
         public int First;
         public int Second;
         public string UserSuppliedText;
+        public bool RenumberAfter;
 
         public ShowRule()
         {
@@ -47,12 +48,13 @@ namespace TVRename
                 First = xmlSettings.ExtractInt("First",-1);
                 Second = xmlSettings.ExtractInt("Second",-1);
                 UserSuppliedText = xmlSettings.ExtractString("Text");
+                RenumberAfter = xmlSettings.ExtractBool("RenumberAfter", true);
             }
         }
 
         public override string ToString()
         {
-            return $"ShowRule: {ActionInWords()} with parameters {First}, {Second} and usertext: {UserSuppliedText}";
+            return $"ShowRule: {ActionInWords()} with parameters {First}, {Second} and usertext: {UserSuppliedText} ({RenumberAfter})";
         }
 
         private void SetToDefaults()
@@ -61,6 +63,7 @@ namespace TVRename
             First = -1;
             Second = -1;
             UserSuppliedText = string.Empty;
+            RenumberAfter = true;
         }
 
         public void WriteXml([NotNull] XmlWriter writer)
@@ -70,6 +73,7 @@ namespace TVRename
             writer.WriteElement("First",First);
             writer.WriteElement("Second",Second);           
             writer.WriteElement("Text",UserSuppliedText);
+            writer.WriteElement("RenumberAfter",RenumberAfter);
             writer.WriteEndElement(); // Rule
         }
 

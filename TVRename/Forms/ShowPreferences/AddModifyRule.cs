@@ -89,6 +89,8 @@ namespace TVRename
                 txtValue2.Text = mRule.Second.ToString();
             }
 
+            chkRenumberAfter.Checked = mRule.RenumberAfter;
+
             EnableDisableAndLabels();
         }
 
@@ -165,9 +167,10 @@ namespace TVRename
         private void bnOK_Click(object sender, EventArgs e)
         {
             mRule.DoWhatNow = Action();
-            mRule.UserSuppliedText = txtUserText.Enabled ? txtUserText.Text : "";
+            mRule.UserSuppliedText = txtUserText.Enabled ? txtUserText.Text : string.Empty;
             mRule.First = ParseTextValue(txtValue1);
             mRule.Second = ParseTextValue(txtValue2);
+            mRule.RenumberAfter = chkRenumberAfter.Checked;
 
             //validation Rules
             if (!mProcessedSeason.ContainsEpisode(mRule.First, mOrder) && mRule.DoWhatNow != RuleAction.kInsert)
@@ -233,48 +236,41 @@ namespace TVRename
             }
         }
 
-        private RuleAction Action ()
+        private RuleAction Action()
         {
-            RuleAction dwn;
-
             if (rbIgnore.Checked)
             {
-                dwn = RuleAction.kIgnoreEp;
+                return RuleAction.kIgnoreEp;
             }
-            else if (rbSwap.Checked)
+            if (rbSwap.Checked)
             {
-                dwn = RuleAction.kSwap;
+                return  RuleAction.kSwap;
             }
-            else if (rbMerge.Checked)
+            if (rbMerge.Checked)
             {
-                dwn = RuleAction.kMerge;
+                return RuleAction.kMerge;
             }
-            else if (rbInsert.Checked)
+            if (rbInsert.Checked)
             {
-                dwn = RuleAction.kInsert;
+                return RuleAction.kInsert;
             }
-            else if (rbRemove.Checked)
+            if (rbRemove.Checked)
             {
-                dwn = RuleAction.kRemove;
+                return RuleAction.kRemove;
             }
-            else if (rbCollapse.Checked)
+            if (rbCollapse.Checked)
             {
-                dwn = RuleAction.kCollapse;
+                return RuleAction.kCollapse;
             }
-            else if (rbRename.Checked)
+            if (rbRename.Checked)
             {
-                dwn = RuleAction.kRename;
+                return RuleAction.kRename;
             }
-            else if (rbSplit.Checked)
+            if (rbSplit.Checked)
             {
-                dwn = RuleAction.kSplit;
+                return RuleAction.kSplit;
             }
-            else
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-
-            return dwn;
+            throw new ArgumentOutOfRangeException();
         }
     }
 }

@@ -128,9 +128,10 @@ namespace TVRename
             {
                 ListViewItem lvi = new ListViewItem {Text = sr.ActionInWords()};
 
-                lvi.SubItems.Add(sr.First == -1 ? "" : sr.First.ToString());
-                lvi.SubItems.Add(sr.Second == -1 ? "" : sr.Second.ToString());
+                lvi.SubItems.Add(sr.First == -1 ? string.Empty : sr.First.ToString());
+                lvi.SubItems.Add(sr.Second == -1 ? string.Empty : sr.Second.ToString());
                 lvi.SubItems.Add(sr.UserSuppliedText);
+                lvi.SubItems.Add(sr.RenumberAfter ? "Yes" : "No");
                 lvi.Tag = sr;
                 lvRuleList.Items.Add(lvi);
             }

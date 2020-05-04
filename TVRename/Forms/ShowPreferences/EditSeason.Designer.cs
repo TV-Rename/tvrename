@@ -65,6 +65,7 @@ namespace TVRename
             this.EpisodeName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.bnRemoveSeen = new System.Windows.Forms.Button();
             this.bnAddSeen = new System.Windows.Forms.Button();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabControl1.SuspendLayout();
             this.Rules.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -98,7 +99,8 @@ namespace TVRename
             this.columnHeader3,
             this.columnHeader4,
             this.columnHeader5,
-            this.columnHeader6});
+            this.columnHeader6,
+            this.columnHeader1});
             this.lvRuleList.FullRowSelect = true;
             this.lvRuleList.HideSelection = false;
             this.lvRuleList.Location = new System.Drawing.Point(7, 19);
@@ -126,7 +128,7 @@ namespace TVRename
             // columnHeader6
             // 
             this.columnHeader6.Text = "Name";
-            this.columnHeader6.Width = 205;
+            this.columnHeader6.Width = 150;
             // 
             // bnDelRule
             // 
@@ -362,6 +364,10 @@ namespace TVRename
             this.bnAddSeen.UseVisualStyleBackColor = true;
             this.bnAddSeen.Click += new System.EventHandler(this.Button2_Click);
             // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Reorder";
+            // 
             // EditSeason
             // 
             this.AcceptButton = this.bnOK;
@@ -427,5 +433,6 @@ namespace TVRename
         private System.Windows.Forms.ColumnHeader Episode;
         private System.Windows.Forms.ColumnHeader EpisodeName;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
     }
 }

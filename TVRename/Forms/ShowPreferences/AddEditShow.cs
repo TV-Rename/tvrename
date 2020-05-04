@@ -118,6 +118,7 @@ namespace TVRename
             cbUseCustomSearch.Checked = si.UseCustomSearchUrl && !string.IsNullOrWhiteSpace(si.CustomSearchUrl);
             txtSearchURL.Text = si.CustomSearchUrl ?? "";
             EnableDisableCustomSearch();
+            UpdateIgnore();
         }
 
         private void SetTagListText()

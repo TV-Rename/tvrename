@@ -395,7 +395,10 @@ namespace TVRename
                         }
                     }
 
-                    Renumber(eis);
+                    if (sr.RenumberAfter)
+                    {
+                        Renumber(eis);
+                    }
                 }
                 catch (Exception e)
                 {

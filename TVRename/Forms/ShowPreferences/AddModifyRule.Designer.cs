@@ -56,6 +56,7 @@ namespace TVRename
             this.txtLeaveBlank = new System.Windows.Forms.Label();
             this.rbSplit = new System.Windows.Forms.RadioButton();
             this.rbCollapse = new System.Windows.Forms.RadioButton();
+            this.chkRenumberAfter = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // rbRemove
@@ -166,7 +167,7 @@ namespace TVRename
             // bnOK
             // 
             this.bnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.bnOK.Location = new System.Drawing.Point(175, 308);
+            this.bnOK.Location = new System.Drawing.Point(175, 334);
             this.bnOK.Name = "bnOK";
             this.bnOK.Size = new System.Drawing.Size(75, 23);
             this.bnOK.TabIndex = 12;
@@ -177,7 +178,7 @@ namespace TVRename
             // bnCancel
             // 
             this.bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancel.Location = new System.Drawing.Point(256, 308);
+            this.bnCancel.Location = new System.Drawing.Point(259, 334);
             this.bnCancel.Name = "bnCancel";
             this.bnCancel.Size = new System.Drawing.Size(75, 23);
             this.bnCancel.TabIndex = 13;
@@ -241,13 +242,24 @@ namespace TVRename
             this.rbCollapse.UseVisualStyleBackColor = true;
             this.rbCollapse.Click += new System.EventHandler(this.rb_Click);
             // 
+            // chkRenumberAfter
+            // 
+            this.chkRenumberAfter.AutoSize = true;
+            this.chkRenumberAfter.Location = new System.Drawing.Point(80, 306);
+            this.chkRenumberAfter.Name = "chkRenumberAfter";
+            this.chkRenumberAfter.Size = new System.Drawing.Size(172, 17);
+            this.chkRenumberAfter.TabIndex = 14;
+            this.chkRenumberAfter.Text = "Renumber Season After Action";
+            this.chkRenumberAfter.UseVisualStyleBackColor = true;
+            // 
             // AddModifyRule
             // 
             this.AcceptButton = this.bnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
-            this.ClientSize = new System.Drawing.Size(341, 341);
+            this.ClientSize = new System.Drawing.Size(341, 369);
+            this.Controls.Add(this.chkRenumberAfter);
             this.Controls.Add(this.bnCancel);
             this.Controls.Add(this.bnOK);
             this.Controls.Add(this.txtUserText);
@@ -303,5 +315,6 @@ namespace TVRename
         private System.Windows.Forms.Label txtLeaveBlank;
         private System.Windows.Forms.RadioButton rbSplit;
         private System.Windows.Forms.RadioButton rbCollapse;
+        private System.Windows.Forms.CheckBox chkRenumberAfter;
     }
 }
