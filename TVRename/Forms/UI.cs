@@ -3226,6 +3226,8 @@ namespace TVRename
                         ListViewNativeMethods.HideCheckbox(lvAction,lvi);
                     }
                 }
+                //lvAction.SetGroupCollapse(ListViewNativeMethods.GroupState.COLLAPSED);
+
 
                 lvAction.EndUpdate();
             }

@@ -20,6 +20,63 @@ namespace TVRename.Utility
             SendMessage(list.Handle, LVM_SETITEM, IntPtr.Zero, ref lviItem);
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct LVGROUP
+        {
+            public int cbSize;
+            public int mask;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string pszHeader;
+            public int cchHeader;
+            [MarshalAs(UnmanagedType.LPTStr)]
+            public string pszFooter;
+            public int cchFooter;
+            public int iGroupId;
+            public int stateMask;
+            public int state;
+            public int uAlign;
+        }
+
+        public enum GroupState
+        {
+            COLLAPSIBLE = 8,
+            COLLAPSED = 1,
+            EXPANDED = 0
+        }
+
+        [DllImport("user32.dll")]
+        static extern int SendMessage2
+            (IntPtr window, int message, int wParam, IntPtr lParam);
+
+        public static void SetGroupCollapse([NotNull] this ListView list, GroupState state)
+        {
+            for (int i = 0; i <= list.Groups.Count; i++)
+            {
+                LVGROUP group = new LVGROUP();
+                group.cbSize = Marshal.SizeOf(group);
+                group.state = (int)state; // LVGS_COLLAPSIBLE 
+                group.mask = 4; // LVGF_STATE 
+                group.iGroupId = i;
+                IntPtr ip = IntPtr.Zero;
+                try
+                {
+                    ip = Marshal.AllocHGlobal(group.cbSize);
+                    Marshal.StructureToPtr(group, ip, true);
+                    SendMessage2(list.Handle, 0x1000 + 147, i, ip); // #define LVM_SETGROUPINFO(LVM_FIRST + 147)
+               
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.WriteLine
+                        (ex.Message + Environment.NewLine + ex.StackTrace);
+                }
+                finally
+                {
+                    if (null != ip) Marshal.FreeHGlobal(ip);
+                }
+            }
+        }
+
         private const int LVIF_STATE = 0x8;
         private const int LVIS_STATEIMAGEMASK = 0xF000;
         private const int LVM_SETITEM = LVM_FIRST + 76;
