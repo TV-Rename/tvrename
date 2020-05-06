@@ -334,8 +334,7 @@ namespace TVRename
                     }
 
                     ShowItem si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
-                    bool r = FinderHelper.FindSeasEp(file, out int seas, out int ep, out int maxEp, si, rel, false,
-                        out TVSettings.FilenameProcessorRE matchRex);
+                    bool r = FinderHelper.FindSeasEp(file, out int seas, out int ep, out int maxEp, si, rel, out TVSettings.FilenameProcessorRE matchRex);
 
                     AddItemToListView(file.Name, seas, ep, maxEp, matchRex, r);
                 }
@@ -350,8 +349,7 @@ namespace TVRename
                     }
 
                     ShowItem si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
-                    bool r = FinderHelper.FindSeasEp(filename, out int seas, out int ep, out int maxEp, si, rel, false,
-                        out TVSettings.FilenameProcessorRE matchRex);
+                    bool r = FinderHelper.FindSeasEp(filename, out int seas, out int ep, out int maxEp, si, rel, out TVSettings.FilenameProcessorRE matchRex);
 
                     AddItemToListView(filename, seas, ep, maxEp, matchRex, r);
                 }

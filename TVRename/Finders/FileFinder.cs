@@ -95,28 +95,42 @@ namespace TVRename
             return false;
         }
 
-        private static (bool  identifysuccess, int seasF, int epF,  int maxEp)  IdentifyFile([NotNull] ItemMissing me, [NotNull] FileInfo dce)
+        private static (bool  identifysuccess, int foundSeason, int foundEpisode,  int maxEp) IdentifyFile([NotNull] ItemMissing me, [NotNull] FileInfo dce)
         {
             int season = me.Episode.AppropriateSeasonNumber;
             int epnum = me.Episode.AppropriateEpNum;
 
             bool regularMatch =
-                FinderHelper.FindSeasEp(dce, out int seasF, out int epF, out int maxEp, me.Episode.Show) &&
-                seasF == season &&
-                epF == epnum;
+                FinderHelper.FindSeasEp(dce, out int foundSeason, out int foundEpisode, out int maxEp, me.Episode.Show) &&
+                foundSeason == season &&
+                foundEpisode == epnum;
 
             if (regularMatch)
             {
-                return (true, seasF,  epF,  maxEp);
+                return (true, foundSeason, foundEpisode,  maxEp);
             }
 
             if (me.Episode.Show.UseSequentialMatch)
             {
-                bool sequentialMatch = TVDoc.MatchesSequentialNumber(dce.RemoveExtension(false), me.Episode);
-
-                if (sequentialMatch)
+                if (TVDoc.MatchesSequentialNumber(dce.RemoveExtension(false), me.Episode))
                 {
                     return (true, season, epnum, me.Episode.EpNum2);
+                }
+            }
+
+            if (me.Episode.Show.UseAirDateMatch)
+            {
+                if (FinderHelper.FindSeasEpDateCheck(dce.Name, out foundSeason, out foundEpisode, out maxEp, me.Episode.Show))
+                {
+                    return (true, foundSeason, foundEpisode, maxEp);
+                }
+            }
+ 
+            if (me.Episode.Show.UseEpNameMatch)
+            {
+                if (FinderHelper.FindSeasEpNameCheck(dce, me.Episode.Show, out foundSeason, out foundEpisode))
+                {
+                    return (true, foundSeason, foundEpisode, -1);
                 }
             }
 

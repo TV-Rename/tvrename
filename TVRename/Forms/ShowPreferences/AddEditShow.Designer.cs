@@ -67,6 +67,8 @@ namespace TVRename
             this.chkCustomLanguage = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.txtIgnoreList = new System.Windows.Forms.Label();
+            this.btnIgnoreList = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.chkReplaceAutoFolders = new System.Windows.Forms.CheckBox();
@@ -117,8 +119,9 @@ namespace TVRename
             this.cbIncludeNoAirdate = new System.Windows.Forms.CheckBox();
             this.cbIncludeFuture = new System.Windows.Forms.CheckBox();
             this.pbAdvanced = new System.Windows.Forms.PictureBox();
-            this.btnIgnoreList = new System.Windows.Forms.Button();
-            this.txtIgnoreList = new System.Windows.Forms.Label();
+            this.cbEpNameMatching = new System.Windows.Forms.CheckBox();
+            this.label68 = new System.Windows.Forms.Label();
+            this.cbAirdateMatching = new System.Windows.Forms.CheckBox();
             this.Folders.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbBasics)).BeginInit();
@@ -270,11 +273,11 @@ namespace TVRename
             // cbSequentialMatching
             // 
             this.cbSequentialMatching.AutoSize = true;
-            this.cbSequentialMatching.Location = new System.Drawing.Point(8, 193);
+            this.cbSequentialMatching.Location = new System.Drawing.Point(26, 233);
             this.cbSequentialMatching.Name = "cbSequentialMatching";
-            this.cbSequentialMatching.Size = new System.Drawing.Size(324, 17);
+            this.cbSequentialMatching.Size = new System.Drawing.Size(180, 17);
             this.cbSequentialMatching.TabIndex = 6;
-            this.cbSequentialMatching.Text = "Use sequential number matching (finding missing episodes only)";
+            this.cbSequentialMatching.Text = "Use sequential number matching";
             this.cbSequentialMatching.UseVisualStyleBackColor = true;
             // 
             // chkCustomShowName
@@ -326,7 +329,7 @@ namespace TVRename
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(450, 444);
+            this.tabPage1.Size = new System.Drawing.Size(456, 468);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Basics";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -452,6 +455,30 @@ namespace TVRename
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Folders";
             this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // txtIgnoreList
+            // 
+            this.txtIgnoreList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtIgnoreList.AutoSize = true;
+            this.txtIgnoreList.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtIgnoreList.Location = new System.Drawing.Point(11, 447);
+            this.txtIgnoreList.Name = "txtIgnoreList";
+            this.txtIgnoreList.Size = new System.Drawing.Size(259, 13);
+            this.txtIgnoreList.TabIndex = 50;
+            this.txtIgnoreList.Text = "Note: Some files in these folders are ignored";
+            this.txtIgnoreList.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // btnIgnoreList
+            // 
+            this.btnIgnoreList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnIgnoreList.BackColor = System.Drawing.Color.Transparent;
+            this.btnIgnoreList.Location = new System.Drawing.Point(286, 442);
+            this.btnIgnoreList.Name = "btnIgnoreList";
+            this.btnIgnoreList.Size = new System.Drawing.Size(153, 23);
+            this.btnIgnoreList.TabIndex = 49;
+            this.btnIgnoreList.Text = "See Ignore List";
+            this.btnIgnoreList.UseVisualStyleBackColor = false;
+            this.btnIgnoreList.Click += new System.EventHandler(this.BtnIgnoreList_Click);
             // 
             // label12
             // 
@@ -760,7 +787,7 @@ namespace TVRename
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(450, 444);
+            this.tabPage3.Size = new System.Drawing.Size(456, 468);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Show Aliases";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -873,7 +900,7 @@ namespace TVRename
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(450, 444);
+            this.tabPage4.Size = new System.Drawing.Size(456, 468);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Custom Search";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -974,6 +1001,9 @@ namespace TVRename
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.cbEpNameMatching);
+            this.tabPage2.Controls.Add(this.label68);
+            this.tabPage2.Controls.Add(this.cbAirdateMatching);
             this.tabPage2.Controls.Add(this.label9);
             this.tabPage2.Controls.Add(this.cbIncludeNoAirdate);
             this.tabPage2.Controls.Add(this.cbIncludeFuture);
@@ -987,7 +1017,7 @@ namespace TVRename
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(450, 444);
+            this.tabPage2.Size = new System.Drawing.Size(456, 468);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Advanced";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -1038,29 +1068,34 @@ namespace TVRename
             this.pbAdvanced.TabStop = false;
             this.pbAdvanced.Click += new System.EventHandler(this.pbAdvanced_Click);
             // 
-            // btnIgnoreList
+            // cbEpNameMatching
             // 
-            this.btnIgnoreList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnIgnoreList.BackColor = System.Drawing.Color.Transparent;
-            this.btnIgnoreList.Location = new System.Drawing.Point(286, 442);
-            this.btnIgnoreList.Name = "btnIgnoreList";
-            this.btnIgnoreList.Size = new System.Drawing.Size(153, 23);
-            this.btnIgnoreList.TabIndex = 49;
-            this.btnIgnoreList.Text = "See Ignore List";
-            this.btnIgnoreList.UseVisualStyleBackColor = false;
-            this.btnIgnoreList.Click += new System.EventHandler(this.BtnIgnoreList_Click);
+            this.cbEpNameMatching.AutoSize = true;
+            this.cbEpNameMatching.Location = new System.Drawing.Point(26, 279);
+            this.cbEpNameMatching.Name = "cbEpNameMatching";
+            this.cbEpNameMatching.Size = new System.Drawing.Size(182, 17);
+            this.cbEpNameMatching.TabIndex = 62;
+            this.cbEpNameMatching.Text = "Look for episode title in filenames";
+            this.cbEpNameMatching.UseVisualStyleBackColor = true;
             // 
-            // txtIgnoreList
+            // label68
             // 
-            this.txtIgnoreList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtIgnoreList.AutoSize = true;
-            this.txtIgnoreList.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtIgnoreList.Location = new System.Drawing.Point(11, 447);
-            this.txtIgnoreList.Name = "txtIgnoreList";
-            this.txtIgnoreList.Size = new System.Drawing.Size(259, 13);
-            this.txtIgnoreList.TabIndex = 50;
-            this.txtIgnoreList.Text = "Note: Some files in these folders are ignored";
-            this.txtIgnoreList.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.label68.AutoSize = true;
+            this.label68.Location = new System.Drawing.Point(6, 213);
+            this.label68.Name = "label68";
+            this.label68.Size = new System.Drawing.Size(180, 13);
+            this.label68.TabIndex = 61;
+            this.label68.Text = "When finding missing episodes (only)";
+            // 
+            // cbAirdateMatching
+            // 
+            this.cbAirdateMatching.AutoSize = true;
+            this.cbAirdateMatching.Location = new System.Drawing.Point(26, 256);
+            this.cbAirdateMatching.Name = "cbAirdateMatching";
+            this.cbAirdateMatching.Size = new System.Drawing.Size(158, 17);
+            this.cbAirdateMatching.TabIndex = 60;
+            this.cbAirdateMatching.Text = "&Look for airdate in filenames";
+            this.cbAirdateMatching.UseVisualStyleBackColor = true;
             // 
             // AddEditShow
             // 
@@ -1186,5 +1221,8 @@ namespace TVRename
         private System.Windows.Forms.RadioButton rdoDefault;
         private System.Windows.Forms.Label txtIgnoreList;
         private System.Windows.Forms.Button btnIgnoreList;
+        private System.Windows.Forms.CheckBox cbEpNameMatching;
+        private System.Windows.Forms.Label label68;
+        private System.Windows.Forms.CheckBox cbAirdateMatching;
     }
 }

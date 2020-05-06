@@ -164,7 +164,6 @@ namespace TVRename
         public bool KeepTogether = true;
         public bool LeadingZeroOnSeason = false;
         public bool LeaveOriginals = false;
-        public bool LookForDateInFilename = false;
         public bool MissingCheck = true;
         public bool MoveLibraryFiles = true;
         public bool CorrectFileDates = false;
@@ -328,6 +327,8 @@ namespace TVRename
         public bool DefShowDoRenaming = true;
         public bool DefShowDoMissingCheck = true;
         public bool DefShowSequentialMatching = false;
+        public bool DefShowAirDateMatching = false;
+        public bool DefShowEpNameMatching = false;
         public bool DefShowSpecialsCount = false;
         public bool DefShowAutoFolders = true;
         public bool DefShowUseDefLocation = false;
@@ -477,7 +478,6 @@ namespace TVRename
             writer.WriteElement("LeaveOriginals", LeaveOriginals);
             writer.WriteElement("RetainLanguageSpecificSubtitles", RetainLanguageSpecificSubtitles);
             writer.WriteElement("ForceBulkAddToUseSettingsOnly", ForceBulkAddToUseSettingsOnly);
-            writer.WriteElement("LookForDateInFilename", LookForDateInFilename);
             writer.WriteElement("AutoMergeEpisodes", AutoMergeDownloadEpisodes);
             writer.WriteElement("AutoMergeLibraryEpisodes", AutoMergeLibraryEpisodes);
             writer.WriteElement("MonitorFolders", MonitorFolders);
@@ -538,6 +538,8 @@ namespace TVRename
             writer.WriteElement("DefShowDoRenaming", DefShowDoRenaming);
             writer.WriteElement("DefShowDoMissingCheck", DefShowDoMissingCheck);
             writer.WriteElement("DefShowSequentialMatching", DefShowSequentialMatching);
+            writer.WriteElement("DefShowAirDateMatching", DefShowAirDateMatching);
+            writer.WriteElement("DefShowEpNameMatching", DefShowEpNameMatching);
             writer.WriteElement("DefShowSpecialsCount", DefShowSpecialsCount);
             writer.WriteElement("DefShowAutoFolders", DefShowAutoFolders);
             writer.WriteElement("DefShowUseDefLocation", DefShowUseDefLocation);
@@ -1282,7 +1284,6 @@ namespace TVRename
             IgnorePreviouslySeen = xmlSettings.ExtractBool("IgnorePreviouslySeen",false);
             LeaveOriginals = xmlSettings.ExtractBool("LeaveOriginals",false);
             AutoSearchForDownloadedFiles = xmlSettings.ExtractBool("AutoSearchForDownloadedFiles",false);
-            LookForDateInFilename = xmlSettings.ExtractBool("LookForDateInFilename",false);
             AutoMergeDownloadEpisodes = xmlSettings.ExtractBool("AutoMergeEpisodes",false);
             AutoMergeLibraryEpisodes = xmlSettings.ExtractBool("AutoMergeLibraryEpisodes",false);
             RetainLanguageSpecificSubtitles = xmlSettings.ExtractBool("RetainLanguageSpecificSubtitles",true);
@@ -1330,7 +1331,11 @@ namespace TVRename
             DefShowDVDOrder = xmlSettings.ExtractBool("DefShowDVDOrder", false);
             DefShowDoRenaming = xmlSettings.ExtractBool("DefShowDoRenaming", true);
             DefShowDoMissingCheck = xmlSettings.ExtractBool("DefShowDoMissingCheck", true);
+
             DefShowSequentialMatching = xmlSettings.ExtractBool("DefShowSequentialMatching", false);
+            DefShowAirDateMatching= xmlSettings.ExtractBool("DefShowAirDateMatching", xmlSettings.ExtractBool("LookForDateInFilename", false));
+            DefShowEpNameMatching = xmlSettings.ExtractBool("DefShowEpNameMatching", false);
+
             DefShowSpecialsCount = xmlSettings.ExtractBool("DefShowSpecialsCount", false);
             DefShowAutoFolders = xmlSettings.ExtractBool("DefShowAutoFolders", true);
             DefShowUseDefLocation = xmlSettings.ExtractBool("DefShowUseDefLocation", false);

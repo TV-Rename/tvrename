@@ -301,7 +301,6 @@ namespace TVRename
             s.AutoSearchForDownloadedFiles = chkAutoSearchForDownloadedFiles.Checked;
             s.LeaveOriginals = cbLeaveOriginals.Checked;
             s.CheckuTorrent = cbCheckuTorrent.Checked;
-            s.LookForDateInFilename = cbLookForAirdate.Checked;
             s.AutoMergeDownloadEpisodes = chkAutoMergeDownloadEpisodes.Checked;
             s.AutoMergeLibraryEpisodes = chkAutoMergeLibraryEpisodes.Checked;
             s.RetainLanguageSpecificSubtitles = chkRetainLanguageSpecificSubtitles.Checked;
@@ -395,6 +394,8 @@ namespace TVRename
             s.DefShowLocation = (string)cmbDefShowLocation.SelectedItem;
             s.DefaultShowTimezoneName = cbTimeZone.Text;
             s.DefShowSequentialMatching = cbDefShowSequentialMatching.Checked;
+            s.DefShowAirDateMatching = cbDefShowAirdateMatching.Checked;
+            s.DefShowEpNameMatching = cbDefShowEpNameMatching.Checked;
             s.DefShowSpecialsCount = cbDefShowSpecialsCount.Checked;
             s.DefShowUseBase = rbDefShowUseBase.Checked;
             s.DefShowUseDefLocation = cbDefShowUseDefLocation.Checked;
@@ -820,7 +821,6 @@ namespace TVRename
             cbRenameCheck.Checked = s.RenameCheck;
             chkPreventMove.Checked = s.PreventMove;
             cbCheckuTorrent.Checked = s.CheckuTorrent;
-            cbLookForAirdate.Checked = s.LookForDateInFilename;
             chkRetainLanguageSpecificSubtitles.Checked = s.RetainLanguageSpecificSubtitles;
             chkForceBulkAddToUseSettingsOnly.Checked = s.ForceBulkAddToUseSettingsOnly;
             chkAutoMergeDownloadEpisodes.Checked = s.AutoMergeDownloadEpisodes;
@@ -881,6 +881,8 @@ namespace TVRename
             cbDefShowAutoFolders.Checked= s.DefShowAutoFolders;
             cmbDefShowLocation.SelectedText= s.DefShowLocation;
             cbDefShowSequentialMatching.Checked= s.DefShowSequentialMatching;
+            cbDefShowAirdateMatching.Checked = s.DefShowAirDateMatching;
+            cbDefShowEpNameMatching.Checked = s.DefShowEpNameMatching;
             cbDefShowSpecialsCount.Checked= s.DefShowSpecialsCount;
             rbDefShowUseBase.Checked= s.DefShowUseBase;
             cbDefShowUseDefLocation.Checked= s.DefShowUseDefLocation;

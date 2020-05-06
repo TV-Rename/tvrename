@@ -22,46 +22,90 @@ namespace TVRename
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem si,
-    [CanBeNull] out TVSettings.FilenameProcessorRE re)
+        public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem si,[CanBeNull] out TVSettings.FilenameProcessorRE re)
         {
-            return FindSeasEp(fi, out seas, out ep, out maxEp, si, TVSettings.Instance.FNPRegexs,
-                TVSettings.Instance.LookForDateInFilename, out re);
+            return FindSeasEp(fi, out seas, out ep, out maxEp, si, TVSettings.Instance.FNPRegexs, out re);
         }
 
-        public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowItem si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, bool doDateCheck, [CanBeNull] out TVSettings.FilenameProcessorRE re)
+        public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowItem si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, [CanBeNull] out TVSettings.FilenameProcessorRE re)
         {
-            re = null;
-
-            if (doDateCheck && FindSeasEpDateCheck(itemName, out seas, out ep, out maxEp, si))
-            {
-                return true;
-            }
-
             return FindSeasEp(string.Empty, itemName, out seas, out ep, out maxEp, si, rexps, out re);
         }
 
         public static bool FindSeasEp([CanBeNull] FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem si,
-            IEnumerable<TVSettings.FilenameProcessorRE> rexps, bool doDateCheck, [CanBeNull] out TVSettings.FilenameProcessorRE re)
+            IEnumerable<TVSettings.FilenameProcessorRE> rexps, [CanBeNull] out TVSettings.FilenameProcessorRE re)
         {
-            re = null;
             if (fi is null)
             {
+                re = null;
                 seas = -1;
                 ep = -1;
                 maxEp = -1;
                 return false;
             }
 
-            if (doDateCheck && FindSeasEpDateCheck(fi.Name, out seas, out ep, out maxEp, si))
-            {
-                return true;
-            }
-
             return FindSeasEp(fi.Directory.FullName, fi.RemoveExtension(), out seas, out ep, out maxEp, si, rexps, out re);
         }
 
-        private static bool FindSeasEpDateCheck([CanBeNull] string filename, out int seas, out int ep, out int maxEp, [CanBeNull] ShowItem si)
+        public static bool FindSeasEpNameCheck(FileInfo fi, ShowItem si, out int seas, out int ep)
+        {
+            ep = -1;
+            seas = -1;
+
+            if (fi is null || si is null)
+            {
+                return false;
+            }
+
+            SeriesInfo ser = si.TheSeries();
+
+            if (ser is null)
+            {
+                return false;
+            }
+
+            string simplifiedFilename = fi.Name.CompareName();
+
+            Dictionary<int, ProcessedSeason> seasonsToUse = si.AppropriateSeasons();
+            if (seasonsToUse is null)
+            {
+                return false;
+            }
+
+            foreach (KeyValuePair<int, ProcessedSeason> kvp in seasonsToUse)
+            {
+                if (kvp.Value?.Episodes?.Values is null)
+                {
+                    continue;
+                }
+
+                if (!(si.IgnoreSeasons is null) && si.IgnoreSeasons.Contains(kvp.Value.SeasonNumber))
+                {
+                    continue;
+                }
+
+                if (kvp.Value.SeasonNumber == 0 && TVSettings.Instance.IgnoreAllSpecials)
+                {
+                    continue;
+                }
+
+                foreach (Episode epi in kvp.Value.Episodes.Values)
+                {
+                    string simplifiedEpName = epi.Name.CompareName();
+
+                    if (simplifiedFilename.Contains(simplifiedEpName))
+                    {
+                        seas = epi.GetSeasonNumber(si.Order);
+                        ep = epi.GetEpisodeNumber(si.Order);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static bool FindSeasEpDateCheck([CanBeNull] string filename, out int seas, out int ep, out int maxEp, [CanBeNull] ShowItem si)
         {
             ep = -1;
             seas = -1;

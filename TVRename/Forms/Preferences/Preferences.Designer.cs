@@ -322,7 +322,6 @@ namespace TVRename
             this.txtWTWDays = new System.Windows.Forms.TextBox();
             this.cbMode = new System.Windows.Forms.ComboBox();
             this.label34 = new System.Windows.Forms.Label();
-            this.cbLookForAirdate = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
             this.tpDataSources = new System.Windows.Forms.TabPage();
@@ -355,6 +354,9 @@ namespace TVRename
             this.cbDefShowUseDefLocation = new System.Windows.Forms.CheckBox();
             this.cbDefShowAutoFolders = new System.Windows.Forms.CheckBox();
             this.groupBox18 = new System.Windows.Forms.GroupBox();
+            this.cbDefShowEpNameMatching = new System.Windows.Forms.CheckBox();
+            this.label68 = new System.Windows.Forms.Label();
+            this.cbDefShowAirdateMatching = new System.Windows.Forms.CheckBox();
             this.cbDefShowSpecialsCount = new System.Windows.Forms.CheckBox();
             this.cbDefShowSequentialMatching = new System.Windows.Forms.CheckBox();
             this.cbDefShowIncludeNoAirdate = new System.Windows.Forms.CheckBox();
@@ -3523,7 +3525,6 @@ namespace TVRename
             this.tbGeneral.Controls.Add(this.txtWTWDays);
             this.tbGeneral.Controls.Add(this.cbMode);
             this.tbGeneral.Controls.Add(this.label34);
-            this.tbGeneral.Controls.Add(this.cbLookForAirdate);
             this.tbGeneral.Controls.Add(this.label2);
             this.tbGeneral.Location = new System.Drawing.Point(139, 4);
             this.tbGeneral.Name = "tbGeneral";
@@ -3607,16 +3608,6 @@ namespace TVRename
             this.label34.Size = new System.Drawing.Size(37, 13);
             this.label34.TabIndex = 18;
             this.label34.Text = "&Mode:";
-            // 
-            // cbLookForAirdate
-            // 
-            this.cbLookForAirdate.AutoSize = true;
-            this.cbLookForAirdate.Location = new System.Drawing.Point(14, 78);
-            this.cbLookForAirdate.Name = "cbLookForAirdate";
-            this.cbLookForAirdate.Size = new System.Drawing.Size(158, 17);
-            this.cbLookForAirdate.TabIndex = 15;
-            this.cbLookForAirdate.Text = "&Look for airdate in filenames";
-            this.cbLookForAirdate.UseVisualStyleBackColor = true;
             // 
             // label2
             // 
@@ -3992,6 +3983,9 @@ namespace TVRename
             // 
             this.groupBox18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox18.Controls.Add(this.cbDefShowEpNameMatching);
+            this.groupBox18.Controls.Add(this.label68);
+            this.groupBox18.Controls.Add(this.cbDefShowAirdateMatching);
             this.groupBox18.Controls.Add(this.cbDefShowSpecialsCount);
             this.groupBox18.Controls.Add(this.cbDefShowSequentialMatching);
             this.groupBox18.Controls.Add(this.cbDefShowIncludeNoAirdate);
@@ -4002,10 +3996,39 @@ namespace TVRename
             this.groupBox18.Controls.Add(this.cbDefShowNextAirdate);
             this.groupBox18.Location = new System.Drawing.Point(6, 237);
             this.groupBox18.Name = "groupBox18";
-            this.groupBox18.Size = new System.Drawing.Size(401, 189);
+            this.groupBox18.Size = new System.Drawing.Size(401, 258);
             this.groupBox18.TabIndex = 56;
             this.groupBox18.TabStop = false;
             this.groupBox18.Text = "Default Advanced Settings";
+            // 
+            // cbDefShowEpNameMatching
+            // 
+            this.cbDefShowEpNameMatching.AutoSize = true;
+            this.cbDefShowEpNameMatching.Location = new System.Drawing.Point(29, 231);
+            this.cbDefShowEpNameMatching.Name = "cbDefShowEpNameMatching";
+            this.cbDefShowEpNameMatching.Size = new System.Drawing.Size(182, 17);
+            this.cbDefShowEpNameMatching.TabIndex = 58;
+            this.cbDefShowEpNameMatching.Text = "Look for episode title in filenames";
+            this.cbDefShowEpNameMatching.UseVisualStyleBackColor = true;
+            // 
+            // label68
+            // 
+            this.label68.AutoSize = true;
+            this.label68.Location = new System.Drawing.Point(9, 165);
+            this.label68.Name = "label68";
+            this.label68.Size = new System.Drawing.Size(180, 13);
+            this.label68.TabIndex = 57;
+            this.label68.Text = "When finding missing episodes (only)";
+            // 
+            // cbDefShowAirdateMatching
+            // 
+            this.cbDefShowAirdateMatching.AutoSize = true;
+            this.cbDefShowAirdateMatching.Location = new System.Drawing.Point(29, 208);
+            this.cbDefShowAirdateMatching.Name = "cbDefShowAirdateMatching";
+            this.cbDefShowAirdateMatching.Size = new System.Drawing.Size(158, 17);
+            this.cbDefShowAirdateMatching.TabIndex = 56;
+            this.cbDefShowAirdateMatching.Text = "&Look for airdate in filenames";
+            this.cbDefShowAirdateMatching.UseVisualStyleBackColor = true;
             // 
             // cbDefShowSpecialsCount
             // 
@@ -4020,11 +4043,11 @@ namespace TVRename
             // cbDefShowSequentialMatching
             // 
             this.cbDefShowSequentialMatching.AutoSize = true;
-            this.cbDefShowSequentialMatching.Location = new System.Drawing.Point(9, 166);
+            this.cbDefShowSequentialMatching.Location = new System.Drawing.Point(29, 185);
             this.cbDefShowSequentialMatching.Name = "cbDefShowSequentialMatching";
-            this.cbDefShowSequentialMatching.Size = new System.Drawing.Size(324, 17);
+            this.cbDefShowSequentialMatching.Size = new System.Drawing.Size(180, 17);
             this.cbDefShowSequentialMatching.TabIndex = 53;
-            this.cbDefShowSequentialMatching.Text = "Use sequential number matching (finding missing episodes only)";
+            this.cbDefShowSequentialMatching.Text = "Use sequential number matching";
             this.cbDefShowSequentialMatching.UseVisualStyleBackColor = true;
             // 
             // cbDefShowIncludeNoAirdate
@@ -4639,7 +4662,6 @@ namespace TVRename
         private System.Windows.Forms.TextBox txtWTWDays;
         private System.Windows.Forms.ComboBox cbMode;
         private System.Windows.Forms.Label label34;
-        private System.Windows.Forms.CheckBox cbLookForAirdate;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TabControl tcTabs;
         private System.Windows.Forms.TextBox txtSeasonFolderName;
@@ -4821,5 +4843,8 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbIgnoreNoVideoFolders;
         private System.Windows.Forms.Label label62;
         private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.CheckBox cbDefShowEpNameMatching;
+        private System.Windows.Forms.Label label68;
+        private System.Windows.Forms.CheckBox cbDefShowAirdateMatching;
     }
 }

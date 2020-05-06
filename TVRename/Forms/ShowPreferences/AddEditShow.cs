@@ -81,6 +81,9 @@ namespace TVRename
             chkCustomLanguage_CheckedChanged(null, null);
 
             cbSequentialMatching.Checked = si.UseSequentialMatch;
+            cbAirdateMatching.Checked = si.UseAirDateMatch;
+            cbEpNameMatching.Checked = si.UseEpNameMatch;
+
             chkShowNextAirdate.Checked = si.ShowNextAirdate;
             chkSpecialsCount.Checked = si.CountSpecials;
             txtBaseFolder.Text = si.AutoAddFolderBase;
@@ -359,6 +362,8 @@ namespace TVRename
             selectedShow.ManualFoldersReplaceAutomatic = chkReplaceAutoFolders.Checked;
 
             selectedShow.UseSequentialMatch = cbSequentialMatching.Checked;
+            selectedShow.UseAirDateMatch = cbAirdateMatching.Checked;
+            selectedShow.UseEpNameMatch = cbEpNameMatching.Checked;
 
             SetupDropDowns();
         }

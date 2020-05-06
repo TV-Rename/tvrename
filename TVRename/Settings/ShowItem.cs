@@ -51,6 +51,8 @@ namespace TVRename
         public bool UseCustomLanguage;
         public string CustomLanguageCode;
         public bool UseSequentialMatch;
+        public bool UseEpNameMatch;
+        public bool UseAirDateMatch;
         public readonly List<string> AliasNames = new List<string>();
         public bool UseCustomSearchUrl;
         public string CustomSearchUrl;
@@ -303,6 +305,8 @@ namespace TVRename
 
             BannersLastUpdatedOnDisk = xmlSettings.ExtractDateTime("BannersLastUpdatedOnDisk");
             UseSequentialMatch = xmlSettings.ExtractBool("UseSequentialMatch",false);
+            UseAirDateMatch = xmlSettings.ExtractBool("UseAirDateMatch", false);
+            UseEpNameMatch = xmlSettings.ExtractBool("UseEpNameMatch", false);
             ManualFoldersReplaceAutomatic = xmlSettings.ExtractBool("ManualFoldersReplaceAutomatic", false);
 
             SetupIgnoreRules(xmlSettings);
@@ -678,6 +682,8 @@ namespace TVRename
             lastFiguredTz = string.Empty;
 
             UseSequentialMatch = TVSettings.Instance.DefShowSequentialMatching;
+            UseAirDateMatch = TVSettings.Instance.DefShowAirDateMatching;
+            UseEpNameMatch = TVSettings.Instance.DefShowEpNameMatching;
             ShowNextAirdate = TVSettings.Instance.DefShowNextAirdate;
             DoRename = TVSettings.Instance.DefShowDoRenaming;
             DoMissingCheck = TVSettings.Instance.DefShowDoMissingCheck;
@@ -784,6 +790,8 @@ namespace TVRename
             writer.WriteElement("ForceCheckNoAirdate",ForceCheckNoAirdate);
             writer.WriteElement("ForceCheckFuture",ForceCheckFuture);
             writer.WriteElement("UseSequentialMatch",UseSequentialMatch);
+            writer.WriteElement("UseAirDateMatch", UseAirDateMatch);
+            writer.WriteElement("UseEpNameMatch", UseEpNameMatch);
             writer.WriteElement("CustomFolderFormat", AutoAddCustomFolderFormat);
             writer.WriteElement("AutoAddType", (int)AutoAddType );
             writer.WriteElement("ConfigurationProvider", (int)ConfigurationProvider);
