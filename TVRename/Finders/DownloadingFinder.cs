@@ -43,7 +43,7 @@ namespace TVRename
                 foreach (TorrentEntry te in downloading)
                 {
                     FileInfo file = new FileInfo(te.DownloadingTo);
-                    if (!file.IsMovieFile()) // not a usefile file extension
+                    if (!file.IsMovieFile() && file.Extension != ".rar") // not a usefile file extension
                     {
                         continue;
                     }
