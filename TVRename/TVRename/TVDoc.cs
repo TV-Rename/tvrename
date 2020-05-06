@@ -584,11 +584,14 @@ namespace TVRename
         public void RemoveIgnored()
         {
             ItemList toRemove = new ItemList();
+            int numberIgnored=0;
+            int numberPreviouslySeen = 0;
             foreach (Item item in TheActionList)
             {
                 if (TVSettings.Instance.Ignore.Any(ii => ii.SameFileAs(item.Ignore)))
                 {
                     toRemove.Add(item);
+                    numberIgnored++;
                 }
 
                 if (TVSettings.Instance.IgnorePreviouslySeen)
@@ -596,9 +599,12 @@ namespace TVRename
                     if (TVSettings.Instance.PreviouslySeenEpisodes.Includes(item))
                     {
                         toRemove.Add(item);
+                        numberPreviouslySeen++;
                     }
                 }
             }
+
+            Logger.Info($"Removing {toRemove.Count} items from the missing items because they are either in the ignore list ({numberIgnored}) or you have ignore previously seen episodes enables ({numberPreviouslySeen})");
 
             foreach (Item action in toRemove)
             {
