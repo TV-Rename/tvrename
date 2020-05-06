@@ -37,22 +37,26 @@ namespace TVRename
         private readonly bool addingNewShow;
         private readonly TVDoc mDoc;
 
-        public AddEditShow([NotNull] ShowItem si,TVDoc doc)
+        public AddEditShow([NotNull] ShowItem si, TVDoc doc)
         {
             selectedShow = si;
             mDoc = doc;
             sampleProcessedSeason = si.GetFirstAvailableSeason();
             sampleEpisode = si.GetFirstAvailableEpisode();
-            addingNewShow = si.TvdbCode ==-1;
+            addingNewShow = si.TvdbCode == -1;
             InitializeComponent();
 
-            lblSeasonWordPreview.Text = TVSettings.Instance.SeasonFolderFormat + "-(" + CustomSeasonName.NameFor(si.GetFirstAvailableSeason(), TVSettings.Instance.SeasonFolderFormat) + ")";
+            lblSeasonWordPreview.Text = TVSettings.Instance.SeasonFolderFormat + "-(" +
+                                        CustomSeasonName.NameFor(si.GetFirstAvailableSeason(),
+                                            TVSettings.Instance.SeasonFolderFormat) + ")";
+
             lblSeasonWordPreview.ForeColor = Color.DarkGray;
 
             SetupDropDowns(si);
 
             codeFinderForm =
-                new TheTvdbCodeFinder(si.TvdbCode != -1 ? si.TvdbCode.ToString() : "") { Dock = DockStyle.Fill };
+                new TheTvdbCodeFinder(si.TvdbCode != -1 ? si.TvdbCode.ToString() : "") {Dock = DockStyle.Fill};
+
             codeFinderForm.SelectionChanged += MTCCF_SelectionChanged;
 
             pnlCF.SuspendLayout();
@@ -71,7 +75,9 @@ namespace TVRename
             chkCustomLanguage.Checked = si.UseCustomLanguage;
             if (chkCustomLanguage.Checked)
             {
-                Language languageFromCode = TheTVDB.LocalCache.Instance.LanguageList.GetLanguageFromCode(si.CustomLanguageCode);
+                Language languageFromCode =
+                    TheTVDB.LocalCache.Instance.LanguageList.GetLanguageFromCode(si.CustomLanguageCode);
+
                 if (languageFromCode != null)
                 {
                     cbLanguage.Text = languageFromCode.Name;
@@ -114,6 +120,14 @@ namespace TVRename
             foreach (string aliasName in selectedShow.AliasNames)
             {
                 lbShowAlias.Items.Add(aliasName);
+            }
+
+            if (selectedShow.TheSeries() != null)
+            {
+                foreach (string aliasName in selectedShow.TheSeries()?.Aliases()??new List<string>())
+                {
+                    lbSourceAliases.Items.Add(aliasName);
+                }
             }
 
             SetTagListText();
