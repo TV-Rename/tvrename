@@ -842,7 +842,7 @@ namespace TVRename.TheTVDB
                 {
                     JToken episodeToUse = episodeData.Value.Item1 ?? episodeData.Value.Item2;
                     long serverUpdateTime = (long) episodeToUse["lastUpdated"];
-                    (int newEps, int updatedEps) = ProcessEpisode(serverUpdateTime, episodeData, si.TvdbCode, oldEpisodeIds);
+                    (int newEps, int updatedEps) = ProcessEpisode(serverUpdateTime, episodeData, si, oldEpisodeIds);
                     numberOfNewEpisodes += newEps;
                     numberOfUpdatedEpisodes += updatedEps;
                 }
@@ -876,14 +876,14 @@ namespace TVRename.TheTVDB
         }
 
         private (int newEps, int updatedEps) ProcessEpisode(long serverUpdateTime,
-            KeyValuePair<int, Tuple<JToken, JToken>> episodeData, int id, ICollection<int> oldEpisodeIds)
+            KeyValuePair<int, Tuple<JToken, JToken>> episodeData,[NotNull] SeriesInfo si, ICollection<int> oldEpisodeIds)
         {
             int newEpisodeCount = 0;
             int updatedEpisodeCount = 0;
             int serverEpisodeId = episodeData.Key;
 
             bool found = false;
-            foreach (Episode ep in series[id].Episodes.Where(ep => ep.EpisodeId == serverEpisodeId))
+            foreach (Episode ep in si.Episodes.Where(ep => ep.EpisodeId == serverEpisodeId))
             {
                 oldEpisodeIds.Remove(serverEpisodeId);
 
@@ -900,7 +900,7 @@ namespace TVRename.TheTVDB
             if (!found)
             {
                 // must be a new episode
-                extraEpisodes.TryAdd(serverEpisodeId, new ExtraEp(id, serverEpisodeId));
+                extraEpisodes.TryAdd(serverEpisodeId, new ExtraEp(si.TvdbCode, serverEpisodeId));
                 newEpisodeCount++;
             }
 
