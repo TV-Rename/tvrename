@@ -37,7 +37,7 @@ namespace TVRename
             }
             catch (FormatException fex)
             {
-                LOGGER.Error($"Could not parse contents of uTorrent resource file: Got a format exception accessing {resDatFile}, message: {fex.Message}");
+                LOGGER.Warn($"Could not parse contents of uTorrent resource file: Got a format exception accessing {resDatFile}, message: {fex.Message}");
             }
         }
 
