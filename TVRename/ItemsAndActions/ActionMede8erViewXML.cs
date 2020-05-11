@@ -80,10 +80,10 @@ namespace TVRename
 
         #region Item Members
 
-        protected override string SeriesName => SelectedShow.ShowName;
-        protected override string SeasonNumber => snum > 0 ? snum.ToString() : "";
-        protected override string EpisodeNumber => string.Empty;
-        protected override string AirDate => string.Empty;
+        public override string SeriesName => SelectedShow.ShowName;
+        public override string SeasonNumber => snum > 0 ? snum.ToString() : "";
+        public override string EpisodeNumber => string.Empty;
+        public override string AirDateString => string.Empty;
 
         #endregion
     }

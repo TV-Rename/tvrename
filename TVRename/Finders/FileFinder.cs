@@ -202,7 +202,7 @@ namespace TVRename
 
         private static bool FindExistingActionFor([NotNull] ItemList addTo,[NotNull] FileSystemInfo fi)
         {
-            foreach (ActionCopyMoveRename existingFileOperation in addTo.CopyMoveItems())
+            foreach (ActionCopyMoveRename existingFileOperation in addTo.CopyMoveRename)
             {
                 if (string.Compare(existingFileOperation.From.FullName, fi.FullName,
                         StringComparison.OrdinalIgnoreCase) == 0)
@@ -223,7 +223,7 @@ namespace TVRename
             // base name, but different extensions
             ItemList extras = new ItemList();
 
-            foreach (ActionCopyMoveRename action in actionlist.CopyMoveItems())
+            foreach (ActionCopyMoveRename action in actionlist.CopyMoveRename)
             {
                 KeepTogetherForItem(actionlist, fromLibrary, action, extras,showErrors,d);
             }
@@ -387,7 +387,7 @@ namespace TVRename
 
         private static bool ActionListContains([NotNull] ItemList actionlist, ActionCopyMoveRename newitem)
         {
-            return actionlist.CopyMoveItems().Any(cmAction => cmAction.SameSource(newitem));
+            return actionlist.CopyMoveRename.Any(cmAction => cmAction.SameSource(newitem));
         }
 
         protected void ProcessMissingItem(TVDoc.ScanSettings settings, ItemList newList, ItemList toRemove, ItemMissing me, ItemList thisRound, [NotNull] List<FileInfo> matchedFiles,bool useFullPath)
@@ -474,7 +474,7 @@ namespace TVRename
         private bool OtherActionsMatch(FileInfo matchedFile, Item me, TVDoc.ScanSettings settings,bool useFullPath)
         //This is used to check whether the selected file may match any other files we are looking for
         {
-            foreach (ItemMissing testMissingAction in ActionList.MissingItems().ToList())
+            foreach (ItemMissing testMissingAction in ActionList.Missing.ToList())
             {
                 if (testMissingAction.SameAs(me))
                 {

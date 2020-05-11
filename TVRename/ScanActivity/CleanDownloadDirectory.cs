@@ -58,7 +58,7 @@ namespace TVRename
             //Remove any missing items we are planning to resolve
             foreach (ActionCopyMoveRename acmr in returnActions.OfType<ActionCopyMoveRename>())
             {
-                foreach (ItemMissing missingItem in MDoc.TheActionList.MissingItems())
+                foreach (ItemMissing missingItem in MDoc.TheActionList.Missing)
                 {
                     if (missingItem.Episode == acmr.Episode)
                     {

@@ -7,14 +7,16 @@
 // 
 
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 
 namespace TVRename
 {
-    public class ItemList : List<Item>
+    public class ItemList : List<Item>, INotifyPropertyChanged
     {
-        public void Add([CanBeNull] ItemList slil)
+        public void Add([CanBeNull] IEnumerable<Item> slil)
         {
             if (slil is null)
             {
@@ -28,13 +30,22 @@ namespace TVRename
         }
 
         [NotNull]
-        public IEnumerable<Action> Actions( ) => this.OfType<Action>().ToList();
+        public List<Action> Actions => this.OfType<Action>().ToList();
 
         [NotNull]
-        public IEnumerable<ItemMissing> MissingItems() => this.OfType<ItemMissing>().ToList();
+        public List<ItemMissing> Missing => this.OfType<ItemMissing>().ToList();
 
         [NotNull]
-        public IEnumerable<ActionCopyMoveRename> CopyMoveItems() => this.OfType<ActionCopyMoveRename>().ToList();
+        public List<ActionCopyMoveRename> CopyMove => this.OfType<ActionCopyMoveRename>().Where(a=>a.Operation!=ActionCopyMoveRename.Op.rename).ToList();
+
+        [NotNull]
+        public List<ActionTDownload> DownloadTorrents => this.OfType<ActionTDownload>().ToList();
+
+        [NotNull]
+        public List<ActionDownloadImage> SaveImages => this.OfType<ActionDownloadImage>().ToList();
+
+        [NotNull]
+        public List<ActionCopyMoveRename> CopyMoveRename => this.OfType<ActionCopyMoveRename>().ToList();
 
         public void Replace(ItemList toRemove, ItemList newList)
         {
@@ -53,6 +64,19 @@ namespace TVRename
             {
                 Remove(sli);
             }
+        }
+
+        public void NotifyUpdated()
+        {
+            OnPropertyChanged();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] [CanBeNull] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

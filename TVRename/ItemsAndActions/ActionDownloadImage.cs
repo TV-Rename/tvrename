@@ -180,14 +180,14 @@ namespace TVRename
         [CanBeNull]
         public override IgnoreItem Ignore => GenerateIgnore(destination?.FullName);
 
-        protected override string SeriesName =>
+        public override string SeriesName =>
             Episode != null ? Episode.Show.ShowName : si != null ? si.ShowName : "";
 
         [CanBeNull]
-        protected override string DestinationFolder => TargetFolder;
-        protected override string DestinationFile => destination.Name;
-        protected override string SourceDetails => path;
-        protected override bool InError => string.IsNullOrEmpty(path);
+        public override string DestinationFolder => TargetFolder;
+        public override string DestinationFile => destination.Name;
+        public override string SourceDetails => path;
+        public override bool InError => string.IsNullOrEmpty(path);
         [NotNull]
         public override string ScanListViewGroup => "lvgActionDownload";
         [CanBeNull]

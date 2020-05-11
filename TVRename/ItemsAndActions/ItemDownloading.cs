@@ -23,9 +23,9 @@ namespace TVRename
         public override string ScanListViewGroup => "lvgDownloading";
 
         [CanBeNull]
-        protected override string DestinationFolder => TargetFolder;
-        protected override string DestinationFile => entry.FileIdentifier;
-        protected override string SourceDetails => entry.RemainingText;
+        public override string DestinationFolder => TargetFolder;
+        public override string DestinationFile => entry.FileIdentifier;
+        public override string SourceDetails => entry.RemainingText;
 
         public override int IconNumber { get; }
         [CanBeNull]

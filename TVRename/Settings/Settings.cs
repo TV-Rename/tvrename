@@ -1485,7 +1485,7 @@ namespace TVRename
             throw new ArgumentException();
         }
 
-        private ShowItem.ShowAirStatus ConvertToShowAirStatus([NotNull] string value)
+        private static ShowItem.ShowAirStatus ConvertToShowAirStatus([NotNull] string value)
         {
             switch (value)
             {
@@ -1510,7 +1510,7 @@ namespace TVRename
             }
         }
 
-        private ProcessedSeason.SeasonStatus ConvertToSeasonStatus([NotNull] string value)
+        private static ProcessedSeason.SeasonStatus ConvertToSeasonStatus([NotNull] string value)
         {
             switch (value)
             {

@@ -245,7 +245,7 @@ namespace TVRename
             }
         }
 
-        private void UpdateAmongstElements(XElement e, string elementName, string value)
+        private static void UpdateAmongstElements(XElement e, string elementName, string value)
         {
             if (!value.HasValue())
             {

@@ -37,7 +37,7 @@ namespace TVRename
                     return;
                 }
 
-                if (!MDoc.TheActionList.MissingItems().Any())
+                if (!MDoc.TheActionList.Missing.Any())
                 {
                     continue;
                 }

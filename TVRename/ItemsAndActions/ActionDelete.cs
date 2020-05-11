@@ -19,7 +19,7 @@ namespace TVRename
         [NotNull]
         public override string ScanListViewGroup => "lvgActionDelete";
 
-        protected override string DestinationFolder => TargetFolder;
-        protected override string DestinationFile => ProgressText;
+        public override string DestinationFolder => TargetFolder;
+        public override string DestinationFile => ProgressText;
     }
 }

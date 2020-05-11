@@ -33,9 +33,9 @@ namespace TVRename
         private void LogActionListSummary()
         {
             LOGGER.Debug($"   Summary of known actions after check: {Checkname()}");
-            LOGGER.Debug($"      Missing Items: {Doc.TheActionList.MissingItems().Count()}");
-            LOGGER.Debug($"      Copy/Move Items: {Doc.TheActionList.CopyMoveItems().Count()}");
-            LOGGER.Debug($"      Total Actions: {Doc.TheActionList.Actions().Count()}");
+            LOGGER.Debug($"      Missing Items: {Doc.TheActionList.Missing.Count()}");
+            LOGGER.Debug($"      Copy/Move Items: {Doc.TheActionList.CopyMoveRename.Count()}");
+            LOGGER.Debug($"      Total Actions: {Doc.TheActionList.Actions.Count()}");
         }
 
         protected abstract string Checkname();

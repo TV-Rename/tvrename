@@ -6,9 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
-using System.Windows.Forms;
-using TVRename.Utility;
-
 // Starting from:
 // http://social.msdn.microsoft.com/Forums/ja-JP/csharpexpressja/thread/67475927-015c-4206-b5e7-d67504edb3a1
 //
@@ -35,74 +32,6 @@ namespace TVRename
             checkEnable = true;
             onMouseDown = false;
             menuCheck = false;
-        }
-
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
-            onMouseDown = true;
-            base.OnMouseDown(e);
-        }
-
-        protected override void OnItemSelectionChanged(ListViewItemSelectionChangedEventArgs e)
-        {
-            if (onMouseDown)
-            {
-                checkEnable = false;
-            }
-
-            base.OnItemSelectionChanged(e);
-        }
-
-        protected override void OnItemCheck(ItemCheckEventArgs ice)
-        {
-            if (!menuCheck && !keyCheck && !checkEnable)
-            {
-                ice.NewValue = ice.CurrentValue;
-                return;
-            }
-            base.OnItemCheck(ice);
-            if (SelectedItems.Count == 1)
-            {
-                Items[SelectedIndices[0]].Selected = false;
-                Items[ice.Index].Selected = true;
-            }
-        }
-
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
-            checkEnable = true;
-            onMouseDown = false;
-            base.OnMouseUp(e);
-        }
-
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Space)
-            {
-                keyCheck = true;
-            }
-            else
-            {
-                base.OnKeyDown(e);
-            }
-        }
-
-        protected override void OnKeyUp(KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Space)
-            {
-                keyCheck = false;
-            }
-        }
-
-        public void SetScrollVerticalPos(int position)
-        {
-            ListViewNativeMethods.SetScrollVerticalPos(this,position);
-        }
-
-        public int GetScrollVerticalPos()
-        {
-            return ListViewNativeMethods.GetScrollVerticalPos(this);
         }
     }
 }

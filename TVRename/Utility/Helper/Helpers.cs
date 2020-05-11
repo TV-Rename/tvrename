@@ -13,7 +13,6 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -71,9 +70,6 @@ namespace TVRename
             int secondIndex
         )
         {
-            Contract.Requires(list != null);
-            Contract.Requires(firstIndex >= 0 && firstIndex < list.Count);
-            Contract.Requires(secondIndex >= 0 && secondIndex < list.Count);
             if (firstIndex == secondIndex)
             {
                 return;

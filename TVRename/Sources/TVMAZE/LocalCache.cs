@@ -293,7 +293,7 @@ namespace TVRename.TVmaze
             }
 
             SaveCache();
-            Logger.Info($"Forgot all TVMaze shows");
+            Logger.Info("Forgot all TVMaze shows");
         }
 
         public void ForgetShow(int id)

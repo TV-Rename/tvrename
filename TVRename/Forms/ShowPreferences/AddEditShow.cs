@@ -72,19 +72,7 @@ namespace TVRename
 
             chkCustomShowName_CheckedChanged(null, null);
 
-            chkCustomLanguage.Checked = si.UseCustomLanguage;
-            if (chkCustomLanguage.Checked)
-            {
-                Language languageFromCode =
-                    TheTVDB.LocalCache.Instance.LanguageList.GetLanguageFromCode(si.CustomLanguageCode);
-
-                if (languageFromCode != null)
-                {
-                    cbLanguage.Text = languageFromCode.Name;
-                }
-            }
-
-            chkCustomLanguage_CheckedChanged(null, null);
+            SetupLanguages(si);
 
             cbSequentialMatching.Checked = si.UseSequentialMatch;
             cbAirdateMatching.Checked = si.UseAirDateMatch;
@@ -136,6 +124,23 @@ namespace TVRename
             txtSearchURL.Text = si.CustomSearchUrl ?? "";
             EnableDisableCustomSearch();
             UpdateIgnore();
+        }
+
+        private void SetupLanguages([NotNull] ShowItem si)
+        {
+            chkCustomLanguage.Checked = si.UseCustomLanguage;
+            if (chkCustomLanguage.Checked)
+            {
+                Language languageFromCode =
+                    TheTVDB.LocalCache.Instance.LanguageList.GetLanguageFromCode(si.CustomLanguageCode);
+
+                if (languageFromCode != null)
+                {
+                    cbLanguage.Text = languageFromCode.Name;
+                }
+            }
+
+            chkCustomLanguage_CheckedChanged(null, null);
         }
 
         private void SetTagListText()

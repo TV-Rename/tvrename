@@ -30,7 +30,7 @@ namespace TVRename
                 LOGGER.Info("Searching RSS Feeds is cancelled as this is an unattended scan");
                 return;
             }
-            int c = ActionList.MissingItems().Count() + 2;
+            int c = ActionList.Missing.Count() + 2;
             int n = 1;
             UpdateStatus(n, c, "Searching on RSS Feed...");
 
@@ -44,7 +44,7 @@ namespace TVRename
             ItemList newItems = new ItemList();
             ItemList toRemove = new ItemList();
 
-            foreach (ItemMissing action in ActionList.MissingItems().ToList())
+            foreach (ItemMissing action in ActionList.Missing.ToList())
             {
                 if (settings.Token.IsCancellationRequested)
                 {

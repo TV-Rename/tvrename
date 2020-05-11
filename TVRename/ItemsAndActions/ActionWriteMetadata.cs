@@ -39,8 +39,8 @@ namespace TVRename
 
         public override int IconNumber => 7;
 
-        protected override string SeriesName => Episode?.Show?.ShowName ?? SelectedShow.ShowName;
-        protected override string DestinationFolder => Where.DirectoryName;
-        protected override string DestinationFile => Where.Name;
+        public override string SeriesName => Episode?.Show?.ShowName ?? SelectedShow.ShowName;
+        public override string DestinationFolder => Where.DirectoryName;
+        public override string DestinationFile => Where.Name;
     }
 }

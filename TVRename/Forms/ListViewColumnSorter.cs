@@ -62,7 +62,7 @@ namespace TVRename
 
                 case SortOrder.Descending:
                     // Descending sort is selected, return negative result of compare operation
-                    return (-compareResult);
+                    return -compareResult;
 
                 case SortOrder.None:
                 default:

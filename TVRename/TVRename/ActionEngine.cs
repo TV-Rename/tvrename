@@ -128,7 +128,7 @@ namespace TVRename
             }
 
             Logger.Info("**********************");
-            Logger.Info($"Doing Selected Actions.... ({theList.Count} items detected, {theList.Actions().Count()} actions to be completed )");
+            Logger.Info($"Doing Selected Actions.... ({theList.Count} items detected, {theList.Actions.Count()} actions to be completed )");
 
             // Run tasks in parallel (as much as is sensible)
 
@@ -159,7 +159,7 @@ namespace TVRename
 
             theList.RemoveAll(x => x is Action action && action.Outcome.Done && !action.Outcome.Error);
 
-            foreach (Action slia in theList.Actions())
+            foreach (Action slia in theList.Actions)
             {
                 Logger.Warn(slia.Outcome.LastError,$"Failed to complete the following action: {slia.Name}, doing {slia}. Error was {slia.Outcome.LastError?.Message}");
             }
@@ -315,6 +315,19 @@ namespace TVRename
             if (actionWorkers is null)
             {
                 return;
+            }
+
+            foreach (Thread aw in actionWorkers.ToList())
+            {
+                if (aw is null)
+                {
+                    continue;
+                }
+
+                if (!aw.IsAlive)
+                {
+                    actionWorkers.Remove(aw);
+                }
             }
 
             // tidy up any finished workers

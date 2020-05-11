@@ -22,7 +22,7 @@ namespace TVRename
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
-            MDoc.TheActionList = new ItemList();
+            MDoc.TheActionList.Clear();
 
             if (TVSettings.Instance.RenameCheck)
             {

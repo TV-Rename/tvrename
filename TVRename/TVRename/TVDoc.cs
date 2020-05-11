@@ -32,7 +32,7 @@ namespace TVRename
         public readonly ShowLibrary Library;
         public readonly CommandLineArgs Args;
         internal TVRenameStats CurrentStats;
-        public ItemList TheActionList;
+        public readonly ItemList TheActionList;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly ActionEngine actionManager;
         private readonly CacheUpdater cacheManager;
@@ -145,9 +145,20 @@ namespace TVRename
 
         public bool Dirty() => mDirty;
 
-        public void DoActions(ItemList theList)
+        public void DoActions([NotNull] ItemList theList)
         {
+            foreach (Item i in theList)
+            {
+                if (i is Action a)
+                {
+                    a.ResetOutcome();
+                }
+            }
+
             actionManager.DoActions(theList, !Args.Hide && Environment.UserInteractive);
+
+            // remove items from master list, unless it had an error
+            TheActionList.RemoveAll(x => x is Action action && action.Outcome.Done && !action.Outcome.Error);
 
             new CleanUpEmptyLibraryFolders(this).Check(null);
         }
@@ -555,7 +566,7 @@ namespace TVRename
             PreventAutoScan("Do all actions");
             ItemList theList = new ItemList();
 
-            theList.AddRange(TheActionList.Actions());
+            theList.AddRange(TheActionList.Actions);
 
             DoActions(theList);
             AllowAutoScan();
@@ -614,7 +625,7 @@ namespace TVRename
 
         public void ForceUpdateImages([NotNull] ShowItem si)
         {
-            TheActionList = new ItemList();
+            TheActionList.Clear();
 
             Logger.Info("*******************************");
             Logger.Info("Force Update Images: " + si.ShowName);
@@ -677,7 +688,7 @@ namespace TVRename
                     Thread.Sleep(10); // wait for thread to create the dialog
                 }
 
-                TheActionList = new ItemList();
+                TheActionList.Clear();
                 SetProgressDelegate noProgress = NoProgress;
 
                 if (!settings.Unattended && settings.Type != TVSettings.ScanType.SingleShow)
@@ -994,6 +1005,135 @@ namespace TVRename
         public void ReindexLibrary()
         {
             Library.ReIndex();
+        }
+
+        public void UpdateMissingAction([NotNull] ItemMissing mi, string fileName)
+        {
+            // make new Item for copying/moving to specified location
+            FileInfo from = new FileInfo(fileName);
+            FileInfo to = new FileInfo(mi.TheFileNoExt + from.Extension);
+            TheActionList.Add(
+                new ActionCopyMoveRename(
+                    TVSettings.Instance.LeaveOriginals
+                        ? ActionCopyMoveRename.Op.copy
+                        : ActionCopyMoveRename.Op.move, from, to
+                    , mi.Episode, true, mi, this));
+
+            // and remove old Missing item
+            TheActionList.Remove(mi);
+
+            // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
+            DownloadIdentifiersController di = new DownloadIdentifiersController();
+            TheActionList.Add(di.ProcessEpisode(mi.Episode, to));
+
+            //If keep together is active then we may want to copy over related files too
+            if (TVSettings.Instance.KeepTogether)
+            {
+                FileFinder.KeepTogether(TheActionList, false, true, this);
+            }
+
+        }
+
+        public void IgnoreSeasonForItem([CanBeNull] Item er)
+        {
+            if (er?.Episode is null)
+            {
+                return;
+            }
+
+            int snum = er.Episode.AppropriateSeasonNumber;
+
+            if (!er.Episode.Show.IgnoreSeasons.Contains(snum))
+            {
+                er.Episode.Show.IgnoreSeasons.Add(snum);
+            }
+
+            // remove all other episodes of this season from the Action list
+            ItemList remove = new ItemList();
+            foreach (Item action in TheActionList)
+            {
+                Item er2 = action;
+                if (er2?.Episode is null)
+                {
+                    continue;
+                }
+
+                if (er2.Episode.AppropriateSeasonNumber != snum)
+                {
+                    continue;
+                }
+
+                if (er2.TargetFolder == er.TargetFolder) //ie if they are for the same series
+                {
+                    remove.Add(action);
+                }
+            }
+
+            foreach (Item action in remove)
+            {
+                TheActionList.Remove(action);
+            }
+
+            if (remove.Count > 0)
+            {
+                SetDirty();
+            }
+        }
+
+        public void RevertAction(Item item)
+        {
+            Action revertAction = (Action)item;
+            ItemMissing m2 = revertAction.UndoItemMissing;
+
+            if (m2 is null)
+            {
+                return;
+            }
+
+            TheActionList.Add(m2);
+            TheActionList.Remove(revertAction);
+
+            //We can remove any CopyMoveActions that are closely related too
+            if (!(revertAction is ActionCopyMoveRename))
+            {
+                return;
+            }
+
+            ActionCopyMoveRename i2 = (ActionCopyMoveRename)item;
+            List<Item> toRemove = new List<Item>();
+
+            foreach (Item a in TheActionList)
+            {
+                switch (a)
+                {
+                    case ItemMissing _:
+                        continue;
+
+                    case ActionCopyMoveRename i1:
+                    {
+                        if (i1.From.RemoveExtension(true).StartsWith(i2.From.RemoveExtension(true), StringComparison.Ordinal))
+                        {
+                            toRemove.Add(i1);
+                        }
+
+                        break;
+                    }
+
+                    case Item ad:
+                    {
+                        if (ad.Episode?.AppropriateEpNum == i2.Episode?.AppropriateEpNum &&
+                            ad.Episode?.AppropriateSeasonNumber == i2.Episode?.AppropriateSeasonNumber)
+                        {
+                            toRemove.Add(a);
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            //Remove all similar items
+            TheActionList.Remove(toRemove);
         }
     }
 }

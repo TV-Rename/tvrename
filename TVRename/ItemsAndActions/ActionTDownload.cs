@@ -123,11 +123,11 @@ namespace TVRename
         public override IgnoreItem Ignore => GenerateIgnore(theFileNoExt);
 
         [CanBeNull]
-        protected override string DestinationFolder => TargetFolder;
+        public override string DestinationFolder => TargetFolder;
         [CanBeNull]
-        protected override string DestinationFile => TargetFilename;
+        public override string DestinationFile => TargetFilename;
 
-        protected override string SourceDetails => $"{SourceName} ({(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())})";
+        public override string SourceDetails => $"{SourceName} ({(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())})";
 
         [CanBeNull]
         public override string TargetFolder => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).DirectoryName;

@@ -77,9 +77,9 @@ namespace TVRename
             try
             {
                 LOGGER.Info($"Summary of known actions after check: {CheckName()}");
-                LOGGER.Info($"   Missing Items: {MDoc.TheActionList.MissingItems().ToList().Count}");
-                LOGGER.Info($"   Copy/Move Items: {MDoc.TheActionList.CopyMoveItems().ToList().Count}");
-                LOGGER.Info($"   Total Actions: {MDoc.TheActionList.Actions().ToList().Count}");
+                LOGGER.Info($"   Missing Items: {MDoc.TheActionList.Missing.ToList().Count}");
+                LOGGER.Info($"   Copy/Move Items: {MDoc.TheActionList.CopyMoveRename.ToList().Count}");
+                LOGGER.Info($"   Total Actions: {MDoc.TheActionList.Actions.ToList().Count}");
             }
             catch (InvalidOperationException)
             {

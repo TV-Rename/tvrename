@@ -35,7 +35,7 @@ namespace TVRename
                 LOGGER.Info("Searching JSON Wepages is cancelled as this is an unattended scan");
                 return;
             }
-            int c = ActionList.MissingItems().Count() + 1;
+            int c = ActionList.Missing.Count() + 1;
             int n = 0;
             UpdateStatus(n,c, "Searching on JSON Page...");
 
@@ -44,7 +44,7 @@ namespace TVRename
             UrlCache cache = new UrlCache();
             try
             {
-                foreach (ItemMissing action in ActionList.MissingItems().ToList())
+                foreach (ItemMissing action in ActionList.Missing.ToList())
                 {
                     if (settings.Token.IsCancellationRequested)
                     {

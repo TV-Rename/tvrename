@@ -23,21 +23,21 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
+using Humanizer;
 using JetBrains.Annotations;
 using TVRename.Forms;
 using TVRename.Forms.Tools;
 using TVRename.Forms.Utilities;
 using TVRename.Ipc;
 using TVRename.Properties;
-using TVRename.Utility;
 using DataFormats = System.Windows.Forms.DataFormats;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
-using DragEventArgs = System.Windows.Forms.DragEventArgs;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using MessageBox = System.Windows.Forms.MessageBox;
 using SystemColors = System.Drawing.SystemColors;
+using BrightIdeasSoftware;
 
 namespace TVRename
 {
@@ -97,8 +97,6 @@ namespace TVRename
         private readonly TVDoc mDoc;
         private bool internalCheckChange;
         private int lastDlRemaining;
-
-        private MyListView lvAction;
         private List<string> mFoldersToOpen;
         private int mInternalChange;
         private List<FileInfo> mLastFl;
@@ -113,8 +111,8 @@ namespace TVRename
         private ProcessedEpisode mLastEpClickedScan;
         private ProcessedSeason mLastProcessedSeasonClicked;
         private List<ShowItem> mLastShowsClicked;
-        private ListViewColumnSorter lvwActionColumnSorter;
-        private ListViewColumnSorter lvwScheduleColumnSorter;
+        private readonly ListViewColumnSorter lvwActionColumnSorter;
+        private readonly ListViewColumnSorter lvwScheduleColumnSorter;
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private bool IsBusy => busy!=0;
@@ -151,9 +149,6 @@ namespace TVRename
 
             lvwScheduleColumnSorter=new ListViewColumnSorter( new DateSorterWtw(0));
             lvWhenToWatch.ListViewItemSorter = lvwScheduleColumnSorter;
-
-            lvwActionColumnSorter = new ListViewColumnSorter(new TextSorter(0));
-            lvAction.ListViewItemSorter = lvwActionColumnSorter;
 
             if (mDoc.Args.Hide || !showUi)
             {
@@ -204,7 +199,217 @@ namespace TVRename
 
             tmrPeriodicScan.Enabled = TVSettings.Instance.RunPeriodicCheck();
 
+            SetupObjectListForScanResults();
+
             UpdateSplashStatus(splash, "Running autoscan");
+        }
+
+        private void SetupObjectListForScanResults()
+        {
+            olvAction.SetObjects(mDoc.TheActionList);
+            olvShowColumn.AspectToStringConverter = delegate(object x)
+            {
+                string oringinalName = (string) x;
+                return PostpendTheIfNeeded(oringinalName);
+            };
+
+            olvShowColumn.ImageGetter = ActionImageGetter;
+
+            olvType.GroupKeyGetter = delegate (object rowObject) {
+                Item i = (Item)rowObject;
+                switch (i.ScanListViewGroup)
+                {
+                    case "lvgActionMissing":
+                        return "A-Mising";
+
+                    case "lvgActionMeta":
+                        return "H-UpdateFiles";
+
+                    case "lvgUpdateFileDates":
+                        return "I-UpdateFileDates";
+
+                    case "lvgDownloading":
+                        return "J-Downloading";
+
+                    case "lvgActionDownload":
+                        return "G-DownloadImage";
+
+                    case "lvgActionDownloadRSS":
+                        return "F-DownloadTorrent";
+
+                    case "lvgActionDelete":
+                        return "E-Delete";
+
+                    case "lvgActionRename":
+                        return "B-Rename";
+
+                    case "lvgActionCopy":
+                        return "C-Copy";
+
+                    case "lvgActionMove":
+                        return "D-Move";
+                }
+
+                return "UNKNOWN";
+
+            };
+            olvType.GroupKeyToTitleConverter = delegate(object groupKey)
+            {
+                switch ((string) groupKey)
+                {
+                    case "A-Mising":
+                        return HeaderName("Missing", mDoc.TheActionList.Missing.Count);
+
+                    case "H-UpdateFiles":
+                        return HeaderName("Media Center Metadata",
+                            mDoc.TheActionList.Count(item => item is ActionWriteMetadata));
+
+                    case "I-UpdateFileDates":
+                        return HeaderName("Update File/Directory Metadata",
+                            mDoc.TheActionList.Count(item => item is ActionDateTouch));
+
+                    case "J-Downloading":
+                        return HeaderName("Downloading", mDoc.TheActionList.Count(item => item is ItemDownloading));
+
+                    case "G-DownloadImage":
+                        return HeaderName("Download", mDoc.TheActionList.Count(action => action is ActionDownloadImage));
+
+                    case "F-DownloadTorrent":
+                        return HeaderName("Download RSS", mDoc.TheActionList.Count(action => action is ActionTDownload));
+
+                    case "E-Delete":
+                        return HeaderName("Remove",
+                            mDoc.TheActionList.Count(action => action is ActionDeleteFile || action is ActionDeleteDirectory));
+
+                    case "B-Rename":
+                        int renameCount = mDoc.TheActionList.Count(action =>
+                            action is ActionCopyMoveRename cmr && cmr.Operation == ActionCopyMoveRename.Op.rename);
+
+                        return HeaderName("Rename", renameCount);
+
+                    case "C-Copy":
+                        List<ActionCopyMoveRename> copyActions = mDoc.TheActionList.OfType<ActionCopyMoveRename>()
+                            .Where(cmr => cmr.Operation == ActionCopyMoveRename.Op.copy).ToList();
+
+                        long copySize = copyActions.Where(item => item.From.Exists).Sum(copy => copy.From.Length);
+                        return HeaderName("Copy", copyActions.Count, copySize);
+
+                    case "D-Move":
+                        List<ActionCopyMoveRename> moveActions = mDoc.TheActionList.OfType<ActionCopyMoveRename>()
+                            .Where(cmr => cmr.Operation == ActionCopyMoveRename.Op.move).ToList();
+
+                        long moveSize = moveActions.Where(item => item.From.Exists).Sum(copy => copy.From.Length);
+                        return HeaderName("Move", moveActions.Count, moveSize);
+                }
+
+                return "UNKNOWN";
+            };
+
+            olvDate.GroupKeyGetter = delegate(object rowObject)
+            {
+                DateTime? episodeTime = ((Item) rowObject).AirDate;
+
+                if (!episodeTime.HasValue)
+                {
+                    return DateTime.Now.AddDays(1);
+                }
+
+                if (episodeTime.Value > DateTime.Now)
+                {
+                    return DateTime.MaxValue;
+                }
+
+                TimeSpan timeSince = DateTime.Now - episodeTime.Value;
+
+                if (timeSince < 7.Days())
+                {
+                    return DateTime.Now.AddDays(-1);
+                }
+
+                if (DateTime.Now.Year == episodeTime.Value.Year && DateTime.Now.Month == episodeTime.Value.Month)
+                {
+                    return DateTime.Now.AddDays(-8);
+                }
+
+                if (DateTime.Now.Year == episodeTime.Value.Year)
+                {
+                    return new DateTime(episodeTime.Value.Year, episodeTime.Value.Month, 1);
+                }
+
+                return new DateTime(episodeTime.Value.Year, 1, 1);
+            };
+            olvDate.GroupKeyToTitleConverter = delegate(object groupKey)
+            {
+                DateTime? episodeTime = (DateTime?)groupKey;
+
+                if (!episodeTime.HasValue)
+                {
+                    return "Generic";
+                }
+
+                if (episodeTime.Value > DateTime.Now)
+                {
+                    return "Future";
+                }
+
+                TimeSpan timeSince = DateTime.Now - episodeTime.Value;
+
+                if (timeSince < 7.Days())
+                {
+                    return "This Week";
+                }
+
+                if (DateTime.Now.Year == episodeTime.Value.Year && DateTime.Now.Month == episodeTime.Value.Month)
+                {
+                    return "Earlier this Month";
+                }
+
+                if (DateTime.Now.Year == episodeTime.Value.Year)
+                {
+                    return episodeTime.Value.ToString("MMMM yyyy");
+                }
+
+                return episodeTime.Value.ToString("yyyy");
+            };
+
+            olvSeason.GroupKeyGetter = delegate(object rowObject)
+            {
+                Item ep = (Item) rowObject;
+                if (ep.SeasonNumber.HasValue())
+                {
+                    return $"{ep.SeriesName} - Season {ep.SeasonNumber}";
+                }
+
+                return ep.SeriesName;
+            };
+
+            olvFolder.GroupKeyGetter = delegate(object rowObject)
+            {
+                Item ep = (Item) rowObject;
+                foreach (string folder in TVSettings.Instance.LibraryFolders)
+                {
+                    if (ep.DestinationFolder.StartsWith(folder, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return folder;
+                    }
+                }
+
+                return ep.DestinationFolder;
+            };
+
+            SimpleDropSink currActionDropSink = (SimpleDropSink)olvAction.DropSink;
+            currActionDropSink.FeedbackColor = Color.LightGray;
+        }
+
+        private void olv1_FormatRow(object sender, [NotNull] FormatRowEventArgs e)
+        {
+            if (e.Model is Action a)
+            {
+                if (a.Outcome.Error)
+                {
+                    e.Item.BackColor = Helpers.WarningColor();
+                }
+            }
         }
 
         private void RecieveArguments([NotNull] string[] args)
@@ -340,15 +545,38 @@ namespace TVRename
             btnWTWBTSearch.Enabled = enabled;
 
             btnWTWBTSearch.Text = UseCustom(lvWhenToWatch) ? "Search" : name;
-            btnActionBTSearch.Text = UseCustom(lvAction) ? "Search" : name;
-
-            FillEpGuideHtml();
+            btnActionBTSearch.Text = UseCustomObject(olvAction) ? "Search" : name;
         }
 
         private void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs eventArgs) =>
             Helpers.SysOpen("http://tvrename.com");
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Close();
+
+        private static bool UseCustomObject([NotNull] ObjectListView view)
+        {
+            foreach (object rowObject in view.SelectedObjects)
+            {
+                if (!(rowObject is ProcessedEpisode pe))
+                {
+                    continue;
+                }
+
+                if (!pe.Show.UseCustomSearchUrl)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(pe.Show.CustomSearchUrl))
+                {
+                    continue;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
 
         private static bool UseCustom([NotNull] ListView view)
         {
@@ -435,7 +663,7 @@ namespace TVRename
                 case "WhenToWatch":
                     return lvWhenToWatch;
                 case "AllInOne":
-                    return lvAction;
+                    return olvAction;
                 default:
                     throw new ArgumentException("Inappropriate ListViewParameter " + name);
             }
@@ -773,13 +1001,12 @@ namespace TVRename
             MyShowTree.BeginUpdate();
 
             MyShowTree.Nodes.Clear();
-            List<KeyValuePair<int, ShowItem>> sil = mDoc.Library.ToList();
-            sil.Sort((a, b) => string.Compare(GenerateShowUIName(a.Value), GenerateShowUIName(b.Value), StringComparison.OrdinalIgnoreCase));
+            List<ShowItem> sil = mDoc.Library.Values.ToList();
+            sil.Sort((a, b) => string.Compare(GenerateShowUIName(a), GenerateShowUIName(b), StringComparison.OrdinalIgnoreCase));
 
             ShowFilter filter = TVSettings.Instance.Filter;
-            foreach (KeyValuePair<int, ShowItem> s in sil)
+            foreach (ShowItem si in sil)
             {
-                ShowItem si = s.Value;
                 if (filter.Filter(si)
                     & (string.IsNullOrEmpty(filterTextBox.Text) || si.NameMatchFilters(filterTextBox.Text)))
                 {
@@ -1609,7 +1836,7 @@ namespace TVRename
             }
         }
 
-        private void MenuFolders(LvResults lvr)
+        private void MenuFolders(ItemList lvr)
         {
             if (mLastShowsClicked is null || mLastShowsClicked.Count != 1)
             {
@@ -1657,7 +1884,7 @@ namespace TVRename
             }
 
             {
-                AddFoldersSubMenu(lvr.FlatList.Select(sli =>sli.TargetFolder),added);
+                AddFoldersSubMenu(lvr.Select(sli =>sli.TargetFolder),added);
             }
         }
 
@@ -1721,6 +1948,10 @@ namespace TVRename
             MenuGuideAndTvdb(false);
             MenuShowAndEpisodes();
             MenuFolders(null);
+            if (mLastEpClicked !=null)
+            {
+                MenuSearchFor();
+            }
 
             showRightClickMenu.Show(pt);
         }
@@ -1845,23 +2076,22 @@ namespace TVRename
 
                     break;
                 case RightClickCommands.kBtSearchFor:
+                {
+                    foreach (ItemMissing m in GetSelectedItems().Missing)
                     {
-                        foreach (ListViewItem lvi in lvAction.SelectedItems)
+                        if (m != null)
                         {
-                            ItemMissing m = (ItemMissing) lvi.Tag;
-                            if (m != null)
-                            {
-                                TVDoc.SearchForEpisode(m.Episode);
-                            }
+                            TVDoc.SearchForEpisode(m.Episode);
                         }
                     }
+                }
 
                     break;
                 case RightClickCommands.kActionAction:
                     ActionAction(false,false);
                     break;
                 case RightClickCommands.kActionRevert:
-                    Revert(false);
+                    Revert();
                     break;
                 case RightClickCommands.kActionBrowseForFile:
                     if (mLastActionsClicked != null && mLastActionsClicked.Count > 0)
@@ -1922,6 +2152,12 @@ namespace TVRename
             mLastEpClicked = null;
         }
 
+        [NotNull]
+        private ItemList GetSelectedItems() => new ItemList {olvAction.SelectedObjects.OfType<Item>()};
+
+        [NotNull]
+        private ItemList GetCheckedItems() => new ItemList { olvAction.CheckedObjects.OfType<Item>() };
+
         private void IncludeSeason([NotNull] ShowItem si, int seasonNumber)
         {
             si.IgnoreSeasons.Remove(seasonNumber);
@@ -1957,29 +2193,7 @@ namespace TVRename
 
         private void ManuallyAddFileForItem([NotNull] ItemMissing mi, string fileName)
         {
-            // make new Item for copying/moving to specified location
-            FileInfo from = new FileInfo(fileName);
-            FileInfo to = new FileInfo(mi.TheFileNoExt + from.Extension);
-            mDoc.TheActionList.Add(
-                new ActionCopyMoveRename(
-                    TVSettings.Instance.LeaveOriginals
-                        ? ActionCopyMoveRename.Op.copy
-                        : ActionCopyMoveRename.Op.move, from, to
-                    , mi.Episode, true, mi,mDoc));
-
-            // and remove old Missing item
-            mDoc.TheActionList.Remove(mi);
-
-            // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
-            DownloadIdentifiersController di = new DownloadIdentifiersController();
-            mDoc.TheActionList.Add(di.ProcessEpisode(mi.Episode, to));
-
-            //If keep together is active then we may want to copy over related files too
-            if (TVSettings.Instance.KeepTogether)
-            {
-                FileFinder.KeepTogether(mDoc.TheActionList, false, true,mDoc);
-            }
-
+            mDoc.UpdateMissingAction(mi, fileName);
             FillActionList(true);
         }
 
@@ -2007,9 +2221,7 @@ namespace TVRename
                 return;
             }
 
-            LvResults lvr = new LvResults(lvAction, false);
-
-            foreach (Item i in lvr.FlatList)
+            foreach (Item i in GetSelectedItems())
             {
                 if (i is ItemMissing miss)
                 {
@@ -2032,49 +2244,7 @@ namespace TVRename
             {
                 foreach (Item ai in mLastActionsClicked)
                 {
-                    Item er = ai;
-                    if (er?.Episode is null)
-                    {
-                        continue;
-                    }
-
-                    int snum = er.Episode.AppropriateSeasonNumber;
-
-                    if (!er.Episode.Show.IgnoreSeasons.Contains(snum))
-                    {
-                        er.Episode.Show.IgnoreSeasons.Add(snum);
-                    }
-
-                    // remove all other episodes of this season from the Action list
-                    ItemList remove = new ItemList();
-                    foreach (Item action in mDoc.TheActionList)
-                    {
-                        Item er2 = action;
-                        if (er2?.Episode is null)
-                        {
-                            continue;
-                        }
-
-                        if (er2.Episode.AppropriateSeasonNumber != snum)
-                        {
-                            continue;
-                        }
-
-                        if (er2.TargetFolder == er.TargetFolder) //ie if they are for the same series
-                        {
-                            remove.Add(action);
-                        }
-                    }
-
-                    foreach (Item action in remove)
-                    {
-                        mDoc.TheActionList.Remove(action);
-                    }
-
-                    if (remove.Count > 0)
-                    {
-                        mDoc.SetDirty();
-                    }
+                    mDoc.IgnoreSeasonForItem(ai);
                 }
 
                 FillMyShows();
@@ -3113,212 +3283,46 @@ namespace TVRename
         }
 
         [NotNull]
-        private ListViewItem LviForItem(Item item)
+        private static object ActionImageGetter(object rowObject)
         {
-            Item sli = item;
-            if (sli is null)
-            {
-                return new ListViewItem();
-            }
-
-            ListViewItem lvi = sli.ScanListViewItem;
-            lvi.Group = lvAction.Groups[sli.ScanListViewGroup];
-
-            if (sli.IconNumber != -1)
-            {
-                lvi.ImageIndex = sli.IconNumber;
-            }
-
-            lvi.Checked = true;
-            lvi.Tag = sli;
-
-            Debug.Assert(lvi.SubItems.Count <= lvAction.Columns.Count - 1);
-
-            while (lvi.SubItems.Count < lvAction.Columns.Count - 1)
-            {
-                lvi.SubItems.Add(""); // pad our way to the error column
-            }
-
-            if (item is Action act && act.Outcome.Error)
-            {
-                lvi.BackColor = Helpers.WarningColor();
-            }
-
-            lvi.SubItems.Add(item.ErrorText); // error text
-
-            if (!(item is Action))
-            {
-                lvi.Checked = false;
-            }
-
-            Debug.Assert(lvi.SubItems.Count == lvAction.Columns.Count);
-
-            return lvi;
+            Item s = (Item)rowObject;
+            return s.IconNumber;
         }
 
-        private void lvAction_RetrieveVirtualItem(object sender, [NotNull] RetrieveVirtualItemEventArgs e)
+        private void SetCheckboxes()
         {
-            Item item = mDoc.TheActionList[e.ItemIndex];
-            e.Item = LviForItem(item);
+            olvAction.CheckObjects(mDoc.TheActionList.Actions);
         }
 
         public void FillActionList(bool preserveExistingCheckboxes)
         {
-            internalCheckChange = true;
+            FillNewActionList(preserveExistingCheckboxes);
+            UpdateActionCheckboxes();
+        }
 
-            // Save where the list is currently scrolled too
-            int currentTop = lvAction.GetScrollVerticalPos();
-
-            List<Item> selectedItems = new List<Item>();
-            List<Item> deSelectedItems = new List<Item>();
+        private void FillNewActionList(bool preserveExistingCheckboxes)
+        {
+            
             if (preserveExistingCheckboxes)
             {
-                //get checkboxes
-                foreach (object index in lvAction.CheckedItems)
-                {
-                    selectedItems.Add((Item) ((ListViewItem) index).Tag);
-                }
+                byte[] oldState = olvAction.SaveState();
+                List <Item> oldItems = olvAction.Items.OfType<OLVListItem>().Select(lvi => (Item)lvi.RowObject).ToList();
 
-                foreach (object index in lvAction.Items)
-                {
-                    Item chosenItem = (Item)((ListViewItem)index).Tag;
-                    if (!selectedItems.Contains(chosenItem))
-                    {
-                        deSelectedItems.Add(chosenItem);
-                    }
-                }
-            }
+                mDoc.TheActionList.NotifyUpdated();
+                olvAction.RebuildColumns();
 
-            if (lvAction.VirtualMode)
-            {
-                lvAction.VirtualListSize = mDoc.TheActionList.Count;
+                List<Item> newItems = olvAction.Items.OfType<OLVListItem>().Select(lvi => (Item)lvi.RowObject).ToList();
+                //We have a new addition - check its checkbox
+                olvAction.CheckObjects(newItems.Where(newRow => !oldItems.Contains(newRow)));
+                olvAction.RestoreState(oldState);
             }
             else
             {
-                lvAction.BeginUpdate();
-                lvAction.Items.Clear();
-
-                foreach (Item item in mDoc.TheActionList.ToList())
-                {
-                    ListViewItem lvi = LviForItem(item);
-
-                    bool hidecheckbox = !(item is Action);
-
-                    if (preserveExistingCheckboxes)
-                    {
-                        if (selectedItems.Contains(item))
-                        {
-                            lvi.Checked = true;
-                        }
-                        else if (deSelectedItems.Contains(item))
-                        {
-                            lvi.Checked = false;
-                        }
-                        else
-                        {
-                            //must be a newly added item, so leave with default checked status
-                        }
-                    }
-
-                    lvAction.Items.Add(lvi);
-                    if (hidecheckbox)
-                    {
-                        ListViewNativeMethods.HideCheckbox(lvAction,lvi);
-                    }
-                }
-                //lvAction.SetGroupCollapse(ListViewNativeMethods.GroupState.COLLAPSED);
-
-
-                lvAction.EndUpdate();
+                mDoc.TheActionList.NotifyUpdated();
+                olvAction.RebuildColumns();
+                SetCheckboxes();
+                DefaultOlvView();
             }
-
-            // Restore the scrolled to position
-            lvAction.SetScrollVerticalPos(currentTop);
-
-            // do nice totals for each group
-            int missingCount = 0;
-            int renameCount = 0;
-            int copyCount = 0;
-            long copySize = 0;
-            int moveCount = 0;
-            int removeCount = 0;
-            long moveSize = 0;
-            int rssCount = 0;
-            int downloadCount = 0;
-            int metaCount = 0;
-            int dlCount = 0;
-            int fileMetaCount = 0;
-
-            foreach (Item action in mDoc.TheActionList)
-            {
-                if (action is ItemMissing)
-                {
-                    missingCount++;
-                }
-                else if (action is ActionCopyMoveRename cmr)
-                {
-                    ActionCopyMoveRename.Op op = cmr.Operation;
-                    if (op == ActionCopyMoveRename.Op.copy)
-                    {
-                        copyCount++;
-                        if (cmr.From.Exists)
-                        {
-                            copySize += cmr.From.Length;
-                        }
-                    }
-                    else if (op == ActionCopyMoveRename.Op.move)
-                    {
-                        moveCount++;
-                        if (cmr.From.Exists)
-                        {
-                            moveSize += cmr.From.Length;
-                        }
-                    }
-                    else if (op == ActionCopyMoveRename.Op.rename)
-                    {
-                        renameCount++;
-                    }
-                }
-                else if (action is ActionDownloadImage)
-                {
-                    downloadCount++;
-                }
-                else if (action is ActionTDownload)
-                {
-                    rssCount++;
-                }
-                else if (action is ActionWriteMetadata) // base interface that all metadata actions are derived from
-                {
-                    metaCount++;
-                }
-                else if (action is ActionDateTouch)
-                {
-                    fileMetaCount++;
-                }
-                else if (action is ItemDownloading)
-                {
-                    dlCount++;
-                }
-                else if (action is ActionDeleteFile || action is ActionDeleteDirectory)
-                {
-                    removeCount++;
-                }
-            }
-
-            lvAction.Groups[0].Header = HeaderName("Missing", missingCount);
-            lvAction.Groups[1].Header = HeaderName("Rename", renameCount);
-            lvAction.Groups[2].Header = HeaderName("Copy", copyCount, copySize);
-            lvAction.Groups[3].Header = HeaderName("Move", moveCount, moveSize);
-            lvAction.Groups[4].Header = HeaderName("Remove", removeCount);
-            lvAction.Groups[5].Header = HeaderName("Download RSS", rssCount);
-            lvAction.Groups[6].Header = HeaderName("Download", downloadCount);
-            lvAction.Groups[7].Header = HeaderName("Media Center Metadata", metaCount);
-            lvAction.Groups[8].Header = HeaderName("Update File/Directory Metadata", fileMetaCount);
-            lvAction.Groups[9].Header = HeaderName("Downloading", dlCount);
-
-            internalCheckChange = false;
-
-            UpdateActionCheckboxes();
         }
 
         [NotNull]
@@ -3335,85 +3339,22 @@ namespace TVRename
         private void ActionAction(bool checkedNotSelected, bool unattended)
         {
             mDoc.PreventAutoScan("Action Selected Items");
-            ItemList lvr = new LvResults(lvAction, checkedNotSelected).FlatList;
-            foreach (Item i in lvr)
-            {
-                if (i is Action a)
-                {
-                    a.ResetOutcome();
-                }
-            }
+            ItemList lvr = checkedNotSelected
+                ? GetCheckedItems()
+                : GetSelectedItems();
+
             mDoc.DoActions(lvr);
-            // remove items from master list, unless it had an error
-            foreach (Item i2 in new LvResults(lvAction, checkedNotSelected).FlatList)
-            {
-                if (i2 != null && !lvr.Contains(i2))
-                {
-                    mDoc.TheActionList.Remove(i2);
-                }
-            }
 
             FillActionList(true);
             RefreshWTW(false,unattended);
             mDoc.AllowAutoScan();
         }
 
-        private void Revert(bool checkedNotSelected)
+        private void Revert()
         {
-            foreach (Item item in new LvResults(lvAction, checkedNotSelected).FlatList)
+            foreach (Item item in GetSelectedItems())
             {
-                Action revertAction = (Action) item;
-                ItemMissing m2 = revertAction.UndoItemMissing;
-
-                if (m2 is null)
-                {
-                    continue;
-                }
-
-                mDoc.TheActionList.Add(m2);
-                mDoc.TheActionList.Remove(revertAction);
-                
-                //We can remove any CopyMoveActions that are closely related too
-                if (!(revertAction is ActionCopyMoveRename))
-                {
-                    continue;
-                }
-
-                ActionCopyMoveRename i2 = (ActionCopyMoveRename)item;
-                List<Item> toRemove = new List<Item>();
-
-                foreach (Item a in mDoc.TheActionList)
-                {
-                    switch (a)
-                    {
-                        case ItemMissing _:
-                            continue;
-
-                        case ActionCopyMoveRename i1:
-                        {
-                            if (i1.From.RemoveExtension(true).StartsWith(i2.From.RemoveExtension(true), StringComparison.Ordinal))
-                            {
-                                toRemove.Add(i1);
-                            }
-
-                            break;
-                        }
-
-                        case Item ad:
-                        {
-                            if (ad.Episode?.AppropriateEpNum == i2.Episode?.AppropriateEpNum &&
-                                ad.Episode?.AppropriateSeasonNumber == i2.Episode?.AppropriateSeasonNumber)
-                            {
-                                toRemove.Add(a);
-                            }
-
-                            break;
-                        }
-                    }
-                }
-
-                //Remove all similar items
-                mDoc.TheActionList.Remove(toRemove);
+                mDoc.RevertAction(item);
             }
 
             FillActionList(true);
@@ -3428,27 +3369,28 @@ namespace TVRename
             FillMyShows();
         }
 
-        private void lvAction_MouseClick(object sender, [NotNull] MouseEventArgs e)
+        private void lvAction_MouseClick([NotNull] object sender, [NotNull] MouseEventArgs e)
         {
+            Point pt = ((ListView)sender).PointToScreen(new Point(e.X, e.Y));
+            
+            GenerateActionRightClickMenu(e, pt, GetSelectedItems());
+        }
+        private void GenerateActionRightClickMenu([NotNull] MouseEventArgs e, Point pt, ItemList lvr)
+        { 
             if (e.Button != MouseButtons.Right)
             {
                 return;
             }
-
-            // build the right click menu for the _selected_ items, and types of items
-            LvResults lvr = new LvResults(lvAction, false);
 
             if (lvr.Count == 0)
             {
                 return; // nothing selected
             }
 
-            Point pt = lvAction.PointToScreen(new Point(e.X, e.Y));
-
             showRightClickMenu.Items.Clear();
 
             // Action related items
-            if (lvr.Count > lvr.Missing.Count) // not just missing selected
+            if (lvr.Count > lvr.Missing.ToList().Count) // not just missing selected
             {
                 AddRcMenuItem("Action Selected", RightClickCommands.kActionAction);
             }
@@ -3457,22 +3399,9 @@ namespace TVRename
             AddRcMenuItem("Ignore Entire Season", RightClickCommands.kActionIgnoreSeason);
             AddRcMenuItem("Remove Selected",RightClickCommands.kActionDelete);
 
-            if (lvr.Count == lvr.Missing.Count) // only missing items selected?
+            if (lvr.Count == lvr.Missing.ToList().Count) // only missing items selected?
             {
-                showRightClickMenu.Items.Add(new ToolStripSeparator());
-
-                ToolStripMenuItem tsi = new ToolStripMenuItem("Search") { Tag = (int)RightClickCommands.kBtSearchFor };
-
-                foreach (SearchEngine se in TVDoc.GetSearchers())
-                {
-                    if (se.Name.HasValue())
-                    {
-                        ToolStripMenuItem tssi = new ToolStripMenuItem(se.Name){ Tag = se};
-                        tssi.Click += (s, ev) => { SearchFor(se); };
-                        tsi.DropDownItems.Add(tssi);
-                    }
-                }
-                showRightClickMenu.Items.Add(tsi);
+                MenuSearchFor();
 
                 if (lvr.Count == 1) // only one selected
                 {
@@ -3492,6 +3421,25 @@ namespace TVRename
             showRightClickMenu.Show(pt);
         }
 
+        private void MenuSearchFor()
+        {
+            showRightClickMenu.Items.Add(new ToolStripSeparator());
+
+            ToolStripMenuItem tsi = new ToolStripMenuItem("Search") {Tag = (int) RightClickCommands.kBtSearchFor};
+
+            foreach (SearchEngine se in TVDoc.GetSearchers())
+            {
+                if (se.Name.HasValue())
+                {
+                    ToolStripMenuItem tssi = new ToolStripMenuItem(se.Name) {Tag = se};
+                    tssi.Click += (s, ev) => { SearchFor(se); };
+                    tsi.DropDownItems.Add(tssi);
+                }
+            }
+
+            showRightClickMenu.Items.Add(tsi);
+        }
+
         private void AddRcMenuItem(string name,RightClickCommands command)
         {
             ToolStripMenuItem tsi = new ToolStripMenuItem(name) { Tag = (int)command };
@@ -3502,7 +3450,7 @@ namespace TVRename
         {
             UpdateSearchButtons();
 
-            LvResults lvr = new LvResults(lvAction, false);
+            ItemList lvr = GetSelectedItems();
 
             if (lvr.Count == 0)
             {
@@ -3511,7 +3459,7 @@ namespace TVRename
                 return;
             }
 
-            btnActionBTSearch.Enabled = lvr.SaveImages.Count <= 0;
+            btnActionBTSearch.Enabled = lvr.Missing.Any();
 
             mLastShowsClicked = null;
             mLastEpClicked = null;
@@ -3524,28 +3472,19 @@ namespace TVRename
 
             mLastActionsClicked = new ItemList();
 
-            foreach (Item ai in lvr.FlatList)
+            foreach (Item ai in lvr)
             {
                 mLastActionsClicked.Add(ai);
             }
 
-            if (lvr.Count != 1 || lvAction.FocusedItem?.Tag is null)
-            {
-                return;
-            }
+            Item action = (Item) olvAction.FocusedObject;
 
-            if (!(lvAction.FocusedItem.Tag is Item action))
-            {
-                return;
-            }
-
-            mLastEpClicked = action.Episode;
-            mLastEpClickedScan = mLastEpClicked;
-
-            if (action.Episode != null)
+            if (action?.Episode != null)
             {
                 mLastProcessedSeasonClicked = action.Episode.AppropriateProcessedSeason;
                 mLastShowsClicked = new List<ShowItem> {action.Episode.Show};
+                mLastEpClicked = action.Episode;
+                mLastEpClickedScan = mLastEpClicked;
             }
             else
             {
@@ -3556,12 +3495,7 @@ namespace TVRename
 
         private void ActionDeleteSelected()
         {
-            ListView.SelectedListViewItemCollection sel = lvAction.SelectedItems;
-            foreach (ListViewItem lvi in sel)
-            {
-                mDoc.TheActionList.Remove((Item) lvi.Tag);
-            }
-
+            mDoc.TheActionList.Remove(GetSelectedItems());
             FillActionList(true);
         }
 
@@ -3582,28 +3516,27 @@ namespace TVRename
                 return;
             }
 
-            LvResults all = new LvResults(lvAction, LvResults.WhichResults.all);
-            LvResults chk = new LvResults(lvAction, LvResults.WhichResults.Checked);
+            ItemList all = mDoc.TheActionList;
+            List<Item> chk = olvAction.CheckedObjects.OfType<Item>().ToList();
 
-            SetCheckbox(mcbRename, all.Rename, chk.Rename);
-            SetCheckbox(mcbCopyMove, all.CopyMove, chk.CopyMove);
-            SetCheckbox(mcbDeleteFiles, all.Deletes, chk.Deletes);
-            SetCheckbox(mcbSaveImages,all.SaveImages,chk.SaveImages);
-            SetCheckbox(mcbWriteMetadata, all.WriteMetadatas, chk.WriteMetadatas);
-            SetCheckbox(mcbModifyMetadata, all.ModifyMetadatas, chk.ModifyMetadatas);
-            SetCheckbox(mcbDownload, all.DownloadTorrents, chk.DownloadTorrents);
+            SetCheckbox(mcbRename, all.OfType<ActionCopyMoveRename>().Where(a => a.Operation==ActionCopyMoveRename.Op.rename), chk.OfType<ActionCopyMoveRename>().Where(a => a.Operation == ActionCopyMoveRename.Op.rename));
+            SetCheckbox(mcbCopyMove, all.OfType<ActionCopyMoveRename>().Where(a => a.Operation != ActionCopyMoveRename.Op.rename), chk.OfType<ActionCopyMoveRename>().Where(a => a.Operation != ActionCopyMoveRename.Op.rename));
+            SetCheckbox(mcbDeleteFiles, all.OfType<ActionDelete>(), chk.OfType<ActionDelete>());
+            SetCheckbox(mcbSaveImages, all.OfType<ActionDownloadImage>(), chk.OfType<ActionDownloadImage>());
+            SetCheckbox(mcbWriteMetadata, all.OfType<ActionWriteMetadata>(), chk.OfType<ActionWriteMetadata>());
+            SetCheckbox(mcbModifyMetadata, all.OfType<ActionFileMetaData>(), chk.OfType<ActionFileMetaData>());
+            SetCheckbox(mcbDownload, all.OfType<ActionTDownload>(), chk.OfType<ActionTDownload>());
 
-            int total1 = all.FlatList.Count-all.Downloading.Count-all.Missing.Count;
+            int numberOfActions = all.Actions.Count;
+            int numberOfCheckedActions = chk.OfType<Action>().Count();
 
-            int total2 = chk.FlatList.Count - chk.Downloading.Count - chk.Missing.Count;
-
-            if (total2 == 0)
+            if (numberOfCheckedActions == 0)
             {
                 mcbAll.CheckState = CheckState.Unchecked;
             }
             else
             {
-                mcbAll.CheckState = total2 == total1 ? CheckState.Checked : CheckState.Indeterminate;
+                mcbAll.CheckState = numberOfCheckedActions == numberOfActions ? CheckState.Checked : CheckState.Indeterminate;
             }
         }
 
@@ -3625,14 +3558,10 @@ namespace TVRename
             box.Enabled = btn.Any();
         }
 
-        private void lvAction_ItemCheck(object sender, [NotNull] ItemCheckEventArgs e)
+        private void olvAction_ItemCheck(object sender, [NotNull] ItemCheckEventArgs e)
         {
-            if (e.Index < 0 || e.Index > lvAction.Items.Count)
-            {
-                return;
-            }
-
-            Item action = (Item) lvAction.Items[e.Index].Tag;
+            //Needed to de-selct any un action able items
+            Item action = (Item)olvAction.GetModelObject(e.Index);
             if (action != null && !(action is Action))
             {
                 e.NewValue = CheckState.Unchecked;
@@ -3644,7 +3573,7 @@ namespace TVRename
         private void lvAction_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             // double-click on an item will search for missing, do nothing (for now) for anything else
-            foreach (ItemMissing miss in new LvResults(lvAction, false).Missing)
+            foreach (ItemMissing miss in GetSelectedItems().Missing)
             {
                 if (miss.Episode != null)
                 {
@@ -3655,14 +3584,7 @@ namespace TVRename
 
         private void bnActionBTSearch_Click(object sender, EventArgs e)
         {
-            LvResults lvr = new LvResults(lvAction, false);
-
-            if (lvr.Count == 0)
-            {
-                return;
-            }
-
-            foreach (Item i in lvr.FlatList)
+            foreach (Item i in GetSelectedItems())
             {
                 if (i?.Episode != null)
                 {
@@ -3675,9 +3597,8 @@ namespace TVRename
 
         private void IgnoreSelected()
         {
-            LvResults lvr = new LvResults(lvAction, false);
             bool added = false;
-            foreach (Item action in lvr.FlatList)
+            foreach (Item action in GetSelectedItems())
             {
                 IgnoreItem ii = action.Ignore;
                 if (ii != null)
@@ -3720,41 +3641,6 @@ namespace TVRename
             if (res == DialogResult.OK)
             {
                 FillMyShows();
-            }
-        }
-
-        private void lvAction_DragDrop(object sender, [NotNull] DragEventArgs e)
-        {
-            // Get a list of filenames being dragged
-            string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop, false);
-
-            // Establish item in list being dragged to, and exit if no item matched
-            Point localPoint = lvAction.PointToClient(new Point(e.X, e.Y));
-            ListViewItem lvi = lvAction.GetItemAt(localPoint.X, localPoint.Y);
-            if (lvi is null)
-            {
-                return;
-            }
-
-            // Check at least one file was being dragged, and that dragged-to item is a "Missing Item" item.
-            if (files.Length <= 0 || !(lvi.Tag is ItemMissing mi))
-            {
-                return;
-            }
-
-            // Only want the first file if multiple files were dragged across.
-            ManuallyAddFileForItem(mi, files[0]);
-        }
-
-        private void lvAction_DragEnter(object sender, [NotNull] DragEventArgs e)
-        {
-            e.Effect = DragDropEffects.All;
-            Point localPoint = lvAction.PointToClient(new Point(e.X, e.Y));
-            ListViewItem lvi = lvAction.GetItemAt(localPoint.X, localPoint.Y);
-            // If we're not dragging over a "ItemMissing" entry, or if we're not dragging a list of files, then change the DragDropEffect
-            if (!(lvi?.Tag is ItemMissing) || !e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                e.Effect = DragDropEffects.None;
             }
         }
 
@@ -3822,8 +3708,7 @@ namespace TVRename
 
         private void duplicateFinderLOGToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            List<PossibleDuplicateEpisode> x = Beta.FindDoubleEps(mDoc);
-            DupEpFinder form = new DupEpFinder(x, mDoc, this);
+            DupEpFinder form = new DupEpFinder( mDoc, this);
             form.ShowDialog();
         }
 
@@ -3946,29 +3831,6 @@ namespace TVRename
             form.ShowDialog();
         }
 
-        private void LvAction_ColumnClick(object sender, [NotNull] ColumnClickEventArgs e)
-        {
-            int col = e.Column;
-            lvwActionColumnSorter.ClickedOn(col);
-
-            switch (col)
-            {
-                case 3:
-                    lvwActionColumnSorter.ListViewItemSorter = new DateSorterScan(col);
-                    break;
-                case 1:
-                case 2:
-                    lvwActionColumnSorter.ListViewItemSorter = new NumberAsTextSorter(col);
-                    break;
-                default:
-                    lvwActionColumnSorter.ListViewItemSorter = new TextSorter(col);
-                    break;
-            }
-
-            lvAction.Sort();
-            lvAction.Refresh();
-        }
-
         private void QuickRenameToolStripMenuItem_Click(object sender, EventArgs e)
         {
             QuickRename form = new QuickRename(mDoc, this);
@@ -4074,12 +3936,16 @@ namespace TVRename
             CheckState cs = menuItem.CheckState;
 
             internalCheckChange = true;
-            foreach (ListViewItem lvi in lvAction.Items)
+            
+            foreach (Item i in olvAction.Objects.OfType<Item>().Where(isValid))
             {
-                Item i = (Item)lvi.Tag;
-                if (isValid(i))
+                if (cs == CheckState.Checked)
                 {
-                    lvi.Checked = cs == CheckState.Checked;
+                    olvAction.CheckObject(i);
+                }
+                else
+                {
+                    olvAction.UncheckObject(i);
                 }
             }
 
@@ -4291,11 +4157,65 @@ namespace TVRename
 
         private void UI_Resize(object sender, EventArgs e)
         {
-            bool isWide = (Width > 1100);
+            bool isWide = Width > 1100;
             tpRecentScan.Visible = isWide;
             tbQuickScan.Visible = isWide;
             tbFullScan.Visible = isWide;
             btnScan.Visible = !isWide;
+        }
+
+        private void BtnRevertView_Click(object sender, EventArgs e)
+        {
+            DefaultOlvView();
+        }
+
+        private void DefaultOlvView()
+        {
+            olvAction.BuildGroups(olvType,SortOrder.Ascending);
+        }
+
+        private void OlvAction_Dropped(object sender, [NotNull] OlvDropEventArgs e)
+        {
+            // Get a list of filenames being dragged
+            string[] files = (string[]) ((DataObject)e.DataObject).GetData(DataFormats.FileDrop, false);
+
+            // Establish item in list being dragged to, and exit if no item matched
+            // Check at least one file was being dragged, and that dragged-to item is a "Missing Item" item.
+            if (files.Length <= 0 ||  !(e.DropTargetItem.RowObject is ItemMissing mi))
+            {
+                return;
+            }
+            
+            // Only want the first file if multiple files were dragged across.
+            ManuallyAddFileForItem(mi, files[0]);
+        }
+
+        private void OlvAction_CanDrop(object sender, [NotNull] OlvDropEventArgs e)
+        {
+            if (!(e.DropSink?.DropTargetItem?.RowObject is Item item))
+            {
+                e.Effect = DragDropEffects.None;
+            }
+            else
+            {
+                if (item is ItemMissing)
+                {
+                    if (((DataObject) e.DataObject).GetDataPresent(DataFormats.FileDrop))
+                    {
+                        e.Effect = DragDropEffects.All;
+                    }
+                    else
+                    {
+                        e.Effect = DragDropEffects.None;
+                        e.InfoMessage = "Can only drag files onto a missing episode";
+                    }
+                }
+                else
+                {
+                    e.Effect = DragDropEffects.None;
+                    e.InfoMessage = "Can only drag onto a missing episode";
+                }
+            }
         }
     }
 }

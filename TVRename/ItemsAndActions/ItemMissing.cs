@@ -60,10 +60,10 @@ namespace TVRename
 
         [CanBeNull]
         public override IgnoreItem Ignore => GenerateIgnore(TheFileNoExt);
-        
-        protected override string DestinationFolder { get; }
 
-        protected override string DestinationFile => Filename;
+        public override string DestinationFolder { get; }
+
+        public override string DestinationFile => Filename;
         [NotNull]
         public override string ScanListViewGroup => "lvgActionMissing";
 

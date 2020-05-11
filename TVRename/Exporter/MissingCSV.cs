@@ -18,7 +18,7 @@ namespace TVRename
             {
                 file.WriteLine("Show Name,Season,Episode,Episode Name,Air Date,Folder,Nice Name,thetvdb.com Code");
 
-                foreach (ItemMissing im in TheActionList.MissingItems().ToList())
+                foreach (ItemMissing im in TheActionList.Missing.ToList())
                 {
                     ProcessedEpisode pe = im.Episode;
                     DateTime? dt = pe.GetAirDateDt(true);

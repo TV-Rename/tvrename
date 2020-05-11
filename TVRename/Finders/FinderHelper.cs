@@ -27,7 +27,7 @@ namespace TVRename
             return FindSeasEp(fi, out seas, out ep, out maxEp, si, TVSettings.Instance.FNPRegexs, out re);
         }
 
-        public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowItem si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, [CanBeNull] out TVSettings.FilenameProcessorRE re)
+        public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowItem si, [NotNull] IEnumerable<TVSettings.FilenameProcessorRE> rexps, [CanBeNull] out TVSettings.FilenameProcessorRE re)
         {
             return FindSeasEp(string.Empty, itemName, out seas, out ep, out maxEp, si, rexps, out re);
         }
@@ -47,7 +47,7 @@ namespace TVRename
             return FindSeasEp(fi.Directory.FullName, fi.RemoveExtension(), out seas, out ep, out maxEp, si, rexps, out re);
         }
 
-        public static bool FindSeasEpNameCheck(FileInfo fi, ShowItem si, out int seas, out int ep)
+        public static bool FindSeasEpNameCheck([CanBeNull] FileInfo fi, [CanBeNull] ShowItem si, out int seas, out int ep)
         {
             ep = -1;
             seas = -1;

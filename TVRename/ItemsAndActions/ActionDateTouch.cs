@@ -135,16 +135,16 @@ namespace TVRename
         [CanBeNull]
         public override IgnoreItem Ignore => whereFile is null ? null : new IgnoreItem(whereFile.FullName);
 
-        protected override string SeriesName => Episode != null ? Episode.Show.ShowName :
+        public override string SeriesName => Episode != null ? Episode.Show.ShowName :
             processedSeason != null ? processedSeason.Show.ShowName : show.ShowName;
-        protected override string SeasonNumber => Episode != null ? Episode.AppropriateSeasonNumber.ToString() :
+        public override string SeasonNumber => Episode != null ? Episode.AppropriateSeasonNumber.ToString() :
             processedSeason != null ? processedSeason.SeasonNumber.ToString() : string.Empty;
-        protected override string AirDate =>
+        public override string AirDateString =>
             updateTime.CompareTo(DateTime.MaxValue) != 0 ? updateTime.ToShortDateString() : "";
         [CanBeNull]
-        protected override string DestinationFolder => whereFile?.DirectoryName ?? whereDirectory?.FullName;
+        public override string DestinationFolder => whereFile?.DirectoryName ?? whereDirectory?.FullName;
         [CanBeNull]
-        protected override string DestinationFile => whereFile?.Name ?? whereDirectory?.Name;
+        public override string DestinationFile => whereFile?.Name ?? whereDirectory?.Name;
         [CanBeNull]
         public override string TargetFolder => whereFile?.DirectoryName??whereDirectory?.Name;
         [NotNull]

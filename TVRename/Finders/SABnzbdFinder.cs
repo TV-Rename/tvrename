@@ -44,10 +44,10 @@ namespace TVRename
 
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
-            int c = ActionList.MissingItems().Count() + 1;
+            int c = ActionList.Missing.Count() + 1;
             int n = 0;
 
-            foreach (ItemMissing action in ActionList.MissingItems().ToList())
+            foreach (ItemMissing action in ActionList.Missing.ToList())
             {
                 if (settings.Token.IsCancellationRequested)
                 {

@@ -41,7 +41,7 @@ namespace TVRename
                 writer.WriteAttributeToXml("Version", "2.1");
                 writer.WriteStartElement("MissingItems");
 
-                foreach (ItemMissing missing in TheActionList.MissingItems().ToList())
+                foreach (ItemMissing missing in TheActionList.Missing.ToList())
                 {
                     writer.WriteStartElement("MissingItem");
 
