@@ -14,8 +14,6 @@ namespace TVRename
     {
         public ItemMissing UndoItemMissing; //Item to revert to if we have to cancel this action
 
-        public abstract string Name { get; } // Name of this action, e.g. "Copy", "Move", "Download"
-
         public abstract string ProgressText { get; } // shortish text to display to user while task is running
 
         private double percent;

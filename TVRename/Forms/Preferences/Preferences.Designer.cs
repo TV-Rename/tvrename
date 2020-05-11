@@ -4259,6 +4259,7 @@ namespace TVRename
             this.cbMissing.TabIndex = 37;
             this.cbMissing.Text = "&Missing Check";
             this.cbMissing.UseVisualStyleBackColor = true;
+            this.cbMissing.CheckedChanged += new System.EventHandler(this.cbMissing_CheckedChanged);
             // 
             // groupBox1
             // 

@@ -314,7 +314,6 @@
     <Compile Include="Sources\TVMAZE\LocalCache.cs" />
     <Compile Include="Sources\TVMAZE\TVmazeAPI.cs" />
     <Compile Include="TVRename\UpdateTimeTracker.cs" />
-    <Compile Include="Utility\ListViewNativeMethods.cs" />
     <Compile Include="Utility\UrlCache.cs" />
     <Compile Include="Forms\ShowPreferences\AutoAddShow.cs">
       <SubType>Form</SubType>
@@ -474,9 +473,7 @@
     <Compile Include="TVRename\FolderMonitorEntryList.cs" />
     <Compile Include="TVRename\ShowLibrary.cs" />
     <Compile Include="TVRename\TVRenameOperationInteruptedException.cs" />
-    <Compile Include="Utility\Sorters\DateSorterScan.cs" />
     <Compile Include="Utility\Sorters\DateSorterWTW.cs" />
-    <Compile Include="Utility\Sorters\DaySorter.cs" />
     <Compile Include="Utility\Extensions\EnumerableExtensions.cs" />
     <Compile Include="Utility\Helper\ShowHtmlHelper.cs" />
     <Compile Include="Utility\Helper\FileHelper.cs" />
@@ -595,7 +592,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="TVRename\IgnoreItem.cs" />
-    <Compile Include="TVRename\LVResults.cs" />
     <Compile Include="TVRename\PathManager.cs" />
     <Compile Include="Utility\BT.cs" />
     <Compile Include="Forms\Utilities\BugReport.cs">

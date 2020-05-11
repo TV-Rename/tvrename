@@ -225,7 +225,9 @@ namespace TVRename
         {
             try
             {
-                string name = styleString;
+                string name = (pe.Show.UseCustomNamingFormat && pe.Show.CustomNamingFormat.HasValue())
+                    ? pe.Show.CustomNamingFormat
+                    : styleString;
 
                 string showname = pe.Show.ShowName;
                 string epname = pe.Name;

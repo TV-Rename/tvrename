@@ -33,6 +33,9 @@ namespace TVRename
             return o is ItemMissing missing && string.CompareOrdinal(missing.TheFileNoExt, TheFileNoExt) == 0;
         }
 
+        [NotNull]
+        public override string Name => "Missing Episode";
+
         public override int CompareTo([CanBeNull] object o)
         {
             //return (o is null || miss is null) ? 0 : (this.TheFileNoExt + this.Episode.Name).CompareTo(miss.TheFileNoExt + miss.Episode.Name);

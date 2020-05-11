@@ -48,6 +48,9 @@ namespace TVRename
             return o is ItemDownloading torrenting && entry == torrenting.entry;
         }
 
+        [NotNull]
+        public override string Name => "Already Downloading";
+
         public override int CompareTo(object o)
         {
             if (!(o is ItemDownloading ut))

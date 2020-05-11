@@ -121,8 +121,13 @@ namespace TVRename
             SetTagListText();
 
             cbUseCustomSearch.Checked = si.UseCustomSearchUrl && !string.IsNullOrWhiteSpace(si.CustomSearchUrl);
-            txtSearchURL.Text = si.CustomSearchUrl ?? "";
+            cbUseCustomNamingFormat.Checked = si.UseCustomNamingFormat && !string.IsNullOrWhiteSpace(si.CustomNamingFormat);
+
+            txtSearchURL.Text = si.CustomSearchUrl ?? string.Empty;
+            txtCustomEpisodeNamingFormat.Text = si.CustomNamingFormat ?? string.Empty;
+
             EnableDisableCustomSearch();
+            EnableDisableCustomNaming();
             UpdateIgnore();
         }
 
@@ -155,6 +160,7 @@ namespace TVRename
             }
 
             txtTagList.Text = tl.ToString();
+            txtTagList2.Text = tl.ToString();
         }
 
         private void SetIgnoreSeasons([NotNull] ShowItem si)
@@ -378,6 +384,8 @@ namespace TVRename
             selectedShow.ForceCheckNoAirdate = cbIncludeNoAirdate.Checked;
             selectedShow.UseCustomSearchUrl = cbUseCustomSearch.Checked;
             selectedShow.CustomSearchUrl = txtSearchURL.Text;
+            selectedShow.UseCustomNamingFormat = cbUseCustomNamingFormat.Checked;
+            selectedShow.CustomNamingFormat = txtCustomEpisodeNamingFormat.Text;
             selectedShow.ManualFoldersReplaceAutomatic = chkReplaceAutoFolders.Checked;
 
             selectedShow.UseSequentialMatch = cbSequentialMatching.Checked;
@@ -615,6 +623,19 @@ namespace TVRename
             llCustomSearchPreview.Enabled = en;
             lbSearchExample.Enabled = en;
         }
+        private void EnableDisableCustomNaming()
+        {
+            bool en = cbUseCustomNamingFormat.Checked;
+
+            lbLibraryDefaultNaming.Enabled = en;
+            txtCustomEpisodeNamingFormat.Enabled = en;
+            lbAvailableTags.Enabled = en;
+            txtTagList2.Enabled = en;
+            lbLibraryDefaultNaming.Enabled = en;
+            label19.Enabled = en;
+            lbNamingExample.Enabled = en;
+            llCustomName.Enabled = en;
+        }
 
         private void tbShowAlias_TextChanged(object sender, EventArgs e)
         {
@@ -704,6 +725,17 @@ namespace TVRename
 
             txtIgnoreList.Visible = someIgnoredEps;
             btnIgnoreList.Visible = someIgnoredEps;
+        }
+
+        private void CbUseCustomNamingFormat_CheckedChanged(object sender, EventArgs e)
+        {
+            EnableDisableCustomNaming();
+        }
+
+        private void TxtCustomEpisodeNamingFormat_TextChanged(object sender, EventArgs e)
+        {
+            llCustomName.Text = CustomEpisodeName.NameForNoExt(sampleEpisode, txtCustomEpisodeNamingFormat.Text, false);
+            llLibraryDefaultFormat.Text = TVSettings.Instance.NamingStyle.NameFor(sampleEpisode);
         }
     }
 }

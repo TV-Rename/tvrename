@@ -115,7 +115,6 @@ namespace TVRename
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.webImages = new System.Windows.Forms.WebBrowser();
             this.tbAllInOne = new System.Windows.Forms.TabPage();
-            this.ilIcons = new System.Windows.Forms.ImageList(this.components);
             this.olvAction = new BrightIdeasSoftware.ObjectListView();
             this.olvShowColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSeason = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -126,6 +125,7 @@ namespace TVRename
             this.olvSource = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvErrors = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvType = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.ilIcons = new System.Windows.Forms.ImageList(this.components);
             this.tsScanResults = new System.Windows.Forms.ToolStrip();
             this.btnScan = new System.Windows.Forms.ToolStripSplitButton();
             this.btnFullScan = new System.Windows.Forms.ToolStripMenuItem();
@@ -158,16 +158,6 @@ namespace TVRename
             this.btnWTWBTSearch = new System.Windows.Forms.ToolStripSplitButton();
             this.txtWhenToWatchSynopsis = new System.Windows.Forms.TextBox();
             this.calCalendar = new System.Windows.Forms.MonthCalendar();
-            this.lvWhenToWatch = new ListViewFlickerFree();
-            this.columnHeader29 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader30 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader31 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader32 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader36 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader33 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader34 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader35 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ilNewIcons = new System.Windows.Forms.ImageList(this.components);
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -199,6 +189,16 @@ namespace TVRename
             this.bwSeasonHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.bwUpdateSchedule = new System.ComponentModel.BackgroundWorker();
             this.bwShowHTMLGenerator = new System.ComponentModel.BackgroundWorker();
+            this.lvWhenToWatch = new ListViewFlickerFree();
+            this.columnHeader29 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader30 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader31 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader32 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader36 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader33 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader34 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader35 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
@@ -844,22 +844,6 @@ namespace TVRename
             this.tbAllInOne.Text = "Scan";
             this.tbAllInOne.UseVisualStyleBackColor = true;
             // 
-            // ilIcons
-            // 
-            this.ilIcons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ilIcons.ImageStream")));
-            this.ilIcons.TransparentColor = System.Drawing.Color.Transparent;
-            this.ilIcons.Images.SetKeyName(0, "OnDisk.bmp");
-            this.ilIcons.Images.SetKeyName(1, "MagGlass.bmp");
-            this.ilIcons.Images.SetKeyName(2, "uTorrent.bmp");
-            this.ilIcons.Images.SetKeyName(3, "copy.bmp");
-            this.ilIcons.Images.SetKeyName(4, "move.bmp");
-            this.ilIcons.Images.SetKeyName(5, "download.bmp");
-            this.ilIcons.Images.SetKeyName(6, "RSS.bmp");
-            this.ilIcons.Images.SetKeyName(7, "NFO.bmp");
-            this.ilIcons.Images.SetKeyName(8, "sab.png");
-            this.ilIcons.Images.SetKeyName(9, "tk1[1].png");
-            this.ilIcons.Images.SetKeyName(10, "qBitTorrent.png");
-            // 
             // olvAction
             // 
             this.olvAction.AllColumns.Add(this.olvShowColumn);
@@ -988,12 +972,28 @@ namespace TVRename
             // 
             // olvType
             // 
-            this.olvType.AspectName = "ScanListViewGroup";
+            this.olvType.AspectName = "Name";
             this.olvType.DisplayIndex = 8;
             this.olvType.GroupWithItemCountFormat = "{0}";
             this.olvType.GroupWithItemCountSingularFormat = "{0}";
             this.olvType.IsVisible = false;
             this.olvType.Text = "Type";
+            // 
+            // ilIcons
+            // 
+            this.ilIcons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ilIcons.ImageStream")));
+            this.ilIcons.TransparentColor = System.Drawing.Color.Transparent;
+            this.ilIcons.Images.SetKeyName(0, "OnDisk.bmp");
+            this.ilIcons.Images.SetKeyName(1, "MagGlass.bmp");
+            this.ilIcons.Images.SetKeyName(2, "uTorrent.bmp");
+            this.ilIcons.Images.SetKeyName(3, "copy.bmp");
+            this.ilIcons.Images.SetKeyName(4, "move.bmp");
+            this.ilIcons.Images.SetKeyName(5, "download.bmp");
+            this.ilIcons.Images.SetKeyName(6, "RSS.bmp");
+            this.ilIcons.Images.SetKeyName(7, "NFO.bmp");
+            this.ilIcons.Images.SetKeyName(8, "sab.png");
+            this.ilIcons.Images.SetKeyName(9, "tk1[1].png");
+            this.ilIcons.Images.SetKeyName(10, "qBitTorrent.png");
             // 
             // tsScanResults
             // 
@@ -1348,95 +1348,6 @@ namespace TVRename
             this.calCalendar.TabIndex = 5;
             this.calCalendar.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.calCalendar_DateSelected);
             // 
-            // lvWhenToWatch
-            // 
-            this.lvWhenToWatch.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvWhenToWatch.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader29,
-            this.columnHeader30,
-            this.columnHeader31,
-            this.columnHeader32,
-            this.columnHeader36,
-            this.columnHeader33,
-            this.columnHeader34,
-            this.columnHeader1,
-            this.columnHeader35});
-            this.lvWhenToWatch.FullRowSelect = true;
-            listViewGroup1.Header = "Recently Aired";
-            listViewGroup1.Name = "justPassed";
-            listViewGroup2.Header = "Next 7 Days";
-            listViewGroup2.Name = "next7days";
-            listViewGroup2.Tag = "1";
-            listViewGroup3.Header = "Future Episodes";
-            listViewGroup3.Name = "futureEps";
-            listViewGroup4.Header = "Later";
-            listViewGroup4.Name = "later";
-            listViewGroup4.Tag = "2";
-            this.lvWhenToWatch.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2,
-            listViewGroup3,
-            listViewGroup4});
-            this.lvWhenToWatch.HideSelection = false;
-            this.lvWhenToWatch.Location = new System.Drawing.Point(3, 43);
-            this.lvWhenToWatch.Name = "lvWhenToWatch";
-            this.lvWhenToWatch.ShowItemToolTips = true;
-            this.lvWhenToWatch.Size = new System.Drawing.Size(932, 312);
-            this.lvWhenToWatch.SmallImageList = this.ilIcons;
-            this.lvWhenToWatch.TabIndex = 3;
-            this.lvWhenToWatch.UseCompatibleStateImageBehavior = false;
-            this.lvWhenToWatch.View = System.Windows.Forms.View.Details;
-            this.lvWhenToWatch.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvWhenToWatch_ColumnClick);
-            this.lvWhenToWatch.SelectedIndexChanged += new System.EventHandler(this.lvWhenToWatch_Click);
-            this.lvWhenToWatch.DoubleClick += new System.EventHandler(this.lvWhenToWatch_DoubleClick);
-            this.lvWhenToWatch.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvWhenToWatch_MouseClick);
-            // 
-            // columnHeader29
-            // 
-            this.columnHeader29.Text = "Show";
-            this.columnHeader29.Width = 187;
-            // 
-            // columnHeader30
-            // 
-            this.columnHeader30.Text = "Season";
-            this.columnHeader30.Width = 51;
-            // 
-            // columnHeader31
-            // 
-            this.columnHeader31.Text = "Episode";
-            this.columnHeader31.Width = 55;
-            // 
-            // columnHeader32
-            // 
-            this.columnHeader32.Text = "Air Date";
-            this.columnHeader32.Width = 81;
-            // 
-            // columnHeader36
-            // 
-            this.columnHeader36.Text = "Time";
-            // 
-            // columnHeader33
-            // 
-            this.columnHeader33.Text = "Day";
-            this.columnHeader33.Width = 42;
-            // 
-            // columnHeader34
-            // 
-            this.columnHeader34.Text = "How Long";
-            this.columnHeader34.Width = 69;
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Network";
-            this.columnHeader1.Width = 100;
-            // 
-            // columnHeader35
-            // 
-            this.columnHeader35.Text = "Episode Name";
-            this.columnHeader35.Width = 360;
-            // 
             // ilNewIcons
             // 
             this.ilNewIcons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ilNewIcons.ImageStream")));
@@ -1656,6 +1567,95 @@ namespace TVRename
             this.bwShowHTMLGenerator.WorkerSupportsCancellation = true;
             this.bwShowHTMLGenerator.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BwShowHTMLGenerator_DoWork);
             this.bwShowHTMLGenerator.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.UpdateWebInformation);
+            // 
+            // lvWhenToWatch
+            // 
+            this.lvWhenToWatch.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvWhenToWatch.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader29,
+            this.columnHeader30,
+            this.columnHeader31,
+            this.columnHeader32,
+            this.columnHeader36,
+            this.columnHeader33,
+            this.columnHeader34,
+            this.columnHeader1,
+            this.columnHeader35});
+            this.lvWhenToWatch.FullRowSelect = true;
+            listViewGroup1.Header = "Recently Aired";
+            listViewGroup1.Name = "justPassed";
+            listViewGroup2.Header = "Next 7 Days";
+            listViewGroup2.Name = "next7days";
+            listViewGroup2.Tag = "1";
+            listViewGroup3.Header = "Future Episodes";
+            listViewGroup3.Name = "futureEps";
+            listViewGroup4.Header = "Later";
+            listViewGroup4.Name = "later";
+            listViewGroup4.Tag = "2";
+            this.lvWhenToWatch.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            listViewGroup1,
+            listViewGroup2,
+            listViewGroup3,
+            listViewGroup4});
+            this.lvWhenToWatch.HideSelection = false;
+            this.lvWhenToWatch.Location = new System.Drawing.Point(3, 43);
+            this.lvWhenToWatch.Name = "lvWhenToWatch";
+            this.lvWhenToWatch.ShowItemToolTips = true;
+            this.lvWhenToWatch.Size = new System.Drawing.Size(932, 312);
+            this.lvWhenToWatch.SmallImageList = this.ilIcons;
+            this.lvWhenToWatch.TabIndex = 3;
+            this.lvWhenToWatch.UseCompatibleStateImageBehavior = false;
+            this.lvWhenToWatch.View = System.Windows.Forms.View.Details;
+            this.lvWhenToWatch.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvWhenToWatch_ColumnClick);
+            this.lvWhenToWatch.SelectedIndexChanged += new System.EventHandler(this.lvWhenToWatch_Click);
+            this.lvWhenToWatch.DoubleClick += new System.EventHandler(this.lvWhenToWatch_DoubleClick);
+            this.lvWhenToWatch.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvWhenToWatch_MouseClick);
+            // 
+            // columnHeader29
+            // 
+            this.columnHeader29.Text = "Show";
+            this.columnHeader29.Width = 187;
+            // 
+            // columnHeader30
+            // 
+            this.columnHeader30.Text = "Season";
+            this.columnHeader30.Width = 51;
+            // 
+            // columnHeader31
+            // 
+            this.columnHeader31.Text = "Episode";
+            this.columnHeader31.Width = 55;
+            // 
+            // columnHeader32
+            // 
+            this.columnHeader32.Text = "Air Date";
+            this.columnHeader32.Width = 81;
+            // 
+            // columnHeader36
+            // 
+            this.columnHeader36.Text = "Time";
+            // 
+            // columnHeader33
+            // 
+            this.columnHeader33.Text = "Day";
+            this.columnHeader33.Width = 42;
+            // 
+            // columnHeader34
+            // 
+            this.columnHeader34.Text = "How Long";
+            this.columnHeader34.Width = 69;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Network";
+            this.columnHeader1.Width = 100;
+            // 
+            // columnHeader35
+            // 
+            this.columnHeader35.Text = "Episode Name";
+            this.columnHeader35.Width = 360;
             // 
             // UI
             // 

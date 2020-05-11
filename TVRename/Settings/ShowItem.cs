@@ -56,6 +56,8 @@ namespace TVRename
         public readonly List<string> AliasNames = new List<string>();
         public bool UseCustomSearchUrl;
         public string CustomSearchUrl;
+        public bool UseCustomNamingFormat;
+        public string CustomNamingFormat;
         public bool ManualFoldersReplaceAutomatic;
         protected internal ProviderType ConfigurationProvider;
 
@@ -296,6 +298,8 @@ namespace TVRename
             DvdOrder = xmlSettings.ExtractBool("DVDOrder",false);
             UseCustomSearchUrl = xmlSettings.ExtractBool("UseCustomSearchURL",false);
             CustomSearchUrl = xmlSettings.ExtractString("CustomSearchURL");
+            UseCustomNamingFormat = xmlSettings.ExtractBool("UseCustomNamingFormat", false);
+            CustomNamingFormat = xmlSettings.ExtractString("CustomNamingFormat");
             ShowTimeZone = xmlSettings.ExtractString("TimeZone") ?? TimeZoneHelper.DefaultTimeZone(); // default, is correct for most shows;
             ForceCheckFuture = xmlSettings.ExtractBoolBackupDefault("ForceCheckFuture","ForceCheckAll",false);
             ForceCheckNoAirdate = xmlSettings.ExtractBoolBackupDefault("ForceCheckNoAirdate","ForceCheckAll",false);
@@ -676,6 +680,8 @@ namespace TVRename
             TVmazeCode = -1;
             UseCustomSearchUrl = false;
             CustomSearchUrl = string.Empty;
+            UseCustomNamingFormat = false;
+            CustomNamingFormat = string.Empty;
             ManualFoldersReplaceAutomatic = false;
             BannersLastUpdatedOnDisk = null; //assume that the banners are old and have expired
             ShowTimeZone = TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.DefaultTimeZone(); // default, is correct for most shows
@@ -815,6 +821,9 @@ namespace TVRename
 
             writer.WriteElement("UseCustomSearchURL", UseCustomSearchUrl);
             writer.WriteElement("CustomSearchURL",CustomSearchUrl);
+
+            writer.WriteElement("UseCustomNamingFormat", UseCustomNamingFormat);
+            writer.WriteElement("CustomNamingFormat", CustomNamingFormat);
 
             foreach (KeyValuePair<int, List<ShowRule>> kvp in SeasonRules)
             {

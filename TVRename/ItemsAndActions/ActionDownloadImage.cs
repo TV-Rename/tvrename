@@ -187,7 +187,6 @@ namespace TVRename
         public override string DestinationFolder => TargetFolder;
         public override string DestinationFile => destination.Name;
         public override string SourceDetails => path;
-        public override bool InError => string.IsNullOrEmpty(path);
         [NotNull]
         public override string ScanListViewGroup => "lvgActionDownload";
         [CanBeNull]
