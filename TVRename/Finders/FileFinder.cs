@@ -122,7 +122,10 @@ namespace TVRename
             {
                 if (FinderHelper.FindSeasEpDateCheck(dce.Name, out foundSeason, out foundEpisode, out maxEp, me.Episode.Show))
                 {
-                    return (true, foundSeason, foundEpisode, maxEp);
+                    if (foundEpisode == epnum && foundSeason == season)
+                    {
+                        return (true, foundSeason, foundEpisode, maxEp);
+                    }
                 }
             }
  
@@ -130,7 +133,10 @@ namespace TVRename
             {
                 if (FinderHelper.FindSeasEpNameCheck(dce, me.Episode.Show, out foundSeason, out foundEpisode))
                 {
-                    return (true, foundSeason, foundEpisode, -1);
+                    if (foundEpisode == epnum && foundSeason == season)
+                    {
+                        return (true, foundSeason, foundEpisode, -1);
+                    }
                 }
             }
 

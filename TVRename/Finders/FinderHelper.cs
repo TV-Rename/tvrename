@@ -64,7 +64,7 @@ namespace TVRename
                 return false;
             }
 
-            string simplifiedFilename = fi.Name.CompareName();
+            string simplifiedFilename = fi.Name.RemoveDot().CompareName();
 
             Dictionary<int, ProcessedSeason> seasonsToUse = si.AppropriateSeasons();
             if (seasonsToUse is null)
