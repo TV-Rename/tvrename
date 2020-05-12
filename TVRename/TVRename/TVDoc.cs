@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
@@ -739,27 +738,6 @@ namespace TVRename
             //Nothing to do - Method is called if we have no UI
         }
 
-        public static bool  MatchesSequentialNumber(string filename, [NotNull] ProcessedEpisode pe)
-        {
-            if (pe.OverallNumber == -1)
-            {
-                return false;
-            }
-
-            string num = pe.OverallNumber.ToString();
-            string matchText = "X" + filename + "X"; // need to pad to let it match non-numbers at start and end
-
-            Match betterMatch = Regex.Match(matchText, @"(E|e|Ep|ep|episode|Episode) ?0*(?<sequencenumber>\d+)\D");
-
-            if (betterMatch.Success)
-            {
-                int sequenceNUm = int.Parse(betterMatch.Groups["sequencenumber"]?.Value??"-2");
-                return sequenceNUm == pe.OverallNumber;
-            }
-
-            return Regex.Match(matchText, @"\D0*" + num + @"\D").Success;
-        }
-
         [NotNull]
         private IEnumerable<ProcessedEpisode> GetMissingEps()
         {
@@ -1031,7 +1009,6 @@ namespace TVRename
             {
                 FileFinder.KeepTogether(TheActionList, false, true, this);
             }
-
         }
 
         public void IgnoreSeasonForItem([CanBeNull] Item er)

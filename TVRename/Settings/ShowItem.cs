@@ -1054,5 +1054,38 @@ namespace TVRename
             airedSeasons.Clear();
             dvdSeasons.Clear();
         }
+
+        [NotNull]
+        public IEnumerable<Episode> EpisodesToUse()
+        {
+            List<Episode> returnValue = new List<Episode>();
+            Dictionary<int, ProcessedSeason> seasonsToUse = AppropriateSeasons();
+            if (seasonsToUse is null)
+            {
+                return returnValue;
+            }
+
+            foreach (KeyValuePair<int, ProcessedSeason> kvp in seasonsToUse)
+            {
+                if (kvp.Value?.Episodes?.Values is null)
+                {
+                    continue;
+                }
+
+                if (!(IgnoreSeasons is null) && IgnoreSeasons.Contains(kvp.Value.SeasonNumber))
+                {
+                    continue;
+                }
+
+                if (kvp.Value.SeasonNumber == 0 && TVSettings.Instance.IgnoreAllSpecials)
+                {
+                    continue;
+                }
+
+                returnValue.AddRange(kvp.Value.Episodes.Values);
+            }
+
+            return returnValue;
+        }
     }
 }

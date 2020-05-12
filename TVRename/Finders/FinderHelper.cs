@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using NLog;
 using NodaTime;
 using Path = System.IO.Path;
 
@@ -20,7 +21,7 @@ namespace TVRename
 {
     internal static class FinderHelper
     {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem si,[CanBeNull] out TVSettings.FilenameProcessorRE re)
         {
@@ -29,7 +30,7 @@ namespace TVRename
 
         public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowItem si, [NotNull] IEnumerable<TVSettings.FilenameProcessorRE> rexps, [CanBeNull] out TVSettings.FilenameProcessorRE re)
         {
-            return FindSeasEp(string.Empty, itemName, out seas, out ep, out maxEp, si, rexps, out re);
+            return FindSeasEp(String.Empty, itemName, out seas, out ep, out maxEp, si, rexps, out re);
         }
 
         public static bool FindSeasEp([CanBeNull] FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem si,
@@ -66,50 +67,46 @@ namespace TVRename
 
             string simplifiedFilename = fi.Name.RemoveDot().CompareName();
 
-            Dictionary<int, ProcessedSeason> seasonsToUse = si.AppropriateSeasons();
-            if (seasonsToUse is null)
+            foreach (Episode epi in si.EpisodesToUse()) 
             {
-                return false;
-            }
+                string simplifiedEpName = epi.Name.RemoveDot().CompareName();
 
-            foreach (KeyValuePair<int, ProcessedSeason> kvp in seasonsToUse)
-            {
-                if (kvp.Value?.Episodes?.Values is null)
+                if (simplifiedFilename.Contains(simplifiedEpName))
                 {
-                    continue;
-                }
-
-                if (!(si.IgnoreSeasons is null) && si.IgnoreSeasons.Contains(kvp.Value.SeasonNumber))
-                {
-                    continue;
-                }
-
-                if (kvp.Value.SeasonNumber == 0 && TVSettings.Instance.IgnoreAllSpecials)
-                {
-                    continue;
-                }
-
-                foreach (Episode epi in kvp.Value.Episodes.Values)
-                {
-                    string simplifiedEpName = epi.Name.CompareName();
-
-                    if (simplifiedFilename.Contains(simplifiedEpName))
-                    {
-                        seas = epi.GetSeasonNumber(si.Order);
-                        ep = epi.GetEpisodeNumber(si.Order);
-                        return true;
-                    }
+                    seas = epi.GetSeasonNumber(si.Order);
+                    ep = epi.GetEpisodeNumber(si.Order);
+                    return true;
                 }
             }
 
             return false;
         }
 
-        public static bool FindSeasEpDateCheck([CanBeNull] string filename, out int seas, out int ep, out int maxEp, [CanBeNull] ShowItem si)
+        public static bool MatchesSequentialNumber(string filename, [NotNull] ProcessedEpisode pe)
+        {
+            if (pe.OverallNumber == -1)
+            {
+                return false;
+            }
+
+            string num = pe.OverallNumber.ToString();
+            string matchText = "X" + filename + "X"; // need to pad to let it match non-numbers at start and end
+
+            Match betterMatch = Regex.Match(matchText, @"(E|e|Ep|ep|episode|Episode) ?0*(?<sequencenumber>\d+)\D");
+
+            if (betterMatch.Success)
+            {
+                int sequenceNUm = Int32.Parse(betterMatch.Groups["sequencenumber"]?.Value ?? "-2");
+                return sequenceNUm == pe.OverallNumber;
+            }
+
+            return Regex.Match(matchText, @"\D0*" + num + @"\D").Success;
+        }
+
+        public static bool FindSeasEpDateCheck([CanBeNull] string filename, out int seas, out int ep, [CanBeNull] ShowItem si)
         {
             ep = -1;
             seas = -1;
-            maxEp = -1;
 
             if (filename is null || si is null)
             {
@@ -134,54 +131,30 @@ namespace TVRename
             filename = filename.Replace(",", "-");
             filename = filename.Replace(" ", "-");
 
-            Dictionary<int, ProcessedSeason> seasonsToUse = si.AppropriateSeasons();
-            if (seasonsToUse is null)
+            foreach (Episode epi in si.EpisodesToUse())
             {
-                return false;
-            }
-
-            foreach (KeyValuePair<int, ProcessedSeason> kvp in seasonsToUse)
-            {
-                if (kvp.Value?.Episodes?.Values is null)
+                LocalDateTime? dt = epi.GetAirDateDt(); // file will have local timezone date, not ours
+                if (dt is null)
                 {
                     continue;
                 }
 
-                if (!(si.IgnoreSeasons is null) && si.IgnoreSeasons.Contains(kvp.Value.SeasonNumber))
-                {
-                    continue;
-                }
+                TimeSpan closestDate = TimeSpan.MaxValue;
 
-                if (kvp.Value.SeasonNumber == 0 && TVSettings.Instance.IgnoreAllSpecials)
+                foreach (string dateFormat in dateFormats)
                 {
-                    continue;
-                }
+                    string datestr = dt.Value.ToString(dateFormat,CultureInfo.CurrentCulture);
 
-                foreach (Episode epi in kvp.Value.Episodes.Values)
-                {
-                    LocalDateTime? dt = epi.GetAirDateDt(); // file will have local timezone date, not ours
-                    if (dt is null)
+                    if (filename.Contains(datestr) && DateTime.TryParseExact(datestr, dateFormat,
+                            new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime dtInFilename))
                     {
-                        continue;
-                    }
+                        TimeSpan timeAgo = DateTime.Now.Subtract(dtInFilename);
 
-                    TimeSpan closestDate = TimeSpan.MaxValue;
-
-                    foreach (string dateFormat in dateFormats)
-                    {
-                        string datestr = dt.Value.ToString(dateFormat,CultureInfo.CurrentCulture);
-
-                        if (filename.Contains(datestr) && DateTime.TryParseExact(datestr, dateFormat,
-                                new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime dtInFilename))
+                        if (timeAgo < closestDate)
                         {
-                            TimeSpan timeAgo = DateTime.Now.Subtract(dtInFilename);
-
-                            if (timeAgo < closestDate)
-                            {
-                                seas = epi.GetSeasonNumber(si.Order);
-                                ep = epi.GetEpisodeNumber(si.Order);
-                                closestDate = timeAgo;
-                            }
+                            seas = epi.GetSeasonNumber(si.Order);
+                            ep = epi.GetEpisodeNumber(si.Order);
+                            closestDate = timeAgo;
                         }
                     }
                 }
@@ -208,7 +181,7 @@ namespace TVRename
 
         public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowItem show)
         {
-            return FindSeasEp(string.Empty, itemName, out seas, out ep, out maxEp, show, TVSettings.Instance.FNPRegexs, out TVSettings.FilenameProcessorRE _);
+            return FindSeasEp(String.Empty, itemName, out seas, out ep, out maxEp, show, TVSettings.Instance.FNPRegexs, out TVSettings.FilenameProcessorRE _);
         }
 
         public static bool FindSeasEp(FileInfo theFile, out int seasF, out int epF, out int maxEp, ShowItem sI)
@@ -256,7 +229,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static List<FileInfo> FindEpOnDisk([CanBeNull] DirFilesCache dfc, [NotNull] ShowItem si, [NotNull] ProcessedEpisode epi,
+        private static List<FileInfo> FindEpOnDisk([CanBeNull] DirFilesCache dfc, [NotNull] ShowItem si, [NotNull] ProcessedEpisode epi,
             bool checkDirectoryExist = true)
         {
             DirFilesCache cache = dfc ?? new DirFilesCache();
@@ -305,7 +278,7 @@ namespace TVRename
             return ret;
         }
 
-        public static bool EpisodeNeeded([NotNull] ShowItem si, DirFilesCache dfc, int seasF, int epF,
+        private static bool EpisodeNeeded([NotNull] ShowItem si, DirFilesCache dfc, int seasF, int epF,
             [NotNull] FileSystemInfo fi)
         {
             if (si is null)
@@ -350,7 +323,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string SimplifyFilename([NotNull] string filename, [CanBeNull] string showNameHint)
+        private static string SimplifyFilename([NotNull] string filename, [CanBeNull] string showNameHint)
         {
             // Look at showNameHint and try to remove the first occurrence of it from filename
             // This is very helpful if the show's name has a >= 4 digit number in it, as that
@@ -360,7 +333,7 @@ namespace TVRename
             //TODO: More replacement of non useful characters - MarkSummerville
             string returnFilename = filename.Replace(".", " "); // turn dots into spaces
 
-            if (string.IsNullOrEmpty(showNameHint))
+            if (String.IsNullOrEmpty(showNameHint))
             {
                 return returnFilename;
             }
@@ -376,7 +349,7 @@ namespace TVRename
 
                 if (nameIsNumber && returnFilename.Contains(showNameHint)) // e.g. "24", or easy exact match of show name at start of filename
                 {
-                    return Regex.Replace(returnFilename, "(^|\\W)" + showNameHint + "\\b", string.Empty);
+                    return Regex.Replace(returnFilename, "(^|\\W)" + showNameHint + "\\b", String.Empty);
                 }
             }
             catch (ArgumentOutOfRangeException ex)
@@ -401,7 +374,7 @@ namespace TVRename
         public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, out int maxEp,
             [CanBeNull] ShowItem si, [NotNull] IEnumerable<TVSettings.FilenameProcessorRE> rexps, [CanBeNull] out TVSettings.FilenameProcessorRE rex)
         {
-            string showNameHint = si != null ? si.ShowName : string.Empty;
+            string showNameHint = si != null ? si.ShowName : String.Empty;
             maxEp = -1;
             seas = -1;
             ep = -1;
@@ -449,7 +422,7 @@ namespace TVRename
 
         private static (int seas, int ep, int maxEp) IdentifyEpisode([CanBeNull] ShowItem si, [NotNull] Match m, TVSettings.FilenameProcessorRE re)
         {
-            if (!int.TryParse(m.Groups["s"].ToString(), out int seas))
+            if (!Int32.TryParse(m.Groups["s"].ToString(), out int seas))
             {
                 if (!re.RegExpression.Contains("<s>") && (si?.AppropriateSeasons()?.Count??0) == 1)
                 {
@@ -461,12 +434,12 @@ namespace TVRename
                 }
             }
 
-            if (!int.TryParse(m.Groups["e"].ToString(), out int ep))
+            if (!Int32.TryParse(m.Groups["e"].ToString(), out int ep))
             {
                 ep = -1;
             }
 
-            if (!int.TryParse(m.Groups["f"].ToString(), out int maxEp))
+            if (!Int32.TryParse(m.Groups["f"].ToString(), out int maxEp))
             {
                 maxEp = -1;
             }
@@ -519,12 +492,12 @@ namespace TVRename
                     Match m = Regex.Match(hint, re.RegExpression, RegexOptions.IgnoreCase);
                     if (m.Success)
                     {
-                        if (!int.TryParse(m.Groups["s"].ToString(), out int seas))
+                        if (!Int32.TryParse(m.Groups["s"].ToString(), out int seas))
                         {
                             seas = -1;
                         }
 
-                        if (!int.TryParse(m.Groups["e"].ToString(), out int ep))
+                        if (!Int32.TryParse(m.Groups["e"].ToString(), out int ep))
                         {
                             ep = -1;
                         }
@@ -597,7 +570,7 @@ namespace TVRename
                 //Remove anything we can from hint to make it cleaner and hence more likely to match
                 refinedHint = RemoveSeriesEpisodeIndicators(refinedHint, doc.Library.SeasonWords());
 
-                if (string.IsNullOrWhiteSpace(refinedHint))
+                if (String.IsNullOrWhiteSpace(refinedHint))
                 {
                     Logger.Info($"Ignoring {hint} as it refines to nothing.");
                     continue;

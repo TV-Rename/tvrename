@@ -207,198 +207,214 @@ namespace TVRename
         private void SetupObjectListForScanResults()
         {
             olvAction.SetObjects(mDoc.TheActionList);
-            olvShowColumn.AspectToStringConverter = delegate(object x)
-            {
-                string oringinalName = (string) x;
-                return PostpendTheIfNeeded(oringinalName);
-            };
 
+            olvShowColumn.AspectToStringConverter = ConvertShowNameDelegate;
             olvShowColumn.ImageGetter = ActionImageGetter;
 
-            olvType.GroupKeyGetter = delegate (object rowObject) {
-                Item i = (Item)rowObject;
-                switch (i.ScanListViewGroup)
-                {
-                    case "lvgActionMissing":
-                        return "A-Mising";
+            olvType.GroupKeyGetter = GroupItemsKeyDelegate;
+            olvType.GroupKeyToTitleConverter = GroupItemsTitleDelegate;
 
-                    case "lvgActionMeta":
-                        return "H-UpdateFiles";
+            olvDate.GroupKeyGetter = GroupDateKeyDelegate;
+            olvDate.GroupKeyToTitleConverter = GroupDateTitleDegate;
 
-                    case "lvgUpdateFileDates":
-                        return "I-UpdateFileDates";
+            olvSeason.GroupKeyGetter = GroupSeasonKeyDelegate;
 
-                    case "lvgDownloading":
-                        return "J-Downloading";
-
-                    case "lvgActionDownload":
-                        return "G-DownloadImage";
-
-                    case "lvgActionDownloadRSS":
-                        return "F-DownloadTorrent";
-
-                    case "lvgActionDelete":
-                        return "E-Delete";
-
-                    case "lvgActionRename":
-                        return "B-Rename";
-
-                    case "lvgActionCopy":
-                        return "C-Copy";
-
-                    case "lvgActionMove":
-                        return "D-Move";
-                }
-
-                return "UNKNOWN";
-
-            };
-            olvType.GroupKeyToTitleConverter = delegate(object groupKey)
-            {
-                switch ((string) groupKey)
-                {
-                    case "A-Mising":
-                        return HeaderName("Missing", mDoc.TheActionList.Missing.Count);
-
-                    case "H-UpdateFiles":
-                        return HeaderName("Media Center Metadata",
-                            mDoc.TheActionList.Count(item => item is ActionWriteMetadata));
-
-                    case "I-UpdateFileDates":
-                        return HeaderName("Update File/Directory Metadata",
-                            mDoc.TheActionList.Count(item => item is ActionDateTouch));
-
-                    case "J-Downloading":
-                        return HeaderName("Downloading", mDoc.TheActionList.Count(item => item is ItemDownloading));
-
-                    case "G-DownloadImage":
-                        return HeaderName("Download", mDoc.TheActionList.Count(action => action is ActionDownloadImage));
-
-                    case "F-DownloadTorrent":
-                        return HeaderName("Download RSS", mDoc.TheActionList.Count(action => action is ActionTDownload));
-
-                    case "E-Delete":
-                        return HeaderName("Remove",
-                            mDoc.TheActionList.Count(action => action is ActionDeleteFile || action is ActionDeleteDirectory));
-
-                    case "B-Rename":
-                        int renameCount = mDoc.TheActionList.Count(action =>
-                            action is ActionCopyMoveRename cmr && cmr.Operation == ActionCopyMoveRename.Op.rename);
-
-                        return HeaderName("Rename", renameCount);
-
-                    case "C-Copy":
-                        List<ActionCopyMoveRename> copyActions = mDoc.TheActionList.OfType<ActionCopyMoveRename>()
-                            .Where(cmr => cmr.Operation == ActionCopyMoveRename.Op.copy).ToList();
-
-                        long copySize = copyActions.Where(item => item.From.Exists).Sum(copy => copy.From.Length);
-                        return HeaderName("Copy", copyActions.Count, copySize);
-
-                    case "D-Move":
-                        List<ActionCopyMoveRename> moveActions = mDoc.TheActionList.OfType<ActionCopyMoveRename>()
-                            .Where(cmr => cmr.Operation == ActionCopyMoveRename.Op.move).ToList();
-
-                        long moveSize = moveActions.Where(item => item.From.Exists).Sum(copy => copy.From.Length);
-                        return HeaderName("Move", moveActions.Count, moveSize);
-                }
-
-                return "UNKNOWN";
-            };
-
-            olvDate.GroupKeyGetter = delegate(object rowObject)
-            {
-                DateTime? episodeTime = ((Item) rowObject).AirDate;
-
-                if (!episodeTime.HasValue)
-                {
-                    return DateTime.Now.AddDays(1);
-                }
-
-                if (episodeTime.Value > DateTime.Now)
-                {
-                    return DateTime.MaxValue;
-                }
-
-                TimeSpan timeSince = DateTime.Now - episodeTime.Value;
-
-                if (timeSince < 7.Days())
-                {
-                    return DateTime.Now.AddDays(-1);
-                }
-
-                if (DateTime.Now.Year == episodeTime.Value.Year && DateTime.Now.Month == episodeTime.Value.Month)
-                {
-                    return DateTime.Now.AddDays(-8);
-                }
-
-                if (DateTime.Now.Year == episodeTime.Value.Year)
-                {
-                    return new DateTime(episodeTime.Value.Year, episodeTime.Value.Month, 1);
-                }
-
-                return new DateTime(episodeTime.Value.Year, 1, 1);
-            };
-            olvDate.GroupKeyToTitleConverter = delegate(object groupKey)
-            {
-                DateTime? episodeTime = (DateTime?)groupKey;
-
-                if (!episodeTime.HasValue)
-                {
-                    return "Generic";
-                }
-
-                if (episodeTime.Value > DateTime.Now)
-                {
-                    return "Future";
-                }
-
-                TimeSpan timeSince = DateTime.Now - episodeTime.Value;
-
-                if (timeSince < 7.Days())
-                {
-                    return "This Week";
-                }
-
-                if (DateTime.Now.Year == episodeTime.Value.Year && DateTime.Now.Month == episodeTime.Value.Month)
-                {
-                    return "Earlier this Month";
-                }
-
-                if (DateTime.Now.Year == episodeTime.Value.Year)
-                {
-                    return episodeTime.Value.ToString("MMMM yyyy");
-                }
-
-                return episodeTime.Value.ToString("yyyy");
-            };
-
-            olvSeason.GroupKeyGetter = delegate(object rowObject)
-            {
-                Item ep = (Item) rowObject;
-                if (ep.SeasonNumber.HasValue())
-                {
-                    return $"{ep.SeriesName} - Season {ep.SeasonNumber}";
-                }
-
-                return ep.SeriesName;
-            };
-
-            olvFolder.GroupKeyGetter = delegate(object rowObject)
-            {
-                Item ep = (Item) rowObject;
-                foreach (string folder in TVSettings.Instance.LibraryFolders)
-                {
-                    if (ep.DestinationFolder.StartsWith(folder, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return folder;
-                    }
-                }
-
-                return ep.DestinationFolder;
-            };
+            olvFolder.GroupKeyGetter = GroupFolderTitleDelegate;
 
             SimpleDropSink currActionDropSink = (SimpleDropSink)olvAction.DropSink;
             currActionDropSink.FeedbackColor = Color.LightGray;
+        }
+
+        private static object GroupFolderTitleDelegate(object rowObject)
+        {
+            Item ep = (Item) rowObject;
+            foreach (string folder in TVSettings.Instance.LibraryFolders)
+            {
+                if (ep.DestinationFolder.StartsWith(folder, StringComparison.OrdinalIgnoreCase))
+                {
+                    return folder;
+                }
+            }
+
+            return ep.DestinationFolder;
+        }
+
+        [NotNull]
+        private static object GroupSeasonKeyDelegate(object rowObject)
+        {
+            Item ep = (Item) rowObject;
+            if (ep.SeasonNumber.HasValue())
+            {
+                return $"{ep.SeriesName} - Season {ep.SeasonNumber}";
+            }
+
+            return ep.SeriesName;
+        }
+
+        [NotNull]
+        private static string GroupDateTitleDegate(object groupKey)
+        {
+            DateTime? episodeTime = (DateTime?) groupKey;
+
+            if (!episodeTime.HasValue)
+            {
+                return "Generic";
+            }
+
+            if (episodeTime.Value > DateTime.Now)
+            {
+                return "Future";
+            }
+
+            TimeSpan timeSince = DateTime.Now - episodeTime.Value;
+
+            if (timeSince < 7.Days())
+            {
+                return "This Week";
+            }
+
+            if (DateTime.Now.Year == episodeTime.Value.Year && DateTime.Now.Month == episodeTime.Value.Month)
+            {
+                return "Earlier this Month";
+            }
+
+            if (DateTime.Now.Year == episodeTime.Value.Year)
+            {
+                return episodeTime.Value.ToString("MMMM yyyy");
+            }
+
+            return episodeTime.Value.ToString("yyyy");
+        }
+
+        [NotNull]
+        private static object GroupDateKeyDelegate(object rowObject)
+        {
+            DateTime? episodeTime = ((Item) rowObject).AirDate;
+
+            if (!episodeTime.HasValue)
+            {
+                return DateTime.Now.AddDays(1);
+            }
+
+            if (episodeTime.Value > DateTime.Now)
+            {
+                return DateTime.MaxValue;
+            }
+
+            TimeSpan timeSince = DateTime.Now - episodeTime.Value;
+
+            if (timeSince < 7.Days())
+            {
+                return DateTime.Now.AddDays(-1);
+            }
+
+            if (DateTime.Now.Year == episodeTime.Value.Year && DateTime.Now.Month == episodeTime.Value.Month)
+            {
+                return DateTime.Now.AddDays(-8);
+            }
+
+            if (DateTime.Now.Year == episodeTime.Value.Year)
+            {
+                return new DateTime(episodeTime.Value.Year, episodeTime.Value.Month, 1);
+            }
+
+            return new DateTime(episodeTime.Value.Year, 1, 1);
+        }
+
+        [NotNull]
+        private string GroupItemsTitleDelegate(object groupKey)
+        {
+            switch ((string) groupKey)
+            {
+                case "A-Mising":
+                    return HeaderName("Missing", mDoc.TheActionList.Missing.Count);
+
+                case "H-UpdateFiles":
+                    return HeaderName("Media Center Metadata", mDoc.TheActionList.Count(item => item is ActionWriteMetadata));
+
+                case "I-UpdateFileDates":
+                    return HeaderName("Update File/Directory Metadata", mDoc.TheActionList.Count(item => item is ActionDateTouch));
+
+                case "J-Downloading":
+                    return HeaderName("Downloading", mDoc.TheActionList.Count(item => item is ItemDownloading));
+
+                case "G-DownloadImage":
+                    return HeaderName("Download", mDoc.TheActionList.SaveImages.Count);
+
+                case "F-DownloadTorrent":
+                    return HeaderName("Download RSS", mDoc.TheActionList.Count(action => action is ActionTDownload));
+
+                case "E-Delete":
+                    return HeaderName("Remove", mDoc.TheActionList.Count(action => action is ActionDeleteFile || action is ActionDeleteDirectory));
+
+                case "B-Rename":
+                    int renameCount = mDoc.TheActionList.Count(action => action is ActionCopyMoveRename cmr && cmr.Operation == ActionCopyMoveRename.Op.rename);
+                    return HeaderName("Rename", renameCount);
+
+                case "C-Copy":
+                    List<ActionCopyMoveRename> copyActions = mDoc.TheActionList.CopyMove
+                        .Where(cmr => cmr.Operation == ActionCopyMoveRename.Op.copy)
+                        .ToList();
+
+                    long copySize = copyActions.Where(item => item.From.Exists).Sum(copy => copy.From.Length);
+                    return HeaderName("Copy", copyActions.Count, copySize);
+
+                case "D-Move":
+                    List<ActionCopyMoveRename> moveActions = mDoc.TheActionList.CopyMove
+                        .Where(cmr => cmr.Operation == ActionCopyMoveRename.Op.move)
+                        .ToList();
+
+                    long moveSize = moveActions.Where(item => item.From.Exists).Sum(copy => copy.From.Length);
+                    return HeaderName("Move", moveActions.Count, moveSize);
+            }
+
+            return "UNKNOWN";
+        }
+
+        [NotNull]
+        private static object GroupItemsKeyDelegate(object rowObject)
+        {
+            Item i = (Item) rowObject;
+            switch (i.ScanListViewGroup)
+            {
+                case "lvgActionMissing":
+                    return "A-Mising";
+
+                case "lvgActionMeta":
+                    return "H-UpdateFiles";
+
+                case "lvgUpdateFileDates":
+                    return "I-UpdateFileDates";
+
+                case "lvgDownloading":
+                    return "J-Downloading";
+
+                case "lvgActionDownload":
+                    return "G-DownloadImage";
+
+                case "lvgActionDownloadRSS":
+                    return "F-DownloadTorrent";
+
+                case "lvgActionDelete":
+                    return "E-Delete";
+
+                case "lvgActionRename":
+                    return "B-Rename";
+
+                case "lvgActionCopy":
+                    return "C-Copy";
+
+                case "lvgActionMove":
+                    return "D-Move";
+            }
+
+            return "UNKNOWN";
+        }
+
+        private string ConvertShowNameDelegate(object x)
+        {
+            string oringinalName = (string) x;
+            return PostpendTheIfNeeded(oringinalName);
         }
 
         private void olv1_FormatRow(object sender, [NotNull] FormatRowEventArgs e)
@@ -2646,7 +2662,7 @@ namespace TVRename
             return PostpendTheIfNeeded(name);
         }
 
-        public static string PostpendTheIfNeeded(string name)
+        private static string PostpendTheIfNeeded(string name)
         {
             if (TVSettings.Instance.PostpendThe && name.StartsWith("The ", StringComparison.Ordinal))
             {
@@ -3302,7 +3318,6 @@ namespace TVRename
 
         private void FillNewActionList(bool preserveExistingCheckboxes)
         {
-            
             if (preserveExistingCheckboxes)
             {
                 byte[] oldState = olvAction.SaveState();
@@ -4028,7 +4043,8 @@ namespace TVRename
                 return;
             }
 
-            float x = tabBounds.X + (tabBounds.Width - icon.Width) / 2.0f; 
+            float xIndent = (tabBounds.Width - icon.Width) / 2.0f;
+            float x = tabBounds.X + xIndent; 
             float y = tabBounds.Y + INDENT;
             e.Graphics.DrawImage(icon, x, y);
             Font labelFont = new Font("Segoe UI Semibold", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);

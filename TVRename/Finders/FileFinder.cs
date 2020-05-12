@@ -112,7 +112,7 @@ namespace TVRename
 
             if (me.Episode.Show.UseSequentialMatch)
             {
-                if (TVDoc.MatchesSequentialNumber(dce.RemoveExtension(false), me.Episode))
+                if (FinderHelper.MatchesSequentialNumber(dce.RemoveExtension(false), me.Episode))
                 {
                     return (true, season, epnum, me.Episode.EpNum2);
                 }
@@ -120,11 +120,11 @@ namespace TVRename
 
             if (me.Episode.Show.UseAirDateMatch)
             {
-                if (FinderHelper.FindSeasEpDateCheck(dce.Name, out foundSeason, out foundEpisode, out maxEp, me.Episode.Show))
+                if (FinderHelper.FindSeasEpDateCheck(dce.Name, out foundSeason, out foundEpisode, me.Episode.Show))
                 {
                     if (foundEpisode == epnum && foundSeason == season)
                     {
-                        return (true, foundSeason, foundEpisode, maxEp);
+                        return (true, foundSeason, foundEpisode, -1);
                     }
                 }
             }
