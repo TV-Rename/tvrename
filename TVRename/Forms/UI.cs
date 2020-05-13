@@ -3115,9 +3115,6 @@ namespace TVRename
             {
                 GenerateActionRightClickMenu(e, pt, lvr, null,null);
             }
-
-
-            
         }
         private void GenerateActionRightClickMenu([NotNull] MouseEventArgs e, Point pt, ItemList lvr, ShowItem si, ProcessedEpisode episode)
         { 

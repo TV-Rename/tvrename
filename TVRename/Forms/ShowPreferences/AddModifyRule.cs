@@ -25,6 +25,7 @@ namespace TVRename
         private readonly ShowRule mRule;
         private readonly ProcessedSeason mProcessedSeason;
         private readonly ProcessedSeason.SeasonType mOrder;
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public AddModifyRule(ShowRule rule, [NotNull] ShowItem show, int seasonNumber)
         {
@@ -172,56 +173,57 @@ namespace TVRename
             mRule.Second = ParseTextValue(txtValue2);
             mRule.RenumberAfter = chkRenumberAfter.Checked;
 
-            //validation Rules
-            if (!mProcessedSeason.ContainsEpisode(mRule.First, mOrder) && mRule.DoWhatNow != RuleAction.kInsert)
+            try
             {
-                MessageBox.Show("First episode number is not valid for the selected season", "Modify Rules",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtValue1.Focus();
+                //validation Rules
+
+                ValidationCheck(mRule.DoWhatNow != RuleAction.kInsert
+                    , !mProcessedSeason.ContainsEpisode(mRule.First, mOrder)
+                    , "First episode number is not valid for the selected season"
+                    , txtValue1);
+
+                ValidationCheck(mRule.DoWhatNow == RuleAction.kInsert
+                    , !(mProcessedSeason.NextEpisodeIs(mRule.First, mOrder) || mProcessedSeason.ContainsEpisode(mRule.First, mOrder))
+                    , "First episode number is not valid for the selected season"
+                    , txtValue1);
+
+                //these 3 types only have one episode cited
+                bool singleEpisodeRule = mRule.DoWhatNow.In(RuleAction.kRename ,RuleAction.kInsert,RuleAction.kSplit);
+
+                ValidationCheck(!singleEpisodeRule
+                    , !mProcessedSeason.ContainsEpisode(mRule.Second, mOrder)
+                    , "Second episode number is not valid for the selected season"
+                    , txtValue2);
+                
+                //these 3 types only have one episode cited - others must be in order
+                ValidationCheck(!singleEpisodeRule
+                    , mRule.First > mRule.Second
+                    , "Second episode number must be after the first episode number"
+                    ,txtValue2);
+
+                //Swap, merge and collapse can't be done on the same episode numbers
+                ValidationCheck(mRule.DoWhatNow.In(RuleAction.kSwap ,RuleAction.kMerge ,RuleAction.kCollapse)
+                    , txtValue2.Text.Equals(txtValue1.Text)
+                    , "Episode Numbers must be different"
+                    , txtValue2);
+            }
+            catch (ValidationFailedException valException)
+            {
+                Logger.Warn($"Validation Error: {valException.Message}: {mRule}");
                 DialogResult = DialogResult.None;
+            }
+        }
+
+        private void ValidationCheck(bool ruleCheck, bool check, string message, Control source)
+        {
+            if (!(ruleCheck&& check))
+            {
                 return;
             }
 
-            if (mRule.DoWhatNow == RuleAction.kInsert && !(mProcessedSeason.NextEpisodeIs(mRule.First, mOrder)|| mProcessedSeason.ContainsEpisode(mRule.First, mOrder)))
-            {
-                MessageBox.Show("First episode number is not valid for the selected season", "Modify Rules",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtValue1.Focus();
-                DialogResult = DialogResult.None;
-                return;
-            }
-
-            //these 3 types only have one episode cited
-            if (!(mRule.DoWhatNow == RuleAction.kRename || mRule.DoWhatNow == RuleAction.kInsert || mRule.DoWhatNow == RuleAction.kSplit) &&
-                !mProcessedSeason.ContainsEpisode(mRule.Second, mOrder))
-            {
-                MessageBox.Show("Second episode number is not valid for the selected season", "Modify Rules",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtValue2.Focus();
-                DialogResult = DialogResult.None;
-                return;
-            }
-
-            //these 3 types only have one episode cited - others must be in order
-            if (!(mRule.DoWhatNow == RuleAction.kRename || mRule.DoWhatNow == RuleAction.kInsert || mRule.DoWhatNow == RuleAction.kSplit) &&
-                mRule.First > mRule.Second)
-            {
-                MessageBox.Show("Second episode number must be before the first episode number", "Modify Rules",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtValue2.Focus();
-                DialogResult = DialogResult.None;
-                return;
-            }
-
-            //Swap, merge and collapse can't be done on the same episode numbers
-            if ((mRule.DoWhatNow == RuleAction.kSwap || mRule.DoWhatNow == RuleAction.kMerge || mRule.DoWhatNow == RuleAction.kCollapse) &&
-                txtValue2.Text.Equals(txtValue1.Text))
-            {
-                MessageBox.Show("Episode Numbers must be different", "Modify Rules",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtValue2.Focus();
-                DialogResult = DialogResult.None;
-            }
+            MessageBox.Show(message, "Modify Rules",MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            source.Focus();
+            throw new ValidationFailedException(message);
         }
 
         private static int ParseTextValue(Control txtValue)
@@ -271,6 +273,13 @@ namespace TVRename
                 return RuleAction.kSplit;
             }
             throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    internal class ValidationFailedException : Exception
+    {
+        public ValidationFailedException(string message):base(message)
+        {
         }
     }
 }
