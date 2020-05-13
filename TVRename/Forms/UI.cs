@@ -447,8 +447,9 @@ namespace TVRename
 
         private void ClearInfoWindows(string defaultText)
         {
-            SetHtmlBody( webImages, ShowHtmlHelper.CreateOldPage(defaultText));
+            SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(defaultText));
             SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(defaultText));
+            SetHtmlBody(webSummary, ShowHtmlHelper.CreateOldPage(defaultText));
         }
 
         private void MoreBusy() => Interlocked.Increment(ref busy);
@@ -1040,6 +1041,7 @@ namespace TVRename
             tabControl1.SelectTab(tbMyShows);
             webInformation.Navigate(QuickStartGuide());
             webImages.Navigate(QuickStartGuide());
+            webSummary.Navigate(QuickStartGuide());
         }
 
         private void FillEpGuideHtml()
@@ -1145,23 +1147,25 @@ namespace TVRename
                     ProcessedSeason s = si.AppropriateSeasons()[snum];
                     SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(si.GetSeasonHtmlOverviewOffline(s)));
                     SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
+                    SetHtmlBody(webSummary, ShowHtmlHelper.CreateOldPage("Not available offline"));
                 }
                 else
                 {
                     // no epnum specified, just show an overview
                     SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(si.GetShowHtmlOverviewOffline()));
                     SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
+                    SetHtmlBody(webSummary, ShowHtmlHelper.CreateOldPage("Not available offline"));
                 }
 
-                return;
+                return; 
             }
 
             if (snum >= 0 && si.AppropriateSeasons().ContainsKey(snum))
             {
                 ProcessedSeason s = si.AppropriateSeasons()[snum];
                 SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
-
                 SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, false));
+                SetHtmlBody(webSummary, si.GetSeasonSummaryHtmlOverview(s, false));
 
                 if (bwSeasonHTMLGenerator.WorkerSupportsCancellation)
                 {
@@ -1173,13 +1177,24 @@ namespace TVRename
                 {
                     bwSeasonHTMLGenerator.RunWorkerAsync(s);
                 }
+
+                if (bwSeasonSummaryHTMLGenerator.WorkerSupportsCancellation)
+                {
+                    // Cancel the asynchronous operation.
+                    bwSeasonSummaryHTMLGenerator.CancelAsync();
+                }
+
+                if (!bwSeasonSummaryHTMLGenerator.IsBusy)
+                {
+                    bwSeasonSummaryHTMLGenerator.RunWorkerAsync(s);
+                }
             }
             else
             {
                 // no epnum specified, just show an overview
                 SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
-
                 SetHtmlBody(webInformation, si.GetShowHtmlOverview(false));
+                SetHtmlBody(webInformation, si.GetShowSummaryHtmlOverview(false));
 
                 if (bwShowHTMLGenerator.WorkerSupportsCancellation)
                 {
@@ -1190,6 +1205,17 @@ namespace TVRename
                 if (!bwShowHTMLGenerator.IsBusy)
                 {
                     bwShowHTMLGenerator.RunWorkerAsync(si);
+                }
+
+                if (bwShowSummaryHTMLGenerator.WorkerSupportsCancellation)
+                {
+                    // Cancel the asynchronous operation.
+                    bwShowSummaryHTMLGenerator.CancelAsync();
+                }
+
+                if (!bwShowSummaryHTMLGenerator.IsBusy)
+                {
+                    bwShowSummaryHTMLGenerator.RunWorkerAsync(si);
                 }
             }
         }
@@ -3769,6 +3795,15 @@ namespace TVRename
             }
         }
 
+        private void UpdateWebSummary(object sender, [NotNull] RunWorkerCompletedEventArgs e)
+        {
+            string html = e.Result as string;
+            if (html.HasValue())
+            {
+                SetHtmlBody(webSummary, html);
+            }
+        }
+
         private void BwShowHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
         {
             ShowItem si = e.Argument as ShowItem;
@@ -3931,6 +3966,20 @@ namespace TVRename
                     e.InfoMessage = "Can only drag onto a missing episode";
                 }
             }
+        }
+
+        private void BwShowSummaryHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
+        {
+            ShowItem si = e.Argument as ShowItem;
+            string html = si?.GetShowSummaryHtmlOverview(true);
+            e.Result = html ?? string.Empty;
+        }
+        private void BwSeasonSummaryHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
+        {
+            ProcessedSeason s = e.Argument as ProcessedSeason;
+            ShowItem si = s?.Show;
+            string html = si?.GetSeasonSummaryHtmlOverview(s, true);
+            e.Result = html ?? string.Empty;
         }
     }
 }

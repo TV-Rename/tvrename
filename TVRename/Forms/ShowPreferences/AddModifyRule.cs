@@ -275,11 +275,4 @@ namespace TVRename
             throw new ArgumentOutOfRangeException();
         }
     }
-
-    internal class ValidationFailedException : Exception
-    {
-        public ValidationFailedException(string message):base(message)
-        {
-        }
-    }
 }

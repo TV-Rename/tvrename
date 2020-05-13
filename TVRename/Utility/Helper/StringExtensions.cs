@@ -189,5 +189,10 @@ namespace TVRename
         {
             return string.Join(", ", values);
         }
+        [NotNull]
+        public static string Concat([NotNull] this IEnumerable<string> values)
+        {
+            return string.Join(string.Empty,values);
+        }
     }
 }
