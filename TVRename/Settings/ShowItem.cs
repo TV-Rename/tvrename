@@ -141,16 +141,7 @@ namespace TVRename
 
         public int GetSeasonIndex(int seasonNumber)
         {
-            List<int> seasonNumbers = new List<int>();
-            foreach (KeyValuePair<int, ProcessedSeason> sn in AppropriateSeasons())
-            {
-                if (sn.Value.IsSpecial)
-                {
-                    continue;
-                }
-
-                seasonNumbers.Add(sn.Value.SeasonNumber);
-            }
+            List<int> seasonNumbers = AppropriateSeasons().Values.ToList().Where(season => !season.IsSpecial).Select(sn => sn.SeasonNumber).ToList();
 
             seasonNumbers.Sort();
 

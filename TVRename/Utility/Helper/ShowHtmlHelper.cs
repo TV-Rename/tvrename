@@ -469,7 +469,7 @@ namespace TVRename
                 explorerButton = string.Empty;
             }
 
-            string tablerows = si.SeasonEpisodes[s.SeasonNumber].Select(episode => SeasonSummaryTableRow(episode,includeDirectoryLinks,dfc)).Concat();
+            string tablerows = si.SeasonEpisodes[s.SeasonNumber].ToList().Select(episode => SeasonSummaryTableRow(episode,includeDirectoryLinks,dfc)).Concat();
 
             string tvdbButton = CreateButton(seasonLink, "TVDB.com", "View on TVDB");
             string episodeText = s.Episodes.Count > 0 ? $"<br/><small class=\"text-muted\">{s.Episodes.Count} Episodes</small>" : string.Empty;
