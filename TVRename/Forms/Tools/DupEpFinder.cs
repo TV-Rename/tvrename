@@ -25,7 +25,7 @@ namespace TVRename.Forms
             kOpenFolderBase = 2000
         }
 
-        public DupEpFinder(TVDoc doc, UI main)
+        public DupEpFinder([NotNull] TVDoc doc, UI main)
         {
             InitializeComponent();
             dupEps = Beta.FindDoubleEps(doc);

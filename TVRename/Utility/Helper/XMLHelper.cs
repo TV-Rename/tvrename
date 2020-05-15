@@ -203,7 +203,7 @@ namespace TVRename
                 {
                     e.Elements(elementName).Single().Value = value;
                 }
-                catch (InvalidOperationException ex)
+                catch (InvalidOperationException)
                 {
                     Logger.Error($"COuld not update element {elementName} in {e}");
                 }

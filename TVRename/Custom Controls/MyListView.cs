@@ -21,17 +21,5 @@ namespace TVRename
     /// </summary>
     public class MyListView : ListViewFlickerFree
     {
-        private bool checkEnable;
-        private bool keyCheck;
-        private readonly bool menuCheck;
-        private bool onMouseDown;
-
-        public MyListView()
-        {
-            keyCheck = false;
-            checkEnable = true;
-            onMouseDown = false;
-            menuCheck = false;
-        }
     }
 }
