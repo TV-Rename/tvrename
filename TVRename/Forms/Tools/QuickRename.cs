@@ -98,6 +98,9 @@ namespace TVRename.Forms.Tools
                 return;
             }
 
+            // Note that the extension of the file may not be fi.extension as users can put ".mkv.t" for example as an extension
+            string otherExtension = TVSettings.Instance.FileHasUsefulExtensionDetails(droppedFile, true);
+
             ShowItem bestShow = (string)cbShowList.SelectedItem == "<Auto>"
                 ? FinderHelper.FindBestMatchingShow(droppedFile, mDoc.Library.Shows)
                 : mDoc.Library.Shows.FirstOrDefault(item => item.ShowName == (string)cbShowList.SelectedItem);
@@ -129,7 +132,7 @@ namespace TVRename.Forms.Tools
                 ProcessedEpisode episode = bestShow.GetEpisode(seasonNum, episodeNum);
 
                 string filename = TVSettings.Instance.FilenameFriendly(
-                    TVSettings.Instance.NamingStyle.NameFor(episode, droppedFile.Extension,
+                    TVSettings.Instance.NamingStyle.NameFor(episode, otherExtension,
                         droppedFile.DirectoryName.Length));
 
                 FileInfo targetFile =

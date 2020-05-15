@@ -47,15 +47,103 @@ namespace TVRename
         public static string GetShowSummaryHtmlOverview([NotNull] this ShowItem si, bool includeDirectoryLinks)
         {
             Color col = Color.FromName("ButtonFace");
+            DirFilesCache dfc = new DirFilesCache();
             StringBuilder sb = new StringBuilder();
+
             sb.AppendLine(HTMLHeader(10, col));
-            foreach (KeyValuePair<int, ProcessedSeason> season in si.AppropriateSeasons().OrderBy(pair => pair.Key))
-            {
-                sb.AppendSeasonSummary(si, season.Value, col, includeDirectoryLinks);
-            }
+            sb.AppendShowSummary(si,dfc, col,includeDirectoryLinks);
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
         }
+
+        private static void AppendShowSummary(this StringBuilder sb, [CanBeNull] ShowItem si, DirFilesCache dfc, Color backgroundColour, bool includeDirectoryLinks)
+        {
+            SeriesInfo ser = si?.TheSeries();
+            if (ser is null)
+            {
+                return;
+            }
+
+            string horizontalBanner = CreateHorizontalBannerHtml(ser);
+            string yearRange = YearRange(ser);
+            string episodeSummary = ser.Episodes.Count.ToString();
+            string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
+
+            StringBuilder tableRows = new StringBuilder();
+
+            foreach (KeyValuePair<int, ProcessedSeason> season in si.AppropriateSeasons().OrderBy(pair => pair.Key))
+            {
+                tableRows.AppendSeasonShowSummary(dfc, si, season.Value, includeDirectoryLinks);
+            }
+
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                <div class=""text-center"">
+	             {horizontalBanner}
+                </div>
+                    <div class=""row"">
+                     <div class=""col-md-8""><h1>{ser.Name}</h1><small class=""text-muted"">{ser.ShowLanguage} - {ser.Type}</small></div>
+                     <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6><small class=""text-muted"">{episodeSummary} Episodes</small></div>
+                    </div>
+		            <div class=""row"">
+<table>
+                        <tr><td><p class=""lead"">{ser.Overview}</p></td><td class=""text-right align-text-top"">
+			         {CreateButton(imdbLink, "IMDB.com", "View on IMDB")}
+			         {CreateButton(ser.OfficialUrl, "Official Site", "View on Official Site")}
+			        </td></tr></table>
+</div>
+<div class=""row"">
+<table class=""table  table-hover"">
+  <thead>
+    <tr>
+      <th scope=""col"">#</th>
+      <th scope=""col"">Date</th>
+      <th scope=""col"">Name</th>
+      <th scope=""col"">Status</th>
+      <th class=""text-right"" scope=""col"">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {tableRows}
+  </tbody>
+</table>
+</div>
+                </div>");
+        }
+
+        static void AppendSeasonShowSummary([NotNull] this StringBuilder sb, DirFilesCache dfc, [NotNull] ShowItem si, [NotNull] ProcessedSeason s, bool includeDirectoryLinks)
+        {
+            string seasonLink = TheTVDB.API.WebsiteSeasonUrl(s);
+            string explorerButton;
+            if (includeDirectoryLinks)
+            {
+                string urlFilename = Uri.EscapeDataString(si.GetBestFolderLocationToOpen(s));
+                explorerButton = CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}",
+                    "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
+            }
+            else
+            {
+                explorerButton = string.Empty;
+            }
+
+            string tableRows = si.SeasonEpisodes[s.SeasonNumber].Select(episode => SeasonSummaryTableRow(episode, includeDirectoryLinks, dfc)).Concat();
+
+            string tvdbButton = CreateButton(seasonLink, "TVDB.com", "View on TVDB");
+            string episodeText = s.Episodes.Count > 0 ? $"<br/><small class=\"text-muted\">{s.Episodes.Count} Episodes</small>" : string.Empty;
+
+            string seasonOverViewHtml = si.TheSeries()?.Season(s.SeasonNumber)?.SeasonName.HasValue() ?? false
+                ? $"<h2>{si.TheSeries()?.Season(s.SeasonNumber)?.SeasonName}</h3><p>{si.TheSeries()?.Season(s.SeasonNumber)?.SeasonDescription}</p>"
+                : string.Empty;
+
+            sb.AppendLine($@"     <tr class=""table-secondary"">
+      <td scope=""row"" colspan=""4""><A HREF=""{seasonLink}"">{SeasonName(si, s.SeasonNumber)}{seasonOverViewHtml}{episodeText}</a></td>
+      <td class=""text-right"">{explorerButton}
+                        {tvdbButton}
+                        </td>
+    </tr>
+{tableRows}");
+
+        }
+
 
         private static void AppendShow(this StringBuilder sb,[CanBeNull] ShowItem si, Color backgroundColour, bool includeDirectoryLinks)
         {
@@ -314,23 +402,31 @@ namespace TVRename
                 {
                     statii.Add("On Disk");
                 }
+                else if (TVSettings.Instance.IgnorePreviouslySeen && ep.PreviouslySeen)
+                {
+                    statii.Add("Previously Seen");
+                }
             }
 
-            if (TVSettings.Instance.IgnorePreviouslySeen && ep.PreviouslySeen)
+            if (!includeDirectoryLinks && TVSettings.Instance.IgnorePreviouslySeen && ep.PreviouslySeen)
             {
                 statii.Add("Previously Seen");
             }
-            if (ep.Show.IgnoreSeasons.Contains(ep.AppropriateSeasonNumber))
+            else if (ep.Show.IgnoreSeasons.Contains(ep.AppropriateSeasonNumber))
             {
                 statii.Add("Ignored Season");
             }
-            if (TVSettings.Instance.IgnoreAllSpecials && ep.AppropriateSeasonNumber == 0)
+            else if (TVSettings.Instance.IgnoreAllSpecials && ep.AppropriateSeasonNumber == 0)
             {
                 statii.Add("All Specials Ignored");
             }
-            if (TVSettings.Instance.Ignore.Any(item => item.MatchesEpisode(ep.Show.AutoAddFolderBase, ep)))
+            else if (TVSettings.Instance.Ignore.Any(item => item.MatchesEpisode(ep.Show.AutoAddFolderBase, ep)))
             {
                 statii.Add("Episode Ignored");
+            }
+            if (!statii.Any() && includeDirectoryLinks && fl.Count == 0 && ep.HasAired())
+            {
+                statii.Add("Missing");
             }
 
             string searchButton = (fl is null || fl.Count == 0) && ep.HasAired()
@@ -348,7 +444,7 @@ namespace TVRename
 
             string airedText = ep.HasAired() ? " (Aired)" : string.Empty;
             return
-                $"<tr><th scope=\"row\">{ep.AppropriateEpNum}</th><td>{ep.GetAirDateDt(true):d}{airedText}</td><td>{ep.Name}</td><td>{statii.ToCsv()}</td><td>{searchButton}{viewButton}</td></tr>";
+                $"<tr><th scope=\"row\">{ep.AppropriateEpNum}</th><td>{ep.GetAirDateDt(true):d}{airedText}</td><td>{ep.Name}</td><td>{statii.ToCsv()}</td><td class=\"text-right\">{searchButton}{viewButton}</td></tr>";
         }
         private static void AppendSeasonSummary(this StringBuilder sb, [CanBeNull] ShowItem si, ProcessedSeason s, Color backgroundColour, bool includeDirectoryLinks)
         {

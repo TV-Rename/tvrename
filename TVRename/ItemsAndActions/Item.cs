@@ -30,7 +30,8 @@ namespace TVRename
         [NotNull]
         public virtual string SeasonNumber => Episode?.SeasonNumberAsText ?? string.Empty;
         [NotNull]
-        public virtual string EpisodeNumber => Episode?.EpNumsAsString() ?? string.Empty;
+        public virtual string EpisodeString => Episode?.EpNumsAsString() ?? string.Empty;
+        public int? EpisodeNumber => Episode?.AppropriateEpNum;
         [NotNull]
         public virtual string AirDateString => Episode?.GetAirDateDt(true).PrettyPrint() ?? string.Empty;
 

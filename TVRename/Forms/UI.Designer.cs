@@ -157,7 +157,7 @@ namespace TVRename
             this.tbWTW = new System.Windows.Forms.TabPage();
             this.tsWtW = new System.Windows.Forms.ToolStrip();
             this.btnWhenToWatchCheck = new System.Windows.Forms.ToolStripButton();
-            this.btnWTWBTSearch = new System.Windows.Forms.ToolStripSplitButton();
+            this.btnScheduleBTSearch = new System.Windows.Forms.ToolStripSplitButton();
             this.txtWhenToWatchSynopsis = new System.Windows.Forms.TextBox();
             this.calCalendar = new System.Windows.Forms.MonthCalendar();
             this.lvWhenToWatch = new ListViewFlickerFree();
@@ -858,6 +858,7 @@ namespace TVRename
             this.webSummary.Size = new System.Drawing.Size(633, 439);
             this.webSummary.TabIndex = 1;
             this.webSummary.WebBrowserShortcutsEnabled = false;
+            this.webSummary.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
             // 
             // tbAllInOne
             // 
@@ -907,6 +908,7 @@ namespace TVRename
             this.olvAction.Name = "olvAction";
             this.olvAction.ShowCommandMenuOnRightClick = true;
             this.olvAction.ShowItemCountOnGroups = true;
+            this.olvAction.ShowItemToolTips = true;
             this.olvAction.Size = new System.Drawing.Size(932, 473);
             this.olvAction.SmallImageList = this.ilIcons;
             this.olvAction.TabIndex = 0;
@@ -1141,7 +1143,7 @@ namespace TVRename
             this.btnActionBTSearch.Size = new System.Drawing.Size(123, 42);
             this.btnActionBTSearch.Text = "BT Search";
             this.btnActionBTSearch.ButtonClick += new System.EventHandler(this.bnActionBTSearch_Click);
-            this.btnActionBTSearch.DropDownOpening += new System.EventHandler(this.BtnActionBTSearch_DropDownOpening);
+            this.btnActionBTSearch.DropDownOpening += new System.EventHandler(this.BTSearch_DropDownOpening);
             this.btnActionBTSearch.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuSearchSites_ItemClicked);
             // 
             // toolStripSeparator9
@@ -1322,7 +1324,7 @@ namespace TVRename
             this.tsWtW.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.tsWtW.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnWhenToWatchCheck,
-            this.btnWTWBTSearch});
+            this.btnScheduleBTSearch});
             this.tsWtW.Location = new System.Drawing.Point(0, 0);
             this.tsWtW.Name = "tsWtW";
             this.tsWtW.Size = new System.Drawing.Size(938, 39);
@@ -1340,19 +1342,19 @@ namespace TVRename
             this.btnWhenToWatchCheck.Text = "&Refresh";
             this.btnWhenToWatchCheck.Click += new System.EventHandler(this.bnWhenToWatchCheck_Click);
             // 
-            // btnWTWBTSearch
+            // btnScheduleBTSearch
             // 
-            this.btnWTWBTSearch.DropDownButtonWidth = 20;
-            this.btnWTWBTSearch.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnWTWBTSearch.Image = global::TVRename.Properties.Resources._1587498_32;
-            this.btnWTWBTSearch.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnWTWBTSearch.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnWTWBTSearch.Name = "btnWTWBTSearch";
-            this.btnWTWBTSearch.Size = new System.Drawing.Size(132, 36);
-            this.btnWTWBTSearch.Text = "BT Search";
-            this.btnWTWBTSearch.ButtonClick += new System.EventHandler(this.bnWTWBTSearch_Click);
-            this.btnWTWBTSearch.DropDownOpening += new System.EventHandler(this.ToolStripSplitButton1_DropDownOpening);
-            this.btnWTWBTSearch.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuSearchSites_ItemClicked);
+            this.btnScheduleBTSearch.DropDownButtonWidth = 20;
+            this.btnScheduleBTSearch.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnScheduleBTSearch.Image = global::TVRename.Properties.Resources._1587498_32;
+            this.btnScheduleBTSearch.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.btnScheduleBTSearch.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnScheduleBTSearch.Name = "btnScheduleBTSearch";
+            this.btnScheduleBTSearch.Size = new System.Drawing.Size(132, 36);
+            this.btnScheduleBTSearch.Text = "BT Search";
+            this.btnScheduleBTSearch.ButtonClick += new System.EventHandler(this.bnWTWBTSearch_Click);
+            this.btnScheduleBTSearch.DropDownOpening += new System.EventHandler(this.BTSearch_DropDownOpening);
+            this.btnScheduleBTSearch.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuSearchSites_ItemClicked);
             // 
             // txtWhenToWatchSynopsis
             // 
@@ -1860,7 +1862,7 @@ namespace TVRename
         private ToolStripButton btnMyShowsCollapse;
         private ToolStrip tsWtW;
         private ToolStripButton btnWhenToWatchCheck;
-        private ToolStripSplitButton btnWTWBTSearch;
+        private ToolStripSplitButton btnScheduleBTSearch;
         private ToolStripButton btnFilterMyShows;
         private ToolStrip tsScanResults;
         private ToolStripSplitButton btnScan;

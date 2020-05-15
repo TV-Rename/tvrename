@@ -28,7 +28,7 @@ namespace TVRename.Forms
         public DupEpFinder(TVDoc doc, UI main)
         {
             InitializeComponent();
-            dupEps = Beta.FindDoubleEps(mDoc);
+            dupEps = Beta.FindDoubleEps(doc);
             mDoc = doc;
             mainUi = main;
             UpdateUI();

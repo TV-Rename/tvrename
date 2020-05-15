@@ -121,7 +121,7 @@ namespace TVRename
                 Logger.Info(e, "Error loading layout XML");
             }
 
-            lvwScheduleColumnSorter=new ListViewColumnSorter( new DateSorterWtw(0));
+            lvwScheduleColumnSorter=new ListViewColumnSorter( new DateSorterWtw(3));
             lvWhenToWatch.ListViewItemSorter = lvwScheduleColumnSorter;
 
             if (mDoc.Args.Hide || !showUi)
@@ -144,6 +144,7 @@ namespace TVRename
             mDoc.DoWhenToWatch(true,true,WindowState==FormWindowState.Minimized);
             UpdateSplashPercent(splash, 40);
             FillWhenToWatchList();
+            SortSchedule(3);
             UpdateSplashPercent(splash, 60);
             UpdateSplashStatus(splash, "Write Upcoming");
             mDoc.WriteUpcoming();
@@ -197,6 +198,9 @@ namespace TVRename
 
             SimpleDropSink currActionDropSink = (SimpleDropSink)olvAction.DropSink;
             currActionDropSink.FeedbackColor = Color.LightGray;
+
+            olvDate.DataType = typeof(DateTime);
+            olvAction.SortGroupItemsByPrimaryColumn = false;
         }
 
         private static object GroupFolderTitleDelegate(object rowObject)
@@ -533,9 +537,9 @@ namespace TVRename
             bool enabled = name.HasValue();
 
             btnActionBTSearch.Enabled = enabled;
-            btnWTWBTSearch.Enabled = enabled;
+            btnScheduleBTSearch.Enabled = enabled;
 
-            btnWTWBTSearch.Text = UseCustom(lvWhenToWatch) ? "Search" : name;
+            btnScheduleBTSearch.Text = UseCustom(lvWhenToWatch) ? "Search" : name;
             btnActionBTSearch.Text = UseCustomObject(olvAction) ? "Search" : name;
         }
 
@@ -767,6 +771,15 @@ namespace TVRename
                 ok = LoadWidths(widthXmlElement) && ok;
             }
 
+            string actionLayout = x.Descendants("Layout").Descendants("ActionLayout").First().Attribute("State")?.Value;
+            if (actionLayout.HasValue())
+            {
+                if (actionLayout != null)
+                {
+                    olvAction.RestoreState(Convert.FromBase64String(actionLayout));
+                }
+            }
+
             SetSplitter(x.Descendants("Layout").Descendants("Splitter").First());
 
             return ok;
@@ -875,6 +888,10 @@ namespace TVRename
                 writer.WriteAttributeToXml("HTMLCollapsed", splitContainer1.Panel2Collapsed);
                 writer.WriteEndElement(); // splitter
 
+                writer.WriteStartElement("ActionLayout");
+                writer.WriteAttributeToXml("State", Convert.ToBase64String(olvAction.SaveState()));
+                writer.WriteEndElement(); // ActionLayout
+                
                 writer.WriteEndElement(); // Layout
                 writer.WriteEndElement(); // tvrename
                 writer.WriteEndDocument();
@@ -970,7 +987,7 @@ namespace TVRename
             foreach (SearchEngine search in TVDoc.GetSearchers().Where(engine => engine.Name.HasValue()))
             {
                 ToolStripMenuItem tsi = new ToolStripMenuItem(search.Name);
-                tsi.Click += (sender, args) => SearchFor(search);
+                tsi.Tag = search;
                 tsi.Font = new Font(tsi.Font.FontFamily,9,FontStyle.Regular);
                 btn.DropDownItems.Add(tsi);
             }
@@ -1346,6 +1363,11 @@ namespace TVRename
         private void lvWhenToWatch_ColumnClick(object sender, [NotNull] ColumnClickEventArgs e)
         {
             int col = e.Column;
+            SortSchedule(col);
+        }
+
+        private void SortSchedule(int col)
+        {
             // 3 - 6 = do date sort on 3
             // 1 or 2 = number sort
             // all others, text sort
@@ -1362,17 +1384,21 @@ namespace TVRename
                     lvWhenToWatch.ShowGroups = true;
                     lvwScheduleColumnSorter.ListViewItemSorter = new DateSorterWtw(col);
                     break;
+
                 case 1:
                 case 2:
                     lvwScheduleColumnSorter.ListViewItemSorter = new NumberAsTextSorter(col);
                     break;
+
                 default:
                     lvwScheduleColumnSorter.ListViewItemSorter = new TextSorter(col);
                     break;
             }
 
+            lvWhenToWatch.BeginUpdate();
             lvWhenToWatch.Sort();
             lvWhenToWatch.Refresh();
+            lvWhenToWatch.EndUpdate();
         }
 
         private void lvWhenToWatch_Click(object sender, EventArgs e)
@@ -3063,6 +3089,7 @@ namespace TVRename
                 byte[] oldState = olvAction.SaveState();
                 List <Item> oldItems = olvAction.Items.OfType<OLVListItem>().Select(lvi => (Item)lvi.RowObject).ToList();
 
+                olvAction.BeginUpdate();
                 mDoc.TheActionList.NotifyUpdated();
                 olvAction.RebuildColumns();
 
@@ -3070,13 +3097,14 @@ namespace TVRename
                 //We have a new addition - check its checkbox
                 olvAction.CheckObjects(newItems.Where(newRow => !oldItems.Contains(newRow)));
                 olvAction.RestoreState(oldState);
+                olvAction.EndUpdate();
             }
             else
             {
                 mDoc.TheActionList.NotifyUpdated();
                 olvAction.RebuildColumns();
                 SetCheckboxes();
-                DefaultOlvView();
+                //DefaultOlvView();
             }
         }
 
@@ -3639,14 +3667,9 @@ namespace TVRename
             SetScan(TVSettings.ScanType.Quick);
         }
 
-        private void BtnActionBTSearch_DropDownOpening(object sender, EventArgs e)
+        private void BTSearch_DropDownOpening([NotNull] object sender, EventArgs e)
         {
-            ChooseSiteMenu(btnActionBTSearch);
-        }
-
-        private void ToolStripSplitButton1_DropDownOpening(object sender, EventArgs e)
-        {
-            ChooseSiteMenu(btnWTWBTSearch);
+            ChooseSiteMenu((ToolStripSplitButton)sender);
         }
 
         private void BtnSearch_ButtonClick(object sender, EventArgs e)
@@ -3921,7 +3944,12 @@ namespace TVRename
 
         private void DefaultOlvView()
         {
+            olvAction.BeginUpdate();
+            olvAction.ShowGroups=true;
+            olvAction.AlwaysGroupByColumn = null;
+            olvAction.Sort(olvType,SortOrder.Ascending);
             olvAction.BuildGroups(olvType,SortOrder.Ascending);
+            olvAction.EndUpdate();
         }
 
         private void OlvAction_Dropped(object sender, [NotNull] OlvDropEventArgs e)
