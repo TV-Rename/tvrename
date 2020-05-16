@@ -606,7 +606,7 @@ namespace TVRename
 
                 if (TVSettings.Instance.IgnorePreviouslySeen)
                 {
-                    if (TVSettings.Instance.PreviouslySeenEpisodes.Includes(item))
+                    if (TVSettings.Instance.PreviouslySeenEpisodes.Includes(item) && item is ItemMissing)
                     {
                         toRemove.Add(item);
                         numberPreviouslySeen++;
