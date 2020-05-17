@@ -986,8 +986,7 @@ namespace TVRename
 
             foreach (SearchEngine search in TVDoc.GetSearchers().Where(engine => engine.Name.HasValue()))
             {
-                ToolStripMenuItem tsi = new ToolStripMenuItem(search.Name);
-                tsi.Tag = search;
+                ToolStripMenuItem tsi = new ToolStripMenuItem(search.Name) {Tag = search};
                 tsi.Font = new Font(tsi.Font.FontFamily,9,FontStyle.Regular);
                 btn.DropDownItems.Add(tsi);
             }
@@ -1593,8 +1592,7 @@ namespace TVRename
             if (url.StartsWith(EXPLORE_PROXY, StringComparison.InvariantCultureIgnoreCase))
             {
                 e.Cancel = true;
-                string path = HttpUtility.UrlDecode(url.Substring(EXPLORE_PROXY.Length).Replace('/', '\\'));
-                Helpers.SysOpen("explorer", $"/select, \"{path}\"");
+                OpenFolder(HttpUtility.UrlDecode(url.Substring(EXPLORE_PROXY.Length)));
                 return;
             }
 
@@ -2321,10 +2319,11 @@ namespace TVRename
                 if (switchToWhenOpenMyShows != null && TVSettings.Instance.AutoSelectShowInMyShows)
                 {
                     GotoEpguideFor(switchToWhenOpenMyShows, false);
+                    switchToWhenOpenMyShows = null; //disable switching to this episode again
+                    FillEpGuideHtml();
                 }
 
-                switchToWhenOpenMyShows = null; //disable switching to this episode again
-                FillEpGuideHtml();
+                UpdateMyShowsButtonStatus();
             }
         }
 
@@ -2775,9 +2774,15 @@ namespace TVRename
         private void MyShowTree_AfterSelect(object sender, [NotNull] TreeViewEventArgs e)
         {
             FillEpGuideHtml(e.Node);
+            UpdateMyShowsButtonStatus();
+        }
+
+        private void UpdateMyShowsButtonStatus()
+        {
             bool showSelected = MyShowTree.SelectedNode != null;
             btnEditShow.Enabled = showSelected;
             btnRemoveShow.Enabled = showSelected;
+            tsbMyShowsContextMenu.Enabled = showSelected;
         }
 
         private void MyShowTree_MouseClick(object sender, [NotNull] MouseEventArgs e)
@@ -3163,20 +3168,23 @@ namespace TVRename
             if (action?.Episode != null && lvr.Count == 1)
             {
                 switchToWhenOpenMyShows = action.Episode;
-                GenerateActionRightClickMenu(e, pt, lvr, action.Episode.Show, action.Episode);
+                if (e.Button != MouseButtons.Right)
+                {
+                    return;
+                }
+                GenerateActionRightClickMenu(pt, lvr, action.Episode.Show, action.Episode);
             }
             else
             {
-                GenerateActionRightClickMenu(e, pt, lvr, null,null);
+                if (e.Button != MouseButtons.Right)
+                {
+                    return;
+                }
+                GenerateActionRightClickMenu(pt, lvr, null,null);
             }
         }
-        private void GenerateActionRightClickMenu([NotNull] MouseEventArgs e, Point pt, ItemList lvr, ShowItem si, ProcessedEpisode episode)
+        private void GenerateActionRightClickMenu(Point pt, [NotNull] ItemList lvr, ShowItem si, ProcessedEpisode episode)
         { 
-            if (e.Button != MouseButtons.Right)
-            {
-                return;
-            }
-
             if (lvr.Count == 0)
             {
                 return; // nothing selected
@@ -4008,6 +4016,70 @@ namespace TVRename
             ShowItem si = s?.Show;
             string html = si?.GetSeasonSummaryHtmlOverview(s, true);
             e.Result = html ?? string.Empty;
+        }
+
+        private void ToolStripButton1_Click(object sender, EventArgs e)
+        {
+            if (lvWhenToWatch.SelectedItems.Count == 0)
+            {
+                return;
+            }
+
+            ToolStripButton button = (ToolStripButton) sender;
+
+            Point pt = button.Owner.PointToScreen(button.Bounds.Location);
+            List<ProcessedEpisode> eis = new List<ProcessedEpisode>();
+
+            foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
+            {
+                eis.Add(lvi.Tag as ProcessedEpisode);
+            }
+
+            WtwRightClickOnShow(eis, pt );
+        }
+
+        private void TsbMyShowsContextMenu_Click(object sender, EventArgs e)
+        {
+            ToolStripButton button = (ToolStripButton)sender;
+            Point pt = button.Owner.PointToScreen(button.Bounds.Location);
+
+            TreeNode n = MyShowTree.SelectedNode;
+
+            if (n is null)
+            {
+                return;
+            }
+
+            ShowItem si = TreeNodeToShowItem(n);
+            ProcessedSeason seas = TreeNodeToSeason(n);
+
+            if (seas != null)
+            {
+                RightClickOnMyShows(seas, pt);
+            }
+            else if (si != null)
+            {
+                RightClickOnMyShows(si, pt);
+            }
+        }
+
+        private void TsbScanContextMenu_Click(object sender, EventArgs e)
+        {
+            ToolStripButton button = (ToolStripButton)sender;
+            Point pt = button.Owner.PointToScreen(button.Bounds.Location);
+
+            ItemList lvr = GetSelectedItems();
+
+            Item action = (Item)olvAction.FocusedObject;
+
+            if (action?.Episode != null && lvr.Count == 1)
+            {
+                GenerateActionRightClickMenu(pt, lvr, action.Episode.Show, action.Episode);
+            }
+            else
+            {
+                GenerateActionRightClickMenu(pt, lvr, null, null);
+            }
         }
     }
 }

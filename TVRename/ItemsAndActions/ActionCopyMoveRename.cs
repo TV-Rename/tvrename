@@ -46,7 +46,7 @@ namespace TVRename
         #region Action Members
 
         [NotNull]
-        public override string Name => IsMoveRename() ? "Move" : "Copy";
+        public override string Name => Operation==Op.rename? "Rename" :  IsMoveRename() ? "Move" : "Copy";
 
         public override string ProgressText => To.Name;
 

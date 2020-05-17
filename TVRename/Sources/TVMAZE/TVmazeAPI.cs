@@ -227,7 +227,13 @@ namespace TVRename.TVmaze
             string description = (string)json["summary"];
             JToken imageNode = json["image"];
             string imageUrl = imageNode.HasValues ? (string)imageNode["original"] : null; 
-            return new Season(id,number,name,description,url,imageUrl,seriesId);
+            return new Season(id,number,name,StripPTags(description),url,imageUrl,seriesId);
+        }
+
+        [NotNull]
+        private static string StripPTags([NotNull] string description)
+        {
+            return description.TrimStartString("<p>").TrimEnd("</p>");
         }
 
         [NotNull]

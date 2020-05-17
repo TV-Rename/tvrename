@@ -85,7 +85,7 @@ namespace TVRename
                      <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6><small class=""text-muted"">{episodeSummary} Episodes</small></div>
                     </div>
 		            <div class=""row"">
-<table>
+<table class=""w-100"">
                         <tr><td><p class=""lead"">{ser.Overview}</p></td><td class=""text-right align-text-top"">
 			         {CreateButton(imdbLink, "IMDB.com", "View on IMDB")}
 			         {CreateButton(ser.OfficialUrl, "Official Site", "View on Official Site")}
@@ -112,33 +112,31 @@ namespace TVRename
 
         static void AppendSeasonShowSummary([NotNull] this StringBuilder sb, DirFilesCache dfc, [NotNull] ShowItem si, [NotNull] ProcessedSeason s, bool includeDirectoryLinks)
         {
-            string seasonLink = TheTVDB.API.WebsiteSeasonUrl(s);
-            string explorerButton;
+            string explorerButton = string.Empty;
             if (includeDirectoryLinks)
             {
                 string urlFilename = Uri.EscapeDataString(si.GetBestFolderLocationToOpen(s));
                 explorerButton = CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}",
                     "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
             }
-            else
-            {
-                explorerButton = string.Empty;
-            }
 
             string tableRows = si.SeasonEpisodes[s.SeasonNumber].Select(episode => SeasonSummaryTableRow(episode, includeDirectoryLinks, dfc)).Concat();
 
-            string tvdbButton = CreateButton(seasonLink, "TVDB.com", "View on TVDB");
+            string tvdbSLug = si.TheSeries()?.Slug;
+            string tvdbLink = !tvdbSLug.HasValue() ? string.Empty : TheTVDB.API.WebsiteSeasonUrl(s);
+            string tvdbButton = CreateButton(tvdbLink, "TVDB.com", "View on TVDB");
+            string tvMazeButton = CreateButton(s.WebsiteUrl, "TVmaze.com", "View on TV Maze");
             string episodeText = s.Episodes.Count > 0 ? $"<br/><small class=\"text-muted\">{s.Episodes.Count} Episodes</small>" : string.Empty;
 
             string seasonOverViewHtml = si.TheSeries()?.Season(s.SeasonNumber)?.SeasonName.HasValue() ?? false
-                ? $"<h2>{si.TheSeries()?.Season(s.SeasonNumber)?.SeasonName}</h3><p>{si.TheSeries()?.Season(s.SeasonNumber)?.SeasonDescription}</p>"
-                : string.Empty;
+                ? $"<h4>{SeasonName(si, s.SeasonNumber)} - {si.TheSeries()?.Season(s.SeasonNumber)?.SeasonName}</h4>{si.TheSeries()?.Season(s.SeasonNumber)?.SeasonDescription}"
+                : SeasonName(si, s.SeasonNumber);
 
             sb.AppendLine($@"     <tr class=""table-secondary"">
-      <td scope=""row"" colspan=""4""><A HREF=""{seasonLink}"">{SeasonName(si, s.SeasonNumber)}{seasonOverViewHtml}{episodeText}</a></td>
+      <td scope=""row"" colspan=""4"">{seasonOverViewHtml}{episodeText}</td>
       <td class=""text-right"">{explorerButton}
-                        {tvdbButton}
-                        </td>
+            {tvdbButton}
+            {tvMazeButton}</td>
     </tr>
 {tableRows}");
 
@@ -454,24 +452,21 @@ namespace TVRename
                 return;
             }
 
-            string seasonLink = TheTVDB.API.WebsiteSeasonUrl(s);
-            string showLink = TheTVDB.API.WebsiteShowUrl(si);
-
-            string explorerButton;
+            string explorerButton = string.Empty;
             if (includeDirectoryLinks)
             {
                 string urlFilename = Uri.EscapeDataString(si.GetBestFolderLocationToOpen(s));
                 explorerButton = CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}",
                     "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
             }
-            else
-            {
-                explorerButton = string.Empty;
-            }
 
             string tablerows = si.SeasonEpisodes[s.SeasonNumber].ToList().Select(episode => SeasonSummaryTableRow(episode,includeDirectoryLinks,dfc)).Concat();
 
-            string tvdbButton = CreateButton(seasonLink, "TVDB.com", "View on TVDB");
+            string tvdbSLug = si.TheSeries()?.Slug;
+            string tvdbLink = !tvdbSLug.HasValue() ? string.Empty : TheTVDB.API.WebsiteSeasonUrl(s);
+            string tvdbButton = CreateButton(tvdbLink, "TVDB.com", "View on TVDB");
+            string tvMazeButton = CreateButton(s.WebsiteUrl, "TVmaze.com", "View on TV Maze");
+
             string episodeText = s.Episodes.Count > 0 ? $"<br/><small class=\"text-muted\">{s.Episodes.Count} Episodes</small>" : string.Empty;
 
             string seasonOverViewHtml = si.TheSeries()?.Season(s.SeasonNumber)?.SeasonName.HasValue() ?? false
@@ -481,12 +476,13 @@ namespace TVRename
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
 <div class=""row"">
 
-                    <div class=""col-8""><h1><A HREF=""{showLink}"">{si.ShowName}</A> - <A HREF=""{seasonLink}"">{SeasonName(si, s.SeasonNumber)}</a></h1>
+                    <div class=""col-8""><h1>{si.ShowName} - {SeasonName(si, s.SeasonNumber)}</h1>
                     {seasonOverViewHtml}
                     </div>
                     <div class=""col-4 text-right"">
                         {explorerButton}
                         {tvdbButton}
+                        {tvMazeButton}
                         {episodeText}
                     </div>
                 </div>
@@ -498,7 +494,7 @@ namespace TVRename
       <th scope=""col"">Date</th>
       <th scope=""col"">Name</th>
       <th scope=""col"">Status</th>
-      <th scope=""col"">Action</th>
+      <th class=""text-right"" scope=""col"">Action</th>
     </tr>
   </thead>
   <tbody>
@@ -676,7 +672,7 @@ namespace TVRename
                 return string.Empty;
             }
 
-            return $"<a href=\"{link}\" class=\"btn btn-outline-secondary\" role=\"button\" aria-disabled=\"true\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"{tooltip}\">{text}</i></a>";
+            return $"<a href=\"{link}\" class=\"btn btn-outline-secondary\" role=\"button\" aria-disabled=\"true\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"{tooltip}\">{text}</a>";
         }
 
         [NotNull]

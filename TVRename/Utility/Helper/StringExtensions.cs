@@ -130,12 +130,31 @@ namespace TVRename
         [NotNull]
         public static string TrimEnd([NotNull] this string root, [NotNull] string ending)
         {
+            if (!root.HasValue())
+            {
+                return root;
+            }
             if (!root.EndsWith(ending, StringComparison.OrdinalIgnoreCase))
             {
                 return root;
             }
 
             return root.RemoveLast(ending.Length);
+        }
+
+        [NotNull]
+        public static string TrimStartString([NotNull] this string root, [NotNull] string startString)
+        {
+            if (!root.HasValue())
+            {
+                return root;
+            }
+            if (!root.StartsWith(startString, StringComparison.OrdinalIgnoreCase))
+            {
+                return root;
+            }
+
+            return root.RemoveFirst(startString.Length);
         }
 
         [NotNull]
