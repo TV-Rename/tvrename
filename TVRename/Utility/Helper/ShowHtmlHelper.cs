@@ -125,7 +125,7 @@ namespace TVRename
             string tvdbSLug = si.TheSeries()?.Slug;
             string tvdbLink = !tvdbSLug.HasValue() ? string.Empty : TheTVDB.API.WebsiteSeasonUrl(s);
             string tvdbButton = CreateButton(tvdbLink, "TVDB.com", "View on TVDB");
-            string tvMazeButton = CreateButton(s.WebsiteUrl, "TVmaze.com", "View on TV Maze");
+            string tvMazeButton = CreateButton(s.Show.Provider!=ShowItem.ProviderType.TVmaze?string.Empty: s.WebsiteUrl, "TVmaze.com", "View on TV Maze");
             string episodeText = s.Episodes.Count > 0 ? $"<br/><small class=\"text-muted\">{s.Episodes.Count} Episodes</small>" : string.Empty;
 
             string seasonOverViewHtml = si.TheSeries()?.Season(s.SeasonNumber)?.SeasonName.HasValue() ?? false
@@ -465,7 +465,7 @@ namespace TVRename
             string tvdbSLug = si.TheSeries()?.Slug;
             string tvdbLink = !tvdbSLug.HasValue() ? string.Empty : TheTVDB.API.WebsiteSeasonUrl(s);
             string tvdbButton = CreateButton(tvdbLink, "TVDB.com", "View on TVDB");
-            string tvMazeButton = CreateButton(s.WebsiteUrl, "TVmaze.com", "View on TV Maze");
+            string tvMazeButton = CreateButton(s.Show.Provider != ShowItem.ProviderType.TVmaze ? string.Empty : s.WebsiteUrl, "TVmaze.com", "View on TV Maze");
 
             string episodeText = s.Episodes.Count > 0 ? $"<br/><small class=\"text-muted\">{s.Episodes.Count} Episodes</small>" : string.Empty;
 
