@@ -166,7 +166,7 @@ namespace TVRename
             return ActionOutcome.Success();
         }
 
-        private void UpdateEpisodeFields([NotNull] Episode episode,[CanBeNull] ShowItem show, [NotNull] XElement root, bool isMultiPart)
+        private static void UpdateEpisodeFields([NotNull] Episode episode,[CanBeNull] ShowItem show, [NotNull] XElement root, bool isMultiPart)
         {
             root.UpdateElement("title", episode.Name,true);
             root.UpdateElement("id", episode.EpisodeId, true);

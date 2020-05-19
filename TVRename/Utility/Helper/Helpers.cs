@@ -40,7 +40,7 @@ namespace TVRename
         {
             if (items == null)
             {
-                throw new ArgumentNullException("items");
+                throw new ArgumentNullException(nameof(items));
             }
 
             return items.Contains(item);

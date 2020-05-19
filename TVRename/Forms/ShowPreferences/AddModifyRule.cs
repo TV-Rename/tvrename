@@ -214,7 +214,7 @@ namespace TVRename
             }
         }
 
-        private void ValidationCheck(bool ruleCheck, bool check, string message, Control source)
+        private static void ValidationCheck(bool ruleCheck, bool check, string message, Control source)
         {
             if (!(ruleCheck&& check))
             {

@@ -1375,12 +1375,12 @@ namespace TVRename
                 ShowNetwork = xmlSettings.Descendants("ShowFilters").Descendants("ShowNetworkFilter").Attributes("ShowNetwork")
                     .FirstOrDefault()?.Value,
 
-                ShowStatusInclude = ((bool?) xmlSettings.Descendants("ShowFilters").Descendants("ShowStatusFilter").Attributes("ShowStatusInclude")
-                    .FirstOrDefault()) ?? true,
-                ShowRatingInclude = ((bool?)xmlSettings.Descendants("ShowFilters").Descendants("ShowRatingFilter").Attributes("ShowRatingInclude")
-                    .FirstOrDefault()) ?? true,
-                ShowNetworkInclude = ((bool?)xmlSettings.Descendants("ShowFilters").Descendants("ShowNetworkFilter").Attributes("ShowNetworkInclude")
-                    .FirstOrDefault()) ?? true
+                ShowStatusInclude = (bool?) xmlSettings.Descendants("ShowFilters").Descendants("ShowStatusFilter").Attributes("ShowStatusInclude")
+                                        .FirstOrDefault() ?? true,
+                ShowRatingInclude = (bool?)xmlSettings.Descendants("ShowFilters").Descendants("ShowRatingFilter").Attributes("ShowRatingInclude")
+                                        .FirstOrDefault() ?? true,
+                ShowNetworkInclude = (bool?)xmlSettings.Descendants("ShowFilters").Descendants("ShowNetworkFilter").Attributes("ShowNetworkInclude")
+                                         .FirstOrDefault() ?? true
             };
 
             foreach (XAttribute rep in xmlSettings.Descendants("ShowFilters").Descendants("GenreFilter").Attributes("Genre"))

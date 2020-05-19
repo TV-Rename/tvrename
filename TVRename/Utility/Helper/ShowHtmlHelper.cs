@@ -110,7 +110,7 @@ namespace TVRename
                 </div>");
         }
 
-        static void AppendSeasonShowSummary([NotNull] this StringBuilder sb, DirFilesCache dfc, [NotNull] ShowItem si, [NotNull] ProcessedSeason s, bool includeDirectoryLinks)
+        private static void AppendSeasonShowSummary([NotNull] this StringBuilder sb, DirFilesCache dfc, [NotNull] ShowItem si, [NotNull] ProcessedSeason s, bool includeDirectoryLinks)
         {
             string explorerButton = string.Empty;
             if (includeDirectoryLinks)

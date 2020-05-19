@@ -30,7 +30,7 @@ namespace TVRename
                 LOGGER.Info("Searching RSS Feeds is cancelled as this is an unattended scan");
                 return;
             }
-            int c = ActionList.Missing.Count() + 2;
+            int c = ActionList.Missing.Count + 2;
             int n = 1;
             UpdateStatus(n, c, "Searching on RSS Feed...");
 

@@ -44,7 +44,7 @@ namespace TVRename
 
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
-            int c = ActionList.Missing.Count() + 1;
+            int c = ActionList.Missing.Count + 1;
             int n = 0;
 
             foreach (ItemMissing action in ActionList.Missing.ToList())

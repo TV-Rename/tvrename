@@ -25,7 +25,7 @@ namespace TVRename
             DirFilesCache dfc = new DirFilesCache();
 
             int currentItem = 0;
-            int totalN = ActionList.Missing.Count() + 1;
+            int totalN = ActionList.Missing.Count + 1;
             UpdateStatus(currentItem, totalN, "Starting searching through library looking for files");
 
             LOGGER.Info("Starting to look for missing items in the library");

@@ -128,7 +128,7 @@ namespace TVRename
             }
 
             Logger.Info("**********************");
-            Logger.Info($"Doing Selected Actions.... ({theList.Count} items detected, {theList.Actions.Count()} actions to be completed )");
+            Logger.Info($"Doing Selected Actions.... ({theList.Count} items detected, {theList.Actions.Count} actions to be completed )");
 
             // Run tasks in parallel (as much as is sensible)
 

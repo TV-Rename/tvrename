@@ -100,7 +100,7 @@ namespace TVRename.TVmaze
                 }
             }
 
-            Say($"Downloading {s.Name} from TVmaze");
+            Say($"{s.Name} from TVmaze");
             try
             {
                 SeriesInfo downloadedSi = API.GetSeriesDetails(s);
