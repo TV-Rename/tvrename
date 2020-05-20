@@ -81,7 +81,7 @@ namespace TVRename
 	             {horizontalBanner}
                 </div>
                     <div class=""row"">
-                     <div class=""col-md-8""><h1>{ser.Name}</h1><small class=""text-muted"">{ser.ShowLanguage} - {ser.Type}</small></div>
+                     <div class=""col-md-8""><h1>{si.ShowName}</h1><small class=""text-muted"">{ser.ShowLanguage} - {ser.Type}</small></div>
                      <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6><small class=""text-muted"">{episodeSummary} Episodes</small></div>
                     </div>
 		            <div class=""row"">
@@ -186,7 +186,7 @@ namespace TVRename
                    </div>
                    <div class=""col-md-8 d-flex flex-column"">
                     <div class=""row"">
-                     <div class=""col-md-8""><h1>{ser.Name}</h1><small class=""text-muted"">{ser.ShowLanguage} - {ser.Type}</small></div>
+                     <div class=""col-md-8""><h1>{si.ShowName}</h1><small class=""text-muted"">{ser.ShowLanguage} - {ser.Type}</small></div>
                      <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6><small class=""text-muted"">{episodeSummary} Episodes{runTimeHtml}</small></div>
                     </div>
                     <div><p class=""lead"">{ser.Overview}</p></div>
@@ -325,7 +325,7 @@ namespace TVRename
             }
             if (url.HasValue() && url.IsWebLink())
             {
-                return $"<img class=\"show-poster rounded w-100\" src=\"{url}\" alt=\"{si.TheSeries()?.Name} Show Poster\">";
+                return $"<img class=\"show-poster rounded w-100\" src=\"{url}\" alt=\"{si.ShowName} Show Poster\">";
             }
 
             return string.Empty;
