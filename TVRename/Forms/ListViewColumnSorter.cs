@@ -9,30 +9,15 @@ namespace TVRename
     public class ListViewColumnSorter : IComparer
     {
         /// <summary>
-        /// Specifies the column to be sorted
-        /// </summary>
-        private int columnToSort;
-
-        /// <summary>
-        /// Specifies the order in which to sort (i.e. 'Ascending').
-        /// </summary>
-        private SortOrder orderOfSort;
-
-        /// <summary>
-        /// Case insensitive comparer object
-        /// </summary>
-        private ListViewItemSorter sorter;
-
-        /// <summary>
         /// Class constructor.  Initializes various elements
         /// </summary>
         public ListViewColumnSorter(ListViewItemSorter s)
         {
             // Initialize the column to '0'
-            columnToSort = 0;
+            SortColumn = 0;
 
             // Initialize the sort order to 'none'
-            orderOfSort = SortOrder.None;
+            Order = SortOrder.None;
 
             // Initialize the CaseInsensitiveComparer object
             ListViewItemSorter = s;
@@ -53,7 +38,7 @@ namespace TVRename
             // Compare the two items
             int compareResult = ListViewItemSorter.Compare(listviewX,listviewY);
 
-            switch (orderOfSort)
+            switch (Order)
             {
                 // Calculate correct return value based on object comparison
                 case SortOrder.Ascending:
@@ -74,29 +59,17 @@ namespace TVRename
         /// <summary>
         /// Gets or sets the number of the column to which to apply the sorting operation (Defaults to '0').
         /// </summary>
-        public int SortColumn
-        {
-            set { columnToSort = value; }
-            get { return columnToSort; }
-        }
+        public int SortColumn { set; get; }
 
         /// <summary>
         /// Gets or sets the order of sorting to apply (for example, 'Ascending' or 'Descending').
         /// </summary>
-        public SortOrder Order
-        {
-            set { orderOfSort = value; }
-            get { return orderOfSort; }
-        }
+        public SortOrder Order { set; get; }
 
         /// <summary>
         /// Case insensitive comparer object
         /// </summary>
-        public ListViewItemSorter ListViewItemSorter
-        {
-            get { return sorter; }
-            set { sorter = value; }
-        }
+        public ListViewItemSorter ListViewItemSorter { get; set; }
 
         public void ClickedOn(int col)
         {

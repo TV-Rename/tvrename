@@ -30,7 +30,7 @@ namespace TVRename.Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DupEpFinder));
-            this.lvDuplicates = new MyListView();
+            this.lvDuplicates = new ListViewFlickerFree();
             this.show = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.season = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.episodes = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -228,7 +228,7 @@ namespace TVRename.Forms
 
         #endregion
 
-        private MyListView lvDuplicates;
+        private ListViewFlickerFree lvDuplicates;
         private System.Windows.Forms.CheckBox chkAirDateTest;
         private System.Windows.Forms.CheckBox chkNameTest;
         private System.Windows.Forms.CheckBox chkMIssingTest;

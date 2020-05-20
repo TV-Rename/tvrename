@@ -259,6 +259,7 @@ namespace TVRename
             s.KeepTogether = cbKeepTogether.Checked;
             s.LeadingZeroOnSeason = cbLeadingZero.Checked;
             s.ShowInTaskbar = chkShowInTaskbar.Checked;
+            s.ShowAccessibilityOptions = chkShowAccessibilityOptions.Checked;
             s.RenameTxtToSub = cbTxtToSub.Checked;
             s.ShowEpisodePictures = cbShowEpisodePictures.Checked;
             s.ReplaceWithBetterQuality = cbHigherQuality.Checked;
@@ -775,6 +776,7 @@ namespace TVRename
 
             cbKeepTogether.Checked = s.KeepTogether;
             cbLeadingZero.Checked = s.LeadingZeroOnSeason;
+            chkShowAccessibilityOptions.Checked = s.ShowAccessibilityOptions;
             chkShowInTaskbar.Checked = s.ShowInTaskbar;
             cbTxtToSub.Checked = s.RenameTxtToSub;
             cbShowEpisodePictures.Checked = s.ShowEpisodePictures;
@@ -1816,6 +1818,11 @@ namespace TVRename
         private void CbDefShowUseDefLocation_CheckedChanged(object sender, EventArgs e)
         {
             cmbDefShowLocation.Enabled = cbDefShowUseDefLocation.Checked;
+        }
+
+        private void ChkMoveLibraryFiles_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

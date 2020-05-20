@@ -261,6 +261,7 @@ namespace TVRename
         public bool HideWtWSpoilers = false;
         public bool HideMyShowsSpoilers = false;
         public bool ShowInTaskbar = true;
+        public bool ShowAccessibilityOptions = false;
         public bool AutoSearchForDownloadedFiles = false;
         public string SpecialsFolderName = "Specials";
         public string SeasonFolderFormat = CustomSeasonName.DefaultStyle();
@@ -434,6 +435,7 @@ namespace TVRename
             writer.WriteElement("KeepTogetherExtensions", keepTogetherExtensionsString);
             writer.WriteElement("LeadingZeroOnSeason", LeadingZeroOnSeason);
             writer.WriteElement("ShowInTaskbar", ShowInTaskbar);
+            writer.WriteElement("ShowAccessibilityOptions",ShowAccessibilityOptions);
             writer.WriteElement("IgnoreSamples", IgnoreSamples);
             writer.WriteElement("ForceLowercaseFilenames", ForceLowercaseFilenames);
             writer.WriteElement("RenameTxtToSub", RenameTxtToSub);
@@ -1209,6 +1211,7 @@ namespace TVRename
             ExportRSSDaysPast = xmlSettings.ExtractInt("ExportRSSDaysPast",0);
             KeepTogether = xmlSettings.ExtractBool("KeepTogether",true);
             LeadingZeroOnSeason = xmlSettings.ExtractBool("LeadingZeroOnSeason",false);
+            ShowAccessibilityOptions = xmlSettings.ExtractBool("ShowAccessibilityOptions", false);
             ShowInTaskbar = xmlSettings.ExtractBool("ShowInTaskbar",true);
             RenameTxtToSub = xmlSettings.ExtractBool("RenameTxtToSub",false);
             ShowEpisodePictures = xmlSettings.ExtractBool("ShowEpisodePictures",true);

@@ -625,6 +625,7 @@ namespace TVRename
             NativeMethods.SendMessage(filterTextBox.Handle, 0xd3, (IntPtr) 2, (IntPtr) (filterButton.Width << 16));
 
             betaToolsToolStripMenuItem.Visible = TVSettings.Instance.IncludeBetaUpdates();
+            EnableDisableAccessibilty();
 
             Show();
             UI_LocationChanged(null, null);
@@ -646,6 +647,16 @@ namespace TVRename
             {
                 RunAutoScan("Startup Scan");
             }
+        }
+
+        private void EnableDisableAccessibilty()
+        {
+            tsbMyShowsContextMenu.Visible = TVSettings.Instance.ShowAccessibilityOptions;
+            tsbScanContextMenu.Visible = TVSettings.Instance.ShowAccessibilityOptions;
+            btnScheduleRightClick.Visible = TVSettings.Instance.ShowAccessibilityOptions;
+            toolStripSeparator12.Visible = TVSettings.Instance.ShowAccessibilityOptions;
+            toolStripSeparator13.Visible = TVSettings.Instance.ShowAccessibilityOptions;
+            toolStripSeparator14.Visible = TVSettings.Instance.ShowAccessibilityOptions;
         }
 
         // MAH: Added in support of the Filter TextBox Button
@@ -2109,6 +2120,7 @@ namespace TVRename
                 ShowHideNotificationIcon();
                 FillWhenToWatchList();
                 ShowInTaskbar = TVSettings.Instance.ShowInTaskbar;
+                EnableDisableAccessibilty();
                 FillEpGuideHtml();
                 mAutoFolderMonitor.SettingsChanged(TVSettings.Instance.MonitorFolders);
                 betaToolsToolStripMenuItem.Visible = TVSettings.Instance.IncludeBetaUpdates();
