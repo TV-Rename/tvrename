@@ -1291,7 +1291,14 @@ namespace TVRename
         {
             if (si != null)
             {
-                Helpers.SysOpen(si.WebsiteUrl);
+                if (si.WebsiteUrl.HasValue())
+                {
+                    Helpers.SysOpen(si.WebsiteUrl);
+                }
+                else if (si.TheSeries()?.WebUrl.HasValue()??false)
+                {
+                    Helpers.SysOpen(si.TheSeries()?.WebUrl);
+                }
             }
         }
 

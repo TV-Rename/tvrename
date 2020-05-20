@@ -512,22 +512,19 @@ namespace TVRename
                 return;
             }
 
-            string seasonLink = TheTVDB.API.WebsiteSeasonUrl(s);
-            string showLink = TheTVDB.API.WebsiteShowUrl(si);
-
-            string explorerButton;
+            string explorerButton = string.Empty;
             if (includeDirectoryLinks)
             {
                 string urlFilename = Uri.EscapeDataString(si.GetBestFolderLocationToOpen(s));
                 explorerButton = CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}",
                     "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
             }
-            else
-            {
-                explorerButton = string.Empty;
-            }
-            
-            string tvdbButton = CreateButton(seasonLink, "TVDB.com", "View on TVDB");
+
+            string tvdbSLug = si.TheSeries()?.Slug;
+            string tvdbLink = !tvdbSLug.HasValue() ? string.Empty : TheTVDB.API.WebsiteSeasonUrl(s);
+            string tvdbButton = CreateButton(tvdbLink, "TVDB.com", "View on TVDB");
+            string tvMazeButton = CreateButton(s.Show.Provider != ShowItem.ProviderType.TVmaze ? string.Empty : s.WebsiteUrl, "TVmaze.com", "View on TV Maze");
+
             string episodeText = s.Episodes.Count >0 ? $"<br/><small class=\"text-muted\">{s.Episodes.Count} Episodes</small>" :string.Empty;
 
             string seasonOverViewHtml = si.TheSeries()?.Season(s.SeasonNumber)?.SeasonName.HasValue() ??false
@@ -538,12 +535,13 @@ namespace TVRename
 				{s.CreateHorizontalBannerHtml()}
 				<br/>
                 <div class=""row"">
-                    <div class=""col-8""><h1><A HREF=""{showLink}"">{si.ShowName}</A> - <A HREF=""{seasonLink}"">{SeasonName(si, s.SeasonNumber)}</a></h1>
+                    <div class=""col-8""><h1>{si.ShowName} - {SeasonName(si, s.SeasonNumber)}</h1>
                     {seasonOverViewHtml}
                     </div>
                     <div class=""col-4 text-right"">
                         {explorerButton}
                         {tvdbButton}
+                        {tvMazeButton}
                         {episodeText}
                     </div>
                 </div>
@@ -750,23 +748,7 @@ namespace TVRename
         public static string GetSeasonImagesHtmlOverview([NotNull] this ShowItem si, [NotNull] ProcessedSeason s)
         {
             int snum = s.SeasonNumber;
-            string body = string.Empty;
-
-            List<ProcessedEpisode> eis =si.SeasonEpisodes[snum];
-
-            string seasText = ProcessedSeason.UIFullSeasonWord(snum);
-
-            if (eis.Count > 0 && eis[0].SeasonId > 0)
-            {
-                seasText = " - <A HREF=\"" + TheTVDB.API.WebsiteSeasonUrl(s) + "\">" + seasText + "</a>";
-            }
-            else
-            {
-                seasText = " - " + seasText;
-            }
-
-            body += "<h1><A HREF=\"" + TheTVDB.API.WebsiteShowUrl(si) + "\">" + si.ShowName +
-                    "</A>" + seasText + "</h1>";
+            string body = $"<h1>{si.ShowName} - {ProcessedSeason.UIFullSeasonWord(snum)}</h1>";
 
             if (TVSettings.Instance.NeedToDownloadBannerFile())
             {
