@@ -105,7 +105,6 @@ namespace TVRename
             this.Name = "DownloadProgress";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Download Progress";
-            this.TopMost = true;
             this.Load += new System.EventHandler(this.DownloadProgress_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

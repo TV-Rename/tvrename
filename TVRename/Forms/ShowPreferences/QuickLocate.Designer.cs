@@ -109,7 +109,6 @@ namespace TVRename.Forms.ShowPreferences
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Quick Locate";
-            this.TopMost = true;
             this.ResumeLayout(false);
             this.PerformLayout();
 

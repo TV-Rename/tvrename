@@ -1667,7 +1667,7 @@ namespace TVRename
         private void buyMeADrinkToolStripMenuItem_Click(object sender, EventArgs e)
         {
             BuyMeADrink bmad = new BuyMeADrink();
-            bmad.ShowDialog();
+            bmad.ShowDialog(this);
         }
 
         public void GotoEpguideFor(ShowItem si, bool changeTab)
@@ -2004,7 +2004,7 @@ namespace TVRename
                                   .Replace(".", "*.") +
                               "|All Files (*.*)|*.*";
 
-            if (openFile.ShowDialog() != DialogResult.OK)
+            if (openFile.ShowDialog(this) != DialogResult.OK)
             {
                 return;
             }
@@ -2121,7 +2121,7 @@ namespace TVRename
             mDoc.PreventAutoScan("Preferences are open");
 
             Preferences pref = new Preferences(mDoc, scanOptions,CurrentlySelectedSeason());
-            if (pref.ShowDialog() == DialogResult.OK)
+            if (pref.ShowDialog(this) == DialogResult.OK)
             {
                 mDoc.SetDirty();
                 ShowHideNotificationIcon();
@@ -2349,7 +2349,7 @@ namespace TVRename
         private void bugReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
             BugReport br = new BugReport(mDoc);
-            br.ShowDialog();
+            br.ShowDialog(this);
         }
 
         private void ShowHideNotificationIcon()
@@ -2360,7 +2360,7 @@ namespace TVRename
         private void statisticsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             StatsWindow sw = new StatsWindow(mDoc.Stats());
-            sw.ShowDialog();
+            sw.ShowDialog(this);
         }
 
         [NotNull]
@@ -2607,7 +2607,7 @@ namespace TVRename
             ShowItem si = new ShowItem();
 
             AddEditShow aes = new AddEditShow(si,mDoc);
-            DialogResult dr = aes.ShowDialog();
+            DialogResult dr = aes.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
                 mDoc.Library.Add(si);
@@ -2716,7 +2716,7 @@ namespace TVRename
             mDoc.PreventAutoScan("Edit Season");
 
             EditSeason er = new EditSeason(si, seasnum, TVSettings.Instance.NamingStyle);
-            DialogResult dr = er.ShowDialog();
+            DialogResult dr = er.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
                 ShowAddedOrEdited(false, false);
@@ -2736,7 +2736,7 @@ namespace TVRename
 
             AddEditShow aes = new AddEditShow(si,mDoc);
 
-            DialogResult dr = aes.ShowDialog();
+            DialogResult dr = aes.ShowDialog(this);
 
             if (dr == DialogResult.OK)
             {
@@ -2905,7 +2905,7 @@ namespace TVRename
         {
             CustomEpisodeName cn = new CustomEpisodeName(TVSettings.Instance.NamingStyle.StyleString);
             CustomNameDesigner cne = new CustomNameDesigner(CurrentlySelectedPel(), cn);
-            DialogResult dr = cne.ShowDialog();
+            DialogResult dr = cne.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
                 TVSettings.Instance.NamingStyle = cn;
@@ -2920,7 +2920,7 @@ namespace TVRename
             AddEditSearchEngine aese = new AddEditSearchEngine(TVDoc.GetSearchers(),
                 pel != null && pel.Count > 0 ? pel[0] : null);
 
-            DialogResult dr = aese.ShowDialog();
+            DialogResult dr = aese.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
                 mDoc.SetDirty();
@@ -2940,7 +2940,7 @@ namespace TVRename
 
             AddEditSeasEpFinders d = new AddEditSeasEpFinders(TVSettings.Instance.FNPRegexs, mDoc.Library.GetSortedShowItems(), currentShow, theFolder);
 
-            DialogResult dr = d.ShowDialog();
+            DialogResult dr = d.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
                 mDoc.SetDirty();
@@ -2972,7 +2972,7 @@ namespace TVRename
 
         private void actorsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new ActorsGrid(mDoc).ShowDialog();
+            new ActorsGrid(mDoc).ShowDialog(this);
         }
 
         private void quickTimer_Tick(object sender, EventArgs e)
@@ -3172,7 +3172,7 @@ namespace TVRename
         {
             BulkAddManager bam = new BulkAddManager(mDoc);
             FolderMonitor fm = new FolderMonitor(mDoc, bam);
-            fm.ShowDialog();
+            fm.ShowDialog(this);
             FillMyShows();
         }
 
@@ -3414,7 +3414,7 @@ namespace TVRename
         private void ignoreListToolStripMenuItem_Click(object sender, EventArgs e)
         {
             IgnoreEdit ie = new IgnoreEdit(mDoc,string.Empty);
-            ie.ShowDialog();
+            ie.ShowDialog(this);
         }
 
         private async void showSummaryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3432,7 +3432,7 @@ namespace TVRename
         private void btnFilter_Click(object sender, EventArgs e)
         {
             Filters filters = new Filters(mDoc);
-            DialogResult res = filters.ShowDialog();
+            DialogResult res = filters.ShowDialog(this);
             if (res == DialogResult.OK)
             {
                 FillMyShows();
@@ -3491,7 +3491,7 @@ namespace TVRename
             }
 
             UpdateNotification unForm = new UpdateNotification(update);
-            unForm.ShowDialog();
+            unForm.ShowDialog(this);
             if (unForm.DialogResult == DialogResult.Abort)
             {
                 Logger.Info("Downloading New Release and Quiting");
@@ -3504,7 +3504,7 @@ namespace TVRename
         private void duplicateFinderLOGToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DupEpFinder form = new DupEpFinder( mDoc, this);
-            form.ShowDialog();
+            form.ShowDialog(this);
         }
 
         private async void btnUpdateAvailable_Click(object sender, EventArgs e)
@@ -3623,7 +3623,7 @@ namespace TVRename
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             LicenceInfoForm form = new LicenceInfoForm();
-            form.ShowDialog();
+            form.ShowDialog(this);
         }
 
         private void QuickRenameToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3785,7 +3785,7 @@ namespace TVRename
         private void ThanksToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ThanksForm form = new ThanksForm();
-            form.ShowDialog();
+            form.ShowDialog(this);
         }
 
         private void TabControl1_DrawItem(object sender, [NotNull] DrawItemEventArgs e)

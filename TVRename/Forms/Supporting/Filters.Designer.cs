@@ -246,7 +246,6 @@ namespace TVRename.Forms
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select Filters...";
-            this.TopMost = true;
             this.ResumeLayout(false);
             this.PerformLayout();
 

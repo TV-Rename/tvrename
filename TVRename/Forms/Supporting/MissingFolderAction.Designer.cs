@@ -197,7 +197,6 @@ namespace TVRename
             this.Name = "MissingFolderAction";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Missing Folder";
-            this.TopMost = true;
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MissingFolderAction_DragDrop);
             this.DragOver += new System.Windows.Forms.DragEventHandler(this.MissingFolderAction_DragOver);
             this.ResumeLayout(false);

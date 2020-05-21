@@ -1,4 +1,4 @@
-﻿namespace TVRename.Forms.ShowPreferences
+namespace TVRename.Forms.ShowPreferences
 {
     partial class NewSeenEpisode
     {
@@ -91,7 +91,6 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "New Seen Episode";
-            this.TopMost = true;
             this.ResumeLayout(false);
             this.PerformLayout();
 
