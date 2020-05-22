@@ -75,6 +75,7 @@ namespace TVRename
             {
                 tableRows.AppendSeasonShowSummary(dfc, si, season.Value, includeDirectoryLinks);
             }
+            string table = CreateEpisodeTableHeader(tableRows.ToString());
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                 <div class=""text-center"">
@@ -91,22 +92,7 @@ namespace TVRename
 			         {CreateButton(ser.OfficialUrl, "Official Site", "View on Official Site")}
 			        </td></tr></table>
 </div>
-<div class=""row"">
-<table class=""table  table-hover"">
-  <thead>
-    <tr>
-      <th scope=""col"">#</th>
-      <th scope=""col"">Date</th>
-      <th scope=""col"">Name</th>
-      <th scope=""col"">Status</th>
-      <th class=""text-right"" scope=""col"">Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    {tableRows}
-  </tbody>
-</table>
-</div>
+{table}
                 </div>");
         }
 
@@ -139,9 +125,7 @@ namespace TVRename
             {tvMazeButton}</td>
     </tr>
 {tableRows}");
-
         }
-
 
         private static void AppendShow(this StringBuilder sb,[CanBeNull] ShowItem si, Color backgroundColour, bool includeDirectoryLinks)
         {
@@ -452,6 +436,40 @@ namespace TVRename
                 return;
             }
 
+            string tablerows = si.SeasonEpisodes[s.SeasonNumber].ToList().Select(episode => SeasonSummaryTableRow(episode,includeDirectoryLinks,dfc)).Concat();
+
+            string seasonHeaderDiv = CreateSeasonHeaderDiv(si,s,includeDirectoryLinks);
+            string table = CreateEpisodeTableHeader(tablerows);
+
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">{seasonHeaderDiv}
+                {table}
+                </div>");
+        }
+
+        [NotNull]
+        private static string CreateEpisodeTableHeader(string rows)
+        {
+            return $@"<div class=""row"">
+<table class=""table  table-hover"">
+  <thead>
+    <tr>
+      <th scope=""col"">#</th>
+      <th scope=""col"">Date</th>
+      <th scope=""col"">Name</th>
+      <th scope=""col"">Status</th>
+      <th class=""text-right"" scope=""col"">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {rows}
+  </tbody>
+</table>
+</div>";
+        }
+
+        [NotNull]
+        private static string CreateSeasonHeaderDiv([NotNull] ShowItem si, [NotNull] ProcessedSeason s, bool includeDirectoryLinks)
+        {
             string explorerButton = string.Empty;
             if (includeDirectoryLinks)
             {
@@ -459,8 +477,6 @@ namespace TVRename
                 explorerButton = CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}",
                     "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
             }
-
-            string tablerows = si.SeasonEpisodes[s.SeasonNumber].ToList().Select(episode => SeasonSummaryTableRow(episode,includeDirectoryLinks,dfc)).Concat();
 
             string tvdbSLug = si.TheSeries()?.Slug;
             string tvdbLink = !tvdbSLug.HasValue() ? string.Empty : TheTVDB.API.WebsiteSeasonUrl(s);
@@ -473,9 +489,7 @@ namespace TVRename
                 ? $"<h2>{si.TheSeries()?.Season(s.SeasonNumber)?.SeasonName}</h3><p>{si.TheSeries()?.Season(s.SeasonNumber)?.SeasonDescription}</p>"
                 : string.Empty;
 
-            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
-<div class=""row"">
-
+            return $@"<div class=""row"">
                     <div class=""col-8""><h1>{si.ShowName} - {SeasonName(si, s.SeasonNumber)}</h1>
                     {seasonOverViewHtml}
                     </div>
@@ -485,24 +499,7 @@ namespace TVRename
                         {tvMazeButton}
                         {episodeText}
                     </div>
-                </div>
-<div class=""row"">
-<table class=""table"">
-  <thead>
-    <tr>
-      <th scope=""col"">#</th>
-      <th scope=""col"">Date</th>
-      <th scope=""col"">Name</th>
-      <th scope=""col"">Status</th>
-      <th class=""text-right"" scope=""col"">Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    {tablerows}
-  </tbody>
-</table>
-</div>
-                </div>");
+                </div>";
         }
 
         private static void AppendSeason(this StringBuilder sb, ProcessedSeason s, [CanBeNull] ShowItem si,Color backgroundColour, bool includeDirectoryLinks)
@@ -512,39 +509,12 @@ namespace TVRename
                 return;
             }
 
-            string explorerButton = string.Empty;
-            if (includeDirectoryLinks)
-            {
-                string urlFilename = Uri.EscapeDataString(si.GetBestFolderLocationToOpen(s));
-                explorerButton = CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}",
-                    "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
-            }
-
-            string tvdbSLug = si.TheSeries()?.Slug;
-            string tvdbLink = !tvdbSLug.HasValue() ? string.Empty : TheTVDB.API.WebsiteSeasonUrl(s);
-            string tvdbButton = CreateButton(tvdbLink, "TVDB.com", "View on TVDB");
-            string tvMazeButton = CreateButton(s.Show.Provider != ShowItem.ProviderType.TVmaze ? string.Empty : s.WebsiteUrl, "TVmaze.com", "View on TV Maze");
-
-            string episodeText = s.Episodes.Count >0 ? $"<br/><small class=\"text-muted\">{s.Episodes.Count} Episodes</small>" :string.Empty;
-
-            string seasonOverViewHtml = si.TheSeries()?.Season(s.SeasonNumber)?.SeasonName.HasValue() ??false
-                ?$"<h2>{si.TheSeries()?.Season(s.SeasonNumber)?.SeasonName}</h3><p>{si.TheSeries()?.Season(s.SeasonNumber)?.SeasonDescription}</p>"
-                :string.Empty;
+            string seasonHeaderDiv = CreateSeasonHeaderDiv(si, s, includeDirectoryLinks);
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
 				{s.CreateHorizontalBannerHtml()}
 				<br/>
-                <div class=""row"">
-                    <div class=""col-8""><h1>{si.ShowName} - {SeasonName(si, s.SeasonNumber)}</h1>
-                    {seasonOverViewHtml}
-                    </div>
-                    <div class=""col-4 text-right"">
-                        {explorerButton}
-                        {tvdbButton}
-                        {tvMazeButton}
-                        {episodeText}
-                    </div>
-                </div>
+                {seasonHeaderDiv}
 				</div>");
         }
 

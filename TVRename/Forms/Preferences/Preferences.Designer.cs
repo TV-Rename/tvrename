@@ -4166,7 +4166,6 @@ namespace TVRename
             this.chkMoveLibraryFiles.TabIndex = 48;
             this.chkMoveLibraryFiles.Text = "Move Files within Library to Keep it Tidy";
             this.chkMoveLibraryFiles.UseVisualStyleBackColor = true;
-            this.chkMoveLibraryFiles.CheckedChanged += new System.EventHandler(this.ChkMoveLibraryFiles_CheckedChanged);
             // 
             // lblScanAction
             // 

@@ -1819,10 +1819,5 @@ namespace TVRename
         {
             cmbDefShowLocation.Enabled = cbDefShowUseDefLocation.Checked;
         }
-
-        private void ChkMoveLibraryFiles_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }
