@@ -488,7 +488,6 @@ namespace TVRename
             this.betaToolsToolStripMenuItem.Name = "betaToolsToolStripMenuItem";
             this.betaToolsToolStripMenuItem.Size = new System.Drawing.Size(42, 20);
             this.betaToolsToolStripMenuItem.Text = "Beta";
-            this.betaToolsToolStripMenuItem.Click += new System.EventHandler(this.BetaToolsToolStripMenuItem_Click);
             // 
             // timezoneInconsistencyLOGToolStripMenuItem
             // 

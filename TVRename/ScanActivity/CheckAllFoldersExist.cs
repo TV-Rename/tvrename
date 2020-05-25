@@ -143,9 +143,6 @@ namespace TVRename
                     continue;
                 }
 
-                string sn = si.ShowName;
-                string text = snum + " of " + si.MaxSeason();
-                string theFolder = folder;
                 string otherFolder = null;
 
                 FaResult whatToDo = GetDefaultAction();
@@ -159,7 +156,7 @@ namespace TVRename
                 if (whatToDo == FaResult.kfaNotSet)
                 {
                     // no command line guidance, so ask the user
-                    MissingFolderAction mfa = new MissingFolderAction(sn, text, theFolder);
+                    MissingFolderAction mfa = new MissingFolderAction(si.ShowName, snum + " of " + si.MaxSeason(), folder);
                     mfa.ShowDialog();
                     whatToDo = mfa.Result;
                     otherFolder = mfa.FolderName;
@@ -183,7 +180,7 @@ namespace TVRename
                         throw new TVRenameOperationInterruptedException();
 
                     case FaResult.kfaCreate:
-                        TryCreateDirectory(folder, sn, text);
+                        TryCreateDirectory(folder, si.ShowName, snum + " of " + si.MaxSeason());
                         goAgain = true;
                         break;
 

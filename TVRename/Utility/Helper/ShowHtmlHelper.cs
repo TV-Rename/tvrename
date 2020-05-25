@@ -376,6 +376,29 @@ namespace TVRename
         private static string SeasonSummaryTableRow([NotNull]ProcessedEpisode ep, bool includeDirectoryLinks, DirFilesCache dfc)
         {
             List<FileInfo> fl = includeDirectoryLinks ? dfc.FindEpOnDisk(ep) : null;
+            IEnumerable<string> statii = GetEpisodeStatus(ep, includeDirectoryLinks, fl);
+
+            string searchButton = (fl is null || fl.Count == 0) && ep.HasAired()
+                ? CreateButton(TVSettings.Instance.BTSearchURL(ep), "<i class=\"fas fa-search\"></i>", "Search for Torrent...")
+                : string.Empty;
+
+            string viewButton = string.Empty;
+            if (fl != null)
+            {
+                foreach (string urlFilename in fl.Select(fi => Uri.EscapeDataString(fi.FullName)))
+                {
+                    viewButton += CreateButton($"{UI.WATCH_PROXY}{urlFilename}", "<i class=\"far fa-eye\"></i>", "Watch Now");
+                }
+            }
+
+            string airedText = ep.HasAired() ? " (Aired)" : string.Empty;
+            return
+                $"<tr><th scope=\"row\">{ep.AppropriateEpNum}</th><td>{ep.GetAirDateDt(true):d}{airedText}</td><td>{ep.Name}</td><td>{statii.ToCsv()}</td><td class=\"text-right\">{searchButton}{viewButton}</td></tr>";
+        }
+
+        [NotNull]
+        private static IEnumerable<string> GetEpisodeStatus([NotNull] ProcessedEpisode ep, bool includeDirectoryLinks, List<FileInfo> fl)
+        {
             List<string> statii = new List<string>();
 
             if (includeDirectoryLinks)
@@ -406,28 +429,15 @@ namespace TVRename
             {
                 statii.Add("Episode Ignored");
             }
+
             if (!statii.Any() && includeDirectoryLinks && fl.Count == 0 && ep.HasAired())
             {
                 statii.Add("Missing");
             }
 
-            string searchButton = (fl is null || fl.Count == 0) && ep.HasAired()
-                ? CreateButton(TVSettings.Instance.BTSearchURL(ep), "<i class=\"fas fa-search\"></i>", "Search for Torrent...")
-                : string.Empty;
-
-            string viewButton = string.Empty;
-            if (fl != null)
-            {
-                foreach (string urlFilename in fl.Select(fi => Uri.EscapeDataString(fi.FullName)))
-                {
-                    viewButton += CreateButton($"{UI.WATCH_PROXY}{urlFilename}", "<i class=\"far fa-eye\"></i>", "Watch Now");
-                }
-            }
-
-            string airedText = ep.HasAired() ? " (Aired)" : string.Empty;
-            return
-                $"<tr><th scope=\"row\">{ep.AppropriateEpNum}</th><td>{ep.GetAirDateDt(true):d}{airedText}</td><td>{ep.Name}</td><td>{statii.ToCsv()}</td><td class=\"text-right\">{searchButton}{viewButton}</td></tr>";
+            return statii;
         }
+
         private static void AppendSeasonSummary(this StringBuilder sb, [CanBeNull] ShowItem si, ProcessedSeason s, Color backgroundColour, bool includeDirectoryLinks)
         {
             DirFilesCache dfc = new DirFilesCache();
