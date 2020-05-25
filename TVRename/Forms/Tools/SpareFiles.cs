@@ -170,7 +170,6 @@ namespace TVRename.Forms.Tools
         {
             pbProgress.Value = e.ProgressPercentage;
             lblStatus.Text = e.UserState.ToString();
-            //olvFileIssues.RebuildColumns();
         }
 
         private void BwRescan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

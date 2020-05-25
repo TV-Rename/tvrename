@@ -55,7 +55,12 @@ namespace TVRename
             {
                 if (!(TVSettings.Instance.CheckuTorrent || TVSettings.Instance.CheckqBitTorrent))
                 {
-                    return new ActionOutcome("No torrent clients enabled to download RSS");
+                    if (Helpers.SysOpen(url))
+                    {
+                        return ActionOutcome.Success();
+                    }
+
+                    return new ActionOutcome("No torrent clients enabled to download RSS - Tried to use system open, but failed");
                 }
 
                 if (!TVSettings.Instance.qBitTorrentDownloadFilesFirst && TVSettings.Instance.CheckqBitTorrent)
