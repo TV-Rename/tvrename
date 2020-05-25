@@ -298,6 +298,12 @@
     <Compile Include="Finders\DownloadingFinder.cs" />
     <Compile Include="Forms\ListViewColumnSorter.cs" />
     <Compile Include="Forms\ShowPreferences\ValidationFailedException.cs" />
+    <Compile Include="Forms\Tools\SpareFiles.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Tools\SpareFiles.Designer.cs">
+      <DependentUpon>SpareFiles.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Utilities\ThanksForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -314,6 +320,7 @@
     <Compile Include="ItemsAndActions\ActionFailedException.cs" />
     <Compile Include="Sources\TVMAZE\LocalCache.cs" />
     <Compile Include="Sources\TVMAZE\TVmazeAPI.cs" />
+    <Compile Include="TVRename\FileIssue.cs" />
     <Compile Include="TVRename\UpdateTimeTracker.cs" />
     <Compile Include="Utility\UrlCache.cs" />
     <Compile Include="Forms\ShowPreferences\AutoAddShow.cs">
@@ -733,6 +740,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Tools\QuickRename.resx">
       <DependentUpon>QuickRename.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Tools\SpareFiles.resx">
+      <DependentUpon>SpareFiles.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Utilities\BugReport.resx">
       <DependentUpon>BugReport.cs</DependentUpon>

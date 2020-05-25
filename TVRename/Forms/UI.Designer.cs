@@ -73,6 +73,7 @@ namespace TVRename
             this.folderMonitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.duplicateFinderLOGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.quickRenameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiExtraFiles = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statisticsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
@@ -166,7 +167,7 @@ namespace TVRename
             this.btnScheduleRightClick = new System.Windows.Forms.ToolStripButton();
             this.txtWhenToWatchSynopsis = new System.Windows.Forms.TextBox();
             this.calCalendar = new System.Windows.Forms.MonthCalendar();
-            this.lvWhenToWatch = new ListViewFlickerFree();
+            this.lvWhenToWatch = new TVRename.ListViewFlickerFree();
             this.columnHeader29 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader30 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader31 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -376,7 +377,8 @@ namespace TVRename
             this.toolStripSeparator3,
             this.folderMonitorToolStripMenuItem,
             this.duplicateFinderLOGToolStripMenuItem,
-            this.quickRenameToolStripMenuItem});
+            this.quickRenameToolStripMenuItem,
+            this.tsmiExtraFiles});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
@@ -431,6 +433,13 @@ namespace TVRename
             this.quickRenameToolStripMenuItem.Text = "Quick Rename...";
             this.quickRenameToolStripMenuItem.Click += new System.EventHandler(this.QuickRenameToolStripMenuItem_Click);
             // 
+            // tsmiExtraFiles
+            // 
+            this.tsmiExtraFiles.Name = "tsmiExtraFiles";
+            this.tsmiExtraFiles.Size = new System.Drawing.Size(264, 22);
+            this.tsmiExtraFiles.Text = "Extra Media Files....";
+            this.tsmiExtraFiles.Click += new System.EventHandler(this.ToolStripMenuItem1_Click);
+            // 
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -479,6 +488,7 @@ namespace TVRename
             this.betaToolsToolStripMenuItem.Name = "betaToolsToolStripMenuItem";
             this.betaToolsToolStripMenuItem.Size = new System.Drawing.Size(42, 20);
             this.betaToolsToolStripMenuItem.Text = "Beta";
+            this.betaToolsToolStripMenuItem.Click += new System.EventHandler(this.BetaToolsToolStripMenuItem_Click);
             // 
             // timezoneInconsistencyLOGToolStripMenuItem
             // 
@@ -1971,5 +1981,6 @@ namespace TVRename
         private ToolStripButton tsbMyShowsContextMenu;
         private ToolStripSeparator toolStripSeparator14;
         private ToolStripButton tsbScanContextMenu;
+        private ToolStripMenuItem tsmiExtraFiles;
     }
 }

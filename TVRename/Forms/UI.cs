@@ -4100,5 +4100,16 @@ namespace TVRename
                 GenerateActionRightClickMenu(pt, lvr, null, null);
             }
         }
+
+        private void BetaToolsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            SpareFiles ui = new SpareFiles(mDoc);
+            ui.Show(this);
+        }
     }
 }
