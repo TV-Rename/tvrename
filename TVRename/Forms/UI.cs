@@ -2532,13 +2532,13 @@ namespace TVRename
                 return 0; //Disk
             }
 
+            if (TVSettings.Instance.IgnorePreviouslySeen && pe.PreviouslySeen)
+            {
+                return 9; //tick
+            }
+
             if (airdt.CompareTo(DateTime.Now) < 0) // has aired
             {
-                if (TVSettings.Instance.IgnorePreviouslySeen && pe.PreviouslySeen)
-                {
-                    return 9; //tick
-                }
-
                 if (pe.Show.DoMissingCheck)
                 {
                     return 1; //Search
@@ -4103,7 +4103,7 @@ namespace TVRename
 
         private void ToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            SpareFiles ui = new SpareFiles(mDoc);
+            OrphanFiles ui = new OrphanFiles(mDoc);
             ui.Show(this);
         }
     }

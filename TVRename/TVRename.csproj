@@ -298,11 +298,11 @@
     <Compile Include="Finders\DownloadingFinder.cs" />
     <Compile Include="Forms\ListViewColumnSorter.cs" />
     <Compile Include="Forms\ShowPreferences\ValidationFailedException.cs" />
-    <Compile Include="Forms\Tools\SpareFiles.cs">
+    <Compile Include="Forms\Tools\OrphanFiles.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Tools\SpareFiles.Designer.cs">
-      <DependentUpon>SpareFiles.cs</DependentUpon>
+    <Compile Include="Forms\Tools\OrphanFiles.Designer.cs">
+      <DependentUpon>OrphanFiles.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Utilities\ThanksForm.cs">
       <SubType>Form</SubType>
@@ -741,8 +741,8 @@
     <EmbeddedResource Include="Forms\Tools\QuickRename.resx">
       <DependentUpon>QuickRename.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Tools\SpareFiles.resx">
-      <DependentUpon>SpareFiles.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\Tools\OrphanFiles.resx">
+      <DependentUpon>OrphanFiles.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Utilities\BugReport.resx">
       <DependentUpon>BugReport.cs</DependentUpon>

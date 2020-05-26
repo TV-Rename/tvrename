@@ -73,7 +73,7 @@ namespace TVRename
             this.folderMonitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.duplicateFinderLOGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.quickRenameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmiExtraFiles = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiOrphanFiles = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statisticsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
@@ -378,7 +378,7 @@ namespace TVRename
             this.folderMonitorToolStripMenuItem,
             this.duplicateFinderLOGToolStripMenuItem,
             this.quickRenameToolStripMenuItem,
-            this.tsmiExtraFiles});
+            this.tsmiOrphanFiles});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
@@ -433,12 +433,12 @@ namespace TVRename
             this.quickRenameToolStripMenuItem.Text = "Quick Rename...";
             this.quickRenameToolStripMenuItem.Click += new System.EventHandler(this.QuickRenameToolStripMenuItem_Click);
             // 
-            // tsmiExtraFiles
+            // tsmiOrphanFiles
             // 
-            this.tsmiExtraFiles.Name = "tsmiExtraFiles";
-            this.tsmiExtraFiles.Size = new System.Drawing.Size(264, 22);
-            this.tsmiExtraFiles.Text = "Extra Media Files....";
-            this.tsmiExtraFiles.Click += new System.EventHandler(this.ToolStripMenuItem1_Click);
+            this.tsmiOrphanFiles.Name = "tsmiOrphanFiles";
+            this.tsmiOrphanFiles.Size = new System.Drawing.Size(264, 22);
+            this.tsmiOrphanFiles.Text = "Orphan Media Files....";
+            this.tsmiOrphanFiles.Click += new System.EventHandler(this.ToolStripMenuItem1_Click);
             // 
             // viewToolStripMenuItem
             // 
@@ -455,19 +455,19 @@ namespace TVRename
             // 
             this.statisticsToolStripMenuItem.Image = global::TVRename.Properties.Resources.graphhs;
             this.statisticsToolStripMenuItem.Name = "statisticsToolStripMenuItem";
-            this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.statisticsToolStripMenuItem.Text = "&Statistics...";
             this.statisticsToolStripMenuItem.Click += new System.EventHandler(this.statisticsToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(163, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
             // 
             // showSummaryToolStripMenuItem
             // 
             this.showSummaryToolStripMenuItem.Name = "showSummaryToolStripMenuItem";
-            this.showSummaryToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.showSummaryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showSummaryToolStripMenuItem.Text = "Show Summary...";
             this.showSummaryToolStripMenuItem.Click += new System.EventHandler(this.showSummaryToolStripMenuItem_Click);
             // 
@@ -475,7 +475,7 @@ namespace TVRename
             // 
             this.actorsToolStripMenuItem.Image = global::TVRename.Properties.Resources.TableHS;
             this.actorsToolStripMenuItem.Name = "actorsToolStripMenuItem";
-            this.actorsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.actorsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.actorsToolStripMenuItem.Text = "&Actors Grid...";
             this.actorsToolStripMenuItem.Click += new System.EventHandler(this.actorsToolStripMenuItem_Click);
             // 
@@ -1980,6 +1980,6 @@ namespace TVRename
         private ToolStripButton tsbMyShowsContextMenu;
         private ToolStripSeparator toolStripSeparator14;
         private ToolStripButton tsbScanContextMenu;
-        private ToolStripMenuItem tsmiExtraFiles;
+        private ToolStripMenuItem tsmiOrphanFiles;
     }
 }

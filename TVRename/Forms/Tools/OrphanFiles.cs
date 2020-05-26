@@ -9,13 +9,13 @@ using JetBrains.Annotations;
 
 namespace TVRename.Forms.Tools
 {
-    public partial class SpareFiles : Form
+    public partial class OrphanFiles : Form
     {
         private readonly TVDoc mDoc;
         private readonly List<FileIssue> issues;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public SpareFiles(TVDoc mDoc)
+        public OrphanFiles(TVDoc mDoc)
         {
             this.mDoc = mDoc;
             issues = new List<FileIssue>();
@@ -23,7 +23,7 @@ namespace TVRename.Forms.Tools
             olvSeason.GroupKeyGetter = GroupSeasonKeyDelegate;
             olvFileDirectory.GroupKeyGetter = GroupFolderTitleDelegate;
             olvFileIssues.SetObjects(issues);
-            olvFileIssues.AutoSizeColumns();
+            Scan();
         }
 
         private static object GroupFolderTitleDelegate(object rowObject)
@@ -121,7 +121,9 @@ namespace TVRename.Forms.Tools
                 Logger.Info($"Finding old eps for {show.ShowName}");
                 bw.ReportProgress((100*current++/total),show.ShowName);
 
-                foreach (KeyValuePair<int, List<string>> showfolders in show.AllFolderLocations(true))
+                Dictionary<int, List<string>> folders = show.AllFolderLocations(true);
+
+                foreach (KeyValuePair<int, List<string>> showfolders in folders)
                 {
                     foreach (string showfolder in showfolders.Value)
                     {
@@ -138,6 +140,10 @@ namespace TVRename.Forms.Tools
                             if (seasonNumber < 0)
                             {
                                 issues.Add(new FileIssue(show, file, "File does not match a Filename Processor"));
+                            }
+                            else if (folders.ContainsKey(seasonNumber) && !folders[seasonNumber].Contains(showfolder))
+                            {
+                                issues.Add(new FileIssue(show, file, "File is in the wrong series folder", seasonNumber, episodeNumber));
                             }
                             else
                             {
@@ -182,15 +188,59 @@ namespace TVRename.Forms.Tools
                 return;
             }
             olvFileIssues.RebuildColumns();
-            olvFileIssues.AutoSizeColumns();
+            AutosizeColumns(olvFileIssues);
+        }
+
+        private static void AutosizeColumns([NotNull] BrightIdeasSoftware.ObjectListView olv)
+        {
+            foreach (ColumnHeader col in olv.Columns)
+            {
+                //auto resize column width
+
+                int colWidthBeforeAutoResize = col.Width;
+                col.AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
+                int colWidthAfterAutoResizeByHeader = col.Width;
+                col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                int colWidthAfterAutoResizeByContent = col.Width;
+
+                if (colWidthAfterAutoResizeByHeader > colWidthAfterAutoResizeByContent)
+                {
+                    col.AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
+                }
+
+                //specific adjusts
+
+                //first column
+                if (col.Index == 0)
+                    //we have to manually take care of tree structure, checkbox and image
+                {
+                    col.Width += 16 + 16 + olv.SmallImageSize.Width;
+                }
+                //last column
+                else if (col.Index == olv.Columns.Count - 1)
+                    //avoid "fill free space" bug
+                {
+                    col.Width = colWidthBeforeAutoResize > colWidthAfterAutoResizeByContent ? colWidthBeforeAutoResize : colWidthAfterAutoResizeByContent;
+                }
+            }
         }
 
         private void BtnRefresh_Click(object sender, EventArgs e)
+        {
+            Scan();
+        }
+
+        private void Scan()
         {
             btnRefresh.Visible = false;
             pbProgress.Visible = true;
             lblStatus.Visible = true;
             bwRescan.RunWorkerAsync();
+        }
+
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

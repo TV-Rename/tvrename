@@ -1,6 +1,6 @@
 ﻿namespace TVRename.Forms.Tools
 {
-    partial class SpareFiles
+    partial class OrphanFiles
     {
         /// <summary>
         /// Required designer variable.
@@ -75,7 +75,7 @@
             this.olvFileIssues.Name = "olvFileIssues";
             this.olvFileIssues.ShowCommandMenuOnRightClick = true;
             this.olvFileIssues.ShowItemCountOnGroups = true;
-            this.olvFileIssues.Size = new System.Drawing.Size(715, 576);
+            this.olvFileIssues.Size = new System.Drawing.Size(844, 580);
             this.olvFileIssues.TabIndex = 0;
             this.olvFileIssues.UseCompatibleStateImageBehavior = false;
             this.olvFileIssues.UseFilterIndicator = true;
@@ -87,22 +87,25 @@
             // 
             this.olvShow.AspectName = "Showname";
             this.olvShow.Text = "Show";
-            this.olvShow.Width = 88;
+            this.olvShow.Width = 208;
             // 
             // olvFileName
             // 
             this.olvFileName.AspectName = "Filename";
             this.olvFileName.Text = "File";
+            this.olvFileName.Width = 145;
             // 
             // olvMessage
             // 
             this.olvMessage.AspectName = "Message";
             this.olvMessage.Text = "Message";
+            this.olvMessage.Width = 104;
             // 
             // olvFileDirectory
             // 
             this.olvFileDirectory.AspectName = "Directory";
             this.olvFileDirectory.Text = "Directory";
+            this.olvFileDirectory.Width = 258;
             // 
             // olvSeason
             // 
@@ -126,7 +129,7 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(721, 622);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(850, 626);
             this.tableLayoutPanel1.TabIndex = 5;
             // 
             // panel1
@@ -136,9 +139,9 @@
             this.panel1.Controls.Add(this.btnRefresh);
             this.panel1.Controls.Add(this.button1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 585);
+            this.panel1.Location = new System.Drawing.Point(3, 589);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(715, 34);
+            this.panel1.Size = new System.Drawing.Size(844, 34);
             this.panel1.TabIndex = 6;
             // 
             // lblStatus
@@ -172,12 +175,13 @@
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(637, 3);
+            this.button1.Location = new System.Drawing.Point(766, 3);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 4;
             this.button1.Text = "Close";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // showRightClickMenu
             // 
@@ -192,17 +196,17 @@
             this.bwRescan.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BwRescan_ProgressChanged);
             this.bwRescan.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BwRescan_RunWorkerCompleted);
             // 
-            // SpareFiles
+            // OrphanFiles
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button1;
-            this.ClientSize = new System.Drawing.Size(721, 622);
+            this.ClientSize = new System.Drawing.Size(850, 626);
             this.Controls.Add(this.tableLayoutPanel1);
             this.MinimizeBox = false;
-            this.Name = "SpareFiles";
+            this.Name = "OrphanFiles";
             this.ShowIcon = false;
-            this.Text = "Spare Files";
+            this.Text = "Orphan Media Files";
             ((System.ComponentModel.ISupportInitialize)(this.olvFileIssues)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
