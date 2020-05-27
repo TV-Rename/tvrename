@@ -74,6 +74,7 @@ namespace TVRename
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tpDisplay = new System.Windows.Forms.TabPage();
+            this.chkShowAccessibilityOptions = new System.Windows.Forms.CheckBox();
             this.cbUseColoursOnWtw = new System.Windows.Forms.CheckBox();
             this.chkBasicShowDetails = new System.Windows.Forms.CheckBox();
             this.chkPostpendThe = new System.Windows.Forms.CheckBox();
@@ -387,7 +388,6 @@ namespace TVRename
             this.label36 = new System.Windows.Forms.Label();
             this.label62 = new System.Windows.Forms.Label();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.chkShowAccessibilityOptions = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -822,6 +822,16 @@ namespace TVRename
             this.tpDisplay.Text = "Display";
             this.tpDisplay.UseVisualStyleBackColor = true;
             // 
+            // chkShowAccessibilityOptions
+            // 
+            this.chkShowAccessibilityOptions.AutoSize = true;
+            this.chkShowAccessibilityOptions.Location = new System.Drawing.Point(220, 288);
+            this.chkShowAccessibilityOptions.Name = "chkShowAccessibilityOptions";
+            this.chkShowAccessibilityOptions.Size = new System.Drawing.Size(150, 17);
+            this.chkShowAccessibilityOptions.TabIndex = 45;
+            this.chkShowAccessibilityOptions.Text = "Show Accessibilty Options";
+            this.chkShowAccessibilityOptions.UseVisualStyleBackColor = true;
+            // 
             // cbUseColoursOnWtw
             // 
             this.cbUseColoursOnWtw.AutoSize = true;
@@ -1156,7 +1166,7 @@ namespace TVRename
             this.tpRSSJSONSearch.Location = new System.Drawing.Point(139, 4);
             this.tpRSSJSONSearch.Name = "tpRSSJSONSearch";
             this.tpRSSJSONSearch.Padding = new System.Windows.Forms.Padding(3);
-            this.tpRSSJSONSearch.Size = new System.Drawing.Size(417, 571);
+            this.tpRSSJSONSearch.Size = new System.Drawing.Size(417, 561);
             this.tpRSSJSONSearch.TabIndex = 12;
             this.tpRSSJSONSearch.Text = "RSS/JSON Search";
             this.tpRSSJSONSearch.UseVisualStyleBackColor = true;
@@ -1483,7 +1493,7 @@ namespace TVRename
             this.tpLibraryFolders.Location = new System.Drawing.Point(139, 4);
             this.tpLibraryFolders.Name = "tpLibraryFolders";
             this.tpLibraryFolders.Padding = new System.Windows.Forms.Padding(3);
-            this.tpLibraryFolders.Size = new System.Drawing.Size(417, 571);
+            this.tpLibraryFolders.Size = new System.Drawing.Size(417, 561);
             this.tpLibraryFolders.TabIndex = 10;
             this.tpLibraryFolders.Text = "Library Folders";
             this.tpLibraryFolders.UseVisualStyleBackColor = true;
@@ -1634,7 +1644,7 @@ namespace TVRename
             this.tbuTorrentNZB.Location = new System.Drawing.Point(139, 4);
             this.tbuTorrentNZB.Name = "tbuTorrentNZB";
             this.tbuTorrentNZB.Padding = new System.Windows.Forms.Padding(3);
-            this.tbuTorrentNZB.Size = new System.Drawing.Size(417, 571);
+            this.tbuTorrentNZB.Size = new System.Drawing.Size(417, 561);
             this.tbuTorrentNZB.TabIndex = 4;
             this.tbuTorrentNZB.Text = "Torrents / NZB";
             this.tbuTorrentNZB.UseVisualStyleBackColor = true;
@@ -1946,14 +1956,13 @@ namespace TVRename
             this.tbSearchFolders.Controls.Add(this.label23);
             this.tbSearchFolders.Location = new System.Drawing.Point(139, 4);
             this.tbSearchFolders.Name = "tbSearchFolders";
-            this.tbSearchFolders.Size = new System.Drawing.Size(417, 571);
+            this.tbSearchFolders.Size = new System.Drawing.Size(417, 561);
             this.tbSearchFolders.TabIndex = 3;
             this.tbSearchFolders.Text = "Search Folders";
             this.tbSearchFolders.UseVisualStyleBackColor = true;
             // 
             // chkUseSearchFullPathWhenMatchingShows
             // 
-            this.chkUseSearchFullPathWhenMatchingShows.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkUseSearchFullPathWhenMatchingShows.AutoSize = true;
             this.chkUseSearchFullPathWhenMatchingShows.Location = new System.Drawing.Point(6, 171);
             this.chkUseSearchFullPathWhenMatchingShows.Name = "chkUseSearchFullPathWhenMatchingShows";
@@ -2173,7 +2182,6 @@ namespace TVRename
             // 
             // label23
             // 
-            this.label23.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label23.AutoSize = true;
             this.label23.Location = new System.Drawing.Point(6, 191);
             this.label23.Name = "label23";
@@ -2194,7 +2202,7 @@ namespace TVRename
             this.tbMediaCenter.Location = new System.Drawing.Point(139, 4);
             this.tbMediaCenter.Name = "tbMediaCenter";
             this.tbMediaCenter.Padding = new System.Windows.Forms.Padding(3);
-            this.tbMediaCenter.Size = new System.Drawing.Size(417, 571);
+            this.tbMediaCenter.Size = new System.Drawing.Size(417, 561);
             this.tbMediaCenter.TabIndex = 8;
             this.tbMediaCenter.Text = "Media Centres";
             this.tbMediaCenter.UseVisualStyleBackColor = true;
@@ -2510,7 +2518,7 @@ namespace TVRename
             this.tbFolderDeleting.Location = new System.Drawing.Point(139, 4);
             this.tbFolderDeleting.Name = "tbFolderDeleting";
             this.tbFolderDeleting.Padding = new System.Windows.Forms.Padding(3);
-            this.tbFolderDeleting.Size = new System.Drawing.Size(417, 571);
+            this.tbFolderDeleting.Size = new System.Drawing.Size(417, 561);
             this.tbFolderDeleting.TabIndex = 9;
             this.tbFolderDeleting.Text = "Folder Deleting";
             this.tbFolderDeleting.UseVisualStyleBackColor = true;
@@ -2651,7 +2659,7 @@ namespace TVRename
             this.tbAutoExport.Location = new System.Drawing.Point(139, 4);
             this.tbAutoExport.Name = "tbAutoExport";
             this.tbAutoExport.Padding = new System.Windows.Forms.Padding(3);
-            this.tbAutoExport.Size = new System.Drawing.Size(417, 571);
+            this.tbAutoExport.Size = new System.Drawing.Size(417, 561);
             this.tbAutoExport.TabIndex = 2;
             this.tbAutoExport.Text = "Automatic Export";
             this.tbAutoExport.UseVisualStyleBackColor = true;
@@ -3256,7 +3264,7 @@ namespace TVRename
             this.tbFilesAndFolders.Location = new System.Drawing.Point(139, 4);
             this.tbFilesAndFolders.Name = "tbFilesAndFolders";
             this.tbFilesAndFolders.Padding = new System.Windows.Forms.Padding(3);
-            this.tbFilesAndFolders.Size = new System.Drawing.Size(417, 571);
+            this.tbFilesAndFolders.Size = new System.Drawing.Size(417, 561);
             this.tbFilesAndFolders.TabIndex = 1;
             this.tbFilesAndFolders.Text = "Files and Folders";
             this.tbFilesAndFolders.UseVisualStyleBackColor = true;
@@ -3531,7 +3539,7 @@ namespace TVRename
             this.tbGeneral.Location = new System.Drawing.Point(139, 4);
             this.tbGeneral.Name = "tbGeneral";
             this.tbGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.tbGeneral.Size = new System.Drawing.Size(417, 571);
+            this.tbGeneral.Size = new System.Drawing.Size(417, 561);
             this.tbGeneral.TabIndex = 0;
             this.tbGeneral.Text = "General";
             this.tbGeneral.UseVisualStyleBackColor = true;
@@ -3847,7 +3855,7 @@ namespace TVRename
             this.tpShowDefaults.Location = new System.Drawing.Point(139, 4);
             this.tpShowDefaults.Name = "tpShowDefaults";
             this.tpShowDefaults.Padding = new System.Windows.Forms.Padding(3);
-            this.tpShowDefaults.Size = new System.Drawing.Size(417, 571);
+            this.tpShowDefaults.Size = new System.Drawing.Size(417, 561);
             this.tpShowDefaults.TabIndex = 14;
             this.tpShowDefaults.Text = "Show Defaults";
             this.tpShowDefaults.UseVisualStyleBackColor = true;
@@ -4379,23 +4387,13 @@ namespace TVRename
             this.pictureBox2.TabIndex = 39;
             this.pictureBox2.TabStop = false;
             // 
-            // chkShowAccessibilityOptions
-            // 
-            this.chkShowAccessibilityOptions.AutoSize = true;
-            this.chkShowAccessibilityOptions.Location = new System.Drawing.Point(220, 288);
-            this.chkShowAccessibilityOptions.Name = "chkShowAccessibilityOptions";
-            this.chkShowAccessibilityOptions.Size = new System.Drawing.Size(150, 17);
-            this.chkShowAccessibilityOptions.TabIndex = 45;
-            this.chkShowAccessibilityOptions.Text = "Show Accessibilty Options";
-            this.chkShowAccessibilityOptions.UseVisualStyleBackColor = true;
-            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
-            this.ClientSize = new System.Drawing.Size(584, 634);
+            this.ClientSize = new System.Drawing.Size(584, 644);
             this.ControlBox = false;
             this.Controls.Add(this.tcTabs);
             this.Controls.Add(this.bnCancel);
