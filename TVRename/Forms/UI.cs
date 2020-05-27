@@ -3250,12 +3250,13 @@ namespace TVRename
             showRightClickMenu.Items.Add(new ToolStripSeparator());
 
             ToolStripMenuItem tsi = new ToolStripMenuItem("Search");
+            tsi.Click += (s, ev) => { SearchFor(TVDoc.GetSearchers().CurrentSearch, ep); };
 
             foreach (SearchEngine se in TVDoc.GetSearchers())
             {
                 if (se.Name.HasValue())
                 {
-                    ToolStripMenuItem tssi = new ToolStripMenuItem(se.Name) {Tag = se};
+                    ToolStripMenuItem tssi = new ToolStripMenuItem(se.Name);
                     tssi.Click += (s, ev) => { SearchFor(se,ep); };
                     tsi.DropDownItems.Add(tssi);
                 }
@@ -3368,11 +3369,18 @@ namespace TVRename
         private void lvAction_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             // double-click on an item will search for missing, do nothing (for now) for anything else
-            foreach (ItemMissing miss in GetSelectedItems().Missing)
+            foreach (Item i in GetSelectedItems())
             {
-                if (miss.Episode != null)
+                if (i is ItemMissing miss)
                 {
-                    TVDoc.SearchForEpisode(miss.Episode);
+                    if (miss.Episode != null)
+                    {
+                        TVDoc.SearchForEpisode(miss.Episode);
+                    }
+                }
+                else
+                {
+                    olvAction.ToggleCheckObject(i);
                 }
             }
         }
