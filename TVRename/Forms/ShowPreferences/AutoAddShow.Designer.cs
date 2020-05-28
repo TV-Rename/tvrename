@@ -129,7 +129,6 @@ namespace TVRename
             // 
             // lblFileName
             // 
-            this.lblFileName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblFileName.AutoSize = true;
             this.lblFileName.Location = new System.Drawing.Point(13, 9);
             this.lblFileName.Name = "lblFileName";

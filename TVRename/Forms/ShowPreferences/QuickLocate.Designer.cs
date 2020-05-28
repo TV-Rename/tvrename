@@ -37,7 +37,6 @@ namespace TVRename.Forms.ShowPreferences
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(4, 21);
             this.label1.Name = "label1";
@@ -47,13 +46,11 @@ namespace TVRename.Forms.ShowPreferences
             // 
             // cbDirectory
             // 
-            this.cbDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.cbDirectory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbDirectory.FormattingEnabled = true;
             this.cbDirectory.Location = new System.Drawing.Point(61, 14);
             this.cbDirectory.Name = "cbDirectory";
-            this.cbDirectory.Size = new System.Drawing.Size(270, 21);
+            this.cbDirectory.Size = new System.Drawing.Size(271, 21);
             this.cbDirectory.Sorted = true;
             this.cbDirectory.TabIndex = 5;
             // 
@@ -61,7 +58,7 @@ namespace TVRename.Forms.ShowPreferences
             // 
             this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancel.Location = new System.Drawing.Point(457, 46);
+            this.bnCancel.Location = new System.Drawing.Point(458, 46);
             this.bnCancel.Name = "bnCancel";
             this.bnCancel.Size = new System.Drawing.Size(75, 23);
             this.bnCancel.TabIndex = 8;
@@ -72,7 +69,7 @@ namespace TVRename.Forms.ShowPreferences
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(376, 46);
+            this.buttonOK.Location = new System.Drawing.Point(377, 46);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 7;
@@ -82,6 +79,8 @@ namespace TVRename.Forms.ShowPreferences
             // 
             // txtShowFolder
             // 
+            this.txtShowFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtShowFolder.Location = new System.Drawing.Point(337, 14);
             this.txtShowFolder.Name = "txtShowFolder";
             this.txtShowFolder.Size = new System.Drawing.Size(195, 20);
@@ -93,7 +92,7 @@ namespace TVRename.Forms.ShowPreferences
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
-            this.ClientSize = new System.Drawing.Size(544, 81);
+            this.ClientSize = new System.Drawing.Size(545, 81);
             this.ControlBox = false;
             this.Controls.Add(this.txtShowFolder);
             this.Controls.Add(this.bnCancel);
