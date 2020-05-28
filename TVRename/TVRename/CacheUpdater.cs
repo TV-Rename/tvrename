@@ -62,7 +62,7 @@ namespace TVRename
             mDownloaderThread.Start(ctsToken);
         }
 
-        public bool DoDownloadsFg(bool showProgress, bool showMsgBox, ICollection<SeriesSpecifier> shows, IWin32Window owner)
+        public bool DoDownloadsFg(bool showProgress, bool showMsgBox, ICollection<SeriesSpecifier> shows, IDialogParent owner)
         {
             if (TVSettings.Instance.OfflineMode)
             {
@@ -84,7 +84,7 @@ namespace TVRename
             if (!DownloadDone && showProgress) // downloading still going on, so time to show the dialog if we're not in /hide mode
             {
                 DownloadProgress dp = new DownloadProgress(this);
-                ((UI)owner).ShowChildDialog(dp);
+                owner.ShowChildDialog(dp);
                 DialogResult result = dp.DialogResult;
                 dp.Dispose();
 
@@ -104,7 +104,7 @@ namespace TVRename
                 {
                     CannotConnectForm ccform = new CannotConnectForm("Error while downloading", TheTVDB.LocalCache.Instance.LastErrorMessage + " " + TVmaze.LocalCache.Instance.LastErrorMessage);
 
-                    ((UI)owner).ShowChildDialog(ccform);
+                    owner.ShowChildDialog(ccform);
                     DialogResult ccresult = ccform.DialogResult;
                     ccform.Dispose();
                     

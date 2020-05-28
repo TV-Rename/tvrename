@@ -163,7 +163,7 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        public bool DoDownloadsFG(bool unattended,bool tvrMinimised, IWin32Window owner)
+        public bool DoDownloadsFG(bool unattended,bool tvrMinimised, IDialogParent owner)
         {
             ICollection<SeriesSpecifier> shows = Library.SeriesSpecifiers;
             bool showProgress = !Args.Hide && Environment.UserInteractive && !tvrMinimised;
@@ -225,7 +225,7 @@ namespace TVRename
             Helpers.SysOpen(TVSettings.Instance.BTSearchURL(ep));
         }
 
-        public void DoWhenToWatch(bool cachedOnly,bool unattended,bool hidden, IWin32Window owner)
+        public void DoWhenToWatch(bool cachedOnly,bool unattended,bool hidden, IDialogParent owner)
         {
             if (!cachedOnly && !DoDownloadsFG(unattended,hidden,owner))
             {
@@ -423,7 +423,7 @@ namespace TVRename
             }
         }
 
-        internal void ShowAddedOrEdited(bool download, bool unattended,bool hidden, IWin32Window owner)
+        internal void ShowAddedOrEdited(bool download, bool unattended,bool hidden, IDialogParent owner)
         {
             SetDirty();
             if (download)
@@ -444,7 +444,7 @@ namespace TVRename
 
         public ConcurrentBag<ShowNotFoundException> ShowProblems => cacheManager.Problems;
 
-        public void Scan([CanBeNull] IEnumerable<ShowItem> passedShows, bool unattended, TVSettings.ScanType st, bool hidden, IWin32Window owner)
+        public void Scan([CanBeNull] IEnumerable<ShowItem> passedShows, bool unattended, TVSettings.ScanType st, bool hidden, IDialogParent owner)
         {
             try
             {
@@ -476,9 +476,6 @@ namespace TVRename
                 if (scanProgDlg != null)
                 {
                     DialogResult ccresult = scanProgDlg.ShowDialog(owner);
-                    //((UI) owner).ShowChildDialog(scanProgDlg);
-                    //DialogResult ccresult = scanProgDlg.DialogResult;
-                    //scanProgDlg.Dispose();
 
                     if (ccresult == DialogResult.Cancel)
                     {
@@ -513,9 +510,9 @@ namespace TVRename
             public readonly TVSettings.ScanType Type;
             public readonly List<ShowItem> Shows;
             public readonly CancellationToken Token;
-            public readonly IWin32Window Owner;
+            public readonly IDialogParent Owner;
 
-            public ScanSettings(List<ShowItem> list, bool unattended, bool hidden, TVSettings.ScanType st,CancellationToken tok, IWin32Window owner)
+            public ScanSettings(List<ShowItem> list, bool unattended, bool hidden, TVSettings.ScanType st,CancellationToken tok, IDialogParent owner)
             {
                 Shows = list;
                 Unattended = unattended;
@@ -896,7 +893,7 @@ namespace TVRename
             return showsToScan;
         }
 
-        internal void ForceRefresh([CanBeNull] IEnumerable<ShowItem> sis, bool unattended,bool tvrMinimised, IWin32Window owner)
+        internal void ForceRefresh([CanBeNull] IEnumerable<ShowItem> sis, bool unattended,bool tvrMinimised, IDialogParent owner)
         {
             PreventAutoScan("Force Refresh");
             if (sis != null)
@@ -924,7 +921,7 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        internal void TVDBServerAccuracyCheck(bool unattended,bool hidden, IWin32Window owner)
+        internal void TVDBServerAccuracyCheck(bool unattended,bool hidden, IDialogParent owner)
         {
             PreventAutoScan("TVDB Accuracy Check");
             IEnumerable<SeriesInfo> seriesToUpdate = TheTVDB.LocalCache.Instance.ServerAccuracyCheck();

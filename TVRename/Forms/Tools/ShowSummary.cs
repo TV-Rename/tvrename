@@ -24,7 +24,7 @@ using RowHeader = SourceGrid.Cells.RowHeader;
 
 namespace TVRename
 {
-    public partial class ShowSummary : Form
+    public partial class ShowSummary : Form,IDialogParent
     {
         private readonly TVDoc mDoc;
 
@@ -314,6 +314,20 @@ namespace TVRename
             }
 
             Helpers.SysOpen(si.WebsiteUrl);
+        }
+
+        private delegate void ShowChildConsumer(Form childForm);
+        public void ShowChildDialog(Form childForm)
+        {
+            if (InvokeRequired)
+            {
+                ShowChildConsumer d = ShowChildDialog;
+                Invoke(d, childForm);
+            }
+            else
+            {
+                childForm.ShowDialog(this);
+            }
         }
 
         private void ForceRefresh([CanBeNull] ShowItem si)
@@ -699,5 +713,10 @@ namespace TVRename
         {
             PopulateGrid();
         }
+    }
+
+    public interface IDialogParent: IWin32Window
+    {
+        void ShowChildDialog(Form childForm);
     }
 }

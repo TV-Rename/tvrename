@@ -60,7 +60,7 @@ namespace TVRename
     ///           resources associated with this form.
     ///  </summary>
     // ReSharper disable once InconsistentNaming
-    public partial class UI : Form, IRemoteActions
+    public partial class UI : Form, IRemoteActions, IDialogParent
     {
         internal const string EXPLORE_PROXY = "http://www.tvrename.com/EXPLOREPROXY";
         internal const string WATCH_PROXY = "http://www.tvrename.com/WATCHPROXY";
