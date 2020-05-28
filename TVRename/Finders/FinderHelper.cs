@@ -535,7 +535,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static List<ShowItem> FindShows([NotNull] IEnumerable<string> possibleShowNames, TVDoc doc)
+        public static List<ShowItem> FindShows([NotNull] IEnumerable<string> possibleShowNames, TVDoc doc, IWin32Window owner)
         {
             List<ShowItem> addedShows = new List<ShowItem>();
 
@@ -591,8 +591,8 @@ namespace TVRename
 
                 //popup dialog
                 AutoAddShow askForMatch = new AutoAddShow(refinedHint,hint);
-
-                DialogResult dr = askForMatch.ShowDialog();
+                
+                DialogResult dr = askForMatch.ShowDialog(owner);
                 if (dr == DialogResult.OK)
                 {
                     //If added add show to collection

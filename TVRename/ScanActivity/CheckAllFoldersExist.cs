@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 
@@ -69,7 +70,7 @@ namespace TVRename
                     folders.Add(string.Empty);
                 }
 
-                CreateSeasonFolders(si, snum, folders, ignoredLocations);
+                CreateSeasonFolders(si, snum, folders, ignoredLocations,settings.Owner);
             } // for each snum
         }
 
@@ -100,15 +101,15 @@ namespace TVRename
         }
 
         private void CreateSeasonFolders(ShowItem si, int snum, [NotNull] IEnumerable<string> folders,
-            ICollection<string> ignoredLocations)
+            ICollection<string> ignoredLocations, IWin32Window owner)
         {
             foreach (string folderExists in folders)
             {
-                CreateSeasonFolder(si, snum, ignoredLocations, folderExists);
+                CreateSeasonFolder(si, snum, ignoredLocations, folderExists,owner);
             } // for each folder
         }
 
-        private void CreateSeasonFolder(ShowItem si, int snum, ICollection<string> ignoredLocations, string proposedFolderName)
+        private void CreateSeasonFolder(ShowItem si, int snum, ICollection<string> ignoredLocations, string proposedFolderName,IWin32Window owner)
         {
             string folder = proposedFolderName;
 
@@ -157,7 +158,7 @@ namespace TVRename
                 {
                     // no command line guidance, so ask the user
                     MissingFolderAction mfa = new MissingFolderAction(si.ShowName, snum + " of " + si.MaxSeason(), folder);
-                    mfa.ShowDialog();
+                    mfa.ShowDialog(owner);
                     whatToDo = mfa.Result;
                     otherFolder = mfa.FolderName;
                 }

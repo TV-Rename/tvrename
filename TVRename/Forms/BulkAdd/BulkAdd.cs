@@ -48,7 +48,7 @@ namespace TVRename
         private void FmpShower()
         {
             progressDialog = new FolderMonitorProgress(this);
-            progressDialog.ShowDialog();
+            progressDialog.ShowDialog(this);
             progressDialog = null;
         }
 
@@ -547,10 +547,10 @@ namespace TVRename
             }
         }
 
-        private static void EditEntry([NotNull] FoundFolder fme)
+        private void EditEntry([NotNull] FoundFolder fme)
         {
             FolderMonitorEdit ed = new FolderMonitorEdit(fme);
-            if (ed.ShowDialog() != DialogResult.OK|| ed.Code == -1)
+            if (ed.ShowDialog(this) != DialogResult.OK|| ed.Code == -1)
             {
                 return;
             }

@@ -681,7 +681,7 @@ namespace TVRename
             string showName = codeFinderForm.SelectedShow()?.Name ?? txtCustomShowName.Text ?? "New Folder";
             QuickLocateForm f = new QuickLocateForm(showName);
 
-            if (f.ShowDialog() == DialogResult.OK)
+            if (f.ShowDialog(this) == DialogResult.OK)
             {
                 txtBaseFolder.Text = f.DirectoryFullPath;
             }
@@ -710,7 +710,7 @@ namespace TVRename
         private void BtnIgnoreList_Click(object sender, EventArgs e)
         {
             IgnoreEdit ie = new IgnoreEdit(mDoc, txtBaseFolder.Text);
-            ie.ShowDialog();
+            ie.ShowDialog(this);
             UpdateIgnore();
         }
 

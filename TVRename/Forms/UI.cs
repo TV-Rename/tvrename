@@ -141,7 +141,7 @@ namespace TVRename
             ClearInfoWindows();
             UpdateSplashPercent(splash, 10);
             UpdateSplashStatus(splash, "Updating WTW");
-            mDoc.DoWhenToWatch(true,true,WindowState==FormWindowState.Minimized);
+            mDoc.DoWhenToWatch(true,true,WindowState==FormWindowState.Minimized,this);
             UpdateSplashPercent(splash, 40);
             FillWhenToWatchList();
             SortSchedule(3);
@@ -471,7 +471,7 @@ namespace TVRename
 
             if (a.QuickUpdate)
             {
-                mDoc.DoDownloadsFG(UNATTENDED, WindowState == FormWindowState.Minimized);
+                mDoc.DoDownloadsFG(UNATTENDED, WindowState == FormWindowState.Minimized,this);
             }
 
             if (a.ForceUpdate)
@@ -526,7 +526,7 @@ namespace TVRename
         {
             MoreBusy();
             Task.Run(
-                () => mDoc.TVDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized)
+                () => mDoc.TVDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized,this)
             );
             LessBusy();
         }
@@ -1530,14 +1530,14 @@ namespace TVRename
         {
             if (doDownloads)
             {
-                if (!mDoc.DoDownloadsFG(unattended,WindowState==FormWindowState.Minimized))
+                if (!mDoc.DoDownloadsFG(unattended,WindowState==FormWindowState.Minimized,this))
                 {
                     return;
                 }
             }
 
             mInternalChange++;
-            mDoc.DoWhenToWatch(true,unattended,WindowState==FormWindowState.Minimized);
+            mDoc.DoWhenToWatch(true,unattended,WindowState==FormWindowState.Minimized,this);
             FillMyShows();
             FillWhenToWatchList();
             mInternalChange--;
@@ -2752,7 +2752,7 @@ namespace TVRename
 
         internal void ForceRefresh(IEnumerable<ShowItem> sis, bool unattended)
         {
-            mDoc.ForceRefresh(sis,unattended,WindowState==FormWindowState.Minimized);
+            mDoc.ForceRefresh(sis,unattended,WindowState==FormWindowState.Minimized,this);
             FillMyShows();
             FillEpGuideHtml();
             RefreshWTW(false, unattended);
@@ -3036,7 +3036,7 @@ namespace TVRename
             Logger.Info($"Starting {desc}{scantype} Scan for {showsdesc} shows...");
 
             MoreBusy();
-            mDoc.Scan(shows, unattended, st,WindowState==FormWindowState.Minimized);
+            mDoc.Scan(shows, unattended, st,WindowState==FormWindowState.Minimized,this);
             LessBusy();
 
             if (mDoc.ShowProblems.Any() && !unattended)
@@ -3150,7 +3150,7 @@ namespace TVRename
                 ? GetCheckedItems()
                 : GetSelectedItems();
 
-            mDoc.DoActions(lvr);
+            mDoc.DoActions(lvr,this);
 
             FillActionList(true);
             RefreshWTW(false,unattended);

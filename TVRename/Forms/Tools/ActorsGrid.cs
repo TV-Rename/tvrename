@@ -318,7 +318,7 @@ namespace TVRename
         private void bnSave_Click(object sender, EventArgs e)
         {
             saveFile.Filter = "PNG Files (*.png)|*.png|All Files (*.*)|*.*";
-            if (saveFile.ShowDialog() != DialogResult.OK)
+            if (saveFile.ShowDialog(this) != DialogResult.OK)
             {
                 return;
             }

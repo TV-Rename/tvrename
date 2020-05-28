@@ -144,7 +144,7 @@ namespace TVRename
 
         public bool Dirty() => mDirty;
 
-        public void DoActions([NotNull] ItemList theList)
+        public void DoActions([NotNull] ItemList theList, IWin32Window owner)
         {
             foreach (Item i in theList)
             {
@@ -154,7 +154,7 @@ namespace TVRename
                 }
             }
 
-            actionManager.DoActions(theList, !Args.Hide && Environment.UserInteractive);
+            actionManager.DoActions(theList, !Args.Hide && Environment.UserInteractive,owner);
 
             // remove items from master list, unless it had an error
             TheActionList.RemoveAll(x => x is Action action && action.Outcome.Done && !action.Outcome.Error);
@@ -163,13 +163,13 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        public bool DoDownloadsFG(bool unattended,bool tvrMinimised)
+        public bool DoDownloadsFG(bool unattended,bool tvrMinimised, IWin32Window owner)
         {
             ICollection<SeriesSpecifier> shows = Library.SeriesSpecifiers;
             bool showProgress = !Args.Hide && Environment.UserInteractive && !tvrMinimised;
             bool showMsgBox = !unattended && !Args.Unattended && !Args.Hide && Environment.UserInteractive;
 
-            bool returnValue = cacheManager.DoDownloadsFg(showProgress, showMsgBox, shows);
+            bool returnValue = cacheManager.DoDownloadsFg(showProgress, showMsgBox, shows,owner);
             UpdateIdsFromCache();
             Library.GenDict();
             return returnValue;
@@ -225,9 +225,9 @@ namespace TVRename
             Helpers.SysOpen(TVSettings.Instance.BTSearchURL(ep));
         }
 
-        public void DoWhenToWatch(bool cachedOnly,bool unattended,bool hidden)
+        public void DoWhenToWatch(bool cachedOnly,bool unattended,bool hidden, IWin32Window owner)
         {
-            if (!cachedOnly && !DoDownloadsFG(unattended,hidden))
+            if (!cachedOnly && !DoDownloadsFG(unattended,hidden,owner))
             {
                 return;
             }
@@ -423,18 +423,18 @@ namespace TVRename
             }
         }
 
-        internal void ShowAddedOrEdited(bool download, bool unattended,bool hidden)
+        internal void ShowAddedOrEdited(bool download, bool unattended,bool hidden, IWin32Window owner)
         {
             SetDirty();
             if (download)
             {
-                if (!DoDownloadsFG(unattended,hidden))
+                if (!DoDownloadsFG(unattended,hidden,owner))
                 {
                     return;
                 }
             }
 
-            DoWhenToWatch(true, unattended,hidden);
+            DoWhenToWatch(true, unattended,hidden,owner);
 
             WriteUpcoming();
             WriteRecent();
@@ -444,7 +444,7 @@ namespace TVRename
 
         public ConcurrentBag<ShowNotFoundException> ShowProblems => cacheManager.Problems;
 
-        public void Scan([CanBeNull] IEnumerable<ShowItem> passedShows, bool unattended, TVSettings.ScanType st, bool hidden)
+        public void Scan([CanBeNull] IEnumerable<ShowItem> passedShows, bool unattended, TVSettings.ScanType st, bool hidden, IWin32Window owner)
         {
             try
             {
@@ -460,7 +460,7 @@ namespace TVRename
                     return;
                 }
 
-                if (!DoDownloadsFG(unattended,hidden))
+                if (!DoDownloadsFG(unattended,hidden,owner))
                 {
                     return;
                 }
@@ -471,9 +471,9 @@ namespace TVRename
 
                 SetupScanUi(hidden);
 
-                actionWork.Start(new ScanSettings(shows.ToList(),unattended,hidden,st,cts.Token));
+                actionWork.Start(new ScanSettings(shows.ToList(),unattended,hidden,st,cts.Token,owner));
 
-                if (scanProgDlg != null && scanProgDlg.ShowDialog() == DialogResult.Cancel)
+                if (scanProgDlg != null && scanProgDlg.ShowDialog(owner) == DialogResult.Cancel)
                 {
                     cts.Cancel();
                 }
@@ -501,14 +501,16 @@ namespace TVRename
             public readonly TVSettings.ScanType Type;
             public readonly List<ShowItem> Shows;
             public readonly CancellationToken Token;
+            public readonly IWin32Window Owner;
 
-            public ScanSettings(List<ShowItem> list, bool unattended, bool hidden, TVSettings.ScanType st,CancellationToken tok)
+            public ScanSettings(List<ShowItem> list, bool unattended, bool hidden, TVSettings.ScanType st,CancellationToken tok, IWin32Window owner)
             {
                 Shows = list;
                 Unattended = unattended;
                 Hidden = hidden;
                 Type = st;
                 Token = tok;
+                Owner = owner;
             }
 
             public bool Equals(ScanSettings other) => Shows==other.Shows && Unattended==other.Unattended && Hidden==other.Hidden && Type==other.Type && Token==other.Token;
@@ -560,14 +562,14 @@ namespace TVRename
             }
         }
 
-        public void DoAllActions()
+        public void DoAllActions(IWin32Window owner)
         {
             PreventAutoScan("Do all actions");
             ItemList theList = new ItemList();
 
             theList.AddRange(TheActionList.Actions);
 
-            DoActions(theList);
+            DoActions(theList,owner);
             AllowAutoScan();
         }
 
@@ -882,7 +884,7 @@ namespace TVRename
             return showsToScan;
         }
 
-        internal void ForceRefresh([CanBeNull] IEnumerable<ShowItem> sis, bool unattended,bool tvrMinimised)
+        internal void ForceRefresh([CanBeNull] IEnumerable<ShowItem> sis, bool unattended,bool tvrMinimised, IWin32Window owner)
         {
             PreventAutoScan("Force Refresh");
             if (sis != null)
@@ -905,17 +907,17 @@ namespace TVRename
                 }
             }
 
-            DoDownloadsFG(unattended, tvrMinimised);
+            DoDownloadsFG(unattended, tvrMinimised,owner);
             AllowAutoScan();
         }
 
         // ReSharper disable once InconsistentNaming
-        internal void TVDBServerAccuracyCheck(bool unattended,bool hidden)
+        internal void TVDBServerAccuracyCheck(bool unattended,bool hidden, IWin32Window owner)
         {
             PreventAutoScan("TVDB Accuracy Check");
             IEnumerable<SeriesInfo> seriesToUpdate = TheTVDB.LocalCache.Instance.ServerAccuracyCheck();
             IEnumerable<ShowItem> showsToUpdate = seriesToUpdate.Select(info => Library.GetShowItem(info.TvdbCode));
-            ForceRefresh(showsToUpdate, unattended, hidden);
+            ForceRefresh(showsToUpdate, unattended, hidden,owner);
             DoDownloadsBG();
             AllowAutoScan();
         }

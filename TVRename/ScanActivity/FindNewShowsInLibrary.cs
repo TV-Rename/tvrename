@@ -37,7 +37,7 @@ namespace TVRename
             bam.AddAllToMyShows();
 
             MDoc.SetDirty();
-            MDoc.DoDownloadsFG(settings.Unattended,settings.Hidden);
+            MDoc.DoDownloadsFG(settings.Unattended,settings.Hidden,settings.Owner);
 
             List<ShowItem> addedShows = idsToAdd.Select(s => MDoc.Library.GetShowItem(s)).ToList();
 
@@ -48,7 +48,7 @@ namespace TVRename
             }
             LOGGER.Info("Added new shows called: {0}", addedShows.Select(si => si?.ShowName).ToCsv());
 
-            MDoc.DoWhenToWatch(true,settings.Unattended,settings.Hidden);
+            MDoc.DoWhenToWatch(true,settings.Unattended,settings.Hidden, settings.Owner);
 
             MDoc.WriteUpcoming();
             MDoc.WriteRecent();
@@ -63,11 +63,11 @@ namespace TVRename
                     break;
                 }
 
-                AskUserAboutShow(folder);
+                AskUserAboutShow(folder,settings.Owner);
             }
         }
 
-        private void AskUserAboutShow([NotNull] FoundFolder folder)
+        private void AskUserAboutShow([NotNull] FoundFolder folder, IWin32Window owner)
         {
             if (folder.CodeKnown)
             {
@@ -82,7 +82,7 @@ namespace TVRename
             }
 
             FolderMonitorEdit ed = new FolderMonitorEdit(folder);
-            if (ed.ShowDialog() != DialogResult.OK || ed.Code == -1)
+            if (ed.ShowDialog(owner) != DialogResult.OK || ed.Code == -1)
             {
                 return;
             }

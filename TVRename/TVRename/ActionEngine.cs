@@ -119,7 +119,7 @@ namespace TVRename
         /// </summary>
         /// <param name="theList">An ItemList to be processed.</param>
         /// <param name="showUi">Whether or not we should display a UI to inform the user about progress.</param>
-        public void DoActions([CanBeNull] ItemList theList, bool showUi)
+        public void DoActions([CanBeNull] ItemList theList, bool showUi, IWin32Window owner)
         {
             if (theList is null)
             {
@@ -150,7 +150,7 @@ namespace TVRename
 
             actionProcessorThread.Start(queues);
 
-            if (cmp != null && cmp.ShowDialog() == DialogResult.Cancel)
+            if (cmp != null && cmp.ShowDialog(owner) == DialogResult.Cancel)
             {
                 actionProcessorThread.Abort();
             }

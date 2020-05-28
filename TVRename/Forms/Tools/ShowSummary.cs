@@ -318,7 +318,7 @@ namespace TVRename
 
         private void ForceRefresh([CanBeNull] ShowItem si)
         {
-            mDoc.ForceRefresh(new List<ShowItem> {si},false,false );
+            mDoc.ForceRefresh(new List<ShowItem> {si},false,false ,this);
         }
 
         #region Nested type: ShowClickEvent

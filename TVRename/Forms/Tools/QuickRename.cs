@@ -44,7 +44,7 @@ namespace TVRename.Forms.Tools
 
             foreach (FileInfo droppedFile in files.Select(droppedFileName => new FileInfo(droppedFileName)))
             {
-                ProcessUnknown(droppedFile);
+                ProcessUnknown(droppedFile,this);
             }
 
             parent.FillActionList(true);
@@ -63,7 +63,7 @@ namespace TVRename.Forms.Tools
 
             foreach (FileInfo subFile in droppedDir.GetFiles())
             {
-                ProcessUnknown(subFile);
+                ProcessUnknown(subFile,this);
             }
 
             foreach (DirectoryInfo subFile in droppedDir.GetDirectories())
@@ -72,7 +72,7 @@ namespace TVRename.Forms.Tools
             }
         }
 
-        private void ProcessUnknown([NotNull] FileInfo droppedFile)
+        private void ProcessUnknown([NotNull] FileInfo droppedFile, IWin32Window owner)
         {
             if ((droppedFile.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
             {
@@ -80,11 +80,11 @@ namespace TVRename.Forms.Tools
             }
             else
             {
-                ProcessFile(droppedFile);
+                ProcessFile(droppedFile,owner);
             }
         }
 
-        private void ProcessFile([NotNull] FileInfo droppedFile)
+        private void ProcessFile([NotNull] FileInfo droppedFile, IWin32Window owner)
         {
             if ((droppedFile.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
             {
@@ -109,7 +109,7 @@ namespace TVRename.Forms.Tools
             {
                 if (TVSettings.Instance.AutoAddAsPartOfQuickRename)
                 {
-                    List<ShowItem> addedShows = FinderHelper.FindShows(new List<string> {droppedFile.Name}, mDoc);
+                    List<ShowItem> addedShows = FinderHelper.FindShows(new List<string> {droppedFile.Name}, mDoc,owner);
                     bestShow = addedShows.FirstOrDefault();
                 }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using JetBrains.Annotations;
 using Alphaleonis.Win32.Filesystem;
 
@@ -50,7 +51,7 @@ namespace TVRename
 
                 filesThatMayBeNeeded = new List<FileInfo>();
 
-                ReviewFilesInDownloadDirectory(dirPath);
+                ReviewFilesInDownloadDirectory(dirPath,settings.Owner);
                 ReviewDirsInDownloadDirectory(dirPath);
             }
 
@@ -155,7 +156,7 @@ namespace TVRename
             return new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup);
         }
 
-        private void ReviewFilesInDownloadDirectory(string dirPath)
+        private void ReviewFilesInDownloadDirectory(string dirPath, IWin32Window owner)
         {
             try
             {
@@ -179,7 +180,7 @@ namespace TVRename
 
                     if (matchingShowsNoDupes.Any())
                     {
-                        ReviewFileInDownloadDirectory(currentSettings.Unattended,  fi, matchingShowsNoDupes);
+                        ReviewFileInDownloadDirectory(currentSettings.Unattended,  fi, matchingShowsNoDupes,owner);
                     }
                 }
             }
@@ -215,7 +216,7 @@ namespace TVRename
             return compareShow.ShowName.StartsWith(testShow.ShowName, StringComparison.Ordinal) && testShow.ShowName.Length < compareShow.ShowName.Length;
         }
 
-        private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, [NotNull] List<ShowItem> matchingShows)
+        private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, [NotNull] List<ShowItem> matchingShows, IWin32Window owner)
         {
             bool fileCanBeDeleted = TVSettings.Instance.RemoveDownloadDirectoriesFiles;
             ProcessedEpisode firstMatchingPep = null;
@@ -261,7 +262,7 @@ namespace TVRename
                             continue;
                         }
 
-                        bool? deleteFile = ReviewFile(unattended, fi, matchingShows, existingFile, pep);
+                        bool? deleteFile = ReviewFile(unattended, fi, matchingShows, existingFile, pep,owner);
                         if (deleteFile.HasValue && deleteFile.Value==false)
                         {
                             fileCanBeDeleted = false;
@@ -283,7 +284,7 @@ namespace TVRename
             }
         }
 
-        private bool? ReviewFile(bool unattended, [NotNull] FileInfo newFile, [NotNull] IReadOnlyCollection<ShowItem> matchingShows, [NotNull] FileInfo existingFile,[NotNull] ProcessedEpisode pep)
+        private bool? ReviewFile(bool unattended, [NotNull] FileInfo newFile, [NotNull] IReadOnlyCollection<ShowItem> matchingShows, [NotNull] FileInfo existingFile,[NotNull] ProcessedEpisode pep, IWin32Window owner)
         {
             FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, newFile);
 
@@ -329,7 +330,7 @@ namespace TVRename
                     {
                         if (matchingShows.Count <= 1)
                         {
-                            return AskUserAboutFileReplacement(newFile, existingFile, pep);
+                            return AskUserAboutFileReplacement(newFile, existingFile, pep,owner);
                         }
 
                         LOGGER.Warn(
@@ -368,12 +369,12 @@ namespace TVRename
             }
         }
 
-        private bool? AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] ProcessedEpisode pep)
+        private bool? AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] ProcessedEpisode pep, IWin32Window owner)
         {
             try
             {
                 ChooseFile question = new ChooseFile(existingFile, newFile);
-                question.ShowDialog();
+                question.ShowDialog(owner);
 
                 switch (question.Answer)
                 {

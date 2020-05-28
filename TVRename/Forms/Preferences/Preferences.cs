@@ -1188,7 +1188,7 @@ namespace TVRename
             saveFile.FileName = txt.Text;
             saveFile.DefaultExt = defaultExt;
             saveFile.FilterIndex = filterIndex;
-            if (saveFile.ShowDialog() == DialogResult.OK)
+            if (saveFile.ShowDialog(this) == DialogResult.OK)
             {
                 txt.Text = saveFile.FileName;
             }
@@ -1208,7 +1208,7 @@ namespace TVRename
         {
             openFile.FileName = txt.Text;
             openFile.Filter = filter;
-            if (saveFile.ShowDialog() == DialogResult.OK)
+            if (saveFile.ShowDialog(this) == DialogResult.OK)
             {
                 txt.Text = openFile.FileName;
             }

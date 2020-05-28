@@ -232,7 +232,7 @@ namespace TVRename
                 folderBrowser.SelectedPath = txtFolder.Text;
             }
 
-            if (folderBrowser.ShowDialog() == DialogResult.OK)
+            if (folderBrowser.ShowDialog(this) == DialogResult.OK)
             {
                 txtFolder.Text = folderBrowser.SelectedPath;
             }

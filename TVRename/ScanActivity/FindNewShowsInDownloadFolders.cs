@@ -23,7 +23,8 @@ namespace TVRename
         [NotNull]
         protected override string CheckName() => "Looked in the Search Folders for any new shows that need to be added to the library";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,
+            TVDoc.ScanSettings settings)
         {
             //for each directory in settings directory
             //for each file in directory
@@ -44,7 +45,7 @@ namespace TVRename
             }
 
             IEnumerable<string> possibleShowNames = GetPossibleShowNameStrings();
-            List<ShowItem> addedShows = FinderHelper.FindShows(possibleShowNames,MDoc);
+            List<ShowItem> addedShows = FinderHelper.FindShows(possibleShowNames,MDoc,settings.Owner);
 
             if (addedShows.Count <= 0)
             {
@@ -52,8 +53,8 @@ namespace TVRename
             }
 
             MDoc.Library.AddRange(addedShows);
-            MDoc.ShowAddedOrEdited(false,false,false);
-            MDoc.ShowAddedOrEdited(true,false,false);
+            MDoc.ShowAddedOrEdited(false,false,false,settings.Owner);
+            MDoc.ShowAddedOrEdited(true,false,false,settings.Owner);
 
             LOGGER.Info("Added new shows called: {0}", addedShows.Select(s => s.ShowName).ToCsv());
 

@@ -87,7 +87,7 @@ namespace TVRename
         private void bnBrowse_Click(object sender, System.EventArgs e)
         {
             folderBrowser.SelectedPath = FolderName;
-            if (folderBrowser.ShowDialog() == DialogResult.OK)
+            if (folderBrowser.ShowDialog(this) == DialogResult.OK)
             {
                 Result = FaResult.kfaDifferentFolder;
                 FolderName = folderBrowser.SelectedPath;

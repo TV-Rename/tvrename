@@ -103,7 +103,7 @@ namespace TVRename
             ShowRule sr = new ShowRule();
             AddModifyRule ar = new AddModifyRule(sr, show,mSeasonNumber);
 
-            bool res = ar.ShowDialog() == DialogResult.OK;
+            bool res = ar.ShowDialog(this) == DialogResult.OK;
             if (res)
             {
                 workingRuleSet.Add(sr);
@@ -163,7 +163,7 @@ namespace TVRename
 
             ShowRule sr = (ShowRule) lvRuleList.SelectedItems[0].Tag;
             AddModifyRule ar = new AddModifyRule(sr,show,mSeasonNumber);
-            ar.ShowDialog(); // modifies rule in-place if OK'd
+            ar.ShowDialog(this); // modifies rule in-place if OK'd
             FillRuleList(false, 0);
         }
 
@@ -293,7 +293,7 @@ namespace TVRename
             possibleEpisodes.AddRange(episodesToRemoveFromSeen);
 
             NewSeenEpisode nse = new NewSeenEpisode(possibleEpisodes);
-            DialogResult dialogResult = nse.ShowDialog();
+            DialogResult dialogResult = nse.ShowDialog(this);
 
             if (dialogResult != DialogResult.OK )
             {
