@@ -535,7 +535,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static List<ShowItem> FindShows([NotNull] IEnumerable<string> possibleShowNames, TVDoc doc, IWin32Window owner)
+        public static List<ShowItem> FindShows([NotNull] IEnumerable<string> possibleShowNames, TVDoc doc, IDialogParent owner)
         {
             List<ShowItem> addedShows = new List<ShowItem>();
 
@@ -592,7 +592,7 @@ namespace TVRename
                 //popup dialog
                 AutoAddShow askForMatch = new AutoAddShow(refinedHint,hint);
                
-                ((UI)owner).ShowChildDialog(askForMatch);
+                owner.ShowChildDialog(askForMatch);
                 DialogResult dr = askForMatch.DialogResult;
                 askForMatch.Dispose();
 

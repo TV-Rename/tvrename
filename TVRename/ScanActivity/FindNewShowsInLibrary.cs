@@ -67,7 +67,7 @@ namespace TVRename
             }
         }
 
-        private void AskUserAboutShow([NotNull] FoundFolder folder, IWin32Window owner)
+        private void AskUserAboutShow([NotNull] FoundFolder folder, IDialogParent owner)
         {
             if (folder.CodeKnown)
             {
@@ -83,7 +83,7 @@ namespace TVRename
 
             FolderMonitorEdit ed = new FolderMonitorEdit(folder);
 
-            ((UI)owner).ShowChildDialog(ed);
+            owner.ShowChildDialog(ed);
             DialogResult x = ed.DialogResult;
             int code = ed.Code;
             ed.Dispose();

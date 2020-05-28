@@ -117,7 +117,7 @@ namespace TVRename
             return CurrentStats;
         }
 
-        public void UpdateIdsFromCache()
+        private void UpdateIdsFromCache()
         {
             lock (TVmaze.LocalCache.SERIES_LOCK)
             {
@@ -144,7 +144,7 @@ namespace TVRename
 
         public bool Dirty() => mDirty;
 
-        public void DoActions([NotNull] ItemList theList, IWin32Window owner)
+        public void DoActions([NotNull] ItemList theList, IDialogParent owner)
         {
             foreach (Item i in theList)
             {
@@ -571,7 +571,7 @@ namespace TVRename
             }
         }
 
-        public void DoAllActions(IWin32Window owner)
+        public void DoAllActions(IDialogParent owner)
         {
             PreventAutoScan("Do all actions");
             ItemList theList = new ItemList();

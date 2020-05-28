@@ -8,7 +8,7 @@ using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 namespace TVRename.Forms.Tools
 {
-    public partial class QuickRename : Form
+    public partial class QuickRename : Form, IDialogParent
     {
         private readonly TVDoc mDoc;
         private readonly UI parent;
@@ -34,6 +34,20 @@ namespace TVRename.Forms.Tools
             }
 
             cbShowList.SelectedItem = "<Auto>";
+        }
+
+        private delegate void ShowChildConsumer(Form childForm);
+        public void ShowChildDialog(Form childForm)
+        {
+            if (InvokeRequired)
+            {
+                ShowChildConsumer d = ShowChildDialog;
+                Invoke(d, childForm);
+            }
+            else
+            {
+                childForm.ShowDialog(this);
+            }
         }
 
         private void Panel1_DragDrop(object sender, [NotNull] DragEventArgs e)
@@ -72,7 +86,7 @@ namespace TVRename.Forms.Tools
             }
         }
 
-        private void ProcessUnknown([NotNull] FileInfo droppedFile, IWin32Window owner)
+        private void ProcessUnknown([NotNull] FileInfo droppedFile, IDialogParent owner)
         {
             if ((droppedFile.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
             {
@@ -84,7 +98,7 @@ namespace TVRename.Forms.Tools
             }
         }
 
-        private void ProcessFile([NotNull] FileInfo droppedFile, IWin32Window owner)
+        private void ProcessFile([NotNull] FileInfo droppedFile, IDialogParent owner)
         {
             if ((droppedFile.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
             {

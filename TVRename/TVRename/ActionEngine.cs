@@ -119,7 +119,7 @@ namespace TVRename
         /// </summary>
         /// <param name="theList">An ItemList to be processed.</param>
         /// <param name="showUi">Whether or not we should display a UI to inform the user about progress.</param>
-        public void DoActions([CanBeNull] ItemList theList, bool showUi, IWin32Window owner)
+        public void DoActions([CanBeNull] ItemList theList, bool showUi, IDialogParent owner)
         {
             if (theList is null)
             {
@@ -152,7 +152,7 @@ namespace TVRename
 
             if (showUi)
             {
-                ((UI) owner).ShowChildDialog(cmp);
+                owner.ShowChildDialog(cmp);
 
                 if (cmp.DialogResult == DialogResult.Cancel)
                 {

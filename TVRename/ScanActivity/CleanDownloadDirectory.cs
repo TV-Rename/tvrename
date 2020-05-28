@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using JetBrains.Annotations;
 using Alphaleonis.Win32.Filesystem;
 
@@ -156,7 +155,7 @@ namespace TVRename
             return new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup);
         }
 
-        private void ReviewFilesInDownloadDirectory(string dirPath, IWin32Window owner)
+        private void ReviewFilesInDownloadDirectory(string dirPath, IDialogParent owner)
         {
             try
             {
@@ -216,7 +215,7 @@ namespace TVRename
             return compareShow.ShowName.StartsWith(testShow.ShowName, StringComparison.Ordinal) && testShow.ShowName.Length < compareShow.ShowName.Length;
         }
 
-        private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, [NotNull] List<ShowItem> matchingShows, IWin32Window owner)
+        private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, [NotNull] List<ShowItem> matchingShows, IDialogParent owner)
         {
             bool fileCanBeDeleted = TVSettings.Instance.RemoveDownloadDirectoriesFiles;
             ProcessedEpisode firstMatchingPep = null;
@@ -284,7 +283,7 @@ namespace TVRename
             }
         }
 
-        private bool? ReviewFile(bool unattended, [NotNull] FileInfo newFile, [NotNull] IReadOnlyCollection<ShowItem> matchingShows, [NotNull] FileInfo existingFile,[NotNull] ProcessedEpisode pep, IWin32Window owner)
+        private bool? ReviewFile(bool unattended, [NotNull] FileInfo newFile, [NotNull] IReadOnlyCollection<ShowItem> matchingShows, [NotNull] FileInfo existingFile,[NotNull] ProcessedEpisode pep, IDialogParent owner)
         {
             FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, newFile);
 
@@ -369,13 +368,13 @@ namespace TVRename
             }
         }
 
-        private bool? AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] ProcessedEpisode pep, IWin32Window owner)
+        private bool? AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] ProcessedEpisode pep, IDialogParent owner)
         {
             try
             {
                 ChooseFile question = new ChooseFile(existingFile, newFile);
 
-                ((UI)owner).ShowChildDialog(question);
+                owner.ShowChildDialog(question);
                 ChooseFile.ChooseFileDialogResult result = question.Answer;
                 question.Dispose();
 
