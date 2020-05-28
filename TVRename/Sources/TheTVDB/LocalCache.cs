@@ -426,14 +426,17 @@ namespace TVRename.TheTVDB
                 foreach (JToken jToken in jsonLanguagesResponse["data"])
                 {
                     JObject languageJson = (JObject) jToken;
-                    int id = (int) languageJson["id"];
-                    string name = (string) languageJson["name"];
-                    string englishName = (string) languageJson["englishName"];
-                    string abbrev = (string) languageJson["abbreviation"];
-
-                    if (id != -1 && !string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(abbrev))
+                    int? id = (int?) languageJson["id"];
+                    if (id.HasValue)
                     {
-                        LanguageList.Add(new Language(id, abbrev, name, englishName));
+                        string name = (string) languageJson["name"];
+                        string englishName = (string) languageJson["englishName"];
+                        string abbrev = (string) languageJson["abbreviation"];
+
+                        if (id != -1 && !string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(abbrev))
+                        {
+                            LanguageList.Add(new Language(id.Value, abbrev, name, englishName));
+                        }
                     }
                 }
 
