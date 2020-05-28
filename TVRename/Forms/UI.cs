@@ -1690,8 +1690,7 @@ namespace TVRename
             {
                 tabControl1.SelectTab(tbMyShows);
             }
-
-            FillEpGuideHtml(si, -1);
+            SelectShow(si);
         }
 
         public void GotoEpguideFor([NotNull] ProcessedEpisode ep, bool changeTab)
@@ -4125,7 +4124,7 @@ namespace TVRename
 
         private void ToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            OrphanFiles ui = new OrphanFiles(mDoc);
+            OrphanFiles ui = new OrphanFiles(mDoc,this);
             ui.Show(this);
         }
     }

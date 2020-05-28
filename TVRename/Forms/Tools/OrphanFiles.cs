@@ -11,12 +11,14 @@ namespace TVRename.Forms.Tools
 {
     public partial class OrphanFiles : Form
     {
+        public UI Parent { get; }
         private readonly TVDoc mDoc;
         private readonly List<FileIssue> issues;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public OrphanFiles(TVDoc mDoc)
+        public OrphanFiles(TVDoc mDoc, UI parent)
         {
+            Parent = parent;
             this.mDoc = mDoc;
             issues = new List<FileIssue>();
             InitializeComponent();
@@ -70,6 +72,7 @@ namespace TVRename.Forms.Tools
 
             AddRcMenuItem("View on TVDB...", (s, args) => TvSourceFor(iss.Show));
             AddRcMenuItem("Open Folder", (s, args) => OpenFolder(iss.Directory));
+            AddRcMenuItem("Episode Guide", (s, args) => Parent.GotoEpguideFor(iss.Show,true));
 
             showRightClickMenu.Show(pt);
         }
