@@ -179,6 +179,20 @@ namespace TVRename
             UpdateSplashStatus(splash, "Running autoscan");
         }
 
+        private delegate void ShowChildConsumer(Form childForm);
+        public void ShowChildDialog(Form childForm)
+        {
+            if (InvokeRequired)
+            {
+                ShowChildConsumer d = ShowChildDialog;
+                Invoke(d, childForm);
+            }
+            else
+            {
+                childForm.ShowDialog(this);
+            }
+        }
+
         private void SetupObjectListForScanResults()
         {
             olvAction.SetObjects(mDoc.TheActionList);

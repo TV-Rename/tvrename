@@ -473,10 +473,22 @@ namespace TVRename
 
                 actionWork.Start(new ScanSettings(shows.ToList(),unattended,hidden,st,cts.Token,owner));
 
-                if (scanProgDlg != null && scanProgDlg.ShowDialog(owner) == DialogResult.Cancel)
+                if (scanProgDlg != null)
                 {
-                    cts.Cancel();
-                }
+                    DialogResult ccresult = scanProgDlg.ShowDialog(owner);
+                    //((UI) owner).ShowChildDialog(scanProgDlg);
+                    //DialogResult ccresult = scanProgDlg.DialogResult;
+                    //scanProgDlg.Dispose();
+
+                    if (ccresult == DialogResult.Cancel)
+                    {
+                        cts.Cancel();
+                    }
+                    else
+                    {
+                        actionWork.Join();
+                    }
+                } 
                 else
                 {
                     actionWork.Join();

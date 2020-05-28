@@ -158,9 +158,11 @@ namespace TVRename
                 {
                     // no command line guidance, so ask the user
                     MissingFolderAction mfa = new MissingFolderAction(si.ShowName, snum + " of " + si.MaxSeason(), folder);
-                    mfa.ShowDialog(owner);
+
+                    ((UI)owner).ShowChildDialog(mfa);
                     whatToDo = mfa.Result;
                     otherFolder = mfa.FolderName;
+                    mfa.Dispose();
                 }
 
                 switch (whatToDo)

@@ -374,9 +374,12 @@ namespace TVRename
             try
             {
                 ChooseFile question = new ChooseFile(existingFile, newFile);
-                question.ShowDialog(owner);
 
-                switch (question.Answer)
+                ((UI)owner).ShowChildDialog(question);
+                ChooseFile.ChooseFileDialogResult result = question.Answer;
+                question.Dispose();
+
+                switch (result)
                 {
                     case ChooseFile.ChooseFileDialogResult.ignore:
                         LOGGER.Info(

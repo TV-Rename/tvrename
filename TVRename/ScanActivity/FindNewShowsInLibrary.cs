@@ -82,12 +82,18 @@ namespace TVRename
             }
 
             FolderMonitorEdit ed = new FolderMonitorEdit(folder);
-            if (ed.ShowDialog(owner) != DialogResult.OK || ed.Code == -1)
+
+            ((UI)owner).ShowChildDialog(ed);
+            DialogResult x = ed.DialogResult;
+            int code = ed.Code;
+            ed.Dispose();
+
+            if (x != DialogResult.OK || code == -1)
             {
                 return;
             }
 
-            folder.TVDBCode = ed.Code;
+            folder.TVDBCode = code;
         }
 
         public override bool Active() => TVSettings.Instance.DoBulkAddInScan;

@@ -591,8 +591,11 @@ namespace TVRename
 
                 //popup dialog
                 AutoAddShow askForMatch = new AutoAddShow(refinedHint,hint);
-                
-                DialogResult dr = askForMatch.ShowDialog(owner);
+               
+                ((UI)owner).ShowChildDialog(askForMatch);
+                DialogResult dr = askForMatch.DialogResult;
+                askForMatch.Dispose();
+
                 if (dr == DialogResult.OK)
                 {
                     //If added add show to collection

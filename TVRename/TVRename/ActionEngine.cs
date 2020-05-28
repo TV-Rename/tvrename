@@ -150,9 +150,14 @@ namespace TVRename
 
             actionProcessorThread.Start(queues);
 
-            if (cmp != null && cmp.ShowDialog(owner) == DialogResult.Cancel)
+            if (showUi)
             {
-                actionProcessorThread.Abort();
+                ((UI) owner).ShowChildDialog(cmp);
+
+                if (cmp.DialogResult == DialogResult.Cancel)
+                {
+                    actionProcessorThread.Abort();
+                }
             }
 
             actionProcessorThread.Join();

@@ -84,7 +84,10 @@ namespace TVRename
             if (!DownloadDone && showProgress) // downloading still going on, so time to show the dialog if we're not in /hide mode
             {
                 DownloadProgress dp = new DownloadProgress(this);
-                DialogResult result = dp.ShowDialog(owner);
+                ((UI)owner).ShowChildDialog(dp);
+                DialogResult result = dp.DialogResult;
+                dp.Dispose();
+
 
                 if (result == DialogResult.Abort)
                 {
@@ -100,7 +103,11 @@ namespace TVRename
                 if (showErrorMsgBox)
                 {
                     CannotConnectForm ccform = new CannotConnectForm("Error while downloading", TheTVDB.LocalCache.Instance.LastErrorMessage + " " + TVmaze.LocalCache.Instance.LastErrorMessage);
-                    DialogResult ccresult = ccform.ShowDialog(owner);
+
+                    ((UI)owner).ShowChildDialog(ccform);
+                    DialogResult ccresult = ccform.DialogResult;
+                    ccform.Dispose();
+                    
                     if (ccresult == DialogResult.Abort)
                     {
                         TVSettings.Instance.OfflineMode = true;
