@@ -48,7 +48,7 @@ namespace TVRename
         private void FmpShower()
         {
             progressDialog = new FolderMonitorProgress(this);
-            progressDialog.ShowDialog(this);
+            progressDialog.ShowDialog();
             progressDialog = null;
         }
 
