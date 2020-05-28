@@ -1223,7 +1223,7 @@ namespace TVRename
             // 
             this.cbDetailedRSSJSONLogging.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbDetailedRSSJSONLogging.AutoSize = true;
-            this.cbDetailedRSSJSONLogging.Location = new System.Drawing.Point(6, 548);
+            this.cbDetailedRSSJSONLogging.Location = new System.Drawing.Point(6, 543);
             this.cbDetailedRSSJSONLogging.Name = "cbDetailedRSSJSONLogging";
             this.cbDetailedRSSJSONLogging.Size = new System.Drawing.Size(307, 17);
             this.cbDetailedRSSJSONLogging.TabIndex = 34;
