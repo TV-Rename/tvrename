@@ -375,7 +375,7 @@ namespace TVRename
 
             public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
             {
-                Helpers.SysOpen("http://www.imdb.com/find?s=nm&q=" + who);
+                Helpers.OpenUrl("http://www.imdb.com/find?s=nm&q=" + who);
             }
         }
 

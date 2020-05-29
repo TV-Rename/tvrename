@@ -144,12 +144,12 @@ namespace TVRename
 
         private void lnkOpenLeftFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Helpers.SysOpen(leftFile.DirectoryName);
+            Helpers.OpenFolderSelectFile(leftFile.FullName);
         }
 
         private void lnkOpenRightFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Helpers.SysOpen(rightFile.DirectoryName);
+            Helpers.OpenFolderSelectFile(rightFile.FullName);
         }
 
         private void btnLeft_Click(object sender, EventArgs e)

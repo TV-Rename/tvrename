@@ -558,7 +558,7 @@ namespace TVRename
         }
 
         private void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs eventArgs) =>
-            Helpers.SysOpen("http://tvrename.com");
+            Helpers.OpenUrl("http://tvrename.com");
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Close();
 
@@ -1289,7 +1289,7 @@ namespace TVRename
         {
             if (e != null)
             {
-                Helpers.SysOpen(e.WebsiteUrl);
+                Helpers.OpenUrl(e.WebsiteUrl);
             }
         }
 
@@ -1297,7 +1297,7 @@ namespace TVRename
         {
             if (seas != null)
             {
-                Helpers.SysOpen(seas.WebsiteUrl);
+                Helpers.OpenUrl(seas.WebsiteUrl);
             }
         }
 
@@ -1307,11 +1307,11 @@ namespace TVRename
             {
                 if (si.WebsiteUrl.HasValue())
                 {
-                    Helpers.SysOpen(si.WebsiteUrl);
+                    Helpers.OpenUrl(si.WebsiteUrl);
                 }
                 else if (si.TheSeries()?.WebUrl.HasValue()??false)
                 {
-                    Helpers.SysOpen(si.TheSeries()?.WebUrl);
+                    Helpers.OpenUrl(si.TheSeries()?.WebUrl);
                 }
             }
         }
@@ -1484,7 +1484,7 @@ namespace TVRename
             List<FileInfo> fl = FinderHelper.FindEpOnDisk(null, ei);
             if (fl.Count > 0)
             {
-                Helpers.SysOpen(fl[0].FullName);
+                Helpers.OpenFile(fl[0].FullName);
                 return;
             }
 
@@ -1624,7 +1624,7 @@ namespace TVRename
             if (url.StartsWith(EXPLORE_PROXY, StringComparison.InvariantCultureIgnoreCase))
             {
                 e.Cancel = true;
-                OpenFolder(HttpUtility.UrlDecode(url.Substring(EXPLORE_PROXY.Length)));
+                Helpers.OpenFolder(HttpUtility.UrlDecode(url.Substring(EXPLORE_PROXY.Length)));
                 return;
             }
 
@@ -1632,14 +1632,14 @@ namespace TVRename
             {
                 e.Cancel = true;
                 string fileName = HttpUtility.UrlDecode(url.Substring(WATCH_PROXY.Length)).Replace('/', '\\');
-                Helpers.SysOpen(fileName);
+                Helpers.OpenFile(fileName);
                 return;
             }
 
             if (url.IsHttpLink() || url.IsFileLink())
             {
                 e.Cancel = true;
-                Helpers.SysOpen(e.Url.AbsoluteUri);
+                Helpers.OpenUrl(e.Url.AbsoluteUri);
             }
         }
 
@@ -1837,7 +1837,7 @@ namespace TVRename
                 foreach (FileInfo fi in fl)
                 {
                     ToolStripMenuItem tsi = new ToolStripMenuItem("Watch: " + fi.FullName);
-                    tsi.Click += (sender, args) => { Helpers.SysOpen(fi.FullName); };
+                    tsi.Click += (sender, args) => { Helpers.OpenFile(fi.FullName); };
                     showRightClickMenu.Items.Add(tsi);
                 }
             }
@@ -1859,7 +1859,7 @@ namespace TVRename
                         foreach (FileInfo fi in fl)
                         {
                             ToolStripMenuItem tsisi = new ToolStripMenuItem("Watch: " + fi.FullName);
-                            tsisi.Click += (s, ev) => { Helpers.SysOpen(fi.FullName); };
+                            tsisi.Click += (s, ev) => { Helpers.OpenFile(fi.FullName); };
 
                             tsis.DropDownItems.Add(tsisi);
                         }
@@ -1933,7 +1933,7 @@ namespace TVRename
 
                 ToolStripMenuItem tsi = new ToolStripMenuItem("Open: " + folder);
                 tsi.Click += (s, ev) => {
-                    OpenFolder(folder);
+                    Helpers.OpenFolder(folder);
                 };
 
                 showRightClickMenu.Items.Add(tsi);
@@ -1950,7 +1950,7 @@ namespace TVRename
 
                 ToolStripMenuItem tssi = new ToolStripMenuItem("Open: " + folder);
                 tssi.Click += (s, ev) => {
-                    OpenFolder(folder); 
+                    Helpers.OpenFolder(folder); 
                 };
                 tsi.DropDownItems.Add(tssi);
             }
@@ -2031,24 +2031,16 @@ namespace TVRename
             FillActionList(true);
         }
 
-        private void OpenFolder(string folder)
-        {
-            if (Directory.Exists(folder))
-            {
-                Helpers.SysOpen(folder);
-            }
-        }
-
         private void SearchFor(SearchEngine s,[NotNull] ProcessedEpisode epi)
         {
-            Helpers.SysOpen(CustomEpisodeName.NameForNoExt(epi, s.Url, true));
+            Helpers.OpenUrl(CustomEpisodeName.NameForNoExt(epi, s.Url, true));
         }
 
         private void SearchFor(SearchEngine s)
         {
             foreach (ItemMissing miss in GetSelectedItems().Missing)
             {
-                Helpers.SysOpen(CustomEpisodeName.NameForNoExt(miss.Episode, s.Url, true));
+                Helpers.OpenUrl(CustomEpisodeName.NameForNoExt(miss.Episode, s.Url, true));
             }
         }
 
@@ -3477,7 +3469,7 @@ namespace TVRename
         }
 
         private void visitSupportForumToolStripMenuItem_Click(object sender, EventArgs e)
-            => Helpers.SysOpen("https://groups.google.com/forum/#!forum/tvrename");
+            => Helpers.OpenUrl("https://groups.google.com/forum/#!forum/tvrename");
 
         public void Quit() => Close();
 

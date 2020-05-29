@@ -350,7 +350,7 @@ namespace TVRename
 
         private static void OpenInfoWindow(string page)
         {
-            Helpers.SysOpen($"https://www.tvrename.com/manual/user{page}");
+            Helpers.OpenUrl($"https://www.tvrename.com/manual/user{page}");
         }
 
         #endregion
@@ -694,7 +694,7 @@ namespace TVRename
 
         private void llCustomSearchPreview_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Helpers.SysOpen(llCustomSearchPreview.Text);
+            Helpers.OpenUrl(llCustomSearchPreview.Text);
         }
 
         private void MTCCF_SelectionChanged(object sender, EventArgs e)

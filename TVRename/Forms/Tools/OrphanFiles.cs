@@ -11,7 +11,7 @@ namespace TVRename.Forms.Tools
 {
     public partial class OrphanFiles : Form
     {
-        public UI Parent { get; }
+        private UI Parent { get; }
         private readonly TVDoc mDoc;
         private readonly List<FileIssue> issues;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
@@ -71,18 +71,10 @@ namespace TVRename.Forms.Tools
             showRightClickMenu.Items.Clear();
 
             AddRcMenuItem("View on TVDB...", (s, args) => TvSourceFor(iss.Show));
-            AddRcMenuItem("Open Folder", (s, args) => OpenFolder(iss.Directory));
+            AddRcMenuItem("Open Folder", (s, args) => Helpers.OpenFolderSelectFile(iss.File.FullName));
             AddRcMenuItem("Episode Guide", (s, args) => Parent.GotoEpguideFor(iss.Show,true));
 
             showRightClickMenu.Show(pt);
-        }
-
-        private void OpenFolder(string folder)
-        {
-            if (Directory.Exists(folder))
-            {
-                Helpers.SysOpen(folder);
-            }
         }
 
         private static void TvSourceFor([CanBeNull] ShowItem si)
@@ -91,11 +83,11 @@ namespace TVRename.Forms.Tools
             {
                 if (si.WebsiteUrl.HasValue())
                 {
-                    Helpers.SysOpen(si.WebsiteUrl);
+                    Helpers.OpenUrl(si.WebsiteUrl);
                 }
                 else if (si.TheSeries()?.WebUrl.HasValue() ?? false)
                 {
-                    Helpers.SysOpen(si.TheSeries()?.WebUrl);
+                    Helpers.OpenUrl(si.TheSeries()?.WebUrl);
                 }
             }
         }

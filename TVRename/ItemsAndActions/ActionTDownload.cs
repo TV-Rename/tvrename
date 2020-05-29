@@ -55,7 +55,7 @@ namespace TVRename
             {
                 if (!(TVSettings.Instance.CheckuTorrent || TVSettings.Instance.CheckqBitTorrent))
                 {
-                    if (Helpers.SysOpen(url))
+                    if (Helpers.OpenUrl(url))
                     {
                         return ActionOutcome.Success();
                     }

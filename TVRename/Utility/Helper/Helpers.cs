@@ -158,10 +158,29 @@ namespace TVRename
 
         private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private static readonly DateTime WindowsStartDateTime = new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        public static bool OpenFolder(string folder)
+        {
+            if (Directory.Exists(folder))
+            {
+                return SysOpen(folder);
+            }
+            return false;
+        }
 
-        public static bool SysOpen([CanBeNull] string what) => SysOpen(what, null);
+        public static void OpenFolderSelectFile(string filename)
+        {
+            string args = $"/e, /select, \"{filename}\"";
 
-        public static bool SysOpen([CanBeNull] string what, [CanBeNull] string arguments)
+            ProcessStartInfo info = new ProcessStartInfo {FileName = "explorer", Arguments = args};
+            Process.Start(info);
+        }
+
+        public static bool OpenUrl(string url) =>SysOpen(url);
+        public static void OpenFile(string filename) => SysOpen(filename);
+
+        private static bool SysOpen([CanBeNull] string what) => SysOpen(what, null);
+
+        private static bool SysOpen([CanBeNull] string what, [CanBeNull] string arguments)
         {
             if (string.IsNullOrWhiteSpace(what))
             {

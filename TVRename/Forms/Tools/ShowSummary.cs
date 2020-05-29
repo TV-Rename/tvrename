@@ -269,7 +269,7 @@ namespace TVRename
                             int wn = n - RightClickCommands.kWatchBase;
                             if (mLastFileList != null && wn >= 0 && wn < mLastFileList.Count)
                             {
-                                Helpers.SysOpen(mLastFileList[wn].FullName);
+                                Helpers.OpenFile(mLastFileList[wn].FullName);
                             }
                         }
                         else if (n >= RightClickCommands.kOpenFolderBase)
@@ -282,7 +282,7 @@ namespace TVRename
 
                                 if (Directory.Exists(folder))
                                 {
-                                    Helpers.SysOpen(folder);
+                                    Helpers.OpenFolder(folder);
                                 }
                             }
                         }
@@ -303,7 +303,7 @@ namespace TVRename
                 return;
             }
 
-            Helpers.SysOpen(seas.TVDBWebsiteUrl);
+            Helpers.OpenUrl(seas.TVDBWebsiteUrl);
         }
 
         private static void TvdbFor([CanBeNull] ShowItem si)
@@ -313,7 +313,7 @@ namespace TVRename
                 return;
             }
 
-            Helpers.SysOpen(si.WebsiteUrl);
+            Helpers.OpenUrl(si.WebsiteUrl);
         }
 
         private delegate void ShowChildConsumer(Form childForm);

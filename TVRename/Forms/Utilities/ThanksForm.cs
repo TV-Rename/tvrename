@@ -12,12 +12,12 @@ namespace TVRename.Forms.Utilities
 
         private void btnLicence_Click(object sender, EventArgs e)
         {
-            Helpers.SysOpen("https://thetvdb.com/");
+            Helpers.OpenUrl("https://thetvdb.com/");
         }
 
         private void BtnVisitTVMaze_Click(object sender, EventArgs e)
         {
-            Helpers.SysOpen("https://www.tvmaze.com/");
+            Helpers.OpenUrl("https://www.tvmaze.com/");
         }
     }
 }

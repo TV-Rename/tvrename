@@ -13,7 +13,7 @@ namespace TVRename.Forms.Utilities
 
         private void btnLicence_Click(object sender, EventArgs e)
         {
-            Helpers.SysOpen("https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md");
+            Helpers.OpenUrl("https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md");
         }
     }
 }

@@ -20,12 +20,12 @@ namespace TVRename.Forms.Utilities
 
         private void bnTVDB_Click(object sender, EventArgs e)
         {
-            Helpers.SysOpen("https://www.thetvdb.com/");
+            Helpers.OpenUrl("https://www.thetvdb.com/");
         }
 
         private void bnAPICheck_Click(object sender, EventArgs e)
         {
-            Helpers.SysOpen("https://www.isitdownrightnow.com/api.thetvdb.com.html");
+            Helpers.OpenUrl("https://www.isitdownrightnow.com/api.thetvdb.com.html");
         }
 
         private void bnOffline_Click(object sender, EventArgs e)

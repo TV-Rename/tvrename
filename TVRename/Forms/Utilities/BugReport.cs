@@ -172,7 +172,7 @@ namespace TVRename
 
         private void linkForum_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Helpers.SysOpen("https://groups.google.com/forum/#!forum/tvrename");   
+            Helpers.OpenUrl("https://groups.google.com/forum/#!forum/tvrename");   
         }
     }
 }

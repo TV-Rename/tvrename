@@ -222,7 +222,7 @@ namespace TVRename
                 return;
             }
 
-            Helpers.SysOpen(TVSettings.Instance.BTSearchURL(ep));
+            Helpers.OpenUrl(TVSettings.Instance.BTSearchURL(ep));
         }
 
         public void DoWhenToWatch(bool cachedOnly,bool unattended,bool hidden, IDialogParent owner)

@@ -1240,7 +1240,7 @@ namespace TVRename
 
             if (rowsIndex.Length > 0)
             {
-                Helpers.SysOpen((string) RSSGrid[rowsIndex[0], 0].Value);
+                Helpers.OpenUrl((string) RSSGrid[rowsIndex[0], 0].Value);
             }
         }
 
@@ -1648,7 +1648,7 @@ namespace TVRename
                 return;
             }
 
-            Helpers.SysOpen(TVSettings.Instance.DownloadFolders[n]);
+            Helpers.OpenFolder(TVSettings.Instance.DownloadFolders[n]);
         }
 
         private void lbSearchFolders_KeyDown(object sender, [NotNull] KeyEventArgs e)
@@ -1729,7 +1729,7 @@ namespace TVRename
         {
             if (lstFMMonitorFolders.SelectedIndex != -1)
             {
-                Helpers.SysOpen(TVSettings.Instance.LibraryFolders[lstFMMonitorFolders.SelectedIndex]);
+                Helpers.OpenFolder(TVSettings.Instance.LibraryFolders[lstFMMonitorFolders.SelectedIndex]);
             }
         }
 
@@ -1801,7 +1801,7 @@ namespace TVRename
 
         private static void OpenInfoWindow(string page)
         {
-            Helpers.SysOpen($"https://www.tvrename.com/manual/options{page}");
+            Helpers.OpenUrl($"https://www.tvrename.com/manual/options{page}");
         }
 
         #endregion

@@ -74,17 +74,17 @@ namespace TVRename.Forms
 
         private void bnReleaseNotes_Click(object sender, EventArgs e)
         {
-            Helpers.SysOpen(newVersion.ReleaseNotesUrl);
+            Helpers.OpenUrl(newVersion.ReleaseNotesUrl);
         }
 
         private void btnDownloadNow_Click(object sender, EventArgs e)
         {
-            Helpers.SysOpen(newVersion.DownloadUrl);
+            Helpers.OpenUrl(newVersion.DownloadUrl);
         }
 
         private void btnDownloadNowAndQuit_Click(object sender, EventArgs e)
         {
-            Helpers.SysOpen(newVersion.DownloadUrl);
+            Helpers.OpenUrl(newVersion.DownloadUrl);
             DialogResult = DialogResult.Abort;
         }
 
@@ -100,7 +100,7 @@ namespace TVRename.Forms
             if (url.IsWebLink())
             {
                 e.Cancel = true;
-                Helpers.SysOpen(e.Url.AbsoluteUri);
+                Helpers.OpenUrl(e.Url.AbsoluteUri);
             }
         }
     }

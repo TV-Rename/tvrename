@@ -180,7 +180,7 @@ namespace TVRename
         {
             if (lstFMMonitorFolders.SelectedIndex != -1)
             {
-                Helpers.SysOpen(TVSettings.Instance.LibraryFolders[lstFMMonitorFolders.SelectedIndex]);
+                Helpers.OpenFolder(TVSettings.Instance.LibraryFolders[lstFMMonitorFolders.SelectedIndex]);
             }
         }
 
@@ -188,7 +188,7 @@ namespace TVRename
         {
             if (lstFMIgnoreFolders.SelectedIndex != -1)
             {
-                Helpers.SysOpen(TVSettings.Instance.LibraryFolders[lstFMIgnoreFolders.SelectedIndex]);
+                Helpers.OpenFolder(TVSettings.Instance.LibraryFolders[lstFMIgnoreFolders.SelectedIndex]);
             }
         }
 
@@ -421,7 +421,7 @@ namespace TVRename
 
             if (lvFMNewShows.SelectedItems[0].Tag is FoundFolder ai)
             {
-                Helpers.SysOpen(ai.Folder.FullName);
+                Helpers.OpenFolder(ai.Folder.FullName);
             }
         }
 
@@ -519,7 +519,7 @@ namespace TVRename
 
             if (fme.TVDBCode != -1)
             {
-                Helpers.SysOpen(TheTVDB.API.WebsiteShowUrl(fme.TVDBCode)); //todo - how will bulk add work for MTVmaze
+                Helpers.OpenUrl(TheTVDB.API.WebsiteShowUrl(fme.TVDBCode)); //todo - how will bulk add work for MTVmaze
             }
         }
 
