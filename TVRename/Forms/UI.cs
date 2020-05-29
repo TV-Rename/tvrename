@@ -189,7 +189,14 @@ namespace TVRename
             }
             else
             {
-                childForm.ShowDialog(this);
+                if (IsDisposed)
+                {
+                    childForm.ShowDialog();
+                }
+                else
+                {
+                    childForm.ShowDialog(this);
+                }
             }
         }
 
