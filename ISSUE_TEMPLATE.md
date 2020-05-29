@@ -40,12 +40,12 @@ Please provide any relevant information about your setup. This is important in c
 ## XML Files
 
 Please include your XML files from your user directory here. Rename them to be txt files to load them here directly.
-- See http://www.tvrename.com/technical#configuration-files for more information
+- See https://www.tvrename.com/manual/technical/#configuration-files for more information
 
 ## Log Files
 
 Upload a log file here that is the log file that was present at the time of the error
- - See http://www.tvrename.com/technical#log-files for more information
+ - See https://www.tvrename.com/manual/support/#logs for more information
 
 ## Error messages
 
