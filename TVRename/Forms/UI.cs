@@ -1698,6 +1698,10 @@ namespace TVRename
                 tabControl1.SelectTab(tbMyShows);
             }
             SelectShow(si);
+            if (changeTab)
+            {
+                tabControl2.SelectTab(tpSummary);
+            }
         }
 
         public void GotoEpguideFor([NotNull] ProcessedEpisode ep, bool changeTab)
