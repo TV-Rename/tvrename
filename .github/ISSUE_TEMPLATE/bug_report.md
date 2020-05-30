@@ -17,6 +17,8 @@ Please answer the following questions for yourself before submitting an issue. *
 - [ ] It is a bug (i.e. something that is going wrong) and not a new feature (These should be raised on the [Idea Wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0))
  - [ ] It is not a general question( these should be asked on the [support forum](https://groups.google.com/forum/#!forum/tvrename))
 
+# Bug Details
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
@@ -45,6 +47,9 @@ Please provide any relevant information about your setup. This is important in c
 * Operating System:
 * Are you using the windows version or command line version?
 
+**Additional context**
+Add any other context about the problem here.
+
 ## XML Files
 
 Please include your XML files from your user directory here. Rename them to be txt files to load them here directly.
@@ -62,6 +67,3 @@ Please include the exact wording of any error messages that you have seen on scr
 ## Screenshots or videos of the issue
 
 Please add any images or videos here. Use snipping tool or tinytake / bandicam For videos
-
-**Additional context**
-Add any other context about the problem here.
