@@ -436,7 +436,7 @@ namespace TVRename
                 }
 
                 SeriesInfo ser = TheSeries();
-                if (ser != null)
+                if (ser?.Name.HasValue()??false)
                 {
                     return ser.Name;
                 }
