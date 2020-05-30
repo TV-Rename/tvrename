@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Cache;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
 
@@ -180,7 +181,19 @@ namespace TVRename.TheTVDB
                 response = HttpRequest("GET", fullUrl, null, "application/json", authToken, lang);
             }
 
-            return JObject.Parse(response);
+            try
+            {
+                return JObject.Parse(response);
+            }
+            catch (JsonReaderException e)
+            {
+                const string ERROR_ON_END = @"{""Error"":""Not authorized""}";
+                if (response.EndsWith(ERROR_ON_END, StringComparison.Ordinal) && response.Length>ERROR_ON_END.Length)
+                {
+                    return JObject.Parse(response.TrimEnd(ERROR_ON_END));
+                }
+                throw;
+            }
         }
 
         public static JObject GetLanguages()
