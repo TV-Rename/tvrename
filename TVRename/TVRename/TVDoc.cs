@@ -475,7 +475,8 @@ namespace TVRename
 
                 if (scanProgDlg != null)
                 {
-                    DialogResult ccresult = scanProgDlg.ShowDialog(owner);
+                    owner.ShowChildDialog(scanProgDlg);
+                    DialogResult ccresult = scanProgDlg.DialogResult;
 
                     if (ccresult == DialogResult.Cancel)
                     {
