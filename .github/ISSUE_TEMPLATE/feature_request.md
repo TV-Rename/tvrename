@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-These should be raised on the [Idea Wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0)) and linked to here.
+These should be raised on the [Idea Wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0) and linked to here.
 
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
