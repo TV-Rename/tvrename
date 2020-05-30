@@ -136,8 +136,8 @@ namespace TVRename.TheTVDB
             }
             catch (WebException e)
             {
-                Logger.Warn(CurrentDLTask + " : " + e.Message + " : " + url);
-                LastErrorMessage = CurrentDLTask + " : " + e.Message;
+                Logger.Warn(CurrentDLTask + " : " + e.LoggableDetails() + " : " + url);
+                LastErrorMessage = CurrentDLTask + " : " + e.LoggableDetails();
                 return null;
             }
         }
@@ -427,16 +427,18 @@ namespace TVRename.TheTVDB
                 {
                     JObject languageJson = (JObject) jToken;
                     int? id = (int?) languageJson["id"];
-                    if (id.HasValue)
+                    if (!id.HasValue)
                     {
-                        string name = (string) languageJson["name"];
-                        string englishName = (string) languageJson["englishName"];
-                        string abbrev = (string) languageJson["abbreviation"];
+                        continue;
+                    }
 
-                        if (id != -1 && !string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(abbrev))
-                        {
-                            LanguageList.Add(new Language(id.Value, abbrev, name, englishName));
-                        }
+                    string name = (string) languageJson["name"];
+                    string englishName = (string) languageJson["englishName"];
+                    string abbrev = (string) languageJson["abbreviation"];
+
+                    if (id != -1 && !string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(abbrev))
+                    {
+                        LanguageList.Add(new Language(id.Value, abbrev, name, englishName));
                     }
                 }
 
@@ -456,22 +458,20 @@ namespace TVRename.TheTVDB
                     Logger.Error($"Error obtaining Languages from TVDB {ex.LoggableDetails()}");
                 }
 
-                LastErrorMessage = ex.Message;
+                LastErrorMessage = ex.LoggableDetails();
 
                 if (showErrorMsgBox)
                 {
                     CannotConnectForm ccform =
-                        new CannotConnectForm("Error while downloading languages from TVDB", ex.Message);
+                        new CannotConnectForm("Error while downloading languages from TVDB", ex.LoggableDetails());
 
                     DialogResult ccresult = ccform.ShowDialog();
                     if (ccresult == DialogResult.Abort)
                     {
                         TVSettings.Instance.OfflineMode = true;
+                        LastErrorMessage = string.Empty;
                     }
                 }
-
-                LastErrorMessage = string.Empty;
-
                 return false;
             }
         }
@@ -675,7 +675,7 @@ namespace TVRename.TheTVDB
                 Logger.LogWebException($"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is",ex);
                 
                 SayNothing();
-                LastErrorMessage = ex.Message;
+                LastErrorMessage = ex.LoggableDetails();
                 return null;
             }
             catch (AggregateException aex) when (aex.InnerException is WebException ex)
@@ -683,7 +683,7 @@ namespace TVRename.TheTVDB
                 Logger.LogWebException($"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is", ex);
 
                 SayNothing();
-                LastErrorMessage = ex.Message;
+                LastErrorMessage = ex.LoggableDetails();
                 return null;
             }
             catch (AggregateException aex) when (aex.InnerException is System.Net.Http.HttpRequestException ex)
@@ -691,7 +691,7 @@ namespace TVRename.TheTVDB
                 Logger.LogHttpRequestException($"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is", ex);
 
                 SayNothing();
-                LastErrorMessage = ex.Message;
+                LastErrorMessage = ex.LoggableDetails();
                 return null;
             }
         }
@@ -1312,7 +1312,7 @@ namespace TVRename.TheTVDB
 
                     if (API.TvdbIsUp() && !CanFindEpisodesFor(code, requestedLanguageCode))
                     {
-                        LastErrorMessage = ex.Message;
+                        LastErrorMessage = ex.LoggableDetails();
                         string msg = $"Show with TVDB Id {code} is no longer found on TVDB. Please Update";
                         throw new ShowNotFoundException(code,msg,ShowItem.ProviderType.TheTVDB,ShowItem.ProviderType.TheTVDB);
                     }
@@ -1329,7 +1329,7 @@ namespace TVRename.TheTVDB
                 }
 
                 SayNothing();
-                LastErrorMessage = ex.Message;
+                LastErrorMessage = ex.LoggableDetails();
                 throw new SourceConnectivityException();
             }
 
@@ -1400,7 +1400,7 @@ namespace TVRename.TheTVDB
                     Logger.LogWebException($"Unble to obtain actors for {series[code].Name}", ex);
                 }
 
-                LastErrorMessage = ex.Message;
+                LastErrorMessage = ex.LoggableDetails();
             }
         }
 
@@ -1475,7 +1475,7 @@ namespace TVRename.TheTVDB
             string txt;
             if (series.ContainsKey(code))
             {
-                txt = series[code].Name;
+                txt = series[code].Name.HasValue() ? series[code].Name : "Code " + code;
             }
             else
             {
@@ -1635,7 +1635,7 @@ namespace TVRename.TheTVDB
                     Logger.Error($"Error obtaining episode [{episodeId}]: " + ex.LoggableDetails());
                 }
 
-                LastErrorMessage = ex.Message;
+                LastErrorMessage = ex.LoggableDetails();
                 SayNothing();
                 return false;
             }
@@ -1816,7 +1816,7 @@ namespace TVRename.TheTVDB
                         Logger.Error($"Error obtaining results for search term '{text}': {ex.LoggableDetails()}");
                     }
 
-                    LastErrorMessage = ex.Message;
+                    LastErrorMessage = ex.LoggableDetails();
                     SayNothing();
                 }
                 else if (((HttpWebResponse) ex.Response).StatusCode == HttpStatusCode.NotFound)
@@ -1835,7 +1835,7 @@ namespace TVRename.TheTVDB
                         Logger.Error($"Error obtaining results for search term '{text}': {ex.LoggableDetails()}");
                     }
 
-                    LastErrorMessage = ex.Message;
+                    LastErrorMessage = ex.LoggableDetails();
                     SayNothing();
                 }
             }
@@ -1861,7 +1861,7 @@ namespace TVRename.TheTVDB
                                 $"Error obtaining results for search term '{text}' in {DefaultLanguageCode}: {ex.LoggableDetails()}");
                         }
 
-                        LastErrorMessage = ex.Message;
+                        LastErrorMessage = ex.LoggableDetails();
                         SayNothing();
                     }
                     else if (((HttpWebResponse) ex.Response).StatusCode == HttpStatusCode.NotFound)
@@ -1874,7 +1874,7 @@ namespace TVRename.TheTVDB
                         Logger.Error(
                             $"Error obtaining {ex.Response.ResponseUri} for search term '{text}' in {DefaultLanguageCode}: {ex.LoggableDetails()}");
 
-                        LastErrorMessage = ex.Message;
+                        LastErrorMessage = ex.LoggableDetails();
                         SayNothing();
                     }
                 }
