@@ -66,6 +66,7 @@ namespace TVRename
         {
             if (TVSettings.Instance.OfflineMode)
             {
+                Logger.Info("Cancelling downloads... We're in offline mode");
                 return true; // don't do internet in offline mode!
             }
 
@@ -97,26 +98,28 @@ namespace TVRename
 
             WaitForBgDownloadDone();
 
-            if (!downloadOk)
+            if (downloadOk)
             {
-                Logger.Warn(TheTVDB.LocalCache.Instance.LastErrorMessage +" "+ TVmaze.LocalCache.Instance.LastErrorMessage);
-                if (showErrorMsgBox)
-                {
-                    CannotConnectForm ccform = new CannotConnectForm("Error while downloading", TheTVDB.LocalCache.Instance.LastErrorMessage + " " + TVmaze.LocalCache.Instance.LastErrorMessage);
-
-                    owner.ShowChildDialog(ccform);
-                    DialogResult ccresult = ccform.DialogResult;
-                    ccform.Dispose();
-                    
-                    if (ccresult == DialogResult.Abort)
-                    {
-                        TVSettings.Instance.OfflineMode = true;
-                    }
-                }
-
-                TheTVDB.LocalCache.Instance.LastErrorMessage = string.Empty;
-                TVmaze.LocalCache.Instance.LastErrorMessage = string.Empty;
+                return true;
             }
+
+            Logger.Warn(TheTVDB.LocalCache.Instance.LastErrorMessage +" "+ TVmaze.LocalCache.Instance.LastErrorMessage);
+            if (showErrorMsgBox)
+            {
+                CannotConnectForm ccform = new CannotConnectForm("Error while downloading", TheTVDB.LocalCache.Instance.LastErrorMessage + " " + TVmaze.LocalCache.Instance.LastErrorMessage);
+
+                owner.ShowChildDialog(ccform);
+                DialogResult ccresult = ccform.DialogResult;
+                ccform.Dispose();
+                    
+                if (ccresult == DialogResult.Abort)
+                {
+                    TVSettings.Instance.OfflineMode = true;
+                }
+            }
+
+            TheTVDB.LocalCache.Instance.LastErrorMessage = string.Empty;
+            TVmaze.LocalCache.Instance.LastErrorMessage = string.Empty;
 
             return downloadOk;
         }
