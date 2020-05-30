@@ -1242,7 +1242,7 @@ namespace TVRename
                 // no epnum specified, just show an overview
                 SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
                 SetHtmlBody(webInformation, si.GetShowHtmlOverview(false));
-                SetHtmlBody(webInformation, si.GetShowSummaryHtmlOverview(false));
+                SetHtmlBody(webSummary, si.GetShowSummaryHtmlOverview(false));
 
                 if (bwShowHTMLGenerator.WorkerSupportsCancellation)
                 {
