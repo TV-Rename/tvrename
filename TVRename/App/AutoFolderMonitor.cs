@@ -39,26 +39,26 @@ namespace TVRename
         {
             foreach (string efi in TVSettings.Instance.DownloadFolders)
             {
-                if (!Directory.Exists(efi)) //Does not exist
-                {
-                    Logger.Warn($"Could not watch {efi} as it does not exist.");
-                    continue;
-                }
-
-                if ((File.GetAttributes(efi) & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)  // not a folder
-                {
-                    Logger.Warn($"Could not watch {efi} as it is not a file.");
-                    continue;
-                }
-
-                if (!efi.IsValidDirectory())  // not a valid folder
-                {
-                    Logger.Error($"Could not watch {efi} as it is a path with invalid characters.");
-                    continue;
-                }
-
                 try
                 {
+                    if (!Directory.Exists(efi)) //Does not exist
+                    {
+                        Logger.Warn($"Could not watch {efi} as it does not exist.");
+                        continue;
+                    }
+
+                    if ((File.GetAttributes(efi) & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)  // not a folder
+                    {
+                        Logger.Warn($"Could not watch {efi} as it is not a file.");
+                        continue;
+                    }
+
+                    if (!efi.IsValidDirectory())  // not a valid folder
+                    {
+                        Logger.Error($"Could not watch {efi} as it is a path with invalid characters.");
+                        continue;
+                    }
+
                     System.IO.FileSystemWatcher watcher = new System.IO.FileSystemWatcher(efi);
                     watcher.Changed += watcher_Changed;
                     watcher.Created += watcher_Changed;
