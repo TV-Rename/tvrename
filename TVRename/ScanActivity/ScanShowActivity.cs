@@ -30,10 +30,17 @@ namespace TVRename
 
         private void LogActionListSummary()
         {
-            LOGGER.Debug($"   Summary of known actions after check: {Checkname()}");
-            LOGGER.Debug($"      Missing Items: {Doc.TheActionList.Missing.Count}");
-            LOGGER.Debug($"      Copy/Move Items: {Doc.TheActionList.CopyMoveRename.Count}");
-            LOGGER.Debug($"      Total Actions: {Doc.TheActionList.Actions.Count}");
+            try
+            {
+                LOGGER.Debug($"   Summary of known actions after check: {Checkname()}");
+                LOGGER.Debug($"      Missing Items: {Doc.TheActionList.Missing.Count}");
+                LOGGER.Debug($"      Copy/Move Items: {Doc.TheActionList.CopyMoveRename.Count}");
+                LOGGER.Debug($"      Total Actions: {Doc.TheActionList.Actions.Count}");
+            }
+            catch (System.InvalidOperationException)
+            {
+                //someties get this if enumeration updates
+            }
         }
 
         protected abstract string Checkname();
