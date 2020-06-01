@@ -120,7 +120,7 @@ namespace TVRename
             this.tpSummary = new System.Windows.Forms.TabPage();
             this.webSummary = new System.Windows.Forms.WebBrowser();
             this.tbAllInOne = new System.Windows.Forms.TabPage();
-            this.olvAction = new BrightIdeasSoftware.ObjectListView();
+            this.olvAction = new ObjectListViewFlickerFree();
             this.olvShowColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSeason = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvEpisode = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));

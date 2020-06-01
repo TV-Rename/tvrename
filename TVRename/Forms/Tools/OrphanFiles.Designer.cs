@@ -1,4 +1,4 @@
-﻿namespace TVRename.Forms.Tools
+namespace TVRename.Forms.Tools
 {
     partial class OrphanFiles
     {
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.olvFileIssues = new BrightIdeasSoftware.ObjectListView();
+            this.olvFileIssues = new ObjectListViewFlickerFree();
             this.olvShow = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvFileName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvMessage = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));

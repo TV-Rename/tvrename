@@ -270,6 +270,9 @@
     <Compile Include="App\ApplicationBase.cs" />
     <Compile Include="App\CommandLineArgs.cs" />
     <Compile Include="App\AutoFolderMonitor.cs" />
+    <Compile Include="Custom Controls\ObjectListViewFlickerFree.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Custom Controls\NativeMethods.cs" />
     <Compile Include="DownloadIdentifers\DownloadWdtvMetaData.cs" />
     <Compile Include="DownloadIdentifers\IncorrectFileDates.cs" />
