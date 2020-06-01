@@ -919,7 +919,7 @@ namespace TVRename
                 return string.Empty;
             }
 
-            foreach (Replacement rep in Replacements)
+            foreach (Replacement rep in DefaultListRE())
             {
                 fn = rep.DoReplace(fn);
             }

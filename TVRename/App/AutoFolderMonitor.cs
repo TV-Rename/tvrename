@@ -59,14 +59,15 @@ namespace TVRename
                         continue;
                     }
 
-                    System.IO.FileSystemWatcher watcher = new System.IO.FileSystemWatcher(efi);
+                    System.IO.FileSystemWatcher watcher = new System.IO.FileSystemWatcher(efi)
+                    {
+                        IncludeSubdirectories = true,
+                        EnableRaisingEvents = true
+                    };
+
                     watcher.Changed += watcher_Changed;
                     watcher.Created += watcher_Changed;
                     watcher.Renamed += watcher_Changed;
-                    //watcher.Deleted += new FileSystemEventHandler(watcher_Changed);
-                    //watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.CreationTime;
-                    watcher.IncludeSubdirectories = true;
-                    watcher.EnableRaisingEvents = true;
                     watchers.Add(watcher);
                     Logger.Info("Starting FileSystemWatcher for {0}", efi);
                 }
