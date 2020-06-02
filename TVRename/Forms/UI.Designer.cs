@@ -455,19 +455,19 @@ namespace TVRename
             // 
             this.statisticsToolStripMenuItem.Image = global::TVRename.Properties.Resources.graphhs;
             this.statisticsToolStripMenuItem.Name = "statisticsToolStripMenuItem";
-            this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.statisticsToolStripMenuItem.Text = "&Statistics...";
             this.statisticsToolStripMenuItem.Click += new System.EventHandler(this.statisticsToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(163, 6);
             // 
             // showSummaryToolStripMenuItem
             // 
             this.showSummaryToolStripMenuItem.Name = "showSummaryToolStripMenuItem";
-            this.showSummaryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showSummaryToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.showSummaryToolStripMenuItem.Text = "Show Summary...";
             this.showSummaryToolStripMenuItem.Click += new System.EventHandler(this.showSummaryToolStripMenuItem_Click);
             // 
@@ -475,7 +475,7 @@ namespace TVRename
             // 
             this.actorsToolStripMenuItem.Image = global::TVRename.Properties.Resources.TableHS;
             this.actorsToolStripMenuItem.Name = "actorsToolStripMenuItem";
-            this.actorsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.actorsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.actorsToolStripMenuItem.Text = "&Actors Grid...";
             this.actorsToolStripMenuItem.Click += new System.EventHandler(this.actorsToolStripMenuItem_Click);
             // 
@@ -1773,6 +1773,7 @@ namespace TVRename
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.tabControl1);
+            this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
@@ -1959,7 +1960,6 @@ namespace TVRename
         private ToolStripButton tbFullScan;
         private ToolStripButton tpRecentScan;
         private ToolStripButton tbQuickScan;
-        private ObjectListView olvAction;
         private OLVColumn olvShowColumn;
         private OLVColumn olvSeason;
         private OLVColumn olvEpisode;
@@ -1981,5 +1981,6 @@ namespace TVRename
         private ToolStripSeparator toolStripSeparator14;
         private ToolStripButton tsbScanContextMenu;
         private ToolStripMenuItem tsmiOrphanFiles;
+        private ObjectListViewFlickerFree olvAction;
     }
 }
