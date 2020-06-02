@@ -37,6 +37,11 @@ namespace TVRename.App
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            Application.ThreadException += delegate(object sender, ThreadExceptionEventArgs eventArgs) {
+                Exception e = eventArgs.Exception;
+                Logger.Fatal(e, "UNHANDLED ERROR - Application.ThreadException");
+                Environment.Exit(1);
+            };
             AppDomain.CurrentDomain.UnhandledException += GlobalExceptionHandler;
 
             if (args.Contains("/?", StringComparer.OrdinalIgnoreCase))
