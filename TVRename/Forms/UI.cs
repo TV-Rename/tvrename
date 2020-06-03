@@ -2042,19 +2042,6 @@ namespace TVRename
             FillActionList(true);
         }
 
-        private void SearchFor(SearchEngine s,[NotNull] ProcessedEpisode epi)
-        {
-            Helpers.OpenUrl(CustomEpisodeName.NameForNoExt(epi, s.Url, true));
-        }
-
-        private void SearchFor(SearchEngine s)
-        {
-            foreach (ItemMissing miss in GetSelectedItems().Missing)
-            {
-                Helpers.OpenUrl(CustomEpisodeName.NameForNoExt(miss.Episode, s.Url, true));
-            }
-        }
-
         private void IgnoreSelectedSeasons([CanBeNull] IEnumerable<Item> actions)
         {
             if (actions == null)
@@ -3266,14 +3253,14 @@ namespace TVRename
             showRightClickMenu.Items.Add(new ToolStripSeparator());
 
             ToolStripMenuItem tsi = new ToolStripMenuItem("Search");
-            tsi.Click += (s, ev) => { SearchFor(TVDoc.GetSearchers().CurrentSearch, ep); };
+            tsi.Click += (s, ev) => { TVDoc.SearchForEpisode(ep); };
 
             foreach (SearchEngine se in TVDoc.GetSearchers())
             {
                 if (se.Name.HasValue())
                 {
                     ToolStripMenuItem tssi = new ToolStripMenuItem(se.Name);
-                    tssi.Click += (s, ev) => { SearchFor(se,ep); };
+                    tssi.Click += (s, ev) => { TVDoc.SearchForEpisode(se,ep); };
                     tsi.DropDownItems.Add(tssi);
                 }
             }

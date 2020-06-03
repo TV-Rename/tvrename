@@ -225,6 +225,16 @@ namespace TVRename
             Helpers.OpenUrl(TVSettings.Instance.BTSearchURL(ep));
         }
 
+        public static void SearchForEpisode(SearchEngine s, [CanBeNull] ProcessedEpisode epi)
+        {
+            if (epi is null)
+            {
+                return;
+            }
+
+            Helpers.OpenUrl(CustomEpisodeName.NameForNoExt(epi, s.Url, true));
+        }
+
         public void DoWhenToWatch(bool cachedOnly,bool unattended,bool hidden, IDialogParent owner)
         {
             if (!cachedOnly && !DoDownloadsFG(unattended,hidden,owner))
