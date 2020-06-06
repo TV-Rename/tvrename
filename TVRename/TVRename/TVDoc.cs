@@ -731,6 +731,8 @@ namespace TVRename
                     return;
                 }
 
+                RemoveDuplicateDownloads(settings);
+
                 // sort Action list by type
                 TheActionList.Sort(new ActionItemSorter()); // was new ActionSorter()
 
@@ -753,6 +755,54 @@ namespace TVRename
             {
                 scanProgDlg?.Done(); 
             }
+        }
+
+        private void RemoveDuplicateDownloads(ScanSettings settings)
+        {
+            foreach (IGrouping<ProcessedEpisode, ActionTDownload> epGroup in TheActionList.DownloadTorrents
+                .GroupBy(item => item.Episode).Where(items => items.Count() > 1))
+            {
+                List<ActionTDownload> actions = epGroup.ToList();
+
+                switch (WhatAction(settings.Unattended))
+                {
+                    case TVSettings.DuplicateActionOutcome.IgnoreAll:
+                        TheActionList.Remove(actions);
+                        break;
+
+                    case TVSettings.DuplicateActionOutcome.ChooseFirst:
+                        TheActionList.Replace(actions, actions.First());
+                        break;
+
+                    case TVSettings.DuplicateActionOutcome.Ask:
+                        throw new NotImplementedException();
+                        break;
+
+                    case TVSettings.DuplicateActionOutcome.DoAll:
+                        //Don't need to do anything as it's the default behaviour
+                        break;
+
+                    case TVSettings.DuplicateActionOutcome.MostSeeders:
+                        ActionTDownload bestAction = actions.OrderByDescending(download => download.Seeders).First();
+                        TheActionList.Replace(actions, bestAction);
+                        break;
+
+                    case TVSettings.DuplicateActionOutcome.Largest:
+                        ActionTDownload largestAction = actions.OrderByDescending(download => download.sizeBytes).First();
+                        TheActionList.Replace(actions, largestAction);
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        private TVSettings.DuplicateActionOutcome WhatAction(bool unattended)
+        {
+            return unattended
+                ? TVSettings.Instance.UnattendedMultiActionOutcome
+                : TVSettings.Instance.UserMultiActionOutcome;
         }
 
         private static void NoProgress(int pct, string message)

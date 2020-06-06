@@ -16,6 +16,7 @@ namespace TVRename
         protected DownloadFinder(TVDoc doc) : base(doc)
         {
         }
+        public override FinderDisplayType DisplayType() => FinderDisplayType.search;
 
         [NotNull]
         protected static IEnumerable<ActionTDownload> FindDuplicates([NotNull] ItemList newItems)

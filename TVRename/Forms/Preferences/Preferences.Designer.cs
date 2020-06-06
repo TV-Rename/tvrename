@@ -110,7 +110,6 @@ namespace TVRename
             this.label59 = new System.Windows.Forms.Label();
             this.cbSearchJSON = new System.Windows.Forms.CheckBox();
             this.cbSearchRSS = new System.Windows.Forms.CheckBox();
-            this.cbDetailedRSSJSONLogging = new System.Windows.Forms.CheckBox();
             this.gbJSON = new System.Windows.Forms.GroupBox();
             this.cbJSONCloudflareProtection = new System.Windows.Forms.CheckBox();
             this.cbSearchJSONManualScanOnly = new System.Windows.Forms.CheckBox();
@@ -127,8 +126,6 @@ namespace TVRename
             this.gbRSS = new System.Windows.Forms.GroupBox();
             this.cbRSSCloudflareProtection = new System.Windows.Forms.CheckBox();
             this.cbSearchRSSManualScanOnly = new System.Windows.Forms.CheckBox();
-            this.label45 = new System.Windows.Forms.Label();
-            this.tbPreferredRSSTerms = new System.Windows.Forms.TextBox();
             this.RSSGrid = new SourceGrid.Grid();
             this.label25 = new System.Windows.Forms.Label();
             this.bnRSSRemove = new System.Windows.Forms.Button();
@@ -147,7 +144,7 @@ namespace TVRename
             this.bnOpenMonFolder = new System.Windows.Forms.Button();
             this.bnAddMonFolder = new System.Windows.Forms.Button();
             this.bnRemoveMonFolder = new System.Windows.Forms.Button();
-            this.tbuTorrentNZB = new System.Windows.Forms.TabPage();
+            this.tpTorrentNZB = new System.Windows.Forms.TabPage();
             this.pbuTorrentNZB = new System.Windows.Forms.PictureBox();
             this.label58 = new System.Windows.Forms.Label();
             this.cbCheckqBitTorrent = new System.Windows.Forms.CheckBox();
@@ -388,6 +385,29 @@ namespace TVRename
             this.label36 = new System.Windows.Forms.Label();
             this.label62 = new System.Windows.Forms.Label();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.tpJackett = new System.Windows.Forms.TabPage();
+            this.cmbSupervisedDuplicateAction = new System.Windows.Forms.ComboBox();
+            this.label77 = new System.Windows.Forms.Label();
+            this.cmbUnattendedDuplicateAction = new System.Windows.Forms.ComboBox();
+            this.label76 = new System.Windows.Forms.Label();
+            this.cbDetailedRSSJSONLogging = new System.Windows.Forms.CheckBox();
+            this.pictureBox4 = new System.Windows.Forms.PictureBox();
+            this.label70 = new System.Windows.Forms.Label();
+            this.cbSearchJackett = new System.Windows.Forms.CheckBox();
+            this.groupBox22 = new System.Windows.Forms.GroupBox();
+            this.cbSearchJackettOnManualScansOnly = new System.Windows.Forms.CheckBox();
+            this.label72 = new System.Windows.Forms.Label();
+            this.txtJackettIndexer = new System.Windows.Forms.TextBox();
+            this.label73 = new System.Windows.Forms.Label();
+            this.txtJackettAPIKey = new System.Windows.Forms.TextBox();
+            this.label74 = new System.Windows.Forms.Label();
+            this.txtJackettPort = new System.Windows.Forms.TextBox();
+            this.label75 = new System.Windows.Forms.Label();
+            this.txtJackettServer = new System.Windows.Forms.TextBox();
+            this.label45 = new System.Windows.Forms.Label();
+            this.tbPreferredRSSTerms = new System.Windows.Forms.TextBox();
+            this.label71 = new System.Windows.Forms.Label();
+            this.llJackettLink = new System.Windows.Forms.LinkLabel();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -399,7 +419,7 @@ namespace TVRename
             this.tpLibraryFolders.SuspendLayout();
             this.groupBox6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLibraryFolders)).BeginInit();
-            this.tbuTorrentNZB.SuspendLayout();
+            this.tpTorrentNZB.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbuTorrentNZB)).BeginInit();
             this.qBitTorrent.SuspendLayout();
             this.gbSAB.SuspendLayout();
@@ -443,6 +463,9 @@ namespace TVRename
             this.groupBox1.SuspendLayout();
             this.gbBulkAdd.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            this.tpJackett.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
+            this.groupBox22.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKButton
@@ -1160,7 +1183,6 @@ namespace TVRename
             this.tpRSSJSONSearch.Controls.Add(this.label59);
             this.tpRSSJSONSearch.Controls.Add(this.cbSearchJSON);
             this.tpRSSJSONSearch.Controls.Add(this.cbSearchRSS);
-            this.tpRSSJSONSearch.Controls.Add(this.cbDetailedRSSJSONLogging);
             this.tpRSSJSONSearch.Controls.Add(this.gbJSON);
             this.tpRSSJSONSearch.Controls.Add(this.gbRSS);
             this.tpRSSJSONSearch.Location = new System.Drawing.Point(139, 4);
@@ -1218,17 +1240,6 @@ namespace TVRename
             this.cbSearchRSS.Text = "&Search RSS for missing files";
             this.cbSearchRSS.UseVisualStyleBackColor = true;
             this.cbSearchRSS.CheckedChanged += new System.EventHandler(this.cbSearchRSS_CheckedChanged);
-            // 
-            // cbDetailedRSSJSONLogging
-            // 
-            this.cbDetailedRSSJSONLogging.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cbDetailedRSSJSONLogging.AutoSize = true;
-            this.cbDetailedRSSJSONLogging.Location = new System.Drawing.Point(6, 543);
-            this.cbDetailedRSSJSONLogging.Name = "cbDetailedRSSJSONLogging";
-            this.cbDetailedRSSJSONLogging.Size = new System.Drawing.Size(307, 17);
-            this.cbDetailedRSSJSONLogging.TabIndex = 34;
-            this.cbDetailedRSSJSONLogging.Text = "Detailed logging (useful when setting up RSS/JSON Feeds)";
-            this.cbDetailedRSSJSONLogging.UseVisualStyleBackColor = false;
             // 
             // gbJSON
             // 
@@ -1370,8 +1381,6 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbRSS.Controls.Add(this.cbRSSCloudflareProtection);
             this.gbRSS.Controls.Add(this.cbSearchRSSManualScanOnly);
-            this.gbRSS.Controls.Add(this.label45);
-            this.gbRSS.Controls.Add(this.tbPreferredRSSTerms);
             this.gbRSS.Controls.Add(this.RSSGrid);
             this.gbRSS.Controls.Add(this.label25);
             this.gbRSS.Controls.Add(this.bnRSSRemove);
@@ -1387,7 +1396,7 @@ namespace TVRename
             // cbRSSCloudflareProtection
             // 
             this.cbRSSCloudflareProtection.AutoSize = true;
-            this.cbRSSCloudflareProtection.Location = new System.Drawing.Point(6, 69);
+            this.cbRSSCloudflareProtection.Location = new System.Drawing.Point(6, 42);
             this.cbRSSCloudflareProtection.Name = "cbRSSCloudflareProtection";
             this.cbRSSCloudflareProtection.Size = new System.Drawing.Size(145, 17);
             this.cbRSSCloudflareProtection.TabIndex = 41;
@@ -1404,24 +1413,6 @@ namespace TVRename
             this.cbSearchRSSManualScanOnly.Text = "Only on manual scans";
             this.cbSearchRSSManualScanOnly.UseVisualStyleBackColor = true;
             // 
-            // label45
-            // 
-            this.label45.AutoSize = true;
-            this.label45.Location = new System.Drawing.Point(6, 46);
-            this.label45.Name = "label45";
-            this.label45.Size = new System.Drawing.Size(85, 13);
-            this.label45.TabIndex = 31;
-            this.label45.Text = "Preferred Terms:";
-            // 
-            // tbPreferredRSSTerms
-            // 
-            this.tbPreferredRSSTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbPreferredRSSTerms.Location = new System.Drawing.Point(97, 43);
-            this.tbPreferredRSSTerms.Name = "tbPreferredRSSTerms";
-            this.tbPreferredRSSTerms.Size = new System.Drawing.Size(304, 20);
-            this.tbPreferredRSSTerms.TabIndex = 30;
-            // 
             // RSSGrid
             // 
             this.RSSGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -1429,11 +1420,11 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.RSSGrid.BackColor = System.Drawing.SystemColors.Window;
             this.RSSGrid.EnableSort = true;
-            this.RSSGrid.Location = new System.Drawing.Point(6, 112);
+            this.RSSGrid.Location = new System.Drawing.Point(6, 87);
             this.RSSGrid.Name = "RSSGrid";
             this.RSSGrid.OptimizeMode = SourceGrid.CellOptimizeMode.ForRows;
             this.RSSGrid.SelectionMode = SourceGrid.GridSelectionMode.Cell;
-            this.RSSGrid.Size = new System.Drawing.Size(395, 77);
+            this.RSSGrid.Size = new System.Drawing.Size(395, 102);
             this.RSSGrid.TabIndex = 26;
             this.RSSGrid.TabStop = true;
             this.RSSGrid.ToolTipText = "";
@@ -1441,7 +1432,7 @@ namespace TVRename
             // label25
             // 
             this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(3, 96);
+            this.label25.Location = new System.Drawing.Point(3, 71);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(99, 13);
             this.label25.TabIndex = 25;
@@ -1631,23 +1622,23 @@ namespace TVRename
             this.bnRemoveMonFolder.UseVisualStyleBackColor = true;
             this.bnRemoveMonFolder.Click += new System.EventHandler(this.bnRemoveMonFolder_Click);
             // 
-            // tbuTorrentNZB
+            // tpTorrentNZB
             // 
-            this.tbuTorrentNZB.Controls.Add(this.pbuTorrentNZB);
-            this.tbuTorrentNZB.Controls.Add(this.label58);
-            this.tbuTorrentNZB.Controls.Add(this.cbCheckqBitTorrent);
-            this.tbuTorrentNZB.Controls.Add(this.cbCheckSABnzbd);
-            this.tbuTorrentNZB.Controls.Add(this.cbCheckuTorrent);
-            this.tbuTorrentNZB.Controls.Add(this.qBitTorrent);
-            this.tbuTorrentNZB.Controls.Add(this.gbSAB);
-            this.tbuTorrentNZB.Controls.Add(this.gbuTorrent);
-            this.tbuTorrentNZB.Location = new System.Drawing.Point(139, 4);
-            this.tbuTorrentNZB.Name = "tbuTorrentNZB";
-            this.tbuTorrentNZB.Padding = new System.Windows.Forms.Padding(3);
-            this.tbuTorrentNZB.Size = new System.Drawing.Size(417, 561);
-            this.tbuTorrentNZB.TabIndex = 4;
-            this.tbuTorrentNZB.Text = "Torrents / NZB";
-            this.tbuTorrentNZB.UseVisualStyleBackColor = true;
+            this.tpTorrentNZB.Controls.Add(this.pbuTorrentNZB);
+            this.tpTorrentNZB.Controls.Add(this.label58);
+            this.tpTorrentNZB.Controls.Add(this.cbCheckqBitTorrent);
+            this.tpTorrentNZB.Controls.Add(this.cbCheckSABnzbd);
+            this.tpTorrentNZB.Controls.Add(this.cbCheckuTorrent);
+            this.tpTorrentNZB.Controls.Add(this.qBitTorrent);
+            this.tpTorrentNZB.Controls.Add(this.gbSAB);
+            this.tpTorrentNZB.Controls.Add(this.gbuTorrent);
+            this.tpTorrentNZB.Location = new System.Drawing.Point(139, 4);
+            this.tpTorrentNZB.Name = "tpTorrentNZB";
+            this.tpTorrentNZB.Padding = new System.Windows.Forms.Padding(3);
+            this.tpTorrentNZB.Size = new System.Drawing.Size(417, 561);
+            this.tpTorrentNZB.TabIndex = 4;
+            this.tpTorrentNZB.Text = "Torrents / NZB";
+            this.tpTorrentNZB.UseVisualStyleBackColor = true;
             // 
             // pbuTorrentNZB
             // 
@@ -3547,7 +3538,7 @@ namespace TVRename
             // chkAutoAddAsPartOfQuickRename
             // 
             this.chkAutoAddAsPartOfQuickRename.AutoSize = true;
-            this.chkAutoAddAsPartOfQuickRename.Location = new System.Drawing.Point(13, 152);
+            this.chkAutoAddAsPartOfQuickRename.Location = new System.Drawing.Point(13, 127);
             this.chkAutoAddAsPartOfQuickRename.Name = "chkAutoAddAsPartOfQuickRename";
             this.chkAutoAddAsPartOfQuickRename.Size = new System.Drawing.Size(191, 17);
             this.chkAutoAddAsPartOfQuickRename.TabIndex = 43;
@@ -3557,7 +3548,7 @@ namespace TVRename
             // chkShareCriticalLogs
             // 
             this.chkShareCriticalLogs.AutoSize = true;
-            this.chkShareCriticalLogs.Location = new System.Drawing.Point(13, 129);
+            this.chkShareCriticalLogs.Location = new System.Drawing.Point(13, 104);
             this.chkShareCriticalLogs.Name = "chkShareCriticalLogs";
             this.chkShareCriticalLogs.Size = new System.Drawing.Size(207, 17);
             this.chkShareCriticalLogs.TabIndex = 42;
@@ -3604,7 +3595,7 @@ namespace TVRename
             this.cbMode.Items.AddRange(new object[] {
             "Beta",
             "Production"});
-            this.cbMode.Location = new System.Drawing.Point(117, 102);
+            this.cbMode.Location = new System.Drawing.Point(117, 77);
             this.cbMode.Name = "cbMode";
             this.cbMode.Size = new System.Drawing.Size(146, 21);
             this.cbMode.Sorted = true;
@@ -3613,7 +3604,7 @@ namespace TVRename
             // label34
             // 
             this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(11, 105);
+            this.label34.Location = new System.Drawing.Point(11, 80);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(37, 13);
             this.label34.TabIndex = 18;
@@ -3644,8 +3635,9 @@ namespace TVRename
             this.tcTabs.Controls.Add(this.tbSearchFolders);
             this.tcTabs.Controls.Add(this.tbFolderDeleting);
             this.tcTabs.Controls.Add(this.tbMediaCenter);
+            this.tcTabs.Controls.Add(this.tpTorrentNZB);
             this.tcTabs.Controls.Add(this.tpRSSJSONSearch);
-            this.tcTabs.Controls.Add(this.tbuTorrentNZB);
+            this.tcTabs.Controls.Add(this.tpJackett);
             this.tcTabs.Controls.Add(this.tbAutoExport);
             this.tcTabs.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             this.tcTabs.ItemSize = new System.Drawing.Size(30, 135);
@@ -4387,6 +4379,272 @@ namespace TVRename
             this.pictureBox2.TabIndex = 39;
             this.pictureBox2.TabStop = false;
             // 
+            // tpJackett
+            // 
+            this.tpJackett.Controls.Add(this.cmbSupervisedDuplicateAction);
+            this.tpJackett.Controls.Add(this.label77);
+            this.tpJackett.Controls.Add(this.cmbUnattendedDuplicateAction);
+            this.tpJackett.Controls.Add(this.label76);
+            this.tpJackett.Controls.Add(this.cbDetailedRSSJSONLogging);
+            this.tpJackett.Controls.Add(this.pictureBox4);
+            this.tpJackett.Controls.Add(this.label70);
+            this.tpJackett.Controls.Add(this.cbSearchJackett);
+            this.tpJackett.Controls.Add(this.groupBox22);
+            this.tpJackett.Controls.Add(this.label45);
+            this.tpJackett.Controls.Add(this.tbPreferredRSSTerms);
+            this.tpJackett.Location = new System.Drawing.Point(139, 4);
+            this.tpJackett.Name = "tpJackett";
+            this.tpJackett.Padding = new System.Windows.Forms.Padding(3);
+            this.tpJackett.Size = new System.Drawing.Size(417, 561);
+            this.tpJackett.TabIndex = 17;
+            this.tpJackett.Text = "Jackett Search";
+            this.tpJackett.UseVisualStyleBackColor = true;
+            // 
+            // cmbSupervisedDuplicateAction
+            // 
+            this.cmbSupervisedDuplicateAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbSupervisedDuplicateAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSupervisedDuplicateAction.FormattingEnabled = true;
+            this.cmbSupervisedDuplicateAction.Items.AddRange(new object[] {
+            "Ask User",
+            "Choose Largest File",
+            "Choose Most Popular",
+            "Download All",
+            "Ignore",
+            "Use First"});
+            this.cmbSupervisedDuplicateAction.Location = new System.Drawing.Point(163, 151);
+            this.cmbSupervisedDuplicateAction.Name = "cmbSupervisedDuplicateAction";
+            this.cmbSupervisedDuplicateAction.Size = new System.Drawing.Size(235, 21);
+            this.cmbSupervisedDuplicateAction.Sorted = true;
+            this.cmbSupervisedDuplicateAction.TabIndex = 47;
+            // 
+            // label77
+            // 
+            this.label77.AutoSize = true;
+            this.label77.Location = new System.Drawing.Point(10, 154);
+            this.label77.Name = "label77";
+            this.label77.Size = new System.Drawing.Size(144, 13);
+            this.label77.TabIndex = 46;
+            this.label77.Text = "Supervised Duplicate Action:";
+            // 
+            // cmbUnattendedDuplicateAction
+            // 
+            this.cmbUnattendedDuplicateAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbUnattendedDuplicateAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbUnattendedDuplicateAction.FormattingEnabled = true;
+            this.cmbUnattendedDuplicateAction.Items.AddRange(new object[] {
+            "Ask User",
+            "Choose Largest File",
+            "Choose Most Popular",
+            "Download All",
+            "Ignore",
+            "Use First"});
+            this.cmbUnattendedDuplicateAction.Location = new System.Drawing.Point(163, 124);
+            this.cmbUnattendedDuplicateAction.Name = "cmbUnattendedDuplicateAction";
+            this.cmbUnattendedDuplicateAction.Size = new System.Drawing.Size(235, 21);
+            this.cmbUnattendedDuplicateAction.Sorted = true;
+            this.cmbUnattendedDuplicateAction.TabIndex = 45;
+            // 
+            // label76
+            // 
+            this.label76.AutoSize = true;
+            this.label76.Location = new System.Drawing.Point(10, 127);
+            this.label76.Name = "label76";
+            this.label76.Size = new System.Drawing.Size(147, 13);
+            this.label76.TabIndex = 44;
+            this.label76.Text = "Unattended Duplicate Action:";
+            // 
+            // cbDetailedRSSJSONLogging
+            // 
+            this.cbDetailedRSSJSONLogging.AutoSize = true;
+            this.cbDetailedRSSJSONLogging.Location = new System.Drawing.Point(8, 75);
+            this.cbDetailedRSSJSONLogging.Name = "cbDetailedRSSJSONLogging";
+            this.cbDetailedRSSJSONLogging.Size = new System.Drawing.Size(307, 17);
+            this.cbDetailedRSSJSONLogging.TabIndex = 43;
+            this.cbDetailedRSSJSONLogging.Text = "Detailed logging (useful when setting up RSS/JSON Feeds)";
+            this.cbDetailedRSSJSONLogging.UseVisualStyleBackColor = false;
+            // 
+            // pictureBox4
+            // 
+            this.pictureBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox4.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pictureBox4.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pictureBox4.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pictureBox4.Location = new System.Drawing.Point(368, 12);
+            this.pictureBox4.Name = "pictureBox4";
+            this.pictureBox4.Size = new System.Drawing.Size(43, 40);
+            this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox4.TabIndex = 42;
+            this.pictureBox4.TabStop = false;
+            // 
+            // label70
+            // 
+            this.label70.AutoSize = true;
+            this.label70.Location = new System.Drawing.Point(4, 7);
+            this.label70.Name = "label70";
+            this.label70.Size = new System.Drawing.Size(312, 39);
+            this.label70.TabIndex = 41;
+            this.label70.Text = "If an episode is missing from your library, TV Rename will talk to a\r\nrunning Jac" +
+    "kett instance for appropriate files to download. It will \r\nuse the torrent handl" +
+    "ers to download the file(s)";
+            // 
+            // cbSearchJackett
+            // 
+            this.cbSearchJackett.AutoSize = true;
+            this.cbSearchJackett.Location = new System.Drawing.Point(8, 187);
+            this.cbSearchJackett.Name = "cbSearchJackett";
+            this.cbSearchJackett.Size = new System.Drawing.Size(171, 17);
+            this.cbSearchJackett.TabIndex = 40;
+            this.cbSearchJackett.Text = "Search &Jackett for missing files";
+            this.cbSearchJackett.UseVisualStyleBackColor = true;
+            this.cbSearchJackett.CheckedChanged += new System.EventHandler(this.CbSearchJackett_CheckedChanged);
+            // 
+            // groupBox22
+            // 
+            this.groupBox22.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox22.Controls.Add(this.llJackettLink);
+            this.groupBox22.Controls.Add(this.label71);
+            this.groupBox22.Controls.Add(this.cbSearchJackettOnManualScansOnly);
+            this.groupBox22.Controls.Add(this.label72);
+            this.groupBox22.Controls.Add(this.txtJackettIndexer);
+            this.groupBox22.Controls.Add(this.label73);
+            this.groupBox22.Controls.Add(this.txtJackettAPIKey);
+            this.groupBox22.Controls.Add(this.label74);
+            this.groupBox22.Controls.Add(this.txtJackettPort);
+            this.groupBox22.Controls.Add(this.label75);
+            this.groupBox22.Controls.Add(this.txtJackettServer);
+            this.groupBox22.Location = new System.Drawing.Point(6, 210);
+            this.groupBox22.Name = "groupBox22";
+            this.groupBox22.Size = new System.Drawing.Size(408, 175);
+            this.groupBox22.TabIndex = 39;
+            this.groupBox22.TabStop = false;
+            this.groupBox22.Text = "Jackett Search";
+            // 
+            // cbSearchJackettOnManualScansOnly
+            // 
+            this.cbSearchJackettOnManualScansOnly.AutoSize = true;
+            this.cbSearchJackettOnManualScansOnly.Location = new System.Drawing.Point(9, 19);
+            this.cbSearchJackettOnManualScansOnly.Name = "cbSearchJackettOnManualScansOnly";
+            this.cbSearchJackettOnManualScansOnly.Size = new System.Drawing.Size(130, 17);
+            this.cbSearchJackettOnManualScansOnly.TabIndex = 38;
+            this.cbSearchJackettOnManualScansOnly.Text = "Only on manual scans";
+            this.cbSearchJackettOnManualScansOnly.UseVisualStyleBackColor = true;
+            // 
+            // label72
+            // 
+            this.label72.AutoSize = true;
+            this.label72.Location = new System.Drawing.Point(6, 97);
+            this.label72.Name = "label72";
+            this.label72.Size = new System.Drawing.Size(70, 13);
+            this.label72.TabIndex = 37;
+            this.label72.Text = "Indexer Path:";
+            // 
+            // txtJackettIndexer
+            // 
+            this.txtJackettIndexer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtJackettIndexer.Location = new System.Drawing.Point(98, 94);
+            this.txtJackettIndexer.Name = "txtJackettIndexer";
+            this.txtJackettIndexer.Size = new System.Drawing.Size(305, 20);
+            this.txtJackettIndexer.TabIndex = 36;
+            // 
+            // label73
+            // 
+            this.label73.AutoSize = true;
+            this.label73.Location = new System.Drawing.Point(6, 123);
+            this.label73.Name = "label73";
+            this.label73.Size = new System.Drawing.Size(48, 13);
+            this.label73.TabIndex = 35;
+            this.label73.Text = "API Key:";
+            // 
+            // txtJackettAPIKey
+            // 
+            this.txtJackettAPIKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtJackettAPIKey.Location = new System.Drawing.Point(98, 120);
+            this.txtJackettAPIKey.Name = "txtJackettAPIKey";
+            this.txtJackettAPIKey.Size = new System.Drawing.Size(305, 20);
+            this.txtJackettAPIKey.TabIndex = 34;
+            // 
+            // label74
+            // 
+            this.label74.AutoSize = true;
+            this.label74.Location = new System.Drawing.Point(6, 71);
+            this.label74.Name = "label74";
+            this.label74.Size = new System.Drawing.Size(29, 13);
+            this.label74.TabIndex = 33;
+            this.label74.Text = "Port:";
+            // 
+            // txtJackettPort
+            // 
+            this.txtJackettPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtJackettPort.Location = new System.Drawing.Point(98, 68);
+            this.txtJackettPort.Name = "txtJackettPort";
+            this.txtJackettPort.Size = new System.Drawing.Size(305, 20);
+            this.txtJackettPort.TabIndex = 32;
+            this.txtJackettPort.TextChanged += new System.EventHandler(this.TxtJackettPort_TextChanged);
+            // 
+            // label75
+            // 
+            this.label75.AutoSize = true;
+            this.label75.Location = new System.Drawing.Point(6, 45);
+            this.label75.Name = "label75";
+            this.label75.Size = new System.Drawing.Size(41, 13);
+            this.label75.TabIndex = 31;
+            this.label75.Text = "Server:";
+            // 
+            // txtJackettServer
+            // 
+            this.txtJackettServer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtJackettServer.Location = new System.Drawing.Point(97, 42);
+            this.txtJackettServer.Name = "txtJackettServer";
+            this.txtJackettServer.Size = new System.Drawing.Size(305, 20);
+            this.txtJackettServer.TabIndex = 30;
+            this.txtJackettServer.TextChanged += new System.EventHandler(this.TxtJackettServer_TextChanged);
+            // 
+            // label45
+            // 
+            this.label45.AutoSize = true;
+            this.label45.Location = new System.Drawing.Point(6, 101);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(85, 13);
+            this.label45.TabIndex = 33;
+            this.label45.Text = "Preferred Terms:";
+            // 
+            // tbPreferredRSSTerms
+            // 
+            this.tbPreferredRSSTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbPreferredRSSTerms.Location = new System.Drawing.Point(94, 98);
+            this.tbPreferredRSSTerms.Name = "tbPreferredRSSTerms";
+            this.tbPreferredRSSTerms.Size = new System.Drawing.Size(304, 20);
+            this.tbPreferredRSSTerms.TabIndex = 32;
+            // 
+            // label71
+            // 
+            this.label71.AutoSize = true;
+            this.label71.Location = new System.Drawing.Point(6, 150);
+            this.label71.Name = "label71";
+            this.label71.Size = new System.Drawing.Size(72, 13);
+            this.label71.TabIndex = 39;
+            this.label71.Text = "Configuration:";
+            // 
+            // llJackettLink
+            // 
+            this.llJackettLink.AutoSize = true;
+            this.llJackettLink.Location = new System.Drawing.Point(98, 150);
+            this.llJackettLink.Name = "llJackettLink";
+            this.llJackettLink.Size = new System.Drawing.Size(55, 13);
+            this.llJackettLink.TabIndex = 40;
+            this.llJackettLink.TabStop = true;
+            this.llJackettLink.Text = "linkLabel1";
+            this.llJackettLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LlJackettLink_LinkClicked);
+            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -4427,8 +4685,8 @@ namespace TVRename
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLibraryFolders)).EndInit();
-            this.tbuTorrentNZB.ResumeLayout(false);
-            this.tbuTorrentNZB.PerformLayout();
+            this.tpTorrentNZB.ResumeLayout(false);
+            this.tpTorrentNZB.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbuTorrentNZB)).EndInit();
             this.qBitTorrent.ResumeLayout(false);
             this.qBitTorrent.PerformLayout();
@@ -4504,6 +4762,11 @@ namespace TVRename
             this.gbBulkAdd.ResumeLayout(false);
             this.gbBulkAdd.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            this.tpJackett.ResumeLayout(false);
+            this.tpJackett.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
+            this.groupBox22.ResumeLayout(false);
+            this.groupBox22.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -4545,15 +4808,13 @@ namespace TVRename
         private System.Windows.Forms.Label label48;
         private System.Windows.Forms.TextBox tbJSONURL;
         private System.Windows.Forms.GroupBox gbRSS;
-        private System.Windows.Forms.Label label45;
-        private System.Windows.Forms.TextBox tbPreferredRSSTerms;
         private SourceGrid.Grid RSSGrid;
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.Button bnRSSRemove;
         private System.Windows.Forms.Button bnRSSGo;
         private System.Windows.Forms.Button bnRSSAdd;
         private System.Windows.Forms.TabPage tpLibraryFolders;
-        private System.Windows.Forms.TabPage tbuTorrentNZB;
+        private System.Windows.Forms.TabPage tpTorrentNZB;
         private System.Windows.Forms.GroupBox qBitTorrent;
         private System.Windows.Forms.TextBox tbqBitTorrentHost;
         private System.Windows.Forms.TextBox tbqBitTorrentPort;
@@ -4692,7 +4953,6 @@ namespace TVRename
         private System.Windows.Forms.Button bnBrowseWPL;
         private System.Windows.Forms.TextBox txtWPL;
         private System.Windows.Forms.CheckBox cbWPL;
-        private System.Windows.Forms.CheckBox cbDetailedRSSJSONLogging;
         private System.Windows.Forms.Label label55;
         private System.Windows.Forms.TextBox tbJSONFilesizeToken;
         private System.Windows.Forms.CheckBox cbSearchRSSManualScanOnly;
@@ -4858,5 +5118,28 @@ namespace TVRename
         private System.Windows.Forms.Label label68;
         private System.Windows.Forms.CheckBox cbDefShowAirdateMatching;
         private System.Windows.Forms.CheckBox chkShowAccessibilityOptions;
+        private System.Windows.Forms.TabPage tpJackett;
+        private System.Windows.Forms.Label label77;
+        private System.Windows.Forms.ComboBox cmbUnattendedDuplicateAction;
+        private System.Windows.Forms.Label label76;
+        private System.Windows.Forms.CheckBox cbDetailedRSSJSONLogging;
+        private System.Windows.Forms.PictureBox pictureBox4;
+        private System.Windows.Forms.Label label70;
+        private System.Windows.Forms.CheckBox cbSearchJackett;
+        private System.Windows.Forms.GroupBox groupBox22;
+        private System.Windows.Forms.CheckBox cbSearchJackettOnManualScansOnly;
+        private System.Windows.Forms.Label label72;
+        private System.Windows.Forms.TextBox txtJackettIndexer;
+        private System.Windows.Forms.Label label73;
+        private System.Windows.Forms.TextBox txtJackettAPIKey;
+        private System.Windows.Forms.Label label74;
+        private System.Windows.Forms.TextBox txtJackettPort;
+        private System.Windows.Forms.Label label75;
+        private System.Windows.Forms.TextBox txtJackettServer;
+        private System.Windows.Forms.Label label45;
+        private System.Windows.Forms.TextBox tbPreferredRSSTerms;
+        private System.Windows.Forms.ComboBox cmbSupervisedDuplicateAction;
+        private System.Windows.Forms.Label label71;
+        private System.Windows.Forms.LinkLabel llJackettLink;
     }
 }

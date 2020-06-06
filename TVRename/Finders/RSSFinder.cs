@@ -19,7 +19,6 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.SearchRSS;
 
-        public override FinderDisplayType DisplayType() => FinderDisplayType.search;
         [NotNull]
         protected override string CheckName() => "Looked in the listed RSS URLs for download links for the missing files";
 

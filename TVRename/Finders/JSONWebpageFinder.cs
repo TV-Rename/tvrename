@@ -18,15 +18,13 @@ using Newtonsoft.Json.Linq;
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
-    internal class JSONFinder: DownloadFinder
+    internal class JSONWebpageFinder: DownloadFinder
     {
-        public JSONFinder(TVDoc i) : base(i) { }
+        public JSONWebpageFinder(TVDoc i) : base(i) { }
 
         public override bool Active() => TVSettings.Instance.SearchJSON;
         [NotNull]
         protected override string CheckName() => "Check JSON links for the missing files";
-
-        public override FinderDisplayType DisplayType() => FinderDisplayType.search;
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
         {
@@ -167,8 +165,8 @@ namespace TVRename
                         LOGGER.Info(
                             $"Adding {itemUrl} from JSON page as it appears to be match for {pe.Show.ShowName} S{pe.AppropriateSeasonNumber}E{pe.AppropriateEpNum}");
 
-                        newItemsForThisMissingEpisode.Add(new ActionTDownload(itemName, itemSizeBytes, itemUrl,
-                            action.TheFileNoExt, pe, action));
+                        newItemsForThisMissingEpisode.Add(new ActionTDownload(itemName, itemSizeBytes,0, itemUrl,
+                            action.TheFileNoExt, pe, action)); //ToDO ADD SEEDERS
 
                         toRemove.Add(action);
                     }

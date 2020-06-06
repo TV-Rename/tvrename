@@ -82,7 +82,6 @@ namespace TVRename
         #endregion
 
         #region ScanType enum
-
         public enum ScanType
         {
             Full,
@@ -90,8 +89,20 @@ namespace TVRename
             Quick,
             SingleShow
         }
-
         #endregion
+
+        #region DuplicateActionOutcome enum
+        public enum DuplicateActionOutcome
+        {
+            IgnoreAll,
+            ChooseFirst,
+            Ask,
+            DoAll,
+            MostSeeders,
+            Largest
+        }
+        #endregion
+
 
         public enum BetaMode
         {
@@ -285,7 +296,17 @@ namespace TVRename
 
         [NotNull]
         public string SpecialsListViewName => "Special";
-        
+
+        public DuplicateActionOutcome UnattendedMultiActionOutcome = DuplicateActionOutcome.IgnoreAll;
+        public DuplicateActionOutcome UserMultiActionOutcome = DuplicateActionOutcome.MostSeeders;
+
+        public bool SearchJackett = false;
+        public bool SearchJackettManualScanOnly = true;
+        public string JackettServer = "127.0.0.1";
+        public string JackettPort = "9117";
+        public string JackettIndexer = "/api/v2.0/indexers/all/results/torznab";
+        public string JackettAPIKey = string.Empty;
+
         public bool CleanLibraryAfterActions = false;
         public bool AutoAddAsPartOfQuickRename = true;
         public bool UseFullPathNameToMatchSearchFolders = false;
@@ -549,7 +570,17 @@ namespace TVRename
             writer.WriteElement("DefaultShowTimezoneName", DefaultShowTimezoneName);
             writer.WriteElement("DefShowUseBase", DefShowUseBase);
             writer.WriteElement("DefShowUseSubFolders", DefShowUseSubFolders);
-            writer.WriteElement("SampleFileMaxSizeMB", SampleFileMaxSizeMB); 
+            writer.WriteElement("SampleFileMaxSizeMB", SampleFileMaxSizeMB);
+
+            writer.WriteElement("UnattendedMultiActionOutcome",(int)UnattendedMultiActionOutcome );
+            writer.WriteElement("UserMultiActionOutcome",(int)UserMultiActionOutcome );
+
+            writer.WriteElement("SearchJackett",SearchJackett );
+            writer.WriteElement("SearchJackettManualScanOnly",SearchJackettManualScanOnly);
+            writer.WriteElement("JackettServer",JackettServer );
+            writer.WriteElement("JackettPort",JackettPort);
+            writer.WriteElement("JackettIndexer",JackettIndexer );
+            writer.WriteElement("JackettAPIKey",JackettAPIKey );
 
             TheSearchers.WriteXml(writer);
             WriteReplacements(writer);
@@ -1346,6 +1377,16 @@ namespace TVRename
             DefShowUseSubFolders = xmlSettings.ExtractBool("DefShowUseSubFolders", true);
             DefShowLocation = xmlSettings.ExtractString("DefShowLocation");
             DefaultShowTimezoneName = xmlSettings.ExtractString("DefaultShowTimezoneName");
+
+            UnattendedMultiActionOutcome = xmlSettings.ExtractEnum("UnattendedMultiActionOutcome", DuplicateActionOutcome.IgnoreAll);
+            UserMultiActionOutcome = xmlSettings.ExtractEnum("UserMultiActionOutcome", DuplicateActionOutcome.MostSeeders);
+
+            SearchJackett = xmlSettings.ExtractBool("SearchJackett", false);
+            SearchJackettManualScanOnly = xmlSettings.ExtractBool("SearchJackettManualScanOnly", true);
+            JackettServer = xmlSettings.ExtractString("JackettServer", "127.0.0.1");
+            JackettPort = xmlSettings.ExtractString("JackettPort", "9117");
+            JackettIndexer = xmlSettings.ExtractString("JackettIndexer", "/api/v2.0/indexers/all/results/torznab");
+            JackettAPIKey = xmlSettings.ExtractString("JackettAPIKey");
 
             Tidyup.load(xmlSettings);
             RSSURLs = xmlSettings.Descendants("RSSURLs").FirstOrDefault()?.ReadStringsFromXml("URL");

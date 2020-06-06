@@ -47,7 +47,7 @@ namespace TVRename
         [NotNull]
         public List<ActionCopyMoveRename> CopyMoveRename => this.OfType<ActionCopyMoveRename>().ToList();
 
-        public void Replace(ItemList toRemove, ItemList newList)
+        public void Replace([CanBeNull] IEnumerable<Item> toRemove, [CanBeNull] IEnumerable<Item> newList)
         {
             Remove(toRemove);
             Add(newList);
@@ -77,6 +77,11 @@ namespace TVRename
         protected virtual void OnPropertyChanged([CallerMemberName] [CanBeNull] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void Replace([CanBeNull] IEnumerable<Item> toRemove, [CanBeNull] Item newItem)
+        {
+            Replace(toRemove,new List<Item>{newItem});
         }
     }
 }

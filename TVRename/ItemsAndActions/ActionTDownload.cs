@@ -19,9 +19,10 @@ namespace TVRename
         private readonly string theFileNoExt;
         public readonly string SourceName;
         private readonly string url;
-        private readonly long sizeBytes;
+        public readonly long sizeBytes;
+        public readonly int Seeders;
 
-        public ActionTDownload(string name, long sizeBytes, string url, string toWhereNoExt, ProcessedEpisode pe,ItemMissing me)
+        public ActionTDownload(string name, long sizeBytes,int seeders, string url, string toWhereNoExt, ProcessedEpisode pe,ItemMissing me)
         {
             Episode = pe;
             SourceName = name;
@@ -29,6 +30,7 @@ namespace TVRename
             theFileNoExt = toWhereNoExt;
             UndoItemMissing = me;
             this.sizeBytes = sizeBytes;
+            Seeders = seeders;
         }
 
         public ActionTDownload([NotNull] RSSItem rss, string theFileNoExt, ProcessedEpisode pe, ItemMissing me)
@@ -38,6 +40,8 @@ namespace TVRename
             this.theFileNoExt = theFileNoExt;
             Episode = pe;
             UndoItemMissing = me;
+            Seeders = rss.Seeders;
+            sizeBytes = rss.Bytes;
         }
 
         #region Action Members
@@ -132,7 +136,7 @@ namespace TVRename
         [CanBeNull]
         public override string DestinationFile => TargetFilename;
 
-        public override string SourceDetails => $"{SourceName} ({(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())})";
+        public override string SourceDetails => $"{SourceName} ({(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())}) [{Seeders} Seeds]";
 
         [CanBeNull]
         public override string TargetFolder => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).DirectoryName;

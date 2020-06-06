@@ -116,8 +116,8 @@ namespace TVRename
             ValidateFilePath(txtSeasonFormat, tpLibraryFolders, true);
             if (cbCheckuTorrent.Checked)
             {
-                ValidateFilePath(txtUTResumeDatPath, tbuTorrentNZB,false);
-                ValidateFilePath(txtRSSuTorrentPath, tbuTorrentNZB,false);
+                ValidateFilePath(txtUTResumeDatPath, tpTorrentNZB,false);
+                ValidateFilePath(txtRSSuTorrentPath, tpTorrentNZB,false);
             }
         }
 
@@ -328,6 +328,16 @@ namespace TVRename
             s.periodCheckHours = int.Parse(domainUpDown1.SelectedItem?.ToString() ?? "1");
             s.periodUpdateCacheHours = int.Parse(domainUpDown2.SelectedItem?.ToString() ?? "1");
 
+            s.UnattendedMultiActionOutcome = ConvertToDupActEnum(cmbUnattendedDuplicateAction);
+            s.UserMultiActionOutcome = ConvertToDupActEnum(cmbSupervisedDuplicateAction);
+
+            s.SearchJackett = cbSearchJackett.Checked;
+            s.SearchJackettManualScanOnly = cbSearchJackettOnManualScansOnly.Checked;
+            s.JackettServer = txtJackettServer.Text;
+            s.JackettPort = txtJackettPort.Text;
+            s.JackettIndexer = txtJackettIndexer.Text;
+            s.JackettAPIKey = txtJackettAPIKey.Text;
+
             s.RemoveDownloadDirectoriesFiles = cbCleanUpDownloadDir.Checked;
             s.DeleteShowFromDisk = cbDeleteShowFromDisk.Checked;
             s.DoBulkAddInScan = cbScanIncludesBulkAdd.Checked;
@@ -401,6 +411,20 @@ namespace TVRename
             s.DefShowUseBase = rbDefShowUseBase.Checked;
             s.DefShowUseDefLocation = cbDefShowUseDefLocation.Checked;
             s.DefShowUseSubFolders = rbDefShowUseSubFolders.Checked;
+        }
+
+        private TVSettings.DuplicateActionOutcome ConvertToDupActEnum([NotNull] ComboBox p0)
+        {
+            switch (p0.Text)
+            {
+                case "Ask User": return TVSettings.DuplicateActionOutcome.Ask;
+                case "Choose Largest File": return TVSettings.DuplicateActionOutcome.Largest;
+                case "Use First": return TVSettings.DuplicateActionOutcome.ChooseFirst;
+                case "Download All": return TVSettings.DuplicateActionOutcome.DoAll;
+                case "Ignore": return TVSettings.DuplicateActionOutcome.IgnoreAll;
+                case "Choose Most Popular": return TVSettings.DuplicateActionOutcome.MostSeeders;
+                default: throw new ArgumentOutOfRangeException();
+            }
         }
 
         private TVSettings.ScanType ScanTypeMode()
@@ -842,6 +866,16 @@ namespace TVRename
             chkAutoAddAsPartOfQuickRename.Checked = s.AutoAddAsPartOfQuickRename;
             chkCleanLibraryAfterActions.Checked = s.CleanLibraryAfterActions;
 
+            cmbUnattendedDuplicateAction.Text = ConvertEnum(s.UnattendedMultiActionOutcome);
+            cmbSupervisedDuplicateAction.Text = ConvertEnum(s.UserMultiActionOutcome);
+
+            cbSearchJackett.Checked = s.SearchJackett;
+            cbSearchJackettOnManualScansOnly.Checked = s.SearchJackettManualScanOnly;
+            txtJackettServer.Text = s.JackettServer;
+            txtJackettPort.Text = s.JackettPort;
+            txtJackettIndexer.Text = s.JackettIndexer;
+            txtJackettAPIKey.Text = s.JackettAPIKey;
+
             cbMissing.Checked = s.MissingCheck;
             chkMoveLibraryFiles.Checked = s.MoveLibraryFiles;
             cbxUpdateAirDate.Checked = s.CorrectFileDates;
@@ -1029,6 +1063,28 @@ namespace TVRename
                     return "Just";
                 default:
                     throw new InvalidOperationException("Unexpected value s.keepTogetherMode = " + sKeepTogetherMode);
+            }
+        }
+
+        [NotNull]
+        private static string ConvertEnum(TVSettings.DuplicateActionOutcome outcome)
+        {
+            switch (outcome)
+            {
+                case TVSettings.DuplicateActionOutcome.IgnoreAll:
+                    return "Ignore";
+                case TVSettings.DuplicateActionOutcome.ChooseFirst:
+                    return "Use First";
+                case TVSettings.DuplicateActionOutcome.Ask:
+                    return "Ask User";
+                case TVSettings.DuplicateActionOutcome.DoAll:
+                    return "Download All";
+                case TVSettings.DuplicateActionOutcome.MostSeeders:
+                    return "Choose Most Popular";
+                case TVSettings.DuplicateActionOutcome.Largest:
+                    return "Choose Largest File";
+                default:
+                    throw new InvalidOperationException("Unexpected value s.outcome = " + outcome);
             }
         }
 
@@ -1258,6 +1314,7 @@ namespace TVRename
         private void cbSearchRSS_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
         private void cbSearchJSON_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
         private void lvwDefinedColors_SelectedIndexChanged(object sender, EventArgs e) => EnableDisable(sender, e);
+        private void CbSearchJackett_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
 
         private void EnableDisable(object sender, EventArgs e)
         {
@@ -1265,6 +1322,7 @@ namespace TVRename
             txtKeepTogether.Enabled = cbKeepTogether.Checked && cbKeepTogetherMode.Text != "All";
             gbRSS.Enabled = cbSearchRSS.Checked;
             gbJSON.Enabled = cbSearchJSON.Checked;
+            groupBox22.Enabled = cbSearchJackett.Checked;
 
             if (!cbNotificationIcon.Checked)
             {
@@ -1341,9 +1399,11 @@ namespace TVRename
             cbCheckSABnzbd.Enabled = e;
             cbCheckqBitTorrent.Enabled = e;
             cbSearchJSON.Enabled = e;
+            cbSearchJackett.Enabled = e;
 
             cbSearchJSONManualScanOnly.Enabled = cbSearchJSON.Checked && e;
             cbSearchRSSManualScanOnly.Enabled = cbSearchRSS.Checked && e;
+            cbSearchJackettOnManualScansOnly.Enabled = cbSearchJackett.Checked && e;
 
             cbLeaveOriginals.Enabled = e && cbSearchLocally.Checked;
         }
@@ -1818,6 +1878,26 @@ namespace TVRename
         private void CbDefShowUseDefLocation_CheckedChanged(object sender, EventArgs e)
         {
             cmbDefShowLocation.Enabled = cbDefShowUseDefLocation.Checked;
+        }
+
+        private void LlJackettLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Helpers.OpenUrl(llJackettLink.Text);
+        }
+
+        private void UpdateJackettLink()
+        {
+            llJackettLink.Text = $"http://{txtJackettServer.Text}:{txtJackettPort.Text}/UI/Dashboard";
+        }
+
+        private void TxtJackettServer_TextChanged(object sender, EventArgs e)
+        {
+            UpdateJackettLink();
+        }
+
+        private void TxtJackettPort_TextChanged(object sender, EventArgs e)
+        {
+            UpdateJackettLink();
         }
     }
 }

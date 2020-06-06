@@ -9,14 +9,18 @@ namespace TVRename
         public readonly string Title;
         // ReSharper disable once InconsistentNaming
         public readonly string URL;
+        public readonly int Seeders;
+        public readonly long Bytes;
 
-        public RSSItem(string url, string title, int season, int episode, string showName)
+        public RSSItem(string url, string title, int season, int episode, string showName, int seeders, long bytes)
         {
             URL = url;
             Season = season;
             Episode = episode;
             Title = title;
             ShowName = showName;
+            Seeders = seeders;
+            Bytes = bytes;
         }
     }
 }

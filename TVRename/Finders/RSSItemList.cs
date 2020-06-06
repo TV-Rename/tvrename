@@ -81,6 +81,8 @@ namespace TVRename
             string link = itemElement.ExtractString("link");
             string description = itemElement.ExtractString("description");
             string enclosureLink = itemElement.Descendants("enclosure").FirstOrDefault(enclosure => enclosure.Attribute("type")?.Value == "application/x-bittorrent")?.Attribute("url")?.Value;
+            int seeders = GetSeeders(itemElement);
+            long size = itemElement.ExtractLong("size",0);
 
             if (TVSettings.Instance.DetailedRSSJSONLogging)
             {
@@ -144,10 +146,45 @@ namespace TVRename
 
             if (season != -1 && episode != -1)
             {
-                Add(new RSSItem(link, title, season, episode, showName));
+                Add(new RSSItem(link, title, season, episode, showName,seeders,size));
             }
 
             return true;
+        }
+
+        private int GetSeeders([NotNull] XElement itemElement)
+        {
+            foreach (XElement elemenet in itemElement.Descendants())
+            {
+                if (elemenet.Name.LocalName == "attr")
+                {
+                    if (isSeederElement(elemenet))
+                    {
+                        return getSeederValue(elemenet);
+                    }
+                }
+            }
+
+            return 0;
+        }
+
+        private int getSeederValue([NotNull] XElement elemenet)
+        {
+            foreach (string seedersAsString in from att in elemenet.Attributes() where att.Name == "value" select att.Value)
+            {
+                bool success = int.TryParse(seedersAsString, out int returnValue);
+                if (success)
+                {
+                    return returnValue;
+                }
+            }
+
+            return 0;
+        }
+
+        private bool isSeederElement([NotNull] XElement elemenet)
+        {
+            return elemenet.Attributes().Any(att => att.Name == "name" && att.Value == "seeders");
         }
     }
 }
