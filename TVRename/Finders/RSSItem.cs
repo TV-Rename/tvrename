@@ -11,8 +11,10 @@ namespace TVRename
         public readonly string URL;
         public readonly int Seeders;
         public readonly long Bytes;
+        public readonly string UpstreamSource;
 
-        public RSSItem(string url, string title, int season, int episode, string showName, int seeders, long bytes)
+        public RSSItem(string url, string title, int season, int episode, string showName, int seeders, long bytes,
+            string source)
         {
             URL = url;
             Season = season;
@@ -21,6 +23,7 @@ namespace TVRename
             ShowName = showName;
             Seeders = seeders;
             Bytes = bytes;
+            UpstreamSource = source;
         }
     }
 }

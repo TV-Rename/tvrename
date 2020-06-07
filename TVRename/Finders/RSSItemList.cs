@@ -23,7 +23,7 @@ namespace TVRename
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         // ReSharper disable once InconsistentNaming
-        public bool DownloadRSS([NotNull] string url, bool useCloudflareProtection)
+        public bool DownloadRSS([NotNull] string url, bool useCloudflareProtection, string sourcePrefix)
         {
             string response = null;
 
@@ -38,7 +38,7 @@ namespace TVRename
                     return false;
                 }
 
-                if (!ReadChannel(x.Descendants("channel").First()))
+                if (!ReadChannel(x.Descendants("channel").First(),url,sourcePrefix))
                 {
                     return false;
                 }
@@ -73,9 +73,9 @@ namespace TVRename
             return true;
         }
 
-        private bool ReadChannel([NotNull] XElement x) => x.Descendants("item").All(ReadItem);
+        private bool ReadChannel([NotNull] XElement x,string sourceUrl,string sourcePrefix) => x.Descendants("item").All(element => ReadItem(element,sourceUrl,sourcePrefix));
 
-        private bool ReadItem([NotNull] XElement itemElement)
+        private bool ReadItem([NotNull] XElement itemElement,string sourceUrl, string sourcePrefix)
         {
             string title = itemElement.ExtractString("title");
             string link = itemElement.ExtractString("link");
@@ -83,6 +83,7 @@ namespace TVRename
             string enclosureLink = itemElement.Descendants("enclosure").FirstOrDefault(enclosure => enclosure.Attribute("type")?.Value == "application/x-bittorrent")?.Attribute("url")?.Value;
             int seeders = GetSeeders(itemElement);
             long size = itemElement.ExtractLong("size",0);
+            string source = itemElement.ExtractString("jackettindexer",sourceUrl);
 
             if (TVSettings.Instance.DetailedRSSJSONLogging)
             {
@@ -146,7 +147,7 @@ namespace TVRename
 
             if (season != -1 && episode != -1)
             {
-                Add(new RSSItem(link, title, season, episode, showName,seeders,size));
+                Add(new RSSItem(link, title, season, episode, showName,seeders,size, $"{sourcePrefix}: {source}"));
             }
 
             return true;

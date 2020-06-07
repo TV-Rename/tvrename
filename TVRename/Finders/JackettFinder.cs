@@ -79,7 +79,7 @@ namespace TVRename
             string url = $"http://{serverName}:{serverPort}{allIndexer}/api?t=tvsearch&q={simpleShowName}&tvdbid={action.Episode.Show.TvdbCode}&season={action.Episode.AppropriateSeasonNumber}&ep={action.Episode.AppropriateEpNum}&apikey={apikey}";
 
             RssItemList rssList = new RssItemList();
-            rssList.DownloadRSS(url, TVSettings.Instance.RSSUseCloudflare);
+            rssList.DownloadRSS(url, false,"Jackett");
             ItemList newItemsForThisMissingEpisode = new ItemList();
 
             foreach (RSSItem rss in rssList)

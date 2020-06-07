@@ -284,6 +284,7 @@ namespace TVRename
         public string SearchJSONFilenameToken = "filename";
         public string SearchJSONURLToken = "torrent_url";
         public string SearchJSONFileSizeToken = "size_bytes";
+        public string SearchJSONSeedersToken = "seeds";
 
         [NotNull]
         public string[] VideoExtensionsArray => Convert(VideoExtensionsString);
@@ -544,6 +545,7 @@ namespace TVRename
             writer.WriteElement("SearchJSONFilenameToken", SearchJSONFilenameToken);
             writer.WriteElement("SearchJSONURLToken", SearchJSONURLToken);
             writer.WriteElement("SearchJSONFileSizeToken", SearchJSONFileSizeToken);
+            writer.WriteElement("SearchJSONSeedersToken", SearchJSONSeedersToken);
             writer.WriteElement("PriorityReplaceTerms", PriorityReplaceTerms);
             writer.WriteElement("CopyFutureDatedEpsFromSearchFolders", CopyFutureDatedEpsFromSearchFolders);
             writer.WriteElement("ShareLogs", ShareLogs);
@@ -1257,6 +1259,7 @@ namespace TVRename
             SearchJSONFilenameToken = xmlSettings.ExtractString("SearchJSONFilenameToken", "filename");
             SearchJSONURLToken = xmlSettings.ExtractString("SearchJSONURLToken", "torrent_url");
             SearchJSONFileSizeToken = xmlSettings.ExtractString("SearchJSONFileSizeToken", "size_bytes");
+            SearchJSONSeedersToken = xmlSettings.ExtractString("SearchJSONSeedersToken", "seeds");
             SABAPIKey = xmlSettings.ExtractString("SABAPIKey");
             CheckSABnzbd = xmlSettings.ExtractBool("CheckSABnzbd",false);
             SABHostPort = xmlSettings.ExtractString("SABHostPort");

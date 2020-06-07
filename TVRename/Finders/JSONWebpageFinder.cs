@@ -123,6 +123,7 @@ namespace TVRename
                     {
                         string itemName = (string) item[TVSettings.Instance.SearchJSONFilenameToken];
                         string itemUrl = (string) item[TVSettings.Instance.SearchJSONURLToken];
+                        int seeders = (int)item[TVSettings.Instance.SearchJSONSeedersToken];
                         long itemSizeBytes = CalculateItemSizeBytes(item);
 
                         if (TVSettings.Instance.DetailedRSSJSONLogging)
@@ -133,6 +134,7 @@ namespace TVRename
                             LOGGER.Info($"Name:        {itemName}");
                             LOGGER.Info($"URL:         {itemUrl}");
                             LOGGER.Info($"Size:        {itemSizeBytes}");
+                            LOGGER.Info($"Seeds:       {seeders}");
                         }
 
                         if (!FileHelper.SimplifyAndCheckFilename(itemName, simpleShowName, true, false) &&
@@ -165,8 +167,8 @@ namespace TVRename
                         LOGGER.Info(
                             $"Adding {itemUrl} from JSON page as it appears to be match for {pe.Show.ShowName} S{pe.AppropriateSeasonNumber}E{pe.AppropriateEpNum}");
 
-                        newItemsForThisMissingEpisode.Add(new ActionTDownload(itemName, itemSizeBytes,0, itemUrl,
-                            action.TheFileNoExt, pe, action)); //ToDO ADD SEEDERS
+                        newItemsForThisMissingEpisode.Add(new ActionTDownload(itemName, itemSizeBytes,seeders, itemUrl,
+                            action.TheFileNoExt, pe, action,$"JSON WebPage: {TVSettings.Instance.SearchJSONURL}{imdbId}")); 
 
                         toRemove.Add(action);
                     }

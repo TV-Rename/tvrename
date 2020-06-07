@@ -37,7 +37,7 @@ namespace TVRename
             RssItemList RSSList = new RssItemList();
             foreach (string s in TVSettings.Instance.RSSURLs)
             {
-                RSSList.DownloadRSS(s, TVSettings.Instance.RSSUseCloudflare);
+                RSSList.DownloadRSS(s, TVSettings.Instance.RSSUseCloudflare,"RSS");
             }
 
             ItemList newItems = new ItemList();

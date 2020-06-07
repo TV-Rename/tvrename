@@ -7,6 +7,7 @@
 // 
 
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
@@ -142,12 +143,9 @@ namespace TVRename
                 return theActionList;
             }
 
-            foreach (DownloadIdentifier di in identifiers)
+            foreach (DownloadIdentifier di in identifiers.Where(di => dt == di.GetDownloadType()))
             {
-                if (dt == di.GetDownloadType())
-                {
-                    theActionList.Add(di.ProcessEpisode(dbep,filo, true));
-                }
+                theActionList.Add(di.ProcessEpisode(dbep,filo, true));
             }
             return theActionList;
         }

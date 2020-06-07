@@ -90,7 +90,6 @@ namespace TVRename
             this.colShowStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colColor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label61 = new System.Windows.Forms.Label();
-            this.pbDisplay = new System.Windows.Forms.PictureBox();
             this.cbLeadingZero = new System.Windows.Forms.CheckBox();
             this.txtSeasonFolderName = new System.Windows.Forms.TextBox();
             this.label35 = new System.Windows.Forms.Label();
@@ -106,7 +105,6 @@ namespace TVRename
             this.chkShowInTaskbar = new System.Windows.Forms.CheckBox();
             this.cbNotificationIcon = new System.Windows.Forms.CheckBox();
             this.tpRSSJSONSearch = new System.Windows.Forms.TabPage();
-            this.pbRSSJSONSearch = new System.Windows.Forms.PictureBox();
             this.label59 = new System.Windows.Forms.Label();
             this.cbSearchJSON = new System.Windows.Forms.CheckBox();
             this.cbSearchRSS = new System.Windows.Forms.CheckBox();
@@ -139,13 +137,11 @@ namespace TVRename
             this.label47 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label65 = new System.Windows.Forms.Label();
-            this.pbLibraryFolders = new System.Windows.Forms.PictureBox();
             this.label56 = new System.Windows.Forms.Label();
             this.bnOpenMonFolder = new System.Windows.Forms.Button();
             this.bnAddMonFolder = new System.Windows.Forms.Button();
             this.bnRemoveMonFolder = new System.Windows.Forms.Button();
             this.tpTorrentNZB = new System.Windows.Forms.TabPage();
-            this.pbuTorrentNZB = new System.Windows.Forms.PictureBox();
             this.label58 = new System.Windows.Forms.Label();
             this.cbCheckqBitTorrent = new System.Windows.Forms.CheckBox();
             this.cbCheckSABnzbd = new System.Windows.Forms.CheckBox();
@@ -182,7 +178,6 @@ namespace TVRename
             this.label52 = new System.Windows.Forms.Label();
             this.cbHigherQuality = new System.Windows.Forms.CheckBox();
             this.label67 = new System.Windows.Forms.Label();
-            this.pbSearchFolders = new System.Windows.Forms.PictureBox();
             this.gbAutoAdd = new System.Windows.Forms.GroupBox();
             this.chkAutoSearchForDownloadedFiles = new System.Windows.Forms.CheckBox();
             this.label43 = new System.Windows.Forms.Label();
@@ -219,11 +214,9 @@ namespace TVRename
             this.rbFolderFanArt = new System.Windows.Forms.RadioButton();
             this.rbFolderSeasonPoster = new System.Windows.Forms.RadioButton();
             this.label64 = new System.Windows.Forms.Label();
-            this.pbMediaCenter = new System.Windows.Forms.PictureBox();
             this.bnMCPresets = new System.Windows.Forms.Button();
             this.tbFolderDeleting = new System.Windows.Forms.TabPage();
             this.label69 = new System.Windows.Forms.Label();
-            this.pbFolderDeleting = new System.Windows.Forms.PictureBox();
             this.cbDeleteShowFromDisk = new System.Windows.Forms.CheckBox();
             this.cbCleanUpDownloadDir = new System.Windows.Forms.CheckBox();
             this.label32 = new System.Windows.Forms.Label();
@@ -296,7 +289,6 @@ namespace TVRename
             this.txtSubtitleExtensions = new System.Windows.Forms.TextBox();
             this.chkRetainLanguageSpecificSubtitles = new System.Windows.Forms.CheckBox();
             this.label66 = new System.Windows.Forms.Label();
-            this.pbFilesAndFolders = new System.Windows.Forms.PictureBox();
             this.txtMaxSampleSize = new System.Windows.Forms.TextBox();
             this.txtVideoExtensions = new System.Windows.Forms.TextBox();
             this.bnTags = new System.Windows.Forms.Button();
@@ -316,7 +308,6 @@ namespace TVRename
             this.chkAutoAddAsPartOfQuickRename = new System.Windows.Forms.CheckBox();
             this.chkShareCriticalLogs = new System.Windows.Forms.CheckBox();
             this.label60 = new System.Windows.Forms.Label();
-            this.pbGeneral = new System.Windows.Forms.PictureBox();
             this.txtWTWDays = new System.Windows.Forms.TextBox();
             this.cbMode = new System.Windows.Forms.ComboBox();
             this.label34 = new System.Windows.Forms.Label();
@@ -324,7 +315,6 @@ namespace TVRename
             this.tcTabs = new System.Windows.Forms.TabControl();
             this.tpDataSources = new System.Windows.Forms.TabPage();
             this.label63 = new System.Windows.Forms.Label();
-            this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.label57 = new System.Windows.Forms.Label();
             this.txtParallelDownloads = new System.Windows.Forms.TextBox();
             this.label21 = new System.Windows.Forms.Label();
@@ -341,7 +331,6 @@ namespace TVRename
             this.rdoTVDB = new System.Windows.Forms.RadioButton();
             this.tpShowDefaults = new System.Windows.Forms.TabPage();
             this.label18 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox19 = new System.Windows.Forms.GroupBox();
             this.label24 = new System.Windows.Forms.Label();
             this.cbTimeZone = new System.Windows.Forms.ComboBox();
@@ -384,14 +373,12 @@ namespace TVRename
             this.gbBulkAdd = new System.Windows.Forms.GroupBox();
             this.label36 = new System.Windows.Forms.Label();
             this.label62 = new System.Windows.Forms.Label();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.tpJackett = new System.Windows.Forms.TabPage();
             this.cmbSupervisedDuplicateAction = new System.Windows.Forms.ComboBox();
             this.label77 = new System.Windows.Forms.Label();
             this.cmbUnattendedDuplicateAction = new System.Windows.Forms.ComboBox();
             this.label76 = new System.Windows.Forms.Label();
             this.cbDetailedRSSJSONLogging = new System.Windows.Forms.CheckBox();
-            this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.label70 = new System.Windows.Forms.Label();
             this.cbSearchJackett = new System.Windows.Forms.CheckBox();
             this.groupBox22 = new System.Windows.Forms.GroupBox();
@@ -408,25 +395,35 @@ namespace TVRename
             this.tbPreferredRSSTerms = new System.Windows.Forms.TextBox();
             this.label71 = new System.Windows.Forms.Label();
             this.llJackettLink = new System.Windows.Forms.LinkLabel();
+            this.pbGeneral = new System.Windows.Forms.PictureBox();
+            this.pbDisplay = new System.Windows.Forms.PictureBox();
+            this.pictureBox3 = new System.Windows.Forms.PictureBox();
+            this.pbLibraryFolders = new System.Windows.Forms.PictureBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.pbFilesAndFolders = new System.Windows.Forms.PictureBox();
+            this.pbSearchFolders = new System.Windows.Forms.PictureBox();
+            this.pbFolderDeleting = new System.Windows.Forms.PictureBox();
+            this.pbMediaCenter = new System.Windows.Forms.PictureBox();
+            this.pbuTorrentNZB = new System.Windows.Forms.PictureBox();
+            this.pbRSSJSONSearch = new System.Windows.Forms.PictureBox();
+            this.pictureBox4 = new System.Windows.Forms.PictureBox();
+            this.label78 = new System.Windows.Forms.Label();
+            this.tbJSONSeedersToken = new System.Windows.Forms.TextBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbDisplay)).BeginInit();
             this.tpRSSJSONSearch.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbRSSJSONSearch)).BeginInit();
             this.gbJSON.SuspendLayout();
             this.gbRSS.SuspendLayout();
             this.tpLibraryFolders.SuspendLayout();
             this.groupBox6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbLibraryFolders)).BeginInit();
             this.tpTorrentNZB.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbuTorrentNZB)).BeginInit();
             this.qBitTorrent.SuspendLayout();
             this.gbSAB.SuspendLayout();
             this.gbuTorrent.SuspendLayout();
             this.tbSearchFolders.SuspendLayout();
             this.groupBox8.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbSearchFolders)).BeginInit();
             this.gbAutoAdd.SuspendLayout();
             this.tbMediaCenter.SuspendLayout();
             this.groupBox16.SuspendLayout();
@@ -435,9 +432,7 @@ namespace TVRename
             this.groupBox15.SuspendLayout();
             this.groupBox12.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbMediaCenter)).BeginInit();
             this.tbFolderDeleting.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbFolderDeleting)).BeginInit();
             this.tbAutoExport.SuspendLayout();
             this.groupBox10.SuspendLayout();
             this.groupBox7.SuspendLayout();
@@ -447,25 +442,32 @@ namespace TVRename
             this.groupBox2.SuspendLayout();
             this.tbFilesAndFolders.SuspendLayout();
             this.groupBox9.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbFilesAndFolders)).BeginInit();
             this.tbGeneral.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbGeneral)).BeginInit();
             this.tcTabs.SuspendLayout();
             this.tpDataSources.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.groupBox20.SuspendLayout();
             this.tpShowDefaults.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox19.SuspendLayout();
             this.groupBox18.SuspendLayout();
             this.tpScanSettings.SuspendLayout();
             this.groupBox17.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.gbBulkAdd.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.tpJackett.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             this.groupBox22.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbGeneral)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbDisplay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbLibraryFolders)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbFilesAndFolders)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbSearchFolders)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbFolderDeleting)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbMediaCenter)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbuTorrentNZB)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRSSJSONSearch)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             this.SuspendLayout();
             // 
             // OKButton
@@ -822,7 +824,6 @@ namespace TVRename
             this.tpDisplay.Controls.Add(this.chkPostpendThe);
             this.tpDisplay.Controls.Add(this.groupBox11);
             this.tpDisplay.Controls.Add(this.label61);
-            this.tpDisplay.Controls.Add(this.pbDisplay);
             this.tpDisplay.Controls.Add(this.cbLeadingZero);
             this.tpDisplay.Controls.Add(this.txtSeasonFolderName);
             this.tpDisplay.Controls.Add(this.label35);
@@ -837,6 +838,7 @@ namespace TVRename
             this.tpDisplay.Controls.Add(this.label6);
             this.tpDisplay.Controls.Add(this.chkShowInTaskbar);
             this.tpDisplay.Controls.Add(this.cbNotificationIcon);
+            this.tpDisplay.Controls.Add(this.pbDisplay);
             this.tpDisplay.Location = new System.Drawing.Point(139, 4);
             this.tpDisplay.Name = "tpDisplay";
             this.tpDisplay.Padding = new System.Windows.Forms.Padding(3);
@@ -1020,20 +1022,6 @@ namespace TVRename
             this.label61.Text = "Settings that contol the way that TV Rename looks. These do\r\nnot have any impact " +
     "on the main scanning, just on the way \r\nthe interface looks.";
             // 
-            // pbDisplay
-            // 
-            this.pbDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbDisplay.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbDisplay.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbDisplay.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbDisplay.Location = new System.Drawing.Point(368, 6);
-            this.pbDisplay.Name = "pbDisplay";
-            this.pbDisplay.Size = new System.Drawing.Size(43, 40);
-            this.pbDisplay.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbDisplay.TabIndex = 39;
-            this.pbDisplay.TabStop = false;
-            this.pbDisplay.Click += new System.EventHandler(this.pbDisplay_Click);
-            // 
             // cbLeadingZero
             // 
             this.cbLeadingZero.AutoSize = true;
@@ -1193,20 +1181,6 @@ namespace TVRename
             this.tpRSSJSONSearch.Text = "RSS/JSON Search";
             this.tpRSSJSONSearch.UseVisualStyleBackColor = true;
             // 
-            // pbRSSJSONSearch
-            // 
-            this.pbRSSJSONSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbRSSJSONSearch.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbRSSJSONSearch.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbRSSJSONSearch.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbRSSJSONSearch.Location = new System.Drawing.Point(368, 6);
-            this.pbRSSJSONSearch.Name = "pbRSSJSONSearch";
-            this.pbRSSJSONSearch.Size = new System.Drawing.Size(43, 40);
-            this.pbRSSJSONSearch.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbRSSJSONSearch.TabIndex = 38;
-            this.pbRSSJSONSearch.TabStop = false;
-            this.pbRSSJSONSearch.Click += new System.EventHandler(this.pbRSSJSONSearch_Click);
-            // 
             // label59
             // 
             this.label59.AutoSize = true;
@@ -1245,6 +1219,8 @@ namespace TVRename
             // 
             this.gbJSON.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbJSON.Controls.Add(this.label78);
+            this.gbJSON.Controls.Add(this.tbJSONSeedersToken);
             this.gbJSON.Controls.Add(this.cbJSONCloudflareProtection);
             this.gbJSON.Controls.Add(this.cbSearchJSONManualScanOnly);
             this.gbJSON.Controls.Add(this.label55);
@@ -1266,8 +1242,9 @@ namespace TVRename
             // 
             // cbJSONCloudflareProtection
             // 
+            this.cbJSONCloudflareProtection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbJSONCloudflareProtection.AutoSize = true;
-            this.cbJSONCloudflareProtection.Location = new System.Drawing.Point(98, 172);
+            this.cbJSONCloudflareProtection.Location = new System.Drawing.Point(253, 19);
             this.cbJSONCloudflareProtection.Name = "cbJSONCloudflareProtection";
             this.cbJSONCloudflareProtection.Size = new System.Drawing.Size(145, 17);
             this.cbJSONCloudflareProtection.TabIndex = 40;
@@ -1395,8 +1372,9 @@ namespace TVRename
             // 
             // cbRSSCloudflareProtection
             // 
+            this.cbRSSCloudflareProtection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbRSSCloudflareProtection.AutoSize = true;
-            this.cbRSSCloudflareProtection.Location = new System.Drawing.Point(6, 42);
+            this.cbRSSCloudflareProtection.Location = new System.Drawing.Point(256, 19);
             this.cbRSSCloudflareProtection.Name = "cbRSSCloudflareProtection";
             this.cbRSSCloudflareProtection.Size = new System.Drawing.Size(145, 17);
             this.cbRSSCloudflareProtection.TabIndex = 41;
@@ -1420,11 +1398,11 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.RSSGrid.BackColor = System.Drawing.SystemColors.Window;
             this.RSSGrid.EnableSort = true;
-            this.RSSGrid.Location = new System.Drawing.Point(6, 87);
+            this.RSSGrid.Location = new System.Drawing.Point(6, 55);
             this.RSSGrid.Name = "RSSGrid";
             this.RSSGrid.OptimizeMode = SourceGrid.CellOptimizeMode.ForRows;
             this.RSSGrid.SelectionMode = SourceGrid.GridSelectionMode.Cell;
-            this.RSSGrid.Size = new System.Drawing.Size(395, 102);
+            this.RSSGrid.Size = new System.Drawing.Size(395, 134);
             this.RSSGrid.TabIndex = 26;
             this.RSSGrid.TabStop = true;
             this.RSSGrid.ToolTipText = "";
@@ -1432,7 +1410,7 @@ namespace TVRename
             // label25
             // 
             this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(3, 71);
+            this.label25.Location = new System.Drawing.Point(3, 39);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(99, 13);
             this.label25.TabIndex = 25;
@@ -1475,11 +1453,11 @@ namespace TVRename
             // 
             this.tpLibraryFolders.Controls.Add(this.groupBox6);
             this.tpLibraryFolders.Controls.Add(this.label65);
-            this.tpLibraryFolders.Controls.Add(this.pbLibraryFolders);
             this.tpLibraryFolders.Controls.Add(this.label56);
             this.tpLibraryFolders.Controls.Add(this.bnOpenMonFolder);
             this.tpLibraryFolders.Controls.Add(this.bnAddMonFolder);
             this.tpLibraryFolders.Controls.Add(this.bnRemoveMonFolder);
+            this.tpLibraryFolders.Controls.Add(this.pbLibraryFolders);
             this.tpLibraryFolders.Controls.Add(this.lstFMMonitorFolders);
             this.tpLibraryFolders.Location = new System.Drawing.Point(139, 4);
             this.tpLibraryFolders.Name = "tpLibraryFolders";
@@ -1564,20 +1542,6 @@ namespace TVRename
             this.label65.Text = "TV Rename considers 2 sets of folders. Library Folders are the\r\nbase folders for " +
     "a sorted collection of files";
             // 
-            // pbLibraryFolders
-            // 
-            this.pbLibraryFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbLibraryFolders.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbLibraryFolders.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbLibraryFolders.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbLibraryFolders.Location = new System.Drawing.Point(368, 6);
-            this.pbLibraryFolders.Name = "pbLibraryFolders";
-            this.pbLibraryFolders.Size = new System.Drawing.Size(43, 40);
-            this.pbLibraryFolders.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbLibraryFolders.TabIndex = 43;
-            this.pbLibraryFolders.TabStop = false;
-            this.pbLibraryFolders.Click += new System.EventHandler(this.pbLibraryFolders_Click);
-            // 
             // label56
             // 
             this.label56.AutoSize = true;
@@ -1639,20 +1603,6 @@ namespace TVRename
             this.tpTorrentNZB.TabIndex = 4;
             this.tpTorrentNZB.Text = "Torrents / NZB";
             this.tpTorrentNZB.UseVisualStyleBackColor = true;
-            // 
-            // pbuTorrentNZB
-            // 
-            this.pbuTorrentNZB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbuTorrentNZB.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbuTorrentNZB.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbuTorrentNZB.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbuTorrentNZB.Location = new System.Drawing.Point(368, 6);
-            this.pbuTorrentNZB.Name = "pbuTorrentNZB";
-            this.pbuTorrentNZB.Size = new System.Drawing.Size(43, 40);
-            this.pbuTorrentNZB.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbuTorrentNZB.TabIndex = 21;
-            this.pbuTorrentNZB.TabStop = false;
-            this.pbuTorrentNZB.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // label58
             // 
@@ -1934,7 +1884,6 @@ namespace TVRename
             this.tbSearchFolders.Controls.Add(this.cbCopyFutureDatedEps);
             this.tbSearchFolders.Controls.Add(this.groupBox8);
             this.tbSearchFolders.Controls.Add(this.label67);
-            this.tbSearchFolders.Controls.Add(this.pbSearchFolders);
             this.tbSearchFolders.Controls.Add(this.gbAutoAdd);
             this.tbSearchFolders.Controls.Add(this.cbLeaveOriginals);
             this.tbSearchFolders.Controls.Add(this.cbSearchLocally);
@@ -1943,6 +1892,7 @@ namespace TVRename
             this.tbSearchFolders.Controls.Add(this.bnOpenSearchFolder);
             this.tbSearchFolders.Controls.Add(this.bnRemoveSearchFolder);
             this.tbSearchFolders.Controls.Add(this.bnAddSearchFolder);
+            this.tbSearchFolders.Controls.Add(this.pbSearchFolders);
             this.tbSearchFolders.Controls.Add(this.lbSearchFolders);
             this.tbSearchFolders.Controls.Add(this.label23);
             this.tbSearchFolders.Location = new System.Drawing.Point(139, 4);
@@ -2044,20 +1994,6 @@ namespace TVRename
             this.label67.Size = new System.Drawing.Size(331, 39);
             this.label67.TabIndex = 39;
             this.label67.Text = resources.GetString("label67.Text");
-            // 
-            // pbSearchFolders
-            // 
-            this.pbSearchFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbSearchFolders.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbSearchFolders.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbSearchFolders.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbSearchFolders.Location = new System.Drawing.Point(368, 6);
-            this.pbSearchFolders.Name = "pbSearchFolders";
-            this.pbSearchFolders.Size = new System.Drawing.Size(43, 40);
-            this.pbSearchFolders.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbSearchFolders.TabIndex = 37;
-            this.pbSearchFolders.TabStop = false;
-            this.pbSearchFolders.Click += new System.EventHandler(this.pbSearchFolders_Click);
             // 
             // gbAutoAdd
             // 
@@ -2188,8 +2124,8 @@ namespace TVRename
             this.tbMediaCenter.Controls.Add(this.groupBox15);
             this.tbMediaCenter.Controls.Add(this.groupBox12);
             this.tbMediaCenter.Controls.Add(this.label64);
-            this.tbMediaCenter.Controls.Add(this.pbMediaCenter);
             this.tbMediaCenter.Controls.Add(this.bnMCPresets);
+            this.tbMediaCenter.Controls.Add(this.pbMediaCenter);
             this.tbMediaCenter.Location = new System.Drawing.Point(139, 4);
             this.tbMediaCenter.Name = "tbMediaCenter";
             this.tbMediaCenter.Padding = new System.Windows.Forms.Padding(3);
@@ -2464,20 +2400,6 @@ namespace TVRename
     " files to help video playing applications to\r\nunderstand what is in your library" +
     " and display it in a nicer way.";
             // 
-            // pbMediaCenter
-            // 
-            this.pbMediaCenter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbMediaCenter.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbMediaCenter.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbMediaCenter.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbMediaCenter.Location = new System.Drawing.Point(368, 6);
-            this.pbMediaCenter.Name = "pbMediaCenter";
-            this.pbMediaCenter.Size = new System.Drawing.Size(43, 40);
-            this.pbMediaCenter.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbMediaCenter.TabIndex = 27;
-            this.pbMediaCenter.TabStop = false;
-            this.pbMediaCenter.Click += new System.EventHandler(this.pictureBox7_Click);
-            // 
             // bnMCPresets
             // 
             this.bnMCPresets.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -2492,7 +2414,6 @@ namespace TVRename
             // tbFolderDeleting
             // 
             this.tbFolderDeleting.Controls.Add(this.label69);
-            this.tbFolderDeleting.Controls.Add(this.pbFolderDeleting);
             this.tbFolderDeleting.Controls.Add(this.cbDeleteShowFromDisk);
             this.tbFolderDeleting.Controls.Add(this.cbCleanUpDownloadDir);
             this.tbFolderDeleting.Controls.Add(this.label32);
@@ -2506,6 +2427,7 @@ namespace TVRename
             this.tbFolderDeleting.Controls.Add(this.cbEmptyIgnoreWords);
             this.tbFolderDeleting.Controls.Add(this.cbEmptyIgnoreExtensions);
             this.tbFolderDeleting.Controls.Add(this.cbDeleteEmpty);
+            this.tbFolderDeleting.Controls.Add(this.pbFolderDeleting);
             this.tbFolderDeleting.Location = new System.Drawing.Point(139, 4);
             this.tbFolderDeleting.Name = "tbFolderDeleting";
             this.tbFolderDeleting.Padding = new System.Windows.Forms.Padding(3);
@@ -2523,20 +2445,6 @@ namespace TVRename
             this.label69.TabIndex = 40;
             this.label69.Text = "TV Rename can clean up the search folders to keep them\r\nclear of unused files and" +
     " duplicate downloads.";
-            // 
-            // pbFolderDeleting
-            // 
-            this.pbFolderDeleting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbFolderDeleting.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbFolderDeleting.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbFolderDeleting.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbFolderDeleting.Location = new System.Drawing.Point(368, 6);
-            this.pbFolderDeleting.Name = "pbFolderDeleting";
-            this.pbFolderDeleting.Size = new System.Drawing.Size(43, 40);
-            this.pbFolderDeleting.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbFolderDeleting.TabIndex = 24;
-            this.pbFolderDeleting.TabStop = false;
-            this.pbFolderDeleting.Click += new System.EventHandler(this.pbFolderDeleting_Click);
             // 
             // cbDeleteShowFromDisk
             // 
@@ -3234,7 +3142,6 @@ namespace TVRename
             this.tbFilesAndFolders.Controls.Add(this.chkUseLibraryFullPathWhenMatchingShows);
             this.tbFilesAndFolders.Controls.Add(this.groupBox9);
             this.tbFilesAndFolders.Controls.Add(this.label66);
-            this.tbFilesAndFolders.Controls.Add(this.pbFilesAndFolders);
             this.tbFilesAndFolders.Controls.Add(this.txtKeepTogether);
             this.tbFilesAndFolders.Controls.Add(this.txtMaxSampleSize);
             this.tbFilesAndFolders.Controls.Add(this.txtOtherExtensions);
@@ -3252,6 +3159,7 @@ namespace TVRename
             this.tbFilesAndFolders.Controls.Add(this.cbKeepTogether);
             this.tbFilesAndFolders.Controls.Add(this.cbForceLower);
             this.tbFilesAndFolders.Controls.Add(this.cbIgnoreSamples);
+            this.tbFilesAndFolders.Controls.Add(this.pbFilesAndFolders);
             this.tbFilesAndFolders.Location = new System.Drawing.Point(139, 4);
             this.tbFilesAndFolders.Name = "tbFilesAndFolders";
             this.tbFilesAndFolders.Padding = new System.Windows.Forms.Padding(3);
@@ -3336,20 +3244,6 @@ namespace TVRename
             this.label66.Text = "These preferences control how TV Rename copies files across from\r\nyour search fol" +
     "ders to your library. Often there are other files that\r\nyou\'d like copied as wel" +
     "l.";
-            // 
-            // pbFilesAndFolders
-            // 
-            this.pbFilesAndFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbFilesAndFolders.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbFilesAndFolders.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbFilesAndFolders.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbFilesAndFolders.Location = new System.Drawing.Point(368, 6);
-            this.pbFilesAndFolders.Name = "pbFilesAndFolders";
-            this.pbFilesAndFolders.Size = new System.Drawing.Size(43, 40);
-            this.pbFilesAndFolders.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbFilesAndFolders.TabIndex = 33;
-            this.pbFilesAndFolders.TabStop = false;
-            this.pbFilesAndFolders.Click += new System.EventHandler(this.pbFilesAndFolders_Click);
             // 
             // txtMaxSampleSize
             // 
@@ -3566,20 +3460,6 @@ namespace TVRename
             this.label60.TabIndex = 38;
             this.label60.Text = "General settings to control TV Rename\'s scan and download\r\nbehaviour";
             // 
-            // pbGeneral
-            // 
-            this.pbGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbGeneral.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbGeneral.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbGeneral.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbGeneral.Location = new System.Drawing.Point(368, 6);
-            this.pbGeneral.Name = "pbGeneral";
-            this.pbGeneral.Size = new System.Drawing.Size(43, 40);
-            this.pbGeneral.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbGeneral.TabIndex = 23;
-            this.pbGeneral.TabStop = false;
-            this.pbGeneral.Click += new System.EventHandler(this.pbGeneral_Click);
-            // 
             // txtWTWDays
             // 
             this.txtWTWDays.Location = new System.Drawing.Point(13, 51);
@@ -3653,7 +3533,6 @@ namespace TVRename
             // tpDataSources
             // 
             this.tpDataSources.Controls.Add(this.label63);
-            this.tpDataSources.Controls.Add(this.pictureBox3);
             this.tpDataSources.Controls.Add(this.label57);
             this.tpDataSources.Controls.Add(this.label40);
             this.tpDataSources.Controls.Add(this.domainUpDown2);
@@ -3665,6 +3544,7 @@ namespace TVRename
             this.tpDataSources.Controls.Add(this.label33);
             this.tpDataSources.Controls.Add(this.rdoTVMaze);
             this.tpDataSources.Controls.Add(this.rdoTVDB);
+            this.tpDataSources.Controls.Add(this.pictureBox3);
             this.tpDataSources.Location = new System.Drawing.Point(139, 4);
             this.tpDataSources.Name = "tpDataSources";
             this.tpDataSources.Size = new System.Drawing.Size(417, 561);
@@ -3683,19 +3563,6 @@ namespace TVRename
             this.label63.TabIndex = 57;
             this.label63.Text = "TV Rename downloads information from upstream sources to understand\r\nwhich shows " +
     "have epiosdes";
-            // 
-            // pictureBox3
-            // 
-            this.pictureBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox3.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox3.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pictureBox3.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pictureBox3.Location = new System.Drawing.Point(371, 3);
-            this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(43, 40);
-            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox3.TabIndex = 56;
-            this.pictureBox3.TabStop = false;
             // 
             // label57
             // 
@@ -3841,9 +3708,9 @@ namespace TVRename
             // tpShowDefaults
             // 
             this.tpShowDefaults.Controls.Add(this.label18);
-            this.tpShowDefaults.Controls.Add(this.pictureBox1);
             this.tpShowDefaults.Controls.Add(this.groupBox19);
             this.tpShowDefaults.Controls.Add(this.groupBox18);
+            this.tpShowDefaults.Controls.Add(this.pictureBox1);
             this.tpShowDefaults.Location = new System.Drawing.Point(139, 4);
             this.tpShowDefaults.Name = "tpShowDefaults";
             this.tpShowDefaults.Padding = new System.Windows.Forms.Padding(3);
@@ -3863,20 +3730,6 @@ namespace TVRename
             this.label18.TabIndex = 59;
             this.label18.Text = "These settings control the defaults used to add a new show to the \r\nsystem. Once " +
     "the show has been created, you will need to modify\r\nits configuration directly.";
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox1.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pictureBox1.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pictureBox1.Location = new System.Drawing.Point(368, 6);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(43, 40);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox1.TabIndex = 58;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.PictureBox1_Click_1);
             // 
             // groupBox19
             // 
@@ -4366,19 +4219,6 @@ namespace TVRename
             this.label62.TabIndex = 40;
             this.label62.Text = "General settings to control TV Rename\'s scan and download\r\nbehaviour";
             // 
-            // pictureBox2
-            // 
-            this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox2.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox2.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pictureBox2.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pictureBox2.Location = new System.Drawing.Point(368, 3);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(43, 40);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox2.TabIndex = 39;
-            this.pictureBox2.TabStop = false;
-            // 
             // tpJackett
             // 
             this.tpJackett.Controls.Add(this.cmbSupervisedDuplicateAction);
@@ -4466,19 +4306,6 @@ namespace TVRename
             this.cbDetailedRSSJSONLogging.Text = "Detailed logging (useful when setting up RSS/JSON Feeds)";
             this.cbDetailedRSSJSONLogging.UseVisualStyleBackColor = false;
             // 
-            // pictureBox4
-            // 
-            this.pictureBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox4.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox4.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pictureBox4.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pictureBox4.Location = new System.Drawing.Point(368, 12);
-            this.pictureBox4.Name = "pictureBox4";
-            this.pictureBox4.Size = new System.Drawing.Size(43, 40);
-            this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox4.TabIndex = 42;
-            this.pictureBox4.TabStop = false;
-            // 
             // label70
             // 
             this.label70.AutoSize = true;
@@ -4493,7 +4320,7 @@ namespace TVRename
             // cbSearchJackett
             // 
             this.cbSearchJackett.AutoSize = true;
-            this.cbSearchJackett.Location = new System.Drawing.Point(8, 187);
+            this.cbSearchJackett.Location = new System.Drawing.Point(8, 195);
             this.cbSearchJackett.Name = "cbSearchJackett";
             this.cbSearchJackett.Size = new System.Drawing.Size(171, 17);
             this.cbSearchJackett.TabIndex = 40;
@@ -4516,7 +4343,7 @@ namespace TVRename
             this.groupBox22.Controls.Add(this.txtJackettPort);
             this.groupBox22.Controls.Add(this.label75);
             this.groupBox22.Controls.Add(this.txtJackettServer);
-            this.groupBox22.Location = new System.Drawing.Point(6, 210);
+            this.groupBox22.Location = new System.Drawing.Point(6, 218);
             this.groupBox22.Name = "groupBox22";
             this.groupBox22.Size = new System.Drawing.Size(408, 175);
             this.groupBox22.TabIndex = 39;
@@ -4645,6 +4472,203 @@ namespace TVRename
             this.llJackettLink.Text = "linkLabel1";
             this.llJackettLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LlJackettLink_LinkClicked);
             // 
+            // pbGeneral
+            // 
+            this.pbGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbGeneral.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pbGeneral.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbGeneral.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbGeneral.Location = new System.Drawing.Point(368, 6);
+            this.pbGeneral.Name = "pbGeneral";
+            this.pbGeneral.Size = new System.Drawing.Size(43, 40);
+            this.pbGeneral.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbGeneral.TabIndex = 23;
+            this.pbGeneral.TabStop = false;
+            this.pbGeneral.Click += new System.EventHandler(this.pbGeneral_Click);
+            // 
+            // pbDisplay
+            // 
+            this.pbDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbDisplay.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pbDisplay.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbDisplay.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbDisplay.Location = new System.Drawing.Point(368, 6);
+            this.pbDisplay.Name = "pbDisplay";
+            this.pbDisplay.Size = new System.Drawing.Size(43, 40);
+            this.pbDisplay.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbDisplay.TabIndex = 39;
+            this.pbDisplay.TabStop = false;
+            this.pbDisplay.Click += new System.EventHandler(this.pbDisplay_Click);
+            // 
+            // pictureBox3
+            // 
+            this.pictureBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox3.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pictureBox3.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pictureBox3.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pictureBox3.Location = new System.Drawing.Point(371, 3);
+            this.pictureBox3.Name = "pictureBox3";
+            this.pictureBox3.Size = new System.Drawing.Size(43, 40);
+            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox3.TabIndex = 56;
+            this.pictureBox3.TabStop = false;
+            // 
+            // pbLibraryFolders
+            // 
+            this.pbLibraryFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbLibraryFolders.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pbLibraryFolders.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbLibraryFolders.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbLibraryFolders.Location = new System.Drawing.Point(368, 6);
+            this.pbLibraryFolders.Name = "pbLibraryFolders";
+            this.pbLibraryFolders.Size = new System.Drawing.Size(43, 40);
+            this.pbLibraryFolders.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbLibraryFolders.TabIndex = 43;
+            this.pbLibraryFolders.TabStop = false;
+            this.pbLibraryFolders.Click += new System.EventHandler(this.pbLibraryFolders_Click);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pictureBox1.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pictureBox1.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pictureBox1.Location = new System.Drawing.Point(368, 6);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(43, 40);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox1.TabIndex = 58;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.Click += new System.EventHandler(this.PictureBox1_Click_1);
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox2.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pictureBox2.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pictureBox2.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pictureBox2.Location = new System.Drawing.Point(368, 3);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(43, 40);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox2.TabIndex = 39;
+            this.pictureBox2.TabStop = false;
+            // 
+            // pbFilesAndFolders
+            // 
+            this.pbFilesAndFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbFilesAndFolders.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pbFilesAndFolders.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbFilesAndFolders.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbFilesAndFolders.Location = new System.Drawing.Point(368, 6);
+            this.pbFilesAndFolders.Name = "pbFilesAndFolders";
+            this.pbFilesAndFolders.Size = new System.Drawing.Size(43, 40);
+            this.pbFilesAndFolders.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbFilesAndFolders.TabIndex = 33;
+            this.pbFilesAndFolders.TabStop = false;
+            this.pbFilesAndFolders.Click += new System.EventHandler(this.pbFilesAndFolders_Click);
+            // 
+            // pbSearchFolders
+            // 
+            this.pbSearchFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbSearchFolders.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pbSearchFolders.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbSearchFolders.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbSearchFolders.Location = new System.Drawing.Point(368, 6);
+            this.pbSearchFolders.Name = "pbSearchFolders";
+            this.pbSearchFolders.Size = new System.Drawing.Size(43, 40);
+            this.pbSearchFolders.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbSearchFolders.TabIndex = 37;
+            this.pbSearchFolders.TabStop = false;
+            this.pbSearchFolders.Click += new System.EventHandler(this.pbSearchFolders_Click);
+            // 
+            // pbFolderDeleting
+            // 
+            this.pbFolderDeleting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbFolderDeleting.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pbFolderDeleting.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbFolderDeleting.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbFolderDeleting.Location = new System.Drawing.Point(368, 6);
+            this.pbFolderDeleting.Name = "pbFolderDeleting";
+            this.pbFolderDeleting.Size = new System.Drawing.Size(43, 40);
+            this.pbFolderDeleting.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbFolderDeleting.TabIndex = 24;
+            this.pbFolderDeleting.TabStop = false;
+            this.pbFolderDeleting.Click += new System.EventHandler(this.pbFolderDeleting_Click);
+            // 
+            // pbMediaCenter
+            // 
+            this.pbMediaCenter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbMediaCenter.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pbMediaCenter.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbMediaCenter.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbMediaCenter.Location = new System.Drawing.Point(368, 6);
+            this.pbMediaCenter.Name = "pbMediaCenter";
+            this.pbMediaCenter.Size = new System.Drawing.Size(43, 40);
+            this.pbMediaCenter.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbMediaCenter.TabIndex = 27;
+            this.pbMediaCenter.TabStop = false;
+            this.pbMediaCenter.Click += new System.EventHandler(this.pictureBox7_Click);
+            // 
+            // pbuTorrentNZB
+            // 
+            this.pbuTorrentNZB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbuTorrentNZB.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pbuTorrentNZB.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbuTorrentNZB.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbuTorrentNZB.Location = new System.Drawing.Point(368, 6);
+            this.pbuTorrentNZB.Name = "pbuTorrentNZB";
+            this.pbuTorrentNZB.Size = new System.Drawing.Size(43, 40);
+            this.pbuTorrentNZB.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbuTorrentNZB.TabIndex = 21;
+            this.pbuTorrentNZB.TabStop = false;
+            this.pbuTorrentNZB.Click += new System.EventHandler(this.pictureBox1_Click);
+            // 
+            // pbRSSJSONSearch
+            // 
+            this.pbRSSJSONSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbRSSJSONSearch.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pbRSSJSONSearch.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbRSSJSONSearch.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbRSSJSONSearch.Location = new System.Drawing.Point(368, 6);
+            this.pbRSSJSONSearch.Name = "pbRSSJSONSearch";
+            this.pbRSSJSONSearch.Size = new System.Drawing.Size(43, 40);
+            this.pbRSSJSONSearch.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbRSSJSONSearch.TabIndex = 38;
+            this.pbRSSJSONSearch.TabStop = false;
+            this.pbRSSJSONSearch.Click += new System.EventHandler(this.pbRSSJSONSearch_Click);
+            // 
+            // pictureBox4
+            // 
+            this.pictureBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox4.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pictureBox4.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pictureBox4.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pictureBox4.Location = new System.Drawing.Point(368, 12);
+            this.pictureBox4.Name = "pictureBox4";
+            this.pictureBox4.Size = new System.Drawing.Size(43, 40);
+            this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox4.TabIndex = 42;
+            this.pictureBox4.TabStop = false;
+            // 
+            // label78
+            // 
+            this.label78.AutoSize = true;
+            this.label78.Location = new System.Drawing.Point(7, 175);
+            this.label78.Name = "label78";
+            this.label78.Size = new System.Drawing.Size(83, 13);
+            this.label78.TabIndex = 42;
+            this.label78.Text = "Seeders Token:";
+            // 
+            // tbJSONSeedersToken
+            // 
+            this.tbJSONSeedersToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbJSONSeedersToken.Location = new System.Drawing.Point(98, 172);
+            this.tbJSONSeedersToken.Name = "tbJSONSeedersToken";
+            this.tbJSONSeedersToken.Size = new System.Drawing.Size(305, 20);
+            this.tbJSONSeedersToken.TabIndex = 41;
+            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -4672,10 +4696,8 @@ namespace TVRename
             this.tpDisplay.PerformLayout();
             this.groupBox11.ResumeLayout(false);
             this.groupBox11.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbDisplay)).EndInit();
             this.tpRSSJSONSearch.ResumeLayout(false);
             this.tpRSSJSONSearch.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbRSSJSONSearch)).EndInit();
             this.gbJSON.ResumeLayout(false);
             this.gbJSON.PerformLayout();
             this.gbRSS.ResumeLayout(false);
@@ -4684,10 +4706,8 @@ namespace TVRename
             this.tpLibraryFolders.PerformLayout();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbLibraryFolders)).EndInit();
             this.tpTorrentNZB.ResumeLayout(false);
             this.tpTorrentNZB.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbuTorrentNZB)).EndInit();
             this.qBitTorrent.ResumeLayout(false);
             this.qBitTorrent.PerformLayout();
             this.gbSAB.ResumeLayout(false);
@@ -4698,7 +4718,6 @@ namespace TVRename
             this.tbSearchFolders.PerformLayout();
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbSearchFolders)).EndInit();
             this.gbAutoAdd.ResumeLayout(false);
             this.gbAutoAdd.PerformLayout();
             this.tbMediaCenter.ResumeLayout(false);
@@ -4715,10 +4734,8 @@ namespace TVRename
             this.groupBox12.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbMediaCenter)).EndInit();
             this.tbFolderDeleting.ResumeLayout(false);
             this.tbFolderDeleting.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbFolderDeleting)).EndInit();
             this.tbAutoExport.ResumeLayout(false);
             this.groupBox10.ResumeLayout(false);
             this.groupBox10.PerformLayout();
@@ -4736,19 +4753,15 @@ namespace TVRename
             this.tbFilesAndFolders.PerformLayout();
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbFilesAndFolders)).EndInit();
             this.tbGeneral.ResumeLayout(false);
             this.tbGeneral.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbGeneral)).EndInit();
             this.tcTabs.ResumeLayout(false);
             this.tpDataSources.ResumeLayout(false);
             this.tpDataSources.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.groupBox20.ResumeLayout(false);
             this.groupBox20.PerformLayout();
             this.tpShowDefaults.ResumeLayout(false);
             this.tpShowDefaults.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox19.ResumeLayout(false);
             this.groupBox19.PerformLayout();
             this.groupBox18.ResumeLayout(false);
@@ -4761,12 +4774,23 @@ namespace TVRename
             this.groupBox1.PerformLayout();
             this.gbBulkAdd.ResumeLayout(false);
             this.gbBulkAdd.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.tpJackett.ResumeLayout(false);
             this.tpJackett.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             this.groupBox22.ResumeLayout(false);
             this.groupBox22.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbGeneral)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbDisplay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbLibraryFolders)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbFilesAndFolders)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbSearchFolders)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbFolderDeleting)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbMediaCenter)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbuTorrentNZB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRSSJSONSearch)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -5141,5 +5165,7 @@ namespace TVRename
         private System.Windows.Forms.ComboBox cmbSupervisedDuplicateAction;
         private System.Windows.Forms.Label label71;
         private System.Windows.Forms.LinkLabel llJackettLink;
+        private System.Windows.Forms.Label label78;
+        private System.Windows.Forms.TextBox tbJSONSeedersToken;
     }
 }

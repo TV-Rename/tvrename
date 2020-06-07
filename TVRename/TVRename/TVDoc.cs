@@ -21,6 +21,7 @@ using System.Xml.Linq;
 using JetBrains.Annotations;
 using NLog;
 using NodaTime.Extensions;
+using TVRename.Forms.Supporting;
 
 namespace TVRename
 {
@@ -501,6 +502,9 @@ namespace TVRename
                 {
                     actionWork.Join();
                 }
+
+                RemoveDuplicateDownloads(unattended,owner);
+
                 downloadIdentifiers.Reset();
                 OutputActionFiles(); //Save missing shows to XML (and others)
             }
@@ -514,7 +518,7 @@ namespace TVRename
             }
         }
 
-        public struct ScanSettings : IEquatable<ScanSettings>
+        public readonly struct ScanSettings : IEquatable<ScanSettings>
         {
             public readonly bool Unattended;
             public readonly bool Hidden;
@@ -731,8 +735,6 @@ namespace TVRename
                     return;
                 }
 
-                RemoveDuplicateDownloads(settings);
-
                 // sort Action list by type
                 TheActionList.Sort(new ActionItemSorter()); // was new ActionSorter()
 
@@ -757,17 +759,17 @@ namespace TVRename
             }
         }
 
-        private void RemoveDuplicateDownloads(ScanSettings settings)
+        private void RemoveDuplicateDownloads(bool unattended, IDialogParent owner)
         {
             foreach (IGrouping<ProcessedEpisode, ActionTDownload> epGroup in TheActionList.DownloadTorrents
                 .GroupBy(item => item.Episode).Where(items => items.Count() > 1))
             {
                 List<ActionTDownload> actions = epGroup.ToList();
 
-                switch (WhatAction(settings.Unattended))
+                switch (WhatAction(unattended))
                 {
                     case TVSettings.DuplicateActionOutcome.IgnoreAll:
-                        TheActionList.Remove(actions);
+                        TheActionList.Replace(actions, actions.First().UndoItemMissing);
                         break;
 
                     case TVSettings.DuplicateActionOutcome.ChooseFirst:
@@ -775,7 +777,22 @@ namespace TVRename
                         break;
 
                     case TVSettings.DuplicateActionOutcome.Ask:
-                        throw new NotImplementedException();
+                       
+                        ChooseDownload form = new ChooseDownload(epGroup.Key, actions);
+                        owner.ShowChildDialog(form);
+                        DialogResult dr = form.DialogResult;
+                        ActionTDownload userChosenAction = form.UserChosenAction;
+                        form.Dispose();
+
+                        if (dr == DialogResult.OK)
+                        {
+                            TheActionList.Replace(actions, userChosenAction);
+                        }
+                        else
+                        {
+                            TheActionList.Replace(actions, actions.First().UndoItemMissing);
+                        }
+
                         break;
 
                     case TVSettings.DuplicateActionOutcome.DoAll:

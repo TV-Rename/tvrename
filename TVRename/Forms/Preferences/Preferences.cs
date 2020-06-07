@@ -321,6 +321,7 @@ namespace TVRename
             s.SearchJSONFilenameToken = tbJSONFilenameToken.Text;
             s.SearchJSONURLToken = tbJSONURLToken.Text;
             s.SearchJSONFileSizeToken = tbJSONFilesizeToken.Text;
+            s.SearchJSONSeedersToken = tbJSONSeedersToken.Text;
             s.SearchRSSManualScanOnly = cbSearchRSSManualScanOnly.Checked;
             s.MonitorFolders = cbMonitorFolder.Checked;
             s.runStartupCheck = chkScanOnStartup.Checked;
@@ -833,6 +834,7 @@ namespace TVRename
             tbJSONFilenameToken.Text = s.SearchJSONFilenameToken;
             tbJSONURLToken.Text = s.SearchJSONURLToken;
             tbJSONFilesizeToken.Text = s.SearchJSONFileSizeToken;
+            tbJSONSeedersToken.Text = s.SearchJSONSeedersToken;
 
             cbSearchRSSManualScanOnly.Checked = s.SearchRSSManualScanOnly;
             cbSearchRSS.Checked = s.SearchRSS;

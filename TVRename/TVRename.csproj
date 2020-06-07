@@ -302,6 +302,12 @@
     <Compile Include="Finders\DownloadingFinder.cs" />
     <Compile Include="Forms\ListViewColumnSorter.cs" />
     <Compile Include="Forms\ShowPreferences\ValidationFailedException.cs" />
+    <Compile Include="Forms\Supporting\ChooseDownload.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Supporting\ChooseDownload.Designer.cs">
+      <DependentUpon>ChooseDownload.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Tools\OrphanFiles.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -712,6 +718,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ShowPreferences\QuickLocate.resx">
       <DependentUpon>QuickLocate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Supporting\ChooseDownload.resx">
+      <DependentUpon>ChooseDownload.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Supporting\ChooseFile.resx">
       <DependentUpon>ChooseFile.cs</DependentUpon>
