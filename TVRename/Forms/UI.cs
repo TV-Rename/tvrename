@@ -804,9 +804,9 @@ namespace TVRename
             }
 
             string actionLayout = x.Descendants("Layout").Descendants("ActionLayout").First().Attribute("State")?.Value;
-            if (actionLayout.HasValue())
+            if (actionLayout != null)
             {
-                if (actionLayout != null)
+                if (actionLayout.HasValue())
                 {
                     olvAction.RestoreState(Convert.FromBase64String(actionLayout));
                 }

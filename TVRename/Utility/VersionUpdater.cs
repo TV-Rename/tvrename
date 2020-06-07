@@ -79,7 +79,7 @@ namespace TVRename
                     try
                     {
                         JToken? jToken = gitHubReleaseJson["assets"];
-                        if (jToken != null )
+                        if (jToken is null)
                         {
                             continue; //we have no files for this release, so ignore
                         }

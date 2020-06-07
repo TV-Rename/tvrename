@@ -148,7 +148,7 @@ namespace TVRename
                     break;
 
                 default:
-                    throw new Exception("GetThread started with invalid parameter");
+                    throw new ArgumentException("GetThread started with invalid parameter");
             }
 
             try
