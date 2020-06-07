@@ -102,8 +102,7 @@ namespace TVRename
             Largest
         }
         #endregion
-
-
+        
         public enum BetaMode
         {
             BetaToo,

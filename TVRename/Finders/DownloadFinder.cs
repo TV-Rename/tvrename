@@ -18,6 +18,33 @@ namespace TVRename
         }
         public override FinderDisplayType DisplayType() => FinderDisplayType.search;
 
+        protected static bool RssMatch([NotNull] RSSItem rss, [NotNull] ProcessedEpisode pe)
+        {
+            string simpleShowName = Helpers.SimplifyName(pe.Show.ShowName);
+            string simpleSeriesName = Helpers.SimplifyName(pe.TheSeries.Name);
+
+            if (!FileHelper.SimplifyAndCheckFilename(rss.ShowName, simpleShowName, true, false) &&
+                !(
+                    string.IsNullOrEmpty(rss.ShowName) &&
+                    FileHelper.SimplifyAndCheckFilename(rss.Title, simpleSeriesName, true, false)
+                )
+            )
+            {
+                return false;
+            }
+
+            if (rss.Season != pe.AppropriateSeasonNumber)
+            {
+                return false;
+            }
+            if (rss.Episode != pe.AppropriateEpNum)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         [NotNull]
         protected static IEnumerable<ActionTDownload> FindDuplicates([NotNull] ItemList newItems)
         {

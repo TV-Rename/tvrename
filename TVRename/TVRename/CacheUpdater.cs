@@ -89,7 +89,6 @@ namespace TVRename
                 DialogResult result = dp.DialogResult;
                 dp.Dispose();
 
-
                 if (result == DialogResult.Abort)
                 {
                     cts.Cancel();

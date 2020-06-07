@@ -73,36 +73,16 @@ namespace TVRename
             string serverPort = TVSettings.Instance.JackettPort;
             string allIndexer = TVSettings.Instance.JackettIndexer;
             string apikey = TVSettings.Instance.JackettAPIKey;
-            string simpleShowName = Helpers.SimplifyName(action.Episode.Show.ShowName);
-            string simpleSeriesName = Helpers.SimplifyName(action.Episode.TheSeries.Name);
 
+            string simpleShowName = Helpers.SimplifyName(action.Episode.Show.ShowName);
             string url = $"http://{serverName}:{serverPort}{allIndexer}/api?t=tvsearch&q={simpleShowName}&tvdbid={action.Episode.Show.TvdbCode}&season={action.Episode.AppropriateSeasonNumber}&ep={action.Episode.AppropriateEpNum}&apikey={apikey}";
 
             RssItemList rssList = new RssItemList();
             rssList.DownloadRSS(url, false,"Jackett");
             ItemList newItemsForThisMissingEpisode = new ItemList();
 
-            foreach (RSSItem rss in rssList)
+            foreach (RSSItem rss in rssList.Where(rss => RssMatch(rss, action.Episode)))
             {
-                if (
-                    !FileHelper.SimplifyAndCheckFilename(rss.ShowName, simpleShowName, true, false) &&
-                    !(
-                        string.IsNullOrEmpty(rss.ShowName) &&
-                        FileHelper.SimplifyAndCheckFilename(rss.Title, simpleSeriesName, true, false)
-                    )
-                )
-                {
-                    continue;
-                }
-
-                if (rss.Season != action.Episode.AppropriateSeasonNumber)
-                {
-                    continue;
-                }
-                if (rss.Episode != action.Episode.AppropriateEpNum)
-                {
-                    continue;
-                }
                 LOGGER.Info($"Adding {rss.URL} from RSS feed as it appears to be match for {action.Episode.Show.ShowName} S{action.Episode.AppropriateSeasonNumber}E{action.Episode.AppropriateEpNum}");
                 newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action.TheFileNoExt, action.Episode, action));
                 toRemove.Add(action);

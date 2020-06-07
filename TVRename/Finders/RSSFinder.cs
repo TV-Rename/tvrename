@@ -53,34 +53,14 @@ namespace TVRename
                 UpdateStatus(n++, c, action.Filename);
 
                 ProcessedEpisode pe = action.Episode;
-                string simpleShowName = Helpers.SimplifyName(pe.Show.ShowName);
-                string simpleSeriesName = Helpers.SimplifyName(pe.TheSeries.Name);
                 ItemList newItemsForThisMissingEpisode = new ItemList();
 
-                foreach (RSSItem rss in RSSList)
+                foreach (RSSItem rss in RSSList.Where(rss => RssMatch(rss, pe)))
                 {
-                    if (
-                        !FileHelper.SimplifyAndCheckFilename(rss.ShowName, simpleShowName, true, false) &&
-                        !(
-                            string.IsNullOrEmpty(rss.ShowName) &&
-                            FileHelper.SimplifyAndCheckFilename(rss.Title, simpleSeriesName, true, false)
-                         )
-                       )
-                    {
-                        continue;
-                    }
+                    LOGGER.Info(
+                        $"Adding {rss.URL} from RSS feed as it appears to be match for {action.Episode.Show.ShowName} S{action.Episode.AppropriateSeasonNumber}E{action.Episode.AppropriateEpNum}");
 
-                    if (rss.Season != pe.AppropriateSeasonNumber)
-                    {
-                        continue;
-                    }
-                    if (rss.Episode != pe.AppropriateEpNum)
-                    {
-                        continue;
-                    }
-
-                    LOGGER.Info($"Adding {rss.URL} from RSS feed as it appears to be match for {action.Episode.Show.ShowName} S{action.Episode.AppropriateSeasonNumber}E{action.Episode.AppropriateEpNum}");
-                    newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action.TheFileNoExt, pe,action));
+                    newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action.TheFileNoExt, pe, action));
                     toRemove.Add(action);
                 }
 
