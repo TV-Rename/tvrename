@@ -155,18 +155,12 @@ namespace TVRename
 
         private int GetSeeders([NotNull] XElement itemElement)
         {
-            foreach (XElement elemenet in itemElement.Descendants())
-            {
-                if (elemenet.Name.LocalName == "attr")
-                {
-                    if (isSeederElement(elemenet))
-                    {
-                        return getSeederValue(elemenet);
-                    }
-                }
-            }
-
-            return 0;
+            return itemElement
+                .Descendants()
+                .Where(element => element.Name.LocalName == "attr")
+                .Where(isSeederElement)
+                .Select(getSeederValue)
+                .FirstOrDefault();
         }
 
         private int getSeederValue([NotNull] XElement elemenet)

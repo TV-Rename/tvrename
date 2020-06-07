@@ -18,7 +18,7 @@ namespace TVRename
         public abstract int IconNumber { get; } // which icon number to use in "ilIcons" (UI.cs). -1 for none
         public abstract IgnoreItem Ignore { get; } // what to add to the ignore list / compare against the ignore list
         public ProcessedEpisode Episode { get; protected set; } // associated episode
-        public abstract int CompareTo(object o); // for sorting items in scan list (ActionItemSorter)
+        public abstract int CompareTo(object obj); // for sorting items in scan list (ActionItemSorter)
         public abstract bool SameAs(Item o); // are we the same thing as that other one?
         public abstract string Name { get; } // Name of this action, e.g. "Copy", "Move", "Download"
 
@@ -41,5 +41,14 @@ namespace TVRename
         [NotNull]
         public virtual string SourceDetails => string.Empty;
         public string ErrorText { get; protected internal set; } // Human-readable error message, for when Error is true
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Item other))
+            {
+                return false;
+            }
+            return CompareTo(other) == 0;
+        }
     }
 }
