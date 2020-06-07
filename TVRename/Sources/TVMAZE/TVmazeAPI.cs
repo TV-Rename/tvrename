@@ -360,8 +360,9 @@ namespace TVRename.TVmaze
                     return null;
                 case JObject o:
                     return (string)o[firstSubKey];
+                default:
+                    return null;
             }
-            return null;
         }
 
         private static string MapStatus(string s)

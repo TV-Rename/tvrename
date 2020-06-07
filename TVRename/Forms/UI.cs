@@ -365,9 +365,9 @@ namespace TVRename
 
                     long moveSize = moveActions.Where(item => item.From.Exists).Sum(copy => copy.From.Length);
                     return HeaderName("Move", moveActions.Count, moveSize);
+                default:
+                    return "UNKNOWN";
             }
-
-            return "UNKNOWN";
         }
 
         [NotNull]
@@ -405,9 +405,9 @@ namespace TVRename
 
                 case "lvgActionMove":
                     return "D-Move";
+                default:
+                    return "UNKNOWN";
             }
-
-            return "UNKNOWN";
         }
 
         private string ConvertShowNameDelegate(object x)
@@ -3130,7 +3130,6 @@ namespace TVRename
                 mDoc.TheActionList.NotifyUpdated();
                 olvAction.RebuildColumns();
                 SetCheckboxes();
-                //DefaultOlvView();
             }
         }
 

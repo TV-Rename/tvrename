@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at https://github.com/TV-Rename/tvrename
@@ -105,20 +105,15 @@ namespace TVRename
             this.Name = "DownloadProgress";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Download Progress";
-            this.Load += new System.EventHandler(this.DownloadProgress_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
 
         private System.Windows.Forms.Button bnCancel;
-
         private System.Windows.Forms.ProgressBar pbProgressBar;
-
         private System.Windows.Forms.Label label2;
-
         private System.Windows.Forms.Label txtCurrent;
         private System.Windows.Forms.Timer tmrUpdate;
     }

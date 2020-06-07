@@ -25,7 +25,6 @@ namespace TVRename
         public DownloadProgress(CacheUpdater doc)
         {
             InitializeComponent();
-
             mDoc = doc;
         }
 
@@ -45,11 +44,6 @@ namespace TVRename
             {
                 UpdateStuff();
             }
-        }
-
-        private void DownloadProgress_Load(object sender, System.EventArgs e)
-        {
-            //UpdateStuff();
         }
 
         private void UpdateStuff()
