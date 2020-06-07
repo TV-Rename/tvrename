@@ -103,7 +103,13 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType, [CanBeNull] string token, string lang = "")
+        public static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType, [CanBeNull] string token)
+        {
+            return HttpRequest(method, url, json, contentType, token, string.Empty);
+        }
+
+        [NotNull]
+        public static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType, [CanBeNull] string token, string lang)
             {
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.ContentType = contentType;

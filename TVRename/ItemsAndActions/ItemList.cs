@@ -14,7 +14,7 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    public class ItemList : List<Item>, INotifyPropertyChanged
+    public sealed class ItemList : List<Item>, INotifyPropertyChanged
     {
         public void Add([CanBeNull] IEnumerable<Item> slil)
         {
@@ -74,7 +74,7 @@ namespace TVRename
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] [CanBeNull] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] [CanBeNull] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

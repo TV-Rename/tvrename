@@ -291,7 +291,7 @@ namespace TVRename
             CustomSearchUrl = xmlSettings.ExtractString("CustomSearchURL");
             UseCustomNamingFormat = xmlSettings.ExtractBool("UseCustomNamingFormat", false);
             CustomNamingFormat = xmlSettings.ExtractString("CustomNamingFormat");
-            ShowTimeZone = xmlSettings.ExtractString("TimeZone") ?? TimeZoneHelper.DefaultTimeZone(); // default, is correct for most shows;
+            ShowTimeZone = xmlSettings.ExtractString("TimeZone") ?? TimeZoneHelper.DefaultTimeZone(); // default, is correct for most shows
             ForceCheckFuture = xmlSettings.ExtractBoolBackupDefault("ForceCheckFuture","ForceCheckAll",false);
             ForceCheckNoAirdate = xmlSettings.ExtractBoolBackupDefault("ForceCheckNoAirdate","ForceCheckAll",false);
             AutoAddCustomFolderFormat = xmlSettings.ExtractString("CustomFolderFormat") ?? CustomSeasonName.DefaultStyle();

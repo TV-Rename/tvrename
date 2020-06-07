@@ -19,7 +19,6 @@ namespace TVRename.Forms.ShowPreferences
                 comboBox1.Items.Add(ep);
             }
             
-            //comboBox1.DisplayMember = "Name";
             comboBox1.EndUpdate();
         }
 

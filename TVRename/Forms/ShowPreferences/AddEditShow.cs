@@ -516,9 +516,6 @@ namespace TVRename
 
         private void bnBrowseFolder_Click(object sender, EventArgs e)
         {
-            //folderBrowser.Title = "Add Folder...";
-            //folderBrowser.ShowEditbox = true;
-            //folderBrowser.StartPosition = FormStartPosition.CenterParent;
             folderBrowser.ShowNewFolderButton = true;
 
             if (!string.IsNullOrEmpty(txtFolder.Text))

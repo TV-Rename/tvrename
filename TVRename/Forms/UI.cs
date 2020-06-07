@@ -2593,7 +2593,6 @@ namespace TVRename
                 {
                     n.EnsureVisible();
                     MyShowTree.SelectedNode = n;
-                    //FillEpGuideHTML();
                     return;
                 }
             }
@@ -3242,7 +3241,7 @@ namespace TVRename
                 AddRcMenuItem("Revert to Missing", (sender, args) => Revert());
             }
 
-            MenuGuideAndTvdb(true,episode,new List<ShowItem>(){si},seas );
+            MenuGuideAndTvdb(true,episode,new List<ShowItem> {si},seas );
             MenuFolders(lvr,si,episode?.AppropriateProcessedSeason,episode);
 
             showRightClickMenu.Show(pt);

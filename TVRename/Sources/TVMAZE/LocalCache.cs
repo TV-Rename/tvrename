@@ -238,7 +238,8 @@ namespace TVRename.TVmaze
         }
 
         public void UpdatesDoneOk()
-        {            
+        {
+            //No Need to do anything aswe always refresh from scratch
         }
 
         public SeriesInfo GetSeries(string showName, bool showErrorMsgBox) => throw new NotImplementedException(); //todo when we can offer sarch for TV Maze
@@ -406,6 +407,7 @@ namespace TVRename.TVmaze
 
         public void LatestUpdateTimeIs(string time)
         {
+            //No Need to do anything aswe always refresh from scratch
         }
 
         public Language PreferredLanguage => throw new NotImplementedException();

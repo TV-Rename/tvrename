@@ -134,7 +134,6 @@ namespace TVRename
         {
             copyTimer.Stop();
 
-            //this.UpdateOldStyle();
             bool allDone = UpdateCopyProgress();
 
             if (allDone)
