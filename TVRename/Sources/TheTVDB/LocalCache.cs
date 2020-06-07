@@ -268,9 +268,16 @@ namespace TVRename.TheTVDB
                     foreach (JObject epJson in eps)
                     {
                         JToken episodeToUse = epJson["data"];
-                        foreach (JToken t in episodeToUse.Children())
+                        if (episodeToUse != null)
                         {
-                            EpisodeAccuracyCheck(si, t, issues, showsToUpdate, serverEpIds);
+                            foreach (JToken t in episodeToUse.Children())
+                            {
+                                EpisodeAccuracyCheck(si, t, issues, showsToUpdate, serverEpIds);
+                            }
+                        }
+                        else
+                        {
+                            throw new SourceConsistencyException($"Could not load 'data' from {epJson}",ShowItem.ProviderType.TheTVDB);
                         }
                     }
                 }
@@ -423,7 +430,12 @@ namespace TVRename.TheTVDB
 
                 LanguageList.Clear();
 
-                foreach (JToken jToken in jsonLanguagesResponse["data"])
+                JToken? jTokens = jsonLanguagesResponse["data"];
+                if (jTokens is null)
+                {
+                    throw new SourceConsistencyException($"Data element not found in {jsonLanguagesResponse}",ShowItem.ProviderType.TheTVDB);
+                }
+                foreach (JToken jToken in jTokens)
                 {
                     JObject languageJson = (JObject) jToken;
                     int? id = (int?) languageJson["id"];
@@ -637,7 +649,10 @@ namespace TVRename.TheTVDB
             try
             {
                 JToken dataToken = jsonUpdateResponse["data"];
-
+                if (dataToken is null)
+                {
+                    return 0;
+                }
                 return !dataToken.HasValues ? 0 : ((JArray)dataToken).Count;
             }
             catch (InvalidCastException ex)
@@ -664,6 +679,7 @@ namespace TVRename.TheTVDB
             }
         }
 
+        [CanBeNull]
         private JObject GetUpdatesJson(long updateFromEpochTime, DateTime requestedTime)
         {
             try
@@ -742,9 +758,16 @@ namespace TVRename.TheTVDB
         private void ProcessUpdate([NotNull] JObject jsonResponse, CancellationToken cts)
         {
             // if updatetime > localtime for item, then remove it, so it will be downloaded later
+            JToken? jToken = jsonResponse["data"];
+
+            if (jToken is null)
+            {
+                throw new SourceConsistencyException($"Could not get data element from {jsonResponse}",ShowItem.ProviderType.TheTVDB);
+            }
+
             try
             {
-                foreach (JObject seriesResponse in jsonResponse["data"].Cast<JObject>())
+                foreach (JObject seriesResponse in jToken.Cast<JObject>())
                 {
                     if (!cts.IsCancellationRequested)
                     {
@@ -756,13 +779,13 @@ namespace TVRename.TheTVDB
             {
                 Logger.Error("Did not receive the expected format of json from lastupdated query.");
                 Logger.Error(ex);
-                Logger.Error(jsonResponse["data"].ToString());
+                Logger.Error(jToken.ToString());
             }
             catch (OverflowException ex)
             {
                 Logger.Error("Could not parse the json from lastupdated query.");
                 Logger.Error(ex);
-                Logger.Error(jsonResponse["data"].ToString());
+                Logger.Error(jToken.ToString());
             }
         }
 
@@ -960,9 +983,8 @@ namespace TVRename.TheTVDB
         {
             // anything with a srv_lastupdated of 0 should be marked as dirty
             // typically, this'll be placeholder series
-            foreach (KeyValuePair<int, SeriesInfo> kvp in series)
+            foreach (SeriesInfo ser in series.Select(kvp => kvp.Value))
             {
-                SeriesInfo ser = kvp.Value;
                 if (ser.SrvLastUpdated == 0 || ser.Episodes.Count == 0)
                 {
                     ser.Dirty = true;
@@ -1002,12 +1024,23 @@ namespace TVRename.TheTVDB
                     episodeResponses.Add(jsonEpisodeResponse);
                     try
                     {
-                        int numberOfResponses = ((JArray) jsonEpisodeResponse["data"]).Count;
+                        JToken? jToken = jsonEpisodeResponse["data"];
+
+                        if (jToken is null)
+                        {
+                            throw new SourceConsistencyException($"Data element not found in {jsonEpisodeResponse}", ShowItem.ProviderType.TheTVDB);
+                        }
+                        int numberOfResponses = ((JArray) jToken).Count;
                         bool moreResponses;
 
                         if (TVSettings.TVDBPagingMethod == PagingMethod.proper)
                         {
-                            JToken x = jsonEpisodeResponse["links"]["next"];
+                            JToken x = jsonEpisodeResponse["links"]?["next"];
+
+                            if (x is null)
+                            {
+                                throw new SourceConsistencyException($"links/next element not found in {jsonEpisodeResponse}", ShowItem.ProviderType.TheTVDB);
+                            }
                             moreResponses = !string.IsNullOrWhiteSpace(x.ToString());
                             Logger.Info(
                                 $"Page {pageNumber} of {GetSeries(id)?.Name} had {numberOfResponses} episodes listed in {lang} with {(moreResponses ? "" : "no ")}more to come");
@@ -1251,7 +1284,10 @@ namespace TVRename.TheTVDB
             int requestedLangId = languageFromCode.Id;
 
             JObject seriesData = (JObject) jsonResponse["data"];
-
+            if (seriesData is null)
+            {
+                throw new SourceConsistencyException($"Data element not found in {jsonResponse}", ShowItem.ProviderType.TheTVDB);
+            }
             SeriesInfo si;
             if (isNotDefaultLanguage)
             {
@@ -1294,6 +1330,7 @@ namespace TVRename.TheTVDB
             return (jsonResponse, jsonDefaultLangResponse);
         }
 
+        [NotNull]
         private JObject DownloadSeriesJson(int code, string requestedLanguageCode)
         {
             JObject jsonResponse;
@@ -1371,7 +1408,12 @@ namespace TVRename.TheTVDB
                 JObject jsonActorsResponse = API.GetSeriesActors(code);
 
                 si.ClearActors();
-                foreach (JToken jsonActor in jsonActorsResponse["data"])
+                JToken? jsonActors = jsonActorsResponse["data"];
+                if (jsonActors is null)
+                {
+                    throw new SourceConsistencyException($"Data element not found in {jsonActorsResponse}", ShowItem.ProviderType.TheTVDB);
+                }
+                foreach (JToken jsonActor in jsonActors)
                 {
                     int actorId = (int) jsonActor["id"];
                     string actorImage = (string) jsonActor["image"];
@@ -1424,9 +1466,14 @@ namespace TVRename.TheTVDB
         {
             foreach (JObject response in bannerResponses)
             {
+                JToken? jToken = response["data"];
+                if (jToken is null)
+                {
+                    throw new SourceConsistencyException($"Data element not found in {response}", ShowItem.ProviderType.TheTVDB);
+                }
                 try
                 {
-                    foreach (Banner b in response["data"]
+                    foreach (Banner b in jToken
                         .Cast<JObject>()
                         .Select(bannerData => new Banner(si.TvdbCode, bannerData, languageId)))
                     {
@@ -1442,7 +1489,7 @@ namespace TVRename.TheTVDB
                     Logger.Error(ex,
                         $"Did not receive the expected format of json from when downloading banners for series {code} in {languageCode}");
 
-                    Logger.Error(response["data"].ToString());
+                    Logger.Error(jToken.ToString());
                 }
             }
         }
@@ -1525,12 +1572,12 @@ namespace TVRename.TheTVDB
                 catch (InvalidCastException ex)
                 {
                     Logger.Error(ex,
-                        $"<TVDB ISSUE?>: Did not recieve the expected format of json for {episodeId}. {prefLangEpisode?.ToString()} ::: {defltLangEpisode?.ToString()}");
+                        $"<TVDB ISSUE?>: Did not recieve the expected format of json for {episodeId}. {prefLangEpisode} ::: {defltLangEpisode}");
                 }
                 catch (OverflowException ex)
                 {
                     Logger.Error(ex,
-                        $"<TVDB ISSUE?>: Could not parse the episode json from {episodeId}. {prefLangEpisode?.ToString()} ::: {defltLangEpisode?.ToString()}");
+                        $"<TVDB ISSUE?>: Could not parse the episode json from {episodeId}. {prefLangEpisode} ::: {defltLangEpisode}");
                 }
             });
         }
@@ -1545,7 +1592,12 @@ namespace TVRename.TheTVDB
             {
                 foreach (JObject epResponse in episodeResponses)
                 {
-                    foreach (JToken episodeData in epResponse["data"])
+                    JToken? episodeDatas = epResponse["data"];
+                    if (episodeDatas is null)
+                    {
+                        throw new SourceConsistencyException($"Could not get data element from {epResponse}", ShowItem.ProviderType.TheTVDB);
+                    }
+                    foreach (JToken episodeData in episodeDatas)
                     {
                         int x = (int) episodeData["id"];
                         if (x > 0)
@@ -1567,7 +1619,12 @@ namespace TVRename.TheTVDB
             {
                 foreach (JObject epResponse in episodeDefaultLangResponses)
                 {
-                    foreach (JToken episodeData in epResponse["data"])
+                    JToken? episodeDatas = epResponse["data"];
+                    if (episodeDatas is null)
+                    {
+                        throw new SourceConsistencyException($"Could not get data element from {epResponse}", ShowItem.ProviderType.TheTVDB);
+                    }
+                    foreach (JToken episodeData in episodeDatas)
                     {
                         int x = (int) episodeData["id"];
                         if (x > 0)
@@ -1733,9 +1790,13 @@ namespace TVRename.TheTVDB
                 ok = DownloadSeriesNow(seriesd, false, bannersToo) != null;
             }
 
-            foreach (Episode e in series[code]?.Episodes.Where(e => e.Dirty && e.EpisodeId > 0))
+            ICollection<Episode> collection = series[code]?.Episodes;
+            if (collection != null)
             {
-                extraEpisodes.TryAdd(e.EpisodeId, new ExtraEp(e.SeriesId, e.EpisodeId));
+                foreach (Episode e in collection.Where(e => e.Dirty && e.EpisodeId > 0))
+                {
+                    extraEpisodes.TryAdd(e.EpisodeId, new ExtraEp(e.SeriesId, e.EpisodeId));
+                }
             }
 
             Parallel.ForEach(extraEpisodes, ee =>
@@ -1894,9 +1955,14 @@ namespace TVRename.TheTVDB
 
         private void ProcessSearchResult([NotNull] JObject jsonResponse, int languageId)
         {
+            JToken? jToken = jsonResponse["data"];
+            if (jToken is null)
+            {
+                throw new SourceConsistencyException($"Could not get data element from {jsonResponse}", ShowItem.ProviderType.TheTVDB);
+            }
             try
             {
-                foreach (SeriesInfo si in jsonResponse["data"]
+                foreach (SeriesInfo si in jToken
                     .Cast<JObject>()
                     .Select(seriesResponse => new SeriesInfo(seriesResponse, languageId, true)))
                 {
@@ -1917,7 +1983,7 @@ namespace TVRename.TheTVDB
             {
                 Logger.Error("<TVDB ISSUE?>: Did not receive the expected format of json from search results.");
                 Logger.Error(ex);
-                Logger.Error(jsonResponse["data"].ToString());
+                Logger.Error(jToken.ToString());
             }
         }
 

@@ -111,7 +111,13 @@ namespace TVRename
             JObject jsonResponse = JObject.Parse(response);
             if (jsonResponse.ContainsKey(TVSettings.Instance.SearchJSONRootNode))
             {
-                foreach (JToken item in jsonResponse[TVSettings.Instance.SearchJSONRootNode])
+                JToken? x = jsonResponse[TVSettings.Instance.SearchJSONRootNode];
+                if (x is null)
+                {
+                    LOGGER.Warn($"Could not find {TVSettings.Instance.SearchJSONRootNode} in JSON Repsonse {jsonResponse}");
+                    return;
+                }
+                foreach (JToken item in x)
                 {
                     if (item is null || !(item is JObject episodeResponse))
                     {

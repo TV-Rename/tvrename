@@ -266,9 +266,11 @@ namespace TVRename
             return s.ToString();
         }
 
+        [NotNull]
         public static JObject JsonHttpGetRequest([NotNull] string url, string authToken) =>
             JObject.Parse(HttpRequest("GET",url, null, "application/json", authToken,string.Empty));
 
+        [NotNull]
         public static JObject JsonHttpPostRequest( string url, JObject request, bool retry)
         {
             TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);

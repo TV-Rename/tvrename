@@ -71,7 +71,7 @@ namespace TVRename
                 JToken settings = JToken.Parse(settingsString);
                 JArray currentDownloads = JArray.Parse(downloadsString);
 
-                if(currentDownloads is null || settings is null)
+                if(!currentDownloads.HasValues || !settings.HasValues)
                 {
                     LOGGER.Warn($"Could not get currentDownloads or settings from qBitTorrent: {settingsString} {currentDownloads}");
                     return ret;
@@ -109,7 +109,7 @@ namespace TVRename
                 torrentDetailsString = JsonHelper.Obtain(url);
                 JArray torrentDetails = JArray.Parse(torrentDetailsString);
 
-                if (torrentDetails is null)
+                if (!torrentDetails.HasValues)
                 {
                     LOGGER.Warn(
                         $"Could not get details of downloads from {url} from qBitTorrent: {torrentDetailsString}");
@@ -145,9 +145,12 @@ namespace TVRename
 
         private static (string downloadedFilename, bool isOnHold, int percentComplete) ExtractTorrentFileDetails([NotNull] JToken file)
         {
-            string downloadedFilename = file["name"].ToString();
-            bool isOnHold = file["priority"].Value<int>() == 0;
-            int percentComplete = (int)(100 * file["progress"].ToObject<float>());
+            string downloadedFilename = file["name"]?.ToString();
+            string prioritystring = (string)file["priority"];
+            bool b = int.TryParse(prioritystring, out int priority);
+            bool isOnHold = !b || priority == 0;
+            float? progress = (float?)file["progress"];
+            int percentComplete = (int)(100 * (progress??0));
 
             return (downloadedFilename, isOnHold, percentComplete);
         }

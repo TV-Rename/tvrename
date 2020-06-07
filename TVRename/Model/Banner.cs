@@ -82,8 +82,8 @@ namespace TVRename
             BannerType = (string)json["keyType"];
             LanguageId = json["languageId"] is null ? langId  : (int)json["languageId"];
             
-            double.TryParse((string)json["ratingsInfo"]["average"], NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out Rating);
-            RatingCount = (int)json["ratingsInfo"]["count"];
+            double.TryParse((string)json["ratingsInfo"]?["average"], NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out Rating);
+            RatingCount = (int)json["ratingsInfo"]?["count"];
 
             resolution = (string)json["resolution"];
             int.TryParse((string)json["subKey"], out SeasonId);

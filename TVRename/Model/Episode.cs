@@ -92,11 +92,6 @@ namespace TVRename
             AirTime = o.AirTime;
         }
 
-        protected Episode([NotNull] SeriesInfo ser,ShowItem.ProviderType type)
-        {
-            SetDefaults(ser,type==ShowItem.ProviderType.TVmaze?ser.TvMazeCode:ser.TvdbCode);
-        }
-
         [CanBeNull]
         public LocalDateTime? GetAirDateDt()
         {
@@ -240,7 +235,7 @@ namespace TVRename
 
                 SrvLastUpdated = (long) r["lastUpdated"];
                 Overview = System.Web.HttpUtility.HtmlDecode((string)r["overview"])?.Trim();
-                EpisodeRating = ((string) r["siteRating"]).Trim();
+                EpisodeRating = GetString(r, "siteRating");
                 mName = System.Web.HttpUtility.HtmlDecode((string)r["episodeName"]);
 
                 AirsBeforeEpisode = (int?)r["airsBeforeEpisode"];
@@ -248,12 +243,12 @@ namespace TVRename
                 AirsAfterSeason = (int?)r["airsAfterSeason"];
                 SiteRatingCount = (int?)r["siteRatingCount"];
                 AbsoluteNumber = (int?)r["absoluteNumber"];
-                Filename = ((string)r["filename"]).Trim();
-                ImdbCode = ((string)r["imdbId"]).Trim();
-                ShowUrl = ((string)r["showUrl"]).Trim();
-                ProductionCode = ((string)r["productionCode"]).Trim();
+                Filename = GetString(r, "filename");
+                ImdbCode = GetString(r, "imdbId");
+                ShowUrl = GetString(r, "showUrl");
+                ProductionCode = GetString(r, "productionCode");
                 DvdChapter = (int?)r["dvdChapter"];
-                DvdDiscId = ((string)r["dvdDiscid"]).Trim();
+                DvdDiscId = GetString(r, "dvdDiscid");
 
                 string sn = (string) r["airedSeason"];
                 if (sn is null)
@@ -280,6 +275,9 @@ namespace TVRename
                 Logger.Error(e, $"Failed to parse : {r}");
             }
         }
+
+        [CanBeNull]
+        private string GetString([NotNull] JObject jObject, [NotNull] string key) => ((string)jObject[key])?.Trim();
 
         [NotNull]
         public string Name

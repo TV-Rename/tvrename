@@ -446,7 +446,7 @@ namespace TVRename
             AirsDay = ((string)r["airsDayOfWeek"])?.Trim();
             airsTimeString = (string) r["airsTime"];
             AirsTime = JsonHelper.ParseAirTime(airsTimeString);
-            aliases = r["aliases"].Select(x => x.Value<string>()).ToList();
+            aliases = (r["aliases"] ?? throw new SourceConsistencyException($"Can't find aliases in Series JSON: {r}",ShowItem.ProviderType.TheTVDB)).Select(x => x.Value<string>()).ToList();
             BannerString = (string)r["banner"];
             FirstAired = JsonHelper.ParseFirstAired((string)r["firstAired"]);
 
@@ -509,7 +509,12 @@ namespace TVRename
 
             if (!aliases.Any())
             {
-                aliases = backupLanguageR["aliases"].Select(x => x.Value<string>()).ToList();
+                JToken? aliasesToken = backupLanguageR["aliases"];
+                if (aliasesToken is null)
+                {
+                    throw new SourceConsistencyException($"Can not find aliases in {backupLanguageR}",ShowItem.ProviderType.TheTVDB);
+                }
+                aliases = aliasesToken.Select(x => x.Value<string>()).ToList();
             }
 
             if (string.IsNullOrWhiteSpace(Runtime))

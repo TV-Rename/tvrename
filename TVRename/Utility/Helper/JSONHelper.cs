@@ -58,7 +58,12 @@ namespace TVRename
 
             JArray ja2 = (JArray)ja;
             string[] values = ja2.ToObject<string[]>();
-            return string.Join(delimiter, values);
+            if (values != null)
+            {
+                return string.Join(delimiter, values);
+            }
+
+            return string.Empty;
         }
 
         [NotNull]

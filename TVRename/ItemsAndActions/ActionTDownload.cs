@@ -142,6 +142,7 @@ namespace TVRename
 
         public override string SourceDetails => $"{SourceName} ({(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())}) [{Seeders} Seeds]";
 
+        [NotNull]
         public string SizePretty => $"{(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())}";
 
         [CanBeNull]

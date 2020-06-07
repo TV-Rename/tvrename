@@ -27,13 +27,13 @@ namespace TVRename
     /// </summary>
     public partial class ActorsGrid : Form
     {
-        private int Internal;
+        private int @internal;
         private DataArr theData;
         private readonly TVDoc mDoc;
 
         public ActorsGrid(TVDoc doc)
         {
-            Internal = 0;
+            @internal = 0;
 
             InitializeComponent();
 
@@ -76,45 +76,45 @@ namespace TVRename
 
         private void SortByName()
         {
-            Internal++;
+            @internal++;
             rbName.Checked = true;
-            Internal--;
+            @internal--;
             theData.SortRows(false);
             theData.SortCols(false);
         }
 
         private void SortByTotals()
         {
-            Internal++;
+            @internal++;
             rbTotals.Checked = true;
-            Internal--;
+            @internal--;
             theData.SortRows(true);
             theData.SortCols(true);
         }
 
         private void SortRowsByCount()
         {
-            Internal++;
+            @internal++;
             rbCustom.Checked = true;
-            Internal--;
+            @internal--;
             theData.SortRows(true);
             FillGrid();
         }
 
         private void SortColsByCount()
         {
-            Internal++;
+            @internal++;
             rbCustom.Checked = true;
-            Internal--;
+            @internal--;
             theData.SortCols(true);
             FillGrid();
         }
 
         private void ActorToTop(string a)
         {
-            Internal++;
+            @internal++;
             rbCustom.Checked = true;
-            Internal--;
+            @internal--;
 
             theData.MoveColToTop(a);
 
@@ -139,9 +139,9 @@ namespace TVRename
 
         private void ShowToTop(string s)
         {
-            Internal++;
+            @internal++;
             rbCustom.Checked = true;
-            Internal--;
+            @internal--;
 
             theData.MoveRowToTop(s);
 
@@ -344,7 +344,7 @@ namespace TVRename
 
         private void rbName_CheckedChanged(object sender, EventArgs e)
         {
-            if (Internal != 0)
+            if (@internal != 0)
             {
                 return;
             }
@@ -354,7 +354,7 @@ namespace TVRename
 
         private void rbTotals_CheckedChanged(object sender, EventArgs e)
         {
-            if (Internal != 0)
+            if (@internal != 0)
             {
                 return;
             }

@@ -78,7 +78,8 @@ namespace TVRename
                 {
                     try
                     {
-                        if (!gitHubReleaseJson["assets"].HasValues)
+                        JToken? jToken = gitHubReleaseJson["assets"];
+                        if (jToken != null )
                         {
                             continue; //we have no files for this release, so ignore
                         }
@@ -154,15 +155,15 @@ namespace TVRename
         [NotNull]
         private static Release ParseFromJson([NotNull] JObject gitHubReleaseJson)
         {
-            DateTime.TryParse(gitHubReleaseJson["published_at"].ToString(), out DateTime releaseDate);
-            Release testVersion = new Release(gitHubReleaseJson["tag_name"].ToString(),
+            DateTime.TryParse(gitHubReleaseJson["published_at"]?.ToString(), out DateTime releaseDate);
+            Release testVersion = new Release(gitHubReleaseJson["tag_name"]?.ToString() ?? throw new InvalidOperationException(),
                 Release.VersionType.semantic)
             {
-                DownloadUrl = gitHubReleaseJson["assets"][0]["browser_download_url"].ToString(),
-                ReleaseNotesText = gitHubReleaseJson["body"].ToString(),
-                ReleaseNotesUrl = gitHubReleaseJson["html_url"].ToString(),
+                DownloadUrl = (string)gitHubReleaseJson["assets"]?[0]?["browser_download_url"],
+                ReleaseNotesText = gitHubReleaseJson["body"]?.ToString(),
+                ReleaseNotesUrl = gitHubReleaseJson["html_url"]?.ToString(),
                 ReleaseDate = releaseDate,
-                IsBeta = gitHubReleaseJson["prerelease"].ToString() == "True"
+                IsBeta = gitHubReleaseJson["prerelease"]?.ToString() == "True"
             };
             return testVersion;
         }
