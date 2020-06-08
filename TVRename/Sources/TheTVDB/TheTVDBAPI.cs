@@ -187,7 +187,7 @@ namespace TVRename.TheTVDB
             {
                 return JObject.Parse(response);
             }
-            catch (JsonReaderException e)
+            catch (JsonReaderException)
             {
                 const string ERROR_ON_END = @"{""Error"":""Not authorized""}";
                 if (response.EndsWith(ERROR_ON_END, StringComparison.Ordinal) && response.Length>ERROR_ON_END.Length)

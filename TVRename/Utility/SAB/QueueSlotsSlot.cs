@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-
 namespace TVRename.SAB
 {
     public class QueueSlotsSlot : IDownloadInformation
@@ -12,7 +10,6 @@ namespace TVRename.SAB
 
         string IDownloadInformation.FileIdentifier => Filename;
         string IDownloadInformation.Destination => Filename;
-        [NotNull]
         string IDownloadInformation.RemainingText
         {
             get

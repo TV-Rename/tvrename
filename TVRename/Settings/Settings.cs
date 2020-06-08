@@ -1131,12 +1131,11 @@ namespace TVRename
             }
 
             public readonly string status;
-            [NotNull]
             public override string Text => "Show Status: "+status;
 
             public override bool appliesTo(ProcessedSeason s) => false;
 
-            public override bool appliesTo([NotNull] ShowItem s) => status==s.ShowStatus;
+            public override bool appliesTo(ShowItem s) => status==s.ShowStatus;
         }
 
         public class ShowAirStatusColouringRule : ColouringRule
@@ -1164,12 +1163,11 @@ namespace TVRename
                 }
             }
 
-            [NotNull]
             public override string Text => ToString();
 
             public override bool appliesTo(ProcessedSeason s) => false;
 
-            public override bool appliesTo([NotNull] ShowItem s) => status ==s.SeasonsAirStatus;
+            public override bool appliesTo(ShowItem s) => status ==s.SeasonsAirStatus;
         }
 
         public class SeasonStatusColouringRule : ColouringRule
@@ -1181,7 +1179,6 @@ namespace TVRename
 
             public readonly ProcessedSeason.SeasonStatus status;
 
-            [NotNull]
             public override string Text => ToString();
             public override string ToString()
             {
@@ -1204,7 +1201,7 @@ namespace TVRename
                 }
             }
 
-            public override bool appliesTo([NotNull] ProcessedSeason s) => status == s.Status(s.Show.GetTimeZone());
+            public override bool appliesTo(ProcessedSeason s) => status == s.Status(s.Show.GetTimeZone());
 
             public override bool appliesTo(ShowItem s) => false;
         }

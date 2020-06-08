@@ -28,10 +28,8 @@ namespace TVRename
         }
         #region Action Members
 
-        [NotNull]
         public override string Name => "Write WD TV Live Hub Meta";
 
-        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             if (Where is null)

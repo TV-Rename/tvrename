@@ -23,7 +23,6 @@ namespace TVRename
         public JSONWebpageFinder(TVDoc i) : base(i) { }
 
         public override bool Active() => TVSettings.Instance.SearchJSON;
-        [NotNull]
         protected override string CheckName() => "Check JSON links for the missing files";
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)

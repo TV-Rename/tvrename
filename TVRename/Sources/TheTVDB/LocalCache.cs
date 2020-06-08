@@ -92,18 +92,16 @@ namespace TVRename.TheTVDB
             }
         }
 
-        [CanBeNull]
         public Language PreferredLanguage =>
             LanguageList.GetLanguageFromCode(TVSettings.Instance.PreferredLanguageCode);
 
-        [CanBeNull]
         public Language GetLanguageFromCode(string customLanguageCode) => LanguageList.GetLanguageFromCode(customLanguageCode);
 
         public bool IsConnected { get; private set; }
 
         public string LastErrorMessage { get; set; }
 
-        public void Setup([CanBeNull] FileInfo loadFrom, [NotNull] FileInfo cache, CommandLineArgs cla)
+        public void Setup([CanBeNull] FileInfo loadFrom, FileInfo cache, CommandLineArgs cla)
         {
             args = cla;
 
@@ -144,7 +142,6 @@ namespace TVRename.TheTVDB
 
         public bool HasSeries(int id) => series.ContainsKey(id);
 
-        [CanBeNull]
         public SeriesInfo GetSeries(int id) => HasSeries(id) ? series[id] : null;
 
         [CanBeNull]
@@ -490,7 +487,7 @@ namespace TVRename.TheTVDB
         private void AddPlaceholderSeries([NotNull] SeriesSpecifier ss)
             => AddPlaceholderSeries(ss.TvdbSeriesId, ss.TvMazeSeriesId, ss.CustomLanguageCode);
 
-        public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts,[NotNull] IEnumerable<SeriesSpecifier> ss)
+        public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts,IEnumerable<SeriesSpecifier> ss)
         {
             Say("Validating TheTVDB cache");
             foreach (SeriesSpecifier downloadShow in ss.Where(downloadShow => !HasSeries(downloadShow.TvdbSeriesId)))
@@ -1119,7 +1116,7 @@ namespace TVRename.TheTVDB
 
         private int GetDefaultLanguageId() => LanguageList.GetLanguageFromCode(DefaultLanguageCode)?.Id ?? 7;
 
-        public void AddOrUpdateEpisode([NotNull] Episode e)
+        public void AddOrUpdateEpisode(Episode e)
         {
             lock (SERIES_LOCK)
             {
@@ -1768,7 +1765,7 @@ namespace TVRename.TheTVDB
             series[tvdb] = new SeriesInfo(tvdb,tvmaze, customLanguageCode) {Dirty = true};
         }
 
-        public bool EnsureUpdated([NotNull] SeriesSpecifier seriesd, bool bannersToo)
+        public bool EnsureUpdated(SeriesSpecifier seriesd, bool bannersToo)
         {
             if (seriesd.Provider == ShowItem.ProviderType.TVmaze) {
                 throw new SourceConsistencyException($"Asked to update {seriesd.Name} from TV Maze, but the Id is not for TV maze.", ShowItem.ProviderType.TVmaze);
@@ -2061,7 +2058,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        public void UpdateSeries([NotNull] SeriesInfo si)
+        public void UpdateSeries(SeriesInfo si)
         {
             lock (SERIES_LOCK)
             {

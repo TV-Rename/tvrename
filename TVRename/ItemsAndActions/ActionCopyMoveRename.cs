@@ -45,7 +45,6 @@ namespace TVRename
 
         #region Action Members
 
-        [NotNull]
         public override string Name => Operation==Op.rename? "Rename" :  IsMoveRename() ? "Move" : "Copy";
 
         public override string ProgressText => To.Name;
@@ -53,7 +52,6 @@ namespace TVRename
         // 0.0 to 100.0
         public override long SizeOfWork => QuickOperation() ? 10000 : SourceFileSize();
 
-        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             // read NTFS permissions (if any)
@@ -197,10 +195,8 @@ namespace TVRename
         #endregion
 
         #region Item Members
-        [CanBeNull]
         public override IgnoreItem Ignore => To is null ? null : new IgnoreItem(To.FullName);
 
-        [NotNull]
         public override string ScanListViewGroup
         {
             get
@@ -219,7 +215,6 @@ namespace TVRename
             }
         }
 
-        [CanBeNull]
         public override  string TargetFolder => To?.DirectoryName;
 
         #endregion

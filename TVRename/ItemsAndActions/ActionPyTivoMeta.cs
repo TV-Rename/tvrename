@@ -23,10 +23,8 @@ namespace TVRename
 
         #region Action Members
 
-        [NotNull]
         public override string Name => "Write pyTivo Meta";
 
-        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             try

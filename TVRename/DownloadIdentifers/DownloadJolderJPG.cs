@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -16,7 +15,6 @@ namespace TVRename
 
         public override DownloadType GetDownloadType() => DownloadType.downloadImage;
 
-        [NotNull]
         public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
             ItemList theActionList = new ItemList();

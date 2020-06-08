@@ -36,7 +36,6 @@ namespace TVRename
 
         #region Action Members
 
-        [NotNull]
         public override string Name => "Download";
 
         public override string ProgressText => destination.Name;
@@ -85,7 +84,6 @@ namespace TVRename
             return bmPhoto;
         }
 
-        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             try
@@ -177,19 +175,15 @@ namespace TVRename
 
         public override int IconNumber => 5;
 
-        [CanBeNull]
         public override IgnoreItem Ignore => GenerateIgnore(destination?.FullName);
 
         public override string SeriesName =>
             Episode != null ? Episode.Show.ShowName : si != null ? si.ShowName : "";
 
-        [CanBeNull]
         public override string DestinationFolder => TargetFolder;
         public override string DestinationFile => destination.Name;
         public override string SourceDetails => path;
-        [NotNull]
         public override string ScanListViewGroup => "lvgActionDownload";
-        [CanBeNull]
         public override string TargetFolder => destination?.DirectoryName;
         #endregion
     }

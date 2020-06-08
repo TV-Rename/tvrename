@@ -8,7 +8,6 @@
 
 using System.Collections.Generic;
 using System.Globalization;
-using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -21,7 +20,7 @@ namespace TVRename
 
         public override DownloadType GetDownloadType() => DownloadType.downloadMetaData;
 
-        public override void NotifyComplete([NotNull] FileInfo file)
+        public override void NotifyComplete(FileInfo file)
         {
             if (file.FullName.EndsWith(".nfo", true, new CultureInfo("en")))
             {

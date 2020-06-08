@@ -10,10 +10,9 @@ namespace TVRename
     {
         public CheckAllFoldersExist(TVDoc doc) : base(doc) {}
 
-        [NotNull]
         protected override string Checkname() => "Checked All Folders Exist";
 
-        protected override void Check([NotNull] ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+        protected override void Check(ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
             if (!si.DoMissingCheck && !si.DoRename)
             {

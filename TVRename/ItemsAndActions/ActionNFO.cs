@@ -34,10 +34,8 @@ namespace TVRename
 
         #region Action Members
 
-        [NotNull]
         public override string Name => "Write KODI Metadata";
 
-        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             try

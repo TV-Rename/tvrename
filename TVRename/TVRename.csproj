@@ -5,6 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
+    <Nullable>enable</Nullable>
     <ProjectGuid>{2FFF6A6D-6094-47FF-AB34-E04E644F8F9C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -322,6 +323,11 @@
     </Compile>
     <Compile Include="ItemsAndActions\ActionOutcome.cs" />
     <Compile Include="Model\Season.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Sources\SourceConsistencyException.cs" />
     <Compile Include="TVRename\CacheLoadException.cs" />
     <Compile Include="Sources\TheTVDB\TheTVDBAPI.cs" />
@@ -662,6 +668,10 @@
     <Compile Include="Utility\UpdateVersion.cs" />
     <Compile Include="Utility\VersionUpdater.cs" />
     <Compile Include="Utility\Helper\XMLHelper.cs" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Resources\2738302-32.png" />
     <None Include="Resources\5172493-32.png" />
     <None Include="Resources\1587498-32.png" />

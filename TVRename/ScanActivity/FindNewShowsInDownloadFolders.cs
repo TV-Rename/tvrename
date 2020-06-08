@@ -20,7 +20,6 @@ namespace TVRename
         {
         }
 
-        [NotNull]
         protected override string CheckName() => "Looked in the Search Folders for any new shows that need to be added to the library";
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,

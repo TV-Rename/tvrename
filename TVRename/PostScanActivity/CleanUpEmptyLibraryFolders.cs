@@ -14,7 +14,6 @@ namespace TVRename
     {
         public CleanUpEmptyLibraryFolders(TVDoc doc) : base(doc) {}
 
-        [NotNull]
         protected override string Checkname() => "Cleaned up empty library folders";
 
         protected override bool Active() => TVSettings.Instance.CleanLibraryAfterActions;

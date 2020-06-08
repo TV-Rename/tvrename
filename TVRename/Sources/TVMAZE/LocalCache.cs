@@ -65,7 +65,7 @@ namespace TVRename.TVmaze
 
         public bool LoadOk;
 
-        public void Setup([CanBeNull] FileInfo loadFrom, [NotNull] FileInfo cache, CommandLineArgs cla)
+        public void Setup([CanBeNull] FileInfo loadFrom, FileInfo cache, CommandLineArgs cla)
         {
             System.Diagnostics.Debug.Assert(cache != null);
             cacheFile = cache;
@@ -85,7 +85,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        public bool EnsureUpdated([NotNull] SeriesSpecifier s, bool bannersToo)
+        public bool EnsureUpdated(SeriesSpecifier s, bool bannersToo)
         {
             if (s.Provider != ShowItem.ProviderType.TVmaze)
             {
@@ -149,7 +149,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, [NotNull] IEnumerable<SeriesSpecifier> ss)
+        public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, IEnumerable<SeriesSpecifier> ss)
         {
             Say("Validating TVmaze cache");
             foreach (SeriesSpecifier downloadShow in ss.Where(downloadShow => !HasSeries(downloadShow.TvMazeSeriesId)))
@@ -244,7 +244,6 @@ namespace TVRename.TVmaze
 
         public SeriesInfo GetSeries(string showName, bool showErrorMsgBox) => throw new NotImplementedException(); //todo when we can offer sarch for TV Maze
 
-        [CanBeNull]
         public SeriesInfo GetSeries(int id)
         {
             lock (SERIES_LOCK)
@@ -353,7 +352,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        public void UpdateSeries([NotNull] SeriesInfo si)
+        public void UpdateSeries(SeriesInfo si)
         {
             lock (SERIES_LOCK)
             {
@@ -361,7 +360,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        public void AddOrUpdateEpisode([NotNull] Episode e)
+        public void AddOrUpdateEpisode(Episode e)
         {
             lock (SERIES_LOCK)
             {

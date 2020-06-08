@@ -18,7 +18,6 @@ namespace TVRename
     {
         public MergeLibraryEpisodes(TVDoc doc) : base(doc) {}
 
-        [NotNull]
         protected override string Checkname() => "Created Merge Rules for episodes in the library";
 
         protected override void Check(ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings)

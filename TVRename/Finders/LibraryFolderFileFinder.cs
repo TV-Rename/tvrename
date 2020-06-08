@@ -10,7 +10,6 @@ namespace TVRename
         public LibraryFolderFileFinder(TVDoc i) : base(i) { }
 
         public override bool Active() => TVSettings.Instance.RenameCheck && TVSettings.Instance.MissingCheck && TVSettings.Instance.MoveLibraryFiles;
-        [NotNull]
         protected override string CheckName() => "Looked in the library for the missing files";
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)

@@ -10,7 +10,6 @@ namespace TVRename
         public SearchFolderFileFinder(TVDoc i) : base(i) { }
 
         public override bool Active() => TVSettings.Instance.SearchLocally;
-        [NotNull]
         protected override string CheckName() => "Looked in the search folders for the missing files";
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,

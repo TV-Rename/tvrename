@@ -39,7 +39,6 @@ namespace TVRename
     {
         public qBitTorrentFinder(TVDoc i) : base(i) { }
         public override bool Active() => TVSettings.Instance.CheckqBitTorrent;
-        [NotNull]
         protected override string CheckName() => "Looked in the qBitTorrent for the missing files to see if they are being downloaded";
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
@@ -108,14 +107,6 @@ namespace TVRename
                 string url = GetApiUrl(qBitTorrentAPIPath.torrentDetails) + hashCode;
                 torrentDetailsString = JsonHelper.Obtain(url);
                 JArray torrentDetails = JArray.Parse(torrentDetailsString);
-
-                if (!torrentDetails.HasValues)
-                {
-                    LOGGER.Warn(
-                        $"Could not get details of downloads from {url} from qBitTorrent: {torrentDetailsString}");
-
-                    return;
-                }
 
                 if (!torrentDetails.Children().Any())
                 {

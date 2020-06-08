@@ -42,20 +42,16 @@ namespace TVRename
             updateTime = date;
         }
 
-        [CanBeNull]
         public override string Produces => whereFile?.FullName?? whereDirectory?.FullName;
 
         #region Action Members
 
-        [NotNull]
         public override string Name => "Update Timestamp";
 
-        [CanBeNull]
         public override string ProgressText => whereFile?.Name??whereDirectory?.Name;
 
         public override long SizeOfWork => 100;
 
-        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             try
@@ -132,7 +128,6 @@ namespace TVRename
 
         #region Item Members
 
-        [CanBeNull]
         public override IgnoreItem Ignore => whereFile is null ? null : new IgnoreItem(whereFile.FullName);
 
         public override string SeriesName => Episode != null ? Episode.Show.ShowName :
@@ -141,13 +136,9 @@ namespace TVRename
             processedSeason != null ? processedSeason.SeasonNumber.ToString() : string.Empty;
         public override string AirDateString =>
             updateTime.CompareTo(DateTime.MaxValue) != 0 ? updateTime.ToShortDateString() : "";
-        [CanBeNull]
         public override string DestinationFolder => whereFile?.DirectoryName ?? whereDirectory?.FullName;
-        [CanBeNull]
         public override string DestinationFile => whereFile?.Name ?? whereDirectory?.Name;
-        [CanBeNull]
         public override string TargetFolder => whereFile?.DirectoryName??whereDirectory?.Name;
-        [NotNull]
         public override string ScanListViewGroup => "lvgUpdateFileDates";
         public override int IconNumber => 7;
 

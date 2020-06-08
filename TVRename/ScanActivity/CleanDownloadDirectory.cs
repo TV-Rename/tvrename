@@ -21,7 +21,6 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.RemoveDownloadDirectoriesFiles ||
                                          TVSettings.Instance.ReplaceWithBetterQuality ||
                                          TVSettings.Instance.CopyFutureDatedEpsFromSearchFolders;
-        [NotNull]
         protected override string CheckName() => "Cleaned up and files in download directory that are not needed";
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> shows, TVDoc.ScanSettings settings)

@@ -29,7 +29,7 @@ namespace TVRename
             SourceName = name;
             this.url = url;
             theFileNoExt = toWhereNoExt;
-            this.UpstreamSource = upstreamSource;
+            UpstreamSource = upstreamSource;
             UndoItemMissing = me;
             this.sizeBytes = sizeBytes;
             Seeders = seeders;
@@ -40,7 +40,7 @@ namespace TVRename
             SourceName = rss.Title;
             url = rss.URL;
             this.theFileNoExt = theFileNoExt;
-            this.UpstreamSource = UpstreamSource;
+            UpstreamSource = rss.UpstreamSource;
             Episode = pe;
             UndoItemMissing = me;
             Seeders = rss.Seeders;
@@ -51,12 +51,10 @@ namespace TVRename
         #region Action Members
 
         public override string ProgressText => SourceName;
-        [NotNull]
         public override string Name => "Get Torrent";
         public override long SizeOfWork => 1000000;
         public override string Produces => url;
 
-        [NotNull]
         public override ActionOutcome Go( TVRenameStats stats)
         {
             try
@@ -132,12 +130,9 @@ namespace TVRename
 
         #region Item Members
 
-        [CanBeNull]
         public override IgnoreItem Ignore => GenerateIgnore(theFileNoExt);
 
-        [CanBeNull]
         public override string DestinationFolder => TargetFolder;
-        [CanBeNull]
         public override string DestinationFile => TargetFilename;
 
         public override string SourceDetails => $"{SourceName} ({(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())}) [{Seeders} Seeds]";
@@ -145,13 +140,11 @@ namespace TVRename
         [NotNull]
         public string SizePretty => $"{(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())}";
 
-        [CanBeNull]
         public override string TargetFolder => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).DirectoryName;
 
         [CanBeNull]
         private string TargetFilename => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).Name;
 
-        [NotNull]
         public override string ScanListViewGroup => "lvgActionDownloadRSS";
 
         public override int IconNumber => 6;

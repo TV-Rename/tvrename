@@ -7,7 +7,6 @@
 //
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
@@ -20,7 +19,7 @@ namespace TVRename
 
         public override DownloadType GetDownloadType() => DownloadType.downloadMetaData;
 
-        public override ItemList ProcessShow([NotNull] ShowItem si, bool forceRefresh)
+        public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
             DateTime? updateTime = si.LastAiredDate;
             if (!TVSettings.Instance.CorrectFileDates || !updateTime.HasValue)
@@ -47,7 +46,7 @@ namespace TVRename
             return null;
         }
 
-        public override ItemList ProcessSeason([NotNull] ShowItem si, string folder, int snum, bool forceRefresh)
+        public override ItemList ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
         {
             DateTime? updateTime = si.GetSeason(snum)?.LastAiredDate();
 

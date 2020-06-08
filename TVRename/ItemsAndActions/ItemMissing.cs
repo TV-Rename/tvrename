@@ -33,7 +33,6 @@ namespace TVRename
             return o is ItemMissing missing && string.CompareOrdinal(missing.TheFileNoExt, TheFileNoExt) == 0;
         }
 
-        [NotNull]
         public override string Name => "Missing Episode";
 
         public override int CompareTo([CanBeNull] object o)
@@ -60,16 +59,13 @@ namespace TVRename
 
         #region Item Members
 
-        [CanBeNull]
         public override IgnoreItem Ignore => GenerateIgnore(TheFileNoExt);
 
         public override string DestinationFolder { get; }
 
         public override string DestinationFile => Filename;
-        [NotNull]
         public override string ScanListViewGroup => "lvgActionMissing";
 
-        [NotNull]
         public override string TargetFolder => new FileInfo(TheFileNoExt).DirectoryName;
 
         public override int IconNumber => 1;

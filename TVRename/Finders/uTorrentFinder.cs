@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using IOException = System.IO.IOException;
 
 namespace TVRename
@@ -11,7 +10,6 @@ namespace TVRename
     {
         public uTorrentFinder(TVDoc i) : base(i) { }
         public override bool Active() => TVSettings.Instance.CheckuTorrent;
-        [NotNull]
         protected override string CheckName() => "Looked in the uTorrent queue for the missing files";
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)

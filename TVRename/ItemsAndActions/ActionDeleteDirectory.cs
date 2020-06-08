@@ -26,12 +26,9 @@ namespace TVRename
 
         public override string ProgressText => toRemove.Name;
         public override string Produces => toRemove.FullName;
-        [CanBeNull]
         public override IgnoreItem Ignore => toRemove is null ? null : new IgnoreItem(toRemove.FullName);
-        [CanBeNull]
         public override string TargetFolder => toRemove?.Parent.FullName;
 
-        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             //if the directory is the root download folder do not delete

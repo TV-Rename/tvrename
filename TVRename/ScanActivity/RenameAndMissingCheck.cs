@@ -10,7 +10,6 @@ namespace TVRename
     {
         private readonly DownloadIdentifiersController downloadIdentifiers;
 
-        [NotNull]
         protected override string Checkname() => "Rename & Missing Check";
 
         public RenameAndMissingCheck(TVDoc doc) : base(doc)
@@ -18,7 +17,7 @@ namespace TVRename
             downloadIdentifiers = new DownloadIdentifiersController();
         }
 
-        protected override void Check([NotNull] ShowItem si, [NotNull] DirFilesCache dfc,TVDoc.ScanSettings settings)
+        protected override void Check(ShowItem si, DirFilesCache dfc,TVDoc.ScanSettings settings)
         {
             Dictionary<int, List<string>> allFolders = si.AllExistngFolderLocations();
             if (allFolders.Count == 0) // no folders defined for this show

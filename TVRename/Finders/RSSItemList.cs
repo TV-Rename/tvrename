@@ -94,6 +94,9 @@ namespace TVRename
                 Logger.Info($"Link:        {link}");
                 Logger.Info($"Description: {description}");
                 Logger.Info($"encLink:     {enclosureLink}");
+                Logger.Info($"Seeders:     {seeders}");
+                Logger.Info($"Size:        {size}");
+                Logger.Info($"Source:      {source}");
             }
 
             link = string.IsNullOrWhiteSpace(enclosureLink)?link:enclosureLink;
