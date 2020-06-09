@@ -25,7 +25,7 @@ namespace TVRename
         public static string DefaultTimeZone() => "America/New_York";
 
         [NotNull]
-        public static string TimeZoneForNetwork([CanBeNull] string network,string defaultTimeZone)
+        public static string TimeZoneForNetwork(string? network,string defaultTimeZone)
         {
             string[] uktv = { "Sky Atlantic (UK)", "BBC One", "Sky1", "BBC Two", "ITV", "Nick Jr.", "BBC Three", "Channel 4", "CBeebies", "Sky Box Office", "Watch", "ITV2", "National Geographic (UK)", "V", "ITV Encore", "ITV1", "BBC", "E4", "Channel 5 (UK)", "BBC Four", "ITVBe" };
             string[] ausTv = { "ABC4Kids", "Stan", "Showcase (AU)", "PBS Kids Sprout", "SBS (AU)", "Nine Network", "ABC (AU)" };
@@ -40,7 +40,7 @@ namespace TVRename
 
             if (string.IsNullOrWhiteSpace(network))
             {
-                return defaultTimeZone?? DefaultTimeZone();
+                return defaultTimeZone;
             }
 
             if (uktv.Contains(network))
@@ -58,10 +58,10 @@ namespace TVRename
                 return "America/New_York";
             }
 
-            return defaultTimeZone ??DefaultTimeZone();
+            return defaultTimeZone;
         }
 
-        public static DateTime AdjustTzTimeToLocalTime(LocalDateTime theirDateTime, [CanBeNull] DateTimeZone theirTimeZone)
+        public static DateTime AdjustTzTimeToLocalTime(LocalDateTime theirDateTime, DateTimeZone? theirTimeZone)
         {
             try
             {

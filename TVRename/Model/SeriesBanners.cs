@@ -36,9 +36,11 @@ namespace TVRename
 
         private readonly SeriesInfo series;
 
+        // ReSharper disable once NotNullMemberIsNotInitialized
         public SeriesBanners(SeriesInfo s)
         {
             series = s;
+            ResetBanners();
         }
 
         public void ResetBanners()
@@ -57,7 +59,7 @@ namespace TVRename
             bestSeriesLangFanartId = -1;
         }
 
-        public void MergeBanners([CanBeNull] SeriesBanners o)
+        public void MergeBanners(SeriesBanners? o)
         {
             if (o is null)
             {
@@ -120,9 +122,9 @@ namespace TVRename
             }
         }
 
-        private static bool WorthUpdating([CanBeNull] Dictionary<int, Banner> b) => b != null && b.Count > 0;
+        private static bool WorthUpdating(Dictionary<int, Banner>? b) => b != null && b.Count > 0;
 
-        public string GetSeasonBannerPath(int snum)
+        public string? GetSeasonBannerPath(int snum)
         {
             //We aim to return the season and language specific poster,
             //if not then a season specific one is best
@@ -144,7 +146,7 @@ namespace TVRename
             return GetSeriesPosterPath();
         }
 
-        public string GetSeriesWideBannerPath()
+        public string? GetSeriesWideBannerPath()
         {
             //ry the best one we've found with the correct language
             if (bestSeriesLangBannerId != -1 && AllBanners.ContainsKey(bestSeriesLangBannerId))
@@ -210,7 +212,7 @@ namespace TVRename
             return string.Empty;
         }
 
-        public string GetSeasonWideBannerPath(int snum)
+        public string? GetSeasonWideBannerPath(int snum)
         {
             //We aim to return the season and language specific poster,
             //if not then a season specific one is best
@@ -348,19 +350,15 @@ namespace TVRename
             }
         }
 
-        public string GetImage(TVSettings.FolderJpgIsType type)
+        public string? GetImage(TVSettings.FolderJpgIsType type)
         {
-            switch (type)
+            return type switch
             {
-                case TVSettings.FolderJpgIsType.Banner:
-                    return GetSeriesWideBannerPath();
-                case TVSettings.FolderJpgIsType.FanArt:
-                    return GetSeriesFanartPath();
-                case TVSettings.FolderJpgIsType.SeasonPoster:
-                    return GetSeriesPosterPath();
-                default:
-                    return GetSeriesPosterPath();
-            }
+                TVSettings.FolderJpgIsType.Banner => GetSeriesWideBannerPath(),
+                TVSettings.FolderJpgIsType.FanArt => GetSeriesFanartPath(),
+                TVSettings.FolderJpgIsType.SeasonPoster => GetSeriesPosterPath(),
+                _ => GetSeriesPosterPath()
+            };
         }
 
         public void Remove(int removeBannerId)

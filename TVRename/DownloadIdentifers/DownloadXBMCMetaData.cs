@@ -29,7 +29,7 @@ namespace TVRename
             base.NotifyComplete(file);
         }
 
-        public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
+        public override ItemList? ProcessShow(ShowItem si, bool forceRefresh)
         {
             // for each tv show, optionally write a tvshow.nfo file
             if (TVSettings.Instance.NFOShows)
@@ -54,29 +54,28 @@ namespace TVRename
             return base.ProcessShow(si, forceRefresh);
         }
 
-        public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo,bool forceRefresh)
+        public override ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file,bool forceRefresh)
         {
             if (!TVSettings.Instance.NFOEpisodes)
             {
                 return null;
             }
 
-            string fn = filo.RemoveExtension() + ".nfo";
-            FileInfo nfo = FileHelper.FileInFolder(filo.Directory, fn);
+            FileInfo nfo = FileHelper.FileInFolder(file.Directory, file.RemoveExtension() + ".nfo");
 
-            if (nfo.Exists && dbep.SrvLastUpdated <= TimeZoneHelper.Epoch(nfo.LastWriteTime) && !forceRefresh)
+            if (nfo.Exists && episode.SrvLastUpdated <= TimeZoneHelper.Epoch(nfo.LastWriteTime) && !forceRefresh)
             {
-                return new ItemList();
+                return null;
             }
 
             //If we do not already have plans to put the file into place
             if (DoneNfo.Contains(nfo.FullName))
             {
-                return new ItemList();
+                return null;
             }
 
             DoneNfo.Add(nfo.FullName);
-            return new ItemList { new ActionNfo(nfo, dbep) };
+            return new ItemList { new ActionNfo(nfo, episode) };
         }
 
         public sealed override void Reset() => DoneNfo = new List<string>();

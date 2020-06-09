@@ -39,7 +39,7 @@ namespace TVRename
             CurrentSearch = google;
         }
         
-        public Searchers([CanBeNull] XElement settings)
+        public Searchers(XElement? settings)
         {
             Clear();
             if (settings is null)
@@ -51,18 +51,22 @@ namespace TVRename
 
             foreach (XElement x in settings.Descendants("Choice"))
             {
-                string url = x.Attribute("URL")?.Value;
-                url = url is null
-                    ? x.Attribute("URL2")?.Value
-                    : url.Replace("!", "{ShowName}+S{Season:2}E{Episode}");
+                string? url = x.Attribute("URL")?.Value.Replace("!", "{ShowName}+S{Season:2}E{Episode}");
+                string? url2 = x.Attribute("URL2")?.Value;
+                string? name = x.Attribute("Name")?.Value;
+                string? link = url ?? url2;
 
-                SearchEngine engine = new SearchEngine {Name= x.Attribute("Name")?.Value,Url=url };
-
-                Add(engine);
-                if (engine.Name == currentSearchString)
+                if (name != null && link != null)
                 {
-                    CurrentSearch = engine;
+                    SearchEngine engine = new SearchEngine {Name= name,Url=link };
+                    Add(engine);
+                    if (engine.Name == currentSearchString)
+                    {
+                        CurrentSearch = engine;
+                    }
+
                 }
+
             }
         }
 

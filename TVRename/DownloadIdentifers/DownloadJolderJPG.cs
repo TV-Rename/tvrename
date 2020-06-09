@@ -5,7 +5,7 @@ namespace TVRename
 {
     internal class DownloadFolderJpg : DownloadIdentifier
     {
-        private List<string> doneFolderJpg;
+        private List<string> doneFolderJpg = new List<string>();
         private const string DEFAULT_FILE_NAME = "folder.jpg";
 
         public DownloadFolderJpg() 
@@ -20,11 +20,6 @@ namespace TVRename
             ItemList theActionList = new ItemList();
 
             if (!TVSettings.Instance.FolderJpg)
-            {
-                return theActionList;
-            }
-
-            if (si is null)
             {
                 return theActionList;
             }
@@ -56,7 +51,7 @@ namespace TVRename
             return theActionList;
         }
 
-        public override ItemList ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
+        public override ItemList? ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
         {
             if (!TVSettings.Instance.FolderJpg)
             {

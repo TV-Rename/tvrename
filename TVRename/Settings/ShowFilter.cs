@@ -16,39 +16,40 @@ namespace TVRename
     public class ShowFilter
     {
         public List<string> Genres { get; } = new List<string>();
-        public string ShowName { get; set; } 
-        public string ShowStatus { get; set; }
+        public string? ShowName { get; set; } 
+        public string? ShowStatus { get; set; }
         public bool ShowStatusInclude { get; set; }
-        public string ShowNetwork { get; set; }
+        public string? ShowNetwork { get; set; }
         public bool ShowNetworkInclude { get; set; }
-        public string ShowRating { get; set; }
+        public string? ShowRating { get; set; }
         public bool ShowRatingInclude { get; set; }
 
         public bool Filter([NotNull] ShowItem show)
         {
             bool IsNetworkOk(ShowItem showItem)
             {
-                SeriesInfo seriesInfo = showItem.TheSeries();
-                if (seriesInfo is null)
+                string? seriesInfoNetwork = showItem.TheSeries()?.Network;
+                if (seriesInfoNetwork is null)
                 {
                     return true;
                 }
+
                 return ShowNetworkInclude
-                    ? seriesInfo.Network.Equals(ShowNetwork)
-                    : !seriesInfo.Network.Equals(ShowNetwork);
+                    ? seriesInfoNetwork.Equals(ShowNetwork)
+                    : !seriesInfoNetwork.Equals(ShowNetwork);
             }
 
             bool IsRatingOk(ShowItem showItem)
             {
-                SeriesInfo seriesInfo = showItem.TheSeries();
-                if (seriesInfo is null)
+                string? seriesInfoContentRating = showItem.TheSeries()?.ContentRating;
+                if (seriesInfoContentRating is null)
                 {
                     return true;
                 }
 
                 return ShowRatingInclude
-                    ? seriesInfo.ContentRating.Equals(ShowRating)
-                    : !seriesInfo.ContentRating.Equals(ShowRating);
+                    ? seriesInfoContentRating.Equals(ShowRating)
+                    : !seriesInfoContentRating.Equals(ShowRating);
             }
 
             bool IsStatusOk(ShowItem showItem)

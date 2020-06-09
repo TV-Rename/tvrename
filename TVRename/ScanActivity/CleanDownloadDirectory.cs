@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
-using Alphaleonis.Win32.Filesystem;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
@@ -10,13 +14,16 @@ namespace TVRename
     {
         public CleanDownloadDirectory(TVDoc doc) : base(doc)
         {
+            filesThatMayBeNeeded = new List<FileInfo>();
+            returnActions = new ItemList();
+            showList = new List<ShowItem>();
         }
 
         private List<FileInfo> filesThatMayBeNeeded;
         private readonly DirFilesCache dfc = new DirFilesCache();
         private ICollection<ShowItem> showList;
         private TVDoc.ScanSettings currentSettings;
-        private ItemList returnActions;
+        private readonly ItemList returnActions;
 
         public override bool Active() => TVSettings.Instance.RemoveDownloadDirectoriesFiles ||
                                          TVSettings.Instance.ReplaceWithBetterQuality ||
@@ -25,7 +32,7 @@ namespace TVRename
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> shows, TVDoc.ScanSettings settings)
         {
-            returnActions = new ItemList();
+            returnActions.Clear();
             showList = MDoc.Library.GetSortedShowItems(); //We ignore the current set of shows being scanned to be secrure that no files are deleted for unscanned shows
             currentSettings = settings;
 
@@ -57,13 +64,7 @@ namespace TVRename
             //Remove any missing items we are planning to resolve
             foreach (ActionCopyMoveRename acmr in returnActions.OfType<ActionCopyMoveRename>())
             {
-                foreach (ItemMissing missingItem in MDoc.TheActionList.Missing)
-                {
-                    if (missingItem.Episode == acmr.Episode)
-                    {
-                        removeActions.Add(missingItem);
-                    }
-                }
+                removeActions.AddRange(MDoc.TheActionList.Missing.Where(missingItem => missingItem.Episode == acmr.Episode));
             }
 
             MDoc.TheActionList.Replace(removeActions,returnActions);
@@ -74,7 +75,7 @@ namespace TVRename
             try
             {
                 foreach (string subDirPath in Directory.GetDirectories(dirPath, "*",
-                    System.IO.SearchOption.AllDirectories).Where(Directory.Exists))
+                    SearchOption.AllDirectories).Where(Directory.Exists))
                 {
                     if (currentSettings.Token.IsCancellationRequested)
                     {
@@ -88,11 +89,11 @@ namespace TVRename
             {
                 LOGGER.Warn(ex, $"Could not access subdirectories of {dirPath}");
             }
-            catch (System.IO.DirectoryNotFoundException ex)
+            catch (DirectoryNotFoundException ex)
             {
                 LOGGER.Warn(ex, $"Could not access subdirectories of {dirPath}");
             }
-            catch (System.IO.IOException ex)
+            catch (IOException ex)
             {
                 LOGGER.Warn(ex, $"Could not access subdirectories of {dirPath}");
             }
@@ -158,7 +159,7 @@ namespace TVRename
         {
             try
             {
-                foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories).Where(File.Exists))
+                foreach (string filePath in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories).Where(File.Exists))
                 {
                     if (currentSettings.Token.IsCancellationRequested)
                     {
@@ -186,11 +187,11 @@ namespace TVRename
             {
                 LOGGER.Warn(ex, $"Could not access files in {dirPath}");
             }
-            catch (System.IO.DirectoryNotFoundException ex)
+            catch (DirectoryNotFoundException ex)
             {
                 LOGGER.Warn(ex, $"Could not access files in {dirPath}");
             }
-            catch (System.IO.IOException ex)
+            catch (IOException ex)
             {
                 LOGGER.Warn(ex, $"Could not access files in {dirPath}");
             }
@@ -348,23 +349,17 @@ namespace TVRename
             return null;
         }
 
-        private bool IsNotClearCut(FileHelper.VideoComparison result)
+        private static bool IsNotClearCut(FileHelper.VideoComparison result)
         {
-            switch (result)
+            return result switch
             {
-                case FileHelper.VideoComparison.cantTell:
-                    return true;
-                case FileHelper.VideoComparison.same:
-                    return true;
-                case FileHelper.VideoComparison.similar:
-                    return true;
-                case FileHelper.VideoComparison.firstFileBetter:
-                    return false;
-                case FileHelper.VideoComparison.secondFileBetter:
-                    return false;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(result), result, null);
-            }
+                FileHelper.VideoComparison.cantTell => true,
+                FileHelper.VideoComparison.same => true,
+                FileHelper.VideoComparison.similar => true,
+                FileHelper.VideoComparison.firstFileBetter => false,
+                FileHelper.VideoComparison.secondFileBetter => false,
+                _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
+            };
         }
 
         private bool? AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] ProcessedEpisode pep, IDialogParent owner)
@@ -397,7 +392,7 @@ namespace TVRename
 
                 return null;
             }
-            catch (System.IO.FileNotFoundException)
+            catch (FileNotFoundException)
             {
                 return false;
             }
@@ -461,7 +456,7 @@ namespace TVRename
                 returnActions.Add(new ActionCopyMoveRename(fi, targetFile, pep,d));
 
                 // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
-                returnActions.AddRange(new DownloadIdentifiersController().ProcessEpisode(pep, targetFile));
+                returnActions.AddNullableRange(new DownloadIdentifiersController().ProcessEpisode(pep, targetFile));
             }
         }
 

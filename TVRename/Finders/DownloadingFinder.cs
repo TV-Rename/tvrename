@@ -49,17 +49,17 @@ namespace TVRename
                     }
 
                     //do any of the possible names for the series match the filename?
-                    bool matched = action.Episode.Show.NameMatch(file,true);
+                    bool matched = action.MissingEpisode.Show.NameMatch(file,true);
 
                     if (!matched)
                     {
                         continue;
                     }
 
-                    if (FinderHelper.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) && seasF == action.Episode.AppropriateSeasonNumber && epF == action.Episode.AppropriateEpNum)
+                    if (FinderHelper.FindSeasEp(file, out int seasF, out int epF, out int _, action.MissingEpisode.Show) && seasF == action.MissingEpisode.AppropriateSeasonNumber && epF == action.MissingEpisode.AppropriateEpNum)
                     {
                         toRemove.Add(action);
-                        newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt, tApp));
+                        newList.Add(new ItemDownloading(te, action.MissingEpisode, action.TheFileNoExt, tApp));
                         break;
                     }
                 }

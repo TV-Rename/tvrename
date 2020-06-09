@@ -50,13 +50,13 @@ namespace TVRename
 
                 UpdateStatus(n++, c, action.Filename);
 
-                ProcessedEpisode pe = action.Episode;
+                ProcessedEpisode pe = action.MissingEpisode;
                 ItemList newItemsForThisMissingEpisode = new ItemList();
 
                 foreach (RSSItem rss in RSSList.Where(rss => RssMatch(rss, pe)))
                 {
                     LOGGER.Info(
-                        $"Adding {rss.URL} from RSS feed as it appears to be match for {action.Episode.Show.ShowName} S{action.Episode.AppropriateSeasonNumber}E{action.Episode.AppropriateEpNum}");
+                        $"Adding {rss.URL} from RSS feed as it appears to be match for {pe.Show.ShowName} {pe}");
 
                     newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action.TheFileNoExt, pe, action));
                     toRemove.Add(action);

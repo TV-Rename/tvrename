@@ -10,7 +10,7 @@ namespace TVRename
     {
         public CheckAllFoldersExist(TVDoc doc) : base(doc) {}
 
-        protected override string Checkname() => "Checked All Folders Exist";
+        protected override string ActivityName() => "Checked All Folders Exist";
 
         protected override void Check(ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
@@ -142,7 +142,7 @@ namespace TVRename
                     continue;
                 }
 
-                string otherFolder = null;
+                string? otherFolder = null;
 
                 FaResult whatToDo = GetDefaultAction();
 
@@ -170,7 +170,10 @@ namespace TVRename
                         break;
 
                     case FaResult.kfaDifferentFolder:
-                        folder = otherFolder;
+                        if (otherFolder != null)
+                        {
+                            folder = otherFolder;
+                        }
                         goAgain = UpdateDirectory(si, snum, folder);
                         break;
 
@@ -219,7 +222,7 @@ namespace TVRename
             return goAgain;
         }
 
-        private static void TryCreateDirectory([CanBeNull] string folder, string sn, string text)
+        private static void TryCreateDirectory(string? folder, string sn, string text)
         {
             if (string.IsNullOrWhiteSpace(folder))
             {

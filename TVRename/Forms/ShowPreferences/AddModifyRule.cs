@@ -7,7 +7,6 @@
 // 
 using System;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -27,10 +26,10 @@ namespace TVRename
         private readonly ProcessedSeason.SeasonType mOrder;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public AddModifyRule(ShowRule rule, [NotNull] ShowItem show, int seasonNumber)
+        public AddModifyRule(ShowRule rule, ShowItem show, int seasonNumber)
         {
             mRule = rule;
-            mProcessedSeason = show.GetSeason(seasonNumber);
+            mProcessedSeason = show.GetSeason(seasonNumber) ?? throw new InvalidOperationException($"Can't add rule for Season {seasonNumber} to {show.ShowName}");
             mOrder= show.Order;
 
             InitializeComponent();

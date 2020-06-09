@@ -31,7 +31,7 @@ namespace TVRename
             {
                 response = HttpHelper.GetUrl(url, useCloudflareProtection);
 
-                XElement x = XElement.Load(new System.IO.StringReader(response ?? ""));
+                XElement x = XElement.Load(new System.IO.StringReader(response));
 
                 if (x.Name.LocalName != "rss")
                 {
@@ -156,17 +156,17 @@ namespace TVRename
             return true;
         }
 
-        private int GetSeeders([NotNull] XElement itemElement)
+        private static int GetSeeders([NotNull] XElement itemElement)
         {
             return itemElement
                 .Descendants()
                 .Where(element => element.Name.LocalName == "attr")
-                .Where(isSeederElement)
-                .Select(getSeederValue)
+                .Where(IsSeederElement)
+                .Select(GetSeederValue)
                 .FirstOrDefault();
         }
 
-        private int getSeederValue([NotNull] XElement elemenet)
+        private static int GetSeederValue([NotNull] XElement elemenet)
         {
             foreach (string seedersAsString in from att in elemenet.Attributes() where att.Name == "value" select att.Value)
             {
@@ -180,7 +180,7 @@ namespace TVRename
             return 0;
         }
 
-        private bool isSeederElement([NotNull] XElement elemenet)
+        private static bool IsSeederElement([NotNull] XElement elemenet)
         {
             return elemenet.Attributes().Any(att => att.Name == "name" && att.Value == "seeders");
         }

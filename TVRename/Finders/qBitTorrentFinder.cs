@@ -216,7 +216,7 @@ namespace TVRename
             }
         }
 
-        internal static void StartTorrentDownload(string torrentUrl, string torrentFileName, bool downloadFileFirst)
+        internal static void StartTorrentDownload(string torrentUrl, string? torrentFileName, bool downloadFileFirst)
         {
             if (string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentHost) || string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentPort))
             {
@@ -224,7 +224,7 @@ namespace TVRename
                 return;
             }
 
-            if (downloadFileFirst)
+            if (downloadFileFirst && !(torrentFileName is null))
             {
                 AddFile(torrentFileName,GetApiUrl(qBitTorrentAPIPath.addFile));
             }

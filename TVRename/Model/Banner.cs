@@ -20,14 +20,14 @@ namespace TVRename
     {
         public int BannerId;
         public int LanguageId;
-        public string BannerPath;
-        public string BannerType;
-        private string resolution;
+        public string? BannerPath;
+        public string? BannerType;
+        private string? resolution;
         public double Rating;
         public int RatingCount;
         public int SeasonId;
         public int SeriesId;
-        private string thumbnailPath;
+        private string? thumbnailPath;
 
         public Banner(int seriesId, [NotNull] XElement r)
         {

@@ -84,7 +84,7 @@ namespace TVRename
         public IEnumerable<string> GetStatuses()
         {
             return Values
-                .Where(s => !string.IsNullOrWhiteSpace(s?.ShowStatus))
+                .Where(s => !string.IsNullOrWhiteSpace(s.ShowStatus))
                 .Select(s => s.ShowStatus)
                 .Distinct()
                 .OrderBy(s => s);
@@ -129,8 +129,7 @@ namespace TVRename
             return returnList;
         }
 
-        [CanBeNull]
-        public ShowItem GetShowItem(int id) => ContainsKey(id) ? this[id] : null;
+        public ShowItem? GetShowItem(int id) => ContainsKey(id) ? this[id] : null;
 
         public void GenDict()
         {
@@ -206,8 +205,7 @@ namespace TVRename
             }
         }
 
-        [CanBeNull]
-        public static List<ProcessedEpisode> GenerateEpisodes([NotNull] ShowItem si, int snum, bool applyRules)
+        public static List<ProcessedEpisode>? GenerateEpisodes([NotNull] ShowItem si, int snum, bool applyRules)
         {
             if (!si.AppropriateSeasons().ContainsKey(snum))
             {
@@ -513,7 +511,7 @@ namespace TVRename
             }
         }
 
-        private static void MergeEpisodes([NotNull] List<ProcessedEpisode> eis, ShowItem si, RuleAction action, int fromIndex, int toIndex, [CanBeNull] string newName)
+        private static void MergeEpisodes([NotNull] List<ProcessedEpisode> eis, ShowItem si, RuleAction action, int fromIndex, int toIndex, string? newName)
         {
             int ec = eis.Count;
             if (ValidIndex(fromIndex, ec) && ValidIndex(toIndex, ec) && fromIndex < toIndex)
@@ -677,8 +675,7 @@ namespace TVRename
             return found;
         }
 
-        [CanBeNull]
-        private ProcessedEpisode GetNextMostRecentProcessedEpisode(int nDaysFuture, ICollection<ProcessedEpisode> found, DateTime notBefore)
+        private ProcessedEpisode? GetNextMostRecentProcessedEpisode(int nDaysFuture, ICollection<ProcessedEpisode> found, DateTime notBefore)
         {
             ProcessedEpisode nextAfterThat = null;
             TimeSpan howClose = TimeSpan.MaxValue;

@@ -48,7 +48,9 @@ namespace TVRename
 
         private void MatchDoubleClick(object sender, EventArgs e)
         {
-            bnOK_Click(null, null);
+            DialogResult = DialogResult.OK;
+            Code = codeFinderControl.SelectedCode();
+            Close();
         }
 
         private static void CodeChanged(object sender, EventArgs e)

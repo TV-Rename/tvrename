@@ -56,7 +56,7 @@ namespace TVRename
             return sb.ToString();
         }
 
-        private static void AppendShowSummary(this StringBuilder sb, [CanBeNull] ShowItem si, DirFilesCache dfc, Color backgroundColour, bool includeDirectoryLinks)
+        private static void AppendShowSummary(this StringBuilder sb, ShowItem? si, DirFilesCache dfc, Color backgroundColour, bool includeDirectoryLinks)
         {
             SeriesInfo ser = si?.TheSeries();
             if (ser is null)
@@ -108,7 +108,7 @@ namespace TVRename
 
             string tableRows = si.SeasonEpisodes[s.SeasonNumber].Select(episode => SeasonSummaryTableRow(episode, includeDirectoryLinks, dfc)).Concat();
 
-            string tvdbSLug = si.TheSeries()?.Slug;
+            string? tvdbSLug = si.TheSeries()?.Slug;
             string tvdbLink = !tvdbSLug.HasValue() ? string.Empty : TheTVDB.API.WebsiteSeasonUrl(s);
             string tvdbButton = CreateButton(tvdbLink, "TVDB.com", "View on TVDB");
             string tvMazeButton = CreateButton(s.Show.Provider!=ShowItem.ProviderType.TVmaze?string.Empty: s.WebsiteUrl, "TVmaze.com", "View on TV Maze");
@@ -127,7 +127,7 @@ namespace TVRename
 {tableRows}");
         }
 
-        private static void AppendShow(this StringBuilder sb,[CanBeNull] ShowItem si, Color backgroundColour, bool includeDirectoryLinks)
+        private static void AppendShow(this StringBuilder sb,ShowItem? si, Color backgroundColour, bool includeDirectoryLinks)
         {
             SeriesInfo ser = si?.TheSeries();
 
@@ -198,7 +198,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string YearRange([CanBeNull] SeriesInfo ser)
+        public static string YearRange(SeriesInfo? ser)
         {
             if (ser is null)
             {
@@ -375,7 +375,7 @@ namespace TVRename
         [NotNull]
         private static string SeasonSummaryTableRow([NotNull]ProcessedEpisode ep, bool includeDirectoryLinks, DirFilesCache dfc)
         {
-            List<FileInfo> fl = includeDirectoryLinks ? dfc.FindEpOnDisk(ep) : null;
+            List<FileInfo>? fl = includeDirectoryLinks ? dfc.FindEpOnDisk(ep) : null;
             IEnumerable<string> statii = GetEpisodeStatus(ep, includeDirectoryLinks, fl);
 
             string searchButton = (fl is null || fl.Count == 0) && ep.HasAired()
@@ -397,13 +397,15 @@ namespace TVRename
         }
 
         [NotNull]
-        private static IEnumerable<string> GetEpisodeStatus([NotNull] ProcessedEpisode ep, bool includeDirectoryLinks, List<FileInfo> fl)
+        private static IEnumerable<string> GetEpisodeStatus([NotNull] ProcessedEpisode ep, bool includeDirectoryLinks, List<FileInfo>? fl)
         {
             List<string> statii = new List<string>();
 
+            bool filesExist = fl != null && fl.Count > 0;
+
             if (includeDirectoryLinks)
             {
-                if (fl.Count > 0)
+                if (filesExist)
                 {
                     statii.Add("On Disk");
                 }
@@ -430,7 +432,7 @@ namespace TVRename
                 statii.Add("Episode Ignored");
             }
 
-            if (!statii.Any() && includeDirectoryLinks && fl.Count == 0 && ep.HasAired())
+            if (!statii.Any() && includeDirectoryLinks && !filesExist && ep.HasAired())
             {
                 statii.Add("Missing");
             }
@@ -438,7 +440,7 @@ namespace TVRename
             return statii;
         }
 
-        private static void AppendSeasonSummary(this StringBuilder sb, [CanBeNull] ShowItem si, ProcessedSeason s, Color backgroundColour, bool includeDirectoryLinks)
+        private static void AppendSeasonSummary(this StringBuilder sb, ShowItem? si, ProcessedSeason s, Color backgroundColour, bool includeDirectoryLinks)
         {
             DirFilesCache dfc = new DirFilesCache();
             if (si is null)
@@ -512,7 +514,7 @@ namespace TVRename
                 </div>";
         }
 
-        private static void AppendSeason(this StringBuilder sb, ProcessedSeason s, [CanBeNull] ShowItem si,Color backgroundColour, bool includeDirectoryLinks)
+        private static void AppendSeason(this StringBuilder sb, ProcessedSeason s, ShowItem? si,Color backgroundColour, bool includeDirectoryLinks)
         {
             if (si is null)
             {
@@ -551,7 +553,7 @@ namespace TVRename
             return string.Empty;
         }
 
-        private static void AppendEpisode([NotNull] this StringBuilder sb, [NotNull] ProcessedEpisode ep, [CanBeNull] IReadOnlyCollection<FileInfo> fl,Color backgroundColour)
+        private static void AppendEpisode([NotNull] this StringBuilder sb, [NotNull] ProcessedEpisode ep, IReadOnlyCollection<FileInfo>? fl,Color backgroundColour)
         {
             string stars = StarRating(ep.EpisodeRating);
             string tvdbEpisodeUrl = ep.Show.Provider == ShowItem.ProviderType.TheTVDB ? ep.TVDBWebsiteUrl : string.Empty;
@@ -643,7 +645,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string CreateButton([CanBeNull] string link, string text, string tooltip)
+        private static string CreateButton(string? link, string text, string tooltip)
         {
             if (string.IsNullOrWhiteSpace(link))
             {
@@ -684,7 +686,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string ImageSection(string title, int width, int height, [CanBeNull] string bannerPath,ShowItem.ProviderType p)
+        private static string ImageSection(string title, int width, int height, string? bannerPath,ShowItem.ProviderType p)
         {
             if (string.IsNullOrEmpty(bannerPath))
             {
@@ -721,7 +723,7 @@ namespace TVRename
                 return string.Join("<p/><hr/><p class=\"lead\" />", ei.SourceEpisodes.Select(e => e.Overview));
             }
 
-            return ei.Overview;
+            return ei.Overview ??string.Empty;
         }
 
         [NotNull]
@@ -790,7 +792,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string StarRating(string rating)
+        private static string StarRating(string? rating)
         {
             try
             {
@@ -798,7 +800,7 @@ namespace TVRename
                 {
                     return StarRating(0);
                 }
-                float f = float.Parse(rating, CultureInfo.CreateSpecificCulture("en-US"));
+                float f = float.Parse(rating!, CultureInfo.CreateSpecificCulture("en-US"));
 
                 return StarRating(f / 2);
             }
@@ -1056,7 +1058,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string GetOverviewPart(string name, [CanBeNull] string value)
+        private static string GetOverviewPart(string name, string? value)
         {
             return string.IsNullOrWhiteSpace(value)? string.Empty: "<tr><td width=120px>" + name + "</td><td>" + value + "</td></tr>";
         }

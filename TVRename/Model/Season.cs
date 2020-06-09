@@ -1,20 +1,19 @@
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
     public class Season
     {
         public int SeasonId { get; }
-        public string SeasonName { get; }
+        public string? SeasonName { get; }
         public int SeasonSeriesId { get; }
         public int SeasonNumber { get; }
-        public string SeasonDescription { get; }
-        public string Url { get; }
-        public string ImageUrl { get; }
+        public string? SeasonDescription { get; }
+        public string? Url { get; }
+        public string? ImageUrl { get; }
 
-        public Season([NotNull] XElement r)
+        public Season(XElement r)
         {
             SeasonId = r.ExtractInt("Id")??-1;
             SeasonName = r.ExtractString("Name");
@@ -24,7 +23,7 @@ namespace TVRename
             ImageUrl = r.ExtractString("imageUrl");
         }
 
-        public Season(int seasonId, int seasonNumber, string seasonName, string description, string url, string imageUrl, int seriesId)
+        public Season(int seasonId, int seasonNumber, string? seasonName, string? description, string? url, string? imageUrl, int seriesId)
         {
             SeasonId = seasonId;
             SeasonNumber = seasonNumber;
@@ -35,7 +34,7 @@ namespace TVRename
             Url = url;
         }
 
-        public void WriteXml([NotNull] XmlWriter writer)
+        public void WriteXml(XmlWriter writer)
         {
             writer.WriteStartElement("Season");
             writer.WriteElement("Id", SeasonId);

@@ -86,7 +86,7 @@ namespace TVRename
         public string NameFor([NotNull] ProcessedEpisode pe) => NameFor(pe,string.Empty,0);
 
         [NotNull]
-        public string NameFor([NotNull] ProcessedEpisode pe, [CanBeNull] string extension,int folderNameLength)
+        public string NameFor([NotNull] ProcessedEpisode pe, string? extension,int folderNameLength)
         {
             const int MAX_LENGTH = 260;
             int maxFilenameLength = MAX_LENGTH - 1 - folderNameLength - (extension?.Length ?? 5); //Assume a max 5 character extension
@@ -158,7 +158,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Number}", "");
             name = name.ReplaceInsensitive("{Number:2}", "");
             name = name.ReplaceInsensitive("{Number:3}", "");
-            name = name.ReplaceInsensitive("{Imdb}", ep.ImdbCode);
+            name = name.ReplaceInsensitive("{Imdb}", ep.ImdbCode??string.Empty);
 
             SeriesInfo si = show.TheSeries();
             name = name.ReplaceInsensitive("{ShowImdb}", si?.Imdb??string.Empty);
@@ -256,7 +256,7 @@ namespace TVRename
                 name = name.ReplaceInsensitive("{Year}", pe.TheSeries.MinYear.ToString());
                 name = name.ReplaceInsensitive("{SeasonYear}", pe.AppropriateProcessedSeason.MinYear().ToString());
                 name = name.ReplaceInsensitive("{Imdb}", pe.ImdbCode);
-                name = name.ReplaceInsensitive("{ShowImdb}", pe.Show?.TheSeries()?.Imdb ?? string.Empty);
+                name = name.ReplaceInsensitive("{ShowImdb}", pe.Show.TheSeries()?.Imdb ?? string.Empty);
 
                 name = ReplaceDates(urlEncode, name, pe.GetAirDateDt(false));
                 name = Regex.Replace(name, "{AllEpisodes}", AllEpsText(pe), RegexOptions.IgnoreCase);

@@ -32,7 +32,7 @@ namespace TVRename
         {
             try
             {
-                LOGGER.Debug($"   Summary of known actions after check: {Checkname()}");
+                LOGGER.Debug($"   Summary of known actions after check: {ActivityName()}");
                 LOGGER.Debug($"      Missing Items: {Doc.TheActionList.Missing.Count}");
                 LOGGER.Debug($"      Copy/Move Items: {Doc.TheActionList.CopyMoveRename.Count}");
                 LOGGER.Debug($"      Total Actions: {Doc.TheActionList.Actions.Count}");
@@ -43,6 +43,6 @@ namespace TVRename
             }
         }
 
-        protected abstract string Checkname();
+        protected abstract string ActivityName();
     }
 }

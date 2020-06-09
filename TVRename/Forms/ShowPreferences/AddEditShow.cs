@@ -31,9 +31,9 @@ namespace TVRename
     {
         private readonly ShowItem selectedShow;
         private readonly TheTvdbCodeFinder codeFinderForm;
-        private CustomNameTagsFloatingWindow cntfw;
-        private readonly ProcessedSeason sampleProcessedSeason;
-        private readonly ProcessedEpisode sampleEpisode;
+        private CustomNameTagsFloatingWindow? cntfw;
+        private readonly ProcessedSeason? sampleProcessedSeason;
+        private readonly ProcessedEpisode? sampleEpisode;
         private readonly bool addingNewShow;
         private readonly TVDoc mDoc;
 
@@ -46,9 +46,15 @@ namespace TVRename
             addingNewShow = si.TvdbCode == -1;
             InitializeComponent();
 
-            lblSeasonWordPreview.Text = TVSettings.Instance.SeasonFolderFormat + "-(" +
-                                        CustomSeasonName.NameFor(si.GetFirstAvailableSeason(),
-                                            TVSettings.Instance.SeasonFolderFormat) + ")";
+            if (sampleProcessedSeason != null)
+            {
+                lblSeasonWordPreview.Text = TVSettings.Instance.SeasonFolderFormat + "-(" +
+                                            CustomSeasonName.NameFor(sampleProcessedSeason,
+                                                TVSettings.Instance.SeasonFolderFormat) + ")";
+            }else
+            {
+                lblSeasonWordPreview.Text = TVSettings.Instance.SeasonFolderFormat;
+            }
 
             lblSeasonWordPreview.ForeColor = Color.DarkGray;
 
@@ -70,7 +76,7 @@ namespace TVRename
                 txtCustomShowName.Text = si.CustomShowName;
             }
 
-            chkCustomShowName_CheckedChanged(null, null);
+            UpdateCustomShowNameEnabled();
 
             SetupLanguages(si);
 
@@ -100,7 +106,7 @@ namespace TVRename
 
             SetManualFolders(si);
 
-            txtSeasonNumber_TextChanged(null, null);
+            CheckToEnableAddButton();
             txtFolder_TextChanged();
 
             ActiveControl = codeFinderForm; // set initial focus to the code entry/show finder control
@@ -123,8 +129,8 @@ namespace TVRename
             cbUseCustomSearch.Checked = si.UseCustomSearchUrl && !string.IsNullOrWhiteSpace(si.CustomSearchUrl);
             cbUseCustomNamingFormat.Checked = si.UseCustomNamingFormat && !string.IsNullOrWhiteSpace(si.CustomNamingFormat);
 
-            txtSearchURL.Text = si.CustomSearchUrl ?? string.Empty;
-            txtCustomEpisodeNamingFormat.Text = si.CustomNamingFormat ?? string.Empty;
+            txtSearchURL.Text = si.CustomSearchUrl;
+            txtCustomEpisodeNamingFormat.Text = si.CustomNamingFormat;
 
             EnableDisableCustomSearch();
             EnableDisableCustomNaming();
@@ -137,7 +143,7 @@ namespace TVRename
             if (chkCustomLanguage.Checked)
             {
                 Language languageFromCode =
-                    TheTVDB.LocalCache.Instance.LanguageList.GetLanguageFromCode(si.CustomLanguageCode);
+                    TheTVDB.LocalCache.Instance.LanguageList?.GetLanguageFromCode(si.CustomLanguageCode);
 
                 if (languageFromCode != null)
                 {
@@ -145,7 +151,7 @@ namespace TVRename
                 }
             }
 
-            chkCustomLanguage_CheckedChanged(null, null);
+            cbLanguage.Enabled = chkCustomLanguage.Checked;
         }
 
         private void SetTagListText()
@@ -245,7 +251,7 @@ namespace TVRename
         {
             cbTimeZone.BeginUpdate();
             cbTimeZone.Items.Clear();
-            foreach (string s in TimeZoneHelper.ZoneNames().Where(s => !(s is null)))
+            foreach (string s in TimeZoneHelper.ZoneNames())
             {
                 cbTimeZone.Items.Add(s);
             }
@@ -258,7 +264,7 @@ namespace TVRename
                 string pref = string.Empty;
                 cbLanguage.BeginUpdate();
                 cbLanguage.Items.Clear();
-                foreach (Language l in TheTVDB.LocalCache.Instance.LanguageList.Where(l => !(l.Name is null)))
+                foreach (Language l in TheTVDB.LocalCache.Instance.LanguageList)
                 {
                     cbLanguage.Items.Add(l.Name);
 
@@ -364,8 +370,8 @@ namespace TVRename
             selectedShow.UseCustomLanguage = chkCustomLanguage.Checked;
             if (selectedShow.UseCustomLanguage)
             {
-                selectedShow.CustomLanguageCode = TheTVDB.LocalCache.Instance.LanguageList
-                    .GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString())?.Abbreviation ??TVSettings.Instance.PreferredLanguageCode;
+                selectedShow.CustomLanguageCode = TheTVDB.LocalCache.Instance.LanguageList?.GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString())?.Abbreviation
+                                                  ??TVSettings.Instance.PreferredLanguageCode;
             }
             selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.DefaultTimeZone();
             selectedShow.ShowNextAirdate = chkShowNextAirdate.Checked;
@@ -484,7 +490,7 @@ namespace TVRename
             }
         }
 
-        private void cbDoMissingCheck_CheckedChanged(object sender, EventArgs e)
+        private void cbDoMissingCheck_CheckedChanged(object? sender, EventArgs? e)
         {
             cbIncludeNoAirdate.Enabled = cbDoMissingCheck.Checked;
             cbIncludeFuture.Enabled = cbDoMissingCheck.Checked;
@@ -561,6 +567,11 @@ namespace TVRename
 
         private void chkCustomShowName_CheckedChanged(object sender, EventArgs e)
         {
+            UpdateCustomShowNameEnabled();
+        }
+
+        private void UpdateCustomShowNameEnabled()
+        {
             txtCustomShowName.Enabled = chkCustomShowName.Checked;
         }
 
@@ -570,6 +581,11 @@ namespace TVRename
         }
 
         private void bnAddAlias_Click(object sender, EventArgs e)
+        {
+            AddAlias();
+        }
+
+        private void AddAlias()
         {
             string aliasName = tbShowAlias.Text;
 
@@ -582,6 +598,7 @@ namespace TVRename
             {
                 lbShowAlias.Items.Add(aliasName);
             }
+
             tbShowAlias.Text = string.Empty;
         }
 
@@ -600,7 +617,7 @@ namespace TVRename
         {
             if (e.KeyCode == Keys.Enter)
             {
-                bnAddAlias_Click(null, null);
+                AddAlias();
             }
         }
 
@@ -686,7 +703,10 @@ namespace TVRename
 
         private void txtSearchURL_TextChanged(object sender, EventArgs e)
         {
-            llCustomSearchPreview.Text = CustomEpisodeName.NameForNoExt(sampleEpisode, txtSearchURL.Text, true);
+            if (sampleEpisode != null)
+            {
+                llCustomSearchPreview.Text = CustomEpisodeName.NameForNoExt(sampleEpisode, txtSearchURL.Text, true);
+            }
         }
 
         private void llCustomSearchPreview_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -731,8 +751,13 @@ namespace TVRename
 
         private void TxtCustomEpisodeNamingFormat_TextChanged(object sender, EventArgs e)
         {
-            llCustomName.Text = CustomEpisodeName.NameForNoExt(sampleEpisode, txtCustomEpisodeNamingFormat.Text, false);
-            llLibraryDefaultFormat.Text = TVSettings.Instance.NamingStyle.NameFor(sampleEpisode);
+            if (sampleEpisode != null)
+            {
+                llCustomName.Text =
+                    CustomEpisodeName.NameForNoExt(sampleEpisode, txtCustomEpisodeNamingFormat.Text, false);
+
+                llLibraryDefaultFormat.Text = TVSettings.Instance.NamingStyle.NameFor(sampleEpisode);
+            }
         }
     }
 }

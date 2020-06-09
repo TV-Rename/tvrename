@@ -24,21 +24,22 @@ namespace TVRename
     /// </summary>
     public partial class RecoverXml : Form
     {
-        public FileInfo TvDbFile;
-        private FileInfo[] availableTvDbFiles;
+        public FileInfo? TvDbFile;
+        private readonly FileInfo[] availableTvDbFiles;
 
-        public FileInfo TvMazeFile;
-        private FileInfo[] availableTvMazeFiles;
+        public FileInfo? TvMazeFile;
+        private readonly FileInfo[] availableTvMazeFiles;
 
-        public FileInfo SettingsFile;
-        private FileInfo[] settingsList;
+        public FileInfo? SettingsFile;
+        private readonly FileInfo[] settingsList;
 
-        public RecoverXml([CanBeNull] string hint)
+        public RecoverXml(string? hint)
         {
             InitializeComponent();
-            SettingsFile = null;
-            TvDbFile = null;
-            TvMazeFile = null;
+            settingsList = PathManager.GetPossibleSettingsHistory();
+            availableTvDbFiles = PathManager.GetPossibleTvdbHistory();
+            availableTvMazeFiles = PathManager.GetPossibleTvMazeHistory();
+
             if (!string.IsNullOrEmpty(hint))
             {
                 lbHint.Text = hint + "\r\n ";
@@ -47,41 +48,22 @@ namespace TVRename
 
         private void RecoverXML_Load(object sender, System.EventArgs e)
         {
-            settingsList = PathManager.GetPossibleSettingsHistory();
-            availableTvDbFiles = PathManager.GetPossibleTvdbHistory();
-            availableTvMazeFiles = PathManager.GetPossibleTvMazeHistory();
+            Setup(lbSettings, "Default settings", settingsList);
+            Setup(lbTVDB, "No Cache", availableTvDbFiles);
+            Setup(lbTvMaze, "No Cache", availableTvMazeFiles);
+        }
 
-            lbSettings.Items.Add("Default settings");
-            if (settingsList != null && settingsList.Length > 0)
+        private static void Setup(ListBox lb, string defaultValue, IReadOnlyCollection<FileInfo> files)
+        {
+            lb.Items.Add(defaultValue);
+            if (files.Count > 0)
             {
-                foreach (FileInfo fi in settingsList)
+                foreach (FileInfo fi in files)
                 {
-                    lbSettings.Items.Add(fi.LastWriteTime.ToString("g"));
+                    lb.Items.Add(fi.LastWriteTime.ToString("g"));
                 }
 
-                lbSettings.SelectedIndex = 0;
-            }
-
-            lbTVDB.Items.Add("None");
-            if (availableTvDbFiles != null && availableTvDbFiles.Length > 0)
-            {
-                foreach (FileInfo fi in availableTvDbFiles)
-                {
-                    lbTVDB.Items.Add(fi.LastWriteTime.ToString("g"));
-                }
-
-                lbTVDB.SelectedIndex = 0;
-            }
-
-            lbTvMaze.Items.Add("None");
-            if (availableTvMazeFiles != null && availableTvMazeFiles.Length > 0)
-            {
-                foreach (FileInfo fi in availableTvMazeFiles)
-                {
-                    lbTvMaze.Items.Add(fi.LastWriteTime.ToString("g"));
-                }
-
-                lbTvMaze.SelectedIndex = 0;
+                lb.SelectedIndex = 0;
             }
         }
 
@@ -94,8 +76,7 @@ namespace TVRename
             Close();
         }
 
-        [CanBeNull]
-        private static FileInfo GetFile([NotNull] ListControl lb, IReadOnlyList<FileInfo> fileInfos)
+        private static FileInfo? GetFile([NotNull] ListControl lb, IReadOnlyList<FileInfo> fileInfos)
         {
             // we added a 'none' item at the top of the list, so adjust for that
             int n = lb.SelectedIndex;
@@ -113,3 +94,4 @@ namespace TVRename
         }
     }
 }
+

@@ -8,7 +8,7 @@ namespace TVRename
 
         public override DownloadType GetDownloadType() => DownloadType.downloadImage;
 
-        public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
+        public override ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file, bool forceRefresh)
         {
             if (!TVSettings.Instance.EpJPGs)
             {
@@ -17,19 +17,19 @@ namespace TVRename
 
             ItemList theActionList = new ItemList();
 
-            string ban = dbep.Filename;
+            string ban = episode.Filename;
             if (string.IsNullOrEmpty(ban))
             {
                 return null;
             }
 
-            string basefn = filo.RemoveExtension();
+            string basefn = file.RemoveExtension();
 
-            FileInfo imgjpg = FileHelper.FileInFolder(filo.Directory, basefn + DEFAULT_EXTENSION);
+            FileInfo imgjpg = FileHelper.FileInFolder(file.Directory, basefn + DEFAULT_EXTENSION);
 
             if (forceRefresh || !imgjpg.Exists)
             {
-                theActionList.Add(new ActionDownloadImage(dbep.Show, dbep, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8erImages));
+                theActionList.Add(new ActionDownloadImage(episode.Show, episode, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8erImages));
             }
 
             return theActionList;

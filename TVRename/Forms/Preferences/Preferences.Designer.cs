@@ -2615,7 +2615,7 @@ namespace TVRename
             this.cbWPL.TabIndex = 25;
             this.cbWPL.Text = "WPL";
             this.cbWPL.UseVisualStyleBackColor = true;
-            this.cbWPL.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            this.cbWPL.CheckedChanged += new System.EventHandler((sender, e) => this.EnableDisable());
             // 
             // bnBrowseASX
             // 
@@ -2646,7 +2646,7 @@ namespace TVRename
             this.cbASX.TabIndex = 22;
             this.cbASX.Text = "ASX";
             this.cbASX.UseVisualStyleBackColor = true;
-            this.cbASX.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            this.cbASX.CheckedChanged += new System.EventHandler((sender, e) => this.EnableDisable());
             // 
             // bnBrowseM3U
             // 
@@ -2677,7 +2677,7 @@ namespace TVRename
             this.cbM3U.TabIndex = 17;
             this.cbM3U.Text = "M3U/8";
             this.cbM3U.UseVisualStyleBackColor = true;
-            this.cbM3U.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            this.cbM3U.CheckedChanged += new System.EventHandler((sender, e) => this.EnableDisable());
             // 
             // bnBrowseXSPF
             // 
@@ -2708,7 +2708,7 @@ namespace TVRename
             this.cbXSPF.TabIndex = 0;
             this.cbXSPF.Text = "XSPF";
             this.cbXSPF.UseVisualStyleBackColor = true;
-            this.cbXSPF.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            this.cbXSPF.CheckedChanged += new System.EventHandler((sender, e) => this.EnableDisable());
             // 
             // groupBox7
             // 
@@ -2747,7 +2747,7 @@ namespace TVRename
             this.cbShowsHTML.TabIndex = 6;
             this.cbShowsHTML.Text = "HTML";
             this.cbShowsHTML.UseVisualStyleBackColor = true;
-            this.cbShowsHTML.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            this.cbShowsHTML.CheckedChanged += new System.EventHandler((sender, e) => this.EnableDisable());
             // 
             // txtShowsHTMLTo
             // 
@@ -2778,7 +2778,7 @@ namespace TVRename
             this.cbShowsTXT.TabIndex = 3;
             this.cbShowsTXT.Text = "TXT";
             this.cbShowsTXT.UseVisualStyleBackColor = true;
-            this.cbShowsTXT.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            this.cbShowsTXT.CheckedChanged += new System.EventHandler((sender, e) => this.EnableDisable());
             // 
             // txtShowsTXTTo
             // 
@@ -2823,7 +2823,7 @@ namespace TVRename
             this.cbFOXML.TabIndex = 0;
             this.cbFOXML.Text = "XML";
             this.cbFOXML.UseVisualStyleBackColor = true;
-            this.cbFOXML.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            this.cbFOXML.CheckedChanged += new System.EventHandler((sender, e) => this.EnableDisable());
             // 
             // txtFOXML
             // 
@@ -2868,7 +2868,7 @@ namespace TVRename
             this.cbRenamingXML.TabIndex = 0;
             this.cbRenamingXML.Text = "XML";
             this.cbRenamingXML.UseVisualStyleBackColor = true;
-            this.cbRenamingXML.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            this.cbRenamingXML.CheckedChanged += new System.EventHandler((sender, e) => this.EnableDisable());
             // 
             // txtRenamingXML
             // 
@@ -2936,7 +2936,7 @@ namespace TVRename
             this.cbMissingXML.TabIndex = 3;
             this.cbMissingXML.Text = "XML";
             this.cbMissingXML.UseVisualStyleBackColor = true;
-            this.cbMissingXML.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            this.cbMissingXML.CheckedChanged += new System.EventHandler((sender, e) => this.EnableDisable());
             // 
             // cbMissingCSV
             // 
@@ -2947,7 +2947,7 @@ namespace TVRename
             this.cbMissingCSV.TabIndex = 0;
             this.cbMissingCSV.Text = "CSV";
             this.cbMissingCSV.UseVisualStyleBackColor = true;
-            this.cbMissingCSV.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            this.cbMissingCSV.CheckedChanged += new System.EventHandler((sender, e) => this.EnableDisable());
             // 
             // txtMissingXML
             // 
@@ -3014,7 +3014,7 @@ namespace TVRename
             this.cbWTWICAL.TabIndex = 22;
             this.cbWTWICAL.Text = "iCal";
             this.cbWTWICAL.UseVisualStyleBackColor = true;
-            this.cbWTWICAL.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            this.cbWTWICAL.CheckedChanged += new System.EventHandler((sender, e) => this.EnableDisable());
             // 
             // label4
             // 
@@ -3061,7 +3061,7 @@ namespace TVRename
             this.cbWTWXML.TabIndex = 17;
             this.cbWTWXML.Text = "XML";
             this.cbWTWXML.UseVisualStyleBackColor = true;
-            this.cbWTWXML.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            this.cbWTWXML.CheckedChanged += new System.EventHandler((sender, e) => this.EnableDisable());
             // 
             // bnBrowseWTWRSS
             // 
@@ -3092,7 +3092,7 @@ namespace TVRename
             this.cbWTWRSS.TabIndex = 0;
             this.cbWTWRSS.Text = "RSS";
             this.cbWTWRSS.UseVisualStyleBackColor = true;
-            this.cbWTWRSS.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            this.cbWTWRSS.CheckedChanged += new System.EventHandler((sender, e) => this.EnableDisable());
             // 
             // label17
             // 

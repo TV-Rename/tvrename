@@ -185,8 +185,15 @@ namespace TVRename
 
             try
             {
-                string time = x.Attribute("time")?.Value;
-                cache.LatestUpdateTimeIs(time);
+                string? time = x.Attribute("time")?.Value;
+                if (time != null)
+                {
+                    cache.LatestUpdateTimeIs(time);
+                }
+                else
+                {
+                    Logger.Error("Could not obtain update time from XML");
+                }
 
                 foreach (SeriesInfo si in x.Descendants("Series").Select(seriesXml => new SeriesInfo(seriesXml)))
                 {

@@ -12,7 +12,7 @@ namespace TVRename
 
         public override DownloadType GetDownloadType() => DownloadType.downloadImage;
 
-        public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
+        public override ItemList? ProcessShow(ShowItem si, bool forceRefresh)
         {
             //We only want to do something if the fanart option is enabled. If the KODI option is enabled then let it do the work.
             if (TVSettings.Instance.FanArtJpg && !TVSettings.Instance.KODIImages)

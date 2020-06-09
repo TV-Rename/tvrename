@@ -163,7 +163,7 @@ namespace TVRename.Forms.Tools
                 mDoc.TheActionList.Add(new ActionCopyMoveRename(droppedFile, targetFile, episode,mDoc));
 
                 // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
-                mDoc.TheActionList.AddRange(new DownloadIdentifiersController().ProcessEpisode(episode, targetFile));
+                mDoc.TheActionList.AddNullableRange(new DownloadIdentifiersController().ProcessEpisode(episode, targetFile));
 
                 //If keep together is active then we may want to copy over related files too
                 if (TVSettings.Instance.KeepTogether)

@@ -18,7 +18,7 @@ namespace TVRename
         {
             mainForm = thefm;
             InitializeComponent();
-            timer1_Tick(null, null); // force immediate initial update
+            Tick(); // force immediate initial update
         }
 
         private void bnCancel_Click(object sender, System.EventArgs e)
@@ -29,18 +29,18 @@ namespace TVRename
 
         private void timer1_Tick(object sender, System.EventArgs e)
         {
-            if (mainForm is null)
-            {
-                return;
-            }
+            Tick();
+        }
 
+        private void Tick()
+        {
             timer1.Stop();
 
             BringToFront();
 
             pbProgress.Value = mainForm.FmpPercent;
             lbMessage.Text = mainForm.FmpUpto;
-            
+
             if (mainForm.TokenSource.IsCancellationRequested)
             {
                 Close();

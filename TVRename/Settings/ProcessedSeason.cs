@@ -117,7 +117,7 @@ namespace TVRename
                 .MaxOrDefault(airDateTime => airDateTime.Year,0);
         }
 
-        private bool HasEpisodes => Episodes != null && Episodes.Count > 0;
+        private bool HasEpisodes => Episodes.Count > 0;
 
         public int SeasonIndex => Show.GetSeasonIndex(SeasonNumber);
 
@@ -205,11 +205,9 @@ namespace TVRename
             return returnValue;
         }
 
-        [CanBeNull]
-        public string GetBannerPath() => Show.TheSeries()?.GetSeasonBannerPath(SeasonNumber);
+        public string? GetBannerPath() => Show.TheSeries()?.GetSeasonBannerPath(SeasonNumber);
 
-        [CanBeNull]
-        public string GetWideBannerPath() => Show.TheSeries()?.GetSeasonWideBannerPath(SeasonNumber);
+        public string? GetWideBannerPath() => Show.TheSeries()?.GetSeasonWideBannerPath(SeasonNumber);
 
         public void AddUpdateEpisode([NotNull] Episode newEpisode)
         {
@@ -235,8 +233,7 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public string TVDBWebsiteUrl => TheTVDB.API.WebsiteSeasonUrl(this);
 
-        [CanBeNull]
-        public string WebsiteUrl
+        public string? WebsiteUrl
         {
             get
             {

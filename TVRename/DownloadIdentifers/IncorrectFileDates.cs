@@ -15,11 +15,12 @@ namespace TVRename
     internal sealed class IncorrectFileDates : DownloadIdentifier
     {
         private List<string> doneFilesAndFolders;
+        // ReSharper disable once NotNullMemberIsNotInitialized
         public IncorrectFileDates() => Reset();
 
         public override DownloadType GetDownloadType() => DownloadType.downloadMetaData;
 
-        public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
+        public override ItemList? ProcessShow(ShowItem si, bool forceRefresh)
         {
             DateTime? updateTime = si.LastAiredDate;
             if (!TVSettings.Instance.CorrectFileDates || !updateTime.HasValue)
@@ -35,20 +36,21 @@ namespace TVRename
                 if (di.LastWriteTimeUtc != newUpdateTime && !doneFilesAndFolders.Contains(di.FullName))
                 {
                     doneFilesAndFolders.Add(di.FullName);
-                    return new ItemList {new ActionDateTouch(di, si, newUpdateTime)};
+                    return new ItemList {new ActionDateTouchShow(di, si, newUpdateTime)};
                 }
             }
             catch (Exception)
             {
                 doneFilesAndFolders.Add(di.FullName);
-                return new ItemList { new ActionDateTouch(di, si, newUpdateTime) };
+                return new ItemList { new ActionDateTouchShow(di, si, newUpdateTime) };
             }
             return null;
         }
 
-        public override ItemList ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
+        public override ItemList? ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
         {
-            DateTime? updateTime = si.GetSeason(snum)?.LastAiredDate();
+            ProcessedSeason processedSeason = si.GetSeason(snum) ?? throw new ArgumentException("ProcessSeason called for invlaid season");
+            DateTime? updateTime = processedSeason.LastAiredDate();
 
             if (!TVSettings.Instance.CorrectFileDates || !updateTime.HasValue)
             {
@@ -63,39 +65,39 @@ namespace TVRename
                 if (di.LastWriteTimeUtc != newUpdateTime && !doneFilesAndFolders.Contains(di.FullName))
                 {
                     doneFilesAndFolders.Add(di.FullName);
-                    return new ItemList {new ActionDateTouch(di, si, newUpdateTime)};
+                    return new ItemList {new ActionDateTouchSeason(di, processedSeason, newUpdateTime)};
                 }
             }
             catch (Exception)
             {
                 doneFilesAndFolders.Add(di.FullName);
-                return new ItemList { new ActionDateTouch(di, si, newUpdateTime) };
+                return new ItemList { new ActionDateTouchSeason(di, processedSeason, newUpdateTime) };
             }
 
             return null;
         }
 
-        public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
+        public override ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file, bool forceRefresh)
         {
-            if (!TVSettings.Instance.CorrectFileDates || !dbep.FirstAired.HasValue)
+            if (!TVSettings.Instance.CorrectFileDates || !episode.FirstAired.HasValue)
             {
                 return null;
             }
 
-            DateTime newUpdateTime = Helpers.GetMinWindowsTime(dbep.FirstAired.Value);
+            DateTime newUpdateTime = Helpers.GetMinWindowsTime(episode.FirstAired.Value);
 
             try
             {
-                if (filo.LastWriteTimeUtc != newUpdateTime && !doneFilesAndFolders.Contains(filo.FullName))
+                if (file.LastWriteTimeUtc != newUpdateTime && !doneFilesAndFolders.Contains(file.FullName))
                 {
-                    doneFilesAndFolders.Add(filo.FullName);
-                    return new ItemList { new ActionDateTouch(filo, dbep, newUpdateTime) };
+                    doneFilesAndFolders.Add(file.FullName);
+                    return new ItemList { new ActionDateTouchEpisode(file, episode, newUpdateTime) };
                 }
             }
             catch (Exception)
             {
-                doneFilesAndFolders.Add(filo.FullName);
-                return new ItemList { new ActionDateTouch(filo, dbep, newUpdateTime) };
+                doneFilesAndFolders.Add(file.FullName);
+                return new ItemList { new ActionDateTouchEpisode(file, episode, newUpdateTime) };
             }
             return null;
         }

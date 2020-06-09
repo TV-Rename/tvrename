@@ -42,6 +42,7 @@ namespace TVRename
             BuildData();
             DoSort();
             Cursor.Current = Cursors.Default;
+            theData = new DataArr(mDoc.Library.Count);
         }
 
         private void BuildData()
@@ -52,10 +53,10 @@ namespace TVRename
                 theData = new DataArr(mDoc.Library.Count);
                 foreach (ShowItem ser in mDoc.Library.Shows)
                 {
-                    SeriesInfo si = ser.TheSeries();
+                    SeriesInfo? si = ser.TheSeries();
                     foreach (string aa in ser.Actors.Select(act => act.ActorName.Trim()).Where(aa => !string.IsNullOrEmpty(aa)))
                     {
-                        theData.Set(si?.Name, aa, true);
+                        theData.Set(ser.ShowName, aa, true);
                     }
 
                     if (cbGuestStars.Checked && si != null)
@@ -64,7 +65,7 @@ namespace TVRename
                         {
                             foreach (string g in ep.GuestStars)
                             {
-                                theData.Set(si.Name, g.Trim(), false);
+                                theData.Set(ser.ShowName, g.Trim(), false);
                             }
                         }
                     }
@@ -435,7 +436,7 @@ namespace TVRename
                 Rows[r2] = t2;
             }
 
-            public int RowScore(int r, [CanBeNull] IReadOnlyList<bool> onlyCols)
+            public int RowScore(int r, IReadOnlyList<bool>? onlyCols)
             {
                 int t = 0;
                 for (int c = 0; c < DataC; c++)
@@ -770,9 +771,9 @@ namespace TVRename
         private class SideClickEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
             private readonly ActorsGrid g;
-            private readonly string show;
+            private readonly string? show;
 
-            public SideClickEvent(ActorsGrid g, string show)
+            public SideClickEvent(ActorsGrid g, string? show)
             {
                 this.show = show;
                 this.g = g;

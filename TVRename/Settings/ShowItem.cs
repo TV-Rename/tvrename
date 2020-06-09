@@ -36,12 +36,12 @@ namespace TVRename
         public bool DoRename;
         public bool ForceCheckFuture;
         public bool ForceCheckNoAirdate;
-        public List<int> IgnoreSeasons;
-        public Dictionary<int, List<string>> ManualFolderLocations;
-        public Dictionary<int, List<ProcessedEpisode>> SeasonEpisodes; // built up by applying rules.
-        private Dictionary<int, ProcessedSeason> airedSeasons;
-        private Dictionary<int, ProcessedSeason> dvdSeasons;
-        public Dictionary<int, List<ShowRule>> SeasonRules;
+        public readonly List<int> IgnoreSeasons;
+        public readonly Dictionary<int, List<string>> ManualFolderLocations;
+        public readonly Dictionary<int, List<ProcessedEpisode>> SeasonEpisodes; // built up by applying rules.
+        private readonly Dictionary<int, ProcessedSeason> airedSeasons;
+        private readonly Dictionary<int, ProcessedSeason> dvdSeasons;
+        public readonly Dictionary<int, List<ShowRule>> SeasonRules;
         public bool ShowNextAirdate;
         public int TvdbCode;
         // ReSharper disable once InconsistentNaming
@@ -49,7 +49,7 @@ namespace TVRename
         public bool UseCustomShowName;
         public string CustomShowName;
         public bool UseCustomLanguage;
-        public string CustomLanguageCode;
+        public string? CustomLanguageCode;
         public bool UseSequentialMatch;
         public bool UseEpNameMatch;
         public bool UseAirDateMatch;
@@ -62,7 +62,7 @@ namespace TVRename
         protected internal ProviderType ConfigurationProvider;
 
         public string ShowTimeZone { get; internal set; }
-        private DateTimeZone seriesTimeZone;
+        private DateTimeZone? seriesTimeZone;
         private string lastFiguredTz;
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -83,12 +83,54 @@ namespace TVRename
 
         public ShowItem()
         {
-            SetDefaults();
+            ManualFolderLocations = new Dictionary<int, List<string>>();
+            SeasonRules = new Dictionary<int, List<ShowRule>>();
+            SeasonEpisodes = new Dictionary<int, List<ProcessedEpisode>>();
+            airedSeasons = new Dictionary<int, ProcessedSeason>();
+            dvdSeasons = new Dictionary<int, ProcessedSeason>();
+            IgnoreSeasons = new List<int>();
+
+            UseCustomShowName = false;
+            CustomShowName = string.Empty;
+            UseCustomLanguage = false;
+            TvdbCode = -1;
+            TVmazeCode = -1;
+            UseCustomSearchUrl = false;
+            CustomSearchUrl = string.Empty;
+            UseCustomNamingFormat = false;
+            CustomNamingFormat = string.Empty;
+            ManualFoldersReplaceAutomatic = false;
+            BannersLastUpdatedOnDisk = null; //assume that the banners are old and have expired
+            ShowTimeZone = TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.DefaultTimeZone(); // default, is correct for most shows
+            lastFiguredTz = string.Empty;
+
+            UseSequentialMatch = TVSettings.Instance.DefShowSequentialMatching;
+            UseAirDateMatch = TVSettings.Instance.DefShowAirDateMatching;
+            UseEpNameMatch = TVSettings.Instance.DefShowEpNameMatching;
+            ShowNextAirdate = TVSettings.Instance.DefShowNextAirdate;
+            DoRename = TVSettings.Instance.DefShowDoRenaming;
+            DoMissingCheck = TVSettings.Instance.DefShowDoMissingCheck;
+            CountSpecials = TVSettings.Instance.DefShowSpecialsCount;
+            DvdOrder = TVSettings.Instance.DefShowDVDOrder;
+            ForceCheckNoAirdate = TVSettings.Instance.DefShowIncludeNoAirdate;
+            ForceCheckFuture = TVSettings.Instance.DefShowIncludeFuture;
+
+            AutoAddCustomFolderFormat = CustomSeasonName.DefaultStyle();
+
+            AutoAddFolderBase =
+                  !TVSettings.Instance.DefShowAutoFolders ? string.Empty
+                : !TVSettings.Instance.DefShowUseDefLocation ? string.Empty
+                : TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator() + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(ShowName));
+
+            AutoAddType =
+                !TVSettings.Instance.DefShowAutoFolders ? AutomaticFolderType.none
+                : TVSettings.Instance.DefShowUseBase ? AutomaticFolderType.baseOnly
+                : AutomaticFolderType.libraryDefault;
+
         }
 
-        public ShowItem(int code, ProviderType type)
+        public ShowItem(int code, ProviderType type):this()
         {
-            SetDefaults();
             switch (type)
             {
                 case ProviderType.TVmaze:
@@ -214,7 +256,7 @@ namespace TVRename
             }
         }
 
-        private void FigureOutTimeZone()
+        private DateTimeZone FigureOutTimeZone()
         {
             string tzstr = ShowTimeZone;
 
@@ -225,7 +267,7 @@ namespace TVRename
 
             try
             {
-                seriesTimeZone = DateTimeZoneProviders.Tzdb[tzstr];
+                return DateTimeZoneProviders.Tzdb[tzstr];
             }
             catch (Exception ex)
             {
@@ -234,7 +276,8 @@ namespace TVRename
                 {
                     tzstr = TZConvert.WindowsToIana(tzstr);
                     ShowTimeZone = tzstr;
-                    seriesTimeZone = DateTimeZoneProviders.Tzdb[tzstr];
+                    lastFiguredTz = tzstr;
+                    return DateTimeZoneProviders.Tzdb[tzstr];
                 }
                 catch (Exception ex2)
                 {
@@ -245,35 +288,34 @@ namespace TVRename
                     {
                         tzstr = TimeZoneHelper.DefaultTimeZone();
                         ShowTimeZone = tzstr;
-                        seriesTimeZone = DateTimeZoneProviders.Tzdb[tzstr];
+                        lastFiguredTz = tzstr;
+                        return DateTimeZoneProviders.Tzdb[tzstr];
                     }
                     catch (Exception ex3)
                     {
                         Logger.Warn(ex3,
                             $"Could not work out what timezone '{ShowName}' has. In the settings it uses '{tzstr}', but that is not valid. Tried to use the default timezone {TimeZoneHelper.DefaultTimeZone()} for the show instead - also invalid.  Please update.");
 
-                        seriesTimeZone = DateTimeZoneProviders.Tzdb.GetSystemDefault();
-                        ShowTimeZone = seriesTimeZone.Id;
+                        
+                        ShowTimeZone = DateTimeZoneProviders.Tzdb.GetSystemDefault().Id;
+                        lastFiguredTz = tzstr;
+                        return DateTimeZoneProviders.Tzdb.GetSystemDefault();
                     }
                 }
             }
-
-            lastFiguredTz = tzstr;
         }
 
         public DateTimeZone GetTimeZone()
         {
             if (seriesTimeZone is null || lastFiguredTz != ShowTimeZone)
             {
-                FigureOutTimeZone();
+                seriesTimeZone = FigureOutTimeZone();
             }
             return seriesTimeZone;
         }
 
-        public ShowItem([NotNull] XElement xmlSettings)
+        public ShowItem([NotNull] XElement xmlSettings):this()
         {
-            SetDefaults();
-
             CustomShowName = xmlSettings.ExtractString("ShowName");
             UseCustomShowName = xmlSettings.ExtractBool("UseCustomShowName",false);
             UseCustomLanguage = xmlSettings.ExtractBool("UseCustomLanguage",false);
@@ -291,10 +333,10 @@ namespace TVRename
             CustomSearchUrl = xmlSettings.ExtractString("CustomSearchURL");
             UseCustomNamingFormat = xmlSettings.ExtractBool("UseCustomNamingFormat", false);
             CustomNamingFormat = xmlSettings.ExtractString("CustomNamingFormat");
-            ShowTimeZone = xmlSettings.ExtractString("TimeZone") ?? TimeZoneHelper.DefaultTimeZone(); // default, is correct for most shows
+            ShowTimeZone = xmlSettings.ExtractStringOrNull("TimeZone") ?? TimeZoneHelper.DefaultTimeZone(); // default, is correct for most shows
             ForceCheckFuture = xmlSettings.ExtractBoolBackupDefault("ForceCheckFuture","ForceCheckAll",false);
             ForceCheckNoAirdate = xmlSettings.ExtractBoolBackupDefault("ForceCheckNoAirdate","ForceCheckAll",false);
-            AutoAddCustomFolderFormat = xmlSettings.ExtractString("CustomFolderFormat") ?? CustomSeasonName.DefaultStyle();
+            AutoAddCustomFolderFormat = xmlSettings.ExtractStringOrNull("CustomFolderFormat") ?? CustomSeasonName.DefaultStyle();
             AutoAddType = GetAutoAddType(xmlSettings.ExtractInt("AutoAddType"));
             ConfigurationProvider = GetConfigurationProviderType(xmlSettings.ExtractInt("ConfigurationProvider"));
 
@@ -418,11 +460,9 @@ namespace TVRename
 
         internal bool UsesManualFolders() => ManualFolderLocations.Count > 0;
 
-        [NotNull]
         private iTVSource LocalCache => Provider==ProviderType.TVmaze ? (iTVSource)TVmaze.LocalCache.Instance : TheTVDB.LocalCache.Instance;
 
-        [CanBeNull]
-        public SeriesInfo TheSeries() => Code >0?LocalCache.GetSeries(Code):null;
+        public SeriesInfo? TheSeries() => Code >0?LocalCache.GetSeries(Code):null;
 
         private int Code => Provider == ProviderType.TVmaze ? TVmazeCode:TvdbCode;
 
@@ -438,7 +478,7 @@ namespace TVRename
                 SeriesInfo ser = TheSeries();
                 if (ser?.Name.HasValue()??false)
                 {
-                    return ser.Name;
+                    return ser.Name!;
                 }
 
                 return "<" + TvdbCode + " not downloaded>";
@@ -464,7 +504,7 @@ namespace TVRename
             possibles.AddNullableRange(AliasNames.Select(Helpers.SimplifyName));
 
             //Also use the aliases from theTVDB
-            possibles.AddNullableRange(TheSeries()?.Aliases()?.Select(Helpers.SimplifyName));
+            possibles.AddNullableRange(TheSeries()?.Aliases().Select(Helpers.SimplifyName));
 
             return possibles;
         }
@@ -602,8 +642,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<Actor> Actors => TheSeries()?.GetActors() ?? new List<Actor>();
 
-        [CanBeNull]
-        public Language  PreferredLanguage => UseCustomLanguage ? LocalCache.GetLanguageFromCode(CustomLanguageCode) : LocalCache.PreferredLanguage;
+        public Language? PreferredLanguage => UseCustomLanguage ? LocalCache.GetLanguageFromCode(CustomLanguageCode) : LocalCache.PreferredLanguage;
 
         [NotNull]
         public IEnumerable<KeyValuePair<int, List<ProcessedEpisode>>> ActiveSeasons
@@ -626,8 +665,7 @@ namespace TVRename
             TheTVDB
         }
 
-        [CanBeNull]
-        public string WebsiteUrl
+        public string? WebsiteUrl
         {
             get
             {
@@ -655,61 +693,13 @@ namespace TVRename
             }
         }
 
-        private void SetDefaults()
-        {
-            ManualFolderLocations = new Dictionary<int, List<string>>();
-            SeasonRules = new Dictionary<int, List<ShowRule>>();
-            SeasonEpisodes = new Dictionary<int, List<ProcessedEpisode>>();
-            airedSeasons = new Dictionary<int, ProcessedSeason>();
-            dvdSeasons = new Dictionary<int, ProcessedSeason>();
-            IgnoreSeasons = new List<int>();
-
-            UseCustomShowName = false;
-            CustomShowName = string.Empty;
-            UseCustomLanguage = false;
-            TvdbCode = -1;
-            TVmazeCode = -1;
-            UseCustomSearchUrl = false;
-            CustomSearchUrl = string.Empty;
-            UseCustomNamingFormat = false;
-            CustomNamingFormat = string.Empty;
-            ManualFoldersReplaceAutomatic = false;
-            BannersLastUpdatedOnDisk = null; //assume that the banners are old and have expired
-            ShowTimeZone = TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.DefaultTimeZone(); // default, is correct for most shows
-            lastFiguredTz = string.Empty;
-
-            UseSequentialMatch = TVSettings.Instance.DefShowSequentialMatching;
-            UseAirDateMatch = TVSettings.Instance.DefShowAirDateMatching;
-            UseEpNameMatch = TVSettings.Instance.DefShowEpNameMatching;
-            ShowNextAirdate = TVSettings.Instance.DefShowNextAirdate;
-            DoRename = TVSettings.Instance.DefShowDoRenaming;
-            DoMissingCheck = TVSettings.Instance.DefShowDoMissingCheck;
-            CountSpecials = TVSettings.Instance.DefShowSpecialsCount;
-            DvdOrder = TVSettings.Instance.DefShowDVDOrder;
-            ForceCheckNoAirdate = TVSettings.Instance.DefShowIncludeNoAirdate;
-            ForceCheckFuture = TVSettings.Instance.DefShowIncludeFuture;
-
-            AutoAddCustomFolderFormat = CustomSeasonName.DefaultStyle();
-
-            AutoAddFolderBase =
-                  !TVSettings.Instance.DefShowAutoFolders ? string.Empty
-                : !TVSettings.Instance.DefShowUseDefLocation ?string.Empty
-                :  TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator() + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(ShowName)); 
-
-            AutoAddType =
-                !TVSettings.Instance.DefShowAutoFolders ? AutomaticFolderType.none
-                :TVSettings.Instance.DefShowUseBase ? AutomaticFolderType.baseOnly
-                :AutomaticFolderType.libraryDefault;
-        }
-
-        [CanBeNull]
-        public List<ShowRule> RulesForSeason(int n)
+        public List<ShowRule>? RulesForSeason(int n)
         {
             return SeasonRules.ContainsKey(n) ? SeasonRules[n] : null;
         }
 
         [NotNull]
-        private string AutoFolderNameForSeason(ProcessedSeason s)
+        private string AutoFolderNameForSeason(ProcessedSeason? s)
         {
             string r = AutoAddFolderBase;
             if (string.IsNullOrEmpty(r))
@@ -947,8 +937,7 @@ namespace TVRename
             return string.Compare(ones, twos, StringComparison.Ordinal);
         }
 
-        [CanBeNull]
-        public ProcessedSeason GetSeason(int snum)
+        public ProcessedSeason? GetSeason(int snum)
         {
             Dictionary<int, ProcessedSeason> ssn = AppropriateSeasons();
             return ssn.ContainsKey(snum) ? ssn[snum] : null;
@@ -966,31 +955,14 @@ namespace TVRename
 
         public Dictionary<int, ProcessedSeason> AppropriateSeasons() => DvdOrder ? dvdSeasons : airedSeasons;
 
-        public ProcessedSeason GetFirstAvailableSeason()
+        public ProcessedSeason? GetFirstAvailableSeason()
         {
-            foreach (KeyValuePair<int, ProcessedSeason> x in AppropriateSeasons())
-            {
-                return x.Value;
-            }
-
-            return null;
+            return AppropriateSeasons().Select(x => x.Value).FirstOrDefault();
         }
 
-        [CanBeNull]
-        public ProcessedEpisode GetFirstAvailableEpisode()
+        public ProcessedEpisode? GetFirstAvailableEpisode()
         {
-            foreach (List<ProcessedEpisode> season in SeasonEpisodes.Values)
-            {
-                foreach (ProcessedEpisode pe in season)
-                {
-                    if (!(pe is null))
-                    {
-                        return pe;
-                    }
-                }
-            }
-
-            return null;
+            return SeasonEpisodes.Values.SelectMany(season => season).FirstOrDefault();
         }
 
         public bool InOneFolder() => AutoAddType == AutomaticFolderType.baseOnly;
@@ -1051,19 +1023,15 @@ namespace TVRename
         {
             List<Episode> returnValue = new List<Episode>();
             Dictionary<int, ProcessedSeason> seasonsToUse = AppropriateSeasons();
-            if (seasonsToUse is null)
-            {
-                return returnValue;
-            }
 
             foreach (KeyValuePair<int, ProcessedSeason> kvp in seasonsToUse)
             {
-                if (kvp.Value?.Episodes?.Values is null)
+                if (kvp.Value?.Episodes.Values is null)
                 {
                     continue;
                 }
 
-                if (!(IgnoreSeasons is null) && IgnoreSeasons.Contains(kvp.Value.SeasonNumber))
+                if (IgnoreSeasons.Contains(kvp.Value.SeasonNumber))
                 {
                     continue;
                 }

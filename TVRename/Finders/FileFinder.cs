@@ -41,7 +41,7 @@ namespace TVRename
                 }
 
                 //do any of the possible names for the series match the filename?
-                matched = me.Episode.Show.NameMatch(dce, useFullPath);
+                matched = me.MissingEpisode.Show.NameMatch(dce, useFullPath);
 
                 if (!matched)
                 {
@@ -74,7 +74,7 @@ namespace TVRename
                         !TVSettings.Instance.DownloadFolders.Any(folder =>
                             folder.SameDirectoryLocation(fi.Directory.FullName));
 
-                    addTo.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.copy, dce, fi, me.Episode, doTidyup,
+                    addTo.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.copy, dce, fi, me.MissingEpisode, doTidyup,
                         me,MDoc));
                 }
 
@@ -97,11 +97,11 @@ namespace TVRename
 
         private static (bool  identifysuccess, int foundSeason, int foundEpisode,  int maxEp) IdentifyFile([NotNull] ItemMissing me, [NotNull] FileInfo dce)
         {
-            int season = me.Episode.AppropriateSeasonNumber;
-            int epnum = me.Episode.AppropriateEpNum;
+            int season = me.MissingEpisode.AppropriateSeasonNumber;
+            int epnum = me.MissingEpisode.AppropriateEpNum;
 
             bool regularMatch =
-                FinderHelper.FindSeasEp(dce, out int foundSeason, out int foundEpisode, out int maxEp, me.Episode.Show) &&
+                FinderHelper.FindSeasEp(dce, out int foundSeason, out int foundEpisode, out int maxEp, me.MissingEpisode.Show) &&
                 foundSeason == season &&
                 foundEpisode == epnum;
 
@@ -110,17 +110,17 @@ namespace TVRename
                 return (true, foundSeason, foundEpisode,  maxEp);
             }
 
-            if (me.Episode.Show.UseSequentialMatch)
+            if (me.MissingEpisode.Show.UseSequentialMatch)
             {
-                if (FinderHelper.MatchesSequentialNumber(dce.RemoveExtension(false), me.Episode))
+                if (FinderHelper.MatchesSequentialNumber(dce.RemoveExtension(false), me.MissingEpisode))
                 {
-                    return (true, season, epnum, me.Episode.EpNum2);
+                    return (true, season, epnum, me.MissingEpisode.EpNum2);
                 }
             }
 
-            if (me.Episode.Show.UseAirDateMatch)
+            if (me.MissingEpisode.Show.UseAirDateMatch)
             {
-                if (FinderHelper.FindSeasEpDateCheck(dce.Name, out foundSeason, out foundEpisode, me.Episode.Show))
+                if (FinderHelper.FindSeasEpDateCheck(dce.Name, out foundSeason, out foundEpisode, me.MissingEpisode.Show))
                 {
                     if (foundEpisode == epnum && foundSeason == season)
                     {
@@ -129,9 +129,9 @@ namespace TVRename
                 }
             }
  
-            if (me.Episode.Show.UseEpNameMatch)
+            if (me.MissingEpisode.Show.UseEpNameMatch)
             {
-                if (FinderHelper.FindSeasEpNameCheck(dce, me.Episode.Show, out foundSeason, out foundEpisode))
+                if (FinderHelper.FindSeasEpNameCheck(dce, me.MissingEpisode.Show, out foundSeason, out foundEpisode))
                 {
                     if (foundEpisode == epnum && foundSeason == season)
                     {
@@ -145,8 +145,8 @@ namespace TVRename
 
         private void WarnPathTooLong([NotNull] ItemMissing me, [NotNull] FileInfo dce, [NotNull] Exception e, bool matched)
         {
-            int season = me.Episode.AppropriateSeasonNumber;
-            int epnum = me.Episode.AppropriateEpNum;
+            int season = me.MissingEpisode.AppropriateSeasonNumber;
+            int epnum = me.MissingEpisode.AppropriateEpNum;
 
             string t = "Path too long. " + dce.FullName + ", " + e.Message;
             LOGGER.Error(e, "Path too long. " + dce.FullName);
@@ -161,7 +161,7 @@ namespace TVRename
             t += matched ? ", matched.  " : ", no match.  ";
             if (matched)
             {
-                t += "Show: " + me.Episode.TheSeries.Name + ", Season " + season + ", Ep " + epnum + ".  ";
+                t += "Show: " + me.MissingEpisode.TheSeries.Name + ", Season " + season + ", Ep " + epnum + ".  ";
                 t += "To: " + me.TheFileNoExt;
             }
 
@@ -171,10 +171,6 @@ namespace TVRename
         [NotNull]
         private static ItemMissing UpdateMissingItem([NotNull] ItemMissing me, [NotNull] FileInfo dce, int epF, int maxEp, int seasF)
         {
-            if (me.Episode.Show is null)
-            {
-                return me;
-            }
             ShowRule sr = new ShowRule
             {
                 DoWhatNow = RuleAction.kMerge,
@@ -182,20 +178,20 @@ namespace TVRename
                 Second = maxEp
             };
 
-            me.Episode.Show?.AddSeasonRule(seasF, sr);
+            me.MissingEpisode.Show.AddSeasonRule(seasF, sr);
 
             LOGGER.Info(
-                $"Looking at {me.Episode.Show.ShowName} and have identified that episode {epF} and {maxEp} of season {seasF} have been merged into one file {dce.FullName}");
+                $"Looking at {me.MissingEpisode.Show.ShowName} and have identified that episode {epF} and {maxEp} of season {seasF} have been merged into one file {dce.FullName}");
 
             LOGGER.Info($"Added new rule automatically for {sr}");
 
             //Regenerate the episodes with the new rule added
-            ShowLibrary.GenerateEpisodeDict(me.Episode.Show);
+            ShowLibrary.GenerateEpisodeDict(me.MissingEpisode.Show);
 
             //Get the newly created processed episode we are after
             // ReSharper disable once InconsistentNaming
-            ProcessedEpisode newPE = me.Episode;
-            foreach (ProcessedEpisode pe in me.Episode.Show.SeasonEpisodes[seasF])
+            ProcessedEpisode newPE = me.MissingEpisode;
+            foreach (ProcessedEpisode pe in me.MissingEpisode.Show.SeasonEpisodes[seasF])
             {
                 if (pe.AppropriateEpNum == epF && pe.EpNum2 == maxEp)
                 {
@@ -263,7 +259,7 @@ namespace TVRename
                     string newName = GetFilename(fi.Name, basename, toname);
 
                     ActionCopyMoveRename newitem = new ActionCopyMoveRename(action.Operation, fi,
-                        FileHelper.FileInFolder(action.To.Directory, newName), action.Episode, false,
+                        FileHelper.FileInFolder(action.To.Directory, newName), action.SourceEpisode, false,
                         null,d); // tidy up on main action, not this
 
                     // check this item isn't already in our to-do list
@@ -373,9 +369,9 @@ namespace TVRename
             }
         }
 
-        private static bool AlreadyHaveAction([NotNull] ItemList actionlist, Item action)
+        private static bool AlreadyHaveAction([NotNull] ItemList actionList, Item action)
         {
-            foreach (Item action2 in actionlist)
+            foreach (Item action2 in actionList)
             {
                 if (action2.SameAs(action))
                 {
@@ -391,9 +387,9 @@ namespace TVRename
             return false;
         }
 
-        private static bool ActionListContains([NotNull] ItemList actionlist, ActionCopyMoveRename newitem)
+        private static bool ActionListContains([NotNull] ItemList actionlist, ActionCopyMoveRename newItem)
         {
-            return actionlist.CopyMoveRename.Any(cmAction => cmAction.SameSource(newitem));
+            return actionlist.CopyMoveRename.Any(cmAction => cmAction.SameSource(newItem));
         }
 
         protected void ProcessMissingItem(TVDoc.ScanSettings settings, ItemList newList, ItemList toRemove, ItemMissing me, ItemList thisRound, [NotNull] List<FileInfo> matchedFiles,bool useFullPath)
@@ -402,23 +398,23 @@ namespace TVRename
             {
                 if (!OtherActionsMatch(matchedFiles[0], me, settings,useFullPath))
                 {
-                    if (!FinderHelper.BetterShowsMatch(matchedFiles[0], me.Episode.Show,useFullPath,MDoc))
+                    if (!FinderHelper.BetterShowsMatch(matchedFiles[0], me.MissingEpisode.Show,useFullPath,MDoc))
                     {
                         toRemove.Add(me);
                         newList.AddRange(thisRound);
                     }
                     else
                     {
-                        LOGGER.Warn($"Ignoring potential match for {me.Episode.Show.ShowName} S{me.Episode.AppropriateSeasonNumber} E{me.Episode.AppropriateEpNum}: with file {matchedFiles[0]?.FullName} as there are multiple shows that match for that file");
+                        LOGGER.Warn($"Ignoring potential match for {me.MissingEpisode.Show.ShowName} {me.MissingEpisode}: with file {matchedFiles[0].FullName} as there are multiple shows that match for that file");
                         me.AddComment(
-                            $"Ignoring potential match with file {matchedFiles[0]?.FullName} as there are multiple shows for that file");
+                            $"Ignoring potential match with file {matchedFiles[0].FullName} as there are multiple shows for that file");
                     }
                 }
                 else
                 {
-                    LOGGER.Warn($"Ignoring potential match for {me.Episode.Show.ShowName} S{me.Episode.AppropriateSeasonNumber} E{me.Episode.AppropriateEpNum}: with file {matchedFiles[0]?.FullName} as there are multiple actions for that file");
+                    LOGGER.Warn($"Ignoring potential match for {me.MissingEpisode.Show.ShowName} {me.MissingEpisode}: with file {matchedFiles[0].FullName} as there are multiple actions for that file");
                     me.AddComment(
-                        $"Ignoring potential match with file {matchedFiles[0]?.FullName} as there are multiple actions for that file");
+                        $"Ignoring potential match with file {matchedFiles[0].FullName} as there are multiple actions for that file");
                 }
             }
 
@@ -437,10 +433,10 @@ namespace TVRename
                     foreach (FileInfo matchedFile in matchedFiles)
                     {
                         LOGGER.Warn(
-                            $"Ignoring potential match for {me.Episode.Show.ShowName} S{me.Episode.AppropriateSeasonNumber} E{me.Episode.AppropriateEpNum}: with file {matchedFile?.FullName} as there are multiple files for that action");
+                            $"Ignoring potential match for {me.MissingEpisode.Show.ShowName} {me.MissingEpisode}: with file {matchedFile.FullName} as there are multiple files for that action");
 
                         me.AddComment(
-                            $"Ignoring potential match with file {matchedFile?.FullName} as there are multiple files for that action");
+                            $"Ignoring potential match with file {matchedFile.FullName} as there are multiple files for that action");
                     }
                 }
             }
@@ -490,7 +486,7 @@ namespace TVRename
                 if (ReviewFile(testMissingAction, new ItemList(), matchedFile, settings,false,false,false,useFullPath))
                 {
                     //We have 2 options that match  me and testAction - See whether one is subset of the other
-                    if (me.Episode.Show.ShowName.Contains(testMissingAction.Episode.Show.ShowName))
+                    if (me.Episode != null && me.Episode.Show.ShowName.Contains(testMissingAction.MissingEpisode.Show.ShowName))
                     {
                         continue; //'me' is a better match, so don't worry about the new one
                     }

@@ -36,19 +36,19 @@ namespace TVRename
         private delegate void LoadLanguageDoneDel();
 
         private readonly TVDoc mDoc;
-        private Thread loadLanguageThread;
-        private string enterPreferredLanguage; // hold here until background language download task is done
+        private Thread? loadLanguageThread;
+        private string? enterPreferredLanguage; // hold here until background language download task is done
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        private CustomNameTagsFloatingWindow cntfw;
-        private readonly ProcessedSeason sampleProcessedSeason;
+        private CustomNameTagsFloatingWindow? cntfw;
+        private readonly ProcessedSeason? sampleProcessedSeason;
 
-        private readonly LoadLanguageDoneDel loadLanguageDone;
+        private readonly LoadLanguageDoneDel? loadLanguageDone;
 
         private class FailedValidationException : Exception
         {
         }
 
-        public Preferences(TVDoc doc, bool goToScanOpts, ProcessedSeason s)
+        public Preferences(TVDoc doc, bool goToScanOpts, ProcessedSeason? s)
         {
             sampleProcessedSeason = s;
             InitializeComponent();
@@ -375,7 +375,7 @@ namespace TVRename
             s.keepTogetherMode = KeepTogetherMode();
 
             s.PreferredLanguageCode =
-                TheTVDB.LocalCache.Instance.LanguageList.FirstOrDefault(l => l.Name == cbLanguages.Text)?.Abbreviation ??
+                TheTVDB.LocalCache.Instance.LanguageList?.FirstOrDefault(l => l.Name == cbLanguages.Text)?.Abbreviation ??
                 s.PreferredLanguageCode;
 
             if (string.IsNullOrWhiteSpace(s.PreferredLanguageCode))
@@ -414,18 +414,18 @@ namespace TVRename
             s.DefShowUseSubFolders = rbDefShowUseSubFolders.Checked;
         }
 
-        private TVSettings.DuplicateActionOutcome ConvertToDupActEnum([NotNull] ComboBox p0)
+        private static TVSettings.DuplicateActionOutcome ConvertToDupActEnum([NotNull] ComboBox p0)
         {
-            switch (p0.Text)
+            return p0.Text switch
             {
-                case "Ask User": return TVSettings.DuplicateActionOutcome.Ask;
-                case "Choose Largest File": return TVSettings.DuplicateActionOutcome.Largest;
-                case "Use First": return TVSettings.DuplicateActionOutcome.ChooseFirst;
-                case "Download All": return TVSettings.DuplicateActionOutcome.DoAll;
-                case "Ignore": return TVSettings.DuplicateActionOutcome.IgnoreAll;
-                case "Choose Most Popular": return TVSettings.DuplicateActionOutcome.MostSeeders;
-                default: throw new ArgumentOutOfRangeException();
-            }
+                "Ask User" => TVSettings.DuplicateActionOutcome.Ask,
+                "Choose Largest File" => TVSettings.DuplicateActionOutcome.Largest,
+                "Use First" => TVSettings.DuplicateActionOutcome.ChooseFirst,
+                "Download All" => TVSettings.DuplicateActionOutcome.DoAll,
+                "Ignore" => TVSettings.DuplicateActionOutcome.IgnoreAll,
+                "Choose Most Popular" => TVSettings.DuplicateActionOutcome.MostSeeders,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         private TVSettings.ScanType ScanTypeMode()
@@ -573,13 +573,16 @@ namespace TVRename
             string pref = string.Empty;
             lock(TheTVDB.LocalCache.LANGUAGE_LOCK)
             {
-                foreach (Language l in TheTVDB.LocalCache.Instance.LanguageList)
+                if (TheTVDB.LocalCache.Instance.LanguageList != null)
                 {
-                    cbLanguages.Items.Add(l.Name);
-
-                    if (enterPreferredLanguage == l.Abbreviation)
+                    foreach (Language l in TheTVDB.LocalCache.Instance.LanguageList)
                     {
-                        pref = l.Name;
+                        cbLanguages.Items.Add(l.Name);
+
+                        if (enterPreferredLanguage == l.Abbreviation)
+                        {
+                            pref = l.Name;
+                        }
                     }
                 }
             }
@@ -619,8 +622,8 @@ namespace TVRename
             ReplacementsGrid.AutoStretchColumnsToFitWidth = true;
             ReplacementsGrid.Columns.StretchToFit();
 
-            ReplacementsGrid.Columns[0].Width = ReplacementsGrid.Columns[0].Width - 8; // allow for scrollbar
-            ReplacementsGrid.Columns[1].Width = ReplacementsGrid.Columns[1].Width - 8;
+            ReplacementsGrid.Columns[0].Width -= 8; // allow for scrollbar
+            ReplacementsGrid.Columns[1].Width -= 8;
 
             //////////////////////////////////////////////////////////////////////
             // header row
@@ -638,7 +641,7 @@ namespace TVRename
             ReplacementsGrid[0, 2].View = titleModel;
         }
 
-        private void AddNewReplacementRow([CanBeNull] string from, string to, bool ins)
+        private void AddNewReplacementRow(string? from, string? to, bool ins)
         {
             SourceGrid.Cells.Views.Cell roModel = new SourceGrid.Cells.Views.Cell {ForeColor = Color.Gray};
 
@@ -686,7 +689,7 @@ namespace TVRename
             RSSGrid[0, 0].View = titleModel;
         }
 
-        private void AddNewRssRow(string text)
+        private void AddNewRssRow(string? text)
         {
             int r = RSSGrid.RowsCount;
             RSSGrid.RowsCount = r + 1;
@@ -943,7 +946,7 @@ namespace TVRename
 
             FillTreeViewColoringShowStatusTypeCombobox();
 
-            EnableDisable(null, null);
+            EnableDisable();
         }
 
         private void PopulateFromEnums([NotNull] TVSettings s)
@@ -1121,7 +1124,7 @@ namespace TVRename
             PopulateAndSetDefShowLocation(oldValue);
         }
 
-        private void PopulateAndSetDefShowLocation([CanBeNull] string path)
+        private void PopulateAndSetDefShowLocation(string? path)
         {
             TVSettings.Instance.LibraryFolders.Sort();
 
@@ -1153,11 +1156,6 @@ namespace TVRename
 
         private void PopulateShowStatusColours([NotNull] TVSettings s)
         {
-            if (s.ShowStatusColors is null)
-            {
-                return;
-            }
-
             foreach (
                 KeyValuePair<TVSettings.ColouringRule, Color> showStatusColor in
                 s.ShowStatusColors)
@@ -1306,19 +1304,19 @@ namespace TVRename
 
         #region enable and disable settings as appropriate
 
-        private void cbNotificationIcon_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
-        private void chkShowInTaskbar_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
-        private void cbKeepTogether_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
-        private void cbMissing_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
-        private void cbSearchLocally_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
-        private void cbMeta_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
-        private void cbKeepTogetherMode_SelectedIndexChanged(object sender, EventArgs e) => EnableDisable(sender, e);
-        private void cbSearchRSS_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
-        private void cbSearchJSON_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
-        private void lvwDefinedColors_SelectedIndexChanged(object sender, EventArgs e) => EnableDisable(sender, e);
-        private void CbSearchJackett_CheckedChanged(object sender, EventArgs e) => EnableDisable(sender, e);
+        private void cbNotificationIcon_CheckedChanged(object sender, EventArgs e) => EnableDisable();
+        private void chkShowInTaskbar_CheckedChanged(object sender, EventArgs e) => EnableDisable();
+        private void cbKeepTogether_CheckedChanged(object sender, EventArgs e) => EnableDisable();
+        private void cbMissing_CheckedChanged(object sender, EventArgs e) => EnableDisable();
+        private void cbSearchLocally_CheckedChanged(object sender, EventArgs e) => EnableDisable();
+        private void cbMeta_CheckedChanged(object sender, EventArgs e) => EnableDisable();
+        private void cbKeepTogetherMode_SelectedIndexChanged(object sender, EventArgs e) => EnableDisable();
+        private void cbSearchRSS_CheckedChanged(object sender, EventArgs e) => EnableDisable();
+        private void cbSearchJSON_CheckedChanged(object sender, EventArgs e) => EnableDisable();
+        private void lvwDefinedColors_SelectedIndexChanged(object sender, EventArgs e) => EnableDisable();
+        private void CbSearchJackett_CheckedChanged(object sender, EventArgs e) => EnableDisable();
 
-        private void EnableDisable(object sender, EventArgs e)
+        private void EnableDisable()
         {
             bnRemoveDefinedColor.Enabled = lvwDefinedColors.SelectedItems.Count == 1;
             txtKeepTogether.Enabled = cbKeepTogether.Checked && cbKeepTogetherMode.Text != "All";
@@ -1690,6 +1688,11 @@ namespace TVRename
 
         private void bnRemoveSearchFolder_Click(object sender, EventArgs e)
         {
+            RemoveSelectedSearchFolder();
+        }
+
+        private void RemoveSelectedSearchFolder()
+        {
             int n = lbSearchFolders.SelectedIndex;
             if (n == -1)
             {
@@ -1717,7 +1720,7 @@ namespace TVRename
         {
             if (e.KeyCode == Keys.Delete)
             {
-                bnRemoveSearchFolder_Click(null, null);
+                RemoveSelectedSearchFolder();
             }
         }
 
@@ -1750,6 +1753,11 @@ namespace TVRename
         }
 
         private void bnRemoveMonFolder_Click(object sender, EventArgs e)
+        {
+            RemoveSelectedMonitorFolder();
+        }
+
+        private void RemoveSelectedMonitorFolder()
         {
             for (int i = lstFMMonitorFolders.SelectedIndices.Count - 1; i >= 0; i--)
             {
@@ -1799,7 +1807,7 @@ namespace TVRename
         {
             if (e.KeyCode == Keys.Delete)
             {
-                bnRemoveMonFolder_Click(null, null);
+                RemoveSelectedMonitorFolder();
             }
         }
 

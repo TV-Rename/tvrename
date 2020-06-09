@@ -18,7 +18,7 @@ namespace TVRename
     {
         public MergeLibraryEpisodes(TVDoc doc) : base(doc) {}
 
-        protected override string Checkname() => "Created Merge Rules for episodes in the library";
+        protected override string ActivityName() => "Created Merge Rules for episodes in the library";
 
         protected override void Check(ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
@@ -81,10 +81,6 @@ namespace TVRename
                 }
 
                 FileInfo[] files = dfc.GetFiles(folder);
-                if (files is null)
-                {
-                    continue;
-                }
 
                 foreach (FileInfo fi in files)
                 {

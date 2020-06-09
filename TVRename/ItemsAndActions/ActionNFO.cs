@@ -92,7 +92,7 @@ namespace TVRename
                     writer.WriteStartElement("episodedetails");
                     writer.WriteEndElement(); // episodedetails
                 }
-                else if (SelectedShow != null) // show overview (tvshow.nfo)
+                else  // show overview (tvshow.nfo)
                 {
                     writer.WriteStartElement("tvshow");
                     writer.WriteEndElement(); // tvshow
@@ -118,14 +118,14 @@ namespace TVRename
 
             if (Episode != null) // specific episode
             {
-                ShowItem si = Episode.Show ?? SelectedShow;
+                ShowItem si = Episode.Show;
                 UpdateEpisodeFields(Episode, si, root, false);
             }
-            else if (SelectedShow != null) // show overview (tvshow.nfo)
+            else
             {
                 UpdateShowFields(root);
             }
-            
+
             doc.Save(Where.FullName);
             return ActionOutcome.Success();
         }
@@ -133,17 +133,20 @@ namespace TVRename
         [NotNull]
         private ActionOutcome ReplaceMultipartFile()
         {
-            ShowItem si = Episode.Show ?? SelectedShow;
+            ShowItem si = Episode?.Show ?? SelectedShow;
 
             //We will replace the file as too difficult to update multiparts
             //We can't use XDocument as it's not fully valid XML
             List<XElement> episodeXmLs = new List<XElement>();
 
-            foreach (Episode ep in Episode.SourceEpisodes)
+            if (Episode != null)
             {
-                XElement epNode = new XElement("episodedetails");
-                UpdateEpisodeFields(ep, si, epNode, true);
-                episodeXmLs.Add(epNode);
+                foreach (Episode ep in Episode.SourceEpisodes)
+                {
+                    XElement epNode = new XElement("episodedetails");
+                    UpdateEpisodeFields(ep, si, epNode, true);
+                    episodeXmLs.Add(epNode);
+                }
             }
 
             try
@@ -164,12 +167,12 @@ namespace TVRename
             return ActionOutcome.Success();
         }
 
-        private static void UpdateEpisodeFields([NotNull] Episode episode,[CanBeNull] ShowItem show, [NotNull] XElement root, bool isMultiPart)
+        private static void UpdateEpisodeFields([NotNull] Episode episode,ShowItem? show, [NotNull] XElement root, bool isMultiPart)
         {
             root.UpdateElement("title", episode.Name,true);
             root.UpdateElement("id", episode.EpisodeId, true);
             root.UpdateElement("plot", episode.Overview, true);
-            UpdateAmongstElements(root, "studio", episode.TheSeries?.Network);
+            UpdateAmongstElements(root, "studio", episode.TheSeries.Network);
 
             UpdateId(root, "tvdb", "true", episode.EpisodeId);
             UpdateId(root, "imdb", "false", episode.ImdbCode);
@@ -243,7 +246,7 @@ namespace TVRename
             }
         }
 
-        private static void UpdateAmongstElements(XElement e, string elementName, string value)
+        private static void UpdateAmongstElements(XElement e, string elementName, string? value)
         {
             if (!value.HasValue())
             {
@@ -327,8 +330,12 @@ namespace TVRename
             ratingNode.UpdateElement("votes", votes, true);
         }
 
-        private static void UpdateId([NotNull] XElement root, string idType, [NotNull] string defaultState, string idValue)
+        private static void UpdateId([NotNull] XElement root, string idType, [NotNull] string defaultState, string? idValue)
         {
+            if (idValue is null)
+            {
+                return;
+            }
             const string NODE_NAME = "uniqueid";
             const string NODE_ATTRIBUTE_TYPE = "type";
             const string NODE_ATTRIBUTE_DEFAULT = "default";

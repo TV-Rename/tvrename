@@ -16,7 +16,7 @@ namespace TVRename
 {
     public sealed class ItemList : List<Item>, INotifyPropertyChanged
     {
-        public void Add([CanBeNull] IEnumerable<Item> slil)
+        public void Add(IEnumerable<Item>? slil)
         {
             if (slil is null)
             {
@@ -47,13 +47,13 @@ namespace TVRename
         [NotNull]
         public List<ActionCopyMoveRename> CopyMoveRename => this.OfType<ActionCopyMoveRename>().ToList();
 
-        public void Replace([CanBeNull] IEnumerable<Item> toRemove, [CanBeNull] IEnumerable<Item> newList)
+        public void Replace(IEnumerable<Item>? toRemove, IEnumerable<Item>? newList)
         {
             Remove(toRemove);
             Add(newList);
         }
 
-        internal void Remove([CanBeNull] IEnumerable<Item> toRemove)
+        internal void Remove(IEnumerable<Item>? toRemove)
         {
             if (toRemove is null)
             {
@@ -74,12 +74,13 @@ namespace TVRename
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        private void OnPropertyChanged([CallerMemberName] [CanBeNull] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
+            // ReSharper disable once ConstantConditionalAccessQualifier
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public void Replace([CanBeNull] IEnumerable<Item> toRemove, [CanBeNull] Item newItem)
+        public void Replace(IEnumerable<Item>? toRemove, Item? newItem)
         {
             Replace(toRemove,new List<Item>{newItem});
         }

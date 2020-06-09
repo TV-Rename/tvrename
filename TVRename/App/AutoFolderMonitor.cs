@@ -83,8 +83,8 @@ namespace TVRename
             Logger.Trace("Restarted delay timer");
             try
             {
-                mScanDelayTimer?.Stop();
-                mScanDelayTimer?.Start();
+                mScanDelayTimer.Stop();
+                mScanDelayTimer.Start();
             }
             catch (ObjectDisposedException)
             {
@@ -102,14 +102,11 @@ namespace TVRename
             {
                 Logger.Info("*******************************");
                 Logger.Info("Auto scan fired");
-                if (mainForm != null)
+                if (TVSettings.Instance.MonitoredFoldersScanType == TVSettings.ScanType.SingleShow)
                 {
-                    if (TVSettings.Instance.MonitoredFoldersScanType == TVSettings.ScanType.SingleShow)
-                    {
-                        throw new ArgumentException("Inappropriate action for auto-scan " + TVSettings.Instance.MonitoredFoldersScanType);
-                    }
-                    mainForm.BeginInvoke(mainForm.ScanAndDo,TVSettings.Instance.MonitoredFoldersScanType);
+                    throw new ArgumentException("Inappropriate action for auto-scan " + TVSettings.Instance.MonitoredFoldersScanType);
                 }
+                mainForm.BeginInvoke(mainForm.ScanAndDo,TVSettings.Instance.MonitoredFoldersScanType);
             }
             else
             {
@@ -130,11 +127,7 @@ namespace TVRename
 
         public void Dispose()
         {
-            // ReSharper disable once UseNullPropagation
-            if (mScanDelayTimer != null)
-            {
-                mScanDelayTimer.Dispose();
-            }
+            mScanDelayTimer.Dispose();
         }
     }
 }

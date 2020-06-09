@@ -19,7 +19,7 @@ namespace TVRename.Forms.Supporting
             SetButtonVisiblity();
         }
 
-        public ActionTDownload UserChosenAction
+        public ActionTDownload? UserChosenAction
         {
             get;
             private set;

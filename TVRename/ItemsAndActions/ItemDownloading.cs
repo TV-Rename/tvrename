@@ -16,15 +16,15 @@ namespace TVRename
         private readonly IDownloadInformation entry;
         public readonly string DesiredLocationNoExt;
 
-        public override IgnoreItem Ignore => GenerateIgnore(DesiredLocationNoExt);
+        public override IgnoreItem? Ignore => GenerateIgnore(DesiredLocationNoExt);
         public override string ScanListViewGroup => "lvgDownloading";
 
-        public override string DestinationFolder => TargetFolder;
+        public override string? DestinationFolder => TargetFolder;
         public override string DestinationFile => entry.FileIdentifier;
         public override string SourceDetails => entry.RemainingText;
 
         public override int IconNumber { get; }
-        public override string TargetFolder => string.IsNullOrEmpty(entry.Destination) ? null : new FileInfo(entry.Destination).DirectoryName;
+        public override string? TargetFolder => string.IsNullOrEmpty(entry.Destination) ? null : new FileInfo(entry.Destination).DirectoryName;
 
         public ItemDownloading(IDownloadInformation dl, ProcessedEpisode pe, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp)
         {

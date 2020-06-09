@@ -19,7 +19,7 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     public class ActionMede8erXML : ActionWriteMetadata
     {
-        public ActionMede8erXML(FileInfo nfo, ProcessedEpisode pe) : base(nfo, null)
+        public ActionMede8erXML(FileInfo nfo, ProcessedEpisode pe) : base(nfo, pe.Show)
         {
             Episode = pe;
         }
@@ -41,7 +41,7 @@ namespace TVRename
                 {
                     WriteEpisodeXml();
                 }
-                else if (SelectedShow != null) // show overview (Series.xml)
+                else  // show overview (Series.xml)
                 {
                     WriteSeriesXml();
                 }
@@ -56,12 +56,18 @@ namespace TVRename
 
         private void WriteEpisodeXml()
         {
+            if (Episode == null)
+            {
+                return;
+            }
+
             XmlWriterSettings settings = new XmlWriterSettings {Indent = true, NewLineOnAttributes = true};
             using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
             {
                 // See: http://xbmc.org/wiki/?title=Import_-_Export_Library#TV_Episodes
                 writer.WriteStartElement("details");
                 writer.WriteStartElement("movie");
+
                 writer.WriteElement("title", Episode.Name);
                 writer.WriteElement("season", Episode.AppropriateSeasonNumber);
                 writer.WriteElement("episode", Episode.AppropriateEpNum);
@@ -74,7 +80,7 @@ namespace TVRename
                 writer.WriteEndElement();
 
                 //Mede8er Ratings are on a 100 point scale; TVDB are on a 10 point scale
-                float siteRating = float.Parse(Episode.EpisodeRating, new CultureInfo("en-US")) * 10;
+                float siteRating = float.Parse(Episode.EpisodeRating??string.Empty, new CultureInfo("en-US")) * 10;
                 int intSiteRating = (int) siteRating;
                 if (intSiteRating > 0)
                 {
@@ -90,10 +96,7 @@ namespace TVRename
 
                 //Get the Episode overview
                 writer.WriteElement("episodeplot", Episode.Overview);
-                if (Episode.Show != null)
-                {
-                    writer.WriteElement("mpaa", Episode.Show.TheSeries()?.ContentRating);
-                }
+                writer.WriteElement("mpaa", Episode.Show.TheSeries()?.ContentRating);
 
                 //Runtime...taken from overall Series, not episode specific due to thetvdb
                 string rt = Episode.Show.TheSeries()?.Runtime;
@@ -138,13 +141,11 @@ namespace TVRename
                 writer.WriteStartElement("cast");
 
                 // actors...
-                if (Episode.Show != null)
-                {
-                    foreach (string aa in (Episode.Show.TheSeries()?.GetActorNames() ?? new string[] { }).Where(aa =>
+                foreach (string aa in (Episode.Show.TheSeries()?.GetActorNames() ?? new string[] { }).Where(
+                    aa =>
                         !string.IsNullOrEmpty(aa)))
-                    {
-                        writer.WriteElement("actor", aa);
-                    }
+                {
+                    writer.WriteElement("actor", aa);
                 }
 
                 writer.WriteEndElement(); // cast
@@ -182,7 +183,7 @@ namespace TVRename
                     writer.WriteElement("rating", intSiteRating);
                 }
 
-                writer.WriteElement("status", SelectedShow?.TheSeries()?.Status);
+                writer.WriteElement("status", SelectedShow.TheSeries()?.Status);
                 writer.WriteElement("mpaa", SelectedShow.TheSeries()?.ContentRating);
                 writer.WriteInfo("moviedb", "imdb", "id", SelectedShow.TheSeries()?.Imdb);
                 writer.WriteElement("tvdbid", SelectedShow.TheSeries()?.TvdbCode);

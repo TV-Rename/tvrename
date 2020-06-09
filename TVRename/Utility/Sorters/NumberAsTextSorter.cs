@@ -26,7 +26,7 @@ namespace TVRename
                 return -1;
             }
 
-            if (value == TVSettings.Instance.SpecialsListViewName)
+            if (value == TVSettings.SpecialsListViewName)
             {
                 return 0;
             }

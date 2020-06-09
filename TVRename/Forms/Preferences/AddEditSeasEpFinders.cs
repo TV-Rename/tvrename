@@ -31,10 +31,10 @@ namespace TVRename
     public partial class AddEditSeasEpFinders : Form
     {
         private readonly List<ShowItem> shows;
-        private List<TorrentEntry> torrentCache;
+        private List<TorrentEntry>? torrentCache;
         public List<TVSettings.FilenameProcessorRE> OutputRegularExpressions { get; }
 
-        public AddEditSeasEpFinders(List<TVSettings.FilenameProcessorRE> rex, List<ShowItem> sil, ShowItem initialShow,
+        public AddEditSeasEpFinders(List<TVSettings.FilenameProcessorRE> rex, List<ShowItem> sil, ShowItem? initialShow,
             string initialFolder)
         {
             OutputRegularExpressions = rex;
@@ -177,8 +177,7 @@ namespace TVRename
             StartTimer();
         }
 
-        [CanBeNull]
-        private TVSettings.FilenameProcessorRE RegExForRow(int i)
+        private TVSettings.FilenameProcessorRE? RegExForRow(int i)
         {
             if (i < 1 || i >= Grid1.RowsCount) // row 0 is header
             {
@@ -358,7 +357,7 @@ namespace TVRename
             lvPreview.EndUpdate();
         }
 
-        private void AddItemToListView(string filename, int seas, int ep, int maxEp, [CanBeNull] TVSettings.FilenameProcessorRE matchRex, bool r)
+        private void AddItemToListView(string filename, int seas, int ep, int maxEp, TVSettings.FilenameProcessorRE? matchRex, bool r)
         {
             IEnumerable<ShowItem> matchingShows = FinderHelper.FindMatchingShows(filename, shows);
             string bestShowName = FinderHelper.FindBestMatchingShow(filename, shows)?.ShowName;

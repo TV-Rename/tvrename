@@ -13,15 +13,11 @@ namespace TVRename
 {
     internal class DownloadWdtvMetaData : DownloadIdentifier
     {
-        private List<string> doneFiles;
-        public DownloadWdtvMetaData()
-        {
-            Reset();
-        }
+        private List<string> doneFiles = new List<string>();
 
         public override DownloadType GetDownloadType() => DownloadType.downloadMetaData;
 
-        public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
+        public override ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file, bool forceRefresh)
         {
             if (!TVSettings.Instance.wdLiveTvMeta)
             {
@@ -29,33 +25,33 @@ namespace TVRename
             }
 
             ItemList theActionList = new ItemList();
-            string fn = filo.RemoveExtension() + ".xml";
-            FileInfo nfo = FileHelper.FileInFolder(filo.Directory, fn);
+            string fn = file.RemoveExtension() + ".xml";
+            FileInfo nfo = FileHelper.FileInFolder(file.Directory, fn);
 
-            if (forceRefresh || !nfo.Exists || dbep.SrvLastUpdated > TimeZoneHelper.Epoch(nfo.LastWriteTime))
+            if (forceRefresh || !nfo.Exists || episode.SrvLastUpdated > TimeZoneHelper.Epoch(nfo.LastWriteTime))
             {
-                theActionList.Add(new ActionWdtvMeta(nfo, dbep));
+                theActionList.Add(new ActionWdtvMeta(nfo, episode));
             }
 
             return theActionList;
         }
 
-        public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
+        public override ItemList? ProcessShow(ShowItem si, bool forceRefresh)
         {
             if (TVSettings.Instance.wdLiveTvMeta)
             {
                 ItemList theActionList = new ItemList();
-                FileInfo tvshowxml = FileHelper.FileInFolder(si.AutoAddFolderBase, "series.xml");
+                FileInfo tvShowXml = FileHelper.FileInFolder(si.AutoAddFolderBase, "series.xml");
 
                 SeriesInfo seriesInfo = si.TheSeries();
-                bool needUpdate = !tvshowxml.Exists ||
+                bool needUpdate = !tvShowXml.Exists ||
                                   seriesInfo is null ||
-                                  seriesInfo.SrvLastUpdated > TimeZoneHelper.Epoch(tvshowxml.LastWriteTime);
+                                  seriesInfo.SrvLastUpdated > TimeZoneHelper.Epoch(tvShowXml.LastWriteTime);
 
-                if ((forceRefresh || needUpdate) && !doneFiles.Contains(tvshowxml.FullName))
+                if ((forceRefresh || needUpdate) && !doneFiles.Contains(tvShowXml.FullName))
                 {
-                    doneFiles.Add(tvshowxml.FullName);
-                    theActionList.Add(new ActionWdtvMeta(tvshowxml, si));
+                    doneFiles.Add(tvShowXml.FullName);
+                    theActionList.Add(new ActionWdtvMeta(tvShowXml, si));
                 }
                 return theActionList;
             }

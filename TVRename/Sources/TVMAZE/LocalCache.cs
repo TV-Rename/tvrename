@@ -38,7 +38,7 @@ namespace TVRename.TVmaze
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
-        private static volatile LocalCache IntenalInstance;
+        private static volatile LocalCache? InternalInstance;
         private static readonly object SyncRoot = new object();
 
         [NotNull]
@@ -46,18 +46,15 @@ namespace TVRename.TVmaze
         {
             get
             {
-                if (IntenalInstance is null)
+                if (InternalInstance is null)
                 {
                     lock (SyncRoot)
                     {
-                        if (IntenalInstance is null)
-                        {
-                            IntenalInstance = new LocalCache();
-                        }
+                        InternalInstance ??= new LocalCache();
                     }
                 }
 
-                return IntenalInstance;
+                return InternalInstance;
             }
         }
 
@@ -65,7 +62,7 @@ namespace TVRename.TVmaze
 
         public bool LoadOk;
 
-        public void Setup([CanBeNull] FileInfo loadFrom, FileInfo cache, CommandLineArgs cla)
+        public void Setup(FileInfo? loadFrom, FileInfo cache, CommandLineArgs cla)
         {
             System.Diagnostics.Debug.Assert(cache != null);
             cacheFile = cache;
@@ -242,9 +239,9 @@ namespace TVRename.TVmaze
             //No Need to do anything aswe always refresh from scratch
         }
 
-        public SeriesInfo GetSeries(string showName, bool showErrorMsgBox) => throw new NotImplementedException(); //todo when we can offer sarch for TV Maze
+        public SeriesInfo? GetSeries(string showName, bool showErrorMsgBox) => throw new NotImplementedException(); //todo when we can offer sarch for TV Maze
 
-        public SeriesInfo GetSeries(int id)
+        public SeriesInfo? GetSeries(int id)
         {
             lock (SERIES_LOCK)
             {
@@ -260,6 +257,21 @@ namespace TVRename.TVmaze
             }
         }
 
+        public void AddOrUpdateEpisode(Episode e)
+        {
+            lock (SERIES_LOCK)
+            {
+                if (!series.ContainsKey(e.SeriesId))
+                {
+                    throw new SourceConsistencyException(
+                        $"Can't find the series to add the episode to (TVMaze). EpId:{e.EpisodeId} SeriesId:{e.SeriesId} {e.Name}", ShowItem.ProviderType.TVmaze);
+                }
+
+                SeriesInfo ser = series[e.SeriesId];
+
+                ser.AddEpisode(e);
+            }
+        }
         public void Tidy(ICollection<ShowItem> libraryValues)
         {
             // remove any shows from thetvdb that aren't in My Shows
@@ -307,7 +319,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        public void ForgetShow(int tvdb,int tvmaze, bool makePlaceholder, bool useCustomLanguage, string langCode)
+        public void ForgetShow(int tvdb,int tvmaze, bool makePlaceholder, bool useCustomLanguage, string? langCode)
         {
             lock (SERIES_LOCK)
             {
@@ -316,9 +328,9 @@ namespace TVRename.TVmaze
                     series.TryRemove(tvmaze, out SeriesInfo _);
                     if (makePlaceholder)
                     {
-                        if (useCustomLanguage)
+                        if (useCustomLanguage && langCode.HasValue())
                         {
-                            AddPlaceholderSeries(tvdb,tvmaze, langCode);
+                            AddPlaceholderSeries(tvdb,tvmaze, langCode!);
                         }
                         else
                         {
@@ -360,7 +372,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        public void AddOrUpdateEpisode(Episode e)
+        public void AddOrUpdateEpisode(Episode e,SeriesInfo si)
         {
             lock (SERIES_LOCK)
             {
@@ -371,7 +383,6 @@ namespace TVRename.TVmaze
                 }
 
                 SeriesInfo ser = series[e.SeriesId];
-
                 ser.AddEpisode(e);
             }
         }

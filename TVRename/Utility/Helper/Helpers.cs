@@ -178,9 +178,9 @@ namespace TVRename
         public static bool OpenUrl(string url) =>SysOpen(url);
         public static void OpenFile(string filename) => SysOpen(filename);
 
-        private static bool SysOpen([CanBeNull] string what) => SysOpen(what, null);
+        private static bool SysOpen(string? what) => SysOpen(what, null);
 
-        private static bool SysOpen([CanBeNull] string what, [CanBeNull] string arguments)
+        private static bool SysOpen(string? what, string? arguments)
         {
             if (string.IsNullOrWhiteSpace(what))
             {

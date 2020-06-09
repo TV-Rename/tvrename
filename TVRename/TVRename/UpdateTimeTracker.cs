@@ -1,6 +1,5 @@
 using System;
 using Humanizer;
-using JetBrains.Annotations;
 
 namespace TVRename.TVRename
 {
@@ -40,7 +39,7 @@ namespace TVRename.TVRename
         public DateTime LastSuccessfulServerUpdateDateTime() => Helpers.FromUnixTime(srvTime).ToLocalTime();
         public DateTime ProposedServerUpdateDateTime() => Helpers.FromUnixTime(newSrvTime).ToLocalTime();
 
-        public void Load([CanBeNull] string time)
+        public void Load(string? time)
         {
             long newTime = time is null ? 0 : long.Parse(time);
             if (newTime > DateTime.UtcNow.ToUnixTime() + 1.Days().TotalSeconds)

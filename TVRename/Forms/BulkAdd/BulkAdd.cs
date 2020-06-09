@@ -7,6 +7,7 @@
 // 
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using System.Threading;
 using Alphaleonis.Win32.Filesystem;
@@ -27,7 +28,7 @@ namespace TVRename
     /// </summary>
     public partial class FolderMonitor : Form
     {
-        private FolderMonitorProgress progressDialog;
+        private FolderMonitorProgress? progressDialog;
         public int FmpPercent;
         public string FmpUpto;
         public CancellationTokenSource TokenSource;
@@ -42,7 +43,9 @@ namespace TVRename
             InitializeComponent();
 
             FillFolderStringLists();
+            TokenSource = new CancellationTokenSource();
             tbResults.Parent = null;
+            FmpUpto = string.Empty;
         }
 
         private void FmpShower()
@@ -67,15 +70,7 @@ namespace TVRename
 
         private bool CanClose()
         {
-            foreach (FoundFolder fme in engine.AddItems)
-            {
-                if (fme.CodeKnown)
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return engine.AddItems.All(fme => !fme.CodeKnown);
         }
 
         private void FillFolderStringLists()
@@ -106,24 +101,24 @@ namespace TVRename
 
         private void bnRemoveMonFolder_Click(object sender, System.EventArgs e)
         {
-            for (int i = lstFMMonitorFolders.SelectedIndices.Count - 1; i >= 0; i--)
+            DeleteSelectedFolder(lstFMMonitorFolders, TVSettings.Instance.LibraryFolders);
+        }
+
+        private void DeleteSelectedFolder(ListBox lb, List<string> folders)
+        {
+            for (int i = lb.SelectedIndices.Count - 1; i >= 0; i--)
             {
-                int n = lstFMMonitorFolders.SelectedIndices[i];
-                TVSettings.Instance.LibraryFolders.RemoveAt(n);
+                int n = lb.SelectedIndices[i];
+                folders.RemoveAt(n);
             }
+
             mDoc.SetDirty();
             FillFolderStringLists();
         }
 
         private void bnRemoveIgFolder_Click(object sender, System.EventArgs e)
         {
-            for (int i = lstFMIgnoreFolders.SelectedIndices.Count - 1; i >= 0; i--)
-            {
-                int n = lstFMIgnoreFolders.SelectedIndices[i];
-                TVSettings.Instance.IgnoreFolders.RemoveAt(n);
-            }
-            mDoc.SetDirty();
-            FillFolderStringLists();
+            DeleteSelectedFolder(lstFMIgnoreFolders, TVSettings.Instance.IgnoreFolders);
         }
 
         private void bnAddMonFolder_Click(object sender, System.EventArgs e)
@@ -178,6 +173,11 @@ namespace TVRename
 
         private void bnOpenMonFolder_Click(object sender, System.EventArgs e)
         {
+            OpenSelectedFolder();
+        }
+
+        private void OpenSelectedFolder()
+        {
             if (lstFMMonitorFolders.SelectedIndex != -1)
             {
                 Helpers.OpenFolder(TVSettings.Instance.LibraryFolders[lstFMMonitorFolders.SelectedIndex]);
@@ -194,7 +194,7 @@ namespace TVRename
 
         private void lstFMMonitorFolders_DoubleClick(object sender, System.EventArgs e)
         {
-            bnOpenMonFolder_Click(null, null);
+            OpenSelectedFolder();
         }
 
         private void bnCheck_Click(object sender, System.EventArgs e)
@@ -300,7 +300,7 @@ namespace TVRename
         {
             if (e.KeyCode == Keys.Delete)
             {
-                bnRemoveMonFolder_Click(null, null);
+                DeleteSelectedFolder(lstFMMonitorFolders, TVSettings.Instance.LibraryFolders);
             }
         }
 
@@ -308,7 +308,7 @@ namespace TVRename
         {
             if (e.KeyCode == Keys.Delete)
             {
-                bnRemoveIgFolder_Click(null, null);
+                DeleteSelectedFolder(lstFMIgnoreFolders, TVSettings.Instance.IgnoreFolders);
             }
         }
 
@@ -362,6 +362,11 @@ namespace TVRename
 
         private void bnRemoveNewFolder_Click(object _, System.EventArgs e)
         {
+            RemoveNewFolder();
+        }
+
+        private void RemoveNewFolder()
+        {
             if (lvFMNewShows.SelectedItems.Count == 0)
             {
                 return;
@@ -369,9 +374,10 @@ namespace TVRename
 
             foreach (ListViewItem lvi in lvFMNewShows.SelectedItems)
             {
-                FoundFolder ai = (FoundFolder)lvi.Tag;
+                FoundFolder ai = (FoundFolder) lvi.Tag;
                 engine.AddItems.Remove(ai);
             }
+
             FillNewShowList(false);
         }
 
@@ -408,7 +414,7 @@ namespace TVRename
         {
             if (e.KeyCode == Keys.Delete)
             {
-                bnRemoveNewFolder_Click(null, null);
+                RemoveNewFolder();
             }
         }
 
@@ -530,10 +536,15 @@ namespace TVRename
 
         private void lvFMNewShows_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            bnEditEntry_Click(null, null);
+            EditEntry();
         }
 
         private void bnEditEntry_Click(object sender, System.EventArgs e)
+        {
+            EditEntry();
+        }
+
+        private void EditEntry()
         {
             if (lvFMNewShows.SelectedItems.Count == 0)
             {

@@ -45,7 +45,7 @@ namespace TVRename
             {
                 showList.Add(si);
             }
-            LOGGER.Info("Added new shows called: {0}", addedShows.Select(si => si?.ShowName).ToCsv());
+            LOGGER.Info("Added new shows called: {0}", addedShows.Select(si => si.ShowName).ToCsv());
 
             MDoc.DoWhenToWatch(true,settings.Unattended,settings.Hidden, settings.Owner);
 

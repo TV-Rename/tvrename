@@ -17,7 +17,7 @@ namespace TVRename
     {
         protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
         protected readonly TVDoc MDoc;
-        private SetProgressDelegate progressDelegate;
+        private SetProgressDelegate? progressDelegate;
         private int startPosition;
         private int endPosition;
 
@@ -62,14 +62,14 @@ namespace TVRename
             }
             finally
             {
-                progressDelegate.Invoke(endPosition, string.Empty);
+                progressDelegate?.Invoke(endPosition, string.Empty);
             }
         }
 
         protected void UpdateStatus(int recordNumber,int totalRecords, string message)
         {
             int position = (endPosition - startPosition) * recordNumber / (totalRecords+1);
-            progressDelegate.Invoke(startPosition + position, message);
+            progressDelegate?.Invoke(startPosition + position, message);
         }
 
         private void LogActionListSummary()

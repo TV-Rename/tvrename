@@ -28,6 +28,8 @@ namespace TVRename
 
         #region Item Members
 
+        public ProcessedEpisode MissingEpisode =>Episode ?? throw new InvalidOperationException();
+
         public override bool SameAs(Item o)
         {
             return o is ItemMissing missing && string.CompareOrdinal(missing.TheFileNoExt, TheFileNoExt) == 0;
@@ -35,31 +37,31 @@ namespace TVRename
 
         public override string Name => "Missing Episode";
 
-        public override int CompareTo([CanBeNull] object o)
+        public override int CompareTo(object? o)
         {
             if (o is null || !(o is ItemMissing miss))
             {
                 return 0;
             }
 
-            if (!Episode.Show.ShowName.Equals(miss.Episode.Show.ShowName))
+            if (!MissingEpisode.Show.ShowName.Equals(miss.MissingEpisode.Show.ShowName))
             {
-                return string.Compare(Episode.Show.ShowName, miss.Episode.Show.ShowName, StringComparison.Ordinal);
+                return string.Compare(MissingEpisode.Show.ShowName, miss.MissingEpisode.Show.ShowName, StringComparison.Ordinal);
             }
 
-            if (!Episode.AppropriateSeasonNumber.Equals(miss.Episode.AppropriateSeasonNumber))
+            if (!MissingEpisode.AppropriateSeasonNumber.Equals(miss.MissingEpisode.AppropriateSeasonNumber))
             {
-                return Episode.AppropriateSeasonNumber.CompareTo(miss.Episode.AppropriateSeasonNumber);
+                return MissingEpisode.AppropriateSeasonNumber.CompareTo(miss.MissingEpisode.AppropriateSeasonNumber);
             }
 
-            return Episode.AppropriateEpNum.CompareTo(miss.Episode.AppropriateEpNum);
+            return MissingEpisode.AppropriateEpNum.CompareTo(miss.MissingEpisode.AppropriateEpNum);
         }
 
         #endregion
 
         #region Item Members
 
-        public override IgnoreItem Ignore => GenerateIgnore(TheFileNoExt);
+        public override IgnoreItem? Ignore => GenerateIgnore(TheFileNoExt);
 
         public override string DestinationFolder { get; }
 

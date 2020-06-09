@@ -40,12 +40,12 @@ namespace TVRename
             catch
             {
                 cache[folder] = null;
-                return null;
+                return new FileInfo[]{};
             }
             if (!di.Exists)
             {
                 cache[folder] = null;
-                return null;
+                return new FileInfo[] { };
             }
             
             try {
@@ -55,12 +55,12 @@ namespace TVRename
             }
             catch (System.IO.IOException) {
                Logger.Warn("IOException occurred trying to access " + folder);
-               return null;
+               return new FileInfo[] { };
             }
             catch (UnauthorizedAccessException)
             {
                 Logger.Warn("IOException occurred trying to access " + folder);
-                return null;
+                return new FileInfo[] { };
             }
         }
     }

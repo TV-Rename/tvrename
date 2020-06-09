@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -13,23 +12,17 @@ namespace TVRename
 
         public abstract DownloadType GetDownloadType();
 
-        [CanBeNull]
-        public  ItemList ProcessShow(ShowItem si) => ProcessShow(si,false);
+        public  ItemList? ProcessShow(ShowItem si) => ProcessShow(si,false);
 
-        [CanBeNull]
-        public virtual ItemList ProcessShow(ShowItem si, bool forceRefresh) => null;
+        public virtual ItemList? ProcessShow(ShowItem si, bool forceRefresh) => null;
 
-        [CanBeNull]
-        public  ItemList ProcessSeason(ShowItem si, string folder, int snum) => ProcessSeason(si,folder,snum,false);
+        public  ItemList? ProcessSeason(ShowItem si, string folder, int snum) => ProcessSeason(si,folder,snum,false);
 
-        [CanBeNull]
-        public virtual ItemList ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh) => null;
+        public virtual ItemList? ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh) => null;
 
-        [CanBeNull]
-        public  ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo) => ProcessEpisode(dbep,filo,false);
+        public  ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file) => ProcessEpisode(episode,file,false);
 
-        [CanBeNull]
-        public virtual ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh) => null;
+        public virtual ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file, bool forceRefresh) => null;
 
         public virtual void NotifyComplete(FileInfo file)
         {

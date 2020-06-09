@@ -22,9 +22,9 @@ namespace TVRename
         {
         }
 
-        public DirCache(SetProgressDelegate prog, string folder, bool subFolders)
+        public DirCache(SetProgressDelegate progress, string folder, bool subFolders)
         {
-            BuildDirCache(prog, 0, 0, folder, subFolders);
+            BuildDirCache(progress, 0, 0, folder, subFolders);
         }
 
         public static int CountFiles(string folder, bool subFolders)
@@ -81,7 +81,7 @@ namespace TVRename
             return n;
         }
 
-        public void AddFolder(SetProgressDelegate prog, int initialCount, int totalFiles, string folder,
+        public void AddFolder(SetProgressDelegate? prog, int initialCount, int totalFiles, string folder,
             bool subFolders)
         {
             BuildDirCache(prog, initialCount, totalFiles, folder, subFolders);
@@ -89,7 +89,7 @@ namespace TVRename
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private int BuildDirCache(SetProgressDelegate prog, int count, int totalFiles, string folder, bool subFolders)
+        private int BuildDirCache(SetProgressDelegate? prog, int count, int totalFiles, string folder, bool subFolders)
         {
             if (!Directory.Exists(folder))
             {

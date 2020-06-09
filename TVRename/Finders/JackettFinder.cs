@@ -66,24 +66,26 @@ namespace TVRename
             ActionList.Replace(toRemove, newItems);
         }
 
-        private void FindMissingEpisode([NotNull] ItemMissing action, ItemList toRemove, ItemList newItems)
+        private static void FindMissingEpisode([NotNull] ItemMissing action, ItemList toRemove, ItemList newItems)
         {
             string serverName = TVSettings.Instance.JackettServer;
             string serverPort = TVSettings.Instance.JackettPort;
             string allIndexer = TVSettings.Instance.JackettIndexer;
             string apikey = TVSettings.Instance.JackettAPIKey;
 
-            string simpleShowName = Helpers.SimplifyName(action.Episode.Show.ShowName);
-            string url = $"http://{serverName}:{serverPort}{allIndexer}/api?t=tvsearch&q={simpleShowName}&tvdbid={action.Episode.Show.TvdbCode}&season={action.Episode.AppropriateSeasonNumber}&ep={action.Episode.AppropriateEpNum}&apikey={apikey}";
+            ProcessedEpisode processedEpisode = action.MissingEpisode;
+
+            string simpleShowName = Helpers.SimplifyName(processedEpisode.Show.ShowName);
+            string url = $"http://{serverName}:{serverPort}{allIndexer}/api?t=tvsearch&q={simpleShowName}&tvdbid={processedEpisode.Show.TvdbCode}&season={processedEpisode.AppropriateSeasonNumber}&ep={processedEpisode.AppropriateEpNum}&apikey={apikey}";
 
             RssItemList rssList = new RssItemList();
             rssList.DownloadRSS(url, false,"Jackett");
             ItemList newItemsForThisMissingEpisode = new ItemList();
 
-            foreach (RSSItem rss in rssList.Where(rss => RssMatch(rss, action.Episode)))
+            foreach (RSSItem rss in rssList.Where(rss => RssMatch(rss, processedEpisode)))
             {
-                LOGGER.Info($"Adding {rss.URL} from RSS feed as it appears to be match for {action.Episode.Show.ShowName} S{action.Episode.AppropriateSeasonNumber}E{action.Episode.AppropriateEpNum}");
-                newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action.TheFileNoExt, action.Episode, action));
+                LOGGER.Info($"Adding {rss.URL} from RSS feed as it appears to be match for {processedEpisode.Show.ShowName} S{processedEpisode.AppropriateSeasonNumber}E{processedEpisode.AppropriateEpNum}");
+                newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action.TheFileNoExt, processedEpisode, action));
                 toRemove.Add(action);
             }
 

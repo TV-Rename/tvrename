@@ -53,7 +53,7 @@ namespace TVRename.Ipc
         /// </summary>
         public void FocusWindow()
         {
-            MainUi?.BeginInvoke((MethodInvoker)MainUi.FocusWindow);
+            MainUi.BeginInvoke((MethodInvoker)MainUi.FocusWindow);
         }
 
         /// <summary>
@@ -61,12 +61,12 @@ namespace TVRename.Ipc
         /// </summary>
         public void Quit()
         {
-            MainUi?.BeginInvoke((MethodInvoker)MainUi.Quit);
+            MainUi.BeginInvoke((MethodInvoker)MainUi.Quit);
         }
 
         public void SendArgs(string[] args)
         {
-            MainUi?.BeginInvoke(MainUi.RecieveArgumentDelagate,new object[] {args});
+            MainUi.BeginInvoke(MainUi.RecieveArgumentDelagate,new object[] {args});
         }
     }
 }

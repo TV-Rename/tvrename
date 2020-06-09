@@ -37,6 +37,6 @@ namespace TVRename
         void AddBanners(int seriesId, IEnumerable<Banner> select);
         void LatestUpdateTimeIs(string time);
         Language PreferredLanguage { get; }
-        Language GetLanguageFromCode(string customLanguageCode);
+        Language? GetLanguageFromCode(string? customLanguageCode);
     }
 }

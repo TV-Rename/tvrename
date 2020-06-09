@@ -36,7 +36,7 @@ namespace TVRename
         public bool Unattended { get; }
         public bool QuickUpdate { get; }
         public bool Export { get; }
-        public string UserFilePath { get; }
+        public string? UserFilePath { get; }
 
         private MissingFolderBehavior previousMissingFolderBehavior;
 

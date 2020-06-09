@@ -38,12 +38,12 @@ namespace TVRename
             return res;
         }
 
-        public static void WriteElement(this XmlWriter writer, string elementName, [CanBeNull] string value)
+        public static void WriteElement(this XmlWriter writer, string elementName, string? value)
         {
             WriteElement(writer, elementName, value, false);
         }
 
-        public static void WriteElement(this XmlWriter writer, string elementName, [CanBeNull] string value,bool ignoreIfBlank)
+        public static void WriteElement(this XmlWriter writer, string elementName, string? value,bool ignoreIfBlank)
         {
             if (ignoreIfBlank && string.IsNullOrWhiteSpace(value))
             {
@@ -60,7 +60,7 @@ namespace TVRename
             WriteElement(writer, elementName, value, null);
         }
 
-        public static void WriteElement([NotNull] this XmlWriter writer, [NotNull] string elementName, double value,[CanBeNull] string format)
+        public static void WriteElement([NotNull] this XmlWriter writer, [NotNull] string elementName, double value,string? format)
         {
             writer.WriteStartElement(elementName);
             if (format is null)
@@ -172,7 +172,7 @@ namespace TVRename
             writer.WriteEndAttribute();
         }
 
-        public static void WriteInfo(this XmlWriter writer, string elemName, [CanBeNull] string attribute, [CanBeNull] string attributeVal, [CanBeNull] string value)
+        public static void WriteInfo(this XmlWriter writer, string elemName, string? attribute, string? attributeVal, string? value)
         {
             if (!string.IsNullOrEmpty(value))
             {
@@ -186,17 +186,21 @@ namespace TVRename
             }
         }
 
-        public static void UpdateElement(this XElement root, string elementName, string value, bool ignoreIfBlank)
+        public static void UpdateElement(this XElement root, string elementName, string? value, bool ignoreIfBlank)
         {
             if (ignoreIfBlank && value.IsNullOrWhitespace())
             {
                 return;
             }
-            UpdateElement(root, elementName, value);
+            UpdateElement(root, elementName, value!);
         }
 
-        public static void UpdateElement([NotNull] this XElement e, [NotNull] string elementName, string value)
+        public static void UpdateElement([NotNull] this XElement e, [NotNull] string elementName, string? value)
         {
+            if (value is null)
+            {
+                return;
+            }
             if (e.Elements(elementName).Any())
             {
                 try
@@ -260,7 +264,7 @@ namespace TVRename
             }
         }
 
-        public static void WriteInfo(this XmlWriter writer, string elemName, [CanBeNull] string attribute, [CanBeNull] string attributeVal)
+        public static void WriteInfo(this XmlWriter writer, string elemName, string? attribute, string? attributeVal)
         {
             if (!string.IsNullOrEmpty(attributeVal))
             {
@@ -273,7 +277,7 @@ namespace TVRename
             }
         }
 
-        public static void WriteInfo([NotNull] this XmlWriter writer, [NotNull] string elemName, [CanBeNull] string attribute, bool attributeVal)
+        public static void WriteInfo([NotNull] this XmlWriter writer, [NotNull] string elemName, string? attribute, bool attributeVal)
         {
             writer.WriteStartElement(elemName);
             if (!string.IsNullOrEmpty(attribute))
@@ -332,6 +336,17 @@ namespace TVRename
         {
             return ExtractString(xmlSettings, elementName, string.Empty);
         }
+
+        public static string? ExtractStringOrNull([NotNull] this XElement xmlSettings, string elementName)
+        {
+            if (xmlSettings.Descendants(elementName).Any())
+            {
+                return (string)xmlSettings.Descendants(elementName).First();
+            }
+
+            return null;
+        }
+
         public static string ExtractString([NotNull] this XElement xmlSettings, string elementName,string defaultValue)
         {
             if (xmlSettings.Descendants(elementName).Any())

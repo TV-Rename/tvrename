@@ -14,10 +14,10 @@ namespace TVRename
 {
     internal class DownloadKodiImages : DownloadIdentifier
     {
-        private List<string> donePosterJpg;
-        private List<string> doneBannerJpg;
-        private List<string> doneFanartJpg;
-        private List<string> doneTbn;
+        private List<string> donePosterJpg = new List<string>();
+        private List<string> doneBannerJpg = new List<string>();
+        private List<string> doneFanartJpg = new List<string>();
+        private List<string> doneTbn = new List<string>();
 
         public DownloadKodiImages() => Reset();
         
@@ -32,7 +32,7 @@ namespace TVRename
             base.NotifyComplete(file);
         }
 
-        public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
+        public override ItemList? ProcessShow(ShowItem si, bool forceRefresh)
         {
             //If we have KODI New style images being downloaded then we want to check that 3 files exist
             //for the series:
@@ -86,7 +86,7 @@ namespace TVRename
             return base.ProcessShow(si, forceRefresh);
         }
 
-        public override ItemList ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
+        public override ItemList? ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
         {
             if (TVSettings.Instance.KODIImages)
             {
@@ -145,19 +145,19 @@ namespace TVRename
             return base.ProcessSeason(si, folder, snum, forceRefresh);
         }
 
-        public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
+        public override ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file, bool forceRefresh)
         {
             if (TVSettings.Instance.EpTBNs)
             {
                 ItemList theActionList = new ItemList();
-                if (dbep.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
+                if (episode.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
                 {
                     //We have a merged episode, so we'll also download the images for the episodes had they been separate.
-                    foreach (Episode sourceEp in dbep.SourceEpisodes)
+                    foreach (Episode sourceEp in episode.SourceEpisodes)
                     {
-                        string foldername = filo.DirectoryName;
-                        string filename = TVSettings.Instance.FilenameFriendly(dbep.Show,sourceEp);
-                        ActionDownloadImage b = DoEpisode(dbep.Show,sourceEp,new FileInfo(foldername+"/"+filename), ".jpg", forceRefresh);
+                        string foldername = file.DirectoryName;
+                        string filename = TVSettings.Instance.FilenameFriendly(episode.Show,sourceEp);
+                        ActionDownloadImage b = DoEpisode(episode.Show,sourceEp,new FileInfo(foldername+"/"+filename), ".jpg", forceRefresh);
                         if (b != null)
                         {
                             theActionList.Add(b);
@@ -166,7 +166,7 @@ namespace TVRename
                 }
                 else
                 {
-                    ActionDownloadImage a = DoEpisode(dbep.Show, dbep, filo, ".tbn", forceRefresh);
+                    ActionDownloadImage a = DoEpisode(episode.Show, episode, file, ".tbn", forceRefresh);
                     if (a != null)
                     {
                         theActionList.Add(a);
@@ -174,11 +174,10 @@ namespace TVRename
                 }
                 return theActionList;
             }
-            return base.ProcessEpisode(dbep, filo, forceRefresh);
+            return base.ProcessEpisode(episode, file, forceRefresh);
         }
 
-        [CanBeNull]
-        private ActionDownloadImage DoEpisode(ShowItem si, [NotNull] Episode ep, FileInfo filo,string extension, bool forceRefresh)
+        private ActionDownloadImage? DoEpisode(ShowItem si, [NotNull] Episode ep, FileInfo filo,string extension, bool forceRefresh)
         {
             string ban = ep.Filename;
             if (string.IsNullOrEmpty(ban))

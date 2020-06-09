@@ -5,14 +5,12 @@ namespace TVRename
 {
     internal sealed class DownloadSeriesJpg : DownloadIdentifier
     {
-        private List<string> doneJpg;
+        private List<string> doneJpg = new List<string>();
         private const string DEFAULT_FILE_NAME = "series.jpg";
-
-        public DownloadSeriesJpg() => Reset();
 
         public override DownloadType GetDownloadType() => DownloadType.downloadImage;
 
-        public override ItemList ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
+        public override ItemList? ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
         {
             if (!TVSettings.Instance.SeriesJpg)
             {

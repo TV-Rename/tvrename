@@ -41,8 +41,7 @@ namespace TVRename
         [XmlIgnoreAttribute] public int NsNumberOfShows = 0;
         [XmlIgnoreAttribute] private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        [CanBeNull]
-        public static TVRenameStats Load()
+        public static TVRenameStats? Load()
         {
             string fn = PathManager.StatisticsFile.FullName;
             return !File.Exists(fn) ? new TVRenameStats() : LoadFrom(fn);
@@ -53,8 +52,7 @@ namespace TVRename
             SaveToFile(PathManager.StatisticsFile.FullName);
         }
 
-        [CanBeNull]
-        private static TVRenameStats LoadFrom(string filename)
+        private static TVRenameStats? LoadFrom(string filename)
         {
             if (!File.Exists(filename))
             {

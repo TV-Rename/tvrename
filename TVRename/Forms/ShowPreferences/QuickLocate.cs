@@ -14,7 +14,7 @@ namespace TVRename.Forms.ShowPreferences
 {
     public partial class QuickLocateForm : Form
     {
-        public string DirectoryFullPath;
+        public string? DirectoryFullPath;
 
         public QuickLocateForm(string hint)
         {

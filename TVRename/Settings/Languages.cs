@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 using Alphaleonis.Win32.Filesystem;
@@ -15,8 +16,7 @@ namespace TVRename
     {
         [XmlIgnoreAttribute] private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        [CanBeNull]
-        public static Languages Load()
+        public static Languages? Load()
         {
             string fn = PathManager.LanguagesFile.FullName;
 
@@ -28,8 +28,7 @@ namespace TVRename
             SaveToFile(PathManager.LanguagesFile.FullName);
         }
 
-        [CanBeNull]
-        private static Languages LoadFrom(string filename)
+        private static Languages? LoadFrom(string filename)
         {
             if (!File.Exists(filename))
             {
@@ -80,44 +79,20 @@ namespace TVRename
             }
         }
 
-        [CanBeNull]
-        public Language GetLanguageFromCode(string languageAbbreviation)
+        public Language? GetLanguageFromCode(string? languageAbbreviation)
         {
-            foreach (Language l in this)
-            {
-                if (l.Abbreviation == languageAbbreviation)
-                {
-                    return l;
-                }
-            }
-            return null;
+            return this.FirstOrDefault(l => l.Abbreviation == languageAbbreviation);
         }
 
-        [CanBeNull]
-        public Language GetLanguageFromLocalName(string language)
+        public Language? GetLanguageFromLocalName(string? language)
         {
-            foreach (Language l in this)
-            {
-                if (l.Name == language)
-                {
-                    return l;
-                }
-            }
-            return null;
+            return this.FirstOrDefault(l => l.Name == language);
         }
 
         // ReSharper disable once UnusedMember.Global
-        [CanBeNull]
-        public Language GetLanguageFromId(int languageId)
+        public Language? GetLanguageFromId(int languageId)
         {
-            foreach (Language l in this)
-            {
-                if (l.Id == languageId)
-                {
-                    return l;
-                }
-            }
-            return null;
+            return this.FirstOrDefault(l => l.Id == languageId);
         }
     }
 }

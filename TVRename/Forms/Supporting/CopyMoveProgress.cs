@@ -7,7 +7,6 @@
 // 
 
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -206,8 +205,7 @@ namespace TVRename
             txtDiskSpace.Text = diskText;
         }
 
-        [CanBeNull]
-        private ActionCopyMoveRename GetActiveCmAction()
+        private ActionCopyMoveRename? GetActiveCmAction()
         {
             foreach (Action action in mToDo.Where(aq => aq.Actions.Count != 0).SelectMany(aq => aq.Actions))
             {
@@ -235,7 +233,7 @@ namespace TVRename
             }
             else
             {
-                mDoc.Unpause();
+                mDoc.Resume();
                 cbPause.Text = "Pause";
             }
 

@@ -60,7 +60,7 @@ namespace TVRename
             //Set Default Timezone and if not then set on Network
             ShowItem.ShowTimeZone = TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.TimeZoneForNetwork(codeFinder.SelectedShow()?.Network, ShowItem.ShowTimeZone);
 
-            if (!originalHint.Contains(codeFinder.SelectedShow().Name, StringComparison.OrdinalIgnoreCase))
+            if (!originalHint.Contains(codeFinder.SelectedShow()?.Name??string.Empty, StringComparison.OrdinalIgnoreCase))
             {
                 ShowItem.AliasNames.Add(originalHint);
             }

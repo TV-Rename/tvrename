@@ -103,13 +103,13 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType, [CanBeNull] string token)
+        public static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType, string? token)
         {
             return HttpRequest(method, url, json, contentType, token, string.Empty);
         }
 
         [NotNull]
-        public static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType, [CanBeNull] string token, string lang)
+        public static string HttpRequest([NotNull] string method, [NotNull] string url, string? json, string contentType, string? token, string lang)
             {
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.ContentType = contentType;
@@ -273,7 +273,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static JObject JsonHttpGetRequest([NotNull] string url, string authToken) =>
+        public static JObject JsonHttpGetRequest([NotNull] string url, string? authToken) =>
             JObject.Parse(HttpRequest("GET",url, null, "application/json", authToken,string.Empty));
 
         [NotNull]
@@ -297,7 +297,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string GetHttpParameters([CanBeNull] Dictionary<string, string> parameters)
+        public static string GetHttpParameters(Dictionary<string, string>? parameters)
         {
             if (parameters is null)
             {
@@ -315,7 +315,7 @@ namespace TVRename
             return finalUrl.Remove(finalUrl.LastIndexOf("&", StringComparison.Ordinal));
         }
 
-        public static void RetryOnException(int times,TimeSpan delay,string url, Func<Exception, bool> retryableException,[NotNull] System.Action operation, [CanBeNull] System.Action updateOperation)
+        public static void RetryOnException(int times,TimeSpan delay,string url, Func<Exception, bool> retryableException,[NotNull] System.Action operation, System.Action? updateOperation)
         {
             if (times <= 0)
             {

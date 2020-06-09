@@ -43,7 +43,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        private static int GetSeriesIdFromOtherCodes(int siTvdbCode,string imdb)
+        private static int GetSeriesIdFromOtherCodes(int siTvdbCode,string? imdb)
         {
             try
             {
@@ -124,22 +124,18 @@ namespace TVRename.TVmaze
                 : GetSeriesDetails(GetSeriesIdFromOtherCodes(ss.TvdbSeriesId,ss.ImdbCode));
 
             SeriesInfo downloadedSi = GenerateSeriesInfo(results);
-            JToken? jToken = results["_embedded"];
-            if (jToken is null)
+            JToken jToken = GetChild(results,"_embedded");
+
+            foreach (string name in GetChild(jToken,"akas").Select(akaJson => (string)akaJson["name"]).Where(name => name != null))
             {
-                throw new SourceConsistencyException($"Could not get _embedded element from {results}", ShowItem.ProviderType.TVmaze);
+                downloadedSi.AddAlias(name);
             }
 
-            foreach (JToken akaJson in GetChild(jToken,"akas"))
-            {
-                downloadedSi.AddAlias((string)akaJson["name"]);
-            }
-
-            List<string> writers = GetWriters(jToken["crew"]);
-            List<string> directors = GetDirectors(jToken["crew"]);
+            List<string> writers = GetWriters(GetChild(jToken,"crew"));
+            List<string> directors = GetDirectors(GetChild(jToken,"crew"));
             foreach (JToken epJson in GetChild(jToken,"episodes"))
             {
-                downloadedSi.AddEpisode(GenerateEpisode(ss.TvMazeSeriesId,writers,directors, (JObject)epJson));
+                downloadedSi.AddEpisode(GenerateEpisode(ss.TvMazeSeriesId,writers,directors, (JObject)epJson,downloadedSi));
             }
 
             foreach (JToken jsonSeason in GetChild(jToken, "seasons"))
@@ -239,8 +235,8 @@ namespace TVRename.TVmaze
             JToken personToken = GetChild(jsonActor,"person");
             JToken actorImageNode = GetChild(personToken,"image");
             int actorId = (int) personToken["id"];
-            string actorImage = actorImageNode.HasValues ? (string) actorImageNode["medium"] : null;
-            string actorName = (string) personToken["name"];
+            string? actorImage = actorImageNode.HasValues ? (string) actorImageNode["medium"] : null;
+            string actorName = (string) personToken["name"] ?? throw new SourceConsistencyException("No Actor Name",ShowItem.ProviderType.TVmaze);
             string actorRole = (string) GetChild(GetChild(jsonActor,"character"),"name");
             int actorSortOrder = (int) personToken["id"];
             return new Actor(actorId, actorImage, actorName, actorRole, seriesId,actorSortOrder);
@@ -272,22 +268,19 @@ namespace TVRename.TVmaze
 
             if (r.ContainsKey("genres"))
             {
-                returnValue.Genres = r["genres"]?.Select(x => x.Value<string>()).ToList();
+                returnValue.Genres = r["genres"]?.Select(x => x.Value<string>()).ToList() ??new List<string>();
             }
 
             List<string> typesToTransferToGenres = new List<string>{"Animation","Reality","Documentary","News","Sports"};
             foreach (string conversionType in typesToTransferToGenres.Where(s => s==returnValue.Type))
             {
-                if (returnValue.Genres is null)
-                {
-                    returnValue.Genres=new List<string>();
-                }
                 returnValue.Genres.Add(conversionType);
             }
 
-            if ((string)r["name"] != null)
+            string s1 = (string)r["name"];
+            if (s1 != null)
             {
-                returnValue.Name = System.Web.HttpUtility.HtmlDecode((string)r["name"])?.Trim();
+                returnValue.Name = System.Web.HttpUtility.HtmlDecode(s1).Trim();
             }
 
             string siteRatingString = ((string)GetChild(r,"rating")["average"])?.Trim();
@@ -328,7 +321,7 @@ namespace TVRename.TVmaze
                 ShowLanguage = (string) r["language"],
                 Overview = System.Web.HttpUtility.HtmlDecode((string) r["summary"])?.Trim(),
                 Runtime = ((string) r["runtime"])?.Trim(),
-                Status = MapStatus((string) r["status"]),
+                Status = MapStatus((string) r["status"] ?? throw new SourceConsistencyException("No Status", ShowItem.ProviderType.TVmaze)),
                 Type = (string) r["type"],
                 SrvLastUpdated =
                     long.TryParse((string) r["updated"], out long updateTime)
@@ -338,8 +331,7 @@ namespace TVRename.TVmaze
             };
         }
 
-        [CanBeNull]
-        private static string GetKeySubKey([CanBeNull] JObject r, string key, string firstSubKey)
+        private static string? GetKeySubKey(JObject? r, string key, string firstSubKey)
         {
             if (r is null)
             {
@@ -376,7 +368,7 @@ namespace TVRename.TVmaze
         }
 
         [NotNull]
-        private static Episode GenerateEpisode(int seriesId, [NotNull] List<string> writers, [NotNull] List<string> directors, [NotNull] JObject r)
+        private static Episode GenerateEpisode(int seriesId, [NotNull] List<string> writers, [NotNull] List<string> directors, [NotNull] JObject r,SeriesInfo si)
         {
             //Somethign like {
                 //"id":1,
@@ -396,7 +388,7 @@ namespace TVRename.TVmaze
 
                 JToken airstampToken = GetChild(r, "airstamp");
 
-            Episode newEp =  new Episode(seriesId)
+            Episode newEp =  new Episode(seriesId,si)
             {
                 FirstAired = ((string)r["airdate"]).HasValue()? (DateTime?)r["airdate"]:null,
                 AirTime = JsonHelper.ParseAirTime((string)r["airtime"]),
@@ -432,8 +424,7 @@ namespace TVRename.TVmaze
             return token;
         }
 
-        [CanBeNull]
-        private static string GetUrl([NotNull] JObject r,string typeKey)
+        private static string? GetUrl([NotNull] JObject r,string typeKey)
         {
             JToken x = r["image"];
             if (x is null)

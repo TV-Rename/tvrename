@@ -23,7 +23,7 @@ namespace TVRename
         public override bool Active() =>TVSettings.Instance.ExportWTWICAL;
         protected override string Location() => TVSettings.Instance.ExportWTWICALTo;
 
-        protected override bool Generate(System.IO.Stream str, [CanBeNull] IEnumerable<ProcessedEpisode> episodes)
+        protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode>? episodes)
         {
             if (episodes is null)
             {
@@ -55,8 +55,7 @@ namespace TVRename
             }
         }
 
-        [CanBeNull]
-        private static CalendarEvent CreateEvent([NotNull] ProcessedEpisode ei)
+        private static CalendarEvent? CreateEvent([NotNull] ProcessedEpisode ei)
         {
             string niceName = TVSettings.Instance.NamingStyle.NameFor(ei);
             try

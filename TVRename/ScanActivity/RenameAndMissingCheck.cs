@@ -10,7 +10,7 @@ namespace TVRename
     {
         private readonly DownloadIdentifiersController downloadIdentifiers;
 
-        protected override string Checkname() => "Rename & Missing Check";
+        protected override string ActivityName() => "Rename & Missing Check";
 
         public RenameAndMissingCheck(TVDoc doc) : base(doc)
         {
@@ -108,10 +108,6 @@ namespace TVRename
             Doc.TheActionList.Add(downloadIdentifiers.ProcessSeason(si, folder, snum));
 
             FileInfo[] files = dfc.GetFiles(folder);
-            if (files is null)
-            {
-                return;
-            }
 
             bool renCheck =
                 TVSettings.Instance.RenameCheck && si.DoRename &&
@@ -198,14 +194,14 @@ namespace TVRename
             // look at the official list of episodes, and look to see if we have any gaps
 
             DateTime today = DateTime.Now;
-            foreach (ProcessedEpisode dbep in eps)
+            foreach (ProcessedEpisode episode in eps)
             {
-                if (!localEps.ContainsKey(dbep.AppropriateEpNum)) // not here locally
+                if (!localEps.ContainsKey(episode.AppropriateEpNum)) // not here locally
                 {
                     // second part of missing check is to see what is missing!
                     if (missCheck)
                     {
-                        DateTime? dt = dbep.GetAirDateDt(true);
+                        DateTime? dt = episode.GetAirDateDt(true);
                         bool dtOk = dt != null;
 
                         bool notFuture =
@@ -222,7 +218,7 @@ namespace TVRename
                         if (noAirdatesUntilNow || siForceCheckFuture || siForceCheckNoAirdate)
                         {
                             // then add it as officially missing
-                            Doc.TheActionList.Add(new ItemMissing(dbep, folder));
+                            Doc.TheActionList.Add(new ItemMissing(episode, folder));
                         }
                     }// if doing missing check
                 }
@@ -235,15 +231,14 @@ namespace TVRename
 
                     // do NFO and thumbnail checks if required
                     FileInfo
-                        filo = localEps[dbep.AppropriateEpNum]; // filename (or future filename) of the file
+                        filo = localEps[episode.AppropriateEpNum]; // filename (or future filename) of the file
 
-                    Doc.TheActionList.Add(downloadIdentifiers.ProcessEpisode(dbep, filo));
+                    Doc.TheActionList.Add(downloadIdentifiers.ProcessEpisode(episode, filo));
                 }
             } // up to date check, for each episode in thetvdb
         }
 
-        [CanBeNull]
-        private FileInfo CheckFile([NotNull] string folder, FileInfo fi, [NotNull] FileInfo actualFile, string newName, ProcessedEpisode ep,IEnumerable<FileInfo> files)
+        private FileInfo? CheckFile([NotNull] string folder, FileInfo fi, [NotNull] FileInfo actualFile, string newName, ProcessedEpisode ep,IEnumerable<FileInfo> files)
         {
             if (TVSettings.Instance.RetainLanguageSpecificSubtitles)
             {

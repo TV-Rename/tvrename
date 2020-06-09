@@ -15,7 +15,7 @@ namespace TVRename
 {
     public static class EnumerableExtensions
     {
-        public static void AddNullableRange<T>(this List<T> source, [CanBeNull] IEnumerable<T> items)
+        public static void AddNullableRange<T>(this List<T> source, IEnumerable<T>? items)
         {
             if (items != null)
             {

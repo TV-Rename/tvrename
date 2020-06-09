@@ -25,7 +25,7 @@ namespace TVRename.TheTVDB
 
         // ReSharper disable once InconsistentNaming
         [NotNull]
-        public static string GetImageURL(string url)
+        public static string GetImageURL(string? url)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
@@ -71,7 +71,8 @@ namespace TVRename.TheTVDB
         [NotNull]
         public static string WebsiteShowUrl([NotNull] ShowItem si)
         {
-            return string.IsNullOrWhiteSpace(si.TheSeries()?.Slug) ? WebsiteShowUrl(si.TvdbCode) : WebsiteShowUrl(si.TheSeries()?.Slug);
+            string? value = si.TheSeries()?.Slug;
+            return string.IsNullOrWhiteSpace(value) ? WebsiteShowUrl(si.TvdbCode) : WebsiteShowUrl(value);
         }
 
         [NotNull]
@@ -91,22 +92,18 @@ namespace TVRename.TheTVDB
         [NotNull]
         public static string WebsiteEpisodeUrl([NotNull] Episode ep)
         {
-            if (ep.TheSeries != null)
-            {
-                return string.IsNullOrWhiteSpace(ep.TheSeries?.Slug)
-                    ? WebsiteEpisodeUrl(ep.TheSeries.TvdbCode, ep.EpisodeId)
-                    : WebsiteEpisodeUrl(ep.TheSeries.Slug, ep.EpisodeId);
-            }
-
-            return string.Empty;
+            return string.IsNullOrWhiteSpace(ep.TheSeries.Slug)
+                ? WebsiteEpisodeUrl(ep.TheSeries.TvdbCode, ep.EpisodeId)
+                : WebsiteEpisodeUrl(ep.TheSeries.Slug, ep.EpisodeId);
         }
 
         [NotNull]
         public static string WebsiteSeasonUrl([NotNull] ProcessedSeason s)
         {
-            return string.IsNullOrWhiteSpace(s.Show.TheSeries()?.Slug)
+            string? value = s.Show.TheSeries()?.Slug;
+            return string.IsNullOrWhiteSpace(value)
                 ? WebsiteSeasonUrl(s.Show.TvdbCode, s.Show.Order, s.SeasonNumber)
-                : WebsiteSeasonUrl(s.Show.TheSeries()?.Slug, s.Show.Order, s.SeasonNumber);
+                : WebsiteSeasonUrl(value, s.Show.Order, s.SeasonNumber);
         }
 
         [NotNull]
@@ -160,11 +157,11 @@ namespace TVRename.TheTVDB
         }
 
         [NotNull]
-        private static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, TokenProvider authToken, bool retry) =>
+        private static JObject JsonHttpGetRequest(string url, Dictionary<string, string>? parameters, TokenProvider? authToken, bool retry) =>
             JsonHttpGetRequest(url, parameters, authToken, string.Empty, retry);
 
         [NotNull]
-        private static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, TokenProvider authToken, string lang, bool retry)
+        private static JObject JsonHttpGetRequest(string url, Dictionary<string, string>? parameters, TokenProvider? authToken, string lang, bool retry)
         {
             TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
             string fullUrl = url + HttpHelper.GetHttpParameters(parameters);
@@ -173,10 +170,21 @@ namespace TVRename.TheTVDB
 
             if (retry)
             {
-                HttpHelper.RetryOnException(3, pauseBetweenFailures, fullUrl,
+                if (authToken !=null)
+                {
+                    HttpHelper.RetryOnException(3, pauseBetweenFailures, fullUrl,
                     exception => true,
                     () => { response = HttpRequest("GET", fullUrl, null, "application/json", authToken, lang); },
                     authToken.EnsureValid);
+
+                }
+                else
+                {
+                    HttpHelper.RetryOnException(3, pauseBetweenFailures, fullUrl,
+                        exception => true,
+                        () => { response = HttpRequest("GET", fullUrl, null, "application/json", null, lang); },
+                        () => { });
+                }
             }
             else
             {
@@ -205,8 +213,8 @@ namespace TVRename.TheTVDB
         }
 
         [NotNull]
-        private static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType,
-            [CanBeNull] TokenProvider authToken, string lang = "")
+        private static string HttpRequest([NotNull] string method, [NotNull] string url, string? json, string contentType,
+            TokenProvider? authToken, string lang = "")
             => HttpHelper.HttpRequest(method, url, json, contentType, authToken?.GetToken(), lang);
 
         [NotNull]

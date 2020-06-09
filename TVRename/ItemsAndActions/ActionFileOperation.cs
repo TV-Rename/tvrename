@@ -7,19 +7,17 @@
 // 
 
 using System;
-using System.Diagnostics;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
     public abstract class ActionFileOperation : Action
     {
-        protected TVSettings.TidySettings Tidyup;
+        protected TVSettings.TidySettings? Tidyup;
         protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
-        protected void DeleteOrRecycleFile([CanBeNull] FileInfo file)
+        protected void DeleteOrRecycleFile(FileInfo? file)
         {
             if (file is null)
             {
@@ -40,7 +38,7 @@ namespace TVRename
             }
         }
 
-        protected void DeleteOrRecycleFolder([CanBeNull] DirectoryInfo di)
+        protected void DeleteOrRecycleFolder(DirectoryInfo? di)
         {
             if (di is null)
             {
@@ -61,15 +59,13 @@ namespace TVRename
             }
         }
 
-        protected void DoTidyup([CanBeNull] DirectoryInfo di)
+        protected void DoTidyup(DirectoryInfo? di)
         {
-#if DEBUG
-            Debug.Assert(Tidyup != null);
-            Debug.Assert(Tidyup.DeleteEmpty);
-#else
-            if (this.Tidyup is null || !this.Tidyup.DeleteEmpty)
+            if (Tidyup is null || !Tidyup.DeleteEmpty)
+            {
                 return;
-#endif
+            }
+
             // See if we should now delete the folder we just moved that file from.
             if (di is null)
             {

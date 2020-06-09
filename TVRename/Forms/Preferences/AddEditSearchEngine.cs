@@ -27,13 +27,12 @@ namespace TVRename
     /// </summary>
     public partial class AddEditSearchEngine : Form
     {
-        private CustomNameTagsFloatingWindow cntfw;
-        private Grid grid1;
+        private CustomNameTagsFloatingWindow? cntfw;
         
-        private readonly ProcessedEpisode sampleEpisode;
+        private readonly ProcessedEpisode? sampleEpisode;
         private readonly Searchers mSearchers;
 
-        public AddEditSearchEngine(Searchers s, ProcessedEpisode pe)
+        public AddEditSearchEngine(Searchers s, ProcessedEpisode? pe)
         {
             sampleEpisode = pe;
             InitializeComponent();

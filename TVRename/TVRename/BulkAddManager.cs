@@ -204,7 +204,7 @@ namespace TVRename
             return showName;
         }
 
-        private bool HasSeasonFolders([NotNull] DirectoryInfo di, [CanBeNull] out DirectoryInfo[] subDirs, [NotNull] out string folderFormat)
+        private bool HasSeasonFolders([NotNull] DirectoryInfo di, out DirectoryInfo[]? subDirs, [NotNull] out string folderFormat)
         {
             try
             {

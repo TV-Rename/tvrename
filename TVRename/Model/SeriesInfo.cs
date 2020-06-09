@@ -21,35 +21,35 @@ namespace TVRename
     public class SeriesInfo
     {
         public DateTime? AirsTime;
-        private string airsTimeString; //The raw value we obtain from TVDB
+        private string? airsTimeString; //The raw value we obtain from TVDB
         public bool Dirty; // set to true if local info is known to be older than whats on the server
         public DateTime? FirstAired;
-        public readonly string TargetLanguageCode; //The Language Code we'd like the Series in ; null if we want to use the system setting
+        public readonly string? TargetLanguageCode; //The Language Code we'd like the Series in ; null if we want to use the system setting
         public int LanguageId; //The actual language obtained
         public string Name;
-        public string AirsDay;
-        public string Network;
-        public string Overview;
-        public string Runtime;
-        public string ContentRating;
+        public string? AirsDay;
+        public string? Network;
+        public string? Overview;
+        public string? Runtime;
+        public string? ContentRating;
         public float SiteRating;
         public int SiteRatingVotes;
-        public string Imdb;
+        public string? Imdb;
         public int TvdbCode;
         public int TvMazeCode;
         public int TvRageCode;
-        public string SeriesId;
-        public string WebUrl;
-        public string OfficialUrl;
-        public string Type;
-        public string ShowLanguage;
-        public string BannerString;
-        public string PosterUrl;
+        public string? SeriesId;
+        public string? WebUrl;
+        public string? OfficialUrl;
+        public string? Type;
+        public string? ShowLanguage;
+        public string? BannerString;
+        public string? PosterUrl;
         public bool BannersLoaded;
         public long SrvLastUpdated;
         
         public bool IsSearchResultOnly;
-        public string Slug;
+        public string? Slug;
 
         private List<Actor> actors;
         public List<string> Genres;
@@ -98,7 +98,7 @@ namespace TVRename
       [NotNull]
       public string Year => FirstAired?.ToString("yyyy") ?? $"{MinYear}";
 
-      public string Status { get; set; }
+      public string? Status { get; set; }
 
       // note: "SeriesID" in a <Series> is the tv.com code,
         // "seriesid" in an <Episode> is the tvdb code!
@@ -296,7 +296,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string ChooseBetter([CanBeNull] string encumbant, bool betterLanguage, [CanBeNull] string newValue)
+        private static string ChooseBetter(string? encumbant, bool betterLanguage, string? newValue)
         {
             if (string.IsNullOrEmpty(encumbant))
             {
@@ -312,7 +312,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string ChooseBetterStatus([CanBeNull] string encumbant, bool betterLanguage, [CanBeNull] string newValue)
+        private static string ChooseBetterStatus(string? encumbant, bool betterLanguage, string? newValue)
         {
             if (string.IsNullOrEmpty(encumbant) || encumbant.Equals("Unknown")) 
             {
@@ -351,34 +351,34 @@ namespace TVRename
                 TvMazeCode = seriesXml.ExtractInt("mazeid") ?? -1;
 
                 Name = System.Web.HttpUtility.HtmlDecode(
-                    XmlHelper.ReadStringFixQuotesAndSpaces(seriesXml.ExtractString("SeriesName") ?? seriesXml.ExtractString("seriesName")));
+                    XmlHelper.ReadStringFixQuotesAndSpaces(seriesXml.ExtractStringOrNull("SeriesName") ?? seriesXml.ExtractString("seriesName")));
 
                 SrvLastUpdated = seriesXml.ExtractLong("lastupdated")??seriesXml.ExtractLong("lastUpdated",0);
                 LanguageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId") ?? throw new SourceConsistencyException("Error Extracting Language for Series",ShowItem.ProviderType.TheTVDB);
 
-                airsTimeString = seriesXml.ExtractString("Airs_Time")?? seriesXml.ExtractString("airsTime");
+                airsTimeString = seriesXml.ExtractStringOrNull("Airs_Time")?? seriesXml.ExtractString("airsTime");
                 AirsTime = JsonHelper.ParseAirTime(airsTimeString);
 
-                AirsDay = seriesXml.ExtractString("airsDayOfWeek") ?? seriesXml.ExtractString("Airs_DayOfWeek");
-                BannerString = seriesXml.ExtractString("banner") ?? seriesXml.ExtractString("Banner");
+                AirsDay = seriesXml.ExtractStringOrNull("airsDayOfWeek") ?? seriesXml.ExtractString("Airs_DayOfWeek");
+                BannerString = seriesXml.ExtractStringOrNull("banner") ?? seriesXml.ExtractString("Banner");
                 PosterUrl = seriesXml.ExtractString("posterURL");
-                Imdb = seriesXml.ExtractString("imdbId") ?? seriesXml.ExtractString("IMDB_ID");
+                Imdb = seriesXml.ExtractStringOrNull("imdbId") ?? seriesXml.ExtractString("IMDB_ID");
                 WebUrl = seriesXml.ExtractString("WebURL");
                 OfficialUrl = seriesXml.ExtractString("OfficialUrl");
                 Type = seriesXml.ExtractString("Type");
                 ShowLanguage = seriesXml.ExtractString("ShowLanguage");
                 TvRageCode = seriesXml.ExtractInt("rageid") ?? 0;
-                Network = seriesXml.ExtractString("network") ?? seriesXml.ExtractString("Network");
-                Overview = seriesXml.ExtractString("overview") ?? seriesXml.ExtractString("Overview");
-                ContentRating = seriesXml.ExtractString("rating") ?? seriesXml.ExtractString("Rating");
-                Runtime = seriesXml.ExtractString("runtime") ?? seriesXml.ExtractString("Runtime");
-                SeriesId = seriesXml.ExtractString("seriesId") ?? seriesXml.ExtractString("SeriesID");
-                Status = seriesXml.ExtractString("status") ?? seriesXml.ExtractString("Status");
+                Network = seriesXml.ExtractStringOrNull("network") ?? seriesXml.ExtractString("Network");
+                Overview = seriesXml.ExtractStringOrNull("overview") ?? seriesXml.ExtractString("Overview");
+                ContentRating = seriesXml.ExtractStringOrNull("rating") ?? seriesXml.ExtractString("Rating");
+                Runtime = seriesXml.ExtractStringOrNull("runtime") ?? seriesXml.ExtractString("Runtime");
+                SeriesId = seriesXml.ExtractStringOrNull("seriesId") ?? seriesXml.ExtractString("SeriesID");
+                Status = seriesXml.ExtractStringOrNull("status") ?? seriesXml.ExtractString("Status");
                 SiteRatingVotes = seriesXml.ExtractInt("siteRatingCount") ?? seriesXml.ExtractInt("SiteRatingCount",0);
                 Slug = seriesXml.ExtractString("slug");
 
                 SiteRating = GetSiteRating(seriesXml);
-                FirstAired = JsonHelper.ParseFirstAired(seriesXml.ExtractString("FirstAired") ?? seriesXml.ExtractString("firstAired"));
+                FirstAired = JsonHelper.ParseFirstAired(seriesXml.ExtractStringOrNull("FirstAired") ?? seriesXml.ExtractString("firstAired"));
 
                 LoadActors(seriesXml);
                 LoadAliases(seriesXml);
@@ -395,7 +395,7 @@ namespace TVRename
 
         private static float GetSiteRating([NotNull] XElement seriesXml)
         {
-            string siteRatingString = seriesXml.ExtractString("siteRating") ?? seriesXml.ExtractString("SiteRating");
+            string siteRatingString = seriesXml.ExtractStringOrNull("siteRating") ?? seriesXml.ExtractString("SiteRating");
             float.TryParse(siteRatingString,
                 NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite,
                 CultureInfo.CreateSpecificCulture("en-US"), out float x);
@@ -452,7 +452,7 @@ namespace TVRename
 
             if (r.ContainsKey("genre"))
             {
-                Genres = r["genre"]?.Select(x => x.Value<string>()).ToList();
+                Genres = r["genre"]?.Select(x => x.Value<string>()).ToList() ??new List<string>();
             }
 
             TvdbCode = (int)r["id"];
@@ -463,9 +463,10 @@ namespace TVRename
             ContentRating = ((string) r["rating"])?.Trim();
             Runtime = ((string) r["runtime"])?.Trim();
             SeriesId = (string) r["seriesId"];
-            if ((string)r["seriesName"] != null)
+            string s = (string)r["seriesName"];
+            if (s != null)
             {
-                Name = System.Web.HttpUtility.HtmlDecode((string)r["seriesName"])?.Trim();
+                Name = System.Web.HttpUtility.HtmlDecode(s).Trim();
             }
             Status = (string) r["status"];
 
@@ -497,12 +498,14 @@ namespace TVRename
             //backupLanguageR should be a series of name/value pairs (ie a JArray of JPropertes)
             //TVDB asserts that name and overview are the fields that are localised
 
-            if (string.IsNullOrWhiteSpace(Name) && (string)backupLanguageR["seriesName"] != null ){
-                Name = System.Web.HttpUtility.HtmlDecode((string)backupLanguageR["seriesName"]);
+            string s = (string)backupLanguageR["seriesName"];
+            if (string.IsNullOrWhiteSpace(Name) && s != null ){
+                Name = System.Web.HttpUtility.HtmlDecode(s);
             }
 
-            if (string.IsNullOrWhiteSpace(Overview) && (string)backupLanguageR["overview"] != null ){
-                Overview = System.Web.HttpUtility.HtmlDecode((string)backupLanguageR["overview"]);
+            string o = (string)backupLanguageR["overview"];
+            if (string.IsNullOrWhiteSpace(Overview) && o != null ){
+                Overview = System.Web.HttpUtility.HtmlDecode(o);
             }
 
             //Looking at the data then the aliases, banner and runtime are also different by language
@@ -613,10 +616,10 @@ namespace TVRename
         public string GetSeriesFanartPath() => banners.GetSeriesFanartPath();
         [NotNull]
         public string GetSeriesPosterPath() => banners.GetSeriesPosterPath();
-        public string GetImage(TVSettings.FolderJpgIsType itemForFolderJpg) => banners.GetImage(itemForFolderJpg);
-        public string GetSeasonBannerPath(int snum) => banners.GetSeasonBannerPath(snum);
-        public string GetSeriesWideBannerPath() => banners.GetSeriesWideBannerPath();
-        public string GetSeasonWideBannerPath(int snum) => banners.GetSeasonWideBannerPath(snum);
+        public string? GetImage(TVSettings.FolderJpgIsType itemForFolderJpg) => banners.GetImage(itemForFolderJpg);
+        public string? GetSeasonBannerPath(int snum) => banners.GetSeasonBannerPath(snum);
+        public string? GetSeriesWideBannerPath() => banners.GetSeriesWideBannerPath();
+        public string? GetSeasonWideBannerPath(int snum) => banners.GetSeasonWideBannerPath(snum);
         public void AddOrUpdateBanner([NotNull] Banner banner) => banners.AddOrUpdateBanner(banner);
 
         public void UpdateBanners(List<int> latestBannerIds)
@@ -662,8 +665,7 @@ namespace TVRename
             aliases.Add(s);
         }
 
-        [CanBeNull]
-        public Season Season(int sSeasonNumber)
+        public Season? Season(int sSeasonNumber)
         {
             return seasons.FirstOrDefault(season => season.SeasonNumber== sSeasonNumber);
         }

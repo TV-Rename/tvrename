@@ -6,8 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
-using JetBrains.Annotations;
-
 namespace TVRename
 {
     public class SeriesSpecifier
@@ -17,11 +15,11 @@ namespace TVRename
         public readonly bool UseCustomLanguage;
         public readonly string CustomLanguageCode;
         public readonly string Name;
-        public readonly string ImdbCode;
+        public readonly string? ImdbCode;
         public readonly ShowItem.ProviderType Provider;
 
-        public SeriesSpecifier(int tvdb, int tvmaze, bool useCustomLanguage, [CanBeNull] string customLanguageCode,
-            string name, ShowItem.ProviderType p, string imdb)
+        public SeriesSpecifier(int tvdb, int tvmaze, bool useCustomLanguage, string? customLanguageCode,
+            string name, ShowItem.ProviderType p, string? imdb)
         {
             TvdbSeriesId = tvdb;
             TvMazeSeriesId = tvmaze;

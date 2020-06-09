@@ -15,13 +15,13 @@ namespace TVRename
     public class Actor
     {
         public int ActorId { get; }
-        public string ActorImage { get; }
+        public string? ActorImage { get; }
         public string ActorName { get; }
-        public string ActorRole { get; }
+        public string? ActorRole { get; }
         public int ActorSeriesId { get; }
         public int ActorSortOrder { get; }
 
-        public Actor(int actorId, string actorImage, string actorName, string actorRole, int actorSeriesId, int actorSortOrder)
+        public Actor(int actorId, string? actorImage, string actorName, string? actorRole, int actorSeriesId, int actorSortOrder)
         {
             ActorId = actorId;
             ActorImage = actorImage;

@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -20,7 +19,7 @@ namespace TVRename
         public override bool Active() =>TVSettings.Instance.ExportWTWRSS;
         protected override string Location() => TVSettings.Instance.ExportWTWRSSTo;
 
-        protected override bool Generate(System.IO.Stream str, [CanBeNull] IEnumerable<ProcessedEpisode> elist)
+        protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode>? elist)
         {
             if (elist is null)
             {

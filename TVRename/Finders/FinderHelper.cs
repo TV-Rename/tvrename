@@ -23,18 +23,18 @@ namespace TVRename
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem si,[CanBeNull] out TVSettings.FilenameProcessorRE re)
+        public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem? si,out TVSettings.FilenameProcessorRE? re)
         {
             return FindSeasEp(fi, out seas, out ep, out maxEp, si, TVSettings.Instance.FNPRegexs, out re);
         }
 
-        public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowItem si, [NotNull] IEnumerable<TVSettings.FilenameProcessorRE> rexps, [CanBeNull] out TVSettings.FilenameProcessorRE re)
+        public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowItem? si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? re)
         {
             return FindSeasEp(string.Empty, itemName, out seas, out ep, out maxEp, si, rexps, out re);
         }
 
-        public static bool FindSeasEp([CanBeNull] FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem si,
-            IEnumerable<TVSettings.FilenameProcessorRE> rexps, [CanBeNull] out TVSettings.FilenameProcessorRE re)
+        public static bool FindSeasEp(FileInfo? fi, out int seas, out int ep, out int maxEp, ShowItem? si,
+            IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? re)
         {
             if (fi is null)
             {
@@ -48,7 +48,7 @@ namespace TVRename
             return FindSeasEp(fi.Directory.FullName, fi.RemoveExtension(), out seas, out ep, out maxEp, si, rexps, out re);
         }
 
-        public static bool FindSeasEpNameCheck([CanBeNull] FileInfo fi, [CanBeNull] ShowItem si, out int seas, out int ep)
+        public static bool FindSeasEpNameCheck(FileInfo? fi, ShowItem? si, out int seas, out int ep)
         {
             ep = -1;
             seas = -1;
@@ -58,7 +58,7 @@ namespace TVRename
                 return false;
             }
 
-            SeriesInfo ser = si.TheSeries();
+            SeriesInfo? ser = si.TheSeries();
 
             if (ser is null)
             {
@@ -103,7 +103,7 @@ namespace TVRename
             return Regex.Match(matchText, @"\D0*" + num + @"\D").Success;
         }
 
-        public static bool FindSeasEpDateCheck([CanBeNull] string filename, out int seas, out int ep, [CanBeNull] ShowItem si)
+        public static bool FindSeasEpDateCheck(string? filename, out int seas, out int ep, ShowItem? si)
         {
             ep = -1;
             seas = -1;
@@ -163,8 +163,8 @@ namespace TVRename
             return ep != -1 && seas != -1;
         }
 
-        public static bool FindSeasEp([CanBeNull] DirectoryInfo di, out int seas, out int ep, ShowItem si,
-            [CanBeNull] out TVSettings.FilenameProcessorRE re)
+        public static bool FindSeasEp(DirectoryInfo? di, out int seas, out int ep, ShowItem si,
+            out TVSettings.FilenameProcessorRE? re)
         {
             List<TVSettings.FilenameProcessorRE> rexps = TVSettings.Instance.FNPRegexs;
             re = null;
@@ -179,12 +179,12 @@ namespace TVRename
             return FindSeasEp(di.Parent.FullName, di.Name, out seas, out ep, out int _, si, rexps, out re);
         }
 
-        public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowItem show)
+        public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowItem? show)
         {
             return FindSeasEp(string.Empty, itemName, out seas, out ep, out maxEp, show, TVSettings.Instance.FNPRegexs, out TVSettings.FilenameProcessorRE _);
         }
 
-        public static bool FindSeasEp(FileInfo theFile, out int seasF, out int epF, out int maxEp, ShowItem sI)
+        public static bool FindSeasEp(FileInfo theFile, out int seasF, out int epF, out int maxEp, ShowItem? sI)
         {
             return FindSeasEp(theFile, out seasF, out epF, out maxEp, sI, out TVSettings.FilenameProcessorRE _);
         }
@@ -200,7 +200,7 @@ namespace TVRename
             return true;
         }
 
-        public static bool FileNeeded([NotNull] DirectoryInfo di, [NotNull] ShowItem si, DirFilesCache dfc)
+        public static bool FileNeeded(DirectoryInfo? di, ShowItem? si, DirFilesCache dfc)
         {
             if (di is null)
             {
@@ -222,14 +222,14 @@ namespace TVRename
         }
 
         [NotNull]
-        public static List<FileInfo> FindEpOnDisk(this DirFilesCache dfc, [NotNull] ProcessedEpisode pe,
+        public static List<FileInfo> FindEpOnDisk(this DirFilesCache? dfc, ProcessedEpisode pe,
             bool checkDirectoryExist = true)
         {
             return FindEpOnDisk(dfc, pe.Show, pe, checkDirectoryExist);
         }
 
         [NotNull]
-        private static List<FileInfo> FindEpOnDisk([CanBeNull] DirFilesCache dfc, [NotNull] ShowItem si, [NotNull] ProcessedEpisode epi,
+        private static List<FileInfo> FindEpOnDisk(DirFilesCache? dfc, ShowItem si, ProcessedEpisode epi,
             bool checkDirectoryExist = true)
         {
             DirFilesCache cache = dfc ?? new DirFilesCache();
@@ -251,10 +251,6 @@ namespace TVRename
             foreach (string folder in dirs[snum])
             {
                 FileInfo[] files = cache.GetFiles(folder);
-                if (files is null)
-                {
-                    continue;
-                }
 
                 foreach (FileInfo fiTemp in files.Where(fiTemp => fiTemp.IsMovieFile()))
                 {
@@ -323,7 +319,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string SimplifyFilename([NotNull] string filename, [CanBeNull] string showNameHint)
+        private static string SimplifyFilename([NotNull] string filename, string? showNameHint)
         {
             // Look at showNameHint and try to remove the first occurrence of it from filename
             // This is very helpful if the show's name has a >= 4 digit number in it, as that
@@ -372,7 +368,7 @@ namespace TVRename
         }
 
         public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, out int maxEp,
-            [CanBeNull] ShowItem si, [NotNull] IEnumerable<TVSettings.FilenameProcessorRE> rexps, [CanBeNull] out TVSettings.FilenameProcessorRE rex)
+            ShowItem? si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? rex)
         {
             string showNameHint = si != null ? si.ShowName : string.Empty;
             maxEp = -1;
@@ -420,11 +416,11 @@ namespace TVRename
             return seas != -1 && ep != -1;
         }
 
-        private static (int seas, int ep, int maxEp) IdentifyEpisode([CanBeNull] ShowItem si, [NotNull] Match m, TVSettings.FilenameProcessorRE re)
+        private static (int seas, int ep, int maxEp) IdentifyEpisode(ShowItem? si, [NotNull] Match m, TVSettings.FilenameProcessorRE re)
         {
             if (!int.TryParse(m.Groups["s"].ToString(), out int seas))
             {
-                if (!re.RegExpression.Contains("<s>") && (si?.AppropriateSeasons()?.Count??0) == 1)
+                if (!re.RegExpression.Contains("<s>") && (si?.AppropriateSeasons().Count??0) == 1)
                 {
                     seas = 1;
                 }
@@ -621,9 +617,9 @@ namespace TVRename
             return addedShows;
         }
 
-        public static ShowItem FindBestMatchingShow([NotNull] FileInfo fi, [NotNull] IEnumerable<ShowItem> shows) => FindBestMatchingShow(fi.Name, shows);
+        public static ShowItem? FindBestMatchingShow([NotNull] FileInfo fi, [NotNull] IEnumerable<ShowItem> shows) => FindBestMatchingShow(fi.Name, shows);
 
-        public static ShowItem FindBestMatchingShow(string filename, [NotNull] IEnumerable<ShowItem> shows)
+        public static ShowItem? FindBestMatchingShow(string filename, [NotNull] IEnumerable<ShowItem> shows)
         {
             IEnumerable<ShowItem> showItems = shows as ShowItem[] ?? shows.ToArray();
 

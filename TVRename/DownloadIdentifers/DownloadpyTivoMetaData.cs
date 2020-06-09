@@ -6,7 +6,7 @@ namespace TVRename
     {
         public override DownloadType GetDownloadType() => DownloadType.downloadMetaData;
 
-        public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
+        public override ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file, bool forceRefresh)
         {
             if (!TVSettings.Instance.pyTivoMeta)
             {
@@ -14,9 +14,9 @@ namespace TVRename
             }
 
             ItemList theActionList = new ItemList(); 
-            string fn = filo.Name + ".txt";
+            string fn = file.Name + ".txt";
 
-            string folder = filo.DirectoryName;
+            string folder = file.DirectoryName;
             if (TVSettings.Instance.pyTivoMetaSubFolder)
             {
                 folder += "\\.meta";
@@ -24,9 +24,9 @@ namespace TVRename
 
             FileInfo meta = FileHelper.FileInFolder(folder, fn);
 
-            if (!meta.Exists || dbep.SrvLastUpdated > TimeZoneHelper.Epoch(meta.LastWriteTime))
+            if (!meta.Exists || episode.SrvLastUpdated > TimeZoneHelper.Epoch(meta.LastWriteTime))
             {
-                theActionList.Add(new ActionPyTivoMeta(meta, dbep));
+                theActionList.Add(new ActionPyTivoMeta(meta, episode));
             }
 
             return theActionList;

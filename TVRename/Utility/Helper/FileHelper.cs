@@ -38,40 +38,40 @@ namespace TVRename
             same
         }
 
-        public static VideoComparison BetterQualityFile(FileInfo encumbantFile, [NotNull] FileInfo newFile)
+        public static VideoComparison BetterQualityFile(FileInfo incumbantFile, [NotNull] FileInfo newFile)
         {
             if (!newFile.IsMovieFile())
             {
                 return VideoComparison.firstFileBetter;
             }
 
-            if (!encumbantFile.IsMovieFile())
+            if (!incumbantFile.IsMovieFile())
             {
                 return VideoComparison.secondFileBetter;
             }
 
-            int encumbantLength = encumbantFile.GetFilmLength();
+            int encumbantLength = incumbantFile.GetFilmLength();
             int newFileLength = newFile.GetFilmLength();
-            int encumbantFrameWidth = encumbantFile.GetFrameWidth();
+            int encumbantFrameWidth = incumbantFile.GetFrameWidth();
             int newFileFrameWidth = newFile.GetFrameWidth();
 
             bool newFileContainsTerm =
                 TVSettings.Instance.PriorityReplaceTermsArray.Any(term => newFile.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
 
-            bool encumbantFileContainsTerm =
-                TVSettings.Instance.PriorityReplaceTermsArray.Any(term => encumbantFile.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
+            bool incumbantFileContainsTerm =
+                TVSettings.Instance.PriorityReplaceTermsArray.Any(term => incumbantFile.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
 
             float percentMargin = TVSettings.Instance.replaceMargin;
             float marginMultiplier = (percentMargin + 100) / 100;
 
-            bool encumbantFileIsMuchLonger = encumbantLength > newFileLength * marginMultiplier;
+            bool incumbantFileIsMuchLonger = encumbantLength > newFileLength * marginMultiplier;
             bool newFileIsMuchLonger = encumbantLength * marginMultiplier < newFileLength;
 
             bool newFileIsBetterQuality = encumbantFrameWidth * marginMultiplier < newFileFrameWidth;
-            bool encumbantFileIsBetterQuality = encumbantFrameWidth > newFileFrameWidth * marginMultiplier;
+            bool incumbantFileIsBetterQuality = encumbantFrameWidth > newFileFrameWidth * marginMultiplier;
 
             if (encumbantLength == newFileLength && encumbantFrameWidth == newFileFrameWidth &&
-                newFile.Length == encumbantFile.Length)
+                newFile.Length == incumbantFile.Length)
             {
                 return VideoComparison.same;
             }
@@ -84,22 +84,22 @@ namespace TVRename
                 return VideoComparison.cantTell;
             }
 
-            if (encumbantFileIsBetterQuality && !newFileIsMuchLonger)
+            if (incumbantFileIsBetterQuality && !newFileIsMuchLonger)
             {
                 return VideoComparison.firstFileBetter;  //existing file is better quality
             }
 
-            if (encumbantFileIsMuchLonger && !newFileIsBetterQuality)
+            if (incumbantFileIsMuchLonger && !newFileIsBetterQuality)
             {
                 return VideoComparison.firstFileBetter;  //existing file is longer
             }
 
-            if (newFileIsBetterQuality && !encumbantFileIsMuchLonger)
+            if (newFileIsBetterQuality && !incumbantFileIsMuchLonger)
             {
                 return VideoComparison.secondFileBetter;
             }
 
-            if (newFileIsMuchLonger && !encumbantFileIsBetterQuality)
+            if (newFileIsMuchLonger && !incumbantFileIsBetterQuality)
             {
                 return VideoComparison.secondFileBetter;
             }
@@ -109,7 +109,7 @@ namespace TVRename
                 return VideoComparison.secondFileBetter;
             }
 
-            if (encumbantFileContainsTerm)
+            if (incumbantFileContainsTerm)
             {
                 return VideoComparison.firstFileBetter;
             }
@@ -228,7 +228,7 @@ namespace TVRename
             return (int)Math.Round(ret);
         }
 
-        private static int ParseDuration([CanBeNull] string duration,FileInfo sourceFile)
+        private static int ParseDuration(string? duration,FileInfo sourceFile)
         {
             try
             {
@@ -440,27 +440,27 @@ namespace TVRename
         public static FileInfo FileInFolder([NotNull] DirectoryInfo di, string fn) => FileInFolder(di.FullName, fn);
 
         // see if showname is somewhere in filename
-        public static bool SimplifyAndCheckFilename(string filename, string showname, bool simplifyfilename, bool simplifyshowname)
+        public static bool SimplifyAndCheckFilename(string filename, string showName, bool simplifyfilename, bool simplifyshowname)
         {
-            return Regex.Match(simplifyfilename ? Helpers.SimplifyName(filename) : filename, "\\b" + (simplifyshowname ? Helpers.SimplifyName(showname) : showname) + "\\b", RegexOptions.IgnoreCase).Success;
+            return Regex.Match(simplifyfilename ? Helpers.SimplifyName(filename) : filename, "\\b" + (simplifyshowname ? Helpers.SimplifyName(showName) : showName) + "\\b", RegexOptions.IgnoreCase).Success;
         }
 
-        public static bool SimplifyAndCheckFilenameAtStart(string filename, string showname) =>
-            SimplifyAndCheckFilenameAtStart(filename, showname,true,true);
+        public static bool SimplifyAndCheckFilenameAtStart(string filename, string showName) =>
+            SimplifyAndCheckFilenameAtStart(filename, showName,true,true);
 
-        private static bool SimplifyAndCheckFilenameAtStart(string filename, string showname, bool simplifyfilename, bool simplifyshowname)
+        private static bool SimplifyAndCheckFilenameAtStart(string filename, string showName, bool simplifyFilename, bool simplifyShowName)
         {
-            string showPattern = simplifyshowname ? Helpers.SimplifyName(showname) : showname;
+            string showPattern = simplifyShowName ? Helpers.SimplifyName(showName) : showName;
 
-            return (simplifyfilename ? Helpers.SimplifyName(filename) : filename).StartsWith( showPattern, StringComparison.CurrentCultureIgnoreCase);
+            return (simplifyFilename ? Helpers.SimplifyName(filename) : filename).StartsWith( showPattern, StringComparison.CurrentCultureIgnoreCase);
         }
-        public static bool SimplifyAndCheckFilename(string filename, string showname)
+        public static bool SimplifyAndCheckFilename(string filename, string showName)
         {
-            return SimplifyAndCheckFilename(filename, showname,true,true);
+            return SimplifyAndCheckFilename(filename, showName,true,true);
         }
 
         [NotNull]
-        public static string MakeValidPath([CanBeNull] string input)
+        public static string MakeValidPath(string? input)
         {
             if (string.IsNullOrWhiteSpace(input))
             {
@@ -506,12 +506,12 @@ namespace TVRename
 
         public static bool IsValidDirectory(this string directoryName)
         {
-            if (directoryName.ContainsAnyCharctersFrom(Path.GetInvalidPathChars()))
+            if (directoryName.ContainsAnyCharactersFrom(Path.GetInvalidPathChars()))
             {
                 return false;
             }
 
-            if (directoryName.ContainsAnyCharctersFrom("*?"))
+            if (directoryName.ContainsAnyCharactersFrom("*?"))
             {
                 return false;
             }

@@ -29,7 +29,7 @@ namespace TVRename
         private int pctMediaLib;
         private int pctDownloading;
         private int pctuTorrent;
-        private string msg;
+        private string? msg;
 
         public ScanProgress(bool autoBulkAdd,bool mediaLib,bool downloadFolder, bool searchLocal, bool downloading, bool rss)
         {

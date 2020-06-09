@@ -17,7 +17,7 @@ namespace TVRename
 
     public class ActionWdtvMeta : ActionWriteMetadata
     {
-        public ActionWdtvMeta(FileInfo where, ProcessedEpisode pe) :base(where,null)
+        public ActionWdtvMeta(FileInfo where, ProcessedEpisode pe) :base(where,pe.Show)
         {
             Episode = pe;
         }
@@ -32,22 +32,16 @@ namespace TVRename
 
         public override ActionOutcome Go(TVRenameStats stats)
         {
-            if (Where is null)
-            {
-                return new ActionOutcome("No file location specified - Development Error");
-            }
 
             if (Episode != null)
             {
                 return WriteEpisodeMetaDataFile();
             }
-
-            if (SelectedShow != null)
+            else
             {
                 return WriteSeriesXml();
             }
 
-            return new ActionOutcome("No details available to write - Development Error");
         }
 
         [NotNull]
@@ -109,74 +103,85 @@ namespace TVRename
         [NotNull]
         private ActionOutcome WriteEpisodeMetaDataFile()
         {
-            // "try" and silently fail.  eg. when file is use by other...
-            try
+            if (Episode != null)
             {
-                XmlWriterSettings settings = new XmlWriterSettings
+                // "try" and silently fail.  eg. when file is use by other...
+                try
                 {
-                    Indent = true,
-                    NewLineOnAttributes = true
-                };
-
-                using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
-                {
-                    writer.WriteStartElement("details");
-                    writer.WriteElement("title", TVSettings.Instance.NamingStyle.NameFor(Episode));
-                    writer.WriteElement("mpaa", Episode.TheSeries.ContentRating);
-
-                    if (Episode.FirstAired.HasValue)
+                    XmlWriterSettings settings = new XmlWriterSettings
                     {
-                        writer.WriteElement("year", Episode.FirstAired.Value.ToString("yyyy-MM-dd"));
-                        writer.WriteElement("firstaired",
-                            Episode.FirstAired.Value.ToString("yyyy-MM-dd"));
+                        Indent = true,
+                        NewLineOnAttributes = true
+                    };
+
+                    using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
+                    {
+                        writer.WriteStartElement("details");
+
+                        writer.WriteElement("title", TVSettings.Instance.NamingStyle.NameFor(Episode));
+                        writer.WriteElement("mpaa", Episode.TheSeries.ContentRating);
+
+                        if (Episode.FirstAired.HasValue)
+                        {
+                            writer.WriteElement("year", Episode.FirstAired.Value.ToString("yyyy-MM-dd"));
+                            writer.WriteElement("firstaired",
+                                Episode.FirstAired.Value.ToString("yyyy-MM-dd"));
+                        }
+
+                        writer.WriteElement("runtime", Episode.TheSeries.Runtime, true);
+                        writer.WriteElement("rating", Episode.EpisodeRating);
+                        writer.WriteElement("studio", Episode.TheSeries.Network);
+                        writer.WriteElement("plot", Episode.TheSeries.Overview);
+                        writer.WriteElement("overview", Episode.Overview);
+                        foreach (string director in Episode.Directors)
+                        {
+                            writer.WriteElement("directors", director);
+                        }
+
+                        foreach (string epwriter in Episode.Writers)
+                        {
+                            writer.WriteElement("writers", epwriter);
+                        }
+
+                        foreach (string genre in Episode.TheSeries.Genres)
+                        {
+                            writer.WriteElement("genre", genre);
+                        }
+
+                        // actors...
+                        foreach (Actor aa in Episode.TheSeries.GetActors()
+                            .Where(aa => !string.IsNullOrEmpty(aa.ActorName)))
+                        {
+                            writer.WriteStartElement("actor");
+                            writer.WriteElement("name", aa.ActorName);
+                            writer.WriteElement("role", aa.ActorRole);
+                            writer.WriteEndElement(); // actor
+                        }
+
+                        // guest stars...
+                        foreach (string guest in Episode.GuestStars)
+                        {
+                            writer.WriteElement("guest", guest);
+                        }
+
+                        writer.WriteElement("thumbnail", TheTVDB.API.GetImageURL(Episode.Filename));
+                        writer.WriteElement("banner",
+                            TheTVDB.API.GetImageURL(Episode.AppropriateProcessedSeason.GetWideBannerPath()));
+
+                        writer.WriteElement("backdrop",
+                            TheTVDB.API.GetImageURL(Episode.TheSeries.GetSeriesFanartPath()));
+
+                        writer.WriteEndElement(); // details
                     }
 
-                    writer.WriteElement("runtime", Episode.TheSeries.Runtime, true);
-                    writer.WriteElement("rating", Episode.EpisodeRating);
-                    writer.WriteElement("studio", Episode.TheSeries.Network);
-                    writer.WriteElement("plot", Episode.TheSeries.Overview);
-                    writer.WriteElement("overview", Episode.Overview);
-                    foreach (string director in Episode.Directors)
-                    {
-                        writer.WriteElement("directors", director);
-                    }
-
-                    foreach(string epwriter in Episode.Writers)
-                    {
-                        writer.WriteElement("writers", epwriter);
-                    }
-
-                    foreach (string genre in Episode.TheSeries.Genres)
-                    {
-                        writer.WriteElement("genre", genre);
-                    }
-
-                    // actors...
-                    foreach (Actor aa in Episode.TheSeries.GetActors().Where(aa => !string.IsNullOrEmpty(aa.ActorName)))
-                    {
-                        writer.WriteStartElement("actor");
-                        writer.WriteElement("name", aa.ActorName);
-                        writer.WriteElement("role", aa.ActorRole);
-                        writer.WriteEndElement(); // actor
-                    }
-
-                    // guest stars...
-                    foreach(string guest in Episode.GuestStars)
-                    {
-                        writer.WriteElement("guest", guest);
-                    }
-
-                    writer.WriteElement("thumbnail", TheTVDB.API.GetImageURL(Episode.Filename));
-                    writer.WriteElement("banner", TheTVDB.API.GetImageURL(Episode.AppropriateProcessedSeason.GetWideBannerPath()));
-                    writer.WriteElement("backdrop", TheTVDB.API.GetImageURL(Episode.TheSeries.GetSeriesFanartPath()));
-                    writer.WriteEndElement(); // details
+                    return ActionOutcome.Success();
                 }
-                return ActionOutcome.Success();
+                catch (Exception e)
+                {
+                    return new ActionOutcome(e);
+                }
             }
-            catch (Exception e)
-            {
-                return new ActionOutcome(e);
-            }
+            return new ActionOutcome("Write WDTV Metadata called with no Episode provided");
         }
 
         #endregion

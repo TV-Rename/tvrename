@@ -23,7 +23,7 @@ namespace TVRename
     {
         private bool mInternal;
 
-        public TheTvdbCodeFinder([CanBeNull] string initialHint)
+        public TheTvdbCodeFinder(string? initialHint)
         {
             mInternal = false;
 
@@ -39,7 +39,7 @@ namespace TVRename
             }
         }
 
-        public event EventHandler SelectionChanged;
+        public event EventHandler? SelectionChanged;
 
         public void SetHint(string s)
         {
@@ -64,7 +64,7 @@ namespace TVRename
             }
         }
 
-        public SeriesInfo SelectedShow()
+        public SeriesInfo? SelectedShow()
         {
             try
             {
@@ -198,7 +198,7 @@ namespace TVRename
         {
             if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return)
             {
-                bnGoSearch_Click(null, null);
+                Search(true);
                 e.Handled = true;
             }
         }

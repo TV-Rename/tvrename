@@ -14,20 +14,23 @@ namespace TVRename
     {
         public CleanUpEmptyLibraryFolders(TVDoc doc) : base(doc) {}
 
-        protected override string Checkname() => "Cleaned up empty library folders";
+        protected override string ActivityName() => "Cleaned up empty library folders";
 
         protected override bool Active() => TVSettings.Instance.CleanLibraryAfterActions;
 
-        protected override void DoCheck(SetProgressDelegate prog)
+        protected override void DoCheck(SetProgressDelegate progress)
         {
-            foreach (ShowItem si in MDoc.Library.Shows)
+            IEnumerable<ShowItem> libraryShows = MDoc.Library.Shows.ToList();
+            int totalRecords = libraryShows.Count();
+            int n = 0;
+
+            foreach (ShowItem si in libraryShows)
             {
-                foreach (KeyValuePair<int, List<string>> folderLocation in si.AllProposedFolderLocations())
+                UpdateStatus(n++, totalRecords, si.ShowName);
+
+                foreach (string folderName in si.AllProposedFolderLocations().SelectMany(folderLocation => folderLocation.Value))
                 {
-                    foreach (string folderName in folderLocation.Value)
-                    {
-                        RemoveIfEmpty(folderName);
-                    }
+                    RemoveIfEmpty(folderName);
                 }
             }
         }

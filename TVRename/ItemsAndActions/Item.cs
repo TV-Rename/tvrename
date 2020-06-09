@@ -17,13 +17,12 @@ namespace TVRename
         public abstract string ScanListViewGroup { get; } // which group name for the listview
         public abstract int IconNumber { get; } // which icon number to use in "ilIcons" (UI.cs). -1 for none
         public abstract IgnoreItem? Ignore { get; } // what to add to the ignore list / compare against the ignore list
-        public ProcessedEpisode Episode { get; protected set; } // associated episode
+        public ProcessedEpisode? Episode { get; protected set; } // associated episode
         public abstract int CompareTo(object obj); // for sorting items in scan list (ActionItemSorter)
         public abstract bool SameAs(Item o); // are we the same thing as that other one?
         public abstract string Name { get; } // Name of this action, e.g. "Copy", "Move", "Download"
 
-        [CanBeNull]
-        protected static IgnoreItem GenerateIgnore([CanBeNull] string file) => string.IsNullOrEmpty(file) ? null : new IgnoreItem(file);
+        protected static IgnoreItem? GenerateIgnore(string? file) => string.IsNullOrEmpty(file) ? null : new IgnoreItem(file);
 
         [NotNull]
         public virtual string SeriesName => UI.GenerateShowUIName(Episode);
@@ -35,7 +34,7 @@ namespace TVRename
         [NotNull]
         public virtual string AirDateString => Episode?.GetAirDateDt(true).PrettyPrint() ?? string.Empty;
 
-        public virtual DateTime? AirDate => Episode?.GetAirDateDt(true);
+        public DateTime? AirDate => Episode?.GetAirDateDt(true);
         public abstract string DestinationFolder { get; }
         public abstract string DestinationFile { get; }
         [NotNull]

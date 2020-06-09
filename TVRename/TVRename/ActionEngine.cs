@@ -20,13 +20,13 @@ namespace TVRename
     public class ActionEngine
     {
         private bool actionPause;
-        private List<Thread> actionWorkers;
+        private List<Thread>? actionWorkers;
         private bool actionStarting;
 
         private readonly TVRenameStats mStats; //reference to the main TVRenameStats, so we can update the counts
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        private static readonly NLog.Logger Threadslogger = NLog.LogManager.GetLogger("threads");
+        private static readonly NLog.Logger ThreadsLogger = NLog.LogManager.GetLogger("threads");
 
         /// <summary>
         /// Asks for execution to pause
@@ -39,7 +39,7 @@ namespace TVRename
         /// <summary>
         /// Asks for execution to resume
         /// </summary>
-        public void Unpause()
+        public void Resume()
         {
             actionPause = false;
         }
@@ -66,21 +66,17 @@ namespace TVRename
                 actionStarting = false; // let our creator know we're started ok
 
                 Action action = info.TheAction;
-                if (action == null)
-                {
-                    return;
-                }
 
                 Logger.Trace("Triggering Action: {0} - {1} - {2}", action.Name, action.Produces, action.ToString());
                 action.Outcome = action.Go(mStats);
                 if (action.Outcome.Error)
                 {
-                    action.ErrorText = action.Outcome.LastError.Message;
+                    action.ErrorText = action.Outcome.LastError?.Message??string.Empty;
                 }
 
                 if (!action.Outcome.Done)
                 {
-                    Logger.Error("Hlep");
+                    Logger.Error("Help");
                 }
             }
             catch (ThreadAbortException)
@@ -119,7 +115,7 @@ namespace TVRename
         /// </summary>
         /// <param name="theList">An ItemList to be processed.</param>
         /// <param name="showUi">Whether or not we should display a UI to inform the user about progress.</param>
-        public void DoActions([CanBeNull] ItemList theList, bool showUi, IDialogParent owner)
+        public void DoActions(ItemList? theList, bool showUi, IDialogParent owner)
         {
             if (theList is null)
             {
@@ -254,7 +250,7 @@ namespace TVRename
             }
         }
 
-        private bool ReviewQueues([CanBeNull] IEnumerable<ActionQueue> queues)
+        private bool ReviewQueues(IEnumerable<ActionQueue>? queues)
         {
             // look through the list of semaphores to see if there is one waiting for some work to do
             if (queues is null)
@@ -271,11 +267,6 @@ namespace TVRename
                 if (currentQueue.Sem.WaitOne(20, false))
                 {
                     Action act = currentQueue.NextAction();
-
-                    if (act is null)
-                    {
-                        return false;
-                    }
 
                     if (!act.Outcome.Done)
                     {
@@ -311,7 +302,7 @@ namespace TVRename
             finally
             {
                 int nfr = pai.Sem.Release(); // release our hold on the semaphore, so that worker can grab it
-                Threadslogger.Trace("ActionProcessor[" + pai.Sem + "] pool has " + nfr + " free");
+                ThreadsLogger.Trace("ActionProcessor[" + pai.Sem + "] pool has " + nfr + " free");
             }
         }
 
@@ -338,11 +329,6 @@ namespace TVRename
             // tidy up any finished workers
             for (int i = actionWorkers.Count - 1; i >= 0; i--)
             {
-                if (actionWorkers[i] is null)
-                {
-                    continue;
-                }
-
                 if (!actionWorkers[i].IsAlive)
                 {
                     actionWorkers.RemoveAt(i); // remove dead worker

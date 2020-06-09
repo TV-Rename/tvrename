@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using SourceGrid;
 
 namespace TVRename
 {
@@ -145,5 +146,6 @@ namespace TVRename
         private System.Windows.Forms.Button bnCancel;
         private System.Windows.Forms.Button bnOK;
         private System.Windows.Forms.Button bnTags;
+        private Grid grid1;
     }
 }

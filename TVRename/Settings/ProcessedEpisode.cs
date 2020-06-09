@@ -40,6 +40,7 @@ namespace TVRename
             Type = o.Type;
             TheAiredProcessedSeason = o.TheAiredProcessedSeason;
             TheDvdProcessedSeason = o.TheDvdProcessedSeason;
+            SourceEpisodes=new List<Episode>();
         }
 
         public ProcessedEpisode([NotNull] Episode e, [NotNull] ShowItem si)
@@ -53,6 +54,7 @@ namespace TVRename
             Type = ProcessedEpisodeType.single;
             TheAiredProcessedSeason=si.GetOrAddAiredSeason(e.AiredSeasonNumber,e.SeasonId);
             TheDvdProcessedSeason = si.GetOrAddDvdSeason(e.DvdSeasonNumber, e.SeasonId);
+            SourceEpisodes = new List<Episode>();
         }
 
         public ProcessedEpisode([NotNull] ProcessedEpisode e, [NotNull] ShowItem si, ProcessedEpisodeType t)
@@ -66,6 +68,7 @@ namespace TVRename
             Type = t;
             TheAiredProcessedSeason = e.TheAiredProcessedSeason;
             TheDvdProcessedSeason = e.TheDvdProcessedSeason;
+            SourceEpisodes = new List<Episode>();
         }
 
         public ProcessedEpisode([NotNull] ProcessedEpisode e, [NotNull] ShowItem si, List<Episode> episodes)
@@ -96,6 +99,7 @@ namespace TVRename
             Type = ProcessedEpisodeType.single;
             TheAiredProcessedSeason = pe.TheAiredProcessedSeason;
             TheDvdProcessedSeason = pe.TheDvdProcessedSeason;
+            SourceEpisodes = new List<Episode>();
         }
 
         public int AppropriateSeasonNumber => Show.Order==ProcessedSeason.SeasonType.dvd ? DvdSeasonNumber : AiredSeasonNumber;
@@ -106,10 +110,9 @@ namespace TVRename
         public bool PreviouslySeen => TVSettings.Instance.PreviouslySeenEpisodes.Contains(EpisodeId);
 
         [NotNull]
-        public string SeasonNumberAsText => AppropriateSeasonNumber != 0 ? AppropriateSeasonNumber.ToString() : TVSettings.Instance.SpecialsListViewName;
+        public string SeasonNumberAsText => AppropriateSeasonNumber != 0 ? AppropriateSeasonNumber.ToString() : TVSettings.SpecialsListViewName;
 
-        [NotNull]
-        public string WebsiteUrl
+        public string? WebsiteUrl
         {
             get
             {

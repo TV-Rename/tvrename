@@ -40,7 +40,6 @@ namespace TVRename.Forms
         private void SetButtonStates()
         {
             ShowFilter filter = TVSettings.Instance.Filter;
-            if (filter != null)
             {
                 //Filter By Show Names
                 bool filterByShowNames = filter.ShowName != null;
@@ -76,10 +75,7 @@ namespace TVRename.Forms
             }
 
             SeasonFilter sFilter = TVSettings.Instance.SeasonFilter;
-            if (sFilter != null)
-            {
-                chkHideIgnoredSeasons.Checked = sFilter.HideIgnoredSeasons;
-            }
+            chkHideIgnoredSeasons.Checked = sFilter.HideIgnoredSeasons;
         }
 
         private void btnOk_Click(object sender, EventArgs e)

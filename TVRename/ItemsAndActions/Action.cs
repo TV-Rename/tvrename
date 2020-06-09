@@ -12,7 +12,7 @@ namespace TVRename
 {
     public abstract class Action : Item // Something we can do
     {
-        public ItemMissing UndoItemMissing; //Item to revert to if we have to cancel this action
+        public ItemMissing? UndoItemMissing; //Item to revert to if we have to cancel this action
 
         public abstract string ProgressText { get; } // shortish text to display to user while task is running
 
@@ -24,7 +24,7 @@ namespace TVRename
             set => internalOutcome = value;
         }
 
-        private ActionOutcome internalOutcome;
+        private ActionOutcome? internalOutcome;
 
         public double PercentDone // 0.0 to 100.0
         {

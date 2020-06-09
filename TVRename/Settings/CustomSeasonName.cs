@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 
 // This builds the foldernames to create/find, for any given season
@@ -50,20 +51,14 @@ namespace TVRename
         [NotNull]
         public static List<string> ExamplePresets(ProcessedSeason s)
         {
-            List<string> possibleExamples = new List<string>();
-            foreach (string example in Presets)
-            {
-                possibleExamples.Add(NameFor(s,example));
-            }
-
-            return possibleExamples;
+            return Presets.Select(example => NameFor(s, example)).ToList();
         }
 
         [NotNull]
         public static string NameFor(ProcessedSeason s, string styleString) => NameFor(s, styleString, false);
 
         [NotNull]
-        private static string NameFor([CanBeNull] ProcessedSeason s, string styleString, bool urlEncode)
+        private static string NameFor(ProcessedSeason? s, string styleString, bool urlEncode)
         {
             string name = styleString;
 
@@ -89,7 +84,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{EndYear}", s.MaxYear().ToString());
             name = name.ReplaceInsensitive("{ShowImdb}", s.Show.TheSeries()?.Imdb??string.Empty);
 
-            return TVSettings.Instance.DirectoryFriendly(name.Trim());
+            return TVSettings.DirectoryFriendly(name.Trim());
         }
 
         [NotNull]

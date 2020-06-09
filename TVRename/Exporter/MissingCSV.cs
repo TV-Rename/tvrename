@@ -20,7 +20,7 @@ namespace TVRename
 
                 foreach (ItemMissing im in TheActionList.Missing.ToList())
                 {
-                    ProcessedEpisode pe = im.Episode;
+                    ProcessedEpisode pe = im.MissingEpisode;
                     DateTime? dt = pe.GetAirDateDt(true);
                     file.WriteLine(
                         $"\"{pe.TheSeries.Name}\",{pe.AppropriateSeasonNumber},{pe.EpNumsAsString()},\"{pe.Name}\",{dt:G},\"{im.TargetFolder}\",\"{im.Filename}\",{pe.SeriesId}");

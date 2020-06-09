@@ -36,12 +36,15 @@ namespace TVRename
 
         public ShowRule()
         {
-            SetToDefaults();
+            DoWhatNow = RuleAction.kIgnoreEp;
+            First = -1;
+            Second = -1;
+            UserSuppliedText = string.Empty;
+            RenumberAfter = true;
         }
 
-        public ShowRule([CanBeNull] XElement xmlSettings)
+        public ShowRule(XElement? xmlSettings) :this()
         {
-            SetToDefaults();
             if (xmlSettings != null)
             {
                 DoWhatNow = xmlSettings.ExtractEnum("DoWhatNow",RuleAction.kIgnoreEp);
@@ -55,15 +58,6 @@ namespace TVRename
         public override string ToString()
         {
             return $"ShowRule: {ActionInWords()} with parameters {First}, {Second} and usertext: {UserSuppliedText} ({RenumberAfter})";
-        }
-
-        private void SetToDefaults()
-        {
-            DoWhatNow = RuleAction.kIgnoreEp;
-            First = -1;
-            Second = -1;
-            UserSuppliedText = string.Empty;
-            RenumberAfter = true;
         }
 
         public void WriteXml([NotNull] XmlWriter writer)

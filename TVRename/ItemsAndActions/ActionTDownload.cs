@@ -21,6 +21,7 @@ namespace TVRename
         private readonly string url;
         public readonly long sizeBytes;
         public readonly int Seeders;
+        // ReSharper disable once NotAccessedField.Global - Used as a property in the Choose Download Grid
         public readonly string UpstreamSource;
 
         public ActionTDownload(string name, long sizeBytes,int seeders, string url, string toWhereNoExt, ProcessedEpisode pe,ItemMissing me, string upstreamSource)
@@ -77,7 +78,7 @@ namespace TVRename
 
                 byte[] r = HttpHelper.GetUrlBytes(url,true);
 
-                if (r is null || r.Length == 0)
+                if (r.Length == 0)
                 {
                     return new ActionOutcome($"No data downloaded from {url}");
                 }
@@ -130,20 +131,19 @@ namespace TVRename
 
         #region Item Members
 
-        public override IgnoreItem Ignore => GenerateIgnore(theFileNoExt);
+        public override IgnoreItem? Ignore => GenerateIgnore(theFileNoExt);
 
-        public override string DestinationFolder => TargetFolder;
-        public override string DestinationFile => TargetFilename;
+        public override string? DestinationFolder => TargetFolder;
+        public override string? DestinationFile => TargetFilename;
 
         public override string SourceDetails => $"{SourceName} ({(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())}) [{Seeders} Seeds]";
 
         [NotNull]
         public string SizePretty => $"{(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())}";
 
-        public override string TargetFolder => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).DirectoryName;
+        public override string? TargetFolder => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).DirectoryName;
 
-        [CanBeNull]
-        private string TargetFilename => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).Name;
+        private string? TargetFilename => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).Name;
 
         public override string ScanListViewGroup => "lvgActionDownloadRSS";
 

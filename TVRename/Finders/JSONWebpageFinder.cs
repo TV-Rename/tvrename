@@ -85,7 +85,7 @@ namespace TVRename
 
         private static void FindMissingEpisode([NotNull] ItemMissing action, ItemList toRemove, ItemList newItems, UrlCache cache)
         {
-            ProcessedEpisode pe = action.Episode;
+            ProcessedEpisode pe = action.MissingEpisode;
 
             string imdbId = pe.TheSeries.GetImdbNumber();
             if (string.IsNullOrWhiteSpace(imdbId))
@@ -102,7 +102,7 @@ namespace TVRename
             if (string.IsNullOrWhiteSpace(response))
             {
                 LOGGER.Warn(
-                    $"Got no response from {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.Episode.TheSeries.Name}");
+                    $"Got no response from {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.MissingEpisode.TheSeries.Name}");
 
                 return;
             }
@@ -140,6 +140,11 @@ namespace TVRename
                             LOGGER.Info($"URL:         {itemUrl}");
                             LOGGER.Info($"Size:        {itemSizeBytes}");
                             LOGGER.Info($"Seeds:       {seeders}");
+                        }
+
+                        if (itemName is null || itemUrl is null)
+                        {
+                            continue;
                         }
 
                         if (!FileHelper.SimplifyAndCheckFilename(itemName, simpleShowName, true, false) &&
@@ -180,14 +185,14 @@ namespace TVRename
                     else
                     {
                         LOGGER.Info(
-                            $"{TVSettings.Instance.SearchJSONFilenameToken} or {TVSettings.Instance.SearchJSONURLToken} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.Episode.TheSeries.Name}");
+                            $"{TVSettings.Instance.SearchJSONFilenameToken} or {TVSettings.Instance.SearchJSONURLToken} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.MissingEpisode.TheSeries.Name}");
                     }
                 }
             }
             else
             {
                 LOGGER.Info(
-                    $"{TVSettings.Instance.SearchJSONRootNode} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.Episode.TheSeries.Name}");
+                    $"{TVSettings.Instance.SearchJSONRootNode} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.MissingEpisode.TheSeries.Name}");
             }
 
             RemoveDuplicates(newItemsForThisMissingEpisode);

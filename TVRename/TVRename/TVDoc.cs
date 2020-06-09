@@ -31,7 +31,7 @@ namespace TVRename
         private readonly DownloadIdentifiersController downloadIdentifiers;
         public readonly ShowLibrary Library;
         public readonly CommandLineArgs Args;
-        internal TVRenameStats CurrentStats;
+        internal readonly TVRenameStats CurrentStats;
         public readonly ItemList TheActionList;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly ActionEngine actionManager;
@@ -40,9 +40,9 @@ namespace TVRename
         private readonly FindMissingEpisodes searchFinders;
         private readonly FindMissingEpisodes downloadFinders;
 
-        public string LoadErr;
+        public string? LoadErr;
         public readonly bool LoadOk;
-        private ScanProgress scanProgDlg;
+        private ScanProgress? scanProgDlg;
         private bool mDirty;
 
         // ReSharper disable once RedundantDefaultMemberInitializer
@@ -51,7 +51,7 @@ namespace TVRename
         private bool LastScanComplete { get; set; }
         private TVSettings.ScanType lastScanType;
 
-        public TVDoc([CanBeNull] FileInfo settingsFile, CommandLineArgs args)
+        public TVDoc(FileInfo? settingsFile, CommandLineArgs args)
         {
             Args = args;
 
@@ -69,25 +69,6 @@ namespace TVRename
             downloadIdentifiers = new DownloadIdentifiersController();
 
             LoadOk = (settingsFile is null || LoadXMLSettings(settingsFile)) && TheTVDB.LocalCache.Instance.LoadOk && TVmaze.LocalCache.Instance.LoadOk;
-            LoadLanguages();
-            LoadStats();
-            actionManager = new ActionEngine(CurrentStats);
-        }
-
-        private void LoadStats()
-        {
-            try
-            {
-                CurrentStats = TVRenameStats.Load();
-            }
-            catch (Exception)
-            {
-                // not worried if stats loading fails
-            }
-        }
-
-        private static void LoadLanguages()
-        {
             try
             {
                 TheTVDB.LocalCache.Instance.LanguageList = Languages.Load();
@@ -96,6 +77,16 @@ namespace TVRename
             {
                 // not worried if language loading fails as we'll repopulate
             }
+            try
+            {
+                CurrentStats = TVRenameStats.Load() ?? new TVRenameStats();
+            }
+            catch (Exception)
+            {
+                CurrentStats = new TVRenameStats();
+                // not worried if stats loading fails
+            }
+            actionManager = new ActionEngine(CurrentStats);
         }
 
         [NotNull]
@@ -213,10 +204,10 @@ namespace TVRename
         {
             cacheManager.StopBgDownloadThread();
             Stats().Save();
-            TheTVDB.LocalCache.Instance.LanguageList.Save();
+            TheTVDB.LocalCache.Instance.LanguageList?.Save();
         }
 
-        public static void SearchForEpisode([CanBeNull] ProcessedEpisode ep)
+        public static void SearchForEpisode(ProcessedEpisode? ep)
         {
             if (ep is null)
             {
@@ -226,7 +217,7 @@ namespace TVRename
             Helpers.OpenUrl(TVSettings.Instance.BTSearchURL(ep));
         }
 
-        public static void SearchForEpisode(SearchEngine s, [CanBeNull] ProcessedEpisode epi)
+        public static void SearchForEpisode(SearchEngine s, ProcessedEpisode? epi)
         {
             if (epi is null)
             {
@@ -298,11 +289,11 @@ namespace TVRename
 
             mDirty = false;
             Stats().Save();
-            TheTVDB.LocalCache.Instance.LanguageList.Save();
+            TheTVDB.LocalCache.Instance.LanguageList?.Save();
         }
 
         // ReSharper disable once InconsistentNaming
-        private bool LoadXMLSettings([CanBeNull] FileInfo from)
+        private bool LoadXMLSettings(FileInfo? from)
         {
             Logger.Info("Loading Settings from {0}", from?.FullName);
             if (from is null)
@@ -455,7 +446,7 @@ namespace TVRename
 
         public ConcurrentBag<ShowNotFoundException> ShowProblems => cacheManager.Problems;
 
-        public void Scan([CanBeNull] IEnumerable<ShowItem> passedShows, bool unattended, TVSettings.ScanType st, bool hidden, IDialogParent owner)
+        public void Scan(IEnumerable<ShowItem>? passedShows, bool unattended, TVSettings.ScanType st, bool hidden, IDialogParent owner)
         {
             try
             {
@@ -564,26 +555,16 @@ namespace TVRename
             }
         }
 
-        [CanBeNull]
-        private IEnumerable<ShowItem> GetShowList(TVSettings.ScanType st, IEnumerable<ShowItem> passedShows)
+        private IEnumerable<ShowItem>? GetShowList(TVSettings.ScanType st, IEnumerable<ShowItem>? passedShows)
         {
-            switch (st)
+            return st switch
             {
-                case TVSettings.ScanType.Full:
-                    return Library.GetSortedShowItems();
-
-                case TVSettings.ScanType.Quick:
-                    return GetQuickShowsToScan(true, true);
-
-                case TVSettings.ScanType.Recent:
-                    return Library.GetRecentShows();
-
-                case TVSettings.ScanType.SingleShow:
-                    return passedShows;
-
-                default:
-                    return null;
-            }
+                TVSettings.ScanType.Full => Library.GetSortedShowItems(),
+                TVSettings.ScanType.Quick => GetQuickShowsToScan(true, true),
+                TVSettings.ScanType.Recent => Library.GetRecentShows(),
+                TVSettings.ScanType.SingleShow => passedShows,
+                _ => null
+            };
         }
 
         public void DoAllActions(IDialogParent owner)
@@ -815,7 +796,7 @@ namespace TVRename
             }
         }
 
-        private TVSettings.DuplicateActionOutcome WhatAction(bool unattended)
+        private static TVSettings.DuplicateActionOutcome WhatAction(bool unattended)
         {
             return unattended
                 ? TVSettings.Instance.UnattendedMultiActionOutcome
@@ -971,7 +952,7 @@ namespace TVRename
             return showsToScan;
         }
 
-        internal void ForceRefresh([CanBeNull] IEnumerable<ShowItem> sis, bool unattended,bool tvrMinimised, IDialogParent owner)
+        internal void ForceRefresh(IEnumerable<ShowItem>? sis, bool unattended,bool tvrMinimised, IDialogParent owner)
         {
             PreventAutoScan("Force Refresh");
             if (sis != null)
@@ -1025,11 +1006,7 @@ namespace TVRename
                     scanProgDlg.Dispose();
                 }
 
-                // ReSharper disable once UseNullPropagation
-                if (cacheManager != null)
-                {
-                    cacheManager.Dispose();
-                }
+                cacheManager.Dispose();
             }
         }
 
@@ -1084,7 +1061,7 @@ namespace TVRename
                     TVSettings.Instance.LeaveOriginals
                         ? ActionCopyMoveRename.Op.copy
                         : ActionCopyMoveRename.Op.move, from, to
-                    , mi.Episode, true, mi, this));
+                    , mi.MissingEpisode, true, mi, this));
 
             // and remove old Missing item
             TheActionList.Remove(mi);
@@ -1100,7 +1077,7 @@ namespace TVRename
             }
         }
 
-        public void IgnoreSeasonForItem([CanBeNull] Item er)
+        public void IgnoreSeasonForItem(Item? er)
         {
             if (er?.Episode is null)
             {

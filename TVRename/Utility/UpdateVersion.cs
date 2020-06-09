@@ -13,16 +13,10 @@ using JetBrains.Annotations;
 
 public class Release
 {
-    public string DownloadUrl { get; set; }
-    public string ReleaseNotesText { get; set; }
-    public string ReleaseNotesUrl { get; set; }
-    public bool IsBeta { get; set; }
-    public DateTime ReleaseDate { get; set; }
     public Version VersionNumber { get; }
+    public enum VersionType { semantic, friendly }
     public string Prerelease { get; }
     public string Build { get; }
-
-    public enum VersionType { semantic, friendly }
 
     public Release([NotNull] string version, VersionType type)
     {
@@ -56,7 +50,7 @@ public class Release
         Build = match.Groups["build"].Value;
     }
 
-    private int CompareTo([CanBeNull] object obj)
+    private int CompareTo(object? obj)
     {
         //Returns 1 if this > object, 0 if this=object and -1 if this< object
         if (obj is null)
@@ -98,7 +92,7 @@ public class Release
         return string.Compare(Prerelease, otherUpdateVersion.Prerelease, StringComparison.OrdinalIgnoreCase);
     }
 
-    public bool NewerThan(Release compare) => CompareTo(compare) > 0;
+    public bool NewerThan(Release? compare) => CompareTo(compare) > 0;
 
     public override string ToString()
     {
@@ -116,8 +110,26 @@ public class Release
 
         return sb.ToString();
     }
+}
 
-    [NotNull]
+public class ServerRelease : Release
+{
+    public ServerRelease([NotNull] string version, VersionType type, string downloadUrl, string releaseNotesText, string releaseNotesUrl, bool isBeta, DateTime releaseDate) : base(version, type)
+    {
+        DownloadUrl = downloadUrl;
+        ReleaseNotesText = releaseNotesText;
+        ReleaseNotesUrl = releaseNotesUrl;
+        IsBeta = isBeta;
+        ReleaseDate = releaseDate;
+    }
+
+    public string DownloadUrl { get;}
+    public string ReleaseNotesText { get;}
+    public string ReleaseNotesUrl { get;}
+    public bool IsBeta { get;}
+    public DateTime ReleaseDate { get; }
+
+
     public string LogMessage()
     {
         StringBuilder sb = new StringBuilder();

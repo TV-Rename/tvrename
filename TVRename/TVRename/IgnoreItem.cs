@@ -22,7 +22,7 @@ namespace TVRename
             FileAndPath = fileAndPath;
         }
 
-        public bool SameFileAs([CanBeNull] IgnoreItem o)
+        public bool SameFileAs(IgnoreItem? o)
         {
             if (string.IsNullOrEmpty(FileAndPath) || string.IsNullOrEmpty(o?.FileAndPath))
             {

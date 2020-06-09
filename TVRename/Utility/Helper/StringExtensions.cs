@@ -55,10 +55,10 @@ namespace TVRename
             return source.IndexOf(toCheck, comp) >= 0;
         }
 
-        public static bool HasValue([CanBeNull] this string s) => !string.IsNullOrWhiteSpace(s);
+        public static bool HasValue(this string? s) => !string.IsNullOrWhiteSpace(s);
 
         [NotNull]
-        public static string ReplaceInsensitive([NotNull] this string source, [NotNull] string search, [NotNull] string replacement)
+        public static string ReplaceInsensitive([NotNull] this string source, [NotNull] string search, string? replacement)
         {
             if (!source.HasValue())
             {
@@ -72,16 +72,16 @@ namespace TVRename
                 RegexOptions.IgnoreCase);
         }
 
-        public static bool ContainsAnyCharctersFrom(this string source, [NotNull] IEnumerable<char> possibleChars)
+        public static bool ContainsAnyCharactersFrom(this string source, [NotNull] IEnumerable<char> possibleChars)
         {
             return possibleChars.Any(testChar => source.Contains(testChar.ToString()));
         }
-        public static bool ContainsAnyCharctersFrom(this string source, [NotNull] string possibleChars)
+        public static bool ContainsAnyCharactersFrom(this string source, [NotNull] string possibleChars)
         {
-            return ContainsAnyCharctersFrom(source,possibleChars.ToCharArray());
+            return ContainsAnyCharactersFrom(source,possibleChars.ToCharArray());
         }
 
-        public static bool IsNullOrWhitespace([CanBeNull] this string text) => string.IsNullOrWhiteSpace(text);
+        public static bool IsNullOrWhitespace(this string? text) => string.IsNullOrWhiteSpace(text);
 
         [NotNull]
         public static string RemoveLastCharacter([NotNull] this string instr)

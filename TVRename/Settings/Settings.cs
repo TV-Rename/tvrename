@@ -29,7 +29,7 @@ namespace TVRename
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
-        private static volatile TVSettings instance;
+        private static volatile TVSettings? instance;
         private static readonly object syncRoot = new object();
 
         [NotNull]
@@ -41,10 +41,7 @@ namespace TVRename
                 {
                     lock (syncRoot)
                     {
-                        if (instance is null)
-                        {
-                            instance = new TVSettings();
-                        }
+                        instance ??= new TVSettings();
                     }
                 }
 
@@ -222,11 +219,11 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> AutoAddIgnoreSuffixesArray => Convert(AutoAddIgnoreSuffixes);
 
-        public string keepTogetherExtensionsString = string.Empty;
+        public string keepTogetherExtensionsString;
         [NotNull]
         public IEnumerable<string> keepTogetherExtensionsArray => Convert(keepTogetherExtensionsString);
 
-        public string subtitleExtensionsString = string.Empty;
+        public string subtitleExtensionsString;
         [NotNull]
         public IEnumerable<string> subtitleExtensionsArray => Convert(subtitleExtensionsString);
 
@@ -238,12 +235,12 @@ namespace TVRename
         [NotNull]
         public string[] PreferredRSSSearchTerms() => Convert(preferredRSSSearchTermsString);
 
-        public string OtherExtensionsString = string.Empty;
+        public string OtherExtensionsString;
         [NotNull]
         private IEnumerable<string> OtherExtensionsArray => Convert(OtherExtensionsString);
 
         [NotNull]
-        private static string[] Convert([CanBeNull] string propertyString)
+        private static string[] Convert(string? propertyString)
         {
             return string.IsNullOrWhiteSpace(propertyString) ? new string[0] : propertyString.Split(';');
         }
@@ -295,7 +292,7 @@ namespace TVRename
         public static TheTVDB.LocalCache.PagingMethod TVDBPagingMethod => TheTVDB.LocalCache.PagingMethod.proper;
 
         [NotNull]
-        public string SpecialsListViewName => "Special";
+        public static string SpecialsListViewName => "Special";
 
         public DuplicateActionOutcome UnattendedMultiActionOutcome = DuplicateActionOutcome.IgnoreAll;
         public DuplicateActionOutcome UserMultiActionOutcome = DuplicateActionOutcome.MostSeeders;
@@ -355,16 +352,11 @@ namespace TVRename
         public bool DefShowAutoFolders = true;
         public bool DefShowUseDefLocation = false;
         public string DefShowLocation;
-        public string DefaultShowTimezoneName;
+        public string? DefaultShowTimezoneName;
         public bool DefShowUseBase = false;
         public bool DefShowUseSubFolders = true;
 
         private TVSettings()
-        {
-            SetToDefaults();
-        }
-
-        private void SetToDefaults()
         {
             // defaults that aren't handled with default initialisers
             Ignore = new List<IgnoreItem>();
@@ -378,6 +370,8 @@ namespace TVRename
             OtherExtensionsString = OtherExtensionsStringDEFAULT;
             keepTogetherExtensionsString = keepTogetherExtensionsStringDEFAULT;
             subtitleExtensionsString = subtitleExtensionsStringDEFAULT;
+
+            DefShowLocation = string.Empty;
 
             // have a guess at utorrent's path
             string[] guesses = new string[3];
@@ -626,67 +620,58 @@ namespace TVRename
 
         private void WriteFilters(XmlWriter writer)
         {
-            if (Filter != null)
+            writer.WriteStartElement("ShowFilters");
+
+            writer.WriteInfo("NameFilter", "Name", Filter.ShowName);
+            writer.WriteInfo("ShowStatusFilter", "ShowStatus", Filter.ShowStatus);
+            writer.WriteInfo("ShowNetworkFilter", "ShowNetwork", Filter.ShowNetwork);
+            writer.WriteInfo("ShowRatingFilter", "ShowRating", Filter.ShowRating);
+
+            writer.WriteInfo("ShowStatusFilter", "ShowStatusInclude", Filter.ShowStatusInclude);
+            writer.WriteInfo("ShowNetworkFilter", "ShowNetworkInclude", Filter.ShowNetworkInclude);
+            writer.WriteInfo("ShowRatingFilter", "ShowRatingInclude", Filter.ShowRatingInclude);
+
+            foreach (string genre in Filter.Genres)
             {
-                writer.WriteStartElement("ShowFilters");
-
-                writer.WriteInfo("NameFilter", "Name", Filter.ShowName);
-                writer.WriteInfo("ShowStatusFilter", "ShowStatus", Filter.ShowStatus);
-                writer.WriteInfo("ShowNetworkFilter", "ShowNetwork", Filter.ShowNetwork);
-                writer.WriteInfo("ShowRatingFilter", "ShowRating", Filter.ShowRating);
-
-                writer.WriteInfo("ShowStatusFilter", "ShowStatusInclude", Filter.ShowStatusInclude);
-                writer.WriteInfo("ShowNetworkFilter", "ShowNetworkInclude", Filter.ShowNetworkInclude);
-                writer.WriteInfo("ShowRatingFilter", "ShowRatingInclude", Filter.ShowRatingInclude);
-
-                foreach (string genre in Filter.Genres)
-                {
-                    writer.WriteInfo("GenreFilter", "Genre", genre);
-                }
-
-                writer.WriteEndElement(); //ShowFilters
+                writer.WriteInfo("GenreFilter", "Genre", genre);
             }
 
-            if (SeasonFilter != null)
-            {
-                writer.WriteStartElement("SeasonFilters");
-                writer.WriteElement("SeasonIgnoredFilter", SeasonFilter.HideIgnoredSeasons);
-                writer.WriteEndElement(); //SeasonFilters
-            }
+            writer.WriteEndElement(); //ShowFilters
+
+            writer.WriteStartElement("SeasonFilters");
+            writer.WriteElement("SeasonIgnoredFilter", SeasonFilter.HideIgnoredSeasons);
+            writer.WriteEndElement(); //SeasonFilters
         }
 
         private void WriteShowStatusColours(XmlWriter writer)
         {
-            if (ShowStatusColors != null)
+            writer.WriteStartElement("ShowStatusTVWColors");
+            foreach (KeyValuePair<ColouringRule, System.Drawing.Color> e in ShowStatusColors)
             {
-                writer.WriteStartElement("ShowStatusTVWColors");
-                foreach (KeyValuePair<ColouringRule, System.Drawing.Color> e in ShowStatusColors)
+                writer.WriteStartElement("ShowStatusTVWColor");
+
+                switch (e.Key)
                 {
-                    writer.WriteStartElement("ShowStatusTVWColor");
-
-                    switch (e.Key)
-                    {
-                        case ShowStatusColouringRule sscr:
-                            writer.WriteAttributeToXml("Type", "ShowStatusColouringRule");
-                            writer.WriteAttributeToXml("ShowStatus", sscr.status);
-                            break;
-                        case ShowAirStatusColouringRule sascr:
-                            writer.WriteAttributeToXml("Type", "ShowAirStatusColouringRule");
-                            writer.WriteAttributeToXml("ShowStatus", (int)sascr.status);
-                            break;
-                        case SeasonStatusColouringRule ssascr:
-                            writer.WriteAttributeToXml("Type", "SeasonStatusColouringRule");
-                            writer.WriteAttributeToXml("ShowStatus", (int)ssascr.status);
-                            break;
-                    }
-
-                    writer.WriteAttributeToXml("Color", Helpers.TranslateColorToHtml(e.Value));
-
-                    writer.WriteEndElement(); //ShowStatusTVWColor
+                    case ShowStatusColouringRule sscr:
+                        writer.WriteAttributeToXml("Type", "ShowStatusColouringRule");
+                        writer.WriteAttributeToXml("ShowStatus", sscr.status);
+                        break;
+                    case ShowAirStatusColouringRule sascr:
+                        writer.WriteAttributeToXml("Type", "ShowAirStatusColouringRule");
+                        writer.WriteAttributeToXml("ShowStatus", (int)sascr.status);
+                        break;
+                    case SeasonStatusColouringRule ssascr:
+                        writer.WriteAttributeToXml("Type", "SeasonStatusColouringRule");
+                        writer.WriteAttributeToXml("ShowStatus", (int)ssascr.status);
+                        break;
                 }
 
-                writer.WriteEndElement(); // ShowStatusTVWColors
+                writer.WriteAttributeToXml("Color", Helpers.TranslateColorToHtml(e.Value));
+
+                writer.WriteEndElement(); //ShowStatusTVWColor
             }
+
+            writer.WriteEndElement(); // ShowStatusTVWColors
         }
 
         internal float PercentDirtyUpgrade() => upgradeDirtyPercent;
@@ -705,7 +690,7 @@ namespace TVRename
         public string GetSeasonSearchTermsString() => searchSeasonWordsString;
         public string GetPreferredRSSSearchTermsString() => preferredRSSSearchTermsString;
 
-        public static bool OKExtensionsString([CanBeNull] string s)
+        public static bool OKExtensionsString(string? s)
         {
             if (string.IsNullOrEmpty(s))
             {
@@ -715,7 +700,7 @@ namespace TVRename
             string[] t = s.Split(';');
             foreach (string s2 in t)
             {
-                if (string.IsNullOrEmpty(s2) || !s2.StartsWith(".", StringComparison.Ordinal) || s2.ContainsAnyCharctersFrom(CompulsoryReplacements()) || s2.ContainsAnyCharctersFrom(Path.GetInvalidFileNameChars()))
+                if (string.IsNullOrEmpty(s2) || !s2.StartsWith(".", StringComparison.Ordinal) || s2.ContainsAnyCharactersFrom(CompulsoryReplacements()) || s2.ContainsAnyCharactersFrom(Path.GetInvalidFileNameChars()))
                 {
                     return false;
                 }
@@ -724,7 +709,7 @@ namespace TVRename
             return true;
         }
 
-        public static bool OKExporterLocation([CanBeNull] string s)
+        public static bool OKExporterLocation(string? s)
         {
             if (string.IsNullOrEmpty(s))
             {
@@ -849,7 +834,7 @@ namespace TVRename
             return "";
         }
 
-        private static int TabNumberFromName([CanBeNull] string n)
+        private static int TabNumberFromName(string? n)
         {
             int r = 0;
             if (!string.IsNullOrEmpty(n))
@@ -906,7 +891,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public string BTSearchURL([CanBeNull] ProcessedEpisode epi)
+        public string BTSearchURL(ProcessedEpisode? epi)
         {
             SeriesInfo s = epi?.TheSeries;
             if (s is null)
@@ -935,7 +920,7 @@ namespace TVRename
                 fn = rep.DoReplace(fn);
             }
 
-            if (fn.ContainsAnyCharctersFrom(Path.GetInvalidFileNameChars()))
+            if (fn.ContainsAnyCharactersFrom(Path.GetInvalidFileNameChars()))
             {
                 Logger.Warn($"Need to remove some characters from {fn} as the episode name contains characters that cannot be in the filename.");
                 fn = fn.RemoveCharactersFrom(Path.GetInvalidFileNameChars()).RemoveCharactersFrom("/t".ToCharArray());
@@ -944,7 +929,7 @@ namespace TVRename
             return ForceLowercaseFilenames ? fn.ToLower() : fn;
         }
 
-        public string DirectoryFriendly(string fn)
+        public static string DirectoryFriendly(string fn)
         {
             if (string.IsNullOrWhiteSpace(fn))
             {
@@ -956,7 +941,7 @@ namespace TVRename
                 fn = rep.DoReplace(fn);
             }
 
-            if (fn.ContainsAnyCharctersFrom(Path.GetInvalidPathChars()))
+            if (fn.ContainsAnyCharactersFrom(Path.GetInvalidPathChars()))
             {
                 Logger.Warn($"Need to remove some characters from {fn} as the directory name contains characters that cannot be in the path.");
                 fn = fn.RemoveCharactersFrom(Path.GetInvalidPathChars()).RemoveCharactersFrom("/t".ToCharArray());
@@ -1034,15 +1019,10 @@ namespace TVRename
             public readonly string That;
             public readonly string This;
 
-            public Replacement(string a, string b, bool insens)
+            public Replacement(string from, string to, bool insens)
             {
-                if (b is null)
-                {
-                    b = string.Empty;
-                }
-
-                This = a;
-                That = b;
+                This = from;
+                That = to;
                 CaseInsensitive = insens;
             }
 
@@ -1209,7 +1189,6 @@ namespace TVRename
         // ReSharper disable once FunctionComplexityOverflow
         public void load([NotNull] XElement xmlSettings)
         {
-            SetToDefaults();
             UseColoursOnWtw = xmlSettings.ExtractBool("UseColoursOnWtw", false);
             RSSUseCloudflare = xmlSettings.ExtractBool("RSSUseCloudflare", true);
             SearchJSONUseCloudflare = xmlSettings.ExtractBool("SearchJSONUseCloudflare", true);
@@ -1227,7 +1206,7 @@ namespace TVRename
             ExportWTWICALTo = xmlSettings.ExtractString("ExportWTWICALTo");
             WTWRecentDays = xmlSettings.ExtractInt("WTWRecentDays",7);
             StartupTab = TabNumberFromName(xmlSettings.ExtractString("StartupTab2"));
-            NamingStyle.StyleString = xmlSettings.ExtractString("NamingStyle") ??
+            NamingStyle.StyleString = xmlSettings.ExtractStringOrNull("NamingStyle") ??
                                       CustomEpisodeName.OldNStyle(
                                           xmlSettings.ExtractInt("DefaultNamingStyle",1)); // old naming style
             NotificationAreaIcon = xmlSettings.ExtractBool("NotificationAreaIcon",false);
@@ -1374,7 +1353,7 @@ namespace TVRename
             DefShowUseDefLocation = xmlSettings.ExtractBool("DefShowUseDefLocation", false);
             DefShowUseBase = xmlSettings.ExtractBool("DefShowUseBase", false);
             DefShowUseSubFolders = xmlSettings.ExtractBool("DefShowUseSubFolders", true);
-            DefShowLocation = xmlSettings.ExtractString("DefShowLocation");
+            DefShowLocation = xmlSettings.ExtractString("DefShowLocation",string.Empty);
             DefaultShowTimezoneName = xmlSettings.ExtractString("DefaultShowTimezoneName");
 
             UnattendedMultiActionOutcome = xmlSettings.ExtractEnum("UnattendedMultiActionOutcome", DuplicateActionOutcome.IgnoreAll);
@@ -1388,7 +1367,7 @@ namespace TVRename
             JackettAPIKey = xmlSettings.ExtractString("JackettAPIKey");
 
             Tidyup.load(xmlSettings);
-            RSSURLs = xmlSettings.Descendants("RSSURLs").FirstOrDefault()?.ReadStringsFromXml("URL");
+            RSSURLs = xmlSettings.Descendants("RSSURLs").FirstOrDefault()?.ReadStringsFromXml("URL")??new List<string>();
             TheSearchers = new Searchers(xmlSettings.Descendants("TheSearchers").FirstOrDefault());
 
             UpdateReplacements(xmlSettings);
@@ -1460,8 +1439,7 @@ namespace TVRename
             }
         }
 
-        [CanBeNull]
-        private ColouringRule ExtractColouringRule([NotNull] XElement rep)
+        private static ColouringRule? ExtractColouringRule([NotNull] XElement rep)
         {
             string showStatus = rep.Attribute("ShowStatus")?.Value;
             if (showStatus is null)
@@ -1583,12 +1561,18 @@ namespace TVRename
             foreach (XElement rep in xmlSettings.Descendants("FNPRegexs").FirstOrDefault()?.Descendants("Regex") ??
                                      new List<XElement>())
             {
-                FNPRegexs.Add(new FilenameProcessorRE(
-                    XmlConvert.ToBoolean(rep.Attribute("Enabled")?.Value ?? "false"),
-                    rep.Attribute("RE")?.Value,
-                    XmlConvert.ToBoolean(rep.Attribute("UseFullPath")?.Value ?? "false"),
-                    rep.Attribute("Notes")?.Value
-                ));
+                string? enabledValue = rep.Attribute("Enabled")?.Value;
+                string? reValue = rep.Attribute("RE")?.Value;
+                string? useFullPathValue = rep.Attribute("UseFullPath")?.Value;
+                string? notesValue = rep.Attribute("Notes")?.Value;
+
+                bool enabled = !(enabledValue is null) && XmlConvert.ToBoolean(enabledValue);
+                bool useFullPath = !(useFullPathValue is null) && XmlConvert.ToBoolean(useFullPathValue);
+
+                if (reValue != null && notesValue != null)
+                {
+                    FNPRegexs.Add(new FilenameProcessorRE(enabled, reValue, useFullPath, notesValue));
+                }
             }
         }
 
@@ -1598,8 +1582,15 @@ namespace TVRename
             foreach (XElement rep in xmlSettings.Descendants("Replacements").FirstOrDefault()?.Descendants("Replace") ??
                                      new List<XElement>())
             {
-                Replacements.Add(new Replacement(rep.Attribute("This")?.Value, rep.Attribute("That")?.Value,
-                    rep.Attribute("CaseInsensitive")?.Value == "Y"));
+                string? thisValue = rep.Attribute("This")?.Value;
+                string? thatValue = rep.Attribute("That")?.Value;
+                string? caseInsensitiveValue = rep.Attribute("CaseInsensitive")?.Value;
+                bool caseInsensitive = caseInsensitiveValue == "Y";
+
+                if (thisValue != null  &&thatValue != null)
+                {
+                    Replacements.Add(new Replacement(thisValue, thatValue, caseInsensitive));
+                }
             }
         }
     }

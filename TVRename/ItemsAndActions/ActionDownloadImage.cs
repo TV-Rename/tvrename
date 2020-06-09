@@ -23,9 +23,9 @@ namespace TVRename
         private readonly ShowItem si;
         private readonly bool shrinkLargeMede8ErImage;
 
-        public ActionDownloadImage(ShowItem si, ProcessedEpisode pe, FileInfo dest, string path) : this(si, pe, dest, path, false) { }
+        public ActionDownloadImage(ShowItem si, ProcessedEpisode? pe, FileInfo dest, string path) : this(si, pe, dest, path, false) { }
 
-        public ActionDownloadImage(ShowItem si, ProcessedEpisode pe, FileInfo dest, string path, bool shrink)
+        public ActionDownloadImage(ShowItem si, ProcessedEpisode? pe, FileInfo dest, string path, bool shrink)
         {
             Episode = pe;
             this.si = si;
@@ -174,17 +174,13 @@ namespace TVRename
         #region Item Members
 
         public override int IconNumber => 5;
-
-        public override IgnoreItem Ignore => GenerateIgnore(destination?.FullName);
-
-        public override string SeriesName =>
-            Episode != null ? Episode.Show.ShowName : si != null ? si.ShowName : "";
-
+        public override IgnoreItem? Ignore => GenerateIgnore(destination.FullName);
+        public override string SeriesName => Episode != null ? Episode.Show.ShowName : si.ShowName;
         public override string DestinationFolder => TargetFolder;
         public override string DestinationFile => destination.Name;
         public override string SourceDetails => path;
         public override string ScanListViewGroup => "lvgActionDownload";
-        public override string TargetFolder => destination?.DirectoryName;
+        public override string TargetFolder => destination.DirectoryName;
         #endregion
     }
 }

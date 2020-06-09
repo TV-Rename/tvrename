@@ -14,11 +14,6 @@ namespace TVRename
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
-            if (ActionList is null)
-            {
-                return;
-            }
-
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
             DirFilesCache dfc = new DirFilesCache();
@@ -75,7 +70,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private List<FileInfo> GetMatchingFilesFromFolder([CanBeNull] string baseFolder, DirFilesCache dfc, ItemMissing me, TVDoc.ScanSettings settings,
+        private List<FileInfo> GetMatchingFilesFromFolder(string? baseFolder, DirFilesCache dfc, ItemMissing me, TVDoc.ScanSettings settings,
             ItemList thisRound)
         {
             List<FileInfo> matchedFiles;
@@ -87,10 +82,8 @@ namespace TVRename
             else
             {
                 IEnumerable<FileInfo> testFiles = dfc.GetFilesIncludeSubDirs(baseFolder);
-                matchedFiles = testFiles is null
-                    ? new List<FileInfo>()
-                    : testFiles.Where(testFile => ReviewFile(me, thisRound, testFile, settings, false, false, false,
-                        TVSettings.Instance.UseFullPathNameToMatchLibraryFolders)).ToList();
+                matchedFiles = testFiles.Where(testFile => ReviewFile(me, thisRound, testFile, settings, false, false, false,
+                    TVSettings.Instance.UseFullPathNameToMatchLibraryFolders)).ToList();
             }
 
             return matchedFiles;
@@ -101,10 +94,6 @@ namespace TVRename
         {
             LOGGER.Info($"Starting to look for {me.Filename} in the library folder: {folderName}");
             FileInfo[] files = dfc.GetFiles(folderName);
-            if (files is null)
-            {
-                return;
-            }
 
             foreach (FileInfo testFile in files)
             {

@@ -34,7 +34,7 @@ namespace TVRename
             private set;
         } // All work has been completed for this item, and can be removed from to-do list.  set to true on completion, even on error.
 
-        public Exception LastError { get; }
+        public Exception? LastError { get; }
 
         public bool Completed { get; private set; }
 

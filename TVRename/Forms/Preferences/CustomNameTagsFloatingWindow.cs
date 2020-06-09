@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -21,7 +20,7 @@ namespace TVRename
     /// </summary>
     public partial class CustomNameTagsFloatingWindow : Form
     {
-        public CustomNameTagsFloatingWindow([CanBeNull] ProcessedEpisode pe)
+        public CustomNameTagsFloatingWindow(ProcessedEpisode? pe)
         {
             InitializeComponent();
 
@@ -37,7 +36,7 @@ namespace TVRename
             }
         }
 
-        public CustomNameTagsFloatingWindow([CanBeNull] ProcessedSeason pe)
+        public CustomNameTagsFloatingWindow(ProcessedSeason? pe)
         {
             InitializeComponent();
 

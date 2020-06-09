@@ -13,16 +13,6 @@ namespace TVRename
 
         public int Compare(Item x, Item y)
         {
-            if (x is null)
-            {
-                return -1;
-            }
-
-            if (y is null)
-            {
-                return 1;
-            }
-
             return TypeNumber(x) == TypeNumber(y) ? x.CompareTo(y) : TypeNumber(x) - TypeNumber(y);
         }
 
@@ -30,50 +20,23 @@ namespace TVRename
 
         private static int TypeNumber(Item a)
         {
-            switch (a)
+            return a switch
             {
-                case ItemMissing _:
-                    return 1;
-
-                case ActionCopyMoveRename _:
-                    return 2;
-
-                case ActionTDownload _:
-                    return 3;
-
-                case ActionDownloadImage _:
-                    return 4;
-
-                case ActionMede8erViewXML _:
-                    return 5;
-
-                case ActionMede8erXML _:
-                    return 6;
-
-                case ActionNfo _:
-                    return 7;
-
-                case ActionPyTivoMeta _:
-                    return 8;
-
-                case ActionWdtvMeta _:
-                    return 9;
-
-                case ItemDownloading _:
-                    return 10;
-
-                case ActionDeleteFile _:
-                    return 11;
-
-                case ActionDeleteDirectory _:
-                    return 12;
-
-                case ActionDateTouch _:
-                    return 13;
-
-                default:
-                    return 14;
-            }
+                ItemMissing _ => 1,
+                ActionCopyMoveRename _ => 2,
+                ActionTDownload _ => 3,
+                ActionDownloadImage _ => 4,
+                ActionMede8erViewXML _ => 5,
+                ActionMede8erXML _ => 6,
+                ActionNfo _ => 7,
+                ActionPyTivoMeta _ => 8,
+                ActionWdtvMeta _ => 9,
+                ItemDownloading _ => 10,
+                ActionDeleteFile _ => 11,
+                ActionDeleteDirectory _ => 12,
+                ActionDateTouch _ => 13,
+                _ => 14
+            };
         }
     }
 }

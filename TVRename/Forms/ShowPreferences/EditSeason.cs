@@ -27,7 +27,7 @@ namespace TVRename
     {
         private readonly CustomEpisodeName nameStyle;
         private readonly List<ShowRule> workingRuleSet;
-        private readonly List<ProcessedEpisode> mOriginalEps;
+        private readonly List<ProcessedEpisode>? mOriginalEps;
         private readonly ShowItem show;
         private readonly int mSeasonNumber;
         private readonly List<ProcessedEpisode> episodesToAddToSeen;
@@ -74,12 +74,15 @@ namespace TVRename
             }
 
             lvSeenEpisodes.Items.Clear();
-            foreach (ProcessedEpisode ep in mOriginalEps.Where(ep => ep.PreviouslySeen))
+            if (mOriginalEps != null)
             {
-                ListViewItem lvi = new ListViewItem { Text = ep.EpNumsAsString() };
-                lvi.SubItems.Add(ep.Name);
-                lvi.Tag = ep;
-                lvSeenEpisodes.Items.Add(lvi);
+                foreach (ProcessedEpisode ep in mOriginalEps.Where(ep => ep.PreviouslySeen))
+                {
+                    ListViewItem lvi = new ListViewItem {Text = ep.EpNumsAsString()};
+                    lvi.SubItems.Add(ep.Name);
+                    lvi.Tag = ep;
+                    lvSeenEpisodes.Items.Add(lvi);
+                }
             }
 
             if (keepSel)
@@ -156,13 +159,18 @@ namespace TVRename
 
         private void bnEdit_Click(object sender, System.EventArgs e)
         {
+            EditSelectedRule();
+        }
+
+        private void EditSelectedRule()
+        {
             if (lvRuleList.SelectedItems.Count == 0)
             {
                 return;
             }
 
             ShowRule sr = (ShowRule) lvRuleList.SelectedItems[0].Tag;
-            AddModifyRule ar = new AddModifyRule(sr,show,mSeasonNumber);
+            AddModifyRule ar = new AddModifyRule(sr, show, mSeasonNumber);
             ar.ShowDialog(this); // modifies rule in-place if OK'd
             FillRuleList(false, 0);
         }
@@ -221,7 +229,7 @@ namespace TVRename
 
         private void lvRuleList_DoubleClick(object sender, System.EventArgs e)
         {
-            bnEdit_Click(null, null);
+            EditSelectedRule();
         }
 
         private void bnOK_Click(object sender, System.EventArgs e)
@@ -276,20 +284,11 @@ namespace TVRename
         private void Button2_Click(object sender, System.EventArgs e)
         {
             List<ProcessedEpisode> possibleEpisodes = new List<ProcessedEpisode>();
-            foreach (ProcessedEpisode testEp in mOriginalEps)
+            if (mOriginalEps != null)
             {
-                if (testEp.PreviouslySeen)
-                {
-                    continue;
-                }
-
-                if (episodesToAddToSeen.Contains(testEp))
-                {
-                    continue;
-                }
-
-                possibleEpisodes.Add(testEp);
+                possibleEpisodes.AddRange(mOriginalEps.Where(testEp => !testEp.PreviouslySeen).Where(testEp => !episodesToAddToSeen.Contains(testEp)));
             }
+
             possibleEpisodes.AddRange(episodesToRemoveFromSeen);
 
             NewSeenEpisode nse = new NewSeenEpisode(possibleEpisodes);

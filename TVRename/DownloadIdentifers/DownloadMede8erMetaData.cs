@@ -6,12 +6,12 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     internal class DownloadMede8erMetaData : DownloadIdentifier
     {
-        private List<string> doneFiles;
+        private List<string> doneFiles = new List<string>();
         public DownloadMede8erMetaData() => Reset();
 
         public override DownloadType GetDownloadType() => DownloadType.downloadMetaData;
 
-        public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
+        public override ItemList? ProcessShow(ShowItem si, bool forceRefresh)
         {
             if (TVSettings.Instance.Mede8erXML)
             {
@@ -44,7 +44,7 @@ namespace TVRename
             return base.ProcessShow(si, forceRefresh);
         }
 
-        public override ItemList ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
+        public override ItemList? ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
         {
             if (!TVSettings.Instance.Mede8erXML)
             {
@@ -63,7 +63,7 @@ namespace TVRename
             return theActionList;
         }
 
-        public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
+        public override ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file, bool forceRefresh)
         {
             if (!TVSettings.Instance.Mede8erXML)
             {
@@ -71,12 +71,12 @@ namespace TVRename
             }
 
             ItemList theActionList = new ItemList();
-            string fn = filo.RemoveExtension() + ".xml";
-            FileInfo nfo = FileHelper.FileInFolder(filo.Directory, fn);
+            string fn = file.RemoveExtension() + ".xml";
+            FileInfo nfo = FileHelper.FileInFolder(file.Directory, fn);
 
-            if (forceRefresh || !nfo.Exists || dbep.SrvLastUpdated > TimeZoneHelper.Epoch(nfo.LastWriteTime))
+            if (forceRefresh || !nfo.Exists || episode.SrvLastUpdated > TimeZoneHelper.Epoch(nfo.LastWriteTime))
             {
-                theActionList.Add(new ActionMede8erXML(nfo, dbep));
+                theActionList.Add(new ActionMede8erXML(nfo, episode));
             }
 
             return theActionList;

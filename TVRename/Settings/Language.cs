@@ -10,10 +10,11 @@ namespace TVRename
 {
     public class Language
     {
+        // ReSharper disable once NotNullMemberIsNotInitialized
         public Language() {
         }
 
-        public Language(int id, string abbreviation, string name, string englishName)
+        public Language(int id, string abbreviation, string name, string? englishName)
         {
             Id = id;
             Abbreviation = abbreviation;
@@ -25,6 +26,6 @@ namespace TVRename
         public int Id { get; set; }
         public string Abbreviation { get; set; }
         public string Name { get; set; }
-        public string EnglishName { get; set; }
+        public string? EnglishName { get; set; }
     }
 }

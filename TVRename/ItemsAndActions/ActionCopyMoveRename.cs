@@ -25,7 +25,7 @@ namespace TVRename
         public readonly FileInfo To;
         private readonly TVDoc doc;
 
-        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, bool doTidyup,ItemMissing undoItem,TVDoc tvDoc)
+        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, bool doTidyup,ItemMissing? undoItem,TVDoc tvDoc)
         {
             Tidyup = doTidyup? TVSettings.Instance.Tidyup:null;
             PercentDone = 0;
@@ -105,7 +105,7 @@ namespace TVRename
                     //File is correct name
                     LOGGER.Debug($"Just copied {To.FullName} to the right place. Marking it as 'seen'.");
                     //Record this episode as seen
-                    TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(Episode);
+                    TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(SourceEpisode);
 
                     if (TVSettings.Instance.IgnorePreviouslySeen) { doc.SetDirty(); }
                 }
@@ -194,28 +194,26 @@ namespace TVRename
         public override int IconNumber => IsMoveRename() ? 4 : 3;
         #endregion
 
+        public ProcessedEpisode SourceEpisode => Episode ?? throw new InvalidOperationException();
+
         #region Item Members
-        public override IgnoreItem Ignore => To is null ? null : new IgnoreItem(To.FullName);
+        public override IgnoreItem Ignore => new IgnoreItem(To.FullName);
 
         public override string ScanListViewGroup
         {
             get
             {
-                switch (Operation)
+                return Operation switch
                 {
-                    case Op.rename:
-                        return "lvgActionRename";
-                    case Op.copy:
-                        return "lvgActionCopy";
-                    case Op.move:
-                        return "lvgActionMove";
-                    default:
-                        return "lvgActionCopy";
-                }
+                    Op.rename => "lvgActionRename",
+                    Op.copy => "lvgActionCopy",
+                    Op.move => "lvgActionMove",
+                    _ => "lvgActionCopy"
+                };
             }
         }
 
-        public override  string TargetFolder => To?.DirectoryName;
+        public override  string TargetFolder => To.DirectoryName;
 
         #endregion
 
@@ -224,7 +222,7 @@ namespace TVRename
 
         public bool QuickOperation()
         {
-            if (From is null || To is null || From.Directory is null || To.Directory is null)
+            if (From.Directory is null || To.Directory is null)
             {
                 return false;
             }

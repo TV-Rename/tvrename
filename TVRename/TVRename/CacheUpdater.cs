@@ -24,9 +24,9 @@ namespace TVRename
         private bool downloadOk;
         private bool downloadStopOnError;
         private bool showErrorMsgBox;
-        private Semaphore workerSemaphore;
+        private Semaphore? workerSemaphore;
         private List<Thread> workers;
-        private Thread mDownloaderThread;
+        private Thread? mDownloaderThread;
         private ICollection<SeriesSpecifier> downloadIds;
         public ConcurrentBag<ShowNotFoundException> Problems { get; }
         
@@ -38,6 +38,8 @@ namespace TVRename
             DownloadDone = true;
             downloadOk = true;
             Problems = new ConcurrentBag<ShowNotFoundException>();
+            workers = new List<Thread>();
+            downloadIds = new List<SeriesSpecifier>();
         }
 
         public void StartBgDownloadThread(bool stopOnError, ICollection<SeriesSpecifier> shows, bool showMsgBox,
@@ -210,18 +212,15 @@ namespace TVRename
 
         private void WaitForAllThreadsAndTidyUp()
         {
-            if (workers != null)
+            foreach (Thread t in workers)
             {
-                foreach (Thread t in workers)
+                if (t.IsAlive)
                 {
-                    if (t.IsAlive)
-                    {
-                        t.Join();
-                    }
+                    t.Join();
                 }
             }
 
-            workers = null;
+            workers.Clear();
             workerSemaphore = null;
         }
 
@@ -274,7 +273,8 @@ namespace TVRename
                 Logger.Info($"Identified that {downloadIds.Count(s => s.Provider==ShowItem.ProviderType.TheTVDB && (TheTVDB.LocalCache.Instance.GetSeries(s.TvdbSeriesId)?.Dirty??true))} TVDB and {downloadIds.Count(s => s.Provider == ShowItem.ProviderType.TVmaze && (TVmaze.LocalCache.Instance.GetSeries(s.TvMazeSeriesId)?.Dirty ?? true))} TV Maze shows need to be updated");
                 workers = new List<Thread>();
 
-                workerSemaphore = new Semaphore(numWorkers, numWorkers); // allow up to numWorkers working at once
+                Semaphore newSemaphore = new Semaphore(numWorkers, numWorkers); // allow up to numWorkers working at once
+                workerSemaphore = newSemaphore;
 
                 foreach (SeriesSpecifier code in downloadIds)
                 {
@@ -286,13 +286,12 @@ namespace TVRename
                     DownloadsRemaining = totalItems - n;
                     n++;
 
-                    workerSemaphore.WaitOne(); // blocks until there is an available slot
+                    newSemaphore.WaitOne(); // blocks until there is an available slot
                     Thread t = new Thread(GetThread);
                     workers.Add(t);
                     t.Name = "GetThread:" + code.Name;
                     t.Start(code); // will grab the semaphore as soon as we make it available
-                    int nfr = workerSemaphore
-                        .Release(1); // release our hold on the semaphore, so that worker can grab it
+                    int nfr = newSemaphore.Release(1); // release our hold on the semaphore, so that worker can grab it
                     Threadslogger.Trace("Started " + code + " pool has " + nfr + " free");
                     Thread.Sleep(1); // allow the other thread a chance to run and grab
 
@@ -332,7 +331,7 @@ namespace TVRename
             }
             finally
             {
-                workers = null;
+                workers.Clear();
                 workerSemaphore = null;
                 DownloadDone = true;
             }

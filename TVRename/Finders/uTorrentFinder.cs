@@ -39,7 +39,7 @@ namespace TVRename
             }
         }
 
-        internal static IEnumerable<TorrentEntry> GetTorrentDownloads()
+        internal static IEnumerable<TorrentEntry>? GetTorrentDownloads()
         {
             try
             {

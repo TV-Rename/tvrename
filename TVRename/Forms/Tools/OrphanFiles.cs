@@ -77,17 +77,17 @@ namespace TVRename.Forms.Tools
             showRightClickMenu.Show(pt);
         }
 
-        private static void TvSourceFor([CanBeNull] ShowItem si)
+        private static void TvSourceFor(ShowItem? si)
         {
             if (si != null)
             {
                 if (si.WebsiteUrl.HasValue())
                 {
-                    Helpers.OpenUrl(si.WebsiteUrl);
+                    Helpers.OpenUrl(si.WebsiteUrl!);
                 }
                 else if (si.TheSeries()?.WebUrl.HasValue() ?? false)
                 {
-                    Helpers.OpenUrl(si.TheSeries()?.WebUrl);
+                    Helpers.OpenUrl(si.TheSeries()?.WebUrl!);
                 }
             }
         }
@@ -114,7 +114,7 @@ namespace TVRename.Forms.Tools
             foreach (ShowItem show in mDoc.Library.Shows.OrderBy(item => item.ShowName))
             {
                 Logger.Info($"Finding old eps for {show.ShowName}");
-                bw.ReportProgress((100*current++/total),show.ShowName);
+                bw.ReportProgress(100*current++/total,show.ShowName);
 
                 Dictionary<int, List<string>> folders = show.AllFolderLocations(true);
 

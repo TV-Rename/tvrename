@@ -16,10 +16,10 @@ namespace TVRename.Forms
 {
     public partial class UpdateNotification : Form
     {
-        private readonly Release newVersion;
+        private readonly ServerRelease newVersion;
         private const string GITHUB_CONVERSION_URL = "https://api.github.com/markdown";
 
-        public UpdateNotification([NotNull] Release update)
+        public UpdateNotification([NotNull] ServerRelease update)
         {
             newVersion = update;
             InitializeComponent();

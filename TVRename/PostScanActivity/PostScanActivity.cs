@@ -15,25 +15,30 @@ namespace TVRename
     {
         protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
         protected readonly TVDoc MDoc;
-        private SetProgressDelegate progressDelegate;
+        private SetProgressDelegate? progressDelegate;
         private int startPosition;
         private int endPosition;
 
-        protected PostScanActivity(TVDoc doc) => MDoc = doc;
+        protected PostScanActivity(TVDoc doc)
+        {
+            MDoc = doc;
+            startPosition = 0;
+            endPosition = 100;
+        }
 
-        protected abstract string Checkname();
+        protected abstract string ActivityName();
         protected abstract bool Active();
-        protected abstract void DoCheck(SetProgressDelegate prog);
+        protected abstract void DoCheck(SetProgressDelegate? progress);
 
-        public void Check(SetProgressDelegate prog) =>
-            Check(prog, 0, 100);
+        public void Check(SetProgressDelegate? progress) =>
+            Check(progress, 0, 100);
 
-        public void Check(SetProgressDelegate prog, int startpct, int totPct)
+        private void Check(SetProgressDelegate? progress, int startpct, int totPct)
         {
             startPosition = startpct;
             endPosition = totPct;
-            progressDelegate = prog;
-            progressDelegate?.Invoke(startPosition, string.Empty);
+            progressDelegate = progress;
+            progressDelegate?.Invoke(startpct, string.Empty);
             try
             {
                 if (!Active())
@@ -41,7 +46,7 @@ namespace TVRename
                     return;
                 }
 
-                DoCheck(prog);
+                DoCheck(progress);
                 LogActionListSummary();
             }
             catch(TVRenameOperationInterruptedException)
@@ -50,11 +55,11 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                LOGGER.Fatal(e, $"Failed to run Scan for {Checkname()}");
+                LOGGER.Fatal(e, $"Failed to run Scan for {ActivityName()}");
             }
             finally
             {
-                progressDelegate?.Invoke(endPosition, string.Empty);
+                progressDelegate?.Invoke(totPct, string.Empty);
             }
         }
 
@@ -66,7 +71,7 @@ namespace TVRename
 
         private void LogActionListSummary()
         {
-            LOGGER.Info($"Completed after activity: {Checkname()}");
+            LOGGER.Info($"Completed after activity: {ActivityName()}");
         }
     }
 }

@@ -78,12 +78,11 @@ namespace TVRename
             ActionList.Replace(toRemove, newList);
         }
 
-        [CanBeNull]
-        private static XElement GetSabDownload(string hostport, string key)
+        private static XElement? GetSabDownload(string hostPort, string key)
         {
             // Something like:
             // http://localhost:8080/sabnzbd/api?mode=queue&apikey=xxx&start=0&limit=8888&output=xml
-            string theUrl = $"http://{hostport}/sabnzbd/api?mode=queue&start=0&limit=8888&output=xml&apikey={key}";
+            string theUrl = $"http://{hostPort}/sabnzbd/api?mode=queue&start=0&limit=8888&output=xml&apikey={key}";
 
             string response;
             try
@@ -116,8 +115,7 @@ namespace TVRename
             return x;
         }
 
-        [CanBeNull]
-        private static QueueSlotsSlot CreateQueueSlotsSlot([NotNull] XElement slot, string simpleShowName, ItemMissing action)
+        private static QueueSlotsSlot? CreateQueueSlotsSlot([NotNull] XElement slot, string simpleShowName, ItemMissing action)
         {
             string filename = slot.Attribute("filename")?.Value;
             if (string.IsNullOrWhiteSpace(filename))
@@ -133,9 +131,9 @@ namespace TVRename
             }
 
             if (!FinderHelper.FindSeasEp(file, out int seasF, out int epF, out int _,
-                    action.Episode.Show) ||
-                seasF != action.Episode.AppropriateSeasonNumber ||
-                epF != action.Episode.AppropriateEpNum)
+                    action.MissingEpisode.Show) ||
+                seasF != action.MissingEpisode.AppropriateSeasonNumber ||
+                epF != action.MissingEpisode.AppropriateEpNum)
             {
                 return null;
             }

@@ -26,8 +26,8 @@ namespace TVRename
 
         public override string ProgressText => toRemove.Name;
         public override string Produces => toRemove.FullName;
-        public override IgnoreItem Ignore => toRemove is null ? null : new IgnoreItem(toRemove.FullName);
-        public override string TargetFolder => toRemove?.Parent.FullName;
+        public override IgnoreItem Ignore => new IgnoreItem(toRemove.FullName);
+        public override string TargetFolder => toRemove.Parent.FullName;
 
         public override ActionOutcome Go(TVRenameStats stats)
         {
