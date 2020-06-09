@@ -321,6 +321,10 @@
     <Compile Include="Forms\Utilities\ThanksForm.Designer.cs">
       <DependentUpon>ThanksForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ItemsAndActions\ActionDateTouchDirectory.cs" />
+    <Compile Include="ItemsAndActions\ActionDateTouchEpisode.cs" />
+    <Compile Include="ItemsAndActions\ActionDateTouchSeason.cs" />
+    <Compile Include="ItemsAndActions\ActionDateTouchShow.cs" />
     <Compile Include="ItemsAndActions\ActionOutcome.cs" />
     <Compile Include="Model\Season.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -338,6 +342,7 @@
     <Compile Include="Sources\TVMAZE\TVmazeAPI.cs" />
     <Compile Include="TVRename\FileIssue.cs" />
     <Compile Include="TVRename\UpdateTimeTracker.cs" />
+    <Compile Include="Utility\ServerRelease.cs" />
     <Compile Include="Utility\UrlCache.cs" />
     <Compile Include="Forms\ShowPreferences\AutoAddShow.cs">
       <SubType>Form</SubType>

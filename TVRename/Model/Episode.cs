@@ -332,7 +332,10 @@ namespace TVRename
         {
             get
             {
-                if (internalSeries != null){ return internalSeries;} 
+                if (internalSeries != null)
+                {
+                    return internalSeries;
+                } 
 
                 throw new InvalidOperationException("Attempt to access Series for an Episode that has yet to be set");
             }

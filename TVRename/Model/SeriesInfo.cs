@@ -21,7 +21,6 @@ namespace TVRename
     public class SeriesInfo
     {
         public DateTime? AirsTime;
-        private string? airsTimeString; //The raw value we obtain from TVDB
         public bool Dirty; // set to true if local info is known to be older than whats on the server
         public DateTime? FirstAired;
         public readonly string? TargetLanguageCode; //The Language Code we'd like the Series in ; null if we want to use the system setting
@@ -356,7 +355,7 @@ namespace TVRename
                 SrvLastUpdated = seriesXml.ExtractLong("lastupdated")??seriesXml.ExtractLong("lastUpdated",0);
                 LanguageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId") ?? throw new SourceConsistencyException("Error Extracting Language for Series",ShowItem.ProviderType.TheTVDB);
 
-                airsTimeString = seriesXml.ExtractStringOrNull("Airs_Time")?? seriesXml.ExtractString("airsTime");
+                String airsTimeString = seriesXml.ExtractStringOrNull("Airs_Time")?? seriesXml.ExtractString("airsTime");
                 AirsTime = JsonHelper.ParseAirTime(airsTimeString);
 
                 AirsDay = seriesXml.ExtractStringOrNull("airsDayOfWeek") ?? seriesXml.ExtractString("Airs_DayOfWeek");
@@ -444,7 +443,7 @@ namespace TVRename
         private void LoadJson([NotNull] JObject r)
         {
             AirsDay = ((string)r["airsDayOfWeek"])?.Trim();
-            airsTimeString = (string) r["airsTime"];
+            String airsTimeString = (string) r["airsTime"];
             AirsTime = JsonHelper.ParseAirTime(airsTimeString);
             aliases = (r["aliases"] ?? throw new SourceConsistencyException($"Can't find aliases in Series JSON: {r}",ShowItem.ProviderType.TheTVDB)).Select(x => x.Value<string>()).ToList();
             BannerString = (string)r["banner"];
