@@ -66,7 +66,7 @@ namespace TVRename.Ipc
 
         public void SendArgs(string[] args)
         {
-            MainUi.BeginInvoke(MainUi.RecieveArgumentDelagate,new object[] {args});
+            MainUi.BeginInvoke(MainUi.ReceiveArgumentDelegate,new object[] {args});
         }
     }
 }

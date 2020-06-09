@@ -68,10 +68,10 @@ namespace TVRename
         #region Delegates
 
         public delegate void ScanTypeDelegate(TVSettings.ScanType type);
-        public delegate void ArgumentDelagate(string[] args);
+        public delegate void ArgumentDelegate(string[] args);
 
         public readonly ScanTypeDelegate ScanAndDo;
-        public readonly ArgumentDelagate RecieveArgumentDelagate;
+        public readonly ArgumentDelegate ReceiveArgumentDelegate;
 
         #endregion
 
@@ -105,7 +105,7 @@ namespace TVRename
             InitializeComponent();
 
             ScanAndDo = ScanAndAction;
-            RecieveArgumentDelagate = RecieveArguments;
+            ReceiveArgumentDelegate = RecieveArguments;
 
             try
             {
@@ -1750,7 +1750,8 @@ namespace TVRename
                     : "Visit thetvdb.com";
                 AddRcMenuItem(label, (sender, args) => TvSourceFor(seas));
             }
-            else
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            else if (si!=null)
             {
                 AddRcMenuItem("Episode Guide", (sender, args) => GotoEpguideFor(si, true));
                 string label = si.Provider == ShowItem.ProviderType.TVmaze
