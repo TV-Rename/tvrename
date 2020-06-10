@@ -648,5 +648,27 @@ namespace TVRename
         {
             return sil.Where(item => item.NameMatch(filename));
         }
+
+        public static FileInfo GenerateTargetName(ItemMissing mi, FileInfo from)
+        {
+            if (mi.MissingEpisode.Show.DoRename && TVSettings.Instance.RenameCheck)
+            {
+                return new FileInfo(mi.TheFileNoExt + from.Extension);
+            }
+
+            return new FileInfo(mi.DestinationFolder.EnsureEndsWithSeparator() + from.Name);
+        }
+        public static FileInfo GenerateTargetName(string folder,ProcessedEpisode pep, FileInfo fi)
+        {
+            string filename = fi.Name;
+
+            if (pep.Show.DoRename && TVSettings.Instance.RenameCheck)
+            {
+                filename = TVSettings.Instance.FilenameFriendly(
+                    TVSettings.Instance.NamingStyle.NameFor(pep, fi.Extension, folder.Length));
+            }
+
+            return new FileInfo(folder.EnsureEndsWithSeparator() + filename);
+        }
     }
 }

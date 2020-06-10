@@ -433,7 +433,7 @@ namespace TVRename
             {
                 if (!Directory.Exists(folder))
                 {
-                    if (TVSettings.Instance.AutoCreateFolders) // Also check || Doc.Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.create
+                    if (TVSettings.Instance.AutoCreateFolders) // TODO? Also check || Doc.Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.create
                     {
                         LOGGER.Info($"Want to copy {fi.FullName} to {folder}, but it doesn't exist yet, so creating it");
                         Directory.CreateDirectory(folder);
@@ -444,9 +444,7 @@ namespace TVRename
                         continue;
                     }
                 }
-                string filename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pep,fi.Extension,folder.Length));
-
-                FileInfo targetFile = new FileInfo(folder.EnsureEndsWithSeparator() + filename);
+                FileInfo targetFile = FinderHelper.GenerateTargetName(folder, pep,fi);
 
                 if (fi.FullName == targetFile.FullName)
                 {

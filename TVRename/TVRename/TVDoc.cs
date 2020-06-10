@@ -1055,7 +1055,7 @@ namespace TVRename
         {
             // make new Item for copying/moving to specified location
             FileInfo from = new FileInfo(fileName);
-            FileInfo to = new FileInfo(mi.TheFileNoExt + from.Extension);
+            FileInfo to = FinderHelper.GenerateTargetName(mi, from); 
             TheActionList.Add(
                 new ActionCopyMoveRename(
                     TVSettings.Instance.LeaveOriginals

@@ -3751,8 +3751,17 @@ namespace TVRename
         {
             ProcessedSeason s = e.Argument as ProcessedSeason;
             ShowItem si = s?.Show;
-            string html = si?.GetSeasonHtmlOverview(s, true);
-            e.Result = html??string.Empty;
+
+            string html = string.Empty;
+            try
+            {
+                html = si?.GetSeasonHtmlOverview(s, true) ?? string.Empty;
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception, "Error Occurred Creating Show Summary");
+            }
+            e.Result = html;
         }
 
         private void UpdateWebInformation(object sender, [NotNull] RunWorkerCompletedEventArgs e)
@@ -3776,8 +3785,17 @@ namespace TVRename
         private void BwShowHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
         {
             ShowItem si = e.Argument as ShowItem;
-            string html = si?.GetShowHtmlOverview(true);
-            e.Result = html ?? string.Empty;
+
+            string html = string.Empty;
+            try
+            {
+                html = si?.GetShowHtmlOverview(true) ?? string.Empty;
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception, "Error Occurred Creating Show Summary");
+            }
+            e.Result = html;
         }
 
         private void BwUpdateSchedule_DoWork(object sender, [NotNull] DoWorkEventArgs e)
@@ -3945,15 +3963,31 @@ namespace TVRename
         private void BwShowSummaryHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
         {
             ShowItem si = e.Argument as ShowItem;
-            string html = si?.GetShowSummaryHtmlOverview(true);
-            e.Result = html ?? string.Empty;
+            string html = string.Empty;
+            try
+            {
+                html = si?.GetShowSummaryHtmlOverview(true) ??string.Empty;
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception,"Error Occurred Creating Show Summary");
+            }
+            e.Result = html;
         }
         private void BwSeasonSummaryHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
         {
             ProcessedSeason s = e.Argument as ProcessedSeason;
             ShowItem si = s?.Show;
-            string html = si?.GetSeasonSummaryHtmlOverview(s, true);
-            e.Result = html ?? string.Empty;
+            string html = string.Empty;
+            try
+            {
+                html = si?.GetSeasonSummaryHtmlOverview(s, true) ?? string.Empty;
+            }
+            catch (Exception exception)
+            {
+                Logger.Error(exception, "Error Occurred Creating Show Summary");
+            }
+            e.Result = html;
         }
 
         private void ToolStripButton1_Click(object sender, EventArgs e)

@@ -60,7 +60,7 @@ namespace TVRename
                     me = UpdateMissingItem(me, dce, epF, maxEp, seasF);
                 }
 
-                FileInfo fi = new FileInfo(me.TheFileNoExt + dce.Extension);
+                FileInfo fi = FinderHelper.GenerateTargetName(me, dce);
 
                 if (preventMove)
                 {
