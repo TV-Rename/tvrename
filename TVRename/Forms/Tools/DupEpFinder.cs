@@ -152,7 +152,6 @@ namespace TVRename.Forms
                 AddRcMenuItem("Add Rule", (o, args) => AddRule(mlastSelected, si, mlastClicked));
             }
             duplicateRightClickMenu.Show(pt);
-
         }
 
         private void AddRcMenuItem(string label, EventHandler command)

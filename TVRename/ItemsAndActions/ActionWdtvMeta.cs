@@ -32,16 +32,7 @@ namespace TVRename
 
         public override ActionOutcome Go(TVRenameStats stats)
         {
-
-            if (Episode != null)
-            {
-                return WriteEpisodeMetaDataFile();
-            }
-            else
-            {
-                return WriteSeriesXml();
-            }
-
+            return Episode != null ? WriteEpisodeMetaDataFile() : WriteSeriesXml();
         }
 
         [NotNull]

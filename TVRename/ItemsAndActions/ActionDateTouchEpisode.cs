@@ -59,7 +59,6 @@ namespace TVRename
             }
         }
 
-
         public override int CompareTo(object o)
         {
             ActionDateTouchEpisode nfo = o as ActionDateTouchEpisode;

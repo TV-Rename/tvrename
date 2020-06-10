@@ -7,6 +7,7 @@
 // 
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
@@ -49,25 +50,28 @@ namespace TVRename
 
             string currentSearchString = settings.ExtractString("Current");
 
-            foreach (XElement x in settings.Descendants("Choice"))
+            foreach (SearchEngine engine in settings.Descendants("Choice").Select(GenerateSearchEngine).Where(x => x.HasValue).Select(x => x.Value))
             {
-                string? url = x.Attribute("URL")?.Value.Replace("!", "{ShowName}+S{Season:2}E{Episode}");
-                string? url2 = x.Attribute("URL2")?.Value;
-                string? name = x.Attribute("Name")?.Value;
-                string? link = url ?? url2;
-
-                if (name != null && link != null)
+                Add(engine);
+                if (engine.Name == currentSearchString)
                 {
-                    SearchEngine engine = new SearchEngine {Name= name,Url=link };
-                    Add(engine);
-                    if (engine.Name == currentSearchString)
-                    {
-                        CurrentSearch = engine;
-                    }
-
+                    CurrentSearch = engine;
                 }
-
             }
+        }
+
+        private SearchEngine? GenerateSearchEngine(XElement x)
+        {
+            string? url = x.Attribute("URL")?.Value.Replace("!", "{ShowName}+S{Season:2}E{Episode}");
+            string? url2 = x.Attribute("URL2")?.Value;
+            string? name = x.Attribute("Name")?.Value;
+            string? link = url ?? url2;
+
+            if (name != null && link != null)
+            {
+                return new SearchEngine { Name = name, Url = link };
+            }
+            return null;
         }
 
         public void SetSearchEngine(SearchEngine s)

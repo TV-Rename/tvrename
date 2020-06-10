@@ -4,6 +4,12 @@ using JetBrains.Annotations;
 
 public class ServerRelease : Release
 {
+    public string DownloadUrl { get; }
+    public string ReleaseNotesText { get; }
+    public string ReleaseNotesUrl { get; }
+    public bool IsBeta { get; }
+    public DateTime ReleaseDate { get; }
+
     public ServerRelease([NotNull] string version, VersionType type, string downloadUrl, string releaseNotesText, string releaseNotesUrl, bool isBeta, DateTime releaseDate) : base(version, type)
     {
         DownloadUrl = downloadUrl;
@@ -12,13 +18,6 @@ public class ServerRelease : Release
         IsBeta = isBeta;
         ReleaseDate = releaseDate;
     }
-
-    public string DownloadUrl { get; }
-    public string ReleaseNotesText { get; }
-    public string ReleaseNotesUrl { get; }
-    public bool IsBeta { get;}
-    public DateTime ReleaseDate { get; }
-
 
     public string LogMessage()
     {
