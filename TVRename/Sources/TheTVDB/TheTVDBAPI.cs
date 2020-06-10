@@ -310,19 +310,14 @@ namespace TVRename.TheTVDB
 
                 if (ex.Status == WebExceptionStatus.ProtocolError && !(ex.Response is null) && ex.Response is HttpWebResponse resp)
                 {
-                    switch (resp.StatusCode)
+                    return resp.StatusCode switch
                     {
-                        case HttpStatusCode.Unauthorized:
-                            return true;
-                        case HttpStatusCode.Forbidden:
-                            return true;
-                        case HttpStatusCode.NotFound:
-                            return false;
-                        case HttpStatusCode.OK:
-                            return true;
-                        default:
-                            return false;
-                    }
+                        HttpStatusCode.Unauthorized => true,
+                        HttpStatusCode.Forbidden => true,
+                        HttpStatusCode.NotFound => false,
+                        HttpStatusCode.OK => true,
+                        _ => false
+                    };
                 }
 
                 return false;

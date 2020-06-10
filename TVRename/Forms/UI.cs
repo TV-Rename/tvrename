@@ -373,40 +373,20 @@ namespace TVRename
         private static object GroupItemsKeyDelegate(object rowObject)
         {
             Item i = (Item) rowObject;
-            switch (i.ScanListViewGroup)
+            return i.ScanListViewGroup switch
             {
-                case "lvgActionMissing":
-                    return "A-Mising";
-
-                case "lvgActionMeta":
-                    return "H-UpdateFiles";
-
-                case "lvgUpdateFileDates":
-                    return "I-UpdateFileDates";
-
-                case "lvgDownloading":
-                    return "J-Downloading";
-
-                case "lvgActionDownload":
-                    return "G-DownloadImage";
-
-                case "lvgActionDownloadRSS":
-                    return "F-DownloadTorrent";
-
-                case "lvgActionDelete":
-                    return "E-Delete";
-
-                case "lvgActionRename":
-                    return "B-Rename";
-
-                case "lvgActionCopy":
-                    return "C-Copy";
-
-                case "lvgActionMove":
-                    return "D-Move";
-                default:
-                    return "UNKNOWN";
-            }
+                "lvgActionMissing" => "A-Mising",
+                "lvgActionMeta" => "H-UpdateFiles",
+                "lvgUpdateFileDates" => "I-UpdateFileDates",
+                "lvgDownloading" => "J-Downloading",
+                "lvgActionDownload" => "G-DownloadImage",
+                "lvgActionDownloadRSS" => "F-DownloadTorrent",
+                "lvgActionDelete" => "E-Delete",
+                "lvgActionRename" => "B-Rename",
+                "lvgActionCopy" => "C-Copy",
+                "lvgActionMove" => "D-Move",
+                _ => "UNKNOWN"
+            };
         }
 
         private static string ConvertShowNameDelegate(object x)
@@ -684,15 +664,12 @@ namespace TVRename
 
         private ListView ListViewByName([NotNull] string name)
         {
-            switch (name)
+            return name switch
             {
-                case "WhenToWatch":
-                    return lvWhenToWatch;
-                case "AllInOne":
-                    return olvAction;
-                default:
-                    throw new ArgumentException("Inappropriate ListViewParameter " + name);
-            }
+                "WhenToWatch" => lvWhenToWatch,
+                "AllInOne" => olvAction,
+                _ => throw new ArgumentException("Inappropriate ListViewParameter " + name)
+            };
         }
 
         private void flushImageCacheToolStripMenuItem_Click(object sender, EventArgs e)

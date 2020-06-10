@@ -163,17 +163,13 @@ namespace TVRename
                 return BrowserEmulationVersion.Version11;
             }
 
-            switch (ieVersion)
+            return ieVersion switch
             {
-                case 10:
-                    return BrowserEmulationVersion.Version10;
-                case 9:
-                    return BrowserEmulationVersion.Version9;
-                case 8:
-                    return BrowserEmulationVersion.Version8;
-                default:
-                    return BrowserEmulationVersion.Version7;
-            }
+                10 => BrowserEmulationVersion.Version10,
+                9 => BrowserEmulationVersion.Version9,
+                8 => BrowserEmulationVersion.Version8,
+                _ => BrowserEmulationVersion.Version7
+            };
         }
 
         public static void UpdateBrowserEmulationVersion()

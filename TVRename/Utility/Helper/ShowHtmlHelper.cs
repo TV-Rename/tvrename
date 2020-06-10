@@ -693,20 +693,13 @@ namespace TVRename
                 return "";
             }
 
-            string url;
-            switch (p)
+            // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
+            string url = p switch
             {
-                case ShowItem.ProviderType.TVmaze:
-                    url = bannerPath;
-                    break;
-
-                case ShowItem.ProviderType.TheTVDB:
-                    url = TheTVDB.API.GetImageURL(bannerPath);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(p), p, null);
-            }
+                ShowItem.ProviderType.TVmaze => bannerPath,
+                ShowItem.ProviderType.TheTVDB => TheTVDB.API.GetImageURL(bannerPath),
+                _ => throw new ArgumentOutOfRangeException(nameof(p), p, null)
+            };
 
             return string.IsNullOrEmpty(url) ? "" : $"<h2>{title}</h2><img width={width} height={height} src=\"{url}\"><br/>";
         }

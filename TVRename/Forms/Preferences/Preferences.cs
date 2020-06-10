@@ -504,15 +504,12 @@ namespace TVRename
 
         private TVSettings.KeepTogetherModes KeepTogetherMode()
         {
-            switch (cbKeepTogetherMode.Text)
+            return cbKeepTogetherMode.Text switch
             {
-                case "All but these":
-                    return TVSettings.KeepTogetherModes.AllBut;
-                case "Just":
-                    return TVSettings.KeepTogetherModes.Just;
-                default:
-                    return TVSettings.KeepTogetherModes.All;
-            }
+                "All but these" => TVSettings.KeepTogetherModes.AllBut,
+                "Just" => TVSettings.KeepTogetherModes.Just,
+                _ => TVSettings.KeepTogetherModes.All
+            };
         }
 
         #endregion
@@ -963,134 +960,97 @@ namespace TVRename
 
         private RadioButton ChooseRadioButton(TVSettings.ScanType enumType)
         {
-            switch (enumType)
+            return enumType switch
             {
-                case TVSettings.ScanType.Quick:
-                    return rdoQuickScan;
-                case TVSettings.ScanType.Recent:
-                    return rdoRecentScan;
-                case TVSettings.ScanType.Full:
-                    return rdoFullScan;
-                case TVSettings.ScanType.SingleShow:
-                    throw new InvalidOperationException("Unexpected value s.MonitoredFoldersScanType = SingleShow");
-                default:
-                    throw new InvalidOperationException("Unexpected value s.MonitoredFoldersScanType = " + enumType);
-            }
+                TVSettings.ScanType.Quick => rdoQuickScan,
+                TVSettings.ScanType.Recent => rdoRecentScan,
+                TVSettings.ScanType.Full => rdoFullScan,
+                TVSettings.ScanType.SingleShow => throw new InvalidOperationException("Unexpected value s.MonitoredFoldersScanType = SingleShow"),
+                _ => throw new InvalidOperationException("Unexpected value s.MonitoredFoldersScanType = " + enumType)
+            };
         }
 
         private RadioButton ChooseRadioButton(ShowItem.ProviderType enumType)
         {
-            switch (enumType)
+            return enumType switch
             {
-                case ShowItem.ProviderType.libraryDefault:
-                    return rdoTVDB;
-
-                case ShowItem.ProviderType.TVmaze:
-                    return rdoTVMaze;
-
-                case ShowItem.ProviderType.TheTVDB:
-                    return rdoTVDB;
-
-                default:
-                    throw new InvalidOperationException("Unexpected value s.DefaultProvider = " + enumType);
-            }
+                ShowItem.ProviderType.libraryDefault => rdoTVDB,
+                ShowItem.ProviderType.TVmaze => rdoTVMaze,
+                ShowItem.ProviderType.TheTVDB => rdoTVDB,
+                _ => throw new InvalidOperationException("Unexpected value s.DefaultProvider = " + enumType)
+            };
         }
 
         private RadioButton ChooseRadioButton(qBitTorrentAPIVersion sQBitTorrentApiVersion)
         {
-            switch (sQBitTorrentApiVersion)
+            return sQBitTorrentApiVersion switch
             {
-                case qBitTorrentAPIVersion.v0:
-                    return rdoqBitTorrentAPIVersionv0;
-                case qBitTorrentAPIVersion.v1:
-                    return rdoqBitTorrentAPIVersionv1;
-                case qBitTorrentAPIVersion.v2:
-                    return rdoqBitTorrentAPIVersionv2;
-                default:
-                    throw new InvalidOperationException("Unexpected value s.qBitTorrentAPIVersion = " + sQBitTorrentApiVersion);
-            }
+                qBitTorrentAPIVersion.v0 => rdoqBitTorrentAPIVersionv0,
+                qBitTorrentAPIVersion.v1 => rdoqBitTorrentAPIVersionv1,
+                qBitTorrentAPIVersion.v2 => rdoqBitTorrentAPIVersionv2,
+                _ => throw new InvalidOperationException("Unexpected value s.qBitTorrentAPIVersion = " +
+                                                         sQBitTorrentApiVersion)
+            };
         }
 
         private RadioButton ChooseRadioButton(TVSettings.FolderJpgIsType enumTyp)
         {
-            switch (enumTyp)
+            return enumTyp switch
             {
-                case TVSettings.FolderJpgIsType.FanArt:
-                    return rbFolderFanArt;
-                case TVSettings.FolderJpgIsType.Banner:
-                    return rbFolderBanner;
-                case TVSettings.FolderJpgIsType.SeasonPoster:
-                    return rbFolderSeasonPoster;
-                case TVSettings.FolderJpgIsType.Poster:
-                    return rbFolderPoster;
-                default:
-                    throw new InvalidOperationException("Unexpected value s.FolderJpgIs = " + enumTyp);
-            }
+                TVSettings.FolderJpgIsType.FanArt => rbFolderFanArt,
+                TVSettings.FolderJpgIsType.Banner => rbFolderBanner,
+                TVSettings.FolderJpgIsType.SeasonPoster => rbFolderSeasonPoster,
+                TVSettings.FolderJpgIsType.Poster => rbFolderPoster,
+                _ => throw new InvalidOperationException("Unexpected value s.FolderJpgIs = " + enumTyp)
+            };
         }
 
         private RadioButton ChooseRadioButton(TVSettings.WTWDoubleClickAction sWtwDoubleClick)
         {
-            switch (sWtwDoubleClick)
+            return sWtwDoubleClick switch
             {
-                case TVSettings.WTWDoubleClickAction.Search:
-                    return rbWTWSearch;
-                case TVSettings.WTWDoubleClickAction.Scan:
-                    return rbWTWScan;
-                default:
-                    throw new InvalidOperationException("Unexpected value s.WTWDoubleClick = " + sWtwDoubleClick);
-            }
+                TVSettings.WTWDoubleClickAction.Search => rbWTWSearch,
+                TVSettings.WTWDoubleClickAction.Scan => rbWTWScan,
+                _ => throw new InvalidOperationException("Unexpected value s.WTWDoubleClick = " + sWtwDoubleClick)
+            };
         }
 
         [NotNull]
         private static string ConvertEnum(TVSettings.BetaMode mode)
         {
-            switch (mode)
+            return mode switch
             {
-                case TVSettings.BetaMode.ProductionOnly:
-                    return "Production";
-                case TVSettings.BetaMode.BetaToo:
-                    return "Beta";
-                default:
-                    throw new InvalidOperationException("Unexpected value s.mode = " + mode);
-            }
+                TVSettings.BetaMode.ProductionOnly => "Production",
+                TVSettings.BetaMode.BetaToo => "Beta",
+                _ => throw new InvalidOperationException("Unexpected value s.mode = " + mode)
+            };
         }
 
         [NotNull]
         private static string ConvertEnum(TVSettings.KeepTogetherModes sKeepTogetherMode)
         {
-            switch (sKeepTogetherMode)
+            return sKeepTogetherMode switch
             {
-                case TVSettings.KeepTogetherModes.All:
-                    return "All";
-                case TVSettings.KeepTogetherModes.AllBut:
-                    return "All but these";
-                case TVSettings.KeepTogetherModes.Just:
-                    return "Just";
-                default:
-                    throw new InvalidOperationException("Unexpected value s.keepTogetherMode = " + sKeepTogetherMode);
-            }
+                TVSettings.KeepTogetherModes.All => "All",
+                TVSettings.KeepTogetherModes.AllBut => "All but these",
+                TVSettings.KeepTogetherModes.Just => "Just",
+                _ => throw new InvalidOperationException("Unexpected value s.keepTogetherMode = " + sKeepTogetherMode)
+            };
         }
 
         [NotNull]
         private static string ConvertEnum(TVSettings.DuplicateActionOutcome outcome)
         {
-            switch (outcome)
+            return outcome switch
             {
-                case TVSettings.DuplicateActionOutcome.IgnoreAll:
-                    return "Ignore";
-                case TVSettings.DuplicateActionOutcome.ChooseFirst:
-                    return "Use First";
-                case TVSettings.DuplicateActionOutcome.Ask:
-                    return "Ask User";
-                case TVSettings.DuplicateActionOutcome.DoAll:
-                    return "Download All";
-                case TVSettings.DuplicateActionOutcome.MostSeeders:
-                    return "Choose Most Popular";
-                case TVSettings.DuplicateActionOutcome.Largest:
-                    return "Choose Largest File";
-                default:
-                    throw new InvalidOperationException("Unexpected value s.outcome = " + outcome);
-            }
+                TVSettings.DuplicateActionOutcome.IgnoreAll => "Ignore",
+                TVSettings.DuplicateActionOutcome.ChooseFirst => "Use First",
+                TVSettings.DuplicateActionOutcome.Ask => "Ask User",
+                TVSettings.DuplicateActionOutcome.DoAll => "Download All",
+                TVSettings.DuplicateActionOutcome.MostSeeders => "Choose Most Popular",
+                TVSettings.DuplicateActionOutcome.Largest => "Choose Largest File",
+                _ => throw new InvalidOperationException("Unexpected value s.outcome = " + outcome)
+            };
         }
 
         private void FillSearchFolderList()

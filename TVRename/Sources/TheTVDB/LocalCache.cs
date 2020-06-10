@@ -202,17 +202,12 @@ namespace TVRename.TheTVDB
 
             List<SeriesInfo> matchingShows = GetSeriesDictMatching(showName).Values.ToList();
 
-            switch (matchingShows.Count)
+            return matchingShows.Count switch
             {
-                case 0:
-                    return null;
-
-                case 1:
-                    return matchingShows.First();
-
-                default:
-                    return null;
-            }
+                0 => null,
+                1 => matchingShows.First(),
+                _ => null
+            };
         }
 
         [NotNull]

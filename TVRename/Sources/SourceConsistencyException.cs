@@ -16,17 +16,12 @@ namespace TVRename
         [NotNull]
         private static string DataProviderName(ShowItem.ProviderType provider)
         {
-            switch (provider)
+            return provider switch
             {
-                case ShowItem.ProviderType.TVmaze:
-                    return "TVmaze";
-
-                case ShowItem.ProviderType.TheTVDB:
-                    return "TheTVDB";
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(provider), provider, null);
-            }
+                ShowItem.ProviderType.TVmaze => "TVmaze",
+                ShowItem.ProviderType.TheTVDB => "TheTVDB",
+                _ => throw new ArgumentOutOfRangeException(nameof(provider), provider, null)
+            };
         }
     }
 }

@@ -163,50 +163,28 @@ namespace TVRename
             {
                 case qBitTorrentAPIVersion.v1:
                 {
-                    switch (path)
+                    return path switch
                     {
-                        case qBitTorrentAPIPath.settings:
-                            return url+"query/preferences";
-
-                        case qBitTorrentAPIPath.torrents:
-                            return url + "query/torrents?filter=all";
-
-                        case qBitTorrentAPIPath.torrentDetails:
-                            return url + "query/propertiesFiles/";
-
-                        case qBitTorrentAPIPath.addFile:
-                            return url + "command/upload";
-
-                        case qBitTorrentAPIPath.addUrl:
-                            return url + "command/download";
-
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(path), path, null);
-                    }
+                        qBitTorrentAPIPath.settings => url + "query/preferences",
+                        qBitTorrentAPIPath.torrents => url + "query/torrents?filter=all",
+                        qBitTorrentAPIPath.torrentDetails => url + "query/propertiesFiles/",
+                        qBitTorrentAPIPath.addFile => url + "command/upload",
+                        qBitTorrentAPIPath.addUrl => url + "command/download",
+                        _ => throw new ArgumentOutOfRangeException(nameof(path), path, null)
+                    };
                 }
 
                 case qBitTorrentAPIVersion.v2:
                 {
-                    switch (path)
+                    return path switch
                     {
-                        case qBitTorrentAPIPath.settings:
-                            return url + "api/v2/app/preferences";
-
-                        case qBitTorrentAPIPath.torrents:
-                            return url + "api/v2/torrents/info?filter=all";
-
-                        case qBitTorrentAPIPath.torrentDetails:
-                            return url + "api/v2/torrents/files?hash=";
-
-                        case qBitTorrentAPIPath.addFile:
-                            return url + "api/v2/torrents/add";
-
-                        case qBitTorrentAPIPath.addUrl:
-                            return url + "api/v2/torrents/add";
-
-                            default:
-                            throw new ArgumentOutOfRangeException(nameof(path), path, null);
-                    }
+                        qBitTorrentAPIPath.settings => url + "api/v2/app/preferences",
+                        qBitTorrentAPIPath.torrents => url + "api/v2/torrents/info?filter=all",
+                        qBitTorrentAPIPath.torrentDetails => url + "api/v2/torrents/files?hash=",
+                        qBitTorrentAPIPath.addFile => url + "api/v2/torrents/add",
+                        qBitTorrentAPIPath.addUrl => url + "api/v2/torrents/add",
+                        _ => throw new ArgumentOutOfRangeException(nameof(path), path, null)
+                    };
                 }
 
                 case qBitTorrentAPIVersion.v0:

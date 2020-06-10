@@ -13,21 +13,16 @@ namespace TVRename.TheTVDB
         {
             get
             {
-                switch (LocalCache.VERS)
+                return LocalCache.VERS switch
                 {
                     // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                    case ApiVersion.v2:
-                        return "https://api.thetvdb.com";
-
+                    ApiVersion.v2 => "https://api.thetvdb.com",
                     // ReSharper disable once HeuristicUnreachableCode
                     // ReSharper disable once HeuristicUnreachableCode
-                    case ApiVersion.v3:
-                        // ReSharper disable once HeuristicUnreachableCode
-                        return "https://api-dev.thetvdb.com";
-
-                    default:
-                        throw new NotSupportedException();
-                }
+                    ApiVersion.v3 => "https://api-dev.thetvdb.com",
+                    // ReSharper disable once HeuristicUnreachableCode
+                    _ => throw new NotSupportedException()
+                };
             }
         }
 

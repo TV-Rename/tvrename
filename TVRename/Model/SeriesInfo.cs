@@ -355,7 +355,7 @@ namespace TVRename
                 SrvLastUpdated = seriesXml.ExtractLong("lastupdated")??seriesXml.ExtractLong("lastUpdated",0);
                 LanguageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId") ?? throw new SourceConsistencyException("Error Extracting Language for Series",ShowItem.ProviderType.TheTVDB);
 
-                String airsTimeString = seriesXml.ExtractStringOrNull("Airs_Time")?? seriesXml.ExtractString("airsTime");
+                string airsTimeString = seriesXml.ExtractStringOrNull("Airs_Time")?? seriesXml.ExtractString("airsTime");
                 AirsTime = JsonHelper.ParseAirTime(airsTimeString);
 
                 AirsDay = seriesXml.ExtractStringOrNull("airsDayOfWeek") ?? seriesXml.ExtractString("Airs_DayOfWeek");
@@ -443,7 +443,7 @@ namespace TVRename
         private void LoadJson([NotNull] JObject r)
         {
             AirsDay = ((string)r["airsDayOfWeek"])?.Trim();
-            String airsTimeString = (string) r["airsTime"];
+            string airsTimeString = (string) r["airsTime"];
             AirsTime = JsonHelper.ParseAirTime(airsTimeString);
             aliases = (r["aliases"] ?? throw new SourceConsistencyException($"Can't find aliases in Series JSON: {r}",ShowItem.ProviderType.TheTVDB)).Select(x => x.Value<string>()).ToList();
             BannerString = (string)r["banner"];

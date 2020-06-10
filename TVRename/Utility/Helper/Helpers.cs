@@ -49,19 +49,14 @@ namespace TVRename
         [NotNull]
         public static string PrettyPrint(this TVSettings.ScanType st)
         {
-            switch (st)
+            return st switch
             {
-                case TVSettings.ScanType.Quick:
-                    return "Quick";
-                case TVSettings.ScanType.Full:
-                    return "Full";
-                case TVSettings.ScanType.Recent:
-                    return "Recent";
-                case TVSettings.ScanType.SingleShow:
-                    return "Single";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(st), st, null);
-            }
+                TVSettings.ScanType.Quick => "Quick",
+                TVSettings.ScanType.Full => "Full",
+                TVSettings.ScanType.Recent => "Recent",
+                TVSettings.ScanType.SingleShow => "Single",
+                _ => throw new ArgumentOutOfRangeException(nameof(st), st, null)
+            };
         }
 
         public static void Swap<T>(

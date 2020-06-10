@@ -402,32 +402,22 @@ namespace TVRename
 
         public int GetSeasonNumber(ProcessedSeason.SeasonType order)
         {
-            switch (order)
+            return order switch
             {
-                case ProcessedSeason.SeasonType.dvd:
-                    return DvdSeasonNumber;
-
-                case ProcessedSeason.SeasonType.aired:
-                    return AiredSeasonNumber;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(order), order, null);
-            }
+                ProcessedSeason.SeasonType.dvd => DvdSeasonNumber,
+                ProcessedSeason.SeasonType.aired => AiredSeasonNumber,
+                _ => throw new ArgumentOutOfRangeException(nameof(order), order, null)
+            };
         }
 
         public int GetEpisodeNumber(ProcessedSeason.SeasonType order)
         {
-            switch (order)
+            return order switch
             {
-                case ProcessedSeason.SeasonType.dvd:
-                    return DvdEpNum;
-
-                case ProcessedSeason.SeasonType.aired:
-                    return AiredEpNum;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(order), order, null);
-            }
+                ProcessedSeason.SeasonType.dvd => DvdEpNum,
+                ProcessedSeason.SeasonType.aired => AiredEpNum,
+                _ => throw new ArgumentOutOfRangeException(nameof(order), order, null)
+            };
         }
 
         [NotNull]
