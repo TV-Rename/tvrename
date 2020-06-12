@@ -291,16 +291,17 @@
     <Compile Include="Exporter\ShowsHTML.cs" />
     <Compile Include="Exporter\UpcomingExporter.cs" />
     <Compile Include="Exporter\UpcomingiCAL.cs" />
-    <Compile Include="Finders\DownloadFinder.cs" />
-    <Compile Include="Finders\FinderHelper.cs" />
-    <Compile Include="Finders\LibraryFolderFileFinder.cs" />
-    <Compile Include="Finders\qBitTorrentFinder.cs" />
-    <Compile Include="Finders\JSONWebpageFinder.cs" />
-    <Compile Include="Finders\JackettFinder.cs" />
-    <Compile Include="Finders\RSSItem.cs" />
-    <Compile Include="Finders\RSSItemList.cs" />
-    <Compile Include="Finders\SearchFolderFileFinder.cs" />
-    <Compile Include="Finders\DownloadingFinder.cs" />
+    <Compile Include="ScanActivity\Finders\DownloadFinder.cs" />
+    <Compile Include="ScanActivity\Finders\FinderHelper.cs" />
+    <Compile Include="ScanActivity\Finders\LibraryFolderFileFinder.cs" />
+    <Compile Include="DownloadProvider\qBitTorrent.cs" />
+    <Compile Include="ScanActivity\Finders\qBitTorrentFinder.cs" />
+    <Compile Include="ScanActivity\Finders\JSONWebpageFinder.cs" />
+    <Compile Include="ScanActivity\Finders\JackettFinder.cs" />
+    <Compile Include="ScanActivity\Finders\RSSItem.cs" />
+    <Compile Include="ScanActivity\Finders\RSSItemList.cs" />
+    <Compile Include="ScanActivity\Finders\SearchFolderFileFinder.cs" />
+    <Compile Include="ScanActivity\Finders\DownloadingFinder.cs" />
     <Compile Include="Forms\ListViewColumnSorter.cs" />
     <Compile Include="Forms\ShowPreferences\ValidationFailedException.cs" />
     <Compile Include="Forms\Supporting\ChooseDownload.cs">
@@ -326,7 +327,11 @@
     <Compile Include="ItemsAndActions\ActionDateTouchSeason.cs" />
     <Compile Include="ItemsAndActions\ActionDateTouchShow.cs" />
     <Compile Include="ItemsAndActions\ActionOutcome.cs" />
+    <Compile Include="ItemsAndActions\ActionTRemove.cs" />
+    <Compile Include="DownloadProvider\IDownloadProvider.cs" />
+    <Compile Include="DownloadProvider\uTorrent.cs" />
     <Compile Include="Model\Season.cs" />
+    <Compile Include="ScanActivity\CleanUpTorrents.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -341,6 +346,7 @@
     <Compile Include="Sources\TVMAZE\LocalCache.cs" />
     <Compile Include="Sources\TVMAZE\TVmazeAPI.cs" />
     <Compile Include="TVRename\FileIssue.cs" />
+    <Compile Include="TVRename\MergedEpisodeFinderController.cs" />
     <Compile Include="TVRename\UpdateTimeTracker.cs" />
     <Compile Include="Utility\ServerRelease.cs" />
     <Compile Include="Utility\UrlCache.cs" />
@@ -369,11 +375,11 @@
     <Compile Include="Forms\Supporting\ChooseFile.Designer.cs">
       <DependentUpon>ChooseFile.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Tools\DupEpFinder.cs">
+    <Compile Include="Forms\Tools\MergedEpisodeFinder.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Tools\DupEpFinder.Designer.cs">
-      <DependentUpon>DupEpFinder.cs</DependentUpon>
+    <Compile Include="Forms\Tools\MergedEpisodeFinder.Designer.cs">
+      <DependentUpon>MergedEpisodeFinder.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Supporting\UpdateNotification.cs">
       <SubType>Form</SubType>
@@ -428,11 +434,11 @@
     <Compile Include="Exporter\MissingXML.cs" />
     <Compile Include="Exporter\UpcomingRSS.cs" />
     <Compile Include="Exporter\UpcomingXML.cs" />
-    <Compile Include="Finders\FileFinder.cs" />
-    <Compile Include="Finders\RSSFinder.cs" />
-    <Compile Include="Finders\uTorrentFinder.cs" />
-    <Compile Include="Finders\SABnzbdFinder.cs" />
-    <Compile Include="Finders\Finder.cs" />
+    <Compile Include="ScanActivity\Finders\FileFinder.cs" />
+    <Compile Include="ScanActivity\Finders\RSSFinder.cs" />
+    <Compile Include="ScanActivity\Finders\uTorrentFinder.cs" />
+    <Compile Include="ScanActivity\Finders\SABnzbdFinder.cs" />
+    <Compile Include="ScanActivity\Finders\Finder.cs" />
     <Compile Include="Forms\Supporting\Filters.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -466,9 +472,9 @@
     <Compile Include="ItemsAndActions\ActionWdtvMeta.cs" />
     <Compile Include="ItemsAndActions\ActionWriteMetadata.cs" />
     <Compile Include="ItemsAndActions\ItemList.cs" />
-    <Compile Include="PostScanActivity\CleanUpEmptyLibraryFolders.cs" />
-    <Compile Include="PostScanActivity\PostScanActivity.cs" />
-    <Compile Include="ScanActivity\CheckAllFoldersExist.cs" />
+    <Compile Include="ScanActivity\PostScanActivity\CleanUpEmptyLibraryFolders.cs" />
+    <Compile Include="ScanActivity\PostScanActivity\PostScanActivity.cs" />
+    <Compile Include="ScanActivity\ScanShowActivity\CheckAllFoldersExist.cs" />
     <Compile Include="ScanActivity\CheckShows.cs" />
     <Compile Include="ScanActivity\FindMissingEpisodes.cs" />
     <Compile Include="ScanActivity\FindMissingEpisodesDownloading.cs" />
@@ -476,9 +482,9 @@
     <Compile Include="ScanActivity\FindMissingEpisodesSearch.cs" />
     <Compile Include="ScanActivity\FindNewShowsInDownloadFolders.cs" />
     <Compile Include="ScanActivity\FindNewShowsInLibrary.cs" />
-    <Compile Include="ScanActivity\MergeLibraryEpisodes.cs" />
-    <Compile Include="ScanActivity\RenameAndMissingCheck.cs" />
-    <Compile Include="ScanActivity\ScanShowActivity.cs" />
+    <Compile Include="ScanActivity\ScanShowActivity\MergeLibraryEpisodes.cs" />
+    <Compile Include="ScanActivity\ScanShowActivity\RenameAndMissingCheck.cs" />
+    <Compile Include="ScanActivity\ScanShowActivity\ScanShowActivity.cs" />
     <Compile Include="ScanActivity\ScanActivity.cs" />
     <Compile Include="Settings\CustomSeasonName.cs" />
     <Compile Include="Settings\Language.cs" />
@@ -514,7 +520,7 @@
     <Compile Include="Utility\Sorters\ListViewItemDateSorter.cs" />
     <Compile Include="Utility\Sorters\ListViewItemSorter.cs" />
     <Compile Include="Utility\Sorters\NumberAsTextSorter.cs" />
-    <Compile Include="Utility\PossibleDuplicateEpisode.cs" />
+    <Compile Include="Utility\PossibleMergedEpisode.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
     <Compile Include="Forms\Tools\ActorsGrid.cs">
       <SubType>Form</SubType>
@@ -814,8 +820,8 @@
       <DependentUpon>BulkAddProgress.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Tools\DupEpFinder.resx">
-      <DependentUpon>DupEpFinder.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\Tools\MergedEpisodeFinder.resx">
+      <DependentUpon>MergedEpisodeFinder.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Tools\ShowSummary.resx">

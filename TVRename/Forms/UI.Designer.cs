@@ -423,7 +423,7 @@ namespace TVRename
             // 
             this.duplicateFinderLOGToolStripMenuItem.Name = "duplicateFinderLOGToolStripMenuItem";
             this.duplicateFinderLOGToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
-            this.duplicateFinderLOGToolStripMenuItem.Text = "Duplicate Episode Finder...";
+            this.duplicateFinderLOGToolStripMenuItem.Text = "Merged Episode Finder...";
             this.duplicateFinderLOGToolStripMenuItem.Click += new System.EventHandler(this.duplicateFinderLOGToolStripMenuItem_Click);
             // 
             // quickRenameToolStripMenuItem

@@ -340,7 +340,7 @@ namespace TVRename
                     return HeaderName("Download", mDoc.TheActionList.SaveImages.Count);
 
                 case "F-DownloadTorrent":
-                    return HeaderName("Download RSS", mDoc.TheActionList.Count(action => action is ActionTDownload));
+                    return HeaderName("Start/Stop Download", mDoc.TheActionList.Count(action => action is ActionTDownload || action is ActionTRemove));
 
                 case "E-Delete":
                     return HeaderName("Remove", mDoc.TheActionList.Count(action => action is ActionDeleteFile || action is ActionDeleteDirectory));
@@ -664,12 +664,15 @@ namespace TVRename
 
         private ListView ListViewByName([NotNull] string name)
         {
-            return name switch
+            switch (name)
             {
-                "WhenToWatch" => lvWhenToWatch,
-                "AllInOne" => olvAction,
-                _ => throw new ArgumentException("Inappropriate ListViewParameter " + name)
-            };
+                case "WhenToWatch":
+                    return lvWhenToWatch;
+                case "AllInOne":
+                    return olvAction;
+                default:
+                    throw new ArgumentException("Inappropriate ListViewParameter " + name);
+            }
         }
 
         private void flushImageCacheToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1084,7 +1087,6 @@ namespace TVRename
             {
                 ShowItem si => si,
                 ProcessedEpisode pe => pe.Show,
-                ProcessedSeason seas when seas.Episodes.Count == 0 => null,
                 ProcessedSeason seas => seas.Show,
                 _ => null
             };
@@ -2610,9 +2612,21 @@ namespace TVRename
                 if (res3 == DialogResult.Yes)
                 {
                     Logger.Info($"Recycling {si.AutoAddFolderBase} as part of the removal of {si.ShowName}");
-                    Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(si.AutoAddFolderBase,
-                        Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
-                        Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                    try
+                    {
+                        Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(si.AutoAddFolderBase,
+                            Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                            Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                    }
+                    catch (OperationCanceledException e)
+                    {
+                        Logger.Warn($"Failed to remove {si.AutoAddFolderBase} as operation was cancelled: {e.Message}");
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e, $"Failed to remove {si.AutoAddFolderBase} as operation was cancelled");
+                    }
+
                 }
             }
 
@@ -3026,6 +3040,10 @@ namespace TVRename
 
         private void FillNewActionList(bool preserveExistingCheckboxes)
         {
+            if (olvAction.IsDisposed)
+            {
+                return;
+            }
             if (preserveExistingCheckboxes)
             {
                 byte[] oldState = olvAction.SaveState();
@@ -3241,7 +3259,7 @@ namespace TVRename
             SetCheckbox(mcbSaveImages, all.OfType<ActionDownloadImage>(), chk.OfType<ActionDownloadImage>());
             SetCheckbox(mcbWriteMetadata, all.OfType<ActionWriteMetadata>(), chk.OfType<ActionWriteMetadata>());
             SetCheckbox(mcbModifyMetadata, all.OfType<ActionFileMetaData>(), chk.OfType<ActionFileMetaData>());
-            SetCheckbox(mcbDownload, all.OfType<ActionTDownload>(), chk.OfType<ActionTDownload>());
+            SetCheckbox(mcbDownload, all.OfType<ActionTDownload>(), chk.OfType<ActionTDownload>()); //todo add ActionTRemove
 
             int numberOfActions = all.Actions.Count;
             int numberOfCheckedActions = chk.OfType<Action>().Count();
@@ -3431,7 +3449,7 @@ namespace TVRename
 
         private void duplicateFinderLOGToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DupEpFinder form = new DupEpFinder( mDoc, this);
+            MergedEpisodeFinder form = new MergedEpisodeFinder( mDoc, this);
             form.ShowDialog(this);
         }
 
@@ -3688,7 +3706,7 @@ namespace TVRename
 
         private void McbDownload_Click(object sender, EventArgs e)
         {
-            UpdateCheckboxGroup(mcbDownload, i => i is ActionTDownload);
+            UpdateCheckboxGroup(mcbDownload, i => i is ActionTDownload || i is ActionTRemove);
         }
 
         private void McbWriteMetadata_Click(object sender, EventArgs e)

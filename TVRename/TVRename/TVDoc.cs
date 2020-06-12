@@ -152,6 +152,7 @@ namespace TVRename
             TheActionList.RemoveAll(x => x is Action action && action.Outcome.Done && !action.Outcome.Error);
 
             new CleanUpEmptyLibraryFolders(this).Check(null);
+
         }
 
         // ReSharper disable once InconsistentNaming
@@ -708,6 +709,7 @@ namespace TVRename
                 localFinders.Check(scanProgDlg is null ? noProgress : scanProgDlg.LocalSearchProg, specific, settings);
                 downloadFinders.Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadingProg, specific, settings);
                 searchFinders.Check(scanProgDlg is null? noProgress : scanProgDlg.ToBeDownloadedProg, specific, settings);
+                new CleanUpTorrents(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.ToBeDownloadedProg, specific, settings);
 
                 if (settings.Token.IsCancellationRequested)
                 {

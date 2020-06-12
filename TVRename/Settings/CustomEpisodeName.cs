@@ -229,17 +229,17 @@ namespace TVRename
                     ? pe.Show.CustomNamingFormat
                     : styleString;
 
-                string showname = pe.Show.ShowName;
-                string epname = pe.Name;
+                string showName = pe.Show.ShowName;
+                string episodeName = pe.Name;
                 if (urlEncode)
                 {
-                    showname = Uri.EscapeDataString(showname);
-                    epname = Uri.EscapeDataString(epname);
+                    showName = Uri.EscapeDataString(showName);
+                    episodeName = Uri.EscapeDataString(episodeName);
                 }
 
-                name = name.ReplaceInsensitive("{ShowName}", showname);
+                name = name.ReplaceInsensitive("{ShowName}", showName);
                 name = name.ReplaceInsensitive("{ShowNameLower}", pe.Show.ShowName.ToLower().Replace(' ','-').RemoveCharactersFrom("()[]{}&$:"));
-                name = name.ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower());
+                name = name.ReplaceInsensitive("{ShowNameInitial}", showName.Initial().ToLower());
                 name = name.ReplaceInsensitive("{Season}", pe.AppropriateSeasonNumber.ToString());
                 name = name.ReplaceInsensitive("{Season:2}", pe.AppropriateSeasonNumber.ToString("00"));
                 name = name.ReplaceInsensitive("{SeasonNumber}", pe.AppropriateSeasonIndex.ToString());
@@ -249,7 +249,7 @@ namespace TVRename
                 name = name.ReplaceInsensitive("{Episode}", pe.AppropriateEpNum.ToString(episodeFormat));
                 name = name.ReplaceInsensitive("{Episode2}", pe.EpNum2.ToString(episodeFormat));
 
-                name = name.ReplaceInsensitive("{EpisodeName}", epname);
+                name = name.ReplaceInsensitive("{EpisodeName}", episodeName);
                 name = name.ReplaceInsensitive("{Number}", pe.OverallNumber.ToString());
                 name = name.ReplaceInsensitive("{Number:2}", pe.OverallNumber.ToString("00"));
                 name = name.ReplaceInsensitive("{Number:3}", pe.OverallNumber.ToString("000"));

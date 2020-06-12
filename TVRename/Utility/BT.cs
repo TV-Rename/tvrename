@@ -30,17 +30,21 @@ namespace TVRename
         kBTEOF
     }
 
-    public class TorrentEntry: IDownloadInformation // represents a torrent downloading in uTorrent
+    public class TorrentEntry: IDownloadInformation // represents a torrent downloading in a doewloader(Torrent)
     {
         public readonly string DownloadingTo;
         public readonly int PercentDone;
         public readonly string TorrentFile;
+        public readonly bool Finished;
+        public readonly string key;
 
-        public TorrentEntry(string torrentfile, string to, int percent)
+        public TorrentEntry(string torrentfile, string to, int percent, bool finished, string key)
         {
             TorrentFile = torrentfile;
             DownloadingTo = to;
             PercentDone = percent;
+            Finished = finished;
+            this.key = key;
         }
 
         string IDownloadInformation.FileIdentifier => TorrentFile;
@@ -1032,7 +1036,7 @@ namespace TVRename
                             }
 
                             int percent = (a.Count == 1) ? PercentBitsOn((BTString) (d2.GetItem("have"))) : -1;
-                            TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent);
+                            TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent,false,torrentFile); //todo - work out whether it's finished
                             r.Add(te);
                         }
                         catch (System.IO.PathTooLongException ptle)

@@ -1,33 +1,38 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 
 namespace TVRename.Forms
 {
-    public partial class DupEpFinder : Form
+    public partial class MergedEpisodeFinder : Form
     {
-        private List<PossibleDuplicateEpisode> dupEps;
+        private List<PossibleMergedEpisode> dupEps;
         private readonly TVDoc mDoc;
         private readonly UI mainUi;
 
-        public DupEpFinder([NotNull] TVDoc doc, UI main)
+        public MergedEpisodeFinder([NotNull] TVDoc doc, UI main)
         {
             InitializeComponent();
-            dupEps = Beta.FindDoubleEps(doc);
+            dupEps = new List<PossibleMergedEpisode>();
             mDoc = doc;
             mainUi = main;
-            UpdateUI();
+            Scan();
         }
 
         // ReSharper disable once InconsistentNaming
         private void UpdateUI()
         {
-            lvDuplicates.BeginUpdate();
-            lvDuplicates.Items.Clear();
+            ClearGrid();
+            PopulateGrid();
+        }
 
-            foreach (PossibleDuplicateEpisode item in dupEps)
+        private void PopulateGrid()
+        {
+            lvMergedEpisodes.BeginUpdate();
+            foreach (PossibleMergedEpisode item in dupEps)
             {
                 ListViewItem possible = item.PresentationView;
 
@@ -38,17 +43,18 @@ namespace TVRename.Forms
 
                 if (passesSizeTest && passesAirDateTest && passesNameTest && passesMissingTest)
                 {
-                    lvDuplicates.Items.Add(possible);
+                    lvMergedEpisodes.Items.Add(possible);
                 }
             }
 
-            lvDuplicates.EndUpdate();
+            lvMergedEpisodes.EndUpdate();
         }
 
-        private void btnRescan_Click(object sender, EventArgs e)
+        private void ClearGrid()
         {
-            dupEps = Beta.FindDoubleEps(mDoc);
-            UpdateUI();
+            lvMergedEpisodes.BeginUpdate();
+            lvMergedEpisodes.Items.Clear();
+            lvMergedEpisodes.EndUpdate();
         }
 
         private void chkAirDateTest_CheckedChanged(object sender, EventArgs e)
@@ -126,57 +132,55 @@ namespace TVRename.Forms
                 return;
             }
 
-            if (lvDuplicates.SelectedItems.Count == 0)
+            if (lvMergedEpisodes.SelectedItems.Count == 0)
             {
                 return;
             }
 
-            PossibleDuplicateEpisode? mlastSelected = (PossibleDuplicateEpisode) lvDuplicates.SelectedItems[0].Tag;
-            ListViewItem? mlastClicked = lvDuplicates.SelectedItems[0];
+            PossibleMergedEpisode? mlastSelected = (PossibleMergedEpisode) lvMergedEpisodes.SelectedItems[0].Tag;
+            ListViewItem? mlastClicked = lvMergedEpisodes.SelectedItems[0];
             ShowItem? si = mlastSelected?.ShowItem;
 
-            Point pt = lvDuplicates.PointToScreen(new Point(e.X, e.Y));
-
-            duplicateRightClickMenu.Items.Clear();
-
-            if (si != null)
+            if (si == null)
             {
-                AddRcMenuItem("Episode Guide", (o, args) => GotoEpGuide(si,mlastSelected));
-                AddRcMenuItem("Force Refresh", (o, args) => mainUi.ForceRefresh(new List<ShowItem> {si}, false));
-                AddRcMenuItem("Edit Show", (o, args) => mainUi.EditShow(si));
-
-                AddRcMenuItem("Edit " + ProcessedSeason.UIFullSeasonWord(mlastSelected.SeasonNumber),
-                        (o, args) => mainUi.EditSeason(si, mlastSelected.SeasonNumber));
-
-                duplicateRightClickMenu.Items.Add(new ToolStripSeparator());
-                AddRcMenuItem("Add Rule", (o, args) => AddRule(mlastSelected, si, mlastClicked));
+                return;
             }
-            duplicateRightClickMenu.Show(pt);
+
+            Point pt = lvMergedEpisodes.PointToScreen(new Point(e.X, e.Y));
+
+            possibleMergedEpisodeRightClickMenu.Items.Clear();
+
+            AddRcMenuItem("Episode Guide", (o, args) => GotoEpGuide(si,mlastSelected));
+            AddRcMenuItem("Force Refresh", (o, args) => mainUi.ForceRefresh(new List<ShowItem> {si}, false));
+            AddRcMenuItem("Edit Show", (o, args) => mainUi.EditShow(si));
+
+            AddRcMenuItem("Edit " + ProcessedSeason.UIFullSeasonWord(mlastSelected.SeasonNumber),
+                (o, args) => mainUi.EditSeason(si, mlastSelected.SeasonNumber));
+
+            possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
+            AddRcMenuItem("Add Rule", (o, args) => AddRule(mlastSelected, si, mlastClicked));
+
+            possibleMergedEpisodeRightClickMenu.Show(pt);
         }
 
         private void AddRcMenuItem(string label, EventHandler command)
         {
             ToolStripMenuItem tsi = new ToolStripMenuItem(label);
             tsi.Click += command;
-            duplicateRightClickMenu.Items.Add(tsi);
+            possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
         }
 
-        private void duplicateRightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            duplicateRightClickMenu.Close();
-        }
-
-        private void AddRule(PossibleDuplicateEpisode selected,ShowItem si, ListViewItem lastClicked)
+        private void AddRule(PossibleMergedEpisode selected,ShowItem si, ListViewItem lastClicked)
         {
             ShowRule sr = selected.GenerateRule();
 
             si.AddSeasonRule(selected.SeasonNumber, sr);
 
-            lvDuplicates.Items.Remove(lastClicked);
+            lvMergedEpisodes.Items.Remove(lastClicked);
             dupEps.Remove(selected);
         }
 
-        private void GotoEpGuide(ShowItem? si, PossibleDuplicateEpisode? mlastSelected)
+        private void GotoEpGuide(ShowItem? si, PossibleMergedEpisode? mlastSelected)
         {
             if (mlastSelected != null)
             {
@@ -191,6 +195,47 @@ namespace TVRename.Forms
             }
 
             Close();
+        }
+
+        private void PossibleMergedEpisodeRightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            possibleMergedEpisodeRightClickMenu.Close();
+        }
+
+        private void BwScan_DoWork(object sender, DoWorkEventArgs e)
+        {
+            dupEps = MergedEpisodeFinderController.FindDoubleEps( mDoc,(BackgroundWorker)sender);
+        }
+
+        private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            pbProgress.Value = e.ProgressPercentage;
+            lblStatus.Text = e.UserState.ToString();
+        }
+
+        private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            btnRefresh.Visible = true;
+            pbProgress.Visible = false;
+            lblStatus.Visible = false;
+            if (lvMergedEpisodes.IsDisposed)
+            {
+                return;
+            }
+            ClearGrid();
+            PopulateGrid();
+        }
+        private void BtnRefresh_Click_1(object sender, EventArgs e)
+        {
+            Scan();
+        }
+
+        private void Scan()
+        {
+            btnRefresh.Visible = false;
+            pbProgress.Visible = true;
+            lblStatus.Visible = true;
+            bwScan.RunWorkerAsync();
         }
     }
 }

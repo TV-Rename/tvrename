@@ -72,7 +72,7 @@ namespace TVRename
 
                 if (!TVSettings.Instance.qBitTorrentDownloadFilesFirst && TVSettings.Instance.CheckqBitTorrent)
                 {
-                    qBitTorrentFinder.StartTorrentDownload(url, null, false);
+                    new qBitTorrent().StartUrlDownload(url);
                     return ActionOutcome.Success();
                 }
 
@@ -84,15 +84,16 @@ namespace TVRename
                 }
 
                 string saveTemp = SaveDownloadedData(r, SourceName);
+                FileInfo downloadedFile = new FileInfo(theFileNoExt + saveTemp);
 
                 if (TVSettings.Instance.CheckuTorrent)
                 {
-                    uTorrentFinder.StartTorrentDownload(saveTemp, theFileNoExt);
+                    new uTorrent().StartTorrentDownload(downloadedFile);
                 }
                 
                 if (TVSettings.Instance.CheckqBitTorrent)
                 {
-                    qBitTorrentFinder.StartTorrentDownload(url,saveTemp, TVSettings.Instance.qBitTorrentDownloadFilesFirst);
+                    new qBitTorrent().StartTorrentDownload(downloadedFile);
                 }
 
                 return ActionOutcome.Success();
@@ -126,10 +127,6 @@ namespace TVRename
         {
             return !(o is ActionTDownload rss) ? 0 : string.Compare(url, rss.url, StringComparison.Ordinal);
         }
-
-        #endregion
-
-        #region Item Members
 
         public override IgnoreItem? Ignore => GenerateIgnore(theFileNoExt);
 

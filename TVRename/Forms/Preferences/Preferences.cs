@@ -444,18 +444,18 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        private qBitTorrentAPIVersion qBitTorrentAPIVersionMode()
+        private qBitTorrent.qBitTorrentAPIVersion qBitTorrentAPIVersionMode()
         {
             if (rdoqBitTorrentAPIVersionv0.Checked)
             {
-                return qBitTorrentAPIVersion.v0;
+                return global::TVRename.qBitTorrent.qBitTorrentAPIVersion.v0;
             }
             if (rdoqBitTorrentAPIVersionv1.Checked)
             {
-                return qBitTorrentAPIVersion.v1;
+                return global::TVRename.qBitTorrent.qBitTorrentAPIVersion.v1;
             }
 
-            return qBitTorrentAPIVersion.v2;
+            return global::TVRename.qBitTorrent.qBitTorrentAPIVersion.v2;
         }
 
         private ShowItem.ProviderType ProviderMode()
@@ -981,13 +981,13 @@ namespace TVRename
             };
         }
 
-        private RadioButton ChooseRadioButton(qBitTorrentAPIVersion sQBitTorrentApiVersion)
+        private RadioButton ChooseRadioButton(qBitTorrent.qBitTorrentAPIVersion sQBitTorrentApiVersion)
         {
             return sQBitTorrentApiVersion switch
             {
-                qBitTorrentAPIVersion.v0 => rdoqBitTorrentAPIVersionv0,
-                qBitTorrentAPIVersion.v1 => rdoqBitTorrentAPIVersionv1,
-                qBitTorrentAPIVersion.v2 => rdoqBitTorrentAPIVersionv2,
+                global::TVRename.qBitTorrent.qBitTorrentAPIVersion.v0 => rdoqBitTorrentAPIVersionv0,
+                global::TVRename.qBitTorrent.qBitTorrentAPIVersion.v1 => rdoqBitTorrentAPIVersionv1,
+                global::TVRename.qBitTorrent.qBitTorrentAPIVersion.v2 => rdoqBitTorrentAPIVersionv2,
                 _ => throw new InvalidOperationException("Unexpected value s.qBitTorrentAPIVersion = " +
                                                          sQBitTorrentApiVersion)
             };

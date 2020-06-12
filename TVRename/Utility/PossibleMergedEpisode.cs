@@ -12,7 +12,7 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    public class PossibleDuplicateEpisode
+    public class PossibleMergedEpisode
     {
         private readonly ProcessedEpisode episodeOne;
         private readonly ProcessedEpisode episodeTwo;
@@ -22,7 +22,7 @@ namespace TVRename
         public readonly bool OneFound;
         public readonly bool LargeFileSize;
 
-        public PossibleDuplicateEpisode(ProcessedEpisode episodeOne, ProcessedEpisode episodeTwo, int season, bool airDatesMatch, bool similarNames, bool oneFound, bool largeFileSize)
+        public PossibleMergedEpisode(ProcessedEpisode episodeOne, ProcessedEpisode episodeTwo, int season, bool airDatesMatch, bool similarNames, bool oneFound, bool largeFileSize)
         {
             this.episodeTwo = episodeTwo;
             this.episodeOne = episodeOne;

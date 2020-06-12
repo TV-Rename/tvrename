@@ -35,7 +35,8 @@ namespace TVRename
                 ActionDeleteFile _ => 11,
                 ActionDeleteDirectory _ => 12,
                 ActionDateTouch _ => 13,
-                _ => 14
+                ActionTRemove _ => 14,
+                _ => 15
             };
         }
     }

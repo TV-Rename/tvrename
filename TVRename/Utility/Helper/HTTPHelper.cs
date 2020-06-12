@@ -105,14 +105,18 @@ namespace TVRename
         [NotNull]
         public static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType, string? token)
         {
-            return HttpRequest(method, url, json, contentType, token, string.Empty);
+            return HttpRequest(method, url, json, contentType, token, string.Empty );
         }
 
         [NotNull]
-        public static string HttpRequest([NotNull] string method, [NotNull] string url, string? json, string contentType, string? token, string lang)
+        public static string HttpRequest([NotNull] string method, [NotNull] string url, string? postContent,
+            string? contentType, string? token, string? lang)
+        {
+            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+            if (!contentType.IsNullOrWhitespace())
             {
-                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
-            httpWebRequest.ContentType = contentType;
+                httpWebRequest.ContentType = contentType;
+            }
             httpWebRequest.Method = method;
             if (!token.IsNullOrWhitespace())
             {
@@ -130,7 +134,7 @@ namespace TVRename
                 using (StreamWriter streamWriter =
                     new StreamWriter(httpWebRequest.GetRequestStream()))
                 {
-                    streamWriter.Write(json);
+                    streamWriter.Write(postContent);
                     streamWriter.Flush();
                 }
             }

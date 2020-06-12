@@ -76,17 +76,19 @@ namespace TVRename
 
                 if (!action.Outcome.Done)
                 {
-                    Logger.Error("Help");
+                    Logger.Error("Action did not report whether it was completed");
+                    info.TheAction.Outcome = new ActionOutcome("Action did not report whether it was completed");
                 }
             }
-            catch (ThreadAbortException)
+            catch (ThreadAbortException te)
             {
                 //Thread has been killed off
+                info.TheAction.Outcome = new ActionOutcome(te);
             }
             catch (Exception e)
             {
                 Logger.Fatal(e, "Unhandled Exception in Process Single Action");
-                info.TheAction.Outcome = ActionOutcome.CompleteFail();
+                info.TheAction.Outcome = new ActionOutcome(e);
             }
             finally
             {
@@ -378,6 +380,7 @@ namespace TVRename
 
                 case ActionDownloadImage _:
                 case ActionTDownload _:
+                case ActionTRemove _:
                     return 3;
 
                 case ActionCopyMoveRename rename:
@@ -388,7 +391,7 @@ namespace TVRename
                     return 1;
 
                 case ActionDateTouch _:
-                    // add them after the slow move/reanems (ie last)
+                    // add them after the slow move/renames (ie last)
                     return 0;
 
                 default:

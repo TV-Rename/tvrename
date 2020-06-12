@@ -386,12 +386,12 @@ namespace TVRename
                 torrentCache = new List<TorrentEntry>();
                 if (TVSettings.Instance.CheckuTorrent)
                 {
-                    torrentCache.AddNullableRange(uTorrentFinder.GetTorrentDownloads());
+                    torrentCache.AddNullableRange(new uTorrent().GetTorrentDownloads());
                 }
 
                 if (TVSettings.Instance.CheckqBitTorrent)
                 {
-                    torrentCache.AddNullableRange(qBitTorrentFinder.GetTorrentDownloads());
+                    torrentCache.AddNullableRange(new qBitTorrent().GetTorrentDownloads());
                 }
             }
 

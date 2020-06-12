@@ -14,6 +14,7 @@ using System.Threading;
 using System.Xml;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using UnauthorizedAccessException = System.UnauthorizedAccessException;
 
 namespace TVRename
 {
@@ -158,6 +159,11 @@ namespace TVRename
                 return -1;
             }
             catch (System.IO.IOException xe)
+            {
+                Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside, got {xe.Message}");
+                return -1;
+            }
+            catch (UnauthorizedAccessException xe)
             {
                 Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside, got {xe.Message}");
                 return -1;

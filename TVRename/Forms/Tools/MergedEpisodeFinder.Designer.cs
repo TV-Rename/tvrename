@@ -1,6 +1,6 @@
 namespace TVRename.Forms
 {
-    partial class DupEpFinder
+    partial class MergedEpisodeFinder
     {
         /// <summary>
         /// Required designer variable.
@@ -29,8 +29,8 @@ namespace TVRename.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DupEpFinder));
-            this.lvDuplicates = new ListViewFlickerFree();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MergedEpisodeFinder));
+            this.lvMergedEpisodes = new ListViewFlickerFree();
             this.show = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.season = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.episodes = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -43,36 +43,39 @@ namespace TVRename.Forms
             this.chkFilesizeTest = new System.Windows.Forms.CheckBox();
             this.btnClose = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnRescan = new System.Windows.Forms.Button();
-            this.duplicateRightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.possibleMergedEpisodeRightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.duplicateRightClickMenu.SuspendLayout();
+            this.bwScan = new System.ComponentModel.BackgroundWorker();
+            this.lblStatus = new System.Windows.Forms.Label();
+            this.pbProgress = new System.Windows.Forms.ProgressBar();
+            this.btnRefresh = new System.Windows.Forms.Button();
+            this.possibleMergedEpisodeRightClickMenu.SuspendLayout();
             this.SuspendLayout();
             // 
-            // lvDuplicates
+            // lvMergedEpisodes
             // 
-            this.lvDuplicates.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.lvMergedEpisodes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvDuplicates.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.lvMergedEpisodes.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.show,
             this.season,
             this.episodes,
             this.airDate,
             this.episodeNames,
             this.name});
-            this.lvDuplicates.FullRowSelect = true;
-            this.lvDuplicates.HideSelection = false;
-            this.lvDuplicates.Location = new System.Drawing.Point(12, 36);
-            this.lvDuplicates.MultiSelect = false;
-            this.lvDuplicates.Name = "lvDuplicates";
-            this.lvDuplicates.ShowGroups = false;
-            this.lvDuplicates.Size = new System.Drawing.Size(696, 352);
-            this.lvDuplicates.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.lvDuplicates.TabIndex = 0;
-            this.lvDuplicates.UseCompatibleStateImageBehavior = false;
-            this.lvDuplicates.View = System.Windows.Forms.View.Details;
-            this.lvDuplicates.MouseClick += this.lvDuplicates_MouseClick;
+            this.lvMergedEpisodes.FullRowSelect = true;
+            this.lvMergedEpisodes.HideSelection = false;
+            this.lvMergedEpisodes.Location = new System.Drawing.Point(6, 36);
+            this.lvMergedEpisodes.MultiSelect = false;
+            this.lvMergedEpisodes.Name = "lvMergedEpisodes";
+            this.lvMergedEpisodes.ShowGroups = false;
+            this.lvMergedEpisodes.Size = new System.Drawing.Size(696, 352);
+            this.lvMergedEpisodes.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.lvMergedEpisodes.TabIndex = 0;
+            this.lvMergedEpisodes.UseCompatibleStateImageBehavior = false;
+            this.lvMergedEpisodes.View = System.Windows.Forms.View.Details;
+            this.lvMergedEpisodes.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvDuplicates_MouseClick);
             // 
             // show
             // 
@@ -173,25 +176,14 @@ namespace TVRename.Forms
             this.label1.TabIndex = 7;
             this.label1.Text = "Checks Performed:";
             // 
-            // btnRescan
+            // possibleMergedEpisodeRightClickMenu
             // 
-            this.btnRescan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnRescan.Location = new System.Drawing.Point(12, 394);
-            this.btnRescan.Name = "btnRescan";
-            this.btnRescan.Size = new System.Drawing.Size(75, 23);
-            this.btnRescan.TabIndex = 8;
-            this.btnRescan.Text = "Rescan";
-            this.btnRescan.UseVisualStyleBackColor = true;
-            this.btnRescan.Click += new System.EventHandler(this.btnRescan_Click);
-            // 
-            // duplicateRightClickMenu
-            // 
-            this.duplicateRightClickMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.possibleMergedEpisodeRightClickMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem1});
-            this.duplicateRightClickMenu.Name = "menuSearchSites";
-            this.duplicateRightClickMenu.ShowImageMargin = false;
-            this.duplicateRightClickMenu.Size = new System.Drawing.Size(156, 26);
-            this.duplicateRightClickMenu.ItemClicked += duplicateRightClickMenu_ItemClicked;
+            this.possibleMergedEpisodeRightClickMenu.Name = "menuSearchSites";
+            this.possibleMergedEpisodeRightClickMenu.ShowImageMargin = false;
+            this.possibleMergedEpisodeRightClickMenu.Size = new System.Drawing.Size(156, 26);
+            this.possibleMergedEpisodeRightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.PossibleMergedEpisodeRightClickMenu_ItemClicked);
             // 
             // toolStripMenuItem1
             // 
@@ -199,28 +191,64 @@ namespace TVRename.Forms
             this.toolStripMenuItem1.Size = new System.Drawing.Size(155, 22);
             this.toolStripMenuItem1.Text = "toolStripMenuItem1";
             // 
-            // frmDupEpFinder
+            // bwScan
+            // 
+            this.bwScan.WorkerReportsProgress = true;
+            this.bwScan.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BwScan_DoWork);
+            this.bwScan.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BwScan_ProgressChanged);
+            this.bwScan.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BwScan_RunWorkerCompleted);
+            // 
+            // lblStatus
+            // 
+            this.lblStatus.AutoSize = true;
+            this.lblStatus.Location = new System.Drawing.Point(112, 399);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(0, 13);
+            this.lblStatus.TabIndex = 11;
+            this.lblStatus.Visible = false;
+            // 
+            // pbProgress
+            // 
+            this.pbProgress.Location = new System.Drawing.Point(6, 394);
+            this.pbProgress.Name = "pbProgress";
+            this.pbProgress.Size = new System.Drawing.Size(100, 23);
+            this.pbProgress.TabIndex = 10;
+            this.pbProgress.Visible = false;
+            // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Location = new System.Drawing.Point(6, 394);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(75, 23);
+            this.btnRefresh.TabIndex = 9;
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click_1);
+            // 
+            // MergedEpisodeFinder
             // 
             this.AcceptButton = this.btnClose;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(708, 420);
-            this.Controls.Add(this.btnRescan);
+            this.Controls.Add(this.lblStatus);
+            this.Controls.Add(this.pbProgress);
+            this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.chkFilesizeTest);
             this.Controls.Add(this.chkMIssingTest);
             this.Controls.Add(this.chkNameTest);
             this.Controls.Add(this.chkAirDateTest);
-            this.Controls.Add(this.lvDuplicates);
+            this.Controls.Add(this.lvMergedEpisodes);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(600, 400);
-            this.Name = "DupEpFinder";
+            this.Name = "MergedEpisodeFinder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Duplicate Episode Finder";
-            this.duplicateRightClickMenu.ResumeLayout(false);
+            this.Text = "Merged Episode Finder";
+            this.possibleMergedEpisodeRightClickMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -228,21 +256,24 @@ namespace TVRename.Forms
 
         #endregion
 
-        private ListViewFlickerFree lvDuplicates;
+        private ListViewFlickerFree lvMergedEpisodes;
         private System.Windows.Forms.CheckBox chkAirDateTest;
         private System.Windows.Forms.CheckBox chkNameTest;
         private System.Windows.Forms.CheckBox chkMIssingTest;
         private System.Windows.Forms.CheckBox chkFilesizeTest;
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button btnRescan;
         private System.Windows.Forms.ColumnHeader show;
         private System.Windows.Forms.ColumnHeader season;
         private System.Windows.Forms.ColumnHeader episodes;
         private System.Windows.Forms.ColumnHeader airDate;
         private System.Windows.Forms.ColumnHeader episodeNames;
         private System.Windows.Forms.ColumnHeader name;
-        private System.Windows.Forms.ContextMenuStrip duplicateRightClickMenu;
+        private System.Windows.Forms.ContextMenuStrip possibleMergedEpisodeRightClickMenu;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.ComponentModel.BackgroundWorker bwScan;
+        private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.ProgressBar pbProgress;
+        private System.Windows.Forms.Button btnRefresh;
     }
 }
