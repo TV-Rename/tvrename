@@ -7,6 +7,7 @@
 // 
 using Alphaleonis.Win32.Filesystem;
 using DaveChambers.FolderBrowserDialogEx;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -14,11 +15,10 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using JetBrains.Annotations;
-using ColumnHeader = SourceGrid.Cells.ColumnHeader;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using TimeZoneConverter;
+using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 using Control = System.Windows.Forms.Control;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 namespace TVRename
 {
@@ -283,6 +283,7 @@ namespace TVRename
             s.qBitTorrentHost = tbqBitTorrentHost.Text;
             s.qBitTorrentPort = tbqBitTorrentPort.Text;
             s.CheckqBitTorrent = cbCheckqBitTorrent.Checked;
+            s.RemoveCompletedTorrents = chkRemoveCompletedTorrents.Checked;
             s.SearchRSS = cbSearchRSS.Checked;
             s.EpTBNs = cbEpTBNs.Checked;
             s.NFOShows = cbNFOShows.Checked;
@@ -820,6 +821,7 @@ namespace TVRename
             tbqBitTorrentHost.Text = s.qBitTorrentHost;
             tbqBitTorrentPort.Text = s.qBitTorrentPort;
             cbCheckqBitTorrent.Checked = s.CheckqBitTorrent;
+            chkRemoveCompletedTorrents.Checked= s.RemoveCompletedTorrents;
             cbCheckSABnzbd.Checked = s.CheckSABnzbd;
             cbHigherQuality.Checked = s.ReplaceWithBetterQuality;
 
@@ -1263,18 +1265,6 @@ namespace TVRename
         #endregion
 
         #region enable and disable settings as appropriate
-
-        private void cbNotificationIcon_CheckedChanged(object sender, EventArgs e) => EnableDisable();
-        private void chkShowInTaskbar_CheckedChanged(object sender, EventArgs e) => EnableDisable();
-        private void cbKeepTogether_CheckedChanged(object sender, EventArgs e) => EnableDisable();
-        private void cbMissing_CheckedChanged(object sender, EventArgs e) => EnableDisable();
-        private void cbSearchLocally_CheckedChanged(object sender, EventArgs e) => EnableDisable();
-        private void cbMeta_CheckedChanged(object sender, EventArgs e) => EnableDisable();
-        private void cbKeepTogetherMode_SelectedIndexChanged(object sender, EventArgs e) => EnableDisable();
-        private void cbSearchRSS_CheckedChanged(object sender, EventArgs e) => EnableDisable();
-        private void cbSearchJSON_CheckedChanged(object sender, EventArgs e) => EnableDisable();
-        private void lvwDefinedColors_SelectedIndexChanged(object sender, EventArgs e) => EnableDisable();
-        private void CbSearchJackett_CheckedChanged(object sender, EventArgs e) => EnableDisable();
 
         private void EnableDisable()
         {
@@ -1860,12 +1850,11 @@ namespace TVRename
             llJackettLink.Text = $"http://{txtJackettServer.Text}:{txtJackettPort.Text}/UI/Dashboard";
         }
 
-        private void TxtJackettServer_TextChanged(object sender, EventArgs e)
+        private void EnableDisable(object sender, EventArgs e)
         {
-            UpdateJackettLink();
+            EnableDisable();
         }
-
-        private void TxtJackettPort_TextChanged(object sender, EventArgs e)
+        private void JackettDetailsUpdate(object sender, EventArgs e)
         {
             UpdateJackettLink();
         }

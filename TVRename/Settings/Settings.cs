@@ -123,6 +123,7 @@ namespace TVRename
         public bool BGDownload = false;
         public bool CheckuTorrent = false;
         public bool CheckqBitTorrent = false;
+        public bool RemoveCompletedTorrents = false;
         public string qBitTorrentHost = "localhost";
         public string qBitTorrentPort = "8080";
         public qBitTorrent.qBitTorrentAPIVersion qBitTorrentAPIVersion = qBitTorrent.qBitTorrentAPIVersion.v2;
@@ -480,6 +481,7 @@ namespace TVRename
             writer.WriteElement("MonitoredFoldersScanType", (int) MonitoredFoldersScanType);
             writer.WriteElement("DefaultProvider", (int)DefaultProvider);
             writer.WriteElement("CheckuTorrent", CheckuTorrent);
+            writer.WriteElement("RemoveCompletedTorrents", RemoveCompletedTorrents);
             writer.WriteElement("CheckqBitTorrent", CheckqBitTorrent);
             writer.WriteElement("qBitTorrentHost", qBitTorrentHost);
             writer.WriteElement("qBitTorrentPort", qBitTorrentPort);
@@ -1286,6 +1288,7 @@ namespace TVRename
             PreventMove = xmlSettings.ExtractBool("PreventMove",false);
             CheckuTorrent = xmlSettings.ExtractBool("CheckuTorrent",false);
             CheckqBitTorrent = xmlSettings.ExtractBool("CheckqBitTorrent",false);
+            RemoveCompletedTorrents = xmlSettings.ExtractBool("RemoveCompletedTorrents", false);
             qBitTorrentHost = xmlSettings.ExtractString("qBitTorrentHost", "localhost");
             qBitTorrentPort = xmlSettings.ExtractString("qBitTorrentPort", "8080");
             qBitTorrentAPIVersion = xmlSettings.ExtractEnum( "qBitTorrentAPIVersion", qBitTorrent.qBitTorrentAPIVersion.v2);

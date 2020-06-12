@@ -16,7 +16,7 @@ namespace TVRename
         }
 
         protected override string CheckName() => "Cleaned up completed TV Torrents";
-        public override bool Active() => true;//todo move to settings
+        public override bool Active() => TVSettings.Instance.RemoveCompletedTorrents;
 
         protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {

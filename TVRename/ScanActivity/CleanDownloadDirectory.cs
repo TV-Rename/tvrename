@@ -433,7 +433,7 @@ namespace TVRename
             {
                 if (!Directory.Exists(folder))
                 {
-                    if (TVSettings.Instance.AutoCreateFolders) // TODO? Also check || Doc.Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.create
+                    if (TVSettings.Instance.AutoCreateFolders || MDoc.Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.create)
                     {
                         LOGGER.Info($"Want to copy {fi.FullName} to {folder}, but it doesn't exist yet, so creating it");
                         Directory.CreateDirectory(folder);

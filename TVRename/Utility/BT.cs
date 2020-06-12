@@ -1036,7 +1036,7 @@ namespace TVRename
                             }
 
                             int percent = (a.Count == 1) ? PercentBitsOn((BTString) (d2.GetItem("have"))) : -1;
-                            TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent,false,torrentFile); //todo - work out whether it's finished
+                            TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent,false,torrentFile); //todo - work out whether it's finished (TORRENT REMOVE)
                             r.Add(te);
                         }
                         catch (System.IO.PathTooLongException ptle)

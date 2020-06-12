@@ -3259,7 +3259,7 @@ namespace TVRename
             SetCheckbox(mcbSaveImages, all.OfType<ActionDownloadImage>(), chk.OfType<ActionDownloadImage>());
             SetCheckbox(mcbWriteMetadata, all.OfType<ActionWriteMetadata>(), chk.OfType<ActionWriteMetadata>());
             SetCheckbox(mcbModifyMetadata, all.OfType<ActionFileMetaData>(), chk.OfType<ActionFileMetaData>());
-            SetCheckbox(mcbDownload, all.OfType<ActionTDownload>(), chk.OfType<ActionTDownload>()); //todo add ActionTRemove
+            SetCheckbox(mcbDownload, all.TorrentActions, chk.Where(item => item is ActionTRemove || item is ActionTDownload));
 
             int numberOfActions = all.Actions.Count;
             int numberOfCheckedActions = chk.OfType<Action>().Count();
