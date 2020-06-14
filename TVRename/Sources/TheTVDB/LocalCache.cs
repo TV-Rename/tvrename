@@ -415,17 +415,20 @@ namespace TVRename.TheTVDB
             {
                 JObject jsonLanguagesResponse = API.GetLanguages();
 
-                LanguageList ??= new Languages();
-                LanguageList.Clear();
-
-                JToken? jTokens = jsonLanguagesResponse["data"];
-                if (jTokens is null)
+                lock (LANGUAGE_LOCK)
                 {
-                    throw new SourceConsistencyException($"Data element not found in {jsonLanguagesResponse}",
-                        ShowItem.ProviderType.TheTVDB);
-                }
+                    LanguageList ??= new Languages();
+                    LanguageList.Clear();
 
-                LanguageList.AddRange(jTokens.Select(GenerateLanguage).Where(language => language != null));
+                    JToken? jTokens = jsonLanguagesResponse["data"];
+                    if (jTokens is null)
+                    {
+                        throw new SourceConsistencyException($"Data element not found in {jsonLanguagesResponse}",
+                            ShowItem.ProviderType.TheTVDB);
+                    }
+
+                    LanguageList.AddRange(jTokens.Select(GenerateLanguage).Where(language => language != null));
+                }
 
                 return true;
             }
@@ -1180,15 +1183,6 @@ namespace TVRename.TheTVDB
             {
                 SayNothing();
                 return null;
-            }
-
-            Language? languageFromCode = LanguageList?.GetLanguageFromCode(requestedLanguageCode);
-            if (languageFromCode is null)
-            {
-                SayNothing();
-                throw new ArgumentException(
-                    $"Requested language ({requestedLanguageCode}) not found in Language Cache, cache has ({LanguageList?.Select(language => language.Abbreviation).ToCsv()})",
-                    requestedLanguageCode);
             }
 
             lock (SERIES_LOCK)
