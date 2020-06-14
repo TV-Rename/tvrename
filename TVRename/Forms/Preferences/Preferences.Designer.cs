@@ -153,6 +153,9 @@ namespace TVRename
             this.cbCheckSABnzbd = new System.Windows.Forms.CheckBox();
             this.cbCheckuTorrent = new System.Windows.Forms.CheckBox();
             this.qBitTorrent = new System.Windows.Forms.GroupBox();
+            this.chkRemoveCompletedTorrents = new System.Windows.Forms.CheckBox();
+            this.llqBitTorrentLink = new System.Windows.Forms.LinkLabel();
+            this.label79 = new System.Windows.Forms.Label();
             this.rdoqBitTorrentAPIVersionv2 = new System.Windows.Forms.RadioButton();
             this.rdoqBitTorrentAPIVersionv1 = new System.Windows.Forms.RadioButton();
             this.rdoqBitTorrentAPIVersionv0 = new System.Windows.Forms.RadioButton();
@@ -410,7 +413,6 @@ namespace TVRename
             this.txtJackettServer = new System.Windows.Forms.TextBox();
             this.label45 = new System.Windows.Forms.Label();
             this.tbPreferredRSSTerms = new System.Windows.Forms.TextBox();
-            this.chkRemoveCompletedTorrents = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -1649,7 +1651,6 @@ namespace TVRename
             // 
             // tpTorrentNZB
             // 
-            this.tpTorrentNZB.Controls.Add(this.chkRemoveCompletedTorrents);
             this.tpTorrentNZB.Controls.Add(this.pbuTorrentNZB);
             this.tpTorrentNZB.Controls.Add(this.label58);
             this.tpTorrentNZB.Controls.Add(this.cbCheckqBitTorrent);
@@ -1727,6 +1728,9 @@ namespace TVRename
             // 
             this.qBitTorrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.qBitTorrent.Controls.Add(this.chkRemoveCompletedTorrents);
+            this.qBitTorrent.Controls.Add(this.llqBitTorrentLink);
+            this.qBitTorrent.Controls.Add(this.label79);
             this.qBitTorrent.Controls.Add(this.rdoqBitTorrentAPIVersionv2);
             this.qBitTorrent.Controls.Add(this.rdoqBitTorrentAPIVersionv1);
             this.qBitTorrent.Controls.Add(this.rdoqBitTorrentAPIVersionv0);
@@ -1738,10 +1742,40 @@ namespace TVRename
             this.qBitTorrent.Controls.Add(this.label42);
             this.qBitTorrent.Location = new System.Drawing.Point(6, 308);
             this.qBitTorrent.Name = "qBitTorrent";
-            this.qBitTorrent.Size = new System.Drawing.Size(405, 125);
+            this.qBitTorrent.Size = new System.Drawing.Size(405, 176);
             this.qBitTorrent.TabIndex = 7;
             this.qBitTorrent.TabStop = false;
             this.qBitTorrent.Text = "qBitTorrent";
+            // 
+            // chkRemoveCompletedTorrents
+            // 
+            this.chkRemoveCompletedTorrents.AutoSize = true;
+            this.chkRemoveCompletedTorrents.Location = new System.Drawing.Point(75, 125);
+            this.chkRemoveCompletedTorrents.Name = "chkRemoveCompletedTorrents";
+            this.chkRemoveCompletedTorrents.Size = new System.Drawing.Size(184, 17);
+            this.chkRemoveCompletedTorrents.TabIndex = 22;
+            this.chkRemoveCompletedTorrents.Text = "Automatically Remove Completed";
+            this.chkRemoveCompletedTorrents.UseVisualStyleBackColor = true;
+            // 
+            // llqBitTorrentLink
+            // 
+            this.llqBitTorrentLink.AutoSize = true;
+            this.llqBitTorrentLink.Location = new System.Drawing.Point(76, 146);
+            this.llqBitTorrentLink.Name = "llqBitTorrentLink";
+            this.llqBitTorrentLink.Size = new System.Drawing.Size(83, 13);
+            this.llqBitTorrentLink.TabIndex = 42;
+            this.llqBitTorrentLink.TabStop = true;
+            this.llqBitTorrentLink.Text = "llqBitTorrentLink";
+            this.llqBitTorrentLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel1_LinkClicked);
+            // 
+            // label79
+            // 
+            this.label79.AutoSize = true;
+            this.label79.Location = new System.Drawing.Point(8, 145);
+            this.label79.Name = "label79";
+            this.label79.Size = new System.Drawing.Size(21, 13);
+            this.label79.TabIndex = 41;
+            this.label79.Text = "UI:";
             // 
             // rdoqBitTorrentAPIVersionv2
             // 
@@ -1803,6 +1837,7 @@ namespace TVRename
             this.tbqBitTorrentHost.Name = "tbqBitTorrentHost";
             this.tbqBitTorrentHost.Size = new System.Drawing.Size(324, 20);
             this.tbqBitTorrentHost.TabIndex = 1;
+            this.tbqBitTorrentHost.TextChanged += new System.EventHandler(this.QBitDetailsChanged);
             // 
             // tbqBitTorrentPort
             // 
@@ -1812,6 +1847,7 @@ namespace TVRename
             this.tbqBitTorrentPort.Name = "tbqBitTorrentPort";
             this.tbqBitTorrentPort.Size = new System.Drawing.Size(324, 20);
             this.tbqBitTorrentPort.TabIndex = 4;
+            this.tbqBitTorrentPort.TextChanged += new System.EventHandler(this.QBitDetailsChanged);
             // 
             // label41
             // 
@@ -4674,16 +4710,6 @@ namespace TVRename
             this.tbPreferredRSSTerms.Size = new System.Drawing.Size(304, 20);
             this.tbPreferredRSSTerms.TabIndex = 32;
             // 
-            // chkRemoveCompletedTorrents
-            // 
-            this.chkRemoveCompletedTorrents.AutoSize = true;
-            this.chkRemoveCompletedTorrents.Location = new System.Drawing.Point(6, 439);
-            this.chkRemoveCompletedTorrents.Name = "chkRemoveCompletedTorrents";
-            this.chkRemoveCompletedTorrents.Size = new System.Drawing.Size(184, 17);
-            this.chkRemoveCompletedTorrents.TabIndex = 22;
-            this.chkRemoveCompletedTorrents.Text = "Automatically Remove Completed";
-            this.chkRemoveCompletedTorrents.UseVisualStyleBackColor = true;
-            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -5183,5 +5209,7 @@ namespace TVRename
         private System.Windows.Forms.Label label78;
         private System.Windows.Forms.TextBox tbJSONSeedersToken;
         private System.Windows.Forms.CheckBox chkRemoveCompletedTorrents;
+        private System.Windows.Forms.LinkLabel llqBitTorrentLink;
+        private System.Windows.Forms.Label label79;
     }
 }

@@ -1292,6 +1292,10 @@ namespace TVRename
             ExportersOptEnableDisable();
 
             ScanOptEnableDisable();
+
+            qBitTorrent.Enabled = cbCheckqBitTorrent.Checked;
+            gbSAB.Enabled = cbCheckSABnzbd.Checked;
+            gbuTorrent.Enabled = cbCheckuTorrent.Checked;
         }
 
         private void ExportersOptEnableDisable()
@@ -1857,6 +1861,21 @@ namespace TVRename
         private void JackettDetailsUpdate(object sender, EventArgs e)
         {
             UpdateJackettLink();
+        }
+
+        private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Helpers.OpenUrl(llqBitTorrentLink.Text);
+        }
+
+        private void QBitDetailsChanged(object sender, EventArgs e)
+        {
+            UpdateQBitTorrentLink();
+        }
+
+        private void UpdateQBitTorrentLink()
+        {
+            llqBitTorrentLink.Text = $"http://{tbqBitTorrentHost.Text}:{tbqBitTorrentPort.Text}/";
         }
     }
 }
