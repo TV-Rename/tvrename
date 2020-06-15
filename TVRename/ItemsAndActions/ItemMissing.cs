@@ -41,7 +41,7 @@ namespace TVRename
         {
             if (o is null || !(o is ItemMissing miss))
             {
-                return 0;
+                return -1;
             }
 
             if (!MissingEpisode.Show.ShowName.Equals(miss.MissingEpisode.Show.ShowName))

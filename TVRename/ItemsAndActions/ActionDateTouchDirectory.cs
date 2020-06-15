@@ -3,7 +3,7 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
-    internal class ActionDateTouchDirectory : ActionDateTouch
+    internal abstract class ActionDateTouchDirectory : ActionDateTouch
     {
         private readonly DirectoryInfo whereDirectory;
 
@@ -48,18 +48,12 @@ namespace TVRename
         {
             ActionDateTouchDirectory nfo = o as ActionDateTouchDirectory;
 
-            if (Episode is null)
-            {
-                return 1;
-            }
-
-            if (nfo?.Episode is null)
+            if (nfo?.whereDirectory is null)
             {
                 return -1;
             }
 
-            return string.Compare(whereDirectory.FullName + Episode.Name,
-                nfo.whereDirectory.FullName + nfo.Episode.Name, StringComparison.Ordinal);
+            return string.Compare(whereDirectory.FullName, nfo.whereDirectory.FullName, StringComparison.Ordinal);
         }
     }
 }

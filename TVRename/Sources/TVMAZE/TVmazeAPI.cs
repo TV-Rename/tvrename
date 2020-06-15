@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
 
@@ -34,12 +35,20 @@ namespace TVRename.TVmaze
                 {
                     Logger.Error($"Could not get updates from TV Maze due to {ex.LoggableDetails()}");
                 }
+
                 throw new SourceConnectivityException(ex.Message);
             }
             catch (System.IO.IOException iex)
             {
                 Logger.Error($"Could not get updates from TV Maze due to {iex.Message}");
                 throw new SourceConnectivityException(iex.Message);
+            }
+            catch (JsonReaderException jre)
+            {
+                {
+                    Logger.Error($"Could not get updates from TV Maze due to {jre.Message}");
+                    throw new SourceConnectivityException(jre.Message);
+                }
             }
         }
 

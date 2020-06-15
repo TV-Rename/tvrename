@@ -1010,6 +1010,11 @@ namespace TVRename
                 bool hasTargets = ((targets != null) && (targets.Type == BTChunk.kList));
                 BTList targetList = (BTList) (targets);
 
+                //foreach (var i in d2.Items)
+                //{
+                //logger.Info($"   {i.Key}  {i.Data.AsText()}");   
+                //}
+
                 foreach (string s in a)
                 {
                     if ((c < prioString.Data.Length) && (prioString.Data[c] != BTPrio.Skip))
@@ -1036,7 +1041,8 @@ namespace TVRename
                             }
 
                             int percent = (a.Count == 1) ? PercentBitsOn((BTString) (d2.GetItem("have"))) : -1;
-                            TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent,false,torrentFile); //todo - work out whether it's finished (TORRENT REMOVE)
+                            bool completed = ((BTInteger) d2.GetItem("order")).Value == -1;
+                            TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent, completed, torrentFile); 
                             r.Add(te);
                         }
                         catch (System.IO.PathTooLongException ptle)

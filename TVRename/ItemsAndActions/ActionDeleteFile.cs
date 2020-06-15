@@ -60,7 +60,7 @@ namespace TVRename
         {
             if (!(o is ActionDeleteFile cmr) || toRemove.Directory is null || cmr.toRemove.Directory is null )
             {
-                return 0;
+                return -1;
             }
 
             return string.Compare(toRemove.FullName , cmr.toRemove.FullName , StringComparison.Ordinal);

@@ -125,7 +125,7 @@ namespace TVRename
 
         public override int CompareTo(object o)
         {
-            return !(o is ActionTDownload rss) ? 0 : string.Compare(url, rss.url, StringComparison.Ordinal);
+            return !(o is ActionTDownload rss) ? -1 : string.Compare(url, rss.url, StringComparison.Ordinal);
         }
 
         public override IgnoreItem? Ignore => GenerateIgnore(theFileNoExt);

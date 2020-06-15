@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Runtime.Remoting;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
@@ -67,7 +68,15 @@ namespace TVRename.App
             ui.Text = ui.Text + " " + Helpers.DisplayVersion;
 
             // Bind IPC actions to the form, this allows another instance to trigger form actions
-            RemoteClient.Bind(ui);
+            try
+            {
+                RemoteClient.Bind(ui);
+            }
+            catch (RemotingException ex)
+            {
+                Logger.Warn(
+                    $"Could not create IPC Port: {ex.Message} : TV Rename WIll nto be able to accept incoming commands");
+            }
 
             MainForm = ui;
         }

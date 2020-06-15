@@ -166,7 +166,7 @@ namespace TVRename
 
         public override int CompareTo(object o)
         {
-            return !(o is ActionDownloadImage dl) ? 0 : string.Compare(destination.FullName, dl.destination.FullName, StringComparison.Ordinal);
+            return !(o is ActionDownloadImage dl) ? -1 : string.Compare(destination.FullName, dl.destination.FullName, StringComparison.Ordinal);
         }
 
         #endregion

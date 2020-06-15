@@ -25,7 +25,7 @@ namespace TVRename
 
         public override int CompareTo(object o)
         {
-            return !(o is ActionTRemove rss) ? 0 : string.Compare(name.TorrentFile, rss.name.TorrentFile, StringComparison.Ordinal);
+            return !(o is ActionTRemove rss) ? -1 : string.Compare(name.TorrentFile, rss.name.TorrentFile, StringComparison.Ordinal);
         }
 
         public override string Name => "Remove Completed Torrent";
