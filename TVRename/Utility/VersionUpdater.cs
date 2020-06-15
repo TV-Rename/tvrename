@@ -37,17 +37,14 @@ namespace TVRename
 
             (ServerRelease latestVersion, ServerRelease latestBetaVersion) = await GetLatestReleases().ConfigureAwait(false);
 
-            switch (TVSettings.Instance.mode)
+            return TVSettings.Instance.mode switch
             {
-                case TVSettings.BetaMode.ProductionOnly when latestVersion?.NewerThan(currentVersion)?? false:
-                    return latestVersion;
-
-                case TVSettings.BetaMode.BetaToo when latestBetaVersion?.NewerThan(currentVersion)??false:
-                    return latestBetaVersion;
-
-                default:
-                    throw new ArgumentException();
-            }
+                TVSettings.BetaMode.ProductionOnly when (latestVersion?.NewerThan(currentVersion) ?? false) =>
+                latestVersion,
+                TVSettings.BetaMode.BetaToo when (latestBetaVersion?.NewerThan(currentVersion) ?? false) =>
+                latestBetaVersion,
+                _ => null
+            };
         }
 
         private static async Task<(ServerRelease? latestVersion, ServerRelease? latestBetaVersion)> GetLatestReleases()
