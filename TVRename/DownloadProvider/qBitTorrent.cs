@@ -252,8 +252,10 @@ namespace TVRename
                     HttpResponseMessage response = client.PostAsync(url, content).Result;
                     if (!response.IsSuccessStatusCode)
                     {
-                        Logger.Warn(
-                            $"Tried to download {torrentUrl} from qBitTorrent via {url}. Got following response {response.StatusCode}");
+                        string message =
+                            $"Tried to download {torrentUrl} from qBitTorrent via {url}. Got following response {response.StatusCode}";
+                        Logger.Warn(message);
+                        throw new WebException(message);
                     }
                     else
                     {
@@ -266,6 +268,7 @@ namespace TVRename
             {
                 Logger.Warn(
                     $"Could not connect to {wex.Response.ResponseUri} to download {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.LoggableDetails()}");
+                throw;
             }
         }
 

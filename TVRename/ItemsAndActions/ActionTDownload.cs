@@ -58,50 +58,67 @@ namespace TVRename
 
         public override ActionOutcome Go( TVRenameStats stats)
         {
+            bool isDownloadable = url.IsWebLink();
             try
             {
-                if (!(TVSettings.Instance.CheckuTorrent || TVSettings.Instance.CheckqBitTorrent))
+                try
                 {
-                    if (Helpers.OpenUrl(url))
+                    if (TVSettings.Instance.CheckuTorrent && isDownloadable)
                     {
+                        FileInfo downloadedFile = DownloadFile();
+                        new uTorrent().StartTorrentDownload(downloadedFile);
                         return ActionOutcome.Success();
                     }
 
-                    return new ActionOutcome("No torrent clients enabled to download RSS - Tried to use system open, but failed");
+                    if (TVSettings.Instance.CheckqBitTorrent)
+                    {
+                        if (isDownloadable && TVSettings.Instance.qBitTorrentDownloadFilesFirst)
+                        {
+                            FileInfo downloadedFile = DownloadFile();
+                            new qBitTorrent().StartTorrentDownload(downloadedFile);
+                            return ActionOutcome.Success();
+                        }
+                        else
+                        {
+                            new qBitTorrent().StartUrlDownload(url);
+                            return ActionOutcome.Success();
+                        }
+                    }
+                }
+                catch (DownloadFailedException e)
+                {
+                    //Don't worry about this error, we'll retry below
                 }
 
-                if (!TVSettings.Instance.qBitTorrentDownloadFilesFirst && TVSettings.Instance.CheckqBitTorrent)
+                if (Helpers.OpenUrl(url))
                 {
-                    new qBitTorrent().StartUrlDownload(url);
                     return ActionOutcome.Success();
                 }
 
-                byte[] r = HttpHelper.GetUrlBytes(url,true);
-
-                if (r.Length == 0)
-                {
-                    return new ActionOutcome($"No data downloaded from {url}");
-                }
-
-                string saveTemp = SaveDownloadedData(r, SourceName);
-                FileInfo downloadedFile = new FileInfo(theFileNoExt + saveTemp);
-
-                if (TVSettings.Instance.CheckuTorrent)
-                {
-                    new uTorrent().StartTorrentDownload(downloadedFile);
-                }
-                
-                if (TVSettings.Instance.CheckqBitTorrent)
-                {
-                    new qBitTorrent().StartTorrentDownload(downloadedFile);
-                }
-
-                return ActionOutcome.Success();
+                return new ActionOutcome("No torrent clients enabled to download RSS - Tried to use system open, but failed");
             }
             catch (Exception e)
             {
                 return new ActionOutcome(e);
             }
+        }
+
+        private FileInfo DownloadFile()
+        {
+            byte[] r = HttpHelper.GetUrlBytes(url, true);
+
+            if (r.Length == 0)
+            {
+                throw new DownloadFailedException();
+            }
+
+            string saveTemp = SaveDownloadedData(r, SourceName);
+            FileInfo downloadedFile = new FileInfo(theFileNoExt + saveTemp);
+            return downloadedFile;
+        }
+
+        private class DownloadFailedException : Exception
+        {
         }
 
         [NotNull]
