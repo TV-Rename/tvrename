@@ -2624,7 +2624,7 @@ namespace TVRename
                     }
                     catch (Exception e)
                     {
-                        Logger.Error(e, $"Failed to remove {si.AutoAddFolderBase} as operation was cancelled");
+                        Logger.Error(e, $"Failed to remove {si.AutoAddFolderBase} as operation failed");
                     }
 
                 }
