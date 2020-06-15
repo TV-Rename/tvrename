@@ -1,7 +1,7 @@
 using System;
 using Humanizer;
 
-namespace TVRename.TVRename
+namespace TVRename
 {
     public class UpdateTimeTracker
     {

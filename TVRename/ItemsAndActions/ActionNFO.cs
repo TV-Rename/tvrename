@@ -205,7 +205,7 @@ namespace TVRename
             }
 
             //Director(s)
-            string epDirector = episode.EpisodeDirector;
+            string? epDirector = episode.EpisodeDirector;
             if (!string.IsNullOrEmpty(epDirector))
             {
                 string[] dirs = epDirector.Split('|');
@@ -216,7 +216,7 @@ namespace TVRename
             }
 
             //Writers(s)
-            string epWriter = episode.Writer;
+            string? epWriter = episode.Writer;
             if (!string.IsNullOrEmpty(epWriter))
             {
                 string[] writers = epWriter.Split('|');

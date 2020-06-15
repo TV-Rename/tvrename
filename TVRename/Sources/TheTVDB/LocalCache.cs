@@ -20,7 +20,6 @@ using System.Windows.Forms;
 using Humanizer;
 using JetBrains.Annotations;
 using TVRename.Forms.Utilities;
-using TVRename.TVRename;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 // Talk to the TheTVDB web API, and get tv series info
