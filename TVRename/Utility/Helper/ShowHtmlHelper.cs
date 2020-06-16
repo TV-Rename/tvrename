@@ -891,7 +891,7 @@ namespace TVRename
             }
 
             string airsTime = ser?.AirsTime.PrettyPrint();
-            string airsDay = ser?.AirsDay;
+            string? airsDay = ser?.AirsDay;
             if (!string.IsNullOrEmpty(airsTime) && !string.IsNullOrEmpty(airsDay))
             {
                 body += "<h2>Airs</h2> " + airsTime + " " + airsDay;

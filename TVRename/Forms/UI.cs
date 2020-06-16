@@ -3767,7 +3767,7 @@ namespace TVRename
 
         private void BwSeasonHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
         {
-            ProcessedSeason s = e.Argument as ProcessedSeason;
+            ProcessedSeason? s = e.Argument as ProcessedSeason;
             ShowItem si = s?.Show;
 
             string html = string.Empty;
