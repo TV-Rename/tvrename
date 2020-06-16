@@ -353,7 +353,7 @@ namespace TVRename
 
             ActionQueue[] queues = new ActionQueue[4];
             queues[0] = new ActionQueue("Move/Copy", 1); // cross-filesystem moves (slow ones)
-            queues[1] = new ActionQueue("Move/Delete", 1); // local rename/moves
+            queues[1] = new ActionQueue("Rename/Delete", 1); // local rename/moves
             queues[2] = new ActionQueue("Write Metadata", 4); // writing KODI NFO files, etc.
             queues[3] = new ActionQueue("Download",
                 TVSettings.Instance.ParallelDownloads); // downloading torrents, banners, thumbnails
