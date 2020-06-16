@@ -29,7 +29,7 @@ namespace TVRename
         {
             if (cache.ContainsKey(folder))
             {
-                return cache[folder];
+                return cache[folder] ?? new FileInfo[] { };
             }
 
             DirectoryInfo di;
@@ -39,12 +39,12 @@ namespace TVRename
             }
             catch
             {
-                cache[folder] = null;
+                cache[folder] = new FileInfo[] { };
                 return new FileInfo[]{};
             }
             if (!di.Exists)
             {
-                cache[folder] = null;
+                cache[folder] = new FileInfo[] { };
                 return new FileInfo[] { };
             }
             
