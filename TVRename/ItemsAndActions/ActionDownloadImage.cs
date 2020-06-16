@@ -88,7 +88,7 @@ namespace TVRename
         {
             try
             {
-                byte[] theData = si.Provider == ShowItem.ProviderType.TheTVDB
+                byte[]? theData = si.Provider == ShowItem.ProviderType.TheTVDB
                     ? TheTVDB.LocalCache.Instance.GetTvdbDownload(path)
                     : HttpHelper.Download(path,false);
                 

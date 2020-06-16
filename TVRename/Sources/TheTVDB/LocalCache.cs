@@ -38,6 +38,7 @@ namespace TVRename.TheTVDB
     // ReSharper disable once InconsistentNaming
     public class LocalCache : iTVSource
     {
+#nullable enable
         public static readonly ApiVersion VERS = ApiVersion.v2;
 
         private FileInfo cacheFile;
@@ -1174,7 +1175,7 @@ namespace TVRename.TheTVDB
                 }
             }
 
-            SeriesInfo si;
+            SeriesInfo? si;
             try
             {
                 si = DownloadSeriesInfo(code, requestedLanguageCode);
