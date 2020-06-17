@@ -59,7 +59,7 @@ namespace TVRename
             }
             catch (UnauthorizedAccessException)
             {
-                Logger.Warn("IOException occurred trying to access " + folder);
+                Logger.Warn("UnauthorizedAccessException occurred trying to access " + folder);
                 return new FileInfo[] { };
             }
         }
