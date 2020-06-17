@@ -146,14 +146,14 @@ namespace TVRename.TheTVDB
             //return $"{WebsiteRoot}/?tab=episode&seriesid={seriesId}&seasonid={seasonId}&id={episodeId}";
 
             //New format: https://thetvdb.com/series/the-terror/episodes/7124969
-            return $"{WebsiteRoot}/series/{seriesId}/episodes/{episodeId}";
+            return episodeId>0?$"{WebsiteRoot}/series/{seriesId}/episodes/{episodeId}":string.Empty;
         }
 
         [NotNull]
         // ReSharper disable once MemberCanBePrivate.Global
         public static string WebsiteEpisodeUrl(string slug, int episodeId)
         {
-            return $"{WebsiteRoot}/series/{slug}/episodes/{episodeId}";
+            return episodeId > 0 ? $"{WebsiteRoot}/series/{slug}/episodes/{episodeId}":string.Empty;
         }
 
         [NotNull]

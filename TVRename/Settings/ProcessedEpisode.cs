@@ -88,6 +88,31 @@ namespace TVRename
         public ProcessedEpisode([NotNull] ProcessedEpisode pe, ShowItem si, [NotNull] string name, int airedEpNum, int dvdEpNum, int epNum2)
             : base(pe)
         {
+            //This is used when a new episode is inserted
+
+            EpisodeId = -1;
+            SrvLastUpdated = 0;
+            Overview = string.Empty;
+            Runtime = null;
+            LinkUrl = null;
+            EpisodeRating = null;
+            EpisodeGuestStars = null;
+            EpisodeDirector = null;
+            Writer = null;
+            Dirty = false;
+            DvdChapter = null;
+            DvdDiscId = null;
+            AirsBeforeEpisode = null;
+            AirsBeforeSeason = null;
+            AirsAfterSeason = null;
+            SiteRatingCount = null;
+            AbsoluteNumber = null;
+            ProductionCode = null;
+            ImdbCode = null;
+            Filename = null;
+            AirStamp = null;
+            AirTime = null;
+
             NextToAir = false;
             OverallNumber = -1;
             Ignore = false;
