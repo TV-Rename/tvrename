@@ -96,5 +96,16 @@ namespace TVRename
 
             newItems.AddNullableRange(newItemsForThisMissingEpisode);
         }
+
+        public static void SearchForEpisode(ProcessedEpisode episode)
+        {
+            string serverName = TVSettings.Instance.JackettServer;
+            string serverPort = TVSettings.Instance.JackettPort;
+            const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
+
+            string url = $"http://{serverName}:{serverPort}/UI/Dashboard#search={CustomEpisodeName.NameForNoExt(episode,FORMAT,false)}";
+
+            Helpers.OpenUrl(url);
+        }
     }
 }

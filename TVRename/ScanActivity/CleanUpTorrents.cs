@@ -100,9 +100,16 @@ namespace TVRename
                 return null;
             }
 
-            ProcessedEpisode episode = bestShow.GetEpisode(seasonNum, episodeNum);
+            try
+            {
+                ProcessedEpisode episode = bestShow.GetEpisode(seasonNum, episodeNum);
 
-            return new List<ProcessedEpisode>() {episode};
+                return new List<ProcessedEpisode>() {episode};
+            }
+            catch (ShowItem.EpisodeNotFoundException)
+            {
+                return null;
+            }
         }
     }
 }

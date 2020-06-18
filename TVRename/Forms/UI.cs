@@ -624,7 +624,7 @@ namespace TVRename
             // Send EM_SETMARGINS to prevent text from disappearing underneath the button
             NativeMethods.SendMessage(filterTextBox.Handle, 0xd3, (IntPtr) 2, (IntPtr) (filterButton.Width << 16));
 
-            betaToolsToolStripMenuItem.Visible = TVSettings.Instance.IncludeBetaUpdates();
+            UpdateVisibilityFromSettings();
             EnableDisableAccessibilty();
 
             Show();
@@ -647,6 +647,13 @@ namespace TVRename
             {
                 RunAutoScan("Startup Scan");
             }
+        }
+
+        private void UpdateVisibilityFromSettings()
+        {
+            betaToolsToolStripMenuItem.Visible = TVSettings.Instance.IncludeBetaUpdates();
+            tbActionJackettSearch.Visible = TVSettings.Instance.SearchJackett;
+            tsbScheduleJackettSearch.Visible = TVSettings.Instance.SearchJackett;
         }
 
         private void EnableDisableAccessibilty()
@@ -2080,7 +2087,7 @@ namespace TVRename
                 EnableDisableAccessibilty();
                 FillEpGuideHtml();
                 mAutoFolderMonitor.SettingsChanged(TVSettings.Instance.MonitorFolders);
-                betaToolsToolStripMenuItem.Visible = TVSettings.Instance.IncludeBetaUpdates();
+                UpdateVisibilityFromSettings();
                 ForceRefresh(null,false);
             }
 
@@ -3200,6 +3207,14 @@ namespace TVRename
                 }
             }
 
+            if (TVSettings.Instance.SearchJackett)
+            {
+                tsi.DropDownItems.Add(new ToolStripSeparator());
+                ToolStripMenuItem tssi = new ToolStripMenuItem("Jackett Search");
+                tssi.Click += (s, ev) => { JackettFinder.SearchForEpisode(ep); };
+                tsi.DropDownItems.Add(tssi);
+            }
+
             showRightClickMenu.Items.Add(tsi);
         }
 
@@ -3220,10 +3235,12 @@ namespace TVRename
             {
                 // disable everything
                 btnActionBTSearch.Enabled = false;
+                tbActionJackettSearch.Enabled = false;
                 return;
             }
 
             btnActionBTSearch.Enabled = lvr.Missing.Any();
+
             showRightClickMenu.Items.Clear();
         }
 
@@ -4076,6 +4093,31 @@ namespace TVRename
         {
             OrphanFiles ui = new OrphanFiles(mDoc,this);
             ui.Show(this);
+        }
+
+        private void tbJackettSearch_Click(object sender, EventArgs e)
+        {
+            if (TVSettings.Instance.SearchJackett)
+            {
+                foreach (Item i in GetSelectedItems())
+                {
+                    if (i?.Episode != null)
+                    {
+                        JackettFinder.SearchForEpisode(i.Episode);
+                    }
+                }
+            }
+        }
+
+        private void tsbScheduleJackettSearch_Click(object sender, EventArgs e)
+        {
+            if (TVSettings.Instance.SearchJackett)
+            {
+                foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
+                {
+                    JackettFinder.SearchForEpisode((ProcessedEpisode) lvi.Tag);
+                }
+            }
         }
     }
 }

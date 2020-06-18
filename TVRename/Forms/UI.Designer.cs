@@ -120,7 +120,7 @@ namespace TVRename
             this.tpSummary = new System.Windows.Forms.TabPage();
             this.webSummary = new System.Windows.Forms.WebBrowser();
             this.tbAllInOne = new System.Windows.Forms.TabPage();
-            this.olvAction = new ObjectListViewFlickerFree();
+            this.olvAction = new TVRename.ObjectListViewFlickerFree();
             this.olvShowColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSeason = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvEpisode = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -141,6 +141,7 @@ namespace TVRename
             this.tbQuickScan = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.btnActionBTSearch = new System.Windows.Forms.ToolStripSplitButton();
+            this.tbActionJackettSearch = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.btnIgnoreSelectedActions = new System.Windows.Forms.ToolStripButton();
             this.btnRemoveSelActions = new System.Windows.Forms.ToolStripButton();
@@ -167,7 +168,7 @@ namespace TVRename
             this.btnScheduleRightClick = new System.Windows.Forms.ToolStripButton();
             this.txtWhenToWatchSynopsis = new System.Windows.Forms.TextBox();
             this.calCalendar = new System.Windows.Forms.MonthCalendar();
-            this.lvWhenToWatch = new ListViewFlickerFree();
+            this.lvWhenToWatch = new TVRename.ListViewFlickerFree();
             this.columnHeader29 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader30 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader31 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -210,6 +211,7 @@ namespace TVRename
             this.bwShowHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.bwShowSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.bwSeasonSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
+            this.tsbScheduleJackettSearch = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
@@ -1067,6 +1069,7 @@ namespace TVRename
             this.tbQuickScan,
             this.toolStripSeparator11,
             this.btnActionBTSearch,
+            this.tbActionJackettSearch,
             this.toolStripSeparator9,
             this.btnIgnoreSelectedActions,
             this.btnRemoveSelActions,
@@ -1180,6 +1183,17 @@ namespace TVRename
             this.btnActionBTSearch.DropDownOpening += new System.EventHandler(this.BTSearch_DropDownOpening);
             this.btnActionBTSearch.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuSearchSites_ItemClicked);
             // 
+            // tbActionJackettSearch
+            // 
+            this.tbActionJackettSearch.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbActionJackettSearch.Image = global::TVRename.Properties.Resources._1587498_32;
+            this.tbActionJackettSearch.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbActionJackettSearch.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbActionJackettSearch.Name = "tbActionJackettSearch";
+            this.tbActionJackettSearch.Size = new System.Drawing.Size(142, 42);
+            this.tbActionJackettSearch.Text = "Jackett Search";
+            this.tbActionJackettSearch.Click += new System.EventHandler(this.tbJackettSearch_Click);
+            // 
             // toolStripSeparator9
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
@@ -1191,7 +1205,7 @@ namespace TVRename
             this.btnIgnoreSelectedActions.Image = ((System.Drawing.Image)(resources.GetObject("btnIgnoreSelectedActions.Image")));
             this.btnIgnoreSelectedActions.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnIgnoreSelectedActions.Name = "btnIgnoreSelectedActions";
-            this.btnIgnoreSelectedActions.Size = new System.Drawing.Size(63, 42);
+            this.btnIgnoreSelectedActions.Size = new System.Drawing.Size(63, 19);
             this.btnIgnoreSelectedActions.Text = "&Ignore Sel";
             this.btnIgnoreSelectedActions.Click += new System.EventHandler(this.cbActionIgnore_Click);
             // 
@@ -1201,7 +1215,7 @@ namespace TVRename
             this.btnRemoveSelActions.Image = ((System.Drawing.Image)(resources.GetObject("btnRemoveSelActions.Image")));
             this.btnRemoveSelActions.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnRemoveSelActions.Name = "btnRemoveSelActions";
-            this.btnRemoveSelActions.Size = new System.Drawing.Size(72, 42);
+            this.btnRemoveSelActions.Size = new System.Drawing.Size(72, 19);
             this.btnRemoveSelActions.Text = "&Remove Sel";
             this.btnRemoveSelActions.Click += new System.EventHandler(this.bnRemoveSel_Click);
             // 
@@ -1374,6 +1388,7 @@ namespace TVRename
             this.tsWtW.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnWhenToWatchCheck,
             this.btnScheduleBTSearch,
+            this.tsbScheduleJackettSearch,
             this.toolStripSeparator12,
             this.btnScheduleRightClick});
             this.tsWtW.Location = new System.Drawing.Point(0, 0);
@@ -1764,6 +1779,17 @@ namespace TVRename
             this.bwSeasonSummaryHTMLGenerator.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BwSeasonSummaryHTMLGenerator_DoWork);
             this.bwSeasonSummaryHTMLGenerator.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.UpdateWebSummary);
             // 
+            // tsbScheduleJackettSearch
+            // 
+            this.tsbScheduleJackettSearch.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tsbScheduleJackettSearch.Image = global::TVRename.Properties.Resources._1587498_32;
+            this.tsbScheduleJackettSearch.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tsbScheduleJackettSearch.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbScheduleJackettSearch.Name = "tsbScheduleJackettSearch";
+            this.tsbScheduleJackettSearch.Size = new System.Drawing.Size(142, 36);
+            this.tsbScheduleJackettSearch.Text = "Jackett Search";
+            this.tsbScheduleJackettSearch.Click += new System.EventHandler(this.tsbScheduleJackettSearch_Click);
+            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1982,5 +2008,7 @@ namespace TVRename
         private ToolStripButton tsbScanContextMenu;
         private ToolStripMenuItem tsmiOrphanFiles;
         private ObjectListViewFlickerFree olvAction;
+        private ToolStripButton tbActionJackettSearch;
+        private ToolStripButton tsbScheduleJackettSearch;
     }
 }
