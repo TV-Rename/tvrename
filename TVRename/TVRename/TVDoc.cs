@@ -744,11 +744,21 @@ namespace TVRename
 
         private void RemoveDuplicateDownloads(bool unattended, IDialogParent owner)
         {
+            bool cancelAllFuture = false;
             foreach (IGrouping<ProcessedEpisode, ActionTDownload> epGroup in TheActionList.DownloadTorrents
-                .GroupBy(item => item.Episode).Where(items => items.Count() > 1))
+                .GroupBy(item => item.Episode)
+                .Where(items => items.Count() > 1)
+                .OrderBy(grouping => grouping.Key.Show.ShowName)
+                .ThenBy(g => g.Key.AppropriateSeasonNumber)
+                .ThenBy(g2 => g2.Key.AppropriateEpNum))
             {
                 List<ActionTDownload> actions = epGroup.ToList();
 
+                if (cancelAllFuture)
+                {
+                    TheActionList.Replace(actions, actions.First().UndoItemMissing);
+                    continue;
+                }
                 switch (WhatAction(unattended))
                 {
                     case TVSettings.DuplicateActionOutcome.IgnoreAll:
@@ -770,6 +780,12 @@ namespace TVRename
                         if (dr == DialogResult.OK)
                         {
                             TheActionList.Replace(actions, userChosenAction);
+                        }
+                        else if (dr == DialogResult.Abort)
+                        {
+                            //Cancel all future
+                            cancelAllFuture = true;
+                            TheActionList.Replace(actions, actions.First().UndoItemMissing);
                         }
                         else
                         {

@@ -3929,7 +3929,11 @@ namespace TVRename
 
         private void UI_Resize(object sender, EventArgs e)
         {
-            bool isWide = Width > (TVSettings.Instance.ShowAccessibilityOptions? 1300: 1100);
+            int targetWidth = 1100;
+            if (TVSettings.Instance.ShowAccessibilityOptions) targetWidth += 200;
+            if (TVSettings.Instance.SearchJackett) targetWidth += 200;
+
+            bool isWide = Width > (targetWidth);
             tpRecentScan.Visible = isWide;
             tbQuickScan.Visible = isWide;
             tbFullScan.Visible = isWide;

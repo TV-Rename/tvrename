@@ -40,5 +40,11 @@ namespace TVRename.Forms.Supporting
             UserChosenAction = (ActionTDownload)olvChooseDownload.SelectedObject;
             DialogResult = olvChooseDownload.SelectedObject != null ? DialogResult.OK : DialogResult.Cancel;
         }
+
+        private void bnCancelAll_Click(object sender, System.EventArgs e)
+        {
+            DialogResult = DialogResult.Abort;
+            Close();
+        }
     }
 }

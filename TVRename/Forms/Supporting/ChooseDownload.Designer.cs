@@ -32,14 +32,15 @@ namespace TVRename.Forms.Supporting
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.olvChooseDownload = new ObjectListViewFlickerFree();
+            this.olvChooseDownload = new TVRename.ObjectListViewFlickerFree();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSize = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSeeders = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvSource = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblEpisodeName = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.olvSource = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.bnCancelAll = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvChooseDownload)).BeginInit();
@@ -67,6 +68,7 @@ namespace TVRename.Forms.Supporting
             // 
             this.flowLayoutPanel1.Controls.Add(this.btnOK);
             this.flowLayoutPanel1.Controls.Add(this.btnCancel);
+            this.flowLayoutPanel1.Controls.Add(this.bnCancelAll);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 514);
@@ -143,6 +145,12 @@ namespace TVRename.Forms.Supporting
             this.olvSeeders.AspectName = "Seeders";
             this.olvSeeders.Text = "Seeders";
             // 
+            // olvSource
+            // 
+            this.olvSource.AspectName = "UpstreamSource";
+            this.olvSource.Text = "Source";
+            this.olvSource.Width = 400;
+            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.lblEpisodeName);
@@ -172,11 +180,16 @@ namespace TVRename.Forms.Supporting
             this.label1.TabIndex = 0;
             this.label1.Text = "Selected Episode:";
             // 
-            // olvSource
+            // bnCancelAll
             // 
-            this.olvSource.AspectName = "UpstreamSource";
-            this.olvSource.Text = "Source";
-            this.olvSource.Width = 400;
+            this.bnCancelAll.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.bnCancelAll.Location = new System.Drawing.Point(265, 3);
+            this.bnCancelAll.Name = "bnCancelAll";
+            this.bnCancelAll.Size = new System.Drawing.Size(75, 23);
+            this.bnCancelAll.TabIndex = 4;
+            this.bnCancelAll.Text = "Cancel All";
+            this.bnCancelAll.UseVisualStyleBackColor = true;
+            this.bnCancelAll.Click += new System.EventHandler(this.bnCancelAll_Click);
             // 
             // ChooseDownload
             // 
@@ -217,5 +230,6 @@ namespace TVRename.Forms.Supporting
         private BrightIdeasSoftware.OLVColumn olvSize;
         private BrightIdeasSoftware.OLVColumn olvSeeders;
         private BrightIdeasSoftware.OLVColumn olvSource;
+        private System.Windows.Forms.Button bnCancelAll;
     }
 }
