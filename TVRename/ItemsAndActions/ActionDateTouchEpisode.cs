@@ -15,8 +15,6 @@ namespace TVRename
         public override string Produces => whereFile.FullName;
         public override string ProgressText => whereFile.Name;
         public override IgnoreItem Ignore => new IgnoreItem(whereFile.FullName);
-        public override string SeriesName => Episode != null ? Episode.Show.ShowName :string.Empty;
-        public override string SeasonNumber => Episode != null ? Episode.AppropriateSeasonNumber.ToString() : string.Empty;
         public override string? DestinationFolder => whereFile.DirectoryName;
         public override string? DestinationFile => whereFile.Name;
         public override string? TargetFolder => whereFile.DirectoryName;

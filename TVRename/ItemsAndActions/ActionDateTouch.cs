@@ -29,6 +29,6 @@ namespace TVRename
         public override string ScanListViewGroup => "lvgUpdateFileDates";
         public override int IconNumber => 7;
         public override string AirDateString =>
-            UpdateTime.CompareTo(DateTime.MaxValue) != 0 ? UpdateTime.ToShortDateString() : "";
+            UpdateTime.CompareTo(DateTime.MaxValue) != 0 ? UpdateTime.ToShortDateString() : string.Empty;
     }
 }
