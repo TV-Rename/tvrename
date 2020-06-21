@@ -34,8 +34,8 @@ namespace TVRename
                 Name = "Google", Url = "https://www.google.com/search?q={ShowName}+S{Season:2}E{Episode}"
             };
             Add(google);
-            Add(new SearchEngine {Name="Pirate Bay" ,Url= "https://thepiratebay.org/search/{ShowName} S{Season:2}E{Episode}"});
-            Add(new SearchEngine { Name = "binsearch", Url = "https://www.binsearch.info/?q={ShowName}+S{Season:2}E{Episode}"});
+            Add(new SearchEngine {Name="YouTube" ,Url= "https://www.youtube.com/results?search_query={ShowName}+{EpisodeName}" });
+            Add(new SearchEngine { Name = "Vimeo", Url = "https://vimeo.com/search?q={ShowName}+{EpisodeName}" });
 
             CurrentSearch = google;
         }
