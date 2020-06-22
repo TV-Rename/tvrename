@@ -141,9 +141,9 @@ namespace TVRename.TheTVDB
 
         public SeriesInfo? GetSeries(int id) => HasSeries(id) ? series[id] : null;
 
-        public SeriesInfo? GetSeriesAndDownload(int id) => HasSeries(id)
+        public SeriesInfo? GetSeriesAndDownload(int id, bool showErrorMsgBox) => HasSeries(id)
             ? series[id]
-            : DownloadSeriesNow(id, false, false, false, TVSettings.Instance.PreferredLanguageCode);
+            : DownloadSeriesNow(id, false, false, false, TVSettings.Instance.PreferredLanguageCode,showErrorMsgBox);
 
         public ConcurrentDictionary<int, SeriesInfo> GetSeriesDict() => series;
 
@@ -240,7 +240,7 @@ namespace TVRename.TheTVDB
             int tvdbId = si.TvdbCode;
             try
             {
-                SeriesInfo newSi = DownloadSeriesInfo(tvdbId, "en");
+                SeriesInfo newSi = DownloadSeriesInfo(tvdbId, "en",false);
                 if (newSi.SrvLastUpdated != si.SrvLastUpdated)
                 {
                     issues.Add(
@@ -1145,12 +1145,12 @@ namespace TVRename.TheTVDB
             return forceReloadOn.ContainsKey(code) || !series.ContainsKey(code);
         }
 
-        private SeriesInfo? DownloadSeriesNow([NotNull] SeriesSpecifier deets, bool episodesToo, bool bannersToo) =>
+        private SeriesInfo? DownloadSeriesNow([NotNull] SeriesSpecifier deets, bool episodesToo, bool bannersToo, bool showErrorMsgBox) =>
             DownloadSeriesNow(deets.TvdbSeriesId, episodesToo, bannersToo, deets.UseCustomLanguage,
-                deets.CustomLanguageCode);
+                deets.CustomLanguageCode,showErrorMsgBox);
 
         private SeriesInfo? DownloadSeriesNow(int code, bool episodesToo, bool bannersToo, bool useCustomLangCode,
-            string langCode)
+            string langCode, bool showErrorMsgBox)
         {
             if (code == 0)
             {
@@ -1178,7 +1178,7 @@ namespace TVRename.TheTVDB
             SeriesInfo? si;
             try
             {
-                si = DownloadSeriesInfo(code, requestedLanguageCode);
+                si = DownloadSeriesInfo(code, requestedLanguageCode,showErrorMsgBox);
             }
             catch (SourceConnectivityException)
             {
@@ -1231,8 +1231,15 @@ namespace TVRename.TheTVDB
         }
 
         [NotNull]
-        private SeriesInfo DownloadSeriesInfo(int code, [NotNull] string requestedLanguageCode)
+        private SeriesInfo DownloadSeriesInfo(int code, [NotNull] string requestedLanguageCode, bool showErrorMsgBox)
         {
+            if (!IsConnected && !Connect(showErrorMsgBox))
+            {
+                Say("Failed to Connect to TVDB");
+                SayNothing();
+                throw new SourceConnectivityException();
+            }
+
             bool isNotDefaultLanguage = IsNotDefaultLanguage(requestedLanguageCode);
 
             (JObject jsonResponse, JObject jsonDefaultLangResponse) =
@@ -1761,7 +1768,7 @@ namespace TVRename.TheTVDB
             series[tvdb] = new SeriesInfo(tvdb, tvmaze, customLanguageCode) { Dirty = true };
         }
 
-        public bool EnsureUpdated(SeriesSpecifier seriesd, bool bannersToo)
+        public bool EnsureUpdated(SeriesSpecifier seriesd, bool bannersToo, bool showErrorMsgBox)
         {
             if (seriesd.Provider == ShowItem.ProviderType.TVmaze)
             {
@@ -1772,7 +1779,7 @@ namespace TVRename.TheTVDB
 
             if (DoWeForceReloadFor(code) || series[code].Episodes.Count == 0)
             {
-                return DownloadSeriesNow(seriesd, true, bannersToo) != null; // the whole lot!
+                return DownloadSeriesNow(seriesd, true, bannersToo, showErrorMsgBox) != null; // the whole lot!
             }
 
             bool ok = true;
@@ -1781,7 +1788,7 @@ namespace TVRename.TheTVDB
             bool bannersNeedUpdating = bannersToo && !series[code].BannersLoaded;
             if (seriesNeedsUpdating || bannersNeedUpdating)
             {
-                ok = DownloadSeriesNow(seriesd, false, bannersToo) != null;
+                ok = DownloadSeriesNow(seriesd, false, bannersToo, showErrorMsgBox) != null;
             }
 
             ICollection<Episode> collection = series[code]?.Episodes;
@@ -1840,7 +1847,7 @@ namespace TVRename.TheTVDB
                     if (int.TryParse(text, out int textAsInt))
                     {
                         DownloadSeriesNow(textAsInt, false, false, false,
-                            TVSettings.Instance.PreferredLanguageCode);
+                            TVSettings.Instance.PreferredLanguageCode,showErrorMsgBox);
                     }
                 }
             }

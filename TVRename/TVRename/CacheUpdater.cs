@@ -163,7 +163,7 @@ namespace TVRename
                 switch (series.Provider)
                 {
                     case ShowItem.ProviderType.TVmaze:
-                        if (TVmaze.LocalCache.Instance.EnsureUpdated(series, bannersToo))
+                        if (TVmaze.LocalCache.Instance.EnsureUpdated(series, bannersToo,true))
                         {
                             return;
                         }
@@ -171,7 +171,7 @@ namespace TVRename
                         break;
 
                     case ShowItem.ProviderType.TheTVDB:
-                        if (TheTVDB.LocalCache.Instance.EnsureUpdated(series, bannersToo))
+                        if (TheTVDB.LocalCache.Instance.EnsureUpdated(series, bannersToo,true))
                         {
                             return;
                         }

@@ -19,7 +19,7 @@ namespace TVRename
         bool Connect(bool showErrorMsgBox);
         void SaveCache();
 
-        bool EnsureUpdated(SeriesSpecifier s, bool bannersToo);
+        bool EnsureUpdated(SeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
         bool GetUpdates(bool showErrorMsgBox,CancellationToken cts,IEnumerable<SeriesSpecifier> ss);
         void UpdatesDoneOk();
 

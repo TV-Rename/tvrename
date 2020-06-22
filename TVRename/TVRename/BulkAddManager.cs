@@ -49,7 +49,7 @@ namespace TVRename
             {
                 try
                 {
-                    SeriesInfo series = TheTVDB.LocalCache.Instance.GetSeriesAndDownload(tvdbId);
+                    SeriesInfo series = TheTVDB.LocalCache.Instance.GetSeriesAndDownload(tvdbId,showErrorMsgBox);
                     if (series != null)
                     {
                         ai.TVDBCode = tvdbId;

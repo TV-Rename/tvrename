@@ -82,7 +82,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        public bool EnsureUpdated(SeriesSpecifier s, bool bannersToo)
+        public bool EnsureUpdated(SeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
         {
             if (s.Provider != ShowItem.ProviderType.TVmaze)
             {
