@@ -335,6 +335,8 @@ namespace TVRename
 
             s.SearchJackett = cbSearchJackett.Checked;
             s.SearchJackettManualScanOnly = cbSearchJackettOnManualScansOnly.Checked;
+            s.SearchJackettButton = chkSearchJackettButton.Checked;
+            s.StopJackettSearchOnFullScan = chkSkipJackettFullScans.Checked;
             s.JackettServer = txtJackettServer.Text;
             s.JackettPort = txtJackettPort.Text;
             s.JackettIndexer = txtJackettIndexer.Text;
@@ -875,6 +877,8 @@ namespace TVRename
 
             cbSearchJackett.Checked = s.SearchJackett;
             cbSearchJackettOnManualScansOnly.Checked = s.SearchJackettManualScanOnly;
+            chkSearchJackettButton.Checked = s.SearchJackettButton;
+            chkSkipJackettFullScans.Checked = s.StopJackettSearchOnFullScan;
             txtJackettServer.Text = s.JackettServer;
             txtJackettPort.Text = s.JackettPort;
             txtJackettIndexer.Text = s.JackettIndexer;
@@ -1272,7 +1276,7 @@ namespace TVRename
             txtKeepTogether.Enabled = cbKeepTogether.Checked && cbKeepTogetherMode.Text != "All";
             gbRSS.Enabled = cbSearchRSS.Checked;
             gbJSON.Enabled = cbSearchJSON.Checked;
-            groupBox22.Enabled = cbSearchJackett.Checked;
+            groupBox22.Enabled = cbSearchJackett.Checked || chkSearchJackettButton.Checked;
 
             if (!cbNotificationIcon.Checked)
             {
@@ -1358,6 +1362,7 @@ namespace TVRename
             cbSearchJSONManualScanOnly.Enabled = cbSearchJSON.Checked && e;
             cbSearchRSSManualScanOnly.Enabled = cbSearchRSS.Checked && e;
             cbSearchJackettOnManualScansOnly.Enabled = cbSearchJackett.Checked && e;
+            chkSkipJackettFullScans.Enabled = cbSearchJackett.Checked && e;
 
             cbLeaveOriginals.Enabled = e && cbSearchLocally.Checked;
         }

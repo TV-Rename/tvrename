@@ -413,6 +413,8 @@ namespace TVRename
             this.txtJackettServer = new System.Windows.Forms.TextBox();
             this.label45 = new System.Windows.Forms.Label();
             this.tbPreferredRSSTerms = new System.Windows.Forms.TextBox();
+            this.chkSkipJackettFullScans = new System.Windows.Forms.CheckBox();
+            this.chkSearchJackettButton = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -4446,6 +4448,7 @@ namespace TVRename
             // 
             // tpJackett
             // 
+            this.tpJackett.Controls.Add(this.chkSearchJackettButton);
             this.tpJackett.Controls.Add(this.cmbSupervisedDuplicateAction);
             this.tpJackett.Controls.Add(this.label77);
             this.tpJackett.Controls.Add(this.cmbUnattendedDuplicateAction);
@@ -4570,6 +4573,7 @@ namespace TVRename
             // 
             this.groupBox22.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox22.Controls.Add(this.chkSkipJackettFullScans);
             this.groupBox22.Controls.Add(this.llJackettLink);
             this.groupBox22.Controls.Add(this.label71);
             this.groupBox22.Controls.Add(this.cbSearchJackettOnManualScansOnly);
@@ -4709,6 +4713,26 @@ namespace TVRename
             this.tbPreferredRSSTerms.Name = "tbPreferredRSSTerms";
             this.tbPreferredRSSTerms.Size = new System.Drawing.Size(304, 20);
             this.tbPreferredRSSTerms.TabIndex = 32;
+            // 
+            // chkSkipJackettFullScans
+            // 
+            this.chkSkipJackettFullScans.AutoSize = true;
+            this.chkSkipJackettFullScans.Location = new System.Drawing.Point(248, 19);
+            this.chkSkipJackettFullScans.Name = "chkSkipJackettFullScans";
+            this.chkSkipJackettFullScans.Size = new System.Drawing.Size(154, 17);
+            this.chkSkipJackettFullScans.TabIndex = 41;
+            this.chkSkipJackettFullScans.Text = "Skip Jackett On Full Scans";
+            this.chkSkipJackettFullScans.UseVisualStyleBackColor = true;
+            // 
+            // chkSearchJackettButton
+            // 
+            this.chkSearchJackettButton.AutoSize = true;
+            this.chkSearchJackettButton.Location = new System.Drawing.Point(227, 195);
+            this.chkSearchJackettButton.Name = "chkSearchJackettButton";
+            this.chkSearchJackettButton.Size = new System.Drawing.Size(165, 17);
+            this.chkSearchJackettButton.TabIndex = 48;
+            this.chkSearchJackettButton.Text = "Show \'Search &Jackett\' button";
+            this.chkSearchJackettButton.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -5211,5 +5235,7 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkRemoveCompletedTorrents;
         private System.Windows.Forms.LinkLabel llqBitTorrentLink;
         private System.Windows.Forms.Label label79;
+        private System.Windows.Forms.CheckBox chkSearchJackettButton;
+        private System.Windows.Forms.CheckBox chkSkipJackettFullScans;
     }
 }

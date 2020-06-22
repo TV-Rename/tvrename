@@ -300,6 +300,8 @@ namespace TVRename
 
         public bool SearchJackett = false;
         public bool SearchJackettManualScanOnly = true;
+        public bool SearchJackettButton = false;
+        public bool StopJackettSearchOnFullScan = true;
         public string JackettServer = "127.0.0.1";
         public string JackettPort = "9117";
         public string JackettIndexer = "/api/v2.0/indexers/all/results/torznab";

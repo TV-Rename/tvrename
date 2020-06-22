@@ -30,6 +30,13 @@ namespace TVRename
                 LOGGER.Info("Searching Jackett is cancelled as this is an unattended scan");
                 return;
             }
+
+            if (settings.Type ==TVSettings.ScanType.Full && TVSettings.Instance.StopJackettSearchOnFullScan)
+            {
+                LOGGER.Info("Searching Jackett is cancelled as this is a full scan");
+                return;
+            }
+
             int c = ActionList.Missing.Count + 2;
             int n = 1;
             UpdateStatus(n, c, "Searching with Jackett...");

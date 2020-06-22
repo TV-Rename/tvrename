@@ -652,8 +652,8 @@ namespace TVRename
         private void UpdateVisibilityFromSettings()
         {
             betaToolsToolStripMenuItem.Visible = TVSettings.Instance.IncludeBetaUpdates();
-            tbActionJackettSearch.Visible = TVSettings.Instance.SearchJackett;
-            tsbScheduleJackettSearch.Visible = TVSettings.Instance.SearchJackett;
+            tbActionJackettSearch.Visible = TVSettings.Instance.SearchJackettButton;
+            tsbScheduleJackettSearch.Visible = TVSettings.Instance.SearchJackettButton;
         }
 
         private void EnableDisableAccessibilty()
@@ -3207,7 +3207,7 @@ namespace TVRename
                 }
             }
 
-            if (TVSettings.Instance.SearchJackett)
+            if (TVSettings.Instance.SearchJackettButton)
             {
                 tsi.DropDownItems.Add(new ToolStripSeparator());
                 ToolStripMenuItem tssi = new ToolStripMenuItem("Jackett Search");
@@ -3932,7 +3932,7 @@ namespace TVRename
         {
             int targetWidth = 1100;
             if (TVSettings.Instance.ShowAccessibilityOptions) targetWidth += 200;
-            if (TVSettings.Instance.SearchJackett) targetWidth += 200;
+            if (TVSettings.Instance.SearchJackettButton) targetWidth += 200;
 
             bool isWide = Width > (targetWidth);
             tpRecentScan.Visible = isWide;
@@ -4102,7 +4102,7 @@ namespace TVRename
 
         private void tbJackettSearch_Click(object sender, EventArgs e)
         {
-            if (TVSettings.Instance.SearchJackett)
+            if (TVSettings.Instance.SearchJackettButton)
             {
                 foreach (Item i in GetSelectedItems())
                 {
@@ -4116,7 +4116,7 @@ namespace TVRename
 
         private void tsbScheduleJackettSearch_Click(object sender, EventArgs e)
         {
-            if (TVSettings.Instance.SearchJackett)
+            if (TVSettings.Instance.SearchJackettButton)
             {
                 foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
                 {
