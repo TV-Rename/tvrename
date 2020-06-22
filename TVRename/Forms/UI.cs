@@ -3240,6 +3240,7 @@ namespace TVRename
             }
 
             btnActionBTSearch.Enabled = lvr.Missing.Any();
+            tbActionJackettSearch.Enabled = lvr.Missing.Any();
 
             showRightClickMenu.Items.Clear();
         }
