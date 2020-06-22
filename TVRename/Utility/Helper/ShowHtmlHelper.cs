@@ -376,7 +376,7 @@ namespace TVRename
         private static string SeasonSummaryTableRow([NotNull]ProcessedEpisode ep, bool includeDirectoryLinks, DirFilesCache dfc)
         {
             List<FileInfo>? fl = includeDirectoryLinks ? dfc.FindEpOnDisk(ep) : null;
-            IEnumerable<string> statii = GetEpisodeStatus(ep, includeDirectoryLinks, fl);
+            string status = GetEpisodeStatus(ep, includeDirectoryLinks, fl);
 
             string searchButton = (fl is null || fl.Count == 0) && ep.HasAired()
                 ? CreateButton(TVSettings.Instance.BTSearchURL(ep), "<i class=\"fas fa-search\"></i>", "Search for Torrent...")
@@ -393,51 +393,42 @@ namespace TVRename
 
             string airedText = ep.HasAired() ? " (Aired)" : string.Empty;
             return
-                $"<tr><th scope=\"row\">{ep.AppropriateEpNum}</th><td>{ep.GetAirDateDt(true):d}{airedText}</td><td>{ep.Name}</td><td>{statii.ToCsv()}</td><td class=\"text-right\">{searchButton}{viewButton}</td></tr>";
+                $"<tr><th scope=\"row\">{ep.AppropriateEpNum}</th><td>{ep.GetAirDateDt(true):d}{airedText}</td><td>{ep.Name}</td><td>{status}</td><td class=\"text-right\">{searchButton}{viewButton}</td></tr>";
         }
 
         [NotNull]
-        private static IEnumerable<string> GetEpisodeStatus([NotNull] ProcessedEpisode ep, bool includeDirectoryLinks, List<FileInfo>? fl)
+        private static string GetEpisodeStatus([NotNull] ProcessedEpisode ep, bool includeDirectoryLinks, List<FileInfo>? fl)
         {
-            List<string> statii = new List<string>();
-
             bool filesExist = fl != null && fl.Count > 0;
 
-            if (includeDirectoryLinks)
+            if (includeDirectoryLinks && filesExist)
             {
-                if (filesExist)
-                {
-                    statii.Add("On Disk");
-                }
-                else if (TVSettings.Instance.IgnorePreviouslySeen && ep.PreviouslySeen)
-                {
-                    statii.Add("Previously Seen");
-                }
+                return "On Disk";
+            }
+            
+            if (ep.Show.IgnoreSeasons.Contains(ep.AppropriateSeasonNumber))
+            {
+                return "Ignored Season";
+            }
+            if (TVSettings.Instance.IgnoreAllSpecials && ep.AppropriateSeasonNumber == 0)
+            {
+                return "All Specials Ignored";
+            }
+            if (TVSettings.Instance.IgnorePreviouslySeen && ep.PreviouslySeen)
+            {
+                return "Previously Seen";
+            }
+            if (TVSettings.Instance.Ignore.Any(item => item.MatchesEpisode(ep.Show.AutoAddFolderBase, ep)))
+            {
+                return "Episode Ignored";
             }
 
-            if (!includeDirectoryLinks && TVSettings.Instance.IgnorePreviouslySeen && ep.PreviouslySeen)
+            if (includeDirectoryLinks && ep.HasAired())
             {
-                statii.Add("Previously Seen");
-            }
-            else if (ep.Show.IgnoreSeasons.Contains(ep.AppropriateSeasonNumber))
-            {
-                statii.Add("Ignored Season");
-            }
-            else if (TVSettings.Instance.IgnoreAllSpecials && ep.AppropriateSeasonNumber == 0)
-            {
-                statii.Add("All Specials Ignored");
-            }
-            else if (TVSettings.Instance.Ignore.Any(item => item.MatchesEpisode(ep.Show.AutoAddFolderBase, ep)))
-            {
-                statii.Add("Episode Ignored");
+                return "Missing";
             }
 
-            if (!statii.Any() && includeDirectoryLinks && !filesExist && ep.HasAired())
-            {
-                statii.Add("Missing");
-            }
-
-            return statii;
+            return string.Empty;
         }
 
         private static void AppendSeasonSummary(this StringBuilder sb, ShowItem? si, ProcessedSeason s, Color backgroundColour, bool includeDirectoryLinks)

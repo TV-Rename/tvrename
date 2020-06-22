@@ -134,8 +134,8 @@ namespace TVRename
                 case ProcessedSeason.SeasonType.dvd:
                     name = name.ReplaceInsensitive("{Season}", ep.DvdSeasonNumber.ToString());
                     name = name.ReplaceInsensitive("{Season:2}", ep.DvdSeasonNumber.ToString("00"));
-                    name = name.ReplaceInsensitive("{SeasonNumber}", show.GetSeasonIndex(ep.DvdSeasonNumber).ToString());
-                    name = name.ReplaceInsensitive("{SeasonNumber:2}", show.GetSeasonIndex(ep.DvdSeasonNumber).ToString("00"));
+                    name = name.ReplaceInsensitiveLazy("{SeasonNumber}", new Lazy<string?>(() => show.GetSeasonIndex(ep.DvdSeasonNumber).ToString()), StringComparison.CurrentCultureIgnoreCase);
+                    name = name.ReplaceInsensitiveLazy("{SeasonNumber:2}", new Lazy<string?>(() => show.GetSeasonIndex(ep.DvdSeasonNumber).ToString("00")), StringComparison.CurrentCultureIgnoreCase);
                     name = name.ReplaceInsensitive("{Episode}", ep.DvdEpNum.ToString("00"));
                     name = name.ReplaceInsensitive("{Episode2}", ep.DvdEpNum.ToString("00"));
                     name = Regex.Replace(name, "{AllEpisodes}", ep.DvdEpNum.ToString("00")); break;
@@ -143,8 +143,8 @@ namespace TVRename
                 case ProcessedSeason.SeasonType.aired:
                     name = name.ReplaceInsensitive("{Season}", ep.AiredSeasonNumber.ToString());
                     name = name.ReplaceInsensitive("{Season:2}", ep.AiredSeasonNumber.ToString("00"));
-                    name = name.ReplaceInsensitive("{SeasonNumber}", show.GetSeasonIndex(ep.AiredSeasonNumber).ToString());
-                    name = name.ReplaceInsensitive("{SeasonNumber:2}", show.GetSeasonIndex(ep.AiredSeasonNumber).ToString("00"));
+                    name = name.ReplaceInsensitiveLazy("{SeasonNumber}", new Lazy<string?>(() => show.GetSeasonIndex(ep.AiredSeasonNumber).ToString()), StringComparison.CurrentCultureIgnoreCase);
+                    name = name.ReplaceInsensitiveLazy("{SeasonNumber:2}", new Lazy<string?>(() => show.GetSeasonIndex(ep.AiredSeasonNumber).ToString("00")), StringComparison.CurrentCultureIgnoreCase);
                     name = name.ReplaceInsensitive("{Episode}", ep.AiredEpNum.ToString("00"));
                     name = name.ReplaceInsensitive("{Episode2}", ep.AiredEpNum.ToString("00"));
                     name = Regex.Replace(name, "{AllEpisodes}", ep.AiredEpNum.ToString("00"));
@@ -162,7 +162,7 @@ namespace TVRename
 
             SeriesInfo si = show.TheSeries();
             name = name.ReplaceInsensitive("{ShowImdb}", si?.Imdb??string.Empty);
-            name = name.ReplaceInsensitive("{Year}", si?.MinYear.ToString() ?? string.Empty);
+            name = name.ReplaceInsensitiveLazy("{Year}",new Lazy<string?>(() => si?.MinYear.ToString() ?? string.Empty),StringComparison.CurrentCultureIgnoreCase  );
 
             ProcessedSeason selectedProcessedSeason = show.GetSeason(ep.GetSeasonNumber(show.Order) );
             name = name.ReplaceInsensitive("{SeasonYear}", selectedProcessedSeason != null ? selectedProcessedSeason.MinYear().ToString() : string.Empty);
@@ -250,11 +250,11 @@ namespace TVRename
                 name = name.ReplaceInsensitive("{Episode2}", pe.EpNum2.ToString(episodeFormat));
 
                 name = name.ReplaceInsensitive("{EpisodeName}", episodeName);
-                name = name.ReplaceInsensitive("{Number}", pe.OverallNumber.ToString());
-                name = name.ReplaceInsensitive("{Number:2}", pe.OverallNumber.ToString("00"));
-                name = name.ReplaceInsensitive("{Number:3}", pe.OverallNumber.ToString("000"));
-                name = name.ReplaceInsensitive("{Year}", pe.TheSeries.MinYear.ToString());
-                name = name.ReplaceInsensitive("{SeasonYear}", pe.AppropriateProcessedSeason.MinYear().ToString());
+                name = name.ReplaceInsensitiveLazy("{Number}", new Lazy<string?>(() => pe.OverallNumber.ToString()), StringComparison.CurrentCultureIgnoreCase);
+                name = name.ReplaceInsensitiveLazy("{Number:2}", new Lazy<string?>(() => pe.OverallNumber.ToString("00")), StringComparison.CurrentCultureIgnoreCase);
+                name = name.ReplaceInsensitiveLazy("{Number:3}", new Lazy<string?>(() => pe.OverallNumber.ToString("000")), StringComparison.CurrentCultureIgnoreCase);
+                name = name.ReplaceInsensitiveLazy("{Year}", new Lazy<string?>(() => pe.TheSeries.MinYear.ToString()),StringComparison.CurrentCultureIgnoreCase);
+                name = name.ReplaceInsensitiveLazy("{SeasonYear}", new Lazy<string?>(() => pe.AppropriateProcessedSeason.MinYear().ToString()),StringComparison.CurrentCultureIgnoreCase);
                 name = name.ReplaceInsensitive("{Imdb}", pe.ImdbCode);
                 name = name.ReplaceInsensitive("{ShowImdb}", pe.Show.TheSeries()?.Imdb ?? string.Empty);
 

@@ -39,6 +39,11 @@ namespace TVRename
                 return false;
             }
 
+            if (!folder.HasValue())
+            {
+                return false;
+            }
+
             string plannedFilename = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(episode));
 
             return FileAndPath.EndsWith(plannedFilename,StringComparison.OrdinalIgnoreCase);

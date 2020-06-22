@@ -3795,7 +3795,7 @@ namespace TVRename
             }
             catch (Exception exception)
             {
-                Logger.Error(exception, "Error Occurred Creating Show Summary");
+                Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
             }
             e.Result = html;
         }
@@ -3829,7 +3829,7 @@ namespace TVRename
             }
             catch (Exception exception)
             {
-                Logger.Error(exception, "Error Occurred Creating Show Summary");
+                Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
             }
             e.Result = html;
         }
@@ -4010,7 +4010,7 @@ namespace TVRename
             }
             catch (Exception exception)
             {
-                Logger.Error(exception,"Error Occurred Creating Show Summary");
+                Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
             }
             e.Result = html;
         }
@@ -4025,7 +4025,7 @@ namespace TVRename
             }
             catch (Exception exception)
             {
-                Logger.Error(exception, "Error Occurred Creating Show Summary");
+                Logger.Error(exception, $"Error Occurred Creating Show Summary for {si?.ShowName} with order {si?.Order}");
             }
             e.Result = html;
         }

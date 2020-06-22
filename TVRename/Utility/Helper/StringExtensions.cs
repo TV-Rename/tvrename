@@ -72,6 +72,44 @@ namespace TVRename
                 RegexOptions.IgnoreCase);
         }
 
+        public static string ReplaceInsensitiveLazy(this string? source, [NotNull] string search, Lazy<string?> replacement, StringComparison comparison)
+        {
+            if (source == null)
+            {
+                return string.Empty;
+            }
+
+            if (source == "")
+            {
+                return string.Empty;
+            }
+
+            int previousIndex = 0;
+            int index = source.IndexOf(search, comparison);
+
+            if (index == -1)
+            {
+                //Does not contain the search string
+                return source;
+            }
+
+            string replacementValue = replacement.Value;
+            StringBuilder sb = new StringBuilder();
+
+            while (index != -1)
+            {
+                sb.Append(source.Substring(previousIndex, index - previousIndex));
+                sb.Append(replacementValue);
+                index += source.Length;
+
+                previousIndex = index;
+                index = source.IndexOf(source, index, comparison);
+            }
+            sb.Append(source.Substring(previousIndex));
+
+            return sb.ToString();
+        }
+
         public static bool ContainsAnyCharactersFrom(this string source, [NotNull] IEnumerable<char> possibleChars)
         {
             return possibleChars.Any(testChar => source.Contains(testChar.ToString()));
