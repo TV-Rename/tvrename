@@ -91,7 +91,11 @@ namespace TVRename
 
             foreach (RSSItem rss in rssList.Where(rss => RssMatch(rss, processedEpisode)))
             {
-                LOGGER.Info($"Adding {rss.URL} from RSS feed as it appears to be match for {processedEpisode.Show.ShowName} S{processedEpisode.AppropriateSeasonNumber}E{processedEpisode.AppropriateEpNum}");
+                if (TVSettings.Instance.DetailedRSSJSONLogging)
+                {
+                    LOGGER.Info(
+                        $"Adding {rss.URL} from RSS feed as it appears to be match for {processedEpisode.Show.ShowName} S{processedEpisode.AppropriateSeasonNumber}E{processedEpisode.AppropriateEpNum}");
+                }
                 newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action.TheFileNoExt, processedEpisode, action));
                 toRemove.Add(action);
             }

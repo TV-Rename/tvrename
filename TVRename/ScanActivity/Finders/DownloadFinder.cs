@@ -76,8 +76,11 @@ namespace TVRename
                         !testActionRssTwo.SourceName.ContainsOneOf(preferredTerms))
                     {
                         duplicateActionRss.Add(testActionRssTwo);
-                        LOGGER.Info(
-                            $"Removing {testActionRssTwo.Produces} as it is not as good a match as {testActionRssOne.Produces}");
+                        if (TVSettings.Instance.DetailedRSSJSONLogging)
+                        {
+                            LOGGER.Info(
+                                $"Removing {testActionRssTwo.Produces} as it is not as good a match as {testActionRssOne.Produces}");
+                        }
                     }
                 }
             }
