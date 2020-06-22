@@ -7,6 +7,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
@@ -49,7 +50,7 @@ namespace TVRename
 
         public override ItemList? ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
         {
-            ProcessedSeason processedSeason = si.GetSeason(snum) ?? throw new ArgumentException("ProcessSeason called for invlaid season");
+            ProcessedSeason processedSeason = si.GetSeason(snum) ?? throw new ArgumentException($"ProcessSeason called for {si.ShowName} invalid season ({snum}), show has ({si.AppropriateSeasons().Keys.Select(i => i.ToString() ).ToCsv()})");
             DateTime? updateTime = processedSeason.LastAiredDate();
 
             if (!TVSettings.Instance.CorrectFileDates || !updateTime.HasValue)
