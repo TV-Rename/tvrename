@@ -300,8 +300,8 @@ namespace TVRename
 
         public bool SearchJackett = false;
         public bool SearchJackettManualScanOnly = true;
-        public bool SearchJackettButton = false;
         public bool StopJackettSearchOnFullScan = true;
+        public bool SearchJackettButton = false;
         public string JackettServer = "127.0.0.1";
         public string JackettPort = "9117";
         public string JackettIndexer = "/api/v2.0/indexers/all/results/torznab";
@@ -580,6 +580,8 @@ namespace TVRename
             writer.WriteElement("JackettPort",JackettPort);
             writer.WriteElement("JackettIndexer",JackettIndexer );
             writer.WriteElement("JackettAPIKey",JackettAPIKey );
+            writer.WriteElement("SearchJackettButton", SearchJackettButton); 
+            writer.WriteElement("StopJackettSearchOnFullScan", StopJackettSearchOnFullScan);
 
             TheSearchers.WriteXml(writer);
             WriteReplacements(writer);
@@ -1370,6 +1372,9 @@ namespace TVRename
             JackettPort = xmlSettings.ExtractString("JackettPort", "9117");
             JackettIndexer = xmlSettings.ExtractString("JackettIndexer", "/api/v2.0/indexers/all/results/torznab");
             JackettAPIKey = xmlSettings.ExtractString("JackettAPIKey");
+
+            SearchJackettButton = xmlSettings.ExtractBool("SearchJackettButton", true);
+            StopJackettSearchOnFullScan = xmlSettings.ExtractBool("StopJackettSearchOnFullScan", true);
 
             Tidyup.load(xmlSettings);
             RSSURLs = xmlSettings.Descendants("RSSURLs").FirstOrDefault()?.ReadStringsFromXml("URL")??new List<string>();
