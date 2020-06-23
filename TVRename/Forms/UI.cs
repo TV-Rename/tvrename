@@ -1065,9 +1065,28 @@ namespace TVRename
         private void ShowQuickStartGuide()
         {
             tabControl1.SelectTab(tbMyShows);
-            webInformation.Navigate(QuickStartGuide());
-            webImages.Navigate(QuickStartGuide());
-            webSummary.Navigate(QuickStartGuide());
+
+            if (webInformation.IsDisposed || webImages.IsDisposed || webSummary.IsDisposed)
+            {
+                return;
+            }
+
+            try
+            {
+                webInformation.Navigate(QuickStartGuide());
+                webImages.Navigate(QuickStartGuide());
+                webSummary.Navigate(QuickStartGuide());
+            }
+            catch (COMException ex)
+            {
+                //Fail gracefully - no RHS episode guide is not too big of a problem.
+                Logger.Warn(ex, "Could not update UI for the QuickStart Guide");
+            }
+            catch (Exception ex)
+            {
+                //Fail gracefully - no RHS episode guide is not too big of a problem.
+                Logger.Error(ex);
+            }
         }
 
         private void FillEpGuideHtml()
