@@ -1036,14 +1036,12 @@ namespace TVRename
                 }
             }
 
-            foreach (ShowItem si in expanded)
+            foreach (TreeNode n in MyShowTree.Nodes)
             {
-                foreach (TreeNode n in MyShowTree.Nodes)
+                ShowItem? showAtNode = TreeNodeToShowItem(n);
+                if ( expanded.Contains(showAtNode))
                 {
-                    if (TreeNodeToShowItem(n) == si)
-                    {
-                        n.Expand();
-                    }
+                    n.Expand();
                 }
             }
 
