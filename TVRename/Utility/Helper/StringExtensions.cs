@@ -84,7 +84,11 @@ namespace TVRename
                 return string.Empty;
             }
 
-            int previousIndex = 0;
+            if (search == string.Empty)
+            {
+                return source;
+            }
+
             int index = source.IndexOf(search, comparison);
 
             if (index == -1)
@@ -93,17 +97,19 @@ namespace TVRename
                 return source;
             }
 
-            string replacementValue = replacement.Value;
+            //We are going to need to do the replacement, so take the time to do the action
+            string replacementValue = replacement.Value??string.Empty;
+
             StringBuilder sb = new StringBuilder();
+            int previousIndex = 0;
 
             while (index != -1)
             {
                 sb.Append(source.Substring(previousIndex, index - previousIndex));
                 sb.Append(replacementValue);
-                index += source.Length;
 
-                previousIndex = index;
-                index = source.IndexOf(source, index, comparison);
+                previousIndex = index + search.Length;
+                index = source.IndexOf(search, previousIndex, comparison);
             }
             sb.Append(source.Substring(previousIndex));
 
