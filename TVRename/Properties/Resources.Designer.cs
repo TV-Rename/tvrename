@@ -521,6 +521,15 @@ namespace TVRename.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to [Spoilers Hidden].
+        /// </summary>
+        internal static string Spoilers_Hidden_Text {
+            get {
+                return ResourceManager.GetString("Spoilers_Hidden_Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap TableHS {

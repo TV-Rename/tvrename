@@ -1442,7 +1442,7 @@ namespace TVRename
             if (TVSettings.Instance.HideWtWSpoilers &&
                 (ei.HowLong() != "Aired" || lvWhenToWatch.Items[n].ImageIndex == 1))
             {
-                txtWhenToWatchSynopsis.Text = "[Spoilers Hidden]";
+                txtWhenToWatchSynopsis.Text = Resources.Spoilers_Hidden_Text;
             }
             else if (ei.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
             {
@@ -1571,8 +1571,7 @@ namespace TVRename
             if (next1.Count >= 1)
             {
                 ProcessedEpisode ei = next1[0];
-                tsNextShowTxt.Text += CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(1)) + ", " + ei.HowLong() +
-                                      " (" + ei.DayOfWeek() + ", " + ei.TimeOfDay() + ")";
+                tsNextShowTxt.Text += $"{CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(1))}, {ei.HowLong()} ({ei.DayOfWeek()}, {ei.TimeOfDay()})";
             }
             else
             {
@@ -3968,8 +3967,9 @@ namespace TVRename
             olvAction.BeginUpdate();
             olvAction.ShowGroups=true;
             olvAction.AlwaysGroupByColumn = null;
-            olvAction.Sort(olvType,SortOrder.Ascending);
-            olvAction.BuildGroups(olvType,SortOrder.Ascending,olvShowColumn,SortOrder.Ascending,olvSeason,SortOrder.Ascending);
+            //olvAction.Sort(olvType,SortOrder.Ascending);
+            olvAction.BuildGroups(olvType,SortOrder.Ascending);//,olvShowColumn,SortOrder.Ascending,olvSeason,SortOrder.Ascending);
+            olvAction.CustomSorter = delegate { olvAction.ListViewItemSorter = new ListViewActionItemSorter(); };
             olvAction.EndUpdate();
         }
 
@@ -4140,6 +4140,11 @@ namespace TVRename
                     JackettFinder.SearchForEpisode((ProcessedEpisode) lvi.Tag);
                 }
             }
+        }
+
+        private void olvAction_BeforeCreatingGroups(object sender, CreateGroupsEventArgs e)
+        {
+            e.Parameters.ItemComparer = new ListViewActionItemSorter();
         }
     }
 }

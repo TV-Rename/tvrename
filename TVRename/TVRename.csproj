@@ -291,6 +291,7 @@
     <Compile Include="Exporter\ShowsHTML.cs" />
     <Compile Include="Exporter\UpcomingExporter.cs" />
     <Compile Include="Exporter\UpcomingiCAL.cs" />
+    <Compile Include="Forms\ListViewActionItemSorter.cs" />
     <Compile Include="ScanActivity\Finders\DownloadFinder.cs" />
     <Compile Include="ScanActivity\Finders\DownloadingProviderFinder.cs" />
     <Compile Include="ScanActivity\Finders\FinderHelper.cs" />

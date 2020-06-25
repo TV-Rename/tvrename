@@ -164,6 +164,7 @@ namespace TVRename
             this.tsWtW = new System.Windows.Forms.ToolStrip();
             this.btnWhenToWatchCheck = new System.Windows.Forms.ToolStripButton();
             this.btnScheduleBTSearch = new System.Windows.Forms.ToolStripSplitButton();
+            this.tsbScheduleJackettSearch = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.btnScheduleRightClick = new System.Windows.Forms.ToolStripButton();
             this.txtWhenToWatchSynopsis = new System.Windows.Forms.TextBox();
@@ -211,7 +212,6 @@ namespace TVRename
             this.bwShowHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.bwShowSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.bwSeasonSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
-            this.tsbScheduleJackettSearch = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
@@ -951,6 +951,7 @@ namespace TVRename
             this.olvAction.UseFiltering = true;
             this.olvAction.UseNotifyPropertyChanged = true;
             this.olvAction.View = System.Windows.Forms.View.Details;
+            this.olvAction.BeforeCreatingGroups += new System.EventHandler<BrightIdeasSoftware.CreateGroupsEventArgs>(this.olvAction_BeforeCreatingGroups);
             this.olvAction.CanDrop += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.OlvAction_CanDrop);
             this.olvAction.Dropped += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.OlvAction_Dropped);
             this.olvAction.FormatRow += new System.EventHandler<BrightIdeasSoftware.FormatRowEventArgs>(this.olv1_FormatRow);
@@ -1422,6 +1423,17 @@ namespace TVRename
             this.btnScheduleBTSearch.DropDownOpening += new System.EventHandler(this.BTSearch_DropDownOpening);
             this.btnScheduleBTSearch.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuSearchSites_ItemClicked);
             // 
+            // tsbScheduleJackettSearch
+            // 
+            this.tsbScheduleJackettSearch.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tsbScheduleJackettSearch.Image = global::TVRename.Properties.Resources._1587498_32;
+            this.tsbScheduleJackettSearch.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tsbScheduleJackettSearch.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbScheduleJackettSearch.Name = "tsbScheduleJackettSearch";
+            this.tsbScheduleJackettSearch.Size = new System.Drawing.Size(142, 36);
+            this.tsbScheduleJackettSearch.Text = "Jackett Search";
+            this.tsbScheduleJackettSearch.Click += new System.EventHandler(this.tsbScheduleJackettSearch_Click);
+            // 
             // toolStripSeparator12
             // 
             this.toolStripSeparator12.Name = "toolStripSeparator12";
@@ -1778,17 +1790,6 @@ namespace TVRename
             this.bwSeasonSummaryHTMLGenerator.WorkerSupportsCancellation = true;
             this.bwSeasonSummaryHTMLGenerator.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BwSeasonSummaryHTMLGenerator_DoWork);
             this.bwSeasonSummaryHTMLGenerator.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.UpdateWebSummary);
-            // 
-            // tsbScheduleJackettSearch
-            // 
-            this.tsbScheduleJackettSearch.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tsbScheduleJackettSearch.Image = global::TVRename.Properties.Resources._1587498_32;
-            this.tsbScheduleJackettSearch.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tsbScheduleJackettSearch.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbScheduleJackettSearch.Name = "tsbScheduleJackettSearch";
-            this.tsbScheduleJackettSearch.Size = new System.Drawing.Size(142, 36);
-            this.tsbScheduleJackettSearch.Text = "Jackett Search";
-            this.tsbScheduleJackettSearch.Click += new System.EventHandler(this.tsbScheduleJackettSearch_Click);
             // 
             // UI
             // 

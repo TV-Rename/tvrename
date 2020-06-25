@@ -7,6 +7,7 @@ using System.Text;
 using System.Web;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using TVRename.Properties;
 
 namespace TVRename
 {
@@ -104,6 +105,11 @@ namespace TVRename
                 string urlFilename = Uri.EscapeDataString(si.GetBestFolderLocationToOpen(s));
                 explorerButton = CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}",
                     "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
+            }
+
+            if (!si.SeasonEpisodes.ContainsKey(s.SeasonNumber))
+            {
+                throw new ArgumentException($"Could not find season {s.SeasonNumber} for {si.ShowName} it only has the follwing seasons ({si.SeasonEpisodes.Keys.Select(i => i.ToString()).ToCsv()})");
             }
 
             string tableRows = si.SeasonEpisodes[s.SeasonNumber].Select(episode => SeasonSummaryTableRow(episode, includeDirectoryLinks, dfc)).Concat();
@@ -699,7 +705,7 @@ namespace TVRename
         {
             if (TVSettings.Instance.HideMyShowsSpoilers && ei.HowLong() != "Aired")
             {
-                return "[Spoilers Hidden]";
+                return Resources.Spoilers_Hidden_Text;
             }
 
             if(ei.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
