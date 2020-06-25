@@ -57,16 +57,19 @@ namespace TVRename
             }
         }
 
-        public override int CompareTo(object o)
+        public override int CompareTo(object? o)
         {
-            ActionDateTouchEpisode nfo = o as ActionDateTouchEpisode;
+            if (o is null || !(o is ActionDateTouchEpisode nfo))
+            {
+                return -1;
+            }
 
             if (Episode is null)
             {
                 return 1;
             }
 
-            if (nfo?.Episode is null)
+            if (nfo.Episode is null)
             {
                 return -1;
             }

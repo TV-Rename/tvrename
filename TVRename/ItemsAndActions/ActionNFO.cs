@@ -407,16 +407,24 @@ namespace TVRename
             return o is ActionNfo nfo && nfo.Where == Where;
         }
 
-        public override int CompareTo(object o)
+        public override int CompareTo(object? o)
         {
-            ActionNfo nfo = o as ActionNfo;
+            if (o is null || !(o is ActionNfo nfo))
+            {
+                return -1;
+            }
+
+            if (Episode is null && nfo.Episode is null)
+            {
+                return string.Compare(Where.FullName, nfo.Where.FullName, StringComparison.Ordinal);
+            }
 
             if (Episode is null)
             {
                 return 1;
             }
 
-            if (nfo?.Episode is null)
+            if (nfo.Episode is null)
             {
                 return -1;
             }

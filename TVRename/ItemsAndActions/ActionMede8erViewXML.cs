@@ -65,11 +65,14 @@ namespace TVRename
             return o is ActionMede8erViewXML xml && xml.Where == Where;
         }
 
-        public override int CompareTo(object o)
+        public override int CompareTo(object? o)
         {
-            ActionMede8erViewXML nfo = o as ActionMede8erViewXML;
+            if (o is null || !(o is ActionMede8erViewXML nfo))
+            {
+                return -1;
+            }
 
-            return string.Compare(Where.FullName, nfo?.Where.FullName, StringComparison.Ordinal);
+            return string.Compare(Where.FullName, nfo.Where.FullName, StringComparison.Ordinal);
         }
 
         #endregion
