@@ -11,6 +11,6 @@ namespace TVRename
             processedSeason = sn;
         }
         public override string SeriesName => processedSeason.Show.ShowName;
-        public override string SeasonNumber => processedSeason.SeasonNumber.ToString();
+        public override string SeasonNumber => processedSeason.SeasonNumber != 0 ? processedSeason.SeasonNumber.ToString() : TVSettings.SpecialsListViewName;
     }
 }
