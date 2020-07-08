@@ -3399,12 +3399,8 @@ namespace TVRename
 
         private async void showSummaryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            UseWaitCursor = true;
-            ShowSummary f = new ShowSummary(mDoc);
-            await Task.Run(() => f.GenerateData()); //do not use configure await = false here as it causes UI to hang
-            f.PopulateGrid();
-            UseWaitCursor = false;
-            f.Show();
+            ShowSummary f = new ShowSummary(mDoc,this);
+            f.Show(this);
         }
 
         private void lvAction_ItemChecked(object sender, ItemCheckedEventArgs e) => UpdateActionCheckboxes();
