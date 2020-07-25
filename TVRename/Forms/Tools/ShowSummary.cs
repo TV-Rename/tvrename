@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -30,10 +29,6 @@ namespace TVRename
         private UI MainWindow { get; }
         private readonly TVDoc mDoc;
 
-        private List<string> mFoldersToOpen;
-        private List<FileInfo> mLastFileList;
-        private ProcessedSeason? mLastProcessedSeasonClicked;
-        private ShowItem? mLastShowClicked;
         private readonly List<ShowSummaryData> showList;
 
         public ShowSummary(TVDoc doc, UI parent)
@@ -44,9 +39,6 @@ namespace TVRename
             InitializeComponent();
             
             showList = new List<ShowSummaryData>();
-            mFoldersToOpen = new List<string>();
-            mLastFileList = new List<FileInfo>();
-
             Scan();
         }
 
@@ -297,55 +289,6 @@ namespace TVRename
         private void showRightClickMenu_ItemClicked(object sender, [NotNull] ToolStripItemClickedEventArgs e)
         {
             showRightClickMenu.Close();
-            RightClickCommands n = (RightClickCommands)e.ClickedItem.Tag;
-            switch (n)
-            {
-                case RightClickCommands.kVisitTvSourceSeason:
-                    {
-                        TvdbFor(mLastProcessedSeasonClicked);
-                        break;
-                    }
-
-                case RightClickCommands.kVisitTvSourceSeries:
-                    {
-                        TvdbFor(mLastShowClicked);
-                        break;
-                    }
-                case RightClickCommands.kForceRefreshSeries:
-                    ForceRefresh(mLastShowClicked);
-                    break;
-                default:
-                    {
-                        if (n >= RightClickCommands.kWatchBase && n < RightClickCommands.kOpenFolderBase)
-                        {
-                            int wn = n - RightClickCommands.kWatchBase;
-                            if (wn >= 0 && wn < mLastFileList.Count)
-                            {
-                                Helpers.OpenFile(mLastFileList[wn].FullName);
-                            }
-                        }
-                        else if (n >= RightClickCommands.kOpenFolderBase)
-                        {
-                            int fnum = n - RightClickCommands.kOpenFolderBase;
-
-                            if (fnum < mFoldersToOpen.Count)
-                            {
-                                string folder = mFoldersToOpen[fnum];
-
-                                if (Directory.Exists(folder))
-                                {
-                                    Helpers.OpenFolder(folder);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Debug.Fail("Unknown right-click action " + n);
-                        }
-
-                        break;
-                    }
-            }
         }
 
         private static void TvdbFor(ProcessedSeason? seas)
@@ -382,11 +325,6 @@ namespace TVRename
             }
         }
 
-        private void ForceRefresh(ShowItem? si)
-        {
-            mDoc.ForceRefresh(new List<ShowItem> {si},false,false ,this);
-        }
-
         #region Nested type: ShowClickEvent
 
         private class ShowClickEvent : ControllerBase
@@ -419,22 +357,30 @@ namespace TVRename
 
                 ProcessedSeason seas = processedSeason;
 
-                gridSummary.mLastFileList = new List<FileInfo>();
-                gridSummary.mFoldersToOpen = new List<string>();
-
-                gridSummary.mLastShowClicked = show;
-                gridSummary.mLastProcessedSeasonClicked = processedSeason;
-
                 if (seas is null)
                 {
-                    GenerateMenu(gridSummary.showRightClickMenu, "Force Refresh",
-                        RightClickCommands.kForceRefreshSeries);
+                    AddRcMenuItem(gridSummary.showRightClickMenu, "Force Refresh",(o, args) =>
+                    {
+                        gridSummary.MainWindow.ForceRefresh(new List<ShowItem> {show}, false);
+                    }
+                        );
 
                     GenerateSeparator(gridSummary.showRightClickMenu);
                 }
 
-                GenerateMenu(gridSummary.showRightClickMenu, "Visit thetvdb.com",
-                    seas is null ? RightClickCommands.kVisitTvSourceSeries : RightClickCommands.kVisitTvSourceSeason);
+                AddRcMenuItem(gridSummary.showRightClickMenu, "Visit thetvdb.com",
+                    (o, args) =>
+                    {
+                        if (seas is null)
+                        {
+                            TvdbFor(show);
+                        }
+                        else
+                        {
+                            TvdbFor(processedSeason);
+                        }
+                    }
+                );
 
                 List<string> added = new List<string>();
 
@@ -463,7 +409,6 @@ namespace TVRename
                     return;
                 }
 
-                int n = gridSummary.mFoldersToOpen.Count;
                 bool first = true;
                 foreach (string folder in afl[seas.SeasonNumber])
                 {
@@ -476,18 +421,16 @@ namespace TVRename
                             first = false;
                         }
 
-                        GenerateMenu(gridSummary.showRightClickMenu, "Open: " + folder,
-                            (int) RightClickCommands.kOpenFolderBase + n);
-
-                        gridSummary.mFoldersToOpen.Add(folder);
-                        n++;
+                        AddRcMenuItem(gridSummary.showRightClickMenu, "Open: " + folder, (sender, args) =>
+                        {
+                            Helpers.OpenFolder(folder);
+                        }); 
                     }
                 }
             }
 
             private void GenerateRightClickOpenMenu(ICollection<string> added)
             {
-                int n = gridSummary.mFoldersToOpen.Count;
                 bool first = true;
 
                 foreach (KeyValuePair<int, List<string>> kvp in show.AllExistngFolderLocations())
@@ -503,11 +446,10 @@ namespace TVRename
                                 first = false;
                             }
 
-                            GenerateMenu(gridSummary.showRightClickMenu, "Open: " + folder,
-                                (int) RightClickCommands.kOpenFolderBase + n);
-
-                            gridSummary.mFoldersToOpen.Add(folder);
-                            n++;
+                            AddRcMenuItem(gridSummary.showRightClickMenu, "Open: " + folder, (sender, args) =>
+                            {
+                                Helpers.OpenFolder(folder);
+                            });
                         }
                     }
                 }
@@ -529,27 +471,19 @@ namespace TVRename
                             first = false;
                         }
 
-                        int n = gridSummary.mLastFileList.Count;
                         foreach (FileInfo fi in fl)
                         {
-                            GenerateMenu(gridSummary.showRightClickMenu, "Watch: " + fi.FullName,
-                                (int) RightClickCommands.kWatchBase + n);
-
-                            gridSummary.mLastFileList.Add(fi);
-                            n++;
+                            ToolStripMenuItem tsi = new ToolStripMenuItem("Watch: " + fi.FullName);
+                            tsi.Click += (sender, args) => { Helpers.OpenFile(fi.FullName); };
+                            gridSummary.showRightClickMenu.Items.Add(tsi);
                         }
                     }
                 }
             }
-
-            private static void GenerateMenu([NotNull] ContextMenuStrip showRightClickMenu, string menuName, RightClickCommands rightClickCommand)
+            private void AddRcMenuItem([NotNull] ContextMenuStrip showRightClickMenu, string name, EventHandler command)
             {
-                GenerateMenu(showRightClickMenu, menuName, (int)rightClickCommand);
-            }
-
-            private static void GenerateMenu([NotNull] ContextMenuStrip showRightClickMenu, string menuName, int rightClickCommand)
-            {
-                ToolStripMenuItem tsi = new ToolStripMenuItem(menuName) {Tag = rightClickCommand};
+                ToolStripMenuItem tsi = new ToolStripMenuItem(name);
+                tsi.Click += command;
                 showRightClickMenu.Items.Add(tsi);
             }
 

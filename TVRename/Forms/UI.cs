@@ -41,16 +41,6 @@ using BrightIdeasSoftware;
 
 namespace TVRename
 {
-    // right click commands
-    public enum RightClickCommands
-    {
-        kVisitTvSourceSeason,
-        kVisitTvSourceSeries,
-        kForceRefreshSeries,
-        kWatchBase = 1000,
-        kOpenFolderBase = 2000,
-    }
-
     ///  <summary>
     ///  Summary for UI
     ///  WARNING: If you change the name of this class, you will need to change the
@@ -1490,7 +1480,6 @@ namespace TVRename
                     UiScan(new List<ShowItem> {ei.Show}, false, TVSettings.ScanType.SingleShow);
                     tabControl1.SelectTab(tbAllInOne);
                     break;
-
                 default:
                     throw new ArgumentOutOfRangeException();
             }
