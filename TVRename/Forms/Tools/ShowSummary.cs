@@ -410,7 +410,7 @@ namespace TVRename
                 }
 
                 bool first = true;
-                foreach (string folder in afl[seas.SeasonNumber])
+                foreach (string folder in afl[seas.SeasonNumber].OrderBy(s => s))
                 {
                     if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !added.Contains(folder))
                     {
@@ -433,7 +433,7 @@ namespace TVRename
             {
                 bool first = true;
 
-                foreach (KeyValuePair<int, List<string>> kvp in show.AllExistngFolderLocations())
+                foreach (KeyValuePair<int, List<string>> kvp in show.AllExistngFolderLocations().OrderBy(pair => pair.Key))
                 {
                     foreach (string folder in kvp.Value)
                     {
