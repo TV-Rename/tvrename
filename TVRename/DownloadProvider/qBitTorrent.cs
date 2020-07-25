@@ -55,6 +55,12 @@ namespace TVRename
                 JToken settings = JToken.Parse(settingsString);
                 JArray currentDownloads = JArray.Parse(downloadsString);
 
+                if (!currentDownloads.HasValues && settings.HasValues)
+                {
+                    Logger.Info($"No Downloads available from qBitTorrent: {currentDownloads}");
+                    return new List<TorrentEntry>();
+                }
+
                 if (!currentDownloads.HasValues || !settings.HasValues)
                 {
                     Logger.Warn($"Could not get currentDownloads or settings from qBitTorrent: {settingsString} {currentDownloads}");
