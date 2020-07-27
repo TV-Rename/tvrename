@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace TVRename
@@ -22,14 +24,14 @@ namespace TVRename
     public partial class AddModifyRule : Form
     {
         private readonly ShowRule mRule;
-        private readonly ProcessedSeason mProcessedSeason;
+        private readonly IEnumerable<ProcessedEpisode> eps;
         private readonly ProcessedSeason.SeasonType mOrder;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public AddModifyRule(ShowRule rule, ShowItem show, int seasonNumber)
+        public AddModifyRule(ShowRule rule, ShowItem show, IEnumerable<ProcessedEpisode> s)
         {
             mRule = rule;
-            mProcessedSeason = show.GetSeason(seasonNumber) ?? throw new InvalidOperationException($"Can't add rule for Season {seasonNumber} to {show.ShowName}");
+            eps = s;
             mOrder= show.Order;
 
             InitializeComponent();
@@ -177,12 +179,12 @@ namespace TVRename
                 //validation Rules
 
                 ValidationCheck(mRule.DoWhatNow != RuleAction.kInsert
-                    , !mProcessedSeason.ContainsEpisode(mRule.First, mOrder)
+                    , !ContainsEpisode(mRule.First)
                     , "First episode number is not valid for the selected season"
                     , txtValue1);
 
                 ValidationCheck(mRule.DoWhatNow == RuleAction.kInsert
-                    , !(mProcessedSeason.NextEpisodeIs(mRule.First, mOrder) || mProcessedSeason.ContainsEpisode(mRule.First, mOrder))
+                    , !(NextEpisodeIs(mRule.First) || ContainsEpisode(mRule.First))
                     , "First episode number is not valid for the selected season"
                     , txtValue1);
 
@@ -190,7 +192,7 @@ namespace TVRename
                 bool singleEpisodeRule = mRule.DoWhatNow.In(RuleAction.kRename ,RuleAction.kInsert,RuleAction.kSplit);
 
                 ValidationCheck(!singleEpisodeRule
-                    , !mProcessedSeason.ContainsEpisode(mRule.Second, mOrder)
+                    , !ContainsEpisode(mRule.Second)
                     , "Second episode number is not valid for the selected season"
                     , txtValue2);
                 
@@ -211,6 +213,18 @@ namespace TVRename
                 Logger.Warn($"Validation Error: {valException.Message}: {mRule}");
                 DialogResult = DialogResult.None;
             }
+        }
+
+        private bool ContainsEpisode(int episodeNumber)
+        {
+            return eps.Any(ep => ep.GetEpisodeNumber(mOrder) == episodeNumber);
+        }
+
+        private bool NextEpisodeIs(int episodeNumber)
+        {
+            int maxEpNum = eps.MaxOrDefault(ep => ep.GetEpisodeNumber(mOrder), 0);
+
+            return episodeNumber == maxEpNum + 1;
         }
 
         private static void ValidationCheck(bool ruleCheck, bool check, string message, Control source)

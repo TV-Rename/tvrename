@@ -104,7 +104,7 @@ namespace TVRename
         private void bnAddRule_Click(object sender, System.EventArgs e)
         {
             ShowRule sr = new ShowRule();
-            AddModifyRule ar = new AddModifyRule(sr, show,mSeasonNumber);
+            AddModifyRule ar = new AddModifyRule(sr, show, ProcessedEpisodes());
 
             bool res = ar.ShowDialog(this) == DialogResult.OK;
             if (res)
@@ -170,7 +170,7 @@ namespace TVRename
             }
 
             ShowRule sr = (ShowRule) lvRuleList.SelectedItems[0].Tag;
-            AddModifyRule ar = new AddModifyRule(sr, show, mSeasonNumber);
+            AddModifyRule ar = new AddModifyRule(sr, show, ProcessedEpisodes());
             ar.ShowDialog(this); // modifies rule in-place if OK'd
             FillRuleList(false, 0);
         }
@@ -259,6 +259,20 @@ namespace TVRename
 
         private void FillPreview()
         {
+            IEnumerable<ProcessedEpisode> pel = ProcessedEpisodes();
+
+            lbEpsPreview.BeginUpdate();
+            lbEpsPreview.Items.Clear();
+            foreach (ProcessedEpisode pe in pel)
+            {
+                lbEpsPreview.Items.Add(nameStyle.NameFor(pe));
+            }
+
+            lbEpsPreview.EndUpdate();
+        }
+
+        private IEnumerable<ProcessedEpisode> ProcessedEpisodes()
+        {
             List<ProcessedEpisode> pel = new List<ProcessedEpisode>();
 
             if (mOriginalEps != null)
@@ -271,14 +285,7 @@ namespace TVRename
                 ShowLibrary.ApplyRules(pel, workingRuleSet, show);
             }
 
-            lbEpsPreview.BeginUpdate();
-            lbEpsPreview.Items.Clear();
-            foreach (ProcessedEpisode pe in pel)
-            {
-                lbEpsPreview.Items.Add(nameStyle.NameFor(pe));
-            }
-
-            lbEpsPreview.EndUpdate();
+            return pel;
         }
 
         private void Button2_Click(object sender, System.EventArgs e)
