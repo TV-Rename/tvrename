@@ -74,8 +74,7 @@ namespace TVRename
                         !TVSettings.Instance.DownloadFolders.Any(folder =>
                             folder.SameDirectoryLocation(fi.Directory.FullName));
 
-                    addTo.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.copy, dce, fi, me.MissingEpisode, doTidyup,
-                        me,MDoc));
+                    addTo.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.copy, dce, fi, me.MissingEpisode, doTidyup, me, MDoc));
                 }
 
                 if (doExtraFiles)
