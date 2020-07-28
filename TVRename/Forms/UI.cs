@@ -3041,12 +3041,17 @@ namespace TVRename
 
         private void SetCheckboxes()
         {
+            internalCheckChange = true;
             olvAction.CheckObjects(mDoc.TheActionList.Actions);
+            internalCheckChange = false;
+            UpdateActionCheckboxes();
         }
 
         public void FillActionList(bool preserveExistingCheckboxes)
         {
+            internalCheckChange = true;
             FillNewActionList(preserveExistingCheckboxes);
+            internalCheckChange = false;
             UpdateActionCheckboxes();
         }
 
@@ -3056,20 +3061,20 @@ namespace TVRename
             {
                 return;
             }
+
+            byte[] oldState = olvAction.SaveState();
+            olvAction.BeginUpdate();
+
             if (preserveExistingCheckboxes)
             {
-                byte[] oldState = olvAction.SaveState();
                 List <Item> oldItems = olvAction.Items.OfType<OLVListItem>().Select(lvi => (Item)lvi.RowObject).ToList();
 
-                olvAction.BeginUpdate();
                 mDoc.TheActionList.NotifyUpdated();
                 olvAction.RebuildColumns();
 
                 List<Item> newItems = olvAction.Items.OfType<OLVListItem>().Select(lvi => (Item)lvi.RowObject).ToList();
                 //We have a new addition - check its checkbox
                 olvAction.CheckObjects(newItems.Where(newRow => !oldItems.Contains(newRow)));
-                olvAction.RestoreState(oldState);
-                olvAction.EndUpdate();
             }
             else
             {
@@ -3077,6 +3082,8 @@ namespace TVRename
                 olvAction.RebuildColumns();
                 SetCheckboxes();
             }
+            olvAction.RestoreState(oldState);
+            olvAction.EndUpdate();
         }
 
         [NotNull]
@@ -3952,7 +3959,7 @@ namespace TVRename
             olvAction.BeginUpdate();
             olvAction.ShowGroups=true;
             olvAction.AlwaysGroupByColumn = null;
-            //olvAction.Sort(olvType,SortOrder.Ascending);
+            olvAction.Sort(olvType,SortOrder.Ascending);
             olvAction.BuildGroups(olvType,SortOrder.Ascending);//,olvShowColumn,SortOrder.Ascending,olvSeason,SortOrder.Ascending);
             olvAction.CustomSorter = delegate { olvAction.ListViewItemSorter = new ListViewActionItemSorter(); };
             olvAction.EndUpdate();
