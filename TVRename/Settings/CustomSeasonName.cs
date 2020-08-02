@@ -31,7 +31,8 @@ namespace TVRename
                                                             "S{SeasonNumber}",
                                                             "S{SeasonNumber:2}",
                                                             "{ShowName} - Season {SeasonNumber:2}",
-                                                            "{StartYear}-{EndYear}"
+                                                            "{StartYear}-{EndYear}",
+                                                            "Season {SeasonNumber:2} - {SeasonName}"
                                                         };
 
         internal static readonly List<string> TAGS = new List<string>
@@ -45,7 +46,8 @@ namespace TVRename
             "{SeasonNumber:2}",
             "{StartYear}",
             "{EndYear}",
-            "{ShowImdb}"
+            "{ShowImdb}",
+            "{SeasonName}"
         };
 
         [NotNull]
@@ -73,6 +75,9 @@ namespace TVRename
                 showname = Uri.EscapeDataString(showname);
             }
 
+            string seasonName = s.Show.TheSeries()?.Season(s.SeasonNumber)?.SeasonName;
+
+
             name = name.ReplaceInsensitive("{ShowName}", showname);
             name = name.ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower());
             name = name.ReplaceInsensitive("{ShowNameLower}", s.Show.ShowName.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
@@ -80,6 +85,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Season:2}", s.SeasonNumber.ToString("00"));
             name = name.ReplaceInsensitive("{SeasonNumber}", s.SeasonIndex.ToString());
             name = name.ReplaceInsensitive("{SeasonNumber:2}", s.SeasonIndex.ToString("00"));
+            name = name.ReplaceInsensitive("{SeasonName}", seasonName??string.Empty);
             name = name.ReplaceInsensitive("{StartYear}", s.MinYear().ToString());
             name = name.ReplaceInsensitive("{EndYear}", s.MaxYear().ToString());
             name = name.ReplaceInsensitive("{ShowImdb}", s.Show.TheSeries()?.Imdb??string.Empty);
