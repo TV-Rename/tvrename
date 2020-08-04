@@ -34,9 +34,10 @@ namespace TVRename
                 ItemDownloading _ => 10,
                 ActionDeleteFile _ => 11,
                 ActionDeleteDirectory _ => 12,
-                ActionDateTouch _ => 13,
-                ActionTRemove _ => 14,
-                _ => 15
+                ActionDateTouchEpisode _ => 13,
+                ActionDateTouchSeason _ => 14,
+                ActionDateTouchShow _ => 15,
+                ActionTRemove _ => 16
             };
         }
     }
