@@ -469,15 +469,7 @@ namespace TVRename.TheTVDB
         {
             Say("Could not connect to TVDB");
 
-            if (ex.IsUnimportant())
-            {
-                Logger.Warn($"Error obtaining Languages from TVDB {ex.LoggableDetails()}");
-            }
-            else
-            {
-                Logger.Error($"Error obtaining Languages from TVDB {ex.LoggableDetails()}");
-            }
-
+            Logger.LogWebException("Error obtaining Languages from TVDB",ex);
             LastErrorMessage = ex.LoggableDetails();
 
             if (showErrorMsgBox)
@@ -691,6 +683,14 @@ namespace TVRename.TheTVDB
             try
             {
                 return API.GetUpdatesSince(updateFromEpochTime, TVSettings.Instance.PreferredLanguageCode);
+            }
+            catch (IOException iex)
+            {
+                Logger.LogIoException($"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is", iex);
+
+                SayNothing();
+                LastErrorMessage = iex.LoggableDetails();
+                return null;
             }
             catch (WebException ex)
             {
@@ -1111,7 +1111,7 @@ namespace TVRename.TheTVDB
                 }
                 catch (IOException ex)
                 {
-                    Logger.Warn(ex, "Connection to TVDB Failed whilst loading episode with Id {0}.", id);
+                    Logger.Warn(ex, $"Connection to TVDB Failed whilst loading episode with Id {id}.");
                     return null;
                 }
             }

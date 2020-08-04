@@ -286,6 +286,11 @@ namespace TVRename.TheTVDB
                 //no images for chosen language
                 Logger.Warn($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}");
             }
+            catch (IOException)
+            {
+                //no images for chosen language
+                Logger.Warn($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}");
+            }
             return new List<string>();
         }
 
@@ -357,8 +362,7 @@ namespace TVRename.TheTVDB
                 }
                 catch (IOException ioe)
                 {
-                    Logger.Error(ioe,
-                        $"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}");
+                    Logger.Warn($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}: {ioe.LoggableDetails()}");
                 }
             }
 

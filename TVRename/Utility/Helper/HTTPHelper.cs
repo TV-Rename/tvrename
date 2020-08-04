@@ -66,7 +66,7 @@ namespace TVRename
                 return client.DownloadString(url);
             }
 
-            return String.Empty;
+            return string.Empty;
         }
 
         public static byte[] GetUrlBytes(string url, bool useCloudflareProtection)
@@ -106,7 +106,7 @@ namespace TVRename
         [NotNull]
         public static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType, string? token)
         {
-            return HttpRequest(method, url, json, contentType, token, String.Empty );
+            return HttpRequest(method, url, json, contentType, token, string.Empty );
         }
 
         [NotNull]
@@ -160,7 +160,7 @@ namespace TVRename
             {
                 if (stream == null)
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
 
                 using (StreamReader reader = new StreamReader(stream))
@@ -180,6 +180,11 @@ namespace TVRename
             {
                 l.Error(message + " " + wex.LoggableDetails());
             }
+        }
+
+        public static void LogIoException([NotNull] this Logger l, string message, [NotNull] IOException wex)
+        {
+            l.Warn(message + " " + wex.LoggableDetails());
         }
 
         public static void LogHttpRequestException([NotNull] this Logger l, string message, [NotNull] HttpRequestException wex)
@@ -252,6 +257,17 @@ namespace TVRename
             return wc.DownloadData(url);
         }
 
+        public static string LoggableDetails([NotNull] this IOException ex)
+        {
+            StringBuilder s = new StringBuilder();
+            s.Append($"IOException obtained. {ex.Message}");
+            if (ex.InnerException != null)
+            {
+                s.Append($". Further details: {ex.InnerException.Message}");
+            }
+            return s.ToString();
+        }
+
         [NotNull]
         public static string LoggableDetails([NotNull] this WebException ex)
         {
@@ -300,7 +316,7 @@ namespace TVRename
 
         [NotNull]
         public static JObject JsonHttpGetRequest([NotNull] string url, string? authToken) =>
-            JObject.Parse(HttpRequest("GET",url, null, "application/json", authToken,String.Empty));
+            JObject.Parse(HttpRequest("GET",url, null, "application/json", authToken,string.Empty));
 
         [NotNull]
         public static JObject JsonHttpPostRequest( string url, JObject request, bool retry)
@@ -311,12 +327,12 @@ namespace TVRename
             if (retry)
             {
                 RetryOnException(3, pauseBetweenFailures, url, exception => true,
-                    () => { response = HttpRequest("POST", url, request.ToString(), "application/json",String.Empty); },
+                    () => { response = HttpRequest("POST", url, request.ToString(), "application/json",string.Empty); },
                     null);
             }
             else
             {
-                response = HttpRequest("POST", url, request.ToString(), "application/json", String.Empty);
+                response = HttpRequest("POST", url, request.ToString(), "application/json", string.Empty);
             }
 
             return JObject.Parse(response);
@@ -327,7 +343,7 @@ namespace TVRename
         {
             if (parameters is null)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             StringBuilder sb = new StringBuilder();
