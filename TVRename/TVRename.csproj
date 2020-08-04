@@ -351,6 +351,9 @@
     <Compile Include="TVRename\FileIssue.cs" />
     <Compile Include="TVRename\MergedEpisodeFinderController.cs" />
     <Compile Include="TVRename\UpdateTimeTracker.cs" />
+    <Compile Include="Utility\Extensions\SafeEnumerable.cs" />
+    <Compile Include="Utility\Extensions\SafeEnumerator.cs" />
+    <Compile Include="Utility\Extensions\SafeList.cs" />
     <Compile Include="Utility\ServerRelease.cs" />
     <Compile Include="Utility\UrlCache.cs" />
     <Compile Include="Forms\ShowPreferences\AutoAddShow.cs">

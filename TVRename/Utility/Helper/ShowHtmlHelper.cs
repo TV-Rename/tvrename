@@ -69,21 +69,7 @@ namespace TVRename
             string yearRange = YearRange(ser);
             string episodeSummary = ser.Episodes.Count.ToString();
             string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
-
-            StringBuilder tableRows = new StringBuilder();
-
-            foreach (ProcessedSeason season in si.AppropriateSeasons().OrderBy(pair => pair.Key).Select(pair => pair.Value))
-            {
-                if (si.SeasonEpisodes.TryGetValue(season.SeasonNumber, out List<ProcessedEpisode> seasonEpisodes))
-                {
-                    tableRows.AppendSeasonShowSummary(dfc, si, season, includeDirectoryLinks, seasonEpisodes);
-                }
-                else
-                {
-                    throw new ArgumentException($"Could not find season {season.SeasonNumber} for {si.ShowName} it only has the following seasons ({si.SeasonEpisodes.Keys.Select(i => i.ToString()).ToCsv()})");
-                }
-            }
-            string table = CreateEpisodeTableHeader(tableRows.ToString());
+            string table = CreateEpisodeTableHeader(CreateTableRows(si, dfc, includeDirectoryLinks));
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                 <div class=""text-center"">
@@ -94,14 +80,29 @@ namespace TVRename
                      <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6><small class=""text-muted"">{episodeSummary} Episodes</small></div>
                     </div>
 		            <div class=""row"">
-<table class=""w-100"">
+                    <table class=""w-100"">
                         <tr><td><p class=""lead"">{ser.Overview}</p></td><td class=""text-right align-text-top"">
 			         {CreateButton(imdbLink, "IMDB.com", "View on IMDB")}
 			         {CreateButton(ser.OfficialUrl, "Official Site", "View on Official Site")}
 			        </td></tr></table>
-</div>
-{table}
+                </div>
+                {table}
                 </div>");
+        }
+
+        private static string CreateTableRows(ShowItem si, DirFilesCache dfc, bool includeDirectoryLinks)
+        {
+            StringBuilder tableRows = new StringBuilder();
+
+            foreach (ProcessedSeason season in si.AppropriateSeasons().OrderBy(pair => pair.Key).Select(pair => pair.Value))
+            {
+                if (si.SeasonEpisodes.TryGetValue(season.SeasonNumber, out List<ProcessedEpisode> seasonEpisodes))
+                {
+                    tableRows.AppendSeasonShowSummary(dfc, si, season, includeDirectoryLinks, seasonEpisodes);
+                }
+            }
+
+            return tableRows.ToString();
         }
 
         private static void AppendSeasonShowSummary([NotNull] this StringBuilder sb, DirFilesCache dfc, [NotNull] ShowItem si, [NotNull] ProcessedSeason s, bool includeDirectoryLinks, List<ProcessedEpisode> seasonEpisodes)
