@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
+using System.Collections.Concurrent;
 using Alphaleonis.Win32.Filesystem;
 using System.Xml;
 using System.Collections.Generic;
@@ -37,11 +38,11 @@ namespace TVRename
         public bool ForceCheckFuture;
         public bool ForceCheckNoAirdate;
         public readonly List<int> IgnoreSeasons;
-        public readonly Dictionary<int, List<string>> ManualFolderLocations;
-        public readonly Dictionary<int, List<ProcessedEpisode>> SeasonEpisodes; // built up by applying rules.
-        private readonly Dictionary<int, ProcessedSeason> airedSeasons;
-        private readonly Dictionary<int, ProcessedSeason> dvdSeasons;
-        public readonly Dictionary<int, List<ShowRule>> SeasonRules;
+        public readonly ConcurrentDictionary<int, List<string>> ManualFolderLocations;
+        public readonly ConcurrentDictionary<int, List<ProcessedEpisode>> SeasonEpisodes; // built up by applying rules.
+        private readonly ConcurrentDictionary<int, ProcessedSeason> airedSeasons;
+        private readonly ConcurrentDictionary<int, ProcessedSeason> dvdSeasons;
+        public readonly ConcurrentDictionary<int, List<ShowRule>> SeasonRules;
         public bool ShowNextAirdate;
         public int TvdbCode;
         // ReSharper disable once InconsistentNaming
@@ -83,11 +84,11 @@ namespace TVRename
 
         public ShowItem()
         {
-            ManualFolderLocations = new Dictionary<int, List<string>>();
-            SeasonRules = new Dictionary<int, List<ShowRule>>();
-            SeasonEpisodes = new Dictionary<int, List<ProcessedEpisode>>();
-            airedSeasons = new Dictionary<int, ProcessedSeason>();
-            dvdSeasons = new Dictionary<int, ProcessedSeason>();
+            ManualFolderLocations = new ConcurrentDictionary<int, List<string>>();
+            SeasonRules = new ConcurrentDictionary<int, List<ShowRule>>();
+            SeasonEpisodes = new ConcurrentDictionary<int, List<ProcessedEpisode>>();
+            airedSeasons = new ConcurrentDictionary<int, ProcessedSeason>();
+            dvdSeasons = new ConcurrentDictionary<int, ProcessedSeason>();
             IgnoreSeasons = new List<int>();
 
             UseCustomShowName = false;
@@ -197,7 +198,7 @@ namespace TVRename
 
         private bool HasAnyAirdates(int snum)
         {
-            Dictionary<int, ProcessedSeason> seasonsToUse = AppropriateSeasons();
+            ConcurrentDictionary<int, ProcessedSeason> seasonsToUse = AppropriateSeasons();
 
             return seasonsToUse.ContainsKey(snum) && seasonsToUse[snum].Episodes.Values.Any(e => e.FirstAired != null);
         }
@@ -939,7 +940,7 @@ namespace TVRename
 
         public ProcessedSeason? GetSeason(int snum)
         {
-            Dictionary<int, ProcessedSeason> ssn = AppropriateSeasons();
+            ConcurrentDictionary<int, ProcessedSeason> ssn = AppropriateSeasons();
             return ssn.ContainsKey(snum) ? ssn[snum] : null;
         }
 
@@ -953,7 +954,7 @@ namespace TVRename
             SeasonRules[snum].Add(sr);
         }
 
-        public Dictionary<int, ProcessedSeason> AppropriateSeasons() => DvdOrder ? dvdSeasons : airedSeasons;
+        public ConcurrentDictionary<int, ProcessedSeason> AppropriateSeasons() => DvdOrder ? dvdSeasons : airedSeasons;
 
         public ProcessedSeason? GetFirstAvailableSeason()
         {
@@ -1022,7 +1023,7 @@ namespace TVRename
         public IEnumerable<Episode> EpisodesToUse()
         {
             List<Episode> returnValue = new List<Episode>();
-            Dictionary<int, ProcessedSeason> seasonsToUse = AppropriateSeasons();
+            ConcurrentDictionary<int, ProcessedSeason> seasonsToUse = AppropriateSeasons();
 
             foreach (KeyValuePair<int, ProcessedSeason> kvp in seasonsToUse)
             {

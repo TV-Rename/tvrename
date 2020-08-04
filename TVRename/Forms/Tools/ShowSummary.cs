@@ -251,12 +251,8 @@ namespace TVRename
             DirFilesCache dfc = new DirFilesCache();
             ProcessedSeason processedSeason = null;
 
-            Dictionary<int, ProcessedSeason> seasons = si.AppropriateSeasons();
-
-            if (snum >= 0 && seasons.ContainsKey(snum))
+            if (snum >= 0 && si.AppropriateSeasons().TryGetValue(snum,out processedSeason))
             {
-                processedSeason = seasons[snum];
-
                 List<ProcessedEpisode> eis = si.SeasonEpisodes[snum];
 
                 foreach (ProcessedEpisode ei in eis)

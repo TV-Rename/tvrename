@@ -72,9 +72,16 @@ namespace TVRename
 
             StringBuilder tableRows = new StringBuilder();
 
-            foreach (KeyValuePair<int, ProcessedSeason> season in si.AppropriateSeasons().OrderBy(pair => pair.Key))
+            foreach (ProcessedSeason season in si.AppropriateSeasons().OrderBy(pair => pair.Key).Select(pair => pair.Value))
             {
-                tableRows.AppendSeasonShowSummary(dfc, si, season.Value, includeDirectoryLinks);
+                if (si.SeasonEpisodes.TryGetValue(season.SeasonNumber, out List<ProcessedEpisode> seasonEpisodes))
+                {
+                    tableRows.AppendSeasonShowSummary(dfc, si, season, includeDirectoryLinks, seasonEpisodes);
+                }
+                else
+                {
+                    throw new ArgumentException($"Could not find season {season.SeasonNumber} for {si.ShowName} it only has the following seasons ({si.SeasonEpisodes.Keys.Select(i => i.ToString()).ToCsv()})");
+                }
             }
             string table = CreateEpisodeTableHeader(tableRows.ToString());
 
@@ -97,7 +104,7 @@ namespace TVRename
                 </div>");
         }
 
-        private static void AppendSeasonShowSummary([NotNull] this StringBuilder sb, DirFilesCache dfc, [NotNull] ShowItem si, [NotNull] ProcessedSeason s, bool includeDirectoryLinks)
+        private static void AppendSeasonShowSummary([NotNull] this StringBuilder sb, DirFilesCache dfc, [NotNull] ShowItem si, [NotNull] ProcessedSeason s, bool includeDirectoryLinks, List<ProcessedEpisode> seasonEpisodes)
         {
             string explorerButton = string.Empty;
             if (includeDirectoryLinks)
@@ -107,12 +114,7 @@ namespace TVRename
                     "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
             }
 
-            if (!si.SeasonEpisodes.ContainsKey(s.SeasonNumber))
-            {
-                throw new ArgumentException($"Could not find season {s.SeasonNumber} for {si.ShowName} it only has the follwing seasons ({si.SeasonEpisodes.Keys.Select(i => i.ToString()).ToCsv()})");
-            }
-
-            string tableRows = si.SeasonEpisodes[s.SeasonNumber].Select(episode => SeasonSummaryTableRow(episode, includeDirectoryLinks, dfc)).Concat();
+            string tableRows = seasonEpisodes.Select(episode => SeasonSummaryTableRow(episode, includeDirectoryLinks, dfc)).Concat();
 
             string? tvdbSLug = si.TheSeries()?.Slug;
             string tvdbLink = !tvdbSLug.HasValue() ? string.Empty : TheTVDB.API.WebsiteSeasonUrl(s);
