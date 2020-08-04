@@ -77,7 +77,6 @@ namespace TVRename
 
             string seasonName = s.Show.TheSeries()?.Season(s.SeasonNumber)?.SeasonName;
 
-
             name = name.ReplaceInsensitive("{ShowName}", showname);
             name = name.ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower());
             name = name.ReplaceInsensitive("{ShowNameLower}", s.Show.ShowName.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));

@@ -10,6 +10,7 @@ using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using NLog;
 using System.IO;
+using System.Net.Cache;
 
 namespace TVRename
 {
@@ -65,7 +66,7 @@ namespace TVRename
                 return client.DownloadString(url);
             }
 
-            return string.Empty;
+            return String.Empty;
         }
 
         public static byte[] GetUrlBytes(string url, bool useCloudflareProtection)
@@ -105,7 +106,7 @@ namespace TVRename
         [NotNull]
         public static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType, string? token)
         {
-            return HttpRequest(method, url, json, contentType, token, string.Empty );
+            return HttpRequest(method, url, json, contentType, token, String.Empty );
         }
 
         [NotNull]
@@ -148,6 +149,27 @@ namespace TVRename
             Logger.Trace("Returned {0}", result);
             return result;
         }
+
+        [NotNull]
+        public static string Obtain([NotNull] string url)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (Stream stream = response.GetResponseStream())
+            {
+                if (stream == null)
+                {
+                    return String.Empty;
+                }
+
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    return reader.ReadToEnd();
+                }
+            }
+        }
+
         public static void LogWebException([NotNull] this Logger l,string message, [NotNull] WebException wex)
         {
             if (wex.IsUnimportant())
@@ -224,7 +246,7 @@ namespace TVRename
 
             if (forceReload)
             {
-                wc.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.Reload);
+                wc.CachePolicy = new RequestCachePolicy(RequestCacheLevel.Reload);
             }
 
             return wc.DownloadData(url);
@@ -278,7 +300,7 @@ namespace TVRename
 
         [NotNull]
         public static JObject JsonHttpGetRequest([NotNull] string url, string? authToken) =>
-            JObject.Parse(HttpRequest("GET",url, null, "application/json", authToken,string.Empty));
+            JObject.Parse(HttpRequest("GET",url, null, "application/json", authToken,String.Empty));
 
         [NotNull]
         public static JObject JsonHttpPostRequest( string url, JObject request, bool retry)
@@ -289,12 +311,12 @@ namespace TVRename
             if (retry)
             {
                 RetryOnException(3, pauseBetweenFailures, url, exception => true,
-                    () => { response = HttpRequest("POST", url, request.ToString(), "application/json",string.Empty); },
+                    () => { response = HttpRequest("POST", url, request.ToString(), "application/json",String.Empty); },
                     null);
             }
             else
             {
-                response = HttpRequest("POST", url, request.ToString(), "application/json", string.Empty);
+                response = HttpRequest("POST", url, request.ToString(), "application/json", String.Empty);
             }
 
             return JObject.Parse(response);
@@ -305,13 +327,13 @@ namespace TVRename
         {
             if (parameters is null)
             {
-                return string.Empty;
+                return String.Empty;
             }
 
             StringBuilder sb = new StringBuilder();
             sb.Append("?");
 
-            foreach (KeyValuePair<string,string>  item in parameters)
+            foreach (KeyValuePair<string, string> item in parameters)
             {
                 sb.Append($"{item.Key}={WebUtility.UrlEncode(item.Value)}&");
             }

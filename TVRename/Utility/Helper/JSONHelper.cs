@@ -8,8 +8,6 @@
 
 using System;
 using System.Globalization;
-using System.IO;
-using System.Net;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using NLog;
@@ -66,26 +64,6 @@ namespace TVRename
             return string.Empty;
         }
 
-        [NotNull]
-        public static string Obtain([NotNull] string url)
-        {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            using (Stream stream = response.GetResponseStream())
-            {
-                if (stream == null)
-                {
-                    return string.Empty;
-                }
-
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    return reader.ReadToEnd();
-                }
-            }
-        }
-
         public static int ExtractStringToInt([NotNull] this JObject r, [NotNull] string key)
         {
             string valueAsString = (string)r[key];
@@ -112,5 +90,5 @@ namespace TVRename
 
             return null;
         }
-   }
+    }
 }
