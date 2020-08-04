@@ -342,8 +342,8 @@ namespace TVRename
 
             if (si.UsesManualFolders())
             {
-                Dictionary<int, List<string>> afl = si.AllExistngFolderLocations();
-                foreach (KeyValuePair<int, List<string>> kvp in afl)
+                Dictionary<int, SafeList<string>> afl = si.AllExistngFolderLocations();
+                foreach (KeyValuePair<int, SafeList<string>> kvp in afl)
                 {
                     foreach (string folder in kvp.Value)
                     {

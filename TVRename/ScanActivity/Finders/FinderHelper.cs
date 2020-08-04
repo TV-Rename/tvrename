@@ -241,7 +241,7 @@ namespace TVRename
 
             int snum = seasWanted;
 
-            Dictionary<int, List<string>> dirs = si.AllFolderLocationsEpCheck(checkDirectoryExist);
+            Dictionary<int, SafeList<string>> dirs = si.AllFolderLocationsEpCheck(checkDirectoryExist);
 
             if (!dirs.ContainsKey(snum))
             {

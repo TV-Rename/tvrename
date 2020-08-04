@@ -637,7 +637,7 @@ namespace TVRename
             Logger.Info("*******************************");
             Logger.Info("Force Update Images: " + si.ShowName);
 
-            Dictionary<int, List<string>> allFolders = si.AllExistngFolderLocations();
+            Dictionary<int, SafeList<string>> allFolders = si.AllExistngFolderLocations();
 
             if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && allFolders.Any())
             {
@@ -667,7 +667,7 @@ namespace TVRename
                 }
 
                 // all the folders for this particular season
-                List<string> folders = allFolders[snum];
+                SafeList<string> folders = allFolders[snum];
 
                 foreach (string folder in folders)
                 {

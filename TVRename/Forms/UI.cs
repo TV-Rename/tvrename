@@ -1850,7 +1850,7 @@ namespace TVRename
 
             if (ep != null)
             {
-                Dictionary<int, List<string>> afl = ep.Show.AllExistngFolderLocations();
+                Dictionary<int, SafeList<string>> afl = ep.Show.AllExistngFolderLocations();
                 if (afl.ContainsKey(ep.AppropriateSeasonNumber))
                 {
                     AddFolders(afl[ep.AppropriateSeasonNumber], added);
@@ -1858,7 +1858,7 @@ namespace TVRename
             }
             else if (seas != null && si != null)
             {
-                Dictionary<int, List<string>> folders = si.AllExistngFolderLocations();
+                Dictionary<int, SafeList<string>> folders = si.AllExistngFolderLocations();
 
                 if (folders.ContainsKey(seas.SeasonNumber))
                 {
@@ -2911,15 +2911,12 @@ namespace TVRename
                 return string.Empty;
             }
 
-            foreach (List<string> folders in currentShow.AllExistngFolderLocations().Values)
+            foreach (var folder in currentShow.AllExistngFolderLocations().Values.SelectMany(list => list))
             {
-                foreach (string folder in folders)
-                {
                     if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder))
                     {
                         return folder;
                     }
-                }
             }
 
             return string.Empty;

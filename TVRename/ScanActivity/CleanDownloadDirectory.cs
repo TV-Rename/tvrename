@@ -416,7 +416,7 @@ namespace TVRename
                 return;
             }
 
-            Dictionary<int, List<string>> foldersLocations = si.AllProposedFolderLocations();
+            Dictionary<int, SafeList<string>> foldersLocations = si.AllProposedFolderLocations();
             if (!foldersLocations.ContainsKey(seasF))
             {
                 LOGGER.Info(
@@ -427,7 +427,7 @@ namespace TVRename
             LOGGER.Info(
                 $"Identified that {fi.FullName} matches S{seasF}E{epF} of show {si.ShowName}, that it's not already present and airs in the future. Copying across.");
 
-            List<string> folders = si.AllProposedFolderLocations()[seasF];
+            SafeList<string> folders = si.AllProposedFolderLocations()[seasF];
 
             foreach (string folder in folders)
             {

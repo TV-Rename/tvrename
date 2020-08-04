@@ -19,7 +19,7 @@ namespace TVRename
                 return; // skip
             }
 
-            Dictionary<int, List<string>> flocs = si.AllProposedFolderLocations();
+            Dictionary<int, SafeList<string>> flocs = si.AllProposedFolderLocations();
 
             List<string> ignoredLocations = new List<string>();
 
@@ -43,7 +43,7 @@ namespace TVRename
                     continue;
                 }
 
-                List<string> folders = new List<string>();
+                SafeList<string> folders = new SafeList<string>();
 
                 if (flocs.ContainsKey(snum))
                 {

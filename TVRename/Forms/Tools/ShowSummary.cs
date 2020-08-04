@@ -398,7 +398,7 @@ namespace TVRename
 
             private void GenerateOpenMenu([NotNull] ProcessedSeason seas, ICollection<string> added)
             {
-                Dictionary<int, List<string>> afl = show.AllExistngFolderLocations();
+                Dictionary<int, SafeList<string>> afl = show.AllExistngFolderLocations();
 
                 if (!afl.ContainsKey(seas.SeasonNumber))
                 {
@@ -429,7 +429,7 @@ namespace TVRename
             {
                 bool first = true;
 
-                foreach (KeyValuePair<int, List<string>> kvp in show.AllExistngFolderLocations().OrderBy(pair => pair.Key))
+                foreach (KeyValuePair<int, SafeList<string>> kvp in show.AllExistngFolderLocations().OrderBy(pair => pair.Key))
                 {
                     foreach (string folder in kvp.Value)
                     {

@@ -19,7 +19,7 @@ namespace TVRename
 
         protected override void Check(ShowItem si, DirFilesCache dfc,TVDoc.ScanSettings settings)
         {
-            Dictionary<int, List<string>> allFolders = si.AllExistngFolderLocations();
+            Dictionary<int, SafeList<string>> allFolders = si.AllExistngFolderLocations();
             if (allFolders.Count == 0) // no folders defined for this show
             {
                 return; // so, nothing to do.
@@ -61,13 +61,13 @@ namespace TVRename
                 }
 
                 // all the folders for this particular season
-                List<string> folders = allFolders[snum];
+                SafeList<string> folders = allFolders[snum];
 
                 CheckSeason(si, dfc, settings, snum, folders, timeForBannerUpdate);
             } // for each season of this show
         }
 
-        private void CheckSeason([NotNull] ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum, [NotNull] IReadOnlyCollection<string> folders, bool timeForBannerUpdate)
+        private void CheckSeason([NotNull] ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum, [NotNull] SafeList<string> folders, bool timeForBannerUpdate)
         {
             bool folderNotDefined = folders.Count == 0;
             if (folderNotDefined && TVSettings.Instance.MissingCheck && !si.AutoAddNewSeasons())

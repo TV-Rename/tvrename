@@ -865,20 +865,20 @@ namespace TVRename
         }
 
         [NotNull]
-        public Dictionary<int, List<string>> AllExistngFolderLocations() => AllFolderLocations( true,true);
+        public Dictionary<int, SafeList<string>> AllExistngFolderLocations() => AllFolderLocations( true,true);
         [NotNull]
-        public Dictionary<int, List<string>> AllProposedFolderLocations() => AllFolderLocations(true,false);
+        public Dictionary<int, SafeList<string>> AllProposedFolderLocations() => AllFolderLocations(true,false);
 
         [NotNull]
-        public Dictionary<int, List<string>> AllFolderLocationsEpCheck(bool checkExist) => AllFolderLocations(true, checkExist);
+        public Dictionary<int, SafeList<string>> AllFolderLocationsEpCheck(bool checkExist) => AllFolderLocations(true, checkExist);
 
         [NotNull]
-        public Dictionary<int, List<string>> AllFolderLocations(bool manualToo)=> AllFolderLocations(manualToo,true);
+        public Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo)=> AllFolderLocations(manualToo,true);
 
         [NotNull]
-        private Dictionary<int, List<string>> AllFolderLocations(bool manualToo,bool checkExist)
+        private Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo,bool checkExist)
         {
-            Dictionary<int, List<string>> fld = new Dictionary<int, List<string>>();
+            Dictionary<int, SafeList<string>> fld = new Dictionary<int, SafeList<string>>();
 
             if (manualToo)
             {
@@ -886,7 +886,7 @@ namespace TVRename
                 {
                     if (!fld.ContainsKey(kvp.Key))
                     {
-                        fld[kvp.Key] = new List<string>();
+                        fld[kvp.Key] = new SafeList<string>();
                     }
 
                     foreach (string s in kvp.Value)
@@ -919,7 +919,7 @@ namespace TVRename
                     //Now we can add the automated one
                     if (!fld.ContainsKey(i))
                     {
-                        fld[i] = new List<string>();
+                        fld[i] = new SafeList<string>();
                     }
 
                     if (!fld[i].Contains(newName))

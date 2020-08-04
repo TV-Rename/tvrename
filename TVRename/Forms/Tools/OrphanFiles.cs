@@ -116,9 +116,9 @@ namespace TVRename.Forms.Tools
                 Logger.Info($"Finding old eps for {show.ShowName}");
                 bw.ReportProgress(100*current++/total,show.ShowName);
 
-                Dictionary<int, List<string>> folders = show.AllFolderLocations(true);
+                Dictionary<int, SafeList<string>> folders = show.AllFolderLocations(true);
 
-                foreach (KeyValuePair<int, List<string>> showfolders in folders)
+                foreach (KeyValuePair<int, SafeList<string>> showfolders in folders)
                 {
                     foreach (string showfolder in showfolders.Value)
                     {

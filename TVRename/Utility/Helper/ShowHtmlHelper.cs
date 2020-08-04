@@ -248,16 +248,11 @@ namespace TVRename
                 return si.AutoAddFolderBase;
             }
 
-            Dictionary<int, List<string>> afl = si.AllExistngFolderLocations();
-
-            foreach (KeyValuePair<int, List<string>> season in afl)
+            foreach (string folder  in si.AllExistngFolderLocations().Values.SelectMany(a=>a))
             {
-                foreach (string folder in season.Value)
+                if (!string.IsNullOrWhiteSpace(folder) && Directory.Exists(folder))
                 {
-                    if (!string.IsNullOrWhiteSpace(folder) && Directory.Exists(folder))
-                    {
-                        return folder;
-                    }
+                    return folder;
                 }
             }
             return string.Empty;
@@ -532,7 +527,7 @@ namespace TVRename
 
         private static string GetBestFolderLocationToOpen([NotNull] this ShowItem si,[NotNull] ProcessedSeason s )
         {
-            Dictionary<int, List<string>> afl = si.AllExistngFolderLocations();
+            Dictionary<int, SafeList<string>> afl = si.AllExistngFolderLocations();
 
             if (afl.ContainsKey(s.SeasonNumber))
             {

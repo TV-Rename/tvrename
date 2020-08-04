@@ -32,7 +32,7 @@ namespace TVRename
                 return;
             }
 
-            Dictionary<int, List<string>> allFolders = si.AllExistngFolderLocations();
+            Dictionary<int, SafeList<string>> allFolders = si.AllExistngFolderLocations();
 
             if (allFolders.Count == 0) // no folders defined for this show
             {
