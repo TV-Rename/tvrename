@@ -70,7 +70,7 @@ namespace TVRename.Forms.ShowPreferences
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(248, 13);
             this.label1.TabIndex = 3;
-            this.label1.Text = "Select an episode that shoud be considered \'seen\':";
+            this.label1.Text = "Select an episode that should be considered \'seen\':";
             // 
             // NewSeenEpisode
             // 
