@@ -135,6 +135,8 @@ namespace TVRename
 
         public static bool IsMovieFile([NotNull] this FileInfo file) => TVSettings.Instance.FileHasUsefulExtension(file, false);
 
+        public static bool IsMovieFile([NotNull] this string filename) => TVSettings.Instance.FileHasUsefulExtension(filename, false);
+
         public static (bool found,string extension)  IsLanguageSpecificSubtitle(this FileInfo file)
         {
             foreach (string subExtension in TVSettings.Instance.subtitleExtensionsArray)

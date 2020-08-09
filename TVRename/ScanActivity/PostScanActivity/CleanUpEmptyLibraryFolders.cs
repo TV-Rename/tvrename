@@ -6,7 +6,6 @@ using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 using Microsoft.VisualBasic.FileIO;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
@@ -107,13 +106,16 @@ namespace TVRename
                     return true;
                 }
 
-                bool containsMovieFiles = Directory.GetFiles(folderName).ToList().Select(s => new FileInfo(s))
-                    .Any(info => info.IsMovieFile());
+                bool containsMovieFiles = Directory.GetFiles(folderName).Any(s => s.IsMovieFile());
 
                 if (!containsMovieFiles)
                 {
                     return true;
                 }
+            }
+            catch (ArgumentException a)
+            {
+                LOGGER.Warn($"Could not determine whether {folderName} can be removed as we got as ArgumentException {a.Message}");
             }
             catch (FileReadOnlyException)
             {
