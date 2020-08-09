@@ -2827,33 +2827,18 @@ namespace TVRename
             ShowItem currentShow = TreeNodeToShowItem(MyShowTree.SelectedNode);
 
             int snum = currentSeas?.SeasonNumber ?? 1;
-            List<ProcessedEpisode> pel = null;
+
             if (currentShow != null && currentShow.SeasonEpisodes.ContainsKey(snum))
             {
-                pel = currentShow.SeasonEpisodes[snum];
-            }
-            else if (currentShow?.SeasonEpisodes.First() != null)
-            {
-                pel = currentShow.SeasonEpisodes.First().Value;
-            }
-            else
-            {
-                foreach (ShowItem si in mDoc.Library.GetSortedShowItems())
-                {
-                    foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
-                    {
-                        pel = kvp.Value;
-                        break;
-                    }
-
-                    if (pel != null)
-                    {
-                        break;
-                    }
-                }
+                return currentShow.SeasonEpisodes[snum];
             }
 
-            return pel;
+            if (currentShow?.SeasonEpisodes.Any() ?? false)
+            {
+                return currentShow.SeasonEpisodes.First().Value;
+            }
+
+            return mDoc.Library.GetSortedShowItems().SelectMany(si => si.SeasonEpisodes.Values).FirstOrDefault();
         }
 
         private void filenameTemplateEditorToolStripMenuItem_Click(object sender, EventArgs e)
