@@ -950,7 +950,7 @@ namespace TVRename
             if (fn.ContainsAnyCharactersFrom(Path.GetInvalidPathChars()))
             {
                 Logger.Warn($"Need to remove some characters from {fn} as the directory name contains characters that cannot be in the path.");
-                fn = fn.RemoveCharactersFrom(Path.GetInvalidPathChars()).RemoveCharactersFrom("/t".ToCharArray());
+                fn = fn.RemoveCharactersFrom(Path.GetInvalidPathChars()).RemoveCharactersFrom("\t".ToCharArray());
             }
 
             return fn;
