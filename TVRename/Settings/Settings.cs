@@ -1025,10 +1025,10 @@ namespace TVRename
             public readonly string That;
             public readonly string This;
 
-            public Replacement(string from, string to, bool insens)
+            public Replacement(string from, string? to, bool insens)
             {
                 This = from;
-                That = to;
+                That = to ?? string.Empty;
                 CaseInsensitive = insens;
             }
 
@@ -1597,7 +1597,7 @@ namespace TVRename
                 string? caseInsensitiveValue = rep.Attribute("CaseInsensitive")?.Value;
                 bool caseInsensitive = caseInsensitiveValue == "Y";
 
-                if (thisValue != null  &&thatValue != null)
+                if (thisValue != null  && thatValue != null)
                 {
                     Replacements.Add(new Replacement(thisValue, thatValue, caseInsensitive));
                 }
