@@ -75,6 +75,36 @@ namespace TVRename
             }
         }
 
+        public void RemoveAll(Predicate<T> item)
+        {
+            lock (@lock)
+            {
+                inner.RemoveAll(item);
+            }
+        }
+
+        public void Sort(IComparer<T> item)
+        {
+            lock (@lock)
+            {
+                inner.Sort(item);
+            }
+        }
+        public void AddRange(IEnumerable<T> item)
+        {
+            lock (@lock)
+            {
+                inner.AddRange(item);
+            }
+        }
+
+        public void AddNullableRange(IEnumerable<T>? items)
+        {
+            if (items != null)
+            {
+                AddRange(items);
+            }
+        }
         public void Clear()
         {
             lock (@lock)

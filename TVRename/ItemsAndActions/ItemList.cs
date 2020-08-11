@@ -14,7 +14,7 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    public sealed class ItemList : List<Item>, INotifyPropertyChanged
+    public sealed class ItemList : SafeList<Item>, INotifyPropertyChanged
     {
         public void Add(IEnumerable<Item>? slil)
         {
