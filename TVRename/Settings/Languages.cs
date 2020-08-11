@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
@@ -11,9 +12,10 @@ namespace TVRename
     [System.ComponentModel.DesignerCategoryAttribute("code")]
 
     [XmlRoot("Languages", Namespace = "")]
-    public class Languages : SafeList<Language>
+    public class Languages : List<Language>
     {
         [XmlIgnoreAttribute] private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        [XmlIgnoreAttribute] object lockObject = new object();
 
         public static Languages? Load()
         {
@@ -70,28 +72,49 @@ namespace TVRename
                 di.Create();
             }
 
-            XmlWriterSettings settings = new XmlWriterSettings { Indent = true, NewLineOnAttributes = true };
-            using (XmlWriter writer = XmlWriter.Create(toFile, settings))
+            lock (lockObject)
             {
-                XmlSerializer xs = new XmlSerializer(typeof(Languages));
-                xs.Serialize(writer, this);
+                XmlWriterSettings settings = new XmlWriterSettings {Indent = true, NewLineOnAttributes = true};
+                using (XmlWriter writer = XmlWriter.Create(toFile, settings))
+                {
+                    XmlSerializer xs = new XmlSerializer(typeof(Languages));
+                    xs.Serialize(writer, this);
+                }
             }
         }
 
         public Language? GetLanguageFromCode(string? languageAbbreviation)
         {
-            return this.FirstOrDefault(l => l.Abbreviation == languageAbbreviation);
+            lock (lockObject)
+            {
+                return this.FirstOrDefault(l => l.Abbreviation == languageAbbreviation);
+            }
         }
 
         public Language? GetLanguageFromLocalName(string? language)
         {
-            return this.FirstOrDefault(l => l.Name == language);
+            lock (lockObject)
+            {
+                return this.FirstOrDefault(l => l.Name == language);
+            }
         }
 
         // ReSharper disable once UnusedMember.Global
         public Language? GetLanguageFromId(int languageId)
         {
-            return this.FirstOrDefault(l => l.Id == languageId);
+            lock (lockObject)
+            {
+                return this.FirstOrDefault(l => l.Id == languageId);
+            }
+        }
+
+        public void LoadLanguages(IEnumerable<Language?> where)
+        {
+            lock (lockObject)
+            {
+                Clear();
+                AddRange(where);
+            }
         }
     }
 }

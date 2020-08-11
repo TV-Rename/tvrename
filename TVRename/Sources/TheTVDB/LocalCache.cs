@@ -419,7 +419,6 @@ namespace TVRename.TheTVDB
                 lock (LANGUAGE_LOCK)
                 {
                     LanguageList ??= new Languages();
-                    LanguageList.Clear();
 
                     JToken? jTokens = jsonLanguagesResponse["data"];
                     if (jTokens is null)
@@ -428,7 +427,7 @@ namespace TVRename.TheTVDB
                             ShowItem.ProviderType.TheTVDB);
                     }
 
-                    LanguageList.AddRange(jTokens.Select(GenerateLanguage).Where(language => language != null));
+                    LanguageList.LoadLanguages(jTokens.Select(GenerateLanguage).Where(language => language != null));
                 }
 
                 return true;
