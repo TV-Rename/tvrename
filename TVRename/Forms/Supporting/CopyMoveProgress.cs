@@ -115,7 +115,14 @@ namespace TVRename
 
             if (top >= 0)
             {
-                lvProgress.TopItem = lvProgress.Items[top];
+                try
+                {
+                    lvProgress.TopItem = lvProgress.Items[top];
+                }
+                catch (NullReferenceException)
+                {
+                    //Ignore this as we're done
+                }
             }
 
             lvProgress.EndUpdate();
