@@ -719,7 +719,7 @@ namespace TVRename
                 string from = (string) ReplacementsGrid[i, 0].Value;
                 string to = (string) ReplacementsGrid[i, 1].Value;
                 bool ins = (bool) ReplacementsGrid[i, 2].Value;
-                if (!string.IsNullOrEmpty(from) && to != null)
+                if (!string.IsNullOrEmpty(from))
                 {
                     s.Replacements.Add(new TVSettings.Replacement(from, to, ins));
                 }

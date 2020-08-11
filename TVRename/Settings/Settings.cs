@@ -929,7 +929,7 @@ namespace TVRename
             if (fn.ContainsAnyCharactersFrom(Path.GetInvalidFileNameChars()))
             {
                 Logger.Warn($"Need to remove some characters from {fn} as the episode name contains characters that cannot be in the filename.");
-                fn = fn.RemoveCharactersFrom(Path.GetInvalidFileNameChars()).RemoveCharactersFrom("/t".ToCharArray());
+                fn = fn.RemoveCharactersFrom(Path.GetInvalidFileNameChars()).RemoveCharactersFrom("\t".ToCharArray());
             }
 
             return ForceLowercaseFilenames ? fn.ToLower() : fn;
@@ -1028,7 +1028,7 @@ namespace TVRename
             public Replacement(string from, string? to, bool insens)
             {
                 This = from;
-                That = to ?? string.Empty;
+                That = to ??string.Empty;
                 CaseInsensitive = insens;
             }
 
