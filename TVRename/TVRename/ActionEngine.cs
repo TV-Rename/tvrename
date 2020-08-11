@@ -20,7 +20,7 @@ namespace TVRename
     public class ActionEngine
     {
         private bool actionPause;
-        private List<Thread>? actionWorkers;
+        private SafeList<Thread>? actionWorkers;
         private bool actionStarting;
 
         private readonly TVRenameStats mStats; //reference to the main TVRenameStats, so we can update the counts
@@ -191,7 +191,7 @@ namespace TVRename
 
                 try
                 {
-                    actionWorkers = new List<Thread>();
+                    actionWorkers = new SafeList<Thread>();
 
                     ExecuteQueues(queues);
 
