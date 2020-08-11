@@ -49,8 +49,6 @@ namespace TVRename
                 int startPos = 100 * (currentMatchingFinderId - 1) / totalMatchingFinders;
                 int endPos = 100 * currentMatchingFinderId / totalMatchingFinders;
                 f.Check(prog,startPos, endPos, showList, settings);
-
-                MDoc.RemoveIgnored();
             }
         }
 
