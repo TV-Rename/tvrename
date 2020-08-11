@@ -391,6 +391,7 @@ namespace TVRename
             this.label62 = new System.Windows.Forms.Label();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.tpJackett = new System.Windows.Forms.TabPage();
+            this.chkSearchJackettButton = new System.Windows.Forms.CheckBox();
             this.cmbSupervisedDuplicateAction = new System.Windows.Forms.ComboBox();
             this.label77 = new System.Windows.Forms.Label();
             this.cmbUnattendedDuplicateAction = new System.Windows.Forms.ComboBox();
@@ -400,6 +401,7 @@ namespace TVRename
             this.label70 = new System.Windows.Forms.Label();
             this.cbSearchJackett = new System.Windows.Forms.CheckBox();
             this.groupBox22 = new System.Windows.Forms.GroupBox();
+            this.chkSkipJackettFullScans = new System.Windows.Forms.CheckBox();
             this.llJackettLink = new System.Windows.Forms.LinkLabel();
             this.label71 = new System.Windows.Forms.Label();
             this.cbSearchJackettOnManualScansOnly = new System.Windows.Forms.CheckBox();
@@ -413,8 +415,6 @@ namespace TVRename
             this.txtJackettServer = new System.Windows.Forms.TextBox();
             this.label45 = new System.Windows.Forms.Label();
             this.tbPreferredRSSTerms = new System.Windows.Forms.TextBox();
-            this.chkSkipJackettFullScans = new System.Windows.Forms.CheckBox();
-            this.chkSearchJackettButton = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -3190,6 +3190,7 @@ namespace TVRename
             this.txtExportRSSDaysPast.Name = "txtExportRSSDaysPast";
             this.txtExportRSSDaysPast.Size = new System.Drawing.Size(28, 20);
             this.txtExportRSSDaysPast.TabIndex = 20;
+            this.txtExportRSSDaysPast.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // bnBrowseWTWXML
             // 
@@ -3766,6 +3767,7 @@ namespace TVRename
             this.txtParallelDownloads.Name = "txtParallelDownloads";
             this.txtParallelDownloads.Size = new System.Drawing.Size(28, 20);
             this.txtParallelDownloads.TabIndex = 51;
+            this.txtParallelDownloads.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // label21
             // 
@@ -3836,6 +3838,7 @@ namespace TVRename
             this.tbPercentDirty.Name = "tbPercentDirty";
             this.tbPercentDirty.Size = new System.Drawing.Size(28, 20);
             this.tbPercentDirty.TabIndex = 24;
+            this.tbPercentDirty.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // label10
             // 
@@ -4468,6 +4471,16 @@ namespace TVRename
             this.tpJackett.Text = "Jackett Search";
             this.tpJackett.UseVisualStyleBackColor = true;
             // 
+            // chkSearchJackettButton
+            // 
+            this.chkSearchJackettButton.AutoSize = true;
+            this.chkSearchJackettButton.Location = new System.Drawing.Point(227, 195);
+            this.chkSearchJackettButton.Name = "chkSearchJackettButton";
+            this.chkSearchJackettButton.Size = new System.Drawing.Size(165, 17);
+            this.chkSearchJackettButton.TabIndex = 48;
+            this.chkSearchJackettButton.Text = "Show \'Search &Jackett\' button";
+            this.chkSearchJackettButton.UseVisualStyleBackColor = true;
+            // 
             // cmbSupervisedDuplicateAction
             // 
             this.cmbSupervisedDuplicateAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -4592,6 +4605,16 @@ namespace TVRename
             this.groupBox22.TabStop = false;
             this.groupBox22.Text = "Jackett Search";
             // 
+            // chkSkipJackettFullScans
+            // 
+            this.chkSkipJackettFullScans.AutoSize = true;
+            this.chkSkipJackettFullScans.Location = new System.Drawing.Point(248, 19);
+            this.chkSkipJackettFullScans.Name = "chkSkipJackettFullScans";
+            this.chkSkipJackettFullScans.Size = new System.Drawing.Size(154, 17);
+            this.chkSkipJackettFullScans.TabIndex = 41;
+            this.chkSkipJackettFullScans.Text = "Skip Jackett On Full Scans";
+            this.chkSkipJackettFullScans.UseVisualStyleBackColor = true;
+            // 
             // llJackettLink
             // 
             this.llJackettLink.AutoSize = true;
@@ -4713,26 +4736,6 @@ namespace TVRename
             this.tbPreferredRSSTerms.Name = "tbPreferredRSSTerms";
             this.tbPreferredRSSTerms.Size = new System.Drawing.Size(304, 20);
             this.tbPreferredRSSTerms.TabIndex = 32;
-            // 
-            // chkSkipJackettFullScans
-            // 
-            this.chkSkipJackettFullScans.AutoSize = true;
-            this.chkSkipJackettFullScans.Location = new System.Drawing.Point(248, 19);
-            this.chkSkipJackettFullScans.Name = "chkSkipJackettFullScans";
-            this.chkSkipJackettFullScans.Size = new System.Drawing.Size(154, 17);
-            this.chkSkipJackettFullScans.TabIndex = 41;
-            this.chkSkipJackettFullScans.Text = "Skip Jackett On Full Scans";
-            this.chkSkipJackettFullScans.UseVisualStyleBackColor = true;
-            // 
-            // chkSearchJackettButton
-            // 
-            this.chkSearchJackettButton.AutoSize = true;
-            this.chkSearchJackettButton.Location = new System.Drawing.Point(227, 195);
-            this.chkSearchJackettButton.Name = "chkSearchJackettButton";
-            this.chkSearchJackettButton.Size = new System.Drawing.Size(165, 17);
-            this.chkSearchJackettButton.TabIndex = 48;
-            this.chkSearchJackettButton.Text = "Show \'Search &Jackett\' button";
-            this.chkSearchJackettButton.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 

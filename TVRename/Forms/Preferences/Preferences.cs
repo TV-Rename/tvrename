@@ -253,9 +253,9 @@ namespace TVRename
             s.VideoExtensionsString = txtVideoExtensions.Text;
             s.OtherExtensionsString = txtOtherExtensions.Text;
             s.subtitleExtensionsString = txtSubtitleExtensions.Text;
-            s.ExportRSSMaxDays = Convert.ToInt32(txtExportRSSMaxDays.Text);
-            s.ExportRSSMaxShows = Convert.ToInt32(txtExportRSSMaxShows.Text);
-            s.ExportRSSDaysPast = Convert.ToInt32(txtExportRSSDaysPast.Text);
+            s.ExportRSSMaxDays = txtExportRSSMaxDays.Text.ToInt(7);
+            s.ExportRSSMaxShows = txtExportRSSMaxShows.Text.ToInt(10);
+            s.ExportRSSDaysPast = txtExportRSSDaysPast.Text.ToInt(0);
             s.KeepTogether = cbKeepTogether.Checked;
             s.LeadingZeroOnSeason = cbLeadingZero.Checked;
             s.ShowInTaskbar = chkShowInTaskbar.Checked;
