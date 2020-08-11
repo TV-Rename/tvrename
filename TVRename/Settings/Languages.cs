@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
@@ -12,7 +11,7 @@ namespace TVRename
     [System.ComponentModel.DesignerCategoryAttribute("code")]
 
     [XmlRoot("Languages", Namespace = "")]
-    public class Languages : List<Language>
+    public class Languages : SafeList<Language>
     {
         [XmlIgnoreAttribute] private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
