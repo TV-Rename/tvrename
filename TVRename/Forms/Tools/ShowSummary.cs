@@ -29,7 +29,7 @@ namespace TVRename
         private UI MainWindow { get; }
         private readonly TVDoc mDoc;
 
-        private readonly List<ShowSummaryData> showList;
+        private readonly SafeList<ShowSummaryData> showList;
 
         public ShowSummary(TVDoc doc, UI parent)
         {
@@ -38,7 +38,7 @@ namespace TVRename
 
             InitializeComponent();
             
-            showList = new List<ShowSummaryData>();
+            showList = new SafeList<ShowSummaryData>();
             Scan();
         }
 
@@ -57,6 +57,11 @@ namespace TVRename
 
         private void PopulateGrid()
         {
+            if (grid1.IsDisposed)
+            {
+                return;
+            }
+
             Cell colTitleModel = new Cell
             {
                 ElementText = new ActorsGrid.RotatedText(-90.0f),

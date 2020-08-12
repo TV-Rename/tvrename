@@ -3429,7 +3429,7 @@ namespace TVRename
             if (update is null)
             {
                 btnUpdateAvailable.Visible = false;
-                if (showNoUpdateRequiredDialog && !inSilentMode)
+                if (showNoUpdateRequiredDialog && !inSilentMode && Environment.UserInteractive)
                 {
                     MessageBox.Show(@"There is no update available please try again later.", @"No update available",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -3439,7 +3439,7 @@ namespace TVRename
 
             Logger.Warn(update.LogMessage());
 
-            if (inSilentMode || Debugger.IsAttached)
+            if (inSilentMode || Debugger.IsAttached || !Environment.UserInteractive)
             {
                return;
             }

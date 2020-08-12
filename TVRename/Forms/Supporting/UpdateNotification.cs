@@ -11,6 +11,7 @@ using System.Net;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
+using NLog;
 
 namespace TVRename.Forms
 {
@@ -18,6 +19,7 @@ namespace TVRename.Forms
     {
         private readonly ServerRelease newVersion;
         private const string GITHUB_CONVERSION_URL = "https://api.github.com/markdown";
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public UpdateNotification([NotNull] ServerRelease update)
         {
@@ -32,44 +34,53 @@ namespace TVRename.Forms
 
         private void UpdateWithMarkdown()
         {
-            if (WebRequest.Create(new Uri(GITHUB_CONVERSION_URL)) is HttpWebRequest req)
+            try
             {
-                req.Method = "POST";
-                req.ContentType = "application/json";
-                req.UserAgent = TVSettings.USER_AGENT;
-
-                JObject request = new JObject
+                if (WebRequest.Create(new Uri(GITHUB_CONVERSION_URL)) is HttpWebRequest req)
                 {
-                    {"text", newVersion.ReleaseNotesText},
-                    {"mode", "gfm"},
-                    {"context", "TV-Rename/tvrename"}
-                };
+                    req.Method = "POST";
+                    req.ContentType = "application/json";
+                    req.UserAgent = TVSettings.USER_AGENT;
 
-                using (System.IO.StreamWriter writer = new System.IO.StreamWriter(req.GetRequestStream()))
-                {
-                    writer.Write(request.ToString());
-                }
-
-                string result = null;
-                using (HttpWebResponse resp = req.GetResponse() as HttpWebResponse)
-                {
-                    if (resp != null)
+                    JObject request = new JObject
                     {
-                        System.IO.StreamReader reader = new System.IO.StreamReader(resp.GetResponseStream() ?? throw new InvalidOperationException());
+                        {"text", newVersion.ReleaseNotesText},
+                        {"mode", "gfm"},
+                        {"context", "TV-Rename/tvrename"}
+                    };
 
-                        result = reader.ReadToEnd();
+                    using (System.IO.StreamWriter writer = new System.IO.StreamWriter(req.GetRequestStream()))
+                    {
+                        writer.Write(request.ToString());
                     }
+
+                    string result = null;
+                    using (HttpWebResponse resp = req.GetResponse() as HttpWebResponse)
+                    {
+                        if (resp != null)
+                        {
+                            System.IO.StreamReader reader =
+                                new System.IO.StreamReader(resp.GetResponseStream() ??
+                                                           throw new InvalidOperationException());
+
+                            result = reader.ReadToEnd();
+                        }
+                    }
+
+                    const string HTML_HEAD =
+                        "<html><head><style type=\"text/css\">* {font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"; font-size:90%}</style></head><body>";
+
+                    const string HTML_FOOTER = "</body></html>";
+
+                    webReleaseNotes.DocumentText = HTML_HEAD + result + HTML_FOOTER;
                 }
-
-                const string HTML_HEAD = "<html><head><style type=\"text/css\">* {font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"; font-size:90%}</style></head><body>";
-
-                const string HTML_FOOTER = "</body></html>";
-
-                webReleaseNotes.DocumentText = HTML_HEAD + result + HTML_FOOTER;
+                webReleaseNotes.Visible = true;
+                tbReleaseNotes.Visible = false;
             }
-
-            webReleaseNotes.Visible = true;
-            tbReleaseNotes.Visible = false;
+            catch (WebException wex)
+            {
+                Logger.LogWebException("GitHub Conversion of markdown failed",wex);   
+            }
         }
 
         private void bnReleaseNotes_Click(object sender, EventArgs e)

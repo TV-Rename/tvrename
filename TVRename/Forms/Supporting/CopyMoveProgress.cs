@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System.IO;
 using System.Linq;
 
 namespace TVRename
@@ -80,31 +81,23 @@ namespace TVRename
             long totalWork = 0;
             lvProgress.Items.Clear();
 
-            foreach (ActionQueue aq in mToDo)
+            foreach (Action action in mToDo.Where(aq => aq.Actions.Count != 0).SelectMany(aq => aq.Actions))
             {
-                if (aq.Actions.Count == 0)
+                if (!action.Outcome.Done)
                 {
-                    continue;
+                    allDone = false;
                 }
 
-                foreach (Action action in aq.Actions)
+                long size = action.SizeOfWork;
+                workDone += (long) (size * action.PercentDone / 100);
+                totalWork += action.SizeOfWork;
+
+                if (!action.Outcome.Done)
                 {
-                    if (!action.Outcome.Done)
-                    {
-                        allDone = false;
-                    }
+                    ListViewItem lvi = new ListViewItem(action.Name);
+                    lvi.SubItems.Add(action.ProgressText);
 
-                    long size = action.SizeOfWork;
-                    workDone += (long) (size * action.PercentDone / 100);
-                    totalWork += action.SizeOfWork;
-
-                    if (!action.Outcome.Done)
-                    {
-                        ListViewItem lvi = new ListViewItem(action.Name);
-                        lvi.SubItems.Add(action.ProgressText);
-
-                        lvProgress.Items.Add(lvi);
-                    }
+                    lvProgress.Items.Add(lvi);
                 }
             }
 
@@ -188,11 +181,20 @@ namespace TVRename
                     di = null;
                 }
 
-                if (di != null)
+                try
                 {
-                    int pct = (int)(1000 * di.TotalFreeSpace / di.TotalSize);
-                    diskValue = 1000 - pct;
-                    diskText = di.TotalFreeSpace.GBMB(1) + " free";
+                    if (di != null)
+                    {
+                        int pct = (int) (1000 * di.TotalFreeSpace / di.TotalSize);
+                        diskValue = 1000 - pct;
+                        diskText = di.TotalFreeSpace.GBMB(1) + " free";
+                    }
+                }
+                catch (UnauthorizedAccessException)
+                {
+                }
+                catch (IOException)
+                {
                 }
             }
 
