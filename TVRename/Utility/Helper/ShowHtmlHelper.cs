@@ -356,11 +356,16 @@ namespace TVRename
             Color col = Color.FromName("ButtonFace");
             sb.AppendLine(HTMLHeader(10,col));
             sb.AppendSeason(s,si,col,includeDirectoryLinks);
-            foreach (ProcessedEpisode ep in si.SeasonEpisodes[s.SeasonNumber])
+
+            if (si.SeasonEpisodes.TryGetValue(s.SeasonNumber, out List<ProcessedEpisode> siSeasonEpisode))
             {
-                List<FileInfo> fl = includeDirectoryLinks ? dfc.FindEpOnDisk(ep) : null;
-                sb.AppendEpisode(ep,fl,col);
+                foreach (ProcessedEpisode ep in siSeasonEpisode)
+                {
+                    List<FileInfo> fl = includeDirectoryLinks ? dfc.FindEpOnDisk(ep) : null;
+                    sb.AppendEpisode(ep, fl, col);
+                }
             }
+
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
         }

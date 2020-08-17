@@ -1143,7 +1143,10 @@ namespace TVRename
 
         public void RevertAction(Item item)
         {
-            Action revertAction = (Action)item;
+            if (!(item is Action revertAction))
+            {
+                return;
+            }
             ItemMissing m2 = revertAction.UndoItemMissing;
 
             if (m2 is null)
