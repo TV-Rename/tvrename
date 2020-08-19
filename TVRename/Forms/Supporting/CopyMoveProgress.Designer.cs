@@ -72,7 +72,7 @@ namespace TVRename
             // pbFile
             // 
             this.pbFile.Location = new System.Drawing.Point(51, 34);
-            this.pbFile.Maximum = 1000;
+            this.pbFile.Maximum = MAX_PROGRESS_BAR;
             this.pbFile.Name = "pbFile";
             this.pbFile.Size = new System.Drawing.Size(242, 23);
             this.pbFile.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -81,7 +81,7 @@ namespace TVRename
             // pbGroup
             // 
             this.pbGroup.Location = new System.Drawing.Point(51, 63);
-            this.pbGroup.Maximum = 1000;
+            this.pbGroup.Maximum = MAX_PROGRESS_BAR;
             this.pbGroup.Name = "pbGroup";
             this.pbGroup.Size = new System.Drawing.Size(242, 23);
             this.pbGroup.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -141,7 +141,7 @@ namespace TVRename
             // pbDiskSpace
             // 
             this.pbDiskSpace.Location = new System.Drawing.Point(51, 92);
-            this.pbDiskSpace.Maximum = 1000;
+            this.pbDiskSpace.Maximum = MAX_PROGRESS_BAR;
             this.pbDiskSpace.Name = "pbDiskSpace";
             this.pbDiskSpace.Size = new System.Drawing.Size(243, 23);
             this.pbDiskSpace.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
