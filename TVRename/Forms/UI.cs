@@ -2828,9 +2828,12 @@ namespace TVRename
 
             int snum = currentSeas?.SeasonNumber ?? 1;
 
-            if (currentShow != null && currentShow.SeasonEpisodes.ContainsKey(snum))
+            if (currentShow != null)
             {
-                return currentShow.SeasonEpisodes[snum];
+                if (currentShow.SeasonEpisodes.TryGetValue(snum,out List<ProcessedEpisode> returnValue))
+                {
+                    return returnValue;
+                }
             }
 
             if (currentShow?.SeasonEpisodes.Any() ?? false)
