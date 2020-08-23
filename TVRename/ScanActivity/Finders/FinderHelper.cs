@@ -583,7 +583,7 @@ namespace TVRename
                 }
 
                 Logger.Info("****************");
-                Logger.Info("Auto Adding New Show");
+                Logger.Info($"Auto Adding New Show for '{refinedHint}'");
 
                 //popup dialog
                 AutoAddShow askForMatch = new AutoAddShow(refinedHint,hint);

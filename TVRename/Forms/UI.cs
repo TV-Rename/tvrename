@@ -190,6 +190,26 @@ namespace TVRename
             }
         }
 
+        public void ShowChild(Form childForm)
+        {
+            if (InvokeRequired)
+            {
+                ShowChildConsumer d = ShowChild;
+                Invoke(d, childForm);
+            }
+            else
+            {
+                if (IsDisposed)
+                {
+                    childForm.Show();
+                }
+                else
+                {
+                    childForm.Show(this);
+                }
+            }
+        }
+
         private void SetupObjectListForScanResults()
         {
             olvAction.SetObjects(mDoc.TheActionList);
@@ -4122,6 +4142,11 @@ namespace TVRename
         private void olvAction_BeforeCreatingGroups(object sender, CreateGroupsEventArgs e)
         {
             e.Parameters.ItemComparer = new ListViewActionItemSorter();
+        }
+
+        public void ShowFgDownloadProgress(CacheUpdater cu, CancellationTokenSource cts)
+        {
+            Invoke((MethodInvoker) delegate { new DownloadProgress(cu, cts).Show(this); });
         }
     }
 }

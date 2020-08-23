@@ -156,7 +156,7 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        public bool DoDownloadsFG(bool unattended,bool tvrMinimised, IDialogParent owner)
+        public bool DoDownloadsFG(bool unattended,bool tvrMinimised, UI owner)
         {
             ICollection<SeriesSpecifier> shows = Library.SeriesSpecifiers;
             bool showProgress = !Args.Hide && Environment.UserInteractive && !tvrMinimised;
@@ -228,7 +228,7 @@ namespace TVRename
             Helpers.OpenUrl(CustomEpisodeName.NameForNoExt(epi, s.Url, true));
         }
 
-        public void DoWhenToWatch(bool cachedOnly,bool unattended,bool hidden, IDialogParent owner)
+        public void DoWhenToWatch(bool cachedOnly,bool unattended,bool hidden, UI owner)
         {
             if (!cachedOnly && !DoDownloadsFG(unattended,hidden,owner))
             {
@@ -426,7 +426,7 @@ namespace TVRename
             }
         }
 
-        internal void ShowAddedOrEdited(bool download, bool unattended,bool hidden, IDialogParent owner)
+        internal void ShowAddedOrEdited(bool download, bool unattended,bool hidden, UI owner)
         {
             SetDirty();
             if (download)
@@ -447,7 +447,7 @@ namespace TVRename
 
         public ConcurrentBag<ShowNotFoundException> ShowProblems => cacheManager.Problems;
 
-        public void Scan(IEnumerable<ShowItem>? passedShows, bool unattended, TVSettings.ScanType st, bool hidden, IDialogParent owner)
+        public void Scan(IEnumerable<ShowItem>? passedShows, bool unattended, TVSettings.ScanType st, bool hidden, UI owner)
         {
             try
             {
@@ -468,7 +468,7 @@ namespace TVRename
                     return;
                 }
 
-                Thread actionWork = new Thread(ScanWorker) {Name = "ActionWork"};
+                Thread actionWork = new Thread(ScanWorker) {Name = "Scan Thread"};
                 CancellationTokenSource cts = new CancellationTokenSource();
                 actionWork.SetApartmentState(ApartmentState.STA); //needed to allow DragDrop on any UI this thread creates
 
@@ -517,9 +517,9 @@ namespace TVRename
             public readonly TVSettings.ScanType Type;
             public readonly List<ShowItem> Shows;
             public readonly CancellationToken Token;
-            public readonly IDialogParent Owner;
+            public readonly UI Owner;
 
-            public ScanSettings(List<ShowItem> list, bool unattended, bool hidden, TVSettings.ScanType st,CancellationToken tok, IDialogParent owner)
+            public ScanSettings(List<ShowItem> list, bool unattended, bool hidden, TVSettings.ScanType st,CancellationToken tok, UI owner)
             {
                 Shows = list;
                 Unattended = unattended;
@@ -970,7 +970,7 @@ namespace TVRename
             return showsToScan;
         }
 
-        internal void ForceRefresh(IEnumerable<ShowItem>? sis, bool unattended,bool tvrMinimised, IDialogParent owner)
+        internal void ForceRefresh(IEnumerable<ShowItem>? sis, bool unattended,bool tvrMinimised, UI owner)
         {
             PreventAutoScan("Force Refresh");
             if (sis != null)
@@ -998,7 +998,7 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        internal void TVDBServerAccuracyCheck(bool unattended,bool hidden, IDialogParent owner)
+        internal void TVDBServerAccuracyCheck(bool unattended,bool hidden, UI owner)
         {
             PreventAutoScan("TVDB Accuracy Check");
             IEnumerable<SeriesInfo> seriesToUpdate = TheTVDB.LocalCache.Instance.ServerAccuracyCheck();

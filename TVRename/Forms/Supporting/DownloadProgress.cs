@@ -5,6 +5,9 @@
 // 
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
+using System.Threading;
+using System.Timers;
 using System.Windows.Forms;
 
 namespace TVRename
@@ -21,20 +24,27 @@ namespace TVRename
     public partial class DownloadProgress : Form
     {
         private readonly CacheUpdater mDoc;
+        private readonly System.Timers.Timer newTimer;
+        private readonly CancellationTokenSource token;
 
-        public DownloadProgress(CacheUpdater doc)
+        public DownloadProgress(CacheUpdater doc, CancellationTokenSource cts)
         {
             InitializeComponent();
             mDoc = doc;
+            token = cts;
+            tmrUpdate.Start();
+            newTimer = new System.Timers.Timer(100);
+            newTimer.Elapsed += NewTimerOnElapsed;
+            newTimer.SynchronizingObject = this;
+            newTimer.AutoReset = true;
         }
 
-        private void bnCancel_Click(object sender, System.EventArgs e)
+        private void NewTimerOnElapsed(object sender, ElapsedEventArgs e)
         {
-            tmrUpdate.Stop();
-            DialogResult = DialogResult.Abort;
+            Tick();
         }
 
-        private void tmrUpdate_Tick(object sender, System.EventArgs e)
+        private void Tick()
         {
             if (mDoc.DownloadDone)
             {
@@ -44,6 +54,19 @@ namespace TVRename
             {
                 UpdateStuff();
             }
+        }
+
+        private void bnCancel_Click(object sender, System.EventArgs e)
+        {
+            tmrUpdate.Stop();
+            newTimer.Stop();
+            DialogResult = DialogResult.Abort;
+            token.Cancel();
+        }
+
+        private void tmrUpdate_Tick(object sender, System.EventArgs e)
+        {
+            Tick();
         }
 
         private void UpdateStuff()

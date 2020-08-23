@@ -60,11 +60,12 @@ namespace TVRename
 
             ClearProblematicSeriesIds();
 
-            mDownloaderThread = new Thread(Downloader) { Name = "Downloader" };
+            mDownloaderThread = new Thread(Downloader) { Name = "Download Thread" };
+            mDownloaderThread.SetApartmentState(ApartmentState.STA);
             mDownloaderThread.Start(ctsToken);
         }
 
-        public bool DoDownloadsFg(bool showProgress, bool showMsgBox, ICollection<SeriesSpecifier> shows, IDialogParent owner)
+        public bool DoDownloadsFg(bool showProgress, bool showMsgBox, ICollection<SeriesSpecifier> shows, UI owner)
         {
             if (TVSettings.Instance.OfflineMode)
             {
@@ -86,15 +87,7 @@ namespace TVRename
 
             if (!DownloadDone && showProgress) // downloading still going on, so time to show the dialog if we're not in /hide mode
             {
-                DownloadProgress dp = new DownloadProgress(this);
-                owner.ShowChildDialog(dp);
-                DialogResult result = dp.DialogResult;
-                dp.Dispose();
-
-                if (result == DialogResult.Abort)
-                {
-                    cts.Cancel();
-                }
+                owner.ShowFgDownloadProgress(this, cts);
             }
 
             WaitForBgDownloadDone();
