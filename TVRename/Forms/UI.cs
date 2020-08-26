@@ -943,7 +943,7 @@ namespace TVRename
         {
             try
             {
-                if (mDoc.Dirty() && !mDoc.Args.Unattended && !mDoc.Args.Hide)
+                if (mDoc.Dirty() && !mDoc.Args.Unattended && !mDoc.Args.Hide && !TVSettings.Instance.AutoSaveOnExit)
                 {
                     DialogResult res = MessageBox.Show(
                         "Your changes have not been saved.  Do you wish to save before quitting?", "Unsaved data",
@@ -974,7 +974,7 @@ namespace TVRename
                     }
                 }
 
-                if (mDoc.Dirty() && (mDoc.Args.Unattended || mDoc.Args.Hide))
+                if (mDoc.Dirty() && (mDoc.Args.Unattended || mDoc.Args.Hide || TVSettings.Instance.AutoSaveOnExit))
                 {
                     //We have to assume that they wanted to save any settings
                     mDoc.WriteXMLSettings();
@@ -984,6 +984,7 @@ namespace TVRename
                 {
                     SaveLayoutXml();
                     mDoc.TidyCaches();
+                    SaveCaches();
                     mDoc.Closing();
                     mAutoFolderMonitor.Dispose();
                     BGDownloadTimer.Dispose();

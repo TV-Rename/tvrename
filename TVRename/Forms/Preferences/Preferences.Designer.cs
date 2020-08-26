@@ -415,6 +415,7 @@ namespace TVRename
             this.txtJackettServer = new System.Windows.Forms.TextBox();
             this.label45 = new System.Windows.Forms.Label();
             this.tbPreferredRSSTerms = new System.Windows.Forms.TextBox();
+            this.cbAutoSaveOnExit = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -3587,6 +3588,7 @@ namespace TVRename
             // 
             // tbGeneral
             // 
+            this.tbGeneral.Controls.Add(this.cbAutoSaveOnExit);
             this.tbGeneral.Controls.Add(this.chkAutoAddAsPartOfQuickRename);
             this.tbGeneral.Controls.Add(this.chkShareCriticalLogs);
             this.tbGeneral.Controls.Add(this.label60);
@@ -4737,6 +4739,17 @@ namespace TVRename
             this.tbPreferredRSSTerms.Size = new System.Drawing.Size(304, 20);
             this.tbPreferredRSSTerms.TabIndex = 32;
             // 
+            // cbAutoSaveOnExit
+            // 
+            this.cbAutoSaveOnExit.AutoSize = true;
+            this.cbAutoSaveOnExit.Location = new System.Drawing.Point(13, 150);
+            this.cbAutoSaveOnExit.Name = "cbAutoSaveOnExit";
+            this.cbAutoSaveOnExit.Size = new System.Drawing.Size(109, 17);
+            this.cbAutoSaveOnExit.TabIndex = 44;
+            this.cbAutoSaveOnExit.Text = "Auto save on Exit";
+            this.toolTip1.SetToolTip(this.cbAutoSaveOnExit, "Should the system ask the user or always save when the application is shutdown?");
+            this.cbAutoSaveOnExit.UseVisualStyleBackColor = true;
+            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -5240,5 +5253,6 @@ namespace TVRename
         private System.Windows.Forms.Label label79;
         private System.Windows.Forms.CheckBox chkSearchJackettButton;
         private System.Windows.Forms.CheckBox chkSkipJackettFullScans;
+        private System.Windows.Forms.CheckBox cbAutoSaveOnExit;
     }
 }

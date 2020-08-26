@@ -295,6 +295,8 @@ namespace TVRename
         [NotNull]
         public static string SpecialsListViewName => "Special";
 
+        public bool AutoSaveOnExit = false;
+
         public DuplicateActionOutcome UnattendedMultiActionOutcome = DuplicateActionOutcome.IgnoreAll;
         public DuplicateActionOutcome UserMultiActionOutcome = DuplicateActionOutcome.MostSeeders;
 
@@ -582,6 +584,8 @@ namespace TVRename
             writer.WriteElement("JackettAPIKey",JackettAPIKey );
             writer.WriteElement("SearchJackettButton", SearchJackettButton); 
             writer.WriteElement("StopJackettSearchOnFullScan", StopJackettSearchOnFullScan);
+            writer.WriteElement("StopJackettSearchOnFullScan", StopJackettSearchOnFullScan);
+            writer.WriteElement("AutoSaveOnExit", AutoSaveOnExit);
 
             TheSearchers.WriteXml(writer);
             WriteReplacements(writer);
@@ -1375,6 +1379,7 @@ namespace TVRename
 
             SearchJackettButton = xmlSettings.ExtractBool("SearchJackettButton", true);
             StopJackettSearchOnFullScan = xmlSettings.ExtractBool("StopJackettSearchOnFullScan", true);
+            AutoSaveOnExit = xmlSettings.ExtractBool("AutoSaveOnExit", false);
 
             Tidyup.load(xmlSettings);
             RSSURLs = xmlSettings.Descendants("RSSURLs").FirstOrDefault()?.ReadStringsFromXml("URL")??new List<string>();

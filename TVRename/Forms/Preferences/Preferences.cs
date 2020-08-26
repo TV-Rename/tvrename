@@ -213,6 +213,7 @@ namespace TVRename
 
             UpdateReplacement(s);
 
+            s.AutoSaveOnExit = cbAutoSaveOnExit.Checked;
             s.RSSUseCloudflare = cbRSSCloudflareProtection.Checked;
             s.SearchJSONUseCloudflare = cbJSONCloudflareProtection.Checked;
             s.qBitTorrentDownloadFilesFirst = cbDownloadTorrentBeforeDownloading.Checked;
@@ -737,6 +738,7 @@ namespace TVRename
 
             txtMaxSampleSize.Text = s.SampleFileMaxSizeMB.ToString();
 
+            cbAutoSaveOnExit.Checked = s.AutoSaveOnExit;
             cbRSSCloudflareProtection.Checked= s.RSSUseCloudflare;
             cbJSONCloudflareProtection.Checked= s.SearchJSONUseCloudflare;
             cbDownloadTorrentBeforeDownloading.Checked= s.qBitTorrentDownloadFilesFirst;
