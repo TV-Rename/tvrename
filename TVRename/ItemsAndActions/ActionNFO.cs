@@ -127,6 +127,8 @@ namespace TVRename
             }
 
             doc.Save(Where.FullName);
+            Where.LastWriteTime = DateTimeOffset.FromUnixTimeMilliseconds(Episode?.SrvLastUpdated ?? SelectedShow.TheSeries()?.SrvLastUpdated??0).UtcDateTime; 
+
             return ActionOutcome.Success();
         }
 

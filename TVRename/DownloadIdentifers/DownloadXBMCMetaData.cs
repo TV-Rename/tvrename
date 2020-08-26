@@ -40,7 +40,7 @@ namespace TVRename
                 SeriesInfo seriesInfo = si.TheSeries();
                 bool needUpdate = !tvshownfo.Exists ||
                                   seriesInfo is null ||
-                                  seriesInfo.SrvLastUpdated > TimeZoneHelper.Epoch(tvshownfo.LastWriteTime);
+                                  System.Math.Abs(seriesInfo.SrvLastUpdated - TimeZoneHelper.Epoch(tvshownfo.LastWriteTime)) > 1;
 
                 bool alreadyOnTheList = DoneNfo.Contains(tvshownfo.FullName);
 
@@ -63,7 +63,7 @@ namespace TVRename
 
             FileInfo nfo = FileHelper.FileInFolder(file.Directory, file.RemoveExtension() + ".nfo");
 
-            if (nfo.Exists && episode.SrvLastUpdated <= TimeZoneHelper.Epoch(nfo.LastWriteTime) && !forceRefresh)
+            if (nfo.Exists && System.Math.Abs(episode.SrvLastUpdated - TimeZoneHelper.Epoch(nfo.LastWriteTime)) > 1 && !forceRefresh)
             {
                 return null;
             }
