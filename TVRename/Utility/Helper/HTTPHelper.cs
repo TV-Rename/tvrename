@@ -199,7 +199,7 @@ namespace TVRename
             }
         }
 
-        public static bool IsUnimportant([NotNull] this WebException ex)
+        private static bool IsUnimportant([NotNull] this WebException ex)
         {
             switch (ex.Status)
             {
@@ -221,7 +221,7 @@ namespace TVRename
             }
         }
 
-        public static bool IsUnimportant([NotNull] this HttpRequestException ex)
+        private static bool IsUnimportant([NotNull] this HttpRequestException ex)
         {
             if (ex.InnerException is WebException wex)
             {

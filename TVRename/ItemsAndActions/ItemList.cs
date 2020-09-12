@@ -53,7 +53,7 @@ namespace TVRename
             Add(newList);
         }
 
-        public List<Item> TorrentActions => this.Where(a => a is ActionTRemove || a is ActionTDownload).ToList();
+        public List<Action> TorrentActions => this.Where(a => a is ActionTRemove || a is ActionTDownload).OfType<Action>().ToList();
 
         internal void Remove(IEnumerable<Item>? toRemove)
         {

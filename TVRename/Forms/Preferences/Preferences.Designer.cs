@@ -67,6 +67,7 @@ namespace TVRename
             this.chkScheduledScan = new System.Windows.Forms.CheckBox();
             this.chkScanOnStartup = new System.Windows.Forms.CheckBox();
             this.chkIgnoreAllSpecials = new System.Windows.Forms.CheckBox();
+            this.cbAutoSaveOnExit = new System.Windows.Forms.CheckBox();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.cmDefaults = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.KODIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -415,7 +416,7 @@ namespace TVRename
             this.txtJackettServer = new System.Windows.Forms.TextBox();
             this.label45 = new System.Windows.Forms.Label();
             this.tbPreferredRSSTerms = new System.Windows.Forms.TextBox();
-            this.cbAutoSaveOnExit = new System.Windows.Forms.CheckBox();
+            this.chkUseJackettTextSearch = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -782,6 +783,17 @@ namespace TVRename
             this.chkIgnoreAllSpecials.Text = "Ignore Specials  for all Shows";
             this.toolTip1.SetToolTip(this.chkIgnoreAllSpecials, "Ignores \'specials\' season for all shows");
             this.chkIgnoreAllSpecials.UseVisualStyleBackColor = true;
+            // 
+            // cbAutoSaveOnExit
+            // 
+            this.cbAutoSaveOnExit.AutoSize = true;
+            this.cbAutoSaveOnExit.Location = new System.Drawing.Point(13, 150);
+            this.cbAutoSaveOnExit.Name = "cbAutoSaveOnExit";
+            this.cbAutoSaveOnExit.Size = new System.Drawing.Size(109, 17);
+            this.cbAutoSaveOnExit.TabIndex = 44;
+            this.cbAutoSaveOnExit.Text = "Auto save on Exit";
+            this.toolTip1.SetToolTip(this.cbAutoSaveOnExit, "Should the system ask the user or always save when the application is shutdown?");
+            this.cbAutoSaveOnExit.UseVisualStyleBackColor = true;
             // 
             // cmDefaults
             // 
@@ -4588,6 +4600,7 @@ namespace TVRename
             // 
             this.groupBox22.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox22.Controls.Add(this.chkUseJackettTextSearch);
             this.groupBox22.Controls.Add(this.chkSkipJackettFullScans);
             this.groupBox22.Controls.Add(this.llJackettLink);
             this.groupBox22.Controls.Add(this.label71);
@@ -4602,7 +4615,7 @@ namespace TVRename
             this.groupBox22.Controls.Add(this.txtJackettServer);
             this.groupBox22.Location = new System.Drawing.Point(6, 218);
             this.groupBox22.Name = "groupBox22";
-            this.groupBox22.Size = new System.Drawing.Size(408, 175);
+            this.groupBox22.Size = new System.Drawing.Size(408, 201);
             this.groupBox22.TabIndex = 39;
             this.groupBox22.TabStop = false;
             this.groupBox22.Text = "Jackett Search";
@@ -4620,7 +4633,7 @@ namespace TVRename
             // llJackettLink
             // 
             this.llJackettLink.AutoSize = true;
-            this.llJackettLink.Location = new System.Drawing.Point(98, 150);
+            this.llJackettLink.Location = new System.Drawing.Point(98, 170);
             this.llJackettLink.Name = "llJackettLink";
             this.llJackettLink.Size = new System.Drawing.Size(55, 13);
             this.llJackettLink.TabIndex = 40;
@@ -4631,7 +4644,7 @@ namespace TVRename
             // label71
             // 
             this.label71.AutoSize = true;
-            this.label71.Location = new System.Drawing.Point(6, 150);
+            this.label71.Location = new System.Drawing.Point(6, 170);
             this.label71.Name = "label71";
             this.label71.Size = new System.Drawing.Size(72, 13);
             this.label71.TabIndex = 39;
@@ -4739,16 +4752,15 @@ namespace TVRename
             this.tbPreferredRSSTerms.Size = new System.Drawing.Size(304, 20);
             this.tbPreferredRSSTerms.TabIndex = 32;
             // 
-            // cbAutoSaveOnExit
+            // chkUseJackettTextSearch
             // 
-            this.cbAutoSaveOnExit.AutoSize = true;
-            this.cbAutoSaveOnExit.Location = new System.Drawing.Point(13, 150);
-            this.cbAutoSaveOnExit.Name = "cbAutoSaveOnExit";
-            this.cbAutoSaveOnExit.Size = new System.Drawing.Size(109, 17);
-            this.cbAutoSaveOnExit.TabIndex = 44;
-            this.cbAutoSaveOnExit.Text = "Auto save on Exit";
-            this.toolTip1.SetToolTip(this.cbAutoSaveOnExit, "Should the system ask the user or always save when the application is shutdown?");
-            this.cbAutoSaveOnExit.UseVisualStyleBackColor = true;
+            this.chkUseJackettTextSearch.AutoSize = true;
+            this.chkUseJackettTextSearch.Location = new System.Drawing.Point(98, 146);
+            this.chkUseJackettTextSearch.Name = "chkUseJackettTextSearch";
+            this.chkUseJackettTextSearch.Size = new System.Drawing.Size(100, 17);
+            this.chkUseJackettTextSearch.TabIndex = 42;
+            this.chkUseJackettTextSearch.Text = "Use text search";
+            this.chkUseJackettTextSearch.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -5254,5 +5266,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkSearchJackettButton;
         private System.Windows.Forms.CheckBox chkSkipJackettFullScans;
         private System.Windows.Forms.CheckBox cbAutoSaveOnExit;
+        private System.Windows.Forms.CheckBox chkUseJackettTextSearch;
     }
 }

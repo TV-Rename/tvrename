@@ -301,6 +301,7 @@ namespace TVRename
         public DuplicateActionOutcome UserMultiActionOutcome = DuplicateActionOutcome.MostSeeders;
 
         public bool SearchJackett = false;
+        public bool UseJackettTextSearch = false;
         public bool SearchJackettManualScanOnly = true;
         public bool StopJackettSearchOnFullScan = true;
         public bool SearchJackettButton = false;
@@ -577,6 +578,7 @@ namespace TVRename
             writer.WriteElement("UserMultiActionOutcome",(int)UserMultiActionOutcome );
 
             writer.WriteElement("SearchJackett",SearchJackett );
+            writer.WriteElement("UseJackettTextSearch", UseJackettTextSearch);
             writer.WriteElement("SearchJackettManualScanOnly",SearchJackettManualScanOnly);
             writer.WriteElement("JackettServer",JackettServer );
             writer.WriteElement("JackettPort",JackettPort);
@@ -1371,6 +1373,7 @@ namespace TVRename
             UserMultiActionOutcome = xmlSettings.ExtractEnum("UserMultiActionOutcome", DuplicateActionOutcome.MostSeeders);
 
             SearchJackett = xmlSettings.ExtractBool("SearchJackett", false);
+            UseJackettTextSearch = xmlSettings.ExtractBool("UseJackettTextSearch", false);
             SearchJackettManualScanOnly = xmlSettings.ExtractBool("SearchJackettManualScanOnly", true);
             JackettServer = xmlSettings.ExtractString("JackettServer", "127.0.0.1");
             JackettPort = xmlSettings.ExtractString("JackettPort", "9117");

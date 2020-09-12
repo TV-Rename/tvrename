@@ -214,126 +214,23 @@ namespace TVRename.TheTVDB
         [NotNull]
         internal IEnumerable<SeriesInfo> ServerAccuracyCheck()
         {
-            List<string> issues = new List<string>();
-            List<SeriesInfo> showsToUpdate = new List<SeriesInfo>();
             Say("TVDB Accuracy Check running");
-
+            TvdbAccuracyCheck check = new TvdbAccuracyCheck(this);
             lock (SERIES_LOCK)
             {
-                foreach (SeriesInfo si in series.Values.Where(info => !info.IsSearchResultOnly).ToList())
+                foreach (SeriesInfo si in series.Values.Where(info => !info.IsSearchResultOnly).OrderBy(s=>s.Name).ToList())
                 {
-                    ServerAccuracyCheck(si, issues, showsToUpdate);
+                    check.ServerAccuracyCheck(si);
                 }
             }
 
-            foreach (string issue in issues)
+            foreach (string issue in check.Issues)
             {
                 Logger.Warn(issue);
             }
 
             SayNothing();
-            return showsToUpdate;
-        }
-
-        private void ServerAccuracyCheck([NotNull] SeriesInfo si, List<string> issues, List<SeriesInfo> showsToUpdate)
-        {
-            int tvdbId = si.TvdbCode;
-            try
-            {
-                SeriesInfo newSi = DownloadSeriesInfo(tvdbId, "en",false);
-                if (newSi.SrvLastUpdated != si.SrvLastUpdated)
-                {
-                    issues.Add(
-                        $"{si.Name} is not up to date: Local is {si.SrvLastUpdated} server is {newSi.SrvLastUpdated}");
-
-                    si.Dirty = true;
-                }
-
-                List<JObject> eps = GetEpisodes(tvdbId, "en");
-                List<long> serverEpIds = new List<long>();
-
-                if (eps != null)
-                {
-                    foreach (JObject epJson in eps)
-                    {
-                        JToken episodeToUse = epJson["data"];
-                        if (episodeToUse != null)
-                        {
-                            foreach (JToken t in episodeToUse.Children())
-                            {
-                                EpisodeAccuracyCheck(si, t, issues, showsToUpdate, serverEpIds);
-                            }
-                        }
-                        else
-                        {
-                            throw new SourceConsistencyException($"Could not load 'data' from {epJson}", ShowItem.ProviderType.TheTVDB);
-                        }
-                    }
-                }
-
-                //Look for episodes that are local, but not on server
-                foreach (Episode localEp in si.Episodes)
-                {
-                    int localEpId = localEp.EpisodeId;
-                    if (!serverEpIds.Contains(localEpId))
-                    {
-                        issues.Add($"{si.Name} {localEpId} should be removed: Server is missing.");
-                        localEp.Dirty = true;
-                        si.Dirty = true;
-                        if (!showsToUpdate.Contains(si))
-                        {
-                            showsToUpdate.Add(si);
-                        }
-                    }
-                }
-            }
-            catch (SourceConnectivityException)
-            {
-                issues.Add($"Failed to compare {si.Name} as we could not download the series details.");
-            }
-        }
-
-        private static void EpisodeAccuracyCheck([NotNull] SeriesInfo si, [NotNull] JToken t, List<string> issues, List<SeriesInfo> showsToUpdate, [NotNull] List<long> serverEpIds)
-        {
-            long serverUpdateTime = (long)t["lastUpdated"];
-            int epId = (int)t["id"];
-
-            serverEpIds.Add(epId);
-            try
-            {
-                Episode ep = si.GetEpisode(epId);
-
-                if (serverUpdateTime > ep.SrvLastUpdated)
-                {
-                    issues.Add(
-                        $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is not up to date: Local is {ep.SrvLastUpdated} server is {serverUpdateTime}");
-
-                    ep.Dirty = true;
-                    if (!showsToUpdate.Contains(si))
-                    {
-                        showsToUpdate.Add(si);
-                    }
-                }
-
-                if (serverUpdateTime < ep.SrvLastUpdated)
-                {
-                    issues.Add(
-                        $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is in the future: Local is {ep.SrvLastUpdated} server is {serverUpdateTime}");
-
-                    ep.Dirty = true;
-                }
-            }
-            catch (ShowItem.EpisodeNotFoundException)
-            {
-                issues.Add(
-                    $"{si.Name} {epId} is not found: Local is missing; server is {serverUpdateTime}");
-
-                si.Dirty = true;
-                if (!showsToUpdate.Contains(si))
-                {
-                    showsToUpdate.Add(si);
-                }
-            }
+            return check.ShowsToUpdate;
         }
 
         private Episode? FindEpisodeById(int id)
@@ -1008,7 +905,7 @@ namespace TVRename.TheTVDB
             brute //keeps asking until we get a 0 length response
         }
 
-        private List<JObject>? GetEpisodes(int id, string lang)
+        internal List<JObject>? GetEpisodes(int id, string lang)
         {
             //Now deal with obtaining any episodes for the series
             //tvDB only gives us responses in blocks of 100, so we need to iterate over the pages until we get one with <100 rows
@@ -1096,15 +993,7 @@ namespace TVRename.TheTVDB
                     }
                     else
                     {
-                        if (ex.IsUnimportant())
-                        {
-                            Logger.Warn($"Error obtaining episode {id} in {lang}: details {ex.LoggableDetails()}");
-                        }
-                        else
-                        {
-                            Logger.Error($"Error obtaining {id} in {lang}: details {ex.LoggableDetails()}");
-                        }
-
+                        Logger.LogWebException($"Error obtaining episode {id} in {lang}:",ex);
                         return null;
                     }
                 }
@@ -1230,7 +1119,7 @@ namespace TVRename.TheTVDB
         }
 
         [NotNull]
-        private SeriesInfo DownloadSeriesInfo(int code, [NotNull] string requestedLanguageCode, bool showErrorMsgBox)
+        internal SeriesInfo DownloadSeriesInfo(int code, [NotNull] string requestedLanguageCode, bool showErrorMsgBox)
         {
             if (!IsConnected && !Connect(showErrorMsgBox))
             {
@@ -1352,17 +1241,7 @@ namespace TVRename.TheTVDB
                         throw new ShowNotFoundException(code, msg, ShowItem.ProviderType.TheTVDB, ShowItem.ProviderType.TheTVDB);
                     }
                 }
-
-                if (ex.IsUnimportant())
-                {
-                    Logger.Warn($"Error obtaining series {code} in {requestedLanguageCode}: {ex.LoggableDetails()}");
-                }
-                else
-                {
-                    Logger.Error(ex,
-                        $"Error obtaining series {code} in {requestedLanguageCode}: {ex.LoggableDetails()}");
-                }
-
+                Logger.LogWebException($"Error obtaining series {code} in {requestedLanguageCode}:",ex);
                 SayNothing();
                 LastErrorMessage = ex.LoggableDetails();
                 throw new SourceConnectivityException();
@@ -1682,14 +1561,7 @@ namespace TVRename.TheTVDB
             }
             catch (WebException ex)
             {
-                if (ex.IsUnimportant())
-                {
-                    Logger.Info($"Error obtaining episode [{episodeId}]: " + ex.LoggableDetails());
-                }
-                else
-                {
-                    Logger.Error($"Error obtaining episode [{episodeId}]: " + ex.LoggableDetails());
-                }
+                Logger.LogWebException($"Error obtaining episode[{ episodeId}]:",ex);
 
                 LastErrorMessage = ex.LoggableDetails();
                 SayNothing();
@@ -1868,15 +1740,7 @@ namespace TVRename.TheTVDB
             {
                 if (ex.Response is null) //probably a timeout
                 {
-                    if (ex.IsUnimportant())
-                    {
-                        Logger.Info($"Error obtaining results for search term '{text}': {ex.LoggableDetails()}");
-                    }
-                    else
-                    {
-                        Logger.Error($"Error obtaining results for search term '{text}': {ex.LoggableDetails()}");
-                    }
-
+                    Logger.LogWebException($"Error obtaining results for search term '{text}':",ex);
                     LastErrorMessage = ex.LoggableDetails();
                     SayNothing();
                 }
@@ -1887,15 +1751,7 @@ namespace TVRename.TheTVDB
                 }
                 else
                 {
-                    if (ex.IsUnimportant())
-                    {
-                        Logger.Info($"Error obtaining results for search term '{text}': {ex.LoggableDetails()}");
-                    }
-                    else
-                    {
-                        Logger.Error($"Error obtaining results for search term '{text}': {ex.LoggableDetails()}");
-                    }
-
+                    Logger.LogWebException($"Error obtaining results for search term '{text}':",ex);
                     LastErrorMessage = ex.LoggableDetails();
                     SayNothing();
                 }
@@ -1911,17 +1767,7 @@ namespace TVRename.TheTVDB
                 {
                     if (ex.Response is null) //probably a timeout
                     {
-                        if (ex.IsUnimportant())
-                        {
-                            Logger.Warn(
-                                $"Error obtaining results for search term '{text}' in {DefaultLanguageCode}: {ex.LoggableDetails()}");
-                        }
-                        else
-                        {
-                            Logger.Error(
-                                $"Error obtaining results for search term '{text}' in {DefaultLanguageCode}: {ex.LoggableDetails()}");
-                        }
-
+                        Logger.LogWebException($"Error obtaining results for search term '{text}' in {DefaultLanguageCode}:",ex);
                         LastErrorMessage = ex.LoggableDetails();
                         SayNothing();
                     }

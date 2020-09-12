@@ -341,6 +341,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Sources\SourceConsistencyException.cs" />
+    <Compile Include="Sources\TheTVDB\TvdbAccuracyCheck.cs" />
     <Compile Include="TVRename\CacheLoadException.cs" />
     <Compile Include="Sources\TheTVDB\TheTVDBAPI.cs" />
     <Compile Include="Model\CachePersistor.cs" />

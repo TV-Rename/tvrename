@@ -2655,6 +2655,10 @@ namespace TVRename
                     {
                         Logger.Warn($"Failed to remove {si.AutoAddFolderBase} as operation was cancelled: {e.Message}");
                     }
+                    catch (System.IO.DirectoryNotFoundException e)
+                    {
+                        Logger.Warn($"Failed to remove {si.AutoAddFolderBase} as it is not found: {e.Message}");
+                    }
                     catch (Exception e)
                     {
                         Logger.Error(e, $"Failed to remove {si.AutoAddFolderBase} as operation failed");
@@ -3225,7 +3229,7 @@ namespace TVRename
                 }
             }
 
-            if (TVSettings.Instance.SearchJackettButton)
+            if (TVSettings.Instance.SearchJackett || TVSettings.Instance.SearchJackettButton)
             {
                 tsi.DropDownItems.Add(new ToolStripSeparator());
                 ToolStripMenuItem tssi = new ToolStripMenuItem("Jackett Search");

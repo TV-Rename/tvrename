@@ -335,6 +335,7 @@ namespace TVRename
             s.UserMultiActionOutcome = ConvertToDupActEnum(cmbSupervisedDuplicateAction);
 
             s.SearchJackett = cbSearchJackett.Checked;
+            s.UseJackettTextSearch = chkUseJackettTextSearch.Checked;
             s.SearchJackettManualScanOnly = cbSearchJackettOnManualScansOnly.Checked;
             s.SearchJackettButton = chkSearchJackettButton.Checked;
             s.StopJackettSearchOnFullScan = chkSkipJackettFullScans.Checked;
@@ -878,6 +879,7 @@ namespace TVRename
             cmbSupervisedDuplicateAction.Text = ConvertEnum(s.UserMultiActionOutcome);
 
             cbSearchJackett.Checked = s.SearchJackett;
+            chkUseJackettTextSearch.Checked = s.UseJackettTextSearch;
             cbSearchJackettOnManualScansOnly.Checked = s.SearchJackettManualScanOnly;
             chkSearchJackettButton.Checked = s.SearchJackettButton;
             chkSkipJackettFullScans.Checked = s.StopJackettSearchOnFullScan;

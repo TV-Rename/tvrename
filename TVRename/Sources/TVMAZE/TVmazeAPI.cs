@@ -31,11 +31,7 @@ namespace TVRename.TVmaze
             }
             catch (WebException ex)
             {
-                if (!ex.IsUnimportant())
-                {
-                    Logger.Error($"Could not get updates from TV Maze due to {ex.LoggableDetails()}");
-                }
-
+                Logger.LogWebException("Could not get updates from TV Maze due to",ex);
                 throw new SourceConnectivityException(ex.Message);
             }
             catch (System.IO.IOException iex)
@@ -45,10 +41,8 @@ namespace TVRename.TVmaze
             }
             catch (JsonReaderException jre)
             {
-                {
-                    Logger.Error($"Could not get updates from TV Maze due to {jre.Message}");
-                    throw new SourceConnectivityException(jre.Message);
-                }
+                Logger.Error($"Could not get updates from TV Maze due to {jre.Message}");
+                throw new SourceConnectivityException(jre.Message);
             }
         }
 
@@ -105,10 +99,8 @@ namespace TVRename.TVmaze
                 {
                     throw new ShowNotFoundException(tvMazeId,$"Please add show maze id {tvMazeId} to tvMaze", ShowItem.ProviderType.TVmaze, ShowItem.ProviderType.TVmaze);
                 }
-                if (!wex.IsUnimportant())
-                {
-                    Logger.Error($"Could not get show with id {tvMazeId} from TV Maze due to {wex.LoggableDetails()}");
-                }
+
+                Logger.LogWebException($"Could not get show with id {tvMazeId} from TV Maze due to",wex);
                 throw new SourceConnectivityException($"Can't find TVmaze series for {tvMazeId} {wex.Message}");
             }
         }
@@ -379,7 +371,7 @@ namespace TVRename.TVmaze
         [NotNull]
         private static Episode GenerateEpisode(int seriesId, [NotNull] List<string> writers, [NotNull] List<string> directors, [NotNull] JObject r,SeriesInfo si)
         {
-            //Somethign like {
+            //Something like {
                 //"id":1,
                 //"url":"http://www.tvmaze.com/episodes/1/under-the-dome-1x01-pilot",
                 //"name":"Pilot",

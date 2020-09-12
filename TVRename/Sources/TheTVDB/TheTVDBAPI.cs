@@ -349,16 +349,7 @@ namespace TVRename.TheTVDB
                 }
                 catch (WebException webEx)
                 {
-                    if (webEx.IsUnimportant())
-                    {
-                        Logger.Info(
-                            $"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}: {webEx.LoggableDetails()}");
-                    }
-                    else
-                    {
-                        Logger.Warn(
-                            $"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}: {webEx.LoggableDetails()}");
-                    }
+                    Logger.LogWebException($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}:",webEx);
                 }
                 catch (IOException ioe)
                 {

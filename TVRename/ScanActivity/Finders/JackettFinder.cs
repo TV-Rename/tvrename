@@ -75,15 +75,8 @@ namespace TVRename
 
         private static void FindMissingEpisode([NotNull] ItemMissing action, ItemList toRemove, ItemList newItems)
         {
-            string serverName = TVSettings.Instance.JackettServer;
-            string serverPort = TVSettings.Instance.JackettPort;
-            string allIndexer = TVSettings.Instance.JackettIndexer;
-            string apikey = TVSettings.Instance.JackettAPIKey;
-
             ProcessedEpisode processedEpisode = action.MissingEpisode;
-
-            string simpleShowName = Helpers.SimplifyName(processedEpisode.Show.ShowName);
-            string url = $"http://{serverName}:{serverPort}{allIndexer}/api?t=tvsearch&q={simpleShowName}&tvdbid={processedEpisode.Show.TvdbCode}&season={processedEpisode.AppropriateSeasonNumber}&ep={processedEpisode.AppropriateEpNum}&apikey={apikey}";
+            string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(processedEpisode) : NormalJackettUrl( processedEpisode);
 
             RssItemList rssList = new RssItemList();
             rssList.DownloadRSS(url, false,"Jackett");
@@ -106,6 +99,30 @@ namespace TVRename
             }
 
             newItems.AddNullableRange(newItemsForThisMissingEpisode);
+        }
+
+        private static string NormalJackettUrl(ProcessedEpisode processedEpisode)
+        {
+            string serverName = TVSettings.Instance.JackettServer;
+            string serverPort = TVSettings.Instance.JackettPort;
+            string allIndexer = TVSettings.Instance.JackettIndexer;
+            string apikey = TVSettings.Instance.JackettAPIKey;
+            string simpleShowName = Helpers.SimplifyName(processedEpisode.Show.ShowName);
+
+            return
+                $"http://{serverName}:{serverPort}{allIndexer}/api?t=tvsearch&q={simpleShowName}&tvdbid={processedEpisode.Show.TvdbCode}&season={processedEpisode.AppropriateSeasonNumber}&ep={processedEpisode.AppropriateEpNum}&apikey={apikey}";
+        }
+
+        private static string TextJackettUrl(ProcessedEpisode episode)
+        {
+            string serverName = TVSettings.Instance.JackettServer;
+            string serverPort = TVSettings.Instance.JackettPort;
+            string allIndexer = TVSettings.Instance.JackettIndexer;
+            string apikey = TVSettings.Instance.JackettAPIKey;
+            const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
+            string text = CustomEpisodeName.NameForNoExt(episode, FORMAT, false);
+            return
+                $"http://{serverName}:{serverPort}{allIndexer}/api?t=tvsearch&q={text}&apikey={apikey}";
         }
 
         public static void SearchForEpisode(ProcessedEpisode episode)

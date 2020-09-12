@@ -51,7 +51,15 @@ namespace TVRename
             }
 
             writer.WriteStartElement(elementName);
-            writer.WriteValue(value??string.Empty);
+            try
+            {
+                writer.WriteValue(value ?? string.Empty);
+            }
+            catch (ArgumentException e)
+            {
+                Logger.Error($"Cound not write {elementName} with value {value} because {e.Message}");
+            }
+
             writer.WriteEndElement();
         }
 
