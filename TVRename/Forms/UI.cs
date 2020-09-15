@@ -3231,7 +3231,10 @@ namespace TVRename
 
             if (TVSettings.Instance.SearchJackett || TVSettings.Instance.SearchJackettButton)
             {
-                tsi.DropDownItems.Add(new ToolStripSeparator());
+                if (TVDoc.GetSearchers().Any())
+                {
+                    tsi.DropDownItems.Add(new ToolStripSeparator());
+                }
                 ToolStripMenuItem tssi = new ToolStripMenuItem("Jackett Search");
                 tssi.Click += (s, ev) => { JackettFinder.SearchForEpisode(ep); };
                 tsi.DropDownItems.Add(tssi);

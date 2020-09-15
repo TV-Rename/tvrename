@@ -14,7 +14,6 @@ using System.Threading;
 using System.Xml;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
-using UnauthorizedAccessException = System.UnauthorizedAccessException;
 
 namespace TVRename
 {
@@ -115,6 +114,10 @@ namespace TVRename
                     Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.Message}");
                 }
                 catch (NotSupportedException e)
+                {
+                    Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.Message}");
+                }
+                catch (System.IO.IOException e)
                 {
                     Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.Message}");
                 }

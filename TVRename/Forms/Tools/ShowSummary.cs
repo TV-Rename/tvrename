@@ -363,8 +363,7 @@ namespace TVRename
                     AddRcMenuItem(gridSummary.showRightClickMenu, "Force Refresh",(o, args) =>
                     {
                         gridSummary.MainWindow.ForceRefresh(new List<ShowItem> {show}, false);
-                    }
-                        );
+                    });
 
                     GenerateSeparator(gridSummary.showRightClickMenu);
                 }
