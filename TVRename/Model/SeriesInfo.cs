@@ -433,11 +433,11 @@ namespace TVRename
 
         private void LoadGenres([NotNull] XElement seriesXml)
         {
-            Genres = new List<string>();
-            foreach (XElement g in seriesXml.Descendants("Genres").Descendants("Genre"))
-            {
-                Genres.Add(g.Value);
-            }
+            Genres = seriesXml
+                .Descendants("Genres")
+                .Descendants("Genre")
+                .Select(g => g.Value.Trim()).Distinct()
+                .ToList();
         }
 
         private void LoadJson([NotNull] JObject r)
@@ -451,7 +451,7 @@ namespace TVRename
 
             if (r.ContainsKey("genre"))
             {
-                Genres = r["genre"]?.Select(x => x.Value<string>()).ToList() ??new List<string>();
+                Genres = r["genre"]?.Select(x => x.Value<string>().Trim()).Distinct().ToList() ??new List<string>();
             }
 
             TvdbCode = (int)r["id"];

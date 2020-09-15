@@ -70,7 +70,10 @@ namespace TVRename.Forms
                 foreach (string genre in filter.Genres)
                 {
                     int genreIndex = clbGenre.Items.IndexOf(genre);
-                    clbGenre.SetItemChecked(genreIndex, true);
+                    if (genreIndex > 0)
+                    {
+                        clbGenre.SetItemChecked(genreIndex, true);
+                    }
                 }
             }
 

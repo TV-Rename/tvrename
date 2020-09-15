@@ -638,7 +638,7 @@ namespace TVRename
         }
         
         [NotNull]
-        public IEnumerable<string> Genres => TheSeries()?.Genres??new List<string>();
+        public IEnumerable<string> Genres => TheSeries()?.Genres.Distinct() ?? new List<string>();
 
         [NotNull]
         public IEnumerable<Actor> Actors => TheSeries()?.GetActors() ?? new List<Actor>();
