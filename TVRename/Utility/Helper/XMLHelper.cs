@@ -228,7 +228,7 @@ namespace TVRename
 
         public static void ReplaceElements([NotNull] this XElement root, string key, [NotNull] IEnumerable<string> values)
         {
-            IEnumerable<XElement> elementsToRemove = root.Elements(key);
+            IEnumerable<XElement> elementsToRemove = root.Elements(key).ToList();
             foreach (XElement oldValue in elementsToRemove)
             {
                 oldValue.Remove();
