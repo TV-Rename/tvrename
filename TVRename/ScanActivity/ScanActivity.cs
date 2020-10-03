@@ -25,12 +25,12 @@ namespace TVRename
 
         protected abstract string CheckName();
         public abstract bool Active();
-        protected abstract void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings);
+        protected abstract void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList, TVDoc.ScanSettings settings);
 
-        public void Check(SetProgressDelegate prog, List<ShowItem> showList, TVDoc.ScanSettings settings) =>
+        public void Check(SetProgressDelegate prog, List<ShowConfiguration> showList, TVDoc.ScanSettings settings) =>
             Check(prog, 0, 100, showList, settings);
 
-        public void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList,
+        public void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowConfiguration> showList,
             TVDoc.ScanSettings settings)
         {
             startPosition = startpct;

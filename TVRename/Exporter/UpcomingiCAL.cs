@@ -68,7 +68,7 @@ namespace TVRename
                 }
 
                 DateTime startTime = stTime.Value;
-                string s = ei.Show.TheSeries()?.Runtime;
+                string s = ei.Show.CachedShow?.Runtime;
                 DateTime endTime = stTime.Value.AddMinutes(string.IsNullOrWhiteSpace(s) ? 0 : int.Parse(s));
 
                 return new CalendarEvent
@@ -78,7 +78,7 @@ namespace TVRename
                     Description = ei.Overview,
                     Comments = new List<string> {ei.Overview},
                     Summary = niceName,
-                    Location = ei.TheSeries.Network,
+                    Location = ei.TheCachedSeries.Network,
                     Url = new Uri(TheTVDB.API.WebsiteEpisodeUrl(ei)),
                     Uid = ei.EpisodeId.ToString()
                 };

@@ -13,7 +13,7 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     internal class ShowsTXT : ShowsExporter
     {
-        public ShowsTXT(List<ShowItem> shows) : base(shows)
+        public ShowsTXT(List<ShowConfiguration> shows) : base(shows)
         {
         }
 
@@ -24,7 +24,28 @@ namespace TVRename
         {
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
             {
-                foreach (ShowItem si in Shows)
+                foreach (ShowConfiguration si in Shows)
+                {
+                    file.WriteLine(si.ShowName);
+                }
+            }
+        }
+    }
+
+    internal class MoviesTxt : MoviesExporter
+    {
+        public MoviesTxt(List<MovieConfiguration> shows) : base(shows)
+        {
+        }
+
+        public override bool Active() => TVSettings.Instance.ExportMoviesTXT;
+        protected override string Location() => TVSettings.Instance.ExportMoviesTXTTo;
+
+        protected override void Do()
+        {
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
+            {
+                foreach (MovieConfiguration si in Shows)
                 {
                     file.WriteLine(si.ShowName);
                 }

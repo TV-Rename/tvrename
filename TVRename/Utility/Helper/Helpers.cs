@@ -228,7 +228,7 @@ namespace TVRename
         {
             //TODO consider whether we should merge with above to refine characters updated
             n = RemoveDiacritics(n);
-            n = Regex.Replace(n, "[^\\w ]", "");
+            n = Regex.Replace(n, "[^\\w ]", " ");
             return SimplifyName(n);
         }
 
@@ -255,7 +255,7 @@ namespace TVRename
 
         public static DateTime GetMinWindowsTime(DateTime dateTime)
         {
-            //Any series before 1980 will get 1980 as the timestamp
+            //Any cachedSeries before 1980 will get 1980 as the timestamp
             return dateTime.CompareTo(WindowsStartDateTime) < 0 ? WindowsStartDateTime : dateTime;
         }
 

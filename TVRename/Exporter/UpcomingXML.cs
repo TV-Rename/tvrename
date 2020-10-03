@@ -38,8 +38,8 @@ namespace TVRename
                 foreach (ProcessedEpisode ei in elist)
                 {
                     writer.WriteStartElement("item");
-                    writer.WriteElement("id",ei.TheSeries.TvdbCode);
-                    writer.WriteElement("SeriesName",ei.TheSeries.Name);
+                    writer.WriteElement("id",ei.TheCachedSeries.TvdbCode);
+                    writer.WriteElement("SeriesName",ei.TheCachedSeries.Name);
                     writer.WriteElement("SeasonNumber",Helpers.Pad(ei.AppropriateSeasonNumber));
                     writer.WriteElement("EpisodeNumber", Helpers.Pad(ei.AppropriateEpNum));
                     writer.WriteElement("EpisodeName",ei.Name);

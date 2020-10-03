@@ -48,7 +48,7 @@ namespace TVRename
                         continue;
                     }
 
-                    //do any of the possible names for the series match the filename?
+                    //do any of the possible names for the cachedSeries match the filename?
                     bool matched = action.MissingEpisode.Show.NameMatch(file,true);
 
                     if (!matched)

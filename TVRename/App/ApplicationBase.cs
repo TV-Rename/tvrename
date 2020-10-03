@@ -98,6 +98,7 @@ namespace TVRename.App
 
             FileInfo tvdbFile = PathManager.TVDBFile;
             FileInfo tvmazeFile = PathManager.TVmazeFile;
+            FileInfo tmdbFile = PathManager.TmdbFile;
             FileInfo settingsFile = PathManager.TVDocSettingsFile;
             TVDoc doc;
 
@@ -122,7 +123,8 @@ namespace TVRename.App
 
                 // Try loading TheTVDB cache file
                 TheTVDB.LocalCache.Instance.Setup(tvdbFile, PathManager.TVDBFile, clargs);
-                TVmaze.LocalCache.Instance.Setup(tvmazeFile, PathManager.TVmazeFile, clargs); 
+                TVmaze.LocalCache.Instance.Setup(tvmazeFile, PathManager.TVmazeFile, clargs);
+                TMDB.LocalCache.Instance.Setup(tmdbFile,PathManager.TmdbFile,clargs);
 
                 // Try loading settings file
                 doc = new TVDoc(settingsFile, clargs);

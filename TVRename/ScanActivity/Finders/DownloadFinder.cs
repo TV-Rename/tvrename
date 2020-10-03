@@ -21,7 +21,7 @@ namespace TVRename
         protected static bool RssMatch([NotNull] RSSItem rss, [NotNull] ProcessedEpisode pe)
         {
             string simpleShowName = Helpers.SimplifyName(pe.Show.ShowName);
-            string simpleSeriesName = Helpers.SimplifyName(pe.TheSeries.Name);
+            string simpleSeriesName = Helpers.SimplifyName(pe.TheCachedSeries.Name);
 
             if (!FileHelper.SimplifyAndCheckFilename(rss.ShowName, simpleShowName, true, false) &&
                 !(

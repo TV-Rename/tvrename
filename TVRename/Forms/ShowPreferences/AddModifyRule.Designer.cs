@@ -67,7 +67,7 @@ namespace TVRename
             this.rbRemove.Size = new System.Drawing.Size(236, 17);
             this.rbRemove.TabIndex = 3;
             this.rbRemove.TabStop = true;
-            this.rbRemove.Text = "R&emove : Remove episode(s) from the series";
+            this.rbRemove.Text = "R&emove : Remove episode(s) from the cachedSeries";
             this.rbRemove.UseVisualStyleBackColor = true;
             this.rbRemove.Click += new System.EventHandler(this.rb_Click);
             // 

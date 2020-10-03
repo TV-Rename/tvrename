@@ -51,7 +51,7 @@ namespace TVRename
 
             const int N = 5;
 
-            foreach (ProcessedEpisode ei in mDoc.Library.NextNShows(N, 0, 9999))
+            foreach (ProcessedEpisode ei in mDoc.TvLibrary.NextNShows(N, 0, 9999))
             {
                 ListViewItem lvi = new ListViewItem {Text = ei.HowLong()};
                 lvi.SubItems.Add(ei.DayOfWeek());

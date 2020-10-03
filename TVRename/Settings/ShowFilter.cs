@@ -24,11 +24,11 @@ namespace TVRename
         public string? ShowRating { get; set; }
         public bool ShowRatingInclude { get; set; }
 
-        public bool Filter([NotNull] ShowItem show)
+        public bool Filter([NotNull] ShowConfiguration show)
         {
-            bool IsNetworkOk(ShowItem showItem)
+            bool IsNetworkOk(ShowConfiguration showItem)
             {
-                string? seriesInfoNetwork = showItem.TheSeries()?.Network;
+                string? seriesInfoNetwork = showItem.CachedShow?.Network;
                 if (seriesInfoNetwork is null)
                 {
                     return true;
@@ -39,9 +39,9 @@ namespace TVRename
                     : !seriesInfoNetwork.Equals(ShowNetwork);
             }
 
-            bool IsRatingOk(ShowItem showItem)
+            bool IsRatingOk(ShowConfiguration showItem)
             {
-                string? seriesInfoContentRating = showItem.TheSeries()?.ContentRating;
+                string? seriesInfoContentRating = showItem.CachedShow?.ContentRating;
                 if (seriesInfoContentRating is null)
                 {
                     return true;
@@ -52,7 +52,7 @@ namespace TVRename
                     : !seriesInfoContentRating.Equals(ShowRating);
             }
 
-            bool IsStatusOk(ShowItem showItem)
+            bool IsStatusOk(ShowConfiguration showItem)
             {
                 return ShowStatusInclude
                     ? showItem.ShowStatus.Equals(ShowStatus)
@@ -78,7 +78,7 @@ namespace TVRename
             return isNameOk && isStatusOk && isNetworkOk && isRatingOk && (areGenresIgnored || doAnyGenresMatch);
         }
 
-        private bool FindMatchingGenres([NotNull] ShowItem show)
+        private bool FindMatchingGenres([NotNull] ShowConfiguration show)
         {
             return show.Genres.Any(showGenre => Genres.Contains(showGenre));
         }

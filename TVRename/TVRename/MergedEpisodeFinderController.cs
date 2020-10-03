@@ -15,7 +15,7 @@ namespace TVRename
         [NotNull]
         internal static List<PossibleMergedEpisode> FindDoubleEps(TVDoc doc, [NotNull] BackgroundWorker worker)
         {
-            int total = doc.Library.Count;
+            int total = doc.TvLibrary.Count;
             int current = 0;
 
             doc.PreventAutoScan("Find Double Episodes");
@@ -28,7 +28,7 @@ namespace TVRename
             output.AppendLine("##################################################");
 
             DirFilesCache dfc = new DirFilesCache();
-            foreach (ShowItem si in doc.Library.GetSortedShowItems())
+            foreach (ShowConfiguration si in doc.TvLibrary.GetSortedShowItems())
             {
                 worker.ReportProgress(100 * current++ / total, si.ShowName);
 
@@ -60,7 +60,7 @@ namespace TVRename
             return returnValue;
         }
 
-        private static void SearchForDuplicates([NotNull] ProcessedEpisode pep, StringBuilder output, ShowItem si, int seasonId, [NotNull] IEnumerable<ProcessedEpisode> seasonEpisodes, DirFilesCache dfc, List<PossibleMergedEpisode> returnValue)
+        private static void SearchForDuplicates([NotNull] ProcessedEpisode pep, StringBuilder output, ShowConfiguration si, int seasonId, [NotNull] IEnumerable<ProcessedEpisode> seasonEpisodes, DirFilesCache dfc, List<PossibleMergedEpisode> returnValue)
         {
             if (pep.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
             {

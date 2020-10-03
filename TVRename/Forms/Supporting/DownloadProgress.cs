@@ -72,8 +72,9 @@ namespace TVRename
         private void UpdateStuff()
         {
             txtCurrent.Text =
-                TheTVDB.LocalCache.Instance.CurrentDLTask +
-                TVmaze.LocalCache.Instance.CurrentDLTask;
+                TheTVDB.LocalCache.Instance.CurrentDLTask ??
+                TVmaze.LocalCache.Instance.CurrentDLTask ??
+                TMDB.LocalCache.Instance.CurrentDLTask?? string.Empty;
             pbProgressBar.Value = mDoc.DownloadPct;
         }
     }

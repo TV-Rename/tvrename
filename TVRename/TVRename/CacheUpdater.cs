@@ -114,6 +114,7 @@ namespace TVRename
 
             TheTVDB.LocalCache.Instance.LastErrorMessage = string.Empty;
             TVmaze.LocalCache.Instance.LastErrorMessage = string.Empty;
+            TMDB.LocalCache.Instance.LastErrorMessage = string.Empty;
 
             return downloadOk;
         }
@@ -155,18 +156,56 @@ namespace TVRename
                 Threadslogger.Trace("  Downloading " + series.Name);
                 switch (series.Provider)
                 {
-                    case ShowItem.ProviderType.TVmaze:
-                        if (TVmaze.LocalCache.Instance.EnsureUpdated(series, bannersToo,true))
+                    case TVDoc.ProviderType.TVmaze:
+                        switch (series.Type)
                         {
-                            return;
+                            case MediaConfiguration.MediaType.tv:
+                                if (TVmaze.LocalCache.Instance.EnsureUpdated(series, bannersToo, true))
+                                {
+                                    return;
+                                }
+
+                                break;
+                            case MediaConfiguration.MediaType.movie:
+                            default:
+                                throw new ArgumentOutOfRangeException();
                         }
 
                         break;
 
-                    case ShowItem.ProviderType.TheTVDB:
-                        if (TheTVDB.LocalCache.Instance.EnsureUpdated(series, bannersToo,true))
+                    case TVDoc.ProviderType.TheTVDB:
+                        switch (series.Type)
                         {
-                            return;
+                            case MediaConfiguration.MediaType.tv:
+                                if (TheTVDB.LocalCache.Instance.EnsureUpdated(series, bannersToo,true))
+                                {
+                                    return;
+                                }
+
+                                break;
+
+                            case MediaConfiguration.MediaType.movie:
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+
+                        break;
+
+                    case TVDoc.ProviderType.TMDB:
+
+                        switch (series.Type)
+                        {
+                            case MediaConfiguration.MediaType.movie:
+                                if (TMDB.LocalCache.Instance.EnsureUpdated(series, bannersToo, true))
+                                {
+                                    return;
+                                }
+
+                                break;
+
+                            case MediaConfiguration.MediaType.tv:
+                            default:
+                                throw new ArgumentOutOfRangeException();
                         }
 
                         break;
@@ -233,10 +272,10 @@ namespace TVRename
                     return;
                 }
 
-                if (downloadIds.Any(s => s.Provider == ShowItem.ProviderType.TVmaze))
+                if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TVmaze))
                 {
                     if (!TVmaze.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
-                        downloadIds.Where(specifier => specifier.Provider == ShowItem.ProviderType.TVmaze)))
+                        downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TVmaze)))
                     {
                         DownloadDone = true;
                         downloadOk = false;
@@ -244,16 +283,28 @@ namespace TVRename
                     }
                 }
 
-                if (downloadIds.Any(s => s.Provider == ShowItem.ProviderType.TheTVDB))
+                if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TheTVDB))
                 {
                     if (!TheTVDB.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
-                        downloadIds.Where(specifier => specifier.Provider == ShowItem.ProviderType.TheTVDB)))
+                        downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TheTVDB)))
                     {
                         DownloadDone = true;
                         downloadOk = false;
                         return;
                     }
                 }
+
+                if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TMDB))
+                {
+                    if (!TMDB.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
+                        downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TMDB)))
+                    {
+                        DownloadDone = true;
+                        downloadOk = false;
+                        return;
+                    }
+                }
+
 
                 // for each of the ShowItems, make sure we've got downloaded data for it
 
@@ -261,9 +312,11 @@ namespace TVRename
                 int n = 0;
 
                 int numWorkers = TVSettings.Instance.ParallelDownloads;
-                Logger.Info("Setting up {0} threads to download information from TheTVDB.com and TVMaze.com", numWorkers);
-                Logger.Info($"Working on {downloadIds.Count(s => s.Provider == ShowItem.ProviderType.TheTVDB)} TVDB and {downloadIds.Count(s => s.Provider == ShowItem.ProviderType.TVmaze)} TV Maze shows.");
-                Logger.Info($"Identified that {downloadIds.Count(s => s.Provider==ShowItem.ProviderType.TheTVDB && (TheTVDB.LocalCache.Instance.GetSeries(s.TvdbSeriesId)?.Dirty??true))} TVDB and {downloadIds.Count(s => s.Provider == ShowItem.ProviderType.TVmaze && (TVmaze.LocalCache.Instance.GetSeries(s.TvMazeSeriesId)?.Dirty ?? true))} TV Maze shows need to be updated");
+                Logger.Info("Setting up {0} threads to download information from TheTVDB.com, TMDB and TVMaze.com", numWorkers);
+                Logger.Info($"Working on {downloadIds.Count(s => s.Provider == TVDoc.ProviderType.TheTVDB)} TVDB and {downloadIds.Count(s => s.Provider == TVDoc.ProviderType.TVmaze)} TV Maze shows.");
+                Logger.Info($"Working on {downloadIds.Count(s => s.Provider == TVDoc.ProviderType.TMDB)} TMDB Movies.");
+                Logger.Info($"Identified that {downloadIds.Count(s => s.Provider==TVDoc.ProviderType.TheTVDB && (TheTVDB.LocalCache.Instance.GetSeries(s.TvdbSeriesId)?.Dirty??true))} TVDB and {downloadIds.Count(s => s.Provider == TVDoc.ProviderType.TVmaze && (TVmaze.LocalCache.Instance.GetSeries(s.TvMazeSeriesId)?.Dirty ?? true))} TV Maze shows need to be updated");
+                Logger.Info($"Identified that {downloadIds.Count(s => s.Provider == TVDoc.ProviderType.TMDB && (TMDB.LocalCache.Instance.GetMovie(s.TmdbId)?.Dirty ?? true))} TMDB movies need to be updated");
                 workers = new List<Thread>();
 
                 Semaphore newSemaphore = new Semaphore(numWorkers, numWorkers); // allow up to numWorkers working at once
@@ -309,6 +362,7 @@ namespace TVRename
                 {
                     TheTVDB.LocalCache.Instance.UpdatesDoneOk();
                     TVmaze.LocalCache.Instance.UpdatesDoneOk();
+                    TMDB.LocalCache.Instance.UpdatesDoneOk();
                 }
                 downloadOk = true;
             }
@@ -368,16 +422,18 @@ namespace TVRename
             {
                 foreach (SeriesSpecifier ss in downloadIds)
                 {
-                    if (ss.TvdbSeriesId == sid.ShowId && sid.ShowIdProvider == ShowItem.ProviderType.TheTVDB)
+                    if (ss.TvdbSeriesId == sid.ShowId && sid.ShowIdProvider == TVDoc.ProviderType.TheTVDB)
                     {
                         toRemove.Add(ss);
                     }
-                    if (ss.TvMazeSeriesId == sid.ShowId && sid.ShowIdProvider == ShowItem.ProviderType.TVmaze)
+                    if (ss.TvMazeSeriesId == sid.ShowId && sid.ShowIdProvider == TVDoc.ProviderType.TVmaze)
                     {
                         toRemove.Add(ss);
                     }
                 }
             }
+
+            //todo - similar for movies
 
             foreach (SeriesSpecifier s in toRemove)
             {

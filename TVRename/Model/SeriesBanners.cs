@@ -19,10 +19,10 @@ namespace TVRename
         public Dictionary<int, Banner> AllBanners; // All Banners linked by bannerId.
 
         //Collections of Posters and Banners per season
-        private Dictionary<int, Banner> seasonBanners; // e.g. Dictionary of the best posters per series.
-        private Dictionary<int, Banner> seasonLangBanners; // e.g. Dictionary of the best posters per series in the correct language.
-        private Dictionary<int, Banner> seasonWideBanners; // e.g. Dictionary of the best wide banners per series.
-        private Dictionary<int, Banner> seasonLangWideBanners; // e.g. Dictionary of the best wide banners per series in the correct language.
+        private Dictionary<int, Banner> seasonBanners; // e.g. Dictionary of the best posters per cachedSeries.
+        private Dictionary<int, Banner> seasonLangBanners; // e.g. Dictionary of the best posters per cachedSeries in the correct language.
+        private Dictionary<int, Banner> seasonWideBanners; // e.g. Dictionary of the best wide banners per cachedSeries.
+        private Dictionary<int, Banner> seasonLangWideBanners; // e.g. Dictionary of the best wide banners per cachedSeries in the correct language.
 
         //best Banner, Poster and Fanart loaded from the images files (in any language)
         private int bestSeriesPosterId;
@@ -34,12 +34,12 @@ namespace TVRename
         private int bestSeriesLangBannerId;
         private int bestSeriesLangFanartId;
 
-        private readonly SeriesInfo series;
+        private readonly CachedSeriesInfo cachedSeries;
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public SeriesBanners(SeriesInfo s)
+        public SeriesBanners(CachedSeriesInfo s)
         {
-            series = s;
+            cachedSeries = s;
             ResetBanners();
         }
 
@@ -130,7 +130,7 @@ namespace TVRename
             //if not then a season specific one is best
             //if not then the poster is the fallback
 
-            System.Diagnostics.Debug.Assert(series.BannersLoaded);
+            System.Diagnostics.Debug.Assert(cachedSeries.BannersLoaded);
 
             if (seasonLangBanners.ContainsKey(snum))
             {
@@ -161,9 +161,9 @@ namespace TVRename
             }
 
             //then choose the one the TVDB recommended _LOWERED IN PRIORITY AFTER LEVERAGE issue - https://github.com/TV-Rename/tvrename/issues/285
-            if (!string.IsNullOrEmpty(series.BannerString))
+            if (!string.IsNullOrEmpty(cachedSeries.BannerString))
             {
-                return series.BannerString;
+                return cachedSeries.BannerString;
             }
 
             //give up
@@ -185,9 +185,9 @@ namespace TVRename
                 return AllBanners[bestSeriesPosterId]?.BannerPath ?? string.Empty;
             }
 
-            if (!string.IsNullOrEmpty(series.PosterUrl))
+            if (!string.IsNullOrEmpty(cachedSeries.PosterUrl))
             {
-                return series.PosterUrl;
+                return cachedSeries.PosterUrl;
             }
             //give up
             return string.Empty;
@@ -218,7 +218,7 @@ namespace TVRename
             //if not then a season specific one is best
             //if not then the poster is the fallback
 
-            System.Diagnostics.Debug.Assert(series.BannersLoaded);
+            System.Diagnostics.Debug.Assert(cachedSeries.BannersLoaded);
 
             if (seasonLangWideBanners.ContainsKey(snum))
             {
@@ -270,7 +270,7 @@ namespace TVRename
                 bestSeriesFanartId = GetBestBannerId(banner, bestSeriesFanartId);
             }
 
-            if (banner.LanguageId == series.LanguageId)
+            if (banner.LanguageId == cachedSeries.LanguageId)
             {
                 if (banner.IsSeriesPoster())
                 {
@@ -323,7 +323,7 @@ namespace TVRename
         private void AddUpdateIntoCollections([NotNull] Banner banner, [NotNull] IDictionary<int, Banner> coll, IDictionary<int, Banner> langColl)
         {
             //update language specific cache if appropriate
-            if (banner.LanguageId == series.LanguageId)
+            if (banner.LanguageId == cachedSeries.LanguageId)
             {
                 AddUpdateIntoCollection(banner, langColl);
             }

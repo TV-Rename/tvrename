@@ -42,18 +42,18 @@ namespace TVRename
             BuildData();
             DoSort();
             Cursor.Current = Cursors.Default;
-            theData = new DataArr(mDoc.Library.Count);
+            theData = new DataArr(mDoc.TvLibrary.Count);
         }
 
         private void BuildData()
         {
             // find actors that have been in more than one thing
-            lock(TheTVDB.LocalCache.SERIES_LOCK)
+            lock(TheTVDB.LocalCache.Instance.SERIES_LOCK)
             {
-                theData = new DataArr(mDoc.Library.Count);
-                foreach (ShowItem ser in mDoc.Library.Shows)
+                theData = new DataArr(mDoc.TvLibrary.Count);
+                foreach (ShowConfiguration ser in mDoc.TvLibrary.Shows)
                 {
-                    SeriesInfo? si = ser.TheSeries();
+                    CachedSeriesInfo? si = ser.CachedShow;
                     foreach (string aa in ser.Actors.Select(act => act.ActorName.Trim()).Where(aa => !string.IsNullOrEmpty(aa)))
                     {
                         theData.Set(ser.ShowName, aa, true);

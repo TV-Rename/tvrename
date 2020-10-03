@@ -24,7 +24,7 @@ namespace TVRename
 
         protected abstract Finder.FinderDisplayType CurrentType();
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList, TVDoc.ScanSettings settings)
         {
             // have a look around for any missing episodes
             List < Finder > appropriateFinders =  finders.Where(f => f.DisplayType() == CurrentType() && f.Active()).ToList();

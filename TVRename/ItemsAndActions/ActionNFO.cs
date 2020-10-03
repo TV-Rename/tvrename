@@ -27,7 +27,7 @@ namespace TVRename
             Episode = pe;
         }
 
-        public ActionNfo(FileInfo nfo, ShowItem si) : base(nfo, si)
+        public ActionNfo(FileInfo nfo, ShowConfiguration si) : base(nfo, si)
         {
             Episode = null;
         }
@@ -118,7 +118,7 @@ namespace TVRename
 
             if (Episode != null) // specific episode
             {
-                ShowItem si = Episode.Show;
+                ShowConfiguration si = Episode.Show;
                 UpdateEpisodeFields(Episode, si, root, false);
             }
             else
@@ -127,7 +127,7 @@ namespace TVRename
             }
 
             doc.Save(Where.FullName);
-            Where.LastWriteTime = DateTimeOffset.FromUnixTimeMilliseconds(Episode?.SrvLastUpdated ?? SelectedShow.TheSeries()?.SrvLastUpdated??0).UtcDateTime; 
+            Where.LastWriteTime = DateTimeOffset.FromUnixTimeMilliseconds(Episode?.SrvLastUpdated ?? SelectedShow.CachedShow?.SrvLastUpdated??0).UtcDateTime; 
 
             return ActionOutcome.Success();
         }
@@ -135,7 +135,7 @@ namespace TVRename
         [NotNull]
         private ActionOutcome ReplaceMultipartFile()
         {
-            ShowItem si = Episode?.Show ?? SelectedShow;
+            ShowConfiguration si = Episode?.Show ?? SelectedShow;
 
             //We will replace the file as too difficult to update multiparts
             //We can't use XDocument as it's not fully valid XML
@@ -169,12 +169,12 @@ namespace TVRename
             return ActionOutcome.Success();
         }
 
-        private static void UpdateEpisodeFields([NotNull] Episode episode,ShowItem? show, [NotNull] XElement root, bool isMultiPart)
+        private static void UpdateEpisodeFields([NotNull] Episode episode,ShowConfiguration? show, [NotNull] XElement root, bool isMultiPart)
         {
             root.UpdateElement("title", episode.Name,true);
             root.UpdateElement("id", episode.EpisodeId, true);
             root.UpdateElement("plot", episode.Overview, true);
-            UpdateAmongstElements(root, "studio", episode.TheSeries.Network);
+            UpdateAmongstElements(root, "studio", episode.TheCachedSeries.Network);
 
             UpdateId(root, "tvdb", "true", episode.EpisodeId);
             UpdateId(root, "imdb", "false", episode.ImdbCode);
@@ -191,10 +191,10 @@ namespace TVRename
                 root.UpdateElement("showtitle", show.ShowName, true);
                 root.UpdateElement("season", episode.GetSeasonNumber(show.Order), true);
                 root.UpdateElement("episode", episode.GetEpisodeNumber(show.Order), true);
-                root.UpdateElement("mpaa", show.TheSeries()?.ContentRating, true);
+                root.UpdateElement("mpaa", show.CachedShow?.ContentRating, true);
 
                 //actor(s) and guest actor(s)
-                SeriesInfo s = show.TheSeries();
+                CachedSeriesInfo s = show.CachedShow;
                 if (s != null)
                 {
                     ReplaceActors(root, episode.AllActors(s));
@@ -272,16 +272,17 @@ namespace TVRename
 
         private void UpdateShowFields([NotNull] XElement root)
         {
-            SeriesInfo series = SelectedShow.TheSeries();
+            CachedSeriesInfo cachedSeries = SelectedShow.CachedShow;
             root.UpdateElement("title", SelectedShow.ShowName);
 
-            float? showRating = series?.SiteRating;
+            float? showRating = cachedSeries?.SiteRating;
             if (showRating.HasValue)
             {
-                UpdateRatings(root,showRating.Value.ToString(CultureInfo.InvariantCulture), series.SiteRatingVotes);
+                UpdateRatings(root,showRating.Value.ToString(CultureInfo.InvariantCulture), cachedSeries.SiteRatingVotes);
             }
 
             string lang = TVSettings.Instance.PreferredLanguageCode;
+            
             if (SelectedShow.UseCustomLanguage && SelectedShow.PreferredLanguage != null)
             {
                 lang = SelectedShow.PreferredLanguage.Abbreviation;
@@ -297,20 +298,20 @@ namespace TVRename
             urlNode.UpdateAttribute("cache", "auth.json");
             urlNode.SetValue(TheTVDB.API.BuildUrl(SelectedShow.TvdbCode, lang));
 
-            if (!(series is null))
+            if (!(cachedSeries is null))
             {
                 root.UpdateElement("originaltitle", SelectedShow.ShowName);
-                UpdateAmongstElements(root,"studio", series.Network);
-                root.UpdateElement("id", series.TvdbCode);
-                root.UpdateElement("runtime", series.Runtime, true);
-                root.UpdateElement("mpaa", series.ContentRating, true);
-                root.UpdateElement("premiered", series.FirstAired);
-                root.UpdateElement("year", series.Year);
-                root.UpdateElement("status", series.Status);
-                root.UpdateElement("plot", series.Overview);
+                UpdateAmongstElements(root,"studio", cachedSeries.Network);
+                root.UpdateElement("id", cachedSeries.TvdbCode);
+                root.UpdateElement("runtime", cachedSeries.Runtime, true);
+                root.UpdateElement("mpaa", cachedSeries.ContentRating, true);
+                root.UpdateElement("premiered", cachedSeries.FirstAired);
+                root.UpdateElement("year", cachedSeries.Year);
+                root.UpdateElement("status", cachedSeries.Status);
+                root.UpdateElement("plot", cachedSeries.Overview);
 
-                UpdateId(root, "tvdb", "true", series.TvdbCode);
-                UpdateId(root, "imdb", "false", series.Imdb);
+                UpdateId(root, "tvdb", "true", cachedSeries.TvdbCode);
+                UpdateId(root, "imdb", "false", cachedSeries.Imdb);
             }
 
             root.ReplaceElements("genre", SelectedShow.Genres);

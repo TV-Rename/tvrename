@@ -24,7 +24,7 @@ namespace TVRename
 
         protected override void Do()
         {
-            IEnumerable<ProcessedEpisode> lpe = doc.Library.RecentEpisodes(TVSettings.Instance.WTWRecentDays).ToList();
+            IEnumerable<ProcessedEpisode> lpe = doc.TvLibrary.RecentEpisodes(TVSettings.Instance.WTWRecentDays).ToList();
             DirFilesCache dfc = new DirFilesCache();
 
             //Write Contents to file

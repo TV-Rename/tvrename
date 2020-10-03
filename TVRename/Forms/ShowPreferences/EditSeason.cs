@@ -28,12 +28,12 @@ namespace TVRename
         private readonly CustomEpisodeName nameStyle;
         private readonly List<ShowRule> workingRuleSet;
         private readonly List<ProcessedEpisode>? mOriginalEps;
-        private readonly ShowItem show;
+        private readonly ShowConfiguration show;
         private readonly int mSeasonNumber;
         private readonly List<ProcessedEpisode> episodesToAddToSeen;
         private readonly List<ProcessedEpisode> episodesToRemoveFromSeen;
 
-        public EditSeason([NotNull] ShowItem si, int seasonNumber, CustomEpisodeName style)
+        public EditSeason([NotNull] ShowConfiguration si, int seasonNumber, CustomEpisodeName style)
         {
             mOriginalEps = ShowLibrary.GenerateEpisodes(si, seasonNumber, false);
 

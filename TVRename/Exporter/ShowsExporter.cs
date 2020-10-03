@@ -12,9 +12,19 @@ namespace TVRename
 {
     internal abstract class ShowsExporter : Exporter
     {
-        protected readonly List<ShowItem> Shows;
+        protected readonly List<ShowConfiguration> Shows;
 
-        protected ShowsExporter(List<ShowItem> shows)
+        protected ShowsExporter(List<ShowConfiguration> shows)
+        {
+            Shows = shows;
+        }
+    }
+
+    internal abstract class MoviesExporter : Exporter
+    {
+        protected readonly List<MovieConfiguration> Shows;
+
+        protected MoviesExporter(List<MovieConfiguration> shows)
         {
             Shows = shows;
         }

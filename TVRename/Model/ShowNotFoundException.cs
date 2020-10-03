@@ -13,10 +13,10 @@ namespace TVRename
     public class ShowNotFoundException : Exception
     {
         public readonly int ShowId;
-        public readonly ShowItem.ProviderType ShowIdProvider;
-        public readonly ShowItem.ProviderType ErrorProvider;
+        public readonly TVDoc.ProviderType ShowIdProvider;
+        public readonly TVDoc.ProviderType ErrorProvider;
 
-        public ShowNotFoundException(int id, string message, ShowItem.ProviderType showIdProvider, ShowItem.ProviderType errorProvider) :base(message)
+        public ShowNotFoundException(int id, string message, TVDoc.ProviderType showIdProvider, TVDoc.ProviderType errorProvider) :base(message)
         {
             ShowId = id;
             ShowIdProvider = showIdProvider;

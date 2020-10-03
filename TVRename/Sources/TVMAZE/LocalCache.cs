@@ -14,27 +14,16 @@ using System.Threading;
 using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-// Talk to the TVmaze web API, and get tv series info
+// Talk to the TVmaze web API, and get tv cachedSeries info
 
 // Hierarchy is:
-//   TVmaze -> Series (class SeriesInfo) -> Seasons (class Season) -> Episodes (class Episode)
+//   TVmaze -> Series (class CachedSeriesInfo) -> Seasons (class Season) -> Episodes (class Episode)
 
 namespace TVRename.TVmaze
 {
     // ReSharper disable once InconsistentNaming
-    public class LocalCache : iTVSource
+    public class LocalCache : MediaCache, iTVSource
     {
-        private FileInfo cacheFile;
-
-        public static readonly object SERIES_LOCK = new object();
-
-        private readonly ConcurrentDictionary<int, SeriesInfo> series = new ConcurrentDictionary<int, SeriesInfo>();
-
-        // ReSharper disable once InconsistentNaming
-        public string CurrentDLTask;
-
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
@@ -58,40 +47,36 @@ namespace TVRename.TVmaze
             }
         }
 
-        public string LastErrorMessage { get; set; }
-
-        public bool LoadOk;
-
         public void Setup(FileInfo? loadFrom, FileInfo cache, CommandLineArgs cla)
         {
             System.Diagnostics.Debug.Assert(cache != null);
-            cacheFile = cache;
+            CacheFile = cache;
 
             LastErrorMessage = string.Empty;
 
-            LoadOk = loadFrom is null || CachePersistor.LoadCache(loadFrom, this);
+            LoadOk = loadFrom is null || CachePersistor.LoadTvCache(loadFrom, this);
         }
 
-        public bool Connect(bool showErrorMsgBox) => true;
+        public bool Connect(bool showErrorMsgBox) => throw new NotImplementedException();
 
         public void SaveCache()
         {
             lock (SERIES_LOCK)
             {
-                CachePersistor.SaveCache(series, cacheFile, 0);
+                CachePersistor.SaveCache(Series, CacheFile, 0);
             }
         }
 
         public bool EnsureUpdated(SeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
         {
-            if (s.Provider != ShowItem.ProviderType.TVmaze)
+            if (s.Provider != TVDoc.ProviderType.TVmaze)
             {
-                throw new SourceConsistencyException($"Asked to update {s.Name} from TV Maze, but the Id is not for TV maze.", ShowItem.ProviderType.TVmaze);
+                throw new SourceConsistencyException($"Asked to update {s.Name} from TV Maze, but the Id is not for TV maze.", TVDoc.ProviderType.TVmaze);
             }
 
             lock (SERIES_LOCK)
             {
-                if (series.ContainsKey(s.TvMazeSeriesId) && !series[s.TvMazeSeriesId].Dirty)
+                if (Series.ContainsKey(s.TvMazeSeriesId) && !Series[s.TvMazeSeriesId].Dirty)
                 {
                     return true;
                 }
@@ -100,13 +85,13 @@ namespace TVRename.TVmaze
             Say($"{s.Name} from TVmaze");
             try
             {
-                SeriesInfo downloadedSi = API.GetSeriesDetails(s);
+                CachedSeriesInfo downloadedSi = API.GetSeriesDetails(s);
 
                 if (downloadedSi.TvMazeCode != s.TvMazeSeriesId && s.TvMazeSeriesId ==-1)
                 {
                     lock (SERIES_LOCK)
                     {
-                        series.TryRemove(-1, out _);
+                        Series.TryRemove(-1, out _);
                     }
                 }
 
@@ -122,7 +107,7 @@ namespace TVRename.TVmaze
             }
             catch (SourceConsistencyException sce)
             {
-                Logger.Error(sce.Message);
+                LOGGER.Error(sce.Message);
                 LastErrorMessage = sce.Message;
                 return true;
             }
@@ -130,18 +115,18 @@ namespace TVRename.TVmaze
             return true;
         }
 
-        private void AddSeriesToCache([NotNull] SeriesInfo si)
+        private void AddSeriesToCache([NotNull] CachedSeriesInfo si)
         {
             int id = si.TvMazeCode;
             lock (SERIES_LOCK)
             {
-                if (series.ContainsKey(id))
+                if (Series.ContainsKey(id))
                 {
-                    series[id].Merge(si);
+                    Series[id].Merge(si);
                 }
                 else
                 {
-                    series[id] = si;
+                    Series[id] = si;
                 }
             }
         }
@@ -168,12 +153,12 @@ namespace TVRename.TVmaze
 
                         if (showId > 0 && HasSeries(showId))
                         {
-                            SeriesInfo x = GetSeries(showId);
+                            CachedSeriesInfo x = GetSeries(showId);
                             if (!(x is null))
                             {
                                 if (x.SrvLastUpdated < showUpdateTime.Value)
                                 {
-                                    Logger.Info($"Identified that show with TVMaze Id {showId} {x.Name} should be updated as update time is now {showUpdateTime.Value} and cache has {x.SrvLastUpdated}. ie {Helpers.FromUnixTime(showUpdateTime.Value).ToLocalTime()} to {Helpers.FromUnixTime(x.SrvLastUpdated).ToLocalTime()}.");
+                                    LOGGER.Info($"Identified that show with TVMaze Id {showId} {x.Name} should be updated as update time is now {showUpdateTime.Value} and cache has {x.SrvLastUpdated}. ie {Helpers.FromUnixTime(showUpdateTime.Value).ToLocalTime()} to {Helpers.FromUnixTime(x.SrvLastUpdated).ToLocalTime()}.");
                                     x.Dirty = true;
                                 }
                             }
@@ -198,7 +183,7 @@ namespace TVRename.TVmaze
             }
             catch (SourceConsistencyException sce)
             {
-                Logger.Error(sce.Message);
+                LOGGER.Error(sce.Message);
                 LastErrorMessage = sce.Message;
                 return false;
             }
@@ -209,10 +194,10 @@ namespace TVRename.TVmaze
             lock (SERIES_LOCK)
             {
                 // anything with a srv_lastupdated of 0 should be marked as dirty
-                // typically, this'll be placeholder series
-                foreach (KeyValuePair<int, SeriesInfo> kvp in series)
+                // typically, this'll be placeholder cachedSeries
+                foreach (KeyValuePair<int, CachedSeriesInfo> kvp in Series)
                 {
-                    SeriesInfo ser = kvp.Value;
+                    CachedSeriesInfo ser = kvp.Value;
                     if (ser.SrvLastUpdated == 0 || ser.Episodes.Count == 0)
                     {
                         ser.Dirty = true;
@@ -224,28 +209,18 @@ namespace TVRename.TVmaze
         private void AddPlaceholderSeries([NotNull] SeriesSpecifier ss)
             => AddPlaceholderSeries(ss.TvdbSeriesId, ss.TvMazeSeriesId, ss.CustomLanguageCode);
 
-        private void SayNothing() => Say(string.Empty);
-        private void Say(string s)
-        {
-            CurrentDLTask = s;
-            if (s.HasValue())
-            {
-                Logger.Info("Status on screen updated: {0}", s);
-            }
-        }
-
         public void UpdatesDoneOk()
         {
             //No Need to do anything aswe always refresh from scratch
         }
 
-        public SeriesInfo? GetSeries(string showName, bool showErrorMsgBox) => throw new NotImplementedException(); //todo when we can offer sarch for TV Maze
+        public CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox) => throw new NotImplementedException(); //todo when we can offer sarch for TV Maze
 
-        public SeriesInfo? GetSeries(int id)
+        public CachedSeriesInfo? GetSeries(int id)
         {
             lock (SERIES_LOCK)
             {
-                return HasSeries(id) ? series[id] : null;
+                return HasSeries(id) ? Series[id] : null;
             }
         }
 
@@ -253,7 +228,7 @@ namespace TVRename.TVmaze
         {
             lock (SERIES_LOCK)
             {
-                return series.ContainsKey(id);
+                return Series.ContainsKey(id);
             }
         }
 
@@ -261,28 +236,27 @@ namespace TVRename.TVmaze
         {
             lock (SERIES_LOCK)
             {
-                if (!series.ContainsKey(e.SeriesId))
+                if (!Series.ContainsKey(e.SeriesId))
                 {
                     throw new SourceConsistencyException(
-                        $"Can't find the series to add the episode to (TVMaze). EpId:{e.EpisodeId} SeriesId:{e.SeriesId} {e.Name}", ShowItem.ProviderType.TVmaze);
+                        $"Can't find the cachedSeries to add the episode to (TVMaze). EpId:{e.EpisodeId} SeriesId:{e.SeriesId} {e.Name}", TVDoc.ProviderType.TVmaze);
                 }
 
-                SeriesInfo ser = series[e.SeriesId];
+                CachedSeriesInfo ser = Series[e.SeriesId];
 
                 ser.AddEpisode(e);
             }
         }
-        public void Tidy(ICollection<ShowItem> libraryValues)
+        public void Tidy(ICollection<ShowConfiguration> libraryValues)
         {
             // remove any shows from thetvdb that aren't in My Shows
             List<int> removeList = new List<int>();
 
             lock (SERIES_LOCK)
             {
-                foreach (KeyValuePair<int, SeriesInfo> kvp in series)
+                foreach (KeyValuePair<int, CachedSeriesInfo> kvp in Series)
                 {
-                    bool found = libraryValues.Any(si => si.TVmazeCode == kvp.Key);
-                    if (!found)
+                    if (libraryValues.All(si => si.TVmazeCode != kvp.Key))
                     {
                         removeList.Add(kvp.Key);
                     }
@@ -293,28 +267,26 @@ namespace TVRename.TVmaze
                     ForgetShow(i);
                 }
             }
-
-            SaveCache();
         }
 
         public void ForgetEverything()
         {
             lock (SERIES_LOCK)
             {
-                series.Clear();
+                Series.Clear();
             }
 
             SaveCache();
-            Logger.Info("Forgot all TVMaze shows");
+            LOGGER.Info("Forgot all TVMaze shows");
         }
 
         public void ForgetShow(int id)
         {
             lock (SERIES_LOCK)
             {
-                if (series.ContainsKey(id))
+                if (Series.ContainsKey(id))
                 {
-                    series.TryRemove(id, out _);
+                    Series.TryRemove(id, out _);
                 }
             }
         }
@@ -323,9 +295,9 @@ namespace TVRename.TVmaze
         {
             lock (SERIES_LOCK)
             {
-                if (series.ContainsKey(tvmaze))
+                if (Series.ContainsKey(tvmaze))
                 {
-                    series.TryRemove(tvmaze, out SeriesInfo _);
+                    Series.TryRemove(tvmaze, out CachedSeriesInfo _);
                     if (makePlaceholder)
                     {
                         if (useCustomLanguage && langCode.HasValue())
@@ -352,7 +324,7 @@ namespace TVRename.TVmaze
         {
             lock (SERIES_LOCK)
             {
-                series[tvmaze] = new SeriesInfo(tvdb,tvmaze) { Dirty = true };
+                Series[tvmaze] = new CachedSeriesInfo(tvdb,tvmaze) { Dirty = true };
             }
         }
 
@@ -360,29 +332,29 @@ namespace TVRename.TVmaze
         {
             lock (SERIES_LOCK)
             {
-                series[tvmaze] = new SeriesInfo(tvdb, tvmaze, customLanguageCode) {Dirty = true};
+                Series[tvmaze] = new CachedSeriesInfo(tvdb, tvmaze, customLanguageCode) {Dirty = true};
             }
         }
 
-        public void UpdateSeries(SeriesInfo si)
+        public void UpdateSeries(CachedSeriesInfo si)
         {
             lock (SERIES_LOCK)
             {
-                series[si.TvMazeCode] = si;
+                Series[si.TvMazeCode] = si;
             }
         }
 
-        public void AddOrUpdateEpisode(Episode e,SeriesInfo si)
+        public void AddOrUpdateEpisode(Episode e,CachedSeriesInfo si)
         {
             lock (SERIES_LOCK)
             {
-                if (!series.ContainsKey(e.SeriesId))
+                if (!Series.ContainsKey(e.SeriesId))
                 {
                     throw new SourceConsistencyException(
-                        $"Can't find the series to add the episode to. EpId:{e.EpisodeId} SeriesId:{e.SeriesId} {e.Name}", ShowItem.ProviderType.TVmaze);
+                        $"Can't find the cachedSeries to add the episode to. EpId:{e.EpisodeId} SeriesId:{e.SeriesId} {e.Name}", TVDoc.ProviderType.TVmaze);
                 }
 
-                SeriesInfo ser = series[e.SeriesId];
+                CachedSeriesInfo ser = Series[e.SeriesId];
                 ser.AddEpisode(e);
             }
         }
@@ -391,26 +363,26 @@ namespace TVRename.TVmaze
         {
             lock (SERIES_LOCK)
             {
-                if (series.ContainsKey(seriesId))
+                if (Series.ContainsKey(seriesId))
                 {
                     foreach (Banner b in seriesBanners)
                     {
-                        if (!series.ContainsKey(b.SeriesId))
+                        if (!Series.ContainsKey(b.SeriesId))
                         {
                             throw new SourceConsistencyException(
-                                $"Can't find the series to add the banner {b.BannerId} to. {seriesId},{b.SeriesId}", ShowItem.ProviderType.TVmaze);
+                                $"Can't find the cachedSeries to add the banner {b.BannerId} to. {seriesId},{b.SeriesId}", TVDoc.ProviderType.TVmaze);
                         }
 
-                        SeriesInfo ser = series[b.SeriesId];
+                        CachedSeriesInfo ser = Series[b.SeriesId];
 
                         ser.AddOrUpdateBanner(b);
                     }
 
-                    series[seriesId].BannersLoaded = true;
+                    Series[seriesId].BannersLoaded = true;
                 }
                 else
                 {
-                    Logger.Warn($"Banners were found for series {seriesId} - Ignoring them.");
+                    LOGGER.Warn($"Banners were found for cachedSeries {seriesId} - Ignoring them.");
                 }
             }
         }
@@ -422,12 +394,12 @@ namespace TVRename.TVmaze
 
         public Language PreferredLanguage => throw new NotImplementedException();
 
-        public ConcurrentDictionary<int,SeriesInfo> CachedData
+        public ConcurrentDictionary<int,CachedSeriesInfo> CachedData
         {
             get {
                 lock (SERIES_LOCK)
                 {
-                    return series;
+                    return Series;
                 }
             }
         }

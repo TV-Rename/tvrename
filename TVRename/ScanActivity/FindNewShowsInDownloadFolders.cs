@@ -22,14 +22,14 @@ namespace TVRename
 
         protected override string CheckName() => "Looked in the Search Folders for any new shows that need to be added to the library";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,
+        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList,
             TVDoc.ScanSettings settings)
         {
             //for each directory in settings directory
             //for each file in directory
             //for each saved show (order by recent)
             //does show match selected file?
-            //if so add series to list of series scanned
+            //if so add cachedSeries to list of cachedSeries scanned
             if (!Active())
             {
                 LOGGER.Info("Not looking for new shows as 'Auto-Add' is turned off");
@@ -44,21 +44,21 @@ namespace TVRename
             }
 
             IEnumerable<string> possibleShowNames = GetPossibleShowNameStrings();
-            List<ShowItem> addedShows = FinderHelper.FindShows(possibleShowNames,MDoc,settings.Owner);
+            List<ShowConfiguration> addedShows = FinderHelper.FindShows(possibleShowNames,MDoc,settings.Owner);
 
             if (addedShows.Count <= 0)
             {
                 return;
             }
 
-            MDoc.Library.AddRange(addedShows);
+            MDoc.TvLibrary.AddRange(addedShows);
             MDoc.ShowAddedOrEdited(false,false,false,settings.Owner);
             MDoc.ShowAddedOrEdited(true,false,false,settings.Owner);
 
             LOGGER.Info("Added new shows called: {0}", addedShows.Select(s => s.ShowName).ToCsv());
 
             //add each new show into the shows being scanned
-            foreach (ShowItem si in addedShows)
+            foreach (ShowConfiguration si in addedShows)
             {
                 showList.Add(si);
             }
@@ -118,9 +118,9 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.AutoSearchForDownloadedFiles;
 
-        private bool LookForSeries(FileSystemInfo name) => LookForSeries(name, MDoc.Library.Values);
+        private bool LookForSeries(FileSystemInfo name) => LookForSeries(name, MDoc.TvLibrary.Values);
 
-        private static bool LookForSeries(FileSystemInfo test, [NotNull] IEnumerable<ShowItem> shows)
+        private static bool LookForSeries(FileSystemInfo test, [NotNull] IEnumerable<ShowConfiguration> shows)
         {
             return shows.Any(si => si.NameMatch(test, TVSettings.Instance.UseFullPathNameToMatchSearchFolders));
         }

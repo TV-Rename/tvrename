@@ -64,7 +64,7 @@ namespace TVRename
             }
         }
 
-        public SeriesInfo? SelectedShow()
+        public CachedSeriesInfo? SelectedShow()
         {
             try
             {
@@ -73,7 +73,7 @@ namespace TVRename
                     return null;
                 }
 
-                return (SeriesInfo)lvMatches.SelectedItems[0].Tag;
+                return (CachedSeriesInfo)lvMatches.SelectedItems[0].Tag;
             }
             catch
             {
@@ -104,9 +104,9 @@ namespace TVRename
             {
                 bool numeric = int.TryParse(what, out int matchnum);
 
-                lock (TheTVDB.LocalCache.SERIES_LOCK)
+                lock (TheTVDB.LocalCache.Instance.SERIES_LOCK)
                 {
-                    foreach (KeyValuePair<int, SeriesInfo> kvp in TheTVDB.LocalCache.Instance.GetSeriesDict())
+                    foreach (KeyValuePair<int, CachedSeriesInfo> kvp in TheTVDB.LocalCache.Instance.GetSeriesDict())
                     {
                         int num = kvp.Key;
                         string show = kvp.Value.Name.RemoveDiacritics();
@@ -147,7 +147,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static ListViewItem NewLvi([NotNull] SeriesInfo si, int num, string show, bool numberMatch)
+        private static ListViewItem NewLvi([NotNull] CachedSeriesInfo si, int num, string show, bool numberMatch)
         {
             ListViewItem lvi = new ListViewItem {Text = num.ToString()};
             lvi.SubItems.Add(show);

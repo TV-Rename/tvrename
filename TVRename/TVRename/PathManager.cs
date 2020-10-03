@@ -16,6 +16,7 @@ namespace TVRename
     {
         private const string TVDB_FILE_NAME = "TheTVDB.xml";
         private const string TVMAZE_FILE_NAME = "TVmaze.xml";
+        private const string TMDB_FILE_NAME = "TMDB.xml";
         private const string SETTINGS_FILE_NAME = "TVRenameSettings.xml";
         private const string UI_LAYOUT_FILE_NAME = "Layout.xml";
         private const string STATISTICS_FILE_NAME = "Statistics.xml";
@@ -69,6 +70,7 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         [NotNull]
         public static FileInfo TVmazeFile=> GetFileInfo(TVMAZE_FILE_NAME);
+        public static FileInfo TmdbFile => GetFileInfo(TMDB_FILE_NAME);
         // ReSharper disable once InconsistentNaming
         [NotNull]
         public static FileInfo TVDocSettingsFile => GetFileInfo(SETTINGS_FILE_NAME);

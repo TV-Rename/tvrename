@@ -26,6 +26,7 @@ namespace TVRename
     public class TVRenameStats
     {
         public int AutoAddedShows = 0;
+        public int AutoAddedMovies = 0;
         public int FilesCopied = 0;
         public int FilesMoved = 0;
         public int FilesRenamed = 0;
@@ -39,6 +40,7 @@ namespace TVRename
         [XmlIgnoreAttribute] public int NsNumberOfEpisodesExpected = 0;
         [XmlIgnoreAttribute] public int NsNumberOfSeasons = 0;
         [XmlIgnoreAttribute] public int NsNumberOfShows = 0;
+        [XmlIgnoreAttribute] public int NsNumberOfMovies = 0;
         [XmlIgnoreAttribute] private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static TVRenameStats? Load()

@@ -17,7 +17,7 @@ namespace TVRename
             downloadIdentifiers = new DownloadIdentifiersController();
         }
 
-        protected override void Check(ShowItem si, DirFilesCache dfc,TVDoc.ScanSettings settings)
+        protected override void Check(ShowConfiguration si, DirFilesCache dfc,TVDoc.ScanSettings settings)
         {
             Dictionary<int, SafeList<string>> allFolders = si.AllExistngFolderLocations();
             if (allFolders.Count == 0) // no folders defined for this show
@@ -67,7 +67,7 @@ namespace TVRename
             } // for each season of this show
         }
 
-        private void CheckSeason([NotNull] ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum, [NotNull] SafeList<string> folders, bool timeForBannerUpdate)
+        private void CheckSeason([NotNull] ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum, [NotNull] SafeList<string> folders, bool timeForBannerUpdate)
         {
             bool folderNotDefined = folders.Count == 0;
             if (folderNotDefined && TVSettings.Instance.MissingCheck && !si.AutoAddNewSeasons())
@@ -76,7 +76,7 @@ namespace TVRename
             }
 
             // base folder:
-            if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && si.AutoAddType != ShowItem.AutomaticFolderType.none)
+            if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && si.AutoAddType != ShowConfiguration.AutomaticFolderType.none)
             {
                 // main image for the folder itself
                 Doc.TheActionList.Add(downloadIdentifiers.ProcessShow(si));
@@ -88,7 +88,7 @@ namespace TVRename
             } // for each folder for this season of this show
         }
 
-        private void CheckSeasonFolder(ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum,
+        private void CheckSeasonFolder(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum,
             bool timeForBannerUpdate, string folder)
         {
             if (settings.Token.IsCancellationRequested)
@@ -98,13 +98,13 @@ namespace TVRename
 
             if (TVSettings.Instance.NeedToDownloadBannerFile() && timeForBannerUpdate)
             {
-                //Image series checks here
+                //Image cachedSeries checks here
                 Doc.TheActionList.Add(
                     downloadIdentifiers.ForceUpdateSeason(DownloadIdentifier.DownloadType.downloadImage, si,
                         folder, snum));
             }
 
-            //Image series checks here
+            //Image cachedSeries checks here
             Doc.TheActionList.Add(downloadIdentifiers.ProcessSeason(si, folder, snum));
 
             FileInfo[] files = dfc.GetFiles(folder);

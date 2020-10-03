@@ -32,11 +32,11 @@ namespace TVRename
         public readonly ConcurrentDictionary<int,Episode> Episodes;
         public readonly int SeasonId;
         public readonly int SeasonNumber;
-        public readonly ShowItem Show;
+        public readonly ShowConfiguration Show;
         // ReSharper disable once NotAccessedField.Local
         private readonly SeasonType type;
 
-        public ProcessedSeason(ShowItem theShow, int number, int seasonId, SeasonType t)
+        public ProcessedSeason(ShowConfiguration theShow, int number, int seasonId, SeasonType t)
         {
             Show = theShow;
             SeasonNumber = number;
@@ -205,9 +205,9 @@ namespace TVRename
             return returnValue;
         }
 
-        public string? GetBannerPath() => Show.TheSeries()?.GetSeasonBannerPath(SeasonNumber);
+        public string? GetBannerPath() => Show.CachedShow?.GetSeasonBannerPath(SeasonNumber);
 
-        public string? GetWideBannerPath() => Show.TheSeries()?.GetSeasonWideBannerPath(SeasonNumber);
+        public string? GetWideBannerPath() => Show.CachedShow?.GetSeasonWideBannerPath(SeasonNumber);
 
         public void AddUpdateEpisode([NotNull] Episode newEpisode)
         {
@@ -237,12 +237,12 @@ namespace TVRename
         {
             get
             {
-                if (Show.Provider == ShowItem.ProviderType.TheTVDB)
+                if (Show.Provider == TVDoc.ProviderType.TheTVDB)
                 {
                     return TVDBWebsiteUrl;
                 }
 
-                return Show.TheSeries()?.Season(SeasonNumber)?.Url; //TODO - IMPROVE HOW TO GET THE SEASON URL
+                return Show.CachedShow?.Season(SeasonNumber)?.Url; //TODO - IMPROVE HOW TO GET THE SEASON URL
             }
         }
         public bool NextEpisodeIs(int episodeNumber, SeasonType order)

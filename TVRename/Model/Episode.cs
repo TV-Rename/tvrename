@@ -50,7 +50,7 @@ namespace TVRename
         public int SeriesId;
         public long SrvLastUpdated;
 
-        private SeriesInfo? internalSeries;
+        private CachedSeriesInfo? internalSeries;
 
         private string? mName;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
@@ -73,7 +73,7 @@ namespace TVRename
             EpisodeDirector = o.EpisodeDirector;
             Writer = o.Writer;
             mName = o.mName;
-            internalSeries = o.TheSeries;
+            internalSeries = o.TheCachedSeries;
             SeasonId = o.SeasonId;
             Dirty = o.Dirty;
             DvdChapter = o.DvdChapter;
@@ -123,7 +123,7 @@ namespace TVRename
             //  <id>...</id>
             //  blah blah
             // </Episode>
-            SeriesId = r.ExtractInt("seriesid", -1); // key to the series
+            SeriesId = r.ExtractInt("seriesid", -1); // key to the cachedSeries
 
             EpisodeId = r.ExtractInt("id",-1);
             SeasonId = r.ExtractInt("airedSeasonID") ?? r.ExtractInt("seasonid",-1);
@@ -166,7 +166,7 @@ namespace TVRename
             return intValue;
         }
 
-        public Episode(int seriesId,JObject? bestLanguageR, JObject jsonInDefaultLang, SeriesInfo si) : this(seriesId,si)
+        public Episode(int seriesId,JObject? bestLanguageR, JObject jsonInDefaultLang, CachedSeriesInfo si) : this(seriesId,si)
         {
             if (bestLanguageR is null)
             {
@@ -178,7 +178,7 @@ namespace TVRename
                 //We will populate with the best language first and then fill in any gaps with the backup Language
                 LoadJson(bestLanguageR);
 
-                //backupLanguageR should be a series of name/value pairs (ie a JArray of JProperties)
+                //backupLanguageR should be a cachedSeries of name/value pairs (ie a JArray of JProperties)
                 //TVDB asserts that name and overview are the fields that are localised
 
                 string? epName = (string) jsonInDefaultLang["episodeName"];
@@ -195,7 +195,7 @@ namespace TVRename
             }
         }
 
-        public Episode(int seriesId, [NotNull] JObject r, SeriesInfo si) :this(seriesId,si)
+        public Episode(int seriesId, [NotNull] JObject r, CachedSeriesInfo si) :this(seriesId,si)
         {
             // <Episode>
             //  <id>...</id>
@@ -205,7 +205,7 @@ namespace TVRename
             LoadJson(r);
         }
 
-        public Episode(int seriesId, SeriesInfo si)
+        public Episode(int seriesId, CachedSeriesInfo si)
         {
             internalSeries = si;
             SeriesId = seriesId;
@@ -328,7 +328,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> Directors => string.IsNullOrEmpty(EpisodeDirector) ? new string[] { } : EpisodeDirector.Split('|').Where(s => s.HasValue());
 
-        public SeriesInfo TheSeries
+        public CachedSeriesInfo TheCachedSeries
         {
             get
             {
@@ -347,7 +347,7 @@ namespace TVRename
 
             if (!returnVal)
             {
-                Logger.Error("Issue with episode " + EpisodeId + " for series " + SeriesId + " for EpNum " + AiredEpNum +
+                Logger.Error("Issue with episode " + EpisodeId + " for cachedSeries " + SeriesId + " for EpNum " + AiredEpNum +
                             " for SeasonID " + SeasonId + " for ReadSeasonNum " + ReadAiredSeasonNum +
                             " for DVDSeasonNum " + ReadDvdSeasonNum);
             }
@@ -355,7 +355,7 @@ namespace TVRename
             return returnVal;
         }
 
-        public void SetSeriesSeason(SeriesInfo ser)
+        public void SetSeriesSeason(CachedSeriesInfo ser)
         {
             internalSeries = ser;
         }
@@ -421,7 +421,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public IEnumerable<Actor> AllActors([NotNull] SeriesInfo  si)
+        public IEnumerable<Actor> AllActors([NotNull] CachedSeriesInfo  si)
         {
             List<Actor> returnValue = si.GetActors().ToList();
             foreach (string star in GuestStars)

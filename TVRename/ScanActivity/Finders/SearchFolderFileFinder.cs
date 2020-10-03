@@ -12,7 +12,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.SearchLocally;
         protected override string CheckName() => "Looked in the search folders for the missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,
+        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList,
             TVDoc.ScanSettings settings)
         {
             ItemList newList = new ItemList();

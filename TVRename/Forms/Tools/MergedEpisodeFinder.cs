@@ -139,7 +139,7 @@ namespace TVRename.Forms
 
             PossibleMergedEpisode? mlastSelected = (PossibleMergedEpisode) lvMergedEpisodes.SelectedItems[0].Tag;
             ListViewItem? mlastClicked = lvMergedEpisodes.SelectedItems[0];
-            ShowItem? si = mlastSelected?.ShowItem;
+            ShowConfiguration? si = mlastSelected?.ShowConfiguration;
 
             if (si == null)
             {
@@ -151,7 +151,7 @@ namespace TVRename.Forms
             possibleMergedEpisodeRightClickMenu.Items.Clear();
 
             AddRcMenuItem("Episode Guide", (o, args) => GotoEpGuide(si,mlastSelected));
-            AddRcMenuItem("Force Refresh", (o, args) => mainUi.ForceRefresh(new List<ShowItem> {si}, false));
+            AddRcMenuItem("Force Refresh", (o, args) => mainUi.ForceRefresh(si, false));
             AddRcMenuItem("Edit Show", (o, args) => mainUi.EditShow(si));
 
             AddRcMenuItem("Edit " + ProcessedSeason.UIFullSeasonWord(mlastSelected.SeasonNumber),
@@ -170,7 +170,7 @@ namespace TVRename.Forms
             possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
         }
 
-        private void AddRule(PossibleMergedEpisode selected,ShowItem si, ListViewItem lastClicked)
+        private void AddRule(PossibleMergedEpisode selected,ShowConfiguration si, ListViewItem lastClicked)
         {
             ShowRule sr = selected.GenerateRule();
 
@@ -180,7 +180,7 @@ namespace TVRename.Forms
             dupEps.Remove(selected);
         }
 
-        private void GotoEpGuide(ShowItem? si, PossibleMergedEpisode? mlastSelected)
+        private void GotoEpGuide(ShowConfiguration? si, PossibleMergedEpisode? mlastSelected)
         {
             if (mlastSelected != null)
             {

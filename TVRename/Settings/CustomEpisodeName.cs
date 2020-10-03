@@ -116,11 +116,11 @@ namespace TVRename
         }
 
         [NotNull]
-        public string GetTargetEpisodeName([NotNull] ShowItem show, [NotNull] Episode ep)
+        public string GetTargetEpisodeName([NotNull] ShowConfiguration show, [NotNull] Episode ep)
             => GetTargetEpisodeName(show, ep, false);
 
         [NotNull]
-        private string GetTargetEpisodeName([NotNull] ShowItem show, [NotNull] Episode ep, bool urlEncode)
+        private string GetTargetEpisodeName([NotNull] ShowConfiguration show, [NotNull] Episode ep, bool urlEncode)
         {
             //note this is for an Episode and not a ProcessedEpisode
             string name = StyleString;
@@ -148,7 +148,7 @@ namespace TVRename
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            string seasonName = show.TheSeries()?.Season(seasonNumber)?.SeasonName;
+            string seasonName = show.CachedShow?.Season(seasonNumber)?.SeasonName;
 
             name = name.ReplaceInsensitive("{Season}", seasonNumber.ToString());
             name = name.ReplaceInsensitive("{Season:2}", seasonNumber.ToString("00"));
@@ -164,7 +164,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Number:3}", "");
             name = name.ReplaceInsensitive("{Imdb}", ep.ImdbCode??string.Empty);
 
-            SeriesInfo si = show.TheSeries();
+            CachedSeriesInfo si = show.CachedShow;
             name = name.ReplaceInsensitive("{ShowImdb}", si?.Imdb??string.Empty);
             name = name.ReplaceInsensitiveLazy("{Year}",new Lazy<string?>(() => si?.MinYear.ToString() ?? string.Empty),StringComparison.CurrentCultureIgnoreCase  );
 
@@ -249,7 +249,7 @@ namespace TVRename
                 name = name.ReplaceInsensitive("{SeasonNumber}", pe.AppropriateSeasonIndex.ToString());
                 name = name.ReplaceInsensitive("{SeasonNumber:2}", pe.AppropriateSeasonIndex.ToString("00"));
 
-                string seasonName = pe.Show.TheSeries()?.Season(pe.AppropriateSeasonNumber)?.SeasonName;
+                string seasonName = pe.Show.CachedShow?.Season(pe.AppropriateSeasonNumber)?.SeasonName;
                 name = name.ReplaceInsensitive("{SeasonName}", seasonName ?? string.Empty);
 
                 string episodeFormat = pe.AppropriateProcessedSeason.Episodes.Count >= 100 ? "000" : "00";
@@ -260,10 +260,10 @@ namespace TVRename
                 name = name.ReplaceInsensitiveLazy("{Number}", new Lazy<string?>(() => pe.OverallNumber.ToString()), StringComparison.CurrentCultureIgnoreCase);
                 name = name.ReplaceInsensitiveLazy("{Number:2}", new Lazy<string?>(() => pe.OverallNumber.ToString("00")), StringComparison.CurrentCultureIgnoreCase);
                 name = name.ReplaceInsensitiveLazy("{Number:3}", new Lazy<string?>(() => pe.OverallNumber.ToString("000")), StringComparison.CurrentCultureIgnoreCase);
-                name = name.ReplaceInsensitiveLazy("{Year}", new Lazy<string?>(() => pe.TheSeries.MinYear.ToString()),StringComparison.CurrentCultureIgnoreCase);
+                name = name.ReplaceInsensitiveLazy("{Year}", new Lazy<string?>(() => pe.TheCachedSeries.MinYear.ToString()),StringComparison.CurrentCultureIgnoreCase);
                 name = name.ReplaceInsensitiveLazy("{SeasonYear}", new Lazy<string?>(() => pe.AppropriateProcessedSeason.MinYear().ToString()),StringComparison.CurrentCultureIgnoreCase);
                 name = name.ReplaceInsensitive("{Imdb}", pe.ImdbCode);
-                name = name.ReplaceInsensitive("{ShowImdb}", pe.Show.TheSeries()?.Imdb ?? string.Empty);
+                name = name.ReplaceInsensitive("{ShowImdb}", pe.Show.CachedShow?.Imdb ?? string.Empty);
 
                 name = ReplaceDates(urlEncode, name, pe.GetAirDateDt(false));
                 name = Regex.Replace(name, "{AllEpisodes}", AllEpsText(pe), RegexOptions.IgnoreCase);

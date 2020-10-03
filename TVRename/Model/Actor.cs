@@ -33,7 +33,7 @@ namespace TVRename
 
         public Actor([NotNull] XElement r)
         {
-            ActorId = r.ExtractInt("Id") ?? throw new SourceConsistencyException("Error Extracting Id for Actor",ShowItem.ProviderType.TheTVDB);
+            ActorId = r.ExtractInt("Id") ?? throw new SourceConsistencyException("Error Extracting Id for Actor",TVDoc.ProviderType.TheTVDB);
             ActorImage = r.ExtractString("Image");
             ActorName = r.ExtractString("Name");
             ActorRole = r.ExtractString("Role");

@@ -20,7 +20,7 @@ namespace TVRename
 
         protected override string ActivityName() => "Created Merge Rules for episodes in the library";
 
-        protected override void Check(ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+        protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
             if (settings.Token.IsCancellationRequested)
             {
@@ -57,7 +57,7 @@ namespace TVRename
             } // for each season of this show
         }
 
-        private static void MergeShowEpisodes([NotNull] ShowItem si, DirFilesCache dfc, CancellationToken token, int snum,IEnumerable<string> folders)
+        private static void MergeShowEpisodes([NotNull] ShowConfiguration si, DirFilesCache dfc, CancellationToken token, int snum,IEnumerable<string> folders)
         {
             if (snum == 0 && si.CountSpecials)
             {

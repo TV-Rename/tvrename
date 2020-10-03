@@ -51,5 +51,21 @@ namespace TVRename
                 label1.Text += txt + "\r\n";
             }
         }
+
+        public CustomNameTagsFloatingWindow(MovieConfiguration? movie)
+        {
+            InitializeComponent();
+
+            foreach (string s in CustomMovieName.TAGS)
+            {
+                string txt = s;
+                if (movie != null)
+                {
+                    txt += " - " + CustomMovieName.NameFor(movie,s);
+                }
+
+                label1.Text += txt + "\r\n";
+            }
+        }
     }
 }

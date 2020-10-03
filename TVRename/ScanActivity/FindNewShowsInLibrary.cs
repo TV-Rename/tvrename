@@ -20,9 +20,9 @@ namespace TVRename
         }
         protected override string CheckName() => "Looked in the library for any new shows to be added (bulk add)";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList, TVDoc.ScanSettings settings)
         {
-            BulkAddManager bam = new BulkAddManager(MDoc);
+            BulkAddSeriesManager bam = new BulkAddSeriesManager(MDoc);
             bam.CheckFolders(settings.Token, prog, false,!settings.Unattended);
             AskUserAboutShows(settings, bam);
 
@@ -38,10 +38,10 @@ namespace TVRename
             MDoc.SetDirty();
             MDoc.DoDownloadsFG(settings.Unattended,settings.Hidden,settings.Owner);
 
-            List<ShowItem> addedShows = idsToAdd.Select(s => MDoc.Library.GetShowItem(s)).ToList();
+            List<ShowConfiguration> addedShows = idsToAdd.Select(s => MDoc.TvLibrary.GetShowItem(s)).ToList();
 
             //add each new show into the shows being scanned
-            foreach (ShowItem si in addedShows)
+            foreach (ShowConfiguration si in addedShows)
             {
                 showList.Add(si);
             }
@@ -53,9 +53,9 @@ namespace TVRename
             MDoc.WriteRecent();
         }
 
-        private void AskUserAboutShows(TVDoc.ScanSettings settings, [NotNull] BulkAddManager bam)
+        private void AskUserAboutShows(TVDoc.ScanSettings settings, [NotNull] BulkAddSeriesManager bam)
         {
-            foreach (FoundFolder folder in bam.AddItems)
+            foreach (PossibleNewTvShow folder in bam.AddItems)
             {
                 if (settings.Token.IsCancellationRequested)
                 {
@@ -66,14 +66,14 @@ namespace TVRename
             }
         }
 
-        private void AskUserAboutShow([NotNull] FoundFolder folder, IDialogParent owner)
+        private void AskUserAboutShow([NotNull] PossibleNewTvShow folder, IDialogParent owner)
         {
             if (folder.CodeKnown)
             {
                 return;
             }
 
-            BulkAddManager.GuessShowItem(folder, MDoc.Library,true);
+            BulkAddSeriesManager.GuessShowItem(folder, MDoc.TvLibrary,true);
 
             if (folder.CodeKnown)
             {

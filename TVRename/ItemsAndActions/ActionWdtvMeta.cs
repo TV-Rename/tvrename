@@ -22,7 +22,7 @@ namespace TVRename
             Episode = pe;
         }
 
-        public ActionWdtvMeta(FileInfo where, ShowItem si) : base(where, si)
+        public ActionWdtvMeta(FileInfo where, ShowConfiguration si) : base(where, si)
         {
             Episode = null;
         }
@@ -52,19 +52,19 @@ namespace TVRename
                     writer.WriteStartElement("show");
 
                     writer.WriteElement("title", SelectedShow.ShowName);
-                    writer.WriteElement("premiered", SelectedShow.TheSeries()?.FirstAired);
-                    writer.WriteElement("year", SelectedShow.TheSeries()?.Year);
-                    writer.WriteElement("status", SelectedShow.TheSeries()?.Status);
-                    writer.WriteElement("mpaa", SelectedShow.TheSeries()?.ContentRating);
-                    writer.WriteElement("tvdbid", SelectedShow.TheSeries()?.TvdbCode);
-                    writer.WriteElement("plot", SelectedShow.TheSeries()?.Overview);
+                    writer.WriteElement("premiered", SelectedShow.CachedShow?.FirstAired);
+                    writer.WriteElement("year", SelectedShow.CachedShow?.Year);
+                    writer.WriteElement("status", SelectedShow.CachedShow?.Status);
+                    writer.WriteElement("mpaa", SelectedShow.CachedShow?.ContentRating);
+                    writer.WriteElement("tvdbid", SelectedShow.CachedShow?.TvdbCode);
+                    writer.WriteElement("plot", SelectedShow.CachedShow?.Overview);
 
                     foreach (string genre in SelectedShow.Genres)
                     {
                         writer.WriteElement("genre", genre);
                     }
 
-                    float siteRating =SelectedShow.TheSeries()?.SiteRating??0 * 10;
+                    float siteRating =SelectedShow.CachedShow?.SiteRating??0 * 10;
 
                     int intSiteRating = (int)siteRating;
                     if (intSiteRating > 0)
@@ -72,9 +72,9 @@ namespace TVRename
                         writer.WriteElement("rating", intSiteRating);
                     }
 
-                    writer.WriteInfo("moviedb", "imdb", "id", SelectedShow.TheSeries()?.Imdb);
+                    writer.WriteInfo("moviedb", "imdb", "id", SelectedShow.CachedShow?.Imdb);
 
-                    string rt = SelectedShow.TheSeries()?.Runtime;
+                    string rt = SelectedShow.CachedShow?.Runtime;
                     if (!string.IsNullOrEmpty(rt))
                     {
                         writer.WriteElement("runtime", rt + " min");
@@ -110,7 +110,7 @@ namespace TVRename
                         writer.WriteStartElement("details");
 
                         writer.WriteElement("title", TVSettings.Instance.NamingStyle.NameFor(Episode));
-                        writer.WriteElement("mpaa", Episode.TheSeries.ContentRating);
+                        writer.WriteElement("mpaa", Episode.TheCachedSeries.ContentRating);
 
                         if (Episode.FirstAired.HasValue)
                         {
@@ -119,10 +119,10 @@ namespace TVRename
                                 Episode.FirstAired.Value.ToString("yyyy-MM-dd"));
                         }
 
-                        writer.WriteElement("runtime", Episode.TheSeries.Runtime, true);
+                        writer.WriteElement("runtime", Episode.TheCachedSeries.Runtime, true);
                         writer.WriteElement("rating", Episode.EpisodeRating);
-                        writer.WriteElement("studio", Episode.TheSeries.Network);
-                        writer.WriteElement("plot", Episode.TheSeries.Overview);
+                        writer.WriteElement("studio", Episode.TheCachedSeries.Network);
+                        writer.WriteElement("plot", Episode.TheCachedSeries.Overview);
                         writer.WriteElement("overview", Episode.Overview);
                         foreach (string director in Episode.Directors)
                         {
@@ -134,13 +134,13 @@ namespace TVRename
                             writer.WriteElement("writers", epwriter);
                         }
 
-                        foreach (string genre in Episode.TheSeries.Genres)
+                        foreach (string genre in Episode.TheCachedSeries.Genres)
                         {
                             writer.WriteElement("genre", genre);
                         }
 
                         // actors...
-                        foreach (Actor aa in Episode.TheSeries.GetActors()
+                        foreach (Actor aa in Episode.TheCachedSeries.GetActors()
                             .Where(aa => !string.IsNullOrEmpty(aa.ActorName)))
                         {
                             writer.WriteStartElement("actor");
@@ -160,7 +160,7 @@ namespace TVRename
                             TheTVDB.API.GetImageURL(Episode.AppropriateProcessedSeason.GetWideBannerPath()));
 
                         writer.WriteElement("backdrop",
-                            TheTVDB.API.GetImageURL(Episode.TheSeries.GetSeriesFanartPath()));
+                            TheTVDB.API.GetImageURL(Episode.TheCachedSeries.GetSeriesFanartPath()));
 
                         writer.WriteEndElement(); // details
                     }

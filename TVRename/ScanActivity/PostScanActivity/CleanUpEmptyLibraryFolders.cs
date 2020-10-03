@@ -19,11 +19,11 @@ namespace TVRename
 
         protected override void DoCheck(SetProgressDelegate progress)
         {
-            IEnumerable<ShowItem> libraryShows = MDoc.Library.Shows.ToList();
+            IEnumerable<ShowConfiguration> libraryShows = MDoc.TvLibrary.Shows.ToList();
             int totalRecords = libraryShows.Count();
             int n = 0;
 
-            foreach (ShowItem si in libraryShows)
+            foreach (ShowConfiguration si in libraryShows)
             {
                 UpdateStatus(n++, totalRecords, si.ShowName);
 

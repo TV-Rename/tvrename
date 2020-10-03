@@ -77,7 +77,7 @@ namespace TVRename.Forms.Tools
             showRightClickMenu.Show(pt);
         }
 
-        private static void TvSourceFor(ShowItem? si)
+        private static void TvSourceFor(ShowConfiguration? si)
         {
             if (si != null)
             {
@@ -85,9 +85,9 @@ namespace TVRename.Forms.Tools
                 {
                     Helpers.OpenUrl(si.WebsiteUrl!);
                 }
-                else if (si.TheSeries()?.WebUrl.HasValue() ?? false)
+                else if (si.CachedShow?.WebUrl.HasValue() ?? false)
                 {
-                    Helpers.OpenUrl(si.TheSeries()?.WebUrl!);
+                    Helpers.OpenUrl(si.CachedShow?.WebUrl!);
                 }
             }
         }
@@ -108,10 +108,10 @@ namespace TVRename.Forms.Tools
         private void UpdateIssues(BackgroundWorker bw)
         {
             List<string> doneFolders = new List<string>();
-            int total = mDoc.Library.Count;
+            int total = mDoc.TvLibrary.Count;
             int current = 0;
 
-            foreach (ShowItem show in mDoc.Library.Shows.OrderBy(item => item.ShowName))
+            foreach (ShowConfiguration show in mDoc.TvLibrary.Shows.OrderBy(item => item.ShowName))
             {
                 Logger.Info($"Finding old eps for {show.ShowName}");
                 bw.ReportProgress(100*current++/total,show.ShowName);
@@ -138,7 +138,7 @@ namespace TVRename.Forms.Tools
                             }
                             else if (folders.ContainsKey(seasonNumber) && !folders[seasonNumber].Contains(showfolder))
                             {
-                                issues.Add(new FileIssue(show, file, "File is in the wrong series folder", seasonNumber, episodeNumber));
+                                issues.Add(new FileIssue(show, file, "File is in the wrong cachedSeries folder", seasonNumber, episodeNumber));
                             }
                             else
                             {

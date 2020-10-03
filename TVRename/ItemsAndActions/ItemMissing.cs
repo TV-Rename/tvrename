@@ -79,4 +79,59 @@ namespace TVRename
             ErrorText += p0;
         }
     }
+
+    public class MovieItemMissing : Item
+    {
+        public readonly string TheFileNoExt;
+        public readonly string Filename;
+        private readonly MovieConfiguration config;
+
+        public MovieItemMissing([NotNull] MovieConfiguration movie, [NotNull] string whereItShouldBeFolder)
+        {
+            Episode = null;
+            Filename = TVSettings.Instance.FilenameFriendly(CustomMovieName.NameFor(movie,TVSettings.Instance.MovieFilenameFormat));
+            TheFileNoExt = whereItShouldBeFolder + System.IO.Path.DirectorySeparatorChar + Filename;
+            DestinationFolder = whereItShouldBeFolder;
+            config = movie;
+        }
+
+        #region Item Members
+
+
+        public override bool SameAs(Item o)
+        {
+            return o is MovieItemMissing missing && string.CompareOrdinal(missing.TheFileNoExt, TheFileNoExt) == 0;
+        }
+
+        public override string Name => "Missing Movie";
+
+        public override int CompareTo(object? o)
+        {
+            if (o is null || !(o is MovieItemMissing miss))
+            {
+                return -1;
+            }
+
+            return String.Compare(TheFileNoExt, miss.TheFileNoExt, StringComparison.Ordinal);
+        }
+
+        #endregion
+
+        #region Item Members
+
+        public override IgnoreItem? Ignore => GenerateIgnore(TheFileNoExt);
+
+        public override string DestinationFolder { get; }
+
+        public override string DestinationFile => Filename;
+        public override string ScanListViewGroup => "lvgActionMissing";
+
+        public override string TargetFolder => new FileInfo(TheFileNoExt).DirectoryName;
+
+        public override int IconNumber => 1;
+
+        public MovieConfiguration MovieConfig => config;
+        #endregion
+    }
+
 }

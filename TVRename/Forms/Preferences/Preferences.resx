@@ -149,6 +149,15 @@ function to look for new shows that are not in
 your library. They should not overlap with the 'Search
 Folders' below.</value>
   </data>
+  <data name="lstMovieMonitorFolders.ToolTip" xml:space="preserve">
+    <value>Library Folders
+
+These are the root folder(s) of your collection
+of sorted TV Shows. This list is used by the 'Bulk Add'
+function to look for new shows that are not in
+your library. They should not overlap with the 'Search
+Folders' below.</value>
+  </data>
   <metadata name="colorDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>430, 17</value>
   </metadata>

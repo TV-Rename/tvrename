@@ -18,7 +18,7 @@ namespace TVRename
         protected override string CheckName() => "Cleaned up completed TV Torrents";
         public override bool Active() => TVSettings.Instance.RemoveCompletedTorrents;
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList, TVDoc.ScanSettings settings)
         {
             DirFilesCache dfc = new DirFilesCache();
             foreach (IDownloadProvider source in sources)
@@ -87,7 +87,7 @@ namespace TVRename
 
         private List<ProcessedEpisode>? MatchEpisodes(FileInfo droppedFile)
         {
-            ShowItem? bestShow = FinderHelper.FindBestMatchingShow(droppedFile, MDoc.Library.Shows);
+            ShowConfiguration? bestShow = FinderHelper.FindBestMatchingShow(droppedFile, MDoc.TvLibrary.Shows);
 
             if (bestShow is null)
             {
@@ -106,7 +106,7 @@ namespace TVRename
 
                 return new List<ProcessedEpisode>() {episode};
             }
-            catch (ShowItem.EpisodeNotFoundException)
+            catch (ShowConfiguration.EpisodeNotFoundException)
             {
                 return null;
             }

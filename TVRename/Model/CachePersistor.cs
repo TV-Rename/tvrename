@@ -50,7 +50,7 @@ namespace TVRename
             }
         }
 
-        public static void SaveCache(ConcurrentDictionary<int, SeriesInfo> series,[NotNull] FileInfo cacheFile, long timestamp)
+        public static void SaveCache(ConcurrentDictionary<int, CachedSeriesInfo> series,[NotNull] FileInfo cacheFile, long timestamp)
         {
             DirectoryInfo di = cacheFile.Directory;
             if (!di.Exists)
@@ -77,7 +77,7 @@ namespace TVRename
                     writer.WriteStartElement("Data");
                     writer.WriteAttributeToXml("time",timestamp);
 
-                    foreach (KeyValuePair<int, SeriesInfo> kvp in series)
+                    foreach (KeyValuePair<int, CachedSeriesInfo> kvp in series)
                     {
                         if (kvp.Value.SrvLastUpdated != 0)
                         {
@@ -102,7 +102,7 @@ namespace TVRename
 
                     writer.WriteStartElement("BannersCache");
 
-                    foreach (KeyValuePair<int, SeriesInfo> kvp in series)
+                    foreach (KeyValuePair<int, CachedSeriesInfo> kvp in series)
                     {
                         writer.WriteStartElement("BannersItem");
 
@@ -134,7 +134,88 @@ namespace TVRename
             }
         }
 
-        public static bool LoadCache([NotNull] FileInfo loadFrom,iTVSource cache)
+        internal static void SaveCache(ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile, long timestamp)
+        {
+            DirectoryInfo di = cacheFile.Directory;
+            if (!di.Exists)
+            {
+                di.Create();
+            }
+
+            Logger.Info("Saving Cache to: {0}", cacheFile.FullName);
+            try
+            {
+                RotateCacheFiles(cacheFile);
+
+                // write ourselves to disc for next time.  use same structure as thetvdb.com (limited fields, though)
+                // to make loading easy
+                XmlWriterSettings settings = new XmlWriterSettings
+                {
+                    Indent = true,
+                    NewLineOnAttributes = true
+                };
+
+                using (XmlWriter writer = XmlWriter.Create(cacheFile.FullName, settings))
+                {
+                    writer.WriteStartDocument();
+                    writer.WriteStartElement("Data");
+                    writer.WriteAttributeToXml("time", timestamp);
+
+                    foreach (KeyValuePair<int, CachedMovieInfo> kvp in movies)
+                    {
+                        if (!kvp.Value.IsSearchResultOnly)
+                        {
+                            kvp.Value.WriteXml(writer);
+                        }
+                        else
+                        {
+                            Logger.Info($"Cannot save {kvp.Value.TvdbCode} ({kvp.Value.Name}) as it is a search result that has not been used.");
+                        }
+                    }
+
+                    //
+                    // <BannersCache>
+                    //      <BannersItem>
+                    //          <SeriesId>123</SeriesId>
+                    //          <Banners>
+                    //              <Banner>
+
+                    /*writer.WriteStartElement("BannersCache");
+
+                    foreach (KeyValuePair<int, CachedSeriesInfo> kvp in series)
+                    {
+                        writer.WriteStartElement("BannersItem");
+
+                        writer.WriteElement("SeriesId", kvp.Key);
+
+                        writer.WriteStartElement("Banners");
+
+                        //We need to write out all banners that we have in any of the collections. 
+
+                        foreach (Banner ban in kvp.Value.AllBanners.Select(kvp3 => kvp3.Value))
+                        {
+                            ban.WriteXml(writer);
+                        }
+
+                        writer.WriteEndElement(); //Banners
+                        writer.WriteEndElement(); //BannersItem
+                    }
+
+                    writer.WriteEndElement(); // BannersCache*/
+
+                    writer.WriteEndElement(); // data
+
+                    writer.WriteEndDocument();
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Failed to save Cache to {cacheFile.FullName}");
+            }
+
+        }
+
+        public static bool LoadTvCache([NotNull] FileInfo loadFrom,iTVSource cache)
         {
             Logger.Info("Loading Cache from: {0}", loadFrom.FullName);
             if (!loadFrom.Exists)
@@ -145,7 +226,7 @@ namespace TVRename
             try
             {
                 XElement x = XElement.Load(loadFrom.FullName);
-                bool r = ProcessXml(x,cache);
+                bool r = ProcessSeriesXml(x,cache);
                 if (r)
                 {
                     cache.UpdatesDoneOk();
@@ -161,9 +242,94 @@ namespace TVRename
             }
         }
 
-        private static bool ProcessXml([NotNull] XElement x,[NotNull] iTVSource cache)
+        public static bool LoadMovieCache([NotNull] FileInfo loadFrom, iMovieSource cache)
         {
-            // Will have one or more series, and episodes
+            Logger.Info("Loading Cache from: {0}", loadFrom.FullName);
+            if (!loadFrom.Exists)
+            {
+                return true; // that's ok
+            }
+
+            try
+            {
+                XElement x = XElement.Load(loadFrom.FullName);
+                bool r = ProcessMovieXml(x, cache);
+                if (r)
+                {
+                    cache.UpdatesDoneOk();
+                }
+
+                return r;
+            }
+            catch (Exception e)
+            {
+                Logger.Warn(e, "Problem on Startup loading File");
+                LoadErr = loadFrom.Name + " : " + e.Message;
+                return false;
+            }
+        }
+
+        private static bool ProcessMovieXml(XElement x, iMovieSource cache)
+        {
+            try
+            {
+                string? time = x.Attribute("time")?.Value;
+                if (time != null)
+                {
+                    cache.LatestUpdateTimeIs(time);
+                }
+                else
+                {
+                    Logger.Error("Could not obtain update time from XML");
+                }
+
+                foreach (CachedMovieInfo si in x.Descendants("Movie").Select(seriesXml => new CachedMovieInfo(seriesXml)))
+                {
+                    // The <cachedSeries> returned by GetSeries have
+                    // less info than other results from
+                    // thetvdb.com, so we need to smartly merge
+                    // in a <Series> if we already have some/all
+                    // info on it (depending on which one came
+                    // first).
+                    cache.Update(si);
+                }
+
+                /*foreach (XElement episodeXml in x.Descendants("Episode"))
+                {
+                    Episode e = new Episode(episodeXml);
+                    if (e.Ok())
+                    {
+                        cache.AddOrUpdateEpisode(e);
+                    }
+                    else
+                    {
+                        Logger.Error($"problem with XML recieved {episodeXml}");
+                    }
+                }
+
+                foreach (XElement banners in x.Descendants("BannersCache"))
+                {
+                    //this wil not be found in a standard response from the TVDB website
+                    //will only be in the response when we are reading from the cache
+                    ProcessXmlBannerCache(banners, cache);
+                }*/
+            }
+            catch (XmlException e)
+            {
+                string message = "Error processing data from Cache (top level).";
+                message += "\r\n" + x;
+                message += "\r\n" + e.Message;
+
+                Logger.Error(message);
+                Logger.Error(x.ToString());
+                throw new CacheLoadException(message);
+            }
+            return true;
+        }
+    
+        private static bool ProcessSeriesXml([NotNull] XElement x,[NotNull] iTVSource cache)
+        {
+            // Will have one or more cachedSeries, and episodes
             // all wrapped in <Data> </Data>
 
             // e.g.: 
@@ -195,9 +361,9 @@ namespace TVRename
                     Logger.Error("Could not obtain update time from XML");
                 }
 
-                foreach (SeriesInfo si in x.Descendants("Series").Select(seriesXml => new SeriesInfo(seriesXml)))
+                foreach (CachedSeriesInfo si in x.Descendants("Series").Select(seriesXml => new CachedSeriesInfo(seriesXml)))
                 {
-                    // The <series> returned by GetSeries have
+                    // The <cachedSeries> returned by GetSeries have
                     // less info than other results from
                     // thetvdb.com, so we need to smartly merge
                     // in a <Series> if we already have some/all

@@ -29,7 +29,7 @@ namespace TVRename
     /// </summary>
     public partial class AddEditShow : Form
     {
-        private readonly ShowItem selectedShow;
+        private readonly ShowConfiguration selectedShow;
         private readonly TheTvdbCodeFinder codeFinderForm;
         private CustomNameTagsFloatingWindow? cntfw;
         private readonly ProcessedSeason? sampleProcessedSeason;
@@ -37,7 +37,7 @@ namespace TVRename
         private readonly bool addingNewShow;
         private readonly TVDoc mDoc;
 
-        public AddEditShow([NotNull] ShowItem si, TVDoc doc)
+        public AddEditShow([NotNull] ShowConfiguration si, TVDoc doc)
         {
             selectedShow = si;
             mDoc = doc;
@@ -111,19 +111,7 @@ namespace TVRename
 
             ActiveControl = codeFinderForm; // set initial focus to the code entry/show finder control
 
-            foreach (string aliasName in selectedShow.AliasNames)
-            {
-                lbShowAlias.Items.Add(aliasName);
-            }
-
-            if (selectedShow.TheSeries() != null)
-            {
-                foreach (string aliasName in selectedShow.TheSeries()?.Aliases()??new List<string>())
-                {
-                    lbSourceAliases.Items.Add(aliasName);
-                }
-            }
-
+            PopulateAliasses();
             SetTagListText();
 
             cbUseCustomSearch.Checked = si.UseCustomSearchUrl && !string.IsNullOrWhiteSpace(si.CustomSearchUrl);
@@ -137,7 +125,23 @@ namespace TVRename
             UpdateIgnore();
         }
 
-        private void SetupLanguages([NotNull] ShowItem si)
+        private void PopulateAliasses()
+        {
+            foreach (string aliasName in selectedShow.AliasNames)
+            {
+                lbShowAlias.Items.Add(aliasName);
+            }
+
+            if (selectedShow.CachedShow != null)
+            {
+                foreach (string aliasName in selectedShow.CachedShow?.GetAliases())
+                {
+                    lbSourceAliases.Items.Add(aliasName);
+                }
+            }
+        }
+
+        private void SetupLanguages([NotNull] ShowConfiguration si)
         {
             chkCustomLanguage.Checked = si.UseCustomLanguage;
             if (chkCustomLanguage.Checked)
@@ -169,7 +173,7 @@ namespace TVRename
             txtTagList2.Text = tl.ToString();
         }
 
-        private void SetIgnoreSeasons([NotNull] ShowItem si)
+        private void SetIgnoreSeasons([NotNull] ShowConfiguration si)
         {
             bool first = true;
             si.IgnoreSeasons.Sort();
@@ -185,22 +189,22 @@ namespace TVRename
             }
         }
 
-        private void SetAutoAdd([NotNull] ShowItem si)
+        private void SetAutoAdd([NotNull] ShowConfiguration si)
         {
             switch (si.AutoAddType)
             {
-                case ShowItem.AutomaticFolderType.none:
+                case ShowConfiguration.AutomaticFolderType.none:
                     chkAutoFolders.Checked = false;
                     break;
-                case ShowItem.AutomaticFolderType.baseOnly:
+                case ShowConfiguration.AutomaticFolderType.baseOnly:
                     chkAutoFolders.Checked = true;
                     rdoFolderBaseOnly.Checked = true;
                     break;
-                case ShowItem.AutomaticFolderType.custom:
+                case ShowConfiguration.AutomaticFolderType.custom:
                     chkAutoFolders.Checked = true;
                     rdoFolderCustom.Checked = true;
                     break;
-                case ShowItem.AutomaticFolderType.libraryDefault:
+                case ShowConfiguration.AutomaticFolderType.libraryDefault:
                     chkAutoFolders.Checked = true;
                     rdoFolderLibraryDefault.Checked = true;
                     break;
@@ -210,19 +214,19 @@ namespace TVRename
             }
         }
 
-        private void SetProvider([NotNull] ShowItem si)
+        private void SetProvider([NotNull] ShowConfiguration si)
         {
             switch (si.ConfigurationProvider)
             {
-                case ShowItem.ProviderType.libraryDefault:
+                case TVDoc.ProviderType.libraryDefault:
                     rdoDefault.Checked = true;
                     break;
 
-                case ShowItem.ProviderType.TVmaze:
+                case TVDoc.ProviderType.TVmaze:
                     rdoTVMaze.Checked = true;
                     break;
 
-                case ShowItem.ProviderType.TheTVDB:
+                case TVDoc.ProviderType.TheTVDB:
                     rdoTVDB.Checked = true;
                     break;
 
@@ -231,7 +235,7 @@ namespace TVRename
             }
         }
 
-        private void SetManualFolders([NotNull] ShowItem si)
+        private void SetManualFolders([NotNull] ShowConfiguration si)
         {
             foreach (KeyValuePair<int, List<string>> kvp in si.ManualFolderLocations)
             {
@@ -247,7 +251,7 @@ namespace TVRename
             lvSeasonFolders.Sort();
         }
 
-        private void SetupDropDowns([NotNull] ShowItem si)
+        private void SetupDropDowns([NotNull] ShowConfiguration si)
         {
             cbTimeZone.BeginUpdate();
             cbTimeZone.Items.Clear();
@@ -435,38 +439,38 @@ namespace TVRename
             }
         }
 
-        private ShowItem.AutomaticFolderType GetAutoAddType()
+        private ShowConfiguration.AutomaticFolderType GetAutoAddType()
         {
             if (!chkAutoFolders.Checked)
             {
-                return ShowItem.AutomaticFolderType.none;
+                return ShowConfiguration.AutomaticFolderType.none;
             }
             if (rdoFolderCustom.Checked)
             {
-                return ShowItem.AutomaticFolderType.custom;
+                return ShowConfiguration.AutomaticFolderType.custom;
             }
             if (rdoFolderBaseOnly.Checked)
             {
-                return ShowItem.AutomaticFolderType.baseOnly;
+                return ShowConfiguration.AutomaticFolderType.baseOnly;
             }
-            return ShowItem.AutomaticFolderType.libraryDefault;
+            return ShowConfiguration.AutomaticFolderType.libraryDefault;
         }
 
-        private ShowItem.ProviderType GetProviderType()
+        private TVDoc.ProviderType GetProviderType()
         {
             if (rdoTVMaze.Checked)
             {
-                return ShowItem.ProviderType.TVmaze;
+                return TVDoc.ProviderType.TVmaze;
             }
             if (rdoDefault.Checked)
             {
-                return ShowItem.ProviderType.libraryDefault;
+                return TVDoc.ProviderType.libraryDefault;
             }
             if (rdoTVDB.Checked)
             {
-                return ShowItem.ProviderType.TheTVDB;
+                return TVDoc.ProviderType.TheTVDB;
             }
-            return ShowItem.ProviderType.TheTVDB;
+            return TVDoc.ProviderType.TheTVDB;
         }
 
         private void bnCancel_Click(object sender, EventArgs e) => Close();
@@ -754,6 +758,11 @@ namespace TVRename
 
                 llLibraryDefaultFormat.Text = TVSettings.Instance.NamingStyle.NameFor(sampleEpisode);
             }
+        }
+
+        private void txtSeasonFormat_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

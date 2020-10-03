@@ -18,7 +18,7 @@ namespace TVRename
 
         protected override string CheckName() => "Looked in the library to find missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList, TVDoc.ScanSettings settings)
         {
             MDoc.TheActionList.Clear();
 
@@ -36,14 +36,14 @@ namespace TVRename
             {
                 // only do episode count if we're doing all shows and seasons
                 MDoc.CurrentStats.NsNumberOfEpisodes = 0;
-                showList = MDoc.Library.Values;
+                showList = MDoc.TvLibrary.Values;
             }
 
             DirFilesCache dfc = new DirFilesCache();
 
             int c = 0;
             UpdateStatus(c,showList.Count, "Checking shows");
-            foreach (ShowItem si in showList.OrderBy(item => item.ShowName ))
+            foreach (ShowConfiguration si in showList.OrderBy(item => item.ShowName ))
             {
                 UpdateStatus(c++ ,showList.Count, si.ShowName);
                 if (settings.Token.IsCancellationRequested)

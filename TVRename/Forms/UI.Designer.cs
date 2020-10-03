@@ -69,20 +69,29 @@ namespace TVRename
             this.flushCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flushImageCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundDownloadNowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator17 = new System.Windows.Forms.ToolStripSeparator();
             this.folderMonitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bulkAddMoviesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.duplicateFinderLOGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.quickRenameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiOrphanFiles = new System.Windows.Forms.ToolStripMenuItem();
+            this.duplicateMoviesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statisticsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.showSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.movieCollectionSummaryLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.actorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator18 = new System.Windows.Forms.ToolStripSeparator();
+            this.movieRecommendationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tvRecommendationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.betaToolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timezoneInconsistencyLOGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.episodeFileQualitySummaryLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator19 = new System.Windows.Forms.ToolStripSeparator();
             this.accuracyCheckLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tMDBAccuracyCheckLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.quickstartGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.visitWebsiteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -97,9 +106,27 @@ namespace TVRename
             this.thanksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tbMyMovies = new System.Windows.Forms.TabPage();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.tbnAddMovie = new System.Windows.Forms.ToolStripButton();
+            this.btnEditMovie = new System.Windows.Forms.ToolStripButton();
+            this.btnMovieDelete = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnMovieRefresh = new System.Windows.Forms.ToolStripButton();
+            this.btnMovieFilter = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbMyMoviesContextMenu = new System.Windows.Forms.ToolStripButton();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.movieTree = new System.Windows.Forms.TreeView();
+            this.filterMoviesTextbox = new System.Windows.Forms.TextBox();
+            this.tabControl3 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.webMovieInformation = new System.Windows.Forms.WebBrowser();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.webMovieImages = new System.Windows.Forms.WebBrowser();
             this.tbMyShows = new System.Windows.Forms.TabPage();
             this.tsMyShows = new System.Windows.Forms.ToolStrip();
-            this.btnAddShow = new System.Windows.Forms.ToolStripButton();
+            this.btnAddTVShow = new System.Windows.Forms.ToolStripButton();
             this.btnEditShow = new System.Windows.Forms.ToolStripButton();
             this.btnRemoveShow = new System.Windows.Forms.ToolStripButton();
             this.btnHideHTMLPanel = new System.Windows.Forms.ToolStripButton();
@@ -212,8 +239,18 @@ namespace TVRename
             this.bwShowHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.bwShowSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.bwSeasonSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
+            this.bwMovieHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
+            this.tbMyMovies.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
+            this.tabControl3.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.tbMyShows.SuspendLayout();
             this.tsMyShows.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -376,11 +413,14 @@ namespace TVRename
             this.flushCacheToolStripMenuItem,
             this.flushImageCacheToolStripMenuItem,
             this.backgroundDownloadNowToolStripMenuItem,
-            this.toolStripSeparator3,
+            this.toolStripSeparator17,
             this.folderMonitorToolStripMenuItem,
+            this.bulkAddMoviesToolStripMenuItem,
+            this.toolStripSeparator3,
             this.duplicateFinderLOGToolStripMenuItem,
             this.quickRenameToolStripMenuItem,
-            this.tsmiOrphanFiles});
+            this.tsmiOrphanFiles,
+            this.duplicateMoviesToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
@@ -408,10 +448,10 @@ namespace TVRename
             this.backgroundDownloadNowToolStripMenuItem.Text = "&Background Download Now";
             this.backgroundDownloadNowToolStripMenuItem.Click += new System.EventHandler(this.backgroundDownloadNowToolStripMenuItem_Click);
             // 
-            // toolStripSeparator3
+            // toolStripSeparator17
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(261, 6);
+            this.toolStripSeparator17.Name = "toolStripSeparator17";
+            this.toolStripSeparator17.Size = new System.Drawing.Size(261, 6);
             // 
             // folderMonitorToolStripMenuItem
             // 
@@ -420,6 +460,18 @@ namespace TVRename
             this.folderMonitorToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
             this.folderMonitorToolStripMenuItem.Text = "Bulk &Add Shows...";
             this.folderMonitorToolStripMenuItem.Click += new System.EventHandler(this.folderMonitorToolStripMenuItem_Click);
+            // 
+            // bulkAddMoviesToolStripMenuItem
+            // 
+            this.bulkAddMoviesToolStripMenuItem.Name = "bulkAddMoviesToolStripMenuItem";
+            this.bulkAddMoviesToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.bulkAddMoviesToolStripMenuItem.Text = "Bulk Add Movies...";
+            this.bulkAddMoviesToolStripMenuItem.Click += new System.EventHandler(this.bulkAddMoviesToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(261, 6);
             // 
             // duplicateFinderLOGToolStripMenuItem
             // 
@@ -442,13 +494,24 @@ namespace TVRename
             this.tsmiOrphanFiles.Text = "Orphan Media Files....";
             this.tsmiOrphanFiles.Click += new System.EventHandler(this.ToolStripMenuItem1_Click);
             // 
+            // duplicateMoviesToolStripMenuItem
+            // 
+            this.duplicateMoviesToolStripMenuItem.Name = "duplicateMoviesToolStripMenuItem";
+            this.duplicateMoviesToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.duplicateMoviesToolStripMenuItem.Text = "Duplicate Movies...";
+            this.duplicateMoviesToolStripMenuItem.Click += new System.EventHandler(this.duplicateMoviesToolStripMenuItem_Click);
+            // 
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statisticsToolStripMenuItem,
             this.toolStripSeparator5,
             this.showSummaryToolStripMenuItem,
-            this.actorsToolStripMenuItem});
+            this.movieCollectionSummaryLogToolStripMenuItem,
+            this.actorsToolStripMenuItem,
+            this.toolStripSeparator18,
+            this.movieRecommendationsToolStripMenuItem,
+            this.tvRecommendationsToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
@@ -457,36 +520,63 @@ namespace TVRename
             // 
             this.statisticsToolStripMenuItem.Image = global::TVRename.Properties.Resources.graphhs;
             this.statisticsToolStripMenuItem.Name = "statisticsToolStripMenuItem";
-            this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.statisticsToolStripMenuItem.Text = "&Statistics...";
             this.statisticsToolStripMenuItem.Click += new System.EventHandler(this.statisticsToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(163, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(224, 6);
             // 
             // showSummaryToolStripMenuItem
             // 
             this.showSummaryToolStripMenuItem.Name = "showSummaryToolStripMenuItem";
-            this.showSummaryToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.showSummaryToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.showSummaryToolStripMenuItem.Text = "Show Summary...";
             this.showSummaryToolStripMenuItem.Click += new System.EventHandler(this.showSummaryToolStripMenuItem_Click);
+            // 
+            // movieCollectionSummaryLogToolStripMenuItem
+            // 
+            this.movieCollectionSummaryLogToolStripMenuItem.Name = "movieCollectionSummaryLogToolStripMenuItem";
+            this.movieCollectionSummaryLogToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.movieCollectionSummaryLogToolStripMenuItem.Text = "Movie Collection Summary...";
+            this.movieCollectionSummaryLogToolStripMenuItem.Click += new System.EventHandler(this.movieCollectionSummaryLogToolStripMenuItem_Click);
             // 
             // actorsToolStripMenuItem
             // 
             this.actorsToolStripMenuItem.Image = global::TVRename.Properties.Resources.TableHS;
             this.actorsToolStripMenuItem.Name = "actorsToolStripMenuItem";
-            this.actorsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
-            this.actorsToolStripMenuItem.Text = "&Actors Grid...";
+            this.actorsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.actorsToolStripMenuItem.Text = "TV &Actors Grid...";
             this.actorsToolStripMenuItem.Click += new System.EventHandler(this.actorsToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator18
+            // 
+            this.toolStripSeparator18.Name = "toolStripSeparator18";
+            this.toolStripSeparator18.Size = new System.Drawing.Size(224, 6);
+            // 
+            // movieRecommendationsToolStripMenuItem
+            // 
+            this.movieRecommendationsToolStripMenuItem.Name = "movieRecommendationsToolStripMenuItem";
+            this.movieRecommendationsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.movieRecommendationsToolStripMenuItem.Text = "Movie Recommendations...";
+            // 
+            // tvRecommendationsToolStripMenuItem
+            // 
+            this.tvRecommendationsToolStripMenuItem.Name = "tvRecommendationsToolStripMenuItem";
+            this.tvRecommendationsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.tvRecommendationsToolStripMenuItem.Text = "TV Recommendations...";
+            this.tvRecommendationsToolStripMenuItem.Click += new System.EventHandler(this.recommendationsToolStripMenuItem_Click);
             // 
             // betaToolsToolStripMenuItem
             // 
             this.betaToolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.timezoneInconsistencyLOGToolStripMenuItem,
             this.episodeFileQualitySummaryLogToolStripMenuItem,
-            this.accuracyCheckLogToolStripMenuItem});
+            this.toolStripSeparator19,
+            this.accuracyCheckLogToolStripMenuItem,
+            this.tMDBAccuracyCheckLogToolStripMenuItem});
             this.betaToolsToolStripMenuItem.Name = "betaToolsToolStripMenuItem";
             this.betaToolsToolStripMenuItem.Size = new System.Drawing.Size(42, 20);
             this.betaToolsToolStripMenuItem.Text = "Beta";
@@ -505,12 +595,24 @@ namespace TVRename
             this.episodeFileQualitySummaryLogToolStripMenuItem.Text = "Episode File Quality Summary (Log)";
             this.episodeFileQualitySummaryLogToolStripMenuItem.Click += new System.EventHandler(this.episodeFileQualitySummaryLogToolStripMenuItem_Click);
             // 
+            // toolStripSeparator19
+            // 
+            this.toolStripSeparator19.Name = "toolStripSeparator19";
+            this.toolStripSeparator19.Size = new System.Drawing.Size(259, 6);
+            // 
             // accuracyCheckLogToolStripMenuItem
             // 
             this.accuracyCheckLogToolStripMenuItem.Name = "accuracyCheckLogToolStripMenuItem";
             this.accuracyCheckLogToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
-            this.accuracyCheckLogToolStripMenuItem.Text = "Accuracy Check (Log)";
+            this.accuracyCheckLogToolStripMenuItem.Text = "TVDB Accuracy Check (Log)";
             this.accuracyCheckLogToolStripMenuItem.Click += new System.EventHandler(this.AccuracyCheckLogToolStripMenuItem_Click);
+            // 
+            // tMDBAccuracyCheckLogToolStripMenuItem
+            // 
+            this.tMDBAccuracyCheckLogToolStripMenuItem.Name = "tMDBAccuracyCheckLogToolStripMenuItem";
+            this.tMDBAccuracyCheckLogToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
+            this.tMDBAccuracyCheckLogToolStripMenuItem.Text = "TMDB Accuracy Check (Log)";
+            this.tMDBAccuracyCheckLogToolStripMenuItem.Click += new System.EventHandler(this.tMDBAccuracyCheckLogToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -617,6 +719,7 @@ namespace TVRename
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.tbMyMovies);
             this.tabControl1.Controls.Add(this.tbMyShows);
             this.tabControl1.Controls.Add(this.tbAllInOne);
             this.tabControl1.Controls.Add(this.tbWTW);
@@ -634,6 +737,216 @@ namespace TVRename
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             this.tabControl1.DoubleClick += new System.EventHandler(this.tabControl1_DoubleClick);
             // 
+            // tbMyMovies
+            // 
+            this.tbMyMovies.Controls.Add(this.toolStrip1);
+            this.tbMyMovies.Controls.Add(this.splitContainer2);
+            this.tbMyMovies.ImageKey = "4632196-48.png";
+            this.tbMyMovies.Location = new System.Drawing.Point(104, 4);
+            this.tbMyMovies.Name = "tbMyMovies";
+            this.tbMyMovies.Padding = new System.Windows.Forms.Padding(3);
+            this.tbMyMovies.Size = new System.Drawing.Size(776, 475);
+            this.tbMyMovies.TabIndex = 12;
+            this.tbMyMovies.Text = "Movies";
+            this.tbMyMovies.UseVisualStyleBackColor = true;
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tbnAddMovie,
+            this.btnEditMovie,
+            this.btnMovieDelete,
+            this.toolStripSeparator15,
+            this.btnMovieRefresh,
+            this.btnMovieFilter,
+            this.toolStripSeparator16,
+            this.tsbMyMoviesContextMenu});
+            this.toolStrip1.Location = new System.Drawing.Point(3, 3);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(770, 39);
+            this.toolStrip1.TabIndex = 13;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // tbnAddMovie
+            // 
+            this.tbnAddMovie.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbnAddMovie.Image = global::TVRename.Properties.Resources._226562_32;
+            this.tbnAddMovie.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tbnAddMovie.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbnAddMovie.Name = "tbnAddMovie";
+            this.tbnAddMovie.Size = new System.Drawing.Size(68, 36);
+            this.tbnAddMovie.Text = "&Add";
+            this.tbnAddMovie.Click += new System.EventHandler(this.AddMovie_Click);
+            // 
+            // btnEditMovie
+            // 
+            this.btnEditMovie.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEditMovie.Image = global::TVRename.Properties.Resources._314251_32;
+            this.btnEditMovie.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.btnEditMovie.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnEditMovie.Name = "btnEditMovie";
+            this.btnEditMovie.Size = new System.Drawing.Size(66, 36);
+            this.btnEditMovie.Text = "&Edit";
+            this.btnEditMovie.Click += new System.EventHandler(this.toolStripButton2_Click);
+            // 
+            // btnMovieDelete
+            // 
+            this.btnMovieDelete.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMovieDelete.Image = global::TVRename.Properties.Resources._616650_32;
+            this.btnMovieDelete.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.btnMovieDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnMovieDelete.Name = "btnMovieDelete";
+            this.btnMovieDelete.Size = new System.Drawing.Size(81, 36);
+            this.btnMovieDelete.Text = "&Delete";
+            this.btnMovieDelete.Click += new System.EventHandler(this.btnMovieDelete_Click);
+            // 
+            // toolStripSeparator15
+            // 
+            this.toolStripSeparator15.Name = "toolStripSeparator15";
+            this.toolStripSeparator15.Size = new System.Drawing.Size(6, 39);
+            // 
+            // btnMovieRefresh
+            // 
+            this.btnMovieRefresh.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMovieRefresh.Image = global::TVRename.Properties.Resources._134221_32;
+            this.btnMovieRefresh.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.btnMovieRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnMovieRefresh.Name = "btnMovieRefresh";
+            this.btnMovieRefresh.Size = new System.Drawing.Size(88, 36);
+            this.btnMovieRefresh.Text = "&Refresh";
+            this.btnMovieRefresh.Click += new System.EventHandler(this.btnMovieRefresh_Click);
+            // 
+            // btnMovieFilter
+            // 
+            this.btnMovieFilter.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMovieFilter.Image = global::TVRename.Properties.Resources._4781834_32;
+            this.btnMovieFilter.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.btnMovieFilter.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnMovieFilter.Name = "btnMovieFilter";
+            this.btnMovieFilter.Size = new System.Drawing.Size(72, 36);
+            this.btnMovieFilter.Text = "&Filter";
+            this.btnMovieFilter.Click += new System.EventHandler(this.btnMovieFilter_Click);
+            // 
+            // toolStripSeparator16
+            // 
+            this.toolStripSeparator16.Name = "toolStripSeparator16";
+            this.toolStripSeparator16.Size = new System.Drawing.Size(6, 39);
+            // 
+            // tsbMyMoviesContextMenu
+            // 
+            this.tsbMyMoviesContextMenu.Image = global::TVRename.Properties.Resources._314251_32;
+            this.tsbMyMoviesContextMenu.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tsbMyMoviesContextMenu.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbMyMoviesContextMenu.Name = "tsbMyMoviesContextMenu";
+            this.tsbMyMoviesContextMenu.Size = new System.Drawing.Size(119, 36);
+            this.tsbMyMoviesContextMenu.Text = "Context Menu";
+            this.tsbMyMoviesContextMenu.Click += new System.EventHandler(this.tsbMyMoviesContextMenu_Click);
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer2.Location = new System.Drawing.Point(2, 43);
+            this.splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.movieTree);
+            this.splitContainer2.Panel1.Controls.Add(this.filterMoviesTextbox);
+            this.splitContainer2.Panel1MinSize = 100;
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.tabControl3);
+            this.splitContainer2.Panel2MinSize = 100;
+            this.splitContainer2.Size = new System.Drawing.Size(773, 429);
+            this.splitContainer2.SplitterDistance = 280;
+            this.splitContainer2.TabIndex = 12;
+            // 
+            // movieTree
+            // 
+            this.movieTree.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.movieTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.movieTree.HideSelection = false;
+            this.movieTree.Location = new System.Drawing.Point(0, 20);
+            this.movieTree.Name = "movieTree";
+            this.movieTree.Size = new System.Drawing.Size(276, 405);
+            this.movieTree.TabIndex = 0;
+            this.movieTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.MyMoviesTree_AfterSelect);
+            this.movieTree.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MyMoviesTree_MouseClick);
+            // 
+            // filterMoviesTextbox
+            // 
+            this.filterMoviesTextbox.Dock = System.Windows.Forms.DockStyle.Top;
+            this.filterMoviesTextbox.Location = new System.Drawing.Point(0, 0);
+            this.filterMoviesTextbox.Name = "filterMoviesTextbox";
+            this.filterMoviesTextbox.Size = new System.Drawing.Size(276, 20);
+            this.filterMoviesTextbox.TabIndex = 1;
+            this.filterMoviesTextbox.SizeChanged += new System.EventHandler(this.filterMoviesTextBox_SizeChanged);
+            this.filterMoviesTextbox.TextChanged += new System.EventHandler(this.filterMoviesTextBox_TextChanged);
+            // 
+            // tabControl3
+            // 
+            this.tabControl3.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
+            this.tabControl3.Controls.Add(this.tabPage1);
+            this.tabControl3.Controls.Add(this.tabPage2);
+            this.tabControl3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl3.Location = new System.Drawing.Point(0, 0);
+            this.tabControl3.Name = "tabControl3";
+            this.tabControl3.SelectedIndex = 0;
+            this.tabControl3.Size = new System.Drawing.Size(485, 425);
+            this.tabControl3.TabIndex = 7;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.webMovieInformation);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(477, 396);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Information";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // webMovieInformation
+            // 
+            this.webMovieInformation.AllowWebBrowserDrop = false;
+            this.webMovieInformation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webMovieInformation.Location = new System.Drawing.Point(3, 3);
+            this.webMovieInformation.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webMovieInformation.Name = "webMovieInformation";
+            this.webMovieInformation.Size = new System.Drawing.Size(471, 390);
+            this.webMovieInformation.TabIndex = 0;
+            this.webMovieInformation.WebBrowserShortcutsEnabled = false;
+            this.webMovieInformation.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.webMovieImages);
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(477, 396);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Images";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // webMovieImages
+            // 
+            this.webMovieImages.AllowWebBrowserDrop = false;
+            this.webMovieImages.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webMovieImages.Location = new System.Drawing.Point(3, 3);
+            this.webMovieImages.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webMovieImages.Name = "webMovieImages";
+            this.webMovieImages.Size = new System.Drawing.Size(471, 390);
+            this.webMovieImages.TabIndex = 0;
+            this.webMovieImages.WebBrowserShortcutsEnabled = false;
+            this.webMovieImages.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
+            // 
             // tbMyShows
             // 
             this.tbMyShows.Controls.Add(this.tsMyShows);
@@ -644,14 +957,14 @@ namespace TVRename
             this.tbMyShows.Padding = new System.Windows.Forms.Padding(3);
             this.tbMyShows.Size = new System.Drawing.Size(776, 475);
             this.tbMyShows.TabIndex = 9;
-            this.tbMyShows.Text = "My Shows";
+            this.tbMyShows.Text = "TV Shows";
             this.tbMyShows.UseVisualStyleBackColor = true;
             // 
             // tsMyShows
             // 
             this.tsMyShows.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.tsMyShows.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnAddShow,
+            this.btnAddTVShow,
             this.btnEditShow,
             this.btnRemoveShow,
             this.btnHideHTMLPanel,
@@ -667,16 +980,16 @@ namespace TVRename
             this.tsMyShows.TabIndex = 11;
             this.tsMyShows.Text = "toolStrip1";
             // 
-            // btnAddShow
+            // btnAddTVShow
             // 
-            this.btnAddShow.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAddShow.Image = global::TVRename.Properties.Resources._226562_32;
-            this.btnAddShow.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.btnAddShow.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnAddShow.Name = "btnAddShow";
-            this.btnAddShow.Size = new System.Drawing.Size(68, 36);
-            this.btnAddShow.Text = "&Add";
-            this.btnAddShow.Click += new System.EventHandler(this.bnMyShowsAdd_Click);
+            this.btnAddTVShow.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAddTVShow.Image = global::TVRename.Properties.Resources._226562_32;
+            this.btnAddTVShow.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.btnAddTVShow.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnAddTVShow.Name = "btnAddTVShow";
+            this.btnAddTVShow.Size = new System.Drawing.Size(68, 36);
+            this.btnAddTVShow.Text = "&Add";
+            this.btnAddTVShow.Click += new System.EventHandler(this.bnMyShowsAdd_Click);
             // 
             // btnEditShow
             // 
@@ -1569,6 +1882,7 @@ namespace TVRename
             this.ilNewIcons.Images.SetKeyName(2, "1587498-48.png");
             this.ilNewIcons.Images.SetKeyName(3, "115762-48.png");
             this.ilNewIcons.Images.SetKeyName(4, "3790574-48.png");
+            this.ilNewIcons.Images.SetKeyName(5, "4632196-48.png");
             // 
             // imageList1
             // 
@@ -1791,6 +2105,12 @@ namespace TVRename
             this.bwSeasonSummaryHTMLGenerator.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BwSeasonSummaryHTMLGenerator_DoWork);
             this.bwSeasonSummaryHTMLGenerator.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.UpdateWebSummary);
             // 
+            // bwMovieHTMLGenerator
+            // 
+            this.bwMovieHTMLGenerator.WorkerSupportsCancellation = true;
+            this.bwMovieHTMLGenerator.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwMovieHTMLGenerator_DoWork);
+            this.bwMovieHTMLGenerator.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.UpdateMovieInformation);
+            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1817,6 +2137,18 @@ namespace TVRename
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
+            this.tbMyMovies.ResumeLayout(false);
+            this.tbMyMovies.PerformLayout();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel1.PerformLayout();
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
+            this.tabControl3.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             this.tbMyShows.ResumeLayout(false);
             this.tbMyShows.PerformLayout();
             this.tsMyShows.ResumeLayout(false);
@@ -1948,7 +2280,7 @@ namespace TVRename
         private ToolStrip tsMyShows;
         private ToolStripButton btnMyShowsRefresh;
         private ToolStripSeparator toolStripSeparator4;
-        private ToolStripButton btnAddShow;
+        private ToolStripButton btnAddTVShow;
         private ToolStripButton btnEditShow;
         private ToolStripButton btnRemoveShow;
         private ToolStripButton btnHideHTMLPanel;
@@ -2011,5 +2343,33 @@ namespace TVRename
         private ObjectListViewFlickerFree olvAction;
         private ToolStripButton tbActionJackettSearch;
         private ToolStripButton tsbScheduleJackettSearch;
+        private TabPage tbMyMovies;
+        private ToolStrip toolStrip1;
+        private ToolStripButton tbnAddMovie;
+        private ToolStripButton btnEditMovie;
+        private ToolStripButton btnMovieDelete;
+        private ToolStripSeparator toolStripSeparator15;
+        private ToolStripButton btnMovieRefresh;
+        private ToolStripButton btnMovieFilter;
+        private ToolStripSeparator toolStripSeparator16;
+        private ToolStripButton tsbMyMoviesContextMenu;
+        private SplitContainer splitContainer2;
+        private TreeView movieTree;
+        private TextBox filterMoviesTextbox;
+        private TabControl tabControl3;
+        private TabPage tabPage1;
+        private WebBrowser webMovieInformation;
+        private TabPage tabPage2;
+        private WebBrowser webMovieImages;
+        private System.ComponentModel.BackgroundWorker bwMovieHTMLGenerator;
+        private ToolStripSeparator toolStripSeparator17;
+        private ToolStripMenuItem bulkAddMoviesToolStripMenuItem;
+        private ToolStripMenuItem tMDBAccuracyCheckLogToolStripMenuItem;
+        private ToolStripMenuItem tvRecommendationsToolStripMenuItem;
+        private ToolStripMenuItem duplicateMoviesToolStripMenuItem;
+        private ToolStripMenuItem movieCollectionSummaryLogToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator18;
+        private ToolStripMenuItem movieRecommendationsToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator19;
     }
 }

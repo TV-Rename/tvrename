@@ -12,7 +12,7 @@ namespace TVRename
         public AutoAddShow(string hint,string filename)
         {
             InitializeComponent();
-            ShowItem = new ShowItem();
+            ShowConfiguration = new ShowConfiguration();
             lblFileName.Text = "Filename: "+filename;
             codeFinder = new TheTvdbCodeFinder("") {Dock = DockStyle.Fill};
             codeFinder.SetHint(hint);
@@ -48,21 +48,21 @@ namespace TVRename
             lblDirectoryName.Text = System.IO.Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(codeFinder.SelectedShow()?.Name ));
         }
 
-        public ShowItem ShowItem { get; }
+        public ShowConfiguration ShowConfiguration { get; }
 
         private void SetShowItem()
         {
             int code = codeFinder.SelectedCode();
 
-            ShowItem.TvdbCode = code;
-            ShowItem.AutoAddFolderBase = cbDirectory.Text+lblDirectoryName.Text;
+            ShowConfiguration.TvdbCode = code;
+            ShowConfiguration.AutoAddFolderBase = cbDirectory.Text+lblDirectoryName.Text;
 
             //Set Default Timezone and if not then set on Network
-            ShowItem.ShowTimeZone = TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.TimeZoneForNetwork(codeFinder.SelectedShow()?.Network, ShowItem.ShowTimeZone);
+            ShowConfiguration.ShowTimeZone = TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.TimeZoneForNetwork(codeFinder.SelectedShow()?.Network, ShowConfiguration.ShowTimeZone);
 
             if (!originalHint.Contains(codeFinder.SelectedShow()?.Name??string.Empty, StringComparison.OrdinalIgnoreCase))
             {
-                ShowItem.AliasNames.Add(originalHint);
+                ShowConfiguration.AliasNames.Add(originalHint);
             }
         }
 

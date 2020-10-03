@@ -14,7 +14,7 @@ namespace TVRename
     {
         public bool HideIgnoredSeasons { get; set; }
 
-        public bool Filter(ShowItem si, [NotNull] ProcessedSeason sea)
+        public bool Filter(ShowConfiguration si, [NotNull] ProcessedSeason sea)
         {
             if (sea.SeasonNumber == 0 && TVSettings.Instance.IgnoreAllSpecials)
             {

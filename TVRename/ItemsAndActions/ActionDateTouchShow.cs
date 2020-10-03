@@ -3,10 +3,10 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
-    internal class ActionDateTouchShow : ActionDateTouchDirectory
+    internal class ActionDateTouchMedia : ActionDateTouchDirectory
     {
-        private readonly ShowItem show; // if for an entire show, rather than specific episode
-        public ActionDateTouchShow(DirectoryInfo dir, ShowItem si, DateTime date) :base(dir,date)
+        private readonly MediaConfiguration show; // if for an entire show, rather than specific episode
+        public ActionDateTouchMedia(DirectoryInfo dir, MediaConfiguration si, DateTime date) :base(dir,date)
         {
             show = si;
         }

@@ -28,7 +28,7 @@ namespace TVRename.Forms.Tools
 
             cbShowList.Items.Add("<Auto>");
 
-            foreach (ShowItem si in tvDoc.Library.Shows.ToArray().OrderBy(item => item.ShowName))
+            foreach (ShowConfiguration si in tvDoc.TvLibrary.Shows.ToArray().OrderBy(item => item.ShowName))
             {
                 cbShowList.Items.Add(si.ShowName);
             }
@@ -115,15 +115,15 @@ namespace TVRename.Forms.Tools
             // Note that the extension of the file may not be fi.extension as users can put ".mkv.t" for example as an extension
             string otherExtension = TVSettings.Instance.FileHasUsefulExtensionDetails(droppedFile, true);
 
-            ShowItem bestShow = (string)cbShowList.SelectedItem == "<Auto>"
-                ? FinderHelper.FindBestMatchingShow(droppedFile, mDoc.Library.Shows)
-                : mDoc.Library.Shows.FirstOrDefault(item => item.ShowName == (string)cbShowList.SelectedItem);
+            ShowConfiguration bestShow = (string)cbShowList.SelectedItem == "<Auto>"
+                ? FinderHelper.FindBestMatchingShow(droppedFile, mDoc.TvLibrary.Shows)
+                : mDoc.TvLibrary.Shows.FirstOrDefault(item => item.ShowName == (string)cbShowList.SelectedItem);
 
             if (bestShow is null)
             {
                 if (TVSettings.Instance.AutoAddAsPartOfQuickRename)
                 {
-                    List<ShowItem> addedShows = FinderHelper.FindShows(new List<string> {droppedFile.Name}, mDoc,owner);
+                    List<ShowConfiguration> addedShows = FinderHelper.FindShows(new List<string> {droppedFile.Name}, mDoc,owner);
                     bestShow = addedShows.FirstOrDefault();
                 }
 
@@ -171,7 +171,7 @@ namespace TVRename.Forms.Tools
                     FileFinder.KeepTogether(mDoc.TheActionList, false, true,mDoc);
                 }
             }
-            catch (ShowItem.EpisodeNotFoundException)
+            catch (ShowConfiguration.EpisodeNotFoundException)
             {
                 Logger.Info(
                     $"Can't rename file for {bestShow.ShowName} for {droppedFile.FullName}, as it does not have Episode {episodeNum} for Season {seasonNum}.");

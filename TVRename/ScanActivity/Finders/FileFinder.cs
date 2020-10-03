@@ -40,7 +40,7 @@ namespace TVRename
                     return false;
                 }
 
-                //do any of the possible names for the series match the filename?
+                //do any of the possible names for the cachedSeries match the filename?
                 matched = me.MissingEpisode.Show.NameMatch(dce, useFullPath);
 
                 if (!matched)
@@ -160,7 +160,7 @@ namespace TVRename
             t += matched ? ", matched.  " : ", no match.  ";
             if (matched)
             {
-                t += "Show: " + me.MissingEpisode.TheSeries.Name + ", Season " + season + ", Ep " + epnum + ".  ";
+                t += "Show: " + me.MissingEpisode.TheCachedSeries.Name + ", Season " + season + ", Ep " + epnum + ".  ";
                 t += "To: " + me.TheFileNoExt;
             }
 

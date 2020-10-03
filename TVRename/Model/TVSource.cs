@@ -23,16 +23,16 @@ namespace TVRename
         bool GetUpdates(bool showErrorMsgBox,CancellationToken cts,IEnumerable<SeriesSpecifier> ss);
         void UpdatesDoneOk();
 
-        SeriesInfo GetSeries(string showName, bool showErrorMsgBox);
-        SeriesInfo GetSeries(int id);
+        CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox);
+        CachedSeriesInfo GetSeries(int id);
         bool HasSeries(int id);
 
-        void Tidy(ICollection<ShowItem> libraryValues);
+        void Tidy(ICollection<ShowConfiguration> libraryValues);
 
         void ForgetEverything();
         void ForgetShow(int id);
         void ForgetShow(int tvdb,int tvmaze, bool makePlaceholder,bool useCustomLanguage,string langCode);
-        void UpdateSeries(SeriesInfo si);
+        void UpdateSeries(CachedSeriesInfo si);
         void AddOrUpdateEpisode(Episode episode);
         void AddBanners(int seriesId, IEnumerable<Banner> select);
         void LatestUpdateTimeIs(string time);

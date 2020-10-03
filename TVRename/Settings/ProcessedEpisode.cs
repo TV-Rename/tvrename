@@ -8,12 +8,12 @@ namespace TVRename
     public class ProcessedEpisode : Episode
     {
         public int
-            EpNum2; // if we are a concatenation of episodes, this is the last one in the series. Otherwise, same as EpNum
+            EpNum2; // if we are a concatenation of episodes, this is the last one in the cachedSeries. Otherwise, same as EpNum
 
         public bool Ignore;
         public bool NextToAir;
         public int OverallNumber;
-        public readonly ShowItem Show;
+        public readonly ShowConfiguration Show;
         public readonly ProcessedEpisodeType Type;
         public readonly List<Episode> SourceEpisodes;
         public ProcessedSeason TheAiredProcessedSeason;
@@ -43,7 +43,7 @@ namespace TVRename
             SourceEpisodes=new List<Episode>();
         }
 
-        public ProcessedEpisode([NotNull] Episode e, [NotNull] ShowItem si)
+        public ProcessedEpisode([NotNull] Episode e, [NotNull] ShowConfiguration si)
             : base(e)
         {
             OverallNumber = -1;
@@ -57,7 +57,7 @@ namespace TVRename
             SourceEpisodes = new List<Episode>();
         }
 
-        public ProcessedEpisode([NotNull] ProcessedEpisode e, [NotNull] ShowItem si, ProcessedEpisodeType t)
+        public ProcessedEpisode([NotNull] ProcessedEpisode e, [NotNull] ShowConfiguration si, ProcessedEpisodeType t)
             : base(e)
         {
             OverallNumber = -1;
@@ -71,7 +71,7 @@ namespace TVRename
             SourceEpisodes = new List<Episode>();
         }
 
-        public ProcessedEpisode([NotNull] ProcessedEpisode e, [NotNull] ShowItem si, List<Episode> episodes)
+        public ProcessedEpisode([NotNull] ProcessedEpisode e, [NotNull] ShowConfiguration si, List<Episode> episodes)
             : base(e)
         {
             OverallNumber = -1;
@@ -85,7 +85,7 @@ namespace TVRename
             TheDvdProcessedSeason = e.TheDvdProcessedSeason;
         }
 
-        public ProcessedEpisode([NotNull] ProcessedEpisode pe, ShowItem si, [NotNull] string name, int airedEpNum, int dvdEpNum, int epNum2)
+        public ProcessedEpisode([NotNull] ProcessedEpisode pe, ShowConfiguration si, [NotNull] string name, int airedEpNum, int dvdEpNum, int epNum2)
             : base(pe)
         {
             //This is used when a new episode is inserted
@@ -141,7 +141,7 @@ namespace TVRename
         {
             get
             {
-                if (Show.Provider == ShowItem.ProviderType.TheTVDB)
+                if (Show.Provider == TVDoc.ProviderType.TheTVDB)
                 {
                     return TVDBWebsiteUrl;
                 }

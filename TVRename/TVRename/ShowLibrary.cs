@@ -11,11 +11,11 @@ namespace TVRename
     /// Handles a thread-safe implementation of the 'library' this will hold all the ShowItem configuration as well
     /// many methods that provide summaries of the data in the library
     /// </summary>
-    public class ShowLibrary : ConcurrentDictionary<int, ShowItem>
+    public class ShowLibrary : ConcurrentDictionary<int, ShowConfiguration>
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         [NotNull]
-        public IEnumerable<ShowItem> Shows => Values;
+        public IEnumerable<ShowConfiguration> Shows => Values;
 
         [NotNull]
         public ICollection<SeriesSpecifier> SeriesSpecifiers
@@ -23,9 +23,9 @@ namespace TVRename
             get
             {
                 List<SeriesSpecifier> value = new List<SeriesSpecifier>();
-                foreach (KeyValuePair<int, ShowItem> series in this)
+                foreach (KeyValuePair<int, ShowConfiguration> series in this)
                 {
-                    value.Add(new SeriesSpecifier(series.Value.TvdbCode, series.Value.TVmazeCode, series.Value.UseCustomLanguage, series.Value.CustomLanguageCode, series.Value.ShowName,series.Value.Provider,series.Value.TheSeries()?.Imdb));
+                    value.Add(new SeriesSpecifier(series.Value.TvdbCode, series.Value.TVmazeCode, 0,series.Value.UseCustomLanguage, series.Value.CustomLanguageCode, series.Value.ShowName,series.Value.Provider,series.Value.CachedShow?.Imdb,MediaConfiguration.MediaType.tv));
                 }
 
                 return value;
@@ -70,7 +70,7 @@ namespace TVRename
         public IEnumerable<string> GetGenres()
         {
             List<string> allGenres = new List<string>();
-            foreach (ShowItem si in Values)
+            foreach (ShowConfiguration si in Values)
             {
                 allGenres.AddRange(si.Genres);
             }
@@ -94,7 +94,7 @@ namespace TVRename
         public IEnumerable<string> GetTypes()
         {
             return Values
-                .Select(s => s.TheSeries()?.Type)
+                .Select(s => s.CachedShow?.Type)
                 .Distinct()
                 .Where(s => s.HasValue())
                 .OrderBy(s => s);
@@ -104,7 +104,7 @@ namespace TVRename
         public IEnumerable<string> GetNetworks()
         {
             return Values
-                .Select(si => si.TheSeries())
+                .Select(si => si.CachedShow)
                 .Where(seriesInfo => !string.IsNullOrWhiteSpace(seriesInfo?.Network))
                 .Select(seriesInfo => seriesInfo.Network)
                 .Distinct()
@@ -114,7 +114,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> GetContentRatings()
         {
-            return Values.Select(si => si.TheSeries())
+            return Values.Select(si => si.CachedShow)
                 .Where(s => !string.IsNullOrWhiteSpace(s?.ContentRating))
                 .Select(s => s.ContentRating)
                 .Distinct()
@@ -122,24 +122,24 @@ namespace TVRename
         }
 
         [NotNull]
-        public List<ShowItem> GetSortedShowItems()
+        public List<ShowConfiguration> GetSortedShowItems()
         {
-            List<ShowItem> returnList = Shows.ToList();
-            returnList.Sort(ShowItem.CompareShowItemNames);
+            List<ShowConfiguration> returnList = Shows.ToList();
+            returnList.Sort(MediaConfiguration.CompareNames);
             return returnList;
         }
 
-        public ShowItem? GetShowItem(int id) => ContainsKey(id) ? this[id] : null;
+        public ShowConfiguration? GetShowItem(int id) => ContainsKey(id) ? this[id] : null;
 
         public void GenDict()
         {
-            foreach (ShowItem show in Values)
+            foreach (ShowConfiguration show in Values)
             {
                 GenerateEpisodeDict(show);
             }
         }
 
-        public static bool GenerateEpisodeDict([NotNull] ShowItem si)
+        public static bool GenerateEpisodeDict([NotNull] ShowConfiguration si)
         {
             // copy data from tvdb
             // process as per rules
@@ -147,17 +147,17 @@ namespace TVRename
 
             bool r = true;
 
-            lock (si.Provider==ShowItem.ProviderType.TVmaze? TVmaze.LocalCache.SERIES_LOCK: TheTVDB.LocalCache.SERIES_LOCK)
+            lock (si.Provider==TVDoc.ProviderType.TVmaze? TVmaze.LocalCache.Instance.SERIES_LOCK: TheTVDB.LocalCache.Instance.SERIES_LOCK)
             {
                 si.ClearEpisodes();
 
-                SeriesInfo ser = si.Provider == ShowItem.ProviderType.TVmaze
+                CachedSeriesInfo ser = si.Provider == TVDoc.ProviderType.TVmaze
                     ? TVmaze.LocalCache.Instance.GetSeries(si.TVmazeCode)
                     : TheTVDB.LocalCache.Instance.GetSeries(si.TvdbCode);
 
                 if (ser is null)
                 {
-                    string source = si.Provider == ShowItem.ProviderType.TVmaze ? "TVMaze" : "TVDB";
+                    string source = si.Provider == TVDoc.ProviderType.TVmaze ? "TVMaze" : "TVDB";
                     Logger.Warn($"Asked to generate episodes for {si.ShowName}, but this has not yet been downloaded from {source}");
                     return false;
                 }
@@ -183,7 +183,7 @@ namespace TVRename
             return r;
         }
         
-        private static void AddOverallCount([NotNull] ShowItem si)
+        private static void AddOverallCount([NotNull] ShowConfiguration si)
         {
             // now, go through and number them all sequentially
             List<int> theKeys = si.AppropriateSeasons().Keys.ToList();
@@ -205,7 +205,7 @@ namespace TVRename
             }
         }
 
-        public static List<ProcessedEpisode>? GenerateEpisodes([NotNull] ShowItem si, int snum, bool applyRules)
+        public static List<ProcessedEpisode>? GenerateEpisodes([NotNull] ShowConfiguration si, int snum, bool applyRules)
         {
             if (!si.AppropriateSeasons().ContainsKey(snum))
             {
@@ -257,7 +257,7 @@ namespace TVRename
             return eis;
         }
 
-        private static void AutoMerge([NotNull] List<ProcessedEpisode> eis,ShowItem si)
+        private static void AutoMerge([NotNull] List<ProcessedEpisode> eis,ShowConfiguration si)
         {
             for (int i = 1; i < eis.Count; i++)
             {
@@ -269,7 +269,7 @@ namespace TVRename
             }
         }
 
-        private static void MergeSpecialsIn([NotNull] ShowItem si, int snum,  [NotNull] List<ProcessedEpisode> eis)
+        private static void MergeSpecialsIn([NotNull] ShowConfiguration si, int snum,  [NotNull] List<ProcessedEpisode> eis)
         {
             foreach (Episode ep in si.AppropriateSeasons()[0].Episodes.Values)
             {
@@ -285,7 +285,7 @@ namespace TVRename
             }
         }
 
-        private static void MergeEpisode(ShowItem si, int snum, [NotNull] Episode ep, IList<ProcessedEpisode> eis)
+        private static void MergeEpisode(ShowConfiguration si, int snum, [NotNull] Episode ep, IList<ProcessedEpisode> eis)
         {
             if (!ep.AirsBeforeSeason.HasValue)
             {
@@ -321,7 +321,7 @@ namespace TVRename
             }
         }
 
-        internal void Add([NotNull] ShowItem found)
+        internal void Add([NotNull] ShowConfiguration found)
         {
             if (found.TvdbCode == -1)
             {
@@ -343,7 +343,7 @@ namespace TVRename
             }
         }
 
-        public static void ApplyRules([NotNull] List<ProcessedEpisode> eis, [NotNull] IEnumerable<ShowRule> rules, ShowItem show)
+        public static void ApplyRules([NotNull] List<ProcessedEpisode> eis, [NotNull] IEnumerable<ShowRule> rules, ShowConfiguration show)
         {
             foreach (ShowRule sr in rules)
             {
@@ -353,7 +353,7 @@ namespace TVRename
             RemoveIgnoredEpisodes(eis);
         }
 
-        private static void ApplyRule([NotNull] List<ProcessedEpisode> episodes, ShowItem show, [NotNull] ShowRule sr)
+        private static void ApplyRule([NotNull] List<ProcessedEpisode> episodes, ShowConfiguration show, [NotNull] ShowRule sr)
         {
             try
             {
@@ -484,7 +484,7 @@ namespace TVRename
             }
         }
 
-        private static void SplitEpisode([NotNull] IList<ProcessedEpisode> eis, ShowItem si, int numberOfNewParts, int index)
+        private static void SplitEpisode([NotNull] IList<ProcessedEpisode> eis, ShowConfiguration si, int numberOfNewParts, int index)
         {
             int ec = eis.Count;
             // split one episode into a multi-parter
@@ -511,7 +511,7 @@ namespace TVRename
             }
         }
 
-        private static void MergeEpisodes([NotNull] List<ProcessedEpisode> eis, ShowItem si, RuleAction action, int fromIndex, int toIndex, string? newName)
+        private static void MergeEpisodes([NotNull] List<ProcessedEpisode> eis, ShowConfiguration si, RuleAction action, int fromIndex, int toIndex, string? newName)
         {
             int ec = eis.Count;
             if (ValidIndex(fromIndex, ec) && ValidIndex(toIndex, ec) && fromIndex < toIndex)
@@ -553,7 +553,7 @@ namespace TVRename
             }
         }
 
-        private static void InsertEpisode([NotNull] IList<ProcessedEpisode> eis, ShowItem si, int index, string txt, [NotNull] ShowRule sr)
+        private static void InsertEpisode([NotNull] IList<ProcessedEpisode> eis, ShowConfiguration si, int index, string txt, [NotNull] ShowRule sr)
         {
             // this only applies for inserting an episode, at the end of the list
             if (sr.First == eis[eis.Count - 1].AppropriateEpNum + 1) // after the last episode
@@ -640,9 +640,9 @@ namespace TVRename
         }
 
         [NotNull]
-        internal IEnumerable<ShowItem> GetRecentShows() => GetSortedShowItems().Where(IsRecent);
+        internal IEnumerable<ShowConfiguration> GetRecentShows() => GetSortedShowItems().Where(IsRecent);
 
-        private static bool IsRecent([NotNull] ShowItem si)
+        private static bool IsRecent([NotNull] ShowConfiguration si)
         {
             // only scan "recent" shows
             int days = TVSettings.Instance.WTWRecentDays;
@@ -679,9 +679,9 @@ namespace TVRename
         {
             ProcessedEpisode nextAfterThat = null;
             TimeSpan howClose = TimeSpan.MaxValue;
-            foreach (ShowItem si in GetSortedShowItems())
+            foreach (ShowConfiguration si in GetSortedShowItems())
             {
-                lock (si.Provider==ShowItem.ProviderType.TVmaze ? TVmaze.LocalCache.SERIES_LOCK : TheTVDB.LocalCache.SERIES_LOCK)
+                lock (si.Provider==TVDoc.ProviderType.TVmaze ? TVmaze.LocalCache.Instance.SERIES_LOCK : TheTVDB.LocalCache.Instance.SERIES_LOCK)
                 {
                     if (!si.ShowNextAirdate)
                     {
@@ -747,15 +747,15 @@ namespace TVRename
             return nextAfterThat;
         }
 
-        public void AddRange([NotNull] IEnumerable<ShowItem> addedShows)
+        public void AddRange([NotNull] IEnumerable<ShowConfiguration> addedShows)
         {
-            foreach (ShowItem show in addedShows)
+            foreach (ShowConfiguration show in addedShows)
             {
                 Add(show);
             }
         }
 
-        internal void Remove([NotNull] ShowItem si)
+        internal void Remove([NotNull] ShowConfiguration si)
         {
             if (!TryRemove(si.TvdbCode, out _))
             {
@@ -768,7 +768,7 @@ namespace TVRename
         {
             List<ProcessedEpisode> returnList = new List<ProcessedEpisode>();
 
-            foreach (ShowItem si in Values)
+            foreach (ShowConfiguration si in Values)
             {
                 if (!si.ShowNextAirdate)
                 {
@@ -809,11 +809,11 @@ namespace TVRename
 
         public void LoadFromXml([NotNull] XElement xmlSettings)
         {
-            foreach (ShowItem si in xmlSettings.Descendants("ShowItem").Select(showSettings => new ShowItem(showSettings)))
+            foreach (ShowConfiguration si in xmlSettings.Descendants("ShowItem").Select(showSettings => new ShowConfiguration(showSettings)))
             {
                 if (si.UseCustomShowName) // see if custom show name is actually the real show name
                 {
-                    SeriesInfo ser = si.TheSeries();
+                    CachedSeriesInfo ser = si.CachedShow;
                     if (ser != null && si.CustomShowName == ser.Name)
                     {
                         // then, turn it off
@@ -832,7 +832,7 @@ namespace TVRename
             List<ProcessedEpisode> episodes = new List<ProcessedEpisode>();
 
             // for each show, see if any episodes were aired in "recent" days...
-            foreach (ShowItem si in GetRecentShows())
+            foreach (ShowConfiguration si in GetRecentShows())
             {
                 foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.ActiveSeasons)
                 {
@@ -855,9 +855,147 @@ namespace TVRename
 
             foreach (int x in toReIndex)
             {
-                TryRemove(x,out ShowItem si);
+                TryRemove(x,out ShowConfiguration si);
                 Add(si);
             }
+        }
+    }
+
+    public class MovieLibrary : ConcurrentDictionary<int, MovieConfiguration>
+    {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        [NotNull]
+        public IEnumerable<MovieConfiguration> Movies => Values;
+
+      [NotNull]
+        public IEnumerable<SeriesSpecifier> SeriesSpecifiers
+        {
+            get
+            {
+                return this.Select(series => new SeriesSpecifier(series.Value.TvdbCode, series.Value.TVmazeCode,series.Value.TmdbCode, series.Value.UseCustomLanguage, series.Value.CustomLanguageCode, series.Value.ShowName, series.Value.Provider, series.Value.CachedData?.Imdb, MediaConfiguration.MediaType.movie)).ToList();
+            }
+        }
+
+        [NotNull]
+        public IEnumerable<string> GetGenres()
+        {
+            List<string> allGenres = new List<string>();
+            foreach (MovieConfiguration si in Values)
+            {
+                allGenres.AddRange(si.Genres);
+            }
+
+            List<string> distinctGenres = allGenres.Distinct().ToList();
+            distinctGenres.Sort();
+            return distinctGenres;
+        }
+
+        public MovieConfiguration? GetMovie(int id) => ContainsKey(id) ? this[id] : null;
+
+        internal void Add([NotNull] MovieConfiguration found)
+        {
+            if (found.Code == -1)
+            {
+                return;
+            }
+
+            if (TryAdd(found.Code, found))
+            {
+                return;
+            }
+
+            if (ContainsKey(found.Code))
+            {
+                Logger.Warn($"Failed to Add {found.ShowName} with {found.SourceProviderName}={found.Code} to library, but it's already present");
+            }
+            else
+            {
+                Logger.Error($"Failed to Add {found.ShowName} with {found.SourceProviderName}={found.Code} to library");
+            }
+        }
+
+        internal void Remove([NotNull] MovieConfiguration si)
+        {
+            if (!TryRemove(si.TmdbCode, out _))
+            {
+                Logger.Error($"Failed to remove {si.ShowName} from the library with TMDBCode={si.TmdbCode}");
+            }
+        }
+
+        public void LoadFromXml(XElement? xmlSettings)
+        {
+            if (xmlSettings != null)
+            {
+                foreach (MovieConfiguration si in xmlSettings.Descendants("MovieItem").Select(showSettings => new MovieConfiguration(showSettings)))
+                {
+                // if (si.UseCustomShowName) // see if custom show name is actually the real show name
+                // {
+                //     CachedSeriesInfo ser = si.TheSeries();
+                //     if (ser != null && si.CustomShowName == ser.Name)
+                //     {
+                //         // then, turn it off
+                //         si.CustomShowName = string.Empty;
+                //         si.UseCustomShowName = false;
+                //     }
+                // }
+
+                Add(si);
+                }
+            }
+        }
+
+        public List<MovieConfiguration> GetSortedMovies()
+        {
+                List<MovieConfiguration> returnList = Movies.ToList();
+                returnList.Sort(MediaConfiguration.CompareNames);
+                return returnList;
+        }
+
+        [NotNull]
+        public IEnumerable<string> GetNetworks()
+        {
+            return Values
+                .Select(si => si.CachedMovie)
+                .Where(seriesInfo => !string.IsNullOrWhiteSpace(seriesInfo?.Network))
+                .Select(seriesInfo => seriesInfo.Network)
+                .Distinct()
+                .OrderBy(s => s);
+        }
+
+        [NotNull]
+        public IEnumerable<string> GetContentRatings()
+        {
+            return Values.Select(si => si.CachedMovie)
+                .Where(s => !string.IsNullOrWhiteSpace(s?.ContentRating))
+                .Select(s => s.ContentRating)
+                .Distinct()
+                .OrderBy(s => s);
+        }
+
+        [NotNull]
+        public IEnumerable<string> GetYears()
+        {
+            return Values.Select(si => si.CachedMovie?.Year)
+                .Where(s => (s.HasValue))
+                .Select(s => s!.ToString())
+                .Distinct()
+                .OrderBy(s => s);
+        }
+
+        [NotNull]
+        public IEnumerable<string> GetStatuses()
+        {
+            return Values
+                .Select(s=>s.CachedMovie)
+                .Where(s => !string.IsNullOrWhiteSpace(s?.Status))
+                .Select(s => s.Status)
+                .Distinct()
+                .OrderBy(s => s);
+        }
+
+        public MovieConfiguration? GetMovie(PossibleNewMovie ai)
+        {
+            return GetMovie(ai.TMDBCode??0); //todo revisit this when we can have a genuine multisource library
         }
     }
 }

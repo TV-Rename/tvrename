@@ -116,15 +116,10 @@ namespace TVRename
             this.lbSearchURL = new System.Windows.Forms.Label();
             this.cbUseCustomSearch = new System.Windows.Forms.CheckBox();
             this.pbCustomSearch = new System.Windows.Forms.PictureBox();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.cbEpNameMatching = new System.Windows.Forms.CheckBox();
-            this.label68 = new System.Windows.Forms.Label();
-            this.cbAirdateMatching = new System.Windows.Forms.CheckBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.cbIncludeNoAirdate = new System.Windows.Forms.CheckBox();
-            this.cbIncludeFuture = new System.Windows.Forms.CheckBox();
-            this.pbAdvanced = new System.Windows.Forms.PictureBox();
             this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.llLibraryDefaultFormat = new System.Windows.Forms.LinkLabel();
+            this.llCustomName = new System.Windows.Forms.LinkLabel();
+            this.lbLibraryDefaultNaming = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.lbNamingExample = new System.Windows.Forms.Label();
             this.txtCustomEpisodeNamingFormat = new System.Windows.Forms.TextBox();
@@ -133,9 +128,14 @@ namespace TVRename
             this.label19 = new System.Windows.Forms.Label();
             this.cbUseCustomNamingFormat = new System.Windows.Forms.CheckBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.lbLibraryDefaultNaming = new System.Windows.Forms.Label();
-            this.llCustomName = new System.Windows.Forms.LinkLabel();
-            this.llLibraryDefaultFormat = new System.Windows.Forms.LinkLabel();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.cbEpNameMatching = new System.Windows.Forms.CheckBox();
+            this.label68 = new System.Windows.Forms.Label();
+            this.cbAirdateMatching = new System.Windows.Forms.CheckBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.cbIncludeNoAirdate = new System.Windows.Forms.CheckBox();
+            this.cbIncludeFuture = new System.Windows.Forms.CheckBox();
+            this.pbAdvanced = new System.Windows.Forms.PictureBox();
             this.Folders.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbBasics)).BeginInit();
@@ -147,10 +147,10 @@ namespace TVRename
             ((System.ComponentModel.ISupportInitialize)(this.pbAliases)).BeginInit();
             this.tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCustomSearch)).BeginInit();
-            this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbAdvanced)).BeginInit();
             this.tabPage6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbAdvanced)).BeginInit();
             this.SuspendLayout();
             // 
             // txtCustomShowName
@@ -504,10 +504,10 @@ namespace TVRename
             this.label12.AutoSize = true;
             this.label12.Location = new System.Drawing.Point(6, 5);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(328, 26);
+            this.label12.Size = new System.Drawing.Size(366, 26);
             this.label12.TabIndex = 48;
-            this.label12.Text = "Setup which folders the episodes for this series should be stored in.  \r\nYou can " +
-    "choose automatic folders or maintain full manual control.";
+            this.label12.Text = "Setup which folders the episodes for this cachedSeries should be stored in.  \r\nYo" +
+    "u can choose automatic folders or maintain full manual control.";
             // 
             // groupBox1
             // 
@@ -691,6 +691,7 @@ namespace TVRename
             this.txtSeasonFormat.Name = "txtSeasonFormat";
             this.txtSeasonFormat.Size = new System.Drawing.Size(201, 20);
             this.txtSeasonFormat.TabIndex = 28;
+            this.txtSeasonFormat.TextChanged += new System.EventHandler(this.txtSeasonFormat_TextChanged);
             // 
             // bnTags
             // 
@@ -1039,6 +1040,136 @@ namespace TVRename
             this.pbCustomSearch.TabStop = false;
             this.pbCustomSearch.Click += new System.EventHandler(this.pbSearch_Click);
             // 
+            // tabPage6
+            // 
+            this.tabPage6.Controls.Add(this.llLibraryDefaultFormat);
+            this.tabPage6.Controls.Add(this.llCustomName);
+            this.tabPage6.Controls.Add(this.lbLibraryDefaultNaming);
+            this.tabPage6.Controls.Add(this.label15);
+            this.tabPage6.Controls.Add(this.lbNamingExample);
+            this.tabPage6.Controls.Add(this.txtCustomEpisodeNamingFormat);
+            this.tabPage6.Controls.Add(this.txtTagList2);
+            this.tabPage6.Controls.Add(this.lbAvailableTags);
+            this.tabPage6.Controls.Add(this.label19);
+            this.tabPage6.Controls.Add(this.cbUseCustomNamingFormat);
+            this.tabPage6.Controls.Add(this.pictureBox1);
+            this.tabPage6.Location = new System.Drawing.Point(4, 22);
+            this.tabPage6.Name = "tabPage6";
+            this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage6.Size = new System.Drawing.Size(456, 468);
+            this.tabPage6.TabIndex = 5;
+            this.tabPage6.Text = "Custom Episode Naming";
+            this.tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // llLibraryDefaultFormat
+            // 
+            this.llLibraryDefaultFormat.AutoSize = true;
+            this.llLibraryDefaultFormat.Location = new System.Drawing.Point(104, 63);
+            this.llLibraryDefaultFormat.Name = "llLibraryDefaultFormat";
+            this.llLibraryDefaultFormat.Size = new System.Drawing.Size(0, 13);
+            this.llLibraryDefaultFormat.TabIndex = 57;
+            // 
+            // llCustomName
+            // 
+            this.llCustomName.AutoSize = true;
+            this.llCustomName.Location = new System.Drawing.Point(104, 116);
+            this.llCustomName.Name = "llCustomName";
+            this.llCustomName.Size = new System.Drawing.Size(0, 13);
+            this.llCustomName.TabIndex = 56;
+            // 
+            // lbLibraryDefaultNaming
+            // 
+            this.lbLibraryDefaultNaming.AutoSize = true;
+            this.lbLibraryDefaultNaming.Location = new System.Drawing.Point(29, 63);
+            this.lbLibraryDefaultNaming.Name = "lbLibraryDefaultNaming";
+            this.lbLibraryDefaultNaming.Size = new System.Drawing.Size(44, 13);
+            this.lbLibraryDefaultNaming.TabIndex = 55;
+            this.lbLibraryDefaultNaming.Text = "Default:";
+            // 
+            // label15
+            // 
+            this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(8, 5);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(206, 13);
+            this.label15.TabIndex = 54;
+            this.label15.Text = "Setup an episode format just for this show.";
+            // 
+            // lbNamingExample
+            // 
+            this.lbNamingExample.AutoSize = true;
+            this.lbNamingExample.Location = new System.Drawing.Point(29, 116);
+            this.lbNamingExample.Name = "lbNamingExample";
+            this.lbNamingExample.Size = new System.Drawing.Size(50, 13);
+            this.lbNamingExample.TabIndex = 52;
+            this.lbNamingExample.Text = "Example:";
+            // 
+            // txtCustomEpisodeNamingFormat
+            // 
+            this.txtCustomEpisodeNamingFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtCustomEpisodeNamingFormat.Location = new System.Drawing.Point(107, 87);
+            this.txtCustomEpisodeNamingFormat.Name = "txtCustomEpisodeNamingFormat";
+            this.txtCustomEpisodeNamingFormat.Size = new System.Drawing.Size(329, 20);
+            this.txtCustomEpisodeNamingFormat.TabIndex = 51;
+            this.txtCustomEpisodeNamingFormat.TextChanged += new System.EventHandler(this.TxtCustomEpisodeNamingFormat_TextChanged);
+            // 
+            // txtTagList2
+            // 
+            this.txtTagList2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtTagList2.Location = new System.Drawing.Point(49, 164);
+            this.txtTagList2.Name = "txtTagList2";
+            this.txtTagList2.Size = new System.Drawing.Size(361, 280);
+            this.txtTagList2.TabIndex = 48;
+            this.txtTagList2.Text = "<tags>";
+            // 
+            // lbAvailableTags
+            // 
+            this.lbAvailableTags.AutoSize = true;
+            this.lbAvailableTags.Location = new System.Drawing.Point(29, 143);
+            this.lbAvailableTags.Name = "lbAvailableTags";
+            this.lbAvailableTags.Size = new System.Drawing.Size(80, 13);
+            this.lbAvailableTags.TabIndex = 49;
+            this.lbAvailableTags.Tag = "";
+            this.lbAvailableTags.Text = "Available Tags:";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(29, 90);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(80, 13);
+            this.label19.TabIndex = 50;
+            this.label19.Text = "Custom Format:";
+            // 
+            // cbUseCustomNamingFormat
+            // 
+            this.cbUseCustomNamingFormat.AutoSize = true;
+            this.cbUseCustomNamingFormat.Location = new System.Drawing.Point(10, 43);
+            this.cbUseCustomNamingFormat.Name = "cbUseCustomNamingFormat";
+            this.cbUseCustomNamingFormat.Size = new System.Drawing.Size(157, 17);
+            this.cbUseCustomNamingFormat.TabIndex = 47;
+            this.cbUseCustomNamingFormat.Text = "Use Custom Naming Format";
+            this.cbUseCustomNamingFormat.UseVisualStyleBackColor = true;
+            this.cbUseCustomNamingFormat.CheckedChanged += new System.EventHandler(this.CbUseCustomNamingFormat_CheckedChanged);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pictureBox1.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pictureBox1.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pictureBox1.Location = new System.Drawing.Point(393, 6);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(43, 40);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox1.TabIndex = 53;
+            this.pictureBox1.TabStop = false;
+            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.cbEpNameMatching);
@@ -1137,136 +1268,6 @@ namespace TVRename
             this.pbAdvanced.TabStop = false;
             this.pbAdvanced.Click += new System.EventHandler(this.pbAdvanced_Click);
             // 
-            // tabPage6
-            // 
-            this.tabPage6.Controls.Add(this.llLibraryDefaultFormat);
-            this.tabPage6.Controls.Add(this.llCustomName);
-            this.tabPage6.Controls.Add(this.lbLibraryDefaultNaming);
-            this.tabPage6.Controls.Add(this.label15);
-            this.tabPage6.Controls.Add(this.lbNamingExample);
-            this.tabPage6.Controls.Add(this.txtCustomEpisodeNamingFormat);
-            this.tabPage6.Controls.Add(this.txtTagList2);
-            this.tabPage6.Controls.Add(this.lbAvailableTags);
-            this.tabPage6.Controls.Add(this.label19);
-            this.tabPage6.Controls.Add(this.cbUseCustomNamingFormat);
-            this.tabPage6.Controls.Add(this.pictureBox1);
-            this.tabPage6.Location = new System.Drawing.Point(4, 22);
-            this.tabPage6.Name = "tabPage6";
-            this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(456, 468);
-            this.tabPage6.TabIndex = 5;
-            this.tabPage6.Text = "Custom Episode Naming";
-            this.tabPage6.UseVisualStyleBackColor = true;
-            // 
-            // label15
-            // 
-            this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(8, 5);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(206, 13);
-            this.label15.TabIndex = 54;
-            this.label15.Text = "Setup an episode format just for this show.";
-            // 
-            // lbNamingExample
-            // 
-            this.lbNamingExample.AutoSize = true;
-            this.lbNamingExample.Location = new System.Drawing.Point(29, 116);
-            this.lbNamingExample.Name = "lbNamingExample";
-            this.lbNamingExample.Size = new System.Drawing.Size(50, 13);
-            this.lbNamingExample.TabIndex = 52;
-            this.lbNamingExample.Text = "Example:";
-            // 
-            // txtCustomEpisodeNamingFormat
-            // 
-            this.txtCustomEpisodeNamingFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtCustomEpisodeNamingFormat.Location = new System.Drawing.Point(107, 87);
-            this.txtCustomEpisodeNamingFormat.Name = "txtCustomEpisodeNamingFormat";
-            this.txtCustomEpisodeNamingFormat.Size = new System.Drawing.Size(329, 20);
-            this.txtCustomEpisodeNamingFormat.TabIndex = 51;
-            this.txtCustomEpisodeNamingFormat.TextChanged += new System.EventHandler(this.TxtCustomEpisodeNamingFormat_TextChanged);
-            // 
-            // txtTagList2
-            // 
-            this.txtTagList2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTagList2.Location = new System.Drawing.Point(49, 164);
-            this.txtTagList2.Name = "txtTagList2";
-            this.txtTagList2.Size = new System.Drawing.Size(361, 280);
-            this.txtTagList2.TabIndex = 48;
-            this.txtTagList2.Text = "<tags>";
-            // 
-            // lbAvailableTags
-            // 
-            this.lbAvailableTags.AutoSize = true;
-            this.lbAvailableTags.Location = new System.Drawing.Point(29, 143);
-            this.lbAvailableTags.Name = "lbAvailableTags";
-            this.lbAvailableTags.Size = new System.Drawing.Size(80, 13);
-            this.lbAvailableTags.TabIndex = 49;
-            this.lbAvailableTags.Tag = "";
-            this.lbAvailableTags.Text = "Available Tags:";
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(29, 90);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(80, 13);
-            this.label19.TabIndex = 50;
-            this.label19.Text = "Custom Format:";
-            // 
-            // cbUseCustomNamingFormat
-            // 
-            this.cbUseCustomNamingFormat.AutoSize = true;
-            this.cbUseCustomNamingFormat.Location = new System.Drawing.Point(10, 43);
-            this.cbUseCustomNamingFormat.Name = "cbUseCustomNamingFormat";
-            this.cbUseCustomNamingFormat.Size = new System.Drawing.Size(157, 17);
-            this.cbUseCustomNamingFormat.TabIndex = 47;
-            this.cbUseCustomNamingFormat.Text = "Use Custom Naming Format";
-            this.cbUseCustomNamingFormat.UseVisualStyleBackColor = true;
-            this.cbUseCustomNamingFormat.CheckedChanged += new System.EventHandler(this.CbUseCustomNamingFormat_CheckedChanged);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox1.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pictureBox1.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pictureBox1.Location = new System.Drawing.Point(393, 6);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(43, 40);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox1.TabIndex = 53;
-            this.pictureBox1.TabStop = false;
-            // 
-            // lbLibraryDefaultNaming
-            // 
-            this.lbLibraryDefaultNaming.AutoSize = true;
-            this.lbLibraryDefaultNaming.Location = new System.Drawing.Point(29, 63);
-            this.lbLibraryDefaultNaming.Name = "lbLibraryDefaultNaming";
-            this.lbLibraryDefaultNaming.Size = new System.Drawing.Size(44, 13);
-            this.lbLibraryDefaultNaming.TabIndex = 55;
-            this.lbLibraryDefaultNaming.Text = "Default:";
-            // 
-            // llCustomName
-            // 
-            this.llCustomName.AutoSize = true;
-            this.llCustomName.Location = new System.Drawing.Point(104, 116);
-            this.llCustomName.Name = "llCustomName";
-            this.llCustomName.Size = new System.Drawing.Size(0, 13);
-            this.llCustomName.TabIndex = 56;
-            // 
-            // llLibraryDefaultFormat
-            // 
-            this.llLibraryDefaultFormat.AutoSize = true;
-            this.llLibraryDefaultFormat.Location = new System.Drawing.Point(104, 63);
-            this.llLibraryDefaultFormat.Name = "llLibraryDefaultFormat";
-            this.llLibraryDefaultFormat.Size = new System.Drawing.Size(0, 13);
-            this.llLibraryDefaultFormat.TabIndex = 57;
-            // 
             // AddEditShow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1302,12 +1303,12 @@ namespace TVRename
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCustomSearch)).EndInit();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbAdvanced)).EndInit();
             this.tabPage6.ResumeLayout(false);
             this.tabPage6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbAdvanced)).EndInit();
             this.ResumeLayout(false);
 
         }

@@ -69,9 +69,9 @@ namespace TVRename.TheTVDB
         }
 
         [NotNull]
-        public static string WebsiteShowUrl([NotNull] ShowItem si)
+        public static string WebsiteShowUrl([NotNull] ShowConfiguration si)
         {
-            string? value = si.TheSeries()?.Slug;
+            string? value = si.CachedShow?.Slug;
             return string.IsNullOrWhiteSpace(value) ? WebsiteShowUrl(si.TvdbCode) : WebsiteShowUrl(value);
         }
 
@@ -79,7 +79,7 @@ namespace TVRename.TheTVDB
         public static string WebsiteShowUrl(int seriesId)
         {
             //return $"{WebsiteRoot}/series/{seriesId}";
-            return $"{WebsiteRoot}/?tab=series&id={seriesId}";
+            return $"{WebsiteRoot}/?tab=cachedSeries&id={seriesId}";
         }
 
         [NotNull]
@@ -92,15 +92,15 @@ namespace TVRename.TheTVDB
         [NotNull]
         public static string WebsiteEpisodeUrl([NotNull] Episode ep)
         {
-            return string.IsNullOrWhiteSpace(ep.TheSeries.Slug)
-                ? WebsiteEpisodeUrl(ep.TheSeries.TvdbCode, ep.EpisodeId)
-                : WebsiteEpisodeUrl(ep.TheSeries.Slug, ep.EpisodeId);
+            return string.IsNullOrWhiteSpace(ep.TheCachedSeries.Slug)
+                ? WebsiteEpisodeUrl(ep.TheCachedSeries.TvdbCode, ep.EpisodeId)
+                : WebsiteEpisodeUrl(ep.TheCachedSeries.Slug, ep.EpisodeId);
         }
 
         [NotNull]
         public static string WebsiteSeasonUrl([NotNull] ProcessedSeason s)
         {
-            string? value = s.Show.TheSeries()?.Slug;
+            string? value = s.Show.CachedShow?.Slug;
             return string.IsNullOrWhiteSpace(value)
                 ? WebsiteSeasonUrl(s.Show.TvdbCode, s.Show.Order, s.SeasonNumber)
                 : WebsiteSeasonUrl(value, s.Show.Order, s.SeasonNumber);
@@ -297,7 +297,7 @@ namespace TVRename.TheTVDB
         [NotNull]
         public static JObject Search(string text, string defaultLanguageCode)
         {
-            string uri = TokenProvider.TVDB_API_URL + "/search/series";
+            string uri = TokenProvider.TVDB_API_URL + "/search/cachedSeries";
             return JsonHttpGetRequest(uri, new Dictionary<string, string> { { "name", text } }, TokenProvider, defaultLanguageCode, false);
         }
 

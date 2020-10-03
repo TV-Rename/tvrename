@@ -16,12 +16,12 @@ namespace TVRename
         {
             filesThatMayBeNeeded = new List<FileInfo>();
             returnActions = new ItemList();
-            showList = new List<ShowItem>();
+            showList = new List<ShowConfiguration>();
         }
 
         private List<FileInfo> filesThatMayBeNeeded;
         private readonly DirFilesCache dfc = new DirFilesCache();
-        private ICollection<ShowItem> showList;
+        private ICollection<ShowConfiguration> showList;
         private TVDoc.ScanSettings currentSettings;
         private readonly ItemList returnActions;
 
@@ -30,10 +30,10 @@ namespace TVRename
                                          TVSettings.Instance.CopyFutureDatedEpsFromSearchFolders;
         protected override string CheckName() => "Cleaned up and files in download directory that are not needed";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> shows, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> shows, TVDoc.ScanSettings settings)
         {
             returnActions.Clear();
-            showList = MDoc.Library.GetSortedShowItems(); //We ignore the current set of shows being scanned to be secrure that no files are deleted for unscanned shows
+            showList = MDoc.TvLibrary.GetSortedShowItems(); //We ignore the current set of shows being scanned to be secrure that no files are deleted for unscanned shows
             currentSettings = settings;
 
             //for each directory in settings directory
@@ -121,13 +121,13 @@ namespace TVRename
                 return;
             }
 
-            List<ShowItem> matchingShows = showList.Where(si => si.NameMatch(di,TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+            List<ShowConfiguration> matchingShows = showList.Where(si => si.NameMatch(di,TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
             if (!matchingShows.Any())
             {
                 return;
             }
 
-            ShowItem firstMatchingShow = matchingShows.FirstOrDefault(si => FinderHelper.FileNeeded(di, si, dfc));
+            ShowConfiguration firstMatchingShow = matchingShows.FirstOrDefault(si => FinderHelper.FileNeeded(di, si, dfc));
             if (firstMatchingShow != null)
             {
                 LOGGER.Info($"Not removing {di.FullName} as it may be needed for {firstMatchingShow.ShowName}");
@@ -138,11 +138,11 @@ namespace TVRename
         }
 
         [NotNull]
-        private static Action SetupDirectoryRemoval([NotNull] DirectoryInfo di, [NotNull] IReadOnlyList<ShowItem> matchingShows)
+        private static Action SetupDirectoryRemoval([NotNull] DirectoryInfo di, [NotNull] IReadOnlyList<ShowConfiguration> matchingShows)
         {
-            ShowItem si = matchingShows[0]; //Choose the first series
+            ShowConfiguration si = matchingShows[0]; //Choose the first cachedSeries
             FinderHelper.FindSeasEp(di, out int seasF, out int epF, si, out TVSettings.FilenameProcessorRE _);
-            SeriesInfo s = si.TheSeries();
+            CachedSeriesInfo s = si.CachedShow;
             if (s is null)
             {
                 throw new ArgumentNullException(nameof(s));
@@ -173,9 +173,9 @@ namespace TVRename
                         continue;
                     }
 
-                    List<ShowItem> matchingShows = showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+                    List<ShowConfiguration> matchingShows = showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
 
-                    List<ShowItem> matchingShowsNoDupes = RemoveShortShows(matchingShows);
+                    List<ShowConfiguration> matchingShowsNoDupes = RemoveShortShows(matchingShows);
 
                     if (matchingShowsNoDupes.Any())
                     {
@@ -198,29 +198,29 @@ namespace TVRename
         }
 
         [NotNull]
-        private static List<ShowItem> RemoveShortShows([NotNull] IReadOnlyCollection<ShowItem> matchingShows)
+        private static List<ShowConfiguration> RemoveShortShows([NotNull] IReadOnlyCollection<ShowConfiguration> matchingShows)
         {
             //Remove any shows from the list that are subsets of all the ohters
             //so that a file does not match CSI and CSI: New York
             return matchingShows.Where(testShow => !IsInferiorTo(testShow, matchingShows)).ToList();
         }
 
-        private static bool IsInferiorTo(ShowItem testShow, [NotNull] IEnumerable<ShowItem> matchingShows)
+        private static bool IsInferiorTo(ShowConfiguration testShow, [NotNull] IEnumerable<ShowConfiguration> matchingShows)
         {
             return matchingShows.Any(compareShow => IsInferiorTo(testShow, compareShow));
         }
 
-        private static bool IsInferiorTo([NotNull] ShowItem testShow, [NotNull] ShowItem compareShow)
+        private static bool IsInferiorTo([NotNull] ShowConfiguration testShow, [NotNull] ShowConfiguration compareShow)
         {
             return compareShow.ShowName.StartsWith(testShow.ShowName, StringComparison.Ordinal) && testShow.ShowName.Length < compareShow.ShowName.Length;
         }
 
-        private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, [NotNull] List<ShowItem> matchingShows, IDialogParent owner)
+        private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, [NotNull] List<ShowConfiguration> matchingShows, IDialogParent owner)
         {
             bool fileCanBeDeleted = TVSettings.Instance.RemoveDownloadDirectoriesFiles;
             ProcessedEpisode firstMatchingPep = null;
 
-            foreach (ShowItem si in matchingShows)
+            foreach (ShowConfiguration si in matchingShows)
             {
                 FinderHelper.FindSeasEp(fi, out int seasF, out int epF, out int _, si, out TVSettings.FilenameProcessorRE re);
 
@@ -245,7 +245,7 @@ namespace TVRename
 
                 if (encumbants.Count == 0)
                 {
-                    //File is needed as there are no files for that series/episode
+                    //File is needed as there are no files for that cachedSeries/episode
                     fileCanBeDeleted = false;
 
                     CopyFutureDatedFile(fi, pep, MDoc);
@@ -283,7 +283,7 @@ namespace TVRename
             }
         }
 
-        private bool? ReviewFile(bool unattended, [NotNull] FileInfo newFile, [NotNull] IReadOnlyCollection<ShowItem> matchingShows, [NotNull] FileInfo existingFile,[NotNull] ProcessedEpisode pep, IDialogParent owner)
+        private bool? ReviewFile(bool unattended, [NotNull] FileInfo newFile, [NotNull] IReadOnlyCollection<ShowConfiguration> matchingShows, [NotNull] FileInfo existingFile,[NotNull] ProcessedEpisode pep, IDialogParent owner)
         {
             FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, newFile);
 
@@ -400,7 +400,7 @@ namespace TVRename
 
         private void CopyFutureDatedFile(FileInfo fi, [NotNull] ProcessedEpisode pep,TVDoc d)
         {
-            ShowItem si = pep.Show;
+            ShowConfiguration si = pep.Show;
             int seasF = pep.AppropriateSeasonNumber;
             int epF = pep.AppropriateEpNum;
 

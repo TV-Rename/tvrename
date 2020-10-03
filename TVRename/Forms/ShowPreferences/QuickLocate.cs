@@ -43,5 +43,10 @@ namespace TVRename.Forms.ShowPreferences
         {
             DirectoryFullPath = cbDirectory.Text + txtShowFolder.Text;
         }
+
+        private void cbDirectory_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

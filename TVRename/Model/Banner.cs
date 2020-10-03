@@ -45,7 +45,7 @@ namespace TVRename
                 SetDefaults();
 
                 BannerId = r.ExtractInt("id")??-1;
-                SeriesId = r.ExtractInt("seriesid")?? seriesId; // thetvdb series id
+                SeriesId = r.ExtractInt("seriesid")?? seriesId; // thetvdb cachedSeries id
                 SeasonId = r.ExtractInt("seasonid",-1);
                 BannerPath = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("BannerPath"));
                 BannerType = r.ExtractString("BannerType");
@@ -99,7 +99,7 @@ namespace TVRename
 
         public bool IsSeriesPoster() => BannerType == "poster";
 
-        public bool IsSeriesBanner() => BannerType == "series";
+        public bool IsSeriesBanner() => BannerType == "cachedSeries";
 
         public bool IsSeasonPoster() => BannerType == "season";
 

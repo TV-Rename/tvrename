@@ -58,7 +58,7 @@ namespace TVRename
             }
         }
 
-        public ShowItem ShowItem => episodeTwo.Show;
+        public ShowConfiguration ShowConfiguration => episodeTwo.Show;
         public ProcessedEpisode Episode => episodeOne;
 
         [NotNull]

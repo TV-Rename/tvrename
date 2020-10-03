@@ -23,7 +23,7 @@ namespace TVRename
 
         protected override string CheckName() => "Asked Jackett for download links for the missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList,TVDoc.ScanSettings settings)
         {
             if ( settings.Unattended && TVSettings.Instance.SearchJackettManualScanOnly)
             {

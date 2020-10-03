@@ -28,7 +28,7 @@ namespace TVRename
         private readonly ProcessedSeason.SeasonType mOrder;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public AddModifyRule(ShowRule rule, ShowItem show, IEnumerable<ProcessedEpisode> s)
+        public AddModifyRule(ShowRule rule, ShowConfiguration show, IEnumerable<ProcessedEpisode> s)
         {
             mRule = rule;
             eps = s;

@@ -7,6 +7,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -132,6 +133,25 @@ namespace TVRename
 
             return -1;
         }
+
+        public static bool IsImportant(this DirectoryInfo info)
+        {
+            if (info.Name.Equals("subs", StringComparison.OrdinalIgnoreCase)) return false;
+            if (info.Name.Equals("subtitles", StringComparison.OrdinalIgnoreCase)) return false;
+            if (info.Name.Equals("subfiles", StringComparison.OrdinalIgnoreCase)) return false;
+            if (info.Name.Equals(".actors", StringComparison.OrdinalIgnoreCase)) return false;
+            if (info.Name.Equals("actors", StringComparison.OrdinalIgnoreCase)) return false;
+            if (info.Name.Equals("sample", StringComparison.OrdinalIgnoreCase)) return false;
+            if (info.Name.Equals(".AppleDouble", StringComparison.OrdinalIgnoreCase)) return false;
+            if (info.Name.Equals("art", StringComparison.CurrentCultureIgnoreCase)) return false;
+            return true;
+        }
+
+        public static bool IsSampleFile([NotNull] this FileInfo fi) => Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) &&
+                                                                         fi.Length / (1024 * 1024) < TVSettings.Instance.SampleFileMaxSizeMB;
+
+        public static bool IsDeletedStubFile([NotNull] this FileInfo fi) =>
+            (fi.Name.StartsWith("-.", StringComparison.Ordinal) || fi.Name.StartsWith("._", StringComparison.Ordinal)) && fi.Length / 1024 < 10;
 
         public static bool IsMovieFile([NotNull] this FileInfo file) => TVSettings.Instance.FileHasUsefulExtension(file, false);
 
@@ -486,14 +506,12 @@ namespace TVRename
                 return true; // move on
             }
 
-            if (TVSettings.Instance.IgnoreSamples &&
-                Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) &&
-                fi.Length / (1024 * 1024) < TVSettings.Instance.SampleFileMaxSizeMB)
+            if (TVSettings.Instance.IgnoreSamples && fi.IsSampleFile())
             {
                 return true;
             }
 
-            if (fi.Name.StartsWith("-.", StringComparison.Ordinal) && fi.Length / 1024 < 10)
+            if (fi.IsDeletedStubFile())
             {
                 return true;
             }
@@ -520,5 +538,50 @@ namespace TVRename
 
             return true;
         }
+
+        public static bool IsDoublePartMovie(FileInfo f1, FileInfo f2)
+        {
+            // see https://kodi.wiki/view/Naming_video_files/Movies#Split_Video_Files
+            List<string> ending = new List<string>{"part","cd","dvd", "pt", "disk", "disc" };
+            return ending.Any(end => HasEnding(f1, f2, end));
+        }
+
+        private static bool HasEnding(FileInfo f1, FileInfo f2, string part)
+        {
+            if (f1.FileNameNoExt().EndsWith(part + "1", true, CultureInfo.CurrentCulture) &&
+                f2.FileNameNoExt().EndsWith(part + "2", true, CultureInfo.CurrentCulture))
+            {
+                return true;
+            }
+            if (f1.FileNameNoExt().EndsWith(part + "2", true, CultureInfo.CurrentCulture) &&
+                f2.FileNameNoExt().EndsWith(part + "1", true, CultureInfo.CurrentCulture))
+            {
+                return true;
+            }
+            if (f1.FileNameNoExt().EndsWith(part + ".1", true, CultureInfo.CurrentCulture) &&
+                f2.FileNameNoExt().EndsWith(part + ".2", true, CultureInfo.CurrentCulture))
+            {
+                return true;
+            }
+            if (f1.FileNameNoExt().EndsWith(part + ".2", true, CultureInfo.CurrentCulture) &&
+                f2.FileNameNoExt().EndsWith(part + ".1", true, CultureInfo.CurrentCulture))
+            {
+                return true;
+            }
+            if (f1.FileNameNoExt().EndsWith(part + " 1", true, CultureInfo.CurrentCulture) &&
+                f2.FileNameNoExt().EndsWith(part + " 2", true, CultureInfo.CurrentCulture))
+            {
+                return true;
+            }
+            if (f1.FileNameNoExt().EndsWith(part + " 2", true, CultureInfo.CurrentCulture) &&
+                f2.FileNameNoExt().EndsWith(part + " 1", true, CultureInfo.CurrentCulture))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static string FileNameNoExt(this FileInfo f) => f.Name.RemoveAfter(f.Extension);
     }
 }

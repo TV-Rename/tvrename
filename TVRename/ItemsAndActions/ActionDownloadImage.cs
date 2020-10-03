@@ -20,12 +20,12 @@ namespace TVRename
     {
         private readonly string path;
         private readonly FileInfo destination;
-        private readonly ShowItem si;
+        private readonly MediaConfiguration si;
         private readonly bool shrinkLargeMede8ErImage;
 
-        public ActionDownloadImage(ShowItem si, ProcessedEpisode? pe, FileInfo dest, string path) : this(si, pe, dest, path, false) { }
+        public ActionDownloadImage(MediaConfiguration si, ProcessedEpisode? pe, FileInfo dest, string path) : this(si, pe, dest, path, false) { }
 
-        public ActionDownloadImage(ShowItem si, ProcessedEpisode? pe, FileInfo dest, string path, bool shrink)
+        public ActionDownloadImage(MediaConfiguration si, ProcessedEpisode? pe, FileInfo dest, string path, bool shrink)
         {
             Episode = pe;
             this.si = si;
@@ -88,7 +88,7 @@ namespace TVRename
         {
             try
             {
-                byte[]? theData = si.Provider == ShowItem.ProviderType.TheTVDB
+                byte[]? theData = si.Provider == TVDoc.ProviderType.TheTVDB
                     ? TheTVDB.LocalCache.Instance.GetTvdbDownload(path)
                     : HttpHelper.Download(path,false);
                 

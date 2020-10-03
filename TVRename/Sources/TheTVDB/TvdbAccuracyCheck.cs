@@ -8,22 +8,22 @@ namespace TVRename.TheTVDB
     internal class TvdbAccuracyCheck
     {
         [NotNull] internal readonly List<string> Issues;
-        [NotNull] internal readonly List<SeriesInfo> ShowsToUpdate;
+        [NotNull] internal readonly List<CachedSeriesInfo> ShowsToUpdate;
         [NotNull] private readonly LocalCache lc;
 
         public TvdbAccuracyCheck(LocalCache localCache)
         {
             lc = localCache;
             Issues = new List<string>();
-            ShowsToUpdate = new List<SeriesInfo>();
+            ShowsToUpdate = new List<CachedSeriesInfo>();
         }
 
-        public void ServerAccuracyCheck([NotNull] SeriesInfo si)
+        public void ServerAccuracyCheck([NotNull] CachedSeriesInfo si)
         {
             int tvdbId = si.TvdbCode;
             try
             {
-                SeriesInfo newSi = lc.DownloadSeriesInfo(tvdbId, "en", false);
+                CachedSeriesInfo newSi = lc.DownloadSeriesInfo(tvdbId, "en", false);
                 if (newSi.SrvLastUpdated != si.SrvLastUpdated)
                 {
                     Issues.Add(
@@ -49,7 +49,7 @@ namespace TVRename.TheTVDB
                         }
                         else
                         {
-                            throw new SourceConsistencyException($"Could not load 'data' from {epJson}", ShowItem.ProviderType.TheTVDB);
+                            throw new SourceConsistencyException($"Could not load 'data' from {epJson}", TVDoc.ProviderType.TheTVDB);
                         }
                     }
                 }
@@ -59,11 +59,11 @@ namespace TVRename.TheTVDB
             }
             catch (SourceConnectivityException)
             {
-                Issues.Add($"Failed to compare {si.Name} as we could not download the series details.");
+                Issues.Add($"Failed to compare {si.Name} as we could not download the cachedSeries details.");
             }
         }
 
-        private void FindOrphanEpisodes(SeriesInfo si, List<long> serverEpIds)
+        private void FindOrphanEpisodes(CachedSeriesInfo si, List<long> serverEpIds)
         {
             foreach (Episode localEp in si.Episodes)
             {
@@ -77,7 +77,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private void EnsureUpdated(SeriesInfo si)
+        private void EnsureUpdated(CachedSeriesInfo si)
         {
             si.Dirty = true;
             if (!ShowsToUpdate.Contains(si))
@@ -86,7 +86,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private int EpisodeAccuracyCheck([NotNull] SeriesInfo si, [NotNull] JToken t)
+        private int EpisodeAccuracyCheck([NotNull] CachedSeriesInfo si, [NotNull] JToken t)
         {
             long serverUpdateTime = (long)t["lastUpdated"];
             int epId = (int)t["id"];
@@ -104,7 +104,7 @@ namespace TVRename.TheTVDB
                         $"{si.Name} S{ep.AiredSeasonNumber}E{ep.AiredEpNum} is {diff}: Local is {DateTimeOffset.FromUnixTimeSeconds(ep.SrvLastUpdated)} ({ep.SrvLastUpdated}) server is {DateTimeOffset.FromUnixTimeSeconds(serverUpdateTime)} ({serverUpdateTime})");
                 }
             }
-            catch (ShowItem.EpisodeNotFoundException)
+            catch (ShowConfiguration.EpisodeNotFoundException)
             {
                 Issues.Add(
                     $"{si.Name} {epId} is not found: Local is missing; server is {serverUpdateTime}");

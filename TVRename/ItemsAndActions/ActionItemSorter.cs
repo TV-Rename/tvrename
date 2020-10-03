@@ -36,7 +36,7 @@ namespace TVRename
                 ActionDeleteDirectory _ => 12,
                 ActionDateTouchEpisode _ => 13,
                 ActionDateTouchSeason _ => 14,
-                ActionDateTouchShow _ => 15,
+                ActionDateTouchMedia _ => 15,
                 ActionTRemove _ => 16
             };
         }

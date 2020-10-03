@@ -12,20 +12,24 @@ namespace TVRename
     {
         public readonly int TvdbSeriesId;
         public readonly int TvMazeSeriesId;
+        public readonly int TmdbId;
         public readonly bool UseCustomLanguage;
         public readonly string CustomLanguageCode;
         public readonly string Name;
         public readonly string? ImdbCode;
-        public readonly ShowItem.ProviderType Provider;
+        public readonly TVDoc.ProviderType Provider;
+        public readonly MediaConfiguration.MediaType Type;
 
-        public SeriesSpecifier(int tvdb, int tvmaze, bool useCustomLanguage, string? customLanguageCode,
-            string name, ShowItem.ProviderType p, string? imdb)
+        public SeriesSpecifier(int tvdb, int tvmaze, int tmdb, bool useCustomLanguage, string? customLanguageCode,
+            string name, TVDoc.ProviderType p, string? imdb, MediaConfiguration.MediaType t )
         {
             TvdbSeriesId = tvdb;
             TvMazeSeriesId = tvmaze;
             Name = name;
             ImdbCode = imdb;
             Provider = p;
+            Type = t;
+            TmdbId = tmdb;
 
             if (string.IsNullOrWhiteSpace(customLanguageCode))
             {
@@ -39,7 +43,8 @@ namespace TVRename
             }
         }
 
-        public override string ToString() =>
-            $"{Name}//tvdb={TvdbSeriesId}//tvmaze={TvMazeSeriesId} {Provider} and lang = {CustomLanguageCode}.";
+        public override string ToString() => Type == MediaConfiguration.MediaType.tv
+            ? $"{Name}//tvdb={TvdbSeriesId}//tvmaze={TvMazeSeriesId} {Provider} and lang = {CustomLanguageCode}."
+            : $"{Name}//TMDB={TmdbId} {Provider}.";
     }
 }

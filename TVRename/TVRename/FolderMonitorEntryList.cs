@@ -8,7 +8,10 @@
 
 namespace TVRename
 {
-    public class FolderMonitorEntryList : System.Collections.Generic.List<FoundFolder>
+    public class FolderMonitorEntryList : System.Collections.Generic.List<PossibleNewTvShow>
+    {
+    }
+    public class PossibleNewMovies : System.Collections.Generic.List<PossibleNewMovie>
     {
     }
 }

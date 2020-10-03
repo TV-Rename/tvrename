@@ -61,7 +61,7 @@ namespace TVRename.TVmaze
                     string tvdBimbd = TheTVDB.LocalCache.Instance.GetSeries(siTvdbCode)?.Imdb;
                     if (!imdb.HasValue() && !tvdBimbd.HasValue())
                     {
-                        throw new ShowNotFoundException(siTvdbCode, $"Cant find a show with TVDB Id {siTvdbCode} on TV Maze, either add the show to TV Maze, find the show and update The TVDB Id or use TVDB for that show.", ShowItem.ProviderType.TheTVDB, ShowItem.ProviderType.TVmaze);
+                        throw new ShowNotFoundException(siTvdbCode, $"Cant find a show with TVDB Id {siTvdbCode} on TV Maze, either add the show to TV Maze, find the show and update The TVDB Id or use TVDB for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze);
                     }
                     string imdbCode = imdb ?? tvdBimbd;
                     try
@@ -78,12 +78,12 @@ namespace TVRename.TVmaze
                     {
                         if (wex2.Is404() && TvMazeIsUp())
                         {
-                            throw new ShowNotFoundException(siTvdbCode,$"Please add show with imdb={imdbCode} and tvdb={siTvdbCode} to tvMaze, or use TVDB as the source for that show.", ShowItem.ProviderType.TheTVDB, ShowItem.ProviderType.TVmaze);
+                            throw new ShowNotFoundException(siTvdbCode,$"Please add show with imdb={imdbCode} and tvdb={siTvdbCode} to tvMaze, or use TVDB as the source for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze);
                         }
-                        throw new SourceConnectivityException($"Can't find TVmaze series for IMDB={imdbCode} and tvdb={siTvdbCode} {wex.Message}");
+                        throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for IMDB={imdbCode} and tvdb={siTvdbCode} {wex.Message}");
                     }
                 }
-                throw new SourceConnectivityException($"Can't find TVmaze series for {siTvdbCode} {wex.Message}");
+                throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {siTvdbCode} {wex.Message}");
             }
         }
 
@@ -97,11 +97,11 @@ namespace TVRename.TVmaze
             {
                 if (wex.Is404() && TvMazeIsUp())
                 {
-                    throw new ShowNotFoundException(tvMazeId,$"Please add show maze id {tvMazeId} to tvMaze", ShowItem.ProviderType.TVmaze, ShowItem.ProviderType.TVmaze);
+                    throw new ShowNotFoundException(tvMazeId,$"Please add show maze id {tvMazeId} to tvMaze", TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze);
                 }
 
                 Logger.LogWebException($"Could not get show with id {tvMazeId} from TV Maze due to",wex);
-                throw new SourceConnectivityException($"Can't find TVmaze series for {tvMazeId} {wex.Message}");
+                throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {tvMazeId} {wex.Message}");
             }
         }
 
@@ -118,13 +118,13 @@ namespace TVRename.TVmaze
         }
 
         [NotNull]
-        public static SeriesInfo GetSeriesDetails([NotNull] SeriesSpecifier ss)
+        public static CachedSeriesInfo GetSeriesDetails([NotNull] SeriesSpecifier ss)
         {
             JObject results =  ss.TvMazeSeriesId > 0
                 ? GetSeriesDetails(ss.TvMazeSeriesId)
                 : GetSeriesDetails(GetSeriesIdFromOtherCodes(ss.TvdbSeriesId,ss.ImdbCode));
 
-            SeriesInfo downloadedSi = GenerateSeriesInfo(results);
+            CachedSeriesInfo downloadedSi = GenerateSeriesInfo(results);
             JToken jToken = GetChild(results,"_embedded");
 
             foreach (string name in GetChild(jToken,"akas").Select(akaJson => (string)akaJson["name"]).Where(name => name != null))
@@ -237,7 +237,7 @@ namespace TVRename.TVmaze
             JToken actorImageNode = GetChild(personToken,"image");
             int actorId = (int) personToken["id"];
             string? actorImage = actorImageNode.HasValues ? (string) actorImageNode["medium"] : null;
-            string actorName = (string) personToken["name"] ?? throw new SourceConsistencyException("No Actor Name",ShowItem.ProviderType.TVmaze);
+            string actorName = (string) personToken["name"] ?? throw new SourceConsistencyException("No Actor Name",TVDoc.ProviderType.TVmaze);
             string actorRole = (string) GetChild(GetChild(jsonActor,"character"),"name");
             int actorSortOrder = (int) personToken["id"];
             return new Actor(actorId, actorImage, actorName, actorRole, seriesId,actorSortOrder);
@@ -263,9 +263,9 @@ namespace TVRename.TVmaze
         }
 
         [NotNull]
-        private static SeriesInfo GenerateSeriesInfo([NotNull] JObject r)
+        private static CachedSeriesInfo GenerateSeriesInfo([NotNull] JObject r)
         {
-            SeriesInfo returnValue = GenerateCoreSeriesInfo(r);
+            CachedSeriesInfo returnValue = GenerateCoreSeriesInfo(r);
 
             if (r.ContainsKey("genres"))
             {
@@ -296,7 +296,7 @@ namespace TVRename.TVmaze
         }
 
         [NotNull]
-        private static SeriesInfo GenerateCoreSeriesInfo([NotNull] JObject r)
+        private static CachedSeriesInfo GenerateCoreSeriesInfo([NotNull] JObject r)
         {
             string nw = GetKeySubKey(r, "network", "name");
             string wc = GetKeySubKey(r, "webChannel", "name");
@@ -305,7 +305,7 @@ namespace TVRename.TVmaze
             int tvdb = GetChild(externalsToken, "thetvdb").Type == JTokenType.Null ? -1 : (int) externalsToken["thetvdb"];
             int rage = GetChild(externalsToken, "tvrage").Type == JTokenType.Null ? -1 : (int) externalsToken["tvrage"];
 
-            return new SeriesInfo
+            return new CachedSeriesInfo
             {
                 IsSearchResultOnly = false,
                 AirsDay = days,
@@ -322,7 +322,7 @@ namespace TVRename.TVmaze
                 ShowLanguage = (string) r["language"],
                 Overview = System.Web.HttpUtility.HtmlDecode((string) r["summary"])?.Trim(),
                 Runtime = ((string) r["runtime"])?.Trim(),
-                Status = MapStatus((string) r["status"] ?? throw new SourceConsistencyException("No Status", ShowItem.ProviderType.TVmaze)),
+                Status = MapStatus((string) r["status"] ?? throw new SourceConsistencyException("No Status", TVDoc.ProviderType.TVmaze)),
                 Type = (string) r["type"],
                 SrvLastUpdated =
                     long.TryParse((string) r["updated"], out long updateTime)
@@ -369,7 +369,7 @@ namespace TVRename.TVmaze
         }
 
         [NotNull]
-        private static Episode GenerateEpisode(int seriesId, [NotNull] List<string> writers, [NotNull] List<string> directors, [NotNull] JObject r,SeriesInfo si)
+        private static Episode GenerateEpisode(int seriesId, [NotNull] List<string> writers, [NotNull] List<string> directors, [NotNull] JObject r,CachedSeriesInfo si)
         {
             //Something like {
                 //"id":1,
@@ -419,7 +419,7 @@ namespace TVRename.TVmaze
             JToken? token = json[key];
             if (token is null)
             {
-                throw new SourceConsistencyException($"Could not get '{key}' element from {json}", ShowItem.ProviderType.TVmaze);
+                throw new SourceConsistencyException($"Could not get '{key}' element from {json}", TVDoc.ProviderType.TVmaze);
             }
 
             return token;
@@ -430,7 +430,7 @@ namespace TVRename.TVmaze
             JToken x = r["image"];
             if (x is null)
             {
-                throw new SourceConsistencyException($"Could not get 'image' element from {r}", ShowItem.ProviderType.TVmaze);
+                throw new SourceConsistencyException($"Could not get 'image' element from {r}", TVDoc.ProviderType.TVmaze);
             }
 
             if (x.HasValues)

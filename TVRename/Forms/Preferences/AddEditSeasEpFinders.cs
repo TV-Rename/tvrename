@@ -30,11 +30,11 @@ namespace TVRename
     /// </summary>
     public partial class AddEditSeasEpFinders : Form
     {
-        private readonly List<ShowItem> shows;
+        private readonly List<ShowConfiguration> shows;
         private List<TorrentEntry>? torrentCache;
         public List<TVSettings.FilenameProcessorRE> OutputRegularExpressions { get; }
 
-        public AddEditSeasEpFinders(List<TVSettings.FilenameProcessorRE> rex, List<ShowItem> sil, ShowItem? initialShow,
+        public AddEditSeasEpFinders(List<TVSettings.FilenameProcessorRE> rex, List<ShowConfiguration> sil, ShowConfiguration? initialShow,
             string initialFolder)
         {
             OutputRegularExpressions = rex;
@@ -45,7 +45,7 @@ namespace TVRename
             SetupGrid();
             FillGrid(OutputRegularExpressions);
 
-            foreach (ShowItem si in shows)
+            foreach (ShowConfiguration si in shows)
             {
                 cbShowList.Items.Add(si.ShowName);
                 if (si == initialShow)
@@ -332,7 +332,7 @@ namespace TVRename
                         continue; // move on
                     }
 
-                    ShowItem si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
+                    ShowConfiguration si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
                     bool r = FinderHelper.FindSeasEp(file, out int seas, out int ep, out int maxEp, si, rel, out TVSettings.FilenameProcessorRE matchRex);
 
                     AddItemToListView(file.Name, seas, ep, maxEp, matchRex, r);
@@ -347,7 +347,7 @@ namespace TVRename
                         continue; // move on
                     }
 
-                    ShowItem si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
+                    ShowConfiguration si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
                     bool r = FinderHelper.FindSeasEp(filename, out int seas, out int ep, out int maxEp, si, rel, out TVSettings.FilenameProcessorRE matchRex);
 
                     AddItemToListView(filename, seas, ep, maxEp, matchRex, r);
@@ -359,7 +359,7 @@ namespace TVRename
 
         private void AddItemToListView(string filename, int seas, int ep, int maxEp, TVSettings.FilenameProcessorRE? matchRex, bool r)
         {
-            IEnumerable<ShowItem> matchingShows = FinderHelper.FindMatchingShows(filename, shows);
+            IEnumerable<ShowConfiguration> matchingShows = FinderHelper.FindMatchingShows(filename, shows);
             string bestShowName = FinderHelper.FindBestMatchingShow(filename, shows)?.ShowName;
 
             string otherShowNames = matchingShows.Select(item => item.ShowName).Where(s => s != bestShowName).ToCsv();

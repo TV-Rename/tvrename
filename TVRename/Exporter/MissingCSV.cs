@@ -23,9 +23,11 @@ namespace TVRename
                     ProcessedEpisode pe = im.MissingEpisode;
                     DateTime? dt = pe.GetAirDateDt(true);
                     file.WriteLine(
-                        $"\"{pe.TheSeries.Name}\",{pe.AppropriateSeasonNumber},{pe.EpNumsAsString()},\"{pe.Name}\",{dt:G},\"{im.TargetFolder}\",\"{im.Filename}\",{pe.SeriesId}");
+                        $"\"{pe.TheCachedSeries.Name}\",{pe.AppropriateSeasonNumber},{pe.EpNumsAsString()},\"{pe.Name}\",{dt:G},\"{im.TargetFolder}\",\"{im.Filename}\",{pe.SeriesId}");
                 }
             }
         }
     }
+
+    // ReSharper disable once InconsistentNaming
 }

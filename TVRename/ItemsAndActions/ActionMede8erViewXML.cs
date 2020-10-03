@@ -17,12 +17,12 @@ namespace TVRename
     {
         private readonly int snum;
 
-        public ActionMede8erViewXML(FileInfo nfo, ShowItem si) : base(nfo, si)
+        public ActionMede8erViewXML(FileInfo nfo, ShowConfiguration si) : base(nfo, si)
         {
             snum = -1;
         }
 
-        public ActionMede8erViewXML(FileInfo nfo, ShowItem si, int snum) : base(nfo, si)
+        public ActionMede8erViewXML(FileInfo nfo, ShowConfiguration si, int snum) : base(nfo, si)
         {
             this.snum = snum;
         }

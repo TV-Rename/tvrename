@@ -63,6 +63,10 @@ namespace TVRename
             this.txtEOD = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.txtTE = new System.Windows.Forms.Label();
+            this.txtTmo = new System.Windows.Forms.Label();
+            this.txtAAM = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -209,7 +213,7 @@ namespace TVRename
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(114, 284);
+            this.button1.Location = new System.Drawing.Point(114, 322);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 1;
@@ -317,13 +321,57 @@ namespace TVRename
             this.txtTE.Text = "---";
             this.txtTE.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
+            // txtTmo
+            // 
+            this.txtTmo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtTmo.Location = new System.Drawing.Point(138, 305);
+            this.txtTmo.Name = "txtTmo";
+            this.txtTmo.Size = new System.Drawing.Size(46, 13);
+            this.txtTmo.TabIndex = 2;
+            this.txtTmo.Text = "---";
+            this.txtTmo.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // txtAAM
+            // 
+            this.txtAAM.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtAAM.Location = new System.Drawing.Point(138, 282);
+            this.txtAAM.Name = "txtAAM";
+            this.txtAAM.Size = new System.Drawing.Size(46, 13);
+            this.txtAAM.TabIndex = 3;
+            this.txtAAM.Text = "---";
+            this.txtAAM.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(12, 305);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(70, 13);
+            this.label15.TabIndex = 4;
+            this.label15.Text = "Total movies:";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(12, 282);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(101, 13);
+            this.label16.TabIndex = 5;
+            this.label16.Text = "Auto added movies:";
+            // 
             // StatsWindow
             // 
             this.AcceptButton = this.button1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button1;
-            this.ClientSize = new System.Drawing.Size(207, 319);
+            this.ClientSize = new System.Drawing.Size(207, 357);
+            this.Controls.Add(this.txtTmo);
+            this.Controls.Add(this.txtAAM);
+            this.Controls.Add(this.label15);
+            this.Controls.Add(this.label16);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.txtTE);
             this.Controls.Add(this.txtEOD);
@@ -394,5 +442,9 @@ namespace TVRename
         private System.Windows.Forms.Label txtEOD;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label txtTE;
+        private System.Windows.Forms.Label txtTmo;
+        private System.Windows.Forms.Label txtAAM;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label label16;
     }
 }

@@ -1225,7 +1225,7 @@ namespace TVRename
                     continue;
 
                 // see if the show name matches...
-                if (FileHelper.SimplifyAndCheckFilename(simplifiedfname, m.TheSeries.Name, false, true))
+                if (FileHelper.SimplifyAndCheckFilename(simplifiedfname, m.TheCachedSeries.Name, false, true))
                 {
                     // see if season and episode match
                     bool findFile = FinderHelper.FindSeasEp("", simplifiedfname, out int seasF, out int epF, out int maxEp,

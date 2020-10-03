@@ -23,17 +23,17 @@ namespace TVRename
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem? si,out TVSettings.FilenameProcessorRE? re)
+        public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, out int maxEp, ShowConfiguration? si,out TVSettings.FilenameProcessorRE? re)
         {
             return FindSeasEp(fi, out seas, out ep, out maxEp, si, TVSettings.Instance.FNPRegexs, out re);
         }
 
-        public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowItem? si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? re)
+        public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowConfiguration? si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? re)
         {
             return FindSeasEp(string.Empty, itemName, out seas, out ep, out maxEp, si, rexps, out re);
         }
 
-        public static bool FindSeasEp(FileInfo? fi, out int seas, out int ep, out int maxEp, ShowItem? si,
+        public static bool FindSeasEp(FileInfo? fi, out int seas, out int ep, out int maxEp, ShowConfiguration? si,
             IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? re)
         {
             if (fi is null)
@@ -48,7 +48,7 @@ namespace TVRename
             return FindSeasEp(fi.Directory.FullName, fi.RemoveExtension(), out seas, out ep, out maxEp, si, rexps, out re);
         }
 
-        public static bool FindSeasEpNameCheck(FileInfo? fi, ShowItem? si, out int seas, out int ep)
+        public static bool FindSeasEpNameCheck(FileInfo? fi, ShowConfiguration? si, out int seas, out int ep)
         {
             ep = -1;
             seas = -1;
@@ -58,7 +58,7 @@ namespace TVRename
                 return false;
             }
 
-            SeriesInfo? ser = si.TheSeries();
+            CachedSeriesInfo? ser = si.CachedShow;
 
             if (ser is null)
             {
@@ -103,7 +103,7 @@ namespace TVRename
             return Regex.Match(matchText, @"\D0*" + num + @"\D").Success;
         }
 
-        public static bool FindSeasEpDateCheck(string? filename, out int seas, out int ep, ShowItem? si)
+        public static bool FindSeasEpDateCheck(string? filename, out int seas, out int ep, ShowConfiguration? si)
         {
             ep = -1;
             seas = -1;
@@ -116,7 +116,7 @@ namespace TVRename
             // look for a valid airdate in the filename
             // check for YMD, DMY, and MDY
             // only check against airdates we expect for the given show
-            SeriesInfo ser = si.TheSeries();
+            CachedSeriesInfo ser = si.CachedShow;
 
             if (ser is null)
             {
@@ -163,7 +163,7 @@ namespace TVRename
             return ep != -1 && seas != -1;
         }
 
-        public static bool FindSeasEp(DirectoryInfo? di, out int seas, out int ep, ShowItem si,
+        public static bool FindSeasEp(DirectoryInfo? di, out int seas, out int ep, ShowConfiguration si,
             out TVSettings.FilenameProcessorRE? re)
         {
             List<TVSettings.FilenameProcessorRE> rexps = TVSettings.Instance.FNPRegexs;
@@ -179,17 +179,17 @@ namespace TVRename
             return FindSeasEp(di.Parent.FullName, di.Name, out seas, out ep, out int _, si, rexps, out re);
         }
 
-        public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowItem? show)
+        public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowConfiguration? show)
         {
             return FindSeasEp(string.Empty, itemName, out seas, out ep, out maxEp, show, TVSettings.Instance.FNPRegexs, out TVSettings.FilenameProcessorRE _);
         }
 
-        public static bool FindSeasEp(FileInfo theFile, out int seasF, out int epF, out int maxEp, ShowItem? sI)
+        public static bool FindSeasEp(FileInfo theFile, out int seasF, out int epF, out int maxEp, ShowConfiguration? sI)
         {
             return FindSeasEp(theFile, out seasF, out epF, out maxEp, sI, out TVSettings.FilenameProcessorRE _);
         }
 
-        public static bool FileNeeded(FileInfo fi, ShowItem si, DirFilesCache dfc)
+        public static bool FileNeeded(FileInfo fi, ShowConfiguration si, DirFilesCache dfc)
         {
             if (FindSeasEp(fi, out int seasF, out int epF, out _, si, out _))
             {
@@ -200,7 +200,7 @@ namespace TVRename
             return true;
         }
 
-        public static bool FileNeeded(DirectoryInfo? di, ShowItem? si, DirFilesCache dfc)
+        public static bool FileNeeded(DirectoryInfo? di, ShowConfiguration? si, DirFilesCache dfc)
         {
             if (di is null)
             {
@@ -229,7 +229,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static List<FileInfo> FindEpOnDisk(DirFilesCache? dfc, ShowItem si, ProcessedEpisode epi,
+        private static List<FileInfo> FindEpOnDisk(DirFilesCache? dfc, ShowConfiguration si, ProcessedEpisode epi,
             bool checkDirectoryExist = true)
         {
             DirFilesCache cache = dfc ?? new DirFilesCache();
@@ -274,7 +274,7 @@ namespace TVRename
             return ret;
         }
 
-        private static bool EpisodeNeeded([NotNull] ShowItem si, DirFilesCache dfc, int seasF, int epF,
+        private static bool EpisodeNeeded([NotNull] ShowConfiguration si, DirFilesCache dfc, int seasF, int epF,
             [NotNull] FileSystemInfo fi)
         {
             if (si is null)
@@ -289,10 +289,10 @@ namespace TVRename
 
             try
             {
-                SeriesInfo s = si.TheSeries();
+                CachedSeriesInfo s = si.CachedShow;
                 if (s is null)
                 {
-                    //We have not downloaded the series, so have to assume that we need the episode/file
+                    //We have not downloaded the cachedSeries, so have to assume that we need the episode/file
                     return true;
                 }
 
@@ -310,7 +310,7 @@ namespace TVRename
                     return false;
                 }
             }
-            catch (ShowItem.EpisodeNotFoundException)
+            catch (ShowConfiguration.EpisodeNotFoundException)
             {
                 //Ignore exception, we may need the file
                 return true;
@@ -368,7 +368,7 @@ namespace TVRename
         }
 
         public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, out int maxEp,
-            ShowItem? si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? rex)
+            ShowConfiguration? si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? rex)
         {
             string showNameHint = si != null ? si.ShowName : string.Empty;
             maxEp = -1;
@@ -416,7 +416,7 @@ namespace TVRename
             return seas != -1 && ep != -1;
         }
 
-        private static (int seas, int ep, int maxEp) IdentifyEpisode(ShowItem? si, [NotNull] Match m, TVSettings.FilenameProcessorRE re)
+        private static (int seas, int ep, int maxEp) IdentifyEpisode(ShowConfiguration? si, [NotNull] Match m, TVSettings.FilenameProcessorRE re)
         {
             if (!int.TryParse(m.Groups["s"].ToString(), out int seas))
             {
@@ -466,9 +466,9 @@ namespace TVRename
             return hint2;
         }
 
-        public static bool BetterShowsMatch(FileInfo matchedFile, ShowItem currentlyMatchedShow, bool useFullPath, [NotNull] TVDoc doc)
+        public static bool BetterShowsMatch(FileInfo matchedFile, ShowConfiguration currentlyMatchedShow, bool useFullPath, [NotNull] TVDoc doc)
         {
-            return doc.Library.Shows
+            return doc.TvLibrary.Shows
                 .Where(item => item.NameMatch(matchedFile, useFullPath))
                 .Where(item => item.TvdbCode != currentlyMatchedShow.TvdbCode)
                 .Any(testShow => testShow.ShowName.Contains(currentlyMatchedShow.ShowName));
@@ -520,7 +520,7 @@ namespace TVRename
             return hint;
         }
 
-        private static bool LookForSeries(string test, [NotNull] IEnumerable<ShowItem> shows)
+        private static bool LookForSeries(string test, [NotNull] IEnumerable<ShowConfiguration> shows)
         {
             return shows.Any(si => si.NameMatch(test));
         }
@@ -531,9 +531,9 @@ namespace TVRename
         }
 
         [NotNull]
-        public static List<ShowItem> FindShows([NotNull] IEnumerable<string> possibleShowNames, TVDoc doc, IDialogParent owner)
+        public static List<ShowConfiguration> FindShows([NotNull] IEnumerable<string> possibleShowNames, TVDoc doc, IDialogParent owner)
         {
-            List<ShowItem> addedShows = new List<ShowItem>();
+            List<ShowConfiguration> addedShows = new List<ShowConfiguration>();
 
             foreach (string hint in possibleShowNames)
             {
@@ -564,7 +564,7 @@ namespace TVRename
                 string refinedHint = Regex.Replace(hint, @"\(\d{4}\)", "");
 
                 //Remove anything we can from hint to make it cleaner and hence more likely to match
-                refinedHint = RemoveSeriesEpisodeIndicators(refinedHint, doc.Library.SeasonWords());
+                refinedHint = RemoveSeriesEpisodeIndicators(refinedHint, doc.TvLibrary.SeasonWords());
 
                 if (string.IsNullOrWhiteSpace(refinedHint))
                 {
@@ -595,7 +595,7 @@ namespace TVRename
                 if (dr == DialogResult.OK)
                 {
                     //If added add show to collection
-                    addedShows.Add(askForMatch.ShowItem);
+                    addedShows.Add(askForMatch.ShowConfiguration);
                     doc.Stats().AutoAddedShows++;
                 }
                 else if (dr == DialogResult.Abort)
@@ -617,34 +617,34 @@ namespace TVRename
             return addedShows;
         }
 
-        public static ShowItem? FindBestMatchingShow([NotNull] FileInfo fi, [NotNull] IEnumerable<ShowItem> shows) => FindBestMatchingShow(fi.Name, shows);
+        public static ShowConfiguration? FindBestMatchingShow([NotNull] FileInfo fi, [NotNull] IEnumerable<ShowConfiguration> shows) => FindBestMatchingShow(fi.Name, shows);
 
-        public static ShowItem? FindBestMatchingShow(string filename, [NotNull] IEnumerable<ShowItem> shows)
+        public static ShowConfiguration? FindBestMatchingShow(string filename, [NotNull] IEnumerable<ShowConfiguration> shows)
         {
-            IEnumerable<ShowItem> showItems = shows as ShowItem[] ?? shows.ToArray();
+            IEnumerable<ShowConfiguration> showItems = shows as ShowConfiguration[] ?? shows.ToArray();
 
-            IEnumerable<ShowItem> showsMatchAtStart = showItems
+            IEnumerable<ShowConfiguration> showsMatchAtStart = showItems
                 .Where(item => FileHelper.SimplifyAndCheckFilenameAtStart(filename, item.ShowName));
 
-            IEnumerable<ShowItem> matchAtStart = showsMatchAtStart as ShowItem[] ?? showsMatchAtStart.ToArray();
+            IEnumerable<ShowConfiguration> matchAtStart = showsMatchAtStart as ShowConfiguration[] ?? showsMatchAtStart.ToArray();
 
             if (matchAtStart.Any())
             {
                 return matchAtStart.OrderByDescending(s => s.ShowName.Length).First();
             }
 
-            IEnumerable<ShowItem> otherMatchingShows = FindMatchingShows(filename, showItems);
+            IEnumerable<ShowConfiguration> otherMatchingShows = FindMatchingShows(filename, showItems);
             return otherMatchingShows.OrderByDescending(s => s.ShowName.Length).FirstOrDefault();
         }
 
         [NotNull]
-        public static IEnumerable<ShowItem> FindMatchingShows([NotNull] FileInfo fi, [NotNull] IEnumerable<ShowItem> sil)
+        public static IEnumerable<ShowConfiguration> FindMatchingShows([NotNull] FileInfo fi, [NotNull] IEnumerable<ShowConfiguration> sil)
         {
             return FindMatchingShows(fi.Name,sil);
         }
 
         [NotNull]
-        public static IEnumerable<ShowItem> FindMatchingShows(string filename, [NotNull] IEnumerable<ShowItem> sil)
+        public static IEnumerable<ShowConfiguration> FindMatchingShows(string filename, [NotNull] IEnumerable<ShowConfiguration> sil)
         {
             return sil.Where(item => item.NameMatch(filename));
         }

@@ -44,11 +44,11 @@ namespace TVRename
 
         private void GenerateData(BackgroundWorker bw)
         {
-            int total = mDoc.Library.Count;
+            int total = mDoc.TvLibrary.Count;
             int current = 0;
             showList.Clear();
 
-            foreach (ShowItem si in mDoc.Library.GetSortedShowItems())
+            foreach (ShowConfiguration si in mDoc.TvLibrary.GetSortedShowItems())
             {
                 bw.ReportProgress(100 * current++ / total, si.ShowName);
                 showList.Add(AddShowDetails(si));
@@ -148,13 +148,13 @@ namespace TVRename
                 }
 
                 //Ignore shows which do not have the missing check
-                if (chkHideNotScanned.Checked && !show.ShowItem.DoMissingCheck)
+                if (chkHideNotScanned.Checked && !show.ShowConfiguration.DoMissingCheck)
                 {
                     continue;
                 }
 
                 if (chkOnlyShowEnded.Checked &&
-                    !show.ShowItem.ShowStatus.Equals("Ended", StringComparison.OrdinalIgnoreCase))
+                    !show.ShowConfiguration.ShowStatus.Equals("Ended", StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }
@@ -167,18 +167,18 @@ namespace TVRename
                 RowHeader rh = new RowHeader(show.ShowName)
                 {
                     ResizeEnabled = false,
-                    View = new Cell{ForeColor = show.ShowItem.DoMissingCheck ? Color.Black : Color.Gray}
+                    View = new Cell{ForeColor = show.ShowConfiguration.DoMissingCheck ? Color.Black : Color.Gray}
                 };
 
                 //Gray if the show is not checked for missing episodes in the scan
 
                 grid1[r + 1, 0] = rh;
-                grid1[r + 1, 0].AddController(new ShowClickEvent(this, show.ShowItem));
+                grid1[r + 1, 0].AddController(new ShowClickEvent(this, show.ShowConfiguration));
 
-                RowHeader rh2 = new RowHeader(show.ShowItem.ShowStatus)
+                RowHeader rh2 = new RowHeader(show.ShowConfiguration.ShowStatus)
                 {
                     ResizeEnabled = false,
-                    View = new Cell { ForeColor = show.ShowItem.DoMissingCheck ? Color.Black : Color.Gray }
+                    View = new Cell { ForeColor = show.ShowConfiguration.DoMissingCheck ? Color.Black : Color.Gray }
                 };
 
                 //Gray if the show is not checked for missing episodes in the scan
@@ -213,7 +213,7 @@ namespace TVRename
                             Editor = {EditableMode = EditableMode.None}
                         };
 
-                    grid1[r + 1, seasonData.SeasonNumber + 2].AddController(new ShowClickEvent(this, show.ShowItem, seasonData.ProcessedSeason));
+                    grid1[r + 1, seasonData.SeasonNumber + 2].AddController(new ShowClickEvent(this, show.ShowConfiguration, seasonData.ProcessedSeason));
                 }
                 r++;
             }
@@ -226,15 +226,15 @@ namespace TVRename
         }
 
         [NotNull]
-        private static ShowSummaryData AddShowDetails([NotNull] ShowItem si)
+        private static ShowSummaryData AddShowDetails([NotNull] ShowConfiguration si)
         {
             ShowSummaryData showSummary = new ShowSummaryData
                 {
                     ShowName = si.ShowName,
-                    ShowItem = si
+                    ShowConfiguration = si
                 };
 
-            if (si.TheSeries() != null)
+            if (si.CachedShow!= null)
             {
                 foreach (int snum in si.AppropriateSeasons().Keys)
                 {
@@ -248,7 +248,7 @@ namespace TVRename
             return showSummary;
         }
 
-        private static ShowSummaryData.ShowSummarySeasonData? GetSeasonDetails([NotNull] ShowItem si, int snum)
+        private static ShowSummaryData.ShowSummarySeasonData? GetSeasonDetails([NotNull] ShowConfiguration si, int snum)
         {
             int epCount = 0;
             int epGotCount = 0;
@@ -302,7 +302,7 @@ namespace TVRename
             Helpers.OpenUrl(seas.TVDBWebsiteUrl);
         }
 
-        private static void TvdbFor(ShowItem? si)
+        private static void TvdbFor(ShowConfiguration? si)
         {
             if (si?.WebsiteUrl is null)
             {
@@ -332,15 +332,15 @@ namespace TVRename
         {
             private readonly ShowSummary gridSummary;
             private readonly ProcessedSeason? processedSeason;
-            private readonly ShowItem show;
+            private readonly ShowConfiguration show;
 
-            public ShowClickEvent(ShowSummary gridSummary, ShowItem show)
+            public ShowClickEvent(ShowSummary gridSummary, ShowConfiguration show)
             {
                 this.show = show;
                 this.gridSummary = gridSummary;
             }
 
-            public ShowClickEvent(ShowSummary gridSummary, ShowItem show, ProcessedSeason processedSeason)
+            public ShowClickEvent(ShowSummary gridSummary, ShowConfiguration show, ProcessedSeason processedSeason)
             {
                 this.show = show;
                 this.processedSeason = processedSeason;
@@ -362,7 +362,7 @@ namespace TVRename
                 {
                     AddRcMenuItem(gridSummary.showRightClickMenu, "Force Refresh",(o, args) =>
                     {
-                        gridSummary.MainWindow.ForceRefresh(new List<ShowItem> {show}, false);
+                        gridSummary.MainWindow.ForceRefresh(show, false);
                     });
 
                     GenerateSeparator(gridSummary.showRightClickMenu);
@@ -502,7 +502,7 @@ namespace TVRename
         {
             public int MaxSeason;
             public readonly List<ShowSummarySeasonData> SeasonDataList = new List<ShowSummarySeasonData>();
-            public ShowItem ShowItem;
+            public ShowConfiguration ShowConfiguration;
             public string ShowName;
 
             public void AddSeason([NotNull] ShowSummarySeasonData seasonData)

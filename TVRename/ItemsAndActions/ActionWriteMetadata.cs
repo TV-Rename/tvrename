@@ -13,9 +13,9 @@ namespace TVRename
     public abstract class ActionWriteMetadata : ActionDownload
     {
         protected readonly FileInfo Where;
-        protected readonly ShowItem SelectedShow; // if for an entire show, rather than specific episode
+        protected readonly ShowConfiguration SelectedShow; // if for an entire show, rather than specific episode
 
-        protected ActionWriteMetadata(FileInfo where, ShowItem sI)
+        protected ActionWriteMetadata(FileInfo where, ShowConfiguration sI)
         {
             Where = where;
             SelectedShow = sI;

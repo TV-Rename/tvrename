@@ -15,11 +15,11 @@ namespace TVRename
 
         protected ScanShowActivity(TVDoc doc) => Doc = doc;
 
-        protected abstract void Check(ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings);
+        protected abstract void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings);
 
         protected abstract bool Active();
 
-        public void CheckIfActive(ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+        public void CheckIfActive(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
             if (Active())
             {

@@ -43,6 +43,8 @@ namespace TVRename
             int noe = stats.NsNumberOfEpisodes;
             txtEOD.Text = noe == -1 ? "?" : noe.ToString();
             txtTE.Text = stats.NsNumberOfEpisodesExpected.ToString();
+            txtAAM.Text = stats.AutoAddedMovies.ToString();
+            txtTmo.Text = stats.NsNumberOfMovies.ToString();
         }
 
         private void button1_Click(object sender, System.EventArgs e)

@@ -114,6 +114,7 @@ namespace TVRename
         }
 
         public List<string> LibraryFolders;
+        public List<string> MovieLibraryFolders;
         public List<string> IgnoreFolders;
         public List<string> DownloadFolders;
         public List<string> IgnoredAutoAddHints;
@@ -143,6 +144,14 @@ namespace TVRename
         public string ExportShowsTXTTo = string.Empty;
         public bool ExportShowsHTML = false;
         public string ExportShowsHTMLTo = string.Empty;
+        public bool ExportMissingMoviesCSV = false;
+        public string ExportMissingMoviesCSVTo = string.Empty;
+        public bool ExportMissingMoviesXML = false;
+        public string ExportMissingMoviesXMLTo = string.Empty;
+        public bool ExportMoviesTXT = false;
+        public string ExportMoviesTXTTo = string.Empty;
+        public bool ExportMoviesHTML = false; 
+        public string ExportMoviesHTMLTo = string.Empty; 
         public int ExportRSSMaxDays = 7;
         public int ExportRSSMaxShows = 10;
         public int ExportRSSDaysPast = 0;
@@ -177,6 +186,7 @@ namespace TVRename
         public bool CorrectFileDates = false;
         public bool NFOShows = false;
         public bool NFOEpisodes = false;
+        public bool NFOMovies = true;
         public bool KODIImages = false;
         public bool pyTivoMeta = false;
         public bool wdLiveTvMeta = false;
@@ -189,7 +199,12 @@ namespace TVRename
         public bool RSSUseCloudflare = true;
         public bool SearchJSONUseCloudflare = true;
         public bool qBitTorrentDownloadFilesFirst = true;
-        public ShowItem.ProviderType DefaultProvider = ShowItem.ProviderType.TheTVDB;
+        public TVDoc.ProviderType DefaultProvider = TVDoc.ProviderType.TheTVDB;
+
+        public string? TMDBLanguage;
+        public string? TMDBRegion;
+        public float TMDBPercentDirty;
+        public bool IncludeMoviesQuickRecent;
 
         public BetaMode mode = BetaMode.ProductionOnly;
         public float upgradeDirtyPercent = 20;
@@ -206,7 +221,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> AutoAddMovieTermsArray => Convert(AutoAddMovieTerms);
 
-        internal string FilenameFriendly([NotNull] ShowItem show, [NotNull] Episode sourceEp)
+        internal string FilenameFriendly([NotNull] ShowConfiguration show, [NotNull] Episode sourceEp)
         {
             // ReSharper disable once ArrangeMethodOrOperatorBody
             return FilenameFriendly(NamingStyle.GetTargetEpisodeName(show, sourceEp));
@@ -250,6 +265,7 @@ namespace TVRename
 
         public string defaultSeasonWord = "Season";
         public ShowFilter Filter = new ShowFilter();
+        public MovieFilter MovieFilter = new MovieFilter();
         public SeasonFilter SeasonFilter = new SeasonFilter();
         public int ParallelDownloads =4;
         public List<string> RSSURLs = DefaultRSSURLList();
@@ -273,6 +289,8 @@ namespace TVRename
         public bool AutoSearchForDownloadedFiles = false;
         public string SpecialsFolderName = "Specials";
         public string SeasonFolderFormat = CustomSeasonName.DefaultStyle();
+        public string MovieFolderFormat = CustomMovieName.DefaultStyle();
+        public string MovieFilenameFormat = CustomMovieName.DefaultStyle();
         public int StartupTab;
         public Searchers TheSearchers = new Searchers();
 
@@ -362,14 +380,24 @@ namespace TVRename
         public bool DefShowUseBase = false;
         public bool DefShowUseSubFolders = true;
 
+        public bool DefMovieDoRenaming = true;
+        public bool DefMovieDoMissingCheck = true;
+        public bool DefMovieUseutomaticFolders = true;
+        public bool DefMovieUseDefaultLocation = true;
+        public string? DefMovieDefaultLocation;
+        public TVDoc.ProviderType DefaultMovieProvider = TVDoc.ProviderType.TMDB;
+
+
         private TVSettings()
         {
             // defaults that aren't handled with default initialisers
             Ignore = new List<IgnoreItem>();
             PreviouslySeenEpisodes = new PreviouslySeenEpisodes();
             DownloadFolders = new List<string>();
+            MovieLibraryFolders = new List<string>();
             IgnoreFolders = new List<string>();
             LibraryFolders = new List<string>();
+            MovieLibraryFolders = new List<string>();
             IgnoredAutoAddHints = new List<string>();
 
             VideoExtensionsString = VideoExtensionsStringDEFAULT;
@@ -441,6 +469,16 @@ namespace TVRename
             writer.WriteElement("ExportShowsHTMLTo", ExportShowsHTMLTo);
             writer.WriteElement("ExportFOXML", ExportFOXML);
             writer.WriteElement("ExportFOXMLTo", ExportFOXMLTo);
+
+            writer.WriteElement("ExportMoviesTXT", ExportMoviesTXT);
+            writer.WriteElement("ExportMoviesTXTTo", ExportMoviesTXTTo);
+            writer.WriteElement("ExportMoviesHTML", ExportMoviesHTML);
+            writer.WriteElement("ExportMoviesHTMLTo", ExportMoviesHTMLTo);
+            writer.WriteElement("ExportMissingMoviesXML", ExportMissingMoviesXML);
+            writer.WriteElement("ExportMissingMoviesXMLTo", ExportMissingMoviesXMLTo);
+            writer.WriteElement("ExportMissingMoviesCSV", ExportMissingMoviesCSV);
+            writer.WriteElement("ExportMissingMoviesCSVTo", ExportMissingMoviesCSVTo);
+
             writer.WriteElement("StartupTab2", TabNameForNumber(StartupTab));
             writer.WriteElement("NamingStyle", NamingStyle.StyleString);
             writer.WriteElement("NotificationAreaIcon", NotificationAreaIcon);
@@ -468,6 +506,8 @@ namespace TVRename
             writer.WriteElement("HideMyShowsSpoilers", HideMyShowsSpoilers);
             writer.WriteElement("SpecialsFolderName", SpecialsFolderName);
             writer.WriteElement("SeasonFolderFormat", SeasonFolderFormat);
+            writer.WriteElement("MovieFolderFormat", MovieFolderFormat);
+            writer.WriteElement("MovieFilenameFormat", MovieFilenameFormat);
             writer.WriteElement("uTorrentPath", uTorrentPath);
             writer.WriteElement("ResumeDatPath", ResumeDatPath);
             writer.WriteElement("SearchRSS", SearchRSS);
@@ -477,6 +517,7 @@ namespace TVRename
             writer.WriteElement("EpImgs", EpTBNs);
             writer.WriteElement("NFOShows", NFOShows);
             writer.WriteElement("NFOEpisodes", NFOEpisodes);
+            writer.WriteElement("NFOMovies", NFOMovies); 
             writer.WriteElement("KODIImages", KODIImages);
             writer.WriteElement("pyTivoMeta", pyTivoMeta);
             writer.WriteElement("pyTivoMetaSubFolder", pyTivoMetaSubFolder);
@@ -574,7 +615,14 @@ namespace TVRename
             writer.WriteElement("DefShowUseSubFolders", DefShowUseSubFolders);
             writer.WriteElement("SampleFileMaxSizeMB", SampleFileMaxSizeMB);
 
-            writer.WriteElement("UnattendedMultiActionOutcome",(int)UnattendedMultiActionOutcome );
+            writer.WriteElement("DefMovieDoRenaming", DefMovieDoRenaming);
+            writer.WriteElement("DefMovieDoMissingCheck", DefMovieDoMissingCheck);
+            writer.WriteElement("DefMovieUseutomaticFolders", DefMovieUseutomaticFolders);
+            writer.WriteElement("DefMovieUseDefaultLocation", DefMovieUseDefaultLocation);
+            writer.WriteElement("DefMovieDefaultLocation", DefMovieDefaultLocation);
+            writer.WriteElement("DefaultMovieProvider", (int)DefaultMovieProvider);
+
+        writer.WriteElement("UnattendedMultiActionOutcome",(int)UnattendedMultiActionOutcome );
             writer.WriteElement("UserMultiActionOutcome",(int)UserMultiActionOutcome );
 
             writer.WriteElement("SearchJackett",SearchJackett );
@@ -588,6 +636,11 @@ namespace TVRename
             writer.WriteElement("StopJackettSearchOnFullScan", StopJackettSearchOnFullScan);
             writer.WriteElement("StopJackettSearchOnFullScan", StopJackettSearchOnFullScan);
             writer.WriteElement("AutoSaveOnExit", AutoSaveOnExit);
+
+            writer.WriteElement("TMDBLanguage", TMDBLanguage);
+            writer.WriteElement("TMDBRegion", TMDBRegion);
+            writer.WriteElement("TMDBPercentDirty", TMDBPercentDirty);
+            writer.WriteElement("IncludeMoviesQuickRecent", IncludeMoviesQuickRecent);
 
             TheSearchers.WriteXml(writer);
             WriteReplacements(writer);
@@ -649,6 +702,27 @@ namespace TVRename
             }
 
             writer.WriteEndElement(); //ShowFilters
+
+
+            writer.WriteStartElement("MovieFilters");
+
+            writer.WriteInfo("NameFilter", "Name", MovieFilter.ShowName);
+            writer.WriteInfo("ShowStatusFilter", "ShowStatus", MovieFilter.ShowStatus);
+            writer.WriteInfo("ShowNetworkFilter", "ShowNetwork", MovieFilter.ShowNetwork);
+            writer.WriteInfo("ShowRatingFilter", "ShowRating", MovieFilter.ShowRating);
+            writer.WriteInfo("ShowYearFilter", "ShowYear", MovieFilter.ShowYear);
+
+            writer.WriteInfo("ShowStatusFilter", "ShowStatusInclude", MovieFilter.ShowStatusInclude);
+            writer.WriteInfo("ShowNetworkFilter", "ShowNetworkInclude", MovieFilter.ShowNetworkInclude);
+            writer.WriteInfo("ShowRatingFilter", "ShowRatingInclude", MovieFilter.ShowRatingInclude);
+            writer.WriteInfo("ShowYearFilter", "ShowYearInclude", MovieFilter.ShowYearInclude);
+
+            foreach (string genre in MovieFilter.Genres)
+            {
+                writer.WriteInfo("GenreFilter", "Genre", genre);
+            }
+
+            writer.WriteEndElement(); //MovieFilters
 
             writer.WriteStartElement("SeasonFilters");
             writer.WriteElement("SeasonIgnoredFilter", SeasonFilter.HideIgnoredSeasons);
@@ -796,7 +870,7 @@ namespace TVRename
                     false,
                     "like '13 - Showname - 2 - Episode Title.avi'"),
                 new FilenameProcessorRE(true,
-                    "\\b(episode|ep|e) ?(?<e>[0-9]{2,}) ?- ?(series|season) ?(?<s>[0-9]+)",
+                    "\\b(episode|ep|e) ?(?<e>[0-9]{2,}) ?- ?(cachedSeries|season) ?(?<s>[0-9]+)",
                     false, "episode 3 - season 4"),
                 new FilenameProcessorRE(true,
                     "season (?<s>[0-9]+)\\\\e?(?<e>[0-9]{1,3}) ?-",
@@ -905,7 +979,7 @@ namespace TVRename
         [NotNull]
         public string BTSearchURL(ProcessedEpisode? epi)
         {
-            SeriesInfo s = epi?.TheSeries;
+            CachedSeriesInfo s = epi?.TheCachedSeries;
             if (s is null)
             {
                 return string.Empty;
@@ -1074,9 +1148,9 @@ namespace TVRename
             {
             }
 
-            public bool AppliesTo(ShowItem show) => Keys.Any(rule => rule.appliesTo(show));
+            public bool AppliesTo(ShowConfiguration show) => Keys.Any(rule => rule.appliesTo(show));
 
-            public System.Drawing.Color GetColour(ShowItem show)
+            public System.Drawing.Color GetColour(ShowConfiguration show)
             {
                 foreach (KeyValuePair<ColouringRule, System.Drawing.Color> e in this)
                 {
@@ -1112,7 +1186,7 @@ namespace TVRename
                 get;
             }
             public abstract bool appliesTo(ProcessedSeason s);
-            public abstract bool appliesTo(ShowItem s);
+            public abstract bool appliesTo(ShowConfiguration s);
         }
 
         public class ShowStatusColouringRule : ColouringRule
@@ -1127,28 +1201,28 @@ namespace TVRename
 
             public override bool appliesTo(ProcessedSeason s) => false;
 
-            public override bool appliesTo(ShowItem s) => status==s.ShowStatus;
+            public override bool appliesTo(ShowConfiguration s) => status==s.ShowStatus;
         }
 
         public class ShowAirStatusColouringRule : ColouringRule
         {
-            public ShowAirStatusColouringRule(ShowItem.ShowAirStatus status)
+            public ShowAirStatusColouringRule(ShowConfiguration.ShowAirStatus status)
             {
                 this.status = status;
             }
 
-            public readonly ShowItem.ShowAirStatus status;
+            public readonly ShowConfiguration.ShowAirStatus status;
             public override string ToString()
             {
                 switch (status)
                 {
-                    case ShowItem.ShowAirStatus.aired:
+                    case ShowConfiguration.ShowAirStatus.aired:
                         return "Show Season Status: All aired";
-                    case ShowItem.ShowAirStatus.noEpisodesOrSeasons:
+                    case ShowConfiguration.ShowAirStatus.noEpisodesOrSeasons:
                         return "Show Season Status: No Seasons or Episodes in Seasons";
-                    case ShowItem.ShowAirStatus.noneAired:
+                    case ShowConfiguration.ShowAirStatus.noneAired:
                         return "Show Season Status: None aired";
-                    case ShowItem.ShowAirStatus.partiallyAired:
+                    case ShowConfiguration.ShowAirStatus.partiallyAired:
                         return "Show Season Status: Partially aired";
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -1159,7 +1233,7 @@ namespace TVRename
 
             public override bool appliesTo(ProcessedSeason s) => false;
 
-            public override bool appliesTo(ShowItem s) => status ==s.SeasonsAirStatus;
+            public override bool appliesTo(ShowConfiguration s) => status ==s.SeasonsAirStatus;
         }
 
         public class SeasonStatusColouringRule : ColouringRule
@@ -1195,7 +1269,7 @@ namespace TVRename
 
             public override bool appliesTo(ProcessedSeason s) => status == s.Status(s.Show.GetTimeZone());
 
-            public override bool appliesTo(ShowItem s) => false;
+            public override bool appliesTo(ShowConfiguration s) => false;
         }
 
         // ReSharper disable once FunctionComplexityOverflow
@@ -1241,6 +1315,8 @@ namespace TVRename
             AutoSelectShowInMyShows = xmlSettings.ExtractBool("AutoSelectShowInMyShows",true);
             SpecialsFolderName = xmlSettings.ExtractString("SpecialsFolderName", "Specials");
             SeasonFolderFormat = xmlSettings.ExtractString("SeasonFolderFormat");
+            MovieFolderFormat = xmlSettings.ExtractString("MovieFolderFormat");
+            MovieFilenameFormat = xmlSettings.ExtractString("MovieFilenameFormat");
             SearchJSONURL = xmlSettings.ExtractString("SearchJSONURL", "https://eztv.ag/api/get-torrents?imdb_id=");
             SearchJSONRootNode = xmlSettings.ExtractString("SearchJSONRootNode", "torrents");
             SearchJSONFilenameToken = xmlSettings.ExtractString("SearchJSONFilenameToken", "filename");
@@ -1264,6 +1340,14 @@ namespace TVRename
             ExportRecentWPLTo = xmlSettings.ExtractString("ExportRecentWPLTo");
             ExportMissingCSV = xmlSettings.ExtractBool("ExportMissingCSV",false);
             ExportMissingCSVTo = xmlSettings.ExtractString("ExportMissingCSVTo");
+            ExportMoviesTXT = xmlSettings.ExtractBool("ExportMoviesTXT", false);
+            ExportMoviesTXTTo = xmlSettings.ExtractString("ExportMoviesTXTTo");
+            ExportMoviesHTML = xmlSettings.ExtractBool("ExportMoviesHTML", false);
+            ExportMoviesHTMLTo = xmlSettings.ExtractString("ExportMoviesHTMLTo");
+            ExportMissingMoviesXML = xmlSettings.ExtractBool("ExportMissingMoviesXML", false);
+            ExportMissingMoviesXMLTo = xmlSettings.ExtractString("ExportMissingMoviesXMLTo");
+            ExportMissingMoviesCSV = xmlSettings.ExtractBool("ExportMissingMoviesCSV", false);
+            ExportMissingMoviesCSVTo = xmlSettings.ExtractString("ExportMissingMoviesCSVTo");
             ExportRenamingXML = xmlSettings.ExtractBool("ExportRenamingXML",false);
             ExportRenamingXMLTo = xmlSettings.ExtractString("ExportRenamingXMLTo");
             ExportFOXML = xmlSettings.ExtractBool("ExportFOXML",false);
@@ -1283,6 +1367,7 @@ namespace TVRename
             SearchRSSManualScanOnly = xmlSettings.ExtractBool("SearchRSSManualScanOnly",true);
             SearchJSONManualScanOnly = xmlSettings.ExtractBool("SearchJSONManualScanOnly",true);
             EpTBNs = xmlSettings.ExtractBool("EpImgs",false);
+            NFOMovies = xmlSettings.ExtractBool("NFOMovies",true);
             NFOShows = xmlSettings.ExtractBool("NFOShows") ?? xmlSettings.ExtractBool("NFOs",false);
             NFOEpisodes = xmlSettings.ExtractBool("NFOEpisodes") ?? xmlSettings.ExtractBool("NFOs",false);
             KODIImages = xmlSettings.ExtractBool("KODIImages") ??
@@ -1293,7 +1378,7 @@ namespace TVRename
             FolderJpg = xmlSettings.ExtractBool("FolderJpg",false);
             FolderJpgIs = xmlSettings.ExtractEnum("FolderJpgIs", FolderJpgIsType.Poster);
             MonitoredFoldersScanType = xmlSettings.ExtractEnum("MonitoredFoldersScanType",ScanType.Full);
-            DefaultProvider = xmlSettings.ExtractEnum("DefaultProvider", ShowItem.ProviderType.TheTVDB);
+            DefaultProvider = xmlSettings.ExtractEnum("DefaultProvider", TVDoc.ProviderType.TheTVDB);
             RenameCheck = xmlSettings.ExtractBool("RenameCheck",true);
             PreventMove = xmlSettings.ExtractBool("PreventMove",false);
             CheckuTorrent = xmlSettings.ExtractBool("CheckuTorrent",false);
@@ -1369,6 +1454,13 @@ namespace TVRename
             DefShowLocation = xmlSettings.ExtractString("DefShowLocation",string.Empty);
             DefaultShowTimezoneName = xmlSettings.ExtractString("DefaultShowTimezoneName");
 
+            DefMovieDoRenaming = xmlSettings.ExtractBool("DefMovieDoRenaming", true);
+            DefMovieDoMissingCheck = xmlSettings.ExtractBool("DefMovieDoMissingCheck", true);
+            DefMovieUseutomaticFolders = xmlSettings.ExtractBool("DefMovieUseutomaticFolders", true);
+            DefMovieUseDefaultLocation = xmlSettings.ExtractBool("DefMovieUseDefaultLocation",true);
+            DefMovieDefaultLocation = xmlSettings.ExtractStringOrNull("DefMovieDefaultLocation");
+            DefaultMovieProvider = xmlSettings.ExtractEnum("DefaultMovieProvider", TVDoc.ProviderType.TMDB);
+
             UnattendedMultiActionOutcome = xmlSettings.ExtractEnum("UnattendedMultiActionOutcome", DuplicateActionOutcome.IgnoreAll);
             UserMultiActionOutcome = xmlSettings.ExtractEnum("UserMultiActionOutcome", DuplicateActionOutcome.MostSeeders);
 
@@ -1383,6 +1475,11 @@ namespace TVRename
             SearchJackettButton = xmlSettings.ExtractBool("SearchJackettButton", true);
             StopJackettSearchOnFullScan = xmlSettings.ExtractBool("StopJackettSearchOnFullScan", true);
             AutoSaveOnExit = xmlSettings.ExtractBool("AutoSaveOnExit", false);
+
+            TMDBLanguage = xmlSettings.ExtractString("TMDBLanguage");
+            TMDBRegion = xmlSettings.ExtractString("TMDBRegion");
+            TMDBPercentDirty = xmlSettings.ExtractFloat("TMDBPercentDirty",20);
+            IncludeMoviesQuickRecent = xmlSettings.ExtractBool("IncludeMoviesQuickRecent",false);
 
             Tidyup.load(xmlSettings);
             RSSURLs = xmlSettings.Descendants("RSSURLs").FirstOrDefault()?.ReadStringsFromXml("URL")??new List<string>();
@@ -1427,6 +1524,36 @@ namespace TVRename
             {
                 Filter.Genres.Add(rep.Value);
             }
+
+            MovieFilter = new MovieFilter
+            {
+                ShowName = xmlSettings.Descendants("MovieFilter").Descendants("ShowNameFilter").Attributes("ShowName")
+                    .FirstOrDefault()?.Value,
+
+                ShowStatus = xmlSettings.Descendants("MovieFilter").Descendants("ShowStatusFilter").Attributes("ShowStatus")
+                    .FirstOrDefault()?.Value,
+                ShowRating = xmlSettings.Descendants("ShowFilters").Descendants("ShowRatingFilter").Attributes("ShowRating")
+                    .FirstOrDefault()?.Value,
+                ShowNetwork = xmlSettings.Descendants("MovieFilter").Descendants("ShowNetworkFilter").Attributes("ShowNetwork")
+                    .FirstOrDefault()?.Value,
+                ShowYear = xmlSettings.Descendants("MovieFilter").Descendants("ShowYearFilter").Attributes("ShowYear")
+                    .FirstOrDefault()?.Value,
+
+                ShowStatusInclude = (bool?)xmlSettings.Descendants("MovieFilter").Descendants("ShowStatusFilter").Attributes("ShowStatusInclude")
+                    .FirstOrDefault() ?? true,
+                ShowRatingInclude = (bool?)xmlSettings.Descendants("MovieFilter").Descendants("ShowRatingFilter").Attributes("ShowRatingInclude")
+                    .FirstOrDefault() ?? true,
+                ShowNetworkInclude = (bool?)xmlSettings.Descendants("MovieFilter").Descendants("ShowNetworkFilter").Attributes("ShowNetworkInclude")
+                    .FirstOrDefault() ?? true,
+                ShowYearInclude = (bool?)xmlSettings.Descendants("MovieFilter").Descendants("ShowYearFilter").Attributes("ShowYearInclude")
+                .FirstOrDefault() ?? true
+            };
+
+            foreach (XAttribute rep in xmlSettings.Descendants("MovieFilter").Descendants("GenreFilter").Attributes("Genre"))
+            {
+                MovieFilter.Genres.Add(rep.Value);
+            }
+
 
             if (SeasonFolderFormat == string.Empty)
             {
@@ -1494,7 +1621,7 @@ namespace TVRename
                 case "ShowStatusColouringRule":
                     return new ShowStatusColouringRule(showStatus);
                 case "ShowAirStatusColouringRule":
-                    return new ShowAirStatusColouringRule(ExtractEnum<ShowItem.ShowAirStatus>(showStatus));
+                    return new ShowAirStatusColouringRule(ExtractEnum<ShowConfiguration.ShowAirStatus>(showStatus));
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1524,26 +1651,26 @@ namespace TVRename
             throw new ArgumentException();
         }
 
-        private static ShowItem.ShowAirStatus ConvertToShowAirStatus([NotNull] string value)
+        private static ShowConfiguration.ShowAirStatus ConvertToShowAirStatus([NotNull] string value)
         {
             switch (value)
             {
                 case "All aired":
                 case "Aired":
                 case "aired":
-                    return ShowItem.ShowAirStatus.aired;
+                    return ShowConfiguration.ShowAirStatus.aired;
                 case "No Seasons or Episodes in Seasons":
                 case "NoEpisodesOrSeasons":
                 case "noEpisodesOrSeasons":
-                    return ShowItem.ShowAirStatus.noEpisodesOrSeasons;
+                    return ShowConfiguration.ShowAirStatus.noEpisodesOrSeasons;
                 case "None aired":
                 case "NoneAired":
                 case "noneAired":
-                    return ShowItem.ShowAirStatus.noneAired;
+                    return ShowConfiguration.ShowAirStatus.noneAired;
                 case "Partially aired":
                 case "PartiallyAired":
                 case "partiallyAired":
-                    return ShowItem.ShowAirStatus.partiallyAired;
+                    return ShowConfiguration.ShowAirStatus.partiallyAired;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

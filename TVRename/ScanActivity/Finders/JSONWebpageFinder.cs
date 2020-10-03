@@ -25,7 +25,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.SearchJSON;
         protected override string CheckName() => "Check JSON links for the missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList,TVDoc.ScanSettings settings)
         {
             if (TVSettings.Instance.SearchJSONManualScanOnly && settings.Unattended)
             {
@@ -87,14 +87,14 @@ namespace TVRename
         {
             ProcessedEpisode pe = action.MissingEpisode;
 
-            string imdbId = pe.TheSeries.GetImdbNumber();
+            string imdbId = pe.TheCachedSeries.GetImdbNumber();
             if (string.IsNullOrWhiteSpace(imdbId))
             {
                 return;
             }
 
             string simpleShowName = Helpers.SimplifyName(pe.Show.ShowName);
-            string simpleSeriesName = Helpers.SimplifyName(pe.TheSeries.Name);
+            string simpleSeriesName = Helpers.SimplifyName(pe.TheCachedSeries.Name);
             ItemList newItemsForThisMissingEpisode = new ItemList();
 
             string response = cache.GetUrl($"{TVSettings.Instance.SearchJSONURL}{imdbId}",TVSettings.Instance.SearchJSONUseCloudflare);
@@ -102,7 +102,7 @@ namespace TVRename
             if (string.IsNullOrWhiteSpace(response))
             {
                 LOGGER.Warn(
-                    $"Got no response from {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.MissingEpisode.TheSeries.Name}");
+                    $"Got no response from {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.MissingEpisode.TheCachedSeries.Name}");
 
                 return;
             }
@@ -185,14 +185,14 @@ namespace TVRename
                     else
                     {
                         LOGGER.Info(
-                            $"{TVSettings.Instance.SearchJSONFilenameToken} or {TVSettings.Instance.SearchJSONURLToken} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.MissingEpisode.TheSeries.Name}");
+                            $"{TVSettings.Instance.SearchJSONFilenameToken} or {TVSettings.Instance.SearchJSONURLToken} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.MissingEpisode.TheCachedSeries.Name}");
                     }
                 }
             }
             else
             {
                 LOGGER.Info(
-                    $"{TVSettings.Instance.SearchJSONRootNode} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.MissingEpisode.TheSeries.Name}");
+                    $"{TVSettings.Instance.SearchJSONRootNode} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.MissingEpisode.TheCachedSeries.Name}");
             }
 
             RemoveDuplicates(newItemsForThisMissingEpisode);
