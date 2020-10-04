@@ -162,7 +162,7 @@ namespace TVRename.Forms.Utilities
             // 
             // pictureBox3
             // 
-            this.pictureBox3.Image = global::TVRename.Properties.Resources.download;
+            this.pictureBox3.Image = global::TVRename.Properties.Resources.blue_square_2_d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b__1_;
             this.pictureBox3.Location = new System.Drawing.Point(28, 322);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(157, 109);
@@ -197,7 +197,7 @@ namespace TVRename.Forms.Utilities
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(504, 481);
+            this.ClientSize = new System.Drawing.Size(504, 504);
             this.ControlBox = false;
             this.Controls.Add(this.richTextBox3);
             this.Controls.Add(this.pictureBox3);

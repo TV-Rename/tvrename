@@ -755,6 +755,8 @@
     <Compile Include="Utility\UpdateVersion.cs" />
     <Compile Include="Utility\VersionUpdater.cs" />
     <Compile Include="Utility\Helper\XMLHelper.cs" />
+    <None Include="Resources\blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b %281%29.jpg" />
+    <None Include="Resources\blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.jpg" />
     <None Include="Resources\download.jpg" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

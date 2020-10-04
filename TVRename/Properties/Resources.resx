@@ -193,11 +193,11 @@
   <data name="add_Red" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\226562-1281.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SearchWebHS" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SearchWebHS.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="353430-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\353430-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CheckBoxSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\353430-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SearchWebSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\1587498-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -220,8 +220,14 @@
   <data name="Do" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\5172493-1281.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="download" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\download.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="EditShowInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\314251-1281.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="EditShowSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\314251-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -250,8 +256,8 @@
   <data name="saveHS" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\saveHS.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="CheckBoxSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\353430-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="SearchFolderHS" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SearchFolderHS.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="616650-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\616650-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -265,8 +271,8 @@
   <data name="tvm_header_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\tvm-header-logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SearchFolderHS" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SearchFolderHS.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="SearchWebHS" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SearchWebHS.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="graphhs" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\graphhs.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -283,7 +289,7 @@
   <data name="GetLatestVersion" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\GetLatestVersion.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="download" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\download.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b (1).jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
