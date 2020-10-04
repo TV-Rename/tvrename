@@ -128,11 +128,11 @@ namespace TVRename.Forms
             {
                 case MediaConfiguration.MediaType.tv:
                     var newShow = new ShowConfiguration(mlastSelectedKey, TVDoc.ProviderType.TMDB);
-                    tvDoc.TvLibrary.Add(newShow);
+                    tvDoc.Add(newShow);
                     break;
                 case MediaConfiguration.MediaType.movie:
                     var newMovie = new MovieConfiguration(mlastSelectedKey,TVDoc.ProviderType.TMDB);
-                    tvDoc.FilmLibrary.Add(newMovie );
+                    tvDoc.Add(newMovie );
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

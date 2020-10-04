@@ -19,5 +19,10 @@ namespace TVRename.Forms.Utilities
         {
             Helpers.OpenUrl("https://www.tvmaze.com/");
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Helpers.OpenUrl("https://www.themoviedb.org//");
+        }
     }
 }

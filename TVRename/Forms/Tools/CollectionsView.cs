@@ -141,13 +141,14 @@ namespace TVRename.Forms
 
                 // need to add a new showitem
                 var found = new MovieConfiguration(si.TmdbCode,TVDoc.ProviderType.TMDB);
-
-                mDoc.FilmLibrary.Add(found);
-
                 ///TODO put UI to get folder
+            mDoc.Add(found);
+
+                
 
             mDoc.SetDirty();
         mDoc.ExportMovieInfo();
+        
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)

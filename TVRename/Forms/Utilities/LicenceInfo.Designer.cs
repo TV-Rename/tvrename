@@ -103,9 +103,9 @@ namespace TVRename.Forms.Utilities
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(29, 452);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(279, 13);
+            this.label4.Size = new System.Drawing.Size(339, 13);
             this.label4.TabIndex = 6;
-            this.label4.Text = "TheTVDB.com and TVMaze.com for TV show information";
+            this.label4.Text = "TheTVDB.com, TMDB.com and TVMaze.com for TV show information";
             // 
             // label5
             // 

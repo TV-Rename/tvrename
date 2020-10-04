@@ -118,11 +118,11 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="DoSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\5172493-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="314251-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\314251-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="4781834-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\4781834-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Black-Red_256x256" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Black-Red_256x256.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -132,6 +132,9 @@
   </data>
   <data name="226562-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\226562-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ScanSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\322497-48 (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SettingsSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\3855598-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -151,14 +154,20 @@
   <data name="1587498-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\1587498-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="iconfinder_Info_Circle_Symbol_Information_Letter_1396823" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\iconfinder_Info_Circle_Symbol_Information_Letter_1396823.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="AddShow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\226562-128 (1)1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RefreshSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\134221-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Web" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Web.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="5172493-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\5172493-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="TreeView" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\image-Control_TreeView.bmp-41.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Spoilers_Hidden_Text" xml:space="preserve">
+    <value>[Spoilers Hidden]</value>
   </data>
   <data name="SearchWeb" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\1587498-1281.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -166,8 +175,8 @@
   <data name="Help" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Help.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="TreeView" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\image-Control_TreeView.bmp-41.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="5172493-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\5172493-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DeleteSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ButtonSmall_Delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -175,20 +184,17 @@
   <data name="322497-321" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\322497-321.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="RefreshSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\134221-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="tv3white" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\tv3white.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Scan" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\322497-1281.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="graphhs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\graphhs.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="add_Red" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\226562-1281.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SearchWebHS" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SearchWebHS.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="353430-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\353430-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -196,26 +202,23 @@
   <data name="SearchWebSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\1587498-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="AddShow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\226562-128 (1)1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="134221-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\134221-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="AddSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\226562-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="4781834-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\4781834-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="FormulaEvaluatorHS" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\FormulaEvaluatorHS.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="GetLatestVersion" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\GetLatestVersion.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="2738302-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\2738302-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="CheckBoxSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\353430-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="iconfinder_Info_Circle_Symbol_Information_Letter_1396823" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconfinder_Info_Circle_Symbol_Information_Letter_1396823.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Do" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\5172493-1281.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="PreferencesSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\2738302-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="EditShowInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\314251-1281.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -229,23 +232,26 @@
   <data name="DeleteShowSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\616650-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="FilterSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\4781834-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="DeleteShow" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\616650-1281.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="tvdblogo1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\tvdblogo1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ScanSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\322497-48 (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="AddSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\226562-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="134221-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\134221-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="PreferencesSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\2738302-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="saveHS" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\saveHS.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SearchFolderHS" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SearchFolderHS.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="CheckBoxSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\353430-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="616650-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\616650-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -259,11 +265,11 @@
   <data name="tvm_header_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\tvm-header-logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SearchWebHS" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\SearchWebHS.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="SearchFolderHS" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SearchFolderHS.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="DoSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\5172493-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="graphhs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\graphhs.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="FindHS" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\FindHS.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -274,13 +280,10 @@
   <data name="322497-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\322497-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="FilterSmall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\4781834-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="GetLatestVersion" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GetLatestVersion.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="2738302-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\2738302-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Spoilers_Hidden_Text" xml:space="preserve">
-    <value>[Spoilers Hidden]</value>
+  <data name="download" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\download.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

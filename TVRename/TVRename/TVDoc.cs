@@ -127,6 +127,13 @@ namespace TVRename
             return CurrentStats;
         }
 
+        internal void Add(ShowConfiguration newShow)
+        {
+            TvLibrary.Add(newShow);
+            SetDirty();
+            ExportMovieInfo();
+        }
+
         private void UpdateIdsFromCache()
         {
             lock (TVmaze.LocalCache.Instance.SERIES_LOCK)
@@ -1298,6 +1305,13 @@ namespace TVRename
 
             //Remove all similar items
             TheActionList.Remove(toRemove);
+        }
+
+        public void Add(MovieConfiguration found)
+        {
+            FilmLibrary.Add(found);
+            SetDirty();
+            ExportMovieInfo();
         }
     }
 }

@@ -140,7 +140,9 @@ namespace TVRename
 
             sb.AppendLine($@"     <tr class=""table-secondary"">
       <td scope=""row"" colspan=""4"">{seasonOverViewHtml}{episodeText}</td>
-      <td class=""text-right"">{explorerButton}
+      <td class=""text-right"">
+{CreateButton(EditSeasonURL(si,s.SeasonNumber), "<i class=\"far fa-edit\"></i>", "Edit")}
+{explorerButton}
             {tvdbButton}
             {tvMazeButton}</td>
     </tr>
@@ -196,6 +198,7 @@ namespace TVRename
                     <div><p class=""lead"">{ser.Overview}</p></div>
 			        <div><blockquote>{actorLinks}</blockquote></div> 
 		            <div>
+                    {CreateButton(EditTVSeriesURL(si), "<i class=\"far fa-edit\"></i>", "Edit")}
                      {explorerButton}
 			         {CreateButton(tvdbLink, "TVDB.com", "View on TVDB")}
 			         {CreateButton(imdbLink, "IMDB.com", "View on IMDB")}
@@ -259,7 +262,7 @@ namespace TVRename
                    </div>
                    <div class=""col-md-8 d-flex flex-column"">
                     <div class=""row"">
-                     <div class=""col-md-8""><h1>{si.ShowName}</h1><small class=""text-muted"">{ser.TagLine}</small></div>
+                     <div class=""col-md-8""> <h1>{si.ShowName}</h1><small class=""text-muted"">{ser.TagLine}</small></div>
                      <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6>
                         <small class=""text-muted"">{ser.ShowLanguage} - {ser.Type}</small>
                         <small class=""text-muted"">{runTimeHtml}</small></div>
@@ -267,9 +270,10 @@ namespace TVRename
                     <div><p class=""lead"">{ser.Overview}</p></div>
 			        <div><blockquote>{actorLinks}</blockquote></div> 
 		            <div>
+                    {CreateButton(EditMovieURL(si), "<i class=\"far fa-edit\"></i>", "Edit")}
                      {explorerButton}
                     {viewButton}
-                    {CreateButton(tmdbLink, "TMDB.com", "View on TMDB")}
+                     {CreateButton(tmdbLink, "TMDB.com", "View on TMDB")}
 			         {CreateButton(tvdbLink, "TVDB.com", "View on TVDB")}
 			         {CreateButton(imdbLink, "IMDB.com", "View on IMDB")}
                      {CreateButton(mazeLink, "TVmaze.com", "View on TVmaze")}
@@ -278,6 +282,7 @@ namespace TVRename
                     {facebookButton}
                     {instaButton}
                     {twitterButton}
+                    
 			        </div>
 		            <div>
                         &nbsp;
@@ -293,7 +298,116 @@ namespace TVRename
             //Ideally we'd have <div class=""row align-items-bottom flex-grow-1""> in there as it looks better, but a issue in IE prevents it from looking correct
         }
 
+        private static string? EditMovieURL(MovieConfiguration si)
+        {
+            switch (si.Provider)
+            {
+                case TVDoc.ProviderType.TheTVDB:
+                    //tofo reenable when TVDB has movies
+                    //if (si.TVDBSlug > 0)
+                    //{
+                        //return $"https://thetvdb.com/movies/{TVDBSlug}/edit";
+                    //}
 
+                    return null;
+
+                case TVDoc.ProviderType.TMDB:
+                    if (si.TmdbCode > 0)
+                    {
+                        return $"https://www.themoviedb.org/movie/{si.TmdbCode}/edit?active_nav_item=primary_facts";
+                    }
+
+                    return null;
+
+                case TVDoc.ProviderType.TVmaze:
+                case TVDoc.ProviderType.libraryDefault:
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private static string? EditSeasonURL(ShowConfiguration si, int sSeasonNumber)
+        {
+            switch (si.Provider)
+            {
+                case TVDoc.ProviderType.TheTVDB:
+                    //tofo reenable when TVDB has movies
+                    //if (si.TVDBSlug > 0)
+                    //{
+                    //return $"https://thetvdb.com/movies/{TVDBSlug}/edit";
+                    //}
+
+                    return null;
+
+                case TVDoc.ProviderType.TMDB:
+                    if (si.TmdbCode > 0)
+                    {
+                        return $"https://www.themoviedb.org/movie/{si.TmdbCode}/edit?active_nav_item=primary_facts";
+                    }
+
+                    return null;
+
+                case TVDoc.ProviderType.TVmaze:
+                case TVDoc.ProviderType.libraryDefault:
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private static string? EditTVEpisodeURL(ProcessedEpisode ep)
+        {
+            switch (ep.Show.Provider)
+            {
+                case TVDoc.ProviderType.TheTVDB:
+                    if (ep.Show.CachedShow?.Slug.HasValue()??false)
+                    {
+                        return $"https://thetvdb.com/series/gangs-of-london/episodes/7596842/811643/edit";
+                    }
+
+                    return null;
+
+                case TVDoc.ProviderType.TMDB:
+                    if (ep.Show.TmdbCode > 0)
+                    {
+                        return $"https://www.themoviedb.org/tv/{ep.Show.TmdbCode}/season/{ep.AppropriateSeasonNumber}/episode/{ep.AppropriateEpNum}/edit?active_nav_item=primary_facts";
+                    }
+
+                    return null;
+
+                case TVDoc.ProviderType.TVmaze:
+                case TVDoc.ProviderType.libraryDefault:
+                default:
+                    return null;
+            }
+        }
+
+        private static string? EditTVSeriesURL(ShowConfiguration si)
+        {
+            switch (si.Provider)
+            {
+                case TVDoc.ProviderType.TheTVDB:
+                    
+                    if (si.CachedShow?.Slug.HasValue() ?? false)
+                    {
+                    return $"https://thetvdb.com/series/{si.CachedShow.Slug}/edit";
+                    }
+
+                    return null;
+
+                case TVDoc.ProviderType.TMDB:
+                    if (si.TmdbCode > 0)
+                    {
+                        return $"https://www.themoviedb.org/movie/{si.TmdbCode}/edit?active_nav_item=primary_facts";
+                    }
+
+                    return null;
+
+                case TVDoc.ProviderType.TVmaze:
+                case TVDoc.ProviderType.libraryDefault:
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
 
         [NotNull]
         public static string YearRange(CachedSeriesInfo? ser)
@@ -611,6 +725,7 @@ namespace TVRename
                     {seasonOverViewHtml}
                     </div>
                     <div class=""col-4 text-right"">
+                        {CreateButton(EditSeasonURL(si,s.SeasonNumber), "<i class=\"far fa-edit\"></i>", "Edit")}
                         {explorerButton}
                         {tvdbButton}
                         {tvMazeButton}
@@ -726,6 +841,7 @@ namespace TVRename
                    </div>
                    <div><p class=""lead"">{ep.HiddenOverview()}</p></div>
                    <div>
+                    {CreateButton(EditTVEpisodeURL(ep), "<i class=\"far fa-edit\"></i>", "Edit")}
                     {searchButton}
                     {viewButton}
                     {explorerButton}
