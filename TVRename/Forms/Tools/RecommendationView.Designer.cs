@@ -154,6 +154,7 @@ namespace TVRename.Forms
             this.lvRecommendations.UseFilterIndicator = true;
             this.lvRecommendations.UseFiltering = true;
             this.lvRecommendations.View = System.Windows.Forms.View.Details;
+            this.lvRecommendations.CellRightClick += new System.EventHandler<BrightIdeasSoftware.CellRightClickEventArgs>(this.lvRecommendations_CellRightClick);
             // 
             // olvId
             // 

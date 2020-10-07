@@ -438,7 +438,7 @@ namespace TVRename
         }
         private void ScanAndAction(TVSettings.ScanType type)
         {
-            UiScan(null,true,type);
+            UiScan(null,null,true,type,MediaConfiguration.MediaType.both);
             ActionAction(true,true);
         }
 
@@ -506,17 +506,17 @@ namespace TVRename
 
             if (a.Scan)
             {
-                UiScan(null, UNATTENDED, TVSettings.ScanType.Full);
+                UiScan(null,null, UNATTENDED, TVSettings.ScanType.Full,MediaConfiguration.MediaType.both);
             }
 
             if (a.QuickScan)
             {
-                UiScan(null, UNATTENDED, TVSettings.ScanType.Quick);
+                UiScan(null, null, UNATTENDED, TVSettings.ScanType.Quick, MediaConfiguration.MediaType.both);
             }
 
             if (a.RecentScan)
             {
-                UiScan(null, UNATTENDED, TVSettings.ScanType.Recent);
+                UiScan(null, null, UNATTENDED, TVSettings.ScanType.Recent, MediaConfiguration.MediaType.both);
             }
 
             if (a.DoAll)
@@ -1094,7 +1094,7 @@ namespace TVRename
 
             movieTree.Nodes.Clear();
             List<MovieConfiguration> sil = mDoc.FilmLibrary.Values.ToList();
-            sil.Sort((a, b) => string.Compare(GenerateShowUIName(a), GenerateShowUIName(b), StringComparison.OrdinalIgnoreCase));
+            sil.Sort((a, b) => string.Compare(GenerateShowUiName(a), GenerateShowUiName(b), StringComparison.OrdinalIgnoreCase));
 
             MovieFilter filter = TVSettings.Instance.MovieFilter;
             foreach (MovieConfiguration si in sil)
@@ -1113,7 +1113,7 @@ namespace TVRename
             movieTree.EndUpdate();
         }
 
-        private string GenerateShowUIName(MovieConfiguration show)
+        public static string GenerateShowUiName(MovieConfiguration show)
         {
             return PostpendTheIfNeeded(show.ShowName);
         }
@@ -1575,7 +1575,7 @@ namespace TVRename
                     bnWTWBTSearch_Click(null, null);
                     break;
                 case TVSettings.WTWDoubleClickAction.Scan:
-                    UiScan(new List<ShowConfiguration> {ei.Show}, false, TVSettings.ScanType.SingleShow);
+                    UiScan(new List<ShowConfiguration> {ei.Show},null, false, TVSettings.ScanType.SingleShow,MediaConfiguration.MediaType.tv);
                     tabControl1.SelectTab(tbAllInOne);
                     break;
                 default:
@@ -1871,7 +1871,7 @@ namespace TVRename
 
                 AddRcMenuItem(scanText, (sender, args) => 
                     {
-                        UiScan(sil, false, TVSettings.ScanType.SingleShow);
+                        UiScan(sil,null, false, TVSettings.ScanType.SingleShow,MediaConfiguration.MediaType.tv);
                         tabControl1.SelectTab(tbAllInOne);
                     }
                 );
@@ -2042,7 +2042,18 @@ namespace TVRename
 
             List<string> added = new List<string>();
 
+
             //todo - Add more Right click options
+
+            string scanText = "Scan \"" + si.ShowName + "\"";
+
+            AddRcMenuItem(scanText, (sender, args) =>
+            {
+                UiScan(null, new List<MovieConfiguration> {si}, false, TVSettings.ScanType.SingleShow,
+                    MediaConfiguration.MediaType.movie);
+
+                tabControl1.SelectTab(tbAllInOne);
+            });
 
             if (si.Locations.Any())
             {
@@ -2511,7 +2522,7 @@ namespace TVRename
         {
             CachedMovieInfo? ser = si.CachedMovie;
 
-            TreeNode n = new TreeNode(GenerateShowUIName(si)) { Tag = si };
+            TreeNode n = new TreeNode(GenerateShowUiName(si)) { Tag = si };
 
             if (ser != null)
             {
@@ -3322,25 +3333,37 @@ namespace TVRename
             };
         }
 
-        private void UiScan(List<ShowConfiguration>? shows, bool unattended, TVSettings.ScanType st)
+        private void UiScan(List<ShowConfiguration>? shows, List<MovieConfiguration>? movies, bool unattended, TVSettings.ScanType st, MediaConfiguration.MediaType media)
         {
             Logger.Info("*******************************");
             string desc = unattended ? "unattended " : "";
             string showsdesc = shows?.Count > 0 ? shows.Count.ToString() : "all";
+            string moviesdesc = movies?.Count > 0 ? movies.Count.ToString() : "all";
             string scantype = st.PrettyPrint();
-            Logger.Info($"Starting {desc}{scantype} Scan for {showsdesc} shows...");
+            string mediatype = media.PrettyPrint();
+            Logger.Info($"Starting {desc}{scantype} {mediatype} Scan for {showsdesc} shows and {moviesdesc} movies...");
 
             MoreBusy();
-            mDoc.Scan(shows, unattended, st,WindowState==FormWindowState.Minimized,this);
+            mDoc.Scan(shows,movies, unattended, st,media, WindowState==FormWindowState.Minimized,this);
             LessBusy();
 
+            AskUserAboutShowProblems(unattended);
+
+            FillMyShows(); // scanning can download more info to be displayed in my shows
+            FillMyMovies();
+            FillActionList(false);
+        }
+
+        private void AskUserAboutShowProblems(bool unattended)
+        {
             if (mDoc.ShowProblems.Any() && !unattended)
             {
-                string message = mDoc.ShowProblems.Count>1
-                    ? $"Shows with Id { string.Join(",",mDoc.ShowProblems.Select(exception => exception.ShowId))} are not found on TVDB and TVMaze. Please update them"
+                string message = mDoc.ShowProblems.Count > 1
+                    ? $"Shows with Id {string.Join(",", mDoc.ShowProblems.Select(exception => exception.ShowId))} are not found on TVDB and TVMaze. Please update them"
                     : $"Show with {StringFor(mDoc.ShowProblems.First().ShowIdProvider)} Id {mDoc.ShowProblems.First().ShowId} is not found on {StringFor(mDoc.ShowProblems.First().ErrorProvider)}. Please Update";
 
-                DialogResult result = MessageBox.Show(message,"Series No Longer Found", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+                DialogResult result = MessageBox.Show(message, "Series No Longer Found", MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Error);
 
                 if (result != DialogResult.Cancel)
                 {
@@ -3348,7 +3371,8 @@ namespace TVRename
                     {
                         if (mDoc.ShowProblems.Count > 1)
                         {
-                            MessageBox.Show(problem.Message,"Issue With Series Setup",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                            MessageBox.Show(problem.Message, "Issue With Series Setup", MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
                         }
 
                         ShowConfiguration problemShow = mDoc.TvLibrary.GetShowItem(problem.ShowId);
@@ -3361,10 +3385,6 @@ namespace TVRename
 
                 mDoc.ClearShowProblems();
             }
-
-            FillMyShows(); // scanning can download more info to be displayed in my shows
-            FillMyMovies();
-            FillActionList(false);
         }
 
         [NotNull]
@@ -4039,7 +4059,7 @@ namespace TVRename
 
         private void BtnSearch_ButtonClick(object? sender, EventArgs? e)
         {
-            UiScan(null, false, TVSettings.Instance.UIScanType);
+            UiScan(null, null,false, TVSettings.Instance.UIScanType, MediaConfiguration.MediaType.both);
         }
 
         private void UpdateCheckboxGroup([NotNull] ToolStripMenuItem menuItem, [NotNull] Func<Item, bool> isValid)
@@ -4298,17 +4318,17 @@ namespace TVRename
 
         private void TbFullScan_Click(object sender, EventArgs e)
         {
-            UiScan(null, false, TVSettings.ScanType.Full);
+            UiScan(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.both);
         }
 
         private void TpRecentScan_Click(object sender, EventArgs e)
         {
-            UiScan(null, false, TVSettings.ScanType.Recent);
+            UiScan(null, null, false, TVSettings.ScanType.Recent, MediaConfiguration.MediaType.both);
         }
 
         private void TbQuickScan_Click(object sender, EventArgs e)
         {
-            UiScan(null, false, TVSettings.ScanType.Quick);
+            UiScan(null, null, false, TVSettings.ScanType.Quick, MediaConfiguration.MediaType.both);
         }
 
         private void UI_Resize(object sender, EventArgs e)
@@ -4682,6 +4702,13 @@ namespace TVRename
         internal void ForceRefresh(bool unattended)
         {
             ForceRefresh((List<ShowConfiguration>) null, unattended);
+        }
+
+        private void settingsCheckToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SettingsReview form = new SettingsReview(mDoc, this);
+            form.ShowDialog(this);
+
         }
     }
 }

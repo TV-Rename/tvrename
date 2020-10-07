@@ -457,6 +457,54 @@ namespace TVRename
 
         [NotNull]
         public static FileInfo FileInFolder([NotNull] string dir, string fn) => new FileInfo(dir.EnsureEndsWithSeparator()+ fn);
+    public static void RemoveDirectory([NotNull] string folderName)
+        {
+            try
+            {
+                Logger.Info($"Removing {folderName} as part of the library clean up");
+                foreach (string file in Directory.GetFiles(folderName))
+                {
+                    Logger.Info($"    Folder contains {file}");
+                }
+
+                Logger.Info($"Recycling {folderName}");
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName,
+                    Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                    Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+            }
+            catch (FileReadOnlyException)
+            {
+                Logger.Warn($"Could not recycle {folderName} as we got a FileReadOnlyException");
+            }
+            catch (DirectoryReadOnlyException)
+            {
+                Logger.Warn($"Could not recycle {folderName} as we got a DirectoryReadOnlyException");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Logger.Warn($"Could not recycle {folderName} as we got a UnauthorizedAccessException");
+            }
+            catch (System.IO.PathTooLongException)
+            {
+                Logger.Warn($"Could not recycle {folderName} as we got a PathTooLongException");
+            }
+            catch (System.IO.DirectoryNotFoundException)
+            {
+                Logger.Info($"Could not recycle {folderName} as we got a DirectoryNotFoundException");
+            }
+            catch (DirectoryNotEmptyException)
+            {
+                Logger.Warn($"Could not recycle {folderName} as we got a DirectoryNotEmptyException");
+            }
+            catch (OperationCanceledException)
+            {
+                Logger.Info($"Could not recycle {folderName} as we got a OperationCanceledException");
+            }
+            catch (System.IO.IOException i)
+            {
+                Logger.Warn($"Could not find {folderName} as we got a OperationCanceledException: {i.Message}");
+            }
+        }
 
         [NotNull]
         public static FileInfo FileInFolder([NotNull] DirectoryInfo di, string fn) => FileInFolder(di.FullName, fn);

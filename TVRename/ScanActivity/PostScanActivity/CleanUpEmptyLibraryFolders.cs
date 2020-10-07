@@ -38,10 +38,9 @@ namespace TVRename
         {
             if (CanRemove(folderName))
             {
-                RemoveDirectory(folderName);
+                FileHelper.RemoveDirectory(folderName);
             }
         }
-
         private static void RemoveDirectory([NotNull] string folderName)
         {
             try
@@ -53,9 +52,9 @@ namespace TVRename
                 }
 
                 LOGGER.Info($"Recycling {folderName}");
-                FileSystem.DeleteDirectory(folderName,
-                    UIOption.OnlyErrorDialogs,
-                    RecycleOption.SendToRecycleBin);
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName,
+                    Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                    Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
             }
             catch (FileReadOnlyException)
             {
@@ -69,11 +68,11 @@ namespace TVRename
             {
                 LOGGER.Warn($"Could not recycle {folderName} as we got a UnauthorizedAccessException");
             }
-            catch (PathTooLongException)
+            catch (System.IO.PathTooLongException)
             {
                 LOGGER.Warn($"Could not recycle {folderName} as we got a PathTooLongException");
             }
-            catch (DirectoryNotFoundException)
+            catch (System.IO.DirectoryNotFoundException)
             {
                 LOGGER.Info($"Could not recycle {folderName} as we got a DirectoryNotFoundException");
             }
@@ -85,11 +84,13 @@ namespace TVRename
             {
                 LOGGER.Info($"Could not recycle {folderName} as we got a OperationCanceledException");
             }
-            catch (IOException i)
+            catch (System.IO.IOException i)
             {
                 LOGGER.Warn($"Could not find {folderName} as we got a OperationCanceledException: {i.Message}");
             }
         }
+
+
 
         private static bool CanRemove(string folderName)
         {

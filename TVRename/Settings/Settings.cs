@@ -277,6 +277,7 @@ namespace TVRename
         public int SampleFileMaxSizeMB=50; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
         public bool IgnorePreviouslySeen = false;
+        public bool IgnorePreviouslySeenMovies = false; //todo - chekc this is settible and persists to the XMKL file
         public bool SearchRSS = false;
         public bool SearchRSSManualScanOnly = true;
         public bool SearchJSON = false;
@@ -361,6 +362,7 @@ namespace TVRename
         public bool runStartupCheck = false;
         public bool DoBulkAddInScan = false;
         public PreviouslySeenEpisodes PreviouslySeenEpisodes;
+        public PreviouslySeenMovies PreviouslySeenMovies;
         public bool IgnoreAllSpecials = false;
 
         public bool DefShowIncludeNoAirdate = false;
@@ -393,6 +395,7 @@ namespace TVRename
             // defaults that aren't handled with default initialisers
             Ignore = new List<IgnoreItem>();
             PreviouslySeenEpisodes = new PreviouslySeenEpisodes();
+            PreviouslySeenMovies = new PreviouslySeenMovies();
             DownloadFolders = new List<string>();
             MovieLibraryFolders = new List<string>();
             IgnoreFolders = new List<string>();

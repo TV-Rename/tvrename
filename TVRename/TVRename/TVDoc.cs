@@ -318,6 +318,7 @@ namespace TVRename
                 XmlHelper.WriteStringsToXml(TVSettings.Instance.IgnoredAutoAddHints, writer, "IgnoredAutoAddHints","Hint");
                 writer.WriteStringsToXml(TVSettings.Instance.Ignore, "IgnoreItems","Ignore");
                 writer.WriteStringsToXml(TVSettings.Instance.PreviouslySeenEpisodes, "PreviouslySeenEpisodes", "Episode");
+                writer.WriteStringsToXml(TVSettings.Instance.PreviouslySeenMovies, "PreviouslySeenMovies", "Movie");
 
                 writer.WriteEndElement(); // tvrename
                 writer.WriteEndDocument();
@@ -370,6 +371,7 @@ namespace TVRename
                 TVSettings.Instance.Ignore =
                     x.Descendants("IgnoreItems").FirstOrDefault()?.ReadIiFromXml("Ignore") ??new List<IgnoreItem>();
                 TVSettings.Instance.PreviouslySeenEpisodes = new PreviouslySeenEpisodes(x.Descendants("PreviouslySeenEpisodes").FirstOrDefault());
+                TVSettings.Instance.PreviouslySeenMovies = new PreviouslySeenMovies(x.Descendants("PreviouslySeenMovies").FirstOrDefault());
 
                 //MonitorFolders are a little more complex as there is a parameter named the same which we need to ignore
                 IEnumerable<XElement> mfs = x.Descendants("MonitorFolders");
@@ -404,7 +406,7 @@ namespace TVRename
             {
                 new MissingXML(TheActionList),
                 new MissingCSV(TheActionList),
-                new MissingMovieXML(TheActionList),
+                new MissingMovieXml(TheActionList),
                 new MissingMovieCsv(TheActionList),
                 new CopyMoveXml(TheActionList),
                 new RenamingXml(TheActionList)
@@ -518,19 +520,22 @@ namespace TVRename
 
         public ConcurrentBag<ShowNotFoundException> ShowProblems => cacheManager.Problems;
 
-        public void Scan(IEnumerable<ShowConfiguration>? passedShows, bool unattended, TVSettings.ScanType st, bool hidden, UI owner)
+        public void Scan(IEnumerable<ShowConfiguration>? passedShows, List<MovieConfiguration>? passedMovies, bool unattended, TVSettings.ScanType st, MediaConfiguration.MediaType media, bool hidden, UI owner
+        )
         {
             try
             {
                 PreventAutoScan("Scan "+st.PrettyPrint());
 
                 //Get the default set of shows defined by the specified type
-                IEnumerable<ShowConfiguration> shows = GetShowList(st, passedShows);
+                IEnumerable<ShowConfiguration> shows = GetShowList(st, media, passedShows);
+                //Get the default set of shows defined by the specified type
+                IEnumerable<MovieConfiguration> movies = GetMovieList(st,media, passedMovies);
 
                 //If still null then return
-                if (shows is null)
+                if (shows is null && movies is null) 
                 {
-                    Logger.Warn("No Shows Provided to Scan");
+                    Logger.Warn("No Shows/Movies Provided to Scan");
                     return;
                 }
 
@@ -545,7 +550,7 @@ namespace TVRename
 
                 SetupScanUi(hidden);
 
-                actionWork.Start(new ScanSettings(shows.ToList(),unattended,hidden,st,cts.Token,owner));
+                actionWork.Start(new ScanSettings(shows?.ToList()??new List<ShowConfiguration>(),movies?.ToList() ??new List<MovieConfiguration>(),unattended,hidden,st,cts.Token,owner));
 
                 if (scanProgDlg != null)
                 {
@@ -587,12 +592,14 @@ namespace TVRename
             public readonly bool Hidden;
             public readonly TVSettings.ScanType Type;
             public readonly List<ShowConfiguration> Shows;
+            public readonly List<MovieConfiguration> Movies;
             public readonly CancellationToken Token;
             public readonly UI Owner;
 
-            public ScanSettings(List<ShowConfiguration> list, bool unattended, bool hidden, TVSettings.ScanType st,CancellationToken tok, UI owner)
+            public ScanSettings(List<ShowConfiguration> list, List<MovieConfiguration> movies, bool unattended, bool hidden, TVSettings.ScanType st,CancellationToken tok, UI owner)
             {
                 Shows = list;
+                Movies = movies;
                 Unattended = unattended;
                 Hidden = hidden;
                 Type = st;
@@ -627,8 +634,12 @@ namespace TVRename
             }
         }
 
-        private IEnumerable<ShowConfiguration>? GetShowList(TVSettings.ScanType st, IEnumerable<ShowConfiguration>? passedShows)
+        private IEnumerable<ShowConfiguration>? GetShowList(TVSettings.ScanType st,MediaConfiguration.MediaType mt, IEnumerable<ShowConfiguration>? passedShows)
         {
+            if (mt == MediaConfiguration.MediaType.movie)
+            {
+                return null;
+            }
             return st switch
             {
                 TVSettings.ScanType.Full => TvLibrary.GetSortedShowItems(),
@@ -638,6 +649,23 @@ namespace TVRename
                 _ => null
             };
         }
+
+        private IEnumerable<MovieConfiguration>? GetMovieList(TVSettings.ScanType st, MediaConfiguration.MediaType mt, IEnumerable<MovieConfiguration>? passedShows)
+        {
+            if (mt == MediaConfiguration.MediaType.tv)
+            {
+                return null;
+            }
+            return st switch
+            {
+                TVSettings.ScanType.Full => FilmLibrary.GetSortedMovies(),
+                TVSettings.ScanType.Quick => TVSettings.Instance.IncludeMoviesQuickRecent ? FilmLibrary.GetSortedMovies() : passedShows,
+                TVSettings.ScanType.Recent => TVSettings.Instance.IncludeMoviesQuickRecent ? FilmLibrary.GetSortedMovies() : passedShows,
+                TVSettings.ScanType.SingleShow => passedShows,
+                _ => null
+            };
+        }
+
 
         public void DoAllActions(IDialogParent owner)
         {
@@ -675,6 +703,7 @@ namespace TVRename
             ItemList toRemove = new ItemList();
             int numberIgnored=0;
             int numberPreviouslySeen = 0;
+            int numberPreviouslySeenMovies = 0;
             foreach (Item item in TheActionList)
             {
                 if (TVSettings.Instance.Ignore.Any(ii => ii.SameFileAs(item.Ignore)))
@@ -691,9 +720,19 @@ namespace TVRename
                         numberPreviouslySeen++;
                     }
                 }
+
+                // TODO Ensure Ingore PreviouslySeen Movies works
+                // if (TVSettings.Instance.IgnorePreviouslySeenMovies)
+                // {
+                //     if (TVSettings.Instance.PreviouslySeenMovies.Includes(item.co) && item is ItemMissing)
+                //     {
+                //         toRemove.Add(item);
+                //         numberPreviouslySeenMovies++;
+                //     }
+                // }
             }
 
-            Logger.Info($"Removing {toRemove.Count} items from the missing items because they are either in the ignore list ({numberIgnored}) or you have ignore previously seen episodes enables ({numberPreviouslySeen})");
+            Logger.Info($"Removing {toRemove.Count} items from the missing items because they are either in the ignore list ({numberIgnored}) or you have ignore previously seen episodes enables ({numberPreviouslySeen}) or you have ignore previously seen movies enables ({numberPreviouslySeenMovies})");
 
             foreach (Item action in toRemove)
             {
@@ -758,9 +797,6 @@ namespace TVRename
             {
                 ScanSettings settings = (ScanSettings) o;
 
-                //When doing a full scan the show list is null indicating that all shows should be checked
-                List<ShowConfiguration> specific = settings.Shows ?? TvLibrary.Values.ToList();
-
                 while (!Args.Hide && Environment.UserInteractive && (scanProgDlg is null || !scanProgDlg.Ready))
                 {
                     Thread.Sleep(10); // wait for thread to create the dialog
@@ -768,19 +804,21 @@ namespace TVRename
 
                 TheActionList.Clear();
                 SetProgressDelegate noProgress = NoProgress;
+                TheActionList.Clear();
+
 
                 if (!settings.Unattended && settings.Type != TVSettings.ScanType.SingleShow)
                 {
-                    new FindNewShowsInDownloadFolders(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 0, 50, specific, settings);
-                    new FindNewShowsInLibrary(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 50, 100, specific, settings);
+                    new FindNewShowsInDownloadFolders(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 0, 50,  settings);
+                    new FindNewShowsInLibrary(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 50, 100, settings);
                 }
                 
-                new CheckShows(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.MediaLibProg, specific, settings);
-                new CleanDownloadDirectory(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadFolderProg, specific, settings);
-                localFinders.Check(scanProgDlg is null ? noProgress : scanProgDlg.LocalSearchProg, specific, settings);
-                downloadFinders.Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadingProg, specific, settings);
-                searchFinders.Check(scanProgDlg is null? noProgress : scanProgDlg.ToBeDownloadedProg, specific, settings);
-                new CleanUpTorrents(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.ToBeDownloadedProg, specific, settings);
+                new CheckShows(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.MediaLibProg, settings);
+                new CleanDownloadDirectory(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadFolderProg,  settings);
+                localFinders.Check(scanProgDlg is null ? noProgress : scanProgDlg.LocalSearchProg,  settings);
+                downloadFinders.Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadingProg,  settings);
+                searchFinders.Check(scanProgDlg is null? noProgress : scanProgDlg.ToBeDownloadedProg,  settings);
+                new CleanUpTorrents(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.ToBeDownloadedProg, settings);
 
                 if (settings.Token.IsCancellationRequested)
                 {
@@ -1180,13 +1218,16 @@ namespace TVRename
         {
             // make new Item for copying/moving to specified location
             FileInfo from = new FileInfo(fileName);
-            FileInfo to = FinderHelper.GenerateTargetName(mi, from); 
+            FileInfo to = FinderHelper.GenerateTargetName(mi, from);
+
+            ProcessedEpisode ep = mi is ShowItemMissing ? ((ShowItemMissing) mi).MissingEpisode : null;
+
             TheActionList.Add(
                 new ActionCopyMoveRename(
                     TVSettings.Instance.LeaveOriginals
                         ? ActionCopyMoveRename.Op.copy
                         : ActionCopyMoveRename.Op.move, from, to
-                    , mi.MissingEpisode, true, mi, this));
+                    , ep, true, mi, this));
 
             // and remove old Missing item
             TheActionList.Remove(mi);

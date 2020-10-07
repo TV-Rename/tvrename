@@ -651,13 +651,14 @@ namespace TVRename
 
         public static FileInfo GenerateTargetName(ItemMissing mi, FileInfo from)
         {
-            if (mi.MissingEpisode.Show.DoRename && TVSettings.Instance.RenameCheck)
+            if (mi.DoRename && TVSettings.Instance.RenameCheck)
             {
                 return new FileInfo(mi.TheFileNoExt + from.Extension);
             }
 
             return new FileInfo(mi.DestinationFolder.EnsureEndsWithSeparator() + from.Name);
         }
+
         public static FileInfo GenerateTargetName(string folder,ProcessedEpisode pep, FileInfo fi)
         {
             string filename = fi.Name;

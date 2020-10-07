@@ -24,9 +24,9 @@ namespace TVRename
 
         public virtual ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file, bool forceRefresh) => null;
 
-        public ItemList? ProcessMovie(MovieConfiguration movie) => ProcessMovie(movie, false);
+        public ItemList? ProcessMovie(MovieConfiguration movie, FileInfo file) => ProcessMovie(movie,file, false);
 
-        public virtual ItemList? ProcessMovie(MovieConfiguration movie, bool forceRefresh) => null;
+        public virtual ItemList? ProcessMovie(MovieConfiguration movie, FileInfo file, bool forceRefresh) => null;
 
         public virtual void NotifyComplete(FileInfo file)
         {

@@ -34,6 +34,7 @@ namespace TVRename
 
         [NotNull]
         public List<ItemMissing> Missing => this.OfType<ItemMissing>().ToList();
+        public List<ShowItemMissing> MissingEpisodes => this.OfType<ShowItemMissing>().ToList();
         public List<MovieItemMissing> MissingMovies => this.OfType<MovieItemMissing>().ToList();
 
         [NotNull]

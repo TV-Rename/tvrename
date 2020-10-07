@@ -12,7 +12,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.SearchLocally;
         protected override string CheckName() => "Looked in the search folders for the missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList,
+        protected override void DoCheck(SetProgressDelegate prog,
             TVDoc.ScanSettings settings)
         {
             ItemList newList = new ItemList();
@@ -35,7 +35,7 @@ namespace TVRename
             int totalN = ActionList.Missing.Count + 1;
             UpdateStatus(currentItem, totalN, "Starting searching through files");
 
-            foreach (ItemMissing me in ActionList.Missing.ToList())
+            foreach (var me in ActionList.MissingEpisodes.ToList())
             {
                 if (settings.Token.IsCancellationRequested)
                 {
@@ -64,7 +64,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private List<FileInfo> FindMatchedFiles(TVDoc.ScanSettings settings, [NotNull] DirCache dirCache, ItemMissing me, ItemList thisRound)
+        private List<FileInfo> FindMatchedFiles(TVDoc.ScanSettings settings, [NotNull] DirCache dirCache, ShowItemMissing me, ItemList thisRound)
         {
             List<FileInfo> matchedFiles = new List<FileInfo>();
 

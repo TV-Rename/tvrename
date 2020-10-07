@@ -74,9 +74,9 @@ namespace TVRename
             cbDoMissingCheck.Checked = si.DoMissingCheck;
 
             SetProvider(si);
-            chkManualFolders.Checked = selectedShow.UseManualLocations ;
+            chkManualFolders.Checked = selectedShow.UseManualLocations;
             chkAutoFolders.Checked = selectedShow.UseAutomaticFolders;
-            cbDirectory.SelectedText = selectedShow.AutomaticFolderRoot;
+            PopulateRootDirectories(selectedShow.AutomaticFolderRoot);
             txtFolderNameFormat.Text = selectedShow.CustomFolderNameFormat;
             txtCustomMovieFileNamingFormat.Text = selectedShow.CustomNamingFormat;
             cbUseCustomNamingFormat.Checked = selectedShow.UseCustomNamingFormat;
@@ -90,7 +90,7 @@ namespace TVRename
 
             PopulateAliasses();
 
-            PopulateRootDirectories();
+            
             SetTagListText();
             EnableDisableCustomNaming();
             UpdateIgnore();
@@ -124,7 +124,7 @@ namespace TVRename
             txtTagList2.Text = tl.ToString();
         }
 
-        private void PopulateRootDirectories()
+        private void PopulateRootDirectories(string chosenValue)
         {
             cbDirectory.SuspendLayout();
             cbDirectory.Items.Clear();
@@ -135,6 +135,7 @@ namespace TVRename
 
             cbDirectory.SelectedIndex = 0;
             cbDirectory.ResumeLayout();
+            cbDirectory.Text = chosenValue.EnsureEndsWithSeparator();
         }
 
         private void PopulateAliasses()
@@ -323,7 +324,7 @@ namespace TVRename
 
             selectedShow.UseManualLocations = chkManualFolders.Checked;
             selectedShow.UseAutomaticFolders = chkAutoFolders.Checked;
-            selectedShow.AutomaticFolderRoot = cbDirectory.SelectedText;
+            selectedShow.AutomaticFolderRoot = cbDirectory.Text;
             selectedShow.UseCustomFolderNameFormat = rdoFolderCustom.Checked;
             selectedShow.CustomFolderNameFormat = txtFolderNameFormat.Text;
             selectedShow.CustomNamingFormat = txtCustomMovieFileNamingFormat.Text;
@@ -335,7 +336,7 @@ namespace TVRename
             List<string> folders = new List<string>();
             foreach (ListViewItem item in lvManualFolders.Items.OfType<ListViewItem>())
             {
-                folders.Add(item.Name);
+                folders.Add(item.Text);
             }
             return folders.Distinct();
         }
@@ -457,7 +458,7 @@ namespace TVRename
 
             if (string.IsNullOrWhiteSpace(folderBrowser.SelectedPath) && !string.IsNullOrWhiteSpace(cbDirectory.SelectedText))
             {
-                folderBrowser.SelectedPath = cbDirectory.SelectedText;
+                folderBrowser.SelectedPath = cbDirectory.Text;
             }
 
             if (folderBrowser.ShowDialog(this) == DialogResult.OK)

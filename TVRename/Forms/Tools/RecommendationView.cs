@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using JetBrains.Annotations;
@@ -16,13 +15,15 @@ namespace TVRename.Forms
         private readonly UI mainUi;
         private MediaConfiguration.MediaType media;
         private IEnumerable<ShowConfiguration> tvShows;
-        private IEnumerable<MovieConfiguration> movies
-            ;
+        private IEnumerable<MovieConfiguration> movies;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         private RecommendationView([NotNull] TVDoc doc, UI main)
         {
             InitializeComponent();
             recs = new Recomendations();
+            tvShows = new List<ShowConfiguration>();
+            movies = new List<MovieConfiguration>();
             mDoc = doc;
             mainUi = main;
         }
@@ -34,9 +35,11 @@ namespace TVRename.Forms
             {
                 case MediaConfiguration.MediaType.tv:
                     tvShows = doc.TvLibrary.Shows;
+                    movies = new List<MovieConfiguration>();
                     break;
                 case MediaConfiguration.MediaType.movie:
                     movies = doc.FilmLibrary.Movies;
+                    tvShows = new List<ShowConfiguration>();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
@@ -47,6 +50,7 @@ namespace TVRename.Forms
         public RecommendationView([NotNull] TVDoc doc, UI main, IEnumerable<MovieConfiguration> m) : this(doc, main)
         {
             media = MediaConfiguration.MediaType.movie;
+            tvShows = new List<ShowConfiguration>();
             movies = m;
 
             Scan();
@@ -56,11 +60,9 @@ namespace TVRename.Forms
         {
             media = MediaConfiguration.MediaType.tv;
             tvShows = s;
-
+            movies = new List<MovieConfiguration>();
             Scan();
         }
-
-
 
         // ReSharper disable once InconsistentNaming
         private void UpdateUI()
@@ -87,48 +89,13 @@ namespace TVRename.Forms
             UpdateUI();
         }
 
-
-        private void lvDuplicates_MouseClick(object sender, [NotNull] MouseEventArgs e)
-        {
-            if (e.Button != MouseButtons.Right)
-            {
-                return;
-            }
-
-            if (lvRecommendations.SelectedItems.Count == 0)
-            {
-                return;
-            }
-
-            KeyValuePair<int, RecommendationResult> mlastSelected = (KeyValuePair<int,RecommendationResult>) lvRecommendations.SelectedItems[0].Tag;
-            //ShowConfiguration? si = mlastSelected?.ShowConfiguration;
-
-            //if (si == null)
-            //{
-                //return;
-            //}
-
-            Point pt = lvRecommendations.PointToScreen(new Point(e.X, e.Y));
-
-            possibleMergedEpisodeRightClickMenu.Items.Clear();
-
-            AddRcMenuItem("Add to Library", (o, args) => AddToLibrary(mlastSelected.Key,mDoc));
-            //AddRcMenuItem("Episode Guide", (o, args) => GotoEpGuide(si,mlastSelected));
-            //AddRcMenuItem("Force Refresh", (o, args) => mainUi.ForceRefresh(new List<ShowConfiguration> {si}, false));
-            //AddRcMenuItem("Edit Show", (o, args) => mainUi.EditShow(si));
-
-            //AddRcMenuItem("Edit " + ProcessedSeason.UIFullSeasonWord(mlastSelected.SeasonNumber),(o, args) => mainUi.EditSeason(si, mlastSelected.SeasonNumber));
-
-            possibleMergedEpisodeRightClickMenu.Show(pt);
-        }
-
         private void AddToLibrary(int mlastSelectedKey, TVDoc tvDoc)
         {
             switch (media)
             {
                 case MediaConfiguration.MediaType.tv:
-                    var newShow = new ShowConfiguration(mlastSelectedKey, TVDoc.ProviderType.TMDB);
-                    tvDoc.Add(newShow);
+                    var show = new ShowConfiguration(mlastSelectedKey, TVDoc.ProviderType.TMDB);
+                    tvDoc.Add(show);
                     break;
                 case MediaConfiguration.MediaType.movie:
                     var newMovie = new MovieConfiguration(mlastSelectedKey,TVDoc.ProviderType.TMDB);
@@ -204,6 +171,22 @@ namespace TVRename.Forms
             lblStatus.Visible = true;
             bwScan.RunWorkerAsync();
         }
+
+        private void lvRecommendations_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
+        {
+            if (e.Model is null)
+            {
+                return;
+            }
+
+            RecommendationRow mlastSelected = (RecommendationRow)e.Model;
+
+            possibleMergedEpisodeRightClickMenu.Items.Clear();
+
+            AddRcMenuItem("Add to Library", (o, args) => AddToLibrary(mlastSelected.Key, mDoc));
+            //AddRcMenuItem("Force Refresh", (o, args) => mainUi.ForceRefresh(new List<ShowConfiguration> {si}, false));
+            //AddRcMenuItem("Edit Show", (o, args) => mainUi.EditShow(si));
+        }
     }
 
     public class RecommendationRow
@@ -221,11 +204,11 @@ namespace TVRename.Forms
             switch (t)
             {
                 case MediaConfiguration.MediaType.tv:
-                    cachedSeriesInfo = TMDB.LocalCache.Instance.GetSeries(x.key);
+                    cachedSeriesInfo = TMDB.LocalCache.Instance.GetSeries(x.Key);
                     cachedMediaInfo = cachedSeriesInfo;
                     break;
                 case MediaConfiguration.MediaType.movie:
-                    cachedMovieInfo = TMDB.LocalCache.Instance.GetMovie(x.key);
+                    cachedMovieInfo = TMDB.LocalCache.Instance.GetMovie(x.Key);
                     cachedMediaInfo = cachedMovieInfo;
                     break;
                 default:
@@ -233,7 +216,7 @@ namespace TVRename.Forms
             }
         }
 
-        public int Key => result.key;
+        public int Key => result.Key;
         public string? Name => cachedMediaInfo?.Name;
         public string? Year => type == MediaConfiguration.MediaType.movie
             ? cachedMovieInfo?.Year.ToString()
@@ -259,7 +242,7 @@ namespace TVRename.Forms
 
     public class Recomendations : ConcurrentDictionary<int,RecommendationResult>
     {
-       private RecommendationResult enrich(int key)
+       private RecommendationResult Enrich(int key)
         {
             if (TryGetValue(key, out RecommendationResult movieRec))
             {
@@ -267,35 +250,35 @@ namespace TVRename.Forms
             }
 
             RecommendationResult x = new RecommendationResult();
-            x.key = key;
+            x.Key = key;
             TryAdd(key, x);
             return x;
         }
 
        public void AddTopRated(int key)
        {
-           enrich(key).TopRated = true;
+            Enrich(key).TopRated = true;
        }
 
        public void AddTrending(int key)
        {
-           enrich(key).Trending = true;
+            Enrich(key).Trending = true;
         }
 
        public void AddRelated(int key, MediaConfiguration sourceId)
        {
-           enrich(key).Related.Add(sourceId);
+            Enrich(key).Related.Add(sourceId);
        }
 
        public void AddSimilar(int key, MediaConfiguration sourceId)
        {
-           enrich(key).Similar.Add(sourceId);
+            Enrich(key).Similar.Add(sourceId);
         }
     }
 
     public class RecommendationResult
     {
-        internal int key;
+        internal int Key;
         internal bool Trending;
         internal bool TopRated;
         internal List<MediaConfiguration> Related = new List<MediaConfiguration>();

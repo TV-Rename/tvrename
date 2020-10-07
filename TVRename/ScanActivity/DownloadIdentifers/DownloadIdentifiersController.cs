@@ -42,6 +42,22 @@ namespace TVRename
         }
 
         [NotNull]
+        public ItemList ProcessMovie(MovieConfiguration? si, FileInfo filo)
+        {
+            ItemList theActionList = new ItemList();
+            if (si is null)
+            {
+                return theActionList;
+            }
+
+            foreach (DownloadIdentifier di in identifiers)
+            {
+                theActionList.Add(di.ProcessMovie(si,filo));
+            }
+            return theActionList;
+        }
+
+        [NotNull]
         public ItemList ProcessShow(ShowConfiguration? si)
         {
             ItemList theActionList = new ItemList();
@@ -96,7 +112,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public ItemList ForceUpdateMovie(DownloadIdentifier.DownloadType dt, MovieConfiguration? si)
+        public ItemList ForceUpdateMovie(DownloadIdentifier.DownloadType dt, MovieConfiguration? si, FileInfo filo)
         {
             ItemList theActionList = new ItemList();
             if (si is null)
@@ -108,7 +124,7 @@ namespace TVRename
             {
                 if (dt == di.GetDownloadType())
                 {
-                    theActionList.Add(di.ProcessMovie(si, true));
+                    theActionList.Add(di.ProcessMovie(si,filo, true));
                 }
             }
             return theActionList;

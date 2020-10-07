@@ -290,6 +290,10 @@
       <DependentUpon>TMDBCodeFinder.cs</DependentUpon>
     </Compile>
     <Compile Include="Exporter\MissingMovieCSV.cs" />
+    <Compile Include="Exporter\MissingMovieXML.cs" />
+    <Compile Include="Exporter\MoviesExporter.cs" />
+    <Compile Include="Exporter\MoviesHtml.cs" />
+    <Compile Include="Exporter\MoviesTxt.cs" />
     <Compile Include="Forms\Supporting\MovieFilters.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -308,12 +312,53 @@
     <Compile Include="Forms\Tools\DuplicateMovieFinder.Designer.cs">
       <DependentUpon>DuplicateMovieFinder.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Tools\SettingsReview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Tools\SettingsReview.Designer.cs">
+      <DependentUpon>SettingsReview.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Tools\RecommendationView.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\Tools\RecommendationView.Designer.cs">
       <DependentUpon>RecommendationView.cs</DependentUpon>
     </Compile>
+    <Compile Include="LibrarySummary\Check\SettingsCheck.cs" />
+    <Compile Include="LibrarySummary\Check\CustomLanguageMovieCheck.cs" />
+    <Compile Include="LibrarySummary\Check\CustomLanguageTvShowCheck.cs" />
+    <Compile Include="LibrarySummary\Check\CustomMovieCheck.cs" />
+    <Compile Include="LibrarySummary\Check\CustomNameMovieCheck.cs" />
+    <Compile Include="LibrarySummary\Check\CustomNameTvShowCheck.cs" />
+    <Compile Include="LibrarySummary\Check\CustomRegionMovieCheck.cs" />
+    <Compile Include="LibrarySummary\Check\CustomRegionTvShowCheck.cs" />
+    <Compile Include="LibrarySummary\Check\CustomSearchTvShowCheck.cs" />
+    <Compile Include="LibrarySummary\Check\CustomTvShowCheck.cs" />
+    <Compile Include="LibrarySummary\Check\DefaultAirDateMatchingTvCheck.cs" />
+    <Compile Include="LibrarySummary\Check\DefaultDoMissingMovieCheck.cs" />
+    <Compile Include="LibrarySummary\Check\DefaultDoMissingTvCheck.cs" />
+    <Compile Include="LibrarySummary\Check\DefaultDoRenameMovieCheck.cs" />
+    <Compile Include="LibrarySummary\Check\DefaultDoRenameTvCheck.cs" />
+    <Compile Include="LibrarySummary\Check\DefaultEpisodeNameMatchingTvCheck.cs" />
+    <Compile Include="LibrarySummary\Check\DefaultFutureEpisodesTvCheck.cs" />
+    <Compile Include="LibrarySummary\Check\DefaultMovieCheck.cs" />
+    <Compile Include="LibrarySummary\Check\DefaultNoAirdateTvCheck.cs" />
+    <Compile Include="LibrarySummary\Check\DefaultSequentialMatchingTvCheck.cs" />
+    <Compile Include="LibrarySummary\Check\DefaultShowAirDateTvCheck.cs" />
+    <Compile Include="LibrarySummary\Check\DefaultSpecialsAsEpisodesTvCheck.cs" />
+    <Compile Include="LibrarySummary\Check\DefaultTvShowCheck.cs" />
+    <Compile Include="LibrarySummary\Check\DefaultUseDvdTvCheck.cs" />
+    <Compile Include="LibrarySummary\Check\FilenameMovieCheck.cs" />
+    <Compile Include="LibrarySummary\Check\FixCheckException.cs" />
+    <Compile Include="LibrarySummary\Check\ManualFoldersMovieCheck.cs" />
+    <Compile Include="LibrarySummary\Check\MovieCheck.cs" />
+    <Compile Include="LibrarySummary\Check\MovieProviderCheck.cs" />
+    <Compile Include="LibrarySummary\Check\SubdirectoryMovieCheck.cs" />
+    <Compile Include="LibrarySummary\Check\TvShowCheck.cs" />
+    <Compile Include="LibrarySummary\Check\TvShowEpisodeNameCheck.cs" />
+    <Compile Include="LibrarySummary\Check\TvShowProviderCheck.cs" />
+    <Compile Include="LibrarySummary\Check\TvShowSeasonFormatCheck.cs" />
+    <Compile Include="LibrarySummary\Check\UseManualFoldersTvShowCheck.cs" />
     <Compile Include="Model\CachedMediaInfo.cs" />
     <Compile Include="ScanActivity\DownloadIdentifers\DownloadWdtvMetaData.cs" />
     <Compile Include="ScanActivity\DownloadIdentifers\IncorrectFileDates.cs" />
@@ -400,8 +445,11 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ScanActivity\ScanShowActivity\CheckAllMovieFoldersExist.cs" />
+    <Compile Include="ScanActivity\ScanShowActivity\RenameAndMissingMovieCheck.cs" />
     <Compile Include="Settings\MovieConfiguration.cs" />
     <Compile Include="Settings\MovieFilter.cs" />
+    <Compile Include="Settings\PreviouslySeenMovies.cs" />
     <Compile Include="Sources\SourceConsistencyException.cs" />
     <Compile Include="Sources\TheTVDB\TvdbAccuracyCheck.cs" />
     <Compile Include="Sources\TMDB\LocalCache.cs" />
@@ -875,6 +923,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Tools\DuplicateMovieFinder.resx">
       <DependentUpon>DuplicateMovieFinder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Tools\SettingsReview.resx">
+      <DependentUpon>SettingsReview.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Tools\RecommendationView.resx">

@@ -141,7 +141,7 @@ namespace TVRename
             sb.AppendLine($@"     <tr class=""table-secondary"">
       <td scope=""row"" colspan=""4"">{seasonOverViewHtml}{episodeText}</td>
       <td class=""text-right"">
-{CreateButton(EditSeasonURL(si,s.SeasonNumber), "<i class=\"far fa-edit\"></i>", "Edit")}
+{CreateButton(EditSeasonUrl(si,s), "<i class=\"far fa-edit\"></i>", "Edit")}
 {explorerButton}
             {tvdbButton}
             {tvMazeButton}</td>
@@ -198,7 +198,7 @@ namespace TVRename
                     <div><p class=""lead"">{ser.Overview}</p></div>
 			        <div><blockquote>{actorLinks}</blockquote></div> 
 		            <div>
-                    {CreateButton(EditTVSeriesURL(si), "<i class=\"far fa-edit\"></i>", "Edit")}
+                    {CreateButton(EditTvSeriesUrl(si), "<i class=\"far fa-edit\"></i>", "Edit")}
                      {explorerButton}
 			         {CreateButton(tvdbLink, "TVDB.com", "View on TVDB")}
 			         {CreateButton(imdbLink, "IMDB.com", "View on IMDB")}
@@ -270,7 +270,7 @@ namespace TVRename
                     <div><p class=""lead"">{ser.Overview}</p></div>
 			        <div><blockquote>{actorLinks}</blockquote></div> 
 		            <div>
-                    {CreateButton(EditMovieURL(si), "<i class=\"far fa-edit\"></i>", "Edit")}
+                    {CreateButton(EditMovieUrl(si), "<i class=\"far fa-edit\"></i>", "Edit")}
                      {explorerButton}
                     {viewButton}
                      {CreateButton(tmdbLink, "TMDB.com", "View on TMDB")}
@@ -298,7 +298,7 @@ namespace TVRename
             //Ideally we'd have <div class=""row align-items-bottom flex-grow-1""> in there as it looks better, but a issue in IE prevents it from looking correct
         }
 
-        private static string? EditMovieURL(MovieConfiguration si)
+        private static string? EditMovieUrl(MovieConfiguration si)
         {
             switch (si.Provider)
             {
@@ -326,7 +326,7 @@ namespace TVRename
             }
         }
 
-        private static string? EditSeasonURL(ShowConfiguration si, int sSeasonNumber)
+        private static string? EditSeasonUrl(ShowConfiguration si, ProcessedSeason s)
         {
             switch (si.Provider)
             {
@@ -348,13 +348,19 @@ namespace TVRename
                     return null;
 
                 case TVDoc.ProviderType.TVmaze:
+                    if (si.TVmazeCode > 0)
+                    {
+                        return $"https://www.themoviedb.org/movie/{s.SeasonId}/edit?active_nav_item=primary_facts";
+                    }
+
+                    return null;
                 case TVDoc.ProviderType.libraryDefault:
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private static string? EditTVEpisodeURL(ProcessedEpisode ep)
+        private static string? EditTvEpisodeUrl(ProcessedEpisode ep)
         {
             switch (ep.Show.Provider)
             {
@@ -375,13 +381,20 @@ namespace TVRename
                     return null;
 
                 case TVDoc.ProviderType.TVmaze:
+                    if (ep.EpisodeId > 0)
+                    {
+                        return $"https://www.tvmaze.com/episode/update?id={ep.EpisodeId}";
+                    }
+
+                    return null;
+                
                 case TVDoc.ProviderType.libraryDefault:
                 default:
                     return null;
             }
         }
 
-        private static string? EditTVSeriesURL(ShowConfiguration si)
+        private static string? EditTvSeriesUrl(ShowConfiguration si)
         {
             switch (si.Provider)
             {
@@ -403,6 +416,12 @@ namespace TVRename
                     return null;
 
                 case TVDoc.ProviderType.TVmaze:
+                    if (si.TVmazeCode > 0)
+                    {
+                        return $" https://www.tvmaze.com/show/update?id={si.TVmazeCode}";
+                    }
+
+                    return null;
                 case TVDoc.ProviderType.libraryDefault:
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -725,7 +744,7 @@ namespace TVRename
                     {seasonOverViewHtml}
                     </div>
                     <div class=""col-4 text-right"">
-                        {CreateButton(EditSeasonURL(si,s.SeasonNumber), "<i class=\"far fa-edit\"></i>", "Edit")}
+                        {CreateButton(EditSeasonUrl(si,s), "<i class=\"far fa-edit\"></i>", "Edit")}
                         {explorerButton}
                         {tvdbButton}
                         {tvMazeButton}
@@ -841,7 +860,7 @@ namespace TVRename
                    </div>
                    <div><p class=""lead"">{ep.HiddenOverview()}</p></div>
                    <div>
-                    {CreateButton(EditTVEpisodeURL(ep), "<i class=\"far fa-edit\"></i>", "Edit")}
+                    {CreateButton(EditTvEpisodeUrl(ep), "<i class=\"far fa-edit\"></i>", "Edit")}
                     {searchButton}
                     {viewButton}
                     {explorerButton}

@@ -7,7 +7,6 @@
 // 
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Xml.Linq;
@@ -25,7 +24,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.CheckSABnzbd;
         protected override string CheckName() => "Looked in the listed SABnz queue to see if the episode is already being downloaded";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList,TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
         {
             if (string.IsNullOrEmpty(TVSettings.Instance.SABAPIKey) || string.IsNullOrEmpty(TVSettings.Instance.SABHostPort))
             {
@@ -46,7 +45,7 @@ namespace TVRename
             int c = ActionList.Missing.Count + 1;
             int n = 0;
 
-            foreach (ItemMissing action in ActionList.Missing.ToList())
+            foreach (ShowItemMissing action in ActionList.MissingEpisodes.ToList())
             {
                 if (settings.Token.IsCancellationRequested)
                 {
@@ -115,7 +114,7 @@ namespace TVRename
             return x;
         }
 
-        private static QueueSlotsSlot? CreateQueueSlotsSlot([NotNull] XElement slot, string simpleShowName, ItemMissing action)
+        private static QueueSlotsSlot? CreateQueueSlotsSlot([NotNull] XElement slot, string simpleShowName, ShowItemMissing action)
         {
             string filename = slot.Attribute("filename")?.Value;
             if (string.IsNullOrWhiteSpace(filename))

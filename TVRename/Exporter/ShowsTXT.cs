@@ -31,25 +31,4 @@ namespace TVRename
             }
         }
     }
-
-    internal class MoviesTxt : MoviesExporter
-    {
-        public MoviesTxt(List<MovieConfiguration> shows) : base(shows)
-        {
-        }
-
-        public override bool Active() => TVSettings.Instance.ExportMoviesTXT;
-        protected override string Location() => TVSettings.Instance.ExportMoviesTXTTo;
-
-        protected override void Do()
-        {
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
-            {
-                foreach (MovieConfiguration si in Shows)
-                {
-                    file.WriteLine(si.ShowName);
-                }
-            }
-        }
-    }
 }

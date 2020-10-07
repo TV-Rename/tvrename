@@ -18,6 +18,7 @@ namespace TVRename
         public abstract int IconNumber { get; } // which icon number to use in "ilIcons" (UI.cs). -1 for none
         public abstract IgnoreItem? Ignore { get; } // what to add to the ignore list / compare against the ignore list
         public ProcessedEpisode? Episode { get; protected set; } // associated episode
+        public MovieConfiguration? Movie { get; protected set; } // associated movie
         public abstract int CompareTo(object obj); // for sorting items in scan list (ActionItemSorter)
         public abstract bool SameAs(Item o); // are we the same thing as that other one?
         public abstract string Name { get; } // Name of this action, e.g. "Copy", "Move", "Download"
@@ -25,16 +26,16 @@ namespace TVRename
         protected static IgnoreItem? GenerateIgnore(string? file) => string.IsNullOrEmpty(file) ? null : new IgnoreItem(file);
 
         [NotNull]
-        public virtual string SeriesName => UI.GenerateShowUIName(Episode);
+        public virtual string SeriesName => Episode is null? UI.GenerateShowUiName(Movie!):UI.GenerateShowUIName(Episode);
         [NotNull]
         public virtual string SeasonNumber => Episode?.SeasonNumberAsText ?? string.Empty;
         [NotNull]
         public virtual string EpisodeString => Episode?.EpNumsAsString() ?? string.Empty;
         public int? EpisodeNumber => Episode?.AppropriateEpNum;
         [NotNull]
-        public virtual string AirDateString => Episode?.GetAirDateDt(true).PrettyPrint() ?? string.Empty;
+        public virtual string AirDateString => Episode?.GetAirDateDt(true).PrettyPrint() ?? Movie?.CachedMovie?.FirstAired.PrettyPrint() ?? string.Empty;
 
-        public DateTime? AirDate => Episode?.GetAirDateDt(true);
+        public DateTime? AirDate => Episode?.GetAirDateDt(true) ?? Movie?.CachedMovie?.FirstAired;
         public abstract string DestinationFolder { get; }
         public abstract string DestinationFile { get; }
         [NotNull]

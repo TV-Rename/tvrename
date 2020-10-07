@@ -59,6 +59,29 @@ namespace TVRename
             };
         }
 
+        public static string PrettyPrint(this MediaConfiguration.MediaType st)
+        {
+            return st switch
+            {
+                MediaConfiguration.MediaType.tv => "TV",
+                MediaConfiguration.MediaType.movie => "Movies",
+                MediaConfiguration.MediaType.both => "TV and Movies",
+                _ => throw new ArgumentOutOfRangeException(nameof(st), st, null)
+            };
+        }
+
+        public static string PrettyPrint(this TVDoc.ProviderType type)
+        {
+            return type switch
+            {
+                TVDoc.ProviderType.libraryDefault => "Library Default",
+                TVDoc.ProviderType.TVmaze => "TV Maze",
+                TVDoc.ProviderType.TheTVDB => "The TVDB",
+                TVDoc.ProviderType.TMDB => "TMDB",
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
+        }
+
         public static void Swap<T>(
             this IList<T> list,
             int firstIndex,

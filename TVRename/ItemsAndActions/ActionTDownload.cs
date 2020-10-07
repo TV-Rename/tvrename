@@ -24,7 +24,7 @@ namespace TVRename
         // ReSharper disable once NotAccessedField.Global - Used as a property in the Choose Download Grid
         public readonly string UpstreamSource;
 
-        public ActionTDownload(string name, long sizeBytes,int seeders, string url, string toWhereNoExt, ProcessedEpisode pe,ItemMissing me, string upstreamSource)
+        public ActionTDownload(string name, long sizeBytes,int seeders, string url, string toWhereNoExt, ProcessedEpisode? pe,ItemMissing me, string upstreamSource)
         {
             Episode = pe;
             SourceName = name;
@@ -36,7 +36,7 @@ namespace TVRename
             Seeders = seeders;
         }
 
-        public ActionTDownload([NotNull] RSSItem rss, string theFileNoExt, ProcessedEpisode pe, ItemMissing me)
+        public ActionTDownload([NotNull] RSSItem rss, string theFileNoExt, ProcessedEpisode? pe, ItemMissing me)
         {
             SourceName = rss.Title;
             url = rss.URL;

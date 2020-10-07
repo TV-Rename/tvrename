@@ -25,7 +25,7 @@ namespace TVRename
         public readonly FileInfo To;
         private readonly TVDoc doc;
 
-        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, bool doTidyup, ItemMissing? undoItem, TVDoc tvDoc)
+        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode? ep, bool doTidyup, ItemMissing? undoItem, TVDoc tvDoc)
         {
             Tidyup = doTidyup ? TVSettings.Instance.Tidyup : null;
             PercentDone = 0;
@@ -37,9 +37,21 @@ namespace TVRename
             doc = tvDoc;
         }
 
-        public ActionCopyMoveRename(FileInfo from, FileInfo to, ProcessedEpisode ep, TVDoc tvDoc) : 
+        public ActionCopyMoveRename(FileInfo from, FileInfo to, ProcessedEpisode? ep, TVDoc tvDoc) : 
             this(TVSettings.Instance.LeaveOriginals ? Op.copy : Op.move, from, to, ep, true, null, tvDoc)
             {}
+
+        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, MovieConfiguration mc, bool doTidyup, ItemMissing? undoItem, TVDoc tvDoc)
+        {
+            Tidyup = doTidyup ? TVSettings.Instance.Tidyup : null;
+            PercentDone = 0;
+            Movie= mc;
+            Operation = operation;
+            From = from;
+            To = to;
+            UndoItemMissing = undoItem;
+            doc = tvDoc;
+        }
 
         #region Action Members
 
@@ -102,10 +114,28 @@ namespace TVRename
                 {
                     //File is correct name
                     LOGGER.Debug($"Just copied {To.FullName} to the right place. Marking it as 'seen'.");
-                    //Record this episode as seen
-                    TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(SourceEpisode);
 
-                    if (TVSettings.Instance.IgnorePreviouslySeen) { doc.SetDirty(); }
+                    if (Episode != null)
+                    {
+                        //Record this episode as seen
+                        TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(SourceEpisode);
+
+                        if (TVSettings.Instance.IgnorePreviouslySeen)
+                        {
+                            doc.SetDirty();
+                        }
+                    }
+
+                    if (Movie != null)
+                    {
+                        //Record this movie as seen
+                        TVSettings.Instance.PreviouslySeenMovies.EnsureAdded(Movie);
+
+                        if (TVSettings.Instance.IgnorePreviouslySeenMovies)
+                        {
+                            doc.SetDirty();
+                        }
+                    }
                 }
             }
             catch (Exception e)

@@ -6,7 +6,6 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
-using System.Collections.Generic;
 using System.Linq;
 
 namespace TVRename
@@ -20,7 +19,7 @@ namespace TVRename
 
         protected override string CheckName() => "Looked in the listed RSS URLs for download links for the missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList,TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
         {
             if (TVSettings.Instance.SearchRSSManualScanOnly && settings.Unattended)
             {
@@ -41,7 +40,7 @@ namespace TVRename
             ItemList newItems = new ItemList();
             ItemList toRemove = new ItemList();
 
-            foreach (ItemMissing action in ActionList.Missing.ToList())
+            foreach (ShowItemMissing action in ActionList.MissingEpisodes.ToList())
             {
                 if (settings.Token.IsCancellationRequested)
                 {

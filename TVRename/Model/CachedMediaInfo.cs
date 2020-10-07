@@ -79,5 +79,35 @@ namespace TVRename
             }
         }
 
+        protected static string ChooseBetter(string? encumbant, bool betterLanguage, string? newValue)
+        {
+            if (string.IsNullOrEmpty(encumbant))
+            {
+                return newValue?.Trim() ?? string.Empty;
+            }
+
+            if (string.IsNullOrEmpty(newValue))
+            {
+                return encumbant.Trim();
+            }
+
+            return betterLanguage ? newValue.Trim() : encumbant.Trim();
+        }
+
+        [NotNull]
+        protected static string ChooseBetterStatus(string? encumbant, bool betterLanguage, string? newValue)
+        {
+            if (string.IsNullOrEmpty(encumbant) || encumbant.Equals("Unknown"))
+            {
+                return newValue?.Trim() ?? string.Empty;
+            }
+
+            if (string.IsNullOrEmpty(newValue) || newValue.Equals("Unknown"))
+            {
+                return encumbant.Trim();
+            }
+
+            return betterLanguage ? newValue.Trim() : encumbant.Trim();
+        }
     }
 }

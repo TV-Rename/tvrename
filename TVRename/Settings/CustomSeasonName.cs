@@ -137,6 +137,25 @@ namespace TVRename
         [NotNull]
         public static string NameFor(MovieConfiguration? m, string styleString) => NameFor(m, styleString, false);
 
+        public static string NameFor(MovieConfiguration m, string styleString, string? extension)
+        {
+            string r = NameFor(m, styleString);
+
+            if (string.IsNullOrEmpty(extension))
+            {
+                return r;
+            }
+
+            bool needsSpacer = !extension.StartsWith(".", StringComparison.Ordinal);
+
+            if (needsSpacer)
+            {
+                return r + "." + extension;
+            }
+
+            return r + extension;
+        }
+
         [NotNull]
         private static string NameFor(MovieConfiguration? m, string styleString, bool urlEncode)
         {

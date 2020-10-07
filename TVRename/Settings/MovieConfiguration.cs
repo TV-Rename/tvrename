@@ -243,5 +243,8 @@ fld[0] = new SafeList<string>();
 
             writer.WriteEndElement(); // ShowItem
         }
+
+        public IEnumerable<string> AutomaticLocations() => AllFolderLocations(false, false).Values.SelectMany(x => x);
+        
     }
 }

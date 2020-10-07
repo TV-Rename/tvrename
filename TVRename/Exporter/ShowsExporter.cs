@@ -19,14 +19,4 @@ namespace TVRename
             Shows = shows;
         }
     }
-
-    internal abstract class MoviesExporter : Exporter
-    {
-        protected readonly List<MovieConfiguration> Shows;
-
-        protected MoviesExporter(List<MovieConfiguration> shows)
-        {
-            Shows = shows;
-        }
-    }
 }

@@ -218,7 +218,7 @@ namespace TVRename
                         if (noAirdatesUntilNow || siForceCheckFuture || siForceCheckNoAirdate)
                         {
                             // then add it as officially missing
-                            Doc.TheActionList.Add(new ItemMissing(episode, folder));
+                            Doc.TheActionList.Add(new ShowItemMissing(episode, folder));
                         }
                     }// if doing missing check
                 }

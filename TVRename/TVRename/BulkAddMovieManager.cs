@@ -207,45 +207,79 @@ namespace TVRename
                 return;
             }
 
+            string matchingRoot = TVSettings.Instance.MovieLibraryFolders.FirstOrDefault(s =>  ai.MovieFile.Directory.FullName.IsSubfolderOf(s));
+            bool isInLibraryFolderFileFinder = matchingRoot.HasValue();
+
+
             // see if there is a matching show item
             MovieConfiguration found = mDoc.FilmLibrary.GetMovie(ai);
             if (found is null)
             {
-                // need to add a new showitem
-                found = new MovieConfiguration(ai);
-
-                mDoc.FilmLibrary.Add(found);
-
-                mDoc.Stats().AutoAddedMovies++;
+                AddNewMovieToLibrary(ai, isInLibraryFolderFileFinder, matchingRoot);
+                return;
             }
 
-            string matchingRoot =
-                TVSettings.Instance.MovieLibraryFolders.FirstOrDefault(s =>
-                    ai.MovieFile.Directory.FullName.IsSubfolderOf(s));
+            //We are updating an existing record
 
-            if (matchingRoot.HasValue())
+            bool inDefaultPath = ai.MovieFile.Directory.Name.Equals(
+                CustomMovieName.NameFor(found, TVSettings.Instance.MovieFolderFormat),
+                StringComparison.CurrentCultureIgnoreCase);
+
+            if (inDefaultPath && isInLibraryFolderFileFinder)
+            {
+                found.UseAutomaticFolders = true;
+                found.UseCustomFolderNameFormat = false;
+                found.AutomaticFolderRoot = matchingRoot!;
+                //leave found.UseManualLocations alone to retain any existing manual locations
+                return;
+            }
+
+            //we have an existing record that we need to add manual folders to
+
+            if (isInLibraryFolderFileFinder)
             {
                 //Probably in the library
                 found.AutomaticFolderRoot = matchingRoot!;
-                found.UseAutomaticFolders = true;
-
-                if (ai.MovieFile.Directory.Name.Equals(CustomMovieName.NameFor(found,
-                    TVSettings.Instance.MovieFolderFormat),StringComparison.CurrentCultureIgnoreCase))
-                {
-                    found.UseCustomFolderNameFormat = false;
-                    found.UseManualLocations = false;
-                    return;
-                }
             }
 
-
+            found.UseManualLocations = true;
             if (!found.ManualLocations.Contains(ai.MovieFile.Directory.FullName))
             {
                 found.ManualLocations.Add(ai.MovieFile.Directory.FullName);
             }
+        }
+
+        private void AddNewMovieToLibrary(PossibleNewMovie ai, bool isInLibraryFolderFileFinder, string? matchingRoot)
+        {
+            // need to add a new showitem
+            MovieConfiguration found = new MovieConfiguration(ai);
+
+            mDoc.FilmLibrary.Add(found);
+
+            mDoc.Stats().AutoAddedMovies++;
+
+            bool inDefaultPath = ai.MovieFile.Directory.Name.Equals(
+                CustomMovieName.NameFor(found, TVSettings.Instance.MovieFolderFormat),
+                StringComparison.CurrentCultureIgnoreCase);
+
+            if (inDefaultPath && isInLibraryFolderFileFinder)
+            {
+                found.UseAutomaticFolders = true;
+                found.UseCustomFolderNameFormat = false;
+                found.AutomaticFolderRoot = matchingRoot!;
+                found.UseManualLocations = false;
+                return;
+            }
+
+            if (isInLibraryFolderFileFinder)
+            {
+                found.AutomaticFolderRoot = matchingRoot!;
+            }
+
+            found.UseAutomaticFolders = false;
+            found.UseCustomFolderNameFormat = false;
             found.UseManualLocations = true;
-
-
+            found.ManualLocations.Add(ai.MovieFile.Directory.FullName);
         }
 
         public void CheckFolders(CancellationToken token,BackgroundWorker bw,  bool detailedLogging, bool showErrorMsgBox)

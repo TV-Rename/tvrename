@@ -133,7 +133,7 @@ namespace TVRename.Forms
                 AddRcMenuItem("Add to Library...", (o, args) => AddToLibrary(mlastSelected.Movie));
             }
 
-            possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
+            //possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
         }
 
         private void AddToLibrary(CachedMovieInfo si)

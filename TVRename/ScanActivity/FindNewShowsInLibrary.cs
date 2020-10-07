@@ -20,7 +20,7 @@ namespace TVRename
         }
         protected override string CheckName() => "Looked in the library for any new shows to be added (bulk add)";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
         {
             BulkAddSeriesManager bam = new BulkAddSeriesManager(MDoc);
             bam.CheckFolders(settings.Token, prog, false,!settings.Unattended);
@@ -43,7 +43,7 @@ namespace TVRename
             //add each new show into the shows being scanned
             foreach (ShowConfiguration si in addedShows)
             {
-                showList.Add(si);
+                settings.Shows.Add(si);
             }
             LOGGER.Info("Added new shows called: {0}", addedShows.Select(si => si.ShowName).ToCsv());
 

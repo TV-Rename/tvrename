@@ -105,7 +105,7 @@ namespace TVRename
              int? tvdbId = ConvertToInt(FindShowCode("tvdbid", "tvdb"));
              if (tvdbId.HasValue)
              {
-                 CachedMovieInfo? s2 = TMDB.LocalCache.Instance.LookupMovieByTVDB(tvdbId.Value, showErrorMsgBox);
+                 CachedMovieInfo? s2 = TMDB.LocalCache.Instance.LookupMovieByTvdb(tvdbId.Value, showErrorMsgBox);
                  if (s2 != null)
                  {
                      TMDBCode = s2.TmdbCode;

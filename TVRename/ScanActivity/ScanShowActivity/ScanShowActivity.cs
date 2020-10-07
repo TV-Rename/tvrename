@@ -6,18 +6,13 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using JetBrains.Annotations;
+
 namespace TVRename
 {
-    public abstract class ScanShowActivity
+    public abstract class ScanShowActivity : ScanMediaActivity
     {
-        protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
-        protected readonly TVDoc Doc;
-
-        protected ScanShowActivity(TVDoc doc) => Doc = doc;
-
         protected abstract void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings);
-
-        protected abstract bool Active();
 
         public void CheckIfActive(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
@@ -28,7 +23,37 @@ namespace TVRename
             }
         }
 
-        private void LogActionListSummary()
+        protected ScanShowActivity([NotNull] TVDoc doc) : base(doc)
+        {
+        }
+    }
+
+    public abstract class ScanMovieActivity : ScanMediaActivity
+    {
+        protected abstract void Check(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings);
+
+        public void CheckIfActive(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+        {
+            if (Active())
+            {
+                Check(si, dfc, settings);
+                LogActionListSummary();
+            }
+        }
+
+        protected ScanMovieActivity([NotNull] TVDoc doc) : base(doc)
+        {
+        }
+    }
+
+    public abstract class ScanMediaActivity
+    {
+        protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
+        protected readonly TVDoc Doc;
+
+        protected ScanMediaActivity(TVDoc doc) => Doc = doc;
+        protected abstract bool Active();
+        protected void LogActionListSummary()
         {
             try
             {

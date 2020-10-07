@@ -940,6 +940,8 @@ namespace TVRename
         }
 
         public CachedSeriesInfo? CachedShow => (CachedSeriesInfo)CachedData;
+
+
     }
 
     public abstract class MediaConfiguration
@@ -983,7 +985,8 @@ namespace TVRename
         public enum MediaType
         {
             tv,
-            movie
+            movie,
+            both
         }
         protected static TVDoc.ProviderType GetConfigurationProviderType(int? value)
         {
@@ -1009,7 +1012,21 @@ namespace TVRename
                 };
             }
         }
-
+        public bool HasIdOfType(TVDoc.ProviderType instanceDefaultProvider)
+        {
+            switch (instanceDefaultProvider)
+            {
+                case TVDoc.ProviderType.TVmaze:
+                    return TVmazeCode > 0;
+                case TVDoc.ProviderType.TheTVDB:
+                    return TvdbCode > 0;
+                case TVDoc.ProviderType.TMDB:
+                    return TmdbCode > 0;
+                case TVDoc.ProviderType.libraryDefault:
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(instanceDefaultProvider), instanceDefaultProvider, null);
+            }
+        }
         public string SourceProviderName
         {
             get

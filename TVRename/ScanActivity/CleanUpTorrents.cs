@@ -18,7 +18,7 @@ namespace TVRename
         protected override string CheckName() => "Cleaned up completed TV Torrents";
         public override bool Active() => TVSettings.Instance.RemoveCompletedTorrents;
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
         {
             DirFilesCache dfc = new DirFilesCache();
             foreach (IDownloadProvider source in sources)

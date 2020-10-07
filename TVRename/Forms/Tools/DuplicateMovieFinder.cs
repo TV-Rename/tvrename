@@ -29,7 +29,6 @@ namespace TVRename.Forms
             olvDuplicates.SetObjects(dupMovies);
         }
 
-
         private void AddRcMenuItem(string label, EventHandler command)
         {
             ToolStripMenuItem tsi = new ToolStripMenuItem(label);

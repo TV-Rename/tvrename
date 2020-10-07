@@ -7,7 +7,6 @@
 // 
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -23,7 +22,7 @@ namespace TVRename
 
         protected override string CheckName() => "Asked Jackett for download links for the missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList,TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
         {
             if ( settings.Unattended && TVSettings.Instance.SearchJackettManualScanOnly)
             {
@@ -54,7 +53,14 @@ namespace TVRename
 
                     UpdateStatus(n++, c, action.Filename);
 
-                    FindMissingEpisode(action, toRemove, newItems);
+                    if (action is ShowItemMissing)
+                    {
+                        FindMissingEpisode((ShowItemMissing)action, toRemove, newItems);
+                    }
+                    else
+                    {
+                        FindMissingEpisode((MovieItemMissing)action, toRemove, newItems);
+                    }
                 }
             }
             catch (WebException e)
@@ -73,7 +79,7 @@ namespace TVRename
             ActionList.Replace(toRemove, newItems);
         }
 
-        private static void FindMissingEpisode([NotNull] ItemMissing action, ItemList toRemove, ItemList newItems)
+        private static void FindMissingEpisode([NotNull] ShowItemMissing action, ItemList toRemove, ItemList newItems)
         {
             ProcessedEpisode processedEpisode = action.MissingEpisode;
             string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(processedEpisode) : NormalJackettUrl( processedEpisode);
@@ -99,6 +105,55 @@ namespace TVRename
             }
 
             newItems.AddNullableRange(newItemsForThisMissingEpisode);
+        }
+
+        private static void FindMissingEpisode([NotNull] MovieItemMissing action, ItemList toRemove, ItemList newItems)
+        {
+            string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(action.MovieConfig) : NormalJackettUrl(action.MovieConfig);
+
+            RssItemList rssList = new RssItemList();
+            rssList.DownloadRSS(url, false, "Jackett");
+            ItemList newItemsForThisMissingEpisode = new ItemList();
+
+            foreach (RSSItem rss in rssList.Where(rss => RssMatch(rss, action.MovieConfig)))
+            {
+                if (TVSettings.Instance.DetailedRSSJSONLogging)
+                {
+                    LOGGER.Info(
+                        $"Adding {rss.URL} from RSS feed as it appears to be match for {action.MovieConfig.ShowName}");
+                }
+                newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action.TheFileNoExt, null, action));
+                toRemove.Add(action);
+            }
+
+            foreach (ActionTDownload x in FindDuplicates(newItemsForThisMissingEpisode))
+            {
+                newItemsForThisMissingEpisode.Remove(x);
+            }
+
+            newItems.AddNullableRange(newItemsForThisMissingEpisode);
+        }
+
+        private static string TextJackettUrl(MovieConfiguration actionMovieConfig)
+        {
+            string serverName = TVSettings.Instance.JackettServer;
+            string serverPort = TVSettings.Instance.JackettPort;
+            string allIndexer = TVSettings.Instance.JackettIndexer;
+            string apikey = TVSettings.Instance.JackettAPIKey;
+            const string FORMAT = "{ShowName}";
+            string text = CustomMovieName.NameFor(actionMovieConfig,FORMAT);
+            return
+                $"http://{serverName}:{serverPort}{allIndexer}/api?t=movie&q={text}&apikey={apikey}";
+        }
+
+        private static string NormalJackettUrl(MovieConfiguration actionMovieConfig)
+        {
+            string serverName = TVSettings.Instance.JackettServer;
+            string serverPort = TVSettings.Instance.JackettPort;
+            string allIndexer = TVSettings.Instance.JackettIndexer;
+            string apikey = TVSettings.Instance.JackettAPIKey;
+            return
+                $"http://{serverName}:{serverPort}{allIndexer}/api?t=movie&apikey={apikey}&tmdbid={actionMovieConfig.TmdbCode}";
         }
 
         private static string NormalJackettUrl(ProcessedEpisode processedEpisode)

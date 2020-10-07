@@ -30,7 +30,7 @@ namespace TVRename
                                          TVSettings.Instance.CopyFutureDatedEpsFromSearchFolders;
         protected override string CheckName() => "Cleaned up and files in download directory that are not needed";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> shows, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
         {
             returnActions.Clear();
             showList = MDoc.TvLibrary.GetSortedShowItems(); //We ignore the current set of shows being scanned to be secrure that no files are deleted for unscanned shows

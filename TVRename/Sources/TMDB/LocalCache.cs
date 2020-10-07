@@ -742,7 +742,7 @@ namespace TVRename.TMDB
             return returnValue;
         }
 
-        public CachedMovieInfo? LookupMovieByTVDB(int tvdbId, bool showErrorMsgBox)
+        public CachedMovieInfo? LookupMovieByTvdb(int tvdbId, bool showErrorMsgBox)
         {
             throw new NotImplementedException();
         }
@@ -796,66 +796,61 @@ namespace TVRename.TMDB
             {
                 try
                 {
-                    if (arg.TmdbCode == 0)
-                    {
-                        string? imdb = arg.CachedShow?.Imdb;
-                        if (!imdb.HasValue())
-                        {
-                            continue;
-                        }
-                        int? tmdbcode = LookupTVBDIdbyImdb(imdb,false);
-                        if (!tmdbcode.HasValue)
-                        {
-                            continue;
-                        }
-
-                        arg.TmdbCode = tmdbcode.Value;
-                    }
-
-                    var related = Client.GetTvShowRecommendationsAsync(arg.TmdbCode);
-                    var similar = Client.GetTvShowSimilarAsync(arg.TmdbCode);
-
-                    Task.WaitAll(related, similar);
-                    if (related.Result!=null)
-                    {
-                        foreach (var s in related.Result.Results)
-                        {
-                            File(s);
-                            returnValue.AddRelated(s.Id, arg);
-                        }
-                    }
-
-                    if (similar.Result != null)
-                    {
-                        foreach (var s in similar.Result.Results)
-                        {
-                            File(s);
-                            returnValue.AddSimilar(s.Id, arg);
-
-                        }
-                    }
+                    AddRecommendationsFrom(arg, returnValue);
 
                     sender.ReportProgress(100 * current++ / total, arg.CachedShow?.Name);
                 }
                 catch
                 {
-
+                    //todo record and resolve /retry errors
                 }
             }
 
-
-            //var related = movies.Select(arg => (arg.TmdbCode,Client.GetMovieRecommendationsAsync(arg.TmdbCode))).ToList();
-            //var similar = movies.Select(arg => (arg.TmdbCode,Client.GetMovieSimilarAsync(arg.TmdbCode))).ToList();
-
-            //Task.WaitAll(related.Select(tuple => tuple.Item2).ToArray());
-            //Task.WaitAll(similar.Select(tuple => tuple.Item2).ToArray());
-
-
-
-
-
             return returnValue;
         }
+
+        private void AddRecommendationsFrom(ShowConfiguration arg, Recomendations returnValue)
+        {
+            if (arg.TmdbCode == 0)
+            {
+                string? imdb = arg.CachedShow?.Imdb;
+                if (!imdb.HasValue())
+                {
+                    return;
+                }
+
+                int? tmdbcode = LookupTVBDIdbyImdb(imdb!, false);
+                if (!tmdbcode.HasValue)
+                {
+                    return;
+                }
+
+                arg.TmdbCode = tmdbcode.Value;
+            }
+
+            var related = Client.GetTvShowRecommendationsAsync(arg.TmdbCode);
+            var similar = Client.GetTvShowSimilarAsync(arg.TmdbCode);
+
+            Task.WaitAll(related, similar);
+            if (related.Result != null)
+            {
+                foreach (var s in related.Result.Results)
+                {
+                    File(s);
+                    returnValue.AddRelated(s.Id, arg);
+                }
+            }
+
+            if (similar.Result != null)
+            {
+                foreach (var s in similar.Result.Results)
+                {
+                    File(s);
+                    returnValue.AddSimilar(s.Id, arg);
+                }
+            }
+        }
+
         public async Task<Recomendations> GetRecommendations(TVDoc mDoc, BackgroundWorker sender, List<MovieConfiguration> movies)
         {
             string lang = "en";
@@ -906,7 +901,7 @@ namespace TVRename.TMDB
                 }
                 catch
                 {
-
+                    //todo - record error, retry etc
                 }
             }
 

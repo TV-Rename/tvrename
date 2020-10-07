@@ -22,7 +22,7 @@ namespace TVRename
 
         protected override string CheckName() => "Looked in the Search Folders for any new shows that need to be added to the library";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList,
+        protected override void DoCheck(SetProgressDelegate prog,
             TVDoc.ScanSettings settings)
         {
             //for each directory in settings directory
@@ -60,7 +60,7 @@ namespace TVRename
             //add each new show into the shows being scanned
             foreach (ShowConfiguration si in addedShows)
             {
-                showList.Add(si);
+                settings.Shows.Add(si);
             }
         }
 

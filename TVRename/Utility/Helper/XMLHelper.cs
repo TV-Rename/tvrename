@@ -455,5 +455,16 @@ namespace TVRename
             }
             writer.WriteEndElement();
         }
+        internal static void WriteStringsToXml([NotNull] this XmlWriter writer, [NotNull] PreviouslySeenMovies previouslySeenMovies, [NotNull] string elementName, string stringName)
+        {
+            writer.WriteStartElement(elementName);
+            foreach (int ep in previouslySeenMovies)
+            {
+                writer.WriteStartElement(stringName);
+                writer.WriteValue(ep);
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
     }
 }

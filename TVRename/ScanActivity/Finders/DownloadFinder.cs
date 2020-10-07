@@ -45,6 +45,13 @@ namespace TVRename
             return true;
         }
 
+        protected static bool RssMatch([NotNull] RSSItem rss, [NotNull] MovieConfiguration pe)
+        {
+            string simpleShowName = Helpers.SimplifyName(pe.ShowName);
+
+            return FileHelper.SimplifyAndCheckFilename(rss.ShowName, simpleShowName, true, false);
+        }
+
         [NotNull]
         protected static IEnumerable<ActionTDownload> FindDuplicates([NotNull] ItemList newItems)
         {

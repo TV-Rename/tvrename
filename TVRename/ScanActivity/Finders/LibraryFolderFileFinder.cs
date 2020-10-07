@@ -12,7 +12,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.RenameCheck && TVSettings.Instance.MissingCheck && TVSettings.Instance.MoveLibraryFiles;
         protected override string CheckName() => "Looked in the library for the missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
         {
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
@@ -24,7 +24,7 @@ namespace TVRename
 
             LOGGER.Info("Starting to look for missing items in the library");
 
-            foreach (ItemMissing me in ActionList.Missing.ToList())
+            foreach (var me in ActionList.MissingEpisodes.ToList())
             {
                 if (settings.Token.IsCancellationRequested)
                 {
@@ -70,7 +70,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private List<FileInfo> GetMatchingFilesFromFolder(string? baseFolder, DirFilesCache dfc, ItemMissing me, TVDoc.ScanSettings settings,
+        private List<FileInfo> GetMatchingFilesFromFolder(string? baseFolder, DirFilesCache dfc, ShowItemMissing me, TVDoc.ScanSettings settings,
             ItemList thisRound)
         {
             List<FileInfo> matchedFiles;
@@ -89,7 +89,7 @@ namespace TVRename
             return matchedFiles;
         }
 
-        private void ProcessFolder(TVDoc.ScanSettings settings, [NotNull] ItemMissing me, [NotNull] string folderName, [NotNull] DirFilesCache dfc,
+        private void ProcessFolder(TVDoc.ScanSettings settings, [NotNull] ShowItemMissing me, [NotNull] string folderName, [NotNull] DirFilesCache dfc,
             ItemList thisRound, [NotNull] List<FileInfo>  matchedFiles)
         {
             LOGGER.Info($"Starting to look for {me.Filename} in the library folder: {folderName}");

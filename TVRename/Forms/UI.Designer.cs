@@ -240,6 +240,7 @@ namespace TVRename
             this.bwShowSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.bwSeasonSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.bwMovieHTMLGenerator = new System.ComponentModel.BackgroundWorker();
+            this.settingsCheckToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyMovies.SuspendLayout();
@@ -561,6 +562,7 @@ namespace TVRename
             this.movieRecommendationsToolStripMenuItem.Name = "movieRecommendationsToolStripMenuItem";
             this.movieRecommendationsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.movieRecommendationsToolStripMenuItem.Text = "Movie Recommendations...";
+            this.movieRecommendationsToolStripMenuItem.Click += new System.EventHandler(this.movieRecommendationsToolStripMenuItem_Click);
             // 
             // tvRecommendationsToolStripMenuItem
             // 
@@ -576,7 +578,8 @@ namespace TVRename
             this.episodeFileQualitySummaryLogToolStripMenuItem,
             this.toolStripSeparator19,
             this.accuracyCheckLogToolStripMenuItem,
-            this.tMDBAccuracyCheckLogToolStripMenuItem});
+            this.tMDBAccuracyCheckLogToolStripMenuItem,
+            this.settingsCheckToolStripMenuItem});
             this.betaToolsToolStripMenuItem.Name = "betaToolsToolStripMenuItem";
             this.betaToolsToolStripMenuItem.Size = new System.Drawing.Size(42, 20);
             this.betaToolsToolStripMenuItem.Text = "Beta";
@@ -2111,6 +2114,13 @@ namespace TVRename
             this.bwMovieHTMLGenerator.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwMovieHTMLGenerator_DoWork);
             this.bwMovieHTMLGenerator.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.UpdateMovieInformation);
             // 
+            // settingsCheckToolStripMenuItem
+            // 
+            this.settingsCheckToolStripMenuItem.Name = "settingsCheckToolStripMenuItem";
+            this.settingsCheckToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
+            this.settingsCheckToolStripMenuItem.Text = "SettingsCheck";
+            this.settingsCheckToolStripMenuItem.Click += new System.EventHandler(this.settingsCheckToolStripMenuItem_Click);
+            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2371,5 +2381,6 @@ namespace TVRename
         private ToolStripSeparator toolStripSeparator18;
         private ToolStripMenuItem movieRecommendationsToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator19;
+        private ToolStripMenuItem settingsCheckToolStripMenuItem;
     }
 }

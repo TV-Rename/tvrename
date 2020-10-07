@@ -34,10 +34,9 @@ namespace TVRename
         private readonly TVDoc mDoc;
         private readonly BulkAddMovieManager engine;
 
-
         //Thread safe counters to work out the progress
         //For auto id
-        public static volatile int VolatileCounter;
+        private static volatile int VolatileCounter;
 
         public BulkAddMovie(TVDoc doc, BulkAddMovieManager bam)
         {
@@ -581,7 +580,6 @@ namespace TVRename
 
             cts.Cancel();
         }
-
 
         private void bwIdentify_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {

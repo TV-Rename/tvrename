@@ -37,7 +37,7 @@ namespace TVRename
             return base.ProcessShow(si, forceRefresh);
         }
 
-        public override ItemList? ProcessMovie(MovieConfiguration si, bool forceRefresh)
+        public override ItemList? ProcessMovie(MovieConfiguration si, FileInfo filo, bool forceRefresh)
         {
             //We only want to do something if the fanart option is enabled. If the KODI option is enabled then let it do the work.
             if (TVSettings.Instance.FanArtJpg && !TVSettings.Instance.KODIImages)
@@ -64,7 +64,7 @@ namespace TVRename
                 return theActionList;
             }
 
-            return base.ProcessMovie(si, forceRefresh);
+            return base.ProcessMovie(si,filo, forceRefresh);
         }
 
         public sealed override void Reset()

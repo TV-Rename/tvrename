@@ -7,7 +7,6 @@
 // 
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using NLog;
 
@@ -25,13 +24,12 @@ namespace TVRename
 
         protected abstract string CheckName();
         public abstract bool Active();
-        protected abstract void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList, TVDoc.ScanSettings settings);
+        protected abstract void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings);
 
-        public void Check(SetProgressDelegate prog, List<ShowConfiguration> showList, TVDoc.ScanSettings settings) =>
-            Check(prog, 0, 100, showList, settings);
+        public void Check(SetProgressDelegate prog, TVDoc.ScanSettings settings) =>
+            Check(prog, 0, 100,  settings);
 
-        public void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowConfiguration> showList,
-            TVDoc.ScanSettings settings)
+        public void Check(SetProgressDelegate prog, int startpct, int totPct, TVDoc.ScanSettings settings)
         {
             startPosition = startpct;
             endPosition = totPct;
@@ -49,7 +47,7 @@ namespace TVRename
                     return;
                 }
 
-                DoCheck(prog, showList, settings);
+                DoCheck(prog, settings);
                 LogActionListSummary();
             }
             catch(TVRenameOperationInterruptedException)

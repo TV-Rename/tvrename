@@ -7,7 +7,6 @@
 // 
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -25,7 +24,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.SearchJSON;
         protected override string CheckName() => "Check JSON links for the missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog, ICollection<ShowConfiguration> showList,TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
         {
             if (TVSettings.Instance.SearchJSONManualScanOnly && settings.Unattended)
             {
@@ -41,7 +40,7 @@ namespace TVRename
             UrlCache cache = new UrlCache();
             try
             {
-                foreach (ItemMissing action in ActionList.Missing.ToList())
+                foreach (ShowItemMissing action in ActionList.MissingEpisodes.ToList())
                 {
                     if (settings.Token.IsCancellationRequested)
                     {
@@ -83,7 +82,7 @@ namespace TVRename
             ActionList.Replace(toRemove,newItems);
         }
 
-        private static void FindMissingEpisode([NotNull] ItemMissing action, ItemList toRemove, ItemList newItems, UrlCache cache)
+        private static void FindMissingEpisode([NotNull] ShowItemMissing action, ItemList toRemove, ItemList newItems, UrlCache cache)
         {
             ProcessedEpisode pe = action.MissingEpisode;
 
