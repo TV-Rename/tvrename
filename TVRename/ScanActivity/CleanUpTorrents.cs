@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class CleanUpTorrents : ScanActivity
+    internal class CleanUpTorrents : ScanActivity
     {
         private readonly List<IDownloadProvider> sources;
         private ProcessedEpisode? lastFoundEpisode;

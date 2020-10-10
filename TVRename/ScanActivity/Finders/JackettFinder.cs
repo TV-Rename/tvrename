@@ -190,5 +190,16 @@ namespace TVRename
 
             Helpers.OpenUrl(url);
         }
+
+        public static void SearchForMovie(MovieConfiguration mov)
+        {
+            string serverName = TVSettings.Instance.JackettServer;
+            string serverPort = TVSettings.Instance.JackettPort;
+            const string FORMAT = "{ShowName} ({Year})";
+
+            string url = $"http://{serverName}:{serverPort}/UI/Dashboard#search={Uri.EscapeDataString(CustomMovieName.NameFor(mov, FORMAT))}";
+
+            Helpers.OpenUrl(url);
+        }
     }
 }

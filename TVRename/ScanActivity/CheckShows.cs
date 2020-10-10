@@ -34,11 +34,10 @@ namespace TVRename
 
             var showList = settings.Shows;
 
-            if (settings.Type == TVSettings.ScanType.Full)
+            if (settings.Type == TVSettings.ScanType.Full  && showList.Count>0)
             {
                 // only do episode count if we're doing all shows and seasons
                 MDoc.CurrentStats.NsNumberOfEpisodes = 0;
-                showList = MDoc.TvLibrary.GetSortedShowItems();
             }
 
             int c = 0;

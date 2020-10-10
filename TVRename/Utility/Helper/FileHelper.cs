@@ -587,10 +587,11 @@ namespace TVRename
             return true;
         }
 
+        // see https://kodi.wiki/view/Naming_video_files/Movies#Split_Video_Files
+        static List<string> ending = new List<string> { "part", "cd", "dvd", "pt", "disk", "disc" };
+
         public static bool IsDoublePartMovie(FileInfo f1, FileInfo f2)
         {
-            // see https://kodi.wiki/view/Naming_video_files/Movies#Split_Video_Files
-            List<string> ending = new List<string>{"part","cd","dvd", "pt", "disk", "disc" };
             return ending.Any(end => HasEnding(f1, f2, end));
         }
 
@@ -631,5 +632,21 @@ namespace TVRename
         }
 
         public static string FileNameNoExt(this FileInfo f) => f.Name.RemoveAfter(f.Extension);
+
+        private static readonly Regex[] MovieMultiPartRegex = new Regex[]
+        {
+            new Regex(@"(?<base>.*)[ _.-]+(cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*(?<part>[0-9]|(A-D))", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+            new Regex(@"(?<base>.*)[ ._-]*(?<part>|(A-D))$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+        };
+        public static string MovieFileNameBase(this FileInfo movieFile)
+        {
+            string longbase = movieFile.FileNameNoExt();
+            foreach (Match x in MovieMultiPartRegex.Select(tets => tets.Match(longbase)).Where(x => x.Success))
+            {
+                return x.Groups["base"].Value;
+            }
+
+            return longbase;
+        }
     }
 }

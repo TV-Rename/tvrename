@@ -3414,9 +3414,11 @@ namespace TVRename
         private void SetCheckboxes()
         {
             internalCheckChange = true;
+            olvAction.BeginUpdate();
             olvAction.CheckObjects(mDoc.TheActionList.Actions);
             internalCheckChange = false;
             UpdateActionCheckboxes();
+            olvAction.EndUpdate();
         }
 
         public void FillActionList(bool preserveExistingCheckboxes)
@@ -3699,6 +3701,11 @@ namespace TVRename
 
         private void olvAction_ItemCheck(object sender, [NotNull] ItemCheckEventArgs e)
         {
+            if (internalCheckChange)
+            {
+                return;
+            }
+
             //Needed to de-selct any un action able items
             Item action = (Item)olvAction.GetModelObject(e.Index);
             if (action != null && !(action is Action))
@@ -4514,6 +4521,11 @@ namespace TVRename
                     {
                         JackettFinder.SearchForEpisode(i.Episode);
                     }
+
+                    if (i?.Movie != null)
+                    {
+                        JackettFinder.SearchForMovie(i.Movie);
+                    }
                 }
             }
         }
@@ -4709,6 +4721,11 @@ namespace TVRename
             SettingsReview form = new SettingsReview(mDoc, this);
             form.ShowDialog(this);
 
+        }
+
+        private void toolStripButton1_Click_1(object sender, EventArgs e)
+        {
+            UiScan(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.movie);
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
@@ -23,25 +24,6 @@ namespace TVRename
             {
                 return; // so, nothing to do.
             }
-
-            //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
-            //it has all the required files for that show
-            //Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si));
-
-            //TODO Put the banner refresh period into the settings file, we'll default to 3 months
-            //TODO - work out if this banner thing is needed for Movies
-            /*DateTime cutOff = DateTime.Now.AddMonths(-3);
-            DateTime lastUpdate = si.BannersLastUpdatedOnDisk ?? DateTime.Now.AddMonths(-4);
-            bool timeForBannerUpdate = cutOff.CompareTo(lastUpdate) == 1;
-
-            if (TVSettings.Instance.NeedToDownloadBannerFile() && timeForBannerUpdate)
-            {
-                Doc.TheActionList.Add(
-                    downloadIdentifiers.ForceUpdateShow(DownloadIdentifier.DownloadType.downloadImage, si));
-
-                si.BannersLastUpdatedOnDisk = DateTime.Now;
-                Doc.SetDirty();
-            }*/
 
             // process each folder for show...
             foreach (string folder in allFolders)
@@ -74,113 +56,105 @@ namespace TVRename
                 return;
             }
 
-            FileInfo file = null;
+            FileInfo[] movieFiles = files.Where(f => f.IsMovieFile()).ToArray();
 
-            foreach (FileInfo fi in files)
+            if (movieFiles.Length == 0)
             {
-                if (settings.Token.IsCancellationRequested)
-                {
-                    return;
-                }
-
-                FileInfo actualFile = fi;
-
-                // == RENAMING CHECK ==
-                if (renCheck && TVSettings.Instance.FileHasUsefulExtension(fi, true))
-                {
-                    // Note that the extension of the file may not be fi.extension as users can put ".mkv.t" for example as an extension
-                    string otherExtension = TVSettings.Instance.FileHasUsefulExtensionDetails(fi, true);
-
-                    string newName = TVSettings.Instance.FilenameFriendly(CustomMovieName.NameFor(si, TVSettings.Instance.MovieFilenameFormat, otherExtension));
-
-                    FileInfo fileWorthAdding = CheckFile(folder, fi, actualFile, newName, files,si);
-
-                    if (fileWorthAdding != null)
-                    {
-                        
-                        file = fileWorthAdding;
-                    }
-                }
-            } // foreach file in folder
-
-            // == MISSING CHECK part 2/2 (includes NFO and Thumbnails) ==
-            // look at the official list of episodes, and look to see if we have any gaps
-
-            if (file is null) // not here locally
-            {
-                // second part of missing check is to see what is missing!
-                if (missCheck)
-                {
-                    // then add it as officially missing
-                    Doc.TheActionList.Add(new MovieItemMissing(si, folder));
-
-                }// if doing missing check
+                FileIsMissing(si, folder, missCheck);
+                return;
             }
-            else
+
+            if (settings.Token.IsCancellationRequested)
             {
-                Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, file));
-            } // up to date check, for each episode in thetvdb
+                return;
+            }
+
+            List<string> bases = movieFiles.Select(GetBase).Distinct().ToList();
+            string newBase = TVSettings.Instance.FilenameFriendly(CustomMovieName.NameFor(si, TVSettings.Instance.MovieFilenameFormat));
+
+            if (bases.Count == 1 && bases[0].Equals(newBase))
+            {
+                //All Seems OK
+                return;
+            }
+
+            if (renCheck && bases.Count==1 && !bases[0].Equals(newBase,StringComparison.CurrentCultureIgnoreCase))
+            {
+                foreach (FileInfo fi in files)
+                {
+                    if (settings.Token.IsCancellationRequested)
+                    {
+                        return;
+                    }
+                    string baseString = bases[0];
+
+                    if (fi.Name.StartsWith(baseString,StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        string newName = fi.Name.Replace(baseString, newBase);
+                        FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
+
+                        if (newFile.FullName != fi.FullName)
+                        {
+                            //Check that the file does not already exist
+                            //if (FileHelper.FileExistsCaseSensitive(newFile.FullName))
+                            if (FileHelper.FileExistsCaseSensitive(files, newFile))
+                            {
+                                LOGGER.Warn(
+                                    $"Identified that {fi.FullName} should be renamed to {newName}, but it already exists.");
+                            }
+                            else
+                            {
+                                LOGGER.Info($"Identified that {fi.FullName} should be renamed to {newName}.");
+                                Doc.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
+                                    newFile, si, false, null, Doc));
+
+                                //The following section informs the DownloadIdentifers that we already plan to
+                                //copy a file in the appropriate place and they do not need to worry about downloading 
+                                //one for that purpose
+                                downloadIdentifiers.NotifyComplete(newFile);
+                            }
+                        }
+                        else
+                        {
+                            if (fi.IsMovieFile())
+                            {
+                                //File is correct name
+                                LOGGER.Debug($"Identified that {fi.FullName} is in the right place. Marking it as 'seen'.");
+                                //Record this movie as seen
+
+                                TVSettings.Instance.PreviouslySeenMovies.EnsureAdded(si);
+                                if (TVSettings.Instance.IgnorePreviouslySeenMovies)
+                                {
+                                    Doc.SetDirty();
+                                }
+                            }
+                        }
+
+                    }
+                } // foreach file in folder
+            }
+
+            //TODO Reintroduce this
+            //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
+            //it has all the required files for that show
+            //Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, file));
+
         }
 
-        private FileInfo? CheckFile([NotNull] string folder, FileInfo fi, [NotNull] FileInfo actualFile, string newName, IEnumerable<FileInfo> files, MovieConfiguration c)
+        private string GetBase(FileInfo fileInfo)
         {
-            if (TVSettings.Instance.RetainLanguageSpecificSubtitles)
+            //The base is the filename with no multipart extensions
+            return fileInfo.MovieFileNameBase();
+        }
+
+        private void FileIsMissing(MovieConfiguration si, string folder, bool missCheck)
+        {
+            // second part of missing check is to see what is missing!
+            if (missCheck)
             {
-                (bool isSubtitleFile, string subtitleExtension) = fi.IsLanguageSpecificSubtitle();
-
-                if (isSubtitleFile && actualFile.Name != newName)
-                {
-                    newName = TVSettings.Instance.FilenameFriendly(CustomMovieName.NameFor(c,TVSettings.Instance.MovieFilenameFormat));
-                }
-            }
-
-            FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
-
-            if (newFile.FullName != actualFile.FullName)
-            {
-                //Check that the file does not already exist
-                //if (FileHelper.FileExistsCaseSensitive(newFile.FullName))
-                if (FileHelper.FileExistsCaseSensitive(files, newFile))
-                {
-                    LOGGER.Warn(
-                        $"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
-                }
-                else
-                {
-                    LOGGER.Info($"Identified that {actualFile.FullName} should be renamed to {newName}.");
-                    Doc.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
-                        newFile, c, false, null, Doc));
-
-                    //The following section informs the DownloadIdentifers that we already plan to
-                    //copy a file in the appropriate place and they do not need to worry about downloading 
-                    //one for that purpose
-                    downloadIdentifiers.NotifyComplete(newFile);
-
-                    if (newFile.IsMovieFile())
-                    {
-                        return newFile;
-                    }
-                }
-            }
-            else
-            {
-                if (actualFile.IsMovieFile())
-                {
-                    //File is correct name
-                    LOGGER.Debug($"Identified that {actualFile.FullName} is in the right place. Marking it as 'seen'.");
-                    //Record this movie as seen
-
-                    TVSettings.Instance.PreviouslySeenMovies.EnsureAdded(c);
-                    if (TVSettings.Instance.IgnorePreviouslySeenMovies)
-                    {
-                        Doc.SetDirty();
-                    }
-
-                    return actualFile;
-                }
-            }
-
-            return null;
+                // then add it as officially missing
+                Doc.TheActionList.Add(new MovieItemMissing(si, folder));
+            } // if doing missing check
         }
 
         protected override bool Active() => true;
