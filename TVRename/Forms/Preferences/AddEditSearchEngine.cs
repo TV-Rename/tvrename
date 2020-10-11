@@ -28,13 +28,23 @@ namespace TVRename
     public partial class AddEditSearchEngine : Form
     {
         private CustomNameTagsFloatingWindow? cntfw;
-        
-        private readonly ProcessedEpisode? sampleEpisode;
         private readonly Searchers mSearchers;
 
-        public AddEditSearchEngine(Searchers s, ProcessedEpisode? pe)
+        private readonly ProcessedEpisode? sampleEpisode;
+        private readonly MovieConfiguration? sampleMovie;
+
+        public AddEditSearchEngine(Searchers s, MovieConfiguration? movie) :this(s)
+        {
+            sampleMovie = movie;
+        }
+
+        public AddEditSearchEngine(Searchers s, ProcessedEpisode? pe):this(s)
         {
             sampleEpisode = pe;
+        }
+
+        private AddEditSearchEngine(Searchers s)
+        {
             InitializeComponent();
             cntfw = null;
 
@@ -130,6 +140,12 @@ namespace TVRename
         private void bnTags_Click(object sender, EventArgs e)
         {
             cntfw = new CustomNameTagsFloatingWindow(sampleEpisode);
+
+            if (sampleMovie != null)
+            {
+                cntfw = new CustomNameTagsFloatingWindow(sampleMovie);
+            }
+
             cntfw.Show(this);
             Focus();
         }

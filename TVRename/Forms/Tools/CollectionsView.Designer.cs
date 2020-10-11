@@ -44,6 +44,7 @@ namespace TVRename.Forms
             this.olvInLibrary = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvMovieYear = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.chkRemoveCompleted = new System.Windows.Forms.CheckBox();
+            this.chkRemoveFuture = new System.Windows.Forms.CheckBox();
             this.possibleMergedEpisodeRightClickMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvCollections)).BeginInit();
             this.SuspendLayout();
@@ -189,6 +190,17 @@ namespace TVRename.Forms
             this.chkRemoveCompleted.UseVisualStyleBackColor = true;
             this.chkRemoveCompleted.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
+            // chkRemoveFuture
+            // 
+            this.chkRemoveFuture.AutoSize = true;
+            this.chkRemoveFuture.Location = new System.Drawing.Point(257, 6);
+            this.chkRemoveFuture.Name = "chkRemoveFuture";
+            this.chkRemoveFuture.Size = new System.Drawing.Size(136, 17);
+            this.chkRemoveFuture.TabIndex = 14;
+            this.chkRemoveFuture.Text = "Remove Future Movies";
+            this.chkRemoveFuture.UseVisualStyleBackColor = true;
+            this.chkRemoveFuture.CheckedChanged += new System.EventHandler(this.chkRemoveFuture_CheckedChanged);
+            // 
             // CollectionsView
             // 
             this.AcceptButton = this.btnClose;
@@ -196,6 +208,7 @@ namespace TVRename.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(1012, 690);
+            this.Controls.Add(this.chkRemoveFuture);
             this.Controls.Add(this.chkRemoveCompleted);
             this.Controls.Add(this.olvCollections);
             this.Controls.Add(this.lblStatus);
@@ -231,5 +244,6 @@ namespace TVRename.Forms
         private BrightIdeasSoftware.OLVColumn olvInLibrary;
         private BrightIdeasSoftware.OLVColumn olvMovieYear;
         private System.Windows.Forms.CheckBox chkRemoveCompleted;
+        private System.Windows.Forms.CheckBox chkRemoveFuture;
     }
 }

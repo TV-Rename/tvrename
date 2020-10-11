@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
-using Microsoft.VisualBasic.FileIO;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 
 namespace TVRename
@@ -130,11 +128,11 @@ namespace TVRename
             {
                 LOGGER.Warn($"Could not find {folderName} as we got a UnauthorizedAccessException");
             }
-            catch (PathTooLongException)
+            catch (System.IO.PathTooLongException)
             {
                 LOGGER.Warn($"Could not find {folderName} as we got a PathTooLongException");
             }
-            catch (DirectoryNotFoundException)
+            catch (System.IO.DirectoryNotFoundException)
             {
                 LOGGER.Info($"Could not find {folderName} as we got a DirectoryNotFoundException");
             }
@@ -146,7 +144,7 @@ namespace TVRename
             {
                 LOGGER.Info($"Could not find {folderName} as we got a OperationCanceledException");
             }
-            catch (IOException i)
+            catch (System.IO.IOException i)
             {
                 LOGGER.Warn($"Could not find {folderName} as we got a OperationCanceledException: {i.Message}");
             }

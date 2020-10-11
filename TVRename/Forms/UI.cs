@@ -3548,7 +3548,10 @@ namespace TVRename
             }
 
             AddRcMenuItem("Ignore Selected", (sender, args) => IgnoreSelected());
-            AddRcMenuItem("Ignore Entire Season", (sender, args) => IgnoreSelectedSeasons(lvr));
+            if (episode != null)
+            {
+                AddRcMenuItem("Ignore Entire Season", (sender, args) => IgnoreSelectedSeasons(lvr));
+            }
             AddRcMenuItem("Remove Selected", (sender, args) => ActionDeleteSelected());
 
             if (lvr.Count == lvr.Missing.ToList().Count) // only missing items selected?
@@ -4726,6 +4729,32 @@ namespace TVRename
         private void toolStripButton1_Click_1(object sender, EventArgs e)
         {
             UiScan(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.movie);
+        }
+
+        private void movieSearchEnginesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MovieConfiguration? m = CurrentlySelectedMovie();
+
+            AddEditSearchEngine aese = new AddEditSearchEngine(TVDoc.GetMovieSearchers(), m);
+
+            DialogResult dr = aese.ShowDialog(this);
+            if (dr == DialogResult.OK)
+            {
+                mDoc.SetDirty();
+                UpdateSearchButtons();
+            }
+        }
+
+        private MovieConfiguration? CurrentlySelectedMovie()
+        {
+            MovieConfiguration currentMovie = TreeNodeToMovieItem(movieTree.SelectedNode);
+
+            if (currentMovie != null)
+            {
+                return currentMovie;
+            }
+
+            return mDoc.FilmLibrary.Movies.FirstOrDefault();
         }
     }
 }

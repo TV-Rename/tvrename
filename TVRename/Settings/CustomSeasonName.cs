@@ -157,7 +157,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string NameFor(MovieConfiguration? m, string styleString, bool urlEncode)
+        public static string NameFor(MovieConfiguration? m, string styleString, bool urlEncode)
         {
             string name = styleString;
 

@@ -10,7 +10,6 @@ namespace TVRename.Forms
     public partial class CollectionsView : Form
     {
         private readonly List<CollectionMember> collectionMovies;
-        private  List<CollectionMember> incompleteCollectionMovies;
         private readonly TVDoc mDoc;
         private readonly UI mainUi;
 
@@ -18,7 +17,6 @@ namespace TVRename.Forms
         {
             InitializeComponent();
             collectionMovies = new List<CollectionMember>();
-            incompleteCollectionMovies = new List<CollectionMember>();
             mDoc = doc;
             mainUi = main;
             Scan();
@@ -27,7 +25,45 @@ namespace TVRename.Forms
         // ReSharper disable once InconsistentNaming
         private void UpdateUI()
         {
-            olvCollections.SetObjects(chkRemoveCompleted.Checked ? incompleteCollectionMovies : collectionMovies);
+            if (chkRemoveCompleted.Checked && !chkRemoveCompleted.Checked)
+            {
+                var incompleteCollections = collectionMovies.GroupBy(member => member.CollectionName)
+                    .Where(members => members.Any(x => !x.IsInLibrary)).Select(members => members.Key).ToList();
+
+                List<CollectionMember> incompleteCollectionMovies =
+                    collectionMovies.Where(member => incompleteCollections.Contains(member.CollectionName)).ToList();
+                olvCollections.SetObjects(incompleteCollectionMovies );
+
+                return;
+            }
+
+            if (!chkRemoveCompleted.Checked && !chkRemoveCompleted.Checked)
+            {
+                olvCollections.SetObjects(collectionMovies);
+                return;
+            }
+
+            if(chkRemoveFuture.Checked)
+
+            {
+                var historicCollectionMovies =
+                    collectionMovies.Where(m => m.ReleaseDate.HasValue && m.ReleaseDate.Value < DateTime.Now);
+
+                if (!chkRemoveCompleted.Checked)
+                {
+
+                    olvCollections.SetObjects(historicCollectionMovies);
+                    return;
+                }
+
+                var incompleteHistCollections = historicCollectionMovies.GroupBy(member => member.CollectionName)
+                    .Where(members => members.Any(x => !x.IsInLibrary)).Select(members => members.Key).ToList();
+
+                List<CollectionMember> incompleteHistCollectionMovies =
+                    collectionMovies.Where(member => incompleteHistCollections.Contains(member.CollectionName)).ToList();
+                olvCollections.SetObjects(incompleteHistCollectionMovies);
+
+            }
         }
 
         private void AddRcMenuItem(string label, EventHandler command)
@@ -68,12 +104,6 @@ namespace TVRename.Forms
 
                 bw.ReportProgress(100 * current++ / total, collection.Item2);
             }
-
-            var incompleteCollections = collectionMovies.GroupBy(member => member.CollectionName)
-                .Where(members => members.Any(x => !x.IsInLibrary)).Select(members => members.Key).ToList();
-
-            incompleteCollectionMovies =
-                collectionMovies.Where(member => incompleteCollections.Contains(member.CollectionName)).ToList();
         }
 
         private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -155,6 +185,11 @@ namespace TVRename.Forms
         {
             UpdateUI();
         }
+
+        private void chkRemoveFuture_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateUI();
+        }
     }
 
     internal class CollectionMember
@@ -167,6 +202,7 @@ namespace TVRename.Forms
 
         public bool IsInLibrary;
         public int? MovieYear => Movie.Year;
+        public DateTime? ReleaseDate => Movie.FirstAired;
     }
 }
 

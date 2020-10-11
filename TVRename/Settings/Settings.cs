@@ -293,7 +293,8 @@ namespace TVRename
         public string MovieFolderFormat = CustomMovieName.DefaultStyle();
         public string MovieFilenameFormat = CustomMovieName.DefaultStyle();
         public int StartupTab;
-        public Searchers TheSearchers = new Searchers();
+        public Searchers TheSearchers = new Searchers(MediaConfiguration.MediaType.tv);
+        public Searchers TheMovieSearchers = new Searchers(MediaConfiguration.MediaType.movie);
 
         public string SearchJSONURL= "https://eztv.ag/api/get-torrents?imdb_id=";
         public string SearchJSONRootNode = "torrents";
@@ -645,7 +646,8 @@ namespace TVRename
             writer.WriteElement("TMDBPercentDirty", TMDBPercentDirty);
             writer.WriteElement("IncludeMoviesQuickRecent", IncludeMoviesQuickRecent);
 
-            TheSearchers.WriteXml(writer);
+            TheSearchers.WriteXml(writer, "TheSearchers");
+            TheMovieSearchers.WriteXml(writer, "TheMovieSearchers");
             WriteReplacements(writer);
             WriteRegExs(writer);
             XmlHelper.WriteStringsToXml(RSSURLs,writer,"RSSURLs", "URL");
@@ -993,6 +995,18 @@ namespace TVRename
                 : TheSearchers.CurrentSearch.Url;
 
             return !url.HasValue() ? string.Empty : CustomEpisodeName.NameForNoExt(epi, url, true);
+        }
+
+        public string BTMovieSearchURL(MovieConfiguration? mov)
+        {
+            if (mov is null)
+            {
+                return string.Empty;
+            }
+
+            string url = TheMovieSearchers.CurrentSearch.Url;
+
+            return !url.HasValue() ? string.Empty : CustomMovieName.NameFor(mov, url, true);
         }
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
@@ -1486,7 +1500,8 @@ namespace TVRename
 
             Tidyup.load(xmlSettings);
             RSSURLs = xmlSettings.Descendants("RSSURLs").FirstOrDefault()?.ReadStringsFromXml("URL")??new List<string>();
-            TheSearchers = new Searchers(xmlSettings.Descendants("TheSearchers").FirstOrDefault());
+            TheSearchers = new Searchers(xmlSettings.Descendants("TheSearchers").FirstOrDefault(),MediaConfiguration.MediaType.tv);
+            TheMovieSearchers = new Searchers(xmlSettings.Descendants("TheMovieSearchers").FirstOrDefault(),MediaConfiguration.MediaType.movie);
 
             UpdateReplacements(xmlSettings);
             UpdateRegExs(xmlSettings);

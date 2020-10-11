@@ -208,6 +208,12 @@ namespace TVRename
             SetDirty();
         }
 
+        public void SetMovieSearcher(SearchEngine s)
+        {
+            TVSettings.Instance.TheMovieSearchers.SetSearchEngine(s);
+            SetDirty();
+        }
+
         public void SetDefaultScanType(TVSettings.ScanType s)
         {
             if (s == TVSettings.Instance.UIScanType)
@@ -219,6 +225,8 @@ namespace TVRename
         }
 
         public static Searchers GetSearchers() => TVSettings.Instance.TheSearchers;
+
+        public static Searchers GetMovieSearchers() => TVSettings.Instance.TheMovieSearchers;
 
         public void TidyCaches()
         {

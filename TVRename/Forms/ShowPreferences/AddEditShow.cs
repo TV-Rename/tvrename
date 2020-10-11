@@ -693,7 +693,7 @@ namespace TVRename
             }
 
             string showName = codeFinderForm.SelectedShow()?.Name ?? txtCustomShowName.Text ?? "New Folder";
-            QuickLocateForm f = new QuickLocateForm(showName);
+            QuickLocateForm f = new QuickLocateForm(showName,MediaConfiguration.MediaType.tv);
 
             if (f.ShowDialog(this) == DialogResult.OK)
             {

@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
@@ -27,27 +28,49 @@ namespace TVRename
     {
         public SearchEngine CurrentSearch { get; private set; }
 
-        public Searchers()
+        public Searchers(MediaConfiguration.MediaType t)
         {
-            SearchEngine google = new SearchEngine
+            switch (t)
             {
-                Name = "Google", Url = "https://www.google.com/search?q={ShowName}+S{Season:2}E{Episode}"
-            };
-            Add(google);
-            Add(new SearchEngine {Name="YouTube" ,Url= "https://www.youtube.com/results?search_query={ShowName}+{EpisodeName}" });
-            Add(new SearchEngine { Name = "Vimeo", Url = "https://vimeo.com/search?q={ShowName}+{EpisodeName}" });
+                case MediaConfiguration.MediaType.tv:
+                    SearchEngine google2 = new SearchEngine
+                    {
+                        Name = "Google",
+                        Url = "https://www.google.com/search?q={ShowName}+S{Season:2}E{Episode}"
+                    };
+                    Add(google2);
+                    Add(new SearchEngine { Name = "YouTube", Url = "https://www.youtube.com/results?search_query={ShowName}+{EpisodeName}" });
+                    Add(new SearchEngine { Name = "Vimeo", Url = "https://vimeo.com/search?q={ShowName}+{EpisodeName}" });
 
-            CurrentSearch = google;
+                    CurrentSearch = google2;
+                    break;
+
+                case MediaConfiguration.MediaType.movie:
+                    SearchEngine google = new SearchEngine
+                    {
+                        Name = "Google",
+                        Url = "https://www.google.com/search?q={ShowName}"
+                    };
+                    Add(google);
+                    Add(new SearchEngine { Name = "YouTube", Url = "https://www.youtube.com/results?search_query={ShowName}" });
+                    Add(new SearchEngine { Name = "Vimeo", Url = "https://vimeo.com/search?q={ShowName}" });
+
+                    CurrentSearch = google;
+                    break;
+
+                case MediaConfiguration.MediaType.both:
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(t), t, null);
+            }
         }
-        
-        public Searchers(XElement? settings)
+
+        public Searchers(XElement? settings, MediaConfiguration.MediaType t):this(t)
         {
-            Clear();
             if (settings is null)
             {
                 return;
             }
-
+            Clear();
             string currentSearchString = settings.ExtractString("Current");
 
             foreach (SearchEngine engine in settings.Descendants("Choice").Select(GenerateSearchEngine).Where(x => x.HasValue).Select(x => x.Value))
@@ -79,9 +102,9 @@ namespace TVRename
             CurrentSearch = s;
         }
 
-        public void WriteXml([NotNull] XmlWriter writer)
+        public void WriteXml([NotNull] XmlWriter writer, string startElementName)
         {
-            writer.WriteStartElement("TheSearchers");
+            writer.WriteStartElement(startElementName);
             writer.WriteElement("Current",CurrentSearch.Name);
 
             foreach (SearchEngine e in this)
