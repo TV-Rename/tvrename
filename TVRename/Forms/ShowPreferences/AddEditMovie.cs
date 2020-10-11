@@ -89,8 +89,6 @@ namespace TVRename
             }
 
             PopulateAliasses();
-
-            
             SetTagListText();
             EnableDisableCustomNaming();
             UpdateIgnore();
@@ -544,7 +542,6 @@ namespace TVRename
 
         private void txtFolderNameFormat_TextChanged(object sender, EventArgs e)
         {
-
         }
     }
 }

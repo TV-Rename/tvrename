@@ -67,7 +67,6 @@ namespace TVRename
                 }
             } // for each show
 
-
             c = 0;
             UpdateStatus(c, settings.Movies.Count, "Checking shows");
             foreach (MovieConfiguration si in settings.Movies.OrderBy(item => item.ShowName))
@@ -99,5 +98,4 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.RenameCheck || TVSettings.Instance.MissingCheck;
     }
-
 }

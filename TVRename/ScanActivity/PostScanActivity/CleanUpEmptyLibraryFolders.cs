@@ -39,57 +39,6 @@ namespace TVRename
                 FileHelper.RemoveDirectory(folderName);
             }
         }
-        private static void RemoveDirectory([NotNull] string folderName)
-        {
-            try
-            {
-                LOGGER.Info($"Removing {folderName} as part of the library clean up");
-                foreach (string file in Directory.GetFiles(folderName))
-                {
-                    LOGGER.Info($"    Folder contains {file}");
-                }
-
-                LOGGER.Info($"Recycling {folderName}");
-                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName,
-                    Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
-                    Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
-            }
-            catch (FileReadOnlyException)
-            {
-                LOGGER.Warn($"Could not recycle {folderName} as we got a FileReadOnlyException");
-            }
-            catch (DirectoryReadOnlyException)
-            {
-                LOGGER.Warn($"Could not recycle {folderName} as we got a DirectoryReadOnlyException");
-            }
-            catch (UnauthorizedAccessException)
-            {
-                LOGGER.Warn($"Could not recycle {folderName} as we got a UnauthorizedAccessException");
-            }
-            catch (System.IO.PathTooLongException)
-            {
-                LOGGER.Warn($"Could not recycle {folderName} as we got a PathTooLongException");
-            }
-            catch (System.IO.DirectoryNotFoundException)
-            {
-                LOGGER.Info($"Could not recycle {folderName} as we got a DirectoryNotFoundException");
-            }
-            catch (DirectoryNotEmptyException)
-            {
-                LOGGER.Warn($"Could not recycle {folderName} as we got a DirectoryNotEmptyException");
-            }
-            catch (OperationCanceledException)
-            {
-                LOGGER.Info($"Could not recycle {folderName} as we got a OperationCanceledException");
-            }
-            catch (System.IO.IOException i)
-            {
-                LOGGER.Warn($"Could not find {folderName} as we got a OperationCanceledException: {i.Message}");
-            }
-        }
-
-
-
         private static bool CanRemove(string folderName)
         {
             if (!Directory.Exists(folderName))

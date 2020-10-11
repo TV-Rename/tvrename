@@ -36,19 +36,14 @@ namespace TVRename.Forms.ShowPreferences
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-              SetDirectory();
-                DialogResult = DialogResult.OK;
-                Close();
+             SetDirectory();
+             DialogResult = DialogResult.OK;
+             Close();
         }
 
         private void SetDirectory()
         {
             DirectoryFullPath = cbDirectory.Text + txtShowFolder.Text;
-        }
-
-        private void cbDirectory_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }

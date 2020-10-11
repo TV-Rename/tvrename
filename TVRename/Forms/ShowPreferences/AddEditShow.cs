@@ -762,7 +762,6 @@ namespace TVRename
 
         private void txtSeasonFormat_TextChanged(object sender, EventArgs e)
         {
-
         }
     }
 }
