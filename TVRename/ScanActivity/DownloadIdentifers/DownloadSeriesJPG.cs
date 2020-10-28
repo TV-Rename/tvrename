@@ -6,7 +6,7 @@ namespace TVRename
     internal sealed class DownloadSeriesJpg : DownloadIdentifier
     {
         private List<string> doneJpg = new List<string>();
-        private const string DEFAULT_FILE_NAME = "cachedSeries.jpg";
+        private const string DEFAULT_FILE_NAME = "series.jpg";
 
         public override DownloadType GetDownloadType() => DownloadType.downloadImage;
 

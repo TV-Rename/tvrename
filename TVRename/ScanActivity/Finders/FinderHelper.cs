@@ -200,6 +200,37 @@ namespace TVRename
             return true;
         }
 
+        public static bool FileNeeded(FileInfo fi, MovieConfiguration si, DirFilesCache dfc)
+        {
+            return MovieNeeded(si, dfc, fi);
+        }
+
+        private static bool MovieNeeded(MovieConfiguration si, DirFilesCache dfc, FileInfo fi)
+        {
+            if (fi is null)
+            {
+                throw new ArgumentNullException(nameof(fi));
+            }
+
+            if (si is null)
+            {
+                throw new ArgumentNullException(nameof(si));
+            }
+
+            foreach (FileInfo testFileInfo in FindMovieOnDisk(dfc, si))
+            {
+                //We will check that the file that is found is not the one we are testing
+                if (fi.FullName == testFileInfo.FullName)
+                {
+                    continue;
+                }
+
+                //We have found another file that matches
+                return false;
+            }
+            return true;
+        }
+
         public static bool FileNeeded(DirectoryInfo? di, ShowConfiguration? si, DirFilesCache dfc)
         {
             if (di is null)
@@ -219,6 +250,48 @@ namespace TVRename
 
             //We may need the file
             return true;
+        }
+
+        public static bool FileNeeded(DirectoryInfo? di, MovieConfiguration? si, DirFilesCache dfc)
+        {
+            if (di is null)
+            {
+                throw new ArgumentNullException(nameof(di));
+            }
+
+            if (si is null)
+            {
+                throw new ArgumentNullException(nameof(si));
+            }
+
+            foreach (FileInfo testFileInfo in FindMovieOnDisk(dfc, si))
+            {
+                //We will check that the file that is found is not the one we are testing
+                if (di.FullName == testFileInfo.FullName)
+                {
+                    continue;
+                }
+
+                //We have found another file that matches
+                return false;
+            }
+            return true;
+        }
+
+        public static IEnumerable<FileInfo> FindMovieOnDisk(this DirFilesCache cache, MovieConfiguration si)
+        {
+            List<FileInfo> ret = new List<FileInfo>();
+
+            foreach (FileInfo fiTemp in si.Locations
+                .Select(cache.GetFiles)
+                .SelectMany(files => files.Where(fiTemp => fiTemp.IsMovieFile())))
+            {
+                {
+                    ret.Add(fiTemp);
+                }
+            }
+
+            return ret;
         }
 
         [NotNull]
@@ -466,11 +539,20 @@ namespace TVRename
             return hint2;
         }
 
-        public static bool BetterShowsMatch(FileInfo matchedFile, ShowConfiguration currentlyMatchedShow, bool useFullPath, [NotNull] TVDoc doc)
+        public static bool BetterShowsMatch(FileInfo matchedFile, MediaConfiguration currentlyMatchedShow,
+            bool useFullPath, [NotNull] TVDoc doc)
         {
-            return doc.TvLibrary.Shows
+            if (currentlyMatchedShow is ShowConfiguration currentlyMatchedTvShow)
+            {
+                return doc.TvLibrary.Shows
+                    .Where(item => item.NameMatch(matchedFile, useFullPath))
+                    .Where(item => item.TvdbCode != currentlyMatchedTvShow.TvdbCode)//todo - remove TVDB Dependency
+                    .Any(testShow => testShow.ShowName.Contains(currentlyMatchedTvShow.ShowName));
+            }
+
+            return doc.FilmLibrary.Movies
                 .Where(item => item.NameMatch(matchedFile, useFullPath))
-                .Where(item => item.TvdbCode != currentlyMatchedShow.TvdbCode)
+                .Where(item => item.TmdbCode != currentlyMatchedShow.TmdbCode)//todo - remove TMDB Dependency
                 .Any(testShow => testShow.ShowName.Contains(currentlyMatchedShow.ShowName));
         }
 
@@ -521,6 +603,11 @@ namespace TVRename
         }
 
         private static bool LookForSeries(string test, [NotNull] IEnumerable<ShowConfiguration> shows)
+        {
+            return shows.Any(si => si.NameMatch(test));
+        }
+
+        private static bool LookForMovies(string test, [NotNull] IEnumerable<MovieConfiguration> shows)
         {
             return shows.Any(si => si.NameMatch(test));
         }
@@ -576,7 +663,7 @@ namespace TVRename
                 if (TVSettings.Instance.LibraryFolders.Count == 0)
                 {
                     MessageBox.Show(
-                        "Please add some monitor (library) folders under 'Bulk Add Shows' to use the 'Auto Add' functionity (Alternatively you can add them or turn it off in settings).",
+                        "Please add some monitor (library) folders under 'Bulk Add Shows' to use the 'Auto Add' functionality (Alternatively you can add them or turn it off in settings).",
                         "Can't Auto Add Show", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                     continue;
@@ -586,7 +673,7 @@ namespace TVRename
                 Logger.Info($"Auto Adding New Show for '{refinedHint}'");
 
                 //popup dialog
-                AutoAddShow askForMatch = new AutoAddShow(refinedHint,hint);
+                AutoAddShow askForMatch = new AutoAddShow(refinedHint,hint, TVSettings.Instance.LibraryFolders,MediaConfiguration.MediaType.tv);
                
                 owner.ShowChildDialog(askForMatch);
                 DialogResult dr = askForMatch.DialogResult;
@@ -617,7 +704,95 @@ namespace TVRename
             return addedShows;
         }
 
+        [NotNull]
+        public static List<MovieConfiguration> FindMovies([NotNull] IEnumerable<string> possibleShowNames, TVDoc doc, IDialogParent owner)
+        {
+            List<MovieConfiguration> addedShows = new List<MovieConfiguration>();
+
+            foreach (string hint in possibleShowNames)
+            {
+                //if hint doesn't match existing added shows
+                if (LookForMovies(hint, addedShows))
+                {
+                    Logger.Info($"Ignoring {hint} as it matches existing movies.");
+                    continue;
+                }
+
+                //If the hint contains certain terms then we'll ignore it - reconsider this TODO
+                //if (IgnoreHint(hint))
+                {
+                    //Logger.Info($"Ignoring {hint} as it is in the ignore list (from Settings).");
+                    //continue;
+                }
+
+                //If the hint contains certain terms then we'll ignore it
+                if (TVSettings.Instance.IgnoredAutoAddHints.Contains(hint))
+                {
+                    Logger.Info(
+                        $"Ignoring {hint} as it is in the list of ignored terms the user has selected to ignore from prior Auto Adds.");
+
+                    continue;
+                }
+
+                //Remove any (nnnn) in the hint - probably a year
+                string refinedHint = Regex.Replace(hint, @"\(\d{4}\)", "");
+
+                //Remove anything we can from hint to make it cleaner and hence more likely to match
+                refinedHint = RemoveSeriesEpisodeIndicators(refinedHint, doc.TvLibrary.SeasonWords());
+
+                if (string.IsNullOrWhiteSpace(refinedHint))
+                {
+                    Logger.Info($"Ignoring {hint} as it refines to nothing.");
+                    continue;
+                }
+
+                //If there are no LibraryFolders then we cant use the simplified UI
+                if (TVSettings.Instance.LibraryFolders.Count == 0)
+                {
+                    MessageBox.Show(
+                        "Please add some monitor (library) folders under 'Bulk Add Shows' to use the 'Auto Add' functionality (Alternatively you can add them or turn it off in settings).",
+                        "Can't Auto Add Show", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    continue;
+                }
+
+                Logger.Info("****************");
+                Logger.Info($"Auto Adding New Movie for '{refinedHint}'");
+
+                //popup dialog
+                AutoAddShow askForMatch = new AutoAddShow(refinedHint, hint, TVSettings.Instance.MovieLibraryFolders,MediaConfiguration.MediaType.movie);
+
+                owner.ShowChildDialog(askForMatch);
+                DialogResult dr = askForMatch.DialogResult;
+                askForMatch.Dispose();
+
+                if (dr == DialogResult.OK)
+                {
+                    //If added add show to collection
+                    addedShows.Add(askForMatch.MovieConfiguration);
+                    doc.Stats().AutoAddedMovies++;
+                }
+                else if (dr == DialogResult.Abort)
+                {
+                    Logger.Info("Skippng Auto Add Process");
+                    break;
+                }
+                else if (dr == DialogResult.Ignore)
+                {
+                    Logger.Info($"Permenantly Ignoring 'Auto Add' for: {hint}");
+                    TVSettings.Instance.IgnoredAutoAddHints.Add(hint);
+                }
+                else
+                {
+                    Logger.Info($"Cancelled Auto adding new movie {hint}");
+                }
+            }
+
+            return addedShows;
+        }
+
         public static ShowConfiguration? FindBestMatchingShow([NotNull] FileInfo fi, [NotNull] IEnumerable<ShowConfiguration> shows) => FindBestMatchingShow(fi.Name, shows);
+        public static MovieConfiguration? FindBestMatchingMovie([NotNull] FileInfo fi, [NotNull] IEnumerable<MovieConfiguration> shows) => FindBestMatchingShow(fi.Name, shows);
 
         public static ShowConfiguration? FindBestMatchingShow(string filename, [NotNull] IEnumerable<ShowConfiguration> shows)
         {
@@ -637,6 +812,24 @@ namespace TVRename
             return otherMatchingShows.OrderByDescending(s => s.ShowName.Length).FirstOrDefault();
         }
 
+        public static MovieConfiguration? FindBestMatchingShow(string filename, [NotNull] IEnumerable<MovieConfiguration> shows)
+        {
+            IEnumerable<MovieConfiguration> showItems = shows as MovieConfiguration[] ?? shows.ToArray();
+
+            IEnumerable<MovieConfiguration> showsMatchAtStart = showItems
+                .Where(item => FileHelper.SimplifyAndCheckFilenameAtStart(filename, item.ShowName));
+
+            IEnumerable<MovieConfiguration> matchAtStart = showsMatchAtStart as MovieConfiguration[] ?? showsMatchAtStart.ToArray();
+
+            if (matchAtStart.Any())
+            {
+                return matchAtStart.OrderByDescending(s => s.ShowName.Length).First();
+            }
+
+            IEnumerable<MovieConfiguration> otherMatchingShows = FindMatchingShows(filename, showItems);
+            return otherMatchingShows.OrderByDescending(s => s.ShowName.Length).FirstOrDefault();
+        }
+
         [NotNull]
         public static IEnumerable<ShowConfiguration> FindMatchingShows([NotNull] FileInfo fi, [NotNull] IEnumerable<ShowConfiguration> sil)
         {
@@ -648,7 +841,10 @@ namespace TVRename
         {
             return sil.Where(item => item.NameMatch(filename));
         }
-
+        public static IEnumerable<MovieConfiguration> FindMatchingShows(string filename, [NotNull] IEnumerable<MovieConfiguration> sil)
+        {
+            return sil.Where(item => item.NameMatch(filename));
+        }
         public static FileInfo GenerateTargetName(ItemMissing mi, FileInfo from)
         {
             if (mi.DoRename && TVSettings.Instance.RenameCheck)

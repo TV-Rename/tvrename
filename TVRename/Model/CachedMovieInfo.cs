@@ -30,20 +30,15 @@ namespace TVRename
 
         public int? Year => FirstAired?.Year;
 
+        public string? FanartUrl;
+        public string? TrailerUrl;
+
         // note: "SeriesID" in a <Series> is the tv.com code,
         // "seriesid" in an <Episode> is the tvdb code!
 
         public CachedMovieInfo()
         {
-            Actors = new List<Actor>();
-            Aliases = new List<string>();
-            Genres = new List<string>();
-            Dirty = false;
             Name = string.Empty;
-            TvdbCode = -1;
-            TvMazeCode = -1;
-            TmdbCode = -1;
-            TvRageCode = 0;
             LanguageId = -1;
             Status = "Unknown";
         }
@@ -122,6 +117,8 @@ namespace TVRename
             Type = ChooseBetter(Type, useNewDataOverOld, o.Type);
             Overview = ChooseBetter(Overview, useNewDataOverOld, o.Overview);
             PosterUrl = ChooseBetter(PosterUrl, useNewDataOverOld, o.PosterUrl);
+            FanartUrl = ChooseBetter(FanartUrl, useNewDataOverOld, o.FanartUrl);
+            TrailerUrl = ChooseBetter(TrailerUrl, useNewDataOverOld, o.TrailerUrl);
             Network = ChooseBetter(Network, useNewDataOverOld, o.Network);
             Runtime = ChooseBetter(Runtime, useNewDataOverOld, o.Runtime);
             SeriesId = ChooseBetter(SeriesId, useNewDataOverOld, o.SeriesId);
@@ -213,6 +210,8 @@ namespace TVRename
                 TagLine = seriesXml.ExtractStringOrNull("TagLine") ;
     
                 PosterUrl = seriesXml.ExtractString("posterURL");
+                TrailerUrl = seriesXml.ExtractString("TrailerUrl");
+                FanartUrl = seriesXml.ExtractString("FanartUrl");
                 Imdb = seriesXml.ExtractStringOrNull("imdbId") ?? seriesXml.ExtractString("IMDB_ID");
                 WebUrl = seriesXml.ExtractString("WebURL");
                 OfficialUrl = seriesXml.ExtractString("OfficialUrl");
@@ -299,6 +298,8 @@ namespace TVRename
             writer.WriteElement("FacebookId", FacebookId);
             writer.WriteElement("TagLine", TagLine);
             writer.WriteElement("posterURL", PosterUrl);
+            writer.WriteElement("FanartUrl", FanartUrl);
+            writer.WriteElement("TrailerUrl", TrailerUrl);
             writer.WriteElement("WebURL", WebUrl);
             writer.WriteElement("OfficialUrl", OfficialUrl);
             writer.WriteElement("ShowLanguage", ShowLanguage);
@@ -346,3 +347,4 @@ namespace TVRename
         }
     }
 }
+

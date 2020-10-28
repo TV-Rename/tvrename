@@ -19,7 +19,19 @@ namespace TVRename
     /// <summary>
     /// Summary for TheTVDBCodeFinder
     /// </summary>
-    public partial class TheTvdbCodeFinder : UserControl
+
+    public abstract class CodeFinder : UserControl
+    {
+        public abstract void SetHint(string hint);
+
+        public abstract event EventHandler<EventArgs>? SelectionChanged;
+
+        public abstract CachedSeriesInfo? SelectedShow();
+        public abstract CachedMovieInfo? SelectedMovie();
+
+        public abstract int SelectedCode();
+    }
+    public partial class TheTvdbCodeFinder : CodeFinder
     {
         private bool mInternal;
 
@@ -39,9 +51,9 @@ namespace TVRename
             }
         }
 
-        public event EventHandler? SelectionChanged;
+        public override event EventHandler<EventArgs>? SelectionChanged;
 
-        public void SetHint(string s)
+        public override void SetHint(string s)
         {
             mInternal = true;
             txtFindThis.Text = s;
@@ -50,7 +62,9 @@ namespace TVRename
             DoFind(true);
         }
 
-        public int SelectedCode()
+        public override CachedMovieInfo? SelectedMovie() => throw new NotImplementedException();
+
+        public override int SelectedCode()
         {
             try
             {
@@ -64,7 +78,7 @@ namespace TVRename
             }
         }
 
-        public CachedSeriesInfo? SelectedShow()
+        public override CachedSeriesInfo? SelectedShow()
         {
             try
             {

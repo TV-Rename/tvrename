@@ -41,9 +41,13 @@ namespace TVRename
                 {
                     WriteEpisodeXml();
                 }
-                else  // show overview (Series.xml)
+                else  if (SelectedShow !=null)// show overview (Series.xml)
                 {
                     WriteSeriesXml();
+                }
+                else if (Movie != null)// show overview (Series.xml)
+                {
+                    //WriteMovieXml(); TODO Mede8er support for movies
                 }
 
                 return ActionOutcome.Success();
@@ -162,7 +166,7 @@ namespace TVRename
                 // http://www.xbmc.org/wiki/?title=Import_-_Export_Library#TV_Shows
                 writer.WriteStartElement("details");
                 writer.WriteStartElement("movie");
-                writer.WriteElement("title", SelectedShow.ShowName);
+                writer.WriteElement("title", SelectedShow!.ShowName);
 
                 writer.WriteStartElement("genres");
                 string genre = string.Join(" / ", SelectedShow.CachedShow?.Genres ?? new List<string>());

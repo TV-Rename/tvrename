@@ -144,7 +144,10 @@ namespace TVRename
         private void CheckFolderForShows([NotNull] DirectoryInfo di, CancellationToken token, BackgroundWorker bw, bool fullLogging, bool showErrorMsgBox)
         {
             int percentComplete = (int)(100.0 / CurrentPhaseTotal * ((1.0 * CurrentPhase) + (1.0 * CurrentPhaseDirectory / CurrentPhaseTotalDirectory)));
-
+            if (percentComplete > 100)
+            {
+                percentComplete = 100;
+            }
             bw.ReportProgress(percentComplete,di.Name);
             if (!di.Exists)
             {
@@ -210,7 +213,6 @@ namespace TVRename
             string matchingRoot = TVSettings.Instance.MovieLibraryFolders.FirstOrDefault(s =>  ai.MovieFile.Directory.FullName.IsSubfolderOf(s));
             bool isInLibraryFolderFileFinder = matchingRoot.HasValue();
 
-
             // see if there is a matching show item
             MovieConfiguration found = mDoc.FilmLibrary.GetMovie(ai);
             if (found is null)
@@ -221,11 +223,14 @@ namespace TVRename
 
             //We are updating an existing record
 
+            string targetDirectoryName = CustomMovieName.NameFor(found, TVSettings.Instance.MovieFolderFormat);
             bool inDefaultPath = ai.MovieFile.Directory.Name.Equals(
-                CustomMovieName.NameFor(found, TVSettings.Instance.MovieFolderFormat),
+                targetDirectoryName,
                 StringComparison.CurrentCultureIgnoreCase);
 
-            if (inDefaultPath && isInLibraryFolderFileFinder)
+            bool existingLocationIsDefaultToo = found.UseAutomaticFolders && found.AutomaticFolderRoot.In(TVSettings.Instance.MovieLibraryFolders.ToArray());
+
+            if (inDefaultPath && isInLibraryFolderFileFinder && !existingLocationIsDefaultToo)
             {
                 found.UseAutomaticFolders = true;
                 found.UseCustomFolderNameFormat = false;
@@ -236,7 +241,7 @@ namespace TVRename
 
             //we have an existing record that we need to add manual folders to
 
-            if (isInLibraryFolderFileFinder)
+            if (isInLibraryFolderFileFinder && !found.AutomaticFolderRoot.HasValue())
             {
                 //Probably in the library
                 found.AutomaticFolderRoot = matchingRoot!;

@@ -57,7 +57,7 @@ namespace TVRename
                     LOGGER.Info(
                         $"Adding {rss.URL} from RSS feed as it appears to be match for {pe.Show.ShowName} {pe}");
 
-                    newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action.TheFileNoExt, pe, action));
+                    newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action.TheFileNoExt, action));
                     toRemove.Add(action);
                 }
 

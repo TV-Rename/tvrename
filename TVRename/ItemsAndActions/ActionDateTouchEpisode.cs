@@ -1,60 +1,17 @@
 using System;
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
-    internal class ActionDateTouchEpisode : ActionDateTouch
+    internal class ActionDateTouchEpisode : ActionDateTouchFile
     {
-        public ActionDateTouchEpisode(FileInfo f, ProcessedEpisode pe, DateTime date):base(date)
+        public ActionDateTouchEpisode(FileInfo f, ProcessedEpisode pe, DateTime date) : base(f,date)
         {
             Episode = pe;
-            whereFile = f;
         }
-        private readonly FileInfo whereFile;
-        public override string Produces => whereFile.FullName;
-        public override string ProgressText => whereFile.Name;
-        public override IgnoreItem Ignore => new IgnoreItem(whereFile.FullName);
-        public override string? DestinationFolder => whereFile.DirectoryName;
-        public override string? DestinationFile => whereFile.Name;
-        public override string? TargetFolder => whereFile.DirectoryName;
-
         public override bool SameAs(Item o)
         {
-            return o is ActionDateTouchEpisode touch && touch.whereFile == whereFile;
-        }
-
-        public override ActionOutcome Go(TVRenameStats stats)
-        {
-            try
-            {
-                ProcessFile(whereFile, UpdateTime);
-            }
-            catch (UnauthorizedAccessException uae)
-            {
-                return new ActionOutcome(uae);
-            }
-            catch (Exception e)
-            {
-                return new ActionOutcome(e);
-            }
-
-            return ActionOutcome.Success();
-        }
-
-        private static void ProcessFile([NotNull] FileInfo whereFile, DateTime updateTime)
-        {
-            bool priorFileReadonly = whereFile.IsReadOnly;
-            if (priorFileReadonly)
-            {
-                whereFile.IsReadOnly = false;
-            }
-
-            File.SetLastWriteTimeUtc(whereFile.FullName, updateTime);
-            if (priorFileReadonly)
-            {
-                whereFile.IsReadOnly = true;
-            }
+            return o is ActionDateTouchEpisode touch && touch.WhereFile == WhereFile;
         }
 
         public override int CompareTo(object? o)
@@ -74,7 +31,7 @@ namespace TVRename
                 return -1;
             }
 
-            return string.Compare(whereFile.FullName + Episode.Name, nfo.whereFile.FullName + nfo.Episode.Name, StringComparison.Ordinal);
+            return string.Compare(WhereFile.FullName + Episode.Name, nfo.WhereFile.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
     }
 }

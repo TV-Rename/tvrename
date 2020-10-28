@@ -22,6 +22,16 @@ namespace TVRename
         public string CustomNamingFormat;
         public bool UseCustomNamingFormat;
 
+        public MovieFolderFormat Format;
+
+        public enum MovieFolderFormat
+        {
+            singleDirectorySingleFile,
+            singleDirectoryMultiFile,
+            multiPerDirectory,
+            cd,
+            dvd
+        }
 
         public MovieConfiguration()
         {
@@ -43,6 +53,7 @@ namespace TVRename
             TVmazeCode = -1;
             TmdbCode = -1;
 
+            Format = TVSettings.Instance.DefMovieFolderFormat;
             DoRename = TVSettings.Instance.DefMovieDoRenaming;
             DoMissingCheck = TVSettings.Instance.DefMovieDoMissingCheck;
             UseAutomaticFolders = TVSettings.Instance.DefMovieUseutomaticFolders;

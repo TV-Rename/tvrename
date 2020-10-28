@@ -44,11 +44,12 @@ namespace TVRename
         [NotNull]
         public ItemList ProcessMovie(MovieConfiguration? si, FileInfo filo)
         {
-            ItemList theActionList = new ItemList();
             if (si is null)
             {
-                return theActionList;
+                return new ItemList();
             }
+
+            ItemList theActionList = new ItemList();
 
             foreach (DownloadIdentifier di in identifiers)
             {

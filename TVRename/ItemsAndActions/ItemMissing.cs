@@ -19,18 +19,18 @@ namespace TVRename
         public string Filename;
         protected string Folder;
 
-
         public override string DestinationFile => Filename;
         public override string ScanListViewGroup => "lvgActionMissing";
-
         public override string DestinationFolder => Folder;
         public override string TargetFolder => new FileInfo(TheFileNoExt).DirectoryName;
-
         public override int IconNumber => 1;
-
         public abstract bool DoRename { get; }
+        public abstract MediaConfiguration Show { get; }
         public override IgnoreItem? Ignore => GenerateIgnore(TheFileNoExt);
-
+        public void AddComment(string p0)
+        {
+            ErrorText += p0;
+        }
     }
 
     public class ShowItemMissing : ItemMissing
@@ -48,9 +48,8 @@ namespace TVRename
 
         public override bool SameAs(Item o)
         {
-            return o is ItemMissing missing && string.CompareOrdinal(missing.TheFileNoExt, TheFileNoExt) == 0;
+            return o is ShowItemMissing missing && string.CompareOrdinal(missing.TheFileNoExt, TheFileNoExt) == 0;
         }
-
        
         public override string Name => "Missing Episode";
 
@@ -76,13 +75,10 @@ namespace TVRename
 
         #endregion
 
-
-        public void AddComment(string p0)
-        {
-            ErrorText += p0;
-        }
-
         public override bool DoRename => Episode?.Show.DoRename ?? true;
+
+        public override MediaConfiguration Show => MissingEpisode.Show;
+        public override string ToString() => $"{Show.ShowName} {MissingEpisode}";
     }
 
     public class MovieItemMissing : ItemMissing
@@ -96,7 +92,6 @@ namespace TVRename
             Movie = movie;
         }
         #region Item Members
-
 
         public override bool SameAs(Item o)
         {
@@ -115,14 +110,11 @@ namespace TVRename
             return String.Compare(TheFileNoExt, miss.TheFileNoExt, StringComparison.Ordinal);
         }
 
-        #endregion
-
-        #region Item Members
-
         public MovieConfiguration MovieConfig => Movie ?? throw new InvalidOperationException();
         #endregion
 
         public override bool DoRename => MovieConfig.DoRename;
+        public override MediaConfiguration Show => MovieConfig;
+        public override string ToString() => $"{MovieConfig.ShowName}";
     }
-
 }

@@ -31,7 +31,7 @@ namespace TVRename
             int c = ActionList.Missing.Count + 2;
             int n = 1;
             UpdateStatus(n, c, "Searching torrent queue...");
-            foreach (ShowItemMissing action in ActionList.MissingEpisodes.ToList())
+            foreach (var action in ActionList.Missing.ToList())
             {
                 if (settings.Token.IsCancellationRequested)
                 {
@@ -48,18 +48,41 @@ namespace TVRename
                         continue;
                     }
 
-                    //do any of the possible names for the cachedSeries match the filename?
-                    bool matched = action.MissingEpisode.Show.NameMatch(file,true);
-
-                    if (!matched)
+                    if (action is ShowItemMissing showMissingAction)
                     {
-                        continue;
+                        //do any of the possible names for the cachedSeries match the filename?
+                        ProcessedEpisode episode = showMissingAction.MissingEpisode;
+                        bool matched = episode.Show.NameMatch(file, true);
+
+                        if (!matched)
+                        {
+                            continue;
+                        }
+
+                        if (FinderHelper.FindSeasEp(file, out int seasF, out int epF, out int _,
+                                episode.Show) && seasF == episode.AppropriateSeasonNumber &&
+                            epF == episode.AppropriateEpNum)
+                        {
+                            toRemove.Add(action);
+                            newList.Add(new ItemDownloading(te, episode, action.TheFileNoExt, tApp));
+                            break;
+                        }
                     }
 
-                    if (FinderHelper.FindSeasEp(file, out int seasF, out int epF, out int _, action.MissingEpisode.Show) && seasF == action.MissingEpisode.AppropriateSeasonNumber && epF == action.MissingEpisode.AppropriateEpNum)
+                    if (action is MovieItemMissing movieMissingAction)
                     {
+                        //do any of the possible names for the cachedSeries match the filename?
+                        MovieConfiguration movie = movieMissingAction.MovieConfig;
+                        bool matched = movie.NameMatch(file, true);
+
+                        if (!matched)
+                        {
+                            continue;
+                        }
+
+
                         toRemove.Add(action);
-                        newList.Add(new ItemDownloading(te, action.MissingEpisode, action.TheFileNoExt, tApp));
+                        newList.Add(new ItemDownloading(te, movie, action.TheFileNoExt, tApp));
                         break;
                     }
                 }

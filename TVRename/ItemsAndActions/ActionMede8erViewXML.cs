@@ -79,7 +79,7 @@ namespace TVRename
 
         #region Item Members
 
-        public override string SeriesName => SelectedShow.ShowName;
+        public override string SeriesName => SelectedShow?.ShowName??Movie!.ShowName;
         public override string SeasonNumber => snum > 0 ? snum.ToString() : string.Empty;
         public override string EpisodeString => string.Empty;
         public override string AirDateString => string.Empty;

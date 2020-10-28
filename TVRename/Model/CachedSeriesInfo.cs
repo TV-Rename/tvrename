@@ -84,17 +84,10 @@ namespace TVRename
         public CachedSeriesInfo()
         {
             sourceEpisodes = new ConcurrentDictionary<int, Episode>();
-            Actors = new List<Actor>();
-            Aliases = new List<string>();
-            Genres = new List<string>();
-            Dirty = false;
-            Name = string.Empty;
             AirsTime = null;
-            TvdbCode = -1;
-            TvMazeCode = -1;
-            TvRageCode = 0;
             LanguageId = -1;
             Status = "Unknown";
+
             banners = new SeriesBanners(this);
             banners.ResetBanners();
             BannersLoaded = false;

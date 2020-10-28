@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using JetBrains.Annotations;
+using TVRename.Forms.ShowPreferences;
 
 namespace TVRename.Forms
 {
@@ -25,7 +26,7 @@ namespace TVRename.Forms
         // ReSharper disable once InconsistentNaming
         private void UpdateUI()
         {
-            if (chkRemoveCompleted.Checked && !chkRemoveCompleted.Checked)
+            if (chkRemoveCompleted.Checked && !chkRemoveFuture.Checked)
             {
                 var incompleteCollections = collectionMovies.GroupBy(member => member.CollectionName)
                     .Where(members => members.Any(x => !x.IsInLibrary)).Select(members => members.Key).ToList();
@@ -37,7 +38,7 @@ namespace TVRename.Forms
                 return;
             }
 
-            if (!chkRemoveCompleted.Checked && !chkRemoveCompleted.Checked)
+            if (!chkRemoveCompleted.Checked && !chkRemoveFuture.Checked)
             {
                 olvCollections.SetObjects(collectionMovies);
                 return;
@@ -47,7 +48,7 @@ namespace TVRename.Forms
 
             {
                 var historicCollectionMovies =
-                    collectionMovies.Where(m => m.ReleaseDate.HasValue && m.ReleaseDate.Value < DateTime.Now);
+                    collectionMovies.Where(m => m.ReleaseDate.HasValue && m.ReleaseDate.Value < DateTime.Now && m.MovieYear.HasValue);
 
                 if (!chkRemoveCompleted.Checked)
                 {
@@ -60,7 +61,11 @@ namespace TVRename.Forms
                     .Where(members => members.Any(x => !x.IsInLibrary)).Select(members => members.Key).ToList();
 
                 List<CollectionMember> incompleteHistCollectionMovies =
-                    collectionMovies.Where(member => incompleteHistCollections.Contains(member.CollectionName)).ToList();
+                    collectionMovies
+                        .Where(member => incompleteHistCollections.Contains(member.CollectionName))
+                        .Where(m => m.ReleaseDate.HasValue && m.ReleaseDate.Value < DateTime.Now && m.MovieYear.HasValue)
+                        .ToList();
+
                 olvCollections.SetObjects(incompleteHistCollectionMovies);
 
             }
@@ -147,7 +152,6 @@ namespace TVRename.Forms
             CollectionMember mlastSelected = (CollectionMember) e.Model;
 
             possibleMergedEpisodeRightClickMenu.Items.Clear();
-
             
             if (mlastSelected.IsInLibrary)
             {
@@ -168,17 +172,23 @@ namespace TVRename.Forms
 
         private void AddToLibrary(CachedMovieInfo si)
         {
+            // need to add a new showitem
+            var found = new MovieConfiguration(si.TmdbCode,TVDoc.ProviderType.TMDB);
+            QuickLocateForm f = new QuickLocateForm(si.Name, MediaConfiguration.MediaType.movie);
 
-                // need to add a new showitem
-                var found = new MovieConfiguration(si.TmdbCode,TVDoc.ProviderType.TMDB);
-                ///TODO put UI to get folder
-            mDoc.Add(found);
+            if (f.ShowDialog(this) == DialogResult.OK)
+            {
+                if (f.RootDirectory.HasValue())
+                {
+                    found.AutomaticFolderRoot = f.RootDirectory!;
+                    found.UseAutomaticFolders = true;
+                }
 
-                
-
-            mDoc.SetDirty();
-        mDoc.ExportMovieInfo();
-        
+                ///TODO put UI to get folder - check they have not adjusted path - if so add as manual folders
+                mDoc.Add(found);
+                mDoc.SetDirty();
+                mDoc.ExportMovieInfo();
+            }
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)

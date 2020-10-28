@@ -553,14 +553,35 @@ namespace TVRename
 
         private void UpdateSearchButtons()
         {
-            string name = TVDoc.GetSearchers().CurrentSearch.Name;
-            bool enabled = name.HasValue();
+            Searchers searchers = GetUsedSearchers();
+            string name = searchers.CurrentSearch.Name;
+            bool enabled = name.HasValue() && searchers.Count>0;
+
+            btnScheduleBTSearch.Enabled = enabled;
+            btnScheduleBTSearch.Text = UseCustom(lvWhenToWatch) ? "Search" : name;
 
             btnActionBTSearch.Enabled = enabled;
-            btnScheduleBTSearch.Enabled = enabled;
-
-            btnScheduleBTSearch.Text = UseCustom(lvWhenToWatch) ? "Search" : name;
             btnActionBTSearch.Text = UseCustomObject(olvAction) ? "Search" : name;
+        }
+
+        private Searchers GetUsedSearchers()
+        {
+            bool usingScanResults = tabControl1.SelectedTab == tbAllInOne;
+            bool haveTvSelected = !usingScanResults || GetSelectedObjectType(olvAction) == MediaConfiguration.MediaType.tv;
+
+            var searchers = haveTvSelected ? TVDoc.GetSearchers() : TVDoc.GetMovieSearchers();
+            return searchers;
+        }
+
+        private MediaConfiguration.MediaType GetSelectedObjectType(ObjectListView list)
+        {
+            if (list.SelectedObjects.Count == list.SelectedObjects.OfType<MovieConfiguration>().Count())
+                return MediaConfiguration.MediaType.movie;
+
+            if (list.SelectedObjects.Count == list.SelectedObjects.OfType<ProcessedEpisode>().Count())
+                return MediaConfiguration.MediaType.tv;
+
+            return MediaConfiguration.MediaType.both;
         }
 
         private void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs eventArgs) =>
@@ -570,27 +591,8 @@ namespace TVRename
 
         private static bool UseCustomObject([NotNull] ObjectListView view)
         {
-            foreach (object rowObject in view.SelectedObjects)
-            {
-                if (!(rowObject is ProcessedEpisode pe))
-                {
-                    continue;
-                }
-
-                if (!pe.Show.UseCustomSearchUrl)
-                {
-                    continue;
-                }
-
-                if (string.IsNullOrWhiteSpace(pe.Show.CustomSearchUrl))
-                {
-                    continue;
-                }
-
-                return true;
-            }
-
-            return false;
+            return view.SelectedObjects.OfType<ProcessedEpisode>().Any(episode =>
+                episode.Show.UseCustomSearchUrl && episode.Show.CustomSearchUrl.HasValue());
         }
 
         private static bool UseCustom([NotNull] ListView view)
@@ -732,7 +734,7 @@ namespace TVRename
 
             DialogResult res = MessageBox.Show(
                 "Are you sure you want to remove all " +
-                "locally stored TheTVDB information?  This information will have to be downloaded again.  You " +
+                "locally stored TheTVDB, TMDB and TV Maze information?  This information will have to be downloaded again.  You " +
                 "can force the refresh of a single show by holding down the \"Control\" key while clicking on " +
                 "the \"Refresh\" button in the \"My Shows\" tab.",
                 "Force Refresh All", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -741,6 +743,7 @@ namespace TVRename
             {
                 TheTVDB.LocalCache.Instance.ForgetEverything();
                 TVmaze.LocalCache.Instance.ForgetEverything();
+                TMDB.LocalCache.Instance.ForgetEverything();
                 FillMyShows();
                 FillMyMovies();
                 FillEpGuideHtml();
@@ -1019,11 +1022,12 @@ namespace TVRename
             }
         }
 
-        private static void ChooseSiteMenu([NotNull] ToolStripSplitButton btn)
+        private void ChooseSiteMenu([NotNull] ToolStripSplitButton btn)
         {
             btn.DropDownItems.Clear();
+            Searchers searchers = GetUsedSearchers();
 
-            foreach (SearchEngine search in TVDoc.GetSearchers().Where(engine => engine.Name.HasValue()))
+            foreach (SearchEngine search in searchers.Where(engine => engine.Name.HasValue()))
             {
                 ToolStripMenuItem tsi = new ToolStripMenuItem(search.Name) {Tag = search};
                 tsi.Font = new Font(tsi.Font.FontFamily,9,FontStyle.Regular);
@@ -1397,7 +1401,15 @@ namespace TVRename
 
         private void menuSearchSites_ItemClicked(object sender, [NotNull] ToolStripItemClickedEventArgs e)
         {
-            mDoc.SetSearcher((SearchEngine) e.ClickedItem.Tag);
+            if (GetUsedSearchers() == TVDoc.GetMovieSearchers())
+            {
+                mDoc.SetMovieSearcher((SearchEngine) e.ClickedItem.Tag);
+            }
+            else
+            {
+                mDoc.SetSearcher((SearchEngine)e.ClickedItem.Tag);
+            }
+
             UpdateSearchButtons();
         }
 
@@ -1815,7 +1827,7 @@ namespace TVRename
 
         private void MenuGuideAndTvdb(bool addSep, ProcessedEpisode? ep, List<ShowConfiguration>? sis, ProcessedSeason? seas)
         {
-            if (sis is null || sis.Count != 1)
+            if (sis is null || sis.Count != 1 || sis[0]==null)
             {
                 return; // nothing or multiple selected
             }
@@ -2042,19 +2054,24 @@ namespace TVRename
 
             List<string> added = new List<string>();
 
+            AddRcMenuItem("Force Refresh", (sender, args) => ForceMovieRefresh(si, false));
+            AddRcMenuItem("Update Images", (sender, args) => UpdateImages(new List<MovieConfiguration>{si}));
 
-            //todo - Add more Right click options
+            showRightClickMenu.Items.Add(new ToolStripSeparator());
 
-            string scanText = "Scan \"" + si.ShowName + "\"";
+            AddRcMenuItem("Edit Movie", (sender, args) => EditMovie(si));
+            AddRcMenuItem("Delete Movie", (sender, args) => DeleteMovie(si));
 
-            AddRcMenuItem(scanText, (sender, args) =>
+            showRightClickMenu.Items.Add(new ToolStripSeparator());
+
+            AddRcMenuItem($"Scan \"{si.ShowName}\"", (sender, args) =>
             {
                 UiScan(null, new List<MovieConfiguration> {si}, false, TVSettings.ScanType.SingleShow,
                     MediaConfiguration.MediaType.movie);
 
                 tabControl1.SelectTab(tbAllInOne);
             });
-
+            
             if (si.Locations.Any())
             {
                 AddFolders(si.Locations, added);
@@ -2176,6 +2193,10 @@ namespace TVRename
             else if (tabControl1.SelectedTab == tbAllInOne)
             {
                 BtnSearch_ButtonClick(null, null);
+            }
+            else if (tabControl1.SelectedTab == tbMyMovies)
+            {
+                ForceMovieRefresh(false);
             }
             else
             {
@@ -3032,6 +3053,23 @@ namespace TVRename
             FillActionList(false);
         }
 
+        private void UpdateImages(IReadOnlyCollection<MovieConfiguration>? sis)
+        {
+            if (sis == null)
+            {
+                return;
+            }
+
+            foreach (MovieConfiguration si in sis)
+            {
+                //update images for the showitem
+                mDoc.ForceUpdateImages(si);
+            }
+
+            tabControl1.SelectTab(tbAllInOne);
+            FillActionList(false);
+        }
+
         private void bnMyShowsRefresh_Click(object? sender, EventArgs? e)
         {
             if (ModifierKeys == Keys.Control)
@@ -3454,7 +3492,19 @@ namespace TVRename
             {
                 mDoc.TheActionList.NotifyUpdated();
                 olvAction.RebuildColumns();
-                SetCheckboxes();
+                internalCheckChange = true;
+                //olvAction.ItemCheck -= olvAction_ItemCheck;
+                olvAction.BeginUpdate();
+                if (mDoc.TheActionList.Actions.Count <100)
+                {
+                    //TODO WE SHOULD DO THIS ALL THE TIME
+                    olvAction.CheckObjects(mDoc.TheActionList.Actions);
+                }
+                internalCheckChange = false;
+                //olvAction.ItemCheck += olvAction_ItemCheck;
+                UpdateActionCheckboxes();
+                olvAction.EndUpdate();
+                //SetCheckboxes();
             }
             olvAction.RestoreState(oldState);
             olvAction.EndUpdate();
@@ -3519,7 +3569,15 @@ namespace TVRename
                 {
                     return;
                 }
-                GenerateActionRightClickMenu(pt, lvr, action.Episode.Show, action.Episode);
+                GenerateActionRightClickMenu(pt, lvr, action.Episode.Show, action.Episode, null);
+            }
+            else if (action?.Movie != null && lvr.Count == 1)
+            {
+                if (e.Button != MouseButtons.Right)
+                {
+                    return;
+                }
+                GenerateActionRightClickMenu(pt, lvr, null,null, action.Movie);
             }
             else
             {
@@ -3527,10 +3585,10 @@ namespace TVRename
                 {
                     return;
                 }
-                GenerateActionRightClickMenu(pt, lvr, null,null);
+                GenerateActionRightClickMenu(pt, lvr, null,null,null);
             }
         }
-        private void GenerateActionRightClickMenu(Point pt, [NotNull] ItemList lvr, ShowConfiguration? si, ProcessedEpisode? episode)
+        private void GenerateActionRightClickMenu(Point pt, [NotNull] ItemList lvr, ShowConfiguration? si, ProcessedEpisode? episode, MovieConfiguration? movie)
         { 
             if (lvr.Count == 0)
             {
@@ -3559,6 +3617,11 @@ namespace TVRename
                 if (episode != null)
                 {
                     MenuSearchFor(episode);
+                }
+
+                if (movie != null)
+                {
+                    MenuSearchFor(movie);
                 }
 
                 if (lvr.Count == 1) // only one selected
@@ -3604,6 +3667,37 @@ namespace TVRename
                 }
                 ToolStripMenuItem tssi = new ToolStripMenuItem("Jackett Search");
                 tssi.Click += (s, ev) => { JackettFinder.SearchForEpisode(ep); };
+                tsi.DropDownItems.Add(tssi);
+            }
+
+            showRightClickMenu.Items.Add(tsi);
+        }
+
+        private void MenuSearchFor(MovieConfiguration ep)
+        {
+            showRightClickMenu.Items.Add(new ToolStripSeparator());
+
+            ToolStripMenuItem tsi = new ToolStripMenuItem("Search");
+            tsi.Click += (s, ev) => { TVDoc.SearchForMovie(ep); };
+
+            foreach (SearchEngine se in TVDoc.GetMovieSearchers())
+            {
+                if (se.Name.HasValue())
+                {
+                    ToolStripMenuItem tssi = new ToolStripMenuItem(se.Name);
+                    tssi.Click += (s, ev) => { TVDoc.SearchForMovie(se, ep); };
+                    tsi.DropDownItems.Add(tssi);
+                }
+            }
+
+            if (TVSettings.Instance.SearchJackett || TVSettings.Instance.SearchJackettButton)
+            {
+                if (TVDoc.GetMovieSearchers().Any())
+                {
+                    tsi.DropDownItems.Add(new ToolStripSeparator());
+                }
+                ToolStripMenuItem tssi = new ToolStripMenuItem("Jackett Search");
+                tssi.Click += (s, ev) => { JackettFinder.SearchForMovie(ep); };
                 tsi.DropDownItems.Add(tssi);
             }
 
@@ -3730,6 +3824,10 @@ namespace TVRename
                     {
                         TVDoc.SearchForEpisode(miss.Episode);
                     }
+                    if (miss.Movie != null)
+                    {
+                        TVDoc.SearchForMovie(miss.Movie);
+                    }
                 }
                 else
                 {
@@ -3745,6 +3843,10 @@ namespace TVRename
                 if (i?.Episode != null)
                 {
                     TVDoc.SearchForEpisode(i.Episode);
+                }
+                if (i?.Movie != null)
+                {
+                    TVDoc.SearchForMovie(i.Movie);
                 }
             }
         }
@@ -4500,11 +4602,15 @@ namespace TVRename
 
             if (action?.Episode != null && lvr.Count == 1)
             {
-                GenerateActionRightClickMenu(pt, lvr, action.Episode.Show, action.Episode);
+                GenerateActionRightClickMenu(pt, lvr, action.Episode.Show, action.Episode, null);
+            }
+            else if (action?.Movie != null && lvr.Count == 1)
+            {
+                GenerateActionRightClickMenu(pt, lvr, null,null,action.Movie);
             }
             else
             {
-                GenerateActionRightClickMenu(pt, lvr, null, null);
+                GenerateActionRightClickMenu(pt, lvr, null, null, null);
             }
         }
 
@@ -4691,8 +4797,8 @@ namespace TVRename
 
         private void recommendationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            RecommendationView form = new RecommendationView(mDoc, this, mDoc.FilmLibrary.Movies.Take(50));
-            //RecommendationView form = new RecommendationView(mDoc, this, MediaConfiguration.MediaType.movie); todo - revert
+            //RecommendationView form = new RecommendationView(mDoc, this, mDoc.TvLibrary.Shows.Take(50));
+            RecommendationView form = new RecommendationView(mDoc, this, MediaConfiguration.MediaType.tv);
             form.ShowDialog(this);
 
         }
@@ -4705,8 +4811,8 @@ namespace TVRename
 
         private void movieRecommendationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            RecommendationView form = new RecommendationView(mDoc, this, mDoc.TvLibrary.Shows.Take(50));
-            //RecommendationView form = new RecommendationView(mDoc, this, MediaConfiguration.MediaType.tv); todo - revert
+            //RecommendationView form = new RecommendationView(mDoc, this, mDoc.FilmLibrary.Movies.Take(50));
+            RecommendationView form = new RecommendationView(mDoc, this, MediaConfiguration.MediaType.movie); 
             form.ShowDialog(this);
         }
 
@@ -4729,6 +4835,7 @@ namespace TVRename
         private void toolStripButton1_Click_1(object sender, EventArgs e)
         {
             UiScan(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.movie);
+            tabControl1.SelectTab(tbAllInOne);
         }
 
         private void movieSearchEnginesToolStripMenuItem_Click(object sender, EventArgs e)

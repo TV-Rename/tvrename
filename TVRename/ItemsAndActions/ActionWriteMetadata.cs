@@ -13,12 +13,18 @@ namespace TVRename
     public abstract class ActionWriteMetadata : ActionDownload
     {
         protected readonly FileInfo Where;
-        protected readonly ShowConfiguration SelectedShow; // if for an entire show, rather than specific episode
+        protected readonly ShowConfiguration? SelectedShow; // if for an entire show, rather than specific episode
 
         protected ActionWriteMetadata(FileInfo where, ShowConfiguration sI)
         {
             Where = where;
             SelectedShow = sI;
+        }
+
+        protected ActionWriteMetadata(FileInfo where, MovieConfiguration mc)
+        {
+            Where = where;
+            Movie = mc;
         }
 
         public override string Produces => Where.FullName;
@@ -35,7 +41,7 @@ namespace TVRename
 
         public override int IconNumber => 7;
 
-        public override string SeriesName => Episode?.Show.ShowName ?? SelectedShow.ShowName;
+        public override string SeriesName => Episode?.Show.ShowName ?? SelectedShow?.ShowName ?? Movie!.ShowName;
         public override string DestinationFolder => Where.DirectoryName;
         public override string DestinationFile => Where.Name;
     }

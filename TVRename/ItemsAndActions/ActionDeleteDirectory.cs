@@ -24,6 +24,14 @@ namespace TVRename
             toRemove = remove;
         }
 
+        public ActionDeleteDirectory(DirectoryInfo remove, MovieConfiguration mi, TVSettings.TidySettings tidyup)
+        {
+            Tidyup = tidyup;
+            PercentDone = 0;
+            Episode = null;
+            Movie = mi;
+            toRemove = remove;
+        }
         public override string ProgressText => toRemove.Name;
         public override string Produces => toRemove.FullName;
         public override IgnoreItem Ignore => new IgnoreItem(toRemove.FullName);

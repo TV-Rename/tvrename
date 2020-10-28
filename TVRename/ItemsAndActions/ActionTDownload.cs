@@ -36,13 +36,14 @@ namespace TVRename
             Seeders = seeders;
         }
 
-        public ActionTDownload([NotNull] RSSItem rss, string theFileNoExt, ProcessedEpisode? pe, ItemMissing me)
+        public ActionTDownload([NotNull] RSSItem rss, string theFileNoExt, ItemMissing me)
         {
             SourceName = rss.Title;
             url = rss.URL;
             this.theFileNoExt = theFileNoExt;
             UpstreamSource = rss.UpstreamSource;
-            Episode = pe;
+            Episode = me.Episode;
+            Movie = me.Movie;
             UndoItemMissing = me;
             Seeders = rss.Seeders;
             sizeBytes = rss.Bytes;

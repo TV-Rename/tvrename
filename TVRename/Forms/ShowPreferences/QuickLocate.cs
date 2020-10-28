@@ -16,14 +16,14 @@ namespace TVRename.Forms.ShowPreferences
     public partial class QuickLocateForm : Form
     {
         public string? DirectoryFullPath;
-
+        public string? RootDirectory;
         public QuickLocateForm(string hint, MediaConfiguration.MediaType t)
         {
             InitializeComponent();
 
             cbDirectory.SuspendLayout();
             cbDirectory.Items.Clear();
-            List<string> folders = (t == MediaConfiguration.MediaType.movie ?  TVSettings.Instance.LibraryFolders : TVSettings.Instance.MovieLibraryFolders);
+            List<string> folders = (t == MediaConfiguration.MediaType.tv ?  TVSettings.Instance.LibraryFolders : TVSettings.Instance.MovieLibraryFolders);
             foreach (string folder in folders)
             {
                 cbDirectory.Items.Add(folder.TrimEnd(Path.DirectorySeparatorChar.ToString()));
@@ -36,14 +36,11 @@ namespace TVRename.Forms.ShowPreferences
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-             SetDirectory();
-             DialogResult = DialogResult.OK;
-             Close();
-        }
-
-        private void SetDirectory()
-        {
             DirectoryFullPath = cbDirectory.Text + txtShowFolder.Text;
+            RootDirectory = cbDirectory.Text;
+
+            DialogResult = DialogResult.OK;
+             Close();
         }
     }
 }

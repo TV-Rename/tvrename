@@ -23,7 +23,13 @@ namespace TVRename
             Episode = ep;
             toRemove = remove;
         }
-
+        public ActionDeleteFile(FileInfo remove, MovieConfiguration mov, TVSettings.TidySettings? tidyup)
+        {
+            Tidyup = tidyup;
+            PercentDone = 0;
+            Movie = mov;
+            toRemove = remove;
+        }
         public override string ProgressText => toRemove.Name;
         public override string Produces => toRemove.FullName;
         [NotNull]

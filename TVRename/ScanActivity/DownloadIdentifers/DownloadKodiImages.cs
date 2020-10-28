@@ -32,6 +32,59 @@ namespace TVRename
             base.NotifyComplete(file);
         }
 
+        public override ItemList? ProcessMovie(MovieConfiguration movie, FileInfo file, bool forceRefresh)
+        {
+            //If we have KODI New style images being downloaded then we want to check that 3 files exist
+            //for the cachedSeries:
+            //http://wiki.xbmc.org/index.php?title=XBMC_v12_(Frodo)_FAQ#Local_images
+            //poster
+            //banner
+            //fanart
+
+            if (TVSettings.Instance.KODIImages)
+            {
+                ItemList theActionList = new ItemList();
+                string baseFileName = file.MovieFileNameBase();
+
+                FileInfo posterJpg = FileHelper.FileInFolder(file.Directory, baseFileName + "-poster.jpg");
+                FileInfo bannerJpg = FileHelper.FileInFolder(file.Directory, baseFileName + "-banner.jpg");
+                FileInfo fanartJpg = FileHelper.FileInFolder(file.Directory, baseFileName + "-fanart.jpg");
+
+                if ((forceRefresh || !posterJpg.Exists) && !donePosterJpg.Contains(file.Directory.FullName))
+                {
+                    string path = movie.CachedMovie?.PosterUrl;
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        theActionList.Add(new ActionDownloadImage(movie, null, posterJpg, path, false));
+                        donePosterJpg.Add(file.Directory.FullName);
+                    }
+                }
+
+                if ((forceRefresh || !bannerJpg.Exists) && !doneBannerJpg.Contains(file.Directory.FullName))
+                {
+                    string path = string.Empty; //todo link up movir banner url movie.CachedMovie?.BannerUrl;
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        theActionList.Add(new ActionDownloadImage(movie, null, bannerJpg, path, false));
+                        doneBannerJpg.Add(file.Directory.FullName);
+                    }
+                }
+
+                if ((forceRefresh || !fanartJpg.Exists) && !doneFanartJpg.Contains(file.Directory.FullName))
+                {
+                    string path =  movie.CachedMovie?.FanartUrl;
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        theActionList.Add(new ActionDownloadImage(movie, null, fanartJpg, path));
+                        doneFanartJpg.Add(file.Directory.FullName);
+                    }
+                }
+                return theActionList;
+            }
+
+            return base.ProcessMovie(movie, file, forceRefresh);
+        }
+
         public override ItemList? ProcessShow(ShowConfiguration si, bool forceRefresh)
         {
             //If we have KODI New style images being downloaded then we want to check that 3 files exist

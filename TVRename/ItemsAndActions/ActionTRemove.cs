@@ -14,6 +14,12 @@ namespace TVRename
             name = lastFoundEntry;
         }
 
+        public ActionTRemove(IDownloadProvider source, TorrentEntry lastFoundEntry, MovieConfiguration m)
+        {
+            Movie = m;
+            client = source;
+            name = lastFoundEntry;
+        }
         public override string TargetFolder => client.Name();
 
         public override string ScanListViewGroup => "lvgActionDownloadRSS";

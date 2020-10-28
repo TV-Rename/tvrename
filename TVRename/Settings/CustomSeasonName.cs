@@ -135,7 +135,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string NameFor(MovieConfiguration? m, string styleString) => NameFor(m, styleString, false);
+        public static string NameFor(MovieConfiguration? m, string styleString) => NameFor(m, styleString, false,true);
 
         public static string NameFor(MovieConfiguration m, string styleString, string? extension)
         {
@@ -157,7 +157,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string NameFor(MovieConfiguration? m, string styleString, bool urlEncode)
+        public static string NameFor(MovieConfiguration? m, string styleString, bool urlEncode, bool isfilename)
         {
             string name = styleString;
 
@@ -179,7 +179,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Year}", m.CachedMovie?.Year.ToString() );
             name = name.ReplaceInsensitive("{Imdb}", m.CachedMovie?.Imdb );
 
-            return TVSettings.DirectoryFriendly(name.Trim());
+            return isfilename ? TVSettings.DirectoryFriendly(name.Trim()) : name.Trim();
         }
 
         [NotNull]

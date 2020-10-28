@@ -94,6 +94,71 @@ namespace TVRename
             return false;
         }
 
+        protected bool ReviewFile(MovieItemMissing me, ItemList addTo, FileInfo dce, TVDoc.ScanSettings settings, bool preventMove, bool doExtraFiles, bool useFullPath)
+        {
+            if (settings.Token.IsCancellationRequested)
+            {
+                return false;
+            }
+
+            bool matched = false;
+
+            try
+            {
+                if (dce.IgnoreFile() || me.Movie is null )
+                {
+                    return false;
+                }
+
+                //do any of the possible names for the cachedSeries match the filename?
+                matched = me.Show.NameMatch(dce, useFullPath);
+
+                if (!matched)
+                {
+                    return false;
+                }
+
+                if (me.Show.LengthNameMatch(dce,useFullPath) != MDoc.FilmLibrary.Movies.MaxOrDefault(m=>m.LengthNameMatch(dce, useFullPath),0))
+                {
+                    int c = 1;
+                    return false;
+                }
+
+                FileInfo fi = FinderHelper.GenerateTargetName(me, dce);
+
+                if (preventMove)
+                {
+                    //We do not want to move the file, just rename it
+                    fi = new FileInfo(dce.DirectoryName.EnsureEndsWithSeparator() + me.Filename + dce.Extension);
+                }
+
+                if (dce.FullName != fi.FullName && !FindExistingActionFor(addTo, dce))
+                {
+                    // don't remove the base search folders
+                    bool doTidyup =
+                        !TVSettings.Instance.DownloadFolders.Any(folder =>
+                            folder.SameDirectoryLocation(fi.Directory.FullName));
+
+                    addTo.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.copy, dce, fi, me.Movie, doTidyup, me, MDoc));
+                }
+
+                if (doExtraFiles)
+                {
+                    DownloadIdentifiersController di = new DownloadIdentifiersController();
+
+                    // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
+                    addTo.Add(di.ProcessMovie(me.MovieConfig, fi));
+                }
+
+                return true;
+            }
+            catch (PathTooLongException e)
+            {
+                WarnPathTooLong(me, dce, e, matched);
+            }
+            return false;
+        }
+
         private static (bool  identifysuccess, int foundSeason, int foundEpisode,  int maxEp) IdentifyFile([NotNull] ShowItemMissing me, [NotNull] FileInfo dce)
         {
             int season = me.MissingEpisode.AppropriateSeasonNumber;
@@ -161,6 +226,28 @@ namespace TVRename
             if (matched)
             {
                 t += "Show: " + me.MissingEpisode.TheCachedSeries.Name + ", Season " + season + ", Ep " + epnum + ".  ";
+                t += "To: " + me.TheFileNoExt;
+            }
+
+            LOGGER.Warn(t);
+        }
+
+        private void WarnPathTooLong([NotNull] MovieItemMissing me, [NotNull] FileInfo dce, [NotNull] Exception e, bool matched)
+        {
+            string t = "Path too long. " + dce.FullName + ", " + e.Message;
+            LOGGER.Error(e, "Path too long. " + dce.FullName);
+
+            t += ".  More information is available in the log file";
+            if (!MDoc.Args.Unattended && !MDoc.Args.Hide && Environment.UserInteractive)
+            {
+                MessageBox.Show(t, "Path too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+
+            t = "DirectoryName " + dce.DirectoryName + ", File name: " + dce.Name;
+            t += matched ? ", matched.  " : ", no match.  ";
+            if (matched)
+            {
+                t += "Show: " + me.MovieConfig.ShowName  + ".  ";
                 t += "To: " + me.TheFileNoExt;
             }
 
@@ -257,7 +344,11 @@ namespace TVRename
 
                     string newName = GetFilename(fi.Name, basename, toname);
 
-                    ActionCopyMoveRename newitem = new ActionCopyMoveRename(action.Operation, fi,
+                    ActionCopyMoveRename newitem = (action.Episode is null) ?
+                        new ActionCopyMoveRename(action.Operation, fi,
+                            FileHelper.FileInFolder(action.To.Directory, newName), action.Movie!, false,
+                            null, d)
+                        : new ActionCopyMoveRename(action.Operation, fi,
                         FileHelper.FileInFolder(action.To.Directory, newName), action.SourceEpisode, false,
                         null,d); // tidy up on main action, not this
 
@@ -391,27 +482,27 @@ namespace TVRename
             return actionlist.CopyMoveRename.Any(cmAction => cmAction.SameSource(newItem));
         }
 
-        protected void ProcessMissingItem(TVDoc.ScanSettings settings, ItemList newList, ItemList toRemove, ShowItemMissing me, ItemList thisRound, [NotNull] List<FileInfo> matchedFiles,bool useFullPath)
+        protected void ProcessMissingItem(TVDoc.ScanSettings settings, ItemList newList, ItemList toRemove, ItemMissing me, ItemList thisRound, [NotNull] List<FileInfo> matchedFiles,bool useFullPath)
         {
             if (matchedFiles.Count == 1)
             {
                 if (!OtherActionsMatch(matchedFiles[0], me, settings,useFullPath))
                 {
-                    if (!FinderHelper.BetterShowsMatch(matchedFiles[0], me.MissingEpisode.Show,useFullPath,MDoc))
+                    if (!FinderHelper.BetterShowsMatch(matchedFiles[0], me.Show,useFullPath,MDoc))
                     {
                         toRemove.Add(me);
                         newList.AddRange(thisRound);
                     }
                     else
                     {
-                        LOGGER.Warn($"Ignoring potential match for {me.MissingEpisode.Show.ShowName} {me.MissingEpisode}: with file {matchedFiles[0].FullName} as there are multiple shows that match for that file");
+                        LOGGER.Warn($"Ignoring potential match for {me}: with file {matchedFiles[0].FullName} as there are multiple shows that match for that file");
                         me.AddComment(
                             $"Ignoring potential match with file {matchedFiles[0].FullName} as there are multiple shows for that file");
                     }
                 }
                 else
                 {
-                    LOGGER.Warn($"Ignoring potential match for {me.MissingEpisode.Show.ShowName} {me.MissingEpisode}: with file {matchedFiles[0].FullName} as there are multiple actions for that file");
+                    LOGGER.Warn($"Ignoring potential match for {me}: with file {matchedFiles[0].FullName} as there are multiple actions for that file");
                     me.AddComment(
                         $"Ignoring potential match with file {matchedFiles[0].FullName} as there are multiple actions for that file");
                 }
@@ -432,7 +523,7 @@ namespace TVRename
                     foreach (FileInfo matchedFile in matchedFiles)
                     {
                         LOGGER.Warn(
-                            $"Ignoring potential match for {me.MissingEpisode.Show.ShowName} {me.MissingEpisode}: with file {matchedFile.FullName} as there are multiple files for that action");
+                            $"Ignoring potential match for {me}: with file {matchedFile.FullName} as there are multiple files for that action");
 
                         me.AddComment(
                             $"Ignoring potential match with file {matchedFile.FullName} as there are multiple files for that action");

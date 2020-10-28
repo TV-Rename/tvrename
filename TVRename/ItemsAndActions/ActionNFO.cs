@@ -32,6 +32,11 @@ namespace TVRename
             Episode = null;
         }
 
+        public ActionNfo(FileInfo nfo, MovieConfiguration mc) : base(nfo,mc)
+        {
+            Episode = null;
+        }
+
         #region Action Members
 
         public override string Name => "Write KODI Metadata";
@@ -92,6 +97,11 @@ namespace TVRename
                     writer.WriteStartElement("episodedetails");
                     writer.WriteEndElement(); // episodedetails
                 }
+                else if (Movie != null) // specific movie
+                {
+                    writer.WriteStartElement("movie");
+                    writer.WriteEndElement(); // movie
+                }
                 else  // show overview (tvshow.nfo)
                 {
                     writer.WriteStartElement("tvshow");
@@ -121,13 +131,17 @@ namespace TVRename
                 ShowConfiguration si = Episode.Show;
                 UpdateEpisodeFields(Episode, si, root, false);
             }
-            else
+            else if (SelectedShow !=null)
             {
                 UpdateShowFields(root);
             }
+            else if ( Movie != null)
+            {
+                UpdateMovieFields(root);
+            }
 
             doc.Save(Where.FullName);
-            Where.LastWriteTime = DateTimeOffset.FromUnixTimeMilliseconds(Episode?.SrvLastUpdated ?? SelectedShow.CachedShow?.SrvLastUpdated??0).UtcDateTime; 
+            Where.LastWriteTime = DateTimeOffset.FromUnixTimeSeconds(Episode?.SrvLastUpdated ?? SelectedShow?.CachedShow?.SrvLastUpdated?? Movie?.CachedMovie?.SrvLastUpdated ?? 0).UtcDateTime; 
 
             return ActionOutcome.Success();
         }
@@ -270,9 +284,66 @@ namespace TVRename
             e.Add(new XElement(elementName, value));
         }
 
+        private void UpdateMovieFields([NotNull] XElement root)
+        {
+            CachedMovieInfo cachedSeries = Movie!.CachedMovie;
+            root.UpdateElement("title", Movie.ShowName);
+
+            float? showRating = cachedSeries?.SiteRating;
+            if (showRating.HasValue)
+            {
+                UpdateRatings(root, showRating.Value.ToString(CultureInfo.InvariantCulture), cachedSeries.SiteRatingVotes);
+            }
+
+            string lang = TVSettings.Instance.PreferredLanguageCode;
+
+            if (Movie.UseCustomLanguage && Movie.PreferredLanguage != null)
+            {
+                lang = Movie.PreferredLanguage.Abbreviation;
+            }
+
+            //https://forum.kodi.tv/showthread.php?tid=323588
+            //says that we need a format like this:
+            //<episodeguide><url post="yes" cache="auth.json">https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json</url></episodeguide>
+
+            XElement episodeGuideNode = root.GetOrCreateElement("episodeguide");
+            XElement urlNode = episodeGuideNode.GetOrCreateElement("url");
+            urlNode.UpdateAttribute("post", "yes");
+            urlNode.UpdateAttribute("cache", "auth.json");
+            urlNode.SetValue(TheTVDB.API.BuildUrl(Movie.TvdbCode, lang));
+
+            if (!(cachedSeries is null))
+            {
+                root.UpdateElement("originaltitle", Movie.ShowName);
+                UpdateAmongstElements(root, "studio", cachedSeries.Network);
+                root.UpdateElement("id", Movie.Code);
+                root.UpdateElement("runtime", cachedSeries.Runtime, true);
+                root.UpdateElement("mpaa", cachedSeries.ContentRating, true);
+                root.UpdateElement("premiered", cachedSeries.FirstAired);
+                if (cachedSeries.Year.HasValue)
+                {
+                    root.UpdateElement("year", cachedSeries.Year.Value);
+                }
+                root.UpdateElement("status", cachedSeries.Status);
+                root.UpdateElement("plot", cachedSeries.Overview);
+                root.UpdateElement("outline", cachedSeries.Overview);
+                root.UpdateElement("tagline", cachedSeries.TagLine);
+                root.UpdateElement("set", cachedSeries.CollectionName);
+                root.UpdateElement("trailer", cachedSeries.TrailerUrl);
+
+                UpdateId(root, "tvdb", "false", cachedSeries.TvdbCode);
+                UpdateId(root, "imdb", "false", cachedSeries.Imdb);
+                UpdateId(root, "tmdb", "true", cachedSeries.TmdbCode);
+            }
+
+            root.ReplaceElements("genre", Movie.Genres);
+
+            ReplaceActors(root, Movie.Actors);
+        }
+
         private void UpdateShowFields([NotNull] XElement root)
         {
-            CachedSeriesInfo cachedSeries = SelectedShow.CachedShow;
+            CachedSeriesInfo cachedSeries = SelectedShow!.CachedShow;
             root.UpdateElement("title", SelectedShow.ShowName);
 
             float? showRating = cachedSeries?.SiteRating;

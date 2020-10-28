@@ -1,4 +1,4 @@
-﻿using JetBrains.Annotations;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -19,7 +19,7 @@ namespace TVRename
 
         public override string Explain()
         {
-            return $"Default value for {FieldName} is {Default}. For {Movie.ShowName} it is {Field}.";
+            return $"Default value for {FieldName} is {Default}. For this Movie it is {Field}.";
         }
     }
 }

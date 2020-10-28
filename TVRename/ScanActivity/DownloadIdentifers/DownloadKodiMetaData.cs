@@ -63,7 +63,7 @@ namespace TVRename
 
             FileInfo nfo = FileHelper.FileInFolder(file.Directory, file.RemoveExtension() + ".nfo");
 
-            if (nfo.Exists && System.Math.Abs(episode.SrvLastUpdated - TimeZoneHelper.Epoch(nfo.LastWriteTime)) > 1 && !forceRefresh)
+            if (nfo.Exists && System.Math.Abs(episode.SrvLastUpdated - TimeZoneHelper.Epoch(nfo.LastWriteTime)) < 1 && !forceRefresh)
             {
                 return null;
             }
@@ -76,6 +76,31 @@ namespace TVRename
 
             DoneNfo.Add(nfo.FullName);
             return new ItemList { new ActionNfo(nfo, episode) };
+        }
+
+
+        public override ItemList? ProcessMovie(MovieConfiguration mc, FileInfo file, bool forceRefresh)
+        {
+            if (!TVSettings.Instance.NFOMovies || mc.CachedMovie is null)
+            {
+                return null;
+            }
+
+            FileInfo nfo = FileHelper.FileInFolder(file.Directory, file.MovieFileNameBase() + ".nfo");
+
+            if ((nfo.Exists && System.Math.Abs(mc.CachedMovie.SrvLastUpdated - TimeZoneHelper.Epoch(nfo.LastWriteTime)) < 1 && !forceRefresh))
+            {
+                return null;
+            }
+
+            //If we do not already have plans to put the file into place
+            if (DoneNfo.Contains(nfo.FullName))
+            {
+                return null;
+            }
+
+            DoneNfo.Add(nfo.FullName);
+            return new ItemList { new ActionNfo(nfo, mc) };
         }
 
         public sealed override void Reset() => DoneNfo = new List<string>();

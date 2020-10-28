@@ -49,7 +49,7 @@ namespace TVRename
         {
             string simpleShowName = Helpers.SimplifyName(pe.ShowName);
 
-            return FileHelper.SimplifyAndCheckFilename(rss.ShowName, simpleShowName, true, false);
+            return FileHelper.SimplifyAndCheckFilename(rss.ShowName.HasValue()? rss.ShowName: rss.Title, simpleShowName, true, false);
         }
 
         [NotNull]

@@ -30,7 +30,7 @@ namespace TVRename
                 return;
             }
 
-            if (settings.Type ==TVSettings.ScanType.Full && TVSettings.Instance.StopJackettSearchOnFullScan)
+            if (settings.Type ==TVSettings.ScanType.Full && TVSettings.Instance.StopJackettSearchOnFullScan && settings.Shows.Any())
             {
                 LOGGER.Info("Searching Jackett is cancelled as this is a full scan");
                 return;
@@ -53,9 +53,9 @@ namespace TVRename
 
                     UpdateStatus(n++, c, action.Filename);
 
-                    if (action is ShowItemMissing)
+                    if (action is ShowItemMissing showItemMissing)
                     {
-                        FindMissingEpisode((ShowItemMissing)action, toRemove, newItems);
+                        FindMissingEpisode(showItemMissing, toRemove, newItems);
                     }
                     else
                     {
@@ -95,7 +95,7 @@ namespace TVRename
                     LOGGER.Info(
                         $"Adding {rss.URL} from RSS feed as it appears to be match for {processedEpisode.Show.ShowName} S{processedEpisode.AppropriateSeasonNumber}E{processedEpisode.AppropriateEpNum}");
                 }
-                newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action.TheFileNoExt, processedEpisode, action));
+                newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action.TheFileNoExt, action));
                 toRemove.Add(action);
             }
 
@@ -122,7 +122,7 @@ namespace TVRename
                     LOGGER.Info(
                         $"Adding {rss.URL} from RSS feed as it appears to be match for {action.MovieConfig.ShowName}");
                 }
-                newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action.TheFileNoExt, null, action));
+                newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action.TheFileNoExt, action));
                 toRemove.Add(action);
             }
 

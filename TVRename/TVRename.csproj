@@ -324,6 +324,8 @@
     <Compile Include="Forms\Tools\RecommendationView.Designer.cs">
       <DependentUpon>RecommendationView.cs</DependentUpon>
     </Compile>
+    <Compile Include="ItemsAndActions\ActionDateTouchFile.cs" />
+    <Compile Include="ItemsAndActions\ActionDateTouchMovie.cs" />
     <Compile Include="LibrarySummary\Check\SettingsCheck.cs" />
     <Compile Include="LibrarySummary\Check\CustomLanguageMovieCheck.cs" />
     <Compile Include="LibrarySummary\Check\CustomLanguageTvShowCheck.cs" />
@@ -360,6 +362,7 @@
     <Compile Include="LibrarySummary\Check\TvShowSeasonFormatCheck.cs" />
     <Compile Include="LibrarySummary\Check\UseManualFoldersTvShowCheck.cs" />
     <Compile Include="Model\CachedMediaInfo.cs" />
+    <Compile Include="Model\Crew.cs" />
     <Compile Include="ScanActivity\DownloadIdentifers\DownloadWdtvMetaData.cs" />
     <Compile Include="ScanActivity\DownloadIdentifers\IncorrectFileDates.cs" />
     <Compile Include="Exporter\ActionListExporter.cs" />
@@ -433,7 +436,7 @@
     <Compile Include="ItemsAndActions\ActionDateTouchDirectory.cs" />
     <Compile Include="ItemsAndActions\ActionDateTouchEpisode.cs" />
     <Compile Include="ItemsAndActions\ActionDateTouchSeason.cs" />
-    <Compile Include="ItemsAndActions\ActionDateTouchShow.cs" />
+    <Compile Include="ItemsAndActions\ActionDateTouchMedia.cs" />
     <Compile Include="ItemsAndActions\ActionOutcome.cs" />
     <Compile Include="ItemsAndActions\ActionTRemove.cs" />
     <Compile Include="DownloadProvider\IDownloadProvider.cs" />
@@ -445,6 +448,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ScanActivity\FindNewMoviesInDownloadFolders.cs" />
     <Compile Include="ScanActivity\ScanShowActivity\CheckAllMovieFoldersExist.cs" />
     <Compile Include="ScanActivity\ScanShowActivity\RenameAndMissingMovieCheck.cs" />
     <Compile Include="Settings\MovieConfiguration.cs" />

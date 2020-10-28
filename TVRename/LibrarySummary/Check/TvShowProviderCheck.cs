@@ -1,4 +1,4 @@
-﻿using JetBrains.Annotations;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -10,7 +10,7 @@ namespace TVRename
 
         public override bool Check() => Show.ConfigurationProvider!=TVDoc.ProviderType.libraryDefault;
 
-        public override string Explain() => $"{MediaName} does not use the library default, it uses {Show.ConfigurationProvider.PrettyPrint()}";
+        public override string Explain() => $"TV Show does not use the library default, it uses {Show.ConfigurationProvider.PrettyPrint()}";
 
         protected override void FixInternal()
         {

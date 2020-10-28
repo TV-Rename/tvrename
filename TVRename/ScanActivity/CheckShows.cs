@@ -68,7 +68,7 @@ namespace TVRename
             } // for each show
 
             c = 0;
-            UpdateStatus(c, settings.Movies.Count, "Checking shows");
+            UpdateStatus(c, settings.Movies.Count, "Checking movies");
             foreach (MovieConfiguration si in settings.Movies.OrderBy(item => item.ShowName))
             {
                 UpdateStatus(c++, settings.Movies.Count, si.ShowName);

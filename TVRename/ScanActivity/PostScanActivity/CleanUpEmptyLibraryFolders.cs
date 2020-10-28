@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 
 namespace TVRename
@@ -18,7 +17,7 @@ namespace TVRename
         protected override void DoCheck(SetProgressDelegate progress)
         {
             IEnumerable<ShowConfiguration> libraryShows = MDoc.TvLibrary.Shows.ToList();
-            int totalRecords = libraryShows.Count();
+            int totalRecords = libraryShows.Count() + MDoc.FilmLibrary.Count;
             int n = 0;
 
             foreach (ShowConfiguration si in libraryShows)
@@ -30,6 +29,17 @@ namespace TVRename
                     RemoveIfEmpty(folderName);
                 }
             }
+
+            foreach (MovieConfiguration mi in MDoc.FilmLibrary.Movies)
+            {
+                UpdateStatus(n++, totalRecords, mi.ShowName);
+
+                foreach (string folderName in mi.Locations)
+                {
+                    RemoveIfEmpty(folderName);
+                }
+            }
+
         }
 
         private static void RemoveIfEmpty(string folderName)

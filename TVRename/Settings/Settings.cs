@@ -315,6 +315,9 @@ namespace TVRename
         [NotNull]
         public static string SpecialsListViewName => "Special";
 
+        public MovieConfiguration.MovieFolderFormat DefMovieFolderFormat =>
+            MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile; //TODO fix this  //{ get; internal set; }
+
         public bool AutoSaveOnExit = false;
 
         public DuplicateActionOutcome UnattendedMultiActionOutcome = DuplicateActionOutcome.IgnoreAll;
@@ -1006,7 +1009,7 @@ namespace TVRename
 
             string url = TheMovieSearchers.CurrentSearch.Url;
 
-            return !url.HasValue() ? string.Empty : CustomMovieName.NameFor(mov, url, true);
+            return !url.HasValue() ? string.Empty : CustomMovieName.NameFor(mov, url, true,false);
         }
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();

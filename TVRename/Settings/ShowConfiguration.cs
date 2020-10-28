@@ -1099,10 +1099,10 @@ namespace TVRename
             }
 
             //Also add the aliases provided
-            possibles.AddNullableRange(AliasNames.Select(Helpers.SimplifyName));
+            possibles.AddNullableRange(AliasNames.Select(Helpers.SimplifyName).Where(s => s.HasValue()).Where(s=>s.Length>2));
 
             //Also use the aliases from theTVDB
-            possibles.AddNullableRange(CachedData?.GetAliases().Select(Helpers.SimplifyName));
+            possibles.AddNullableRange(CachedData?.GetAliases().Select(Helpers.SimplifyName).Where(s => s.HasValue()).Where(s => s.Length > 2));
 
             return possibles;
         }
@@ -1139,14 +1139,17 @@ namespace TVRename
 
         public bool NameMatch(string text)
         {
-            return GetSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(text, name));
+            return GetSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(Helpers.SimplifyName(text), name,false,false));
         }
 
         public bool NameMatchFilters(string text)
         {
             return GetSimplifiedPossibleShowNames().Any(name => name.Contains(Helpers.SimplifyName(text), StringComparison.OrdinalIgnoreCase));
         }
-
-
+        public int LengthNameMatch(FileInfo file, bool useFullPath)
+        {
+            string filename = useFullPath ? file.FullName : file.Name;
+            return GetSimplifiedPossibleShowNames().Select(name => FileHelper.SimplifyAndCheckFilenameLength(Helpers.SimplifyName(filename), name, false, false)).Max();
+        }
     }
 }

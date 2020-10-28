@@ -512,7 +512,22 @@ namespace TVRename
         // see if showname is somewhere in filename
         public static bool SimplifyAndCheckFilename(string filename, string showName, bool simplifyfilename, bool simplifyshowname)
         {
-            return Regex.Match(simplifyfilename ? Helpers.SimplifyName(filename) : filename, "\\b" + (simplifyshowname ? Helpers.SimplifyName(showName) : showName) + "\\b", RegexOptions.IgnoreCase).Success;
+            Match match = Regex.Match(simplifyfilename ? Helpers.SimplifyName(filename) : filename, "\\b" + (simplifyshowname ? Helpers.SimplifyName(showName) : showName) + "\\b", RegexOptions.IgnoreCase);
+            if (match.Success && false)
+            {
+                Logger.Info($"Matched {filename} to {showName}");
+            }
+            return match.Success;
+        }
+
+        public static int SimplifyAndCheckFilenameLength(string filename, string showName, bool simplifyfilename, bool simplifyshowname)
+        {
+            Match match = Regex.Match(simplifyfilename ? Helpers.SimplifyName(filename) : filename, "\\b" + (simplifyshowname ? Helpers.SimplifyName(showName) : showName) + "\\b", RegexOptions.IgnoreCase);
+            if (match.Success)
+            {
+                return match.Length;
+            }
+            return 0;
         }
 
         public static bool SimplifyAndCheckFilenameAtStart(string filename, string showName) =>
@@ -635,7 +650,7 @@ namespace TVRename
 
         private static readonly Regex[] MovieMultiPartRegex = new Regex[]
         {
-            new Regex(@"(?<base>.*)[ _.-]+(cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*(?<part>[0-9]|(A-D))", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+            new Regex(@"(?<base>.*)[ _.-]+(cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*(?<part>[0-9]|(A-D))$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
             new Regex(@"(?<base>.*)[ ._-]*(?<part>|(A-D))$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
         };
         public static string MovieFileNameBase(this FileInfo movieFile)

@@ -26,9 +26,8 @@ namespace TVRename
         public override int IconNumber { get; }
         public override string? TargetFolder => string.IsNullOrEmpty(entry.Destination) ? null : new FileInfo(entry.Destination).DirectoryName;
 
-        public ItemDownloading(IDownloadInformation dl, ProcessedEpisode pe, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp)
+        private ItemDownloading(IDownloadInformation dl,string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp)
         {
-            Episode = pe;
             DesiredLocationNoExt = desiredLocationNoExt;
             entry = dl;
             IconNumber = tApp switch
@@ -38,6 +37,17 @@ namespace TVRename
                 DownloadingFinder.DownloadApp.qBitTorrent => 10,
                 _ => 0
             };
+        }
+
+        public ItemDownloading(IDownloadInformation dl, ProcessedEpisode pe, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp) :this(dl, desiredLocationNoExt, tApp)
+        {
+            Episode = pe;
+        }
+
+        public ItemDownloading(IDownloadInformation dl, MovieConfiguration mc, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp) : this(dl, desiredLocationNoExt, tApp)
+        {
+            Episode = null;
+            Movie = mc;
         }
 
         #region Item Members

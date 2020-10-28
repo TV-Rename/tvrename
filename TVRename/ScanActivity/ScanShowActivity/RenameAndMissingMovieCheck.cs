@@ -74,6 +74,11 @@ namespace TVRename
             if (bases.Count == 1 && bases[0].Equals(newBase))
             {
                 //All Seems OK
+
+                //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
+                //it has all the required files for that show
+                Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, movieFiles.First(m => m.Name.StartsWith(newBase, StringComparison.Ordinal))));
+
                 return;
             }
 
@@ -91,6 +96,13 @@ namespace TVRename
                     {
                         string newName = fi.Name.Replace(baseString, newBase);
                         FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
+
+                        if (newFile.IsMovieFile())
+                        {
+                            //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
+                            //it has all the required files for that show
+                            Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, newFile));
+                        }
 
                         if (newFile.FullName != fi.FullName)
                         {
@@ -132,12 +144,21 @@ namespace TVRename
                     }
                 } // foreach file in folder
             }
+            else
+            {
+                if (movieFiles.First().IsMovieFile())
+                {
+                    //File is correct name
+                    LOGGER.Debug($"Identified that {movieFiles.First().FullName} is in the right place. Marking it as 'seen'.");
+                    //Record this movie as seen
 
-            //TODO Reintroduce this
-            //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
-            //it has all the required files for that show
-            //Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, file));
-
+                    TVSettings.Instance.PreviouslySeenMovies.EnsureAdded(si);
+                    if (TVSettings.Instance.IgnorePreviouslySeenMovies)
+                    {
+                        Doc.SetDirty();
+                    }
+                }
+            }
         }
 
         private string GetBase(FileInfo fileInfo)

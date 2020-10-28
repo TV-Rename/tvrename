@@ -32,7 +32,10 @@ namespace TVRename
 
         public override ActionOutcome Go(TVRenameStats stats)
         {
-            return Episode != null ? WriteEpisodeMetaDataFile() : WriteSeriesXml();
+            return Episode != null ? WriteEpisodeMetaDataFile() :
+                SelectedShow != null ? WriteSeriesXml() :
+                ActionOutcome.Success();
+                //todo WDTV Movie support WriteMovieXml();
         }
 
         [NotNull]
@@ -51,7 +54,7 @@ namespace TVRename
                     writer.WriteStartElement("details");
                     writer.WriteStartElement("show");
 
-                    writer.WriteElement("title", SelectedShow.ShowName);
+                    writer.WriteElement("title", SelectedShow!.ShowName);
                     writer.WriteElement("premiered", SelectedShow.CachedShow?.FirstAired);
                     writer.WriteElement("year", SelectedShow.CachedShow?.Year);
                     writer.WriteElement("status", SelectedShow.CachedShow?.Status);

@@ -1,4 +1,4 @@
-﻿using JetBrains.Annotations;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -17,7 +17,7 @@ namespace TVRename
 
         public override string Explain()
         {
-            return $"{FieldName} is enabled for {MediaName}, by default is is not.";
+            return $"{FieldName} is enabled for this TV Show, by default is is not.";
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using JetBrains.Annotations;
 
 namespace TVRename
@@ -11,7 +11,7 @@ namespace TVRename
 
         public override bool Check() => Show.UseCustomNamingFormat;
 
-        public override string Explain() => $"{MediaName} does not use the standard episode naming format {TVSettings.Instance.NamingStyle.StyleString}, it uses {Show.CustomNamingFormat}";
+        public override string Explain() => $"TV Show does not use the standard episode naming format {TVSettings.Instance.NamingStyle.StyleString}, it uses {Show.CustomNamingFormat}";
 
         protected override void FixInternal()
         {

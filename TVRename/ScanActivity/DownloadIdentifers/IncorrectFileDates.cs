@@ -48,6 +48,50 @@ namespace TVRename
             return null;
         }
 
+        public override ItemList? ProcessMovie(MovieConfiguration movie, FileInfo file, bool forceRefresh) 
+        {
+            DateTime? updateTime = movie.CachedMovie?.FirstAired;
+            if (!TVSettings.Instance.CorrectFileDates || !updateTime.HasValue)
+            {
+                return base.ProcessMovie(movie, file, forceRefresh);
+            }
+
+            DateTime newUpdateTime = Helpers.GetMinWindowsTime(updateTime.Value);
+
+            DirectoryInfo di = file.Directory;
+            ItemList returnItems = new ItemList();
+
+            try
+            {
+                if (di.LastWriteTimeUtc != newUpdateTime && !doneFilesAndFolders.Contains(di.FullName))
+                {
+                    doneFilesAndFolders.Add(di.FullName);
+                    returnItems.Add(new ActionDateTouchMedia(di, movie, newUpdateTime));
+                }
+            }
+            catch (Exception)
+            {
+                doneFilesAndFolders.Add(di.FullName);
+                returnItems.Add(new ActionDateTouchMedia(di, movie, newUpdateTime));
+            }
+
+            try
+            {
+                if (file.LastWriteTimeUtc != newUpdateTime && !doneFilesAndFolders.Contains(file.FullName))
+                {
+                    doneFilesAndFolders.Add(file.FullName);
+                    returnItems.Add(new ActionDateTouchMovie(file, movie, newUpdateTime) );
+                }
+            }
+            catch (Exception)
+            {
+                doneFilesAndFolders.Add(file.FullName);
+                returnItems.Add(new ActionDateTouchMovie(file, movie, newUpdateTime));
+            }
+
+            return returnItems;
+        }
+
         public override ItemList? ProcessSeason(ShowConfiguration si, string folder, int snum, bool forceRefresh)
         {
             ProcessedSeason processedSeason = si.GetSeason(snum) ?? throw new ArgumentException($"ProcessSeason called for {si.ShowName} invalid season ({snum}), show has ({si.AppropriateSeasons().Keys.Select(i => i.ToString() ).ToCsv()})");

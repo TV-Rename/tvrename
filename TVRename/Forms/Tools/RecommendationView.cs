@@ -73,7 +73,13 @@ namespace TVRename.Forms
 
         private void PopulateGrid()
         {
-            lvRecommendations.SetObjects(recs.Values.Select(x=>new RecommendationRow(x,media)));
+            IEnumerable<RecommendationResult> recommendationRows = chkRemoveExisting.Checked
+                ? media==MediaConfiguration.MediaType.movie
+                    ? recs.Values.Where(x=> !mDoc.FilmLibrary.ContainsKey(x.Key))
+                    : recs.Values.Where(x => !mDoc.TvLibrary.ContainsKey(x.Key))
+                : recs.Values;
+
+            lvRecommendations.SetObjects(recommendationRows.Select(x => new RecommendationRow(x, media)));
         }
 
 

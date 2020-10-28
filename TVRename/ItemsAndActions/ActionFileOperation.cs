@@ -97,6 +97,10 @@ namespace TVRename
             {
                 return;
             }
+            if (TVSettings.Instance.MovieLibraryFolders.Contains(di.FullName))
+            {
+                return;
+            }
 
             FileInfo[] files = di.GetFiles();
             if (files.Length == 0)

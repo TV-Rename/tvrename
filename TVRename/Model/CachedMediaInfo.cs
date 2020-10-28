@@ -33,19 +33,34 @@ namespace TVRename
         public bool IsSearchResultOnly; // set to true if local info is known to be just certain fields found from search results. Do not need to be saved
 
         protected List<Actor> Actors;
+        protected List<Crew> Crew;
         public List<string> Genres;
         protected List<string> Aliases;
 
         private protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
+        protected CachedMediaInfo()
+        {
+            Actors = new List<Actor>();
+            Crew = new List<Crew>();
+            Aliases = new List<string>();
+            Genres = new List<string>();
 
-        public IEnumerable<Actor> GetActors() => Actors;
+            Dirty = false;
+            Name = string.Empty;
+
+            TvdbCode = -1;
+            TvMazeCode = -1;
+            TvRageCode = 0;
+            TmdbCode = -1;
+        }
 
         public IEnumerable<string> GetAliases() => Aliases;
 
+        public IEnumerable<Actor> GetActors() => Actors;
+
         [NotNull]
         public IEnumerable<string> GetActorNames() => GetActors().Select(x => x.ActorName);
-
 
         public void ClearActors()
         {
@@ -56,6 +71,24 @@ namespace TVRename
         {
             Actors.Add(actor);
         }
+
+        public IEnumerable<Crew> GetCrew() => Crew;
+
+
+        [NotNull]
+        public IEnumerable<string> GetCrewNames() => GetCrew().Select(x => x.Name);
+
+
+        public void ClearCrew()
+        {
+            Crew = new List<Crew>();
+        }
+
+        public void AddCrew(Crew crew)
+        {
+            Crew.Add(crew);
+        }
+
 
         [NotNull]
         public string GetImdbNumber() =>

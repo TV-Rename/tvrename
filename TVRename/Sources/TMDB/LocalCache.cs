@@ -429,7 +429,7 @@ namespace TVRename.TMDB
             SaveCache();
             //All cachedSeries will be forgotten and will be fully refreshed, so we'll only need updates after this point
             latestUpdateTime.Reset();
-            LOGGER.Info($"Forget everything, so we assume we have TMDN updates until {latestUpdateTime}");
+            LOGGER.Info($"Forget everything, so we assume we have TMDB updates until {latestUpdateTime}");
         }
 
         public void ForgetMovie(int id)
@@ -535,7 +535,7 @@ namespace TVRename.TMDB
 
         internal CachedMovieInfo DownloadMovieNow(int id, bool showErrorMsgBox)
         {
-            Movie downloadedMovie = Client.GetMovieAsync(id, MovieMethods.ExternalIds|MovieMethods.Images|MovieMethods.AlternativeTitles|MovieMethods.ReleaseDates |MovieMethods.Changes).Result;
+            Movie downloadedMovie = Client.GetMovieAsync(id, MovieMethods.ExternalIds|MovieMethods.Images|MovieMethods.AlternativeTitles|MovieMethods.ReleaseDates |MovieMethods.Changes|MovieMethods.Videos|MovieMethods.Credits).Result;
             if (downloadedMovie is null)
             {
                 throw new ShowNotFoundException(id,"TMDB no longer has this movie",TVDoc.ProviderType.TMDB,TVDoc.ProviderType.TMDB);
@@ -554,24 +554,32 @@ namespace TVRename.TMDB
                 ShowLanguage= downloadedMovie.OriginalLanguage,
                 SiteRating = (float)downloadedMovie.VoteAverage,
                 SiteRatingVotes = downloadedMovie.VoteCount,
-                PosterUrl = "https://image.tmdb.org/t/p/w600_and_h900_bestv2" + downloadedMovie.PosterPath,
-                //SrvLastUpdated = downloadedMovie. todo fix property
+                PosterUrl = ImageURL(downloadedMovie.PosterPath),
+                SrvLastUpdated = DateTime.UtcNow.Date.ToUnixTime(),
                 CollectionName = downloadedMovie.BelongsToCollection?.Name,
                 CollectionId = downloadedMovie.BelongsToCollection?.Id,
                 TagLine = downloadedMovie.Tagline,
                 TwitterId=downloadedMovie.ExternalIds.TwitterId,
                 InstagramId = downloadedMovie.ExternalIds.InstagramId,
                 FacebookId=downloadedMovie.ExternalIds.InstagramId,
-                OfficialUrl=downloadedMovie.Homepage,
+                FanartUrl = ImageURL(downloadedMovie.BackdropPath),
+                ContentRating = GetCertification(downloadedMovie, "AU") ?? GetCertification(downloadedMovie, "US") ?? string.Empty,// todo allow user to choose
+                OfficialUrl =downloadedMovie.Homepage,
+                TrailerUrl = GetYouTubeUrl(downloadedMovie),
                 Dirty = false,
             };
-
-            m.ContentRating = GetCertification(downloadedMovie, "AU") ?? GetCertification(downloadedMovie, "US") ?? string.Empty;// todo allow user to choose
-
 
             foreach (var s in downloadedMovie.AlternativeTitles.Titles.Select(title => title.Title))
             {
                 m.AddAlias(s);
+            }
+            foreach (var s in downloadedMovie.Credits.Cast)
+            {
+                m.AddActor(new Actor(s.Id,s.ProfilePath,s.Name,s.Character,s.CastId,s.Order));
+            }
+            foreach (var s in downloadedMovie.Credits.Crew)
+            {
+                m.AddCrew(new Crew(s.Id, s.ProfilePath, s.Name,  s.Job, s.Department, s.CreditId));
             }
 
             File(m);
@@ -579,17 +587,18 @@ namespace TVRename.TMDB
             return m;
         }
 
+        private string GetYouTubeUrl(Movie downloadedMovie)
+        {
+            string yid = downloadedMovie.Videos.Results.Where(video => video.Type == "Trailer" && video.Site == "YouTube").OrderByDescending(v => v.Size).Select(video => video.Key).FirstOrDefault() ?? string.Empty;
+            return yid.HasValue() ? $"https://www.youtube.com/watch?v={yid}" : string.Empty;
+        }
+
         private string? GetCertification(Movie downloadedMovie, string country)
         {
-            foreach (var rel in downloadedMovie.ReleaseDates.Results)
-            {
-                if (rel.Iso_3166_1 == country)
-                {
-                    return rel.ReleaseDates.First().Certification;
-                }
-            }
-
-            return null;
+            return downloadedMovie.ReleaseDates.Results
+                .Where(rel => rel.Iso_3166_1 == country)
+                .Select(rel => rel.ReleaseDates.First().Certification)
+                .FirstOrDefault();
         }
 
         public void Search(string text, bool showErrorMsgBox)
@@ -607,19 +616,16 @@ namespace TVRename.TMDB
         {
             CachedSeriesInfo m = new CachedSeriesInfo
             {
-                //Imdb = result.I,
                 TmdbCode = result.Id,
                 Name = result.Name,
-                //Runtime = result.Runtime.ToString(),
                 FirstAired = result.FirstAirDate,
-                //Genres = result.Genres.Select(genre => genre.Name).ToList(),
                 Overview = result.Overview,
                 //Network = result.ProductionCompanies.FirstOrDefault()?.Name,
                 //Status = result.Status,
                 ShowLanguage = result.OriginalLanguage,
                 SiteRating = (float)result.VoteAverage,
                 SiteRatingVotes = result.VoteCount,
-                PosterUrl = "https://image.tmdb.org/t/p/w600_and_h900_bestv2" + result.PosterPath,
+                PosterUrl = ImageURL(result.PosterPath),
                 IsSearchResultOnly = true,
                 Dirty = false,
             };
@@ -632,19 +638,15 @@ namespace TVRename.TMDB
         {
             CachedMovieInfo m = new CachedMovieInfo
             {
-                //Imdb = result.I,
                 TmdbCode = result.Id,
                 Name = result.Title,
-                //Runtime = result.Runtime.ToString(),
                 FirstAired = result.ReleaseDate,
-                //Genres = result.Genres.Select(genre => genre.Name).ToList(),
                 Overview = result.Overview,
-                //Network = result.ProductionCompanies.FirstOrDefault()?.Name,
-                //Status = result.Status,
                 ShowLanguage = result.OriginalLanguage,
                 SiteRating = (float)result.VoteAverage,
                 SiteRatingVotes = result.VoteCount,
-                PosterUrl = "https://image.tmdb.org/t/p/w600_and_h900_bestv2" + result.PosterPath,
+                PosterUrl = ImageURL(result.PosterPath),
+                FanartUrl = ImageURL(result.BackdropPath),
                 IsSearchResultOnly = true,
                 Dirty = false,
             };
@@ -652,6 +654,16 @@ namespace TVRename.TMDB
 
             File(m);
             return m;
+        }
+
+        static string? ImageURL(string source)
+        {
+            if (source.HasValue())
+            {
+                return "https://image.tmdb.org/t/p/w600_and_h900_bestv2" + source;
+            }
+
+            return null;
         }
 
         public CachedMovieInfo? LookupMovieByImdb(string imdbToTest, bool showErrorMsgBox)
@@ -680,7 +692,7 @@ namespace TVRename.TMDB
         }
 
 
-        public int? LookupTVBDIdbyImdb(string imdbToTest, bool showErrorMsgBox)
+        public int? LookupTvbdIdByImdb(string imdbToTest, bool showErrorMsgBox)
         {
             var results = Client.FindAsync(FindExternalSource.Imdb, imdbToTest).Result;
             LOGGER.Info($"Got {results.TvResults.Count:N0} results searching for {imdbToTest}");
@@ -732,7 +744,13 @@ namespace TVRename.TMDB
         public Dictionary<int, CachedMovieInfo> GetMovieIdsFromCollection(int collectionId)
         {
             var returnValue = new Dictionary<int, CachedMovieInfo>();
-            foreach (var m in Client.GetCollectionAsync(collectionId).Result.Parts)
+            TMDbLib.Objects.Collections.Collection collection = Client.GetCollectionAsync(collectionId).Result;
+            if (collection == null)
+            {
+                return returnValue;
+            }
+
+            foreach (var m in collection.Parts)
             {
                 int id = m.Id;
                 CachedMovieInfo info = File(m);
@@ -819,7 +837,7 @@ namespace TVRename.TMDB
                     return;
                 }
 
-                int? tmdbcode = LookupTVBDIdbyImdb(imdb!, false);
+                int? tmdbcode = LookupTvbdIdByImdb(imdb!, false);
                 if (!tmdbcode.HasValue)
                 {
                     return;

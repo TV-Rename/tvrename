@@ -35,19 +35,41 @@ namespace TVRename
             int totalN = ActionList.Missing.Count + 1;
             UpdateStatus(currentItem, totalN, "Starting searching through files");
 
-            foreach (var me in ActionList.MissingEpisodes.ToList())
+            foreach (var action in ActionList.Missing.ToList())
             {
                 if (settings.Token.IsCancellationRequested)
                 {
                     return;
                 }
 
-                UpdateStatus(currentItem++, totalN, me.Filename);
+                UpdateStatus(currentItem++, totalN, action.Filename);
 
                 ItemList thisRound = new ItemList();
-                List<FileInfo> matchedFiles = FindMatchedFiles(settings, dirCache, me, thisRound);
 
-                ProcessMissingItem(settings, newList, toRemove, me, thisRound, matchedFiles,TVSettings.Instance.UseFullPathNameToMatchSearchFolders);
+                if (action is ShowItemMissing showMissingAction)
+                {
+                    List<FileInfo> matchedFiles = FindMatchedFiles(settings, dirCache, showMissingAction, thisRound);
+
+                    ProcessMissingItem(settings, newList, toRemove, showMissingAction, thisRound, matchedFiles,
+                        TVSettings.Instance.UseFullPathNameToMatchSearchFolders);
+                }
+                else if (action is MovieItemMissing movieMissingAction)
+                {
+                    List<FileInfo> matchedFiles = new List<FileInfo>();
+
+                    foreach (DirCacheEntry dce in dirCache)
+                    {
+                        if (!ReviewFile(movieMissingAction, thisRound, dce.TheFile, settings, TVSettings.Instance.PreventMove, true, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
+                        {
+                            continue;
+                        }
+
+                        matchedFiles.Add(dce.TheFile);
+                    }
+
+                    ProcessMissingItem(settings, newList, toRemove, movieMissingAction, thisRound, matchedFiles,
+                        TVSettings.Instance.UseFullPathNameToMatchSearchFolders);
+                }
             }
 
             if (TVSettings.Instance.KeepTogether)
