@@ -1825,7 +1825,7 @@ namespace TVRename
             BuildRightClickMenu(pt, ep,sis, ep?.AppropriateProcessedSeason);
         }
 
-        private void MenuGuideAndTvdb(bool addSep, ProcessedEpisode? ep, List<ShowConfiguration>? sis, ProcessedSeason? seas)
+        private void MenuGuideAndTvdb(bool addSep, ProcessedEpisode? ep, List<ShowConfiguration?>? sis, ProcessedSeason? seas)
         {
             if (sis is null || sis.Count != 1 || sis[0]==null)
             {
@@ -1850,7 +1850,7 @@ namespace TVRename
             }
             else if (seas != null)
             {
-                AddRcMenuItem("Episode Guide", (sender, args) => GotoEpguideFor(si, true));
+                AddRcMenuItem("Episode Guide", (sender, args) => GotoEpguideFor(seas.Show, true));
                 string label = seas.Show.Provider == TVDoc.ProviderType.TVmaze
                     ? "Visit Tv Maze..."
                     : "Visit thetvdb.com";

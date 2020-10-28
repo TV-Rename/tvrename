@@ -326,6 +326,7 @@
     </Compile>
     <Compile Include="ItemsAndActions\ActionDateTouchFile.cs" />
     <Compile Include="ItemsAndActions\ActionDateTouchMovie.cs" />
+    <Compile Include="LibrarySummary\Check\FolderBaseMovieCheck.cs" />
     <Compile Include="LibrarySummary\Check\SettingsCheck.cs" />
     <Compile Include="LibrarySummary\Check\CustomLanguageMovieCheck.cs" />
     <Compile Include="LibrarySummary\Check\CustomLanguageTvShowCheck.cs" />

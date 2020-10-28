@@ -39,7 +39,7 @@ namespace TVRename
             }
         }
 
-        public override event EventHandler<EventArgs> SelectionChanged;
+        public override event EventHandler<EventArgs>? SelectionChanged;
 
         public override void SetHint(string s)
         {

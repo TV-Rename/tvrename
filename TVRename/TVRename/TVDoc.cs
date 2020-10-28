@@ -556,21 +556,22 @@ namespace TVRename
                 PreventAutoScan("Scan "+st.PrettyPrint());
 
                 //Get the default set of shows defined by the specified type
-                IEnumerable<ShowConfiguration> shows = GetShowList(st, media, passedShows);
+                List<ShowConfiguration> shows = GetShowList(st, media, passedShows).ToList();
                 //Get the default set of shows defined by the specified type
-                IEnumerable<MovieConfiguration> movies = GetMovieList(st,media, passedMovies);
+                List<MovieConfiguration> movies = GetMovieList(st,media, passedMovies).ToList();
 
                 //If still null then return
-                if (shows is null && movies is null) 
+                if (!shows.Any() && !movies.Any()) 
                 {
                     Logger.Warn("No Shows/Movies Provided to Scan");
                     return;
                 }
 
-                //if (!DoDownloadsFG(unattended,hidden,owner))
-                //{
-                 ///   return;
-                //}
+                if (!DoDownloadsFG(unattended,hidden,owner))
+                {
+                    Logger.Warn("Scan stopped as updates failed");
+                    return;
+                }
 
                 Thread actionWork = new Thread(ScanWorker) {Name = "Scan Thread"};
                 CancellationTokenSource cts = new CancellationTokenSource();
@@ -578,26 +579,9 @@ namespace TVRename
 
                 SetupScanUi(hidden);
 
-                actionWork.Start(new ScanSettings(shows?.ToList()??new List<ShowConfiguration>(),movies?.ToList() ??new List<MovieConfiguration>(),unattended,hidden,st,cts.Token,owner));
+                actionWork.Start(new ScanSettings(shows,movies,unattended,hidden,st,cts.Token,owner));
 
-                if (scanProgDlg != null)
-                {
-                    owner.ShowChildDialog(scanProgDlg);
-                    DialogResult ccresult = scanProgDlg.DialogResult;
-
-                    if (ccresult == DialogResult.Cancel)
-                    {
-                        cts.Cancel();
-                    }
-                    else
-                    {
-                        actionWork.Join();
-                    }
-                } 
-                else
-                {
-                    actionWork.Join();
-                }
+                ShowDialogAndWait(owner, cts, actionWork);
 
                 RemoveDuplicateDownloads(unattended,owner);
 
@@ -611,6 +595,28 @@ namespace TVRename
             finally
             {
                 AllowAutoScan();
+            }
+        }
+
+        private void ShowDialogAndWait(UI owner, CancellationTokenSource cts, Thread actionWork)
+        {
+            if (scanProgDlg != null)
+            {
+                owner.ShowChildDialog(scanProgDlg);
+                DialogResult ccresult = scanProgDlg.DialogResult;
+
+                if (ccresult == DialogResult.Cancel)
+                {
+                    cts.Cancel();
+                }
+                else
+                {
+                    actionWork.Join();
+                }
+            }
+            else
+            {
+                actionWork.Join();
             }
         }
 
@@ -662,35 +668,35 @@ namespace TVRename
             }
         }
 
-        private IEnumerable<ShowConfiguration>? GetShowList(TVSettings.ScanType st,MediaConfiguration.MediaType mt, IEnumerable<ShowConfiguration>? passedShows)
+        private IEnumerable<ShowConfiguration> GetShowList(TVSettings.ScanType st,MediaConfiguration.MediaType mt, IEnumerable<ShowConfiguration>? passedShows)
         {
             if (mt == MediaConfiguration.MediaType.movie)
             {
-                return null;
+                return new List<ShowConfiguration>();
             }
             return st switch
             {
                 TVSettings.ScanType.Full => TvLibrary.GetSortedShowItems(),
                 TVSettings.ScanType.Quick => GetQuickShowsToScan(true, true),
                 TVSettings.ScanType.Recent => TvLibrary.GetRecentShows(),
-                TVSettings.ScanType.SingleShow => passedShows,
-                _ => null
+                TVSettings.ScanType.SingleShow => passedShows ?? new List<ShowConfiguration>(),
+                _ => new List<ShowConfiguration>()
             };
         }
 
-        private IEnumerable<MovieConfiguration>? GetMovieList(TVSettings.ScanType st, MediaConfiguration.MediaType mt, IEnumerable<MovieConfiguration>? passedShows)
+        private IEnumerable<MovieConfiguration> GetMovieList(TVSettings.ScanType st, MediaConfiguration.MediaType mt, IEnumerable<MovieConfiguration>? passedShows)
         {
             if (mt == MediaConfiguration.MediaType.tv)
             {
-                return null;
+                return new List<MovieConfiguration>();
             }
             return st switch
             {
                 TVSettings.ScanType.Full => FilmLibrary.GetSortedMovies(),
                 TVSettings.ScanType.Quick => GetQuickMoviesToScan( true),
-                TVSettings.ScanType.Recent => TVSettings.Instance.IncludeMoviesQuickRecent ? FilmLibrary.GetSortedMovies() : passedShows,
-                TVSettings.ScanType.SingleShow => passedShows,
-                _ => null
+                TVSettings.ScanType.Recent => TVSettings.Instance.IncludeMoviesQuickRecent ? FilmLibrary.GetSortedMovies() : passedShows ?? new List<MovieConfiguration>(),
+                TVSettings.ScanType.SingleShow => passedShows ?? new List<MovieConfiguration>(),
+                _ => new List<MovieConfiguration>()
             };
         }
 

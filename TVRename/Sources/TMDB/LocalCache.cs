@@ -871,7 +871,7 @@ namespace TVRename.TMDB
 
         public async Task<Recomendations> GetRecommendations(TVDoc mDoc, BackgroundWorker sender, List<MovieConfiguration> movies)
         {
-            string lang = "en";
+            const string lang = "en"; //todo make work with multi language
             int total = movies.Count;
                 int current = 0;
             Task<SearchContainer<SearchMovie>> topRated = Client.GetMovieTopRatedListAsync(lang);

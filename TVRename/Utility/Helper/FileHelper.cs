@@ -513,10 +513,6 @@ namespace TVRename
         public static bool SimplifyAndCheckFilename(string filename, string showName, bool simplifyfilename, bool simplifyshowname)
         {
             Match match = Regex.Match(simplifyfilename ? Helpers.SimplifyName(filename) : filename, "\\b" + (simplifyshowname ? Helpers.SimplifyName(showName) : showName) + "\\b", RegexOptions.IgnoreCase);
-            if (match.Success && false)
-            {
-                Logger.Info($"Matched {filename} to {showName}");
-            }
             return match.Success;
         }
 

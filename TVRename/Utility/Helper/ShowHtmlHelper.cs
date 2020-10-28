@@ -229,7 +229,6 @@ namespace TVRename
                 return;
             }
 
-            string horizontalBanner = "";//CreateHorizontalBannerHtml(ser);
             string poster = CreatePosterHtml(ser);
             string yearRange = ser.Year?.ToString() ?? "";
             string stars = StarRating(ser.SiteRating / 2);
@@ -237,7 +236,7 @@ namespace TVRename
             string siteRating = ser.SiteRating > 0 ? ser.SiteRating + "/10" : "";
             string runTimeHtml = string.IsNullOrWhiteSpace(ser.Runtime) ? string.Empty : $"<br/> {ser.Runtime} min";
             string actorLinks = ser.GetActors().Select(ActorLinkHtml).ToCsv();
-            string tvdbLink = "";//TheTVDB.API.WebsiteShowUrl(si);
+            string tvdbLink = TheTVDB.API.WebsiteShowUrl(ser.TvdbCode);
 
             string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : $"http://www.tv.com/show/{ser.SeriesId}/summary.html";
             string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
@@ -253,9 +252,6 @@ namespace TVRename
 
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
-                <div class=""text-center"">
-	             {horizontalBanner}
-                </div>
                   <div class=""row"">
                    <div class=""col-md-4"">
                     {poster}
@@ -987,9 +983,8 @@ namespace TVRename
 
             if (TVSettings.Instance.NeedToDownloadBannerFile())
             {
-                //TODO - fix this with real images
-                body += ImageSection("Series Banner", 758, 140, string.Empty, si.Provider);
                 body += ImageSection("Series Poster", 350, 500, si.CachedMovie?.PosterUrl, si.Provider);
+                body += ImageSection("Series Fanart", 758, 140, si.CachedMovie?.FanartUrl, si.Provider);
             }
             else
             {
