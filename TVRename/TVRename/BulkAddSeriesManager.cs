@@ -475,6 +475,11 @@ namespace TVRename
             {
                 prog.Invoke(100 * c2++ / c,folder);
                 DirectoryInfo di = new DirectoryInfo(folder);
+                if (TVSettings.Instance.MovieLibraryFolders.Contains(folder))
+                {
+                    Logger.Warn($"Not loading {folder} as it is both a movie folder and a tv folder");
+                    continue;
+                }
 
                 CheckFolderForShows(di,token, detailedLogging,showErrorMsgBox);
 

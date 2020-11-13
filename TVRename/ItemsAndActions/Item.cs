@@ -23,10 +23,11 @@ namespace TVRename
         public abstract bool SameAs(Item o); // are we the same thing as that other one?
         public abstract string Name { get; } // Name of this action, e.g. "Copy", "Move", "Download"
 
+        public ItemMissing? UndoItemMissing; //Item to revert to if we have to cancel this action
         protected static IgnoreItem? GenerateIgnore(string? file) => string.IsNullOrEmpty(file) ? null : new IgnoreItem(file);
 
         [NotNull]
-        public virtual string SeriesName => Episode is null? UI.GenerateShowUiName(Movie!):UI.GenerateShowUIName(Episode);
+        public virtual string SeriesName => Episode is null? Movie!.ShowName : UI.GenerateShowUIName(Episode); //UI.GenerateShowUiName(Movie!):UI.GenerateShowUIName(Episode);
         [NotNull]
         public virtual string SeasonNumber => Episode?.SeasonNumberAsText ?? string.Empty;
         [NotNull]

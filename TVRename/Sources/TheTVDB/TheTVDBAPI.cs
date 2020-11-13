@@ -297,7 +297,7 @@ namespace TVRename.TheTVDB
         [NotNull]
         public static JObject Search(string text, string defaultLanguageCode)
         {
-            string uri = TokenProvider.TVDB_API_URL + "/search/cachedSeries";
+            string uri = TokenProvider.TVDB_API_URL + "/search/series";
             return JsonHttpGetRequest(uri, new Dictionary<string, string> { { "name", text } }, TokenProvider, defaultLanguageCode, false);
         }
 

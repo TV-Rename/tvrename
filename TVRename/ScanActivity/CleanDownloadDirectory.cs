@@ -28,6 +28,7 @@ namespace TVRename
         private readonly ItemList returnActions;
 
         public override bool Active() => TVSettings.Instance.RemoveDownloadDirectoriesFiles ||
+                                         TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies ||
                                          TVSettings.Instance.ReplaceWithBetterQuality ||
                                          TVSettings.Instance.CopyFutureDatedEpsFromSearchFolders;
         protected override string CheckName() => "Cleaned up and files in download directory that are not needed";
@@ -106,7 +107,7 @@ namespace TVRename
         private void ReviewDirInDownloadDirectory(string subDirPath)
         {
             //we are not checking for any file updates, so can return
-            if (!TVSettings.Instance.RemoveDownloadDirectoriesFiles)
+            if (!TVSettings.Instance.RemoveDownloadDirectoriesFiles && !TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies)
             {
                 return;
             }
@@ -148,11 +149,11 @@ namespace TVRename
                 return;
             }
 
-            if (matchingShows.Count>0)
+            if (matchingShows.Count>0 && TVSettings.Instance.RemoveDownloadDirectoriesFiles)
             {
                 returnActions.Add(SetupDirectoryRemoval(di, matchingShows));
             }
-            if (matchingMovies.Count > 0)
+            if (matchingMovies.Count > 0 && TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies)
             {
                 returnActions.Add(SetupDirectoryRemoval(di, matchingMovies));
             }
@@ -255,7 +256,7 @@ namespace TVRename
 
         private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, [NotNull] List<MovieConfiguration> matchingMovies, IDialogParent owner)
         {
-            bool fileCanBeDeleted = TVSettings.Instance.RemoveDownloadDirectoriesFiles;
+            bool fileCanBeDeleted = TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies;
             ProcessedEpisode firstMatchingPep = null;
 
             if (!matchingMovies.Any())
@@ -271,13 +272,22 @@ namespace TVRename
 
                 fileCanBeDeleted = false;
             }
+            else
+            {
+                if (TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck && (matchingMovies.Max(c=>c.ShowName.Length) <= TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength))
+                {
+                    LOGGER.Info($"Not removing {fi.FullName} as it may be needed for {matchingMovies.Select(x => x.ShowName).ToCsv()} and they are all too short");
+
+                    fileCanBeDeleted = false;
+                }
+            }
 
             if (fileCanBeDeleted)
             {
                 LOGGER.Info(
                     $"Removing {fi.FullName} as it matches { matchingMovies.Select(s => s.ShowName).ToCsv()} and no episodes are needed");
 
-                returnActions.Add(new ActionDeleteFile(fi, matchingMovies.First(), TVSettings.Instance.Tidyup));
+                returnActions.Add(new ActionDeleteFile(fi, matchingMovies.LongestShowName(), TVSettings.Instance.Tidyup));
             }
             else
             {

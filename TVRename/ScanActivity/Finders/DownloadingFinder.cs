@@ -64,7 +64,7 @@ namespace TVRename
                             epF == episode.AppropriateEpNum)
                         {
                             toRemove.Add(action);
-                            newList.Add(new ItemDownloading(te, episode, action.TheFileNoExt, tApp));
+                            newList.Add(new ItemDownloading(te, episode, action.TheFileNoExt, tApp,action));
                             break;
                         }
                     }
@@ -82,7 +82,7 @@ namespace TVRename
 
 
                         toRemove.Add(action);
-                        newList.Add(new ItemDownloading(te, movie, action.TheFileNoExt, tApp));
+                        newList.Add(new ItemDownloading(te, movie, action.TheFileNoExt, tApp, action));
                         break;
                     }
                 }

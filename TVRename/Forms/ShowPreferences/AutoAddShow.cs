@@ -7,54 +7,77 @@ namespace TVRename
 {
     public partial class AutoAddShow : Form
     {
-        private readonly CodeFinder codeFinder;
+        private readonly CodeFinder tvCodeFinder;
+        private readonly CodeFinder movieCodeFinder;
         private readonly string originalHint;
-        private readonly MediaConfiguration.MediaType mediaType;
 
-        public AutoAddShow(string hint,string filename,List<string> directories, MediaConfiguration.MediaType type)
+        public AutoAddShow(string hint,string filename)
         {
             InitializeComponent();
             ShowConfiguration = new ShowConfiguration();
             MovieConfiguration = new MovieConfiguration();
-            mediaType = type;
+            bool assumeMovie = FinderHelper.IgnoreHint(hint);
 
             lblFileName.Text = "Filename: "+filename;
 
-            codeFinder = (type==MediaConfiguration.MediaType.tv)
-                ? (CodeFinder) new TheTvdbCodeFinder("") {Dock = DockStyle.Fill}
-                : new TmdbCodeFinder("") { Dock = DockStyle.Fill };
+            tvCodeFinder = new TheTvdbCodeFinder("") {Dock = DockStyle.Fill};
+            movieCodeFinder = new TmdbCodeFinder("") { Dock = DockStyle.Fill };
 
-            codeFinder.SetHint(hint);
-            codeFinder.SelectionChanged += MTCCF_SelectionChanged;
+            (!assumeMovie ? tpTV : tpMovie).Show();
+
+            tvCodeFinder.SetHint(hint);
+            movieCodeFinder.SetHint(hint);
+
+            tvCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
+            movieCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
+
             pnlCF.SuspendLayout();
-            pnlCF.Controls.Add(codeFinder);
+            pnlCF.Controls.Add(tvCodeFinder);
             pnlCF.ResumeLayout();
-            ActiveControl = codeFinder; // set initial focus to the code entry/show finder control
 
-            cbDirectory.SuspendLayout();
-            cbDirectory.Items.Clear();
-            foreach (string folder in directories)
-            {
-                cbDirectory.Items.Add(folder.TrimEnd(Path.DirectorySeparatorChar.ToString()));
-            }
+            panel1.SuspendLayout();
+            panel1.Controls.Add(movieCodeFinder);
+            panel1.ResumeLayout();
 
-            if (TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation)
-            {
-                cbDirectory.Text = TVSettings.Instance.DefShowLocation.TrimEnd(Path.DirectorySeparatorChar.ToString()); //todo use another DefMovieLocation
-            }
-            else
-            {
-                cbDirectory.SelectedIndex = 0;
-            }
-            
-            cbDirectory.ResumeLayout();
+            ActiveControl = (!assumeMovie ? tvCodeFinder : movieCodeFinder); // set initial focus to the code entry/show finder control
+
+            UpdateDirectoryDropDown(cbDirectory, TVSettings.Instance.LibraryFolders, TVSettings.Instance.DefShowLocation, TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation,tpTV);
+            UpdateDirectoryDropDown(cbMovieDirectory, TVSettings.Instance.MovieLibraryFolders, TVSettings.Instance.DefMovieDefaultLocation, true,tpMovie);
 
             originalHint = hint;
         }
 
+        private static void UpdateDirectoryDropDown(ComboBox comboBox, List<string> folders, string? defaultValue, bool useDefaultValue, TabPage tabToDisable)
+        {
+            comboBox.SuspendLayout();
+            comboBox.Items.Clear();
+            if (folders.Count == 0)
+            {
+                tabToDisable.Enabled = false;
+            }
+            else
+            {
+                foreach (string folder in folders)
+                {
+                    comboBox.Items.Add(folder.TrimEnd(Path.DirectorySeparatorChar.ToString()));
+                }
+
+                if (useDefaultValue && defaultValue.HasValue())
+                {
+                    comboBox.Text = defaultValue!.TrimEnd(Path.DirectorySeparatorChar.ToString());
+                }
+                else
+                {
+                    comboBox.SelectedIndex = 0;
+                }
+            }
+
+            comboBox.ResumeLayout();
+        }
+
         private void MTCCF_SelectionChanged(object sender, EventArgs e)
         {
-            string mediaName = mediaType == MediaConfiguration.MediaType.tv ?  codeFinder.SelectedShow()?.Name : codeFinder.SelectedMovie()?.Name;
+            string mediaName = tabControl1.SelectedTab == tpTV ?  tvCodeFinder.SelectedShow()?.Name : movieCodeFinder.SelectedMovie()?.Name;
 
             string filenameFriendly = TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(mediaName));
             lblDirectoryName.Text = System.IO.Path.DirectorySeparatorChar + filenameFriendly;
@@ -65,15 +88,15 @@ namespace TVRename
 
         private void SetShowItem()
         {
-            int code = codeFinder.SelectedCode();
+            int code = tvCodeFinder.SelectedCode();
 
             ShowConfiguration.TvdbCode = code;
             ShowConfiguration.AutoAddFolderBase = cbDirectory.Text+lblDirectoryName.Text;
 
             //Set Default Timezone and if not then set on Network
-            ShowConfiguration.ShowTimeZone = TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.TimeZoneForNetwork(codeFinder.SelectedShow()?.Network, ShowConfiguration.ShowTimeZone);
+            ShowConfiguration.ShowTimeZone = TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.TimeZoneForNetwork(tvCodeFinder.SelectedShow()?.Network, ShowConfiguration.ShowTimeZone);
 
-            if (!originalHint.Contains(codeFinder.SelectedShow()?.Name??string.Empty, StringComparison.OrdinalIgnoreCase))
+            if (!originalHint.Contains(tvCodeFinder.SelectedShow()?.Name??string.Empty, StringComparison.OrdinalIgnoreCase))
             {
                 ShowConfiguration.AliasNames.Add(originalHint);
             }
@@ -81,12 +104,16 @@ namespace TVRename
 
         private void SetMovieItem()
         {
-            int code = codeFinder.SelectedCode();
+            int code = movieCodeFinder.SelectedCode();
 
-            MovieConfiguration.TvdbCode = code;
-            // Sort MovieConfiguration.Locations akin to Bulk add using cbDirectory.Text+lblDirectoryName.Text;
+            MovieConfiguration.TmdbCode = code;
+            MovieConfiguration.UseAutomaticFolders = true;
+            MovieConfiguration.AutomaticFolderRoot = cbMovieDirectory.Text;
+            MovieConfiguration.Format = MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile;
+            MovieConfiguration.UseCustomFolderNameFormat = false;
+            MovieConfiguration.ConfigurationProvider = TVDoc.ProviderType.TMDB;
 
-            if (!originalHint.Contains(codeFinder.SelectedMovie()?.Name ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+            if (!originalHint.Contains(movieCodeFinder.SelectedMovie()?.Name ?? string.Empty, StringComparison.OrdinalIgnoreCase))
             {
                 MovieConfiguration.AliasNames.Add(originalHint);
             }
@@ -100,14 +127,13 @@ namespace TVRename
                 return;
             }
 
-            switch (mediaType)
+            if (tabControl1.SelectedTab == tpTV)
             {
-                case MediaConfiguration.MediaType.tv:
-                    SetShowItem();
-                    break;
-                case MediaConfiguration.MediaType.movie:
-                    SetMovieItem();
-                    break;
+                SetShowItem();
+            }
+            if (tabControl1.SelectedTab == tpMovie)
+            {
+                SetMovieItem();
             }
 
             DialogResult = DialogResult.OK;
@@ -116,11 +142,11 @@ namespace TVRename
 
         private bool OkToClose()
         {
-            if (mediaType == MediaConfiguration.MediaType.tv &&  TheTVDB.LocalCache.Instance.HasSeries(codeFinder.SelectedCode())) //todo Get add show to work with TVMAZE
+            if (tabControl1.SelectedTab == tpTV  &&  TheTVDB.LocalCache.Instance.HasSeries(tvCodeFinder.SelectedCode())) //todo Get add show to work with TVMAZE
             {
                 return true;
             }
-            if (mediaType == MediaConfiguration.MediaType.movie && TMDB.LocalCache.Instance.HasMovie(codeFinder.SelectedCode())) //todo Get add show to work with TVMAZE
+            if (tabControl1.SelectedTab==tpMovie && TMDB.LocalCache.Instance.HasMovie(movieCodeFinder.SelectedCode())) //todo Get add show to work with TVMAZE
             {
                 return true;
             }
@@ -144,3 +170,4 @@ namespace TVRename
         }
     }
 }
+

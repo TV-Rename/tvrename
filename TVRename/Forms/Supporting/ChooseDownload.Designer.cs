@@ -32,6 +32,7 @@ namespace TVRename.Forms.Supporting
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.bnCancelAll = new System.Windows.Forms.Button();
             this.olvChooseDownload = new TVRename.ObjectListViewFlickerFree();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSize = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -40,7 +41,6 @@ namespace TVRename.Forms.Supporting
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblEpisodeName = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.bnCancelAll = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvChooseDownload)).BeginInit();
@@ -96,6 +96,17 @@ namespace TVRename.Forms.Supporting
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
+            // bnCancelAll
+            // 
+            this.bnCancelAll.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.bnCancelAll.Location = new System.Drawing.Point(265, 3);
+            this.bnCancelAll.Name = "bnCancelAll";
+            this.bnCancelAll.Size = new System.Drawing.Size(75, 23);
+            this.bnCancelAll.TabIndex = 4;
+            this.bnCancelAll.Text = "Cancel All";
+            this.bnCancelAll.UseVisualStyleBackColor = true;
+            this.bnCancelAll.Click += new System.EventHandler(this.bnCancelAll_Click);
+            // 
             // olvChooseDownload
             // 
             this.olvChooseDownload.AllColumns.Add(this.olvName);
@@ -128,6 +139,7 @@ namespace TVRename.Forms.Supporting
             this.olvChooseDownload.UseFiltering = true;
             this.olvChooseDownload.View = System.Windows.Forms.View.Details;
             this.olvChooseDownload.SelectedIndexChanged += new System.EventHandler(this.OlvChooseDownload_SelectedIndexChanged);
+            this.olvChooseDownload.DoubleClick += new System.EventHandler(this.olvChooseDownload_DoubleClick);
             // 
             // olvName
             // 
@@ -179,17 +191,6 @@ namespace TVRename.Forms.Supporting
             this.label1.Size = new System.Drawing.Size(93, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Selected Episode:";
-            // 
-            // bnCancelAll
-            // 
-            this.bnCancelAll.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancelAll.Location = new System.Drawing.Point(265, 3);
-            this.bnCancelAll.Name = "bnCancelAll";
-            this.bnCancelAll.Size = new System.Drawing.Size(75, 23);
-            this.bnCancelAll.TabIndex = 4;
-            this.bnCancelAll.Text = "Cancel All";
-            this.bnCancelAll.UseVisualStyleBackColor = true;
-            this.bnCancelAll.Click += new System.EventHandler(this.bnCancelAll_Click);
             // 
             // ChooseDownload
             // 

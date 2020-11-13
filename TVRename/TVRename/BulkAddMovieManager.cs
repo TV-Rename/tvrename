@@ -90,13 +90,21 @@ namespace TVRename
                 {
                     return (false, subDirectories);
                 }
+                if (!films.Any())
+                {
+                    Logger.Warn($"Checked {di2.FullName} and it had no movie files.");
+                    if (!di2.GetFiles().Any() && !di2.GetDirectories().Any())
+                    {
+                        di2.Delete(false);
+                    }
+                }
 
                 foreach (FileInfo newFilm in films)
                 {
                     // ....its good!
                     Logger.Info("Adding {0} as a new folder", theFolder);
                     PossibleNewMovie ai = new PossibleNewMovie(newFilm, andGuess, showErrorMsgBox);
-                    AddItems.Add(ai);
+                    AddItems.AddIfNew(ai);
                 }
 
                 return (false, subDirectories);
@@ -210,7 +218,7 @@ namespace TVRename
                 return;
             }
 
-            string matchingRoot = TVSettings.Instance.MovieLibraryFolders.FirstOrDefault(s =>  ai.MovieFile.Directory.FullName.IsSubfolderOf(s));
+            string matchingRoot = TVSettings.Instance.MovieLibraryFolders.FirstOrDefault(s =>  ai.Directory.FullName.IsSubfolderOf(s));
             bool isInLibraryFolderFileFinder = matchingRoot.HasValue();
 
             // see if there is a matching show item
@@ -224,7 +232,7 @@ namespace TVRename
             //We are updating an existing record
 
             string targetDirectoryName = CustomMovieName.NameFor(found, TVSettings.Instance.MovieFolderFormat);
-            bool inDefaultPath = ai.MovieFile.Directory.Name.Equals(
+            bool inDefaultPath = ai.Directory.Name.Equals(
                 targetDirectoryName,
                 StringComparison.CurrentCultureIgnoreCase);
 
@@ -248,9 +256,9 @@ namespace TVRename
             }
 
             found.UseManualLocations = true;
-            if (!found.ManualLocations.Contains(ai.MovieFile.Directory.FullName))
+            if (!found.ManualLocations.Contains(ai.Directory.FullName))
             {
-                found.ManualLocations.Add(ai.MovieFile.Directory.FullName);
+                found.ManualLocations.Add(ai.Directory.FullName);
             }
         }
 
@@ -263,7 +271,7 @@ namespace TVRename
 
             mDoc.Stats().AutoAddedMovies++;
 
-            bool inDefaultPath = ai.MovieFile.Directory.Name.Equals(
+            bool inDefaultPath = ai.Directory.Name.Equals(
                 CustomMovieName.NameFor(found, TVSettings.Instance.MovieFolderFormat),
                 StringComparison.CurrentCultureIgnoreCase);
 
@@ -284,7 +292,7 @@ namespace TVRename
             found.UseAutomaticFolders = false;
             found.UseCustomFolderNameFormat = false;
             found.UseManualLocations = true;
-            found.ManualLocations.Add(ai.MovieFile.Directory.FullName);
+            found.ManualLocations.Add(ai.Directory.FullName);
         }
 
         public void CheckFolders(CancellationToken token,BackgroundWorker bw,  bool detailedLogging, bool showErrorMsgBox)
@@ -311,7 +319,11 @@ namespace TVRename
                 CurrentPhaseTotalDirectory = 1;
 
                 DirectoryInfo di = new DirectoryInfo(folder);
-
+                if (TVSettings.Instance.LibraryFolders.Contains(folder))
+                {
+                    Logger.Warn($"Not loading {folder} as it is both a movie folder and a tv folder");
+                    continue;
+                }
                 CheckFolderForShows(di, token,bw, detailedLogging, showErrorMsgBox);
 
                 if (token.IsCancellationRequested)

@@ -5,6 +5,9 @@
 // 
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
+using System;
+
 namespace TVRename
 {
     public class ActionItemSorter : System.Collections.Generic.IComparer<Item>
@@ -38,7 +41,8 @@ namespace TVRename
                 ActionDateTouchSeason _ => 14,
                 ActionDateTouchMedia _ => 15,
                 ActionDateTouchMovie _ => 16,
-                ActionTRemove _ => 17
+                ActionTRemove _ => 17,
+                _ => throw new NotSupportedException()
             };
         }
     }

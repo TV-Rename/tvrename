@@ -354,7 +354,7 @@ namespace TVRename
             foreach (PossibleNewMovie ai in lvFMNewShows.SelectedItems.Cast<ListViewItem>()
                 .Select(lvi => (PossibleNewMovie) lvi.Tag))
             {
-                TVSettings.Instance.IgnoreFolders.Add(ai.MovieFile.Directory.FullName.ToLower());
+                TVSettings.Instance.IgnoreFolders.Add(ai.Directory.FullName.ToLower());
                 engine.AddItems.Remove(ai);
             }
             mDoc.SetDirty();
@@ -384,7 +384,7 @@ namespace TVRename
 
             if (lvFMNewShows.SelectedItems[0].Tag is PossibleNewMovie ai)
             {
-                Helpers.OpenFolder(ai.MovieFile.Directory.FullName);
+                Helpers.OpenFolder(ai.Directory.FullName);
             }
         }
 
@@ -428,7 +428,7 @@ namespace TVRename
         private static void UpdateResultEntry([NotNull] PossibleNewMovie ai, [NotNull] ListViewItem lvi)
         {
             lvi.SubItems.Clear();
-            lvi.Text = ai.MovieFile.Directory.FullName;
+            lvi.Text = ai.Directory.FullName;
             if (ai.CodeKnown)
             {
                 CachedMovieInfo? x = ai.CachedMovie;
@@ -444,7 +444,7 @@ namespace TVRename
                 lvi.SubItems.Add(string.Empty);
             }
             lvi.Tag = ai;
-            lvi.ImageIndex=ai.CodeKnown&&!string.IsNullOrWhiteSpace(ai.MovieFile.FullName)?1:0;
+            lvi.ImageIndex=ai.CodeKnown&&!string.IsNullOrWhiteSpace(ai.MovieStub)?1:0;
         }
 
         private void UpdateListItem(PossibleNewMovie ai, bool makevis)

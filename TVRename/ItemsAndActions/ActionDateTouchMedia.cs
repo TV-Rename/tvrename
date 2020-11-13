@@ -9,6 +9,10 @@ namespace TVRename
         public ActionDateTouchMedia(DirectoryInfo dir, MediaConfiguration si, DateTime date) :base(dir,date)
         {
             show = si;
+            if (si is MovieConfiguration m)
+            {
+                Movie = m;
+            }
         }
         public override string SeriesName => show.ShowName;
         public override string SeasonNumber => string.Empty;

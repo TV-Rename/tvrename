@@ -350,6 +350,9 @@ namespace TVRename
         public string uTorrentPath;
         public bool MonitorFolders = false;
         public bool RemoveDownloadDirectoriesFiles = false;
+        public bool RemoveDownloadDirectoriesFilesMatchMovies = false;
+        public bool RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck = false;
+        public int RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength = 8;
         public bool DeleteShowFromDisk = true;
 
         public ShowStatusColoringTypeList ShowStatusColors = new ShowStatusColoringTypeList();
@@ -558,6 +561,9 @@ namespace TVRename
             writer.WriteElement("PeriodicScanHours", periodCheckHours);
             writer.WriteElement("PeriodicUpdateCacheHours", periodUpdateCacheHours);
             writer.WriteElement("RemoveDownloadDirectoriesFiles", RemoveDownloadDirectoriesFiles);
+            writer.WriteElement("RemoveDownloadDirectoriesFilesMatchMovies", RemoveDownloadDirectoriesFilesMatchMovies);
+            writer.WriteElement("RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck", RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck);
+            writer.WriteElement("RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength", RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength);
             writer.WriteElement("DoBulkAddInScan", DoBulkAddInScan);
             writer.WriteElement("DeleteShowFromDisk", DeleteShowFromDisk);
             writer.WriteElement("SABAPIKey", SABAPIKey);
@@ -1424,6 +1430,9 @@ namespace TVRename
             periodCheckHours = xmlSettings.ExtractInt("PeriodicScanHours",1);
             periodUpdateCacheHours = xmlSettings.ExtractInt("PeriodicUpdateCacheHours", 1);
             RemoveDownloadDirectoriesFiles = xmlSettings.ExtractBool("RemoveDownloadDirectoriesFiles",false);
+            RemoveDownloadDirectoriesFilesMatchMovies = xmlSettings.ExtractBool("RemoveDownloadDirectoriesFilesMatchMovies", false);
+            RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck = xmlSettings.ExtractBool("RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck", false);
+            RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength = xmlSettings.ExtractInt("RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength", 8);
             DoBulkAddInScan = xmlSettings.ExtractBool("DoBulkAddInScan",false);
             DeleteShowFromDisk = xmlSettings.ExtractBool("DeleteShowFromDisk",true);
             EpJPGs = xmlSettings.ExtractBool("EpJPGs",false);

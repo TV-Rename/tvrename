@@ -11,35 +11,23 @@ using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
 using System;
-using System.Globalization;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
-using static Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-
 namespace TVRename
 {
-    public class ActionNfo : ActionWriteMetadata
+    public abstract class ActionNfo : ActionWriteMetadata
     {
-        public ActionNfo(FileInfo nfo, [NotNull] ProcessedEpisode pe) : base(nfo, pe.Show)
-        {
-            Episode = pe;
-        }
-
-        public ActionNfo(FileInfo nfo, ShowConfiguration si) : base(nfo, si)
-        {
-            Episode = null;
-        }
-
-        public ActionNfo(FileInfo nfo, MovieConfiguration mc) : base(nfo,mc)
-        {
-            Episode = null;
-        }
 
         #region Action Members
 
-        public override string Name => "Write KODI Metadata";
+        protected ActionNfo([NotNull] FileInfo where, [NotNull] ShowConfiguration sI) : base(where, sI)
+        {
+        }
+        protected ActionNfo([NotNull] FileInfo where, [NotNull] MovieConfiguration mc) : base(where, mc)
+        {
+        }
 
         public override ActionOutcome Go(TVRenameStats stats)
         {
@@ -50,7 +38,9 @@ namespace TVRename
                     CreateBlankFile();
                 }
 
-                return UpdateFile();
+                ActionOutcome actionOutcome = UpdateFile();
+                Where.LastWriteTime = DateTimeOffset.FromUnixTimeSeconds(UpdateTime()??0).UtcDateTime;
+                return actionOutcome;
             }
             catch (IOException ex)
             {
@@ -78,6 +68,7 @@ namespace TVRename
                 }
             }
         }
+        protected abstract long? UpdateTime();
 
         private void CreateBlankFile()
         {
@@ -92,177 +83,17 @@ namespace TVRename
 
             using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
             {
-                if (Episode != null) // specific episode
-                {
-                    writer.WriteStartElement("episodedetails");
-                    writer.WriteEndElement(); // episodedetails
-                }
-                else if (Movie != null) // specific movie
-                {
-                    writer.WriteStartElement("movie");
-                    writer.WriteEndElement(); // movie
-                }
-                else  // show overview (tvshow.nfo)
-                {
-                    writer.WriteStartElement("tvshow");
-                    writer.WriteEndElement(); // tvshow
-                }
+                writer.WriteStartElement(RootName());
+                writer.WriteEndElement();
             }
         }
+
+        protected abstract string RootName();
 
         [NotNull]
-        private ActionOutcome UpdateFile()
-        {
-            //We will replace the file as too difficult to update multiparts
-            //We can't use XDocument as it's not fully valid XML
-            if (Episode != null && Episode.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
-            {
-                return ReplaceMultipartFile();
-            }
+        protected abstract ActionOutcome UpdateFile();
 
-            XDocument doc = XDocument.Load(Where.FullName);
-            XElement root = doc.Root;
-            if(root is null){
-                return new ActionOutcome($"Could not load {Where.FullName}");
-            }
-
-            if (Episode != null) // specific episode
-            {
-                ShowConfiguration si = Episode.Show;
-                UpdateEpisodeFields(Episode, si, root, false);
-            }
-            else if (SelectedShow !=null)
-            {
-                UpdateShowFields(root);
-            }
-            else if ( Movie != null)
-            {
-                UpdateMovieFields(root);
-            }
-
-            doc.Save(Where.FullName);
-            Where.LastWriteTime = DateTimeOffset.FromUnixTimeSeconds(Episode?.SrvLastUpdated ?? SelectedShow?.CachedShow?.SrvLastUpdated?? Movie?.CachedMovie?.SrvLastUpdated ?? 0).UtcDateTime; 
-
-            return ActionOutcome.Success();
-        }
-
-        [NotNull]
-        private ActionOutcome ReplaceMultipartFile()
-        {
-            ShowConfiguration si = Episode?.Show ?? SelectedShow;
-
-            //We will replace the file as too difficult to update multiparts
-            //We can't use XDocument as it's not fully valid XML
-            List<XElement> episodeXmLs = new List<XElement>();
-
-            if (Episode != null)
-            {
-                foreach (Episode ep in Episode.SourceEpisodes)
-                {
-                    XElement epNode = new XElement("episodedetails");
-                    UpdateEpisodeFields(ep, si, epNode, true);
-                    episodeXmLs.Add(epNode);
-                }
-            }
-
-            try
-            {
-                using (StreamWriter writer = CreateText(Where.FullName))
-                {
-                    foreach (XElement ep in episodeXmLs)
-                    {
-                        writer.WriteLine(ep);
-                    }
-                }
-            }
-            catch (IOException e)
-            {
-                return new ActionOutcome(e);
-            }
-
-            return ActionOutcome.Success();
-        }
-
-        private static void UpdateEpisodeFields([NotNull] Episode episode,ShowConfiguration? show, [NotNull] XElement root, bool isMultiPart)
-        {
-            root.UpdateElement("title", episode.Name,true);
-            root.UpdateElement("id", episode.EpisodeId, true);
-            root.UpdateElement("plot", episode.Overview, true);
-            UpdateAmongstElements(root, "studio", episode.TheCachedSeries.Network);
-
-            UpdateId(root, "tvdb", "true", episode.EpisodeId);
-            UpdateId(root, "imdb", "false", episode.ImdbCode);
-
-            string showRating = episode.EpisodeRating;
-            if (showRating != null)
-            {
-                UpdateRatings(root, showRating, episode.SiteRatingCount ?? 0);
-            }
-
-            if (!(show is null))
-            {
-                root.UpdateElement("originaltitle", show.ShowName, true);
-                root.UpdateElement("showtitle", show.ShowName, true);
-                root.UpdateElement("season", episode.GetSeasonNumber(show.Order), true);
-                root.UpdateElement("episode", episode.GetEpisodeNumber(show.Order), true);
-                root.UpdateElement("mpaa", show.CachedShow?.ContentRating, true);
-
-                //actor(s) and guest actor(s)
-                CachedSeriesInfo s = show.CachedShow;
-                if (s != null)
-                {
-                    ReplaceActors(root, episode.AllActors(s));
-                }
-            }
-
-            if (episode.FirstAired.HasValue)
-            {
-                root.UpdateElement("aired", episode.FirstAired.Value.ToString("yyyy-MM-dd"), true);
-            }
-
-            //Director(s)
-            string? epDirector = episode.EpisodeDirector;
-            if (!string.IsNullOrEmpty(epDirector))
-            {
-                string[] dirs = epDirector.Split('|');
-                if (dirs.Any())
-                {
-                    root.ReplaceElements("director",dirs);
-                }
-            }
-
-            //Writers(s)
-            string? epWriter = episode.Writer;
-            if (!string.IsNullOrEmpty(epWriter))
-            {
-                string[] writers = epWriter.Split('|');
-                if (writers.Any())
-                {
-                    root.ReplaceElements("credits", writers);
-                }
-            }
-
-            if (isMultiPart && show!=null)
-            {
-                XElement resumeElement = root.GetOrCreateElement("resume");
-
-                //we have to put 0 as we don't know where the multipart episode starts/ends
-                resumeElement.UpdateElement("position", 0);
-                resumeElement.UpdateElement("total", 0);
-
-                //For now we only put art in for multipart episodes. Kodi finds the art appropriately
-                //without our help for the others
-
-                string filename = TVSettings.Instance.FilenameFriendly(show, episode);
-
-                string thumbFilename = filename + ".jpg";
-                UpdateAmongstElements(root,"thumb", thumbFilename);
-                //Should be able to do this using the local filename, but only seems to work if you provide a URL
-                //XMLHelper.WriteElementToXML(writer, "thumb", LocalCache.Instance.GetTVDBDownloadURL(episode.GetFilename()))
-            }
-        }
-
-        private static void UpdateAmongstElements(XElement e, string elementName, string? value)
+        protected static void UpdateAmongstElements(XElement e, string elementName, string? value)
         {
             if (!value.HasValue())
             {
@@ -284,113 +115,7 @@ namespace TVRename
             e.Add(new XElement(elementName, value));
         }
 
-        private void UpdateMovieFields([NotNull] XElement root)
-        {
-            CachedMovieInfo cachedSeries = Movie!.CachedMovie;
-            root.UpdateElement("title", Movie.ShowName);
-
-            float? showRating = cachedSeries?.SiteRating;
-            if (showRating.HasValue)
-            {
-                UpdateRatings(root, showRating.Value.ToString(CultureInfo.InvariantCulture), cachedSeries.SiteRatingVotes);
-            }
-
-            string lang = TVSettings.Instance.PreferredLanguageCode;
-
-            if (Movie.UseCustomLanguage && Movie.PreferredLanguage != null)
-            {
-                lang = Movie.PreferredLanguage.Abbreviation;
-            }
-
-            //https://forum.kodi.tv/showthread.php?tid=323588
-            //says that we need a format like this:
-            //<episodeguide><url post="yes" cache="auth.json">https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json</url></episodeguide>
-
-            XElement episodeGuideNode = root.GetOrCreateElement("episodeguide");
-            XElement urlNode = episodeGuideNode.GetOrCreateElement("url");
-            urlNode.UpdateAttribute("post", "yes");
-            urlNode.UpdateAttribute("cache", "auth.json");
-            urlNode.SetValue(TheTVDB.API.BuildUrl(Movie.TvdbCode, lang));
-
-            if (!(cachedSeries is null))
-            {
-                root.UpdateElement("originaltitle", Movie.ShowName);
-                UpdateAmongstElements(root, "studio", cachedSeries.Network);
-                root.UpdateElement("id", Movie.Code);
-                root.UpdateElement("runtime", cachedSeries.Runtime, true);
-                root.UpdateElement("mpaa", cachedSeries.ContentRating, true);
-                root.UpdateElement("premiered", cachedSeries.FirstAired);
-                if (cachedSeries.Year.HasValue)
-                {
-                    root.UpdateElement("year", cachedSeries.Year.Value);
-                }
-                root.UpdateElement("status", cachedSeries.Status);
-                root.UpdateElement("plot", cachedSeries.Overview);
-                root.UpdateElement("outline", cachedSeries.Overview);
-                root.UpdateElement("tagline", cachedSeries.TagLine);
-                root.UpdateElement("set", cachedSeries.CollectionName);
-                root.UpdateElement("trailer", cachedSeries.TrailerUrl);
-
-                UpdateId(root, "tvdb", "false", cachedSeries.TvdbCode);
-                UpdateId(root, "imdb", "false", cachedSeries.Imdb);
-                UpdateId(root, "tmdb", "true", cachedSeries.TmdbCode);
-            }
-
-            root.ReplaceElements("genre", Movie.Genres);
-
-            ReplaceActors(root, Movie.Actors);
-        }
-
-        private void UpdateShowFields([NotNull] XElement root)
-        {
-            CachedSeriesInfo cachedSeries = SelectedShow!.CachedShow;
-            root.UpdateElement("title", SelectedShow.ShowName);
-
-            float? showRating = cachedSeries?.SiteRating;
-            if (showRating.HasValue)
-            {
-                UpdateRatings(root,showRating.Value.ToString(CultureInfo.InvariantCulture), cachedSeries.SiteRatingVotes);
-            }
-
-            string lang = TVSettings.Instance.PreferredLanguageCode;
-            
-            if (SelectedShow.UseCustomLanguage && SelectedShow.PreferredLanguage != null)
-            {
-                lang = SelectedShow.PreferredLanguage.Abbreviation;
-            }
-
-            //https://forum.kodi.tv/showthread.php?tid=323588
-            //says that we need a format like this:
-            //<episodeguide><url post="yes" cache="auth.json">https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json</url></episodeguide>
-
-            XElement episodeGuideNode = root.GetOrCreateElement("episodeguide");
-            XElement urlNode = episodeGuideNode.GetOrCreateElement("url");
-            urlNode.UpdateAttribute("post", "yes");
-            urlNode.UpdateAttribute("cache", "auth.json");
-            urlNode.SetValue(TheTVDB.API.BuildUrl(SelectedShow.TvdbCode, lang));
-
-            if (!(cachedSeries is null))
-            {
-                root.UpdateElement("originaltitle", SelectedShow.ShowName);
-                UpdateAmongstElements(root,"studio", cachedSeries.Network);
-                root.UpdateElement("id", cachedSeries.TvdbCode);
-                root.UpdateElement("runtime", cachedSeries.Runtime, true);
-                root.UpdateElement("mpaa", cachedSeries.ContentRating, true);
-                root.UpdateElement("premiered", cachedSeries.FirstAired);
-                root.UpdateElement("year", cachedSeries.Year);
-                root.UpdateElement("status", cachedSeries.Status);
-                root.UpdateElement("plot", cachedSeries.Overview);
-
-                UpdateId(root, "tvdb", "true", cachedSeries.TvdbCode);
-                UpdateId(root, "imdb", "false", cachedSeries.Imdb);
-            }
-
-            root.ReplaceElements("genre", SelectedShow.Genres);
-
-            ReplaceActors(root, SelectedShow.Actors);
-        }
-
-        private static void UpdateRatings([NotNull] XElement root, string rating, int votes)
+        protected static void UpdateRatings([NotNull] XElement root, string rating, int votes)
         {
             XElement ratingsNode = root.GetOrCreateElement("ratings");
 
@@ -404,7 +129,7 @@ namespace TVRename
             ratingNode.UpdateElement("votes", votes, true);
         }
 
-        private static void UpdateId([NotNull] XElement root, string idType, [NotNull] string defaultState, string? idValue)
+        protected static void UpdateId([NotNull] XElement root, string idType, [NotNull] string defaultState, string? idValue)
         {
             if (idValue is null)
             {
@@ -430,7 +155,7 @@ namespace TVRename
             }
         }
 
-        private static void ReplaceActors([NotNull] XElement root, [NotNull] IEnumerable<Actor> selectedShowActors)
+        protected static void ReplaceActors([NotNull] XElement root, [NotNull] IEnumerable<Actor> selectedShowActors)
         {
             IEnumerable<Actor> showActors = selectedShowActors as Actor[] ?? selectedShowActors.ToArray();
             if (! showActors.ToList().Any())
@@ -468,7 +193,7 @@ namespace TVRename
             }
         }
 
-        private static void UpdateId([NotNull] XElement root, [NotNull] string idType, [NotNull] string defaultState, int idValue)
+        protected static void UpdateId([NotNull] XElement root, [NotNull] string idType, [NotNull] string defaultState, int idValue)
         {
             UpdateId(root,idType,defaultState,idValue.ToString());
         }

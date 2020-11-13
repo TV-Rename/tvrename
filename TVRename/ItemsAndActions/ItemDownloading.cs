@@ -26,10 +26,11 @@ namespace TVRename
         public override int IconNumber { get; }
         public override string? TargetFolder => string.IsNullOrEmpty(entry.Destination) ? null : new FileInfo(entry.Destination).DirectoryName;
 
-        private ItemDownloading(IDownloadInformation dl,string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp)
+        private ItemDownloading(IDownloadInformation dl,string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp, ItemMissing undoItem)
         {
             DesiredLocationNoExt = desiredLocationNoExt;
             entry = dl;
+            UndoItemMissing = undoItem;
             IconNumber = tApp switch
             {
                 DownloadingFinder.DownloadApp.uTorrent => 2,
@@ -39,12 +40,12 @@ namespace TVRename
             };
         }
 
-        public ItemDownloading(IDownloadInformation dl, ProcessedEpisode pe, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp) :this(dl, desiredLocationNoExt, tApp)
+        public ItemDownloading(IDownloadInformation dl, ProcessedEpisode pe, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp, ItemMissing me) :this(dl, desiredLocationNoExt, tApp,me)
         {
             Episode = pe;
         }
 
-        public ItemDownloading(IDownloadInformation dl, MovieConfiguration mc, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp) : this(dl, desiredLocationNoExt, tApp)
+        public ItemDownloading(IDownloadInformation dl, MovieConfiguration mc, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp, ItemMissing me) : this(dl, desiredLocationNoExt, tApp, me)
         {
             Episode = null;
             Movie = mc;

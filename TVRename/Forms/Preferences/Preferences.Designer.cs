@@ -332,9 +332,13 @@ namespace TVRename
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
             this.tpDataSources = new System.Windows.Forms.TabPage();
-            this.label83 = new System.Windows.Forms.Label();
+            this.panel3 = new System.Windows.Forms.Panel();
             this.rdoMovieTMDB = new System.Windows.Forms.RadioButton();
             this.rdoMovieTheTVDB = new System.Windows.Forms.RadioButton();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.rdoTVTVMaze = new System.Windows.Forms.RadioButton();
+            this.rdoTVTVDB = new System.Windows.Forms.RadioButton();
+            this.label83 = new System.Windows.Forms.Label();
             this.gbTMDB = new System.Windows.Forms.GroupBox();
             this.cbTMDBRegions = new System.Windows.Forms.ComboBox();
             this.label80 = new System.Windows.Forms.Label();
@@ -355,8 +359,6 @@ namespace TVRename
             this.label10 = new System.Windows.Forms.Label();
             this.cbTVDBLanguages = new System.Windows.Forms.ComboBox();
             this.label33 = new System.Windows.Forms.Label();
-            this.rdoTVTVMaze = new System.Windows.Forms.RadioButton();
-            this.rdoTVTVDB = new System.Windows.Forms.RadioButton();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.tpMovieDefaults = new System.Windows.Forms.TabPage();
             this.label86 = new System.Windows.Forms.Label();
@@ -471,8 +473,10 @@ namespace TVRename
             this.cbMissingXML = new System.Windows.Forms.CheckBox();
             this.cbMissingCSV = new System.Windows.Forms.CheckBox();
             this.txtMissingXML = new System.Windows.Forms.TextBox();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.panel3 = new System.Windows.Forms.Panel();
+            this.groupBox28 = new System.Windows.Forms.GroupBox();
+            this.cbCleanUpDownloadDirMovies = new System.Windows.Forms.CheckBox();
+            this.cbCleanUpDownloadDirMoviesLength = new System.Windows.Forms.CheckBox();
+            this.tbCleanUpDownloadDirMoviesLength = new System.Windows.Forms.TextBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -517,6 +521,8 @@ namespace TVRename
             ((System.ComponentModel.ISupportInitialize)(this.pbGeneral)).BeginInit();
             this.tcTabs.SuspendLayout();
             this.tpDataSources.SuspendLayout();
+            this.panel3.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.gbTMDB.SuspendLayout();
             this.groupBox20.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -542,8 +548,7 @@ namespace TVRename
             this.groupBox7.SuspendLayout();
             this.groupBox27.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            this.panel2.SuspendLayout();
-            this.panel3.SuspendLayout();
+            this.groupBox28.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKButton
@@ -2818,9 +2823,9 @@ namespace TVRename
             // 
             // tbFolderDeleting
             // 
+            this.tbFolderDeleting.Controls.Add(this.groupBox28);
             this.tbFolderDeleting.Controls.Add(this.label69);
             this.tbFolderDeleting.Controls.Add(this.cbDeleteShowFromDisk);
-            this.tbFolderDeleting.Controls.Add(this.cbCleanUpDownloadDir);
             this.tbFolderDeleting.Controls.Add(this.label32);
             this.tbFolderDeleting.Controls.Add(this.label30);
             this.tbFolderDeleting.Controls.Add(this.txtEmptyMaxSize);
@@ -2854,7 +2859,7 @@ namespace TVRename
             // cbDeleteShowFromDisk
             // 
             this.cbDeleteShowFromDisk.AutoSize = true;
-            this.cbDeleteShowFromDisk.Location = new System.Drawing.Point(16, 265);
+            this.cbDeleteShowFromDisk.Location = new System.Drawing.Point(16, 348);
             this.cbDeleteShowFromDisk.Name = "cbDeleteShowFromDisk";
             this.cbDeleteShowFromDisk.Size = new System.Drawing.Size(300, 17);
             this.cbDeleteShowFromDisk.TabIndex = 13;
@@ -2864,11 +2869,11 @@ namespace TVRename
             // cbCleanUpDownloadDir
             // 
             this.cbCleanUpDownloadDir.AutoSize = true;
-            this.cbCleanUpDownloadDir.Location = new System.Drawing.Point(16, 242);
+            this.cbCleanUpDownloadDir.Location = new System.Drawing.Point(6, 19);
             this.cbCleanUpDownloadDir.Name = "cbCleanUpDownloadDir";
-            this.cbCleanUpDownloadDir.Size = new System.Drawing.Size(253, 17);
+            this.cbCleanUpDownloadDir.Size = new System.Drawing.Size(293, 17);
             this.cbCleanUpDownloadDir.TabIndex = 11;
-            this.cbCleanUpDownloadDir.Text = "Clean up already copied files from search folders";
+            this.cbCleanUpDownloadDir.Text = "Clean up already copied episode files from search folders";
             this.cbCleanUpDownloadDir.UseVisualStyleBackColor = true;
             // 
             // label32
@@ -3871,15 +3876,14 @@ namespace TVRename
             this.tpDataSources.Text = "Data Sources";
             this.tpDataSources.UseVisualStyleBackColor = true;
             // 
-            // label83
+            // panel3
             // 
-            this.label83.AutoSize = true;
-            this.label83.Location = new System.Drawing.Point(9, 94);
-            this.label83.Name = "label83";
-            this.label83.Size = new System.Drawing.Size(113, 13);
-            this.label83.TabIndex = 61;
-            this.label83.Text = "Default Movie Source:";
-            this.label83.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.panel3.Controls.Add(this.rdoMovieTMDB);
+            this.panel3.Controls.Add(this.rdoMovieTheTVDB);
+            this.panel3.Location = new System.Drawing.Point(129, 90);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(260, 29);
+            this.panel3.TabIndex = 63;
             // 
             // rdoMovieTMDB
             // 
@@ -3903,6 +3907,47 @@ namespace TVRename
             this.rdoMovieTheTVDB.TabStop = true;
             this.rdoMovieTheTVDB.Text = "The TVDB";
             this.rdoMovieTheTVDB.UseVisualStyleBackColor = true;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.rdoTVTVMaze);
+            this.panel2.Controls.Add(this.rdoTVTVDB);
+            this.panel2.Location = new System.Drawing.Point(129, 59);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(260, 29);
+            this.panel2.TabIndex = 62;
+            // 
+            // rdoTVTVMaze
+            // 
+            this.rdoTVTVMaze.AutoSize = true;
+            this.rdoTVTVMaze.Location = new System.Drawing.Point(90, 3);
+            this.rdoTVTVMaze.Name = "rdoTVTVMaze";
+            this.rdoTVTVMaze.Size = new System.Drawing.Size(68, 17);
+            this.rdoTVTVMaze.TabIndex = 46;
+            this.rdoTVTVMaze.TabStop = true;
+            this.rdoTVTVMaze.Text = "TV Maze";
+            this.rdoTVTVMaze.UseVisualStyleBackColor = true;
+            // 
+            // rdoTVTVDB
+            // 
+            this.rdoTVTVDB.AutoSize = true;
+            this.rdoTVTVDB.Location = new System.Drawing.Point(3, 3);
+            this.rdoTVTVDB.Name = "rdoTVTVDB";
+            this.rdoTVTVDB.Size = new System.Drawing.Size(76, 17);
+            this.rdoTVTVDB.TabIndex = 45;
+            this.rdoTVTVDB.TabStop = true;
+            this.rdoTVTVDB.Text = "The TVDB";
+            this.rdoTVTVDB.UseVisualStyleBackColor = true;
+            // 
+            // label83
+            // 
+            this.label83.AutoSize = true;
+            this.label83.Location = new System.Drawing.Point(9, 94);
+            this.label83.Name = "label83";
+            this.label83.Size = new System.Drawing.Size(113, 13);
+            this.label83.TabIndex = 61;
+            this.label83.Text = "Default Movie Source:";
+            this.label83.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // gbTMDB
             // 
@@ -4116,28 +4161,6 @@ namespace TVRename
             this.label33.TabIndex = 47;
             this.label33.Text = "Default TV Source:";
             this.label33.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // rdoTVTVMaze
-            // 
-            this.rdoTVTVMaze.AutoSize = true;
-            this.rdoTVTVMaze.Location = new System.Drawing.Point(90, 3);
-            this.rdoTVTVMaze.Name = "rdoTVTVMaze";
-            this.rdoTVTVMaze.Size = new System.Drawing.Size(68, 17);
-            this.rdoTVTVMaze.TabIndex = 46;
-            this.rdoTVTVMaze.TabStop = true;
-            this.rdoTVTVMaze.Text = "TV Maze";
-            this.rdoTVTVMaze.UseVisualStyleBackColor = true;
-            // 
-            // rdoTVTVDB
-            // 
-            this.rdoTVTVDB.AutoSize = true;
-            this.rdoTVTVDB.Location = new System.Drawing.Point(3, 3);
-            this.rdoTVTVDB.Name = "rdoTVTVDB";
-            this.rdoTVTVDB.Size = new System.Drawing.Size(76, 17);
-            this.rdoTVTVDB.TabIndex = 45;
-            this.rdoTVTVDB.TabStop = true;
-            this.rdoTVTVDB.Text = "The TVDB";
-            this.rdoTVTVDB.UseVisualStyleBackColor = true;
             // 
             // pictureBox3
             // 
@@ -5466,23 +5489,48 @@ namespace TVRename
             this.txtMissingXML.Size = new System.Drawing.Size(251, 20);
             this.txtMissingXML.TabIndex = 4;
             // 
-            // panel2
+            // groupBox28
             // 
-            this.panel2.Controls.Add(this.rdoTVTVMaze);
-            this.panel2.Controls.Add(this.rdoTVTVDB);
-            this.panel2.Location = new System.Drawing.Point(129, 59);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(260, 29);
-            this.panel2.TabIndex = 62;
+            this.groupBox28.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox28.Controls.Add(this.tbCleanUpDownloadDirMoviesLength);
+            this.groupBox28.Controls.Add(this.cbCleanUpDownloadDirMoviesLength);
+            this.groupBox28.Controls.Add(this.cbCleanUpDownloadDirMovies);
+            this.groupBox28.Controls.Add(this.cbCleanUpDownloadDir);
+            this.groupBox28.Location = new System.Drawing.Point(16, 242);
+            this.groupBox28.Name = "groupBox28";
+            this.groupBox28.Size = new System.Drawing.Size(395, 100);
+            this.groupBox28.TabIndex = 41;
+            this.groupBox28.TabStop = false;
+            this.groupBox28.Text = "Clean Up Search Folders";
             // 
-            // panel3
+            // cbCleanUpDownloadDirMovies
             // 
-            this.panel3.Controls.Add(this.rdoMovieTMDB);
-            this.panel3.Controls.Add(this.rdoMovieTheTVDB);
-            this.panel3.Location = new System.Drawing.Point(129, 90);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(260, 29);
-            this.panel3.TabIndex = 63;
+            this.cbCleanUpDownloadDirMovies.AutoSize = true;
+            this.cbCleanUpDownloadDirMovies.Location = new System.Drawing.Point(6, 42);
+            this.cbCleanUpDownloadDirMovies.Name = "cbCleanUpDownloadDirMovies";
+            this.cbCleanUpDownloadDirMovies.Size = new System.Drawing.Size(284, 17);
+            this.cbCleanUpDownloadDirMovies.TabIndex = 12;
+            this.cbCleanUpDownloadDirMovies.Text = "Clean up already copied movie files from search folders";
+            this.cbCleanUpDownloadDirMovies.UseVisualStyleBackColor = true;
+            // 
+            // cbCleanUpDownloadDirMoviesLength
+            // 
+            this.cbCleanUpDownloadDirMoviesLength.AutoSize = true;
+            this.cbCleanUpDownloadDirMoviesLength.Location = new System.Drawing.Point(45, 65);
+            this.cbCleanUpDownloadDirMoviesLength.Name = "cbCleanUpDownloadDirMoviesLength";
+            this.cbCleanUpDownloadDirMoviesLength.Size = new System.Drawing.Size(176, 17);
+            this.cbCleanUpDownloadDirMoviesLength.TabIndex = 13;
+            this.cbCleanUpDownloadDirMoviesLength.Text = "Only include movies longer than";
+            this.cbCleanUpDownloadDirMoviesLength.UseVisualStyleBackColor = true;
+            // 
+            // tbCleanUpDownloadDirMoviesLength
+            // 
+            this.tbCleanUpDownloadDirMoviesLength.Location = new System.Drawing.Point(216, 65);
+            this.tbCleanUpDownloadDirMoviesLength.Name = "tbCleanUpDownloadDirMoviesLength";
+            this.tbCleanUpDownloadDirMoviesLength.Size = new System.Drawing.Size(55, 20);
+            this.tbCleanUpDownloadDirMoviesLength.TabIndex = 14;
+            this.toolTip1.SetToolTip(this.tbCleanUpDownloadDirMoviesLength, "Number of letters that the name of the movie must be. To prevent \'Up\' ");
             // 
             // Preferences
             // 
@@ -5582,6 +5630,10 @@ namespace TVRename
             this.tcTabs.ResumeLayout(false);
             this.tpDataSources.ResumeLayout(false);
             this.tpDataSources.PerformLayout();
+            this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.gbTMDB.ResumeLayout(false);
             this.gbTMDB.PerformLayout();
             this.groupBox20.ResumeLayout(false);
@@ -5626,10 +5678,8 @@ namespace TVRename
             this.groupBox27.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
-            this.panel3.ResumeLayout(false);
-            this.panel3.PerformLayout();
+            this.groupBox28.ResumeLayout(false);
+            this.groupBox28.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -6069,5 +6119,9 @@ namespace TVRename
         private System.Windows.Forms.Label label90;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.GroupBox groupBox28;
+        private System.Windows.Forms.TextBox tbCleanUpDownloadDirMoviesLength;
+        private System.Windows.Forms.CheckBox cbCleanUpDownloadDirMoviesLength;
+        private System.Windows.Forms.CheckBox cbCleanUpDownloadDirMovies;
     }
 }

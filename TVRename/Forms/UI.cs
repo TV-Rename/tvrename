@@ -76,6 +76,7 @@ namespace TVRename
         private bool treeExpandCollapseToggle = true;
 
         private ProcessedEpisode? switchToWhenOpenMyShows;
+        private MovieConfiguration? switchToWhenOpenMyMovies;
 
         private readonly ListViewColumnSorter lvwScheduleColumnSorter;
 
@@ -253,6 +254,11 @@ namespace TVRename
         private static object GroupSeasonKeyDelegate(object rowObject)
         {
             Item ep = (Item) rowObject;
+            if (ep.Movie != null)
+            {
+                return PostpendTheIfNeeded(ep.Movie.ShowName);
+            }
+
             if (ep.SeasonNumber.HasValue())
             {
                 return $"{ep.SeriesName} - Season {ep.SeasonNumber}";
@@ -335,7 +341,7 @@ namespace TVRename
         {
             switch ((string) groupKey)
             {
-                case "A-Mising":
+                case "A-Missing":
                     return HeaderName("Missing", mDoc.TheActionList.Missing.Count);
 
                 case "H-UpdateFiles":
@@ -386,7 +392,7 @@ namespace TVRename
             Item i = (Item) rowObject;
             return i.ScanListViewGroup switch
             {
-                "lvgActionMissing" => "A-Mising",
+                "lvgActionMissing" => "A-Missing",
                 "lvgActionMeta" => "H-UpdateFiles",
                 "lvgUpdateFileDates" => "I-UpdateFileDates",
                 "lvgDownloading" => "J-Downloading",
@@ -439,7 +445,7 @@ namespace TVRename
         private void ScanAndAction(TVSettings.ScanType type)
         {
             UiScan(null,null,true,type,MediaConfiguration.MediaType.both);
-            ActionAction(true,true);
+            ActionAction(true,true, false);
         }
 
         private static void UpdateSplashStatus([NotNull] TVRenameSplash splashScreen, string text)
@@ -521,7 +527,7 @@ namespace TVRename
 
             if (a.DoAll)
             {
-                ActionAction(true, UNATTENDED);
+                ActionAction(true, UNATTENDED,true);
             }
 
             if (a.Save)
@@ -575,10 +581,10 @@ namespace TVRename
 
         private MediaConfiguration.MediaType GetSelectedObjectType(ObjectListView list)
         {
-            if (list.SelectedObjects.Count == list.SelectedObjects.OfType<MovieConfiguration>().Count())
+            if (list.SelectedObjects.Count == list.SelectedObjects.OfType<MovieItemMissing>().Count())
                 return MediaConfiguration.MediaType.movie;
 
-            if (list.SelectedObjects.Count == list.SelectedObjects.OfType<ProcessedEpisode>().Count())
+            if (list.SelectedObjects.Count == list.SelectedObjects.OfType<ShowItemMissing>().Count())
                 return MediaConfiguration.MediaType.tv;
 
             return MediaConfiguration.MediaType.both;
@@ -1801,6 +1807,16 @@ namespace TVRename
             SelectSeason(ep.AppropriateProcessedSeason);
         }
 
+        public void GotoMovieFor([NotNull] MovieConfiguration mc, bool changeTab)
+        {
+            if (changeTab)
+            {
+                tabControl1.SelectTab(tbMyMovies);
+            }
+
+            SelectMovie(mc);
+        }
+
         private void RightClickOnMyShows(ShowConfiguration si, Point pt)
         {
             BuildRightClickMenu(pt,null, new List<ShowConfiguration> { si },null);
@@ -2458,6 +2474,17 @@ namespace TVRename
                 }
 
                 UpdateMyShowsButtonStatus();
+            }
+            if (tabControl1.SelectedTab == tbMyMovies)
+            {
+                if (switchToWhenOpenMyMovies != null && TVSettings.Instance.AutoSelectShowInMyShows)
+                {
+                    GotoMovieFor(switchToWhenOpenMyMovies, false);
+                    switchToWhenOpenMyMovies = null; //disable switching to this movie again
+                    //FillEpGuideHtml();
+                }
+
+                UpdateMyMoviesButtonStatus();
             }
         }
 
@@ -3519,16 +3546,23 @@ namespace TVRename
         [NotNull]
         private static string HeaderName(string name, int number, long filesize) => $"{name} ({PrettyPrint(number)}, {filesize.GBMB(1)})";
 
-        private void bnActionAction_Click(object sender, EventArgs e) => ActionAction(true,false);
+        private void bnActionAction_Click(object sender, EventArgs e) => ActionAction(true,false, false);
 
-        private void ActionAction(bool checkedNotSelected, bool unattended)
+        private void ActionAction(bool checkedNotSelected, bool unattended, bool doAll)
         {
             mDoc.PreventAutoScan("Action Selected Items");
-            ItemList lvr = checkedNotSelected
-                ? GetCheckedItems()
-                : GetSelectedItems();
+            if (doAll)
+            {
+                mDoc.DoAllActions(this);
+            }
+            else
+            {
+                ItemList lvr = checkedNotSelected
+                    ? GetCheckedItems()
+                    : GetSelectedItems();
 
-            mDoc.DoActions(lvr,this);
+                mDoc.DoActions(lvr, this);
+            }
 
             FillActionList(true);
             RefreshWTW(false,unattended);
@@ -3573,6 +3607,7 @@ namespace TVRename
             }
             else if (action?.Movie != null && lvr.Count == 1)
             {
+                switchToWhenOpenMyMovies = action.Movie;
                 if (e.Button != MouseButtons.Right)
                 {
                     return;
@@ -3602,7 +3637,7 @@ namespace TVRename
             // Action related items
             if (lvr.Count > lvr.Missing.ToList().Count) // not just missing selected
             {
-                AddRcMenuItem("Action Selected", (sender, args) => ActionAction(false, false)); 
+                AddRcMenuItem("Action Selected", (sender, args) => ActionAction(false, false,false)); 
             }
 
             AddRcMenuItem("Ignore Selected", (sender, args) => IgnoreSelected());
@@ -3630,7 +3665,7 @@ namespace TVRename
                 }
             }
 
-            if (lvr.CopyMove.Count > 0||lvr.DownloadTorrents.Count>0)
+            if (lvr.CopyMove.Count > 0||lvr.DownloadTorrents.Count>0||lvr.Downloading.Count>0)
             {
                 showRightClickMenu.Items.Add(new ToolStripSeparator());
                 AddRcMenuItem("Revert to Missing", (sender, args) => Revert());
@@ -4187,18 +4222,15 @@ namespace TVRename
             CheckState cs = menuItem.CheckState;
 
             internalCheckChange = true;
-            
-            foreach (Item i in olvAction.Objects.OfType<Item>().Where(isValid))
-            {
-                if (cs == CheckState.Checked)
+
+                            if (cs == CheckState.Checked)
                 {
-                    olvAction.CheckObject(i);
+                    olvAction.CheckObjects(olvAction.Objects.OfType<Item>().Where(isValid).ToList());
                 }
                 else
                 {
-                    olvAction.UncheckObject(i);
+                    olvAction.UncheckObjects(olvAction.Objects.OfType<Item>().Where(isValid).ToList());
                 }
-            }
 
             internalCheckChange = false;
             UpdateActionCheckboxes();

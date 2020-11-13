@@ -32,6 +32,11 @@ namespace TVRename
             destination = dest;
             this.path = path;
             shrinkLargeMede8ErImage = shrink;
+
+            if (si is MovieConfiguration m)
+            {
+                Movie = m;
+            }
         }
 
         #region Action Members

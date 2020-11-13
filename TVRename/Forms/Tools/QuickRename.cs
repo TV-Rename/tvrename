@@ -123,8 +123,8 @@ namespace TVRename.Forms.Tools
             {
                 if (TVSettings.Instance.AutoAddAsPartOfQuickRename)
                 {
-                    List<ShowConfiguration> addedShows = FinderHelper.FindShows(new List<string> {droppedFile.Name}, mDoc,owner);
-                    bestShow = addedShows.FirstOrDefault();
+                    List<MediaConfiguration> addedShows = FinderHelper.FindMedia(new List<string> {droppedFile.Name}, mDoc,owner);
+                    bestShow = addedShows.OfType<ShowConfiguration>().FirstOrDefault();
                 }
 
                 if (bestShow is null)

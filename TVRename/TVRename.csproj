@@ -326,6 +326,9 @@
     </Compile>
     <Compile Include="ItemsAndActions\ActionDateTouchFile.cs" />
     <Compile Include="ItemsAndActions\ActionDateTouchMovie.cs" />
+    <Compile Include="ItemsAndActions\ActionNfoEpisode.cs" />
+    <Compile Include="ItemsAndActions\ActionNfoMovie.cs" />
+    <Compile Include="ItemsAndActions\ActionNfoShow.cs" />
     <Compile Include="LibrarySummary\Check\FolderBaseMovieCheck.cs" />
     <Compile Include="LibrarySummary\Check\SettingsCheck.cs" />
     <Compile Include="LibrarySummary\Check\CustomLanguageMovieCheck.cs" />
@@ -449,7 +452,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ScanActivity\FindNewMoviesInDownloadFolders.cs" />
     <Compile Include="ScanActivity\ScanShowActivity\CheckAllMovieFoldersExist.cs" />
     <Compile Include="ScanActivity\ScanShowActivity\RenameAndMissingMovieCheck.cs" />
     <Compile Include="Settings\MovieConfiguration.cs" />
@@ -609,7 +611,7 @@
     <Compile Include="ScanActivity\FindMissingEpisodesDownloading.cs" />
     <Compile Include="ScanActivity\FindMissingEpisodesLocally.cs" />
     <Compile Include="ScanActivity\FindMissingEpisodesSearch.cs" />
-    <Compile Include="ScanActivity\FindNewShowsInDownloadFolders.cs" />
+    <Compile Include="ScanActivity\FindNewItemsInDownloadFolders.cs" />
     <Compile Include="ScanActivity\FindNewShowsInLibrary.cs" />
     <Compile Include="ScanActivity\ScanShowActivity\MergeLibraryEpisodes.cs" />
     <Compile Include="ScanActivity\ScanShowActivity\RenameAndMissingCheck.cs" />

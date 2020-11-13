@@ -651,7 +651,7 @@ namespace TVRename
                 scanProgDlg = new ScanProgress(
                     TVSettings.Instance.DoBulkAddInScan, 
                     TVSettings.Instance.RenameCheck || TVSettings.Instance.MissingCheck,
-                    TVSettings.Instance.RemoveDownloadDirectoriesFiles || TVSettings.Instance.ReplaceWithBetterQuality,
+                    TVSettings.Instance.RemoveDownloadDirectoriesFiles || TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies || TVSettings.Instance.ReplaceWithBetterQuality,
                     localFinders.Active(),
                     downloadFinders.Active(),
                     searchFinders.Active()
@@ -879,9 +879,8 @@ namespace TVRename
 
                 if (!settings.Unattended && settings.Type != TVSettings.ScanType.SingleShow)
                 {
-                    new FindNewShowsInDownloadFolders(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 0, 30,  settings);
-                    new FindNewMoviesInDownloadFolders(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 30, 60, settings);
-                    new FindNewShowsInLibrary(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 60, 100, settings);
+                    new FindNewItemsInDownloadFolders(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 0, 50,  settings);
+                    new FindNewShowsInLibrary(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 50, 100, settings);
                 }
                 
                 new CheckShows(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.MediaLibProg, settings);
@@ -1317,6 +1316,30 @@ namespace TVRename
             AllowAutoScan();
         }
 
+        private void ReviewAliases()
+        {
+            foreach (var mov in FilmLibrary.Movies)
+            {
+                foreach (var al in mov.AliasNames)
+                {
+                    Logger.Warn($"::{mov.ShowName},{al}");
+                }
+            }
+
+            foreach (var mov in FilmLibrary.Movies)
+            {
+                if (mov.CachedMovie?.GetAliases() is null)
+                {
+                    continue;
+                }
+
+                foreach (var al in mov.CachedMovie?.GetAliases())
+                {
+                    Logger.Warn($"::{mov.ShowName},{al}");
+                }
+            }
+        }
+
         // ReSharper disable once InconsistentNaming
         internal void TMDBServerAccuracyCheck(bool unattended, bool hidden, UI owner)
         {
@@ -1481,11 +1504,7 @@ namespace TVRename
 
         public void RevertAction(Item item)
         {
-            if (!(item is Action revertAction))
-            {
-                return;
-            }
-            ItemMissing m2 = revertAction.UndoItemMissing;
+            ItemMissing? m2 = item.UndoItemMissing;
 
             if (m2 is null)
             {
@@ -1493,15 +1512,14 @@ namespace TVRename
             }
 
             TheActionList.Add(m2);
-            TheActionList.Remove(revertAction);
+            TheActionList.Remove(item);
 
             //We can remove any CopyMoveActions that are closely related too
-            if (!(revertAction is ActionCopyMoveRename))
+            if (!(item is ActionCopyMoveRename i2))
             {
                 return;
             }
 
-            ActionCopyMoveRename i2 = (ActionCopyMoveRename)item;
             List<Item> toRemove = new List<Item>();
 
             foreach (Item a in TheActionList)

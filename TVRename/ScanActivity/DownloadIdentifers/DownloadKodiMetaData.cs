@@ -46,7 +46,7 @@ namespace TVRename
 
                 if ((forceRefresh || needUpdate) && !alreadyOnTheList)
                 {
-                    theActionList.Add(new ActionNfo(tvshownfo, si));
+                    theActionList.Add(new ActionNfoShow(tvshownfo, si));
                     DoneNfo.Add(tvshownfo.FullName);
                 }
                 return theActionList;
@@ -75,7 +75,7 @@ namespace TVRename
             }
 
             DoneNfo.Add(nfo.FullName);
-            return new ItemList { new ActionNfo(nfo, episode) };
+            return new ItemList { new ActionNfoEpisode(nfo, episode) };
         }
 
 
@@ -100,7 +100,7 @@ namespace TVRename
             }
 
             DoneNfo.Add(nfo.FullName);
-            return new ItemList { new ActionNfo(nfo, mc) };
+            return new ItemList { new ActionNfoMovie(nfo, mc) };
         }
 
         public sealed override void Reset() => DoneNfo = new List<string>();

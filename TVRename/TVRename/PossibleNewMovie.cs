@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
+using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
@@ -13,7 +14,8 @@ namespace TVRename
 
     public class PossibleNewMovie
     {
-        public readonly FileInfo MovieFile;
+        public readonly string MovieStub;
+        public readonly DirectoryInfo Directory;
 
         // ReSharper disable once InconsistentNaming
         public int? TMDBCode;
@@ -33,10 +35,11 @@ namespace TVRename
 
         public PossibleNewMovie(FileInfo possibleMovieFile, bool andGuess,bool showErrorMsgBox)
         {
-            MovieFile = possibleMovieFile;
+            MovieStub = possibleMovieFile.MovieFileNameBase();
+            Directory = possibleMovieFile.Directory;
 
             (string directoryRefinedHint, int? directoryPossibleYear) = GuessShowName(possibleMovieFile.Directory.Name);
-            (string fileRefinedHint, int? filePossibleYear) = GuessShowName(possibleMovieFile.RemoveExtension());
+            (string fileRefinedHint, int? filePossibleYear) = GuessShowName(possibleMovieFile.MovieFileNameBase());
 
             RefinedHint = directoryRefinedHint ?? fileRefinedHint;
             PossibleYear = directoryPossibleYear ?? filePossibleYear;
@@ -184,12 +187,12 @@ namespace TVRename
 
         private string? FindShowCode(string simpleIdCode, string uniqueIdCode)
         {
-            List<string> possibleFilenames = new List<string> { $"{MovieFile.RemoveExtension()}.nfo", $"{MovieFile.RemoveExtension()}.xml" };
+            List<string> possibleFilenames = new List<string> { $"{MovieStub}.nfo", $"{MovieStub}.xml" };
             foreach (string fileName in possibleFilenames)
             {
                 try
                 {
-                    IEnumerable<FileInfo> files = MovieFile.Directory.EnumerateFiles(fileName).ToList();
+                    IEnumerable<FileInfo> files = Directory.EnumerateFiles(fileName).ToList();
                     if (files.Any())
                     {
                         foreach (string x in files.Select(info => FindShowCode(info, simpleIdCode, uniqueIdCode))

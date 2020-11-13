@@ -101,6 +101,12 @@ namespace TVRename
             {
                 return null;
             }
+            
+            if (si.AutoAddType == ShowConfiguration.AutomaticFolderType.baseOnly  && folder.Equals(si.AutoAddFolderBase))
+            {
+                //We do not need to look at the season folder - there is no such thing as it'll be covered by the show folder
+                return null;
+            }
 
             DateTime newUpdateTime = Helpers.GetMinWindowsTime(updateTime.Value);
 

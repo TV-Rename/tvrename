@@ -998,7 +998,7 @@ namespace TVRename
             return GetMovie(ai.TMDBCode??0); //todo revisit this when we can have a genuine multisource library
         }
 
-        public void AddRange(List<MovieConfiguration>? addedShows)
+        public void AddRange(IEnumerable<MovieConfiguration>? addedShows)
         {
             if (addedShows is null)
             {

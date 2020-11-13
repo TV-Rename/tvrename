@@ -48,6 +48,7 @@ namespace TVRename
 
         [NotNull]
         public List<ActionCopyMoveRename> CopyMoveRename => this.OfType<ActionCopyMoveRename>().ToList();
+        public List<ItemDownloading> Downloading => this.OfType<ItemDownloading>().ToList();
 
         public void Replace(IEnumerable<Item>? toRemove, IEnumerable<Item>? newList)
         {

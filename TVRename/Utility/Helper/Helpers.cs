@@ -229,6 +229,13 @@ namespace TVRename
 
         public static Color WarningColor() => Color.FromArgb(255, 210, 210);
 
+        public static T LongestShowName<T>(this IEnumerable<T> media) where T : MediaConfiguration
+        {
+            IEnumerable<T> mediaConfigurations = media as T[] ?? media.ToArray();
+            int longestName = mediaConfigurations.Select(configuration => configuration.ShowName.Length).Max();
+            return mediaConfigurations.First(config => config.ShowName.Length == longestName);
+        }
+
         public static bool Contains([NotNull] string source, [NotNull] string toCheck, StringComparison comp) => source.IndexOf(toCheck, comp) >= 0;
         
         [NotNull]

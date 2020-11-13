@@ -38,7 +38,7 @@ namespace TVRename
             else
             {
                 codeFinderControl.SetHint(string.IsNullOrWhiteSpace(hint.RefinedHint)
-                    ? hint.MovieFile.Directory.Name
+                    ? hint.Directory.Name
                     : hint.RefinedHint);
             }
             Code = -1;

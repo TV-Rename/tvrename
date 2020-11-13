@@ -367,6 +367,10 @@ namespace TVRename
             s.JackettAPIKey = txtJackettAPIKey.Text;
 
             s.RemoveDownloadDirectoriesFiles = cbCleanUpDownloadDir.Checked;
+            s.RemoveDownloadDirectoriesFilesMatchMovies = cbCleanUpDownloadDirMovies.Checked;
+            s.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck = cbCleanUpDownloadDirMoviesLength.Checked;
+            int.TryParse(tbCleanUpDownloadDirMoviesLength.Text, out s.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength);
+
             s.DeleteShowFromDisk = cbDeleteShowFromDisk.Checked;
             s.DoBulkAddInScan = cbScanIncludesBulkAdd.Checked;
             s.IgnoreAllSpecials = chkIgnoreAllSpecials.Checked;
@@ -444,7 +448,7 @@ namespace TVRename
             s.DefMovieDoMissingCheck = cbDefMovieDoMissing.Checked;
             s.DefMovieUseutomaticFolders = cbDefMovieAutoFolders.Checked;
             s.DefMovieUseDefaultLocation = cbDefMovieUseDefLocation.Checked;
-            s.DefMovieDefaultLocation = cmbDefMovieLocation.SelectedText;
+            s.DefMovieDefaultLocation = cmbDefMovieLocation.SelectedItem.ToString();
             s.DefaultMovieProvider = MovieProviderMode();
 
             s.TMDBLanguage= cbTMDBLanguages.SelectedText;
@@ -922,6 +926,10 @@ namespace TVRename
             SetDropdownValue(domainUpDown1, s.periodCheckHours);
             SetDropdownValue(domainUpDown2, s.periodUpdateCacheHours);
             cbCleanUpDownloadDir.Checked = s.RemoveDownloadDirectoriesFiles;
+            cbCleanUpDownloadDirMovies.Checked= s.RemoveDownloadDirectoriesFilesMatchMovies;
+            cbCleanUpDownloadDirMoviesLength.Checked= s.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck;
+            tbCleanUpDownloadDirMoviesLength.Text= s.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength.ToString();
+
             cbDeleteShowFromDisk.Checked = s.DeleteShowFromDisk;
             cbCopyFutureDatedEps.Checked = s.CopyFutureDatedEpsFromSearchFolders;
             chkShareCriticalLogs.Checked = s.ShareLogs;

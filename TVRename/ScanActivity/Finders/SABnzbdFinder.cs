@@ -69,7 +69,7 @@ namespace TVRename
                 foreach (QueueSlotsSlot te in x.Descendants("slots").Select(slot => CreateQueueSlotsSlot(slot, simpleShowName, action)).Where(te => !(te is null)))
                 {
                     toRemove.Add(action);
-                    newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt, DownloadApp.SABnzbd));
+                    newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt, DownloadApp.SABnzbd,action));
                     break;
                 }
             }

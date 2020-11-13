@@ -37,7 +37,12 @@ namespace TVRename.Forms.Supporting
 
         private void BtnOK_Click(object sender, System.EventArgs e)
         {
-            UserChosenAction = (ActionTDownload)olvChooseDownload.SelectedObject;
+            Ok();
+        }
+
+        private void Ok()
+        {
+            UserChosenAction = (ActionTDownload) olvChooseDownload.SelectedObject;
             DialogResult = olvChooseDownload.SelectedObject != null ? DialogResult.OK : DialogResult.Cancel;
         }
 
@@ -45,6 +50,11 @@ namespace TVRename.Forms.Supporting
         {
             DialogResult = DialogResult.Abort;
             Close();
+        }
+
+        private void olvChooseDownload_DoubleClick(object sender, System.EventArgs e)
+        {
+            Ok();
         }
     }
 }
