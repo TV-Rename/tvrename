@@ -33,7 +33,7 @@ namespace TVRename
             }
 
             // get list of files being downloaded by SABnzbd
-            XElement x = GetSabDownload(TVSettings.Instance.SABAPIKey,TVSettings.Instance.SABHostPort);
+            XElement x = GetSabDownload(TVSettings.Instance.SABHostPort, TVSettings.Instance.SABAPIKey);
 
             if (x is null)
             {
