@@ -28,7 +28,7 @@ namespace TVRename
         {
             if (string.IsNullOrEmpty(TVSettings.Instance.SABAPIKey) || string.IsNullOrEmpty(TVSettings.Instance.SABHostPort))
             {
-                LOGGER.Info("Searching SABnzxdb Feeds is cancelled as the key and host/port are notprovided in Preferences.");
+                LOGGER.Warn("Searching SABnzbd Feeds is cancelled as the key and host/port are not provided in Preferences.");
                 return;
             }
 
