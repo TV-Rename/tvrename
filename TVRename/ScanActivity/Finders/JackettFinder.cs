@@ -141,7 +141,7 @@ namespace TVRename
             string allIndexer = TVSettings.Instance.JackettIndexer;
             string apikey = TVSettings.Instance.JackettAPIKey;
             const string FORMAT = "{ShowName}";
-            string text = CustomMovieName.NameFor(actionMovieConfig,FORMAT);
+            string text = WebUtility.UrlEncode(CustomMovieName.NameFor(actionMovieConfig,FORMAT));
             return
                 $"http://{serverName}:{serverPort}{allIndexer}/api?t=movie&q={text}&apikey={apikey}";
         }
@@ -162,7 +162,7 @@ namespace TVRename
             string serverPort = TVSettings.Instance.JackettPort;
             string allIndexer = TVSettings.Instance.JackettIndexer;
             string apikey = TVSettings.Instance.JackettAPIKey;
-            string simpleShowName = Helpers.SimplifyName(processedEpisode.Show.ShowName);
+            string simpleShowName = WebUtility.UrlEncode(Helpers.SimplifyName(processedEpisode.Show.ShowName));
 
             return
                 $"http://{serverName}:{serverPort}{allIndexer}/api?t=tvsearch&q={simpleShowName}&tvdbid={processedEpisode.Show.TvdbCode}&season={processedEpisode.AppropriateSeasonNumber}&ep={processedEpisode.AppropriateEpNum}&apikey={apikey}";
@@ -175,7 +175,7 @@ namespace TVRename
             string allIndexer = TVSettings.Instance.JackettIndexer;
             string apikey = TVSettings.Instance.JackettAPIKey;
             const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
-            string text = CustomEpisodeName.NameForNoExt(episode, FORMAT, false);
+            string text = WebUtility.UrlEncode(CustomEpisodeName.NameForNoExt(episode, FORMAT, false));
             return
                 $"http://{serverName}:{serverPort}{allIndexer}/api?t=tvsearch&q={text}&apikey={apikey}";
         }
@@ -186,7 +186,7 @@ namespace TVRename
             string serverPort = TVSettings.Instance.JackettPort;
             const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
 
-            string url = $"http://{serverName}:{serverPort}/UI/Dashboard#search={CustomEpisodeName.NameForNoExt(episode,FORMAT,false)}";
+            string url = $"http://{serverName}:{serverPort}/UI/Dashboard#search={WebUtility.UrlEncode(CustomEpisodeName.NameForNoExt(episode,FORMAT,false))}&tracker=&category=";
 
             Helpers.OpenUrl(url);
         }
@@ -197,7 +197,7 @@ namespace TVRename
             string serverPort = TVSettings.Instance.JackettPort;
             const string FORMAT = "{ShowName} ({Year})";
 
-            string url = $"http://{serverName}:{serverPort}/UI/Dashboard#search={Uri.EscapeDataString(CustomMovieName.NameFor(mov, FORMAT))}";
+            string url = $"http://{serverName}:{serverPort}/UI/Dashboard#search={WebUtility.UrlEncode(CustomMovieName.NameFor(mov, FORMAT))}&tracker=&category=";
 
             Helpers.OpenUrl(url);
         }

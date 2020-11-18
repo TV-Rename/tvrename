@@ -192,20 +192,9 @@ namespace TVRename
                         break;
 
                     case TVDoc.ProviderType.TMDB:
-
-                        switch (series.Type)
+                        if (TMDB.LocalCache.Instance.EnsureUpdated(series, bannersToo, true))
                         {
-                            case MediaConfiguration.MediaType.movie:
-                                if (TMDB.LocalCache.Instance.EnsureUpdated(series, bannersToo, true))
-                                {
-                                    return;
-                                }
-
-                                break;
-
-                            case MediaConfiguration.MediaType.tv:
-                            default:
-                                throw new ArgumentOutOfRangeException();
+                            return;
                         }
 
                         break;

@@ -87,20 +87,30 @@ namespace TVRename.TMDB
                 throw new SourceConsistencyException($"Asked to update {s.Name} from TVDB, but the Id is not for TMDB.", TVDoc.ProviderType.TMDB);
             }
 
+            if (s.Type == MediaConfiguration.MediaType.movie)
+            {
+                return EnsureMovieUpdated(s.TmdbId, s.Name, showErrorMsgBox);
+            }
+
+            return false; //EnsureSeriesUpdated(s.TmdbId, s.Name, showErrorMsgBox);
+        }
+
+        private bool EnsureMovieUpdated(int  id, string name, bool showErrorMsgBox)
+        {
             lock (MOVIE_LOCK)
             {
-                if (Movies.ContainsKey(s.TmdbId) && !Movies[s.TmdbId].Dirty)
+                if (Movies.ContainsKey(id) && !Movies[id].Dirty)
                 {
                     return true;
                 }
             }
 
-            Say($"{s.Name} from TMDB");
+            Say($"{name} from TMDB");
             try
             {
-                CachedMovieInfo downloadedSi = DownloadMovieNow(s.TmdbId, showErrorMsgBox);
+                CachedMovieInfo downloadedSi = DownloadMovieNow(id, showErrorMsgBox);
 
-                if (downloadedSi.TmdbCode != s.TmdbId && s.TmdbId == -1)
+                if (downloadedSi.TmdbCode != id && id == -1)
                 {
                     lock (MOVIE_LOCK)
                     {
