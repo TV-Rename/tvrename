@@ -3334,19 +3334,16 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string GetFolderForShow(ShowConfiguration? currentShow)
+        private static string GetFolderForShow(MediaConfiguration? currentShow)
         {
             if (currentShow is null)
             {
                 return string.Empty;
             }
 
-            foreach (var folder in currentShow.AllExistngFolderLocations().Values.SelectMany(list => list))
+            foreach (string folder in currentShow.AllExistngFolderLocations().Values.SelectMany(list => list).Where(folder => !string.IsNullOrEmpty(folder) && Directory.Exists(folder)))
             {
-                    if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder))
-                    {
-                        return folder;
-                    }
+                return folder;
             }
 
             return string.Empty;
@@ -4223,14 +4220,14 @@ namespace TVRename
 
             internalCheckChange = true;
 
-                            if (cs == CheckState.Checked)
-                {
-                    olvAction.CheckObjects(olvAction.Objects.OfType<Item>().Where(isValid).ToList());
-                }
-                else
-                {
-                    olvAction.UncheckObjects(olvAction.Objects.OfType<Item>().Where(isValid).ToList());
-                }
+            if (cs == CheckState.Checked)
+            {
+                olvAction.CheckObjects(olvAction.Objects.OfType<Item>().Where(isValid).ToList());
+            }
+            else
+            {
+                olvAction.UncheckObjects(olvAction.Objects.OfType<Item>().Where(isValid).ToList());
+            }
 
             internalCheckChange = false;
             UpdateActionCheckboxes();

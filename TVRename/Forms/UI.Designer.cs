@@ -66,6 +66,8 @@ namespace TVRename
             this.movieSearchEnginesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchEnginesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filenameProcessorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator20 = new System.Windows.Forms.ToolStripSeparator();
+            this.settingsCheckToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flushCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flushImageCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -84,13 +86,15 @@ namespace TVRename
             this.showSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.movieCollectionSummaryLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.actorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator18 = new System.Windows.Forms.ToolStripSeparator();
             this.betaToolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timezoneInconsistencyLOGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.episodeFileQualitySummaryLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator19 = new System.Windows.Forms.ToolStripSeparator();
             this.accuracyCheckLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tMDBAccuracyCheckLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator21 = new System.Windows.Forms.ToolStripSeparator();
+            this.movieRecommendationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tvRecommendationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.quickstartGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.visitWebsiteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -240,11 +244,6 @@ namespace TVRename
             this.bwShowSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.bwSeasonSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.bwMovieHTMLGenerator = new System.ComponentModel.BackgroundWorker();
-            this.toolStripSeparator20 = new System.Windows.Forms.ToolStripSeparator();
-            this.settingsCheckToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator21 = new System.Windows.Forms.ToolStripSeparator();
-            this.movieRecommendationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tvRecommendationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyMovies.SuspendLayout();
@@ -423,6 +422,18 @@ namespace TVRename
             this.filenameProcessorsToolStripMenuItem.Text = "File&name Processors";
             this.filenameProcessorsToolStripMenuItem.Click += new System.EventHandler(this.filenameProcessorsToolStripMenuItem_Click);
             // 
+            // toolStripSeparator20
+            // 
+            this.toolStripSeparator20.Name = "toolStripSeparator20";
+            this.toolStripSeparator20.Size = new System.Drawing.Size(251, 6);
+            // 
+            // settingsCheckToolStripMenuItem
+            // 
+            this.settingsCheckToolStripMenuItem.Name = "settingsCheckToolStripMenuItem";
+            this.settingsCheckToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
+            this.settingsCheckToolStripMenuItem.Text = "Settings Check";
+            this.settingsCheckToolStripMenuItem.Click += new System.EventHandler(this.settingsCheckToolStripMenuItem_Click);
+            // 
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -524,8 +535,7 @@ namespace TVRename
             this.toolStripSeparator5,
             this.showSummaryToolStripMenuItem,
             this.movieCollectionSummaryLogToolStripMenuItem,
-            this.actorsToolStripMenuItem,
-            this.toolStripSeparator18});
+            this.actorsToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
@@ -564,11 +574,6 @@ namespace TVRename
             this.actorsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.actorsToolStripMenuItem.Text = "TV &Actors Grid...";
             this.actorsToolStripMenuItem.Click += new System.EventHandler(this.actorsToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator18
-            // 
-            this.toolStripSeparator18.Name = "toolStripSeparator18";
-            this.toolStripSeparator18.Size = new System.Drawing.Size(224, 6);
             // 
             // betaToolsToolStripMenuItem
             // 
@@ -617,6 +622,25 @@ namespace TVRename
             this.tMDBAccuracyCheckLogToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
             this.tMDBAccuracyCheckLogToolStripMenuItem.Text = "TMDB Accuracy Check (Log)";
             this.tMDBAccuracyCheckLogToolStripMenuItem.Click += new System.EventHandler(this.tMDBAccuracyCheckLogToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator21
+            // 
+            this.toolStripSeparator21.Name = "toolStripSeparator21";
+            this.toolStripSeparator21.Size = new System.Drawing.Size(259, 6);
+            // 
+            // movieRecommendationsToolStripMenuItem
+            // 
+            this.movieRecommendationsToolStripMenuItem.Name = "movieRecommendationsToolStripMenuItem";
+            this.movieRecommendationsToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
+            this.movieRecommendationsToolStripMenuItem.Text = "Movie Recommendations...";
+            this.movieRecommendationsToolStripMenuItem.Click += new System.EventHandler(this.movieRecommendationsToolStripMenuItem_Click);
+            // 
+            // tvRecommendationsToolStripMenuItem
+            // 
+            this.tvRecommendationsToolStripMenuItem.Name = "tvRecommendationsToolStripMenuItem";
+            this.tvRecommendationsToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
+            this.tvRecommendationsToolStripMenuItem.Text = "TV Recommendations...";
+            this.tvRecommendationsToolStripMenuItem.Click += new System.EventHandler(this.recommendationsToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -2127,34 +2151,6 @@ namespace TVRename
             this.bwMovieHTMLGenerator.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwMovieHTMLGenerator_DoWork);
             this.bwMovieHTMLGenerator.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.UpdateMovieInformation);
             // 
-            // toolStripSeparator20
-            // 
-            this.toolStripSeparator20.Name = "toolStripSeparator20";
-            this.toolStripSeparator20.Size = new System.Drawing.Size(251, 6);
-            // 
-            // settingsCheckToolStripMenuItem
-            // 
-            this.settingsCheckToolStripMenuItem.Name = "settingsCheckToolStripMenuItem";
-            this.settingsCheckToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
-            this.settingsCheckToolStripMenuItem.Text = "Settings Check";
-            // 
-            // toolStripSeparator21
-            // 
-            this.toolStripSeparator21.Name = "toolStripSeparator21";
-            this.toolStripSeparator21.Size = new System.Drawing.Size(259, 6);
-            // 
-            // movieRecommendationsToolStripMenuItem
-            // 
-            this.movieRecommendationsToolStripMenuItem.Name = "movieRecommendationsToolStripMenuItem";
-            this.movieRecommendationsToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
-            this.movieRecommendationsToolStripMenuItem.Text = "Movie Recommendations...";
-            // 
-            // tvRecommendationsToolStripMenuItem
-            // 
-            this.tvRecommendationsToolStripMenuItem.Name = "tvRecommendationsToolStripMenuItem";
-            this.tvRecommendationsToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
-            this.tvRecommendationsToolStripMenuItem.Text = "TV Recommendations...";
-            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2411,7 +2407,6 @@ namespace TVRename
         private ToolStripMenuItem tMDBAccuracyCheckLogToolStripMenuItem;
         private ToolStripMenuItem duplicateMoviesToolStripMenuItem;
         private ToolStripMenuItem movieCollectionSummaryLogToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator18;
         private ToolStripSeparator toolStripSeparator19;
         private ToolStripButton tsbScanMovies;
         private ToolStripMenuItem movieSearchEnginesToolStripMenuItem;
