@@ -115,7 +115,7 @@ namespace TVRename.Forms.Tools
             // Note that the extension of the file may not be fi.extension as users can put ".mkv.t" for example as an extension
             string otherExtension = TVSettings.Instance.FileHasUsefulExtensionDetails(droppedFile, true);
 
-            ShowConfiguration bestShow = (string)cbShowList.SelectedItem == "<Auto>"
+            ShowConfiguration? bestShow = (string)cbShowList.SelectedItem == "<Auto>"
                 ? FinderHelper.FindBestMatchingShow(droppedFile, mDoc.TvLibrary.Shows)
                 : mDoc.TvLibrary.Shows.FirstOrDefault(item => item.ShowName == (string)cbShowList.SelectedItem);
 

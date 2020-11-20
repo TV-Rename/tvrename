@@ -30,7 +30,7 @@ namespace TVRename
                     continue;
                 }
 
-                var keys = downloads.GroupBy(entry => entry.DownloadingTo);
+                IEnumerable<IGrouping<string, TorrentEntry>> keys = downloads.GroupBy(entry => entry.DownloadingTo);
 
                 foreach (IGrouping<string, TorrentEntry> torrentKey in keys)
                 {
@@ -82,13 +82,13 @@ namespace TVRename
                 return false;
             }
 
-            if (matchesSomeMovies && !movies.All(movie => IsFound(dfc, movie)))
+            if (matchesSomeMovies && !movies!.All(movie => IsFound(dfc, movie)))
             {
                 //Some Movies have not been copied yet - wait until they have
                 return false;
             }
 
-            if (matchesSomeShows && !pes.All(episode => IsFound(dfc,episode)))
+            if (matchesSomeShows && !pes!.All(episode => IsFound(dfc,episode)))
             {
                 //Some Episodes have not been copied yet - wait until they have
                 return false;
@@ -97,14 +97,14 @@ namespace TVRename
             if (matchesSomeShows)
             {
                 lastFoundEntry = download;
-                lastFoundEpisode = pes.First();
+                lastFoundEpisode = pes!.First();
                 lastFoundMovie = null;
                 return true;
             }
 
             lastFoundEntry = download;
             lastFoundEpisode = null;
-            lastFoundMovie = movies.First();
+            lastFoundMovie = movies!.First();
             return true;
         }
 

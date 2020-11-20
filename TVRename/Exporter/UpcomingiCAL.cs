@@ -69,7 +69,7 @@ namespace TVRename
 
                 DateTime startTime = stTime.Value;
                 string s = ei.Show.CachedShow?.Runtime;
-                DateTime endTime = stTime.Value.AddMinutes(string.IsNullOrWhiteSpace(s) ? 0 : int.Parse(s));
+                DateTime endTime = stTime.Value.AddMinutes(string.IsNullOrWhiteSpace(s) ? 0 : int.Parse(s!));
 
                 return new CalendarEvent
                 {

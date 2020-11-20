@@ -156,7 +156,7 @@ namespace TVRename
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            using (Stream stream = response.GetResponseStream())
+            using (Stream? stream = response.GetResponseStream())
             {
                 if (stream == null)
                 {

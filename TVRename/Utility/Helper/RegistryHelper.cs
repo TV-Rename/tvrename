@@ -43,7 +43,7 @@ namespace TVRename
         {
             try
             {
-                RegistryKey key = Registry.LocalMachine.OpenSubKey(INTERNET_EXPLORER_ROOT_KEY);
+                RegistryKey? key = Registry.LocalMachine.OpenSubKey(INTERNET_EXPLORER_ROOT_KEY);
 
                 if (key != null)
                 {
@@ -79,7 +79,7 @@ namespace TVRename
         {
             try
             {
-                RegistryKey key = Registry.CurrentUser.OpenSubKey(BROWSER_EMULATION_KEY, true);
+                RegistryKey? key = Registry.CurrentUser.OpenSubKey(BROWSER_EMULATION_KEY, true);
                 if (key != null)
                 {
                     string programName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);

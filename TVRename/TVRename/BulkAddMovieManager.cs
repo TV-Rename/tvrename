@@ -218,7 +218,7 @@ namespace TVRename
                 return;
             }
 
-            string matchingRoot = TVSettings.Instance.MovieLibraryFolders.FirstOrDefault(s =>  ai.Directory.FullName.IsSubfolderOf(s));
+            string? matchingRoot = TVSettings.Instance.MovieLibraryFolders.FirstOrDefault(s =>  ai.Directory.FullName.IsSubfolderOf(s));
             bool isInLibraryFolderFileFinder = matchingRoot.HasValue();
 
             // see if there is a matching show item

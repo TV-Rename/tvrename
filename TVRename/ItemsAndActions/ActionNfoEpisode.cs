@@ -147,7 +147,7 @@ namespace TVRename
             }
 
             XDocument doc = XDocument.Load(Where.FullName);
-            XElement root = doc.Root;
+            XElement? root = doc.Root;
 
             if (root is null)
             {

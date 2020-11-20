@@ -858,8 +858,8 @@ namespace TVRename
 
         private void SetLocation([NotNull] XElement x)
         {
-            XAttribute valueX = x.Attribute("X");
-            XAttribute valueY = x.Attribute("Y");
+            XAttribute? valueX = x.Attribute("X");
+            XAttribute? valueY = x.Attribute("Y");
 
             if (valueX is null)
             {
@@ -878,8 +878,8 @@ namespace TVRename
 
         private void SetSize([NotNull] XElement x)
         {
-            XAttribute valueX = x.Attribute("Width");
-            XAttribute valueY = x.Attribute("Height");
+            XAttribute? valueX = x.Attribute("Width");
+            XAttribute? valueY = x.Attribute("Height");
 
             if (valueX is null)
             {
@@ -4302,7 +4302,7 @@ namespace TVRename
             const int INDENT = 15;
 
             //GetIcon
-            Image icon = tabCtrl.ImageList.Images[tabPage.ImageKey];
+            Image? icon = tabCtrl.ImageList.Images[tabPage.ImageKey];
             if (icon is null)
             {
                 return;

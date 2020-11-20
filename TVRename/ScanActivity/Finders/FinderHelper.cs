@@ -409,14 +409,14 @@ namespace TVRename
 
             try
             {
-                if (returnFilename.StartsWith(showNameHint, StringComparison.Ordinal))
+                if (returnFilename.StartsWith(showNameHint!, StringComparison.Ordinal))
                 {
                     return returnFilename.Remove(0, showNameHint.Length);
                 }
 
-                bool nameIsNumber = Regex.Match(showNameHint, "^[0-9]+$").Success;
+                bool nameIsNumber = Regex.Match(showNameHint!, "^[0-9]+$").Success;
 
-                if (nameIsNumber && returnFilename.Contains(showNameHint)) // e.g. "24", or easy exact match of show name at start of filename
+                if (nameIsNumber && returnFilename.Contains(showNameHint!)) // e.g. "24", or easy exact match of show name at start of filename
                 {
                     return Regex.Replace(returnFilename, "(^|\\W)" + showNameHint + "\\b", string.Empty);
                 }
@@ -426,7 +426,7 @@ namespace TVRename
                 Logger.Error($"Error in SimplifyFilename for {filename} and {showNameHint}, got {returnFilename} with error {ex.Message}");
             }
 
-            foreach (Match m in Regex.Matches(showNameHint, "(?:^|[^a-z]|\\b)([0-9]{3,})")
+            foreach (Match m in Regex.Matches(showNameHint!, "(?:^|[^a-z]|\\b)([0-9]{3,})")
             ) // find >= 3 digit numbers in show name
             {
                 if (m.Groups.Count > 1) // just in case
@@ -581,7 +581,7 @@ namespace TVRename
                         }
 
                         int p = Math.Min(m.Groups["s"].Index, m.Groups["e"].Index); 
-                        int p2 = Math.Min(p, hint.IndexOf(m.Groups.SyncRoot.ToString(), StringComparison.Ordinal));
+                        int p2 = Math.Min(p, hint.IndexOf(m.Groups.SyncRoot!.ToString(), StringComparison.Ordinal));
 
                         if (seas != -1 && ep != -1)
                         {

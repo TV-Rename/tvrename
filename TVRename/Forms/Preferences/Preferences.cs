@@ -700,7 +700,7 @@ namespace TVRename
             ReplacementsGrid[r, 1] = new SourceGrid.Cells.Cell(to, typeof(string));
             ReplacementsGrid[r, 2] = new SourceGrid.Cells.CheckBox(null, ins);
             if (!string.IsNullOrEmpty(from) &&
-                TVSettings.CompulsoryReplacements().IndexOf(from, StringComparison.Ordinal) != -1)
+                TVSettings.CompulsoryReplacements().IndexOf(from!, StringComparison.Ordinal) != -1)
             {
                 ReplacementsGrid[r, 0].Editor.EnableEdit = false;
                 ReplacementsGrid[r, 0].View = roModel;

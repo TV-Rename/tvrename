@@ -187,9 +187,9 @@ namespace TVRename
                 writer.WriteStartElement(elemName);
                 if (!string.IsNullOrEmpty(attribute) && !string.IsNullOrEmpty(attributeVal))
                 {
-                    writer.WriteAttributeString(attribute, attributeVal);
+                    writer.WriteAttributeString(attribute!, attributeVal!);
                 }
-                writer.WriteValue(value);
+                writer.WriteValue(value!);
                 writer.WriteEndElement();
             }
         }
@@ -261,7 +261,7 @@ namespace TVRename
 
         public static void UpdateAttribute([NotNull] this XElement element, string attributeName, [NotNull] string value)
         {
-            XAttribute att = element.Attributes(attributeName).FirstOrDefault();
+            XAttribute? att = element.Attributes(attributeName).FirstOrDefault();
             if (att is null)
             {
                 element.Add(new XAttribute(attributeName, value));
@@ -274,15 +274,17 @@ namespace TVRename
 
         public static void WriteInfo(this XmlWriter writer, string elemName, string? attribute, string? attributeVal)
         {
-            if (!string.IsNullOrEmpty(attributeVal))
+            if (string.IsNullOrEmpty(attributeVal))
             {
-                writer.WriteStartElement(elemName);
-                if (!string.IsNullOrEmpty(attribute))
-                {
-                    writer.WriteAttributeString(attribute, attributeVal);
-                }
-                writer.WriteEndElement();
+                return;
             }
+
+            writer.WriteStartElement(elemName);
+            if (!string.IsNullOrEmpty(attribute))
+            {
+                writer.WriteAttributeString(attribute!, attributeVal!);
+            }
+            writer.WriteEndElement();
         }
 
         public static void WriteInfo([NotNull] this XmlWriter writer, [NotNull] string elemName, string? attribute, bool attributeVal)
@@ -290,7 +292,7 @@ namespace TVRename
             writer.WriteStartElement(elemName);
             if (!string.IsNullOrEmpty(attribute))
             {
-                writer.WriteAttributeString(attribute, XmlConvert.ToString(attributeVal));
+                writer.WriteAttributeString(attribute!, XmlConvert.ToString(attributeVal));
             }
             writer.WriteEndElement();
         }

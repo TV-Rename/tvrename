@@ -119,7 +119,7 @@ namespace TVRename
 
             DirectoryInfo di = new DirectoryInfo(subDirPath);
 
-            FileInfo neededFile = filesThatMayBeNeeded.FirstOrDefault(info => info.DirectoryName.Contains(di.FullName));
+            FileInfo? neededFile = filesThatMayBeNeeded.FirstOrDefault(info => info.DirectoryName.Contains(di.FullName));
             if (neededFile != null)
             {
                 LOGGER.Info($"Not removing {di.FullName} as it may be needed for {neededFile.FullName}");
@@ -311,7 +311,7 @@ namespace TVRename
                     continue;
                 }
 
-                ProcessedEpisode pep = si.SeasonEpisodes[seasF].FirstOrDefault(ep => ep.AppropriateEpNum == epF);
+                ProcessedEpisode? pep = si.SeasonEpisodes[seasF].FirstOrDefault(ep => ep.AppropriateEpNum == epF);
 
                 if (pep == null)
                 {

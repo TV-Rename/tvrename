@@ -403,7 +403,7 @@ namespace TVRename
         {
             foreach (XElement rulesSet in xmlSettings.Descendants("Rules"))
             {
-                XAttribute value = rulesSet.Attribute("SeasonNumber");
+                XAttribute? value = rulesSet.Attribute("SeasonNumber");
                 if (value is null)
                 {
                     continue;
@@ -423,7 +423,7 @@ namespace TVRename
         {
             foreach (XElement seasonFolder in xmlSettings.Descendants("SeasonFolders"))
             {
-                XAttribute value = seasonFolder.Attribute("SeasonNumber");
+                XAttribute? value = seasonFolder.Attribute("SeasonNumber");
                 if (value is null)
                 {
                     continue;
