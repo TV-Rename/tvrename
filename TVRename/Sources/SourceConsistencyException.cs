@@ -20,6 +20,7 @@ namespace TVRename
             {
                 TVDoc.ProviderType.TVmaze => "TVmaze",
                 TVDoc.ProviderType.TheTVDB => "TheTVDB",
+                TVDoc.ProviderType.TMDB => "TMDB",
                 _ => throw new ArgumentOutOfRangeException(nameof(provider), provider, null)
             };
         }

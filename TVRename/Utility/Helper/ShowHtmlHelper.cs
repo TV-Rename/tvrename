@@ -174,6 +174,7 @@ namespace TVRename
             string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : $"http://www.tv.com/show/{ser.SeriesId}/summary.html";
             string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
             string mazeLink = ser.TvMazeCode <=0 ? string.Empty : ser.WebUrl;
+            string tmdbLink = "http://google.com"; //TODO FIX THIS
 
             string urlFilename = includeDirectoryLinks
                 ? Uri.EscapeDataString(si.GetBestFolderLocationToOpen())
@@ -203,6 +204,7 @@ namespace TVRename
 			         {CreateButton(tvdbLink, "TVDB.com", "View on TVDB")}
 			         {CreateButton(imdbLink, "IMDB.com", "View on IMDB")}
                      {CreateButton(mazeLink, "TVmaze.com", "View on TVmaze")}
+                     {CreateButton(tmdbLink, "TMDB.com", "View on TMDB")}
 			         {CreateButton(tvLink, "TV.com", "View on TV.com")}
 			         {CreateButton(ser.OfficialUrl, "Official Site", "View on Official Site")}
 			        </div>
@@ -338,7 +340,7 @@ namespace TVRename
                 case TVDoc.ProviderType.TMDB:
                     if (si.TmdbCode > 0)
                     {
-                        return $"https://www.themoviedb.org/movie/{si.TmdbCode}/edit?active_nav_item=primary_facts";
+                        return $"https://www.themoviedb.org/tv/{si.TmdbCode}/edit?active_nav_item=primary_facts";
                     }
 
                     return null;
@@ -346,7 +348,7 @@ namespace TVRename
                 case TVDoc.ProviderType.TVmaze:
                     if (si.TVmazeCode > 0)
                     {
-                        return $"https://www.themoviedb.org/movie/{s.SeasonId}/edit?active_nav_item=primary_facts";
+                        return $"https://www.themoviedb.org/tv/{s.SeasonId}/edit?active_nav_item=primary_facts";
                     }
 
                     return null;
@@ -406,7 +408,7 @@ namespace TVRename
                 case TVDoc.ProviderType.TMDB:
                     if (si.TmdbCode > 0)
                     {
-                        return $"https://www.themoviedb.org/movie/{si.TmdbCode}/edit?active_nav_item=primary_facts";
+                        return $"https://www.themoviedb.org/tv/{si.TmdbCode}/edit?active_nav_item=primary_facts";
                     }
 
                     return null;
@@ -571,9 +573,9 @@ namespace TVRename
                 return string.Empty;
             }
 
-            string url = ei.Show.Provider == TVDoc.ProviderType.TVmaze
-                ? ei.Filename
-                : TheTVDB.API.GetImageURL(ei.Filename);
+            string url = ei.Show.Provider == TVDoc.ProviderType.TheTVDB
+                ? TheTVDB.API.GetImageURL(ei.Filename)
+                : ei.Filename;
 
             if (url.HasValue()) 
             {

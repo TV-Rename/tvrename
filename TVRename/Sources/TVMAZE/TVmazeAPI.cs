@@ -120,6 +120,7 @@ namespace TVRename.TVmaze
         [NotNull]
         public static CachedSeriesInfo GetSeriesDetails([NotNull] SeriesSpecifier ss)
         {
+
             JObject results =  ss.TvMazeSeriesId > 0
                 ? GetSeriesDetails(ss.TvMazeSeriesId)
                 : GetSeriesDetails(GetSeriesIdFromOtherCodes(ss.TvdbSeriesId,ss.ImdbCode));

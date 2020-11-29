@@ -63,7 +63,7 @@ namespace TVRename.TVmaze
         {
             lock (SERIES_LOCK)
             {
-                CachePersistor.SaveCache(Series, CacheFile, 0);
+                CachePersistor.SaveCache(Series,Movies, CacheFile, 0);
             }
         }
 
@@ -207,7 +207,7 @@ namespace TVRename.TVmaze
         }
 
         private void AddPlaceholderSeries([NotNull] SeriesSpecifier ss)
-            => AddPlaceholderSeries(ss.TvdbSeriesId, ss.TvMazeSeriesId, ss.CustomLanguageCode);
+            => AddPlaceholderSeries(ss.TvdbSeriesId, ss.TvMazeSeriesId,ss.TmdbId, ss.CustomLanguageCode);
 
         public void UpdatesDoneOk()
         {
@@ -291,7 +291,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        public void ForgetShow(int tvdb,int tvmaze, bool makePlaceholder, bool useCustomLanguage, string? langCode)
+        public void ForgetShow(int tvdb,int tvmaze, int tmdb, bool makePlaceholder, bool useCustomLanguage, string? langCode)
         {
             lock (SERIES_LOCK)
             {
@@ -302,11 +302,11 @@ namespace TVRename.TVmaze
                     {
                         if (useCustomLanguage && langCode.HasValue())
                         {
-                            AddPlaceholderSeries(tvdb,tvmaze, langCode!);
+                            AddPlaceholderSeries(tvdb,tvmaze,tmdb, langCode!);
                         }
                         else
                         {
-                            AddPlaceholderSeries(tvdb, tvmaze);
+                            AddPlaceholderSeries(tvdb, tvmaze, tmdb);
                         }
                     }
                 }
@@ -314,25 +314,25 @@ namespace TVRename.TVmaze
                 {
                     if (tvmaze > 0 && makePlaceholder)
                     {
-                        AddPlaceholderSeries(tvdb, tvmaze);
+                        AddPlaceholderSeries(tvdb, tvmaze, tmdb);
                     }
                 }
             }
         }
 
-        private void AddPlaceholderSeries(int tvdb, int tvmaze) 
+        private void AddPlaceholderSeries(int tvdb, int tvmaze,int tmdb) 
         {
             lock (SERIES_LOCK)
             {
-                Series[tvmaze] = new CachedSeriesInfo(tvdb,tvmaze) { Dirty = true };
+                Series[tvmaze] = new CachedSeriesInfo(tvdb,tvmaze, tmdb) { Dirty = true };
             }
         }
 
-        private void AddPlaceholderSeries(int tvdb, int tvmaze, string customLanguageCode)
+        private void AddPlaceholderSeries(int tvdb, int tvmaze, int tmdb, string customLanguageCode)
         {
             lock (SERIES_LOCK)
             {
-                Series[tvmaze] = new CachedSeriesInfo(tvdb, tvmaze, customLanguageCode) {Dirty = true};
+                Series[tvmaze] = new CachedSeriesInfo(tvdb, tvmaze, tmdb, customLanguageCode) {Dirty = true};
             }
         }
 

@@ -291,6 +291,10 @@ namespace TVRename
 
         public static int ToInt(this string text, int def)
         {
+            if (text is null)
+            {
+                return def;
+            }
             try
             {
                 return int.Parse(text);

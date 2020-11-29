@@ -2731,6 +2731,8 @@ namespace TVRename
             {
                 case TVDoc.ProviderType.TVmaze:
                     return TreeNodeToShowItem(n)?.TVmazeCode == si.TVmazeCode;
+                case TVDoc.ProviderType.TMDB:
+                    return TreeNodeToShowItem(n)?.TmdbCode == si.TmdbCode;
                 case TVDoc.ProviderType.TheTVDB:
                     return TreeNodeToShowItem(n)?.TvdbCode == si.TvdbCode;
                 default:
@@ -3456,7 +3458,8 @@ namespace TVRename
             {
                 case TVDoc.ProviderType.TVmaze:
                     return "TV Maze";
-
+                case TVDoc.ProviderType.TMDB:
+                    return "TMDB";
                 case TVDoc.ProviderType.TheTVDB:
                     return "The TVDB";
 

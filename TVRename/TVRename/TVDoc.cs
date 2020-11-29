@@ -154,6 +154,23 @@ namespace TVRename
                         Logger.Error($"Issue with copy back of ids {show.Name} {show.TvdbCode} {showConfiguration.TVmazeCode} {show.TvMazeCode} ");
                     }
                 }
+
+                foreach (CachedSeriesInfo show in TMDB.LocalCache.Instance.CachedShowData.Values)
+                {
+                    ShowConfiguration showConfiguration = TvLibrary.GetShowItem(show.TvdbCode);
+                    if (showConfiguration is null)
+                    {
+                        continue;
+                    }
+                    if (showConfiguration.TmdbCode == 0 || showConfiguration.TmdbCode == -1)
+                    {
+                        showConfiguration.TmdbCode = show.TmdbCode;
+                    }
+                    if (showConfiguration.TmdbCode != show.TmdbCode)
+                    {
+                        Logger.Error($"Issue with copy back of ids {show.Name}: {showConfiguration.TmdbCode} {show.TmdbCode} ");
+                    }
+                }
             }
         }
 
@@ -1261,24 +1278,32 @@ namespace TVRename
             {
                 foreach (ShowConfiguration si in sis)
                 {
-                    switch (si.Provider)
-                    {
-                        case ProviderType.TVmaze:
-                            TVmaze.LocalCache.Instance.ForgetShow(si.TvdbCode, si.TVmazeCode, true, si.UseCustomLanguage, si.CustomLanguageCode);
-                            break;
-
-                        case ProviderType.TheTVDB:
-                            TheTVDB.LocalCache.Instance.ForgetShow(si.TvdbCode, si.TVmazeCode,true, si.UseCustomLanguage, si.CustomLanguageCode);
-                            break;
-
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    iTVSource cache = GetCache(si);
+                    cache.ForgetShow(si.TvdbCode, si.TVmazeCode, si.TmdbCode, true, si.UseCustomLanguage, si.CustomLanguageCode);
                 }
             }
 
             DoDownloadsFG(unattended, tvrMinimised,owner);
             AllowAutoScan();
+        }
+
+        private iTVSource GetCache(ShowConfiguration si)
+        {
+            switch (si.Provider)
+            {
+                case ProviderType.TVmaze:
+                    return TVmaze.LocalCache.Instance;
+
+                case ProviderType.TheTVDB:
+                    return TheTVDB.LocalCache.Instance;
+
+                case ProviderType.TMDB:
+                    return TMDB.LocalCache.Instance;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
         }
 
         internal void ForceRefreshMovies(IEnumerable<MediaConfiguration>? sis, bool unattended, bool tvrMinimised, UI owner)

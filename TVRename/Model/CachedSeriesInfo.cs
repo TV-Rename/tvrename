@@ -21,7 +21,6 @@ namespace TVRename
     public class CachedSeriesInfo :CachedMediaInfo
     {
         public DateTime? AirsTime;
-        public bool Dirty; // set to true if local info is known to be older than whats on the server
         public DateTime? FirstAired;
         public readonly string? TargetLanguageCode; //The Language Code we'd like the Series in ; null if we want to use the system setting
         public int LanguageId; //The actual language obtained
@@ -31,7 +30,6 @@ namespace TVRename
         public string? Type;
         public string? BannerString;
         public bool BannersLoaded;
-        public long SrvLastUpdated;
         
         public string? Slug;
 
@@ -93,14 +91,15 @@ namespace TVRename
             BannersLoaded = false;
         }
 
-        public CachedSeriesInfo(int tvdb, int tvmaze):this()
+        public CachedSeriesInfo(int tvdb, int tvmaze,int tmdb):this()
         {
             IsSearchResultOnly = false;
             TvMazeCode = tvmaze;
             TvdbCode = tvdb;
+            TmdbCode = tmdb;
         }
 
-        public CachedSeriesInfo( int tvdb, int tvmaze, string langCode) :this(tvdb,tvmaze)
+        public CachedSeriesInfo( int tvdb, int tvmaze, int tmdb, string langCode) :this(tvdb,tvmaze,tmdb)
         {
             TargetLanguageCode = langCode;
         }
@@ -163,6 +162,10 @@ namespace TVRename
             if (o.TvMazeCode !=-1 && TvMazeCode != o.TvMazeCode)
             {
                 TvMazeCode = o.TvMazeCode;
+            }
+            if (o.TmdbCode != -1 && TmdbCode != o.TmdbCode)
+            {
+                TmdbCode = o.TmdbCode;
             }
 
             if (o.TvdbCode != -1 && TvdbCode != o.TvdbCode)
@@ -282,6 +285,7 @@ namespace TVRename
             {
                 TvdbCode = seriesXml.ExtractInt("id")?? throw new SourceConsistencyException("Error Extracting Id for Series",TVDoc.ProviderType.TheTVDB);
                 TvMazeCode = seriesXml.ExtractInt("mazeid") ?? -1;
+                TmdbCode= seriesXml.ExtractInt("TMDBCode") ?? -1;
 
                 Name = System.Web.HttpUtility.HtmlDecode(
                     XmlHelper.ReadStringFixQuotesAndSpaces(seriesXml.ExtractStringOrNull("SeriesName") ?? seriesXml.ExtractString("seriesName")));
@@ -470,6 +474,7 @@ namespace TVRename
 
             writer.WriteElement("id", TvdbCode);
             writer.WriteElement("mazeid",TvMazeCode);
+            writer.WriteElement("TMDBCode", TmdbCode);
             writer.WriteElement("SeriesName", Name);
             writer.WriteElement("lastupdated", SrvLastUpdated);
             writer.WriteElement("LanguageId", LanguageId);

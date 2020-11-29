@@ -136,6 +136,7 @@ namespace TVRename
             this.cbIncludeNoAirdate = new System.Windows.Forms.CheckBox();
             this.cbIncludeFuture = new System.Windows.Forms.CheckBox();
             this.pbAdvanced = new System.Windows.Forms.PictureBox();
+            this.rdoTMDB = new System.Windows.Forms.RadioButton();
             this.Folders.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbBasics)).BeginInit();
@@ -327,6 +328,7 @@ namespace TVRename
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.rdoTMDB);
             this.tabPage1.Controls.Add(this.label13);
             this.tabPage1.Controls.Add(this.rdoTVMaze);
             this.tabPage1.Controls.Add(this.rdoTVDB);
@@ -1268,6 +1270,18 @@ namespace TVRename
             this.pbAdvanced.TabStop = false;
             this.pbAdvanced.Click += new System.EventHandler(this.pbAdvanced_Click);
             // 
+            // rdoTMDB
+            // 
+            this.rdoTMDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.rdoTMDB.AutoSize = true;
+            this.rdoTMDB.Location = new System.Drawing.Point(304, 302);
+            this.rdoTMDB.Name = "rdoTMDB";
+            this.rdoTMDB.Size = new System.Drawing.Size(56, 17);
+            this.rdoTMDB.TabIndex = 45;
+            this.rdoTMDB.TabStop = true;
+            this.rdoTMDB.Text = "TMDB";
+            this.rdoTMDB.UseVisualStyleBackColor = true;
+            // 
             // AddEditShow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1412,5 +1426,6 @@ namespace TVRename
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.LinkLabel llCustomName;
         private System.Windows.Forms.LinkLabel llLibraryDefaultFormat;
+        private System.Windows.Forms.RadioButton rdoTMDB;
     }
 }

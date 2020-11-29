@@ -130,6 +130,10 @@ namespace TVRename
                     TvdbCode = code;
                     break;
 
+                case TVDoc.ProviderType.TMDB:
+                    TmdbCode = code;
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
@@ -314,6 +318,7 @@ namespace TVRename
             CustomShowName = xmlSettings.ExtractString("CustomShowName");
             TvdbCode = xmlSettings.ExtractInt("TVDBID",-1);
             TVmazeCode = xmlSettings.ExtractInt("TVMAZEID", -1);
+            TmdbCode = xmlSettings.ExtractInt("TMDBID", -1);
             CountSpecials = xmlSettings.ExtractBool("CountSpecials",false);
             ShowNextAirdate = xmlSettings.ExtractBool("ShowNextAirdate",true);
             AutoAddFolderBase = xmlSettings.ExtractString("FolderBase");
@@ -447,11 +452,24 @@ namespace TVRename
 
         protected override MediaType GetMediaType() => MediaType.tv;
 
-        protected override MediaCache LocalCache() => Provider== TVDoc.ProviderType.TVmaze ? (MediaCache) TVmaze.LocalCache.Instance : TheTVDB.LocalCache.Instance;
+        protected override MediaCache LocalCache()
+        {
+            return Provider switch
+            {
+                TVDoc.ProviderType.TVmaze => TVmaze.LocalCache.Instance,
+                TVDoc.ProviderType.TMDB => TMDB.LocalCache.Instance,
+                TVDoc.ProviderType.libraryDefault => TheTVDB.LocalCache.Instance,
+                TVDoc.ProviderType.TheTVDB => TheTVDB.LocalCache.Instance,
+                _ => TheTVDB.LocalCache.Instance
+            };
+        }
 
-        
-
-        private int Code => Provider == TVDoc.ProviderType.TVmaze ? TVmazeCode:TvdbCode;
+        private int Code => Provider switch
+        {
+            TVDoc.ProviderType.TVmaze => TVmazeCode,
+            TVDoc.ProviderType.TMDB => TmdbCode,
+            _ => TvdbCode
+        };
 
         public enum ShowAirStatus
         {
@@ -599,6 +617,7 @@ namespace TVRename
                         return TVSettings.Instance.DefaultProvider;
                     case TVDoc.ProviderType.TVmaze:
                     case TVDoc.ProviderType.TheTVDB:
+                    case TVDoc.ProviderType.TMDB:
                         return ConfigurationProvider;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -684,6 +703,7 @@ namespace TVRename
             writer.WriteElement("ShowNextAirdate",ShowNextAirdate);
             writer.WriteElement("TVDBID",TvdbCode);
             writer.WriteElement("TVMAZEID", TVmazeCode);
+            writer.WriteElement("TMDBID", TmdbCode );
             writer.WriteElement("FolderBase", AutoAddFolderBase);
             writer.WriteElement("DoRename",DoRename);
             writer.WriteElement("DoMissingCheck",DoMissingCheck);

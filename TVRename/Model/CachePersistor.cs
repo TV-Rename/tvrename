@@ -50,7 +50,7 @@ namespace TVRename
             }
         }
 
-        public static void SaveCache(ConcurrentDictionary<int, CachedSeriesInfo> series,[NotNull] FileInfo cacheFile, long timestamp)
+        public static void SaveCache(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, [NotNull] FileInfo cacheFile, long timestamp)
         {
             DirectoryInfo di = cacheFile.Directory;
             if (!di.Exists)
@@ -123,44 +123,6 @@ namespace TVRename
 
                     writer.WriteEndElement(); // BannersCache
 
-                    writer.WriteEndElement(); // data
-
-                    writer.WriteEndDocument();
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, $"Failed to save Cache to {cacheFile.FullName}");
-            }
-        }
-
-        internal static void SaveCache(ConcurrentDictionary<int, CachedMovieInfo> movies, FileInfo cacheFile, long timestamp)
-        {
-            DirectoryInfo di = cacheFile.Directory;
-            if (!di.Exists)
-            {
-                di.Create();
-            }
-
-            Logger.Info("Saving Cache to: {0}", cacheFile.FullName);
-            try
-            {
-                RotateCacheFiles(cacheFile);
-
-                // write ourselves to disc for next time.  use same structure as thetvdb.com (limited fields, though)
-                // to make loading easy
-                XmlWriterSettings settings = new XmlWriterSettings
-                {
-                    Indent = true,
-                    NewLineOnAttributes = true
-                };
-
-                using (XmlWriter writer = XmlWriter.Create(cacheFile.FullName, settings))
-                {
-                    writer.WriteStartDocument();
-                    writer.WriteStartElement("Data");
-                    writer.WriteAttributeToXml("time", timestamp);
-
                     foreach (KeyValuePair<int, CachedMovieInfo> kvp in movies)
                     {
                         if (!kvp.Value.IsSearchResultOnly)
@@ -173,7 +135,7 @@ namespace TVRename
                         }
                     }
 
-                    //
+                    // TODO SAVE MIE BANNERS if we ever have them
                     // <BannersCache>
                     //      <BannersItem>
                     //          <SeriesId>123</SeriesId>
@@ -212,7 +174,6 @@ namespace TVRename
             {
                 Logger.Error(e, $"Failed to save Cache to {cacheFile.FullName}");
             }
-
         }
 
         public static bool LoadTvCache([NotNull] FileInfo loadFrom,iTVSource cache)

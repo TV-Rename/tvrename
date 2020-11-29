@@ -108,7 +108,7 @@ namespace TVRename
 
                 lock (TMDB.LocalCache.Instance.MOVIE_LOCK)
                 {
-                    foreach (KeyValuePair<int, CachedMovieInfo> kvp in TMDB.LocalCache.Instance.CachedData)
+                    foreach (KeyValuePair<int, CachedMovieInfo> kvp in TMDB.LocalCache.Instance.CachedMovieData)
                     {
                         int num = kvp.Key;
                         string show = kvp.Value.Name.RemoveDiacritics();

@@ -31,7 +31,7 @@ namespace TVRename
 
         void ForgetEverything();
         void ForgetShow(int id);
-        void ForgetShow(int tvdb,int tvmaze, bool makePlaceholder,bool useCustomLanguage,string langCode);
+        void ForgetShow(int tvdb,int tvmaze,int tmdb, bool makePlaceholder,bool useCustomLanguage,string langCode);
         void UpdateSeries(CachedSeriesInfo si);
         void AddOrUpdateEpisode(Episode episode);
         void AddBanners(int seriesId, IEnumerable<Banner> select);

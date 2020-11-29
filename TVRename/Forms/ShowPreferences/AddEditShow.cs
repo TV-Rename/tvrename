@@ -230,6 +230,9 @@ namespace TVRename
                     rdoTVDB.Checked = true;
                     break;
 
+                case TVDoc.ProviderType.TMDB:
+                    rdoTMDB.Checked = true;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -469,6 +472,10 @@ namespace TVRename
             if (rdoTVDB.Checked)
             {
                 return TVDoc.ProviderType.TheTVDB;
+            }
+            if (rdoTMDB.Checked)
+            {
+                return TVDoc.ProviderType.TMDB;
             }
             return TVDoc.ProviderType.TheTVDB;
         }

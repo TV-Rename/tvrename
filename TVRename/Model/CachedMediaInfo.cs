@@ -7,8 +7,6 @@ namespace TVRename
 {
     public class CachedMediaInfo
     {
-        public bool Dirty; // set to true if local info is known to be older than whats on the server
-
         public string Name;
         public string? Overview;
         public string? Runtime;
@@ -24,7 +22,6 @@ namespace TVRename
         public string? OfficialUrl;
         public string? ShowLanguage;
         public string? PosterUrl;
-        public long SrvLastUpdated;
         public string? TwitterId;
         public string? InstagramId;
         public string? FacebookId;
@@ -36,6 +33,10 @@ namespace TVRename
         protected List<Crew> Crew;
         public List<string> Genres;
         protected List<string> Aliases;
+
+        public bool Dirty; // set to true if local info is known to be older than whats on the server
+        public long SrvLastUpdated;
+
 
         private protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
