@@ -448,7 +448,7 @@ namespace TVRename
             s.DefMovieDoMissingCheck = cbDefMovieDoMissing.Checked;
             s.DefMovieUseutomaticFolders = cbDefMovieAutoFolders.Checked;
             s.DefMovieUseDefaultLocation = cbDefMovieUseDefLocation.Checked;
-            s.DefMovieDefaultLocation = cmbDefMovieLocation.SelectedItem.ToString();
+            s.DefMovieDefaultLocation = (string)cmbDefMovieLocation.SelectedItem;
             s.DefaultMovieProvider = MovieProviderMode();
 
             s.TMDBLanguage= cbTMDBLanguages.SelectedText;
