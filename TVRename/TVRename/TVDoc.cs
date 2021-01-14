@@ -26,6 +26,7 @@ using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using TVRename.Settings.AppState;
 
 namespace TVRename
 {
@@ -48,6 +49,7 @@ namespace TVRename
         public readonly MovieLibrary FilmLibrary;
         public readonly CommandLineArgs Args;
         internal readonly TVRenameStats CurrentStats;
+        internal readonly State CurrentAppState;
         public readonly ItemList TheActionList;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly ActionEngine actionManager;
@@ -102,6 +104,16 @@ namespace TVRename
             {
                 CurrentStats = new TVRenameStats();
                 // not worried if stats loading fails
+            }
+
+            try
+            {
+                CurrentAppState = State.LoadFromDefaultFile();
+            }
+            catch(Exception ex)
+            {
+                Logger.Warn(ex, "Could not load app state file.");
+                CurrentAppState = new State();
             }
             actionManager = new ActionEngine(CurrentStats);
         }

@@ -454,9 +454,11 @@
     </Compile>
     <Compile Include="ScanActivity\ScanShowActivity\CheckAllMovieFoldersExist.cs" />
     <Compile Include="ScanActivity\ScanShowActivity\RenameAndMissingMovieCheck.cs" />
+    <Compile Include="Settings\AppState\UpdateCheck.cs" />
     <Compile Include="Settings\MovieConfiguration.cs" />
     <Compile Include="Settings\MovieFilter.cs" />
     <Compile Include="Settings\PreviouslySeenMovies.cs" />
+    <Compile Include="Settings\AppState\State.cs" />
     <Compile Include="Sources\SourceConsistencyException.cs" />
     <Compile Include="Sources\TheTVDB\TvdbAccuracyCheck.cs" />
     <Compile Include="Sources\TMDB\LocalCache.cs" />

@@ -113,6 +113,13 @@ namespace TVRename
             Just
         }
 
+        public enum UpdateCheckMode
+        {
+            Off,
+            Everytime,
+            Interval
+        }
+
         public List<string> LibraryFolders;
         public List<string> MovieLibraryFolders;
         public List<string> IgnoreFolders;
@@ -393,6 +400,10 @@ namespace TVRename
         public bool DefMovieDoMissingCheck = true;
         public bool DefMovieUseutomaticFolders = true;
         public bool DefMovieUseDefaultLocation = true;
+        public bool SuppressUpdateAvailablePopup = false;
+        public UpdateCheckMode UpdateCheckType = UpdateCheckMode.Everytime;
+        internal TimeSpan UpdateCheckInterval = TimeSpan.FromDays(1);
+
         public string? DefMovieDefaultLocation;
         public TVDoc.ProviderType DefaultMovieProvider = TVDoc.ProviderType.TMDB;
 
@@ -655,6 +666,8 @@ namespace TVRename
             writer.WriteElement("TMDBPercentDirty", TMDBPercentDirty);
             writer.WriteElement("IncludeMoviesQuickRecent", IncludeMoviesQuickRecent);
 
+            WriteAppUpdateElement(writer);
+
             TheSearchers.WriteXml(writer, "TheSearchers");
             TheMovieSearchers.WriteXml(writer, "TheMovieSearchers");
             WriteReplacements(writer);
@@ -664,6 +677,15 @@ namespace TVRename
             WriteFilters(writer);
 
             writer.WriteEndElement(); // settings
+        }
+
+        private void WriteAppUpdateElement(XmlWriter writer)
+        {
+            writer.WriteStartElement("AppUpdate");
+            writer.WriteElement("Mode", (int)UpdateCheckType);
+            writer.WriteElement("Interval", UpdateCheckInterval.ToString());
+            writer.WriteElement("SuppressPopup", SuppressUpdateAvailablePopup);
+            writer.WriteEndElement();
         }
 
         private void WriteReplacements([NotNull] XmlWriter writer)
@@ -1515,10 +1537,23 @@ namespace TVRename
             TheSearchers = new Searchers(xmlSettings.Descendants("TheSearchers").FirstOrDefault(),MediaConfiguration.MediaType.tv);
             TheMovieSearchers = new Searchers(xmlSettings.Descendants("TheMovieSearchers").FirstOrDefault(),MediaConfiguration.MediaType.movie);
 
+            UpdateAppUpdateSettings(xmlSettings);
+
             UpdateReplacements(xmlSettings);
             UpdateRegExs(xmlSettings);
             UpdateShowStatus(xmlSettings);
             UpdateFiters(xmlSettings);
+        }
+
+        private void UpdateAppUpdateSettings(XElement xmlSettings)
+        {
+            var subElement = xmlSettings.Element("AppUpdate");
+            if (subElement != null)
+            {
+                UpdateCheckInterval = TimeSpan.Parse(subElement.ExtractString("Interval", TimeSpan.FromHours(1).ToString()));
+                UpdateCheckType = (UpdateCheckMode)Enum.Parse(typeof(UpdateCheckMode), subElement.ExtractString("Mode", ((int)UpdateCheckMode.Everytime).ToString()));
+                SuppressUpdateAvailablePopup = subElement.ExtractBool("SuppressPopup", false);
+            }
         }
 
         private void UpdateFiters([NotNull] XElement xmlSettings)

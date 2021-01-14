@@ -653,7 +653,7 @@ namespace TVRename
                 BGDownloadTimer.Start();
             }
 
-            UpdateTimer.Start();
+            TriggerAppUpdateCheck();
 
             quickTimer.Start();
 
@@ -661,6 +661,27 @@ namespace TVRename
             {
                 RunAutoScan("Startup Scan");
             }
+        }
+
+        private void TriggerAppUpdateCheck()
+        {
+            var updateCheckType = TVSettings.Instance.UpdateCheckType;
+            if (updateCheckType != TVSettings.UpdateCheckMode.Off)
+            {
+                var checkUpdate = true;
+                if (updateCheckType == TVSettings.UpdateCheckMode.Interval)
+                {
+                    var lastUpdate = mDoc.CurrentAppState.UpdateCheck.LastUpdate;
+                    var interval = TVSettings.Instance.UpdateCheckInterval;
+                    checkUpdate = lastUpdate >= interval;
+                }
+
+                if (checkUpdate)
+                {
+                    UpdateTimer.Start();
+                }
+            }
+
         }
 
         private static void SetupFilterButton(TextBox textBox, EventHandler handler)
@@ -2388,9 +2409,19 @@ namespace TVRename
             Task<ServerRelease> tuv = VersionUpdater.CheckForUpdatesAsync();
             ServerRelease result = await tuv.ConfigureAwait(false);
 
-            uiDisp.Invoke(() => NotifyUpdates(result, false,mDoc.Args.Unattended ||mDoc.Args.Hide));
+            mDoc.CurrentAppState.UpdateCheck.LastUpdateCheckUtc = DateTime.UtcNow;
+            try
+            {
+                mDoc.CurrentAppState.SaveToDefaultFile();
+            }
+            catch(Exception ex)
+            {
+                Logger.Warn(ex, "Could not save app state file after update check!");
+            }
+
+            uiDisp.Invoke(() => NotifyUpdates(result, false, mDoc.Args.Unattended || mDoc.Args.Hide));
         }
-        
+
         private void BGDownloadTimer_Tick(object sender, EventArgs e)
         {
             if (IsBusy)
@@ -3996,12 +4027,15 @@ namespace TVRename
             }
 
             UpdateNotification unForm = new UpdateNotification(update);
-            unForm.ShowDialog(this);
-            if (unForm.DialogResult == DialogResult.Abort)
+            if (!TVSettings.Instance.SuppressUpdateAvailablePopup)
             {
-                Logger.Info("Downloading New Release and Quiting");
-                //We need to quit!
-                Close();
+                unForm.ShowDialog(this);
+                if (unForm.DialogResult == DialogResult.Abort)
+                {
+                    Logger.Info("Downloading New Release and Quiting");
+                    //We need to quit!
+                    Close();
+                }
             }
             btnUpdateAvailable.Visible = true;
         }
