@@ -25,7 +25,6 @@ namespace TVRename.Settings.AppState
 
         public static State LoadFromFile(string path)
         {
-
             if (File.Exists(path))
             {
                 try

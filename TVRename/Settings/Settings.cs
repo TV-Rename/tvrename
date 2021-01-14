@@ -407,7 +407,6 @@ namespace TVRename
         public string? DefMovieDefaultLocation;
         public TVDoc.ProviderType DefaultMovieProvider = TVDoc.ProviderType.TMDB;
 
-
         private TVSettings()
         {
             // defaults that aren't handled with default initialisers
@@ -738,7 +737,6 @@ namespace TVRename
             }
 
             writer.WriteEndElement(); //ShowFilters
-
 
             writer.WriteStartElement("MovieFilters");
 
@@ -1618,7 +1616,6 @@ namespace TVRename
             {
                 MovieFilter.Genres.Add(rep.Value);
             }
-
 
             if (SeasonFolderFormat == string.Empty)
             {
