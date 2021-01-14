@@ -21,6 +21,7 @@ namespace TVRename
         private const string UI_LAYOUT_FILE_NAME = "Layout.xml";
         private const string STATISTICS_FILE_NAME = "Statistics.xml";
         private const string LANGUAGES_FILE_NAME = "Languages.xml";
+        private const string STATE_FILE_NAME = "State.xml";
 
         private static string UserDefinedBasePath;
 
@@ -58,6 +59,8 @@ namespace TVRename
             Directory.CreateDirectory(path);
             return new FileInfo(System.IO.Path.Combine(path, file));
         }
+
+        public static FileInfo StateFile => GetFileInfo(STATE_FILE_NAME);
 
         [NotNull]
         public static FileInfo StatisticsFile => GetFileInfo(STATISTICS_FILE_NAME);
