@@ -30,7 +30,7 @@ namespace TVRename
     public partial class AddEditShow : Form
     {
         private readonly ShowConfiguration selectedShow;
-        private readonly TheTvdbCodeFinder codeFinderForm;
+        private readonly CombinedCodeFinder codeFinderForm;
         private CustomNameTagsFloatingWindow? cntfw;
         private readonly ProcessedSeason? sampleProcessedSeason;
         private readonly ProcessedEpisode? sampleEpisode;
@@ -61,7 +61,7 @@ namespace TVRename
             SetupDropDowns(si);
 
             codeFinderForm =
-                new TheTvdbCodeFinder(si.TvdbCode != -1 ? si.TvdbCode.ToString() : "") {Dock = DockStyle.Fill};
+                new CombinedCodeFinder(si.TvdbCode != -1 ? si.TvdbCode.ToString() : "", MediaConfiguration.MediaType.tv, TVDoc.ProviderType.TheTVDB) {Dock = DockStyle.Fill};
 
             codeFinderForm.SelectionChanged += MTCCF_SelectionChanged;
 
@@ -727,7 +727,7 @@ namespace TVRename
             {
                 txtBaseFolder.Text =
                     TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator()
-                    + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(codeFinderForm.SelectedShow()?.Name));
+                    + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(codeFinderForm.SelectedShow().Name));
             }
         }
 

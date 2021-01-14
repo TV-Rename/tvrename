@@ -44,7 +44,7 @@ namespace TVRename.Forms
 
         private void BwScan_DoWork(object sender, DoWorkEventArgs e)
         {
-            var bw = (BackgroundWorker) sender;
+            BackgroundWorker bw = (BackgroundWorker) sender;
             int total = mDoc.FilmLibrary.Count + mDoc.TvLibrary.Count;
             int current = 0;
 
@@ -147,7 +147,7 @@ namespace TVRename.Forms
                     AddRcMenuItem("Edit Movie", (o, args) => mainUi.EditMovie(si));
 
                     possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
-                    foreach (var f in si.Locations)
+                    foreach (string? f in si.Locations)
                     {
                         AddRcMenuItem("Visit " + f, (o, args) => Helpers.OpenFolder(f));
                     }
@@ -168,7 +168,7 @@ namespace TVRename.Forms
             {
                 AddRcMenuItem("Fix Issues", (o, args) =>
                 {
-                    foreach (var selected in olvDuplicates.SelectedObjects.OfType<SettingsCheck>())
+                    foreach (SettingsCheck? selected in olvDuplicates.SelectedObjects.OfType<SettingsCheck>())
                     {
                         Remedy(selected);
                     }

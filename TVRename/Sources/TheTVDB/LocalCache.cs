@@ -71,7 +71,11 @@ namespace TVRename.TheTVDB
                 {
                     lock (SyncRoot)
                     {
-                        InternalInstance ??= new LocalCache();
+                        // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
+                        if (InternalInstance is null)
+                        {
+                            InternalInstance = new LocalCache();
+                        }
                     }
                 }
 
@@ -1665,7 +1669,7 @@ namespace TVRename.TheTVDB
             return ok;
         }
 
-        public void Search(string text, bool showErrorMsgBox)
+        public override void Search(string text, bool showErrorMsgBox)
         {
             if (!IsConnected && !Connect(showErrorMsgBox))
             {

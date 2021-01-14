@@ -59,7 +59,7 @@ namespace TVRename
                     continue;
                 }
 
-                string simpleShowName = Helpers.SimplifyName(action.Episode.Show.ShowName);
+                string simpleShowName = action.Episode.Show.ShowName.CompareName();
 
                 if (string.IsNullOrWhiteSpace(simpleShowName))
                 {

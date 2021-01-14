@@ -43,14 +43,14 @@ namespace TVRename.Forms
 
         private void BwScan_DoWork(object sender, DoWorkEventArgs e)
         {
-            var bw = (BackgroundWorker) sender;
+            BackgroundWorker bw = (BackgroundWorker) sender;
             int total = mDoc.FilmLibrary.Movies.Count();
             int current = 0;
 
             dupMovies.Clear();
-            foreach (var movie in mDoc.FilmLibrary.Movies)
+            foreach (MovieConfiguration? movie in mDoc.FilmLibrary.Movies)
             {
-                var files = movie.Locations
+                List<FileInfo> files = movie.Locations
                     .Select(s => new DirectoryInfo(s))
                     .Where(info => info.Exists)
                     .SelectMany(d=>d.GetFiles())
@@ -122,7 +122,7 @@ namespace TVRename.Forms
             AddRcMenuItem("Force Refresh", (o, args) => mainUi.ForceMovieRefresh(new List<MovieConfiguration> { si }, false));
             AddRcMenuItem("Edit Movie", (o, args) => mainUi.EditMovie(si));
             possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
-            foreach (var f in mlastSelected.Files)
+            foreach (FileInfo? f in mlastSelected.Files)
             {
                 AddRcMenuItem("Visit " + f.FullName, (o, args) => Helpers.OpenFolderSelectFile(f.FullName));
             }

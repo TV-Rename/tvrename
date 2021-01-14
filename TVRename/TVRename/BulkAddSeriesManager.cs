@@ -396,7 +396,7 @@ namespace TVRename
                 return;
             }
 
-            (bool finished, DirectoryInfo[] subDirs) =CheckFolderForShows(di, false, fullLogging, showErrorMsgBox);
+            (bool finished, DirectoryInfo[]? subDirs) =CheckFolderForShows(di, false, fullLogging, showErrorMsgBox);
 
             if (finished)
             {

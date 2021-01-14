@@ -50,14 +50,14 @@ namespace TVRename
             return null;
         }
 
-        public (bool finished, DirectoryInfo[] subDirs) CheckFolderForMovies([NotNull] DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
+        public (bool finished, DirectoryInfo[]? subDirs) CheckFolderForMovies([NotNull] DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
         {
             CurrentPhaseDirectory++;
             try
             {
                 // ..and not already a folder for one of our shows
                 string theFolder = di2.FullName.ToLower();
-                foreach (var si in mDoc.FilmLibrary.Movies)
+                foreach (MovieConfiguration? si in mDoc.FilmLibrary.Movies)
                 {
                     if (RejectFolderIfIncludedInShow(fullLogging, si, theFolder))
                     {
@@ -178,7 +178,7 @@ namespace TVRename
                 return;
             }
 
-            (bool finished, DirectoryInfo[] subDirs) = CheckFolderForMovies(di, false, fullLogging, showErrorMsgBox);
+            (bool finished, DirectoryInfo[]? subDirs) = CheckFolderForMovies(di, false, fullLogging, showErrorMsgBox);
 
             if (finished)
             {

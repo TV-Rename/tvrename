@@ -40,6 +40,8 @@ namespace TVRename
 
         public abstract string Produces { get; } //What does this action produce? typically a filename
 
+        public virtual Item? Becomes() => null;
+
         public void ResetOutcome()
         {
             internalOutcome=null;

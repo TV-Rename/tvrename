@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
@@ -83,7 +83,7 @@ namespace TVRename
                 }
 
                 //Copy files
-                foreach (var file in Directory.EnumerateFiles(fromDirectpry))
+                foreach (string? file in Directory.EnumerateFiles(fromDirectpry))
                 {
                     string destFile = Path.Combine(toDirectory, Path.GetFileName(file));
                     if (!File.Exists(destFile))

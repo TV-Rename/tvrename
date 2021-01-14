@@ -7,6 +7,7 @@
 // 
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace TVRename
@@ -32,7 +33,7 @@ namespace TVRename
 
             DirFilesCache dfc = new DirFilesCache();
 
-            var showList = settings.Shows;
+            List<ShowConfiguration> showList = settings.Shows;
 
             if (settings.Type == TVSettings.ScanType.Full  && showList.Count>0)
             {

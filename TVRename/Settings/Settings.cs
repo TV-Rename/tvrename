@@ -41,7 +41,11 @@ namespace TVRename
                 {
                     lock (syncRoot)
                     {
-                        instance ??= new TVSettings();
+                        // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
+                        if (instance is null)
+                        {
+                            instance = new TVSettings();
+                        }
                     }
                 }
 

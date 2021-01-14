@@ -65,11 +65,11 @@ namespace TVRename
                 return false;
             }
 
-            string simplifiedFilename = fi.Name.RemoveDot().CompareName();
+            string simplifiedFilename = fi.Name.CompareName();
 
             foreach (Episode epi in si.EpisodesToUse()) 
             {
-                string simplifiedEpName = epi.Name.RemoveDot().CompareName();
+                string simplifiedEpName = epi.Name.CompareName();
 
                 if (simplifiedFilename.Contains(simplifiedEpName))
                 {
@@ -627,23 +627,13 @@ namespace TVRename
         }
 
         [NotNull]
-        public static List<MediaConfiguration> FindMedia([NotNull] IEnumerable<string> possibleShowNames, TVDoc doc, IDialogParent owner)
+        public static List<MediaConfiguration> FindMedia([NotNull] IEnumerable<FileInfo> possibleShows, TVDoc doc, IDialogParent owner)
         {
             List<MediaConfiguration> addedShows = new List<MediaConfiguration>();
 
-            foreach (string hint in possibleShowNames)
+            foreach (FileInfo file in possibleShows)
             {
-                //if hint doesn't match existing added shows
-                if (LookForSeries(hint, addedShows))
-                {
-                    Logger.Info($"Ignoring {hint} as it matches existing shows.");
-                    continue;
-                }
-                if (LookForMovies(hint, addedShows))
-                {
-                    Logger.Info($"Ignoring {hint} as it matches existing movies.");
-                    continue;
-                }
+                String hint = TVSettings.Instance.UseFullPathNameToMatchSearchFolders ? file.FullName : file.RemoveExtension() + ".";
 
                 //If the hint contains certain terms then we'll ignore it
                 if (TVSettings.Instance.IgnoredAutoAddHints.Contains(hint))
@@ -652,6 +642,14 @@ namespace TVRename
                         $"Ignoring {hint} as it is in the list of ignored terms the user has selected to ignore from prior Auto Adds.");
 
                     continue;
+                }
+                //remove any search folders  from the hint. They are probbably useless at helping specify the showname
+                foreach (var path in TVSettings.Instance.DownloadFolders)
+                {
+                    if (hint.StartsWith(path))
+                    {
+                        hint = hint.RemoveFirst(path.Length);
+                    }
                 }
 
                 //Remove any (nnnn) in the hint - probably a year
@@ -663,6 +661,30 @@ namespace TVRename
                 if (string.IsNullOrWhiteSpace(refinedHint))
                 {
                     Logger.Info($"Ignoring {hint} as it refines to nothing.");
+                    continue;
+                }
+
+                //if hint doesn't match existing added shows
+                if (LookForSeries(refinedHint, addedShows))
+                {
+                    Logger.Info($"Ignoring {hint} as it matches shows already being added.");
+                    continue;
+                }
+                if (LookForMovies(refinedHint, addedShows))
+                {
+                    Logger.Info($"Ignoring {hint} as it matches existing movies already being added.");
+                    continue;
+                }
+
+                //if hint doesn't match existing added shows
+                if (LookForSeries(refinedHint, doc.TvLibrary.Shows))
+                {
+                    Logger.Info($"Ignoring {hint} as it matches shows already in the library.");
+                    continue;
+                }
+                if (LookForMovies(refinedHint, doc.FilmLibrary.Movies))
+                {
+                    Logger.Info($"Ignoring {hint} as it matches existing movies already in the library.");
                     continue;
                 }
 
@@ -681,20 +703,30 @@ namespace TVRename
 
                 //popup dialog
                 AutoAddShow askForMatch = new AutoAddShow(refinedHint, hint);
+                DialogResult dr;
 
-                owner.ShowChildDialog(askForMatch);
-                DialogResult dr = askForMatch.DialogResult;
+                if (askForMatch.singleTVShowFound && true) //todo use  TVSettings.Instance.AutomateAutoAddWhenOneShowFound
+                {
+                    // no need to popup dialog
+                    dr = DialogResult.OK;
+                }
+                else
+                {
+                    owner.ShowChildDialog(askForMatch);
+                    dr = askForMatch.DialogResult;
+                }
+
                 askForMatch.Dispose();
 
                 if (dr == DialogResult.OK)
                 {
-                    //If added add show to collection
+                    //If added add show ot collection
                     if (askForMatch.ShowConfiguration.Code>0)
                     {
                         addedShows.Add(askForMatch.ShowConfiguration);
                         doc.Stats().AutoAddedShows++;
                     }
-                    else
+                    else if (askForMatch.MovieConfiguration.Code > 0)
                     {
                         addedShows.Add(askForMatch.MovieConfiguration);
                         doc.Stats().AutoAddedMovies++;

@@ -43,39 +43,43 @@ namespace TVRename
                 return;
             }
 
-            IEnumerable<string> possibleShowNames = GetPossibleShowNameStrings();
+            IEnumerable<FileInfo> possibleShowNames = GetPossibleShowNameStrings();
             List<MediaConfiguration> addedShows = FinderHelper.FindMedia(possibleShowNames,MDoc,settings.Owner);
 
-            if (addedShows.Count <= 0)
+            IEnumerable<ShowConfiguration> addedTVShows = addedShows.OfType<ShowConfiguration>();
+            if (addedTVShows.Count() > 0)
             {
-                return;
+                MDoc.TvLibrary.AddRange(addedTVShows);
+                MDoc.ShowAddedOrEdited(false, false, false, settings.Owner);
+                MDoc.ShowAddedOrEdited(true, false, false, settings.Owner);
+                //add each new show into the shows being scanned
+                foreach (ShowConfiguration si in addedTVShows)
+                {
+                    settings.Shows.Add(si);
+                }
+                LOGGER.Info("Added new shows called: {0}", addedTVShows.Select(s => s.ShowName).ToCsv());
             }
 
-            MDoc.TvLibrary.AddRange(addedShows.OfType<ShowConfiguration>());
-            MDoc.ShowAddedOrEdited(false,false,false,settings.Owner);
-            MDoc.ShowAddedOrEdited(true,false,false,settings.Owner);
 
-            MDoc.FilmLibrary.AddRange(addedShows.OfType<MovieConfiguration>());
-            MDoc.MovieAddedOrEdited(false, false, false, settings.Owner);
-            MDoc.MovieAddedOrEdited(true, false, false, settings.Owner);
-
-            LOGGER.Info("Added new shows/movies called: {0}", addedShows.Select(s => s.ShowName).ToCsv());
-
-            //add each new show into the shows being scanned
-            foreach (ShowConfiguration si in addedShows.OfType<ShowConfiguration>())
+            IEnumerable<MovieConfiguration> addedMovies = addedShows.OfType<MovieConfiguration>();
+            if (addedMovies.Count() > 0)
             {
-                settings.Shows.Add(si);
-            }
-            foreach (MovieConfiguration si in addedShows.OfType<MovieConfiguration>())
-            {
-                settings.Movies.Add(si);
+                MDoc.FilmLibrary.AddRange(addedMovies);
+                MDoc.MovieAddedOrEdited(false, false, false, settings.Owner);
+                MDoc.MovieAddedOrEdited(true, false, false, settings.Owner);
+
+                foreach (MovieConfiguration si in addedMovies)
+                {
+                    settings.Movies.Add(si);
+                }
+                LOGGER.Info("Added new movies called: {0}", addedMovies.Select(s => s.ShowName).ToCsv());
             }
         }
 
         [NotNull]
-        private IEnumerable<string> GetPossibleShowNameStrings()
+        private IEnumerable<FileInfo> GetPossibleShowNameStrings()
         {
-            List<string> possibleShowNames = new List<string>();
+            List<FileInfo> possibleShowNames = new List<FileInfo>();
 
             foreach (string dirPath in TVSettings.Instance.DownloadFolders.ToArray())
             {
@@ -101,7 +105,7 @@ namespace TVRename
                             continue;
                         }
 
-                        possibleShowNames.Add(fi.RemoveExtension() + ".");
+                        possibleShowNames.Add(fi);
                     }
                 }
                 catch (UnauthorizedAccessException ex)

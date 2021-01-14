@@ -116,15 +116,23 @@ namespace TVRename.Forms.Tools
             string otherExtension = TVSettings.Instance.FileHasUsefulExtensionDetails(droppedFile, true);
 
             ShowConfiguration? bestShow = (string)cbShowList.SelectedItem == "<Auto>"
-                ? FinderHelper.FindBestMatchingShow(droppedFile, mDoc.TvLibrary.Shows)
+                ? FinderHelper.FindBestMatchingShow(droppedFile.FullName, mDoc.TvLibrary.Shows)
                 : mDoc.TvLibrary.Shows.FirstOrDefault(item => item.ShowName == (string)cbShowList.SelectedItem);
 
             if (bestShow is null)
             {
                 if (TVSettings.Instance.AutoAddAsPartOfQuickRename)
                 {
-                    List<MediaConfiguration> addedShows = FinderHelper.FindMedia(new List<string> {droppedFile.Name}, mDoc,owner);
+                    List<MediaConfiguration> addedShows = FinderHelper.FindMedia(new List<FileInfo> {droppedFile}, mDoc,owner);
                     bestShow = addedShows.OfType<ShowConfiguration>().FirstOrDefault();
+
+                    if (bestShow !=null)
+                    {
+                        mDoc.TvLibrary.Add(bestShow);
+                        mDoc.ShowAddedOrEdited(true, false, false, parent);
+
+                        Logger.Info($"Added new show called: {bestShow.ShowName}");
+                    }
                 }
 
                 if (bestShow is null)

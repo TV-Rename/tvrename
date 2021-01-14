@@ -242,28 +242,19 @@ namespace TVRename
         public static string TranslateColorToHtml(Color c) => $"#{c.R:X2}{c.G:X2}{c.B:X2}";
         
         [NotNull]
-        public static string SimplifyName(string n)
+        public static string CompareName( this string n)
         {
             n = n.ToLower();
+            n = RemoveDiacritics(n);
+            n = n.Replace(".", " ");
             n = n.Replace("'", "");
             n = n.Replace("&", "and");
             n = n.Replace("!", "");
             n = n.Replace("*", "");
             n = Regex.Replace(n, "[_\\W]+", " ");
+            n = Regex.Replace(n, "[^\\w ]", " ");
             return n.Trim();
         }
-
-        [NotNull]
-        public static string CompareName( this string n)
-        {
-            //TODO consider whether we should merge with above to refine characters updated
-            n = RemoveDiacritics(n);
-            n = Regex.Replace(n, "[^\\w ]", " ");
-            return SimplifyName(n);
-        }
-
-        [NotNull]
-        public static string RemoveDot([NotNull] this string s) => s.Replace(".", " ");
 
         [NotNull]
         public static string RemoveDiacritics([NotNull] this string stIn)
@@ -289,7 +280,7 @@ namespace TVRename
             return dateTime.CompareTo(WindowsStartDateTime) < 0 ? WindowsStartDateTime : dateTime;
         }
 
-        public static int ToInt(this string text, int def)
+        public static int ToInt(this string? text, int def)
         {
             if (text is null)
             {

@@ -22,6 +22,7 @@ using TMDbLib.Objects.Search;
 using TMDbLib.Objects.Trending;
 using TMDbLib.Objects.TvShows;
 using TVRename.Forms;
+using Cast = TMDbLib.Objects.Movies.Cast;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename.TMDB
@@ -49,7 +50,11 @@ namespace TVRename.TMDB
                 {
                     lock (SyncRoot)
                     {
-                        InternalInstance ??= new LocalCache();
+                        // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
+                        if (InternalInstance is null)
+                        {
+                            InternalInstance = new LocalCache();
+                        }
                     }
                 }
 
@@ -400,7 +405,7 @@ namespace TVRename.TMDB
                 return matchingShows.First();
             }
 
-            var exactMatchingShows = matchingShows
+            List<CachedMovieInfo> exactMatchingShows = matchingShows
                 .Where(info => info.Name.CompareName().Equals(showName, StringComparison.InvariantCultureIgnoreCase)).ToList();
 
             if (exactMatchingShows.Count == 0)
@@ -418,7 +423,7 @@ namespace TVRename.TMDB
                 return null;
             }
 
-            var exactMatchingShowsWithYear = exactMatchingShows
+            List<CachedMovieInfo> exactMatchingShowsWithYear = exactMatchingShows
                 .Where(info => info.Year==show.PossibleYear).ToList();
 
             if (exactMatchingShowsWithYear.Count == 0)
@@ -752,7 +757,7 @@ namespace TVRename.TMDB
 
         public Language GetLanguageFromCode(string customLanguageCode) => throw new NotImplementedException();
 
-        public CachedMovieInfo? GetMovieAndDownload(int id, bool showErrorMsgBox) => HasMovie(id)
+        public CachedMovieInfo GetMovieAndDownload(int id, bool showErrorMsgBox) => HasMovie(id)
             ? CachedMovieData[id]
             : DownloadMovieNow(id,showErrorMsgBox);
 
@@ -777,7 +782,7 @@ namespace TVRename.TMDB
                 ShowLanguage= downloadedMovie.OriginalLanguage,
                 SiteRating = (float)downloadedMovie.VoteAverage,
                 SiteRatingVotes = downloadedMovie.VoteCount,
-                PosterUrl = ImageURL(downloadedMovie.PosterPath),
+                PosterUrl = ImageUrl(downloadedMovie.PosterPath),
                 SrvLastUpdated = DateTime.UtcNow.Date.ToUnixTime(),
                 CollectionName = downloadedMovie.BelongsToCollection?.Name,
                 CollectionId = downloadedMovie.BelongsToCollection?.Id,
@@ -785,22 +790,22 @@ namespace TVRename.TMDB
                 TwitterId=downloadedMovie.ExternalIds.TwitterId,
                 InstagramId = downloadedMovie.ExternalIds.InstagramId,
                 FacebookId=downloadedMovie.ExternalIds.InstagramId,
-                FanartUrl = ImageURL(downloadedMovie.BackdropPath),
+                FanartUrl = ImageUrl(downloadedMovie.BackdropPath),
                 ContentRating = GetCertification(downloadedMovie, "AU") ?? GetCertification(downloadedMovie, "US") ?? string.Empty,// todo allow user to choose
                 OfficialUrl =downloadedMovie.Homepage,
                 TrailerUrl = GetYouTubeUrl(downloadedMovie),
                 Dirty = false,
             };
 
-            foreach (var s in downloadedMovie.AlternativeTitles.Titles.Select(title => title.Title))
+            foreach (string? s in downloadedMovie.AlternativeTitles.Titles.Select(title => title.Title))
             {
                 m.AddAlias(s);
             }
-            foreach (var s in downloadedMovie.Credits.Cast)
+            foreach (Cast? s in downloadedMovie.Credits.Cast)
             {
                 m.AddActor(new Actor(s.Id,s.ProfilePath,s.Name,s.Character,s.CastId,s.Order));
             }
-            foreach (var s in downloadedMovie.Credits.Crew)
+            foreach (TMDbLib.Objects.General.Crew? s in downloadedMovie.Credits.Crew)
             {
                 m.AddCrew(new Crew(s.Id, s.ProfilePath, s.Name,  s.Job, s.Department, s.CreditId));
             }
@@ -835,7 +840,7 @@ namespace TVRename.TMDB
                 ShowLanguage = downloadedSeries.OriginalLanguage,
                 SiteRating = (float)downloadedSeries.VoteAverage,
                 SiteRatingVotes = downloadedSeries.VoteCount,
-                PosterUrl = ImageURL(downloadedSeries.PosterPath),
+                PosterUrl = ImageUrl(downloadedSeries.PosterPath),
                 SrvLastUpdated = DateTime.UtcNow.Date.ToUnixTime(),
                 //CollectionName = downloadedSeries.BelongsToCollection?.Name,
                 //CollectionId = downloadedSeries.BelongsToCollection?.Id,
@@ -852,27 +857,27 @@ namespace TVRename.TMDB
                 
             };
 
-            foreach (var s in downloadedSeries.AlternativeTitles.Results.Select(title => title.Title))
+            foreach (string? s in downloadedSeries.AlternativeTitles.Results.Select(title => title.Title))
             {
                 m.AddAlias(s);
             }
-            foreach (var s in downloadedSeries.Credits.Cast)
+            foreach (TMDbLib.Objects.TvShows.Cast? s in downloadedSeries.Credits.Cast)
             {
                 m.AddActor(new Actor(s.Id, s.ProfilePath, s.Name, s.Character, 0, s.Order));
             }
-            foreach (var s in downloadedSeries.Credits.Crew)
+            foreach (TMDbLib.Objects.General.Crew? s in downloadedSeries.Credits.Crew)
             {
                 m.AddCrew(new Crew(s.Id, s.ProfilePath, s.Name, s.Job, s.Department, s.CreditId));
             }
 
             foreach (int snum in Enumerable.Range(1,downloadedSeries.NumberOfSeasons))
             {
-                var downloadedSeason = Client.GetTvSeasonAsync(downloadedSeries.Id, snum, TvSeasonMethods.Images).Result;
+                TvSeason? downloadedSeason = Client.GetTvSeasonAsync(downloadedSeries.Id, snum, TvSeasonMethods.Images).Result;
                 // TODO add language
                 Season newSeason = new Season(downloadedSeason.Id??0,snum,downloadedSeason.Name,downloadedSeason.Overview,String.Empty, downloadedSeason.PosterPath,downloadedSeries.Id);
                 m.AddSeason(newSeason);
 
-                foreach (var downloadedEpisode in downloadedSeason.Episodes)
+                foreach (TvSeasonEpisode? downloadedEpisode in downloadedSeason.Episodes)
                 {
                     Episode newEpisode = new Episode(downloadedSeries.Id, m)
                     {
@@ -888,7 +893,7 @@ namespace TVRename.TMDB
                         SiteRatingCount = downloadedEpisode.VoteCount,
                         EpisodeRating = downloadedEpisode.VoteAverage.ToString(System.Globalization.CultureInfo.InvariantCulture),
                         SeasonId = newSeason.SeasonId,
-                        Filename = ImageURL(downloadedEpisode.StillPath, "original")
+                        Filename = ImageUrl(downloadedEpisode.StillPath, "original")
                         
                     };
                     //todo - add cast and crew
@@ -898,7 +903,7 @@ namespace TVRename.TMDB
 
                 if (downloadedSeason.Images != null)
                 {
-                    foreach (var image in downloadedSeason.Images.Posters)
+                    foreach (ImageData? image in downloadedSeason.Images.Posters)
                     {
                         Banner newBanner = new Banner(downloadedSeries.Id)
                         {
@@ -937,7 +942,7 @@ namespace TVRename.TMDB
 
                 if (ss.Type == MediaConfiguration.MediaType.tv)
                 {
-                    foreach (var show in x.TvResults)
+                    foreach (SearchTv? show in x.TvResults)
                     {
                         return show.Id;
                     }
@@ -946,11 +951,11 @@ namespace TVRename.TMDB
 
             if (ss.TvdbSeriesId>0)
             {
-                var x = Client.FindAsync(FindExternalSource.TvDb, ss.TvdbSeriesId.ToString()).Result;
+                FindContainer? x = Client.FindAsync(FindExternalSource.TvDb, ss.TvdbSeriesId.ToString()).Result;
 
                 if (ss.Type == MediaConfiguration.MediaType.tv)
                 {
-                    foreach (var show in x.TvResults)
+                    foreach (SearchTv? show in x.TvResults)
                     {
                         return show.Id;
                     }
@@ -974,7 +979,7 @@ namespace TVRename.TMDB
                 .FirstOrDefault();
         }
 
-        public void Search(string text, bool showErrorMsgBox)
+        public override void Search(string text, bool showErrorMsgBox)
         {
             SearchContainer<SearchMovie> results = Client.SearchMovieAsync(text).Result;
             LOGGER.Info($"Got {results.Results.Count:N0} of {results.TotalResults:N0} results searching for {text}");
@@ -998,7 +1003,7 @@ namespace TVRename.TMDB
                 ShowLanguage = result.OriginalLanguage,
                 SiteRating = (float)result.VoteAverage,
                 SiteRatingVotes = result.VoteCount,
-                PosterUrl = ImageURL(result.PosterPath),
+                PosterUrl = ImageUrl(result.PosterPath),
                 IsSearchResultOnly = true,
                 Dirty = false,
             };
@@ -1018,8 +1023,8 @@ namespace TVRename.TMDB
                 ShowLanguage = result.OriginalLanguage,
                 SiteRating = (float)result.VoteAverage,
                 SiteRatingVotes = result.VoteCount,
-                PosterUrl = ImageURL(result.PosterPath),
-                FanartUrl = ImageURL(result.BackdropPath),
+                PosterUrl = ImageUrl(result.PosterPath),
+                FanartUrl = ImageUrl(result.BackdropPath),
                 IsSearchResultOnly = true,
                 Dirty = false,
             };
@@ -1029,12 +1034,9 @@ namespace TVRename.TMDB
             return m;
         }
 
-        private static string? ImageURL(string source)
-        {
-            return ImageURL(source, "w600_and_h900_bestv2");
-        }
+        private static string? ImageUrl(string source) => ImageUrl(source, "w600_and_h900_bestv2");
 
-        static string? ImageURL(string source,string type)
+        static string? ImageUrl(string source,string type)
         {
             if (source.HasValue())
             {
@@ -1046,7 +1048,7 @@ namespace TVRename.TMDB
 
         public CachedMovieInfo? LookupMovieByImdb(string imdbToTest, bool showErrorMsgBox)
         {
-            var results = Client.FindAsync(FindExternalSource.Imdb, imdbToTest).Result;
+            FindContainer? results = Client.FindAsync(FindExternalSource.Imdb, imdbToTest).Result;
             LOGGER.Info($"Got {results.MovieResults.Count:N0} results searching for {imdbToTest}");
             foreach (SearchMovie result in results.MovieResults)
             {
@@ -1072,7 +1074,7 @@ namespace TVRename.TMDB
 
         public int? LookupTvbdIdByImdb(string imdbToTest, bool showErrorMsgBox)
         {
-            var results = Client.FindAsync(FindExternalSource.Imdb, imdbToTest).Result;
+            FindContainer? results = Client.FindAsync(FindExternalSource.Imdb, imdbToTest).Result;
             LOGGER.Info($"Got {results.TvResults.Count:N0} results searching for {imdbToTest}");
 
 
@@ -1121,14 +1123,14 @@ namespace TVRename.TMDB
 
         public Dictionary<int, CachedMovieInfo> GetMovieIdsFromCollection(int collectionId)
         {
-            Dictionary<int, CachedMovieInfo>? returnValue = new Dictionary<int, CachedMovieInfo>();
+            Dictionary<int, CachedMovieInfo> returnValue = new Dictionary<int, CachedMovieInfo>();
             TMDbLib.Objects.Collections.Collection collection = Client.GetCollectionAsync(collectionId).Result;
             if (collection == null)
             {
                 return returnValue;
             }
 
-            foreach (var m in collection.Parts)
+            foreach (SearchMovie? m in collection.Parts)
             {
                 int id = m.Id;
                 CachedMovieInfo info = File(m);
@@ -1176,19 +1178,19 @@ namespace TVRename.TMDB
 
             Recomendations returnValue = new Recomendations();
 
-            foreach (var top in topRated.Result.Results)
+            foreach (SearchTv? top in topRated.Result.Results)
             {
                 File(top);
                 returnValue.AddTopRated(top.Id);
             }
-            foreach (var top in trending.Result.Results)
+            foreach (SearchTv? top in trending.Result.Results)
             {
                 File(top);
                 returnValue.AddTrending(top.Id);
             }
 
 
-            foreach (var arg in shows)
+            foreach (ShowConfiguration? arg in shows)
             {
                 try
                 {
@@ -1230,7 +1232,7 @@ namespace TVRename.TMDB
             Task.WaitAll(related, similar);
             if (related.Result != null)
             {
-                foreach (var s in related.Result.Results)
+                foreach (SearchTv? s in related.Result.Results)
                 {
                     File(s);
                     returnValue.AddRelated(s.Id, arg);
@@ -1239,7 +1241,7 @@ namespace TVRename.TMDB
 
             if (similar.Result != null)
             {
-                foreach (var s in similar.Result.Results)
+                foreach (SearchTv? s in similar.Result.Results)
                 {
                     File(s);
                     returnValue.AddSimilar(s.Id, arg);
@@ -1259,34 +1261,34 @@ namespace TVRename.TMDB
 
             Recomendations returnValue = new Recomendations();
 
-            foreach (var top in topRated.Result.Results)
+            foreach (SearchMovie? top in topRated.Result.Results)
             {
                 File(top);
                 returnValue.AddTopRated(top.Id);
             }
-            foreach (var top in trending.Result.Results)
+            foreach (SearchMovie? top in trending.Result.Results)
             {
                 File(top);
                 returnValue.AddTrending(top.Id);
             }
 
 
-            foreach (var arg in movies)
+            foreach (MovieConfiguration? arg in movies)
             {
                 try
                 {
-                    var related = Client.GetMovieRecommendationsAsync(arg.TmdbCode);
-                    var similar = Client.GetMovieSimilarAsync(arg.TmdbCode);
+                    Task<SearchContainer<SearchMovie>>? related = Client.GetMovieRecommendationsAsync(arg.TmdbCode);
+                    Task<SearchContainer<SearchMovie>>? similar = Client.GetMovieSimilarAsync(arg.TmdbCode);
 
                     Task.WaitAll(related, similar);
-                    foreach (var movie in related.Result.Results)
+                    foreach (SearchMovie? movie in related.Result.Results)
                     {
                         File(movie);
                         returnValue.AddRelated(movie.Id, arg);
                     }
 
 
-                    foreach (var movie in similar.Result.Results)
+                    foreach (SearchMovie? movie in similar.Result.Results)
                     {
                         File(movie);
                         returnValue.AddSimilar(movie.Id, arg);

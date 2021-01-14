@@ -280,8 +280,7 @@ namespace TVRename
 
             if (processedSeason != null)
             {
-                return new ShowSummaryData.ShowSummarySeasonData(snum, epCount, epAiredCount, epGotCount,
-                    processedSeason, si.IgnoreSeasons.Contains(snum));
+                return new ShowSummaryData.ShowSummarySeasonData(snum, epCount, epAiredCount, epGotCount, processedSeason);
             }
 
             return null;
@@ -356,9 +355,49 @@ namespace TVRename
 
                 gridSummary.showRightClickMenu.Items.Clear();
 
-                ProcessedSeason seas = processedSeason;
+                if (processedSeason != null)
+                {
+                    if (processedSeason.Show.IgnoreSeasons.Contains(processedSeason.SeasonNumber))
+                    {
+                        AddRcMenuItem(gridSummary.showRightClickMenu, "Stop Ignoring Season", (o, args) =>
+                        {
+                            processedSeason.Show.IgnoreSeasons.Remove(processedSeason.SeasonNumber);
+                            gridSummary.PopulateGrid();
+                        });
+                    }
+                    else
+                    {
+                        AddRcMenuItem(gridSummary.showRightClickMenu, "Ignore Season", (o, args) =>
+                        {
+                            processedSeason.Show.IgnoreSeasons.Add(processedSeason.SeasonNumber);
+                            gridSummary.PopulateGrid();
+                        });
+                    }
+                }
 
-                if (seas is null)
+                if (show != null)
+                {
+                    if (show.DoMissingCheck)
+                    {
+                        AddRcMenuItem(gridSummary.showRightClickMenu, "Stop Checking Show", (o, args) =>
+                        {
+                            show.DoMissingCheck = false;
+                            gridSummary.PopulateGrid();
+                        });
+                    }
+                    else
+                    {
+                        AddRcMenuItem(gridSummary.showRightClickMenu, "Start Checking Show", (o, args) =>
+                        {
+                            show.DoMissingCheck = true;
+                            gridSummary.PopulateGrid();
+                        });
+                    }
+                }
+
+                GenerateSeparator(gridSummary.showRightClickMenu);
+
+                if (processedSeason is null)
                 {
                     AddRcMenuItem(gridSummary.showRightClickMenu, "Force Refresh",(o, args) =>
                     {
@@ -371,7 +410,7 @@ namespace TVRename
                 AddRcMenuItem(gridSummary.showRightClickMenu, "Visit thetvdb.com",
                     (o, args) =>
                     {
-                        if (seas is null)
+                        if (processedSeason is null)
                         {
                             TvdbFor(show);
                         }
@@ -384,21 +423,22 @@ namespace TVRename
 
                 List<string> added = new List<string>();
 
-                if (seas != null)
+                if (processedSeason != null)
                 {
-                    GenerateOpenMenu(seas, added);
+                    GenerateOpenMenu(processedSeason, added);
                 }
 
                 GenerateRightClickOpenMenu(added);
 
-                if (seas != null)
+                if (processedSeason != null)
                 {
-                    GenerateRightClickWatchMenu(seas);
+                    GenerateRightClickWatchMenu(processedSeason);
                 }
 
                 Point pt = new Point(e.X, e.Y);
                 gridSummary.showRightClickMenu.Show(sender.Grid.PointToScreen(pt));
             }
+
 
             private void GenerateOpenMenu([NotNull] ProcessedSeason seas, ICollection<string> added)
             {
@@ -525,19 +565,18 @@ namespace TVRename
                 private readonly int episodeGotCount;
                 public readonly ProcessedSeason ProcessedSeason;
                 public readonly int SeasonNumber;
-                public readonly bool Ignored;
-
-                public ShowSummarySeasonData(int seasonNumber, int episodeCount, int episodeAiredCount, int episodeGotCount, ProcessedSeason processedSeason,bool ignored)
+                
+                public ShowSummarySeasonData(int seasonNumber, int episodeCount, int episodeAiredCount, int episodeGotCount, ProcessedSeason processedSeason)
                 {
                     SeasonNumber = seasonNumber;
                     this.episodeCount = episodeCount;
                     this.episodeAiredCount = episodeAiredCount;
                     this.episodeGotCount = episodeGotCount;
                     ProcessedSeason = processedSeason;
-                    Ignored = ignored;
                 }
 
                 public bool IsSpecial => SeasonNumber == 0;
+                public bool Ignored => ProcessedSeason.Show.IgnoreSeasons.Contains(SeasonNumber);
 
                 [NotNull]
                 public SummaryOutput GetOuput()

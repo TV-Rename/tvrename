@@ -575,7 +575,7 @@ namespace TVRename
             bool usingScanResults = tabControl1.SelectedTab == tbAllInOne;
             bool haveTvSelected = !usingScanResults || GetSelectedObjectType(olvAction) == MediaConfiguration.MediaType.tv;
 
-            var searchers = haveTvSelected ? TVDoc.GetSearchers() : TVDoc.GetMovieSearchers();
+            Searchers searchers = haveTvSelected ? TVDoc.GetSearchers() : TVDoc.GetMovieSearchers();
             return searchers;
         }
 
@@ -3594,7 +3594,7 @@ namespace TVRename
 
             ItemList lvr = GetSelectedItems();
 
-            Item action = (Item)olvAction.FocusedObject;
+            Item? action = (Item)olvAction.FocusedObject;
 
             if (action?.Episode != null && lvr.Count == 1)
             {
@@ -3839,7 +3839,7 @@ namespace TVRename
             }
 
             //Needed to de-selct any un action able items
-            Item action = (Item)olvAction.GetModelObject(e.Index);
+            Item? action = (Item)olvAction.GetModelObject(e.Index);
             if (action != null && !(action is Action))
             {
                 e.NewValue = CheckState.Unchecked;
@@ -4630,7 +4630,7 @@ namespace TVRename
 
             ItemList lvr = GetSelectedItems();
 
-            Item action = (Item)olvAction.FocusedObject;
+            Item? action = (Item)olvAction.FocusedObject;
 
             if (action?.Episode != null && lvr.Count == 1)
             {

@@ -512,13 +512,13 @@ namespace TVRename
         // see if showname is somewhere in filename
         public static bool SimplifyAndCheckFilename(string filename, string showName, bool simplifyfilename, bool simplifyshowname)
         {
-            Match match = Regex.Match(simplifyfilename ? Helpers.SimplifyName(filename) : filename, "\\b" + (simplifyshowname ? Helpers.SimplifyName(showName) : showName) + "\\b", RegexOptions.IgnoreCase);
+            Match match = Regex.Match(simplifyfilename ? filename.CompareName() : filename, "\\b" + (simplifyshowname ? showName.CompareName() : showName) + "\\b", RegexOptions.IgnoreCase);
             return match.Success;
         }
 
         public static int SimplifyAndCheckFilenameLength(string filename, string showName, bool simplifyfilename, bool simplifyshowname)
         {
-            Match match = Regex.Match(simplifyfilename ? Helpers.SimplifyName(filename) : filename, "\\b" + (simplifyshowname ? Helpers.SimplifyName(showName) : showName) + "\\b", RegexOptions.IgnoreCase);
+            Match match = Regex.Match(simplifyfilename ? filename.CompareName() : filename, "\\b" + (simplifyshowname ? showName.CompareName() : showName) + "\\b", RegexOptions.IgnoreCase);
             if (match.Success)
             {
                 return match.Length;
@@ -531,9 +531,9 @@ namespace TVRename
 
         private static bool SimplifyAndCheckFilenameAtStart(string filename, string showName, bool simplifyFilename, bool simplifyShowName)
         {
-            string showPattern = simplifyShowName ? Helpers.SimplifyName(showName) : showName;
+            string showPattern = simplifyShowName ?showName.CompareName() : showName;
 
-            return (simplifyFilename ? Helpers.SimplifyName(filename) : filename).StartsWith( showPattern, StringComparison.CurrentCultureIgnoreCase);
+            return (simplifyFilename ? filename.CompareName() : filename).StartsWith( showPattern, StringComparison.CurrentCultureIgnoreCase);
         }
         public static bool SimplifyAndCheckFilename(string filename, string showName)
         {

@@ -4,6 +4,7 @@ using System.Threading;
 using NLog;
 using TMDbLib.Client;
 using TMDbLib.Objects.Changes;
+using TMDbLib.Objects.General;
 
 namespace TVRename.TMDB
 {
@@ -38,7 +39,7 @@ namespace TVRename.TMDB
                     {
                         throw new CancelledException();
                     }
-                    var response = client.GetChangesMoviesAsync(currentPage, time, cancellationToken: cts).Result;
+                    SearchContainer<ChangesListItem>? response = client.GetChangesMoviesAsync(currentPage, time, cancellationToken: cts).Result;
                     numberOfCallsMade ++;
                     maxPage = response.TotalPages;
                     updatesResponses.AddRange(response.Results);

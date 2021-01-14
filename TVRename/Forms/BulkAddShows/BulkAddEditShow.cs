@@ -17,13 +17,13 @@ namespace TVRename
     {
         public int Code;
 
-        private readonly TheTvdbCodeFinder codeFinderControl;
+        private readonly CombinedCodeFinder codeFinderControl;
 
         public FolderMonitorEdit([NotNull] PossibleNewTvShow hint)
         {
             InitializeComponent();
 
-            codeFinderControl = new TheTvdbCodeFinder("") {Dock = DockStyle.Fill};
+            codeFinderControl = new CombinedCodeFinder("",MediaConfiguration.MediaType.tv,TVDoc.ProviderType.TheTVDB) {Dock = DockStyle.Fill};
             codeFinderControl.SelectionChanged += CodeChanged;
             codeFinderControl.lvMatches.DoubleClick += MatchDoubleClick;
 

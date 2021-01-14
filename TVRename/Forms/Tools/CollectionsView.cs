@@ -28,7 +28,7 @@ namespace TVRename.Forms
         {
             if (chkRemoveCompleted.Checked && !chkRemoveFuture.Checked)
             {
-                var incompleteCollections = collectionMovies.GroupBy(member => member.CollectionName)
+                List<string> incompleteCollections = collectionMovies.GroupBy(member => member.CollectionName)
                     .Where(members => members.Any(x => !x.IsInLibrary)).Select(members => members.Key).ToList();
 
                 List<CollectionMember> incompleteCollectionMovies =
@@ -47,7 +47,7 @@ namespace TVRename.Forms
             if(chkRemoveFuture.Checked)
 
             {
-                var historicCollectionMovies =
+                IEnumerable<CollectionMember> historicCollectionMovies =
                     collectionMovies.Where(m => m.ReleaseDate.HasValue && m.ReleaseDate.Value < DateTime.Now && m.MovieYear.HasValue);
 
                 if (!chkRemoveCompleted.Checked)
@@ -57,7 +57,7 @@ namespace TVRename.Forms
                     return;
                 }
 
-                var incompleteHistCollections = historicCollectionMovies.GroupBy(member => member.CollectionName)
+                List<string> incompleteHistCollections = historicCollectionMovies.GroupBy(member => member.CollectionName)
                     .Where(members => members.Any(x => !x.IsInLibrary)).Select(members => members.Key).ToList();
 
                 List<CollectionMember> incompleteHistCollectionMovies =
@@ -85,7 +85,7 @@ namespace TVRename.Forms
 
         private void BwScan_DoWork(object sender, DoWorkEventArgs e)
         {
-            var bw = (BackgroundWorker) sender;
+            BackgroundWorker bw = (BackgroundWorker) sender;
 
             List<(int, string)> collectionIds = mDoc.FilmLibrary.Values
                 .Select(c => (c.CachedMovie?.CollectionId, c.CachedMovie?.CollectionName))
@@ -98,10 +98,10 @@ namespace TVRename.Forms
             collectionMovies.Clear();
             foreach ((int, string) collection in collectionIds)
             {
-                var shows = TMDB.LocalCache.Instance.GetMovieIdsFromCollection(collection.Item1);
+                Dictionary<int, CachedMovieInfo> shows = TMDB.LocalCache.Instance.GetMovieIdsFromCollection(collection.Item1);
                 foreach (KeyValuePair<int, CachedMovieInfo> neededShow in shows)
                 {
-                    var c = new CollectionMember {CollectionName = collection.Item2, Movie = neededShow.Value};
+                    CollectionMember c = new CollectionMember {CollectionName = collection.Item2, Movie = neededShow.Value};
 
                     c.IsInLibrary = mDoc.FilmLibrary.ContainsKey(c.TmdbCode);
                     collectionMovies.Add(c);
@@ -173,7 +173,7 @@ namespace TVRename.Forms
         private void AddToLibrary(CachedMovieInfo si)
         {
             // need to add a new showitem
-            var found = new MovieConfiguration(si.TmdbCode,TVDoc.ProviderType.TMDB);
+            MovieConfiguration found = new MovieConfiguration(si.TmdbCode,TVDoc.ProviderType.TMDB);
             QuickLocateForm f = new QuickLocateForm(si.Name, MediaConfiguration.MediaType.movie);
 
             if (f.ShowDialog(this) == DialogResult.OK)

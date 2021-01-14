@@ -92,8 +92,8 @@ namespace TVRename
                 return;
             }
 
-            string simpleShowName = Helpers.SimplifyName(pe.Show.ShowName);
-            string simpleSeriesName = Helpers.SimplifyName(pe.TheCachedSeries.Name);
+            string simpleShowName = pe.Show.ShowName.CompareName();
+            string simpleSeriesName = pe.TheCachedSeries.Name.CompareName();
             ItemList newItemsForThisMissingEpisode = new ItemList();
 
             string response = cache.GetUrl($"{TVSettings.Instance.SearchJSONURL}{imdbId}",TVSettings.Instance.SearchJSONUseCloudflare);
@@ -176,8 +176,10 @@ namespace TVRename
                         LOGGER.Info(
                             $"Adding {itemUrl} from JSON page as it appears to be match for {pe.Show.ShowName} S{pe.AppropriateSeasonNumber}E{pe.AppropriateEpNum}");
 
+                        ItemDownloading becomes = new ItemDownloading(new FutureTorrentEntry(itemUrl, action.TheFileNoExt), action.MissingEpisode, action.TheFileNoExt, DownloadingFinder.DownloadApp.qBitTorrent, action);
+
                         newItemsForThisMissingEpisode.Add(new ActionTDownload(itemName, itemSizeBytes,seeders, itemUrl,
-                            action.TheFileNoExt, pe, action,$"JSON WebPage: {TVSettings.Instance.SearchJSONURL}{imdbId}")); 
+                            action.TheFileNoExt, pe, action,$"JSON WebPage: {TVSettings.Instance.SearchJSONURL}{imdbId}",becomes)); 
 
                         toRemove.Add(action);
                     }

@@ -135,14 +135,14 @@ namespace TVRename
                 return; // Some sort of random file - ignore
             }
 
-            var neededMatchingShows = matchingShows.Where(si => FinderHelper.FileNeeded(di, si, dfc)).ToList();
+            List<ShowConfiguration> neededMatchingShows = matchingShows.Where(si => FinderHelper.FileNeeded(di, si, dfc)).ToList();
             if (neededMatchingShows.Any())
             {
                 LOGGER.Info($"Not removing {di.FullName} as it may be needed for {neededMatchingShows.Select(x=>x.ShowName).ToCsv()}");
                 return;
             }
 
-            var neededMatchingMovie = matchingMovies.Where(si => FinderHelper.FileNeeded(di, si, dfc)).ToList();
+            List<MovieConfiguration> neededMatchingMovie = matchingMovies.Where(si => FinderHelper.FileNeeded(di, si, dfc)).ToList();
             if (neededMatchingMovie.Any())
             {
                 LOGGER.Info($"Not removing {di.FullName} as it may be needed for {neededMatchingMovie.Select(x=>x.ShowName).ToCsv()}");
@@ -265,7 +265,7 @@ namespace TVRename
                 fileCanBeDeleted = false;
             }
 
-            var neededMatchingMovie = matchingMovies.Where(si => FinderHelper.FileNeeded(fi, si, dfc)).ToList();
+            List<MovieConfiguration> neededMatchingMovie = matchingMovies.Where(si => FinderHelper.FileNeeded(fi, si, dfc)).ToList();
             if (neededMatchingMovie.Any())
             {
                 LOGGER.Info($"Not removing {fi.FullName} as it may be needed for {neededMatchingMovie.Select(x => x.ShowName).ToCsv()}");

@@ -190,6 +190,10 @@ namespace TVRename
 
             actionManager.DoActions(theList, !Args.Hide && Environment.UserInteractive,owner);
 
+
+            IEnumerable<Item?> enumerable = TheActionList.Actions.Where(a => a.Outcome.Done && a.Becomes() != null).Select(a => a.Becomes());
+            TheActionList.AddNullableRange(enumerable);
+
             // remove items from master list, unless it had an error
             TheActionList.RemoveAll(x => x is Action action && action.Outcome.Done && !action.Outcome.Error);
 
@@ -200,7 +204,7 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public bool DoDownloadsFG(bool unattended,bool tvrMinimised, UI owner)
         {
-            var shows = TvLibrary.SeriesSpecifiers.Union(FilmLibrary.SeriesSpecifiers).ToList();
+            List<SeriesSpecifier> shows = TvLibrary.SeriesSpecifiers.Union(FilmLibrary.SeriesSpecifiers).ToList();
             bool showProgress = !Args.Hide && Environment.UserInteractive && !tvrMinimised;
             bool showMsgBox = !unattended && !Args.Unattended && !Args.Hide && Environment.UserInteractive;
 
@@ -349,7 +353,7 @@ namespace TVRename
                 writer.WriteEndElement(); // MyShows
 
                 writer.WriteStartElement("MyMovies");
-                foreach (var si in FilmLibrary.Values)
+                foreach (MovieConfiguration? si in FilmLibrary.Values)
                 {
                     si.WriteXmlSettings(writer);
                 }
@@ -861,7 +865,7 @@ namespace TVRename
             Logger.Info("Force Update Images: " + si.ShowName);
 
             // process each folder for each movie...
-            foreach (var file in  si.Locations
+            foreach (FileInfo? file in  si.Locations
                 .Select(s => new DirectoryInfo(s))
                 .Where(info => info.Exists)
                 .SelectMany(d => d.GetFiles())
@@ -1343,22 +1347,22 @@ namespace TVRename
 
         private void ReviewAliases()
         {
-            foreach (var mov in FilmLibrary.Movies)
+            foreach (MovieConfiguration? mov in FilmLibrary.Movies)
             {
-                foreach (var al in mov.AliasNames)
+                foreach (string? al in mov.AliasNames)
                 {
                     Logger.Warn($"::{mov.ShowName},{al}");
                 }
             }
 
-            foreach (var mov in FilmLibrary.Movies)
+            foreach (MovieConfiguration? mov in FilmLibrary.Movies)
             {
                 if (mov.CachedMovie?.GetAliases() is null)
                 {
                     continue;
                 }
 
-                foreach (var al in mov.CachedMovie?.GetAliases())
+                foreach (string? al in mov.CachedMovie?.GetAliases())
                 {
                     Logger.Warn($"::{mov.ShowName},{al}");
                 }

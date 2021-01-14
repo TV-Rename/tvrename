@@ -18,7 +18,7 @@ namespace TVRename
 
         protected override void Check(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
-            var allFolders = si.Locations.ToList();
+            List<string> allFolders = si.Locations.ToList();
             if (allFolders.Count == 0) // no folders defined for this show
             {
                 return; // so, nothing to do.

@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using JetBrains.Annotations;
+
 // ReSharper disable All
 
 // Opens, understands, manipulates, and writes out BEncoded .torrent files, and uTorrent's resume.dat
@@ -28,6 +30,13 @@ namespace TVRename
         kInteger,
         kString,
         kBTEOF
+    }
+
+    public class FutureTorrentEntry : TorrentEntry
+    {
+        public FutureTorrentEntry([NotNull] string torrentfile, [NotNull] string to) : base(torrentfile, to, 0, false, string.Empty)
+        {
+        }
     }
 
     public class TorrentEntry: IDownloadInformation // represents a torrent downloading in a doewloader(Torrent)
@@ -1199,7 +1208,7 @@ namespace TVRename
         public FileInfo MatchMissing(string torrentFile, int torrentFileNum, string nameInTorrent)
         {
             // returns true if we found a match (if actSetPrio is on, true also means we have set a priority for this file)
-            string simplifiedfname = Helpers.SimplifyName(nameInTorrent);
+            string simplifiedfname = nameInTorrent.CompareName();
 
             foreach (Item action1 in MissingList)
             {

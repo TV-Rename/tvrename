@@ -95,7 +95,9 @@ namespace TVRename
                     LOGGER.Info(
                         $"Adding {rss.URL} from RSS feed as it appears to be match for {processedEpisode.Show.ShowName} S{processedEpisode.AppropriateSeasonNumber}E{processedEpisode.AppropriateEpNum}");
                 }
-                newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action.TheFileNoExt, action));
+
+                ItemDownloading becomes = new ItemDownloading(new FutureTorrentEntry(rss.URL, action.TheFileNoExt), action.MissingEpisode, action.TheFileNoExt, DownloadingFinder.DownloadApp.qBitTorrent, action);
+                newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action, becomes));
                 toRemove.Add(action);
             }
 
@@ -122,7 +124,8 @@ namespace TVRename
                     LOGGER.Info(
                         $"Adding {rss.URL} from RSS feed as it appears to be match for {action.MovieConfig.ShowName}");
                 }
-                newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action.TheFileNoExt, action));
+                ItemDownloading becomes = new ItemDownloading(new FutureTorrentEntry(rss.URL, action.TheFileNoExt), action.MovieConfig, action.TheFileNoExt, DownloadingFinder.DownloadApp.qBitTorrent, action);
+                newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action,becomes));
                 toRemove.Add(action);
             }
 
@@ -162,7 +165,7 @@ namespace TVRename
             string serverPort = TVSettings.Instance.JackettPort;
             string allIndexer = TVSettings.Instance.JackettIndexer;
             string apikey = TVSettings.Instance.JackettAPIKey;
-            string? simpleShowName = WebUtility.UrlEncode(Helpers.SimplifyName(processedEpisode.Show.ShowName));
+            string? simpleShowName = WebUtility.UrlEncode(processedEpisode.Show.ShowName.CompareName());
 
             return
                 $"http://{serverName}:{serverPort}{allIndexer}/api?t=tvsearch&q={simpleShowName}&tvdbid={processedEpisode.Show.TvdbCode}&season={processedEpisode.AppropriateSeasonNumber}&ep={processedEpisode.AppropriateEpNum}&apikey={apikey}";

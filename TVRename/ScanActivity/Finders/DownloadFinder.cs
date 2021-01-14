@@ -20,8 +20,8 @@ namespace TVRename
 
         protected static bool RssMatch([NotNull] RSSItem rss, [NotNull] ProcessedEpisode pe)
         {
-            string simpleShowName = Helpers.SimplifyName(pe.Show.ShowName);
-            string simpleSeriesName = Helpers.SimplifyName(pe.TheCachedSeries.Name);
+            string simpleShowName = pe.Show.ShowName.CompareName();
+            string simpleSeriesName = pe.TheCachedSeries.Name.CompareName();
 
             if (!FileHelper.SimplifyAndCheckFilename(rss.ShowName, simpleShowName, true, false) &&
                 !(
@@ -47,7 +47,7 @@ namespace TVRename
 
         protected static bool RssMatch([NotNull] RSSItem rss, [NotNull] MovieConfiguration pe)
         {
-            string simpleShowName = Helpers.SimplifyName(pe.ShowName);
+            string simpleShowName = pe.ShowName.CompareName();
 
             return FileHelper.SimplifyAndCheckFilename(rss.ShowName.HasValue()? rss.ShowName: rss.Title, simpleShowName, true, false);
         }

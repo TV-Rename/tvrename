@@ -66,5 +66,7 @@ namespace TVRename
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
         }
+
+        public abstract void Search(string text, bool showErrorMsgBox);
     }
 }

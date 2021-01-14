@@ -27,7 +27,7 @@ namespace TVRename
     public partial class AddEditMovie : Form
     {
         private readonly MovieConfiguration selectedShow;
-        private readonly TmdbCodeFinder  codeFinderForm;
+        private readonly CombinedCodeFinder codeFinderForm;
         private CustomNameTagsFloatingWindow? cntfw;
         private readonly bool addingNewShow;
         private readonly TVDoc mDoc;
@@ -48,7 +48,7 @@ namespace TVRename
             lblSeasonWordPreview.ForeColor = Color.DarkGray;
 
             codeFinderForm =
-                new TmdbCodeFinder(si.TmdbCode != -1 ? si.TmdbCode.ToString() : "") {Dock = DockStyle.Fill};
+                new CombinedCodeFinder(si.TmdbCode != -1 ? si.TmdbCode.ToString() : "",MediaConfiguration.MediaType.movie,TVDoc.ProviderType.TMDB) {Dock = DockStyle.Fill};
 
             codeFinderForm.SelectionChanged += MTCCF_SelectionChanged;
 

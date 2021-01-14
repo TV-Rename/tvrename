@@ -111,6 +111,7 @@ namespace TVRename
             this.lblDirectoryName.Name = "lblDirectoryName";
             this.lblDirectoryName.Size = new System.Drawing.Size(0, 13);
             this.lblDirectoryName.TabIndex = 5;
+            this.lblDirectoryName.UseMnemonic = false;
             // 
             // btnIgnoreFile
             // 

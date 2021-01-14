@@ -100,11 +100,11 @@ namespace TVRename.Forms
             switch (media)
             {
                 case MediaConfiguration.MediaType.tv:
-                    var show = new ShowConfiguration(mlastSelectedKey, TVDoc.ProviderType.TMDB);
+                    ShowConfiguration show = new ShowConfiguration(mlastSelectedKey, TVDoc.ProviderType.TMDB);
                     tvDoc.Add(show);
                     break;
                 case MediaConfiguration.MediaType.movie:
-                    var newMovie = new MovieConfiguration(mlastSelectedKey,TVDoc.ProviderType.TMDB);
+                    MovieConfiguration newMovie = new MovieConfiguration(mlastSelectedKey,TVDoc.ProviderType.TMDB);
                     tvDoc.Add(newMovie );
                     break;
                 default:

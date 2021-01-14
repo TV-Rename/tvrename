@@ -9,7 +9,7 @@
 
 namespace TVRename
 {
-    partial class TmdbCodeFinder
+    partial class CombinedCodeFinder
     {
         /// <summary>
         /// Required designer variable.
@@ -44,9 +44,9 @@ namespace TVRename
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label3 = new System.Windows.Forms.Label();
-            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // txtSearchStatus
@@ -91,8 +91,8 @@ namespace TVRename
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3,
-            this.columnHeader6,
-            this.columnHeader7});
+            this.columnHeader4,
+            this.columnHeader5});
             this.lvMatches.FullRowSelect = true;
             this.lvMatches.HideSelection = false;
             this.lvMatches.Location = new System.Drawing.Point(1, 30);
@@ -114,33 +114,35 @@ namespace TVRename
             // 
             // columnHeader2
             // 
-            this.columnHeader2.Text = "Movie Name";
-            this.columnHeader2.Width = 184;
+            this.columnHeader2.Text = "Show Name";
+            this.columnHeader2.Width = 188;
             // 
             // columnHeader3
             // 
             this.columnHeader3.Text = "Year";
             this.columnHeader3.Width = 39;
             // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Network";
+            this.columnHeader4.Width = 52;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Status";
+            this.columnHeader5.Width = 58;
+            // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(-1, 6);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(68, 13);
+            this.label3.Size = new System.Drawing.Size(85, 13);
             this.label3.TabIndex = 0;
-            this.label3.Text = "TMDB &code:";
+            this.label3.Text = "TheTVDB &code:";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // columnHeader6
-            // 
-            this.columnHeader6.Text = "Rating";
-            // 
-            // columnHeader7
-            // 
-            this.columnHeader7.Text = "Language";
-            // 
-            // TMDBCodeFinder
+            // TheTvdbCodeFinder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -149,7 +151,7 @@ namespace TVRename
             this.Controls.Add(this.txtFindThis);
             this.Controls.Add(this.lvMatches);
             this.Controls.Add(this.label3);
-            this.Name = "TmdbCodeFinder";
+            this.Name = "CombinedCodeFinder";
             this.Size = new System.Drawing.Size(403, 170);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -167,7 +169,7 @@ namespace TVRename
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ColumnHeader columnHeader6;
-        private System.Windows.Forms.ColumnHeader columnHeader7;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ColumnHeader columnHeader5;
     }
 }

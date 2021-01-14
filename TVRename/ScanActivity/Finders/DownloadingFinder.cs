@@ -31,7 +31,7 @@ namespace TVRename
             int c = ActionList.Missing.Count + 2;
             int n = 1;
             UpdateStatus(n, c, "Searching torrent queue...");
-            foreach (var action in ActionList.Missing.ToList())
+            foreach (ItemMissing? action in ActionList.Missing.ToList())
             {
                 if (settings.Token.IsCancellationRequested)
                 {

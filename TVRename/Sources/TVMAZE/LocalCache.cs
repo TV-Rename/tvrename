@@ -224,6 +224,11 @@ namespace TVRename.TVmaze
             }
         }
 
+        public override void Search(string text, bool showErrorMsgBox)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool HasSeries(int id)
         {
             lock (SERIES_LOCK)

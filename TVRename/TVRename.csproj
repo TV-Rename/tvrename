@@ -279,16 +279,13 @@
     <Compile Include="App\ApplicationBase.cs" />
     <Compile Include="App\CommandLineArgs.cs" />
     <Compile Include="App\AutoFolderMonitor.cs" />
+    <Compile Include="Custom Controls\CodeFinder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Custom Controls\ObjectListViewFlickerFree.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Custom Controls\NativeMethods.cs" />
-    <Compile Include="Custom Controls\TMDBCodeFinder.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Custom Controls\TMDBCodeFinder.Designer.cs">
-      <DependentUpon>TMDBCodeFinder.cs</DependentUpon>
-    </Compile>
     <Compile Include="Exporter\MissingMovieCSV.cs" />
     <Compile Include="Exporter\MissingMovieXML.cs" />
     <Compile Include="Exporter\MoviesExporter.cs" />
@@ -547,8 +544,8 @@
     <Compile Include="Custom Controls\ListViewFlickerFree.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Custom Controls\TheTVDBCodeFinder.Designer.cs">
-      <DependentUpon>TheTVDBCodeFinder.cs</DependentUpon>
+    <Compile Include="Custom Controls\CombinedCodeFinder.Designer.cs">
+      <DependentUpon>CombinedCodeFinder.cs</DependentUpon>
     </Compile>
     <Compile Include="ScanActivity\DownloadIdentifers\DownloadEpisodeJPG.cs" />
     <Compile Include="ScanActivity\DownloadIdentifers\DownloadIdentifiersController.cs" />
@@ -868,10 +865,6 @@
     <None Include="Resources\image-Control_TreeView.bmp-4.bmp" />
     <None Include="Resources\EditShow.ico" />
     <None Include="Resources\iconfinder_Info_Circle_Symbol_Information_Letter_1396823.ico" />
-    <EmbeddedResource Include="Custom Controls\TMDBCodeFinder.resx">
-      <DependentUpon>TMDBCodeFinder.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\BulkAddMovies\BulkAddMovie.resx">
       <DependentUpon>BulkAddMovie.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -1052,8 +1045,8 @@
       <DependentUpon>StatsWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Custom Controls\TheTVDBCodeFinder.resx">
-      <DependentUpon>TheTVDBCodeFinder.cs</DependentUpon>
+    <EmbeddedResource Include="Custom Controls\CombinedCodeFinder.resx">
+      <DependentUpon>CombinedCodeFinder.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\UI.resx">
@@ -1094,7 +1087,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Sources\TheTVDB\LocalCache.cs" />
-    <Compile Include="Custom Controls\TheTVDBCodeFinder.cs">
+    <Compile Include="Custom Controls\CombinedCodeFinder.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="TVRename\TVDoc.cs" />

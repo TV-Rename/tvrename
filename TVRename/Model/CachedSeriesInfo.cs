@@ -247,7 +247,7 @@ namespace TVRename
                 AirsTime = o.AirsTime;
             }
 
-            if (o.sourceEpisodes != null && o.sourceEpisodes.Count != 0)
+            if (o.sourceEpisodes.Count != 0)
             {
                 sourceEpisodes = o.sourceEpisodes;
             }

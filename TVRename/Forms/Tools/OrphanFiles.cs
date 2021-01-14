@@ -62,7 +62,7 @@ namespace TVRename.Forms.Tools
             }
 
             Point pt = ((ListView)sender).PointToScreen(new Point(e.X, e.Y));
-            FileIssue iss = (FileIssue)olvFileIssues.FocusedObject;
+            FileIssue? iss = (FileIssue)olvFileIssues.FocusedObject;
             if (iss == null)
             {
                 return;

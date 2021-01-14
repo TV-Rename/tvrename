@@ -24,7 +24,7 @@ namespace TVRename
 
             LOGGER.Info("Starting to look for missing items in the library");
 
-            foreach (var me in ActionList.MissingEpisodes.ToList())
+            foreach (ShowItemMissing? me in ActionList.MissingEpisodes.ToList())
             {
                 if (settings.Token.IsCancellationRequested)
                 {

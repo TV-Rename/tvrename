@@ -7,9 +7,11 @@ namespace TVRename
 {
     public partial class AutoAddShow : Form
     {
-        private readonly CodeFinder tvCodeFinder;
-        private readonly CodeFinder movieCodeFinder;
+        private readonly CombinedCodeFinder tvCodeFinder;
+        private readonly CombinedCodeFinder movieCodeFinder;
         private readonly string originalHint;
+        public readonly bool singleTVShowFound;
+        public readonly bool singleMovieFound;
 
         public AutoAddShow(string hint,string filename)
         {
@@ -20,16 +22,27 @@ namespace TVRename
 
             lblFileName.Text = "Filename: "+filename;
 
-            tvCodeFinder = new TheTvdbCodeFinder("") {Dock = DockStyle.Fill};
-            movieCodeFinder = new TmdbCodeFinder("") { Dock = DockStyle.Fill };
+            tvCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.tv,TVDoc.ProviderType.TheTVDB) {Dock = DockStyle.Fill};
+            movieCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.movie,TVDoc.ProviderType.TMDB) { Dock = DockStyle.Fill };
 
             (!assumeMovie ? tpTV : tpMovie).Show();
 
-            tvCodeFinder.SetHint(hint);
-            movieCodeFinder.SetHint(hint);
-
             tvCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
             movieCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
+
+            singleTVShowFound = tvCodeFinder.SetHint(hint);
+            singleMovieFound = movieCodeFinder.SetHint(hint);
+
+            originalHint = hint;
+
+            if (singleTVShowFound)
+            {
+                SetShowItem();
+            }
+            if (singleMovieFound)
+            {
+                SetMovieItem();
+            }
 
             pnlCF.SuspendLayout();
             pnlCF.Controls.Add(tvCodeFinder);
@@ -43,8 +56,6 @@ namespace TVRename
 
             UpdateDirectoryDropDown(cbDirectory, TVSettings.Instance.LibraryFolders, TVSettings.Instance.DefShowLocation, TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation,tpTV);
             UpdateDirectoryDropDown(cbMovieDirectory, TVSettings.Instance.MovieLibraryFolders, TVSettings.Instance.DefMovieDefaultLocation, true,tpMovie);
-
-            originalHint = hint;
         }
 
         private static void UpdateDirectoryDropDown(ComboBox comboBox, List<string> folders, string? defaultValue, bool useDefaultValue, TabPage tabToDisable)
@@ -77,10 +88,11 @@ namespace TVRename
 
         private void MTCCF_SelectionChanged(object sender, EventArgs e)
         {
-            string mediaName = tabControl1.SelectedTab == tpTV ?  tvCodeFinder.SelectedShow()?.Name : movieCodeFinder.SelectedMovie()?.Name;
-
-            string filenameFriendly = TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(mediaName));
-            lblDirectoryName.Text = System.IO.Path.DirectorySeparatorChar + filenameFriendly;
+            if (tabControl1.SelectedTab == tpTV)
+            {
+                string filenameFriendly = TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(tvCodeFinder.SelectedShow()?.Name));
+                lblDirectoryName.Text = System.IO.Path.DirectorySeparatorChar + filenameFriendly;
+            }
         }
 
         public ShowConfiguration ShowConfiguration { get; }
