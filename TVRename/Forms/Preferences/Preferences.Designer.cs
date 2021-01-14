@@ -71,6 +71,7 @@ namespace TVRename
             this.label84 = new System.Windows.Forms.Label();
             this.lstMovieMonitorFolders = new System.Windows.Forms.ListBox();
             this.chkIncludeMoviesQuickRecent = new System.Windows.Forms.CheckBox();
+            this.tbCleanUpDownloadDirMoviesLength = new System.Windows.Forms.TextBox();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.cmDefaults = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.KODIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -243,9 +244,12 @@ namespace TVRename
             this.bnMCPresets = new System.Windows.Forms.Button();
             this.pbMediaCenter = new System.Windows.Forms.PictureBox();
             this.tbFolderDeleting = new System.Windows.Forms.TabPage();
+            this.groupBox28 = new System.Windows.Forms.GroupBox();
+            this.cbCleanUpDownloadDirMoviesLength = new System.Windows.Forms.CheckBox();
+            this.cbCleanUpDownloadDirMovies = new System.Windows.Forms.CheckBox();
+            this.cbCleanUpDownloadDir = new System.Windows.Forms.CheckBox();
             this.label69 = new System.Windows.Forms.Label();
             this.cbDeleteShowFromDisk = new System.Windows.Forms.CheckBox();
-            this.cbCleanUpDownloadDir = new System.Windows.Forms.CheckBox();
             this.label32 = new System.Windows.Forms.Label();
             this.label30 = new System.Windows.Forms.Label();
             this.txtEmptyMaxSize = new System.Windows.Forms.TextBox();
@@ -473,10 +477,13 @@ namespace TVRename
             this.cbMissingXML = new System.Windows.Forms.CheckBox();
             this.cbMissingCSV = new System.Windows.Forms.CheckBox();
             this.txtMissingXML = new System.Windows.Forms.TextBox();
-            this.groupBox28 = new System.Windows.Forms.GroupBox();
-            this.cbCleanUpDownloadDirMovies = new System.Windows.Forms.CheckBox();
-            this.cbCleanUpDownloadDirMoviesLength = new System.Windows.Forms.CheckBox();
-            this.tbCleanUpDownloadDirMoviesLength = new System.Windows.Forms.TextBox();
+            this.tbAppUpdate = new System.Windows.Forms.TabPage();
+            this.chkUpdateCheckEnabled = new System.Windows.Forms.CheckBox();
+            this.grpUpdateIntervalOption = new System.Windows.Forms.GroupBox();
+            this.optUpdateCheckAlways = new System.Windows.Forms.RadioButton();
+            this.optUpdateCheckInterval = new System.Windows.Forms.RadioButton();
+            this.cboUpdateCheckInterval = new System.Windows.Forms.ComboBox();
+            this.chkNoPopupOnUpdate = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -507,6 +514,7 @@ namespace TVRename
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbMediaCenter)).BeginInit();
             this.tbFolderDeleting.SuspendLayout();
+            this.groupBox28.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbFolderDeleting)).BeginInit();
             this.tbAutoExport.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
@@ -548,7 +556,8 @@ namespace TVRename
             this.groupBox7.SuspendLayout();
             this.groupBox27.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            this.groupBox28.SuspendLayout();
+            this.tbAppUpdate.SuspendLayout();
+            this.grpUpdateIntervalOption.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKButton
@@ -908,6 +917,14 @@ namespace TVRename
             this.chkIncludeMoviesQuickRecent.Text = "&Include Movies in Quick/Recent";
             this.toolTip1.SetToolTip(this.chkIncludeMoviesQuickRecent, "If checked the system will automatically scan and complete actions on startup");
             this.chkIncludeMoviesQuickRecent.UseVisualStyleBackColor = true;
+            // 
+            // tbCleanUpDownloadDirMoviesLength
+            // 
+            this.tbCleanUpDownloadDirMoviesLength.Location = new System.Drawing.Point(216, 65);
+            this.tbCleanUpDownloadDirMoviesLength.Name = "tbCleanUpDownloadDirMoviesLength";
+            this.tbCleanUpDownloadDirMoviesLength.Size = new System.Drawing.Size(55, 20);
+            this.tbCleanUpDownloadDirMoviesLength.TabIndex = 14;
+            this.toolTip1.SetToolTip(this.tbCleanUpDownloadDirMoviesLength, "Number of letters that the name of the movie must be. To prevent \'Up\' ");
             // 
             // cmDefaults
             // 
@@ -2846,6 +2863,51 @@ namespace TVRename
             this.tbFolderDeleting.Text = "Folder Deleting";
             this.tbFolderDeleting.UseVisualStyleBackColor = true;
             // 
+            // groupBox28
+            // 
+            this.groupBox28.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox28.Controls.Add(this.tbCleanUpDownloadDirMoviesLength);
+            this.groupBox28.Controls.Add(this.cbCleanUpDownloadDirMoviesLength);
+            this.groupBox28.Controls.Add(this.cbCleanUpDownloadDirMovies);
+            this.groupBox28.Controls.Add(this.cbCleanUpDownloadDir);
+            this.groupBox28.Location = new System.Drawing.Point(16, 242);
+            this.groupBox28.Name = "groupBox28";
+            this.groupBox28.Size = new System.Drawing.Size(395, 100);
+            this.groupBox28.TabIndex = 41;
+            this.groupBox28.TabStop = false;
+            this.groupBox28.Text = "Clean Up Search Folders";
+            // 
+            // cbCleanUpDownloadDirMoviesLength
+            // 
+            this.cbCleanUpDownloadDirMoviesLength.AutoSize = true;
+            this.cbCleanUpDownloadDirMoviesLength.Location = new System.Drawing.Point(45, 65);
+            this.cbCleanUpDownloadDirMoviesLength.Name = "cbCleanUpDownloadDirMoviesLength";
+            this.cbCleanUpDownloadDirMoviesLength.Size = new System.Drawing.Size(176, 17);
+            this.cbCleanUpDownloadDirMoviesLength.TabIndex = 13;
+            this.cbCleanUpDownloadDirMoviesLength.Text = "Only include movies longer than";
+            this.cbCleanUpDownloadDirMoviesLength.UseVisualStyleBackColor = true;
+            // 
+            // cbCleanUpDownloadDirMovies
+            // 
+            this.cbCleanUpDownloadDirMovies.AutoSize = true;
+            this.cbCleanUpDownloadDirMovies.Location = new System.Drawing.Point(6, 42);
+            this.cbCleanUpDownloadDirMovies.Name = "cbCleanUpDownloadDirMovies";
+            this.cbCleanUpDownloadDirMovies.Size = new System.Drawing.Size(284, 17);
+            this.cbCleanUpDownloadDirMovies.TabIndex = 12;
+            this.cbCleanUpDownloadDirMovies.Text = "Clean up already copied movie files from search folders";
+            this.cbCleanUpDownloadDirMovies.UseVisualStyleBackColor = true;
+            // 
+            // cbCleanUpDownloadDir
+            // 
+            this.cbCleanUpDownloadDir.AutoSize = true;
+            this.cbCleanUpDownloadDir.Location = new System.Drawing.Point(6, 19);
+            this.cbCleanUpDownloadDir.Name = "cbCleanUpDownloadDir";
+            this.cbCleanUpDownloadDir.Size = new System.Drawing.Size(293, 17);
+            this.cbCleanUpDownloadDir.TabIndex = 11;
+            this.cbCleanUpDownloadDir.Text = "Clean up already copied episode files from search folders";
+            this.cbCleanUpDownloadDir.UseVisualStyleBackColor = true;
+            // 
             // label69
             // 
             this.label69.AutoSize = true;
@@ -2865,16 +2927,6 @@ namespace TVRename
             this.cbDeleteShowFromDisk.TabIndex = 13;
             this.cbDeleteShowFromDisk.Text = "Ask to delete from disk when deleting show from database";
             this.cbDeleteShowFromDisk.UseVisualStyleBackColor = true;
-            // 
-            // cbCleanUpDownloadDir
-            // 
-            this.cbCleanUpDownloadDir.AutoSize = true;
-            this.cbCleanUpDownloadDir.Location = new System.Drawing.Point(6, 19);
-            this.cbCleanUpDownloadDir.Name = "cbCleanUpDownloadDir";
-            this.cbCleanUpDownloadDir.Size = new System.Drawing.Size(293, 17);
-            this.cbCleanUpDownloadDir.TabIndex = 11;
-            this.cbCleanUpDownloadDir.Text = "Clean up already copied episode files from search folders";
-            this.cbCleanUpDownloadDir.UseVisualStyleBackColor = true;
             // 
             // label32
             // 
@@ -3841,6 +3893,7 @@ namespace TVRename
             this.tcTabs.Controls.Add(this.tpJackett);
             this.tcTabs.Controls.Add(this.tbAutoExport);
             this.tcTabs.Controls.Add(this.tpAutoExportLibrary);
+            this.tcTabs.Controls.Add(this.tbAppUpdate);
             this.tcTabs.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             this.tcTabs.ItemSize = new System.Drawing.Size(30, 135);
             this.tcTabs.Location = new System.Drawing.Point(12, 12);
@@ -5489,48 +5542,83 @@ namespace TVRename
             this.txtMissingXML.Size = new System.Drawing.Size(251, 20);
             this.txtMissingXML.TabIndex = 4;
             // 
-            // groupBox28
+            // tbAppUpdate
             // 
-            this.groupBox28.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox28.Controls.Add(this.tbCleanUpDownloadDirMoviesLength);
-            this.groupBox28.Controls.Add(this.cbCleanUpDownloadDirMoviesLength);
-            this.groupBox28.Controls.Add(this.cbCleanUpDownloadDirMovies);
-            this.groupBox28.Controls.Add(this.cbCleanUpDownloadDir);
-            this.groupBox28.Location = new System.Drawing.Point(16, 242);
-            this.groupBox28.Name = "groupBox28";
-            this.groupBox28.Size = new System.Drawing.Size(395, 100);
-            this.groupBox28.TabIndex = 41;
-            this.groupBox28.TabStop = false;
-            this.groupBox28.Text = "Clean Up Search Folders";
+            this.tbAppUpdate.Controls.Add(this.grpUpdateIntervalOption);
+            this.tbAppUpdate.Controls.Add(this.chkUpdateCheckEnabled);
+            this.tbAppUpdate.Location = new System.Drawing.Point(139, 4);
+            this.tbAppUpdate.Name = "tbAppUpdate";
+            this.tbAppUpdate.Size = new System.Drawing.Size(417, 561);
+            this.tbAppUpdate.TabIndex = 20;
+            this.tbAppUpdate.Text = "App Updates";
+            this.tbAppUpdate.UseVisualStyleBackColor = true;
             // 
-            // cbCleanUpDownloadDirMovies
+            // chkUpdateCheckEnabled
             // 
-            this.cbCleanUpDownloadDirMovies.AutoSize = true;
-            this.cbCleanUpDownloadDirMovies.Location = new System.Drawing.Point(6, 42);
-            this.cbCleanUpDownloadDirMovies.Name = "cbCleanUpDownloadDirMovies";
-            this.cbCleanUpDownloadDirMovies.Size = new System.Drawing.Size(284, 17);
-            this.cbCleanUpDownloadDirMovies.TabIndex = 12;
-            this.cbCleanUpDownloadDirMovies.Text = "Clean up already copied movie files from search folders";
-            this.cbCleanUpDownloadDirMovies.UseVisualStyleBackColor = true;
+            this.chkUpdateCheckEnabled.AutoSize = true;
+            this.chkUpdateCheckEnabled.Location = new System.Drawing.Point(28, 22);
+            this.chkUpdateCheckEnabled.Name = "chkUpdateCheckEnabled";
+            this.chkUpdateCheckEnabled.Size = new System.Drawing.Size(115, 17);
+            this.chkUpdateCheckEnabled.TabIndex = 0;
+            this.chkUpdateCheckEnabled.Text = "Check for Updates";
+            this.chkUpdateCheckEnabled.UseVisualStyleBackColor = true;
+            this.chkUpdateCheckEnabled.CheckedChanged += new System.EventHandler(this.chkUpdateCheckEnabled_CheckedChanged);
             // 
-            // cbCleanUpDownloadDirMoviesLength
+            // grpUpdateIntervalOption
             // 
-            this.cbCleanUpDownloadDirMoviesLength.AutoSize = true;
-            this.cbCleanUpDownloadDirMoviesLength.Location = new System.Drawing.Point(45, 65);
-            this.cbCleanUpDownloadDirMoviesLength.Name = "cbCleanUpDownloadDirMoviesLength";
-            this.cbCleanUpDownloadDirMoviesLength.Size = new System.Drawing.Size(176, 17);
-            this.cbCleanUpDownloadDirMoviesLength.TabIndex = 13;
-            this.cbCleanUpDownloadDirMoviesLength.Text = "Only include movies longer than";
-            this.cbCleanUpDownloadDirMoviesLength.UseVisualStyleBackColor = true;
+            this.grpUpdateIntervalOption.Controls.Add(this.chkNoPopupOnUpdate);
+            this.grpUpdateIntervalOption.Controls.Add(this.cboUpdateCheckInterval);
+            this.grpUpdateIntervalOption.Controls.Add(this.optUpdateCheckInterval);
+            this.grpUpdateIntervalOption.Controls.Add(this.optUpdateCheckAlways);
+            this.grpUpdateIntervalOption.Location = new System.Drawing.Point(28, 56);
+            this.grpUpdateIntervalOption.Name = "grpUpdateIntervalOption";
+            this.grpUpdateIntervalOption.Size = new System.Drawing.Size(367, 135);
+            this.grpUpdateIntervalOption.TabIndex = 1;
+            this.grpUpdateIntervalOption.TabStop = false;
+            this.grpUpdateIntervalOption.Text = "Check for updates ...";
             // 
-            // tbCleanUpDownloadDirMoviesLength
+            // optUpdateCheckAlways
             // 
-            this.tbCleanUpDownloadDirMoviesLength.Location = new System.Drawing.Point(216, 65);
-            this.tbCleanUpDownloadDirMoviesLength.Name = "tbCleanUpDownloadDirMoviesLength";
-            this.tbCleanUpDownloadDirMoviesLength.Size = new System.Drawing.Size(55, 20);
-            this.tbCleanUpDownloadDirMoviesLength.TabIndex = 14;
-            this.toolTip1.SetToolTip(this.tbCleanUpDownloadDirMoviesLength, "Number of letters that the name of the movie must be. To prevent \'Up\' ");
+            this.optUpdateCheckAlways.AutoSize = true;
+            this.optUpdateCheckAlways.Location = new System.Drawing.Point(16, 20);
+            this.optUpdateCheckAlways.Name = "optUpdateCheckAlways";
+            this.optUpdateCheckAlways.Size = new System.Drawing.Size(89, 17);
+            this.optUpdateCheckAlways.TabIndex = 0;
+            this.optUpdateCheckAlways.TabStop = true;
+            this.optUpdateCheckAlways.Text = "on every start";
+            this.optUpdateCheckAlways.UseVisualStyleBackColor = true;
+            this.optUpdateCheckAlways.CheckedChanged += new System.EventHandler(this.updateCheckOption_CheckedChanged);
+            // 
+            // optUpdateCheckInterval
+            // 
+            this.optUpdateCheckInterval.AutoSize = true;
+            this.optUpdateCheckInterval.Location = new System.Drawing.Point(16, 44);
+            this.optUpdateCheckInterval.Name = "optUpdateCheckInterval";
+            this.optUpdateCheckInterval.Size = new System.Drawing.Size(111, 17);
+            this.optUpdateCheckInterval.TabIndex = 1;
+            this.optUpdateCheckInterval.TabStop = true;
+            this.optUpdateCheckInterval.Text = "at certain intervals";
+            this.optUpdateCheckInterval.UseVisualStyleBackColor = true;
+            this.optUpdateCheckInterval.CheckedChanged += new System.EventHandler(this.updateCheckOption_CheckedChanged);
+            // 
+            // cboUpdateCheckInterval
+            // 
+            this.cboUpdateCheckInterval.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboUpdateCheckInterval.FormattingEnabled = true;
+            this.cboUpdateCheckInterval.Location = new System.Drawing.Point(16, 68);
+            this.cboUpdateCheckInterval.Name = "cboUpdateCheckInterval";
+            this.cboUpdateCheckInterval.Size = new System.Drawing.Size(166, 21);
+            this.cboUpdateCheckInterval.TabIndex = 2;
+            // 
+            // chkNoPopupOnUpdate
+            // 
+            this.chkNoPopupOnUpdate.AutoSize = true;
+            this.chkNoPopupOnUpdate.Location = new System.Drawing.Point(16, 112);
+            this.chkNoPopupOnUpdate.Name = "chkNoPopupOnUpdate";
+            this.chkNoPopupOnUpdate.Size = new System.Drawing.Size(169, 17);
+            this.chkNoPopupOnUpdate.TabIndex = 2;
+            this.chkNoPopupOnUpdate.Text = "No dialog on available Update";
+            this.chkNoPopupOnUpdate.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -5607,6 +5695,8 @@ namespace TVRename
             ((System.ComponentModel.ISupportInitialize)(this.pbMediaCenter)).EndInit();
             this.tbFolderDeleting.ResumeLayout(false);
             this.tbFolderDeleting.PerformLayout();
+            this.groupBox28.ResumeLayout(false);
+            this.groupBox28.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbFolderDeleting)).EndInit();
             this.tbAutoExport.ResumeLayout(false);
             this.tbAutoExport.PerformLayout();
@@ -5678,8 +5768,10 @@ namespace TVRename
             this.groupBox27.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
-            this.groupBox28.ResumeLayout(false);
-            this.groupBox28.PerformLayout();
+            this.tbAppUpdate.ResumeLayout(false);
+            this.tbAppUpdate.PerformLayout();
+            this.grpUpdateIntervalOption.ResumeLayout(false);
+            this.grpUpdateIntervalOption.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -6123,5 +6215,12 @@ namespace TVRename
         private System.Windows.Forms.TextBox tbCleanUpDownloadDirMoviesLength;
         private System.Windows.Forms.CheckBox cbCleanUpDownloadDirMoviesLength;
         private System.Windows.Forms.CheckBox cbCleanUpDownloadDirMovies;
+        private System.Windows.Forms.TabPage tbAppUpdate;
+        private System.Windows.Forms.GroupBox grpUpdateIntervalOption;
+        private System.Windows.Forms.CheckBox chkNoPopupOnUpdate;
+        private System.Windows.Forms.ComboBox cboUpdateCheckInterval;
+        private System.Windows.Forms.RadioButton optUpdateCheckInterval;
+        private System.Windows.Forms.RadioButton optUpdateCheckAlways;
+        private System.Windows.Forms.CheckBox chkUpdateCheckEnabled;
     }
 }
