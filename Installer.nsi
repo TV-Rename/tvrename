@@ -99,8 +99,7 @@ Section "Install"
     File "TVRename\bin\Release\x86\libcurl.dll"
     File "TVRename\bin\Release\x86\libssl-1_1.dll"
     File "TVRename\bin\Release\x86\MediaInfo.dll"
-    File "TVRename\bin\Release\x86\TMDbLib.dll"
-    
+    File "TVRename\bin\Release\TMDbLib.dll"
     
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 
