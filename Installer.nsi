@@ -99,6 +99,7 @@ Section "Install"
     File "TVRename\bin\Release\x86\libcurl.dll"
     File "TVRename\bin\Release\x86\libssl-1_1.dll"
     File "TVRename\bin\Release\x86\MediaInfo.dll"
+    File "TVRename\bin\Release\x86\TMDbLib.dll"
     
     
     WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -167,6 +168,7 @@ Section "Uninstall"
     Delete "$INSTDIR\MediaInfo.dll"
     Delete "$INSTDIR\libcrypto-1_1.dll"
     Delete "$INSTDIR\libssl-1_1.dll"
+    Delete "$INSTDIR\TMDbLib.dll"
 
     Delete "$INSTDIR\Uninstall.exe"
     Delete "$INSTDIR\Microsoft.Toolkit.Win32.UI.Controls.dll"
