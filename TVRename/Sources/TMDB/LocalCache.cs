@@ -986,7 +986,14 @@ namespace TVRename.TMDB
             foreach (SearchMovie result in results.Results)
             {
                 File(result);
-                DownloadMovieNow(result.Id, showErrorMsgBox);
+                try
+                {
+                    DownloadMovieNow(result.Id, showErrorMsgBox);
+                }
+                catch (ShowNotFoundException sex)
+                {
+                    LOGGER.Warn($"Could not get full details of {result.Id} while searching for '{text}'");
+                }
             }
         }
 

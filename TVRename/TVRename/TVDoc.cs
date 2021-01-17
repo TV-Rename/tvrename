@@ -1099,7 +1099,7 @@ namespace TVRename
 
                     foreach (string filePath in x)
                     {
-                        Logger.Info($"Checking to see whether {filePath} is a file that for a show that need scanning");
+                        Logger.Info($"Checking to see whether {filePath} is a file for a show that needs to be scanned");
 
                         if (!File.Exists(filePath))
                         {
