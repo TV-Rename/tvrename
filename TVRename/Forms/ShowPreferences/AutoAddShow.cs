@@ -30,18 +30,27 @@ namespace TVRename
             tvCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
             movieCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
 
-            singleTVShowFound = tvCodeFinder.SetHint(hint);
+            singleTVShowFound = tvCodeFinder.SetHint(hint) && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation;
             singleMovieFound = movieCodeFinder.SetHint(hint);
 
             originalHint = hint;
 
             if (singleTVShowFound)
             {
-                SetShowItem();
+                string filenameFriendly = TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(tvCodeFinder.tvShowInitialFound.Name));
+                SetShowItem(tvCodeFinder.tvShowInitialFound.TvdbCode, TVSettings.Instance.DefShowLocation+ System.IO.Path.DirectorySeparatorChar + filenameFriendly);
+                if (ShowConfiguration.Code == -1)
+                {
+                    SetShowItem();
+                }
             }
             if (singleMovieFound)
             {
-                SetMovieItem();
+                SetMovieItem(movieCodeFinder.movieInitialFound.TmdbCode, TVSettings.Instance.DefMovieDefaultLocation);
+                if (MovieConfiguration.Code == -1)
+                {
+                    SetMovieItem();
+                }
             }
 
             pnlCF.SuspendLayout();
@@ -102,13 +111,18 @@ namespace TVRename
         {
             int code = tvCodeFinder.SelectedCode();
 
+            SetShowItem(code, cbDirectory.Text + lblDirectoryName.Text);
+        }
+
+        private void SetShowItem(int code,string folderbase)
+        {
             ShowConfiguration.TvdbCode = code;
-            ShowConfiguration.AutoAddFolderBase = cbDirectory.Text+lblDirectoryName.Text;
+            ShowConfiguration.AutoAddFolderBase = folderbase;
 
             //Set Default Timezone and if not then set on Network
             ShowConfiguration.ShowTimeZone = TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.TimeZoneForNetwork(tvCodeFinder.SelectedShow()?.Network, ShowConfiguration.ShowTimeZone);
 
-            if (!originalHint.Contains(tvCodeFinder.SelectedShow()?.Name??string.Empty, StringComparison.OrdinalIgnoreCase))
+            if (!originalHint.Contains(tvCodeFinder.SelectedShow()?.Name ?? string.Empty, StringComparison.OrdinalIgnoreCase))
             {
                 ShowConfiguration.AliasNames.Add(originalHint);
             }
@@ -118,9 +132,14 @@ namespace TVRename
         {
             int code = movieCodeFinder.SelectedCode();
 
+            SetMovieItem(code, cbMovieDirectory.Text);
+        }
+
+        private void SetMovieItem(int code, string folderbase)
+        {
             MovieConfiguration.TmdbCode = code;
             MovieConfiguration.UseAutomaticFolders = true;
-            MovieConfiguration.AutomaticFolderRoot = cbMovieDirectory.Text;
+            MovieConfiguration.AutomaticFolderRoot = folderbase;
             MovieConfiguration.Format = MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile;
             MovieConfiguration.UseCustomFolderNameFormat = false;
             MovieConfiguration.ConfigurationProvider = TVDoc.ProviderType.TMDB;
