@@ -3,13 +3,13 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class FolderBaseMovieCheck : MovieCheck
+    internal class FolderBaseMovieCheck : MovieCheck
     {
         public FolderBaseMovieCheck([NotNull] MovieConfiguration movie) : base(movie) { }
 
         public override bool Check() => Movie.UseAutomaticFolders && !Movie.AutomaticFolderRoot.HasValue();
 
-        public override string Explain() => $"This Movie does not have an automatic folder base specified.";
+        public override string Explain() => "This Movie does not have an automatic folder base specified.";
 
         protected override void FixInternal()
         {

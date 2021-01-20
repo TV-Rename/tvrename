@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
 namespace TVRename
 {
-    class FixCheckException : Exception
+    internal class FixCheckException : Exception
     {
         public FixCheckException(string s) :base(s)
         {

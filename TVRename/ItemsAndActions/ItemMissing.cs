@@ -107,7 +107,7 @@ namespace TVRename
                 return -1;
             }
 
-            return String.Compare(TheFileNoExt, miss.TheFileNoExt, StringComparison.Ordinal);
+            return string.Compare(TheFileNoExt, miss.TheFileNoExt, StringComparison.Ordinal);
         }
 
         public MovieConfiguration MovieConfig => Movie ?? throw new InvalidOperationException();

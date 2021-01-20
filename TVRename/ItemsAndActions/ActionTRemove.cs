@@ -2,7 +2,7 @@ using System;
 
 namespace TVRename
 {
-    class ActionTRemove : Action
+    internal class ActionTRemove : Action
     {
         private readonly IDownloadProvider client;
         private readonly TorrentEntry name;

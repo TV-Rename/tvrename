@@ -1,8 +1,8 @@
-﻿using JetBrains.Annotations;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class DefaultSequentialMatchingTvCheck : DefaultTvShowCheck
+    internal class DefaultSequentialMatchingTvCheck : DefaultTvShowCheck
     {
         public DefaultSequentialMatchingTvCheck([NotNull] ShowConfiguration movie) : base(movie) { }
 

@@ -668,7 +668,7 @@ namespace TVRename
             var updateCheckType = TVSettings.Instance.UpdateCheckType;
             if (updateCheckType != TVSettings.UpdateCheckMode.Off)
             {
-                var checkUpdate = true;
+                bool checkUpdate = true;
                 if (updateCheckType == TVSettings.UpdateCheckMode.Interval)
                 {
                     var lastUpdate = mDoc.CurrentAppState.UpdateCheck.LastUpdate;
@@ -3553,16 +3553,12 @@ namespace TVRename
                 internalCheckChange = true;
                 //olvAction.ItemCheck -= olvAction_ItemCheck;
                 olvAction.BeginUpdate();
-                if (mDoc.TheActionList.Actions.Count <100)
-                {
-                    //TODO WE SHOULD DO THIS ALL THE TIME
-                    olvAction.CheckObjects(mDoc.TheActionList.Actions);
-                }
+
                 internalCheckChange = false;
-                //olvAction.ItemCheck += olvAction_ItemCheck;
+                olvAction.ItemCheck += olvAction_ItemCheck;
                 UpdateActionCheckboxes();
                 olvAction.EndUpdate();
-                //SetCheckboxes();
+                SetCheckboxes();
             }
             olvAction.RestoreState(oldState);
             olvAction.EndUpdate();

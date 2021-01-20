@@ -116,7 +116,7 @@ namespace TVRename
             }
             catch (WebException wex)
             {
-                Logger.LogWebException($"Failed to contact GitHub to identify new releases",wex);
+                Logger.LogWebException("Failed to contact GitHub to identify new releases",wex);
             }
             catch (Exception e)
             {

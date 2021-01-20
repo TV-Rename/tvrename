@@ -1,6 +1,6 @@
-﻿namespace TVRename
+namespace TVRename
 {
-    abstract class MovieCheck : SettingsCheck
+    internal abstract class MovieCheck : SettingsCheck
     {
         public readonly MovieConfiguration Movie;
         protected MovieCheck(MovieConfiguration movie)

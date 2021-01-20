@@ -1,8 +1,8 @@
-﻿using JetBrains.Annotations;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class CustomNameTvShowCheck : CustomTvShowCheck
+    internal class CustomNameTvShowCheck : CustomTvShowCheck
     {
         public CustomNameTvShowCheck([NotNull] ShowConfiguration show) : base(show)  { }
 

@@ -120,15 +120,12 @@ namespace TVRename
             return new List<MovieConfiguration> { bestShow };
         }
 
-        private bool IsFound(DirFilesCache dfc,ProcessedEpisode episode)
+        private static bool IsFound(DirFilesCache dfc,ProcessedEpisode episode)
         {
             List<FileInfo> fl = dfc.FindEpOnDisk(episode);
             return fl.Any();
         }
-        private bool IsFound(DirFilesCache dfc, MovieConfiguration movie)
-        {
-            return dfc.FindMovieOnDisk(movie).Any();
-        }
+        private static bool IsFound(DirFilesCache dfc, MovieConfiguration movie) => dfc.FindMovieOnDisk(movie).Any();
 
         private List<ProcessedEpisode>? MatchEpisodes(FileInfo droppedFile)
         {
@@ -149,7 +146,7 @@ namespace TVRename
             {
                 ProcessedEpisode episode = bestShow.GetEpisode(seasonNum, episodeNum);
 
-                return new List<ProcessedEpisode>() {episode};
+                return new List<ProcessedEpisode> {episode};
             }
             catch (ShowConfiguration.EpisodeNotFoundException)
             {

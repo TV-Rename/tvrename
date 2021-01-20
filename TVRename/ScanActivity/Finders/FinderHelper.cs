@@ -633,7 +633,7 @@ namespace TVRename
 
             foreach (FileInfo file in possibleShows)
             {
-                String hint = TVSettings.Instance.UseFullPathNameToMatchSearchFolders ? file.FullName : file.RemoveExtension() + ".";
+                string hint = TVSettings.Instance.UseFullPathNameToMatchSearchFolders ? file.FullName : file.RemoveExtension() + ".";
 
                 //If the hint contains certain terms then we'll ignore it
                 if (TVSettings.Instance.IgnoredAutoAddHints.Contains(hint))
@@ -705,7 +705,7 @@ namespace TVRename
                 AutoAddShow askForMatch = new AutoAddShow(refinedHint, hint);
                 DialogResult dr;
 
-                if (askForMatch.singleTVShowFound && true) //todo use  TVSettings.Instance.AutomateAutoAddWhenOneShowFound
+                if (askForMatch.SingleTvShowFound && true) //todo use  TVSettings.Instance.AutomateAutoAddWhenOneShowFound
                 {
                     // no need to popup dialog
                     dr = DialogResult.OK;

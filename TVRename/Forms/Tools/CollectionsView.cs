@@ -89,25 +89,25 @@ namespace TVRename.Forms
 
             List<(int, string)> collectionIds = mDoc.FilmLibrary.Values
                 .Select(c => (c.CachedMovie?.CollectionId, c.CachedMovie?.CollectionName))
-                .Where((a) => a.CollectionId.HasValue && a.CollectionName.HasValue())
+                .Where(a => a.CollectionId.HasValue && a.CollectionName.HasValue())
                 .Select(a => (a.CollectionId.Value, a.CollectionName)).Distinct().ToList();
 
             int total = collectionIds.Count;
             int current = 0;
 
             collectionMovies.Clear();
-            foreach ((int, string) collection in collectionIds)
+            foreach ((int collectionId, var collectionName) in collectionIds)
             {
-                Dictionary<int, CachedMovieInfo> shows = TMDB.LocalCache.Instance.GetMovieIdsFromCollection(collection.Item1);
+                Dictionary<int, CachedMovieInfo> shows = TMDB.LocalCache.Instance.GetMovieIdsFromCollection(collectionId);
                 foreach (KeyValuePair<int, CachedMovieInfo> neededShow in shows)
                 {
-                    CollectionMember c = new CollectionMember {CollectionName = collection.Item2, Movie = neededShow.Value};
+                    CollectionMember c = new CollectionMember {CollectionName = collectionName, Movie = neededShow.Value};
 
                     c.IsInLibrary = mDoc.FilmLibrary.ContainsKey(c.TmdbCode);
                     collectionMovies.Add(c);
                 }
 
-                bw.ReportProgress(100 * current++ / total, collection.Item2);
+                bw.ReportProgress(100 * current++ / total, collectionName);
             }
         }
 

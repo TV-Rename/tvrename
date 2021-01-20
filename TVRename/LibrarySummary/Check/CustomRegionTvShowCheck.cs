@@ -1,8 +1,8 @@
-﻿using JetBrains.Annotations;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class CustomRegionTvShowCheck : CustomTvShowCheck
+    internal class CustomRegionTvShowCheck : CustomTvShowCheck
     {
         public CustomRegionTvShowCheck([NotNull] ShowConfiguration show) : base(show) { }
 

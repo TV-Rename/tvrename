@@ -599,7 +599,7 @@ namespace TVRename
         }
 
         // see https://kodi.wiki/view/Naming_video_files/Movies#Split_Video_Files
-        static List<string> ending = new List<string> { "part", "cd", "dvd", "pt", "disk", "disc" };
+        private static List<string> ending = new List<string> { "part", "cd", "dvd", "pt", "disk", "disc" };
 
         public static bool IsDoublePartMovie(FileInfo f1, FileInfo f2)
         {
@@ -644,7 +644,7 @@ namespace TVRename
 
         public static string FileNameNoExt(this FileInfo f) => f.Name.RemoveAfter(f.Extension);
 
-        private static readonly Regex[] MovieMultiPartRegex = new Regex[]
+        private static readonly Regex[] MovieMultiPartRegex =
         {
             new Regex(@"(?<base>.*)[ _.-]+(cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*(?<part>[0-9]|(A-D))$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
             new Regex(@"(?<base>.*)[ ._-]*(?<part>|(A-D))$", RegexOptions.Compiled | RegexOptions.IgnoreCase),

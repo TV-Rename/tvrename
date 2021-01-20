@@ -2,7 +2,7 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    abstract class DefaultMovieCheck : MovieCheck
+    internal abstract class DefaultMovieCheck : MovieCheck
     {
         protected DefaultMovieCheck([NotNull] MovieConfiguration movie) : base(movie)
         {

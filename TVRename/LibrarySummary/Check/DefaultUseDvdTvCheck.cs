@@ -1,8 +1,8 @@
-﻿using JetBrains.Annotations;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class DefaultUseDvdTvCheck : DefaultTvShowCheck
+    internal class DefaultUseDvdTvCheck : DefaultTvShowCheck
     {
         public DefaultUseDvdTvCheck([NotNull] ShowConfiguration movie) : base(movie) { }
 

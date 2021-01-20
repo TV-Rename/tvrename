@@ -1,8 +1,8 @@
-﻿using JetBrains.Annotations;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class CustomRegionMovieCheck : CustomMovieCheck
+    internal class CustomRegionMovieCheck : CustomMovieCheck
     {
         public CustomRegionMovieCheck([NotNull] MovieConfiguration movie) : base(movie)
         {

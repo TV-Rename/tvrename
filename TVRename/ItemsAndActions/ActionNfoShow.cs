@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class ActionNfoShow : ActionNfo
+    internal class ActionNfoShow : ActionNfo
     {
         public ActionNfoShow([NotNull] FileInfo where, [NotNull] ShowConfiguration mc) : base(where, mc)
         {

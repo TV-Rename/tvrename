@@ -116,7 +116,7 @@ namespace TVRename
             return tableRows.ToString();
         }
 
-        private static void AppendSeasonShowSummary([NotNull] this StringBuilder sb, DirFilesCache dfc, [NotNull] ShowConfiguration si, [NotNull] ProcessedSeason s, bool includeDirectoryLinks, List<ProcessedEpisode> seasonEpisodes)
+        private static void AppendSeasonShowSummary([NotNull] this StringBuilder sb, DirFilesCache dfc, [NotNull] ShowConfiguration si, [NotNull] ProcessedSeason s, bool includeDirectoryLinks, IEnumerable<ProcessedEpisode> seasonEpisodes)
         {
             string explorerButton = string.Empty;
             if (includeDirectoryLinks)
@@ -365,7 +365,7 @@ namespace TVRename
                 case TVDoc.ProviderType.TheTVDB:
                     if (ep.Show.CachedShow?.Slug.HasValue()??false)
                     {
-                        return $"https://thetvdb.com/series/gangs-of-london/episodes/7596842/811643/edit";
+                        return $"https://thetvdb.com/series/gangs-of-london/episodes/7596842/811643/edit"; //TODO fix URL
                     }
 
                     return null;
@@ -400,7 +400,7 @@ namespace TVRename
                     
                     if (si.CachedShow?.Slug.HasValue() ?? false)
                     {
-                    return $"https://thetvdb.com/series/{si.CachedShow.Slug}/edit";
+                        return $"https://thetvdb.com/series/{si.CachedShow.Slug}/edit";
                     }
 
                     return null;

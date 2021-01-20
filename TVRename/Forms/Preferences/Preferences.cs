@@ -1102,7 +1102,7 @@ namespace TVRename
         {
             cboUpdateCheckInterval.DisplayMember = nameof(UpdateCheckInterval.Text);
             cboUpdateCheckInterval.ValueMember = nameof(UpdateCheckInterval.Interval);
-            cboUpdateCheckInterval.DataSource = new UpdateCheckInterval[]
+            cboUpdateCheckInterval.DataSource = new[]
             {
                 new UpdateCheckInterval { Text = "1 Hour", Interval = TimeSpan.FromHours(1) },
                 new UpdateCheckInterval { Text = "12 Hours", Interval = TimeSpan.FromHours(12) },

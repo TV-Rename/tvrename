@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class SubdirectoryMovieCheck : MovieCheck
+    internal class SubdirectoryMovieCheck : MovieCheck
     {
         public SubdirectoryMovieCheck([NotNull] MovieConfiguration movie) : base(movie) { }
 

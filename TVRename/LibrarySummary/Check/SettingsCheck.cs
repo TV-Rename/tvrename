@@ -28,13 +28,13 @@ namespace TVRename
             {
                 IsError = true;
                 ErrorText = e.Message;
-                LOGGER.Warn($"Error occurred fixing {this.Explain()}, error was {e.Message}");
+                LOGGER.Warn($"Error occurred fixing {Explain()}, error was {e.Message}");
             }
             catch (Exception exception)
             {
                 IsError = true;
                 ErrorText = exception.Message;
-                LOGGER.Error($"Error occurred fixing {this.Explain()}, error was {exception.Message}");
+                LOGGER.Error($"Error occurred fixing {Explain()}, error was {exception.Message}");
             }
         }
         protected abstract void FixInternal();

@@ -2,7 +2,7 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class TvShowProviderCheck : TvShowCheck
+    internal class TvShowProviderCheck : TvShowCheck
     {
         public TvShowProviderCheck([NotNull] ShowConfiguration show) : base(show)
         {

@@ -197,7 +197,7 @@ namespace TVRename.Forms
 
     public class RecommendationRow
     {
-        RecommendationResult result;
+        private RecommendationResult result;
         private MediaConfiguration.MediaType type;
         private CachedSeriesInfo? cachedSeriesInfo;
         private CachedMovieInfo? cachedMovieInfo;
@@ -255,8 +255,7 @@ namespace TVRename.Forms
                 return movieRec;
             }
 
-            RecommendationResult x = new RecommendationResult();
-            x.Key = key;
+            RecommendationResult x = new RecommendationResult {Key = key};
             TryAdd(key, x);
             return x;
         }

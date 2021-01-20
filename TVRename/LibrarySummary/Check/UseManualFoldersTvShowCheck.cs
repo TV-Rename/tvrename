@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class UseManualFoldersTvShowCheck : CustomTvShowCheck
+    internal class UseManualFoldersTvShowCheck : CustomTvShowCheck
     {
         public UseManualFoldersTvShowCheck([NotNull] ShowConfiguration show) : base(show) { }
 

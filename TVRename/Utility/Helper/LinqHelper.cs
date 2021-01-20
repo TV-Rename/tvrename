@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TVRename.Utility.Helper
 {
-    static class LinqHelper
+    internal static class LinqHelper
     {
         public static Task ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> funcBody, int maxDoP = 4)
         {

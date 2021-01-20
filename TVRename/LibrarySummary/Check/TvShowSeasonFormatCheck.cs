@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class TvShowSeasonFormatCheck : TvShowCheck
+    internal class TvShowSeasonFormatCheck : TvShowCheck
     {
         public TvShowSeasonFormatCheck([NotNull] ShowConfiguration show) : base(show)
         {

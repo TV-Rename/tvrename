@@ -130,8 +130,10 @@ namespace TVRename
         protected override MediaType GetMediaType() => MediaType.movie;
         protected override Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo, bool checkExist)
         {
-            Dictionary<int, SafeList<string>> fld = new Dictionary<int, SafeList<string>>();
-fld[0] = new SafeList<string>();
+            Dictionary<int, SafeList<string>> fld = new Dictionary<int, SafeList<string>>
+            {
+                [0] = new SafeList<string>()
+            };
 
             if (manualToo && UseManualLocations)
             {

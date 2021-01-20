@@ -208,7 +208,7 @@ namespace TVRename
             StartTorrent(torrentFile.FullName);
         }
 
-        public void StartTorrent(string torrentFileName)
+        public static void StartTorrent(string torrentFileName)
         {
             if (string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentHost) || string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentPort))
             {

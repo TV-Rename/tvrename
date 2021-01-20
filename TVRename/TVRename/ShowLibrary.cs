@@ -18,7 +18,7 @@ namespace TVRename
         public IEnumerable<ShowConfiguration> Shows => Values;
 
         [NotNull]
-        public ICollection<SeriesSpecifier> SeriesSpecifiers
+        public IEnumerable<SeriesSpecifier> SeriesSpecifiers
         {
             get
             {
@@ -929,18 +929,18 @@ namespace TVRename
             {
                 foreach (MovieConfiguration si in xmlSettings.Descendants("MovieItem").Select(showSettings => new MovieConfiguration(showSettings)))
                 {
-                // if (si.UseCustomShowName) // see if custom show name is actually the real show name
-                // {
-                //     CachedSeriesInfo ser = si.TheSeries();
-                //     if (ser != null && si.CustomShowName == ser.Name)
-                //     {
-                //         // then, turn it off
-                //         si.CustomShowName = string.Empty;
-                //         si.UseCustomShowName = false;
-                //     }
-                // }
+                    // if (si.UseCustomShowName) // see if custom show name is actually the real show name
+                    // {
+                    //     CachedSeriesInfo ser = si.TheSeries();
+                    //     if (ser != null && si.CustomShowName == ser.Name)
+                    //     {
+                    //         // then, turn it off
+                    //         si.CustomShowName = string.Empty;
+                    //         si.UseCustomShowName = false;
+                    //     }
+                    // }
 
-                Add(si);
+                    Add(si);
                 }
             }
         }

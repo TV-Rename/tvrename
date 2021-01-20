@@ -78,9 +78,9 @@ namespace TVRename
                     throw new ArgumentOutOfRangeException();
             }
 
-            foreach ((int width, string name) col in cols)
+            foreach ((int width, var name) in cols)
             {
-                lvMatches.Columns.Add(new ColumnHeader {Text = col.name, Width = col.width});
+                lvMatches.Columns.Add(new ColumnHeader {Text = name, Width = width});
             }
         }
 
@@ -163,7 +163,7 @@ namespace TVRename
                         {
                             if (matches(kvp.Key, kvp.Value, numeric, what, matchnum))
                             {
-                                lvMatches.Items.Add(NewLvi((CachedSeriesInfo)(kvp.Value), kvp.Key, numeric && kvp.Key == matchnum));
+                                lvMatches.Items.Add(NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum));
                                 matchedTVShows++;
                                 tvShowInitialFound = kvp.Value;
                             }
@@ -179,7 +179,7 @@ namespace TVRename
                         {
                             if (matches(kvp.Key, kvp.Value, numeric, what, matchnum))
                             {
-                                lvMatches.Items.Add(NewLvi((CachedMovieInfo)(kvp.Value), kvp.Key, numeric && kvp.Key == matchnum));
+                                lvMatches.Items.Add(NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum));
                                 matchedMovies++;
                                 movieInitialFound = kvp.Value;
                             }

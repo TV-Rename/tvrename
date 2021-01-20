@@ -10,8 +10,8 @@ namespace TVRename
         private readonly CombinedCodeFinder tvCodeFinder;
         private readonly CombinedCodeFinder movieCodeFinder;
         private readonly string originalHint;
-        public readonly bool singleTVShowFound;
-        public readonly bool singleMovieFound;
+        public readonly bool SingleTvShowFound;
+        public readonly bool SingleMovieFound;
 
         public AutoAddShow(string hint,string filename)
         {
@@ -30,12 +30,12 @@ namespace TVRename
             tvCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
             movieCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
 
-            singleTVShowFound = tvCodeFinder.SetHint(hint) && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation;
-            singleMovieFound = movieCodeFinder.SetHint(hint);
+            SingleTvShowFound = tvCodeFinder.SetHint(hint) && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation;
+            SingleMovieFound = movieCodeFinder.SetHint(hint);
 
             originalHint = hint;
 
-            if (singleTVShowFound)
+            if (SingleTvShowFound)
             {
                 string filenameFriendly = TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(tvCodeFinder.tvShowInitialFound.Name));
                 SetShowItem(tvCodeFinder.tvShowInitialFound.TvdbCode, TVSettings.Instance.DefShowLocation+ System.IO.Path.DirectorySeparatorChar + filenameFriendly);
@@ -44,7 +44,7 @@ namespace TVRename
                     SetShowItem();
                 }
             }
-            if (singleMovieFound)
+            if (SingleMovieFound)
             {
                 SetMovieItem(movieCodeFinder.movieInitialFound.TmdbCode, TVSettings.Instance.DefMovieDefaultLocation);
                 if (MovieConfiguration.Code == -1)

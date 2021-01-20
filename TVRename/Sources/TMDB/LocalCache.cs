@@ -1043,7 +1043,7 @@ namespace TVRename.TMDB
 
         private static string? ImageUrl(string source) => ImageUrl(source, "w600_and_h900_bestv2");
 
-        static string? ImageUrl(string source,string type)
+        private static string? ImageUrl(string source,string type)
         {
             if (source.HasValue())
             {

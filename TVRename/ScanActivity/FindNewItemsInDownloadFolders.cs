@@ -47,7 +47,7 @@ namespace TVRename
             List<MediaConfiguration> addedShows = FinderHelper.FindMedia(possibleShowNames,MDoc,settings.Owner);
 
             IEnumerable<ShowConfiguration> addedTVShows = addedShows.OfType<ShowConfiguration>();
-            if (addedTVShows.Count() > 0)
+            if (addedTVShows.Any())
             {
                 MDoc.TvLibrary.AddRange(addedTVShows);
                 MDoc.ShowAddedOrEdited(false, false, false, settings.Owner);
@@ -62,7 +62,7 @@ namespace TVRename
 
 
             IEnumerable<MovieConfiguration> addedMovies = addedShows.OfType<MovieConfiguration>();
-            if (addedMovies.Count() > 0)
+            if (addedMovies.Any())
             {
                 MDoc.FilmLibrary.AddRange(addedMovies);
                 MDoc.MovieAddedOrEdited(false, false, false, settings.Owner);

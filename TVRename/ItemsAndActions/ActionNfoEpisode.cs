@@ -8,7 +8,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
-    class ActionNfoEpisode : ActionNfo
+    internal class ActionNfoEpisode : ActionNfo
     {
         public ActionNfoEpisode(FileInfo nfo, [NotNull] ProcessedEpisode pe) : base(nfo, pe.Show)
         {

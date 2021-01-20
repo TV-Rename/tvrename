@@ -1,8 +1,8 @@
-﻿using JetBrains.Annotations;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class DefaultNoAirdateTvCheck : DefaultTvShowCheck
+    internal class DefaultNoAirdateTvCheck : DefaultTvShowCheck
     {
         public DefaultNoAirdateTvCheck([NotNull] ShowConfiguration movie) : base(movie) { }
 

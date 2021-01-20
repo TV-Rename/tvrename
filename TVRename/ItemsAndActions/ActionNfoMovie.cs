@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class ActionNfoMovie : ActionNfo
+    internal class ActionNfoMovie : ActionNfo
     {
         public ActionNfoMovie([NotNull] FileInfo where, [NotNull] MovieConfiguration mc) : base(where, mc)
         {

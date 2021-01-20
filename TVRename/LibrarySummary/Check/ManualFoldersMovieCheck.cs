@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class ManualFoldersMovieCheck : CustomMovieCheck
+    internal class ManualFoldersMovieCheck : CustomMovieCheck
     {
         public ManualFoldersMovieCheck([NotNull] MovieConfiguration movie) : base(movie)
         {

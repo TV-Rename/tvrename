@@ -23,7 +23,7 @@ namespace TVRename.Forms.ShowPreferences
 
             cbDirectory.SuspendLayout();
             cbDirectory.Items.Clear();
-            List<string> folders = (t == MediaConfiguration.MediaType.tv ?  TVSettings.Instance.LibraryFolders : TVSettings.Instance.MovieLibraryFolders);
+            List<string> folders = t == MediaConfiguration.MediaType.tv ?  TVSettings.Instance.LibraryFolders : TVSettings.Instance.MovieLibraryFolders;
             foreach (string folder in folders)
             {
                 cbDirectory.Items.Add(folder.TrimEnd(Path.DirectorySeparatorChar.ToString()));

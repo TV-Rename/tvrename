@@ -7,7 +7,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
-    class uTorrent : IDownloadProvider
+    internal class uTorrent : IDownloadProvider
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         public void RemoveCompletedDownload(TorrentEntry name)

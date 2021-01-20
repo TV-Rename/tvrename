@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace TVRename
 {
-    abstract class DownloadingProviderFinder : DownloadingFinder
+    internal abstract class DownloadingProviderFinder : DownloadingFinder
     {
         private readonly IDownloadProvider source;
         protected DownloadingProviderFinder(TVDoc doc, IDownloadProvider source) : base(doc)

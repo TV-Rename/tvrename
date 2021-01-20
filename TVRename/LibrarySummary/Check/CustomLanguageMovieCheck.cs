@@ -1,8 +1,8 @@
-﻿using JetBrains.Annotations;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class CustomLanguageMovieCheck : CustomMovieCheck
+    internal class CustomLanguageMovieCheck : CustomMovieCheck
     {
         public CustomLanguageMovieCheck([NotNull] MovieConfiguration movie) : base(movie)
         {

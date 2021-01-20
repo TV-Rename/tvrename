@@ -30,8 +30,8 @@ namespace TVRename
 
         public bool CodeKnown => !CodeUnknown;
         public bool CodeUnknown => TmdbCodeUnknown && TvdbCodeUnknown;
-        public bool TmdbCodeUnknown => (TMDBCode is null || TMDBCode == -1 );
-        public bool TvdbCodeUnknown => (TvdbCode is null || TvdbCode == -1);
+        public bool TmdbCodeUnknown => TMDBCode is null || TMDBCode == -1;
+        public bool TvdbCodeUnknown => TvdbCode is null || TvdbCode == -1;
 
         public PossibleNewMovie(FileInfo possibleMovieFile, bool andGuess,bool showErrorMsgBox)
         {
@@ -169,7 +169,7 @@ namespace TVRename
             return null;
         }
 
-        private int? ConvertToInt(string? s)
+        private static int? ConvertToInt(string? s)
         {
             if (s.HasValue())
             {

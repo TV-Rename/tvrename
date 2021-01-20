@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class TvShowEpisodeNameCheck : TvShowCheck
+    internal class TvShowEpisodeNameCheck : TvShowCheck
     {
         public TvShowEpisodeNameCheck([NotNull] ShowConfiguration show) : base(show)
         {

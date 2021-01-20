@@ -15,7 +15,7 @@ namespace TVRename
     public class Languages : List<Language>
     {
         [XmlIgnoreAttribute] private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        [XmlIgnoreAttribute] object lockObject = new object();
+        [XmlIgnoreAttribute] private object lockObject = new object();
 
         public static Languages? Load()
         {
