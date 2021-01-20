@@ -92,7 +92,7 @@ Section "Install"
     File "TVRename\bin\Release\System.IO.FileSystem.dll"
     File "TVRename\bin\Release\System.IO.FileSystem.Primitives.dll"
     File "TVRename\bin\Release\System.IO.FileSystem.Watcher.dll"
-    
+    File "TVRename\bin\Release\System.Reflection.dll"
 
     File "TVRename\bin\Release\NLog.config"
     File "TVRename\bin\Release\TVRename.exe.config"
@@ -170,6 +170,7 @@ Section "Uninstall"
     Delete "$INSTDIR\System.IO.FileSystem.dll"
     Delete "$INSTDIR\System.IO.FileSystem.Primitives.dll"
     Delete "$INSTDIR\System.IO.FileSystem.Watcher.dll"
+    Delete "$INSTDIR\System.Reflection.dll"
 
     Delete "$INSTDIR\NLog.config"
     Delete "$INSTDIR\TVRename.exe.config"
