@@ -12,20 +12,19 @@ namespace TVRename
         private readonly string originalHint;
         public readonly bool SingleTvShowFound;
         public readonly bool SingleMovieFound;
+        private readonly bool AssumeMovie;
 
         public AutoAddShow(string hint,FileInfo file)
         {
             InitializeComponent();
             ShowConfiguration = new ShowConfiguration();
             MovieConfiguration = new MovieConfiguration();
-            bool assumeMovie = FinderHelper.IgnoreHint(hint) || !hint.ContainsAnyCharactersFrom("0123456789");
+            AssumeMovie = FinderHelper.IgnoreHint(hint) || !hint.ContainsAnyCharactersFrom("0123456789");
 
             lblFileName.Text = "Filename: "+file.FullName;
 
             tvCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.tv,TVDoc.ProviderType.TheTVDB) {Dock = DockStyle.Fill};
             movieCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.movie,TVDoc.ProviderType.TMDB) { Dock = DockStyle.Fill };
-
-            (!assumeMovie ? tpTV : tpMovie).Show();
 
             tvCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
             movieCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
@@ -61,7 +60,7 @@ namespace TVRename
             panel1.Controls.Add(movieCodeFinder);
             panel1.ResumeLayout();
 
-            ActiveControl = (!assumeMovie ? tvCodeFinder : movieCodeFinder); // set initial focus to the code entry/show finder control
+            
 
             UpdateDirectoryDropDown(cbDirectory, TVSettings.Instance.LibraryFolders, TVSettings.Instance.DefShowLocation, TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation,tpTV);
             UpdateDirectoryDropDown(cbMovieDirectory, TVSettings.Instance.MovieLibraryFolders, TVSettings.Instance.DefMovieDefaultLocation, true,tpMovie);
@@ -198,6 +197,12 @@ namespace TVRename
         {
             DialogResult = DialogResult.Ignore;
             Close();
+        }
+
+        private void AutoAddShow_Load(object sender, EventArgs e)
+        {
+            (AssumeMovie ? tpMovie : tpTV).Visible = true;
+            ActiveControl = AssumeMovie ? movieCodeFinder : tvCodeFinder; // set initial focus to the code entry/show finder control
         }
     }
 }

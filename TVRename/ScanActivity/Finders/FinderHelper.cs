@@ -700,57 +700,60 @@ namespace TVRename
 
                 //popup dialog
                 AutoAddShow askForMatch = new AutoAddShow(refinedHint, file);
-                DialogResult dr;
 
                 if (askForMatch.SingleTvShowFound && !askForMatch.SingleMovieFound && true) //todo use  TVSettings.Instance.AutomateAutoAddWhenOneShowFound
                 {
                     // no need to popup dialog
-                    dr = DialogResult.OK;
                     Logger.Info($"Auto Adding New Show for '{refinedHint}' : {askForMatch.ShowConfiguration.CachedShow.Name}");
+                    addedShows.Add(askForMatch.ShowConfiguration);
+                    doc.Stats().AutoAddedShows++;
                 }
-                else if (askForMatch.SingleMovieFound && !askForMatch.SingleTvShowFound)
+                else if (askForMatch.SingleMovieFound && !askForMatch.SingleTvShowFound && true) //todo use  TVSettings.Instance.AutomateAutoAddWhenOneMovieFound
                 {
                     // no need to popup dialog
-                    dr = DialogResult.OK;
                     Logger.Info($"Auto Adding New Movie for '{refinedHint}' : {askForMatch.MovieConfiguration.CachedMovie.Name}");
+                    addedShows.Add(askForMatch.MovieConfiguration);
+                    doc.Stats().AutoAddedMovies++;
                 }
                 else
                 {
-                    owner.ShowChildDialog(askForMatch);
-                    dr = askForMatch.DialogResult;
                     Logger.Info($"Auto Adding New Show/Movie by asking about for '{refinedHint}'");
+                    owner.ShowChildDialog(askForMatch);
+                    DialogResult dr = askForMatch.DialogResult;
+
+                    if (dr == DialogResult.OK)
+                    {
+                        //If added add show ot collection
+                        if (askForMatch.ShowConfiguration.Code > 0)
+                        {
+                            addedShows.Add(askForMatch.ShowConfiguration);
+                            doc.Stats().AutoAddedShows++;
+                        }
+                        else if (askForMatch.MovieConfiguration.Code > 0)
+                        {
+                            addedShows.Add(askForMatch.MovieConfiguration);
+                            doc.Stats().AutoAddedMovies++;
+                        }
+                    }
+                    else if (dr == DialogResult.Abort)
+                    {
+                        Logger.Info("Skippng Auto Add Process");
+                        break;
+                    }
+                    else if (dr == DialogResult.Ignore)
+                    {
+                        Logger.Info($"Permenantly Ignoring 'Auto Add' for: {hint}");
+                        TVSettings.Instance.IgnoredAutoAddHints.Add(hint);
+                    }
+                    else
+                    {
+                        Logger.Info($"Cancelled Auto adding new show/movie {hint}");
+                    }
                 }
 
                 askForMatch.Dispose();
 
-                if (dr == DialogResult.OK)
-                {
-                    //If added add show ot collection
-                    if (askForMatch.ShowConfiguration.Code>0)
-                    {
-                        addedShows.Add(askForMatch.ShowConfiguration);
-                        doc.Stats().AutoAddedShows++;
-                    }
-                    else if (askForMatch.MovieConfiguration.Code > 0)
-                    {
-                        addedShows.Add(askForMatch.MovieConfiguration);
-                        doc.Stats().AutoAddedMovies++;
-                    }
-                }
-                else if (dr == DialogResult.Abort)
-                {
-                    Logger.Info("Skippng Auto Add Process");
-                    break;
-                }
-                else if (dr == DialogResult.Ignore)
-                {
-                    Logger.Info($"Permenantly Ignoring 'Auto Add' for: {hint}");
-                    TVSettings.Instance.IgnoredAutoAddHints.Add(hint);
-                }
-                else
-                {
-                    Logger.Info($"Cancelled Auto adding new show/movie {hint}");
-                }
+
             }
 
             return addedShows;
