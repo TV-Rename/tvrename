@@ -665,14 +665,14 @@ namespace TVRename
 
         private void TriggerAppUpdateCheck()
         {
-            var updateCheckType = TVSettings.Instance.UpdateCheckType;
+            TVSettings.UpdateCheckMode updateCheckType = TVSettings.Instance.UpdateCheckType;
             if (updateCheckType != TVSettings.UpdateCheckMode.Off)
             {
                 bool checkUpdate = true;
                 if (updateCheckType == TVSettings.UpdateCheckMode.Interval)
                 {
-                    var lastUpdate = mDoc.CurrentAppState.UpdateCheck.LastUpdate;
-                    var interval = TVSettings.Instance.UpdateCheckInterval;
+                    TimeSpan lastUpdate = mDoc.CurrentAppState.UpdateCheck.LastUpdate;
+                    TimeSpan interval = TVSettings.Instance.UpdateCheckInterval;
                     checkUpdate = lastUpdate >= interval;
                 }
 
@@ -681,7 +681,6 @@ namespace TVRename
                     UpdateTimer.Start();
                 }
             }
-
         }
 
         private static void SetupFilterButton(TextBox textBox, EventHandler handler)
@@ -1144,10 +1143,7 @@ namespace TVRename
             movieTree.EndUpdate();
         }
 
-        public static string GenerateShowUiName(MovieConfiguration show)
-        {
-            return PostpendTheIfNeeded(show.ShowName);
-        }
+        private static string GenerateShowUiName(MovieConfiguration show) => PostpendTheIfNeeded(show.ShowName);
 
         [NotNull]
         private static string QuickStartGuide() => "https://www.tvrename.com/manual/quickstart/";
@@ -2211,7 +2207,7 @@ namespace TVRename
             tabControl1.SelectTab(tbWTW);
             foreach (ListViewItem lvi in lvWhenToWatch.Items)
             {
-                ProcessedEpisode ei = (ProcessedEpisode)lvi.Tag;
+                ProcessedEpisode? ei = (ProcessedEpisode)lvi.Tag;
                 lvi.Selected = ei != null && ei.TheCachedSeries.TvdbCode == tvdbSeriesCode;
             }
             lvWhenToWatch.Focus();
@@ -2950,9 +2946,7 @@ namespace TVRename
 
             foreach (string directory in si.Locations)
             {
-
-                if (Directory.Exists(directory)
-                ) // todo use new setting && TVSettings.Instance.DeleteShowFromDisk)
+                if (Directory.Exists(directory)) // todo use new setting && TVSettings.Instance.DeleteShowFromDisk)
                 {
                     DialogResult res3 = MessageBox.Show(
                         $"Remove folder \"{directory}\" from disk?",
@@ -3827,6 +3821,8 @@ namespace TVRename
             SetCheckbox(mcbModifyMetadata, all.OfType<ActionFileMetaData>(), chk.OfType<ActionFileMetaData>());
             SetCheckbox(mcbDownload, all.TorrentActions, chk.Where(item => item is ActionTRemove || item is ActionTDownload));
 
+            SetCheckbox(mcbAll, all.Actions, chk.OfType<Action>());
+            /*
             int numberOfActions = all.Actions.Count;
             int numberOfCheckedActions = chk.OfType<Action>().Count();
 
@@ -3837,7 +3833,7 @@ namespace TVRename
             else
             {
                 mcbAll.CheckState = numberOfCheckedActions == numberOfActions ? CheckState.Checked : CheckState.Indeterminate;
-            }
+            }*/
         }
 
         private static void SetCheckbox([NotNull] ToolStripMenuItem box,[NotNull] IEnumerable<Item> all, [NotNull] IEnumerable<Item> chk)
@@ -4272,7 +4268,7 @@ namespace TVRename
         }
         private void McbRename_Click(object sender, EventArgs e)
         {
-            UpdateCheckboxGroup(mcbRename, i => i is ActionCopyMoveRename rename && rename.Operation == ActionCopyMoveRename.Op.rename);
+            UpdateCheckboxGroup(mcbRename, i => i is ActionCopyMoveRename {Operation: ActionCopyMoveRename.Op.rename});
         }
 
         private void McbCopyMove_Click(object sender, EventArgs e)

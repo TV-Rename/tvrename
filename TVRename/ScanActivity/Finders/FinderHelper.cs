@@ -633,7 +633,7 @@ namespace TVRename
 
             foreach (FileInfo file in possibleShows)
             {
-                string hint = TVSettings.Instance.UseFullPathNameToMatchSearchFolders ? file.FullName : file.RemoveExtension() + ".";
+                string hint =  file.RemoveExtension(TVSettings.Instance.UseFullPathNameToMatchSearchFolders) + ".";
 
                 //If the hint contains certain terms then we'll ignore it
                 if (TVSettings.Instance.IgnoredAutoAddHints.Contains(hint))
@@ -698,22 +698,27 @@ namespace TVRename
                     continue;
                 }
 
-                Logger.Info("****************");
-                Logger.Info($"Auto Adding New Show/Movie for '{refinedHint}'");
-
                 //popup dialog
-                AutoAddShow askForMatch = new AutoAddShow(refinedHint, hint);
+                AutoAddShow askForMatch = new AutoAddShow(refinedHint, file);
                 DialogResult dr;
 
-                if (askForMatch.SingleTvShowFound && true) //todo use  TVSettings.Instance.AutomateAutoAddWhenOneShowFound
+                if (askForMatch.SingleTvShowFound && !askForMatch.SingleMovieFound && true) //todo use  TVSettings.Instance.AutomateAutoAddWhenOneShowFound
                 {
                     // no need to popup dialog
                     dr = DialogResult.OK;
+                    Logger.Info($"Auto Adding New Show for '{refinedHint}' : {askForMatch.ShowConfiguration.CachedShow.Name}");
+                }
+                else if (askForMatch.SingleMovieFound && !askForMatch.SingleTvShowFound)
+                {
+                    // no need to popup dialog
+                    dr = DialogResult.OK;
+                    Logger.Info($"Auto Adding New Movie for '{refinedHint}' : {askForMatch.MovieConfiguration.CachedMovie.Name}");
                 }
                 else
                 {
                     owner.ShowChildDialog(askForMatch);
                     dr = askForMatch.DialogResult;
+                    Logger.Info($"Auto Adding New Show/Movie by asking about for '{refinedHint}'");
                 }
 
                 askForMatch.Dispose();

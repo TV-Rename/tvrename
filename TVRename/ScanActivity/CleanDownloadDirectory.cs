@@ -306,7 +306,7 @@ namespace TVRename
 
                 if (!si.SeasonEpisodes.ContainsKey(seasF))
                 {
-                    LOGGER.Info($"Can't find the right season for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}' for show {si.ShowName}:{si.Code}");
+                    LOGGER.Warn($"Can't find the right season for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}' for show {si.ShowName}:{si.Code}");
                     fileCanBeDeleted = false;
                     continue;
                 }
@@ -315,7 +315,7 @@ namespace TVRename
 
                 if (pep == null)
                 {
-                    LOGGER.Info($"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}' for show {si.ShowName}:{si.Code}");
+                    LOGGER.Warn($"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}' for show {si.ShowName}:{si.Code}");
                     fileCanBeDeleted = false;
                     continue;
                 }

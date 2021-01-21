@@ -13,14 +13,14 @@ namespace TVRename
         public readonly bool SingleTvShowFound;
         public readonly bool SingleMovieFound;
 
-        public AutoAddShow(string hint,string filename)
+        public AutoAddShow(string hint,FileInfo file)
         {
             InitializeComponent();
             ShowConfiguration = new ShowConfiguration();
             MovieConfiguration = new MovieConfiguration();
-            bool assumeMovie = FinderHelper.IgnoreHint(hint);
+            bool assumeMovie = FinderHelper.IgnoreHint(hint) || !hint.ContainsAnyCharactersFrom("0123456789");
 
-            lblFileName.Text = "Filename: "+filename;
+            lblFileName.Text = "Filename: "+file.FullName;
 
             tvCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.tv,TVDoc.ProviderType.TheTVDB) {Dock = DockStyle.Fill};
             movieCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.movie,TVDoc.ProviderType.TMDB) { Dock = DockStyle.Fill };
@@ -31,11 +31,11 @@ namespace TVRename
             movieCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
 
             SingleTvShowFound = tvCodeFinder.SetHint(hint) && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation;
-            SingleMovieFound = movieCodeFinder.SetHint(hint);
+            SingleMovieFound = movieCodeFinder.SetHint(hint) && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation;
 
             originalHint = hint;
 
-            if (SingleTvShowFound)
+            if (SingleTvShowFound )
             {
                 string filenameFriendly = TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(tvCodeFinder.tvShowInitialFound.Name));
                 SetShowItem(tvCodeFinder.tvShowInitialFound.TvdbCode, TVSettings.Instance.DefShowLocation+ System.IO.Path.DirectorySeparatorChar + filenameFriendly);
