@@ -93,6 +93,9 @@ Section "Install"
     File "TVRename\bin\Release\System.IO.FileSystem.Primitives.dll"
     File "TVRename\bin\Release\System.IO.FileSystem.Watcher.dll"
     File "TVRename\bin\Release\System.Reflection.dll"
+    File "TVRename\bin\Release\System.Globalization.dll"
+    File "TVRename\bin\Release\System.Globalization.Calendars.dll"
+    File "TVRename\bin\Release\System.Globalization.Extensions.dll"
 
     File "TVRename\bin\Release\NLog.config"
     File "TVRename\bin\Release\TVRename.exe.config"
@@ -171,7 +174,10 @@ Section "Uninstall"
     Delete "$INSTDIR\System.IO.FileSystem.Primitives.dll"
     Delete "$INSTDIR\System.IO.FileSystem.Watcher.dll"
     Delete "$INSTDIR\System.Reflection.dll"
-
+    Delete "$INSTDIR\System.Globalization.dll"
+    Delete "$INSTDIR\System.Globalization.Calendars.dll"
+    Delete "$INSTDIR\System.Globalization.Extensions.dll"
+    
     Delete "$INSTDIR\NLog.config"
     Delete "$INSTDIR\TVRename.exe.config"
 
