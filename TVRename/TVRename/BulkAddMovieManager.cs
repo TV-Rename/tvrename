@@ -74,11 +74,12 @@ namespace TVRename
                     return (false, null);
                 }
 
+                /*
                 bool hasSubFolders = subDirectories.Length > 0;
                 if (hasSubFolders)
                 {
                     return (false, subDirectories);
-                }
+                }*/
 
                 if (TVSettings.Instance.BulkAddIgnoreRecycleBin && IsRecycleBin(di2))
                 {
@@ -102,7 +103,7 @@ namespace TVRename
                 foreach (FileInfo newFilm in films)
                 {
                     // ....its good!
-                    Logger.Info("Adding {0} as a new folder", theFolder);
+                    Logger.Info("Adding {0} as a new Movie", newFilm.FullName);
                     PossibleNewMovie ai = new PossibleNewMovie(newFilm, andGuess, showErrorMsgBox);
                     AddItems.AddIfNew(ai);
                 }

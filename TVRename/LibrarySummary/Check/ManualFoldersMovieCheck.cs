@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
@@ -35,6 +36,7 @@ namespace TVRename
                 if (!source.Exists)
                 {
                     Movie.UseManualLocations = false;
+                    Movie.UseAutomaticFolders = true;
                     return;
                 }
 
@@ -43,35 +45,58 @@ namespace TVRename
                     //directory has nothing in it
                     FileHelper.RemoveDirectory(source.FullName);
                     Movie.UseManualLocations = false;
+                    Movie.UseAutomaticFolders = true;
                     return;
                 }
 
+                Movie.UseAutomaticFolders = true;
                 //try to copy/move files
-                if (Movie.AutomaticLocations().Count() > 1)
+                System.Collections.Generic.List<string> automaticLocations = Movie.AutomaticLocations().ToList();
+
+                if (automaticLocations.Count > 1)
                 {
                     throw new FixCheckException("Multiple target locations for the automated folders");
                 }
 
-                if (!Movie.AutomaticLocations().Any())
+                if (!automaticLocations.Any())
                 {
                     throw new FixCheckException("No target automatic folders can be established");
                 }
 
-                if (source.FullName.Equals(Movie.AutomaticLocations().First(),StringComparison.CurrentCultureIgnoreCase))
+                if (source.FullName.Equals(automaticLocations.First(),StringComparison.CurrentCultureIgnoreCase))
                 {
                     Movie.UseManualLocations = false;
                     return;
-
                 }
 
-                //we have one location
-                CopyOrMove(Movie.ManualLocations[0], Movie.AutomaticLocations().First());
-                Movie.UseAutomaticFolders = true;
+                //Do we want to copy the whole folder or just some files from witin?
+                //we have one location to copy to
+
+                bool manualLocationOnlyHasOneMovie = source.EnumerateFiles().Where(f=>f.IsMovieFile()).All(file => Movie.NameMatch(file, false));
+
+                if (manualLocationOnlyHasOneMovie)
+                {
+                    CopyOrMove(source, automaticLocations.First());
+                }
+                else
+                {
+                    MoveFiles(source.EnumerateFiles().Where(f => f.IsMovieFile()).Where(file => Movie.NameMatch(file, false)), automaticLocations.First());
+                }
+
                 Movie.UseManualLocations = false;
             }
         }
 
-        private void CopyOrMove(string fromDirectpry, string toDirectory)
+        private void MoveFiles(IEnumerable<FileInfo> @where, string destination)
+        {
+            Directory.CreateDirectory(destination);
+            foreach (FileInfo? f in where)
+            {
+                f.MoveTo(System.IO.Path.Combine(destination, f.Name));
+            }
+        }
+
+        private void CopyOrMove(DirectoryInfo fromDirectory, string toDirectory)
         {
             DirectoryInfo target = new DirectoryInfo(toDirectory);
 
@@ -83,27 +108,29 @@ namespace TVRename
                 }
 
                 //Copy files
-                foreach (string? file in Directory.EnumerateFiles(fromDirectpry))
+                foreach (FileInfo file in fromDirectory.EnumerateFiles())
                 {
-                    string destFile = Path.Combine(toDirectory, Path.GetFileName(file));
+                    string destFile = Path.Combine(toDirectory, file.FullName);
                     if (!File.Exists(destFile))
                     {
-                        File.Move(file, destFile);
+                        file.MoveTo(destFile);
+                        //File.Move(file, destFile);
                     }
-                    LOGGER.Info($"Moved {file} to {destFile}");
+                    LOGGER.Info($"Moved {file.FullName} to {destFile}");
 
                 }
                     
-                if (Directory.IsEmpty(fromDirectpry))
+                if (Directory.IsEmpty(fromDirectory.FullName))
                 {
-                    Directory.Delete(fromDirectpry,true);
-                    LOGGER.Info($"Deleted empty directory {fromDirectpry}");
+                    fromDirectory.Delete(false);
+                    LOGGER.Info($"Deleted empty directory {fromDirectory.FullName}");
                 }
                 return;
             }
 
-            Directory.Move(fromDirectpry, toDirectory);
-            LOGGER.Info($"Moved whole directory {fromDirectpry} to {toDirectory}");
+            fromDirectory.MoveTo(toDirectory);
+            //Directory.Move(fromDirectpry, toDirectory);
+            LOGGER.Info($"Moved whole directory {fromDirectory.FullName } to {toDirectory}");
         }
 
         protected override string FieldName => "Use manual folders";

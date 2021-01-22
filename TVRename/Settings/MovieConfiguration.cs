@@ -146,22 +146,15 @@ namespace TVRename
 
             if (UseAutomaticFolders && !string.IsNullOrEmpty(AutomaticFolderRoot))
             {
+                string newName = AutoFolderNameForMovie();
 
-
-                    string newName = AutoFolderNameForMovie();
-
-                    if (!checkExist || Directory.Exists(newName))
+                if (!checkExist || Directory.Exists(newName))
+                {
+                    if (!fld[0].Contains(newName))
                     {
-
-
-
-                        if (!fld[0].Contains(newName))
-                        {
-                            fld[0].Add(newName.TrimSlash());
-                        }
-
-
+                        fld[0].Add(newName.TrimSlash());
                     }
+                }
             }
             return fld;
         }

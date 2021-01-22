@@ -19,7 +19,7 @@ namespace TVRename
             InitializeComponent();
             ShowConfiguration = new ShowConfiguration();
             MovieConfiguration = new MovieConfiguration();
-            assumeMovie = FinderHelper.IgnoreHint(hint) || !file.Name.ContainsAnyCharactersFrom("0123456789");
+            assumeMovie = FinderHelper.IgnoreHint(hint) || !file.FileNameNoExt().ContainsAnyCharactersFrom("0123456789");
 
             lblFileName.Text = "Filename: "+file.FullName;
 
