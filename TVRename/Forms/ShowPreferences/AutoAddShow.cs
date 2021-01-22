@@ -12,14 +12,14 @@ namespace TVRename
         private readonly string originalHint;
         public readonly bool SingleTvShowFound;
         public readonly bool SingleMovieFound;
-        private readonly bool AssumeMovie;
+        private readonly bool assumeMovie;
 
         public AutoAddShow(string hint,FileInfo file)
         {
             InitializeComponent();
             ShowConfiguration = new ShowConfiguration();
             MovieConfiguration = new MovieConfiguration();
-            AssumeMovie = FinderHelper.IgnoreHint(hint) || !hint.ContainsAnyCharactersFrom("0123456789");
+            assumeMovie = FinderHelper.IgnoreHint(hint) || !file.Name.ContainsAnyCharactersFrom("0123456789");
 
             lblFileName.Text = "Filename: "+file.FullName;
 
@@ -30,7 +30,7 @@ namespace TVRename
             movieCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
 
             SingleTvShowFound = tvCodeFinder.SetHint(hint) && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation;
-            SingleMovieFound = movieCodeFinder.SetHint(hint) && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation;
+            SingleMovieFound = movieCodeFinder.SetHint(hint) && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && assumeMovie;
 
             originalHint = hint;
 
@@ -59,8 +59,6 @@ namespace TVRename
             panel1.SuspendLayout();
             panel1.Controls.Add(movieCodeFinder);
             panel1.ResumeLayout();
-
-            
 
             UpdateDirectoryDropDown(cbDirectory, TVSettings.Instance.LibraryFolders, TVSettings.Instance.DefShowLocation, TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation,tpTV);
             UpdateDirectoryDropDown(cbMovieDirectory, TVSettings.Instance.MovieLibraryFolders, TVSettings.Instance.DefMovieDefaultLocation, true,tpMovie);
@@ -201,8 +199,9 @@ namespace TVRename
 
         private void AutoAddShow_Load(object sender, EventArgs e)
         {
-            (AssumeMovie ? tpMovie : tpTV).Visible = true;
-            ActiveControl = AssumeMovie ? movieCodeFinder : tvCodeFinder; // set initial focus to the code entry/show finder control
+            (assumeMovie ? tpMovie : tpTV).Visible = true;
+            ActiveControl = assumeMovie ? movieCodeFinder : tvCodeFinder; // set initial focus to the code entry/show finder control
+            tabControl1.SelectedTab = (assumeMovie ? tpMovie : tpTV);
         }
     }
 }

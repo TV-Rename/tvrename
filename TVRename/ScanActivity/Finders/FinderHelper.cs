@@ -646,7 +646,7 @@ namespace TVRename
                 //remove any search folders  from the hint. They are probbably useless at helping specify the showname
                 foreach (var path in TVSettings.Instance.DownloadFolders)
                 {
-                    if (hint.StartsWith(path))
+                    if (hint.StartsWith(path,StringComparison.OrdinalIgnoreCase))
                     {
                         hint = hint.RemoveFirst(path.Length);
                     }
