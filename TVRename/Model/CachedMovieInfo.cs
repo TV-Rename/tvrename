@@ -151,6 +151,11 @@ namespace TVRename
                 SiteRatingVotes = o.SiteRatingVotes;
             }
 
+            if (useNewDataOverOld && o.Popularity > 0)
+            {
+                Popularity = o.Popularity;
+            }
+
             bool useNewAliases = o.Aliases.Any() && useNewDataOverOld;
             if (!Aliases.Any() || useNewAliases)
             {
@@ -203,6 +208,7 @@ namespace TVRename
                 LanguageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId") ?? throw new SourceConsistencyException("Error Extracting Language for Series", TVDoc.ProviderType.TheTVDB);
 
                 CollectionId = seriesXml.ExtractInt("CollectionId") ;
+                Popularity = seriesXml.ExtractDouble("Popularity") ?? 0;
                 CollectionName = seriesXml.ExtractStringOrNull("CollectionName");
                 TwitterId = seriesXml.ExtractStringOrNull("TwitterId") ;
                 InstagramId = seriesXml.ExtractStringOrNull("InstagramId");
@@ -315,6 +321,7 @@ namespace TVRename
             writer.WriteElement("siteRating", SiteRating, "0.##");
             writer.WriteElement("siteRatingCount", SiteRatingVotes);
             writer.WriteElement("slug", Slug);
+            writer.WriteElement("Popularity", Popularity, "0.##");
 
             if (FirstAired != null)
             {

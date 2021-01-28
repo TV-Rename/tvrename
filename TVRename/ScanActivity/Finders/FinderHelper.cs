@@ -684,7 +684,7 @@ namespace TVRename
                 }
                 if (LookForMovies(refinedHint, doc.FilmLibrary.Movies))
                 {
-                    Logger.Info($"Ignoring {hint} as it matches existing movies already in the library.");
+                    Logger.Info($"Ignoring {hint} as it matches existing movies already in the library:");
                     continue;
                 }
 
@@ -698,8 +698,37 @@ namespace TVRename
                     continue;
                 }
 
+                bool assumeMovie = FinderHelper.IgnoreHint(hint) || !file.FileNameNoExt().ContainsAnyCharactersFrom("0123456789");
+
+                if (assumeMovie && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && true)//todo use  TVSettings.Instance.AutomateAutoAddWhenOneMovieFound
+                {
+                    var foundMovie = TMDB.LocalCache.Instance.GetMovie(refinedHint, null, true, true);
+                    if (foundMovie!=null)
+                    {
+                        // no need to popup dialog
+                        Logger.Info($"Auto Adding New Movie for '{refinedHint}' (directly) : {foundMovie.Name}");
+
+                        MovieConfiguration newMovie = new MovieConfiguration();
+                        newMovie.TmdbCode = foundMovie.TmdbCode;
+                        newMovie.UseAutomaticFolders = true;
+                        newMovie.AutomaticFolderRoot = TVSettings.Instance.DefMovieDefaultLocation;
+                        newMovie.Format = MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile;
+                        newMovie.UseCustomFolderNameFormat = false;
+                        newMovie.ConfigurationProvider = TVDoc.ProviderType.TMDB;
+
+                        if (!hint.Contains(foundMovie?.Name ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+                        {
+                            newMovie.AliasNames.Add(hint);
+                        }
+
+
+                        addedShows.Add(newMovie);
+                        doc.Stats().AutoAddedMovies++;
+                        continue;
+                    }
+                }
                 //popup dialog
-                AutoAddShow askForMatch = new AutoAddShow(refinedHint, file);
+                AutoAddShow askForMatch = new AutoAddShow(refinedHint, file,assumeMovie);
 
                 if (askForMatch.SingleTvShowFound && !askForMatch.SingleMovieFound && true) //todo use  TVSettings.Instance.AutomateAutoAddWhenOneShowFound
                 {

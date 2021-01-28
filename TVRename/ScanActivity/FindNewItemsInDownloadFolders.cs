@@ -91,7 +91,9 @@ namespace TVRename
 
                 try
                 {
-                    foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                    string[] array = Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories);
+                    var orderedFiles = from name in array orderby name select name;
+                    foreach (string filePath in orderedFiles)
                     {
                         if (!File.Exists(filePath))
                         {

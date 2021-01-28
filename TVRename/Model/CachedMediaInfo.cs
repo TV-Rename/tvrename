@@ -26,6 +26,7 @@ namespace TVRename
         public string? InstagramId;
         public string? FacebookId;
         public string? TagLine;
+        public double? Popularity;
 
         public bool IsSearchResultOnly; // set to true if local info is known to be just certain fields found from search results. Do not need to be saved
 

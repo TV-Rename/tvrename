@@ -9,6 +9,7 @@ using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using System.Linq;
 
 // Control for searching for a tvdb code, checking against local cache and
 // searching on thetvdb
@@ -20,6 +21,7 @@ namespace TVRename
         private MediaConfiguration.MediaType Type { get; }
         private TVDoc.ProviderType Source { get; }
         private bool mInternal;
+        private readonly ListViewColumnSorter lvwCodeFinderColumnSorter;
 
         public CachedSeriesInfo tvShowInitialFound { get; private set; }
         public CachedMovieInfo movieInitialFound{ get; private set; }
@@ -41,6 +43,11 @@ namespace TVRename
             }
 
             SetupColumns();
+
+            lvwCodeFinderColumnSorter = new ListViewColumnSorter(new NumberAsTextSorter(5));
+            lvwCodeFinderColumnSorter.Order = SortOrder.Descending;
+            lvMatches.ListViewItemSorter = lvwCodeFinderColumnSorter;
+
             label3.Text = GetPromptLabel(Source);
         }
 
@@ -58,6 +65,7 @@ namespace TVRename
                         (39, "Year"),
                         (45, "Rating"),
                         (40, "Language"),
+                        (40, "Pop."),
                     };
 
                     break;
@@ -69,6 +77,7 @@ namespace TVRename
                         (39, "Year"),
                         (52, "Network"),
                         (58, "Status"),
+                        (40, "Pop."),
                     };
 
                     break;
@@ -131,7 +140,7 @@ namespace TVRename
 
         private void txtFindThis_TextChanged(object sender, EventArgs e)
         {
-            if (!mInternal)
+            if (!mInternal && txtFindThis.Text.Length>2)
             {
                 DoFind(false);
             }
@@ -175,14 +184,11 @@ namespace TVRename
                 {
                     lock (TMDB.LocalCache.Instance.MOVIE_LOCK)
                     {
-                        foreach (KeyValuePair<int, CachedMovieInfo> kvp in TMDB.LocalCache.Instance.CachedMovieData)
+                        foreach (var kvp in TMDB.LocalCache.Instance.CachedMovieData.Where(kvp=> matches(kvp.Key, kvp.Value, numeric, what, matchnum)).OrderByDescending(m=>m.Value.Popularity))
                         {
-                            if (matches(kvp.Key, kvp.Value, numeric, what, matchnum))
-                            {
-                                lvMatches.Items.Add(NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum));
-                                matchedMovies++;
-                                movieInitialFound = kvp.Value;
-                            }
+                            lvMatches.Items.Add(NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum));
+                            matchedMovies++;
+                            movieInitialFound = kvp.Value;
                         }
                     }
                     txtSearchStatus.Text = "Found " + matchedMovies + " movie" + (matchedMovies != 1 ? "s" : "");
@@ -238,6 +244,7 @@ namespace TVRename
             lvi.SubItems.Add(si.Year);
             lvi.SubItems.Add(si.Network ?? string.Empty);
             lvi.SubItems.Add(si.Status);
+            lvi.SubItems.Add(si.Popularity.HasValue ? si.Popularity.Value.ToString("0.##") : string.Empty);
 
             lvi.ToolTipText = si.Overview;
             lvi.Tag = si;
@@ -257,6 +264,7 @@ namespace TVRename
             lvi.SubItems.Add(si.FirstAired.HasValue ? si.FirstAired.Value.Year.ToString() : string.Empty);
             lvi.SubItems.Add(si.ContentRating);
             lvi.SubItems.Add(si.ShowLanguage);
+            lvi.SubItems.Add(si.Popularity.HasValue ? si.Popularity.Value.ToString("0.##") : string.Empty);
             lvi.ToolTipText = si.Overview;
             lvi.Tag = si;
             if (numberMatch)
@@ -337,13 +345,15 @@ namespace TVRename
 
         private void lvMatches_ColumnClick(object sender, [NotNull] ColumnClickEventArgs e)
         {
-            if (e.Column == 0 || e.Column == 2) // code or year
+            lvwCodeFinderColumnSorter.ClickedOn(e.Column);
+
+            if (e.Column == 0 || e.Column == 2 || e.Column==5) // code or year or popularity
             {
-                lvMatches.ListViewItemSorter = new NumberAsTextSorter(e.Column);
+                lvwCodeFinderColumnSorter.ListViewItemSorter = new NumberAsTextSorter(e.Column);
             }
             else
             {
-                lvMatches.ListViewItemSorter = new TextSorter(e.Column);
+                lvwCodeFinderColumnSorter.ListViewItemSorter = new TextSorter(e.Column);
             }
 
             lvMatches.Sort();

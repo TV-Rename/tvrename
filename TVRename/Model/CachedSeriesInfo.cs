@@ -219,6 +219,11 @@ namespace TVRename
                 SiteRating = o.SiteRating;
             }
 
+            if (useNewDataOverOld && o.Popularity > 0)
+            {
+                Popularity = o.Popularity;
+            }
+
             if (useNewDataOverOld && o.SiteRatingVotes > 0)
             {
                 SiteRatingVotes = o.SiteRatingVotes;
@@ -313,6 +318,7 @@ namespace TVRename
                 Status = seriesXml.ExtractStringOrNull("status") ?? seriesXml.ExtractString("Status");
                 SiteRatingVotes = seriesXml.ExtractInt("siteRatingCount") ?? seriesXml.ExtractInt("SiteRatingCount",0);
                 Slug = seriesXml.ExtractString("slug");
+                Popularity = seriesXml.ExtractDouble("Popularity") ?? 0;
 
                 SiteRating = GetSiteRating(seriesXml);
                 FirstAired = JsonHelper.ParseFirstAired(seriesXml.ExtractStringOrNull("FirstAired") ?? seriesXml.ExtractString("firstAired"));
@@ -496,6 +502,7 @@ namespace TVRename
             writer.WriteElement("status", Status);
             writer.WriteElement("siteRating", SiteRating,"0.##");
             writer.WriteElement("siteRatingCount", SiteRatingVotes);
+            writer.WriteElement("Popularity", Popularity, "0.##");
             writer.WriteElement("slug",Slug);
 
             if (FirstAired != null)

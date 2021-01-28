@@ -380,11 +380,13 @@ namespace TVRename.TMDB
 
         public CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox) => throw new NotImplementedException();//todo when we can offer search for TMDB
 
-        public CachedMovieInfo? GetMovie(PossibleNewMovie show, bool showErrorMsgBox)
-        {
-            Search(show.RefinedHint, showErrorMsgBox);
+        public CachedMovieInfo? GetMovie(PossibleNewMovie show, bool showErrorMsgBox) => GetMovie(show.RefinedHint, show.PossibleYear, showErrorMsgBox, false);
 
-            string showName = show.RefinedHint;
+        public CachedMovieInfo? GetMovie(string hint, int? possibleYear, bool showErrorMsgBox,bool useMostPopularMatch)
+        {
+            Search(hint, showErrorMsgBox);
+
+            string showName = hint;
 
             if (string.IsNullOrEmpty(showName))
             {
@@ -408,7 +410,7 @@ namespace TVRename.TMDB
             List<CachedMovieInfo> exactMatchingShows = matchingShows
                 .Where(info => info.Name.CompareName().Equals(showName, StringComparison.InvariantCultureIgnoreCase)).ToList();
 
-            if (exactMatchingShows.Count == 0)
+            if (exactMatchingShows.Count == 0 && !useMostPopularMatch)
             {
                 return null;
             }
@@ -418,24 +420,35 @@ namespace TVRename.TMDB
                 return exactMatchingShows.First();
             }
 
-            if (show.PossibleYear is null)
+            if (possibleYear is null && !useMostPopularMatch)
             {
                 return null;
             }
 
-            List<CachedMovieInfo> exactMatchingShowsWithYear = exactMatchingShows
-                .Where(info => info.Year==show.PossibleYear).ToList();
+            if (possibleYear != null)
+            {
+                List<CachedMovieInfo> exactMatchingShowsWithYear = exactMatchingShows
+                    .Where(info => info.Year == possibleYear).ToList();
 
-            if (exactMatchingShowsWithYear.Count == 0)
+                if (exactMatchingShowsWithYear.Count == 0 && !useMostPopularMatch)
+                {
+                    return null;
+                }
+
+                if (exactMatchingShowsWithYear.Count == 1)
+                {
+                    return exactMatchingShowsWithYear.First();
+                }
+            }
+            if (!useMostPopularMatch)
             {
                 return null;
             }
 
-            if (exactMatchingShowsWithYear.Count == 1)
+            if (matchingShows.All(s => s.Popularity.HasValue))
             {
-                return exactMatchingShowsWithYear.First();
+                return matchingShows.OrderByDescending(s => s.Popularity).First();
             }
-
             return null;
         }
 
@@ -787,6 +800,7 @@ namespace TVRename.TMDB
                 CollectionName = downloadedMovie.BelongsToCollection?.Name,
                 CollectionId = downloadedMovie.BelongsToCollection?.Id,
                 TagLine = downloadedMovie.Tagline,
+                Popularity = downloadedMovie.Popularity,
                 TwitterId=downloadedMovie.ExternalIds.TwitterId,
                 InstagramId = downloadedMovie.ExternalIds.InstagramId,
                 FacebookId=downloadedMovie.ExternalIds.InstagramId,
@@ -985,6 +999,7 @@ namespace TVRename.TMDB
             LOGGER.Info($"Got {results.Results.Count:N0} of {results.TotalResults:N0} results searching for {text}");
             foreach (SearchMovie result in results.Results)
             {
+                LOGGER.Info($"   Movie: {result.Title}:{result.Id}   {result.Popularity}");
                 File(result);
                 try
                 {
@@ -1011,6 +1026,7 @@ namespace TVRename.TMDB
                 SiteRating = (float)result.VoteAverage,
                 SiteRatingVotes = result.VoteCount,
                 PosterUrl = ImageUrl(result.PosterPath),
+                Popularity = result.Popularity,
                 IsSearchResultOnly = true,
                 Dirty = false,
             };
@@ -1031,11 +1047,11 @@ namespace TVRename.TMDB
                 SiteRating = (float)result.VoteAverage,
                 SiteRatingVotes = result.VoteCount,
                 PosterUrl = ImageUrl(result.PosterPath),
+                Popularity = result.Popularity,
                 FanartUrl = ImageUrl(result.BackdropPath),
                 IsSearchResultOnly = true,
                 Dirty = false,
             };
-
 
             File(m);
             return m;

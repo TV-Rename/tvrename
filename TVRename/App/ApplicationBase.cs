@@ -75,7 +75,7 @@ namespace TVRename.App
             catch (RemotingException ex)
             {
                 Logger.Warn(
-                    $"Could not create IPC Port: {ex.Message} : TV Rename WIll nto be able to accept incoming commands");
+                    $"Could not create IPC Port: {ex.Message} : TV Rename will not be able to accept incoming commands");
             }
 
             MainForm = ui;

@@ -14,12 +14,13 @@ namespace TVRename
         public readonly bool SingleMovieFound;
         private readonly bool assumeMovie;
 
-        public AutoAddShow(string hint,FileInfo file)
+        public AutoAddShow(string hint,FileInfo file, bool assumeMovie)
         {
             InitializeComponent();
             ShowConfiguration = new ShowConfiguration();
             MovieConfiguration = new MovieConfiguration();
-            assumeMovie = FinderHelper.IgnoreHint(hint) || !file.FileNameNoExt().ContainsAnyCharactersFrom("0123456789");
+
+            this.assumeMovie = assumeMovie;
 
             lblFileName.Text = "Filename: "+file.FullName;
 

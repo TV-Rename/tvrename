@@ -68,8 +68,12 @@ namespace TVRename
             WriteElement(writer, elementName, value, null);
         }
 
-        public static void WriteElement([NotNull] this XmlWriter writer, [NotNull] string elementName, double value,string? format)
+        public static void WriteElement([NotNull] this XmlWriter writer, [NotNull] string elementName, double? value,string? format)
         {
+            if (!value.HasValue)
+            {
+                return;
+            }
             writer.WriteStartElement(elementName);
             if (format is null)
             {
@@ -77,7 +81,7 @@ namespace TVRename
             }
             else
             {
-                writer.WriteValue(value.ToString(format));
+                writer.WriteValue(value.Value.ToString(format));
             }
             writer.WriteEndElement();
         }
@@ -418,6 +422,16 @@ namespace TVRename
             if (xmlSettings.Descendants(elementName).Any())
             {
                 return XmlConvert.ToSingle((string)xmlSettings.Descendants(elementName).First());
+            }
+
+            return null;
+        }
+
+        public static double? ExtractDouble([NotNull] this XElement xmlSettings, string elementName)
+        {
+            if (xmlSettings.Descendants(elementName).Any())
+            {
+                return XmlConvert.ToDouble((string)xmlSettings.Descendants(elementName).First());
             }
 
             return null;
