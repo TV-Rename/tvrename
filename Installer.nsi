@@ -51,7 +51,7 @@ Var STARTMENU_FOLDER
 Section "Install"
     SetOutPath "$INSTDIR"
 
-    !insertmacro CheckNetFramework 472
+    !insertmacro CheckNetFramework 462
 
     Delete "$INSTDIR\Ionic.Utils.Zip.dll" ; Remove old dependency
 
