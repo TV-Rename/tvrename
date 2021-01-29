@@ -70,6 +70,7 @@ namespace TVRename
             foreach (ActionCopyMoveRename acmr in returnActions.OfType<ActionCopyMoveRename>())
             {
                 removeActions.AddRange(MDoc.TheActionList.Missing.Where(missingItem => missingItem.Episode == acmr.Episode));
+                //todo remove any movies that we have found
             }
 
             MDoc.TheActionList.Replace(removeActions,returnActions);
@@ -280,6 +281,31 @@ namespace TVRename
 
                     fileCanBeDeleted = false;
                 }
+
+                if (TVSettings.Instance.ReplaceWithBetterQuality)
+                { //TODO replace with moviw replacement setting
+
+                    foreach (var testMovie in matchingMovies)
+                    {
+                        List<FileInfo> encumbants = dfc.FindMovieOnDisk(testMovie).ToList();
+
+                        foreach (FileInfo existingFile in encumbants)
+                        {
+                            if (existingFile.FullName.Equals(fi.FullName, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                //the user has put the search folder and the download folder in the same place - DO NOT DELETE
+                                fileCanBeDeleted = false;
+                                continue;
+                            }
+
+                            bool? deleteFile = ReviewFile(unattended, fi, matchingMovies, existingFile, testMovie, owner);
+                            if (deleteFile.HasValue && deleteFile.Value == false)
+                            {
+                                fileCanBeDeleted = false;
+                            }
+                        }
+                    }
+                }
             }
 
             if (fileCanBeDeleted)
@@ -450,6 +476,72 @@ namespace TVRename
             return null;
         }
 
+        private bool? ReviewFile(bool unattended, [NotNull] FileInfo newFile, [NotNull] IReadOnlyCollection<MovieConfiguration> matchingShows, [NotNull] FileInfo existingFile, [NotNull] MovieConfiguration pep, IDialogParent owner)
+        {
+            FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, newFile);
+
+            FileHelper.VideoComparison newResult = result;
+
+            if (TVSettings.Instance.ReplaceWithBetterQuality && TVSettings.Instance.ForceSystemToDecideOnUpgradedFiles && IsNotClearCut(result))
+            {
+                //User has asked us to make a call
+                newResult = existingFile.Length >= newFile.Length ? FileHelper.VideoComparison.firstFileBetter : FileHelper.VideoComparison.secondFileBetter;
+            }
+
+            switch (newResult)
+            {
+                case FileHelper.VideoComparison.secondFileBetter:
+                    if (TVSettings.Instance.ReplaceWithBetterQuality)
+                    {
+                        if (matchingShows.Count > 1)
+                        {
+                            LOGGER.Warn(
+                                $"Keeping {newFile.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({matchingShows.Select(item => item.ShowName).ToCsv()}) that match.");
+                        }
+                        else
+                        {
+                            UpgradeFile(newFile, pep, existingFile);
+                        }
+                    }
+                    else
+                    {
+                        LOGGER.Warn(
+                            $"Keeping {newFile.FullName} as it is better quality than some of the current files for that show (Auto Replace with better quality files is turned off)");
+                    }
+                    return false;
+                case FileHelper.VideoComparison.cantTell:
+                case FileHelper.VideoComparison.similar:
+                    if (unattended)
+                    {
+                        LOGGER.Info(
+                             $"Keeping {newFile.FullName} as it might be better quality than {existingFile.FullName}");
+
+                        return false;
+                    }
+                    else
+                    {
+                        if (matchingShows.Count <= 1)
+                        {
+                            return AskUserAboutFileReplacement(newFile, existingFile, pep, owner);
+                        }
+
+                        LOGGER.Warn(
+                            $"Keeping {newFile.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({matchingShows.Select(item => item.ShowName).ToCsv()}) that match.");
+
+                        return false;
+                    }
+
+                //the other cases of the files being the same or the existing file being better are not enough to save the file
+                case FileHelper.VideoComparison.firstFileBetter:
+                    break;
+                case FileHelper.VideoComparison.same:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            return null;
+        }
+
         private static bool IsNotClearCut(FileHelper.VideoComparison result)
         {
             return result switch
@@ -464,6 +556,42 @@ namespace TVRename
         }
 
         private bool? AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] ProcessedEpisode pep, IDialogParent owner)
+        {
+            try
+            {
+                ChooseFile question = new ChooseFile(existingFile, newFile);
+
+                owner.ShowChildDialog(question);
+                ChooseFile.ChooseFileDialogResult result = question.Answer;
+                question.Dispose();
+
+                switch (result)
+                {
+                    case ChooseFile.ChooseFileDialogResult.ignore:
+                        LOGGER.Info(
+                            $"Keeping {newFile.FullName} as it might be better quality than {existingFile.FullName}");
+                        return false;
+                    case ChooseFile.ChooseFileDialogResult.left:
+                        LOGGER.Info(
+                            $"User has elected to remove {newFile.FullName} as it is not as good quality than {existingFile.FullName}");
+
+                        break;
+                    case ChooseFile.ChooseFileDialogResult.right:
+                        UpgradeFile(newFile, pep, existingFile);
+                        return false;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                return null;
+            }
+            catch (FileNotFoundException)
+            {
+                return false;
+            }
+        }
+
+        private bool? AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] MovieConfiguration pep, IDialogParent owner)
         {
             try
             {
@@ -565,6 +693,22 @@ namespace TVRename
             {
                 returnActions.Add(new ActionDeleteFile(existingFile, pep, null));
                 returnActions.Add(new ActionCopyMoveRename(fi, existingFile.WithExtension(fi.Extension), pep,MDoc));
+            }
+            else
+            {
+                returnActions.Add(new ActionCopyMoveRename(fi, existingFile, pep, MDoc));
+            }
+
+            LOGGER.Info(
+                $"Using {fi.FullName} to replace {existingFile.FullName} as it is better quality");
+        }
+
+        private void UpgradeFile([NotNull] FileInfo fi, MovieConfiguration pep, [NotNull] FileInfo existingFile)
+        {
+            if (existingFile.Extension != fi.Extension)
+            {
+                returnActions.Add(new ActionDeleteFile(existingFile, pep, null));
+                returnActions.Add(new ActionCopyMoveRename(fi, existingFile.WithExtension(fi.Extension), pep, MDoc));
             }
             else
             {

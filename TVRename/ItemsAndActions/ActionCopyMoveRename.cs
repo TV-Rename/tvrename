@@ -41,6 +41,10 @@ namespace TVRename
             this(TVSettings.Instance.LeaveOriginals ? Op.copy : Op.move, from, to, ep, true, null, tvDoc)
             {}
 
+        public ActionCopyMoveRename(FileInfo from, FileInfo to, MovieConfiguration ep, TVDoc tvDoc) :
+    this(TVSettings.Instance.LeaveOriginals ? Op.copy : Op.move, from, to, ep, true, null, tvDoc)
+        { }
+
         public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, MovieConfiguration mc, bool doTidyup, ItemMissing? undoItem, TVDoc tvDoc)
         {
             Tidyup = doTidyup ? TVSettings.Instance.Tidyup : null;
