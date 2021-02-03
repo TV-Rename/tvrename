@@ -208,14 +208,14 @@ namespace TVRename
                     }
 
                     List<ShowConfiguration> matchingShows = showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
-                    List<ShowConfiguration> matchingShowsNoDupes = RemoveShortShows(matchingShows);
+                    List<ShowConfiguration> matchingShowsNoDupes = FinderHelper.RemoveShortShows(matchingShows);
                     if (matchingShowsNoDupes.Any())
                     {
                         ReviewFileInDownloadDirectory(currentSettings.Unattended,  fi, matchingShowsNoDupes,owner);
                     }
 
                     List<MovieConfiguration> matchingMovies = movieList.Where(mi => mi.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
-                    List<MovieConfiguration> matchingNoDupesMovies = RemoveShortShows(matchingMovies);
+                    List<MovieConfiguration> matchingNoDupesMovies = FinderHelper.RemoveShortShows(matchingMovies);
                     if (matchingNoDupesMovies.Any())
                     {
                         ReviewFileInDownloadDirectory(currentSettings.Unattended, fi, matchingNoDupesMovies, owner);
@@ -236,24 +236,7 @@ namespace TVRename
             }
         }
 
-        [NotNull]
-        private static List<T> RemoveShortShows<T>([NotNull] IReadOnlyCollection<T> matchingShows)
-            where T : MediaConfiguration
-        {
-            //Remove any shows from the list that are subsets of all the ohters
-            //so that a file does not match CSI and CSI: New York
-            return matchingShows.Where(testShow => !IsInferiorTo(testShow, matchingShows)).ToList();
-        }
 
-        private static bool IsInferiorTo(MediaConfiguration testShow, [NotNull] IEnumerable<MediaConfiguration> matchingShows)
-        {
-            return matchingShows.Any(compareShow => IsInferiorTo(testShow, compareShow));
-        }
-
-        private static bool IsInferiorTo([NotNull] MediaConfiguration testShow, [NotNull] MediaConfiguration compareShow)
-        {
-            return compareShow.ShowName.StartsWith(testShow.ShowName, StringComparison.Ordinal) && testShow.ShowName.Length < compareShow.ShowName.Length;
-        }
 
         private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, [NotNull] List<MovieConfiguration> matchingMovies, IDialogParent owner)
         {
@@ -500,7 +483,7 @@ namespace TVRename
                         }
                         else
                         {
-                            UpgradeFile(newFile, pep, existingFile);
+                            UpgradeFile(newFile, pep, existingFile, MDoc, returnActions);
                         }
                     }
                     else
@@ -522,7 +505,7 @@ namespace TVRename
                     {
                         if (matchingShows.Count <= 1)
                         {
-                            return AskUserAboutFileReplacement(newFile, existingFile, pep, owner);
+                            return AskUserAboutFileReplacement(newFile, existingFile, pep, owner,MDoc,returnActions);
                         }
 
                         LOGGER.Warn(
@@ -591,7 +574,9 @@ namespace TVRename
             }
         }
 
-        private bool? AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] MovieConfiguration pep, IDialogParent owner)
+        /// <summary>Asks user about whether to replace a file.</summary>
+        /// <returns>false if the newFile is needed.</returns>
+        public static bool? AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] MovieConfiguration pep, IDialogParent owner,TVDoc doc, ItemList returnActions)
         {
             try
             {
@@ -613,7 +598,7 @@ namespace TVRename
 
                         break;
                     case ChooseFile.ChooseFileDialogResult.right:
-                        UpgradeFile(newFile, pep, existingFile);
+                        UpgradeFile(newFile, pep, existingFile,doc,returnActions);
                         return false;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -703,16 +688,16 @@ namespace TVRename
                 $"Using {fi.FullName} to replace {existingFile.FullName} as it is better quality");
         }
 
-        private void UpgradeFile([NotNull] FileInfo fi, MovieConfiguration pep, [NotNull] FileInfo existingFile)
+        public  static void UpgradeFile([NotNull] FileInfo fi, MovieConfiguration pep, [NotNull] FileInfo existingFile,TVDoc doc, ItemList actions)
         {
             if (existingFile.Extension != fi.Extension)
             {
-                returnActions.Add(new ActionDeleteFile(existingFile, pep, null));
-                returnActions.Add(new ActionCopyMoveRename(fi, existingFile.WithExtension(fi.Extension), pep, MDoc));
+                actions.Add(new ActionDeleteFile(existingFile, pep, null));
+                actions.Add(new ActionCopyMoveRename(fi, existingFile.WithExtension(fi.Extension), pep, doc));
             }
             else
             {
-                returnActions.Add(new ActionCopyMoveRename(fi, existingFile, pep, MDoc));
+                actions.Add(new ActionCopyMoveRename(fi, existingFile, pep, doc));
             }
 
             LOGGER.Info(

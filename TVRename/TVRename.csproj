@@ -287,6 +287,12 @@
     <Compile Include="Exporter\MoviesExporter.cs" />
     <Compile Include="Exporter\MoviesHtml.cs" />
     <Compile Include="Exporter\MoviesTxt.cs" />
+    <Compile Include="Forms\Supporting\LinkMovie.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Supporting\LinkMovie.Designer.cs">
+      <DependentUpon>LinkMovie.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Supporting\MovieFilters.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -884,6 +890,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Supporting\ChooseDownload.resx">
       <DependentUpon>ChooseDownload.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Supporting\LinkMovie.resx">
+      <DependentUpon>LinkMovie.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Supporting\ChooseFile.resx">
       <DependentUpon>ChooseFile.cs</DependentUpon>

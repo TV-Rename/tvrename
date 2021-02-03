@@ -161,7 +161,7 @@ namespace TVRename
             }
         }
 
-        private string GetBase(FileInfo fileInfo)
+        public static string GetBase(FileInfo fileInfo)
         {
             //The base is the filename with no multipart extensions
             return fileInfo.MovieFileNameBase();

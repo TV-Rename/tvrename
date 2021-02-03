@@ -16,6 +16,7 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
@@ -27,6 +28,7 @@ using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using TVRename.Settings.AppState;
+using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
 
 namespace TVRename
 {
@@ -1602,6 +1604,384 @@ namespace TVRename
             FilmLibrary.Add(found);
             SetDirty();
             ExportMovieInfo();
+        }
+
+        public void MovieFolderScan(IDialogParent ui)
+        {
+            TheActionList.Clear();
+
+            foreach (string downloadFolder in TVSettings.Instance.DownloadFolders)
+            {
+                if (!Directory.Exists(downloadFolder))
+                {
+                    Logger.Error($"Please update 'Download Folders' {downloadFolder} does not exist");
+                    continue;
+                }
+
+                try
+                {
+                    string[] x = Directory.GetFiles(downloadFolder, "*", SearchOption.AllDirectories);
+                    Logger.Info($"Processing {x.Length} files for shows that need to be scanned");
+
+                    foreach (string filePath in x)
+                    {
+                        if (!File.Exists(filePath))
+                        {
+                            Logger.Info($"   {filePath} does not exist");
+                            continue;
+                        }
+
+                        FileInfo fi = new FileInfo(filePath);
+
+                        if (fi.IgnoreFile())
+                        {
+                            Logger.Info($" {filePath} is an ignored File");
+                            continue;
+                        }
+
+                        Logger.Info($"Checking to see whether {filePath} is a file for a show that needs to be scanned");
+
+                        List<MovieConfiguration> existingMatchingShows = GetMatchingMovies(fi);
+
+                        if (!existingMatchingShows.Any())
+                        {
+                            BonusAutoAdd(fi,ui);
+                        }
+                        else
+                        {
+                            //ask user about which show
+                            LinkMovie askUser = new LinkMovie(existingMatchingShows, fi);
+                            DialogResult descision = askUser.ShowDialog(ui);
+
+                            //if user cancelled then move on
+                            if (descision == DialogResult.Abort)
+                            {
+                                Logger.Info($"User chose to ignore {filePath}");
+                                continue;
+                            }
+
+                            //if user selected a new show then
+                            if ((descision == DialogResult.OK) && askUser.ChosenShow == null)
+                            {
+                                BonusAutoAdd(fi,ui);
+                            }
+
+                            //if user selected a show
+                            if (descision == DialogResult.OK && askUser.ChosenShow != null)
+                            {
+                                MergeMovieFileIntoMovieConfig(fi, askUser.ChosenShow,ui);
+                            }
+                        }
+                    }
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    Logger.Warn($"Could not access files in {downloadFolder} {ex.Message}");
+                }
+                catch (DirectoryNotFoundException ex)
+                {
+                    Logger.Warn($"Could not access files in {downloadFolder} {ex.Message}");
+                }
+                catch (IOException ex)
+                {
+                    Logger.Warn($"Could not access files in {downloadFolder} {ex.Message}");
+                }
+                catch (NotSupportedException ex)
+                {
+                    Logger.Error($"Please update 'Download Folders' {downloadFolder} is not supported {ex.Message}");
+                }
+            }
+
+        }
+
+        private List<MovieConfiguration> GetMatchingMovies(FileSystemInfo fi)
+        {
+            List<MovieConfiguration> matchingMovies = FilmLibrary.GetSortedMovies().Where(mi => mi.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+            return  FinderHelper.RemoveShortShows(matchingMovies);
+        }
+
+        private void MergeMovieFileIntoMovieConfig(FileInfo fi, MovieConfiguration chosenShow, IDialogParent owner)
+        {
+            bool fileCanBeDeleted = true;
+
+            foreach(string folderName in chosenShow.Locations)
+            {
+                DirectoryInfo folder = new DirectoryInfo(folderName);
+
+                if (HasMissingFiles(chosenShow,folder))
+                {
+                    LinkFileToShow(fi, chosenShow, folder);
+                    fileCanBeDeleted = false;
+
+                }
+                else
+                {
+                    FileInfo encumbant = GetExistingFile(chosenShow, folder);
+                    bool? deleteFile = AskForBetter(fi, encumbant,chosenShow,owner);
+                    if (deleteFile.HasValue && deleteFile.Value == false)
+                    {
+                        fileCanBeDeleted = false;
+                    }
+                }
+            }
+
+            if (fileCanBeDeleted)
+            {
+                Logger.Info(
+                    $"Removing {fi.FullName} as it matches { chosenShow.ShowName} and all existing versions are better quality");
+
+                TheActionList.Add(new ActionDeleteFile(fi, chosenShow, TVSettings.Instance.Tidyup));
+            }
+        }
+
+        private static FileInfo GetExistingFile(MovieConfiguration chosenShow, DirectoryInfo folder)
+        {
+            List<FileInfo>? videofiles = folder.GetFiles().Where(fiTemp => fiTemp.IsMovieFile()).ToList();
+
+            if (videofiles is null)
+            {
+                throw new FileNotFoundException();
+            }
+
+            if (videofiles.Count != 1)
+            {
+                Logger.Warn($"{chosenShow.ShowName} has multiple files in {folder.FullName},just considering the first file {videofiles.First().Name} ");
+            }
+
+            return videofiles.First();
+        }
+
+        private void LinkFileToShow(FileInfo fi, MovieConfiguration chosenShow, DirectoryInfo folder)
+        {
+            string newBase = TVSettings.Instance.FilenameFriendly(CustomMovieName.NameFor(chosenShow, TVSettings.Instance.MovieFilenameFormat));
+            string newName = fi.Name.Replace(RenameAndMissingMovieCheck.GetBase(fi), newBase);
+            FileInfo newFile = FileHelper.FileInFolder(folder, newName);
+            
+            TheActionList.Add(new ActionCopyMoveRename(fi, newFile, chosenShow,this));
+        }
+
+        /// <summary>Asks user about whether to replace a file.</summary>
+        /// <returns>false if the newFile is needed.</returns>
+        private bool? AskForBetter(FileInfo newFile, FileInfo existingFile, MovieConfiguration chosenShow, IDialogParent owner)
+        {
+            FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, newFile);
+
+            FileHelper.VideoComparison newResult = result;
+
+            switch (newResult)
+            {
+                case FileHelper.VideoComparison.secondFileBetter:
+                    CleanDownloadDirectory.UpgradeFile(newFile, chosenShow, existingFile,this,TheActionList);
+                    return false;
+                case FileHelper.VideoComparison.cantTell:
+                case FileHelper.VideoComparison.similar:
+                    {
+                        return CleanDownloadDirectory.AskUserAboutFileReplacement(newFile, existingFile, chosenShow, owner, this, TheActionList);
+                    }
+                //the other cases of the files being the same or the existing file being better are not enough to save the file
+                case FileHelper.VideoComparison.firstFileBetter:
+                case FileHelper.VideoComparison.same:
+                    return null;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private bool HasMissingFiles(MovieConfiguration si,DirectoryInfo folder)
+        {
+            FileInfo[] files = folder.GetFiles();
+            FileInfo[] movieFiles = files.Where(f => f.IsMovieFile()).ToArray();
+
+            if (movieFiles.Length == 0)
+            {
+                return true;
+            }
+
+            List<string> bases = movieFiles.Select( RenameAndMissingMovieCheck.GetBase).Distinct().ToList();
+            string newBase = TVSettings.Instance.FilenameFriendly(CustomMovieName.NameFor(si, TVSettings.Instance.MovieFilenameFormat));
+
+            if (bases.Count == 1)
+            {
+                string baseString = bases[0];
+
+                if (baseString.Equals(newBase, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    //All Seems OK
+                    return false;
+                }
+
+                //The bases do not match
+                foreach (FileInfo fi in files)
+                {
+                    if (fi.Name.StartsWith(baseString, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        string newName = fi.Name.Replace(baseString, newBase);
+                        FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
+
+                        if (newFile.IsMovieFile())
+                        {
+                            //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
+                            //it has all the required files for that show
+                            TheActionList.Add(downloadIdentifiers.ProcessMovie(si, newFile));
+                            return false;
+                        }
+
+                        if (newFile.FullName != fi.FullName)
+                        {
+                            //Check that the file does not already exist
+                            //if (FileHelper.FileExistsCaseSensitive(newFile.FullName))
+                            if (FileHelper.FileExistsCaseSensitive(files, newFile))
+                            {
+                                Logger.Warn(
+                                    $"Identified that {fi.FullName} should be renamed to {newName}, but it already exists.");
+
+                                return false;
+                            }
+                            else
+                            {
+                                Logger.Info($"Identified that {fi.FullName} should be renamed to {newName}.");
+                                TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
+                                    newFile, si, false, null, this));
+
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            if (fi.IsMovieFile())
+                            {
+                                return true;
+                            }
+                        }
+
+                    }
+                } // foreach file in folder
+
+                return true;
+            }
+            else
+            {
+                Logger.Warn($"{si.ShowName} in {folder.FullName} has multiple bases: {bases.ToCsv()}");
+                return false;
+            }
+        }
+
+        private void BonusAutoAdd(FileInfo fi, IDialogParent owner)
+        {
+            //do an auto add
+            (MovieConfiguration? newShow, MovieConfiguration? selectedShow) = AutoAddMovieFile(fi,owner);
+
+            //if new show then add and link file to it
+            if (newShow != null)
+            {
+                LinkFileToShow(fi, newShow,new DirectoryInfo(newShow.Locations.First()));
+            }
+            else if (selectedShow != null)
+            {
+                //if user selects existing show then do a compare for that new file for the show
+                MergeMovieFileIntoMovieConfig(fi, selectedShow,owner);
+            }
+            else
+            {
+                Logger.Error($"User elected todo nothing with {fi.FullName}");
+            }
+        }
+
+        private (MovieConfiguration?, MovieConfiguration?) AutoAddMovieFile(FileInfo file, IDialogParent owner)
+        {
+            string hint = file.RemoveExtension(TVSettings.Instance.UseFullPathNameToMatchSearchFolders) + ".";
+
+            //If the hint contains certain terms then we'll ignore it
+            if (TVSettings.Instance.IgnoredAutoAddHints.Contains(hint))
+            {
+                Logger.Info(
+                    $"Ignoring {hint} as it is in the list of ignored terms the user has selected to ignore from prior Auto Adds.");
+
+                return (null,null);
+            }
+            //remove any search folders  from the hint. They are probbably useless at helping specify the showname
+            foreach (var path in TVSettings.Instance.DownloadFolders)
+            {
+                if (hint.StartsWith(path, StringComparison.OrdinalIgnoreCase))
+                {
+                    hint = hint.RemoveFirst(path.Length);
+                }
+            }
+
+            //Remove any (nnnn) in the hint - probably a year
+            string refinedHint = Regex.Replace(hint, @"\(\d{4}\)", "");
+
+            //Remove anything we can from hint to make it cleaner and hence more likely to match
+            refinedHint = FinderHelper.RemoveSeriesEpisodeIndicators(refinedHint, TvLibrary.SeasonWords());
+
+            if (string.IsNullOrWhiteSpace(refinedHint))
+            {
+                Logger.Info($"Ignoring {hint} as it refines to nothing.");
+                return (null,null);
+            }
+
+            //If there are no LibraryFolders then we cant use the simplified UI
+            if (TVSettings.Instance.LibraryFolders.Count + TVSettings.Instance.MovieLibraryFolders.Count == 0)
+            {
+                MessageBox.Show(
+                    "Please add some monitor (library) folders under 'Bulk Add Shows' to use the 'Auto Add' functionality (Alternatively you can add them or turn it off in settings).",
+                    "Can't Auto Add Show", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return (null, null);
+            }
+
+            //popup dialog
+            AutoAddShow askForMatch = new AutoAddShow(refinedHint, file, true);
+
+            {
+                Logger.Info($"Auto Adding New Show/Movie by asking about for '{refinedHint}'");
+                owner.ShowChildDialog(askForMatch);
+                DialogResult dr = askForMatch.DialogResult;
+
+                if (dr == DialogResult.OK)
+                {
+                    if (askForMatch.MovieConfiguration.Code > 0)
+                    {
+                        MovieConfiguration selected = askForMatch.MovieConfiguration;
+
+                        if (FilmLibrary.Values.Contains(selected))
+                        {
+                            return (null, selected);
+                        }
+                        else
+                        {
+                            return (selected, null);
+                        }
+                    }
+
+                    //If added add show ot collection
+                    if (askForMatch.ShowConfiguration.Code > 0)
+                    {
+                        Logger.Error($"User requested movie {file.FullName} be added as a TV Show - Ignoring for now");
+                        return (null, null);
+                    }
+
+                    Logger.Error($"User did not select a movie for {file.FullName}");
+                    return (null, null);
+                }
+                else if (dr == DialogResult.Abort)
+                {
+                    Logger.Info("Skippng Auto Add Process");
+                    return (null, null);
+                }
+                else if (dr == DialogResult.Ignore)
+                {
+                    Logger.Info($"Permenantly Ignoring 'Auto Add' for: {hint}");
+                    TVSettings.Instance.IgnoredAutoAddHints.Add(hint);
+                }
+                else
+                {
+                    Logger.Info($"Cancelled Auto adding new show/movie {hint}");
+                }
+            }
+
+            askForMatch.Dispose();
+            return (null, null);
         }
     }
 }

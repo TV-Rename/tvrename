@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -4920,6 +4921,13 @@ namespace TVRename
             }
 
             return mDoc.FilmLibrary.Movies.FirstOrDefault();
+        }
+
+        private void scanMovieFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //Show Log Pane
+            logToolStripMenuItem_Click(sender, e);
+            mDoc.MovieFolderScan(this);
         }
     }
 }

@@ -15,6 +15,7 @@ using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 using NLog;
 using NodaTime;
+using TVRename.TMDB;
 using Path = System.IO.Path;
 
 namespace TVRename
@@ -539,6 +540,25 @@ namespace TVRename
             return hint2;
         }
 
+        [NotNull]
+        public static List<T> RemoveShortShows<T>([NotNull] IReadOnlyCollection<T> matchingShows)
+            where T : MediaConfiguration
+        {
+            //Remove any shows from the list that are subsets of all the ohters
+            //so that a file does not match CSI and CSI: New York
+            return matchingShows.Where(testShow => !IsInferiorTo(testShow, matchingShows)).ToList();
+        }
+
+        private static bool IsInferiorTo(MediaConfiguration testShow, [NotNull] IEnumerable<MediaConfiguration> matchingShows)
+        {
+            return matchingShows.Any(compareShow => IsInferiorTo(testShow, compareShow));
+        }
+
+        private static bool IsInferiorTo([NotNull] MediaConfiguration testShow, [NotNull] MediaConfiguration compareShow)
+        {
+            return compareShow.ShowName.StartsWith(testShow.ShowName, StringComparison.Ordinal) && testShow.ShowName.Length < compareShow.ShowName.Length;
+        }
+
         public static bool BetterShowsMatch(FileInfo matchedFile, MediaConfiguration currentlyMatchedShow,
             bool useFullPath, [NotNull] TVDoc doc)
         {
@@ -672,7 +692,7 @@ namespace TVRename
                 }
                 if (LookForMovies(refinedHint, addedShows))
                 {
-                    Logger.Info($"Ignoring {hint} as it matches existing movies already being added.");
+                    Logger.Info($"Ignoring {hint} as it matches existing movies already being added: {addedShows.Where(si => si.NameMatch(refinedHint)).Select(s => s.ShowName).ToCsv()}");
                     continue;
                 }
 
@@ -684,7 +704,7 @@ namespace TVRename
                 }
                 if (LookForMovies(refinedHint, doc.FilmLibrary.Movies))
                 {
-                    Logger.Info($"Ignoring {hint} as it matches existing movies already in the library:");
+                    Logger.Info($"Ignoring {hint} as it matches existing movies already in the library: {doc.FilmLibrary.Movies.Where(si => si.NameMatch(refinedHint)).Select(s=>s.ShowName).ToCsv()}");
                     continue;
                 }
 
@@ -702,7 +722,7 @@ namespace TVRename
 
                 if (assumeMovie && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && true)//todo use  TVSettings.Instance.AutomateAutoAddWhenOneMovieFound
                 {
-                    var foundMovie = TMDB.LocalCache.Instance.GetMovie(refinedHint, null, true, true);
+                    var foundMovie = LocalCache.Instance.GetMovie(refinedHint, null, true, true);
                     if (foundMovie!=null)
                     {
                         // no need to popup dialog
@@ -847,10 +867,10 @@ namespace TVRename
         {
             if (mi.DoRename && TVSettings.Instance.RenameCheck)
             {
-                return new FileInfo(mi.TheFileNoExt + from.Extension);
+                return new FileInfo(mi.TheFileNoExt + @from.Extension);
             }
 
-            return new FileInfo(mi.DestinationFolder.EnsureEndsWithSeparator() + from.Name);
+            return new FileInfo(mi.DestinationFolder.EnsureEndsWithSeparator() + @from.Name);
         }
 
         public static FileInfo GenerateTargetName(string folder,ProcessedEpisode pep, FileInfo fi)
