@@ -8,10 +8,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
-using Humanizer;
 using JetBrains.Annotations;
 using NLog;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
@@ -21,21 +18,22 @@ namespace TVRename
     public partial class LinkMovie : Form
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private FileInfo chosenFile;
-        private List<MovieConfiguration> shows;
-        public MovieConfiguration ChosenShow;
+        private readonly FileInfo chosenFile;
+        public MovieConfiguration? ChosenShow;
 
         public LinkMovie([NotNull] List<MovieConfiguration> matchingShows, [NotNull] FileInfo file)
         {
             InitializeComponent();
             lblSourceFileName.Text = file.FullName;
             chosenFile = file;
-            shows = matchingShows;
             DialogResult = DialogResult.Abort;
             foreach (var movie in matchingShows)
             {
                 cbShows.Items.Add(movie);
             }
+
+            cbShows.SelectedIndex = 0;
+            cbShows.DisplayMember = "ShowName";
         }
 
         private void lnkOpenLeftFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

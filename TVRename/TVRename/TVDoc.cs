@@ -20,6 +20,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using NLog;
 using NodaTime.Extensions;
 using TVRename.Forms.Supporting;
@@ -1606,16 +1607,16 @@ namespace TVRename
             ExportMovieInfo();
         }
 
-        public void MovieFolderScan(IDialogParent ui)
+        public void MovieFolderScan(UI ui)
         {
             TheActionList.Clear();
 
-            foreach (string downloadFolder in TVSettings.Instance.DownloadFolders)
+            string downloadFolder = AskUserForFolder(ui);
             {
                 if (!Directory.Exists(downloadFolder))
                 {
                     Logger.Error($"Please update 'Download Folders' {downloadFolder} does not exist");
-                    continue;
+                    return;
                 }
 
                 try
@@ -1661,7 +1662,7 @@ namespace TVRename
                             }
 
                             //if user selected a new show then
-                            if ((descision == DialogResult.OK) && askUser.ChosenShow == null)
+                            if (descision == DialogResult.OK && askUser.ChosenShow == null)
                             {
                                 BonusAutoAdd(fi,ui);
                             }
@@ -1692,6 +1693,25 @@ namespace TVRename
                 }
             }
 
+            ui.FillActionList(true);
+            ui.FocusOnScanResults();
+
+            Logger.Info("Finished looking for new movies.");
+        }
+
+        private string AskUserForFolder(IDialogParent ui)
+        {
+            using (FolderBrowserDialog fbd = new FolderBrowserDialog())
+            {
+                //ui.ShowChildDialog(fbd);
+                fbd.ShowDialog();
+                return fbd.SelectedPath;
+            }
+
+/*            CommonOpenFileDialog dialog = new CommonOpenFileDialog {IsFolderPicker = true};
+            ui.ShowChildDialog(dialog);
+            return dialog.FileName;
+*/
         }
 
         private List<MovieConfiguration> GetMatchingMovies(FileSystemInfo fi)
@@ -1704,10 +1724,8 @@ namespace TVRename
         {
             bool fileCanBeDeleted = true;
 
-            foreach(string folderName in chosenShow.Locations)
+            foreach (DirectoryInfo folder in chosenShow.Locations.Select(folderName => new DirectoryInfo(folderName)))
             {
-                DirectoryInfo folder = new DirectoryInfo(folderName);
-
                 if (HasMissingFiles(chosenShow,folder))
                 {
                     LinkFileToShow(fi, chosenShow, folder);
@@ -1944,7 +1962,7 @@ namespace TVRename
                     {
                         MovieConfiguration selected = askForMatch.MovieConfiguration;
 
-                        if (FilmLibrary.Values.Contains(selected))
+                        if (FilmLibrary.ContainsKey(selected.Code))
                         {
                             return (null, selected);
                         }
