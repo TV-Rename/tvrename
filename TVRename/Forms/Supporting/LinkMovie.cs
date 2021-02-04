@@ -33,7 +33,7 @@ namespace TVRename
             }
 
             cbShows.SelectedIndex = 0;
-            cbShows.DisplayMember = "ShowName";
+            cbShows.DisplayMember = "ShowNameWithYear";
         }
 
         private void lnkOpenLeftFolder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

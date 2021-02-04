@@ -44,7 +44,7 @@ namespace TVRename
 
             SetupColumns();
 
-            lvwCodeFinderColumnSorter = new ListViewColumnSorter(new NumberAsTextSorter(5));
+            lvwCodeFinderColumnSorter = new ListViewColumnSorter(new DoubleAsTextSorter(5));
             lvwCodeFinderColumnSorter.Order = SortOrder.Descending;
             lvMatches.ListViewItemSorter = lvwCodeFinderColumnSorter;
 
@@ -347,9 +347,13 @@ namespace TVRename
         {
             lvwCodeFinderColumnSorter.ClickedOn(e.Column);
 
-            if (e.Column == 0 || e.Column == 2 || e.Column==5) // code or year or popularity
+            if (e.Column == 0 || e.Column == 2 ) // code or year
             {
                 lvwCodeFinderColumnSorter.ListViewItemSorter = new NumberAsTextSorter(e.Column);
+            }
+            else if ( e.Column == 5) //  popularity
+            {
+                lvwCodeFinderColumnSorter.ListViewItemSorter = new DoubleAsTextSorter(e.Column);
             }
             else
             {

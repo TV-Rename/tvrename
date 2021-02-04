@@ -44,6 +44,7 @@ namespace TVRename.Forms
             this.olvDoublePart = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSample = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvDeleted = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvNumber = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.possibleMergedEpisodeRightClickMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvDuplicates)).BeginInit();
             this.SuspendLayout();
@@ -124,6 +125,7 @@ namespace TVRename.Forms
             // 
             this.olvDuplicates.AllColumns.Add(this.olvName);
             this.olvDuplicates.AllColumns.Add(this.olvFiles);
+            this.olvDuplicates.AllColumns.Add(this.olvNumber);
             this.olvDuplicates.AllColumns.Add(this.olvDoublePart);
             this.olvDuplicates.AllColumns.Add(this.olvSample);
             this.olvDuplicates.AllColumns.Add(this.olvDeleted);
@@ -135,6 +137,7 @@ namespace TVRename.Forms
             this.olvDuplicates.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvName,
             this.olvFiles,
+            this.olvNumber,
             this.olvDoublePart,
             this.olvSample,
             this.olvDeleted});
@@ -167,7 +170,7 @@ namespace TVRename.Forms
             this.olvFiles.AspectName = "Filenames";
             this.olvFiles.Groupable = false;
             this.olvFiles.Text = "Filenames";
-            this.olvFiles.Width = 673;
+            this.olvFiles.Width = 594;
             // 
             // olvDoublePart
             // 
@@ -184,6 +187,11 @@ namespace TVRename.Forms
             // 
             this.olvDeleted.AspectName = "IsDeleted";
             this.olvDeleted.Text = "Deleted?";
+            // 
+            // olvNumber
+            // 
+            this.olvNumber.AspectName = "NumberOfFiles";
+            this.olvNumber.Text = "# files";
             // 
             // DuplicateMovieFinder
             // 
@@ -226,5 +234,6 @@ namespace TVRename.Forms
         private BrightIdeasSoftware.OLVColumn olvDoublePart;
         private BrightIdeasSoftware.OLVColumn olvSample;
         private BrightIdeasSoftware.OLVColumn olvDeleted;
+        private BrightIdeasSoftware.OLVColumn olvNumber;
     }
 }

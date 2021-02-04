@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename.Forms
 {
     public partial class DuplicateMovieFinder : Form
     {
+        private static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
         private readonly List<DuplicateMovie> dupMovies;
         private readonly TVDoc mDoc;
         private readonly UI mainUi;
@@ -121,13 +124,107 @@ namespace TVRename.Forms
 
             AddRcMenuItem("Force Refresh", (o, args) => mainUi.ForceMovieRefresh(new List<MovieConfiguration> { si }, false));
             AddRcMenuItem("Edit Movie", (o, args) => mainUi.EditMovie(si));
+            AddRcMenuItem("Choose Best", (o, args) => MergeItems(mlastSelected, mainUi));
             possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
             foreach (FileInfo? f in mlastSelected.Files)
             {
                 AddRcMenuItem("Visit " + f.FullName, (o, args) => Helpers.OpenFolderSelectFile(f.FullName));
             }
         }
+
+        private void MergeItems(DuplicateMovie mlastSelected, UI ui)
+        {
+            foreach (var file1 in mlastSelected.Files)
+            {
+                foreach (FileInfo file2 in mlastSelected.Files)
+                {
+                    if (string.CompareOrdinal(file1.FullName,file2.FullName)>1)
+                    {
+                        MergeConfigurationAndFiles(mlastSelected.Movie, file1, file2, ui);
+                    }
+                }
+            }
+        }
+
+        private void MergeConfigurationAndFiles(MovieConfiguration mlastSelectedMovie, FileInfo file1, FileInfo file2, UI ui)
+        {
+            FileHelper.VideoComparison result = FileHelper.BetterQualityFile(file1, file2);
+
+            FileHelper.VideoComparison newResult = result;
+
+            switch (newResult)
+            {
+                case FileHelper.VideoComparison.secondFileBetter:
+                    //remove first file and combine locations
+                    UpgradeFile("System had identified to", file2, mlastSelectedMovie, file1);
+                    break;
+                case FileHelper.VideoComparison.cantTell:
+                case FileHelper.VideoComparison.similar:
+                {
+                     AskUserAboutFileReplacement(file1, file2, mlastSelectedMovie, ui);
+                     return;
+                }
+                //the other cases of the files being the same or the existing file being better are not enough to save the file
+                case FileHelper.VideoComparison.firstFileBetter:
+                case FileHelper.VideoComparison.same:
+                    //remove second file and combine locations
+                    UpgradeFile("System had identified to", file1, mlastSelectedMovie, file2);
+                    return ;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private static void AskUserAboutFileReplacement(FileInfo file1, FileInfo file2, [NotNull] MovieConfiguration pep, IDialogParent owner)
+        {
+            try
+            {
+                ChooseFile question = new ChooseFile(file1, file2);
+
+                owner.ShowChildDialog(question);
+                ChooseFile.ChooseFileDialogResult result = question.Answer;
+                question.Dispose();
+
+                switch (result)
+                {
+                    case ChooseFile.ChooseFileDialogResult.ignore:
+                        LOGGER.Info($" User has selected keeping {file1.FullName} and {file2.FullName} and they will not be merged");
+                        return ;
+                    case ChooseFile.ChooseFileDialogResult.left:
+                        UpgradeFile("User selected to", file1, pep, file2);
+                        return;
+                    case ChooseFile.ChooseFileDialogResult.right:
+                        UpgradeFile("User selected to", file2, pep, file1);
+                        return;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                return;
+            }
+        }
+
+        private static void UpgradeFile(string message, FileInfo keepFile, MovieConfiguration movie, FileInfo removeFile)
+        {
+            LOGGER.Info($"{message} remove {removeFile.FullName} as it is not as good quality than {keepFile.FullName}");
+
+            if (movie.ManualLocations.Contains(removeFile.DirectoryName))
+            {
+                movie.ManualLocations.Remove(removeFile.DirectoryName);
+            }
+            removeFile.Delete();
+
+            if (removeFile.Directory.GetDirectories().Length >0) { return; }
+
+            if (removeFile.Directory.GetFiles().Any(f => f.IsMovieFile())) { return; }
+
+            FileHelper.DoTidyUp(removeFile.Directory,TVSettings.Instance.Tidyup);
+        }
     }
+
+
 
     public class DuplicateMovie
     {
@@ -138,6 +235,7 @@ namespace TVRename.Forms
         public bool IsDeleted;
         public string Name => Movie.ShowName;
         public string Filenames => Files.Select(info => info.FullName).ToCsv();
+        public int NumberOfFiles => Files.Count;
     }
 }
 

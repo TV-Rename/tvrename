@@ -54,7 +54,7 @@ namespace TVRename
                     if (Tidyup != null && Tidyup.DeleteEmpty)
                     {
                         LOGGER.Info($"Testing {toRemove.Parent.FullName } to see whether it should be tidied up");
-                        DoTidyup(toRemove.Parent);
+                        DoTidyUp(toRemove.Parent);
                     }
                 }
                 return ActionOutcome.Success();

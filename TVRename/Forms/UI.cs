@@ -1517,7 +1517,7 @@ namespace TVRename
             // 3 - 6 = do date sort on 3
             // 1 or 2 = number sort
             // all others, text sort
-
+            
             lvwScheduleColumnSorter.ClickedOn(col);
             lvWhenToWatch.ShowGroups = false;
 

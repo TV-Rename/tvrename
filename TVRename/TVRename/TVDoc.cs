@@ -1621,8 +1621,8 @@ namespace TVRename
 
                 try
                 {
-                    string[] x = Directory.GetFiles(downloadFolder, "*", SearchOption.AllDirectories);
-                    Logger.Info($"Processing {x.Length} files for shows that need to be scanned");
+                    var x = Directory.GetFiles(downloadFolder, "*", SearchOption.AllDirectories).OrderBy(s => s).ToList();
+                    Logger.Info($"Processing {x.Count()} files for shows that need to be scanned");
 
                     foreach (string filePath in x)
                     {

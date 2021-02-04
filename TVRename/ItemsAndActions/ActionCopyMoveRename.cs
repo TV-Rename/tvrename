@@ -84,6 +84,11 @@ namespace TVRename
                 //we use a temp name just in case we are interrupted or some other problem occurs
                 string tempName = TempFor(To);
 
+                if (!Directory.Exists(To.Directory.FullName))
+                {
+                    Directory.CreateDirectory(To.Directory.FullName);
+                }
+
                 // If both full filenames are the same then we want to move it away and back
                 //This deals with an issue on some systems (XP?) that case insensitive moves did not occur
                 if (IsMoveRename() || FileHelper.Same(From, To))
@@ -166,7 +171,7 @@ namespace TVRename
                 if (Operation == Op.move && Tidyup != null && Tidyup.DeleteEmpty)
                 {
                     LOGGER.Info($"Testing {From.Directory.FullName} to see whether it should be tidied up");
-                    DoTidyup(From.Directory);
+                    DoTidyUp(From.Directory);
                 }
             }
             catch (Exception e)

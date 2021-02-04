@@ -46,7 +46,7 @@ namespace TVRename
                     if (Tidyup != null && Tidyup.DeleteEmpty)
                     {
                         LOGGER.Info($"Testing {toRemove.Directory.FullName } to see whether it should be tidied up");
-                        DoTidyup(toRemove.Directory);
+                        DoTidyUp(toRemove.Directory);
                     }
                 }
             }

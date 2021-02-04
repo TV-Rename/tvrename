@@ -24,6 +24,121 @@ namespace TVRename
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
+        internal static void DeleteOrRecycleFolder(DirectoryInfo? di, TVSettings.TidySettings? tidyup)
+        {
+            if (di is null)
+            {
+                return;
+            }
+
+            if (tidyup == null || tidyup.DeleteEmptyIsRecycle)
+            {
+                Logger.Info($"Recycling {di.FullName}");
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName,
+                    Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                    Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+            }
+            else
+            {
+                Logger.Info($"Deleting {di.FullName}");
+                di.Delete(true, true);
+            }
+        }
+
+        public static void DoTidyUp(DirectoryInfo? di, TVSettings.TidySettings? settings)
+        {
+            if (settings is null || !settings.DeleteEmpty)
+            {
+                return;
+            }
+
+            // See if we should now delete the folder we just moved that file from.
+            if (di is null)
+            {
+                return;
+            }
+
+            //if there are sub-directories then we shouldn't remove this one
+            DirectoryInfo[] directories = di.GetDirectories();
+            foreach (DirectoryInfo subdi in directories)
+            {
+                bool okToDelete = settings.EmptyIgnoreWordsArray.Any(word =>
+                    subdi.Name.Contains(word, StringComparison.OrdinalIgnoreCase));
+
+                if (!okToDelete)
+                {
+                    return;
+                }
+            }
+            //we know that each subfolder is OK to delete
+
+            //if the directory is the root download folder do not delete
+            if (TVSettings.Instance.DownloadFolders.Contains(di.FullName))
+            {
+                return;
+            }
+
+            // Do not delete any monitor folders either
+            if (TVSettings.Instance.LibraryFolders.Contains(di.FullName))
+            {
+                return;
+            }
+            if (TVSettings.Instance.MovieLibraryFolders.Contains(di.FullName))
+            {
+                return;
+            }
+
+            FileInfo[] files = di.GetFiles();
+            if (files.Length == 0)
+            {
+                // its empty, so just delete it
+                DeleteOrRecycleFolder(di,settings);
+                return;
+            }
+
+            if (settings.EmptyIgnoreExtensions && !settings.EmptyIgnoreWords)
+            {
+                return; // nope
+            }
+
+            foreach (FileInfo fi in files)
+            {
+                bool okToDelete = settings.EmptyIgnoreExtensions &&
+                                  settings.EmptyIgnoreExtensionsArray.Contains(fi.Extension);
+
+                if (okToDelete)
+                {
+                    continue; // onto the next file
+                }
+
+                // look in the filename
+                if (settings.EmptyIgnoreWordsArray.Any(word =>
+                    fi.Name.Contains(word, StringComparison.OrdinalIgnoreCase)))
+                {
+                    okToDelete = true;
+                }
+
+                if (!okToDelete)
+                {
+                    return;
+                }
+            }
+
+            if (settings.EmptyMaxSizeCheck)
+            {
+                // how many MB are we deleting?
+                long totalBytes = files.Sum(fi => fi.Length);
+
+                if (totalBytes / (1024 * 1024) > settings.EmptyMaxSizeMB)
+                {
+                    return; // too much
+                }
+            }
+
+            DeleteOrRecycleFolder(di,settings);
+        }
+
+
         public static int GetFrameWidth([NotNull] this FileInfo movieFile)
         {
             return GetMetaDetails(movieFile, o => o.Properties.System.Video.FrameWidth, Parse, "GetFrameWidth",
