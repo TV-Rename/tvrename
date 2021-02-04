@@ -138,7 +138,7 @@ namespace TVRename.Forms
             {
                 foreach (FileInfo file2 in mlastSelected.Files)
                 {
-                    if (string.CompareOrdinal(file1.FullName,file2.FullName)>1)
+                    if (string.CompareOrdinal(file1.FullName,file2.FullName)>0)
                     {
                         MergeConfigurationAndFiles(mlastSelected.Movie, file1, file2, ui);
                     }
@@ -209,18 +209,36 @@ namespace TVRename.Forms
         private static void UpgradeFile(string message, FileInfo keepFile, MovieConfiguration movie, FileInfo removeFile)
         {
             LOGGER.Info($"{message} remove {removeFile.FullName} as it is not as good quality than {keepFile.FullName}");
-
-            if (movie.ManualLocations.Contains(removeFile.DirectoryName))
+            try
             {
-                movie.ManualLocations.Remove(removeFile.DirectoryName);
+                if (movie.ManualLocations.Contains(removeFile.DirectoryName))
+                {
+                    movie.ManualLocations.Remove(removeFile.DirectoryName);
+                }
+
+                removeFile.Delete();
+
+                if (removeFile.Directory.GetDirectories().Length > 0)
+                {
+                    return;
+                }
+
+                if (removeFile.Directory.GetFiles().Any(f => f.IsMovieFile()))
+                {
+                    return;
+                }
+
+                FileHelper.DoTidyUp(removeFile.Directory, TVSettings.Instance.Tidyup);
             }
-            removeFile.Delete();
-
-            if (removeFile.Directory.GetDirectories().Length >0) { return; }
-
-            if (removeFile.Directory.GetFiles().Any(f => f.IsMovieFile())) { return; }
-
-            FileHelper.DoTidyUp(removeFile.Directory,TVSettings.Instance.Tidyup);
+            catch (FileNotFoundException)
+            { //ignored}
+            }
+            catch (DirectoryNotFoundException)
+            { //ignored}
+            }
+            catch (IOException)
+            { //ignored}
+            }
         }
     }
 
