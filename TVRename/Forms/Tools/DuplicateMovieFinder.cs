@@ -132,6 +132,10 @@ namespace TVRename.Forms
                 mainUi.ForceMovieRefresh(new List<MovieConfiguration> {si}, false);
                 Update(mlastSelected);
             });
+            AddRcMenuItem("Update", (o, args) =>
+            {
+                Update(mlastSelected);
+            });
             AddRcMenuItem("Edit Movie", (o, args) =>
             {
                 mainUi.EditMovie(si);
@@ -149,6 +153,20 @@ namespace TVRename.Forms
                     Update(mlastSelected);
                 });
             }
+
+            possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
+
+            AddRcMenuItem("Quick Merge All", (o, args) =>
+            {
+                foreach (var testMov in dupMovies.Where(m=> m.IsDoublePart==false &&m.IsDeleted==false && m.IsSample==false && m.NumberOfFiles==2))
+                {
+                    if (testMov.Files[0].FileNameNoExt() == testMov.Files[1].FileNameNoExt())
+                    {
+                        MergeItems(testMov, mainUi);
+                    }
+                }
+            });
+
         }
         private void Update(DuplicateMovie duplicate)
         {
