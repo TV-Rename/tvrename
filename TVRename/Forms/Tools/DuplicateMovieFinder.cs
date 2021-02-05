@@ -46,36 +46,41 @@ namespace TVRename.Forms
 
         private void BwScan_DoWork(object sender, DoWorkEventArgs e)
         {
-            BackgroundWorker bw = (BackgroundWorker) sender;
+            BackgroundWorker bw = (BackgroundWorker)sender;
             int total = mDoc.FilmLibrary.Movies.Count();
             int current = 0;
 
             dupMovies.Clear();
             foreach (MovieConfiguration? movie in mDoc.FilmLibrary.Movies)
             {
-                List<FileInfo> files = movie.Locations
-                    .Select(s => new DirectoryInfo(s))
-                    .Where(info => info.Exists)
-                    .SelectMany(d=>d.GetFiles())
-                    .Where(f => f.IsMovieFile())
-                    .Distinct()
-                    .ToList();
-
-                if (files.Count > 1)
-                {
-                    DuplicateMovie duplicateMovie = new DuplicateMovie{Movie=movie,Files=files};
-                    dupMovies.Add(duplicateMovie);
-
-                    duplicateMovie.IsSample = files.Any(f => f.IsSampleFile());
-                    duplicateMovie.IsDeleted = files.Any(f => f.IsDeletedStubFile());
-
-                    if (files.Count == 2)
-                    {
-                       duplicateMovie.IsDoublePart = FileHelper.IsDoublePartMovie(files[0],files[1]);
-                    }
-                }
+                ProcessMovie(movie);
 
                 bw.ReportProgress(100 * current++ / total, movie.ShowName);
+            }
+        }
+
+        private void ProcessMovie(MovieConfiguration movie)
+        {
+            List<FileInfo> files = movie.Locations
+                                .Select(s => new DirectoryInfo(s))
+                                .Where(info => info.Exists)
+                                .SelectMany(d => d.GetFiles())
+                                .Where(f => f.IsMovieFile())
+                                .Distinct()
+                                .ToList();
+
+            if (files.Count > 1)
+            {
+                DuplicateMovie duplicateMovie = new DuplicateMovie { Movie = movie, Files = files };
+                dupMovies.Add(duplicateMovie);
+
+                duplicateMovie.IsSample = files.Any(f => f.IsSampleFile());
+                duplicateMovie.IsDeleted = files.Any(f => f.IsDeletedStubFile());
+
+                if (files.Count == 2)
+                {
+                    duplicateMovie.IsDoublePart = FileHelper.IsDoublePartMovie(files[0], files[1]);
+                }
             }
         }
 
@@ -117,33 +122,56 @@ namespace TVRename.Forms
                 return;
             }
 
-            DuplicateMovie mlastSelected = (DuplicateMovie) e.Model;
+            DuplicateMovie mlastSelected = (DuplicateMovie)e.Model;
             MovieConfiguration si = mlastSelected.Movie;
 
             possibleMergedEpisodeRightClickMenu.Items.Clear();
 
-            AddRcMenuItem("Force Refresh", (o, args) => mainUi.ForceMovieRefresh(new List<MovieConfiguration> { si }, false));
-            AddRcMenuItem("Edit Movie", (o, args) => mainUi.EditMovie(si));
+            AddRcMenuItem("Force Refresh", (o, args) =>
+            {
+                mainUi.ForceMovieRefresh(new List<MovieConfiguration> {si}, false);
+                Update(mlastSelected);
+            });
+            AddRcMenuItem("Edit Movie", (o, args) =>
+            {
+                mainUi.EditMovie(si);
+                Update(mlastSelected);
+            });
             AddRcMenuItem("Choose Best", (o, args) => MergeItems(mlastSelected, mainUi));
+
             possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
+
             foreach (FileInfo? f in mlastSelected.Files)
             {
-                AddRcMenuItem("Visit " + f.FullName, (o, args) => Helpers.OpenFolderSelectFile(f.FullName));
+                AddRcMenuItem("Visit " + f.FullName, (o, args) =>
+                {
+                    Helpers.OpenFolderSelectFile(f.FullName);
+                    Update(mlastSelected);
+                });
             }
         }
-
+        private void Update(DuplicateMovie duplicate)
+        {
+            if (dupMovies.Contains(duplicate))
+            {
+                dupMovies.Remove(duplicate);
+            }
+            ProcessMovie(duplicate.Movie);
+            UpdateUI();
+        }
         private void MergeItems(DuplicateMovie mlastSelected, UI ui)
         {
             foreach (var file1 in mlastSelected.Files)
             {
                 foreach (FileInfo file2 in mlastSelected.Files)
                 {
-                    if (string.CompareOrdinal(file1.FullName,file2.FullName)>0)
+                    if (string.CompareOrdinal(file1.FullName, file2.FullName) > 0)
                     {
                         MergeConfigurationAndFiles(mlastSelected.Movie, file1, file2, ui);
                     }
                 }
             }
+            Update(mlastSelected);
         }
 
         private void MergeConfigurationAndFiles(MovieConfiguration mlastSelectedMovie, FileInfo file1, FileInfo file2, UI ui)
@@ -160,16 +188,16 @@ namespace TVRename.Forms
                     break;
                 case FileHelper.VideoComparison.cantTell:
                 case FileHelper.VideoComparison.similar:
-                {
-                     AskUserAboutFileReplacement(file1, file2, mlastSelectedMovie, ui);
-                     return;
-                }
+                    {
+                        AskUserAboutFileReplacement(file1, file2, mlastSelectedMovie, ui);
+                        return;
+                    }
                 //the other cases of the files being the same or the existing file being better are not enough to save the file
                 case FileHelper.VideoComparison.firstFileBetter:
                 case FileHelper.VideoComparison.same:
                     //remove second file and combine locations
                     UpgradeFile("System had identified to", file1, mlastSelectedMovie, file2);
-                    return ;
+                    return;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -189,7 +217,7 @@ namespace TVRename.Forms
                 {
                     case ChooseFile.ChooseFileDialogResult.ignore:
                         LOGGER.Info($" User has selected keeping {file1.FullName} and {file2.FullName} and they will not be merged");
-                        return ;
+                        return;
                     case ChooseFile.ChooseFileDialogResult.left:
                         UpgradeFile("User selected to", file1, pep, file2);
                         return;
