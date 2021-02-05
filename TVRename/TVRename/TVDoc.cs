@@ -1807,6 +1807,11 @@ namespace TVRename
 
         private bool HasMissingFiles(MovieConfiguration si,DirectoryInfo folder)
         {
+            if (!folder.Exists)
+            {
+                return true;
+            }
+
             FileInfo[] files = folder.GetFiles();
             FileInfo[] movieFiles = files.Where(f => f.IsMovieFile()).ToArray();
 
