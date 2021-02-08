@@ -21,13 +21,31 @@ namespace TVRename.TheTVDB
                     // ReSharper disable once HeuristicUnreachableCode
                     ApiVersion.v3 => "https://api-dev.thetvdb.com",
                     // ReSharper disable once HeuristicUnreachableCode
+                    ApiVersion.v4 => "https://api4.thetvdb.com/v4",
                     _ => throw new NotSupportedException()
                 };
             }
         }
 
-        public static readonly string TVDB_API_KEY = "5FEC454623154441";
-
+        // ReSharper disable once InconsistentNaming
+        public static string TVDB_API_KEY
+        {
+            get
+            {
+                return LocalCache.VERS switch
+                {
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    ApiVersion.v2 => "5FEC454623154441",
+                    // ReSharper disable once HeuristicUnreachableCode
+                    // ReSharper disable once HeuristicUnreachableCode
+                    ApiVersion.v3 => "5FEC454623154441",
+                    // ReSharper disable once HeuristicUnreachableCode
+                    ApiVersion.v4 => "b6bcc474-b211-4c8d-ac8c-2cfccab56e9b",
+                    _ => throw new NotSupportedException()
+                };
+            }
+        }
+        
         private string lastKnownToken = string.Empty;
         private DateTime lastRefreshTime = DateTime.MinValue;
 
@@ -62,10 +80,10 @@ namespace TVRename.TheTVDB
         private void AcquireToken()
         {
             Logger.Info("Acquire a TheTVDB token... ");
-            JObject request = new JObject(new JProperty("apikey", TVDB_API_KEY));
+            JObject request = new JObject(new JProperty("apikey", TVDB_API_KEY), new JProperty("pin", "TVDB_API_KEY"));
             JObject jsonResponse = HttpHelper.JsonHttpPostRequest($"{TVDB_API_URL}/login", request, true);
 
-            string newToken = (string)jsonResponse["token"];
+            string newToken = (string)jsonResponse["data"]["token"];
             if (newToken == null)
             {
                 Logger.Error("Could not refresh Token");

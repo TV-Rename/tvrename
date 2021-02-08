@@ -32,16 +32,16 @@ namespace TVRename.TheTVDB
     public enum ApiVersion
     {
         v2,
-        v3
+        v3,
+        v4
     }
 
     // ReSharper disable once InconsistentNaming
     public class LocalCache :  MediaCache, iTVSource
     {
 #nullable enable
-        public static readonly ApiVersion VERS = ApiVersion.v2;
+        public static readonly ApiVersion VERS = ApiVersion.v3; //TODO - Revert and make user selectable
 
-        
         private ConcurrentDictionary<int, ExtraEp>
             extraEpisodes; // IDs of extra episodes to grab and merge in on next update
 
@@ -223,7 +223,19 @@ namespace TVRename.TheTVDB
 
         public bool Connect(bool showErrorMsgBox)
         {
-            IsConnected = UpdateLanguages(showErrorMsgBox);
+            switch (VERS)
+            {
+                case ApiVersion.v2:
+                case ApiVersion.v3:
+                    IsConnected = UpdateLanguages(showErrorMsgBox);
+                    break;
+                case ApiVersion.v4:
+                    IsConnected = UpdateLanguages(showErrorMsgBox);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            
             return IsConnected;
         }
 

@@ -220,10 +220,16 @@ namespace TVRename.TheTVDB
         [NotNull]
         public static JObject GetUpdatesSince(long time, string lang)
         {
-            string uri = TokenProvider.TVDB_API_URL + "/updated/query";
+            string uri = LocalCache.VERS==ApiVersion.v4
+                ? TokenProvider.TVDB_API_URL + "/updates"
+                : TokenProvider.TVDB_API_URL + "/updated/query";
+
+            string keyName = LocalCache.VERS == ApiVersion.v4
+                ? "since"
+                : "fromTime;";
 
             return JsonHttpGetRequest(uri,
-                new Dictionary<string, string> { { "fromTime", time.ToString() } },
+                new Dictionary<string, string> { { keyName, time.ToString() } },
                 TokenProvider, lang, true);
         }
 

@@ -122,6 +122,7 @@ namespace TVRename
             if (!token.IsNullOrWhitespace())
             {
                 httpWebRequest.Headers.Add("Authorization", "Bearer " + token);
+                httpWebRequest.Headers.Add("x-api-key", token);
             }
             if (lang != "")
             {
