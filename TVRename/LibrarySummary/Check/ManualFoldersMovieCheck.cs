@@ -110,16 +110,16 @@ namespace TVRename
                 //Copy files
                 foreach (FileInfo file in fromDirectory.EnumerateFiles())
                 {
-                    string destFile = Path.Combine(toDirectory, file.FullName);
+                    string destFile = Path.Combine(toDirectory, file.Name);
                     if (!File.Exists(destFile))
                     {
                         file.MoveTo(destFile);
                         //File.Move(file, destFile);
-                    }
-                    LOGGER.Info($"Moved {file.FullName} to {destFile}");
 
+                        LOGGER.Info($"Moved {file.FullName} to {destFile}");
+                    }
                 }
-                    
+
                 if (Directory.IsEmpty(fromDirectory.FullName))
                 {
                     fromDirectory.Delete(false);
