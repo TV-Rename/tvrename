@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using TVRename.Forms.Utilities;
+using TVRename.TheTVDB; //todo - remove this
 
 namespace TVRename
 {
@@ -272,14 +273,18 @@ namespace TVRename
                     }
                 }
 
-                if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TheTVDB))
+                //TODO - Reinstate once v4 updates are working
+                if (TheTVDB.LocalCache.VERS != ApiVersion.v4)
                 {
-                    if (!TheTVDB.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
-                        downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TheTVDB)))
+                    if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TheTVDB))
                     {
-                        DownloadDone = true;
-                        downloadOk = false;
-                        return;
+                        if (!TheTVDB.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
+                            downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TheTVDB)))
+                        {
+                            DownloadDone = true;
+                            downloadOk = false;
+                            return;
+                        }
                     }
                 }
 

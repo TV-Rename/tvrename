@@ -987,7 +987,7 @@ namespace TVRename.TMDB
 
         private string? GetCertification(Movie downloadedMovie, string country)
         {
-            return downloadedMovie.ReleaseDates.Results
+            return downloadedMovie.ReleaseDates?.Results
                 .Where(rel => rel.Iso_3166_1 == country)
                 .Select(rel => rel.ReleaseDates.First().Certification)
                 .FirstOrDefault();

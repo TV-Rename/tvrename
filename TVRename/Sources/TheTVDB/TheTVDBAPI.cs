@@ -13,6 +13,9 @@ namespace TVRename.TheTVDB
     // ReSharper disable once InconsistentNaming
     internal static class API
     {
+        //V4 Doco: https://app.swaggerhub.com/apis/tvdb/tvdb-api-v4/4.0.1#
+        //         https://app.swaggerhub.com/apis-docs/thetvdb/tvdb-api_v_4/4.0.0#
+
         // ReSharper disable once ConvertToConstant.Local
         private static readonly string WebsiteRoot = "https://thetvdb.com";
         // ReSharper disable once ConvertToConstant.Local
@@ -193,6 +196,10 @@ namespace TVRename.TheTVDB
 
             try
             {
+                if (!response.HasValue())
+                {
+                    return null;
+                }
                 return JObject.Parse(response);
             }
             catch (JsonReaderException)
@@ -226,7 +233,7 @@ namespace TVRename.TheTVDB
 
             string keyName = LocalCache.VERS == ApiVersion.v4
                 ? "since"
-                : "fromTime;";
+                : "fromTime";
 
             return JsonHttpGetRequest(uri,
                 new Dictionary<string, string> { { keyName, time.ToString() } },
@@ -307,6 +314,12 @@ namespace TVRename.TheTVDB
             return JsonHttpGetRequest(uri, new Dictionary<string, string> { { "name", text } }, TokenProvider, defaultLanguageCode, false);
         }
 
+        public static JObject SearchV4(string text, string defaultLanguageCode)
+        {
+            string uri = TokenProvider.TVDB_API_URL + "/search";
+            return JsonHttpGetRequest(uri, new Dictionary<string, string> { { "q", text } , { "type", "series" } }, TokenProvider, defaultLanguageCode, false);
+        }
+
         public static bool TvdbIsUp()
         {
             JObject jsonResponse;
@@ -319,7 +332,7 @@ namespace TVRename.TheTVDB
             {
                 //we expect an Unauthorised response - so we know the site is up
 
-                if (ex.Status == WebExceptionStatus.ProtocolError && !(ex.Response is null) && ex.Response is HttpWebResponse resp)
+                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse resp)
                 {
                     return resp.StatusCode switch
                     {
@@ -373,11 +386,22 @@ namespace TVRename.TheTVDB
             return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
         }
 
+        public static JObject GetSeriesV4(int code, string requestedLanguageCode)
+        {
+            string uri = $"{TokenProvider.TVDB_API_URL}/series/{code}/extended";
+            return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
+        }
+
         [NotNull]
         public static JObject GetEpisode(int episodeId, string requestLangCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/episodes/{episodeId}";
             return JsonHttpGetRequest(uri, null, TokenProvider, requestLangCode, true);
+        }
+
+        public static void Login()
+        {
+            TokenProvider.EnsureValid();
         }
     }
 }

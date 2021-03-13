@@ -287,6 +287,7 @@
     <Compile Include="Exporter\MoviesExporter.cs" />
     <Compile Include="Exporter\MoviesHtml.cs" />
     <Compile Include="Exporter\MoviesTxt.cs" />
+    <Compile Include="Exporter\UpcomingTXT.cs" />
     <Compile Include="Forms\Supporting\LinkMovie.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -453,6 +454,8 @@
     </Compile>
     <Compile Include="ScanActivity\ScanShowActivity\CheckAllMovieFoldersExist.cs" />
     <Compile Include="ScanActivity\ScanShowActivity\RenameAndMissingMovieCheck.cs" />
+    <Compile Include="ScanActivity\ScanShowActivity\ScanMediaActivity.cs" />
+    <Compile Include="ScanActivity\ScanShowActivity\ScanMovieActivity.cs" />
     <Compile Include="Settings\AppState\UpdateCheck.cs" />
     <Compile Include="Settings\MovieConfiguration.cs" />
     <Compile Include="Settings\MovieFilter.cs" />

@@ -133,6 +133,13 @@ namespace TVRename
             return instr.Substring(0, instr.Length - 1);
         }
 
+        public static string First(this string s, int charsToDisplay)
+        {
+            if (!string.IsNullOrWhiteSpace(s))
+                return s.Length <= charsToDisplay ? s : new string(s.Take(charsToDisplay).ToArray());
+            return string.Empty;
+        }
+
         [NotNull]
         public static string Initial([NotNull] this string str) => str.HasValue() ? str.Substring(0, 1): string.Empty;
 

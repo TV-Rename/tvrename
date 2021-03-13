@@ -154,6 +154,7 @@ namespace TVRename
             ValidateExporterLocation(cbWTWRSS, txtWTWRSS);
             ValidateExporterLocation(cbWTWXML, txtWTWXML);
             ValidateExporterLocation(cbWTWICAL, txtWTWICAL);
+            ValidateExporterLocation(cbWTWTXT, txtWTWTXT);
 
             ValidateExporterLocation(cbMissingXML , txtMissingXML);
             ValidateExporterLocation(cbMissingCSV, txtMissingCSV);
@@ -232,6 +233,8 @@ namespace TVRename
             s.ExportWTWRSSTo = txtWTWRSS.Text;
             s.ExportWTWXML = cbWTWXML.Checked;
             s.ExportWTWXMLTo = txtWTWXML.Text;
+            s.ExportWTWTXT = cbWTWTXT.Checked;
+            s.ExportWTWTXTTo = txtWTWTXT.Text;
             s.ExportWTWICAL = cbWTWICAL.Checked;
             s.ExportWTWICALTo = txtWTWICAL.Text;
             s.ExportMissingXML = cbMissingXML.Checked;
@@ -823,6 +826,8 @@ namespace TVRename
             txtWTWDays.Text = s.WTWRecentDays.ToString();
             cbWTWXML.Checked = s.ExportWTWXML;
             txtWTWXML.Text = s.ExportWTWXMLTo;
+            cbWTWTXT.Checked = s.ExportWTWTXT;
+            txtWTWTXT.Text = s.ExportWTWTXTTo;
             txtExportRSSMaxDays.Text = s.ExportRSSMaxDays.ToString();
             txtExportRSSMaxShows.Text = s.ExportRSSMaxShows.ToString();
             txtExportRSSDaysPast.Text = s.ExportRSSDaysPast.ToString();
@@ -1495,6 +1500,7 @@ namespace TVRename
             SetEnabled(cbWTWRSS, txtWTWRSS, bnBrowseWTWRSS);
             SetEnabled(cbWTWXML, txtWTWXML, bnBrowseWTWXML);
             SetEnabled(cbWTWICAL, txtWTWICAL, bnBrowseWTWICAL);
+            SetEnabled(cbWTWTXT, txtWTWTXT, bnBrowseWTWTXT);
             SetEnabled(cbM3U, txtM3U, bnBrowseM3U);
             SetEnabled(cbXSPF, txtXSPF, bnBrowseXSPF);
             SetEnabled(cbASX, txtASX, bnBrowseASX);
@@ -2133,7 +2139,9 @@ namespace TVRename
         private void bnBrowseMissingMoviesCSV_Click(object sender, EventArgs e) => Browse(txtMissingMoviesCSV, "csv", 3);
         private void bnBrowseMoviesTXT_Click(object sender, EventArgs e) => Browse(txtMoviesTXTTo, "txt", 4);
         private void bnBrowseMoviesHTML_Click(object sender, EventArgs e) => Browse(txtMoviesHTMLTo, "html", 5);
-        
+        private void bnBrowseWTWTXT_Click(object sender, EventArgs e) => Browse(txtWTWTXT, "txt", 4);
+
+
         private void Browse([NotNull] Control txt, string defaultExt, int filterIndex)
         {
             //rss =1, XML = 2, CSV = 3, TXT=4, HTML = 5

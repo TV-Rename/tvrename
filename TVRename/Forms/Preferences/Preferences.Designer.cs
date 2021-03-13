@@ -478,12 +478,15 @@ namespace TVRename
             this.cbMissingCSV = new System.Windows.Forms.CheckBox();
             this.txtMissingXML = new System.Windows.Forms.TextBox();
             this.tbAppUpdate = new System.Windows.Forms.TabPage();
-            this.chkUpdateCheckEnabled = new System.Windows.Forms.CheckBox();
             this.grpUpdateIntervalOption = new System.Windows.Forms.GroupBox();
-            this.optUpdateCheckAlways = new System.Windows.Forms.RadioButton();
-            this.optUpdateCheckInterval = new System.Windows.Forms.RadioButton();
-            this.cboUpdateCheckInterval = new System.Windows.Forms.ComboBox();
             this.chkNoPopupOnUpdate = new System.Windows.Forms.CheckBox();
+            this.cboUpdateCheckInterval = new System.Windows.Forms.ComboBox();
+            this.optUpdateCheckInterval = new System.Windows.Forms.RadioButton();
+            this.optUpdateCheckAlways = new System.Windows.Forms.RadioButton();
+            this.chkUpdateCheckEnabled = new System.Windows.Forms.CheckBox();
+            this.bnBrowseWTWTXT = new System.Windows.Forms.Button();
+            this.txtWTWTXT = new System.Windows.Forms.TextBox();
+            this.cbWTWTXT = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -3079,7 +3082,7 @@ namespace TVRename
             this.groupBox10.Controls.Add(this.bnBrowseXSPF);
             this.groupBox10.Controls.Add(this.txtXSPF);
             this.groupBox10.Controls.Add(this.cbXSPF);
-            this.groupBox10.Location = new System.Drawing.Point(12, 318);
+            this.groupBox10.Location = new System.Drawing.Point(12, 343);
             this.groupBox10.Name = "groupBox10";
             this.groupBox10.Size = new System.Drawing.Size(405, 135);
             this.groupBox10.TabIndex = 5;
@@ -3217,7 +3220,7 @@ namespace TVRename
             this.groupBox5.Controls.Add(this.bnBrowseFOXML);
             this.groupBox5.Controls.Add(this.cbFOXML);
             this.groupBox5.Controls.Add(this.txtFOXML);
-            this.groupBox5.Location = new System.Drawing.Point(12, 257);
+            this.groupBox5.Location = new System.Drawing.Point(12, 282);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(405, 55);
             this.groupBox5.TabIndex = 3;
@@ -3262,7 +3265,7 @@ namespace TVRename
             this.groupBox4.Controls.Add(this.bnBrowseRenamingXML);
             this.groupBox4.Controls.Add(this.cbRenamingXML);
             this.groupBox4.Controls.Add(this.txtRenamingXML);
-            this.groupBox4.Location = new System.Drawing.Point(12, 195);
+            this.groupBox4.Location = new System.Drawing.Point(12, 219);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(405, 57);
             this.groupBox4.TabIndex = 2;
@@ -3304,6 +3307,9 @@ namespace TVRename
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.bnBrowseWTWTXT);
+            this.groupBox2.Controls.Add(this.txtWTWTXT);
+            this.groupBox2.Controls.Add(this.cbWTWTXT);
             this.groupBox2.Controls.Add(this.bnBrowseWTWICAL);
             this.groupBox2.Controls.Add(this.txtWTWICAL);
             this.groupBox2.Controls.Add(this.cbWTWICAL);
@@ -3322,7 +3328,7 @@ namespace TVRename
             this.groupBox2.Controls.Add(this.txtExportRSSMaxShows);
             this.groupBox2.Location = new System.Drawing.Point(12, 54);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(405, 135);
+            this.groupBox2.Size = new System.Drawing.Size(405, 159);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Schedule";
@@ -3361,7 +3367,7 @@ namespace TVRename
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(330, 109);
+            this.label4.Location = new System.Drawing.Point(327, 133);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(59, 13);
             this.label4.TabIndex = 21;
@@ -3369,7 +3375,7 @@ namespace TVRename
             // 
             // txtExportRSSDaysPast
             // 
-            this.txtExportRSSDaysPast.Location = new System.Drawing.Point(294, 106);
+            this.txtExportRSSDaysPast.Location = new System.Drawing.Point(291, 130);
             this.txtExportRSSDaysPast.Name = "txtExportRSSDaysPast";
             this.txtExportRSSDaysPast.Size = new System.Drawing.Size(28, 20);
             this.txtExportRSSDaysPast.TabIndex = 20;
@@ -3440,7 +3446,7 @@ namespace TVRename
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(212, 109);
+            this.label17.Location = new System.Drawing.Point(209, 133);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(79, 13);
             this.label17.TabIndex = 7;
@@ -3449,7 +3455,7 @@ namespace TVRename
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(120, 109);
+            this.label16.Location = new System.Drawing.Point(117, 133);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(52, 13);
             this.label16.TabIndex = 5;
@@ -3458,7 +3464,7 @@ namespace TVRename
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(9, 109);
+            this.label15.Location = new System.Drawing.Point(6, 133);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(71, 13);
             this.label15.TabIndex = 3;
@@ -3466,7 +3472,7 @@ namespace TVRename
             // 
             // txtExportRSSMaxDays
             // 
-            this.txtExportRSSMaxDays.Location = new System.Drawing.Point(178, 106);
+            this.txtExportRSSMaxDays.Location = new System.Drawing.Point(175, 130);
             this.txtExportRSSMaxDays.Name = "txtExportRSSMaxDays";
             this.txtExportRSSMaxDays.Size = new System.Drawing.Size(28, 20);
             this.txtExportRSSMaxDays.TabIndex = 6;
@@ -3474,7 +3480,7 @@ namespace TVRename
             // 
             // txtExportRSSMaxShows
             // 
-            this.txtExportRSSMaxShows.Location = new System.Drawing.Point(86, 106);
+            this.txtExportRSSMaxShows.Location = new System.Drawing.Point(83, 130);
             this.txtExportRSSMaxShows.Name = "txtExportRSSMaxShows";
             this.txtExportRSSMaxShows.Size = new System.Drawing.Size(28, 20);
             this.txtExportRSSMaxShows.TabIndex = 4;
@@ -5553,17 +5559,6 @@ namespace TVRename
             this.tbAppUpdate.Text = "App Updates";
             this.tbAppUpdate.UseVisualStyleBackColor = true;
             // 
-            // chkUpdateCheckEnabled
-            // 
-            this.chkUpdateCheckEnabled.AutoSize = true;
-            this.chkUpdateCheckEnabled.Location = new System.Drawing.Point(28, 22);
-            this.chkUpdateCheckEnabled.Name = "chkUpdateCheckEnabled";
-            this.chkUpdateCheckEnabled.Size = new System.Drawing.Size(115, 17);
-            this.chkUpdateCheckEnabled.TabIndex = 0;
-            this.chkUpdateCheckEnabled.Text = "Check for Updates";
-            this.chkUpdateCheckEnabled.UseVisualStyleBackColor = true;
-            this.chkUpdateCheckEnabled.CheckedChanged += new System.EventHandler(this.chkUpdateCheckEnabled_CheckedChanged);
-            // 
             // grpUpdateIntervalOption
             // 
             this.grpUpdateIntervalOption.Controls.Add(this.chkNoPopupOnUpdate);
@@ -5577,17 +5572,24 @@ namespace TVRename
             this.grpUpdateIntervalOption.TabStop = false;
             this.grpUpdateIntervalOption.Text = "Check for updates ...";
             // 
-            // optUpdateCheckAlways
+            // chkNoPopupOnUpdate
             // 
-            this.optUpdateCheckAlways.AutoSize = true;
-            this.optUpdateCheckAlways.Location = new System.Drawing.Point(16, 20);
-            this.optUpdateCheckAlways.Name = "optUpdateCheckAlways";
-            this.optUpdateCheckAlways.Size = new System.Drawing.Size(89, 17);
-            this.optUpdateCheckAlways.TabIndex = 0;
-            this.optUpdateCheckAlways.TabStop = true;
-            this.optUpdateCheckAlways.Text = "on every start";
-            this.optUpdateCheckAlways.UseVisualStyleBackColor = true;
-            this.optUpdateCheckAlways.CheckedChanged += new System.EventHandler(this.updateCheckOption_CheckedChanged);
+            this.chkNoPopupOnUpdate.AutoSize = true;
+            this.chkNoPopupOnUpdate.Location = new System.Drawing.Point(16, 112);
+            this.chkNoPopupOnUpdate.Name = "chkNoPopupOnUpdate";
+            this.chkNoPopupOnUpdate.Size = new System.Drawing.Size(169, 17);
+            this.chkNoPopupOnUpdate.TabIndex = 2;
+            this.chkNoPopupOnUpdate.Text = "No dialog on available Update";
+            this.chkNoPopupOnUpdate.UseVisualStyleBackColor = true;
+            // 
+            // cboUpdateCheckInterval
+            // 
+            this.cboUpdateCheckInterval.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboUpdateCheckInterval.FormattingEnabled = true;
+            this.cboUpdateCheckInterval.Location = new System.Drawing.Point(16, 68);
+            this.cboUpdateCheckInterval.Name = "cboUpdateCheckInterval";
+            this.cboUpdateCheckInterval.Size = new System.Drawing.Size(166, 21);
+            this.cboUpdateCheckInterval.TabIndex = 2;
             // 
             // optUpdateCheckInterval
             // 
@@ -5601,24 +5603,59 @@ namespace TVRename
             this.optUpdateCheckInterval.UseVisualStyleBackColor = true;
             this.optUpdateCheckInterval.CheckedChanged += new System.EventHandler(this.updateCheckOption_CheckedChanged);
             // 
-            // cboUpdateCheckInterval
+            // optUpdateCheckAlways
             // 
-            this.cboUpdateCheckInterval.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboUpdateCheckInterval.FormattingEnabled = true;
-            this.cboUpdateCheckInterval.Location = new System.Drawing.Point(16, 68);
-            this.cboUpdateCheckInterval.Name = "cboUpdateCheckInterval";
-            this.cboUpdateCheckInterval.Size = new System.Drawing.Size(166, 21);
-            this.cboUpdateCheckInterval.TabIndex = 2;
+            this.optUpdateCheckAlways.AutoSize = true;
+            this.optUpdateCheckAlways.Location = new System.Drawing.Point(16, 20);
+            this.optUpdateCheckAlways.Name = "optUpdateCheckAlways";
+            this.optUpdateCheckAlways.Size = new System.Drawing.Size(89, 17);
+            this.optUpdateCheckAlways.TabIndex = 0;
+            this.optUpdateCheckAlways.TabStop = true;
+            this.optUpdateCheckAlways.Text = "on every start";
+            this.optUpdateCheckAlways.UseVisualStyleBackColor = true;
+            this.optUpdateCheckAlways.CheckedChanged += new System.EventHandler(this.updateCheckOption_CheckedChanged);
             // 
-            // chkNoPopupOnUpdate
+            // chkUpdateCheckEnabled
             // 
-            this.chkNoPopupOnUpdate.AutoSize = true;
-            this.chkNoPopupOnUpdate.Location = new System.Drawing.Point(16, 112);
-            this.chkNoPopupOnUpdate.Name = "chkNoPopupOnUpdate";
-            this.chkNoPopupOnUpdate.Size = new System.Drawing.Size(169, 17);
-            this.chkNoPopupOnUpdate.TabIndex = 2;
-            this.chkNoPopupOnUpdate.Text = "No dialog on available Update";
-            this.chkNoPopupOnUpdate.UseVisualStyleBackColor = true;
+            this.chkUpdateCheckEnabled.AutoSize = true;
+            this.chkUpdateCheckEnabled.Location = new System.Drawing.Point(28, 22);
+            this.chkUpdateCheckEnabled.Name = "chkUpdateCheckEnabled";
+            this.chkUpdateCheckEnabled.Size = new System.Drawing.Size(115, 17);
+            this.chkUpdateCheckEnabled.TabIndex = 0;
+            this.chkUpdateCheckEnabled.Text = "Check for Updates";
+            this.chkUpdateCheckEnabled.UseVisualStyleBackColor = true;
+            this.chkUpdateCheckEnabled.CheckedChanged += new System.EventHandler(this.chkUpdateCheckEnabled_CheckedChanged);
+            // 
+            // bnBrowseWTWTXT
+            // 
+            this.bnBrowseWTWTXT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.bnBrowseWTWTXT.Location = new System.Drawing.Point(322, 102);
+            this.bnBrowseWTWTXT.Name = "bnBrowseWTWTXT";
+            this.bnBrowseWTWTXT.Size = new System.Drawing.Size(75, 23);
+            this.bnBrowseWTWTXT.TabIndex = 27;
+            this.bnBrowseWTWTXT.Text = "Browse...";
+            this.bnBrowseWTWTXT.UseVisualStyleBackColor = true;
+            this.bnBrowseWTWTXT.Click += new System.EventHandler(this.bnBrowseWTWTXT_Click);
+            // 
+            // txtWTWTXT
+            // 
+            this.txtWTWTXT.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtWTWTXT.Location = new System.Drawing.Point(65, 104);
+            this.txtWTWTXT.Name = "txtWTWTXT";
+            this.txtWTWTXT.Size = new System.Drawing.Size(250, 20);
+            this.txtWTWTXT.TabIndex = 26;
+            // 
+            // cbWTWTXT
+            // 
+            this.cbWTWTXT.AutoSize = true;
+            this.cbWTWTXT.Location = new System.Drawing.Point(8, 106);
+            this.cbWTWTXT.Name = "cbWTWTXT";
+            this.cbWTWTXT.Size = new System.Drawing.Size(47, 17);
+            this.cbWTWTXT.TabIndex = 25;
+            this.cbWTWTXT.Text = "TXT";
+            this.cbWTWTXT.UseVisualStyleBackColor = true;
+            this.cbWTWTXT.CheckedChanged += new System.EventHandler(this.EnableDisable);
             // 
             // Preferences
             // 
@@ -6222,5 +6259,8 @@ namespace TVRename
         private System.Windows.Forms.RadioButton optUpdateCheckInterval;
         private System.Windows.Forms.RadioButton optUpdateCheckAlways;
         private System.Windows.Forms.CheckBox chkUpdateCheckEnabled;
+        private System.Windows.Forms.Button bnBrowseWTWTXT;
+        private System.Windows.Forms.TextBox txtWTWTXT;
+        private System.Windows.Forms.CheckBox cbWTWTXT;
     }
 }

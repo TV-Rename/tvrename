@@ -19,7 +19,7 @@ namespace TVRename.TheTVDB
                     ApiVersion.v2 => "https://api.thetvdb.com",
                     // ReSharper disable once HeuristicUnreachableCode
                     // ReSharper disable once HeuristicUnreachableCode
-                    ApiVersion.v3 => "https://api-dev.thetvdb.com",
+                    ApiVersion.v3 => "https://api.thetvdb.com",
                     // ReSharper disable once HeuristicUnreachableCode
                     ApiVersion.v4 => "https://api4.thetvdb.com/v4",
                     _ => throw new NotSupportedException()
@@ -83,7 +83,7 @@ namespace TVRename.TheTVDB
             JObject request = new JObject(new JProperty("apikey", TVDB_API_KEY), new JProperty("pin", "TVDB_API_KEY"));
             JObject jsonResponse = HttpHelper.JsonHttpPostRequest($"{TVDB_API_URL}/login", request, true);
 
-            string newToken = (string)jsonResponse["data"]["token"];
+            string newToken = (LocalCache.VERS==ApiVersion.v4) ? (string)jsonResponse["data"]["token"] : (string)jsonResponse["token"];
             if (newToken == null)
             {
                 Logger.Error("Could not refresh Token");

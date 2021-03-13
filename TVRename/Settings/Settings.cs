@@ -172,6 +172,8 @@ namespace TVRename
         public string ExportWTWRSSTo = string.Empty;
         public bool ExportWTWXML = false;
         public string ExportWTWXMLTo = string.Empty;
+        public bool ExportWTWTXT = false;
+        public string ExportWTWTXTTo = string.Empty;
         public bool ExportWTWICAL = false;
         public string ExportWTWICALTo = string.Empty;
         public bool ExportRecentXSPF = false;
@@ -472,6 +474,8 @@ namespace TVRename
             writer.WriteElement("ExportWTWICALTo", ExportWTWICALTo);
             writer.WriteElement("ExportWTWXML", ExportWTWXML);
             writer.WriteElement("ExportWTWXMLTo", ExportWTWXMLTo);
+            writer.WriteElement("ExportWTWTXT", ExportWTWTXT);
+            writer.WriteElement("ExportWTWTXTTo", ExportWTWTXTTo);
             writer.WriteElement("WTWRecentDays", WTWRecentDays);
             writer.WriteElement("ExportMissingXML", ExportMissingXML);
             writer.WriteElement("ExportMissingXMLTo", ExportMissingXMLTo);
@@ -1338,6 +1342,8 @@ namespace TVRename
             ExportWTWRSSTo = xmlSettings.ExtractString("ExportWTWRSSTo");
             ExportWTWXML = xmlSettings.ExtractBool("ExportWTWXML",false);
             ExportWTWXMLTo = xmlSettings.ExtractString("ExportWTWXMLTo");
+            ExportWTWTXT = xmlSettings.ExtractBool("ExportWTWTXT", false);
+            ExportWTWTXTTo = xmlSettings.ExtractString("ExportWTWTXTTo");
             ExportWTWICAL = xmlSettings.ExtractBool("ExportWTWICAL",false);
             ExportWTWICALTo = xmlSettings.ExtractString("ExportWTWICALTo");
             WTWRecentDays = xmlSettings.ExtractInt("WTWRecentDays",7);

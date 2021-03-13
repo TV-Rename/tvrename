@@ -230,7 +230,7 @@ namespace TVRename.TheTVDB
                     IsConnected = UpdateLanguages(showErrorMsgBox);
                     break;
                 case ApiVersion.v4:
-                    IsConnected = UpdateLanguages(showErrorMsgBox);
+                    IsConnected = TVDBLogin(showErrorMsgBox);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -289,6 +289,27 @@ namespace TVRename.TheTVDB
                 }
             }
         }
+
+        private bool TVDBLogin(bool showErrorMsgBox)
+        {
+            Say("TheTVDB Login");
+            try
+            {
+                API.Login();
+                return true;
+            }
+            catch (WebException ex)
+            {
+                HandleConnectionProblem(showErrorMsgBox, ex);
+                return false;
+            }
+            finally
+            {
+                SayNothing();
+            }
+        }
+
+
 
         private bool UpdateLanguages(bool showErrorMsgBox)
         {
@@ -956,9 +977,7 @@ namespace TVRename.TheTVDB
                 }
                 catch (WebException ex)
                 {
-                    if (ex.Status == WebExceptionStatus.ProtocolError && !(ex.Response is null) &&
-                        ex.Response is HttpWebResponse resp &&
-                        resp.StatusCode == HttpStatusCode.NotFound)
+                    if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse {StatusCode: HttpStatusCode.NotFound})
                     {
                         if (pageNumber > 1 && TVSettings.TVDBPagingMethod == PagingMethod.brute)
                         {
@@ -1112,13 +1131,21 @@ namespace TVRename.TheTVDB
                 throw new SourceConnectivityException();
             }
 
-            bool isNotDefaultLanguage = IsNotDefaultLanguage(requestedLanguageCode);
+            CachedSeriesInfo si;
+            if (VERS == ApiVersion.v4)
+            {
+                si = GenerateSeriesInfoV4(DownloadSeriesJson(code, requestedLanguageCode));
+            }
+            else
+            {
+                bool isNotDefaultLanguage = IsNotDefaultLanguage(requestedLanguageCode);
 
-            (JObject jsonResponse, JObject jsonDefaultLangResponse) =
-                DownloadSeriesJson(code, requestedLanguageCode, isNotDefaultLanguage);
+                (JObject jsonResponse, JObject jsonDefaultLangResponse) =
+                    DownloadSeriesJson(code, requestedLanguageCode, isNotDefaultLanguage);
 
-            CachedSeriesInfo si = GenerateSeriesInfo(jsonResponse, jsonDefaultLangResponse, isNotDefaultLanguage,
-                requestedLanguageCode);
+                si = GenerateSeriesInfo(jsonResponse, jsonDefaultLangResponse, isNotDefaultLanguage,
+                    requestedLanguageCode);
+            }
 
             if (si is null)
             {
@@ -1128,6 +1155,79 @@ namespace TVRename.TheTVDB
             }
 
             return si;
+        }
+
+        private CachedSeriesInfo GenerateSeriesInfoV4(JObject r)
+        {
+            CachedSeriesInfo si = new CachedSeriesInfo
+            {
+                AirsDay = GetAirsDayV4(r),
+                AirsTime = GetAirsTimeV4(r),
+                //BannerString = GetBannerV4(r),
+                FirstAired = JsonHelper.ParseFirstAired((string) r["data"]["firstAired"]),
+                TvdbCode = (int) r["data"]["id"],
+                //Imdb = ((string) r["imdbId"])?.Trim(),
+                Network = ((string) r["data"]["originalNetwork"]["name"])?.Trim(),
+                Slug = ((string) r["data"]["slug"])?.Trim(),
+                //Overview = System.Web.HttpUtility.HtmlDecode((string) r["overview"])?.Trim(),
+                //ContentRating = ((string) r["rating"])?.Trim(),
+                //Runtime = ((string) r["runtime"])?.Trim(),
+                //SeriesId = (string) r["seriesId"],
+                Status = (string) r["data"]["status"]["name"]
+            };
+            //si.Aliases = (r["aliases"] ?? throw new SourceConsistencyException($"Can't find aliases in Series JSON: {r}", TVDoc.ProviderType.TheTVDB)).Select(x => x.Value<string>()).ToList();
+
+            string s = (string)r["data"]["name"];
+            if (s != null)
+            {
+                si.Name = System.Web.HttpUtility.HtmlDecode(s).Trim();
+            }
+
+            //si.SrvLastUpdated = long.TryParse((string)r["lastUpdated"], out long updateTime) ? updateTime : 0;
+
+            if (r.ContainsKey("genre"))
+            {
+                si.Genres = r["data"]["genre"]?.Select(x => x.Value<string>().Trim()).Distinct().ToList() ?? new List<string>();
+            }
+
+
+            //string siteRatingString = (string)r["siteRating"];
+            //float.TryParse(siteRatingString, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out SiteRating);
+
+            //string siteRatingVotesString = (string)r["siteRatingCount"];
+            //int.TryParse(siteRatingVotesString, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out SiteRatingVotes);
+            return si;
+        }
+
+        private string? GetBannerV4(JObject r)
+        {
+            return (string) r["banner"];
+        }
+
+        private DateTime? GetAirsTimeV4(JObject r)
+        {
+            string airsTimeString = (string)r["data"]["airsTime"];
+            return JsonHelper.ParseAirTime(airsTimeString);
+        }
+
+        private string GetAirsDayV4(JObject r)
+        {
+            JToken jTokens = r["data"]["airsDays"];
+            IEnumerable<JToken> days = jTokens.Children().Where(token => (bool )token.Values().First());
+            return days.Select(ConvertDayName).ToCsv();
+        }
+
+        private string ConvertDayName(JToken t)
+        {
+            JProperty p = (JProperty) t;
+            return UppercaseFirst(p.Name);
+        }
+        string UppercaseFirst(string str)
+        {
+            //TODO move to stirngHelpers
+            if (string.IsNullOrEmpty(str))
+                return string.Empty;
+            return char.ToUpper(str[0]) + str.Substring(1).ToLower();
         }
 
         [NotNull]
@@ -1207,13 +1307,13 @@ namespace TVRename.TheTVDB
             JObject jsonResponse;
             try
             {
-                jsonResponse = API.GetSeries(code, requestedLanguageCode);
+                jsonResponse = VERS==ApiVersion.v4
+                    ?API.GetSeriesV4(code, requestedLanguageCode)
+                    :API.GetSeries(code, requestedLanguageCode);
             }
             catch (WebException ex)
             {
-                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response != null &&
-                    ex.Response is HttpWebResponse resp &&
-                    resp.StatusCode == HttpStatusCode.NotFound)
+                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse {StatusCode: HttpStatusCode.NotFound})
                 {
                     LOGGER.Warn($"Show with Id {code} is no longer available from TVDB (got a 404).");
                     SayNothing();
@@ -1242,9 +1342,7 @@ namespace TVRename.TheTVDB
             }
             catch (WebException ex)
             {
-                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response != null &&
-                    ex.Response is HttpWebResponse resp &&
-                    resp.StatusCode == HttpStatusCode.NotFound)
+                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse {StatusCode: HttpStatusCode.NotFound})
                 {
                     return false;
                 }
@@ -1721,7 +1819,9 @@ namespace TVRename.TheTVDB
             JObject jsonSearchDefaultLangResponse = null;
             try
             {
-                jsonSearchResponse = API.Search(text, TVSettings.Instance.PreferredLanguageCode);
+                jsonSearchResponse = VERS== ApiVersion.v4
+                    ? API.SearchV4(text, TVSettings.Instance.PreferredLanguageCode) 
+                    : API.Search(text, TVSettings.Instance.PreferredLanguageCode);
             }
             catch (WebException ex)
             {
@@ -1744,7 +1844,7 @@ namespace TVRename.TheTVDB
                 }
             }
 
-            if (InForeignLanguage())
+            if (InForeignLanguage() && VERS != ApiVersion.v4)
             {
                 try
                 {
@@ -1795,9 +1895,11 @@ namespace TVRename.TheTVDB
             }
             try
             {
-                foreach (CachedSeriesInfo si in jToken
-                    .Cast<JObject>()
-                    .Select(seriesResponse => new CachedSeriesInfo(seriesResponse, languageId, true)))
+                IEnumerable<CachedSeriesInfo> cachedSeriesInfos = (VERS == ApiVersion.v4)
+                    ? GetEnumSeriesV4(jToken,languageId, true)
+                    : jToken.Cast<JObject>().Select(seriesResponse => new CachedSeriesInfo(seriesResponse, languageId, true));
+
+                foreach (CachedSeriesInfo si in cachedSeriesInfos)
                 {
                     lock (SERIES_LOCK)
                     {
@@ -1818,6 +1920,62 @@ namespace TVRename.TheTVDB
                 LOGGER.Error(ex);
                 LOGGER.Error(jToken.ToString());
             }
+        }
+
+        private IEnumerable<CachedSeriesInfo> GetEnumSeriesV4(JToken jToken, int languageId, bool b)
+        {
+            JArray ja = (JArray) jToken;
+            List<CachedSeriesInfo> ses = new List<CachedSeriesInfo>();
+
+            foreach (JToken jt  in ja.Children())
+            {
+                JObject showJson = (JObject)jt;
+                ses.Add(GenerateSeriesV4(showJson, languageId, b));
+            }
+
+            return ses;
+        }
+
+        private CachedSeriesInfo GenerateSeriesV4(JObject r, int langId, bool searchResult)
+        {
+
+            CachedSeriesInfo si = new CachedSeriesInfo
+            {
+
+                TvdbCode = (int)r["tvdb_id"],
+
+                Slug = ((string)r["id"])?.Trim(),
+                PosterUrl = (string)r["image_url"],
+                Overview = (string)r["overview"],
+                Network = (string)r["network"],
+                LanguageId = langId,
+                Status = (string)r["status"],
+                IsSearchResultOnly = searchResult,
+        };
+            //si.Aliases = (r["aliases"] ?? throw new SourceConsistencyException($"Can't find aliases in Series JSON: {r}", TVDoc.ProviderType.TheTVDB)).Select(x => x.Value<string>()).ToList();
+
+            string s = (string)r["name"];
+            if (s != null)
+            {
+                si.Name = System.Web.HttpUtility.HtmlDecode(s).Trim();
+            }
+
+
+            if (string.IsNullOrEmpty(si.Name))
+            {
+                LOGGER.Warn("Issue with cachedSeries " + si);
+                LOGGER.Warn(r.ToString());
+            }
+
+            if (si.SrvLastUpdated == 0 && !searchResult)
+            {
+                LOGGER.Warn("Issue with cachedSeries (update time is 0) " + si);
+                LOGGER.Warn(r.ToString());
+                si.SrvLastUpdated = 100;
+            }
+
+
+            return si;
         }
 
         // Next episode to air of a given show
