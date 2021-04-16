@@ -1488,7 +1488,7 @@ namespace TVRename
 
         private void ExportersOptEnableDisable()
         {
-            bool wtw = cbWTWRSS.Checked || cbWTWXML.Checked || cbWTWICAL.Checked;
+            bool wtw = cbWTWRSS.Checked || cbWTWXML.Checked || cbWTWICAL.Checked || cbWTWTXT.Checked;
             label4.Enabled = wtw;
             label15.Enabled = wtw;
             label16.Enabled = wtw;

@@ -864,7 +864,7 @@ namespace TVRename.TheTVDB
                 if (maxUpdateTime > nowTime)
                 {
                     LOGGER.Error(
-                        $"Assuming up to date: Could not parse update time {maxUpdateTime} compared to {nowTime} from: {jsonUpdateResponse}");
+                        $"Assuming up to date: Update time from TVDB API is greater than current time for {maxUpdateTime} > {nowTime} ({Helpers.FromUnixTime(maxUpdateTime)} > {Helpers.FromUnixTime(nowTime)}) from: {jsonUpdateResponse}");
 
                     return DateTime.UtcNow.ToUnixTime();
                 }

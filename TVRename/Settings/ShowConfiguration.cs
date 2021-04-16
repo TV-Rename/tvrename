@@ -1119,7 +1119,7 @@ namespace TVRename
             }
 
             //Also add the aliases provided
-            possibles.AddNullableRange(AliasNames.Select(s=>s.CompareName()).Where(s => s.HasValue()).Where(s=>s.Length>6));
+            possibles.AddNullableRange(AliasNames.Select(s=>s.CompareName()).Where(s => s.HasValue()).Where(s=>s.Length>2));
 
             //Also use the aliases from theTVDB
             possibles.AddNullableRange(CachedData?.GetAliases().Select(s => s.CompareName()).Where(s => s.HasValue()).Where(s => s.Length > 6));

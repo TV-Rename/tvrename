@@ -131,7 +131,10 @@ namespace TVRename
                 cbDirectory.Items.Add(folder.EnsureEndsWithSeparator());
             }
 
-            cbDirectory.SelectedIndex = 0;
+            if (TVSettings.Instance.MovieLibraryFolders.Any())
+            {
+                cbDirectory.SelectedIndex = 0;
+            }
             cbDirectory.ResumeLayout();
             cbDirectory.Text = chosenValue.EnsureEndsWithSeparator();
         }

@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using JetBrains.Annotations;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename.Forms
 {
@@ -232,7 +230,7 @@ namespace TVRename.Forms
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            catch (FileNotFoundException)
+            catch (System.IO.FileNotFoundException)
             {
                 return;
             }
@@ -262,19 +260,17 @@ namespace TVRename.Forms
 
                 FileHelper.DoTidyUp(removeFile.Directory, TVSettings.Instance.Tidyup);
             }
-            catch (FileNotFoundException)
+            catch (System.IO.FileNotFoundException)
             { //ignored}
             }
-            catch (DirectoryNotFoundException)
+            catch (System.IO.DirectoryNotFoundException)
             { //ignored}
             }
-            catch (IOException)
+            catch (System.IO.IOException)
             { //ignored}
             }
         }
     }
-
-
 
     public class DuplicateMovie
     {
