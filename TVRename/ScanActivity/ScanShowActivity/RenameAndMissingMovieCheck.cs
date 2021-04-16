@@ -94,6 +94,10 @@ namespace TVRename
 
                     if (fi.Name.StartsWith(baseString,StringComparison.CurrentCultureIgnoreCase))
                     {
+                        if (!baseString.HasValue())
+                        {
+                            LOGGER.Error($"Could not check {si.ShowName} movie folder {folder} as the {baseString} worked out to be null: {movieFiles.Select(info => info.Name).ToCsv() }");
+                        }
                         string newName = fi.Name.Replace(baseString, newBase);
                         FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
 
