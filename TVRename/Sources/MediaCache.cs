@@ -47,7 +47,27 @@ namespace TVRename
                 LOGGER.Info("Status on screen updated: {0}", s);
             }
         }
+        public ConcurrentDictionary<int, CachedMovieInfo> CachedMovieData
+        {
+            get
+            {
+                lock (MOVIE_LOCK)
+                {
+                    return Movies;
+                }
+            }
+        }
 
+        public ConcurrentDictionary<int, CachedSeriesInfo> CachedShowData
+        {
+            get
+            {
+                lock (SERIES_LOCK)
+                {
+                    return Series;
+                }
+            }
+        }
 
         public bool HasSeries(int id) => Series.ContainsKey(id);
 
@@ -67,6 +87,6 @@ namespace TVRename
             };
         }
 
-        public abstract void Search(string text, bool showErrorMsgBox);
+        public abstract void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type);
     }
 }

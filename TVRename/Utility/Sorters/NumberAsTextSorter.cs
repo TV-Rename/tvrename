@@ -46,7 +46,7 @@ namespace TVRename
     {
         public DoubleAsTextSorter(int column) : base(column) { }
 
-        protected override int CompareListViewItem(ListViewItem x, ListViewItem y) =>(int) (1000* ParseAsDouble(x) - ParseAsDouble(y));
+        protected override int CompareListViewItem(ListViewItem x, ListViewItem y) =>(int) (1000*( ParseAsDouble(x) - ParseAsDouble(y)));
 
         private double ParseAsDouble([NotNull] ListViewItem cellItem)
         {

@@ -84,6 +84,7 @@ namespace TVRename
             UseCustomLanguage = false;
             TvdbCode = -1;
             TVmazeCode = -1;
+            TmdbCode = -1;
             UseCustomSearchUrl = false;
             CustomSearchUrl = string.Empty;
             UseCustomNamingFormat = false;
@@ -454,22 +455,24 @@ namespace TVRename
 
         protected override MediaCache LocalCache()
         {
+            if (Provider == TVDoc.ProviderType.libraryDefault)
+            {
+                return TVSettings.Instance.DefaultProvider switch
+                {
+                    TVDoc.ProviderType.TVmaze => TVmaze.LocalCache.Instance,
+                    TVDoc.ProviderType.TMDB => TMDB.LocalCache.Instance,
+                    TVDoc.ProviderType.TheTVDB => TheTVDB.LocalCache.Instance,
+                };
+
+            }
+
             return Provider switch
             {
                 TVDoc.ProviderType.TVmaze => TVmaze.LocalCache.Instance,
                 TVDoc.ProviderType.TMDB => TMDB.LocalCache.Instance,
-                TVDoc.ProviderType.libraryDefault => TheTVDB.LocalCache.Instance,
                 TVDoc.ProviderType.TheTVDB => TheTVDB.LocalCache.Instance,
-                _ => TheTVDB.LocalCache.Instance
             };
         }
-
-        private int Code => Provider switch
-        {
-            TVDoc.ProviderType.TVmaze => TVmazeCode,
-            TVDoc.ProviderType.TMDB => TmdbCode,
-            _ => TvdbCode
-        };
 
         public enum ShowAirStatus
         {
@@ -988,7 +991,15 @@ namespace TVRename
         protected abstract MediaType GetMediaType();
 
         protected abstract Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo, bool checkExist);
-
+        internal int IdCode(TVDoc.ProviderType provider)
+        {
+            return (provider) switch
+            {
+                TVDoc.ProviderType.TVmaze => TVmazeCode,
+                TVDoc.ProviderType.TMDB => TmdbCode,
+                _ => TvdbCode
+            };
+        }
 
         [NotNull]
         public Dictionary<int, SafeList<string>> AllExistngFolderLocations() => AllFolderLocations(true, true);
@@ -1057,7 +1068,7 @@ namespace TVRename
                     TVDoc.ProviderType.TVmaze => "TV Maze",
                     TVDoc.ProviderType.TheTVDB => "TVDB",
                     TVDoc.ProviderType.TMDB => "TMDB",
-                    _ => throw new ArgumentOutOfRangeException()
+                    _ => throw new ArgumentOutOfRangeException(nameof(Provider), Provider, null)
                 };
             }
         }

@@ -695,6 +695,7 @@ namespace TVRename
             this.rdoTMDB.TabStop = true;
             this.rdoTMDB.Text = "TMDB";
             this.rdoTMDB.UseVisualStyleBackColor = true;
+            this.rdoTMDB.CheckedChanged += new System.EventHandler(this.rdoProvider_CheckedChanged);
             // 
             // label13
             // 
@@ -719,6 +720,7 @@ namespace TVRename
             this.rdoTVDB.TabStop = true;
             this.rdoTVDB.Text = "The TVDB";
             this.rdoTVDB.UseVisualStyleBackColor = true;
+            this.rdoTVDB.CheckedChanged += new System.EventHandler(this.rdoProvider_CheckedChanged);
             // 
             // rdoDefault
             // 
@@ -731,6 +733,7 @@ namespace TVRename
             this.rdoDefault.TabStop = true;
             this.rdoDefault.Text = "Library Default";
             this.rdoDefault.UseVisualStyleBackColor = true;
+            this.rdoDefault.CheckedChanged += new System.EventHandler(this.rdoProvider_CheckedChanged);
             // 
             // label60
             // 

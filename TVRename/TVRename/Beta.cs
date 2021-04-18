@@ -30,7 +30,7 @@ namespace TVRename
             Logger.Info(output.ToString());
 
             DirFilesCache dfc = new DirFilesCache();
-            foreach (ShowConfiguration si in doc.TvLibrary.Values)
+            foreach (ShowConfiguration si in doc.TvLibrary.Shows)
             {
                 foreach (List<ProcessedEpisode> episodes in si.SeasonEpisodes.Values.ToList())
                 {

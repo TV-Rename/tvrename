@@ -166,7 +166,6 @@ namespace TVRename
             string siteRating = ser.SiteRating > 0 ? ser.SiteRating+ "/10" : "";
             string runTimeHtml = string.IsNullOrWhiteSpace(ser.Runtime) ? string.Empty : $"<br/> {ser.Runtime} min";
             string actorLinks = ser.GetActors().Select(ActorLinkHtml).ToCsv();
-            string tvdbLink = TheTVDB.API.WebsiteShowUrl(si);
             string airsTime = ParseAirsTime(ser);
             string airsDay = ser.AirsDay;
             string dayTime = $"{airsDay} {airsTime}";
@@ -174,7 +173,8 @@ namespace TVRename
             string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : $"http://www.tv.com/show/{ser.SeriesId}/summary.html";
             string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
             string mazeLink = ser.TvMazeCode <=0 ? string.Empty : ser.WebUrl;
-            string tmdbLink = "http://google.com"; //TODO FIX THIS
+            string tmdbLink = si.TmdbCode > 0 ? $"https://www.themoviedb.org/tv/{si.TmdbCode}" : string.Empty;
+            string tvdbLink = si.TvdbCode>0?  TheTVDB.API.WebsiteShowUrl(si) : string.Empty;
 
             string urlFilename = includeDirectoryLinks
                 ? Uri.EscapeDataString(si.GetBestFolderLocationToOpen())
@@ -211,7 +211,7 @@ namespace TVRename
 		            <div>
                         &nbsp;
 			        </div>
-		            <div class=""row align-items-bottom"">
+		            <div class=""row align-items-bottom flex-grow-1"">
                      <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}{AddRatingCount(ser.SiteRatingVotes)}</div>
                      <div class=""col-md-4 align-self-end text-center"">{ser.ContentRating}<br>{ser.Network}, {dayTime}</div>
                      <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{ser.Genres.ToCsv()}</div>
@@ -219,7 +219,6 @@ namespace TVRename
                    </div>
                   </div>
                  </div>");
-            //Ideally we'd have <div class=""row align-items-bottom flex-grow-1""> in there as it looks better, but a issue in IE prevents it from looking correct
         }
 
         private static void AppendMovie(this StringBuilder sb, MovieConfiguration? si, Color backgroundColour, bool includeDirectoryLinks)
@@ -248,9 +247,9 @@ namespace TVRename
             string urlFilename = includeDirectoryLinks ? Uri.EscapeDataString(si.Locations.FirstOrDefault() ?? string.Empty)                 : string.Empty;
             string explorerButton = includeDirectoryLinks                 ? CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder")                 : string.Empty;
             string viewButton = includeDirectoryLinks ? CreateButton($"{UI.WATCH_PROXY}{urlFilename}", "<i class=\"far fa-eye\"></i>", "Watch Now") : string.Empty;
-            string facebookButton = ser.FacebookId.HasValue() ?CreateButton($"https://facebook.com/{ser.FacebookId}", "<i class=\"fab fa-facebook\"></i>", "Facebook"):String.Empty;
-            string instaButton = ser.InstagramId.HasValue() ? CreateButton($"https://instagram.com/{ser.InstagramId}", "<i class=\"fab fa-instagram\"></i>", "Instagram"):String.Empty;
-            string twitterButton = ser.TwitterId.HasValue() ? CreateButton($"https://twitter.com/{ser.TwitterId}", "<i class=\"fab fa-twitter\"></i>", "Twitter"):String.Empty;
+            string facebookButton = ser.FacebookId.HasValue() ?CreateButton($"https://facebook.com/{ser.FacebookId}", "<i class=\"fab fa-facebook\"></i>", "Facebook"):string.Empty;
+            string instaButton = ser.InstagramId.HasValue() ? CreateButton($"https://instagram.com/{ser.InstagramId}", "<i class=\"fab fa-instagram\"></i>", "Instagram"):string.Empty;
+            string twitterButton = ser.TwitterId.HasValue() ? CreateButton($"https://twitter.com/{ser.TwitterId}", "<i class=\"fab fa-twitter\"></i>", "Twitter"):string.Empty;
 
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
@@ -285,7 +284,7 @@ namespace TVRename
 		            <div>
                         &nbsp;
 			        </div>
-		            <div class=""row align-items-bottom"">
+		            <div class=""row align-items-bottom flex-grow-1"">
                      <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}{AddRatingCount(ser.SiteRatingVotes)}</div>
                      <div class=""col-md-4 align-self-end text-center"">{ser.ContentRating}<br>{ser.Network}</div>
                      <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{ser.Genres.ToCsv()}</div>
@@ -293,7 +292,6 @@ namespace TVRename
                    </div>
                   </div>
                  </div>");
-            //Ideally we'd have <div class=""row align-items-bottom flex-grow-1""> in there as it looks better, but a issue in IE prevents it from looking correct
         }
 
         private static string? EditMovieUrl(MovieConfiguration si)
@@ -365,7 +363,7 @@ namespace TVRename
                 case TVDoc.ProviderType.TheTVDB:
                     if (ep.Show.CachedShow?.Slug.HasValue()??false)
                     {
-                        return $"https://thetvdb.com/series/gangs-of-london/episodes/7596842/811643/edit"; //TODO fix URL
+                        return $"https://thetvdb.com/series/{ep.Show.CachedShow?.Slug}/episodes/{ep.EpisodeId}";
                     }
 
                     return null;
@@ -1163,7 +1161,7 @@ namespace TVRename
             string yearRange = YearRange(ser);
 
             string siteRating = (ser?.SiteRating??0) > 0 ? ser.SiteRating + "/10" : string.Empty;
-            string tvdbLink = TheTVDB.API.WebsiteShowUrl(si);
+            string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(si) : string.Empty;
 
             string tableHtml = string.Empty;
 
@@ -1281,11 +1279,65 @@ namespace TVRename
 
         public static string GetMovieHtmlOverviewOffline([NotNull] this MovieConfiguration si)
         {
+            string body = string.Empty;
             CachedMovieInfo? ser = si.CachedMovie;
-            string body = ser?.Name;
-            //todo - finish this GetMovieHtmlOverviewOffline
 
-            return body ??string.Empty;
+            if (!(ser is null) &&
+                !string.IsNullOrEmpty(CreatePosterHtml(ser)) )
+            {
+                body += $"<img width=758 height=140 src=\"{ CreatePosterHtml(ser)}\"><br/>";
+            }
+
+            body += $"<h1><A HREF=\"{ser.OfficialUrl}\">{si.ShowName}</A> </h1>";
+
+            body += "<h2>Overview</h2>" + ser?.Overview; //get overview in either format
+
+            bool first = true;
+            foreach (Actor aa in si.Actors.Where(aa => !string.IsNullOrEmpty(aa.ActorName)))
+            {
+                body += first ? "<h2>Actors</h2>" : ", ";
+
+                body += "<A HREF=\"http://www.imdb.com/find?s=nm&q=" + aa.ActorName + "\">" + aa.ActorName + $"</a> as {aa.ActorRole}";
+                first = false;
+            }
+
+            string siteRating = (ser?.SiteRating ?? 0) > 0 ? ser.SiteRating + "/10" : string.Empty;
+            string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(ser.TvdbCode) : string.Empty;
+            string tmdbLink = si.TmdbCode > 0 ? $"https://www.themoviedb.org/movie/{si.TmdbCode}" : string.Empty;
+            string mazeLink = ser.TvMazeCode > 0 ? ser.WebUrl : string.Empty;
+            string facebookButton = ser.FacebookId.HasValue() ? $"https://facebook.com/{ser.FacebookId}" : string.Empty;
+            string instaButton = ser.InstagramId.HasValue() ? $"https://instagram.com/{ser.InstagramId}" : string.Empty;
+            string twitterButton = ser.TwitterId.HasValue() ? $"https://twitter.com/{ser.TwitterId}" : string.Empty;
+
+            string tableHtml = string.Empty;
+
+            tableHtml += GetOverviewPart("thetvdb.com", $"<A HREF=\"{tvdbLink}\">Visit</a>");
+            tableHtml += GetOverviewPart("imdb.com", "<A HREF=\"http://www.imdb.com/title/" + ser?.Imdb + "\">Visit</a>");
+            tableHtml += GetOverviewPart("tv.com", "<A HREF=\"http://www.tv.com/show/" + ser?.SeriesId + "/summary.html\">Visit</a>");
+            if (tmdbLink.HasValue()) tableHtml += GetOverviewPart("MovieDB", $"<A HREF=\"{tmdbLink}\">Visit</a>");
+            if (mazeLink.HasValue()) tableHtml += GetOverviewPart("TV Maze", $"<A HREF=\"{mazeLink}\">Visit</a>");
+            if (facebookButton.HasValue()) tableHtml += GetOverviewPart("Facebook", $"<A HREF=\"{facebookButton}\">Visit</a>");
+            if (instaButton.HasValue()) tableHtml += GetOverviewPart("Instagram", $"<A HREF=\"{instaButton}\">Visit</a>");
+            if (twitterButton.HasValue()) tableHtml += GetOverviewPart("Twitter", $"<A HREF=\"{twitterButton}\">Visit</a>");
+
+            tableHtml += GetOverviewPart("Runtime", ser?.Runtime);
+            tableHtml += GetOverviewPart("Aliases", si.AliasNames.ToCsv());
+            tableHtml += GetOverviewPart("Genres", si.Genres.ToCsv());
+            tableHtml += GetOverviewPart("Rating", ser?.ContentRating);
+            tableHtml += GetOverviewPart("Network", ser?.Network);
+            tableHtml += GetOverviewPart("Network", ser?.ContentRating);
+            tableHtml += GetOverviewPart("User Rating", $"{siteRating}{AddRatingCount(ser?.SiteRatingVotes ?? 0)}");
+            tableHtml += GetOverviewPart("Released", ser.Year?.ToString());
+            tableHtml += GetOverviewPart("Tagline", ser.TagLine);
+            tableHtml += GetOverviewPart("Status", ser?.Status);
+            tableHtml += GetOverviewPart("Type", ser?.Type);
+
+            if (!string.IsNullOrWhiteSpace(tableHtml))
+            {
+                body += "<h2>Information<table border=0>" + tableHtml + "</table>";
+            }
+                    
+            return body;
         }
 
         [NotNull]

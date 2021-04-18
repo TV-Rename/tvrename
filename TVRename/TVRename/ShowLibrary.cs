@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -11,11 +10,11 @@ namespace TVRename
     /// Handles a thread-safe implementation of the 'library' this will hold all the ShowItem configuration as well
     /// many methods that provide summaries of the data in the library
     /// </summary>
-    public class ShowLibrary : ConcurrentDictionary<int, ShowConfiguration>
+    public class ShowLibrary : SafeList<ShowConfiguration>
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         [NotNull]
-        public IEnumerable<ShowConfiguration> Shows => Values;
+        public IEnumerable<ShowConfiguration> Shows => this;
 
         [NotNull]
         public IEnumerable<SeriesSpecifier> SeriesSpecifiers
@@ -23,9 +22,9 @@ namespace TVRename
             get
             {
                 List<SeriesSpecifier> value = new List<SeriesSpecifier>();
-                foreach (KeyValuePair<int, ShowConfiguration> series in this)
+                foreach (ShowConfiguration series in Shows)
                 {
-                    value.Add(new SeriesSpecifier(series.Value.TvdbCode, series.Value.TVmazeCode, 0,series.Value.UseCustomLanguage, series.Value.CustomLanguageCode, series.Value.ShowName,series.Value.Provider,series.Value.CachedShow?.Imdb,MediaConfiguration.MediaType.tv));
+                    value.Add(new SeriesSpecifier(series.TvdbCode, series.TVmazeCode, 0,series.UseCustomLanguage, series.CustomLanguageCode, series.ShowName,series.Provider,series.CachedShow?.Imdb,MediaConfiguration.MediaType.tv));
                 }
 
                 return value;
@@ -44,7 +43,7 @@ namespace TVRename
             if (!TVSettings.Instance.ForceBulkAddToUseSettingsOnly)
             {
                 IEnumerable<string> seasonWordsFromShows =
-                    from si in Values select CustomSeasonName.GetTextFromPattern(si.AutoAddCustomFolderFormat);
+                    from si in Shows select CustomSeasonName.GetTextFromPattern(si.AutoAddCustomFolderFormat);
 
                 results.AddRange(seasonWordsFromShows.Distinct());
 
@@ -59,7 +58,7 @@ namespace TVRename
         {
             List<string> results = new List<string> {TVSettings.Instance.SeasonFolderFormat};
 
-            IEnumerable<string> seasonWordsFromShows = Values.Select(si => si.AutoAddCustomFolderFormat);
+            IEnumerable<string> seasonWordsFromShows = Shows.Select(si => si.AutoAddCustomFolderFormat);
 
             results.AddRange(seasonWordsFromShows.Distinct().ToList());
 
@@ -70,7 +69,7 @@ namespace TVRename
         public IEnumerable<string> GetGenres()
         {
             List<string> allGenres = new List<string>();
-            foreach (ShowConfiguration si in Values)
+            foreach (ShowConfiguration si in Shows)
             {
                 allGenres.AddRange(si.Genres);
             }
@@ -83,7 +82,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> GetStatuses()
         {
-            return Values
+            return Shows
                 .Where(s => !string.IsNullOrWhiteSpace(s.ShowStatus))
                 .Select(s => s.ShowStatus)
                 .Distinct()
@@ -93,7 +92,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> GetTypes()
         {
-            return Values
+            return Shows
                 .Select(s => s.CachedShow?.Type)
                 .Distinct()
                 .Where(s => s.HasValue())
@@ -103,7 +102,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> GetNetworks()
         {
-            return Values
+            return Shows
                 .Select(si => si.CachedShow)
                 .Where(seriesInfo => !string.IsNullOrWhiteSpace(seriesInfo?.Network))
                 .Select(seriesInfo => seriesInfo.Network)
@@ -114,7 +113,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> GetContentRatings()
         {
-            return Values.Select(si => si.CachedShow)
+            return Shows.Select(si => si.CachedShow)
                 .Where(s => !string.IsNullOrWhiteSpace(s?.ContentRating))
                 .Select(s => s.ContentRating)
                 .Distinct()
@@ -129,11 +128,52 @@ namespace TVRename
             return returnList;
         }
 
-        public ShowConfiguration? GetShowItem(int id) => ContainsKey(id) ? this[id] : null;
+        // internal void Remove([NotNull] ShowConfiguration si)
+        // {
+        //     if (!TryTake()(si.TvdbCode, out _))
+        //     {
+        //         Logger.Error($"Failed to remove {si.ShowName} from the library with TVDBId={si.TvdbCode}");
+        //     }
+        // }
+
+        public ShowConfiguration? GetShowItem(int id,TVDoc.ProviderType provider) => this.SingleOrDefault(configuration => configuration.IdCode(provider)==id);
+
+        /*internal void Add([NotNull] ShowConfiguration found)
+        {
+            if (found.TvdbCode == -1)
+            {
+                return;
+            }
+
+            if (TryAdd(found.TvdbCode, found))
+            {
+                return;
+            }
+
+            if (ContainsKey(found.TvdbCode))
+            {
+                Logger.Warn($"Failed to Add {found.ShowName} with TVDBId={found.TvdbCode} to library, but it's already present");
+            }
+            else
+            {
+                Logger.Error($"Failed to Add {found.ShowName} with TVDBId={found.TvdbCode} to library");
+            }
+        }*/
+
+        // public void ReIndex()
+        // {
+        //     List<int> toReIndex = this.Where(x => x.Key != x.Value.TvdbCode).Select(x => x.Key).ToList();
+        //
+        //     foreach (int x in toReIndex)
+        //     {
+        //         TryRemove(x, out ShowConfiguration si);
+        //         Add(si);
+        //     }
+        // }
 
         public void GenDict()
         {
-            foreach (ShowConfiguration show in Values)
+            foreach (ShowConfiguration show in Shows)
             {
                 GenerateEpisodeDict(show);
             }
@@ -319,28 +359,6 @@ namespace TVRename
                     eis.Insert(i, pe);
                     break;
                 }
-            }
-        }
-
-        internal void Add([NotNull] ShowConfiguration found)
-        {
-            if (found.TvdbCode == -1)
-            {
-                return;
-            }
-
-            if (TryAdd(found.TvdbCode, found))
-            {
-                return;
-            }
-
-            if (ContainsKey(found.TvdbCode))
-            {
-                Logger.Warn($"Failed to Add {found.ShowName} with TVDBId={found.TvdbCode} to library, but it's already present");
-            }
-            else
-            {
-                Logger.Error($"Failed to Add {found.ShowName} with TVDBId={found.TvdbCode} to library");
             }
         }
 
@@ -756,20 +774,12 @@ namespace TVRename
             }
         }
 
-        internal void Remove([NotNull] ShowConfiguration si)
-        {
-            if (!TryRemove(si.TvdbCode, out _))
-            {
-                Logger.Error($"Failed to remove {si.ShowName} from the library with TVDBId={si.TvdbCode}");
-            }
-        }
-
         [NotNull]
         public IEnumerable<ProcessedEpisode> GetRecentAndFutureEps(int days)
         {
             List<ProcessedEpisode> returnList = new List<ProcessedEpisode>();
 
-            foreach (ShowConfiguration si in Values)
+            foreach (ShowConfiguration si in Shows)
             {
                 if (!si.ShowNextAirdate)
                 {
@@ -848,168 +858,6 @@ namespace TVRename
             }
 
             return episodes;
-        }
-
-        public void ReIndex()
-        {
-            List<int> toReIndex = this.Where(x => x.Key != x.Value.TvdbCode).Select(x=>x.Key).ToList();
-
-            foreach (int x in toReIndex)
-            {
-                TryRemove(x,out ShowConfiguration si);
-                Add(si);
-            }
-        }
-    }
-
-    public class MovieLibrary : ConcurrentDictionary<int, MovieConfiguration>
-    {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        [NotNull]
-        public IEnumerable<MovieConfiguration> Movies => Values;
-
-      [NotNull]
-        public IEnumerable<SeriesSpecifier> SeriesSpecifiers
-        {
-            get
-            {
-                return this.Select(series => new SeriesSpecifier(series.Value.TvdbCode, series.Value.TVmazeCode,series.Value.TmdbCode, series.Value.UseCustomLanguage, series.Value.CustomLanguageCode, series.Value.ShowName, series.Value.Provider, series.Value.CachedData?.Imdb, MediaConfiguration.MediaType.movie)).ToList();
-            }
-        }
-
-        [NotNull]
-        public IEnumerable<string> GetGenres()
-        {
-            List<string> allGenres = new List<string>();
-            foreach (MovieConfiguration si in Values)
-            {
-                allGenres.AddRange(si.Genres);
-            }
-
-            List<string> distinctGenres = allGenres.Distinct().ToList();
-            distinctGenres.Sort();
-            return distinctGenres;
-        }
-
-        public MovieConfiguration? GetMovie(int id) => ContainsKey(id) ? this[id] : null;
-
-        internal void Add([NotNull] MovieConfiguration found)
-        {
-            if (found.Code == -1)
-            {
-                return;
-            }
-
-            if (TryAdd(found.Code, found))
-            {
-                return;
-            }
-
-            if (ContainsKey(found.Code))
-            {
-                Logger.Warn($"Failed to Add {found.ShowName} with {found.SourceProviderName}={found.Code} to library, but it's already present");
-            }
-            else
-            {
-                Logger.Error($"Failed to Add {found.ShowName} with {found.SourceProviderName}={found.Code} to library");
-            }
-        }
-
-        internal void Remove([NotNull] MovieConfiguration si)
-        {
-            if (!TryRemove(si.TmdbCode, out _))
-            {
-                Logger.Error($"Failed to remove {si.ShowName} from the library with TMDBCode={si.TmdbCode}");
-            }
-        }
-
-        public void LoadFromXml(XElement? xmlSettings)
-        {
-            if (xmlSettings != null)
-            {
-                foreach (MovieConfiguration si in xmlSettings.Descendants("MovieItem").Select(showSettings => new MovieConfiguration(showSettings)))
-                {
-                    // if (si.UseCustomShowName) // see if custom show name is actually the real show name
-                    // {
-                    //     CachedSeriesInfo ser = si.TheSeries();
-                    //     if (ser != null && si.CustomShowName == ser.Name)
-                    //     {
-                    //         // then, turn it off
-                    //         si.CustomShowName = string.Empty;
-                    //         si.UseCustomShowName = false;
-                    //     }
-                    // }
-
-                    Add(si);
-                }
-            }
-        }
-
-        public List<MovieConfiguration> GetSortedMovies()
-        {
-                List<MovieConfiguration> returnList = Movies.ToList();
-                returnList.Sort(MediaConfiguration.CompareNames);
-                return returnList;
-        }
-
-        [NotNull]
-        public IEnumerable<string> GetNetworks()
-        {
-            return Values
-                .Select(si => si.CachedMovie)
-                .Where(seriesInfo => !string.IsNullOrWhiteSpace(seriesInfo?.Network))
-                .Select(seriesInfo => seriesInfo.Network)
-                .Distinct()
-                .OrderBy(s => s);
-        }
-
-        [NotNull]
-        public IEnumerable<string> GetContentRatings()
-        {
-            return Values.Select(si => si.CachedMovie)
-                .Where(s => !string.IsNullOrWhiteSpace(s?.ContentRating))
-                .Select(s => s.ContentRating)
-                .Distinct()
-                .OrderBy(s => s);
-        }
-
-        [NotNull]
-        public IEnumerable<string> GetYears()
-        {
-            return Values.Select(si => si.CachedMovie?.Year)
-                .Where(s => (s.HasValue))
-                .Select(s => s!.ToString())
-                .Distinct()
-                .OrderBy(s => s);
-        }
-
-        [NotNull]
-        public IEnumerable<string> GetStatuses()
-        {
-            return Values
-                .Select(s=>s.CachedMovie)
-                .Where(s => !string.IsNullOrWhiteSpace(s?.Status))
-                .Select(s => s.Status)
-                .Distinct()
-                .OrderBy(s => s);
-        }
-
-        public MovieConfiguration? GetMovie(PossibleNewMovie ai)
-        {
-            return GetMovie(ai.TMDBCode??0); //todo revisit this when we can have a genuine multisource library
-        }
-
-        public void AddRange(IEnumerable<MovieConfiguration>? addedShows)
-        {
-            if (addedShows is null)
-            {
-                return;
-            }
-
-            foreach (MovieConfiguration show in addedShows)
-            {
-                Add(show);
-            }
         }
     }
 }

@@ -48,7 +48,7 @@ namespace TVRename
             lblSeasonWordPreview.ForeColor = Color.DarkGray;
 
             codeFinderForm =
-                new CombinedCodeFinder(si.TmdbCode != -1 ? si.TmdbCode.ToString() : "",MediaConfiguration.MediaType.movie,TVDoc.ProviderType.TMDB) {Dock = DockStyle.Fill};
+                new CombinedCodeFinder(si.TmdbCode != -1 ? si.TmdbCode.ToString() : "",MediaConfiguration.MediaType.movie,si.Provider) {Dock = DockStyle.Fill};
 
             codeFinderForm.SelectionChanged += MTCCF_SelectionChanged;
 
@@ -545,6 +545,11 @@ namespace TVRename
 
         private void txtFolderNameFormat_TextChanged(object sender, EventArgs e)
         {
+        }
+
+        private void rdoProvider_CheckedChanged(object sender, EventArgs e)
+        {
+            codeFinderForm.SetSource(GetProviderType());
         }
     }
 }

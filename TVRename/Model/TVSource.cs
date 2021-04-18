@@ -27,7 +27,7 @@ namespace TVRename
         CachedSeriesInfo GetSeries(int id);
         bool HasSeries(int id);
 
-        void Tidy(ICollection<ShowConfiguration> libraryValues);
+        void Tidy(IEnumerable<ShowConfiguration> libraryValues);
 
         void ForgetEverything();
         void ForgetShow(int id);

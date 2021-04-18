@@ -12,15 +12,24 @@ namespace TVRename
         }
         public void UpdateStatus(string status)
         {
-            if (IsHandleCreated) Invoke((MethodInvoker) delegate { lblStatus.Text = status; });
+            if (IsHandleCreated)
+            {
+                Invoke((MethodInvoker) delegate { lblStatus.Text = status; });
+            }
         }
         public void UpdateProgress(int progress)
         {
-            if (IsHandleCreated) Invoke((MethodInvoker) delegate { prgComplete.Value = progress; });
+            if (IsHandleCreated)
+            {
+                Invoke((MethodInvoker) delegate { prgComplete.Value = progress; });
+            }
         }
         public void UpdateInfo(string info)
         {
-            if (IsHandleCreated) Invoke((MethodInvoker) delegate { lblInfo.Text = info; });
+            if (IsHandleCreated)
+            {
+                Invoke((MethodInvoker) delegate { lblInfo.Text = info; });
+            }
         }
     }
 }

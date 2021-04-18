@@ -155,7 +155,7 @@ namespace TVRename
             {
                 foreach (CachedSeriesInfo show in TVmaze.LocalCache.Instance.CachedData.Values)
                 {
-                    ShowConfiguration showConfiguration = TvLibrary.GetShowItem(show.TvdbCode);
+                    ShowConfiguration showConfiguration = TvLibrary.GetShowItem(show.TvdbCode,ProviderType.TheTVDB); //TODO - Revisit for multisource
                     if (showConfiguration is null)
                     {
                         continue;
@@ -170,9 +170,9 @@ namespace TVRename
                     }
                 }
 
-                foreach (CachedSeriesInfo show in TMDB.LocalCache.Instance.CachedShowData.Values)
+                foreach (CachedSeriesInfo show in TMDB.LocalCache.Instance.CachedShowData.Values.Where(show=>show.TvdbCode>0))
                 {
-                    ShowConfiguration showConfiguration = TvLibrary.GetShowItem(show.TvdbCode);
+                    ShowConfiguration showConfiguration = TvLibrary.GetShowItem(show.TvdbCode,ProviderType.TheTVDB);//TODO - Revisit for multisource
                     if (showConfiguration is null)
                     {
                         continue;
@@ -266,9 +266,9 @@ namespace TVRename
 
         public void TidyCaches()
         {
-            TheTVDB.LocalCache.Instance.Tidy(TvLibrary.Values);
-            TVmaze.LocalCache.Instance.Tidy(TvLibrary.Values);
-            TMDB.LocalCache.Instance.Tidy(FilmLibrary.Values);
+            TheTVDB.LocalCache.Instance.Tidy(TvLibrary.Shows);
+            TVmaze.LocalCache.Instance.Tidy(TvLibrary.Shows);
+            TMDB.LocalCache.Instance.Tidy(FilmLibrary.Movies);
         }
 
         public void Closing()
@@ -360,7 +360,7 @@ namespace TVRename
                 TVSettings.Instance.WriteXML(writer); // <Settings>
 
                 writer.WriteStartElement("MyShows");
-                foreach (ShowConfiguration si in TvLibrary.Values)
+                foreach (ShowConfiguration si in TvLibrary.Shows)
                 {
                     si.WriteXmlSettings(writer);
                 }
@@ -368,7 +368,7 @@ namespace TVRename
                 writer.WriteEndElement(); // MyShows
 
                 writer.WriteStartElement("MyMovies");
-                foreach (MovieConfiguration? si in FilmLibrary.Values)
+                foreach (MovieConfiguration? si in FilmLibrary.Movies)
                 {
                     si.WriteXmlSettings(writer);
                 }
@@ -1155,7 +1155,7 @@ namespace TVRename
 
                         DirectoryInfo di = new DirectoryInfo(subDirPath);
 
-                        foreach (ShowConfiguration si in TvLibrary.Values
+                        foreach (ShowConfiguration si in TvLibrary.Shows
                             .Where(si => !showsToScan.Contains(si))
                             .Where(si => si.NameMatch(di,TVSettings.Instance.UseFullPathNameToMatchSearchFolders)))
                         {
@@ -1262,7 +1262,7 @@ namespace TVRename
 
                         DirectoryInfo di = new DirectoryInfo(subDirPath);
 
-                        foreach (MovieConfiguration si in FilmLibrary.Values
+                        foreach (MovieConfiguration si in FilmLibrary.Movies
                             .Where(si => !showsToScan.Contains(si))
                             .Where(si => si.NameMatch(di, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)))
                         {
@@ -1306,7 +1306,7 @@ namespace TVRename
             AllowAutoScan();
         }
 
-        private iTVSource GetCache(ShowConfiguration si)
+        public static iTVSource GetCache(ShowConfiguration si)
         {
             switch (si.Provider)
             {
@@ -1322,7 +1322,24 @@ namespace TVRename
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
 
+        public static MediaCache GetMediaCache(ProviderType p)
+        {
+            switch (p)
+            {
+                case ProviderType.TVmaze:
+                    return TVmaze.LocalCache.Instance;
+
+                case ProviderType.TheTVDB:
+                    return TheTVDB.LocalCache.Instance;
+
+                case ProviderType.TMDB:
+                    return TMDB.LocalCache.Instance;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         internal void ForceRefreshMovies(IEnumerable<MediaConfiguration>? sis, bool unattended, bool tvrMinimised, UI owner)
@@ -1354,7 +1371,7 @@ namespace TVRename
         {
             PreventAutoScan("TVDB Accuracy Check");
             IEnumerable<CachedSeriesInfo> seriesToUpdate = TheTVDB.LocalCache.Instance.ServerAccuracyCheck();
-            IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(info => TvLibrary.GetShowItem(info.TvdbCode));
+            IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(info => TvLibrary.GetShowItem(info.TvdbCode,ProviderType.TheTVDB));//TODO - Revisit for multisource
             ForceRefreshShows(showsToUpdate, unattended, hidden,owner);
             DoDownloadsBG();
             AllowAutoScan();
@@ -1389,7 +1406,7 @@ namespace TVRename
         {
             PreventAutoScan("TMDB Accuracy Check");
             IEnumerable<CachedMovieInfo> seriesToUpdate = TMDB.LocalCache.Instance.ServerAccuracyCheck();
-            IEnumerable<MovieConfiguration> showsToUpdate = seriesToUpdate.Select(mov => FilmLibrary.GetMovie(mov.TmdbCode) );
+            IEnumerable<MovieConfiguration> showsToUpdate = seriesToUpdate.Select(mov => FilmLibrary.GetMovie(mov.TmdbCode, ProviderType.TMDB) );
             ForceRefreshMovies(showsToUpdate, unattended, hidden, owner);
             DoDownloadsBG();
             AllowAutoScan();
@@ -1454,7 +1471,7 @@ namespace TVRename
 
         public void ReindexLibrary()
         {
-            TvLibrary.ReIndex();
+            //TvLibrary.ReIndex(); //TODO - Revisit for multisource
         }
 
         public void UpdateMissingAction([NotNull] ItemMissing mi, string fileName)
@@ -1621,7 +1638,7 @@ namespace TVRename
 
                 try
                 {
-                    var x = Directory.GetFiles(downloadFolder, "*", SearchOption.AllDirectories).OrderBy(s => s).ToList();
+                    IEnumerable<string>? x = Directory.GetFiles(downloadFolder, "*", SearchOption.AllDirectories).OrderBy(s => s).ToList();
                     Logger.Info($"Processing {x.Count()} files for shows that need to be scanned");
 
                     foreach (string filePath in x)
@@ -1954,7 +1971,7 @@ namespace TVRename
             }
 
             //popup dialog
-            AutoAddShow askForMatch = new AutoAddShow(refinedHint, file, true);
+            AutoAddMedia askForMatch = new AutoAddMedia(refinedHint, file, true);
 
             {
                 Logger.Info($"Auto Adding New Show/Movie by asking about for '{refinedHint}'");
@@ -1967,7 +1984,7 @@ namespace TVRename
                     {
                         MovieConfiguration selected = askForMatch.MovieConfiguration;
 
-                        if (FilmLibrary.ContainsKey(selected.Code))
+                        if (FilmLibrary.Contains(selected))
                         {
                             return (null, selected);
                         }

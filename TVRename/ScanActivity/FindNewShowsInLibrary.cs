@@ -31,14 +31,14 @@ namespace TVRename
                 return;
             }
 
-            List<int> idsToAdd = bam.AddItems.Where(s => s.CodeKnown).Select(folder => folder.TVDBCode).ToList();
+            var idsToAdd = bam.AddItems.Where(s => s.CodeKnown).Select(folder => new {Code = folder.ProviderCode, folder.Provider}).ToList(); 
             
             bam.AddAllToMyShows();
 
             MDoc.SetDirty();
             MDoc.DoDownloadsFG(settings.Unattended,settings.Hidden,settings.Owner);
 
-            List<ShowConfiguration> addedShows = idsToAdd.Select(s => MDoc.TvLibrary.GetShowItem(s)).ToList();
+            List<ShowConfiguration> addedShows = idsToAdd.Select(s => MDoc.TvLibrary.GetShowItem(s.Code,s.Provider)).ToList();
 
             //add each new show into the shows being scanned
             foreach (ShowConfiguration si in addedShows)
@@ -80,7 +80,7 @@ namespace TVRename
                 return;
             }
 
-            FolderMonitorEdit ed = new FolderMonitorEdit(folder);
+            BulkAddEditShow ed = new BulkAddEditShow(folder);
 
             owner.ShowChildDialog(ed);
             DialogResult x = ed.DialogResult;
@@ -92,7 +92,7 @@ namespace TVRename
                 return;
             }
 
-            folder.TVDBCode = code;
+            folder.SetId(code,TVDoc.ProviderType.TheTVDB);
         }
 
         public override bool Active() => TVSettings.Instance.DoBulkAddInScan;

@@ -384,7 +384,7 @@ namespace TVRename.TMDB
 
         public CachedMovieInfo? GetMovie(string hint, int? possibleYear, bool showErrorMsgBox,bool useMostPopularMatch)
         {
-            Search(hint, showErrorMsgBox);
+            Search(hint, showErrorMsgBox,MediaConfiguration.MediaType.movie);
 
             string showName = hint;
 
@@ -500,7 +500,7 @@ namespace TVRename.TMDB
             }
         }
 
-        public void Tidy(ICollection<MovieConfiguration> libraryValues)
+        public void Tidy(IEnumerable<MovieConfiguration> libraryValues)
         {
             // remove any shows from cache that aren't in My Movies
             List<int> removeList = new List<int>();
@@ -523,7 +523,7 @@ namespace TVRename.TMDB
             }
         }
 
-        public void Tidy(ICollection<ShowConfiguration> libraryValues)
+        public void Tidy(IEnumerable<ShowConfiguration> libraryValues)
         {
             // remove any shows from TMDB that aren't in My Shows
             List<int> removeList = new List<int>();
@@ -747,27 +747,6 @@ namespace TVRename.TMDB
 
         public Language PreferredLanguage => throw new NotImplementedException();
 
-        public ConcurrentDictionary<int,CachedMovieInfo> CachedMovieData
-        {
-            get {
-                lock (MOVIE_LOCK)
-                {
-                    return Movies;
-                }
-            }
-        }
-
-        public ConcurrentDictionary<int, CachedSeriesInfo> CachedShowData
-        {
-            get
-            {
-                lock (SERIES_LOCK)
-                {
-                    return Series;
-                }
-            }
-        }
-
         public Language GetLanguageFromCode(string customLanguageCode) => throw new NotImplementedException();
 
         public CachedMovieInfo GetMovieAndDownload(int id, bool showErrorMsgBox) => HasMovie(id)
@@ -884,8 +863,9 @@ namespace TVRename.TMDB
                 m.AddCrew(new Crew(s.Id, s.ProfilePath, s.Name, s.Job, s.Department, s.CreditId));
             }
 
-            foreach (int snum in Enumerable.Range(1,downloadedSeries.NumberOfSeasons))
+            foreach (var searchSeason in downloadedSeries.Seasons)
             {
+                int snum = searchSeason.SeasonNumber;
                 TvSeason? downloadedSeason = Client.GetTvSeasonAsync(downloadedSeries.Id, snum, TvSeasonMethods.Images).Result;
                 // TODO add language
                 Season newSeason = new Season(downloadedSeason.Id??0,snum,downloadedSeason.Name,downloadedSeason.Overview,String.Empty, downloadedSeason.PosterPath,downloadedSeries.Id);
@@ -993,21 +973,48 @@ namespace TVRename.TMDB
                 .FirstOrDefault();
         }
 
-        public override void Search(string text, bool showErrorMsgBox)
+        public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type)
         {
-            SearchContainer<SearchMovie> results = Client.SearchMovieAsync(text).Result;
-            LOGGER.Info($"Got {results.Results.Count:N0} of {results.TotalResults:N0} results searching for {text}");
-            foreach (SearchMovie result in results.Results)
+            if (type ==MediaConfiguration.MediaType.movie)
             {
-                LOGGER.Info($"   Movie: {result.Title}:{result.Id}   {result.Popularity}");
-                File(result);
-                try
+                SearchContainer<SearchMovie> results = Client.SearchMovieAsync(text).Result;
+                LOGGER.Info(
+                    $"Got {results.Results.Count:N0} of {results.TotalResults:N0} results searching for {text}");
+
+                foreach (SearchMovie result in results.Results)
                 {
-                    DownloadMovieNow(result.Id, showErrorMsgBox);
+                    LOGGER.Info($"   Movie: {result.Title}:{result.Id}   {result.Popularity}");
+                    File(result);
+                    try
+                    {
+                        DownloadMovieNow(result.Id, showErrorMsgBox);
+                    }
+                    catch (ShowNotFoundException sex)
+                    {
+                        LOGGER.Warn($"Could not get full details of {result.Id} while searching for '{text}'");
+                    }
                 }
-                catch (ShowNotFoundException sex)
+            }
+            else
+            {
+                SearchContainer<SearchTv>? results = Client.SearchTvShowAsync(text).Result;
+                LOGGER.Info(
+                    $"Got {results.Results.Count:N0} of {results.TotalResults:N0} results searching for {text}");
+
+                foreach (SearchTv result in results.Results)
                 {
-                    LOGGER.Warn($"Could not get full details of {result.Id} while searching for '{text}'");
+                    LOGGER.Info($"   TV Show: {result.Name}:{result.Id}   {result.Popularity}");
+                    File(result);
+                    try
+                    {
+                        SeriesSpecifier ss = new SeriesSpecifier(-1, -1, result.Id, false, string.Empty, result.Name,
+                            TVDoc.ProviderType.TMDB, null, MediaConfiguration.MediaType.tv);
+                        DownloadSeriesNow(ss, showErrorMsgBox);
+                    }
+                    catch (ShowNotFoundException sex)
+                    {
+                        LOGGER.Warn($"Could not get full details of {result.Id} while searching for '{text}'");
+                    }
                 }
             }
         }

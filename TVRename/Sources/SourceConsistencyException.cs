@@ -9,20 +9,8 @@ namespace TVRename
     {
         // Thrown if an error occurs in the XML when reading TheTVDB.xml
         public SourceConsistencyException(string message,TVDoc.ProviderType provider)
-            : base(DataProviderName(provider)+": "+message)
+            : base(provider.PrettyPrint()+": "+message)
         {
-        }
-
-        [NotNull]
-        private static string DataProviderName(TVDoc.ProviderType provider)
-        {
-            return provider switch
-            {
-                TVDoc.ProviderType.TVmaze => "TVmaze",
-                TVDoc.ProviderType.TheTVDB => "TheTVDB",
-                TVDoc.ProviderType.TMDB => "TMDB",
-                _ => throw new ArgumentOutOfRangeException(nameof(provider), provider, null)
-            };
         }
     }
 }

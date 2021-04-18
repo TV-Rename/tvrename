@@ -19,12 +19,12 @@ namespace TVRename
     public partial class CombinedCodeFinder : UserControl
     {
         private MediaConfiguration.MediaType Type { get; }
-        private TVDoc.ProviderType Source { get; }
+        internal TVDoc.ProviderType Source { get; set; }
         private bool mInternal;
         private readonly ListViewColumnSorter lvwCodeFinderColumnSorter;
 
-        public CachedSeriesInfo tvShowInitialFound { get; private set; }
-        public CachedMovieInfo movieInitialFound{ get; private set; }
+        public CachedSeriesInfo TvShowInitialFound { get; private set; }
+        public CachedMovieInfo MovieInitialFound{ get; private set; }
         public CombinedCodeFinder(string? initialHint, MediaConfiguration.MediaType type, TVDoc.ProviderType source)
         {
             Type = type;
@@ -44,11 +44,28 @@ namespace TVRename
 
             SetupColumns();
 
-            lvwCodeFinderColumnSorter = new ListViewColumnSorter(new DoubleAsTextSorter(5));
-            lvwCodeFinderColumnSorter.Order = SortOrder.Descending;
+            lvwCodeFinderColumnSorter = new ListViewColumnSorter(new DoubleAsTextSorter(5))
+            {
+                Order = SortOrder.Descending
+            };
+
             lvMatches.ListViewItemSorter = lvwCodeFinderColumnSorter;
 
             label3.Text = GetPromptLabel(Source);
+        }
+
+        public void SetSource(TVDoc.ProviderType source)
+        {
+            if (source == TVDoc.ProviderType.libraryDefault)
+            {
+                Source = Type == MediaConfiguration.MediaType.movie ? TVSettings.Instance.DefaultMovieProvider : TVSettings.Instance.DefaultProvider;
+            }
+            else
+            {
+                Source = source;
+            }
+            label3.Text = GetPromptLabel(Source);
+            DoFind(false);
         }
 
         private void SetupColumns()
@@ -95,10 +112,11 @@ namespace TVRename
 
         public  event EventHandler<EventArgs>? SelectionChanged;
 
-        public  bool SetHint(string s)
+        public  bool SetHint(string s,TVDoc.ProviderType provider)
         {
             mInternal = true;
             txtFindThis.Text = s;
+            SetSource(provider);
             mInternal = false;
             Search(true);
             return DoFind(true);
@@ -157,38 +175,36 @@ namespace TVRename
 
             string what = txtFindThis.Text.CompareName();
             int matchedMovies = 0;
-            int matchedTVShows = 0;
+            int matchedTvShows = 0;
 
             lvMatches.Items.Clear();
             if (!string.IsNullOrEmpty(what))
             {
                 bool numeric = int.TryParse(what, out int matchnum);
+                MediaCache cache = TVDoc.GetMediaCache(Source);
 
                 if (Type == MediaConfiguration.MediaType.tv)
                 {
-                    lock (TheTVDB.LocalCache.Instance.SERIES_LOCK)
+                    lock (cache.SERIES_LOCK)
                     {
-                        foreach (KeyValuePair<int, CachedSeriesInfo> kvp in TheTVDB.LocalCache.Instance.GetSeriesDict())
+                        foreach (KeyValuePair<int, CachedSeriesInfo> kvp in cache.CachedShowData.Where(kvp => matches(kvp.Key, kvp.Value, numeric, what, matchnum)))
                         {
-                            if (matches(kvp.Key, kvp.Value, numeric, what, matchnum))
-                            {
-                                lvMatches.Items.Add(NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum));
-                                matchedTVShows++;
-                                tvShowInitialFound = kvp.Value;
-                            }
+                            lvMatches.Items.Add(NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum));
+                            matchedTvShows++;
+                            TvShowInitialFound = kvp.Value;
                         }
                     }
-                    txtSearchStatus.Text = "Found " + matchedTVShows + " show" + (matchedTVShows != 1 ? "s" : "");
+                    txtSearchStatus.Text = "Found " + matchedTvShows + " show" + (matchedTvShows != 1 ? "s" : "");
                 }
                 else if (Type == MediaConfiguration.MediaType.movie)
                 {
                     lock (TMDB.LocalCache.Instance.MOVIE_LOCK)
                     {
-                        foreach (var kvp in TMDB.LocalCache.Instance.CachedMovieData.Where(kvp=> matches(kvp.Key, kvp.Value, numeric, what, matchnum)).OrderByDescending(m=>m.Value.Popularity))
+                        foreach (KeyValuePair<int, CachedMovieInfo> kvp in TMDB.LocalCache.Instance.CachedMovieData.Where(kvp=> matches(kvp.Key, kvp.Value, numeric, what, matchnum)).OrderByDescending(m=>m.Value.Popularity))
                         {
                             lvMatches.Items.Add(NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum));
                             matchedMovies++;
-                            movieInitialFound = kvp.Value;
+                            MovieInitialFound = kvp.Value;
                         }
                     }
                     txtSearchStatus.Text = "Found " + matchedMovies + " movie" + (matchedMovies != 1 ? "s" : "");
@@ -213,7 +229,7 @@ namespace TVRename
                 return true;
             }
 
-            if (matchedTVShows == 1 && chooseOnlyMatch)
+            if (matchedTvShows == 1 && chooseOnlyMatch)
             {
                 lvMatches.Items[0].Selected = true;
 
@@ -287,7 +303,7 @@ namespace TVRename
 
             if (!string.IsNullOrEmpty(txtFindThis.Text))
             {
-                GetSourceInstance(Source).Search(txtFindThis.Text,showErrorMsgBox);
+                GetSourceInstance(Source).Search(txtFindThis.Text,showErrorMsgBox,Type);
                 DoFind(true);
             }
         }

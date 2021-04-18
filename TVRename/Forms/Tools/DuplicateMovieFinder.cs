@@ -10,7 +10,7 @@ namespace TVRename.Forms
 {
     public partial class DuplicateMovieFinder : Form
     {
-        private static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly List<DuplicateMovie> dupMovies;
         private readonly TVDoc mDoc;
         private readonly UI mainUi;
@@ -218,7 +218,7 @@ namespace TVRename.Forms
                 switch (result)
                 {
                     case ChooseFile.ChooseFileDialogResult.ignore:
-                        LOGGER.Info($" User has selected keeping {file1.FullName} and {file2.FullName} and they will not be merged");
+                        Logger.Info($" User has selected keeping {file1.FullName} and {file2.FullName} and they will not be merged");
                         return;
                     case ChooseFile.ChooseFileDialogResult.left:
                         UpgradeFile("User selected to", file1, pep, file2);
@@ -238,7 +238,7 @@ namespace TVRename.Forms
 
         private static void UpgradeFile(string message, FileInfo keepFile, MovieConfiguration movie, FileInfo removeFile)
         {
-            LOGGER.Info($"{message} remove {removeFile.FullName} as it is not as good quality than {keepFile.FullName}");
+            Logger.Info($"{message} remove {removeFile.FullName} as it is not as good quality than {keepFile.FullName}");
             try
             {
                 if (movie.ManualLocations.Contains(removeFile.DirectoryName))

@@ -164,7 +164,7 @@ namespace TVRename.TheTVDB
 
         public CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox)
         {
-            Search(showName, showErrorMsgBox);
+            Search(showName, showErrorMsgBox,MediaConfiguration.MediaType.tv);
 
             if (string.IsNullOrEmpty(showName))
             {
@@ -290,6 +290,7 @@ namespace TVRename.TheTVDB
             }
         }
 
+        // ReSharper disable once InconsistentNaming
         private bool TVDBLogin(bool showErrorMsgBox)
         {
             Say("TheTVDB Login");
@@ -1779,7 +1780,7 @@ namespace TVRename.TheTVDB
             return ok;
         }
 
-        public override void Search(string text, bool showErrorMsgBox)
+        public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type)
         {
             if (!IsConnected && !Connect(showErrorMsgBox))
             {
@@ -2018,7 +2019,7 @@ namespace TVRename.TheTVDB
                 }
         */
 
-        public void Tidy(ICollection<ShowConfiguration> libraryValues)
+        public void Tidy(IEnumerable<ShowConfiguration> libraryValues)
         {
             // remove any shows from thetvdb that aren't in My Shows
             List<int> removeList = new List<int>();

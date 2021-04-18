@@ -87,7 +87,7 @@ namespace TVRename.Forms
         {
             BackgroundWorker bw = (BackgroundWorker) sender;
 
-            List<(int, string)> collectionIds = mDoc.FilmLibrary.Values
+            List<(int, string)> collectionIds = mDoc.FilmLibrary.Movies
                 .Select(c => (c.CachedMovie?.CollectionId, c.CachedMovie?.CollectionName))
                 .Where(a => a.CollectionId.HasValue && a.CollectionName.HasValue())
                 .Select(a => (a.CollectionId.Value, a.CollectionName)).Distinct().ToList();
@@ -103,7 +103,7 @@ namespace TVRename.Forms
                 {
                     CollectionMember c = new CollectionMember {CollectionName = collectionName, Movie = neededShow.Value};
 
-                    c.IsInLibrary = mDoc.FilmLibrary.ContainsKey(c.TmdbCode);
+                    c.IsInLibrary = mDoc.FilmLibrary.Movies.Any(configuration => configuration.TmdbCode ==c.TmdbCode);
                     collectionMovies.Add(c);
                 }
 
@@ -155,7 +155,7 @@ namespace TVRename.Forms
             
             if (mlastSelected.IsInLibrary)
             {
-                MovieConfiguration? si = mDoc.FilmLibrary.GetMovie(mlastSelected.TmdbCode);
+                MovieConfiguration? si = mDoc.FilmLibrary.GetMovie(mlastSelected.TmdbCode,TVDoc.ProviderType.TMDB); //TODO - Revisit for multisource
                 if ( si!=null)
                 {
                     AddRcMenuItem("Force Refresh", (o, args) => mainUi.ForceMovieRefresh(si, false));

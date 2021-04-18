@@ -13,19 +13,21 @@ namespace TVRename
     using System;
     using System.Windows.Forms;
 
-    public partial class FolderMonitorEdit : Form
+    public partial class BulkAddEditShow : Form
     {
         public int Code;
 
         private readonly CombinedCodeFinder codeFinderControl;
+        public TVDoc.ProviderType ProviderType => codeFinderControl.Source;
 
-        public FolderMonitorEdit([NotNull] PossibleNewTvShow hint)
+        public BulkAddEditShow([NotNull] PossibleNewTvShow hint)
         {
             InitializeComponent();
 
-            codeFinderControl = new CombinedCodeFinder("",MediaConfiguration.MediaType.tv,TVDoc.ProviderType.TheTVDB) {Dock = DockStyle.Fill};
+            codeFinderControl = new CombinedCodeFinder("",MediaConfiguration.MediaType.tv, TVSettings.Instance.DefaultProvider) {Dock = DockStyle.Fill};
             codeFinderControl.SelectionChanged += CodeChanged;
             codeFinderControl.lvMatches.DoubleClick += MatchDoubleClick;
+            label1.Text = $"Search for {TVSettings.Instance.DefaultProvider.PrettyPrint()} entry, by partial name or ID:";
 
             pnlCF.SuspendLayout();
             pnlCF.Controls.Add(codeFinderControl);
@@ -33,7 +35,7 @@ namespace TVRename
 
             if (hint.CodeKnown)
             {
-                codeFinderControl.SetHint(hint.TVDBCode.ToString());
+                codeFinderControl.SetHint(hint.ProviderCode.ToString(),hint.Provider); 
             }
             else
             {
@@ -41,7 +43,7 @@ namespace TVRename
                 int p = s.LastIndexOf(System.IO.Path.DirectorySeparatorChar);
                 codeFinderControl.SetHint(string.IsNullOrWhiteSpace(hint.RefinedHint)
                     ? s.Substring(p + 1)
-                    : hint.RefinedHint);
+                    : hint.RefinedHint,TVDoc.ProviderType.libraryDefault);
             }
             Code = -1;
         }

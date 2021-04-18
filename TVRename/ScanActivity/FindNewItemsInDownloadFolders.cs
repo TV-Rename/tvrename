@@ -46,18 +46,18 @@ namespace TVRename
             IEnumerable<FileInfo> possibleShowNames = GetPossibleShowNameStrings();
             List<MediaConfiguration> addedShows = FinderHelper.FindMedia(possibleShowNames,MDoc,settings.Owner);
 
-            IEnumerable<ShowConfiguration> addedTVShows = addedShows.OfType<ShowConfiguration>();
-            if (addedTVShows.Any())
+            IEnumerable<ShowConfiguration> addedTvShows = addedShows.OfType<ShowConfiguration>();
+            if (addedTvShows.Any())
             {
-                MDoc.TvLibrary.AddRange(addedTVShows);
+                MDoc.TvLibrary.AddRange(addedTvShows);
                 MDoc.ShowAddedOrEdited(false, false, false, settings.Owner);
                 MDoc.ShowAddedOrEdited(true, false, false, settings.Owner);
                 //add each new show into the shows being scanned
-                foreach (ShowConfiguration si in addedTVShows)
+                foreach (ShowConfiguration si in addedTvShows)
                 {
                     settings.Shows.Add(si);
                 }
-                LOGGER.Info("Added new shows called: {0}", addedTVShows.Select(s => s.ShowName).ToCsv());
+                LOGGER.Info("Added new shows called: {0}", addedTvShows.Select(s => s.ShowName).ToCsv());
             }
 
 
@@ -92,7 +92,7 @@ namespace TVRename
                 try
                 {
                     string[] array = Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories);
-                    var orderedFiles = from name in array orderby name select name;
+                    IOrderedEnumerable<string>? orderedFiles = from name in array orderby name select name;
                     foreach (string filePath in orderedFiles)
                     {
                         if (!File.Exists(filePath))

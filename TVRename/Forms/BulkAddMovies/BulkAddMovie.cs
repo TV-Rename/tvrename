@@ -489,9 +489,17 @@ namespace TVRename
                 return;
             }
 
-            if (fme.TVDBCode != -1)
+            if (fme.CodeKnown)
             {
-                Helpers.OpenUrl(TheTVDB.API.WebsiteShowUrl(fme.TVDBCode)); //todo - how will bulk add work for MTVmaze
+                if (fme.Provider == TVDoc.ProviderType.TheTVDB)
+                {
+                    Helpers.OpenUrl(
+                        TheTVDB.API.WebsiteShowUrl(fme.ProviderCode)); 
+                }
+                else
+                {
+                    //todo - how will bulk add work for MTVmaze
+                }
             }
         }
 

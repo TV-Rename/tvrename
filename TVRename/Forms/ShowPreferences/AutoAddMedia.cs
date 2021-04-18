@@ -5,7 +5,7 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
-    public partial class AutoAddShow : Form
+    public partial class AutoAddMedia : Form
     {
         private readonly CombinedCodeFinder tvCodeFinder;
         private readonly CombinedCodeFinder movieCodeFinder;
@@ -14,7 +14,7 @@ namespace TVRename
         public readonly bool SingleMovieFound;
         private readonly bool assumeMovie;
 
-        public AutoAddShow(string hint,FileInfo file, bool assumeMovie)
+        public AutoAddMedia(string hint,FileInfo file, bool assumeMovie)
         {
             InitializeComponent();
             ShowConfiguration = new ShowConfiguration();
@@ -24,21 +24,21 @@ namespace TVRename
 
             lblFileName.Text = "Filename: "+file.FullName;
 
-            tvCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.tv,TVDoc.ProviderType.TheTVDB) {Dock = DockStyle.Fill};
-            movieCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.movie,TVDoc.ProviderType.TMDB) { Dock = DockStyle.Fill };
+            tvCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.tv,TVSettings.Instance.DefaultProvider) {Dock = DockStyle.Fill};
+            movieCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.movie,TVSettings.Instance.DefaultMovieProvider) { Dock = DockStyle.Fill };
 
             tvCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
             movieCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
 
-            SingleTvShowFound = tvCodeFinder.SetHint(hint) && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation;
-            SingleMovieFound = movieCodeFinder.SetHint(hint) && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && assumeMovie;
+            SingleTvShowFound = tvCodeFinder.SetHint(hint, TVSettings.Instance.DefaultProvider) && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation;
+            SingleMovieFound = movieCodeFinder.SetHint(hint, TVSettings.Instance.DefaultMovieProvider) && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && assumeMovie;
 
             originalHint = hint;
 
             if (SingleTvShowFound )
             {
-                string filenameFriendly = TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(tvCodeFinder.tvShowInitialFound.Name));
-                SetShowItem(tvCodeFinder.tvShowInitialFound.TvdbCode, TVSettings.Instance.DefShowLocation+ System.IO.Path.DirectorySeparatorChar + filenameFriendly);
+                string filenameFriendly = TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(tvCodeFinder.TvShowInitialFound.Name));
+                SetShowItem(tvCodeFinder.TvShowInitialFound.TvdbCode, TVSettings.Instance.DefShowLocation+ System.IO.Path.DirectorySeparatorChar + filenameFriendly);
                 if (ShowConfiguration.Code == -1)
                 {
                     SetShowItem();
@@ -46,7 +46,7 @@ namespace TVRename
             }
             if (SingleMovieFound)
             {
-                SetMovieItem(movieCodeFinder.movieInitialFound.TmdbCode, TVSettings.Instance.DefMovieDefaultLocation);
+                SetMovieItem(movieCodeFinder.MovieInitialFound.TmdbCode, TVSettings.Instance.DefMovieDefaultLocation);
                 if (MovieConfiguration.Code == -1)
                 {
                     SetMovieItem();

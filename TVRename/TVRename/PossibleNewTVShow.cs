@@ -15,20 +15,27 @@ namespace TVRename
     {
         public readonly DirectoryInfo Folder;
         // ReSharper disable once InconsistentNaming
-        public int TVDBCode;
+        internal int ProviderCode;
+        internal TVDoc.ProviderType Provider;
         public readonly bool HasSeasonFoldersGuess;
         public readonly string SeasonFolderFormat;
         public string? RefinedHint;
 
         public bool CodeKnown => !CodeUnknown;
-        public bool CodeUnknown => TVDBCode == -1;
-        
+        public bool CodeUnknown => ProviderCode == -1;
+
         public PossibleNewTvShow(DirectoryInfo directory, bool seasonFolders, string folderFormat)
         {
             Folder = directory;
-            TVDBCode = -1;
+            ProviderCode = -1;
             HasSeasonFoldersGuess = seasonFolders;
             SeasonFolderFormat = folderFormat;
+        }
+
+        public void SetId(int code, TVDoc.ProviderType provider)
+        {
+            ProviderCode = code;
+            Provider = provider;
         }
     }
 }

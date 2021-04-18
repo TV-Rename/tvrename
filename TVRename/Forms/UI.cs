@@ -11,11 +11,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Deployment.Application;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,6 +41,9 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using MessageBox = System.Windows.Forms.MessageBox;
 using SystemColors = System.Drawing.SystemColors;
 using BrightIdeasSoftware;
+using CefSharp;
+using CefSharp.WinForms;
+using TVRename;
 
 namespace TVRename
 {
@@ -53,8 +58,8 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     public partial class UI : Form, IRemoteActions, IDialogParent
     {
-        internal const string EXPLORE_PROXY = "http://www.tvrename.com/EXPLOREPROXY";
-        internal const string WATCH_PROXY = "http://www.tvrename.com/WATCHPROXY";
+        public const string EXPLORE_PROXY = "http://www.tvrename.com/EXPLOREPROXY";
+        public const string WATCH_PROXY = "http://www.tvrename.com/WATCHPROXY";
 
         #region Delegates
 
@@ -94,7 +99,13 @@ namespace TVRename
 
             internalCheckChange = false;
 
+            Cef.Initialize(new CefSettings());
             InitializeComponent();
+            chrSummary.RequestHandler = new BrowserRequestHandler();
+            chrImages.RequestHandler = new BrowserRequestHandler();
+            chrInformation.RequestHandler = new BrowserRequestHandler();
+            chrMovieImages.RequestHandler = new BrowserRequestHandler();
+            chrMovieInformation.RequestHandler = new BrowserRequestHandler();
 
             ScanAndDo = ScanAndAction;
             ReceiveArgumentDelegate = RecieveArguments;
@@ -470,15 +481,15 @@ namespace TVRename
 
         private void ClearInfoWindows(string defaultText)
         {
-            SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(defaultText));
-            SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(defaultText));
-            SetHtmlBody(webSummary, ShowHtmlHelper.CreateOldPage(defaultText));
+            SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(defaultText));
+            SetHtmlBody(chrInformation, ShowHtmlHelper.CreateOldPage(defaultText));
+            SetHtmlBody(chrSummary, ShowHtmlHelper.CreateOldPage(defaultText));
         }
 
         private void ClearMovieInfoWindows(string defaultText)
         {
-            SetHtmlBody(webMovieImages, ShowHtmlHelper.CreateOldPage(defaultText));
-            SetHtmlBody(webMovieInformation, ShowHtmlHelper.CreateOldPage(defaultText));
+            SetHtmlBody(chrMovieImages, ShowHtmlHelper.CreateOldPage(defaultText));
+            SetHtmlBody(chrMovieInformation, ShowHtmlHelper.CreateOldPage(defaultText));
         }
 
         private void MoreBusy() => Interlocked.Increment(ref busy);
@@ -1079,7 +1090,7 @@ namespace TVRename
             MyShowTree.BeginUpdate();
 
             MyShowTree.Nodes.Clear();
-            List<ShowConfiguration> sil = mDoc.TvLibrary.Values.ToList();
+            List<ShowConfiguration> sil = mDoc.TvLibrary.Shows.ToList();
             sil.Sort((a, b) => string.Compare(GenerateShowUIName(a), GenerateShowUIName(b), StringComparison.OrdinalIgnoreCase));
 
             ShowFilter filter = TVSettings.Instance.Filter;
@@ -1124,7 +1135,7 @@ namespace TVRename
             movieTree.BeginUpdate();
 
             movieTree.Nodes.Clear();
-            List<MovieConfiguration> sil = mDoc.FilmLibrary.Values.ToList();
+            List<MovieConfiguration> sil = mDoc.FilmLibrary.Movies.ToList();
             sil.Sort((a, b) => string.Compare(GenerateShowUiName(a), GenerateShowUiName(b), StringComparison.OrdinalIgnoreCase));
 
             MovieFilter filter = TVSettings.Instance.MovieFilter;
@@ -1147,22 +1158,18 @@ namespace TVRename
         private static string GenerateShowUiName(MovieConfiguration show) => PostpendTheIfNeeded(show.ShowName);
 
         [NotNull]
-        private static string QuickStartGuide() => "https://www.tvrename.com/manual/quickstart/";
+        public static string QuickStartGuide() => "https://www.tvrename.com/manual/quickstart/";
 
         private void ShowQuickStartGuide()
         {
             tabControl1.SelectTab(tbMyShows);
 
-            if (webInformation.IsDisposed || webImages.IsDisposed || webSummary.IsDisposed)
-            {
-                return;
-            }
-
             try
             {
-                webInformation.Navigate(QuickStartGuide());
-                webImages.Navigate(QuickStartGuide());
-                webSummary.Navigate(QuickStartGuide());
+                SetHtmlBody(chrInformation, QuickStartGuide());
+                SetHtmlBody(chrImages, QuickStartGuide());
+                SetHtmlBody(chrSummary, QuickStartGuide());
+
             }
             catch (COMException ex)
             {
@@ -1293,16 +1300,16 @@ namespace TVRename
                 if (snum >= 0 && si.AppropriateSeasons().ContainsKey(snum))
                 {
                     ProcessedSeason s = si.AppropriateSeasons()[snum];
-                    SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(si.GetSeasonHtmlOverviewOffline(s)));
-                    SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
-                    SetHtmlBody(webSummary, ShowHtmlHelper.CreateOldPage("Not available offline"));
+                   SetHtmlBody(chrInformation, ShowHtmlHelper.CreateOldPage(si.GetSeasonHtmlOverviewOffline(s)));
+                    SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
+                    SetHtmlBody(chrSummary, ShowHtmlHelper.CreateOldPage("Not available offline"));
                 }
                 else
                 {
                     // no epnum specified, just show an overview
-                    SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(si.GetShowHtmlOverviewOffline()));
-                    SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
-                    SetHtmlBody(webSummary, ShowHtmlHelper.CreateOldPage("Not available offline"));
+                    SetHtmlBody(chrInformation, ShowHtmlHelper.CreateOldPage(si.GetShowHtmlOverviewOffline()));
+                    SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
+                    SetHtmlBody(chrSummary, ShowHtmlHelper.CreateOldPage("Not available offline"));
                 }
 
                 return; 
@@ -1311,9 +1318,9 @@ namespace TVRename
             if (snum >= 0 && si.AppropriateSeasons().ContainsKey(snum))
             {
                 ProcessedSeason s = si.AppropriateSeasons()[snum];
-                SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
-                SetHtmlBody(webInformation, si.GetSeasonHtmlOverview(s, false));
-                SetHtmlBody(webSummary, si.GetSeasonSummaryHtmlOverview(s, false));
+                SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
+                SetHtmlBody(chrInformation, si.GetSeasonHtmlOverview(s, false));
+                SetHtmlBody(chrSummary, si.GetSeasonSummaryHtmlOverview(s, false));
 
                 if (bwSeasonHTMLGenerator.WorkerSupportsCancellation)
                 {
@@ -1340,9 +1347,9 @@ namespace TVRename
             else
             {
                 // no epnum specified, just show an overview
-                SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
-                SetHtmlBody(webInformation, si.GetShowHtmlOverview(false));
-                SetHtmlBody(webSummary, si.GetShowSummaryHtmlOverview(false));
+                SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
+                SetHtmlBody(chrInformation, si.GetShowHtmlOverview(false));
+                SetHtmlBody(chrSummary, si.GetShowSummaryHtmlOverview(false));
 
                 if (bwShowHTMLGenerator.WorkerSupportsCancellation)
                 {
@@ -1383,6 +1390,30 @@ namespace TVRename
             {
                 //Fail gracefully - no RHS episode guide is not too big of a problem.
                 Logger.Warn(ex,"Could not update UI for the show/cachedSeries information pane");
+            }
+            catch (Exception ex)
+            {
+                //Fail gracefully - no RHS episode guide is not too big of a problem.
+                Logger.Error(ex);
+            }
+            web.Update();
+        }
+
+        private static void SetHtmlBody([NotNull] ChromiumWebBrowser web, string body)
+        {
+            if (web.IsDisposed)
+            {
+                return;
+            }
+
+            try
+            {
+                web.LoadHtml(body);
+            }
+            catch (COMException ex)
+            {
+                //Fail gracefully - no RHS episode guide is not too big of a problem.
+                Logger.Warn(ex, "Could not update UI for the show/cachedSeries information pane");
             }
             catch (Exception ex)
             {
@@ -3184,15 +3215,12 @@ namespace TVRename
 
             if (TVSettings.Instance.OfflineMode || TVSettings.Instance.ShowBasicShowDetails)
             {
-               SetHtmlBody(webMovieInformation, ShowHtmlHelper.CreateOldPage(si.GetMovieHtmlOverviewOffline()));
-               SetHtmlBody(webMovieImages, ShowHtmlHelper.CreateOldPage(si.GetMovieImagesHtmlOverview()));
-
-               return;
+                SetHtmlBody(chrMovieInformation, ShowHtmlHelper.CreateOldPage(si.GetMovieHtmlOverviewOffline()));
+                SetHtmlBody(chrMovieImages, ShowHtmlHelper.CreateOldPage(si.GetMovieImagesHtmlOverview()));
+                return;
             }
-
-            SetHtmlBody(webMovieImages, ShowHtmlHelper.CreateOldPage(si.GetMovieImagesHtmlOverview()));
-            SetHtmlBody(webMovieInformation, si.GetMovieHtmlOverview(false));
-
+            SetHtmlBody(chrMovieImages, ShowHtmlHelper.CreateOldPage(si.GetMovieImagesHtmlOverview()));
+            SetHtmlBody(chrMovieInformation, si.GetMovieHtmlOverview(false));
             if (bwMovieHTMLGenerator.WorkerSupportsCancellation)
             {
                 // Cancel the asynchronous operation.
@@ -3465,7 +3493,7 @@ namespace TVRename
                                 MessageBoxIcon.Error);
                         }
 
-                        ShowConfiguration problemShow = mDoc.TvLibrary.GetShowItem(problem.ShowId);
+                        ShowConfiguration problemShow = mDoc.TvLibrary.GetShowItem(problem.ShowId,problem.ShowIdProvider);
                         if (problemShow != null)
                         {
                             EditShow(problemShow);
@@ -3480,19 +3508,14 @@ namespace TVRename
         [NotNull]
         private static string StringFor(TVDoc.ProviderType i)
         {
-            switch (i)
+            return i switch
             {
-                case TVDoc.ProviderType.TVmaze:
-                    return "TV Maze";
-                case TVDoc.ProviderType.TMDB:
-                    return "TMDB";
-                case TVDoc.ProviderType.TheTVDB:
-                    return "The TVDB";
-
-                case TVDoc.ProviderType.libraryDefault:
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(i), i, null);
-            }
+                TVDoc.ProviderType.TVmaze => "TV Maze",
+                TVDoc.ProviderType.TMDB => "TMDB",
+                TVDoc.ProviderType.TheTVDB => "The TVDB",
+                TVDoc.ProviderType.libraryDefault => throw new ArgumentOutOfRangeException(nameof(i), i, null),
+                _ => throw new ArgumentOutOfRangeException(nameof(i), i, null)
+            };
         }
 
         [NotNull]
@@ -4370,7 +4393,7 @@ namespace TVRename
             string html = e.Result as string;
             if (html.HasValue())
             {
-                SetHtmlBody(webInformation, html!);
+                SetHtmlBody(chrInformation, html!);
             }
         }
 
@@ -4379,7 +4402,7 @@ namespace TVRename
             string html = e.Result as string;
             if (html.HasValue())
             {
-                SetHtmlBody(webMovieInformation, html!);
+                SetHtmlBody(chrMovieInformation, html!);
             }
         }
 
@@ -4388,7 +4411,7 @@ namespace TVRename
             string html = e.Result as string;
             if (html.HasValue())
             {
-                SetHtmlBody(webSummary, html!);
+                SetHtmlBody(chrSummary, html!);
             }
         }
 
@@ -4930,4 +4953,117 @@ namespace TVRename
             mDoc.MovieFolderScan(this);
         }
     }
+
+
+public class BrowserRequestHandler : IRequestHandler
+{
+    public bool OnBeforeBrowse(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect)
+    {
+        if (request.Url is null)
+        {
+            return false;
+        }
+
+        string url = request.Url;
+
+        if (string.Compare(url, "about:blank", StringComparison.Ordinal) == 0)
+        {
+            return false; // don't intercept about:blank
+        }
+
+        if (url == UI.QuickStartGuide())
+        {
+            return false; // let the quick-start guide be shown
+        }
+
+        if (url.Contains(@"ieframe.dll"))
+        {
+            //url = e.Url.Fragment.Substring(1);
+        }
+
+        if (url.StartsWith(UI.EXPLORE_PROXY, StringComparison.InvariantCultureIgnoreCase))
+        {
+            string openlocation = HttpUtility.UrlDecode(url.Substring(UI.EXPLORE_PROXY.Length));
+            if (Helpers.OpenFolder(openlocation))
+            {
+                return true;
+            }
+            Helpers.OpenFolderSelectFile(openlocation);
+            return true;
+        }
+
+        if (url.StartsWith(UI.WATCH_PROXY, StringComparison.InvariantCultureIgnoreCase))
+        {
+            string fileName = HttpUtility.UrlDecode(url.Substring(UI.WATCH_PROXY.Length)).Replace('/', '\\');
+            Helpers.OpenFile(fileName);
+            return true;
+        }
+
+        if (url.IsHttpLink() || url.IsFileLink())
+        {
+            
+            Helpers.OpenUrl(url);
+            return true;
+        }
+        return false;
+    }
+
+    public void OnDocumentAvailableInMainFrame(IWebBrowser chromiumWebBrowser, IBrowser browser)
+    {
+       
+    }
+
+    public bool OnOpenUrlFromTab(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl,
+        WindowOpenDisposition targetDisposition, bool userGesture)
+    {
+        return false;
+    }
+
+    public IResourceRequestHandler GetResourceRequestHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame,
+        IRequest request, bool isNavigation, bool isDownload, string requestInitiator, ref bool disableDefaultHandling) => null;
+        
+    public bool GetAuthCredentials(IWebBrowser chromiumWebBrowser, IBrowser browser, string originUrl, bool isProxy, string host,
+        int port, string realm, string scheme, IAuthCallback callback)
+    {
+        callback.Dispose();
+        return false;
+    }
+
+    public bool OnCertificateError(IWebBrowser browserControl, IBrowser browser, CefErrorCode errorCode, string requestUrl,
+        ISslInfo sslInfo, IRequestCallback callback)
+    {
+        callback.Dispose();
+        return false;
+    }
+
+    public bool OnSelectClientCertificate(IWebBrowser chromiumWebBrowser, IBrowser browser, bool isProxy, string host, int port,
+        X509Certificate2Collection certificates, ISelectClientCertificateCallback callback) =>
+        false;
+
+    public void OnPluginCrashed(IWebBrowser browserControl, IBrowser browser, string pluginPath)
+    {
+        throw new Exception("Plugin crashed!");
+    }
+
+    public CefReturnValue OnBeforeResourceLoad(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request,
+        IRequestCallback callback)
+    {
+        return CefReturnValue.Continue;
+    }
+    public void OnRenderProcessTerminated(IWebBrowser browserControl, IBrowser browser, CefTerminationStatus status)
+    {
+    }
+
+    public bool OnQuotaRequest(IWebBrowser browserControl, IBrowser browser, string originUrl, long newSize,
+        IRequestCallback callback)
+    {
+        callback.Dispose();
+        return false;
+    }
+
+    public void OnRenderViewReady(IWebBrowser browserControl, IBrowser browser)
+    {
+
+    }
+}
 }

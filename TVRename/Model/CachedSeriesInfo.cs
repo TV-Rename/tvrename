@@ -154,7 +154,7 @@ namespace TVRename
         // ReSharper disable once FunctionComplexityOverflow
         public void Merge([NotNull] CachedSeriesInfo o)
         {
-            if (o.TvdbCode != TvdbCode && o.TvMazeCode !=TvMazeCode) 
+            if (o.TvdbCode != TvdbCode && o.TvMazeCode !=TvMazeCode && o.TmdbCode != TmdbCode)  
             {
                 return; // that's not us!
             }
@@ -581,7 +581,7 @@ namespace TVRename
             sourceEpisodes.TryRemove(episodeId, out Episode _);
         }
 
-        public override string ToString() => $"TVDB:{TvdbCode}/Maze:{TvMazeCode}/{Name}";
+        public override string ToString() => $"TVDB:{TvdbCode}/Maze:{TvMazeCode}/TMDB:{TmdbCode}/{Name}";
 
         private List<Season> seasons = new List<Season>();
         public void AddSeason(Season generateSeason)

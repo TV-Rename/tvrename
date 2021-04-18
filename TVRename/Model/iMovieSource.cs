@@ -19,7 +19,7 @@ namespace TVRename
         CachedMovieInfo GetMovie(int? id);
         bool HasMovie(int id);
 
-        void Tidy(ICollection<MovieConfiguration> libraryValues);
+        void Tidy(IEnumerable<MovieConfiguration> libraryValues);
 
         void ForgetEverything();
         void ForgetMovie(int id);

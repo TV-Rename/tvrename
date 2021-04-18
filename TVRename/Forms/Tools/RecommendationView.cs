@@ -13,9 +13,9 @@ namespace TVRename.Forms
         private Recomendations recs;
         private readonly TVDoc mDoc;
         private readonly UI mainUi;
-        private MediaConfiguration.MediaType media;
-        private IEnumerable<ShowConfiguration> tvShows;
-        private IEnumerable<MovieConfiguration> movies;
+        private readonly MediaConfiguration.MediaType media;
+        private readonly IEnumerable<ShowConfiguration> tvShows;
+        private readonly IEnumerable<MovieConfiguration> movies;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         private RecommendationView([NotNull] TVDoc doc, UI main)
@@ -75,8 +75,8 @@ namespace TVRename.Forms
         {
             IEnumerable<RecommendationResult> recommendationRows = chkRemoveExisting.Checked
                 ? media==MediaConfiguration.MediaType.movie
-                    ? recs.Values.Where(x=> !mDoc.FilmLibrary.ContainsKey(x.Key))
-                    : recs.Values.Where(x => !mDoc.TvLibrary.ContainsKey(x.Key))
+                    ? recs.Values.Where(x=> mDoc.FilmLibrary.Movies.Any(configuration => configuration.TmdbCode == x.Key))
+                    : recs.Values.Where(x => mDoc.TvLibrary.Shows.All(configuration => configuration.TmdbCode != x.Key))
                 : recs.Values;
 
             lvRecommendations.SetObjects(recommendationRows.Select(x => new RecommendationRow(x, media)));
@@ -132,7 +132,7 @@ namespace TVRename.Forms
                     recs = TMDB.LocalCache.Instance.GetRecommendations(mDoc, (BackgroundWorker)sender, tvShows.ToList()).Result;
                     foreach (KeyValuePair<int, RecommendationResult> rec in recs)
                     {
-                        Logger.Warn($"{rec.Key,-10} | {(rec.Value.TopRated ? "Top" : "   ")} | {(rec.Value.Trending ? "Trend" : "    ")} | {rec.Value.Related.Count,5} | {rec.Value.Similar.Count,5} | {mDoc.TvLibrary.ContainsKey(rec.Key)} | {TMDB.LocalCache.Instance.GetSeries(rec.Key)?.Name}");
+                        Logger.Warn($"{rec.Key,-10} | {(rec.Value.TopRated ? "Top" : "   ")} | {(rec.Value.Trending ? "Trend" : "    ")} | {rec.Value.Related.Count,5} | {rec.Value.Similar.Count,5} | {mDoc.TvLibrary.Shows.All(configuration => configuration.TmdbCode != rec.Key)} | {TMDB.LocalCache.Instance.GetSeries(rec.Key)?.Name}");
                     }
                     break;
                 case MediaConfiguration.MediaType.movie:

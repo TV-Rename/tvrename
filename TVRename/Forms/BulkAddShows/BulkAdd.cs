@@ -7,6 +7,7 @@
 // 
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Threading;
@@ -470,11 +471,12 @@ namespace TVRename
 
         private static void UpdateResultEntry([NotNull] PossibleNewTvShow ai, [NotNull] ListViewItem lvi)
         {
+            Debug.Assert(ai.Provider == TVDoc.ProviderType.TheTVDB && ai.CodeKnown);
             lvi.SubItems.Clear();
             lvi.Text = ai.Folder.FullName;
-            lvi.SubItems.Add(ai.CodeKnown ? TheTVDB.LocalCache.Instance.GetSeries(ai.TVDBCode)?.Name : ""); //todo - get bulk add to work for TVmaze
+            lvi.SubItems.Add(ai.CodeKnown ? TheTVDB.LocalCache.Instance.GetSeries(ai.ProviderCode)?.Name : ""); //todo - get bulk add to work for TVmaze
             lvi.SubItems.Add(ai.HasSeasonFoldersGuess ? "Folder per season" : "Flat");
-            lvi.SubItems.Add(ai.CodeKnown ? ai.TVDBCode.ToString() : "");
+            lvi.SubItems.Add(ai.CodeKnown ? ai.ProviderCode.ToString() : string.Empty);
             lvi.Tag = ai;
             lvi.ImageIndex=ai.CodeKnown&&!string.IsNullOrWhiteSpace(ai.Folder.FullName)?1:0;
         }
@@ -523,9 +525,17 @@ namespace TVRename
                 return;
             }
 
-            if (fme.TVDBCode != -1)
+            if (fme.CodeKnown)
             {
-                Helpers.OpenUrl(TheTVDB.API.WebsiteShowUrl(fme.TVDBCode)); //todo - how will bulk add work for MTVmaze
+                if (fme.Provider == TVDoc.ProviderType.TheTVDB)
+                {
+                    Helpers.OpenUrl(
+                        TheTVDB.API.WebsiteShowUrl(fme.ProviderCode));
+                }
+                else
+                {
+                    //todo - how will bulk add work for MTVmaze
+                }
             }
         }
 
@@ -560,13 +570,13 @@ namespace TVRename
 
         private void EditEntry([NotNull] PossibleNewTvShow fme)
         {
-            FolderMonitorEdit ed = new FolderMonitorEdit(fme);
+            BulkAddEditShow ed = new BulkAddEditShow(fme);
             if (ed.ShowDialog(this) != DialogResult.OK|| ed.Code == -1)
             {
                 return;
             }
 
-            fme.TVDBCode = ed.Code;
+            fme.SetId(ed.Code,ed.ProviderType);
         }
 
         private void lstFMMonitorFolders_SelectedIndexChanged(object sender, System.EventArgs e)

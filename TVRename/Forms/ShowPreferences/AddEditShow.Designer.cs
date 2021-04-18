@@ -57,6 +57,7 @@ namespace TVRename
             this.chkCustomShowName = new System.Windows.Forms.CheckBox();
             this.Folders = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.rdoTMDB = new System.Windows.Forms.RadioButton();
             this.label13 = new System.Windows.Forms.Label();
             this.rdoTVMaze = new System.Windows.Forms.RadioButton();
             this.rdoTVDB = new System.Windows.Forms.RadioButton();
@@ -136,7 +137,6 @@ namespace TVRename
             this.cbIncludeNoAirdate = new System.Windows.Forms.CheckBox();
             this.cbIncludeFuture = new System.Windows.Forms.CheckBox();
             this.pbAdvanced = new System.Windows.Forms.PictureBox();
-            this.rdoTMDB = new System.Windows.Forms.RadioButton();
             this.Folders.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbBasics)).BeginInit();
@@ -353,6 +353,19 @@ namespace TVRename
             this.tabPage1.Text = "Basics";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // rdoTMDB
+            // 
+            this.rdoTMDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.rdoTMDB.AutoSize = true;
+            this.rdoTMDB.Location = new System.Drawing.Point(304, 302);
+            this.rdoTMDB.Name = "rdoTMDB";
+            this.rdoTMDB.Size = new System.Drawing.Size(56, 17);
+            this.rdoTMDB.TabIndex = 45;
+            this.rdoTMDB.TabStop = true;
+            this.rdoTMDB.Text = "TMDB";
+            this.rdoTMDB.UseVisualStyleBackColor = true;
+            this.rdoTMDB.CheckedChanged += new System.EventHandler(this.rdoProvider_CheckedChanged);
+            // 
             // label13
             // 
             this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -375,6 +388,7 @@ namespace TVRename
             this.rdoTVMaze.TabStop = true;
             this.rdoTVMaze.Text = "TVmaze";
             this.rdoTVMaze.UseVisualStyleBackColor = true;
+            this.rdoTVMaze.CheckedChanged += new System.EventHandler(this.rdoProvider_CheckedChanged);
             // 
             // rdoTVDB
             // 
@@ -387,6 +401,7 @@ namespace TVRename
             this.rdoTVDB.TabStop = true;
             this.rdoTVDB.Text = "The TVDB";
             this.rdoTVDB.UseVisualStyleBackColor = true;
+            this.rdoTVDB.CheckedChanged += new System.EventHandler(this.rdoProvider_CheckedChanged);
             // 
             // rdoDefault
             // 
@@ -399,6 +414,7 @@ namespace TVRename
             this.rdoDefault.TabStop = true;
             this.rdoDefault.Text = "Library Default";
             this.rdoDefault.UseVisualStyleBackColor = true;
+            this.rdoDefault.CheckedChanged += new System.EventHandler(this.rdoProvider_CheckedChanged);
             // 
             // label60
             // 
@@ -1269,18 +1285,6 @@ namespace TVRename
             this.pbAdvanced.TabIndex = 41;
             this.pbAdvanced.TabStop = false;
             this.pbAdvanced.Click += new System.EventHandler(this.pbAdvanced_Click);
-            // 
-            // rdoTMDB
-            // 
-            this.rdoTMDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.rdoTMDB.AutoSize = true;
-            this.rdoTMDB.Location = new System.Drawing.Point(304, 302);
-            this.rdoTMDB.Name = "rdoTMDB";
-            this.rdoTMDB.Size = new System.Drawing.Size(56, 17);
-            this.rdoTMDB.TabIndex = 45;
-            this.rdoTMDB.TabStop = true;
-            this.rdoTMDB.Text = "TMDB";
-            this.rdoTMDB.UseVisualStyleBackColor = true;
             // 
             // AddEditShow
             // 

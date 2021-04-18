@@ -653,7 +653,7 @@ namespace TVRename
             writer.WriteElement("DefMovieDefaultLocation", DefMovieDefaultLocation);
             writer.WriteElement("DefaultMovieProvider", (int)DefaultMovieProvider);
 
-        writer.WriteElement("UnattendedMultiActionOutcome",(int)UnattendedMultiActionOutcome );
+            writer.WriteElement("UnattendedMultiActionOutcome",(int)UnattendedMultiActionOutcome );
             writer.WriteElement("UserMultiActionOutcome",(int)UserMultiActionOutcome );
 
             writer.WriteElement("SearchJackett",SearchJackett );
@@ -1555,7 +1555,7 @@ namespace TVRename
 
         private void UpdateAppUpdateSettings(XElement xmlSettings)
         {
-            var subElement = xmlSettings.Element("AppUpdate");
+            XElement? subElement = xmlSettings.Element("AppUpdate");
             if (subElement != null)
             {
                 UpdateCheckInterval = TimeSpan.Parse(subElement.ExtractString("Interval", TimeSpan.FromHours(1).ToString()));

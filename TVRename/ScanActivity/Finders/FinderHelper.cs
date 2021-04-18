@@ -722,7 +722,7 @@ namespace TVRename
 
                 if (assumeMovie && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && true)//todo use  TVSettings.Instance.AutomateAutoAddWhenOneMovieFound
                 {
-                    var foundMovie = LocalCache.Instance.GetMovie(refinedHint, null, true, true);
+                    CachedMovieInfo? foundMovie = LocalCache.Instance.GetMovie(refinedHint, null, true, true);
                     if (foundMovie!=null)
                     {
                         // no need to popup dialog
@@ -748,7 +748,7 @@ namespace TVRename
                     }
                 }
                 //popup dialog
-                AutoAddShow askForMatch = new AutoAddShow(refinedHint, file,assumeMovie);
+                AutoAddMedia askForMatch = new AutoAddMedia(refinedHint, file,assumeMovie);
 
                 if (askForMatch.SingleTvShowFound && !askForMatch.SingleMovieFound && true) //todo use  TVSettings.Instance.AutomateAutoAddWhenOneShowFound
                 {

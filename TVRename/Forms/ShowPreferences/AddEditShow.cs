@@ -43,7 +43,7 @@ namespace TVRename
             mDoc = doc;
             sampleProcessedSeason = si.GetFirstAvailableSeason();
             sampleEpisode = si.GetFirstAvailableEpisode();
-            addingNewShow = si.TvdbCode == -1;
+            addingNewShow = (si.TvdbCode == -1 && si.TmdbCode == -1 && si.TVmazeCode == -1);
             InitializeComponent();
 
             if (sampleProcessedSeason != null)
@@ -60,8 +60,7 @@ namespace TVRename
 
             SetupDropDowns(si);
 
-            codeFinderForm =
-                new CombinedCodeFinder(si.TvdbCode != -1 ? si.TvdbCode.ToString() : "", MediaConfiguration.MediaType.tv, TVDoc.ProviderType.TheTVDB) {Dock = DockStyle.Fill};
+            codeFinderForm = new CombinedCodeFinder(si.TvdbCode != -1 ? si.TvdbCode.ToString() : "", MediaConfiguration.MediaType.tv, si.Provider) {Dock = DockStyle.Fill};
 
             codeFinderForm.SelectionChanged += MTCCF_SelectionChanged;
 
@@ -300,9 +299,9 @@ namespace TVRename
 
         private bool OkToClose()
         {
-            if (!TheTVDB.LocalCache.Instance.HasSeries(codeFinderForm.SelectedCode())) //todo Get add show to work with TVMAZE
+            if (!TVDoc.GetMediaCache(GetProviderType()).HasSeries(codeFinderForm.SelectedCode())) 
             {
-                DialogResult dr = MessageBox.Show("tvdb code unknown, close anyway?", "TVRename Add/Edit Show",
+                DialogResult dr = MessageBox.Show($"{GetProviderType().PrettyPrint()} code unknown, close anyway?", "TVRename Add/Edit Show",
                                                   MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (dr == DialogResult.No)
                 {
@@ -382,7 +381,18 @@ namespace TVRename
             }
             selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.DefaultTimeZone();
             selectedShow.ShowNextAirdate = chkShowNextAirdate.Checked;
-            selectedShow.TvdbCode = code;
+            if (GetProviderType()==TVDoc.ProviderType.TheTVDB || (GetProviderType()==TVDoc.ProviderType.libraryDefault && TVSettings.Instance.DefaultProvider==TVDoc.ProviderType.TheTVDB))
+            {
+                selectedShow.TvdbCode = code;
+            }
+            if (GetProviderType() == TVDoc.ProviderType.TMDB || (GetProviderType() == TVDoc.ProviderType.libraryDefault && TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TMDB))
+            {
+                selectedShow.TmdbCode = code;
+            }
+            if (GetProviderType() == TVDoc.ProviderType.TVmaze || (GetProviderType() == TVDoc.ProviderType.libraryDefault && TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TVmaze))
+            {
+                selectedShow.TVmazeCode = code;
+            }
             selectedShow.CountSpecials = chkSpecialsCount.Checked;
             selectedShow.DoRename = cbDoRenaming.Checked;
             selectedShow.DoMissingCheck = cbDoMissingCheck.Checked;
@@ -769,6 +779,11 @@ namespace TVRename
 
         private void txtSeasonFormat_TextChanged(object sender, EventArgs e)
         {
+        }
+
+        private void rdoProvider_CheckedChanged(object sender, EventArgs e)
+        {
+            codeFinderForm.SetSource(GetProviderType());
         }
     }
 }

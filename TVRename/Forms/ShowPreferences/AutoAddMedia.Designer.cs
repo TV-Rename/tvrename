@@ -1,6 +1,6 @@
 namespace TVRename
 {
-    partial class AutoAddShow
+    partial class AutoAddMedia
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@ namespace TVRename
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AutoAddShow));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AutoAddMedia));
             this.cbDirectory = new System.Windows.Forms.ComboBox();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -232,7 +232,7 @@ namespace TVRename
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "AutoAddShow";
+            this.Name = "AutoAddMedia";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "New Show Detected...";
             this.Load += new System.EventHandler(this.AutoAddShow_Load);

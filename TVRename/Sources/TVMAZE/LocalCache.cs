@@ -224,7 +224,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        public override void Search(string text, bool showErrorMsgBox)
+        public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type)
         {
             throw new NotImplementedException();
         }
@@ -252,7 +252,7 @@ namespace TVRename.TVmaze
                 ser.AddEpisode(e);
             }
         }
-        public void Tidy(ICollection<ShowConfiguration> libraryValues)
+        public void Tidy(IEnumerable<ShowConfiguration> libraryValues)
         {
             // remove any shows from thetvdb that aren't in My Shows
             List<int> removeList = new List<int>();

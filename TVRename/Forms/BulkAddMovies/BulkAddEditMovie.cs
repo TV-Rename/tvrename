@@ -23,9 +23,11 @@ namespace TVRename
         {
             InitializeComponent();
 
-            codeFinderControl = new CombinedCodeFinder("",MediaConfiguration.MediaType.movie,TVDoc.ProviderType.TMDB) {Dock = DockStyle.Fill};
+            codeFinderControl = new CombinedCodeFinder("",MediaConfiguration.MediaType.movie,TVSettings.Instance.DefaultMovieProvider) {Dock = DockStyle.Fill};
             codeFinderControl.SelectionChanged += CodeChanged;
             codeFinderControl.lvMatches.DoubleClick += MatchDoubleClick;
+
+            label1.Text = $"Search for {TVSettings.Instance.DefaultMovieProvider} entry, by partial name or ID:";
 
             pnlCF.SuspendLayout();
             pnlCF.Controls.Add(codeFinderControl);
@@ -33,13 +35,13 @@ namespace TVRename
 
             if (hint.CodeKnown)
             {
-                codeFinderControl.SetHint(hint.TMDBCode.ToString()); //todo make generic
+                codeFinderControl.SetHint(hint.TMDBCode.ToString(),TVDoc.ProviderType.TMDB); //todo make generic
             }
             else
             {
                 codeFinderControl.SetHint(string.IsNullOrWhiteSpace(hint.RefinedHint)
                     ? hint.Directory.Name
-                    : hint.RefinedHint);
+                    : hint.RefinedHint,TVDoc.ProviderType.TMDB); //todo make generic
             }
             Code = -1;
         }

@@ -51,7 +51,7 @@ namespace TVRename
                     CachedSeriesInfo cachedSeries = TheTVDB.LocalCache.Instance.GetSeriesAndDownload(tvdbId,showErrorMsgBox);
                     if (cachedSeries != null)
                     {
-                        ai.TVDBCode = tvdbId;
+                        ai.SetId(tvdbId,TVDoc.ProviderType.TheTVDB);
                         return;
                     }
                 }
@@ -64,7 +64,7 @@ namespace TVRename
             CachedSeriesInfo ser = TheTVDB.LocalCache.Instance.GetSeries(showName,showErrorMsgBox);
             if (ser != null)
             {
-                ai.TVDBCode = ser.TvdbCode;
+                ai.SetId(tvdbId, TVDoc.ProviderType.TheTVDB);
                 return;
             }
 
@@ -85,7 +85,7 @@ namespace TVRename
             ai.RefinedHint = refinedHint;
             if (ser != null)
             {
-                ai.TVDBCode = ser.TvdbCode;
+                ai.SetId(tvdbId, TVDoc.ProviderType.TheTVDB);
             }
         }
 
@@ -432,11 +432,11 @@ namespace TVRename
         private void AddToLibrary([NotNull] PossibleNewTvShow ai)
         {
             // see if there is a matching show item
-            ShowConfiguration found = mDoc.TvLibrary.GetShowItem(ai.TVDBCode);
+            ShowConfiguration found = mDoc.TvLibrary.GetShowItem(ai.ProviderCode, ai.Provider);
             if (found is null)
             {
                 // need to add a new showitem
-                found = new ShowConfiguration(ai.TVDBCode,TVDoc.ProviderType.TheTVDB); //todo fix up for TVMAZE to allow searching vis TVMaze too (BulkAdd)
+                found = new ShowConfiguration(ai.ProviderCode, ai.Provider);
                 mDoc.TvLibrary.Add(found);
             }
 
