@@ -774,7 +774,7 @@ namespace TVRename.TMDB
                 ShowLanguage= downloadedMovie.OriginalLanguage,
                 SiteRating = (float)downloadedMovie.VoteAverage,
                 SiteRatingVotes = downloadedMovie.VoteCount,
-                PosterUrl = ImageUrl(downloadedMovie.PosterPath),
+                PosterUrl = PosterImageUrl(downloadedMovie.PosterPath),
                 SrvLastUpdated = DateTime.UtcNow.Date.ToUnixTime(),
                 CollectionName = downloadedMovie.BelongsToCollection?.Name,
                 CollectionId = downloadedMovie.BelongsToCollection?.Id,
@@ -783,7 +783,7 @@ namespace TVRename.TMDB
                 TwitterId=downloadedMovie.ExternalIds.TwitterId,
                 InstagramId = downloadedMovie.ExternalIds.InstagramId,
                 FacebookId=downloadedMovie.ExternalIds.InstagramId,
-                FanartUrl = ImageUrl(downloadedMovie.BackdropPath),
+                FanartUrl = OriginalImageUrl(downloadedMovie.BackdropPath),
                 ContentRating = GetCertification(downloadedMovie, "AU") ?? GetCertification(downloadedMovie, "US") ?? string.Empty,// todo allow user to choose
                 OfficialUrl =downloadedMovie.Homepage,
                 TrailerUrl = GetYouTubeUrl(downloadedMovie),
@@ -833,7 +833,7 @@ namespace TVRename.TMDB
                 ShowLanguage = downloadedSeries.OriginalLanguage,
                 SiteRating = (float)downloadedSeries.VoteAverage,
                 SiteRatingVotes = downloadedSeries.VoteCount,
-                PosterUrl = ImageUrl(downloadedSeries.PosterPath),
+                PosterUrl = PosterImageUrl(downloadedSeries.PosterPath),
                 SrvLastUpdated = DateTime.UtcNow.Date.ToUnixTime(),
                 //CollectionName = downloadedSeries.BelongsToCollection?.Name,
                 //CollectionId = downloadedSeries.BelongsToCollection?.Id,
@@ -887,7 +887,7 @@ namespace TVRename.TMDB
                         SiteRatingCount = downloadedEpisode.VoteCount,
                         EpisodeRating = downloadedEpisode.VoteAverage.ToString(System.Globalization.CultureInfo.InvariantCulture),
                         SeasonId = newSeason.SeasonId,
-                        Filename = ImageUrl(downloadedEpisode.StillPath, "original")
+                        Filename = OriginalImageUrl(downloadedEpisode.StillPath)
                         
                     };
                     //todo - add cast and crew
@@ -1032,7 +1032,7 @@ namespace TVRename.TMDB
                 ShowLanguage = result.OriginalLanguage,
                 SiteRating = (float)result.VoteAverage,
                 SiteRatingVotes = result.VoteCount,
-                PosterUrl = ImageUrl(result.PosterPath),
+                PosterUrl = PosterImageUrl(result.PosterPath),
                 Popularity = result.Popularity,
                 IsSearchResultOnly = true,
                 Dirty = false,
@@ -1053,9 +1053,9 @@ namespace TVRename.TMDB
                 ShowLanguage = result.OriginalLanguage,
                 SiteRating = (float)result.VoteAverage,
                 SiteRatingVotes = result.VoteCount,
-                PosterUrl = ImageUrl(result.PosterPath),
+                PosterUrl = PosterImageUrl(result.PosterPath),
                 Popularity = result.Popularity,
-                FanartUrl = ImageUrl(result.BackdropPath),
+                FanartUrl = OriginalImageUrl(result.BackdropPath),
                 IsSearchResultOnly = true,
                 Dirty = false,
             };
@@ -1063,8 +1063,9 @@ namespace TVRename.TMDB
             File(m);
             return m;
         }
-
         private static string? ImageUrl(string source) => ImageUrl(source, "w600_and_h900_bestv2");
+        private static string? PosterImageUrl(string source) => ImageUrl(source, "w600_and_h900_bestv2");
+        private static string? OriginalImageUrl(string source) => ImageUrl(source, "original");
 
         private static string? ImageUrl(string source,string type)
         {
