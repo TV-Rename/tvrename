@@ -983,8 +983,8 @@ namespace TVRename
 
             if (TVSettings.Instance.NeedToDownloadBannerFile())
             {
-                body += ImageSection("Series Poster", 350, 500, si.CachedMovie?.PosterUrl, si.Provider);
-                body += ImageSection("Series Fanart", 758, 140, si.CachedMovie?.FanartUrl, si.Provider);
+                body += ImageSection("Poster", 350, 500, si.CachedMovie?.PosterUrl, si.Provider);
+                body += ImageSection("Fanart", 960, 540, si.CachedMovie?.FanartUrl, si.Provider);
             }
             else
             {
@@ -1282,13 +1282,7 @@ namespace TVRename
             string body = string.Empty;
             CachedMovieInfo? ser = si.CachedMovie;
 
-            if (!(ser is null) &&
-                !string.IsNullOrEmpty(CreatePosterHtml(ser)) )
-            {
-                body += $"<img width=758 height=140 src=\"{ CreatePosterHtml(ser)}\"><br/>";
-            }
-
-            body += $"<h1><A HREF=\"{ser.OfficialUrl}\">{si.ShowName}</A> </h1>";
+            body += $"<h1><A HREF=\"{ser?.OfficialUrl}\">{si.ShowName}</A> </h1>";
 
             body += "<h2>Overview</h2>" + ser?.Overview; //get overview in either format
 
@@ -1301,10 +1295,10 @@ namespace TVRename
                 first = false;
             }
 
-            string siteRating = (ser?.SiteRating ?? 0) > 0 ? ser.SiteRating + "/10" : string.Empty;
+            string siteRating = (ser?.SiteRating ?? 0) > 0 ? ser?.SiteRating + "/10" : string.Empty;
             string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(ser.TvdbCode) : string.Empty;
             string tmdbLink = si.TmdbCode > 0 ? $"https://www.themoviedb.org/movie/{si.TmdbCode}" : string.Empty;
-            string mazeLink = ser.TvMazeCode > 0 ? ser.WebUrl : string.Empty;
+            string mazeLink = ser?.TvMazeCode > 0 ? ser?.WebUrl : string.Empty;
             string facebookButton = ser.FacebookId.HasValue() ? $"https://facebook.com/{ser.FacebookId}" : string.Empty;
             string instaButton = ser.InstagramId.HasValue() ? $"https://instagram.com/{ser.InstagramId}" : string.Empty;
             string twitterButton = ser.TwitterId.HasValue() ? $"https://twitter.com/{ser.TwitterId}" : string.Empty;
@@ -1327,8 +1321,8 @@ namespace TVRename
             tableHtml += GetOverviewPart("Network", ser?.Network);
             tableHtml += GetOverviewPart("Network", ser?.ContentRating);
             tableHtml += GetOverviewPart("User Rating", $"{siteRating}{AddRatingCount(ser?.SiteRatingVotes ?? 0)}");
-            tableHtml += GetOverviewPart("Released", ser.Year?.ToString());
-            tableHtml += GetOverviewPart("Tagline", ser.TagLine);
+            tableHtml += GetOverviewPart("Released", ser?.Year?.ToString());
+            tableHtml += GetOverviewPart("Tagline", ser?.TagLine);
             tableHtml += GetOverviewPart("Status", ser?.Status);
             tableHtml += GetOverviewPart("Type", ser?.Type);
 
