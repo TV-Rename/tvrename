@@ -146,7 +146,7 @@ namespace TVRename
 
         public override bool SameAs(Item o) => o is ActionTDownload rss && rss.url == url;
 
-        public override int CompareTo(object o)
+        public override int CompareTo(Item o)
         {
             return !(o is ActionTDownload rss) ? -1 : string.Compare(url, rss.url, StringComparison.Ordinal);
         }

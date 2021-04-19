@@ -1630,9 +1630,14 @@ namespace TVRename
 
             string downloadFolder = AskUserForFolder(ui);
             {
+                if (!downloadFolder.HasValue())
+                {
+                    return;
+                }
+
                 if (!Directory.Exists(downloadFolder))
                 {
-                    Logger.Error($"Please update 'Download Folders' {downloadFolder} does not exist");
+                    Logger.Error($"Please update 'Download Folders' '{downloadFolder}' does not exist");
                     return;
                 }
 
@@ -1653,7 +1658,6 @@ namespace TVRename
 
                         if (fi.IgnoreFile())
                         {
-                            Logger.Info($" {filePath} is an ignored File");
                             continue;
                         }
 
@@ -1923,7 +1927,7 @@ namespace TVRename
             }
             else
             {
-                Logger.Error($"User elected todo nothing with {fi.FullName}");
+                Logger.Warn($"User elected todo nothing with {fi.FullName}");
             }
         }
 

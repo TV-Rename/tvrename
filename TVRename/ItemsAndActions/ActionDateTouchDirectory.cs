@@ -44,7 +44,7 @@ namespace TVRename
         public override string? DestinationFile => whereDirectory.Name;
         public override string? TargetFolder => whereDirectory.Name;
 
-        public override int CompareTo(object o)
+        public override int CompareTo(Item o)
         {
             ActionDateTouchDirectory nfo = o as ActionDateTouchDirectory;
 

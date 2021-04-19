@@ -29,7 +29,7 @@ namespace TVRename
 
         public override bool SameAs(Item o) => o is ActionTRemove other && other.client == client && other.name == name;
 
-        public override int CompareTo(object o)
+        public override int CompareTo(Item o)
         {
             return !(o is ActionTRemove rss) ? -1 : string.Compare(name.TorrentFile, rss.name.TorrentFile, StringComparison.Ordinal);
         }

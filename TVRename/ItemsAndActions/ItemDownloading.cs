@@ -60,7 +60,7 @@ namespace TVRename
 
         public override string Name => "Already Downloading";
 
-        public override int CompareTo(object o)
+        public override int CompareTo(Item o)
         {
             if (!(o is ItemDownloading ut))
             {

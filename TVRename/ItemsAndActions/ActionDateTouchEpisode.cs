@@ -14,7 +14,7 @@ namespace TVRename
             return o is ActionDateTouchEpisode touch && touch.WhereFile == WhereFile;
         }
 
-        public override int CompareTo(object? o)
+        public override int CompareTo(Item o)
         {
             if (o is null || !(o is ActionDateTouchEpisode nfo))
             {

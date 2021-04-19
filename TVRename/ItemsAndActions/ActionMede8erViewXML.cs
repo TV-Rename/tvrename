@@ -65,7 +65,7 @@ namespace TVRename
             return o is ActionMede8erViewXML xml && xml.Where == Where;
         }
 
-        public override int CompareTo(object? o)
+        public override int CompareTo(Item o)
         {
             if (!(o is ActionMede8erViewXML nfo))
             {

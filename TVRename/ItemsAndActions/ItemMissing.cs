@@ -53,7 +53,7 @@ namespace TVRename
        
         public override string Name => "Missing Episode";
 
-        public override int CompareTo(object? o)
+        public override int CompareTo(Item o)
         {
             if (!(o is ShowItemMissing miss))
             {

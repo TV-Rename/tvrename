@@ -62,7 +62,7 @@ namespace TVRename
             return o is ActionDeleteFile cmr && FileHelper.Same(toRemove , cmr.toRemove);
         }
 
-        public override int CompareTo(object o)
+        public override int CompareTo(Item o)
         {
             if (!(o is ActionDeleteFile cmr) || toRemove.Directory is null || cmr.toRemove.Directory is null )
             {
