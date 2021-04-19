@@ -3562,7 +3562,7 @@ namespace TVRename
 
                 List<Item> newItems = olvAction.Items.OfType<OLVListItem>().Select(lvi => (Item)lvi.RowObject).ToList();
                 //We have a new addition - check its checkbox
-                olvAction.CheckObjects(newItems.Where(newRow => !oldItems.Contains(newRow)));
+                olvAction.CheckObjects(newItems.Where(newRow => !oldItems.Contains(newRow)).Where(newAction => newAction is Action));
             }
             else
             {
