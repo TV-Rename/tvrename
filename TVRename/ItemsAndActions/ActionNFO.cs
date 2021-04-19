@@ -208,7 +208,7 @@ namespace TVRename
 
         public override int CompareTo(object? o)
         {
-            if (o is null || !(o is ActionNfo nfo))
+            if (!(o is ActionNfo nfo))
             {
                 return -1;
             }

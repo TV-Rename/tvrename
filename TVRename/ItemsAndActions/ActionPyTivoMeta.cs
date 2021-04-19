@@ -104,7 +104,7 @@ namespace TVRename
 
         public override int CompareTo(object? obj)
         {
-            if (obj is null || !(obj is ActionPyTivoMeta nfo))
+            if (!(obj is ActionPyTivoMeta nfo))
             {
                 return -1;
             }

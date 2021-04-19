@@ -67,7 +67,7 @@ namespace TVRename
 
         public override int CompareTo(object? o)
         {
-            if (o is null || !(o is ActionMede8erViewXML nfo))
+            if (!(o is ActionMede8erViewXML nfo))
             {
                 return -1;
             }

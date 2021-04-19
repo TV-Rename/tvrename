@@ -186,7 +186,7 @@ namespace TVRename
 
         public override int CompareTo(object? o)
         {
-            if (o is null || !(o is ActionWdtvMeta nfo))
+            if (!(o is ActionWdtvMeta nfo))
             {
                 return -1;
             }

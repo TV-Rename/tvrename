@@ -174,10 +174,6 @@ namespace TVRename
             return !(o is ActionDownloadImage dl) ? -1 : string.Compare(destination.FullName, dl.destination.FullName, StringComparison.Ordinal);
         }
 
-        #endregion
-
-        #region Item Members
-
         public override int IconNumber => 5;
         public override IgnoreItem? Ignore => GenerateIgnore(destination.FullName);
         public override string SeriesName => Episode != null ? Episode.Show.ShowName : si.ShowName;

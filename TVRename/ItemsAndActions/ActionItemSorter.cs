@@ -24,24 +24,25 @@ namespace TVRename
         private static int TypeNumber(Item a)
         {
             return a switch
-            { //todo fix this for new types
-                ItemMissing _ => 1,
-                ActionCopyMoveRename _ => 2,
-                ActionTDownload _ => 3,
-                ActionDownloadImage _ => 4,
-                ActionMede8erViewXML _ => 5,
-                ActionMede8erXML _ => 6,
-                ActionNfo _ => 7,
-                ActionPyTivoMeta _ => 8,
-                ActionWdtvMeta _ => 9,
-                ItemDownloading _ => 10,
-                ActionDeleteFile _ => 11,
-                ActionDeleteDirectory _ => 12,
-                ActionDateTouchEpisode _ => 13,
-                ActionDateTouchSeason _ => 14,
-                ActionDateTouchMedia _ => 15,
-                ActionDateTouchMovie _ => 16,
-                ActionTRemove _ => 17,
+            { 
+                ShowItemMissing _ => 1,
+                MovieItemMissing _ => 2,
+                ActionCopyMoveRename _ => 3,
+                ActionTDownload _ => 4,
+                ActionDownloadImage _ => 5,
+                ActionMede8erViewXML _ => 6,
+                ActionMede8erXML _ => 7,
+                ActionNfo _ => 8,
+                ActionPyTivoMeta _ => 9,
+                ActionWdtvMeta _ => 10,
+                ItemDownloading _ => 11,
+                ActionDeleteFile _ => 12,
+                ActionDeleteDirectory _ => 13,
+                ActionDateTouchEpisode _ => 14,
+                ActionDateTouchSeason _ => 15,
+                ActionDateTouchMedia _ => 16,
+                ActionDateTouchMovie _ => 17,
+                ActionTRemove _ => 18,
                 _ => throw new NotSupportedException()
             };
         }

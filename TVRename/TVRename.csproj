@@ -341,6 +341,7 @@
     <Compile Include="ItemsAndActions\ActionNfoEpisode.cs" />
     <Compile Include="ItemsAndActions\ActionNfoMovie.cs" />
     <Compile Include="ItemsAndActions\ActionNfoShow.cs" />
+    <Compile Include="ItemsAndActions\MovieItemMissing.cs" />
     <Compile Include="LibrarySummary\Check\FolderBaseMovieCheck.cs" />
     <Compile Include="LibrarySummary\Check\SettingsCheck.cs" />
     <Compile Include="LibrarySummary\Check\CustomLanguageMovieCheck.cs" />
