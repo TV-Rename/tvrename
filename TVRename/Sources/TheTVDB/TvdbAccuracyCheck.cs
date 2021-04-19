@@ -27,7 +27,8 @@ namespace TVRename.TheTVDB
                 if (newSi.SrvLastUpdated != si.SrvLastUpdated)
                 {
                     Issues.Add(
-                        $"{si.Name} is not up to date: Local is { DateTimeOffset.FromUnixTimeSeconds(si.SrvLastUpdated)} ({si.SrvLastUpdated}) server is { DateTimeOffset.FromUnixTimeSeconds(newSi.SrvLastUpdated)} ({newSi.SrvLastUpdated})");
+                        $"{si.Name} is not up to date: Local is {DateTimeOffset.FromUnixTimeSeconds(si.SrvLastUpdated)} ({si.SrvLastUpdated}) server is {DateTimeOffset.FromUnixTimeSeconds(newSi.SrvLastUpdated)} ({newSi.SrvLastUpdated})");
+
                     EnsureUpdated(si);
                 }
 
@@ -49,7 +50,8 @@ namespace TVRename.TheTVDB
                         }
                         else
                         {
-                            throw new SourceConsistencyException($"Could not load 'data' from {epJson}", TVDoc.ProviderType.TheTVDB);
+                            throw new SourceConsistencyException($"Could not load 'data' from {epJson}",
+                                TVDoc.ProviderType.TheTVDB);
                         }
                     }
                 }
@@ -60,6 +62,10 @@ namespace TVRename.TheTVDB
             catch (SourceConnectivityException)
             {
                 Issues.Add($"Failed to compare {si.Name} as we could not download the cachedSeries details.");
+            }
+            catch (ShowNotFoundException)
+            {
+                Issues.Add($"Failed to compare {si.Name} as it no longer exists on TVDB {tvdbId}.");
             }
         }
 
