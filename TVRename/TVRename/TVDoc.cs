@@ -828,7 +828,7 @@ namespace TVRename
 
             Dictionary<int, SafeList<string>> allFolders = si.AllExistngFolderLocations();
 
-            if (!String.IsNullOrEmpty(si.AutoAddFolderBase) && allFolders.Any())
+            if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && allFolders.Any())
             {
                 TheActionList.Add(
                     downloadIdentifiers.ForceUpdateShow(DownloadIdentifier.DownloadType.downloadImage, si));

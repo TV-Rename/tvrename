@@ -871,7 +871,7 @@ namespace TVRename.TMDB
                 int snum = searchSeason.SeasonNumber;
                 TvSeason? downloadedSeason = Client.GetTvSeasonAsync(downloadedSeries.Id, snum, TvSeasonMethods.Images).Result;
                 // TODO add language
-                Season newSeason = new Season(downloadedSeason.Id??0,snum,downloadedSeason.Name,downloadedSeason.Overview,String.Empty, downloadedSeason.PosterPath,downloadedSeries.Id);
+                Season newSeason = new Season(downloadedSeason.Id??0,snum,downloadedSeason.Name,downloadedSeason.Overview,string.Empty, downloadedSeason.PosterPath,downloadedSeries.Id);
                 m.AddSeason(newSeason);
 
                 foreach (TvSeasonEpisode? downloadedEpisode in downloadedSeason.Episodes)
