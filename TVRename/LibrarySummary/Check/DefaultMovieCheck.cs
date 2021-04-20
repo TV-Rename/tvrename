@@ -12,14 +12,8 @@ namespace TVRename
         protected abstract bool Field { get; }
         protected abstract bool Default { get; }
 
-        public override bool Check()
-        {
-            return Field != Default;
-        }
+        public override bool Check() => Field != Default;
 
-        public override string Explain()
-        {
-            return $"Default value for {FieldName} is {Default}. For this Movie it is {Field}.";
-        }
+        public override string Explain() => $"Default value for '{FieldName}' is {Default}. For this Movie it is {Field}.";
     }
 }

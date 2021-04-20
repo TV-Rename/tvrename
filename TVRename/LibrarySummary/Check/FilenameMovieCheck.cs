@@ -9,12 +9,13 @@ namespace TVRename
 
         public override bool Check() => Movie.UseCustomNamingFormat;
 
-        public override string Explain() => $"This movie does not use the standard Folder naming format {TVSettings.Instance.MovieFilenameFormat}, it uses {Movie.CustomNamingFormat}";
+        public override string Explain() => $"This movie does not use the standard file naming format '{TVSettings.Instance.MovieFilenameFormat}', it uses '{Movie.CustomNamingFormat}'";
 
         protected override void FixInternal()
         {
+            //string currentLocation = 
             //todo - move files
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
         public override string CheckName => "[Movie] Use Custom File Name Format";
     }

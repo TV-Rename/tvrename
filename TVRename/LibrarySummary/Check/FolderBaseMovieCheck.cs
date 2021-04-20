@@ -15,7 +15,7 @@ namespace TVRename
         {
             //Movie.AutomaticFolderRoot = TVSettings.Instance.MovieLibraryFolders[1];
             //return;
-            throw new NotImplementedException();
+            throw new NotImplementedException(); //TODO
         }
 
         public override string CheckName => "[Movie] Use Default folder supplied";

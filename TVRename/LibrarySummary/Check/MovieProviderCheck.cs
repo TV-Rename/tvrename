@@ -10,7 +10,7 @@ namespace TVRename
 
         public override bool Check() => Movie.ConfigurationProvider != TVDoc.ProviderType.libraryDefault;
 
-        public override string Explain() => $"This Movie does not use the library default, it uses {Movie.ConfigurationProvider.PrettyPrint()}";
+        public override string Explain() => $"This movie does not use the library default ({TVSettings.Instance.DefaultMovieProvider.PrettyPrint()}), it uses {Movie.ConfigurationProvider.PrettyPrint()} (Hardcoded)";
 
         protected override void FixInternal()
         {
