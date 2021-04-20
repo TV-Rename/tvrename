@@ -69,7 +69,7 @@ namespace TVRename
             }
 
             List<string> bases = movieFiles.Select(GetBase).Distinct().ToList();
-            string newBase = TVSettings.Instance.FilenameFriendly(CustomMovieName.NameFor(si, TVSettings.Instance.MovieFilenameFormat));
+            string newBase = TVSettings.Instance.FilenameFriendly(si.ProposedFilename);
 
             if (bases.Count == 1 && bases[0].Equals(newBase))
             {

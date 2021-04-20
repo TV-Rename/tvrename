@@ -1791,7 +1791,7 @@ namespace TVRename
 
         private void LinkFileToShow(FileInfo fi, MovieConfiguration chosenShow, DirectoryInfo folder)
         {
-            string newBase = TVSettings.Instance.FilenameFriendly(CustomMovieName.NameFor(chosenShow, TVSettings.Instance.MovieFilenameFormat));
+            string newBase = TVSettings.Instance.FilenameFriendly(chosenShow.ProposedFilename);
             string newName = fi.Name.Replace(RenameAndMissingMovieCheck.GetBase(fi), newBase);
             FileInfo newFile = FileHelper.FileInFolder(folder, newName);
             
@@ -1841,7 +1841,7 @@ namespace TVRename
             }
 
             List<string> bases = movieFiles.Select( RenameAndMissingMovieCheck.GetBase).Distinct().ToList();
-            string newBase = TVSettings.Instance.FilenameFriendly(CustomMovieName.NameFor(si, TVSettings.Instance.MovieFilenameFormat));
+            string newBase = TVSettings.Instance.FilenameFriendly(si.ProposedFilename);
 
             if (bases.Count == 1)
             {

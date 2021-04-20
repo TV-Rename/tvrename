@@ -8,7 +8,7 @@ namespace TVRename
         public MovieItemMissing([NotNull] MovieConfiguration movie, [NotNull] string whereItShouldBeFolder)
         {
             Episode = null;
-            Filename = TVSettings.Instance.FilenameFriendly(CustomMovieName.NameFor(movie,TVSettings.Instance.MovieFilenameFormat));
+            Filename = TVSettings.Instance.FilenameFriendly(movie.ProposedFilename);
             TheFileNoExt = whereItShouldBeFolder + System.IO.Path.DirectorySeparatorChar + Filename;
             Folder = whereItShouldBeFolder;
             Movie = movie;

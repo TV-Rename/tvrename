@@ -540,7 +540,7 @@ namespace TVRename
             llCustomName.Text =
                 CustomMovieName.NameFor(selectedShow, txtCustomMovieFileNamingFormat.Text);
 
-            llFilenameDefaultFormat.Text = CustomMovieName.NameFor(selectedShow, TVSettings.Instance.MovieFilenameFormat);
+            llFilenameDefaultFormat.Text = selectedShow.ProposedFilename;
         }
 
         private void txtFolderNameFormat_TextChanged(object sender, EventArgs e)
