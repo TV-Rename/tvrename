@@ -111,21 +111,25 @@ namespace TVRename
 
         public MovieConfiguration(PossibleNewMovie movie): this()
         {
-            TmdbCode = movie.TMDBCode ??-1;
-            TvdbCode = movie.TvdbCode ??-1;
+            if (movie.CodeUnknown)
+            {
+                return;
+            }
+            switch (movie.Provider)
+            {
+                case TVDoc.ProviderType.TheTVDB:
+                    TvdbCode = movie.ProviderCode;
+                    break;
+                case TVDoc.ProviderType.TMDB:
+                    TmdbCode = movie.ProviderCode;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
 
-            if (!movie.TmdbCodeUnknown)
-            {
-                ConfigurationProvider = TVSettings.Instance.DefaultMovieProvider == TVDoc.ProviderType.TMDB
-                    ? TVDoc.ProviderType.libraryDefault
-                    : TVDoc.ProviderType.TMDB;
-            }
-            else if (!movie.TvdbCodeUnknown)
-            {
-                ConfigurationProvider = TVSettings.Instance.DefaultMovieProvider == TVDoc.ProviderType.TheTVDB
-                    ? TVDoc.ProviderType.libraryDefault
-                    : TVDoc.ProviderType.TheTVDB;
-            }
+            ConfigurationProvider = TVSettings.Instance.DefaultMovieProvider == movie.Provider
+                ? TVDoc.ProviderType.libraryDefault
+                : movie.Provider;
         }
 
         protected override MediaType GetMediaType() => MediaType.movie;

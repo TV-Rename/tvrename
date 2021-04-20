@@ -20,7 +20,6 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using NLog;
 using NodaTime.Extensions;
 using TVRename.Forms.Supporting;

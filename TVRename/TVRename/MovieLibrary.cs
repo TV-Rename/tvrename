@@ -140,7 +140,7 @@ namespace TVRename
 
         public MovieConfiguration? GetMovie(PossibleNewMovie ai)
         {
-            return GetMovie(ai.TMDBCode??0,TVDoc.ProviderType.TMDB); //todo revisit this when we can have a genuine multisource library
+            return GetMovie(ai.ProviderCode,ai.Provider);
         }
 
         public void AddRange(IEnumerable<MovieConfiguration>? addedShows)

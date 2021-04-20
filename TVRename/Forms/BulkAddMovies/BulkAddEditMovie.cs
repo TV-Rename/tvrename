@@ -16,6 +16,7 @@ namespace TVRename
     public partial class BulkAddEditMovie : Form
     {
         public int Code;
+        public TVDoc.ProviderType Provider;
 
         private readonly CombinedCodeFinder codeFinderControl;
 
@@ -35,21 +36,23 @@ namespace TVRename
 
             if (hint.CodeKnown)
             {
-                codeFinderControl.SetHint(hint.TMDBCode.ToString(),TVDoc.ProviderType.TMDB); //todo make generic
+                codeFinderControl.SetHint(hint.ProviderCode.ToString(),hint.Provider);
             }
             else
             {
                 codeFinderControl.SetHint(string.IsNullOrWhiteSpace(hint.RefinedHint)
                     ? hint.Directory.Name
-                    : hint.RefinedHint,TVDoc.ProviderType.TMDB); //todo make generic
+                    : hint.RefinedHint,TVSettings.Instance.DefaultMovieProvider);
             }
             Code = -1;
+            Provider = TVDoc.ProviderType.libraryDefault;
         }
 
         private void MatchDoubleClick(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
             Code = codeFinderControl.SelectedCode();
+            Provider = codeFinderControl.Source;
             Close();
         }
 
@@ -68,6 +71,7 @@ namespace TVRename
         {
             DialogResult = DialogResult.OK;
             Code = codeFinderControl.SelectedCode();
+            Provider = codeFinderControl.Source;
             Close();
         }
     }

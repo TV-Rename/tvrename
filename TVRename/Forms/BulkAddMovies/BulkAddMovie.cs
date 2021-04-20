@@ -432,14 +432,14 @@ namespace TVRename
             if (ai.CodeKnown)
             {
                 CachedMovieInfo? x = ai.CachedMovie;
-                lvi.SubItems.Add(x?.Name); //todo - get bulk add to work for TVmaze
+                lvi.SubItems.Add(x?.Name); 
                 string val = x?.FirstAired?.Year.ToString();
                 lvi.SubItems.Add(val ??string.Empty);
-                lvi.SubItems.Add(ai.TMDBCode.ToString());
+                lvi.SubItems.Add(ai.CodeString);
             }
             else
             {
-                lvi.SubItems.Add(ai.RefinedHint); //todo - get bulk add to work for TVmaze
+                lvi.SubItems.Add(ai.RefinedHint); 
                 lvi.SubItems.Add(ai.PossibleYear.ToString());
                 lvi.SubItems.Add(string.Empty);
             }
@@ -541,7 +541,7 @@ namespace TVRename
                 return;
             }
 
-            fme.TMDBCode = ed.Code;
+            fme.SetId(ed.Code,ed.Provider);
         }
 
         private void lstFMMonitorFolders_SelectedIndexChanged(object sender, System.EventArgs e)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Xml;
 using JetBrains.Annotations;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
@@ -18,20 +19,19 @@ namespace TVRename
         public readonly DirectoryInfo Directory;
 
         // ReSharper disable once InconsistentNaming
-        public int? TMDBCode;
         public string RefinedHint;
         public int? PossibleYear;
-        public int? TvdbCode;
         public string? ImdbCode;
-        
+        internal int ProviderCode;
+        internal TVDoc.ProviderType Provider;
+
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public CachedMovieInfo? CachedMovie => TMDB.LocalCache.Instance.GetMovie(TMDBCode);
-
+        public CachedMovieInfo? CachedMovie => Provider ==TVDoc.ProviderType.TMDB ? TMDB.LocalCache.Instance.GetMovie(ProviderCode) : TheTVDB.LocalCache.Instance.GetMovie(ProviderCode);
         public bool CodeKnown => !CodeUnknown;
-        public bool CodeUnknown => TmdbCodeUnknown && TvdbCodeUnknown;
-        public bool TmdbCodeUnknown => TMDBCode is null || TMDBCode == -1;
-        public bool TvdbCodeUnknown => TvdbCode is null || TvdbCode == -1;
+        public bool CodeUnknown => ProviderCode == -1;
+
+        public string CodeString => (CodeUnknown) ? "<Unknown>" : $"{ProviderCode} ({Provider.PrettyPrint()})";
 
         public PossibleNewMovie(FileInfo possibleMovieFile, bool andGuess,bool showErrorMsgBox)
         {
@@ -48,16 +48,16 @@ namespace TVRename
             {
                 GuessMovie(showErrorMsgBox);
             }
-
         }
 
         public void GuessMovie(bool showErrorMsgBox)
         {
             //Lookup based on TMDB ID Being Present
             int? tmdbId = ConvertToInt(FindShowCode("tmdbid", "tmdb"));
-            TMDBCode = ValidateOnTMDB(tmdbId, showErrorMsgBox);
+            int? TMDBCode = ValidateOnTMDB(tmdbId, showErrorMsgBox);
             if (TMDBCode.HasValue)
             {
+                SetId(TMDBCode.Value, TVDoc.ProviderType.TMDB);
                 return;
             }
 
@@ -82,7 +82,7 @@ namespace TVRename
                 CachedMovieInfo? s = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbToTest!, showErrorMsgBox);
                 if (s != null)
                 {
-                    TMDBCode = s.TmdbCode;
+                    SetId(s.TmdbCode, TVDoc.ProviderType.TMDB);
                     ImdbCode = imdbToTest;
                     return;
                 }
@@ -92,7 +92,7 @@ namespace TVRename
             CachedMovieInfo? ser = TMDB.LocalCache.Instance.GetMovie(this, showErrorMsgBox);
             if (ser != null)
             {
-                TMDBCode = ser.TmdbCode;
+                SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
                 return;
             }
 
@@ -100,7 +100,7 @@ namespace TVRename
             ser = ParseHints(showErrorMsgBox);
             if (ser != null)
             {
-                TMDBCode = ser.TmdbCode;
+                SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
                 return;
             }
 
@@ -111,10 +111,24 @@ namespace TVRename
                  CachedMovieInfo? s2 = TMDB.LocalCache.Instance.LookupMovieByTvdb(tvdbId.Value, showErrorMsgBox);
                  if (s2 != null)
                  {
-                     TMDBCode = s2.TmdbCode;
-                     TvdbCode = tvdbId.Value;
+                     SetId(s2.TmdbCode, TVDoc.ProviderType.TMDB);
                  }
+                else
+                {
+                    //Find movie on TVDB based on Id
+                    CachedMovieInfo? s3 = TheTVDB.LocalCache.Instance.GetMovieOrDownload(tvdbId.Value, showErrorMsgBox);
+                    if (s3 != null)
+                    {
+                        SetId(s3.TvdbCode, TVDoc.ProviderType.TheTVDB);
+                    }
+
+                }
             }
+        }
+        public void SetId(int code, TVDoc.ProviderType provider)
+        {
+            ProviderCode = code;
+            Provider = provider;
         }
 
         private CachedMovieInfo? ParseHints(bool showErrorMsgBox)
@@ -158,7 +172,7 @@ namespace TVRename
                 try
                 {
                     CachedMovieInfo series = TMDB.LocalCache.Instance.GetMovieAndDownload(tmdbId.Value, showErrorMsgBox);
-                    return tmdbId.Value;
+                    return series.TmdbCode;
                 }
                 catch (ShowNotFoundException)
                 {
