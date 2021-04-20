@@ -1221,14 +1221,7 @@ namespace TVRename.TheTVDB
         private string ConvertDayName(JToken t)
         {
             JProperty p = (JProperty) t;
-            return UppercaseFirst(p.Name);
-        }
-        string UppercaseFirst(string str)
-        {
-            //TODO move to stirngHelpers
-            if (string.IsNullOrEmpty(str))
-                return string.Empty;
-            return char.ToUpper(str[0]) + str.Substring(1).ToLower();
+            return p.Name.UppercaseFirst();
         }
 
         [NotNull]
@@ -2097,6 +2090,11 @@ namespace TVRename.TheTVDB
         {
             LatestUpdateTime.Load(time);
             LOGGER.Info($"Loaded file with updates until {LatestUpdateTime.LastSuccessfulServerUpdateDateTime()}");
+        }
+
+        public CachedMovieInfo? GetMovieOrDownload(int tvdbId, bool showErrorMsgBox)
+        {
+            throw new NotImplementedException();
         }
     }
 }

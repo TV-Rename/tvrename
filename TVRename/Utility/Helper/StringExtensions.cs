@@ -125,6 +125,12 @@ namespace TVRename
             return ContainsAnyCharactersFrom(source,possibleChars.ToCharArray());
         }
 
+        public static string UppercaseFirst(this string str)
+        {
+            if (string.IsNullOrEmpty(str))
+                return string.Empty;
+            return char.ToUpper(str[0]) + str.Substring(1).ToLower();
+        }
         public static bool IsNullOrWhitespace(this string? text) => string.IsNullOrWhiteSpace(text);
 
         [NotNull]
