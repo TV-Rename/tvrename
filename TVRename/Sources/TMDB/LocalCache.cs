@@ -378,7 +378,10 @@ namespace TVRename.TMDB
             latestMovieUpdateTime.RecordSuccessfulUpdate();
         }
 
-        public CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox) => throw new NotImplementedException();//todo when we can offer search for TMDB
+        public CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox)
+        {
+            throw new NotImplementedException(); //TODO
+        }
 
         public CachedMovieInfo? GetMovie(PossibleNewMovie show, bool showErrorMsgBox) => GetMovie(show.RefinedHint, show.PossibleYear, showErrorMsgBox, false);
 
@@ -696,7 +699,7 @@ namespace TVRename.TMDB
 
         public void AddPoster(int seriesId, IEnumerable<Banner> select)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); //TODO
         }
 
         private void AddPlaceholderMovie(int tvdb, int tvmaze,int tmdb) 
@@ -1173,7 +1176,7 @@ namespace TVRename.TMDB
 
         public CachedMovieInfo? LookupMovieByTvdb(int tvdbId, bool showErrorMsgBox)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); //TODO
         }
 
         public IEnumerable<CachedMovieInfo> ServerAccuracyCheck()

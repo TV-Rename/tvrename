@@ -57,7 +57,7 @@ namespace TVRename.TVmaze
             LoadOk = loadFrom is null || CachePersistor.LoadTvCache(loadFrom, this);
         }
 
-        public bool Connect(bool showErrorMsgBox) => throw new NotImplementedException();
+        public bool Connect(bool showErrorMsgBox) => true;
 
         public void SaveCache()
         {
@@ -214,7 +214,10 @@ namespace TVRename.TVmaze
             //No Need to do anything aswe always refresh from scratch
         }
 
-        public CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox) => throw new NotImplementedException(); //todo when we can offer sarch for TV Maze
+        public CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox)
+        {
+            throw new NotImplementedException(); //TODO
+        }
 
         public CachedSeriesInfo? GetSeries(int id)
         {
@@ -226,7 +229,7 @@ namespace TVRename.TVmaze
 
         public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); //TODO
         }
 
         public bool HasSeries(int id)
@@ -409,6 +412,6 @@ namespace TVRename.TVmaze
             }
         }
 
-        public Language GetLanguageFromCode(string customLanguageCode) => throw new NotImplementedException();
+        public Language GetLanguageFromCode(string customLanguageCode) => throw new NotImplementedException(); 
     }
 }
