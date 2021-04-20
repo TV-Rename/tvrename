@@ -1408,7 +1408,9 @@ namespace TVRename
 
             try
             {
-                web.LoadHtml(body);
+                string? base64EncodedHtml = Convert.ToBase64String(Encoding.UTF8.GetBytes(body));
+                web.Load("data:text/html;base64," + base64EncodedHtml);
+                //web.LoadHtml(body);
             }
             catch (COMException ex)
             {
