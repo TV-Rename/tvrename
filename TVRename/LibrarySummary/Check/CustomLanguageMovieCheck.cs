@@ -4,7 +4,7 @@ namespace TVRename
 {
     internal class CustomLanguageMovieCheck : CustomMovieCheck
     {
-        public CustomLanguageMovieCheck([NotNull] MovieConfiguration movie) : base(movie)
+        public CustomLanguageMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
         {
         }
 

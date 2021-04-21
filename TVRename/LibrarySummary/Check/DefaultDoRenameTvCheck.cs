@@ -4,7 +4,7 @@ namespace TVRename
 {
     internal class DefaultDoRenameTvCheck : DefaultTvShowCheck
     {
-        public DefaultDoRenameTvCheck([NotNull] ShowConfiguration movie) : base(movie)         { }
+        public DefaultDoRenameTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)         { }
 
         protected override string FieldName => "Rename Check";
 

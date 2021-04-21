@@ -4,7 +4,7 @@ namespace TVRename
 {
     internal class CustomRegionTvShowCheck : CustomTvShowCheck
     {
-        public CustomRegionTvShowCheck([NotNull] ShowConfiguration show) : base(show) { }
+        public CustomRegionTvShowCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc) { }
 
         protected override void FixInternal()
         {

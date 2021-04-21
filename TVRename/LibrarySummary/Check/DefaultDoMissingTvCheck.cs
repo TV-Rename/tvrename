@@ -4,7 +4,7 @@ namespace TVRename
 {
     internal class DefaultDoMissingTvCheck : DefaultTvShowCheck
     {
-        public DefaultDoMissingTvCheck([NotNull] ShowConfiguration movie) : base(movie) { }
+        public DefaultDoMissingTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc) { }
 
         protected override string FieldName => "Do Missing Check";
 

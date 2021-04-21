@@ -4,7 +4,7 @@ namespace TVRename
 {
     internal class DefaultSequentialMatchingTvCheck : DefaultTvShowCheck
     {
-        public DefaultSequentialMatchingTvCheck([NotNull] ShowConfiguration movie) : base(movie) { }
+        public DefaultSequentialMatchingTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc) { }
 
         protected override string FieldName => "Do Sequential Matching Check";
 

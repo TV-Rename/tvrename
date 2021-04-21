@@ -4,7 +4,7 @@ namespace TVRename
 {
     internal class DefaultUseDvdTvCheck : DefaultTvShowCheck
     {
-        public DefaultUseDvdTvCheck([NotNull] ShowConfiguration movie) : base(movie) { }
+        public DefaultUseDvdTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc) { }
 
         protected override string FieldName => "Use DVD Order Check";
 

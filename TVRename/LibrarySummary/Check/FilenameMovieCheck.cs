@@ -5,7 +5,7 @@ namespace TVRename
 {
     internal class FilenameMovieCheck : MovieCheck
     {
-        public FilenameMovieCheck([NotNull] MovieConfiguration movie) : base(movie) { }
+        public FilenameMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc) { }
 
         public override bool Check() => Movie.UseCustomNamingFormat;
 
@@ -13,9 +13,7 @@ namespace TVRename
 
         protected override void FixInternal()
         {
-            //string currentLocation = 
-            //todo - move files
-            //throw new NotImplementedException();
+            Movie.UseCustomNamingFormat = false;
         }
         public override string CheckName => "[Movie] Use Custom File Name Format";
     }

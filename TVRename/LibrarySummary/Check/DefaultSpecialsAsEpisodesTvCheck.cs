@@ -4,7 +4,7 @@ namespace TVRename
 {
     internal class DefaultSpecialsAsEpisodesTvCheck : DefaultTvShowCheck
     {
-        public DefaultSpecialsAsEpisodesTvCheck([NotNull] ShowConfiguration movie) : base(movie) { }
+        public DefaultSpecialsAsEpisodesTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc) { }
 
         protected override string FieldName => "Count Specials As Episodes Check";
 

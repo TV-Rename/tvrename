@@ -1,11 +1,11 @@
-using System;
+using System.Linq;
 using JetBrains.Annotations;
 
 namespace TVRename
 {
     internal class FolderBaseMovieCheck : MovieCheck
     {
-        public FolderBaseMovieCheck([NotNull] MovieConfiguration movie) : base(movie) { }
+        public FolderBaseMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc) { }
 
         public override bool Check() => Movie.UseAutomaticFolders && !Movie.AutomaticFolderRoot.HasValue();
 
@@ -13,9 +13,17 @@ namespace TVRename
 
         protected override void FixInternal()
         {
-            //Movie.AutomaticFolderRoot = TVSettings.Instance.MovieLibraryFolders[1];
-            //return;
-            throw new NotImplementedException(); //TODO
+            if (TVSettings.Instance.MovieLibraryFolders.Count > 1)
+            {
+                throw new FixCheckException("Can't fix movie as multiple Movie Library Folders are specified");
+            }
+
+            if (TVSettings.Instance.MovieLibraryFolders.Count == 0)
+            {
+                throw new FixCheckException("Can't fix movie as no Movie Library Folders are specified");
+            }
+
+            Movie.AutomaticFolderRoot = TVSettings.Instance.MovieLibraryFolders.First();
         }
 
         public override string CheckName => "[Movie] Use Default folder supplied";

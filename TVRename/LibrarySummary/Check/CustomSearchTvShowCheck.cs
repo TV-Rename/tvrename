@@ -4,7 +4,7 @@ namespace TVRename
 {
     internal class CustomSearchTvShowCheck : CustomTvShowCheck
     {
-        public CustomSearchTvShowCheck([NotNull] ShowConfiguration movie) : base(movie)
+        public CustomSearchTvShowCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
 

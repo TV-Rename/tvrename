@@ -4,7 +4,7 @@ namespace TVRename
 {
     internal class MovieProviderCheck : MovieCheck
     {
-        public MovieProviderCheck([NotNull] MovieConfiguration m) : base(m)
+        public MovieProviderCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
         {
         }
 

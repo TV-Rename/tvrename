@@ -3,7 +3,8 @@ namespace TVRename
     internal abstract class MovieCheck : SettingsCheck
     {
         public readonly MovieConfiguration Movie;
-        protected MovieCheck(MovieConfiguration movie)
+        
+        protected MovieCheck(MovieConfiguration movie, TVDoc doc) :base(doc)
         {
             Movie = movie;
         }

@@ -4,7 +4,7 @@ namespace TVRename
 {
     internal class DefaultEpisodeNameMatchingTvCheck : DefaultTvShowCheck
     {
-        public DefaultEpisodeNameMatchingTvCheck([NotNull] ShowConfiguration movie) : base(movie) { }
+        public DefaultEpisodeNameMatchingTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc) { }
 
         protected override string FieldName => "Do EpisodeName Matching Check";
 

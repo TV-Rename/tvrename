@@ -1,9 +1,9 @@
-﻿namespace TVRename
+namespace TVRename
 {
     internal abstract class TvShowCheck : SettingsCheck
     {
         public readonly ShowConfiguration Show;
-        protected TvShowCheck(ShowConfiguration show)
+        protected TvShowCheck(ShowConfiguration show, TVDoc doc):base(doc)
         {
             Show = show;
         }

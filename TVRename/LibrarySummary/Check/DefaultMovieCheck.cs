@@ -4,7 +4,7 @@ namespace TVRename
 {
     internal abstract class DefaultMovieCheck : MovieCheck
     {
-        protected DefaultMovieCheck([NotNull] MovieConfiguration movie) : base(movie)
+        protected DefaultMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
         {
         }
         public override string CheckName => "[Movie] "+FieldName;

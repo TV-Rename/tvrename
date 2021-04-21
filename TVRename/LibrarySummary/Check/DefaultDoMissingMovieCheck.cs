@@ -4,7 +4,7 @@ namespace TVRename
 {
     internal class DefaultDoMissingMovieCheck : DefaultMovieCheck
     {
-        public DefaultDoMissingMovieCheck([NotNull] MovieConfiguration movie) : base(movie)
+        public DefaultDoMissingMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
         {
         }
 

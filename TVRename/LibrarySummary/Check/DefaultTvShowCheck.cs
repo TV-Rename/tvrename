@@ -4,7 +4,7 @@ namespace TVRename
 {
     internal abstract class DefaultTvShowCheck : TvShowCheck
     {
-        protected DefaultTvShowCheck([NotNull] ShowConfiguration movie) : base(movie)
+        protected DefaultTvShowCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
         public override string CheckName => "[TV] " + FieldName;

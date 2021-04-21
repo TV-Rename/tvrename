@@ -5,7 +5,7 @@ namespace TVRename
 {
     internal class TvShowSeasonFormatCheck : TvShowCheck
     {
-        public TvShowSeasonFormatCheck([NotNull] ShowConfiguration show) : base(show)
+        public TvShowSeasonFormatCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
 
@@ -15,8 +15,7 @@ namespace TVRename
 
         protected override void FixInternal()
         {
-            //todo
-            throw new NotImplementedException();
+            Show.AutoAddType = ShowConfiguration.AutomaticFolderType.libraryDefault;
         }
         public override string CheckName => "[TV] Use Custom season Folder Name Format";
     }

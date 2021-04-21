@@ -5,7 +5,7 @@ namespace TVRename
 {
     internal class TvShowEpisodeNameCheck : TvShowCheck
     {
-        public TvShowEpisodeNameCheck([NotNull] ShowConfiguration show) : base(show)
+        public TvShowEpisodeNameCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
 
@@ -15,8 +15,7 @@ namespace TVRename
 
         protected override void FixInternal()
         {
-            //todo - move files
-            throw new NotImplementedException();
+            Show.UseCustomNamingFormat = false;
         }
         public override string CheckName => "[TV] Use Custom Folder Name Format";
     }

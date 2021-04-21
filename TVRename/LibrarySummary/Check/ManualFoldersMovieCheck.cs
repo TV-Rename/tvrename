@@ -8,7 +8,7 @@ namespace TVRename
 {
     internal class ManualFoldersMovieCheck : CustomMovieCheck
     {
-        public ManualFoldersMovieCheck([NotNull] MovieConfiguration movie) : base(movie)
+        public ManualFoldersMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
         {
         }
 
