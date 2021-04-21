@@ -20,6 +20,11 @@ namespace TVRename
             }
         }
 
+        public List<(int, string)> Collections => Movies
+            .Select(c => (c.CachedMovie?.CollectionId, c.CachedMovie?.CollectionName))
+            .Where(a => a.CollectionId.HasValue && a.CollectionName.HasValue())
+            .Select(a => (a.CollectionId.Value, a.CollectionName)).Distinct().ToList();
+
         [NotNull]
         public IEnumerable<string> GetGenres()
         {

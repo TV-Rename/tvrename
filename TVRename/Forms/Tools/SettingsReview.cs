@@ -52,44 +52,44 @@ namespace TVRename.Forms
 
             foreach (MovieConfiguration movie in mDoc.FilmLibrary.GetSortedMovies())
             {
-                set.Add(new CustomLanguageMovieCheck(movie));
-                set.Add(new CustomNameMovieCheck(movie));
-                set.Add(new CustomRegionMovieCheck(movie));
-                set.Add(new ManualFoldersMovieCheck(movie));
+                set.Add(new CustomLanguageMovieCheck(movie,mDoc));
+                set.Add(new CustomNameMovieCheck(movie,mDoc));
+                set.Add(new CustomRegionMovieCheck(movie,mDoc));
+                set.Add(new ManualFoldersMovieCheck(movie,mDoc));
 
-                set.Add(new DefaultDoMissingMovieCheck(movie));
-                set.Add(new DefaultDoRenameMovieCheck(movie));
+                set.Add(new DefaultDoMissingMovieCheck(movie,mDoc));
+                set.Add(new DefaultDoRenameMovieCheck(movie,mDoc));
 
-                set.Add(new FilenameMovieCheck(movie));
-                set.Add(new MovieProviderCheck(movie));
-                set.Add(new SubdirectoryMovieCheck(movie));
-                set.Add(new FolderBaseMovieCheck(movie));
+                set.Add(new FilenameMovieCheck(movie,mDoc));
+                set.Add(new MovieProviderCheck(movie,mDoc));
+                set.Add(new SubdirectoryMovieCheck(movie,mDoc));
+                set.Add(new FolderBaseMovieCheck(movie,mDoc));
                 
                 bw.ReportProgress(100 * current++ / total, movie.ShowName);
             }
 
             foreach (ShowConfiguration show in mDoc.TvLibrary.GetSortedShowItems())
             {
-                set.Add(new CustomLanguageTvShowCheck(show));
-                set.Add(new CustomNameTvShowCheck(show));
-                set.Add(new CustomRegionTvShowCheck(show));
-                set.Add(new CustomSearchTvShowCheck(show));
-                set.Add(new UseManualFoldersTvShowCheck(show));
+                set.Add(new CustomLanguageTvShowCheck(show,mDoc));
+                set.Add(new CustomNameTvShowCheck(show,mDoc));
+                set.Add(new CustomRegionTvShowCheck(show,mDoc));
+                set.Add(new CustomSearchTvShowCheck(show,mDoc));
+                set.Add(new UseManualFoldersTvShowCheck(show,mDoc));
 
-                set.Add(new DefaultAirDateMatchingTvCheck(show));
-                set.Add(new DefaultDoMissingTvCheck(show));
-                set.Add(new DefaultDoRenameTvCheck(show));
-                set.Add(new DefaultEpisodeNameMatchingTvCheck(show));
-                set.Add(new DefaultFutureEpisodesTvCheck(show));
-                set.Add(new DefaultNoAirdateTvCheck(show));
-                set.Add(new DefaultSequentialMatchingTvCheck(show));
-                set.Add(new DefaultShowAirDateTvCheck(show));
-                set.Add(new DefaultSpecialsAsEpisodesTvCheck(show));
-                set.Add(new DefaultUseDvdTvCheck(show));
+                set.Add(new DefaultAirDateMatchingTvCheck(show,mDoc));
+                set.Add(new DefaultDoMissingTvCheck(show,mDoc));
+                set.Add(new DefaultDoRenameTvCheck(show,mDoc));
+                set.Add(new DefaultEpisodeNameMatchingTvCheck(show,mDoc));
+                set.Add(new DefaultFutureEpisodesTvCheck(show,mDoc));
+                set.Add(new DefaultNoAirdateTvCheck(show,mDoc));
+                set.Add(new DefaultSequentialMatchingTvCheck(show,mDoc));
+                set.Add(new DefaultShowAirDateTvCheck(show,mDoc));
+                set.Add(new DefaultSpecialsAsEpisodesTvCheck(show,mDoc));
+                set.Add(new DefaultUseDvdTvCheck(show,mDoc));
 
-                set.Add(new TvShowEpisodeNameCheck(show));
-                set.Add(new TvShowProviderCheck(show));
-                set.Add(new TvShowSeasonFormatCheck(show));
+                set.Add(new TvShowEpisodeNameCheck(show,mDoc));
+                set.Add(new TvShowProviderCheck(show,mDoc));
+                set.Add(new TvShowSeasonFormatCheck(show,mDoc));
 
                 bw.ReportProgress(100 * current++ / total, show.ShowName);
             }

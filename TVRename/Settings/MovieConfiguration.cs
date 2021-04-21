@@ -61,7 +61,7 @@ namespace TVRename
             
         }
 
-        public string ShowNameWithYear => $"{ShowName} ({CachedMovie?.Year})";
+        public String ShowNameWithYear => $"{ShowName} ({CachedMovie?.Year})";
         public MovieConfiguration(int code, TVDoc.ProviderType type) : this()
         {
             ConfigurationProvider = type;

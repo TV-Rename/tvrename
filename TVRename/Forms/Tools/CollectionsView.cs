@@ -87,10 +87,7 @@ namespace TVRename.Forms
         {
             BackgroundWorker bw = (BackgroundWorker) sender;
 
-            List<(int, string)> collectionIds = mDoc.FilmLibrary.Movies
-                .Select(c => (c.CachedMovie?.CollectionId, c.CachedMovie?.CollectionName))
-                .Where(a => a.CollectionId.HasValue && a.CollectionName.HasValue())
-                .Select(a => (a.CollectionId.Value, a.CollectionName)).Distinct().ToList();
+            List<(int, string)> collectionIds = mDoc.FilmLibrary.Collections;
 
             int total = collectionIds.Count;
             int current = 0;
@@ -155,7 +152,8 @@ namespace TVRename.Forms
             
             if (mlastSelected.IsInLibrary)
             {
-                MovieConfiguration? si = mDoc.FilmLibrary.GetMovie(mlastSelected.TmdbCode,TVDoc.ProviderType.TMDB); //TODO - Revisit for multisource
+                TVDoc.ProviderType providerToUse = TVSettings.Instance.DefaultMovieProvider == TVDoc.ProviderType.TMDB? TVSettings.Instance.DefaultMovieProvider :TVDoc.ProviderType.TMDB;
+                MovieConfiguration? si = mDoc.FilmLibrary.GetMovie(mlastSelected.TmdbCode,providerToUse); 
                 if ( si!=null)
                 {
                     AddRcMenuItem("Force Refresh", (o, args) => mainUi.ForceMovieRefresh(si, false));
@@ -176,19 +174,31 @@ namespace TVRename.Forms
             MovieConfiguration found = new MovieConfiguration(si.TmdbCode,TVDoc.ProviderType.TMDB);
             QuickLocateForm f = new QuickLocateForm(si.Name, MediaConfiguration.MediaType.movie);
 
-            if (f.ShowDialog(this) == DialogResult.OK)
+            if (f.ShowDialog(this) != DialogResult.OK)
             {
-                if (f.RootDirectory.HasValue())
-                {
-                    found.AutomaticFolderRoot = f.RootDirectory!;
-                    found.UseAutomaticFolders = true;
-                }
-
-                ///TODO put UI to get folder - check they have not adjusted path - if so add as manual folders
-                mDoc.Add(found);
-                mDoc.SetDirty();
-                mDoc.ExportMovieInfo();
+                return;
             }
+
+            if (found.ConfigurationProvider == TVSettings.Instance.DefaultMovieProvider)
+            {
+                found.ConfigurationProvider = TVDoc.ProviderType.libraryDefault;
+            }
+
+            if (f.FolderNameChanged)
+            {
+                found.UseAutomaticFolders = false;
+                found.UseManualLocations = true;
+                found.ManualLocations.Add(f.DirectoryFullPath);
+            }
+            else if (f.RootDirectory.HasValue())
+            {
+                found.AutomaticFolderRoot = f.RootDirectory!;
+                found.UseAutomaticFolders = true;
+            }
+
+            mDoc.Add(found);
+            mDoc.SetDirty();
+            mDoc.ExportMovieInfo();
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -207,6 +217,7 @@ namespace TVRename.Forms
         public string CollectionName;
         public CachedMovieInfo Movie;
 
+        // ReSharper disable once UnusedMember.Global - Used by UI component
         public string MovieName =>Movie.Name;
         public int TmdbCode=>Movie.TmdbCode;
 

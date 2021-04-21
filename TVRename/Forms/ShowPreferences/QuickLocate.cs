@@ -17,6 +17,7 @@ namespace TVRename.Forms.ShowPreferences
     {
         public string? DirectoryFullPath;
         public string? RootDirectory;
+        private readonly string InitialFolder;
         public QuickLocateForm(string hint, MediaConfiguration.MediaType t)
         {
             InitializeComponent();
@@ -31,8 +32,11 @@ namespace TVRename.Forms.ShowPreferences
             cbDirectory.SelectedIndex = 0;
             cbDirectory.ResumeLayout();
 
-            txtShowFolder.Text = Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(hint));
+            InitialFolder= Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(hint));
+            txtShowFolder.Text = InitialFolder;
         }
+
+        public bool FolderNameChanged => txtShowFolder.Text == InitialFolder;
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
@@ -40,7 +44,7 @@ namespace TVRename.Forms.ShowPreferences
             RootDirectory = cbDirectory.Text;
 
             DialogResult = DialogResult.OK;
-             Close();
+            Close();
         }
     }
 }

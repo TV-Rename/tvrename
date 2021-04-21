@@ -230,10 +230,10 @@ namespace TVRename
 
         private bool OkToClose()
         {
-            if (!TMDB.LocalCache.Instance.HasMovie(codeFinderForm.SelectedCode())) //todo Get add show to work with other providers
+            if (!TVDoc.GetMediaCache(GetProviderType()).HasMovie(codeFinderForm.SelectedCode()))
             {
-                DialogResult dr = MessageBox.Show("tvdb code unknown, close anyway?", "TVRename Add/Edit Movie",
-                                                  MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult dr = MessageBox.Show($"{GetProviderType().PrettyPrint()} code unknown, close anyway?", "TVRename Add/Edit Movie",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (dr == DialogResult.No)
                 {
                     return false;
@@ -313,7 +313,19 @@ namespace TVRename
             selectedShow.UseCustomRegion = chkCustomRegion.Checked;
             selectedShow.CustomRegionCode = cbRegion.Text;
 
-            selectedShow.TmdbCode = code; //todo - fix so works with multi providers
+            if (GetProviderType() == TVDoc.ProviderType.TheTVDB || (GetProviderType() == TVDoc.ProviderType.libraryDefault && TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TheTVDB))
+            {
+                selectedShow.TvdbCode = code;
+            }
+            if (GetProviderType() == TVDoc.ProviderType.TMDB || (GetProviderType() == TVDoc.ProviderType.libraryDefault && TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TMDB))
+            {
+                selectedShow.TmdbCode = code;
+            }
+            if (GetProviderType() == TVDoc.ProviderType.TVmaze || (GetProviderType() == TVDoc.ProviderType.libraryDefault && TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TVmaze))
+            {
+                selectedShow.TVmazeCode = code;
+            }
+
             selectedShow.DoRename = cbDoRenaming.Checked;
             selectedShow.DoMissingCheck = cbDoMissingCheck.Checked;
             selectedShow.ConfigurationProvider = GetProviderType();

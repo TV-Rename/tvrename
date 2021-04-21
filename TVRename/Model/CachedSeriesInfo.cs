@@ -581,6 +581,8 @@ namespace TVRename
             sourceEpisodes.TryRemove(episodeId, out Episode _);
         }
 
+        protected override MediaConfiguration.MediaType MediaType() => MediaConfiguration.MediaType.tv;
+
         public override string ToString() => $"TVDB:{TvdbCode}/Maze:{TvMazeCode}/TMDB:{TmdbCode}/{Name}";
 
         private List<Season> seasons = new List<Season>();

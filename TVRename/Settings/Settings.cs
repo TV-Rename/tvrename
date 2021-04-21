@@ -290,7 +290,7 @@ namespace TVRename
         public int SampleFileMaxSizeMB=50; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
         public bool IgnorePreviouslySeen = false;
-        public bool IgnorePreviouslySeenMovies = false; //todo - chekc this is settible and persists to the XMKL file
+        public bool IgnorePreviouslySeenMovies = false; //todo - check this is settable and persists to the XML file
         public bool SearchRSS = false;
         public bool SearchRSSManualScanOnly = true;
         public bool SearchJSON = false;

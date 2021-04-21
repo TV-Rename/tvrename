@@ -40,7 +40,16 @@ namespace TVRename
             this.lblFileName = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpTV = new System.Windows.Forms.TabPage();
+            this.rdoTVTMDB = new System.Windows.Forms.RadioButton();
+            this.label13 = new System.Windows.Forms.Label();
+            this.rdoTVTVMaze = new System.Windows.Forms.RadioButton();
+            this.rdoTVTVDB = new System.Windows.Forms.RadioButton();
+            this.rdoTVDefault = new System.Windows.Forms.RadioButton();
             this.tpMovie = new System.Windows.Forms.TabPage();
+            this.rdoMovieTMDB = new System.Windows.Forms.RadioButton();
+            this.label3 = new System.Windows.Forms.Label();
+            this.rdoMovieTVDB = new System.Windows.Forms.RadioButton();
+            this.rdoMovieLibraryDefault = new System.Windows.Forms.RadioButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.cbMovieDirectory = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -90,7 +99,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlCF.Location = new System.Drawing.Point(3, 3);
             this.pnlCF.Name = "pnlCF";
-            this.pnlCF.Size = new System.Drawing.Size(463, 367);
+            this.pnlCF.Size = new System.Drawing.Size(463, 342);
             this.pnlCF.TabIndex = 3;
             // 
             // label1
@@ -160,6 +169,11 @@ namespace TVRename
             // 
             // tpTV
             // 
+            this.tpTV.Controls.Add(this.rdoTVTMDB);
+            this.tpTV.Controls.Add(this.label13);
+            this.tpTV.Controls.Add(this.rdoTVTVMaze);
+            this.tpTV.Controls.Add(this.rdoTVTVDB);
+            this.tpTV.Controls.Add(this.rdoTVDefault);
             this.tpTV.Controls.Add(this.pnlCF);
             this.tpTV.Controls.Add(this.cbDirectory);
             this.tpTV.Controls.Add(this.label1);
@@ -171,8 +185,75 @@ namespace TVRename
             this.tpTV.Text = "TV";
             this.tpTV.UseVisualStyleBackColor = true;
             // 
+            // rdoTVTMDB
+            // 
+            this.rdoTVTMDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.rdoTVTMDB.AutoSize = true;
+            this.rdoTVTMDB.Location = new System.Drawing.Point(300, 353);
+            this.rdoTVTMDB.Name = "rdoTVTMDB";
+            this.rdoTVTMDB.Size = new System.Drawing.Size(56, 17);
+            this.rdoTVTMDB.TabIndex = 50;
+            this.rdoTVTMDB.TabStop = true;
+            this.rdoTVTMDB.Text = "TMDB";
+            this.rdoTVTMDB.UseVisualStyleBackColor = true;
+            this.rdoTVTMDB.CheckedChanged += new System.EventHandler(this.rdoTVProvider_CheckedChanged);
+            // 
+            // label13
+            // 
+            this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(3, 355);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(44, 13);
+            this.label13.TabIndex = 49;
+            this.label13.Text = "Source:";
+            this.label13.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // rdoTVTVMaze
+            // 
+            this.rdoTVTVMaze.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.rdoTVTVMaze.AutoSize = true;
+            this.rdoTVTVMaze.Location = new System.Drawing.Point(230, 353);
+            this.rdoTVTVMaze.Name = "rdoTVTVMaze";
+            this.rdoTVTVMaze.Size = new System.Drawing.Size(64, 17);
+            this.rdoTVTVMaze.TabIndex = 48;
+            this.rdoTVTVMaze.TabStop = true;
+            this.rdoTVTVMaze.Text = "TVmaze";
+            this.rdoTVTVMaze.UseVisualStyleBackColor = true;
+            this.rdoTVTVMaze.CheckedChanged += new System.EventHandler(this.rdoTVProvider_CheckedChanged);
+            // 
+            // rdoTVTVDB
+            // 
+            this.rdoTVTVDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.rdoTVTVDB.AutoSize = true;
+            this.rdoTVTVDB.Location = new System.Drawing.Point(143, 353);
+            this.rdoTVTVDB.Name = "rdoTVTVDB";
+            this.rdoTVTVDB.Size = new System.Drawing.Size(76, 17);
+            this.rdoTVTVDB.TabIndex = 47;
+            this.rdoTVTVDB.TabStop = true;
+            this.rdoTVTVDB.Text = "The TVDB";
+            this.rdoTVTVDB.UseVisualStyleBackColor = true;
+            this.rdoTVTVDB.CheckedChanged += new System.EventHandler(this.rdoTVProvider_CheckedChanged);
+            // 
+            // rdoTVDefault
+            // 
+            this.rdoTVDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.rdoTVDefault.AutoSize = true;
+            this.rdoTVDefault.Location = new System.Drawing.Point(48, 353);
+            this.rdoTVDefault.Name = "rdoTVDefault";
+            this.rdoTVDefault.Size = new System.Drawing.Size(93, 17);
+            this.rdoTVDefault.TabIndex = 46;
+            this.rdoTVDefault.TabStop = true;
+            this.rdoTVDefault.Text = "Library Default";
+            this.rdoTVDefault.UseVisualStyleBackColor = true;
+            this.rdoTVDefault.CheckedChanged += new System.EventHandler(this.rdoTVProvider_CheckedChanged);
+            // 
             // tpMovie
             // 
+            this.tpMovie.Controls.Add(this.rdoMovieTMDB);
+            this.tpMovie.Controls.Add(this.label3);
+            this.tpMovie.Controls.Add(this.rdoMovieTVDB);
+            this.tpMovie.Controls.Add(this.rdoMovieLibraryDefault);
             this.tpMovie.Controls.Add(this.panel1);
             this.tpMovie.Controls.Add(this.cbMovieDirectory);
             this.tpMovie.Controls.Add(this.label2);
@@ -184,6 +265,56 @@ namespace TVRename
             this.tpMovie.Text = "Movie";
             this.tpMovie.UseVisualStyleBackColor = true;
             // 
+            // rdoMovieTMDB
+            // 
+            this.rdoMovieTMDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.rdoMovieTMDB.AutoSize = true;
+            this.rdoMovieTMDB.Location = new System.Drawing.Point(229, 354);
+            this.rdoMovieTMDB.Name = "rdoMovieTMDB";
+            this.rdoMovieTMDB.Size = new System.Drawing.Size(56, 17);
+            this.rdoMovieTMDB.TabIndex = 49;
+            this.rdoMovieTMDB.TabStop = true;
+            this.rdoMovieTMDB.Text = "TMDB";
+            this.rdoMovieTMDB.UseVisualStyleBackColor = true;
+            this.rdoMovieTMDB.CheckedChanged += new System.EventHandler(this.rdoMovieProvider_CheckedChanged);
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(7, 356);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(44, 13);
+            this.label3.TabIndex = 48;
+            this.label3.Text = "Source:";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // rdoMovieTVDB
+            // 
+            this.rdoMovieTVDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.rdoMovieTVDB.AutoSize = true;
+            this.rdoMovieTVDB.Location = new System.Drawing.Point(147, 354);
+            this.rdoMovieTVDB.Name = "rdoMovieTVDB";
+            this.rdoMovieTVDB.Size = new System.Drawing.Size(76, 17);
+            this.rdoMovieTVDB.TabIndex = 47;
+            this.rdoMovieTVDB.TabStop = true;
+            this.rdoMovieTVDB.Text = "The TVDB";
+            this.rdoMovieTVDB.UseVisualStyleBackColor = true;
+            this.rdoMovieTVDB.CheckedChanged += new System.EventHandler(this.rdoMovieProvider_CheckedChanged);
+            // 
+            // rdoMovieLibraryDefault
+            // 
+            this.rdoMovieLibraryDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.rdoMovieLibraryDefault.AutoSize = true;
+            this.rdoMovieLibraryDefault.Location = new System.Drawing.Point(52, 354);
+            this.rdoMovieLibraryDefault.Name = "rdoMovieLibraryDefault";
+            this.rdoMovieLibraryDefault.Size = new System.Drawing.Size(93, 17);
+            this.rdoMovieLibraryDefault.TabIndex = 46;
+            this.rdoMovieLibraryDefault.TabStop = true;
+            this.rdoMovieLibraryDefault.Text = "Library Default";
+            this.rdoMovieLibraryDefault.UseVisualStyleBackColor = true;
+            this.rdoMovieLibraryDefault.CheckedChanged += new System.EventHandler(this.rdoMovieProvider_CheckedChanged);
+            // 
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -191,7 +322,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.Location = new System.Drawing.Point(5, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(463, 367);
+            this.panel1.Size = new System.Drawing.Size(463, 344);
             this.panel1.TabIndex = 6;
             // 
             // cbMovieDirectory
@@ -202,7 +333,7 @@ namespace TVRename
             this.cbMovieDirectory.FormattingEnabled = true;
             this.cbMovieDirectory.Location = new System.Drawing.Point(72, 376);
             this.cbMovieDirectory.Name = "cbMovieDirectory";
-            this.cbMovieDirectory.Size = new System.Drawing.Size(224, 21);
+            this.cbMovieDirectory.Size = new System.Drawing.Size(222, 21);
             this.cbMovieDirectory.Sorted = true;
             this.cbMovieDirectory.TabIndex = 5;
             // 
@@ -216,7 +347,7 @@ namespace TVRename
             this.label2.TabIndex = 7;
             this.label2.Text = "Location:";
             // 
-            // AutoAddShow
+            // AutoAddMedia
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -263,5 +394,14 @@ namespace TVRename
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ComboBox cbMovieDirectory;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.RadioButton rdoTVTMDB;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.RadioButton rdoTVTVMaze;
+        private System.Windows.Forms.RadioButton rdoTVTVDB;
+        private System.Windows.Forms.RadioButton rdoTVDefault;
+        private System.Windows.Forms.RadioButton rdoMovieTMDB;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.RadioButton rdoMovieTVDB;
+        private System.Windows.Forms.RadioButton rdoMovieLibraryDefault;
     }
 }

@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    public class CachedMediaInfo
+    public abstract class CachedMediaInfo
     {
         public string Name;
         public string? Overview;
@@ -56,7 +56,20 @@ namespace TVRename
             TvRageCode = 0;
             TmdbCode = -1;
         }
-
+        protected abstract MediaConfiguration.MediaType MediaType();
+        public int IdCode(TVDoc.ProviderType source)
+        {
+            return source switch
+            {
+                TVDoc.ProviderType.libraryDefault => IdCode(MediaType() == MediaConfiguration.MediaType.movie
+                    ? TVSettings.Instance.DefaultMovieProvider
+                    : TVSettings.Instance.DefaultProvider),
+                TVDoc.ProviderType.TVmaze => TvMazeCode,
+                TVDoc.ProviderType.TheTVDB => TvdbCode,
+                TVDoc.ProviderType.TMDB => TmdbCode,
+                _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
+            };
+        }
         public IEnumerable<string> GetAliases() => Aliases;
 
         public IEnumerable<Actor> GetActors() => Actors;

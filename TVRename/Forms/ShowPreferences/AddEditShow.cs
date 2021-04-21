@@ -443,13 +443,7 @@ namespace TVRename
             }
 
             selectedShow.AliasNames.Clear();
-            foreach (string showAlias in lbShowAlias.Items)
-            {
-                if (!selectedShow.AliasNames.Contains(showAlias))
-                {
-                    selectedShow.AliasNames.Add(showAlias);
-                }
-            }
+            selectedShow.AliasNames.AddNullableRange(lbShowAlias.Items.Cast<string>().Distinct());
         }
 
         private ShowConfiguration.AutomaticFolderType GetAutoAddType()

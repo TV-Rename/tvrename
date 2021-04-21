@@ -14,7 +14,7 @@ namespace TVRename
         public readonly bool SingleMovieFound;
         private readonly bool assumeMovie;
 
-        public AutoAddMedia(string hint,FileInfo file, bool assumeMovie)
+        public AutoAddMedia(string hint, FileInfo file, bool assumeMovie)
         {
             InitializeComponent();
             ShowConfiguration = new ShowConfiguration();
@@ -24,8 +24,8 @@ namespace TVRename
 
             lblFileName.Text = "Filename: "+file.FullName;
 
-            tvCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.tv,TVSettings.Instance.DefaultProvider) {Dock = DockStyle.Fill};
-            movieCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.movie,TVSettings.Instance.DefaultMovieProvider) { Dock = DockStyle.Fill };
+            tvCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.tv,TVDoc.ProviderType.libraryDefault) {Dock = DockStyle.Fill};
+            movieCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.movie, TVDoc.ProviderType.libraryDefault) { Dock = DockStyle.Fill };
 
             tvCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
             movieCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
@@ -38,7 +38,7 @@ namespace TVRename
             if (SingleTvShowFound )
             {
                 string filenameFriendly = TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(tvCodeFinder.TvShowInitialFound.Name));
-                SetShowItem(tvCodeFinder.TvShowInitialFound.TvdbCode, TVSettings.Instance.DefShowLocation+ System.IO.Path.DirectorySeparatorChar + filenameFriendly);
+                SetShowItem(tvCodeFinder.TvShowInitialFoundCode, tvCodeFinder.Source,TVSettings.Instance.DefShowLocation+ System.IO.Path.DirectorySeparatorChar + filenameFriendly);
                 if (ShowConfiguration.Code == -1)
                 {
                     SetShowItem();
@@ -46,7 +46,7 @@ namespace TVRename
             }
             if (SingleMovieFound)
             {
-                SetMovieItem(movieCodeFinder.MovieInitialFound.TmdbCode, TVSettings.Instance.DefMovieDefaultLocation);
+                SetMovieItem(movieCodeFinder.MovieInitialFoundCode,movieCodeFinder.Source, TVSettings.Instance.DefMovieDefaultLocation);
                 if (MovieConfiguration.Code == -1)
                 {
                     SetMovieItem();
@@ -109,13 +109,14 @@ namespace TVRename
         {
             int code = tvCodeFinder.SelectedCode();
 
-            SetShowItem(code, cbDirectory.Text + lblDirectoryName.Text);
+            SetShowItem(code,tvCodeFinder.Source, cbDirectory.Text + lblDirectoryName.Text);
         }
 
-        private void SetShowItem(int code,string folderbase)
+        private void SetShowItem(int code,TVDoc.ProviderType type ,string folderbase)
         {
-            ShowConfiguration.TvdbCode = code;
+            ShowConfiguration.SetId(type,code); 
             ShowConfiguration.AutoAddFolderBase = folderbase;
+            ShowConfiguration.ConfigurationProvider = type == TVSettings.Instance.DefaultProvider? TVDoc.ProviderType.libraryDefault: type;
 
             //Set Default Timezone and if not then set on Network
             ShowConfiguration.ShowTimeZone = TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.TimeZoneForNetwork(tvCodeFinder.SelectedShow()?.Network, ShowConfiguration.ShowTimeZone);
@@ -130,17 +131,17 @@ namespace TVRename
         {
             int code = movieCodeFinder.SelectedCode();
 
-            SetMovieItem(code, cbMovieDirectory.Text);
+            SetMovieItem(code,movieCodeFinder.Source, cbMovieDirectory.Text);
         }
 
-        private void SetMovieItem(int code, string folderbase)
+        private void SetMovieItem(int code, TVDoc.ProviderType type, string folderbase)
         {
-            MovieConfiguration.TmdbCode = code;
+            MovieConfiguration.SetId(type, code);
             MovieConfiguration.UseAutomaticFolders = true;
             MovieConfiguration.AutomaticFolderRoot = folderbase;
             MovieConfiguration.Format = MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile;
             MovieConfiguration.UseCustomFolderNameFormat = false;
-            MovieConfiguration.ConfigurationProvider = TVDoc.ProviderType.TMDB;
+            MovieConfiguration.ConfigurationProvider = type == TVSettings.Instance.DefaultMovieProvider ? TVDoc.ProviderType.libraryDefault : type;
 
             if (!originalHint.Contains(movieCodeFinder.SelectedMovie()?.Name ?? string.Empty, StringComparison.OrdinalIgnoreCase))
             {
@@ -171,11 +172,11 @@ namespace TVRename
 
         private bool OkToClose()
         {
-            if (tabControl1.SelectedTab == tpTV  &&  TheTVDB.LocalCache.Instance.HasSeries(tvCodeFinder.SelectedCode())) //todo Get add show to work with TVMAZE
+            if (tabControl1.SelectedTab == tpTV  && TVDoc.GetMediaCache(tvCodeFinder.Source).HasSeries(tvCodeFinder.SelectedCode()) )
             {
                 return true;
             }
-            if (tabControl1.SelectedTab==tpMovie && TMDB.LocalCache.Instance.HasMovie(movieCodeFinder.SelectedCode())) //todo Get add show to work with TVMAZE
+            if (tabControl1.SelectedTab==tpMovie && TVDoc.GetMediaCache(movieCodeFinder.Source).HasMovie(movieCodeFinder.SelectedCode()))
             {
                 return true;
             }
@@ -204,6 +205,50 @@ namespace TVRename
             ActiveControl = assumeMovie ? movieCodeFinder : tvCodeFinder; // set initial focus to the code entry/show finder control
             tabControl1.SelectedTab = (assumeMovie ? tpMovie : tpTV);
         }
+
+        private void rdoMovieProvider_CheckedChanged(object sender, EventArgs e)
+        {
+            movieCodeFinder.SetSource(GetMovieProviderType());
+        }
+        private void rdoTVProvider_CheckedChanged(object sender, EventArgs e)
+        {
+            tvCodeFinder.SetSource(GetTvProviderType());
+        }
+        private TVDoc.ProviderType GetMovieProviderType()
+        {
+            if (rdoMovieLibraryDefault.Checked)
+            {
+                return TVDoc.ProviderType.libraryDefault;
+            }
+            if (rdoMovieTVDB.Checked)
+            {
+                return TVDoc.ProviderType.TheTVDB;
+            }
+            if (rdoMovieTMDB.Checked)
+            {
+                return TVDoc.ProviderType.TMDB;
+            }
+            return TVDoc.ProviderType.libraryDefault;
+        }
+        private TVDoc.ProviderType GetTvProviderType()
+        {
+            if (rdoTVTVMaze.Checked)
+            {
+                return TVDoc.ProviderType.TVmaze;
+            }
+            if (rdoTVDefault.Checked)
+            {
+                return TVDoc.ProviderType.libraryDefault;
+            }
+            if (rdoTVTVDB.Checked)
+            {
+                return TVDoc.ProviderType.TheTVDB;
+            }
+            if (rdoTVTMDB.Checked)
+            {
+                return TVDoc.ProviderType.TMDB;
+            }
+            return TVDoc.ProviderType.libraryDefault;
+        }
     }
 }
-

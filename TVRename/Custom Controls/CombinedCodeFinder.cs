@@ -25,6 +25,9 @@ namespace TVRename
 
         public CachedSeriesInfo TvShowInitialFound { get; private set; }
         public CachedMovieInfo MovieInitialFound{ get; private set; }
+        public int TvShowInitialFoundCode => TvShowInitialFound.IdCode(Source);
+
+        public int MovieInitialFoundCode => MovieInitialFound.IdCode(Source);
         public CombinedCodeFinder(string? initialHint, MediaConfiguration.MediaType type, TVDoc.ProviderType source)
         {
             Type = type;
@@ -110,7 +113,7 @@ namespace TVRename
             }
         }
 
-        public  event EventHandler<EventArgs>? SelectionChanged;
+        public event EventHandler<EventArgs>? SelectionChanged;
 
         public  bool SetHint(string s,TVDoc.ProviderType provider)
         {
@@ -200,7 +203,7 @@ namespace TVRename
                 {
                     lock (TMDB.LocalCache.Instance.MOVIE_LOCK)
                     {
-                        foreach (KeyValuePair<int, CachedMovieInfo> kvp in TMDB.LocalCache.Instance.CachedMovieData.Where(kvp=> matches(kvp.Key, kvp.Value, numeric, what, matchnum)).OrderByDescending(m=>m.Value.Popularity))
+                        foreach (KeyValuePair<int, CachedMovieInfo> kvp in cache.CachedMovieData.Where(kvp=> matches(kvp.Key, kvp.Value, numeric, what, matchnum)).OrderByDescending(m=>m.Value.Popularity))
                         {
                             lvMatches.Items.Add(NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum));
                             matchedMovies++;
@@ -308,33 +311,40 @@ namespace TVRename
             }
         }
 
-        private static string GetLabel(TVDoc.ProviderType source)
+        private string GetLabel(TVDoc.ProviderType source)
         {
             return source switch
             {
                 TVDoc.ProviderType.TMDB => "Searching on TMDB.com",
                 TVDoc.ProviderType.TheTVDB => "Searching on TheTVDB.com",
                 TVDoc.ProviderType.TVmaze => "Searching on TVmaze.com",
+                TVDoc.ProviderType.libraryDefault => GetLabel(DefaultType),
                 _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
             };
         }
-        private static string GetPromptLabel(TVDoc.ProviderType source)
+        private TVDoc.ProviderType DefaultType => MediaConfiguration.MediaType.movie == Type
+            ? TVSettings.Instance.DefaultMovieProvider
+            : TVSettings.Instance.DefaultProvider;
+
+        private string GetPromptLabel(TVDoc.ProviderType source)
         {
             return source switch
             {
                 TVDoc.ProviderType.TMDB => "TMDB &code:",
                 TVDoc.ProviderType.TheTVDB => "TheTVDB &code:",
                 TVDoc.ProviderType.TVmaze => "TVmaze &code:",
+                TVDoc.ProviderType.libraryDefault => GetPromptLabel(DefaultType),
                 _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
             };
         }
-        private static MediaCache GetSourceInstance(TVDoc.ProviderType source)
+        private MediaCache GetSourceInstance(TVDoc.ProviderType source)
         {
             return source switch
             {
                 TVDoc.ProviderType.TMDB => TMDB.LocalCache.Instance,
                 TVDoc.ProviderType.TheTVDB => TheTVDB.LocalCache.Instance,
                 TVDoc.ProviderType.TVmaze => TVmaze.LocalCache.Instance,
+                TVDoc.ProviderType.libraryDefault => GetSourceInstance(DefaultType),
                 _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
             };
         }

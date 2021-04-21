@@ -199,8 +199,8 @@ namespace TVRename
             // 
             this.pbAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbAdvanced.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbAdvanced.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbAdvanced.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbAdvanced.Image = ((System.Drawing.Image)(resources.GetObject("pbAdvanced.Image")));
+            this.pbAdvanced.InitialImage = ((System.Drawing.Image)(resources.GetObject("pbAdvanced.InitialImage")));
             this.pbAdvanced.Location = new System.Drawing.Point(391, 6);
             this.pbAdvanced.Name = "pbAdvanced";
             this.pbAdvanced.Size = new System.Drawing.Size(43, 40);
@@ -321,8 +321,8 @@ namespace TVRename
             // 
             this.pbAliases.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbAliases.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbAliases.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbAliases.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbAliases.Image = ((System.Drawing.Image)(resources.GetObject("pbAliases.Image")));
+            this.pbAliases.InitialImage = ((System.Drawing.Image)(resources.GetObject("pbAliases.InitialImage")));
             this.pbAliases.Location = new System.Drawing.Point(391, 6);
             this.pbAliases.Name = "pbAliases";
             this.pbAliases.Size = new System.Drawing.Size(43, 40);
@@ -630,8 +630,8 @@ namespace TVRename
             // 
             this.pbFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbFolders.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbFolders.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbFolders.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbFolders.Image = ((System.Drawing.Image)(resources.GetObject("pbFolders.Image")));
+            this.pbFolders.InitialImage = ((System.Drawing.Image)(resources.GetObject("pbFolders.InitialImage")));
             this.pbFolders.Location = new System.Drawing.Point(397, 6);
             this.pbFolders.Name = "pbFolders";
             this.pbFolders.Size = new System.Drawing.Size(43, 40);
@@ -712,7 +712,6 @@ namespace TVRename
             // 
             this.rdoTVDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.rdoTVDB.AutoSize = true;
-            this.rdoTVDB.Enabled = false;
             this.rdoTVDB.Location = new System.Drawing.Point(147, 304);
             this.rdoTVDB.Name = "rdoTVDB";
             this.rdoTVDB.Size = new System.Drawing.Size(76, 17);
@@ -750,8 +749,8 @@ namespace TVRename
             // 
             this.pbBasics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbBasics.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbBasics.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pbBasics.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pbBasics.Image = ((System.Drawing.Image)(resources.GetObject("pbBasics.Image")));
+            this.pbBasics.InitialImage = ((System.Drawing.Image)(resources.GetObject("pbBasics.InitialImage")));
             this.pbBasics.Location = new System.Drawing.Point(401, 6);
             this.pbBasics.Name = "pbBasics";
             this.pbBasics.Size = new System.Drawing.Size(43, 40);
@@ -949,8 +948,8 @@ namespace TVRename
             // 
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox1.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
-            this.pictureBox1.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
             this.pictureBox1.Location = new System.Drawing.Point(393, 6);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(43, 40);

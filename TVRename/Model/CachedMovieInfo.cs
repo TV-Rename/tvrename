@@ -36,6 +36,7 @@ namespace TVRename
         // note: "SeriesID" in a <Series> is the tv.com code,
         // "seriesid" in an <Episode> is the tvdb code!
 
+        protected override MediaConfiguration.MediaType MediaType() => MediaConfiguration.MediaType.movie;
         public CachedMovieInfo()
         {
             Name = string.Empty;
