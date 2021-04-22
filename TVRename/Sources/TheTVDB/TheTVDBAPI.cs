@@ -225,7 +225,7 @@ namespace TVRename.TheTVDB
             => HttpHelper.HttpRequest(method, url, json, contentType, authToken?.GetToken(), lang);
 
         [NotNull]
-        public static JObject GetUpdatesSince(long time, string lang)
+        public static JObject GetShowUpdatesSince(long time, string lang)
         {
             string uri = LocalCache.VERS==ApiVersion.v4
                 ? TokenProvider.TVDB_API_URL + "/updates"
@@ -308,16 +308,27 @@ namespace TVRename.TheTVDB
         }
 
         [NotNull]
-        public static JObject Search(string text, string defaultLanguageCode)
+        public static JObject SearchTvShow(string text, string defaultLanguageCode)
         {
             string uri = TokenProvider.TVDB_API_URL + "/search/series";
             return JsonHttpGetRequest(uri, new Dictionary<string, string> { { "name", text } }, TokenProvider, defaultLanguageCode, false);
         }
 
-        public static JObject SearchV4(string text, string defaultLanguageCode)
+        public static JObject SearchV4(string text, string defaultLanguageCode,MediaConfiguration.MediaType media)
         {
             string uri = TokenProvider.TVDB_API_URL + "/search";
-            return JsonHttpGetRequest(uri, new Dictionary<string, string> { { "q", text } , { "type", "series" } }, TokenProvider, defaultLanguageCode, false);
+            return media switch
+            {
+                MediaConfiguration.MediaType.tv => JsonHttpGetRequest(uri,
+                    new Dictionary<string, string> {{"q", text}, {"type", "series"}}, TokenProvider,
+                    defaultLanguageCode, false),
+                MediaConfiguration.MediaType.movie => JsonHttpGetRequest(uri,
+                    new Dictionary<string, string> {{"q", text}, {"type", "movie"}}, TokenProvider, defaultLanguageCode,
+                    false),
+                MediaConfiguration.MediaType.both => JsonHttpGetRequest(uri,
+                    new Dictionary<string, string> {{"q", text}}, TokenProvider, defaultLanguageCode, false),
+                _ => throw new ArgumentOutOfRangeException(nameof(media), media, null)
+            };
         }
 
         public static bool TvdbIsUp()

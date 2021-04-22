@@ -299,9 +299,9 @@ namespace TVRename
 
         private bool OkToClose()
         {
-            if (!TVDoc.GetMediaCache(GetProviderType()).HasSeries(codeFinderForm.SelectedCode())) 
+            if (!TVDoc.GetMediaCache(GetProviderTypeInUse()).HasSeries(codeFinderForm.SelectedCode())) 
             {
-                DialogResult dr = MessageBox.Show($"{GetProviderType().PrettyPrint()} code unknown, close anyway?", "TVRename Add/Edit Show",
+                DialogResult dr = MessageBox.Show($"{GetConfigurationProviderType().PrettyPrint()} code unknown, close anyway?", "TVRename Add/Edit Show",
                                                   MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (dr == DialogResult.No)
                 {
@@ -381,15 +381,15 @@ namespace TVRename
             }
             selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.DefaultTimeZone();
             selectedShow.ShowNextAirdate = chkShowNextAirdate.Checked;
-            if (GetProviderType()==TVDoc.ProviderType.TheTVDB || (GetProviderType()==TVDoc.ProviderType.libraryDefault && TVSettings.Instance.DefaultProvider==TVDoc.ProviderType.TheTVDB))
+            if (GetProviderTypeInUse()==TVDoc.ProviderType.TheTVDB )
             {
                 selectedShow.TvdbCode = code;
             }
-            if (GetProviderType() == TVDoc.ProviderType.TMDB || (GetProviderType() == TVDoc.ProviderType.libraryDefault && TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TMDB))
+            if (GetProviderTypeInUse() == TVDoc.ProviderType.TMDB )
             {
                 selectedShow.TmdbCode = code;
             }
-            if (GetProviderType() == TVDoc.ProviderType.TVmaze || (GetProviderType() == TVDoc.ProviderType.libraryDefault && TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TVmaze))
+            if (GetProviderTypeInUse() == TVDoc.ProviderType.TVmaze)
             {
                 selectedShow.TVmazeCode = code;
             }
@@ -400,7 +400,7 @@ namespace TVRename
             selectedShow.AutoAddFolderBase = txtBaseFolder.Text;
 
             selectedShow.AutoAddType = GetAutoAddType();
-            selectedShow.ConfigurationProvider = GetProviderType();
+            selectedShow.ConfigurationProvider = GetConfigurationProviderType();
 
             selectedShow.DvdOrder = chkDVDOrder.Checked;
             selectedShow.ForceCheckFuture = cbIncludeFuture.Checked;
@@ -463,7 +463,7 @@ namespace TVRename
             return ShowConfiguration.AutomaticFolderType.libraryDefault;
         }
 
-        private TVDoc.ProviderType GetProviderType()
+        private TVDoc.ProviderType GetConfigurationProviderType()
         {
             if (rdoTVMaze.Checked)
             {
@@ -482,6 +482,16 @@ namespace TVRename
                 return TVDoc.ProviderType.TMDB;
             }
             return TVDoc.ProviderType.TheTVDB;
+        }
+
+        private TVDoc.ProviderType GetProviderTypeInUse()
+        {
+            if (GetConfigurationProviderType() == TVDoc.ProviderType.libraryDefault)
+            {
+                return TVSettings.Instance.DefaultProvider;
+            }
+
+            return GetConfigurationProviderType();
         }
 
         private void bnCancel_Click(object sender, EventArgs e) => Close();
@@ -777,7 +787,7 @@ namespace TVRename
 
         private void rdoProvider_CheckedChanged(object sender, EventArgs e)
         {
-            codeFinderForm.SetSource(GetProviderType());
+            codeFinderForm.SetSource(GetConfigurationProviderType());
         }
     }
 }

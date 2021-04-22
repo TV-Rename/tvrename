@@ -29,7 +29,7 @@ namespace TVRename
         private List<Thread> workers;
         private Thread? mDownloaderThread;
         private ICollection<SeriesSpecifier> downloadIds;
-        public ConcurrentBag<ShowNotFoundException> Problems { get; }
+        public ConcurrentBag<MediaNotFoundException> Problems { get; }
         
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private static readonly NLog.Logger Threadslogger = NLog.LogManager.GetLogger("threads");
@@ -38,7 +38,7 @@ namespace TVRename
         {
             DownloadDone = true;
             downloadOk = true;
-            Problems = new ConcurrentBag<ShowNotFoundException>();
+            Problems = new ConcurrentBag<MediaNotFoundException>();
             workers = new List<Thread>();
             downloadIds = new List<SeriesSpecifier>();
         }
@@ -204,7 +204,7 @@ namespace TVRename
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            catch (ShowNotFoundException snfe)
+            catch (MediaNotFoundException snfe)
             {
                 Problems.Add(snfe);
                 //We don't want this to stop all other threads
@@ -412,7 +412,7 @@ namespace TVRename
         {
             List<SeriesSpecifier> toRemove = new List<SeriesSpecifier>();
 
-            foreach (ShowNotFoundException sid in Problems)
+            foreach (MediaNotFoundException sid in Problems)
             {
                 foreach (SeriesSpecifier ss in downloadIds)
                 {

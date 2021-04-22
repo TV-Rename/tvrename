@@ -268,7 +268,7 @@ namespace TVRename.TMDB
                             if (!(x is null))
                             {
                                 LOGGER.Info(
-                                    $"Identified that show with TMDB Id {id} {x.Name} should be updated.");
+                                    $"Identified that Movie with TMDB Id {id} {x.Name} should be updated.");
 
                                 x.Dirty = true;
                             }
@@ -310,20 +310,15 @@ namespace TVRename.TMDB
             {
                 if (downloadShow.Type == MediaConfiguration.MediaType.tv)
                 {
-                    /*
-                    if (!HasShow(downloadShow.TMDBId))
+                    if (!HasShow(downloadShow.TmdbId))
                     {
                         AddPlaceholderSeries(downloadShow);
                     }
                     else
                     {
-                        var Show = GetShow(downloadShow.TMDBId);
-                        if (Show?.IsSearchResultOnly??false)
-                        {
-                            Show.Dirty = true;
-                        }
+                        CachedSeriesInfo? Show = GetSeries(downloadShow.TmdbId);
+                        Show?.UpgradeSearchResultToDirty();
                     }
-                */
                 }
                 else
                 {
@@ -494,12 +489,30 @@ namespace TVRename.TMDB
                 return HasMovie(id.Value) ? Movies[id.Value] : null;
             }
         }
-
+        public CachedSeriesInfo? GetSeries(int? id)
+        {
+            if (!id.HasValue)
+            {
+                return null;
+            }
+            lock (SERIES_LOCK)
+            {
+                return HasShow(id.Value) ? Series[id.Value] : null;
+            }
+        }
         public bool HasMovie(int id)
         {
             lock (MOVIE_LOCK)
             {
                 return Movies.ContainsKey(id);
+            }
+        }
+
+        public bool HasShow(int id)
+        {
+            lock (SERIES_LOCK)
+            {
+                return Series.ContainsKey(id);
             }
         }
 
@@ -761,7 +774,7 @@ namespace TVRename.TMDB
             Movie downloadedMovie = Client.GetMovieAsync(id, MovieMethods.ExternalIds|MovieMethods.Images|MovieMethods.AlternativeTitles|MovieMethods.ReleaseDates |MovieMethods.Changes|MovieMethods.Videos|MovieMethods.Credits).Result;
             if (downloadedMovie is null)
             {
-                throw new ShowNotFoundException(id,"TMDB no longer has this movie",TVDoc.ProviderType.TMDB,TVDoc.ProviderType.TMDB);
+                throw new MediaNotFoundException(id,"TMDB no longer has this movie",TVDoc.ProviderType.TMDB,TVDoc.ProviderType.TMDB);
             }
             CachedMovieInfo m = new CachedMovieInfo
             {
@@ -818,20 +831,20 @@ namespace TVRename.TMDB
             TvShow? downloadedSeries = Client.GetTvShowAsync(id,TvShowMethods.ExternalIds | TvShowMethods.Images | TvShowMethods.AlternativeTitles | TvShowMethods.ContentRatings | TvShowMethods.Changes | TvShowMethods.Videos | TvShowMethods.Credits).Result;
             if (downloadedSeries is null)
             {
-                throw new ShowNotFoundException(id, "TMDB no longer has this show", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB);
+                throw new MediaNotFoundException(id, "TMDB no longer has this show", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB);
             }
             CachedSeriesInfo m = new CachedSeriesInfo
             {
                 Imdb = downloadedSeries.ExternalIds.ImdbId,
                 TmdbCode = downloadedSeries.Id,
                 TvdbCode = downloadedSeries.ExternalIds.TvdbId.ToInt(ss.TvdbSeriesId),
-                TvMazeCode = downloadedSeries.ExternalIds.TvrageId.ToInt(ss.TvMazeSeriesId),
+                //TvMazeCode = downloadedSeries.ExternalIds.TvrageId.ToInt(ss.TvMazeSeriesId),
                 Name = downloadedSeries.Name,
                 //Runtime = downloadedSeries.Runtime.ToString(),
                 FirstAired = downloadedSeries.FirstAirDate,
                 Genres = downloadedSeries.Genres.Select(genre => genre.Name).ToList(),
                 Overview = downloadedSeries.Overview,
-                Network = downloadedSeries.ProductionCompanies.FirstOrDefault()?.Name,
+                Network = downloadedSeries.Networks.FirstOrDefault()?.Name,
                 Status = MapStatus(downloadedSeries.Status),
                 ShowLanguage = downloadedSeries.OriginalLanguage,
                 SiteRating = (float)downloadedSeries.VoteAverage,
@@ -992,7 +1005,7 @@ namespace TVRename.TMDB
                     {
                         DownloadMovieNow(result.Id, showErrorMsgBox);
                     }
-                    catch (ShowNotFoundException sex)
+                    catch (MediaNotFoundException sex)
                     {
                         LOGGER.Warn($"Could not get full details of {result.Id} while searching for '{text}'");
                     }
@@ -1014,7 +1027,7 @@ namespace TVRename.TMDB
                             TVDoc.ProviderType.TMDB, null, MediaConfiguration.MediaType.tv);
                         DownloadSeriesNow(ss, showErrorMsgBox);
                     }
-                    catch (ShowNotFoundException sex)
+                    catch (MediaNotFoundException sex)
                     {
                         LOGGER.Warn($"Could not get full details of {result.Id} while searching for '{text}'");
                     }

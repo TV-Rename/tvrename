@@ -152,6 +152,80 @@ namespace TVRename
         {
             lock (TVmaze.LocalCache.Instance.SERIES_LOCK)
             {
+                foreach (var show in TvLibrary.Shows)
+                {
+                    var cachedData = show.CachedShow;
+                    if (cachedData is null)
+                    {
+                        continue;
+
+                    }
+                    if (show.TmdbCode <= 0 && cachedData.TmdbCode > 0)
+                    {
+                        show.TmdbCode = cachedData.TmdbCode;
+                    }
+                    if (show.TmdbCode > 0 && cachedData.TmdbCode > 0 && show.TmdbCode != cachedData.TmdbCode)
+                    {
+                        Logger.Error($"Show has inconsistent TMDB Id: {show.ShowName} {show.TmdbCode} {cachedData.TmdbCode}");
+                        show.TmdbCode = cachedData.TmdbCode;
+                    }
+
+                    if (show.TVmazeCode <= 0 && cachedData.TvMazeCode > 0)
+                    {
+                        show.TVmazeCode = cachedData.TvMazeCode;
+                    }
+                    if (show.TVmazeCode > 0 && cachedData.TvMazeCode > 0 && show.TVmazeCode != cachedData.TvMazeCode)
+                    {
+                        Logger.Error($"Show has inconsistent TVmazeCode Id: {show.ShowName} {show.TVmazeCode} {cachedData.TvMazeCode}");
+                        show.TVmazeCode = cachedData.TvMazeCode;
+                    }
+
+                    if (show.TvdbCode <= 0 && cachedData.TvdbCode > 0)
+                    {
+                        show.TvdbCode = cachedData.TvdbCode;
+                    }
+                    if (show.TvdbCode > 0 && cachedData.TvdbCode > 0 && show.TvdbCode != cachedData.TvdbCode)
+                    {
+                        Logger.Error($"Show has inconsistent TvdbCode Id: {show.ShowName} {show.TvdbCode} {cachedData.TvdbCode}");
+                        show.TvdbCode = cachedData.TvdbCode;
+                    }
+                }
+
+                foreach (var show in FilmLibrary.Movies)
+                {
+                    var cachedData = show.CachedMovie;
+
+                    if (show.TmdbCode <= 0 && cachedData.TmdbCode > 0)
+                    {
+                        show.TmdbCode = cachedData.TmdbCode;
+                    }
+                    if (show.TmdbCode > 0 && cachedData.TmdbCode > 0 && show.TmdbCode != cachedData.TmdbCode)
+                    {
+                        Logger.Error($"Movie has inconsistent TMDB Id: {show.ShowName} {show.TmdbCode} {cachedData.TmdbCode}");
+                        show.TmdbCode = cachedData.TmdbCode;
+                    }
+
+                    if (show.TVmazeCode <= 0 && cachedData.TvMazeCode > 0)
+                    {
+                        show.TVmazeCode = cachedData.TvMazeCode;
+                    }
+                    if (show.TVmazeCode > 0 && cachedData.TvMazeCode > 0 && show.TVmazeCode != cachedData.TvMazeCode)
+                    {
+                        Logger.Error($"Movie has inconsistent TVmazeCode Id: {show.ShowName} {show.TVmazeCode} {cachedData.TvMazeCode}");
+                        show.TVmazeCode = cachedData.TvMazeCode;
+                    }
+
+                    if (show.TvdbCode <= 0 && cachedData.TvdbCode > 0)
+                    {
+                        show.TvdbCode = cachedData.TvdbCode;
+                    }
+                    if (show.TvdbCode > 0 && cachedData.TvdbCode > 0 && show.TvdbCode != cachedData.TvdbCode)
+                    {
+                        Logger.Error($"Movie has inconsistent TvdbCode Id: {show.ShowName} {show.TvdbCode} {cachedData.TvdbCode}");
+                        show.TvdbCode = cachedData.TvdbCode;
+                    }
+                }
+
                 foreach (CachedSeriesInfo show in TVmaze.LocalCache.Instance.CachedData.Values)
                 {
                     ShowConfiguration showConfiguration = TvLibrary.GetShowItem(show.TvdbCode,ProviderType.TheTVDB); //TODO - Revisit for multisource
@@ -163,9 +237,14 @@ namespace TVRename
                     {
                         showConfiguration.TVmazeCode = show.TvMazeCode;
                     }
-                    if(showConfiguration.TVmazeCode != show.TvMazeCode)
+                    if (showConfiguration.TmdbCode <= 0 && show.TmdbCode > 0)
+                    {
+                        showConfiguration.TmdbCode = show.TmdbCode;
+                    }
+                    if (showConfiguration.TVmazeCode != show.TvMazeCode)
                     {
                         Logger.Error($"Issue with copy back of ids {show.Name} {show.TvdbCode} {showConfiguration.TVmazeCode} {show.TvMazeCode} ");
+                        showConfiguration.TVmazeCode = show.TvMazeCode;
                     }
                 }
 
@@ -581,7 +660,7 @@ namespace TVRename
             ExportMovieInfo(); //Save movie list to disk
         }
 
-        public ConcurrentBag<ShowNotFoundException> ShowProblems => cacheManager.Problems;
+        public ConcurrentBag<MediaNotFoundException> ShowProblems => cacheManager.Problems;
 
         public void Scan(IEnumerable<ShowConfiguration>? passedShows, List<MovieConfiguration>? passedMovies, bool unattended, TVSettings.ScanType st, MediaConfiguration.MediaType media, bool hidden, UI owner
         )

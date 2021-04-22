@@ -3487,7 +3487,7 @@ namespace TVRename
 
                 if (result != DialogResult.Cancel)
                 {
-                    foreach (ShowNotFoundException problem in mDoc.ShowProblems)
+                    foreach (MediaNotFoundException problem in mDoc.ShowProblems)
                     {
                         if (mDoc.ShowProblems.Count > 1)
                         {

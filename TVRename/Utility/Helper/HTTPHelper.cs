@@ -319,6 +319,9 @@ namespace TVRename
         public static JObject JsonHttpGetRequest([NotNull] string url, string? authToken) =>
             JObject.Parse(HttpRequest("GET",url, null, "application/json", authToken,string.Empty));
 
+        public static JArray JsonListHttpGetRequest([NotNull] string url, string? authToken) =>
+            JArray.Parse(HttpRequest("GET", url, null, "application/json", authToken, string.Empty));
+
         [NotNull]
         public static JObject JsonHttpPostRequest( string url, JObject request, bool retry)
         {
@@ -440,6 +443,18 @@ namespace TVRename
                 exception => exception is WebException wex && !wex.Is404()
                     ,() => { response = JsonHttpGetRequest(fullUrl, null); }
                     ,null);
+
+            return response;
+        }
+
+        public static JArray HttpGetArrayRequestWithRetry(string fullUrl, int times, int secondsGap)
+        {
+            JArray response = null;
+            TimeSpan gap = TimeSpan.FromSeconds(secondsGap);
+            RetryOnException(times, gap, fullUrl,
+                exception => exception is WebException wex && !wex.Is404()
+                , () => { response = JsonListHttpGetRequest(fullUrl, null); }
+                , null);
 
             return response;
         }

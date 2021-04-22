@@ -174,7 +174,7 @@ namespace TVRename
                     CachedMovieInfo series = TMDB.LocalCache.Instance.GetMovieAndDownload(tmdbId.Value, showErrorMsgBox);
                     return series.TmdbCode;
                 }
-                catch (ShowNotFoundException)
+                catch (MediaNotFoundException)
                 {
                     //continue to try the next method
                 }

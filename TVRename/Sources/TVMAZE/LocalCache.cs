@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using JetBrains.Annotations;
+using TMDbLib.Objects.General;
+using TMDbLib.Objects.Search;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 // Talk to the TVmaze web API, and get tv cachedSeries info
@@ -229,7 +231,17 @@ namespace TVRename.TVmaze
 
         public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type)
         {
-            throw new NotImplementedException(); //TODO
+            if (type == MediaConfiguration.MediaType.tv)
+            {
+                List<CachedSeriesInfo>? results = API.ShowSearch(text).ToList();
+                LOGGER.Info($"Got {results.Count:N0} results searching for {text} on TVMaze");
+
+                foreach (CachedSeriesInfo result in results)
+                {
+                    LOGGER.Info($"   Movie: {result.Name}:{result.TvMazeCode}   {result.Popularity}");
+                    AddSeriesToCache(result);
+                }
+            }
         }
 
         public bool HasSeries(int id)

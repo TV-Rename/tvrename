@@ -534,6 +534,10 @@ namespace TVRename
             {
                 return TVDoc.ProviderType.TVmaze;
             }
+            if (rdoTVTMDB.Checked)
+            {
+                return TVDoc.ProviderType.TMDB;
+            }
             return TVDoc.ProviderType.TheTVDB;
         }
 
@@ -571,8 +575,7 @@ namespace TVRename
             TVSettings.ShowStatusColoringTypeList returnValue = new TVSettings.ShowStatusColoringTypeList();
             foreach (ListViewItem item in lvwDefinedColors.Items)
             {
-                if (item.SubItems.Count > 1 && !string.IsNullOrEmpty(item.SubItems[1].Text) && item.Tag != null &&
-                    item.Tag is TVSettings.ColouringRule type)
+                if (item.SubItems.Count > 1 && !string.IsNullOrEmpty(item.SubItems[1].Text) && item.Tag is TVSettings.ColouringRule type)
                 {
                     returnValue.Add(type, ColorTranslator.FromHtml(item.SubItems[1].Text));
                 }
@@ -1136,21 +1139,8 @@ namespace TVRename
             ChooseRadioButton(s.FolderJpgIs).Checked = true;
             ChooseRadioButton(s.qBitTorrentAPIVersion).Checked = true;
             ChooseRadioButton(s.MonitoredFoldersScanType).Checked = true;
-            ChooseRadioButton(s.DefaultProvider).Checked = true;
-
-            switch (s.DefaultMovieProvider)
-            {
-                case TVDoc.ProviderType.libraryDefault:
-                case TVDoc.ProviderType.TMDB:
-                case TVDoc.ProviderType.TVmaze:
-                    rdoMovieTMDB.Checked = true;
-                    break;
-                case TVDoc.ProviderType.TheTVDB:
-                    rdoMovieTheTVDB.Checked = true;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            ChooseTvRadioButton(s.DefaultProvider).Checked = true;
+            ChooseMovieRadioButton(s.DefaultMovieProvider).Checked = true;
         }
 
         private RadioButton ChooseRadioButton(TVSettings.ScanType enumType)
@@ -1165,13 +1155,25 @@ namespace TVRename
             };
         }
 
-        private RadioButton ChooseRadioButton(TVDoc.ProviderType enumType)
+        private RadioButton ChooseTvRadioButton(TVDoc.ProviderType enumType)
         {
             return enumType switch
             {
                 TVDoc.ProviderType.libraryDefault => throw new InvalidOperationException("Unexpected value s.DefaultProvider = " + enumType),
                 TVDoc.ProviderType.TVmaze => rdoTVTVMaze,
                 TVDoc.ProviderType.TheTVDB => rdoTVTVDB,
+                TVDoc.ProviderType.TMDB=> rdoTVTMDB,
+                _ => throw new InvalidOperationException("Unexpected value s.DefaultProvider = " + enumType)
+            };
+        }
+        private RadioButton ChooseMovieRadioButton(TVDoc.ProviderType enumType)
+        {
+            return enumType switch
+            {
+                TVDoc.ProviderType.libraryDefault => throw new InvalidOperationException("Unexpected value s.DefaultMovieProvider = " + enumType),
+                TVDoc.ProviderType.TVmaze => throw new InvalidOperationException("Unexpected value s.DefaultMovieProvider = " + enumType),
+                TVDoc.ProviderType.TheTVDB => rdoMovieTheTVDB,
+                TVDoc.ProviderType.TMDB => rdoMovieTMDB ,
                 _ => throw new InvalidOperationException("Unexpected value s.DefaultProvider = " + enumType)
             };
         }
@@ -1372,12 +1374,9 @@ namespace TVRename
 
         private static void SetDropdownValue([NotNull] DomainUpDown control, int sPeriodCheckHours)
         {
-            foreach (object item in control.Items)
+            foreach (object item in control.Items.Cast<object>().Where(item => item.ToString() == sPeriodCheckHours.ToString()))
             {
-                if (item.ToString() == sPeriodCheckHours.ToString())
-                {
-                    control.SelectedItem = item;
-                }
+                control.SelectedItem = item;
             }
         }
 

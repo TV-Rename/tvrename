@@ -584,7 +584,7 @@ namespace TVRename.TheTVDB
         {
             try
             {
-                return API.GetUpdatesSince(updateFromEpochTime, TVSettings.Instance.PreferredLanguageCode);
+                return API.GetShowUpdatesSince(updateFromEpochTime, TVSettings.Instance.PreferredLanguageCode);
             }
             catch (IOException iex)
             {
@@ -751,7 +751,7 @@ namespace TVRename.TheTVDB
 
                 ProcessEpisodes(selectedCachedSeriesInfo, episodesResponses);
             }
-            catch (ShowNotFoundException ex)
+            catch (MediaNotFoundException ex)
             {
                 LOGGER.Warn(
                     $"Episodes were not found for {ex.ShowId}:{selectedCachedSeriesInfo.Name} in languange {requestedLanguageCode} or {DefaultLanguageCode}");
@@ -1316,7 +1316,7 @@ namespace TVRename.TheTVDB
                     {
                         LastErrorMessage = ex.LoggableDetails();
                         string msg = $"Show with TVDB Id {code} is no longer found on TVDB. Please Update";
-                        throw new ShowNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TheTVDB);
+                        throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TheTVDB);
                     }
                 }
                 LOGGER.LogWebException($"Error obtaining cachedSeries {code} in {requestedLanguageCode}:",ex);
@@ -1790,20 +1790,28 @@ namespace TVRename.TheTVDB
             text = text.RemoveDiacritics(); // API doesn't like accented characters
 
             bool isNumber = Regex.Match(text, "^[0-9]+$").Success;
-            try
+
+            if (isNumber)
             {
-                if (isNumber)
+                if (int.TryParse(text, out int textAsInt))
                 {
-                    if (int.TryParse(text, out int textAsInt))
+                    try
                     {
-                        DownloadSeriesNow(textAsInt, false, false, false,
-                            TVSettings.Instance.PreferredLanguageCode,showErrorMsgBox);
+                        switch (type)
+                        {
+                            case MediaConfiguration.MediaType.tv:
+                                DownloadSeriesNow(textAsInt, false, false, false, TVSettings.Instance.PreferredLanguageCode, showErrorMsgBox);
+                                break;
+                            case MediaConfiguration.MediaType.movie:
+                                DownloadMovieNow(textAsInt,  false, false, TVSettings.Instance.PreferredLanguageCode, showErrorMsgBox);
+                                break;
+                        }
+                    }
+                    catch (MediaNotFoundException)
+                    {
+                        //not really an issue so we can continue
                     }
                 }
-            }
-            catch (ShowNotFoundException)
-            {
-                //not really an issue so we can continue
             }
 
             // but, the number could also be a name, so continue searching as usual
@@ -1814,8 +1822,10 @@ namespace TVRename.TheTVDB
             try
             {
                 jsonSearchResponse = VERS== ApiVersion.v4
-                    ? API.SearchV4(text, TVSettings.Instance.PreferredLanguageCode) 
-                    : API.Search(text, TVSettings.Instance.PreferredLanguageCode);
+                    ? API.SearchV4(text, TVSettings.Instance.PreferredLanguageCode,type) 
+                    : type==MediaConfiguration.MediaType.tv
+                        ? API.SearchTvShow(text, TVSettings.Instance.PreferredLanguageCode)
+                        : null; //Can't search for Movies in the v3 API
             }
             catch (WebException ex)
             {
@@ -1838,11 +1848,11 @@ namespace TVRename.TheTVDB
                 }
             }
 
-            if (InForeignLanguage() && VERS != ApiVersion.v4)
+            if (InForeignLanguage() && VERS != ApiVersion.v4 && type== MediaConfiguration.MediaType.tv)
             {
                 try
                 {
-                    jsonSearchDefaultLangResponse = API.Search(text, DefaultLanguageCode);
+                    jsonSearchDefaultLangResponse = API.SearchTvShow(text, DefaultLanguageCode);
                 }
                 catch (WebException ex)
                 {
@@ -2093,6 +2103,10 @@ namespace TVRename.TheTVDB
         }
 
         public CachedMovieInfo? GetMovieOrDownload(int tvdbId, bool showErrorMsgBox)
+        {
+            throw new NotImplementedException(); //TODO
+        }
+        private void DownloadMovieNow(int tvdbId, bool bannersToo, bool useCustomLangCode, string langCode, bool showErrorMsgBox)
         {
             throw new NotImplementedException(); //TODO
         }

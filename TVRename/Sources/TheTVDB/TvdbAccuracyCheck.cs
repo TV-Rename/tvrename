@@ -63,7 +63,7 @@ namespace TVRename.TheTVDB
             {
                 Issues.Add($"Failed to compare {si.Name} as we could not download the cachedSeries details.");
             }
-            catch (ShowNotFoundException)
+            catch (MediaNotFoundException)
             {
                 Issues.Add($"Failed to compare {si.Name} as it no longer exists on TVDB {tvdbId}.");
             }

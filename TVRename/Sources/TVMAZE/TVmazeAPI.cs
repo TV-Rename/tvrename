@@ -15,7 +15,7 @@ namespace TVRename.TVmaze
     {
         // ReSharper disable once ConvertToConstant.Local
         // ReSharper disable once InconsistentNaming
-        private static readonly string APIRoot = "http://api.tvmaze.com";
+        private static readonly string APIRoot = "https://api.tvmaze.com";
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -46,6 +46,33 @@ namespace TVRename.TVmaze
             }
         }
 
+        public static IEnumerable<CachedSeriesInfo> ShowSearch(string searchText)
+        {
+            JArray response;
+            try
+            {
+                string fullUrl = $"{APIRoot}/search/shows?q={searchText}";
+                response = HttpHelper.HttpGetArrayRequestWithRetry(fullUrl, 5, 2);
+            }
+            catch (WebException wex)
+            {
+                Logger.LogWebException($"Could not search for show '{searchText}' from TV Maze due to", wex);
+                throw new SourceConnectivityException($"Can't search TVmaze  for {searchText} {wex.Message}");
+            }
+            
+            return response.Children().Select(ConvertSearchResult);
+        }
+
+        private static CachedSeriesInfo ConvertSearchResult(JToken token)
+        {
+            double score = token["score"].Value<double>();
+            JObject show = token["show"].Value<JObject>();
+            CachedSeriesInfo downloadedSi = GenerateSeriesInfo(show);
+            downloadedSi.Popularity = score;
+            downloadedSi.IsSearchResultOnly = true;
+            return downloadedSi;
+        }
+
         private static int GetSeriesIdFromOtherCodes(int siTvdbCode,string? imdb)
         {
             try
@@ -61,7 +88,7 @@ namespace TVRename.TVmaze
                     string tvdBimbd = TheTVDB.LocalCache.Instance.GetSeries(siTvdbCode)?.Imdb;
                     if (!imdb.HasValue() && !tvdBimbd.HasValue())
                     {
-                        throw new ShowNotFoundException(siTvdbCode, $"Cant find a show with TVDB Id {siTvdbCode} on TV Maze, either add the show to TV Maze, find the show and update The TVDB Id or use TVDB for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze);
+                        throw new MediaNotFoundException(siTvdbCode, $"Cant find a show with TVDB Id {siTvdbCode} on TV Maze, either add the show to TV Maze, find the show and update The TVDB Id or use TVDB for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze);
                     }
                     string imdbCode = imdb ?? tvdBimbd;
                     try
@@ -78,7 +105,7 @@ namespace TVRename.TVmaze
                     {
                         if (wex2.Is404() && TvMazeIsUp())
                         {
-                            throw new ShowNotFoundException(siTvdbCode,$"Please add show with imdb={imdbCode} and tvdb={siTvdbCode} to tvMaze, or use TVDB as the source for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze);
+                            throw new MediaNotFoundException(siTvdbCode,$"Please add show with imdb={imdbCode} and tvdb={siTvdbCode} to tvMaze, or use TVDB as the source for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze);
                         }
                         throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for IMDB={imdbCode} and tvdb={siTvdbCode} {wex.Message}");
                     }
@@ -97,7 +124,7 @@ namespace TVRename.TVmaze
             {
                 if (wex.Is404() && TvMazeIsUp())
                 {
-                    throw new ShowNotFoundException(tvMazeId,$"Please add show maze id {tvMazeId} to tvMaze", TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze);
+                    throw new MediaNotFoundException(tvMazeId,$"Please add show maze id {tvMazeId} to tvMaze", TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze);
                 }
 
                 Logger.LogWebException($"Could not get show with id {tvMazeId} from TV Maze due to",wex);

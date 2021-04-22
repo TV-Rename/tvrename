@@ -648,7 +648,7 @@
     <Compile Include="Model\Actor.cs" />
     <Compile Include="Model\SeriesBanners.cs" />
     <Compile Include="Model\SeriesSpecifier.cs" />
-    <Compile Include="Model\ShowNotFoundException.cs" />
+    <Compile Include="Model\MediaNotFoundException.cs" />
     <Compile Include="Sources\SourceConnectivityException.cs" />
     <Compile Include="Model\TVSource.cs" />
     <Compile Include="TVRename\ActionEngine.cs" />

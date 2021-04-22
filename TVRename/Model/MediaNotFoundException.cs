@@ -10,13 +10,13 @@ using System;
 
 namespace TVRename
 {
-    public class ShowNotFoundException : Exception
+    public class MediaNotFoundException : Exception
     {
         public readonly int ShowId;
         public readonly TVDoc.ProviderType ShowIdProvider;
         public readonly TVDoc.ProviderType ErrorProvider;
 
-        public ShowNotFoundException(int id, string message, TVDoc.ProviderType showIdProvider, TVDoc.ProviderType errorProvider) :base(message)
+        public MediaNotFoundException(int id, string message, TVDoc.ProviderType showIdProvider, TVDoc.ProviderType errorProvider) :base(message)
         {
             ShowId = id;
             ShowIdProvider = showIdProvider;

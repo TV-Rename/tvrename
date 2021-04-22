@@ -55,7 +55,7 @@ namespace TVRename
                         return;
                     }
                 }
-                catch (ShowNotFoundException)
+                catch (MediaNotFoundException)
                 {
                     //continue to try the next method
                 }

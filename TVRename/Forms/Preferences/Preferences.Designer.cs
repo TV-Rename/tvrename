@@ -285,6 +285,9 @@ namespace TVRename
             this.cbRenamingXML = new System.Windows.Forms.CheckBox();
             this.txtRenamingXML = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.bnBrowseWTWTXT = new System.Windows.Forms.Button();
+            this.txtWTWTXT = new System.Windows.Forms.TextBox();
+            this.cbWTWTXT = new System.Windows.Forms.CheckBox();
             this.bnBrowseWTWICAL = new System.Windows.Forms.Button();
             this.txtWTWICAL = new System.Windows.Forms.TextBox();
             this.cbWTWICAL = new System.Windows.Forms.CheckBox();
@@ -484,9 +487,7 @@ namespace TVRename
             this.optUpdateCheckInterval = new System.Windows.Forms.RadioButton();
             this.optUpdateCheckAlways = new System.Windows.Forms.RadioButton();
             this.chkUpdateCheckEnabled = new System.Windows.Forms.CheckBox();
-            this.bnBrowseWTWTXT = new System.Windows.Forms.Button();
-            this.txtWTWTXT = new System.Windows.Forms.TextBox();
-            this.cbWTWTXT = new System.Windows.Forms.CheckBox();
+            this.rdoTVTMDB = new System.Windows.Forms.RadioButton();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -3333,6 +3334,37 @@ namespace TVRename
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Schedule";
             // 
+            // bnBrowseWTWTXT
+            // 
+            this.bnBrowseWTWTXT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.bnBrowseWTWTXT.Location = new System.Drawing.Point(322, 102);
+            this.bnBrowseWTWTXT.Name = "bnBrowseWTWTXT";
+            this.bnBrowseWTWTXT.Size = new System.Drawing.Size(75, 23);
+            this.bnBrowseWTWTXT.TabIndex = 27;
+            this.bnBrowseWTWTXT.Text = "Browse...";
+            this.bnBrowseWTWTXT.UseVisualStyleBackColor = true;
+            this.bnBrowseWTWTXT.Click += new System.EventHandler(this.bnBrowseWTWTXT_Click);
+            // 
+            // txtWTWTXT
+            // 
+            this.txtWTWTXT.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtWTWTXT.Location = new System.Drawing.Point(65, 104);
+            this.txtWTWTXT.Name = "txtWTWTXT";
+            this.txtWTWTXT.Size = new System.Drawing.Size(250, 20);
+            this.txtWTWTXT.TabIndex = 26;
+            // 
+            // cbWTWTXT
+            // 
+            this.cbWTWTXT.AutoSize = true;
+            this.cbWTWTXT.Location = new System.Drawing.Point(8, 106);
+            this.cbWTWTXT.Name = "cbWTWTXT";
+            this.cbWTWTXT.Size = new System.Drawing.Size(47, 17);
+            this.cbWTWTXT.TabIndex = 25;
+            this.cbWTWTXT.Text = "TXT";
+            this.cbWTWTXT.UseVisualStyleBackColor = true;
+            this.cbWTWTXT.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            // 
             // bnBrowseWTWICAL
             // 
             this.bnBrowseWTWICAL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -3947,7 +3979,7 @@ namespace TVRename
             // rdoMovieTMDB
             // 
             this.rdoMovieTMDB.AutoSize = true;
-            this.rdoMovieTMDB.Location = new System.Drawing.Point(90, 4);
+            this.rdoMovieTMDB.Location = new System.Drawing.Point(173, 4);
             this.rdoMovieTMDB.Name = "rdoMovieTMDB";
             this.rdoMovieTMDB.Size = new System.Drawing.Size(56, 17);
             this.rdoMovieTMDB.TabIndex = 60;
@@ -3958,7 +3990,6 @@ namespace TVRename
             // rdoMovieTheTVDB
             // 
             this.rdoMovieTheTVDB.AutoSize = true;
-            this.rdoMovieTheTVDB.Enabled = false;
             this.rdoMovieTheTVDB.Location = new System.Drawing.Point(3, 4);
             this.rdoMovieTheTVDB.Name = "rdoMovieTheTVDB";
             this.rdoMovieTheTVDB.Size = new System.Drawing.Size(76, 17);
@@ -3969,6 +4000,7 @@ namespace TVRename
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.rdoTVTMDB);
             this.panel2.Controls.Add(this.rdoTVTVMaze);
             this.panel2.Controls.Add(this.rdoTVTVDB);
             this.panel2.Location = new System.Drawing.Point(129, 59);
@@ -5626,36 +5658,16 @@ namespace TVRename
             this.chkUpdateCheckEnabled.UseVisualStyleBackColor = true;
             this.chkUpdateCheckEnabled.CheckedChanged += new System.EventHandler(this.chkUpdateCheckEnabled_CheckedChanged);
             // 
-            // bnBrowseWTWTXT
+            // rdoTVTMDB
             // 
-            this.bnBrowseWTWTXT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseWTWTXT.Location = new System.Drawing.Point(322, 102);
-            this.bnBrowseWTWTXT.Name = "bnBrowseWTWTXT";
-            this.bnBrowseWTWTXT.Size = new System.Drawing.Size(75, 23);
-            this.bnBrowseWTWTXT.TabIndex = 27;
-            this.bnBrowseWTWTXT.Text = "Browse...";
-            this.bnBrowseWTWTXT.UseVisualStyleBackColor = true;
-            this.bnBrowseWTWTXT.Click += new System.EventHandler(this.bnBrowseWTWTXT_Click);
-            // 
-            // txtWTWTXT
-            // 
-            this.txtWTWTXT.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtWTWTXT.Location = new System.Drawing.Point(65, 104);
-            this.txtWTWTXT.Name = "txtWTWTXT";
-            this.txtWTWTXT.Size = new System.Drawing.Size(250, 20);
-            this.txtWTWTXT.TabIndex = 26;
-            // 
-            // cbWTWTXT
-            // 
-            this.cbWTWTXT.AutoSize = true;
-            this.cbWTWTXT.Location = new System.Drawing.Point(8, 106);
-            this.cbWTWTXT.Name = "cbWTWTXT";
-            this.cbWTWTXT.Size = new System.Drawing.Size(47, 17);
-            this.cbWTWTXT.TabIndex = 25;
-            this.cbWTWTXT.Text = "TXT";
-            this.cbWTWTXT.UseVisualStyleBackColor = true;
-            this.cbWTWTXT.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            this.rdoTVTMDB.AutoSize = true;
+            this.rdoTVTMDB.Location = new System.Drawing.Point(173, 4);
+            this.rdoTVTMDB.Name = "rdoTVTMDB";
+            this.rdoTVTMDB.Size = new System.Drawing.Size(56, 17);
+            this.rdoTVTMDB.TabIndex = 61;
+            this.rdoTVTMDB.TabStop = true;
+            this.rdoTVTMDB.Text = "TMDB";
+            this.rdoTVTMDB.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -6262,5 +6274,6 @@ namespace TVRename
         private System.Windows.Forms.Button bnBrowseWTWTXT;
         private System.Windows.Forms.TextBox txtWTWTXT;
         private System.Windows.Forms.CheckBox cbWTWTXT;
+        private System.Windows.Forms.RadioButton rdoTVTMDB;
     }
 }
