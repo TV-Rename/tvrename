@@ -29,7 +29,7 @@ namespace TVRename
 
         public CachedMovieInfo? CachedMovie => Provider ==TVDoc.ProviderType.TMDB ? TMDB.LocalCache.Instance.GetMovie(ProviderCode) : TheTVDB.LocalCache.Instance.GetMovie(ProviderCode);
         public bool CodeKnown => !CodeUnknown;
-        public bool CodeUnknown => ProviderCode == -1;
+        public bool CodeUnknown => ProviderCode <= 0;
 
         public string CodeString => (CodeUnknown) ? "<Unknown>" : $"{ProviderCode} ({Provider.PrettyPrint()})";
 

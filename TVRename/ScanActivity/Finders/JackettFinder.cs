@@ -30,7 +30,7 @@ namespace TVRename
                 return;
             }
 
-            if (settings.Type ==TVSettings.ScanType.Full && TVSettings.Instance.StopJackettSearchOnFullScan && settings.Shows.Any())
+            if (settings.Type ==TVSettings.ScanType.Full && TVSettings.Instance.StopJackettSearchOnFullScan && settings.AnyMediaToUpdate)
             {
                 LOGGER.Info("Searching Jackett is cancelled as this is a full scan");
                 return;

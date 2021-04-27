@@ -441,7 +441,7 @@ namespace TVRename
                     // ignored
                 }
             }
-
+             
             selectedShow.AliasNames.Clear();
             selectedShow.AliasNames.AddNullableRange(lbShowAlias.Items.Cast<string>().Distinct());
         }
@@ -787,7 +787,7 @@ namespace TVRename
 
         private void rdoProvider_CheckedChanged(object sender, EventArgs e)
         {
-            codeFinderForm.SetSource(GetConfigurationProviderType());
+            codeFinderForm.SetSource(GetConfigurationProviderType(), selectedShow);
         }
     }
 }

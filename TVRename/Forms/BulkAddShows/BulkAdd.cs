@@ -471,12 +471,23 @@ namespace TVRename
 
         private static void UpdateResultEntry([NotNull] PossibleNewTvShow ai, [NotNull] ListViewItem lvi)
         {
-            Debug.Assert(ai.Provider == TVDoc.ProviderType.TheTVDB && ai.CodeKnown);
             lvi.SubItems.Clear();
             lvi.Text = ai.Folder.FullName;
-            lvi.SubItems.Add(ai.CodeKnown ? TheTVDB.LocalCache.Instance.GetSeries(ai.ProviderCode)?.Name : ""); //todo - get bulk add to work for TVmaze
-            lvi.SubItems.Add(ai.HasSeasonFoldersGuess ? "Folder per season" : "Flat");
-            lvi.SubItems.Add(ai.CodeKnown ? ai.ProviderCode.ToString() : string.Empty);
+            if (ai.CodeKnown)
+            {
+                CachedSeriesInfo? x = ai.CachedSeries;
+
+                lvi.SubItems.Add(x?.Name);
+                lvi.SubItems.Add(ai.HasSeasonFoldersGuess ? "Folder per season" : "Flat");
+                lvi.SubItems.Add(ai.CodeKnown ? ai.ProviderCode.ToString() : string.Empty);
+            }
+            else
+            {
+                lvi.SubItems.Add(ai.RefinedHint);
+                lvi.SubItems.Add(ai.HasSeasonFoldersGuess ? "Folder per season" : "Flat");
+                lvi.SubItems.Add(string.Empty);
+            }
+
             lvi.Tag = ai;
             lvi.ImageIndex=ai.CodeKnown&&!string.IsNullOrWhiteSpace(ai.Folder.FullName)?1:0;
         }

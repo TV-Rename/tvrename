@@ -22,6 +22,7 @@ namespace TVRename
         internal TVDoc.ProviderType Source { get; set; }
         private bool mInternal;
         private readonly ListViewColumnSorter lvwCodeFinderColumnSorter;
+        private bool beenupdated;
 
         public CachedSeriesInfo TvShowInitialFound { get; private set; }
         public CachedMovieInfo MovieInitialFound{ get; private set; }
@@ -33,6 +34,7 @@ namespace TVRename
             Type = type;
             Source = source;
             mInternal = false;
+            
 
             InitializeComponent();
 
@@ -55,20 +57,42 @@ namespace TVRename
             lvMatches.ListViewItemSorter = lvwCodeFinderColumnSorter;
 
             label3.Text = GetPromptLabel(Source);
+            beenupdated = false;
         }
 
-        public void SetSource(TVDoc.ProviderType source)
+        public void SetSource(TVDoc.ProviderType source) => SetSource(source, null);
+        public void SetSource(TVDoc.ProviderType source, MediaConfiguration? mi)
+        {
+            UpdateSource(source);
+            if(!beenupdated && mi!= null)
+            {
+                mInternal = true;
+                txtFindThis.Text = GenerateNewHintForProvider(mi);
+                mInternal = false;
+            }
+            DoFind(false);
+        }
+
+        private void UpdateSource(TVDoc.ProviderType source)
         {
             if (source == TVDoc.ProviderType.libraryDefault)
             {
-                Source = Type == MediaConfiguration.MediaType.movie ? TVSettings.Instance.DefaultMovieProvider : TVSettings.Instance.DefaultProvider;
+                Source = Type == MediaConfiguration.MediaType.movie
+                    ? TVSettings.Instance.DefaultMovieProvider
+                    : TVSettings.Instance.DefaultProvider;
             }
             else
             {
                 Source = source;
             }
+
             label3.Text = GetPromptLabel(Source);
-            DoFind(false);
+        }
+
+        private string GenerateNewHintForProvider(MediaConfiguration mi)
+        {
+            if (mi.IdCode(Source) >0) return mi.IdCode(Source).ToString();
+            return mi.ShowName ;
         }
 
         private void SetupColumns()
@@ -161,6 +185,10 @@ namespace TVRename
 
         private void txtFindThis_TextChanged(object sender, EventArgs e)
         {
+            if (!mInternal)
+            {
+                beenupdated = true;
+            }
             if (!mInternal && txtFindThis.Text.Length>2)
             {
                 DoFind(false);
@@ -174,6 +202,7 @@ namespace TVRename
                 return false;
             }
 
+            mInternal = true;
             lvMatches.BeginUpdate();
 
             string what = txtFindThis.Text.CompareName();
@@ -228,16 +257,17 @@ namespace TVRename
             if (matchedMovies == 1 && chooseOnlyMatch)
             {
                 lvMatches.Items[0].Selected = true;
-                
+                mInternal = false;
                 return true;
             }
 
             if (matchedTvShows == 1 && chooseOnlyMatch)
             {
                 lvMatches.Items[0].Selected = true;
-
+                mInternal = false;
                 return true;
             }
+            mInternal = false;
             return false;
         }
 
@@ -351,6 +381,10 @@ namespace TVRename
 
         private void lvMatches_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (!mInternal)
+            {
+                beenupdated = true;
+            }
             SelectionChanged?.Invoke(sender, e);
         }
 
@@ -362,6 +396,10 @@ namespace TVRename
 
         private void txtFindThis_KeyDown(object sender, [NotNull] KeyEventArgs e)
         {
+            if (!mInternal)
+            {
+                beenupdated = true;
+            }
             if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return)
             {
                 Search(true);

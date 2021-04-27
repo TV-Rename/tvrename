@@ -33,6 +33,10 @@ namespace TVRename
             {
                 mAutoFolderMonitor.Dispose();
             }
+            if (disposing && (scanProgDlg != null))
+            {
+                scanProgDlg.Dispose();
+            }
             base.Dispose(disposing);
         }
 
@@ -245,6 +249,7 @@ namespace TVRename
             this.bwShowSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.bwSeasonSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.bwMovieHTMLGenerator = new System.ComponentModel.BackgroundWorker();
+            this.bwScan = new System.ComponentModel.BackgroundWorker();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyMovies.SuspendLayout();
@@ -2145,6 +2150,13 @@ namespace TVRename
             this.bwMovieHTMLGenerator.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwMovieHTMLGenerator_DoWork);
             this.bwMovieHTMLGenerator.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.UpdateMovieInformation);
             // 
+            // bwScan
+            // 
+            this.bwScan.WorkerSupportsCancellation = true;
+            this.bwScan.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwScan_DoWork);
+            this.bwScan.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwScan_ProgressChanged);
+            this.bwScan.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwScan_RunWorkerCompleted);
+            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2410,5 +2422,6 @@ namespace TVRename
         private CefSharp.WinForms.ChromiumWebBrowser chrImages;
         private CefSharp.WinForms.ChromiumWebBrowser chrSummary;
         private CefSharp.WinForms.ChromiumWebBrowser chrMovieImages;
+        private System.ComponentModel.BackgroundWorker bwScan;
     }
 }

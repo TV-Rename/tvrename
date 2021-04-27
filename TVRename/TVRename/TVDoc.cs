@@ -22,7 +22,6 @@ using System.Xml.Linq;
 using JetBrains.Annotations;
 using NLog;
 using NodaTime.Extensions;
-using TVRename.Forms.Supporting;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
@@ -62,7 +61,6 @@ namespace TVRename
 
         public string? LoadErr;
         public readonly bool LoadOk;
-        private ScanProgress? scanProgDlg;
         private bool mDirty;
 
         // ReSharper disable once RedundantDefaultMemberInitializer
@@ -84,8 +82,6 @@ namespace TVRename
 
             mDirty = false;
             TheActionList = new ItemList();
-
-            scanProgDlg = null;
 
             downloadIdentifiers = new DownloadIdentifiersController();
 
@@ -154,7 +150,7 @@ namespace TVRename
             {
                 foreach (var show in TvLibrary.Shows)
                 {
-                    var cachedData = show.CachedShow;
+                    CachedSeriesInfo? cachedData = show.CachedShow;
                     if (cachedData is null)
                     {
                         continue;
@@ -177,7 +173,7 @@ namespace TVRename
                     if (show.TVmazeCode > 0 && cachedData.TvMazeCode > 0 && show.TVmazeCode != cachedData.TvMazeCode)
                     {
                         Logger.Error($"Show has inconsistent TVmazeCode Id: {show.ShowName} {show.TVmazeCode} {cachedData.TvMazeCode}");
-                        show.TVmazeCode = cachedData.TvMazeCode;
+                        //show.TVmazeCode = cachedData.TvMazeCode;
                     }
 
                     if (show.TvdbCode <= 0 && cachedData.TvdbCode > 0)
@@ -193,7 +189,7 @@ namespace TVRename
 
                 foreach (var show in FilmLibrary.Movies)
                 {
-                    var cachedData = show.CachedMovie;
+                    CachedMovieInfo? cachedData = show.CachedMovie;
 
                     if (show.TmdbCode <= 0 && cachedData.TmdbCode > 0)
                     {
@@ -282,7 +278,6 @@ namespace TVRename
             }
 
             actionManager.DoActions(theList, !Args.Hide && Environment.UserInteractive,owner);
-
 
             IEnumerable<Item?> enumerable = TheActionList.Actions.Where(a => a.Outcome.Done && a.Becomes() != null).Select(a => a.Becomes());
             TheActionList.AddNullableRange(enumerable);
@@ -662,125 +657,161 @@ namespace TVRename
 
         public ConcurrentBag<MediaNotFoundException> ShowProblems => cacheManager.Problems;
 
-        public void Scan(IEnumerable<ShowConfiguration>? passedShows, List<MovieConfiguration>? passedMovies, bool unattended, TVSettings.ScanType st, MediaConfiguration.MediaType media, bool hidden, UI owner
-        )
+        public bool HasActiveLocalFinders => localFinders.Active();
+
+        public bool HasActiveDownloadFinders => downloadFinders.Active();
+
+        public bool HasActiveSearchFinders => searchFinders.Active();
+
+        public void Scan(ScanSettings settings)
         {
+            ScanProgress? scanProgDlg = settings.UpdateUi;
+
             try
             {
-                PreventAutoScan("Scan "+st.PrettyPrint());
+                Logger.Info("*******************************");
+                string desc = settings.Unattended ? "unattended " : "";
+                string showsdesc = settings.Shows?.Count > 0 ? settings.Shows.Count.ToString() : "all";
+                string moviesdesc = settings.Movies?.Count > 0 ? settings.Movies.Count.ToString() : "all";
+                string scantype = settings.Type.PrettyPrint();
+                string mediatype = settings.Media.PrettyPrint();
+                Logger.Info($"Starting {desc}{scantype} {mediatype} Scan for {showsdesc} shows and {moviesdesc} movies...");
 
-                //Get the default set of shows defined by the specified type
-                List<ShowConfiguration> shows = GetShowList(st, media, passedShows).ToList();
-                //Get the default set of shows defined by the specified type
-                List<MovieConfiguration> movies = GetMovieList(st,media, passedMovies).ToList();
+                PreventAutoScan("Scan " + scantype);
+
+                UpdateMediaToScan(settings);
 
                 //If still null then return
-                if (!shows.Any() && !movies.Any()) 
+                if (!settings.AnyMediaToUpdate)
                 {
                     Logger.Warn("No Shows/Movies Provided to Scan");
                     return;
                 }
 
-                if (!DoDownloadsFG(unattended,hidden,owner))
+                if (!DoDownloadsFG(settings.Unattended, settings.Hidden, settings.Owner))
                 {
                     Logger.Warn("Scan stopped as updates failed");
                     return;
                 }
 
-                Thread actionWork = new Thread(ScanWorker) {Name = "Scan Thread"};
-                CancellationTokenSource cts = new CancellationTokenSource();
-                actionWork.SetApartmentState(ApartmentState.STA); //needed to allow DragDrop on any UI this thread creates
+                while (!Args.Hide && Environment.UserInteractive && (scanProgDlg is null || !scanProgDlg.Ready))
+                {
+                    Thread.Sleep(10); // wait for thread to create the dialog
+                }
 
-                SetupScanUi(hidden);
+                SetProgressDelegate noProgress = NoProgress;
+                TheActionList.Clear();
 
-                actionWork.Start(new ScanSettings(shows,movies,unattended,hidden,st,cts.Token,owner));
+                if (!settings.Unattended && settings.Type != TVSettings.ScanType.SingleShow)
+                {
+                    new FindNewItemsInDownloadFolders(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 0, 50, settings);
+                    new FindNewShowsInLibrary(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 50, 100, settings);
 
-                ShowDialogAndWait(owner, cts, actionWork);
+                    UpdateMediaToScan(settings);
+                }
 
-                RemoveDuplicateDownloads(unattended,owner);
+                new CheckShows(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.MediaLibProg, settings);
+                new CleanDownloadDirectory(this).Check(
+                    scanProgDlg is null ? noProgress : scanProgDlg.DownloadFolderProg, settings);
+
+                localFinders.Check(scanProgDlg is null ? noProgress : scanProgDlg.LocalSearchProg, settings);
+                downloadFinders.Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadingProg, settings);
+                searchFinders.Check(scanProgDlg is null ? noProgress : scanProgDlg.ToBeDownloadedProg, settings);
+                new CleanUpTorrents(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.ToBeDownloadedProg,
+                    settings);
+
+                if (settings.Token.IsCancellationRequested)
+                {
+                    TheActionList.Clear();
+                    LastScanComplete = false;
+                    return;
+                }
+
+                // sort Action list by type
+                TheActionList.Sort(new ActionItemSorter()); // was new ActionSorter()
+
+                Stats().FindAndOrganisesDone++;
+
+                RemoveDuplicateDownloads(settings.Unattended, settings.Owner);
 
                 downloadIdentifiers.Reset();
                 OutputActionFiles(); //Save missing shows to XML (and others)
+
+                lastScanType = settings.Type;
+                LastScanComplete = true;
+            }
+            catch (TVRenameOperationInterruptedException)
+            {
+                Logger.Warn("Scan cancelled by user");
+                TheActionList.Clear();
+                LastScanComplete = false;
             }
             catch (Exception e)
             {
-                Logger.Fatal(e, "Unhandled Exception in Scan");
+                Logger.Fatal(e, "Unhandled Exception in ScanWorker");
+                LastScanComplete = false;
             }
             finally
             {
+                scanProgDlg?.Done();
                 AllowAutoScan();
             }
         }
 
-        private void ShowDialogAndWait(UI owner, CancellationTokenSource cts, Thread actionWork)
+        private void UpdateMediaToScan(ScanSettings settings)
         {
-            if (scanProgDlg != null)
-            {
-                owner.ShowChildDialog(scanProgDlg);
-                DialogResult ccresult = scanProgDlg.DialogResult;
+            //Get the default set of shows defined by the specified type
+            List<ShowConfiguration> shows = GetShowList(settings.Type, settings.Media, settings.Shows).ToList();
+            //Get the default set of shows defined by the specified type
+            List<MovieConfiguration> movies = GetMovieList(settings.Type, settings.Media, settings.Movies).ToList();
 
-                if (ccresult == DialogResult.Cancel)
-                {
-                    cts.Cancel();
-                }
-                else
-                {
-                    actionWork.Join();
-                }
-            }
-            else
-            {
-                actionWork.Join();
-            }
+            settings.UpdateShowsAndMovies(shows, movies);
         }
 
-        public readonly struct ScanSettings : IEquatable<ScanSettings>
+        public class ScanSettings : IEquatable<ScanSettings>
         {
             public readonly bool Unattended;
             public readonly bool Hidden;
             public readonly TVSettings.ScanType Type;
-            public readonly List<ShowConfiguration> Shows;
-            public readonly List<MovieConfiguration> Movies;
+            public List<ShowConfiguration>? Shows;
+            public List<MovieConfiguration>? Movies;
             public readonly CancellationToken Token;
             public readonly UI Owner;
+            public readonly MediaConfiguration.MediaType Media;
+            public readonly ScanProgress UpdateUi;
 
-            public ScanSettings(List<ShowConfiguration> list, List<MovieConfiguration> movies, bool unattended, bool hidden, TVSettings.ScanType st,CancellationToken tok, UI owner)
+            public ScanSettings(List<ShowConfiguration>? shows, List<MovieConfiguration>? movies, bool unattended, bool hidden, TVSettings.ScanType st,CancellationToken tok, MediaConfiguration.MediaType media, UI owner, ScanProgress updateUi)
             {
-                Shows = list;
+                Shows = shows;
                 Movies = movies;
                 Unattended = unattended;
                 Hidden = hidden;
                 Type = st;
                 Token = tok;
                 Owner = owner;
+                Media = media;
+                UpdateUi = updateUi;
             }
 
-            public bool Equals(ScanSettings other) => Shows==other.Shows && Unattended==other.Unattended && Hidden==other.Hidden && Type==other.Type && Token==other.Token;
+            public bool AnyMediaToUpdate => (Shows?.Any() ?? false) || (Movies?.Any() ?? false);
+            public bool Equals(ScanSettings other) =>
+                Shows==other.Shows &&
+                Movies == other.Movies &&
+                Unattended ==other.Unattended &&
+                Hidden==other.Hidden &&
+                Type==other.Type &&
+                Token==other.Token &&
+                Owner == other.Owner &&
+                Media == other.Media;
+
+            public void UpdateShowsAndMovies(List<ShowConfiguration>? shows, List<MovieConfiguration>? movies)
+            {
+                Shows = shows;
+                Movies = movies;
+            }
         }
 
-        private void SetupScanUi(bool hidden)
-        {
-            if (!Args.Hide && Environment.UserInteractive)
-            {
-                scanProgDlg = new ScanProgress(
-                    TVSettings.Instance.DoBulkAddInScan, 
-                    TVSettings.Instance.RenameCheck || TVSettings.Instance.MissingCheck,
-                    TVSettings.Instance.RemoveDownloadDirectoriesFiles || TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies || TVSettings.Instance.ReplaceWithBetterQuality,
-                    localFinders.Active(),
-                    downloadFinders.Active(),
-                    searchFinders.Active()
-                    );
 
-                if (hidden)
-                {
-                    scanProgDlg.WindowState = FormWindowState.Minimized;
-                }
-            }
-            else
-            {
-                scanProgDlg = null;
-            }
-        }
 
         private IEnumerable<ShowConfiguration> GetShowList(TVSettings.ScanType st,MediaConfiguration.MediaType mt, IEnumerable<ShowConfiguration>? passedShows)
         {
@@ -975,67 +1006,7 @@ namespace TVRename
             RemoveIgnored();
         }
 
-        private void ScanWorker(object o)
-        {
-            try
-            {
-                ScanSettings settings = (ScanSettings) o;
-
-                while (!Args.Hide && Environment.UserInteractive && (scanProgDlg is null || !scanProgDlg.Ready))
-                {
-                    Thread.Sleep(10); // wait for thread to create the dialog
-                }
-
-                TheActionList.Clear();
-                SetProgressDelegate noProgress = NoProgress;
-                TheActionList.Clear();
-
-
-                if (!settings.Unattended && settings.Type != TVSettings.ScanType.SingleShow)
-                {
-                    new FindNewItemsInDownloadFolders(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 0, 50,  settings);
-                    new FindNewShowsInLibrary(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 50, 100, settings);
-                }
-                
-                new CheckShows(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.MediaLibProg, settings);
-                new CleanDownloadDirectory(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadFolderProg,  settings);
-                localFinders.Check(scanProgDlg is null ? noProgress : scanProgDlg.LocalSearchProg,  settings);
-                downloadFinders.Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadingProg,  settings);
-                searchFinders.Check(scanProgDlg is null? noProgress : scanProgDlg.ToBeDownloadedProg,  settings);
-                new CleanUpTorrents(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.ToBeDownloadedProg, settings);
-
-                if (settings.Token.IsCancellationRequested)
-                {
-                    TheActionList.Clear();
-                    LastScanComplete = false;
-                    return;
-                }
-
-                // sort Action list by type
-                TheActionList.Sort(new ActionItemSorter()); // was new ActionSorter()
-
-                Stats().FindAndOrganisesDone++;
-                lastScanType = settings.Type;
-                LastScanComplete = true;
-            }
-            catch (TVRenameOperationInterruptedException)
-            {
-                Logger.Warn("Scan cancelled by user");
-                TheActionList.Clear();
-                LastScanComplete = false;
-            }
-            catch (Exception e)
-            {
-                Logger.Fatal(e, "Unhandled Exception in ScanWorker");
-                LastScanComplete = false;
-            }
-            finally
-            {
-                scanProgDlg?.Done(); 
-            }
-        }
-
-        private void RemoveDuplicateDownloads(bool unattended, IDialogParent owner)
+        private void RemoveDuplicateDownloads(bool unattended, UI owner)
         {
             bool cancelAllFuture = false;
             foreach (IGrouping<ItemMissing, ActionTDownload> epGroup in TheActionList.DownloadTorrents
@@ -1061,12 +1032,8 @@ namespace TVRename
                         break;
 
                     case TVSettings.DuplicateActionOutcome.Ask:
-                       
-                        ChooseDownload form = new ChooseDownload(epGroup.Key, actions);
-                        owner.ShowChildDialog(form);
-                        DialogResult dr = form.DialogResult;
-                        ActionTDownload userChosenAction = form.UserChosenAction;
-                        form.Dispose();
+
+                        (DialogResult dr, ActionTDownload userChosenAction) = owner.AskAbout(epGroup.Key, actions);
 
                         if (dr == DialogResult.OK)
                         {
@@ -1375,7 +1342,7 @@ namespace TVRename
             {
                 foreach (ShowConfiguration si in sis)
                 {
-                    iTVSource cache = GetCache(si);
+                    iTVSource cache = GetTVCache(si.Provider);
                     cache.ForgetShow(si.TvdbCode, si.TVmazeCode, si.TmdbCode, true, si.UseCustomLanguage, si.CustomLanguageCode);
                 }
             }
@@ -1384,9 +1351,9 @@ namespace TVRename
             AllowAutoScan();
         }
 
-        public static iTVSource GetCache(ShowConfiguration si)
+        public static iTVSource GetTVCache(ProviderType p)
         {
-            switch (si.Provider)
+            switch (p)
             {
                 case ProviderType.TVmaze:
                     return TVmaze.LocalCache.Instance;
@@ -1500,12 +1467,6 @@ namespace TVRename
             ReleaseUnmanagedResources();
             if (disposing)
             {
-                // ReSharper disable once UseNullPropagation
-                if (scanProgDlg != null)
-                {
-                    scanProgDlg.Dispose();
-                }
-
                 cacheManager.Dispose();
             }
         }
@@ -1721,7 +1682,7 @@ namespace TVRename
 
                 try
                 {
-                    IEnumerable<string>? x = Directory.GetFiles(downloadFolder, "*", SearchOption.AllDirectories).OrderBy(s => s).ToList();
+                    IEnumerable<string> x = Directory.GetFiles(downloadFolder, "*", SearchOption.AllDirectories).OrderBy(s => s).ToList();
                     Logger.Info($"Processing {x.Count()} files for shows that need to be scanned");
 
                     foreach (string filePath in x)

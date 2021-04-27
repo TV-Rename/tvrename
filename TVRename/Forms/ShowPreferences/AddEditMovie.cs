@@ -227,10 +227,18 @@ namespace TVRename
             DialogResult = DialogResult.OK;
             Close();
         }
+        private TVDoc.ProviderType GetProviderTypeInUse()
+        {
+            if (GetProviderType() == TVDoc.ProviderType.libraryDefault)
+            {
+                return TVSettings.Instance.DefaultProvider;
+            }
 
+            return GetProviderType();
+        }
         private bool OkToClose()
         {
-            if (!TVDoc.GetMediaCache(GetProviderType()).HasMovie(codeFinderForm.SelectedCode()))
+            if (!TVDoc.GetMediaCache(GetProviderTypeInUse()).HasMovie(codeFinderForm.SelectedCode()))
             {
                 DialogResult dr = MessageBox.Show($"{GetProviderType().PrettyPrint()} code unknown, close anyway?", "TVRename Add/Edit Movie",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -561,7 +569,7 @@ namespace TVRename
 
         private void rdoProvider_CheckedChanged(object sender, EventArgs e)
         {
-            codeFinderForm.SetSource(GetProviderType());
+            codeFinderForm.SetSource(GetProviderType(),selectedShow);
         }
     }
 }

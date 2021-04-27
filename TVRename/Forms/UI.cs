@@ -11,10 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Deployment.Application;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
@@ -43,7 +41,7 @@ using SystemColors = System.Drawing.SystemColors;
 using BrightIdeasSoftware;
 using CefSharp;
 using CefSharp.WinForms;
-using TVRename;
+using TVRename.Forms.Supporting;
 
 namespace TVRename
 {
@@ -89,9 +87,12 @@ namespace TVRename
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private bool IsBusy => busy!=0;
 
+        private ScanProgress? scanProgDlg;
+
         public UI(TVDoc doc, [NotNull] TVRenameSplash splash, bool showUi)
         {
             mDoc = doc;
+            scanProgDlg = null;
 
             busy = 0;
 
@@ -1408,7 +1409,7 @@ namespace TVRename
 
             try
             {
-                string? base64EncodedHtml = Convert.ToBase64String(Encoding.UTF8.GetBytes(body));
+                string base64EncodedHtml = Convert.ToBase64String(Encoding.UTF8.GetBytes(body));
                 web.Load("data:text/html;base64," + base64EncodedHtml);
                 //web.LoadHtml(body);
             }
@@ -1700,6 +1701,7 @@ namespace TVRename
             mInternalChange++;
             mDoc.DoWhenToWatch(true,unattended,WindowState==FormWindowState.Minimized,this);
             FillMyShows();
+            FillMyMovies();
             FillWhenToWatchList();
             mInternalChange--;
 
@@ -1743,7 +1745,7 @@ namespace TVRename
             }
         }
 
-        private void NavigateTo(object sender, [NotNull] WebBrowserNavigatingEventArgs e)
+        private void NavigateTo(object _, [NotNull] WebBrowserNavigatingEventArgs e)
         {
             if (e.Url is null)
             {
@@ -2241,8 +2243,7 @@ namespace TVRename
             tabControl1.SelectTab(tbWTW);
             foreach (ListViewItem lvi in lvWhenToWatch.Items)
             {
-                ProcessedEpisode? ei = (ProcessedEpisode)lvi.Tag;
-                lvi.Selected = ei != null && ei.TheCachedSeries.TvdbCode == tvdbSeriesCode;
+                lvi.Selected = lvi.Tag is ProcessedEpisode ei && ei.TheCachedSeries.TvdbCode == tvdbSeriesCode;
             }
             lvWhenToWatch.Focus();
         }
@@ -3455,23 +3456,71 @@ namespace TVRename
 
         private void UiScan(List<ShowConfiguration>? shows, List<MovieConfiguration>? movies, bool unattended, TVSettings.ScanType st, MediaConfiguration.MediaType media)
         {
-            Logger.Info("*******************************");
-            string desc = unattended ? "unattended " : "";
-            string showsdesc = shows?.Count > 0 ? shows.Count.ToString() : "all";
-            string moviesdesc = movies?.Count > 0 ? movies.Count.ToString() : "all";
-            string scantype = st.PrettyPrint();
-            string mediatype = media.PrettyPrint();
-            Logger.Info($"Starting {desc}{scantype} {mediatype} Scan for {showsdesc} shows and {moviesdesc} movies...");
-
+            CancellationTokenSource cts = new CancellationTokenSource();
+            bool hidden = WindowState == FormWindowState.Minimized;
+            SetupScanUi(hidden );
             MoreBusy();
-            mDoc.Scan(shows,movies, unattended, st,media, WindowState==FormWindowState.Minimized,this);
+            this.bwScan.RunWorkerAsync(new TVDoc.ScanSettings(shows, movies, unattended, hidden, st, cts.Token, media, this, scanProgDlg));
+            ShowDialogAndWait(cts);
+        }
+
+        private void ShowDialogAndWait(CancellationTokenSource cts)
+        {
+            if (scanProgDlg != null)
+            {
+                this.ShowChildDialog(scanProgDlg);
+                DialogResult ccresult = scanProgDlg.DialogResult;
+
+                if (ccresult == DialogResult.Cancel)
+                {
+                    cts.Cancel();
+                }
+            }
+        }
+
+        private void bwScan_DoWork(object sender, DoWorkEventArgs e)
+        {
+            
+            mDoc.Scan((TVDoc.ScanSettings)e.Argument);
+        }
+
+        private void bwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+
+        }
+
+        private void bwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            AskUserAboutShowProblems(false);// to do, reitroduce unattended);
             LessBusy();
-
-            AskUserAboutShowProblems(unattended);
-
+            scanProgDlg.Close();
             FillMyShows(); // scanning can download more info to be displayed in my shows
             FillMyMovies();
             FillActionList(false);
+        }
+
+        private void SetupScanUi(bool hidden)
+        {
+            if (!mDoc.Args.Hide && Environment.UserInteractive)
+            {
+                scanProgDlg = new ScanProgress(
+                    TVSettings.Instance.DoBulkAddInScan,
+                    TVSettings.Instance.RenameCheck || TVSettings.Instance.MissingCheck,
+                    TVSettings.Instance.RemoveDownloadDirectoriesFiles || TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies || TVSettings.Instance.ReplaceWithBetterQuality,
+                    mDoc.HasActiveLocalFinders,
+                    mDoc.HasActiveDownloadFinders,
+                    mDoc.HasActiveSearchFinders
+                );
+
+                if (hidden)
+                {
+                    scanProgDlg.WindowState = FormWindowState.Minimized;
+                }
+            }
+            else
+            {
+                scanProgDlg = null;
+            }
         }
 
         private void AskUserAboutShowProblems(bool unattended)
@@ -3641,7 +3690,7 @@ namespace TVRename
 
             ItemList lvr = GetSelectedItems();
 
-            Item? action = (Item)olvAction.FocusedObject;
+            Item? action = olvAction.FocusedObject as Item;
 
             if (action?.Episode != null && lvr.Count == 1)
             {
@@ -3887,9 +3936,8 @@ namespace TVRename
                 return;
             }
 
-            //Needed to de-selct any un action able items
-            Item? action = (Item)olvAction.GetModelObject(e.Index);
-            if (action != null && !(action is Action))
+            //Needed to de-select any un action able items
+            if (olvAction.GetModelObject(e.Index) is Item action && !(action is Action))
             {
                 e.NewValue = CheckState.Unchecked;
             }
@@ -4682,7 +4730,7 @@ namespace TVRename
 
             ItemList lvr = GetSelectedItems();
 
-            Item? action = (Item)olvAction.FocusedObject;
+            Item? action = olvAction.FocusedObject as Item;
 
             if (action?.Episode != null && lvr.Count == 1)
             {
@@ -4954,10 +5002,27 @@ namespace TVRename
             logToolStripMenuItem_Click(sender, e);
             mDoc.MovieFolderScan(this);
         }
+
+        public (DialogResult, ActionTDownload) AskAbout(ItemMissing epGroupKey, List<ActionTDownload> actions)
+        {
+            DialogResult dr = DialogResult.OK;
+            ActionTDownload userChosenAction = null;
+
+            this.Invoke((MethodInvoker)delegate {
+                // Running on the UI thread
+                ChooseDownload form = new ChooseDownload(epGroupKey, actions);
+                this.ShowChildDialog(form);
+                dr = form.DialogResult;
+                userChosenAction = form.UserChosenAction;
+                form.Dispose();
+            });
+
+            return (dr, userChosenAction);
+        }
     }
 
 
-public class BrowserRequestHandler : IRequestHandler
+    public class BrowserRequestHandler : IRequestHandler
 {
     public bool OnBeforeBrowse(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect)
     {
