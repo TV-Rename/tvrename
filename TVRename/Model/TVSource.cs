@@ -20,7 +20,6 @@ namespace TVRename
         void SaveCache();
 
         bool EnsureUpdated(SeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
-        bool GetUpdates(bool showErrorMsgBox,CancellationToken cts,IEnumerable<SeriesSpecifier> ss);
         void UpdatesDoneOk();
 
         CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox);

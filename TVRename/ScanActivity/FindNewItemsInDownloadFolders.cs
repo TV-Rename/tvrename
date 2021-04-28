@@ -50,8 +50,7 @@ namespace TVRename
             if (addedTvShows.Any())
             {
                 MDoc.TvLibrary.AddRange(addedTvShows);
-                MDoc.ShowAddedOrEdited(false, false, false, settings.Owner);
-                MDoc.ShowAddedOrEdited(true, false, false, settings.Owner);
+                MDoc.TvAddedOrEdited(true, false, false, settings.Owner, addedTvShows);
                 //add each new show into the shows being scanned
                 foreach (ShowConfiguration si in addedTvShows)
                 {
@@ -65,8 +64,7 @@ namespace TVRename
             if (addedMovies.Any())
             {
                 MDoc.FilmLibrary.AddRange(addedMovies);
-                MDoc.MovieAddedOrEdited(false, false, false, settings.Owner);
-                MDoc.MovieAddedOrEdited(true, false, false, settings.Owner);
+                MDoc.MoviesAddedOrEdited(true, false, false, settings.Owner, addedMovies);
 
                 foreach (MovieConfiguration si in addedMovies)
                 {

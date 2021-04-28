@@ -963,6 +963,10 @@ namespace TVRename
 
         public CachedSeriesInfo? CachedShow => (CachedSeriesInfo)CachedData;
 
-
+        public SeriesSpecifier SeriesSpecifier()
+        {
+            return new SeriesSpecifier(TvdbCode, TVmazeCode, TmdbCode, UseCustomLanguage,
+                CustomLanguageCode, ShowName, Provider, CachedShow?.Imdb, MediaType.tv);
+        }
     }
 }

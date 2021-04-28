@@ -289,16 +289,19 @@ namespace TVRename
 
         }
 
-        // ReSharper disable once InconsistentNaming
-        public bool DoDownloadsFG(bool unattended,bool tvrMinimised, UI owner)
+        public bool DoDownloadsFG(bool unattended, bool tvrMinimised, UI owner)
         {
-            List<SeriesSpecifier> shows = TvLibrary.SeriesSpecifiers.Union(FilmLibrary.SeriesSpecifiers).ToList();
+            return DoDownloadsFG(unattended, tvrMinimised, owner, TvLibrary.SeriesSpecifiers.Union(FilmLibrary.SeriesSpecifiers).ToList());
+        }
+
+        // ReSharper disable once InconsistentNaming
+        public bool DoDownloadsFG(bool unattended,bool tvrMinimised, UI owner, List<SeriesSpecifier>? passedShows)
+        {
             bool showProgress = !Args.Hide && Environment.UserInteractive && !tvrMinimised;
             bool showMsgBox = !unattended && !Args.Unattended && !Args.Hide && Environment.UserInteractive;
 
-            bool returnValue = cacheManager.DoDownloadsFg(showProgress, showMsgBox, shows,owner);
-            UpdateIdsFromCache();
-            TvLibrary.GenDict();
+            bool returnValue = cacheManager.DoDownloadsFg(showProgress, showMsgBox, passedShows, owner);
+            UpdateDenormalisations();
             return returnValue;
         }
 
@@ -391,18 +394,10 @@ namespace TVRename
             Helpers.OpenUrl(CustomMovieName.NameFor(epi, s.Url, true,false));
         }
 
-        public void DoWhenToWatch(bool cachedOnly,bool unattended,bool hidden, UI owner)
+        public void UpdateDenormalisations()
         {
-            if (!cachedOnly && !DoDownloadsFG(unattended,hidden,owner))
-            {
-                return;
-            }
-
-            if (cachedOnly)
-            {
-                UpdateIdsFromCache();
-                TvLibrary.GenDict();
-            }
+            UpdateIdsFromCache();
+            TvLibrary.GenDict();
         }
 
         // ReSharper disable once InconsistentNaming
@@ -622,28 +617,29 @@ namespace TVRename
             }
         }
 
-        internal void ShowAddedOrEdited(bool download, bool unattended,bool hidden, UI owner)
+        internal void TvAddedOrEdited(bool download, bool unattended, bool hidden, UI owner,
+            ShowConfiguration show) =>
+            TvAddedOrEdited(download, unattended, hidden, owner, show.AsList());
+        internal void TvAddedOrEdited(bool download, bool unattended, bool hidden, UI owner, IEnumerable<ShowConfiguration> shows)
         {
             SetDirty();
             if (download)
             {
-                if (!DoDownloadsFG(unattended,hidden,owner))
+                if (!DoDownloadsFG(unattended, hidden, owner,shows))
                 {
                     return;
                 }
             }
+            else
+            {
+                UpdateDenormalisations();
+            }
 
-            DoWhenToWatch(true, unattended,hidden,owner);
-
-            WriteUpcoming();
-            WriteRecent();
-           
-            ExportShowInfo(); //Save shows list to disk
+            RunExporters();
         }
 
-        internal void MovieAddedOrEdited(bool download, bool unattended, bool hidden, UI owner)
+        internal void UpdateMedia(bool download, bool unattended, bool hidden, UI owner)
         {
-            SetDirty();
             if (download)
             {
                 if (!DoDownloadsFG(unattended, hidden, owner))
@@ -651,8 +647,33 @@ namespace TVRename
                     return;
                 }
             }
+            else
+            {
+                UpdateDenormalisations();
+            }
 
-            ExportMovieInfo(); //Save movie list to disk
+            RunExporters();
+        }
+
+        internal void MoviesAddedOrEdited(bool download, bool unattended, bool hidden, UI owner,
+            MovieConfiguration movie) =>
+            MoviesAddedOrEdited(download, unattended, hidden, owner, movie.AsList());
+        internal void MoviesAddedOrEdited(bool download, bool unattended, bool hidden, UI owner, IEnumerable<MovieConfiguration> movies)
+        {
+            SetDirty();
+            if (download)
+            {
+                if (!DoDownloadsFG(unattended, hidden, owner, movies))
+                {
+                    return;
+                }
+            }
+            else
+            {
+                UpdateDenormalisations();
+            }
+
+            RunExporters();
         }
 
         public ConcurrentBag<MediaNotFoundException> ShowProblems => cacheManager.Problems;
@@ -1337,79 +1358,83 @@ namespace TVRename
 
         internal void ForceRefreshShows(IEnumerable<ShowConfiguration>? sis, bool unattended,bool tvrMinimised, UI owner)
         {
-            PreventAutoScan("Force Refresh");
-            if (sis != null)
+            if (sis == null)
             {
-                foreach (ShowConfiguration si in sis)
-                {
-                    iTVSource cache = GetTVCache(si.Provider);
-                    cache.ForgetShow(si.TvdbCode, si.TVmazeCode, si.TmdbCode, true, si.UseCustomLanguage, si.CustomLanguageCode);
-                }
+                return;
             }
 
-            DoDownloadsFG(unattended, tvrMinimised,owner);
+            PreventAutoScan("Force Refresh");
+            List<ShowConfiguration> showConfigurations = sis.ToList();
+
+            foreach (ShowConfiguration si in showConfigurations)
+            {
+                iTVSource cache = GetTVCache(si.Provider);
+                cache.ForgetShow(si.TvdbCode, si.TVmazeCode, si.TmdbCode, true, si.UseCustomLanguage, si.CustomLanguageCode);
+            }
+            DoDownloadsFG(unattended, tvrMinimised, owner, showConfigurations);
             AllowAutoScan();
         }
 
+        private bool DoDownloadsFG(bool unattended, bool tvrMinimised, UI owner, IEnumerable<ShowConfiguration> passedShows)
+        {
+            return DoDownloadsFG(unattended,tvrMinimised, owner, passedShows.Select(configuration => configuration.SeriesSpecifier()).ToList());
+        }
+
+        // ReSharper disable once InconsistentNaming
         public static iTVSource GetTVCache(ProviderType p)
         {
-            switch (p)
+            return p switch
             {
-                case ProviderType.TVmaze:
-                    return TVmaze.LocalCache.Instance;
-
-                case ProviderType.TheTVDB:
-                    return TheTVDB.LocalCache.Instance;
-
-                case ProviderType.TMDB:
-                    return TMDB.LocalCache.Instance;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                ProviderType.TVmaze => TVmaze.LocalCache.Instance,
+                ProviderType.TheTVDB => TheTVDB.LocalCache.Instance,
+                ProviderType.TMDB => TMDB.LocalCache.Instance,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
-
+        public static iMovieSource GetMovieCache(ProviderType p)
+        {
+            return p switch
+            {
+                ProviderType.TheTVDB => TheTVDB.LocalCache.Instance,
+                ProviderType.TMDB => TMDB.LocalCache.Instance,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
         public static MediaCache GetMediaCache(ProviderType p)
         {
-            switch (p)
+            return p switch
             {
-                case ProviderType.TVmaze:
-                    return TVmaze.LocalCache.Instance;
-
-                case ProviderType.TheTVDB:
-                    return TheTVDB.LocalCache.Instance;
-
-                case ProviderType.TMDB:
-                    return TMDB.LocalCache.Instance;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                ProviderType.TVmaze => TVmaze.LocalCache.Instance,
+                ProviderType.TheTVDB => TheTVDB.LocalCache.Instance,
+                ProviderType.TMDB => TMDB.LocalCache.Instance,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
-        internal void ForceRefreshMovies(IEnumerable<MediaConfiguration>? sis, bool unattended, bool tvrMinimised, UI owner)
+        internal void ForceRefreshMovies(IEnumerable<MovieConfiguration>? sis, bool unattended, bool tvrMinimised, UI owner)
         {
-            PreventAutoScan("Force Refresh");
-            if (sis != null)
+            if (sis == null)
             {
-                foreach (MediaConfiguration si in sis)
-                {
-                    switch (si.Provider)
-                    {
-                        case ProviderType.TMDB:
-                            TMDB.LocalCache.Instance.ForgetMovie(si.TmdbCode);
-                            break;
+                return;
 
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
             }
 
-            DoDownloadsFG(unattended, tvrMinimised, owner);
+            PreventAutoScan("Force Refresh");
+            List<MovieConfiguration>? movieConfigurations = sis?.ToList();
+
+            foreach (MovieConfiguration si in movieConfigurations)
+            {
+                iMovieSource? cache = GetMovieCache(si.Provider);
+                cache.ForgetMovie(si.TvdbCode, si.TVmazeCode, si.TmdbCode, true, si.UseCustomLanguage, si.CustomLanguageCode);
+            }
+            DoDownloadsFG(unattended, tvrMinimised, owner, movieConfigurations);
             AllowAutoScan();
         }
 
+        private bool DoDownloadsFG(bool unattended, bool tvrMinimised, UI owner, IEnumerable<MovieConfiguration> passedShows)
+        {
+            return DoDownloadsFG(unattended, tvrMinimised, owner, passedShows.Select(configuration => configuration.SeriesSpecifier()).ToList());
+        }
 
         // ReSharper disable once InconsistentNaming
         internal void TVDBServerAccuracyCheck(bool unattended,bool hidden, UI owner)

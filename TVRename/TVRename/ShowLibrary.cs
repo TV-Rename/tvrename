@@ -17,19 +17,7 @@ namespace TVRename
         public IEnumerable<ShowConfiguration> Shows => this;
 
         [NotNull]
-        public IEnumerable<SeriesSpecifier> SeriesSpecifiers
-        {
-            get
-            {
-                List<SeriesSpecifier> value = new List<SeriesSpecifier>();
-                foreach (ShowConfiguration series in Shows)
-                {
-                    value.Add(new SeriesSpecifier(series.TvdbCode, series.TVmazeCode, 0,series.UseCustomLanguage, series.CustomLanguageCode, series.ShowName,series.Provider,series.CachedShow?.Imdb,MediaConfiguration.MediaType.tv));
-                }
-
-                return value;
-            }
-        }
+        public IEnumerable<SeriesSpecifier> SeriesSpecifiers=>Shows.Select(series => new SeriesSpecifier(series.TvdbCode, series.TVmazeCode, series.TmdbCode, series.UseCustomLanguage, series.CustomLanguageCode, series.ShowName, series.Provider, series.CachedShow?.Imdb, MediaConfiguration.MediaType.tv));
 
         [NotNull]
         public IEnumerable<string> ShowStatuses =>Shows.Select(item => item.ShowStatus).Distinct().OrderBy(s => s);

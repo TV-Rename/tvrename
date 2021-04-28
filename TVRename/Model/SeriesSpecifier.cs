@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System;
+
 namespace TVRename
 {
     public class SeriesSpecifier
@@ -44,7 +46,18 @@ namespace TVRename
         }
 
         public override string ToString() => Type == MediaConfiguration.MediaType.tv
-            ? $"{Name}//tvdb={TvdbSeriesId}//tvmaze={TvMazeSeriesId} {Provider} and lang = {CustomLanguageCode}."
-            : $"{Name}//TMDB={TmdbId} {Provider}.";
+            ? $"{Name}//tvdb={TvdbSeriesId}//tvmaze={TvMazeSeriesId}//TMDB={TmdbId} {Provider} and lang = {CustomLanguageCode}."
+            : $"{Name}//tvdb={TvdbSeriesId}//TMDB={TmdbId} {Provider} and lang = {CustomLanguageCode}.";
+
+        public int IdFor(TVDoc.ProviderType provider)
+        {
+            return provider switch
+            {
+                TVDoc.ProviderType.TVmaze => TvMazeSeriesId,
+                TVDoc.ProviderType.TheTVDB => TvdbSeriesId,
+                TVDoc.ProviderType.TMDB => TmdbId,
+                _ => throw new ArgumentOutOfRangeException(nameof(provider), provider, null)
+            };
+        }
     }
 }

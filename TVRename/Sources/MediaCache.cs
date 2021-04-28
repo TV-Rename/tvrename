@@ -38,6 +38,7 @@ namespace TVRename
 
         public bool IsConnected { get; protected set; }
 
+        public abstract bool EnsureUpdated(SeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
         protected void SayNothing() => Say(null);
         protected void Say(string? s)
         {

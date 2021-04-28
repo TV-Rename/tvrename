@@ -90,11 +90,11 @@ namespace TVRename.TMDB
             }
         }
 
-        public bool EnsureUpdated(SeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
+        public override bool EnsureUpdated(SeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
         {
             if (s.Provider != TVDoc.ProviderType.TMDB)
             {
-                throw new SourceConsistencyException($"Asked to update {s.Name} from TVDB, but the Id is not for TMDB.", TVDoc.ProviderType.TMDB);
+                throw new SourceConsistencyException($"Asked to update {s.Name} from TMDB, but the Id is not for TMDB.", TVDoc.ProviderType.TMDB);
             }
 
             if (s.Type == MediaConfiguration.MediaType.movie)

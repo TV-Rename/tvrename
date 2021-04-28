@@ -109,7 +109,7 @@ namespace TVRename
             chrMovieInformation.RequestHandler = new BrowserRequestHandler();
 
             ScanAndDo = ScanAndAction;
-            ReceiveArgumentDelegate = RecieveArguments;
+            ReceiveArgumentDelegate = ReceiveArgs;
 
             try
             {
@@ -146,7 +146,7 @@ namespace TVRename
             ClearInfoWindows();
             UpdateSplashPercent(splash, 10);
             UpdateSplashStatus(splash, "Updating WTW");
-            mDoc.DoWhenToWatch(true,true,WindowState==FormWindowState.Minimized,this);
+            mDoc.UpdateDenormalisations();
             UpdateSplashPercent(splash, 40);
             FillWhenToWatchList();
             SortSchedule(3);
@@ -376,6 +376,7 @@ namespace TVRename
                     return HeaderName("Remove", mDoc.TheActionList.Count(action => action is ActionDeleteFile || action is ActionDeleteDirectory));
 
                 case "B-Rename":
+                    // ReSharper disable once MergeSequentialPatterns (I think it's clearer this way)
                     int renameCount = mDoc.TheActionList.Count(action => action is ActionCopyMoveRename cmr && cmr.Operation == ActionCopyMoveRename.Op.rename);
                     return HeaderName("Rename", renameCount);
 
@@ -436,7 +437,7 @@ namespace TVRename
             }
         }
 
-        private void RecieveArguments([NotNull] string[] args)
+        private void ReceiveArgs([NotNull] string[] args)
         {
             // Send command-line arguments to already running instance
 
@@ -508,7 +509,7 @@ namespace TVRename
 
             if (a.QuickUpdate)
             {
-                mDoc.DoDownloadsFG(UNATTENDED, WindowState == FormWindowState.Minimized,this);
+                UiDownload(true,UNATTENDED);
             }
 
             if (a.ForceUpdate)
@@ -739,15 +740,12 @@ namespace TVRename
 
         private ListView ListViewByName([NotNull] string name)
         {
-            switch (name)
+            return name switch
             {
-                case "WhenToWatch":
-                    return lvWhenToWatch;
-                case "AllInOne":
-                    return olvAction;
-                default:
-                    throw new ArgumentException("Inappropriate ListViewParameter " + name);
-            }
+                "WhenToWatch" => lvWhenToWatch,
+                "AllInOne" => olvAction,
+                _ => throw new ArgumentException("Inappropriate ListViewParameter " + name)
+            };
         }
 
         private void flushImageCacheToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1376,30 +1374,6 @@ namespace TVRename
             }
         }
 
-        private static void SetHtmlBody([NotNull] WebBrowser web, string body)
-        {
-            if (web.IsDisposed)
-            {
-                return;
-            }
-
-            try
-            {
-                web.DocumentText = body; 
-            }
-            catch (COMException ex)
-            {
-                //Fail gracefully - no RHS episode guide is not too big of a problem.
-                Logger.Warn(ex,"Could not update UI for the show/cachedSeries information pane");
-            }
-            catch (Exception ex)
-            {
-                //Fail gracefully - no RHS episode guide is not too big of a problem.
-                Logger.Error(ex);
-            }
-            web.Update();
-        }
-
         private static void SetHtmlBody([NotNull] ChromiumWebBrowser web, string body)
         {
             if (web.IsDisposed)
@@ -1690,23 +1664,17 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         private void RefreshWTW(bool doDownloads,bool unattended)
         {
-            if (doDownloads)
-            {
-                if (!mDoc.DoDownloadsFG(unattended,WindowState==FormWindowState.Minimized,this))
-                {
-                    return;
-                }
-            }
+            UiDownload(doDownloads, unattended);
 
-            mInternalChange++;
-            mDoc.DoWhenToWatch(true,unattended,WindowState==FormWindowState.Minimized,this);
             FillMyShows();
             FillMyMovies();
-            FillWhenToWatchList();
-            mInternalChange--;
 
-            mDoc.WriteUpcoming();
-            mDoc.WriteRecent();
+            FillWhenToWatchList();
+        }
+
+        private void UiDownload(bool doDownloads, bool unattended)
+        {
+            mDoc.UpdateMedia(doDownloads, unattended, WindowState == FormWindowState.Minimized, this);
         }
 
         private void refreshWTWTimer_Tick(object sender, EventArgs e)
@@ -1726,9 +1694,9 @@ namespace TVRename
             List<ProcessedEpisode> next1 = mDoc.TvLibrary.NextNShows(1, 0, 36500);
 
             tsNextShowTxt.Text = "Next airing: ";
-            if (next1.Count >= 1)
+            if (next1.Any())
             {
-                ProcessedEpisode ei = next1[0];
+                ProcessedEpisode ei = next1.First();
                 tsNextShowTxt.Text += $"{CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(1))}, {ei.HowLong()} ({ei.DayOfWeek()}, {ei.TimeOfDay()})";
             }
             else
@@ -1742,57 +1710,6 @@ namespace TVRename
             foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
             {
                 TVDoc.SearchForEpisode((ProcessedEpisode) lvi.Tag);
-            }
-        }
-
-        private void NavigateTo(object _, [NotNull] WebBrowserNavigatingEventArgs e)
-        {
-            if (e.Url is null)
-            {
-                return;
-            }
-
-            string url = e.Url.AbsoluteUri;
-
-            if (string.Compare(url, "about:blank", StringComparison.Ordinal) == 0)
-            {
-                return; // don't intercept about:blank
-            }
-
-            if (url == QuickStartGuide())
-            {
-                return; // let the quick-start guide be shown
-            }
-
-            if (url.Contains(@"ieframe.dll"))
-            {
-                url = e.Url.Fragment.Substring(1);
-            }
-
-            if (url.StartsWith(EXPLORE_PROXY, StringComparison.InvariantCultureIgnoreCase))
-            {
-                e.Cancel = true;
-                string openlocation = HttpUtility.UrlDecode(url.Substring(EXPLORE_PROXY.Length));
-                if (Helpers.OpenFolder(openlocation))
-                {
-                    return;
-                }
-                Helpers.OpenFolderSelectFile(openlocation);
-                return;
-            }
-
-            if (url.StartsWith(WATCH_PROXY, StringComparison.InvariantCultureIgnoreCase))
-            {
-                e.Cancel = true;
-                string fileName = HttpUtility.UrlDecode(url.Substring(WATCH_PROXY.Length)).Replace('/', '\\');
-                Helpers.OpenFile(fileName);
-                return;
-            }
-
-            if (url.IsHttpLink() || url.IsFileLink())
-            {
-                e.Cancel = true;
-                Helpers.OpenUrl(e.Url.AbsoluteUri);
             }
         }
 
@@ -2181,13 +2098,13 @@ namespace TVRename
         private void IncludeSeason([NotNull] ShowConfiguration si, int seasonNumber)
         {
             si.IgnoreSeasons.Remove(seasonNumber);
-            ShowAddedOrEdited(false, false);
+            ShowAddedOrEdited(false, false,si);
         }
 
         private void IgnoreSeason([NotNull] ShowConfiguration si, int seasonNumber)
         {
             si.IgnoreSeasons.Add(seasonNumber);
-            ShowAddedOrEdited(false, false);
+            ShowAddedOrEdited(false, false,si);
         }
 
         private void BrowseForMissingItem(ItemMissing? mi)
@@ -2636,6 +2553,7 @@ namespace TVRename
 
             if (ser != null)
             {
+                //TODO Add Movie Colouring
                 //if (TVSettings.Instance.ShowStatusColors.AppliesTo(si))
                 //{
                     //n.ForeColor = TVSettings.Instance.ShowStatusColors.GetColour(si);
@@ -2789,17 +2707,7 @@ namespace TVRename
 
         private static bool NodeIsForShow([NotNull] ShowConfiguration si, TreeNode n)
         {
-            switch (si.Provider)
-            {
-                case TVDoc.ProviderType.TVmaze:
-                    return TreeNodeToShowItem(n)?.TVmazeCode == si.TVmazeCode;
-                case TVDoc.ProviderType.TMDB:
-                    return TreeNodeToShowItem(n)?.TmdbCode == si.TmdbCode;
-                case TVDoc.ProviderType.TheTVDB:
-                    return TreeNodeToShowItem(n)?.TvdbCode == si.TvdbCode;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            return TreeNodeToShowItem(n)?.IdCode(si.Provider) == si.IdCode(si.Provider);
         }
 
         private void SelectShow(ShowConfiguration si)
@@ -2840,8 +2748,9 @@ namespace TVRename
             {
                 mDoc.FilmLibrary.Add(mov);
 
-                MovieAddedOrEdited(false, false);
+                MovieAddedOrEdited(false, false,mov);
                 SelectMovie(mov);
+                MovieAddedOrEdited(true, false, mov);
 
                 Logger.Info($"Added new movie called {mov.ShowName}");
             }
@@ -2849,8 +2758,6 @@ namespace TVRename
             {
                 Logger.Info("Cancelled adding new movie");
             }
-
-            MovieAddedOrEdited(true, false);
 
             LessBusy();
             mDoc.AllowAutoScan();
@@ -2870,40 +2777,32 @@ namespace TVRename
             {
                 mDoc.TvLibrary.Add(si);
 
-                ShowAddedOrEdited(false,false);
+                ShowAddedOrEdited(false,false,si);
                 SelectShow(si);
-
+                ShowAddedOrEdited(true, false,si);
                 Logger.Info("Added new show called {0}", si.ShowName);
             }
             else
             {
                 Logger.Info("Cancelled adding new show");
             }
-
-            ShowAddedOrEdited(true,false);
-
             LessBusy();
             mDoc.AllowAutoScan();
         }
 
-        private void ShowAddedOrEdited(bool download,bool unattended)
+        private void ShowAddedOrEdited(bool download,bool unattended, ShowConfiguration si)
         {
-            mDoc.SetDirty();
-            RefreshWTW(download,unattended);
-            mDoc.ReindexLibrary();
-            FillMyShows();
+            mDoc.TvAddedOrEdited(download,unattended, WindowState == FormWindowState.Minimized, this,si);
 
-            mDoc.ExportShowInfo(); //Save shows list to disk
+            FillMyShows();
+            FillWhenToWatchList();
         }
 
-        private void MovieAddedOrEdited(bool download, bool unattended)
+        private void MovieAddedOrEdited(bool download, bool unattended, MovieConfiguration si)
         {
-            mDoc.SetDirty();
-            RefreshWTW(download, unattended);
-            mDoc.ReindexLibrary();
-            FillMyMovies();
+            mDoc.MoviesAddedOrEdited(download, unattended, WindowState == FormWindowState.Minimized, this, si);
 
-            mDoc.ExportMovieInfo(); //Save Movie list to disk 
+            FillMyMovies();
         }
 
         private void bnMyShowsDelete_Click(object sender, EventArgs e)
@@ -2964,9 +2863,8 @@ namespace TVRename
 
             Logger.Info($"User asked to remove {si.ShowName} - removing now");
             mDoc.TvLibrary.Remove(si);
-            ShowAddedOrEdited(false,false);
+            ShowAddedOrEdited(false,false,si);
         }
-
 
         private void DeleteMovie([NotNull] MovieConfiguration si)
         {
@@ -3018,7 +2916,7 @@ namespace TVRename
 
             Logger.Info($"User asked to remove {si.ShowName} - removing now");
             mDoc.FilmLibrary.Remove(si);
-            MovieAddedOrEdited(false, false);
+            MovieAddedOrEdited(false, false,si);
         }
 
 
@@ -3058,7 +2956,7 @@ namespace TVRename
             DialogResult dr = er.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
-                ShowAddedOrEdited(false, false);
+                ShowAddedOrEdited(false, false,si);
                 SelectSeason(si.AppropriateSeasons()[seasnum]);
             }
 
@@ -3079,7 +2977,7 @@ namespace TVRename
 
             if (dr == DialogResult.OK)
             {
-                ShowAddedOrEdited(si.TvdbCode != oldCode,false);
+                ShowAddedOrEdited(si.TvdbCode != oldCode,false,si);
                 SelectShow(si);
 
                 Logger.Info("Modified show called {0}", si.ShowName);
@@ -3093,13 +2991,13 @@ namespace TVRename
         {
             MoreBusy();
             mDoc.PreventAutoScan("Edit Movie");
-
+            int oldCode = si.TvdbCode;
             AddEditMovie aes = new AddEditMovie(si,mDoc);
             DialogResult dr = aes.ShowDialog(this);
 
             if (dr == DialogResult.OK)
             {
-                MovieAddedOrEdited(true, false); //todo optimise so that download is only done if movie config has changed show; aes.HasCHanged ?
+                MovieAddedOrEdited(si.TvdbCode != oldCode, false,si); //todo optimise so that download is only done if movie config has changed show; aes.HasCHanged ?
                 SelectMovie(si);
 
                 Logger.Info("Modified movie called {0}", si.ShowName);
@@ -5043,11 +4941,6 @@ namespace TVRename
             return false; // let the quick-start guide be shown
         }
 
-        if (url.Contains(@"ieframe.dll"))
-        {
-            //url = e.Url.Fragment.Substring(1);
-        }
-
         if (url.StartsWith(UI.EXPLORE_PROXY, StringComparison.InvariantCultureIgnoreCase))
         {
             string openlocation = HttpUtility.UrlDecode(url.Substring(UI.EXPLORE_PROXY.Length));
@@ -5068,7 +4961,6 @@ namespace TVRename
 
         if (url.IsHttpLink() || url.IsFileLink())
         {
-            
             Helpers.OpenUrl(url);
             return true;
         }

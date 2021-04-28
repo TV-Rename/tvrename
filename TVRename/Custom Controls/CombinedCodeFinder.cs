@@ -19,7 +19,7 @@ namespace TVRename
     public partial class CombinedCodeFinder : UserControl
     {
         private MediaConfiguration.MediaType Type { get; }
-        internal TVDoc.ProviderType Source { get; set; }
+        internal TVDoc.ProviderType Source { get; private set; }
         private bool mInternal;
         private readonly ListViewColumnSorter lvwCodeFinderColumnSorter;
         private bool beenupdated;
@@ -28,6 +28,7 @@ namespace TVRename
         public CachedMovieInfo MovieInitialFound{ get; private set; }
         public int TvShowInitialFoundCode => TvShowInitialFound.IdCode(Source);
 
+        const string DEFAULT_MESSAGE = "Enter the show's name, and click \"Search\"";
         public int MovieInitialFoundCode => MovieInitialFound.IdCode(Source);
         public CombinedCodeFinder(string? initialHint, MediaConfiguration.MediaType type, TVDoc.ProviderType source)
         {
@@ -40,14 +41,14 @@ namespace TVRename
 
             txtFindThis.Text = initialHint;
 
-            if (string.IsNullOrEmpty(initialHint))
+            SetupColumns();
+
+            if (!initialHint.HasValue() )
             {
-                ListViewItem lvi = new ListViewItem("");
-                lvi.SubItems.Add("Enter the show's name, and click \"Search\"");
+                ListViewItem lvi = new ListViewItem(string.Empty);
+                lvi.SubItems.Add(DEFAULT_MESSAGE);
                 lvMatches.Items.Add(lvi);
             }
-
-            SetupColumns();
 
             lvwCodeFinderColumnSorter = new ListViewColumnSorter(new DoubleAsTextSorter(5))
             {
@@ -64,7 +65,7 @@ namespace TVRename
         public void SetSource(TVDoc.ProviderType source, MediaConfiguration? mi)
         {
             UpdateSource(source);
-            if(!beenupdated && mi!= null)
+            if(!beenupdated && mi!= null && mi.IdCode(source)>0)
             {
                 mInternal = true;
                 txtFindThis.Text = GenerateNewHintForProvider(mi);
@@ -202,73 +203,83 @@ namespace TVRename
                 return false;
             }
 
-            mInternal = true;
-            lvMatches.BeginUpdate();
-
-            string what = txtFindThis.Text.CompareName();
-            int matchedMovies = 0;
-            int matchedTvShows = 0;
-
-            lvMatches.Items.Clear();
-            if (!string.IsNullOrEmpty(what))
+            try
             {
-                bool numeric = int.TryParse(what, out int matchnum);
-                MediaCache cache = TVDoc.GetMediaCache(Source);
+                mInternal = true;
+                lvMatches.BeginUpdate();
 
-                if (Type == MediaConfiguration.MediaType.tv)
+                string what = txtFindThis.Text.CompareName();
+                int matchedMovies = 0;
+                int matchedTvShows = 0;
+
+                if (!txtFindThis.Text.HasValue() && lvMatches.Items.Count == 1 && lvMatches.Items[0].SubItems[1].Text== DEFAULT_MESSAGE)
                 {
-                    lock (cache.SERIES_LOCK)
-                    {
-                        foreach (KeyValuePair<int, CachedSeriesInfo> kvp in cache.CachedShowData.Where(kvp => matches(kvp.Key, kvp.Value, numeric, what, matchnum)))
-                        {
-                            lvMatches.Items.Add(NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum));
-                            matchedTvShows++;
-                            TvShowInitialFound = kvp.Value;
-                        }
-                    }
-                    txtSearchStatus.Text = "Found " + matchedTvShows + " show" + (matchedTvShows != 1 ? "s" : "");
-                }
-                else if (Type == MediaConfiguration.MediaType.movie)
-                {
-                    lock (TMDB.LocalCache.Instance.MOVIE_LOCK)
-                    {
-                        foreach (KeyValuePair<int, CachedMovieInfo> kvp in cache.CachedMovieData.Where(kvp=> matches(kvp.Key, kvp.Value, numeric, what, matchnum)).OrderByDescending(m=>m.Value.Popularity))
-                        {
-                            lvMatches.Items.Add(NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum));
-                            matchedMovies++;
-                            MovieInitialFound = kvp.Value;
-                        }
-                    }
-                    txtSearchStatus.Text = "Found " + matchedMovies + " movie" + (matchedMovies != 1 ? "s" : "");
+                    //we have no further information
+                    return false;
                 }
 
-                if (lvMatches.Items.Count == 1 && numeric)
+                lvMatches.Items.Clear();
+                if (!string.IsNullOrEmpty(what))
+                {
+                    bool numeric = int.TryParse(what, out int matchnum);
+                    MediaCache cache = TVDoc.GetMediaCache(Source);
+
+                    if (Type == MediaConfiguration.MediaType.tv)
+                    {
+                        lock (cache.SERIES_LOCK)
+                        {
+                            foreach (KeyValuePair<int, CachedSeriesInfo> kvp in cache.CachedShowData.Where(kvp => matches(kvp.Key, kvp.Value, numeric, what, matchnum)))
+                            {
+                                lvMatches.Items.Add(NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum));
+                                matchedTvShows++;
+                                TvShowInitialFound = kvp.Value;
+                            }
+                        }
+                        txtSearchStatus.Text = "Found " + matchedTvShows + " show" + (matchedTvShows != 1 ? "s" : "");
+                    }
+                    else if (Type == MediaConfiguration.MediaType.movie)
+                    {
+                        lock (TMDB.LocalCache.Instance.MOVIE_LOCK)
+                        {
+                            foreach (KeyValuePair<int, CachedMovieInfo> kvp in cache.CachedMovieData.Where(kvp=> matches(kvp.Key, kvp.Value, numeric, what, matchnum)).OrderByDescending(m=>m.Value.Popularity))
+                            {
+                                lvMatches.Items.Add(NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum));
+                                matchedMovies++;
+                                MovieInitialFound = kvp.Value;
+                            }
+                        }
+                        txtSearchStatus.Text = "Found " + matchedMovies + " movie" + (matchedMovies != 1 ? "s" : "");
+                    }
+
+                    if (lvMatches.Items.Count == 1 && numeric)
+                    {
+                        lvMatches.Items[0].Selected = true;
+                    }
+                }
+                else
+                {
+                    txtSearchStatus.Text = string.Empty;
+                }
+
+                if (matchedMovies == 1 && chooseOnlyMatch)
                 {
                     lvMatches.Items[0].Selected = true;
+                    return true;
                 }
-            }
-            else
-            {
-                txtSearchStatus.Text = string.Empty;
-            }
 
-            lvMatches.EndUpdate();
-
-            if (matchedMovies == 1 && chooseOnlyMatch)
+                if (matchedTvShows == 1 && chooseOnlyMatch)
+                {
+                    lvMatches.Items[0].Selected = true;
+                    return true;
+                }
+                
+                return false;
+            }
+            finally
             {
-                lvMatches.Items[0].Selected = true;
+                lvMatches.EndUpdate();
                 mInternal = false;
-                return true;
             }
-
-            if (matchedTvShows == 1 && chooseOnlyMatch)
-            {
-                lvMatches.Items[0].Selected = true;
-                mInternal = false;
-                return true;
-            }
-            mInternal = false;
-            return false;
         }
 
         private bool matches(int num, CachedMediaInfo kvp, bool numeric, string what, int matchnum)

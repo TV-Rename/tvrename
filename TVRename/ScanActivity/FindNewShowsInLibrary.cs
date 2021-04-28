@@ -34,11 +34,7 @@ namespace TVRename
             var idsToAdd = bam.AddItems.Where(s => s.CodeKnown).Select(folder => new {Code = folder.ProviderCode, folder.Provider}).ToList(); 
             
             bam.AddAllToMyShows();
-
-            MDoc.SetDirty();
-            MDoc.DoDownloadsFG(settings.Unattended,settings.Hidden,settings.Owner);
-
-            List<ShowConfiguration> addedShows = idsToAdd.Select(s => MDoc.TvLibrary.GetShowItem(s.Code,s.Provider)).ToList();
+            List<ShowConfiguration> addedShows = idsToAdd.Select(s => MDoc.TvLibrary.GetShowItem(s.Code, s.Provider)).ToList();
 
             //add each new show into the shows being scanned
             foreach (ShowConfiguration si in addedShows)
@@ -47,10 +43,7 @@ namespace TVRename
             }
             LOGGER.Info("Added new shows called: {0}", addedShows.Select(si => si.ShowName).ToCsv());
 
-            MDoc.DoWhenToWatch(true,settings.Unattended,settings.Hidden, settings.Owner);
-
-            MDoc.WriteUpcoming();
-            MDoc.WriteRecent();
+            MDoc.TvAddedOrEdited(true,settings.Unattended,settings.Hidden,settings.Owner,addedShows);
         }
 
         private void AskUserAboutShows(TVDoc.ScanSettings settings, [NotNull] BulkAddSeriesManager bam)

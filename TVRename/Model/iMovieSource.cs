@@ -10,9 +10,7 @@ namespace TVRename
         void Setup(FileInfo loadFrom, FileInfo cacheFile, CommandLineArgs args);
         bool Connect(bool showErrorMsgBox);
         void SaveCache();
-
         bool EnsureUpdated(SeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
-        bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, IEnumerable<SeriesSpecifier> ss);
         void UpdatesDoneOk();
 
         CachedMovieInfo GetMovie(PossibleNewMovie show, bool showErrorMsgBox);

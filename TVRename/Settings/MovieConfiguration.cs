@@ -262,6 +262,11 @@ namespace TVRename
         }
 
         public IEnumerable<string> AutomaticLocations() => AllFolderLocations(false, false).Values.SelectMany(x => x);
-        
+
+        public SeriesSpecifier SeriesSpecifier()
+        {
+            return new SeriesSpecifier(TvdbCode, TVmazeCode, TmdbCode, UseCustomLanguage,
+                CustomLanguageCode, ShowName, Provider, CachedMovie?.Imdb, MediaType.movie);
+        }
     }
 }

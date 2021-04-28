@@ -37,7 +37,7 @@ namespace TVRename.TheTVDB
     }
 
     // ReSharper disable once InconsistentNaming
-    public class LocalCache :  MediaCache, iTVSource
+    public class LocalCache :  MediaCache, iTVSource, iMovieSource
     {
 #nullable enable
         public static readonly ApiVersion VERS = ApiVersion.v3; //TODO - Revert and make user selectable
@@ -162,6 +162,10 @@ namespace TVRename.TheTVDB
             LatestUpdateTime.RecordSuccessfulUpdate();
         }
 
+        public CachedMovieInfo GetMovie(PossibleNewMovie show, bool showErrorMsgBox) => throw new NotImplementedException();
+
+        public CachedMovieInfo GetMovie(int? id) => throw new NotImplementedException();
+
         public CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox)
         {
             Search(showName, showErrorMsgBox,MediaConfiguration.MediaType.tv);
@@ -239,6 +243,11 @@ namespace TVRename.TheTVDB
             return IsConnected;
         }
 
+        public void Tidy(IEnumerable<MovieConfiguration> libraryValues)
+        {
+            throw new NotImplementedException();
+        }
+
         public void ForgetEverything()
         {
             lock (SERIES_LOCK)
@@ -252,6 +261,26 @@ namespace TVRename.TheTVDB
             //All cachedSeries will be forgotten and will be fully refreshed, so we'll only need updates after this point
             LatestUpdateTime.Reset();
             LOGGER.Info($"Forget everything, so we assume we have updates until {LatestUpdateTime}");
+        }
+
+        public void ForgetMovie(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ForgetMovie(int tvdb, int tvmaze, int tmdb, bool makePlaceholder, bool useCustomLanguage, string langCode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Update(CachedMovieInfo si)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddPoster(int seriesId, IEnumerable<Banner> @select)
+        {
+            throw new NotImplementedException();
         }
 
         public void ForgetShow(int tvdb, int tvmaze, int tmdb, bool makePlaceholder, bool useCustomLanguage, string? customLanguageCode)
@@ -1718,7 +1747,7 @@ namespace TVRename.TheTVDB
             Series[tvdb] = new CachedSeriesInfo(tvdb, tvmaze,tmdb, customLanguageCode) { Dirty = true };
         }
 
-        public bool EnsureUpdated(SeriesSpecifier seriesd, bool bannersToo, bool showErrorMsgBox)
+        public override bool EnsureUpdated(SeriesSpecifier seriesd, bool bannersToo, bool showErrorMsgBox)
         {
             if (seriesd.Provider == TVDoc.ProviderType.TVmaze)
             {
