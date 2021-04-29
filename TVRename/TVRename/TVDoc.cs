@@ -146,121 +146,113 @@ namespace TVRename
 
         private void UpdateIdsFromCache()
         {
-            lock (TVmaze.LocalCache.Instance.SERIES_LOCK)
+            //OK, so we have a flurry of different Ids. There are 2 scenarios:
+            // (1) Configuration has a cachedItem that has additional or different information to the main config. (This should be most)
+            // (2) There is information in one of the caches that has information that could be useful (most should have been picked up in 1 above)
+
+
+            foreach (ShowConfiguration? show in TvLibrary.Shows)
             {
-                foreach (var show in TvLibrary.Shows)
+                CachedSeriesInfo? cachedData = show?.CachedShow;
+                if (cachedData is null)
                 {
-                    CachedSeriesInfo? cachedData = show.CachedShow;
-                    if (cachedData is null)
-                    {
-                        continue;
+                    continue;
 
-                    }
-                    if (show.TmdbCode <= 0 && cachedData.TmdbCode > 0)
-                    {
-                        show.TmdbCode = cachedData.TmdbCode;
-                    }
-                    if (show.TmdbCode > 0 && cachedData.TmdbCode > 0 && show.TmdbCode != cachedData.TmdbCode)
-                    {
-                        Logger.Error($"Show has inconsistent TMDB Id: {show.ShowName} {show.TmdbCode} {cachedData.TmdbCode}");
-                        show.TmdbCode = cachedData.TmdbCode;
-                    }
-
-                    if (show.TVmazeCode <= 0 && cachedData.TvMazeCode > 0)
-                    {
-                        show.TVmazeCode = cachedData.TvMazeCode;
-                    }
-                    if (show.TVmazeCode > 0 && cachedData.TvMazeCode > 0 && show.TVmazeCode != cachedData.TvMazeCode)
-                    {
-                        Logger.Error($"Show has inconsistent TVmazeCode Id: {show.ShowName} {show.TVmazeCode} {cachedData.TvMazeCode}");
-                        //show.TVmazeCode = cachedData.TvMazeCode;
-                    }
-
-                    if (show.TvdbCode <= 0 && cachedData.TvdbCode > 0)
-                    {
-                        show.TvdbCode = cachedData.TvdbCode;
-                    }
-                    if (show.TvdbCode > 0 && cachedData.TvdbCode > 0 && show.TvdbCode != cachedData.TvdbCode)
-                    {
-                        Logger.Error($"Show has inconsistent TvdbCode Id: {show.ShowName} {show.TvdbCode} {cachedData.TvdbCode}");
-                        show.TvdbCode = cachedData.TvdbCode;
-                    }
                 }
 
-                foreach (var show in FilmLibrary.Movies)
+                show.TmdbCode = GetBestValue(show, cachedData,ProviderType.TMDB, MediaConfiguration.MediaType.tv);
+                show.TvdbCode = GetBestValue(show, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.tv);
+                show.TVmazeCode = GetBestValue(show, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
+            }
+
+            foreach (MovieConfiguration? show in FilmLibrary.Movies)
+            {
+                CachedMovieInfo? cachedData = show.CachedMovie;
+                if (cachedData is null)
                 {
-                    CachedMovieInfo? cachedData = show.CachedMovie;
+                    continue;
 
-                    if (show.TmdbCode <= 0 && cachedData.TmdbCode > 0)
-                    {
-                        show.TmdbCode = cachedData.TmdbCode;
-                    }
-                    if (show.TmdbCode > 0 && cachedData.TmdbCode > 0 && show.TmdbCode != cachedData.TmdbCode)
-                    {
-                        Logger.Error($"Movie has inconsistent TMDB Id: {show.ShowName} {show.TmdbCode} {cachedData.TmdbCode}");
-                        show.TmdbCode = cachedData.TmdbCode;
-                    }
-
-                    if (show.TVmazeCode <= 0 && cachedData.TvMazeCode > 0)
-                    {
-                        show.TVmazeCode = cachedData.TvMazeCode;
-                    }
-                    if (show.TVmazeCode > 0 && cachedData.TvMazeCode > 0 && show.TVmazeCode != cachedData.TvMazeCode)
-                    {
-                        Logger.Error($"Movie has inconsistent TVmazeCode Id: {show.ShowName} {show.TVmazeCode} {cachedData.TvMazeCode}");
-                        show.TVmazeCode = cachedData.TvMazeCode;
-                    }
-
-                    if (show.TvdbCode <= 0 && cachedData.TvdbCode > 0)
-                    {
-                        show.TvdbCode = cachedData.TvdbCode;
-                    }
-                    if (show.TvdbCode > 0 && cachedData.TvdbCode > 0 && show.TvdbCode != cachedData.TvdbCode)
-                    {
-                        Logger.Error($"Movie has inconsistent TvdbCode Id: {show.ShowName} {show.TvdbCode} {cachedData.TvdbCode}");
-                        show.TvdbCode = cachedData.TvdbCode;
-                    }
                 }
 
-                foreach (CachedSeriesInfo show in TVmaze.LocalCache.Instance.CachedData.Values)
+                show.TmdbCode = GetBestValue(show, cachedData, ProviderType.TMDB, MediaConfiguration.MediaType.movie);
+                show.TvdbCode = GetBestValue(show, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.movie);
+                show.TVmazeCode = GetBestValue(show, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.movie);
+            }
+
+            CheckForUsefulTVIds(TVmaze.LocalCache.Instance, ProviderType.TheTVDB);
+            CheckForUsefulTVIds(TVmaze.LocalCache.Instance, ProviderType.TMDB);
+
+            CheckForUsefulTVIds(TMDB.LocalCache.Instance, ProviderType.TheTVDB);
+            CheckForUsefulTVIds(TMDB.LocalCache.Instance, ProviderType.TVmaze);
+
+            CheckForUsefulTVIds(TheTVDB.LocalCache.Instance, ProviderType.TVmaze);
+            CheckForUsefulTVIds(TheTVDB.LocalCache.Instance, ProviderType.TMDB);
+
+            //We don't bother checking a non-existant TVMaze movie cache
+
+            CheckForUsefulMovieIds(TMDB.LocalCache.Instance, ProviderType.TheTVDB);
+            CheckForUsefulMovieIds(TMDB.LocalCache.Instance, ProviderType.TVmaze);
+
+            CheckForUsefulMovieIds(TheTVDB.LocalCache.Instance, ProviderType.TVmaze);
+            CheckForUsefulMovieIds(TheTVDB.LocalCache.Instance, ProviderType.TMDB);
+        }
+
+        // ReSharper disable once InconsistentNaming
+        private void CheckForUsefulTVIds(MediaCache cache, ProviderType provider)
+        {
+            lock (cache.SERIES_LOCK)
+            {
+                foreach (CachedSeriesInfo cachedData in cache.CachedShowData.Values.Where(show => show.IdCode(provider) > 0))
                 {
-                    ShowConfiguration showConfiguration = TvLibrary.GetShowItem(show.TvdbCode,ProviderType.TheTVDB); //TODO - Revisit for multisource
+                    ShowConfiguration? showConfiguration = TvLibrary.GetShowItem(cachedData.IdCode(provider), provider); 
                     if (showConfiguration is null)
                     {
                         continue;
                     }
-                    if (showConfiguration.TVmazeCode == 0 || showConfiguration.TVmazeCode == -1)         
-                    {
-                        showConfiguration.TVmazeCode = show.TvMazeCode;
-                    }
-                    if (showConfiguration.TmdbCode <= 0 && show.TmdbCode > 0)
-                    {
-                        showConfiguration.TmdbCode = show.TmdbCode;
-                    }
-                    if (showConfiguration.TVmazeCode != show.TvMazeCode)
-                    {
-                        Logger.Error($"Issue with copy back of ids {show.Name} {show.TvdbCode} {showConfiguration.TVmazeCode} {show.TvMazeCode} ");
-                        showConfiguration.TVmazeCode = show.TvMazeCode;
-                    }
-                }
 
-                foreach (CachedSeriesInfo show in TMDB.LocalCache.Instance.CachedShowData.Values.Where(show=>show.TvdbCode>0))
-                {
-                    ShowConfiguration showConfiguration = TvLibrary.GetShowItem(show.TvdbCode,ProviderType.TheTVDB);//TODO - Revisit for multisource
-                    if (showConfiguration is null)
-                    {
-                        continue;
-                    }
-                    if (showConfiguration.TmdbCode == 0 || showConfiguration.TmdbCode == -1)
-                    {
-                        showConfiguration.TmdbCode = show.TmdbCode;
-                    }
-                    if (showConfiguration.TmdbCode != show.TmdbCode)
-                    {
-                        Logger.Error($"Issue with copy back of ids {show.Name}: {showConfiguration.TmdbCode} {show.TmdbCode} ");
-                    }
+                    showConfiguration.TmdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TMDB, MediaConfiguration.MediaType.tv);
+                    showConfiguration.TvdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.tv);
+                    showConfiguration.TVmazeCode = GetBestValue(showConfiguration, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
                 }
             }
+        }
+
+        private void CheckForUsefulMovieIds(MediaCache cache, ProviderType provider)
+        {
+            lock (cache.MOVIE_LOCK)
+            {
+                foreach (CachedMovieInfo cachedData in cache.CachedMovieData.Values.Where(show => show.IdCode(provider) > 0))
+                {
+                    MovieConfiguration? showConfiguration = FilmLibrary.GetMovie(cachedData.IdCode(provider), provider);
+                    if (showConfiguration is null)
+                    {
+                        continue;
+                    }
+
+                    showConfiguration.TmdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TMDB, MediaConfiguration.MediaType.movie);
+                    showConfiguration.TvdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.movie);
+                    showConfiguration.TVmazeCode = GetBestValue(showConfiguration, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.movie);
+                }
+            }
+        }
+        private int GetBestValue(MediaConfiguration show, CachedMediaInfo cachedData,ProviderType provider, MediaConfiguration.MediaType type)
+        {
+            int currentValue = show.IdCode(provider);
+            int valueFromCache = cachedData.IdCode(provider);
+
+            if (currentValue  <= 0 && valueFromCache > 0)
+            {
+                Logger.Info($"Updatng media:{type.PrettyPrint()} {show.ShowName} {provider.PrettyPrint()} Id to {valueFromCache}");
+                return valueFromCache;
+            }
+
+            if (currentValue  > 0 && valueFromCache > 0 && currentValue  != valueFromCache)
+            {
+                Logger.Error($"Media:{type.PrettyPrint()} {show.ShowName} has inconsistent {provider.PrettyPrint()} Id: {currentValue } {valueFromCache}, updating to {valueFromCache}.");
+                return valueFromCache;
+            }
+
+            return currentValue ;
         }
 
         public void SetDirty() => mDirty = true;
