@@ -370,7 +370,7 @@ namespace TVRename
             try
             {
                 // Duration should be formatted as "00:44:08"
-                if (!string.IsNullOrWhiteSpace(duration))
+                if (duration.HasValue())
                 {
                     string[] timeParts = duration.Split(':');
 

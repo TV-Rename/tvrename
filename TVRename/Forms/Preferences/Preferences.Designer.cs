@@ -343,6 +343,7 @@ namespace TVRename
             this.rdoMovieTMDB = new System.Windows.Forms.RadioButton();
             this.rdoMovieTheTVDB = new System.Windows.Forms.RadioButton();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.rdoTVTMDB = new System.Windows.Forms.RadioButton();
             this.rdoTVTVMaze = new System.Windows.Forms.RadioButton();
             this.rdoTVTVDB = new System.Windows.Forms.RadioButton();
             this.label83 = new System.Windows.Forms.Label();
@@ -487,7 +488,7 @@ namespace TVRename
             this.optUpdateCheckInterval = new System.Windows.Forms.RadioButton();
             this.optUpdateCheckAlways = new System.Windows.Forms.RadioButton();
             this.chkUpdateCheckEnabled = new System.Windows.Forms.CheckBox();
-            this.rdoTVTMDB = new System.Windows.Forms.RadioButton();
+            this.cbMovieHigherQuality = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -2308,15 +2309,16 @@ namespace TVRename
             // 
             this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox8.Controls.Add(this.cbMovieHigherQuality);
             this.groupBox8.Controls.Add(this.label53);
             this.groupBox8.Controls.Add(this.label54);
             this.groupBox8.Controls.Add(this.tbPercentBetter);
             this.groupBox8.Controls.Add(this.tbPriorityOverrideTerms);
             this.groupBox8.Controls.Add(this.label52);
             this.groupBox8.Controls.Add(this.cbHigherQuality);
-            this.groupBox8.Location = new System.Drawing.Point(6, 457);
+            this.groupBox8.Location = new System.Drawing.Point(6, 442);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(406, 100);
+            this.groupBox8.Size = new System.Drawing.Size(406, 115);
             this.groupBox8.TabIndex = 40;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Upgrade Shows when better quality files found";
@@ -2324,7 +2326,7 @@ namespace TVRename
             // label53
             // 
             this.label53.AutoSize = true;
-            this.label53.Location = new System.Drawing.Point(7, 72);
+            this.label53.Location = new System.Drawing.Point(7, 89);
             this.label53.Name = "label53";
             this.label53.Size = new System.Drawing.Size(129, 13);
             this.label53.TabIndex = 36;
@@ -2333,7 +2335,7 @@ namespace TVRename
             // label54
             // 
             this.label54.AutoSize = true;
-            this.label54.Location = new System.Drawing.Point(173, 71);
+            this.label54.Location = new System.Drawing.Point(173, 88);
             this.label54.Name = "label54";
             this.label54.Size = new System.Drawing.Size(129, 13);
             this.label54.TabIndex = 38;
@@ -2341,7 +2343,7 @@ namespace TVRename
             // 
             // tbPercentBetter
             // 
-            this.tbPercentBetter.Location = new System.Drawing.Point(141, 68);
+            this.tbPercentBetter.Location = new System.Drawing.Point(141, 85);
             this.tbPercentBetter.Name = "tbPercentBetter";
             this.tbPercentBetter.Size = new System.Drawing.Size(28, 20);
             this.tbPercentBetter.TabIndex = 37;
@@ -2351,7 +2353,7 @@ namespace TVRename
             // 
             this.tbPriorityOverrideTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbPriorityOverrideTerms.Location = new System.Drawing.Point(141, 42);
+            this.tbPriorityOverrideTerms.Location = new System.Drawing.Point(141, 59);
             this.tbPriorityOverrideTerms.Name = "tbPriorityOverrideTerms";
             this.tbPriorityOverrideTerms.Size = new System.Drawing.Size(263, 20);
             this.tbPriorityOverrideTerms.TabIndex = 35;
@@ -2359,7 +2361,7 @@ namespace TVRename
             // label52
             // 
             this.label52.AutoSize = true;
-            this.label52.Location = new System.Drawing.Point(8, 45);
+            this.label52.Location = new System.Drawing.Point(8, 62);
             this.label52.Name = "label52";
             this.label52.Size = new System.Drawing.Size(110, 13);
             this.label52.TabIndex = 34;
@@ -2398,7 +2400,7 @@ namespace TVRename
             this.gbAutoAdd.Controls.Add(this.tbMovieTerms);
             this.gbAutoAdd.Location = new System.Drawing.Point(6, 344);
             this.gbAutoAdd.Name = "gbAutoAdd";
-            this.gbAutoAdd.Size = new System.Drawing.Size(407, 107);
+            this.gbAutoAdd.Size = new System.Drawing.Size(407, 92);
             this.gbAutoAdd.TabIndex = 36;
             this.gbAutoAdd.TabStop = false;
             this.gbAutoAdd.Text = "Auto Add Shows from Search Folders";
@@ -4008,6 +4010,17 @@ namespace TVRename
             this.panel2.Size = new System.Drawing.Size(260, 29);
             this.panel2.TabIndex = 62;
             // 
+            // rdoTVTMDB
+            // 
+            this.rdoTVTMDB.AutoSize = true;
+            this.rdoTVTMDB.Location = new System.Drawing.Point(173, 4);
+            this.rdoTVTMDB.Name = "rdoTVTMDB";
+            this.rdoTVTMDB.Size = new System.Drawing.Size(56, 17);
+            this.rdoTVTMDB.TabIndex = 61;
+            this.rdoTVTMDB.TabStop = true;
+            this.rdoTVTMDB.Text = "TMDB";
+            this.rdoTVTMDB.UseVisualStyleBackColor = true;
+            // 
             // rdoTVTVMaze
             // 
             this.rdoTVTVMaze.AutoSize = true;
@@ -4062,10 +4075,6 @@ namespace TVRename
             // 
             this.cbTMDBRegions.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTMDBRegions.FormattingEnabled = true;
-            this.cbTMDBRegions.Items.AddRange(new object[] {
-            "My Shows",
-            "Scan",
-            "Schedule"});
             this.cbTMDBRegions.Location = new System.Drawing.Point(116, 45);
             this.cbTMDBRegions.Name = "cbTMDBRegions";
             this.cbTMDBRegions.Size = new System.Drawing.Size(146, 21);
@@ -4110,10 +4119,6 @@ namespace TVRename
             // 
             this.cbTMDBLanguages.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTMDBLanguages.FormattingEnabled = true;
-            this.cbTMDBLanguages.Items.AddRange(new object[] {
-            "My Shows",
-            "Scan",
-            "Schedule"});
             this.cbTMDBLanguages.Location = new System.Drawing.Point(117, 19);
             this.cbTMDBLanguages.Name = "cbTMDBLanguages";
             this.cbTMDBLanguages.Size = new System.Drawing.Size(146, 21);
@@ -5658,16 +5663,15 @@ namespace TVRename
             this.chkUpdateCheckEnabled.UseVisualStyleBackColor = true;
             this.chkUpdateCheckEnabled.CheckedChanged += new System.EventHandler(this.chkUpdateCheckEnabled_CheckedChanged);
             // 
-            // rdoTVTMDB
+            // cbMovieHigherQuality
             // 
-            this.rdoTVTMDB.AutoSize = true;
-            this.rdoTVTMDB.Location = new System.Drawing.Point(173, 4);
-            this.rdoTVTMDB.Name = "rdoTVTMDB";
-            this.rdoTVTMDB.Size = new System.Drawing.Size(56, 17);
-            this.rdoTVTMDB.TabIndex = 61;
-            this.rdoTVTMDB.TabStop = true;
-            this.rdoTVTMDB.Text = "TMDB";
-            this.rdoTVTMDB.UseVisualStyleBackColor = true;
+            this.cbMovieHigherQuality.AutoSize = true;
+            this.cbMovieHigherQuality.Location = new System.Drawing.Point(6, 36);
+            this.cbMovieHigherQuality.Name = "cbMovieHigherQuality";
+            this.cbMovieHigherQuality.Size = new System.Drawing.Size(332, 17);
+            this.cbMovieHigherQuality.TabIndex = 39;
+            this.cbMovieHigherQuality.Text = "Update movies when higher-quality ones found in Search Folders";
+            this.cbMovieHigherQuality.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -6275,5 +6279,6 @@ namespace TVRename
         private System.Windows.Forms.TextBox txtWTWTXT;
         private System.Windows.Forms.CheckBox cbWTWTXT;
         private System.Windows.Forms.RadioButton rdoTVTMDB;
+        private System.Windows.Forms.CheckBox cbMovieHigherQuality;
     }
 }

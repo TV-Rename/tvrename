@@ -51,7 +51,7 @@ namespace TVRename
 
                 Movie.UseAutomaticFolders = true;
                 //try to copy/move files
-                System.Collections.Generic.List<string> automaticLocations = Movie.AutomaticLocations().ToList();
+                List<string> automaticLocations = Movie.AutomaticLocations().ToList();
 
                 if (automaticLocations.Count > 1)
                 {
@@ -87,7 +87,7 @@ namespace TVRename
             }
         }
 
-        private void MoveFiles(IEnumerable<FileInfo> @where, string destination)
+        private void MoveFiles(IEnumerable<FileInfo> where, string destination)
         {
             Directory.CreateDirectory(destination);
             foreach (FileInfo? f in where)

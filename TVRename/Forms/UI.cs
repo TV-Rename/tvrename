@@ -3404,7 +3404,7 @@ namespace TVRename
                 scanProgDlg = new ScanProgress(
                     TVSettings.Instance.DoBulkAddInScan,
                     TVSettings.Instance.RenameCheck || TVSettings.Instance.MissingCheck,
-                    TVSettings.Instance.RemoveDownloadDirectoriesFiles || TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies || TVSettings.Instance.ReplaceWithBetterQuality,
+                    TVSettings.Instance.RemoveDownloadDirectoriesFiles || TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies || TVSettings.Instance.ReplaceWithBetterQuality || TVSettings.Instance.ReplaceMoviesWithBetterQuality,
                     mDoc.HasActiveLocalFinders,
                     mDoc.HasActiveDownloadFinders,
                     mDoc.HasActiveSearchFinders

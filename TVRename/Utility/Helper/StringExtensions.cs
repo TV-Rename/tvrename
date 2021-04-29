@@ -55,6 +55,8 @@ namespace TVRename
             return source.IndexOf(toCheck, comp) >= 0;
         }
 
+        public static bool IsNumeric(this string text) => int.TryParse(text, out int _);
+
         public static bool HasValue(this string? s) => !string.IsNullOrWhiteSpace(s);
 
         [NotNull]
@@ -141,7 +143,7 @@ namespace TVRename
 
         public static string First(this string s, int charsToDisplay)
         {
-            if (!string.IsNullOrWhiteSpace(s))
+            if (s.HasValue())
                 return s.Length <= charsToDisplay ? s : new string(s.Take(charsToDisplay).ToArray());
             return string.Empty;
         }

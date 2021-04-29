@@ -126,7 +126,7 @@ namespace TVRename
         public IEnumerable<string> GetYears()
         {
             return Movies.Select(si => si.CachedMovie?.Year)
-                .Where(s => (s.HasValue))
+                .Where(s => s.HasValue)
                 .Select(s => s!.ToString())
                 .Distinct()
                 .OrderBy(s => s);

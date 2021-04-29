@@ -27,6 +27,7 @@ using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using TVRename.Settings.AppState;
+using TVRename.Utility.Helper;
 using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
 
 namespace TVRename

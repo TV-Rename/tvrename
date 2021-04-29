@@ -468,7 +468,7 @@ namespace TVRename
 
             foreach (string folder  in si.AllExistngFolderLocations().Values.SelectMany(a=>a))
             {
-                if (!string.IsNullOrWhiteSpace(folder) && Directory.Exists(folder))
+                if (folder.HasValue() && Directory.Exists(folder))
                 {
                     return folder;
                 }
@@ -1176,7 +1176,7 @@ namespace TVRename
             tableHtml += GetOverviewPart("Active From", yearRange);
             tableHtml += GetOverviewPart("Status", ser?.Status);
 
-            if (!string.IsNullOrWhiteSpace(tableHtml))
+            if (tableHtml.HasValue())
             {
                 body += "<h2>Information<table border=0>"+tableHtml+"</table>";
             }

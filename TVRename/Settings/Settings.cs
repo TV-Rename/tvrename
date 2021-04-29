@@ -223,6 +223,8 @@ namespace TVRename
         public float upgradeDirtyPercent = 20;
         public float replaceMargin = 10;
         public bool ReplaceWithBetterQuality = false;
+        public bool ReplaceMoviesWithBetterQuality = false;
+        
         public bool ForceSystemToDecideOnUpgradedFiles = false;
         public KeepTogetherModes keepTogetherMode = KeepTogetherModes.All;
 
@@ -467,6 +469,7 @@ namespace TVRename
             writer.WriteElement("SearchJSONUseCloudflare", SearchJSONUseCloudflare);
             writer.WriteElement("qBitTorrentDownloadFilesFirst", qBitTorrentDownloadFilesFirst);
             writer.WriteElement("ReplaceWithBetterQuality", ReplaceWithBetterQuality);
+            writer.WriteElement("ReplaceMoviesWithBetterQuality", ReplaceMoviesWithBetterQuality);
             writer.WriteElement("ForceSystemToDecideOnUpgradedFiles", ForceSystemToDecideOnUpgradedFiles);
             writer.WriteElement("ExportWTWRSS", ExportWTWRSS);
             writer.WriteElement("ExportWTWRSSTo", ExportWTWRSSTo);
@@ -1338,6 +1341,7 @@ namespace TVRename
             ShowBasicShowDetails = xmlSettings.ExtractBool("ShowBasicShowDetails",false);
             DetailedRSSJSONLogging = xmlSettings.ExtractBool("DetailedRSSJSONLogging",false);
             ReplaceWithBetterQuality = xmlSettings.ExtractBool("ReplaceWithBetterQuality",false);
+            ReplaceMoviesWithBetterQuality = xmlSettings.ExtractBool("ReplaceMoviesWithBetterQuality", false);
             ForceSystemToDecideOnUpgradedFiles = xmlSettings.ExtractBool("ForceSystemToDecideOnUpgradedFiles", false);
             ExportWTWRSSTo = xmlSettings.ExtractString("ExportWTWRSSTo");
             ExportWTWXML = xmlSettings.ExtractBool("ExportWTWXML",false);

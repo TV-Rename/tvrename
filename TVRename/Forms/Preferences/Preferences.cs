@@ -55,6 +55,7 @@ namespace TVRename
             loadLanguageDone += LoadLanguageDoneFunc;
 
             SetupTimezoneDropdown();
+            SetupTMDBDropDowns();
             SetupRssGrid();
             SetupReplacementsGrid();
             FillFolderStringLists();
@@ -79,6 +80,19 @@ namespace TVRename
             }
 
             cbTimeZone.EndUpdate();
+        }
+
+        private void SetupTMDBDropDowns()
+        {
+            cbTMDBLanguages.BeginUpdate();
+            cbTMDBLanguages.Items.Clear();
+            cbTMDBLanguages.Items.AddRange(TMDB.LocalCache.LANGUAGES.Select(language => language.Name).ToArray());
+            cbTMDBLanguages.EndUpdate();
+
+            cbTMDBRegions.BeginUpdate();
+            cbTMDBRegions.Items.Clear();
+            cbTMDBRegions.Items.AddRange(TMDB.LocalCache.COUNTRIES.Select(r => r.Name).ToArray());
+            cbTMDBRegions.EndUpdate();
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
@@ -286,6 +300,7 @@ namespace TVRename
             s.RenameTxtToSub = cbTxtToSub.Checked;
             s.ShowEpisodePictures = cbShowEpisodePictures.Checked;
             s.ReplaceWithBetterQuality = cbHigherQuality.Checked;
+            s.ReplaceMoviesWithBetterQuality = cbMovieHigherQuality.Checked;
             s.HideMyShowsSpoilers = chkHideMyShowsSpoilers.Checked;
             s.HideWtWSpoilers = chkHideWtWSpoilers.Checked;
             s.AutoSelectShowInMyShows = cbAutoSelInMyShows.Checked;
@@ -454,8 +469,8 @@ namespace TVRename
             s.DefMovieDefaultLocation = (string)cmbDefMovieLocation.SelectedItem;
             s.DefaultMovieProvider = MovieProviderMode();
 
-            s.TMDBLanguage= cbTMDBLanguages.SelectedText;
-            s.TMDBRegion = cbTMDBRegions.SelectedText;
+            s.TMDBLanguage= TMDB.LocalCache.Instance.LanguageCode(cbTMDBLanguages.SelectedItem.ToString());
+            s.TMDBRegion = TMDB.LocalCache.Instance.RegionCode(cbTMDBRegions.SelectedItem.ToString());
             s.TMDBPercentDirty = tbTMDBPercentDirty.Text.ToPercent(20);
             s.IncludeMoviesQuickRecent = chkIncludeMoviesQuickRecent.Checked;
 
@@ -920,6 +935,7 @@ namespace TVRename
             chkRemoveCompletedTorrents.Checked= s.RemoveCompletedTorrents;
             cbCheckSABnzbd.Checked = s.CheckSABnzbd;
             cbHigherQuality.Checked = s.ReplaceWithBetterQuality;
+            cbMovieHigherQuality.Checked = s.ReplaceMoviesWithBetterQuality;
 
             txtParallelDownloads.Text = s.ParallelDownloads.ToString();
             tbPercentDirty.Text = s.upgradeDirtyPercent.ToString(CultureInfo.InvariantCulture);
@@ -1023,7 +1039,6 @@ namespace TVRename
             cbDefShowDoRenaming.Checked= s.DefShowDoRenaming;
             cbDefShowDVDOrder.Checked= s.DefShowDVDOrder;
             cbDefShowAutoFolders.Checked= s.DefShowAutoFolders;
-            cmbDefShowLocation.SelectedText= s.DefShowLocation;
             cbDefShowSequentialMatching.Checked= s.DefShowSequentialMatching;
             cbDefShowAirdateMatching.Checked = s.DefShowAirDateMatching;
             cbDefShowEpNameMatching.Checked = s.DefShowEpNameMatching;
@@ -1037,9 +1052,8 @@ namespace TVRename
             cbDefMovieAutoFolders.Checked = s.DefMovieUseutomaticFolders;
             cbDefMovieUseDefLocation.Checked = s.DefMovieUseDefaultLocation;
 
-            //TODO - Fix these
-            //s.TMDBLanguages = cbTMDBLanguages.SelectedText;
-            //s.TMDBRegions = cbTMDBRegions.SelectedText;
+            cbTMDBLanguages.Text = TMDB.LocalCache.Instance.LanguageName(s.TMDBLanguage);
+            cbTMDBRegions.Text = TMDB.LocalCache.Instance.RegionName(s.TMDBRegion);
 
             tbTMDBPercentDirty.Text = s.upgradeDirtyPercent.ToString(CultureInfo.InvariantCulture);
             chkIncludeMoviesQuickRecent.Checked = s.IncludeMoviesQuickRecent;
@@ -1320,7 +1334,7 @@ namespace TVRename
                 cmbDefMovieLocation.Items.Add(folder);
             }
 
-            cmbDefMovieLocation.SelectedItem = path;
+            cmbDefMovieLocation.Text = path;
 
             cmbDefMovieLocation.EndUpdate();
         }
@@ -1342,7 +1356,7 @@ namespace TVRename
                 cmbDefShowLocation.Items.Add(folder);
             }
 
-            cmbDefShowLocation.SelectedItem = path;
+            cmbDefShowLocation.Text = path;
 
             cmbDefShowLocation.EndUpdate();
         }

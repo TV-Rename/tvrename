@@ -30,6 +30,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.RemoveDownloadDirectoriesFiles ||
                                          TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies ||
                                          TVSettings.Instance.ReplaceWithBetterQuality ||
+                                         TVSettings.Instance.ReplaceMoviesWithBetterQuality ||
                                          TVSettings.Instance.CopyFutureDatedEpsFromSearchFolders;
         protected override string CheckName() => "Cleaned up and files in download directory that are not needed";
 
@@ -265,9 +266,8 @@ namespace TVRename
                     fileCanBeDeleted = false;
                 }
 
-                if (TVSettings.Instance.ReplaceWithBetterQuality)
-                { //TODO replace with moviw replacement setting
-
+                if (TVSettings.Instance.ReplaceMoviesWithBetterQuality)
+                { 
                     foreach (var testMovie in matchingMovies)
                     {
                         List<FileInfo> encumbants = dfc.FindMovieOnDisk(testMovie).ToList();
@@ -465,7 +465,7 @@ namespace TVRename
 
             FileHelper.VideoComparison newResult = result;
 
-            if (TVSettings.Instance.ReplaceWithBetterQuality && TVSettings.Instance.ForceSystemToDecideOnUpgradedFiles && IsNotClearCut(result))
+            if (TVSettings.Instance.ReplaceMoviesWithBetterQuality && TVSettings.Instance.ForceSystemToDecideOnUpgradedFiles && IsNotClearCut(result))
             {
                 //User has asked us to make a call
                 newResult = existingFile.Length >= newFile.Length ? FileHelper.VideoComparison.firstFileBetter : FileHelper.VideoComparison.secondFileBetter;
@@ -474,7 +474,7 @@ namespace TVRename
             switch (newResult)
             {
                 case FileHelper.VideoComparison.secondFileBetter:
-                    if (TVSettings.Instance.ReplaceWithBetterQuality)
+                    if (TVSettings.Instance.ReplaceMoviesWithBetterQuality)
                     {
                         if (matchingShows.Count > 1)
                         {
