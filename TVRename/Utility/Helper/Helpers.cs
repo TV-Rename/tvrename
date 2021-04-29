@@ -46,6 +46,8 @@ namespace TVRename
             return items.Contains(item);
         }
 
+        public static bool IsNumeric(this string text) => int.TryParse(text, out int _);
+
         public static List<T> AsList<T>(this T item) => new List<T> { item };
 
         [NotNull]

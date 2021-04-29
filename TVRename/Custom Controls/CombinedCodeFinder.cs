@@ -22,7 +22,6 @@ namespace TVRename
         internal TVDoc.ProviderType Source { get; private set; }
         private bool mInternal;
         private readonly ListViewColumnSorter lvwCodeFinderColumnSorter;
-        private bool beenupdated;
 
         public CachedSeriesInfo TvShowInitialFound { get; private set; }
         public CachedMovieInfo MovieInitialFound{ get; private set; }
@@ -35,7 +34,6 @@ namespace TVRename
             Type = type;
             Source = source;
             mInternal = false;
-            
 
             InitializeComponent();
 
@@ -58,14 +56,13 @@ namespace TVRename
             lvMatches.ListViewItemSorter = lvwCodeFinderColumnSorter;
 
             label3.Text = GetPromptLabel(Source);
-            beenupdated = false;
         }
 
         public void SetSource(TVDoc.ProviderType source) => SetSource(source, null);
         public void SetSource(TVDoc.ProviderType source, MediaConfiguration? mi)
         {
             UpdateSource(source);
-            if(!beenupdated && mi!= null && mi.IdCode(source)>0)
+            if(txtFindThis.Text.IsNumeric() && mi!= null && mi.IdCode(source)>0)
             {
                 mInternal = true;
                 txtFindThis.Text = GenerateNewHintForProvider(mi);
@@ -186,10 +183,6 @@ namespace TVRename
 
         private void txtFindThis_TextChanged(object sender, EventArgs e)
         {
-            if (!mInternal)
-            {
-                beenupdated = true;
-            }
             if (!mInternal && txtFindThis.Text.Length>2)
             {
                 DoFind(false);
@@ -392,10 +385,6 @@ namespace TVRename
 
         private void lvMatches_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!mInternal)
-            {
-                beenupdated = true;
-            }
             SelectionChanged?.Invoke(sender, e);
         }
 
@@ -407,10 +396,6 @@ namespace TVRename
 
         private void txtFindThis_KeyDown(object sender, [NotNull] KeyEventArgs e)
         {
-            if (!mInternal)
-            {
-                beenupdated = true;
-            }
             if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return)
             {
                 Search(true);
