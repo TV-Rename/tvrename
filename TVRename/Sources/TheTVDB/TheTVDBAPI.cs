@@ -82,7 +82,7 @@ namespace TVRename.TheTVDB
         public static string WebsiteShowUrl(int seriesId)
         {
             //return $"{WebsiteRoot}/series/{seriesId}";
-            return $"{WebsiteRoot}/?tab=cachedSeries&id={seriesId}";
+            return $"{WebsiteRoot}/?tab=series&id={seriesId}";
         }
 
         [NotNull]
