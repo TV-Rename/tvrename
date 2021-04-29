@@ -148,17 +148,6 @@ namespace TVRename
             }
         }*/
 
-        // public void ReIndex()
-        // {
-        //     List<int> toReIndex = this.Where(x => x.Key != x.Value.TvdbCode).Select(x => x.Key).ToList();
-        //
-        //     foreach (int x in toReIndex)
-        //     {
-        //         TryRemove(x, out ShowConfiguration si);
-        //         Add(si);
-        //     }
-        // }
-
         public void GenDict()
         {
             foreach (ShowConfiguration show in Shows)

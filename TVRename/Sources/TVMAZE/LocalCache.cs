@@ -213,12 +213,12 @@ namespace TVRename.TVmaze
 
         public void UpdatesDoneOk()
         {
-            //No Need to do anything aswe always refresh from scratch
+            //No Need to do anything as we always refresh from scratch
         }
 
         public CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox)
         {
-            throw new NotImplementedException(); //TODO
+            throw new NotImplementedException(); //todo - (BulkAdd Manager needs to work for new providers)
         }
 
         public CachedSeriesInfo? GetSeries(int id)

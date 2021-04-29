@@ -375,7 +375,7 @@ namespace TVRename.TMDB
 
         public CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox)
         {
-            throw new NotImplementedException(); //TODO
+            throw new NotImplementedException(); //todo - (BulkAdd Manager needs to work for new providers)
         }
 
         public CachedMovieInfo? GetMovie(PossibleNewMovie show, bool showErrorMsgBox) => GetMovie(show.RefinedHint, show.PossibleYear, showErrorMsgBox, false);

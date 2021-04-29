@@ -6,7 +6,6 @@ using System.Threading;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using TVRename.Forms.Utilities;
-//using TVRename.TheTVDB; //todo - remove this
 
 namespace TVRename
 {
@@ -394,10 +393,12 @@ namespace TVRename
                     {
                         toRemove.Add(ss);
                     }
+                    if (ss.TmdbId == sid.ShowId && sid.ShowIdProvider == TVDoc.ProviderType.TMDB)
+                    {
+                        toRemove.Add(ss);
+                    }
                 }
             }
-
-            //todo - similar for movies
 
             foreach (SeriesSpecifier s in toRemove)
             {

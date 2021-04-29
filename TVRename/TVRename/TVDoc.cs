@@ -1433,7 +1433,7 @@ namespace TVRename
         {
             PreventAutoScan("TVDB Accuracy Check");
             IEnumerable<CachedSeriesInfo> seriesToUpdate = TheTVDB.LocalCache.Instance.ServerAccuracyCheck();
-            IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(info => TvLibrary.GetShowItem(info.TvdbCode,ProviderType.TheTVDB));//TODO - Revisit for multisource
+            IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(info => TvLibrary.GetShowItem(info.TvdbCode,ProviderType.TheTVDB));
             ForceRefreshShows(showsToUpdate, unattended, hidden,owner);
             DoDownloadsBG();
             AllowAutoScan();
@@ -1524,11 +1524,6 @@ namespace TVRename
         }
 
         public void ClearShowProblems() => cacheManager.ClearProblems();
-
-        public void ReindexLibrary()
-        {
-            //TvLibrary.ReIndex(); //TODO - Revisit for multisource
-        }
 
         public void UpdateMissingAction([NotNull] ItemMissing mi, string fileName)
         {

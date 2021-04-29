@@ -36,8 +36,8 @@ namespace TVRename
         public static void GuessShowItem([NotNull] PossibleNewTvShow ai, [NotNull] ShowLibrary library, bool showErrorMsgBox)
         {
             string showName = GuessShowName(ai, library);
-
-            int tvdbId = FindShowCode(ai);
+            //todo - (BulkAdd Manager needs to work for new providers)
+            int tvdbId = FindTVDBShowCode(ai);
 
             if (string.IsNullOrEmpty(showName)  && tvdbId == -1)
             {
@@ -89,7 +89,7 @@ namespace TVRename
             }
         }
 
-        private static int FindShowCode(PossibleNewTvShow ai)
+        private static int FindTVDBShowCode(PossibleNewTvShow ai)
         {
             List<string> possibleFilenames = new List<string> {"cachedSeries.xml", "tvshow.nfo"};
             foreach (string fileName in possibleFilenames)
@@ -99,7 +99,7 @@ namespace TVRename
                     IEnumerable<FileInfo> files = ai.Folder.EnumerateFiles(fileName).ToList();
                     if (files.Any())
                     {
-                        foreach (int x in files.Select(FindShowCode).Where(x => x != -1))
+                        foreach (int x in files.Select(FindTVDBShowCode).Where(x => x != -1))
                         {
                             return x;
                         }
@@ -126,7 +126,7 @@ namespace TVRename
             return -1;
         }
 
-        private static int FindShowCode([NotNull] FileInfo file)
+        private static int FindTVDBShowCode([NotNull] FileInfo file)
         {
             try
             {

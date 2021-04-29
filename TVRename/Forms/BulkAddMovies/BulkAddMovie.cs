@@ -484,21 +484,21 @@ namespace TVRename
                 return;
             }
 
-            if (!(lvFMNewShows.SelectedItems[0].Tag is PossibleNewTvShow fme))
+            if (!(lvFMNewShows.SelectedItems[0].Tag is PossibleNewMovie fme))
             {
                 return;
             }
 
             if (fme.CodeKnown)
             {
-                if (fme.Provider == TVDoc.ProviderType.TheTVDB)
+                switch (fme.Provider)
                 {
-                    Helpers.OpenUrl(
-                        TheTVDB.API.WebsiteShowUrl(fme.ProviderCode)); 
-                }
-                else
-                {
-                    //todo - how will bulk add work for MTVmaze
+                    case TVDoc.ProviderType.TheTVDB:
+                        Helpers.OpenUrl(TheTVDB.API.WebsiteShowUrl(fme.ProviderCode));
+                        break;
+                    case TVDoc.ProviderType.TMDB:
+                        Helpers.OpenUrl($"https://www.themoviedb.org/movie/{fme.ProviderCode}");
+                        break;
                 }
             }
         }

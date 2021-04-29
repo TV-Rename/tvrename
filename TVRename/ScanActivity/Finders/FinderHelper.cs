@@ -566,14 +566,28 @@ namespace TVRename
             {
                 return doc.TvLibrary.Shows
                     .Where(item => item.NameMatch(matchedFile, useFullPath))
-                    .Where(item => item.TvdbCode != currentlyMatchedTvShow.TvdbCode)//todo - remove TVDB Dependency
+                    .Where(item => !HaveACommonId(item,currentlyMatchedTvShow))
                     .Any(testShow => testShow.ShowName.Contains(currentlyMatchedTvShow.ShowName));
             }
 
             return doc.FilmLibrary.Movies
                 .Where(item => item.NameMatch(matchedFile, useFullPath))
-                .Where(item => item.TmdbCode != currentlyMatchedShow.TmdbCode)//todo - remove TMDB Dependency
+                .Where(item => !HaveACommonId(item, currentlyMatchedShow))
                 .Any(testShow => testShow.ShowName.Contains(currentlyMatchedShow.ShowName));
+        }
+
+        private static bool HaveACommonId(MediaConfiguration item, MediaConfiguration currentlyMatchedTvShow)
+        {
+            return HaveSameNonZeroId(item, currentlyMatchedTvShow, TVDoc.ProviderType.TheTVDB)
+                || HaveSameNonZeroId(item, currentlyMatchedTvShow, TVDoc.ProviderType.TMDB)
+                || HaveSameNonZeroId(item, currentlyMatchedTvShow, TVDoc.ProviderType.TVmaze);
+        }
+
+        private static bool HaveSameNonZeroId(MediaConfiguration item, MediaConfiguration currentlyMatchedTvShow, TVDoc.ProviderType p)
+        {
+            return (item.IdCode(p) != currentlyMatchedTvShow.IdCode(p))
+                   && (item.IdCode(p) > 0)
+                   && (currentlyMatchedTvShow.IdCode(p) > 0);
         }
 
         private static string RemoveSe(string hint)

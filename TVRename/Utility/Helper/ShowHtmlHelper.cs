@@ -237,7 +237,7 @@ namespace TVRename
             string siteRating = ser.SiteRating > 0 ? ser.SiteRating + "/10" : "";
             string runTimeHtml = string.IsNullOrWhiteSpace(ser.Runtime) ? string.Empty : $"<br/> {ser.Runtime} min";
             string actorLinks = ser.GetActors().Select(ActorLinkHtml).ToCsv();
-            string tvdbLink = ser.TvdbCode>0?TheTVDB.API.WebsiteShowUrl(ser.TvdbCode):string.Empty;
+            string tvdbLink = ser.TvdbCode>0?TheTVDB.API.WebsiteShowUrl(ser.TvdbCode):string.Empty; //todo -check this works - looks like the Show version
 
             string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : $"http://www.tv.com/show/{ser.SeriesId}/summary.html";
             string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";

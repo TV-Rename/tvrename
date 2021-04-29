@@ -40,7 +40,7 @@ namespace TVRename.TheTVDB
     public class LocalCache :  MediaCache, iTVSource, iMovieSource
     {
 #nullable enable
-        public static readonly ApiVersion VERS = ApiVersion.v3; //TODO - Revert and make user selectable
+        public static readonly ApiVersion VERS = ApiVersion.v3; //TODO - API.V4 Revert and make user selectable
 
         private ConcurrentDictionary<int, ExtraEp>
             extraEpisodes; // IDs of extra episodes to grab and merge in on next update
@@ -2055,12 +2055,13 @@ namespace TVRename.TheTVDB
         {
             // remove any shows from thetvdb that aren't in My Shows
             List<int> removeList = new List<int>();
+            List<ShowConfiguration> showConfigurations = libraryValues.ToList();
 
             lock (SERIES_LOCK)
             {
                 foreach (KeyValuePair<int, CachedSeriesInfo> kvp in Series)
                 {
-                    bool found = libraryValues.Any(si => si.TvdbCode == kvp.Key);
+                    bool found = showConfigurations.Any(si => si.TvdbCode == kvp.Key);
                     if (!found)
                     {
                         removeList.Add(kvp.Key);
