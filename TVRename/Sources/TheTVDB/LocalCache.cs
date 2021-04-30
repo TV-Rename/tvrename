@@ -245,7 +245,25 @@ namespace TVRename.TheTVDB
 
         public void Tidy(IEnumerable<MovieConfiguration> libraryValues)
         {
-            throw new NotImplementedException();
+            // remove any shows from cache that aren't in My Movies
+            List<int> removeList = new List<int>();
+
+            lock (MOVIE_LOCK)
+            {
+                foreach (KeyValuePair<int, CachedMovieInfo> kvp in Movies)
+                {
+                    bool found = libraryValues.Any(si => si.TmdbCode == kvp.Key);
+                    if (!found)
+                    {
+                        removeList.Add(kvp.Key);
+                    }
+                }
+
+                foreach (int i in removeList)
+                {
+                    ForgetMovie(i);
+                }
+            }
         }
 
         public void ForgetEverything()
