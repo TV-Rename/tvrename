@@ -46,8 +46,8 @@ namespace TVRename
         }
 
         public override string ToString() => Type == MediaConfiguration.MediaType.tv
-            ? $"{Name}//tvdb={TvdbSeriesId}//tvmaze={TvMazeSeriesId}//TMDB={TmdbId} {Provider} and lang = {CustomLanguageCode}."
-            : $"{Name}//tvdb={TvdbSeriesId}//TMDB={TmdbId} {Provider} and lang = {CustomLanguageCode}.";
+            ? $"{Name}//tvdb={TvdbSeriesId}//tvmaze={TvMazeSeriesId}//TMDB={TmdbId} {Provider} and lang = {LanguageCode}."
+            : $"{Name}//tvdb={TvdbSeriesId}//TMDB={TmdbId} {Provider} and lang = {LanguageCode}.";
 
         public int IdFor(TVDoc.ProviderType provider)
         {
@@ -59,5 +59,7 @@ namespace TVRename
                 _ => throw new ArgumentOutOfRangeException(nameof(provider), provider, null)
             };
         }
+
+        public string LanguageCode =>UseCustomLanguage ? CustomLanguageCode : TVSettings.Instance.PreferredLanguageCode;
     }
 }

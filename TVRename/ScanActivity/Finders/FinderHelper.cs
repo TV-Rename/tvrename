@@ -15,7 +15,6 @@ using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 using NLog;
 using NodaTime;
-using TVRename.TMDB;
 using Path = System.IO.Path;
 
 namespace TVRename
@@ -736,7 +735,8 @@ namespace TVRename
 
                 if (assumeMovie && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && true)//todo use  TVSettings.Instance.AutomateAutoAddWhenOneMovieFound
                 {
-                    CachedMovieInfo? foundMovie = LocalCache.Instance.GetMovie(refinedHint, null, true, true);
+                    //TODO - Make generic, currently uses TMDB only
+                    CachedMovieInfo? foundMovie = TMDB.LocalCache.Instance.GetMovie(refinedHint, null,TVSettings.Instance.TMDBLanguage, true, true);
                     if (foundMovie!=null)
                     {
                         // no need to popup dialog

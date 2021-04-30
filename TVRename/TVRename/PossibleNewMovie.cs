@@ -51,9 +51,12 @@ namespace TVRename
 
         public void GuessMovie(bool showErrorMsgBox)
         {
+            //TODO  make generic, as this assumes TMDB
+            string language = TVSettings.Instance.TMDBLanguage;
+
             //Lookup based on TMDB ID Being Present
             int? tmdbId = ConvertToInt(FindShowCode("tmdbid", "tmdb"));
-            int? TMDBCode = ValidateOnTMDB(tmdbId, showErrorMsgBox);
+            int? TMDBCode = ValidateOnTMDB(tmdbId, language, showErrorMsgBox);
             if (TMDBCode.HasValue)
             {
                 SetId(TMDBCode.Value, TVDoc.ProviderType.TMDB);
@@ -78,7 +81,7 @@ namespace TVRename
 
             if (imdbToTest.HasValue())
             {
-                CachedMovieInfo? s = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbToTest!, showErrorMsgBox);
+                CachedMovieInfo? s = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbToTest!, TVSettings.Instance.TMDBLanguage, showErrorMsgBox);
                 if (s != null)
                 {
                     SetId(s.TmdbCode, TVDoc.ProviderType.TMDB);
@@ -88,7 +91,7 @@ namespace TVRename
             }
 
             //Do a Search on TMDB
-            CachedMovieInfo? ser = TMDB.LocalCache.Instance.GetMovie(this, showErrorMsgBox);
+            CachedMovieInfo? ser = TMDB.LocalCache.Instance.GetMovie(this, TVSettings.Instance.TMDBLanguage , showErrorMsgBox);
             if (ser != null)
             {
                 SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
@@ -96,7 +99,7 @@ namespace TVRename
             }
 
             //Tweak the hints and do another Search on TMDB
-            ser = ParseHints(showErrorMsgBox);
+            ser = ParseHints(showErrorMsgBox, language);
             if (ser != null)
             {
                 SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
@@ -130,7 +133,7 @@ namespace TVRename
             Provider = provider;
         }
 
-        private CachedMovieInfo? ParseHints(bool showErrorMsgBox)
+        private CachedMovieInfo? ParseHints(bool showErrorMsgBox, string language)
         {
             Match mat = Regex.Match(RefinedHint.Trim(), @"\s(\d{4})$");
             if (mat.Success)
@@ -158,19 +161,19 @@ namespace TVRename
                 RefinedHint = refinedHint;
                 PossibleYear ??= newPossibleYear;
 
-                return TMDB.LocalCache.Instance.GetMovie(this, showErrorMsgBox);
+                return TMDB.LocalCache.Instance.GetMovie(this, language, showErrorMsgBox);
             }
 
             return null;
         }
 
-        private int? ValidateOnTMDB(int? tmdbId, bool showErrorMsgBox)
+        private int? ValidateOnTMDB(int? tmdbId,string language, bool showErrorMsgBox)
         {
             if (tmdbId.HasValue)
             {
                 try
                 {
-                    CachedMovieInfo series = TMDB.LocalCache.Instance.GetMovieAndDownload(tmdbId.Value, showErrorMsgBox);
+                    CachedMovieInfo series = TMDB.LocalCache.Instance.GetMovieAndDownload(tmdbId.Value, language, showErrorMsgBox);
                     return series.TmdbCode;
                 }
                 catch (MediaNotFoundException)

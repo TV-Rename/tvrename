@@ -107,6 +107,8 @@ namespace TVRename
             chrInformation.RequestHandler = new BrowserRequestHandler();
             chrMovieImages.RequestHandler = new BrowserRequestHandler();
             chrMovieInformation.RequestHandler = new BrowserRequestHandler();
+            chrMovieTrailer.RequestHandler = new BrowserRequestHandler();
+            chrTvTrailer.RequestHandler = new BrowserRequestHandler();
 
             ScanAndDo = ScanAndAction;
             ReceiveArgumentDelegate = ReceiveArgs;
@@ -486,12 +488,14 @@ namespace TVRename
             SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(defaultText));
             SetHtmlBody(chrInformation, ShowHtmlHelper.CreateOldPage(defaultText));
             SetHtmlBody(chrSummary, ShowHtmlHelper.CreateOldPage(defaultText));
+            SetHtmlBody(chrTvTrailer, ShowHtmlHelper.CreateOldPage(defaultText));
         }
 
         private void ClearMovieInfoWindows(string defaultText)
         {
             SetHtmlBody(chrMovieImages, ShowHtmlHelper.CreateOldPage(defaultText));
             SetHtmlBody(chrMovieInformation, ShowHtmlHelper.CreateOldPage(defaultText));
+            SetHtmlBody(chrMovieTrailer, ShowHtmlHelper.CreateOldPage(defaultText));
         }
 
         private void MoreBusy() => Interlocked.Increment(ref busy);
@@ -1165,10 +1169,10 @@ namespace TVRename
 
             try
             {
-                SetHtmlBody(chrInformation, QuickStartGuide());
-                SetHtmlBody(chrImages, QuickStartGuide());
-                SetHtmlBody(chrSummary, QuickStartGuide());
-
+                SetHtmlEmbed(chrInformation, QuickStartGuide());
+                SetHtmlEmbed(chrImages, QuickStartGuide());
+                SetHtmlEmbed(chrSummary, QuickStartGuide());
+                SetHtmlEmbed(chrTvTrailer, QuickStartGuide());
             }
             catch (COMException ex)
             {
@@ -1299,17 +1303,17 @@ namespace TVRename
                 if (snum >= 0 && si.AppropriateSeasons().ContainsKey(snum))
                 {
                     ProcessedSeason s = si.AppropriateSeasons()[snum];
-                   SetHtmlBody(chrInformation, ShowHtmlHelper.CreateOldPage(si.GetSeasonHtmlOverviewOffline(s)));
+                    SetHtmlBody(chrInformation, ShowHtmlHelper.CreateOldPage(si.GetSeasonHtmlOverviewOffline(s)));
                     SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
-                    SetHtmlBody(chrSummary, ShowHtmlHelper.CreateOldPage("Not available offline"));
                 }
                 else
                 {
                     // no epnum specified, just show an overview
                     SetHtmlBody(chrInformation, ShowHtmlHelper.CreateOldPage(si.GetShowHtmlOverviewOffline()));
                     SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
-                    SetHtmlBody(chrSummary, ShowHtmlHelper.CreateOldPage("Not available offline"));
                 }
+                SetHtmlBody(chrSummary, ShowHtmlHelper.CreateOldPage("Not available offline"));
+                SetHtmlBody(chrTvTrailer, ShowHtmlHelper.CreateOldPage("Not available offline"));
 
                 return; 
             }
@@ -1320,6 +1324,7 @@ namespace TVRename
                 SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
                 SetHtmlBody(chrInformation, si.GetSeasonHtmlOverview(s, false));
                 SetHtmlBody(chrSummary, si.GetSeasonSummaryHtmlOverview(s, false));
+                UpdateTvTrailer(si);
 
                 if (bwSeasonHTMLGenerator.WorkerSupportsCancellation)
                 {
@@ -1349,6 +1354,7 @@ namespace TVRename
                 SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
                 SetHtmlBody(chrInformation, si.GetShowHtmlOverview(false));
                 SetHtmlBody(chrSummary, si.GetShowSummaryHtmlOverview(false));
+                UpdateTvTrailer(si);
 
                 if (bwShowHTMLGenerator.WorkerSupportsCancellation)
                 {
@@ -1371,6 +1377,18 @@ namespace TVRename
                 {
                     bwShowSummaryHTMLGenerator.RunWorkerAsync(si);
                 }
+            }
+        }
+
+        private void UpdateTvTrailer(ShowConfiguration? si)
+        {
+            if (si.CachedShow?.TrailerUrl?.HasValue() ?? false)
+            {
+                SetHtmlEmbed(chrTvTrailer, ShowHtmlHelper.YoutubeTrailer(si.CachedShow));
+            }
+            else
+            {
+                SetHtmlBody(chrTvTrailer, ShowHtmlHelper.CreateOldPage("Not available for this TV show"));
             }
         }
 
@@ -1399,7 +1417,29 @@ namespace TVRename
             }
             web.Update();
         }
+        private static void SetHtmlEmbed([NotNull] ChromiumWebBrowser web, string link)
+        {
+            if (web.IsDisposed)
+            {
+                return;
+            }
 
+            try
+            {
+                web.Load(link);
+            }
+            catch (COMException ex)
+            {
+                //Fail gracefully - no RHS episode guide is not too big of a problem.
+                Logger.Warn(ex, "Could not update UI for the show/cachedSeries information pane");
+            }
+            catch (Exception ex)
+            {
+                //Fail gracefully - no RHS episode guide is not too big of a problem.
+                Logger.Error(ex);
+            }
+            web.Update();
+        }
         private static void TvSourceFor(ProcessedEpisode? e)
         {
             if (e?.WebsiteUrl != null)
@@ -3118,10 +3158,20 @@ namespace TVRename
             {
                 SetHtmlBody(chrMovieInformation, ShowHtmlHelper.CreateOldPage(si.GetMovieHtmlOverviewOffline()));
                 SetHtmlBody(chrMovieImages, ShowHtmlHelper.CreateOldPage(si.GetMovieImagesHtmlOverview()));
+                SetHtmlBody(chrMovieTrailer, ShowHtmlHelper.CreateOldPage("Not available offline"));
                 return;
             }
             SetHtmlBody(chrMovieImages, ShowHtmlHelper.CreateOldPage(si.GetMovieImagesHtmlOverview()));
             SetHtmlBody(chrMovieInformation, si.GetMovieHtmlOverview(false));
+            if (si.CachedMovie?.TrailerUrl?.HasValue() ?? false)
+            {
+                SetHtmlEmbed(chrMovieTrailer, ShowHtmlHelper.YoutubeTrailer(si.CachedMovie));
+            }
+            else
+            {
+                SetHtmlBody(chrMovieTrailer, ShowHtmlHelper.CreateOldPage("Not available for this Movie"));
+            }
+
             if (bwMovieHTMLGenerator.WorkerSupportsCancellation)
             {
                 // Cancel the asynchronous operation.
@@ -4939,6 +4989,11 @@ namespace TVRename
         if (url == UI.QuickStartGuide())
         {
             return false; // let the quick-start guide be shown
+        }
+
+        if (url.Contains("://www.youtube.com/embed/"))
+        {
+            return false; // let embedded youtube URL be show
         }
 
         if (url.StartsWith(UI.EXPLORE_PROXY, StringComparison.InvariantCultureIgnoreCase))

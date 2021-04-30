@@ -327,7 +327,7 @@ namespace TVRename
             switch (si.Provider)
             {
                 case TVDoc.ProviderType.TheTVDB:
-                    //tofo reenable when TVDB has movies
+                    //todo reenable when TVDB has movies
                     //if (si.TVDBSlug > 0)
                     //{
                     //return $"https://thetvdb.com/movies/{TVDBSlug}/edit";
@@ -338,15 +338,15 @@ namespace TVRename
                 case TVDoc.ProviderType.TMDB:
                     if (si.TmdbCode > 0)
                     {
-                        return $"https://www.themoviedb.org/tv/{si.TmdbCode}/edit?active_nav_item=primary_facts";
+                        return $"https://www.themoviedb.org/tv/{si.TmdbCode}/edit?active_nav_item=seasons";
                     }
 
                     return null;
 
                 case TVDoc.ProviderType.TVmaze:
-                    if (si.TVmazeCode > 0)
+                    if (si.TVmazeCode > 0 && s.SeasonId>0)
                     {
-                        return $"https://www.themoviedb.org/tv/{s.SeasonId}/edit?active_nav_item=primary_facts";
+                        return $"https://www.tvmaze.com/season/update?id={s.SeasonId}";
                     }
 
                     return null;
@@ -1367,6 +1367,11 @@ namespace TVRename
         private static string GetOverviewPart(string name, string? value)
         {
             return string.IsNullOrWhiteSpace(value)? string.Empty: "<tr><td width=120px>" + name + "</td><td>" + value + "</td></tr>";
+        }
+
+        public static string? YoutubeTrailer(CachedMediaInfo? si)
+        {
+            return si?.TrailerUrl?.Replace("/watch?v=", "/embed/");
         }
     }
 }

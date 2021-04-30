@@ -336,8 +336,10 @@ namespace TVRename
         public void TidyCaches()
         {
             TheTVDB.LocalCache.Instance.Tidy(TvLibrary.Shows);
+            TheTVDB.LocalCache.Instance.Tidy(FilmLibrary.Movies);
             TVmaze.LocalCache.Instance.Tidy(TvLibrary.Shows);
             TMDB.LocalCache.Instance.Tidy(FilmLibrary.Movies);
+            TMDB.LocalCache.Instance.Tidy(TvLibrary.Shows);
         }
 
         public void Closing()

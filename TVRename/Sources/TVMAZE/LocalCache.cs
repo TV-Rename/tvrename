@@ -12,8 +12,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using JetBrains.Annotations;
-using TMDbLib.Objects.General;
-using TMDbLib.Objects.Search;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 // Talk to the TVmaze web API, and get tv cachedSeries info
@@ -209,14 +207,14 @@ namespace TVRename.TVmaze
         }
 
         private void AddPlaceholderSeries([NotNull] SeriesSpecifier ss)
-            => AddPlaceholderSeries(ss.TvdbSeriesId, ss.TvMazeSeriesId,ss.TmdbId, ss.CustomLanguageCode);
+            => AddPlaceholderSeries(ss.TvdbSeriesId, ss.TvMazeSeriesId,ss.TmdbId, ss.LanguageCode);
 
         public void UpdatesDoneOk()
         {
             //No Need to do anything as we always refresh from scratch
         }
 
-        public CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox)
+        public CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox, string languageCode)
         {
             throw new NotImplementedException(); //todo - (BulkAdd Manager needs to work for new providers)
         }
@@ -229,7 +227,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type)
+        public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type, string languageCode)
         {
             if (type == MediaConfiguration.MediaType.tv)
             {

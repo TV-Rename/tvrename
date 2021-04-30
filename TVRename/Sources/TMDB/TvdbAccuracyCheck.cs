@@ -10,6 +10,8 @@ namespace TVRename.TMDB
         [NotNull] internal readonly List<CachedMovieInfo> ShowsToUpdate;
         [NotNull] private readonly LocalCache lc;
 
+        //TODO - make this work for TV Shows too
+
         public TmdbAccuracyCheck(LocalCache localCache)
         {
             lc = localCache;
@@ -22,7 +24,7 @@ namespace TVRename.TMDB
             int tvdbId = si.TmdbCode;
             try
             {
-                CachedMovieInfo newSi = lc.DownloadMovieNow(tvdbId, false);
+                CachedMovieInfo newSi = lc.DownloadMovieNow(tvdbId,si.LanguageCodeToUse(TVDoc.ProviderType.TMDB), false);
 
                 if (!Match(newSi,si))
                 {

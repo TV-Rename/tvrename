@@ -133,6 +133,8 @@ namespace TVRename
             this.chrMovieInformation = new CefSharp.WinForms.ChromiumWebBrowser();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.chrMovieImages = new CefSharp.WinForms.ChromiumWebBrowser();
+            this.tpMovieTrailer = new System.Windows.Forms.TabPage();
+            this.chrMovieTrailer = new CefSharp.WinForms.ChromiumWebBrowser();
             this.tbMyShows = new System.Windows.Forms.TabPage();
             this.tsMyShows = new System.Windows.Forms.ToolStrip();
             this.btnAddTVShow = new System.Windows.Forms.ToolStripButton();
@@ -155,6 +157,8 @@ namespace TVRename
             this.chrImages = new CefSharp.WinForms.ChromiumWebBrowser();
             this.tpSummary = new System.Windows.Forms.TabPage();
             this.chrSummary = new CefSharp.WinForms.ChromiumWebBrowser();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.chrTvTrailer = new CefSharp.WinForms.ChromiumWebBrowser();
             this.tbAllInOne = new System.Windows.Forms.TabPage();
             this.olvAction = new TVRename.ObjectListViewFlickerFree();
             this.olvShowColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -261,6 +265,7 @@ namespace TVRename
             this.tabControl3.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tpMovieTrailer.SuspendLayout();
             this.tbMyShows.SuspendLayout();
             this.tsMyShows.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -271,6 +276,7 @@ namespace TVRename
             this.tpInformation.SuspendLayout();
             this.tpImages.SuspendLayout();
             this.tpSummary.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.tbAllInOne.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvAction)).BeginInit();
             this.tsScanResults.SuspendLayout();
@@ -948,6 +954,7 @@ namespace TVRename
             this.tabControl3.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
             this.tabControl3.Controls.Add(this.tabPage1);
             this.tabControl3.Controls.Add(this.tabPage2);
+            this.tabControl3.Controls.Add(this.tpMovieTrailer);
             this.tabControl3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl3.Location = new System.Drawing.Point(0, 0);
             this.tabControl3.Name = "tabControl3";
@@ -994,6 +1001,26 @@ namespace TVRename
             this.chrMovieImages.Name = "chrMovieImages";
             this.chrMovieImages.Size = new System.Drawing.Size(471, 390);
             this.chrMovieImages.TabIndex = 1;
+            // 
+            // tpMovieTrailer
+            // 
+            this.tpMovieTrailer.Controls.Add(this.chrMovieTrailer);
+            this.tpMovieTrailer.Location = new System.Drawing.Point(4, 25);
+            this.tpMovieTrailer.Name = "tpMovieTrailer";
+            this.tpMovieTrailer.Padding = new System.Windows.Forms.Padding(3);
+            this.tpMovieTrailer.Size = new System.Drawing.Size(477, 396);
+            this.tpMovieTrailer.TabIndex = 2;
+            this.tpMovieTrailer.Text = "Trailer";
+            this.tpMovieTrailer.UseVisualStyleBackColor = true;
+            // 
+            // chrMovieTrailer
+            // 
+            this.chrMovieTrailer.ActivateBrowserOnCreation = false;
+            this.chrMovieTrailer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chrMovieTrailer.Location = new System.Drawing.Point(3, 3);
+            this.chrMovieTrailer.Name = "chrMovieTrailer";
+            this.chrMovieTrailer.Size = new System.Drawing.Size(471, 390);
+            this.chrMovieTrailer.TabIndex = 2;
             // 
             // tbMyShows
             // 
@@ -1179,6 +1206,7 @@ namespace TVRename
             this.tabControl2.Controls.Add(this.tpInformation);
             this.tabControl2.Controls.Add(this.tpImages);
             this.tabControl2.Controls.Add(this.tpSummary);
+            this.tabControl2.Controls.Add(this.tabPage3);
             this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl2.Location = new System.Drawing.Point(0, 0);
             this.tabControl2.Name = "tabControl2";
@@ -1245,6 +1273,26 @@ namespace TVRename
             this.chrSummary.Name = "chrSummary";
             this.chrSummary.Size = new System.Drawing.Size(471, 390);
             this.chrSummary.TabIndex = 2;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.chrTvTrailer);
+            this.tabPage3.Location = new System.Drawing.Point(4, 25);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(477, 396);
+            this.tabPage3.TabIndex = 3;
+            this.tabPage3.Text = "Trailer";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // chrTvTrailer
+            // 
+            this.chrTvTrailer.ActivateBrowserOnCreation = false;
+            this.chrTvTrailer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chrTvTrailer.Location = new System.Drawing.Point(3, 3);
+            this.chrTvTrailer.Name = "chrTvTrailer";
+            this.chrTvTrailer.Size = new System.Drawing.Size(471, 390);
+            this.chrTvTrailer.TabIndex = 2;
             // 
             // tbAllInOne
             // 
@@ -2195,6 +2243,7 @@ namespace TVRename
             this.tabControl3.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
+            this.tpMovieTrailer.ResumeLayout(false);
             this.tbMyShows.ResumeLayout(false);
             this.tbMyShows.PerformLayout();
             this.tsMyShows.ResumeLayout(false);
@@ -2208,6 +2257,7 @@ namespace TVRename
             this.tpInformation.ResumeLayout(false);
             this.tpImages.ResumeLayout(false);
             this.tpSummary.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
             this.tbAllInOne.ResumeLayout(false);
             this.tbAllInOne.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvAction)).EndInit();
@@ -2423,5 +2473,9 @@ namespace TVRename
         private CefSharp.WinForms.ChromiumWebBrowser chrSummary;
         private CefSharp.WinForms.ChromiumWebBrowser chrMovieImages;
         private System.ComponentModel.BackgroundWorker bwScan;
+        private TabPage tpMovieTrailer;
+        private CefSharp.WinForms.ChromiumWebBrowser chrMovieTrailer;
+        private TabPage tabPage3;
+        private CefSharp.WinForms.ChromiumWebBrowser chrTvTrailer;
     }
 }

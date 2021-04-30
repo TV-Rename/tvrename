@@ -88,6 +88,6 @@ namespace TVRename
             };
         }
 
-        public abstract void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type);
+        public abstract void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type, string LanguageCode);
     }
 }

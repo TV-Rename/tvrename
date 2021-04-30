@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Xml.Linq;
 using JetBrains.Annotations;
 
 namespace TVRename
@@ -20,14 +22,21 @@ namespace TVRename
         public int TmdbCode;
         public string? WebUrl;
         public string? OfficialUrl;
+        public string? TrailerUrl;
         public string? ShowLanguage;
         public string? PosterUrl;
         public string? TwitterId;
         public string? InstagramId;
         public string? FacebookId;
         public string? TagLine;
+        public string? SeriesId;
+        public string? Slug;
         public double? Popularity;
+        public DateTime? FirstAired;
+        public readonly string? TargetLanguageCode; //The Language Code we'd like the Series in ; null if we want to use the system setting
+        public int LanguageId; //The actual language obtained
 
+        public string? Status { get; set; }
         public bool IsSearchResultOnly; // set to true if local info is known to be just certain fields found from search results. Do not need to be saved
 
         protected List<Actor> Actors;
@@ -38,6 +47,9 @@ namespace TVRename
         public bool Dirty; // set to true if local info is known to be older than whats on the server
         public long SrvLastUpdated;
 
+        public string LanguageCodeToUse(TVDoc.ProviderType provider) => UseCustomLanguage && (TargetLanguageCode.HasValue())
+            ? TargetLanguageCode
+            : provider == TVDoc.ProviderType.TMDB ? TVSettings.Instance.TMDBLanguage : TVSettings.Instance.PreferredLanguageCode;
 
         private protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
@@ -55,7 +67,25 @@ namespace TVRename
             TvMazeCode = -1;
             TvRageCode = 0;
             TmdbCode = -1;
+
+            LanguageId = -1;
+            Status = "Unknown";
         }
+
+        protected CachedMediaInfo(int tvdb, int tvmaze, int tmdbId) : this()
+        {
+            IsSearchResultOnly = false;
+            TvMazeCode = tvmaze;
+            TvdbCode = tvdb;
+            TmdbCode = tmdbId;
+        }
+
+        protected CachedMediaInfo(int tvdb, int tvmaze, int tmdbId, string langCode) : this(tvdb, tvmaze, tmdbId)
+        {
+            TargetLanguageCode = langCode;
+        }
+
+        public bool UseCustomLanguage => TargetLanguageCode != null;
         protected abstract MediaConfiguration.MediaType MediaType();
         public int IdCode(TVDoc.ProviderType source)
         {
@@ -104,6 +134,45 @@ namespace TVRename
             Crew.Add(crew);
         }
 
+        protected static float GetSiteRating([NotNull] XElement seriesXml)
+        {
+            string siteRatingString = seriesXml.ExtractStringOrNull("siteRating") ?? seriesXml.ExtractString("SiteRating");
+            float.TryParse(siteRatingString,
+                NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite,
+                CultureInfo.CreateSpecificCulture("en-US"), out float x);
+
+            return x;
+        }
+
+        [NotNull]
+        protected string GenerateErrorMessage() => "Error processing data from TheTVDB for a show. " + this + "\r\nLanguage: \"" + LanguageId + "\"";
+
+        protected void LoadActors([NotNull] XElement seriesXml)
+        {
+            ClearActors();
+            foreach (Actor a in seriesXml.Descendants("Actors").Descendants("Actor").Select(actorXml => new Actor(actorXml)))
+            {
+                AddActor(a);
+            }
+        }
+
+        protected void LoadAliases([NotNull] XElement seriesXml)
+        {
+            Aliases = new List<string>();
+            foreach (XElement aliasXml in seriesXml.Descendants("Aliases").Descendants("Alias"))
+            {
+                Aliases.Add(aliasXml.Value);
+            }
+        }
+
+        protected void LoadGenres([NotNull] XElement seriesXml)
+        {
+            Genres = seriesXml
+                .Descendants("Genres")
+                .Descendants("Genre")
+                .Select(g => g.Value.Trim()).Distinct()
+                .ToList();
+        }
 
         [NotNull]
         public string GetImdbNumber() =>

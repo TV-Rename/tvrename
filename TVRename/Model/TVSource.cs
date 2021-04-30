@@ -22,7 +22,7 @@ namespace TVRename
         bool EnsureUpdated(SeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
         void UpdatesDoneOk();
 
-        CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox);
+        CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox, string languageCode);
         CachedSeriesInfo GetSeries(int id);
         bool HasSeries(int id);
 

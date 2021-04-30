@@ -126,17 +126,18 @@ namespace TVRename.Forms
 
         private void BwScan_DoWork(object sender, DoWorkEventArgs e)
         {
+            string languageCode = TVSettings.Instance.TMDBLanguage;
             switch (media)
             {
                 case MediaConfiguration.MediaType.tv:
-                    recs = TMDB.LocalCache.Instance.GetRecommendations(mDoc, (BackgroundWorker)sender, tvShows.ToList()).Result;
+                    recs = TMDB.LocalCache.Instance.GetRecommendations(mDoc, (BackgroundWorker)sender, tvShows.ToList(), languageCode).Result;
                     foreach (KeyValuePair<int, RecommendationResult> rec in recs)
                     {
                         Logger.Warn($"{rec.Key,-10} | {(rec.Value.TopRated ? "Top" : "   ")} | {(rec.Value.Trending ? "Trend" : "    ")} | {rec.Value.Related.Count,5} | {rec.Value.Similar.Count,5} | {mDoc.TvLibrary.Shows.All(configuration => configuration.TmdbCode != rec.Key)} | {TMDB.LocalCache.Instance.GetSeries(rec.Key)?.Name}");
                     }
                     break;
                 case MediaConfiguration.MediaType.movie:
-                    recs = TMDB.LocalCache.Instance.GetRecommendations(mDoc, (BackgroundWorker)sender, movies.ToList()).Result;
+                    recs = TMDB.LocalCache.Instance.GetRecommendations(mDoc, (BackgroundWorker)sender, movies.ToList(), languageCode).Result;
                     foreach (KeyValuePair<int, RecommendationResult> rec in recs)
                     {
                         Logger.Warn($"{rec.Key,-10} | {(rec.Value.TopRated?"Top":"   ")} | {(rec.Value.Trending ? "Trend":"    ")} | {rec.Value.Related.Count,5} | {rec.Value.Similar.Count,5} | {TMDB.LocalCache.Instance.GetMovie(rec.Key)?.IsSearchResultOnly} | {TMDB.LocalCache.Instance.GetMovie(rec.Key)?.Name}");

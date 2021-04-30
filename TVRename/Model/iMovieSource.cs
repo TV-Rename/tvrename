@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Threading;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
@@ -13,7 +12,7 @@ namespace TVRename
         bool EnsureUpdated(SeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
         void UpdatesDoneOk();
 
-        CachedMovieInfo GetMovie(PossibleNewMovie show, bool showErrorMsgBox);
+        CachedMovieInfo GetMovie(PossibleNewMovie show, string languageCode, bool showErrorMsgBox);
         CachedMovieInfo GetMovie(int? id);
         bool HasMovie(int id);
 

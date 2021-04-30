@@ -35,6 +35,10 @@ namespace TVRename
 
         public static void GuessShowItem([NotNull] PossibleNewTvShow ai, [NotNull] ShowLibrary library, bool showErrorMsgBox)
         {
+            string languageCode = TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TMDB
+                ? TVSettings.Instance.TMDBLanguage
+                : TVSettings.Instance.PreferredLanguageCode;
+
             string showName = GuessShowName(ai, library);
             //todo - (BulkAdd Manager needs to work for new providers)
             int tvdbId = FindTVDBShowCode(ai);
@@ -61,7 +65,7 @@ namespace TVRename
                 }
             }
 
-            CachedSeriesInfo ser = TheTVDB.LocalCache.Instance.GetSeries(showName,showErrorMsgBox);
+            CachedSeriesInfo ser = TheTVDB.LocalCache.Instance.GetSeries(showName,showErrorMsgBox, languageCode);
             if (ser != null)
             {
                 ai.SetId(tvdbId, TVDoc.ProviderType.TheTVDB);
@@ -80,7 +84,7 @@ namespace TVRename
                 Logger.Info($"Ignoring {showName} as it refines to nothing.");
             }
 
-            ser = TheTVDB.LocalCache.Instance.GetSeries(refinedHint,showErrorMsgBox);
+            ser = TheTVDB.LocalCache.Instance.GetSeries(refinedHint,showErrorMsgBox, languageCode);
 
             ai.RefinedHint = refinedHint;
             if (ser != null)

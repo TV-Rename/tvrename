@@ -162,13 +162,13 @@ namespace TVRename.TheTVDB
             LatestUpdateTime.RecordSuccessfulUpdate();
         }
 
-        public CachedMovieInfo GetMovie(PossibleNewMovie show, bool showErrorMsgBox) => throw new NotImplementedException();
+        public CachedMovieInfo GetMovie(PossibleNewMovie show, string languageCode, bool showErrorMsgBox) => throw new NotImplementedException();
 
         public CachedMovieInfo GetMovie(int? id) => throw new NotImplementedException();
 
-        public CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox)
+        public CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox,string languageCode)
         {
-            Search(showName, showErrorMsgBox,MediaConfiguration.MediaType.tv);
+            Search(showName, showErrorMsgBox,MediaConfiguration.MediaType.tv,languageCode);
 
             if (string.IsNullOrEmpty(showName))
             {
@@ -418,7 +418,7 @@ namespace TVRename.TheTVDB
         }
 
         private void AddPlaceholderSeries([NotNull] SeriesSpecifier ss)
-            => AddPlaceholderSeries(ss.TvdbSeriesId, ss.TvMazeSeriesId, ss.TmdbId,ss.CustomLanguageCode);
+            => AddPlaceholderSeries(ss.TvdbSeriesId, ss.TvMazeSeriesId, ss.TmdbId,ss.LanguageCode);
 
         public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, IEnumerable<SeriesSpecifier> ss)
         {
@@ -1786,7 +1786,7 @@ namespace TVRename.TheTVDB
                     return;
                 }
 
-                ok = DownloadEpisodeNow(ee.Value.SeriesId, ee.Key, seriesd.CustomLanguageCode) && ok;
+                ok = DownloadEpisodeNow(ee.Value.SeriesId, ee.Key, seriesd.LanguageCode) && ok;
                 ee.Value.Done = true;
             });
 
@@ -1802,7 +1802,7 @@ namespace TVRename.TheTVDB
             return ok;
         }
 
-        public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type)
+        public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type, string languageCode)
         {
             if (!IsConnected && !Connect(showErrorMsgBox))
             {
@@ -1829,10 +1829,10 @@ namespace TVRename.TheTVDB
                         switch (type)
                         {
                             case MediaConfiguration.MediaType.tv:
-                                DownloadSeriesNow(textAsInt, false, false, false, TVSettings.Instance.PreferredLanguageCode, showErrorMsgBox);
+                                DownloadSeriesNow(textAsInt, false, false, true, languageCode, showErrorMsgBox);
                                 break;
                             case MediaConfiguration.MediaType.movie:
-                                DownloadMovieNow(textAsInt,  false, false, TVSettings.Instance.PreferredLanguageCode, showErrorMsgBox);
+                                DownloadMovieNow(textAsInt,  false, true, languageCode, showErrorMsgBox);
                                 break;
                         }
                     }

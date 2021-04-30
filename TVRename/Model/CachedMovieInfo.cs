@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -11,54 +8,37 @@ namespace TVRename
 {
     public class CachedMovieInfo : CachedMediaInfo
     {
-        public DateTime? FirstAired;
-        public readonly string? TargetLanguageCode; //The Language Code we'd like the Series in ; null if we want to use the system setting
-        public int LanguageId; //The actual language obtained
         public string? Network;
         public string? Type;
-        public string? ShowLanguage;
         public int? CollectionId;
         public string? CollectionName;
-        public string? SeriesId;
-
-        public string? Slug;
-
-        public bool UseCustomLanguage => TargetLanguageCode != null;
-
-
-        public string? Status { get; set; }
 
         public int? Year => FirstAired?.Year;
 
         public string? FanartUrl;
-        public string? TrailerUrl;
-
-        // note: "SeriesID" in a <Series> is the tv.com code,
-        // "seriesid" in an <Episode> is the tvdb code!
 
         protected override MediaConfiguration.MediaType MediaType() => MediaConfiguration.MediaType.movie;
+
+        private void DefaultValues()
+        {
+        }
         public CachedMovieInfo()
         {
-            Name = string.Empty;
-            LanguageId = -1;
-            Status = "Unknown";
+            DefaultValues();
         }
 
-        public CachedMovieInfo(int tvdb, int tvmaze,int tmdbId) : this()
+        public CachedMovieInfo(int tvdb, int tvmaze, int tmdb) : base(tvdb, tvmaze, tmdb)
         {
-            IsSearchResultOnly = false;
-            TvMazeCode = tvmaze;
-            TvdbCode = tvdb;
-            TmdbCode = tmdbId;
+            DefaultValues();
         }
 
-        public CachedMovieInfo(int tvdb, int tvmaze, int tmdbId, string langCode) : this(tvdb, tvmaze,tmdbId)
+        public CachedMovieInfo(int tvdb, int tvmaze, int tmdb, string langCode) : base(tvdb, tvmaze, tmdb, langCode)
         {
-            TargetLanguageCode = langCode;
+            DefaultValues();
         }
-
-        public CachedMovieInfo([NotNull] XElement seriesXml) : this()
+        public CachedMovieInfo([NotNull] XElement seriesXml)
         {
+            DefaultValues();
             LoadXml(seriesXml);
             IsSearchResultOnly = false;
         }
@@ -71,7 +51,7 @@ namespace TVRename
                 return;
             }
 
-            if (o.TvdbCode != TvdbCode && o.TvMazeCode != TvMazeCode)
+            if (o.TvdbCode != TvdbCode && o.TvMazeCode != TvMazeCode && o.TmdbCode != TmdbCode)
             {
                 return; // that's not us!
             }
@@ -81,14 +61,14 @@ namespace TVRename
                 TvMazeCode = o.TvMazeCode;
             }
 
-            if (o.TvdbCode != -1 && TvdbCode != o.TvdbCode)
-            {
-                TvdbCode = o.TvdbCode;
-            }
-
             if (o.TmdbCode != -1 && TmdbCode != o.TmdbCode)
             {
                 TmdbCode = o.TmdbCode;
+            }
+
+            if (o.TvdbCode != -1 && TvdbCode != o.TvdbCode)
+            {
+                TvdbCode = o.TvdbCode;
             }
 
             if (o.SrvLastUpdated != 0 && o.SrvLastUpdated < SrvLastUpdated)
@@ -248,46 +228,7 @@ namespace TVRename
                 throw e;
             }
         }
-
-        private static float GetSiteRating([NotNull] XElement seriesXml)
-        {
-            string siteRatingString = seriesXml.ExtractStringOrNull("siteRating") ?? seriesXml.ExtractString("SiteRating");
-            float.TryParse(siteRatingString,
-                NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite,
-                CultureInfo.CreateSpecificCulture("en-US"), out float x);
-
-            return x;
-        }
-
-        [NotNull]
-        private string GenerateErrorMessage() => "Error processing data from TheTVDB for a show. " + this + "\r\nLanguage: \"" + LanguageId + "\"";
-
-        private void LoadActors([NotNull] XElement seriesXml)
-        {
-            ClearActors();
-            foreach (Actor a in seriesXml.Descendants("Actors").Descendants("Actor").Select(actorXml => new Actor(actorXml)))
-            {
-                AddActor(a);
-            }
-        }
-        private void LoadAliases([NotNull] XElement seriesXml)
-        {
-            Aliases = new List<string>();
-            foreach (XElement aliasXml in seriesXml.Descendants("Aliases").Descendants("Alias"))
-            {
-                Aliases.Add(aliasXml.Value);
-            }
-        }
-
-        private void LoadGenres([NotNull] XElement seriesXml)
-        {
-            Genres = seriesXml
-                .Descendants("Genres")
-                .Descendants("Genre")
-                .Select(g => g.Value.Trim()).Distinct()
-                .ToList();
-        }
- 
+        
         public void WriteXml([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("Movie");

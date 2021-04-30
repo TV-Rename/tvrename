@@ -338,9 +338,14 @@ namespace TVRename
             txtSearchStatus.Text = GetLabel(Source);
             txtSearchStatus.Update();
 
+            //TODO - make search multi language and use custom language specified
+            string languageCode = Source == TVDoc.ProviderType.TMDB
+                ? TVSettings.Instance.TMDBLanguage
+                : TVSettings.Instance.PreferredLanguageCode;
+
             if (!string.IsNullOrEmpty(txtFindThis.Text))
             {
-                GetSourceInstance(Source).Search(txtFindThis.Text,showErrorMsgBox,Type);
+                GetSourceInstance(Source).Search(txtFindThis.Text,showErrorMsgBox,Type,languageCode);
                 DoFind(true);
             }
         }
