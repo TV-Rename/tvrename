@@ -36,7 +36,7 @@ namespace TVRename.Forms.ShowPreferences
             txtShowFolder.Text = InitialFolder;
         }
 
-        public bool FolderNameChanged => txtShowFolder.Text == InitialFolder;
+        public bool FolderNameChanged => txtShowFolder.Text != InitialFolder;
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
