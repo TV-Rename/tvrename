@@ -56,7 +56,6 @@ Section "Install"
     Delete "$INSTDIR\Ionic.Utils.Zip.dll" ; Remove old dependency
 
     File "TVRename\bin\Release\TVRename.exe"
-    File "TVRename\bin\Release\CefSharp.BrowserSubprocess.exe"
     File "TVRename\bin\Release\AlphaFS.dll"
     File "TVRename\bin\Release\CefSharp.BrowserSubprocess.Core.dll"
     File "TVRename\bin\Release\CefSharp.Core.dll"
