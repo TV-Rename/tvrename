@@ -70,8 +70,8 @@ namespace TVRename
             //Remove any missing items we are planning to resolve
             foreach (ActionCopyMoveRename acmr in returnActions.OfType<ActionCopyMoveRename>())
             {
-                removeActions.AddRange(MDoc.TheActionList.Missing.Where(missingItem => missingItem.Episode == acmr.Episode));
-                //todo remove any movies that we have found
+                removeActions.AddRange(MDoc.TheActionList.MissingEpisodes.Where(missingItem => missingItem.Episode == acmr.Episode));
+                removeActions.AddRange(MDoc.TheActionList.MissingMovies.Where(missingItem => missingItem.Movie == acmr.Movie));
             }
 
             MDoc.TheActionList.Replace(removeActions,returnActions);
@@ -210,16 +210,12 @@ namespace TVRename
 
                     List<ShowConfiguration> matchingShows = showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
                     List<ShowConfiguration> matchingShowsNoDupes = FinderHelper.RemoveShortShows(matchingShows);
-                    if (matchingShowsNoDupes.Any())
-                    {
-                        ReviewFileInDownloadDirectory(currentSettings.Unattended,  fi, matchingShowsNoDupes,owner);
-                    }
-
                     List<MovieConfiguration> matchingMovies = movieList.Where(mi => mi.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
                     List<MovieConfiguration> matchingNoDupesMovies = FinderHelper.RemoveShortShows(matchingMovies);
-                    if (matchingNoDupesMovies.Any())
+
+                    if (matchingShowsNoDupes.Any() || matchingNoDupesMovies.Any())
                     {
-                        ReviewFileInDownloadDirectory(currentSettings.Unattended, fi, matchingNoDupesMovies, owner);
+                        ReviewFileInDownloadDirectory(currentSettings.Unattended,  fi, matchingShowsNoDupes, matchingNoDupesMovies, owner);
                     }
                 }
             }
@@ -238,75 +234,15 @@ namespace TVRename
         }
 
 
-
-        private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, [NotNull] List<MovieConfiguration> matchingMovies, IDialogParent owner)
+        private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, [NotNull] List<ShowConfiguration> matchingShows, [NotNull] List<MovieConfiguration> matchingMovies, IDialogParent owner)
         {
-            bool fileCanBeDeleted = TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies;
-            ProcessedEpisode firstMatchingPep = null;
-
-            if (!matchingMovies.Any())
+            if (!matchingMovies.Any() && !matchingShows.Any())
             {
                 // Some sort of random file - ignore
-                fileCanBeDeleted = false;
+                return;
             }
 
-            List<MovieConfiguration> neededMatchingMovie = matchingMovies.Where(si => FinderHelper.FileNeeded(fi, si, dfc)).ToList();
-            if (neededMatchingMovie.Any())
-            {
-                LOGGER.Info($"Not removing {fi.FullName} as it may be needed for {neededMatchingMovie.Select(x => x.ShowName).ToCsv()}");
-
-                fileCanBeDeleted = false;
-            }
-            else
-            {
-                if (TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck && (matchingMovies.Max(c=>c.ShowName.Length) <= TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength))
-                {
-                    LOGGER.Info($"Not removing {fi.FullName} as it may be needed for {matchingMovies.Select(x => x.ShowName).ToCsv()} and they are all too short");
-
-                    fileCanBeDeleted = false;
-                }
-
-                if (TVSettings.Instance.ReplaceMoviesWithBetterQuality)
-                { 
-                    foreach (var testMovie in matchingMovies)
-                    {
-                        List<FileInfo> encumbants = dfc.FindMovieOnDisk(testMovie).ToList();
-
-                        foreach (FileInfo existingFile in encumbants)
-                        {
-                            if (existingFile.FullName.Equals(fi.FullName, StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                //the user has put the search folder and the download folder in the same place - DO NOT DELETE
-                                fileCanBeDeleted = false;
-                                continue;
-                            }
-
-                            bool? deleteFile = ReviewFile(unattended, fi, matchingMovies, existingFile, testMovie, owner);
-                            if (deleteFile.HasValue && deleteFile.Value == false)
-                            {
-                                fileCanBeDeleted = false;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (fileCanBeDeleted)
-            {
-                LOGGER.Info(
-                    $"Removing {fi.FullName} as it matches { matchingMovies.Select(s => s.ShowName).ToCsv()} and no episodes are needed");
-
-                returnActions.Add(new ActionDeleteFile(fi, matchingMovies.LongestShowName(), TVSettings.Instance.Tidyup));
-            }
-            else
-            {
-                filesThatMayBeNeeded.Add(fi);
-            }
-        }
-
-        private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, [NotNull] List<ShowConfiguration> matchingShows, IDialogParent owner)
-        {
-            bool fileCanBeDeleted = TVSettings.Instance.RemoveDownloadDirectoriesFiles;
+            bool fileCanBeDeleted = (TVSettings.Instance.RemoveDownloadDirectoriesFiles && matchingShows.Any()) || (TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies && matchingMovies.Any());
             ProcessedEpisode firstMatchingPep = null;
 
             foreach (ShowConfiguration si in matchingShows)
@@ -380,12 +316,65 @@ namespace TVRename
                 }
             }
 
+            List<MovieConfiguration> neededMatchingMovie = matchingMovies.Where(si => FinderHelper.FileNeeded(fi, si, dfc)).ToList();
+            if (neededMatchingMovie.Any())
+            {
+                LOGGER.Info($"Not removing {fi.FullName} as it may be needed for {neededMatchingMovie.Select(x => x.ShowName).ToCsv()}");
+
+                fileCanBeDeleted = false;
+            }
+            else
+            {
+                if (TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck && (matchingMovies.Max(c => c.ShowName.Length) <= TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength))
+                {
+                    LOGGER.Info($"Not removing {fi.FullName} as it may be needed for {matchingMovies.Select(x => x.ShowName).ToCsv()} and they are all too short");
+
+                    fileCanBeDeleted = false;
+                }
+
+                if (TVSettings.Instance.ReplaceMoviesWithBetterQuality)
+                {
+                    foreach (var testMovie in matchingMovies)
+                    {
+                        List<FileInfo> encumbants = dfc.FindMovieOnDisk(testMovie).ToList();
+
+                        foreach (FileInfo existingFile in encumbants)
+                        {
+                            if (existingFile.FullName.Equals(fi.FullName, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                //the user has put the search folder and the download folder in the same place - DO NOT DELETE
+                                fileCanBeDeleted = false;
+                                continue;
+                            }
+
+                            bool? deleteFile = ReviewFile(unattended, fi, matchingMovies, existingFile, testMovie, owner);
+                            if (deleteFile.HasValue && deleteFile.Value == false)
+                            {
+                                fileCanBeDeleted = false;
+                            }
+                        }
+                    }
+                }
+            }
+
             if (fileCanBeDeleted)
             {
-                LOGGER.Info(
-                    $"Removing {fi.FullName} as it matches { matchingShows.Select(s => s.ShowName).ToCsv()} and no episodes are needed");
+                if (matchingMovies.Any())
+                {
+                    LOGGER.Info(
+                        $"Removing {fi.FullName} as it matches {matchingMovies.Select(s => s.ShowName).ToCsv()} and no files are needed for those movies");
+                    returnActions.Add(new ActionDeleteFile(fi, matchingMovies.LongestShowName(), TVSettings.Instance.Tidyup));
+                }
+                if (matchingShows.Any())
+                {
+                    LOGGER.Info(
+                        $"Removing {fi.FullName} as it matches {matchingShows.Select(s => s.ShowName).ToCsv()} and no episodes are needed");
 
-                returnActions.Add(new ActionDeleteFile(fi, firstMatchingPep, TVSettings.Instance.Tidyup));
+                    if (!matchingShows.Any())
+                    {
+                        returnActions.Add(new ActionDeleteFile(fi, firstMatchingPep, TVSettings.Instance.Tidyup));
+                    }
+                }
             }
             else
             {

@@ -1083,7 +1083,7 @@ namespace TVRename.TMDB
 
         internal CachedMovieInfo DownloadMovieNow(int id,string languageCode, bool showErrorMsgBox)
         {
-            Movie downloadedMovie = Client.GetMovieAsync(id,languageCode, MovieMethods.ExternalIds|MovieMethods.Images|MovieMethods.AlternativeTitles|MovieMethods.ReleaseDates |MovieMethods.Changes|MovieMethods.Videos|MovieMethods.Credits).Result;
+            Movie downloadedMovie = Client.GetMovieAsync(id,languageCode,languageCode, MovieMethods.ExternalIds|MovieMethods.Images|MovieMethods.AlternativeTitles|MovieMethods.ReleaseDates |MovieMethods.Changes|MovieMethods.Videos|MovieMethods.Credits).Result;
             if (downloadedMovie is null)
             {
                 throw new MediaNotFoundException(id,"TMDB no longer has this movie",TVDoc.ProviderType.TMDB,TVDoc.ProviderType.TMDB);
@@ -1179,11 +1179,11 @@ namespace TVRename.TMDB
                 SiteRatingVotes = downloadedSeries.VoteCount,
                 PosterUrl = PosterImageUrl(downloadedSeries.PosterPath),
                 SrvLastUpdated = DateTime.UtcNow.Date.ToUnixTime(),
-                //TagLine = downloadedSeries.TagLine, TODO ***on Website
+                TagLine = downloadedSeries.Tagline,
                 TwitterId = downloadedSeries.ExternalIds.TwitterId,
                 InstagramId = downloadedSeries.ExternalIds.InstagramId,
                 FacebookId = downloadedSeries.ExternalIds.InstagramId,
-                //FanartUrl = ImageURL(downloadedSeries.BackdropPath),  TODO **** on Website
+                //FanartUrl = OriginalImageUrl(downloadedSeries.BackdropPath),  //TODO **** on Website
                 ContentRating = GetCertification(downloadedSeries, TVSettings.Instance.TMDBRegion) ?? GetCertification(downloadedSeries, "US") ?? string.Empty,// todo allow user to choose
                 OfficialUrl = downloadedSeries.Homepage,
                 Type = downloadedSeries.Type,
@@ -1402,7 +1402,6 @@ namespace TVRename.TMDB
                 Name = result.Name,
                 FirstAired = result.FirstAirDate,
                 Overview = result.Overview,
-                //Network = result.ProductionCompanies.FirstOrDefault()?.Name,
                 //Status = result.Status,
                 ShowLanguage = result.OriginalLanguage,
                 SiteRating = (float)result.VoteAverage,
@@ -1411,6 +1410,8 @@ namespace TVRename.TMDB
                 Popularity = result.Popularity,
                 IsSearchResultOnly = true,
                 Dirty = false,
+                SrvLastUpdated = DateTime.UtcNow.Date.ToUnixTime(),
+                //FanartUrl = OriginalImageUrl(result.BackdropPath),  //TODO **** on Website
             };
 
             File(m);
@@ -1530,7 +1531,7 @@ namespace TVRename.TMDB
         public Dictionary<int, CachedMovieInfo> GetMovieIdsFromCollection(int collectionId,string languageCode)
         {
             Dictionary<int, CachedMovieInfo> returnValue = new Dictionary<int, CachedMovieInfo>();
-            TMDbLib.Objects.Collections.Collection collection = Client.GetCollectionAsync(collectionId, languageCode).Result;
+            TMDbLib.Objects.Collections.Collection collection = Client.GetCollectionAsync(collectionId, languageCode,languageCode).Result;
             if (collection == null)
             {
                 return returnValue;

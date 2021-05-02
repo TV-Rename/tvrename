@@ -563,9 +563,12 @@ namespace TVRename
         {
             if (currentlyMatchedShow is ShowConfiguration currentlyMatchedTvShow)
             {
-                return doc.TvLibrary.Shows
+                IEnumerable<ShowConfiguration> showConfigurations = doc.TvLibrary.Shows
                     .Where(item => item.NameMatch(matchedFile, useFullPath))
                     .Where(item => !HaveACommonId(item,currentlyMatchedTvShow))
+                    ;
+
+                return showConfigurations
                     .Any(testShow => testShow.ShowName.Contains(currentlyMatchedTvShow.ShowName));
             }
 
@@ -584,7 +587,7 @@ namespace TVRename
 
         private static bool HaveSameNonZeroId(MediaConfiguration item, MediaConfiguration currentlyMatchedTvShow, TVDoc.ProviderType p)
         {
-            return (item.IdCode(p) != currentlyMatchedTvShow.IdCode(p))
+            return (item.IdCode(p) == currentlyMatchedTvShow.IdCode(p))
                    && (item.IdCode(p) > 0)
                    && (currentlyMatchedTvShow.IdCode(p) > 0);
         }
