@@ -495,6 +495,7 @@
     <Compile Include="TVRename\MovieLibrary.cs" />
     <Compile Include="TVRename\PossibleNewMovie.cs" />
     <Compile Include="TVRename\UpdateTimeTracker.cs" />
+    <Compile Include="Utility\DependencyChecker.cs" />
     <Compile Include="Utility\Extensions\SafeEnumerable.cs" />
     <Compile Include="Utility\Extensions\SafeEnumerator.cs" />
     <Compile Include="Utility\Extensions\SafeList.cs" />

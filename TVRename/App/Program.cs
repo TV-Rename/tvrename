@@ -10,6 +10,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using CefSharp;
 using JetBrains.Annotations;
 using TVRename.Ipc;
 
@@ -33,6 +34,15 @@ namespace TVRename.App
             Logger.Info($"TV Rename {Helpers.DisplayVersion} started with args: {string.Join(" ", args)}");
             Logger.Info($"Copyright (C) {DateTime.Now.Year} TV Rename");
             Logger.Info("This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions");
+
+            try
+            {
+                DependencyChecker.AssertAllDependenciesPresent();
+            }
+            catch (Exception e)
+            {
+                Logger.Fatal(e);
+            }
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
