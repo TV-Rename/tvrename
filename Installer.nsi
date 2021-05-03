@@ -57,7 +57,7 @@ Section "Install"
 
     File "TVRename\bin\Release\TVRename.exe"
     File "TVRename\bin\Release\*.dll"
-
+    
     File "TVRename\bin\Release\NLog.config"
     File "TVRename\bin\Release\TVRename.exe.config"
 
@@ -70,8 +70,13 @@ Section "Install"
     File "TVRename\bin\Release\x86\libcurl.dll"
     File "TVRename\bin\Release\x86\libssl-3.dll"
     File "TVRename\bin\Release\x86\MediaInfo.dll"
-    
+
     WriteUninstaller "$INSTDIR\Uninstall.exe"
+
+    SetOutPath "$INSTDIR\x64"
+    File "TVRename\bin\Release\x64\*.*"
+    SetOutPath "$INSTDIR\x86"
+    File "TVRename\bin\Release\x86\*.*"
 
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
