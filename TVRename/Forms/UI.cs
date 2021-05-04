@@ -4877,7 +4877,7 @@ namespace TVRename
 
         private void recommendationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //RecommendationView form = new RecommendationView(mDoc, this, mDoc.TvLibrary.Shows.Take(50));
+            //RecommendationView form = new RecommendationView(mDoc, this, mDoc.TvLibrary.Shows.Take(20));
             RecommendationView form = new RecommendationView(mDoc, this, MediaConfiguration.MediaType.tv);
             form.ShowDialog(this);
 
@@ -4891,7 +4891,7 @@ namespace TVRename
 
         private void movieRecommendationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //RecommendationView form = new RecommendationView(mDoc, this, mDoc.FilmLibrary.Movies.Take(50));
+            //RecommendationView form = new RecommendationView(mDoc, this, mDoc.FilmLibrary.Movies.Take(20));
             RecommendationView form = new RecommendationView(mDoc, this, MediaConfiguration.MediaType.movie); 
             form.ShowDialog(this);
         }

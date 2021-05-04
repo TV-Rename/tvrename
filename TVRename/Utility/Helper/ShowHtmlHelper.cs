@@ -7,6 +7,7 @@ using System.Text;
 using System.Web;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using TVRename.Forms;
 using TVRename.Properties;
 
 namespace TVRename
@@ -44,12 +45,13 @@ namespace TVRename
             return sb.ToString();
         }
 
-        public static string GetShowHtmlOverview(this CachedSeriesInfo series)
+        public static string GetShowHtmlOverview(this CachedSeriesInfo series, RecommendationRow recommendation)
         {
             Color col = Color.FromName("ButtonFace");
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(HTMLHeader(10, col));
             sb.AppendShow(null,series, col, false);
+            sb.AppendRecommendation(recommendation, col);
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
         }
@@ -65,12 +67,13 @@ namespace TVRename
             return sb.ToString();
         }
 
-        public static string GetMovieHtmlOverview(this CachedMovieInfo movie)
+        public static string GetMovieHtmlOverview(this CachedMovieInfo movie, RecommendationRow? recommendation)
         {
             Color col = Color.FromName("ButtonFace");
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(HTMLHeader(10, col));
             sb.AppendMovie(null,movie, col, false);
+            sb.AppendRecommendation(recommendation, col);
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
         }
@@ -246,6 +249,31 @@ namespace TVRename
                   </div>
                  </div>");
         }
+
+        private static void AppendRecommendation(this StringBuilder sb, RecommendationRow recommendationRow, Color backgroundColour)
+        {
+            string top = recommendationRow.TopRated ? "TOP RATED" : string.Empty;
+            string trending = recommendationRow.Trending ? "TRENDING" : string.Empty;
+
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                   <div class=""col-md-4"">
+                    {top}
+                    <BR />
+                    {trending}
+                   </div>
+                   <div class=""col-md-8 d-flex flex-column"">
+                    <div class=""row"">
+                     <b>Because it's related to:</b> {recommendationRow.Related}
+                    </div>
+                    <div class=""row"">
+                     <b>Because it's similar to:</b> {recommendationRow.Similar}
+                    </div>
+                   </div>
+                  </div>
+                 </div>");
+        }
+
 
         private static void AppendMovie(this StringBuilder sb, MovieConfiguration? si, Color backgroundColour,
             bool includeDirectoryLinks)
@@ -1362,7 +1390,7 @@ namespace TVRename
             string siteRating = (ser?.SiteRating ?? 0) > 0 ? ser?.SiteRating + "/10" : string.Empty;
             string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(ser.TvdbCode) : string.Empty;
             string tmdbLink = si.TmdbCode > 0 ? $"https://www.themoviedb.org/movie/{si.TmdbCode}" : string.Empty;
-            string mazeLink = ser?.TvMazeCode > 0 ? ser?.WebUrl : string.Empty;
+            string mazeLink = ser?.TvMazeCode > 0 ? ser.WebUrl : string.Empty;
             string facebookButton = ser.FacebookId.HasValue() ? $"https://facebook.com/{ser.FacebookId}" : string.Empty;
             string instaButton = ser.InstagramId.HasValue() ? $"https://instagram.com/{ser.InstagramId}" : string.Empty;
             string twitterButton = ser.TwitterId.HasValue() ? $"https://twitter.com/{ser.TwitterId}" : string.Empty;

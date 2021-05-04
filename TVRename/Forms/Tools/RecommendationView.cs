@@ -27,6 +27,10 @@ namespace TVRename.Forms
             movies = new List<MovieConfiguration>();
             mDoc = doc;
             mainUi = main;
+
+            olvScore.MakeGroupies(new[] { 5, 10, 20}, new[] { "0-5", "5-10", "10-20", "20+" });
+
+            //olvRating.MakeGroupies(new[] { 2, 4, 6, 8 }, new[] { "*", "**", "***", "****","*****" });
         }
 
         public RecommendationView([NotNull] TVDoc doc, UI main, MediaConfiguration.MediaType type) : this(doc, main)
@@ -193,12 +197,13 @@ namespace TVRename.Forms
         {
             RecommendationRow? rr = (e.Item as BrightIdeasSoftware.OLVListItem).RowObject as RecommendationRow;
 
-            if (rr.cachedMovieInfo != null)
+            if (rr.Movie != null)
             {
-                UI.SetHtmlBody(chrRecommendationPreview, rr.cachedMovieInfo.GetMovieHtmlOverview());
-            } else if (rr.cachedSeriesInfo != null)
+                UI.SetHtmlBody(chrRecommendationPreview, rr.Movie.GetMovieHtmlOverview(rr));
+            }
+            else if (rr.Series != null)
             {
-                UI.SetHtmlBody(chrRecommendationPreview, rr.cachedSeriesInfo.GetShowHtmlOverview());
+                UI.SetHtmlBody(chrRecommendationPreview, rr.Series.GetShowHtmlOverview(rr));
             }
 
         }
@@ -209,8 +214,8 @@ namespace TVRename.Forms
     {
         private readonly RecommendationResult result;
         private readonly MediaConfiguration.MediaType type;
-        public readonly CachedSeriesInfo? cachedSeriesInfo;
-        public readonly CachedMovieInfo? cachedMovieInfo;
+        public readonly CachedSeriesInfo? Series;
+        public readonly CachedMovieInfo? Movie;
         private readonly CachedMediaInfo? cachedMediaInfo;
 
         public RecommendationRow(RecommendationResult x, MediaConfiguration.MediaType t)
@@ -220,12 +225,12 @@ namespace TVRename.Forms
             switch (t)
             {
                 case MediaConfiguration.MediaType.tv:
-                    cachedSeriesInfo = TMDB.LocalCache.Instance.GetSeries(x.Key);
-                    cachedMediaInfo = cachedSeriesInfo;
+                    Series = TMDB.LocalCache.Instance.GetSeries(x.Key);
+                    cachedMediaInfo = Series;
                     break;
                 case MediaConfiguration.MediaType.movie:
-                    cachedMovieInfo = TMDB.LocalCache.Instance.GetMovie(x.Key);
-                    cachedMediaInfo = cachedMovieInfo;
+                    Movie = TMDB.LocalCache.Instance.GetMovie(x.Key);
+                    cachedMediaInfo = Movie;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(t), t, null);
@@ -236,11 +241,12 @@ namespace TVRename.Forms
         public string? Name => cachedMediaInfo?.Name;
         public string? Overview => cachedMediaInfo?.Overview;
         public string? Year => type == MediaConfiguration.MediaType.movie
-            ? cachedMovieInfo?.Year.ToString()
-            : cachedSeriesInfo?.Year;
+            ? Movie?.Year.ToString()
+            : Series?.Year;
 
         public bool TopRated => result.TopRated;
         public bool Trending => result.Trending;
+        public string? Language => cachedMediaInfo.ShowLanguage;
 
 
         //Star score is out of 5 stars, we produce a 'normlised' result by adding a top mark 10/10 and a bottom mark 1/10 and recalculating
@@ -251,6 +257,8 @@ namespace TVRename.Forms
         public int RecommendationScore => result.GetScore(20, 20, 2, 1);
 
         public string Reason => result.Similar.Select(configuration => configuration.ShowName).ToCsv() + "-" + result.Related.Select(configuration => configuration.ShowName).ToCsv();
+        public string Similar => result.Similar.Select(configuration => configuration.ShowName).ToCsv();
+        public string Related => result.Related.Select(configuration => configuration.ShowName).ToCsv();
     }
 
     public class Recomendations : ConcurrentDictionary<int,RecommendationResult>
