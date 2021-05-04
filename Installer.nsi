@@ -74,9 +74,18 @@ Section "Install"
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 
     SetOutPath "$INSTDIR\x64"
-    File "TVRename\bin\Release\x64\*.*"
+    File "TVRename\bin\Release\x64\*.dll"
+    File "TVRename\bin\Release\x64\*.exe"
+    File "TVRename\bin\Release\x64\*.bin"
+    File "TVRename\bin\Release\x64\*.pak"
+    File "TVRename\bin\Release\x64\*.dat"
+    
     SetOutPath "$INSTDIR\x86"
-    File "TVRename\bin\Release\x86\*.*"
+    File "TVRename\bin\Release\x86\*.dll"
+    File "TVRename\bin\Release\x86\*.exe"
+    File "TVRename\bin\Release\x86\*.bin"
+    File "TVRename\bin\Release\x86\*.pak"
+    File "TVRename\bin\Release\x86\*.dat"
 
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
