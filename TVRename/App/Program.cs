@@ -37,7 +37,7 @@ namespace TVRename.App
 
             try
             {
-                DependencyChecker.AssertAllDependenciesPresent();
+                //DependencyChecker.AssertAllDependenciesPresent();
             }
             catch (Exception e)
             {

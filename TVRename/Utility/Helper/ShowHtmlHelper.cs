@@ -44,6 +44,16 @@ namespace TVRename
             return sb.ToString();
         }
 
+        public static string GetShowHtmlOverview(this CachedSeriesInfo series)
+        {
+            Color col = Color.FromName("ButtonFace");
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(HTMLHeader(10, col));
+            sb.AppendShow(null,series, col, false);
+            sb.AppendLine(HTMLFooter());
+            return sb.ToString();
+        }
+
         [NotNull]
         public static string GetMovieHtmlOverview(this MovieConfiguration si, bool includeDirectoryLinks)
         {
@@ -51,6 +61,16 @@ namespace TVRename
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(HTMLHeader(10, col));
             sb.AppendMovie(si, col, includeDirectoryLinks);
+            sb.AppendLine(HTMLFooter());
+            return sb.ToString();
+        }
+
+        public static string GetMovieHtmlOverview(this CachedMovieInfo movie)
+        {
+            Color col = Color.FromName("ButtonFace");
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(HTMLHeader(10, col));
+            sb.AppendMovie(null,movie, col, false);
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
         }
@@ -149,7 +169,8 @@ namespace TVRename
 {tableRows}");
         }
 
-        private static void AppendShow(this StringBuilder sb,ShowConfiguration? si, Color backgroundColour, bool includeDirectoryLinks)
+        private static void AppendShow(this StringBuilder sb, ShowConfiguration? si, Color backgroundColour,
+            bool includeDirectoryLinks)
         {
             CachedSeriesInfo ser = si?.CachedShow;
 
@@ -157,6 +178,11 @@ namespace TVRename
             {
                 return;
             }
+            AppendShow(sb,si,ser,backgroundColour,includeDirectoryLinks);
+        }
+
+        private static void AppendShow(this StringBuilder sb, ShowConfiguration? si, CachedSeriesInfo ser, Color backgroundColour, bool includeDirectoryLinks)
+        {
             string horizontalBanner = CreateHorizontalBannerHtml(ser);
             string poster = CreatePosterHtml(ser);
             string yearRange = YearRange(ser);
@@ -173,8 +199,8 @@ namespace TVRename
             string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : $"http://www.tv.com/show/{ser.SeriesId}/summary.html";
             string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
             string mazeLink = ser.TvMazeCode <=0 ? string.Empty : ser.WebUrl;
-            string tmdbLink = si.TmdbCode > 0 ? $"https://www.themoviedb.org/tv/{si.TmdbCode}" : string.Empty;
-            string tvdbLink = si.TvdbCode>0?  TheTVDB.API.WebsiteShowUrl(si) : string.Empty;
+            string tmdbLink = ser.TmdbCode > 0 ? $"https://www.themoviedb.org/tv/{ser.TmdbCode}" : string.Empty;
+            string tvdbLink = ser.TvdbCode>0?  TheTVDB.API.WebsiteShowUrl(ser) : string.Empty;
 
             string urlFilename = includeDirectoryLinks
                 ? Uri.EscapeDataString(si.GetBestFolderLocationToOpen())
@@ -193,13 +219,13 @@ namespace TVRename
                    </div>
                    <div class=""col-md-8 d-flex flex-column"">
                     <div class=""row"">
-                     <div class=""col-md-8""><h1>{si.ShowName}</h1><small class=""text-muted"">{ser.ShowLanguage} - {ser.Type}</small></div>
+                     <div class=""col-md-8""><h1>{si?.ShowName ?? ser.Name}</h1><small class=""text-muted"">{ser.ShowLanguage} - {ser.Type}</small></div>
                      <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6><small class=""text-muted"">{episodeSummary} Episodes{runTimeHtml}</small></div>
                     </div>
                     <div><p class=""lead"">{ser.Overview}</p></div>
 			        <div><blockquote>{actorLinks}</blockquote></div> 
 		            <div>
-                    {CreateButton(EditTvSeriesUrl(si), "<i class=\"far fa-edit\"></i>", "Edit")}
+                    {CreateButton(EditTvSeriesUrl(ser), "<i class=\"far fa-edit\"></i>", "Edit")}
                      {explorerButton}
 			         {CreateButton(tvdbLink, "TVDB.com", "View on TVDB")}
 			         {CreateButton(imdbLink, "IMDB.com", "View on IMDB")}
@@ -221,7 +247,8 @@ namespace TVRename
                  </div>");
         }
 
-        private static void AppendMovie(this StringBuilder sb, MovieConfiguration? si, Color backgroundColour, bool includeDirectoryLinks)
+        private static void AppendMovie(this StringBuilder sb, MovieConfiguration? si, Color backgroundColour,
+            bool includeDirectoryLinks)
         {
             CachedMovieInfo? ser = si?.CachedMovie;
 
@@ -229,7 +256,11 @@ namespace TVRename
             {
                 return;
             }
+            AppendMovie(sb,si,ser,backgroundColour,includeDirectoryLinks);
+        }
 
+        private static void AppendMovie(this StringBuilder sb, MovieConfiguration? si, CachedMovieInfo ser,  Color backgroundColour, bool includeDirectoryLinks)
+        {
             string poster = CreatePosterHtml(ser);
             string yearRange = ser.Year?.ToString() ?? "";
             string stars = StarRating(ser.SiteRating / 2);
@@ -241,7 +272,7 @@ namespace TVRename
 
             string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : $"http://www.tv.com/show/{ser.SeriesId}/summary.html";
             string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
-            string tmdbLink = si.TmdbCode > 0 ? $"https://www.themoviedb.org/movie/{si.TmdbCode}" : string.Empty;
+            string tmdbLink = ser.TmdbCode > 0 ? $"https://www.themoviedb.org/movie/{ser.TmdbCode}" : string.Empty;
             string mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
 
             string urlFilename = includeDirectoryLinks ? Uri.EscapeDataString(si.Locations.FirstOrDefault() ?? string.Empty)                 : string.Empty;
@@ -259,7 +290,7 @@ namespace TVRename
                    </div>
                    <div class=""col-md-8 d-flex flex-column"">
                     <div class=""row"">
-                     <div class=""col-md-8""> <h1>{si.ShowName}</h1><small class=""text-muted"">{ser.TagLine}</small></div>
+                     <div class=""col-md-8""> <h1>{si?.ShowName ?? ser.Name}</h1><small class=""text-muted"">{ser.TagLine}</small></div>
                      <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6>
                         <small class=""text-muted"">{ser.ShowLanguage} - {ser.Type}</small>
                         <small class=""text-muted"">{runTimeHtml}</small></div>
@@ -267,7 +298,7 @@ namespace TVRename
                     <div><p class=""lead"">{ser.Overview}</p></div>
 			        <div><blockquote>{actorLinks}</blockquote></div> 
 		            <div>
-                    {CreateButton(EditMovieUrl(si), "<i class=\"far fa-edit\"></i>", "Edit")}
+                    {CreateButton(EditMovieUrl(ser), "<i class=\"far fa-edit\"></i>", "Edit")}
                      {explorerButton}
                     {viewButton}
                      {CreateButton(tmdbLink, "TMDB.com", "View on TMDB")}
@@ -320,6 +351,21 @@ namespace TVRename
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private static string? EditMovieUrl(CachedMovieInfo si)
+        {
+            if (si.TmdbCode > 0)
+            {
+                return $"https://www.themoviedb.org/movie/{si.TmdbCode}/edit?active_nav_item=primary_facts";
+            }
+            if (si.Slug.HasValue())
+            {
+                return $"https://thetvdb.com/movies/{si.Slug}/edit";
+            }
+
+            return null;
+
         }
 
         private static string? EditSeasonUrl(ShowConfiguration si, ProcessedSeason s)
@@ -422,6 +468,24 @@ namespace TVRename
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private static string? EditTvSeriesUrl(CachedSeriesInfo si)
+        {
+            if (si.TmdbCode > 0)
+            {
+                return $"https://www.themoviedb.org/tv/{si.TmdbCode}/edit?active_nav_item=primary_facts";
+            }
+            if (si.Slug.HasValue())
+            {
+                return $"https://thetvdb.com/series/{si.Slug}/edit";
+            }
+            if (si.TvMazeCode > 0)
+            {
+                return $" https://www.tvmaze.com/show/update?id={si.TvMazeCode}";
+            }
+
+            return null;
         }
 
         [NotNull]

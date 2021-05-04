@@ -79,6 +79,13 @@ namespace TVRename.TheTVDB
         }
 
         [NotNull]
+        public static string WebsiteShowUrl([NotNull] CachedSeriesInfo si)
+        {
+            string? value = si.Slug;
+            return string.IsNullOrWhiteSpace(value) ? WebsiteShowUrl(si.TvdbCode) : WebsiteShowUrl(value);
+        }
+
+        [NotNull]
         public static string WebsiteShowUrl(int seriesId)
         {
             //return $"{WebsiteRoot}/series/{seriesId}";

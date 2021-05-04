@@ -48,15 +48,21 @@ namespace TVRename.Forms
             this.olvReason = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.label1 = new System.Windows.Forms.Label();
             this.chkRemoveExisting = new System.Windows.Forms.CheckBox();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.chrRecommendationPreview = new CefSharp.WinForms.ChromiumWebBrowser();
             this.possibleMergedEpisodeRightClickMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.lvRecommendations)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnClose.Location = new System.Drawing.Point(627, 394);
+            this.btnClose.Location = new System.Drawing.Point(815, 574);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 23);
             this.btnClose.TabIndex = 6;
@@ -87,8 +93,9 @@ namespace TVRename.Forms
             // 
             // lblStatus
             // 
+            this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(112, 399);
+            this.lblStatus.Location = new System.Drawing.Point(112, 579);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(0, 13);
             this.lblStatus.TabIndex = 11;
@@ -96,7 +103,8 @@ namespace TVRename.Forms
             // 
             // pbProgress
             // 
-            this.pbProgress.Location = new System.Drawing.Point(6, 394);
+            this.pbProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pbProgress.Location = new System.Drawing.Point(6, 574);
             this.pbProgress.Name = "pbProgress";
             this.pbProgress.Size = new System.Drawing.Size(100, 23);
             this.pbProgress.TabIndex = 10;
@@ -123,9 +131,6 @@ namespace TVRename.Forms
             this.lvRecommendations.AllColumns.Add(this.olvPopular);
             this.lvRecommendations.AllColumns.Add(this.olvReason);
             this.lvRecommendations.AllowColumnReorder = true;
-            this.lvRecommendations.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.lvRecommendations.CellEditUseWholeCell = false;
             this.lvRecommendations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvId,
@@ -136,17 +141,19 @@ namespace TVRename.Forms
             this.olvTop,
             this.olvPopular,
             this.olvReason});
+            this.lvRecommendations.ContextMenuStrip = this.possibleMergedEpisodeRightClickMenu;
             this.lvRecommendations.Cursor = System.Windows.Forms.Cursors.Default;
+            this.lvRecommendations.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lvRecommendations.FullRowSelect = true;
             this.lvRecommendations.HideSelection = false;
             this.lvRecommendations.IncludeColumnHeadersInCopy = true;
-            this.lvRecommendations.Location = new System.Drawing.Point(6, 36);
+            this.lvRecommendations.Location = new System.Drawing.Point(0, 0);
             this.lvRecommendations.MultiSelect = false;
             this.lvRecommendations.Name = "lvRecommendations";
             this.lvRecommendations.ShowCommandMenuOnRightClick = true;
             this.lvRecommendations.ShowItemCountOnGroups = true;
             this.lvRecommendations.ShowItemToolTips = true;
-            this.lvRecommendations.Size = new System.Drawing.Size(696, 352);
+            this.lvRecommendations.Size = new System.Drawing.Size(516, 539);
             this.lvRecommendations.SortGroupItemsByPrimaryColumn = false;
             this.lvRecommendations.Sorting = System.Windows.Forms.SortOrder.Descending;
             this.lvRecommendations.TabIndex = 12;
@@ -155,6 +162,7 @@ namespace TVRename.Forms
             this.lvRecommendations.UseFiltering = true;
             this.lvRecommendations.View = System.Windows.Forms.View.Details;
             this.lvRecommendations.CellRightClick += new System.EventHandler<BrightIdeasSoftware.CellRightClickEventArgs>(this.lvRecommendations_CellRightClick);
+            this.lvRecommendations.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lvRecommendations_ItemSelectionChanged);
             // 
             // olvId
             // 
@@ -219,14 +227,42 @@ namespace TVRename.Forms
             this.chkRemoveExisting.UseVisualStyleBackColor = true;
             this.chkRemoveExisting.CheckedChanged += new System.EventHandler(this.chkAirDateTest_CheckedChanged);
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(6, 29);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.lvRecommendations);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.chrRecommendationPreview);
+            this.splitContainer1.Size = new System.Drawing.Size(890, 539);
+            this.splitContainer1.SplitterDistance = 516;
+            this.splitContainer1.TabIndex = 13;
+            // 
+            // chrRecommendationPreview
+            // 
+            this.chrRecommendationPreview.ActivateBrowserOnCreation = false;
+            this.chrRecommendationPreview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chrRecommendationPreview.Location = new System.Drawing.Point(0, 0);
+            this.chrRecommendationPreview.Name = "chrRecommendationPreview";
+            this.chrRecommendationPreview.Size = new System.Drawing.Size(370, 539);
+            this.chrRecommendationPreview.TabIndex = 0;
+            // 
             // RecommendationView
             // 
             this.AcceptButton = this.btnClose;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(708, 420);
-            this.Controls.Add(this.lvRecommendations);
+            this.ClientSize = new System.Drawing.Size(902, 600);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.pbProgress);
             this.Controls.Add(this.btnRefresh);
@@ -241,6 +277,10 @@ namespace TVRename.Forms
             this.Text = "Recommendations";
             this.possibleMergedEpisodeRightClickMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.lvRecommendations)).EndInit();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -265,5 +305,7 @@ namespace TVRename.Forms
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox chkRemoveExisting;
         private BrightIdeasSoftware.OLVColumn olvId;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private CefSharp.WinForms.ChromiumWebBrowser chrRecommendationPreview;
     }
 }

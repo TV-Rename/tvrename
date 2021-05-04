@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 using JetBrains.Annotations;
@@ -35,11 +36,9 @@ namespace TVRename.Forms
             {
                 case MediaConfiguration.MediaType.tv:
                     tvShows = doc.TvLibrary.Shows;
-                    movies = new List<MovieConfiguration>();
                     break;
                 case MediaConfiguration.MediaType.movie:
                     movies = doc.FilmLibrary.Movies;
-                    tvShows = new List<ShowConfiguration>();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
@@ -50,9 +49,7 @@ namespace TVRename.Forms
         public RecommendationView([NotNull] TVDoc doc, UI main, IEnumerable<MovieConfiguration> m) : this(doc, main)
         {
             media = MediaConfiguration.MediaType.movie;
-            tvShows = new List<ShowConfiguration>();
             movies = m;
-
             Scan();
         }
 
@@ -60,7 +57,6 @@ namespace TVRename.Forms
         {
             media = MediaConfiguration.MediaType.tv;
             tvShows = s;
-            movies = new List<MovieConfiguration>();
             Scan();
         }
 
@@ -75,7 +71,7 @@ namespace TVRename.Forms
         {
             IEnumerable<RecommendationResult> recommendationRows = chkRemoveExisting.Checked
                 ? media==MediaConfiguration.MediaType.movie
-                    ? recs.Values.Where(x=> mDoc.FilmLibrary.Movies.Any(configuration => configuration.TmdbCode == x.Key))
+                    ? recs.Values.Where(x=> mDoc.FilmLibrary.Movies.All(configuration => configuration.TmdbCode != x.Key))
                     : recs.Values.Where(x => mDoc.TvLibrary.Shows.All(configuration => configuration.TmdbCode != x.Key))
                 : recs.Values;
 
@@ -191,18 +187,31 @@ namespace TVRename.Forms
             possibleMergedEpisodeRightClickMenu.Items.Clear();
 
             AddRcMenuItem("Add to Library", (o, args) => AddToLibrary(mlastSelected.Key, mDoc));
-            //AddRcMenuItem("Force Refresh", (o, args) => mainUi.ForceRefresh(new List<ShowConfiguration> {si}, false));
-            //AddRcMenuItem("Edit Show", (o, args) => mainUi.EditShow(si));
+        }
+
+        private void lvRecommendations_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            RecommendationRow? rr = (e.Item as BrightIdeasSoftware.OLVListItem).RowObject as RecommendationRow;
+
+            if (rr.cachedMovieInfo != null)
+            {
+                UI.SetHtmlBody(chrRecommendationPreview, rr.cachedMovieInfo.GetMovieHtmlOverview());
+            } else if (rr.cachedSeriesInfo != null)
+            {
+                UI.SetHtmlBody(chrRecommendationPreview, rr.cachedSeriesInfo.GetShowHtmlOverview());
+            }
+
         }
     }
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class RecommendationRow
     {
-        private RecommendationResult result;
-        private MediaConfiguration.MediaType type;
-        private CachedSeriesInfo? cachedSeriesInfo;
-        private CachedMovieInfo? cachedMovieInfo;
-        private CachedMediaInfo? cachedMediaInfo;
+        private readonly RecommendationResult result;
+        private readonly MediaConfiguration.MediaType type;
+        public readonly CachedSeriesInfo? cachedSeriesInfo;
+        public readonly CachedMovieInfo? cachedMovieInfo;
+        private readonly CachedMediaInfo? cachedMediaInfo;
 
         public RecommendationRow(RecommendationResult x, MediaConfiguration.MediaType t)
         {
@@ -225,6 +234,7 @@ namespace TVRename.Forms
 
         public int Key => result.Key;
         public string? Name => cachedMediaInfo?.Name;
+        public string? Overview => cachedMediaInfo?.Overview;
         public string? Year => type == MediaConfiguration.MediaType.movie
             ? cachedMovieInfo?.Year.ToString()
             : cachedSeriesInfo?.Year;
@@ -232,19 +242,15 @@ namespace TVRename.Forms
         public bool TopRated => result.TopRated;
         public bool Trending => result.Trending;
 
-        public float StarScore => (cachedMediaInfo?.SiteRatingVotes ?? 1 * cachedMediaInfo?.SiteRating ?? 1 + 3) /
-                                  (cachedMediaInfo?.SiteRatingVotes ?? 1 + 1);
+
+        //Star score is out of 5 stars, we produce a 'normlised' result by adding a top mark 10/10 and a bottom mark 1/10 and recalculating
+        //this is to stop a show with one 10/10 vote looking too good, this normalises it back if the number of votes is small
+        public float StarScore => (((cachedMediaInfo?.SiteRatingVotes ?? 1) * (cachedMediaInfo?.SiteRating ?? 5)) + 5) /
+                                  ((cachedMediaInfo?.SiteRatingVotes ?? 1) + 1);
 
         public int RecommendationScore => result.GetScore(20, 20, 2, 1);
 
         public string Reason => result.Similar.Select(configuration => configuration.ShowName).ToCsv() + "-" + result.Related.Select(configuration => configuration.ShowName).ToCsv();
-
-        //lvi.SubItems.Add(rec.Value.TopRated? "Top" : "   ");
-        //lvi.SubItems.Add(rec.Value.Trending? "Trend" : "    ");
-        //lvi.SubItems.Add(rec.Value.Related.Count.ToString());
-        //lvi.SubItems.Add(rec.Value.Similar.Count.ToString());
-        //lvi.SubItems.Add(mDoc.TvLibrary.ContainsKey(rec.Key).ToString());
-        //lvi.SubItems.Add(cachedMovieInfo?.IsSearchResultOnly.ToString());
     }
 
     public class Recomendations : ConcurrentDictionary<int,RecommendationResult>
@@ -287,8 +293,8 @@ namespace TVRename.Forms
         internal int Key;
         internal bool Trending;
         internal bool TopRated;
-        internal List<MediaConfiguration> Related = new List<MediaConfiguration>();
-        internal List<MediaConfiguration> Similar = new List<MediaConfiguration>();
+        internal readonly List<MediaConfiguration> Related = new List<MediaConfiguration>();
+        internal readonly List<MediaConfiguration> Similar = new List<MediaConfiguration>();
 
         public int GetScore(int trendingWeight, int topWeight, int relatedWeight, int similarWeight)
         {

@@ -1392,7 +1392,7 @@ namespace TVRename
             }
         }
 
-        private static void SetHtmlBody([NotNull] ChromiumWebBrowser web, string body)
+        public static void SetHtmlBody([NotNull] ChromiumWebBrowser web, string body)
         {
             if (web.IsDisposed)
             {
