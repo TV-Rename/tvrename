@@ -27,7 +27,7 @@ namespace TVRename
         protected static IgnoreItem? GenerateIgnore(string? file) => string.IsNullOrEmpty(file) ? null : new IgnoreItem(file);
 
         [NotNull]
-        public virtual string SeriesName => Episode is null? Movie!.ShowName : UI.GenerateShowUIName(Episode); //UI.GenerateShowUiName(Movie!):UI.GenerateShowUIName(Episode);
+        public virtual string SeriesName => Episode is null? Movie?.ShowName ?? string.Empty : UI.GenerateShowUIName(Episode); //UI.GenerateShowUiName(Movie!):UI.GenerateShowUIName(Episode);
         [NotNull]
         public virtual string SeasonNumber => Episode?.SeasonNumberAsText ?? string.Empty;
         [NotNull]

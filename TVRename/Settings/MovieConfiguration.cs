@@ -179,6 +179,32 @@ namespace TVRename
             return AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.NameFor(this, TVSettings.Instance.MovieFolderFormat);
         }
 
+        public (string, string, string) NeighbouringFolderNames()
+        {
+            int? year = CachedMovie?.Year;
+
+            if (!year.HasValue)
+            {
+                return (AutoFolderNameForMovie(), AutoFolderNameForMovie(), AutoFolderNameForMovie());
+            }
+            return (AutoFolderNameForMovie(), AutoFolderNameForMovie(year.Value - 1), AutoFolderNameForMovie(year.Value + 1));
+        }
+
+        private string AutoFolderNameForMovie(int year)
+        {
+            if (string.IsNullOrEmpty(AutomaticFolderRoot))
+            {
+                return string.Empty;
+            }
+
+            if (UseCustomFolderNameFormat)
+            {
+                return AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.NameFor(this, CustomFolderNameFormat,year);
+            }
+
+            return AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.NameFor(this, TVSettings.Instance.MovieFolderFormat,year);
+        }
+
         private void SetupLocations([NotNull] XElement xmlSettings)
         {
             foreach (string alias in xmlSettings.Descendants("Locations").Descendants("Location").Select(alias => alias.Value).Where(s => s.HasValue()).Distinct())
@@ -268,5 +294,6 @@ namespace TVRename
             return new SeriesSpecifier(TvdbCode, TVmazeCode, TmdbCode, UseCustomLanguage,
                 CustomLanguageCode, ShowName, Provider, CachedMovie?.Imdb, MediaType.movie);
         }
+
     }
 }

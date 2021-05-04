@@ -93,5 +93,12 @@ namespace TVRename
             name = name.ReplaceInsensitive("\\", string.Empty);
             return name.Trim();
         }
+
+        public static string NameFor(MovieConfiguration m, string styleString, int year)
+        {
+            string styleStringNewYear = styleString.ReplaceInsensitive("{Year}", year.ToString());
+
+            return NameFor(m, styleStringNewYear);
+        }
     }
 }

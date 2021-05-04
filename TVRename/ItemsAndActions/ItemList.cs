@@ -37,6 +37,7 @@ namespace TVRename
         public List<ShowItemMissing> MissingEpisodes => this.OfType<ShowItemMissing>().ToList();
         public List<MovieItemMissing> MissingMovies => this.OfType<MovieItemMissing>().ToList();
 
+        public List<ActionMoveRenameDirectory> MoveRenameDirectories => this.OfType<ActionMoveRenameDirectory>().ToList();
         [NotNull]
         public List<ActionCopyMoveRename> CopyMove => this.OfType<ActionCopyMoveRename>().Where(a=>a.Operation!=ActionCopyMoveRename.Op.rename).ToList();
 

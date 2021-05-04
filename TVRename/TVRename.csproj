@@ -338,6 +338,7 @@
     </Compile>
     <Compile Include="ItemsAndActions\ActionDateTouchFile.cs" />
     <Compile Include="ItemsAndActions\ActionDateTouchMovie.cs" />
+    <Compile Include="ItemsAndActions\ActionMoveRenameDirectory.cs" />
     <Compile Include="ItemsAndActions\ActionNfoEpisode.cs" />
     <Compile Include="ItemsAndActions\ActionNfoMovie.cs" />
     <Compile Include="ItemsAndActions\ActionNfoShow.cs" />

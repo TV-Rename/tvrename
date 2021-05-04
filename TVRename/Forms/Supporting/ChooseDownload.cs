@@ -9,6 +9,10 @@ namespace TVRename.Forms.Supporting
         {
             InitializeComponent();
             lblEpisodeName.Text = $"{im.Show.ShowName} - {im}";
+            if (im is MovieItemMissing mim)
+            {
+                lblEpisodeName.Text = $"{mim.MovieConfig.ShowNameWithYear}";
+            }
             olvSize.AspectToStringConverter = delegate (object x) {
                 long sizeBytes = (long)x;
 

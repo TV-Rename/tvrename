@@ -388,6 +388,7 @@ namespace TVRename
 
                 case ActionDeleteFile _:
                 case ActionDeleteDirectory _:
+                case ActionMoveRenameDirectory _:
                     return 1;
 
                 case ActionDateTouch _:
