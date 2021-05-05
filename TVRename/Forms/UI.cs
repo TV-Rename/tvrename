@@ -1066,14 +1066,14 @@ namespace TVRename
         private void ChooseSiteMenu([NotNull] ToolStripSplitButton btn)
         {
             btn.DropDownItems.Clear();
-            Searchers searchers = GetUsedSearchers();
+            btn.DropDownItems.AddRange(GetUsedSearchers().Where(engine => engine.Name.HasValue()).Select(CreateSearcherMenuItem).ToArray());
+        }
 
-            foreach (SearchEngine search in searchers.Where(engine => engine.Name.HasValue()))
-            {
-                ToolStripMenuItem tsi = new ToolStripMenuItem(search.Name) {Tag = search};
-                tsi.Font = new Font(tsi.Font.FontFamily,9,FontStyle.Regular);
-                btn.DropDownItems.Add(tsi);
-            }
+        private static ToolStripItem CreateSearcherMenuItem(SearchEngine search)
+        {
+            ToolStripMenuItem tsi = new ToolStripMenuItem(search.Name) {Tag = search};
+            tsi.Font = new Font(tsi.Font.FontFamily, 9, FontStyle.Regular);
+            return tsi;
         }
 
         private void FillMyShows()
@@ -3847,11 +3847,11 @@ namespace TVRename
             SetCheckbox(mcbAll, all.Actions, chk.OfType<Action>());
         }
 
-        private IEnumerable<Item> RenameActions(IEnumerable<Item> all)
+        private static IEnumerable<Item> RenameActions(IEnumerable<Item> all)
         {
             return all.Where(a =>
-                (a is ActionCopyMoveRename cmr && cmr.Operation == ActionCopyMoveRename.Op.rename) ||
-                (a is ActionMoveRenameDirectory));
+                a is ActionCopyMoveRename {Operation: ActionCopyMoveRename.Op.rename} ||
+                a is ActionMoveRenameDirectory);
         }
 
         private static void SetCheckbox([NotNull] ToolStripMenuItem box,[NotNull] IEnumerable<Item> all, [NotNull] IEnumerable<Item> chk)
