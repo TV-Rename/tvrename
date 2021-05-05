@@ -97,5 +97,7 @@ namespace TVRename
         }
 
         public override string Produces => targetFolder;
+
+        public override string SourceDetails => sourceFolder;
     }
 }

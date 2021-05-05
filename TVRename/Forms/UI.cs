@@ -379,7 +379,7 @@ namespace TVRename
 
                 case "B-Rename":
                     // ReSharper disable once MergeSequentialPatterns (I think it's clearer this way)
-                    int renameCount = mDoc.TheActionList.Count(action => action is ActionCopyMoveRename cmr && cmr.Operation == ActionCopyMoveRename.Op.rename);
+                    int renameCount = mDoc.TheActionList.Count(action => action is ActionCopyMoveRename cmr && cmr.Operation == ActionCopyMoveRename.Op.rename) + mDoc.TheActionList.Count(action => action is ActionMoveRenameDirectory);
                     return HeaderName("Rename", renameCount);
 
                 case "C-Copy":
@@ -3836,7 +3836,7 @@ namespace TVRename
             ItemList all = mDoc.TheActionList;
             List<Item> chk = olvAction.CheckedObjects.OfType<Item>().ToList();
 
-            SetCheckbox(mcbRename, all.OfType<ActionCopyMoveRename>().Where(a => a.Operation==ActionCopyMoveRename.Op.rename), chk.OfType<ActionCopyMoveRename>().Where(a => a.Operation == ActionCopyMoveRename.Op.rename));
+            SetCheckbox(mcbRename, RenameActions(all), RenameActions(chk));
             SetCheckbox(mcbCopyMove, all.OfType<ActionCopyMoveRename>().Where(a => a.Operation != ActionCopyMoveRename.Op.rename), chk.OfType<ActionCopyMoveRename>().Where(a => a.Operation != ActionCopyMoveRename.Op.rename));
             SetCheckbox(mcbDeleteFiles, all.OfType<ActionDelete>(), chk.OfType<ActionDelete>());
             SetCheckbox(mcbSaveImages, all.OfType<ActionDownloadImage>(), chk.OfType<ActionDownloadImage>());
@@ -3845,18 +3845,13 @@ namespace TVRename
             SetCheckbox(mcbDownload, all.TorrentActions, chk.Where(item => item is ActionTRemove || item is ActionTDownload));
 
             SetCheckbox(mcbAll, all.Actions, chk.OfType<Action>());
-            /*
-            int numberOfActions = all.Actions.Count;
-            int numberOfCheckedActions = chk.OfType<Action>().Count();
+        }
 
-            if (numberOfCheckedActions == 0)
-            {
-                mcbAll.CheckState = CheckState.Unchecked;
-            }
-            else
-            {
-                mcbAll.CheckState = numberOfCheckedActions == numberOfActions ? CheckState.Checked : CheckState.Indeterminate;
-            }*/
+        private IEnumerable<Item> RenameActions(IEnumerable<Item> all)
+        {
+            return all.Where(a =>
+                (a is ActionCopyMoveRename cmr && cmr.Operation == ActionCopyMoveRename.Op.rename) ||
+                (a is ActionMoveRenameDirectory));
         }
 
         private static void SetCheckbox([NotNull] ToolStripMenuItem box,[NotNull] IEnumerable<Item> all, [NotNull] IEnumerable<Item> chk)
@@ -4290,7 +4285,7 @@ namespace TVRename
         }
         private void McbRename_Click(object sender, EventArgs e)
         {
-            UpdateCheckboxGroup(mcbRename, i => i is ActionCopyMoveRename {Operation: ActionCopyMoveRename.Op.rename});
+            UpdateCheckboxGroup(mcbRename, i => i is ActionCopyMoveRename {Operation: ActionCopyMoveRename.Op.rename} || i is ActionMoveRenameDirectory);
         }
 
         private void McbCopyMove_Click(object sender, EventArgs e)
