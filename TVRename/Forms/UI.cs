@@ -42,6 +42,7 @@ using BrightIdeasSoftware;
 using CefSharp;
 using CefSharp.WinForms;
 using TVRename.Forms.Supporting;
+using TVRename.Utility.Helper;
 
 namespace TVRename
 {
@@ -91,6 +92,8 @@ namespace TVRename
 
         public UI(TVDoc doc, [NotNull] TVRenameSplash splash, bool showUi)
         {
+            Cef.Initialize(new CefSettings());
+
             mDoc = doc;
             scanProgDlg = null;
 
@@ -100,7 +103,6 @@ namespace TVRename
 
             internalCheckChange = false;
 
-            Cef.Initialize(new CefSettings());
             InitializeComponent();
             chrSummary.RequestHandler = new BrowserRequestHandler();
             chrImages.RequestHandler = new BrowserRequestHandler();
@@ -182,6 +184,13 @@ namespace TVRename
             tmrPeriodicScan.Enabled = TVSettings.Instance.RunPeriodicCheck();
 
             SetupObjectListForScanResults();
+
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+            TaskHelper.WaitUntil(() => Cef.IsInitialized, 100, 30 * 1000);
+            watch.Stop();
+
+            Logger.Warn($"Execution Time to wait for Cef to be ready: {watch.ElapsedMilliseconds} ms");
 
             UpdateSplashStatus(splash, "Running autoscan");
         }
@@ -1394,8 +1403,9 @@ namespace TVRename
 
         public static void SetHtmlBody([NotNull] ChromiumWebBrowser web, string body)
         {
-            if (web.IsDisposed)
+            if (web.IsDisposed || !web.IsBrowserInitialized)
             {
+                Logger.Warn("Could not update UI for the show/cachedSeries/movie information pane (not initialised)");
                 return;
             }
 
@@ -1408,7 +1418,7 @@ namespace TVRename
             catch (COMException ex)
             {
                 //Fail gracefully - no RHS episode guide is not too big of a problem.
-                Logger.Warn(ex, "Could not update UI for the show/cachedSeries information pane");
+                Logger.Warn(ex, "Could not update UI for the show/cachedSeries/movie information pane");
             }
             catch (Exception ex)
             {
@@ -1419,8 +1429,9 @@ namespace TVRename
         }
         private static void SetHtmlEmbed([NotNull] ChromiumWebBrowser web, string link)
         {
-            if (web.IsDisposed)
+            if (web.IsDisposed || !web.IsBrowserInitialized)
             {
+                Logger.Warn("Could not update UI for the show/cachedSeries/movie information pane (not initialised)");
                 return;
             }
 
@@ -1431,7 +1442,7 @@ namespace TVRename
             catch (COMException ex)
             {
                 //Fail gracefully - no RHS episode guide is not too big of a problem.
-                Logger.Warn(ex, "Could not update UI for the show/cachedSeries information pane");
+                Logger.Warn(ex, "Could not update UI for the show/cachedSeries/movie information pane");
             }
             catch (Exception ex)
             {
@@ -3526,12 +3537,32 @@ namespace TVRename
 
         private void SetCheckboxes()
         {
+            olvAction.ItemChecked -= lvAction_ItemChecked;
+            olvAction.ItemCheck -= olvAction_ItemCheck;
             internalCheckChange = true;
+
             olvAction.BeginUpdate();
-            olvAction.CheckObjects(mDoc.TheActionList.Actions);
+            if (2 * mDoc.TheActionList.Actions.Count > mDoc.TheActionList.Count)
+            {
+                olvAction.CheckAll();
+                foreach (var i in mDoc.TheActionList.Where(i => !(i is Action)))
+                {
+                    olvAction.UncheckObject(i);
+                }
+            }
+            else
+            {
+                olvAction.CheckObjects(mDoc.TheActionList.Actions);
+            }
+
             internalCheckChange = false;
-            UpdateActionCheckboxes();
+
+            olvAction.ItemChecked += lvAction_ItemChecked;
+            olvAction.ItemCheck += olvAction_ItemCheck;
+
             olvAction.EndUpdate();
+            UpdateActionCheckboxes();
+            
         }
 
         public void FillActionList(bool preserveExistingCheckboxes)
@@ -3560,25 +3591,30 @@ namespace TVRename
                 olvAction.RebuildColumns();
 
                 List<Item> newItems = olvAction.Items.OfType<OLVListItem>().Select(lvi => (Item)lvi.RowObject).ToList();
+
                 //We have a new addition - check its checkbox
+                internalCheckChange = true;
+                olvAction.ItemCheck -= olvAction_ItemCheck;
+                olvAction.ItemChecked -= lvAction_ItemChecked;
+
                 olvAction.CheckObjects(newItems.Where(newRow => !oldItems.Contains(newRow)).Where(newAction => newAction is Action));
+
+                internalCheckChange = false;
+                olvAction.ItemCheck += olvAction_ItemCheck;
+                olvAction.ItemChecked += lvAction_ItemChecked;
+
             }
             else
             {
                 mDoc.TheActionList.NotifyUpdated();
+               
                 olvAction.RebuildColumns();
-                internalCheckChange = true;
-                //olvAction.ItemCheck -= olvAction_ItemCheck;
-                olvAction.BeginUpdate();
-
-                internalCheckChange = false;
-                olvAction.ItemCheck += olvAction_ItemCheck;
-                UpdateActionCheckboxes();
-                olvAction.EndUpdate();
+                
                 SetCheckboxes();
             }
             olvAction.RestoreState(oldState);
             olvAction.EndUpdate();
+            UpdateActionCheckboxes();
         }
 
         [NotNull]
@@ -3874,6 +3910,10 @@ namespace TVRename
 
         private void olvAction_ItemCheck(object sender, [NotNull] ItemCheckEventArgs e)
         {
+            if (e.Index % 100 == 0)
+            {
+                Logger.Info($"Updated {e.Index} from {mDoc.TheActionList.Count} records = {(double)e.Index/ (double)mDoc.TheActionList.Count:P2}");
+            }
             if (internalCheckChange)
             {
                 return;
