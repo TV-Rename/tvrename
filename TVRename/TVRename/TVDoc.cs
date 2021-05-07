@@ -264,24 +264,32 @@ namespace TVRename
 
         public void DoActions([NotNull] ItemList theList, IDialogParent owner)
         {
-            foreach (Item i in theList)
+            try
             {
-                if (i is Action a)
+                foreach (Item i in theList)
                 {
-                    a.ResetOutcome();
+                    if (i is Action a)
+                    {
+                        a.ResetOutcome();
+                    }
                 }
+
+                actionManager.DoActions(theList, !Args.Hide && Environment.UserInteractive, owner);
+
+                IEnumerable<Item?> enumerable = TheActionList.Actions.Where(a => a.Outcome.Done && a.Becomes() != null)
+                    .Select(a => a.Becomes());
+
+                TheActionList.AddNullableRange(enumerable);
+
+                // remove items from master list, unless it had an error
+                TheActionList.RemoveAll(x => x is Action action && action.Outcome.Done && !action.Outcome.Error);
+
+                new CleanUpEmptyLibraryFolders(this).Check(null);
             }
-
-            actionManager.DoActions(theList, !Args.Hide && Environment.UserInteractive,owner);
-
-            IEnumerable<Item?> enumerable = TheActionList.Actions.Where(a => a.Outcome.Done && a.Becomes() != null).Select(a => a.Becomes());
-            TheActionList.AddNullableRange(enumerable);
-
-            // remove items from master list, unless it had an error
-            TheActionList.RemoveAll(x => x is Action action && action.Outcome.Done && !action.Outcome.Error);
-
-            new CleanUpEmptyLibraryFolders(this).Check(null);
-
+            catch (Exception e)
+            {
+                Logger.Fatal(e,$"FAILED TO DO ACTIONS");
+            }
         }
 
         public bool DoDownloadsFG(bool unattended, bool tvrMinimised, UI owner)
