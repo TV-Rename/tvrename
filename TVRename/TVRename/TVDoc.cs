@@ -150,35 +150,8 @@ namespace TVRename
             //OK, so we have a flurry of different Ids. There are 2 scenarios:
             // (1) Configuration has a cachedItem that has additional or different information to the main config. (This should be most)
             // (2) There is information in one of the caches that has information that could be useful (most should have been picked up in 1 above)
+            // We do them backwards as we previeve the (1) updates are better quality
 
-
-            foreach (ShowConfiguration? show in TvLibrary.Shows)
-            {
-                CachedSeriesInfo? cachedData = show?.CachedShow;
-                if (cachedData is null)
-                {
-                    continue;
-
-                }
-
-                show.TmdbCode = GetBestValue(show, cachedData,ProviderType.TMDB, MediaConfiguration.MediaType.tv);
-                show.TvdbCode = GetBestValue(show, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.tv);
-                show.TVmazeCode = GetBestValue(show, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
-            }
-
-            foreach (MovieConfiguration? show in FilmLibrary.Movies)
-            {
-                CachedMovieInfo? cachedData = show.CachedMovie;
-                if (cachedData is null)
-                {
-                    continue;
-
-                }
-
-                show.TmdbCode = GetBestValue(show, cachedData, ProviderType.TMDB, MediaConfiguration.MediaType.movie);
-                show.TvdbCode = GetBestValue(show, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.movie);
-                show.TVmazeCode = GetBestValue(show, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.movie);
-            }
 
             CheckForUsefulTVIds(TVmaze.LocalCache.Instance, ProviderType.TheTVDB);
             CheckForUsefulTVIds(TVmaze.LocalCache.Instance, ProviderType.TMDB);
@@ -196,6 +169,34 @@ namespace TVRename
 
             CheckForUsefulMovieIds(TheTVDB.LocalCache.Instance, ProviderType.TVmaze);
             CheckForUsefulMovieIds(TheTVDB.LocalCache.Instance, ProviderType.TMDB);
+
+            foreach (ShowConfiguration? show in TvLibrary.Shows)
+            {
+                CachedSeriesInfo? cachedData = show?.CachedShow;
+                if (cachedData is null)
+                {
+                    continue;
+
+                }
+
+                show.TmdbCode = GetBestValue(show, cachedData,ProviderType.TMDB, MediaConfiguration.MediaType.tv, $"based on looking up {ProviderType.TMDB.PrettyPrint()} in cache keyed on {show.Provider.PrettyPrint()}");
+                show.TvdbCode = GetBestValue(show, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.tv, $"based on looking up {ProviderType.TheTVDB.PrettyPrint()} in cache keyed on {show.Provider.PrettyPrint()}");
+                show.TVmazeCode = GetBestValue(show, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.tv, $"based on looking up {ProviderType.TVmaze.PrettyPrint()} in cache keyed on {show.Provider.PrettyPrint()}");
+            }
+
+            foreach (MovieConfiguration? show in FilmLibrary.Movies)
+            {
+                CachedMovieInfo? cachedData = show.CachedMovie;
+                if (cachedData is null)
+                {
+                    continue;
+
+                }
+
+                show.TmdbCode = GetBestValue(show, cachedData, ProviderType.TMDB, MediaConfiguration.MediaType.movie, $"based on looking up {ProviderType.TMDB.PrettyPrint()} in cache keyed on {show.Provider.PrettyPrint()}");
+                show.TvdbCode = GetBestValue(show, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.movie, $"based on looking up {ProviderType.TheTVDB.PrettyPrint()} in cache keyed on {show.Provider.PrettyPrint()}");
+                show.TVmazeCode = GetBestValue(show, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.movie, $"based on looking up {ProviderType.TVmaze.PrettyPrint()} in cache keyed on {show.Provider.PrettyPrint()}");
+            }
         }
 
         // ReSharper disable once InconsistentNaming
@@ -211,9 +212,10 @@ namespace TVRename
                         continue;
                     }
 
-                    showConfiguration.TmdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TMDB, MediaConfiguration.MediaType.tv);
-                    showConfiguration.TvdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.tv);
-                    showConfiguration.TVmazeCode = GetBestValue(showConfiguration, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
+                    string checkName = $"looked in the {cache.GetType().Name} cache based on {provider.PrettyPrint()}";
+                    showConfiguration.TmdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TMDB, MediaConfiguration.MediaType.tv, checkName);
+                    showConfiguration.TvdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.tv, checkName);
+                    showConfiguration.TVmazeCode = GetBestValue(showConfiguration, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.tv, checkName);
                 }
             }
         }
@@ -229,27 +231,27 @@ namespace TVRename
                     {
                         continue;
                     }
-
-                    showConfiguration.TmdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TMDB, MediaConfiguration.MediaType.movie);
-                    showConfiguration.TvdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.movie);
-                    showConfiguration.TVmazeCode = GetBestValue(showConfiguration, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.movie);
+                    string checkName = $"looked in the {cache.GetType().Name} cache based on {provider.PrettyPrint()}";
+                    showConfiguration.TmdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TMDB, MediaConfiguration.MediaType.movie, checkName);
+                    showConfiguration.TvdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.movie, checkName);
+                    showConfiguration.TVmazeCode = GetBestValue(showConfiguration, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.movie, checkName);
                 }
             }
         }
-        private int GetBestValue(MediaConfiguration show, CachedMediaInfo cachedData,ProviderType provider, MediaConfiguration.MediaType type)
+        private int GetBestValue(MediaConfiguration show, CachedMediaInfo cachedData,ProviderType provider, MediaConfiguration.MediaType type, string basedOnInformation)
         {
             int currentValue = show.IdCode(provider);
             int valueFromCache = cachedData.IdCode(provider);
 
             if (currentValue  <= 0 && valueFromCache > 0)
             {
-                Logger.Info($"Updatng media:{type.PrettyPrint()} {show.ShowName} {provider.PrettyPrint()} Id to {valueFromCache}");
+                Logger.Info($"Updatng media:{type.PrettyPrint()} {show.ShowName} {provider.PrettyPrint()} Id to {valueFromCache}, {basedOnInformation}.");
                 return valueFromCache;
             }
 
             if (currentValue  > 0 && valueFromCache > 0 && currentValue  != valueFromCache)
             {
-                Logger.Error($"Media:{type.PrettyPrint()} {show.ShowName} has inconsistent {provider.PrettyPrint()} Id: {currentValue } {valueFromCache}, updating to {valueFromCache}.");
+                Logger.Error($"Media:{type.PrettyPrint()} {show.ShowName} has inconsistent {provider.PrettyPrint()} Id: {currentValue } {valueFromCache}, updating to {valueFromCache}, {basedOnInformation}.");
                 return valueFromCache;
             }
 
