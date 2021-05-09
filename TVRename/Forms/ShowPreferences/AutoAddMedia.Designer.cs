@@ -193,7 +193,6 @@ namespace TVRename
             this.rdoTVTMDB.Name = "rdoTVTMDB";
             this.rdoTVTMDB.Size = new System.Drawing.Size(56, 17);
             this.rdoTVTMDB.TabIndex = 50;
-            this.rdoTVTMDB.TabStop = true;
             this.rdoTVTMDB.Text = "TMDB";
             this.rdoTVTMDB.UseVisualStyleBackColor = true;
             this.rdoTVTMDB.CheckedChanged += new System.EventHandler(this.rdoTVProvider_CheckedChanged);
@@ -217,7 +216,6 @@ namespace TVRename
             this.rdoTVTVMaze.Name = "rdoTVTVMaze";
             this.rdoTVTVMaze.Size = new System.Drawing.Size(64, 17);
             this.rdoTVTVMaze.TabIndex = 48;
-            this.rdoTVTVMaze.TabStop = true;
             this.rdoTVTVMaze.Text = "TVmaze";
             this.rdoTVTVMaze.UseVisualStyleBackColor = true;
             this.rdoTVTVMaze.CheckedChanged += new System.EventHandler(this.rdoTVProvider_CheckedChanged);
@@ -230,7 +228,6 @@ namespace TVRename
             this.rdoTVTVDB.Name = "rdoTVTVDB";
             this.rdoTVTVDB.Size = new System.Drawing.Size(76, 17);
             this.rdoTVTVDB.TabIndex = 47;
-            this.rdoTVTVDB.TabStop = true;
             this.rdoTVTVDB.Text = "The TVDB";
             this.rdoTVTVDB.UseVisualStyleBackColor = true;
             this.rdoTVTVDB.CheckedChanged += new System.EventHandler(this.rdoTVProvider_CheckedChanged);
@@ -239,6 +236,7 @@ namespace TVRename
             // 
             this.rdoTVDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.rdoTVDefault.AutoSize = true;
+            this.rdoTVDefault.Checked = true;
             this.rdoTVDefault.Location = new System.Drawing.Point(48, 353);
             this.rdoTVDefault.Name = "rdoTVDefault";
             this.rdoTVDefault.Size = new System.Drawing.Size(93, 17);
@@ -273,7 +271,6 @@ namespace TVRename
             this.rdoMovieTMDB.Name = "rdoMovieTMDB";
             this.rdoMovieTMDB.Size = new System.Drawing.Size(56, 17);
             this.rdoMovieTMDB.TabIndex = 49;
-            this.rdoMovieTMDB.TabStop = true;
             this.rdoMovieTMDB.Text = "TMDB";
             this.rdoMovieTMDB.UseVisualStyleBackColor = true;
             this.rdoMovieTMDB.CheckedChanged += new System.EventHandler(this.rdoMovieProvider_CheckedChanged);
@@ -297,7 +294,6 @@ namespace TVRename
             this.rdoMovieTVDB.Name = "rdoMovieTVDB";
             this.rdoMovieTVDB.Size = new System.Drawing.Size(76, 17);
             this.rdoMovieTVDB.TabIndex = 47;
-            this.rdoMovieTVDB.TabStop = true;
             this.rdoMovieTVDB.Text = "The TVDB";
             this.rdoMovieTVDB.UseVisualStyleBackColor = true;
             this.rdoMovieTVDB.CheckedChanged += new System.EventHandler(this.rdoMovieProvider_CheckedChanged);
@@ -306,6 +302,7 @@ namespace TVRename
             // 
             this.rdoMovieLibraryDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.rdoMovieLibraryDefault.AutoSize = true;
+            this.rdoMovieLibraryDefault.Checked = true;
             this.rdoMovieLibraryDefault.Location = new System.Drawing.Point(52, 354);
             this.rdoMovieLibraryDefault.Name = "rdoMovieLibraryDefault";
             this.rdoMovieLibraryDefault.Size = new System.Drawing.Size(93, 17);

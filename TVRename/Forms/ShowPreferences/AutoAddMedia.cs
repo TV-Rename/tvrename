@@ -24,6 +24,7 @@ namespace TVRename
 
             lblFileName.Text = "Filename: "+file.FullName;
 
+
             tvCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.tv,TVDoc.ProviderType.libraryDefault) {Dock = DockStyle.Fill};
             movieCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.movie, TVDoc.ProviderType.libraryDefault) { Dock = DockStyle.Fill };
 
