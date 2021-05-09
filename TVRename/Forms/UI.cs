@@ -1405,7 +1405,6 @@ namespace TVRename
         {
             if (web.IsDisposed || !web.IsBrowserInitialized)
             {
-                Logger.Warn("Could not update UI for the show/cachedSeries/movie information pane (not initialised)");
                 return;
             }
 
@@ -1431,7 +1430,6 @@ namespace TVRename
         {
             if (web.IsDisposed || !web.IsBrowserInitialized)
             {
-                Logger.Warn("Could not update UI for the show/cachedSeries/movie information pane (not initialised)");
                 return;
             }
 

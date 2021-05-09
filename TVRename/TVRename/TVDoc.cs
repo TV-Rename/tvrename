@@ -452,7 +452,7 @@ namespace TVRename
                 XmlHelper.WriteStringsToXml(TVSettings.Instance.MovieLibraryFolders, writer, "MovieLibraryFolders", "Folder");
                 XmlHelper.WriteStringsToXml(TVSettings.Instance.IgnoreFolders, writer, "IgnoreFolders", "Folder");
                 XmlHelper.WriteStringsToXml(TVSettings.Instance.DownloadFolders, writer, "FinderSearchFolders","Folder");
-                XmlHelper.WriteStringsToXml(TVSettings.Instance.IgnoredAutoAddHints, writer, "IgnoredAutoAddHints","Hint");
+                XmlHelper.WriteStringsToXml(TVSettings.Instance.IgnoredAutoAddHints.Distinct(), writer, "IgnoredAutoAddHints","Hint");
                 writer.WriteStringsToXml(TVSettings.Instance.Ignore, "IgnoreItems","Ignore");
                 writer.WriteStringsToXml(TVSettings.Instance.PreviouslySeenEpisodes, "PreviouslySeenEpisodes", "Episode");
                 writer.WriteStringsToXml(TVSettings.Instance.PreviouslySeenMovies, "PreviouslySeenMovies", "Movie");

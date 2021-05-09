@@ -671,6 +671,15 @@ namespace TVRename
             {
                 string hint =  file.RemoveExtension(TVSettings.Instance.UseFullPathNameToMatchSearchFolders) + ".";
 
+                //remove any search folders  from the hint. They are probbably useless at helping specify the showname
+                foreach (var path in TVSettings.Instance.DownloadFolders)
+                {
+                    if (hint.StartsWith(path, StringComparison.OrdinalIgnoreCase))
+                    {
+                        hint = hint.RemoveFirst(path.Length);
+                    }
+                }
+
                 //If the hint contains certain terms then we'll ignore it
                 if (TVSettings.Instance.IgnoredAutoAddHints.Contains(hint))
                 {
@@ -678,14 +687,6 @@ namespace TVRename
                         $"Ignoring {hint} as it is in the list of ignored terms the user has selected to ignore from prior Auto Adds.");
 
                     continue;
-                }
-                //remove any search folders  from the hint. They are probbably useless at helping specify the showname
-                foreach (var path in TVSettings.Instance.DownloadFolders)
-                {
-                    if (hint.StartsWith(path,StringComparison.OrdinalIgnoreCase))
-                    {
-                        hint = hint.RemoveFirst(path.Length);
-                    }
                 }
 
                 //Remove any (nnnn) in the hint - probably a year
