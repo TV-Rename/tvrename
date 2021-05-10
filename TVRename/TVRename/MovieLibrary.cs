@@ -39,7 +39,22 @@ namespace TVRename
             return distinctGenres;
         }
 
-        public MovieConfiguration? GetMovie(int id, TVDoc.ProviderType provider) => this.SingleOrDefault(configuration => configuration.IdCode(provider) == id);
+        public MovieConfiguration? GetMovie(int id, TVDoc.ProviderType provider)
+        {
+            List<MovieConfiguration>? matching = this.Where(configuration => configuration.IdCode(provider) == id).ToList();
+
+            if (!matching.Any())
+            {
+                return null;
+            }
+            if (matching.Count == 1)
+            {
+                return matching.First();
+            }
+            Logger.Error($"Movie Library has multiple: {matching.Select(x => x.ToString()).ToCsv()}");
+            return matching.First();
+        }
+        
         /*
         internal void Add([NotNull] MovieConfiguration found)
         {

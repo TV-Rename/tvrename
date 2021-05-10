@@ -40,6 +40,27 @@ namespace TVRename
 
             return results.Where(t => !string.IsNullOrWhiteSpace(t)).Select(s =>s.Trim() ).Distinct();
         }
+        public void Add(ShowConfiguration newShow)
+        {
+            if (Contains(newShow))
+            {
+                return;
+            }
+
+            List<ShowConfiguration> matchingShows = this.Where(configuration => configuration.AnyIdsMatch(newShow)).ToList();
+            if (matchingShows.Any())
+            {
+                foreach (ShowConfiguration existingshow in matchingShows)
+                {
+                    //TODO Merge them in
+                    Logger.Error($"Trying to add {newShow}, but we already have {existingshow}");
+                }
+                return;
+            }
+
+            base.Add(newShow);
+        }
+
 
         [NotNull]
         public IEnumerable<string> GetSeasonPatterns()
@@ -124,7 +145,21 @@ namespace TVRename
         //     }
         // }
 
-        public ShowConfiguration? GetShowItem(int id,TVDoc.ProviderType provider) => this.SingleOrDefault(configuration => configuration.IdCode(provider)==id);
+        public ShowConfiguration? GetShowItem(int id,TVDoc.ProviderType provider)
+        {
+            List<ShowConfiguration>? matching = this.Where(configuration => configuration.IdCode(provider) == id).ToList();
+
+            if (!matching.Any())
+            {
+                return null;
+            }
+            if (matching.Count == 1)
+            {
+                return matching.First();
+            }
+            Logger.Error($"TV Library has multiple: {matching.Select(x=>x.ToString()).ToCsv()}");
+            return matching.First();
+        }
 
         /*internal void Add([NotNull] ShowConfiguration found)
         {
@@ -164,19 +199,15 @@ namespace TVRename
 
             bool r = true;
 
-            lock (si.Provider==TVDoc.ProviderType.TVmaze? TVmaze.LocalCache.Instance.SERIES_LOCK: TheTVDB.LocalCache.Instance.SERIES_LOCK)
+            lock ( TVDoc.GetMediaCache(si.Provider).SERIES_LOCK)
             {
                 si.ClearEpisodes();
 
-                CachedSeriesInfo ser =
-                    si.Provider == TVDoc.ProviderType.TVmaze ? TVmaze.LocalCache.Instance.GetSeries(si.TVmazeCode):
-                    si.Provider == TVDoc.ProviderType.TMDB ? TMDB.LocalCache.Instance.GetSeries(si.TmdbCode) :
-                    TheTVDB.LocalCache.Instance.GetSeries(si.TvdbCode);
+                CachedSeriesInfo ser = TVDoc.GetMediaCache(si.Provider).GetSeries(si.Code);
 
                 if (ser is null)
                 {
-                    string source = si.Provider == TVDoc.ProviderType.TVmaze ? "TVMaze" : "TVDB";
-                    Logger.Warn($"Asked to generate episodes for {si.ShowName}, but this has not yet been downloaded from {source}");
+                    Logger.Warn($"Asked to generate episodes for {si.ShowName}, but this has not yet been downloaded from {si.Provider.PrettyPrint()}");
                     return false;
                 }
 
@@ -677,7 +708,7 @@ namespace TVRename
             TimeSpan howClose = TimeSpan.MaxValue;
             foreach (ShowConfiguration si in GetSortedShowItems())
             {
-                lock (si.Provider==TVDoc.ProviderType.TVmaze ? TVmaze.LocalCache.Instance.SERIES_LOCK : TheTVDB.LocalCache.Instance.SERIES_LOCK)
+                lock (TVDoc.GetMediaCache(si.Provider).SERIES_LOCK)
                 {
                     if (!si.ShowNextAirdate)
                     {

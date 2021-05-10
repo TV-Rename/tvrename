@@ -15,6 +15,7 @@ namespace TVRename
 
         public bool LoadOk;
 
+        public abstract TVDoc.ProviderType Provider();
         
         protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 

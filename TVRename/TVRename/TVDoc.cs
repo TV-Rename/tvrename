@@ -212,7 +212,7 @@ namespace TVRename
                         continue;
                     }
 
-                    string checkName = $"looked in the {cache.GetType().Name} cache based on {provider.PrettyPrint()}";
+                    string checkName = $"looked in the {cache.Provider().PrettyPrint()} cache based on {provider.PrettyPrint()} [{cachedData.IdCode(provider)}]";
                     showConfiguration.TmdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TMDB, MediaConfiguration.MediaType.tv, checkName);
                     showConfiguration.TvdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.tv, checkName);
                     showConfiguration.TVmazeCode = GetBestValue(showConfiguration, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.tv, checkName);
@@ -231,7 +231,7 @@ namespace TVRename
                     {
                         continue;
                     }
-                    string checkName = $"looked in the {cache.GetType().Name} cache based on {provider.PrettyPrint()}";
+                    string checkName = $"looked in the {cache.Provider().PrettyPrint()} cache based on {provider.PrettyPrint()} [{cachedData.IdCode(provider)}]";
                     showConfiguration.TmdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TMDB, MediaConfiguration.MediaType.movie, checkName);
                     showConfiguration.TvdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.movie, checkName);
                     showConfiguration.TVmazeCode = GetBestValue(showConfiguration, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.movie, checkName);
@@ -251,7 +251,7 @@ namespace TVRename
 
             if (currentValue  > 0 && valueFromCache > 0 && currentValue  != valueFromCache)
             {
-                Logger.Error($"Media:{type.PrettyPrint()} {show.ShowName} has inconsistent {provider.PrettyPrint()} Id: {currentValue } {valueFromCache}, updating to {valueFromCache}, {basedOnInformation}.");
+                Logger.Error($"Media:{type.PrettyPrint()}: {show.ShowName} has inconsistent {provider.PrettyPrint()} Id: {currentValue } {valueFromCache}, updating to {valueFromCache}, {basedOnInformation}.");
                 return valueFromCache;
             }
 

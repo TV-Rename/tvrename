@@ -84,6 +84,7 @@ namespace TVRename.TheTVDB
         }
 
         public string LastErrorMessage { get; set; }
+        public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TheTVDB;
 
         public void Setup(FileInfo? loadFrom, FileInfo cache, CommandLineArgs cla)
         {

@@ -115,7 +115,6 @@ namespace TVRename
                 !TVSettings.Instance.DefShowAutoFolders ? AutomaticFolderType.none
                 : TVSettings.Instance.DefShowUseBase ? AutomaticFolderType.baseOnly
                 : AutomaticFolderType.libraryDefault;
-
         }
 
         public ShowConfiguration(int code, TVDoc.ProviderType type):this()
@@ -401,8 +400,6 @@ namespace TVRename
                 IgnoreSeasons.Add(seasonNumber);
             }
         }
-
-
 
         private void SetupSeasonRules([NotNull] XElement xmlSettings)
         {
@@ -854,7 +851,6 @@ namespace TVRename
             return fld;
         }
 
-
         public ProcessedSeason? GetSeason(int snum)
         {
             ConcurrentDictionary<int, ProcessedSeason> ssn = AppropriateSeasons();
@@ -889,8 +885,6 @@ namespace TVRename
         public string AutoFolderNameForSeason(int snum) => AutoFolderNameForSeason(GetSeason(snum));
 
         public bool AutoAddNewSeasons() => AutoAddType != AutomaticFolderType.none;
-
-
 
         public bool NoAirdatesUntilNow(int maxSeasonNumber)
         {
@@ -968,5 +962,12 @@ namespace TVRename
             return new SeriesSpecifier(TvdbCode, TVmazeCode, TmdbCode, UseCustomLanguage,
                 CustomLanguageCode, ShowName, Provider, CachedShow?.Imdb, MediaType.tv);
         }
+
+        public bool AnyIdsMatch(ShowConfiguration newShow) =>
+            IdsMatch(TvdbCode, newShow.TvdbCode) ||
+            IdsMatch(TVmazeCode, newShow.TVmazeCode) ||
+            IdsMatch(TmdbCode, newShow.TmdbCode);
+
+        private static bool IdsMatch(int code1, int code2) => code1 == code2 && code1 > 0;
     }
 }

@@ -441,7 +441,7 @@ namespace TVRename
             {
                 // need to add a new showitem
                 found = new ShowConfiguration(ai.ProviderCode, ai.Provider);
-                mDoc.TvLibrary.Add(found);
+                mDoc.Add(found);
             }
 
             found.AutoAddFolderBase = ai.Folder.FullName;

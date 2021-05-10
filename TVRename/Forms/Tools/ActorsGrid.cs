@@ -48,25 +48,22 @@ namespace TVRename
         private void BuildData()
         {
             // find actors that have been in more than one thing
-            lock(TheTVDB.LocalCache.Instance.SERIES_LOCK)
+            theData = new DataArr(mDoc.TvLibrary.Count);
+            foreach (ShowConfiguration ser in mDoc.TvLibrary.Shows)
             {
-                theData = new DataArr(mDoc.TvLibrary.Count);
-                foreach (ShowConfiguration ser in mDoc.TvLibrary.Shows)
+                CachedSeriesInfo? si = ser.CachedShow;
+                foreach (string aa in ser.Actors.Select(act => act.ActorName.Trim()).Where(aa => !string.IsNullOrEmpty(aa)))
                 {
-                    CachedSeriesInfo? si = ser.CachedShow;
-                    foreach (string aa in ser.Actors.Select(act => act.ActorName.Trim()).Where(aa => !string.IsNullOrEmpty(aa)))
-                    {
-                        theData.Set(ser.ShowName, aa, true);
-                    }
+                    theData.Set(ser.ShowName, aa, true);
+                }
 
-                    if (cbGuestStars.Checked && si != null)
+                if (cbGuestStars.Checked && si != null)
+                {
+                    foreach (Episode ep in si.Episodes)
                     {
-                        foreach (Episode ep in si.Episodes)
+                        foreach (string g in ep.GuestStars)
                         {
-                            foreach (string g in ep.GuestStars)
-                            {
-                                theData.Set(ser.ShowName, g.Trim(), false);
-                            }
+                            theData.Set(ser.ShowName, g.Trim(), false);
                         }
                     }
                 }

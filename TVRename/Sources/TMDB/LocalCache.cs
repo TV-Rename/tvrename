@@ -1073,6 +1073,8 @@ namespace TVRename.TMDB
             LOGGER.Info($"Loaded file with updates until {latestMovieUpdateTime.LastSuccessfulServerUpdateDateTime()}");
         }
 
+        public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TMDB;
+
         public Language PreferredLanguage => throw new NotImplementedException();
 
         public Language GetLanguageFromCode(string customLanguageCode) => throw new NotImplementedException();

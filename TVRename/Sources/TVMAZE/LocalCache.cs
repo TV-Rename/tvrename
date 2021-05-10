@@ -410,6 +410,8 @@ namespace TVRename.TVmaze
             //No Need to do anything aswe always refresh from scratch
         }
 
+        public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TVmaze;
+
         public Language PreferredLanguage => throw new NotImplementedException();
 
         public ConcurrentDictionary<int,CachedSeriesInfo> CachedData

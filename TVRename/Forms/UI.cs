@@ -2824,7 +2824,7 @@ namespace TVRename
             DialogResult dr = aes.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
-                mDoc.TvLibrary.Add(si);
+                mDoc.Add(si);
 
                 ShowAddedOrEdited(false,false,si);
                 SelectShow(si);
