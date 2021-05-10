@@ -254,7 +254,7 @@ namespace TVRename
                 
                 return false;
             }
-            if (chkAutoFolders.Checked && string.IsNullOrWhiteSpace(cbDirectory.SelectedItem.ToString()))
+            if (chkAutoFolders.Checked && string.IsNullOrWhiteSpace(cbDirectory.SelectedItem?.ToString()))
             {
                 MessageBox.Show("Please enter base folder for this show or turn off automatic folders", "TVRename Add/Edit Movie",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -264,7 +264,7 @@ namespace TVRename
 
                 return false;
             }
-            if (chkAutoFolders.Checked && !TVSettings.OKPath(cbDirectory.SelectedItem.ToString(), false))
+            if (chkAutoFolders.Checked && !TVSettings.OKPath(cbDirectory.SelectedItem?.ToString(), false))
             {
                 MessageBox.Show("Please check the base folder is a valid one and has no invalid characters"
                     , "TVRename Add/Edit Movie",

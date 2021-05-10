@@ -42,7 +42,7 @@ namespace TVRename
             };
         }
 
-        public string ToString() => $"{GetMediaType()}: ({ConfigurationProvider.PrettyPrint()}) TVDB:{TvdbCode} TMDB:{TmdbCode} TVMaze:{TVmazeCode} ({CustomShowName},{CustomLanguageCode},{CustomRegionCode})";
+        public override string ToString() => $"{GetMediaType()}: ({ConfigurationProvider.PrettyPrint()}) TVDB:{TvdbCode} TMDB:{TmdbCode} TVMaze:{TVmazeCode} ({CustomShowName},{CustomLanguageCode},{CustomRegionCode})";
 
         [NotNull]
         public Dictionary<int, SafeList<string>> AllExistngFolderLocations() => AllFolderLocations(true, true);

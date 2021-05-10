@@ -469,8 +469,8 @@ namespace TVRename
             s.DefMovieDefaultLocation = (string)cmbDefMovieLocation.SelectedItem;
             s.DefaultMovieProvider = MovieProviderMode();
 
-            s.TMDBLanguage= TMDB.LocalCache.Instance.LanguageCode(cbTMDBLanguages.SelectedItem.ToString());
-            s.TMDBRegion = TMDB.LocalCache.Instance.RegionCode(cbTMDBRegions.SelectedItem.ToString());
+            s.TMDBLanguage= TMDB.LocalCache.Instance.LanguageCode(cbTMDBLanguages.SelectedItem?.ToString());
+            s.TMDBRegion = TMDB.LocalCache.Instance.RegionCode(cbTMDBRegions.SelectedItem?.ToString());
             s.TMDBPercentDirty = tbTMDBPercentDirty.Text.ToPercent(20);
             s.IncludeMoviesQuickRecent = chkIncludeMoviesQuickRecent.Checked;
 
