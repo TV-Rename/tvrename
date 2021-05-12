@@ -65,23 +65,7 @@ namespace TVRename
         public MovieConfiguration(int code, TVDoc.ProviderType type) : this()
         {
             ConfigurationProvider = type;
-            switch (type)
-            {
-                case TVDoc.ProviderType.TVmaze:
-                    TVmazeCode = code;
-                    break;
-
-                case TVDoc.ProviderType.TheTVDB:
-                    TvdbCode = code;
-                    break;
-
-                case TVDoc.ProviderType.TMDB:
-                    TmdbCode = code;
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
+            SetId(type,code);
         }
 
         public MovieConfiguration([NotNull] XElement xmlSettings) : this()

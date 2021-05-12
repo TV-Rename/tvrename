@@ -45,7 +45,6 @@ namespace TVRename.Forms
             }
 
             if(chkRemoveFuture.Checked)
-
             {
                 IEnumerable<CollectionMember> historicCollectionMovies =
                     collectionMovies.Where(m => m.ReleaseDate.HasValue && m.ReleaseDate.Value < DateTime.Now && m.MovieYear.HasValue);

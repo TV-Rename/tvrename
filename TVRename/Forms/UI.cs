@@ -4575,7 +4575,7 @@ namespace TVRename
             olvAction.ShowGroups=true;
             olvAction.AlwaysGroupByColumn = null;
             olvAction.Sort(olvType,SortOrder.Ascending);
-            olvAction.BuildGroups(olvType,SortOrder.Ascending);//,olvShowColumn,SortOrder.Ascending,olvSeason,SortOrder.Ascending);
+            olvAction.BuildGroups(olvType,SortOrder.Ascending); //,olvShowColumn,SortOrder.Ascending,olvSeason,SortOrder.Ascending);
             olvAction.CustomSorter = delegate { olvAction.ListViewItemSorter = new ListViewActionItemSorter(); };
             olvAction.EndUpdate();
         }

@@ -3,11 +3,6 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
-    /// <inheritdoc />
-    /// <summary>
-    /// Summary for TheTVDBCodeFinder
-    /// </summary>
-
     public abstract class CodeFinder : UserControl
     {
         public abstract void SetHint(string hint);

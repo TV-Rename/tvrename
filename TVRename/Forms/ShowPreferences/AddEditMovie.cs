@@ -320,20 +320,7 @@ namespace TVRename
 
             selectedShow.UseCustomRegion = chkCustomRegion.Checked;
             selectedShow.CustomRegionCode = cbRegion.Text;
-
-            if (GetProviderType() == TVDoc.ProviderType.TheTVDB || (GetProviderType() == TVDoc.ProviderType.libraryDefault && TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TheTVDB))
-            {
-                selectedShow.TvdbCode = code;
-            }
-            if (GetProviderType() == TVDoc.ProviderType.TMDB || (GetProviderType() == TVDoc.ProviderType.libraryDefault && TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TMDB))
-            {
-                selectedShow.TmdbCode = code;
-            }
-            if (GetProviderType() == TVDoc.ProviderType.TVmaze || (GetProviderType() == TVDoc.ProviderType.libraryDefault && TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TVmaze))
-            {
-                selectedShow.TVmazeCode = code;
-            }
-
+            selectedShow.SetId(GetProviderTypeInUse(), code);
             selectedShow.DoRename = cbDoRenaming.Checked;
             selectedShow.DoMissingCheck = cbDoMissingCheck.Checked;
             selectedShow.ConfigurationProvider = GetProviderType();

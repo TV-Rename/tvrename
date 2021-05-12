@@ -389,18 +389,8 @@ namespace TVRename
 
             selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.DefaultTimeZone();
             selectedShow.ShowNextAirdate = chkShowNextAirdate.Checked;
-            if (GetProviderTypeInUse()==TVDoc.ProviderType.TheTVDB )
-            {
-                selectedShow.TvdbCode = code;
-            }
-            if (GetProviderTypeInUse() == TVDoc.ProviderType.TMDB )
-            {
-                selectedShow.TmdbCode = code;
-            }
-            if (GetProviderTypeInUse() == TVDoc.ProviderType.TVmaze)
-            {
-                selectedShow.TVmazeCode = code;
-            }
+
+            selectedShow.SetId(GetProviderTypeInUse(),code);
             selectedShow.CountSpecials = chkSpecialsCount.Checked;
             selectedShow.DoRename = cbDoRenaming.Checked;
             selectedShow.DoMissingCheck = cbDoMissingCheck.Checked;

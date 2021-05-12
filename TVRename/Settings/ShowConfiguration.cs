@@ -119,23 +119,8 @@ namespace TVRename
 
         public ShowConfiguration(int code, TVDoc.ProviderType type):this()
         {
-            switch (type)
-            {
-                case TVDoc.ProviderType.TVmaze:
-                    TVmazeCode = code;
-                    break;
-
-                case TVDoc.ProviderType.TheTVDB:
-                    TvdbCode = code;
-                    break;
-
-                case TVDoc.ProviderType.TMDB:
-                    TmdbCode = code;
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
+            ConfigurationProvider = type;
+            SetId(type, code);
         }
 
         public void AddEpisode([NotNull] Episode e)
