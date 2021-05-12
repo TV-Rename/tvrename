@@ -73,6 +73,9 @@ Section "Install"
 
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 
+    SetOutPath "$INSTDIR\locales"
+    File "TVRename\bin\Release\locales\*.pak"
+    
     SetOutPath "$INSTDIR\x64"
     File "TVRename\bin\Release\x64\*.dll"
     File "TVRename\bin\Release\x64\*.exe"
@@ -114,11 +117,18 @@ Section "Uninstall"
     
     Delete "$INSTDIR\NLog.config"
     Delete "$INSTDIR\TVRename.exe.config"
+    Delete "$INSTDIR\debug.log"
 
     Delete "$INSTDIR\Uninstall.exe"
 
+    Delete "$INSTDIR\locales\*.pak"
+    RmDir "$INSTDIR\locales"
+    
+    RmDir /r "$INSTDIR\x64"
+    RmDir /r "$INSTDIR\x86"
+    
     RmDir "$INSTDIR"
-
+    
     !insertmacro MUI_STARTMENU_GETFOLDER Application $STARTMENU_FOLDER
     Delete "$SMPROGRAMS\$STARTMENU_FOLDER\${APPNAME}.lnk"
     Delete "$SMPROGRAMS\$STARTMENU_FOLDER\${APPNAME} (Recover).lnk"
