@@ -105,7 +105,6 @@ namespace TVRename
                 LOGGER.Warn(ex, $"Could not access subdirectories of {dirPath}");
             }
         }
-
         private void ReviewDirInDownloadDirectory(string subDirPath)
         {
             //we are not checking for any file updates, so can return
@@ -159,9 +158,7 @@ namespace TVRename
             {
                 returnActions.Add(SetupDirectoryRemoval(di, matchingMovies));
             }
-
         }
-
         [NotNull]
         private static Action SetupDirectoryRemoval([NotNull] DirectoryInfo di,
             [NotNull] IReadOnlyList<ShowConfiguration> matchingShows)
@@ -232,8 +229,7 @@ namespace TVRename
                 LOGGER.Warn(ex, $"Could not access files in {dirPath}");
             }
         }
-
-
+        
         private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, [NotNull] List<ShowConfiguration> matchingShows, [NotNull] List<MovieConfiguration> matchingMovies, IDialogParent owner)
         {
             if (!matchingMovies.Any() && !matchingShows.Any())
@@ -280,7 +276,6 @@ namespace TVRename
                         LOGGER.Warn(
                             $"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}' for show {si.ShowName}:{si.Code}");
                     }
-
 
                     fileCanBeDeleted = false;
                     continue;
