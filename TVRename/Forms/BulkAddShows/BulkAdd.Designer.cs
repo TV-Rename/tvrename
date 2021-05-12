@@ -67,13 +67,13 @@ namespace TVRename
             this.tbResults = new System.Windows.Forms.TabPage();
             this.bnEditEntry = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
-            this.lvFMNewShows = new ListViewFlickerFree();
+            this.lvFMNewShows = new TVRename.ListViewFlickerFree();
             this.columnHeader42 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader43 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader44 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader45 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.bnClose = new System.Windows.Forms.Button();
             this.imagesPassFail = new System.Windows.Forms.ImageList(this.components);
+            this.bnClose = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tbFolders.SuspendLayout();
             this.tbIgnore.SuspendLayout();
@@ -140,7 +140,7 @@ namespace TVRename
             this.lstFMMonitorFolders.TabIndex = 6;
             this.lstFMMonitorFolders.SelectedIndexChanged += new System.EventHandler(this.lstFMMonitorFolders_SelectedIndexChanged);
             this.lstFMMonitorFolders.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstFMMonitorFolders_DragDrop);
-            this.lstFMMonitorFolders.DragOver += new System.Windows.Forms.DragEventHandler(lstFMMonitorFolders_DragOver);
+            this.lstFMMonitorFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.lstFMMonitorFolders_DragOver);
             this.lstFMMonitorFolders.DoubleClick += new System.EventHandler(this.lstFMMonitorFolders_DoubleClick);
             this.lstFMMonitorFolders.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstFMMonitorFolders_KeyDown);
             // 
@@ -215,7 +215,7 @@ namespace TVRename
             this.lstFMIgnoreFolders.TabIndex = 6;
             this.lstFMIgnoreFolders.SelectedIndexChanged += new System.EventHandler(this.lstFMIgnoreFolders_SelectedIndexChanged);
             this.lstFMIgnoreFolders.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstFMIgnoreFolders_DragDrop);
-            this.lstFMIgnoreFolders.DragOver += new System.Windows.Forms.DragEventHandler(lstFMIgnoreFolders_DragOver);
+            this.lstFMIgnoreFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.lstFMIgnoreFolders_DragOver);
             this.lstFMIgnoreFolders.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstFMIgnoreFolders_KeyDown);
             // 
             // bnVisitTVcom
@@ -460,8 +460,15 @@ namespace TVRename
             // 
             // columnHeader45
             // 
-            this.columnHeader45.Text = "TheTVDB Code";
+            this.columnHeader45.Text = "Source Code";
             this.columnHeader45.Width = 94;
+            // 
+            // imagesPassFail
+            // 
+            this.imagesPassFail.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imagesPassFail.ImageStream")));
+            this.imagesPassFail.TransparentColor = System.Drawing.Color.Transparent;
+            this.imagesPassFail.Images.SetKeyName(0, "fail");
+            this.imagesPassFail.Images.SetKeyName(1, "pass");
             // 
             // bnClose
             // 
@@ -474,13 +481,6 @@ namespace TVRename
             this.bnClose.Text = "Close";
             this.bnClose.UseVisualStyleBackColor = true;
             this.bnClose.Click += new System.EventHandler(this.bnClose_Click);
-            // 
-            // imagesPassFail
-            // 
-            this.imagesPassFail.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imagesPassFail.ImageStream")));
-            this.imagesPassFail.TransparentColor = System.Drawing.Color.Transparent;
-            this.imagesPassFail.Images.SetKeyName(0, "fail");
-            this.imagesPassFail.Images.SetKeyName(1, "pass");
             // 
             // FolderMonitor
             // 
