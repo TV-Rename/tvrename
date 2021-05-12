@@ -300,6 +300,8 @@
     <Compile Include="Exporter\MoviesHtml.cs" />
     <Compile Include="Exporter\MoviesTxt.cs" />
     <Compile Include="Exporter\UpcomingTXT.cs" />
+    <Compile Include="Forms\BrowserRequestHandler.cs" />
+    <Compile Include="Forms\Supporting\FaResult.cs" />
     <Compile Include="Forms\Supporting\LinkMovie.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -312,18 +314,23 @@
     <Compile Include="Forms\Supporting\MovieFilters.Designer.cs">
       <DependentUpon>MovieFilters.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Tools\CollectionMember.cs" />
     <Compile Include="Forms\Tools\CollectionsView.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\Tools\CollectionsView.Designer.cs">
       <DependentUpon>CollectionsView.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Tools\DuplicateMovie.cs" />
     <Compile Include="Forms\Tools\DuplicateMovieFinder.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\Tools\DuplicateMovieFinder.Designer.cs">
       <DependentUpon>DuplicateMovieFinder.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Tools\Recomendations.cs" />
+    <Compile Include="Forms\Tools\RecommendationResult.cs" />
+    <Compile Include="Forms\Tools\RecommendationRow.cs" />
     <Compile Include="Forms\Tools\SettingsReview.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -343,7 +350,9 @@
     <Compile Include="ItemsAndActions\ActionNfoMovie.cs" />
     <Compile Include="ItemsAndActions\ActionNfoShow.cs" />
     <Compile Include="ItemsAndActions\MovieItemMissing.cs" />
+    <Compile Include="ItemsAndActions\ShowItemMissing.cs" />
     <Compile Include="LibrarySummary\Check\FolderBaseMovieCheck.cs" />
+    <Compile Include="LibrarySummary\Check\FolderBaseTvCheck.cs" />
     <Compile Include="LibrarySummary\Check\SettingsCheck.cs" />
     <Compile Include="LibrarySummary\Check\CustomLanguageMovieCheck.cs" />
     <Compile Include="LibrarySummary\Check\CustomLanguageTvShowCheck.cs" />
@@ -477,32 +486,53 @@
     <Compile Include="Settings\MovieFilter.cs" />
     <Compile Include="Settings\PreviouslySeenMovies.cs" />
     <Compile Include="Settings\AppState\State.cs" />
+    <Compile Include="Settings\RuleAction.cs" />
+    <Compile Include="Settings\SearchEngine.cs" />
     <Compile Include="Sources\SourceConsistencyException.cs" />
+    <Compile Include="Sources\TheTVDB\ApiVersion.cs" />
     <Compile Include="Sources\TheTVDB\TvdbAccuracyCheck.cs" />
     <Compile Include="Sources\TMDB\LocalCache.cs" />
-    <Compile Include="Sources\TMDB\TMDBAPI.cs" />
+    <Compile Include="Sources\TMDB\API.cs" />
     <Compile Include="Sources\MediaCache.cs" />
-    <Compile Include="Sources\TMDB\TvdbAccuracyCheck.cs" />
+    <Compile Include="Sources\TMDB\TmdbAccuracyCheck.cs" />
     <Compile Include="TVRename\BulkAddMovieManager.cs" />
     <Compile Include="TVRename\CacheLoadException.cs" />
-    <Compile Include="Sources\TheTVDB\TheTVDBAPI.cs" />
+    <Compile Include="Sources\TheTVDB\API.cs" />
     <Compile Include="Model\CachePersistor.cs" />
     <Compile Include="Sources\TheTVDB\TokenProvider.cs" />
     <Compile Include="ItemsAndActions\ActionFailedException.cs" />
     <Compile Include="Sources\TVMAZE\LocalCache.cs" />
-    <Compile Include="Sources\TVMAZE\TVmazeAPI.cs" />
+    <Compile Include="Sources\TVMAZE\API.cs" />
     <Compile Include="TVRename\FileIssue.cs" />
     <Compile Include="TVRename\MergedEpisodeFinderController.cs" />
     <Compile Include="TVRename\MovieLibrary.cs" />
     <Compile Include="TVRename\PossibleNewMovie.cs" />
+    <Compile Include="TVRename\PossibleNewMovies.cs" />
     <Compile Include="TVRename\UpdateTimeTracker.cs" />
+    <Compile Include="Utility\BEncodeLoader.cs" />
+    <Compile Include="Utility\BTChunk.cs" />
+    <Compile Include="Utility\BTCore.cs" />
+    <Compile Include="Utility\BTDictionary.cs" />
+    <Compile Include="Utility\BTDictionaryItem.cs" />
+    <Compile Include="Utility\BTEOF.cs" />
+    <Compile Include="Utility\BTError.cs" />
+    <Compile Include="Utility\BTFile.cs" />
+    <Compile Include="Utility\BTInteger.cs" />
+    <Compile Include="Utility\BTItem.cs" />
+    <Compile Include="Utility\BTList.cs" />
+    <Compile Include="Utility\BTListOrDictionaryEnd.cs" />
+    <Compile Include="Utility\BTResume.cs" />
+    <Compile Include="Utility\BTString.cs" />
     <Compile Include="Utility\DependencyChecker.cs" />
     <Compile Include="Utility\Extensions\SafeEnumerable.cs" />
     <Compile Include="Utility\Extensions\SafeEnumerator.cs" />
     <Compile Include="Utility\Extensions\SafeList.cs" />
+    <Compile Include="Utility\HashCacheItem.cs" />
     <Compile Include="Utility\Helper\LinqHelper.cs" />
     <Compile Include="Utility\Helper\TaskHelper.cs" />
     <Compile Include="Utility\ServerRelease.cs" />
+    <Compile Include="Utility\Sorters\DoubleAsTextSorter.cs" />
+    <Compile Include="Utility\TorrentEntry.cs" />
     <Compile Include="Utility\UrlCache.cs" />
     <Compile Include="Forms\ShowPreferences\AutoAddMedia.cs">
       <SubType>Form</SubType>
@@ -517,11 +547,11 @@
     <Compile Include="Forms\ShowPreferences\NewSeenEpisode.Designer.cs">
       <DependentUpon>NewSeenEpisode.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ShowPreferences\QuickLocate.cs">
+    <Compile Include="Forms\ShowPreferences\QuickLocateForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\ShowPreferences\QuickLocate.Designer.cs">
-      <DependentUpon>QuickLocate.cs</DependentUpon>
+    <Compile Include="Forms\ShowPreferences\QuickLocateForm.Designer.cs">
+      <DependentUpon>QuickLocateForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Supporting\ChooseFile.cs">
       <SubType>Form</SubType>
@@ -553,11 +583,11 @@
     <Compile Include="Forms\Utilities\CannotConnectForm.Designer.cs">
       <DependentUpon>CannotConnectForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Utilities\LicenceInfo.cs">
+    <Compile Include="Forms\Utilities\LicenceInfoForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Utilities\LicenceInfo.Designer.cs">
-      <DependentUpon>LicenceInfo.cs</DependentUpon>
+    <Compile Include="Forms\Utilities\LicenceInfoForm.Designer.cs">
+      <DependentUpon>LicenceInfoForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Utilities\LogViewer.cs">
       <SubType>Form</SubType>
@@ -581,7 +611,7 @@
     <Compile Include="ScanActivity\DownloadIdentifers\DownloadKodiMetaData.cs" />
     <Compile Include="ScanActivity\DownloadIdentifers\DownloadFanartJPG.cs" />
     <Compile Include="ScanActivity\DownloadIdentifers\DownloadIdentifier.cs" />
-    <Compile Include="ScanActivity\DownloadIdentifers\DownloadJolderJPG.cs" />
+    <Compile Include="ScanActivity\DownloadIdentifers\DownloadFolderJpg.cs" />
     <Compile Include="ScanActivity\DownloadIdentifers\DownloadKodiImages.cs" />
     <Compile Include="Exporter\ShowsTXT.cs" />
     <Compile Include="Exporter\Exporter.cs" />
@@ -653,7 +683,7 @@
     <Compile Include="Model\SeriesSpecifier.cs" />
     <Compile Include="Model\MediaNotFoundException.cs" />
     <Compile Include="Sources\SourceConnectivityException.cs" />
-    <Compile Include="Model\TVSource.cs" />
+    <Compile Include="Model\iTVSource.cs" />
     <Compile Include="TVRename\ActionEngine.cs" />
     <Compile Include="TVRename\BulkAddSeriesManager.cs" />
     <Compile Include="TVRename\CacheUpdater.cs" />
@@ -661,7 +691,7 @@
     <Compile Include="ScanActivity\CleanDownloadDirectory.cs" />
     <Compile Include="TVRename\FolderMonitorEntryList.cs" />
     <Compile Include="TVRename\ShowLibrary.cs" />
-    <Compile Include="TVRename\TVRenameOperationInteruptedException.cs" />
+    <Compile Include="TVRename\TVRenameOperationInterruptedException.cs" />
     <Compile Include="Utility\Sorters\DateSorterWTW.cs" />
     <Compile Include="Utility\Extensions\EnumerableExtensions.cs" />
     <Compile Include="Utility\Helper\ShowHtmlHelper.cs" />
@@ -670,7 +700,7 @@
     <Compile Include="Utility\Helper\HTTPHelper.cs" />
     <Compile Include="Utility\Helper\JSONHelper.cs" />
     <Compile Include="Utility\NativeMethods.cs" />
-    <Compile Include="Utility\DownloadInformation.cs" />
+    <Compile Include="Utility\IDownloadInformation.cs" />
     <Compile Include="Utility\Sorters\ListViewItemDateSorter.cs" />
     <Compile Include="Utility\Sorters\ListViewItemSorter.cs" />
     <Compile Include="Utility\Sorters\NumberAsTextSorter.cs" />
@@ -724,8 +754,8 @@
     <Compile Include="Forms\ShowPreferences\EditSeason.Designer.cs">
       <DependentUpon>EditSeason.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\BulkAddShows\BulkAdd.Designer.cs">
-      <DependentUpon>BulkAdd.cs</DependentUpon>
+    <Compile Include="Forms\BulkAddShows\FolderMonitor.Designer.cs">
+      <DependentUpon>FolderMonitor.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\BulkAddShows\BulkAddEditShow.cs">
       <SubType>Form</SubType>
@@ -733,8 +763,8 @@
     <Compile Include="Forms\BulkAddShows\BulkAddEditShow.Designer.cs">
       <DependentUpon>BulkAddEditShow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\BulkAddShows\BulkAddProgress.Designer.cs">
-      <DependentUpon>BulkAddProgress.cs</DependentUpon>
+    <Compile Include="Forms\BulkAddShows\FolderMonitorProgress.Designer.cs">
+      <DependentUpon>FolderMonitorProgress.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Preferences\IgnoreEdit.Designer.cs">
       <DependentUpon>IgnoreEdit.cs</DependentUpon>
@@ -782,7 +812,7 @@
     </Compile>
     <Compile Include="TVRename\IgnoreItem.cs" />
     <Compile Include="TVRename\PathManager.cs" />
-    <Compile Include="Utility\BT.cs" />
+    <Compile Include="Utility\FutureTorrentEntry.cs" />
     <Compile Include="Forms\Utilities\BugReport.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -806,10 +836,10 @@
     <Compile Include="Forms\ShowPreferences\EditSeason.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\BulkAddShows\BulkAdd.cs">
+    <Compile Include="Forms\BulkAddShows\FolderMonitor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\BulkAddShows\BulkAddProgress.cs">
+    <Compile Include="Forms\BulkAddShows\FolderMonitorProgress.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Utility\DirCacheEntry.cs" />
@@ -830,7 +860,7 @@
     <Compile Include="Utility\SetProgressDelegate.cs" />
     <Compile Include="Utility\Helper\StringExtensions.cs" />
     <Compile Include="Utility\Helper\TimeZoneHelper.cs" />
-    <Compile Include="Utility\UpdateVersion.cs" />
+    <Compile Include="Utility\Release.cs" />
     <Compile Include="Utility\VersionUpdater.cs" />
     <Compile Include="Utility\Helper\XMLHelper.cs" />
     <None Include="packages.config" />
@@ -907,8 +937,8 @@
     <EmbeddedResource Include="Forms\ShowPreferences\NewSeenEpisode.resx">
       <DependentUpon>NewSeenEpisode.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ShowPreferences\QuickLocate.resx">
-      <DependentUpon>QuickLocate.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\ShowPreferences\QuickLocateForm.resx">
+      <DependentUpon>QuickLocateForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Supporting\ChooseDownload.resx">
       <DependentUpon>ChooseDownload.cs</DependentUpon>
@@ -1001,16 +1031,16 @@
       <DependentUpon>Filters.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\BulkAddShows\BulkAdd.resx">
-      <DependentUpon>BulkAdd.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\BulkAddShows\FolderMonitor.resx">
+      <DependentUpon>FolderMonitor.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\BulkAddShows\BulkAddEditShow.resx">
       <DependentUpon>BulkAddEditShow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\BulkAddShows\BulkAddProgress.resx">
-      <DependentUpon>BulkAddProgress.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\BulkAddShows\FolderMonitorProgress.resx">
+      <DependentUpon>FolderMonitorProgress.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Tools\MergedEpisodeFinder.resx">
@@ -1048,8 +1078,8 @@
     <EmbeddedResource Include="Forms\Utilities\ThanksForm.resx">
       <DependentUpon>ThanksForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Utilities\LicenceInfo.resx">
-      <DependentUpon>LicenceInfo.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\Utilities\LicenceInfoForm.resx">
+      <DependentUpon>LicenceInfoForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Utilities\LogViewer.resx">
       <DependentUpon>LogViewer.cs</DependentUpon>
@@ -1103,13 +1133,13 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Settings\Searchers.cs" />
-    <Compile Include="Settings\Settings.cs" />
+    <Compile Include="Settings\TVSettings.cs" />
     <Compile Include="Forms\Utilities\ShowException.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Settings\ShowRule.cs" />
     <Compile Include="Utility\Sorters\TextSorter.cs" />
-    <Compile Include="Settings\Statistics.cs" />
+    <Compile Include="Settings\TVRenameStats.cs" />
     <Compile Include="Forms\Utilities\StatsWindow.cs">
       <SubType>Form</SubType>
     </Compile>

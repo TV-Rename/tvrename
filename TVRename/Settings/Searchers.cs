@@ -18,12 +18,6 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    public struct SearchEngine
-    {
-        public string Name;
-        public string Url;
-    }
-
     public class Searchers:List<SearchEngine>
     {
         public SearchEngine CurrentSearch { get; private set; }

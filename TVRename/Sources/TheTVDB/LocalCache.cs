@@ -29,13 +29,6 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename.TheTVDB
 {
-    public enum ApiVersion
-    {
-        v2,
-        v3,
-        v4
-    }
-
     // ReSharper disable once InconsistentNaming
     public class LocalCache :  MediaCache, iTVSource, iMovieSource
     {

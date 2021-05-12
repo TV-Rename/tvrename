@@ -565,8 +565,7 @@ namespace TVRename
             {
                 IEnumerable<ShowConfiguration> showConfigurations = doc.TvLibrary.Shows
                     .Where(item => item.NameMatch(matchedFile, useFullPath))
-                    .Where(item => !HaveACommonId(item,currentlyMatchedTvShow))
-                    ;
+                    .Where(item => !HaveACommonId(item,currentlyMatchedTvShow));
 
                 return showConfigurations
                     .Any(testShow => testShow.ShowName.Contains(currentlyMatchedTvShow.ShowName));

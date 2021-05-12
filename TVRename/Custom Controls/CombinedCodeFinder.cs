@@ -90,7 +90,7 @@ namespace TVRename
         private string GenerateNewHintForProvider(MediaConfiguration mi)
         {
             if (mi.IdCode(Source) >0) return mi.IdCode(Source).ToString();
-            return mi.ShowName ;
+            return mi.ShowName;
         }
 
         private void SetupColumns()

@@ -188,13 +188,13 @@ namespace TVRename
                 SrvLastUpdated = seriesXml.ExtractLong("lastupdated") ?? seriesXml.ExtractLong("lastUpdated", 0);
                 LanguageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId") ?? throw new SourceConsistencyException("Error Extracting Language for Series", TVDoc.ProviderType.TheTVDB);
 
-                CollectionId = seriesXml.ExtractInt("CollectionId") ;
+                CollectionId = seriesXml.ExtractInt("CollectionId");
                 Popularity = seriesXml.ExtractDouble("Popularity") ?? 0;
                 CollectionName = seriesXml.ExtractStringOrNull("CollectionName");
-                TwitterId = seriesXml.ExtractStringOrNull("TwitterId") ;
+                TwitterId = seriesXml.ExtractStringOrNull("TwitterId");
                 InstagramId = seriesXml.ExtractStringOrNull("InstagramId");
-                FacebookId = seriesXml.ExtractStringOrNull("FacebookId") ;
-                TagLine = seriesXml.ExtractStringOrNull("TagLine") ;
+                FacebookId = seriesXml.ExtractStringOrNull("FacebookId");
+                TagLine = seriesXml.ExtractStringOrNull("TagLine");
     
                 PosterUrl = seriesXml.ExtractString("posterURL");
                 TrailerUrl = seriesXml.ExtractString("TrailerUrl");
@@ -296,4 +296,3 @@ namespace TVRename
         }
     }
 }
-

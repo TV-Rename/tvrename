@@ -14,18 +14,6 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    public enum RuleAction
-    {
-        kRemove,
-        kSwap,
-        kMerge,
-        kInsert,
-        kIgnoreEp,
-        kRename,
-        kSplit,
-        kCollapse
-    }
-
     public class ShowRule
     {
         public RuleAction DoWhatNow;

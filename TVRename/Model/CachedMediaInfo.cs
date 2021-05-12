@@ -33,7 +33,7 @@ namespace TVRename
         public string? Slug;
         public double? Popularity;
         public DateTime? FirstAired;
-        public readonly string? TargetLanguageCode; //The Language Code we'd like the Series in ; null if we want to use the system setting
+        public readonly string? TargetLanguageCode; //The Language Code we'd like the Series in, null if we want to use the system setting
         public int LanguageId; //The actual language obtained
 
         public string? Status { get; set; }

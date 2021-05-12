@@ -72,7 +72,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{ShowName}", showname);
             name = name.ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower());
             name = name.ReplaceInsensitive("{ShowNameLower}", showname.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
-            name = name.ReplaceInsensitive("{ContentRating}", m.CachedMovie?.ContentRating) ;
+            name = name.ReplaceInsensitive("{ContentRating}", m.CachedMovie?.ContentRating);
             name = name.ReplaceInsensitive("{Year}", m.CachedMovie?.Year.ToString() );
             name = name.ReplaceInsensitive("{Imdb}", m.CachedMovie?.Imdb );
 

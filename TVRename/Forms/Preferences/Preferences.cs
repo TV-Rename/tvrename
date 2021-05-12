@@ -274,7 +274,7 @@ namespace TVRename
             s.ExportRecentWPL = cbWPL.Checked;
             s.ExportRecentWPLTo = txtWPL.Text;
 
-            s.ExportMoviesTXT = cbMoviesTXT.Checked ;
+            s.ExportMoviesTXT = cbMoviesTXT.Checked;
             s.ExportMoviesTXTTo = txtMoviesTXTTo.Text;
             s.ExportMoviesHTML = cbMoviesHTML.Checked;
             s.ExportMoviesHTMLTo = txtMoviesHTMLTo.Text;

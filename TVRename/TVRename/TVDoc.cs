@@ -255,7 +255,7 @@ namespace TVRename
                 return valueFromCache;
             }
 
-            return currentValue ;
+            return currentValue;
         }
 
         public void SetDirty() => mDirty = true;

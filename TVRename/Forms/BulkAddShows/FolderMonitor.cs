@@ -233,12 +233,12 @@ namespace TVRename
             FmpPercent = percent;
         }
 
-        private static void lstFMMonitorFolders_DragOver(object _, [NotNull] DragEventArgs e)
+        private void lstFMMonitorFolders_DragOver(object _, [NotNull] DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private static void lstFMIgnoreFolders_DragOver(object _, [NotNull] DragEventArgs e)
+        private void lstFMIgnoreFolders_DragOver(object _, [NotNull] DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
