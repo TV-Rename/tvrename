@@ -79,6 +79,10 @@ Section "Install"
     File "TVRename\bin\Release\x64\*.bin"
     File "TVRename\bin\Release\x64\*.pak"
     File "TVRename\bin\Release\x64\*.dat"
+    File "TVRename\bin\Release\CefSharp.Core.dll"
+
+    SetOutPath "$INSTDIR\x64\locales"
+    File "TVRename\bin\Release\x64\locales\*.pak"
     
     SetOutPath "$INSTDIR\x86"
     File "TVRename\bin\Release\x86\*.dll"
@@ -86,7 +90,11 @@ Section "Install"
     File "TVRename\bin\Release\x86\*.bin"
     File "TVRename\bin\Release\x86\*.pak"
     File "TVRename\bin\Release\x86\*.dat"
+    File "TVRename\bin\Release\CefSharp.Core.dll"
 
+    SetOutPath "$INSTDIR\x86\locales"
+    File "TVRename\bin\Release\x86\locales\*.pak"
+    
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${APPNAME}.lnk" "$INSTDIR\TVRename.exe"
