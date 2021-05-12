@@ -73,9 +73,6 @@ Section "Install"
 
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 
-    SetOutPath "$INSTDIR\locales"
-    File "TVRename\bin\Release\locales\*.pak"
-    
     SetOutPath "$INSTDIR\x64"
     File "TVRename\bin\Release\x64\*.dll"
     File "TVRename\bin\Release\x64\*.exe"
@@ -121,9 +118,6 @@ Section "Uninstall"
 
     Delete "$INSTDIR\Uninstall.exe"
 
-    Delete "$INSTDIR\locales\*.pak"
-    RmDir "$INSTDIR\locales"
-    
     RmDir /r "$INSTDIR\x64"
     RmDir /r "$INSTDIR\x86"
     
