@@ -981,6 +981,7 @@ namespace TVRename
             this.chrMovieInformation.Name = "chrMovieInformation";
             this.chrMovieInformation.Size = new System.Drawing.Size(471, 390);
             this.chrMovieInformation.TabIndex = 1;
+            this.chrMovieInformation.Visible = false;
             // 
             // tabPage2
             // 
@@ -1001,6 +1002,7 @@ namespace TVRename
             this.chrMovieImages.Name = "chrMovieImages";
             this.chrMovieImages.Size = new System.Drawing.Size(471, 390);
             this.chrMovieImages.TabIndex = 1;
+            this.chrMovieImages.Visible = false;
             // 
             // tpMovieTrailer
             // 
@@ -1021,6 +1023,7 @@ namespace TVRename
             this.chrMovieTrailer.Name = "chrMovieTrailer";
             this.chrMovieTrailer.Size = new System.Drawing.Size(471, 390);
             this.chrMovieTrailer.TabIndex = 2;
+            this.chrMovieTrailer.Visible = false;
             // 
             // tbMyShows
             // 
@@ -1233,6 +1236,7 @@ namespace TVRename
             this.chrInformation.Name = "chrInformation";
             this.chrInformation.Size = new System.Drawing.Size(471, 390);
             this.chrInformation.TabIndex = 1;
+            this.chrInformation.Visible = false;
             // 
             // tpImages
             // 
@@ -1253,6 +1257,7 @@ namespace TVRename
             this.chrImages.Name = "chrImages";
             this.chrImages.Size = new System.Drawing.Size(471, 390);
             this.chrImages.TabIndex = 1;
+            this.chrImages.Visible = false;
             // 
             // tpSummary
             // 
@@ -1273,6 +1278,7 @@ namespace TVRename
             this.chrSummary.Name = "chrSummary";
             this.chrSummary.Size = new System.Drawing.Size(471, 390);
             this.chrSummary.TabIndex = 2;
+            this.chrSummary.Visible = false;
             // 
             // tabPage3
             // 
@@ -1293,6 +1299,7 @@ namespace TVRename
             this.chrTvTrailer.Name = "chrTvTrailer";
             this.chrTvTrailer.Size = new System.Drawing.Size(471, 390);
             this.chrTvTrailer.TabIndex = 2;
+            this.chrTvTrailer.Visible = false;
             // 
             // tbAllInOne
             // 

@@ -427,6 +427,8 @@ namespace TVRename
                 TheTVDB.LocalCache.Instance.LanguageList?.FirstOrDefault(l => l.Name == cbTVDBLanguages.Text)?.Abbreviation ??
                 s.PreferredLanguageCode;
 
+            s.TvdbVersion = cbTVDBVersion.Text == "v3" ? TheTVDB.ApiVersion.v3 : TheTVDB.ApiVersion.v4;
+
             if (string.IsNullOrWhiteSpace(s.PreferredLanguageCode))
             {
                 s.PreferredLanguageCode = "en";
@@ -1148,6 +1150,7 @@ namespace TVRename
         {
             cbKeepTogetherMode.Text = ConvertEnum(s.keepTogetherMode);
             cbMode.Text = ConvertEnum(s.mode);
+            cbTVDBVersion.Text = ConvertEnum(s.TvdbVersion);
 
             ChooseRadioButton(s.WTWDoubleClick).Checked = true;
             ChooseRadioButton(s.FolderJpgIs).Checked = true;
@@ -1233,6 +1236,16 @@ namespace TVRename
             {
                 TVSettings.BetaMode.ProductionOnly => "Production",
                 TVSettings.BetaMode.BetaToo => "Beta",
+                _ => throw new InvalidOperationException("Unexpected value s.mode = " + mode)
+            };
+        }
+        private static string ConvertEnum(TheTVDB.ApiVersion mode)
+        {
+            return mode switch
+            {
+                TheTVDB.ApiVersion.v2 => "v2",
+                TheTVDB.ApiVersion.v3 => "v3",
+                TheTVDB.ApiVersion.v4 => "v4",
                 _ => throw new InvalidOperationException("Unexpected value s.mode = " + mode)
             };
         }
@@ -2245,6 +2258,11 @@ namespace TVRename
         private void updateCheckOption_CheckedChanged(object sender, EventArgs e)
         {
             cboUpdateCheckInterval.Enabled = optUpdateCheckInterval.Checked;
+        }
+
+        private void label91_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

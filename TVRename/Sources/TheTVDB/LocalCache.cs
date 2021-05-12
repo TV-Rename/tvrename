@@ -40,8 +40,6 @@ namespace TVRename.TheTVDB
     public class LocalCache :  MediaCache, iTVSource, iMovieSource
     {
 #nullable enable
-        public static readonly ApiVersion VERS = ApiVersion.v3; //TODO - API.V4 Revert and make user selectable
-
         private ConcurrentDictionary<int, ExtraEp>
             extraEpisodes; // IDs of extra episodes to grab and merge in on next update
 
@@ -228,7 +226,7 @@ namespace TVRename.TheTVDB
 
         public bool Connect(bool showErrorMsgBox)
         {
-            switch (VERS)
+            switch (TVSettings.Instance.TvdbVersion)
             {
                 case ApiVersion.v2:
                 case ApiVersion.v3:
@@ -1181,7 +1179,7 @@ namespace TVRename.TheTVDB
             }
 
             CachedSeriesInfo si;
-            if (VERS == ApiVersion.v4)
+            if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
             {
                 si = GenerateSeriesInfoV4(DownloadSeriesJson(code, requestedLanguageCode));
             }
@@ -1349,7 +1347,7 @@ namespace TVRename.TheTVDB
             JObject jsonResponse;
             try
             {
-                jsonResponse = VERS==ApiVersion.v4
+                jsonResponse = TVSettings.Instance.TvdbVersion ==ApiVersion.v4
                     ?API.GetSeriesV4(code, requestedLanguageCode)
                     :API.GetSeries(code, requestedLanguageCode);
             }
@@ -1869,7 +1867,7 @@ namespace TVRename.TheTVDB
             JObject jsonSearchDefaultLangResponse = null;
             try
             {
-                jsonSearchResponse = VERS== ApiVersion.v4
+                jsonSearchResponse = TVSettings.Instance.TvdbVersion == ApiVersion.v4
                     ? API.SearchV4(text, TVSettings.Instance.PreferredLanguageCode,type) 
                     : type==MediaConfiguration.MediaType.tv
                         ? API.SearchTvShow(text, TVSettings.Instance.PreferredLanguageCode)
@@ -1896,7 +1894,7 @@ namespace TVRename.TheTVDB
                 }
             }
 
-            if (InForeignLanguage() && VERS != ApiVersion.v4 && type== MediaConfiguration.MediaType.tv)
+            if (InForeignLanguage() && TVSettings.Instance.TvdbVersion != ApiVersion.v4 && type== MediaConfiguration.MediaType.tv)
             {
                 try
                 {
@@ -1947,7 +1945,7 @@ namespace TVRename.TheTVDB
             }
             try
             {
-                IEnumerable<CachedSeriesInfo> cachedSeriesInfos = (VERS == ApiVersion.v4)
+                IEnumerable<CachedSeriesInfo> cachedSeriesInfos = (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
                     ? GetEnumSeriesV4(jToken,languageId, true)
                     : jToken.Cast<JObject>().Select(seriesResponse => new CachedSeriesInfo(seriesResponse, languageId, true));
 

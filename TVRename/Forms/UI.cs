@@ -42,7 +42,6 @@ using BrightIdeasSoftware;
 using CefSharp;
 using CefSharp.WinForms;
 using TVRename.Forms.Supporting;
-using TVRename.Utility.Helper;
 
 namespace TVRename
 {
@@ -92,7 +91,10 @@ namespace TVRename
 
         public UI(TVDoc doc, [NotNull] TVRenameSplash splash, bool showUi)
         {
-            Cef.Initialize(new CefSettings());
+            CefSettings settings = new CefSettings();
+            settings.LogSeverity = LogSeverity.Info;
+            settings.DisableGpuAcceleration();
+            Cef.Initialize(settings,true);
 
             mDoc = doc;
             scanProgDlg = null;
@@ -184,13 +186,6 @@ namespace TVRename
             tmrPeriodicScan.Enabled = TVSettings.Instance.RunPeriodicCheck();
 
             SetupObjectListForScanResults();
-
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
-            TaskHelper.WaitUntil(() => Cef.IsInitialized, 100, 30 * 1000);
-            watch.Stop();
-
-            Logger.Warn($"Execution Time to wait for Cef to be ready: {watch.ElapsedMilliseconds} ms");
 
             UpdateSplashStatus(splash, "Running autoscan");
         }
@@ -1403,6 +1398,7 @@ namespace TVRename
 
         public static void SetHtmlBody([NotNull] ChromiumWebBrowser web, string body)
         {
+            web.Visible = true;
             if (web.IsDisposed || !web.IsBrowserInitialized)
             {
                 return;
@@ -1428,6 +1424,7 @@ namespace TVRename
         }
         private static void SetHtmlEmbed([NotNull] ChromiumWebBrowser web, string link)
         {
+            web.Visible = true;
             if (web.IsDisposed || !web.IsBrowserInitialized)
             {
                 return;

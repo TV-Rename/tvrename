@@ -1192,7 +1192,6 @@ namespace TVRename.TMDB
                 TrailerUrl = GetYouTubeUrl(downloadedSeries),
                 Popularity = downloadedSeries.Popularity,
                 Dirty = false,
-                
             };
 
             foreach (string? s in downloadedSeries.AlternativeTitles.Results.Select(title => title.Title))
@@ -1206,6 +1205,35 @@ namespace TVRename.TMDB
             foreach (TMDbLib.Objects.General.Crew? s in downloadedSeries.Credits.Crew)
             {
                 m.AddCrew(new Crew(s.Id, s.ProfilePath, s.Name, s.Job, s.Department, s.CreditId));
+            }
+
+            double bestBackdropRating = downloadedSeries.Images.Backdrops.Select(x => x.VoteAverage).Max();
+            foreach (ImageData? image in downloadedSeries.Images.Backdrops.Where(x => Math.Abs(x.VoteAverage - bestBackdropRating) < .01))
+            {
+                Banner newBanner = new Banner(downloadedSeries.Id)
+                {
+                    BannerId = 1,
+                    BannerPath = OriginalImageUrl(image.FilePath),
+                    BannerType = "fanart",
+                    Rating = image.VoteAverage,
+                    RatingCount = image.VoteCount
+                };
+
+                m.AddOrUpdateBanner(newBanner);
+            }
+            double bestPosterRating = downloadedSeries.Images.Posters.Select(x => x.VoteAverage).Max();
+            foreach (ImageData? image in downloadedSeries.Images.Posters.Where(x => Math.Abs(x.VoteAverage - bestPosterRating) < .01))
+            {
+                Banner newBanner = new Banner(downloadedSeries.Id)
+                {
+                    BannerId = 2,
+                    BannerPath = PosterImageUrl(image.FilePath),
+                    BannerType = "poster",
+                    Rating = image.VoteAverage,
+                    RatingCount = image.VoteCount
+                };
+
+                m.AddOrUpdateBanner(newBanner);
             }
 
             foreach (var searchSeason in downloadedSeries.Seasons)
@@ -1246,16 +1274,19 @@ namespace TVRename.TMDB
                     m.AddEpisode(newEpisode);
                 }
 
-                if (downloadedSeason.Images != null)
+                if (downloadedSeason.Images != null && downloadedSeason.Images.Posters.Count>0)
                 {
-                    foreach (ImageData? image in downloadedSeason.Images.Posters)
+                    double bestRating = downloadedSeason.Images.Posters.Select(x => x.VoteAverage).Max();
+                    foreach (ImageData? image in downloadedSeason.Images.Posters.Where(x=>Math.Abs(x.VoteAverage - bestRating) < .01))
                     {
                         Banner newBanner = new Banner(downloadedSeries.Id)
                         {
-                            BannerPath = image.FilePath,
-                            BannerType = "fanart",
+                            BannerId  = 10+snum,
+                            BannerPath = OriginalImageUrl(image.FilePath),
+                            BannerType = "season",
                             Rating = image.VoteAverage,
-                            RatingCount = image.VoteCount
+                            RatingCount = image.VoteCount,
+                            SeasonId = downloadedSeason.Id??0
                         };
 
                         m.AddOrUpdateBanner(newBanner);

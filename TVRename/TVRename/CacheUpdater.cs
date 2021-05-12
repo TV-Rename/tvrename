@@ -229,7 +229,7 @@ namespace TVRename
                 }
 
                 //TODO - Reinstate once v4 updates are working
-                if (TheTVDB.LocalCache.VERS != TheTVDB.ApiVersion.v4)
+                if (TVSettings.Instance.TvdbVersion != TheTVDB.ApiVersion.v4)
                 {
                     if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TheTVDB))
                     {

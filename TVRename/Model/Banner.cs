@@ -99,7 +99,7 @@ namespace TVRename
 
         public bool IsSeriesPoster() => BannerType == "poster";
 
-        public bool IsSeriesBanner() => BannerType == "cachedSeries";
+        public bool IsSeriesBanner() => BannerType == "series";
 
         public bool IsSeasonPoster() => BannerType == "season";
 

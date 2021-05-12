@@ -196,6 +196,7 @@ namespace TVRename
             this.tbSearchFolders = new System.Windows.Forms.TabPage();
             this.chkUseSearchFullPathWhenMatchingShows = new System.Windows.Forms.CheckBox();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.cbMovieHigherQuality = new System.Windows.Forms.CheckBox();
             this.label53 = new System.Windows.Forms.Label();
             this.label54 = new System.Windows.Forms.Label();
             this.tbPercentBetter = new System.Windows.Forms.TextBox();
@@ -488,7 +489,8 @@ namespace TVRename
             this.optUpdateCheckInterval = new System.Windows.Forms.RadioButton();
             this.optUpdateCheckAlways = new System.Windows.Forms.RadioButton();
             this.chkUpdateCheckEnabled = new System.Windows.Forms.CheckBox();
-            this.cbMovieHigherQuality = new System.Windows.Forms.CheckBox();
+            this.label91 = new System.Windows.Forms.Label();
+            this.cbTVDBVersion = new System.Windows.Forms.ComboBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -2322,6 +2324,16 @@ namespace TVRename
             this.groupBox8.TabIndex = 40;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Upgrade Shows when better quality files found";
+            // 
+            // cbMovieHigherQuality
+            // 
+            this.cbMovieHigherQuality.AutoSize = true;
+            this.cbMovieHigherQuality.Location = new System.Drawing.Point(6, 36);
+            this.cbMovieHigherQuality.Name = "cbMovieHigherQuality";
+            this.cbMovieHigherQuality.Size = new System.Drawing.Size(332, 17);
+            this.cbMovieHigherQuality.TabIndex = 39;
+            this.cbMovieHigherQuality.Text = "Update movies when higher-quality ones found in Search Folders";
+            this.cbMovieHigherQuality.UseVisualStyleBackColor = true;
             // 
             // label53
             // 
@@ -4187,6 +4199,8 @@ namespace TVRename
             // 
             this.groupBox20.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox20.Controls.Add(this.label91);
+            this.groupBox20.Controls.Add(this.cbTVDBVersion);
             this.groupBox20.Controls.Add(this.label37);
             this.groupBox20.Controls.Add(this.label38);
             this.groupBox20.Controls.Add(this.tbPercentDirty);
@@ -5663,15 +5677,28 @@ namespace TVRename
             this.chkUpdateCheckEnabled.UseVisualStyleBackColor = true;
             this.chkUpdateCheckEnabled.CheckedChanged += new System.EventHandler(this.chkUpdateCheckEnabled_CheckedChanged);
             // 
-            // cbMovieHigherQuality
+            // label91
             // 
-            this.cbMovieHigherQuality.AutoSize = true;
-            this.cbMovieHigherQuality.Location = new System.Drawing.Point(6, 36);
-            this.cbMovieHigherQuality.Name = "cbMovieHigherQuality";
-            this.cbMovieHigherQuality.Size = new System.Drawing.Size(332, 17);
-            this.cbMovieHigherQuality.TabIndex = 39;
-            this.cbMovieHigherQuality.Text = "Update movies when higher-quality ones found in Search Folders";
-            this.cbMovieHigherQuality.UseVisualStyleBackColor = true;
+            this.label91.AutoSize = true;
+            this.label91.Location = new System.Drawing.Point(10, 75);
+            this.label91.Name = "label91";
+            this.label91.Size = new System.Drawing.Size(45, 13);
+            this.label91.TabIndex = 26;
+            this.label91.Text = "Version:";
+            this.label91.Click += new System.EventHandler(this.label91_Click);
+            // 
+            // cbTVDBVersion
+            // 
+            this.cbTVDBVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbTVDBVersion.FormattingEnabled = true;
+            this.cbTVDBVersion.Items.AddRange(new object[] {
+            "v3",
+            "v4"});
+            this.cbTVDBVersion.Location = new System.Drawing.Point(116, 72);
+            this.cbTVDBVersion.Name = "cbTVDBVersion";
+            this.cbTVDBVersion.Size = new System.Drawing.Size(146, 21);
+            this.cbTVDBVersion.Sorted = true;
+            this.cbTVDBVersion.TabIndex = 27;
             // 
             // Preferences
             // 
@@ -6280,5 +6307,7 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbWTWTXT;
         private System.Windows.Forms.RadioButton rdoTVTMDB;
         private System.Windows.Forms.CheckBox cbMovieHigherQuality;
+        private System.Windows.Forms.Label label91;
+        private System.Windows.Forms.ComboBox cbTVDBVersion;
     }
 }

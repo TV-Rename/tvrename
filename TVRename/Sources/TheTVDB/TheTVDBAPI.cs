@@ -234,11 +234,11 @@ namespace TVRename.TheTVDB
         [NotNull]
         public static JObject GetShowUpdatesSince(long time, string lang)
         {
-            string uri = LocalCache.VERS==ApiVersion.v4
+            string uri = TVSettings.Instance.TvdbVersion == ApiVersion.v4
                 ? TokenProvider.TVDB_API_URL + "/updates"
                 : TokenProvider.TVDB_API_URL + "/updated/query";
 
-            string keyName = LocalCache.VERS == ApiVersion.v4
+            string keyName = TVSettings.Instance.TvdbVersion == ApiVersion.v4
                 ? "since"
                 : "fromTime";
 

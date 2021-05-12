@@ -379,6 +379,14 @@ namespace TVRename
                 selectedShow.CustomLanguageCode = TheTVDB.LocalCache.Instance.LanguageList?.GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString())?.Abbreviation
                                                   ??TVSettings.Instance.PreferredLanguageCode;
             }
+
+            selectedShow.UseCustomRegion = chkCustomRegion.Checked;
+            if (selectedShow.UseCustomRegion)
+            {
+                selectedShow.CustomRegionCode = TMDB.LocalCache.COUNTRIES
+                    .FirstOrDefault(x => x.Name == cbLanguage.SelectedItem?.ToString()).Code ?? TVSettings.Instance.TMDBRegion;
+            }
+
             selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.DefaultTimeZone();
             selectedShow.ShowNextAirdate = chkShowNextAirdate.Checked;
             if (GetProviderTypeInUse()==TVDoc.ProviderType.TheTVDB )
@@ -444,6 +452,11 @@ namespace TVRename
              
             selectedShow.AliasNames.Clear();
             selectedShow.AliasNames.AddNullableRange(lbShowAlias.Items.Cast<string>().Distinct());
+
+            cbRegion.BeginUpdate();
+            cbRegion.Items.Clear();
+            cbRegion.Items.AddRange(TMDB.LocalCache.COUNTRIES.Select(r => r.Name).ToArray());
+            cbRegion.EndUpdate();
         }
 
         private ShowConfiguration.AutomaticFolderType GetAutoAddType()
@@ -788,6 +801,11 @@ namespace TVRename
         private void rdoProvider_CheckedChanged(object sender, EventArgs e)
         {
             codeFinderForm.SetSource(GetConfigurationProviderType(), selectedShow);
+        }
+
+        private void chkCustomRegion_CheckedChanged(object sender, EventArgs e)
+        {
+            cbRegion.Enabled = chkCustomRegion.Checked;
         }
     }
 }

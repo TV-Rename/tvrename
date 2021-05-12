@@ -40,7 +40,7 @@ namespace TVRename
             (string? directoryRefinedHint, int? directoryPossibleYear) = GuessShowName(possibleMovieFile.Directory.Name);
             (string? fileRefinedHint, int? filePossibleYear) = GuessShowName(possibleMovieFile.MovieFileNameBase());
 
-            RefinedHint = (fileRefinedHint.HasValue()) ? fileRefinedHint : directoryRefinedHint ;
+            RefinedHint = fileRefinedHint.HasValue() ? fileRefinedHint : directoryRefinedHint ;
             PossibleYear = filePossibleYear ?? directoryPossibleYear;
 
             if (andGuess)
