@@ -92,7 +92,7 @@ namespace TVRename
             CefSettings settings = new CefSettings();
             settings.LogSeverity = LogSeverity.Info;
             settings.DisableGpuAcceleration();
-            Cef.Initialize(settings,true);
+            Cef.Initialize(settings);
 
             mDoc = doc;
             scanProgDlg = null;
