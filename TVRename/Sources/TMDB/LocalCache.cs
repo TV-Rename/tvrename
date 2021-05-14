@@ -1126,11 +1126,11 @@ namespace TVRename.TMDB
             }
             foreach (Cast? s in downloadedMovie.Credits.Cast)
             {
-                m.AddActor(new Actor(s.Id,s.ProfilePath,s.Name,s.Character,s.CastId,s.Order));
+                m.AddActor(new Actor(s.Id, OriginalImageUrl(s.ProfilePath),s.Name,s.Character,s.CastId,s.Order));
             }
             foreach (TMDbLib.Objects.General.Crew? s in downloadedMovie.Credits.Crew)
             {
-                m.AddCrew(new Crew(s.Id, s.ProfilePath, s.Name,  s.Job, s.Department, s.CreditId));
+                m.AddCrew(new Crew(s.Id, OriginalImageUrl(s.ProfilePath), s.Name,  s.Job, s.Department, s.CreditId));
             }
 
             File(m);
@@ -1200,11 +1200,11 @@ namespace TVRename.TMDB
             }
             foreach (TMDbLib.Objects.TvShows.Cast? s in downloadedSeries.Credits.Cast)
             {
-                m.AddActor(new Actor(s.Id, s.ProfilePath, s.Name, s.Character, 0, s.Order));
+                m.AddActor(new Actor(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Character, 0, s.Order));
             }
             foreach (TMDbLib.Objects.General.Crew? s in downloadedSeries.Credits.Crew)
             {
-                m.AddCrew(new Crew(s.Id, s.ProfilePath, s.Name, s.Job, s.Department, s.CreditId));
+                m.AddCrew(new Crew(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Job, s.Department, s.CreditId));
             }
             if (downloadedSeries.Images.Backdrops.Any())
             {

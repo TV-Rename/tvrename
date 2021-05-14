@@ -221,7 +221,7 @@ namespace TVRename
                 }
                 catch (InvalidOperationException)
                 {
-                    Logger.Error($"COuld not update element {elementName} in {e}");
+                    Logger.Error($"Could not update element {elementName} in {e}");
                 }
             }
             else

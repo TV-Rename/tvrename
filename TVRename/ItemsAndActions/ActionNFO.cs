@@ -158,7 +158,7 @@ namespace TVRename
         protected static void ReplaceActors([NotNull] XElement root, [NotNull] IEnumerable<Actor> selectedShowActors)
         {
             IEnumerable<Actor> showActors = selectedShowActors as Actor[] ?? selectedShowActors.ToArray();
-            if (! showActors.ToList().Any())
+            if (!showActors.ToList().Any())
             {
                 return;
             }
@@ -168,7 +168,7 @@ namespace TVRename
             {
                 oldActor.Remove();
             }
-            
+
             // actors...
             foreach (Actor aa in showActors.Where(aa => !string.IsNullOrEmpty(aa.ActorName)))
             {
@@ -179,14 +179,14 @@ namespace TVRename
                     tAdd.Add(new XElement("role", aa.ActorRole));
                 }
 
-                if (aa.ActorSortOrder>0)
+                if (aa.ActorSortOrder>=0)
                 {
                     tAdd.Add(new XElement("order", aa.ActorSortOrder));
                 }
 
                 if (!string.IsNullOrWhiteSpace(aa.ActorImage))
                 {
-                    tAdd.Add(new XElement("thumb", TheTVDB.API.GetImageURL(aa.ActorImage)));
+                    tAdd.Add(new XElement("thumb", aa.ActorImage));
                 }
 
                 root.Add(tAdd);

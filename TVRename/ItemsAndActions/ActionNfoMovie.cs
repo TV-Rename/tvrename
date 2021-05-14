@@ -57,6 +57,7 @@ namespace TVRename
             if (!(cachedSeries is null))
             {
                 root.UpdateElement("originaltitle", Movie.ShowName);
+                root.UpdateElement("sorttitle", UI.GenerateShowUiName(Movie));
                 UpdateAmongstElements(root, "studio", cachedSeries.Network);
                 root.UpdateElement("id", Movie.Code);
                 root.UpdateElement("runtime", cachedSeries.Runtime, true);

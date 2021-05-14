@@ -1162,7 +1162,7 @@ namespace TVRename
             movieTree.EndUpdate();
         }
 
-        private static string GenerateShowUiName(MovieConfiguration show) => PostpendTheIfNeeded(show.ShowName);
+        internal static string GenerateShowUiName(MovieConfiguration show) => PostpendTheIfNeeded(show.ShowName);
 
         [NotNull]
         public static string QuickStartGuide() => "https://www.tvrename.com/manual/quickstart/";
