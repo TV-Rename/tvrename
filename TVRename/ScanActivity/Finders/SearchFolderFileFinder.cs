@@ -105,7 +105,7 @@ namespace TVRename
 
         private static int CountFilesInDownloadDirs()
         {
-            return TVSettings.Instance.DownloadFolders.ToArray().Sum(s => DirCache.CountFiles(s, true));
+            return TVSettings.Instance.DownloadFolders.ToArray().Select(x=>x.Trim()).Sum(s => DirCache.CountFiles(s, true));
         }
     }
 }

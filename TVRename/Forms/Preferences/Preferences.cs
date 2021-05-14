@@ -1845,7 +1845,7 @@ namespace TVRename
                 return;
             }
 
-            TVSettings.Instance.DownloadFolders.Add(searchFolderBrowser.SelectedPath);
+            TVSettings.Instance.DownloadFolders.Add(searchFolderBrowser.SelectedPath.Trim());
             mDoc.SetDirty();
             FillSearchFolderList();
         }
@@ -1877,7 +1877,7 @@ namespace TVRename
                 return;
             }
 
-            Helpers.OpenFolder(TVSettings.Instance.DownloadFolders[n]);
+            Helpers.OpenFolder(TVSettings.Instance.DownloadFolders[n].Trim());
         }
 
         private void lbSearchFolders_KeyDown(object sender, [NotNull] KeyEventArgs e)
@@ -1903,7 +1903,7 @@ namespace TVRename
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
                     {
-                        TVSettings.Instance.DownloadFolders.Add(path.ToLower());
+                        TVSettings.Instance.DownloadFolders.Add(path.ToLower().Trim());
                     }
                 }
                 catch

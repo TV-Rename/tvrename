@@ -440,7 +440,7 @@ namespace TVRename
         [NotNull]
         internal static List<string> ReadStringsFromXml([NotNull] this XElement rootElement, string token)
         {
-            return rootElement.Descendants(token).Select(n=>n.Value).ToList();
+            return rootElement.Descendants(token).Select(n=>n.Value.Trim()).ToList();
         }
         [NotNull]
         internal static List<IgnoreItem> ReadIiFromXml([NotNull] this XElement rootElement, string token)
