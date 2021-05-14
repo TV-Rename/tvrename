@@ -448,12 +448,6 @@ namespace TVRename
 
         private void MTCCF_SelectionChanged(object sender, EventArgs e)
         {
-            if (addingNewShow && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation)
-            {
-                // txtBaseFolder.Text =
-                //     TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator()
-                //     + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(codeFinderForm.SelectedShow()?.Name));
-            }
         }
         private void bnBrowseFolder_Click_1(object sender, EventArgs e)
         {

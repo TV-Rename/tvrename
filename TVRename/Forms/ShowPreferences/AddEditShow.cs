@@ -744,7 +744,7 @@ namespace TVRename
             {
                 txtBaseFolder.Text =
                     TVSettings.Instance.DefShowLocation.EnsureEndsWithSeparator()
-                    + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(codeFinderForm.SelectedShow().Name));
+                    + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(codeFinderForm.SelectedShow()?.Name));
             }
         }
 
