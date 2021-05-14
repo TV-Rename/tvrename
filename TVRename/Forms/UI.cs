@@ -89,8 +89,10 @@ namespace TVRename
 
         public UI(TVDoc doc, [NotNull] TVRenameSplash splash, bool showUi)
         {
-            CefSettings settings = new CefSettings();
-            settings.LogSeverity = LogSeverity.Info;
+            CefSettings settings = new CefSettings {LogSeverity = LogSeverity.Verbose};
+            settings.CefCommandLineArgs.Add("disable-gpu", "1");
+            settings.CefCommandLineArgs.Add("disable-gpu-vsync", "1");
+            settings.CefCommandLineArgs.Add("disable-gpu-compositing", "1");
             settings.DisableGpuAcceleration();
             Cef.Initialize(settings);
 
