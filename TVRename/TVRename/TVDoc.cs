@@ -1980,7 +1980,7 @@ namespace TVRename
             (MovieConfiguration? newShow, MovieConfiguration? selectedShow) = AutoAddMovieFile(fi,owner);
 
             //if new show then add and link file to it
-            if (newShow != null)
+            if (newShow != null && newShow.Locations.Any())
             {
                 LinkFileToShow(fi, newShow,new DirectoryInfo(newShow.Locations.First()));
             }
