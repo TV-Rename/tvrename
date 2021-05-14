@@ -149,6 +149,18 @@ namespace TVRename
                 Genres = o.Genres;
             }
 
+            bool useNewCrew = o.Crew.Any() && useNewDataOverOld;
+            if (!Crew.Any() || useNewCrew)
+            {
+                Crew = o.Crew;
+            }
+
+            bool useNewActors = o.Actors.Any() && useNewDataOverOld;
+            if (!Actors.Any() || useNewActors)
+            {
+                Actors = o.Actors;
+            }
+
             if (useNewDataOverOld)
             {
                 LanguageId = o.LanguageId;

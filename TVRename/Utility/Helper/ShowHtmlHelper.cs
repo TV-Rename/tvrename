@@ -324,7 +324,7 @@ namespace TVRename
                         <small class=""text-muted"">{runTimeHtml}</small></div>
                     </div>
                     <div><p class=""lead"">{ser.Overview}</p></div>
-			        <div><blockquote>{actorLinks}</blockquote></div> 
+			        <div></div> 
 		            <div>
                     {CreateButton(EditMovieUrl(ser), "<i class=\"far fa-edit\"></i>", "Edit")}
                      {explorerButton}
@@ -340,6 +340,38 @@ namespace TVRename
                     {twitterButton}
                     
 			        </div>
+<div id=""accordion"">
+  <div class=""card"">
+    <div class=""card-header"" id=""headingOne"">
+      <h5 class=""mb-0"">
+        <button class=""btn btn-link"" data-toggle=""collapse"" data-target=""#collapseOne"" aria-expanded=""false"" aria-controls=""collapseOne"">
+          Cast
+        </button>
+      </h5>
+    </div>
+
+    <div id = ""collapseOne"" class=""collapse show"" aria-labelledby=""headingOne"" data-parent=""#accordion"">
+      <div class=""card-body"">
+        <blockquote>{actorLinks}</blockquote>
+        
+      </div>
+    </div>
+  </div>
+  <div class=""card"">
+    <div class=""card-header"" id=""headingTwo"">
+      <h5 class=""mb-0"">
+        <button class=""btn btn-link collapsed"" data-toggle=""collapse"" data-target=""#collapseTwo"" aria-expanded=""false"" aria-controls=""collapseTwo"">
+          Crew
+        </button>
+      </h5>
+    </div>
+    <div id = ""collapseTwo"" class=""collapse"" aria-labelledby=""headingTwo"" data-parent=""#accordion"">
+      <div class=""card-body"">
+        {ser.GetCrew().Select(c => $"{c.Name} as {c.Job}").ToCsv()}
+      </div>
+    </div>
+  </div>
+</div>
 		            <div>
                         &nbsp;
 			        </div>

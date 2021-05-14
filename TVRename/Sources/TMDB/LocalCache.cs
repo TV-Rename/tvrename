@@ -1206,34 +1206,40 @@ namespace TVRename.TMDB
             {
                 m.AddCrew(new Crew(s.Id, s.ProfilePath, s.Name, s.Job, s.Department, s.CreditId));
             }
-
-            double bestBackdropRating = downloadedSeries.Images.Backdrops.Select(x => x.VoteAverage).Max();
-            foreach (ImageData? image in downloadedSeries.Images.Backdrops.Where(x => Math.Abs(x.VoteAverage - bestBackdropRating) < .01))
+            if (downloadedSeries.Images.Backdrops.Any())
             {
-                Banner newBanner = new Banner(downloadedSeries.Id)
+                double bestBackdropRating = downloadedSeries.Images.Backdrops.Select(x => x.VoteAverage).Max();
+                foreach (ImageData? image in downloadedSeries.Images.Backdrops.Where(x =>
+                    Math.Abs(x.VoteAverage - bestBackdropRating) < .01))
                 {
-                    BannerId = 1,
-                    BannerPath = OriginalImageUrl(image.FilePath),
-                    BannerType = "fanart",
-                    Rating = image.VoteAverage,
-                    RatingCount = image.VoteCount
-                };
+                    Banner newBanner = new Banner(downloadedSeries.Id)
+                    {
+                        BannerId = 1,
+                        BannerPath = OriginalImageUrl(image.FilePath),
+                        BannerType = "fanart",
+                        Rating = image.VoteAverage,
+                        RatingCount = image.VoteCount
+                    };
 
-                m.AddOrUpdateBanner(newBanner);
+                    m.AddOrUpdateBanner(newBanner);
+                }
             }
-            double bestPosterRating = downloadedSeries.Images.Posters.Select(x => x.VoteAverage).Max();
-            foreach (ImageData? image in downloadedSeries.Images.Posters.Where(x => Math.Abs(x.VoteAverage - bestPosterRating) < .01))
-            {
-                Banner newBanner = new Banner(downloadedSeries.Id)
+            if (downloadedSeries.Images.Posters.Any()) { 
+                double bestPosterRating = downloadedSeries.Images.Posters.Select(x => x.VoteAverage).Max();
+                foreach (ImageData? image in downloadedSeries.Images.Posters.Where(x =>
+                    Math.Abs(x.VoteAverage - bestPosterRating) < .01))
                 {
-                    BannerId = 2,
-                    BannerPath = PosterImageUrl(image.FilePath),
-                    BannerType = "poster",
-                    Rating = image.VoteAverage,
-                    RatingCount = image.VoteCount
-                };
+                    Banner newBanner = new Banner(downloadedSeries.Id)
+                    {
+                        BannerId = 2,
+                        BannerPath = PosterImageUrl(image.FilePath),
+                        BannerType = "poster",
+                        Rating = image.VoteAverage,
+                        RatingCount = image.VoteCount
+                    };
 
-                m.AddOrUpdateBanner(newBanner);
+                    m.AddOrUpdateBanner(newBanner);
+                }
             }
 
             foreach (var searchSeason in downloadedSeries.Seasons)
