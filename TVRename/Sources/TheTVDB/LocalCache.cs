@@ -1521,7 +1521,9 @@ namespace TVRename.TheTVDB
         }
         private DateTime? GetReleaseDateV4(JObject json, string region)
         {
-            string date = json["data"]["releases"]?.FirstOrDefault(x => x["country"].ToString() == region)?["date"]?.ToString();
+            string date = region is null
+                    ? json["data"]["releases"]?.FirstOrDefault()?["date"]?.ToString()
+                : json["data"]["releases"]?.FirstOrDefault(x => x["country"].ToString() == region)?["date"]?.ToString();
             try
             {
                 if (!date.HasValue())
@@ -1551,8 +1553,9 @@ namespace TVRename.TheTVDB
         {
             CachedMovieInfo si = new CachedMovieInfo
             {
-                FirstAired = GetReleaseDateV4(r, "aus") ?? GetReleaseDateV4(r, "global"),
+                FirstAired = GetReleaseDateV4(r, "aus") ?? GetReleaseDateV4(r, "global") ?? GetReleaseDateV4(r,null),
                 TvdbCode = (int) r["data"]["id"],
+                Slug= ((string)r["data"]["slug"])?.Trim(),
                 Imdb = GetExternalIdV4(r, "IMDB"),
                 Runtime = ((string) r["data"]["runtime"])?.Trim(),
                 Name = r["data"]["name"]?.ToString(),
