@@ -690,7 +690,7 @@ namespace TVRename.TMDB
             throw new NotImplementedException(); //todo - (BulkAdd Manager needs to work for new providers)
         }
 
-        public CachedMovieInfo GetMovie(PossibleNewMovie show, string languageCode, bool showErrorMsgBox) => GetMovie(show.RefinedHint, show.PossibleYear,languageCode, showErrorMsgBox, false);
+        public CachedMovieInfo? GetMovie(PossibleNewMovie show, string languageCode, bool showErrorMsgBox) => GetMovie(show.RefinedHint, show.PossibleYear,languageCode, showErrorMsgBox, false);
 
         public CachedMovieInfo? GetMovie(string hint, int? possibleYear, string languageCode, bool showErrorMsgBox,bool useMostPopularMatch)
         {

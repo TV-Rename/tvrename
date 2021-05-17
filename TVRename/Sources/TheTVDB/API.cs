@@ -37,6 +37,11 @@ namespace TVRename.TheTVDB
 
             string mirr = WebsiteImageRoot;
 
+            if (url.StartsWith(mirr,StringComparison.OrdinalIgnoreCase))
+            {
+                return url;
+            }
+
             if (url.StartsWith("/", StringComparison.Ordinal))
             {
                 url = url.RemoveFirstCharacter();
@@ -420,6 +425,41 @@ namespace TVRename.TheTVDB
         public static void Login()
         {
             TokenProvider.EnsureValid();
+        }
+
+        public static JObject GetMovie(int code, string requestedLanguageCode)
+        {
+            string uri = TokenProvider.TVDB_API_URL + "/movies/" + code;
+            return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
+        }
+
+        public static JObject GetMovieV4(int code, string requestedLanguageCode)
+        {
+            string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code}/extended";
+            return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
+        }
+
+        public static JObject GetSeasonEpisoedesV4(int showId, int seasonId, string requestedLanguageCode)
+        {
+            string uri = $"{TokenProvider.TVDB_API_URL}/seasons/{seasonId}/extended";
+            return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
+        }
+
+        public static JObject GetSeriesTranslationsV4(int code, string requestedLanguageCode)
+        {
+            string uri = $"{TokenProvider.TVDB_API_URL}/series/{code}/translations/{requestedLanguageCode}";
+            return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
+        }
+        public static JObject GetEpisodeTranslationsV4(int code, string requestedLanguageCode)
+        {
+            string uri = $"{TokenProvider.TVDB_API_URL}/episodes/{code}/translations/{requestedLanguageCode}";
+            return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
+        }
+
+        public static JObject GetMovieTranslationsV4(int code, string requestedLanguageCode)
+        {
+            string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code}/translations/{requestedLanguageCode}";
+            return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
         }
     }
 }

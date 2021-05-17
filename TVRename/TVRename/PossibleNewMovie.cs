@@ -118,7 +118,7 @@ namespace TVRename
                 else
                 {
                     //Find movie on TVDB based on Id
-                    CachedMovieInfo? s3 = TheTVDB.LocalCache.Instance.GetMovieOrDownload(tvdbId.Value, showErrorMsgBox);
+                    CachedMovieInfo? s3 = TheTVDB.LocalCache.Instance.GetMovieAndDownload(tvdbId.Value, TVSettings.Instance.PreferredLanguageCode, showErrorMsgBox);
                     if (s3 != null)
                     {
                         SetId(s3.TvdbCode, TVDoc.ProviderType.TheTVDB);

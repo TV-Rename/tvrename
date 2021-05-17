@@ -21,14 +21,22 @@ namespace TVRename
         public int ActorSeriesId { get; }
         public int ActorSortOrder { get; }
 
-        public Actor(int actorId, string? actorImage, string actorName, string? actorRole, int actorSeriesId, int actorSortOrder)
+        public Actor(int actorId, string? actorImage, string actorName, string? actorRole, int actorSeriesId, int? actorSortOrder)
         {
             ActorId = actorId;
             ActorImage = actorImage;
             ActorName = actorName;
             ActorRole = actorRole;
             ActorSeriesId = actorSeriesId;
-            ActorSortOrder = actorSortOrder;
+
+            if (actorSortOrder.HasValue)
+            {
+                ActorSortOrder = actorSortOrder.Value;
+            }
+            else
+            {
+                ActorSortOrder = -1;
+            }
         }
 
         public Actor([NotNull] XElement r)

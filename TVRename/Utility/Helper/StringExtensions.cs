@@ -271,6 +271,18 @@ namespace TVRename
         {
             return string.Join("|", values);
         }
+
+        public static int? ToInt(this string value)
+        {
+            try
+            {
+                return int.Parse(value);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
         [NotNull]
         public static string Concat([NotNull] this IEnumerable<string> values)
         {

@@ -40,7 +40,8 @@ namespace TVRename.TheTVDB
                     // ReSharper disable once HeuristicUnreachableCode
                     ApiVersion.v3 => "5FEC454623154441",
                     // ReSharper disable once HeuristicUnreachableCode
-                    ApiVersion.v4 => "b6bcc474-b211-4c8d-ac8c-2cfccab56e9b",
+                    //ApiVersion.v4 => "b6bcc474-b211-4c8d-ac8c-2cfccab56e9b",
+                    ApiVersion.v4 => "51020266-18f7-4382-81fc-75a4014fa59f",
                     _ => throw new NotSupportedException()
                 };
             }

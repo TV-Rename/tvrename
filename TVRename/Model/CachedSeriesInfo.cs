@@ -53,6 +53,8 @@ namespace TVRename
         [NotNull]
       public string Year => FirstAired?.ToString("yyyy") ?? $"{MinYear}";
 
+      public IEnumerable<Season> Seasons => seasons;
+
       // note: "SeriesID" in a <Series> is the tv.com code,
         // "seriesid" in an <Episode> is the tvdb code!
 

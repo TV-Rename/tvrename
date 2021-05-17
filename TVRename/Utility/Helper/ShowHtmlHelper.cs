@@ -612,7 +612,7 @@ namespace TVRename
 
             return string.Empty;
         }
-
+        
         [NotNull]
         private static string CreateHorizontalBannerHtml([NotNull] this ProcessedSeason s)
         {
