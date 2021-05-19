@@ -8,7 +8,7 @@ using NLog;
 
 namespace TVRename
 {
-    public abstract class MediaConfiguration
+    public abstract class MediaConfiguration : ISeriesSpecifier
     {
         protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
         public bool DoMissingCheck;
@@ -21,9 +21,8 @@ namespace TVRename
 
         public bool UseCustomShowName;
         public string CustomShowName;
-        public bool UseCustomLanguage;
-        public string? CustomLanguageCode;
-        
+        public string lastName; //todo, update from cache
+
         public bool UseCustomRegion;
         public string? CustomRegionCode;
 
@@ -145,6 +144,36 @@ namespace TVRename
                         throw new ArgumentOutOfRangeException();
                 }
             }
+        }
+
+        public int TvdbId => TvdbCode;
+
+        public string Name => lastName;
+
+        public MediaType Type => GetMediaType();
+
+        public int TvMazeId => TVmazeCode;
+
+        public int TmdbId => TmdbCode;
+
+        public string? ImdbCode => this.ImdbCode;
+
+        public string LanguageCode => UseCustomLanguage ? CustomLanguageCode : TVSettings.Instance.PreferredLanguageCode;
+
+        public bool UseCustomLanguage { get; set; }
+
+        public string CustomLanguageCode { get; set; }
+
+        public int IdFor(TVDoc.ProviderType provider)
+        {
+            return provider switch
+            {
+                TVDoc.ProviderType.libraryDefault => throw new ArgumentOutOfRangeException(),
+                TVDoc.ProviderType.TVmaze => TVmazeCode,
+                TVDoc.ProviderType.TheTVDB => TvdbCode,
+                TVDoc.ProviderType.TMDB => TmdbCode,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         protected abstract TVDoc.ProviderType DefaultProvider();

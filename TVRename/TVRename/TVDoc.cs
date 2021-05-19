@@ -287,11 +287,13 @@ namespace TVRename
 
         public bool DoDownloadsFG(bool unattended, bool tvrMinimised, UI owner)
         {
-            return DoDownloadsFG(unattended, tvrMinimised, owner, TvLibrary.SeriesSpecifiers.Union(FilmLibrary.SeriesSpecifiers).ToList());
+            List<ISeriesSpecifier> idsToDownload = new List<ISeriesSpecifier>(TvLibrary);
+            idsToDownload.AddRange(FilmLibrary);
+            return DoDownloadsFG(unattended, tvrMinimised, owner, idsToDownload);
         }
 
         // ReSharper disable once InconsistentNaming
-        public bool DoDownloadsFG(bool unattended,bool tvrMinimised, UI owner, List<SeriesSpecifier>? passedShows)
+        public bool DoDownloadsFG(bool unattended,bool tvrMinimised, UI owner, List<ISeriesSpecifier>? passedShows)
         {
             bool showProgress = !Args.Hide && Environment.UserInteractive && !tvrMinimised;
             bool showMsgBox = !unattended && !Args.Unattended && !Args.Hide && Environment.UserInteractive;
@@ -304,7 +306,9 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public void DoDownloadsBG()
         {
-            cacheManager.StartBgDownloadThread(false, TvLibrary.SeriesSpecifiers.Union(FilmLibrary.SeriesSpecifiers).ToList(),false, CancellationToken.None);
+            List<ISeriesSpecifier> idsToDownload = new List<ISeriesSpecifier>(TvLibrary);
+            idsToDownload.AddRange(FilmLibrary);
+            cacheManager.StartBgDownloadThread(false, idsToDownload, false, CancellationToken.None);
         }
 
         public int DownloadsRemaining() =>
@@ -394,7 +398,33 @@ namespace TVRename
         public void UpdateDenormalisations()
         {
             UpdateIdsFromCache();
+            UpdateNamesFromCache();
             TvLibrary.GenDict();
+        }
+
+        private void UpdateNamesFromCache()
+        {
+            foreach (ShowConfiguration? show in TvLibrary.Shows)
+            {
+                CachedSeriesInfo? cachedData = show?.CachedShow;
+                if (cachedData is null)
+                {
+                    continue;
+
+                }
+                show.lastName = cachedData.Name;
+            }
+
+            foreach (MovieConfiguration? show in FilmLibrary.Movies)
+            {
+                CachedMovieInfo? cachedData = show.CachedMovie;
+                if (cachedData is null)
+                {
+                    continue;
+
+                }
+                show.lastName = cachedData.Name;
+            }
         }
 
         // ReSharper disable once InconsistentNaming
@@ -1373,7 +1403,7 @@ namespace TVRename
 
         private bool DoDownloadsFG(bool unattended, bool tvrMinimised, UI owner, IEnumerable<ShowConfiguration> passedShows)
         {
-            return DoDownloadsFG(unattended,tvrMinimised, owner, passedShows.Select(configuration => configuration.SeriesSpecifier()).ToList());
+            return DoDownloadsFG(unattended,tvrMinimised, owner, passedShows.ToList());
         }
 
         // ReSharper disable once InconsistentNaming
@@ -1429,7 +1459,7 @@ namespace TVRename
 
         private bool DoDownloadsFG(bool unattended, bool tvrMinimised, UI owner, IEnumerable<MovieConfiguration> passedShows)
         {
-            return DoDownloadsFG(unattended, tvrMinimised, owner, passedShows.Select(configuration => configuration.SeriesSpecifier()).ToList());
+            return DoDownloadsFG(unattended, tvrMinimised, owner, passedShows.ToList());
         }
 
         // ReSharper disable once InconsistentNaming

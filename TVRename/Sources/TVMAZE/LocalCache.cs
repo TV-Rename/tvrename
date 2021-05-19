@@ -67,7 +67,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        public override bool EnsureUpdated(SeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
+        public override bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
         {
             if (s.Provider != TVDoc.ProviderType.TVmaze)
             {
@@ -76,7 +76,7 @@ namespace TVRename.TVmaze
 
             lock (SERIES_LOCK)
             {
-                if (Series.ContainsKey(s.TvMazeSeriesId) && !Series[s.TvMazeSeriesId].Dirty)
+                if (Series.ContainsKey(s.TvMazeId) && !Series[s.TvMazeId].Dirty)
                 {
                     return true;
                 }
@@ -87,7 +87,7 @@ namespace TVRename.TVmaze
             {
                 CachedSeriesInfo downloadedSi = API.GetSeriesDetails(s);
 
-                if (downloadedSi.TvMazeCode != s.TvMazeSeriesId && s.TvMazeSeriesId ==-1)
+                if (downloadedSi.TvMazeCode != s.TvMazeId && s.TvMazeId ==-1)
                 {
                     lock (SERIES_LOCK)
                     {
@@ -131,10 +131,10 @@ namespace TVRename.TVmaze
             }
         }
 
-        public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, IEnumerable<SeriesSpecifier> ss)
+        public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, IEnumerable<ISeriesSpecifier> ss)
         {
             Say("Validating TVmaze cache");
-            foreach (SeriesSpecifier downloadShow in ss.Where(downloadShow => !HasSeries(downloadShow.TvMazeSeriesId)))
+            foreach (ISeriesSpecifier downloadShow in ss.Where(downloadShow => !HasSeries(downloadShow.TvMazeId)))
             {
                 AddPlaceholderSeries(downloadShow);
             }
@@ -206,8 +206,8 @@ namespace TVRename.TVmaze
             }
         }
 
-        private void AddPlaceholderSeries([NotNull] SeriesSpecifier ss)
-            => AddPlaceholderSeries(ss.TvdbSeriesId, ss.TvMazeSeriesId,ss.TmdbId, ss.LanguageCode);
+        private void AddPlaceholderSeries([NotNull] ISeriesSpecifier ss)
+            => AddPlaceholderSeries(ss.TvdbId, ss.TvMazeId,ss.TmdbId, ss.LanguageCode);
 
         public void UpdatesDoneOk()
         {

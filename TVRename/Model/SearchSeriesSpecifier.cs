@@ -10,23 +10,23 @@ using System;
 
 namespace TVRename
 {
-    public class SeriesSpecifier
+    public class SearchSeriesSpecifier : ISeriesSpecifier
     {
-        public readonly int TvdbSeriesId;
-        public readonly int TvMazeSeriesId;
-        public readonly int TmdbId;
-        public readonly bool UseCustomLanguage;
-        public readonly string CustomLanguageCode;
-        public readonly string Name;
-        public readonly string? ImdbCode;
-        public readonly TVDoc.ProviderType Provider;
-        public readonly MediaConfiguration.MediaType Type;
+        public  int TvdbId { get; }
+        public int TvMazeId { get; }
+        public int TmdbId { get; }
+        public  bool UseCustomLanguage { get;  }
+        public  string CustomLanguageCode { get;  }
+        public  string Name { get;  }
+        public  string? ImdbCode { get;  }
+        public  TVDoc.ProviderType Provider { get;  }
+        public  MediaConfiguration.MediaType Type { get;  }
 
-        public SeriesSpecifier(int tvdb, int tvmaze, int tmdb, bool useCustomLanguage, string? customLanguageCode,
+        public SearchSeriesSpecifier(int tvdb, int tvmaze, int tmdb, bool useCustomLanguage, string? customLanguageCode,
             string name, TVDoc.ProviderType p, string? imdb, MediaConfiguration.MediaType t )
         {
-            TvdbSeriesId = tvdb;
-            TvMazeSeriesId = tvmaze;
+            TvdbId = tvdb;
+            TvMazeId = tvmaze;
             Name = name;
             ImdbCode = imdb;
             Provider = p;
@@ -46,15 +46,15 @@ namespace TVRename
         }
 
         public override string ToString() => Type == MediaConfiguration.MediaType.tv
-            ? $"{Name}//tvdb={TvdbSeriesId}//tvmaze={TvMazeSeriesId}//TMDB={TmdbId} {Provider} and lang = {LanguageCode}."
-            : $"{Name}//tvdb={TvdbSeriesId}//TMDB={TmdbId} {Provider} and lang = {LanguageCode}.";
+            ? $"{Name}//tvdb={TvdbId}//tvmaze={TvMazeId}//TMDB={TmdbId} {Provider} and lang = {LanguageCode}."
+            : $"{Name}//tvdb={TvdbId}//TMDB={TmdbId} {Provider} and lang = {LanguageCode}.";
 
         public int IdFor(TVDoc.ProviderType provider)
         {
             return provider switch
             {
-                TVDoc.ProviderType.TVmaze => TvMazeSeriesId,
-                TVDoc.ProviderType.TheTVDB => TvdbSeriesId,
+                TVDoc.ProviderType.TVmaze => TvMazeId,
+                TVDoc.ProviderType.TheTVDB => TvdbId,
                 TVDoc.ProviderType.TMDB => TmdbId,
                 _ => throw new ArgumentOutOfRangeException(nameof(provider), provider, null)
             };

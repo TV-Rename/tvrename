@@ -399,13 +399,13 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private void AddPlaceholderSeries([NotNull] SeriesSpecifier ss)
-            => AddPlaceholderSeries(ss.TvdbSeriesId, ss.TvMazeSeriesId, ss.TmdbId,ss.LanguageCode);
+        private void AddPlaceholderSeries([NotNull] ISeriesSpecifier ss)
+            => AddPlaceholderSeries(ss.TvdbId, ss.TvMazeId, ss.TmdbId,ss.LanguageCode);
 
-        public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, IEnumerable<SeriesSpecifier> ss)
+        public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, IEnumerable<ISeriesSpecifier> ss)
         {
             Say("Validating TheTVDB cache");
-            foreach (SeriesSpecifier downloadShow in ss.Where(downloadShow => !HasSeries(downloadShow.TvdbSeriesId)))
+            foreach (ISeriesSpecifier downloadShow in ss.Where(downloadShow => !HasSeries(downloadShow.TvdbId)))
             {
                 AddPlaceholderSeries(downloadShow);
             }
@@ -1048,8 +1048,8 @@ namespace TVRename.TheTVDB
             return forceReloadOn.ContainsKey(code) || !Series.ContainsKey(code);
         }
 
-        private CachedSeriesInfo? DownloadSeriesNow([NotNull] SeriesSpecifier deets, bool episodesToo, bool bannersToo, bool showErrorMsgBox) =>
-            DownloadSeriesNow(deets.TvdbSeriesId, episodesToo, bannersToo, deets.UseCustomLanguage,
+        private CachedSeriesInfo? DownloadSeriesNow([NotNull] ISeriesSpecifier deets, bool episodesToo, bool bannersToo, bool showErrorMsgBox) =>
+            DownloadSeriesNow(deets.TvdbId, episodesToo, bannersToo, deets.UseCustomLanguage,
                 deets.CustomLanguageCode,showErrorMsgBox);
 
         private CachedSeriesInfo? DownloadSeriesNow(int code, bool episodesToo, bool bannersToo, bool useCustomLangCode,
@@ -2303,7 +2303,7 @@ namespace TVRename.TheTVDB
             Series[tvdb] = new CachedSeriesInfo(tvdb, tvmaze,tmdb, customLanguageCode) { Dirty = true };
         }
 
-        public override bool EnsureUpdated(SeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
+        public override bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
         {
             if (s.Provider != TVDoc.ProviderType.TheTVDB)
             {
@@ -2314,7 +2314,7 @@ namespace TVRename.TheTVDB
 
             if (s.Type == MediaConfiguration.MediaType.movie)
             {
-                return EnsureMovieUpdated(s.TvdbSeriesId, s.LanguageCode, s.Name, showErrorMsgBox);
+                return EnsureMovieUpdated(s.TvdbId, s.LanguageCode, s.Name, showErrorMsgBox);
             }
 
             return EnsureSeriesUpdated(s,bannersToo, showErrorMsgBox);
@@ -2383,10 +2383,10 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private bool EnsureSeriesUpdated(SeriesSpecifier seriesd, bool bannersToo, bool showErrorMsgBox)
+        private bool EnsureSeriesUpdated(ISeriesSpecifier seriesd, bool bannersToo, bool showErrorMsgBox)
         {
 
-            int code = seriesd.TvdbSeriesId;
+            int code = seriesd.TvdbId;
 
             if (DoWeForceReloadFor(code) || Series[code].Episodes.Count == 0)
             {

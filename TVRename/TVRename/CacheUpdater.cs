@@ -27,7 +27,7 @@ namespace TVRename
         private Semaphore? workerSemaphore;
         private List<Thread> workers;
         private Thread? mDownloaderThread;
-        private ICollection<SeriesSpecifier> downloadIds;
+        private ICollection<ISeriesSpecifier> downloadIds;
         public ConcurrentBag<MediaNotFoundException> Problems { get; }
         
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
@@ -39,10 +39,10 @@ namespace TVRename
             downloadOk = true;
             Problems = new ConcurrentBag<MediaNotFoundException>();
             workers = new List<Thread>();
-            downloadIds = new List<SeriesSpecifier>();
+            downloadIds = new List<ISeriesSpecifier>();
         }
 
-        public void StartBgDownloadThread(bool stopOnError, ICollection<SeriesSpecifier> shows, bool showMsgBox,
+        public void StartBgDownloadThread(bool stopOnError, ICollection<ISeriesSpecifier> shows, bool showMsgBox,
             CancellationToken ctsToken)
         {
             if (!DownloadDone)
@@ -65,7 +65,7 @@ namespace TVRename
             mDownloaderThread.Start(ctsToken);
         }
 
-        public bool DoDownloadsFg(bool showProgress, bool showMsgBox, ICollection<SeriesSpecifier> shows, UI owner)
+        public bool DoDownloadsFg(bool showProgress, bool showMsgBox, ICollection<ISeriesSpecifier> shows, UI owner)
         {
             if (TVSettings.Instance.OfflineMode)
             {
@@ -135,11 +135,11 @@ namespace TVRename
         {
             System.Diagnostics.Debug.Assert(workerSemaphore != null);
 
-            SeriesSpecifier series;
+            ISeriesSpecifier series;
 
             switch (codeIn)
             {
-                case SeriesSpecifier ss:
+                case ISeriesSpecifier ss:
                     series = ss;
                     break;
 
@@ -271,7 +271,7 @@ namespace TVRename
                 Semaphore newSemaphore = new Semaphore(numWorkers, numWorkers); // allow up to numWorkers working at once
                 workerSemaphore = newSemaphore;
 
-                foreach (SeriesSpecifier code in downloadIds)
+                foreach (ISeriesSpecifier code in downloadIds)
                 {
                     if (cts.IsCancellationRequested)
                     {
@@ -343,9 +343,7 @@ namespace TVRename
             return type == MediaConfiguration.MediaType.tv
                 ?downloadIds.Count(s => s.Provider == provider && s.Type == type && (TVDoc.GetMediaCache(provider).GetSeries(s.IdFor(provider))?.Dirty ?? true))
                 :downloadIds.Count(s => s.Provider == provider && s.Type == type && (TVDoc.GetMediaCache(provider).GetMovie (s.IdFor(provider))?.Dirty ?? true));
-
         }
-
 
         private void WaitForBgDownloadDone()
         {
@@ -379,17 +377,17 @@ namespace TVRename
 
         public void ClearProblems()
         {
-            List<SeriesSpecifier> toRemove = new List<SeriesSpecifier>();
+            List<ISeriesSpecifier> toRemove = new List<ISeriesSpecifier>();
 
             foreach (MediaNotFoundException sid in Problems)
             {
-                foreach (SeriesSpecifier ss in downloadIds)
+                foreach (ISeriesSpecifier ss in downloadIds)
                 {
-                    if (ss.TvdbSeriesId == sid.ShowId && sid.ShowIdProvider == TVDoc.ProviderType.TheTVDB)
+                    if (ss.TvdbId == sid.ShowId && sid.ShowIdProvider == TVDoc.ProviderType.TheTVDB)
                     {
                         toRemove.Add(ss);
                     }
-                    if (ss.TvMazeSeriesId == sid.ShowId && sid.ShowIdProvider == TVDoc.ProviderType.TVmaze)
+                    if (ss.TvMazeId == sid.ShowId && sid.ShowIdProvider == TVDoc.ProviderType.TVmaze)
                     {
                         toRemove.Add(ss);
                     }
@@ -400,7 +398,7 @@ namespace TVRename
                 }
             }
 
-            foreach (SeriesSpecifier s in toRemove)
+            foreach (ISeriesSpecifier s in toRemove)
             {
                 downloadIds.Remove(s);
             }

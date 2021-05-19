@@ -145,12 +145,12 @@ namespace TVRename.TVmaze
         }
 
         [NotNull]
-        public static CachedSeriesInfo GetSeriesDetails([NotNull] SeriesSpecifier ss)
+        public static CachedSeriesInfo GetSeriesDetails([NotNull] ISeriesSpecifier ss)
         {
 
-            JObject results =  ss.TvMazeSeriesId > 0
-                ? GetSeriesDetails(ss.TvMazeSeriesId)
-                : GetSeriesDetails(GetSeriesIdFromOtherCodes(ss.TvdbSeriesId,ss.ImdbCode));
+            JObject results =  ss.TvMazeId > 0
+                ? GetSeriesDetails(ss.TvMazeId)
+                : GetSeriesDetails(GetSeriesIdFromOtherCodes(ss.TvdbId,ss.ImdbCode));
 
             CachedSeriesInfo downloadedSi = GenerateSeriesInfo(results);
             JToken jToken = GetChild(results,"_embedded");
@@ -164,12 +164,12 @@ namespace TVRename.TVmaze
             List<string> directors = GetDirectors(GetChild(jToken,"crew"));
             foreach (JToken epJson in GetChild(jToken,"episodes"))
             {
-                downloadedSi.AddEpisode(GenerateEpisode(ss.TvMazeSeriesId,writers,directors, (JObject)epJson,downloadedSi));
+                downloadedSi.AddEpisode(GenerateEpisode(ss.TvMazeId,writers,directors, (JObject)epJson,downloadedSi));
             }
 
             foreach (JToken jsonSeason in GetChild(jToken, "seasons"))
             {
-                downloadedSi.AddSeason(GenerateSeason(ss.TvMazeSeriesId, jsonSeason));
+                downloadedSi.AddSeason(GenerateSeason(ss.TvMazeId, jsonSeason));
 
                 JToken imageNode = GetChild(jsonSeason, "image");
                 if (imageNode.HasValues)
@@ -177,21 +177,21 @@ namespace TVRename.TVmaze
                     string child = (string)GetChild(imageNode,"original");
                     if (child != null)
                     {
-                        downloadedSi.AddOrUpdateBanner(GenerateBanner(ss.TvMazeSeriesId, (int) jsonSeason["number"], child));
+                        downloadedSi.AddOrUpdateBanner(GenerateBanner(ss.TvMazeId, (int) jsonSeason["number"], child));
                     }
                 }
             }
 
             foreach (JToken imageJson in GetChild(jToken, "images").Where(imageJson => (string)imageJson["type"] == "background"))
             {
-                downloadedSi.AddOrUpdateBanner(GenerateBanner(ss.TvMazeSeriesId, imageJson));
+                downloadedSi.AddOrUpdateBanner(GenerateBanner(ss.TvMazeId, imageJson));
             }
             downloadedSi.BannersLoaded = true;
 
             downloadedSi.ClearActors();
             foreach (JToken jsonActor in GetChild(jToken,"cast"))
             {
-                downloadedSi.AddActor(GenerateActor(ss.TvMazeSeriesId, jsonActor));
+                downloadedSi.AddActor(GenerateActor(ss.TvMazeId, jsonActor));
             }
             
             return downloadedSi;

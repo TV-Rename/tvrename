@@ -90,7 +90,7 @@ namespace TVRename.TMDB
             }
         }
 
-        public override bool EnsureUpdated(SeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
+        public override bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
         {
             if (s.Provider != TVDoc.ProviderType.TMDB)
             {
@@ -105,7 +105,7 @@ namespace TVRename.TMDB
             return EnsureSeriesUpdated(s, showErrorMsgBox);
         }
 
-        private bool EnsureSeriesUpdated(SeriesSpecifier s, bool showErrorMsgBox)
+        private bool EnsureSeriesUpdated(ISeriesSpecifier s, bool showErrorMsgBox)
         {
             lock (SERIES_LOCK)
             {
@@ -238,7 +238,7 @@ namespace TVRename.TMDB
                 }
             }
         }
-        public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, IEnumerable<SeriesSpecifier> ss)
+        public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, IEnumerable<ISeriesSpecifier> ss)
         {
             Say("Validating TMDB cache");
             MarkPlaceHoldersDirty(ss);
@@ -304,9 +304,9 @@ namespace TVRename.TMDB
 
         }
 
-        private void MarkPlaceHoldersDirty(IEnumerable<SeriesSpecifier> ss)
+        private void MarkPlaceHoldersDirty(IEnumerable<ISeriesSpecifier> ss)
         {
-            foreach (SeriesSpecifier downloadShow in ss)
+            foreach (ISeriesSpecifier downloadShow in ss)
             {
                 if (downloadShow.Type == MediaConfiguration.MediaType.tv)
                 {
@@ -359,11 +359,11 @@ namespace TVRename.TMDB
             }
         }
 
-        private void AddPlaceholderSeries([NotNull] SeriesSpecifier ss)
-            => AddPlaceholderSeries(ss.TvdbSeriesId, ss.TvMazeSeriesId,ss.TmdbId, ss.LanguageCode);
+        private void AddPlaceholderSeries([NotNull] ISeriesSpecifier ss)
+            => AddPlaceholderSeries(ss.TvdbId, ss.TvMazeId,ss.TmdbId, ss.LanguageCode);
 
-        private void AddPlaceholderMovie([NotNull] SeriesSpecifier ss)
-            => AddPlaceholderMovie(ss.TvdbSeriesId, ss.TvMazeSeriesId, ss.TmdbId, ss.LanguageCode);
+        private void AddPlaceholderMovie([NotNull] ISeriesSpecifier ss)
+            => AddPlaceholderMovie(ss.TvdbId, ss.TvMazeId, ss.TmdbId, ss.LanguageCode);
 
 
         public void UpdatesDoneOk()
@@ -842,7 +842,7 @@ namespace TVRename.TMDB
             return null;
         }
 
-        internal CachedSeriesInfo DownloadSeriesNow(SeriesSpecifier ss, bool showErrorMsgBox)
+        internal CachedSeriesInfo DownloadSeriesNow(ISeriesSpecifier ss, bool showErrorMsgBox)
         {
             int id = ss.TmdbId > 0 ? ss.TmdbId : GetSeriesIdFromOtherCodes(ss) ?? 0;
 
@@ -855,7 +855,7 @@ namespace TVRename.TMDB
             {
                 Imdb = downloadedSeries.ExternalIds.ImdbId,
                 TmdbCode = downloadedSeries.Id,
-                TvdbCode = downloadedSeries.ExternalIds.TvdbId.ToInt(ss.TvdbSeriesId),
+                TvdbCode = downloadedSeries.ExternalIds.TvdbId.ToInt(ss.TvdbId),
                 TvMazeCode = -1,
                 Name = downloadedSeries.Name,
                 Runtime = downloadedSeries.EpisodeRunTime.FirstOrDefault().ToString(System.Globalization.CultureInfo.CurrentCulture), //todo  use average?
@@ -1004,7 +1004,7 @@ namespace TVRename.TMDB
             return s;
         }
 
-        private int? GetSeriesIdFromOtherCodes(SeriesSpecifier ss)
+        private int? GetSeriesIdFromOtherCodes(ISeriesSpecifier ss)
         {
             if (ss.ImdbCode.HasValue())
             {
@@ -1026,9 +1026,9 @@ namespace TVRename.TMDB
                 }
             }
 
-            if (ss.TvdbSeriesId>0)
+            if (ss.TvdbId>0)
             {
-                FindContainer? x = Client.FindAsync(FindExternalSource.TvDb, ss.TvdbSeriesId.ToString()).Result;
+                FindContainer? x = Client.FindAsync(FindExternalSource.TvDb, ss.TvdbId.ToString()).Result;
 
                 if (ss.Type == MediaConfiguration.MediaType.tv)
                 {
@@ -1109,7 +1109,7 @@ namespace TVRename.TMDB
                     File(result);
                     try
                     {
-                        SeriesSpecifier ss = new SeriesSpecifier(-1, -1, result.Id, true, languageCode, result.Name,
+                        ISeriesSpecifier ss = new SearchSeriesSpecifier(-1, -1, result.Id, true, languageCode, result.Name,
                             TVDoc.ProviderType.TMDB, null, MediaConfiguration.MediaType.tv);
                         DownloadSeriesNow(ss, showErrorMsgBox);
                     }

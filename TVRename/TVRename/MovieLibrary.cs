@@ -11,15 +11,6 @@ namespace TVRename
         [NotNull]
         public IEnumerable<MovieConfiguration> Movies => this;
 
-        [NotNull]
-        public IEnumerable<SeriesSpecifier> SeriesSpecifiers
-        {
-            get
-            {
-                return this.Select(series => new SeriesSpecifier(series.TvdbCode, series.TVmazeCode,series.TmdbCode, series.UseCustomLanguage, series.CustomLanguageCode, series.ShowName, series.Provider, series.CachedMovie?.Imdb , MediaConfiguration.MediaType.movie)).ToList();
-            }
-        }
-
         public List<(int, string)> Collections => Movies
             .Select(c => (c.CachedMovie?.CollectionId, c.CachedMovie?.CollectionName))
             .Where(a => a.CollectionId.HasValue && a.CollectionName.HasValue())

@@ -390,6 +390,7 @@
     <Compile Include="LibrarySummary\Check\UseManualFoldersTvShowCheck.cs" />
     <Compile Include="Model\CachedMediaInfo.cs" />
     <Compile Include="Model\Crew.cs" />
+    <Compile Include="Model\ISeriesSpecifier.cs" />
     <Compile Include="ScanActivity\DownloadIdentifers\DownloadWdtvMetaData.cs" />
     <Compile Include="ScanActivity\DownloadIdentifers\IncorrectFileDates.cs" />
     <Compile Include="Exporter\ActionListExporter.cs" />
@@ -683,7 +684,7 @@
     <Compile Include="Settings\ShowConfiguration.cs" />
     <Compile Include="Model\Actor.cs" />
     <Compile Include="Model\SeriesBanners.cs" />
-    <Compile Include="Model\SeriesSpecifier.cs" />
+    <Compile Include="Model\SearchSeriesSpecifier.cs" />
     <Compile Include="Model\MediaNotFoundException.cs" />
     <Compile Include="Sources\SourceConnectivityException.cs" />
     <Compile Include="Model\iTVSource.cs" />

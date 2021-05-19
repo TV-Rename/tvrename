@@ -942,12 +942,6 @@ namespace TVRename
 
         public CachedSeriesInfo? CachedShow => (CachedSeriesInfo)CachedData;
 
-        public SeriesSpecifier SeriesSpecifier()
-        {
-            return new SeriesSpecifier(TvdbCode, TVmazeCode, TmdbCode, UseCustomLanguage,
-                CustomLanguageCode, ShowName, Provider, CachedShow?.Imdb, MediaType.tv);
-        }
-
         public bool AnyIdsMatch(ShowConfiguration newShow) =>
             IdsMatch(TvdbCode, newShow.TvdbCode) ||
             IdsMatch(TVmazeCode, newShow.TVmazeCode) ||
