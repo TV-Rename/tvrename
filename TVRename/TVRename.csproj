@@ -481,11 +481,14 @@
     <Compile Include="ScanActivity\ScanShowActivity\ScanMovieActivity.cs" />
     <Compile Include="Settings\AppState\UpdateCheck.cs" />
     <Compile Include="Settings\CustomMovieName.cs" />
+    <Compile Include="Settings\LocalPreferences.cs" />
     <Compile Include="Settings\MediaConfiguration.cs" />
     <Compile Include="Settings\MovieConfiguration.cs" />
     <Compile Include="Settings\MovieFilter.cs" />
     <Compile Include="Settings\PreviouslySeenMovies.cs" />
     <Compile Include="Settings\AppState\State.cs" />
+    <Compile Include="Settings\Region.cs" />
+    <Compile Include="Settings\Regions.cs" />
     <Compile Include="Settings\RuleAction.cs" />
     <Compile Include="Settings\SearchEngine.cs" />
     <Compile Include="Sources\SourceConsistencyException.cs" />

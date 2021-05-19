@@ -23,6 +23,7 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public readonly object LANGUAGE_LOCK = new object();
         public Languages? LanguageList;
+        public Regions? RegionList;
 
         // ReSharper disable once InconsistentNaming
         public readonly object MOVIE_LOCK = new object();

@@ -340,7 +340,7 @@ namespace TVRename
 
             //TODO - make search multi language and use custom language specified
             string languageCode = Source == TVDoc.ProviderType.TMDB
-                ? TVSettings.Instance.TMDBLanguage
+                ? TVSettings.Instance.TMDBLanguage.ISODialectAbbreviation
                 : TVSettings.Instance.PreferredLanguageCode;
 
             if (!string.IsNullOrEmpty(txtFindThis.Text))

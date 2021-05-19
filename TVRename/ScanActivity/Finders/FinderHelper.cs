@@ -739,7 +739,7 @@ namespace TVRename
                 if (assumeMovie && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && true)//todo use  TVSettings.Instance.AutomateAutoAddWhenOneMovieFound
                 {
                     //TODO - Make generic, currently uses TMDB only
-                    CachedMovieInfo? foundMovie = TMDB.LocalCache.Instance.GetMovie(refinedHint, null,TVSettings.Instance.TMDBLanguage, true, true);
+                    CachedMovieInfo? foundMovie = TMDB.LocalCache.Instance.GetMovie(refinedHint, null,TVSettings.Instance.TMDBLanguage.ISODialectAbbreviation, true, true);
                     if (foundMovie!=null)
                     {
                         // no need to popup dialog

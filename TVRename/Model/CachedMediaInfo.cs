@@ -49,7 +49,7 @@ namespace TVRename
 
         public string LanguageCodeToUse(TVDoc.ProviderType provider) => UseCustomLanguage && (TargetLanguageCode.HasValue())
             ? TargetLanguageCode
-            : provider == TVDoc.ProviderType.TMDB ? TVSettings.Instance.TMDBLanguage : TVSettings.Instance.PreferredLanguageCode;
+            : provider == TVDoc.ProviderType.TMDB ? TVSettings.Instance.TMDBLanguage.ISODialectAbbreviation : TVSettings.Instance.PreferredLanguageCode;
 
         private protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 

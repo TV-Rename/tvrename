@@ -89,7 +89,8 @@ namespace TVRename.TheTVDB
             extraEpisodes = new ConcurrentDictionary<int, ExtraEp>();
             removeEpisodeIds = new ConcurrentDictionary<int, ExtraEp>();
 
-            LanguageList = new Languages { new Language(7, "en", "English", "English") };
+            LanguageList = Languages.Instance;
+            RegionList = Regions.Instance;
 
             //assume that the data is up to date (this will be overridden by the value in the XML if we have a prior install)
             //If we have no prior install then the app has no shows and is by definition up-to-date
@@ -230,20 +231,7 @@ namespace TVRename.TheTVDB
 
         public bool Connect(bool showErrorMsgBox)
         {
-            switch (TVSettings.Instance.TvdbVersion)
-            {
-                case ApiVersion.v2:
-                case ApiVersion.v3:
-                    IsConnected = UpdateLanguages(showErrorMsgBox);
-                    break;
-                case ApiVersion.v4:
-                    IsConnected = TVDBLogin(showErrorMsgBox);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            
-            return IsConnected;
+            return TVDBLogin(showErrorMsgBox);
         }
 
         public void Tidy(IEnumerable<MovieConfiguration> libraryValues)
@@ -388,63 +376,6 @@ namespace TVRename.TheTVDB
             {
                 SayNothing();
             }
-        }
-
-
-
-        private bool UpdateLanguages(bool showErrorMsgBox)
-        {
-            Say("TheTVDB Languages");
-            try
-            {
-                JObject jsonLanguagesResponse = API.GetLanguages();
-
-                lock (LANGUAGE_LOCK)
-                {
-                    LanguageList ??= new Languages();
-
-                    JToken? jTokens = jsonLanguagesResponse["data"];
-                    if (jTokens is null)
-                    {
-                        throw new SourceConsistencyException($"Data element not found in {jsonLanguagesResponse}",
-                            TVDoc.ProviderType.TheTVDB);
-                    }
-
-                    LanguageList.LoadLanguages(jTokens.Select(GenerateLanguage).Where(language => language != null));
-                }
-
-                return true;
-            }
-            catch (WebException ex)
-            {
-                HandleConnectionProblem(showErrorMsgBox, ex);
-                return false;
-            }
-            finally
-            {
-                SayNothing();
-            }
-        }
-
-        private static Language? GenerateLanguage(JToken jToken)
-        {
-            JObject languageJson = (JObject)jToken;
-            int? id = (int?)languageJson["id"];
-            if (!id.HasValue)
-            {
-                return null;
-            }
-
-            string name = (string)languageJson["name"];
-            string englishName = (string)languageJson["englishName"];
-            string abbrev = (string)languageJson["abbreviation"];
-
-            if (id != -1 && !string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(abbrev))
-            {
-                return new Language(id.Value, abbrev, name, englishName);
-            }
-
-            return null;
         }
 
         private void HandleConnectionProblem(bool showErrorMsgBox, WebException ex)
@@ -1092,9 +1023,9 @@ namespace TVRename.TheTVDB
         }
 
         private int GetLanguageId() =>
-            LanguageList?.GetLanguageFromCode(TVSettings.Instance.PreferredLanguageCode)?.Id ?? 7;
+            LanguageList?.GetLanguageFromCode(TVSettings.Instance.PreferredLanguageCode)?.TVDBId ?? 7;
 
-        private int GetDefaultLanguageId() => LanguageList?.GetLanguageFromCode(DefaultLanguageCode)?.Id ?? 7;
+        private int GetDefaultLanguageId() => LanguageList?.GetLanguageFromCode(DefaultLanguageCode)?.TVDBId ?? 7;
 
         public void AddOrUpdateEpisode(Episode e)
         {
@@ -1189,12 +1120,22 @@ namespace TVRename.TheTVDB
             {
                 if (si != null)
                 {
-                    DownloadSeriesBanners(code, si, requestedLanguageCode);
+                    if (TVSettings.Instance.TvdbVersion != ApiVersion.v4)
+                    {
+                        DownloadSeriesBanners(code, si, requestedLanguageCode);
+                    }
+                    else
+                    {
+                        si.BannersLoaded = true; //todo - not really true, but will do for now
+                    }
                 }
             }
 
-            DownloadSeriesActors(code);
-
+            //V4 has actors in the main request
+            if (TVSettings.Instance.TvdbVersion != ApiVersion.v4)
+            {
+                DownloadSeriesActors(code);
+            }
             forceReloadOn.TryRemove(code, out _);
 
             Series.TryGetValue(code, out CachedSeriesInfo returnValue);
@@ -1216,7 +1157,7 @@ namespace TVRename.TheTVDB
             if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
             {
                 string languagCodeToUse;
-                (si,languagCodeToUse) = GenerateSeriesInfoV4(DownloadSeriesJson(code, requestedLanguageCode), requestedLanguageCode);
+                (si,languagCodeToUse) = GenerateSeriesInfoV4(DownloadSeriesJson(code, requestedLanguageCode), threelettercodefor(requestedLanguageCode));
 
                 AddTranslations(si, DownloadSeriesTranslationsJsonV4(code, languagCodeToUse));
             }
@@ -1239,6 +1180,13 @@ namespace TVRename.TheTVDB
             }
 
             return si;
+        }
+
+        private string threelettercodefor(string requestedLanguageCode)
+        {
+            if (requestedLanguageCode == "en") return "eng";
+            if (requestedLanguageCode == "fr") return "fra";
+            return requestedLanguageCode;
         }
 
         private void AddTranslations(CachedSeriesInfo si, JObject downloadSeriesTranslationsJsonV4)
@@ -1285,8 +1233,9 @@ namespace TVRename.TheTVDB
             CachedMovieInfo si;
             if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
             {
-                si = GenerateMovieInfoV4(DownloadMovieJson(code, requestedLanguageCode));
-                AddTranslations(si, DownloadMovieTranslationsJsonV4(code, "eng")); //todo work out appropriate language
+                string languageCode;
+                (si, languageCode) = GenerateMovieInfoV4(DownloadMovieJson(code, requestedLanguageCode), threelettercodefor(requestedLanguageCode));
+                AddTranslations(si, DownloadMovieTranslationsJsonV4(code, languageCode));
             }
             else
             {
@@ -1335,7 +1284,7 @@ namespace TVRename.TheTVDB
             try
             {
                 jsonResponse = TVSettings.Instance.TvdbVersion == ApiVersion.v4
-                    ? API.GetMovieV4(code, requestedLanguageCode)
+                    ? API.GetMovieV4(code, threelettercodefor(requestedLanguageCode))
                     : API.GetMovie(code, requestedLanguageCode);
             }
             catch (WebException ex)
@@ -1385,7 +1334,7 @@ namespace TVRename.TheTVDB
                     $"Requested language ({requestedLanguageCode}) not found in Language Cache, cache has ({LanguageList.Select(language => language.Abbreviation).ToCsv()})",
                     requestedLanguageCode);
             }
-            int requestedLangId = languageFromCode.Id;
+            int requestedLangId = languageFromCode.TVDBId;
 
             JObject seriesData = (JObject)jsonResponse["data"];
             if (seriesData is null)
@@ -1512,7 +1461,7 @@ namespace TVRename.TheTVDB
                 {
                     return null;
                 }
-                return DateTime.ParseExact(date, "yyyy-mm-dd", System.Globalization.CultureInfo.InvariantCulture);
+                return DateTime.ParseExact(date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             }
             catch
             {
@@ -1530,7 +1479,7 @@ namespace TVRename.TheTVDB
                 {
                     return null;
                 }
-                return DateTime.ParseExact(date, "yyyy-mm-dd", System.Globalization.CultureInfo.InvariantCulture);
+                return DateTime.ParseExact(date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             }
             catch
             {
@@ -1549,7 +1498,7 @@ namespace TVRename.TheTVDB
             return si;
         }
 
-        private CachedMovieInfo GenerateMovieInfoV4(JObject r)
+        private (CachedMovieInfo,string) GenerateMovieInfoV4(JObject r,string lang)
         {
             CachedMovieInfo si = new CachedMovieInfo
             {
@@ -1560,7 +1509,7 @@ namespace TVRename.TheTVDB
                 Runtime = ((string) r["data"]["runtime"])?.Trim(),
                 Name = r["data"]["name"]?.ToString(),
                 //TODO /TagLine = GetTranslation("eng", "tagline", r) ?? string.Empty,
-                TrailerUrl = r["data"]["trailers"]?.FirstOrDefault(x => x["language"]?.ToString() == "eng")?["url"]
+                TrailerUrl = r["data"]["trailers"]?.FirstOrDefault(x => x["language"]?.ToString() == lang)?["url"]
                     ?.ToString(),
                 IsSearchResultOnly = false,
                 Dirty = false,
@@ -1580,12 +1529,12 @@ namespace TVRename.TheTVDB
                 SrvLastUpdated = ((DateTime) r["data"]["lastUpdated"]).ToUnixTime(),
                 Genres = r["data"]["genres"]?.Select(x => x["name"].ToString()).ToList(),
                 CollectionId = r["data"]["lists"]?.FirstOrDefault(x =>
-                        x["isOfficial"].ToString() == "true" && ((JArray) x["nameTranslations"]).Contains("eng"))?["id"]
+                        x["isOfficial"].ToString() == "true" && ((JArray) x["nameTranslations"]).Contains(lang))?["id"]
                     .ToString().ToInt(),
 
                 //todo - get collection name translations
                 CollectionName = r["data"]["lists"]?.FirstOrDefault(x =>
-                        x["isOfficial"].ToString() == "true" && ((JArray) x["nameTranslations"]).Contains("eng"))?[
+                        x["isOfficial"].ToString() == "true" && ((JArray) x["nameTranslations"]).Contains(lang))?[
                         "name"]
                     .ToString(),
 
@@ -1598,7 +1547,7 @@ namespace TVRename.TheTVDB
 
             if (!(r["data"]?["aliases"] is null))
             {
-                foreach (var x in r["data"]["aliases"]?.Where(x => x["language"]?.ToString() == "eng"))
+                foreach (var x in r["data"]["aliases"]?.Where(x => x["language"]?.ToString() == lang))
                 {
                     si.AddAlias(x["name"]?.ToString());
                 }
@@ -1625,7 +1574,7 @@ namespace TVRename.TheTVDB
                     si.AddCrew(new Crew(id, string.Empty, name, role, string.Empty,sort));
                 }
             }
-            return si;
+            return (si, GetAppropriateLangCode(r["data"]["nameTranslations"], lang));
         }
 
         private (CachedSeriesInfo,string)  GenerateSeriesInfoV4(JObject r,string preferredLangCode)
@@ -1647,7 +1596,7 @@ namespace TVRename.TheTVDB
                 Slug = ((string) r["data"]["slug"])?.Trim(),
                 Genres = r["data"]["genres"]?.Select(x => x["name"].ToString()).ToList(),
                 ShowLanguage = r["data"]["originalLanguage"]?.ToString(),
-                TrailerUrl = r["data"]["trailers"]?.FirstOrDefault(x => x["language"]?.ToString() == "eng")?["url"]
+                TrailerUrl = r["data"]["trailers"]?.FirstOrDefault(x => x["language"]?.ToString() == preferredLangCode)?["url"]
                     ?.ToString(), //todo use lang code and backup to first in any language
                 SrvLastUpdated = ((DateTime) r["data"]["lastUpdated"]).ToUnixTime(),
                 Status = (string) r["data"]["status"]["name"],
@@ -1662,7 +1611,7 @@ namespace TVRename.TheTVDB
 
             if (!(r["data"]?["aliases"] is null))
             {
-                foreach (var x in r["data"]["aliases"]?.Where(x => x["language"]?.ToString() == "eng")) //todo use lang code and backup to first in any language
+                foreach (var x in r["data"]["aliases"]?.Where(x => x["language"]?.ToString() == preferredLangCode)) //todo use lang code and backup to first in any language
                 {
                     si.AddAlias(x["name"]?.ToString());
                 }
@@ -1712,18 +1661,35 @@ namespace TVRename.TheTVDB
                 }
             }
 
-            string langCodeToUse = GetAppropriateLangCode(r["data"], preferredLangCode);
+            string langCodeToUse = GetAppropriateLangCode(r["data"]["nameTranslations"], preferredLangCode);
             return (si,langCodeToUse);
         }
 
-        private string GetAppropriateLangCode(JToken jToken, string preferredLangCode)
+        private string GetAppropriateLangCode(JToken languageOptions, string preferredLangCode)
         {
-            return "eng";//todo make  use of the json to find the most appropriate language code
-        }
+            if (((JArray)languageOptions).ContainsTyped(preferredLangCode))
+            {
+                return preferredLangCode;
+            }
+            if ((((JArray)languageOptions).Count == 1))
+            {
+                return ((JArray)languageOptions).First.ToString();
+            }
 
-        private string? GetBannerV4(JObject r)
-        {
-            return (string) r["banner"];
+            if (((JArray) languageOptions).ContainsTyped(threelettercodefor(TVSettings.Instance.PreferredLanguageCode)))
+            {
+                return threelettercodefor(TVSettings.Instance.PreferredLanguageCode);
+            }
+            if ((((JArray)languageOptions).Count == 0))
+            {
+                throw new SourceConsistencyException($"Element exists with no language",TVDoc.ProviderType.TheTVDB);
+            }
+            if (((JArray)languageOptions).ContainsTyped("eng"))
+            {
+                return "eng";
+            }
+
+            return ((JArray)languageOptions).First.ToString();//todo make  use of the json to find the most appropriate language code
         }
 
         private DateTime? GetAirsTimeV4(JObject r)
@@ -1772,7 +1738,7 @@ namespace TVRename.TheTVDB
                     $"Requested language ({requestedLanguageCode}) not found in Language Cache, cache has ({LanguageList.Select(language => language.Abbreviation).ToCsv()})",
                     requestedLanguageCode);
             }
-            int requestedLangId = languageFromCode.Id;
+            int requestedLangId = languageFromCode.TVDBId;
 
             JObject seriesData = (JObject)jsonResponse["data"];
             if (seriesData is null)
@@ -1823,7 +1789,7 @@ namespace TVRename.TheTVDB
             try
             {
                 jsonResponse = TVSettings.Instance.TvdbVersion ==ApiVersion.v4
-                    ?API.GetSeriesV4(code, requestedLanguageCode)
+                    ?API.GetSeriesV4(code, threelettercodefor(requestedLanguageCode))
                     :API.GetSeries(code, requestedLanguageCode);
             }
             catch (WebException ex)
@@ -2059,11 +2025,12 @@ namespace TVRename.TheTVDB
             string requestLangCode = useCustomLangCode ? langCode : TVSettings.Instance.PreferredLanguageCode;
             foreach (var s in si.Seasons)
             {
-                JObject seasonInfo = API.GetSeasonEpisoedesV4(code, s.SeasonId,requestLangCode);
+                JObject seasonInfo = API.GetSeasonEpisoedesV4(code, s.SeasonId,threelettercodefor(requestLangCode));
                 foreach (JToken x in seasonInfo["data"]["episodes"])
                 {
-                    Episode newEp = GenerateEpisodeV4(x, code, si);
-                    AddTranslations(newEp,API.GetEpisodeTranslationsV4(newEp.EpisodeId,"eng"));//todo work ou ans use right language code
+                    int id = x["id"].ToObject<int>();
+                    (Episode newEp, string bestLanguage) = GenerateEpisodeV4(x, code, si,langCode);
+                    AddTranslations(newEp,API.GetEpisodeTranslationsV4(newEp.EpisodeId, bestLanguage));
                     si.AddEpisode(newEp);
                 }
             }
@@ -2077,7 +2044,7 @@ namespace TVRename.TheTVDB
             //Set a language code on the SI?? si.lan ==downloadSeriesTranslationsJsonV4["data"]["language"].ToString();
         }
 
-        private Episode GenerateEpisodeV4(JToken episodeJson,int code, CachedSeriesInfo si)
+        private (Episode,string) GenerateEpisodeV4(JToken episodeJson,int code, CachedSeriesInfo si,string lang)
         {
             Episode x = new Episode(code, si)
             {
@@ -2091,7 +2058,7 @@ namespace TVRename.TheTVDB
                 Filename = episodeJson["image"].ToObject<string>(),
             };
 
-            return x;
+            return (x, GetAppropriateLangCode(episodeJson["nameTranslations"], lang));
         }
 
         private DateTime? GetEpisodeAiredDate(JToken episodeJson)
@@ -2103,7 +2070,7 @@ namespace TVRename.TheTVDB
                 {
                     return null;
                 }
-                return DateTime.ParseExact(date, "yyyy-mm-dd", System.Globalization.CultureInfo.InvariantCulture);
+                return DateTime.ParseExact(date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             }
             catch
             {
@@ -2116,7 +2083,7 @@ namespace TVRename.TheTVDB
             string requestLangCode = useCustomLangCode ? langCode : TVSettings.Instance.PreferredLanguageCode;
             if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
             {
-                ReloadEpisodesV4(code,useCustomLangCode,langCode,si);
+                ReloadEpisodesV4(code,useCustomLangCode, threelettercodefor(langCode), si);
                 return;
             }
             
@@ -2516,7 +2483,7 @@ namespace TVRename.TheTVDB
             try
             {
                 jsonSearchResponse = TVSettings.Instance.TvdbVersion == ApiVersion.v4
-                    ? API.SearchV4(text, TVSettings.Instance.PreferredLanguageCode,type) 
+                    ? API.SearchV4(text, threelettercodefor(TVSettings.Instance.PreferredLanguageCode),type) 
                     : type==MediaConfiguration.MediaType.tv
                         ? API.SearchTvShow(text, TVSettings.Instance.PreferredLanguageCode)
                         : null; //Can't search for Movies in the v3 API

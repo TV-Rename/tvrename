@@ -41,6 +41,25 @@ namespace TVRename
             return DateTime.Parse("20:00");
         }
 
+        public static bool ContainsTyped<T>(this JArray arr, T item)
+        {
+            return System.Linq.Enumerable.Any(arr,it =>
+            {
+                T typed;
+                try
+                {
+                    typed = it.ToObject<T>();
+                }
+                catch (Newtonsoft.Json.JsonException e)
+                {
+                    Console.WriteLine("Couldn't parse array item {0} as type {1}: {2}", it, typeof(T), e);
+                    return false;
+                }
+
+                return typed.Equals(item);
+            });
+        }
+
         [NotNull]
         public static string Flatten(this JToken? ja,string delimiter)
         {

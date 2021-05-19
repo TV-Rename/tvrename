@@ -214,8 +214,8 @@ namespace TVRename
         public bool qBitTorrentDownloadFilesFirst = true;
         public TVDoc.ProviderType DefaultProvider = TVDoc.ProviderType.TheTVDB;
 
-        public string? TMDBLanguage;
-        public string? TMDBRegion;
+        public Language? TMDBLanguage;
+        public Region? TMDBRegion;
         public float TMDBPercentDirty;
         public bool IncludeMoviesQuickRecent;
 
@@ -673,8 +673,8 @@ namespace TVRename
             writer.WriteElement("StopJackettSearchOnFullScan", StopJackettSearchOnFullScan);
             writer.WriteElement("AutoSaveOnExit", AutoSaveOnExit);
 
-            writer.WriteElement("TMDBLanguage", TMDBLanguage);
-            writer.WriteElement("TMDBRegion", TMDBRegion);
+            writer.WriteElement("TMDBLanguage", TMDBLanguage.ISODialectAbbreviation);
+            writer.WriteElement("TMDBRegion", TMDBRegion.Abbreviation);
             writer.WriteElement("TMDBPercentDirty", TMDBPercentDirty);
             writer.WriteElement("IncludeMoviesQuickRecent", IncludeMoviesQuickRecent);
 
@@ -1542,8 +1542,8 @@ namespace TVRename
             StopJackettSearchOnFullScan = xmlSettings.ExtractBool("StopJackettSearchOnFullScan", true);
             AutoSaveOnExit = xmlSettings.ExtractBool("AutoSaveOnExit", false);
 
-            TMDBLanguage = xmlSettings.ExtractString("TMDBLanguage");
-            TMDBRegion = xmlSettings.ExtractString("TMDBRegion");
+            TMDBLanguage = Languages.Instance.LanguageFromDialectCode(xmlSettings.ExtractString("TMDBLanguage"));
+            TMDBRegion = Regions.Instance.RegionFromCode(xmlSettings.ExtractString("TMDBRegion"));
             TMDBPercentDirty = xmlSettings.ExtractFloat("TMDBPercentDirty",20);
             IncludeMoviesQuickRecent = xmlSettings.ExtractBool("IncludeMoviesQuickRecent",false);
 

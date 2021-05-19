@@ -168,7 +168,7 @@ namespace TVRename
             bool currentLanguageNotSet = LanguageId == -1;
             string bestLanguageCode = TargetLanguageCode ?? TVSettings.Instance.PreferredLanguageCode;
             Language optimaLanguage = LocalCache.Instance.GetLanguageFromCode(bestLanguageCode);
-            bool newLanguageOptimal = !(optimaLanguage is null) && o.LanguageId == optimaLanguage.Id;
+            bool newLanguageOptimal = !(optimaLanguage is null) && o.LanguageId == optimaLanguage.TVDBId;
             bool useNewDataOverOld = currentLanguageNotSet || newLanguageOptimal;
 
             SrvLastUpdated = o.SrvLastUpdated;

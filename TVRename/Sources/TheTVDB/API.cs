@@ -226,12 +226,6 @@ namespace TVRename.TheTVDB
         }
 
         [NotNull]
-        public static JObject GetLanguages()
-        {
-            return JsonHttpGetRequest(TokenProvider.TVDB_API_URL + "/languages", null, TokenProvider, true);
-        }
-
-        [NotNull]
         private static string HttpRequest([NotNull] string method, [NotNull] string url, string? json, string contentType,
             TokenProvider? authToken, string lang = "")
             => HttpHelper.HttpRequest(method, url, json, contentType, authToken?.GetToken(), lang);

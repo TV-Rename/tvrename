@@ -52,7 +52,7 @@ namespace TVRename
         public void GuessMovie(bool showErrorMsgBox)
         {
             //TODO  make generic, as this assumes TMDB
-            string language = TVSettings.Instance.TMDBLanguage;
+            string language = TVSettings.Instance.TMDBLanguage.ISODialectAbbreviation;
 
             //Lookup based on TMDB ID Being Present
             int? tmdbId = ConvertToInt(FindShowCode("tmdbid", "tmdb"));
@@ -81,7 +81,7 @@ namespace TVRename
 
             if (imdbToTest.HasValue())
             {
-                CachedMovieInfo? s = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbToTest!, TVSettings.Instance.TMDBLanguage, showErrorMsgBox);
+                CachedMovieInfo? s = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbToTest!, TVSettings.Instance.TMDBLanguage.ISODialectAbbreviation, showErrorMsgBox);
                 if (s != null)
                 {
                     SetId(s.TmdbCode, TVDoc.ProviderType.TMDB);
@@ -91,7 +91,7 @@ namespace TVRename
             }
 
             //Do a Search on TMDB
-            CachedMovieInfo? ser = TMDB.LocalCache.Instance.GetMovie(this, TVSettings.Instance.TMDBLanguage , showErrorMsgBox);
+            CachedMovieInfo? ser = TMDB.LocalCache.Instance.GetMovie(this, TVSettings.Instance.TMDBLanguage.ISODialectAbbreviation , showErrorMsgBox);
             if (ser != null)
             {
                 SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);

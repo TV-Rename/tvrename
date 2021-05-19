@@ -150,7 +150,7 @@ namespace TVRename
 
                 if (languageFromCode != null)
                 {
-                    cbLanguage.Text = languageFromCode.Name;
+                    cbLanguage.Text = languageFromCode.LocalName;
                 }
             }
 
@@ -272,11 +272,11 @@ namespace TVRename
                 cbLanguage.Items.Clear();
                 foreach (Language l in TheTVDB.LocalCache.Instance.LanguageList)
                 {
-                    cbLanguage.Items.Add(l.Name);
+                    cbLanguage.Items.Add(l.LocalName);
 
                     if (si.CustomLanguageCode == l.Abbreviation)
                     {
-                        pref = l.Name;
+                        pref = l.LocalName;
                     }
                 }
                 cbLanguage.EndUpdate();
@@ -383,8 +383,7 @@ namespace TVRename
             selectedShow.UseCustomRegion = chkCustomRegion.Checked;
             if (selectedShow.UseCustomRegion)
             {
-                selectedShow.CustomRegionCode = TMDB.LocalCache.COUNTRIES
-                    .FirstOrDefault(x => x.Name == cbLanguage.SelectedItem?.ToString()).Code ?? TVSettings.Instance.TMDBRegion;
+                selectedShow.CustomRegionCode = Regions.Instance.RegionFromName(cbLanguage.SelectedItem?.ToString())?.ThreeAbbreviation ?? TVSettings.Instance.TMDBRegion.ThreeAbbreviation;
             }
 
             selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.DefaultTimeZone();
@@ -445,7 +444,7 @@ namespace TVRename
 
             cbRegion.BeginUpdate();
             cbRegion.Items.Clear();
-            cbRegion.Items.AddRange(TMDB.LocalCache.COUNTRIES.Select(r => r.Name).ToArray());
+            cbRegion.Items.AddRange((object[])Regions.Instance.EnglishNames);
             cbRegion.EndUpdate();
         }
 

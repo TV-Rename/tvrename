@@ -165,7 +165,7 @@ namespace TVRename
 
                 if (languageFromCode != null)
                 {
-                    cbLanguage.Text = languageFromCode.Name;
+                    cbLanguage.Text = languageFromCode.LocalName;
                 }
             }
 
@@ -203,11 +203,11 @@ namespace TVRename
                 cbLanguage.Items.Clear();
                 foreach (Language l in TheTVDB.LocalCache.Instance.LanguageList)
                 {
-                    cbLanguage.Items.Add(l.Name);
+                    cbLanguage.Items.Add(l.LocalName);
 
                     if (si.CustomLanguageCode == l.Abbreviation)
                     {
-                        pref = l.Name;
+                        pref = l.LocalName;
                     }
                 }
                 cbLanguage.EndUpdate();

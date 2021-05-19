@@ -86,12 +86,12 @@ namespace TVRename
         {
             cbTMDBLanguages.BeginUpdate();
             cbTMDBLanguages.Items.Clear();
-            cbTMDBLanguages.Items.AddRange(TMDB.LocalCache.LANGUAGES.Select(language => language.Name).ToArray());
+            cbTMDBLanguages.Items.AddRange(Languages.Instance.Select(language => language.LocalName).ToArray());
             cbTMDBLanguages.EndUpdate();
 
             cbTMDBRegions.BeginUpdate();
             cbTMDBRegions.Items.Clear();
-            cbTMDBRegions.Items.AddRange(TMDB.LocalCache.COUNTRIES.Select(r => r.Name).ToArray());
+            cbTMDBRegions.Items.AddRange(Regions.Instance.Select(r => r.EnglishName).ToArray());
             cbTMDBRegions.EndUpdate();
         }
 
@@ -424,7 +424,7 @@ namespace TVRename
             s.keepTogetherMode = KeepTogetherMode();
 
             s.PreferredLanguageCode =
-                TheTVDB.LocalCache.Instance.LanguageList?.FirstOrDefault(l => l.Name == cbTVDBLanguages.Text)?.Abbreviation ??
+                TheTVDB.LocalCache.Instance.LanguageList?.FirstOrDefault(l => l.LocalName == cbTVDBLanguages.Text)?.Abbreviation ??
                 s.PreferredLanguageCode;
 
             s.TvdbVersion = cbTVDBVersion.Text == "v3" ? TheTVDB.ApiVersion.v3 : TheTVDB.ApiVersion.v4;
@@ -471,8 +471,8 @@ namespace TVRename
             s.DefMovieDefaultLocation = (string)cmbDefMovieLocation.SelectedItem;
             s.DefaultMovieProvider = MovieProviderMode();
 
-            s.TMDBLanguage= TMDB.LocalCache.Instance.LanguageCode(cbTMDBLanguages.SelectedItem?.ToString());
-            s.TMDBRegion = TMDB.LocalCache.Instance.RegionCode(cbTMDBRegions.SelectedItem?.ToString());
+            s.TMDBLanguage= Languages.Instance.GetLanguageFromLocalName(cbTMDBLanguages.SelectedItem?.ToString());
+            s.TMDBRegion = Regions.Instance.RegionFromName(cbTMDBRegions.SelectedItem?.ToString());
             s.TMDBPercentDirty = tbTMDBPercentDirty.Text.ToPercent(20);
             s.IncludeMoviesQuickRecent = chkIncludeMoviesQuickRecent.Checked;
 
@@ -673,11 +673,11 @@ namespace TVRename
                 {
                     foreach (Language l in TheTVDB.LocalCache.Instance.LanguageList)
                     {
-                        cbTVDBLanguages.Items.Add(l.Name);
+                        cbTVDBLanguages.Items.Add(l.LocalName);
 
                         if (enterPreferredLanguage == l.Abbreviation)
                         {
-                            pref = l.Name;
+                            pref = l.LocalName;
                         }
                     }
                 }
@@ -1054,8 +1054,8 @@ namespace TVRename
             cbDefMovieAutoFolders.Checked = s.DefMovieUseutomaticFolders;
             cbDefMovieUseDefLocation.Checked = s.DefMovieUseDefaultLocation;
 
-            cbTMDBLanguages.Text = TMDB.LocalCache.Instance.LanguageName(s.TMDBLanguage);
-            cbTMDBRegions.Text = TMDB.LocalCache.Instance.RegionName(s.TMDBRegion);
+            cbTMDBLanguages.Text = s.TMDBLanguage.LocalName;
+            cbTMDBRegions.Text = s.TMDBRegion.EnglishName;
 
             tbTMDBPercentDirty.Text = s.upgradeDirtyPercent.ToString(CultureInfo.InvariantCulture);
             chkIncludeMoviesQuickRecent.Checked = s.IncludeMoviesQuickRecent;

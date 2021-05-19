@@ -87,14 +87,7 @@ namespace TVRename
             downloadIdentifiers = new DownloadIdentifiersController();
 
             LoadOk = (settingsFile is null || LoadXMLSettings(settingsFile)) && TheTVDB.LocalCache.Instance.LoadOk && TMDB.LocalCache.Instance.LoadOk && TVmaze.LocalCache.Instance.LoadOk;
-            try
-            {
-                TheTVDB.LocalCache.Instance.LanguageList = Languages.Load();
-            }
-            catch (Exception)
-            {
-                // not worried if language loading fails as we'll repopulate
-            }
+
             try
             {
                 CurrentStats = TVRenameStats.Load() ?? new TVRenameStats();
@@ -356,7 +349,6 @@ namespace TVRename
         {
             cacheManager.StopBgDownloadThread();
             Stats().Save();
-            TheTVDB.LocalCache.Instance.LanguageList?.Save();
         }
 
         public static void SearchForEpisode(ProcessedEpisode? ep)
@@ -463,7 +455,6 @@ namespace TVRename
 
             mDirty = false;
             Stats().Save();
-            TheTVDB.LocalCache.Instance.LanguageList?.Save();
         }
 
         // ReSharper disable once InconsistentNaming

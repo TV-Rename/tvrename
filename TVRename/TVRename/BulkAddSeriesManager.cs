@@ -36,7 +36,7 @@ namespace TVRename
         public static void GuessShowItem([NotNull] PossibleNewTvShow ai, [NotNull] ShowLibrary library, bool showErrorMsgBox)
         {
             string languageCode = TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TMDB
-                ? TVSettings.Instance.TMDBLanguage
+                ? TVSettings.Instance.TMDBLanguage.ThreeAbbreviation
                 : TVSettings.Instance.PreferredLanguageCode;
 
             string showName = GuessShowName(ai, library);
