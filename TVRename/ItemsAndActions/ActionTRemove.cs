@@ -20,6 +20,7 @@ namespace TVRename
             client = source;
             name = lastFoundEntry;
         }
+
         public override string TargetFolder => client.Name();
 
         public override string ScanListViewGroup => "lvgActionDownloadRSS";

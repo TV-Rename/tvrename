@@ -1,11 +1,16 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using BrightIdeasSoftware;
+using CefSharp;
+using CefSharp.WinForms;
+using Humanizer;
+using JetBrains.Annotations;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -22,9 +27,8 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
-using Humanizer;
-using JetBrains.Annotations;
 using TVRename.Forms;
+using TVRename.Forms.Supporting;
 using TVRename.Forms.Tools;
 using TVRename.Forms.Utilities;
 using TVRename.Ipc;
@@ -36,10 +40,6 @@ using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using MessageBox = System.Windows.Forms.MessageBox;
 using SystemColors = System.Drawing.SystemColors;
-using BrightIdeasSoftware;
-using CefSharp;
-using CefSharp.WinForms;
-using TVRename.Forms.Supporting;
 
 namespace TVRename
 {
@@ -60,12 +60,13 @@ namespace TVRename
         #region Delegates
 
         public delegate void ScanTypeDelegate(TVSettings.ScanType type);
+
         public delegate void ArgumentDelegate(string[] args);
 
         public readonly ScanTypeDelegate ScanAndDo;
         public readonly ArgumentDelegate ReceiveArgumentDelegate;
 
-        #endregion
+        #endregion Delegates
 
         private int busy;
         private readonly TVDoc mDoc;
@@ -83,13 +84,13 @@ namespace TVRename
         private readonly ListViewColumnSorter lvwScheduleColumnSorter;
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private bool IsBusy => busy!=0;
+        private bool IsBusy => busy != 0;
 
         private ScanProgress? scanProgDlg;
 
         public UI(TVDoc doc, [NotNull] TVRenameSplash splash, bool showUi)
         {
-            CefSettings settings = new CefSettings {LogSeverity = LogSeverity.Verbose};
+            CefSettings settings = new CefSettings { LogSeverity = LogSeverity.Verbose };
             settings.CefCommandLineArgs.Add("disable-gpu", "1");
             settings.CefCommandLineArgs.Add("disable-gpu-vsync", "1");
             settings.CefCommandLineArgs.Add("disable-gpu-compositing", "1");
@@ -131,7 +132,7 @@ namespace TVRename
                 Logger.Info(e, "Error loading layout XML");
             }
 
-            lvwScheduleColumnSorter=new ListViewColumnSorter( new DateSorterWtw(3));
+            lvwScheduleColumnSorter = new ListViewColumnSorter(new DateSorterWtw(3));
             lvWhenToWatch.ListViewItemSorter = lvwScheduleColumnSorter;
 
             if (mDoc.Args.Hide || !showUi)
@@ -191,6 +192,7 @@ namespace TVRename
         }
 
         private delegate void ShowChildConsumer(Form childForm);
+
         public void ShowChildDialog(Form childForm)
         {
             if (InvokeRequired)
@@ -257,7 +259,7 @@ namespace TVRename
 
         private static object GroupFolderTitleDelegate(object rowObject)
         {
-            Item ep = (Item) rowObject;
+            Item ep = (Item)rowObject;
             foreach (string folder in TVSettings.Instance.LibraryFolders)
             {
                 if (ep.DestinationFolder.StartsWith(folder, StringComparison.OrdinalIgnoreCase))
@@ -272,7 +274,7 @@ namespace TVRename
         [NotNull]
         private static object GroupSeasonKeyDelegate(object rowObject)
         {
-            Item ep = (Item) rowObject;
+            Item ep = (Item)rowObject;
             if (ep.Movie != null)
             {
                 return PostpendTheIfNeeded(ep.Movie.ShowName);
@@ -289,7 +291,7 @@ namespace TVRename
         [NotNull]
         private static string GroupDateTitleDegate(object? groupKey)
         {
-            DateTime? episodeTime = (DateTime?) groupKey;
+            DateTime? episodeTime = (DateTime?)groupKey;
 
             if (!episodeTime.HasValue)
             {
@@ -323,7 +325,7 @@ namespace TVRename
 
         private static object? GroupDateKeyDelegate(object rowObject)
         {
-            DateTime? episodeTime = ((Item) rowObject).AirDate;
+            DateTime? episodeTime = ((Item)rowObject).AirDate;
 
             if (!episodeTime.HasValue)
             {
@@ -358,7 +360,7 @@ namespace TVRename
         [NotNull]
         private string GroupItemsTitleDelegate(object groupKey)
         {
-            switch ((string) groupKey)
+            switch ((string)groupKey)
             {
                 case "A-Missing":
                     return HeaderName("Missing", mDoc.TheActionList.Missing.Count);
@@ -401,6 +403,7 @@ namespace TVRename
 
                     long moveSize = moveActions.Where(item => item.From.Exists).Sum(copy => copy.From.Length);
                     return HeaderName("Move", moveActions.Count, moveSize);
+
                 default:
                     return "UNKNOWN";
             }
@@ -409,7 +412,7 @@ namespace TVRename
         [NotNull]
         private static object GroupItemsKeyDelegate(object rowObject)
         {
-            Item i = (Item) rowObject;
+            Item i = (Item)rowObject;
             return i.ScanListViewGroup switch
             {
                 "lvgActionMissing" => "A-Missing",
@@ -428,7 +431,7 @@ namespace TVRename
 
         private static string ConvertShowNameDelegate(object x)
         {
-            string oringinalName = (string) x;
+            string oringinalName = (string)x;
             return PostpendTheIfNeeded(oringinalName);
         }
 
@@ -462,15 +465,17 @@ namespace TVRename
             TVSettings.Instance.RenameCheck = previousRenameBehavior;
             mDoc.Args.RevertFromTempUse();
         }
+
         private void ScanAndAction(TVSettings.ScanType type)
         {
-            UiScan(null,null,true,type,MediaConfiguration.MediaType.both);
-            ActionAction(true,true, false);
+            UiScan(null, null, true, type, MediaConfiguration.MediaType.both);
+            ActionAction(true, true, false);
         }
 
         private static void UpdateSplashStatus([NotNull] TVRenameSplash splashScreen, string text)
         {
-            if (splashScreen.IsHandleCreated) {
+            if (splashScreen.IsHandleCreated)
+            {
                 Logger.Info($"Splash Screen Updated with: {text}");
                 splashScreen.Invoke((System.Action)delegate { splashScreen.UpdateStatus(text); });
             }
@@ -480,11 +485,12 @@ namespace TVRename
         {
             if (splashScreen.IsHandleCreated)
             {
-                splashScreen.Invoke((System.Action) delegate { splashScreen.UpdateProgress(num); });
+                splashScreen.Invoke((System.Action)delegate { splashScreen.UpdateProgress(num); });
             }
         }
 
         private void ClearInfoWindows() => ClearInfoWindows("");
+
         private void ClearMovieInfoWindows() => ClearMovieInfoWindows("");
 
         private void ClearInfoWindows(string defaultText)
@@ -517,7 +523,7 @@ namespace TVRename
 
             if (a.QuickUpdate)
             {
-                UiDownload(true,UNATTENDED);
+                UiDownload(true, UNATTENDED);
             }
 
             if (a.ForceUpdate)
@@ -534,7 +540,7 @@ namespace TVRename
 
             if (a.Scan)
             {
-                UiScan(null,null, UNATTENDED, TVSettings.ScanType.Full,MediaConfiguration.MediaType.both);
+                UiScan(null, null, UNATTENDED, TVSettings.ScanType.Full, MediaConfiguration.MediaType.both);
             }
 
             if (a.QuickScan)
@@ -549,7 +555,7 @@ namespace TVRename
 
             if (a.DoAll)
             {
-                ActionAction(true, UNATTENDED,true);
+                ActionAction(true, UNATTENDED, true);
             }
 
             if (a.Save)
@@ -574,7 +580,7 @@ namespace TVRename
         {
             MoreBusy();
             Task.Run(
-                () => mDoc.TVDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized,this)
+                () => mDoc.TVDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized, this)
             );
             LessBusy();
         }
@@ -583,7 +589,7 @@ namespace TVRename
         {
             Searchers searchers = GetUsedSearchers();
             string name = searchers.CurrentSearch.Name;
-            bool enabled = name.HasValue() && searchers.Count>0;
+            bool enabled = name.HasValue() && searchers.Count > 0;
 
             btnScheduleBTSearch.Enabled = enabled;
             btnScheduleBTSearch.Text = UseCustom(lvWhenToWatch) ? "Search" : name;
@@ -657,7 +663,7 @@ namespace TVRename
                 tp.BackColor = SystemColors.Control;
             }
 
-            SetupFilterButton(filterTextBox,filterButton_Click);
+            SetupFilterButton(filterTextBox, filterButton_Click);
             SetupFilterButton(filterMoviesTextbox, filterMovieButton_Click);
 
             UpdateVisibilityFromSettings();
@@ -722,7 +728,7 @@ namespace TVRename
             filterButton.Click += handler;
             textBox.Controls.Add(filterButton);
             // Send EM_SETMARGINS to prevent text from disappearing underneath the button
-            NativeMethods.SendMessage(textBox.Handle, 0xd3, (IntPtr) 2, (IntPtr) (filterButton.Width << 16));
+            NativeMethods.SendMessage(textBox.Handle, 0xd3, (IntPtr)2, (IntPtr)(filterButton.Width << 16));
         }
 
         private void UpdateVisibilityFromSettings()
@@ -744,6 +750,7 @@ namespace TVRename
 
         // MAH: Added in support of the Filter TextBox Button
         private void filterButton_Click(object sender, EventArgs e) => filterTextBox.Clear();
+
         private void filterMovieButton_Click(object sender, EventArgs e) => filterMoviesTextbox.Clear();
 
         private ListView ListViewByName([NotNull] string name)
@@ -877,7 +884,7 @@ namespace TVRename
 
         private void SetSplitter([NotNull] XElement x)
         {
-            splitContainer1.SplitterDistance = int.Parse(x.Attribute("Distance")?.Value??"100");
+            splitContainer1.SplitterDistance = int.Parse(x.Attribute("Distance")?.Value ?? "100");
             splitContainer1.Panel2Collapsed = bool.Parse(x.Attribute("HTMLCollapsed")?.Value ?? "false");
             if (splitContainer1.Panel2Collapsed)
             {
@@ -890,7 +897,7 @@ namespace TVRename
             SetSize(x.Descendants("Size").First());
             SetLocation(x.Descendants("Location").First());
 
-            WindowState = x.ExtractBool("Maximized",false)
+            WindowState = x.ExtractBool("Maximized", false)
                 ? FormWindowState.Maximized
                 : FormWindowState.Normal;
         }
@@ -904,12 +911,12 @@ namespace TVRename
             {
                 Logger.Error($"Missing X from {x}");
             }
-            if ( valueY==null)
+            if (valueY == null)
             {
                 Logger.Error($"Missing Y from {x}");
             }
 
-            int xloc = valueX ==null ? 100 : int.Parse(valueX.Value);
+            int xloc = valueX == null ? 100 : int.Parse(valueX.Value);
             int yloc = valueY is null ? 100 : int.Parse(valueY.Value);
 
             Location = new Point(xloc, yloc);
@@ -981,7 +988,7 @@ namespace TVRename
                 writer.WriteStartElement("ActionLayout");
                 writer.WriteAttributeToXml("State", Convert.ToBase64String(olvAction.SaveState()));
                 writer.WriteEndElement(); // ActionLayout
-                
+
                 writer.WriteEndElement(); // Layout
                 writer.WriteEndElement(); // tvrename
                 writer.WriteEndDocument();
@@ -1020,21 +1027,29 @@ namespace TVRename
                         case DialogResult.Yes:
                             mDoc.WriteXMLSettings();
                             break;
+
                         case DialogResult.Cancel:
                             e.Cancel = true;
                             break;
+
                         case DialogResult.No:
                             break;
+
                         case DialogResult.None:
                             break;
+
                         case DialogResult.OK:
                             break;
+
                         case DialogResult.Abort:
                             break;
+
                         case DialogResult.Retry:
                             break;
+
                         case DialogResult.Ignore:
                             break;
+
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
@@ -1075,7 +1090,7 @@ namespace TVRename
 
         private static ToolStripItem CreateSearcherMenuItem(SearchEngine search)
         {
-            ToolStripMenuItem tsi = new ToolStripMenuItem(search.Name) {Tag = search};
+            ToolStripMenuItem tsi = new ToolStripMenuItem(search.Name) { Tag = search };
             tsi.Font = new Font(tsi.Font.FontFamily, 9, FontStyle.Regular);
             return tsi;
         }
@@ -1117,7 +1132,7 @@ namespace TVRename
             foreach (TreeNode n in MyShowTree.Nodes)
             {
                 ShowConfiguration? showAtNode = TreeNodeToShowItem(n);
-                if ( expanded.Contains(showAtNode))
+                if (expanded.Contains(showAtNode))
                 {
                     n.Expand();
                 }
@@ -1192,7 +1207,7 @@ namespace TVRename
 
         private void FillEpGuideHtml()
         {
-            if (MyShowTree.Nodes.Count == 0) 
+            if (MyShowTree.Nodes.Count == 0)
             {
                 ShowQuickStartGuide();
             }
@@ -1319,7 +1334,7 @@ namespace TVRename
                 SetHtmlBody(chrSummary, ShowHtmlHelper.CreateOldPage("Not available offline"));
                 SetHtmlBody(chrTvTrailer, ShowHtmlHelper.CreateOldPage("Not available offline"));
 
-                return; 
+                return;
             }
 
             if (snum >= 0 && si.AppropriateSeasons().ContainsKey(snum))
@@ -1422,6 +1437,7 @@ namespace TVRename
             }
             web.Update();
         }
+
         private static void SetHtmlEmbed([NotNull] ChromiumWebBrowser web, string link)
         {
             web.Visible = true;
@@ -1446,6 +1462,7 @@ namespace TVRename
             }
             web.Update();
         }
+
         private static void TvSourceFor(ProcessedEpisode? e)
         {
             if (e?.WebsiteUrl != null)
@@ -1462,7 +1479,7 @@ namespace TVRename
             }
         }
 
-        private static void TvSourceFor( ShowConfiguration? si)
+        private static void TvSourceFor(ShowConfiguration? si)
         {
             if (si != null)
             {
@@ -1470,7 +1487,7 @@ namespace TVRename
                 {
                     Helpers.OpenUrl(si.WebsiteUrl!);
                 }
-                else if (si.CachedShow?.WebUrl.HasValue()??false)
+                else if (si.CachedShow?.WebUrl.HasValue() ?? false)
                 {
                     Helpers.OpenUrl(si.CachedShow?.WebUrl!);
                 }
@@ -1481,7 +1498,7 @@ namespace TVRename
         {
             if (GetUsedSearchers() == TVDoc.GetMovieSearchers())
             {
-                mDoc.SetMovieSearcher((SearchEngine) e.ClickedItem.Tag);
+                mDoc.SetMovieSearcher((SearchEngine)e.ClickedItem.Tag);
             }
             else
             {
@@ -1491,7 +1508,7 @@ namespace TVRename
             UpdateSearchButtons();
         }
 
-        private void bnWhenToWatchCheck_Click(object? sender, EventArgs? e) => RefreshWTW(true,false);
+        private void bnWhenToWatchCheck_Click(object? sender, EventArgs? e) => RefreshWTW(true, false);
 
         private void FillWhenToWatchList()
         {
@@ -1571,7 +1588,7 @@ namespace TVRename
             // 3 - 6 = do date sort on 3
             // 1 or 2 = number sort
             // all others, text sort
-            
+
             lvwScheduleColumnSorter.ClickedOn(col);
             lvWhenToWatch.ShowGroups = false;
 
@@ -1614,7 +1631,7 @@ namespace TVRename
 
             int n = lvWhenToWatch.SelectedIndices[0];
 
-            ProcessedEpisode ei = (ProcessedEpisode) lvWhenToWatch.Items[n].Tag;
+            ProcessedEpisode ei = (ProcessedEpisode)lvWhenToWatch.Items[n].Tag;
             switchToWhenOpenMyShows = ei;
 
             if (TVSettings.Instance.HideWtWSpoilers &&
@@ -1624,7 +1641,7 @@ namespace TVRename
             }
             else if (ei.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
             {
-                txtWhenToWatchSynopsis.Text = string.Join(Environment.NewLine+ Environment.NewLine, ei.SourceEpisodes.Select(episode => episode.Overview));
+                txtWhenToWatchSynopsis.Text = string.Join(Environment.NewLine + Environment.NewLine, ei.SourceEpisodes.Select(episode => episode.Overview));
             }
             else
             {
@@ -1635,8 +1652,8 @@ namespace TVRename
             DateTime? dt = ei.GetAirDateDt(true);
             if (dt != null)
             {
-                calCalendar.SelectionStart = (DateTime) dt;
-                calCalendar.SelectionEnd = (DateTime) dt;
+                calCalendar.SelectionStart = (DateTime)dt;
+                calCalendar.SelectionEnd = (DateTime)dt;
             }
 
             mInternalChange--;
@@ -1649,7 +1666,7 @@ namespace TVRename
                 return;
             }
 
-            ProcessedEpisode ei = (ProcessedEpisode) lvWhenToWatch.SelectedItems[0].Tag;
+            ProcessedEpisode ei = (ProcessedEpisode)lvWhenToWatch.SelectedItems[0].Tag;
             List<FileInfo> fl = FinderHelper.FindEpOnDisk(null, ei);
             if (fl.Count > 0)
             {
@@ -1664,10 +1681,12 @@ namespace TVRename
                 case TVSettings.WTWDoubleClickAction.Search:
                     bnWTWBTSearch_Click(null, null);
                     break;
+
                 case TVSettings.WTWDoubleClickAction.Scan:
-                    UiScan(new List<ShowConfiguration> {ei.Show},null, false, TVSettings.ScanType.SingleShow,MediaConfiguration.MediaType.tv);
+                    UiScan(new List<ShowConfiguration> { ei.Show }, null, false, TVSettings.ScanType.SingleShow, MediaConfiguration.MediaType.tv);
                     tabControl1.SelectTab(tbAllInOne);
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1687,7 +1706,7 @@ namespace TVRename
             {
                 lvi.Selected = false;
 
-                ProcessedEpisode ei = (ProcessedEpisode) lvi.Tag;
+                ProcessedEpisode ei = (ProcessedEpisode)lvi.Tag;
                 DateTime? dt2 = ei.GetAirDateDt(true);
                 if (dt2 != null)
                 {
@@ -1708,7 +1727,7 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        private void RefreshWTW(bool doDownloads,bool unattended)
+        private void RefreshWTW(bool doDownloads, bool unattended)
         {
             UiDownload(doDownloads, unattended);
 
@@ -1730,7 +1749,7 @@ namespace TVRename
                 return;
             }
 
-            RefreshWTW(false,true);
+            RefreshWTW(false, true);
         }
 
         // ReSharper disable once InconsistentNaming
@@ -1755,13 +1774,13 @@ namespace TVRename
         {
             foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
             {
-                TVDoc.SearchForEpisode((ProcessedEpisode) lvi.Tag);
+                TVDoc.SearchForEpisode((ProcessedEpisode)lvi.Tag);
             }
         }
 
         private void notifyIcon1_Click(object sender, MouseEventArgs e)
         {
-            // double-click of notification icon causes a click then double-click event, 
+            // double-click of notification icon causes a click then double-click event,
             // so we need to do a timeout before showing the single click's popup
             tmrShowUpcomingPopup.Start();
         }
@@ -1835,12 +1854,12 @@ namespace TVRename
 
         private void RightClickOnMyShows(ShowConfiguration si, Point pt)
         {
-            BuildRightClickMenu(pt,null, new List<ShowConfiguration> { si },null);
+            BuildRightClickMenu(pt, null, new List<ShowConfiguration> { si }, null);
         }
 
         private void RightClickOnMyShows([NotNull] ProcessedSeason seas, Point pt)
         {
-            BuildRightClickMenu(pt,null, new List<ShowConfiguration> { seas.Show },seas);
+            BuildRightClickMenu(pt, null, new List<ShowConfiguration> { seas.Show }, seas);
         }
 
         private void WtwRightClickOnShow([NotNull] List<ProcessedEpisode> eps, Point pt)
@@ -1850,16 +1869,16 @@ namespace TVRename
                 return;
             }
 
-            ProcessedEpisode ep = eps.Count ==1?eps[0]:null;
+            ProcessedEpisode ep = eps.Count == 1 ? eps[0] : null;
 
             List<ShowConfiguration> sis = eps.Select(e => e.Show).ToList();
 
-            BuildRightClickMenu(pt, ep,sis, ep?.AppropriateProcessedSeason);
+            BuildRightClickMenu(pt, ep, sis, ep?.AppropriateProcessedSeason);
         }
 
         private void MenuGuideAndTvdb(bool addSep, ProcessedEpisode? ep, List<ShowConfiguration?>? sis, ProcessedSeason? seas)
         {
-            if (sis is null || sis.Count != 1 || sis[0]==null)
+            if (sis is null || sis.Count != 1 || sis[0] == null)
             {
                 return; // nothing or multiple selected
             }
@@ -1873,7 +1892,7 @@ namespace TVRename
 
             if (ep != null)
             {
-                AddRcMenuItem("Episode Guide", (sender, args) => GotoEpguideFor(ep,true));
+                AddRcMenuItem("Episode Guide", (sender, args) => GotoEpguideFor(ep, true));
 
                 string label = ep.Show.Provider == TVDoc.ProviderType.TVmaze
                     ? "Visit Tv Maze..."
@@ -1889,7 +1908,7 @@ namespace TVRename
                 AddRcMenuItem(label, (sender, args) => TvSourceFor(seas));
             }
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            else if (si!=null)
+            else if (si != null)
             {
                 AddRcMenuItem("Episode Guide", (sender, args) => GotoEpguideFor(si, true));
                 string label = si.Provider == TVDoc.ProviderType.TVmaze
@@ -1899,9 +1918,9 @@ namespace TVRename
             }
         }
 
-        private void MenuShowAndEpisodes(List<ShowConfiguration> sil ,ProcessedSeason? seas, ProcessedEpisode? ep)
+        private void MenuShowAndEpisodes(List<ShowConfiguration> sil, ProcessedSeason? seas, ProcessedEpisode? ep)
         {
-            ShowConfiguration si = sil.Count >= 1 ?sil[0]:null;
+            ShowConfiguration si = sil.Count >= 1 ? sil[0] : null;
 
             if (si != null)
             {
@@ -1913,9 +1932,9 @@ namespace TVRename
                     ? "Scan Multiple Shows"
                     : "Scan \"" + si.ShowName + "\"";
 
-                AddRcMenuItem(scanText, (sender, args) => 
+                AddRcMenuItem(scanText, (sender, args) =>
                     {
-                        UiScan(sil,null, false, TVSettings.ScanType.SingleShow,MediaConfiguration.MediaType.tv);
+                        UiScan(sil, null, false, TVSettings.ScanType.SingleShow, MediaConfiguration.MediaType.tv);
                         tabControl1.SelectTab(tbAllInOne);
                     }
                 );
@@ -1933,11 +1952,11 @@ namespace TVRename
                 AddRcMenuItem("Edit " + ProcessedSeason.UIFullSeasonWord(seas.SeasonNumber), (sender, args) => EditSeason(si, seas.SeasonNumber));
                 if (si.IgnoreSeasons.Contains(seas.SeasonNumber))
                 {
-                    AddRcMenuItem("Include " + ProcessedSeason.UIFullSeasonWord(seas.SeasonNumber),(sender, args) => IncludeSeason(si, seas.SeasonNumber));
+                    AddRcMenuItem("Include " + ProcessedSeason.UIFullSeasonWord(seas.SeasonNumber), (sender, args) => IncludeSeason(si, seas.SeasonNumber));
                 }
                 else
                 {
-                    AddRcMenuItem("Ignore " + ProcessedSeason.UIFullSeasonWord(seas.SeasonNumber),(sender, args) => IgnoreSeason(si,seas.SeasonNumber));
+                    AddRcMenuItem("Ignore " + ProcessedSeason.UIFullSeasonWord(seas.SeasonNumber), (sender, args) => IgnoreSeason(si, seas.SeasonNumber));
                 }
             }
 
@@ -2017,22 +2036,22 @@ namespace TVRename
             {
                 if (si.AutoAddFolderBase.HasValue())
                 {
-                    AddFolders(new[] {si.AutoAddFolderBase}, added);
+                    AddFolders(new[] { si.AutoAddFolderBase }, added);
                 }
                 AddFoldersSubMenu(si.AllExistngFolderLocations().Values.SelectMany(l => l).ToList(), added);
             }
 
-            if (lvr is null || lvr.Count>1)
+            if (lvr is null || lvr.Count > 1)
             {
                 return;
             }
 
             {
-                AddFoldersSubMenu(lvr.Select(sli =>sli.TargetFolder),added);
+                AddFoldersSubMenu(lvr.Select(sli => sli.TargetFolder), added);
             }
         }
 
-        private void AddFolders([NotNull] IEnumerable<string> foldersList,[NotNull] ICollection<string> alreadyAdded)
+        private void AddFolders([NotNull] IEnumerable<string> foldersList, [NotNull] ICollection<string> alreadyAdded)
         {
             bool first = true;
             foreach (string folder in foldersList
@@ -2049,7 +2068,8 @@ namespace TVRename
                 }
 
                 ToolStripMenuItem tsi = new ToolStripMenuItem("Open: " + folder);
-                tsi.Click += (s, ev) => {
+                tsi.Click += (s, ev) =>
+                {
                     Helpers.OpenFolder(folder);
                 };
 
@@ -2057,17 +2077,18 @@ namespace TVRename
             }
         }
 
-        private void AddFoldersSubMenu([NotNull] IEnumerable<string> foldersList,[NotNull] ICollection<string> alreadyAdded)
+        private void AddFoldersSubMenu([NotNull] IEnumerable<string> foldersList, [NotNull] ICollection<string> alreadyAdded)
         {
-            ToolStripMenuItem tsi = new ToolStripMenuItem("Open Other Folders" );
+            ToolStripMenuItem tsi = new ToolStripMenuItem("Open Other Folders");
 
             foreach (string folder in foldersList.Where(folder => !string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !alreadyAdded.Contains(folder)))
             {
                 alreadyAdded.Add(folder); // don't show the same folder more than once
 
                 ToolStripMenuItem tssi = new ToolStripMenuItem("Open: " + folder);
-                tssi.Click += (s, ev) => {
-                    Helpers.OpenFolder(folder); 
+                tssi.Click += (s, ev) =>
+                {
+                    Helpers.OpenFolder(folder);
                 };
                 tsi.DropDownItems.Add(tssi);
             }
@@ -2079,7 +2100,6 @@ namespace TVRename
             }
         }
 
-
         private void RightClickOnMyMovies(MovieConfiguration si, Point pt)
         {
             showRightClickMenu.Items.Clear();
@@ -2087,7 +2107,7 @@ namespace TVRename
             List<string> added = new List<string>();
 
             AddRcMenuItem("Force Refresh", (sender, args) => ForceMovieRefresh(si, false));
-            AddRcMenuItem("Update Images", (sender, args) => UpdateImages(new List<MovieConfiguration>{si}));
+            AddRcMenuItem("Update Images", (sender, args) => UpdateImages(new List<MovieConfiguration> { si }));
 
             showRightClickMenu.Items.Add(new ToolStripSeparator());
 
@@ -2098,12 +2118,12 @@ namespace TVRename
 
             AddRcMenuItem($"Scan \"{si.ShowName}\"", (sender, args) =>
             {
-                UiScan(null, new List<MovieConfiguration> {si}, false, TVSettings.ScanType.SingleShow,
+                UiScan(null, new List<MovieConfiguration> { si }, false, TVSettings.ScanType.SingleShow,
                     MediaConfiguration.MediaType.movie);
 
                 tabControl1.SelectTab(tbAllInOne);
             });
-            
+
             if (si.Locations.Any())
             {
                 AddFolders(si.Locations, added);
@@ -2111,18 +2131,19 @@ namespace TVRename
 
             showRightClickMenu.Show(pt);
         }
+
         private void BuildRightClickMenu(Point pt, ProcessedEpisode? ep, List<ShowConfiguration> sis, ProcessedSeason? seas)
         {
             showRightClickMenu.Items.Clear();
 
-            MenuGuideAndTvdb(false,  ep,  sis,  seas);
-            MenuShowAndEpisodes(sis,seas,ep);
+            MenuGuideAndTvdb(false, ep, sis, seas);
+            MenuShowAndEpisodes(sis, seas, ep);
             if (sis.Count == 1)
             {
                 MenuFolders(null, sis[0], seas, ep);
             }
 
-            if (ep !=null)
+            if (ep != null)
             {
                 MenuSearchFor(ep);
             }
@@ -2136,7 +2157,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private ItemList GetSelectedItems() => new ItemList {olvAction.SelectedObjects.OfType<Item>()};
+        private ItemList GetSelectedItems() => new ItemList { olvAction.SelectedObjects.OfType<Item>() };
 
         [NotNull]
         private ItemList GetCheckedItems() => new ItemList { olvAction.CheckedObjects.OfType<Item>() };
@@ -2144,13 +2165,13 @@ namespace TVRename
         private void IncludeSeason([NotNull] ShowConfiguration si, int seasonNumber)
         {
             si.IgnoreSeasons.Remove(seasonNumber);
-            ShowAddedOrEdited(false, false,si);
+            ShowAddedOrEdited(false, false, si);
         }
 
         private void IgnoreSeason([NotNull] ShowConfiguration si, int seasonNumber)
         {
             si.IgnoreSeasons.Add(seasonNumber);
-            ShowAddedOrEdited(false, false,si);
+            ShowAddedOrEdited(false, false, si);
         }
 
         private void BrowseForMissingItem(ItemMissing? mi)
@@ -2264,7 +2285,7 @@ namespace TVRename
             MoreBusy(); // no background download while preferences are open!
             mDoc.PreventAutoScan("Preferences are open");
 
-            Preferences pref = new Preferences(mDoc, scanOptions,CurrentlySelectedSeason());
+            Preferences pref = new Preferences(mDoc, scanOptions, CurrentlySelectedSeason());
             if (pref.ShowDialog(this) == DialogResult.OK)
             {
                 mDoc.SetDirty();
@@ -2287,7 +2308,7 @@ namespace TVRename
             try
             {
                 mDoc.WriteXMLSettings();
-                SaveCaches(); 
+                SaveCaches();
                 if (!SaveLayoutXml())
                 {
                     Logger.Error("Failed to Save Layout Configuration Files");
@@ -2301,7 +2322,7 @@ namespace TVRename
                     e2 = e2.InnerException;
                 }
 
-                Logger.Error(e2,"Failed to Save Configuration Files");
+                Logger.Error(e2, "Failed to Save Configuration Files");
                 string m2 = e2.Message;
                 MessageBox.Show(this,
                     ex.Message + "\r\n\r\n" +
@@ -2362,7 +2383,7 @@ namespace TVRename
             {
                 // we've just finished a bunch of background downloads
                 SaveCaches();
-                RefreshWTW(false,true);
+                RefreshWTW(false, true);
 
                 backgroundDownloadNowToolStripMenuItem.Enabled = true;
             }
@@ -2408,7 +2429,7 @@ namespace TVRename
             {
                 mDoc.CurrentAppState.SaveToDefaultFile();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.Warn(ex, "Could not save app state file after update check!");
             }
@@ -2428,11 +2449,11 @@ namespace TVRename
 
             // after first time (10 seconds), put up to user defined period (by default 60 minutes)
             BGDownloadTimer.Interval = TVSettings.Instance.PeriodicUpdateCachePeriod();
-            
+
             BGDownloadTimer.Start();
 
             if (TVSettings.Instance.BGDownload && mDoc.DownloadsRemaining() == 0)
-                // only do auto-download if don't have stuff to do already
+            // only do auto-download if don't have stuff to do already
             {
                 BackgroundDownloadNow();
             }
@@ -2535,7 +2556,7 @@ namespace TVRename
         {
             CachedSeriesInfo ser = si.CachedShow;
 
-            TreeNode n = new TreeNode(GenerateShowUIName(ser,si)) {Tag = si};
+            TreeNode n = new TreeNode(GenerateShowUIName(ser, si)) { Tag = si };
 
             if (ser != null)
             {
@@ -2602,7 +2623,7 @@ namespace TVRename
                 //TODO Add Movie Colouring
                 //if (TVSettings.Instance.ShowStatusColors.AppliesTo(si))
                 //{
-                    //n.ForeColor = TVSettings.Instance.ShowStatusColors.GetColour(si);
+                //n.ForeColor = TVSettings.Instance.ShowStatusColors.GetColour(si);
                 //}
             }
             movieTree.Nodes.Add(n);
@@ -2617,7 +2638,7 @@ namespace TVRename
         private static string GenerateShowUIName([NotNull] ShowConfiguration si)
         {
             CachedSeriesInfo s = si.CachedShow;
-            return GenerateShowUIName(s,si);
+            return GenerateShowUIName(s, si);
         }
 
         // ReSharper disable once InconsistentNaming
@@ -2669,7 +2690,7 @@ namespace TVRename
 
             if (ep.IsInFuture(true))
             {
-                return (Color.LightGray,Color.Black);
+                return (Color.LightGray, Color.Black);
             }
 
             return (Color.LightBlue, Color.Black);
@@ -2707,7 +2728,7 @@ namespace TVRename
             List<FileInfo> fl = dfc.FindEpOnDisk(pe);
             bool appropriateFileNameFound = !TVSettings.Instance.RenameCheck
                                             || !pe.Show.DoRename
-                                            || fl.All(file => file.Name.StartsWith( TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pe)), StringComparison.OrdinalIgnoreCase));
+                                            || fl.All(file => file.Name.StartsWith(TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(pe)), StringComparison.OrdinalIgnoreCase));
 
             if (fl.Count > 0 && appropriateFileNameFound)
             {
@@ -2794,7 +2815,7 @@ namespace TVRename
             {
                 mDoc.FilmLibrary.Add(mov);
 
-                MovieAddedOrEdited(false, false,mov);
+                MovieAddedOrEdited(false, false, mov);
                 SelectMovie(mov);
                 MovieAddedOrEdited(true, false, mov);
 
@@ -2817,15 +2838,15 @@ namespace TVRename
             mDoc.PreventAutoScan("Add Show");
             ShowConfiguration si = new ShowConfiguration();
 
-            AddEditShow aes = new AddEditShow(si,mDoc);
+            AddEditShow aes = new AddEditShow(si, mDoc);
             DialogResult dr = aes.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
                 mDoc.Add(si);
 
-                ShowAddedOrEdited(false,false,si);
+                ShowAddedOrEdited(false, false, si);
                 SelectShow(si);
-                ShowAddedOrEdited(true, false,si);
+                ShowAddedOrEdited(true, false, si);
                 Logger.Info("Added new show called {0}", si.ShowName);
             }
             else
@@ -2836,9 +2857,9 @@ namespace TVRename
             mDoc.AllowAutoScan();
         }
 
-        private void ShowAddedOrEdited(bool download,bool unattended, ShowConfiguration si)
+        private void ShowAddedOrEdited(bool download, bool unattended, ShowConfiguration si)
         {
-            mDoc.TvAddedOrEdited(download,unattended, WindowState == FormWindowState.Minimized, this,si);
+            mDoc.TvAddedOrEdited(download, unattended, WindowState == FormWindowState.Minimized, this, si);
 
             FillMyShows();
             FillWhenToWatchList();
@@ -2903,13 +2924,12 @@ namespace TVRename
                     {
                         Logger.Error(e, $"Failed to remove {si.AutoAddFolderBase} as operation failed");
                     }
-
                 }
             }
 
             Logger.Info($"User asked to remove {si.ShowName} - removing now");
             mDoc.TvLibrary.Remove(si);
-            ShowAddedOrEdited(false,false,si);
+            ShowAddedOrEdited(false, false, si);
         }
 
         private void DeleteMovie([NotNull] MovieConfiguration si)
@@ -2955,16 +2975,14 @@ namespace TVRename
                         {
                             Logger.Error(e, $"Failed to remove {directory} as operation failed");
                         }
-
                     }
                 }
             }
 
             Logger.Info($"User asked to remove {si.ShowName} - removing now");
             mDoc.FilmLibrary.Remove(si);
-            MovieAddedOrEdited(false, false,si);
+            MovieAddedOrEdited(false, false, si);
         }
-
 
         private void bnMyShowsEdit_Click(object sender, EventArgs e)
         {
@@ -3002,7 +3020,7 @@ namespace TVRename
             DialogResult dr = er.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
-                ShowAddedOrEdited(false, false,si);
+                ShowAddedOrEdited(false, false, si);
                 SelectSeason(si.AppropriateSeasons()[seasnum]);
             }
 
@@ -3017,13 +3035,13 @@ namespace TVRename
 
             int oldCode = si.TvdbCode;
 
-            AddEditShow aes = new AddEditShow(si,mDoc);
+            AddEditShow aes = new AddEditShow(si, mDoc);
 
             DialogResult dr = aes.ShowDialog(this);
 
             if (dr == DialogResult.OK)
             {
-                ShowAddedOrEdited(si.TvdbCode != oldCode,false,si);
+                ShowAddedOrEdited(si.TvdbCode != oldCode, false, si);
                 SelectShow(si);
 
                 Logger.Info("Modified show called {0}", si.ShowName);
@@ -3038,12 +3056,12 @@ namespace TVRename
             MoreBusy();
             mDoc.PreventAutoScan("Edit Movie");
             int oldCode = si.TvdbCode;
-            AddEditMovie aes = new AddEditMovie(si,mDoc);
+            AddEditMovie aes = new AddEditMovie(si, mDoc);
             DialogResult dr = aes.ShowDialog(this);
 
             if (dr == DialogResult.OK)
             {
-                MovieAddedOrEdited(si.TvdbCode != oldCode, false,si); //todo optimise so that download is only done if movie config has changed show; aes.HasCHanged ?
+                MovieAddedOrEdited(si.TvdbCode != oldCode, false, si); //todo optimise so that download is only done if movie config has changed show; aes.HasCHanged ?
                 SelectMovie(si);
 
                 Logger.Info("Modified movie called {0}", si.ShowName);
@@ -3055,7 +3073,7 @@ namespace TVRename
 
         internal void ForceRefresh(IEnumerable<ShowConfiguration>? sis, bool unattended)
         {
-            mDoc.ForceRefreshShows(sis,unattended,WindowState==FormWindowState.Minimized,this);
+            mDoc.ForceRefreshShows(sis, unattended, WindowState == FormWindowState.Minimized, this);
             FillMyShows();
             FillEpGuideHtml();
             RefreshWTW(false, unattended);
@@ -3214,7 +3232,6 @@ namespace TVRename
             }
         }
 
-
         private void UpdateMyShowsButtonStatus()
         {
             bool showSelected = MyShowTree.SelectedNode != null;
@@ -3285,7 +3302,7 @@ namespace TVRename
 
             if (currentShow != null)
             {
-                if (currentShow.SeasonEpisodes.TryGetValue(snum,out List<ProcessedEpisode> returnValue))
+                if (currentShow.SeasonEpisodes.TryGetValue(snum, out List<ProcessedEpisode> returnValue))
                 {
                     return returnValue;
                 }
@@ -3331,7 +3348,7 @@ namespace TVRename
             ShowConfiguration? currentShow = TreeNodeToShowItem(MyShowTree.SelectedNode);
             string theFolder = GetFolderForShow(currentShow);
 
-            if (string.IsNullOrWhiteSpace(theFolder) && TVSettings.Instance.DownloadFolders.Count>0)
+            if (string.IsNullOrWhiteSpace(theFolder) && TVSettings.Instance.DownloadFolders.Count > 0)
             {
                 theFolder = TVSettings.Instance.DownloadFolders.First();
             }
@@ -3412,7 +3429,7 @@ namespace TVRename
         {
             CancellationTokenSource cts = new CancellationTokenSource();
             bool hidden = WindowState == FormWindowState.Minimized;
-            SetupScanUi(hidden );
+            SetupScanUi(hidden);
             MoreBusy();
             this.bwScan.RunWorkerAsync(new TVDoc.ScanSettings(shows, movies, unattended, hidden, st, cts.Token, media, this, scanProgDlg));
             ShowDialogAndWait(cts);
@@ -3434,13 +3451,11 @@ namespace TVRename
 
         private void bwScan_DoWork(object sender, DoWorkEventArgs e)
         {
-            
             mDoc.Scan((TVDoc.ScanSettings)e.Argument);
         }
 
         private void bwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-
         }
 
         private void bwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -3498,7 +3513,7 @@ namespace TVRename
                                 MessageBoxIcon.Error);
                         }
 
-                        ShowConfiguration problemShow = mDoc.TvLibrary.GetShowItem(problem.ShowId,problem.ShowIdProvider);
+                        ShowConfiguration problemShow = mDoc.TvLibrary.GetShowItem(problem.ShowId, problem.ShowIdProvider);
                         if (problemShow != null)
                         {
                             EditShow(problemShow);
@@ -3557,7 +3572,6 @@ namespace TVRename
 
             olvAction.EndUpdate();
             UpdateActionCheckboxes();
-            
         }
 
         public void FillActionList(bool preserveExistingCheckboxes)
@@ -3580,7 +3594,7 @@ namespace TVRename
 
             if (preserveExistingCheckboxes)
             {
-                List <Item> oldItems = olvAction.Items.OfType<OLVListItem>().Select(lvi => (Item)lvi.RowObject).ToList();
+                List<Item> oldItems = olvAction.Items.OfType<OLVListItem>().Select(lvi => (Item)lvi.RowObject).ToList();
 
                 mDoc.TheActionList.NotifyUpdated();
                 olvAction.RebuildColumns();
@@ -3597,14 +3611,13 @@ namespace TVRename
                 internalCheckChange = false;
                 olvAction.ItemCheck += olvAction_ItemCheck;
                 olvAction.ItemChecked += lvAction_ItemChecked;
-
             }
             else
             {
                 mDoc.TheActionList.NotifyUpdated();
-               
+
                 olvAction.RebuildColumns();
-                
+
                 SetCheckboxes();
             }
             olvAction.RestoreState(oldState);
@@ -3621,7 +3634,7 @@ namespace TVRename
         [NotNull]
         private static string HeaderName(string name, int number, long filesize) => $"{name} ({PrettyPrint(number)}, {filesize.GBMB(1)})";
 
-        private void bnActionAction_Click(object sender, EventArgs e) => ActionAction(true,false, false);
+        private void bnActionAction_Click(object sender, EventArgs e) => ActionAction(true, false, false);
 
         private void ActionAction(bool checkedNotSelected, bool unattended, bool doAll)
         {
@@ -3640,7 +3653,7 @@ namespace TVRename
             }
 
             FillActionList(true);
-            RefreshWTW(false,unattended);
+            RefreshWTW(false, unattended);
             mDoc.AllowAutoScan();
         }
 
@@ -3652,7 +3665,7 @@ namespace TVRename
             }
 
             FillActionList(true);
-            RefreshWTW(false,false);
+            RefreshWTW(false, false);
         }
 
         private void folderMonitorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3687,7 +3700,7 @@ namespace TVRename
                 {
                     return;
                 }
-                GenerateActionRightClickMenu(pt, lvr, null,null, action.Movie);
+                GenerateActionRightClickMenu(pt, lvr, null, null, action.Movie);
             }
             else
             {
@@ -3695,11 +3708,12 @@ namespace TVRename
                 {
                     return;
                 }
-                GenerateActionRightClickMenu(pt, lvr, null,null,null);
+                GenerateActionRightClickMenu(pt, lvr, null, null, null);
             }
         }
+
         private void GenerateActionRightClickMenu(Point pt, [NotNull] ItemList lvr, ShowConfiguration? si, ProcessedEpisode? episode, MovieConfiguration? movie)
-        { 
+        {
             if (lvr.Count == 0)
             {
                 return; // nothing selected
@@ -3712,7 +3726,7 @@ namespace TVRename
             // Action related items
             if (lvr.Count > lvr.Missing.ToList().Count) // not just missing selected
             {
-                AddRcMenuItem("Action Selected", (sender, args) => ActionAction(false, false,false)); 
+                AddRcMenuItem("Action Selected", (sender, args) => ActionAction(false, false, false));
             }
 
             AddRcMenuItem("Ignore Selected", (sender, args) => IgnoreSelected());
@@ -3740,14 +3754,14 @@ namespace TVRename
                 }
             }
 
-            if (lvr.CopyMove.Count > 0||lvr.DownloadTorrents.Count>0||lvr.Downloading.Count>0)
+            if (lvr.CopyMove.Count > 0 || lvr.DownloadTorrents.Count > 0 || lvr.Downloading.Count > 0)
             {
                 showRightClickMenu.Items.Add(new ToolStripSeparator());
                 AddRcMenuItem("Revert to Missing", (sender, args) => Revert());
             }
 
-            MenuGuideAndTvdb(true,episode,new List<ShowConfiguration> {si},seas );
-            MenuFolders(lvr,si,episode?.AppropriateProcessedSeason,episode);
+            MenuGuideAndTvdb(true, episode, new List<ShowConfiguration> { si }, seas);
+            MenuFolders(lvr, si, episode?.AppropriateProcessedSeason, episode);
 
             showRightClickMenu.Show(pt);
         }
@@ -3764,7 +3778,7 @@ namespace TVRename
                 if (se.Name.HasValue())
                 {
                     ToolStripMenuItem tssi = new ToolStripMenuItem(se.Name);
-                    tssi.Click += (s, ev) => { TVDoc.SearchForEpisode(se,ep); };
+                    tssi.Click += (s, ev) => { TVDoc.SearchForEpisode(se, ep); };
                     tsi.DropDownItems.Add(tssi);
                 }
             }
@@ -3814,7 +3828,7 @@ namespace TVRename
             showRightClickMenu.Items.Add(tsi);
         }
 
-        private void AddRcMenuItem(string name,EventHandler command)
+        private void AddRcMenuItem(string name, EventHandler command)
         {
             ToolStripMenuItem tsi = new ToolStripMenuItem(name);
             tsi.Click += command;
@@ -3881,11 +3895,11 @@ namespace TVRename
         private static IEnumerable<Item> RenameActions(IEnumerable<Item> all)
         {
             return all.Where(a =>
-                a is ActionCopyMoveRename {Operation: ActionCopyMoveRename.Op.rename} ||
+                a is ActionCopyMoveRename { Operation: ActionCopyMoveRename.Op.rename } ||
                 a is ActionMoveRenameDirectory);
         }
 
-        private static void SetCheckbox([NotNull] ToolStripMenuItem box,[NotNull] IEnumerable<Item> all, [NotNull] IEnumerable<Item> chk)
+        private static void SetCheckbox([NotNull] ToolStripMenuItem box, [NotNull] IEnumerable<Item> all, [NotNull] IEnumerable<Item> chk)
         {
             IEnumerable<Item> enumerable = chk.ToList();
             IEnumerable<Item> btn = all as Item[] ?? all.ToArray();
@@ -3907,7 +3921,7 @@ namespace TVRename
         {
             if (e.Index % 100 == 0)
             {
-                Logger.Info($"Updated {e.Index} from {mDoc.TheActionList.Count} records = {(double)e.Index/ (double)mDoc.TheActionList.Count:P2}");
+                Logger.Info($"Updated {e.Index} from {mDoc.TheActionList.Count} records = {(double)e.Index / (double)mDoc.TheActionList.Count:P2}");
             }
             if (internalCheckChange)
             {
@@ -3986,13 +4000,13 @@ namespace TVRename
 
         private void ignoreListToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            IgnoreEdit ie = new IgnoreEdit(mDoc,string.Empty);
+            IgnoreEdit ie = new IgnoreEdit(mDoc, string.Empty);
             ie.ShowDialog(this);
         }
 
         private async void showSummaryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ShowSummary f = new ShowSummary(mDoc,this);
+            ShowSummary f = new ShowSummary(mDoc, this);
             f.Show(this);
         }
 
@@ -4009,6 +4023,7 @@ namespace TVRename
         }
 
         private void filterTextBox_TextChanged(object sender, EventArgs e) => FillMyShows();
+
         private void filterMoviesTextBox_TextChanged(object sender, EventArgs e) => FillMyMovies();
 
         private void filterTextBox_SizeChanged(object sender, EventArgs e)
@@ -4031,7 +4046,7 @@ namespace TVRename
                 filterButton.Location = new Point(tb.ClientSize.Width - filterButton.Width, clientSizeHeight + 1);
 
                 // Send EM_SETMARGINS to prevent text from disappearing underneath the button
-                NativeMethods.SendMessage(tb.Handle, 0xd3, (IntPtr) 2, (IntPtr) (filterButton.Width << 16));
+                NativeMethods.SendMessage(tb.Handle, 0xd3, (IntPtr)2, (IntPtr)(filterButton.Width << 16));
             }
         }
 
@@ -4067,7 +4082,7 @@ namespace TVRename
 
             if (inSilentMode || Debugger.IsAttached || !Environment.UserInteractive)
             {
-               return;
+                return;
             }
 
             UpdateNotification unForm = new UpdateNotification(update);
@@ -4086,7 +4101,7 @@ namespace TVRename
 
         private void duplicateFinderLOGToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DuplicateMovieFinder form = new DuplicateMovieFinder( mDoc, this);
+            DuplicateMovieFinder form = new DuplicateMovieFinder(mDoc, this);
             form.ShowDialog(this);
         }
 
@@ -4123,16 +4138,17 @@ namespace TVRename
         private void timezoneInconsistencyLOGToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Show Log Pane
-            logToolStripMenuItem_Click(sender,e);
+            logToolStripMenuItem_Click(sender, e);
 
-            Task.Run(() => {
+            Task.Run(() =>
+            {
                 TimeZoneTracker results = new TimeZoneTracker();
                 foreach (ShowConfiguration si in mDoc.TvLibrary.GetSortedShowItems())
                 {
                     CachedSeriesInfo ser = si.CachedShow;
                     if (ser != null)
                     {
-                        results.Add(ser.Network??string.Empty, si.ShowTimeZone, si.ShowName);
+                        results.Add(ser.Network ?? string.Empty, si.ShowTimeZone, si.ShowName);
                     }
                 }
                 Logger.Info(results.PrintVersion());
@@ -4198,7 +4214,8 @@ namespace TVRename
             //Show Log Pane
             logToolStripMenuItem_Click(sender, e);
 
-            Task.Run(() => {
+            Task.Run(() =>
+            {
                 Beta.LogShowEpisodeSizes(mDoc);
             });
         }
@@ -4263,7 +4280,7 @@ namespace TVRename
 
         private void SetScan(TVSettings.ScanType st)
         {
-            btnScan.Text = st.PrettyPrint()+" Scan";
+            btnScan.Text = st.PrettyPrint() + " Scan";
             mDoc.SetDefaultScanType(st);
         }
 
@@ -4284,7 +4301,7 @@ namespace TVRename
 
         private void BtnSearch_ButtonClick(object? sender, EventArgs? e)
         {
-            UiScan(null, null,false, TVSettings.Instance.UIScanType, MediaConfiguration.MediaType.both);
+            UiScan(null, null, false, TVSettings.Instance.UIScanType, MediaConfiguration.MediaType.both);
         }
 
         private void UpdateCheckboxGroup([NotNull] ToolStripMenuItem menuItem, [NotNull] Func<Item, bool> isValid)
@@ -4318,9 +4335,10 @@ namespace TVRename
         {
             UpdateCheckboxGroup(mcbAll, item => true);
         }
+
         private void McbRename_Click(object sender, EventArgs e)
         {
-            UpdateCheckboxGroup(mcbRename, i => i is ActionCopyMoveRename {Operation: ActionCopyMoveRename.Op.rename} || i is ActionMoveRenameDirectory);
+            UpdateCheckboxGroup(mcbRename, i => i is ActionCopyMoveRename { Operation: ActionCopyMoveRename.Op.rename } || i is ActionMoveRenameDirectory);
         }
 
         private void McbCopyMove_Click(object sender, EventArgs e)
@@ -4330,7 +4348,7 @@ namespace TVRename
 
         private void McbDeleteFiles_Click(object sender, EventArgs e)
         {
-            UpdateCheckboxGroup(mcbDeleteFiles,i => i is ActionDelete);
+            UpdateCheckboxGroup(mcbDeleteFiles, i => i is ActionDelete);
         }
 
         private void McbSaveImages_Click(object sender, EventArgs e)
@@ -4366,7 +4384,7 @@ namespace TVRename
             Graphics g = e.Graphics;
             TabControl tabCtrl = (TabControl)sender;
 
-            g.FillRectangle(e.State == DrawItemState.Selected ? Brushes.White : new SolidBrush(BackColor),e.Bounds);
+            g.FillRectangle(e.State == DrawItemState.Selected ? Brushes.White : new SolidBrush(BackColor), e.Bounds);
 
             // Get the item from the collection.
             TabPage tabPage = tabCtrl.TabPages[e.Index];
@@ -4390,13 +4408,13 @@ namespace TVRename
             }
 
             float xIndent = (tabBounds.Width - icon.Width) / 2.0f;
-            float x = tabBounds.X + xIndent; 
+            float x = tabBounds.X + xIndent;
             float y = tabBounds.Y + INDENT;
             e.Graphics.DrawImage(icon, x, y);
             Font labelFont = new Font("Segoe UI Semibold", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
 
-            Rectangle textarea = new Rectangle(tabBounds.X, tabBounds.Y + INDENT + icon.Height,tabBounds.Width,tabBounds.Height-(INDENT + icon.Height));
-            g.DrawString(tabPage.Text, labelFont, Brushes.Black,textarea,stringFlags );
+            Rectangle textarea = new Rectangle(tabBounds.X, tabBounds.Y + INDENT + icon.Height, tabBounds.Width, tabBounds.Height - (INDENT + icon.Height));
+            g.DrawString(tabPage.Text, labelFont, Brushes.Black, textarea, stringFlags);
         }
 
         private void BwSeasonHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
@@ -4466,7 +4484,7 @@ namespace TVRename
 
         private void BwUpdateSchedule_RunWorkerCompleted(object sender, [NotNull] RunWorkerCompletedEventArgs e)
         {
-            if(!(e.Result is List<ListViewItem> newContents))
+            if (!(e.Result is List<ListViewItem> newContents))
             {
                 return;
             }
@@ -4574,10 +4592,10 @@ namespace TVRename
         private void DefaultOlvView()
         {
             olvAction.BeginUpdate();
-            olvAction.ShowGroups=true;
+            olvAction.ShowGroups = true;
             olvAction.AlwaysGroupByColumn = null;
-            olvAction.Sort(olvType,SortOrder.Ascending);
-            olvAction.BuildGroups(olvType,SortOrder.Ascending); //,olvShowColumn,SortOrder.Ascending,olvSeason,SortOrder.Ascending);
+            olvAction.Sort(olvType, SortOrder.Ascending);
+            olvAction.BuildGroups(olvType, SortOrder.Ascending); //,olvShowColumn,SortOrder.Ascending,olvSeason,SortOrder.Ascending);
             olvAction.CustomSorter = delegate { olvAction.ListViewItemSorter = new ListViewActionItemSorter(); };
             olvAction.EndUpdate();
         }
@@ -4585,15 +4603,15 @@ namespace TVRename
         private void OlvAction_Dropped(object sender, [NotNull] OlvDropEventArgs e)
         {
             // Get a list of filenames being dragged
-            string[] files = (string[]) ((DataObject)e.DataObject).GetData(DataFormats.FileDrop, false);
+            string[] files = (string[])((DataObject)e.DataObject).GetData(DataFormats.FileDrop, false);
 
             // Establish item in list being dragged to, and exit if no item matched
             // Check at least one file was being dragged, and that dragged-to item is a "Missing Item" item.
-            if (files.Length <= 0 ||  !(e.DropTargetItem.RowObject is ItemMissing mi))
+            if (files.Length <= 0 || !(e.DropTargetItem.RowObject is ItemMissing mi))
             {
                 return;
             }
-            
+
             // Only want the first file if multiple files were dragged across.
             ManuallyAddFileForItem(mi, files[0]);
         }
@@ -4608,7 +4626,7 @@ namespace TVRename
             {
                 if (item is ItemMissing)
                 {
-                    if (((DataObject) e.DataObject).GetDataPresent(DataFormats.FileDrop))
+                    if (((DataObject)e.DataObject).GetDataPresent(DataFormats.FileDrop))
                     {
                         e.Effect = DragDropEffects.All;
                     }
@@ -4632,7 +4650,7 @@ namespace TVRename
             string html = string.Empty;
             try
             {
-                html = si?.GetShowSummaryHtmlOverview(true) ??string.Empty;
+                html = si?.GetShowSummaryHtmlOverview(true) ?? string.Empty;
             }
             catch (Exception exception)
             {
@@ -4640,6 +4658,7 @@ namespace TVRename
             }
             e.Result = html;
         }
+
         private void BwSeasonSummaryHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
         {
             ProcessedSeason s = e.Argument as ProcessedSeason;
@@ -4663,7 +4682,7 @@ namespace TVRename
                 return;
             }
 
-            ToolStripButton button = (ToolStripButton) sender;
+            ToolStripButton button = (ToolStripButton)sender;
 
             Point pt = button.Owner.PointToScreen(button.Bounds.Location);
             List<ProcessedEpisode> eis = new List<ProcessedEpisode>();
@@ -4673,7 +4692,7 @@ namespace TVRename
                 eis.Add(lvi.Tag as ProcessedEpisode);
             }
 
-            WtwRightClickOnShow(eis, pt );
+            WtwRightClickOnShow(eis, pt);
         }
 
         private void TsbMyShowsContextMenu_Click(object sender, EventArgs e)
@@ -4716,7 +4735,7 @@ namespace TVRename
             }
             else if (action?.Movie != null && lvr.Count == 1)
             {
-                GenerateActionRightClickMenu(pt, lvr, null,null,action.Movie);
+                GenerateActionRightClickMenu(pt, lvr, null, null, action.Movie);
             }
             else
             {
@@ -4726,7 +4745,7 @@ namespace TVRename
 
         private void ToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            OrphanFiles ui = new OrphanFiles(mDoc,this);
+            OrphanFiles ui = new OrphanFiles(mDoc, this);
             ui.Show(this);
         }
 
@@ -4755,7 +4774,7 @@ namespace TVRename
             {
                 foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
                 {
-                    JackettFinder.SearchForEpisode((ProcessedEpisode) lvi.Tag);
+                    JackettFinder.SearchForEpisode((ProcessedEpisode)lvi.Tag);
                 }
             }
         }
@@ -4767,7 +4786,7 @@ namespace TVRename
 
         public void ShowFgDownloadProgress(CacheUpdater cu, CancellationTokenSource cts)
         {
-            Invoke((MethodInvoker) delegate { new DownloadProgress(cu, cts).Show(this); });
+            Invoke((MethodInvoker)delegate { new DownloadProgress(cu, cts).Show(this); });
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
@@ -4863,11 +4882,10 @@ namespace TVRename
             }
 
             MovieConfiguration si = TreeNodeToMovieItem(n);
-                 if (si != null)
+            if (si != null)
             {
                 RightClickOnMyMovies(si, pt);
             }
-
         }
 
         private void btnMovieFilter_Click(object sender, EventArgs e)
@@ -4902,7 +4920,7 @@ namespace TVRename
 
         internal void ForceMovieRefresh(MovieConfiguration? sis, bool unattended)
         {
-            ForceMovieRefresh(new List<MovieConfiguration> { sis },unattended);
+            ForceMovieRefresh(new List<MovieConfiguration> { sis }, unattended);
         }
 
         private void recommendationsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4910,7 +4928,6 @@ namespace TVRename
             //RecommendationView form = new RecommendationView(mDoc, this, mDoc.TvLibrary.Shows.Take(20));
             RecommendationView form = new RecommendationView(mDoc, this, MediaConfiguration.MediaType.tv);
             form.ShowDialog(this);
-
         }
 
         private void duplicateMoviesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4922,7 +4939,7 @@ namespace TVRename
         private void movieRecommendationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //RecommendationView form = new RecommendationView(mDoc, this, mDoc.FilmLibrary.Movies.Take(20));
-            RecommendationView form = new RecommendationView(mDoc, this, MediaConfiguration.MediaType.movie); 
+            RecommendationView form = new RecommendationView(mDoc, this, MediaConfiguration.MediaType.movie);
             form.ShowDialog(this);
         }
 
@@ -4930,16 +4947,16 @@ namespace TVRename
         {
             ForceRefresh(new List<ShowConfiguration> { show }, unattended);
         }
+
         internal void ForceRefresh(bool unattended)
         {
-            ForceRefresh((List<ShowConfiguration>) null, unattended);
+            ForceRefresh((List<ShowConfiguration>)null, unattended);
         }
 
         private void settingsCheckToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SettingsReview form = new SettingsReview(mDoc, this);
             form.ShowDialog(this);
-
         }
 
         private void toolStripButton1_Click_1(object sender, EventArgs e)
@@ -4986,7 +5003,8 @@ namespace TVRename
             DialogResult dr = DialogResult.OK;
             ActionTDownload userChosenAction = null;
 
-            this.Invoke((MethodInvoker)delegate {
+            this.Invoke((MethodInvoker)delegate
+            {
                 // Running on the UI thread
                 ChooseDownload form = new ChooseDownload(epGroupKey, actions);
                 this.ShowChildDialog(form);

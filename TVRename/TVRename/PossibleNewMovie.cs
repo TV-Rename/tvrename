@@ -1,15 +1,14 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
-using JetBrains.Annotations;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
-
     // "PossibleNewMovie" represents a folder found by doing a Check in the 'Bulk Add Movie' dialog
 
     public class PossibleNewMovie
@@ -19,6 +18,7 @@ namespace TVRename
 
         // ReSharper disable once InconsistentNaming
         public string RefinedHint;
+
         public int? PossibleYear;
         public string? ImdbCode;
         internal int ProviderCode;
@@ -26,13 +26,13 @@ namespace TVRename
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public CachedMovieInfo? CachedMovie => Provider ==TVDoc.ProviderType.TMDB ? TMDB.LocalCache.Instance.GetMovie(ProviderCode) : TheTVDB.LocalCache.Instance.GetMovie(ProviderCode);
+        public CachedMovieInfo? CachedMovie => Provider == TVDoc.ProviderType.TMDB ? TMDB.LocalCache.Instance.GetMovie(ProviderCode) : TheTVDB.LocalCache.Instance.GetMovie(ProviderCode);
         public bool CodeKnown => !CodeUnknown;
         public bool CodeUnknown => ProviderCode <= 0;
 
         public string CodeString => (CodeUnknown) ? "<Unknown>" : $"{ProviderCode} ({Provider.PrettyPrint()})";
 
-        public PossibleNewMovie(FileInfo possibleMovieFile, bool andGuess,bool showErrorMsgBox)
+        public PossibleNewMovie(FileInfo possibleMovieFile, bool andGuess, bool showErrorMsgBox)
         {
             MovieStub = possibleMovieFile.MovieFileNameBase();
             Directory = possibleMovieFile.Directory;
@@ -70,9 +70,9 @@ namespace TVRename
                 imdbToTest = imdbId;
             }
             else
-            { 
+            {
                 string? id = FindShowCode("id", "id");
-                if (id?.StartsWith("tt",StringComparison.OrdinalIgnoreCase) ?? false)
+                if (id?.StartsWith("tt", StringComparison.OrdinalIgnoreCase) ?? false)
                 {
                     imdbToTest = id;
                 }
@@ -106,14 +106,14 @@ namespace TVRename
             }
 
             //Tweak the hints and do another Search on TMDB
-             int? tvdbId = ConvertToInt(FindShowCode("tvdbid", "tvdb"));
-             if (tvdbId.HasValue)
-             {
-                 CachedMovieInfo? s2 = TMDB.LocalCache.Instance.LookupMovieByTvdb(tvdbId.Value, showErrorMsgBox);
-                 if (s2 != null)
-                 {
-                     SetId(s2.TmdbCode, TVDoc.ProviderType.TMDB);
-                 }
+            int? tvdbId = ConvertToInt(FindShowCode("tvdbid", "tvdb"));
+            if (tvdbId.HasValue)
+            {
+                CachedMovieInfo? s2 = TMDB.LocalCache.Instance.LookupMovieByTvdb(tvdbId.Value, showErrorMsgBox);
+                if (s2 != null)
+                {
+                    SetId(s2.TmdbCode, TVDoc.ProviderType.TMDB);
+                }
                 else
                 {
                     //Find movie on TVDB based on Id
@@ -122,10 +122,10 @@ namespace TVRename
                     {
                         SetId(s3.TvdbCode, TVDoc.ProviderType.TheTVDB);
                     }
-
                 }
             }
         }
+
         public void SetId(int code, TVDoc.ProviderType provider)
         {
             ProviderCode = code;
@@ -166,7 +166,7 @@ namespace TVRename
             return null;
         }
 
-        private int? ValidateOnTMDB(int? tmdbId,Locale locale, bool showErrorMsgBox)
+        private int? ValidateOnTMDB(int? tmdbId, Locale locale, bool showErrorMsgBox)
         {
             if (tmdbId.HasValue)
             {
@@ -231,7 +231,7 @@ namespace TVRename
                     Logger.Warn($"Could not look in {fileName} for any ShowCodes {e.Message}");
                 }
             }
-            
+
             //Can't find it
             return null;
         }
@@ -294,7 +294,7 @@ namespace TVRename
             int? possibleYear = null;
 
             List<string> removeCrapAfterTerms =
-                new List<string> { "1080p", "720p","dvdrip","webrip","brrip","r5","BDrip","limited","dvdscr","unrated","tv","bluray","hdrip","3d","xvid","r6rip" };
+                new List<string> { "1080p", "720p", "dvdrip", "webrip", "brrip", "r5", "BDrip", "limited", "dvdscr", "unrated", "tv", "bluray", "hdrip", "3d", "xvid", "r6rip" };
 
             foreach (string? removeCrapAfterTerm in removeCrapAfterTerms)
             {
@@ -325,7 +325,7 @@ namespace TVRename
 
             refinedHint = refinedHint.CompareName();
 
-            return (refinedHint,possibleYear);
+            return (refinedHint, possibleYear);
         }
     }
 }

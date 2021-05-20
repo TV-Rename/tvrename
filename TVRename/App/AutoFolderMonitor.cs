@@ -1,10 +1,10 @@
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
-    public sealed class AutoFolderMonitor :IDisposable 
+    public sealed class AutoFolderMonitor : IDisposable
     {
         private readonly TVDoc mDoc;
         private readonly UI mainForm;
@@ -106,11 +106,11 @@ namespace TVRename
                 {
                     throw new ArgumentException("Inappropriate action for auto-scan " + TVSettings.Instance.MonitoredFoldersScanType);
                 }
-                mainForm.BeginInvoke(mainForm.ScanAndDo,TVSettings.Instance.MonitoredFoldersScanType);
+                mainForm.BeginInvoke(mainForm.ScanAndDo, TVSettings.Instance.MonitoredFoldersScanType);
             }
             else
             {
-               Logger.Info("Auto scan cancelled as the system is already busy");
+                Logger.Info("Auto scan cancelled as the system is already busy");
             }
             Start();
         }

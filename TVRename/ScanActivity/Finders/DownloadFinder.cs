@@ -1,21 +1,22 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
-using System.Collections.Generic;
 using JetBrains.Annotations;
+using System.Collections.Generic;
 
 namespace TVRename
 {
-    public abstract class DownloadFinder:Finder
+    public abstract class DownloadFinder : Finder
     {
         protected DownloadFinder(TVDoc doc) : base(doc)
         {
         }
+
         public override FinderDisplayType DisplayType() => FinderDisplayType.search;
 
         protected static bool RssMatch([NotNull] RSSItem rss, [NotNull] ProcessedEpisode pe)
@@ -49,7 +50,7 @@ namespace TVRename
         {
             string simpleShowName = pe.ShowName.CompareName();
 
-            return FileHelper.SimplifyAndCheckFilename(rss.ShowName.HasValue()? rss.ShowName: rss.Title, simpleShowName, true, false);
+            return FileHelper.SimplifyAndCheckFilename(rss.ShowName.HasValue() ? rss.ShowName : rss.Title, simpleShowName, true, false);
         }
 
         [NotNull]

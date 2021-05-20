@@ -1,7 +1,7 @@
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -43,7 +43,7 @@ namespace TVRename
             if ((it is null) || (it.Type != BTChunk.kDictionary))
                 return null;
 
-            BTDictionary dict = (BTDictionary) (it);
+            BTDictionary dict = (BTDictionary)(it);
             return dict;
         }
 
@@ -81,19 +81,19 @@ namespace TVRename
                 if ((dictitem.Key == ".fileguard") || (dictitem.Data.Type != BTChunk.kDictionary))
                     continue;
 
-                if  (dictitem.Data is BTError err)
+                if (dictitem.Data is BTError err)
                 {
                     logger.Error($"Error finding BT items: {err.Message}");
                     return r;
                 }
 
-                BTDictionary d2 = (BTDictionary) (dictitem.Data);
+                BTDictionary d2 = (BTDictionary)(dictitem.Data);
 
                 BTItem p = d2.GetItem("prio");
                 if ((p is null) || (p.Type != BTChunk.kString))
                     continue;
 
-                BTString prioString = (BTString) (p);
+                BTString prioString = (BTString)(p);
                 string directoryName = Path.GetDirectoryName(ResumeDatPath) + System.IO.Path.DirectorySeparatorChar;
 
                 string torrentFile = dictitem.Key;
@@ -116,15 +116,15 @@ namespace TVRename
                 if ((p is null) || (p.Type != BTChunk.kString))
                     continue;
 
-                string defaultFolder = ((BTString) p).AsString();
+                string defaultFolder = ((BTString)p).AsString();
 
                 BTItem targets = d2.GetItem("targets");
                 bool hasTargets = ((targets != null) && (targets.Type == BTChunk.kList));
-                BTList targetList = (BTList) (targets);
+                BTList targetList = (BTList)(targets);
 
                 //foreach (var i in d2.Items)
                 //{
-                //logger.Info($"   {i.Key}  {i.Data.AsText()}");   
+                //logger.Info($"   {i.Key}  {i.Data.AsText()}");
                 //}
 
                 foreach (string s in a)
@@ -141,9 +141,9 @@ namespace TVRename
                                 // see if there is a target for this (the c'th) file
                                 foreach (BTItem t in targetList.Items)
                                 {
-                                    BTList l = (BTList) (t);
-                                    BTInteger n = (BTInteger) (l.Items[0]);
-                                    BTString dest = (BTString) (l.Items[1]);
+                                    BTList l = (BTList)(t);
+                                    BTInteger n = (BTInteger)(l.Items[0]);
+                                    BTString dest = (BTString)(l.Items[1]);
                                     if (n.Value == c)
                                     {
                                         saveTo = dest.AsString();
@@ -152,9 +152,9 @@ namespace TVRename
                                 }
                             }
 
-                            int percent = (a.Count == 1) ? PercentBitsOn((BTString) (d2.GetItem("have"))) : -1;
-                            bool completed = ((BTInteger) d2.GetItem("order")).Value == -1;
-                            TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent, completed, torrentFile); 
+                            int percent = (a.Count == 1) ? PercentBitsOn((BTString)(d2.GetItem("have"))) : -1;
+                            bool completed = ((BTInteger)d2.GetItem("order")).Value == -1;
+                            TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent, completed, torrentFile);
                             r.Add(te);
                         }
                         catch (System.IO.PathTooLongException ptle)
@@ -181,7 +181,7 @@ namespace TVRename
             if ((p is null) || (p.Type != BTChunk.kString))
                 return "";
 
-            BTString prioString = (BTString) (p);
+            BTString prioString = (BTString)(p);
             if ((fileNum < 0) || (fileNum > prioString.Data.Length))
                 return "";
 
@@ -209,7 +209,7 @@ namespace TVRename
             if (p is null || (p.Type != BTChunk.kString))
                 return;
 
-            BTString prioString = (BTString) (p);
+            BTString prioString = (BTString)(p);
             if ((fileNum < 0) || (fileNum > prioString.Data.Length))
                 return;
 
@@ -239,7 +239,7 @@ namespace TVRename
                     if (p.Type != BTChunk.kString)
                         return;
 
-                    ((BTString) p).SetString(toHere);
+                    ((BTString)p).SetString(toHere);
                 }
             }
             else
@@ -257,7 +257,7 @@ namespace TVRename
                     if (p.Type != BTChunk.kList)
                         return;
 
-                    theList = (BTList) (p);
+                    theList = (BTList)(p);
                 }
 
                 // the list contains two element lists, of integer/string which are filenumber/path
@@ -269,12 +269,12 @@ namespace TVRename
                     if (t.Type != BTChunk.kList)
                         return;
 
-                    BTList l2 = (BTList) (t);
+                    BTList l2 = (BTList)(t);
                     if ((l2.Items.Count != 2) || (l2.Items[0].Type != BTChunk.kInteger) ||
                         (l2.Items[1].Type != BTChunk.kString))
                         return;
 
-                    int n = (int) ((BTInteger) (l2.Items[0])).Value;
+                    int n = (int)((BTInteger)(l2.Items[0])).Value;
                     if (n == fileNum)
                     {
                         thisFileList = l2;
@@ -302,7 +302,7 @@ namespace TVRename
             System.IO.MemoryStream ms = new System.IO.MemoryStream();
             ResumeDat.Write(ms);
             System.Security.Cryptography.SHA1Managed sha1 = new System.Security.Cryptography.SHA1Managed();
-            byte[] theHash = sha1.ComputeHash(ms.GetBuffer(), 0, (int) ms.Length);
+            byte[] theHash = sha1.ComputeHash(ms.GetBuffer(), 0, (int)ms.Length);
             ms.Close();
             string newfg = BTString.CharsToHex(theHash, 0, 20);
             ResumeDat.GetDict().Items.Add(new BTDictionaryItem(".fileguard", new BTString(newfg)));
@@ -326,9 +326,11 @@ namespace TVRename
                     case ItemMissing action:
                         name = action.TheFileNoExt;
                         break;
+
                     case ItemDownloading actionIp:
                         name = actionIp.DesiredLocationNoExt;
                         break;
+
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -464,7 +466,7 @@ namespace TVRename
             SetPrios = setPrios;
             Results = results;
 
-            Prog(0,string.Empty);
+            Prog(0, string.Empty);
 
             if (!LoadResumeDat())
                 return false;
@@ -486,7 +488,7 @@ namespace TVRename
             if (Altered && !testMode)
                 WriteResumeDat();
 
-            Prog(0,string.Empty);
+            Prog(0, string.Empty);
 
             return r;
         }

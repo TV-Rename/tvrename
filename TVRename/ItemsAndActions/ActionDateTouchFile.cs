@@ -1,12 +1,12 @@
-using System;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using System;
 
 namespace TVRename
 {
     internal abstract class ActionDateTouchFile : ActionDateTouch
     {
-        protected ActionDateTouchFile(FileInfo f, DateTime date):base(date)
+        protected ActionDateTouchFile(FileInfo f, DateTime date) : base(date)
         {
             WhereFile = f;
         }

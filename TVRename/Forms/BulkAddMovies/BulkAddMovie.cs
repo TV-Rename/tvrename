@@ -1,21 +1,21 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using Alphaleonis.Win32.Filesystem;
+using DaveChambers.FolderBrowserDialogEx;
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows.Forms;
 using System.Threading;
 using System.Threading.Tasks;
-using Alphaleonis.Win32.Filesystem;
+using System.Windows.Forms;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using DaveChambers.FolderBrowserDialogEx;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -32,6 +32,7 @@ namespace TVRename
     {
         //public CancellationTokenSource TokenSource;
         private readonly TVDoc mDoc;
+
         private readonly BulkAddMovieManager engine;
 
         //Thread safe counters to work out the progress
@@ -69,10 +70,10 @@ namespace TVRename
         {
             TVSettings.Instance.MovieLibraryFolders.Sort();
             TVSettings.Instance.IgnoreFolders.Sort();
-            
+
             lstFMMonitorFolders.BeginUpdate();
             lstFMMonitorFolders.Items.Clear();
-            
+
             foreach (string folder in TVSettings.Instance.MovieLibraryFolders)
             {
                 lstFMMonitorFolders.Items.Add(folder);
@@ -233,7 +234,7 @@ namespace TVRename
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
                     {
-                        engine.CheckFolderForMovies( di, true, true,true);
+                        engine.CheckFolderForMovies(di, true, true, true);
                         FillNewShowList(true);
                     }
                 }
@@ -314,7 +315,7 @@ namespace TVRename
 
             ai.GuessMovie(true);
             Interlocked.Increment(ref VolatileCounter);
-            bw.ReportProgress((int) 100.0 * VolatileCounter / total, ai);
+            bw.ReportProgress((int)100.0 * VolatileCounter / total, ai);
         }
 
         private void bnRemoveNewFolder_Click(object _, System.EventArgs e)
@@ -352,7 +353,7 @@ namespace TVRename
             }
 
             foreach (PossibleNewMovie ai in lvFMNewShows.SelectedItems.Cast<ListViewItem>()
-                .Select(lvi => (PossibleNewMovie) lvi.Tag))
+                .Select(lvi => (PossibleNewMovie)lvi.Tag))
             {
                 TVSettings.Instance.IgnoreFolders.Add(ai.Directory.FullName.ToLower());
                 engine.AddItems.Remove(ai);
@@ -432,19 +433,19 @@ namespace TVRename
             if (ai.CodeKnown)
             {
                 CachedMovieInfo? x = ai.CachedMovie;
-                lvi.SubItems.Add(x?.Name); 
+                lvi.SubItems.Add(x?.Name);
                 string val = x?.FirstAired?.Year.ToString();
-                lvi.SubItems.Add(val ??string.Empty);
+                lvi.SubItems.Add(val ?? string.Empty);
                 lvi.SubItems.Add(ai.CodeString);
             }
             else
             {
-                lvi.SubItems.Add(ai.RefinedHint); 
+                lvi.SubItems.Add(ai.RefinedHint);
                 lvi.SubItems.Add(ai.PossibleYear.ToString());
                 lvi.SubItems.Add(string.Empty);
             }
             lvi.Tag = ai;
-            lvi.ImageIndex=ai.CodeKnown&&!string.IsNullOrWhiteSpace(ai.MovieStub)?1:0;
+            lvi.ImageIndex = ai.CodeKnown && !string.IsNullOrWhiteSpace(ai.MovieStub) ? 1 : 0;
         }
 
         private void UpdateListItem(PossibleNewMovie ai, bool makevis)
@@ -496,6 +497,7 @@ namespace TVRename
                     case TVDoc.ProviderType.TheTVDB:
                         Helpers.OpenUrl(TheTVDB.API.WebsiteShowUrl(fme.ProviderCode));
                         break;
+
                     case TVDoc.ProviderType.TMDB:
                         Helpers.OpenUrl($"https://www.themoviedb.org/movie/{fme.ProviderCode}");
                         break;
@@ -536,12 +538,12 @@ namespace TVRename
         private void EditEntry([NotNull] PossibleNewMovie fme)
         {
             BulkAddEditMovie ed = new BulkAddEditMovie(fme);
-            if (ed.ShowDialog(this) != DialogResult.OK|| ed.Code == -1)
+            if (ed.ShowDialog(this) != DialogResult.OK || ed.Code == -1)
             {
                 return;
             }
 
-            fme.SetId(ed.Code,ed.Provider);
+            fme.SetId(ed.Code, ed.Provider);
         }
 
         private void lstFMMonitorFolders_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -577,6 +579,7 @@ namespace TVRename
         {
             IdentifyAll((BackgroundWorker)sender);
         }
+
         private void IdentifyAll(BackgroundWorker bw)
         {
             CancellationTokenSource cts = new CancellationTokenSource();
@@ -584,7 +587,7 @@ namespace TVRename
 
             VolatileCounter = 0;
 
-            Parallel.ForEach(engine.AddItems, movie => AutoMatchMovie(cts, movie,bw, engine.AddItems.Count));
+            Parallel.ForEach(engine.AddItems, movie => AutoMatchMovie(cts, movie, bw, engine.AddItems.Count));
 
             cts.Cancel();
         }
@@ -594,7 +597,7 @@ namespace TVRename
             lvFMNewShows.Update();
 
             pbProgress.Value = e.ProgressPercentage;
-            lblStatusLabel.Text = ((PossibleNewMovie) e.UserState).RefinedHint;
+            lblStatusLabel.Text = ((PossibleNewMovie)e.UserState).RefinedHint;
             UpdateListItem((PossibleNewMovie)e.UserState, false);
         }
 

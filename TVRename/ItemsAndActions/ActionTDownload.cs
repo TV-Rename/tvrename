@@ -1,31 +1,34 @@
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 using JetBrains.Annotations;
 
 namespace TVRename
 {
-    using System;
     using Alphaleonis.Win32.Filesystem;
+    using System;
 
     // ReSharper disable once InconsistentNaming
     public class ActionTDownload : ActionDownload
     {
         // ReSharper disable once InconsistentNaming
         private readonly string theFileNoExt;
+
         public readonly string SourceName;
         private readonly string url;
         public readonly long sizeBytes;
         public readonly int Seeders;
+
         // ReSharper disable once NotAccessedField.Global - Used as a property in the Choose Download Grid
         public readonly string UpstreamSource;
+
         private readonly ItemDownloading becomes;
 
-        public ActionTDownload(string name, long sizeBytes,int seeders, string url, string toWhereNoExt, ProcessedEpisode? pe,ItemMissing me, string upstreamSource, ItemDownloading becomes)
+        public ActionTDownload(string name, long sizeBytes, int seeders, string url, string toWhereNoExt, ProcessedEpisode? pe, ItemMissing me, string upstreamSource, ItemDownloading becomes)
         {
             Episode = pe;
             SourceName = name;
@@ -38,7 +41,7 @@ namespace TVRename
             this.becomes = becomes;
         }
 
-        public ActionTDownload([NotNull] RSSItem rss, ItemMissing me,ItemDownloading becomes)
+        public ActionTDownload([NotNull] RSSItem rss, ItemMissing me, ItemDownloading becomes)
         {
             SourceName = rss.Title;
             url = rss.URL;
@@ -62,7 +65,7 @@ namespace TVRename
 
         public override Item Becomes() => becomes;
 
-        public override ActionOutcome Go( TVRenameStats stats)
+        public override ActionOutcome Go(TVRenameStats stats)
         {
             bool isDownloadable = url.IsWebLink();
             try
@@ -128,7 +131,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string SaveDownloadedData(byte[] r,string name)
+        private static string SaveDownloadedData(byte[] r, string name)
         {
             string saveTemp = Path.GetTempPath().EnsureEndsWithSeparator() + TVSettings.Instance.FilenameFriendly(name);
             if (new FileInfo(saveTemp).Extension.ToLower() != "torrent")
@@ -140,7 +143,7 @@ namespace TVRename
             return saveTemp;
         }
 
-        #endregion
+        #endregion Action Members
 
         #region Item Members
 
@@ -169,6 +172,6 @@ namespace TVRename
 
         public override int IconNumber => 6;
 
-        #endregion
+        #endregion Item Members
     }
 }

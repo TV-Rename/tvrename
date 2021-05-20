@@ -34,7 +34,7 @@ namespace TVRename
                 // 20 byte chunks of SHA1 hash values
                 TreeNode n = new TreeNode("Key=" + Key);
                 tn.Add(n);
-                n.Nodes.Add(new TreeNode("<File hash data>" + ((BTString) Data).PieceAsNiceString(0)));
+                n.Nodes.Add(new TreeNode("<File hash data>" + ((BTString)Data).PieceAsNiceString(0)));
             }
             else
             {

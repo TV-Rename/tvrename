@@ -1,24 +1,24 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 
 // Things like bittorrent search engines, etc.  Manages a URL template that is fed through
 // CustomName.cs to generate a final URL.
 
 namespace TVRename
 {
-    public class Searchers:List<SearchEngine>
+    public class Searchers : List<SearchEngine>
     {
         public SearchEngine CurrentSearch { get; private set; }
 
@@ -58,7 +58,7 @@ namespace TVRename
             }
         }
 
-        public Searchers(XElement? settings, MediaConfiguration.MediaType t):this(t)
+        public Searchers(XElement? settings, MediaConfiguration.MediaType t) : this(t)
         {
             if (settings is null)
             {
@@ -99,7 +99,7 @@ namespace TVRename
         public void WriteXml([NotNull] XmlWriter writer, string startElementName)
         {
             writer.WriteStartElement(startElementName);
-            writer.WriteElement("Current",CurrentSearch.Name);
+            writer.WriteElement("Current", CurrentSearch.Name);
 
             foreach (SearchEngine e in this)
             {

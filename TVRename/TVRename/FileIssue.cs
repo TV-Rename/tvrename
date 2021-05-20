@@ -7,6 +7,7 @@ namespace TVRename
         // ReSharper disable once NotAccessedField.Global - Used as a property in the Grid
         // ReSharper disable once MemberCanBePrivate.Global
         public readonly string Message;
+
         public int? SeasonNumber { get; }
         public int? EpisodeNumber { get; }
         public ShowConfiguration Show { get; }
@@ -15,6 +16,7 @@ namespace TVRename
 
         // ReSharper disable once UnusedMember.Global - Used as a property in the Grid
         public string Filename => File.Name;
+
         public string Directory => File.DirectoryName;
 
         public FileIssue(ShowConfiguration show, FileInfo file, string message)
@@ -24,7 +26,7 @@ namespace TVRename
             File = file;
         }
 
-        public FileIssue(ShowConfiguration show, FileInfo file, string message, int seasonNumber, int episodeNumber) : this(show, file,message)
+        public FileIssue(ShowConfiguration show, FileInfo file, string message, int seasonNumber, int episodeNumber) : this(show, file, message)
         {
             SeasonNumber = seasonNumber;
             EpisodeNumber = episodeNumber;

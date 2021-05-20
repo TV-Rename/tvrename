@@ -1,10 +1,10 @@
+using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -42,7 +42,7 @@ namespace TVRename
             UseCustomNamingFormat = false;
             UseCustomFolderNameFormat = false;
             UseCustomRegion = false;
-            
+
             ManualLocations = new List<string>();
             CustomNamingFormat = string.Empty;
             CustomFolderNameFormat = string.Empty;
@@ -58,14 +58,14 @@ namespace TVRename
             DoMissingCheck = TVSettings.Instance.DefMovieDoMissingCheck;
             UseAutomaticFolders = TVSettings.Instance.DefMovieUseutomaticFolders;
             AutomaticFolderRoot = TVSettings.Instance.DefMovieUseDefaultLocation ? TVSettings.Instance.DefMovieDefaultLocation ?? string.Empty : string.Empty;
-            
         }
 
         public String ShowNameWithYear => $"{ShowName} ({CachedMovie?.Year})";
+
         public MovieConfiguration(int code, TVDoc.ProviderType type) : this()
         {
             ConfigurationProvider = type;
-            SetId(type,code);
+            SetId(type, code);
         }
 
         public MovieConfiguration([NotNull] XElement xmlSettings) : this()
@@ -93,7 +93,7 @@ namespace TVRename
             SetupLocations(xmlSettings);
         }
 
-        public MovieConfiguration(PossibleNewMovie movie): this()
+        public MovieConfiguration(PossibleNewMovie movie) : this()
         {
             if (movie.CodeUnknown)
             {
@@ -104,9 +104,11 @@ namespace TVRename
                 case TVDoc.ProviderType.TheTVDB:
                     TvdbCode = movie.ProviderCode;
                     break;
+
                 case TVDoc.ProviderType.TMDB:
                     TmdbCode = movie.ProviderCode;
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -117,6 +119,7 @@ namespace TVRename
         }
 
         protected override MediaType GetMediaType() => MediaType.movie;
+
         protected override Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo, bool checkExist)
         {
             Dictionary<int, SafeList<string>> fld = new Dictionary<int, SafeList<string>>
@@ -129,7 +132,6 @@ namespace TVRename
                 foreach (string kvp in ManualLocations.ToList())
                 {
                     fld[0].Add(kvp.TrimSlash());
-                    
                 }
             }
 
@@ -157,7 +159,7 @@ namespace TVRename
 
             if (UseCustomFolderNameFormat)
             {
-                return AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.NameFor(this,CustomFolderNameFormat );
+                return AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.NameFor(this, CustomFolderNameFormat);
             }
 
             return AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.NameFor(this, TVSettings.Instance.MovieFolderFormat);
@@ -183,10 +185,10 @@ namespace TVRename
 
             if (UseCustomFolderNameFormat)
             {
-                return AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.NameFor(this, CustomFolderNameFormat,year);
+                return AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.NameFor(this, CustomFolderNameFormat, year);
             }
 
-            return AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.NameFor(this, TVSettings.Instance.MovieFolderFormat,year);
+            return AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.NameFor(this, TVSettings.Instance.MovieFolderFormat, year);
         }
 
         private void SetupLocations([NotNull] XElement xmlSettings)
@@ -219,7 +221,7 @@ namespace TVRename
             };
         }
 
-        public CachedMovieInfo? CachedMovie => (CachedMovieInfo) CachedData;
+        public CachedMovieInfo? CachedMovie => (CachedMovieInfo)CachedData;
 
         public IEnumerable<string> Locations => AllFolderLocations(true, false).Values.SelectMany(x => x);
 

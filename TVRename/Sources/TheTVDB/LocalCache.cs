@@ -30,9 +30,10 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 namespace TVRename.TheTVDB
 {
     // ReSharper disable once InconsistentNaming
-    public class LocalCache :  MediaCache, iTVSource, iMovieSource
+    public class LocalCache : MediaCache, iTVSource, iMovieSource
     {
 #nullable enable
+
         private ConcurrentDictionary<int, ExtraEp>
             extraEpisodes; // IDs of extra episodes to grab and merge in on next update
 
@@ -111,9 +112,10 @@ namespace TVRename.TheTVDB
                 return null;
             }
         }
+
         public CachedSeriesInfo? GetSeriesAndDownload(int id, bool showErrorMsgBox) => HasSeries(id)
             ? Series[id]
-            : DownloadSeriesNow(id, false, false, new Locale( TVSettings.Instance.PreferredTVDBLanguage),showErrorMsgBox);
+            : DownloadSeriesNow(id, false, false, new Locale(TVSettings.Instance.PreferredTVDBLanguage), showErrorMsgBox);
 
         public ConcurrentDictionary<int, CachedSeriesInfo> GetSeriesDict() => Series;
 
@@ -142,7 +144,6 @@ namespace TVRename.TheTVDB
             return matchingSeries;
         }
 
-
         public void UpdatesDoneOk()
         {
             // call when all downloading and updating is done.  updates local Srv_Time with the tentative
@@ -167,7 +168,7 @@ namespace TVRename.TheTVDB
 
         public CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox, Locale preferredLocale)
         {
-            Search(showName, showErrorMsgBox,MediaConfiguration.MediaType.tv, preferredLocale);
+            Search(showName, showErrorMsgBox, MediaConfiguration.MediaType.tv, preferredLocale);
 
             if (string.IsNullOrEmpty(showName))
             {
@@ -193,7 +194,7 @@ namespace TVRename.TheTVDB
             TvdbAccuracyCheck check = new TvdbAccuracyCheck(this);
             lock (SERIES_LOCK)
             {
-                foreach (CachedSeriesInfo si in Series.Values.Where(info => !info.IsSearchResultOnly).OrderBy(s=>s.Name).ToList())
+                foreach (CachedSeriesInfo si in Series.Values.Where(info => !info.IsSearchResultOnly).OrderBy(s => s.Name).ToList())
                 {
                     check.ServerAccuracyCheck(si);
                 }
@@ -280,7 +281,7 @@ namespace TVRename.TheTVDB
             ForgetMovie(s.TvdbId);
             lock (MOVIE_LOCK)
             {
-                if (s.TvdbId > 0 )
+                if (s.TvdbId > 0)
                 {
                     AddPlaceholderSeries(s);
                 }
@@ -302,7 +303,7 @@ namespace TVRename.TheTVDB
             ForgetShow(ss.TvdbId);
             lock (SERIES_LOCK)
             {
-                if(ss.TvdbId>0 )
+                if (ss.TvdbId > 0)
                 {
                     AddPlaceholderSeries(ss);
 
@@ -346,7 +347,7 @@ namespace TVRename.TheTVDB
         {
             Say("Could not connect to TVDB");
 
-            LOGGER.LogWebException("Error obtaining Languages from TVDB",ex);
+            LOGGER.LogWebException("Error obtaining Languages from TVDB", ex);
             LastErrorMessage = ex.LoggableDetails();
 
             if (showErrorMsgBox)
@@ -364,7 +365,7 @@ namespace TVRename.TheTVDB
         }
 
         private void AddPlaceholderSeries([NotNull] ISeriesSpecifier ss)
-            => AddPlaceholderSeries(ss.TvdbId, ss.TvMazeId, ss.TmdbId,ss.TargetLocale);
+            => AddPlaceholderSeries(ss.TvdbId, ss.TvMazeId, ss.TmdbId, ss.TargetLocale);
 
         public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, IEnumerable<ISeriesSpecifier> ss)
         {
@@ -882,7 +883,7 @@ namespace TVRename.TheTVDB
             brute //keeps asking until we get a 0 length response
         }
 
-        internal List<JObject>? GetEpisodes(int id,Locale locale)
+        internal List<JObject>? GetEpisodes(int id, Locale locale)
         {
             //Now deal with obtaining any episodes for the cachedSeries
             //tvDB only gives us responses in blocks of 100, so we need to iterate over the pages until we get one with <100 rows
@@ -896,8 +897,8 @@ namespace TVRename.TheTVDB
 
             while (morePages)
             {
-                 try
-                 {    
+                try
+                {
                     JObject jsonEpisodeResponse = API.GetSeriesEpisodes(id, languageToUse.Abbreviation, pageNumber);
 
                     episodeResponses.Add(jsonEpisodeResponse);
@@ -950,7 +951,7 @@ namespace TVRename.TheTVDB
                 }
                 catch (WebException ex)
                 {
-                    if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse {StatusCode: HttpStatusCode.NotFound})
+                    if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse { StatusCode: HttpStatusCode.NotFound })
                     {
                         if (pageNumber > 1 && TVSettings.TVDBPagingMethod == PagingMethod.brute)
                         {
@@ -969,7 +970,7 @@ namespace TVRename.TheTVDB
                     }
                     else
                     {
-                        LOGGER.LogWebException($"Error obtaining episode {id} in {languageToUse.EnglishName}:",ex);
+                        LOGGER.LogWebException($"Error obtaining episode {id} in {languageToUse.EnglishName}:", ex);
                         return null;
                     }
                 }
@@ -1005,7 +1006,7 @@ namespace TVRename.TheTVDB
         }
 
         private CachedSeriesInfo? DownloadSeriesNow([NotNull] ISeriesSpecifier deets, bool episodesToo, bool bannersToo, bool showErrorMsgBox) =>
-            DownloadSeriesNow(deets.TvdbId, episodesToo, bannersToo, deets.TargetLocale,showErrorMsgBox);
+            DownloadSeriesNow(deets.TvdbId, episodesToo, bannersToo, deets.TargetLocale, showErrorMsgBox);
 
         private CachedSeriesInfo? DownloadSeriesNow(int code, bool episodesToo, bool bannersToo, Locale locale, bool showErrorMsgBox)
         {
@@ -1022,7 +1023,7 @@ namespace TVRename.TheTVDB
             CachedSeriesInfo? si;
             try
             {
-                si = DownloadSeriesInfo(code, locale,showErrorMsgBox);
+                si = DownloadSeriesInfo(code, locale, showErrorMsgBox);
             }
             catch (SourceConnectivityException)
             {
@@ -1098,7 +1099,7 @@ namespace TVRename.TheTVDB
             if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
             {
                 Language languagCodeToUse;
-                (si,languagCodeToUse) = GenerateSeriesInfoV4(DownloadSeriesJson(code, locale), locale);
+                (si, languagCodeToUse) = GenerateSeriesInfoV4(DownloadSeriesJson(code, locale), locale);
 
                 AddTranslations(si, DownloadSeriesTranslationsJsonV4(code, new Locale(languagCodeToUse)));
             }
@@ -1135,6 +1136,7 @@ namespace TVRename.TheTVDB
                 si.AddAlias(alias);
             }
         }
+
         private void AddTranslations(CachedMovieInfo si, JObject downloadSeriesTranslationsJsonV4)
         {
             si.Name = downloadSeriesTranslationsJsonV4["data"]["name"].ToString();
@@ -1151,6 +1153,7 @@ namespace TVRename.TheTVDB
                 si.AddAlias(alias);
             }
         }
+
         internal CachedMovieInfo DownloadMovieInfo(int code, Locale locale, bool showErrorMsgBox)
         {
             if (!IsConnected && !Connect(showErrorMsgBox))
@@ -1271,9 +1274,9 @@ namespace TVRename.TheTVDB
             {
                 //BannerString = GetBannerV4(r),
                 FirstAired = GetReleaseDate(r, "aus") ?? GetReleaseDate(r, "global"),
-                TvdbCode = (int) r["id"],
+                TvdbCode = (int)r["id"],
                 Imdb = GetExternalId(r, "IMDB"),
-                Runtime = ((string) r["runtime"])?.Trim(),
+                Runtime = ((string)r["runtime"])?.Trim(),
                 Name = GetTranslation(locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), "name", r) ?? string.Empty,
                 TagLine = GetTranslation(locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), "tagline", r) ?? string.Empty,
                 Overview = GetTranslation(locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), "overview", r) ?? string.Empty,
@@ -1281,16 +1284,16 @@ namespace TVRename.TheTVDB
                 Genres = r["genres"]?.Select(x => x["name"].ToString()).ToList(),
                 IsSearchResultOnly = false,
                 Dirty = false,
-                PosterUrl = "https://artworks.thetvdb.com" + GetArtwork(r,"Poster"),
+                PosterUrl = "https://artworks.thetvdb.com" + GetArtwork(r, "Poster"),
                 FanartUrl = "https://artworks.thetvdb.com" + GetArtwork(r, "Background"),
                 OfficialUrl = GetExternalId(r, "Official Website"),
                 FacebookId = GetExternalId(r, "Facebook"),
-                InstagramId= GetExternalId(r, "Instagram"),
+                InstagramId = GetExternalId(r, "Instagram"),
                 TwitterId = GetExternalId(r, "Twitter"),
                 //Icon = "https://artworks.thetvdb.com" + GetArtwork(r, "Icon"), TODO - Other Image Downloads
             };
 
-            if(!(r["people"]?["actors"] is null))
+            if (!(r["people"]?["actors"] is null))
             {
                 foreach (var actorJson in r["people"]["actors"])
                 {
@@ -1308,8 +1311,8 @@ namespace TVRename.TheTVDB
                     int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                     string name = actorJson["name"]?.ToString();
                     string image = "https://artworks.thetvdb.com" + actorJson["people_image"];
-                    string role = actorJson["role"]?.ToString() ;
-                    si.AddCrew(new Crew(id, image, name, role.HasValue()?role: "Director", "Directing",string.Empty));
+                    string role = actorJson["role"]?.ToString();
+                    si.AddCrew(new Crew(id, image, name, role.HasValue() ? role : "Director", "Directing", string.Empty));
                 }
             }
             if (!(r["people"]?["producers"] is null))
@@ -1343,6 +1346,7 @@ namespace TVRename.TheTVDB
         {
             return json["artworks"]?.FirstOrDefault(x => x["artwork_type"].ToString() == type)?["url"]?.ToString();
         }
+
         private string? GetArtworkV4(JObject json, int type)
         {
             return json["data"]["artworks"]?.FirstOrDefault(x => ((int)x["type"]) == type)?["image"]?.ToString(); //TODO use max score to get preferred
@@ -1352,6 +1356,7 @@ namespace TVRename.TheTVDB
         {
             return json["remoteids"]?.FirstOrDefault(x => x["source_name"].ToString() == source)?["id"]?.ToString();
         }
+
         private string? GetExternalIdV4(JObject json, string source)
         {
             return json["data"]["remoteIds"]?.FirstOrDefault(x => x["sourceName"].ToString() == source)?["id"]?.ToString();
@@ -1361,6 +1366,7 @@ namespace TVRename.TheTVDB
         {
             return json["data"]["contentRatings"]?.FirstOrDefault(x => x["country"].ToString() == country)?["name"]?.ToString();
         }
+
         private DateTime? GetReleaseDate(JObject json, string region)
         {
             string date = json["release_dates"]?.FirstOrDefault(x => x["country"].ToString() == region && x["type"].ToString() == "release_date")?["date"]?.ToString();
@@ -1377,6 +1383,7 @@ namespace TVRename.TheTVDB
                 return null;
             }
         }
+
         private DateTime? GetReleaseDateV4(JObject json, string region)
         {
             string date = region is null
@@ -1408,16 +1415,16 @@ namespace TVRename.TheTVDB
             return si;
         }
 
-        private (CachedMovieInfo,Language) GenerateMovieInfoV4(JObject r, Locale locale)
+        private (CachedMovieInfo, Language) GenerateMovieInfoV4(JObject r, Locale locale)
         {
             Language lang = locale.LanguageToUse(TVDoc.ProviderType.TheTVDB);
             CachedMovieInfo si = new CachedMovieInfo
             {
-                FirstAired = GetReleaseDateV4(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation) ?? GetReleaseDateV4(r, "global") ?? GetReleaseDateV4(r,null),
-                TvdbCode = (int) r["data"]["id"],
-                Slug= ((string)r["data"]["slug"])?.Trim(),
+                FirstAired = GetReleaseDateV4(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation) ?? GetReleaseDateV4(r, "global") ?? GetReleaseDateV4(r, null),
+                TvdbCode = (int)r["data"]["id"],
+                Slug = ((string)r["data"]["slug"])?.Trim(),
                 Imdb = GetExternalIdV4(r, "IMDB"),
-                Runtime = ((string) r["data"]["runtime"])?.Trim(),
+                Runtime = ((string)r["data"]["runtime"])?.Trim(),
                 Name = r["data"]["name"]?.ToString(),
                 //TODO /TagLine = GetTranslation("eng", "tagline", r) ?? string.Empty,
                 TrailerUrl = r["data"]["trailers"]?.FirstOrDefault(x => x["language"]?.ToString() == locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)?["url"]
@@ -1437,15 +1444,15 @@ namespace TVRename.TheTVDB
                 ShowLanguage = r["data"]["audioLanguages"]?.ToString(),
                 ContentRating = GetContentRatingV4(r, "aus") ?? GetContentRatingV4(r, "usa"),
                 Status = r["data"]["status"]["name"]?.ToString(),
-                SrvLastUpdated = ((DateTime) r["data"]["lastUpdated"]).ToUnixTime(),
+                SrvLastUpdated = ((DateTime)r["data"]["lastUpdated"]).ToUnixTime(),
                 Genres = r["data"]["genres"]?.Select(x => x["name"].ToString()).ToList(),
                 CollectionId = r["data"]["lists"]?.FirstOrDefault(x =>
-                        x["isOfficial"].ToString() == "true" && ((JArray) x["nameTranslations"]).ContainsTyped(lang.ThreeAbbreviation))?["id"]
+                        x["isOfficial"].ToString() == "true" && ((JArray)x["nameTranslations"]).ContainsTyped(lang.ThreeAbbreviation))?["id"]
                     .ToString().ToInt(),
 
                 //todo - get collection name translations
                 CollectionName = r["data"]["lists"]?.FirstOrDefault(x =>
-                        x["isOfficial"].ToString() == "true" && ((JArray) x["nameTranslations"]).ContainsTyped(lang.ThreeAbbreviation))?[
+                        x["isOfficial"].ToString() == "true" && ((JArray)x["nameTranslations"]).ContainsTyped(lang.ThreeAbbreviation))?[
                         "name"]
                     .ToString(),
 
@@ -1479,18 +1486,18 @@ namespace TVRename.TheTVDB
                     string name = actorJson["personName"]?.ToString();
                     string role = actorJson["peopleType"]?.ToString();
                     string sort = actorJson["sort"]?.ToString();
-                    si.AddCrew(new Crew(id, string.Empty, name, role, string.Empty,sort));
+                    si.AddCrew(new Crew(id, string.Empty, name, role, string.Empty, sort));
                 }
             }
             return (si, GetAppropriateLanguage(r["data"]["nameTranslations"], locale));
         }
 
-        private (CachedSeriesInfo,Language)  GenerateSeriesInfoV4(JObject r, Locale locale)
+        private (CachedSeriesInfo, Language) GenerateSeriesInfoV4(JObject r, Locale locale)
         {
             CachedSeriesInfo si = new CachedSeriesInfo
             {
                 AirsTime = GetAirsTimeV4(r),
-                TvdbCode = (int) r["data"]["id"],
+                TvdbCode = (int)r["data"]["id"],
                 Imdb = GetExternalIdV4(r, "IMDB"),
                 OfficialUrl = GetExternalIdV4(r, "Official Website"),
                 FacebookId = GetExternalIdV4(r, "Facebook"),
@@ -1501,14 +1508,14 @@ namespace TVRename.TheTVDB
                 PosterUrl = GetArtworkV4(r, 2),
                 IsSearchResultOnly = false,
                 Dirty = false,
-                Slug = ((string) r["data"]["slug"])?.Trim(),
+                Slug = ((string)r["data"]["slug"])?.Trim(),
                 Genres = r["data"]["genres"]?.Select(x => x["name"].ToString()).ToList(),
                 ShowLanguage = r["data"]["originalLanguage"]?.ToString(),
                 TrailerUrl = r["data"]["trailers"]?.FirstOrDefault(x => x["language"]?.ToString() == locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)?["url"]
                     ?.ToString(), //todo use lang code and backup to first in any language
-                SrvLastUpdated = ((DateTime) r["data"]["lastUpdated"]).ToUnixTime(),
-                Status = (string) r["data"]["status"]["name"],
-                FirstAired = JsonHelper.ParseFirstAired((string) r["data"]["firstAired"]),
+                SrvLastUpdated = ((DateTime)r["data"]["lastUpdated"]).ToUnixTime(),
+                Status = (string)r["data"]["status"]["name"],
+                FirstAired = JsonHelper.ParseFirstAired((string)r["data"]["firstAired"]),
                 AirsDay = GetAirsDayV4(r),
 
                 //todo load country?  "originalCountry": "usa",
@@ -1558,14 +1565,14 @@ namespace TVRename.TheTVDB
                 foreach (var seasonJson in r["data"]["seasons"])
                 {
                     int SeasonId = (int)seasonJson["id"];
-                    string SeasonName = (string) seasonJson["name"] + " " + seasonJson["number"];
+                    string SeasonName = (string)seasonJson["name"] + " " + seasonJson["number"];
                     int SeasonSeriesId = (int)seasonJson["seriesId"];
                     int SeasonNumber = (int)seasonJson["number"];
                     string SeasonDescription = string.Empty;
                     string ImageUrl = (string)seasonJson["image"];
                     string url = string.Empty;
 
-                    si.AddSeason(new Season(SeasonId, SeasonNumber, SeasonName, SeasonDescription, url,ImageUrl,SeasonSeriesId));
+                    si.AddSeason(new Season(SeasonId, SeasonNumber, SeasonName, SeasonDescription, url, ImageUrl, SeasonSeriesId));
                 }
             }
 
@@ -1584,13 +1591,13 @@ namespace TVRename.TheTVDB
                 return Languages.Instance.GetLanguageFromThreeCode(((JArray)languageOptions).Single().ToString());
             }
 
-            if (((JArray) languageOptions).ContainsTyped(TVSettings.Instance.PreferredTVDBLanguage.ThreeAbbreviation))
+            if (((JArray)languageOptions).ContainsTyped(TVSettings.Instance.PreferredTVDBLanguage.ThreeAbbreviation))
             {
                 return TVSettings.Instance.PreferredTVDBLanguage;
             }
             if ((((JArray)languageOptions).Count == 0))
             {
-                throw new SourceConsistencyException($"Element exists with no language",TVDoc.ProviderType.TheTVDB);
+                throw new SourceConsistencyException($"Element exists with no language", TVDoc.ProviderType.TheTVDB);
             }
             if (((JArray)languageOptions).ContainsTyped("eng"))
             {
@@ -1609,13 +1616,13 @@ namespace TVRename.TheTVDB
         private string GetAirsDayV4(JObject r)
         {
             JToken jTokens = r["data"]["airsDays"];
-            IEnumerable<JToken> days = jTokens.Children().Where(token => (bool )token.Values().First());
+            IEnumerable<JToken> days = jTokens.Children().Where(token => (bool)token.Values().First());
             return days.Select(ConvertDayName).ToCsv();
         }
 
         private string ConvertDayName(JToken t)
         {
-            JProperty p = (JProperty) t;
+            JProperty p = (JProperty)t;
             return p.Name.UppercaseFirst();
         }
 
@@ -1680,13 +1687,13 @@ namespace TVRename.TheTVDB
             JObject jsonResponse;
             try
             {
-                jsonResponse = TVSettings.Instance.TvdbVersion ==ApiVersion.v4
-                    ?API.GetSeriesV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
-                    :API.GetSeries(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation);
+                jsonResponse = TVSettings.Instance.TvdbVersion == ApiVersion.v4
+                    ? API.GetSeriesV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
+                    : API.GetSeries(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation);
             }
             catch (WebException ex)
             {
-                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse {StatusCode: HttpStatusCode.NotFound})
+                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse { StatusCode: HttpStatusCode.NotFound })
                 {
                     LOGGER.Warn($"Show with Id {code} is no longer available from TVDB (got a 404).");
                     SayNothing();
@@ -1698,7 +1705,7 @@ namespace TVRename.TheTVDB
                         throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TheTVDB);
                     }
                 }
-                LOGGER.LogWebException($"Error obtaining cachedSeries {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",ex);
+                LOGGER.LogWebException($"Error obtaining cachedSeries {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:", ex);
                 SayNothing();
                 LastErrorMessage = ex.LoggableDetails();
                 throw new SourceConnectivityException();
@@ -1713,7 +1720,6 @@ namespace TVRename.TheTVDB
             try
             {
                 return API.GetMovieTranslationsV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
-
             }
             catch (WebException ex)
             {
@@ -1730,7 +1736,6 @@ namespace TVRename.TheTVDB
             try
             {
                 return API.GetSeriesTranslationsV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
-                    
             }
             catch (WebException ex)
             {
@@ -1749,7 +1754,7 @@ namespace TVRename.TheTVDB
             }
             catch (WebException ex)
             {
-                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse {StatusCode: HttpStatusCode.NotFound})
+                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse { StatusCode: HttpStatusCode.NotFound })
                 {
                     return false;
                 }
@@ -1818,7 +1823,7 @@ namespace TVRename.TheTVDB
 
             List<int> latestBannerIds = new List<int>();
 
-            ProcessBannerResponses(code, si,locale, bannerResponses, latestBannerIds);
+            ProcessBannerResponses(code, si, locale, bannerResponses, latestBannerIds);
             ProcessBannerResponses(code, si, new Locale(TVSettings.Instance.PreferredTVDBLanguage), bannerDefaultLangResponses, latestBannerIds);
 
             si.UpdateBanners(latestBannerIds);
@@ -1915,16 +1920,15 @@ namespace TVRename.TheTVDB
         {
             foreach (var s in si.Seasons)
             {
-                JObject seasonInfo = API.GetSeasonEpisoedesV4(code, s.SeasonId,locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
+                JObject seasonInfo = API.GetSeasonEpisoedesV4(code, s.SeasonId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
                 foreach (JToken x in seasonInfo["data"]["episodes"])
                 {
                     int id = x["id"].ToObject<int>();
-                    (Episode newEp, Language bestLanguage) = GenerateEpisodeV4(x, code, si,locale);
-                    AddTranslations(newEp,API.GetEpisodeTranslationsV4(newEp.EpisodeId, bestLanguage.ThreeAbbreviation));
+                    (Episode newEp, Language bestLanguage) = GenerateEpisodeV4(x, code, si, locale);
+                    AddTranslations(newEp, API.GetEpisodeTranslationsV4(newEp.EpisodeId, bestLanguage.ThreeAbbreviation));
                     si.AddEpisode(newEp);
                 }
             }
-
         }
 
         private void AddTranslations(Episode newEp, JObject downloadSeriesTranslationsJsonV4)
@@ -1934,7 +1938,7 @@ namespace TVRename.TheTVDB
             //Set a language code on the SI?? si.lan ==downloadSeriesTranslationsJsonV4["data"]["language"].ToString();
         }
 
-        private (Episode,Language) GenerateEpisodeV4(JToken episodeJson,int code, CachedSeriesInfo si,Locale locale)
+        private (Episode, Language) GenerateEpisodeV4(JToken episodeJson, int code, CachedSeriesInfo si, Locale locale)
         {
             Episode x = new Episode(code, si)
             {
@@ -1975,7 +1979,7 @@ namespace TVRename.TheTVDB
                 ReloadEpisodesV4(code, locale, si);
                 return;
             }
-            
+
             List<JObject> episodePrefLangResponses = GetEpisodes(code, locale);
             List<JObject> episodeDefaultLangResponses = null;
             if (locale.IsDifferentLanguageToDefaultFor(TVDoc.ProviderType.TheTVDB))
@@ -2107,7 +2111,7 @@ namespace TVRename.TheTVDB
             }
             catch (WebException ex)
             {
-                LOGGER.LogWebException($"Error obtaining episode[{ episodeId}]:",ex);
+                LOGGER.LogWebException($"Error obtaining episode[{ episodeId}]:", ex);
 
                 LastErrorMessage = ex.LoggableDetails();
                 return false;
@@ -2116,7 +2120,7 @@ namespace TVRename.TheTVDB
             {
                 SayNothing();
             }
-            
+
             JObject jsonResponseData = (JObject)jsonEpisodeResponse["data"] ?? throw new SourceConsistencyException("No Data in Ep Response", TVDoc.ProviderType.TheTVDB);
             if (locale.IsDifferentLanguageToDefaultFor(TVDoc.ProviderType.TheTVDB))
             {
@@ -2178,14 +2182,14 @@ namespace TVRename.TheTVDB
             return $"S{ep.AiredSeasonNumber:00}E{ep.AiredEpNum:00}";
         }
 
-        private void AddPlaceholderSeries(int tvdb, int tvmaze,int tmdb)
+        private void AddPlaceholderSeries(int tvdb, int tvmaze, int tmdb)
         {
-            Series[tvdb] = new CachedSeriesInfo(tvdb, tvmaze,tmdb) { Dirty = true };
+            Series[tvdb] = new CachedSeriesInfo(tvdb, tvmaze, tmdb) { Dirty = true };
         }
 
         private void AddPlaceholderSeries(int tvdb, int tvmaze, int tmdb, Locale locale)
         {
-            Series[tvdb] = new CachedSeriesInfo(tvdb, tvmaze,tmdb, locale) { Dirty = true };
+            Series[tvdb] = new CachedSeriesInfo(tvdb, tvmaze, tmdb, locale) { Dirty = true };
         }
 
         public override Language? PreferredLanguage() => TVSettings.Instance.PreferredTVDBLanguage;
@@ -2204,7 +2208,7 @@ namespace TVRename.TheTVDB
                 return EnsureMovieUpdated(s.TvdbId, s.TargetLocale, s.Name, showErrorMsgBox);
             }
 
-            return EnsureSeriesUpdated(s,bannersToo, showErrorMsgBox);
+            return EnsureSeriesUpdated(s, bannersToo, showErrorMsgBox);
         }
 
         private bool EnsureMovieUpdated(int id, Locale locale, string name, bool showErrorMsgBox)
@@ -2272,7 +2276,6 @@ namespace TVRename.TheTVDB
 
         private bool EnsureSeriesUpdated(ISeriesSpecifier seriesd, bool bannersToo, bool showErrorMsgBox)
         {
-
             int code = seriesd.TvdbId;
 
             if (DoWeForceReloadFor(code) || Series[code].Episodes.Count == 0)
@@ -2350,6 +2353,7 @@ namespace TVRename.TheTVDB
                             case MediaConfiguration.MediaType.tv:
                                 DownloadSeriesNow(textAsInt, false, false, locale, showErrorMsgBox);
                                 break;
+
                             case MediaConfiguration.MediaType.movie:
                                 DownloadMovieNow(textAsInt, locale, showErrorMsgBox);
                                 break;
@@ -2370,8 +2374,8 @@ namespace TVRename.TheTVDB
             try
             {
                 jsonSearchResponse = TVSettings.Instance.TvdbVersion == ApiVersion.v4
-                    ? API.SearchV4(text, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation,type) 
-                    : type==MediaConfiguration.MediaType.tv
+                    ? API.SearchV4(text, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation, type)
+                    : type == MediaConfiguration.MediaType.tv
                         ? API.SearchTvShow(text, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation)
                         : null; //Can't search for Movies in the v3 API
             }
@@ -2379,7 +2383,7 @@ namespace TVRename.TheTVDB
             {
                 if (ex.Response is null) //probably a timeout
                 {
-                    LOGGER.LogWebException($"Error obtaining results for search term '{text}':",ex);
+                    LOGGER.LogWebException($"Error obtaining results for search term '{text}':", ex);
                     LastErrorMessage = ex.LoggableDetails();
                     SayNothing();
                 }
@@ -2390,15 +2394,14 @@ namespace TVRename.TheTVDB
                 }
                 else
                 {
-                    LOGGER.LogWebException($"Error obtaining results for search term '{text}':",ex);
+                    LOGGER.LogWebException($"Error obtaining results for search term '{text}':", ex);
                     LastErrorMessage = ex.LoggableDetails();
                     SayNothing();
                 }
             }
 
-            if (locale.IsDifferentLanguageToDefaultFor(TVDoc.ProviderType.TheTVDB) && TVSettings.Instance.TvdbVersion != ApiVersion.v4 && type== MediaConfiguration.MediaType.tv)
+            if (locale.IsDifferentLanguageToDefaultFor(TVDoc.ProviderType.TheTVDB) && TVSettings.Instance.TvdbVersion != ApiVersion.v4 && type == MediaConfiguration.MediaType.tv)
             {
-
                 try
                 {
                     jsonSearchDefaultLangResponse = API.SearchTvShow(text, TVSettings.Instance.PreferredTVDBLanguage.Abbreviation);
@@ -2407,7 +2410,7 @@ namespace TVRename.TheTVDB
                 {
                     if (ex.Response is null) //probably a timeout
                     {
-                        LOGGER.LogWebException($"Error obtaining results for search term '{text}' in {TVSettings.Instance.PreferredTVDBLanguage.EnglishName}:",ex);
+                        LOGGER.LogWebException($"Error obtaining results for search term '{text}' in {TVSettings.Instance.PreferredTVDBLanguage.EnglishName}:", ex);
                         LastErrorMessage = ex.LoggableDetails();
                         SayNothing();
                     }
@@ -2449,7 +2452,7 @@ namespace TVRename.TheTVDB
             try
             {
                 IEnumerable<CachedSeriesInfo> cachedSeriesInfos = (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
-                    ? GetEnumSeriesV4(jToken,locale, true)
+                    ? GetEnumSeriesV4(jToken, locale, true)
                     : jToken.Cast<JObject>().Select(seriesResponse => new CachedSeriesInfo(seriesResponse, locale, true));
 
                 foreach (CachedSeriesInfo si in cachedSeriesInfos)
@@ -2477,10 +2480,10 @@ namespace TVRename.TheTVDB
 
         private IEnumerable<CachedSeriesInfo> GetEnumSeriesV4(JToken jToken, Locale locale, bool b)
         {
-            JArray ja = (JArray) jToken;
+            JArray ja = (JArray)jToken;
             List<CachedSeriesInfo> ses = new List<CachedSeriesInfo>();
 
-            foreach (JToken jt  in ja.Children())
+            foreach (JToken jt in ja.Children())
             {
                 JObject showJson = (JObject)jt;
                 ses.Add(GenerateSeriesV4(showJson, locale, b));
@@ -2502,7 +2505,7 @@ namespace TVRename.TheTVDB
                 Status = (string)r["status"],
                 IsSearchResultOnly = searchResult,
                 ShowLanguage = (string)r["primary_language"],
-                FirstAired = new DateTime((int)r["year"],1,1),
+                FirstAired = new DateTime((int)r["year"], 1, 1),
             };
 
             string s = (string)r["name"];
@@ -2595,7 +2598,7 @@ namespace TVRename.TheTVDB
         {
             lock (SERIES_LOCK)
             {
-                CachePersistor.SaveCache(Series,Movies, CacheFile, LatestUpdateTime.LastSuccessfulServerUpdateTimecode());
+                CachePersistor.SaveCache(Series, Movies, CacheFile, LatestUpdateTime.LastSuccessfulServerUpdateTimecode());
             }
         }
 

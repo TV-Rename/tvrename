@@ -1,18 +1,18 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.mdr
 //
 // For more information see http://thetvdb.com/wiki/index.php/API:banners.xml
-//  
+//
 
-using System.Globalization;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
+using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -42,20 +42,20 @@ namespace TVRename
             //        <Season>5</Season>
             //  blah blah
             // </Banner>
-                SetDefaults();
+            SetDefaults();
 
-                BannerId = r.ExtractInt("id")??-1;
-                SeriesId = r.ExtractInt("seriesid")?? seriesId; // thetvdb cachedSeries id
-                SeasonId = r.ExtractInt("seasonid",-1);
-                BannerPath = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("BannerPath"));
-                BannerType = r.ExtractString("BannerType");
-                LanguageId = r.ExtractInt("LanguageId",-1);
-                resolution = r.ExtractString("Resolution");
-                string sn = r.ExtractString("Rating");
-                double.TryParse(sn, out Rating);
-                RatingCount  = r.ExtractInt("RatingCount",-1);
-                SeasonId = r.ExtractInt("Season",-1);
-                thumbnailPath = r.ExtractString("ThumbnailPath");
+            BannerId = r.ExtractInt("id") ?? -1;
+            SeriesId = r.ExtractInt("seriesid") ?? seriesId; // thetvdb cachedSeries id
+            SeasonId = r.ExtractInt("seasonid", -1);
+            BannerPath = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("BannerPath"));
+            BannerType = r.ExtractString("BannerType");
+            LanguageId = r.ExtractInt("LanguageId", -1);
+            resolution = r.ExtractString("Resolution");
+            string sn = r.ExtractString("Rating");
+            double.TryParse(sn, out Rating);
+            RatingCount = r.ExtractInt("RatingCount", -1);
+            SeasonId = r.ExtractInt("Season", -1);
+            thumbnailPath = r.ExtractString("ThumbnailPath");
         }
 
         public Banner(int seriesId, [NotNull] JObject json, int langId)
@@ -80,8 +80,8 @@ namespace TVRename
             BannerPath = (string)json["fileName"];
             BannerId = (int)json["id"];
             BannerType = (string)json["keyType"];
-            LanguageId = json["languageId"] is null ? langId  : (int)json["languageId"];
-            
+            LanguageId = json["languageId"] is null ? langId : (int)json["languageId"];
+
             double.TryParse((string)json["ratingsInfo"]?["average"], NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out Rating);
             RatingCount = (int)json["ratingsInfo"]?["count"];
 
@@ -95,7 +95,7 @@ namespace TVRename
             SeriesId = seriesId;
         }
 
-        public bool SameAs([NotNull] Banner  o) => BannerId == o.BannerId;
+        public bool SameAs([NotNull] Banner o) => BannerId == o.BannerId;
 
         public bool IsSeriesPoster() => BannerType == "poster";
 
@@ -138,15 +138,15 @@ namespace TVRename
 
             writer.WriteStartElement("Banner");
 
-            writer.WriteElement("id",BannerId);
-            writer.WriteElement("BannerPath",BannerPath);
-            writer.WriteElement("BannerType",BannerType);
+            writer.WriteElement("id", BannerId);
+            writer.WriteElement("BannerPath", BannerPath);
+            writer.WriteElement("BannerType", BannerType);
             writer.WriteElement("LanguageId", LanguageId);
-            writer.WriteElement("Resolution",resolution);
-            writer.WriteElement("Rating",Rating);
-            writer.WriteElement("RatingCount",RatingCount);
-            writer.WriteElement("Season",SeasonId);  
-            writer.WriteElement("ThumbnailPath",thumbnailPath);
+            writer.WriteElement("Resolution", resolution);
+            writer.WriteElement("Rating", Rating);
+            writer.WriteElement("RatingCount", RatingCount);
+            writer.WriteElement("Season", SeasonId);
+            writer.WriteElement("ThumbnailPath", thumbnailPath);
 
             writer.WriteEndElement(); //Banner
         }

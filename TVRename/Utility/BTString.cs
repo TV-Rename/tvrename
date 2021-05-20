@@ -71,7 +71,7 @@ namespace TVRename
 
             byte[] len = System.Text.Encoding.ASCII.GetBytes(Data.Length.ToString());
             sw.Write(len, 0, len.Length);
-            sw.WriteByte((byte) ':');
+            sw.WriteByte((byte)':');
             sw.Write(Data, 0, Data.Length);
         }
     }

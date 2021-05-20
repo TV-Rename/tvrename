@@ -1,17 +1,17 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
-using System;
-using System.Net;
-using System.Windows.Forms;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using NLog;
+using System;
+using System.Net;
+using System.Windows.Forms;
 
 namespace TVRename.Forms
 {
@@ -79,7 +79,7 @@ namespace TVRename.Forms
             }
             catch (WebException wex)
             {
-                Logger.LogWebException("GitHub Conversion of markdown failed",wex);   
+                Logger.LogWebException("GitHub Conversion of markdown failed", wex);
             }
         }
 

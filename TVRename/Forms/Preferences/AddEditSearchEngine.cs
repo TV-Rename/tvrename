@@ -1,16 +1,16 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using SourceGrid;
+using SourceGrid.Cells.Views;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using SourceGrid;
-using SourceGrid.Cells.Views;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 using ContentAlignment = DevAge.Drawing.ContentAlignment;
 
@@ -33,12 +33,12 @@ namespace TVRename
         private readonly ProcessedEpisode? sampleEpisode;
         private readonly MovieConfiguration? sampleMovie;
 
-        public AddEditSearchEngine(Searchers s, MovieConfiguration? movie) :this(s)
+        public AddEditSearchEngine(Searchers s, MovieConfiguration? movie) : this(s)
         {
             sampleMovie = movie;
         }
 
-        public AddEditSearchEngine(Searchers s, ProcessedEpisode? pe):this(s)
+        public AddEditSearchEngine(Searchers s, ProcessedEpisode? pe) : this(s)
         {
             sampleEpisode = pe;
         }
@@ -64,11 +64,11 @@ namespace TVRename
         private void SetupGrid()
         {
             Cell titleModel = new Cell
-                 {
-                     BackColor = Color.SteelBlue,
-                     ForeColor = Color.White,
-                     TextAlignment = ContentAlignment.MiddleLeft
-                 };
+            {
+                BackColor = Color.SteelBlue,
+                ForeColor = Color.White,
+                TextAlignment = ContentAlignment.MiddleLeft
+            };
             grid1.Columns.Clear();
             grid1.Rows.Clear();
 
@@ -89,11 +89,11 @@ namespace TVRename
             //////////////////////////////////////////////////////////////////////
             // header row
 
-            ColumnHeader h = new ColumnHeader("Name") {AutomaticSortEnabled = false};
+            ColumnHeader h = new ColumnHeader("Name") { AutomaticSortEnabled = false };
             grid1[0, 0] = h;
             grid1[0, 0].View = titleModel;
 
-            h = new ColumnHeader("URL") {AutomaticSortEnabled = false};
+            h = new ColumnHeader("URL") { AutomaticSortEnabled = false };
             grid1[0, 1] = h;
             grid1[0, 1].View = titleModel;
         }
@@ -128,11 +128,11 @@ namespace TVRename
             mSearchers.Clear();
             for (int i = 1; i < grid1.RowsCount; i++) // skip header row
             {
-                string name = (string) grid1[i, 0].Value;
-                string url = (string) grid1[i, 1].Value;
+                string name = (string)grid1[i, 0].Value;
+                string url = (string)grid1[i, 1].Value;
                 if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(url))
                 {
-                    mSearchers.Add(new SearchEngine{ Name=name,Url= url });
+                    mSearchers.Add(new SearchEngine { Name = name, Url = url });
                 }
             }
         }

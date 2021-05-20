@@ -1,6 +1,6 @@
+using JetBrains.Annotations;
 using System.Diagnostics;
 using System.Security.AccessControl;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -18,7 +18,7 @@ namespace TVRename
             rename
         }
 
-        #endregion
+        #endregion Op enum
 
         public readonly FileInfo From;
         public Op Operation;
@@ -37,9 +37,9 @@ namespace TVRename
             doc = tvDoc;
         }
 
-        public ActionCopyMoveRename(FileInfo from, FileInfo to, ProcessedEpisode? ep, TVDoc tvDoc) : 
+        public ActionCopyMoveRename(FileInfo from, FileInfo to, ProcessedEpisode? ep, TVDoc tvDoc) :
             this(TVSettings.Instance.LeaveOriginals ? Op.copy : Op.move, from, to, ep, true, null, tvDoc)
-            {}
+        { }
 
         public ActionCopyMoveRename(FileInfo from, FileInfo to, MovieConfiguration ep, TVDoc tvDoc) :
     this(TVSettings.Instance.LeaveOriginals ? Op.copy : Op.move, from, to, ep, true, null, tvDoc)
@@ -49,7 +49,7 @@ namespace TVRename
         {
             Tidyup = doTidyup ? TVSettings.Instance.Tidyup : null;
             PercentDone = 0;
-            Movie= mc;
+            Movie = mc;
             Operation = operation;
             From = from;
             To = to;
@@ -59,7 +59,7 @@ namespace TVRename
 
         #region Action Members
 
-        public override string Name => Operation==Op.rename? "Rename" :  IsMoveRename() ? "Move" : "Copy";
+        public override string Name => Operation == Op.rename ? "Rename" : IsMoveRename() ? "Move" : "Copy";
 
         public override string ProgressText => To.Name;
 
@@ -113,7 +113,7 @@ namespace TVRename
                     }
                 }
 
-                // Copying the temp file into the correct name is very quick, so no progress reporting		
+                // Copying the temp file into the correct name is very quick, so no progress reporting
                 File.Move(tempName, To.FullName, MoveOptions.ReplaceExisting);
                 LOGGER.Info($"{Name} completed: {From.FullName} to {To.FullName } ");
 
@@ -189,12 +189,15 @@ namespace TVRename
                 case Op.move:
                     stats.FilesMoved++;
                     break;
+
                 case Op.rename:
                     stats.FilesRenamed++;
                     break;
+
                 case Op.copy:
                     stats.FilesCopied++;
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -217,7 +220,7 @@ namespace TVRename
                 return -1;
             }
 
-            if (   From.Directory is null
+            if (From.Directory is null
                 || To.Directory is null
                 || cmr.From.Directory is null
                 || cmr.To.Directory is null)
@@ -233,11 +236,13 @@ namespace TVRename
         }
 
         public override int IconNumber => IsMoveRename() ? 4 : 3;
-        #endregion
+
+        #endregion Action Members
 
         public ProcessedEpisode SourceEpisode => Episode ?? throw new InvalidOperationException();
 
         #region Item Members
+
         public override IgnoreItem Ignore => new IgnoreItem(To.FullName);
 
         public override string ScanListViewGroup
@@ -254,9 +259,9 @@ namespace TVRename
             }
         }
 
-        public override  string TargetFolder => To.DirectoryName;
+        public override string TargetFolder => To.DirectoryName;
 
-        #endregion
+        #endregion Item Members
 
         [NotNull]
         private static string TempFor([NotNull] FileSystemInfo f) => f.FullName + ".tvrenametemp";

@@ -10,6 +10,7 @@ namespace TVRename.SAB
 
         string? IDownloadInformation.FileIdentifier => Filename;
         string? IDownloadInformation.Destination => Filename;
+
         string IDownloadInformation.RemainingText
         {
             get

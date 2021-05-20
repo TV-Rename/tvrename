@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 using JetBrains.Annotations;
 
@@ -24,7 +24,7 @@ namespace TVRename
         {
             InitializeComponent();
 
-            codeFinderControl = new CombinedCodeFinder("",MediaConfiguration.MediaType.movie,TVSettings.Instance.DefaultMovieProvider) {Dock = DockStyle.Fill};
+            codeFinderControl = new CombinedCodeFinder("", MediaConfiguration.MediaType.movie, TVSettings.Instance.DefaultMovieProvider) { Dock = DockStyle.Fill };
             codeFinderControl.SelectionChanged += CodeChanged;
             codeFinderControl.lvMatches.DoubleClick += MatchDoubleClick;
 
@@ -36,13 +36,13 @@ namespace TVRename
 
             if (hint.CodeKnown)
             {
-                codeFinderControl.SetHint(hint.ProviderCode.ToString(),hint.Provider);
+                codeFinderControl.SetHint(hint.ProviderCode.ToString(), hint.Provider);
             }
             else
             {
                 codeFinderControl.SetHint(string.IsNullOrWhiteSpace(hint.RefinedHint)
                     ? hint.Directory.Name
-                    : hint.RefinedHint,TVSettings.Instance.DefaultMovieProvider);
+                    : hint.RefinedHint, TVSettings.Instance.DefaultMovieProvider);
             }
             Code = -1;
             Provider = TVDoc.ProviderType.libraryDefault;

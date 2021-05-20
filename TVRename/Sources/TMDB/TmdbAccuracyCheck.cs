@@ -1,6 +1,6 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 
 namespace TVRename.TMDB
 {
@@ -24,9 +24,9 @@ namespace TVRename.TMDB
             int tvdbId = si.TmdbCode;
             try
             {
-                CachedMovieInfo newSi = lc.DownloadMovieNow(tvdbId,si.TargetLocale, false);
+                CachedMovieInfo newSi = lc.DownloadMovieNow(tvdbId, si.TargetLocale, false);
 
-                if (!Match(newSi,si))
+                if (!Match(newSi, si))
                 {
                     Issues.Add(
                         $"{si.Name} is not up to date: Local is { DateTimeOffset.FromUnixTimeSeconds(si.SrvLastUpdated)} ({si.SrvLastUpdated}) server is { DateTimeOffset.FromUnixTimeSeconds(newSi.SrvLastUpdated)} ({newSi.SrvLastUpdated})");

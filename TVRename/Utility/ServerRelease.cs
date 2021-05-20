@@ -1,6 +1,6 @@
+using JetBrains.Annotations;
 using System;
 using System.Text;
-using JetBrains.Annotations;
 
 namespace TVRename
 {

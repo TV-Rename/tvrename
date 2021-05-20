@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TVRename
 {
@@ -11,12 +11,14 @@ namespace TVRename
         private ProcessedEpisode? lastFoundEpisode;
         private MovieConfiguration? lastFoundMovie;
         private TorrentEntry? lastFoundEntry;
+
         public CleanUpTorrents([NotNull] TVDoc doc) : base(doc)
         {
-            sources = new List<IDownloadProvider> {new qBitTorrent(), new uTorrent()};
+            sources = new List<IDownloadProvider> { new qBitTorrent(), new uTorrent() };
         }
 
         protected override string CheckName() => "Cleaned up completed TV Torrents";
+
         public override bool Active() => TVSettings.Instance.RemoveCompletedTorrents;
 
         protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
@@ -34,7 +36,7 @@ namespace TVRename
 
                 foreach (IGrouping<string, TorrentEntry> torrentKey in keys)
                 {
-                    if(torrentKey.All(entry => CanRemove(entry,dfc)))
+                    if (torrentKey.All(entry => CanRemove(entry, dfc)))
                     {
                         if (lastFoundEntry != null && lastFoundEpisode != null)
                         {
@@ -88,7 +90,7 @@ namespace TVRename
                 return false;
             }
 
-            if (matchesSomeShows && !pes!.All(episode => IsFound(dfc,episode)))
+            if (matchesSomeShows && !pes!.All(episode => IsFound(dfc, episode)))
             {
                 //Some Episodes have not been copied yet - wait until they have
                 return false;
@@ -120,11 +122,12 @@ namespace TVRename
             return new List<MovieConfiguration> { bestShow };
         }
 
-        private static bool IsFound(DirFilesCache dfc,ProcessedEpisode episode)
+        private static bool IsFound(DirFilesCache dfc, ProcessedEpisode episode)
         {
             List<FileInfo> fl = dfc.FindEpOnDisk(episode);
             return fl.Any();
         }
+
         private static bool IsFound(DirFilesCache dfc, MovieConfiguration movie) => dfc.FindMovieOnDisk(movie).Any();
 
         private List<ProcessedEpisode>? MatchEpisodes(FileInfo droppedFile)
@@ -146,7 +149,7 @@ namespace TVRename
             {
                 ProcessedEpisode episode = bestShow.GetEpisode(seasonNum, episodeNum);
 
-                return new List<ProcessedEpisode> {episode};
+                return new List<ProcessedEpisode> { episode };
             }
             catch (ShowConfiguration.EpisodeNotFoundException)
             {

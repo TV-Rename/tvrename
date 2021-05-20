@@ -1,16 +1,16 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -71,7 +71,7 @@ namespace TVRename
                 action.Outcome = action.Go(mStats);
                 if (action.Outcome.Error)
                 {
-                    action.ErrorText = action.Outcome.LastError?.Message??string.Empty;
+                    action.ErrorText = action.Outcome.LastError?.Message ?? string.Empty;
                 }
 
                 if (!action.Outcome.Done)
@@ -164,7 +164,7 @@ namespace TVRename
 
             foreach (Action slia in theList.Actions)
             {
-                Logger.Warn(slia.Outcome.LastError,$"Failed to complete the following action: {slia.Name}, doing {slia}. Error was {slia.Outcome.LastError?.Message}");
+                Logger.Warn(slia.Outcome.LastError, $"Failed to complete the following action: {slia.Name}, doing {slia}. Error was {slia.Outcome.LastError?.Message}");
             }
 
             Logger.Info("Completed Selected Actions");
@@ -415,6 +415,7 @@ namespace TVRename
                 TheAction = a;
             }
         }
-        #endregion
+
+        #endregion Nested type: ProcessActionInfo
     }
 }

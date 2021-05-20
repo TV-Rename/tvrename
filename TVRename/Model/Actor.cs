@@ -1,14 +1,14 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using JetBrains.Annotations;
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -41,12 +41,12 @@ namespace TVRename
 
         public Actor([NotNull] XElement r)
         {
-            ActorId = r.ExtractInt("Id") ?? throw new SourceConsistencyException("Error Extracting Id for Actor",TVDoc.ProviderType.TheTVDB);
+            ActorId = r.ExtractInt("Id") ?? throw new SourceConsistencyException("Error Extracting Id for Actor", TVDoc.ProviderType.TheTVDB);
             ActorImage = r.ExtractString("Image");
             ActorName = r.ExtractString("Name");
             ActorRole = r.ExtractString("Role");
-            ActorSeriesId = r.ExtractInt("SeriesId",-1);
-            ActorSortOrder = r.ExtractInt("SortOrder",-1); 
+            ActorSeriesId = r.ExtractInt("SeriesId", -1);
+            ActorSortOrder = r.ExtractInt("SortOrder", -1);
         }
 
         public Actor(string name)
@@ -66,6 +66,6 @@ namespace TVRename
             writer.WriteEndElement();
         }
 
-        public bool AsSelf() => ActorName==ActorRole;
+        public bool AsSelf() => ActorName == ActorRole;
     }
 }

@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 using System.Collections.Generic;
 using System.Globalization;
@@ -54,7 +54,7 @@ namespace TVRename
             return base.ProcessShow(si, forceRefresh);
         }
 
-        public override ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file,bool forceRefresh)
+        public override ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file, bool forceRefresh)
         {
             if (!TVSettings.Instance.NFOEpisodes)
             {
@@ -77,7 +77,6 @@ namespace TVRename
             DoneNfo.Add(nfo.FullName);
             return new ItemList { new ActionNfoEpisode(nfo, episode) };
         }
-
 
         public override ItemList? ProcessMovie(MovieConfiguration mc, FileInfo file, bool forceRefresh)
         {

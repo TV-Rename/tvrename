@@ -1,24 +1,24 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
+using JetBrains.Annotations;
+using NLog;
 using System;
-using System.Drawing;
-using System.Globalization;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using JetBrains.Annotations;
-using NLog;
 
 // Helpful functions and classes
 
@@ -96,7 +96,7 @@ namespace TVRename
             list[firstIndex] = list[secondIndex];
             list[secondIndex] = temp;
         }
-        
+
         public static void SafeInvoke([NotNull] this Control uiElement, System.Action updater, bool forceSynchronous)
         {
             if (uiElement is null)
@@ -176,6 +176,7 @@ namespace TVRename
 
         private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private static readonly DateTime WindowsStartDateTime = new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
         public static bool OpenFolder(string folder)
         {
             if (Directory.Exists(folder))
@@ -189,11 +190,12 @@ namespace TVRename
         {
             string args = $"/e, /select, \"{filename}\"";
 
-            ProcessStartInfo info = new ProcessStartInfo {FileName = "explorer", Arguments = args};
+            ProcessStartInfo info = new ProcessStartInfo { FileName = "explorer", Arguments = args };
             Process.Start(info);
         }
 
-        public static bool OpenUrl(string url) =>SysOpen(url);
+        public static bool OpenUrl(string url) => SysOpen(url);
+
         public static void OpenFile(string filename) => SysOpen(filename);
 
         private static bool SysOpen(string? what) => SysOpen(what, null);
@@ -237,12 +239,12 @@ namespace TVRename
         }
 
         public static bool Contains([NotNull] string source, [NotNull] string toCheck, StringComparison comp) => source.IndexOf(toCheck, comp) >= 0;
-        
+
         [NotNull]
         public static string TranslateColorToHtml(Color c) => $"#{c.R:X2}{c.G:X2}{c.B:X2}";
-        
+
         [NotNull]
-        public static string CompareName( this string n)
+        public static string CompareName(this string n)
         {
             n = n.ToLower();
             n = RemoveDiacritics(n);
@@ -320,6 +322,7 @@ namespace TVRename
 
             return value;
         }
+
         public static int ToInt(this string text, int min, int def, int max)
         {
             int value;

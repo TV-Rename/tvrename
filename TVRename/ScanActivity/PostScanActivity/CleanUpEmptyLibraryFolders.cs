@@ -1,14 +1,16 @@
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Alphaleonis.Win32.Filesystem;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 
 namespace TVRename
 {
     internal class CleanUpEmptyLibraryFolders : PostScanActivity
     {
-        public CleanUpEmptyLibraryFolders(TVDoc doc) : base(doc) {}
+        public CleanUpEmptyLibraryFolders(TVDoc doc) : base(doc)
+        {
+        }
 
         protected override string ActivityName() => "Cleaned up empty library folders";
 
@@ -39,7 +41,6 @@ namespace TVRename
                     RemoveIfEmpty(folderName);
                 }
             }
-
         }
 
         private static void RemoveIfEmpty(string folderName)
@@ -49,6 +50,7 @@ namespace TVRename
                 FileHelper.RemoveDirectory(folderName);
             }
         }
+
         private static bool CanRemove(string folderName)
         {
             if (!Directory.Exists(folderName))

@@ -1,15 +1,18 @@
-using System.Collections.Generic;
-using System.Linq;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TVRename
 {
-    internal class SearchFolderFileFinder:FileFinder
+    internal class SearchFolderFileFinder : FileFinder
     {
-        public SearchFolderFileFinder(TVDoc i) : base(i) { }
+        public SearchFolderFileFinder(TVDoc i) : base(i)
+        {
+        }
 
         public override bool Active() => TVSettings.Instance.SearchLocally;
+
         protected override string CheckName() => "Looked in the search folders for the missing files";
 
         protected override void DoCheck(SetProgressDelegate prog,
@@ -92,7 +95,7 @@ namespace TVRename
 
             foreach (DirCacheEntry dce in dirCache)
             {
-                if (!ReviewFile(me, thisRound, dce.TheFile, settings, TVSettings.Instance.AutoMergeDownloadEpisodes, TVSettings.Instance.PreventMove,true, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
+                if (!ReviewFile(me, thisRound, dce.TheFile, settings, TVSettings.Instance.AutoMergeDownloadEpisodes, TVSettings.Instance.PreventMove, true, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
                 {
                     continue;
                 }
@@ -105,7 +108,7 @@ namespace TVRename
 
         private static int CountFilesInDownloadDirs()
         {
-            return TVSettings.Instance.DownloadFolders.ToArray().Select(x=>x.Trim()).Sum(s => DirCache.CountFiles(s, true));
+            return TVSettings.Instance.DownloadFolders.ToArray().Select(x => x.Trim()).Sum(s => DirCache.CountFiles(s, true));
         }
     }
 }

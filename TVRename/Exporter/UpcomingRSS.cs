@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 using System;
 using System.Collections.Generic;
@@ -13,10 +13,14 @@ using System.Xml;
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
-    internal class UpcomingRSS :UpcomingExporter
+    internal class UpcomingRSS : UpcomingExporter
     {
-        public UpcomingRSS(TVDoc i) : base(i) { }
-        public override bool Active() =>TVSettings.Instance.ExportWTWRSS;
+        public UpcomingRSS(TVDoc i) : base(i)
+        {
+        }
+
+        public override bool Active() => TVSettings.Instance.ExportWTWRSS;
+
         protected override string Location() => TVSettings.Instance.ExportWTWRSSTo;
 
         protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode>? elist)
@@ -49,8 +53,8 @@ namespace TVRename
                         string niceName = TVSettings.Instance.NamingStyle.NameFor(ei);
 
                         writer.WriteStartElement("item");
-                        
-                        writer.WriteElement("title",ei.HowLong() + " " + ei.DayOfWeek() + " " + ei.TimeOfDay() + " " + ei.Show.ShowName + " " + niceName);
+
+                        writer.WriteElement("title", ei.HowLong() + " " + ei.DayOfWeek() + " " + ei.TimeOfDay() + " " + ei.Show.ShowName + " " + niceName);
                         writer.WriteElement("link", TheTVDB.API.WebsiteEpisodeUrl(ei));
                         writer.WriteElement("description", ei.Show.ShowName + "<br/>" + niceName + "<br/>" + ei.Overview);
 
@@ -62,7 +66,7 @@ namespace TVRename
                         }
 
                         writer.WriteEndElement(); //pubDate
-                        
+
                         writer.WriteEndElement(); // item
                     }
                     writer.WriteEndElement(); //channel

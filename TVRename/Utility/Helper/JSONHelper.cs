@@ -1,22 +1,23 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
-using System;
-using System.Globalization;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using NLog;
+using System;
+using System.Globalization;
 
 namespace TVRename
 {
     public static class JsonHelper
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public static DateTime? ParseAirTime(string? theTime)
         {
             try
@@ -43,25 +44,25 @@ namespace TVRename
 
         public static bool ContainsTyped<T>(this JArray arr, T item)
         {
-            return System.Linq.Enumerable.Any(arr,it =>
-            {
-                T typed;
-                try
-                {
-                    typed = it.ToObject<T>();
-                }
-                catch (Newtonsoft.Json.JsonException e)
-                {
-                    Console.WriteLine("Couldn't parse array item {0} as type {1}: {2}", it, typeof(T), e);
-                    return false;
-                }
+            return System.Linq.Enumerable.Any(arr, it =>
+             {
+                 T typed;
+                 try
+                 {
+                     typed = it.ToObject<T>();
+                 }
+                 catch (Newtonsoft.Json.JsonException e)
+                 {
+                     Console.WriteLine("Couldn't parse array item {0} as type {1}: {2}", it, typeof(T), e);
+                     return false;
+                 }
 
-                return typed.Equals(item);
-            });
+                 return typed.Equals(item);
+             });
         }
 
         [NotNull]
-        public static string Flatten(this JToken? ja,string delimiter)
+        public static string Flatten(this JToken? ja, string delimiter)
         {
             if (ja is null)
             {

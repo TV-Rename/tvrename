@@ -1,26 +1,30 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using JetBrains.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
-    internal class UpcomingiCAL :UpcomingExporter
+    internal class UpcomingiCAL : UpcomingExporter
     {
-        public UpcomingiCAL(TVDoc i) : base(i) { }
-        public override bool Active() =>TVSettings.Instance.ExportWTWICAL;
+        public UpcomingiCAL(TVDoc i) : base(i)
+        {
+        }
+
+        public override bool Active() => TVSettings.Instance.ExportWTWICAL;
+
         protected override string Location() => TVSettings.Instance.ExportWTWICALTo;
 
         protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode>? episodes)
@@ -32,8 +36,8 @@ namespace TVRename
 
             try
             {
-                Calendar calendar = new Calendar {ProductId = "Upcoming Shows Exported by TV Rename http://www.tvrename.com"};
-                
+                Calendar calendar = new Calendar { ProductId = "Upcoming Shows Exported by TV Rename http://www.tvrename.com" };
+
                 foreach (ProcessedEpisode ei in episodes)
                 {
                     CalendarEvent ev = CreateEvent(ei);
@@ -44,7 +48,7 @@ namespace TVRename
                 }
 
                 CalendarSerializer serializer = new CalendarSerializer();
-                serializer.Serialize(calendar,str,Encoding.ASCII);
+                serializer.Serialize(calendar, str, Encoding.ASCII);
 
                 return true;
             } // try
@@ -76,7 +80,7 @@ namespace TVRename
                     Start = new CalDateTime(startTime),
                     End = new CalDateTime(endTime),
                     Description = ei.Overview,
-                    Comments = new List<string> {ei.Overview},
+                    Comments = new List<string> { ei.Overview },
                     Summary = niceName,
                     Location = ei.TheCachedSeries.Network,
                     Url = new Uri(TheTVDB.API.WebsiteEpisodeUrl(ei)),

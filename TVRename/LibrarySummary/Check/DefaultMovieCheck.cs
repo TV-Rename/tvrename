@@ -7,7 +7,8 @@ namespace TVRename
         protected DefaultMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
         {
         }
-        public override string CheckName => "[Movie] "+FieldName;
+
+        public override string CheckName => "[Movie] " + FieldName;
         protected abstract string FieldName { get; }
         protected abstract bool Field { get; }
         protected abstract bool Default { get; }

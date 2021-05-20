@@ -1,11 +1,13 @@
-using System;
 using JetBrains.Annotations;
+using System;
 
 namespace TVRename
 {
     internal class FilenameMovieCheck : MovieCheck
     {
-        public FilenameMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc) { }
+        public FilenameMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
+        {
+        }
 
         public override bool Check() => Movie.UseCustomNamingFormat;
 
@@ -15,6 +17,7 @@ namespace TVRename
         {
             Movie.UseCustomNamingFormat = false;
         }
+
         public override string CheckName => "[Movie] Use Custom File Name Format";
     }
 }

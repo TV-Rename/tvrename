@@ -23,6 +23,7 @@ namespace TVRename
                 throw new FixCheckException($"Could not update provider for {MediaName}. It did not have an Id for {TVSettings.Instance.DefaultMovieProvider}");
             }
         }
+
         public override string CheckName => "[Movie] Use default source provider";
     }
 }

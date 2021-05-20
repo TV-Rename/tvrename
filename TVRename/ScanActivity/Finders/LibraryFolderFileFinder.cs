@@ -1,15 +1,18 @@
-using System.Collections.Generic;
-using System.Linq;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TVRename
 {
     internal class LibraryFolderFileFinder : FileFinder
     {
-        public LibraryFolderFileFinder(TVDoc i) : base(i) { }
+        public LibraryFolderFileFinder(TVDoc i) : base(i)
+        {
+        }
 
         public override bool Active() => TVSettings.Instance.RenameCheck && TVSettings.Instance.MissingCheck && TVSettings.Instance.MoveLibraryFiles;
+
         protected override string CheckName() => "Looked in the library for the missing files";
 
         protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
@@ -33,7 +36,7 @@ namespace TVRename
 
                 UpdateStatus(currentItem++, totalN, me.Filename);
 
-                if(me is ShowItemMissing sim)
+                if (me is ShowItemMissing sim)
                 {
                     if (me.Episode?.Show is null)
                     {
@@ -69,8 +72,8 @@ namespace TVRename
             }
             (string targetFolder, string targetFolderEarlier, string targetFolderLater) = mim.MovieConfig.NeighbouringFolderNames();
 
-            TestShouldMove(targetFolderEarlier, targetFolder, dfc, newList, toRemove,mim);
-            TestShouldMove(targetFolderLater, targetFolder, dfc, newList, toRemove,mim);
+            TestShouldMove(targetFolderEarlier, targetFolder, dfc, newList, toRemove, mim);
+            TestShouldMove(targetFolderLater, targetFolder, dfc, newList, toRemove, mim);
         }
 
         private void TestShouldMove(string sourceFolder, string targetFolder, DirFilesCache dfc, ItemList newList, ItemList toRemove, MovieItemMissing mim)
@@ -93,7 +96,7 @@ namespace TVRename
             LOGGER.Info($"Have identified that {sourceFolder} can be copied to {targetFolder}");
 
             toRemove.Add(mim);
-            newList.Add(new ActionMoveRenameDirectory(sourceFolder,targetFolder,mim.MovieConfig));
+            newList.Add(new ActionMoveRenameDirectory(sourceFolder, targetFolder, mim.MovieConfig));
         }
 
         private void FindEpisode(TVDoc.ScanSettings settings, ShowItemMissing me, DirFilesCache dfc, ItemList newList,
@@ -141,7 +144,7 @@ namespace TVRename
         }
 
         private void ProcessFolder(TVDoc.ScanSettings settings, [NotNull] ShowItemMissing me, [NotNull] string folderName, [NotNull] DirFilesCache dfc,
-            ItemList thisRound, [NotNull] List<FileInfo>  matchedFiles)
+            ItemList thisRound, [NotNull] List<FileInfo> matchedFiles)
         {
             LOGGER.Info($"Starting to look for {me.Filename} in the library folder: {folderName}");
             FileInfo[] files = dfc.GetFiles(folderName);

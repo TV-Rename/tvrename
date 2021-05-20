@@ -11,7 +11,9 @@ namespace TVRename
         }
 
         public override bool Active() => TVSettings.Instance.ExportMissingMoviesXML;
+
         protected override string Location() => TVSettings.Instance.ExportMissingMoviesXMLTo;
+
         public override bool ApplicableFor(TVSettings.ScanType st) => st == TVSettings.ScanType.Full;
 
         protected override void Do()
@@ -38,7 +40,7 @@ namespace TVRename
                     writer.WriteElement("id", missing.MovieConfig.Code);
                     writer.WriteElement("title", missing.MovieConfig.ShowName);
                     writer.WriteElement("description", missing.MovieConfig.CachedData?.Overview);
-                    writer.WriteElement("pubDate",missing.MovieConfig.CachedMovie?.Year);
+                    writer.WriteElement("pubDate", missing.MovieConfig.CachedMovie?.Year);
 
                     writer.WriteEndElement(); // MissingMovieItem
                 }

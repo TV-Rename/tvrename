@@ -1,17 +1,17 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using System;
-using System.Windows.Forms;
 using NLog;
 using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets;
 using NLog.Windows.Forms;
+using System;
+using System.Windows.Forms;
 
 namespace TVRename
 {
@@ -26,18 +26,18 @@ namespace TVRename
         {
             RichTextBoxTarget target = new RichTextBoxTarget
             {
-                Name ="UI Target",
+                Name = "UI Target",
                 Layout = "${date:format=HH\\:MM\\:ss} ${level:uppercase=true} ${message}",
                 ControlName = "logData",
                 FormName = "LogViewer",
                 AutoScroll = true,
-                ToolWindow=true,
+                ToolWindow = true,
                 UseDefaultRowColoringRules = true,
                 MaxLines = 500,
-                MessageRetention=RichTextBoxTargetMessageRetentionStrategy.All,
-                SupportLinks=true,
+                MessageRetention = RichTextBoxTargetMessageRetentionStrategy.All,
+                SupportLinks = true,
                 CreatedForm = false,
-                AllowAccessoryFormCreation=false
+                AllowAccessoryFormCreation = false
             };
 
             LogManager.Configuration.AddTarget(target);

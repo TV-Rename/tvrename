@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 using System;
 using System.Windows.Forms;
@@ -25,7 +25,7 @@ namespace TVRename
         private readonly System.Collections.Generic.List<IgnoreItem> ignore;
         private readonly TVDoc mDoc;
 
-        public IgnoreEdit(TVDoc doc,string defaultFilter)
+        public IgnoreEdit(TVDoc doc, string defaultFilter)
         {
             mDoc = doc;
             ignore = new System.Collections.Generic.List<IgnoreItem>();
@@ -78,7 +78,7 @@ namespace TVRename
             foreach (IgnoreItem ii in ignore)
             {
                 string s = ii.FileAndPath;
-                if (all || s.Contains(f,StringComparison.CurrentCultureIgnoreCase))
+                if (all || s.Contains(f, StringComparison.CurrentCultureIgnoreCase))
                 {
                     lbItems.Items.Add(s);
                 }

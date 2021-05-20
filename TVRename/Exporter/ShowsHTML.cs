@@ -1,16 +1,16 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -22,6 +22,7 @@ namespace TVRename
         }
 
         public override bool Active() => TVSettings.Instance.ExportShowsHTML;
+
         protected override string Location() => TVSettings.Instance.ExportShowsHTMLTo;
 
         protected override void Do()
@@ -58,7 +59,7 @@ namespace TVRename
             string posterUrl = TheTVDB.API.GetImageURL(cachedSeries.GetImage(TVSettings.FolderJpgIsType.Poster));
             string yearRange = ShowHtmlHelper.YearRange(cachedSeries);
             string episodeSummary = cachedSeries.Episodes.Count.ToString();
-            string stars = ShowHtmlHelper.StarRating(cachedSeries.SiteRating/2);
+            string stars = ShowHtmlHelper.StarRating(cachedSeries.SiteRating / 2);
             string genreIcons = string.Join("&nbsp;", cachedSeries.Genres.Select(ShowHtmlHelper.GenreIconHtml));
             string siteRating = cachedSeries.SiteRating > 0 ? cachedSeries.SiteRating + "/10" : "";
 

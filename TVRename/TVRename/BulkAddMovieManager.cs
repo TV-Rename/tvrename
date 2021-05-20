@@ -1,10 +1,10 @@
+using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
-using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -17,6 +17,7 @@ namespace TVRename
         //Thread safe counters to work out the progress
         //for scanning
         private static volatile int CurrentPhaseDirectory;
+
         private static volatile int CurrentPhaseTotalDirectory;
         private static volatile int CurrentPhase;
         private static volatile int CurrentPhaseTotal;
@@ -31,7 +32,7 @@ namespace TVRename
         {
             try
             {
-                return  di.GetDirectories().Where(d => d.IsImportant()).ToArray();
+                return di.GetDirectories().Where(d => d.IsImportant()).ToArray();
             }
             catch (UnauthorizedAccessException)
             {
@@ -157,7 +158,7 @@ namespace TVRename
             {
                 percentComplete = 100;
             }
-            bw.ReportProgress(percentComplete,di.Name);
+            bw.ReportProgress(percentComplete, di.Name);
             if (!di.Exists)
             {
                 return;
@@ -196,7 +197,7 @@ namespace TVRename
 
             foreach (DirectoryInfo di2 in subDirs)
             {
-                CheckFolderForShows(di2, token,bw, fullLogging, showErrorMsgBox); // not a season folder.. recurse!
+                CheckFolderForShows(di2, token, bw, fullLogging, showErrorMsgBox); // not a season folder.. recurse!
             } // for each directory
         }
 
@@ -219,7 +220,7 @@ namespace TVRename
                 return;
             }
 
-            string? matchingRoot = TVSettings.Instance.MovieLibraryFolders.FirstOrDefault(s =>  ai.Directory.FullName.IsSubfolderOf(s));
+            string? matchingRoot = TVSettings.Instance.MovieLibraryFolders.FirstOrDefault(s => ai.Directory.FullName.IsSubfolderOf(s));
             bool isInLibraryFolderFileFinder = matchingRoot.HasValue();
 
             // see if there is a matching show item
@@ -296,7 +297,7 @@ namespace TVRename
             found.ManualLocations.Add(ai.Directory.FullName);
         }
 
-        public void CheckFolders(CancellationToken token,BackgroundWorker bw,  bool detailedLogging, bool showErrorMsgBox)
+        public void CheckFolders(CancellationToken token, BackgroundWorker bw, bool detailedLogging, bool showErrorMsgBox)
         {
             // Check the  folder list, and build up a new "AddItems" list.
             // guessing what the shows actually are isn't done here.  That is done by
@@ -325,14 +326,13 @@ namespace TVRename
                     Logger.Warn($"Not loading {folder} as it is both a movie folder and a tv folder");
                     continue;
                 }
-                CheckFolderForShows(di, token,bw, detailedLogging, showErrorMsgBox);
+                CheckFolderForShows(di, token, bw, detailedLogging, showErrorMsgBox);
 
                 if (token.IsCancellationRequested)
                 {
                     break;
                 }
                 Interlocked.Increment(ref CurrentPhase);
-
             }
         }
     }

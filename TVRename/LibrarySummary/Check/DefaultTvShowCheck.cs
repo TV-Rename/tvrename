@@ -7,6 +7,7 @@ namespace TVRename
         protected DefaultTvShowCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
         {
         }
+
         public override string CheckName => "[TV] " + FieldName;
         protected abstract string FieldName { get; }
         protected abstract bool Field { get; }

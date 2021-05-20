@@ -1,7 +1,7 @@
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -36,6 +36,6 @@ namespace TVRename
 
         public bool Includes(MovieConfiguration? m) => m != null && m.Code > 0 && Contains(m.Code);
 
-            //TODO fix this class to make it work with multi sources
+        //TODO fix this class to make it work with multi sources
     }
 }

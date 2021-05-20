@@ -1,16 +1,16 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
-using System;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
+using System;
 using System.Xml;
 using System.Xml.Serialization;
-using JetBrains.Annotations;
 
 // ReSharper disable RedundantDefaultMemberInitializer
 
@@ -20,7 +20,6 @@ namespace TVRename
 {
     [Serializable]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    
     [XmlRootAttribute("Statistics", Namespace = "")]
     // ReSharper disable once InconsistentNaming
     public class TVRenameStats
@@ -37,6 +36,7 @@ namespace TVRename
 
         // The following aren't saved, but are calculated when we do a scan
         [XmlIgnoreAttribute] public int NsNumberOfEpisodes = -1; // -1 = unknown
+
         [XmlIgnoreAttribute] public int NsNumberOfEpisodesExpected = 0;
         [XmlIgnoreAttribute] public int NsNumberOfSeasons = 0;
         [XmlIgnoreAttribute] public int NsNumberOfShows = 0;
@@ -61,7 +61,7 @@ namespace TVRename
                 return null;
             }
 
-            XmlReaderSettings settings = new XmlReaderSettings {IgnoreComments = true, IgnoreWhitespace = true};
+            XmlReaderSettings settings = new XmlReaderSettings { IgnoreComments = true, IgnoreWhitespace = true };
             TVRenameStats sc;
 
             try
@@ -69,15 +69,15 @@ namespace TVRename
                 using (XmlReader reader = XmlReader.Create(filename, settings))
                 {
                     XmlSerializer xs = new XmlSerializer(typeof(TVRenameStats));
-                    sc = (TVRenameStats) xs.Deserialize(reader);
+                    sc = (TVRenameStats)xs.Deserialize(reader);
                 }
 
                 System.Diagnostics.Debug.Assert(sc != null);
             }
             catch (Exception e)
             {
-               Logger.Fatal(e);
-               return new TVRenameStats(); 
+                Logger.Fatal(e);
+                return new TVRenameStats();
             }
 
             return sc;
@@ -96,7 +96,7 @@ namespace TVRename
                 di.Create();
             }
 
-            XmlWriterSettings settings = new XmlWriterSettings {Indent = true, NewLineOnAttributes = true};
+            XmlWriterSettings settings = new XmlWriterSettings { Indent = true, NewLineOnAttributes = true };
             using (XmlWriter writer = XmlWriter.Create(toFile, settings))
             {
                 XmlSerializer xs = new XmlSerializer(typeof(TVRenameStats));

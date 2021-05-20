@@ -7,8 +7,10 @@ namespace TVRename
         public readonly int Season;
         public readonly string ShowName;
         public readonly string Title;
+
         // ReSharper disable once InconsistentNaming
         public readonly string URL;
+
         public readonly int Seeders;
         public readonly long Bytes;
         public readonly string UpstreamSource;

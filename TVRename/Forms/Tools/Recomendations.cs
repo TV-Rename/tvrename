@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 
 namespace TVRename.Forms
 {
-    public class Recomendations : ConcurrentDictionary<int,RecommendationResult>
+    public class Recomendations : ConcurrentDictionary<int, RecommendationResult>
     {
         private RecommendationResult Enrich(int key)
         {
@@ -11,7 +11,7 @@ namespace TVRename.Forms
                 return movieRec;
             }
 
-            RecommendationResult x = new RecommendationResult {Key = key};
+            RecommendationResult x = new RecommendationResult { Key = key };
             TryAdd(key, x);
             return x;
         }

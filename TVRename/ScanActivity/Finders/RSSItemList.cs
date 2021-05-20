@@ -1,11 +1,13 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using JetBrains.Annotations;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +15,6 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
-using NLog;
 
 namespace TVRename
 {
@@ -38,14 +38,14 @@ namespace TVRename
                     return false;
                 }
 
-                if (!ReadChannel(x.Descendants("channel").First(),url,sourcePrefix))
+                if (!ReadChannel(x.Descendants("channel").First(), url, sourcePrefix))
                 {
                     return false;
                 }
             }
             catch (WebException e)
             {
-                Logger.LogWebException($"Could not download RSS page at: {url} got the following message:",e);
+                Logger.LogWebException($"Could not download RSS page at: {url} got the following message:", e);
                 return false;
             }
             catch (XmlException e)
@@ -56,7 +56,7 @@ namespace TVRename
             }
             catch (AggregateException ex) when (ex.InnerException is WebException wex)
             {
-                Logger.LogWebException($"Could not download RSS page at: {url} got the following message: ",wex);
+                Logger.LogWebException($"Could not download RSS page at: {url} got the following message: ", wex);
                 return false;
             }
             catch (AggregateException ex) when (ex.InnerException is System.Net.Http.HttpRequestException hex)
@@ -73,17 +73,17 @@ namespace TVRename
             return true;
         }
 
-        private bool ReadChannel([NotNull] XElement x,string sourceUrl,string sourcePrefix) => x.Descendants("item").All(element => ReadItem(element,sourceUrl,sourcePrefix));
+        private bool ReadChannel([NotNull] XElement x, string sourceUrl, string sourcePrefix) => x.Descendants("item").All(element => ReadItem(element, sourceUrl, sourcePrefix));
 
-        private bool ReadItem([NotNull] XElement itemElement,string sourceUrl, string sourcePrefix)
+        private bool ReadItem([NotNull] XElement itemElement, string sourceUrl, string sourcePrefix)
         {
             string title = itemElement.ExtractString("title");
             string link = itemElement.ExtractString("link");
             string description = itemElement.ExtractString("description");
             string enclosureLink = itemElement.Descendants("enclosure").FirstOrDefault(enclosure => enclosure.Attribute("type")?.Value == "application/x-bittorrent")?.Attribute("url")?.Value;
             int seeders = GetSeeders(itemElement);
-            long size = itemElement.ExtractLong("size",0);
-            string source = itemElement.ExtractString("jackettindexer",sourceUrl);
+            long size = itemElement.ExtractLong("size", 0);
+            string source = itemElement.ExtractString("jackettindexer", sourceUrl);
 
             if (TVSettings.Instance.DetailedRSSJSONLogging)
             {
@@ -99,7 +99,7 @@ namespace TVRename
                 Logger.Info($"Source:      {source}");
             }
 
-            link = string.IsNullOrWhiteSpace(enclosureLink)?link:enclosureLink;
+            link = string.IsNullOrWhiteSpace(enclosureLink) ? link : enclosureLink;
 
             if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(link))
             {
@@ -108,7 +108,7 @@ namespace TVRename
 
             string showName = string.Empty;
 
-            FinderHelper.FindSeasEp( title, out int season, out int episode, out int _, null);
+            FinderHelper.FindSeasEp(title, out int season, out int episode, out int _, null);
 
             if (TVSettings.Instance.DetailedRSSJSONLogging)
             {
@@ -150,7 +150,7 @@ namespace TVRename
 
             if (season != -1 && episode != -1)
             {
-                Add(new RSSItem(link, title, season, episode, showName,seeders,size, $"{sourcePrefix}: {source}"));
+                Add(new RSSItem(link, title, season, episode, showName, seeders, size, $"{sourcePrefix}: {source}"));
             }
 
             return true;

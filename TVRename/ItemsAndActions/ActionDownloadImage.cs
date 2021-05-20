@@ -1,20 +1,20 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using JetBrains.Annotations;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
-    using System;
     using Alphaleonis.Win32.Filesystem;
+    using System;
 
     public class ActionDownloadImage : ActionDownload
     {
@@ -23,7 +23,9 @@ namespace TVRename
         private readonly MediaConfiguration si;
         private readonly bool shrinkLargeMede8ErImage;
 
-        public ActionDownloadImage(MediaConfiguration si, ProcessedEpisode? pe, FileInfo dest, string path) : this(si, pe, dest, path, false) { }
+        public ActionDownloadImage(MediaConfiguration si, ProcessedEpisode? pe, FileInfo dest, string path) : this(si, pe, dest, path, false)
+        {
+        }
 
         public ActionDownloadImage(MediaConfiguration si, ProcessedEpisode? pe, FileInfo dest, string path, bool shrink)
         {
@@ -95,8 +97,8 @@ namespace TVRename
             {
                 byte[]? theData = si.Provider == TVDoc.ProviderType.TheTVDB
                     ? TheTVDB.LocalCache.Instance.GetTvdbDownload(path)
-                    : HttpHelper.Download(path,false);
-                
+                    : HttpHelper.Download(path, false);
+
                 if (theData is null || theData.Length == 0)
                 {
                     return new ActionOutcome("Unable to download " + path);
@@ -160,7 +162,7 @@ namespace TVRename
             return theData;
         }
 
-        #endregion
+        #endregion Action Members
 
         #region Item Members
 
@@ -182,6 +184,7 @@ namespace TVRename
         public override string SourceDetails => path;
         public override string ScanListViewGroup => "lvgActionDownload";
         public override string TargetFolder => destination.DirectoryName;
-        #endregion
+
+        #endregion Item Members
     }
 }

@@ -32,11 +32,11 @@ namespace TVRename
         public int Compare(object x, object y)
         {
             // Cast the objects to be compared to ListViewItem objects
-            ListViewItem listviewX = (ListViewItem) x;
-            ListViewItem listviewY = (ListViewItem) y;
+            ListViewItem listviewX = (ListViewItem)x;
+            ListViewItem listviewY = (ListViewItem)y;
 
             // Compare the two items
-            int compareResult = ListViewItemSorter.Compare(listviewX,listviewY);
+            int compareResult = ListViewItemSorter.Compare(listviewX, listviewY);
 
             switch (Order)
             {

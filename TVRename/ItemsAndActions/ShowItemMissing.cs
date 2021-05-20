@@ -1,5 +1,5 @@
-using System;
 using JetBrains.Annotations;
+using System;
 
 namespace TVRename
 {
@@ -12,15 +12,16 @@ namespace TVRename
             TheFileNoExt = whereItShouldBeFolder + System.IO.Path.DirectorySeparatorChar + Filename;
             Folder = whereItShouldBeFolder;
         }
+
         #region Item Members
 
-        public ProcessedEpisode MissingEpisode =>Episode ?? throw new InvalidOperationException();
+        public ProcessedEpisode MissingEpisode => Episode ?? throw new InvalidOperationException();
 
         public override bool SameAs(Item o)
         {
             return o is ShowItemMissing missing && string.CompareOrdinal(missing.TheFileNoExt, TheFileNoExt) == 0;
         }
-       
+
         public override string Name => "Missing Episode";
 
         public override int CompareTo(Item o)
@@ -43,11 +44,12 @@ namespace TVRename
             return MissingEpisode.AppropriateEpNum.CompareTo(miss.MissingEpisode.AppropriateEpNum);
         }
 
-        #endregion
+        #endregion Item Members
 
         public override bool DoRename => Episode?.Show.DoRename ?? true;
 
         public override MediaConfiguration Show => MissingEpisode.Show;
+
         public override string ToString() => $"{Show.ShowName} {MissingEpisode}";
     }
 }

@@ -1,5 +1,5 @@
-using System;
 using JetBrains.Annotations;
+using System;
 
 namespace TVRename
 {
@@ -8,8 +8,8 @@ namespace TVRename
     public class SourceConsistencyException : Exception
     {
         // Thrown if an error occurs in the XML when reading TheTVDB.xml
-        public SourceConsistencyException(string message,TVDoc.ProviderType provider)
-            : base(provider.PrettyPrint()+": "+message)
+        public SourceConsistencyException(string message, TVDoc.ProviderType provider)
+            : base(provider.PrettyPrint() + ": " + message)
         {
         }
     }

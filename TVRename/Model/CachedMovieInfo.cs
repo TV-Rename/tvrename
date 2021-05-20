@@ -1,7 +1,7 @@
+using JetBrains.Annotations;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -21,6 +21,7 @@ namespace TVRename
         private void DefaultValues()
         {
         }
+
         public CachedMovieInfo()
         {
             DefaultValues();
@@ -35,6 +36,7 @@ namespace TVRename
         {
             DefaultValues();
         }
+
         public CachedMovieInfo([NotNull] XElement seriesXml)
         {
             DefaultValues();
@@ -205,7 +207,7 @@ namespace TVRename
                 InstagramId = seriesXml.ExtractStringOrNull("InstagramId");
                 FacebookId = seriesXml.ExtractStringOrNull("FacebookId");
                 TagLine = seriesXml.ExtractStringOrNull("TagLine");
-    
+
                 PosterUrl = seriesXml.ExtractString("posterURL");
                 TrailerUrl = seriesXml.ExtractString("TrailerUrl");
                 FanartUrl = seriesXml.ExtractString("FanartUrl");
@@ -238,7 +240,7 @@ namespace TVRename
                 throw e;
             }
         }
-        
+
         public void WriteXml([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("Movie");
@@ -286,7 +288,6 @@ namespace TVRename
                 aa.WriteXml(writer);
             }
             writer.WriteEndElement(); //Actors
-
 
             writer.WriteStartElement("Aliases");
             foreach (string a in Aliases)

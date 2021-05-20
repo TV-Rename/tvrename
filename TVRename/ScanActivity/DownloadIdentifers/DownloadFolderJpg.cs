@@ -8,13 +8,12 @@ namespace TVRename
         private List<string> doneFolderJpg = new List<string>();
         private const string DEFAULT_FILE_NAME = "folder.jpg";
 
-        public DownloadFolderJpg() 
+        public DownloadFolderJpg()
         {
             Reset();
         }
 
         public override DownloadType GetDownloadType() => DownloadType.downloadImage;
-
 
         public override ItemList ProcessMovie(MovieConfiguration mc, FileInfo file, bool forceRefresh)
         {
@@ -99,8 +98,8 @@ namespace TVRename
             ItemList theActionList = new ItemList();
             FileInfo fi = FileHelper.FileInFolder(folder, DEFAULT_FILE_NAME);
 
-            if (!doneFolderJpg.Contains(fi.FullName) && (!fi.Exists|| forceRefresh))
-                // some folders may come up multiple times
+            if (!doneFolderJpg.Contains(fi.FullName) && (!fi.Exists || forceRefresh))
+            // some folders may come up multiple times
             {
                 string bannerPath = TVSettings.Instance.SeasonSpecificFolderJPG()
                     ? si.CachedShow?.GetSeasonBannerPath(snum)
@@ -119,7 +118,7 @@ namespace TVRename
 
         public sealed override void Reset()
         {
-            doneFolderJpg  = new List<string>();
+            doneFolderJpg = new List<string>();
         }
     }
 }

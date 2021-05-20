@@ -1,14 +1,16 @@
+using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
     internal class CheckAllFoldersExist : ScanShowActivity
     {
-        public CheckAllFoldersExist(TVDoc doc) : base(doc) {}
+        public CheckAllFoldersExist(TVDoc doc) : base(doc)
+        {
+        }
 
         protected override string ActivityName() => "Checked All Folders Exist";
 
@@ -50,7 +52,7 @@ namespace TVRename
                     folders = flocs[snum];
                 }
 
-                if (si.SeasonEpisodes[snum].All(episode => !MightWeProcess(episode,folders)))
+                if (si.SeasonEpisodes[snum].All(episode => !MightWeProcess(episode, folders)))
                 {
                     //All episodes in this season are ignored
                     continue;
@@ -68,7 +70,7 @@ namespace TVRename
                     folders.Add(string.Empty);
                 }
 
-                CreateSeasonFolders(si, snum, folders, ignoredLocations,settings.Owner);
+                CreateSeasonFolders(si, snum, folders, ignoredLocations, settings.Owner);
             } // for each snum
         }
 
@@ -76,7 +78,7 @@ namespace TVRename
         {
             foreach (string folder in folders)
             {
-                if (TVSettings.Instance.Ignore.Any(ii => ii.MatchesEpisode(folder,episode)))
+                if (TVSettings.Instance.Ignore.Any(ii => ii.MatchesEpisode(folder, episode)))
                 {
                     return false;
                 }
@@ -90,7 +92,7 @@ namespace TVRename
                 }
             }
 
-            if (!episode.Show.ForceCheckNoAirdate && episode.GetAirDateDt(true)== null)
+            if (!episode.Show.ForceCheckNoAirdate && episode.GetAirDateDt(true) == null)
             {
                 return false;
             }
@@ -103,11 +105,11 @@ namespace TVRename
         {
             foreach (string folderExists in folders)
             {
-                CreateSeasonFolder(si, snum, ignoredLocations, folderExists,owner);
+                CreateSeasonFolder(si, snum, ignoredLocations, folderExists, owner);
             } // for each folder
         }
 
-        private void CreateSeasonFolder(ShowConfiguration si, int snum, ICollection<string> ignoredLocations, string proposedFolderName,IDialogParent owner)
+        private void CreateSeasonFolder(ShowConfiguration si, int snum, ICollection<string> ignoredLocations, string proposedFolderName, IDialogParent owner)
         {
             string folder = proposedFolderName;
 
@@ -203,7 +205,7 @@ namespace TVRename
             } while (goAgain);
         }
 
-        private  bool  UpdateDirectory(ShowConfiguration si, int snum, string folder)
+        private bool UpdateDirectory(ShowConfiguration si, int snum, string folder)
         {
             DirectoryInfo di = new DirectoryInfo(folder);
             bool goAgain = !di.Exists;
@@ -248,10 +250,13 @@ namespace TVRename
             {
                 case CommandLineArgs.MissingFolderBehavior.create:
                     return FaResult.kfaCreate;
+
                 case CommandLineArgs.MissingFolderBehavior.ignore:
                     return FaResult.kfaIgnoreOnce;
+
                 case CommandLineArgs.MissingFolderBehavior.ask:
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }

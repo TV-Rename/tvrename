@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 using Alphaleonis.Win32.Filesystem;
 using System;
@@ -26,7 +26,7 @@ namespace TVRename
         public override int IconNumber { get; }
         public override string? TargetFolder => string.IsNullOrEmpty(entry.Destination) ? null : new FileInfo(entry.Destination).DirectoryName;
 
-        private ItemDownloading(IDownloadInformation dl,string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp, ItemMissing undoItem)
+        private ItemDownloading(IDownloadInformation dl, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp, ItemMissing undoItem)
         {
             DesiredLocationNoExt = desiredLocationNoExt;
             entry = dl;
@@ -40,7 +40,7 @@ namespace TVRename
             };
         }
 
-        public ItemDownloading(IDownloadInformation dl, ProcessedEpisode pe, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp, ItemMissing me) :this(dl, desiredLocationNoExt, tApp,me)
+        public ItemDownloading(IDownloadInformation dl, ProcessedEpisode pe, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp, ItemMissing me) : this(dl, desiredLocationNoExt, tApp, me)
         {
             Episode = pe;
         }
@@ -79,6 +79,7 @@ namespace TVRename
 
             return string.Compare(DesiredLocationNoExt, ut.DesiredLocationNoExt, StringComparison.Ordinal);
         }
-        #endregion
+
+        #endregion Item Members
     }
 }

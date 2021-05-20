@@ -1,22 +1,24 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using JetBrains.Annotations;
 using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
     internal class JackettFinder : DownloadFinder
     {
-        public JackettFinder(TVDoc i) : base(i) { }
+        public JackettFinder(TVDoc i) : base(i)
+        {
+        }
 
         public override bool Active() => TVSettings.Instance.SearchJackett;
 
@@ -24,13 +26,13 @@ namespace TVRename
 
         protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
         {
-            if ( settings.Unattended && TVSettings.Instance.SearchJackettManualScanOnly)
+            if (settings.Unattended && TVSettings.Instance.SearchJackettManualScanOnly)
             {
                 LOGGER.Info("Searching Jackett is cancelled as this is an unattended scan");
                 return;
             }
 
-            if (settings.Type ==TVSettings.ScanType.Full && TVSettings.Instance.StopJackettSearchOnFullScan && settings.AnyMediaToUpdate)
+            if (settings.Type == TVSettings.ScanType.Full && TVSettings.Instance.StopJackettSearchOnFullScan && settings.AnyMediaToUpdate)
             {
                 LOGGER.Info("Searching Jackett is cancelled as this is a full scan");
                 return;
@@ -82,10 +84,10 @@ namespace TVRename
         private static void FindMissingEpisode([NotNull] ShowItemMissing action, ItemList toRemove, ItemList newItems)
         {
             ProcessedEpisode processedEpisode = action.MissingEpisode;
-            string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(processedEpisode) : NormalJackettUrl( processedEpisode);
+            string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(processedEpisode) : NormalJackettUrl(processedEpisode);
 
             RssItemList rssList = new RssItemList();
-            rssList.DownloadRSS(url, false,"Jackett");
+            rssList.DownloadRSS(url, false, "Jackett");
             ItemList newItemsForThisMissingEpisode = new ItemList();
 
             foreach (RSSItem rss in rssList.Where(rss => RssMatch(rss, processedEpisode)))
@@ -125,7 +127,7 @@ namespace TVRename
                         $"Adding {rss.URL} from RSS feed as it appears to be match for {action.MovieConfig.ShowName}");
                 }
                 ItemDownloading becomes = new ItemDownloading(new FutureTorrentEntry(rss.URL, action.TheFileNoExt), action.MovieConfig, action.TheFileNoExt, DownloadingFinder.DownloadApp.qBitTorrent, action);
-                newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action,becomes));
+                newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action, becomes));
                 toRemove.Add(action);
             }
 
@@ -144,7 +146,7 @@ namespace TVRename
             string allIndexer = TVSettings.Instance.JackettIndexer;
             string apikey = TVSettings.Instance.JackettAPIKey;
             const string FORMAT = "{ShowName}";
-            string? text = WebUtility.UrlEncode(CustomMovieName.NameFor(actionMovieConfig,FORMAT));
+            string? text = WebUtility.UrlEncode(CustomMovieName.NameFor(actionMovieConfig, FORMAT));
             return
                 $"http://{serverName}:{serverPort}{allIndexer}/api?t=movie&q={text}&apikey={apikey}";
         }
@@ -189,7 +191,7 @@ namespace TVRename
             string serverPort = TVSettings.Instance.JackettPort;
             const string FORMAT = "{ShowName} S{Season:2}E{Episode}[-E{Episode2}]";
 
-            string url = $"http://{serverName}:{serverPort}/UI/Dashboard#search={WebUtility.UrlEncode(CustomEpisodeName.NameForNoExt(episode,FORMAT,false))}&tracker=&category=";
+            string url = $"http://{serverName}:{serverPort}/UI/Dashboard#search={WebUtility.UrlEncode(CustomEpisodeName.NameForNoExt(episode, FORMAT, false))}&tracker=&category=";
 
             Helpers.OpenUrl(url);
         }

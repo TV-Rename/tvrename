@@ -1,13 +1,13 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-using System;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using System;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -28,6 +28,7 @@ namespace TVRename
         public static FileInfo[] GetPossibleSettingsHistory() => new DirectoryInfo(System.IO.Path.GetDirectoryName(TVDocSettingsFile.FullName)).GetFiles(SETTINGS_FILE_NAME + "*");
 
         public static FileInfo[] GetPossibleTvdbHistory() => new DirectoryInfo(System.IO.Path.GetDirectoryName(TVDocSettingsFile.FullName)).GetFiles(TVDB_FILE_NAME + "*");
+
         public static FileInfo[] GetPossibleTvMazeHistory() => new DirectoryInfo(System.IO.Path.GetDirectoryName(TVDocSettingsFile.FullName)).GetFiles(TVMAZE_FILE_NAME + "*");
 
         public static void SetUserDefinedBasePath(string path)
@@ -64,19 +65,25 @@ namespace TVRename
 
         [NotNull]
         public static FileInfo StatisticsFile => GetFileInfo(STATISTICS_FILE_NAME);
+
         // ReSharper disable once InconsistentNaming
         [NotNull]
         public static FileInfo UILayoutFile => GetFileInfo(UI_LAYOUT_FILE_NAME);
+
         // ReSharper disable once InconsistentNaming
         [NotNull]
         public static FileInfo TVDBFile => GetFileInfo(TVDB_FILE_NAME);
+
         // ReSharper disable once InconsistentNaming
         [NotNull]
-        public static FileInfo TVmazeFile=> GetFileInfo(TVMAZE_FILE_NAME);
+        public static FileInfo TVmazeFile => GetFileInfo(TVMAZE_FILE_NAME);
+
         public static FileInfo TmdbFile => GetFileInfo(TMDB_FILE_NAME);
+
         // ReSharper disable once InconsistentNaming
         [NotNull]
         public static FileInfo TVDocSettingsFile => GetFileInfo(SETTINGS_FILE_NAME);
+
         [NotNull]
         public static FileInfo LanguagesFile => GetFileInfo(LANGUAGES_FILE_NAME);
     }

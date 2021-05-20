@@ -2,7 +2,7 @@ namespace TVRename
 {
     public class FileSystemProperties
     {
-        public  FileSystemProperties(long? totalBytes, long? freeBytes, long? availableBytes)
+        public FileSystemProperties(long? totalBytes, long? freeBytes, long? availableBytes)
         {
             TotalBytes = totalBytes;
             FreeBytes = freeBytes;

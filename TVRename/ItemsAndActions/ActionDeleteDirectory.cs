@@ -1,14 +1,14 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
-using System;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using System;
 
 namespace TVRename
 {
@@ -32,6 +32,7 @@ namespace TVRename
             Movie = mi;
             toRemove = remove;
         }
+
         public override string ProgressText => toRemove.Name;
         public override string Produces => toRemove.FullName;
         public override IgnoreItem Ignore => new IgnoreItem(toRemove.FullName);

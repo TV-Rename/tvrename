@@ -1,16 +1,16 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -234,7 +234,7 @@ namespace TVRename
                 {
                     AutomaticSortEnabled = false,
                     ResizeEnabled = false
-                }; 
+                };
 
                 grid1[0, c + 1] = h;
                 grid1[0, c + 1].View = colTitleModel;
@@ -377,7 +377,7 @@ namespace TVRename
             }
         }
 
-        #endregion
+        #endregion Nested type: CellClickEvent
 
         #region Nested type: DataArr
 
@@ -515,7 +515,7 @@ namespace TVRename
             {
                 bool[] keepR = new bool[DataR];
                 bool[] keepC = new bool[DataC];
-                // trim by actor 
+                // trim by actor
                 int countR = 0;
                 int countC = 0;
 
@@ -685,7 +685,7 @@ namespace TVRename
                 Rows[0] = t2;
             }
 
-            public void SortRows(bool score) 
+            public void SortRows(bool score)
             {
                 for (int r2 = 0; r2 < DataR - 1; r2++)
                 {
@@ -720,7 +720,7 @@ namespace TVRename
             }
         }
 
-        #endregion
+        #endregion Nested type: DataArr
 
         #region Nested type: RotatedText
 
@@ -761,7 +761,7 @@ namespace TVRename
             }
         }
 
-        #endregion
+        #endregion Nested type: RotatedText
 
         #region Nested type: SideClickEvent
 
@@ -789,7 +789,7 @@ namespace TVRename
             }
         }
 
-        #endregion
+        #endregion Nested type: SideClickEvent
 
         #region Nested type: SortColsByCountEvent
 
@@ -808,7 +808,7 @@ namespace TVRename
             }
         }
 
-        #endregion
+        #endregion Nested type: SortColsByCountEvent
 
         #region Nested type: SortRowsByCountEvent
 
@@ -827,7 +827,7 @@ namespace TVRename
             }
         }
 
-        #endregion
+        #endregion Nested type: SortRowsByCountEvent
 
         #region Nested type: TopClickEvent
 
@@ -848,6 +848,6 @@ namespace TVRename
             }
         }
 
-        #endregion
+        #endregion Nested type: TopClickEvent
     }
 }

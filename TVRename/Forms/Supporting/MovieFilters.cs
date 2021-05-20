@@ -1,14 +1,14 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
+using JetBrains.Annotations;
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename.Forms
 {
@@ -29,7 +29,7 @@ namespace TVRename.Forms
             cmbNetwork.Items.AddRange(doc.FilmLibrary.GetNetworks().Cast<object>().ToArray());
 
             cmbShowStatus.Items.Add(string.Empty);
-            cmbShowStatus.Items.AddRange(doc.FilmLibrary.GetStatuses().Cast<object>().ToArray()); 
+            cmbShowStatus.Items.AddRange(doc.FilmLibrary.GetStatuses().Cast<object>().ToArray());
 
             cmbRating.Items.Add(string.Empty);
             cmbRating.Items.AddRange(doc.FilmLibrary.GetContentRatings().Cast<object>().ToArray());
@@ -94,7 +94,7 @@ namespace TVRename.Forms
 
             filter.ShowName = string.IsNullOrEmpty(tbShowName.Text) ? null : tbShowName.Text;
             filter.ShowStatus = string.IsNullOrEmpty(cmbShowStatus.Text) ? null : cmbShowStatus.SelectedItem.ToString();
-            filter.ShowNetwork  = string.IsNullOrEmpty(cmbNetwork.Text) ? null : cmbNetwork.SelectedItem.ToString();
+            filter.ShowNetwork = string.IsNullOrEmpty(cmbNetwork.Text) ? null : cmbNetwork.SelectedItem.ToString();
             filter.ShowRating = string.IsNullOrEmpty(cmbRating.Text) ? null : cmbRating.SelectedItem.ToString();
             filter.ShowYear = string.IsNullOrEmpty(cmbYear.Text) ? null : cmbYear.SelectedItem.ToString();
 

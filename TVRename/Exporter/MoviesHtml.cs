@@ -1,8 +1,8 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -13,6 +13,7 @@ namespace TVRename
         }
 
         public override bool Active() => TVSettings.Instance.ExportMoviesHTML;
+
         protected override string Location() => TVSettings.Instance.ExportMoviesHTMLTo;
 
         protected override void Do()
@@ -66,7 +67,7 @@ namespace TVRename
 <small class=""text-muted"">{cachedSeries.ShowLanguage} - {cachedSeries.Type}</small>
                         <small class=""text-muted"">{runTimeHtml}</small></div>
 </div>
-                
+
             <div><blockquote>{cachedSeries.Overview}</blockquote></div>
             <div><blockquote>{cachedSeries.GetActorNames().ToCsv()}</blockquote></div>
             <div class=""row align-items-bottom flex-grow-1"">

@@ -1,8 +1,8 @@
+using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -22,15 +22,15 @@ namespace TVRename
             {
                 throw new FixCheckException("Movie has multiple manual locations - unclear which to copy across");
             }
-            if (Movie.ManualLocations.Count ==0)
+            if (Movie.ManualLocations.Count == 0)
             {
                 //no files to copy
                 Movie.UseAutomaticFolders = true;
                 Movie.UseManualLocations = false;
                 return;
             }
-            
-            if (Movie.ManualLocations.Count == 1 )
+
+            if (Movie.ManualLocations.Count == 1)
             {
                 DirectoryInfo source = new DirectoryInfo(Movie.ManualLocations.First());
                 if (!source.Exists)
@@ -63,7 +63,7 @@ namespace TVRename
                     throw new FixCheckException("No target automatic folders can be established");
                 }
 
-                if (source.FullName.Equals(automaticLocations.First(),StringComparison.CurrentCultureIgnoreCase))
+                if (source.FullName.Equals(automaticLocations.First(), StringComparison.CurrentCultureIgnoreCase))
                 {
                     Movie.UseManualLocations = false;
                     return;
@@ -72,7 +72,7 @@ namespace TVRename
                 //Do we want to copy the whole folder or just some files from witin?
                 //we have one location to copy to
 
-                bool manualLocationOnlyHasOneMovie = source.EnumerateFiles().Where(f=>f.IsMovieFile()).All(file => Movie.NameMatch(file, false));
+                bool manualLocationOnlyHasOneMovie = source.EnumerateFiles().Where(f => f.IsMovieFile()).All(file => Movie.NameMatch(file, false));
 
                 if (manualLocationOnlyHasOneMovie)
                 {

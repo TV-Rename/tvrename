@@ -1,3 +1,5 @@
+using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -5,8 +7,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Web;
-using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 using TVRename.Forms;
 using TVRename.Properties;
 
@@ -35,12 +35,12 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string GetShowHtmlOverview(this ShowConfiguration si,bool includeDirectoryLinks)
+        public static string GetShowHtmlOverview(this ShowConfiguration si, bool includeDirectoryLinks)
         {
             Color col = Color.FromName("ButtonFace");
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(HTMLHeader(10,col));
-            sb.AppendShow(si,col,includeDirectoryLinks);
+            sb.AppendLine(HTMLHeader(10, col));
+            sb.AppendShow(si, col, includeDirectoryLinks);
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
         }
@@ -50,7 +50,7 @@ namespace TVRename
             Color col = Color.FromName("ButtonFace");
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(HTMLHeader(10, col));
-            sb.AppendShow(null,series, col, false);
+            sb.AppendShow(null, series, col, false);
             sb.AppendRecommendation(recommendation, col);
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
@@ -72,7 +72,7 @@ namespace TVRename
             Color col = Color.FromName("ButtonFace");
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(HTMLHeader(10, col));
-            sb.AppendMovie(null,movie, col, false);
+            sb.AppendMovie(null, movie, col, false);
             sb.AppendRecommendation(recommendation, col);
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
@@ -86,7 +86,7 @@ namespace TVRename
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine(HTMLHeader(10, col));
-            sb.AppendShowSummary(si,dfc, col,includeDirectoryLinks);
+            sb.AppendShowSummary(si, dfc, col, includeDirectoryLinks);
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
         }
@@ -154,7 +154,7 @@ namespace TVRename
             string? tvdbSLug = si.CachedShow?.Slug;
             string tvdbLink = !tvdbSLug.HasValue() ? string.Empty : TheTVDB.API.WebsiteSeasonUrl(s);
             string tvdbButton = CreateButton(tvdbLink, "TVDB.com", "View on TVDB");
-            string tvMazeButton = CreateButton(s.Show.Provider!=TVDoc.ProviderType.TVmaze?string.Empty: s.WebsiteUrl, "TVmaze.com", "View on TV Maze");
+            string tvMazeButton = CreateButton(s.Show.Provider != TVDoc.ProviderType.TVmaze ? string.Empty : s.WebsiteUrl, "TVmaze.com", "View on TV Maze");
             string episodeText = s.Episodes.Count > 0 ? $"<br/><small class=\"text-muted\">{s.Episodes.Count} Episodes</small>" : string.Empty;
 
             string seasonOverViewHtml = si.CachedShow?.Season(s.SeasonNumber)?.SeasonName.HasValue() ?? false
@@ -164,7 +164,7 @@ namespace TVRename
             sb.AppendLine($@"     <tr class=""table-secondary"">
       <td scope=""row"" colspan=""4"">{seasonOverViewHtml}{episodeText}</td>
       <td class=""text-right"">
-{CreateButton(EditSeasonUrl(si,s), "<i class=\"far fa-edit\"></i>", "Edit")}
+{CreateButton(EditSeasonUrl(si, s), "<i class=\"far fa-edit\"></i>", "Edit")}
 {explorerButton}
             {tvdbButton}
             {tvMazeButton}</td>
@@ -181,7 +181,7 @@ namespace TVRename
             {
                 return;
             }
-            AppendShow(sb,si,ser,backgroundColour,includeDirectoryLinks);
+            AppendShow(sb, si, ser, backgroundColour, includeDirectoryLinks);
         }
 
         private static void AppendShow(this StringBuilder sb, ShowConfiguration? si, CachedSeriesInfo ser, Color backgroundColour, bool includeDirectoryLinks)
@@ -190,9 +190,9 @@ namespace TVRename
             string poster = CreatePosterHtml(ser);
             string yearRange = YearRange(ser);
             string episodeSummary = ser.Episodes.Count.ToString();
-            string stars = StarRating(ser.SiteRating/2);
+            string stars = StarRating(ser.SiteRating / 2);
             string genreIcons = string.Join("&nbsp;", ser.Genres.Select(GenreIconHtml));
-            string siteRating = ser.SiteRating > 0 ? ser.SiteRating+ "/10" : "";
+            string siteRating = ser.SiteRating > 0 ? ser.SiteRating + "/10" : "";
             string runTimeHtml = string.IsNullOrWhiteSpace(ser.Runtime) ? string.Empty : $"<br/> {ser.Runtime} min";
             string actorLinks = ser.GetActors().Select(ActorLinkHtml).ToCsv();
             string airsTime = ParseAirsTime(ser);
@@ -201,9 +201,9 @@ namespace TVRename
 
             string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : $"http://www.tv.com/show/{ser.SeriesId}/summary.html";
             string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
-            string mazeLink = ser.TvMazeCode <=0 ? string.Empty : ser.WebUrl;
+            string mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
             string tmdbLink = ser.TmdbCode > 0 ? $"https://www.themoviedb.org/tv/{ser.TmdbCode}" : string.Empty;
-            string tvdbLink = ser.TvdbCode>0?  TheTVDB.API.WebsiteShowUrl(ser) : string.Empty;
+            string tvdbLink = ser.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(ser) : string.Empty;
 
             string urlFilename = includeDirectoryLinks
                 ? Uri.EscapeDataString(si.GetBestFolderLocationToOpen())
@@ -226,7 +226,7 @@ namespace TVRename
                      <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6><small class=""text-muted"">{episodeSummary} Episodes{runTimeHtml}</small></div>
                     </div>
                     <div><p class=""lead"">{ser.Overview}</p></div>
-			        <div><blockquote>{actorLinks}</blockquote></div> 
+			        <div><blockquote>{actorLinks}</blockquote></div>
 		            <div>
                     {CreateButton(EditTvSeriesUrl(ser), "<i class=\"far fa-edit\"></i>", "Edit")}
                      {explorerButton}
@@ -274,7 +274,6 @@ namespace TVRename
                  </div>");
         }
 
-
         private static void AppendMovie(this StringBuilder sb, MovieConfiguration? si, Color backgroundColour,
             bool includeDirectoryLinks)
         {
@@ -284,10 +283,10 @@ namespace TVRename
             {
                 return;
             }
-            AppendMovie(sb,si,ser,backgroundColour,includeDirectoryLinks);
+            AppendMovie(sb, si, ser, backgroundColour, includeDirectoryLinks);
         }
 
-        private static void AppendMovie(this StringBuilder sb, MovieConfiguration? si, CachedMovieInfo ser,  Color backgroundColour, bool includeDirectoryLinks)
+        private static void AppendMovie(this StringBuilder sb, MovieConfiguration? si, CachedMovieInfo ser, Color backgroundColour, bool includeDirectoryLinks)
         {
             string poster = CreatePosterHtml(ser);
             string yearRange = ser.Year?.ToString() ?? "";
@@ -296,19 +295,18 @@ namespace TVRename
             string siteRating = ser.SiteRating > 0 ? ser.SiteRating + "/10" : "";
             string runTimeHtml = string.IsNullOrWhiteSpace(ser.Runtime) ? string.Empty : $"<br/> {ser.Runtime} min";
             string actorLinks = ser.GetActors().Select(ActorLinkHtml).ToCsv();
-            string tvdbLink = ser.Slug.HasValue() ? $"https://www.thetvdb.com/movies/{ser.Slug}" :string.Empty; 
+            string tvdbLink = ser.Slug.HasValue() ? $"https://www.thetvdb.com/movies/{ser.Slug}" : string.Empty;
             string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : $"http://www.tv.com/show/{ser.SeriesId}/summary.html";
             string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
             string tmdbLink = ser.TmdbCode > 0 ? $"https://www.themoviedb.org/movie/{ser.TmdbCode}" : string.Empty;
             string mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
 
-            string urlFilename = includeDirectoryLinks ? Uri.EscapeDataString(si.Locations.FirstOrDefault() ?? string.Empty)                 : string.Empty;
-            string explorerButton = includeDirectoryLinks                 ? CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder")                 : string.Empty;
+            string urlFilename = includeDirectoryLinks ? Uri.EscapeDataString(si.Locations.FirstOrDefault() ?? string.Empty) : string.Empty;
+            string explorerButton = includeDirectoryLinks ? CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder") : string.Empty;
             string viewButton = includeDirectoryLinks ? CreateButton($"{UI.WATCH_PROXY}{urlFilename}", "<i class=\"far fa-eye\"></i>", "Watch Now") : string.Empty;
-            string facebookButton = ser.FacebookId.HasValue() ?CreateButton($"https://facebook.com/{ser.FacebookId}", "<i class=\"fab fa-facebook\"></i>", "Facebook"):string.Empty;
-            string instaButton = ser.InstagramId.HasValue() ? CreateButton($"https://instagram.com/{ser.InstagramId}", "<i class=\"fab fa-instagram\"></i>", "Instagram"):string.Empty;
-            string twitterButton = ser.TwitterId.HasValue() ? CreateButton($"https://twitter.com/{ser.TwitterId}", "<i class=\"fab fa-twitter\"></i>", "Twitter"):string.Empty;
-
+            string facebookButton = ser.FacebookId.HasValue() ? CreateButton($"https://facebook.com/{ser.FacebookId}", "<i class=\"fab fa-facebook\"></i>", "Facebook") : string.Empty;
+            string instaButton = ser.InstagramId.HasValue() ? CreateButton($"https://instagram.com/{ser.InstagramId}", "<i class=\"fab fa-instagram\"></i>", "Instagram") : string.Empty;
+            string twitterButton = ser.TwitterId.HasValue() ? CreateButton($"https://twitter.com/{ser.TwitterId}", "<i class=\"fab fa-twitter\"></i>", "Twitter") : string.Empty;
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                   <div class=""row"">
@@ -323,7 +321,7 @@ namespace TVRename
                         <small class=""text-muted"">{runTimeHtml}</small></div>
                     </div>
                     <div><p class=""lead"">{ser.Overview}</p></div>
-			        <div></div> 
+			        <div></div>
 		            <div>
                     {CreateButton(EditMovieUrl(ser), "<i class=\"far fa-edit\"></i>", "Edit")}
                      {explorerButton}
@@ -337,7 +335,7 @@ namespace TVRename
                     {facebookButton}
                     {instaButton}
                     {twitterButton}
-                    
+
 			        </div>
 <div id=""accordion"">
   <div class=""card"">
@@ -352,7 +350,7 @@ namespace TVRename
     <div id = ""collapseOne"" class=""collapse show"" aria-labelledby=""headingOne"" data-parent=""#accordion"">
       <div class=""card-body"">
         <blockquote>{actorLinks}</blockquote>
-        
+
       </div>
     </div>
   </div>
@@ -392,7 +390,7 @@ namespace TVRename
                     //tofo reenable when TVDB has movies
                     //if (si.TVDBSlug > 0)
                     //{
-                        //return $"https://thetvdb.com/movies/{TVDBSlug}/edit";
+                    //return $"https://thetvdb.com/movies/{TVDBSlug}/edit";
                     //}
 
                     return null;
@@ -424,7 +422,6 @@ namespace TVRename
             }
 
             return null;
-
         }
 
         private static string? EditSeasonUrl(ShowConfiguration si, ProcessedSeason s)
@@ -449,12 +446,13 @@ namespace TVRename
                     return null;
 
                 case TVDoc.ProviderType.TVmaze:
-                    if (si.TVmazeCode > 0 && s.SeasonId>0)
+                    if (si.TVmazeCode > 0 && s.SeasonId > 0)
                     {
                         return $"https://www.tvmaze.com/season/update?id={s.SeasonId}";
                     }
 
                     return null;
+
                 case TVDoc.ProviderType.libraryDefault:
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -466,7 +464,7 @@ namespace TVRename
             switch (ep.Show.Provider)
             {
                 case TVDoc.ProviderType.TheTVDB:
-                    if (ep.Show.CachedShow?.Slug.HasValue()??false)
+                    if (ep.Show.CachedShow?.Slug.HasValue() ?? false)
                     {
                         return $"https://thetvdb.com/series/{ep.Show.CachedShow?.Slug}/episodes/{ep.EpisodeId}";
                     }
@@ -488,7 +486,7 @@ namespace TVRename
                     }
 
                     return null;
-                
+
                 case TVDoc.ProviderType.libraryDefault:
                 default:
                     return null;
@@ -500,7 +498,7 @@ namespace TVRename
             switch (si.Provider)
             {
                 case TVDoc.ProviderType.TheTVDB:
-                    
+
                     if (si.CachedShow?.Slug.HasValue() ?? false)
                     {
                         return $"https://thetvdb.com/series/{si.CachedShow.Slug}/edit";
@@ -523,6 +521,7 @@ namespace TVRename
                     }
 
                     return null;
+
                 case TVDoc.ProviderType.libraryDefault:
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -578,7 +577,7 @@ namespace TVRename
         [NotNull]
         private static string ParseAirsTime([NotNull] CachedSeriesInfo ser)
         {
-            return ser.AirsTime?.ToString("h tt")?? string.Empty;
+            return ser.AirsTime?.ToString("h tt") ?? string.Empty;
         }
 
         [NotNull]
@@ -589,7 +588,7 @@ namespace TVRename
                 return si.AutoAddFolderBase;
             }
 
-            foreach (string folder  in si.AllExistngFolderLocations().Values.SelectMany(a=>a))
+            foreach (string folder in si.AllExistngFolderLocations().Values.SelectMany(a => a))
             {
                 if (folder.HasValue() && Directory.Exists(folder))
                 {
@@ -606,12 +605,12 @@ namespace TVRename
             if (!string.IsNullOrEmpty(path) &&
                 !string.IsNullOrEmpty(TheTVDB.API.GetImageURL(path)))
             {
-                return  $"<img class=\"rounded\" src=\"{TheTVDB.API.GetImageURL(path)}\"><br/>&nbsp;";
+                return $"<img class=\"rounded\" src=\"{TheTVDB.API.GetImageURL(path)}\"><br/>&nbsp;";
             }
 
             return string.Empty;
         }
-        
+
         [NotNull]
         private static string CreateHorizontalBannerHtml([NotNull] this ProcessedSeason s)
         {
@@ -630,7 +629,7 @@ namespace TVRename
             string url = ser.GetSeriesPosterPath();
             if (url.HasValue() && !url.IsWebLink() && TheTVDB.API.GetImageURL(url).HasValue())
             {
-                url =TheTVDB.API.GetImageURL(url);
+                url = TheTVDB.API.GetImageURL(url);
             }
             if (url.HasValue() && url.IsWebLink())
             {
@@ -657,7 +656,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string CreateSeasonPosterHtml([NotNull] ShowConfiguration si,int snum)
+        private static string CreateSeasonPosterHtml([NotNull] ShowConfiguration si, int snum)
         {
             string url = si.CachedShow?.GetSeasonBannerPath(snum);
             if (url is null)
@@ -698,7 +697,7 @@ namespace TVRename
                 ? TheTVDB.API.GetImageURL(ei.Filename)
                 : ei.Filename;
 
-            if (url.HasValue()) 
+            if (url.HasValue())
             {
                 return $"<img class=\"rounded w-100\" src=\"{url}\" alt=\"{ei.Name} Screenshot\">";
             }
@@ -711,8 +710,8 @@ namespace TVRename
             StringBuilder sb = new StringBuilder();
             DirFilesCache dfc = new DirFilesCache();
             Color col = Color.FromName("ButtonFace");
-            sb.AppendLine(HTMLHeader(10,col));
-            sb.AppendSeason(s,si,col,includeDirectoryLinks);
+            sb.AppendLine(HTMLHeader(10, col));
+            sb.AppendSeason(s, si, col, includeDirectoryLinks);
 
             if (si.SeasonEpisodes.TryGetValue(s.SeasonNumber, out List<ProcessedEpisode> siSeasonEpisode))
             {
@@ -739,7 +738,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string SeasonSummaryTableRow([NotNull]ProcessedEpisode ep, bool includeDirectoryLinks, DirFilesCache dfc)
+        private static string SeasonSummaryTableRow([NotNull] ProcessedEpisode ep, bool includeDirectoryLinks, DirFilesCache dfc)
         {
             List<FileInfo>? fl = includeDirectoryLinks ? dfc.FindEpOnDisk(ep) : null;
             string status = GetEpisodeStatus(ep, includeDirectoryLinks, fl);
@@ -771,7 +770,7 @@ namespace TVRename
             {
                 return "On Disk";
             }
-            
+
             if (ep.Show.IgnoreSeasons.Contains(ep.AppropriateSeasonNumber))
             {
                 return "Ignored Season";
@@ -805,9 +804,9 @@ namespace TVRename
                 return;
             }
 
-            string tablerows = si.SeasonEpisodes[s.SeasonNumber].ToList().Select(episode => SeasonSummaryTableRow(episode,includeDirectoryLinks,dfc)).Concat();
+            string tablerows = si.SeasonEpisodes[s.SeasonNumber].ToList().Select(episode => SeasonSummaryTableRow(episode, includeDirectoryLinks, dfc)).Concat();
 
-            string seasonHeaderDiv = CreateSeasonHeaderDiv(si,s,includeDirectoryLinks);
+            string seasonHeaderDiv = CreateSeasonHeaderDiv(si, s, includeDirectoryLinks);
             string table = CreateEpisodeTableHeader(tablerows);
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">{seasonHeaderDiv}
@@ -863,7 +862,7 @@ namespace TVRename
                     {seasonOverViewHtml}
                     </div>
                     <div class=""col-4 text-right"">
-                        {CreateButton(EditSeasonUrl(si,s), "<i class=\"far fa-edit\"></i>", "Edit")}
+                        {CreateButton(EditSeasonUrl(si, s), "<i class=\"far fa-edit\"></i>", "Edit")}
                         {explorerButton}
                         {tvdbButton}
                         {tvMazeButton}
@@ -872,7 +871,7 @@ namespace TVRename
                 </div>";
         }
 
-        private static void AppendSeason(this StringBuilder sb, ProcessedSeason s, ShowConfiguration? si,Color backgroundColour, bool includeDirectoryLinks)
+        private static void AppendSeason(this StringBuilder sb, ProcessedSeason s, ShowConfiguration? si, Color backgroundColour, bool includeDirectoryLinks)
         {
             if (si is null)
             {
@@ -888,7 +887,7 @@ namespace TVRename
 				</div>");
         }
 
-        private static string GetBestFolderLocationToOpen([NotNull] this ShowConfiguration si,[NotNull] ProcessedSeason s )
+        private static string GetBestFolderLocationToOpen([NotNull] this ShowConfiguration si, [NotNull] ProcessedSeason s)
         {
             Dictionary<int, SafeList<string>> afl = si.AllExistngFolderLocations();
 
@@ -902,7 +901,7 @@ namespace TVRename
                     }
                 }
             }
-            
+
             if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && Directory.Exists(si.AutoAddFolderBase))
             {
                 return si.AutoAddFolderBase;
@@ -911,13 +910,13 @@ namespace TVRename
             return string.Empty;
         }
 
-        private static void AppendEpisode([NotNull] this StringBuilder sb, [NotNull] ProcessedEpisode ep, IReadOnlyCollection<FileInfo>? fl,Color backgroundColour)
+        private static void AppendEpisode([NotNull] this StringBuilder sb, [NotNull] ProcessedEpisode ep, IReadOnlyCollection<FileInfo>? fl, Color backgroundColour)
         {
             string stars = StarRating(ep.EpisodeRating);
             string tvdbEpisodeUrl = ep.Show.Provider == TVDoc.ProviderType.TheTVDB ? ep.TVDBWebsiteUrl : string.Empty;
             bool ratingIsNumber = float.TryParse(ep.EpisodeRating, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out float rating);
             string siteRating = ratingIsNumber && rating > 0
-                ? rating + "/10" + AddRatingCount(ep.SiteRatingCount??0)
+                ? rating + "/10" + AddRatingCount(ep.SiteRatingCount ?? 0)
                 : "";
 
             string imdbLink = string.IsNullOrWhiteSpace(ep.ImdbCode) ? string.Empty : "http://www.imdb.com/title/" + ep.ImdbCode;
@@ -941,8 +940,8 @@ namespace TVRename
                 ? string.Empty
                 : "<br />";
 
-            string searchButton = (fl is null || fl.Count==0) && ep.HasAired()
-                ? CreateButton(TVSettings.Instance.BTSearchURL(ep), "<i class=\"fas fa-search\"></i>","Search for Torrent...")
+            string searchButton = (fl is null || fl.Count == 0) && ep.HasAired()
+                ? CreateButton(TVSettings.Instance.BTSearchURL(ep), "<i class=\"fas fa-search\"></i>", "Search for Torrent...")
                 : string.Empty;
 
             string viewButton = string.Empty;
@@ -951,15 +950,15 @@ namespace TVRename
             {
                 foreach (string urlFilename in fl.Select(fi => Uri.EscapeDataString(fi.FullName)))
                 {
-                    viewButton += CreateButton($"{UI.WATCH_PROXY}{urlFilename}", "<i class=\"far fa-eye\"></i>","Watch Now");
-                    explorerButton += CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>","Open Containing Folder");
+                    viewButton += CreateButton($"{UI.WATCH_PROXY}{urlFilename}", "<i class=\"far fa-eye\"></i>", "Watch Now");
+                    explorerButton += CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
                 }
             }
 
-            string tvdbButton = CreateButton(tvdbEpisodeUrl, "TVDB.com","View on TVDB");
-            string tvMazeButton = CreateButton(ep.Show.Provider==TVDoc.ProviderType.TVmaze? ep.LinkUrl:null, "TVmaze.com", "View on TV maze");
-            string imdbButton = CreateButton(imdbLink, "IMDB.com","View on IMDB");
-            string tvButton = CreateButton(ep.ShowUrl, "TV.com","View on TV.com");
+            string tvdbButton = CreateButton(tvdbEpisodeUrl, "TVDB.com", "View on TVDB");
+            string tvMazeButton = CreateButton(ep.Show.Provider == TVDoc.ProviderType.TVmaze ? ep.LinkUrl : null, "TVmaze.com", "View on TV maze");
+            string imdbButton = CreateButton(imdbLink, "IMDB.com", "View on IMDB");
+            string tvButton = CreateButton(ep.ShowUrl, "TV.com", "View on TV.com");
 
             sb.AppendLine($@"
                 <div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
@@ -1038,14 +1037,14 @@ namespace TVRename
                 return body;
             }
 
-            body += ImageSection("Show Banner", 758, 140, ser.GetSeriesWideBannerPath(),si.Provider);
+            body += ImageSection("Show Banner", 758, 140, ser.GetSeriesWideBannerPath(), si.Provider);
             body += ImageSection("Show Poster", 350, 500, ser.GetSeriesPosterPath(), si.Provider);
             body += ImageSection("Show Fanart", 960, 540, ser.GetSeriesFanartPath(), si.Provider);
             return body;
         }
 
         [NotNull]
-        private static string ImageSection(string title, int width, int height, string? bannerPath,TVDoc.ProviderType p)
+        private static string ImageSection(string title, int width, int height, string? bannerPath, TVDoc.ProviderType p)
         {
             if (string.IsNullOrEmpty(bannerPath))
             {
@@ -1071,12 +1070,12 @@ namespace TVRename
                 return Resources.Spoilers_Hidden_Text;
             }
 
-            if(ei.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
+            if (ei.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
             {
                 return string.Join("<p/><hr/><p class=\"lead\" />", ei.SourceEpisodes.Select(e => e.Overview));
             }
 
-            return ei.Overview ??string.Empty;
+            return ei.Overview ?? string.Empty;
         }
 
         [NotNull]
@@ -1087,7 +1086,7 @@ namespace TVRename
 
             if (TVSettings.Instance.NeedToDownloadBannerFile())
             {
-                body += ImageSection("Series Banner", 758, 140, si.CachedShow?.GetSeasonWideBannerPath(snum),si.Provider);
+                body += ImageSection("Series Banner", 758, 140, si.CachedShow?.GetSeasonWideBannerPath(snum), si.Provider);
                 body += ImageSection("Series Poster", 350, 500, si.CachedShow?.GetSeasonBannerPath(snum), si.Provider);
             }
             else
@@ -1155,7 +1154,7 @@ namespace TVRename
         [NotNull]
         private static string ActorLinkHtml([NotNull] Actor actor)
         {
-            string asText = actor.AsSelf()?string.Empty
+            string asText = actor.AsSelf() ? string.Empty
                 : string.IsNullOrWhiteSpace(actor.ActorRole) ? string.Empty
                 : " as " + actor.ActorRole;
             string tryText =
@@ -1208,7 +1207,7 @@ namespace TVRename
 
         // ReSharper disable once InconsistentNaming
         [NotNull]
-        internal static string HTMLHeader(int size,Color backgroundColour)
+        internal static string HTMLHeader(int size, Color backgroundColour)
         {
             return @"<!DOCTYPE html>
                 <html><head>
@@ -1283,7 +1282,7 @@ namespace TVRename
 
             string yearRange = YearRange(ser);
 
-            string siteRating = (ser?.SiteRating??0) > 0 ? ser.SiteRating + "/10" : string.Empty;
+            string siteRating = (ser?.SiteRating ?? 0) > 0 ? ser.SiteRating + "/10" : string.Empty;
             string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(si) : string.Empty;
 
             string tableHtml = string.Empty;
@@ -1295,13 +1294,13 @@ namespace TVRename
             tableHtml += GetOverviewPart("Aliases", si.AliasNames.ToCsv());
             tableHtml += GetOverviewPart("Genres", si.Genres.ToCsv());
             tableHtml += GetOverviewPart("Rating", ser?.ContentRating);
-            tableHtml += GetOverviewPart("User Rating", $"{siteRating}{AddRatingCount(ser?.SiteRatingVotes??0)}");
+            tableHtml += GetOverviewPart("User Rating", $"{siteRating}{AddRatingCount(ser?.SiteRatingVotes ?? 0)}");
             tableHtml += GetOverviewPart("Active From", yearRange);
             tableHtml += GetOverviewPart("Status", ser?.Status);
 
             if (tableHtml.HasValue())
             {
-                body += "<h2>Information<table border=0>"+tableHtml+"</table>";
+                body += "<h2>Information<table border=0>" + tableHtml + "</table>";
             }
 
             return body;
@@ -1354,7 +1353,7 @@ namespace TVRename
                 }
 
                 List<FileInfo> fl = dfc.FindEpOnDisk(ei);
-                if (fl.Count>0)
+                if (fl.Count > 0)
                 {
                     foreach (FileInfo fi in fl)
                     {
@@ -1453,12 +1452,12 @@ namespace TVRename
             {
                 body += "<h2>Information<table border=0>" + tableHtml + "</table>";
             }
-                    
+
             return body;
         }
 
         [NotNull]
-        private static string EpisodeName([NotNull] ShowConfiguration si, int snum,  [NotNull] ProcessedEpisode ei)
+        private static string EpisodeName([NotNull] ShowConfiguration si, int snum, [NotNull] ProcessedEpisode ei)
         {
             if (si.Order == ProcessedSeason.SeasonType.dvd && snum == 0)
             {
@@ -1469,10 +1468,10 @@ namespace TVRename
 
         private static string GetOverview([NotNull] ProcessedEpisode ei)
         {
-            string overviewString=string.Empty;
+            string overviewString = string.Empty;
 
             overviewString += GetOverviewPart("imdb.com", "<A HREF=\"http://www.imdb.com/title/" + ei.ImdbCode + "\">Visit</a>");
-            overviewString += GetOverviewPart("Link", "<A HREF=\"" +ei.ShowUrl+ "\">Visit</a>");
+            overviewString += GetOverviewPart("Link", "<A HREF=\"" + ei.ShowUrl + "\">Visit</a>");
             overviewString += GetOverviewPart("Director", ei.EpisodeDirector);
             overviewString += GetOverviewPart("Guest Stars", ei.EpisodeGuestStars);
             overviewString += GetOverviewPart("Production Code", ei.ProductionCode);
@@ -1489,7 +1488,7 @@ namespace TVRename
         [NotNull]
         private static string GetOverviewPart(string name, string? value)
         {
-            return string.IsNullOrWhiteSpace(value)? string.Empty: "<tr><td width=120px>" + name + "</td><td>" + value + "</td></tr>";
+            return string.IsNullOrWhiteSpace(value) ? string.Empty : "<tr><td width=120px>" + name + "</td><td>" + value + "</td></tr>";
         }
 
         public static string? YoutubeTrailer(CachedMediaInfo? si)

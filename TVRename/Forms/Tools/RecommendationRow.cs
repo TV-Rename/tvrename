@@ -23,10 +23,12 @@ namespace TVRename.Forms
                     Series = TMDB.LocalCache.Instance.GetSeries(x.Key);
                     cachedMediaInfo = Series;
                     break;
+
                 case MediaConfiguration.MediaType.movie:
                     Movie = TMDB.LocalCache.Instance.GetMovie(x.Key);
                     cachedMediaInfo = Movie;
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(t), t, null);
             }
@@ -35,6 +37,7 @@ namespace TVRename.Forms
         public int Key => result.Key;
         public string? Name => cachedMediaInfo?.Name;
         public string? Overview => cachedMediaInfo?.Overview;
+
         public string? Year => type == MediaConfiguration.MediaType.movie
             ? Movie?.Year.ToString()
             : Series?.Year;
@@ -42,7 +45,6 @@ namespace TVRename.Forms
         public bool TopRated => result.TopRated;
         public bool Trending => result.Trending;
         public string? Language => cachedMediaInfo.ShowLanguage;
-
 
         //Star score is out of 5 stars, we produce a 'normlised' result by adding a top mark 10/10 and a bottom mark 1/10 and recalculating
         //this is to stop a show with one 10/10 vote looking too good, this normalises it back if the number of votes is small

@@ -102,14 +102,13 @@ namespace TVRename
             Add(new Language(27, "zh", "zho", "Chinese (Hong Kong)", "大陆简体", "zh-HK", false));
             Add(new Language(27, "zh", "zho", "Chinese (Taiwan)", "大陆简体", "zh-TW", false));
             Add(new Language(262, "zu", "zul", "Zulu (South Africa)", "isiZulu", "zu-ZA", true));
-
         }
 
         public Language? GetLanguageFromCode(string? languageAbbreviation)
         {
             lock (lockObject)
             {
-                return this.SingleOrDefault(l => l.Abbreviation == languageAbbreviation  && l.IsPrimary);
+                return this.SingleOrDefault(l => l.Abbreviation == languageAbbreviation && l.IsPrimary);
             }
         }
 

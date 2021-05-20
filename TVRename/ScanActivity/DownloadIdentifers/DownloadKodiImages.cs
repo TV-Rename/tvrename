@@ -1,13 +1,13 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Globalization;
-using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -20,15 +20,15 @@ namespace TVRename
         private List<string> doneTbn = new List<string>();
 
         public DownloadKodiImages() => Reset();
-        
+
         public override DownloadType GetDownloadType() => DownloadType.downloadImage;
-        
+
         public override void NotifyComplete(FileInfo file)
         {
             if (file.Name.EndsWith(".tbn", true, new CultureInfo("en")))
             {
                 doneTbn.Add(file.FullName);
-            } 
+            }
             base.NotifyComplete(file);
         }
 
@@ -72,7 +72,7 @@ namespace TVRename
 
                 if ((forceRefresh || !fanartJpg.Exists) && !doneFanartJpg.Contains(file.Directory.FullName))
                 {
-                    string path =  movie.CachedMovie?.FanartUrl;
+                    string path = movie.CachedMovie?.FanartUrl;
                     if (!string.IsNullOrEmpty(path))
                     {
                         theActionList.Add(new ActionDownloadImage(movie, null, fanartJpg, path));
@@ -209,8 +209,8 @@ namespace TVRename
                     foreach (Episode sourceEp in episode.SourceEpisodes)
                     {
                         string foldername = file.DirectoryName;
-                        string filename = TVSettings.Instance.FilenameFriendly(episode.Show,sourceEp);
-                        ActionDownloadImage b = DoEpisode(episode.Show,sourceEp,new FileInfo(foldername+"/"+filename), ".jpg", forceRefresh);
+                        string filename = TVSettings.Instance.FilenameFriendly(episode.Show, sourceEp);
+                        ActionDownloadImage b = DoEpisode(episode.Show, sourceEp, new FileInfo(foldername + "/" + filename), ".jpg", forceRefresh);
                         if (b != null)
                         {
                             theActionList.Add(b);
@@ -230,7 +230,7 @@ namespace TVRename
             return base.ProcessEpisode(episode, file, forceRefresh);
         }
 
-        private ActionDownloadImage? DoEpisode(ShowConfiguration si, [NotNull] Episode ep, FileInfo filo,string extension, bool forceRefresh)
+        private ActionDownloadImage? DoEpisode(ShowConfiguration si, [NotNull] Episode ep, FileInfo filo, string extension, bool forceRefresh)
         {
             string ban = ep.Filename;
             if (string.IsNullOrEmpty(ban))
@@ -251,7 +251,7 @@ namespace TVRename
             }
 
             doneTbn.Add(imgtbn.FullName);
-            return new ActionDownloadImage(si, ep is ProcessedEpisode episode ? episode  : new ProcessedEpisode(ep,si ), imgtbn, ban);
+            return new ActionDownloadImage(si, ep is ProcessedEpisode episode ? episode : new ProcessedEpisode(ep, si), imgtbn, ban);
         }
 
         public sealed override void Reset()

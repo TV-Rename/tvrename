@@ -1,5 +1,5 @@
-using System;
 using JetBrains.Annotations;
+using System;
 
 namespace TVRename
 {
@@ -13,6 +13,7 @@ namespace TVRename
             Folder = whereItShouldBeFolder;
             Movie = movie;
         }
+
         #region Item Members
 
         public override bool SameAs(Item o)
@@ -33,10 +34,12 @@ namespace TVRename
         }
 
         public MovieConfiguration MovieConfig => Movie ?? throw new InvalidOperationException();
-        #endregion
+
+        #endregion Item Members
 
         public override bool DoRename => MovieConfig.DoRename;
         public override MediaConfiguration Show => MovieConfig;
+
         public override string ToString() => $"{MovieConfig.ShowName}";
     }
 }

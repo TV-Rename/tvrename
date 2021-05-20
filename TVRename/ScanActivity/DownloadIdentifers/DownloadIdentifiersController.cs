@@ -1,14 +1,14 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -16,8 +16,9 @@ namespace TVRename
     internal class DownloadIdentifiersController
     {
         private readonly List<DownloadIdentifier> identifiers;
-        
-        public DownloadIdentifiersController() {
+
+        public DownloadIdentifiersController()
+        {
             identifiers = new List<DownloadIdentifier>
             {
                 new DownloadFolderJpg(),
@@ -53,7 +54,7 @@ namespace TVRename
 
             foreach (DownloadIdentifier di in identifiers)
             {
-                theActionList.Add(di.ProcessMovie(si,filo));
+                theActionList.Add(di.ProcessMovie(si, filo));
             }
             return theActionList;
         }
@@ -85,7 +86,7 @@ namespace TVRename
 
             foreach (DownloadIdentifier di in identifiers)
             {
-                theActionList.Add(di.ProcessSeason (si,folder,snum));
+                theActionList.Add(di.ProcessSeason(si, folder, snum));
             }
             return theActionList;
         }
@@ -100,12 +101,13 @@ namespace TVRename
             ItemList theActionList = new ItemList();
             foreach (DownloadIdentifier di in identifiers)
             {
-                theActionList.Add(di.ProcessEpisode(episode,filo));
+                theActionList.Add(di.ProcessEpisode(episode, filo));
             }
             return theActionList;
         }
 
-        public  void Reset() {
+        public void Reset()
+        {
             foreach (DownloadIdentifier di in identifiers)
             {
                 di.Reset();
@@ -125,7 +127,7 @@ namespace TVRename
             {
                 if (dt == di.GetDownloadType())
                 {
-                    theActionList.Add(di.ProcessMovie(si,filo, true));
+                    theActionList.Add(di.ProcessMovie(si, filo, true));
                 }
             }
             return theActionList;
@@ -144,7 +146,7 @@ namespace TVRename
             {
                 if (dt == di.GetDownloadType())
                 {
-                    theActionList.Add(di.ProcessShow(si,true));
+                    theActionList.Add(di.ProcessShow(si, true));
                 }
             }
             return theActionList;
@@ -163,7 +165,7 @@ namespace TVRename
             {
                 if (dt == di.GetDownloadType())
                 {
-                    theActionList.Add(di.ProcessSeason(si, folder,snum, true));
+                    theActionList.Add(di.ProcessSeason(si, folder, snum, true));
                 }
             }
             return theActionList;

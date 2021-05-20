@@ -1,22 +1,24 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
     internal class MergeLibraryEpisodes : ScanShowActivity
     {
-        public MergeLibraryEpisodes(TVDoc doc) : base(doc) {}
+        public MergeLibraryEpisodes(TVDoc doc) : base(doc)
+        {
+        }
 
         protected override string ActivityName() => "Created Merge Rules for episodes in the library";
 
@@ -57,7 +59,7 @@ namespace TVRename
             } // for each season of this show
         }
 
-        private static void MergeShowEpisodes([NotNull] ShowConfiguration si, DirFilesCache dfc, CancellationToken token, int snum,IEnumerable<string> folders)
+        private static void MergeShowEpisodes([NotNull] ShowConfiguration si, DirFilesCache dfc, CancellationToken token, int snum, IEnumerable<string> folders)
         {
             if (snum == 0 && si.CountSpecials)
             {
@@ -141,7 +143,7 @@ namespace TVRename
             }
 
             if (rulesToAdd.Any())
-            { 
+            {
                 //Regenerate the episodes with the new rule added
                 ShowLibrary.GenerateEpisodeDict(si);
             }

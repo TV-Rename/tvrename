@@ -1,13 +1,13 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
-using System;
 using NLog;
+using System;
 
 namespace TVRename
 {
@@ -27,7 +27,9 @@ namespace TVRename
         }
 
         protected abstract string ActivityName();
+
         protected abstract bool Active();
+
         protected abstract void DoCheck(SetProgressDelegate? progress);
 
         public void Check(SetProgressDelegate? progress) =>
@@ -49,7 +51,7 @@ namespace TVRename
                 DoCheck(progress);
                 LogActionListSummary();
             }
-            catch(TVRenameOperationInterruptedException)
+            catch (TVRenameOperationInterruptedException)
             {
                 throw;
             }
@@ -63,9 +65,9 @@ namespace TVRename
             }
         }
 
-        protected void UpdateStatus(int recordNumber,int totalRecords, string message)
+        protected void UpdateStatus(int recordNumber, int totalRecords, string message)
         {
-            int position = (endPosition - startPosition) * recordNumber / (totalRecords+1);
+            int position = (endPosition - startPosition) * recordNumber / (totalRecords + 1);
             progressDelegate?.Invoke(startPosition + position, message);
         }
 

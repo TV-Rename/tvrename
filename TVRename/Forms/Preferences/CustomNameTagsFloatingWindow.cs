@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 using System.Windows.Forms;
 
 namespace TVRename
@@ -61,7 +61,7 @@ namespace TVRename
                 string txt = s;
                 if (movie != null)
                 {
-                    txt += " - " + CustomMovieName.NameFor(movie,s);
+                    txt += " - " + CustomMovieName.NameFor(movie, s);
                 }
 
                 label1.Text += txt + "\r\n";

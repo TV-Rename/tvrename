@@ -1,6 +1,6 @@
 namespace TVRename
 {
-    public abstract class Finder :ScanActivity
+    public abstract class Finder : ScanActivity
     {
         public ItemList ActionList { protected get; set; }
 
@@ -10,7 +10,7 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        public enum FinderDisplayType { local, downloading, search}
+        public enum FinderDisplayType { local, downloading, search }
 
         public abstract FinderDisplayType DisplayType();
     }

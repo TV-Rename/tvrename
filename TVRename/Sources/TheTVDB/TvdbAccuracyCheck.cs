@@ -1,7 +1,7 @@
-using System;
-using System.Collections.Generic;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 
 namespace TVRename.TheTVDB
 {

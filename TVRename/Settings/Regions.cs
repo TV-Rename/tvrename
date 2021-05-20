@@ -12,7 +12,7 @@ namespace TVRename
         private static readonly object SyncRoot = new object();
 
         public static Regions Instance
-        { 
+        {
             get
             {
                 if (InternalInstance is null)

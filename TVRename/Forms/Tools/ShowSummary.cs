@@ -1,22 +1,22 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
+using SourceGrid;
+using SourceGrid.Cells.Controllers;
+using SourceGrid.Cells.Views;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
-using SourceGrid;
-using SourceGrid.Cells.Controllers;
-using SourceGrid.Cells.Views;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 using ContentAlignment = DevAge.Drawing.ContentAlignment;
 using Directory = System.IO.Directory;
@@ -24,7 +24,7 @@ using RowHeader = SourceGrid.Cells.RowHeader;
 
 namespace TVRename
 {
-    public partial class ShowSummary : Form,IDialogParent
+    public partial class ShowSummary : Form, IDialogParent
     {
         private UI MainWindow { get; }
         private readonly TVDoc mDoc;
@@ -37,7 +37,7 @@ namespace TVRename
             mDoc = doc;
 
             InitializeComponent();
-            
+
             showList = new SafeList<ShowSummaryData>();
             Scan();
         }
@@ -114,7 +114,7 @@ namespace TVRename
             grid1[0, 1].View = topleftTitleModel;
 
             // Draw season
-            for (int c = chkHideSpecials.Checked?1:0; c < maxSeason + 1; c++)
+            for (int c = chkHideSpecials.Checked ? 1 : 0; c < maxSeason + 1; c++)
             {
                 h = new ColumnHeader(ProcessedSeason.UIFullSeasonWord(c))
                 {
@@ -132,7 +132,7 @@ namespace TVRename
 
             // Draw Shows
 
-            int r = 0; 
+            int r = 0;
             foreach (ShowSummaryData show in showList)
             {
                 //Ignore shows with no missing episodes
@@ -167,7 +167,7 @@ namespace TVRename
                 RowHeader rh = new RowHeader(show.ShowName)
                 {
                     ResizeEnabled = false,
-                    View = new Cell{ForeColor = show.ShowConfiguration.DoMissingCheck ? Color.Black : Color.Gray}
+                    View = new Cell { ForeColor = show.ShowConfiguration.DoMissingCheck ? Color.Black : Color.Gray }
                 };
 
                 //Gray if the show is not checked for missing episodes in the scan
@@ -210,7 +210,7 @@ namespace TVRename
                                 ForeColor = Color.White,
                                 TextAlignment = ContentAlignment.BottomRight
                             },
-                            Editor = {EditableMode = EditableMode.None}
+                            Editor = { EditableMode = EditableMode.None }
                         };
 
                     grid1[r + 1, seasonData.SeasonNumber + 2].AddController(new ShowClickEvent(this, show.ShowConfiguration, seasonData.ProcessedSeason));
@@ -229,12 +229,12 @@ namespace TVRename
         private static ShowSummaryData AddShowDetails([NotNull] ShowConfiguration si)
         {
             ShowSummaryData showSummary = new ShowSummaryData
-                {
-                    ShowName = si.ShowName,
-                    ShowConfiguration = si
-                };
+            {
+                ShowName = si.ShowName,
+                ShowConfiguration = si
+            };
 
-            if (si.CachedShow!= null)
+            if (si.CachedShow != null)
             {
                 foreach (int snum in si.AppropriateSeasons().Keys)
                 {
@@ -256,7 +256,7 @@ namespace TVRename
             DirFilesCache dfc = new DirFilesCache();
             ProcessedSeason processedSeason = null;
 
-            if (snum >= 0 && si.AppropriateSeasons().TryGetValue(snum,out processedSeason))
+            if (snum >= 0 && si.AppropriateSeasons().TryGetValue(snum, out processedSeason))
             {
                 List<ProcessedEpisode> eis = si.SeasonEpisodes[snum];
 
@@ -270,7 +270,7 @@ namespace TVRename
                         epAiredCount++;
                     }
 
-                    List<FileInfo> fl = dfc.FindEpOnDisk(ei,false);
+                    List<FileInfo> fl = dfc.FindEpOnDisk(ei, false);
                     if (fl.Count != 0)
                     {
                         epGotCount++;
@@ -312,6 +312,7 @@ namespace TVRename
         }
 
         private delegate void ShowChildConsumer(Form childForm);
+
         public void ShowChildDialog(Form childForm)
         {
             if (InvokeRequired)
@@ -399,10 +400,10 @@ namespace TVRename
 
                 if (processedSeason is null)
                 {
-                    AddRcMenuItem(gridSummary.showRightClickMenu, "Force Refresh",(o, args) =>
-                    {
-                        gridSummary.MainWindow.ForceRefresh(show, false);
-                    });
+                    AddRcMenuItem(gridSummary.showRightClickMenu, "Force Refresh", (o, args) =>
+                     {
+                         gridSummary.MainWindow.ForceRefresh(show, false);
+                     });
 
                     GenerateSeparator(gridSummary.showRightClickMenu);
                 }
@@ -439,7 +440,6 @@ namespace TVRename
                 gridSummary.showRightClickMenu.Show(sender.Grid.PointToScreen(pt));
             }
 
-
             private void GenerateOpenMenu([NotNull] ProcessedSeason seas, ICollection<string> added)
             {
                 Dictionary<int, SafeList<string>> afl = show.AllExistngFolderLocations();
@@ -464,7 +464,7 @@ namespace TVRename
                         AddRcMenuItem(gridSummary.showRightClickMenu, "Open: " + folder, (sender, args) =>
                         {
                             Helpers.OpenFolder(folder);
-                        }); 
+                        });
                     }
                 }
             }
@@ -520,6 +520,7 @@ namespace TVRename
                     }
                 }
             }
+
             private void AddRcMenuItem([NotNull] ContextMenuStrip showRightClickMenu, string name, EventHandler command)
             {
                 ToolStripMenuItem tsi = new ToolStripMenuItem(name);
@@ -534,7 +535,7 @@ namespace TVRename
             }
         }
 
-        #endregion
+        #endregion Nested type: ShowClickEvent
 
         #region Nested type: ShowSummaryData
 
@@ -565,7 +566,7 @@ namespace TVRename
                 private readonly int episodeGotCount;
                 public readonly ProcessedSeason ProcessedSeason;
                 public readonly int SeasonNumber;
-                
+
                 public ShowSummarySeasonData(int seasonNumber, int episodeCount, int episodeAiredCount, int episodeGotCount, ProcessedSeason processedSeason)
                 {
                     SeasonNumber = seasonNumber;
@@ -633,14 +634,14 @@ namespace TVRename
                     return output;
                 }
 
-                public bool HasMissingEpisodes() => episodeGotCount!=episodeCount;
+                public bool HasMissingEpisodes() => episodeGotCount != episodeCount;
 
                 public bool HasAiredMssingEpisodes() => episodeGotCount != episodeAiredCount;
 
                 public bool HasEpisodesOnDisk() => episodeGotCount > 0;
             }
 
-            #endregion
+            #endregion Nested type: ShowSummarySeasonData
 
             #region Nested type: SummaryOutput
 
@@ -651,9 +652,10 @@ namespace TVRename
                 public bool Ignored;
                 public bool Special;
             }
-            #endregion
 
-            public bool HasMssingEpisodes(bool ignoreSpecials,bool ignoreIgnoredSeasons)
+            #endregion Nested type: SummaryOutput
+
+            public bool HasMssingEpisodes(bool ignoreSpecials, bool ignoreIgnoredSeasons)
             {
                 foreach (ShowSummarySeasonData ssn in SeasonDataList)
                 {
@@ -704,7 +706,8 @@ namespace TVRename
                 return SeasonDataList.Any(ssn => ssn.HasEpisodesOnDisk());
             }
         }
-        #endregion
+
+        #endregion Nested type: ShowSummaryData
 
         private void CheckedChanged(object sender, EventArgs e) => PopulateGrid();
 

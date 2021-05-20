@@ -1,10 +1,10 @@
+using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using JetBrains.Annotations;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename.Forms
 {
@@ -100,6 +100,7 @@ namespace TVRename.Forms
 
             UpdateUI();
         }
+
         private void BtnRefresh_Click_1(object sender, EventArgs e)
         {
             Scan();
@@ -127,7 +128,7 @@ namespace TVRename.Forms
 
             AddRcMenuItem("Force Refresh", (o, args) =>
             {
-                mainUi.ForceMovieRefresh(new List<MovieConfiguration> {si}, false);
+                mainUi.ForceMovieRefresh(new List<MovieConfiguration> { si }, false);
                 Update(mlastSelected);
             });
             AddRcMenuItem("Update", (o, args) =>
@@ -152,6 +153,7 @@ namespace TVRename.Forms
                 });
             }
         }
+
         private void Update(DuplicateMovie duplicate)
         {
             if (dupMovies.Contains(duplicate))
@@ -161,6 +163,7 @@ namespace TVRename.Forms
             ProcessMovie(duplicate.Movie);
             UpdateUI();
         }
+
         private void MergeItems(DuplicateMovie mlastSelected, UI ui)
         {
             foreach (var file1 in mlastSelected.Files)
@@ -188,6 +191,7 @@ namespace TVRename.Forms
                     //remove first file and combine locations
                     UpgradeFile("System had identified to", file2, mlastSelectedMovie, file1);
                     break;
+
                 case FileHelper.VideoComparison.cantTell:
                 case FileHelper.VideoComparison.similar:
                     {
@@ -200,6 +204,7 @@ namespace TVRename.Forms
                     //remove second file and combine locations
                     UpgradeFile("System had identified to", file1, mlastSelectedMovie, file2);
                     return;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -220,12 +225,15 @@ namespace TVRename.Forms
                     case ChooseFile.ChooseFileDialogResult.ignore:
                         Logger.Info($" User has selected keeping {file1.FullName} and {file2.FullName} and they will not be merged");
                         return;
+
                     case ChooseFile.ChooseFileDialogResult.left:
                         UpgradeFile("User selected to", file1, pep, file2);
                         return;
+
                     case ChooseFile.ChooseFileDialogResult.right:
                         UpgradeFile("User selected to", file2, pep, file1);
                         return;
+
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

@@ -1,7 +1,7 @@
+using CefSharp;
 using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Web;
-using CefSharp;
 
 namespace TVRename
 {
@@ -59,7 +59,6 @@ namespace TVRename
 
         public void OnDocumentAvailableInMainFrame(IWebBrowser chromiumWebBrowser, IBrowser browser)
         {
-       
         }
 
         public bool OnOpenUrlFromTab(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl,
@@ -70,7 +69,7 @@ namespace TVRename
 
         public IResourceRequestHandler GetResourceRequestHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame,
             IRequest request, bool isNavigation, bool isDownload, string requestInitiator, ref bool disableDefaultHandling) => null;
-        
+
         public bool GetAuthCredentials(IWebBrowser chromiumWebBrowser, IBrowser browser, string originUrl, bool isProxy, string host,
             int port, string realm, string scheme, IAuthCallback callback)
         {
@@ -99,6 +98,7 @@ namespace TVRename
         {
             return CefReturnValue.Continue;
         }
+
         public void OnRenderProcessTerminated(IWebBrowser browserControl, IBrowser browser, CefTerminationStatus status)
         {
         }
@@ -112,7 +112,6 @@ namespace TVRename
 
         public void OnRenderViewReady(IWebBrowser browserControl, IBrowser browser)
         {
-
         }
     }
 }

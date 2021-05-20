@@ -4,10 +4,14 @@ namespace TVRename
 {
     internal class MissingMovieCsv : ActionListExporter
     {
-        public MissingMovieCsv(ItemList theActionList) : base(theActionList) { }
+        public MissingMovieCsv(ItemList theActionList) : base(theActionList)
+        {
+        }
 
         public override bool Active() => TVSettings.Instance.ExportMissingMoviesCSV;
+
         protected override string Location() => TVSettings.Instance.ExportMissingMoviesCSVTo;
+
         public override bool ApplicableFor(TVSettings.ScanType st) => st == TVSettings.ScanType.Full;
 
         protected override void Do()

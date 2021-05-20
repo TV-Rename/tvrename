@@ -1,6 +1,6 @@
 namespace TVRename
 {
-    public class TorrentEntry: IDownloadInformation // represents a torrent downloading in a doewloader(Torrent)
+    public class TorrentEntry : IDownloadInformation // represents a torrent downloading in a doewloader(Torrent)
     {
         public readonly string DownloadingTo;
         public readonly int PercentDone;
@@ -21,7 +21,7 @@ namespace TVRename
 
         string IDownloadInformation.Destination => DownloadingTo;
 
-        string IDownloadInformation.RemainingText  
+        string IDownloadInformation.RemainingText
         {
             get
             {

@@ -1,16 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 using CloudFlareUtilities;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using NLog;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Cache;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace TVRename
 {
@@ -100,13 +100,13 @@ namespace TVRename
                 return client.DownloadData(url);
             }
 
-            return new byte[]{};
+            return new byte[] { };
         }
 
         [NotNull]
         public static string HttpRequest([NotNull] string method, [NotNull] string url, string json, string contentType, string? token)
         {
-            return HttpRequest(method, url, json, contentType, token, string.Empty );
+            return HttpRequest(method, url, json, contentType, token, string.Empty);
         }
 
         [NotNull]
@@ -126,7 +126,7 @@ namespace TVRename
             }
             if (lang != "")
             {
-                httpWebRequest.Headers.Add("Accept-Language",lang);
+                httpWebRequest.Headers.Add("Accept-Language", lang);
             }
 
             Logger.Trace("Obtaining {0}", url);
@@ -171,11 +171,11 @@ namespace TVRename
             }
         }
 
-        public static void LogWebException([NotNull] this Logger l,string message, [NotNull] WebException wex)
+        public static void LogWebException([NotNull] this Logger l, string message, [NotNull] WebException wex)
         {
             if (wex.IsUnimportant())
             {
-                l.Warn(message+" "+wex.LoggableDetails());
+                l.Warn(message + " " + wex.LoggableDetails());
             }
             else
             {
@@ -317,21 +317,21 @@ namespace TVRename
 
         [NotNull]
         public static JObject JsonHttpGetRequest([NotNull] string url, string? authToken) =>
-            JObject.Parse(HttpRequest("GET",url, null, "application/json", authToken,string.Empty));
+            JObject.Parse(HttpRequest("GET", url, null, "application/json", authToken, string.Empty));
 
         public static JArray JsonListHttpGetRequest([NotNull] string url, string? authToken) =>
             JArray.Parse(HttpRequest("GET", url, null, "application/json", authToken, string.Empty));
 
         [NotNull]
-        public static JObject JsonHttpPostRequest( string url, JObject request, bool retry)
+        public static JObject JsonHttpPostRequest(string url, JObject request, bool retry)
         {
             TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
 
-            string response=null;
+            string response = null;
             if (retry)
             {
                 RetryOnException(3, pauseBetweenFailures, url, exception => true,
-                    () => { response = HttpRequest("POST", url, request.ToString(), "application/json",string.Empty); },
+                    () => { response = HttpRequest("POST", url, request.ToString(), "application/json", string.Empty); },
                     null);
             }
             else
@@ -361,7 +361,7 @@ namespace TVRename
             return finalUrl.Remove(finalUrl.LastIndexOf("&", StringComparison.Ordinal));
         }
 
-        public static void RetryOnException(int times,TimeSpan delay,string url, Func<Exception, bool> retryableException,[NotNull] System.Action operation, System.Action? updateOperation)
+        public static void RetryOnException(int times, TimeSpan delay, string url, Func<Exception, bool> retryableException, [NotNull] System.Action operation, System.Action? updateOperation)
         {
             if (times <= 0)
             {
@@ -435,14 +435,14 @@ namespace TVRename
             } while (true);
         }
 
-        public static JObject  HttpGetRequestWithRetry(string fullUrl, int times,int secondsGap) 
+        public static JObject HttpGetRequestWithRetry(string fullUrl, int times, int secondsGap)
         {
             JObject response = null;
             TimeSpan gap = TimeSpan.FromSeconds(secondsGap);
             RetryOnException(times, gap, fullUrl,
                 exception => exception is WebException wex && !wex.Is404()
-                    ,() => { response = JsonHttpGetRequest(fullUrl, null); }
-                    ,null);
+                    , () => { response = JsonHttpGetRequest(fullUrl, null); }
+                    , null);
 
             return response;
         }

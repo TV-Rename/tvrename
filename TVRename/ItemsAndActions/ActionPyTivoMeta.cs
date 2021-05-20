@@ -1,21 +1,21 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 using System.Linq;
 
 namespace TVRename
 {
-    using System;
     using Alphaleonis.Win32.Filesystem;
-    
+    using System;
+
     public class ActionPyTivoMeta : ActionWriteMetadata
     {
-        public ActionPyTivoMeta(FileInfo nfo, ProcessedEpisode pe) :base(nfo,pe.Show)
+        public ActionPyTivoMeta(FileInfo nfo, ProcessedEpisode pe) : base(nfo, pe.Show)
         {
             Episode = pe;
         }
@@ -72,7 +72,7 @@ namespace TVRename
                 return new ActionOutcome(e);
             }
         }
-    
+
         private static void WriteEntries(System.IO.TextWriter writer, string heading, string? entries)
         {
             if (string.IsNullOrEmpty(entries))
@@ -93,7 +93,7 @@ namespace TVRename
             }
         }
 
-        #endregion
+        #endregion Action Members
 
         #region Item Members
 
@@ -127,6 +127,6 @@ namespace TVRename
             return string.Compare(Where.FullName + Episode.Name, nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
 
-        #endregion
+        #endregion Item Members
     }
 }

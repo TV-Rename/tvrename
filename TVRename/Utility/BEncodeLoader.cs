@@ -8,7 +8,7 @@ namespace TVRename
         {
             System.IO.BinaryReader br = new System.IO.BinaryReader(sr);
 
-            byte[] c = br.ReadBytes((int) length);
+            byte[] c = br.ReadBytes((int)length);
 
             BTString bts = new BTString();
             bts.Data = c;
@@ -31,14 +31,14 @@ namespace TVRename
             if (neg)
                 r = -r;
 
-            BTInteger bti = new BTInteger {Value = r};
+            BTInteger bti = new BTInteger { Value = r };
             return bti;
         }
 
         public BTItem ReadDictionary(System.IO.FileStream sr)
         {
             BTDictionary d = new BTDictionary();
-            for (;;)
+            for (; ; )
             {
                 BTItem next = ReadNext(sr);
                 if ((next.Type == BTChunk.kListOrDictionaryEnd) || (next.Type == BTChunk.kBTEOF))
@@ -53,7 +53,7 @@ namespace TVRename
 
                 BTDictionaryItem di = new BTDictionaryItem
                 {
-                    Key = ((BTString) next).AsString(),
+                    Key = ((BTString)next).AsString(),
                     Data = ReadNext(sr)
                 };
 
@@ -64,7 +64,7 @@ namespace TVRename
         public BTItem ReadList(System.IO.FileStream sr)
         {
             BTList ll = new BTList();
-            for (;;)
+            for (; ; )
             {
                 BTItem next = ReadNext(sr);
                 if (next.Type == BTChunk.kListOrDictionaryEnd)

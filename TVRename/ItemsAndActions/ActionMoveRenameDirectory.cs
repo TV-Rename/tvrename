@@ -1,6 +1,6 @@
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Linq;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -88,7 +88,7 @@ namespace TVRename
                     source.Delete(false);
                     LOGGER.Info($"Deleted empty directory {source.FullName}");
                 }
-                return ActionOutcome.Success(); 
+                return ActionOutcome.Success();
             }
 
             source.MoveTo(targetFolder);

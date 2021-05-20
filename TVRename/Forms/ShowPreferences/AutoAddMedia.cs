@@ -1,7 +1,7 @@
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -22,11 +22,10 @@ namespace TVRename
 
             this.assumeMovie = assumeMovie;
 
-            lblFileName.Text = "Filename: "+file.FullName;
+            lblFileName.Text = "Filename: " + file.FullName;
 
-
-            tvCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.tv,TVDoc.ProviderType.libraryDefault) {Dock = DockStyle.Fill};
-            movieCodeFinder = new CombinedCodeFinder("",MediaConfiguration.MediaType.movie, TVDoc.ProviderType.libraryDefault) { Dock = DockStyle.Fill };
+            tvCodeFinder = new CombinedCodeFinder("", MediaConfiguration.MediaType.tv, TVDoc.ProviderType.libraryDefault) { Dock = DockStyle.Fill };
+            movieCodeFinder = new CombinedCodeFinder("", MediaConfiguration.MediaType.movie, TVDoc.ProviderType.libraryDefault) { Dock = DockStyle.Fill };
 
             tvCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
             movieCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
@@ -36,10 +35,10 @@ namespace TVRename
 
             originalHint = hint;
 
-            if (SingleTvShowFound )
+            if (SingleTvShowFound)
             {
                 string filenameFriendly = TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(tvCodeFinder.TvShowInitialFound.Name));
-                SetShowItem(tvCodeFinder.TvShowInitialFoundCode, tvCodeFinder.Source,TVSettings.Instance.DefShowLocation+ System.IO.Path.DirectorySeparatorChar + filenameFriendly);
+                SetShowItem(tvCodeFinder.TvShowInitialFoundCode, tvCodeFinder.Source, TVSettings.Instance.DefShowLocation + System.IO.Path.DirectorySeparatorChar + filenameFriendly);
                 if (ShowConfiguration.Code == -1)
                 {
                     SetShowItem();
@@ -47,7 +46,7 @@ namespace TVRename
             }
             if (SingleMovieFound)
             {
-                SetMovieItem(movieCodeFinder.MovieInitialFoundCode,movieCodeFinder.Source, TVSettings.Instance.DefMovieDefaultLocation);
+                SetMovieItem(movieCodeFinder.MovieInitialFoundCode, movieCodeFinder.Source, TVSettings.Instance.DefMovieDefaultLocation);
                 if (MovieConfiguration.Code == -1)
                 {
                     SetMovieItem();
@@ -62,8 +61,8 @@ namespace TVRename
             panel1.Controls.Add(movieCodeFinder);
             panel1.ResumeLayout();
 
-            UpdateDirectoryDropDown(cbDirectory, TVSettings.Instance.LibraryFolders, TVSettings.Instance.DefShowLocation, TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation,tpTV);
-            UpdateDirectoryDropDown(cbMovieDirectory, TVSettings.Instance.MovieLibraryFolders, TVSettings.Instance.DefMovieDefaultLocation, true,tpMovie);
+            UpdateDirectoryDropDown(cbDirectory, TVSettings.Instance.LibraryFolders, TVSettings.Instance.DefShowLocation, TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation, tpTV);
+            UpdateDirectoryDropDown(cbMovieDirectory, TVSettings.Instance.MovieLibraryFolders, TVSettings.Instance.DefMovieDefaultLocation, true, tpMovie);
         }
 
         private static void UpdateDirectoryDropDown(ComboBox comboBox, List<string> folders, string? defaultValue, bool useDefaultValue, TabPage tabToDisable)
@@ -110,14 +109,14 @@ namespace TVRename
         {
             int code = tvCodeFinder.SelectedCode();
 
-            SetShowItem(code,tvCodeFinder.Source, cbDirectory.Text + lblDirectoryName.Text);
+            SetShowItem(code, tvCodeFinder.Source, cbDirectory.Text + lblDirectoryName.Text);
         }
 
-        private void SetShowItem(int code,TVDoc.ProviderType type ,string folderbase)
+        private void SetShowItem(int code, TVDoc.ProviderType type, string folderbase)
         {
-            ShowConfiguration.SetId(type,code); 
+            ShowConfiguration.SetId(type, code);
             ShowConfiguration.AutoAddFolderBase = folderbase;
-            ShowConfiguration.ConfigurationProvider = type == TVSettings.Instance.DefaultProvider? TVDoc.ProviderType.libraryDefault: type;
+            ShowConfiguration.ConfigurationProvider = type == TVSettings.Instance.DefaultProvider ? TVDoc.ProviderType.libraryDefault : type;
 
             //Set Default Timezone and if not then set on Network
             ShowConfiguration.ShowTimeZone = TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.TimeZoneForNetwork(tvCodeFinder.SelectedShow()?.Network, ShowConfiguration.ShowTimeZone);
@@ -132,7 +131,7 @@ namespace TVRename
         {
             int code = movieCodeFinder.SelectedCode();
 
-            SetMovieItem(code,movieCodeFinder.Source, cbMovieDirectory.Text);
+            SetMovieItem(code, movieCodeFinder.Source, cbMovieDirectory.Text);
         }
 
         private void SetMovieItem(int code, TVDoc.ProviderType type, string folderbase)
@@ -173,11 +172,11 @@ namespace TVRename
 
         private bool OkToClose()
         {
-            if (tabControl1.SelectedTab == tpTV  && TVDoc.GetMediaCache(tvCodeFinder.Source).HasSeries(tvCodeFinder.SelectedCode()) )
+            if (tabControl1.SelectedTab == tpTV && TVDoc.GetMediaCache(tvCodeFinder.Source).HasSeries(tvCodeFinder.SelectedCode()))
             {
                 return true;
             }
-            if (tabControl1.SelectedTab==tpMovie && TVDoc.GetMediaCache(movieCodeFinder.Source).HasMovie(movieCodeFinder.SelectedCode()))
+            if (tabControl1.SelectedTab == tpMovie && TVDoc.GetMediaCache(movieCodeFinder.Source).HasMovie(movieCodeFinder.SelectedCode()))
             {
                 return true;
             }
@@ -211,10 +210,12 @@ namespace TVRename
         {
             movieCodeFinder.SetSource(GetMovieProviderType());
         }
+
         private void rdoTVProvider_CheckedChanged(object sender, EventArgs e)
         {
             tvCodeFinder.SetSource(GetTvProviderType());
         }
+
         private TVDoc.ProviderType GetMovieProviderType()
         {
             if (rdoMovieLibraryDefault.Checked)
@@ -231,6 +232,7 @@ namespace TVRename
             }
             return TVDoc.ProviderType.libraryDefault;
         }
+
         private TVDoc.ProviderType GetTvProviderType()
         {
             if (rdoTVTVMaze.Checked)

@@ -1,23 +1,23 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
-using System.Linq;
 using JetBrains.Annotations;
+using System.Linq;
 
 namespace TVRename
 {
     using System;
-    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
     using System.Xml;
+    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
     public class ActionWdtvMeta : ActionWriteMetadata
     {
-        public ActionWdtvMeta(FileInfo where, ProcessedEpisode pe) :base(where,pe.Show)
+        public ActionWdtvMeta(FileInfo where, ProcessedEpisode pe) : base(where, pe.Show)
         {
             Episode = pe;
         }
@@ -26,6 +26,7 @@ namespace TVRename
         {
             Episode = null;
         }
+
         #region Action Members
 
         public override string Name => "Write WD TV Live Hub Meta";
@@ -35,7 +36,7 @@ namespace TVRename
             return Episode != null ? WriteEpisodeMetaDataFile() :
                 SelectedShow != null ? WriteSeriesXml() :
                 ActionOutcome.Success();
-                //todo WDTV Movie support WriteMovieXml();
+            //todo WDTV Movie support WriteMovieXml();
         }
 
         [NotNull]
@@ -67,7 +68,7 @@ namespace TVRename
                         writer.WriteElement("genre", genre);
                     }
 
-                    float siteRating =SelectedShow.CachedShow?.SiteRating??0 * 10;
+                    float siteRating = SelectedShow.CachedShow?.SiteRating ?? 0 * 10;
 
                     int intSiteRating = (int)siteRating;
                     if (intSiteRating > 0)
@@ -178,7 +179,7 @@ namespace TVRename
             return new ActionOutcome("Write WDTV Metadata called with no Episode provided");
         }
 
-        #endregion
+        #endregion Action Members
 
         #region Item Members
 
@@ -208,6 +209,7 @@ namespace TVRename
 
             return string.Compare(Where.FullName + Episode.Name, nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
-        #endregion
+
+        #endregion Item Members
     }
 }

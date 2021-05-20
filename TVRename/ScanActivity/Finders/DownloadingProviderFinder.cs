@@ -5,10 +5,12 @@ namespace TVRename
     internal abstract class DownloadingProviderFinder : DownloadingFinder
     {
         private readonly IDownloadProvider source;
+
         protected DownloadingProviderFinder(TVDoc doc, IDownloadProvider source) : base(doc)
         {
             this.source = source;
         }
+
         protected override string CheckName() => $"Looked in {source.Name()} for the missing files to see if they are being downloaded";
 
         protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)

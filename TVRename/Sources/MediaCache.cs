@@ -1,13 +1,13 @@
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Concurrent;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
     public abstract class MediaCache
     {
-
         protected FileInfo CacheFile;
+
         // ReSharper disable once InconsistentNaming
         public string? CurrentDLTask;
 
@@ -16,21 +16,23 @@ namespace TVRename
         public bool LoadOk;
 
         public abstract TVDoc.ProviderType Provider();
-        
-        protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
+        protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
         // ReSharper disable once InconsistentNaming
         public readonly object LANGUAGE_LOCK = new object();
+
         public Languages? LanguageList;
         public Regions? RegionList;
 
         // ReSharper disable once InconsistentNaming
         public readonly object MOVIE_LOCK = new object();
+
         protected readonly ConcurrentDictionary<int, CachedMovieInfo> Movies = new ConcurrentDictionary<int, CachedMovieInfo>();
 
         // ReSharper disable once InconsistentNaming
         public readonly object SERIES_LOCK = new object();
+
         protected readonly ConcurrentDictionary<int, CachedSeriesInfo> Series = new ConcurrentDictionary<int, CachedSeriesInfo>();
 
         public abstract Language? PreferredLanguage();
@@ -40,7 +42,9 @@ namespace TVRename
         public bool IsConnected { get; protected set; }
 
         public abstract bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
+
         protected void SayNothing() => Say(null);
+
         protected void Say(string? s)
         {
             CurrentDLTask = s;
@@ -49,6 +53,7 @@ namespace TVRename
                 LOGGER.Info("Status on screen updated: {0}", s);
             }
         }
+
         public ConcurrentDictionary<int, CachedMovieInfo> CachedMovieData
         {
             get

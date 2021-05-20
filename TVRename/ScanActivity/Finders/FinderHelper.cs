@@ -1,20 +1,20 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
+using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
+using NLog;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
-using NLog;
-using NodaTime;
 using Path = System.IO.Path;
 
 namespace TVRename
@@ -23,7 +23,7 @@ namespace TVRename
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, out int maxEp, ShowConfiguration? si,out TVSettings.FilenameProcessorRE? re)
+        public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, out int maxEp, ShowConfiguration? si, out TVSettings.FilenameProcessorRE? re)
         {
             return FindSeasEp(fi, out seas, out ep, out maxEp, si, TVSettings.Instance.FNPRegexs, out re);
         }
@@ -67,7 +67,7 @@ namespace TVRename
 
             string simplifiedFilename = fi.Name.CompareName();
 
-            foreach (Episode epi in si.EpisodesToUse()) 
+            foreach (Episode epi in si.EpisodesToUse())
             {
                 string simplifiedEpName = epi.Name.CompareName();
 
@@ -143,7 +143,7 @@ namespace TVRename
 
                 foreach (string dateFormat in dateFormats)
                 {
-                    string datestr = dt.Value.ToString(dateFormat,CultureInfo.CurrentCulture);
+                    string datestr = dt.Value.ToString(dateFormat, CultureInfo.CurrentCulture);
 
                     if (filename.Contains(datestr) && DateTime.TryParseExact(datestr, dateFormat,
                             new CultureInfo("en-GB"), DateTimeStyles.None, out DateTime dtInFilename))
@@ -493,7 +493,7 @@ namespace TVRename
         {
             if (!int.TryParse(m.Groups["s"].ToString(), out int seas))
             {
-                if (!re.RegExpression.Contains("<s>") && (si?.AppropriateSeasons().Count??0) == 1)
+                if (!re.RegExpression.Contains("<s>") && (si?.AppropriateSeasons().Count ?? 0) == 1)
                 {
                     seas = 1;
                 }
@@ -565,7 +565,7 @@ namespace TVRename
             {
                 IEnumerable<ShowConfiguration> showConfigurations = doc.TvLibrary.Shows
                     .Where(item => item.NameMatch(matchedFile, useFullPath))
-                    .Where(item => !HaveACommonId(item,currentlyMatchedTvShow));
+                    .Where(item => !HaveACommonId(item, currentlyMatchedTvShow));
 
                 return showConfigurations
                     .Any(testShow => testShow.ShowName.Contains(currentlyMatchedTvShow.ShowName));
@@ -615,7 +615,7 @@ namespace TVRename
                             ep = -1;
                         }
 
-                        int p = Math.Min(m.Groups["s"].Index, m.Groups["e"].Index); 
+                        int p = Math.Min(m.Groups["s"].Index, m.Groups["e"].Index);
                         int p2 = Math.Min(p, hint.IndexOf(m.Groups.SyncRoot!.ToString(), StringComparison.Ordinal));
 
                         if (seas != -1 && ep != -1)
@@ -646,10 +646,12 @@ namespace TVRename
         {
             return shows.Any(si => si.NameMatch(test));
         }
+
         private static bool LookForMovie(FileSystemInfo test, [NotNull] IEnumerable<MovieConfiguration> shows)
         {
             return shows.Any(si => si.NameMatch(test, TVSettings.Instance.UseFullPathNameToMatchSearchFolders));
         }
+
         private static bool LookForSeries(FileSystemInfo test, [NotNull] IEnumerable<ShowConfiguration> shows)
         {
             return shows.Any(si => si.NameMatch(test, TVSettings.Instance.UseFullPathNameToMatchSearchFolders));
@@ -668,7 +670,7 @@ namespace TVRename
 
             foreach (FileInfo file in possibleShows)
             {
-                string hint =  file.RemoveExtension(TVSettings.Instance.UseFullPathNameToMatchSearchFolders) + ".";
+                string hint = file.RemoveExtension(TVSettings.Instance.UseFullPathNameToMatchSearchFolders) + ".";
 
                 //remove any search folders  from the hint. They are probbably useless at helping specify the showname
                 foreach (var path in TVSettings.Instance.DownloadFolders)
@@ -720,7 +722,7 @@ namespace TVRename
                 }
                 if (LookForMovies(refinedHint, doc.FilmLibrary.Movies))
                 {
-                    Logger.Info($"Ignoring {hint} as it matches existing movies already in the library: {doc.FilmLibrary.Movies.Where(si => si.NameMatch(refinedHint)).Select(s=>s.ShowName).ToCsv()}");
+                    Logger.Info($"Ignoring {hint} as it matches existing movies already in the library: {doc.FilmLibrary.Movies.Where(si => si.NameMatch(refinedHint)).Select(s => s.ShowName).ToCsv()}");
                     continue;
                 }
 
@@ -740,7 +742,7 @@ namespace TVRename
                 {
                     //TODO - Make generic, currently uses TMDB only
                     CachedMovieInfo? foundMovie = TMDB.LocalCache.Instance.GetMovie(refinedHint, null, new Locale(), true, true);
-                    if (foundMovie!=null)
+                    if (foundMovie != null)
                     {
                         // no need to popup dialog
                         Logger.Info($"Auto Adding New Movie for '{refinedHint}' (directly) : {foundMovie.Name}");
@@ -758,14 +760,13 @@ namespace TVRename
                             newMovie.AliasNames.Add(hint);
                         }
 
-
                         addedShows.Add(newMovie);
                         doc.Stats().AutoAddedMovies++;
                         continue;
                     }
                 }
                 //popup dialog
-                AutoAddMedia askForMatch = new AutoAddMedia(refinedHint, file,assumeMovie);
+                AutoAddMedia askForMatch = new AutoAddMedia(refinedHint, file, assumeMovie);
 
                 if (askForMatch.SingleTvShowFound && !askForMatch.SingleMovieFound && true) //todo use  TVSettings.Instance.AutomateAutoAddWhenOneShowFound
                 {
@@ -818,15 +819,13 @@ namespace TVRename
                 }
 
                 askForMatch.Dispose();
-
-
             }
 
             return addedShows;
         }
 
-
         public static ShowConfiguration? FindBestMatchingShow([NotNull] FileInfo fi, [NotNull] IEnumerable<ShowConfiguration> shows) => FindBestMatchingShow(fi.Name, shows);
+
         public static MovieConfiguration? FindBestMatchingMovie([NotNull] FileInfo fi, [NotNull] IEnumerable<MovieConfiguration> shows) => FindBestMatchingShow(fi.Name, shows);
 
         public static ShowConfiguration? FindBestMatchingShow(string filename, [NotNull] IEnumerable<ShowConfiguration> shows)
@@ -868,7 +867,7 @@ namespace TVRename
         [NotNull]
         public static IEnumerable<ShowConfiguration> FindMatchingShows([NotNull] FileInfo fi, [NotNull] IEnumerable<ShowConfiguration> sil)
         {
-            return FindMatchingShows(fi.Name,sil);
+            return FindMatchingShows(fi.Name, sil);
         }
 
         [NotNull]
@@ -876,10 +875,12 @@ namespace TVRename
         {
             return sil.Where(item => item.NameMatch(filename));
         }
+
         public static IEnumerable<MovieConfiguration> FindMatchingShows(string filename, [NotNull] IEnumerable<MovieConfiguration> sil)
         {
             return sil.Where(item => item.NameMatch(filename));
         }
+
         public static FileInfo GenerateTargetName(ItemMissing mi, FileInfo from)
         {
             if (mi.DoRename && TVSettings.Instance.RenameCheck)
@@ -890,7 +891,7 @@ namespace TVRename
             return new FileInfo(mi.DestinationFolder.EnsureEndsWithSeparator() + @from.Name);
         }
 
-        public static FileInfo GenerateTargetName(string folder,ProcessedEpisode pep, FileInfo fi)
+        public static FileInfo GenerateTargetName(string folder, ProcessedEpisode pep, FileInfo fi)
         {
             string filename = fi.Name;
 

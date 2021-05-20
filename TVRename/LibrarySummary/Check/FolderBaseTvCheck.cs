@@ -1,11 +1,13 @@
-using System.Linq;
 using JetBrains.Annotations;
+using System.Linq;
 
 namespace TVRename
 {
     internal class FolderBaseTvCheck : TvShowCheck
     {
-        public FolderBaseTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc) { }
+        public FolderBaseTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
+        {
+        }
 
         public override bool Check() => !Show.AutoAddFolderBase.HasValue() && Show.AutoAddNewSeasons();
 

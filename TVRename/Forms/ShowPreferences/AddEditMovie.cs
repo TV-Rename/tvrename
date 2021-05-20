@@ -1,17 +1,17 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -48,7 +48,7 @@ namespace TVRename
             lblSeasonWordPreview.ForeColor = Color.DarkGray;
 
             codeFinderForm =
-                new CombinedCodeFinder(si.TmdbCode != -1 ? si.TmdbCode.ToString() : "",MediaConfiguration.MediaType.movie,si.Provider) {Dock = DockStyle.Fill};
+                new CombinedCodeFinder(si.TmdbCode != -1 ? si.TmdbCode.ToString() : "", MediaConfiguration.MediaType.movie, si.Provider) { Dock = DockStyle.Fill };
 
             codeFinderForm.SelectionChanged += MTCCF_SelectionChanged;
 
@@ -227,6 +227,7 @@ namespace TVRename
             DialogResult = DialogResult.OK;
             Close();
         }
+
         private TVDoc.ProviderType GetProviderTypeInUse()
         {
             if (GetProviderType() == TVDoc.ProviderType.libraryDefault)
@@ -236,6 +237,7 @@ namespace TVRename
 
             return GetProviderType();
         }
+
         private bool OkToClose()
         {
             if (!TVDoc.GetMediaCache(GetProviderTypeInUse()).HasMovie(codeFinderForm.SelectedCode()))
@@ -251,7 +253,7 @@ namespace TVRename
             {
                 MessageBox.Show("Please enter language for the show or accept the default preferred language", "TVRename Add/Edit Movie",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                
+
                 return false;
             }
             if (chkAutoFolders.Checked && string.IsNullOrWhiteSpace(cbDirectory.SelectedItem?.ToString()))
@@ -294,8 +296,11 @@ namespace TVRename
         #region HelpWindows
 
         private void pbBasics_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-basics-tab");
+
         private void pbAdvanced_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-advanced-tab");
+
         private void pbAliases_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-show-aliases-tab");
+
         private void pbFolders_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-folders-tab");
 
         private static void OpenInfoWindow(string page)
@@ -303,7 +308,7 @@ namespace TVRename
             Helpers.OpenUrl($"https://www.tvrename.com/manual/user{page}");
         }
 
-        #endregion
+        #endregion HelpWindows
 
         private void SetShow()
         {
@@ -314,7 +319,7 @@ namespace TVRename
             selectedShow.UseCustomLanguage = chkCustomLanguage.Checked;
             if (selectedShow.UseCustomLanguage)
             {
-                selectedShow.CustomLanguageCode = (Languages.Instance.GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString()) ??TVSettings.Instance.PreferredTVDBLanguage).Abbreviation;
+                selectedShow.CustomLanguageCode = (Languages.Instance.GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString()) ?? TVSettings.Instance.PreferredTVDBLanguage).Abbreviation;
             }
 
             selectedShow.UseCustomRegion = chkCustomRegion.Checked;
@@ -425,7 +430,7 @@ namespace TVRename
 
         private void tbShowAlias_TextChanged(object sender, EventArgs e)
         {
-          bnAddAlias.Enabled = tbShowAlias.Text.Length > 0;
+            bnAddAlias.Enabled = tbShowAlias.Text.Length > 0;
         }
 
         private void lbShowAlias_SelectedIndexChanged(object sender, EventArgs e)
@@ -435,9 +440,9 @@ namespace TVRename
 
         private void bnTags_Click(object sender, EventArgs e)
         {
-                cntfw = new CustomNameTagsFloatingWindow(selectedShow);
-                cntfw.Show(this);
-                Focus();
+            cntfw = new CustomNameTagsFloatingWindow(selectedShow);
+            cntfw.Show(this);
+            Focus();
         }
 
         private void chkCustomLanguage_CheckedChanged(object sender, EventArgs e)
@@ -448,6 +453,7 @@ namespace TVRename
         private void MTCCF_SelectionChanged(object sender, EventArgs e)
         {
         }
+
         private void bnBrowseFolder_Click_1(object sender, EventArgs e)
         {
             folderBrowser.ShowNewFolderButton = true;
@@ -470,7 +476,7 @@ namespace TVRename
 
         private void bnAdd_Click_1(object sender, EventArgs e)
         {
-            ListViewItem lvi = new ListViewItem { Text =txtFolder.Text};
+            ListViewItem lvi = new ListViewItem { Text = txtFolder.Text };
 
             lvManualFolders.Items.Add(lvi);
 
@@ -549,7 +555,7 @@ namespace TVRename
 
         private void rdoProvider_CheckedChanged(object sender, EventArgs e)
         {
-            codeFinderForm.SetSource(GetProviderType(),selectedShow);
+            codeFinderForm.SetSource(GetProviderType(), selectedShow);
         }
     }
 }

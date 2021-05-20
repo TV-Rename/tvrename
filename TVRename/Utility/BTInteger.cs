@@ -31,10 +31,10 @@ namespace TVRename
 
         public override void Write(System.IO.Stream sw)
         {
-            sw.WriteByte((byte) 'i');
+            sw.WriteByte((byte)'i');
             byte[] b = System.Text.Encoding.ASCII.GetBytes(Value.ToString());
             sw.Write(b, 0, b.Length);
-            sw.WriteByte((byte) 'e');
+            sw.WriteByte((byte)'e');
         }
     }
 }

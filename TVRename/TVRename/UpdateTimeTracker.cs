@@ -1,5 +1,5 @@
-using System;
 using Humanizer;
+using System;
 
 namespace TVRename
 {
@@ -36,7 +36,9 @@ namespace TVRename
         }
 
         public long LastSuccessfulServerUpdateTimecode() => srvTime;
+
         public DateTime LastSuccessfulServerUpdateDateTime() => Helpers.FromUnixTime(srvTime).ToLocalTime();
+
         public DateTime ProposedServerUpdateDateTime() => Helpers.FromUnixTime(newSrvTime).ToLocalTime();
 
         public void Load(string? time)

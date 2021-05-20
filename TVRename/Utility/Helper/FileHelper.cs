@@ -1,22 +1,22 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
+using Alphaleonis.Win32.Filesystem;
+using Humanizer;
+using JetBrains.Annotations;
+using MediaInfo;
+using Microsoft.WindowsAPICodePack.Shell;
+using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using MediaInfo;
-using Microsoft.WindowsAPICodePack.Shell;
-using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
-using Alphaleonis.Win32.Filesystem;
-using Humanizer;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -92,7 +92,7 @@ namespace TVRename
             if (files.Length == 0)
             {
                 // its empty, so just delete it
-                DeleteOrRecycleFolder(di,settings);
+                DeleteOrRecycleFolder(di, settings);
                 return;
             }
 
@@ -135,9 +135,8 @@ namespace TVRename
                 }
             }
 
-            DeleteOrRecycleFolder(di,settings);
+            DeleteOrRecycleFolder(di, settings);
         }
-
 
         public static int GetFrameWidth([NotNull] this FileInfo movieFile)
         {
@@ -192,7 +191,7 @@ namespace TVRename
                 return VideoComparison.same;
             }
 
-            if (   encumbantLength == -1
+            if (encumbantLength == -1
                 || newFileLength == -1
                 || encumbantFrameWidth == -1
                 || newFileFrameWidth == -1)
@@ -272,11 +271,11 @@ namespace TVRename
 
         public static bool IsMovieFile([NotNull] this string filename) => TVSettings.Instance.FileHasUsefulExtension(filename, false);
 
-        public static (bool found,string extension)  IsLanguageSpecificSubtitle(this FileInfo file)
+        public static (bool found, string extension) IsLanguageSpecificSubtitle(this FileInfo file)
         {
             foreach (string subExtension in TVSettings.Instance.subtitleExtensionsArray)
             {
-                string regex = @"(?<ext>\.\w{2,3}\"+subExtension+")$";
+                string regex = @"(?<ext>\.\w{2,3}\" + subExtension + ")$";
 
                 Match m = Regex.Match(file.Name, regex, RegexOptions.IgnoreCase);
 
@@ -285,7 +284,7 @@ namespace TVRename
                     continue;
                 }
 
-                return (true,m.Groups["ext"].ToString());
+                return (true, m.Groups["ext"].ToString());
             }
 
             return (false, string.Empty);
@@ -298,9 +297,9 @@ namespace TVRename
         }
 
         [NotNull]
-        public static FileInfo WithExtension([NotNull] this FileInfo baseFile, string extension) => new FileInfo(baseFile.RemoveExtension(true)+extension);
+        public static FileInfo WithExtension([NotNull] this FileInfo baseFile, string extension) => new FileInfo(baseFile.RemoveExtension(true) + extension);
 
-        private static int GetMetaDetails([NotNull] this FileInfo movieFile, Func<ShellObject, IShellProperty> extractMethod, Func<string,FileInfo,int> parseMethod,string operation, Func<MediaInfoWrapper,int> meExtractMethod,Func<int,int> meParseMethod)
+        private static int GetMetaDetails([NotNull] this FileInfo movieFile, Func<ShellObject, IShellProperty> extractMethod, Func<string, FileInfo, int> parseMethod, string operation, Func<MediaInfoWrapper, int> meExtractMethod, Func<int, int> meParseMethod)
         {
             try
             {
@@ -365,7 +364,7 @@ namespace TVRename
             return (int)Math.Round(ret);
         }
 
-        private static int ParseDuration(string? duration,FileInfo sourceFile)
+        private static int ParseDuration(string? duration, FileInfo sourceFile)
         {
             try
             {
@@ -374,7 +373,7 @@ namespace TVRename
                 {
                     string[] timeParts = duration.Split(':');
 
-                    return (int)( int.Parse(timeParts[0]).Hours().TotalSeconds
+                    return (int)(int.Parse(timeParts[0]).Hours().TotalSeconds
                                 + int.Parse(timeParts[1]).Minutes().TotalSeconds
                                 + int.Parse(timeParts[2]).Seconds().TotalSeconds);
                 }
@@ -414,7 +413,7 @@ namespace TVRename
             }
             catch (UriFormatException e)
             {
-                Logger.Warn(e,$"Could not compare {directoryPath1} and {directoryPath2}, assuming they are not the same location");
+                Logger.Warn(e, $"Could not compare {directoryPath1} and {directoryPath2}, assuming they are not the same location");
                 return false;
             }
         }
@@ -497,7 +496,7 @@ namespace TVRename
             double asGb = Math.Round((double)value / ONE_GB, decimalPlaces);
             double asMb = Math.Round((double)value / ONE_MB, decimalPlaces);
             double asKb = Math.Round((double)value / ONE_KB, decimalPlaces);
-            double asB  = Math.Round((double)value, decimalPlaces);
+            double asB = Math.Round((double)value, decimalPlaces);
             string chosenValue = asTb >= 1 ? $"{asTb:G3} TB"
                 : asGb >= 1 ? $"{asGb:G3} GB"
                 : asMb >= 1 ? $"{asMb:G3} MB"
@@ -571,8 +570,9 @@ namespace TVRename
         }
 
         [NotNull]
-        public static FileInfo FileInFolder([NotNull] string dir, string fn) => new FileInfo(dir.EnsureEndsWithSeparator()+ fn);
-    public static void RemoveDirectory([NotNull] string folderName)
+        public static FileInfo FileInFolder([NotNull] string dir, string fn) => new FileInfo(dir.EnsureEndsWithSeparator() + fn);
+
+        public static void RemoveDirectory([NotNull] string folderName)
         {
             try
             {
@@ -642,17 +642,18 @@ namespace TVRename
         }
 
         public static bool SimplifyAndCheckFilenameAtStart(string filename, string showName) =>
-            SimplifyAndCheckFilenameAtStart(filename, showName,true,true);
+            SimplifyAndCheckFilenameAtStart(filename, showName, true, true);
 
         private static bool SimplifyAndCheckFilenameAtStart(string filename, string showName, bool simplifyFilename, bool simplifyShowName)
         {
-            string showPattern = simplifyShowName ?showName.CompareName() : showName;
+            string showPattern = simplifyShowName ? showName.CompareName() : showName;
 
-            return (simplifyFilename ? filename.CompareName() : filename).StartsWith( showPattern, StringComparison.CurrentCultureIgnoreCase);
+            return (simplifyFilename ? filename.CompareName() : filename).StartsWith(showPattern, StringComparison.CurrentCultureIgnoreCase);
         }
+
         public static bool SimplifyAndCheckFilename(string filename, string showName)
         {
-            return SimplifyAndCheckFilename(filename, showName,true,true);
+            return SimplifyAndCheckFilename(filename, showName, true, true);
         }
 
         [NotNull]
@@ -764,6 +765,7 @@ namespace TVRename
             new Regex(@"(?<base>.*)[ _.-]+(cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*(?<part>[0-9]|(A-D))$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
             new Regex(@"(?<base>.*)[ ._-]*(?<part>|(A-D))$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
         };
+
         public static string MovieFileNameBase(this FileInfo movieFile)
         {
             string longbase = movieFile.FileNameNoExt();

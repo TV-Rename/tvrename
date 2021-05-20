@@ -1,18 +1,18 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 using System.IO;
 using System.Linq;
 
 namespace TVRename
 {
-    using System;
     using Alphaleonis.Win32.Filesystem;
+    using System;
     using System.Windows.Forms;
 
     /// <summary>
@@ -59,7 +59,7 @@ namespace TVRename
             txtFile.Text = Normalise(file) + "% Done";
             txtTotal.Text = Normalise(group) + "% Done";
 
-            // progress bars go 0 to MAX_PROGRESS_BAR            
+            // progress bars go 0 to MAX_PROGRESS_BAR
             pbFile.Value = MAX_PROGRESS_BAR / 100 * Normalise(file);
             pbGroup.Value = MAX_PROGRESS_BAR / 100 * Normalise(group);
             pbFile.Update();
@@ -90,7 +90,7 @@ namespace TVRename
                 }
 
                 long size = action.SizeOfWork;
-                workDone += (long) (size * action.PercentDone / 100);
+                workDone += (long)(size * action.PercentDone / 100);
                 totalWork += action.SizeOfWork;
 
                 if (!action.Outcome.Done)
@@ -186,7 +186,7 @@ namespace TVRename
                 {
                     if (di != null)
                     {
-                        (diskValue,diskText) = DiskValue(di.TotalFreeSpace, di.TotalSize);
+                        (diskValue, diskText) = DiskValue(di.TotalFreeSpace, di.TotalSize);
                     }
                 }
                 catch (UnauthorizedAccessException)
@@ -205,20 +205,20 @@ namespace TVRename
                 long? totalBytes = driveStats.TotalBytes;
                 if (availableBytes.HasValue && totalBytes.HasValue)
                 {
-                    (diskValue, diskText) = DiskValue(availableBytes.Value,totalBytes.Value);
+                    (diskValue, diskText) = DiskValue(availableBytes.Value, totalBytes.Value);
                 }
             }
-            
+
             pbDiskSpace.Value = diskValue;
             txtDiskSpace.Text = diskText;
         }
 
         private static (int value, string diskText) DiskValue(long diTotalFreeSpace, long totalSize)
         {
-            int pct = (int) (MAX_PROGRESS_BAR * diTotalFreeSpace / totalSize);
+            int pct = (int)(MAX_PROGRESS_BAR * diTotalFreeSpace / totalSize);
             int diskValue = MAX_PROGRESS_BAR - pct;
             string diskText = diTotalFreeSpace.GBMB(1) + " free";
-            return (diskValue,diskText);
+            return (diskValue, diskText);
         }
 
         private ActionCopyMoveRename? GetActiveCmAction()

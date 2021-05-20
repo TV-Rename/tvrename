@@ -4,7 +4,9 @@ namespace TVRename
 {
     internal class DefaultAirDateMatchingTvCheck : DefaultTvShowCheck
     {
-        public DefaultAirDateMatchingTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc) { }
+        public DefaultAirDateMatchingTvCheck([NotNull] ShowConfiguration show, TVDoc doc) : base(show, doc)
+        {
+        }
 
         protected override string FieldName => "Do Airdate matching Check";
 

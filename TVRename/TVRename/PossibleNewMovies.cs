@@ -7,7 +7,7 @@ namespace TVRename
     {
         public void AddIfNew(PossibleNewMovie ai)
         {
-            if (this.Any(m => m.MovieStub.Equals(ai.MovieStub,StringComparison.CurrentCultureIgnoreCase)))
+            if (this.Any(m => m.MovieStub.Equals(ai.MovieStub, StringComparison.CurrentCultureIgnoreCase)))
             {
                 return;
             }

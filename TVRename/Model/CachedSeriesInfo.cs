@@ -1,10 +1,11 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
@@ -13,11 +14,10 @@ using System.Globalization;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
-    public class CachedSeriesInfo :CachedMediaInfo
+    public class CachedSeriesInfo : CachedMediaInfo
     {
         public DateTime? AirsTime;
         public string? AirsDay;
@@ -25,7 +25,7 @@ namespace TVRename
         public string? Type;
         public string? BannerString;
         public bool BannersLoaded;
-        
+
         private ConcurrentDictionary<int, Episode> sourceEpisodes;
 
         [NotNull]
@@ -41,7 +41,7 @@ namespace TVRename
             Episodes.Select(e => e.GetAirDateDt())
                 .Where(adt => adt.HasValue)
                 .Select(adt => adt.Value)
-                .Min(airDateTime => (int?) airDateTime.Year);
+                .Min(airDateTime => (int?)airDateTime.Year);
 
         public int? MaxYear =>
             Episodes.Select(e => e.GetAirDateDt())
@@ -50,11 +50,11 @@ namespace TVRename
                 .Max(airDateTime => (int?)airDateTime.Year);
 
         [NotNull]
-      public string Year => FirstAired?.ToString("yyyy") ?? $"{MinYear}";
+        public string Year => FirstAired?.ToString("yyyy") ?? $"{MinYear}";
 
-      public IEnumerable<Season> Seasons => seasons;
+        public IEnumerable<Season> Seasons => seasons;
 
-      // note: "SeriesID" in a <Series> is the tv.com code,
+        // note: "SeriesID" in a <Series> is the tv.com code,
         // "seriesid" in an <Episode> is the tvdb code!
 
         private void DefaultValues()
@@ -72,17 +72,17 @@ namespace TVRename
             DefaultValues();
         }
 
-        public CachedSeriesInfo(int tvdb, int tvmaze,int tmdb):base(tvdb,tvmaze,tmdb)
+        public CachedSeriesInfo(int tvdb, int tvmaze, int tmdb) : base(tvdb, tvmaze, tmdb)
         {
             DefaultValues();
         }
 
-        public CachedSeriesInfo( int tvdb, int tvmaze, int tmdb, Locale langCode) : base(tvdb,tvmaze,tmdb,langCode)
+        public CachedSeriesInfo(int tvdb, int tvmaze, int tmdb, Locale langCode) : base(tvdb, tvmaze, tmdb, langCode)
         {
             DefaultValues();
         }
 
-        public CachedSeriesInfo([NotNull] XElement seriesXml):this()
+        public CachedSeriesInfo([NotNull] XElement seriesXml) : this()
         {
             LoadXml(seriesXml);
             IsSearchResultOnly = false;
@@ -96,11 +96,11 @@ namespace TVRename
 
             if (string.IsNullOrEmpty(Name))
             {
-                LOGGER.Warn("Issue with cachedSeries " + this );
+                LOGGER.Warn("Issue with cachedSeries " + this);
                 LOGGER.Warn(json.ToString());
             }
 
-            if (SrvLastUpdated==0 && !searchResult)
+            if (SrvLastUpdated == 0 && !searchResult)
             {
                 LOGGER.Warn("Issue with cachedSeries (update time is 0) " + this);
                 LOGGER.Warn(json.ToString());
@@ -108,15 +108,16 @@ namespace TVRename
             }
         }
 
-        public CachedSeriesInfo([NotNull] JObject json, JObject jsonInDefaultLang, Locale locale) :this()
+        public CachedSeriesInfo([NotNull] JObject json, JObject jsonInDefaultLang, Locale locale) : this()
         {
             TargetLocale = locale;
-            LoadJson(json,jsonInDefaultLang);
+            LoadJson(json, jsonInDefaultLang);
             IsSearchResultOnly = false;
-            if (string.IsNullOrEmpty(Name)            ){
-                LOGGER.Warn("Issue with cachedSeries " + this );
+            if (string.IsNullOrEmpty(Name))
+            {
+                LOGGER.Warn("Issue with cachedSeries " + this);
                 LOGGER.Warn(json.ToString());
-                LOGGER.Info(jsonInDefaultLang .ToString());
+                LOGGER.Info(jsonInDefaultLang.ToString());
             }
 
             if (SrvLastUpdated == 0)
@@ -127,7 +128,6 @@ namespace TVRename
                 SrvLastUpdated = 100;
             }
         }
-
 
         // ReSharper disable once FunctionComplexityOverflow
         public void Merge([NotNull] CachedSeriesInfo o)
@@ -142,7 +142,7 @@ namespace TVRename
                 return; // that's not us!
             }
 
-            if (o.TvMazeCode !=-1 && TvMazeCode != o.TvMazeCode)
+            if (o.TvMazeCode != -1 && TvMazeCode != o.TvMazeCode)
             {
                 TvMazeCode = o.TvMazeCode;
             }
@@ -177,7 +177,7 @@ namespace TVRename
             Name = ChooseBetter(Name, useNewDataOverOld, o.Name);
             AirsDay = ChooseBetter(AirsDay, useNewDataOverOld, o.AirsDay);
             Imdb = ChooseBetter(Imdb, useNewDataOverOld, o.Imdb);
-            WebUrl= ChooseBetter(WebUrl, useNewDataOverOld, o.WebUrl);
+            WebUrl = ChooseBetter(WebUrl, useNewDataOverOld, o.WebUrl);
             OfficialUrl = ChooseBetter(OfficialUrl, useNewDataOverOld, o.OfficialUrl);
             ShowLanguage = ChooseBetter(ShowLanguage, useNewDataOverOld, o.ShowLanguage);
             Type = ChooseBetter(Type, useNewDataOverOld, o.Type);
@@ -196,7 +196,7 @@ namespace TVRename
             FacebookId = ChooseBetter(FacebookId, useNewDataOverOld, o.FacebookId);
             TagLine = ChooseBetter(TagLine, useNewDataOverOld, o.TagLine);
 
-            if ( o.FirstAired.HasValue &&(useNewDataOverOld || !FirstAired.HasValue))
+            if (o.FirstAired.HasValue && (useNewDataOverOld || !FirstAired.HasValue))
             {
                 FirstAired = o.FirstAired;
             }
@@ -267,7 +267,7 @@ namespace TVRename
             Dirty = o.Dirty;
             IsSearchResultOnly = o.IsSearchResultOnly;
         }
-        
+
         private void LoadXml([NotNull] XElement seriesXml)
         {
             //<Data>
@@ -288,17 +288,17 @@ namespace TVRename
 
             try
             {
-                TvdbCode = seriesXml.ExtractInt("id")?? throw new SourceConsistencyException("Error Extracting Id for Series",TVDoc.ProviderType.TheTVDB);
+                TvdbCode = seriesXml.ExtractInt("id") ?? throw new SourceConsistencyException("Error Extracting Id for Series", TVDoc.ProviderType.TheTVDB);
                 TvMazeCode = seriesXml.ExtractInt("mazeid") ?? -1;
-                TmdbCode= seriesXml.ExtractInt("TMDBCode") ?? -1;
+                TmdbCode = seriesXml.ExtractInt("TMDBCode") ?? -1;
 
                 Name = System.Web.HttpUtility.HtmlDecode(
                     XmlHelper.ReadStringFixQuotesAndSpaces(seriesXml.ExtractStringOrNull("SeriesName") ?? seriesXml.ExtractString("seriesName")));
 
-                SrvLastUpdated = seriesXml.ExtractLong("lastupdated")??seriesXml.ExtractLong("lastUpdated",0);
-                LanguageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId") ?? throw new SourceConsistencyException("Error Extracting Language for Series",TVDoc.ProviderType.TheTVDB);
+                SrvLastUpdated = seriesXml.ExtractLong("lastupdated") ?? seriesXml.ExtractLong("lastUpdated", 0);
+                LanguageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId") ?? throw new SourceConsistencyException("Error Extracting Language for Series", TVDoc.ProviderType.TheTVDB);
 
-                string airsTimeString = seriesXml.ExtractStringOrNull("Airs_Time")?? seriesXml.ExtractString("airsTime");
+                string airsTimeString = seriesXml.ExtractStringOrNull("Airs_Time") ?? seriesXml.ExtractString("airsTime");
                 AirsTime = JsonHelper.ParseAirTime(airsTimeString);
 
                 AirsDay = seriesXml.ExtractStringOrNull("airsDayOfWeek") ?? seriesXml.ExtractString("Airs_DayOfWeek");
@@ -323,7 +323,7 @@ namespace TVRename
                 Runtime = seriesXml.ExtractStringOrNull("runtime") ?? seriesXml.ExtractString("Runtime");
                 SeriesId = seriesXml.ExtractStringOrNull("seriesId") ?? seriesXml.ExtractString("SeriesID");
                 Status = seriesXml.ExtractStringOrNull("status") ?? seriesXml.ExtractString("Status");
-                SiteRatingVotes = seriesXml.ExtractInt("siteRatingCount") ?? seriesXml.ExtractInt("SiteRatingCount",0);
+                SiteRatingVotes = seriesXml.ExtractInt("siteRatingCount") ?? seriesXml.ExtractInt("SiteRatingCount", 0);
                 Slug = seriesXml.ExtractString("slug");
                 Popularity = seriesXml.ExtractDouble("Popularity") ?? 0;
 
@@ -343,7 +343,7 @@ namespace TVRename
             }
         }
 
-                private void LoadSeasons([NotNull] XElement seriesXml)
+        private void LoadSeasons([NotNull] XElement seriesXml)
         {
             seasons = new List<Season>();
             foreach (Season s in seriesXml.Descendants("Seasons").Descendants("Season").Select(xml => new Season(xml)))
@@ -351,41 +351,42 @@ namespace TVRename
                 seasons.Add(s);
             }
         }
+
         private void LoadJson([NotNull] JObject r)
         {
             AirsDay = ((string)r["airsDayOfWeek"])?.Trim();
-            string airsTimeString = (string) r["airsTime"];
+            string airsTimeString = (string)r["airsTime"];
             AirsTime = JsonHelper.ParseAirTime(airsTimeString);
-            Aliases = (r["aliases"] ?? throw new SourceConsistencyException($"Can't find aliases in Series JSON: {r}",TVDoc.ProviderType.TheTVDB)).Select(x => x.Value<string>()).ToList();
+            Aliases = (r["aliases"] ?? throw new SourceConsistencyException($"Can't find aliases in Series JSON: {r}", TVDoc.ProviderType.TheTVDB)).Select(x => x.Value<string>()).ToList();
             BannerString = (string)r["banner"];
             FirstAired = JsonHelper.ParseFirstAired((string)r["firstAired"]);
 
             if (r.ContainsKey("genre"))
             {
-                Genres = r["genre"]?.Select(x => x.Value<string>().Trim()).Distinct().ToList() ??new List<string>();
+                Genres = r["genre"]?.Select(x => x.Value<string>().Trim()).Distinct().ToList() ?? new List<string>();
             }
 
             TvdbCode = (int)r["id"];
             Imdb = ((string)r["imdbId"])?.Trim();
-            Network =  ((string) r["network"])?.Trim();
+            Network = ((string)r["network"])?.Trim();
             Slug = ((string)r["slug"])?.Trim();
             Overview = System.Web.HttpUtility.HtmlDecode((string)r["overview"])?.Trim();
-            ContentRating = ((string) r["rating"])?.Trim();
-            Runtime = ((string) r["runtime"])?.Trim();
-            SeriesId = (string) r["seriesId"];
+            ContentRating = ((string)r["rating"])?.Trim();
+            Runtime = ((string)r["runtime"])?.Trim();
+            SeriesId = (string)r["seriesId"];
             string s = (string)r["seriesName"];
             if (s != null)
             {
                 Name = System.Web.HttpUtility.HtmlDecode(s).Trim();
             }
-            Status = (string) r["status"];
+            Status = (string)r["status"];
 
             SrvLastUpdated = long.TryParse((string)r["lastUpdated"], out long updateTime) ? updateTime : 0;
 
-            string siteRatingString = (string) r["siteRating"];
+            string siteRatingString = (string)r["siteRating"];
             float.TryParse(siteRatingString, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out SiteRating);
 
-            string siteRatingVotesString =  (string) r["siteRatingCount"];
+            string siteRatingVotesString = (string)r["siteRatingCount"];
             int.TryParse(siteRatingVotesString, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out SiteRatingVotes);
         }
 
@@ -401,7 +402,7 @@ namespace TVRename
 
         private void LoadJson([NotNull] JObject bestLanguageR, JObject backupLanguageR)
         {
-            //Here we have two pieces of JSON. One in local language and one in the default language (English). 
+            //Here we have two pieces of JSON. One in local language and one in the default language (English).
             //We will populate with the best language frst and then fill in any gaps with the backup Language
             LoadJson(bestLanguageR);
 
@@ -409,12 +410,14 @@ namespace TVRename
             //TVDB asserts that name and overview are the fields that are localised
 
             string s = (string)backupLanguageR["seriesName"];
-            if (string.IsNullOrWhiteSpace(Name) && s != null ){
+            if (string.IsNullOrWhiteSpace(Name) && s != null)
+            {
                 Name = System.Web.HttpUtility.HtmlDecode(s);
             }
 
             string o = (string)backupLanguageR["overview"];
-            if (string.IsNullOrWhiteSpace(Overview) && o != null ){
+            if (string.IsNullOrWhiteSpace(Overview) && o != null)
+            {
                 Overview = System.Web.HttpUtility.HtmlDecode(o);
             }
 
@@ -425,7 +428,7 @@ namespace TVRename
                 JToken? aliasesToken = backupLanguageR["aliases"];
                 if (aliasesToken is null)
                 {
-                    throw new SourceConsistencyException($"Can not find aliases in {backupLanguageR}",TVDoc.ProviderType.TheTVDB);
+                    throw new SourceConsistencyException($"Can not find aliases in {backupLanguageR}", TVDoc.ProviderType.TheTVDB);
                 }
                 Aliases = aliasesToken.Select(x => x.Value<string>()).ToList();
             }
@@ -446,13 +449,13 @@ namespace TVRename
             writer.WriteStartElement("Series");
 
             writer.WriteElement("id", TvdbCode);
-            writer.WriteElement("mazeid",TvMazeCode);
+            writer.WriteElement("mazeid", TvMazeCode);
             writer.WriteElement("TMDBCode", TmdbCode);
             writer.WriteElement("SeriesName", Name);
             writer.WriteElement("lastupdated", SrvLastUpdated);
             writer.WriteElement("LanguageId", LanguageId);
             writer.WriteElement("airsDayOfWeek", AirsDay);
-            writer.WriteElement("Airs_Time", AirsTime?.ToString("HH:mm"),true);
+            writer.WriteElement("Airs_Time", AirsTime?.ToString("HH:mm"), true);
             writer.WriteElement("banner", BannerString);
             writer.WriteElement("TwitterId", TwitterId);
             writer.WriteElement("InstagramId", InstagramId);
@@ -465,17 +468,17 @@ namespace TVRename
             writer.WriteElement("ShowLanguage", ShowLanguage);
             writer.WriteElement("Type", Type);
             writer.WriteElement("imdbId", Imdb);
-            writer.WriteElement("rageid",TvRageCode);
+            writer.WriteElement("rageid", TvRageCode);
             writer.WriteElement("network", Network);
             writer.WriteElement("overview", Overview);
             writer.WriteElement("rating", ContentRating);
             writer.WriteElement("runtime", Runtime);
             writer.WriteElement("seriesId", SeriesId);
             writer.WriteElement("status", Status);
-            writer.WriteElement("siteRating", SiteRating,"0.##");
+            writer.WriteElement("siteRating", SiteRating, "0.##");
             writer.WriteElement("siteRatingCount", SiteRatingVotes);
             writer.WriteElement("Popularity", Popularity, "0.##");
-            writer.WriteElement("slug",Slug);
+            writer.WriteElement("slug", Slug);
 
             if (FirstAired != null)
             {
@@ -515,17 +518,23 @@ namespace TVRename
 
         [NotNull]
         public string GetSeriesFanartPath() => banners.GetSeriesFanartPath();
+
         [NotNull]
         public string GetSeriesPosterPath() => banners.GetSeriesPosterPath();
+
         public string? GetImage(TVSettings.FolderJpgIsType itemForFolderJpg) => banners.GetImage(itemForFolderJpg);
+
         public string? GetSeasonBannerPath(int snum) => banners.GetSeasonBannerPath(snum);
+
         public string? GetSeriesWideBannerPath() => banners.GetSeriesWideBannerPath();
+
         public string? GetSeasonWideBannerPath(int snum) => banners.GetSeasonWideBannerPath(snum);
+
         public void AddOrUpdateBanner([NotNull] Banner banner) => banners.AddOrUpdateBanner(banner);
 
         public void UpdateBanners(List<int> latestBannerIds)
         {
-            List<int> bannersToRemove =new List<int>();
+            List<int> bannersToRemove = new List<int>();
             foreach (KeyValuePair<int, Banner> bannerKeyValuePair in AllBanners)
             {
                 if (latestBannerIds.Contains(bannerKeyValuePair.Key))
@@ -544,7 +553,7 @@ namespace TVRename
 
         public void AddEpisode([NotNull] Episode episode)
         {
-            sourceEpisodes.TryAdd(episode.EpisodeId,episode);
+            sourceEpisodes.TryAdd(episode.EpisodeId, episode);
             episode.SetSeriesSeason(this);
         }
 
@@ -558,6 +567,7 @@ namespace TVRename
         public override string ToString() => $"TVDB:{TvdbCode}/Maze:{TvMazeCode}/TMDB:{TmdbCode}/{Name}";
 
         private List<Season> seasons = new List<Season>();
+
         public void AddSeason(Season generateSeason)
         {
             seasons.Add(generateSeason);
@@ -565,7 +575,7 @@ namespace TVRename
 
         public Season? Season(int sSeasonNumber)
         {
-            return seasons.FirstOrDefault(season => season.SeasonNumber== sSeasonNumber);
+            return seasons.FirstOrDefault(season => season.SeasonNumber == sSeasonNumber);
         }
     }
 }

@@ -1,5 +1,5 @@
-using System;
 using Alphaleonis.Win32.Filesystem;
+using System;
 
 namespace TVRename
 {
@@ -9,6 +9,7 @@ namespace TVRename
         {
             Movie = mov;
         }
+
         public override bool SameAs(Item o)
         {
             return o is ActionDateTouchMovie touch && touch.WhereFile == WhereFile;

@@ -1,9 +1,9 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 using TVRename.Forms.ShowPreferences;
 
 namespace TVRename.Forms
@@ -33,7 +33,7 @@ namespace TVRename.Forms
 
                 List<CollectionMember> incompleteCollectionMovies =
                     collectionMovies.Where(member => incompleteCollections.Contains(member.CollectionName)).ToList();
-                olvCollections.SetObjects(incompleteCollectionMovies );
+                olvCollections.SetObjects(incompleteCollectionMovies);
 
                 return;
             }
@@ -44,14 +44,13 @@ namespace TVRename.Forms
                 return;
             }
 
-            if(chkRemoveFuture.Checked)
+            if (chkRemoveFuture.Checked)
             {
                 IEnumerable<CollectionMember> historicCollectionMovies =
                     collectionMovies.Where(m => m.ReleaseDate.HasValue && m.ReleaseDate.Value < DateTime.Now && m.MovieYear.HasValue);
 
                 if (!chkRemoveCompleted.Checked)
                 {
-
                     olvCollections.SetObjects(historicCollectionMovies);
                     return;
                 }
@@ -66,7 +65,6 @@ namespace TVRename.Forms
                         .ToList();
 
                 olvCollections.SetObjects(incompleteHistCollectionMovies);
-
             }
         }
 
@@ -84,7 +82,7 @@ namespace TVRename.Forms
 
         private void BwScan_DoWork(object sender, DoWorkEventArgs e)
         {
-            BackgroundWorker bw = (BackgroundWorker) sender;
+            BackgroundWorker bw = (BackgroundWorker)sender;
 
             List<(int, string)> collectionIds = mDoc.FilmLibrary.Collections;
 
@@ -94,12 +92,12 @@ namespace TVRename.Forms
             collectionMovies.Clear();
             foreach ((int collectionId, var collectionName) in collectionIds)
             {
-                Dictionary<int, CachedMovieInfo> shows = TMDB.LocalCache.Instance.GetMovieIdsFromCollection(collectionId,TVSettings.Instance.TMDBLanguage.ISODialectAbbreviation);
+                Dictionary<int, CachedMovieInfo> shows = TMDB.LocalCache.Instance.GetMovieIdsFromCollection(collectionId, TVSettings.Instance.TMDBLanguage.ISODialectAbbreviation);
                 foreach (KeyValuePair<int, CachedMovieInfo> neededShow in shows)
                 {
-                    CollectionMember c = new CollectionMember {CollectionName = collectionName, Movie = neededShow.Value};
+                    CollectionMember c = new CollectionMember { CollectionName = collectionName, Movie = neededShow.Value };
 
-                    c.IsInLibrary = mDoc.FilmLibrary.Movies.Any(configuration => configuration.TmdbCode ==c.TmdbCode);
+                    c.IsInLibrary = mDoc.FilmLibrary.Movies.Any(configuration => configuration.TmdbCode == c.TmdbCode);
                     collectionMovies.Add(c);
                 }
 
@@ -125,6 +123,7 @@ namespace TVRename.Forms
 
             UpdateUI();
         }
+
         private void BtnRefresh_Click_1(object sender, EventArgs e)
         {
             Scan();
@@ -145,15 +144,15 @@ namespace TVRename.Forms
                 return;
             }
 
-            CollectionMember mlastSelected = (CollectionMember) e.Model;
+            CollectionMember mlastSelected = (CollectionMember)e.Model;
 
             possibleMergedEpisodeRightClickMenu.Items.Clear();
-            
+
             if (mlastSelected.IsInLibrary)
             {
-                TVDoc.ProviderType providerToUse = TVSettings.Instance.DefaultMovieProvider == TVDoc.ProviderType.TMDB? TVSettings.Instance.DefaultMovieProvider :TVDoc.ProviderType.TMDB;
-                MovieConfiguration? si = mDoc.FilmLibrary.GetMovie(mlastSelected.TmdbCode,providerToUse); 
-                if ( si!=null)
+                TVDoc.ProviderType providerToUse = TVSettings.Instance.DefaultMovieProvider == TVDoc.ProviderType.TMDB ? TVSettings.Instance.DefaultMovieProvider : TVDoc.ProviderType.TMDB;
+                MovieConfiguration? si = mDoc.FilmLibrary.GetMovie(mlastSelected.TmdbCode, providerToUse);
+                if (si != null)
                 {
                     AddRcMenuItem("Force Refresh", (o, args) => mainUi.ForceMovieRefresh(si, false));
                     AddRcMenuItem("Edit Movie", (o, args) => mainUi.EditMovie(si));
@@ -170,7 +169,7 @@ namespace TVRename.Forms
         private void AddToLibrary(CachedMovieInfo si)
         {
             // need to add a new showitem
-            MovieConfiguration found = new MovieConfiguration(si.TmdbCode,TVDoc.ProviderType.TMDB);
+            MovieConfiguration found = new MovieConfiguration(si.TmdbCode, TVDoc.ProviderType.TMDB);
             QuickLocateForm f = new QuickLocateForm(si.Name, MediaConfiguration.MediaType.movie);
 
             if (f.ShowDialog(this) != DialogResult.OK)

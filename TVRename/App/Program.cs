@@ -1,17 +1,17 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using CefSharp;
+using JetBrains.Annotations;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using CefSharp;
-using JetBrains.Annotations;
 using TVRename.Ipc;
 
 namespace TVRename.App
@@ -47,7 +47,8 @@ namespace TVRename.App
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Application.ThreadException += delegate(object sender, ThreadExceptionEventArgs eventArgs) {
+            Application.ThreadException += delegate (object sender, ThreadExceptionEventArgs eventArgs)
+            {
                 Exception e = eventArgs.Exception;
                 Logger.Fatal(e, "UNHANDLED ERROR - Application.ThreadException");
                 Environment.Exit(1);
@@ -71,7 +72,7 @@ namespace TVRename.App
                     Logger.Info("Could not attach to console");
                 }
                 return;
-            } 
+            }
             // Check if an application instance is already running
             Mutex mutex = new Mutex(true, "TVRename", out bool newInstance);
 
@@ -126,17 +127,17 @@ namespace TVRename.App
 
                 new ShowException(ex).ShowDialog();
 
-	            Environment.Exit(1);
+                Environment.Exit(1);
             }
 
             Logger.Info("Application exiting");
         }
 
         private static void GlobalExceptionHandler(object sender, UnhandledExceptionEventArgs args)
-    {
-        Exception e = (Exception) args.ExceptionObject;
-        Logger.Fatal(e,"UNHANDLED ERROR - GlobalExceptionHandler");
-        Environment.Exit(1);
+        {
+            Exception e = (Exception)args.ExceptionObject;
+            Logger.Fatal(e, "UNHANDLED ERROR - GlobalExceptionHandler");
+            Environment.Exit(1);
         }
     }
 }

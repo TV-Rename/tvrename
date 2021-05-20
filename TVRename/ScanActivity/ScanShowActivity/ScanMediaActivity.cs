@@ -6,7 +6,9 @@ namespace TVRename
         protected readonly TVDoc Doc;
 
         protected ScanMediaActivity(TVDoc doc) => Doc = doc;
+
         protected abstract bool Active();
+
         protected void LogActionListSummary()
         {
             try

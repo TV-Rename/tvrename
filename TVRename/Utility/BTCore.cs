@@ -1,6 +1,6 @@
+using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -23,7 +23,7 @@ namespace TVRename
             FileCacheWithSubFolders = false;
         }
 
-        protected void Prog(int percent,string message) => SetProg?.Invoke(percent,message);
+        protected void Prog(int percent, string message) => SetProg?.Invoke(percent, message);
 
         protected abstract bool NewTorrentEntry(string torrentFile, int numberInTorrent);
 
@@ -64,7 +64,7 @@ namespace TVRename
 
                     byte[] thePiece = new byte[pieceSize];
                     sr.Seek(whereInFile, System.IO.SeekOrigin.Begin);
-                    int n = sr.Read(thePiece, 0, (int) pieceSize);
+                    int n = sr.Read(thePiece, 0, (int)pieceSize);
                     sr.Close();
 
                     System.Security.Cryptography.SHA1Managed sha1 = new System.Security.Cryptography.SHA1Managed();
@@ -143,19 +143,19 @@ namespace TVRename
             if ((bti is null) || (bti.Type != BTChunk.kDictionary))
                 return false;
 
-            BTDictionary infoDict = (BTDictionary) (bti);
+            BTDictionary infoDict = (BTDictionary)(bti);
 
             bti = infoDict.GetItem("piece length");
             if ((bti is null) || (bti.Type != BTChunk.kInteger))
                 return false;
 
-            long pieceSize = ((BTInteger) bti).Value;
+            long pieceSize = ((BTInteger)bti).Value;
 
             bti = infoDict.GetItem("pieces");
             if ((bti is null) || (bti.Type != BTChunk.kString))
                 return false;
 
-            BTString torrentPieces = (BTString) (bti);
+            BTString torrentPieces = (BTString)(bti);
 
             bti = infoDict.GetItem("files");
 
@@ -165,11 +165,11 @@ namespace TVRename
                 if ((bti is null) || (bti.Type != BTChunk.kString))
                     return false;
 
-                BTString di = (BTString) (bti);
+                BTString di = (BTString)(bti);
                 string nameInTorrent = di.AsString();
 
                 BTItem fileSizeI = infoDict.GetItem("length");
-                long fileSize = ((BTInteger) fileSizeI).Value;
+                long fileSize = ((BTInteger)fileSizeI).Value;
 
                 NewTorrentEntry(torrentFile, -1);
                 if (DoHashChecking)
@@ -195,32 +195,32 @@ namespace TVRename
                 if (bti.Type != BTChunk.kList)
                     return false;
 
-                BTList fileList = (BTList) (bti);
+                BTList fileList = (BTList)(bti);
 
                 // list of dictionaries
                 for (int i = 0; i < fileList.Items.Count; i++)
                 {
-                    Prog(100 * i / fileList.Items.Count,i.ToString());
+                    Prog(100 * i / fileList.Items.Count, i.ToString());
                     if (fileList.Items[i].Type != BTChunk.kDictionary)
                         return false;
 
-                    BTDictionary file = (BTDictionary) (fileList.Items[i]);
+                    BTDictionary file = (BTDictionary)(fileList.Items[i]);
                     BTItem thePath = file.GetItem("path");
                     if (thePath.Type != BTChunk.kList)
                         return false;
 
-                    BTList pathList = (BTList) (thePath);
+                    BTList pathList = (BTList)(thePath);
                     // want the last of the items in the list, which is the filename itself
                     int n = pathList.Items.Count - 1;
                     if (n < 0)
                         return false;
 
-                    BTString fileName = (BTString) (pathList.Items[n]);
+                    BTString fileName = (BTString)(pathList.Items[n]);
 
                     BTItem fileSizeI = file.GetItem("length");
-                    long fileSize = ((BTInteger) fileSizeI).Value;
+                    long fileSize = ((BTInteger)fileSizeI).Value;
 
-                    int pieceNum = (int) (overallPosition / pieceSize);
+                    int pieceNum = (int)(overallPosition / pieceSize);
                     if (overallPosition % pieceSize != 0)
                         pieceNum++;
 
@@ -239,11 +239,11 @@ namespace TVRename
 
                     FinishedTorrentEntry(torrentFile, i, fileName.AsString());
 
-                    int sizeInPieces = (int) (fileSize / pieceSize);
+                    int sizeInPieces = (int)(fileSize / pieceSize);
                     if (fileSize % pieceSize != 0)
                         sizeInPieces++; // another partial piece
 
-                    lastPieceLeftover = (lastPieceLeftover + (int) ((sizeInPieces * pieceSize) - fileSize)) % pieceSize;
+                    lastPieceLeftover = (lastPieceLeftover + (int)((sizeInPieces * pieceSize) - fileSize)) % pieceSize;
                     overallPosition += fileSize;
                 } // for each file in the torrent
             }
@@ -257,7 +257,7 @@ namespace TVRename
                 tvTree.Update();
             }
 
-            Prog(0,string.Empty);
+            Prog(0, string.Empty);
 
             return true;
         }

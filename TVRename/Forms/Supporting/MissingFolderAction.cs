@@ -1,13 +1,13 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
-using System.Windows.Forms;
+//
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using System.Windows.Forms;
 
 namespace TVRename
 {
@@ -82,7 +82,7 @@ namespace TVRename
 
         private void MissingFolderAction_DragDrop(object sender, [NotNull] DragEventArgs e)
         {
-            string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop);
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)
             {
                 try

@@ -1,7 +1,7 @@
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using NLog;
 using TMDbLib.Client;
 using TMDbLib.Objects.Changes;
 using TMDbLib.Objects.General;
@@ -18,7 +18,6 @@ namespace TVRename.TMDB
 
         public static IEnumerable<ChangesListItem> GetChangesMovies(this TMDbClient client, CancellationToken cts, UpdateTimeTracker latestUpdateTime)
         {
-
             //We need to ask for updates in blocks of 7 days
             //We'll keep asking until we get to a date within 7 days of today
             //(up to a maximum of 52 - if you are this far behind then you may need multiple refreshes)
@@ -39,8 +38,8 @@ namespace TVRename.TMDB
                     {
                         throw new CancelledException();
                     }
-                    SearchContainer<ChangesListItem>? response = client.GetMoviesChangesAsync(page:currentPage, startDate: time, cancellationToken: cts).Result;
-                    numberOfCallsMade ++;
+                    SearchContainer<ChangesListItem>? response = client.GetMoviesChangesAsync(page: currentPage, startDate: time, cancellationToken: cts).Result;
+                    numberOfCallsMade++;
                     maxPage = response.TotalPages;
                     updatesResponses.AddRange(response.Results);
                     if (numberOfCallsMade > MAX_NUMBER_OF_CALLS)
@@ -48,7 +47,6 @@ namespace TVRename.TMDB
                         throw new TooManyCallsException();
                     }
                 }
-
             }
 
             latestUpdateTime.RegisterServerUpdate(DateTime.Now.ToUnixTime());
@@ -59,6 +57,7 @@ namespace TVRename.TMDB
         internal class TooManyCallsException : Exception
         {
         }
+
         internal class CancelledException : Exception
         {
         }

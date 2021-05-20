@@ -25,7 +25,7 @@ namespace TVRename.Settings.AppState
                         return (State)serializer.Deserialize(reader);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Logger.Warn(ex, "Could not load app state file {0}", path);
                     return new State();
@@ -43,7 +43,7 @@ namespace TVRename.Settings.AppState
         public void SaveToFile(string path)
         {
             XmlSerializer? serializer = new XmlSerializer(typeof(State));
-            XmlWriterSettings xmlWriterSettings = new XmlWriterSettings {Indent = true};
+            XmlWriterSettings xmlWriterSettings = new XmlWriterSettings { Indent = true };
             using (XmlWriter? xmlWriter = XmlWriter.Create(path, xmlWriterSettings))
             {
                 serializer.Serialize(xmlWriter, this);

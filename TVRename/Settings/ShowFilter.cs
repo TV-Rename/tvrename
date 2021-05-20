@@ -1,22 +1,22 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
     public class ShowFilter
     {
         public List<string> Genres { get; } = new List<string>();
-        public string? ShowName { get; set; } 
+        public string? ShowName { get; set; }
         public string? ShowStatus { get; set; }
         public bool ShowStatusInclude { get; set; }
         public string? ShowNetwork { get; set; }
@@ -56,7 +56,7 @@ namespace TVRename
             {
                 return ShowStatusInclude
                     ? showItem.ShowStatus.Equals(ShowStatus)
-                    :!showItem.ShowStatus.Equals(ShowStatus);
+                    : !showItem.ShowStatus.Equals(ShowStatus);
             }
 
             //Filter on show name

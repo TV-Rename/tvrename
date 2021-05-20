@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 using Alphaleonis.Win32.Filesystem;
 
@@ -18,6 +18,7 @@ namespace TVRename
         }
 
         public override bool Active() => TVSettings.Instance.ExportRecentASX;
+
         protected override string Location() => TVSettings.Instance.ExportRecentASXTo;
 
         protected override string GenerateHeader() => "<ASX version=\"3\">";

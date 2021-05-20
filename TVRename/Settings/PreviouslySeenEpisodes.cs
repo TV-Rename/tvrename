@@ -1,15 +1,15 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -34,7 +34,7 @@ namespace TVRename
 
         private void EnsureAdded(int epId)
         {
-            if (!Contains(epId) && epId>0)
+            if (!Contains(epId) && epId > 0)
             {
                 Add(epId);
             }
@@ -42,7 +42,7 @@ namespace TVRename
 
         public void EnsureAdded([NotNull] ProcessedEpisode episode) => EnsureAdded(episode.EpisodeId);
 
-        public bool Includes([NotNull] Item item) => item.Episode != null && item.Episode.EpisodeId >0 && Contains(item.Episode.EpisodeId);
+        public bool Includes([NotNull] Item item) => item.Episode != null && item.Episode.EpisodeId > 0 && Contains(item.Episode.EpisodeId);
 
         public bool Includes(ProcessedEpisode? episode) => episode != null && episode.EpisodeId > 0 && Contains(episode.EpisodeId);
     }

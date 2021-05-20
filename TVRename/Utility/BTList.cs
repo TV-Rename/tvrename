@@ -29,11 +29,11 @@ namespace TVRename
 
         public override void Write(System.IO.Stream sw)
         {
-            sw.WriteByte((byte) 'l');
+            sw.WriteByte((byte)'l');
             foreach (BTItem i in Items)
                 i.Write(sw);
 
-            sw.WriteByte((byte) 'e');
+            sw.WriteByte((byte)'e');
         }
     }
 }

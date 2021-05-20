@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 using Alphaleonis.Win32.Filesystem;
 using DaveChambers.FolderBrowserDialogEx;
 using JetBrains.Annotations;
@@ -126,20 +126,20 @@ namespace TVRename
 
         private void ValidateFilePaths()
         {
-            ValidateFilePath(txtSpecialsFolderName, tpLibraryFolders,true);
+            ValidateFilePath(txtSpecialsFolderName, tpLibraryFolders, true);
             ValidateFilePath(txtSeasonFormat, tpLibraryFolders, true);
             ValidateFilePath(txtMovieFolderFormat, tpLibraryFolders, true);
             ValidateFilePath(txtMovieFilenameFormat, tpLibraryFolders, true);
             if (cbCheckuTorrent.Checked)
             {
-                ValidateFilePath(txtUTResumeDatPath, tpTorrentNZB,false);
-                ValidateFilePath(txtRSSuTorrentPath, tpTorrentNZB,false);
+                ValidateFilePath(txtUTResumeDatPath, tpTorrentNZB, false);
+                ValidateFilePath(txtRSSuTorrentPath, tpTorrentNZB, false);
             }
         }
 
-        private void ValidateFilePath([NotNull] TextBox validationField,TabPage errorPage,bool emptyOk)
+        private void ValidateFilePath([NotNull] TextBox validationField, TabPage errorPage, bool emptyOk)
         {
-            if (TVSettings.OKPath(validationField.Text,emptyOk))
+            if (TVSettings.OKPath(validationField.Text, emptyOk))
             {
                 return;
             }
@@ -169,7 +169,7 @@ namespace TVRename
             ValidateExporterLocation(cbWTWICAL, txtWTWICAL);
             ValidateExporterLocation(cbWTWTXT, txtWTWTXT);
 
-            ValidateExporterLocation(cbMissingXML , txtMissingXML);
+            ValidateExporterLocation(cbMissingXML, txtMissingXML);
             ValidateExporterLocation(cbMissingCSV, txtMissingCSV);
 
             ValidateExporterLocation(cbShowsTXT, txtShowsTXTTo);
@@ -190,7 +190,7 @@ namespace TVRename
             ValidateExporterLocation(cbWPL, txtWPL);
         }
 
-        private void ValidateExporterLocation([NotNull] CheckBox controlCheckbox,TextBox validationField)
+        private void ValidateExporterLocation([NotNull] CheckBox controlCheckbox, TextBox validationField)
         {
             if (!controlCheckbox.Checked)
             {
@@ -422,7 +422,7 @@ namespace TVRename
 
             s.keepTogetherMode = KeepTogetherMode();
 
-            s.PreferredTVDBLanguage =Languages.Instance.GetLanguageFromLocalName(cbTVDBLanguages.Text) ??
+            s.PreferredTVDBLanguage = Languages.Instance.GetLanguageFromLocalName(cbTVDBLanguages.Text) ??
                 s.PreferredTVDBLanguage ?? Languages.Instance.GetLanguageFromCode("en");
 
             s.TvdbVersion = cbTVDBVersion.Text == "v3" ? TheTVDB.ApiVersion.v3 : TheTVDB.ApiVersion.v4;
@@ -433,7 +433,7 @@ namespace TVRename
             s.SampleFileMaxSizeMB = txtMaxSampleSize.Text.ToInt(50);
             s.upgradeDirtyPercent = tbPercentDirty.Text.ToPercent(20);
             s.replaceMargin = tbPercentBetter.Text.ToPercent(10);
-            s.ParallelDownloads = txtParallelDownloads.Text.ToInt( 1, 4, 8);
+            s.ParallelDownloads = txtParallelDownloads.Text.ToInt(1, 4, 8);
 
             UpdateRSSURLs(s);
 
@@ -463,7 +463,7 @@ namespace TVRename
             s.DefMovieDefaultLocation = (string)cmbDefMovieLocation.SelectedItem;
             s.DefaultMovieProvider = MovieProviderMode();
 
-            s.TMDBLanguage= Languages.Instance.GetLanguageFromLocalName(cbTMDBLanguages.SelectedItem?.ToString());
+            s.TMDBLanguage = Languages.Instance.GetLanguageFromLocalName(cbTMDBLanguages.SelectedItem?.ToString());
             s.TMDBRegion = Regions.Instance.RegionFromName(cbTMDBRegions.SelectedItem?.ToString());
             s.TMDBPercentDirty = tbTMDBPercentDirty.Text.ToPercent(20);
             s.IncludeMoviesQuickRecent = chkIncludeMoviesQuickRecent.Checked;
@@ -558,6 +558,7 @@ namespace TVRename
             }
             return TVDoc.ProviderType.TMDB;
         }
+
         private TVSettings.FolderJpgIsType FolderJpgMode()
         {
             if (rbFolderFanArt.Checked)
@@ -603,7 +604,7 @@ namespace TVRename
             };
         }
 
-        #endregion
+        #endregion Update Settings
 
         #region Update Form
 
@@ -614,7 +615,6 @@ namespace TVRename
             foreach (Language l in Languages.Instance)
             {
                 cbTVDBLanguages.Items.Add(l.LocalName);
-
             }
             cbTVDBLanguages.EndUpdate();
             cbTVDBLanguages.Enabled = true;
@@ -657,22 +657,22 @@ namespace TVRename
             //////////////////////////////////////////////////////////////////////
             // header row
 
-            ColumnHeader h = new ColumnHeader("Search") {AutomaticSortEnabled = false};
+            ColumnHeader h = new ColumnHeader("Search") { AutomaticSortEnabled = false };
             ReplacementsGrid[0, 0] = h;
             ReplacementsGrid[0, 0].View = titleModel;
 
-            h = new ColumnHeader("Replace") {AutomaticSortEnabled = false};
+            h = new ColumnHeader("Replace") { AutomaticSortEnabled = false };
             ReplacementsGrid[0, 1] = h;
             ReplacementsGrid[0, 1].View = titleModel;
 
-            h = new ColumnHeader("Case Ins.") {AutomaticSortEnabled = false};
+            h = new ColumnHeader("Case Ins.") { AutomaticSortEnabled = false };
             ReplacementsGrid[0, 2] = h;
             ReplacementsGrid[0, 2].View = titleModel;
         }
 
         private void AddNewReplacementRow(string? from, string? to, bool ins)
         {
-            SourceGrid.Cells.Views.Cell roModel = new SourceGrid.Cells.Views.Cell {ForeColor = Color.Gray};
+            SourceGrid.Cells.Views.Cell roModel = new SourceGrid.Cells.Views.Cell { ForeColor = Color.Gray };
 
             int r = ReplacementsGrid.RowsCount;
             ReplacementsGrid.RowsCount = r + 1;
@@ -713,7 +713,7 @@ namespace TVRename
 
             //////////////////////////////////////////////////////////////////////
             // header row
-            ColumnHeader h = new ColumnHeader("URL") {AutomaticSortEnabled = false};
+            ColumnHeader h = new ColumnHeader("URL") { AutomaticSortEnabled = false };
             RSSGrid[0, 0] = h;
             RSSGrid[0, 0].View = titleModel;
         }
@@ -732,7 +732,7 @@ namespace TVRename
             s.RSSURLs.Clear();
             for (int i = 1; i < RSSGrid.RowsCount; i++)
             {
-                string url = (string) RSSGrid[i, 0].Value;
+                string url = (string)RSSGrid[i, 0].Value;
                 if (!string.IsNullOrEmpty(url))
                 {
                     s.RSSURLs.Add(url);
@@ -745,9 +745,9 @@ namespace TVRename
             s.Replacements.Clear();
             for (int i = 1; i < ReplacementsGrid.RowsCount; i++)
             {
-                string from = (string) ReplacementsGrid[i, 0].Value;
-                string to = (string) ReplacementsGrid[i, 1].Value;
-                bool ins = (bool) ReplacementsGrid[i, 2].Value;
+                string from = (string)ReplacementsGrid[i, 0].Value;
+                string to = (string)ReplacementsGrid[i, 1].Value;
+                bool ins = (bool)ReplacementsGrid[i, 2].Value;
                 if (!string.IsNullOrEmpty(from))
                 {
                     s.Replacements.Add(new TVSettings.Replacement(from, to, ins));
@@ -765,9 +765,9 @@ namespace TVRename
             txtMaxSampleSize.Text = s.SampleFileMaxSizeMB.ToString();
 
             cbAutoSaveOnExit.Checked = s.AutoSaveOnExit;
-            cbRSSCloudflareProtection.Checked= s.RSSUseCloudflare;
-            cbJSONCloudflareProtection.Checked= s.SearchJSONUseCloudflare;
-            cbDownloadTorrentBeforeDownloading.Checked= s.qBitTorrentDownloadFilesFirst;
+            cbRSSCloudflareProtection.Checked = s.RSSUseCloudflare;
+            cbJSONCloudflareProtection.Checked = s.SearchJSONUseCloudflare;
+            cbDownloadTorrentBeforeDownloading.Checked = s.qBitTorrentDownloadFilesFirst;
             chkBasicShowDetails.Checked = s.ShowBasicShowDetails;
             cbDetailedRSSJSONLogging.Checked = s.DetailedRSSJSONLogging;
             cbWTWRSS.Checked = s.ExportWTWRSS;
@@ -782,10 +782,10 @@ namespace TVRename
             txtExportRSSMaxDays.Text = s.ExportRSSMaxDays.ToString();
             txtExportRSSMaxShows.Text = s.ExportRSSMaxShows.ToString();
             txtExportRSSDaysPast.Text = s.ExportRSSDaysPast.ToString();
-            cbUseColoursOnWtw.Checked= s.UseColoursOnWtw;
+            cbUseColoursOnWtw.Checked = s.UseColoursOnWtw;
 
             cbTimeZone.Text = s.DefaultShowTimezoneName;
-            if (cbTimeZone.Text == string.Empty&& !string.IsNullOrWhiteSpace(s.DefaultShowTimezoneName))
+            if (cbTimeZone.Text == string.Empty && !string.IsNullOrWhiteSpace(s.DefaultShowTimezoneName))
             {
                 try
                 {
@@ -865,7 +865,7 @@ namespace TVRename
             tbqBitTorrentHost.Text = s.qBitTorrentHost;
             tbqBitTorrentPort.Text = s.qBitTorrentPort;
             cbCheckqBitTorrent.Checked = s.CheckqBitTorrent;
-            chkRemoveCompletedTorrents.Checked= s.RemoveCompletedTorrents;
+            chkRemoveCompletedTorrents.Checked = s.RemoveCompletedTorrents;
             cbCheckSABnzbd.Checked = s.CheckSABnzbd;
             cbHigherQuality.Checked = s.ReplaceWithBetterQuality;
             cbMovieHigherQuality.Checked = s.ReplaceMoviesWithBetterQuality;
@@ -907,16 +907,16 @@ namespace TVRename
             SetDropdownValue(domainUpDown1, s.periodCheckHours);
             SetDropdownValue(domainUpDown2, s.periodUpdateCacheHours);
             cbCleanUpDownloadDir.Checked = s.RemoveDownloadDirectoriesFiles;
-            cbCleanUpDownloadDirMovies.Checked= s.RemoveDownloadDirectoriesFilesMatchMovies;
-            cbCleanUpDownloadDirMoviesLength.Checked= s.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck;
-            tbCleanUpDownloadDirMoviesLength.Text= s.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength.ToString();
+            cbCleanUpDownloadDirMovies.Checked = s.RemoveDownloadDirectoriesFilesMatchMovies;
+            cbCleanUpDownloadDirMoviesLength.Checked = s.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck;
+            tbCleanUpDownloadDirMoviesLength.Text = s.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength.ToString();
 
             cbDeleteShowFromDisk.Checked = s.DeleteShowFromDisk;
             cbCopyFutureDatedEps.Checked = s.CopyFutureDatedEpsFromSearchFolders;
             chkShareCriticalLogs.Checked = s.ShareLogs;
             chkPostpendThe.Checked = s.PostpendThe;
             chkUseLibraryFullPathWhenMatchingShows.Checked = s.UseFullPathNameToMatchLibraryFolders;
-            chkUseSearchFullPathWhenMatchingShows.Checked= s.UseFullPathNameToMatchSearchFolders;
+            chkUseSearchFullPathWhenMatchingShows.Checked = s.UseFullPathNameToMatchSearchFolders;
             chkAutoAddAsPartOfQuickRename.Checked = s.AutoAddAsPartOfQuickRename;
             chkCleanLibraryAfterActions.Checked = s.CleanLibraryAfterActions;
 
@@ -965,20 +965,20 @@ namespace TVRename
             tbMovieTerms.Text = s.AutoAddMovieTerms;
             tbIgnoreSuffixes.Text = s.AutoAddIgnoreSuffixes;
 
-            cbDefShowIncludeFuture.Checked= s.DefShowIncludeFuture;
-            cbDefShowIncludeNoAirdate.Checked= s.DefShowIncludeNoAirdate;
-            cbDefShowNextAirdate.Checked= s.DefShowNextAirdate;
-            cbDefShowDoMissingCheck.Checked= s.DefShowDoMissingCheck;
-            cbDefShowDoRenaming.Checked= s.DefShowDoRenaming;
-            cbDefShowDVDOrder.Checked= s.DefShowDVDOrder;
-            cbDefShowAutoFolders.Checked= s.DefShowAutoFolders;
-            cbDefShowSequentialMatching.Checked= s.DefShowSequentialMatching;
+            cbDefShowIncludeFuture.Checked = s.DefShowIncludeFuture;
+            cbDefShowIncludeNoAirdate.Checked = s.DefShowIncludeNoAirdate;
+            cbDefShowNextAirdate.Checked = s.DefShowNextAirdate;
+            cbDefShowDoMissingCheck.Checked = s.DefShowDoMissingCheck;
+            cbDefShowDoRenaming.Checked = s.DefShowDoRenaming;
+            cbDefShowDVDOrder.Checked = s.DefShowDVDOrder;
+            cbDefShowAutoFolders.Checked = s.DefShowAutoFolders;
+            cbDefShowSequentialMatching.Checked = s.DefShowSequentialMatching;
             cbDefShowAirdateMatching.Checked = s.DefShowAirDateMatching;
             cbDefShowEpNameMatching.Checked = s.DefShowEpNameMatching;
-            cbDefShowSpecialsCount.Checked= s.DefShowSpecialsCount;
-            rbDefShowUseBase.Checked= s.DefShowUseBase;
-            cbDefShowUseDefLocation.Checked= s.DefShowUseDefLocation;
-            rbDefShowUseSubFolders.Checked= s.DefShowUseSubFolders;
+            cbDefShowSpecialsCount.Checked = s.DefShowSpecialsCount;
+            rbDefShowUseBase.Checked = s.DefShowUseBase;
+            cbDefShowUseDefLocation.Checked = s.DefShowUseDefLocation;
+            rbDefShowUseSubFolders.Checked = s.DefShowUseSubFolders;
 
             cbDefMovieDoRenaming.Checked = s.DefMovieDoRenaming;
             cbDefMovieDoMissing.Checked = s.DefMovieDoMissingCheck;
@@ -1042,10 +1042,12 @@ namespace TVRename
                 case TVSettings.UpdateCheckMode.Off:
                     chkUpdateCheckEnabled.Checked = false;
                     break;
+
                 case TVSettings.UpdateCheckMode.Everytime:
                     chkUpdateCheckEnabled.Checked = true;
                     optUpdateCheckAlways.Checked = true;
                     break;
+
                 case TVSettings.UpdateCheckMode.Interval:
                     chkUpdateCheckEnabled.Checked = true;
                     optUpdateCheckInterval.Checked = true;
@@ -1066,7 +1068,6 @@ namespace TVRename
                 new UpdateCheckInterval { Text = "2 Week", Interval = TimeSpan.FromDays(7 * 2) },
                 new UpdateCheckInterval { Text = "30 Days", Interval = TimeSpan.FromDays(30) },
                 new UpdateCheckInterval { Text = "90 Days", Interval = TimeSpan.FromDays(90) },
-
             };
         }
 
@@ -1110,10 +1111,11 @@ namespace TVRename
                 TVDoc.ProviderType.libraryDefault => throw new InvalidOperationException("Unexpected value s.DefaultProvider = " + enumType),
                 TVDoc.ProviderType.TVmaze => rdoTVTVMaze,
                 TVDoc.ProviderType.TheTVDB => rdoTVTVDB,
-                TVDoc.ProviderType.TMDB=> rdoTVTMDB,
+                TVDoc.ProviderType.TMDB => rdoTVTMDB,
                 _ => throw new InvalidOperationException("Unexpected value s.DefaultProvider = " + enumType)
             };
         }
+
         private RadioButton ChooseMovieRadioButton(TVDoc.ProviderType enumType)
         {
             return enumType switch
@@ -1121,7 +1123,7 @@ namespace TVRename
                 TVDoc.ProviderType.libraryDefault => throw new InvalidOperationException("Unexpected value s.DefaultMovieProvider = " + enumType),
                 TVDoc.ProviderType.TVmaze => throw new InvalidOperationException("Unexpected value s.DefaultMovieProvider = " + enumType),
                 TVDoc.ProviderType.TheTVDB => rdoMovieTheTVDB,
-                TVDoc.ProviderType.TMDB => rdoMovieTMDB ,
+                TVDoc.ProviderType.TMDB => rdoMovieTMDB,
                 _ => throw new InvalidOperationException("Unexpected value s.DefaultProvider = " + enumType)
             };
         }
@@ -1170,6 +1172,7 @@ namespace TVRename
                 _ => throw new InvalidOperationException("Unexpected value s.mode = " + mode)
             };
         }
+
         private static string ConvertEnum(TheTVDB.ApiVersion mode)
         {
             return mode switch
@@ -1250,7 +1253,7 @@ namespace TVRename
 
         private void UpdateDefShowLocation()
         {
-            string oldValue = (string) cmbDefShowLocation.SelectedItem;
+            string oldValue = (string)cmbDefShowLocation.SelectedItem;
             PopulateAndSetDefShowLocation(oldValue);
         }
 
@@ -1282,6 +1285,7 @@ namespace TVRename
 
             cmbDefMovieLocation.EndUpdate();
         }
+
         private void PopulateAndSetDefShowLocation(string? path)
         {
             TVSettings.Instance.LibraryFolders.Sort();
@@ -1289,7 +1293,7 @@ namespace TVRename
             cmbDefShowLocation.BeginUpdate();
             cmbDefShowLocation.Items.Clear();
 
-            cmbDefShowLocation.Items.Add(path??string.Empty);
+            cmbDefShowLocation.Items.Add(path ?? string.Empty);
 
             foreach (string folder in TVSettings.Instance.LibraryFolders)
             {
@@ -1304,6 +1308,7 @@ namespace TVRename
 
             cmbDefShowLocation.EndUpdate();
         }
+
         private void PopulateReplacements([NotNull] TVSettings s)
         {
             foreach (TVSettings.Replacement rep in s.Replacements)
@@ -1347,7 +1352,7 @@ namespace TVRename
         private void FillTreeViewColoringShowStatusTypeCombobox()
         {
             // Shows
-            foreach (ShowConfiguration.ShowAirStatus x in EnumUtil.GetValues< ShowConfiguration.ShowAirStatus>())
+            foreach (ShowConfiguration.ShowAirStatus x in EnumUtil.GetValues<ShowConfiguration.ShowAirStatus>())
             {
                 cboShowStatus.Items.Add(new TVSettings.ShowAirStatusColouringRule(x));
             }
@@ -1358,7 +1363,7 @@ namespace TVRename
             }
 
             // Seasons
-            foreach (ProcessedSeason.SeasonStatus t in EnumUtil.GetValues< ProcessedSeason.SeasonStatus>())
+            foreach (ProcessedSeason.SeasonStatus t in EnumUtil.GetValues<ProcessedSeason.SeasonStatus>())
             {
                 cboShowStatus.Items.Add(new TVSettings.SeasonStatusColouringRule(t));
             }
@@ -1366,7 +1371,7 @@ namespace TVRename
             cboShowStatus.DisplayMember = "Text";
         }
 
-        #endregion
+        #endregion Update Form
 
         private void TxtNumberOnlyKeyPress(object sender, [NotNull] KeyPressEventArgs e)
         {
@@ -1376,8 +1381,6 @@ namespace TVRename
                 e.Handled = true;
             }
         }
-
-
 
         #region RSS OnClick Functionality
 
@@ -1403,11 +1406,11 @@ namespace TVRename
 
             if (rowsIndex.Length > 0)
             {
-                Helpers.OpenUrl((string) RSSGrid[rowsIndex[0], 0].Value);
+                Helpers.OpenUrl((string)RSSGrid[rowsIndex[0], 0].Value);
             }
         }
 
-        #endregion
+        #endregion RSS OnClick Functionality
 
         #region enable and disable settings as appropriate
 
@@ -1519,7 +1522,7 @@ namespace TVRename
             {
                 // don't delete compulsory items
                 int n = rowsIndex[0];
-                string from = (string) ReplacementsGrid[n, 0].Value;
+                string from = (string)ReplacementsGrid[n, 0].Value;
                 if (string.IsNullOrEmpty(from) ||
                     TVSettings.CompulsoryReplacements().IndexOf(from, StringComparison.Ordinal) == -1)
                 {
@@ -1562,7 +1565,7 @@ namespace TVRename
             }
         }
 
-        #endregion
+        #endregion Replacement Rows OnClick Functionality
 
         #region ColourSelection OnClick Functionality
 
@@ -1614,7 +1617,7 @@ namespace TVRename
             }
         }
 
-        #endregion
+        #endregion ColourSelection OnClick Functionality
 
         private void Preferences_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -1627,7 +1630,7 @@ namespace TVRename
 
         private void cmDefaults_ItemClicked(object sender, [NotNull] ToolStripItemClickedEventArgs e)
         {
-            if (!(e.ClickedItem?.Tag is string) || !int.TryParse((string) e.ClickedItem.Tag, out int v))
+            if (!(e.ClickedItem?.Tag is string) || !int.TryParse((string)e.ClickedItem.Tag, out int v))
             {
                 return;
             }
@@ -1650,6 +1653,7 @@ namespace TVRename
                     cbFantArtJpg.Checked = false;
                     cbKODIImages.Checked = true;
                     break;
+
                 case 2: // pytivo
                     cbEpTBNs.Checked = false;
                     cbNFOShows.Checked = false;
@@ -1665,6 +1669,7 @@ namespace TVRename
                     cbFantArtJpg.Checked = false;
                     cbKODIImages.Checked = false;
                     break;
+
                 case 3: // mede8er
                     cbEpTBNs.Checked = false;
                     cbNFOShows.Checked = false;
@@ -1680,6 +1685,7 @@ namespace TVRename
                     cbFantArtJpg.Checked = true;
                     cbKODIImages.Checked = false;
                     break;
+
                 case 4: // none
                     cbEpTBNs.Checked = false;
                     cbNFOShows.Checked = false;
@@ -1695,6 +1701,7 @@ namespace TVRename
                     cbFantArtJpg.Checked = false;
                     cbKODIImages.Checked = false;
                     break;
+
                 default:
                     System.Diagnostics.Debug.Fail("Unknown default selected.");
                     break;
@@ -1826,7 +1833,7 @@ namespace TVRename
 
         private void lbSearchFolders_DragDrop(object sender, [NotNull] DragEventArgs e)
         {
-            string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop);
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)
             {
                 try
@@ -1963,10 +1970,9 @@ namespace TVRename
             FillMovieFolderStringLists();
         }
 
-
         private void lstFMMonitorFolders_DragDrop(object sender, [NotNull] DragEventArgs e)
         {
-            string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop);
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)
             {
                 try
@@ -1998,6 +2004,7 @@ namespace TVRename
             bnRemoveMovieMonFolder.Enabled = lstMovieMonitorFolders.SelectedIndices.Count > 0;
             bnOpenMovieMonFolder.Enabled = lstMovieMonitorFolders.SelectedIndices.Count > 0;
         }
+
         private void lbSearchFolders_SelectedIndexChanged(object sender, EventArgs e)
         {
             bnRemoveSearchFolder.Enabled = lbSearchFolders.SelectedIndices.Count > 0;
@@ -2009,17 +2016,24 @@ namespace TVRename
         #region HelpWindows
 
         private void pbGeneral_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-general-tab");
+
         private void pbDisplay_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-display-tab");
+
         private void pbSearchFolders_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-search-folders-tab");
+
         private void pbRSSJSONSearch_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-rss--json-search-tab");
 
         private void pbFilesAndFolders_Click(object sender, EventArgs e) =>
             OpenInfoWindow("/#the-files-and-folders-tab");
 
         private void pbFolderDeleting_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-folder-deleting-tab");
+
         private void pictureBox7_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-media-center-tab");
+
         private void pictureBox1_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-torrents--nzb-tab");
+
         private void pbLibraryFolders_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-library-folders-tab");
+
         private void PictureBox1_Click_1(object sender, EventArgs e) => OpenInfoWindow("/#the-folder-defaults-tab");
 
         private static void OpenInfoWindow(string page)
@@ -2027,7 +2041,7 @@ namespace TVRename
             Helpers.OpenUrl($"https://www.tvrename.com/manual/options{page}");
         }
 
-        #endregion
+        #endregion HelpWindows
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -2057,6 +2071,7 @@ namespace TVRename
         {
             EnableDisable();
         }
+
         private void JackettDetailsUpdate(object sender, EventArgs e)
         {
             UpdateJackettLink();
@@ -2080,24 +2095,40 @@ namespace TVRename
         #region PopupBrowseDialog
 
         private void bnBrowseWTWRSS_Click(object sender, EventArgs e) => Browse(txtWTWRSS, "rss", 1);
-        private void bnBrowseMissingXML_Click(object sender, EventArgs e) => Browse(txtMissingXML, "xml", 2);
-        private void bnBrowseRenamingXML_Click(object sender, EventArgs e) => Browse(txtRenamingXML, "xml", 2);
-        private void bnBrowseFOXML_Click(object sender, EventArgs e) => Browse(txtFOXML, "xml", 2);
-        private void bnBrowseWTWXML_Click(object sender, EventArgs e) => Browse(txtWTWXML, "xml", 2);
-        private void bnBrowseMissingCSV_Click(object sender, EventArgs e) => Browse(txtMissingCSV, "csv", 3);
-        private void bnBrowseShowsTXT_Click(object sender, EventArgs e) => Browse(txtShowsTXTTo, "txt", 4);
-        private void bnBrowseShowsHTML_Click(object sender, EventArgs e) => Browse(txtShowsHTMLTo, "html", 5);
-        private void bnBrowseWTWICAL_Click(object sender, EventArgs e) => Browse(txtWTWICAL, "iCal", 6);
-        private void bnBrowseXSPF_Click(object sender, EventArgs e) => Browse(txtXSPF, "xspf", 7);
-        private void bnBrowseM3U_Click(object sender, EventArgs e) => Browse(txtM3U, "m3u8", 8);
-        private void bnBrowseASX_Click(object sender, EventArgs e) => Browse(txtASX, "asx", 9);
-        private void bnBrowseWPL_Click(object sender, EventArgs e) => Browse(txtWPL, "wpl", 10);
-        private void bnBrowseMissingMoviesXML_Click(object sender, EventArgs e) => Browse(txtMissingMoviesXML, "xml", 2);
-        private void bnBrowseMissingMoviesCSV_Click(object sender, EventArgs e) => Browse(txtMissingMoviesCSV, "csv", 3);
-        private void bnBrowseMoviesTXT_Click(object sender, EventArgs e) => Browse(txtMoviesTXTTo, "txt", 4);
-        private void bnBrowseMoviesHTML_Click(object sender, EventArgs e) => Browse(txtMoviesHTMLTo, "html", 5);
-        private void bnBrowseWTWTXT_Click(object sender, EventArgs e) => Browse(txtWTWTXT, "txt", 4);
 
+        private void bnBrowseMissingXML_Click(object sender, EventArgs e) => Browse(txtMissingXML, "xml", 2);
+
+        private void bnBrowseRenamingXML_Click(object sender, EventArgs e) => Browse(txtRenamingXML, "xml", 2);
+
+        private void bnBrowseFOXML_Click(object sender, EventArgs e) => Browse(txtFOXML, "xml", 2);
+
+        private void bnBrowseWTWXML_Click(object sender, EventArgs e) => Browse(txtWTWXML, "xml", 2);
+
+        private void bnBrowseMissingCSV_Click(object sender, EventArgs e) => Browse(txtMissingCSV, "csv", 3);
+
+        private void bnBrowseShowsTXT_Click(object sender, EventArgs e) => Browse(txtShowsTXTTo, "txt", 4);
+
+        private void bnBrowseShowsHTML_Click(object sender, EventArgs e) => Browse(txtShowsHTMLTo, "html", 5);
+
+        private void bnBrowseWTWICAL_Click(object sender, EventArgs e) => Browse(txtWTWICAL, "iCal", 6);
+
+        private void bnBrowseXSPF_Click(object sender, EventArgs e) => Browse(txtXSPF, "xspf", 7);
+
+        private void bnBrowseM3U_Click(object sender, EventArgs e) => Browse(txtM3U, "m3u8", 8);
+
+        private void bnBrowseASX_Click(object sender, EventArgs e) => Browse(txtASX, "asx", 9);
+
+        private void bnBrowseWPL_Click(object sender, EventArgs e) => Browse(txtWPL, "wpl", 10);
+
+        private void bnBrowseMissingMoviesXML_Click(object sender, EventArgs e) => Browse(txtMissingMoviesXML, "xml", 2);
+
+        private void bnBrowseMissingMoviesCSV_Click(object sender, EventArgs e) => Browse(txtMissingMoviesCSV, "csv", 3);
+
+        private void bnBrowseMoviesTXT_Click(object sender, EventArgs e) => Browse(txtMoviesTXTTo, "txt", 4);
+
+        private void bnBrowseMoviesHTML_Click(object sender, EventArgs e) => Browse(txtMoviesHTMLTo, "html", 5);
+
+        private void bnBrowseWTWTXT_Click(object sender, EventArgs e) => Browse(txtWTWTXT, "txt", 4);
 
         private void Browse([NotNull] Control txt, string defaultExt, int filterIndex)
         {
@@ -2193,7 +2224,6 @@ namespace TVRename
 
         private void label91_Click(object sender, EventArgs e)
         {
-
         }
     }
 }

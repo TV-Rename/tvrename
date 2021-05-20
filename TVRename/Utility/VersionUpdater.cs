@@ -1,16 +1,16 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using JetBrains.Annotations;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
-using Newtonsoft.Json.Linq;
 
 namespace TVRename
 {
@@ -116,7 +116,7 @@ namespace TVRename
             }
             catch (WebException wex)
             {
-                Logger.LogWebException("Failed to contact GitHub to identify new releases",wex);
+                Logger.LogWebException("Failed to contact GitHub to identify new releases", wex);
             }
             catch (Exception e)
             {
@@ -151,7 +151,7 @@ namespace TVRename
         {
             DateTime.TryParse(gitHubReleaseJson["published_at"]?.ToString(), out DateTime releaseDate);
 
-            string url = (string) gitHubReleaseJson["assets"]?[0]?["browser_download_url"];
+            string url = (string)gitHubReleaseJson["assets"]?[0]?["browser_download_url"];
             string releaseNotesText = gitHubReleaseJson["body"]?.ToString();
             string releaseNotesUrl = gitHubReleaseJson["html_url"]?.ToString();
             string version = gitHubReleaseJson["tag_name"]?.ToString();

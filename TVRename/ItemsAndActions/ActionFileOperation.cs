@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 using Alphaleonis.Win32.Filesystem;
 
@@ -22,7 +22,7 @@ namespace TVRename
                 return;
             }
 
-            if (Tidyup is null ||  Tidyup.DeleteEmptyIsRecycle)
+            if (Tidyup is null || Tidyup.DeleteEmptyIsRecycle)
             {
                 LOGGER.Info($"Recycling {file.FullName}");
                 Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(file.FullName,
@@ -37,6 +37,7 @@ namespace TVRename
         }
 
         protected void DoTidyUp(DirectoryInfo? di) => FileHelper.DoTidyUp(di, Tidyup);
+
         protected void DeleteOrRecycleFolder(DirectoryInfo? di) => FileHelper.DeleteOrRecycleFolder(di, Tidyup);
     }
 }

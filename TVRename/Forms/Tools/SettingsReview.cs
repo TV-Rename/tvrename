@@ -1,10 +1,10 @@
+using BrightIdeasSoftware;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
-using JetBrains.Annotations;
 
 namespace TVRename.Forms
 {
@@ -44,7 +44,7 @@ namespace TVRename.Forms
 
         private void BwScan_DoWork(object sender, DoWorkEventArgs e)
         {
-            BackgroundWorker bw = (BackgroundWorker) sender;
+            BackgroundWorker bw = (BackgroundWorker)sender;
             int total = mDoc.FilmLibrary.Count + mDoc.TvLibrary.Count;
             int current = 0;
 
@@ -52,44 +52,44 @@ namespace TVRename.Forms
 
             foreach (MovieConfiguration movie in mDoc.FilmLibrary.GetSortedMovies())
             {
-                set.Add(new CustomLanguageMovieCheck(movie,mDoc));
-                set.Add(new CustomNameMovieCheck(movie,mDoc));
-                set.Add(new CustomRegionMovieCheck(movie,mDoc));
-                set.Add(new ManualFoldersMovieCheck(movie,mDoc));
+                set.Add(new CustomLanguageMovieCheck(movie, mDoc));
+                set.Add(new CustomNameMovieCheck(movie, mDoc));
+                set.Add(new CustomRegionMovieCheck(movie, mDoc));
+                set.Add(new ManualFoldersMovieCheck(movie, mDoc));
 
-                set.Add(new DefaultDoMissingMovieCheck(movie,mDoc));
-                set.Add(new DefaultDoRenameMovieCheck(movie,mDoc));
+                set.Add(new DefaultDoMissingMovieCheck(movie, mDoc));
+                set.Add(new DefaultDoRenameMovieCheck(movie, mDoc));
 
-                set.Add(new FilenameMovieCheck(movie,mDoc));
-                set.Add(new MovieProviderCheck(movie,mDoc));
-                set.Add(new SubdirectoryMovieCheck(movie,mDoc));
-                set.Add(new FolderBaseMovieCheck(movie,mDoc));
-                
+                set.Add(new FilenameMovieCheck(movie, mDoc));
+                set.Add(new MovieProviderCheck(movie, mDoc));
+                set.Add(new SubdirectoryMovieCheck(movie, mDoc));
+                set.Add(new FolderBaseMovieCheck(movie, mDoc));
+
                 bw.ReportProgress(100 * current++ / total, movie.ShowName);
             }
 
             foreach (ShowConfiguration show in mDoc.TvLibrary.GetSortedShowItems())
             {
-                set.Add(new CustomLanguageTvShowCheck(show,mDoc));
-                set.Add(new CustomNameTvShowCheck(show,mDoc));
-                set.Add(new CustomRegionTvShowCheck(show,mDoc));
-                set.Add(new CustomSearchTvShowCheck(show,mDoc));
-                set.Add(new UseManualFoldersTvShowCheck(show,mDoc));
+                set.Add(new CustomLanguageTvShowCheck(show, mDoc));
+                set.Add(new CustomNameTvShowCheck(show, mDoc));
+                set.Add(new CustomRegionTvShowCheck(show, mDoc));
+                set.Add(new CustomSearchTvShowCheck(show, mDoc));
+                set.Add(new UseManualFoldersTvShowCheck(show, mDoc));
 
-                set.Add(new DefaultAirDateMatchingTvCheck(show,mDoc));
-                set.Add(new DefaultDoMissingTvCheck(show,mDoc));
-                set.Add(new DefaultDoRenameTvCheck(show,mDoc));
-                set.Add(new DefaultEpisodeNameMatchingTvCheck(show,mDoc));
-                set.Add(new DefaultFutureEpisodesTvCheck(show,mDoc));
-                set.Add(new DefaultNoAirdateTvCheck(show,mDoc));
-                set.Add(new DefaultSequentialMatchingTvCheck(show,mDoc));
-                set.Add(new DefaultShowAirDateTvCheck(show,mDoc));
-                set.Add(new DefaultSpecialsAsEpisodesTvCheck(show,mDoc));
-                set.Add(new DefaultUseDvdTvCheck(show,mDoc));
+                set.Add(new DefaultAirDateMatchingTvCheck(show, mDoc));
+                set.Add(new DefaultDoMissingTvCheck(show, mDoc));
+                set.Add(new DefaultDoRenameTvCheck(show, mDoc));
+                set.Add(new DefaultEpisodeNameMatchingTvCheck(show, mDoc));
+                set.Add(new DefaultFutureEpisodesTvCheck(show, mDoc));
+                set.Add(new DefaultNoAirdateTvCheck(show, mDoc));
+                set.Add(new DefaultSequentialMatchingTvCheck(show, mDoc));
+                set.Add(new DefaultShowAirDateTvCheck(show, mDoc));
+                set.Add(new DefaultSpecialsAsEpisodesTvCheck(show, mDoc));
+                set.Add(new DefaultUseDvdTvCheck(show, mDoc));
 
-                set.Add(new TvShowEpisodeNameCheck(show,mDoc));
-                set.Add(new TvShowProviderCheck(show,mDoc));
-                set.Add(new TvShowSeasonFormatCheck(show,mDoc));
+                set.Add(new TvShowEpisodeNameCheck(show, mDoc));
+                set.Add(new TvShowProviderCheck(show, mDoc));
+                set.Add(new TvShowSeasonFormatCheck(show, mDoc));
                 set.Add(new FolderBaseTvCheck(show, mDoc));
 
                 bw.ReportProgress(100 * current++ / total, show.ShowName);
@@ -114,6 +114,7 @@ namespace TVRename.Forms
 
             UpdateUI();
         }
+
         private void BtnRefresh_Click_1(object sender, EventArgs e)
         {
             Scan();
@@ -137,13 +138,13 @@ namespace TVRename.Forms
             possibleMergedEpisodeRightClickMenu.Items.Clear();
             if (olvDuplicates.SelectedObjects.Count == 1)
             {
-                SettingsCheck mlastSelected = (SettingsCheck) e.Model;
+                SettingsCheck mlastSelected = (SettingsCheck)e.Model;
 
                 if (mlastSelected is MovieCheck mcheck)
                 {
                     MovieConfiguration si = mcheck.Movie;
                     AddRcMenuItem("Force Refresh",
-                        (o, args) => mainUi.ForceMovieRefresh(new List<MovieConfiguration> {si}, false));
+                        (o, args) => mainUi.ForceMovieRefresh(new List<MovieConfiguration> { si }, false));
 
                     AddRcMenuItem("Edit Movie", (o, args) => mainUi.EditMovie(si));
 
@@ -157,7 +158,7 @@ namespace TVRename.Forms
                 {
                     ShowConfiguration si = tcheck.Show;
                     AddRcMenuItem("Force Refresh",
-                        (o, args) => mainUi.ForceRefresh(new List<ShowConfiguration> {si}, false));
+                        (o, args) => mainUi.ForceRefresh(new List<ShowConfiguration> { si }, false));
 
                     AddRcMenuItem("Edit TV Show", (o, args) => mainUi.EditShow(si));
                 }

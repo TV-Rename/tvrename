@@ -1,11 +1,12 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,7 +14,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 using TVRename.Forms.ShowPreferences;
 
 namespace TVRename
@@ -51,7 +51,8 @@ namespace TVRename
                 lblSeasonWordPreview.Text = TVSettings.Instance.SeasonFolderFormat + "-(" +
                                             CustomSeasonName.NameFor(sampleProcessedSeason,
                                                 TVSettings.Instance.SeasonFolderFormat) + ")";
-            }else
+            }
+            else
             {
                 lblSeasonWordPreview.Text = TVSettings.Instance.SeasonFolderFormat;
             }
@@ -60,7 +61,7 @@ namespace TVRename
 
             SetupDropDowns(si);
 
-            codeFinderForm = new CombinedCodeFinder(si.Code != -1 ? si.Code.ToString() : "", MediaConfiguration.MediaType.tv, si.Provider) {Dock = DockStyle.Fill};
+            codeFinderForm = new CombinedCodeFinder(si.Code != -1 ? si.Code.ToString() : "", MediaConfiguration.MediaType.tv, si.Provider) { Dock = DockStyle.Fill };
 
             codeFinderForm.SelectionChanged += MTCCF_SelectionChanged;
 
@@ -195,14 +196,17 @@ namespace TVRename
                 case ShowConfiguration.AutomaticFolderType.none:
                     chkAutoFolders.Checked = false;
                     break;
+
                 case ShowConfiguration.AutomaticFolderType.baseOnly:
                     chkAutoFolders.Checked = true;
                     rdoFolderBaseOnly.Checked = true;
                     break;
+
                 case ShowConfiguration.AutomaticFolderType.custom:
                     chkAutoFolders.Checked = true;
                     rdoFolderCustom.Checked = true;
                     break;
+
                 case ShowConfiguration.AutomaticFolderType.libraryDefault:
                     chkAutoFolders.Checked = true;
                     rdoFolderLibraryDefault.Checked = true;
@@ -232,6 +236,7 @@ namespace TVRename
                 case TVDoc.ProviderType.TMDB:
                     rdoTMDB.Checked = true;
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -243,7 +248,7 @@ namespace TVRename
             {
                 foreach (string s in kvp.Value)
                 {
-                    ListViewItem lvi = new ListViewItem {Text = kvp.Key.ToString()};
+                    ListViewItem lvi = new ListViewItem { Text = kvp.Key.ToString() };
                     lvi.SubItems.Add(s);
 
                     lvSeasonFolders.Items.Add(lvi);
@@ -299,7 +304,7 @@ namespace TVRename
 
         private bool OkToClose()
         {
-            if (!TVDoc.GetMediaCache(GetProviderTypeInUse()).HasSeries(codeFinderForm.SelectedCode())) 
+            if (!TVDoc.GetMediaCache(GetProviderTypeInUse()).HasSeries(codeFinderForm.SelectedCode()))
             {
                 DialogResult dr = MessageBox.Show($"{GetConfigurationProviderType().PrettyPrint()} code unknown, close anyway?", "TVRename Add/Edit Show",
                                                   MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -312,7 +317,7 @@ namespace TVRename
             {
                 MessageBox.Show("Please enter language for the show or accept the default preferred language", "TVRename Add/Edit Show",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                
+
                 return false;
             }
             if (chkAutoFolders.Checked && string.IsNullOrWhiteSpace(txtBaseFolder.Text))
@@ -325,7 +330,7 @@ namespace TVRename
 
                 return false;
             }
-            if (chkAutoFolders.Checked && !TVSettings.OKPath(txtBaseFolder.Text,false))
+            if (chkAutoFolders.Checked && !TVSettings.OKPath(txtBaseFolder.Text, false))
             {
                 MessageBox.Show("Please check the base folder is a valid one and has no invalid characters"
                     , "TVRename Add/Edit Show",
@@ -355,9 +360,13 @@ namespace TVRename
         #region HelpWindows
 
         private void pbBasics_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-basics-tab");
+
         private void pbAdvanced_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-advanced-tab");
+
         private void pbSearch_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-search-tab");
+
         private void pbAliases_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-show-aliases-tab");
+
         private void pbFolders_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-folders-tab");
 
         private static void OpenInfoWindow(string page)
@@ -365,7 +374,7 @@ namespace TVRename
             Helpers.OpenUrl($"https://www.tvrename.com/manual/user{page}");
         }
 
-        #endregion
+        #endregion HelpWindows
 
         private void SetShow()
         {
@@ -388,7 +397,7 @@ namespace TVRename
             selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.DefaultTimeZone();
             selectedShow.ShowNextAirdate = chkShowNextAirdate.Checked;
 
-            selectedShow.SetId(GetProviderTypeInUse(),code);
+            selectedShow.SetId(GetProviderTypeInUse(), code);
             selectedShow.CountSpecials = chkSpecialsCount.Checked;
             selectedShow.DoRename = cbDoRenaming.Checked;
             selectedShow.DoMissingCheck = cbDoMissingCheck.Checked;
@@ -437,7 +446,7 @@ namespace TVRename
                     // ignored
                 }
             }
-             
+
             selectedShow.AliasNames.Clear();
             selectedShow.AliasNames.AddNullableRange(lbShowAlias.Items.Cast<string>().Distinct());
 
@@ -531,7 +540,7 @@ namespace TVRename
 
         private void bnAdd_Click(object sender, EventArgs e)
         {
-            ListViewItem lvi = new ListViewItem {Text = txtSeasonNumber.Text};
+            ListViewItem lvi = new ListViewItem { Text = txtSeasonNumber.Text };
             lvi.SubItems.Add(txtFolder.Text);
 
             lvSeasonFolders.Items.Add(lvi);
@@ -551,7 +560,7 @@ namespace TVRename
                 folderBrowser.SelectedPath = txtFolder.Text;
             }
 
-            if(string.IsNullOrWhiteSpace(folderBrowser.SelectedPath) && !string.IsNullOrWhiteSpace(txtBaseFolder.Text))
+            if (string.IsNullOrWhiteSpace(folderBrowser.SelectedPath) && !string.IsNullOrWhiteSpace(txtBaseFolder.Text))
             {
                 folderBrowser.SelectedPath = txtBaseFolder.Text;
             }
@@ -659,6 +668,7 @@ namespace TVRename
             llCustomSearchPreview.Enabled = en;
             lbSearchExample.Enabled = en;
         }
+
         private void EnableDisableCustomNaming()
         {
             bool en = cbUseCustomNamingFormat.Checked;
@@ -675,7 +685,7 @@ namespace TVRename
 
         private void tbShowAlias_TextChanged(object sender, EventArgs e)
         {
-          bnAddAlias.Enabled = tbShowAlias.Text.Length > 0;
+            bnAddAlias.Enabled = tbShowAlias.Text.Length > 0;
         }
 
         private void lbShowAlias_SelectedIndexChanged(object sender, EventArgs e)
@@ -685,9 +695,9 @@ namespace TVRename
 
         private void bnTags_Click(object sender, EventArgs e)
         {
-                cntfw = new CustomNameTagsFloatingWindow(sampleProcessedSeason);
-                cntfw.Show(this);
-                Focus();
+            cntfw = new CustomNameTagsFloatingWindow(sampleProcessedSeason);
+            cntfw.Show(this);
+            Focus();
         }
 
         private void txtFolder_TextChanged(object sender, EventArgs e) => CheckToEnableAddButton();
@@ -710,12 +720,12 @@ namespace TVRename
                 MessageBox.Show(
                     "Please add some library folders in the Preferences to use this.",
                     "Can't Auto Add Show", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
+
                 return;
             }
 
             string showName = codeFinderForm.SelectedShow()?.Name ?? txtCustomShowName.Text ?? "New Folder";
-            QuickLocateForm f = new QuickLocateForm(showName,MediaConfiguration.MediaType.tv);
+            QuickLocateForm f = new QuickLocateForm(showName, MediaConfiguration.MediaType.tv);
 
             if (f.ShowDialog(this) == DialogResult.OK)
             {

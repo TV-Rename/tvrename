@@ -1,7 +1,7 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -32,7 +32,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string NameFor(MovieConfiguration? m, string styleString) => NameFor(m, styleString, false,true);
+        public static string NameFor(MovieConfiguration? m, string styleString) => NameFor(m, styleString, false, true);
 
         public static string NameFor(MovieConfiguration m, string styleString, string? extension)
         {
@@ -73,8 +73,8 @@ namespace TVRename
             name = name.ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower());
             name = name.ReplaceInsensitive("{ShowNameLower}", showname.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
             name = name.ReplaceInsensitive("{ContentRating}", m.CachedMovie?.ContentRating);
-            name = name.ReplaceInsensitive("{Year}", m.CachedMovie?.Year.ToString() );
-            name = name.ReplaceInsensitive("{Imdb}", m.CachedMovie?.Imdb );
+            name = name.ReplaceInsensitive("{Year}", m.CachedMovie?.Year.ToString());
+            name = name.ReplaceInsensitive("{Imdb}", m.CachedMovie?.Imdb);
 
             return isfilename ? TVSettings.DirectoryFriendly(name.Trim()) : name.Trim();
         }

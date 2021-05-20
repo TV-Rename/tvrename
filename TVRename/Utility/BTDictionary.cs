@@ -56,11 +56,11 @@ namespace TVRename
 
         public override void Write(System.IO.Stream sw)
         {
-            sw.WriteByte((byte) 'd');
+            sw.WriteByte((byte)'d');
             foreach (BTDictionaryItem i in Items)
                 i.Write(sw);
 
-            sw.WriteByte((byte) 'e');
+            sw.WriteByte((byte)'e');
         }
     }
 }

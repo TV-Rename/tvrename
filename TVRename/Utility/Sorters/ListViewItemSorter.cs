@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 using System;
 using System.Collections;
 using System.Windows.Forms;
@@ -19,6 +19,7 @@ namespace TVRename
         {
             Col = column;
         }
+
         public int Compare(object x, object y)
         {
             if (!(x is ListViewItem lvix))

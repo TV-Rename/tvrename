@@ -11,7 +11,7 @@ using System.Text;
 namespace CefSharp
 {
     /// <summary>
-    /// DependencyChecker provides a known list of Cef/CefSharp dependencies and 
+    /// DependencyChecker provides a known list of Cef/CefSharp dependencies and
     /// provides helper methods to check for their existance.
     /// </summary>
     public static class DependencyChecker

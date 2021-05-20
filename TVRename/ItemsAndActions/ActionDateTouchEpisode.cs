@@ -1,14 +1,15 @@
-using System;
 using Alphaleonis.Win32.Filesystem;
+using System;
 
 namespace TVRename
 {
     internal class ActionDateTouchEpisode : ActionDateTouchFile
     {
-        public ActionDateTouchEpisode(FileInfo f, ProcessedEpisode pe, DateTime date) : base(f,date)
+        public ActionDateTouchEpisode(FileInfo f, ProcessedEpisode pe, DateTime date) : base(f, date)
         {
             Episode = pe;
         }
+
         public override bool SameAs(Item o)
         {
             return o is ActionDateTouchEpisode touch && touch.WhereFile == WhereFile;

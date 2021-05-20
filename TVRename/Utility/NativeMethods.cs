@@ -10,9 +10,10 @@ namespace TVRename
 
         [DllImport("kernel32.dll")]
         private static extern bool AttachConsole(uint dwProcessId);
+
         private const uint ATTACH_PARENT_PROCESS = 0xFFFFFFFF;
 
         // Attach to console window – this may modify the standard handles
-        public static bool AttachParentConsole() =>AttachConsole(ATTACH_PARENT_PROCESS);
+        public static bool AttachParentConsole() => AttachConsole(ATTACH_PARENT_PROCESS);
     }
 }

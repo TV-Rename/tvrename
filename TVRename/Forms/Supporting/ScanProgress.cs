@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 using System.Windows.Forms;
 
 namespace TVRename
@@ -31,7 +31,7 @@ namespace TVRename
         private int pctuTorrent;
         private string? msg;
 
-        public ScanProgress(bool autoBulkAdd,bool mediaLib,bool downloadFolder, bool searchLocal, bool downloading, bool rss)
+        public ScanProgress(bool autoBulkAdd, bool mediaLib, bool downloadFolder, bool searchLocal, bool downloading, bool rss)
         {
             Ready = false;
             finished = false;
@@ -51,7 +51,7 @@ namespace TVRename
             pbBulkAutoAdd.Update();
             pbMediaLib.Value = pctMediaLib < 0 ? 0 : pctMediaLib > 100 ? 100 : pctMediaLib;
             pbMediaLib.Update();
-            pbDownloadFolder.Value = pctDownloadFolder< 0 ? 0 : pctDownloadFolder > 100 ? 100 : pctDownloadFolder;
+            pbDownloadFolder.Value = pctDownloadFolder < 0 ? 0 : pctDownloadFolder > 100 ? 100 : pctDownloadFolder;
             pbDownloadFolder.Update();
             pbLocalSearch.Value = pctLocalSearch < 0 ? 0 : pctLocalSearch > 100 ? 100 : pctLocalSearch;
             pbLocalSearch.Update();

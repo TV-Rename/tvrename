@@ -1,10 +1,10 @@
+using JetBrains.Annotations;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
-using NLog;
 
 namespace TVRename
 {
@@ -15,11 +15,11 @@ namespace TVRename
         public static void WriteStringsToXml([NotNull] IEnumerable<string> strings, [NotNull] XmlWriter writer, [NotNull] string elementName, [NotNull] string stringName)
         {
             writer.WriteStartElement(elementName);
-            writer.WriteStringsToXml(stringName,strings);
+            writer.WriteStringsToXml(stringName, strings);
             writer.WriteEndElement();
         }
 
-        public static void WriteStringsToXml(this XmlWriter writer,  [NotNull] string elementName, [NotNull] IEnumerable<string> strings)
+        public static void WriteStringsToXml(this XmlWriter writer, [NotNull] string elementName, [NotNull] IEnumerable<string> strings)
         {
             foreach (string ss in strings)
             {
@@ -43,7 +43,7 @@ namespace TVRename
             WriteElement(writer, elementName, value, false);
         }
 
-        public static void WriteElement(this XmlWriter writer, string elementName, string? value,bool ignoreIfBlank)
+        public static void WriteElement(this XmlWriter writer, string elementName, string? value, bool ignoreIfBlank)
         {
             if (ignoreIfBlank && string.IsNullOrWhiteSpace(value))
             {
@@ -68,7 +68,7 @@ namespace TVRename
             WriteElement(writer, elementName, value, null);
         }
 
-        public static void WriteElement([NotNull] this XmlWriter writer, [NotNull] string elementName, double? value,string? format)
+        public static void WriteElement([NotNull] this XmlWriter writer, [NotNull] string elementName, double? value, string? format)
         {
             if (!value.HasValue)
             {
@@ -91,7 +91,7 @@ namespace TVRename
             WriteElement(writer, elementName, value, false);
         }
 
-        public static void WriteElement(this XmlWriter writer, string elementName, int value,bool ignoreZero)
+        public static void WriteElement(this XmlWriter writer, string elementName, int value, bool ignoreZero)
         {
             if (ignoreZero && value == 0)
             {
@@ -102,12 +102,14 @@ namespace TVRename
             writer.WriteValue(value);
             writer.WriteEndElement();
         }
+
         public static void WriteElement([NotNull] this XmlWriter writer, [NotNull] string elementName, bool value)
         {
             writer.WriteStartElement(elementName);
             writer.WriteValue(value);
             writer.WriteEndElement();
         }
+
         public static void WriteElement([NotNull] this XmlWriter writer, [NotNull] string elementName, DateTime? value)
         {
             writer.WriteStartElement(elementName);
@@ -139,16 +141,16 @@ namespace TVRename
 
         public static XElement GetOrCreateElement([NotNull] this XElement root, string elementName, string name, string value)
         {
-            if (root.Elements(elementName).Any(el => el.HasAttribute(name,value)))
+            if (root.Elements(elementName).Any(el => el.HasAttribute(name, value)))
             {
-                return root.Elements(elementName).First(el => el.HasAttribute(name,value));
+                return root.Elements(elementName).First(el => el.HasAttribute(name, value));
             }
             XElement e = new XElement(elementName);
             root.Add(e);
             return e;
         }
 
-        public static void WriteAttributeToXml([NotNull] this XmlWriter writer, [NotNull] string attributeName, DateTime?  value)
+        public static void WriteAttributeToXml([NotNull] this XmlWriter writer, [NotNull] string attributeName, DateTime? value)
         {
             writer.WriteStartAttribute(attributeName);
             if (value != null)
@@ -158,6 +160,7 @@ namespace TVRename
 
             writer.WriteEndAttribute();
         }
+
         internal static void WriteElement(this XmlWriter writer, string elementName, int? value)
         {
             if (value.HasValue)
@@ -165,18 +168,21 @@ namespace TVRename
                 WriteElement(writer, elementName, value.Value);
             }
         }
+
         public static void WriteAttributeToXml([NotNull] this XmlWriter writer, [NotNull] string attributeName, int value)
         {
             writer.WriteStartAttribute(attributeName);
             writer.WriteValue(value);
             writer.WriteEndAttribute();
         }
+
         public static void WriteAttributeToXml([NotNull] this XmlWriter writer, [NotNull] string attributeName, bool value)
         {
             writer.WriteStartAttribute(attributeName);
             writer.WriteValue(value);
             writer.WriteEndAttribute();
         }
+
         public static void WriteAttributeToXml([NotNull] this XmlWriter writer, [NotNull] string attributeName, long value)
         {
             writer.WriteStartAttribute(attributeName);
@@ -316,7 +322,7 @@ namespace TVRename
             return node.Attributes().Any(testAttribute => testAttribute.Name == name && testAttribute.Value == value);
         }
 
-        public static bool ExtractBool([NotNull] this XElement xmlSettings, string elementName,bool defaultValue)
+        public static bool ExtractBool([NotNull] this XElement xmlSettings, string elementName, bool defaultValue)
         {
             if (xmlSettings.Descendants(elementName).Any())
             {
@@ -325,7 +331,8 @@ namespace TVRename
 
             return defaultValue;
         }
-        public static bool ExtractBoolBackupDefault([NotNull] this XElement xmlSettings, string elementName, string backupElementName,bool defaultValue)
+
+        public static bool ExtractBoolBackupDefault([NotNull] this XElement xmlSettings, string elementName, string backupElementName, bool defaultValue)
         {
             return xmlSettings.ExtractBool(elementName)
                 ?? xmlSettings.ExtractBool(backupElementName)
@@ -336,16 +343,17 @@ namespace TVRename
         {
             if (xmlSettings.Descendants(elementName).Any())
             {
-                string textVersion=(string)xmlSettings.Descendants(elementName).First();
+                string textVersion = (string)xmlSettings.Descendants(elementName).First();
                 if (string.IsNullOrWhiteSpace(textVersion))
                 {
                     return null;
                 }
 
-                return XmlConvert.ToDateTime(textVersion,XmlDateTimeSerializationMode.Utc);
+                return XmlConvert.ToDateTime(textVersion, XmlDateTimeSerializationMode.Utc);
             }
             return null;
         }
+
         public static string ExtractString([NotNull] this XElement xmlSettings, string elementName)
         {
             return ExtractString(xmlSettings, elementName, string.Empty);
@@ -361,7 +369,7 @@ namespace TVRename
             return null;
         }
 
-        public static string ExtractString([NotNull] this XElement xmlSettings, string elementName,string defaultValue)
+        public static string ExtractString([NotNull] this XElement xmlSettings, string elementName, string defaultValue)
         {
             if (xmlSettings.Descendants(elementName).Any())
             {
@@ -370,9 +378,10 @@ namespace TVRename
 
             return defaultValue;
         }
+
         public static int? ExtractInt([NotNull] this XElement xmlSettings, string elementName)
         {
-            if(xmlSettings.Descendants(elementName).Any() && !string.IsNullOrWhiteSpace((string)xmlSettings.Descendants(elementName).First()))
+            if (xmlSettings.Descendants(elementName).Any() && !string.IsNullOrWhiteSpace((string)xmlSettings.Descendants(elementName).First()))
             {
                 return XmlConvert.ToInt32((string)xmlSettings.Descendants(elementName).First());
             }
@@ -380,7 +389,7 @@ namespace TVRename
             return null;
         }
 
-        public static int ExtractInt([NotNull] this XElement xmlSettings, string elementName, int defaultValue) => ExtractInt(xmlSettings,elementName)??defaultValue;
+        public static int ExtractInt([NotNull] this XElement xmlSettings, string elementName, int defaultValue) => ExtractInt(xmlSettings, elementName) ?? defaultValue;
 
         public static long? ExtractLong([NotNull] this XElement xmlSettings, string elementName)
         {
@@ -440,8 +449,9 @@ namespace TVRename
         [NotNull]
         internal static List<string> ReadStringsFromXml([NotNull] this XElement rootElement, string token)
         {
-            return rootElement.Descendants(token).Select(n=>n.Value.Trim()).ToList();
+            return rootElement.Descendants(token).Select(n => n.Value.Trim()).ToList();
         }
+
         [NotNull]
         internal static List<IgnoreItem> ReadIiFromXml([NotNull] this XElement rootElement, string token)
         {
@@ -471,6 +481,7 @@ namespace TVRename
             }
             writer.WriteEndElement();
         }
+
         internal static void WriteStringsToXml([NotNull] this XmlWriter writer, [NotNull] PreviouslySeenMovies previouslySeenMovies, [NotNull] string elementName, string stringName)
         {
             writer.WriteStartElement(elementName);

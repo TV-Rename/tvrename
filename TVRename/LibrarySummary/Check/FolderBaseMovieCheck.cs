@@ -1,11 +1,13 @@
-using System.Linq;
 using JetBrains.Annotations;
+using System.Linq;
 
 namespace TVRename
 {
     internal class FolderBaseMovieCheck : MovieCheck
     {
-        public FolderBaseMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc) { }
+        public FolderBaseMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
+        {
+        }
 
         public override bool Check() => Movie.UseAutomaticFolders && !Movie.AutomaticFolderRoot.HasValue();
 

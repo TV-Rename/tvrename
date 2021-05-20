@@ -1,16 +1,16 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
+using JetBrains.Annotations;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using JetBrains.Annotations;
-using NodaTime;
 
 namespace TVRename
 {
@@ -25,7 +25,7 @@ namespace TVRename
         public static string DefaultTimeZone() => "America/New_York";
 
         [NotNull]
-        public static string TimeZoneForNetwork(string? network,string defaultTimeZone)
+        public static string TimeZoneForNetwork(string? network, string defaultTimeZone)
         {
             string[] uktv = { "Sky Atlantic (UK)", "BBC One", "Sky1", "BBC Two", "ITV", "Nick Jr.", "BBC Three", "Channel 4", "CBeebies", "Sky Box Office", "Watch", "ITV2", "National Geographic (UK)", "V", "ITV Encore", "ITV1", "BBC", "E4", "Channel 5 (UK)", "BBC Four", "ITVBe" };
             string[] ausTv = { "ABC4Kids", "Stan", "Showcase (AU)", "PBS Kids Sprout", "SBS (AU)", "Nine Network", "ABC (AU)" };

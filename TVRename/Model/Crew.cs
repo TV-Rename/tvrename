@@ -1,6 +1,6 @@
+using JetBrains.Annotations;
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -10,7 +10,7 @@ namespace TVRename
         public string? ImageUrl { get; }
         public string Name { get; }
         public string? Job { get; }
-        public string? Department{ get; }
+        public string? Department { get; }
         public string? CreditId { get; }
 
         public Crew(int id, string? image, string actorName, string? job, string? department, string? creditId)

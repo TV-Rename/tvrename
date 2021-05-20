@@ -1,15 +1,15 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 // This builds the foldernames to create/find, for any given season
 
@@ -85,10 +85,10 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Season:2}", s.SeasonNumber.ToString("00"));
             name = name.ReplaceInsensitive("{SeasonNumber}", s.SeasonIndex.ToString());
             name = name.ReplaceInsensitive("{SeasonNumber:2}", s.SeasonIndex.ToString("00"));
-            name = name.ReplaceInsensitive("{SeasonName}", seasonName??string.Empty);
+            name = name.ReplaceInsensitive("{SeasonName}", seasonName ?? string.Empty);
             name = name.ReplaceInsensitive("{StartYear}", s.MinYear().ToString());
             name = name.ReplaceInsensitive("{EndYear}", s.MaxYear().ToString());
-            name = name.ReplaceInsensitive("{ShowImdb}", s.Show.CachedShow?.Imdb??string.Empty);
+            name = name.ReplaceInsensitive("{ShowImdb}", s.Show.CachedShow?.Imdb ?? string.Empty);
             name = name.ReplaceInsensitive("{TotalNumberOfEpisodes}", s?.Episodes.Count.ToString() ?? string.Empty);
 
             return TVSettings.DirectoryFriendly(name.Trim());

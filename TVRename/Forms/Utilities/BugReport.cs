@@ -1,16 +1,16 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
-using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Text;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using System.Collections.Generic;
+using System.Text;
+using System.Windows.Forms;
 
 namespace TVRename
 {
@@ -39,12 +39,12 @@ namespace TVRename
             txtEmailText.Update();
 
             StringBuilder txt = new StringBuilder();
-            
+
             if (cbSettings.Checked)
             {
-                txt.AppendLine("==== Settings Files ====" );
+                txt.AppendLine("==== Settings Files ====");
                 txt.AppendLine();
-                txt.AppendLine("---- TVRenameSettings.xml" );
+                txt.AppendLine("---- TVRenameSettings.xml");
                 txt.AppendLine();
                 OutputSettingsFile(txt);
                 txt.AppendLine("");
@@ -59,7 +59,7 @@ namespace TVRename
 
             if (cbFOScan.Checked)
             {
-                txt.AppendLine( "==== Finding & Organising Directory Scan ====");
+                txt.AppendLine("==== Finding & Organising Directory Scan ====");
                 txt.AppendLine();
                 ExtractDownloadFolders(txt);
                 txt.AppendLine();
@@ -67,7 +67,7 @@ namespace TVRename
 
             if (cbFolderScan.Checked)
             {
-                txt.AppendLine("==== Media Folders Directory Scan ====" );
+                txt.AppendLine("==== Media Folders Directory Scan ====");
                 ExtractShowDetails(txt);
                 txt.AppendLine();
             }
@@ -172,7 +172,7 @@ namespace TVRename
 
         private void linkForum_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Helpers.OpenUrl("https://groups.google.com/forum/#!forum/tvrename");   
+            Helpers.OpenUrl("https://groups.google.com/forum/#!forum/tvrename");
         }
     }
 }

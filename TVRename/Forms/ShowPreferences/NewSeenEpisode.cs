@@ -7,6 +7,7 @@ namespace TVRename.Forms.ShowPreferences
     public partial class NewSeenEpisode : Form
     {
         public ProcessedEpisode? ChosenEpisode;
+
         public NewSeenEpisode(IEnumerable<ProcessedEpisode> eps)
         {
             InitializeComponent();
@@ -17,13 +18,13 @@ namespace TVRename.Forms.ShowPreferences
             {
                 comboBox1.Items.Add(ep);
             }
-            
+
             comboBox1.EndUpdate();
         }
 
         private void BnOK_Click(object sender, EventArgs e)
         {
-            ChosenEpisode = (ProcessedEpisode) comboBox1.SelectedItem;
+            ChosenEpisode = (ProcessedEpisode)comboBox1.SelectedItem;
             DialogResult = DialogResult.OK;
             Close();
         }

@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 using System;
 
@@ -19,16 +19,16 @@ namespace TVRename
             return TypeNumber(x) == TypeNumber(y) ? x.CompareTo(y) : TypeNumber(x) - TypeNumber(y);
         }
 
-        #endregion
+        #endregion IComparer<Item> Members
 
         private static int TypeNumber(Item a)
         {
             return a switch
-            { 
+            {
                 ShowItemMissing _ => 1,
                 MovieItemMissing _ => 2,
                 ActionCopyMoveRename _ => 3,
-                ActionMoveRenameDirectory _ =>4,
+                ActionMoveRenameDirectory _ => 4,
                 ActionTDownload _ => 5,
                 ActionDownloadImage _ => 6,
                 ActionMede8erViewXML _ => 7,

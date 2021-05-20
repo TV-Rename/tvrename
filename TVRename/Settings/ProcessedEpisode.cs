@@ -1,7 +1,7 @@
-using System;
-using System.Collections.Generic;
 using JetBrains.Annotations;
 using NodaTime;
+using System;
+using System.Collections.Generic;
 
 namespace TVRename
 {
@@ -18,6 +18,7 @@ namespace TVRename
         public readonly List<Episode> SourceEpisodes;
         public ProcessedSeason TheAiredProcessedSeason;
         public ProcessedSeason TheDvdProcessedSeason;
+
         [NotNull]
         // ReSharper disable once InconsistentNaming
         public string TVDBWebsiteUrl => TheTVDB.API.WebsiteEpisodeUrl(this);
@@ -40,7 +41,7 @@ namespace TVRename
             Type = o.Type;
             TheAiredProcessedSeason = o.TheAiredProcessedSeason;
             TheDvdProcessedSeason = o.TheDvdProcessedSeason;
-            SourceEpisodes=new List<Episode>();
+            SourceEpisodes = new List<Episode>();
         }
 
         public ProcessedEpisode([NotNull] Episode e, [NotNull] ShowConfiguration si)
@@ -52,7 +53,7 @@ namespace TVRename
             Show = si;
             EpNum2 = Show.Order == ProcessedSeason.SeasonType.dvd ? DvdEpNum : AiredEpNum;
             Type = ProcessedEpisodeType.single;
-            TheAiredProcessedSeason=si.GetOrAddAiredSeason(e.AiredSeasonNumber,e.SeasonId);
+            TheAiredProcessedSeason = si.GetOrAddAiredSeason(e.AiredSeasonNumber, e.SeasonId);
             TheDvdProcessedSeason = si.GetOrAddDvdSeason(e.DvdSeasonNumber, e.SeasonId);
             SourceEpisodes = new List<Episode>();
         }
@@ -127,7 +128,7 @@ namespace TVRename
             SourceEpisodes = new List<Episode>();
         }
 
-        public int AppropriateSeasonNumber => Show.Order==ProcessedSeason.SeasonType.dvd ? DvdSeasonNumber : AiredSeasonNumber;
+        public int AppropriateSeasonNumber => Show.Order == ProcessedSeason.SeasonType.dvd ? DvdSeasonNumber : AiredSeasonNumber;
         public int AppropriateSeasonIndex => Show.GetSeasonIndex(AppropriateSeasonNumber);
         public ProcessedSeason AppropriateProcessedSeason => Show.Order == ProcessedSeason.SeasonType.dvd ? TheDvdProcessedSeason : TheAiredProcessedSeason;
         public int AppropriateEpNum => Show.Order == ProcessedSeason.SeasonType.dvd ? DvdEpNum : AiredEpNum;
@@ -149,6 +150,7 @@ namespace TVRename
                 return LinkUrl;
             }
         }
+
         [NotNull]
         public string EpNumsAsString()
         {
@@ -204,7 +206,7 @@ namespace TVRename
                 return "";
             }
 
-            DateTime dt = (DateTime) airsdt;
+            DateTime dt = (DateTime)airsdt;
 
             TimeSpan ts = dt.Subtract(DateTime.Now); // how long...
             if (ts.TotalHours < 0)
@@ -248,7 +250,7 @@ namespace TVRename
                 return false;
             }
 
-            DateTime dt = (DateTime) airsdt;
+            DateTime dt = (DateTime)airsdt;
 
             TimeSpan ts = dt.Subtract(DateTime.Now); // how long...
             return ts.TotalHours < 0;
@@ -284,7 +286,7 @@ namespace TVRename
 
         public void SetEpisodeNumbers(int startEpisodeNum, int endEpisodeNum)
         {
-            if (Show.Order==ProcessedSeason.SeasonType.dvd)
+            if (Show.Order == ProcessedSeason.SeasonType.dvd)
             {
                 DvdEpNum = startEpisodeNum;
             }

@@ -1,7 +1,7 @@
-using System.Globalization;
-using System.Xml.Linq;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using System.Globalization;
+using System.Xml.Linq;
 
 namespace TVRename
 {

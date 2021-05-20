@@ -1,15 +1,15 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -28,18 +28,20 @@ namespace TVRename
         {
             return listToClone.Select(item => (T)item.Clone()).ToList();
         }
+
         [NotNull]
         public static IList<T> Clone<T>([NotNull] this IEnumerable<T> listToClone)
         {
             return listToClone.Select(item => item).ToList();
         }
+
         public static void ForEach<T>([NotNull] this IEnumerable<T> source, Action<T> action)
-        {   
+        {
             foreach (T item in source) { action(item); }
         }
 
         [NotNull]
-        public static IEnumerable<int> Keys([NotNull] this IEnumerable<KeyValuePair<int, List<ProcessedEpisode>>> source )
+        public static IEnumerable<int> Keys([NotNull] this IEnumerable<KeyValuePair<int, List<ProcessedEpisode>>> source)
         {
             return source.Select(pair => pair.Key).ToList();
         }
@@ -49,6 +51,7 @@ namespace TVRename
             IEnumerable<T> enumerable = enumeration.ToList();
             return enumerable.Any() ? enumerable.Max(selector) : defaultValue;
         }
+
         public static int MinOrDefault<T>([NotNull] this IEnumerable<T> enumeration, Func<T, int> selector, int defaultValue)
         {
             IEnumerable<T> enumerable = enumeration.ToList();

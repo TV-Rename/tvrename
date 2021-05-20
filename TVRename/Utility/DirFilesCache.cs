@@ -1,15 +1,15 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
-using System;
-using System.Collections.Generic;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
+using System;
+using System.Collections.Generic;
 
 // Will cache the file lists of contents of single directories.  Will return the cached
 // data, or read cache and return it.
@@ -25,7 +25,7 @@ namespace TVRename
 
         public FileInfo[] GetFiles([NotNull] string folder) => Get(folder, false);
 
-        private FileInfo[] Get([NotNull] string folder,bool includeSubs)
+        private FileInfo[] Get([NotNull] string folder, bool includeSubs)
         {
             if (cache.ContainsKey(folder))
             {
@@ -40,22 +40,24 @@ namespace TVRename
             catch
             {
                 cache[folder] = new FileInfo[] { };
-                return new FileInfo[]{};
+                return new FileInfo[] { };
             }
             if (!di.Exists)
             {
                 cache[folder] = new FileInfo[] { };
                 return new FileInfo[] { };
             }
-            
-            try {
-                FileInfo[] files = includeSubs ? di.GetFiles("*", System.IO.SearchOption.AllDirectories): di.GetFiles();
+
+            try
+            {
+                FileInfo[] files = includeSubs ? di.GetFiles("*", System.IO.SearchOption.AllDirectories) : di.GetFiles();
                 cache[folder] = files;
                 return files;
             }
-            catch (System.IO.IOException) {
-               Logger.Warn("IOException occurred trying to access " + folder);
-               return new FileInfo[] { };
+            catch (System.IO.IOException)
+            {
+                Logger.Warn("IOException occurred trying to access " + folder);
+                return new FileInfo[] { };
             }
             catch (UnauthorizedAccessException)
             {

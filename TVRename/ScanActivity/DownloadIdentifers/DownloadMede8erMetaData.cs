@@ -7,6 +7,7 @@ namespace TVRename
     internal class DownloadMede8erMetaData : DownloadIdentifier
     {
         private List<string> doneFiles = new List<string>();
+
         public DownloadMede8erMetaData() => Reset();
 
         public override DownloadType GetDownloadType() => DownloadType.downloadMetaData;

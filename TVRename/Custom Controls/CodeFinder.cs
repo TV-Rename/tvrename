@@ -10,6 +10,7 @@ namespace TVRename
         public abstract event EventHandler<EventArgs>? SelectionChanged;
 
         public abstract CachedSeriesInfo? SelectedShow();
+
         public abstract CachedMovieInfo? SelectedMovie();
 
         public abstract int SelectedCode();

@@ -1,15 +1,15 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -20,17 +20,20 @@ namespace TVRename
 
         //Collections of Posters and Banners per season
         private Dictionary<int, Banner> seasonBanners; // e.g. Dictionary of the best posters per cachedSeries.
+
         private Dictionary<int, Banner> seasonLangBanners; // e.g. Dictionary of the best posters per cachedSeries in the correct language.
         private Dictionary<int, Banner> seasonWideBanners; // e.g. Dictionary of the best wide banners per cachedSeries.
         private Dictionary<int, Banner> seasonLangWideBanners; // e.g. Dictionary of the best wide banners per cachedSeries in the correct language.
 
         //best Banner, Poster and Fanart loaded from the images files (in any language)
         private int bestSeriesPosterId;
+
         private int bestSeriesBannerId;
         private int bestSeriesFanartId;
 
         //best Banner, Poster and Fanart loaded from the images files (in our language)
         private int bestSeriesLangPosterId;
+
         private int bestSeriesLangBannerId;
         private int bestSeriesLangFanartId;
 
@@ -193,19 +196,19 @@ namespace TVRename
             return string.Empty;
         }
 
-    [NotNull]
-    public string GetSeriesFanartPath()
+        [NotNull]
+        public string GetSeriesFanartPath()
         {
             //then try the best one we've found with the correct language
             if (bestSeriesLangFanartId != -1 && AllBanners.ContainsKey(bestSeriesLangFanartId))
             {
-                return AllBanners[bestSeriesLangFanartId]?.BannerPath?? string.Empty;
+                return AllBanners[bestSeriesLangFanartId]?.BannerPath ?? string.Empty;
             }
 
             //if there are none with the righ tlanguage then try one from another language
             if (bestSeriesFanartId != -1 && AllBanners.ContainsKey(bestSeriesFanartId))
             {
-                return AllBanners[bestSeriesFanartId]?.BannerPath??string.Empty;
+                return AllBanners[bestSeriesFanartId]?.BannerPath ?? string.Empty;
             }
 
             //give up
@@ -388,8 +391,8 @@ namespace TVRename
                     double maxRating = AllBanners.Where(pair => pair.Value.IsSeriesBanner())
                     .Select(pair => pair.Value.Rating).Max();
 
-                bestSeriesBannerId = AllBanners.Where(pair => pair.Value.IsSeriesBanner())
-                    .First(pair => Math.Abs(pair.Value.Rating - maxRating) < 0.001).Value.BannerId;
+                    bestSeriesBannerId = AllBanners.Where(pair => pair.Value.IsSeriesBanner())
+                        .First(pair => Math.Abs(pair.Value.Rating - maxRating) < 0.001).Value.BannerId;
                 }
                 else
                 {
@@ -404,8 +407,8 @@ namespace TVRename
                     double maxRating = AllBanners.Where(pair => pair.Value.IsFanart())
                     .Select(pair => pair.Value.Rating).Max();
 
-                bestSeriesFanartId = AllBanners.Where(pair => pair.Value.IsFanart())
-                    .First(pair => Math.Abs(pair.Value.Rating - maxRating) < 0.001).Value.BannerId;
+                    bestSeriesFanartId = AllBanners.Where(pair => pair.Value.IsFanart())
+                        .First(pair => Math.Abs(pair.Value.Rating - maxRating) < 0.001).Value.BannerId;
                 }
                 else
                 {

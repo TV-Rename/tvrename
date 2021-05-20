@@ -1,15 +1,15 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
+using JetBrains.Annotations;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using JetBrains.Annotations;
-using NLog;
 
 // This builds the filenames to rename to, for any given episode (or multi-episode episode)
 
@@ -84,10 +84,10 @@ namespace TVRename
         };
 
         [NotNull]
-        public string NameFor([NotNull] ProcessedEpisode pe) => NameFor(pe,string.Empty,0);
+        public string NameFor([NotNull] ProcessedEpisode pe) => NameFor(pe, string.Empty, 0);
 
         [NotNull]
-        public string NameFor([NotNull] ProcessedEpisode pe, string? extension,int folderNameLength)
+        public string NameFor([NotNull] ProcessedEpisode pe, string? extension, int folderNameLength)
         {
             const int MAX_LENGTH = 260;
             int maxFilenameLength = MAX_LENGTH - 1 - folderNameLength - (extension?.Length ?? 5); //Assume a max 5 character extension
@@ -102,7 +102,7 @@ namespace TVRename
 
             if (string.IsNullOrEmpty(extension))
             {
-                return r.Substring(0,Math.Min(maxFilenameLength, r.Length));
+                return r.Substring(0, Math.Min(maxFilenameLength, r.Length));
             }
 
             bool needsSpacer = !extension.StartsWith(".", StringComparison.Ordinal);
@@ -162,13 +162,13 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Number}", "");
             name = name.ReplaceInsensitive("{Number:2}", "");
             name = name.ReplaceInsensitive("{Number:3}", "");
-            name = name.ReplaceInsensitive("{Imdb}", ep.ImdbCode??string.Empty);
+            name = name.ReplaceInsensitive("{Imdb}", ep.ImdbCode ?? string.Empty);
 
             CachedSeriesInfo si = show.CachedShow;
-            name = name.ReplaceInsensitive("{ShowImdb}", si?.Imdb??string.Empty);
-            name = name.ReplaceInsensitiveLazy("{Year}",new Lazy<string?>(() => si?.MinYear.ToString() ?? string.Empty),StringComparison.CurrentCultureIgnoreCase  );
+            name = name.ReplaceInsensitive("{ShowImdb}", si?.Imdb ?? string.Empty);
+            name = name.ReplaceInsensitiveLazy("{Year}", new Lazy<string?>(() => si?.MinYear.ToString() ?? string.Empty), StringComparison.CurrentCultureIgnoreCase);
 
-            ProcessedSeason selectedProcessedSeason = show.GetSeason(ep.GetSeasonNumber(show.Order) );
+            ProcessedSeason selectedProcessedSeason = show.GetSeason(ep.GetSeasonNumber(show.Order));
             name = name.ReplaceInsensitive("{SeasonYear}", selectedProcessedSeason != null ? selectedProcessedSeason.MinYear().ToString() : string.Empty);
 
             name = ReplaceDates(urlEncode, name, ep.GetAirDateDt(show.GetTimeZone()));
@@ -210,7 +210,7 @@ namespace TVRename
 
                 return name;
             }
-            catch(ArgumentOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
                 if (name.Contains("{ShortDate}") || name.Contains("{LongDate}") || name.Contains("{YMDDate}"))
                 {
@@ -222,10 +222,10 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string NameForNoExt([NotNull] ProcessedEpisode pe, [NotNull]  string styleString) => NameForNoExt(pe, styleString, false);
+        public static string NameForNoExt([NotNull] ProcessedEpisode pe, [NotNull] string styleString) => NameForNoExt(pe, styleString, false);
 
         [NotNull]
-        public static string NameForNoExt([NotNull] ProcessedEpisode pe, [NotNull]  string styleString, bool urlEncode)
+        public static string NameForNoExt([NotNull] ProcessedEpisode pe, [NotNull] string styleString, bool urlEncode)
         {
             try
             {
@@ -242,7 +242,7 @@ namespace TVRename
                 }
 
                 name = name.ReplaceInsensitive("{ShowName}", showName);
-                name = name.ReplaceInsensitive("{ShowNameLower}", pe.Show.ShowName.ToLower().Replace(' ','-').RemoveCharactersFrom("()[]{}&$:"));
+                name = name.ReplaceInsensitive("{ShowNameLower}", pe.Show.ShowName.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
                 name = name.ReplaceInsensitive("{ShowNameInitial}", showName.Initial().ToLower());
                 name = name.ReplaceInsensitive("{Season}", pe.AppropriateSeasonNumber.ToString());
                 name = name.ReplaceInsensitive("{Season:2}", pe.AppropriateSeasonNumber.ToString("00"));
@@ -260,8 +260,8 @@ namespace TVRename
                 name = name.ReplaceInsensitiveLazy("{Number}", new Lazy<string?>(() => pe.OverallNumber.ToString()), StringComparison.CurrentCultureIgnoreCase);
                 name = name.ReplaceInsensitiveLazy("{Number:2}", new Lazy<string?>(() => pe.OverallNumber.ToString("00")), StringComparison.CurrentCultureIgnoreCase);
                 name = name.ReplaceInsensitiveLazy("{Number:3}", new Lazy<string?>(() => pe.OverallNumber.ToString("000")), StringComparison.CurrentCultureIgnoreCase);
-                name = name.ReplaceInsensitiveLazy("{Year}", new Lazy<string?>(() => pe.TheCachedSeries.MinYear.ToString()),StringComparison.CurrentCultureIgnoreCase);
-                name = name.ReplaceInsensitiveLazy("{SeasonYear}", new Lazy<string?>(() => pe.AppropriateProcessedSeason.MinYear().ToString()),StringComparison.CurrentCultureIgnoreCase);
+                name = name.ReplaceInsensitiveLazy("{Year}", new Lazy<string?>(() => pe.TheCachedSeries.MinYear.ToString()), StringComparison.CurrentCultureIgnoreCase);
+                name = name.ReplaceInsensitiveLazy("{SeasonYear}", new Lazy<string?>(() => pe.AppropriateProcessedSeason.MinYear().ToString()), StringComparison.CurrentCultureIgnoreCase);
                 name = name.ReplaceInsensitive("{Imdb}", pe.ImdbCode);
                 name = name.ReplaceInsensitive("{ShowImdb}", pe.Show.CachedShow?.Imdb ?? string.Empty);
 

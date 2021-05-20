@@ -1,13 +1,15 @@
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
     internal class CheckAllMovieFoldersExist : ScanMovieActivity
     {
-        public CheckAllMovieFoldersExist(TVDoc doc) : base(doc) { }
+        public CheckAllMovieFoldersExist(TVDoc doc) : base(doc)
+        {
+        }
 
         protected override string ActivityName() => "Checked All movie Folders Exist";
 
@@ -146,7 +148,7 @@ namespace TVRename
             return goAgain;
         }
 
-        private static void TryCreateDirectory(string? folder,  string text)
+        private static void TryCreateDirectory(string? folder, string text)
         {
             if (string.IsNullOrWhiteSpace(folder))
             {
@@ -172,10 +174,13 @@ namespace TVRename
             {
                 case CommandLineArgs.MissingFolderBehavior.create:
                     return FaResult.kfaCreate;
+
                 case CommandLineArgs.MissingFolderBehavior.ignore:
                     return FaResult.kfaIgnoreOnce;
+
                 case CommandLineArgs.MissingFolderBehavior.ask:
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }

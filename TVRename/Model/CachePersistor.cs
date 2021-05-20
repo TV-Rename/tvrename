@@ -1,14 +1,14 @@
+using JetBrains.Annotations;
+using NLog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using NLog;
 
 namespace TVRename
 {
@@ -16,6 +16,7 @@ namespace TVRename
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public static string LoadErr;
+
         private static void RotateCacheFiles([NotNull] FileInfo cacheFile)
         {
             if (cacheFile.Exists)
@@ -75,7 +76,7 @@ namespace TVRename
                 {
                     writer.WriteStartDocument();
                     writer.WriteStartElement("Data");
-                    writer.WriteAttributeToXml("time",timestamp);
+                    writer.WriteAttributeToXml("time", timestamp);
 
                     foreach (KeyValuePair<int, CachedSeriesInfo> kvp in series)
                     {
@@ -110,7 +111,7 @@ namespace TVRename
 
                         writer.WriteStartElement("Banners");
 
-                        //We need to write out all banners that we have in any of the collections. 
+                        //We need to write out all banners that we have in any of the collections.
 
                         foreach (Banner ban in kvp.Value.AllBanners.Select(kvp3 => kvp3.Value))
                         {
@@ -152,7 +153,7 @@ namespace TVRename
 
                         writer.WriteStartElement("Banners");
 
-                        //We need to write out all banners that we have in any of the collections. 
+                        //We need to write out all banners that we have in any of the collections.
 
                         foreach (Banner ban in kvp.Value.AllBanners.Select(kvp3 => kvp3.Value))
                         {
@@ -176,7 +177,7 @@ namespace TVRename
             }
         }
 
-        public static bool LoadTvCache([NotNull] FileInfo loadFrom,iTVSource cache)
+        public static bool LoadTvCache([NotNull] FileInfo loadFrom, iTVSource cache)
         {
             Logger.Info("Loading Cache from: {0}", loadFrom.FullName);
             if (!loadFrom.Exists)
@@ -187,7 +188,7 @@ namespace TVRename
             try
             {
                 XElement x = XElement.Load(loadFrom.FullName);
-                bool r = ProcessSeriesXml(x,cache);
+                bool r = ProcessSeriesXml(x, cache);
                 if (r)
                 {
                     cache.UpdatesDoneOk();
@@ -287,13 +288,13 @@ namespace TVRename
             }
             return true;
         }
-    
-        private static bool ProcessSeriesXml([NotNull] XElement x,[NotNull] iTVSource cache)
+
+        private static bool ProcessSeriesXml([NotNull] XElement x, [NotNull] iTVSource cache)
         {
             // Will have one or more cachedSeries, and episodes
             // all wrapped in <Data> </Data>
 
-            // e.g.: 
+            // e.g.:
             //<Data>
             // <Series>
             //  <id>...</id>
@@ -350,7 +351,7 @@ namespace TVRename
                 {
                     //this wil not be found in a standard response from the TVDB website
                     //will only be in the response when we are reading from the cache
-                    ProcessXmlBannerCache(banners,cache);
+                    ProcessXmlBannerCache(banners, cache);
                 }
             }
             catch (XmlException e)
@@ -381,7 +382,7 @@ namespace TVRename
             {
                 int seriesId = bannersXml.ExtractInt("SeriesId") ?? -1;
 
-                localCache.AddBanners(seriesId,bannersXml.Descendants("Banners").Descendants("Banner")
+                localCache.AddBanners(seriesId, bannersXml.Descendants("Banners").Descendants("Banner")
                     .Select(banner => new Banner(seriesId, banner)));
             }
         }

@@ -1,17 +1,17 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using JetBrains.Annotations;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using JetBrains.Annotations;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 // Talk to the TVmaze web API, and get tv cachedSeries info
@@ -63,7 +63,7 @@ namespace TVRename.TVmaze
         {
             lock (SERIES_LOCK)
             {
-                CachePersistor.SaveCache(Series,Movies, CacheFile, 0);
+                CachePersistor.SaveCache(Series, Movies, CacheFile, 0);
             }
         }
 
@@ -89,7 +89,7 @@ namespace TVRename.TVmaze
             {
                 CachedSeriesInfo downloadedSi = API.GetSeriesDetails(s);
 
-                if (downloadedSi.TvMazeCode != s.TvMazeId && s.TvMazeId ==-1)
+                if (downloadedSi.TvMazeCode != s.TvMazeId && s.TvMazeId == -1)
                 {
                     lock (SERIES_LOCK)
                     {
@@ -261,6 +261,7 @@ namespace TVRename.TVmaze
                 ser.AddEpisode(e);
             }
         }
+
         public void Tidy(IEnumerable<ShowConfiguration> libraryValues)
         {
             // remove any shows from thetvdb that aren't in My Shows
@@ -328,7 +329,7 @@ namespace TVRename.TVmaze
         {
             lock (SERIES_LOCK)
             {
-                Series[ss.TvMazeId] = new CachedSeriesInfo(ss.TvdbId, ss.TvMazeId, ss.TmdbId,ss.TargetLocale) {Dirty = true};
+                Series[ss.TvMazeId] = new CachedSeriesInfo(ss.TvdbId, ss.TvMazeId, ss.TmdbId, ss.TargetLocale) { Dirty = true };
             }
         }
 
@@ -340,7 +341,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        public void AddOrUpdateEpisode(Episode e,CachedSeriesInfo si)
+        public void AddOrUpdateEpisode(Episode e, CachedSeriesInfo si)
         {
             lock (SERIES_LOCK)
             {
@@ -390,9 +391,10 @@ namespace TVRename.TVmaze
 
         public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TVmaze;
 
-        public ConcurrentDictionary<int,CachedSeriesInfo> CachedData
+        public ConcurrentDictionary<int, CachedSeriesInfo> CachedData
         {
-            get {
+            get
+            {
                 lock (SERIES_LOCK)
                 {
                     return Series;

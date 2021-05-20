@@ -1,15 +1,15 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
-using System;
-using System.Windows.Forms;
-using System.Collections.Generic;
+//
 using JetBrains.Annotations;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 
 // Control for searching for a tvdb code, checking against local cache and
 // searching on thetvdb
@@ -24,11 +24,12 @@ namespace TVRename
         private readonly ListViewColumnSorter lvwCodeFinderColumnSorter;
 
         public CachedSeriesInfo TvShowInitialFound { get; private set; }
-        public CachedMovieInfo MovieInitialFound{ get; private set; }
+        public CachedMovieInfo MovieInitialFound { get; private set; }
         public int TvShowInitialFoundCode => TvShowInitialFound.IdCode(Source);
 
-        const string DEFAULT_MESSAGE = "Enter the show's name, and click \"Search\"";
+        private const string DEFAULT_MESSAGE = "Enter the show's name, and click \"Search\"";
         public int MovieInitialFoundCode => MovieInitialFound.IdCode(Source);
+
         public CombinedCodeFinder(string? initialHint, MediaConfiguration.MediaType type, TVDoc.ProviderType source)
         {
             Type = type;
@@ -41,7 +42,7 @@ namespace TVRename
 
             SetupColumns();
 
-            if (!initialHint.HasValue() )
+            if (!initialHint.HasValue())
             {
                 ListViewItem lvi = new ListViewItem(string.Empty);
                 lvi.SubItems.Add(DEFAULT_MESSAGE);
@@ -59,10 +60,11 @@ namespace TVRename
         }
 
         public void SetSource(TVDoc.ProviderType source) => SetSource(source, null);
+
         public void SetSource(TVDoc.ProviderType source, MediaConfiguration? mi)
         {
             UpdateSource(source);
-            if(txtFindThis.Text.IsNumeric() && mi!= null && mi.IdFor(source)>0)
+            if (txtFindThis.Text.IsNumeric() && mi != null && mi.IdFor(source) > 0)
             {
                 mInternal = true;
                 txtFindThis.Text = GenerateNewHintForProvider(mi);
@@ -89,7 +91,7 @@ namespace TVRename
 
         private string GenerateNewHintForProvider(MediaConfiguration mi)
         {
-            if (mi.IdFor(Source) >0) return mi.IdFor(Source).ToString();
+            if (mi.IdFor(Source) > 0) return mi.IdFor(Source).ToString();
             return mi.ShowName;
         }
 
@@ -111,6 +113,7 @@ namespace TVRename
                     };
 
                     break;
+
                 case MediaConfiguration.MediaType.tv:
                     cols = new (int width, string name)[]
                     {
@@ -123,6 +126,7 @@ namespace TVRename
                     };
 
                     break;
+
                 case MediaConfiguration.MediaType.both:
                     throw new ArgumentOutOfRangeException();
                 default:
@@ -131,13 +135,13 @@ namespace TVRename
 
             foreach ((int width, var name) in cols)
             {
-                lvMatches.Columns.Add(new ColumnHeader {Text = name, Width = width});
+                lvMatches.Columns.Add(new ColumnHeader { Text = name, Width = width });
             }
         }
 
         public event EventHandler<EventArgs>? SelectionChanged;
 
-        public  bool SetHint(string s,TVDoc.ProviderType provider)
+        public bool SetHint(string s, TVDoc.ProviderType provider)
         {
             mInternal = true;
             txtFindThis.Text = s;
@@ -148,6 +152,7 @@ namespace TVRename
         }
 
         public CachedMovieInfo? SelectedMovie() => (CachedMovieInfo)SelectedObject();
+
         public CachedSeriesInfo? SelectedShow() => (CachedSeriesInfo)SelectedObject();
 
         private object? SelectedObject()
@@ -159,7 +164,7 @@ namespace TVRename
                     return null;
                 }
 
-                return  lvMatches.SelectedItems[0].Tag;
+                return lvMatches.SelectedItems[0].Tag;
             }
             catch
             {
@@ -167,7 +172,7 @@ namespace TVRename
             }
         }
 
-        public  int SelectedCode()
+        public int SelectedCode()
         {
             try
             {
@@ -183,7 +188,7 @@ namespace TVRename
 
         private void txtFindThis_TextChanged(object sender, EventArgs e)
         {
-            if (!mInternal && txtFindThis.Text.Length>2)
+            if (!mInternal && txtFindThis.Text.Length > 2)
             {
                 DoFind(false);
             }
@@ -205,7 +210,7 @@ namespace TVRename
                 int matchedMovies = 0;
                 int matchedTvShows = 0;
 
-                if (!txtFindThis.Text.HasValue() && lvMatches.Items.Count == 1 && lvMatches.Items[0].SubItems[1].Text== DEFAULT_MESSAGE)
+                if (!txtFindThis.Text.HasValue() && lvMatches.Items.Count == 1 && lvMatches.Items[0].SubItems[1].Text == DEFAULT_MESSAGE)
                 {
                     //we have no further information
                     return false;
@@ -234,7 +239,7 @@ namespace TVRename
                     {
                         lock (TMDB.LocalCache.Instance.MOVIE_LOCK)
                         {
-                            foreach (KeyValuePair<int, CachedMovieInfo> kvp in cache.CachedMovieData.Where(kvp=> matches(kvp.Key, kvp.Value, numeric, what, matchnum)).OrderByDescending(m=>m.Value.Popularity))
+                            foreach (KeyValuePair<int, CachedMovieInfo> kvp in cache.CachedMovieData.Where(kvp => matches(kvp.Key, kvp.Value, numeric, what, matchnum)).OrderByDescending(m => m.Value.Popularity))
                             {
                                 lvMatches.Items.Add(NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum));
                                 matchedMovies++;
@@ -265,7 +270,7 @@ namespace TVRename
                     lvMatches.Items[0].Selected = true;
                     return true;
                 }
-                
+
                 return false;
             }
             finally
@@ -292,7 +297,7 @@ namespace TVRename
         [NotNull]
         private static ListViewItem NewLvi([NotNull] CachedSeriesInfo si, int num, bool numberMatch)
         {
-            ListViewItem lvi = new ListViewItem {Text = num.ToString()};
+            ListViewItem lvi = new ListViewItem { Text = num.ToString() };
             lvi.SubItems.Add(si.Name);
             lvi.SubItems.Add(si.Year);
             lvi.SubItems.Add(si.Network ?? string.Empty);
@@ -342,7 +347,7 @@ namespace TVRename
 
             if (!string.IsNullOrEmpty(txtFindThis.Text))
             {
-                GetSourceInstance(Source).Search(txtFindThis.Text,showErrorMsgBox,Type, new Locale());
+                GetSourceInstance(Source).Search(txtFindThis.Text, showErrorMsgBox, Type, new Locale());
                 DoFind(true);
             }
         }
@@ -358,6 +363,7 @@ namespace TVRename
                 _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
             };
         }
+
         private TVDoc.ProviderType DefaultType => MediaConfiguration.MediaType.movie == Type
             ? TVSettings.Instance.DefaultMovieProvider
             : TVSettings.Instance.DefaultProvider;
@@ -373,6 +379,7 @@ namespace TVRename
                 _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
             };
         }
+
         private MediaCache GetSourceInstance(TVDoc.ProviderType source)
         {
             return source switch
@@ -409,11 +416,11 @@ namespace TVRename
         {
             lvwCodeFinderColumnSorter.ClickedOn(e.Column);
 
-            if (e.Column == 0 || e.Column == 2 ) // code or year
+            if (e.Column == 0 || e.Column == 2) // code or year
             {
                 lvwCodeFinderColumnSorter.ListViewItemSorter = new NumberAsTextSorter(e.Column);
             }
-            else if ( e.Column == 5) //  popularity
+            else if (e.Column == 5) //  popularity
             {
                 lvwCodeFinderColumnSorter.ListViewItemSorter = new DoubleAsTextSorter(e.Column);
             }

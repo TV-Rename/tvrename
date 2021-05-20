@@ -13,14 +13,15 @@ namespace TVRename.Forms.Supporting
             {
                 lblEpisodeName.Text = $"{mim.MovieConfig.ShowNameWithYear}";
             }
-            olvSize.AspectToStringConverter = delegate (object x) {
+            olvSize.AspectToStringConverter = delegate (object x)
+            {
                 long sizeBytes = (long)x;
 
                 return $"{(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())}";
             };
             olvChooseDownload.SetObjects(options);
             SetButtonVisiblity();
-            olvChooseDownload.Sort(olvSeeders,SortOrder.Descending);
+            olvChooseDownload.Sort(olvSeeders, SortOrder.Descending);
         }
 
         public ActionTDownload? UserChosenAction
@@ -46,7 +47,7 @@ namespace TVRename.Forms.Supporting
 
         private void Ok()
         {
-            UserChosenAction = (ActionTDownload) olvChooseDownload.SelectedObject;
+            UserChosenAction = (ActionTDownload)olvChooseDownload.SelectedObject;
             DialogResult = olvChooseDownload.SelectedObject != null ? DialogResult.OK : DialogResult.Cancel;
         }
 

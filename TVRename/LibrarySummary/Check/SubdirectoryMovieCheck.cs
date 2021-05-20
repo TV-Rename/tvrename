@@ -1,15 +1,17 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using JetBrains.Annotations;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 
 namespace TVRename
 {
     internal class SubdirectoryMovieCheck : MovieCheck
     {
-        public SubdirectoryMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc) { }
+        public SubdirectoryMovieCheck([NotNull] MovieConfiguration movie, TVDoc doc) : base(movie, doc)
+        {
+        }
 
         public override bool Check() => Movie.UseCustomFolderNameFormat;
 
@@ -19,7 +21,7 @@ namespace TVRename
         {
             List<string> currentLocations = Movie.AutomaticLocations().ToList();
             string newLocation = Movie.AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.NameFor(Movie, TVSettings.Instance.MovieFolderFormat);
-            
+
             Movie.UseCustomFolderNameFormat = false;
 
             if (!currentLocations.Any())
@@ -28,14 +30,14 @@ namespace TVRename
             }
             string message = $"Could not move files for {Movie.ShowName}. Would have liked to move files from [{currentLocations.ToCsv()}] to '{newLocation}'";
 
-            if (currentLocations.Count >1)
+            if (currentLocations.Count > 1)
             {
                 LOGGER.Warn($"{message}, but there are more than one source. ");
                 return;
             }
 
             string currentLocation = currentLocations.Single();
-            if (currentLocation == newLocation )
+            if (currentLocation == newLocation)
             {
                 //Nothing to do
                 return;
@@ -48,14 +50,14 @@ namespace TVRename
                 LOGGER.Warn($"{message}, but that directory already exists.");
                 return;
             }
-            
+
             try
             {
                 Directory.Move(currentLocations.Single(), newLocation);
             }
             catch (UnauthorizedAccessException uae)
             {
-                throw new FixCheckException(message+": "+ uae.Message);
+                throw new FixCheckException(message + ": " + uae.Message);
             }
             catch (DirectoryNotFoundException)
             {
@@ -68,6 +70,5 @@ namespace TVRename
         }
 
         public override string CheckName => "[Movie] Use custom folder name format";
-
     }
 }

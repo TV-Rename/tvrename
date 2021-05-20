@@ -1,15 +1,15 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 using TVRename.Forms.ShowPreferences;
 
 namespace TVRename
@@ -78,7 +78,7 @@ namespace TVRename
             {
                 foreach (ProcessedEpisode ep in mOriginalEps.Where(ep => ep.PreviouslySeen))
                 {
-                    ListViewItem lvi = new ListViewItem {Text = ep.EpNumsAsString()};
+                    ListViewItem lvi = new ListViewItem { Text = ep.EpNumsAsString() };
                     lvi.SubItems.Add(ep.Name);
                     lvi.Tag = ep;
                     lvSeenEpisodes.Items.Add(lvi);
@@ -129,7 +129,7 @@ namespace TVRename
             lvRuleList.Items.Clear();
             foreach (ShowRule sr in workingRuleSet)
             {
-                ListViewItem lvi = new ListViewItem {Text = sr.ActionInWords()};
+                ListViewItem lvi = new ListViewItem { Text = sr.ActionInWords() };
 
                 lvi.SubItems.Add(sr.First == -1 ? string.Empty : sr.First.ToString());
                 lvi.SubItems.Add(sr.Second == -1 ? string.Empty : sr.Second.ToString());
@@ -169,7 +169,7 @@ namespace TVRename
                 return;
             }
 
-            ShowRule sr = (ShowRule) lvRuleList.SelectedItems[0].Tag;
+            ShowRule sr = (ShowRule)lvRuleList.SelectedItems[0].Tag;
             AddModifyRule ar = new AddModifyRule(sr, show, ProcessedEpisodes());
             ar.ShowDialog(this); // modifies rule in-place if OK'd
             FillRuleList(false, 0);
@@ -182,7 +182,7 @@ namespace TVRename
                 return;
             }
 
-            ShowRule sr = (ShowRule) lvRuleList.SelectedItems[0].Tag;
+            ShowRule sr = (ShowRule)lvRuleList.SelectedItems[0].Tag;
 
             workingRuleSet.Remove(sr);
             FillRuleList(false, 0);
@@ -301,7 +301,7 @@ namespace TVRename
             NewSeenEpisode nse = new NewSeenEpisode(possibleEpisodes);
             DialogResult dialogResult = nse.ShowDialog(this);
 
-            if (dialogResult != DialogResult.OK )
+            if (dialogResult != DialogResult.OK)
             {
                 return;
             }
@@ -350,7 +350,7 @@ namespace TVRename
 
         private void LvSeenEpisodes_ColumnClick(object sender, [NotNull] ColumnClickEventArgs e)
         {
-            if (e.Column == 0) 
+            if (e.Column == 0)
             {
                 lvSeenEpisodes.ListViewItemSorter = new NumberAsTextSorter(e.Column);
             }

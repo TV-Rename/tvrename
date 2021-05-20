@@ -1,15 +1,15 @@
-using System;
 using JetBrains.Annotations;
+using System;
 
 namespace TVRename
 {
     public class ActionOutcome
     {
         [NotNull]
-        public static ActionOutcome NoOutcomeYet() => new ActionOutcome{Completed=false,Done=false,Error=false};
+        public static ActionOutcome NoOutcomeYet() => new ActionOutcome { Completed = false, Done = false, Error = false };
 
         [NotNull]
-        public static ActionOutcome Success() => new ActionOutcome{ Completed = true,Done=true,Error=false };
+        public static ActionOutcome Success() => new ActionOutcome { Completed = true, Done = true, Error = false };
 
         private ActionOutcome()
         {
@@ -23,7 +23,9 @@ namespace TVRename
             Completed = true;
         }
 
-        public ActionOutcome(string errorText) : this(new Exception(errorText)) {}
+        public ActionOutcome(string errorText) : this(new Exception(errorText))
+        {
+        }
 
         public bool Error { get; private set; } // Error state, after trying to do work?
 

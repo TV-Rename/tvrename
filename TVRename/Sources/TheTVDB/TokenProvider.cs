@@ -1,7 +1,7 @@
-using System;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using NLog;
+using System;
 
 namespace TVRename.TheTVDB
 {
@@ -46,7 +46,7 @@ namespace TVRename.TheTVDB
                 };
             }
         }
-        
+
         private string lastKnownToken = string.Empty;
         private DateTime lastRefreshTime = DateTime.MinValue;
 

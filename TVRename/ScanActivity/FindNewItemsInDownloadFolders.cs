@@ -1,16 +1,16 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -19,7 +19,7 @@ namespace TVRename
         public FindNewItemsInDownloadFolders(TVDoc doc) : base(doc)
         {
         }
-        
+
         protected override string CheckName() => "Looked in the Search Folders for any new series/movies that need to be added to the library";
 
         protected override void DoCheck(SetProgressDelegate prog,
@@ -44,7 +44,7 @@ namespace TVRename
             }
 
             IEnumerable<FileInfo> possibleShowNames = GetPossibleShowNameStrings();
-            List<MediaConfiguration> addedShows = FinderHelper.FindMedia(possibleShowNames,MDoc,settings.Owner);
+            List<MediaConfiguration> addedShows = FinderHelper.FindMedia(possibleShowNames, MDoc, settings.Owner);
 
             IEnumerable<ShowConfiguration> addedTvShows = addedShows.OfType<ShowConfiguration>();
             if (addedTvShows.Any())
@@ -58,7 +58,6 @@ namespace TVRename
                 }
                 LOGGER.Info("Added new shows called: {0}", addedTvShows.Select(s => s.ShowName).ToCsv());
             }
-
 
             IEnumerable<MovieConfiguration> addedMovies = addedShows.OfType<MovieConfiguration>();
             if (addedMovies.Any())

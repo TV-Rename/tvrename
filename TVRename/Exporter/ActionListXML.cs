@@ -31,7 +31,7 @@ namespace TVRename
                         continue;
                     }
 
-                    ActionCopyMoveRename acmr = (ActionCopyMoveRename) action;
+                    ActionCopyMoveRename acmr = (ActionCopyMoveRename)action;
                     writer.WriteStartElement("Item");
 
                     writer.WriteAttributeToXml("Operation", acmr.Name);
@@ -43,7 +43,7 @@ namespace TVRename
                     writer.WriteAttributeToXml("Season", acmr.SourceEpisode.AppropriateSeasonNumber);
                     writer.WriteAttributeToXml("Episode", acmr.SourceEpisode.EpNumsAsString());
 
-                    writer.WriteEndElement(); //Item                                
+                    writer.WriteEndElement(); //Item
                 }
 
                 writer.WriteEndElement(); // Name
@@ -51,7 +51,9 @@ namespace TVRename
                 writer.WriteEndDocument();
             }
         }
+
         protected abstract bool IsOutput(Item a);
+
         protected abstract string MainXmlElementName();
     }
 }

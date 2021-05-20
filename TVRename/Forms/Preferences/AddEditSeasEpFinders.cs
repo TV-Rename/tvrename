@@ -1,19 +1,19 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
-using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Drawing;
-using System.Linq;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 using SourceGrid;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
@@ -184,10 +184,10 @@ namespace TVRename
                 return null;
             }
 
-            bool en = (bool) Grid1[i, 0].Value;
-            string regex = (string) Grid1[i, 1].Value;
-            bool fullPath = (bool) Grid1[i, 2].Value;
-            string notes = (string) Grid1[i, 3].Value ?? "";
+            bool en = (bool)Grid1[i, 0].Value;
+            string regex = (string)Grid1[i, 1].Value;
+            bool fullPath = (bool)Grid1[i, 2].Value;
+            string notes = (string)Grid1[i, 3].Value ?? "";
 
             return string.IsNullOrEmpty(regex) ? null : new TVSettings.FilenameProcessorRE(en, regex, fullPath, notes);
         }
@@ -365,7 +365,7 @@ namespace TVRename
             string otherShowNames = matchingShows.Select(item => item.ShowName).Where(s => s != bestShowName).ToCsv();
             string showDisplayString = otherShowNames.Any() ? bestShowName + " - (" + otherShowNames + ")" : bestShowName;
 
-            ListViewItem lvi = new ListViewItem {Text = filename};
+            ListViewItem lvi = new ListViewItem { Text = filename };
             lvi.SubItems.Add(showDisplayString);
             lvi.SubItems.Add(seas == -1 ? "-" : seas.ToString());
             lvi.SubItems.Add(ep == -1 ? "-" : ep + (maxEp != -1 ? "-" + maxEp : ""));
@@ -426,7 +426,7 @@ namespace TVRename
             }
         }
 
-        #endregion
+        #endregion Nested type: ChangedCont
 
         private void bnUp_Click(object sender, EventArgs e)
         {

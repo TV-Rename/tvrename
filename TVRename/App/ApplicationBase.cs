@@ -1,7 +1,3 @@
-using System;
-using System.Reflection;
-using System.Runtime.Remoting;
-using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 using Microsoft.VisualBasic.ApplicationServices;
@@ -10,6 +6,10 @@ using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets.Syslog;
 using NLog.Targets.Syslog.Settings;
+using System;
+using System.Reflection;
+using System.Runtime.Remoting;
+using System.Windows.Forms;
 using TVRename.Ipc;
 
 namespace TVRename.App
@@ -32,7 +32,7 @@ namespace TVRename.App
             CommandLineArgs clargs = new CommandLineArgs(CommandLineArgs);
             if (clargs.Hide || !Environment.UserInteractive)
             {
-                SplashScreen.Visible  = false;
+                SplashScreen.Visible = false;
             }
         }
 
@@ -124,7 +124,7 @@ namespace TVRename.App
                 // Try loading TheTVDB cache file
                 TheTVDB.LocalCache.Instance.Setup(tvdbFile, PathManager.TVDBFile, clargs);
                 TVmaze.LocalCache.Instance.Setup(tvmazeFile, PathManager.TVmazeFile, clargs);
-                TMDB.LocalCache.Instance.Setup(tmdbFile,PathManager.TmdbFile,clargs);
+                TMDB.LocalCache.Instance.Setup(tmdbFile, PathManager.TmdbFile, clargs);
 
                 // Try loading settings file
                 doc = new TVDoc(settingsFile, clargs);
@@ -192,10 +192,11 @@ namespace TVRename.App
             SetupPapertrailLogging();
             SetupSemaTextLogging();
 
-            Logger.Fatal($"TV Rename {Helpers.DisplayVersion} logging started on {Environment.OSVersion}, {(Environment.Is64BitOperatingSystem?"64 Bit OS":"")}, {(Environment.Is64BitProcess? "64 Bit Process":"")} {Environment.Version} {(Environment.UserInteractive?"Interactive":"")} with args: {string.Join(" ", CommandLineArgs)}");
+            Logger.Fatal($"TV Rename {Helpers.DisplayVersion} logging started on {Environment.OSVersion}, {(Environment.Is64BitOperatingSystem ? "64 Bit OS" : "")}, {(Environment.Is64BitProcess ? "64 Bit Process" : "")} {Environment.Version} {(Environment.UserInteractive ? "Interactive" : "")} with args: {string.Join(" ", CommandLineArgs)}");
             Logger.Info($"Copyright (C) {DateTime.Now.Year} TV Rename");
             Logger.Info("This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions");
         }
+
         private static void SetupSemaTextLogging()
         {
             try
@@ -259,7 +260,7 @@ namespace TVRename.App
                 LoggingConfiguration config = LogManager.Configuration;
                 SyslogTarget papertrail = new SyslogTarget
                 {
-                    MessageCreation = {Facility = Facility.Local7},
+                    MessageCreation = { Facility = Facility.Local7 },
                     MessageSend =
                     {
                         Protocol = ProtocolType.Tcp,

@@ -1,17 +1,18 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 using System;
-using System.Text;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
+
 // ReSharper disable InconsistentNaming
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable All
@@ -24,6 +25,7 @@ namespace DaveChambers.FolderBrowserDialogEx
         {
             // Constants for sending and receiving messages in BrowseCallBackProc
             public const int WM_USER = 0x400;
+
             public const int WM_GETFONT = 0x0031;
 
             public const int MAX_PATH = 260;
@@ -43,17 +45,21 @@ namespace DaveChambers.FolderBrowserDialogEx
 
             // Browsing for directory.
             public const uint BIF_RETURNONLYFSDIRS = 0x0001;  // For finding a folder to start document searching
+
             public const uint BIF_DONTGOBELOWDOMAIN = 0x0002;  // For starting the Find Computer
             public const uint BIF_STATUSTEXT = 0x0004;  // Top of the dialog has 2 lines of text for BROWSEINFO.lpszTitle and one line if
-                                                        // this flag is set.  Passing the message BFFM_SETSTATUSTEXTA to the hwnd can set the
-                                                        // rest of the text.  This is not used with BIF_USENEWUI and BROWSEINFO.lpszTitle gets
-                                                        // all three lines of text.
+
+            // this flag is set.  Passing the message BFFM_SETSTATUSTEXTA to the hwnd can set the
+            // rest of the text.  This is not used with BIF_USENEWUI and BROWSEINFO.lpszTitle gets
+            // all three lines of text.
             public const uint BIF_RETURNFSANCESTORS = 0x0008;
+
             public const uint BIF_EDITBOX = 0x0010;   // Add an editbox to the dialog
             public const uint BIF_VALIDATE = 0x0020;   // insist on valid result (or CANCEL)
 
             public const uint BIF_NEWDIALOGSTYLE = 0x0040;   // Use the new dialog layout with the ability to resize
-                                                             // Caller needs to call OleInitialize() before using this API
+
+            // Caller needs to call OleInitialize() before using this API
             public const uint BIF_USENEWUI = 0x0040 + 0x0010; //(BIF_NEWDIALOGSTYLE | BIF_EDITBOX);
 
             public const uint BIF_BROWSEINCLUDEURLS = 0x0080;   // Allow URLs to be displayed or entered. (Requires BIF_USENEWUI)
@@ -73,10 +79,13 @@ namespace DaveChambers.FolderBrowserDialogEx
             {
                 public IntPtr hwndOwner;
                 public IntPtr pidlRoot;
+
                 //public IntPtr pszDisplayName;
                 public string pszDisplayName;
+
                 //[MarshalAs(UnmanagedType.LPTStr)]
                 public string lpszTitle;
+
                 public uint ulFlags;
                 public BrowseCallbackProc lpfn;
                 public IntPtr lParam;
@@ -111,6 +120,7 @@ namespace DaveChambers.FolderBrowserDialogEx
 
             public const int SW_HIDE = 0;
             public const int SW_SHOW = 5;
+
             [DllImport("user32.dll")]
             public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
@@ -141,6 +151,7 @@ namespace DaveChambers.FolderBrowserDialogEx
 
             [DllImport("user32.dll", SetLastError = true)]
             public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+
             public static void MoveWindow(IntPtr hWnd, RECT rect, bool bRepaint)
             {
                 MoveWindow(hWnd, rect.Left, rect.Top, rect.Width, rect.Height, bRepaint);
@@ -249,8 +260,10 @@ namespace DaveChambers.FolderBrowserDialogEx
                 public IntPtr hIcon;
                 public int iIcon;
                 public uint dwAttributes;
+
                 [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
                 public string szDisplayName;
+
                 [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
                 public string szTypeName;
             }
@@ -299,22 +312,27 @@ namespace DaveChambers.FolderBrowserDialogEx
         }
 
         #region Fields that mimic the same-named fields in FolderBrowserDialog
+
         public Environment.SpecialFolder RootFolder { get; set; }
         public string SelectedPath { get; set; }
         public bool ShowNewFolderButton { get; set; }
         public FormStartPosition StartPosition { get; set; }
-        #endregion
+
+        #endregion Fields that mimic the same-named fields in FolderBrowserDialog
 
         // Fields specific to CustomFolderBrowserDialog
         public string Title { get; set; }
+
         public bool ShowEditbox { get; set; }
 
         // These are the control IDs used in the dialog
         private struct CtlIds
         {
             public const int PATH_EDIT = 0x3744;
+
             //public const int PATH_EDIT_LABEL = 0x3748;    // Only when BIF_NEWDIALOGSTYLE
             public const int TITLE = 0x3742;
+
             public const int TREEVIEW = 0x3741;
             public const int NEW_FOLDER_BUTTON = 0x3746;
             public const int IDOK = 1;
@@ -368,7 +386,7 @@ namespace DaveChambers.FolderBrowserDialogEx
                 hwndOwner = owner.Handle
             };
 
-            if (Win32.SHGetSpecialFolderLocation(owner.Handle, (int)RootFolder, ref bi.pidlRoot)!=0)
+            if (Win32.SHGetSpecialFolderLocation(owner.Handle, (int)RootFolder, ref bi.pidlRoot) != 0)
                 bi.pidlRoot = IntPtr.Zero;
             bi.lpszTitle = string.Empty;
             bi.ulFlags = Win32.BIF_RETURNONLYFSDIRS;    // do NOT use BIF_NEWDIALOGSTYLE or BIF_STATUSTEXT

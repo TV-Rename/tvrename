@@ -1,19 +1,19 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
-using Alphaleonis.Win32.Filesystem;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -45,7 +45,7 @@ namespace TVRename
             //todo - (BulkAdd Manager needs to work for new providers)
             int tvdbId = FindTvdbShowCode(ai);
 
-            if (string.IsNullOrEmpty(showName)  && tvdbId == -1)
+            if (string.IsNullOrEmpty(showName) && tvdbId == -1)
             {
                 return;
             }
@@ -54,10 +54,10 @@ namespace TVRename
             {
                 try
                 {
-                    CachedSeriesInfo cachedSeries = TheTVDB.LocalCache.Instance.GetSeriesAndDownload(tvdbId,showErrorMsgBox);
+                    CachedSeriesInfo cachedSeries = TheTVDB.LocalCache.Instance.GetSeriesAndDownload(tvdbId, showErrorMsgBox);
                     if (cachedSeries != null)
                     {
-                        ai.SetId(tvdbId,TVDoc.ProviderType.TheTVDB);
+                        ai.SetId(tvdbId, TVDoc.ProviderType.TheTVDB);
                         return;
                     }
                 }
@@ -67,7 +67,7 @@ namespace TVRename
                 }
             }
 
-            CachedSeriesInfo ser = TheTVDB.LocalCache.Instance.GetSeries(showName,showErrorMsgBox, localeToUse);
+            CachedSeriesInfo ser = TheTVDB.LocalCache.Instance.GetSeries(showName, showErrorMsgBox, localeToUse);
             if (ser != null)
             {
                 ai.SetId(tvdbId, TVDoc.ProviderType.TheTVDB);
@@ -86,7 +86,7 @@ namespace TVRename
                 Logger.Info($"Ignoring {showName} as it refines to nothing.");
             }
 
-            ser = TheTVDB.LocalCache.Instance.GetSeries(refinedHint,showErrorMsgBox, localeToUse);
+            ser = TheTVDB.LocalCache.Instance.GetSeries(refinedHint, showErrorMsgBox, localeToUse);
 
             ai.RefinedHint = refinedHint;
             if (ser != null)
@@ -97,7 +97,7 @@ namespace TVRename
 
         private static int FindTvdbShowCode(PossibleNewTvShow ai)
         {
-            List<string> possibleFilenames = new List<string> {"cachedSeries.xml", "tvshow.nfo"};
+            List<string> possibleFilenames = new List<string> { "cachedSeries.xml", "tvshow.nfo" };
             foreach (string fileName in possibleFilenames)
             {
                 try
@@ -164,7 +164,7 @@ namespace TVRename
             }
             catch (XmlException xe)
             {
-                Logger.Warn( $"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside, got {xe.Message}");
+                Logger.Warn($"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside, got {xe.Message}");
                 return -1;
             }
             catch (System.IO.IOException xe)
@@ -179,7 +179,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                Logger.Error(e,$"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside.");
+                Logger.Error(e, $"Could not parse {file.FullName} to try and see whether there is any TVDB Ids inside.");
             }
 
             return -1;
@@ -265,11 +265,11 @@ namespace TVRename
 
                 subDirs = null;
             }
-            folderFormat =string.Empty;
+            folderFormat = string.Empty;
             return false;
         }
 
-        public (bool finished, DirectoryInfo[] subDirs) CheckFolderForShows([NotNull] DirectoryInfo di2, bool andGuess,bool  fullLogging, bool showErrorMsgBox)
+        public (bool finished, DirectoryInfo[] subDirs) CheckFolderForShows([NotNull] DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
         {
             try
             {
@@ -279,7 +279,7 @@ namespace TVRename
                 {
                     if (RejectFolderIfIncludedInShow(fullLogging, si, theFolder))
                     {
-                        return (true,null);
+                        return (true, null);
                     }
                 } // for each showitem
 
@@ -289,7 +289,7 @@ namespace TVRename
                 //This is an indication that something is wrong
                 if (subDirectories is null)
                 {
-                    return (false,null);
+                    return (false, null);
                 }
 
                 bool hasSubFolders = subDirectories.Length > 0;
@@ -315,14 +315,14 @@ namespace TVRename
                 Logger.Info("Adding {0} as a new folder", theFolder);
                 if (andGuess)
                 {
-                    GuessShowItem(ai, mDoc.TvLibrary,showErrorMsgBox);
+                    GuessShowItem(ai, mDoc.TvLibrary, showErrorMsgBox);
                 }
                 return (hasSeasonFolders, subDirectories);
             }
             catch (UnauthorizedAccessException)
             {
                 Logger.Info("Can't access {0}, so ignoring it", di2.FullName);
-                return (true,null);
+                return (true, null);
             }
         }
 
@@ -335,7 +335,7 @@ namespace TVRename
             return endsWith;
         }
 
-        private static bool RejectFolderIfIncludedInShow(bool fullLogging, [NotNull] ShowConfiguration si,string theFolder)
+        private static bool RejectFolderIfIncludedInShow(bool fullLogging, [NotNull] ShowConfiguration si, string theFolder)
         {
             if (si.AutoAddNewSeasons() && !string.IsNullOrEmpty(si.AutoAddFolderBase) &&
                 theFolder.IsSubfolderOf(si.AutoAddFolderBase))
@@ -379,7 +379,7 @@ namespace TVRename
             return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Any(file => file.IsMovieFile());
         }
 
-        private void CheckFolderForShows([NotNull] DirectoryInfo di, CancellationToken token,bool fullLogging, bool showErrorMsgBox)
+        private void CheckFolderForShows([NotNull] DirectoryInfo di, CancellationToken token, bool fullLogging, bool showErrorMsgBox)
         {
             if (!di.Exists)
             {
@@ -402,7 +402,7 @@ namespace TVRename
                 return;
             }
 
-            (bool finished, DirectoryInfo[]? subDirs) =CheckFolderForShows(di, false, fullLogging, showErrorMsgBox);
+            (bool finished, DirectoryInfo[]? subDirs) = CheckFolderForShows(di, false, fullLogging, showErrorMsgBox);
 
             if (finished)
             {
@@ -418,13 +418,13 @@ namespace TVRename
 
             foreach (DirectoryInfo di2 in subDirs)
             {
-                CheckFolderForShows(di2, token,fullLogging,showErrorMsgBox); // not a season folder.. recurse!
+                CheckFolderForShows(di2, token, fullLogging, showErrorMsgBox); // not a season folder.. recurse!
             } // for each directory
         }
 
         public void AddAllToMyShows()
         {
-            foreach (PossibleNewTvShow ai in AddItems.Where(ai=>!ai.CodeUnknown))
+            foreach (PossibleNewTvShow ai in AddItems.Where(ai => !ai.CodeUnknown))
             {
                 AddToLibrary(ai);
             }
@@ -464,7 +464,7 @@ namespace TVRename
             mDoc.Stats().AutoAddedShows++;
         }
 
-        public void CheckFolders(CancellationToken token, [NotNull] SetProgressDelegate prog,bool detailedLogging, bool showErrorMsgBox)
+        public void CheckFolders(CancellationToken token, [NotNull] SetProgressDelegate prog, bool detailedLogging, bool showErrorMsgBox)
         {
             // Check the  folder list, and build up a new "AddItems" list.
             // guessing what the shows actually are isn't done here.  That is done by
@@ -479,7 +479,7 @@ namespace TVRename
             int c2 = 0;
             foreach (string folder in TVSettings.Instance.LibraryFolders)
             {
-                prog.Invoke(100 * c2++ / c,folder);
+                prog.Invoke(100 * c2++ / c, folder);
                 DirectoryInfo di = new DirectoryInfo(folder);
                 if (TVSettings.Instance.MovieLibraryFolders.Contains(folder))
                 {
@@ -487,14 +487,14 @@ namespace TVRename
                     continue;
                 }
 
-                CheckFolderForShows(di,token, detailedLogging,showErrorMsgBox);
+                CheckFolderForShows(di, token, detailedLogging, showErrorMsgBox);
 
                 if (token.IsCancellationRequested)
                 {
                     break;
                 }
             }
-            prog.Invoke(100 , string.Empty);
+            prog.Invoke(100, string.Empty);
         }
     }
 }

@@ -1,9 +1,9 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -81,7 +81,9 @@ namespace TVRename
         }
 
         public bool UseCustomLanguage => TargetLocale != null;
+
         protected abstract MediaConfiguration.MediaType MediaType();
+
         public int IdCode(TVDoc.ProviderType source)
         {
             return source switch
@@ -95,6 +97,7 @@ namespace TVRename
                 _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
             };
         }
+
         public IEnumerable<string> GetAliases() => Aliases;
 
         public IEnumerable<Actor> GetActors() => Actors;
@@ -114,10 +117,8 @@ namespace TVRename
 
         public IEnumerable<Crew> GetCrew() => Crew;
 
-
         [NotNull]
         public IEnumerable<string> GetCrewNames() => GetCrew().Select(x => x.Name);
-
 
         public void ClearCrew()
         {
@@ -175,13 +176,13 @@ namespace TVRename
             : Imdb.StartsWith("tt", StringComparison.Ordinal) ? Imdb.RemoveFirst(2)
             : Imdb;
 
-
         public void AddAlias(string s)
         {
             Aliases.Add(s);
         }
 
         public override string ToString() => $"TMDB:{TmdbCode}/TVDB:{TvdbCode}/Maze:{TvMazeCode}/{Name}";
+
         public void UpgradeSearchResultToDirty()
         {
             if (IsSearchResultOnly)

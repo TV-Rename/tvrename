@@ -1,27 +1,30 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using JetBrains.Annotations;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using JetBrains.Annotations;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
-    internal class JSONWebpageFinder: DownloadFinder
+    internal class JSONWebpageFinder : DownloadFinder
     {
-        public JSONWebpageFinder(TVDoc i) : base(i) { }
+        public JSONWebpageFinder(TVDoc i) : base(i)
+        {
+        }
 
         public override bool Active() => TVSettings.Instance.SearchJSON;
+
         protected override string CheckName() => "Check JSON links for the missing files";
 
         protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
@@ -33,7 +36,7 @@ namespace TVRename
             }
             int c = ActionList.Missing.Count + 1;
             int n = 0;
-            UpdateStatus(n,c, "Searching on JSON Page...");
+            UpdateStatus(n, c, "Searching on JSON Page...");
 
             ItemList newItems = new ItemList();
             ItemList toRemove = new ItemList();
@@ -79,7 +82,7 @@ namespace TVRename
             {
                 LOGGER.Warn(ex, $"Failed to Parse {TVSettings.Instance.SearchJSONURL} into JSON - Please check that the URL is valid JSON format.");
             }
-            ActionList.Replace(toRemove,newItems);
+            ActionList.Replace(toRemove, newItems);
         }
 
         private static void FindMissingEpisode([NotNull] ShowItemMissing action, ItemList toRemove, ItemList newItems, UrlCache cache)
@@ -96,7 +99,7 @@ namespace TVRename
             string simpleSeriesName = pe.TheCachedSeries.Name.CompareName();
             ItemList newItemsForThisMissingEpisode = new ItemList();
 
-            string response = cache.GetUrl($"{TVSettings.Instance.SearchJSONURL}{imdbId}",TVSettings.Instance.SearchJSONUseCloudflare);
+            string response = cache.GetUrl($"{TVSettings.Instance.SearchJSONURL}{imdbId}", TVSettings.Instance.SearchJSONUseCloudflare);
 
             if (string.IsNullOrWhiteSpace(response))
             {
@@ -125,8 +128,8 @@ namespace TVRename
                     if (episodeResponse.ContainsKey(TVSettings.Instance.SearchJSONFilenameToken) &&
                         episodeResponse.ContainsKey(TVSettings.Instance.SearchJSONURLToken))
                     {
-                        string itemName = (string) item[TVSettings.Instance.SearchJSONFilenameToken];
-                        string itemUrl = (string) item[TVSettings.Instance.SearchJSONURLToken];
+                        string itemName = (string)item[TVSettings.Instance.SearchJSONFilenameToken];
+                        string itemUrl = (string)item[TVSettings.Instance.SearchJSONURLToken];
                         int seeders = (int)item[TVSettings.Instance.SearchJSONSeedersToken];
                         long itemSizeBytes = CalculateItemSizeBytes(item);
 
@@ -178,8 +181,8 @@ namespace TVRename
 
                         ItemDownloading becomes = new ItemDownloading(new FutureTorrentEntry(itemUrl, action.TheFileNoExt), action.MissingEpisode, action.TheFileNoExt, DownloadingFinder.DownloadApp.qBitTorrent, action);
 
-                        newItemsForThisMissingEpisode.Add(new ActionTDownload(itemName, itemSizeBytes,seeders, itemUrl,
-                            action.TheFileNoExt, pe, action,$"JSON WebPage: {TVSettings.Instance.SearchJSONURL}{imdbId}",becomes)); 
+                        newItemsForThisMissingEpisode.Add(new ActionTDownload(itemName, itemSizeBytes, seeders, itemUrl,
+                            action.TheFileNoExt, pe, action, $"JSON WebPage: {TVSettings.Instance.SearchJSONURL}{imdbId}", becomes));
 
                         toRemove.Add(action);
                     }
@@ -213,7 +216,7 @@ namespace TVRename
         {
             try
             {
-                return (long) item[TVSettings.Instance.SearchJSONFileSizeToken];
+                return (long)item[TVSettings.Instance.SearchJSONFileSizeToken];
             }
             catch
             {

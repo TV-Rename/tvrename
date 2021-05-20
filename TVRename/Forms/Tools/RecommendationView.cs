@@ -1,9 +1,9 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename.Forms
 {
@@ -26,7 +26,7 @@ namespace TVRename.Forms
             mDoc = doc;
             mainUi = main;
 
-            olvScore.MakeGroupies(new[] { 5, 10, 20}, new[] { "0-5", "5-10", "10-20", "20+" });
+            olvScore.MakeGroupies(new[] { 5, 10, 20 }, new[] { "0-5", "5-10", "10-20", "20+" });
 
             //olvRating.MakeGroupies(new[] { 2, 4, 6, 8 }, new[] { "*", "**", "***", "****","*****" });
         }
@@ -39,9 +39,11 @@ namespace TVRename.Forms
                 case MediaConfiguration.MediaType.tv:
                     tvShows = doc.TvLibrary.Shows;
                     break;
+
                 case MediaConfiguration.MediaType.movie:
                     movies = doc.FilmLibrary.Movies;
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
@@ -72,14 +74,13 @@ namespace TVRename.Forms
         private void PopulateGrid()
         {
             IEnumerable<RecommendationResult> recommendationRows = chkRemoveExisting.Checked
-                ? media==MediaConfiguration.MediaType.movie
-                    ? recs.Values.Where(x=> mDoc.FilmLibrary.Movies.All(configuration => configuration.TmdbCode != x.Key))
+                ? media == MediaConfiguration.MediaType.movie
+                    ? recs.Values.Where(x => mDoc.FilmLibrary.Movies.All(configuration => configuration.TmdbCode != x.Key))
                     : recs.Values.Where(x => mDoc.TvLibrary.Shows.All(configuration => configuration.TmdbCode != x.Key))
                 : recs.Values;
 
             lvRecommendations.SetObjects(recommendationRows.Select(x => new RecommendationRow(x, media)));
         }
-
 
         private void ClearGrid()
         {
@@ -101,10 +102,12 @@ namespace TVRename.Forms
                     ShowConfiguration show = new ShowConfiguration(mlastSelectedKey, TVDoc.ProviderType.TMDB);
                     tvDoc.Add(show);
                     break;
+
                 case MediaConfiguration.MediaType.movie:
-                    MovieConfiguration newMovie = new MovieConfiguration(mlastSelectedKey,TVDoc.ProviderType.TMDB);
-                    tvDoc.Add(newMovie );
+                    MovieConfiguration newMovie = new MovieConfiguration(mlastSelectedKey, TVDoc.ProviderType.TMDB);
+                    tvDoc.Add(newMovie);
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -134,13 +137,15 @@ namespace TVRename.Forms
                         Logger.Warn($"{rec.Key,-10} | {(rec.Value.TopRated ? "Top" : "   ")} | {(rec.Value.Trending ? "Trend" : "    ")} | {rec.Value.Related.Count,5} | {rec.Value.Similar.Count,5} | {mDoc.TvLibrary.Shows.All(configuration => configuration.TmdbCode != rec.Key)} | {TMDB.LocalCache.Instance.GetSeries(rec.Key)?.Name}");
                     }
                     break;
+
                 case MediaConfiguration.MediaType.movie:
                     recs = TMDB.LocalCache.Instance.GetRecommendations(mDoc, (BackgroundWorker)sender, movies.ToList(), languageCode).Result;
                     foreach (KeyValuePair<int, RecommendationResult> rec in recs)
                     {
-                        Logger.Warn($"{rec.Key,-10} | {(rec.Value.TopRated?"Top":"   ")} | {(rec.Value.Trending ? "Trend":"    ")} | {rec.Value.Related.Count,5} | {rec.Value.Similar.Count,5} | {TMDB.LocalCache.Instance.GetMovie(rec.Key)?.IsSearchResultOnly} | {TMDB.LocalCache.Instance.GetMovie(rec.Key)?.Name}");
+                        Logger.Warn($"{rec.Key,-10} | {(rec.Value.TopRated ? "Top" : "   ")} | {(rec.Value.Trending ? "Trend" : "    ")} | {rec.Value.Related.Count,5} | {rec.Value.Similar.Count,5} | {TMDB.LocalCache.Instance.GetMovie(rec.Key)?.IsSearchResultOnly} | {TMDB.LocalCache.Instance.GetMovie(rec.Key)?.Name}");
                     }
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -164,6 +169,7 @@ namespace TVRename.Forms
             ClearGrid();
             PopulateGrid();
         }
+
         private void BtnRefresh_Click_1(object sender, EventArgs e)
         {
             Scan();
@@ -203,7 +209,6 @@ namespace TVRename.Forms
             {
                 UI.SetHtmlBody(chrRecommendationPreview, rr.Series.GetShowHtmlOverview(rr));
             }
-
         }
     }
 }

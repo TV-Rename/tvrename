@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 using Alphaleonis.Win32.Filesystem;
 using System.Collections.Generic;
@@ -18,13 +18,14 @@ namespace TVRename
         {
             // ReSharper disable once InconsistentNaming
             SABnzbd,
+
             uTorrent,
             qBitTorrent
         }
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.downloading;
 
-        protected void SearchForAppropriateDownloads(List<TorrentEntry> downloading, DownloadApp tApp,TVDoc.ScanSettings settings)
+        protected void SearchForAppropriateDownloads(List<TorrentEntry> downloading, DownloadApp tApp, TVDoc.ScanSettings settings)
         {
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
@@ -64,7 +65,7 @@ namespace TVRename
                             epF == episode.AppropriateEpNum)
                         {
                             toRemove.Add(action);
-                            newList.Add(new ItemDownloading(te, episode, action.TheFileNoExt, tApp,action));
+                            newList.Add(new ItemDownloading(te, episode, action.TheFileNoExt, tApp, action));
                             break;
                         }
                     }
@@ -80,14 +81,13 @@ namespace TVRename
                             continue;
                         }
 
-
                         toRemove.Add(action);
                         newList.Add(new ItemDownloading(te, movie, action.TheFileNoExt, tApp, action));
                         break;
                     }
                 }
             }
-            ActionList.Replace(toRemove,newList);
+            ActionList.Replace(toRemove, newList);
         }
 
         protected DownloadingFinder(TVDoc doc) : base(doc)

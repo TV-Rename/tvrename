@@ -1,16 +1,16 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -63,7 +63,7 @@ namespace TVRename
             {
                 file.Write(contents);
             }
-            
+
             LOGGER.Trace("contents of File are: {0}", contents);
         }
 

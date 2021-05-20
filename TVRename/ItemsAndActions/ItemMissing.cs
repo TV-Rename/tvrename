@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 namespace TVRename
 {
@@ -24,6 +24,7 @@ namespace TVRename
         public abstract bool DoRename { get; }
         public abstract MediaConfiguration Show { get; }
         public override IgnoreItem? Ignore => GenerateIgnore(TheFileNoExt);
+
         public void AddComment(string p0)
         {
             ErrorText += p0;

@@ -9,7 +9,7 @@ namespace TVRename
 
         public override void Write(System.IO.Stream sw)
         {
-            sw.WriteByte((byte) 'e');
+            sw.WriteByte((byte)'e');
         }
     }
 }

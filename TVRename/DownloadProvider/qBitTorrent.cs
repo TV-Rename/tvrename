@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
 
 namespace TVRename
 {
@@ -20,8 +20,9 @@ namespace TVRename
         {
             v0, //Applies to qBittorrent up to v3.1.x
             v1, //Applies to qBittorrent v3.2.0-v4.0.4
-            v2 //Applies to qBittorrent v4.1+ 
+            v2 //Applies to qBittorrent v4.1+
         }
+
         // ReSharper disable once InconsistentNaming
         private enum qBitTorrentAPIPath
         {
@@ -106,7 +107,7 @@ namespace TVRename
                     string proposedFilename = TVSettings.Instance.FilenameFriendly(savePath + torrentName) +
                                               TVSettings.Instance.VideoExtensionsArray[0];
 
-                    ret.Add(new TorrentEntry(torrentName, proposedFilename, 0,false,hashCode));
+                    ret.Add(new TorrentEntry(torrentName, proposedFilename, 0, false, hashCode));
                     return;
                 }
 
@@ -139,15 +140,15 @@ namespace TVRename
             return (downloadedFilename, isOnHold, percentComplete);
         }
 
-        private static (string hashCode, string torrentName,bool completed) ExtractTorrentDetails([NotNull] JToken torrent)
+        private static (string hashCode, string torrentName, bool completed) ExtractTorrentDetails([NotNull] JToken torrent)
         {
             string hashCode = (string)torrent["hash"];
             string torrentName = (string)torrent["name"];
-            string state = (string) torrent["state"];
+            string state = (string)torrent["state"];
 
             bool completed = state.In("uploading", "pausedUP", "queuedUP", "stalledUP", "checkingUP", "forcedUP");
- 
-            return (hashCode, torrentName,completed);
+
+            return (hashCode, torrentName, completed);
         }
 
         [NotNull]
@@ -158,32 +159,32 @@ namespace TVRename
             switch (TVSettings.Instance.qBitTorrentAPIVersion)
             {
                 case qBitTorrentAPIVersion.v1:
-                {
-                    return path switch
                     {
-                        qBitTorrentAPIPath.settings => url + "query/preferences",
-                        qBitTorrentAPIPath.torrents => url + "query/torrents?filter=all",
-                        qBitTorrentAPIPath.torrentDetails => url + "query/propertiesFiles/",
-                        qBitTorrentAPIPath.addFile => url + "command/upload",
-                        qBitTorrentAPIPath.addUrl => url + "command/download",
-                        qBitTorrentAPIPath.delete => url + "command/delete",
-                        _ => throw new ArgumentOutOfRangeException(nameof(path), path, null)
-                    };
-                }
+                        return path switch
+                        {
+                            qBitTorrentAPIPath.settings => url + "query/preferences",
+                            qBitTorrentAPIPath.torrents => url + "query/torrents?filter=all",
+                            qBitTorrentAPIPath.torrentDetails => url + "query/propertiesFiles/",
+                            qBitTorrentAPIPath.addFile => url + "command/upload",
+                            qBitTorrentAPIPath.addUrl => url + "command/download",
+                            qBitTorrentAPIPath.delete => url + "command/delete",
+                            _ => throw new ArgumentOutOfRangeException(nameof(path), path, null)
+                        };
+                    }
 
                 case qBitTorrentAPIVersion.v2:
-                {
-                    return path switch
                     {
-                        qBitTorrentAPIPath.settings => url + "api/v2/app/preferences",
-                        qBitTorrentAPIPath.torrents => url + "api/v2/torrents/info?filter=all",
-                        qBitTorrentAPIPath.torrentDetails => url + "api/v2/torrents/files?hash=",
-                        qBitTorrentAPIPath.addFile => url + "api/v2/torrents/add",
-                        qBitTorrentAPIPath.addUrl => url + "api/v2/torrents/add",
-                        qBitTorrentAPIPath.delete => url+ "api/v2/torrents/delete",
-                        _ => throw new ArgumentOutOfRangeException(nameof(path), path, null)
-                    };
-                }
+                        return path switch
+                        {
+                            qBitTorrentAPIPath.settings => url + "api/v2/app/preferences",
+                            qBitTorrentAPIPath.torrents => url + "api/v2/torrents/info?filter=all",
+                            qBitTorrentAPIPath.torrentDetails => url + "api/v2/torrents/files?hash=",
+                            qBitTorrentAPIPath.addFile => url + "api/v2/torrents/add",
+                            qBitTorrentAPIPath.addUrl => url + "api/v2/torrents/add",
+                            qBitTorrentAPIPath.delete => url + "api/v2/torrents/delete",
+                            _ => throw new ArgumentOutOfRangeException(nameof(path), path, null)
+                        };
+                    }
 
                 case qBitTorrentAPIVersion.v0:
                     throw new NotSupportedException("Only qBitTorrent API v1 and v2 are supported");
@@ -289,16 +290,16 @@ namespace TVRename
             string url = GetApiUrl(qBitTorrentAPIPath.delete);
 
             //Annoyingly V1 uses POST, but V2 is a GET...
-            if (TVSettings.Instance.qBitTorrentAPIVersion==qBitTorrentAPIVersion.v1)
+            if (TVSettings.Instance.qBitTorrentAPIVersion == qBitTorrentAPIVersion.v1)
             {
-                string parametersString = HttpHelper.GetHttpParameters(new Dictionary<string, string> { { "hashes", name.key }});
+                string parametersString = HttpHelper.GetHttpParameters(new Dictionary<string, string> { { "hashes", name.key } });
                 HttpHelper.HttpRequest("POST", url, parametersString.RemoveCharactersFrom("?"), "application/x-www-form-urlencoded", null, null);
             }
             else
             {
                 try
                 {
-                    string parametersString = HttpHelper.GetHttpParameters(new Dictionary<string, string> {{"hashes", name.key}, {"deleteFiles", "false"}});
+                    string parametersString = HttpHelper.GetHttpParameters(new Dictionary<string, string> { { "hashes", name.key }, { "deleteFiles", "false" } });
                     HttpHelper.HttpRequest("GET", url + parametersString, null, null, null, string.Empty);
                 }
                 catch (WebException wex)
@@ -308,7 +309,6 @@ namespace TVRename
                 }
             }
         }
-
 
         public string Name() => "qBitTorrent";
     }

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace TVRename.Utility.Helper
 {
-    static class TaskHelper
+    internal static class TaskHelper
     {
         // <summary>
         /// Blocks while condition is true or timeout occurs.

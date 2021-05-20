@@ -6,11 +6,15 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     internal class MissingCSV : ActionListExporter
     {
-        public MissingCSV(ItemList theActionList) : base(theActionList) {}
+        public MissingCSV(ItemList theActionList) : base(theActionList)
+        {
+        }
 
         public override bool Active() => TVSettings.Instance.ExportMissingCSV;
+
         protected override string Location() => TVSettings.Instance.ExportMissingCSVTo;
-        public override bool ApplicableFor(TVSettings.ScanType st) => st==TVSettings.ScanType.Full;
+
+        public override bool ApplicableFor(TVSettings.ScanType st) => st == TVSettings.ScanType.Full;
 
         protected override void Do()
         {

@@ -1,15 +1,15 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 namespace TVRename
 {
-    using System;
     using Alphaleonis.Win32.Filesystem;
+    using System;
     using System.Xml;
 
     // ReSharper disable once InconsistentNaming
@@ -56,7 +56,7 @@ namespace TVRename
             return ActionOutcome.Success();
         }
 
-        #endregion
+        #endregion Action Members
 
         #region Item Members
 
@@ -75,15 +75,15 @@ namespace TVRename
             return string.Compare(Where.FullName, nfo.Where.FullName, StringComparison.Ordinal);
         }
 
-        #endregion
+        #endregion Item Members
 
         #region Item Members
 
-        public override string SeriesName => SelectedShow?.ShowName??Movie!.ShowName;
+        public override string SeriesName => SelectedShow?.ShowName ?? Movie!.ShowName;
         public override string SeasonNumber => snum > 0 ? snum.ToString() : string.Empty;
         public override string EpisodeString => string.Empty;
         public override string AirDateString => string.Empty;
 
-        #endregion
+        #endregion Item Members
     }
 }

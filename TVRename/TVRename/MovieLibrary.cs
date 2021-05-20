@@ -1,13 +1,14 @@
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
     public class MovieLibrary : SafeList<MovieConfiguration>
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         [NotNull]
         public IEnumerable<MovieConfiguration> Movies => this;
 
@@ -45,7 +46,7 @@ namespace TVRename
             Logger.Error($"Movie Library has multiple: {matching.Select(x => x.ToString()).ToCsv()}");
             return matching.First();
         }
-        
+
         /*
         internal void Add([NotNull] MovieConfiguration found)
         {
@@ -142,7 +143,7 @@ namespace TVRename
         public IEnumerable<string> GetStatuses()
         {
             return Movies
-                .Select(s=>s.CachedMovie)
+                .Select(s => s.CachedMovie)
                 .Where(s => !string.IsNullOrWhiteSpace(s?.Status))
                 .Select(s => s.Status)
                 .Distinct()
@@ -151,7 +152,7 @@ namespace TVRename
 
         public MovieConfiguration? GetMovie(PossibleNewMovie ai)
         {
-            return GetMovie(ai.ProviderCode,ai.Provider);
+            return GetMovie(ai.ProviderCode, ai.Provider);
         }
 
         public void AddRange(IEnumerable<MovieConfiguration>? addedShows)

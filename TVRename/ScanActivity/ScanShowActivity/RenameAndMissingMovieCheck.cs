@@ -1,7 +1,7 @@
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -33,9 +33,8 @@ namespace TVRename
                 }
 
                 CheckMovieFolder(si, dfc, settings, folder);
-            } 
+            }
         }
-
 
         private void CheckMovieFolder(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, string folder)
         {
@@ -82,7 +81,7 @@ namespace TVRename
                 return;
             }
 
-            if (renCheck && bases.Count==1 && !bases[0].Equals(newBase,StringComparison.CurrentCultureIgnoreCase))
+            if (renCheck && bases.Count == 1 && !bases[0].Equals(newBase, StringComparison.CurrentCultureIgnoreCase))
             {
                 foreach (FileInfo fi in files)
                 {
@@ -92,7 +91,7 @@ namespace TVRename
                     }
                     string baseString = bases[0];
 
-                    if (fi.Name.StartsWith(baseString,StringComparison.CurrentCultureIgnoreCase))
+                    if (fi.Name.StartsWith(baseString, StringComparison.CurrentCultureIgnoreCase))
                     {
                         string newName = (baseString.HasValue()) ? fi.Name.Replace(baseString, newBase) : newBase + fi.Extension;
                         FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
@@ -120,7 +119,7 @@ namespace TVRename
                                     newFile, si, false, null, Doc));
 
                                 //The following section informs the DownloadIdentifers that we already plan to
-                                //copy a file in the appropriate place and they do not need to worry about downloading 
+                                //copy a file in the appropriate place and they do not need to worry about downloading
                                 //one for that purpose
                                 downloadIdentifiers.NotifyComplete(newFile);
                             }
@@ -140,7 +139,6 @@ namespace TVRename
                                 }
                             }
                         }
-
                     }
                 } // foreach file in folder
             }

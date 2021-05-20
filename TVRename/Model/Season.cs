@@ -15,10 +15,10 @@ namespace TVRename
 
         public Season(XElement r)
         {
-            SeasonId = r.ExtractInt("Id")??-1;
+            SeasonId = r.ExtractInt("Id") ?? -1;
             SeasonName = r.ExtractString("Name");
             SeasonSeriesId = r.ExtractInt("SeriesId", -1);
-            SeasonNumber = r.ExtractInt("seasonNumber")??-1;
+            SeasonNumber = r.ExtractInt("seasonNumber") ?? -1;
             SeasonDescription = r.ExtractString("description");
             ImageUrl = r.ExtractString("imageUrl");
         }

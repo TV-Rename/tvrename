@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -55,7 +55,7 @@ namespace TVRename
             }
             else
             {
-                pe = (ProcessedEpisode) lvTest.SelectedItems[0].Tag;
+                pe = (ProcessedEpisode)lvTest.SelectedItems[0].Tag;
             }
 
             foreach (string s in CustomEpisodeName.TAGS)
@@ -97,7 +97,7 @@ namespace TVRename
 
                 lvi.SubItems.Add(pre1 + (seas != -1 ? seas.ToString() : ""));
                 lvi.SubItems.Add(pre2 + (ep != -1 ? ep.ToString() : "") + (maxEp != -1 ? "-" + maxEp : ""));
-                
+
                 lvi.Tag = pe;
 
                 if (!ok || !ok1 || !ok2)

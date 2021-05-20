@@ -1,6 +1,6 @@
+using BrightIdeasSoftware;
 using System.Collections;
 using System.Collections.Generic;
-using BrightIdeasSoftware;
 
 namespace TVRename
 {

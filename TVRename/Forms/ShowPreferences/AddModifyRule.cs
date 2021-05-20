@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +32,7 @@ namespace TVRename
         {
             mRule = rule;
             eps = s;
-            mOrder= show.Order;
+            mOrder = show.Order;
 
             InitializeComponent();
 
@@ -76,6 +76,7 @@ namespace TVRename
                 case RuleAction.kIgnoreEp:
                     rbIgnore.Checked = true;
                     break;
+
                 default:
                     throw new InvalidOperationException("Unexpected value mRule.DoWhatNow = " + mRule.DoWhatNow);
             }
@@ -189,21 +190,21 @@ namespace TVRename
                     , txtValue1);
 
                 //these 3 types only have one episode cited
-                bool singleEpisodeRule = mRule.DoWhatNow.In(RuleAction.kRename ,RuleAction.kInsert,RuleAction.kSplit);
+                bool singleEpisodeRule = mRule.DoWhatNow.In(RuleAction.kRename, RuleAction.kInsert, RuleAction.kSplit);
 
                 ValidationCheck(!singleEpisodeRule
                     , !ContainsEpisode(mRule.Second)
                     , "Second episode number is not valid for the selected season"
                     , txtValue2);
-                
+
                 //these 3 types only have one episode cited - others must be in order
                 ValidationCheck(!singleEpisodeRule
                     , mRule.First > mRule.Second
                     , "Second episode number must be after the first episode number"
-                    ,txtValue2);
+                    , txtValue2);
 
                 //Swap, merge and collapse can't be done on the same episode numbers
-                ValidationCheck(mRule.DoWhatNow.In(RuleAction.kSwap ,RuleAction.kMerge ,RuleAction.kCollapse)
+                ValidationCheck(mRule.DoWhatNow.In(RuleAction.kSwap, RuleAction.kMerge, RuleAction.kCollapse)
                     , txtValue2.Text.Equals(txtValue1.Text)
                     , "Episode Numbers must be different"
                     , txtValue2);
@@ -229,12 +230,12 @@ namespace TVRename
 
         private static void ValidationCheck(bool ruleCheck, bool check, string message, Control source)
         {
-            if (!(ruleCheck&& check))
+            if (!(ruleCheck && check))
             {
                 return;
             }
 
-            MessageBox.Show(message, "Modify Rules",MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(message, "Modify Rules", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             source.Focus();
             throw new ValidationFailedException(message);
         }
@@ -259,7 +260,7 @@ namespace TVRename
             }
             if (rbSwap.Checked)
             {
-                return  RuleAction.kSwap;
+                return RuleAction.kSwap;
             }
             if (rbMerge.Checked)
             {

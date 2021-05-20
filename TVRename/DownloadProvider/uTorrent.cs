@@ -10,10 +10,12 @@ namespace TVRename
     internal class uTorrent : IDownloadProvider
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public void RemoveCompletedDownload(TorrentEntry name)
         {
             throw new NotSupportedException();
         }
+
         public string Name() => "uTorrent";
 
         public void StartUrlDownload(string torrentUrl)

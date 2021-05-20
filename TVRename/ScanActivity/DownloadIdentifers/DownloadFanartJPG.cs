@@ -20,8 +20,8 @@ namespace TVRename
                 ItemList theActionList = new ItemList();
                 FileInfo fi = FileHelper.FileInFolder(si.AutoAddFolderBase, DEFAULT_FILE_NAME);
 
-                bool doesntExist =  !fi.Exists;
-                if ((forceRefresh ||doesntExist) &&!DoneFanartJpg.Contains(fi.FullName))
+                bool doesntExist = !fi.Exists;
+                if ((forceRefresh || doesntExist) && !DoneFanartJpg.Contains(fi.FullName))
                 {
                     string bannerPath = si.CachedShow?.GetSeriesFanartPath();
 
@@ -64,12 +64,12 @@ namespace TVRename
                 return theActionList;
             }
 
-            return base.ProcessMovie(si,filo, forceRefresh);
+            return base.ProcessMovie(si, filo, forceRefresh);
         }
 
         public sealed override void Reset()
         {
-            DoneFanartJpg = new List<string>(); 
+            DoneFanartJpg = new List<string>();
         }
     }
 }

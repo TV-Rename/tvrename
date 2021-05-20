@@ -6,7 +6,7 @@ namespace TVRename
     {
         TVDoc.ProviderType Provider { get; }
         int TvdbId { get; }
-        string  Name { get; }
+        string Name { get; }
         MediaConfiguration.MediaType Type { get; }
         int TvMazeId { get; }
         int TmdbId { get; }
@@ -18,9 +18,10 @@ namespace TVRename
     public static class SeriesSpecifiedHelper
     {
         public static Language LanguageToUse(this ISeriesSpecifier ss) => ss.TargetLocale.LanguageToUse(ss.Provider);
+
         public static Region RegionToUse(this ISeriesSpecifier ss) => ss.TargetLocale.RegionToUse(ss.Provider);
 
-        public static int IdFor(this ISeriesSpecifier ss,TVDoc.ProviderType provider)
+        public static int IdFor(this ISeriesSpecifier ss, TVDoc.ProviderType provider)
         {
             return provider switch
             {
@@ -31,6 +32,5 @@ namespace TVRename
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
-
     }
 }

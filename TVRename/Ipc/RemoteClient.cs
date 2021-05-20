@@ -39,10 +39,10 @@ namespace TVRename.Ipc
         public static void Bind(UI form)
         {
             MainUi = form;
-            
-            Hashtable channelProperties = new Hashtable {{"exclusiveAddressUse", false}, {"portName", IPC_CHANNEL}};
 
-            IpcServerChannel serverChannel = new IpcServerChannel(channelProperties,null);
+            Hashtable channelProperties = new Hashtable { { "exclusiveAddressUse", false }, { "portName", IPC_CHANNEL } };
+
+            IpcServerChannel serverChannel = new IpcServerChannel(channelProperties, null);
             ChannelServices.RegisterChannel(serverChannel, true);
 
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(RemoteClient), IPC_SERVICE, WellKnownObjectMode.Singleton);
@@ -66,7 +66,7 @@ namespace TVRename.Ipc
 
         public void SendArgs(string[] args)
         {
-            MainUi.BeginInvoke(MainUi.ReceiveArgumentDelegate,new object[] {args});
+            MainUi.BeginInvoke(MainUi.ReceiveArgumentDelegate, new object[] { args });
         }
     }
 }

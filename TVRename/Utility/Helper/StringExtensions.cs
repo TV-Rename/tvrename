@@ -1,16 +1,16 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -26,8 +26,8 @@ namespace TVRename
 
         public static bool IsHttpLink([NotNull] this string s)
         {
-            return  s.StartsWith("http://", StringComparison.Ordinal)
-                ||  s.StartsWith("https://", StringComparison.Ordinal);
+            return s.StartsWith("http://", StringComparison.Ordinal)
+                || s.StartsWith("https://", StringComparison.Ordinal);
         }
 
         public static bool IsFtpLink([NotNull] this string s)
@@ -39,6 +39,7 @@ namespace TVRename
         {
             return s.StartsWith("file://", StringComparison.Ordinal);
         }
+
         public static string RemoveCharactersFrom(this string source, [NotNull] IEnumerable<char> badChars)
         {
             string returnValue = source;
@@ -70,7 +71,7 @@ namespace TVRename
             return Regex.Replace(
                 source,
                 Regex.Escape(search),
-                string.IsNullOrEmpty(replacement ) ? string.Empty : replacement.Replace("$", "$$"),
+                string.IsNullOrEmpty(replacement) ? string.Empty : replacement.Replace("$", "$$"),
                 RegexOptions.IgnoreCase);
         }
 
@@ -100,7 +101,7 @@ namespace TVRename
             }
 
             //We are going to need to do the replacement, so take the time to do the action
-            string replacementValue = replacement.Value??string.Empty;
+            string replacementValue = replacement.Value ?? string.Empty;
 
             StringBuilder sb = new StringBuilder();
             int previousIndex = 0;
@@ -122,9 +123,10 @@ namespace TVRename
         {
             return possibleChars.Any(testChar => source.Contains(testChar.ToString()));
         }
+
         public static bool ContainsAnyCharactersFrom(this string source, [NotNull] string possibleChars)
         {
-            return ContainsAnyCharactersFrom(source,possibleChars.ToCharArray());
+            return ContainsAnyCharactersFrom(source, possibleChars.ToCharArray());
         }
 
         public static string UppercaseFirst(this string str)
@@ -133,6 +135,7 @@ namespace TVRename
                 return string.Empty;
             return char.ToUpper(str[0]) + str.Substring(1).ToLower();
         }
+
         public static bool IsNullOrWhitespace(this string? text) => string.IsNullOrWhiteSpace(text);
 
         [NotNull]
@@ -149,18 +152,20 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string Initial([NotNull] this string str) => str.HasValue() ? str.Substring(0, 1): string.Empty;
+        public static string Initial([NotNull] this string str) => str.HasValue() ? str.Substring(0, 1) : string.Empty;
 
         [NotNull]
         public static string RemoveLast([NotNull] this string instr, int number)
         {
             return instr.Substring(0, instr.Length - number);
         }
+
         [NotNull]
         public static string RemoveFirstCharacter([NotNull] this string instr)
         {
             return instr.Substring(1);
         }
+
         [NotNull]
         public static string RemoveFirst([NotNull] this string instr, int number)
         {
@@ -267,6 +272,7 @@ namespace TVRename
         {
             return string.Join(", ", values);
         }
+
         public static string ToPsv([NotNull] this IEnumerable<string> values)
         {
             return string.Join("|", values);
@@ -283,10 +289,11 @@ namespace TVRename
                 return null;
             }
         }
+
         [NotNull]
         public static string Concat([NotNull] this IEnumerable<string> values)
         {
-            return string.Join(string.Empty,values);
+            return string.Join(string.Empty, values);
         }
     }
 }

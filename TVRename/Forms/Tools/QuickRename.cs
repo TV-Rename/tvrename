@@ -1,10 +1,10 @@
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using JetBrains.Annotations;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename.Forms.Tools
 {
@@ -16,7 +16,7 @@ namespace TVRename.Forms.Tools
 
         public QuickRename([NotNull] TVDoc tvDoc, UI ui)
         {
-            mDoc=tvDoc;
+            mDoc = tvDoc;
             parent = ui;
             InitializeComponent();
 
@@ -37,6 +37,7 @@ namespace TVRename.Forms.Tools
         }
 
         private delegate void ShowChildConsumer(Form childForm);
+
         public void ShowChildDialog(Form childForm)
         {
             if (InvokeRequired)
@@ -58,12 +59,12 @@ namespace TVRename.Forms.Tools
 
             foreach (FileInfo droppedFile in files.Select(droppedFileName => new FileInfo(droppedFileName)))
             {
-                ProcessUnknown(droppedFile,this);
+                ProcessUnknown(droppedFile, this);
             }
 
             parent.FillActionList(true);
             parent.FocusOnScanResults();
-            
+
             Logger.Info("Finished quick rename.");
         }
 
@@ -77,7 +78,7 @@ namespace TVRename.Forms.Tools
 
             foreach (FileInfo subFile in droppedDir.GetFiles())
             {
-                ProcessUnknown(subFile,this);
+                ProcessUnknown(subFile, this);
             }
 
             foreach (DirectoryInfo subFile in droppedDir.GetDirectories())
@@ -94,7 +95,7 @@ namespace TVRename.Forms.Tools
             }
             else
             {
-                ProcessFile(droppedFile,owner);
+                ProcessFile(droppedFile, owner);
             }
         }
 
@@ -123,10 +124,10 @@ namespace TVRename.Forms.Tools
             {
                 if (TVSettings.Instance.AutoAddAsPartOfQuickRename)
                 {
-                    List<MediaConfiguration> addedShows = FinderHelper.FindMedia(new List<FileInfo> {droppedFile}, mDoc,owner);
+                    List<MediaConfiguration> addedShows = FinderHelper.FindMedia(new List<FileInfo> { droppedFile }, mDoc, owner);
                     bestShow = addedShows.OfType<ShowConfiguration>().FirstOrDefault();
 
-                    if (bestShow !=null)
+                    if (bestShow != null)
                     {
                         mDoc.Add(bestShow);
                         mDoc.TvAddedOrEdited(true, false, false, parent, bestShow);
@@ -168,7 +169,7 @@ namespace TVRename.Forms.Tools
                     return;
                 }
 
-                mDoc.TheActionList.Add(new ActionCopyMoveRename(droppedFile, targetFile, episode,mDoc));
+                mDoc.TheActionList.Add(new ActionCopyMoveRename(droppedFile, targetFile, episode, mDoc));
 
                 // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
                 mDoc.TheActionList.AddNullableRange(new DownloadIdentifiersController().ProcessEpisode(episode, targetFile));
@@ -176,7 +177,7 @@ namespace TVRename.Forms.Tools
                 //If keep together is active then we may want to copy over related files too
                 if (TVSettings.Instance.KeepTogether)
                 {
-                    FileFinder.KeepTogether(mDoc.TheActionList, false, true,mDoc);
+                    FileFinder.KeepTogether(mDoc.TheActionList, false, true, mDoc);
                 }
             }
             catch (ShowConfiguration.EpisodeNotFoundException)

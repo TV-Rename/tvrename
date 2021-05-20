@@ -1,9 +1,9 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename.Forms
 {
@@ -137,7 +137,7 @@ namespace TVRename.Forms
                 return;
             }
 
-            PossibleMergedEpisode? mlastSelected = (PossibleMergedEpisode) lvMergedEpisodes.SelectedItems[0].Tag;
+            PossibleMergedEpisode? mlastSelected = (PossibleMergedEpisode)lvMergedEpisodes.SelectedItems[0].Tag;
             ListViewItem? mlastClicked = lvMergedEpisodes.SelectedItems[0];
             ShowConfiguration? si = mlastSelected?.ShowConfiguration;
 
@@ -150,7 +150,7 @@ namespace TVRename.Forms
 
             possibleMergedEpisodeRightClickMenu.Items.Clear();
 
-            AddRcMenuItem("Episode Guide", (o, args) => GotoEpGuide(si,mlastSelected));
+            AddRcMenuItem("Episode Guide", (o, args) => GotoEpGuide(si, mlastSelected));
             AddRcMenuItem("Force Refresh", (o, args) => mainUi.ForceRefresh(si, false));
             AddRcMenuItem("Edit Show", (o, args) => mainUi.EditShow(si));
 
@@ -170,7 +170,7 @@ namespace TVRename.Forms
             possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
         }
 
-        private void AddRule(PossibleMergedEpisode selected,ShowConfiguration si, ListViewItem lastClicked)
+        private void AddRule(PossibleMergedEpisode selected, ShowConfiguration si, ListViewItem lastClicked)
         {
             ShowRule sr = selected.GenerateRule();
 
@@ -204,7 +204,7 @@ namespace TVRename.Forms
 
         private void BwScan_DoWork(object sender, DoWorkEventArgs e)
         {
-            dupEps = MergedEpisodeFinderController.FindDoubleEps( mDoc,(BackgroundWorker)sender);
+            dupEps = MergedEpisodeFinderController.FindDoubleEps(mDoc, (BackgroundWorker)sender);
         }
 
         private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -225,6 +225,7 @@ namespace TVRename.Forms
             ClearGrid();
             PopulateGrid();
         }
+
         private void BtnRefresh_Click_1(object sender, EventArgs e)
         {
             Scan();

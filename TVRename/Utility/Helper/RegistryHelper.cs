@@ -1,21 +1,22 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Security;
 using Alphaleonis.Win32.Filesystem;
 using Microsoft.Win32;
 using NLog;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Security;
 
 namespace TVRename
 {
-    public static class RegistryHelper {
+    public static class RegistryHelper
+    {
         //From https://www.cyotek.com/blog/configuring-the-emulation-mode-of-an-internet-explorer-webbrowser-control THANKS
         //Needed to ensure webBrowser renders HTML 5 content
 
@@ -74,7 +75,7 @@ namespace TVRename
 
             return 0;
         }
-        
+
         private static BrowserEmulationVersion GetBrowserEmulationVersion()
         {
             try
@@ -113,7 +114,7 @@ namespace TVRename
         {
             try
             {
-                RegistryKey key = Registry.CurrentUser.CreateSubKey(BROWSER_EMULATION_KEY,true);
+                RegistryKey key = Registry.CurrentUser.CreateSubKey(BROWSER_EMULATION_KEY, true);
 
                 if (key != null)
                 {
@@ -123,7 +124,7 @@ namespace TVRename
                     {
                         // if it's a valid value, update or create the value
                         key.SetValue(programName, (int)browserEmulationVersion, RegistryValueKind.DWord);
-                        Logger.Warn("SETTING REGISTRY:{0}-{1}-{2}-{3}",key.Name,programName, (int)browserEmulationVersion, RegistryValueKind.DWord.ToString());
+                        Logger.Warn("SETTING REGISTRY:{0}-{1}-{2}-{3}", key.Name, programName, (int)browserEmulationVersion, RegistryValueKind.DWord.ToString());
                     }
                     else
                     {

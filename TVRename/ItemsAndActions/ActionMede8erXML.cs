@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 using System.Collections.Generic;
 using System.Globalization;
@@ -41,7 +41,7 @@ namespace TVRename
                 {
                     WriteEpisodeXml();
                 }
-                else  if (SelectedShow !=null)// show overview (Series.xml)
+                else if (SelectedShow != null)// show overview (Series.xml)
                 {
                     WriteSeriesXml();
                 }
@@ -65,7 +65,7 @@ namespace TVRename
                 return;
             }
 
-            XmlWriterSettings settings = new XmlWriterSettings {Indent = true, NewLineOnAttributes = true};
+            XmlWriterSettings settings = new XmlWriterSettings { Indent = true, NewLineOnAttributes = true };
             using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
             {
                 // See: http://xbmc.org/wiki/?title=Import_-_Export_Library#TV_Episodes
@@ -84,8 +84,8 @@ namespace TVRename
                 writer.WriteEndElement();
 
                 //Mede8er Ratings are on a 100 point scale; TVDB are on a 10 point scale
-                float siteRating = float.Parse(Episode.EpisodeRating??string.Empty, new CultureInfo("en-US")) * 10;
-                int intSiteRating = (int) siteRating;
+                float siteRating = float.Parse(Episode.EpisodeRating ?? string.Empty, new CultureInfo("en-US")) * 10;
+                int intSiteRating = (int)siteRating;
                 if (intSiteRating > 0)
                 {
                     writer.WriteElement("rating", intSiteRating);
@@ -160,7 +160,7 @@ namespace TVRename
 
         private void WriteSeriesXml()
         {
-            XmlWriterSettings settings = new XmlWriterSettings {Indent = true, NewLineOnAttributes = true};
+            XmlWriterSettings settings = new XmlWriterSettings { Indent = true, NewLineOnAttributes = true };
             using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
             {
                 // http://www.xbmc.org/wiki/?title=Import_-_Export_Library#TV_Shows
@@ -181,7 +181,7 @@ namespace TVRename
 
                 //Mede8er Ratings are on a 100 point scale; TVDB are on a 10 point scale
                 float siteRating = SelectedShow.CachedShow?.SiteRating ?? 0 * 10;
-                int intSiteRating = (int) siteRating;
+                int intSiteRating = (int)siteRating;
                 if (intSiteRating > 0)
                 {
                     writer.WriteElement("rating", intSiteRating);
@@ -214,7 +214,7 @@ namespace TVRename
             }
         }
 
-        #endregion
+        #endregion Action Members
 
         #region Item Members
 
@@ -248,6 +248,6 @@ namespace TVRename
             return string.Compare(Where.FullName + Episode.Name, nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
 
-        #endregion
+        #endregion Item Members
     }
 }
