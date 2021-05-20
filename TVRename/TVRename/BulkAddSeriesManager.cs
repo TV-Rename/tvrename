@@ -35,13 +35,15 @@ namespace TVRename
 
         public static void GuessShowItem([NotNull] PossibleNewTvShow ai, [NotNull] ShowLibrary library, bool showErrorMsgBox)
         {
-            string languageCode = TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TMDB
-                ? TVSettings.Instance.TMDBLanguage.ThreeAbbreviation
-                : TVSettings.Instance.PreferredLanguageCode;
+            Language languageToUse = TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TMDB
+                ? TVSettings.Instance.TMDBLanguage
+                : TVSettings.Instance.PreferredTVDBLanguage;
+
+            Locale localeToUse = new Locale(languageToUse);
 
             string showName = GuessShowName(ai, library);
             //todo - (BulkAdd Manager needs to work for new providers)
-            int tvdbId = FindTVDBShowCode(ai);
+            int tvdbId = FindTvdbShowCode(ai);
 
             if (string.IsNullOrEmpty(showName)  && tvdbId == -1)
             {
@@ -65,7 +67,7 @@ namespace TVRename
                 }
             }
 
-            CachedSeriesInfo ser = TheTVDB.LocalCache.Instance.GetSeries(showName,showErrorMsgBox, languageCode);
+            CachedSeriesInfo ser = TheTVDB.LocalCache.Instance.GetSeries(showName,showErrorMsgBox, localeToUse);
             if (ser != null)
             {
                 ai.SetId(tvdbId, TVDoc.ProviderType.TheTVDB);
@@ -84,7 +86,7 @@ namespace TVRename
                 Logger.Info($"Ignoring {showName} as it refines to nothing.");
             }
 
-            ser = TheTVDB.LocalCache.Instance.GetSeries(refinedHint,showErrorMsgBox, languageCode);
+            ser = TheTVDB.LocalCache.Instance.GetSeries(refinedHint,showErrorMsgBox, localeToUse);
 
             ai.RefinedHint = refinedHint;
             if (ser != null)
@@ -93,7 +95,7 @@ namespace TVRename
             }
         }
 
-        private static int FindTVDBShowCode(PossibleNewTvShow ai)
+        private static int FindTvdbShowCode(PossibleNewTvShow ai)
         {
             List<string> possibleFilenames = new List<string> {"cachedSeries.xml", "tvshow.nfo"};
             foreach (string fileName in possibleFilenames)
@@ -103,7 +105,7 @@ namespace TVRename
                     IEnumerable<FileInfo> files = ai.Folder.EnumerateFiles(fileName).ToList();
                     if (files.Any())
                     {
-                        foreach (int x in files.Select(FindTVDBShowCode).Where(x => x != -1))
+                        foreach (int x in files.Select(FindTvdbShowCode).Where(x => x != -1))
                         {
                             return x;
                         }
@@ -130,7 +132,7 @@ namespace TVRename
             return -1;
         }
 
-        private static int FindTVDBShowCode([NotNull] FileInfo file)
+        private static int FindTvdbShowCode([NotNull] FileInfo file)
         {
             try
             {

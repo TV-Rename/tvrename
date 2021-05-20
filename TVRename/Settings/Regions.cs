@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace TVRename
@@ -32,6 +32,8 @@ namespace TVRename
         }
 
         public IEnumerable<string> EnglishNames => this.Select(r => r.EnglishName);
+
+        public Region FallbackRegion => RegionFromCode("US");
 
         private Regions()
         {

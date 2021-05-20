@@ -90,6 +90,8 @@ namespace TVRename.TMDB
             }
         }
 
+        public override Language? PreferredLanguage() => TVSettings.Instance.TMDBLanguage;
+
         public override bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
         {
             if (s.Provider != TVDoc.ProviderType.TMDB)
@@ -99,7 +101,7 @@ namespace TVRename.TMDB
 
             if (s.Type == MediaConfiguration.MediaType.movie)
             {
-                return EnsureMovieUpdated(s.TmdbId, s.LanguageCode,s.Name, showErrorMsgBox);
+                return EnsureMovieUpdated(s.TmdbId, s.TargetLocale ,s.Name, showErrorMsgBox);
             }
 
             return EnsureSeriesUpdated(s, showErrorMsgBox);
@@ -160,7 +162,7 @@ namespace TVRename.TMDB
             return true;
         }
 
-        private bool EnsureMovieUpdated(int  id, string languageCode, string name, bool showErrorMsgBox)
+        private bool EnsureMovieUpdated(int  id, Locale locale, string name, bool showErrorMsgBox)
         {
             lock (MOVIE_LOCK)
             {
@@ -173,7 +175,7 @@ namespace TVRename.TMDB
             Say($"{name} from TMDB");
             try
             {
-                CachedMovieInfo downloadedSi = DownloadMovieNow(id,languageCode, showErrorMsgBox);
+                CachedMovieInfo downloadedSi = DownloadMovieNow(id,locale, showErrorMsgBox);
 
                 if (downloadedSi.TmdbCode != id && id == -1)
                 {
@@ -360,10 +362,10 @@ namespace TVRename.TMDB
         }
 
         private void AddPlaceholderSeries([NotNull] ISeriesSpecifier ss)
-            => AddPlaceholderSeries(ss.TvdbId, ss.TvMazeId,ss.TmdbId, ss.LanguageCode);
+            => AddPlaceholderSeries(ss.TvdbId, ss.TvMazeId,ss.TmdbId, ss.TargetLocale);
 
         private void AddPlaceholderMovie([NotNull] ISeriesSpecifier ss)
-            => AddPlaceholderMovie(ss.TvdbId, ss.TvMazeId, ss.TmdbId, ss.LanguageCode);
+            => AddPlaceholderMovie(ss.TvdbId, ss.TvMazeId, ss.TmdbId, ss.TargetLocale);
 
 
         public void UpdatesDoneOk()
@@ -373,16 +375,16 @@ namespace TVRename.TMDB
             latestMovieUpdateTime.RecordSuccessfulUpdate();
         }
 
-        public CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox, string languageCode)
+        public CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox, Locale preferredLocale)
         {
             throw new NotImplementedException(); //todo - (BulkAdd Manager needs to work for new providers)
         }
 
-        public CachedMovieInfo? GetMovie(PossibleNewMovie show, string languageCode, bool showErrorMsgBox) => GetMovie(show.RefinedHint, show.PossibleYear,languageCode, showErrorMsgBox, false);
+        public CachedMovieInfo GetMovie(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) => GetMovie(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
 
-        public CachedMovieInfo? GetMovie(string hint, int? possibleYear, string languageCode, bool showErrorMsgBox,bool useMostPopularMatch)
+        public CachedMovieInfo? GetMovie(string hint, int? possibleYear, Locale preferredLocale, bool showErrorMsgBox,bool useMostPopularMatch)
         {
-            Search(hint, showErrorMsgBox,MediaConfiguration.MediaType.movie,languageCode);
+            Search(hint, showErrorMsgBox,MediaConfiguration.MediaType.movie,preferredLocale);
 
             string showName = hint;
 
@@ -589,31 +591,14 @@ namespace TVRename.TMDB
             }
         }
 
-        public void ForgetShow(int tvdb, int tvmaze, int tmdb, bool makePlaceholder, bool useCustomLanguage, string langCode)
+        public void ForgetShow(ISeriesSpecifier ss)
         {
+            ForgetShow(ss.TmdbId);
             lock (SERIES_LOCK)
             {
-                if (Series.ContainsKey(tmdb))
+                if (ss.TmdbId > 0)
                 {
-                    Series.TryRemove(tmdb, out CachedSeriesInfo _);
-                    if (makePlaceholder)
-                    {
-                        if (useCustomLanguage && langCode.HasValue())
-                        {
-                            AddPlaceholderSeries(tvdb, tvmaze,tmdb, langCode!);
-                        }
-                        else
-                        {
-                            AddPlaceholderSeries(tvdb, tvmaze,tmdb);
-                        }
-                    }
-                }
-                else
-                {
-                    if (tvmaze > 0 && makePlaceholder)
-                    {
-                        AddPlaceholderSeries(tvdb, tvmaze, tmdb);
-                    }
+                    AddPlaceholderSeries(ss);
                 }
             }
         }
@@ -681,31 +666,14 @@ namespace TVRename.TMDB
             }
         }
 
-        public void ForgetMovie(int tvdb,int tvmaze,int tmdb, bool makePlaceholder, bool useCustomLanguage, string? langCode)
+        public void ForgetMovie(ISeriesSpecifier s)
         {
+            ForgetMovie(s.TmdbId);
             lock (MOVIE_LOCK)
             {
-                if (Movies.ContainsKey(tmdb))
+                if (s.TmdbId > 0)
                 {
-                    Movies.TryRemove(tmdb, out CachedMovieInfo _);
-                    if (makePlaceholder)
-                    {
-                        if (useCustomLanguage && langCode.HasValue())
-                        {
-                            AddPlaceholderSeries(tvdb,tvmaze,tmdb, langCode!);
-                        }
-                        else
-                        {
-                            AddPlaceholderSeries(tvdb, tvmaze,tmdb);
-                        }
-                    }
-                }
-                else
-                {
-                    if (tmdb > 0 && makePlaceholder)
-                    {
-                        AddPlaceholderSeries(tvdb, tvmaze,tmdb);
-                    }
+                    AddPlaceholderSeries(s);
                 }
             }
         }
@@ -731,19 +699,19 @@ namespace TVRename.TMDB
             }
         }
 
-        private void AddPlaceholderSeries(int tvdb, int tvmaze, int tmdb, string customLanguageCode)
+        private void AddPlaceholderSeries(int tvdb, int tvmaze, int tmdb, Locale locale)
         {
             lock (SERIES_LOCK)
             {
-                Series[tmdb] = new CachedSeriesInfo(tvdb, tvmaze, tmdb, customLanguageCode) {Dirty = true};
+                Series[tmdb] = new CachedSeriesInfo(tvdb, tvmaze, tmdb, locale) {Dirty = true};
             }
         }
 
-        private void AddPlaceholderMovie(int tvdb, int tvmaze, int tmdb, string customLanguageCode)
+        private void AddPlaceholderMovie(int tvdb, int tvmaze, int tmdb, Locale locale)
         {
             lock (MOVIE_LOCK)
             {
-                Movies[tmdb] = new CachedMovieInfo(tvdb, tvmaze, tmdb, customLanguageCode) { Dirty = true };
+                Movies[tmdb] = new CachedMovieInfo(tvdb, tvmaze, tmdb, locale) { Dirty = true };
             }
         }
 
@@ -763,17 +731,13 @@ namespace TVRename.TMDB
 
         public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TMDB;
 
-        public Language PreferredLanguage => throw new NotImplementedException();
-
-        public Language GetLanguageFromCode(string customLanguageCode) => throw new NotImplementedException();
-
-        public CachedMovieInfo GetMovieAndDownload(int id, string languageCode, bool showErrorMsgBox) => HasMovie(id)
+        public CachedMovieInfo GetMovieAndDownload(int id, Locale locale, bool showErrorMsgBox) => HasMovie(id)
             ? CachedMovieData[id]
-            : DownloadMovieNow(id,languageCode,showErrorMsgBox);
+            : DownloadMovieNow(id,locale,showErrorMsgBox);
 
-        internal CachedMovieInfo DownloadMovieNow(int id,string languageCode, bool showErrorMsgBox)
+        internal CachedMovieInfo DownloadMovieNow(int id, Locale locale, bool showErrorMsgBox)
         {
-            Movie downloadedMovie = Client.GetMovieAsync(id,languageCode,languageCode, MovieMethods.ExternalIds|MovieMethods.Images|MovieMethods.AlternativeTitles|MovieMethods.ReleaseDates |MovieMethods.Changes|MovieMethods.Videos|MovieMethods.Credits).Result;
+            Movie downloadedMovie = Client.GetMovieAsync(id,locale.LanguageToUse(TVDoc.ProviderType.TMDB).Abbreviation, locale.LanguageToUse(TVDoc.ProviderType.TMDB).Abbreviation, MovieMethods.ExternalIds|MovieMethods.Images|MovieMethods.AlternativeTitles|MovieMethods.ReleaseDates |MovieMethods.Changes|MovieMethods.Videos|MovieMethods.Credits).Result;
             if (downloadedMovie is null)
             {
                 throw new MediaNotFoundException(id,"TMDB no longer has this movie",TVDoc.ProviderType.TMDB,TVDoc.ProviderType.TMDB);
@@ -846,7 +810,7 @@ namespace TVRename.TMDB
         {
             int id = ss.TmdbId > 0 ? ss.TmdbId : GetSeriesIdFromOtherCodes(ss) ?? 0;
 
-            TvShow? downloadedSeries = Client.GetTvShowAsync(id,TvShowMethods.ExternalIds | TvShowMethods.Images | TvShowMethods.AlternativeTitles | TvShowMethods.ContentRatings | TvShowMethods.Changes | TvShowMethods.Videos | TvShowMethods.Credits,ss.LanguageCode).Result;
+            TvShow? downloadedSeries = Client.GetTvShowAsync(id,TvShowMethods.ExternalIds | TvShowMethods.Images | TvShowMethods.AlternativeTitles | TvShowMethods.ContentRatings | TvShowMethods.Changes | TvShowMethods.Videos | TvShowMethods.Credits,ss.LanguageToUse().ISODialectAbbreviation).Result;
             if (downloadedSeries is null)
             {
                 throw new MediaNotFoundException(id, "TMDB no longer has this show", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB);
@@ -933,7 +897,7 @@ namespace TVRename.TMDB
             foreach (var searchSeason in downloadedSeries.Seasons)
             {
                 int snum = searchSeason.SeasonNumber;
-                TvSeason? downloadedSeason = Client.GetTvSeasonAsync(downloadedSeries.Id, snum, TvSeasonMethods.Images, ss.LanguageCode).Result;
+                TvSeason? downloadedSeason = Client.GetTvSeasonAsync(downloadedSeries.Id, snum, TvSeasonMethods.Images, ss.LanguageToUse().ISODialectAbbreviation).Result;
                 
                 Season newSeason = new Season(downloadedSeason.Id??0,snum,downloadedSeason.Name,downloadedSeason.Overview,string.Empty, downloadedSeason.PosterPath,downloadedSeries.Id);
                 m.AddSeason(newSeason);
@@ -1075,11 +1039,12 @@ namespace TVRename.TMDB
                 .FirstOrDefault();
         }
 
-        public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type, string languageCode)
+        public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type,
+            Locale locale)
         {
             if (type ==MediaConfiguration.MediaType.movie)
             {
-                SearchContainer<SearchMovie> results = Client.SearchMovieAsync(text,languageCode).Result;
+                SearchContainer<SearchMovie> results = Client.SearchMovieAsync(text,locale.LanguageToUse(TVDoc.ProviderType.TMDB).ISODialectAbbreviation).Result;
                 LOGGER.Info(
                     $"Got {results.Results.Count:N0} of {results.TotalResults:N0} results searching for {text}");
 
@@ -1089,7 +1054,7 @@ namespace TVRename.TMDB
                     File(result);
                     try
                     {
-                        DownloadMovieNow(result.Id,languageCode, showErrorMsgBox);
+                        DownloadMovieNow(result.Id, locale, showErrorMsgBox);
                     }
                     catch (MediaNotFoundException sex)
                     {
@@ -1109,7 +1074,7 @@ namespace TVRename.TMDB
                     File(result);
                     try
                     {
-                        ISeriesSpecifier ss = new SearchSeriesSpecifier(-1, -1, result.Id, true, languageCode, result.Name,
+                        ISeriesSpecifier ss = new SearchSeriesSpecifier(-1, -1, result.Id, locale, result.Name,
                             TVDoc.ProviderType.TMDB, null, MediaConfiguration.MediaType.tv);
                         DownloadSeriesNow(ss, showErrorMsgBox);
                     }
@@ -1180,13 +1145,13 @@ namespace TVRename.TMDB
             return null;
         }
 
-        public CachedMovieInfo? LookupMovieByImdb(string imdbToTest, string languageCode, bool showErrorMsgBox)
+        public CachedMovieInfo? LookupMovieByImdb(string imdbToTest, Locale locale, bool showErrorMsgBox)
         {
             FindContainer? results = Client.FindAsync(FindExternalSource.Imdb, imdbToTest).Result;
             LOGGER.Info($"Got {results.MovieResults.Count:N0} results searching for {imdbToTest}");
             foreach (SearchMovie result in results.MovieResults)
             {
-                DownloadMovieNow(result.Id, languageCode, showErrorMsgBox); 
+                DownloadMovieNow(result.Id, locale, showErrorMsgBox); 
             }
 
             if (results.MovieResults.Count == 0)

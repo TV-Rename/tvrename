@@ -37,7 +37,6 @@ namespace TVRename
 
         private readonly TVDoc mDoc;
         private Thread? loadLanguageThread;
-        private string? enterPreferredLanguage; // hold here until background language download task is done
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private CustomNameTagsFloatingWindow? cntfw;
         private readonly ProcessedSeason? sampleProcessedSeason;
@@ -52,8 +51,8 @@ namespace TVRename
         {
             sampleProcessedSeason = s;
             InitializeComponent();
-            loadLanguageDone += LoadLanguageDoneFunc;
 
+            FillLanguageList();
             SetupTimezoneDropdown();
             SetupTMDBDropDowns();
             SetupRssGrid();
@@ -423,17 +422,10 @@ namespace TVRename
 
             s.keepTogetherMode = KeepTogetherMode();
 
-            s.PreferredLanguageCode =
-                TheTVDB.LocalCache.Instance.LanguageList?.FirstOrDefault(l => l.LocalName == cbTVDBLanguages.Text)?.Abbreviation ??
-                s.PreferredLanguageCode;
+            s.PreferredTVDBLanguage =Languages.Instance.GetLanguageFromLocalName(cbTVDBLanguages.Text) ??
+                s.PreferredTVDBLanguage ?? Languages.Instance.GetLanguageFromCode("en");
 
             s.TvdbVersion = cbTVDBVersion.Text == "v3" ? TheTVDB.ApiVersion.v3 : TheTVDB.ApiVersion.v4;
-
-            if (string.IsNullOrWhiteSpace(s.PreferredLanguageCode))
-            {
-                s.PreferredLanguageCode = "en";
-            }
-
             s.WTWDoubleClick = rbWTWScan.Checked
                 ? TVSettings.WTWDoubleClickAction.Scan
                 : TVSettings.WTWDoubleClickAction.Search;
@@ -615,75 +607,16 @@ namespace TVRename
 
         #region Update Form
 
-        private void SetupLanguages()
-        {
-            cbTVDBLanguages.Items.Clear();
-            cbTVDBLanguages.Items.Add("Please wait...");
-            cbTVDBLanguages.SelectedIndex = 0;
-            cbTVDBLanguages.Update();
-            cbTVDBLanguages.Enabled = false;
-
-            loadLanguageThread = new Thread(LoadLanguage);
-            loadLanguageThread.Start();
-        }
-
-        private void LoadLanguage()
-        {
-            bool aborted = false;
-            lock (TheTVDB.LocalCache.Instance.LANGUAGE_LOCK)
-            {
-                try
-                {
-                    if (!TheTVDB.LocalCache.Instance.IsConnected)
-                    {
-                        TheTVDB.LocalCache.Instance.Connect(true);
-                    }
-                }
-                catch (ThreadAbortException)
-                {
-                    aborted = true;
-                }
-                catch (Exception e)
-                {
-                    Logger.Fatal(e, "Unhandled Exception in LoadLanguages");
-                    aborted = true;
-                }
-            }
-
-            if (!aborted)
-            {
-                BeginInvoke(loadLanguageDone);
-            }
-        }
-
-        private void LoadLanguageDoneFunc()
-        {
-            FillLanguageList();
-        }
-
         private void FillLanguageList()
         {
             cbTVDBLanguages.BeginUpdate();
             cbTVDBLanguages.Items.Clear();
-
-            string pref = string.Empty;
-            lock(TheTVDB.LocalCache.Instance.LANGUAGE_LOCK)
+            foreach (Language l in Languages.Instance)
             {
-                if (TheTVDB.LocalCache.Instance.LanguageList != null)
-                {
-                    foreach (Language l in TheTVDB.LocalCache.Instance.LanguageList)
-                    {
-                        cbTVDBLanguages.Items.Add(l.LocalName);
+                cbTVDBLanguages.Items.Add(l.LocalName);
 
-                        if (enterPreferredLanguage == l.Abbreviation)
-                        {
-                            pref = l.LocalName;
-                        }
-                    }
-                }
             }
             cbTVDBLanguages.EndUpdate();
-            cbTVDBLanguages.Text = pref;
             cbTVDBLanguages.Enabled = true;
         }
 
@@ -825,8 +758,6 @@ namespace TVRename
         // ReSharper disable once FunctionComplexityOverflow
         private void Preferences_Load(object sender, EventArgs e)
         {
-            SetupLanguages();
-
             TVSettings s = TVSettings.Instance;
 
             PopulateReplacements(s);
@@ -1009,7 +940,7 @@ namespace TVRename
             cbSearchLocally.Checked = s.SearchLocally;
             cbIgnorePreviouslySeen.Checked = s.IgnorePreviouslySeen;
             cbLeaveOriginals.Checked = s.LeaveOriginals;
-            enterPreferredLanguage = s.PreferredLanguageCode;
+            cbTVDBLanguages.Text = s.PreferredTVDBLanguage.LocalName;
             cbScanIncludesBulkAdd.Checked = s.DoBulkAddInScan;
             chkIgnoreAllSpecials.Checked = s.IgnoreAllSpecials;
 

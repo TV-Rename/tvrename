@@ -2,7 +2,6 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
-using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -32,7 +31,7 @@ namespace TVRename
             DefaultValues();
         }
 
-        public CachedMovieInfo(int tvdb, int tvmaze, int tmdb, string langCode) : base(tvdb, tvmaze, tmdb, langCode)
+        public CachedMovieInfo(int tvdb, int tvmaze, int tmdb, Locale locale) : base(tvdb, tvmaze, tmdb, locale)
         {
             DefaultValues();
         }
@@ -80,10 +79,9 @@ namespace TVRename
             {
                 IsSearchResultOnly = false;
             }
-            bool currentLanguageNotSet = LanguageId == -1;
-            string bestLanguageCode = TargetLanguageCode ?? TVSettings.Instance.PreferredLanguageCode;
-            Language optimaLanguage = LocalCache.Instance.GetLanguageFromCode(bestLanguageCode);
-            bool newLanguageOptimal = !(optimaLanguage is null) && o.LanguageId == optimaLanguage.TVDBId;
+            bool currentLanguageNotSet = ActualLocale is null;
+            Language optimaLanguage = TargetLocale.PreferredLanguage ?? TVSettings.Instance.PreferredTVDBLanguage;
+            bool newLanguageOptimal = o.ActualLocale.PreferredLanguage == optimaLanguage;
             bool useNewDataOverOld = currentLanguageNotSet || newLanguageOptimal;
 
             SrvLastUpdated = o.SrvLastUpdated;
@@ -163,7 +161,7 @@ namespace TVRename
 
             if (useNewDataOverOld)
             {
-                LanguageId = o.LanguageId;
+                ActualLocale = o.ActualLocale;
             }
 
             Dirty = o.Dirty;

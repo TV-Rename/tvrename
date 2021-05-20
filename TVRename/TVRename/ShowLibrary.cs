@@ -144,7 +144,7 @@ namespace TVRename
 
         public ShowConfiguration? GetShowItem(int id,TVDoc.ProviderType provider)
         {
-            List<ShowConfiguration>? matching = this.Where(configuration => configuration.IdCode(provider) == id).ToList();
+            List<ShowConfiguration>? matching = this.Where(configuration => configuration.IdFor(provider) == id).ToList();
 
             if (!matching.Any())
             {

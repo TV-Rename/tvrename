@@ -14,7 +14,6 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
-using TVRename.TheTVDB;
 
 namespace TVRename
 {
@@ -78,7 +77,7 @@ namespace TVRename
             DefaultValues();
         }
 
-        public CachedSeriesInfo( int tvdb, int tvmaze, int tmdb, string langCode) : base(tvdb,tvmaze,tmdb,langCode)
+        public CachedSeriesInfo( int tvdb, int tvmaze, int tmdb, Locale langCode) : base(tvdb,tvmaze,tmdb,langCode)
         {
             DefaultValues();
         }
@@ -89,9 +88,9 @@ namespace TVRename
             IsSearchResultOnly = false;
         }
 
-        public CachedSeriesInfo([NotNull] JObject json,int langId,bool searchResult) : this()
+        public CachedSeriesInfo([NotNull] JObject json, Locale locale, bool searchResult) : this()
         {
-            LanguageId = langId;
+            TargetLocale = locale;
             LoadJson(json);
             IsSearchResultOnly = searchResult;
 
@@ -109,9 +108,9 @@ namespace TVRename
             }
         }
 
-        public CachedSeriesInfo([NotNull] JObject json, JObject jsonInDefaultLang, int langId):this()
+        public CachedSeriesInfo([NotNull] JObject json, JObject jsonInDefaultLang, Locale locale) :this()
         {
-            LanguageId = langId;
+            TargetLocale = locale;
             LoadJson(json,jsonInDefaultLang);
             IsSearchResultOnly = false;
             if (string.IsNullOrEmpty(Name)            ){
@@ -165,10 +164,10 @@ namespace TVRename
             {
                 IsSearchResultOnly = false;
             }
-            bool currentLanguageNotSet = LanguageId == -1;
-            string bestLanguageCode = TargetLanguageCode ?? TVSettings.Instance.PreferredLanguageCode;
-            Language optimaLanguage = LocalCache.Instance.GetLanguageFromCode(bestLanguageCode);
-            bool newLanguageOptimal = !(optimaLanguage is null) && o.LanguageId == optimaLanguage.TVDBId;
+
+            bool currentLanguageNotSet = ActualLocale is null;
+            Language optimaLanguage = TargetLocale.PreferredLanguage ?? TVSettings.Instance.PreferredTVDBLanguage;
+            bool newLanguageOptimal = o.ActualLocale.PreferredLanguage == optimaLanguage;
             bool useNewDataOverOld = currentLanguageNotSet || newLanguageOptimal;
 
             SrvLastUpdated = o.SrvLastUpdated;
@@ -262,7 +261,7 @@ namespace TVRename
 
             if (useNewDataOverOld)
             {
-                LanguageId = o.LanguageId;
+                ActualLocale = o.ActualLocale;
             }
 
             Dirty = o.Dirty;

@@ -137,5 +137,13 @@ namespace TVRename
                 return this.SingleOrDefault(l => l.ISODialectAbbreviation == iso);
             }
         }
+
+        public Language? GetLanguageFromThreeCode(string threeLetterIsoCode)
+        {
+            lock (lockObject)
+            {
+                return this.SingleOrDefault(l => l.ThreeAbbreviation == threeLetterIsoCode && l.IsPrimary);
+            }
+        }
     }
 }

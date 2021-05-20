@@ -67,6 +67,8 @@ namespace TVRename.TVmaze
             }
         }
 
+        public override Language? PreferredLanguage() => throw new NotImplementedException();
+
         public override bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
         {
             if (s.Provider != TVDoc.ProviderType.TVmaze)
@@ -195,26 +197,19 @@ namespace TVRename.TVmaze
             {
                 // anything with a srv_lastupdated of 0 should be marked as dirty
                 // typically, this'll be placeholder cachedSeries
-                foreach (KeyValuePair<int, CachedSeriesInfo> kvp in Series)
+                foreach (CachedSeriesInfo? ser in Series.Values.Where(ser => ser.SrvLastUpdated == 0 || ser.Episodes.Count == 0))
                 {
-                    CachedSeriesInfo ser = kvp.Value;
-                    if (ser.SrvLastUpdated == 0 || ser.Episodes.Count == 0)
-                    {
-                        ser.Dirty = true;
-                    }
+                    ser.Dirty = true;
                 }
             }
         }
-
-        private void AddPlaceholderSeries([NotNull] ISeriesSpecifier ss)
-            => AddPlaceholderSeries(ss.TvdbId, ss.TvMazeId,ss.TmdbId, ss.LanguageCode);
 
         public void UpdatesDoneOk()
         {
             //No Need to do anything as we always refresh from scratch
         }
 
-        public CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox, string languageCode)
+        public CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox, Locale language)
         {
             throw new NotImplementedException(); //todo - (BulkAdd Manager needs to work for new providers)
         }
@@ -227,7 +222,8 @@ namespace TVRename.TVmaze
             }
         }
 
-        public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type, string languageCode)
+        public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type,
+            Locale preferredLocale)
         {
             if (type == MediaConfiguration.MediaType.tv)
             {
@@ -309,48 +305,30 @@ namespace TVRename.TVmaze
             }
         }
 
-        public void ForgetShow(int tvdb,int tvmaze, int tmdb, bool makePlaceholder, bool useCustomLanguage, string? langCode)
+        public void ForgetShow(ISeriesSpecifier ss)
         {
             lock (SERIES_LOCK)
             {
-                if (Series.ContainsKey(tvmaze))
+                if (Series.ContainsKey(ss.TvMazeId))
                 {
-                    Series.TryRemove(tvmaze, out CachedSeriesInfo _);
-                    if (makePlaceholder)
-                    {
-                        if (useCustomLanguage && langCode.HasValue())
-                        {
-                            AddPlaceholderSeries(tvdb,tvmaze,tmdb, langCode!);
-                        }
-                        else
-                        {
-                            AddPlaceholderSeries(tvdb, tvmaze, tmdb);
-                        }
-                    }
+                    Series.TryRemove(ss.TvMazeId, out CachedSeriesInfo _);
+                    AddPlaceholderSeries(ss);
                 }
                 else
                 {
-                    if (tvmaze > 0 && makePlaceholder)
+                    if (ss.TvMazeId > 0)
                     {
-                        AddPlaceholderSeries(tvdb, tvmaze, tmdb);
+                        AddPlaceholderSeries(ss);
                     }
                 }
             }
         }
 
-        private void AddPlaceholderSeries(int tvdb, int tvmaze,int tmdb) 
+        private void AddPlaceholderSeries(ISeriesSpecifier ss)
         {
             lock (SERIES_LOCK)
             {
-                Series[tvmaze] = new CachedSeriesInfo(tvdb,tvmaze, tmdb) { Dirty = true };
-            }
-        }
-
-        private void AddPlaceholderSeries(int tvdb, int tvmaze, int tmdb, string customLanguageCode)
-        {
-            lock (SERIES_LOCK)
-            {
-                Series[tvmaze] = new CachedSeriesInfo(tvdb, tvmaze, tmdb, customLanguageCode) {Dirty = true};
+                Series[ss.TvMazeId] = new CachedSeriesInfo(ss.TvdbId, ss.TvMazeId, ss.TmdbId,ss.TargetLocale) {Dirty = true};
             }
         }
 
@@ -412,8 +390,6 @@ namespace TVRename.TVmaze
 
         public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TVmaze;
 
-        public Language PreferredLanguage => throw new NotImplementedException();
-
         public ConcurrentDictionary<int,CachedSeriesInfo> CachedData
         {
             get {
@@ -423,7 +399,5 @@ namespace TVRename.TVmaze
                 }
             }
         }
-
-        public Language GetLanguageFromCode(string customLanguageCode) => throw new NotImplementedException(); 
     }
 }

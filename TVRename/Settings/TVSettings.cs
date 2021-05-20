@@ -374,7 +374,7 @@ namespace TVRename
         public string SABHostPort = string.Empty;
         public string SABAPIKey = string.Empty;
         public bool CheckSABnzbd = false;
-        public string PreferredLanguageCode = "en";
+        public Language PreferredTVDBLanguage;
         public TheTVDB.ApiVersion TvdbVersion = TheTVDB.ApiVersion.v3;
         public WTWDoubleClickAction WTWDoubleClick = WTWDoubleClickAction.Scan;
 
@@ -591,7 +591,7 @@ namespace TVRename
             writer.WriteElement("SABAPIKey", SABAPIKey);
             writer.WriteElement("CheckSABnzbd", CheckSABnzbd);
             writer.WriteElement("SABHostPort", SABHostPort);
-            writer.WriteElement("PreferredLanguage", PreferredLanguageCode);
+            writer.WriteElement("PreferredLanguage", PreferredTVDBLanguage.Abbreviation);
             writer.WriteElement("WTWDoubleClick", (int) WTWDoubleClick);
             writer.WriteElement("EpJPGs", EpJPGs);
             writer.WriteElement("SeriesJpg", SeriesJpg);
@@ -1388,7 +1388,7 @@ namespace TVRename
             SABAPIKey = xmlSettings.ExtractString("SABAPIKey");
             CheckSABnzbd = xmlSettings.ExtractBool("CheckSABnzbd",false);
             SABHostPort = xmlSettings.ExtractString("SABHostPort");
-            PreferredLanguageCode = xmlSettings.ExtractString("PreferredLanguage", "en");
+            PreferredTVDBLanguage = Languages.Instance.GetLanguageFromCode(xmlSettings.ExtractString("PreferredLanguage", "en"));
             WTWDoubleClick = xmlSettings.ExtractEnum("WTWDoubleClick",WTWDoubleClickAction.Scan);
             ExportMissingXML = xmlSettings.ExtractBool("ExportMissingXML",false);
             ExportMissingXMLTo = xmlSettings.ExtractString("ExportMissingXMLTo");

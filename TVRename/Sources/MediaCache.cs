@@ -33,8 +33,7 @@ namespace TVRename
         public readonly object SERIES_LOCK = new object();
         protected readonly ConcurrentDictionary<int, CachedSeriesInfo> Series = new ConcurrentDictionary<int, CachedSeriesInfo>();
 
-        public Language? PreferredLanguage =>
-            LanguageList?.GetLanguageFromCode(TVSettings.Instance.PreferredLanguageCode);
+        public abstract Language? PreferredLanguage();
 
         public Language? GetLanguageFromCode(string customLanguageCode) => LanguageList?.GetLanguageFromCode(customLanguageCode);
 
@@ -90,6 +89,6 @@ namespace TVRename
             };
         }
 
-        public abstract void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type, string LanguageCode);
+        public abstract void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type, Locale locale);
     }
 }

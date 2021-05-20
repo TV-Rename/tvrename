@@ -586,9 +586,9 @@ namespace TVRename
 
         private static bool HaveSameNonZeroId(MediaConfiguration item, MediaConfiguration currentlyMatchedTvShow, TVDoc.ProviderType p)
         {
-            return (item.IdCode(p) == currentlyMatchedTvShow.IdCode(p))
-                   && (item.IdCode(p) > 0)
-                   && (currentlyMatchedTvShow.IdCode(p) > 0);
+            return (item.IdFor(p) == currentlyMatchedTvShow.IdFor(p))
+                   && (item.IdFor(p) > 0)
+                   && (currentlyMatchedTvShow.IdFor(p) > 0);
         }
 
         private static string RemoveSe(string hint)
@@ -739,7 +739,7 @@ namespace TVRename
                 if (assumeMovie && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && true)//todo use  TVSettings.Instance.AutomateAutoAddWhenOneMovieFound
                 {
                     //TODO - Make generic, currently uses TMDB only
-                    CachedMovieInfo? foundMovie = TMDB.LocalCache.Instance.GetMovie(refinedHint, null,TVSettings.Instance.TMDBLanguage.ISODialectAbbreviation, true, true);
+                    CachedMovieInfo? foundMovie = TMDB.LocalCache.Instance.GetMovie(refinedHint, null, new Locale(), true, true);
                     if (foundMovie!=null)
                     {
                         // no need to popup dialog

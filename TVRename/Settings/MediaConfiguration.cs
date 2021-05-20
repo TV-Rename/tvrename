@@ -18,10 +18,12 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public int TVmazeCode;
         public int TmdbCode;
+        public string? ImdbCode { get; set; } //todo - make sure this is set
+        public Locale TargetLocale { get; }
 
         public bool UseCustomShowName;
         public string CustomShowName;
-        public string lastName; //todo, update from cache
+        public string LastName;
 
         public bool UseCustomRegion;
         public string? CustomRegionCode;
@@ -31,15 +33,6 @@ namespace TVRename
         protected abstract MediaType GetMediaType();
 
         protected abstract Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo, bool checkExist);
-        internal int IdCode(TVDoc.ProviderType provider)
-        {
-            return (provider) switch
-            {
-                TVDoc.ProviderType.TVmaze => TVmazeCode,
-                TVDoc.ProviderType.TMDB => TmdbCode,
-                _ => TvdbCode
-            };
-        }
 
         public override string ToString() => $"{GetMediaType()}: ({ConfigurationProvider.PrettyPrint()}) TVDB:{TvdbCode} TMDB:{TmdbCode} TVMaze:{TVmazeCode} ({CustomShowName},{CustomLanguageCode},{CustomRegionCode})";
 
@@ -67,7 +60,7 @@ namespace TVRename
         }
         public CachedMediaInfo? CachedData => Code > 0 ? LocalCache().GetMedia(Code, GetMediaType()) : null;
 
-        public Language? PreferredLanguage => UseCustomLanguage ? LocalCache().GetLanguageFromCode(CustomLanguageCode!) : LocalCache().PreferredLanguage;
+        public Language? PreferredLanguage => UseCustomLanguage ? LocalCache().GetLanguageFromCode(CustomLanguageCode!) : LocalCache().PreferredLanguage();
 
         protected abstract MediaCache LocalCache();
 
@@ -98,20 +91,6 @@ namespace TVRename
                 case TVDoc.ProviderType.libraryDefault:
                 default:
                     throw new ArgumentOutOfRangeException(nameof(instanceDefaultProvider), instanceDefaultProvider, null);
-            }
-        }
-        public string SourceProviderName
-        {
-            get
-            {
-                return Provider switch
-                {
-                    TVDoc.ProviderType.libraryDefault => throw new ArgumentOutOfRangeException(),
-                    TVDoc.ProviderType.TVmaze => "TV Maze",
-                    TVDoc.ProviderType.TheTVDB => "TVDB",
-                    TVDoc.ProviderType.TMDB => "TMDB",
-                    _ => throw new ArgumentOutOfRangeException(nameof(Provider), Provider, null)
-                };
             }
         }
 
@@ -148,7 +127,7 @@ namespace TVRename
 
         public int TvdbId => TvdbCode;
 
-        public string Name => lastName;
+        public string Name => LastName;
 
         public MediaType Type => GetMediaType();
 
@@ -156,25 +135,13 @@ namespace TVRename
 
         public int TmdbId => TmdbCode;
 
-        public string? ImdbCode => this.ImdbCode;
-
-        public string LanguageCode => UseCustomLanguage ? CustomLanguageCode : TVSettings.Instance.PreferredLanguageCode;
+        public Language LanguageToUse => UseCustomLanguage
+                ? Languages.Instance.GetLanguageFromCode(CustomLanguageCode)
+                : TVSettings.Instance.PreferredTVDBLanguage;
 
         public bool UseCustomLanguage { get; set; }
 
         public string CustomLanguageCode { get; set; }
-
-        public int IdFor(TVDoc.ProviderType provider)
-        {
-            return provider switch
-            {
-                TVDoc.ProviderType.libraryDefault => throw new ArgumentOutOfRangeException(),
-                TVDoc.ProviderType.TVmaze => TVmazeCode,
-                TVDoc.ProviderType.TheTVDB => TvdbCode,
-                TVDoc.ProviderType.TMDB => TmdbCode,
-                _ => throw new ArgumentOutOfRangeException()
-            };
-        }
 
         protected abstract TVDoc.ProviderType DefaultProvider();
 
@@ -183,8 +150,6 @@ namespace TVRename
 
         [NotNull]
         public IEnumerable<Actor> Actors => CachedData?.GetActors() ?? new List<Actor>();
-
-
 
         [NotNull]
         protected IEnumerable<string> GetSimplifiedPossibleShowNames()
@@ -224,6 +189,10 @@ namespace TVRename
                 if (ser?.Name.HasValue() ?? false)
                 {
                     return ser.Name!;
+                }
+                if (LastName.HasValue())
+                {
+                    return LastName;
                 }
 
                 return "<" + Code + " not downloaded>";

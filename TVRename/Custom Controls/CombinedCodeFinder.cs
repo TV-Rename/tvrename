@@ -62,7 +62,7 @@ namespace TVRename
         public void SetSource(TVDoc.ProviderType source, MediaConfiguration? mi)
         {
             UpdateSource(source);
-            if(txtFindThis.Text.IsNumeric() && mi!= null && mi.IdCode(source)>0)
+            if(txtFindThis.Text.IsNumeric() && mi!= null && mi.IdFor(source)>0)
             {
                 mInternal = true;
                 txtFindThis.Text = GenerateNewHintForProvider(mi);
@@ -89,7 +89,7 @@ namespace TVRename
 
         private string GenerateNewHintForProvider(MediaConfiguration mi)
         {
-            if (mi.IdCode(Source) >0) return mi.IdCode(Source).ToString();
+            if (mi.IdFor(Source) >0) return mi.IdFor(Source).ToString();
             return mi.ShowName;
         }
 
@@ -339,13 +339,10 @@ namespace TVRename
             txtSearchStatus.Update();
 
             //TODO - make search multi language and use custom language specified
-            string languageCode = Source == TVDoc.ProviderType.TMDB
-                ? TVSettings.Instance.TMDBLanguage.ISODialectAbbreviation
-                : TVSettings.Instance.PreferredLanguageCode;
 
             if (!string.IsNullOrEmpty(txtFindThis.Text))
             {
-                GetSourceInstance(Source).Search(txtFindThis.Text,showErrorMsgBox,Type,languageCode);
+                GetSourceInstance(Source).Search(txtFindThis.Text,showErrorMsgBox,Type, new Locale());
                 DoFind(true);
             }
         }

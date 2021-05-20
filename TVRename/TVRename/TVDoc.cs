@@ -233,7 +233,7 @@ namespace TVRename
         }
         private int GetBestValue(MediaConfiguration show, CachedMediaInfo cachedData,ProviderType provider, MediaConfiguration.MediaType type, string basedOnInformation)
         {
-            int currentValue = show.IdCode(provider);
+            int currentValue = show.IdFor(provider);
             int valueFromCache = cachedData.IdCode(provider);
 
             if (currentValue  <= 0 && valueFromCache > 0)
@@ -412,7 +412,7 @@ namespace TVRename
                     continue;
 
                 }
-                show.lastName = cachedData.Name;
+                show.LastName = cachedData.Name;
             }
 
             foreach (MovieConfiguration? show in FilmLibrary.Movies)
@@ -423,7 +423,7 @@ namespace TVRename
                     continue;
 
                 }
-                show.lastName = cachedData.Name;
+                show.LastName = cachedData.Name;
             }
         }
 
@@ -1395,7 +1395,7 @@ namespace TVRename
             foreach (ShowConfiguration si in showConfigurations)
             {
                 iTVSource cache = GetTVCache(si.Provider);
-                cache.ForgetShow(si.TvdbCode, si.TVmazeCode, si.TmdbCode, true, si.UseCustomLanguage, si.CustomLanguageCode);
+                cache.ForgetShow(si);
             }
             DoDownloadsFG(unattended, tvrMinimised, owner, showConfigurations);
             AllowAutoScan();
@@ -1451,7 +1451,7 @@ namespace TVRename
             foreach (MovieConfiguration si in movieConfigurations)
             {
                 iMovieSource? cache = GetMovieCache(si.Provider);
-                cache.ForgetMovie(si.TvdbCode, si.TVmazeCode, si.TmdbCode, true, si.UseCustomLanguage, si.CustomLanguageCode);
+                cache.ForgetMovie(si);
             }
             DoDownloadsFG(unattended, tvrMinimised, owner, movieConfigurations);
             AllowAutoScan();

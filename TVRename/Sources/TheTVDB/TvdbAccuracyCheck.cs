@@ -23,7 +23,7 @@ namespace TVRename.TheTVDB
             int tvdbId = si.TvdbCode;
             try
             {
-                CachedSeriesInfo newSi = lc.DownloadSeriesInfo(tvdbId, "en", false);
+                CachedSeriesInfo newSi = lc.DownloadSeriesInfo(tvdbId, new Locale(), false);
                 if (newSi.SrvLastUpdated != si.SrvLastUpdated)
                 {
                     Issues.Add(
@@ -32,7 +32,7 @@ namespace TVRename.TheTVDB
                     EnsureUpdated(si);
                 }
 
-                List<JObject> eps = lc.GetEpisodes(tvdbId, "en");
+                List<JObject> eps = lc.GetEpisodes(tvdbId, new Locale(Languages.Instance.GetLanguageFromCode("en")));
                 List<long> serverEpIds = new List<long>();
 
                 if (eps != null)

@@ -2753,7 +2753,7 @@ namespace TVRename
 
         private static bool NodeIsForShow([NotNull] ShowConfiguration si, TreeNode n)
         {
-            return TreeNodeToShowItem(n)?.IdCode(si.Provider) == si.IdCode(si.Provider);
+            return TreeNodeToShowItem(n)?.IdFor(si.Provider) == si.IdFor(si.Provider);
         }
 
         private void SelectShow(ShowConfiguration si)

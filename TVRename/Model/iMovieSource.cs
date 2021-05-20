@@ -12,7 +12,7 @@ namespace TVRename
         bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
         void UpdatesDoneOk();
 
-        CachedMovieInfo GetMovie(PossibleNewMovie show, string languageCode, bool showErrorMsgBox);
+        CachedMovieInfo GetMovie(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox);
         CachedMovieInfo GetMovie(int? id);
         bool HasMovie(int id);
 
@@ -20,7 +20,7 @@ namespace TVRename
 
         void ForgetEverything();
         void ForgetMovie(int id);
-        void ForgetMovie(int tvdb, int tvmaze,int tmdb, bool makePlaceholder, bool useCustomLanguage, string langCode);
+        void ForgetMovie(ISeriesSpecifier s);
         void Update(CachedMovieInfo si);
         void AddPoster(int seriesId, IEnumerable<Banner> select);
         void LatestUpdateTimeIs(string time);

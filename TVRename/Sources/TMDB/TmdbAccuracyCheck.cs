@@ -24,7 +24,7 @@ namespace TVRename.TMDB
             int tvdbId = si.TmdbCode;
             try
             {
-                CachedMovieInfo newSi = lc.DownloadMovieNow(tvdbId,si.LanguageCodeToUse(TVDoc.ProviderType.TMDB), false);
+                CachedMovieInfo newSi = lc.DownloadMovieNow(tvdbId,si.TargetLocale, false);
 
                 if (!Match(newSi,si))
                 {

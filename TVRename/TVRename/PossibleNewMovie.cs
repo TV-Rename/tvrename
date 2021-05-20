@@ -52,11 +52,10 @@ namespace TVRename
         public void GuessMovie(bool showErrorMsgBox)
         {
             //TODO  make generic, as this assumes TMDB
-            string language = TVSettings.Instance.TMDBLanguage.ISODialectAbbreviation;
 
             //Lookup based on TMDB ID Being Present
             int? tmdbId = ConvertToInt(FindShowCode("tmdbid", "tmdb"));
-            int? TMDBCode = ValidateOnTMDB(tmdbId, language, showErrorMsgBox);
+            int? TMDBCode = ValidateOnTMDB(tmdbId, new Locale(), showErrorMsgBox);
             if (TMDBCode.HasValue)
             {
                 SetId(TMDBCode.Value, TVDoc.ProviderType.TMDB);
@@ -81,7 +80,7 @@ namespace TVRename
 
             if (imdbToTest.HasValue())
             {
-                CachedMovieInfo? s = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbToTest!, TVSettings.Instance.TMDBLanguage.ISODialectAbbreviation, showErrorMsgBox);
+                CachedMovieInfo? s = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbToTest!, new Locale(), showErrorMsgBox);
                 if (s != null)
                 {
                     SetId(s.TmdbCode, TVDoc.ProviderType.TMDB);
@@ -91,7 +90,7 @@ namespace TVRename
             }
 
             //Do a Search on TMDB
-            CachedMovieInfo? ser = TMDB.LocalCache.Instance.GetMovie(this, TVSettings.Instance.TMDBLanguage.ISODialectAbbreviation , showErrorMsgBox);
+            CachedMovieInfo? ser = TMDB.LocalCache.Instance.GetMovie(this, new Locale(), showErrorMsgBox);
             if (ser != null)
             {
                 SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
@@ -99,7 +98,7 @@ namespace TVRename
             }
 
             //Tweak the hints and do another Search on TMDB
-            ser = ParseHints(showErrorMsgBox, language);
+            ser = ParseHints(showErrorMsgBox);
             if (ser != null)
             {
                 SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
@@ -118,7 +117,7 @@ namespace TVRename
                 else
                 {
                     //Find movie on TVDB based on Id
-                    CachedMovieInfo? s3 = TheTVDB.LocalCache.Instance.GetMovieAndDownload(tvdbId.Value, TVSettings.Instance.PreferredLanguageCode, showErrorMsgBox);
+                    CachedMovieInfo? s3 = TheTVDB.LocalCache.Instance.GetMovieAndDownload(tvdbId.Value, new Locale(), showErrorMsgBox);
                     if (s3 != null)
                     {
                         SetId(s3.TvdbCode, TVDoc.ProviderType.TheTVDB);
@@ -133,7 +132,7 @@ namespace TVRename
             Provider = provider;
         }
 
-        private CachedMovieInfo? ParseHints(bool showErrorMsgBox, string language)
+        private CachedMovieInfo? ParseHints(bool showErrorMsgBox)
         {
             Match mat = Regex.Match(RefinedHint.Trim(), @"\s(\d{4})$");
             if (mat.Success)
@@ -161,19 +160,19 @@ namespace TVRename
                 RefinedHint = refinedHint;
                 PossibleYear ??= newPossibleYear;
 
-                return TMDB.LocalCache.Instance.GetMovie(this, language, showErrorMsgBox);
+                return TMDB.LocalCache.Instance.GetMovie(this, new Locale(), showErrorMsgBox);
             }
 
             return null;
         }
 
-        private int? ValidateOnTMDB(int? tmdbId,string language, bool showErrorMsgBox)
+        private int? ValidateOnTMDB(int? tmdbId,Locale locale, bool showErrorMsgBox)
         {
             if (tmdbId.HasValue)
             {
                 try
                 {
-                    CachedMovieInfo series = TMDB.LocalCache.Instance.GetMovieAndDownload(tmdbId.Value, language, showErrorMsgBox);
+                    CachedMovieInfo series = TMDB.LocalCache.Instance.GetMovieAndDownload(tmdbId.Value, locale, showErrorMsgBox);
                     return series.TmdbCode;
                 }
                 catch (MediaNotFoundException)

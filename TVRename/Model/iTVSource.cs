@@ -7,7 +7,6 @@
 // 
 
 using System.Collections.Generic;
-using System.Threading;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
@@ -22,7 +21,7 @@ namespace TVRename
         bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
         void UpdatesDoneOk();
 
-        CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox, string languageCode);
+        CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox, Locale preferredLocale);
         CachedSeriesInfo GetSeries(int id);
         bool HasSeries(int id);
 
@@ -30,12 +29,10 @@ namespace TVRename
 
         void ForgetEverything();
         void ForgetShow(int id);
-        void ForgetShow(int tvdb,int tvmaze,int tmdb, bool makePlaceholder,bool useCustomLanguage,string langCode);
+        void ForgetShow(ISeriesSpecifier ss);
         void UpdateSeries(CachedSeriesInfo si);
         void AddOrUpdateEpisode(Episode episode);
         void AddBanners(int seriesId, IEnumerable<Banner> select);
         void LatestUpdateTimeIs(string time);
-        Language PreferredLanguage { get; }
-        Language? GetLanguageFromCode(string? customLanguageCode);
     }
 }

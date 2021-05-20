@@ -33,8 +33,8 @@ namespace TVRename
         public string? Slug;
         public double? Popularity;
         public DateTime? FirstAired;
-        public readonly string? TargetLanguageCode; //The Language Code we'd like the Series in, null if we want to use the system setting
-        public int LanguageId; //The actual language obtained
+        public Locale? TargetLocale; //The Language Code we'd like the Series in, null if we want to use the system setting
+        public Locale? ActualLocale; //The actual language obtained
 
         public string? Status { get; set; }
         public bool IsSearchResultOnly; // set to true if local info is known to be just certain fields found from search results. Do not need to be saved
@@ -46,10 +46,6 @@ namespace TVRename
 
         public bool Dirty; // set to true if local info is known to be older than whats on the server
         public long SrvLastUpdated;
-
-        public string LanguageCodeToUse(TVDoc.ProviderType provider) => UseCustomLanguage && (TargetLanguageCode.HasValue())
-            ? TargetLanguageCode
-            : provider == TVDoc.ProviderType.TMDB ? TVSettings.Instance.TMDBLanguage.ISODialectAbbreviation : TVSettings.Instance.PreferredLanguageCode;
 
         private protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
@@ -68,7 +64,6 @@ namespace TVRename
             TvRageCode = 0;
             TmdbCode = -1;
 
-            LanguageId = -1;
             Status = "Unknown";
         }
 
@@ -80,12 +75,12 @@ namespace TVRename
             TmdbCode = tmdbId;
         }
 
-        protected CachedMediaInfo(int tvdb, int tvmaze, int tmdbId, string langCode) : this(tvdb, tvmaze, tmdbId)
+        protected CachedMediaInfo(int tvdb, int tvmaze, int tmdbId, Locale locale) : this(tvdb, tvmaze, tmdbId)
         {
-            TargetLanguageCode = langCode;
+            TargetLocale = locale;
         }
 
-        public bool UseCustomLanguage => TargetLanguageCode != null;
+        public bool UseCustomLanguage => TargetLocale != null;
         protected abstract MediaConfiguration.MediaType MediaType();
         public int IdCode(TVDoc.ProviderType source)
         {
@@ -145,7 +140,7 @@ namespace TVRename
         }
 
         [NotNull]
-        protected string GenerateErrorMessage() => "Error processing data from TheTVDB for a show. " + this + "\r\nLanguage: \"" + LanguageId + "\"";
+        protected string GenerateErrorMessage() => "Error processing data from TheTVDB for a show. " + this + "\r\nLanguage: \"" + TargetLocale.PreferredLanguage.EnglishName + "\"";
 
         protected void LoadActors([NotNull] XElement seriesXml)
         {

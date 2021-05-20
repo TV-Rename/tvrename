@@ -37,7 +37,7 @@ namespace TVRename
                 UpdateRatings(root, showRating.Value.ToString(CultureInfo.InvariantCulture), cachedSeries.SiteRatingVotes);
             }
 
-            string lang = TVSettings.Instance.PreferredLanguageCode;
+            string lang = TVSettings.Instance.PreferredTVDBLanguage.Abbreviation;
 
             if (SelectedShow.UseCustomLanguage && SelectedShow.PreferredLanguage != null)
             {
