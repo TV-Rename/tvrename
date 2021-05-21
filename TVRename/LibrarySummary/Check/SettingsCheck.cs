@@ -26,6 +26,7 @@ namespace TVRename
                 IsError = false;
                 ErrorText = string.Empty;
                 FixInternal();
+                MarkMediaDirty();
                 Doc.SetDirty();
             }
             catch (FixCheckException e)
@@ -43,6 +44,8 @@ namespace TVRename
         }
 
         protected abstract void FixInternal();
+
+        protected abstract void MarkMediaDirty();
 
         // ReSharper disable once UnusedMember.Global- Property is referred to by the ObjectListView
         public abstract MediaConfiguration.MediaType Type();

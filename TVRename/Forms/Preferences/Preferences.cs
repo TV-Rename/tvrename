@@ -423,7 +423,7 @@ namespace TVRename
             s.keepTogetherMode = KeepTogetherMode();
 
             s.PreferredTVDBLanguage = Languages.Instance.GetLanguageFromLocalName(cbTVDBLanguages.Text) ??
-                s.PreferredTVDBLanguage ?? Languages.Instance.GetLanguageFromCode("en");
+                s.PreferredTVDBLanguage ?? Languages.Instance.FallbackLanguage;
 
             s.TvdbVersion = cbTVDBVersion.Text == "v3" ? TheTVDB.ApiVersion.v3 : TheTVDB.ApiVersion.v4;
             s.WTWDoubleClick = rbWTWScan.Checked

@@ -121,20 +121,20 @@ namespace TVRename.App
                     }
                 }
 
+                // Try loading settings file
+                doc = new TVDoc(settingsFile, clargs);
+
                 // Try loading TheTVDB cache file
                 TheTVDB.LocalCache.Instance.Setup(tvdbFile, PathManager.TVDBFile, clargs);
                 TVmaze.LocalCache.Instance.Setup(tvmazeFile, PathManager.TVmazeFile, clargs);
                 TMDB.LocalCache.Instance.Setup(tmdbFile, PathManager.TmdbFile, clargs);
-
-                // Try loading settings file
-                doc = new TVDoc(settingsFile, clargs);
 
                 if (recover)
                 {
                     doc.SetDirty();
                 }
 
-                recover = !doc.LoadOk;
+                recover = !doc.LoadOk || !(TheTVDB.LocalCache.Instance.LoadOk && TMDB.LocalCache.Instance.LoadOk && TVmaze.LocalCache.Instance.LoadOk);
 
                 // Continue if correctly loaded
                 if (!recover)

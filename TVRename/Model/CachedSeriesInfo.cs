@@ -67,17 +67,17 @@ namespace TVRename
             BannersLoaded = false;
         }
 
-        public CachedSeriesInfo()
-        {
-            DefaultValues();
-        }
-
-        public CachedSeriesInfo(int tvdb, int tvmaze, int tmdb) : base(tvdb, tvmaze, tmdb)
+        protected CachedSeriesInfo()
         {
             DefaultValues();
         }
 
         public CachedSeriesInfo(int tvdb, int tvmaze, int tmdb, Locale langCode) : base(tvdb, tvmaze, tmdb, langCode)
+        {
+            DefaultValues();
+        }
+
+        public CachedSeriesInfo(Locale locale) : base(locale)
         {
             DefaultValues();
         }
@@ -88,9 +88,8 @@ namespace TVRename
             IsSearchResultOnly = false;
         }
 
-        public CachedSeriesInfo([NotNull] JObject json, Locale locale, bool searchResult) : this()
+        public CachedSeriesInfo([NotNull] JObject json, Locale locale, bool searchResult) : this(locale)
         {
-            TargetLocale = locale;
             LoadJson(json);
             IsSearchResultOnly = searchResult;
 
@@ -108,9 +107,8 @@ namespace TVRename
             }
         }
 
-        public CachedSeriesInfo([NotNull] JObject json, JObject jsonInDefaultLang, Locale locale) : this()
+        public CachedSeriesInfo([NotNull] JObject json, JObject jsonInDefaultLang, Locale locale) : this(locale)
         {
-            TargetLocale = locale;
             LoadJson(json, jsonInDefaultLang);
             IsSearchResultOnly = false;
             if (string.IsNullOrEmpty(Name))
@@ -166,9 +164,9 @@ namespace TVRename
             }
 
             bool currentLanguageNotSet = ActualLocale is null;
-            Language optimaLanguage = TargetLocale.PreferredLanguage ?? TVSettings.Instance.PreferredTVDBLanguage;
-            bool newLanguageOptimal = o.ActualLocale.PreferredLanguage == optimaLanguage;
-            bool useNewDataOverOld = currentLanguageNotSet || newLanguageOptimal;
+            //            Language optimaLanguage = config o.ActualLocale ?? TVSettings.Instance.PreferredTVDBLanguage;
+            // bool newLanguageOptimal = o.ActualLocale.PreferredLanguage == optimaLanguage;
+            bool useNewDataOverOld = currentLanguageNotSet; //TODO - work out cached language and see what's best || newLanguageOptimal;
 
             SrvLastUpdated = o.SrvLastUpdated;
 
@@ -296,7 +294,15 @@ namespace TVRename
                     XmlHelper.ReadStringFixQuotesAndSpaces(seriesXml.ExtractStringOrNull("SeriesName") ?? seriesXml.ExtractString("seriesName")));
 
                 SrvLastUpdated = seriesXml.ExtractLong("lastupdated") ?? seriesXml.ExtractLong("lastUpdated", 0);
-                LanguageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId") ?? throw new SourceConsistencyException("Error Extracting Language for Series", TVDoc.ProviderType.TheTVDB);
+                int? languageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId");
+                string regionCode = seriesXml.ExtractString("RegionCode");
+                ActualLocale =
+                    languageId.HasValue && regionCode.HasValue() ? new Locale(
+                        Regions.Instance.RegionFromCode(regionCode),
+                        Languages.Instance.GetLanguageFromId(languageId.Value))
+                    : languageId.HasValue ? new Locale(Languages.Instance.GetLanguageFromId(languageId.Value))
+                    : regionCode.HasValue() ? new Locale(Regions.Instance.RegionFromCode(regionCode))
+                    : new Locale();
 
                 string airsTimeString = seriesXml.ExtractStringOrNull("Airs_Time") ?? seriesXml.ExtractString("airsTime");
                 AirsTime = JsonHelper.ParseAirTime(airsTimeString);
@@ -453,7 +459,8 @@ namespace TVRename
             writer.WriteElement("TMDBCode", TmdbCode);
             writer.WriteElement("SeriesName", Name);
             writer.WriteElement("lastupdated", SrvLastUpdated);
-            writer.WriteElement("LanguageId", LanguageId);
+            writer.WriteElement("LanguageId", ActualLocale.PreferredLanguage?.TVDBId);
+            writer.WriteElement("RegionCode", ActualLocale.PreferredRegion?.Abbreviation);
             writer.WriteElement("airsDayOfWeek", AirsDay);
             writer.WriteElement("Airs_Time", AirsTime?.ToString("HH:mm"), true);
             writer.WriteElement("banner", BannerString);

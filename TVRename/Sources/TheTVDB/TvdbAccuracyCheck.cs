@@ -32,7 +32,7 @@ namespace TVRename.TheTVDB
                     EnsureUpdated(si);
                 }
 
-                List<JObject> eps = lc.GetEpisodes(tvdbId, new Locale(Languages.Instance.GetLanguageFromCode("en")));
+                List<JObject> eps = lc.GetEpisodes(tvdbId, new Locale());
                 List<long> serverEpIds = new List<long>();
 
                 if (eps != null)

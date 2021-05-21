@@ -90,7 +90,7 @@ namespace TVRename
 
             downloadIdentifiers = new DownloadIdentifiersController();
 
-            LoadOk = (settingsFile is null || LoadXMLSettings(settingsFile)) && TheTVDB.LocalCache.Instance.LoadOk && TMDB.LocalCache.Instance.LoadOk && TVmaze.LocalCache.Instance.LoadOk;
+            LoadOk = (settingsFile is null || LoadXMLSettings(settingsFile));
 
             try
             {
@@ -291,11 +291,11 @@ namespace TVRename
         {
             List<ISeriesSpecifier> idsToDownload = new List<ISeriesSpecifier>(TvLibrary);
             idsToDownload.AddRange(FilmLibrary);
-            return DoDownloadsFG(unattended, tvrMinimised, owner, idsToDownload);
+            return DoDownloadsFGNow(unattended, tvrMinimised, owner, idsToDownload);
         }
 
         // ReSharper disable once InconsistentNaming
-        public bool DoDownloadsFG(bool unattended, bool tvrMinimised, UI owner, List<ISeriesSpecifier>? passedShows)
+        public bool DoDownloadsFGNow(bool unattended, bool tvrMinimised, UI owner, List<ISeriesSpecifier>? passedShows)
         {
             bool showProgress = !Args.Hide && Environment.UserInteractive && !tvrMinimised;
             bool showMsgBox = !unattended && !Args.Unattended && !Args.Hide && Environment.UserInteractive;
@@ -414,6 +414,10 @@ namespace TVRename
                     continue;
                 }
                 show.LastName = cachedData.Name;
+                if (cachedData.Imdb.HasValue())
+                {
+                    show.ImdbCode = cachedData.Imdb;
+                }
             }
 
             foreach (MovieConfiguration? show in FilmLibrary.Movies)
@@ -424,6 +428,10 @@ namespace TVRename
                     continue;
                 }
                 show.LastName = cachedData.Name;
+                if (cachedData.Imdb.HasValue())
+                {
+                    show.ImdbCode = cachedData.Imdb;
+                }
             }
         }
 
@@ -1403,11 +1411,6 @@ namespace TVRename
             AllowAutoScan();
         }
 
-        private bool DoDownloadsFG(bool unattended, bool tvrMinimised, UI owner, IEnumerable<ShowConfiguration> passedShows)
-        {
-            return DoDownloadsFG(unattended, tvrMinimised, owner, passedShows.ToList());
-        }
-
         // ReSharper disable once InconsistentNaming
         public static iTVSource GetTVCache(ProviderType p)
         {
@@ -1460,9 +1463,9 @@ namespace TVRename
             AllowAutoScan();
         }
 
-        private bool DoDownloadsFG(bool unattended, bool tvrMinimised, UI owner, IEnumerable<MovieConfiguration> passedShows)
+        private bool DoDownloadsFG(bool unattended, bool tvrMinimised, UI owner, IEnumerable<MediaConfiguration> passedShows)
         {
-            return DoDownloadsFG(unattended, tvrMinimised, owner, passedShows.ToList());
+            return DoDownloadsFGNow(unattended, tvrMinimised, owner, new List<ISeriesSpecifier>(passedShows));
         }
 
         // ReSharper disable once InconsistentNaming

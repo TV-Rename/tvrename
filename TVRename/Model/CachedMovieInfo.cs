@@ -22,12 +22,7 @@ namespace TVRename
         {
         }
 
-        public CachedMovieInfo()
-        {
-            DefaultValues();
-        }
-
-        public CachedMovieInfo(int tvdb, int tvmaze, int tmdb) : base(tvdb, tvmaze, tmdb)
+        public CachedMovieInfo(Locale locale) : base(locale)
         {
             DefaultValues();
         }
@@ -82,9 +77,9 @@ namespace TVRename
                 IsSearchResultOnly = false;
             }
             bool currentLanguageNotSet = ActualLocale is null;
-            Language optimaLanguage = TargetLocale.PreferredLanguage ?? TVSettings.Instance.PreferredTVDBLanguage;
-            bool newLanguageOptimal = o.ActualLocale.PreferredLanguage == optimaLanguage;
-            bool useNewDataOverOld = currentLanguageNotSet || newLanguageOptimal;
+            //            Language optimaLanguage = config o.ActualLocale ?? TVSettings.Instance.PreferredTVDBLanguage;
+            // bool newLanguageOptimal = o.ActualLocale.PreferredLanguage == optimaLanguage;
+            bool useNewDataOverOld = currentLanguageNotSet; //TODO - work out cached language and see what's best || newLanguageOptimal;
 
             SrvLastUpdated = o.SrvLastUpdated;
 
@@ -198,7 +193,15 @@ namespace TVRename
                     XmlHelper.ReadStringFixQuotesAndSpaces(seriesXml.ExtractStringOrNull("SeriesName") ?? seriesXml.ExtractString("seriesName")));
 
                 SrvLastUpdated = seriesXml.ExtractLong("lastupdated") ?? seriesXml.ExtractLong("lastUpdated", 0);
-                LanguageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId") ?? throw new SourceConsistencyException("Error Extracting Language for Series", TVDoc.ProviderType.TheTVDB);
+                int? languageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId");
+                string regionCode = seriesXml.ExtractString("RegionCode");
+                ActualLocale =
+                    languageId.HasValue && regionCode.HasValue() ? new Locale(
+                        Regions.Instance.RegionFromCode(regionCode),
+                        Languages.Instance.GetLanguageFromId(languageId.Value))
+                    : languageId.HasValue ? new Locale(Languages.Instance.GetLanguageFromId(languageId.Value))
+                    : regionCode.HasValue() ? new Locale(Regions.Instance.RegionFromCode(regionCode))
+                    : new Locale();
 
                 CollectionId = seriesXml.ExtractInt("CollectionId");
                 Popularity = seriesXml.ExtractDouble("Popularity") ?? 0;
@@ -250,7 +253,8 @@ namespace TVRename
             writer.WriteElement("TMDBCode", TmdbCode);
             writer.WriteElement("SeriesName", Name);
             writer.WriteElement("lastupdated", SrvLastUpdated);
-            writer.WriteElement("LanguageId", LanguageId);
+            writer.WriteElement("LanguageId", ActualLocale.PreferredLanguage?.TVDBId);
+            writer.WriteElement("RegionCode", ActualLocale.PreferredRegion?.Abbreviation);
             writer.WriteElement("CollectionId", CollectionId);
             writer.WriteElement("CollectionName", CollectionName);
             writer.WriteElement("TwitterId", TwitterId);

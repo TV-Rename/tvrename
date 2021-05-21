@@ -79,6 +79,7 @@ namespace TVRename
             UpdateCustomShowNameEnabled();
 
             SetupLanguages(si);
+            SetupRegions(si);
 
             cbSequentialMatching.Checked = si.UseSequentialMatch;
             cbAirdateMatching.Checked = si.UseAirDateMatch;
@@ -156,6 +157,23 @@ namespace TVRename
             }
 
             cbLanguage.Enabled = chkCustomLanguage.Checked;
+        }
+
+        private void SetupRegions([NotNull] ShowConfiguration si)
+        {
+            chkCustomRegion.Checked = si.UseCustomRegion;
+            if (chkCustomLanguage.Checked)
+            {
+                Region r =
+                    Regions.Instance.RegionFromCode(si.CustomRegionCode);
+
+                if (r != null)
+                {
+                    cbRegion.Text = r.EnglishName;
+                }
+            }
+
+            cbRegion.Enabled = chkCustomRegion.Checked;
         }
 
         private void SetTagListText()
@@ -270,23 +288,38 @@ namespace TVRename
             cbTimeZone.EndUpdate();
             cbTimeZone.Text = si.ShowTimeZone;
 
-            if (TheTVDB.LocalCache.Instance.LanguageList != null) //This means that language shave been loaded
+            string pref = string.Empty;
+            cbLanguage.BeginUpdate();
+            cbLanguage.Items.Clear();
+            foreach (Language l in Languages.Instance)
             {
-                string pref = string.Empty;
-                cbLanguage.BeginUpdate();
-                cbLanguage.Items.Clear();
-                foreach (Language l in TheTVDB.LocalCache.Instance.LanguageList)
-                {
-                    cbLanguage.Items.Add(l.LocalName);
+                cbLanguage.Items.Add(l.LocalName);
 
-                    if (si.CustomLanguageCode == l.Abbreviation)
+                if (si.CustomLanguageCode == l.Abbreviation)
+                {
+                    pref = l.LocalName;
+                }
+            }
+            cbLanguage.EndUpdate();
+            cbLanguage.Text = pref;
+
+            string rpref = string.Empty;
+            cbRegion.BeginUpdate();
+            cbRegion.Items.Clear();
+            foreach (Region r in Regions.Instance)
+            {
+                if (r.EnglishName.HasValue())
+                {
+                    cbRegion.Items.Add(r.EnglishName!);
+
+                    if (si.CustomRegionCode == r.Abbreviation)
                     {
-                        pref = l.LocalName;
+                        rpref = r.EnglishName;
                     }
                 }
-                cbLanguage.EndUpdate();
-                cbLanguage.Text = pref;
             }
+            cbRegion.EndUpdate();
+            cbRegion.Text = rpref;
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
@@ -316,6 +349,20 @@ namespace TVRename
             if (chkCustomLanguage.Checked && string.IsNullOrWhiteSpace(cbLanguage.SelectedItem?.ToString()))
             {
                 MessageBox.Show("Please enter language for the show or accept the default preferred language", "TVRename Add/Edit Show",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                return false;
+            }
+            if (chkCustomRegion.Checked && string.IsNullOrWhiteSpace(cbRegion.SelectedItem?.ToString()))
+            {
+                MessageBox.Show("Please enter region for the show or accept the default region", "TVRename Add/Edit Show",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                return false;
+            }
+            if (chkCustomShowName.Checked && string.IsNullOrWhiteSpace(txtCustomShowName.Text))
+            {
+                MessageBox.Show("Please enter custom for the show or remove custom naming", "TVRename Add/Edit Show",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 return false;
@@ -449,11 +496,6 @@ namespace TVRename
 
             selectedShow.AliasNames.Clear();
             selectedShow.AliasNames.AddNullableRange(lbShowAlias.Items.Cast<string>().Distinct());
-
-            cbRegion.BeginUpdate();
-            cbRegion.Items.Clear();
-            cbRegion.Items.AddRange((object[])Regions.Instance.EnglishNames);
-            cbRegion.EndUpdate();
         }
 
         private ShowConfiguration.AutomaticFolderType GetAutoAddType()

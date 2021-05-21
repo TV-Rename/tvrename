@@ -33,7 +33,6 @@ namespace TVRename
         public string? Slug;
         public double? Popularity;
         public DateTime? FirstAired;
-        public Locale? TargetLocale; //The Language Code we'd like the Series in, null if we want to use the system setting
         public Locale? ActualLocale; //The actual language obtained
 
         public string? Status { get; set; }
@@ -49,7 +48,13 @@ namespace TVRename
 
         private protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
-        protected CachedMediaInfo()
+        protected CachedMediaInfo(Locale locale)
+        {
+            Defaults();
+            ActualLocale = locale;
+        }
+
+        private void Defaults()
         {
             Actors = new List<Actor>();
             Crew = new List<Crew>();
@@ -67,20 +72,19 @@ namespace TVRename
             Status = "Unknown";
         }
 
-        protected CachedMediaInfo(int tvdb, int tvmaze, int tmdbId) : this()
+        protected CachedMediaInfo(int tvdb, int tvmaze, int tmdbId, Locale locale) : this(locale)
         {
             IsSearchResultOnly = false;
             TvMazeCode = tvmaze;
             TvdbCode = tvdb;
             TmdbCode = tmdbId;
+            Defaults();
         }
 
-        protected CachedMediaInfo(int tvdb, int tvmaze, int tmdbId, Locale locale) : this(tvdb, tvmaze, tmdbId)
+        protected CachedMediaInfo()
         {
-            TargetLocale = locale;
+            Defaults();
         }
-
-        public bool UseCustomLanguage => TargetLocale != null;
 
         protected abstract MediaConfiguration.MediaType MediaType();
 
@@ -141,7 +145,7 @@ namespace TVRename
         }
 
         [NotNull]
-        protected string GenerateErrorMessage() => "Error processing data from TheTVDB for a show. " + this + "\r\nLanguage: \"" + TargetLocale.PreferredLanguage.EnglishName + "\"";
+        protected string GenerateErrorMessage() => "Error processing data from TheTVDB for a show. " + this + "\r\nLanguage: \"" + ActualLocale?.PreferredLanguage?.EnglishName + "\"";
 
         protected void LoadActors([NotNull] XElement seriesXml)
         {

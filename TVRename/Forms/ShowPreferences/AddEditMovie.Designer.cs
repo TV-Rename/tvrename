@@ -683,6 +683,7 @@ namespace TVRename
             this.chkCustomRegion.TabIndex = 46;
             this.chkCustomRegion.Text = "Custom Region:";
             this.chkCustomRegion.UseVisualStyleBackColor = true;
+            this.chkCustomRegion.CheckedChanged += new System.EventHandler(this.chkCustomRegion_CheckedChanged);
             // 
             // rdoTMDB
             // 

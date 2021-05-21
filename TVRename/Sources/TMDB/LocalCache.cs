@@ -683,22 +683,6 @@ namespace TVRename.TMDB
             throw new NotImplementedException(); //TODO
         }
 
-        private void AddPlaceholderMovie(int tvdb, int tvmaze, int tmdb)
-        {
-            lock (MOVIE_LOCK)
-            {
-                Movies[tmdb] = new CachedMovieInfo(tvdb, tvmaze, tmdb) { Dirty = true };
-            }
-        }
-
-        private void AddPlaceholderSeries(int tvdb, int tvmaze, int tmdb)
-        {
-            lock (SERIES_LOCK)
-            {
-                Series[tmdb] = new CachedSeriesInfo(tvdb, tvmaze, tmdb) { Dirty = true };
-            }
-        }
-
         private void AddPlaceholderSeries(int tvdb, int tvmaze, int tmdb, Locale locale)
         {
             lock (SERIES_LOCK)
@@ -742,7 +726,7 @@ namespace TVRename.TMDB
             {
                 throw new MediaNotFoundException(id, "TMDB no longer has this movie", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB);
             }
-            CachedMovieInfo m = new CachedMovieInfo
+            CachedMovieInfo m = new CachedMovieInfo(locale)
             {
                 Imdb = downloadedMovie.ExternalIds.ImdbId,
                 TmdbCode = downloadedMovie.Id,
@@ -815,7 +799,7 @@ namespace TVRename.TMDB
             {
                 throw new MediaNotFoundException(id, "TMDB no longer has this show", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB);
             }
-            CachedSeriesInfo m = new CachedSeriesInfo
+            CachedSeriesInfo m = new CachedSeriesInfo(ss.TargetLocale)
             {
                 Imdb = downloadedSeries.ExternalIds.ImdbId,
                 TmdbCode = downloadedSeries.Id,
@@ -1092,7 +1076,7 @@ namespace TVRename.TMDB
 
         private CachedSeriesInfo File(SearchTv result)
         {
-            CachedSeriesInfo m = new CachedSeriesInfo
+            CachedSeriesInfo m = new CachedSeriesInfo(new Locale())
             {
                 TmdbCode = result.Id,
                 Name = result.Name,
@@ -1116,7 +1100,7 @@ namespace TVRename.TMDB
 
         private CachedMovieInfo File(SearchMovie result)
         {
-            CachedMovieInfo m = new CachedMovieInfo
+            CachedMovieInfo m = new CachedMovieInfo(new Locale())
             {
                 TmdbCode = result.Id,
                 Name = result.Title,

@@ -273,7 +273,7 @@ namespace TVRename
                 bestSeriesFanartId = GetBestBannerId(banner, bestSeriesFanartId);
             }
 
-            if (banner.LanguageId == cachedSeries.ActualLocale.PreferredLanguage.TVDBId)//todo - make this properly generic
+            if (banner.LanguageId == cachedSeries.ActualLocale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TVDBId)//todo - make this properly generic
             {
                 if (banner.IsSeriesPoster())
                 {

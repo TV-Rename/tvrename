@@ -1,12 +1,10 @@
-using System.Collections.Generic;
 using System.Linq;
 
 namespace TVRename
 {
-    public class Languages : List<Language>
+    public class Languages : SafeList<Language>
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        private readonly object lockObject = new object();
 
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
@@ -33,6 +31,8 @@ namespace TVRename
                 return InternalInstance;
             }
         }
+
+        public Language FallbackLanguage => GetLanguageFromCode("en");
 
         private Languages()
         {
@@ -106,43 +106,28 @@ namespace TVRename
 
         public Language? GetLanguageFromCode(string? languageAbbreviation)
         {
-            lock (lockObject)
-            {
-                return this.SingleOrDefault(l => l.Abbreviation == languageAbbreviation && l.IsPrimary);
-            }
+            return this.SingleOrDefault(l => l.Abbreviation == languageAbbreviation && l.IsPrimary);
         }
 
         public Language? GetLanguageFromLocalName(string? language)
         {
-            lock (lockObject)
-            {
-                return this.SingleOrDefault(l => l.LocalName == language && l.IsPrimary);
-            }
+            return this.SingleOrDefault(l => l.LocalName == language && l.IsPrimary);
         }
 
         // ReSharper disable once UnusedMember.Global
         public Language? GetLanguageFromId(int languageId)
         {
-            lock (lockObject)
-            {
-                return this.SingleOrDefault(l => l.TVDBId == languageId);
-            }
+            return this.SingleOrDefault(l => l.TVDBId == languageId && l.IsPrimary);
         }
 
         public Language? LanguageFromDialectCode(string iso)
         {
-            lock (lockObject)
-            {
-                return this.SingleOrDefault(l => l.ISODialectAbbreviation == iso);
-            }
+            return this.SingleOrDefault(l => l.ISODialectAbbreviation == iso);
         }
 
         public Language? GetLanguageFromThreeCode(string threeLetterIsoCode)
         {
-            lock (lockObject)
-            {
-                return this.SingleOrDefault(l => l.ThreeAbbreviation == threeLetterIsoCode && l.IsPrimary);
-            }
+            return this.SingleOrDefault(l => l.ThreeAbbreviation == threeLetterIsoCode && l.IsPrimary);
         }
     }
 }
