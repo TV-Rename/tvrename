@@ -78,7 +78,6 @@ namespace TVRename
             TvMazeCode = tvmaze;
             TvdbCode = tvdb;
             TmdbCode = tmdbId;
-            Defaults();
         }
 
         protected CachedMediaInfo()

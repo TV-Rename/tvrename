@@ -52,6 +52,12 @@ namespace TVRename.TheTVDB
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        public void Reset()
+        {
+            lastKnownToken = string.Empty;
+            lastRefreshTime = DateTime.MinValue;
+        }
+
         public string GetToken()
         {
             //If we have not logged on at all then logon

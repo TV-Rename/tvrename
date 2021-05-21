@@ -2289,6 +2289,7 @@ namespace TVRename
             if (pref.ShowDialog(this) == DialogResult.OK)
             {
                 mDoc.SetDirty();
+                mDoc.Reconnect();
                 ShowHideNotificationIcon();
                 FillWhenToWatchList();
                 ShowInTaskbar = TVSettings.Instance.ShowInTaskbar;

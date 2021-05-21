@@ -413,7 +413,10 @@ namespace TVRename
                 {
                     continue;
                 }
-                show.LastName = cachedData.Name;
+                if (cachedData.Name.HasValue())
+                {
+                    show.LastName = cachedData.Name;
+                }
                 if (cachedData.Imdb.HasValue())
                 {
                     show.ImdbCode = cachedData.Imdb;
@@ -427,7 +430,10 @@ namespace TVRename
                 {
                     continue;
                 }
-                show.LastName = cachedData.Name;
+                if (cachedData.Name.HasValue())
+                {
+                    show.LastName = cachedData.Name;
+                }
                 if (cachedData.Imdb.HasValue())
                 {
                     show.ImdbCode = cachedData.Imdb;
@@ -2118,6 +2124,13 @@ namespace TVRename
 
             askForMatch.Dispose();
             return (null, null);
+        }
+
+        public void Reconnect()
+        {
+            TheTVDB.LocalCache.Instance.ReConnect(false);
+            TMDB.LocalCache.Instance.ReConnect(false);
+            TVmaze.LocalCache.Instance.ReConnect(false);
         }
     }
 }

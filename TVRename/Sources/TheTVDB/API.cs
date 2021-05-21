@@ -420,8 +420,12 @@ namespace TVRename.TheTVDB
             return JsonHttpGetRequest(uri, null, TokenProvider, requestLangCode, true);
         }
 
-        public static void Login()
+        public static void Login(bool forceReconect)
         {
+            if (forceReconect)
+            {
+                TokenProvider.Reset();
+            }
             TokenProvider.EnsureValid();
         }
 

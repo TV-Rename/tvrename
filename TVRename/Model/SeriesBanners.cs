@@ -326,7 +326,7 @@ namespace TVRename
         private void AddUpdateIntoCollections([NotNull] Banner banner, [NotNull] IDictionary<int, Banner> coll, IDictionary<int, Banner> langColl)
         {
             //update language specific cache if appropriate
-            if (banner.LanguageId == cachedSeries.ActualLocale.PreferredLanguage.TVDBId)
+            if (banner.LanguageId == (cachedSeries.ActualLocale.PreferredLanguage?.TVDBId ?? 0))
             {
                 AddUpdateIntoCollection(banner, langColl);
             }

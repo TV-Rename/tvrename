@@ -401,5 +401,10 @@ namespace TVRename.TVmaze
                 }
             }
         }
+
+        public void ReConnect(bool b)
+        {
+            //nothing to be done here
+        }
     }
 }

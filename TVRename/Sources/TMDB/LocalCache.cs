@@ -1392,5 +1392,10 @@ namespace TVRename.TMDB
             //Task.WaitAll(similar.Select(tuple => tuple.Item2).ToArray());
             return returnValue;
         }
+
+        public void ReConnect(bool b)
+        {
+            //nothing to be done here
+        }
     }
 }

@@ -26,7 +26,8 @@ namespace TVRename
         public enum SeasonType
         {
             dvd,
-            aired
+            aired,
+            absolute
         }
 
         public readonly ConcurrentDictionary<int, Episode> Episodes;
