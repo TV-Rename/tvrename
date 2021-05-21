@@ -1112,11 +1112,16 @@ namespace TVRename.TheTVDB
                 DownloadSeriesActors(code);
             }
 
-            forceReloadOn.TryRemove(code, out _);
+            HaveReloaded(code);
 
             Series.TryGetValue(code, out CachedSeriesInfo returnValue);
             SayNothing();
             return returnValue;
+        }
+
+        private void HaveReloaded(int code)
+        {
+            forceReloadOn.TryRemove(code, out _);
         }
 
         [NotNull]
@@ -2482,7 +2487,7 @@ namespace TVRename.TheTVDB
 
             removeEpisodeIds.Clear();
 
-            forceReloadOn.TryRemove(code, out _);
+            HaveReloaded(code);
 
             return ok;
         }
@@ -2868,7 +2873,7 @@ namespace TVRename.TheTVDB
             //TODO Reinstate
             //DownloadMovieActors(tvdbId);
 
-            forceReloadOn.TryRemove(tvdbId, out _);
+            HaveReloaded(tvdbId);
 
             lock (MOVIE_LOCK)
             {
