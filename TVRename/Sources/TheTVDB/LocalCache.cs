@@ -330,6 +330,7 @@ namespace TVRename.TheTVDB
             try
             {
                 API.Login();
+                IsConnected = true;
                 return true;
             }
             catch (WebException ex)
@@ -1922,17 +1923,38 @@ namespace TVRename.TheTVDB
 
         private void ReloadEpisodesV4(int code, Locale locale, CachedSeriesInfo si)
         {
-            foreach (var s in si.Seasons)
+            Parallel.ForEach(si.Seasons, s =>
             {
-                JObject seasonInfo = API.GetSeasonEpisoedesV4(code, s.SeasonId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
-                foreach (JToken x in seasonInfo["data"]["episodes"])
+                try
                 {
-                    int id = x["id"].ToObject<int>();
-                    (Episode newEp, Language bestLanguage) = GenerateEpisodeV4(x, code, si, locale);
-                    AddTranslations(newEp, API.GetEpisodeTranslationsV4(newEp.EpisodeId, bestLanguage.ThreeAbbreviation));
-                    si.AddEpisode(newEp);
+                    JObject seasonInfo = API.GetSeasonEpisoedesV4(code, s.SeasonId,
+                        locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
+
+                    JToken episodeData = seasonInfo["data"]["episodes"];
+                    if (episodeData != null)
+                    {
+                        Parallel.ForEach(episodeData, x =>
+                        {
+                            try
+                            {
+                                (Episode newEp, Language bestLanguage) = GenerateEpisodeV4(x, code, si, locale);
+                                AddTranslations(newEp,
+                                    API.GetEpisodeTranslationsV4(newEp.EpisodeId, bestLanguage.ThreeAbbreviation));
+
+                                si.AddEpisode(newEp);
+                            }
+                            catch (SourceConnectivityException sce1)
+                            {
+                                LOGGER.Error(sce1);
+                            }
+                        });
+                    }
                 }
-            }
+                catch (SourceConnectivityException sce)
+                {
+                    LOGGER.Error(sce);
+                }
+            });
         }
 
         private void AddTranslations(Episode newEp, JObject downloadSeriesTranslationsJsonV4)
