@@ -1947,10 +1947,18 @@ namespace TVRename.TheTVDB
                             {
                                 LOGGER.Error(sce1);
                             }
+                            catch (SourceConsistencyException sce1)
+                            {
+                                LOGGER.Error(sce1);
+                            }
                         });
                     }
                 }
                 catch (SourceConnectivityException sce)
+                {
+                    LOGGER.Error(sce);
+                }
+                catch (SourceConsistencyException sce)
                 {
                     LOGGER.Error(sce);
                 }

@@ -465,6 +465,7 @@ namespace TVRename.TheTVDB
         {
             try
             {
+                Logger.Trace($"   Downloading {uri}");
                 return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
             }
             catch (WebException webEx)
