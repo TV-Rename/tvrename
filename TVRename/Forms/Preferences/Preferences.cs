@@ -54,7 +54,7 @@ namespace TVRename
 
             FillLanguageList();
             SetupTimezoneDropdown();
-            SetupTMDBDropDowns();
+            SetupTmdbDropDowns();
             SetupRssGrid();
             SetupReplacementsGrid();
             FillFolderStringLists();
@@ -77,20 +77,25 @@ namespace TVRename
             {
                 cbTimeZone.Items.Add(s);
             }
-
             cbTimeZone.EndUpdate();
         }
 
-        private void SetupTMDBDropDowns()
+        private void SetupTmdbDropDowns()
         {
             cbTMDBLanguages.BeginUpdate();
             cbTMDBLanguages.Items.Clear();
-            cbTMDBLanguages.Items.AddRange(Languages.Instance.Select(language => language.LocalName).ToArray());
+            foreach (Language language in Languages.Instance)
+            {
+                cbTMDBLanguages.Items.Add(language.LocalName);
+            }
             cbTMDBLanguages.EndUpdate();
 
             cbTMDBRegions.BeginUpdate();
             cbTMDBRegions.Items.Clear();
-            cbTMDBRegions.Items.AddRange(Regions.Instance.Select(r => r.EnglishName).ToArray());
+            foreach (Region region in Regions.Instance.Where(region => region.EnglishName.HasValue()))
+            {
+                cbTMDBLanguages.Items.Add(region.EnglishName!);
+            }
             cbTMDBRegions.EndUpdate();
         }
 
@@ -422,8 +427,7 @@ namespace TVRename
 
             s.keepTogetherMode = KeepTogetherMode();
 
-            s.PreferredTVDBLanguage = Languages.Instance.GetLanguageFromLocalName(cbTVDBLanguages.Text) ??
-                s.PreferredTVDBLanguage ?? Languages.Instance.FallbackLanguage;
+            s.PreferredTVDBLanguage = Languages.Instance.GetLanguageFromLocalName(cbTVDBLanguages.Text) ?? s.PreferredTVDBLanguage;
 
             s.TvdbVersion = cbTVDBVersion.Text == "v3" ? TheTVDB.ApiVersion.v3 : TheTVDB.ApiVersion.v4;
             s.WTWDoubleClick = rbWTWScan.Checked
@@ -985,8 +989,8 @@ namespace TVRename
             cbDefMovieAutoFolders.Checked = s.DefMovieUseutomaticFolders;
             cbDefMovieUseDefLocation.Checked = s.DefMovieUseDefaultLocation;
 
-            cbTMDBLanguages.Text = s.TMDBLanguage.LocalName;
-            cbTMDBRegions.Text = s.TMDBRegion.EnglishName;
+            cbTMDBLanguages.Text = s.TMDBLanguage?.LocalName ?? Languages.Instance.FallbackLanguage.LocalName;
+            cbTMDBRegions.Text = s.TMDBRegion?.EnglishName ?? Regions.Instance.FallbackRegion.EnglishName;
 
             tbTMDBPercentDirty.Text = s.upgradeDirtyPercent.ToString(CultureInfo.InvariantCulture);
             chkIncludeMoviesQuickRecent.Checked = s.IncludeMoviesQuickRecent;
