@@ -603,7 +603,7 @@ namespace TVRename
             writer.WriteElement("SABAPIKey", SABAPIKey);
             writer.WriteElement("CheckSABnzbd", CheckSABnzbd);
             writer.WriteElement("SABHostPort", SABHostPort);
-            writer.WriteElement("PreferredLanguage", PreferredTVDBLanguage.Abbreviation);
+            writer.WriteElement("PreferredLanguage", PreferredTVDBLanguage?.Abbreviation ?? Languages.Instance.FallbackLanguage.Abbreviation);
             writer.WriteElement("WTWDoubleClick", (int)WTWDoubleClick);
             writer.WriteElement("EpJPGs", EpJPGs);
             writer.WriteElement("SeriesJpg", SeriesJpg);
@@ -685,8 +685,8 @@ namespace TVRename
             writer.WriteElement("StopJackettSearchOnFullScan", StopJackettSearchOnFullScan);
             writer.WriteElement("AutoSaveOnExit", AutoSaveOnExit);
 
-            writer.WriteElement("TMDBLanguage", TMDBLanguage.ISODialectAbbreviation);
-            writer.WriteElement("TMDBRegion", TMDBRegion.Abbreviation);
+            writer.WriteElement("TMDBLanguage", TMDBLanguage?.ISODialectAbbreviation ?? Languages.Instance.FallbackLanguage.ISODialectAbbreviation);
+            writer.WriteElement("TMDBRegion", TMDBRegion?.Abbreviation ?? Regions.Instance.FallbackRegion.Abbreviation);
             writer.WriteElement("TMDBPercentDirty", TMDBPercentDirty);
             writer.WriteElement("IncludeMoviesQuickRecent", IncludeMoviesQuickRecent);
 
