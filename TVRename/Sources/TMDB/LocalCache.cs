@@ -732,7 +732,7 @@ namespace TVRename.TMDB
                 TmdbCode = downloadedMovie.Id,
                 Name = downloadedMovie.Title,
                 Runtime = downloadedMovie.Runtime.ToString(),
-                FirstAired = GetReleaseDateDetail(downloadedMovie, TVSettings.Instance.TMDBRegion.Abbreviation) ?? downloadedMovie.ReleaseDate,
+                FirstAired = GetReleaseDateDetail(downloadedMovie, TVSettings.Instance.TMDBRegion?.Abbreviation) ?? downloadedMovie.ReleaseDate,
                 Genres = downloadedMovie.Genres.Select(genre => genre.Name).ToList(),
                 Overview = downloadedMovie.Overview,
                 Network = downloadedMovie.ProductionCompanies.FirstOrDefault()?.Name, //TODO UPdate Movie to include multiple production companies
@@ -750,7 +750,7 @@ namespace TVRename.TMDB
                 InstagramId = downloadedMovie.ExternalIds.InstagramId,
                 FacebookId = downloadedMovie.ExternalIds.InstagramId,
                 FanartUrl = OriginalImageUrl(downloadedMovie.BackdropPath),
-                ContentRating = GetCertification(downloadedMovie, TVSettings.Instance.TMDBRegion.Abbreviation) ?? GetCertification(downloadedMovie, "US") ?? string.Empty,
+                ContentRating = GetCertification(downloadedMovie, TVSettings.Instance.TMDBRegion?.Abbreviation) ?? GetCertification(downloadedMovie, Regions.Instance.FallbackRegion.Abbreviation) ?? string.Empty,
                 OfficialUrl = downloadedMovie.Homepage,
                 TrailerUrl = GetYouTubeUrl(downloadedMovie),
                 Dirty = false,

@@ -94,7 +94,7 @@ namespace TVRename
             cbTMDBRegions.Items.Clear();
             foreach (Region region in Regions.Instance.Where(region => region.EnglishName.HasValue()))
             {
-                cbTMDBLanguages.Items.Add(region.EnglishName!);
+                cbTMDBRegions.Items.Add(region.EnglishName!);
             }
             cbTMDBRegions.EndUpdate();
         }
