@@ -228,18 +228,14 @@ namespace TVRename
                     }
                 }
 
-                //TODO - Reinstate once v4 updates are working
-                if (TVSettings.Instance.TvdbVersion != TheTVDB.ApiVersion.v4)
+                if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TheTVDB))
                 {
-                    if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TheTVDB))
+                    if (!TheTVDB.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
+                        downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TheTVDB)))
                     {
-                        if (!TheTVDB.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
-                            downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TheTVDB)))
-                        {
-                            DownloadDone = true;
-                            downloadOk = false;
-                            return;
-                        }
+                        DownloadDone = true;
+                        downloadOk = false;
+                        return;
                     }
                 }
 

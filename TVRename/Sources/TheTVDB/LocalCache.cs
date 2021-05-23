@@ -669,7 +669,14 @@ namespace TVRename.TheTVDB
                 {
                     if (!cts.IsCancellationRequested)
                     {
-                        ProcessSeriesUpdate(seriesResponse);
+                        if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
+                        {
+                            ProcessSeriesUpdateV4(seriesResponse);
+                        }
+                        else
+                        {
+                            ProcessSeriesUpdate(seriesResponse);
+                        }
                     }
                 }
             }
@@ -753,6 +760,84 @@ namespace TVRename.TheTVDB
             {
                 //We assue this is due to the update being for a recently removed show.
                 LOGGER.Error(kex);
+            }
+        }
+
+        private void ProcessSeriesUpdateV4([NotNull] JObject seriesResponse)
+        {
+            int id = (int)seriesResponse["recordId"];
+            long time = (long)seriesResponse["timeStamp"];
+            string entityType = (string)seriesResponse["entityType"];
+            string method = (string)seriesResponse["method"];
+
+            if (entityType == "series" || entityType == "translatedseries")
+            {
+                if (Series.ContainsKey(id))
+                {
+                    CachedSeriesInfo selectedCachedSeriesInfo = Series[id];
+
+                    if (time > selectedCachedSeriesInfo.SrvLastUpdated) // newer version on the server
+                    {
+                        selectedCachedSeriesInfo.Dirty = true; // mark as dirty, so it'll be fetched again later
+                    }
+                    else
+                    {
+                        LOGGER.Info(selectedCachedSeriesInfo.Name + " has a lastupdated of  " +
+                                    Helpers.FromUnixTime(selectedCachedSeriesInfo.SrvLastUpdated) + " server says " +
+                                    Helpers.FromUnixTime(time));
+                    }
+                }
+
+                return;
+            }
+
+            if (entityType == "movies" || entityType == "translatedmovies" || entityType == "movie-genres")
+            {
+                if (Movies.ContainsKey(id))
+                {
+                    CachedMovieInfo selectedMovieCachedData = Movies[id];
+                    if (time > selectedMovieCachedData.SrvLastUpdated) // newer version on the server
+                    {
+                        selectedMovieCachedData.Dirty = true; // mark as dirty, so it'll be fetched again later
+                    }
+                    else
+                    {
+                        LOGGER.Info(selectedMovieCachedData.Name + " has a lastupdated of  " +
+                                    Helpers.FromUnixTime(selectedMovieCachedData.SrvLastUpdated) + " server says " +
+                                    Helpers.FromUnixTime(time));
+                    }
+                }
+
+                return;
+            }
+
+            if (entityType == "artwork" || entityType == "people" || entityType == "characters" || entityType == "award-nominees")
+            {
+                return;
+            }
+            if (entityType == "episodes" || entityType == "translatedepisodes")
+            {
+                var x = Series.Values.Where(y => y.Episodes.Any(e => e.EpisodeId == id));
+                if (!x.Any())
+                {
+                    return;
+                }
+                LOGGER.Info("");
+                return;
+            }
+            if (entityType == "seasons")
+            {
+                var x = Series.Values.Where(y => y.Seasons.Any(e => e.SeasonId == id));
+                if (!x.Any())
+                {
+                    return;
+                }
+                LOGGER.Info("");
+                return;
+            }
+            if (entityType == "")
+            {
+                return;
             }
         }
 
@@ -852,8 +937,9 @@ namespace TVRename.TheTVDB
         {
             try
             {
-                IEnumerable<long> updateTimes = from a in jsonUpdateResponse["data"] select (long)a["lastUpdated"];
-                long maxUpdateTime = updateTimes.DefaultIfEmpty(0).Max();
+                string keyName = TVSettings.Instance.TvdbVersion == ApiVersion.v4 ? "timeStamp" : "lastUpdated";
+                IEnumerable<long>? updateTimes = jsonUpdateResponse["data"]?.Select(a => (long)a[keyName]);
+                long maxUpdateTime = updateTimes?.DefaultIfEmpty(0)?.Max() ?? 0;
 
                 //Add a day to take into account any timezone issues
                 long nowTime = DateTime.UtcNow.ToUnixTime() + (int)1.Days().TotalSeconds;
