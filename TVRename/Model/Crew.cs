@@ -40,7 +40,7 @@ namespace TVRename
 
         public void WriteXml([NotNull] XmlWriter writer)
         {
-            writer.WriteStartElement("Crew");
+            writer.WriteStartElement("CrewMember");
             writer.WriteElement("Id", Id);
             writer.WriteElement("Image", ImageUrl);
             writer.WriteElement("Name", Name);

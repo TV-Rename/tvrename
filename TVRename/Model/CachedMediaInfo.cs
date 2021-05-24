@@ -155,6 +155,15 @@ namespace TVRename
             }
         }
 
+        protected void LoadCrew([NotNull] XElement seriesXml)
+        {
+            ClearCrew();
+            foreach (Crew c in seriesXml.Descendants("Crew").Descendants("CrewMember").Select(crewXML => new Crew(crewXML)))
+            {
+                AddCrew(c);
+            }
+        }
+
         protected void LoadAliases([NotNull] XElement seriesXml)
         {
             Aliases = new List<string>();

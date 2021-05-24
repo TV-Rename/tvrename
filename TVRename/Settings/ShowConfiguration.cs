@@ -305,6 +305,9 @@ namespace TVRename
             TvdbCode = xmlSettings.ExtractInt("TVDBID", -1);
             TVmazeCode = xmlSettings.ExtractInt("TVMAZEID", -1);
             TmdbCode = xmlSettings.ExtractInt("TMDBID", -1);
+            LastName = xmlSettings.ExtractStringOrNull("LastName");
+            ImdbCode = xmlSettings.ExtractStringOrNull("ImdbCode");
+
             CountSpecials = xmlSettings.ExtractBool("CountSpecials", false);
             ShowNextAirdate = xmlSettings.ExtractBool("ShowNextAirdate", true);
             AutoAddFolderBase = xmlSettings.ExtractString("FolderBase");
@@ -676,6 +679,8 @@ namespace TVRename
             writer.WriteElement("TVDBID", TvdbCode);
             writer.WriteElement("TVMAZEID", TVmazeCode);
             writer.WriteElement("TMDBID", TmdbCode);
+            writer.WriteElement("LastName", LastName);
+            writer.WriteElement("ImdbCode", ImdbCode);
             writer.WriteElement("FolderBase", AutoAddFolderBase);
             writer.WriteElement("DoRename", DoRename);
             writer.WriteElement("DoMissingCheck", DoMissingCheck);

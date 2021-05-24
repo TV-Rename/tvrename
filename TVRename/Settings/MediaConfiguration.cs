@@ -20,7 +20,7 @@ namespace TVRename
         public int TVmazeCode;
 
         public int TmdbCode;
-        public string? ImdbCode { get; set; } //todo - make sure this is set
+        public string? ImdbCode { get; set; }
 
         public Locale TargetLocale => UseCustomLanguage && UseCustomRegion
             ? new Locale(Regions.Instance.RegionFromCode(CustomRegionCode), Languages.Instance.GetLanguageFromCode(CustomLanguageCode))

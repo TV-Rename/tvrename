@@ -80,7 +80,8 @@ namespace TVRename
             DoRename = xmlSettings.ExtractBool("DoRename", true);
             DoMissingCheck = xmlSettings.ExtractBool("DoMissingCheck", true);
             ConfigurationProvider = GetConfigurationProviderType(xmlSettings.ExtractInt("ConfigurationProvider"));
-
+            LastName = xmlSettings.ExtractStringOrNull("LastName");
+            ImdbCode = xmlSettings.ExtractStringOrNull("ImdbCode");
             UseManualLocations = xmlSettings.ExtractBool("UseManualLocations", false);
             UseAutomaticFolders = xmlSettings.ExtractBool("useAutomaticFolders", true);
             AutomaticFolderRoot = xmlSettings.ExtractString("automaticFolderRoot");
@@ -253,6 +254,8 @@ namespace TVRename
             writer.WriteElement("TVMAZEID", TVmazeCode);
             writer.WriteElement("TMDBID", TmdbCode);
             writer.WriteElement("DoRename", DoRename);
+            writer.WriteElement("ImdbCode", ImdbCode);
+            writer.WriteElement("LastName", LastName);
             writer.WriteElement("DoMissingCheck", DoMissingCheck);
             writer.WriteElement("ConfigurationProvider", (int)ConfigurationProvider);
 

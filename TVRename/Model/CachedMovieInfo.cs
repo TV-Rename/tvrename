@@ -233,6 +233,7 @@ namespace TVRename
                 FirstAired = JsonHelper.ParseFirstAired(seriesXml.ExtractStringOrNull("FirstAired") ?? seriesXml.ExtractString("firstAired"));
 
                 LoadActors(seriesXml);
+                LoadCrew(seriesXml);
                 LoadAliases(seriesXml);
                 LoadGenres(seriesXml);
             }
@@ -292,7 +293,12 @@ namespace TVRename
                 aa.WriteXml(writer);
             }
             writer.WriteEndElement(); //Actors
-
+            writer.WriteStartElement("Crew");
+            foreach (Crew aa in Crew)
+            {
+                aa.WriteXml(writer);
+            }
+            writer.WriteEndElement(); //Crew
             writer.WriteStartElement("Aliases");
             foreach (string a in Aliases)
             {
