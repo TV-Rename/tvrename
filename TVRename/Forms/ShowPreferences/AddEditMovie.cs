@@ -161,8 +161,7 @@ namespace TVRename
             chkCustomLanguage.Checked = si.UseCustomLanguage;
             if (chkCustomLanguage.Checked)
             {
-                Language languageFromCode =
-                    TheTVDB.LocalCache.Instance.LanguageList?.GetLanguageFromCode(si.CustomLanguageCode);
+                Language languageFromCode = Languages.Instance.GetLanguageFromCode(si.CustomLanguageCode);
 
                 if (languageFromCode != null)
                 {

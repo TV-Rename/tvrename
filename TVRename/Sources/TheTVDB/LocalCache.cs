@@ -85,16 +85,13 @@ namespace TVRename.TheTVDB
             extraEpisodes = new ConcurrentDictionary<int, ExtraEp>();
             removeEpisodeIds = new ConcurrentDictionary<int, ExtraEp>();
 
-            LanguageList = Languages.Instance;
-            RegionList = Regions.Instance;
-
             //assume that the data is up to date (this will be overridden by the value in the XML if we have a prior install)
             //If we have no prior install then the app has no shows and is by definition up-to-date
             LatestUpdateTime = new UpdateTimeTracker();
 
             LOGGER.Info($"Assumed we have updates until {LatestUpdateTime}");
 
-            LoadOk = loadFrom is null || CachePersistor.LoadTvCache(loadFrom, this);
+            LoadOk = loadFrom is null || (CachePersistor.LoadMovieCache(loadFrom, this) && CachePersistor.LoadTvCache(loadFrom, this));
 
             forceReloadOn = new ConcurrentDictionary<int, int>();
         }
@@ -797,7 +794,7 @@ namespace TVRename.TheTVDB
                 case "episodes":
                 case "translatedepisodes":
                     {
-                        List<CachedSeriesInfo>? matchingShows = Series.Values.Where(y => y.Episodes.Any(e => e.EpisodeId == id)).ToList();
+                        List<CachedSeriesInfo> matchingShows = Series.Values.Where(y => y.Episodes.Any(e => e.EpisodeId == id)).ToList();
                         if (!matchingShows.Any())
                         {
                             return;
@@ -952,7 +949,7 @@ namespace TVRename.TheTVDB
             {
                 string keyName = TVSettings.Instance.TvdbVersion == ApiVersion.v4 ? "timeStamp" : "lastUpdated";
                 IEnumerable<long>? updateTimes = jsonUpdateResponse["data"]?.Select(a => (long)a[keyName]);
-                long maxUpdateTime = updateTimes?.DefaultIfEmpty(0)?.Max() ?? 0;
+                long maxUpdateTime = updateTimes?.DefaultIfEmpty(0).Max() ?? 0;
 
                 //Add a day to take into account any timezone issues
                 long nowTime = DateTime.UtcNow.ToUnixTime() + (int)1.Days().TotalSeconds;
@@ -1267,7 +1264,7 @@ namespace TVRename.TheTVDB
             si.Name = downloadSeriesTranslationsJsonV4["data"]["name"].ToString();
             si.Overview = downloadSeriesTranslationsJsonV4["data"]["overview"].ToString();
             //Set a language code on the SI?? si.lan ==downloadSeriesTranslationsJsonV4["data"]["language"].ToString();
-            IEnumerable<string> aliases = downloadSeriesTranslationsJsonV4["data"]["aliases"]?.OfType<string>();
+            IEnumerable<string>? aliases = downloadSeriesTranslationsJsonV4["data"]["aliases"]?.Select(x => x.ToString());
             if (aliases == null)
             {
                 return;
@@ -1791,9 +1788,9 @@ namespace TVRename.TheTVDB
                 return TVSettings.Instance.PreferredTVDBLanguage;
             }
 
-            if ((((JArray)languageOptions).Count == 0))
+            if (((JArray)languageOptions).Count == 0)
             {
-                throw new SourceConsistencyException($"Element exists with no language", TVDoc.ProviderType.TheTVDB);
+                throw new SourceConsistencyException("Element exists with no language", TVDoc.ProviderType.TheTVDB);
             }
 
             if (((JArray)languageOptions).ContainsTyped(Languages.Instance.FallbackLanguage.ThreeAbbreviation))

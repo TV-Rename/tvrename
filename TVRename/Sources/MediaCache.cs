@@ -20,12 +20,6 @@ namespace TVRename
         protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
         // ReSharper disable once InconsistentNaming
-        public readonly object LANGUAGE_LOCK = new object();
-
-        public Languages? LanguageList;
-        public Regions? RegionList;
-
-        // ReSharper disable once InconsistentNaming
         public readonly object MOVIE_LOCK = new object();
 
         protected readonly ConcurrentDictionary<int, CachedMovieInfo> Movies = new ConcurrentDictionary<int, CachedMovieInfo>();
@@ -36,8 +30,6 @@ namespace TVRename
         protected readonly ConcurrentDictionary<int, CachedSeriesInfo> Series = new ConcurrentDictionary<int, CachedSeriesInfo>();
 
         public abstract Language? PreferredLanguage();
-
-        public Language? GetLanguageFromCode(string customLanguageCode) => LanguageList?.GetLanguageFromCode(customLanguageCode);
 
         public bool IsConnected { get; protected set; }
 

@@ -70,7 +70,7 @@ namespace TVRename
 
         public CachedMediaInfo? CachedData => Code > 0 ? LocalCache().GetMedia(Code, GetMediaType()) : null;
 
-        public Language? PreferredLanguage => UseCustomLanguage ? LocalCache().GetLanguageFromCode(CustomLanguageCode!) : LocalCache().PreferredLanguage();
+        public Language? PreferredLanguage => UseCustomLanguage ? Languages.Instance.GetLanguageFromCode(CustomLanguageCode) : LocalCache().PreferredLanguage();
 
         protected abstract MediaCache LocalCache();
 
