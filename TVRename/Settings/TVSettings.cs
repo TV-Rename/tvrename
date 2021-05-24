@@ -1572,8 +1572,8 @@ namespace TVRename
             StopJackettSearchOnFullScan = xmlSettings.ExtractBool("StopJackettSearchOnFullScan", true);
             AutoSaveOnExit = xmlSettings.ExtractBool("AutoSaveOnExit", false);
 
-            TMDBLanguage = Languages.Instance.LanguageFromDialectCode(xmlSettings.ExtractString("TMDBLanguage"));
-            TMDBRegion = Regions.Instance.RegionFromCode(xmlSettings.ExtractString("TMDBRegion"));
+            TMDBLanguage = Languages.Instance.LanguageFromDialectCode(xmlSettings.ExtractString("TMDBLanguage")) ?? Languages.Instance.FallbackLanguage;
+            TMDBRegion = Regions.Instance.RegionFromCode(xmlSettings.ExtractString("TMDBRegion")) ?? Regions.Instance.FallbackRegion;
             TMDBPercentDirty = xmlSettings.ExtractFloat("TMDBPercentDirty", 20);
             IncludeMoviesQuickRecent = xmlSettings.ExtractBool("IncludeMoviesQuickRecent", false);
 
