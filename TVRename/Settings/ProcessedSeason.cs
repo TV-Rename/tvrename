@@ -36,7 +36,7 @@ namespace TVRename
         public readonly ShowConfiguration Show;
 
         // ReSharper disable once NotAccessedField.Local
-        private readonly SeasonType type;
+        public readonly SeasonType type;
 
         public ProcessedSeason(ShowConfiguration theShow, int number, int seasonId, SeasonType t)
         {

@@ -70,6 +70,17 @@ namespace TVRename
             };
         }
 
+        public static string PrettyPrint(this ProcessedSeason.SeasonType st)
+        {
+            return st switch
+            {
+                ProcessedSeason.SeasonType.dvd => "dvd",
+                ProcessedSeason.SeasonType.aired => "official",
+                ProcessedSeason.SeasonType.absolute => "absolute",
+                _ => throw new ArgumentOutOfRangeException(nameof(st), st, null)
+            };
+        }
+
         public static string PrettyPrint(this TVDoc.ProviderType type)
         {
             return type switch

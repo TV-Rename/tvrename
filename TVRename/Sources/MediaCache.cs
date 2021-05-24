@@ -31,7 +31,7 @@ namespace TVRename
 
         public abstract Language? PreferredLanguage();
 
-        public bool IsConnected { get; protected set; }
+        protected bool IsConnected { get; set; }
 
         public abstract bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox);
 

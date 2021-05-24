@@ -429,11 +429,10 @@ namespace TVRename
             switch (si.Provider)
             {
                 case TVDoc.ProviderType.TheTVDB:
-                    //todo reenable when TVDB has movies
-                    //if (si.TVDBSlug > 0)
-                    //{
-                    //return $"https://thetvdb.com/movies/{TVDBSlug}/edit";
-                    //}
+                    if (si.CachedShow?.Slug.HasValue() ?? false)
+                    {
+                        return $"https://thetvdb.com/series/{si.CachedShow.Slug}/seasons/{s.type.PrettyPrint()}/{s.SeasonNumber}/edit";
+                    }
 
                     return null;
 
