@@ -11,7 +11,7 @@ namespace TVRename
 {
     /// <inheritdoc />
     /// <summary>
-    /// Updates TVDB cache in another thread and reports back progress to UI
+    /// Updates Provider cache in another thread and reports back progress to UI
     /// Handles the update happening in the background and also presenting a UI and bringing the update into the
     /// foreground
     /// </summary>
@@ -97,10 +97,11 @@ namespace TVRename
                 return true;
             }
 
-            Logger.Warn(TheTVDB.LocalCache.Instance.LastErrorMessage + " " + TVmaze.LocalCache.Instance.LastErrorMessage);
+            string message = TheTVDB.LocalCache.Instance.LastErrorMessage + " " + TVmaze.LocalCache.Instance.LastErrorMessage + " " + TMDB.LocalCache.Instance.LastErrorMessage;
+            Logger.Warn(message);
             if (showErrorMsgBox)
             {
-                CannotConnectForm ccform = new CannotConnectForm("Error while downloading", TheTVDB.LocalCache.Instance.LastErrorMessage + " " + TVmaze.LocalCache.Instance.LastErrorMessage);
+                CannotConnectForm ccform = new CannotConnectForm("Error while downloading", message);
 
                 owner.ShowChildDialog(ccform);
                 DialogResult ccresult = ccform.DialogResult;

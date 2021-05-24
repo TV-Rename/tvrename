@@ -152,7 +152,7 @@ namespace TVRename
 
                 if (ep is null)
                 {
-                    continue; // season+episode number don't correspond to any episode we know of from thetvdb
+                    continue; // season+episode number don't correspond to any episode we know of
                 }
 
                 FileInfo actualFile = fi;
@@ -235,7 +235,7 @@ namespace TVRename
 
                     Doc.TheActionList.Add(downloadIdentifiers.ProcessEpisode(episode, filo));
                 }
-            } // up to date check, for each episode in thetvdb
+            } // up to date check, for each episode
         }
 
         private FileInfo? CheckFile([NotNull] string folder, FileInfo fi, [NotNull] FileInfo actualFile, string newName, ProcessedEpisode ep, IEnumerable<FileInfo> files)

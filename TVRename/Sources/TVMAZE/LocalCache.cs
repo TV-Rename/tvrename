@@ -264,7 +264,7 @@ namespace TVRename.TVmaze
 
         public void Tidy(IEnumerable<ShowConfiguration> libraryValues)
         {
-            // remove any shows from thetvdb that aren't in My Shows
+            // remove any shows from tvmaze that aren't in My Shows
             List<int> removeList = new List<int>();
 
             lock (SERIES_LOCK)

@@ -36,7 +36,7 @@ namespace TVRename
         {
             selectedShow = si;
             mDoc = doc;
-            addingNewShow = si.TvdbCode == -1;
+            addingNewShow = (si.TvdbCode == -1 && si.TmdbCode == -1 && si.TVmazeCode == -1);
             InitializeComponent();
 
             SetupDropDowns(si);

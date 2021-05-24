@@ -408,7 +408,7 @@ namespace TVRename
                     GenerateSeparator(gridSummary.showRightClickMenu);
                 }
 
-                AddRcMenuItem(gridSummary.showRightClickMenu, "Visit thetvdb.com",
+                AddRcMenuItem(gridSummary.showRightClickMenu, "Visit thetvdb.com", //todo - make this work for all sources
                     (o, args) =>
                     {
                         if (processedSeason is null)

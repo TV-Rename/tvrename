@@ -736,7 +736,7 @@ namespace TVRename
                     continue;
                 }
 
-                bool assumeMovie = FinderHelper.IgnoreHint(hint) || !file.FileNameNoExt().ContainsAnyCharactersFrom("0123456789");
+                bool assumeMovie = IgnoreHint(hint) || !file.FileNameNoExt().ContainsAnyCharactersFrom("0123456789");
 
                 if (assumeMovie && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && true)//todo use  TVSettings.Instance.AutomateAutoAddWhenOneMovieFound
                 {

@@ -638,7 +638,7 @@ namespace TVRename.TMDB
                         if (!Series.ContainsKey(b.SeriesId))
                         {
                             throw new SourceConsistencyException(
-                                $"Can't find the cachedSeries to add the banner {b.BannerId} to (TheTVDB). {seriesId},{b.SeriesId}", TVDoc.ProviderType.TMDB);
+                                $"Can't find the cachedSeries to add the banner {b.BannerId} to (TMDB). {seriesId},{b.SeriesId}", TVDoc.ProviderType.TMDB);
                         }
 
                         CachedSeriesInfo ser = Series[b.SeriesId];

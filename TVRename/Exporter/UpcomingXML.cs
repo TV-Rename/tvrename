@@ -41,7 +41,7 @@ namespace TVRename
                 foreach (ProcessedEpisode ei in elist)
                 {
                     writer.WriteStartElement("item");
-                    writer.WriteElement("id", ei.TheCachedSeries.TvdbCode);
+                    writer.WriteElement("id", ei.TheCachedSeries.TvdbCode); //todo - make sure this works with  non tvdb shows
                     writer.WriteElement("SeriesName", ei.TheCachedSeries.Name);
                     writer.WriteElement("SeasonNumber", Helpers.Pad(ei.AppropriateSeasonNumber));
                     writer.WriteElement("EpisodeNumber", Helpers.Pad(ei.AppropriateEpNum));

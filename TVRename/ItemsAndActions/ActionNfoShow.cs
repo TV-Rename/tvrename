@@ -52,7 +52,7 @@ namespace TVRename
             XElement urlNode = episodeGuideNode.GetOrCreateElement("url");
             urlNode.UpdateAttribute("post", "yes");
             urlNode.UpdateAttribute("cache", "auth.json");
-            urlNode.SetValue(TheTVDB.API.BuildUrl(SelectedShow.TvdbCode, lang));
+            urlNode.SetValue(TheTVDB.API.BuildUrl(SelectedShow.TvdbCode, lang)); //todo make work for all providers
 
             if (!(cachedSeries is null))
             {
@@ -66,7 +66,7 @@ namespace TVRename
                 root.UpdateElement("status", cachedSeries.Status);
                 root.UpdateElement("plot", cachedSeries.Overview);
 
-                UpdateId(root, "tvdb", "true", cachedSeries.TvdbCode);
+                UpdateId(root, "tvdb", "true", cachedSeries.TvdbCode); //todo make work for all providers
                 UpdateId(root, "imdb", "false", cachedSeries.Imdb);
             }
 

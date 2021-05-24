@@ -18,14 +18,14 @@ namespace TVRename.Forms.Utilities
             set => base.Text = value;
         }
 
-        private void bnTVDB_Click(object sender, EventArgs e)
+        private void bnTVDB_Click(object sender, EventArgs e) //todo make work for all providers
         {
             Helpers.OpenUrl("https://www.thetvdb.com/");
         }
 
         private void bnAPICheck_Click(object sender, EventArgs e)
         {
-            Helpers.OpenUrl("https://www.isitdownrightnow.com/api.thetvdb.com.html");
+            Helpers.OpenUrl("https://www.isitdownrightnow.com/api.thetvdb.com.html"); //todo make work for all providers
         }
 
         private void bnOffline_Click(object sender, EventArgs e)

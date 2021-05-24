@@ -151,10 +151,6 @@ namespace TVRename
 
         public int TmdbId => TmdbCode;
 
-        public Language LanguageToUse => UseCustomLanguage
-                ? Languages.Instance.GetLanguageFromCode(CustomLanguageCode)
-                : TVSettings.Instance.PreferredTVDBLanguage;
-
         public bool UseCustomLanguage { get; set; }
 
         public string CustomLanguageCode { get; set; }
@@ -185,7 +181,7 @@ namespace TVRename
             //Also add the aliases provided
             possibles.AddNullableRange(AliasNames.Select(s => s.CompareName()).Where(s => s.HasValue()).Where(s => s.Length > 2));
 
-            //Also use the aliases from theTVDB
+            //Also use the aliases from source provider
             possibles.AddNullableRange(CachedData?.GetAliases().Select(s => s.CompareName()).Where(s => s.HasValue()).Where(s => s.Length > 6));
 
             return possibles;

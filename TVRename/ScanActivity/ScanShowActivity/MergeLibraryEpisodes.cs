@@ -112,7 +112,7 @@ namespace TVRename
 
                     if (epIdx == -1)
                     {
-                        continue; // season+episode number don't correspond to any episode we know of from thetvdb
+                        continue; // season+episode number don't correspond to any episode we know of
                     }
 
                     ProcessedEpisode ep = eps[epIdx];

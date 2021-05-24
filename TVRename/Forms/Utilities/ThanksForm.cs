@@ -22,7 +22,7 @@ namespace TVRename.Forms.Utilities
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Helpers.OpenUrl("https://www.themoviedb.org//");
+            Helpers.OpenUrl("https://www.themoviedb.org/");
         }
     }
 }

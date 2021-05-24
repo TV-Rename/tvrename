@@ -70,7 +70,7 @@ namespace TVRename.Forms.Tools
 
             showRightClickMenu.Items.Clear();
 
-            AddRcMenuItem("View on TVDB...", (s, args) => TvSourceFor(iss.Show));
+            AddRcMenuItem("View on TVDB...", (s, args) => TvSourceFor(iss.Show)); //todo - make this work for all sources
             AddRcMenuItem("Open Folder", (s, args) => Helpers.OpenFolderSelectFile(iss.File.FullName));
             AddRcMenuItem("Episode Guide", (s, args) => MainWindow.GotoEpguideFor(iss.Show, true));
 

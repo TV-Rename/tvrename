@@ -30,6 +30,9 @@ namespace TVRename
         public FileInfo? TvMazeFile;
         private readonly FileInfo[] availableTvMazeFiles;
 
+        public FileInfo? TmdbFile;
+        private readonly FileInfo[] availableTmdbFiles;
+
         public FileInfo? SettingsFile;
         private readonly FileInfo[] settingsList;
 
@@ -39,6 +42,7 @@ namespace TVRename
             settingsList = PathManager.GetPossibleSettingsHistory();
             availableTvDbFiles = PathManager.GetPossibleTvdbHistory();
             availableTvMazeFiles = PathManager.GetPossibleTvMazeHistory();
+            availableTmdbFiles = PathManager.GetPossibleTmdbHistory();
 
             if (!string.IsNullOrEmpty(hint))
             {
@@ -51,6 +55,7 @@ namespace TVRename
             Setup(lbSettings, "Default settings", settingsList);
             Setup(lbTVDB, "No Cache", availableTvDbFiles);
             Setup(lbTvMaze, "No Cache", availableTvMazeFiles);
+            Setup(lbTMDB, "No Cache", availableTmdbFiles);
         }
 
         private static void Setup(ListBox lb, string defaultValue, IReadOnlyCollection<FileInfo> files)
@@ -71,6 +76,7 @@ namespace TVRename
         {
             TvDbFile = GetFile(lbTVDB, availableTvDbFiles);
             TvMazeFile = GetFile(lbTvMaze, availableTvMazeFiles);
+            TmdbFile = GetFile(lbTMDB, availableTmdbFiles);
             SettingsFile = GetFile(lbSettings, settingsList);
             DialogResult = DialogResult.OK;
             Close();
@@ -91,6 +97,10 @@ namespace TVRename
         {
             DialogResult = DialogResult.Cancel;
             Close();
+        }
+
+        private void label5_Click(object sender, System.EventArgs e)
+        {
         }
     }
 }

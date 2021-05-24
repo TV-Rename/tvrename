@@ -144,7 +144,7 @@ namespace TVRename
         }
 
         [NotNull]
-        protected string GenerateErrorMessage() => "Error processing data from TheTVDB for a show. " + this + "\r\nLanguage: \"" + ActualLocale?.PreferredLanguage?.EnglishName + "\"";
+        protected string GenerateErrorMessage() => "Error processing data for a show. " + this + "\r\nLanguage: \"" + ActualLocale?.PreferredLanguage?.EnglishName + "\"";
 
         protected void LoadActors([NotNull] XElement seriesXml)
         {

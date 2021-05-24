@@ -90,7 +90,7 @@ namespace TVRename
                         }
                         else
                         {
-                            Logger.Info($"Cannot save {kvp.Value.TvdbCode} ({kvp.Value.Name}) as it has not been updated at all.");
+                            Logger.Info($"Cannot save {kvp.Key} ({kvp.Value.Name}) to {cacheFile.Name} as it has not been updated at all.");
                         }
                     }
 
@@ -132,7 +132,7 @@ namespace TVRename
                         }
                         else
                         {
-                            Logger.Info($"Cannot save {kvp.Value.TvdbCode} ({kvp.Value.Name}) as it is a search result that has not been used.");
+                            Logger.Info($"Cannot save {kvp.Key} ({kvp.Value.Name}) to {cacheFile.Name} as it is a search result that has not been used.");
                         }
                     }
 

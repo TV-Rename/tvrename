@@ -582,6 +582,9 @@ namespace TVRename
             Task.Run(
                 () => mDoc.TVDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized, this)
             );
+            Task.Run(
+                () => mDoc.TMDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized, this)
+            );
             LessBusy();
         }
 
@@ -1893,27 +1896,20 @@ namespace TVRename
             if (ep != null)
             {
                 AddRcMenuItem("Episode Guide", (sender, args) => GotoEpguideFor(ep, true));
-
-                string label = ep.Show.Provider == TVDoc.ProviderType.TVmaze
-                    ? "Visit Tv Maze..."
-                    : "Visit thetvdb.com";
+                string label = $"Visit {ep.Show.Provider.PrettyPrint()}...";
                 AddRcMenuItem(label, (sender, args) => TvSourceFor(ep));
             }
             else if (seas != null)
             {
                 AddRcMenuItem("Episode Guide", (sender, args) => GotoEpguideFor(seas.Show, true));
-                string label = seas.Show.Provider == TVDoc.ProviderType.TVmaze
-                    ? "Visit Tv Maze..."
-                    : "Visit thetvdb.com";
+                string label = $"Visit {seas.Show.Provider.PrettyPrint()}...";
                 AddRcMenuItem(label, (sender, args) => TvSourceFor(seas));
             }
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             else if (si != null)
             {
                 AddRcMenuItem("Episode Guide", (sender, args) => GotoEpguideFor(si, true));
-                string label = si.Provider == TVDoc.ProviderType.TVmaze
-                    ? "Visit Tv Maze..."
-                    : "Visit thetvdb.com";
+                string label = $"Visit {si.Provider.PrettyPrint()}...";
                 AddRcMenuItem(label, (sender, args) => TvSourceFor(si));
             }
         }
@@ -2227,7 +2223,7 @@ namespace TVRename
             tabControl1.SelectTab(tbWTW);
             foreach (ListViewItem lvi in lvWhenToWatch.Items)
             {
-                lvi.Selected = lvi.Tag is ProcessedEpisode ei && ei.TheCachedSeries.TvdbCode == tvdbSeriesCode;
+                lvi.Selected = lvi.Tag is ProcessedEpisode ei && ei.TheCachedSeries.TvdbCode == tvdbSeriesCode; //todo make work for all providers
             }
             lvWhenToWatch.Focus();
         }
@@ -2674,7 +2670,7 @@ namespace TVRename
                 return ser.Name;
             }
 
-            return "-- Unknown : " + si?.TvdbCode + " --";
+            return "-- Unknown : " + si?.Code + " --";
         }
 
         private static (Color, Color) GetWtwColour([NotNull] ProcessedEpisode ep, DateTime dt)
@@ -3034,7 +3030,7 @@ namespace TVRename
             MoreBusy();
             mDoc.PreventAutoScan("Edit Show");
 
-            int oldCode = si.TvdbCode;
+            int oldCode = si.TvdbCode; //todo make work for all providers
 
             AddEditShow aes = new AddEditShow(si, mDoc);
 
@@ -3056,7 +3052,7 @@ namespace TVRename
         {
             MoreBusy();
             mDoc.PreventAutoScan("Edit Movie");
-            int oldCode = si.TvdbCode;
+            int oldCode = si.TvdbCode; //todo make work for all providers
             AddEditMovie aes = new AddEditMovie(si, mDoc);
             DialogResult dr = aes.ShowDialog(this);
 
@@ -3498,7 +3494,7 @@ namespace TVRename
             if (mDoc.ShowProblems.Any() && !unattended)
             {
                 string message = mDoc.ShowProblems.Count > 1
-                    ? $"Shows with Id {string.Join(",", mDoc.ShowProblems.Select(exception => exception.ShowId))} are not found on TVDB and TVMaze. Please update them"
+                    ? $"Shows with Id {string.Join(",", mDoc.ShowProblems.Select(exception => exception.ShowId))} are not found on TVDB, TMDB and TVMaze. Please update them"
                     : $"Show with {StringFor(mDoc.ShowProblems.First().ShowIdProvider)} Id {mDoc.ShowProblems.First().ShowId} is not found on {StringFor(mDoc.ShowProblems.First().ErrorProvider)}. Please Update";
 
                 DialogResult result = MessageBox.Show(message, "Series No Longer Found", MessageBoxButtons.OKCancel,

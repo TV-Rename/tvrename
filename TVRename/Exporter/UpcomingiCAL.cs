@@ -83,7 +83,7 @@ namespace TVRename
                     Comments = new List<string> { ei.Overview },
                     Summary = niceName,
                     Location = ei.TheCachedSeries.Network,
-                    Url = new Uri(TheTVDB.API.WebsiteEpisodeUrl(ei)),
+                    Url = new Uri(TheTVDB.API.WebsiteEpisodeUrl(ei)), //todo - make sure this works with  non tvdb shows
                     Uid = ei.EpisodeId.ToString()
                 };
             }

@@ -31,6 +31,8 @@ namespace TVRename
 
         public static FileInfo[] GetPossibleTvMazeHistory() => new DirectoryInfo(System.IO.Path.GetDirectoryName(TVDocSettingsFile.FullName)).GetFiles(TVMAZE_FILE_NAME + "*");
 
+        public static FileInfo[] GetPossibleTmdbHistory() => new DirectoryInfo(System.IO.Path.GetDirectoryName(TVDocSettingsFile.FullName)).GetFiles(TMDB_FILE_NAME + "*");
+
         public static void SetUserDefinedBasePath(string path)
         {
             if (string.IsNullOrEmpty(path))

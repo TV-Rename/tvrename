@@ -52,7 +52,7 @@ namespace TVRename
             XElement urlNode = episodeGuideNode.GetOrCreateElement("url");
             urlNode.UpdateAttribute("post", "yes");
             urlNode.UpdateAttribute("cache", "auth.json");
-            urlNode.SetValue(TheTVDB.API.BuildUrl(Movie.TvdbCode, lang));
+            urlNode.SetValue(TheTVDB.API.BuildUrl(Movie.TvdbCode, lang)); //todo make work for all providers
 
             if (!(cachedSeries is null))
             {

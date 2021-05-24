@@ -65,7 +65,7 @@ namespace TVRename
                 }
                 catch (Exception e)
                 {
-                    LOGGER.Error(e, $"Failed to scan {si.ShowName}. Please double check settings for this show: {si.TvdbCode}: {si.AutoAddFolderBase}");
+                    LOGGER.Error(e, $"Failed to scan {si.ShowName}. Please double check settings for this show: {si}: {si.AutoAddFolderBase}");
                 }
             } // for each show
 

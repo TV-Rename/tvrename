@@ -86,7 +86,7 @@ namespace TVRename
                 return;
             }
 
-            folder.SetId(code, TVDoc.ProviderType.TheTVDB);
+            folder.SetId(code, ed.ProviderType);
         }
 
         public override bool Active() => TVSettings.Instance.DoBulkAddInScan;

@@ -85,9 +85,9 @@ namespace TVRename
         {
             StringBuilder output = new StringBuilder();
             output.AppendLine();
-            output.AppendLine("/forcerefresh will refresh all TVDB and TV Maze information");
-            output.AppendLine("/forceupdate will verify TVDB information is up to date");
-            output.AppendLine("/quickupdate will do a quick update from TVDB and TV Maze");
+            output.AppendLine("/forcerefresh will refresh all TVDB, TMDB and TV Maze information");
+            output.AppendLine("/forceupdate will verify TVDB & TMDB information is up to date");
+            output.AppendLine("/quickupdate will do a quick update from TVDB, TMDB and TV Maze");
             output.AppendLine("/scan will Tell TV Rename to run a full scan");
             output.AppendLine("/quickscan will scan shows most likely to need an update: http://www.tvrename.com/userguide#scan");
             output.AppendLine("/recentscan will scan recent shows: http://www.tvrename.com/userguide#scan");

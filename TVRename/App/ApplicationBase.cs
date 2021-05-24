@@ -112,6 +112,7 @@ namespace TVRename.App
                     {
                         tvdbFile = recoveryForm.TvDbFile;
                         tvmazeFile = recoveryForm.TvMazeFile;
+                        tmdbFile = recoveryForm.TmdbFile;
                         settingsFile = recoveryForm.SettingsFile;
                     }
                     else

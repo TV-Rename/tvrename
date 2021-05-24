@@ -597,26 +597,6 @@ namespace TVRename
             }
         }
 
-        public TVDoc.ProviderType Provider
-        {
-            get
-            {
-                switch (ConfigurationProvider)
-                {
-                    case TVDoc.ProviderType.libraryDefault:
-                        return TVSettings.Instance.DefaultProvider;
-
-                    case TVDoc.ProviderType.TVmaze:
-                    case TVDoc.ProviderType.TheTVDB:
-                    case TVDoc.ProviderType.TMDB:
-                        return ConfigurationProvider;
-
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-        }
-
         protected override TVDoc.ProviderType DefaultProvider() => TVSettings.Instance.DefaultProvider;
 
         public List<ShowRule>? RulesForSeason(int n)
