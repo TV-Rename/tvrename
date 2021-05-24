@@ -291,7 +291,10 @@ namespace TVRename.TheTVDB
 
         public void Update(CachedMovieInfo si)
         {
-            throw new NotImplementedException();
+            lock (MOVIE_LOCK)
+            {
+                Movies[si.TvdbCode] = si;
+            }
         }
 
         public void AddPoster(int seriesId, IEnumerable<Banner> @select)
