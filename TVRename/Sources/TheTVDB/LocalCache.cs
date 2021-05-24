@@ -770,75 +770,88 @@ namespace TVRename.TheTVDB
             string entityType = (string)seriesResponse["entityType"];
             string method = (string)seriesResponse["method"];
 
-            if (entityType == "series" || entityType == "translatedseries")
+            switch (entityType)
             {
-                if (Series.ContainsKey(id))
-                {
-                    CachedSeriesInfo selectedCachedSeriesInfo = Series[id];
-
-                    if (time > selectedCachedSeriesInfo.SrvLastUpdated) // newer version on the server
+                case "series":
+                case "translatedseries":
                     {
-                        selectedCachedSeriesInfo.Dirty = true; // mark as dirty, so it'll be fetched again later
+                        if (Series.ContainsKey(id))
+                        {
+                            CachedSeriesInfo selectedCachedSeriesInfo = Series[id];
+                            ProcessUpdate(selectedCachedSeriesInfo, time, $"as it({id}) has been updated");
+                        }
+                        return;
                     }
-                    else
+                case "movies":
+                case "translatedmovies":
+                case "movie-genres":
                     {
-                        LOGGER.Info(selectedCachedSeriesInfo.Name + " has a lastupdated of  " +
-                                    Helpers.FromUnixTime(selectedCachedSeriesInfo.SrvLastUpdated) + " server says " +
-                                    Helpers.FromUnixTime(time));
+                        if (Movies.ContainsKey(id))
+                        {
+                            CachedMovieInfo selectedMovieCachedData = Movies[id];
+                            ProcessUpdate(selectedMovieCachedData, time, $"as it({id}) has been updated");
+                        }
+
+                        return;
                     }
-                }
-
-                return;
-            }
-
-            if (entityType == "movies" || entityType == "translatedmovies" || entityType == "movie-genres")
-            {
-                if (Movies.ContainsKey(id))
-                {
-                    CachedMovieInfo selectedMovieCachedData = Movies[id];
-                    if (time > selectedMovieCachedData.SrvLastUpdated) // newer version on the server
+                case "episodes":
+                case "translatedepisodes":
                     {
-                        selectedMovieCachedData.Dirty = true; // mark as dirty, so it'll be fetched again later
+                        List<CachedSeriesInfo>? matchingShows = Series.Values.Where(y => y.Episodes.Any(e => e.EpisodeId == id)).ToList();
+                        if (!matchingShows.Any())
+                        {
+                            return;
+                        }
+
+                        foreach (CachedSeriesInfo? selectedCachedSeriesInfo in matchingShows)
+                        {
+                            ProcessUpdate(selectedCachedSeriesInfo, time, $"as episodes({id}) have been updated");
+                        }
+                        return;
                     }
-                    else
+                case "seasons":
+                case "translatedseasons":
                     {
-                        LOGGER.Info(selectedMovieCachedData.Name + " has a lastupdated of  " +
-                                    Helpers.FromUnixTime(selectedMovieCachedData.SrvLastUpdated) + " server says " +
-                                    Helpers.FromUnixTime(time));
+                        List<CachedSeriesInfo>? matchingShows = Series.Values.Where(y => y.Seasons.Any(e => e.SeasonId == id)).ToList();
+                        if (!matchingShows.Any())
+                        {
+                            return;
+                        }
+                        foreach (CachedSeriesInfo? selectedCachedSeriesInfo in matchingShows)
+                        {
+                            ProcessUpdate(selectedCachedSeriesInfo, time, $"as seasons({id}) have been updated");
+                        }
+                        return;
                     }
-                }
-
-                return;
-            }
-
-            if (entityType == "artwork" || entityType == "people" || entityType == "characters" || entityType == "award-nominees")
-            {
-                return;
-            }
-            if (entityType == "episodes" || entityType == "translatedepisodes")
-            {
-                var x = Series.Values.Where(y => y.Episodes.Any(e => e.EpisodeId == id));
-                if (!x.Any())
-                {
+                case "artwork":
+                case "people":
+                case "characters":
+                case "award-nominees":
+                case "companies":
+                case "lists":
+                case "translatedlists":
+                case "translatedcompanies":
                     return;
-                }
-                LOGGER.Info("");
-                return;
-            }
-            if (entityType == "seasons")
-            {
-                var x = Series.Values.Where(y => y.Seasons.Any(e => e.SeasonId == id));
-                if (!x.Any())
-                {
+
+                default:
                     return;
-                }
-                LOGGER.Info("");
-                return;
             }
-            if (entityType == "")
+        }
+
+        private static void ProcessUpdate(CachedMediaInfo selectedCachedSeriesInfo, long time, string message)
+        {
+            if (time > selectedCachedSeriesInfo.SrvLastUpdated) // newer version on the server
             {
-                return;
+                selectedCachedSeriesInfo.Dirty = true; // mark as dirty, so it'll be fetched again later
             }
+            else
+            {
+                LOGGER.Info(selectedCachedSeriesInfo.Name + " has a lastupdated of  " +
+                            Helpers.FromUnixTime(selectedCachedSeriesInfo.SrvLastUpdated) + " server says " +
+                            Helpers.FromUnixTime(time));
+            }
+
+            LOGGER.Info($"Updating {selectedCachedSeriesInfo.Name} {message}");
         }
 
         private void ProcessEpisodes([NotNull] CachedSeriesInfo si,
