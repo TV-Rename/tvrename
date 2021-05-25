@@ -94,7 +94,10 @@ Section "Install"
 
     SetOutPath "$INSTDIR\x86\locales"
     File "TVRename\bin\Release\x86\locales\*.pak"
-    
+
+    SetOutPath "$INSTDIR\swiftshader"
+    File "TVRename\bin\Release\swiftshader\*.dll"
+
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${APPNAME}.lnk" "$INSTDIR\TVRename.exe"
@@ -128,6 +131,7 @@ Section "Uninstall"
 
     RmDir /r "$INSTDIR\x64"
     RmDir /r "$INSTDIR\x86"
+    RmDir /r "$INSTDIR\swiftshader"
     
     RmDir "$INSTDIR"
     
