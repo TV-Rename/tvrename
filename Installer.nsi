@@ -94,7 +94,7 @@ Section "Install"
 
     SetOutPath "$INSTDIR\x86\locales"
     File "TVRename\bin\Release\x86\locales\*.pak"
-    
+
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${APPNAME}.lnk" "$INSTDIR\TVRename.exe"
