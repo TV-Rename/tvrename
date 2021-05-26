@@ -68,13 +68,46 @@ namespace TVRename
             }
         }
 
-        public bool HasSeries(int id) => Series.ContainsKey(id);
+        public CachedSeriesInfo? GetSeries(int? id)
+        {
+            if (!id.HasValue)
+            {
+                return null;
+            }
+            lock (SERIES_LOCK)
+            {
+                return HasSeries(id.Value) ? Series[id.Value] : null;
+            }
+        }
 
-        public CachedSeriesInfo? GetSeries(int id) => HasSeries(id) ? Series[id] : null;
+        public bool HasSeries(int id)
+        {
+            lock (SERIES_LOCK)
+            {
+                return Series.ContainsKey(id);
+            }
+        }
 
-        public bool HasMovie(int id) => Movies.ContainsKey(id);
+        public bool HasMovie(int id)
+        {
+            lock (MOVIE_LOCK)
+            {
+                return Movies.ContainsKey(id);
+            }
+        }
 
-        public CachedMovieInfo? GetMovie(int id) => HasMovie(id) ? Movies[id] : null;
+        public CachedMovieInfo? GetMovie(int? id)
+        {
+            if (!id.HasValue)
+            {
+                return null;
+            }
+
+            lock (MOVIE_LOCK)
+            {
+                return HasMovie(id.Value) ? Movies[id.Value] : null;
+            }
+        }
 
         public CachedMediaInfo? GetMedia(int code, MediaConfiguration.MediaType type)
         {

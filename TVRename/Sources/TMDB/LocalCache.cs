@@ -311,7 +311,7 @@ namespace TVRename.TMDB
             {
                 if (downloadShow.Type == MediaConfiguration.MediaType.tv)
                 {
-                    if (!HasShow(downloadShow.TmdbId))
+                    if (!HasSeries(downloadShow.TmdbId))
                     {
                         AddPlaceholderSeries(downloadShow);
                     }
@@ -476,46 +476,6 @@ namespace TVRename.TMDB
                 }
             }
             return matchingSeries;
-        }
-
-        public CachedMovieInfo? GetMovie(int? id)
-        {
-            if (!id.HasValue)
-            {
-                return null;
-            }
-            lock (MOVIE_LOCK)
-            {
-                return HasMovie(id.Value) ? Movies[id.Value] : null;
-            }
-        }
-
-        public CachedSeriesInfo? GetSeries(int? id)
-        {
-            if (!id.HasValue)
-            {
-                return null;
-            }
-            lock (SERIES_LOCK)
-            {
-                return HasShow(id.Value) ? Series[id.Value] : null;
-            }
-        }
-
-        public bool HasMovie(int id)
-        {
-            lock (MOVIE_LOCK)
-            {
-                return Movies.ContainsKey(id);
-            }
-        }
-
-        public bool HasShow(int id)
-        {
-            lock (SERIES_LOCK)
-            {
-                return Series.ContainsKey(id);
-            }
         }
 
         public void Tidy(IEnumerable<MovieConfiguration> libraryValues)

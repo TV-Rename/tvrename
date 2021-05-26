@@ -343,11 +343,6 @@ namespace TVRename
             return value is null ? AutomaticFolderType.libraryDefault : (AutomaticFolderType)value;
         }
 
-        private static TVDoc.ProviderType GetConfigurationProviderType(int? value)
-        {
-            return value is null ? TVDoc.ProviderType.libraryDefault : (TVDoc.ProviderType)value;
-        }
-
         private void UpgradeFromOldSeasonFormat([NotNull] XElement xmlSettings)
         {
             //These variables have been discontinued (JULY 2018).  If we have any then we should migrate to the new values
@@ -443,21 +438,18 @@ namespace TVRename
 
         protected override MediaCache LocalCache()
         {
-            if (Provider == TVDoc.ProviderType.libraryDefault)
-            {
-                return TVSettings.Instance.DefaultProvider switch
-                {
-                    TVDoc.ProviderType.TVmaze => TVmaze.LocalCache.Instance,
-                    TVDoc.ProviderType.TMDB => TMDB.LocalCache.Instance,
-                    TVDoc.ProviderType.TheTVDB => TheTVDB.LocalCache.Instance,
-                };
-            }
+            return LocalCache(Provider == TVDoc.ProviderType.libraryDefault ? TVSettings.Instance.DefaultProvider : Provider);
+        }
 
-            return Provider switch
+        private static MediaCache LocalCache(TVDoc.ProviderType provider)
+        {
+            return provider switch
             {
                 TVDoc.ProviderType.TVmaze => TVmaze.LocalCache.Instance,
                 TVDoc.ProviderType.TMDB => TMDB.LocalCache.Instance,
                 TVDoc.ProviderType.TheTVDB => TheTVDB.LocalCache.Instance,
+                TVDoc.ProviderType.libraryDefault => throw new ArgumentOutOfRangeException(nameof(provider), provider, null),
+                _ => throw new ArgumentOutOfRangeException(nameof(provider), provider, null)
             };
         }
 
@@ -935,12 +927,5 @@ namespace TVRename
         }
 
         public CachedSeriesInfo? CachedShow => (CachedSeriesInfo)CachedData;
-
-        public bool AnyIdsMatch(ShowConfiguration newShow) =>
-            IdsMatch(TvdbCode, newShow.TvdbCode) ||
-            IdsMatch(TVmazeCode, newShow.TVmazeCode) ||
-            IdsMatch(TmdbCode, newShow.TmdbCode);
-
-        private static bool IdsMatch(int code1, int code2) => code1 == code2 && code1 > 0;
     }
 }

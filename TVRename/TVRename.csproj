@@ -527,7 +527,6 @@
     <Compile Include="Utility\BTListOrDictionaryEnd.cs" />
     <Compile Include="Utility\BTResume.cs" />
     <Compile Include="Utility\BTString.cs" />
-    <Compile Include="Utility\DependencyChecker.cs" />
     <Compile Include="Utility\Extensions\SafeEnumerable.cs" />
     <Compile Include="Utility\Extensions\SafeEnumerator.cs" />
     <Compile Include="Utility\Extensions\SafeList.cs" />

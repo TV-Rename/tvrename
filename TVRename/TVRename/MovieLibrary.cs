@@ -47,29 +47,28 @@ namespace TVRename
             return matching.First();
         }
 
-        /*
-        internal void Add([NotNull] MovieConfiguration found)
+        new public void Add(MovieConfiguration newShow)
         {
-            if (found.Code == -1)
+            if (Contains(newShow))
             {
                 return;
             }
 
-            if (TryAdd(found.Code, found))
+            List<MovieConfiguration> matchingShows = this.Where(configuration => configuration.AnyIdsMatch(newShow)).ToList();
+            if (matchingShows.Any())
             {
+                foreach (MovieConfiguration existingshow in matchingShows)
+                {
+                    //TODO Merge them in
+                    Logger.Error($"Trying to add {newShow}, but we already have {existingshow}");
+                }
                 return;
             }
 
-            if (ContainsKey(found.Code))
-            {
-                Logger.Warn($"Failed to Add {found.ShowName} with {found.SourceProviderName}={found.Code} to library, but it's already present");
-            }
-            else
-            {
-                Logger.Error($"Failed to Add {found.ShowName} with {found.SourceProviderName}={found.Code} to library");
-            }
+            base.Add(newShow);
         }
 
+        /*
         internal void Remove([NotNull] MovieConfiguration si)
         {
             if (!TryRemove(si.TmdbCode, out _))
@@ -85,16 +84,16 @@ namespace TVRename
             {
                 foreach (MovieConfiguration si in xmlSettings.Descendants("MovieItem").Select(showSettings => new MovieConfiguration(showSettings)))
                 {
-                    // if (si.UseCustomShowName) // see if custom show name is actually the real show name
-                    // {
-                    //     CachedSeriesInfo ser = si.TheSeries();
-                    //     if (ser != null && si.CustomShowName == ser.Name)
-                    //     {
-                    //         // then, turn it off
-                    //         si.CustomShowName = string.Empty;
-                    //         si.UseCustomShowName = false;
-                    //     }
-                    // }
+                    if (si.UseCustomShowName) // see if custom show name is actually the real show name
+                    {
+                        CachedMovieInfo? ser = si.CachedMovie;
+                        if (ser != null && si.CustomShowName == ser.Name)
+                        {
+                            // then, turn it off
+                            si.CustomShowName = string.Empty;
+                            si.UseCustomShowName = false;
+                        }
+                    }
 
                     Add(si);
                 }
@@ -153,19 +152,6 @@ namespace TVRename
         public MovieConfiguration? GetMovie(PossibleNewMovie ai)
         {
             return GetMovie(ai.ProviderCode, ai.Provider);
-        }
-
-        public void AddRange(IEnumerable<MovieConfiguration>? addedShows)
-        {
-            if (addedShows is null)
-            {
-                return;
-            }
-
-            foreach (MovieConfiguration show in addedShows)
-            {
-                Add(show);
-            }
         }
     }
 }

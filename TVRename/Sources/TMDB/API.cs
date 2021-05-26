@@ -14,7 +14,7 @@ namespace TVRename.TMDB
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         //As a safety measure we check that no more than 52 calls are made
-        internal const int MAX_NUMBER_OF_CALLS = 50;
+        private const int MAX_NUMBER_OF_CALLS = 50;
 
         public static IEnumerable<ChangesListItem> GetChangesMovies(this TMDbClient client, CancellationToken cts, UpdateTimeTracker latestUpdateTime)
         {
@@ -23,7 +23,6 @@ namespace TVRename.TMDB
             //(up to a maximum of 52 - if you are this far behind then you may need multiple refreshes)
 
             List<ChangesListItem> updatesResponses = new List<ChangesListItem>();
-            bool moreUpdates = true;
             int numberOfCallsMade = 0;
 
             for (DateTime time = latestUpdateTime.LastSuccessfulServerUpdateDateTime();
@@ -54,11 +53,11 @@ namespace TVRename.TMDB
             return updatesResponses;
         }
 
-        internal class TooManyCallsException : Exception
+        private class TooManyCallsException : Exception
         {
         }
 
-        internal class CancelledException : Exception
+        private class CancelledException : Exception
         {
         }
     }

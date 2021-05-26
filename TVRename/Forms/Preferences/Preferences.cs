@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
 using TimeZoneConverter;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
@@ -33,15 +32,10 @@ namespace TVRename
     /// </summary>
     public partial class Preferences : Form
     {
-        private delegate void LoadLanguageDoneDel();
-
         private readonly TVDoc mDoc;
-        private Thread? loadLanguageThread;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private CustomNameTagsFloatingWindow? cntfw;
         private readonly ProcessedSeason? sampleProcessedSeason;
-
-        private readonly LoadLanguageDoneDel? loadLanguageDone;
 
         private class FailedValidationException : Exception
         {
@@ -1625,11 +1619,6 @@ namespace TVRename
 
         private void Preferences_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (loadLanguageThread != null && loadLanguageThread.IsAlive)
-            {
-                loadLanguageThread.Abort();
-                loadLanguageThread.Join(500); // milliseconds timeout
-            }
         }
 
         private void cmDefaults_ItemClicked(object sender, [NotNull] ToolStripItemClickedEventArgs e)

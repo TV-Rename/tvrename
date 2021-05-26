@@ -108,6 +108,13 @@ namespace TVRename
             }
         }
 
+        public bool AnyIdsMatch(MediaConfiguration newShow) =>
+            IdsMatch(TvdbCode, newShow.TvdbCode) ||
+            IdsMatch(TVmazeCode, newShow.TVmazeCode) ||
+            IdsMatch(TmdbCode, newShow.TmdbCode);
+
+        private static bool IdsMatch(int code1, int code2) => code1 == code2 && code1 > 0;
+
         public static int CompareNames(MediaConfiguration x, MediaConfiguration y)
         {
             string ones = x.ShowName;

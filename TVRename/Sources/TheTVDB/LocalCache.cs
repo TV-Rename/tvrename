@@ -153,19 +153,6 @@ namespace TVRename.TheTVDB
         public CachedMovieInfo GetMovie(PossibleNewMovie show, Locale locale, bool showErrorMsgBox) =>
             throw new NotImplementedException();
 
-        public CachedMovieInfo GetMovie(int? id)
-        {
-            if (!id.HasValue)
-            {
-                return null;
-            }
-
-            lock (MOVIE_LOCK)
-            {
-                return HasMovie(id.Value) ? Movies[id.Value] : null;
-            }
-        }
-
         public CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox, Locale preferredLocale)
         {
             Search(showName, showErrorMsgBox, MediaConfiguration.MediaType.tv, preferredLocale);
@@ -352,13 +339,13 @@ namespace TVRename.TheTVDB
         {
             Say("Could not connect to TVDB");
 
-            LOGGER.LogWebException("Error obtaining Languages from TVDB", ex);
+            LOGGER.LogWebException("Error obtaining token from TVDB", ex);
             LastErrorMessage = ex.LoggableDetails();
 
             if (showErrorMsgBox)
             {
                 CannotConnectForm ccform =
-                    new CannotConnectForm("Error while downloading languages from TVDB", ex.LoggableDetails());
+                    new CannotConnectForm("Error while obtaining token from TVDB", ex.LoggableDetails());
 
                 DialogResult ccresult = ccform.ShowDialog();
                 if (ccresult == DialogResult.Abort)
@@ -812,7 +799,7 @@ namespace TVRename.TheTVDB
                 case "seasons":
                 case "translatedseasons":
                     {
-                        List<CachedSeriesInfo>? matchingShows = Series.Values.Where(y => y.Seasons.Any(e => e.SeasonId == id)).ToList();
+                        List<CachedSeriesInfo> matchingShows = Series.Values.Where(y => y.Seasons.Any(e => e.SeasonId == id)).ToList();
                         if (!matchingShows.Any())
                         {
                             return;
@@ -1286,7 +1273,7 @@ namespace TVRename.TheTVDB
 
             //TODO /si.TagLine = downloadSeriesTranslationsJsonV4["data"]["TagLine"].ToString();
 
-            IEnumerable<string> aliases = downloadSeriesTranslationsJsonV4["data"]["aliases"]?.OfType<string>();
+            IEnumerable<string> aliases = downloadSeriesTranslationsJsonV4["data"]["aliases"]?.Select(x => x.ToString());
             if (aliases == null)
             {
                 return;

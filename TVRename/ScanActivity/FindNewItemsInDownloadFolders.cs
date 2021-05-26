@@ -46,10 +46,10 @@ namespace TVRename
             IEnumerable<FileInfo> possibleShowNames = GetPossibleShowNameStrings();
             List<MediaConfiguration> addedShows = FinderHelper.FindMedia(possibleShowNames, MDoc, settings.Owner);
 
-            IEnumerable<ShowConfiguration> addedTvShows = addedShows.OfType<ShowConfiguration>();
+            List<ShowConfiguration> addedTvShows = addedShows.OfType<ShowConfiguration>().ToList();
             if (addedTvShows.Any())
             {
-                MDoc.TvLibrary.AddRange(addedTvShows);
+                MDoc.TvLibrary.AddNullableRange(addedTvShows);
                 MDoc.TvAddedOrEdited(true, false, false, settings.Owner, addedTvShows);
                 //add each new show into the shows being scanned
                 foreach (ShowConfiguration si in addedTvShows)
@@ -59,10 +59,10 @@ namespace TVRename
                 LOGGER.Info("Added new shows called: {0}", addedTvShows.Select(s => s.ShowName).ToCsv());
             }
 
-            IEnumerable<MovieConfiguration> addedMovies = addedShows.OfType<MovieConfiguration>();
+            List<MovieConfiguration> addedMovies = addedShows.OfType<MovieConfiguration>().ToList();
             if (addedMovies.Any())
             {
-                MDoc.FilmLibrary.AddRange(addedMovies);
+                MDoc.FilmLibrary.AddNullableRange(addedMovies);
                 MDoc.MoviesAddedOrEdited(true, false, false, settings.Owner, addedMovies);
 
                 foreach (MovieConfiguration si in addedMovies)

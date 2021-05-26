@@ -24,9 +24,9 @@ namespace TVRename
 
         void UpdatesDoneOk();
 
-        CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox, Locale preferredLocale);
+        CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox, Locale preferredLocale);
 
-        CachedSeriesInfo GetSeries(int id);
+        CachedSeriesInfo? GetSeries(int? id);
 
         bool HasSeries(int id);
 
