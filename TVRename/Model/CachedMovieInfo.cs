@@ -195,13 +195,7 @@ namespace TVRename
                 SrvLastUpdated = seriesXml.ExtractLong("lastupdated") ?? seriesXml.ExtractLong("lastUpdated", 0);
                 int? languageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId");
                 string regionCode = seriesXml.ExtractString("RegionCode");
-                ActualLocale =
-                    languageId.HasValue && regionCode.HasValue() ? new Locale(
-                        Regions.Instance.RegionFromCode(regionCode),
-                        Languages.Instance.GetLanguageFromId(languageId.Value))
-                    : languageId.HasValue ? new Locale(Languages.Instance.GetLanguageFromId(languageId.Value))
-                    : regionCode.HasValue() ? new Locale(Regions.Instance.RegionFromCode(regionCode))
-                    : new Locale();
+                ActualLocale = GetLocale(languageId, regionCode);
 
                 CollectionId = seriesXml.ExtractInt("CollectionId");
                 Popularity = seriesXml.ExtractDouble("Popularity") ?? 0;
@@ -254,8 +248,8 @@ namespace TVRename
             writer.WriteElement("TMDBCode", TmdbCode);
             writer.WriteElement("SeriesName", Name);
             writer.WriteElement("lastupdated", SrvLastUpdated);
-            writer.WriteElement("LanguageId", ActualLocale.PreferredLanguage?.TVDBId);
-            writer.WriteElement("RegionCode", ActualLocale.PreferredRegion?.Abbreviation);
+            writer.WriteElement("LanguageId", ActualLocale?.PreferredLanguage?.TVDBId);
+            writer.WriteElement("RegionCode", ActualLocale?.PreferredRegion?.Abbreviation);
             writer.WriteElement("CollectionId", CollectionId);
             writer.WriteElement("CollectionName", CollectionName);
             writer.WriteElement("TwitterId", TwitterId);

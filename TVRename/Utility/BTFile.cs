@@ -12,7 +12,7 @@ namespace TVRename
             Items = new List<BTItem>();
         }
 
-        public List<string> AllFilesInTorrent()
+        public List<string>? AllFilesInTorrent()
         {
             List<string> r = new List<string>();
 
@@ -40,7 +40,9 @@ namespace TVRename
                 foreach (BTItem it in fileList.Items)
                 {
                     BTDictionary file = (BTDictionary)(it);
-                    BTItem thePath = file.GetItem("path");
+                    BTItem? thePath = file.GetItem("path");
+                    if (thePath == null)
+                        return null;
                     if (thePath.Type != BTChunk.kList)
                         return null;
 
@@ -66,7 +68,7 @@ namespace TVRename
                 t.Tree(n.Nodes);
         }
 
-        public BTItem GetItem(string key)
+        public BTItem? GetItem(string key)
         {
             return GetItem(key, false);
         }
@@ -80,7 +82,7 @@ namespace TVRename
             return (BTDictionary)(Items[0]);
         }
 
-        public BTItem GetItem(string key, bool ignoreCase)
+        public BTItem? GetItem(string key, bool ignoreCase)
         {
             if (Items.Count == 0)
                 return null;

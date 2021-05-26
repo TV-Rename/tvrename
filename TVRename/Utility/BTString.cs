@@ -35,7 +35,7 @@ namespace TVRename
             return enc.GetString(Data);
         }
 
-        public byte[] StringTwentyBytePiece(int pieceNum)
+        public byte[]? StringTwentyBytePiece(int pieceNum)
         {
             byte[] res = new byte[20];
             if (((pieceNum * 20) + 20) > Data.Length)

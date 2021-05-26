@@ -44,7 +44,7 @@ namespace TVRename.Forms
 
         public bool TopRated => result.TopRated;
         public bool Trending => result.Trending;
-        public string? Language => cachedMediaInfo.ShowLanguage;
+        public string? Language => cachedMediaInfo?.ShowLanguage;
 
         //Star score is out of 5 stars, we produce a 'normlised' result by adding a top mark 10/10 and a bottom mark 1/10 and recalculating
         //this is to stop a show with one 10/10 vote looking too good, this normalises it back if the number of votes is small

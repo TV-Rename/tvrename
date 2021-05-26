@@ -22,7 +22,7 @@ namespace TVRename
         {
         }
 
-        public DirCache(SetProgressDelegate progress, string folder, bool subFolders)
+        public DirCache(SetProgressDelegate? progress, string folder, bool subFolders)
         {
             BuildDirCache(progress, 0, 0, folder, subFolders);
         }

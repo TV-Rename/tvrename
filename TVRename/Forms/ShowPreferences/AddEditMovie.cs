@@ -175,10 +175,10 @@ namespace TVRename
         private void SetupRegions([NotNull] MovieConfiguration si)
         {
             chkCustomRegion.Checked = si.UseCustomRegion;
-            if (chkCustomLanguage.Checked)
+            if (chkCustomRegion.Checked)
             {
-                Region r =
-                    Regions.Instance.RegionFromCode(si.CustomRegionCode);
+                Region? r = si.CustomRegionCode.HasValue() ?
+                    Regions.Instance.RegionFromCode(si.CustomRegionCode!) : Regions.Instance.FallbackRegion;
 
                 if (r != null)
                 {

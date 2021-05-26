@@ -32,7 +32,7 @@ namespace TVRename
             }
         }
 
-        public Language FallbackLanguage => GetLanguageFromCode("en");
+        public Language FallbackLanguage => GetLanguageFromCode("en")!;
 
         private Languages()
         {

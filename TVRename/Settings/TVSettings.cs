@@ -218,8 +218,8 @@ namespace TVRename
         public bool qBitTorrentDownloadFilesFirst = true;
         public TVDoc.ProviderType DefaultProvider = TVDoc.ProviderType.TheTVDB;
 
-        public Language? TMDBLanguage;
-        public Region? TMDBRegion;
+        public Language TMDBLanguage;
+        public Region TMDBRegion;
         public float TMDBPercentDirty;
         public bool IncludeMoviesQuickRecent;
 
@@ -446,6 +446,10 @@ namespace TVRename
             keepTogetherExtensionsString = keepTogetherExtensionsStringDEFAULT;
             subtitleExtensionsString = subtitleExtensionsStringDEFAULT;
 
+            PreferredTVDBLanguage = Languages.Instance.FallbackLanguage;
+            TMDBLanguage = Languages.Instance.FallbackLanguage;
+            TMDBRegion = Regions.Instance.FallbackRegion;
+
             DefShowLocation = string.Empty;
 
             // have a guess at utorrent's path
@@ -603,7 +607,7 @@ namespace TVRename
             writer.WriteElement("SABAPIKey", SABAPIKey);
             writer.WriteElement("CheckSABnzbd", CheckSABnzbd);
             writer.WriteElement("SABHostPort", SABHostPort);
-            writer.WriteElement("PreferredLanguage", PreferredTVDBLanguage?.Abbreviation ?? Languages.Instance.FallbackLanguage.Abbreviation);
+            writer.WriteElement("PreferredLanguage", PreferredTVDBLanguage.Abbreviation);
             writer.WriteElement("WTWDoubleClick", (int)WTWDoubleClick);
             writer.WriteElement("EpJPGs", EpJPGs);
             writer.WriteElement("SeriesJpg", SeriesJpg);
@@ -685,8 +689,8 @@ namespace TVRename
             writer.WriteElement("StopJackettSearchOnFullScan", StopJackettSearchOnFullScan);
             writer.WriteElement("AutoSaveOnExit", AutoSaveOnExit);
 
-            writer.WriteElement("TMDBLanguage", TMDBLanguage?.ISODialectAbbreviation ?? Languages.Instance.FallbackLanguage.ISODialectAbbreviation);
-            writer.WriteElement("TMDBRegion", TMDBRegion?.Abbreviation ?? Regions.Instance.FallbackRegion.Abbreviation);
+            writer.WriteElement("TMDBLanguage", TMDBLanguage.ISODialectAbbreviation);
+            writer.WriteElement("TMDBRegion", TMDBRegion.Abbreviation);
             writer.WriteElement("TMDBPercentDirty", TMDBPercentDirty);
             writer.WriteElement("IncludeMoviesQuickRecent", IncludeMoviesQuickRecent);
 
@@ -877,11 +881,11 @@ namespace TVRename
             return s.IsValidDirectory();
         }
 
-        public static bool OKPath([NotNull] string s, bool EmptyOK)
+        public static bool OKPath(string? s, bool EmptyOK)
         {
-            if (!EmptyOK && string.IsNullOrEmpty(s))
+            if (string.IsNullOrEmpty(s))
             {
-                return false;
+                return EmptyOK;
             }
 
             if (s.IsWebLink())
@@ -1418,7 +1422,7 @@ namespace TVRename
             SABAPIKey = xmlSettings.ExtractString("SABAPIKey");
             CheckSABnzbd = xmlSettings.ExtractBool("CheckSABnzbd", false);
             SABHostPort = xmlSettings.ExtractString("SABHostPort");
-            PreferredTVDBLanguage = Languages.Instance.GetLanguageFromCode(xmlSettings.ExtractString("PreferredLanguage", "en"));
+            PreferredTVDBLanguage = Languages.Instance.GetLanguageFromCode(xmlSettings.ExtractString("PreferredLanguage", "en")) ?? Languages.Instance.FallbackLanguage;
             WTWDoubleClick = xmlSettings.ExtractEnum("WTWDoubleClick", WTWDoubleClickAction.Scan);
             ExportMissingXML = xmlSettings.ExtractBool("ExportMissingXML", false);
             ExportMissingXMLTo = xmlSettings.ExtractString("ExportMissingXMLTo");

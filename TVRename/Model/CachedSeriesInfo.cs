@@ -296,14 +296,7 @@ namespace TVRename
                 SrvLastUpdated = seriesXml.ExtractLong("lastupdated") ?? seriesXml.ExtractLong("lastUpdated", 0);
                 int? languageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId");
                 string regionCode = seriesXml.ExtractString("RegionCode");
-                ActualLocale =
-                    languageId.HasValue && regionCode.HasValue() ? new Locale(
-                        Regions.Instance.RegionFromCode(regionCode),
-                        Languages.Instance.GetLanguageFromId(languageId.Value))
-                    : languageId.HasValue ? new Locale(Languages.Instance.GetLanguageFromId(languageId.Value))
-                    : regionCode.HasValue() ? new Locale(Regions.Instance.RegionFromCode(regionCode))
-                    : new Locale();
-
+                ActualLocale = GetLocale(languageId, regionCode);
                 string airsTimeString = seriesXml.ExtractStringOrNull("Airs_Time") ?? seriesXml.ExtractString("airsTime");
                 AirsTime = JsonHelper.ParseAirTime(airsTimeString);
 
@@ -370,7 +363,7 @@ namespace TVRename
 
             if (r.ContainsKey("genre"))
             {
-                Genres = r["genre"]?.Select(x => x.Value<string>().Trim()).Distinct().ToList() ?? new List<string>();
+                Genres = r["genre"]?.Select(x => x.Value<string>()?.Trim()).Distinct().ToList() ?? new List<string>();
             }
 
             TvdbCode = (int)r["id"];
@@ -460,8 +453,8 @@ namespace TVRename
             writer.WriteElement("TMDBCode", TmdbCode);
             writer.WriteElement("SeriesName", Name);
             writer.WriteElement("lastupdated", SrvLastUpdated);
-            writer.WriteElement("LanguageId", ActualLocale.PreferredLanguage?.TVDBId);
-            writer.WriteElement("RegionCode", ActualLocale.PreferredRegion?.Abbreviation);
+            writer.WriteElement("LanguageId", ActualLocale?.PreferredLanguage?.TVDBId);
+            writer.WriteElement("RegionCode", ActualLocale?.PreferredRegion?.Abbreviation);
             writer.WriteElement("airsDayOfWeek", AirsDay);
             writer.WriteElement("Airs_Time", AirsTime?.ToString("HH:mm"), true);
             writer.WriteElement("banner", BannerString);

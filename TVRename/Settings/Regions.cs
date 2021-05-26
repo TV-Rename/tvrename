@@ -33,7 +33,7 @@ namespace TVRename
 
         public IEnumerable<string> EnglishNames => this.Select(r => r.EnglishName);
 
-        public Region FallbackRegion => RegionFromCode("US");
+        public Region FallbackRegion => RegionFromCode("US")!;
 
         private Regions()
         {
@@ -284,7 +284,7 @@ namespace TVRename
             return this.SingleOrDefault(x => x.Abbreviation == regionCode);
         }
 
-        public Region? RegionFromName(string regionName)
+        public Region? RegionFromName(string? regionName)
         {
             return this.SingleOrDefault(x => x.EnglishName == regionName);
         }

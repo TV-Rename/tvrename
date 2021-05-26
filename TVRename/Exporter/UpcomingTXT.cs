@@ -43,16 +43,16 @@ namespace TVRename
 
             if (!stTime.HasValue)
             {
-                return null;
+                return string.Empty;
             }
 
             string niceName = TVSettings.Instance.NamingStyle.NameFor(ei);
             DateTime startTime = stTime.Value;
 
-            return FormattedLine(niceName, ei.TheCachedSeries.Network, startTime.ToString("ddd, d MMM"), startTime.ToString("HH:mm"));
+            return FormattedLine(niceName, ei.TheCachedSeries.Network ?? string.Empty, startTime.ToString("ddd, d MMM"), startTime.ToString("HH:mm"));
         }
 
-        private string FormattedLine(string niceName, string? network, string day, string time)
+        private string FormattedLine(string niceName, string network, string day, string time)
         {
             return $"{day,-15} {time,-10} {network.First(15),-15} {niceName.First(80),-80}";
         }

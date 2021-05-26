@@ -46,18 +46,15 @@ namespace TVRename
         {
             return System.Linq.Enumerable.Any(arr, it =>
              {
-                 T typed;
                  try
                  {
-                     typed = it.ToObject<T>();
+                     return it.ToObject<T>()?.Equals(item) ?? false;
                  }
                  catch (Newtonsoft.Json.JsonException e)
                  {
                      Console.WriteLine("Couldn't parse array item {0} as type {1}: {2}", it, typeof(T), e);
                      return false;
                  }
-
-                 return typed.Equals(item);
              });
         }
 

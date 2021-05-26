@@ -46,7 +46,7 @@ namespace TVRename
             }
             if (SingleMovieFound)
             {
-                SetMovieItem(movieCodeFinder.MovieInitialFoundCode, movieCodeFinder.Source, TVSettings.Instance.DefMovieDefaultLocation);
+                SetMovieItem(movieCodeFinder.MovieInitialFoundCode, movieCodeFinder.Source, TVSettings.Instance.DefMovieDefaultLocation ?? string.Empty);
                 if (MovieConfiguration.Code == -1)
                 {
                     SetMovieItem();

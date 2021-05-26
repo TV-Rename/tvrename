@@ -1404,8 +1404,9 @@ namespace TVRename
 
         private void UpdateTvTrailer(ShowConfiguration? si)
         {
-            if (si.CachedShow?.TrailerUrl?.HasValue() ?? false)
+            if (si?.CachedShow?.TrailerUrl?.HasValue() ?? false)
             {
+                // ReSharper disable once AssignNullToNotNullAttribute
                 SetHtmlEmbed(chrTvTrailer, ShowHtmlHelper.YoutubeTrailer(si.CachedShow));
             }
             else
@@ -3186,6 +3187,7 @@ namespace TVRename
             SetHtmlBody(chrMovieInformation, si.GetMovieHtmlOverview(false));
             if (si.CachedMovie?.TrailerUrl?.HasValue() ?? false)
             {
+                // ReSharper disable once AssignNullToNotNullAttribute
                 SetHtmlEmbed(chrMovieTrailer, ShowHtmlHelper.YoutubeTrailer(si.CachedMovie));
             }
             else
@@ -3428,21 +3430,23 @@ namespace TVRename
             bool hidden = WindowState == FormWindowState.Minimized;
             SetupScanUi(hidden);
             MoreBusy();
-            this.bwScan.RunWorkerAsync(new TVDoc.ScanSettings(shows, movies, unattended, hidden, st, cts.Token, media, this, scanProgDlg));
+            this.bwScan.RunWorkerAsync(new TVDoc.ScanSettings(shows??new List<ShowConfiguration>(), movies??new List<MovieConfiguration>(), unattended, hidden, st, cts.Token, media, this, scanProgDlg));
             ShowDialogAndWait(cts);
         }
 
         private void ShowDialogAndWait(CancellationTokenSource cts)
         {
-            if (scanProgDlg != null)
+            if (scanProgDlg == null)
             {
-                this.ShowChildDialog(scanProgDlg);
-                DialogResult ccresult = scanProgDlg.DialogResult;
+                return;
+            }
 
-                if (ccresult == DialogResult.Cancel)
-                {
-                    cts.Cancel();
-                }
+            ShowChildDialog(scanProgDlg);
+
+            // ReSharper disable once PossibleNullReferenceException
+            if (scanProgDlg.DialogResult == DialogResult.Cancel)
+            {
+                cts.Cancel();
             }
         }
 
@@ -3459,7 +3463,7 @@ namespace TVRename
         {
             AskUserAboutShowProblems(false); // todo, reitroduce unattended);
             LessBusy();
-            scanProgDlg.Close();
+            scanProgDlg?.Close();
             FillMyShows(); // scanning can download more info to be displayed in my shows
             FillMyMovies();
             FillActionList(false);

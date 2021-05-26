@@ -16,9 +16,9 @@ namespace TVRename
 
         void UpdatesDoneOk();
 
-        CachedMovieInfo GetMovie(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox);
+        CachedMovieInfo? GetMovie(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox);
 
-        CachedMovieInfo GetMovie(int? id);
+        CachedMovieInfo? GetMovie(int? id);
 
         bool HasMovie(int id);
 

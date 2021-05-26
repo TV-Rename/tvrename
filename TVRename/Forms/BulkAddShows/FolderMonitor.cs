@@ -394,9 +394,9 @@ namespace TVRename
                 return;
             }
 
-            foreach (ListViewItem lvi in lvFMNewShows.SelectedItems)
+            foreach (PossibleNewTvShow ai in lvFMNewShows.SelectedItems.Cast<ListViewItem>()
+                .Select(lvi => (PossibleNewTvShow)lvi.Tag))
             {
-                PossibleNewTvShow ai = (PossibleNewTvShow)lvi.Tag;
                 TVSettings.Instance.IgnoreFolders.Add(ai.Folder.FullName.ToLower());
                 engine.AddItems.Remove(ai);
             }
@@ -493,16 +493,13 @@ namespace TVRename
 
         private void UpdateListItem(PossibleNewTvShow ai, bool makevis)
         {
-            foreach (ListViewItem lvi in lvFMNewShows.Items)
+            foreach (ListViewItem lvi in lvFMNewShows.Items.Cast<ListViewItem>().Where(lvi => lvi.Tag == ai))
             {
-                if (lvi.Tag == ai)
-                {
-                    UpdateResultEntry(ai, lvi);
+                UpdateResultEntry(ai, lvi);
 
-                    if (makevis)
-                    {
-                        lvi.EnsureVisible();
-                    }
+                if (makevis)
+                {
+                    lvi.EnsureVisible();
                 }
             }
         }
@@ -535,25 +532,24 @@ namespace TVRename
                 return;
             }
 
-            if (fme.CodeKnown)
+            if (!fme.CodeKnown)
             {
-                switch (fme.Provider)
-                {
-                    case TVDoc.ProviderType.TheTVDB:
-                        Helpers.OpenUrl(TheTVDB.API.WebsiteShowUrl(fme.ProviderCode));
-                        break;
+                return;
+            }
 
-                    case TVDoc.ProviderType.TVmaze:
-                        Helpers.OpenUrl(TVmaze.LocalCache.Instance.GetSeries(fme.ProviderCode)?.WebUrl);
-                        break;
+            switch (fme.Provider)
+            {
+                case TVDoc.ProviderType.TheTVDB:
+                    Helpers.OpenUrl(TheTVDB.API.WebsiteShowUrl(fme.ProviderCode));
+                    break;
 
-                    case TVDoc.ProviderType.TMDB:
-                        Helpers.OpenUrl($"https://www.themoviedb.org/tv/{fme.ProviderCode}");
-                        break;
+                case TVDoc.ProviderType.TVmaze:
+                    Helpers.OpenUrl(TVmaze.LocalCache.Instance.GetSeries(fme.ProviderCode)?.WebUrl ?? string.Empty);
+                    break;
 
-                    default:
-                        break;
-                }
+                case TVDoc.ProviderType.TMDB:
+                    Helpers.OpenUrl($"https://www.themoviedb.org/tv/{fme.ProviderCode}");
+                    break;
             }
         }
 

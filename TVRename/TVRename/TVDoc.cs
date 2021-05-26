@@ -168,7 +168,7 @@ namespace TVRename
 
             foreach (ShowConfiguration? show in TvLibrary.Shows)
             {
-                CachedSeriesInfo? cachedData = show?.CachedShow;
+                CachedSeriesInfo? cachedData = show.CachedShow;
                 if (cachedData is null)
                 {
                     continue;
@@ -287,7 +287,7 @@ namespace TVRename
             }
         }
 
-        public bool DoDownloadsFG(bool unattended, bool tvrMinimised, UI owner)
+        public bool DoDownloadsFg(bool unattended, bool tvrMinimised, UI owner)
         {
             List<ISeriesSpecifier> idsToDownload = new List<ISeriesSpecifier>(TvLibrary);
             idsToDownload.AddRange(FilmLibrary);
@@ -295,7 +295,7 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        public bool DoDownloadsFGNow(bool unattended, bool tvrMinimised, UI owner, List<ISeriesSpecifier>? passedShows)
+        public bool DoDownloadsFGNow(bool unattended, bool tvrMinimised, UI owner, List<ISeriesSpecifier> passedShows)
         {
             bool showProgress = !Args.Hide && Environment.UserInteractive && !tvrMinimised;
             bool showMsgBox = !unattended && !Args.Unattended && !Args.Hide && Environment.UserInteractive;
@@ -406,9 +406,9 @@ namespace TVRename
 
         private void UpdateNamesFromCache()
         {
-            foreach (ShowConfiguration? show in TvLibrary.Shows)
+            foreach (ShowConfiguration show in TvLibrary.Shows)
             {
-                CachedSeriesInfo? cachedData = show?.CachedShow;
+                CachedSeriesInfo? cachedData = show.CachedShow;
                 if (cachedData is null)
                 {
                     continue;
@@ -682,7 +682,7 @@ namespace TVRename
         {
             if (download)
             {
-                if (!DoDownloadsFG(unattended, hidden, owner))
+                if (!DoDownloadsFg(unattended, hidden, owner))
                 {
                     return;
                 }
@@ -750,7 +750,7 @@ namespace TVRename
                     return;
                 }
 
-                if (!DoDownloadsFG(settings.Unattended, settings.Hidden, settings.Owner))
+                if (!DoDownloadsFg(settings.Unattended, settings.Hidden, settings.Owner))
                 {
                     Logger.Warn("Scan stopped as updates failed");
                     return;
@@ -835,14 +835,14 @@ namespace TVRename
             public readonly bool Unattended;
             public readonly bool Hidden;
             public readonly TVSettings.ScanType Type;
-            public List<ShowConfiguration>? Shows;
-            public List<MovieConfiguration>? Movies;
+            public List<ShowConfiguration> Shows;
+            public List<MovieConfiguration> Movies;
             public readonly CancellationToken Token;
             public readonly UI Owner;
             public readonly MediaConfiguration.MediaType Media;
-            public readonly ScanProgress UpdateUi;
+            public readonly ScanProgress? UpdateUi;
 
-            public ScanSettings(List<ShowConfiguration>? shows, List<MovieConfiguration>? movies, bool unattended, bool hidden, TVSettings.ScanType st, CancellationToken tok, MediaConfiguration.MediaType media, UI owner, ScanProgress updateUi)
+            public ScanSettings(List<ShowConfiguration> shows, List<MovieConfiguration> movies, bool unattended, bool hidden, TVSettings.ScanType st, CancellationToken tok, MediaConfiguration.MediaType media, UI owner, ScanProgress? updateUi)
             {
                 Shows = shows;
                 Movies = movies;
@@ -855,7 +855,7 @@ namespace TVRename
                 UpdateUi = updateUi;
             }
 
-            public bool AnyMediaToUpdate => (Shows?.Any() ?? false) || (Movies?.Any() ?? false);
+            public bool AnyMediaToUpdate => (Shows.Any()) || (Movies.Any());
 
             public bool Equals(ScanSettings other) =>
                 Shows == other.Shows &&
@@ -867,7 +867,7 @@ namespace TVRename
                 Owner == other.Owner &&
                 Media == other.Media;
 
-            public void UpdateShowsAndMovies(List<ShowConfiguration>? shows, List<MovieConfiguration>? movies)
+            public void UpdateShowsAndMovies(List<ShowConfiguration> shows, List<MovieConfiguration> movies)
             {
                 Shows = shows;
                 Movies = movies;
@@ -1073,7 +1073,8 @@ namespace TVRename
             foreach (IGrouping<ItemMissing, ActionTDownload> epGroup in TheActionList.DownloadTorrents
                 .GroupBy(item => item.UndoItemMissing)
                 .Where(items => items.Count() > 1)
-                .OrderBy(grouping => grouping.Key.Show.ShowName))
+                .Where(items => items.Key!=null)
+                .OrderBy(grouping => grouping.Key?.Show.ShowName))
             {
                 List<ActionTDownload> actions = epGroup.ToList();
 
@@ -1458,11 +1459,11 @@ namespace TVRename
             }
 
             PreventAutoScan("Force Refresh");
-            List<MovieConfiguration>? movieConfigurations = sis?.ToList();
+            List<MovieConfiguration> movieConfigurations = sis.ToList();
 
             foreach (MovieConfiguration si in movieConfigurations)
             {
-                iMovieSource? cache = GetMovieCache(si.Provider);
+                iMovieSource cache = GetMovieCache(si.Provider);
                 cache.ForgetMovie(si);
             }
             DoDownloadsFG(unattended, tvrMinimised, owner, movieConfigurations);

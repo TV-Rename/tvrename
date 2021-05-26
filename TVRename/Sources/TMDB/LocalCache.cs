@@ -373,12 +373,12 @@ namespace TVRename.TMDB
             latestMovieUpdateTime.RecordSuccessfulUpdate();
         }
 
-        public CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox, Locale preferredLocale)
+        public CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox, Locale preferredLocale)
         {
             throw new NotImplementedException(); //todo - (BulkAdd Manager needs to work for new providers)
         }
 
-        public CachedMovieInfo GetMovie(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) => GetMovie(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
+        public CachedMovieInfo? GetMovie(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) => GetMovie(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
 
         public CachedMovieInfo? GetMovie(string hint, int? possibleYear, Locale preferredLocale, bool showErrorMsgBox, bool useMostPopularMatch)
         {

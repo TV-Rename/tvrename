@@ -111,7 +111,7 @@ namespace TVRename
             return e;
         }
 
-        public BTFile Load(string filename)
+        public BTFile? Load(string filename)
         {
             BTFile f = new BTFile();
 

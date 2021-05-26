@@ -7,8 +7,8 @@ namespace TVRename
     public abstract class BTCore
     {
         protected bool DoHashChecking;
-        protected DirCache FileCache;
-        protected string FileCacheIsFor;
+        protected DirCache? FileCache;
+        protected string? FileCacheIsFor;
         protected bool FileCacheWithSubFolders;
         protected Dictionary<string, List<HashCacheItem>> HashCache;
         protected SetProgressDelegate SetProg;
@@ -23,7 +23,7 @@ namespace TVRename
             FileCacheWithSubFolders = false;
         }
 
-        protected void Prog(int percent, string message) => SetProg?.Invoke(percent, message);
+        protected void Prog(int percent, string message) => SetProg(percent, message);
 
         protected abstract bool NewTorrentEntry(string torrentFile, int numberInTorrent);
 
@@ -35,10 +35,12 @@ namespace TVRename
 
         protected abstract bool FinishedTorrentEntry(string torrentFile, int numberInTorrent, string filename);
 
-        private FileInfo FindLocalFileWithHashAt(byte[] findMe, long whereInFile, long pieceSize, long fileSize)
+        private FileInfo? FindLocalFileWithHashAt(byte[] findMe, long whereInFile, long pieceSize, long fileSize)
         {
-            if (whereInFile < 0)
+            if (whereInFile < 0 || FileCache is null)
+            {
                 return null;
+            }
 
             foreach (DirCacheEntry dc in FileCache)
             {
@@ -46,7 +48,9 @@ namespace TVRename
                 long flen = dc.Length;
 
                 if ((flen != fileSize) || (flen < (whereInFile + pieceSize))) // this file is wrong size || too small
+                {
                     continue;
+                }
 
                 byte[] theHash = CheckCache(fiTemp.FullName, whereInFile, pieceSize, fileSize);
                 if (theHash is null)
@@ -84,21 +88,25 @@ namespace TVRename
                 }
 
                 if (allGood)
+                {
                     return fiTemp;
+                }
             } // while enum
 
             return null;
         }
 
-        protected void CacheThis(string filename, long whereInFile, long piecesize, long fileSize, byte[] hash)
+        private void CacheThis(string filename, long whereInFile, long piecesize, long fileSize, byte[] hash)
         {
             if (!HashCache.ContainsKey(filename))
+            {
                 HashCache[filename] = new List<HashCacheItem>();
+            }
 
             HashCache[filename].Add(new HashCacheItem(whereInFile, piecesize, fileSize, hash));
         }
 
-        protected byte[] CheckCache(string filename, long whereInFile, long piecesize, long fileSize)
+        private byte[]? CheckCache(string filename, long whereInFile, long piecesize, long fileSize)
         {
             if (HashCache.ContainsKey(filename))
             {
@@ -125,35 +133,37 @@ namespace TVRename
             }
         }
 
-        public bool ProcessTorrentFile(string torrentFile, TreeView tvTree, CommandLineArgs args)
+        protected bool ProcessTorrentFile(string torrentFile, TreeView? tvTree, CommandLineArgs args)
         {
             // ----------------------------------------
             // read in torrent file
 
-            if (tvTree != null)
-                tvTree.Nodes.Clear();
+            tvTree?.Nodes.Clear();
 
             BEncodeLoader bel = new BEncodeLoader();
-            BTFile btFile = bel.Load(torrentFile);
+            BTFile? btFile = bel.Load(torrentFile);
 
-            if (btFile is null)
+            BTItem? bti = btFile?.GetItem("info");
+            if (bti is null || (bti.Type != BTChunk.kDictionary))
+            {
                 return false;
-
-            BTItem bti = btFile.GetItem("info");
-            if ((bti is null) || (bti.Type != BTChunk.kDictionary))
-                return false;
+            }
 
             BTDictionary infoDict = (BTDictionary)(bti);
 
             bti = infoDict.GetItem("piece length");
             if ((bti is null) || (bti.Type != BTChunk.kInteger))
+            {
                 return false;
+            }
 
             long pieceSize = ((BTInteger)bti).Value;
 
             bti = infoDict.GetItem("pieces");
             if ((bti is null) || (bti.Type != BTChunk.kString))
+            {
                 return false;
+            }
 
             BTString torrentPieces = (BTString)(bti);
 
@@ -163,24 +173,37 @@ namespace TVRename
             {
                 bti = infoDict.GetItem("name");
                 if ((bti is null) || (bti.Type != BTChunk.kString))
+                {
                     return false;
+                }
 
                 BTString di = (BTString)(bti);
                 string nameInTorrent = di.AsString();
 
-                BTItem fileSizeI = infoDict.GetItem("length");
-                long fileSize = ((BTInteger)fileSizeI).Value;
+                BTItem? fileSizeI = infoDict.GetItem("length");
+                if (!(fileSizeI is BTInteger btInteger))
+                {
+                    return false;
+                }
+                long fileSize = btInteger.Value;
 
                 NewTorrentEntry(torrentFile, -1);
                 if (DoHashChecking)
                 {
                     byte[] torrentPieceHash = torrentPieces.StringTwentyBytePiece(0);
-
+                    if (torrentPieceHash is null)
+                    {
+                        return false;
+                    }
                     FileInfo fi = FindLocalFileWithHashAt(torrentPieceHash, 0, pieceSize, fileSize);
                     if (fi != null)
+                    {
                         FoundFileOnDiskForFileInTorrent(torrentFile, fi, -1, nameInTorrent);
+                    }
                     else
+                    {
                         DidNotFindFileOnDiskForFileInTorrent(torrentFile, -1, nameInTorrent);
+                    }
                 }
 
                 FinishedTorrentEntry(torrentFile, -1, nameInTorrent);
@@ -193,7 +216,9 @@ namespace TVRename
                 long lastPieceLeftover = 0;
 
                 if (bti.Type != BTChunk.kList)
+                {
                     return false;
+                }
 
                 BTList fileList = (BTList)(bti);
 
@@ -202,46 +227,67 @@ namespace TVRename
                 {
                     Prog(100 * i / fileList.Items.Count, i.ToString());
                     if (fileList.Items[i].Type != BTChunk.kDictionary)
+                    {
                         return false;
+                    }
 
                     BTDictionary file = (BTDictionary)(fileList.Items[i]);
                     BTItem thePath = file.GetItem("path");
-                    if (thePath.Type != BTChunk.kList)
+                    if (thePath is null || thePath.Type != BTChunk.kList)
+                    {
                         return false;
+                    }
 
                     BTList pathList = (BTList)(thePath);
                     // want the last of the items in the list, which is the filename itself
                     int n = pathList.Items.Count - 1;
                     if (n < 0)
+                    {
                         return false;
+                    }
 
                     BTString fileName = (BTString)(pathList.Items[n]);
 
-                    BTItem fileSizeI = file.GetItem("length");
-                    long fileSize = ((BTInteger)fileSizeI).Value;
+                    BTItem? fileSizeI = file.GetItem("length");
+                    if (!(fileSizeI is BTInteger btInteger))
+                    {
+                        return false;
+                    }
+                    long fileSize = btInteger.Value;
 
                     int pieceNum = (int)(overallPosition / pieceSize);
                     if (overallPosition % pieceSize != 0)
+                    {
                         pieceNum++;
+                    }
 
                     NewTorrentEntry(torrentFile, i);
 
                     if (DoHashChecking)
                     {
-                        byte[] torrentPieceHash = torrentPieces.StringTwentyBytePiece(pieceNum);
-
+                        byte[]? torrentPieceHash = torrentPieces.StringTwentyBytePiece(pieceNum);
+                        if (torrentPieceHash is null)
+                        {
+                            return false;
+                        }
                         FileInfo fi = FindLocalFileWithHashAt(torrentPieceHash, lastPieceLeftover, pieceSize, fileSize);
                         if (fi != null)
+                        {
                             FoundFileOnDiskForFileInTorrent(torrentFile, fi, i, fileName.AsString());
+                        }
                         else
+                        {
                             DidNotFindFileOnDiskForFileInTorrent(torrentFile, i, fileName.AsString());
+                        }
                     }
 
                     FinishedTorrentEntry(torrentFile, i, fileName.AsString());
 
                     int sizeInPieces = (int)(fileSize / pieceSize);
                     if (fileSize % pieceSize != 0)
+                    {
                         sizeInPieces++; // another partial piece
+                    }
 
                     lastPieceLeftover = (lastPieceLeftover + (int)((sizeInPieces * pieceSize) - fileSize)) % pieceSize;
                     overallPosition += fileSize;

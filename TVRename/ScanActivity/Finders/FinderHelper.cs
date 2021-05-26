@@ -750,7 +750,7 @@ namespace TVRename
                         MovieConfiguration newMovie = new MovieConfiguration();
                         newMovie.TmdbCode = foundMovie.TmdbCode;
                         newMovie.UseAutomaticFolders = true;
-                        newMovie.AutomaticFolderRoot = TVSettings.Instance.DefMovieDefaultLocation;
+                        newMovie.AutomaticFolderRoot = TVSettings.Instance.DefMovieDefaultLocation ?? string.Empty;
                         newMovie.Format = MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile;
                         newMovie.UseCustomFolderNameFormat = false;
                         newMovie.ConfigurationProvider = TVDoc.ProviderType.TMDB;
@@ -771,14 +771,14 @@ namespace TVRename
                 if (askForMatch.SingleTvShowFound && !askForMatch.SingleMovieFound && true) //todo use  TVSettings.Instance.AutomateAutoAddWhenOneShowFound
                 {
                     // no need to popup dialog
-                    Logger.Info($"Auto Adding New Show for '{refinedHint}' : {askForMatch.ShowConfiguration.CachedShow.Name}");
+                    Logger.Info($"Auto Adding New Show for '{refinedHint}' : {askForMatch.ShowConfiguration.CachedShow?.Name}");
                     addedShows.Add(askForMatch.ShowConfiguration);
                     doc.Stats().AutoAddedShows++;
                 }
                 else if (askForMatch.SingleMovieFound && !askForMatch.SingleTvShowFound && true) //todo use  TVSettings.Instance.AutomateAutoAddWhenOneMovieFound
                 {
                     // no need to popup dialog
-                    Logger.Info($"Auto Adding New Movie for '{refinedHint}' : {askForMatch.MovieConfiguration.CachedMovie.Name}");
+                    Logger.Info($"Auto Adding New Movie for '{refinedHint}' : {askForMatch.MovieConfiguration.CachedMovie?.Name}");
                     addedShows.Add(askForMatch.MovieConfiguration);
                     doc.Stats().AutoAddedMovies++;
                 }

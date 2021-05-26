@@ -73,7 +73,10 @@ namespace TVRename
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(HTMLHeader(10, col));
             sb.AppendMovie(null, movie, col, false);
-            sb.AppendRecommendation(recommendation, col);
+            if (recommendation != null)
+            {
+                sb.AppendRecommendation(recommendation, col);
+            }
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
         }
@@ -172,10 +175,10 @@ namespace TVRename
 {tableRows}");
         }
 
-        private static void AppendShow(this StringBuilder sb, ShowConfiguration? si, Color backgroundColour,
+        private static void AppendShow(this StringBuilder sb, ShowConfiguration si, Color backgroundColour,
             bool includeDirectoryLinks)
         {
-            CachedSeriesInfo ser = si?.CachedShow;
+            CachedSeriesInfo ser = si.CachedShow;
 
             if (ser is null)
             {
@@ -206,7 +209,7 @@ namespace TVRename
             string tvdbLink = ser.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(ser) : string.Empty;
 
             string urlFilename = includeDirectoryLinks
-                ? Uri.EscapeDataString(si.GetBestFolderLocationToOpen())
+                ? Uri.EscapeDataString(si?.GetBestFolderLocationToOpen() ?? string.Empty)
                 : string.Empty;
             string explorerButton = includeDirectoryLinks
                 ? CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder")
@@ -301,7 +304,7 @@ namespace TVRename
             string tmdbLink = ser.TmdbCode > 0 ? $"https://www.themoviedb.org/movie/{ser.TmdbCode}" : string.Empty;
             string mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
 
-            string urlFilename = includeDirectoryLinks ? Uri.EscapeDataString(si.Locations.FirstOrDefault() ?? string.Empty) : string.Empty;
+            string urlFilename = includeDirectoryLinks && si != null ? Uri.EscapeDataString(si.Locations.FirstOrDefault() ?? string.Empty) : string.Empty;
             string explorerButton = includeDirectoryLinks ? CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder") : string.Empty;
             string viewButton = includeDirectoryLinks ? CreateButton($"{UI.WATCH_PROXY}{urlFilename}", "<i class=\"far fa-eye\"></i>", "Watch Now") : string.Empty;
             string facebookButton = ser.FacebookId.HasValue() ? CreateButton($"https://facebook.com/{ser.FacebookId}", "<i class=\"fab fa-facebook\"></i>", "Facebook") : string.Empty;
@@ -1417,12 +1420,12 @@ namespace TVRename
             }
 
             string siteRating = (ser?.SiteRating ?? 0) > 0 ? ser?.SiteRating + "/10" : string.Empty;
-            string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(ser.TvdbCode) : string.Empty;
+            string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(si.TvdbCode) : string.Empty;
             string tmdbLink = si.TmdbCode > 0 ? $"https://www.themoviedb.org/movie/{si.TmdbCode}" : string.Empty;
             string mazeLink = ser?.TvMazeCode > 0 ? ser.WebUrl : string.Empty;
-            string facebookButton = ser.FacebookId.HasValue() ? $"https://facebook.com/{ser.FacebookId}" : string.Empty;
-            string instaButton = ser.InstagramId.HasValue() ? $"https://instagram.com/{ser.InstagramId}" : string.Empty;
-            string twitterButton = ser.TwitterId.HasValue() ? $"https://twitter.com/{ser.TwitterId}" : string.Empty;
+            string facebookButton = ser?.FacebookId.HasValue() ?? false ? $"https://facebook.com/{ser.FacebookId}" : string.Empty;
+            string instaButton = ser?.InstagramId.HasValue() ?? false ? $"https://instagram.com/{ser.InstagramId}" : string.Empty;
+            string twitterButton = ser?.TwitterId.HasValue() ?? false ? $"https://twitter.com/{ser.TwitterId}" : string.Empty;
 
             string tableHtml = string.Empty;
 

@@ -199,8 +199,11 @@ namespace TVRename.Forms
 
         private void lvRecommendations_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
-            RecommendationRow? rr = (e.Item as BrightIdeasSoftware.OLVListItem).RowObject as RecommendationRow;
-
+            RecommendationRow? rr = (e.Item as BrightIdeasSoftware.OLVListItem)?.RowObject as RecommendationRow;
+            if (rr == null)
+            {
+                return;
+            }
             if (rr.Movie != null)
             {
                 UI.SetHtmlBody(chrRecommendationPreview, rr.Movie.GetMovieHtmlOverview(rr));

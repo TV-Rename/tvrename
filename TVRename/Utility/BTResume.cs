@@ -20,7 +20,7 @@ namespace TVRename
         public bool PrioWasSet;
         public ListView Results;
 
-        public BTFile ResumeDat; // resume file, if we're using it
+        public BTFile? ResumeDat; // resume file, if we're using it
         public string ResumeDatPath;
 
         public List<TVSettings.FilenameProcessorRE> Rexps; // used by MatchMissing
@@ -35,13 +35,15 @@ namespace TVRename
             ResumeDatPath = resumeDatFile;
         }
 
-        public BTDictionary GetTorrentDict(string torrentFile)
+        public BTDictionary? GetTorrentDict(string torrentFile)
         {
             // find dictionary for the specified torrent file
 
-            BTItem it = ResumeDat.GetDict().GetItem(torrentFile, true);
+            BTItem? it = ResumeDat?.GetDict().GetItem(torrentFile, true);
             if ((it is null) || (it.Type != BTChunk.kDictionary))
+            {
                 return null;
+            }
 
             BTDictionary dict = (BTDictionary)(it);
             return dict;
@@ -59,7 +61,9 @@ namespace TVRename
                 for (int j = 0; j < 8; j++)
                 {
                     if ((c & 0x01) != 0)
+                    {
                         bitsOn++;
+                    }
 
                     c >>= 1;
                 }
@@ -72,14 +76,23 @@ namespace TVRename
         {
             List<TorrentEntry> r = new List<TorrentEntry>();
 
+            if (ResumeDat is null)
+            {
+                return r;
+            }
+
             BEncodeLoader bel = new BEncodeLoader();
             foreach (BTDictionaryItem dictitem in ResumeDat.GetDict().Items)
             {
                 if ((dictitem.Type != BTChunk.kDictionaryItem))
+                {
                     continue;
+                }
 
                 if ((dictitem.Key == ".fileguard") || (dictitem.Data.Type != BTChunk.kDictionary))
+                {
                     continue;
+                }
 
                 if (dictitem.Data is BTError err)
                 {
@@ -91,30 +104,43 @@ namespace TVRename
 
                 BTItem p = d2.GetItem("prio");
                 if ((p is null) || (p.Type != BTChunk.kString))
+                {
                     continue;
+                }
 
                 BTString prioString = (BTString)(p);
                 string directoryName = Path.GetDirectoryName(ResumeDatPath) + System.IO.Path.DirectorySeparatorChar;
 
                 string torrentFile = dictitem.Key;
                 if (!File.Exists(torrentFile)) // if the torrent file doesn't exist
+                {
                     torrentFile = directoryName + torrentFile; // ..try prepending the resume.dat folder's path to it.
+                }
 
                 if (!File.Exists(torrentFile))
+                {
                     continue; // can't find it.  give up!
+                }
 
                 BTFile tor = bel.Load(torrentFile);
                 if (tor is null)
+                {
                     continue;
+                }
 
                 List<string> a = tor.AllFilesInTorrent();
-                if (a is null) continue;
+                if (a is null)
+                {
+                    continue;
+                }
 
                 int c = 0;
 
                 p = d2.GetItem("path");
                 if ((p is null) || (p.Type != BTChunk.kString))
+                {
                     continue;
+                }
 
                 string defaultFolder = ((BTString)p).AsString();
 
@@ -175,22 +201,32 @@ namespace TVRename
         {
             BTDictionary dict = GetTorrentDict(torrentFile);
             if (dict is null)
+            {
                 return "";
+            }
 
             BTItem p = dict.GetItem("prio");
             if ((p is null) || (p.Type != BTChunk.kString))
+            {
                 return "";
+            }
 
             BTString prioString = (BTString)(p);
             if ((fileNum < 0) || (fileNum > prioString.Data.Length))
+            {
                 return "";
+            }
 
             int pr = prioString.Data[fileNum];
             if (pr == BTPrio.Normal)
+            {
                 return "Normal";
+            }
 
             if (pr == BTPrio.Skip)
+            {
                 return "Skip";
+            }
 
             return pr.ToString();
         }
@@ -198,20 +234,28 @@ namespace TVRename
         private void SetResumePrio(string torrentFile, int fileNum, byte newPrio)
         {
             if (!SetPrios)
+            {
                 return;
+            }
 
             if (fileNum == -1)
+            {
                 fileNum = 0;
+            }
 
             BTDictionary dict = GetTorrentDict(torrentFile);
 
             BTItem p = dict?.GetItem("prio");
             if (p is null || (p.Type != BTChunk.kString))
+            {
                 return;
+            }
 
             BTString prioString = (BTString)(p);
             if ((fileNum < 0) || (fileNum > prioString.Data.Length))
+            {
                 return;
+            }
 
             Altered = true;
             PrioWasSet = true;
@@ -225,7 +269,9 @@ namespace TVRename
 
             BTDictionary dict = GetTorrentDict(torrentFile);
             if (dict is null)
+            {
                 return;
+            }
 
             Altered = true;
 
@@ -233,11 +279,15 @@ namespace TVRename
             {
                 BTItem p = dict.GetItem("path");
                 if (p is null)
+                {
                     dict.Items.Add(new BTDictionaryItem("path", new BTString(toHere)));
+                }
                 else
                 {
                     if (p.Type != BTChunk.kString)
+                    {
                         return;
+                    }
 
                     ((BTString)p).SetString(toHere);
                 }
@@ -255,7 +305,9 @@ namespace TVRename
                 else
                 {
                     if (p.Type != BTChunk.kList)
+                    {
                         return;
+                    }
 
                     theList = (BTList)(p);
                 }
@@ -267,12 +319,16 @@ namespace TVRename
                 foreach (BTItem t in theList.Items)
                 {
                     if (t.Type != BTChunk.kList)
+                    {
                         return;
+                    }
 
                     BTList l2 = (BTList)(t);
                     if ((l2.Items.Count != 2) || (l2.Items[0].Type != BTChunk.kInteger) ||
                         (l2.Items[1].Type != BTChunk.kString))
+                    {
                         return;
+                    }
 
                     int n = (int)((BTInteger)(l2.Items[0])).Value;
                     if (n == fileNum)
@@ -290,12 +346,18 @@ namespace TVRename
                     theList.Items.Add(thisFileList);
                 }
                 else
+                {
                     thisFileList.Items[1] = new BTString(toHere);
+                }
             }
         }
 
-        public void FixFileguard()
+        private void FixFileguard()
         {
+            if (ResumeDat == null)
+            {
+                return;
+            }
             // finally, fix up ".fileguard"
             // this is the SHA1 of the entire file, without the .fileguard
             ResumeDat.GetDict().RemoveItem(".fileguard");
@@ -308,7 +370,7 @@ namespace TVRename
             ResumeDat.GetDict().Items.Add(new BTDictionaryItem(".fileguard", new BTString(newfg)));
         }
 
-        public FileInfo MatchMissing(string torrentFile, int torrentFileNum, string nameInTorrent)
+        public FileInfo? MatchMissing(string torrentFile, int torrentFileNum, string nameInTorrent)
         {
             // returns true if we found a match (if actSetPrio is on, true also means we have set a priority for this file)
             string simplifiedfname = nameInTorrent.CompareName();
@@ -316,7 +378,9 @@ namespace TVRename
             foreach (Item action1 in MissingList)
             {
                 if ((!(action1 is ItemMissing)) && (!(action1 is ItemDownloading)))
+                {
                     continue;
+                }
 
                 ProcessedEpisode m = action1.Episode;
                 string name = null;
@@ -336,7 +400,9 @@ namespace TVRename
                 }
 
                 if ((m is null) || string.IsNullOrEmpty(name))
+                {
                     continue;
+                }
 
                 // see if the show name matches...
                 if (FileHelper.SimplifyAndCheckFilename(simplifiedfname, m.TheCachedSeries.Name, false, true))
@@ -354,7 +420,9 @@ namespace TVRename
                         string ext = (p == -1) ? "" : nameInTorrent.Substring(p);
                         AlterResume(torrentFile, torrentFileNum, name + ext);
                         if (SetPrios)
+                        {
                             SetResumePrio(torrentFile, torrentFileNum, BTPrio.Normal);
+                        }
 
                         return new FileInfo(name + ext);
                     }
@@ -364,17 +432,23 @@ namespace TVRename
             return null;
         }
 
-        public void WriteResumeDat()
+        private void WriteResumeDat()
         {
+            if (ResumeDat == null)
+            {
+                return;
+            }
             FixFileguard();
             // write out new resume.dat file
             string to = ResumeDatPath + ".before_tvrename";
             if (File.Exists(to))
+            {
                 File.Delete(to);
+            }
 
             File.Move(ResumeDatPath, to);
             System.IO.Stream s = File.Create(ResumeDatPath);
-            ResumeDat.Write(s);
+            ResumeDat?.Write(s);
             s.Close();
         }
 
@@ -395,7 +469,9 @@ namespace TVRename
             AlterResume(torrentFile, numberInTorrent, onDisk.FullName); // make resume.dat point to the file we found
 
             if (SetPrios)
+            {
                 SetResumePrio(torrentFile, numberInTorrent, BTPrio.Normal);
+            }
 
             return true;
         }
@@ -406,7 +482,9 @@ namespace TVRename
             Type = "Not Found";
 
             if (SetPrios)
+            {
                 SetResumePrio(torrentFile, numberInTorrent, BTPrio.Skip);
+            }
 
             return true;
         }
@@ -432,8 +510,10 @@ namespace TVRename
 
             bool prioChanged = SetPrios && PrioWasSet;
             if (prioChanged || (!string.IsNullOrEmpty(NewLocation)))
+            {
                 AddResult(Type, torrentFile, (numberInTorrent + 1).ToString(),
                     prioChanged ? GetResumePrio(torrentFile, numberInTorrent) : string.Empty, NewLocation);
+            }
 
             return true;
         }
@@ -452,13 +532,19 @@ namespace TVRename
             Rexps = rexps;
 
             if (!matchMissing && !hashSearch)
+            {
                 return true; // nothing to do
+            }
 
             if (hashSearch && string.IsNullOrEmpty(searchFolder))
+            {
                 return false;
+            }
 
             if (matchMissing && ((missingList is null) || (rexps is null)))
+            {
                 return false;
+            }
 
             MissingList = missingList;
             DoMatchMissing = matchMissing;
@@ -469,24 +555,32 @@ namespace TVRename
             Prog(0, string.Empty);
 
             if (!LoadResumeDat())
+            {
                 return false;
+            }
 
             bool r = true;
 
             Prog(0, string.Empty);
 
             if (hashSearch)
+            {
                 BuildFileCache(searchFolder, searchSubFolders);
+            }
 
             foreach (string tf in Torrents)
             {
                 r = ProcessTorrentFile(tf, null, args);
                 if (!r) // stop on the first failure
+                {
                     break;
+                }
             }
 
             if (Altered && !testMode)
+            {
                 WriteResumeDat();
+            }
 
             Prog(0, string.Empty);
 
@@ -502,11 +596,15 @@ namespace TVRename
         private void AddResult(string type, string torrent, string num, string prio, string location)
         {
             if (Results is null)
+            {
                 return;
+            }
 
             int p = torrent.LastIndexOf(System.IO.Path.DirectorySeparatorChar.ToString());
             if (p != -1)
+            {
                 torrent = torrent.Substring(p + 1);
+            }
 
             ListViewItem lvi = new ListViewItem(type);
             lvi.SubItems.Add(torrent);

@@ -371,7 +371,7 @@ namespace TVRename
                 // Duration should be formatted as "00:44:08"
                 if (duration.HasValue())
                 {
-                    string[] timeParts = duration.Split(':');
+                    string[] timeParts = duration!.Split(':');
 
                     return (int)(int.Parse(timeParts[0]).Hours().TotalSeconds
                                 + int.Parse(timeParts[1]).Minutes().TotalSeconds

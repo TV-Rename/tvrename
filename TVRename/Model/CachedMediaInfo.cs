@@ -48,13 +48,20 @@ namespace TVRename
 
         private protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
-        protected CachedMediaInfo(Locale locale)
+        protected CachedMediaInfo(Locale locale) : this()
         {
-            Defaults();
             ActualLocale = locale;
         }
 
-        private void Defaults()
+        protected CachedMediaInfo(int tvdb, int tvmaze, int tmdbId, Locale locale) : this(locale)
+        {
+            IsSearchResultOnly = false;
+            TvMazeCode = tvmaze;
+            TvdbCode = tvdb;
+            TmdbCode = tmdbId;
+        }
+
+        protected CachedMediaInfo()
         {
             Actors = new List<Actor>();
             Crew = new List<Crew>();
@@ -72,19 +79,6 @@ namespace TVRename
             Status = "Unknown";
         }
 
-        protected CachedMediaInfo(int tvdb, int tvmaze, int tmdbId, Locale locale) : this(locale)
-        {
-            IsSearchResultOnly = false;
-            TvMazeCode = tvmaze;
-            TvdbCode = tvdb;
-            TmdbCode = tmdbId;
-        }
-
-        protected CachedMediaInfo()
-        {
-            Defaults();
-        }
-
         protected abstract MediaConfiguration.MediaType MediaType();
 
         public int IdCode(TVDoc.ProviderType source)
@@ -99,6 +93,29 @@ namespace TVRename
                 TVDoc.ProviderType.TMDB => TmdbCode,
                 _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
             };
+        }
+
+        protected static Locale GetLocale(int? languageId, string? regionCode)
+        {
+            bool validLanguage = languageId.HasValue && Languages.Instance.GetLanguageFromId(languageId.Value) != null;
+            bool validRegion = regionCode.HasValue() && Regions.Instance.RegionFromCode(regionCode!) != null;
+
+            if (validLanguage && validRegion)
+            {
+                return new Locale(Regions.Instance.RegionFromCode(regionCode)!, Languages.Instance.GetLanguageFromId(languageId.Value)!);
+            }
+
+            if (validLanguage)
+            {
+                return new Locale(Languages.Instance.GetLanguageFromId(languageId.Value)!);
+            }
+
+            if (validRegion)
+            {
+                return new Locale(Regions.Instance.RegionFromCode(regionCode)!);
+            }
+
+            return new Locale();
         }
 
         public IEnumerable<string> GetAliases() => Aliases;
@@ -158,7 +175,7 @@ namespace TVRename
         protected void LoadCrew([NotNull] XElement seriesXml)
         {
             ClearCrew();
-            foreach (Crew c in seriesXml.Descendants("Crew").Descendants("CrewMember").Select(crewXML => new Crew(crewXML)))
+            foreach (Crew c in seriesXml.Descendants("Crew").Descendants("CrewMember").Select(crewXml => new Crew(crewXml)))
             {
                 AddCrew(c);
             }

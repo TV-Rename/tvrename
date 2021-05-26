@@ -209,7 +209,7 @@ namespace TVRename.TVmaze
             //No Need to do anything as we always refresh from scratch
         }
 
-        public CachedSeriesInfo GetSeries(string showName, bool showErrorMsgBox, Locale language)
+        public CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox, Locale language)
         {
             throw new NotImplementedException(); //todo - (BulkAdd Manager needs to work for new providers)
         }

@@ -11,7 +11,10 @@ namespace TVRename
 
         protected override void MarkMediaDirty()
         {
-            Show.CachedShow.Dirty = true;
+            if (Show.CachedShow != null)
+            {
+                Show.CachedShow.Dirty = true;
+            }
         }
 
         public override MediaConfiguration.MediaType Type() => MediaConfiguration.MediaType.tv;

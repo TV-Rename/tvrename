@@ -176,12 +176,10 @@ namespace TVRename.TheTVDB
             return episodeId > 0 ? $"{WebsiteRoot}/series/{slug}/episodes/{episodeId}" : string.Empty;
         }
 
-        [NotNull]
-        private static JObject JsonHttpGetRequest(string url, Dictionary<string, string>? parameters, TokenProvider? authToken, bool retry) =>
+        private static JObject? JsonHttpGetRequest(string url, Dictionary<string, string>? parameters, TokenProvider? authToken, bool retry) =>
             JsonHttpGetRequest(url, parameters, authToken, string.Empty, retry);
 
-        [NotNull]
-        private static JObject JsonHttpGetRequest(string url, Dictionary<string, string>? parameters, TokenProvider? authToken, string lang, bool retry)
+        private static JObject? JsonHttpGetRequest(string url, Dictionary<string, string>? parameters, TokenProvider? authToken, string lang, bool retry)
         {
             TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
             string fullUrl = url + HttpHelper.GetHttpParameters(parameters);
@@ -234,8 +232,7 @@ namespace TVRename.TheTVDB
             TokenProvider? authToken, string lang = "")
             => HttpHelper.HttpRequest(method, url, json, contentType, authToken?.GetToken(), lang);
 
-        [NotNull]
-        public static JObject GetShowUpdatesSince(long time, string lang)
+        public static JObject? GetShowUpdatesSince(long time, string lang)
         {
             string uri = TVSettings.Instance.TvdbVersion == ApiVersion.v4
                 ? TokenProvider.TVDB_API_URL + "/updates"
@@ -250,8 +247,7 @@ namespace TVRename.TheTVDB
                 TokenProvider, lang, true);
         }
 
-        [NotNull]
-        public static JObject GetSeriesEpisodes(int seriesId, string languageCode, int pageNumber = 0)
+        public static JObject? GetSeriesEpisodes(int seriesId, string languageCode, int pageNumber = 0)
         {
             string episodeUri = $"{TokenProvider.TVDB_API_URL}/series/{seriesId}/episodes";
             return JsonHttpGetRequest(episodeUri,
@@ -259,8 +255,7 @@ namespace TVRename.TheTVDB
                 TokenProvider, languageCode, true);
         }
 
-        [NotNull]
-        public static JObject GetSeriesActors(int seriesId)
+        public static JObject? GetSeriesActors(int seriesId)
         {
             return JsonHttpGetRequest($"{TokenProvider.TVDB_API_URL}/series/{seriesId}/actors",
                 null, TokenProvider, false);
@@ -285,11 +280,11 @@ namespace TVRename.TheTVDB
 
             try
             {
-                JObject jsonEpisodeSearchResponse = JsonHttpGetRequest(
+                JObject? jsonEpisodeSearchResponse = JsonHttpGetRequest(
                     uriImages, null, TokenProvider,
                     requestedLanguageCode, false);
 
-                JObject a = (JObject)jsonEpisodeSearchResponse["data"];
+                JObject? a = (JObject)jsonEpisodeSearchResponse?["data"];
 
                 if (a != null)
                 {
@@ -317,14 +312,13 @@ namespace TVRename.TheTVDB
             return new List<string>();
         }
 
-        [NotNull]
-        public static JObject SearchTvShow(string text, string defaultLanguageCode)
+        public static JObject? SearchTvShow(string text, string defaultLanguageCode)
         {
             string uri = TokenProvider.TVDB_API_URL + "/search/series";
             return JsonHttpGetRequest(uri, new Dictionary<string, string> { { "name", text } }, TokenProvider, defaultLanguageCode, false);
         }
 
-        public static JObject SearchV4(string text, string defaultLanguageCode, MediaConfiguration.MediaType media)
+        public static JObject? SearchV4(string text, string defaultLanguageCode, MediaConfiguration.MediaType media)
         {
             string uri = TokenProvider.TVDB_API_URL + "/search";
             return media switch
@@ -343,7 +337,7 @@ namespace TVRename.TheTVDB
 
         public static bool TvdbIsUp()
         {
-            JObject jsonResponse;
+            JObject? jsonResponse;
             try
             {
                 //Deliberately send no authToken, so that it should fail if it's up
@@ -368,7 +362,7 @@ namespace TVRename.TheTVDB
                 return false;
             }
 
-            return jsonResponse.HasValues;
+            return jsonResponse?.HasValues ?? false;
         }
 
         [NotNull]
@@ -400,21 +394,19 @@ namespace TVRename.TheTVDB
             return returnList;
         }
 
-        [NotNull]
-        public static JObject GetSeries(int code, string requestedLanguageCode)
+        public static JObject? GetSeries(int code, string requestedLanguageCode)
         {
             string uri = TokenProvider.TVDB_API_URL + "/series/" + code;
             return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
         }
 
-        public static JObject GetSeriesV4(int code, string requestedLanguageCode)
+        public static JObject? GetSeriesV4(int code, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/series/{code}/extended";
             return GetUrl(uri, requestedLanguageCode);
         }
 
-        [NotNull]
-        public static JObject GetEpisode(int episodeId, string requestLangCode)
+        public static JObject? GetEpisode(int episodeId, string requestLangCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/episodes/{episodeId}";
             return JsonHttpGetRequest(uri, null, TokenProvider, requestLangCode, true);
@@ -429,7 +421,7 @@ namespace TVRename.TheTVDB
             TokenProvider.EnsureValid();
         }
 
-        public static JObject GetMovie(int code, string requestedLanguageCode)
+        public static JObject? GetMovie(int code, string requestedLanguageCode)
         {
             string uri = TokenProvider.TVDB_API_URL + "/movies/" + code;
             return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
@@ -470,7 +462,7 @@ namespace TVRename.TheTVDB
             try
             {
                 Logger.Trace($"   Downloading {uri}");
-                return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
+                return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true) ?? throw new SourceConnectivityException($"Looking for {uri} images (in {requestedLanguageCode})");
             }
             catch (WebException webEx)
             {

@@ -103,6 +103,10 @@ namespace TVRename
             ItemList toRemove)
         {
             ItemList thisRound = new ItemList();
+            if (me.Episode == null)
+            {
+                return;
+            }
 
             string baseFolder = me.Episode.Show.AutoAddFolderBase;
             LOGGER.Info($"Starting to look for {me.Filename} in the library: {baseFolder}");

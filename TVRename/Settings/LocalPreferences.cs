@@ -39,27 +39,32 @@ namespace TVRename
 
         public Language LanguageToUse(TVDoc.ProviderType provider)
         {
-            return PreferredLanguage ?? DefaultLanuage(provider);
+            return PreferredLanguage ?? DefaultLanguage(provider);
         }
 
-        private Language DefaultLanuage(TVDoc.ProviderType provider)
+        private Language DefaultLanguage(TVDoc.ProviderType provider)
         {
             return (provider == TVDoc.ProviderType.TMDB ? TVSettings.Instance.TMDBLanguage : TVSettings.Instance.PreferredTVDBLanguage);
         }
 
         public Region RegionToUse(TVDoc.ProviderType provider)
         {
-            return PreferredRegion ?? TVSettings.Instance.TMDBRegion ?? Regions.Instance.FallbackRegion;
+            return PreferredRegion ?? DefaultRegion(provider);
+        }
+
+        private Region DefaultRegion(TVDoc.ProviderType provider)
+        {
+            throw new System.NotImplementedException();
         }
 
         public bool IsDifferentLanguageToDefaultFor(TVDoc.ProviderType provider)
         {
-            if (PreferredLanguage is null)
+            if (PreferredLanguage == null)
             {
                 return false;
             }
 
-            if (PreferredLanguage.ISODialectAbbreviation == DefaultLanuage(provider).ISODialectAbbreviation)
+            if (PreferredLanguage!.ISODialectAbbreviation == DefaultLanguage(provider).ISODialectAbbreviation)
             {
                 return false;
             }

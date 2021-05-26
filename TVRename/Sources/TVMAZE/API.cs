@@ -63,10 +63,14 @@ namespace TVRename.TVmaze
             return response.Children().Select(ConvertSearchResult);
         }
 
-        private static CachedSeriesInfo ConvertSearchResult(JToken token)
+        private static CachedSeriesInfo? ConvertSearchResult(JToken token)
         {
             double score = token["score"].Value<double>();
             JObject show = token["show"].Value<JObject>();
+            if (show is null)
+            {
+                return null;
+            }
             CachedSeriesInfo downloadedSi = GenerateSeriesInfo(show);
             downloadedSi.Popularity = score;
             downloadedSi.IsSearchResultOnly = true;
@@ -297,7 +301,7 @@ namespace TVRename.TVmaze
 
             if (r.ContainsKey("genres"))
             {
-                returnValue.Genres = r["genres"]?.Select(x => x.Value<string>().Trim()).Distinct().ToList() ?? new List<string>();
+                returnValue.Genres = r["genres"]?.Select(x => x.Value<string>()?.Trim()).Distinct().ToList() ?? new List<string>();
             }
 
             List<string> typesToTransferToGenres = new List<string> { "Animation", "Reality", "Documentary", "News", "Sports" };

@@ -22,15 +22,27 @@ namespace TVRename
         public int TmdbCode;
         public string? ImdbCode { get; set; }
 
-        public Locale TargetLocale => UseCustomLanguage && UseCustomRegion
-            ? new Locale(Regions.Instance.RegionFromCode(CustomRegionCode), Languages.Instance.GetLanguageFromCode(CustomLanguageCode))
-                : UseCustomLanguage ? new Locale(Languages.Instance.GetLanguageFromCode(CustomLanguageCode))
-                : UseCustomRegion ? new Locale(Regions.Instance.RegionFromCode(CustomRegionCode))
-                : new Locale();
+        public Locale TargetLocale
+        {
+            get
+            {
+                bool useValidRegion = UseCustomRegion && CustomRegionCode.HasValue() &&
+                                      Regions.Instance.RegionFromCode(CustomRegionCode!) != null;
+
+                bool useValidLanguage = UseCustomLanguage && CustomLanguageCode.HasValue() &&
+                                        Languages.Instance.GetLanguageFromCode(CustomLanguageCode) != null;
+
+                return
+                    useValidLanguage && useValidRegion ? new Locale(Regions.Instance.RegionFromCode(CustomRegionCode)!, Languages.Instance.GetLanguageFromCode(CustomLanguageCode)!)
+                    : useValidLanguage ? new Locale(Languages.Instance.GetLanguageFromCode(CustomLanguageCode)!)
+                    : useValidRegion ? new Locale(Regions.Instance.RegionFromCode(CustomRegionCode)!)
+                    : new Locale();
+            }
+        }
 
         public bool UseCustomShowName;
         public string CustomShowName;
-        public string LastName;
+        public string? LastName;
 
         public bool UseCustomRegion;
         public string? CustomRegionCode;
@@ -150,7 +162,7 @@ namespace TVRename
 
         public int TvdbId => TvdbCode;
 
-        public string Name => LastName;
+        public string? Name => LastName;
 
         public MediaType Type => GetMediaType();
 
@@ -210,7 +222,7 @@ namespace TVRename
                 }
                 if (LastName.HasValue())
                 {
-                    return LastName;
+                    return LastName!;
                 }
 
                 return "<" + Code + " not downloaded>";

@@ -161,10 +161,9 @@ namespace TVRename
         private void SetupRegions([NotNull] ShowConfiguration si)
         {
             chkCustomRegion.Checked = si.UseCustomRegion;
-            if (chkCustomLanguage.Checked)
+            if (chkCustomLanguage.Checked && si.CustomRegionCode.HasValue())
             {
-                Region r =
-                    Regions.Instance.RegionFromCode(si.CustomRegionCode);
+                Region r = Regions.Instance.RegionFromCode(si.CustomRegionCode!);
 
                 if (r != null)
                 {
