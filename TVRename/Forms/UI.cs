@@ -94,8 +94,11 @@ namespace TVRename
             settings.CefCommandLineArgs.Add("disable-gpu", "1");
             settings.CefCommandLineArgs.Add("disable-gpu-vsync", "1");
             settings.CefCommandLineArgs.Add("disable-gpu-compositing", "1");
+            settings.CachePath = PathManager.CefCachePath;
+            settings.LogFile = PathManager.CefLogFile;
             settings.DisableGpuAcceleration();
             Cef.Initialize(settings);
+            Cef.EnableHighDPISupport();
 
             mDoc = doc;
             scanProgDlg = null;
@@ -3430,7 +3433,7 @@ namespace TVRename
             bool hidden = WindowState == FormWindowState.Minimized;
             SetupScanUi(hidden);
             MoreBusy();
-            this.bwScan.RunWorkerAsync(new TVDoc.ScanSettings(shows??new List<ShowConfiguration>(), movies??new List<MovieConfiguration>(), unattended, hidden, st, cts.Token, media, this, scanProgDlg));
+            this.bwScan.RunWorkerAsync(new TVDoc.ScanSettings(shows ?? new List<ShowConfiguration>(), movies ?? new List<MovieConfiguration>(), unattended, hidden, st, cts.Token, media, this, scanProgDlg));
             ShowDialogAndWait(cts);
         }
 
@@ -5015,6 +5018,21 @@ namespace TVRename
             });
 
             return (dr, userChosenAction);
+        }
+
+        private void browserTestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DependencyChecker.AssertAllDependenciesPresent();
+                Logger.Info("Dependencies all found");
+                MessageBox.Show("Dependencies all found", "Browser Capability Test");
+            }
+            catch (Exception a)
+            {
+                Logger.Error(a, "Missing Cef Dependencies");
+                MessageBox.Show("Dependencies missing - see log for more details", "Browser Capability Test");
+            }
         }
     }
 }

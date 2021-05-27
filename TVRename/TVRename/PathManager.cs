@@ -20,7 +20,6 @@ namespace TVRename
         private const string SETTINGS_FILE_NAME = "TVRenameSettings.xml";
         private const string UI_LAYOUT_FILE_NAME = "Layout.xml";
         private const string STATISTICS_FILE_NAME = "Statistics.xml";
-        private const string LANGUAGES_FILE_NAME = "Languages.xml";
         private const string STATE_FILE_NAME = "State.xml";
 
         private static string UserDefinedBasePath;
@@ -86,7 +85,26 @@ namespace TVRename
         [NotNull]
         public static FileInfo TVDocSettingsFile => GetFileInfo(SETTINGS_FILE_NAME);
 
-        [NotNull]
-        public static FileInfo LanguagesFile => GetFileInfo(LANGUAGES_FILE_NAME);
+        public static string CefCachePath
+        {
+            get
+            {
+                {
+                    string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "cache");
+                    Directory.CreateDirectory(path);
+                    return path;
+                }
+            }
+        }
+
+        public static string CefLogFile
+        {
+            get
+            {
+                string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "log");
+                Directory.CreateDirectory(path);
+                return Path.Combine(path, "cef-debug.log");
+            }
+        }
     }
 }
