@@ -979,7 +979,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string[] TabNames() => new[] { "MyShows", "Scan", "WTW" };
+        private static string[] TabNames() => new[] { "MyMovies", "MyShows", "Scan", "WTW" };
 
         private static string TabNameForNumber(int n)
         {

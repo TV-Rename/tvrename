@@ -170,7 +170,7 @@ namespace TVRename
             int t = TVSettings.Instance.StartupTab;
             if (t < tabControl1.TabCount)
             {
-                tabControl1.SelectedIndex = TVSettings.Instance.StartupTab;
+                tabControl1.SelectedIndex = t;
             }
 
             tabControl1_SelectedIndexChanged(null, null);
