@@ -91,13 +91,11 @@ namespace TVRename
         public UI(TVDoc doc, [NotNull] TVRenameSplash splash, bool showUi)
         {
             CheckForBroswerDependencies(false);
-            CefSettings settings = new CefSettings { LogSeverity = LogSeverity.Verbose };
-            settings.CefCommandLineArgs.Add("disable-gpu", "1");
-            settings.CefCommandLineArgs.Add("disable-gpu-vsync", "1");
-            settings.CefCommandLineArgs.Add("disable-gpu-compositing", "1");
-            settings.CachePath = PathManager.CefCachePath;
-            settings.LogFile = PathManager.CefLogFile;
-            settings.DisableGpuAcceleration();
+            CefSettings settings = new CefSettings
+            {
+                CachePath = PathManager.CefCachePath,
+                LogFile = PathManager.CefLogFile
+            };
             Cef.Initialize(settings);
             //Cef.EnableHighDPISupport(); todo - reinstate
 
