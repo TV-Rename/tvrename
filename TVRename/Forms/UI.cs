@@ -98,7 +98,7 @@ namespace TVRename
             settings.LogFile = PathManager.CefLogFile;
             settings.DisableGpuAcceleration();
             Cef.Initialize(settings);
-            Cef.EnableHighDPISupport();
+            //Cef.EnableHighDPISupport(); todo - reinstate
 
             mDoc = doc;
             scanProgDlg = null;
