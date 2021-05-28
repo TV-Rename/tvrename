@@ -90,6 +90,7 @@ namespace TVRename
 
         public UI(TVDoc doc, [NotNull] TVRenameSplash splash, bool showUi)
         {
+            CheckForBroswerDependencies(false);
             CefSettings settings = new CefSettings { LogSeverity = LogSeverity.Verbose };
             settings.CefCommandLineArgs.Add("disable-gpu", "1");
             settings.CefCommandLineArgs.Add("disable-gpu-vsync", "1");
@@ -5022,16 +5023,27 @@ namespace TVRename
 
         private void browserTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            CheckForBroswerDependencies(true);
+        }
+
+        private static void CheckForBroswerDependencies(bool showUi)
+        {
             try
             {
                 DependencyChecker.AssertAllDependenciesPresent();
                 Logger.Info("Dependencies all found");
-                MessageBox.Show("Dependencies all found", "Browser Capability Test");
+                if (showUi)
+                {
+                    MessageBox.Show("Dependencies all found", "Browser Capability Test");
+                }
             }
             catch (Exception a)
             {
                 Logger.Error(a, "Missing Cef Dependencies");
-                MessageBox.Show("Dependencies missing - see log for more details", "Browser Capability Test");
+                if (showUi)
+                {
+                    MessageBox.Show("Dependencies missing - see log for more details", "Browser Capability Test");
+                }
             }
         }
     }
