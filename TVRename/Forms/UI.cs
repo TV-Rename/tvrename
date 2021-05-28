@@ -166,14 +166,6 @@ namespace TVRename
             mDoc.WriteRecent();
             UpdateSplashStatus(splash, "Setting Notifications");
             ShowHideNotificationIcon();
-
-            int t = TVSettings.Instance.StartupTab;
-            if (t < tabControl1.TabCount)
-            {
-                tabControl1.SelectedIndex = t;
-            }
-
-            tabControl1_SelectedIndexChanged(null, null);
             UpdateSplashStatus(splash, "Creating Monitors");
 
             mAutoFolderMonitor = new AutoFolderMonitor(mDoc, this);
@@ -190,7 +182,27 @@ namespace TVRename
 
             SetupObjectListForScanResults();
 
-            UpdateSplashStatus(splash, "Running autoscan");
+            UpdateSplashStatus(splash, "Running Auto-scan");
+
+            SetStartUpTab();
+        }
+
+        private void SetStartUpTab()
+        {
+            try
+            {
+                int t = TVSettings.Instance.StartupTab;
+                if (t < tabControl1.TabCount)
+                {
+                    tabControl1.SelectedIndex = t;
+                }
+
+                tabControl1_SelectedIndexChanged(null, null);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Failed to set startup Tab");
+            }
         }
 
         private delegate void ShowChildConsumer(Form childForm);

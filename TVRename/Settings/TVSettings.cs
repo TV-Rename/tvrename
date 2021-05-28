@@ -988,23 +988,18 @@ namespace TVRename
                 return TabNames()[n];
             }
 
-            return "";
+            return string.Empty;
         }
 
         private static int TabNumberFromName(string? n)
         {
-            int r = 0;
-            if (!string.IsNullOrEmpty(n))
+            if (string.IsNullOrEmpty(n))
             {
-                r = Array.IndexOf(TabNames(), n);
+                return 0;
             }
 
-            if (r < 0)
-            {
-                r = 0;
-            }
-
-            return r;
+            int r = Array.IndexOf(TabNames(), n);
+            return r < 0 ? 0 : r;
         }
 
         public bool FileHasUsefulExtension([NotNull] FileInfo file, bool otherExtensionsToo) =>
