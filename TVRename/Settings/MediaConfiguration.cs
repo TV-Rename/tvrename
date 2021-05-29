@@ -27,7 +27,7 @@ namespace TVRename
             get
             {
                 bool useValidRegion = UseCustomRegion && CustomRegionCode.HasValue() &&
-                                      Regions.Instance.RegionFromCode(CustomRegionCode!) != null;
+                                      Regions.Instance.RegionFromName(CustomRegionCode!) != null;
 
                 bool useValidLanguage = UseCustomLanguage && CustomLanguageCode.HasValue() &&
                                         Languages.Instance.GetLanguageFromCode(CustomLanguageCode) != null;
@@ -35,7 +35,7 @@ namespace TVRename
                 return
                     useValidLanguage && useValidRegion ? new Locale(Regions.Instance.RegionFromCode(CustomRegionCode)!, Languages.Instance.GetLanguageFromCode(CustomLanguageCode)!)
                     : useValidLanguage ? new Locale(Languages.Instance.GetLanguageFromCode(CustomLanguageCode)!)
-                    : useValidRegion ? new Locale(Regions.Instance.RegionFromCode(CustomRegionCode)!)
+                    : useValidRegion ? new Locale(Regions.Instance.RegionFromName(CustomRegionCode)!)
                     : new Locale();
             }
         }

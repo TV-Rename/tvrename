@@ -52,10 +52,8 @@ namespace TVRename
             return PreferredRegion ?? DefaultRegion(provider);
         }
 
-        private Region DefaultRegion(TVDoc.ProviderType provider)
-        {
-            throw new System.NotImplementedException();
-        }
+        // ReSharper disable once UnusedParameter.Local
+        private Region DefaultRegion(TVDoc.ProviderType provider) => TVSettings.Instance.TMDBRegion;
 
         public bool IsDifferentLanguageToDefaultFor(TVDoc.ProviderType provider)
         {
