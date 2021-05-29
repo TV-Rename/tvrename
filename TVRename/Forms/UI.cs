@@ -3440,6 +3440,11 @@ namespace TVRename
 
         private void UiScan(List<ShowConfiguration>? shows, List<MovieConfiguration>? movies, bool unattended, TVSettings.ScanType st, MediaConfiguration.MediaType media)
         {
+            if (bwScan.IsBusy)
+            {
+                Logger.Warn($"Can't start scan as it's already running");
+                return;
+            }
             CancellationTokenSource cts = new CancellationTokenSource();
             bool hidden = WindowState == FormWindowState.Minimized;
             SetupScanUi(hidden);
