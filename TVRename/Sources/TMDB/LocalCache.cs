@@ -89,7 +89,7 @@ namespace TVRename.TMDB
             }
         }
 
-        public override Language? PreferredLanguage() => TVSettings.Instance.TMDBLanguage;
+        public override Language PreferredLanguage() => TVSettings.Instance.TMDBLanguage;
 
         public override bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
         {
@@ -481,18 +481,11 @@ namespace TVRename.TMDB
         public void Tidy(IEnumerable<MovieConfiguration> libraryValues)
         {
             // remove any shows from cache that aren't in My Movies
-            List<int> removeList = new List<int>();
+            List<MovieConfiguration>? movieConfigurations = libraryValues.ToList();
 
             lock (MOVIE_LOCK)
             {
-                foreach (KeyValuePair<int, CachedMovieInfo> kvp in Movies)
-                {
-                    bool found = libraryValues.Any(si => si.TmdbCode == kvp.Key);
-                    if (!found)
-                    {
-                        removeList.Add(kvp.Key);
-                    }
-                }
+                List<int> removeList = Movies.Keys.Where(id => movieConfigurations.All(si => si.TmdbCode != id)).ToList();
 
                 foreach (int i in removeList)
                 {
@@ -504,17 +497,11 @@ namespace TVRename.TMDB
         public void Tidy(IEnumerable<ShowConfiguration> libraryValues)
         {
             // remove any shows from TMDB that aren't in My Shows
-            List<int> removeList = new List<int>();
+            List<ShowConfiguration> showConfigurations = libraryValues.ToList();
 
             lock (SERIES_LOCK)
             {
-                foreach (KeyValuePair<int, CachedSeriesInfo> kvp in Series)
-                {
-                    if (libraryValues.All(si => si.TmdbCode != kvp.Key))
-                    {
-                        removeList.Add(kvp.Key);
-                    }
-                }
+                List<int> removeList = Series.Keys.Where(id => showConfigurations.All(si => si.TmdbCode != id)).ToList();
 
                 foreach (int i in removeList)
                 {

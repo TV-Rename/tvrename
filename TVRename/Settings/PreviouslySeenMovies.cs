@@ -36,6 +36,8 @@ namespace TVRename
 
         public bool Includes(MovieConfiguration? m) => m != null && m.Code > 0 && Contains(m.Code);
 
+        public bool Includes([NotNull] Item item) => Includes(item.Movie);
+
         //TODO fix this class to make it work with multi sources
     }
 }

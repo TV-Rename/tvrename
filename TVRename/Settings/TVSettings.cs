@@ -345,6 +345,16 @@ namespace TVRename
         public MovieConfiguration.MovieFolderFormat DefMovieFolderFormat =>
             MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile; //TODO fix this  //{ get; internal set; }
 
+        public bool AutomateAutoAddWhenOneMovieFound => true; //todo persist and edit this
+
+        public bool AutomateAutoAddWhenOneShowFound => true; //todo persist and edit this
+
+        public StringComparison FileNameComparisonType => FileNameCaseSensitiveMatch
+            ? StringComparison.CurrentCulture
+            : StringComparison.CurrentCultureIgnoreCase;
+
+        public bool FileNameCaseSensitiveMatch => false; //todo persist and edit this
+
         public bool AutoSaveOnExit = false;
 
         public DuplicateActionOutcome UnattendedMultiActionOutcome = DuplicateActionOutcome.IgnoreAll;

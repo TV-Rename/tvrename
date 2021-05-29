@@ -5,8 +5,11 @@ namespace TVRename.Forms.Utilities
 {
     public partial class CannotConnectForm : Form
     {
-        public CannotConnectForm(string header, string message)
+        private readonly TVDoc.ProviderType provider;
+
+        public CannotConnectForm(string header, string message, TVDoc.ProviderType provider)
         {
+            this.provider = provider;
             InitializeComponent();
             label1.Text = message;
             Text = header;
@@ -18,14 +21,36 @@ namespace TVRename.Forms.Utilities
             set => base.Text = value;
         }
 
-        private void bnTVDB_Click(object sender, EventArgs e) //todo make work for all providers
+        private void bnTVDB_Click(object sender, EventArgs e)
         {
-            Helpers.OpenUrl("https://www.thetvdb.com/");
+            Helpers.OpenUrl(GetCoreUrl(provider));
+        }
+
+        private static string GetCoreUrl(TVDoc.ProviderType provider)
+        {
+            return provider switch
+            {
+                TVDoc.ProviderType.TVmaze => "https://www.tvmaze.com/",
+                TVDoc.ProviderType.TheTVDB => "https://www.thetvdb.com/",
+                TVDoc.ProviderType.TMDB => "https://themoviedb.org/",
+                _ => throw new ArgumentOutOfRangeException(nameof(provider), provider, null)
+            };
         }
 
         private void bnAPICheck_Click(object sender, EventArgs e)
         {
-            Helpers.OpenUrl("https://www.isitdownrightnow.com/api.thetvdb.com.html"); //todo make work for all providers
+            Helpers.OpenUrl(GetIsDownUrl(provider));
+        }
+
+        private static string GetIsDownUrl(TVDoc.ProviderType provider)
+        {
+            return provider switch
+            {
+                TVDoc.ProviderType.TVmaze => "https://www.isitdownrightnow.com/api.tvmaze.com.html",
+                TVDoc.ProviderType.TheTVDB => "https://www.isitdownrightnow.com/api.thetvdb.com.html",
+                TVDoc.ProviderType.TMDB => "https://www.isitdownrightnow.com/api.themoviedb.org.html",
+                _ => throw new ArgumentOutOfRangeException(nameof(provider), provider, null)
+            };
         }
 
         private void bnOffline_Click(object sender, EventArgs e)

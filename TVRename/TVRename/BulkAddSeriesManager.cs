@@ -35,9 +35,9 @@ namespace TVRename
 
         public static void GuessShowItem([NotNull] PossibleNewTvShow ai, [NotNull] ShowLibrary library, bool showErrorMsgBox)
         {
-            Language languageToUse = (TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TMDB
+            Language languageToUse = TVSettings.Instance.DefaultProvider == TVDoc.ProviderType.TMDB
                 ? TVSettings.Instance.TMDBLanguage
-                : TVSettings.Instance.PreferredTVDBLanguage) ?? Languages.Instance.FallbackLanguage;
+                : TVSettings.Instance.PreferredTVDBLanguage;
 
             Locale localeToUse = new Locale(languageToUse);
 

@@ -6,6 +6,7 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System;
 using JetBrains.Annotations;
 using System.Xml;
 using System.Xml.Linq;
@@ -41,7 +42,7 @@ namespace TVRename
 
         public Actor([NotNull] XElement r)
         {
-            ActorId = r.ExtractInt("Id") ?? throw new SourceConsistencyException("Error Extracting Id for Actor", TVDoc.ProviderType.TheTVDB); //todo make work for all providers
+            ActorId = r.ExtractInt("Id") ?? throw new Exception("Error Extracting Id for Actor");
             ActorImage = r.ExtractString("Image");
             ActorName = r.ExtractString("Name");
             ActorRole = r.ExtractString("Role");

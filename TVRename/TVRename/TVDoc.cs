@@ -283,7 +283,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                Logger.Fatal(e, $"FAILED TO DO ACTIONS");
+                Logger.Fatal(e, "FAILED TO DO ACTIONS");
             }
         }
 
@@ -663,9 +663,10 @@ namespace TVRename
         internal void TvAddedOrEdited(bool download, bool unattended, bool hidden, UI owner, IEnumerable<ShowConfiguration> shows)
         {
             SetDirty();
+            //todo make sure shows updated are marked for force refresh
             if (download)
             {
-                if (!DoDownloadsFG(unattended, hidden, owner, shows))
+                if (!DoDownloadsFg(unattended, hidden, owner, shows))
                 {
                     return;
                 }
@@ -702,9 +703,10 @@ namespace TVRename
         internal void MoviesAddedOrEdited(bool download, bool unattended, bool hidden, UI owner, IEnumerable<MovieConfiguration> movies)
         {
             SetDirty();
+            //todo make sure movies updated are marked for force refresh
             if (download)
             {
-                if (!DoDownloadsFG(unattended, hidden, owner, movies))
+                if (!DoDownloadsFg(unattended, hidden, owner, movies))
                 {
                     return;
                 }
@@ -733,8 +735,8 @@ namespace TVRename
             {
                 Logger.Info("*******************************");
                 string desc = settings.Unattended ? "unattended " : "";
-                string showsdesc = settings.Shows?.Count > 0 ? settings.Shows.Count.ToString() : "all";
-                string moviesdesc = settings.Movies?.Count > 0 ? settings.Movies.Count.ToString() : "all";
+                string showsdesc = settings.Shows.Count > 0 ? settings.Shows.Count.ToString() : "all";
+                string moviesdesc = settings.Movies.Count > 0 ? settings.Movies.Count.ToString() : "all";
                 string scantype = settings.Type.PrettyPrint();
                 string mediatype = settings.Media.PrettyPrint();
                 Logger.Info($"Starting {desc}{scantype} {mediatype} Scan for {showsdesc} shows and {moviesdesc} movies...");
@@ -972,14 +974,14 @@ namespace TVRename
                 }
 
                 // TODO Ensure Ingore PreviouslySeen Movies works
-                // if (TVSettings.Instance.IgnorePreviouslySeenMovies)
-                // {
-                //     if (TVSettings.Instance.PreviouslySeenMovies.Includes(item.co) && item is ItemMissing)
-                //     {
-                //         toRemove.Add(item);
-                //         numberPreviouslySeenMovies++;
-                //     }
-                // }
+                if (TVSettings.Instance.IgnorePreviouslySeenMovies)
+                {
+                    if (TVSettings.Instance.PreviouslySeenMovies.Includes(item) && item is ItemMissing)
+                    {
+                        toRemove.Add(item);
+                        numberPreviouslySeenMovies++;
+                    }
+                }
             }
 
             Logger.Info($"Removing {toRemove.Count} items from the missing items because they are either in the ignore list ({numberIgnored}) or you have ignore previously seen episodes enables ({numberPreviouslySeen}) or you have ignore previously seen movies enables ({numberPreviouslySeenMovies})");
@@ -1073,7 +1075,7 @@ namespace TVRename
             foreach (IGrouping<ItemMissing, ActionTDownload> epGroup in TheActionList.DownloadTorrents
                 .GroupBy(item => item.UndoItemMissing)
                 .Where(items => items.Count() > 1)
-                .Where(items => items.Key!=null)
+                .Where(items => items.Key != null)
                 .OrderBy(grouping => grouping.Key?.Show.ShowName))
             {
                 List<ActionTDownload> actions = epGroup.ToList();
@@ -1414,7 +1416,7 @@ namespace TVRename
                 iTVSource cache = GetTVCache(si.Provider);
                 cache.ForgetShow(si);
             }
-            DoDownloadsFG(unattended, tvrMinimised, owner, showConfigurations);
+            DoDownloadsFg(unattended, tvrMinimised, owner, showConfigurations);
             AllowAutoScan();
         }
 
@@ -1466,11 +1468,11 @@ namespace TVRename
                 iMovieSource cache = GetMovieCache(si.Provider);
                 cache.ForgetMovie(si);
             }
-            DoDownloadsFG(unattended, tvrMinimised, owner, movieConfigurations);
+            DoDownloadsFg(unattended, tvrMinimised, owner, movieConfigurations);
             AllowAutoScan();
         }
 
-        private bool DoDownloadsFG(bool unattended, bool tvrMinimised, UI owner, IEnumerable<MediaConfiguration> passedShows)
+        private bool DoDownloadsFg(bool unattended, bool tvrMinimised, UI owner, IEnumerable<MediaConfiguration> passedShows)
         {
             return DoDownloadsFGNow(unattended, tvrMinimised, owner, new List<ISeriesSpecifier>(passedShows));
         }
@@ -1819,6 +1821,7 @@ namespace TVRename
             Logger.Info("Finished looking for new movies.");
         }
 
+        // ReSharper disable once UnusedParameter.Local
         private string AskUserForFolder(IDialogParent ui)
         {
             using (FolderBrowserDialog fbd = new FolderBrowserDialog())

@@ -97,7 +97,7 @@ namespace TVRename
                 LogFile = PathManager.CefLogFile
             };
             Cef.Initialize(settings);
-            //Cef.EnableHighDPISupport(); todo - reinstate
+            //Cef.EnableHighDPISupport(); todo - reinstate when we support high DPI
 
             mDoc = doc;
             scanProgDlg = null;
@@ -1952,7 +1952,7 @@ namespace TVRename
 
                 if (sil.Count == 1)
                 {
-                    AddRcMenuItem("Schedule", (sender, args) => GotoWtwFor(si.TvdbCode));
+                    AddRcMenuItem("Schedule", (sender, args) => GotoWtwFor(si));
                     AddRcMenuItem("Edit Show", (sender, args) => EditShow(si));
                     AddRcMenuItem("Delete Show", (sender, args) => DeleteShow(si));
                 }
@@ -2228,17 +2228,12 @@ namespace TVRename
             FillActionList(true);
         }
 
-        private void GotoWtwFor(int tvdbSeriesCode)
+        private void GotoWtwFor(ShowConfiguration show)
         {
-            if (tvdbSeriesCode == -1)
-            {
-                return;
-            }
-
             tabControl1.SelectTab(tbWTW);
             foreach (ListViewItem lvi in lvWhenToWatch.Items)
             {
-                lvi.Selected = lvi.Tag is ProcessedEpisode ei && ei.TheCachedSeries.TvdbCode == tvdbSeriesCode; //todo make work for all providers
+                lvi.Selected = lvi.Tag is ProcessedEpisode ei && ei.TheCachedSeries.IsCacheFor(show);
             }
             lvWhenToWatch.Focus();
         }

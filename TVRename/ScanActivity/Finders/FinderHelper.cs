@@ -738,7 +738,7 @@ namespace TVRename
 
                 bool assumeMovie = IgnoreHint(hint) || !file.FileNameNoExt().ContainsAnyCharactersFrom("0123456789");
 
-                if (assumeMovie && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && true)//todo use  TVSettings.Instance.AutomateAutoAddWhenOneMovieFound
+                if (assumeMovie && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && TVSettings.Instance.AutomateAutoAddWhenOneMovieFound)
                 {
                     //TODO - Make generic, currently uses TMDB only
                     CachedMovieInfo? foundMovie = TMDB.LocalCache.Instance.GetMovie(refinedHint, null, new Locale(), true, true);
@@ -768,14 +768,14 @@ namespace TVRename
                 //popup dialog
                 AutoAddMedia askForMatch = new AutoAddMedia(refinedHint, file, assumeMovie);
 
-                if (askForMatch.SingleTvShowFound && !askForMatch.SingleMovieFound && true) //todo use  TVSettings.Instance.AutomateAutoAddWhenOneShowFound
+                if (askForMatch.SingleTvShowFound && !askForMatch.SingleMovieFound && TVSettings.Instance.AutomateAutoAddWhenOneShowFound)
                 {
                     // no need to popup dialog
                     Logger.Info($"Auto Adding New Show for '{refinedHint}' : {askForMatch.ShowConfiguration.CachedShow?.Name}");
                     addedShows.Add(askForMatch.ShowConfiguration);
                     doc.Stats().AutoAddedShows++;
                 }
-                else if (askForMatch.SingleMovieFound && !askForMatch.SingleTvShowFound && true) //todo use  TVSettings.Instance.AutomateAutoAddWhenOneMovieFound
+                else if (askForMatch.SingleMovieFound && !askForMatch.SingleTvShowFound && TVSettings.Instance.AutomateAutoAddWhenOneMovieFound)
                 {
                     // no need to popup dialog
                     Logger.Info($"Auto Adding New Movie for '{refinedHint}' : {askForMatch.MovieConfiguration.CachedMovie?.Name}");

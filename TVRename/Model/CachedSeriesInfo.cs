@@ -585,5 +585,7 @@ namespace TVRename
         {
             return seasons.FirstOrDefault(season => season.SeasonNumber == sSeasonNumber);
         }
+
+        public bool IsCacheFor(ShowConfiguration show) => show.TmdbCode == TmdbCode || show.TvdbId == TvdbCode || show.TvMazeId == TvMazeCode;
     }
 }

@@ -101,7 +101,7 @@ namespace TVRename
             Logger.Warn(message);
             if (showErrorMsgBox)
             {
-                CannotConnectForm ccform = new CannotConnectForm("Error while downloading", message);
+                CannotConnectForm ccform = new CannotConnectForm("Error while downloading", message, FindProviderWithError());
 
                 owner.ShowChildDialog(ccform);
                 DialogResult ccresult = ccform.DialogResult;
@@ -118,6 +118,25 @@ namespace TVRename
             TMDB.LocalCache.Instance.LastErrorMessage = string.Empty;
 
             return downloadOk;
+        }
+
+        private TVDoc.ProviderType FindProviderWithError()
+        {
+            if (TheTVDB.LocalCache.Instance.LastErrorMessage.HasValue())
+            {
+                return TVDoc.ProviderType.TheTVDB;
+            }
+            if (TMDB.LocalCache.Instance.LastErrorMessage.HasValue())
+            {
+                return TVDoc.ProviderType.TMDB;
+            }
+            if (TVmaze.LocalCache.Instance.LastErrorMessage.HasValue())
+            {
+                return TVDoc.ProviderType.TVmaze;
+            }
+
+            //Should never get here, but just in case
+            return TVSettings.Instance.DefaultProvider;
         }
 
         public void StopBgDownloadThread()

@@ -343,7 +343,7 @@ namespace TVRename.TheTVDB
             if (showErrorMsgBox)
             {
                 CannotConnectForm ccform =
-                    new CannotConnectForm("Error while obtaining token from TVDB", ex.LoggableDetails());
+                    new CannotConnectForm("Error while obtaining token from TVDB", ex.LoggableDetails(), TVDoc.ProviderType.TheTVDB);
 
                 DialogResult ccresult = ccform.ShowDialog();
                 if (ccresult == DialogResult.Abort)

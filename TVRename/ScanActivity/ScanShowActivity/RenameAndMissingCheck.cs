@@ -253,8 +253,7 @@ namespace TVRename
 
             FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
 
-            //**** TODO *** Parameterise case insensitive search
-            if (!string.Equals(newFile.FullName, actualFile.FullName, StringComparison.CurrentCultureIgnoreCase))
+            if (!string.Equals(newFile.FullName, actualFile.FullName, TVSettings.Instance.FileNameComparisonType))
             {
                 //Check that the file does not already exist
                 //if (FileHelper.FileExistsCaseSensitive(newFile.FullName))
