@@ -159,7 +159,7 @@ namespace TVRename
                             writer.WriteElement("guest", guest);
                         }
 
-                        writer.WriteElement("thumbnail", TheTVDB.API.GetImageURL(Episode.Filename));
+                        writer.WriteElement("thumbnail", Episode?.ThumbnailUrl());
                         writer.WriteElement("banner",
                             TheTVDB.API.GetImageURL(Episode.AppropriateProcessedSeason.GetWideBannerPath()));
 

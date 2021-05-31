@@ -66,8 +66,10 @@ namespace TVRename
                 root.UpdateElement("status", cachedSeries.Status);
                 root.UpdateElement("plot", cachedSeries.Overview);
 
-                UpdateId(root, "tvdb", "true", cachedSeries.TvdbCode); //todo make work for all providers
-                UpdateId(root, "imdb", "false", cachedSeries.Imdb);
+                UpdateId(root, "tvdb", SelectedShow.Provider == TVDoc.ProviderType.TheTVDB ? "true" : "false", SelectedShow.TvdbCode);
+                UpdateId(root, "tmdb", SelectedShow.Provider == TVDoc.ProviderType.TMDB ? "true" : "false", SelectedShow.TmdbCode);
+                UpdateId(root, "tvmaze", SelectedShow.Provider == TVDoc.ProviderType.TVmaze ? "true" : "false", SelectedShow.TvMazeId);
+                UpdateId(root, "imdb", "false", SelectedShow.ImdbCode);
             }
 
             root.ReplaceElements("genre", SelectedShow.Genres);

@@ -19,7 +19,7 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     internal class JSONWebpageFinder : DownloadFinder
     {
-        public JSONWebpageFinder(TVDoc i) : base(i)
+        public JSONWebpageFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
         {
         }
 
@@ -27,9 +27,9 @@ namespace TVRename
 
         protected override string CheckName() => "Check JSON links for the missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog)
         {
-            if (TVSettings.Instance.SearchJSONManualScanOnly && settings.Unattended)
+            if (TVSettings.Instance.SearchJSONManualScanOnly && Settings.Unattended)
             {
                 LOGGER.Info("Searching JSON Wepages is cancelled as this is an unattended scan");
                 return;
@@ -45,7 +45,7 @@ namespace TVRename
             {
                 foreach (ShowItemMissing action in ActionList.MissingEpisodes.ToList())
                 {
-                    if (settings.Token.IsCancellationRequested)
+                    if (Settings.Token.IsCancellationRequested)
                     {
                         return;
                     }

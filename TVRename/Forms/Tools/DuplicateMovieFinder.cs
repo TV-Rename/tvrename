@@ -240,7 +240,6 @@ namespace TVRename.Forms
             }
             catch (System.IO.FileNotFoundException)
             {
-                return;
             }
         }
 

@@ -69,7 +69,7 @@ namespace TVRename.Forms.Tools
 
             showRightClickMenu.Items.Clear();
 
-            AddRcMenuItem("View on TVDB...", (s, args) => TvSourceFor(iss.Show)); //todo - make this work for all sources
+            AddRcMenuItem("View on Source Provider...", (s, args) => TvSourceFor(iss.Show));
             AddRcMenuItem("Open Folder", (s, args) => Helpers.OpenFolderSelectFile(iss.File.FullName));
             AddRcMenuItem("Episode Guide", (s, args) => MainWindow.GotoEpguideFor(iss.Show, true));
 
@@ -212,7 +212,7 @@ namespace TVRename.Forms.Tools
                 }
                 //last column
                 else if (col.Index == olv.Columns.Count - 1)
-                //avoid "fill free space" bug
+                //avoid "fill free space" issue
                 {
                     col.Width = colWidthBeforeAutoResize > colWidthAfterAutoResizeByContent ? colWidthBeforeAutoResize : colWidthAfterAutoResizeByContent;
                 }

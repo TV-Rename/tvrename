@@ -3,6 +3,7 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
+    // ReSharper disable once InconsistentNaming
     public class BTString : BTItem
     {
         public byte[] Data;
@@ -10,6 +11,7 @@ namespace TVRename
         public BTString(string s)
             : base(BTChunk.kString)
         {
+            Data = new byte[0];
             SetString(s);
         }
 
@@ -39,7 +41,9 @@ namespace TVRename
         {
             byte[] res = new byte[20];
             if (((pieceNum * 20) + 20) > Data.Length)
+            {
                 return null;
+            }
 
             Array.Copy(Data, pieceNum * 20, res, 0, 20);
             return res;
@@ -49,7 +53,9 @@ namespace TVRename
         {
             string r = string.Empty;
             for (int i = 0; i < n; i++)
+            {
                 r += (data[start + i] < 16 ? "0" : "") + data[start + i].ToString("x").ToUpper();
+            }
 
             return r;
         }

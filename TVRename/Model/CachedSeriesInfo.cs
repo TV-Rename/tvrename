@@ -33,7 +33,7 @@ namespace TVRename
 
         public void ClearEpisodes() => sourceEpisodes.Clear();
 
-        private SeriesBanners banners;
+        private readonly SeriesBanners banners;
 
         public IEnumerable<KeyValuePair<int, Banner>> AllBanners => banners.AllBanners;
 
@@ -57,7 +57,7 @@ namespace TVRename
         // note: "SeriesID" in a <Series> is the tv.com code,
         // "seriesid" in an <Episode> is the tvdb code!
 
-        private void DefaultValues()
+        private CachedSeriesInfo(TVDoc.ProviderType source) : base(source)
         {
             sourceEpisodes = new ConcurrentDictionary<int, Episode>();
             AirsTime = null;
@@ -67,28 +67,33 @@ namespace TVRename
             BannersLoaded = false;
         }
 
-        protected CachedSeriesInfo()
+        public CachedSeriesInfo(int tvdb, int tvmaze, int tmdb, Locale langCode, TVDoc.ProviderType source) : base(tvdb, tvmaze, tmdb, langCode, source)
         {
-            DefaultValues();
+            sourceEpisodes = new ConcurrentDictionary<int, Episode>();
+            AirsTime = null;
+
+            banners = new SeriesBanners(this);
+            banners.ResetBanners();
+            BannersLoaded = false;
         }
 
-        public CachedSeriesInfo(int tvdb, int tvmaze, int tmdb, Locale langCode) : base(tvdb, tvmaze, tmdb, langCode)
+        public CachedSeriesInfo(Locale locale, TVDoc.ProviderType source) : base(locale, source)
         {
-            DefaultValues();
+            sourceEpisodes = new ConcurrentDictionary<int, Episode>();
+            AirsTime = null;
+
+            banners = new SeriesBanners(this);
+            banners.ResetBanners();
+            BannersLoaded = false;
         }
 
-        public CachedSeriesInfo(Locale locale) : base(locale)
-        {
-            DefaultValues();
-        }
-
-        public CachedSeriesInfo([NotNull] XElement seriesXml) : this()
+        public CachedSeriesInfo([NotNull] XElement seriesXml, TVDoc.ProviderType source) : this(source)
         {
             LoadXml(seriesXml);
             IsSearchResultOnly = false;
         }
 
-        public CachedSeriesInfo([NotNull] JObject json, Locale locale, bool searchResult) : this(locale)
+        public CachedSeriesInfo([NotNull] JObject json, Locale locale, bool searchResult, TVDoc.ProviderType source) : this(locale, source)
         {
             LoadJson(json);
             IsSearchResultOnly = searchResult;
@@ -107,7 +112,7 @@ namespace TVRename
             }
         }
 
-        public CachedSeriesInfo([NotNull] JObject json, JObject jsonInDefaultLang, Locale locale) : this(locale)
+        public CachedSeriesInfo([NotNull] JObject json, JObject jsonInDefaultLang, Locale locale, TVDoc.ProviderType source) : this(locale, source)
         {
             LoadJson(json, jsonInDefaultLang);
             IsSearchResultOnly = false;
@@ -453,7 +458,7 @@ namespace TVRename
             writer.WriteElement("TMDBCode", TmdbCode);
             writer.WriteElement("SeriesName", Name);
             writer.WriteElement("lastupdated", SrvLastUpdated);
-            writer.WriteElement("LanguageId", ActualLocale?.PreferredLanguage?.TVDBId);
+            writer.WriteElement("LanguageId", ActualLocale?.PreferredLanguage?.TvdbId);
             writer.WriteElement("RegionCode", ActualLocale?.PreferredRegion?.Abbreviation);
             writer.WriteElement("airsDayOfWeek", AirsDay);
             writer.WriteElement("Airs_Time", AirsTime?.ToString("HH:mm"), true);

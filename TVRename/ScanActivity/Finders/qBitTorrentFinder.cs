@@ -11,7 +11,7 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     internal class qBitTorrentFinder : DownloadingProviderFinder
     {
-        public qBitTorrentFinder(TVDoc i) : base(i, new qBitTorrent())
+        public qBitTorrentFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, new qBitTorrent(), settings)
         {
         }
 

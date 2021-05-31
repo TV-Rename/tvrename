@@ -35,18 +35,18 @@ namespace TVRename
 
             originalHint = hint;
 
-            if (SingleTvShowFound)
+            if (SingleTvShowFound && tvCodeFinder.TvShowInitialFoundCode.HasValue && tvCodeFinder.TvShowInitialFound != null)
             {
                 string filenameFriendly = TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(tvCodeFinder.TvShowInitialFound.Name));
-                SetShowItem(tvCodeFinder.TvShowInitialFoundCode, tvCodeFinder.Source, TVSettings.Instance.DefShowLocation + System.IO.Path.DirectorySeparatorChar + filenameFriendly);
+                SetShowItem(tvCodeFinder.TvShowInitialFoundCode.Value, tvCodeFinder.Source, TVSettings.Instance.DefShowLocation + System.IO.Path.DirectorySeparatorChar + filenameFriendly);
                 if (ShowConfiguration.Code == -1)
                 {
                     SetShowItem();
                 }
             }
-            if (SingleMovieFound)
+            if (SingleMovieFound && movieCodeFinder.MovieInitialFoundCode.HasValue)
             {
-                SetMovieItem(movieCodeFinder.MovieInitialFoundCode, movieCodeFinder.Source, TVSettings.Instance.DefMovieDefaultLocation ?? string.Empty);
+                SetMovieItem(movieCodeFinder.MovieInitialFoundCode.Value, movieCodeFinder.Source, TVSettings.Instance.DefMovieDefaultLocation ?? string.Empty);
                 if (MovieConfiguration.Code == -1)
                 {
                     SetMovieItem();

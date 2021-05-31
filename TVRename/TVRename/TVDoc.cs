@@ -59,9 +59,9 @@ namespace TVRename
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly ActionEngine actionManager;
         private readonly CacheUpdater cacheManager;
-        private readonly FindMissingEpisodes localFinders;
-        private readonly FindMissingEpisodes searchFinders;
-        private readonly FindMissingEpisodes downloadFinders;
+        private FindMissingEpisodes? localFinders;
+        private FindMissingEpisodes? searchFinders;
+        private FindMissingEpisodes? downloadFinders;
 
         public string? LoadErr;
         public readonly bool LoadOk;
@@ -81,10 +81,6 @@ namespace TVRename
             TvLibrary = new ShowLibrary();
             FilmLibrary = new MovieLibrary();
             cacheManager = new CacheUpdater();
-            localFinders = new FindMissingEpisodesLocally(this);
-            downloadFinders = new FindMissingEpisodesDownloading(this);
-            searchFinders = new FindMissingEpisodesSearch(this);
-
             mDirty = false;
             TheActionList = new ItemList();
 
@@ -721,11 +717,11 @@ namespace TVRename
 
         public ConcurrentBag<MediaNotFoundException> ShowProblems => cacheManager.Problems;
 
-        public bool HasActiveLocalFinders => localFinders.Active();
+        public bool HasActiveLocalFinders => localFinders?.Active() ?? false;
 
-        public bool HasActiveDownloadFinders => downloadFinders.Active();
+        public bool HasActiveDownloadFinders => downloadFinders?.Active() ?? false;
 
-        public bool HasActiveSearchFinders => searchFinders.Active();
+        public bool HasActiveSearchFinders => searchFinders?.Active() ?? false;
 
         public void Scan(ScanSettings settings)
         {
@@ -768,21 +764,19 @@ namespace TVRename
 
                 if (!settings.Unattended && settings.Type != TVSettings.ScanType.SingleShow)
                 {
-                    new FindNewItemsInDownloadFolders(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 0, 50, settings);
-                    new FindNewShowsInLibrary(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 50, 100, settings);
+                    new FindNewItemsInDownloadFolders(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 0, 50);
+                    new FindNewShowsInLibrary(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 50, 100);
 
                     UpdateMediaToScan(settings);
                 }
 
-                new CheckShows(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.MediaLibProg, settings);
-                new CleanDownloadDirectory(this).Check(
-                    scanProgDlg is null ? noProgress : scanProgDlg.DownloadFolderProg, settings);
+                new CheckShows(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.MediaLibProg);
+                new CleanDownloadDirectory(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadFolderProg);
 
-                localFinders.Check(scanProgDlg is null ? noProgress : scanProgDlg.LocalSearchProg, settings);
-                downloadFinders.Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadingProg, settings);
-                searchFinders.Check(scanProgDlg is null ? noProgress : scanProgDlg.ToBeDownloadedProg, settings);
-                new CleanUpTorrents(this).Check(scanProgDlg is null ? noProgress : scanProgDlg.ToBeDownloadedProg,
-                    settings);
+                localFinders?.Check(scanProgDlg is null ? noProgress : scanProgDlg.LocalSearchProg);
+                downloadFinders?.Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadingProg);
+                searchFinders?.Check(scanProgDlg is null ? noProgress : scanProgDlg.ToBeDownloadedProg);
+                new CleanUpTorrents(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.ToBeDownloadedProg);
 
                 if (settings.Token.IsCancellationRequested)
                 {
@@ -1516,9 +1510,15 @@ namespace TVRename
         internal void TMDBServerAccuracyCheck(bool unattended, bool hidden, UI owner)
         {
             PreventAutoScan("TMDB Accuracy Check");
-            IEnumerable<CachedMovieInfo> seriesToUpdate = TMDB.LocalCache.Instance.ServerAccuracyCheck();
-            IEnumerable<MovieConfiguration> showsToUpdate = seriesToUpdate.Select(mov => FilmLibrary.GetMovie(mov.TmdbCode, ProviderType.TMDB));
-            ForceRefreshMovies(showsToUpdate, unattended, hidden, owner);
+
+            IEnumerable<CachedMovieInfo> moviesToUpdate = TMDB.LocalCache.Instance.ServerAccuracyCheck();
+            IEnumerable<MovieConfiguration> filmsToUpdate = moviesToUpdate.Select(mov => FilmLibrary.GetMovie(mov.TmdbCode, ProviderType.TMDB));
+            ForceRefreshMovies(filmsToUpdate, unattended, hidden, owner);
+
+            IEnumerable<CachedSeriesInfo> seriesToUpdate = TMDB.LocalCache.Instance.ServerShowsAccuracyCheck();
+            IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(mov => TvLibrary.GetShowItem(mov.TmdbCode, ProviderType.TMDB));
+            ForceRefreshShows(showsToUpdate, unattended, hidden, owner);
+
             DoDownloadsBG();
             AllowAutoScan();
         }
@@ -2135,6 +2135,13 @@ namespace TVRename
             TheTVDB.LocalCache.Instance.ReConnect(false);
             TMDB.LocalCache.Instance.ReConnect(false);
             TVmaze.LocalCache.Instance.ReConnect(false);
+        }
+
+        public void SetScanSettings(ScanSettings settings)
+        {
+            localFinders = new FindMissingEpisodesLocally(this, settings);
+            downloadFinders = new FindMissingEpisodesDownloading(this, settings);
+            searchFinders = new FindMissingEpisodesSearch(this, settings);
         }
     }
 }

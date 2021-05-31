@@ -245,7 +245,7 @@ namespace TVRename
                     Logger.Error("Could not obtain update time from XML");
                 }
 
-                foreach (CachedMovieInfo si in x.Descendants("Movie").Select(seriesXml => new CachedMovieInfo(seriesXml)))
+                foreach (CachedMovieInfo si in x.Descendants("Movie").Select(seriesXml => new CachedMovieInfo(seriesXml, TVDoc.ProviderType.libraryDefault)))
                 {
                     // The <cachedSeries> returned by GetSeries have
                     // less info than other results from
@@ -323,7 +323,7 @@ namespace TVRename
                     Logger.Error("Could not obtain update time from XML");
                 }
 
-                foreach (CachedSeriesInfo si in x.Descendants("Series").Select(seriesXml => new CachedSeriesInfo(seriesXml)))
+                foreach (CachedSeriesInfo si in x.Descendants("Series").Select(seriesXml => new CachedSeriesInfo(seriesXml, TVDoc.ProviderType.libraryDefault)))
                 {
                     // The <cachedSeries> returned by GetSeries have
                     // less info than other results from

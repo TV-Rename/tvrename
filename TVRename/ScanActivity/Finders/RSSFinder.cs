@@ -13,7 +13,7 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     internal class RSSFinder : DownloadFinder
     {
-        public RSSFinder(TVDoc i) : base(i)
+        public RSSFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
         {
         }
 
@@ -21,9 +21,9 @@ namespace TVRename
 
         protected override string CheckName() => "Looked in the listed RSS URLs for download links for the missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog)
         {
-            if (TVSettings.Instance.SearchRSSManualScanOnly && settings.Unattended)
+            if (TVSettings.Instance.SearchRSSManualScanOnly && Settings.Unattended)
             {
                 LOGGER.Info("Searching RSS Feeds is cancelled as this is an unattended scan");
                 return;
@@ -44,7 +44,7 @@ namespace TVRename
 
             foreach (ShowItemMissing action in ActionList.MissingEpisodes.ToList())
             {
-                if (settings.Token.IsCancellationRequested)
+                if (Settings.Token.IsCancellationRequested)
                 {
                     return;
                 }

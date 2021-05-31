@@ -403,7 +403,8 @@ namespace TVRename
 
         public static long ExtractLong([NotNull] this XElement xmlSettings, string elementName, int defaultValue) => ExtractLong(xmlSettings, elementName) ?? defaultValue;
 
-        public static T ExtractEnum<T>([NotNull] this XElement xmlSettings, string elementName, T defaultVal)
+        [CanBeNull]
+        public static T ExtractEnum<T>([NotNull] this XElement xmlSettings, string elementName, [CanBeNull] T defaultVal)
         {
             if (!typeof(T).IsEnum)
             {

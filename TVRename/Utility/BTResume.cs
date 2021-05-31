@@ -27,7 +27,7 @@ namespace TVRename
         public bool SetPrios;
         public string Type;
 
-        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public BTResume(SetProgressDelegate setprog, string resumeDatFile)
             : base(setprog)
@@ -96,7 +96,7 @@ namespace TVRename
 
                 if (dictitem.Data is BTError err)
                 {
-                    logger.Error($"Error finding BT items: {err.Message}");
+                    Logger.Error($"Error finding BT items: {err.Message}");
                     return r;
                 }
 
@@ -186,7 +186,7 @@ namespace TVRename
                         catch (System.IO.PathTooLongException ptle)
                         {
                             //this is not the file we are looking for
-                            logger.Debug(ptle);
+                            Logger.Debug(ptle);
                         }
                     }
 
@@ -197,16 +197,12 @@ namespace TVRename
             return r;
         }
 
-        public string GetResumePrio(string torrentFile, int fileNum)
+        private string GetResumePrio(string torrentFile, int fileNum)
         {
             BTDictionary dict = GetTorrentDict(torrentFile);
-            if (dict is null)
-            {
-                return "";
-            }
 
-            BTItem p = dict.GetItem("prio");
-            if ((p is null) || (p.Type != BTChunk.kString))
+            BTItem p = dict?.GetItem("prio");
+            if (p is null || (p.Type != BTChunk.kString))
             {
                 return "";
             }

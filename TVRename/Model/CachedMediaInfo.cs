@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace TVRename
 {
-    public abstract class CachedMediaInfo
+    public abstract class CachedMediaInfo : ISeriesSpecifier
     {
         public string Name;
         public string? Overview;
@@ -47,13 +47,14 @@ namespace TVRename
         public long SrvLastUpdated;
 
         private protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
+        private readonly TVDoc.ProviderType source;
 
-        protected CachedMediaInfo(Locale locale) : this()
+        protected CachedMediaInfo(Locale locale, TVDoc.ProviderType source) : this(source)
         {
             ActualLocale = locale;
         }
 
-        protected CachedMediaInfo(int tvdb, int tvmaze, int tmdbId, Locale locale) : this(locale)
+        protected CachedMediaInfo(int tvdb, int tvmaze, int tmdbId, Locale locale, TVDoc.ProviderType source) : this(locale, source)
         {
             IsSearchResultOnly = false;
             TvMazeCode = tvmaze;
@@ -61,7 +62,7 @@ namespace TVRename
             TmdbCode = tmdbId;
         }
 
-        protected CachedMediaInfo()
+        protected CachedMediaInfo(TVDoc.ProviderType source)
         {
             Actors = new List<Actor>();
             Crew = new List<Crew>();
@@ -77,13 +78,14 @@ namespace TVRename
             TmdbCode = -1;
 
             Status = "Unknown";
+            this.source = source;
         }
 
         protected abstract MediaConfiguration.MediaType MediaType();
 
-        public int IdCode(TVDoc.ProviderType source)
+        public int IdCode(TVDoc.ProviderType selectedSource)
         {
-            return source switch
+            return selectedSource switch
             {
                 TVDoc.ProviderType.libraryDefault => IdCode(MediaType() == MediaConfiguration.MediaType.movie
                     ? TVSettings.Instance.DefaultMovieProvider
@@ -91,7 +93,7 @@ namespace TVRename
                 TVDoc.ProviderType.TVmaze => TvMazeCode,
                 TVDoc.ProviderType.TheTVDB => TvdbCode,
                 TVDoc.ProviderType.TMDB => TmdbCode,
-                _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
+                _ => throw new ArgumentOutOfRangeException(nameof(source), selectedSource, null)
             };
         }
 
@@ -251,5 +253,21 @@ namespace TVRename
 
             return betterLanguage ? newValue.Trim() : encumbant.Trim();
         }
+
+        TVDoc.ProviderType ISeriesSpecifier.Provider => source;
+
+        public int TvdbId => TvMazeCode;
+
+        string ISeriesSpecifier.Name => Name;
+
+        public MediaConfiguration.MediaType Type => MediaType();
+
+        public int TvMazeId => TvMazeCode;
+
+        public int TmdbId => TmdbCode;
+
+        public string? ImdbCode => Imdb;
+
+        public Locale TargetLocale => ActualLocale ?? new Locale();
     }
 }

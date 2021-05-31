@@ -89,7 +89,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{StartYear}", s.MinYear().ToString());
             name = name.ReplaceInsensitive("{EndYear}", s.MaxYear().ToString());
             name = name.ReplaceInsensitive("{ShowImdb}", s.Show.CachedShow?.Imdb ?? string.Empty);
-            name = name.ReplaceInsensitive("{TotalNumberOfEpisodes}", s?.Episodes.Count.ToString() ?? string.Empty);
+            name = name.ReplaceInsensitive("{TotalNumberOfEpisodes}", s.Episodes.Count.ToString());
 
             return TVSettings.DirectoryFriendly(name.Trim());
         }

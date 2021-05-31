@@ -56,7 +56,7 @@ namespace TVRename
                 return string.Empty;
             }
 
-            string posterUrl = TheTVDB.API.GetImageURL(cachedSeries.GetImage(TVSettings.FolderJpgIsType.Poster)); //todo - make sure this works with  non tvdb shows
+            string posterUrl = si.PosterUrl();
             string yearRange = ShowHtmlHelper.YearRange(cachedSeries);
             string episodeSummary = cachedSeries.Episodes.Count.ToString();
             string stars = ShowHtmlHelper.StarRating(cachedSeries.SiteRating / 2);

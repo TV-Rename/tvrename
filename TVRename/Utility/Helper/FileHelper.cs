@@ -250,14 +250,46 @@ namespace TVRename
 
         public static bool IsImportant(this DirectoryInfo info)
         {
-            if (info.Name.Equals("subs", StringComparison.OrdinalIgnoreCase)) return false;
-            if (info.Name.Equals("subtitles", StringComparison.OrdinalIgnoreCase)) return false;
-            if (info.Name.Equals("subfiles", StringComparison.OrdinalIgnoreCase)) return false;
-            if (info.Name.Equals(".actors", StringComparison.OrdinalIgnoreCase)) return false;
-            if (info.Name.Equals("actors", StringComparison.OrdinalIgnoreCase)) return false;
-            if (info.Name.Equals("sample", StringComparison.OrdinalIgnoreCase)) return false;
-            if (info.Name.Equals(".AppleDouble", StringComparison.OrdinalIgnoreCase)) return false;
-            if (info.Name.Equals("art", StringComparison.CurrentCultureIgnoreCase)) return false;
+            if (info.Name.Equals("subs", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            if (info.Name.Equals("subtitles", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            if (info.Name.Equals("subfiles", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            if (info.Name.Equals(".actors", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            if (info.Name.Equals("actors", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            if (info.Name.Equals("sample", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            if (info.Name.Equals(".AppleDouble", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            if (info.Name.Equals("art", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return false;
+            }
+
             return true;
         }
 

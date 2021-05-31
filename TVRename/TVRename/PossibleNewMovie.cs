@@ -55,10 +55,10 @@ namespace TVRename
 
             //Lookup based on TMDB ID Being Present
             int? tmdbId = ConvertToInt(FindShowCode("tmdbid", "tmdb"));
-            int? TMDBCode = ValidateOnTMDB(tmdbId, new Locale(), showErrorMsgBox);
-            if (TMDBCode.HasValue)
+            int? tmdbCode = ValidateOnTMDB(tmdbId, new Locale(), showErrorMsgBox);
+            if (tmdbCode.HasValue)
             {
-                SetId(TMDBCode.Value, TVDoc.ProviderType.TMDB);
+                SetId(tmdbCode.Value, TVDoc.ProviderType.TMDB);
                 return;
             }
 

@@ -132,7 +132,10 @@ namespace TVRename
         public static string UppercaseFirst(this string str)
         {
             if (string.IsNullOrEmpty(str))
+            {
                 return string.Empty;
+            }
+
             return char.ToUpper(str[0]) + str.Substring(1).ToLower();
         }
 
@@ -147,7 +150,10 @@ namespace TVRename
         public static string First(this string s, int charsToDisplay)
         {
             if (s.HasValue())
+            {
                 return s.Length <= charsToDisplay ? s : new string(s.Take(charsToDisplay).ToArray());
+            }
+
             return string.Empty;
         }
 

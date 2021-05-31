@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System;
 
 namespace TVRename

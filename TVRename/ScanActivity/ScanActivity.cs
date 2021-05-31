@@ -19,19 +19,24 @@ namespace TVRename
         private SetProgressDelegate? progressDelegate;
         private int startPosition;
         private int endPosition;
+        protected readonly TVDoc.ScanSettings Settings;
 
-        protected ScanActivity(TVDoc doc) => MDoc = doc;
+        protected ScanActivity(TVDoc doc, TVDoc.ScanSettings settings)
+        {
+            MDoc = doc;
+            this.Settings = settings;
+        }
 
         protected abstract string CheckName();
 
         public abstract bool Active();
 
-        protected abstract void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings);
+        protected abstract void DoCheck(SetProgressDelegate prog);
 
-        public void Check(SetProgressDelegate prog, TVDoc.ScanSettings settings) =>
-            Check(prog, 0, 100, settings);
+        public void Check(SetProgressDelegate prog) =>
+            Check(prog, 0, 100);
 
-        public void Check(SetProgressDelegate prog, int startpct, int totPct, TVDoc.ScanSettings settings)
+        public void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
             startPosition = startpct;
             endPosition = totPct;
@@ -39,7 +44,7 @@ namespace TVRename
             progressDelegate.Invoke(startPosition, string.Empty);
             try
             {
-                if (settings.Token.IsCancellationRequested)
+                if (Settings.Token.IsCancellationRequested)
                 {
                     return;
                 }
@@ -49,7 +54,7 @@ namespace TVRename
                     return;
                 }
 
-                DoCheck(prog, settings);
+                DoCheck(prog);
                 LogActionListSummary();
             }
             catch (TVRenameOperationInterruptedException)

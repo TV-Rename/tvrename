@@ -12,7 +12,7 @@ namespace TVRename
         private MovieConfiguration? lastFoundMovie;
         private TorrentEntry? lastFoundEntry;
 
-        public CleanUpTorrents([NotNull] TVDoc doc) : base(doc)
+        public CleanUpTorrents([NotNull] TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
         {
             sources = new List<IDownloadProvider> { new qBitTorrent(), new uTorrent() };
         }
@@ -21,7 +21,7 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.RemoveCompletedTorrents;
 
-        protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog)
         {
             DirFilesCache dfc = new DirFilesCache();
             foreach (IDownloadProvider source in sources)

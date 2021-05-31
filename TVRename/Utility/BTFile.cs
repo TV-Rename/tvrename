@@ -3,9 +3,10 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
+    // ReSharper disable once InconsistentNaming
     public class BTFile
     {
-        public List<BTItem> Items;
+        public readonly List<BTItem> Items;
 
         public BTFile()
         {
@@ -18,7 +19,9 @@ namespace TVRename
 
             BTItem bti = GetItem("info");
             if ((bti is null) || (bti.Type != BTChunk.kDictionary))
+            {
                 return null;
+            }
 
             BTDictionary infoDict = (BTDictionary)(bti);
 
@@ -28,7 +31,9 @@ namespace TVRename
             {
                 bti = infoDict.GetItem("name");
                 if ((bti is null) || (bti.Type != BTChunk.kString))
+                {
                     return null;
+                }
 
                 r.Add(((BTString)bti).AsString());
             }
@@ -42,15 +47,22 @@ namespace TVRename
                     BTDictionary file = (BTDictionary)(it);
                     BTItem? thePath = file.GetItem("path");
                     if (thePath == null)
+                    {
                         return null;
+                    }
+
                     if (thePath.Type != BTChunk.kList)
+                    {
                         return null;
+                    }
 
                     BTList pathList = (BTList)(thePath);
                     // want the last of the items in the list, which is the filename itself
                     int n = pathList.Items.Count - 1;
                     if (n < 0)
+                    {
                         return null;
+                    }
 
                     BTString fileName = (BTString)(pathList.Items[n]);
                     r.Add(fileName.AsString());
@@ -65,7 +77,9 @@ namespace TVRename
             TreeNode n = new TreeNode("BT File");
             tn.Add(n);
             foreach (BTItem t in Items)
+            {
                 t.Tree(n.Nodes);
+            }
         }
 
         public BTItem? GetItem(string key)
@@ -85,7 +99,9 @@ namespace TVRename
         public BTItem? GetItem(string key, bool ignoreCase)
         {
             if (Items.Count == 0)
+            {
                 return null;
+            }
 
             BTDictionary btd = GetDict();
             return btd.GetItem(key, ignoreCase);
@@ -94,7 +110,9 @@ namespace TVRename
         public void Write(System.IO.Stream sw)
         {
             foreach (BTItem i in Items)
+            {
                 i.Write(sw);
+            }
         }
     }
 }

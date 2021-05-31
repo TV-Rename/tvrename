@@ -337,7 +337,7 @@ namespace TVRename.TVmaze
             int tvdb = GetChild(externalsToken, "thetvdb").Type == JTokenType.Null ? -1 : (int)externalsToken["thetvdb"];
             int rage = GetChild(externalsToken, "tvrage").Type == JTokenType.Null ? -1 : (int)externalsToken["tvrage"];
 
-            return new CachedSeriesInfo(new Locale())
+            return new CachedSeriesInfo(new Locale(), TVDoc.ProviderType.TVmaze)
             {
                 IsSearchResultOnly = false,
                 AirsDay = days,

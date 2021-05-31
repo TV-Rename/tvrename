@@ -291,17 +291,17 @@ namespace TVRename
             showRightClickMenu.Close();
         }
 
-        private static void TvdbFor(ProcessedSeason? seas)
+        private static void OpenLinkFor(ProcessedSeason? seas)
         {
-            if (seas is null)
+            if (seas?.WebsiteUrl is null)
             {
                 return;
             }
 
-            Helpers.OpenUrl(seas.TVDBWebsiteUrl);
+            Helpers.OpenUrl(seas.WebsiteUrl);
         }
 
-        private static void TvdbFor(ShowConfiguration? si)
+        private static void OpenLinkFor(ShowConfiguration? si)
         {
             if (si?.WebsiteUrl is null)
             {
@@ -376,24 +376,21 @@ namespace TVRename
                     }
                 }
 
-                if (show != null)
+                if (show.DoMissingCheck)
                 {
-                    if (show.DoMissingCheck)
+                    AddRcMenuItem(gridSummary.showRightClickMenu, "Stop Checking Show", (o, args) =>
                     {
-                        AddRcMenuItem(gridSummary.showRightClickMenu, "Stop Checking Show", (o, args) =>
-                        {
-                            show.DoMissingCheck = false;
-                            gridSummary.PopulateGrid();
-                        });
-                    }
-                    else
+                        show.DoMissingCheck = false;
+                        gridSummary.PopulateGrid();
+                    });
+                }
+                else
+                {
+                    AddRcMenuItem(gridSummary.showRightClickMenu, "Start Checking Show", (o, args) =>
                     {
-                        AddRcMenuItem(gridSummary.showRightClickMenu, "Start Checking Show", (o, args) =>
-                        {
-                            show.DoMissingCheck = true;
-                            gridSummary.PopulateGrid();
-                        });
-                    }
+                        show.DoMissingCheck = true;
+                        gridSummary.PopulateGrid();
+                    });
                 }
 
                 GenerateSeparator(gridSummary.showRightClickMenu);
@@ -408,16 +405,16 @@ namespace TVRename
                     GenerateSeparator(gridSummary.showRightClickMenu);
                 }
 
-                AddRcMenuItem(gridSummary.showRightClickMenu, "Visit thetvdb.com", //todo - make this work for all sources
+                AddRcMenuItem(gridSummary.showRightClickMenu, "Visit Source",
                     (o, args) =>
                     {
                         if (processedSeason is null)
                         {
-                            TvdbFor(show);
+                            OpenLinkFor(show);
                         }
                         else
                         {
-                            TvdbFor(processedSeason);
+                            OpenLinkFor(processedSeason);
                         }
                     }
                 );

@@ -12,7 +12,7 @@ namespace TVRename
 {
     internal class CleanDownloadDirectory : ScanActivity
     {
-        public CleanDownloadDirectory(TVDoc doc) : base(doc)
+        public CleanDownloadDirectory(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
         {
             filesThatMayBeNeeded = new List<FileInfo>();
             returnActions = new ItemList();
@@ -24,7 +24,6 @@ namespace TVRename
         private readonly DirFilesCache dfc = new DirFilesCache();
         private ICollection<ShowConfiguration> showList;
         private ICollection<MovieConfiguration> movieList;
-        private TVDoc.ScanSettings currentSettings;
         private readonly ItemList returnActions;
 
         public override bool Active() => TVSettings.Instance.RemoveDownloadDirectoriesFiles ||
@@ -35,13 +34,11 @@ namespace TVRename
 
         protected override string CheckName() => "Cleaned up and files in download directory that are not needed";
 
-        protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog)
         {
             returnActions.Clear();
             showList = MDoc.TvLibrary.GetSortedShowItems(); //We ignore the current set of shows being scanned to be secrure that no files are deleted for unscanned shows
             movieList = MDoc.FilmLibrary.GetSortedMovies();
-
-            currentSettings = settings;
 
             //for each directory in settings directory
             //for each file in directory
@@ -56,14 +53,14 @@ namespace TVRename
             {
                 UpdateStatus(c++, totalDownloadFolders, dirPath);
 
-                if (!Directory.Exists(dirPath) || currentSettings.Token.IsCancellationRequested)
+                if (!Directory.Exists(dirPath) || Settings.Token.IsCancellationRequested)
                 {
                     continue;
                 }
 
                 filesThatMayBeNeeded = new List<FileInfo>();
 
-                ReviewFilesInDownloadDirectory(dirPath, settings.Owner);
+                ReviewFilesInDownloadDirectory(dirPath, Settings.Owner);
                 ReviewDirsInDownloadDirectory(dirPath);
             }
 
@@ -85,7 +82,7 @@ namespace TVRename
                 foreach (string subDirPath in Directory.GetDirectories(dirPath, "*",
                     SearchOption.AllDirectories).Where(Directory.Exists))
                 {
-                    if (currentSettings.Token.IsCancellationRequested)
+                    if (Settings.Token.IsCancellationRequested)
                     {
                         return;
                     }
@@ -196,7 +193,7 @@ namespace TVRename
             {
                 foreach (string filePath in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories).Where(File.Exists))
                 {
-                    if (currentSettings.Token.IsCancellationRequested)
+                    if (Settings.Token.IsCancellationRequested)
                     {
                         return;
                     }
@@ -215,7 +212,7 @@ namespace TVRename
 
                     if (matchingShowsNoDupes.Any() || matchingNoDupesMovies.Any())
                     {
-                        ReviewFileInDownloadDirectory(currentSettings.Unattended, fi, matchingShowsNoDupes, matchingNoDupesMovies, owner);
+                        ReviewFileInDownloadDirectory(Settings.Unattended, fi, matchingShowsNoDupes, matchingNoDupesMovies, owner);
                     }
                 }
             }

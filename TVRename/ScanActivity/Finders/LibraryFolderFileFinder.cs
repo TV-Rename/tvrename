@@ -7,7 +7,7 @@ namespace TVRename
 {
     internal class LibraryFolderFileFinder : FileFinder
     {
-        public LibraryFolderFileFinder(TVDoc i) : base(i)
+        public LibraryFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
         {
         }
 
@@ -15,7 +15,7 @@ namespace TVRename
 
         protected override string CheckName() => "Looked in the library for the missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog)
         {
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
@@ -29,7 +29,7 @@ namespace TVRename
 
             foreach (ItemMissing? me in ActionList.Missing.ToList())
             {
-                if (settings.Token.IsCancellationRequested)
+                if (Settings.Token.IsCancellationRequested)
                 {
                     return;
                 }
@@ -43,11 +43,11 @@ namespace TVRename
                         LOGGER.Info($"Not looking for {me.Filename} in the library as the show/episode is null");
                         continue;
                     }
-                    FindEpisode(settings, sim, dfc, newList, toRemove);
+                    FindEpisode(sim, dfc, newList, toRemove);
                 }
                 else if (me is MovieItemMissing mim)
                 {
-                    FindMovie(settings, mim, dfc, newList, toRemove);
+                    FindMovie(mim, dfc, newList, toRemove);
                 }
             }
 
@@ -64,7 +64,7 @@ namespace TVRename
             ActionList.Replace(toRemove, newList);
         }
 
-        private void FindMovie(TVDoc.ScanSettings settings, MovieItemMissing mim, DirFilesCache dfc, ItemList newList, ItemList toRemove)
+        private void FindMovie(MovieItemMissing mim, DirFilesCache dfc, ItemList newList, ItemList toRemove)
         {
             if (!mim.MovieConfig.UseAutomaticFolders)
             {
@@ -99,8 +99,7 @@ namespace TVRename
             newList.Add(new ActionMoveRenameDirectory(sourceFolder, targetFolder, mim.MovieConfig));
         }
 
-        private void FindEpisode(TVDoc.ScanSettings settings, ShowItemMissing me, DirFilesCache dfc, ItemList newList,
-            ItemList toRemove)
+        private void FindEpisode(ShowItemMissing me, DirFilesCache dfc, ItemList newList, ItemList toRemove)
         {
             ItemList thisRound = new ItemList();
             if (me.Episode == null)
@@ -111,7 +110,7 @@ namespace TVRename
             string baseFolder = me.Episode.Show.AutoAddFolderBase;
             LOGGER.Info($"Starting to look for {me.Filename} in the library: {baseFolder}");
 
-            List<FileInfo> matchedFiles = GetMatchingFilesFromFolder(baseFolder, dfc, me, settings, thisRound);
+            List<FileInfo> matchedFiles = GetMatchingFilesFromFolder(baseFolder, dfc, me, thisRound);
 
             foreach (string folderName in me.Episode.Show.AllFolderLocationsEpCheck(false)
                 .Where(folders => folders.Value != null)
@@ -120,16 +119,15 @@ namespace TVRename
                     .Where(f => !string.IsNullOrWhiteSpace(f)) //No point looking here
                     .Where(f => f != baseFolder)))
             {
-                ProcessFolder(settings, me, folderName, dfc, thisRound, matchedFiles);
+                ProcessFolder(me, folderName, dfc, thisRound, matchedFiles);
             }
 
-            ProcessMissingItem(settings, newList, toRemove, me, thisRound, matchedFiles,
+            ProcessMissingItem(newList, toRemove, me, thisRound, matchedFiles,
                 TVSettings.Instance.UseFullPathNameToMatchLibraryFolders);
         }
 
         [NotNull]
-        private List<FileInfo> GetMatchingFilesFromFolder(string? baseFolder, DirFilesCache dfc, ShowItemMissing me, TVDoc.ScanSettings settings,
-            ItemList thisRound)
+        private List<FileInfo> GetMatchingFilesFromFolder(string? baseFolder, DirFilesCache dfc, ShowItemMissing me, ItemList thisRound)
         {
             List<FileInfo> matchedFiles;
 
@@ -140,14 +138,14 @@ namespace TVRename
             else
             {
                 IEnumerable<FileInfo> testFiles = dfc.GetFilesIncludeSubDirs(baseFolder);
-                matchedFiles = testFiles.Where(testFile => ReviewFile(me, thisRound, testFile, settings, false, false, false,
+                matchedFiles = testFiles.Where(testFile => ReviewFile(me, thisRound, testFile, false, false, false,
                     TVSettings.Instance.UseFullPathNameToMatchLibraryFolders)).ToList();
             }
 
             return matchedFiles;
         }
 
-        private void ProcessFolder(TVDoc.ScanSettings settings, [NotNull] ShowItemMissing me, [NotNull] string folderName, [NotNull] DirFilesCache dfc,
+        private void ProcessFolder([NotNull] ShowItemMissing me, [NotNull] string folderName, [NotNull] DirFilesCache dfc,
             ItemList thisRound, [NotNull] List<FileInfo> matchedFiles)
         {
             LOGGER.Info($"Starting to look for {me.Filename} in the library folder: {folderName}");
@@ -155,7 +153,7 @@ namespace TVRename
 
             foreach (FileInfo testFile in files)
             {
-                if (!ReviewFile(me, thisRound, testFile, settings, false, false, false,
+                if (!ReviewFile(me, thisRound, testFile, false, false, false,
                     TVSettings.Instance.UseFullPathNameToMatchLibraryFolders))
                 {
                     continue;

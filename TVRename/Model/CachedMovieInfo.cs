@@ -22,17 +22,17 @@ namespace TVRename
         {
         }
 
-        public CachedMovieInfo(Locale locale) : base(locale)
+        public CachedMovieInfo(Locale locale, TVDoc.ProviderType source) : base(locale, source)
         {
             DefaultValues();
         }
 
-        public CachedMovieInfo(int tvdb, int tvmaze, int tmdb, Locale locale) : base(tvdb, tvmaze, tmdb, locale)
+        public CachedMovieInfo(int tvdb, int tvmaze, int tmdb, Locale locale, TVDoc.ProviderType source) : base(tvdb, tvmaze, tmdb, locale, source)
         {
             DefaultValues();
         }
 
-        public CachedMovieInfo([NotNull] XElement seriesXml)
+        public CachedMovieInfo([NotNull] XElement seriesXml, TVDoc.ProviderType source) : base(source)
         {
             DefaultValues();
             LoadXml(seriesXml);
@@ -248,7 +248,7 @@ namespace TVRename
             writer.WriteElement("TMDBCode", TmdbCode);
             writer.WriteElement("SeriesName", Name);
             writer.WriteElement("lastupdated", SrvLastUpdated);
-            writer.WriteElement("LanguageId", ActualLocale?.PreferredLanguage?.TVDBId);
+            writer.WriteElement("LanguageId", ActualLocale?.PreferredLanguage?.TvdbId);
             writer.WriteElement("RegionCode", ActualLocale?.PreferredRegion?.Abbreviation);
             writer.WriteElement("CollectionId", CollectionId);
             writer.WriteElement("CollectionName", CollectionName);

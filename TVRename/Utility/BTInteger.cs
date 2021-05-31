@@ -2,6 +2,7 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
+    // ReSharper disable once InconsistentNaming
     public class BTInteger : BTItem
     {
         public long Value;

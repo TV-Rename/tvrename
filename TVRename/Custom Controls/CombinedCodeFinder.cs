@@ -23,12 +23,12 @@ namespace TVRename
         private bool mInternal;
         private readonly ListViewColumnSorter lvwCodeFinderColumnSorter;
 
-        public CachedSeriesInfo TvShowInitialFound { get; private set; }
-        public CachedMovieInfo MovieInitialFound { get; private set; }
-        public int TvShowInitialFoundCode => TvShowInitialFound.IdCode(Source);
+        public CachedSeriesInfo? TvShowInitialFound { get; private set; }
+        public CachedMovieInfo? MovieInitialFound { get; private set; }
+        public int? TvShowInitialFoundCode => TvShowInitialFound?.IdCode(Source);
 
         private const string DEFAULT_MESSAGE = "Enter the show's name, and click \"Search\"";
-        public int MovieInitialFoundCode => MovieInitialFound.IdCode(Source);
+        public int? MovieInitialFoundCode => MovieInitialFound?.IdCode(Source);
 
         public CombinedCodeFinder(string? initialHint, MediaConfiguration.MediaType type, TVDoc.ProviderType source)
         {

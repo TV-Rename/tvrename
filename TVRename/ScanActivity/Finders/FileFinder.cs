@@ -19,16 +19,16 @@ namespace TVRename
 {
     internal abstract class FileFinder : Finder
     {
-        protected FileFinder(TVDoc i) : base(i)
+        protected FileFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
         {
         }
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.local;
 
         // ReSharper disable once FunctionComplexityOverflow
-        protected bool ReviewFile(ShowItemMissing me, ItemList addTo, FileInfo dce, TVDoc.ScanSettings settings, bool addMergeRules, bool preventMove, bool doExtraFiles, bool useFullPath)
+        protected bool ReviewFile(ShowItemMissing me, ItemList addTo, FileInfo dce, bool addMergeRules, bool preventMove, bool doExtraFiles, bool useFullPath)
         {
-            if (settings.Token.IsCancellationRequested)
+            if (Settings.Token.IsCancellationRequested)
             {
                 return false;
             }
@@ -97,9 +97,9 @@ namespace TVRename
             return false;
         }
 
-        protected bool ReviewFile(MovieItemMissing me, ItemList addTo, FileInfo dce, TVDoc.ScanSettings settings, bool preventMove, bool doExtraFiles, bool useFullPath)
+        protected bool ReviewFile(MovieItemMissing me, ItemList addTo, FileInfo dce, bool preventMove, bool doExtraFiles, bool useFullPath)
         {
-            if (settings.Token.IsCancellationRequested)
+            if (Settings.Token.IsCancellationRequested)
             {
                 return false;
             }
@@ -487,11 +487,11 @@ namespace TVRename
             return actionlist.CopyMoveRename.Any(cmAction => cmAction.SameSource(newItem));
         }
 
-        protected void ProcessMissingItem(TVDoc.ScanSettings settings, ItemList newList, ItemList toRemove, ItemMissing me, ItemList thisRound, [NotNull] List<FileInfo> matchedFiles, bool useFullPath)
+        protected void ProcessMissingItem(ItemList newList, ItemList toRemove, ItemMissing me, ItemList thisRound, [NotNull] List<FileInfo> matchedFiles, bool useFullPath)
         {
             if (matchedFiles.Count == 1)
             {
-                if (!OtherActionsMatch(matchedFiles[0], me, settings, useFullPath))
+                if (!OtherActionsMatch(matchedFiles[0], me, useFullPath))
                 {
                     if (!FinderHelper.BetterShowsMatch(matchedFiles[0], me.Show, useFullPath, MDoc))
                     {
@@ -568,7 +568,7 @@ namespace TVRename
             return bestMatchedFiles;
         }
 
-        private bool OtherActionsMatch(FileInfo matchedFile, Item me, TVDoc.ScanSettings settings, bool useFullPath)
+        private bool OtherActionsMatch(FileInfo matchedFile, Item me, bool useFullPath)
         //This is used to check whether the selected file may match any other files we are looking for
         {
             foreach (ShowItemMissing testMissingAction in ActionList.MissingEpisodes.ToList())
@@ -578,7 +578,7 @@ namespace TVRename
                     continue;
                 }
 
-                if (ReviewFile(testMissingAction, new ItemList(), matchedFile, settings, false, false, false, useFullPath))
+                if (ReviewFile(testMissingAction, new ItemList(), matchedFile, false, false, false, useFullPath))
                 {
                     //We have 2 options that match  me and testAction - See whether one is subset of the other
                     if (me.Episode != null && me.Episode.Show.ShowName.Contains(testMissingAction.MissingEpisode.Show.ShowName))

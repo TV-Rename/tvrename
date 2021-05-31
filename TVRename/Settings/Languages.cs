@@ -117,7 +117,7 @@ namespace TVRename
         // ReSharper disable once UnusedMember.Global
         public Language? GetLanguageFromId(int languageId)
         {
-            return this.SingleOrDefault(l => l.TVDBId == languageId && l.IsPrimary);
+            return this.SingleOrDefault(l => l.TvdbId == languageId && l.IsPrimary);
         }
 
         public Language? LanguageFromDialectCode(string iso)

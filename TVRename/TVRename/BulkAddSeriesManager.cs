@@ -269,7 +269,7 @@ namespace TVRename
             return false;
         }
 
-        public (bool finished, DirectoryInfo[] subDirs) CheckFolderForShows([NotNull] DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
+        public (bool finished, DirectoryInfo[]? subDirs) CheckFolderForShows([NotNull] DirectoryInfo di2, bool andGuess, bool fullLogging, bool showErrorMsgBox)
         {
             try
             {

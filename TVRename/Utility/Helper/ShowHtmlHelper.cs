@@ -102,7 +102,7 @@ namespace TVRename
                 return;
             }
 
-            string horizontalBanner = CreateHorizontalBannerHtml(ser);
+            string horizontalBanner = CreateHorizontalBannerHtml(si);
             string yearRange = YearRange(ser);
             string episodeSummary = ser.Episodes.Count.ToString();
             string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
@@ -189,8 +189,8 @@ namespace TVRename
 
         private static void AppendShow(this StringBuilder sb, ShowConfiguration? si, CachedSeriesInfo ser, Color backgroundColour, bool includeDirectoryLinks)
         {
-            string horizontalBanner = CreateHorizontalBannerHtml(ser);
-            string poster = CreatePosterHtml(ser);
+            string horizontalBanner = CreateHorizontalBannerHtml(si);
+            string poster = CreatePosterHtml(si);
             string yearRange = YearRange(ser);
             string episodeSummary = ser.Episodes.Count.ToString();
             string stars = StarRating(ser.SiteRating / 2);
@@ -601,13 +601,12 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string CreateHorizontalBannerHtml([NotNull] CachedSeriesInfo ser)
+        private static string CreateHorizontalBannerHtml(ShowConfiguration? series)
         {
-            string path = ser.GetSeriesWideBannerPath();
-            if (!string.IsNullOrEmpty(path) &&
-                !string.IsNullOrEmpty(TheTVDB.API.GetImageURL(path)))
+            string? url = series?.WideBannerUrl();
+            if (url.HasValue())
             {
-                return $"<img class=\"rounded\" src=\"{TheTVDB.API.GetImageURL(path)}\"><br/>&nbsp;";
+                return $"<img class=\"rounded\" src=\"{url}\"><br/>&nbsp;";
             }
 
             return string.Empty;
@@ -616,8 +615,8 @@ namespace TVRename
         [NotNull]
         private static string CreateHorizontalBannerHtml([NotNull] this ProcessedSeason s)
         {
-            if (!string.IsNullOrEmpty(s.GetWideBannerPath()) &&
-                !string.IsNullOrEmpty(TheTVDB.API.GetImageURL(s.GetWideBannerPath())))
+            string url = s.WideBannerUrl();
+            if (url.HasValue())
             {
                 return $"<img class=\"rounded w-100\" src=\"{TheTVDB.API.GetImageURL(s.GetWideBannerPath())}\"><br/>";
             }
@@ -626,19 +625,44 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string CreatePosterHtml([NotNull] CachedSeriesInfo ser)
+        private static string CreatePosterHtml([NotNull] ShowConfiguration? series)
         {
-            string url = ser.GetSeriesPosterPath();
-            if (url.HasValue() && !url.IsWebLink() && TheTVDB.API.GetImageURL(url).HasValue())
+            if (series is null)
             {
-                url = TheTVDB.API.GetImageURL(url);
+                return string.Empty;
             }
-            if (url.HasValue() && url.IsWebLink())
+
+            string url = series.PosterUrl();
+            if (url.HasValue() && url!.IsWebLink())
             {
-                return $"<img class=\"show-poster rounded w-100\" src=\"{url}\" alt=\"{ser.Name} Show Poster\">";
+                return $"<img class=\"show-poster rounded w-100\" src=\"{url}\" alt=\"{series.ShowName} Show Poster\">";
             }
 
             return string.Empty;
+        }
+
+        public static string PosterUrl(this ShowConfiguration series)
+        {
+            string? url = series.CachedShow?.GetSeriesPosterPath();
+
+            if (url.HasValue() && !url!.IsWebLink() && series.Provider == TVDoc.ProviderType.TheTVDB && TheTVDB.API.GetImageURL(url).HasValue())
+            {
+                return TheTVDB.API.GetImageURL(url);
+            }
+            string x = TheTVDB.API.GetImageURL(series.CachedShow?.GetImage(TVSettings.FolderJpgIsType.Poster)); //todo - make sure this works with  non tvdb shows
+            return string.Empty;
+        }
+
+        public static string? ThumbnailUrl(this ProcessedEpisode episode)
+        {
+            string? url = episode.Filename;
+
+            if (url.HasValue() && !url!.IsWebLink() && episode.Show.Provider == TVDoc.ProviderType.TheTVDB && TheTVDB.API.GetImageURL(url).HasValue())
+            {
+                return TheTVDB.API.GetImageURL(url);
+            }
+            //todo - make sure this works with  non tvdb shows
+            return episode.Filename;
         }
 
         [NotNull]
@@ -690,14 +714,12 @@ namespace TVRename
                 return string.Empty;
             }
 
-            if (string.IsNullOrEmpty(ei.Filename))
+            if (string.IsNullOrEmpty(ei.ThumbnailUrl()))
             {
                 return string.Empty;
             }
 
-            string url = ei.Show.Provider == TVDoc.ProviderType.TheTVDB
-                ? TheTVDB.API.GetImageURL(ei.Filename)
-                : ei.Filename;
+            string url = ei.ThumbnailUrl();
 
             if (url.HasValue())
             {
@@ -1031,7 +1053,7 @@ namespace TVRename
         public static string GetShowImagesHtmlOverview([NotNull] this ShowConfiguration si)
         {
             string body =
-                $"<h1><A HREF=\"{TheTVDB.API.WebsiteShowUrl(si)}\">{si.ShowName}</A> </h1>";
+                $"<h1><A HREF=\"{si.ProviderShowUrl()}\">{si.ShowName}</A> </h1>";
 
             CachedSeriesInfo ser = si.CachedShow;
             if (ser is null)
@@ -1249,15 +1271,13 @@ namespace TVRename
             string body = string.Empty;
             CachedSeriesInfo ser = si.CachedShow;
 
-            if (!(ser is null) &&
-                !string.IsNullOrEmpty(ser.GetSeriesWideBannerPath()) &&
-                !string.IsNullOrEmpty(TheTVDB.API.GetImageURL(ser.GetSeriesWideBannerPath())))
+            string bannerUrl = si.WideBannerUrl();
+            if (bannerUrl.HasValue())
             {
-                body += "<img width=758 height=140 src=\"" + TheTVDB.API.GetImageURL(ser.GetSeriesWideBannerPath()) +
-                        "\"><br/>";
+                body += $"<img width=758 height=140 src=\"{bannerUrl}\"><br/>";
             }
 
-            body += $"<h1><A HREF=\"{TheTVDB.API.WebsiteShowUrl(si)}\">{si.ShowName}</A> </h1>";
+            body += $"<h1><A HREF=\"{si.ProviderShowUrl()}\">{si.ShowName}</A> </h1>";
 
             body += "<h2>Overview</h2>" + ser?.Overview; //get overview in either format
 
@@ -1308,35 +1328,55 @@ namespace TVRename
             return body;
         }
 
+        public static string WideBannerUrl(this ShowConfiguration series)
+        {
+            string? url = series.CachedShow?.GetSeriesWideBannerPath();
+
+            if (url.HasValue() && !url!.IsWebLink() && series.Provider == TVDoc.ProviderType.TheTVDB && TheTVDB.API.GetImageURL(url).HasValue())
+            {
+                return TheTVDB.API.GetImageURL(url);
+            }
+            string x = TheTVDB.API.GetImageURL(series.CachedShow?.GetImage(TVSettings.FolderJpgIsType.Banner)); //todo - make sure this works with  non tvdb shows
+            return string.Empty;
+        }
+
+        public static string WideBannerUrl(this ProcessedSeason season)
+        {
+            string? url = season.GetWideBannerPath();
+
+            if (url.HasValue() && !url!.IsWebLink() && season.Show.Provider == TVDoc.ProviderType.TheTVDB && TheTVDB.API.GetImageURL(url).HasValue())
+            {
+                return TheTVDB.API.GetImageURL(url);
+            }
+            return string.Empty;
+        }
+
         [NotNull]
         public static string GetSeasonHtmlOverviewOffline([NotNull] this ShowConfiguration si, [NotNull] ProcessedSeason s)
         {
-            CachedSeriesInfo ser = si.CachedShow;
             int snum = s.SeasonNumber;
             string body = string.Empty;
 
-            if (!string.IsNullOrEmpty(ser?.GetSeriesWideBannerPath()) &&
-                !string.IsNullOrEmpty(TheTVDB.API.GetImageURL(ser.GetSeriesWideBannerPath())))
+            string widePosterUrl = si.WideBannerUrl();
+            if (widePosterUrl.HasValue())
             {
-                body += "<img width=758 height=140 src=\"" + TheTVDB.API.GetImageURL(ser.GetSeriesWideBannerPath()) +
-                        "\"><br/>";
+                body += $"<img width=758 height=140 src=\"{widePosterUrl}\"><br/>";
             }
 
             List<ProcessedEpisode> eis = si.SeasonEpisodes[snum];
 
             string seasText = SeasonName(si, snum);
-
-            if (eis.Count > 0 && eis[0].SeasonId > 0)
+            string seasonUrl = s.WebsiteUrl;
+            if (eis.Count > 0 && eis[0].SeasonId > 0 && seasonUrl.HasValue())
             {
-                seasText = " - <A HREF=\"" + TheTVDB.API.WebsiteSeasonUrl(s) + "\">" +
-                           seasText + "</a>";
+                seasText = $" - <A HREF=\"{seasonUrl}\">{seasText}</a>";
             }
             else
             {
                 seasText = " - " + seasText;
             }
 
-            body += "<h1><A HREF=\"" + TheTVDB.API.WebsiteShowUrl(si) + "\">" + si.ShowName +
+            body += "<h1><A HREF=\"" + si.ProviderShowUrl() + "\">" + si.ShowName +
                     "</A>" + seasText + "</h1>";
 
             DirFilesCache dfc = new DirFilesCache();
@@ -1344,7 +1384,7 @@ namespace TVRename
             {
                 string epl = ei.EpNumsAsString();
 
-                string episodeUrl = TheTVDB.API.WebsiteEpisodeUrl(ei);
+                string episodeUrl = ei.ProviderWebUrl();
 
                 body += "<A href=\"" + episodeUrl + "\" name=\"ep" + epl + "\">"; // anchor
                 body += "<b>" + EpisodeName(si, snum, ei) + "</b>";
@@ -1383,9 +1423,9 @@ namespace TVRename
                     body += "<table><tr>";
                     body += "<td width=100% valign=top>" + GetOverview(ei) + "</td><td width=300 height=225>";
                     // 300x168 / 300x225
-                    if (!string.IsNullOrEmpty(ei.Filename))
+                    if (ei.ThumbnailUrl().HasValue())
                     {
-                        body += "<img src=" + TheTVDB.API.GetImageURL(ei.Filename) + ">";
+                        body += "<img src=" + ei.ThumbnailUrl() + ">";
                     }
 
                     body += "</td></tr></table>";
@@ -1399,6 +1439,29 @@ namespace TVRename
             } // for each episode in this season
 
             return body;
+        }
+
+        public static string ProviderWebUrl(this ProcessedEpisode ei)
+        {
+            if (ei.Show.Provider == TVDoc.ProviderType.TheTVDB)
+            {
+                return TheTVDB.API.WebsiteEpisodeUrl(ei);
+            }
+
+            //todo - make sure this works with  non tvdb shows
+            return string.Empty;
+        }
+
+        public static string ProviderShowUrl(this ShowConfiguration show)
+        {
+            return show.Provider switch
+            {
+                TVDoc.ProviderType.TheTVDB => TheTVDB.API.WebsiteShowUrl(show),
+                TVDoc.ProviderType.TMDB => show.WebsiteUrl ?? string.Empty,
+                TVDoc.ProviderType.libraryDefault => show.WebsiteUrl ?? string.Empty,
+                TVDoc.ProviderType.TVmaze => show.WebsiteUrl ?? string.Empty,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         public static string GetMovieHtmlOverviewOffline([NotNull] this MovieConfiguration si)
@@ -1419,7 +1482,7 @@ namespace TVRename
                 first = false;
             }
 
-            string siteRating = (ser?.SiteRating ?? 0) > 0 ? ser?.SiteRating + "/10" : string.Empty;
+            string siteRating = (ser?.SiteRating ?? 0) > 0 ? ser.SiteRating + "/10" : string.Empty;
             string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(si.TvdbCode) : string.Empty;
             string tmdbLink = si.TmdbCode > 0 ? $"https://www.themoviedb.org/movie/{si.TmdbCode}" : string.Empty;
             string mazeLink = ser?.TvMazeCode > 0 ? ser.WebUrl : string.Empty;
@@ -1432,11 +1495,30 @@ namespace TVRename
             tableHtml += GetOverviewPart("thetvdb.com", $"<A HREF=\"{tvdbLink}\">Visit</a>");
             tableHtml += GetOverviewPart("imdb.com", "<A HREF=\"http://www.imdb.com/title/" + ser?.Imdb + "\">Visit</a>");
             tableHtml += GetOverviewPart("tv.com", "<A HREF=\"http://www.tv.com/show/" + ser?.SeriesId + "/summary.html\">Visit</a>");
-            if (tmdbLink.HasValue()) tableHtml += GetOverviewPart("MovieDB", $"<A HREF=\"{tmdbLink}\">Visit</a>");
-            if (mazeLink.HasValue()) tableHtml += GetOverviewPart("TV Maze", $"<A HREF=\"{mazeLink}\">Visit</a>");
-            if (facebookButton.HasValue()) tableHtml += GetOverviewPart("Facebook", $"<A HREF=\"{facebookButton}\">Visit</a>");
-            if (instaButton.HasValue()) tableHtml += GetOverviewPart("Instagram", $"<A HREF=\"{instaButton}\">Visit</a>");
-            if (twitterButton.HasValue()) tableHtml += GetOverviewPart("Twitter", $"<A HREF=\"{twitterButton}\">Visit</a>");
+            if (tmdbLink.HasValue())
+            {
+                tableHtml += GetOverviewPart("MovieDB", $"<A HREF=\"{tmdbLink}\">Visit</a>");
+            }
+
+            if (mazeLink.HasValue())
+            {
+                tableHtml += GetOverviewPart("TV Maze", $"<A HREF=\"{mazeLink}\">Visit</a>");
+            }
+
+            if (facebookButton.HasValue())
+            {
+                tableHtml += GetOverviewPart("Facebook", $"<A HREF=\"{facebookButton}\">Visit</a>");
+            }
+
+            if (instaButton.HasValue())
+            {
+                tableHtml += GetOverviewPart("Instagram", $"<A HREF=\"{instaButton}\">Visit</a>");
+            }
+
+            if (twitterButton.HasValue())
+            {
+                tableHtml += GetOverviewPart("Twitter", $"<A HREF=\"{twitterButton}\">Visit</a>");
+            }
 
             tableHtml += GetOverviewPart("Runtime", ser?.Runtime);
             tableHtml += GetOverviewPart("Aliases", si.AliasNames.ToCsv());

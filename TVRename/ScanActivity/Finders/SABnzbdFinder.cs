@@ -19,7 +19,7 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     internal class SABnzbdFinder : DownloadingFinder
     {
-        public SABnzbdFinder(TVDoc i) : base(i)
+        public SABnzbdFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
         {
         }
 
@@ -27,7 +27,7 @@ namespace TVRename
 
         protected override string CheckName() => "Looked in the listed SABnz queue to see if the episode is already being downloaded";
 
-        protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog)
         {
             if (string.IsNullOrEmpty(TVSettings.Instance.SABAPIKey) || string.IsNullOrEmpty(TVSettings.Instance.SABHostPort))
             {
@@ -50,7 +50,7 @@ namespace TVRename
 
             foreach (ShowItemMissing action in ActionList.MissingEpisodes.ToList())
             {
-                if (settings.Token.IsCancellationRequested)
+                if (Settings.Token.IsCancellationRequested)
                 {
                     return;
                 }

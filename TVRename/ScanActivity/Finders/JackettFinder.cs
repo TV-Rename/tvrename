@@ -16,7 +16,7 @@ namespace TVRename
 {
     internal class JackettFinder : DownloadFinder
     {
-        public JackettFinder(TVDoc i) : base(i)
+        public JackettFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
         {
         }
 
@@ -24,15 +24,15 @@ namespace TVRename
 
         protected override string CheckName() => "Asked Jackett for download links for the missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog)
         {
-            if (settings.Unattended && TVSettings.Instance.SearchJackettManualScanOnly)
+            if (Settings.Unattended && TVSettings.Instance.SearchJackettManualScanOnly)
             {
                 LOGGER.Info("Searching Jackett is cancelled as this is an unattended scan");
                 return;
             }
 
-            if (settings.Type == TVSettings.ScanType.Full && TVSettings.Instance.StopJackettSearchOnFullScan && settings.AnyMediaToUpdate)
+            if (Settings.Type == TVSettings.ScanType.Full && TVSettings.Instance.StopJackettSearchOnFullScan && Settings.AnyMediaToUpdate)
             {
                 LOGGER.Info("Searching Jackett is cancelled as this is a full scan");
                 return;
@@ -48,7 +48,7 @@ namespace TVRename
             {
                 foreach (ItemMissing action in ActionList.Missing.ToList())
                 {
-                    if (settings.Token.IsCancellationRequested)
+                    if (Settings.Token.IsCancellationRequested)
                     {
                         return;
                     }

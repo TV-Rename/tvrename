@@ -4,6 +4,7 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
+    // ReSharper disable once InconsistentNaming
     public class BTList : BTItem
     {
         public readonly List<BTItem> Items;
@@ -24,14 +25,18 @@ namespace TVRename
             TreeNode n = new TreeNode("List");
             tn.Add(n);
             foreach (BTItem t in Items)
+            {
                 t.Tree(n.Nodes);
+            }
         }
 
         public override void Write(System.IO.Stream sw)
         {
             sw.WriteByte((byte)'l');
             foreach (BTItem i in Items)
+            {
                 i.Write(sw);
+            }
 
             sw.WriteByte((byte)'e');
         }

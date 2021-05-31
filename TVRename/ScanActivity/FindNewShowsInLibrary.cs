@@ -15,17 +15,17 @@ namespace TVRename
 {
     internal class FindNewShowsInLibrary : ScanActivity
     {
-        public FindNewShowsInLibrary(TVDoc doc) : base(doc)
+        public FindNewShowsInLibrary(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
         {
         }
 
         protected override string CheckName() => "Looked in the library for any new shows to be added (bulk add)";
 
-        protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog)
         {
             BulkAddSeriesManager bam = new BulkAddSeriesManager(MDoc);
-            bam.CheckFolders(settings.Token, prog, false, !settings.Unattended);
-            AskUserAboutShows(settings, bam);
+            bam.CheckFolders(Settings.Token, prog, false, !Settings.Unattended);
+            AskUserAboutShows(bam);
 
             if (!bam.AddItems.Any(s => s.CodeKnown))
             {
@@ -40,23 +40,23 @@ namespace TVRename
             //add each new show into the shows being scanned
             foreach (ShowConfiguration si in addedShows)
             {
-                settings.Shows.Add(si);
+                Settings.Shows.Add(si);
             }
             LOGGER.Info("Added new shows called: {0}", addedShows.Select(si => si.ShowName).ToCsv());
 
-            MDoc.TvAddedOrEdited(true, settings.Unattended, settings.Hidden, settings.Owner, addedShows);
+            MDoc.TvAddedOrEdited(true, Settings.Unattended, Settings.Hidden, Settings.Owner, addedShows);
         }
 
-        private void AskUserAboutShows(TVDoc.ScanSettings settings, [NotNull] BulkAddSeriesManager bam)
+        private void AskUserAboutShows([NotNull] BulkAddSeriesManager bam)
         {
             foreach (PossibleNewTvShow folder in bam.AddItems)
             {
-                if (settings.Token.IsCancellationRequested)
+                if (Settings.Token.IsCancellationRequested)
                 {
                     break;
                 }
 
-                AskUserAboutShow(folder, settings.Owner);
+                AskUserAboutShow(folder, Settings.Owner);
             }
         }
 

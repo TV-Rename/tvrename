@@ -1,10 +1,10 @@
-// 
+//
 // Main website for TVRename is http://tvrename.com
-// 
+//
 // Source code available at https://github.com/TV-Rename/tvrename
-// 
+//
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-// 
+//
 
 using System;
 using System.Drawing;
@@ -23,7 +23,7 @@ namespace TVRename
 
         public enum ChooseFileDialogResult
         {
-            left,right,ignore
+            left, right, ignore
         }
 
         public ChooseFileDialogResult Answer;
@@ -33,11 +33,11 @@ namespace TVRename
         public ChooseFile([NotNull] FileInfo left, [NotNull] FileInfo right)
         {
             InitializeComponent();
-            
+
             leftFile = left;
             rightFile = right;
 
-            (int leftFrameWidth, bool leftFrameUnknown,int leftFilmLength) = UpdateFields(left, txtNameLeft, txtDimensionsLeft, txtLengthLeft, txtSizeLeft, txtPathLeft);
+            (int leftFrameWidth, bool leftFrameUnknown, int leftFilmLength) = UpdateFields(left, txtNameLeft, txtDimensionsLeft, txtLengthLeft, txtSizeLeft, txtPathLeft);
             (int rightFrameWidth, bool rightFrameUnknown, int rightFilmLength) = UpdateFields(right, lblNameRight, lblDimensionsRight, lblLengthRight, lblSizeRight, txtPathRight);
 
             SetBoldFileSize(left, right);
@@ -52,7 +52,7 @@ namespace TVRename
             SetBoldFrameWidth(leftFrameWidth, rightFrameWidth);
         }
 
-        private static (int,bool,int) UpdateFields([NotNull] FileInfo file, [NotNull] Label nameLabel, [NotNull] Label dimensionsLabel, [NotNull] Label lengthLabel, [NotNull] Label sizeLabel, [NotNull] Label pathLabel)
+        private static (int, bool, int) UpdateFields([NotNull] FileInfo file, [NotNull] Label nameLabel, [NotNull] Label dimensionsLabel, [NotNull] Label lengthLabel, [NotNull] Label sizeLabel, [NotNull] Label pathLabel)
         {
             nameLabel.Text = file.Name;
             int leftFrameWidth = file.GetFrameWidth();
@@ -64,7 +64,7 @@ namespace TVRename
                 lengthLabel.Text =
                     "Length: " + (leftFilmLength == -1 ? "Unknown" : leftFilmLength.Seconds().Humanize(2));
             }
-            catch (ArgumentException) //bug in Humanizer causes this in Polish
+            catch (ArgumentException) //Issue in Humanizer causes this in Polish
             {
                 lengthLabel.Text =
                     "Length: " + (leftFilmLength == -1 ? "Unknown" : leftFilmLength.Seconds() + " s");
@@ -100,7 +100,7 @@ namespace TVRename
             }
             catch (IOException)
             {
-                Logger.Warn( $"Can't find File in ChooseFile called {left.Name} or {right.Name}");
+                Logger.Warn($"Can't find File in ChooseFile called {left.Name} or {right.Name}");
             }
         }
 

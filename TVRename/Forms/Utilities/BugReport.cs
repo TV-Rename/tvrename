@@ -99,7 +99,7 @@ namespace TVRename
 
                     foreach (string folder in si.AllExistngFolderLocations()[snum])
                     {
-                        txt.AppendLine(si.ToString() + " : " + si.ShowName + " : S" + snum);
+                        txt.AppendLine(si + " : " + si.ShowName + " : S" + snum);
                         txt.AppendLine("Folder: " + folder);
 
                         DirCache files = new DirCache();

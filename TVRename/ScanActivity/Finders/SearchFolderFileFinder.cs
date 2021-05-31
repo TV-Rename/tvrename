@@ -7,7 +7,7 @@ namespace TVRename
 {
     internal class SearchFolderFileFinder : FileFinder
     {
-        public SearchFolderFileFinder(TVDoc i) : base(i)
+        public SearchFolderFileFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
         {
         }
 
@@ -15,8 +15,7 @@ namespace TVRename
 
         protected override string CheckName() => "Looked in the search folders for the missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog,
-            TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog)
         {
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
@@ -26,7 +25,7 @@ namespace TVRename
             DirCache dirCache = new DirCache();
             foreach (string s in TVSettings.Instance.DownloadFolders.ToList())
             {
-                if (settings.Token.IsCancellationRequested)
+                if (Settings.Token.IsCancellationRequested)
                 {
                     return;
                 }
@@ -40,7 +39,7 @@ namespace TVRename
 
             foreach (ItemMissing? action in ActionList.Missing.ToList())
             {
-                if (settings.Token.IsCancellationRequested)
+                if (Settings.Token.IsCancellationRequested)
                 {
                     return;
                 }
@@ -51,9 +50,9 @@ namespace TVRename
 
                 if (action is ShowItemMissing showMissingAction)
                 {
-                    List<FileInfo> matchedFiles = FindMatchedFiles(settings, dirCache, showMissingAction, thisRound);
+                    List<FileInfo> matchedFiles = FindMatchedFiles(dirCache, showMissingAction, thisRound);
 
-                    ProcessMissingItem(settings, newList, toRemove, showMissingAction, thisRound, matchedFiles,
+                    ProcessMissingItem(newList, toRemove, showMissingAction, thisRound, matchedFiles,
                         TVSettings.Instance.UseFullPathNameToMatchSearchFolders);
                 }
                 else if (action is MovieItemMissing movieMissingAction)
@@ -62,7 +61,7 @@ namespace TVRename
 
                     foreach (DirCacheEntry dce in dirCache)
                     {
-                        if (!ReviewFile(movieMissingAction, thisRound, dce.TheFile, settings, TVSettings.Instance.PreventMove, true, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
+                        if (!ReviewFile(movieMissingAction, thisRound, dce.TheFile, TVSettings.Instance.PreventMove, true, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
                         {
                             continue;
                         }
@@ -70,7 +69,7 @@ namespace TVRename
                         matchedFiles.Add(dce.TheFile);
                     }
 
-                    ProcessMissingItem(settings, newList, toRemove, movieMissingAction, thisRound, matchedFiles,
+                    ProcessMissingItem(newList, toRemove, movieMissingAction, thisRound, matchedFiles,
                         TVSettings.Instance.UseFullPathNameToMatchSearchFolders);
                 }
             }
@@ -89,13 +88,13 @@ namespace TVRename
         }
 
         [NotNull]
-        private List<FileInfo> FindMatchedFiles(TVDoc.ScanSettings settings, [NotNull] DirCache dirCache, ShowItemMissing me, ItemList thisRound)
+        private List<FileInfo> FindMatchedFiles([NotNull] DirCache dirCache, ShowItemMissing me, ItemList thisRound)
         {
             List<FileInfo> matchedFiles = new List<FileInfo>();
 
             foreach (DirCacheEntry dce in dirCache)
             {
-                if (!ReviewFile(me, thisRound, dce.TheFile, settings, TVSettings.Instance.AutoMergeDownloadEpisodes, TVSettings.Instance.PreventMove, true, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
+                if (!ReviewFile(me, thisRound, dce.TheFile, TVSettings.Instance.AutoMergeDownloadEpisodes, TVSettings.Instance.PreventMove, true, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
                 {
                     continue;
                 }

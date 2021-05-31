@@ -12,7 +12,7 @@ namespace TVRename
     {
         public Language(int tvdbid, string abbreviation, string threeAbbreviation, string localName, string? englishName, string isoDialectAbbreviation, bool isPrimary)
         {
-            TVDBId = tvdbid;
+            TvdbId = tvdbid;
             Abbreviation = abbreviation;
             ThreeAbbreviation = threeAbbreviation;
             LocalName = localName;
@@ -21,10 +21,13 @@ namespace TVRename
             IsPrimary = isPrimary;
         }
 
-        public int TVDBId { get; set; }
+        public int TvdbId { get; set; }
         public string Abbreviation { get; set; }
         public string ThreeAbbreviation { get; set; }
+
+        // ReSharper disable once InconsistentNaming
         public string ISODialectAbbreviation { get; set; }
+
         public bool IsPrimary { get; set; }
         public string LocalName { get; set; }
         public string? EnglishName { get; set; }

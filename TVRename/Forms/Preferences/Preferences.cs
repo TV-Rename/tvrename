@@ -938,7 +938,7 @@ namespace TVRename
             cbSearchLocally.Checked = s.SearchLocally;
             cbIgnorePreviouslySeen.Checked = s.IgnorePreviouslySeen;
             cbLeaveOriginals.Checked = s.LeaveOriginals;
-            cbTVDBLanguages.Text = s.PreferredTVDBLanguage?.LocalName ?? Languages.Instance.FallbackLanguage.LocalName;
+            cbTVDBLanguages.Text = s.PreferredTVDBLanguage.LocalName;
             cbScanIncludesBulkAdd.Checked = s.DoBulkAddInScan;
             chkIgnoreAllSpecials.Checked = s.IgnoreAllSpecials;
 
@@ -983,8 +983,8 @@ namespace TVRename
             cbDefMovieAutoFolders.Checked = s.DefMovieUseutomaticFolders;
             cbDefMovieUseDefLocation.Checked = s.DefMovieUseDefaultLocation;
 
-            cbTMDBLanguages.Text = s.TMDBLanguage?.LocalName ?? Languages.Instance.FallbackLanguage.LocalName;
-            cbTMDBRegions.Text = s.TMDBRegion?.EnglishName ?? Regions.Instance.FallbackRegion.EnglishName;
+            cbTMDBLanguages.Text = s.TMDBLanguage.LocalName;
+            cbTMDBRegions.Text = s.TMDBRegion.EnglishName ?? Regions.Instance.FallbackRegion.EnglishName;
 
             tbTMDBPercentDirty.Text = s.upgradeDirtyPercent.ToString(CultureInfo.InvariantCulture);
             chkIncludeMoviesQuickRecent.Checked = s.IncludeMoviesQuickRecent;

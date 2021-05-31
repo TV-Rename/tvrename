@@ -25,7 +25,7 @@ namespace TVRename
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.downloading;
 
-        protected void SearchForAppropriateDownloads(List<TorrentEntry> downloading, DownloadApp tApp, TVDoc.ScanSettings settings)
+        protected void SearchForAppropriateDownloads(List<TorrentEntry> downloading, DownloadApp tApp)
         {
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
@@ -34,7 +34,7 @@ namespace TVRename
             UpdateStatus(n, c, "Searching torrent queue...");
             foreach (ItemMissing? action in ActionList.Missing.ToList())
             {
-                if (settings.Token.IsCancellationRequested)
+                if (Settings.Token.IsCancellationRequested)
                 {
                     return;
                 }
@@ -90,7 +90,7 @@ namespace TVRename
             ActionList.Replace(toRemove, newList);
         }
 
-        protected DownloadingFinder(TVDoc doc) : base(doc)
+        protected DownloadingFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
         {
         }
     }

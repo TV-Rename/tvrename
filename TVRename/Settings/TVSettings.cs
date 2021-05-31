@@ -304,7 +304,7 @@ namespace TVRename
         public int SampleFileMaxSizeMB = 50; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
         public bool IgnorePreviouslySeen = false;
-        public bool IgnorePreviouslySeenMovies = false; //todo - check this is settable and persists to the XML file
+        public bool IgnorePreviouslySeenMovies = false; //todo persist and edit this
         public bool SearchRSS = false;
         public bool SearchRSSManualScanOnly = true;
         public bool SearchJSON = false;
@@ -343,7 +343,7 @@ namespace TVRename
         public static string SpecialsListViewName => "Special";
 
         public MovieConfiguration.MovieFolderFormat DefMovieFolderFormat =>
-            MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile; //TODO fix this  //{ get; internal set; }
+            MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile; //TODO - Support Alternate movie storage formats
 
         public bool AutomateAutoAddWhenOneMovieFound => true; //todo persist and edit this
 
@@ -354,6 +354,8 @@ namespace TVRename
             : StringComparison.CurrentCultureIgnoreCase;
 
         public bool FileNameCaseSensitiveMatch => false; //todo persist and edit this
+
+        public bool DeleteMovieFromDisk => false; //todo persist and edit this
 
         public bool AutoSaveOnExit = false;
 

@@ -400,7 +400,7 @@ namespace TVRename.TheTVDB
             return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
         }
 
-        public static JObject? GetSeriesV4(int code, string requestedLanguageCode)
+        public static JObject GetSeriesV4(int code, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/series/{code}/extended";
             return GetUrl(uri, requestedLanguageCode);

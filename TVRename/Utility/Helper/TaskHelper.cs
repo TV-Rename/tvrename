@@ -15,7 +15,7 @@ namespace TVRename.Utility.Helper
         /// <returns></returns>
         public static async Task WaitWhile(Func<bool> condition, int frequency = 25, int timeout = -1)
         {
-            Task? waitTask = Task.Run(async () =>
+            Task waitTask = Task.Run(async () =>
             {
                 while (condition())
                 {
@@ -38,7 +38,7 @@ namespace TVRename.Utility.Helper
         /// <returns></returns>
         public static async Task WaitUntil(Func<bool> condition, int frequency = 25, int timeout = -1)
         {
-            Task? waitTask = Task.Run(async () =>
+            Task waitTask = Task.Run(async () =>
             {
                 while (!condition())
                 {

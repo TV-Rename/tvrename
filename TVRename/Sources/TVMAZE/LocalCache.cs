@@ -67,7 +67,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        public override Language? PreferredLanguage() => throw new NotImplementedException();
+        public override Language PreferredLanguage() => throw new NotImplementedException();
 
         public override bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
         {
@@ -227,7 +227,7 @@ namespace TVRename.TVmaze
         {
             if (type == MediaConfiguration.MediaType.tv)
             {
-                List<CachedSeriesInfo>? results = API.ShowSearch(text).ToList();
+                List<CachedSeriesInfo> results = API.ShowSearch(text).ToList();
                 LOGGER.Info($"Got {results.Count:N0} results searching for {text} on TVMaze");
 
                 foreach (CachedSeriesInfo result in results)
@@ -265,17 +265,11 @@ namespace TVRename.TVmaze
         public void Tidy(IEnumerable<ShowConfiguration> libraryValues)
         {
             // remove any shows from tvmaze that aren't in My Shows
-            List<int> removeList = new List<int>();
+            IEnumerable<ShowConfiguration> showConfigurations = libraryValues.ToList();
 
             lock (SERIES_LOCK)
             {
-                foreach (KeyValuePair<int, CachedSeriesInfo> kvp in Series)
-                {
-                    if (libraryValues.All(si => si.TVmazeCode != kvp.Key))
-                    {
-                        removeList.Add(kvp.Key);
-                    }
-                }
+                IEnumerable<int> removeList = Series.Keys.Where(id => showConfigurations.All(si => si.TVmazeCode != id)).ToList();
 
                 foreach (int i in removeList)
                 {
@@ -329,7 +323,7 @@ namespace TVRename.TVmaze
         {
             lock (SERIES_LOCK)
             {
-                Series[ss.TvMazeId] = new CachedSeriesInfo(ss.TvdbId, ss.TvMazeId, ss.TmdbId, ss.TargetLocale) { Dirty = true };
+                Series[ss.TvMazeId] = new CachedSeriesInfo(ss.TvdbId, ss.TvMazeId, ss.TmdbId, ss.TargetLocale, TVDoc.ProviderType.TVmaze) { Dirty = true };
             }
         }
 

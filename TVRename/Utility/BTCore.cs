@@ -4,14 +4,15 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
+    // ReSharper disable once InconsistentNaming
     public abstract class BTCore
     {
         protected bool DoHashChecking;
-        protected DirCache? FileCache;
-        protected string? FileCacheIsFor;
-        protected bool FileCacheWithSubFolders;
-        protected Dictionary<string, List<HashCacheItem>> HashCache;
-        protected SetProgressDelegate SetProg;
+        private DirCache? FileCache;
+        private string? FileCacheIsFor;
+        private bool FileCacheWithSubFolders;
+        private readonly Dictionary<string, List<HashCacheItem>> HashCache;
+        private readonly SetProgressDelegate SetProg;
 
         protected BTCore(SetProgressDelegate setprog)
         {
@@ -112,9 +113,9 @@ namespace TVRename
             {
                 foreach (HashCacheItem h in HashCache[filename])
                 {
-                    if ((h.whereInFile == whereInFile) && (h.pieceSize == piecesize) && (h.fileSize == fileSize))
+                    if ((h.WhereInFile == whereInFile) && (h.PieceSize == piecesize) && (h.FileSize == fileSize))
                     {
-                        return h.theHash;
+                        return h.TheHash;
                     }
                 }
             }

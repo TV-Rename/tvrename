@@ -12,6 +12,7 @@ using Ical.Net.Serialization;
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace TVRename
@@ -38,13 +39,9 @@ namespace TVRename
             {
                 Calendar calendar = new Calendar { ProductId = "Upcoming Shows Exported by TV Rename http://www.tvrename.com" };
 
-                foreach (ProcessedEpisode ei in episodes)
+                foreach (CalendarEvent ev in episodes.Select(CreateEvent).Where(ev => !(ev is null)))
                 {
-                    CalendarEvent ev = CreateEvent(ei);
-                    if (!(ev is null))
-                    {
-                        calendar.Events.Add(ev);
-                    }
+                    calendar.Events.Add(ev);
                 }
 
                 CalendarSerializer serializer = new CalendarSerializer();
@@ -83,7 +80,7 @@ namespace TVRename
                     Comments = new List<string> { ei.Overview },
                     Summary = niceName,
                     Location = ei.TheCachedSeries.Network,
-                    Url = new Uri(TheTVDB.API.WebsiteEpisodeUrl(ei)), //todo - make sure this works with  non tvdb shows
+                    Url = new Uri(ei.ProviderWebUrl()),
                     Uid = ei.EpisodeId.ToString()
                 };
             }

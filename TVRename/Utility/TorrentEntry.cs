@@ -6,15 +6,15 @@ namespace TVRename
         public readonly int PercentDone;
         public readonly string TorrentFile;
         public readonly bool Finished;
-        public readonly string key;
+        public readonly string Key;
 
-        public TorrentEntry(string torrentfile, string to, int percent, bool finished, string key)
+        public TorrentEntry(string torrentFile, string to, int percent, bool finished, string key)
         {
-            TorrentFile = torrentfile;
+            TorrentFile = torrentFile;
             DownloadingTo = to;
             PercentDone = percent;
             Finished = finished;
-            this.key = key;
+            Key = key;
         }
 
         string IDownloadInformation.FileIdentifier => TorrentFile;

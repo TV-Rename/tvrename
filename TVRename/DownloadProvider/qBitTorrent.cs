@@ -292,14 +292,14 @@ namespace TVRename
             //Annoyingly V1 uses POST, but V2 is a GET...
             if (TVSettings.Instance.qBitTorrentAPIVersion == qBitTorrentAPIVersion.v1)
             {
-                string parametersString = HttpHelper.GetHttpParameters(new Dictionary<string, string> { { "hashes", name.key } });
+                string parametersString = HttpHelper.GetHttpParameters(new Dictionary<string, string> { { "hashes", name.Key } });
                 HttpHelper.HttpRequest("POST", url, parametersString.RemoveCharactersFrom("?"), "application/x-www-form-urlencoded", null, null);
             }
             else
             {
                 try
                 {
-                    string parametersString = HttpHelper.GetHttpParameters(new Dictionary<string, string> { { "hashes", name.key }, { "deleteFiles", "false" } });
+                    string parametersString = HttpHelper.GetHttpParameters(new Dictionary<string, string> { { "hashes", name.Key }, { "deleteFiles", "false" } });
                     HttpHelper.HttpRequest("GET", url + parametersString, null, null, null, string.Empty);
                 }
                 catch (WebException wex)

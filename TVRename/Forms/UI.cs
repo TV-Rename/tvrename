@@ -2952,7 +2952,7 @@ namespace TVRename
 
             foreach (string directory in si.Locations)
             {
-                if (Directory.Exists(directory)) // todo use new setting && TVSettings.Instance.DeleteShowFromDisk)
+                if (Directory.Exists(directory) && TVSettings.Instance.DeleteMovieFromDisk)
                 {
                     DialogResult res3 = MessageBox.Show(
                         $"Remove folder \"{directory}\" from disk?",
@@ -3442,9 +3442,13 @@ namespace TVRename
             }
             CancellationTokenSource cts = new CancellationTokenSource();
             bool hidden = WindowState == FormWindowState.Minimized;
+            TVDoc.ScanSettings settings = new TVDoc.ScanSettings(shows ?? new List<ShowConfiguration>(),
+                movies ?? new List<MovieConfiguration>(), unattended, hidden, st, cts.Token, media, this, scanProgDlg);
+
+            mDoc.SetScanSettings(settings);
             SetupScanUi(hidden);
             MoreBusy();
-            this.bwScan.RunWorkerAsync(new TVDoc.ScanSettings(shows ?? new List<ShowConfiguration>(), movies ?? new List<MovieConfiguration>(), unattended, hidden, st, cts.Token, media, this, scanProgDlg));
+            bwScan.RunWorkerAsync(settings);
             ShowDialogAndWait(cts);
         }
 

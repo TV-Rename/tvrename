@@ -13,7 +13,7 @@ namespace TVRename
 {
     public abstract class DownloadFinder : Finder
     {
-        protected DownloadFinder(TVDoc doc) : base(doc)
+        protected DownloadFinder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
         {
         }
 

@@ -41,8 +41,11 @@ namespace TVRename
                 foreach (ProcessedEpisode ei in elist)
                 {
                     writer.WriteStartElement("item");
-                    writer.WriteElement("id", ei.TheCachedSeries.TvdbCode); //todo - make sure this works with  non tvdb shows
-                    writer.WriteElement("SeriesName", ei.TheCachedSeries.Name);
+                    writer.WriteElement("ShowTvdbId", ei.Show.TvdbCode);
+                    writer.WriteElement("ShowTMDBId", ei.Show.TmdbCode);
+                    writer.WriteElement("ShowTvMazeId", ei.Show.TVmazeCode);
+                    writer.WriteElement("ShowIMDB", ei.Show.ImdbCode);
+                    writer.WriteElement("SeriesName", ei.Show.Name);
                     writer.WriteElement("SeasonNumber", Helpers.Pad(ei.AppropriateSeasonNumber));
                     writer.WriteElement("EpisodeNumber", Helpers.Pad(ei.AppropriateEpNum));
                     writer.WriteElement("EpisodeName", ei.Name);
@@ -84,7 +87,7 @@ namespace TVRename
                     writer.WriteEndElement();
 
                     writer.WriteElement("Rating", ei.EpisodeRating);
-                    writer.WriteElement("filename", ei.Filename);
+                    writer.WriteElement("filename", ei.ThumbnailUrl());
 
                     writer.WriteEndElement(); // item
                 }

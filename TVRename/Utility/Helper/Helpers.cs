@@ -36,7 +36,7 @@ namespace TVRename
         /// </value>
         public static bool OnMono => Type.GetType("Mono.Runtime") != null;
 
-        public static bool In<T>(this T item, [NotNull] params T[] items)
+        public static bool In<T>([CanBeNull] this T item, [NotNull] params T[] items)
         {
             if (items == null)
             {

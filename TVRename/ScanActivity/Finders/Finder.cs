@@ -4,7 +4,7 @@ namespace TVRename
     {
         public ItemList ActionList { protected get; set; }
 
-        protected Finder(TVDoc doc) : base(doc)
+        protected Finder(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
         {
             ActionList = MDoc.TheActionList;
         }

@@ -33,7 +33,7 @@ namespace TVRename
 
         public MovieConfiguration? GetMovie(int id, TVDoc.ProviderType provider)
         {
-            List<MovieConfiguration>? matching = this.Where(configuration => configuration.IdFor(provider) == id).ToList();
+            List<MovieConfiguration> matching = this.Where(configuration => configuration.IdFor(provider) == id).ToList();
 
             if (!matching.Any())
             {

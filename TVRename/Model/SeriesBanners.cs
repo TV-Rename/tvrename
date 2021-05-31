@@ -273,7 +273,7 @@ namespace TVRename
                 bestSeriesFanartId = GetBestBannerId(banner, bestSeriesFanartId);
             }
 
-            if (banner.LanguageId == (cachedSeries.ActualLocale?.LanguageToUse(TVDoc.ProviderType.TheTVDB)?.TVDBId ?? 0))//todo - make this properly generic
+            if (banner.LanguageId == (cachedSeries.ActualLocale?.LanguageToUse(TVDoc.ProviderType.TheTVDB).TvdbId ?? 0))//todo - make this properly generic
             {
                 if (banner.IsSeriesPoster())
                 {
@@ -326,7 +326,7 @@ namespace TVRename
         private void AddUpdateIntoCollections([NotNull] Banner banner, [NotNull] IDictionary<int, Banner> coll, IDictionary<int, Banner> langColl)
         {
             //update language specific cache if appropriate
-            if (banner.LanguageId == (cachedSeries.ActualLocale?.PreferredLanguage?.TVDBId ?? 0))
+            if (banner.LanguageId == (cachedSeries.ActualLocale?.PreferredLanguage?.TvdbId ?? 0))
             {
                 AddUpdateIntoCollection(banner, langColl);
             }

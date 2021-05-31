@@ -36,6 +36,7 @@ namespace TVRename
 
         public bool IsReadOnly => false;
 
+        [CanBeNull]
         public T this[int index]
         {
             get

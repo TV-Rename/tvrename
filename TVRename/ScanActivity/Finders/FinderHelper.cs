@@ -747,15 +747,17 @@ namespace TVRename
                         // no need to popup dialog
                         Logger.Info($"Auto Adding New Movie for '{refinedHint}' (directly) : {foundMovie.Name}");
 
-                        MovieConfiguration newMovie = new MovieConfiguration();
-                        newMovie.TmdbCode = foundMovie.TmdbCode;
-                        newMovie.UseAutomaticFolders = true;
-                        newMovie.AutomaticFolderRoot = TVSettings.Instance.DefMovieDefaultLocation ?? string.Empty;
-                        newMovie.Format = MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile;
-                        newMovie.UseCustomFolderNameFormat = false;
-                        newMovie.ConfigurationProvider = TVDoc.ProviderType.TMDB;
+                        MovieConfiguration newMovie = new MovieConfiguration
+                        {
+                            TmdbCode = foundMovie.TmdbCode,
+                            UseAutomaticFolders = true,
+                            AutomaticFolderRoot = TVSettings.Instance.DefMovieDefaultLocation ?? string.Empty,
+                            Format = MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile,
+                            UseCustomFolderNameFormat = false,
+                            ConfigurationProvider = TVDoc.ProviderType.TMDB
+                        };
 
-                        if (!hint.Contains(foundMovie?.Name ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+                        if (!hint.Contains(foundMovie.Name, StringComparison.OrdinalIgnoreCase))
                         {
                             newMovie.AliasNames.Add(hint);
                         }

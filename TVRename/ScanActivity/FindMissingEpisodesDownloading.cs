@@ -2,7 +2,7 @@ namespace TVRename
 {
     internal class FindMissingEpisodesDownloading : FindMissingEpisodes
     {
-        public FindMissingEpisodesDownloading(TVDoc doc) : base(doc)
+        public FindMissingEpisodesDownloading(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
         {
         }
 

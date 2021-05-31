@@ -15,7 +15,9 @@ namespace TVRename
 
         // ReSharper disable once MemberCanBePrivate.Global- Property is referred to by the ObjectListView
         // ReSharper disable once UnusedAutoPropertyAccessor.Global- Property is referred to by the ObjectListView
-        public string ErrorText { get; private set; }
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        public string? ErrorText { get; private set; }
 
         public bool IsError { get; private set; }
 

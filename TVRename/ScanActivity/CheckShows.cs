@@ -14,13 +14,13 @@ namespace TVRename
 {
     internal class CheckShows : ScanActivity
     {
-        public CheckShows(TVDoc doc) : base(doc)
+        public CheckShows(TVDoc doc, TVDoc.ScanSettings settings) : base(doc, settings)
         {
         }
 
         protected override string CheckName() => "Looked in the library to find missing files";
 
-        protected override void DoCheck(SetProgressDelegate prog, TVDoc.ScanSettings settings)
+        protected override void DoCheck(SetProgressDelegate prog)
         {
             if (TVSettings.Instance.RenameCheck)
             {
@@ -34,9 +34,9 @@ namespace TVRename
 
             DirFilesCache dfc = new DirFilesCache();
 
-            List<ShowConfiguration> showList = settings.Shows;
+            List<ShowConfiguration> showList = Settings.Shows;
 
-            if (settings.Type == TVSettings.ScanType.Full && showList.Count > 0)
+            if (Settings.Type == TVSettings.ScanType.Full && showList.Count > 0)
             {
                 // only do episode count if we're doing all shows and seasons
                 MDoc.CurrentStats.NsNumberOfEpisodes = 0;
@@ -47,7 +47,7 @@ namespace TVRename
             foreach (ShowConfiguration si in showList.OrderBy(item => item.ShowName))
             {
                 UpdateStatus(c++, showList.Count, si.ShowName);
-                if (settings.Token.IsCancellationRequested)
+                if (Settings.Token.IsCancellationRequested)
                 {
                     return;
                 }
@@ -55,9 +55,9 @@ namespace TVRename
                 LOGGER.Info("Rename and missing check: " + si.ShowName);
                 try
                 {
-                    new CheckAllFoldersExist(MDoc).CheckIfActive(si, dfc, settings);
-                    new MergeLibraryEpisodes(MDoc).CheckIfActive(si, dfc, settings);
-                    new RenameAndMissingCheck(MDoc).CheckIfActive(si, dfc, settings);
+                    new CheckAllFoldersExist(MDoc).CheckIfActive(si, dfc, Settings);
+                    new MergeLibraryEpisodes(MDoc).CheckIfActive(si, dfc, Settings);
+                    new RenameAndMissingCheck(MDoc).CheckIfActive(si, dfc, Settings);
                 }
                 catch (TVRenameOperationInterruptedException)
                 {
@@ -70,11 +70,11 @@ namespace TVRename
             } // for each show
 
             c = 0;
-            UpdateStatus(c, settings.Movies.Count, "Checking movies");
-            foreach (MovieConfiguration si in settings.Movies.OrderBy(item => item.ShowName))
+            UpdateStatus(c, Settings.Movies.Count, "Checking movies");
+            foreach (MovieConfiguration si in Settings.Movies.OrderBy(item => item.ShowName))
             {
-                UpdateStatus(c++, settings.Movies.Count, si.ShowName);
-                if (settings.Token.IsCancellationRequested)
+                UpdateStatus(c++, Settings.Movies.Count, si.ShowName);
+                if (Settings.Token.IsCancellationRequested)
                 {
                     return;
                 }
@@ -82,8 +82,8 @@ namespace TVRename
                 LOGGER.Info("Rename and missing check: " + si.ShowName);
                 try
                 {
-                    new CheckAllMovieFoldersExist(MDoc).CheckIfActive(si, dfc, settings);
-                    new RenameAndMissingMovieCheck(MDoc).CheckIfActive(si, dfc, settings);
+                    new CheckAllMovieFoldersExist(MDoc).CheckIfActive(si, dfc, Settings);
+                    new RenameAndMissingMovieCheck(MDoc).CheckIfActive(si, dfc, Settings);
                 }
                 catch (TVRenameOperationInterruptedException)
                 {

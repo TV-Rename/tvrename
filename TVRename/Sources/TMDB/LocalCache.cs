@@ -481,7 +481,7 @@ namespace TVRename.TMDB
         public void Tidy(IEnumerable<MovieConfiguration> libraryValues)
         {
             // remove any shows from cache that aren't in My Movies
-            List<MovieConfiguration>? movieConfigurations = libraryValues.ToList();
+            List<MovieConfiguration> movieConfigurations = libraryValues.ToList();
 
             lock (MOVIE_LOCK)
             {
@@ -634,7 +634,7 @@ namespace TVRename.TMDB
         {
             lock (SERIES_LOCK)
             {
-                Series[tmdb] = new CachedSeriesInfo(tvdb, tvmaze, tmdb, locale) { Dirty = true };
+                Series[tmdb] = new CachedSeriesInfo(tvdb, tvmaze, tmdb, locale, TVDoc.ProviderType.TMDB) { Dirty = true };
             }
         }
 
@@ -642,7 +642,7 @@ namespace TVRename.TMDB
         {
             lock (MOVIE_LOCK)
             {
-                Movies[tmdb] = new CachedMovieInfo(tvdb, tvmaze, tmdb, locale) { Dirty = true };
+                Movies[tmdb] = new CachedMovieInfo(tvdb, tvmaze, tmdb, locale, TVDoc.ProviderType.TMDB) { Dirty = true };
             }
         }
 
@@ -673,13 +673,13 @@ namespace TVRename.TMDB
             {
                 throw new MediaNotFoundException(id, "TMDB no longer has this movie", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB);
             }
-            CachedMovieInfo m = new CachedMovieInfo(locale)
+            CachedMovieInfo m = new CachedMovieInfo(locale, TVDoc.ProviderType.TMDB)
             {
                 Imdb = downloadedMovie.ExternalIds.ImdbId,
                 TmdbCode = downloadedMovie.Id,
                 Name = downloadedMovie.Title,
                 Runtime = downloadedMovie.Runtime.ToString(),
-                FirstAired = GetReleaseDateDetail(downloadedMovie, locale.RegionToUse(TVDoc.ProviderType.TMDB).Abbreviation) ?? GetReleaseDateDetail(downloadedMovie, TVSettings.Instance.TMDBRegion?.Abbreviation) ?? downloadedMovie.ReleaseDate,
+                FirstAired = GetReleaseDateDetail(downloadedMovie, locale.RegionToUse(TVDoc.ProviderType.TMDB).Abbreviation) ?? GetReleaseDateDetail(downloadedMovie, TVSettings.Instance.TMDBRegion.Abbreviation) ?? downloadedMovie.ReleaseDate,
                 Genres = downloadedMovie.Genres.Select(genre => genre.Name).ToList(),
                 Overview = downloadedMovie.Overview,
                 Network = downloadedMovie.ProductionCompanies.FirstOrDefault()?.Name, //TODO UPdate Movie to include multiple production companies
@@ -697,7 +697,7 @@ namespace TVRename.TMDB
                 InstagramId = downloadedMovie.ExternalIds.InstagramId,
                 FacebookId = downloadedMovie.ExternalIds.InstagramId,
                 FanartUrl = OriginalImageUrl(downloadedMovie.BackdropPath),
-                ContentRating = GetCertification(downloadedMovie, locale.RegionToUse(TVDoc.ProviderType.TMDB).Abbreviation) ?? GetCertification(downloadedMovie, TVSettings.Instance.TMDBRegion?.Abbreviation) ?? GetCertification(downloadedMovie, Regions.Instance.FallbackRegion.Abbreviation) ?? string.Empty,
+                ContentRating = GetCertification(downloadedMovie, locale.RegionToUse(TVDoc.ProviderType.TMDB).Abbreviation) ?? GetCertification(downloadedMovie, TVSettings.Instance.TMDBRegion.Abbreviation) ?? GetCertification(downloadedMovie, Regions.Instance.FallbackRegion.Abbreviation) ?? string.Empty,
                 OfficialUrl = downloadedMovie.Homepage,
                 TrailerUrl = GetYouTubeUrl(downloadedMovie),
                 Dirty = false,
@@ -723,11 +723,11 @@ namespace TVRename.TMDB
 
         private DateTime? GetReleaseDateDetail(Movie downloadedMovie, string? country)
         {
-            IOrderedEnumerable<DateTime> dates = downloadedMovie.ReleaseDates?.Results
+            List<DateTime> dates = downloadedMovie.ReleaseDates?.Results
                 .Where(rel => rel.Iso_3166_1 == country)
                 .SelectMany(rel => rel.ReleaseDates)
                 .Select(d => d.ReleaseDate)
-                .OrderBy(time => time);
+                .OrderBy(time => time).ToList();
 
             if (dates?.Any() ?? false)
             {
@@ -746,7 +746,7 @@ namespace TVRename.TMDB
             {
                 throw new MediaNotFoundException(id, "TMDB no longer has this show", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB);
             }
-            CachedSeriesInfo m = new CachedSeriesInfo(ss.TargetLocale)
+            CachedSeriesInfo m = new CachedSeriesInfo(ss.TargetLocale, TVDoc.ProviderType.TMDB)
             {
                 Imdb = downloadedSeries.ExternalIds.ImdbId,
                 TmdbCode = downloadedSeries.Id,
@@ -1023,7 +1023,7 @@ namespace TVRename.TMDB
 
         private CachedSeriesInfo File(SearchTv result)
         {
-            CachedSeriesInfo m = new CachedSeriesInfo(new Locale())
+            CachedSeriesInfo m = new CachedSeriesInfo(new Locale(), TVDoc.ProviderType.TMDB)
             {
                 TmdbCode = result.Id,
                 Name = result.Name,
@@ -1047,7 +1047,7 @@ namespace TVRename.TMDB
 
         private CachedMovieInfo File(SearchMovie result)
         {
-            CachedMovieInfo m = new CachedMovieInfo(new Locale())
+            CachedMovieInfo m = new CachedMovieInfo(new Locale(), TVDoc.ProviderType.TMDB)
             {
                 TmdbCode = result.Id,
                 Name = result.Title,
@@ -1175,18 +1175,39 @@ namespace TVRename.TMDB
             return returnValue;
         }
 
-        public CachedMovieInfo? LookupMovieByTvdb(int tvdbId, bool showErrorMsgBox)
+        public CachedMovieInfo LookupMovieByTvdb(int tvdbId, bool showErrorMsgBox)
         {
             throw new NotImplementedException(); //TODO
         }
 
         public IEnumerable<CachedMovieInfo> ServerAccuracyCheck()
         {
-            Say("TMDB Accuracy Check running");
+            Say("TMDB Accuracy Check (Movies) running");
             TmdbAccuracyCheck check = new TmdbAccuracyCheck(this);
             lock (MOVIE_LOCK)
             {
                 foreach (CachedMovieInfo si in Movies.Values.Where(info => !info.IsSearchResultOnly).OrderBy(s => s.Name).ToList())
+                {
+                    check.ServerAccuracyCheck(si);
+                }
+            }
+
+            foreach (string issue in check.Issues)
+            {
+                LOGGER.Warn(issue);
+            }
+
+            SayNothing();
+            return check.MoviesToUpdate;
+        }
+
+        public IEnumerable<CachedSeriesInfo> ServerShowsAccuracyCheck()
+        {
+            Say("TMDB Accuracy Check (TV) running");
+            TmdbAccuracyCheck check = new TmdbAccuracyCheck(this);
+            lock (SERIES_LOCK)
+            {
+                foreach (CachedSeriesInfo si in Series.Values.Where(info => !info.IsSearchResultOnly).OrderBy(s => s.Name).ToList())
                 {
                     check.ServerAccuracyCheck(si);
                 }

@@ -1,5 +1,6 @@
 namespace TVRename
 {
+    // ReSharper disable once InconsistentNaming
     public enum BTChunk
     {
         kError,
@@ -9,6 +10,8 @@ namespace TVRename
         kListOrDictionaryEnd,
         kInteger,
         kString,
+
+        // ReSharper disable once InconsistentNaming
         kBTEOF
     }
 }
