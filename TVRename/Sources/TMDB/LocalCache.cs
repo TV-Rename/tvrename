@@ -1175,7 +1175,7 @@ namespace TVRename.TMDB
             return returnValue;
         }
 
-        public CachedMovieInfo LookupMovieByTvdb(int tvdbId, bool showErrorMsgBox)
+        public CachedMovieInfo? LookupMovieByTvdb(int tvdbId, bool showErrorMsgBox)
         {
             throw new NotImplementedException(); //TODO
         }
