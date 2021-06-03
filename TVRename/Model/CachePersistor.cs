@@ -83,46 +83,12 @@ namespace TVRename
                         if (kvp.Value.SrvLastUpdated != 0)
                         {
                             kvp.Value.WriteXml(writer);
-                            foreach (Episode e in kvp.Value.Episodes)
-                            {
-                                e.WriteXml(writer);
-                            }
                         }
                         else
                         {
                             Logger.Info($"Cannot save {kvp.Key} ({kvp.Value.Name}) to {cacheFile.Name} as it has not been updated at all.");
                         }
                     }
-
-                    //
-                    // <BannersCache>
-                    //      <BannersItem>
-                    //          <SeriesId>123</SeriesId>
-                    //          <Banners>
-                    //              <Banner>
-
-                    writer.WriteStartElement("BannersCache");
-
-                    foreach (KeyValuePair<int, CachedSeriesInfo> kvp in series)
-                    {
-                        writer.WriteStartElement("BannersItem");
-
-                        writer.WriteElement("SeriesId", kvp.Key);
-
-                        writer.WriteStartElement("Banners");
-
-                        //We need to write out all banners that we have in any of the collections.
-
-                        foreach (Banner ban in kvp.Value.AllBanners.Select(kvp3 => kvp3.Value))
-                        {
-                            ban.WriteXml(writer);
-                        }
-
-                        writer.WriteEndElement(); //Banners
-                        writer.WriteEndElement(); //BannersItem
-                    }
-
-                    writer.WriteEndElement(); // BannersCache
 
                     foreach (KeyValuePair<int, CachedMovieInfo> kvp in movies)
                     {
@@ -135,36 +101,6 @@ namespace TVRename
                             Logger.Info($"Cannot save {kvp.Key} ({kvp.Value.Name}) to {cacheFile.Name} as it is a search result that has not been used.");
                         }
                     }
-
-                    // TODO SAVE MIE BANNERS if we ever have them
-                    // <BannersCache>
-                    //      <BannersItem>
-                    //          <SeriesId>123</SeriesId>
-                    //          <Banners>
-                    //              <Banner>
-
-                    /*writer.WriteStartElement("BannersCache");
-
-                    foreach (KeyValuePair<int, CachedSeriesInfo> kvp in series)
-                    {
-                        writer.WriteStartElement("BannersItem");
-
-                        writer.WriteElement("SeriesId", kvp.Key);
-
-                        writer.WriteStartElement("Banners");
-
-                        //We need to write out all banners that we have in any of the collections.
-
-                        foreach (Banner ban in kvp.Value.AllBanners.Select(kvp3 => kvp3.Value))
-                        {
-                            ban.WriteXml(writer);
-                        }
-
-                        writer.WriteEndElement(); //Banners
-                        writer.WriteEndElement(); //BannersItem
-                    }
-
-                    writer.WriteEndElement(); // BannersCache*/
 
                     writer.WriteEndElement(); // data
 
@@ -245,7 +181,7 @@ namespace TVRename
                     Logger.Error("Could not obtain update time from XML");
                 }
 
-                foreach (CachedMovieInfo si in x.Descendants("Movie").Select(seriesXml => new CachedMovieInfo(seriesXml, TVDoc.ProviderType.libraryDefault)))
+                foreach (CachedMovieInfo si in x.Descendants("Movie").Select(seriesXml => new CachedMovieInfo(seriesXml, cache.SourceProvider())))
                 {
                     // The <cachedSeries> returned by GetSeries have
                     // less info than other results from
@@ -255,26 +191,6 @@ namespace TVRename
                     // first).
                     cache.Update(si);
                 }
-
-                /*foreach (XElement episodeXml in x.Descendants("Episode"))
-                {
-                    Episode e = new Episode(episodeXml);
-                    if (e.Ok())
-                    {
-                        cache.AddOrUpdateEpisode(e);
-                    }
-                    else
-                    {
-                        Logger.Error($"problem with XML recieved {episodeXml}");
-                    }
-                }
-
-                foreach (XElement banners in x.Descendants("BannersCache"))
-                {
-                    //this wil not be found in a standard response from the TVDB website
-                    //will only be in the response when we are reading from the cache
-                    ProcessXmlBannerCache(banners, cache);
-                }*/
             }
             catch (XmlException e)
             {
@@ -377,13 +293,13 @@ namespace TVRename
             //          <SeriesId>123</SeriesId>
             //          <Banners>
             //              <Banner>
-
+            //NB - this is legacy and will be removed post 2021 - Just to migrate old 'Banner' format to new Image format
             foreach (XElement bannersXml in r.Descendants("BannersItem"))
             {
                 int seriesId = bannersXml.ExtractInt("SeriesId") ?? -1;
 
-                localCache.AddBanners(seriesId, bannersXml.Descendants("Banners").Descendants("Banner")
-                    .Select(banner => new Banner(seriesId, banner)));
+                localCache.GetSeries(seriesId).AddBanners(seriesId, bannersXml.Descendants("Banners").Descendants("Banner")
+                    .Select(banner => ShowImage.GenerateFromLegacyBannerXML(seriesId, banner,localCache.SourceProvider())));
             }
         }
     }

@@ -661,7 +661,10 @@ namespace TVRename
             {
                 return TheTVDB.API.GetImageURL(url);
             }
-            //todo - make sure this works with  non tvdb shows
+            if (url.HasValue() && url!.IsWebLink())
+            {
+                return url;
+            }            //todo - make sure this works with  non tvdb shows
             return episode.Filename;
         }
 

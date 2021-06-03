@@ -39,7 +39,10 @@ namespace TVRename.TVmaze
                 {
                     lock (SyncRoot)
                     {
-                        InternalInstance ??= new LocalCache();
+                        if (InternalInstance is null)
+                        {
+                            InternalInstance = new LocalCache();
+                        }
                     }
                 }
 
@@ -47,7 +50,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        public void Setup(FileInfo? loadFrom, FileInfo cache, CommandLineArgs cla)
+        public void Setup(FileInfo? loadFrom, FileInfo cache, bool showIssues)
         {
             System.Diagnostics.Debug.Assert(cache != null);
             CacheFile = cache;
@@ -350,34 +353,6 @@ namespace TVRename.TVmaze
             }
         }
 
-        public void AddBanners(int seriesId, IEnumerable<Banner> seriesBanners)
-        {
-            lock (SERIES_LOCK)
-            {
-                if (Series.ContainsKey(seriesId))
-                {
-                    foreach (Banner b in seriesBanners)
-                    {
-                        if (!Series.ContainsKey(b.SeriesId))
-                        {
-                            throw new SourceConsistencyException(
-                                $"Can't find the cachedSeries to add the banner {b.BannerId} to. {seriesId},{b.SeriesId}", TVDoc.ProviderType.TVmaze);
-                        }
-
-                        CachedSeriesInfo ser = Series[b.SeriesId];
-
-                        ser.AddOrUpdateBanner(b);
-                    }
-
-                    Series[seriesId].BannersLoaded = true;
-                }
-                else
-                {
-                    LOGGER.Warn($"Banners were found for cachedSeries {seriesId} - Ignoring them.");
-                }
-            }
-        }
-
         public void LatestUpdateTimeIs(string time)
         {
             //No Need to do anything aswe always refresh from scratch
@@ -399,6 +374,11 @@ namespace TVRename.TVmaze
         public void ReConnect(bool b)
         {
             //nothing to be done here
+        }
+
+        TVDoc.ProviderType iTVSource.SourceProvider() 
+        {
+            return TVDoc.ProviderType.TVmaze;
         }
     }
 }

@@ -69,6 +69,11 @@ namespace TVRename
                 mInternal = true;
                 txtFindThis.Text = GenerateNewHintForProvider(mi);
                 mInternal = false;
+            } else if (txtFindThis.Text.IsNumeric() && mi != null && mi.Name.HasValue())
+            {
+                mInternal = true;
+                txtFindThis.Text = GenerateNewHintForProvider(mi);
+                mInternal = false;
             }
             DoFind(false);
         }
@@ -237,7 +242,7 @@ namespace TVRename
                     }
                     else if (Type == MediaConfiguration.MediaType.movie)
                     {
-                        lock (TMDB.LocalCache.Instance.MOVIE_LOCK)
+                        lock (TMDB.LocalCache.Instance.MOVIE_LOCK) //todo replace with cache
                         {
                             foreach (KeyValuePair<int, CachedMovieInfo> kvp in cache.CachedMovieData.Where(kvp => matches(kvp.Key, kvp.Value, numeric, what, matchnum)).OrderByDescending(m => m.Value.Popularity))
                             {

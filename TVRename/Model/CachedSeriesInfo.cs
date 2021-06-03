@@ -24,8 +24,7 @@ namespace TVRename
         public string? Network;
         public string? Type;
         public string? BannerString;
-        public bool BannersLoaded;
-
+        
         private ConcurrentDictionary<int, Episode> sourceEpisodes;
 
         [NotNull]
@@ -33,9 +32,7 @@ namespace TVRename
 
         public void ClearEpisodes() => sourceEpisodes.Clear();
 
-        private readonly SeriesBanners banners;
-
-        public IEnumerable<KeyValuePair<int, Banner>> AllBanners => banners.AllBanners;
+        private ShowImages images = new ShowImages();
 
         public int? MinYear =>
             Episodes.Select(e => e.GetAirDateDt())
@@ -61,30 +58,18 @@ namespace TVRename
         {
             sourceEpisodes = new ConcurrentDictionary<int, Episode>();
             AirsTime = null;
-
-            banners = new SeriesBanners(this);
-            banners.ResetBanners();
-            BannersLoaded = false;
         }
 
         public CachedSeriesInfo(int tvdb, int tvmaze, int tmdb, Locale langCode, TVDoc.ProviderType source) : base(tvdb, tvmaze, tmdb, langCode, source)
         {
             sourceEpisodes = new ConcurrentDictionary<int, Episode>();
             AirsTime = null;
-
-            banners = new SeriesBanners(this);
-            banners.ResetBanners();
-            BannersLoaded = false;
         }
 
         public CachedSeriesInfo(Locale locale, TVDoc.ProviderType source) : base(locale, source)
         {
             sourceEpisodes = new ConcurrentDictionary<int, Episode>();
             AirsTime = null;
-
-            banners = new SeriesBanners(this);
-            banners.ResetBanners();
-            BannersLoaded = false;
         }
 
         public CachedSeriesInfo([NotNull] XElement seriesXml, TVDoc.ProviderType source) : this(source)
@@ -259,8 +244,7 @@ namespace TVRename
                 sourceEpisodes = o.sourceEpisodes;
             }
 
-            banners.MergeBanners(o.banners);
-            BannersLoaded = o.BannersLoaded;
+            images.MergeImages(o.images);
 
             if (useNewDataOverOld)
             {
@@ -345,6 +329,14 @@ namespace TVRename
                 LOGGER.Error(e, GenerateErrorMessage());
                 // ReSharper disable once PossibleIntendedRethrow
                 throw e;
+            }
+        }
+
+        internal void AddBanners(int seriesId, IEnumerable<ShowImage> enumerable)
+        {
+            foreach(ShowImage s in enumerable)
+            {
+                images.Add(s);
             }
         }
 
@@ -526,41 +518,53 @@ namespace TVRename
             }
             writer.WriteEndElement(); //Genres
 
+            writer.WriteStartElement("Episodes");
+            foreach (Episode e in Episodes)
+            {
+                e.WriteXml(writer);
+            }
+            writer.WriteEndElement(); //Episodes
+
+            writer.WriteStartElement("Images");
+            foreach (ShowImage i in images)
+            {
+                i.WriteXml(writer);
+            }
+            writer.WriteEndElement(); //Images
+
             writer.WriteEndElement(); // cachedSeries
         }
 
         [NotNull]
-        public string GetSeriesFanartPath() => banners.GetSeriesFanartPath();
+        public string GetSeriesFanartPath() => images.GetShowImage(TargetLocale.LanguageToUse(source),MediaImage.ImageType.Background)?.ImageUrl;
 
         [NotNull]
-        public string GetSeriesPosterPath() => banners.GetSeriesPosterPath();
+        public string GetSeriesPosterPath() => images.GetShowImage(TargetLocale.LanguageToUse(source),MediaImage.ImageType.Poster)?.ImageUrl;
 
-        public string? GetImage(TVSettings.FolderJpgIsType itemForFolderJpg) => banners.GetImage(itemForFolderJpg);
+        public string? GetImage(TVSettings.FolderJpgIsType itemForFolderJpg) => images.GetImage(itemForFolderJpg, TargetLocale.LanguageToUse(source))?.ImageUrl;
 
-        public string? GetSeasonBannerPath(int snum) => banners.GetSeasonBannerPath(snum);
+        public string? GetSeasonBannerPath(int snum) => images.GetSeasonBanner(snum,TargetLocale.LanguageToUse(source))?.ImageUrl;
 
-        public string? GetSeriesWideBannerPath() => banners.GetSeriesWideBannerPath();
+        public string? GetSeriesWideBannerPath() => images.GetShowImage(TargetLocale.LanguageToUse(source),MediaImage.ImageType.WideBanner)?.ImageUrl;
 
-        public string? GetSeasonWideBannerPath(int snum) => banners.GetSeasonWideBannerPath(snum);
-
-        public void AddOrUpdateBanner([NotNull] Banner banner) => banners.AddOrUpdateBanner(banner);
+        public string? GetSeasonWideBannerPath(int snum) => images.GetSeasonWideBanner(snum, TargetLocale.LanguageToUse(source))?.ImageUrl;
 
         public void UpdateBanners(List<int> latestBannerIds)
         {
             List<int> bannersToRemove = new List<int>();
-            foreach (KeyValuePair<int, Banner> bannerKeyValuePair in AllBanners)
+            foreach (ShowImage currentImage in images)
             {
-                if (latestBannerIds.Contains(bannerKeyValuePair.Key))
+                if (latestBannerIds.Contains(currentImage.Id))
                 {
                     continue;
                 }
 
-                bannersToRemove.Add(bannerKeyValuePair.Key);
+                bannersToRemove.Add(currentImage.Id);
             }
 
             foreach (int removeBanner in bannersToRemove)
             {
-                banners.Remove(removeBanner);
+                images.RemoveAll(x=>x.Id == removeBanner);
             }
         }
 
@@ -592,5 +596,11 @@ namespace TVRename
         }
 
         public bool IsCacheFor(ShowConfiguration show) => show.TmdbCode == TmdbCode || show.TvdbId == TvdbCode || show.TvMazeId == TvMazeCode;
+
+        public void AddOrUpdateImage(ShowImage showImage)
+        {
+            images.RemoveAll(s => s.Id == showImage.Id);
+            images.Add(showImage);
+        }
     }
 }

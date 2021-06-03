@@ -61,7 +61,7 @@ namespace TVRename.TMDB
             }
         }
 
-        public void Setup(FileInfo? loadFrom, FileInfo cache, CommandLineArgs cla)
+        public void Setup(FileInfo? loadFrom, FileInfo cache, bool showIssues)
         {
             System.Diagnostics.Debug.Assert(cache != null);
             CacheFile = cache;
@@ -574,34 +574,6 @@ namespace TVRename.TMDB
             }
         }
 
-        public void AddBanners(int seriesId, IEnumerable<Banner> seriesBanners)
-        {
-            lock (SERIES_LOCK)
-            {
-                if (Series.ContainsKey(seriesId))
-                {
-                    foreach (Banner b in seriesBanners)
-                    {
-                        if (!Series.ContainsKey(b.SeriesId))
-                        {
-                            throw new SourceConsistencyException(
-                                $"Can't find the cachedSeries to add the banner {b.BannerId} to (TMDB). {seriesId},{b.SeriesId}", TVDoc.ProviderType.TMDB);
-                        }
-
-                        CachedSeriesInfo ser = Series[b.SeriesId];
-
-                        ser.AddOrUpdateBanner(b);
-                    }
-
-                    Series[seriesId].BannersLoaded = true;
-                }
-                else
-                {
-                    LOGGER.Warn($"Banners were found for cachedSeries {seriesId} - Ignoring them.");
-                }
-            }
-        }
-
         public void ForgetMovie(int id)
         {
             lock (MOVIE_LOCK)
@@ -625,7 +597,7 @@ namespace TVRename.TMDB
             }
         }
 
-        public void AddPoster(int seriesId, IEnumerable<Banner> select)
+        public void AddPoster(int seriesId, IEnumerable<MovieImage> select)
         {
             throw new NotImplementedException(); //TODO
         }
@@ -795,16 +767,18 @@ namespace TVRename.TMDB
                 foreach (ImageData? image in downloadedSeries.Images.Backdrops.Where(x =>
                     Math.Abs(x.VoteAverage - bestBackdropRating) < .01))
                 {
-                    Banner newBanner = new Banner(downloadedSeries.Id)
+                    ShowImage newBanner = new ShowImage()
                     {
-                        BannerId = 1,
-                        BannerPath = OriginalImageUrl(image.FilePath),
-                        BannerType = "fanart",
+                        SeriesId = downloadedSeries.Id,
+                        SeriesSource = TVDoc.ProviderType.TheTVDB,
+                        Id = 1,
+                        ImageUrl = OriginalImageUrl(image.FilePath),
+                        ImageStyle = MediaImage.ImageType.Background,
                         Rating = image.VoteAverage,
                         RatingCount = image.VoteCount
                     };
 
-                    m.AddOrUpdateBanner(newBanner);
+                    m.AddOrUpdateImage(newBanner);
                 }
             }
             if (downloadedSeries.Images.Posters.Any())
@@ -813,16 +787,18 @@ namespace TVRename.TMDB
                 foreach (ImageData? image in downloadedSeries.Images.Posters.Where(x =>
                     Math.Abs(x.VoteAverage - bestPosterRating) < .01))
                 {
-                    Banner newBanner = new Banner(downloadedSeries.Id)
+                    ShowImage newBanner = new ShowImage()
                     {
-                        BannerId = 2,
-                        BannerPath = PosterImageUrl(image.FilePath),
-                        BannerType = "poster",
+                        SeriesId = downloadedSeries.Id,
+                        SeriesSource = TVDoc.ProviderType.TMDB,
+                        Id = 2,
+                        ImageUrl = PosterImageUrl(image.FilePath),
+                        ImageStyle =MediaImage.ImageType.Poster,
                         Rating = image.VoteAverage,
                         RatingCount = image.VoteCount
                     };
 
-                    m.AddOrUpdateBanner(newBanner);
+                    m.AddOrUpdateImage(newBanner);
                 }
             }
 
@@ -869,22 +845,20 @@ namespace TVRename.TMDB
                     double bestRating = downloadedSeason.Images.Posters.Select(x => x.VoteAverage).Max();
                     foreach (ImageData? image in downloadedSeason.Images.Posters.Where(x => Math.Abs(x.VoteAverage - bestRating) < .01))
                     {
-                        Banner newBanner = new Banner(downloadedSeries.Id)
+                        ShowImage newBanner = new ShowImage()
                         {
-                            BannerId = 10 + snum,
-                            BannerPath = OriginalImageUrl(image.FilePath),
-                            BannerType = "season",
+                            Id = 10 + snum,
+                            ImageUrl = OriginalImageUrl(image.FilePath),
+                            ImageStyle = MediaImage.ImageType.Poster,
                             Rating = image.VoteAverage,
                             RatingCount = image.VoteCount,
                             SeasonId = downloadedSeason.Id ?? 0
                         };
 
-                        m.AddOrUpdateBanner(newBanner);
+                        m.AddOrUpdateImage(newBanner);
                     }
                 }
             }
-
-            m.BannersLoaded = true;
 
             File(m);
 
@@ -1365,5 +1339,7 @@ namespace TVRename.TMDB
         {
             //nothing to be done here
         }
+
+        public TVDoc.ProviderType SourceProvider() => TVDoc.ProviderType.TMDB;
     }
 }

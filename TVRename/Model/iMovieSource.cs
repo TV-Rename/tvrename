@@ -6,7 +6,7 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     public interface iMovieSource
     {
-        void Setup(FileInfo loadFrom, FileInfo cacheFile, CommandLineArgs args);
+        void Setup(FileInfo loadFrom, FileInfo cacheFile, bool showIssues);
 
         bool Connect(bool showErrorMsgBox);
 
@@ -32,8 +32,10 @@ namespace TVRename
 
         void Update(CachedMovieInfo si);
 
-        void AddPoster(int seriesId, IEnumerable<Banner> select);
+        void AddPoster(int seriesId, IEnumerable<MovieImage> select);
 
         void LatestUpdateTimeIs(string time);
+
+        TVDoc.ProviderType SourceProvider();
     }
 }

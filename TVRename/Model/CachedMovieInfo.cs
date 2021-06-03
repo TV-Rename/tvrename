@@ -11,6 +11,7 @@ namespace TVRename
         public string? Type;
         public int? CollectionId;
         public string? CollectionName;
+        private MovieImages images = new MovieImages();
 
         public int? Year => FirstAired?.Year;
 
@@ -308,6 +309,12 @@ namespace TVRename
             writer.WriteEndElement(); //Genres
 
             writer.WriteEndElement(); // cachedSeries
+        }
+
+        public void AddOrUpdateImage(MovieImage image)
+        {
+            images.RemoveAll(s => s.Id == image.Id);
+            images.Add(image);
         }
     }
 }

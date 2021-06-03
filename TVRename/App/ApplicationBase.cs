@@ -126,9 +126,10 @@ namespace TVRename.App
                 doc = new TVDoc(settingsFile, clargs);
 
                 // Try loading TheTVDB cache file
-                TheTVDB.LocalCache.Instance.Setup(tvdbFile, PathManager.TVDBFile, clargs);
-                TVmaze.LocalCache.Instance.Setup(tvmazeFile, PathManager.TVmazeFile, clargs);
-                TMDB.LocalCache.Instance.Setup(tmdbFile, PathManager.TmdbFile, clargs);
+                bool showIssues = !clargs.Unattended && !clargs.Hide;
+                TheTVDB.LocalCache.Instance.Setup(tvdbFile, PathManager.TVDBFile, showIssues);
+                TVmaze.LocalCache.Instance.Setup(tvmazeFile, PathManager.TVmazeFile, showIssues);
+                TMDB.LocalCache.Instance.Setup(tmdbFile, PathManager.TmdbFile, showIssues);
 
                 if (recover)
                 {

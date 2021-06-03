@@ -180,16 +180,15 @@ namespace TVRename.TVmaze
                     string child = (string)GetChild(imageNode, "original");
                     if (child != null)
                     {
-                        downloadedSi.AddOrUpdateBanner(GenerateBanner(ss.TvMazeId, (int)jsonSeason["number"], child));
+                        downloadedSi.AddOrUpdateImage(GenerateImage(ss.TvMazeId, (int)jsonSeason["number"], child));
                     }
                 }
             }
 
-            foreach (JToken imageJson in GetChild(jToken, "images").Where(imageJson => (string)imageJson["type"] == "background"))
+            foreach (JToken imageJson in GetChild(jToken, "images"))
             {
-                downloadedSi.AddOrUpdateBanner(GenerateBanner(ss.TvMazeId, imageJson));
+                downloadedSi.AddOrUpdateImage(GenerateImage(ss.TvMazeId, imageJson));
             }
-            downloadedSi.BannersLoaded = true;
 
             downloadedSi.ClearActors();
             foreach (JToken jsonActor in GetChild(jToken, "cast"))
@@ -233,30 +232,35 @@ namespace TVRename.TVmaze
         }
 
         [NotNull]
-        private static Banner GenerateBanner(int seriesId, [NotNull] JToken imageJson)
+        private static ShowImage GenerateImage(int seriesId, [NotNull] JToken imageJson)
         {
-            Banner newBanner = new Banner(seriesId)
+            ShowImage newBanner = new ShowImage()
             {
-                BannerPath = (string)GetChild(GetChild(GetChild(imageJson, "resolutions"), "original"), "url"),
-                BannerId = (int)imageJson["id"],
-                BannerType = "fanart",
+                SeriesId = seriesId,
+                ImageUrl = (string)GetChild(GetChild(GetChild(imageJson, "resolutions"), "original"), "url"),
+                Id = (int)imageJson["id"],
+                ImageStyle = MediaImage.ImageType.Background,
                 Rating = (bool)imageJson["main"] ? 10 : 1,
-                RatingCount = 1
+                RatingCount = 1,
+                SeriesSource = TVDoc.ProviderType.TVmaze,
             };
 
             return newBanner;
         }
 
         [NotNull]
-        private static Banner GenerateBanner(int seriesId, int seasonNumber, [NotNull] string url)
+        private static ShowImage GenerateImage(int seriesId, int seasonNumber, [NotNull] string url)
         {
-            Banner newBanner = new Banner(seriesId)
+            ShowImage newBanner = new ShowImage()
             {
-                BannerPath = url,
-                BannerType = "season",
+                SeriesId = seriesId,
+                ImageUrl = url,
+                ImageStyle = MediaImage.ImageType.Poster,
+                Subject = MediaImage.ImageSubject.Season,
                 SeasonId = seasonNumber,
                 Rating = 10,
-                RatingCount = 1
+                RatingCount = 1,
+                SeriesSource  = TVDoc.ProviderType.TVmaze,
             };
 
             return newBanner;

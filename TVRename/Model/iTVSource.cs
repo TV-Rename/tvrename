@@ -14,7 +14,7 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     public interface iTVSource
     {
-        void Setup(FileInfo loadFrom, FileInfo cacheFile, CommandLineArgs args);
+        void Setup(FileInfo loadFrom, FileInfo cacheFile, bool showConnectionIssues);
 
         bool Connect(bool showErrorMsgBox);
 
@@ -42,8 +42,7 @@ namespace TVRename
 
         void AddOrUpdateEpisode(Episode episode);
 
-        void AddBanners(int seriesId, IEnumerable<Banner> select);
-
-        void LatestUpdateTimeIs(string time);
+       void LatestUpdateTimeIs(string time);
+       TVDoc.ProviderType SourceProvider();
     }
 }

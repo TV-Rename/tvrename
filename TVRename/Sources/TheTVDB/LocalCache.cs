@@ -12,6 +12,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -42,7 +43,7 @@ namespace TVRename.TheTVDB
         private ConcurrentDictionary<int, int> forceReloadOn;
         private UpdateTimeTracker LatestUpdateTime;
 
-        private CommandLineArgs args;
+        private bool ShowConnectionIssues;
 
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
@@ -71,11 +72,13 @@ namespace TVRename.TheTVDB
             }
         }
 
+        public TVDoc.ProviderType SourceProvider() => TVDoc.ProviderType.TheTVDB;
+
         public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TheTVDB;
 
-        public void Setup(FileInfo? loadFrom, FileInfo cache, CommandLineArgs cla)
+        public void Setup(FileInfo? loadFrom, FileInfo cache, bool showIssues)
         {
-            args = cla;
+            ShowConnectionIssues = showIssues;
 
             System.Diagnostics.Debug.Assert(cache != null);
             CacheFile = cache;
@@ -274,7 +277,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        public void AddPoster(int seriesId, IEnumerable<Banner> @select)
+        public void AddPoster(int seriesId, IEnumerable<MovieImage> @select)
         {
             throw new NotImplementedException();
         }
@@ -475,7 +478,7 @@ namespace TVRename.TheTVDB
                         $"We have run {MAX_NUMBER_OF_CALLS} weeks of updates and we are not up to date.  The system will need to check again once this set of updates have been processed.{Environment.NewLine}Last Updated time was {LatestUpdateTime.LastSuccessfulServerUpdateDateTime()}{Environment.NewLine}New Last Updated time is {LatestUpdateTime.ProposedServerUpdateDateTime()}{Environment.NewLine}{Environment.NewLine}If the dates keep getting more recent then let the system keep getting {MAX_NUMBER_OF_CALLS} week blocks of updates, otherwise consider a 'Force Refresh All'";
 
                     LOGGER.Error(errorMessage);
-                    if (!args.Unattended && !args.Hide && Environment.UserInteractive)
+                    if (ShowConnectionIssues && Environment.UserInteractive)
                     {
                         MessageBox.Show(errorMessage, "Long Running Update", MessageBoxButtons.OK,
                             MessageBoxIcon.Warning);
@@ -529,7 +532,7 @@ namespace TVRename.TheTVDB
 
                 LOGGER.Warn(ex, msg);
 
-                if (!args.Unattended && !args.Hide && Environment.UserInteractive)
+                if (ShowConnectionIssues && Environment.UserInteractive)
                 {
                     MessageBox.Show(msg, "Error obtaining updates from TVDB", MessageBoxButtons.OK,
                         MessageBoxIcon.Warning);
@@ -1174,10 +1177,7 @@ namespace TVRename.TheTVDB
                     {
                         DownloadSeriesBanners(code, si, locale);
                     }
-                    else
-                    {
-                        si.BannersLoaded = true; //todo - not really true, but will do for now
-                    }
+                    //TODO - somethign for TVDB V4 IMages
                 }
             }
 
@@ -1423,8 +1423,44 @@ namespace TVRename.TheTVDB
             };
 
             AddCastCrew(r, si);
+            AddMovieImagesV4(r, si);
 
             return si;
+        }
+
+        private void AddMovieImagesV4(JObject r, CachedMovieInfo si)
+        {
+            if (!(r["data"]?["artworks"] is null))
+            {
+                foreach (var imageJson in r["data"]["artworks"])
+                {
+                    int imageCodeType = (int)imageJson["type"];
+                    if (imageCodeType == 13)
+                    {
+                        //Not an image we are interested in
+                        continue;
+                    }
+                    MovieImage mi = new MovieImage();
+                    mi.Id = (int)imageJson["id"];
+                    mi.ImageUrl = TheTVDB.API.GetImageURL((string)imageJson["image"]);
+                    mi.ThumbnailUrl = TheTVDB.API.GetImageURL((string)imageJson["thumbnail"]);
+                    mi.LanguageCode = (string)imageJson["language"];
+                    mi.Rating = (int)imageJson["score"];
+                    mi.MovieId = si.TvdbCode;
+                    mi.ImageStyle = MapBannerTVDBV4APICode(imageCodeType);
+                    mi.MovieSource = TVDoc.ProviderType.TheTVDB;
+                    mi.RatingCount = 1;
+
+                    si.AddOrUpdateImage(mi);
+                }
+            }
+        }
+
+        private MediaImage.ImageType MapBannerTVDBV4APICode(int v)
+        {
+            if (v == 14) return MediaImage.ImageType.Poster;
+            if (v == 15) return MediaImage.ImageType.Background;
+            return MediaImage.ImageType.Poster;
         }
 
         private static void AddCastCrew(JObject r, CachedMovieInfo si)
@@ -1623,6 +1659,7 @@ namespace TVRename.TheTVDB
             }
 
             AddCastAndCrew(r, si);
+            AddMovieImagesV4(r, si);
 
             return (si, GetAppropriateLanguage(r["data"]["nameTranslations"], locale));
         }
@@ -2042,8 +2079,6 @@ namespace TVRename.TheTVDB
                 bannerDefaultLangResponses, latestBannerIds);
 
             si.UpdateBanners(latestBannerIds);
-
-            si.BannersLoaded = true;
         }
 
         private void ProcessBannerResponses(int code, CachedSeriesInfo si, Locale locale,
@@ -2061,15 +2096,14 @@ namespace TVRename.TheTVDB
 
                 try
                 {
-                    foreach (Banner b in jToken
-                        .Cast<JObject>()
-                        .Select(bannerData => new Banner(si.TvdbCode, bannerData,
-                            locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).TvdbId)))
+                    foreach (JObject bannerData in jToken.Cast<JObject>())
                     {
+                        ShowImage s = CreateShowImage(si.TvdbCode, bannerData);
+
                         lock (SERIES_LOCK)
                         {
-                            si.AddOrUpdateBanner(b);
-                            latestBannerIds.Add(b.BannerId);
+                            si.AddOrUpdateImage(s);
+                            latestBannerIds.Add(s.Id);
                         }
                     }
                 }
@@ -2081,6 +2115,51 @@ namespace TVRename.TheTVDB
                     LOGGER.Error(jToken.ToString());
                 }
             }
+        }
+
+        private ShowImage CreateShowImage(int tvdbId, JObject bannerData)
+        {
+            double.TryParse((string)bannerData["ratingsInfo"]?["average"], NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out double Rating);
+            int.TryParse((string)bannerData["subKey"], out int seasonId);
+            // {
+            //  "fileName": "string",
+            //  "id": 0,
+            //  "keyType": "string",
+            //  "languageId": 0,
+            //  "ratingsInfo": {
+            //      "average": 0,
+            //      "count": 0
+            //      },
+            //  "resolution": "string",
+            //  "subKey": "string",         //May Contain Season Number
+            //  "thumbnail": "string"
+            //  }
+            return new ShowImage
+            {
+                SeriesSource = TVDoc.ProviderType.TheTVDB,
+                SeriesId = tvdbId,
+                ImageUrl = TheTVDB.API.GetImageURL((string)bannerData["fileName"]),
+                Id = (int)bannerData["id"],
+                ImageStyle = MapBannerType((string)bannerData["keyType"]),
+                Subject = MediaImage.ImageSubject.Show,
+                LanguageCode = Languages.Instance.GetLanguageFromCode((string)bannerData["language"])?.Abbreviation,
+                SeasonId = seasonId,
+                RatingCount = (int)bannerData["ratingsInfo"]?["count"],
+                Rating = Rating,
+                Resolution = (string)bannerData["resolution"],
+                ThumbnailUrl = TheTVDB.API.GetImageURL((string)bannerData["thumbnail"])
+            };
+        }
+
+        private MediaImage.ImageType MapBannerType(string? s)
+        {
+            if (s == "fanart") return MediaImage.ImageType.Background;
+            return MediaImage.ImageType.Poster;
+        }
+
+        private MediaImage.ImageSubject MapImageSource(string? s)
+        {
+            throw new NotImplementedException();
         }
 
         private static (List<JObject> bannerDefaultLangResponses, List<JObject> bannerResponses) DownloadBanners(
@@ -2550,8 +2629,8 @@ namespace TVRename.TheTVDB
             bool ok = true;
 
             bool seriesNeedsUpdating = Series[code].Dirty;
-            bool bannersNeedUpdating = bannersToo && !Series[code].BannersLoaded;
-            if (seriesNeedsUpdating || bannersNeedUpdating)
+
+            if (seriesNeedsUpdating || bannersToo)
             {
                 ok = DownloadSeriesNow(seriesd, false, bannersToo, showErrorMsgBox) != null;
             }
@@ -2742,6 +2821,25 @@ namespace TVRename.TheTVDB
                         }
                     }
                 }
+
+                IEnumerable<CachedMovieInfo> cachedMovieInfos = (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
+                    ? GetEnumMoviesV4(jToken, locale, true)
+                    : new List<CachedMovieInfo>();
+
+                foreach (CachedMovieInfo si in cachedMovieInfos)
+                {
+                    lock (MOVIE_LOCK)
+                    {
+                        if (Movies.ContainsKey(si.TvdbCode))
+                        {
+                            Movies[si.TvdbCode].Merge(si);
+                        }
+                        else
+                        {
+                            Movies[si.TvdbCode] = si;
+                        }
+                    }
+                }
             }
             catch (InvalidCastException ex)
             {
@@ -2759,10 +2857,73 @@ namespace TVRename.TheTVDB
             foreach (JToken jt in ja.Children())
             {
                 JObject showJson = (JObject)jt;
+                if (jt["type"].ToString() == "movie")
+                {
+                    continue;
+                }
                 ses.Add(GenerateSeriesV4(showJson, locale, b));
             }
 
             return ses;
+        }
+
+        private IEnumerable<CachedMovieInfo> GetEnumMoviesV4(JToken jToken, Locale locale, bool b)
+        {
+            JArray ja = (JArray)jToken;
+            List<CachedMovieInfo> ses = new List<CachedMovieInfo>();
+
+            foreach (JToken jt in ja.Children())
+            {
+                JObject showJson = (JObject)jt;
+                if (jt["type"].ToString() == "movie")
+                {
+                    ses.Add(GenerateMovieV4(showJson, locale, b));
+                }
+            }
+
+            return ses;
+        }
+
+        private CachedMovieInfo GenerateMovieV4(JObject r, Locale locale, bool searchResult)
+        {
+            //todo - obtain language specific title and overviews
+            CachedMovieInfo si = new CachedMovieInfo(locale, TVDoc.ProviderType.TheTVDB)
+            {
+                TvdbCode = (int)r["tvdb_id"],
+                Slug = ((string)r["id"])?.Trim(),
+                PosterUrl = (string)r["image_url"],
+                Overview = (string)r["overview"],
+                Network = (string)r["network"],
+                Status = (string)r["status"],
+                IsSearchResultOnly = searchResult,
+                ShowLanguage = (string)r["primary_language"],
+            };
+            int? year = (int)r["year"];
+            if (year.HasValue)
+            {
+                si.FirstAired = new DateTime(year.Value, 1, 1);
+            }
+
+            string s = (string)r["name"];
+            if (s != null)
+            {
+                si.Name = System.Web.HttpUtility.HtmlDecode(s).Trim();
+            }
+
+            if (string.IsNullOrEmpty(si.Name))
+            {
+                LOGGER.Warn("Issue with CachedMovieInfo " + si);
+                LOGGER.Warn(r.ToString());
+            }
+
+            if (si.SrvLastUpdated == 0 && !searchResult)
+            {
+                LOGGER.Warn("Issue with CachedMovieInfo (update time is 0) " + si);
+                LOGGER.Warn(r.ToString());
+                si.SrvLastUpdated = 100;
+            }
+
+            return si;
         }
 
         private CachedSeriesInfo GenerateSeriesV4(JObject r, Locale locale, bool searchResult)
@@ -2777,8 +2938,12 @@ namespace TVRename.TheTVDB
                 Status = (string)r["status"],
                 IsSearchResultOnly = searchResult,
                 ShowLanguage = (string)r["primary_language"],
-                FirstAired = new DateTime((int)r["year"], 1, 1),
             };
+            int? year = (int)r["year"];
+            if (year.HasValue)
+            {
+                si.FirstAired = new DateTime(year.Value, 1, 1);
+            }
 
             string s = (string)r["name"];
             if (s != null)
@@ -2890,35 +3055,6 @@ namespace TVRename.TheTVDB
             }
         }
 
-        public void AddBanners(int seriesId, IEnumerable<Banner> seriesBanners)
-        {
-            lock (SERIES_LOCK)
-            {
-                if (Series.ContainsKey(seriesId))
-                {
-                    foreach (Banner b in seriesBanners)
-                    {
-                        if (!Series.ContainsKey(b.SeriesId))
-                        {
-                            throw new SourceConsistencyException(
-                                $"Can't find the cachedSeries to add the banner {b.BannerId} to (TheTVDB). {seriesId},{b.SeriesId}",
-                                TVDoc.ProviderType.TheTVDB);
-                        }
-
-                        CachedSeriesInfo ser = Series[b.SeriesId];
-
-                        ser.AddOrUpdateBanner(b);
-                    }
-
-                    Series[seriesId].BannersLoaded = true;
-                }
-                else
-                {
-                    LOGGER.Warn($"Banners were found for cachedSeries {seriesId} - Ignoring them.");
-                }
-            }
-        }
-
         public void LatestUpdateTimeIs(string time)
         {
             LatestUpdateTime.Load(time);
@@ -2993,6 +3129,11 @@ namespace TVRename.TheTVDB
             {
                 SayNothing();
             }
+        }
+
+        TVDoc.ProviderType iMovieSource.SourceProvider()
+        {
+            return Provider();
         }
     }
 }
