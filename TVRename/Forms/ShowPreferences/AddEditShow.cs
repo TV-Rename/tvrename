@@ -32,6 +32,7 @@ namespace TVRename
         private readonly ShowConfiguration selectedShow;
         private readonly CombinedCodeFinder codeFinderForm;
         private CustomNameTagsFloatingWindow? cntfw;
+        internal bool HasChanged;
         private readonly ProcessedSeason? sampleProcessedSeason;
         private readonly ProcessedEpisode? sampleEpisode;
         private readonly bool addingNewShow;
@@ -45,6 +46,7 @@ namespace TVRename
             sampleEpisode = si.GetFirstAvailableEpisode();
             addingNewShow = (si.TvdbCode == -1 && si.TmdbCode == -1 && si.TVmazeCode == -1);
             InitializeComponent();
+            HasChanged = false;
 
             if (sampleProcessedSeason != null)
             {
@@ -749,6 +751,7 @@ namespace TVRename
 
         private void chkCustomLanguage_CheckedChanged(object sender, EventArgs e)
         {
+            HasChanged = true;
             cbLanguage.Enabled = chkCustomLanguage.Checked;
         }
 
@@ -788,6 +791,7 @@ namespace TVRename
 
         private void MTCCF_SelectionChanged(object sender, EventArgs e)
         {
+            HasChanged = true;
             if (addingNewShow && TVSettings.Instance.DefShowAutoFolders && TVSettings.Instance.DefShowUseDefLocation)
             {
                 txtBaseFolder.Text =
@@ -838,12 +842,24 @@ namespace TVRename
 
         private void rdoProvider_CheckedChanged(object sender, EventArgs e)
         {
+            HasChanged = true;
             codeFinderForm.SetSource(GetConfigurationProviderType(), selectedShow);
         }
 
         private void chkCustomRegion_CheckedChanged(object sender, EventArgs e)
         {
+            HasChanged = true;
             cbRegion.Enabled = chkCustomRegion.Checked;
+        }
+
+        private void cbLanguage_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            HasChanged = true;
+        }
+
+        private void cbRegion_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            HasChanged = true;
         }
     }
 }

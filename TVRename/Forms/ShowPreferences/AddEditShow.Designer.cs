@@ -57,6 +57,8 @@ namespace TVRename
             this.chkCustomShowName = new System.Windows.Forms.CheckBox();
             this.Folders = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.chkCustomRegion = new System.Windows.Forms.CheckBox();
+            this.cbRegion = new System.Windows.Forms.ComboBox();
             this.rdoTMDB = new System.Windows.Forms.RadioButton();
             this.label13 = new System.Windows.Forms.Label();
             this.rdoTVMaze = new System.Windows.Forms.RadioButton();
@@ -137,8 +139,6 @@ namespace TVRename
             this.cbIncludeNoAirdate = new System.Windows.Forms.CheckBox();
             this.cbIncludeFuture = new System.Windows.Forms.CheckBox();
             this.pbAdvanced = new System.Windows.Forms.PictureBox();
-            this.cbRegion = new System.Windows.Forms.ComboBox();
-            this.chkCustomRegion = new System.Windows.Forms.CheckBox();
             this.Folders.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbBasics)).BeginInit();
@@ -357,6 +357,29 @@ namespace TVRename
             this.tabPage1.Text = "Basics";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // chkCustomRegion
+            // 
+            this.chkCustomRegion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkCustomRegion.AutoSize = true;
+            this.chkCustomRegion.Location = new System.Drawing.Point(9, 439);
+            this.chkCustomRegion.Name = "chkCustomRegion";
+            this.chkCustomRegion.Size = new System.Drawing.Size(101, 17);
+            this.chkCustomRegion.TabIndex = 48;
+            this.chkCustomRegion.Text = "Custom Region:";
+            this.chkCustomRegion.UseVisualStyleBackColor = true;
+            this.chkCustomRegion.CheckedChanged += new System.EventHandler(this.chkCustomRegion_CheckedChanged);
+            // 
+            // cbRegion
+            // 
+            this.cbRegion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbRegion.FormattingEnabled = true;
+            this.cbRegion.Location = new System.Drawing.Point(134, 439);
+            this.cbRegion.Name = "cbRegion";
+            this.cbRegion.Size = new System.Drawing.Size(146, 21);
+            this.cbRegion.Sorted = true;
+            this.cbRegion.TabIndex = 47;
+            this.cbRegion.SelectedIndexChanged += new System.EventHandler(this.cbRegion_SelectedIndexChanged);
+            // 
             // rdoTMDB
             // 
             this.rdoTMDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -454,6 +477,7 @@ namespace TVRename
             this.cbLanguage.Name = "cbLanguage";
             this.cbLanguage.Size = new System.Drawing.Size(200, 21);
             this.cbLanguage.TabIndex = 9;
+            this.cbLanguage.SelectedIndexChanged += new System.EventHandler(this.cbLanguage_SelectedIndexChanged);
             // 
             // chkCustomLanguage
             // 
@@ -1289,28 +1313,6 @@ namespace TVRename
             this.pbAdvanced.TabIndex = 41;
             this.pbAdvanced.TabStop = false;
             this.pbAdvanced.Click += new System.EventHandler(this.pbAdvanced_Click);
-            // 
-            // cbRegion
-            // 
-            this.cbRegion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbRegion.FormattingEnabled = true;
-            this.cbRegion.Location = new System.Drawing.Point(134, 439);
-            this.cbRegion.Name = "cbRegion";
-            this.cbRegion.Size = new System.Drawing.Size(146, 21);
-            this.cbRegion.Sorted = true;
-            this.cbRegion.TabIndex = 47;
-            // 
-            // chkCustomRegion
-            // 
-            this.chkCustomRegion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkCustomRegion.AutoSize = true;
-            this.chkCustomRegion.Location = new System.Drawing.Point(9, 439);
-            this.chkCustomRegion.Name = "chkCustomRegion";
-            this.chkCustomRegion.Size = new System.Drawing.Size(101, 17);
-            this.chkCustomRegion.TabIndex = 48;
-            this.chkCustomRegion.Text = "Custom Region:";
-            this.chkCustomRegion.UseVisualStyleBackColor = true;
-            this.chkCustomRegion.CheckedChanged += new System.EventHandler(this.chkCustomRegion_CheckedChanged);
             // 
             // AddEditShow
             // 

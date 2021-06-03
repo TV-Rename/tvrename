@@ -11,8 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-// Control for searching for a tvdb code, checking against local cache and
-// searching on thetvdb
+// Control for searching for a source provider code, checking against local cache and
+// searching on various providers
 
 namespace TVRename
 {
@@ -69,13 +69,15 @@ namespace TVRename
                 mInternal = true;
                 txtFindThis.Text = GenerateNewHintForProvider(mi);
                 mInternal = false;
-            } else if (txtFindThis.Text.IsNumeric() && mi != null && mi.Name.HasValue())
+                DoFind(false);
+            }
+            else if (txtFindThis.Text.IsNumeric() && mi != null && mi.Name.HasValue())
             {
                 mInternal = true;
                 txtFindThis.Text = GenerateNewHintForProvider(mi);
                 mInternal = false;
+                DoFind(true);
             }
-            DoFind(false);
         }
 
         private void UpdateSource(TVDoc.ProviderType source)
@@ -242,7 +244,7 @@ namespace TVRename
                     }
                     else if (Type == MediaConfiguration.MediaType.movie)
                     {
-                        lock (TMDB.LocalCache.Instance.MOVIE_LOCK) //todo replace with cache
+                        lock (cache.MOVIE_LOCK)
                         {
                             foreach (KeyValuePair<int, CachedMovieInfo> kvp in cache.CachedMovieData.Where(kvp => matches(kvp.Key, kvp.Value, numeric, what, matchnum)).OrderByDescending(m => m.Value.Popularity))
                             {

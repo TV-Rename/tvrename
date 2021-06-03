@@ -597,11 +597,6 @@ namespace TVRename.TMDB
             }
         }
 
-        public void AddPoster(int seriesId, IEnumerable<MovieImage> select)
-        {
-            throw new NotImplementedException(); //TODO
-        }
-
         private void AddPlaceholderSeries(int tvdb, int tvmaze, int tmdb, Locale locale)
         {
             lock (SERIES_LOCK)

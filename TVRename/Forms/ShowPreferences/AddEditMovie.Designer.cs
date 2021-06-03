@@ -672,6 +672,7 @@ namespace TVRename
             this.cbRegion.Name = "cbRegion";
             this.cbRegion.Size = new System.Drawing.Size(200, 21);
             this.cbRegion.TabIndex = 47;
+            this.cbRegion.SelectedIndexChanged += new System.EventHandler(this.cbRegion_SelectedIndexChanged);
             // 
             // chkCustomRegion
             // 
@@ -769,6 +770,7 @@ namespace TVRename
             this.cbLanguage.Name = "cbLanguage";
             this.cbLanguage.Size = new System.Drawing.Size(200, 21);
             this.cbLanguage.TabIndex = 9;
+            this.cbLanguage.SelectedIndexChanged += new System.EventHandler(this.cbLanguage_SelectedIndexChanged);
             // 
             // chkCustomLanguage
             // 
@@ -791,6 +793,7 @@ namespace TVRename
             this.pnlCF.Name = "pnlCF";
             this.pnlCF.Size = new System.Drawing.Size(444, 244);
             this.pnlCF.TabIndex = 0;
+            this.pnlCF.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlCF_Paint);
             // 
             // chkCustomShowName
             // 

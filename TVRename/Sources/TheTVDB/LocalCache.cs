@@ -277,11 +277,6 @@ namespace TVRename.TheTVDB
             }
         }
 
-        public void AddPoster(int seriesId, IEnumerable<MovieImage> @select)
-        {
-            throw new NotImplementedException();
-        }
-
         public void ForgetShow(ISeriesSpecifier ss)
         {
             ForgetShow(ss.TvdbId);
@@ -1621,7 +1616,6 @@ namespace TVRename.TheTVDB
                 Dirty = false,
                 PosterUrl = "https://artworks.thetvdb.com" + GetArtworkV4(r, 14),
                 FanartUrl = "https://artworks.thetvdb.com" + GetArtworkV4(r, 15),
-                //TODO multiple posters and artwork
                 //todo BannerUrl = "https://artworks.thetvdb.com" + GetArtworkV4(r, 16),
                 OfficialUrl = GetExternalIdV4(r, "Official Website"),
                 FacebookId = GetExternalIdV4(r, "Facebook"),

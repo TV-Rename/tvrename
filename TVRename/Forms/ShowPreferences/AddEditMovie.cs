@@ -29,6 +29,7 @@ namespace TVRename
         private readonly MovieConfiguration selectedShow;
         private readonly CombinedCodeFinder codeFinderForm;
         private CustomNameTagsFloatingWindow? cntfw;
+        internal bool HasChanged;
         private readonly bool addingNewShow;
         private readonly TVDoc mDoc;
 
@@ -38,6 +39,7 @@ namespace TVRename
             mDoc = doc;
             addingNewShow = (si.TvdbCode == -1 && si.TmdbCode == -1 && si.TVmazeCode == -1);
             InitializeComponent();
+            HasChanged = false;
 
             SetupDropDowns(si);
 
@@ -493,11 +495,13 @@ namespace TVRename
 
         private void chkCustomLanguage_CheckedChanged(object sender, EventArgs e)
         {
+            HasChanged = true;
             cbLanguage.Enabled = chkCustomLanguage.Checked;
         }
 
         private void MTCCF_SelectionChanged(object sender, EventArgs e)
         {
+            HasChanged = true;
         }
 
         private void bnBrowseFolder_Click_1(object sender, EventArgs e)
@@ -601,12 +605,29 @@ namespace TVRename
 
         private void rdoProvider_CheckedChanged(object sender, EventArgs e)
         {
+            HasChanged = true;
             codeFinderForm.SetSource(GetProviderType(), selectedShow);
         }
 
         private void chkCustomRegion_CheckedChanged(object sender, EventArgs e)
         {
+            HasChanged = true;
             cbRegion.Enabled = chkCustomRegion.Checked;
+        }
+
+        private void cbLanguage_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            HasChanged = true;
+        }
+
+        private void cbRegion_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            HasChanged = true;
+        }
+
+        private void pnlCF_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

@@ -3040,15 +3040,12 @@ namespace TVRename
             MoreBusy();
             mDoc.PreventAutoScan("Edit Show");
 
-            int oldCode = si.TvdbCode; //todo make work for all providers
-
             AddEditShow aes = new AddEditShow(si, mDoc);
-
             DialogResult dr = aes.ShowDialog(this);
 
             if (dr == DialogResult.OK)
             {
-                ShowAddedOrEdited(si.TvdbCode != oldCode, false, si);
+                ShowAddedOrEdited(aes.HasChanged, false, si);
                 SelectShow(si);
 
                 Logger.Info("Modified show called {0}", si.ShowName);
@@ -3058,17 +3055,22 @@ namespace TVRename
             LessBusy();
         }
 
+        private void ShowAddedOrEdited(object hasChanged, bool v, ShowConfiguration si)
+        {
+            throw new NotImplementedException();
+        }
+
         internal void EditMovie([NotNull] MovieConfiguration si)
         {
             MoreBusy();
             mDoc.PreventAutoScan("Edit Movie");
-            int oldCode = si.TvdbCode; //todo make work for all providers
+
             AddEditMovie aes = new AddEditMovie(si, mDoc);
             DialogResult dr = aes.ShowDialog(this);
 
             if (dr == DialogResult.OK)
             {
-                MovieAddedOrEdited(si.TvdbCode != oldCode, false, si); //todo optimise so that download is only done if movie config has changed show; aes.HasCHanged ?
+                MovieAddedOrEdited(aes.HasChanged, false, si);
                 SelectMovie(si);
 
                 Logger.Info("Modified movie called {0}", si.ShowName);

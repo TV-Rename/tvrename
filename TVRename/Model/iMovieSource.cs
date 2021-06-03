@@ -32,8 +32,6 @@ namespace TVRename
 
         void Update(CachedMovieInfo si);
 
-        void AddPoster(int seriesId, IEnumerable<MovieImage> select);
-
         void LatestUpdateTimeIs(string time);
 
         TVDoc.ProviderType SourceProvider();
