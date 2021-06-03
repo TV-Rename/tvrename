@@ -3444,13 +3444,17 @@ namespace TVRename
             }
             CancellationTokenSource cts = new CancellationTokenSource();
             bool hidden = WindowState == FormWindowState.Minimized;
-            TVDoc.ScanSettings settings = new TVDoc.ScanSettings(shows ?? new List<ShowConfiguration>(),
-                movies ?? new List<MovieConfiguration>(), unattended, hidden, st, cts.Token, media, this, scanProgDlg);
 
-            mDoc.SetScanSettings(settings);
+            TVDoc.ScanSettings initialSettings = new TVDoc.ScanSettings(shows ?? new List<ShowConfiguration>(),
+                movies ?? new List<MovieConfiguration>(), unattended, hidden, st, cts.Token, media, this, null);
+            mDoc.SetScanSettings(initialSettings);
             SetupScanUi(hidden);
+
             MoreBusy();
-            bwScan.RunWorkerAsync(settings);
+            TVDoc.ScanSettings scanSettings = new TVDoc.ScanSettings(shows ?? new List<ShowConfiguration>(),
+                movies ?? new List<MovieConfiguration>(), unattended, hidden, st, cts.Token, media, this, scanProgDlg);
+            mDoc.SetScanSettings(scanSettings);
+            bwScan.RunWorkerAsync(scanSettings);
             ShowDialogAndWait(cts);
         }
 
