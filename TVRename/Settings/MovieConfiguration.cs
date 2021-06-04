@@ -100,7 +100,7 @@ namespace TVRename
             {
                 return;
             }
-            switch (movie.Provider)
+            switch (movie.SourceProvider)
             {
                 case TVDoc.ProviderType.TheTVDB:
                     TvdbCode = movie.ProviderCode;
@@ -114,9 +114,9 @@ namespace TVRename
                     throw new ArgumentOutOfRangeException();
             }
 
-            ConfigurationProvider = TVSettings.Instance.DefaultMovieProvider == movie.Provider
+            ConfigurationProvider = TVSettings.Instance.DefaultMovieProvider == movie.SourceProvider
                 ? TVDoc.ProviderType.libraryDefault
-                : movie.Provider;
+                : movie.SourceProvider;
         }
 
         protected override MediaType GetMediaType() => MediaType.movie;

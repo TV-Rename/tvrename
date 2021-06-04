@@ -32,7 +32,7 @@ namespace TVRename.TMDB
         private static readonly TMDbClient Client = new TMDbClient("2dcfd2d08f80439d7ef5210f217b80b4");
 
         private UpdateTimeTracker latestMovieUpdateTime;
-        private UpdateTimeTracker latestTvUpdateTime;
+        private UpdateTimeTracker latestTvUpdateTime; //TOD Use htis
 
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
@@ -100,7 +100,7 @@ namespace TVRename.TMDB
 
             if (s.Type == MediaConfiguration.MediaType.movie)
             {
-                return EnsureMovieUpdated(s.TmdbId, s.TargetLocale, s.Name, showErrorMsgBox);
+                return EnsureMovieUpdated(s, s.TargetLocale, s.Name, showErrorMsgBox);
             }
 
             return EnsureSeriesUpdated(s, showErrorMsgBox);
@@ -161,11 +161,11 @@ namespace TVRename.TMDB
             return true;
         }
 
-        private bool EnsureMovieUpdated(int id, Locale locale, string name, bool showErrorMsgBox)
+        private bool EnsureMovieUpdated(ISeriesSpecifier id, Locale locale, string name, bool showErrorMsgBox)
         {
             lock (MOVIE_LOCK)
             {
-                if (Movies.ContainsKey(id) && !Movies[id].Dirty)
+                if (Movies.ContainsKey(id.TmdbId) && !Movies[id.TmdbId].Dirty)
                 {
                     return true;
                 }
@@ -176,7 +176,7 @@ namespace TVRename.TMDB
             {
                 CachedMovieInfo downloadedSi = DownloadMovieNow(id, locale, showErrorMsgBox);
 
-                if (downloadedSi.TmdbCode != id && id == -1)
+                if (downloadedSi.TmdbCode != id.TmdbId && id.TmdbId == -1)
                 {
                     lock (MOVIE_LOCK)
                     {
@@ -629,16 +629,16 @@ namespace TVRename.TMDB
 
         public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TMDB;
 
-        public CachedMovieInfo GetMovieAndDownload(int id, Locale locale, bool showErrorMsgBox) => HasMovie(id)
-            ? CachedMovieData[id]
+        public CachedMovieInfo GetMovieAndDownload(ISeriesSpecifier id, Locale locale, bool showErrorMsgBox) => HasMovie(id.TmdbId)
+            ? CachedMovieData[id.TmdbId]
             : DownloadMovieNow(id, locale, showErrorMsgBox);
 
-        internal CachedMovieInfo DownloadMovieNow(int id, Locale locale, bool showErrorMsgBox)
+        internal CachedMovieInfo DownloadMovieNow(ISeriesSpecifier id, Locale locale, bool showErrorMsgBox)
         {
-            Movie downloadedMovie = Client.GetMovieAsync(id, locale.LanguageToUse(TVDoc.ProviderType.TMDB).Abbreviation, locale.LanguageToUse(TVDoc.ProviderType.TMDB).Abbreviation, MovieMethods.ExternalIds | MovieMethods.Images | MovieMethods.AlternativeTitles | MovieMethods.ReleaseDates | MovieMethods.Changes | MovieMethods.Videos | MovieMethods.Credits).Result;
+            Movie downloadedMovie = Client.GetMovieAsync(id.TmdbId, locale.LanguageToUse(TVDoc.ProviderType.TMDB).Abbreviation, locale.LanguageToUse(TVDoc.ProviderType.TMDB).Abbreviation, MovieMethods.ExternalIds | MovieMethods.Images | MovieMethods.AlternativeTitles | MovieMethods.ReleaseDates | MovieMethods.Changes | MovieMethods.Videos | MovieMethods.Credits).Result;
             if (downloadedMovie is null)
             {
-                throw new MediaNotFoundException(id, "TMDB no longer has this movie", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB);
+                throw new MediaNotFoundException(id, "TMDB no longer has this movie", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
             }
             CachedMovieInfo m = new CachedMovieInfo(locale, TVDoc.ProviderType.TMDB)
             {
@@ -711,7 +711,7 @@ namespace TVRename.TMDB
             TvShow? downloadedSeries = Client.GetTvShowAsync(id, TvShowMethods.ExternalIds | TvShowMethods.Images | TvShowMethods.AlternativeTitles | TvShowMethods.ContentRatings | TvShowMethods.Changes | TvShowMethods.Videos | TvShowMethods.Credits, ss.LanguageToUse().ISODialectAbbreviation).Result;
             if (downloadedSeries is null)
             {
-                throw new MediaNotFoundException(id, "TMDB no longer has this show", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB);
+                throw new MediaNotFoundException(ss, "TMDB no longer has this show", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv);
             }
             CachedSeriesInfo m = new CachedSeriesInfo(ss.TargetLocale, TVDoc.ProviderType.TMDB)
             {
@@ -756,53 +756,26 @@ namespace TVRename.TMDB
             {
                 m.AddCrew(new Crew(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Job, s.Department, s.CreditId));
             }
-            if (downloadedSeries.Images.Backdrops.Any())
-            {
-                double bestBackdropRating = downloadedSeries.Images.Backdrops.Select(x => x.VoteAverage).Max();
-                foreach (ImageData? image in downloadedSeries.Images.Backdrops.Where(x =>
-                    Math.Abs(x.VoteAverage - bestBackdropRating) < .01))
-                {
-                    ShowImage newBanner = new ShowImage()
-                    {
-                        SeriesId = downloadedSeries.Id,
-                        SeriesSource = TVDoc.ProviderType.TheTVDB,
-                        Id = 1,
-                        ImageUrl = OriginalImageUrl(image.FilePath),
-                        ImageStyle = MediaImage.ImageType.Background,
-                        Rating = image.VoteAverage,
-                        RatingCount = image.VoteCount
-                    };
+            AddMovieImages(downloadedSeries, m);
 
-                    m.AddOrUpdateImage(newBanner);
-                }
-            }
-            if (downloadedSeries.Images.Posters.Any())
-            {
-                double bestPosterRating = downloadedSeries.Images.Posters.Select(x => x.VoteAverage).Max();
-                foreach (ImageData? image in downloadedSeries.Images.Posters.Where(x =>
-                    Math.Abs(x.VoteAverage - bestPosterRating) < .01))
-                {
-                    ShowImage newBanner = new ShowImage()
-                    {
-                        SeriesId = downloadedSeries.Id,
-                        SeriesSource = TVDoc.ProviderType.TMDB,
-                        Id = 2,
-                        ImageUrl = PosterImageUrl(image.FilePath),
-                        ImageStyle =MediaImage.ImageType.Poster,
-                        Rating = image.VoteAverage,
-                        RatingCount = image.VoteCount
-                    };
+            AddSeasons(ss, downloadedSeries, m);
 
-                    m.AddOrUpdateImage(newBanner);
-                }
-            }
+            File(m);
 
+            return m;
+        }
+
+        private static void AddSeasons(ISeriesSpecifier ss, TvShow downloadedSeries, CachedSeriesInfo m)
+        {
             foreach (var searchSeason in downloadedSeries.Seasons)
             {
                 int snum = searchSeason.SeasonNumber;
-                TvSeason? downloadedSeason = Client.GetTvSeasonAsync(downloadedSeries.Id, snum, TvSeasonMethods.Images, ss.LanguageToUse().ISODialectAbbreviation).Result;
+                TvSeason? downloadedSeason = Client.GetTvSeasonAsync(downloadedSeries.Id, snum, TvSeasonMethods.Images,
+                    ss.LanguageToUse().ISODialectAbbreviation).Result;
 
-                Season newSeason = new Season(downloadedSeason.Id ?? 0, snum, downloadedSeason.Name, downloadedSeason.Overview, string.Empty, downloadedSeason.PosterPath, downloadedSeries.Id);
+                Season newSeason = new Season(downloadedSeason.Id ?? 0, snum, downloadedSeason.Name, downloadedSeason.Overview,
+                    string.Empty, downloadedSeason.PosterPath, downloadedSeries.Id);
+
                 m.AddSeason(newSeason);
 
                 foreach (TvSeasonEpisode? downloadedEpisode in downloadedSeason.Episodes)
@@ -838,13 +811,14 @@ namespace TVRename.TMDB
                 if (downloadedSeason.Images != null && downloadedSeason.Images.Posters.Count > 0)
                 {
                     double bestRating = downloadedSeason.Images.Posters.Select(x => x.VoteAverage).Max();
-                    foreach (ImageData? image in downloadedSeason.Images.Posters.Where(x => Math.Abs(x.VoteAverage - bestRating) < .01))
+                    foreach (ImageData? image in downloadedSeason.Images.Posters.Where(x =>
+                        Math.Abs(x.VoteAverage - bestRating) < .01))
                     {
                         ShowImage newBanner = new ShowImage()
                         {
                             Id = 10 + snum,
                             ImageUrl = OriginalImageUrl(image.FilePath),
-                            ImageStyle = MediaImage.ImageType.Poster,
+                            ImageStyle = MediaImage.ImageType.poster,
                             Rating = image.VoteAverage,
                             RatingCount = image.VoteCount,
                             SeasonId = downloadedSeason.Id ?? 0
@@ -854,10 +828,51 @@ namespace TVRename.TMDB
                     }
                 }
             }
+        }
 
-            File(m);
+        private static void AddMovieImages(TvShow downloadedSeries, CachedSeriesInfo m)
+        {
+            if (downloadedSeries.Images.Backdrops.Any())
+            {
+                double bestBackdropRating = downloadedSeries.Images.Backdrops.Select(x => x.VoteAverage).Max();
+                foreach (ImageData? image in downloadedSeries.Images.Backdrops.Where(x =>
+                    Math.Abs(x.VoteAverage - bestBackdropRating) < .01))
+                {
+                    ShowImage newBanner = new ShowImage()
+                    {
+                        SeriesId = downloadedSeries.Id,
+                        SeriesSource = TVDoc.ProviderType.TheTVDB,
+                        Id = 1,
+                        ImageUrl = OriginalImageUrl(image.FilePath),
+                        ImageStyle = MediaImage.ImageType.background,
+                        Rating = image.VoteAverage,
+                        RatingCount = image.VoteCount
+                    };
 
-            return m;
+                    m.AddOrUpdateImage(newBanner);
+                }
+            }
+
+            if (downloadedSeries.Images.Posters.Any())
+            {
+                double bestPosterRating = downloadedSeries.Images.Posters.Select(x => x.VoteAverage).Max();
+                foreach (ImageData? image in downloadedSeries.Images.Posters.Where(x =>
+                    Math.Abs(x.VoteAverage - bestPosterRating) < .01))
+                {
+                    ShowImage newBanner = new ShowImage()
+                    {
+                        SeriesId = downloadedSeries.Id,
+                        SeriesSource = TVDoc.ProviderType.TMDB,
+                        Id = 2,
+                        ImageUrl = PosterImageUrl(image.FilePath),
+                        ImageStyle = MediaImage.ImageType.poster,
+                        Rating = image.VoteAverage,
+                        RatingCount = image.VoteCount
+                    };
+
+                    m.AddOrUpdateImage(newBanner);
+                }
+            }
         }
 
         private static string MapStatus(string s)
@@ -958,7 +973,9 @@ namespace TVRename.TMDB
                     File(result);
                     try
                     {
-                        DownloadMovieNow(result.Id, locale, showErrorMsgBox);
+                        ISeriesSpecifier ss = new SearchSpecifier(-1, -1, result.Id, locale, result.Title,
+                            TVDoc.ProviderType.TMDB, null, MediaConfiguration.MediaType.movie);
+                        DownloadMovieNow(ss, locale, showErrorMsgBox);
                     }
                     catch (MediaNotFoundException sex)
                     {
@@ -978,7 +995,7 @@ namespace TVRename.TMDB
                     File(result);
                     try
                     {
-                        ISeriesSpecifier ss = new SearchSeriesSpecifier(-1, -1, result.Id, locale, result.Name,
+                        ISeriesSpecifier ss = new SearchSpecifier(-1, -1, result.Id, locale, result.Name,
                             TVDoc.ProviderType.TMDB, null, MediaConfiguration.MediaType.tv);
                         DownloadSeriesNow(ss, showErrorMsgBox);
                     }
@@ -1058,7 +1075,8 @@ namespace TVRename.TMDB
             LOGGER.Info($"Got {results.MovieResults.Count:N0} results searching for {imdbToTest}");
             foreach (SearchMovie result in results.MovieResults)
             {
-                DownloadMovieNow(result.Id, locale, showErrorMsgBox);
+                SearchSpecifier ss = new SearchSpecifier(result.Id, locale, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
+                DownloadMovieNow(ss, locale, showErrorMsgBox);
             }
 
             if (results.MovieResults.Count == 0)

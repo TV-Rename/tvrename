@@ -398,15 +398,15 @@ namespace TVRename
             {
                 foreach (ISeriesSpecifier ss in downloadIds)
                 {
-                    if (ss.TvdbId == sid.ShowId && sid.ShowIdProvider == TVDoc.ProviderType.TheTVDB)
+                    if (ss.TvdbId == sid.Media.TvdbId && sid.ShowIdProvider == TVDoc.ProviderType.TheTVDB)
                     {
                         toRemove.Add(ss);
                     }
-                    if (ss.TvMazeId == sid.ShowId && sid.ShowIdProvider == TVDoc.ProviderType.TVmaze)
+                    if (ss.TvMazeId == sid.Media.TvMazeId && sid.ShowIdProvider == TVDoc.ProviderType.TVmaze)
                     {
                         toRemove.Add(ss);
                     }
-                    if (ss.TmdbId == sid.ShowId && sid.ShowIdProvider == TVDoc.ProviderType.TMDB)
+                    if (ss.TmdbId == sid.Media.TmdbId && sid.ShowIdProvider == TVDoc.ProviderType.TMDB)
                     {
                         toRemove.Add(ss);
                     }

@@ -9,10 +9,8 @@
 //
 
 using JetBrains.Annotations;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -21,9 +19,9 @@ namespace TVRename
 {
     public class MediaImage
     {
-        public enum ImageType { Poster, Background, WideBanner }
+        public enum ImageType { poster, background, wideBanner }
 
-        public enum ImageSubject { Show, Season, Episode, Movie }
+        public enum ImageSubject { show, season, episode, movie }
 
         public int Id;
         public string? LanguageCode;
@@ -41,8 +39,8 @@ namespace TVRename
             LanguageCode = r.ExtractString("LanguageCode");
 
             ImageUrl = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("ImageUrl"));
-            ImageStyle = r.ExtractEnum("ImageStyle", ImageType.Poster);
-            Subject = r.ExtractEnum("Subject", ImageSubject.Show);
+            ImageStyle = r.ExtractEnum("ImageStyle", ImageType.poster);
+            Subject = r.ExtractEnum("Subject", ImageSubject.show);
 
             Resolution = r.ExtractString("Resolution");
             string sn = r.ExtractString("Rating");
@@ -74,10 +72,11 @@ namespace TVRename
         public int MovieId;
         public TVDoc.ProviderType MovieSource;
 
-        public MovieImage() : base()
+        public MovieImage()
         {
-            Subject = MediaImage.ImageSubject.Movie;
+            Subject = ImageSubject.movie;
         }
+
         public MovieImage(int movieId, TVDoc.ProviderType source, [NotNull] XElement r) : base(r)
         {
             MovieId = r.ExtractInt("MovieId") ?? movieId; // thetvdb cachedSeries id
@@ -108,7 +107,7 @@ namespace TVRename
             SeriesSource = source;
         }
 
-        public ShowImage() : base()
+        public ShowImage()
         {
         }
 
@@ -122,7 +121,7 @@ namespace TVRename
             writer.WriteEndElement(); //ShowImage
         }
 
-        internal static ShowImage GenerateFromLegacyBannerXML(int seriesId, XElement r, TVDoc.ProviderType source)
+        internal static ShowImage GenerateFromLegacyBannerXml(int seriesId, XElement r, TVDoc.ProviderType source)
         {
             // <Banner>
             //        <id>708811</id>
@@ -136,43 +135,47 @@ namespace TVRename
             //  blah blah
             // </Banner>
             string sn = r.ExtractString("Rating");
-            double.TryParse(sn, out double Rating);
+            double.TryParse(sn, out double rating);
 
-            ShowImage legacy = new ShowImage();
+            ShowImage legacy = new ShowImage
+            {
+                Id = r.ExtractInt("id") ?? -1,
+                SeriesId = r.ExtractInt("seriesid") ?? seriesId,
+                SeasonId = r.ExtractInt("seasonid", -1),
+                ImageUrl = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("BannerPath")),
+                SeriesSource = source,
+                ImageStyle = Convert(r.ExtractString("BannerType")),
+                Subject = Convert2(r.ExtractString("BannerType")),
+                LanguageCode = Languages.Instance.GetLanguageFromId(r.ExtractInt("LanguageId") ?? -1)?.Abbreviation,
+                Resolution = r.ExtractString("Resolution"),
+                Rating = rating,
+                RatingCount = r.ExtractInt("RatingCount", -1)
+            };
 
-            legacy.Id = r.ExtractInt("id") ?? -1;
-            legacy.SeriesId = r.ExtractInt("seriesid") ?? seriesId; // thetvdb cachedSeries id
-            legacy.SeasonId = r.ExtractInt("seasonid", -1);
-            legacy.ImageUrl = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("BannerPath"));
-            legacy.SeriesSource = source;
-            legacy.ImageStyle = Convert(r.ExtractString("BannerType"));
-            legacy.Subject = Convert2(r.ExtractString("BannerType"));
-            legacy.LanguageCode = Languages.Instance.GetLanguageFromId(r.ExtractInt("LanguageId")??-1)?.Abbreviation;
-            legacy.Resolution  = r.ExtractString("Resolution");
-            legacy.RatingCount = r.ExtractInt("RatingCount", -1);
+            // thetvdb cachedSeries id
             legacy.SeasonId = r.ExtractInt("Season", -1);
-            legacy.ThumbnailUrl  = r.ExtractString("ThumbnailPath");
+            legacy.ThumbnailUrl = r.ExtractString("ThumbnailPath");
 
             return legacy;
         }
 
         private static ImageSubject Convert2(string v)
         {
-            if (v == "fanart") return ImageSubject.Show;
-            if (v == "poster") return ImageSubject.Show;
-            if (v == "season") return ImageSubject.Season;
-            if (v == "series") return ImageSubject.Season;
-            if (v == "seasonwide") return ImageSubject.Show;
+            if (v == "fanart") return ImageSubject.show;
+            if (v == "poster") return ImageSubject.show;
+            if (v == "season") return ImageSubject.season;
+            if (v == "series") return ImageSubject.season;
+            if (v == "seasonwide") return ImageSubject.show;
             throw new NotImplementedException();
         }
 
         private static ImageType Convert(string v)
         {
-            if (v == "fanart") return ImageType.Background;
-            if (v == "poster") return ImageType.Poster;
-            if (v == "season") return ImageType.Poster;
-            if (v == "series") return ImageType.WideBanner;
-            if (v == "seasonwide") return ImageType.WideBanner;
+            if (v == "fanart") return ImageType.background;
+            if (v == "poster") return ImageType.poster;
+            if (v == "season") return ImageType.poster;
+            if (v == "series") return ImageType.wideBanner;
+            if (v == "seasonwide") return ImageType.wideBanner;
             throw new NotImplementedException();
         }
     }
@@ -185,7 +188,7 @@ namespace TVRename
     {
         internal ShowImage? GetSeasonWideBanner(int snum, Language lang)
         {
-            return GetImage(snum, lang, MediaImage.ImageType.WideBanner);
+            return GetImage(snum, lang, MediaImage.ImageType.wideBanner);
         }
 
         internal ShowImage? GetSeasonBanner(int snum, Language lang)
@@ -194,7 +197,7 @@ namespace TVRename
             //if not then a season specific one is best
             //if not then the poster is the fallback
 
-            return GetImage(snum, lang, MediaImage.ImageType.Poster);
+            return GetImage(snum, lang, MediaImage.ImageType.poster);
         }
 
         internal ShowImage? GetImage(int snum, Language lang, MediaImage.ImageType type)
@@ -204,6 +207,7 @@ namespace TVRename
                 ?? GetShowImage(lang, type)
                 ;
         }
+
         internal ShowImage? GetShowImage(Language lang, MediaImage.ImageType type)
         {
             return GetSeriesLangImage(lang, type)
@@ -212,47 +216,48 @@ namespace TVRename
 
         private ShowImage? GetBestSeason(int snum, MediaImage.ImageType type)
         {
-            var validImages = this.Where(i => i.ImageStyle == type && i.SeasonNumber == snum);
+            IEnumerable<ShowImage> validImages = this.Where(i => i.ImageStyle == type && i.SeasonNumber == snum);
             return BestFrom(validImages);
         }
 
         private ShowImage? GetSeriesLangImage(Language l, MediaImage.ImageType type)
         {
-            var validImages = this.Where(i => i.ImageStyle == type && i.LanguageCode == l.Abbreviation);
+            IEnumerable<ShowImage> validImages = this.Where(i => i.ImageStyle == type && i.LanguageCode == l.ThreeAbbreviation);
             return BestFrom(validImages);
         }
 
         private ShowImage? GetBestSeasonLanguage(int snum, Language l, MediaImage.ImageType type)
         {
-            var validImages = this.Where(i => i.ImageStyle == type && i.SeasonNumber == snum && i.LanguageCode == l.Abbreviation);
+            IEnumerable<ShowImage> validImages = this.Where(i => i.ImageStyle == type && i.SeasonNumber == snum && i.LanguageCode == l.Abbreviation);
             return BestFrom(validImages);
         }
 
-        private ShowImage GetSeriesImage(MediaImage.ImageType type)
+        private ShowImage? GetSeriesImage(MediaImage.ImageType type)
         {
-            var validImages = this.Where(i => i.ImageStyle == type);
+            IEnumerable<ShowImage> validImages = this.Where(i => i.ImageStyle == type);
             return BestFrom(validImages);
         }
 
-        private ShowImage? BestFrom(IEnumerable<ShowImage> validImages)
+        private static ShowImage? BestFrom(IEnumerable<ShowImage> validImages)
         {
-            if (!validImages.Any())
+            List<ShowImage> showImages = validImages.ToList();
+            if (!showImages.Any())
             {
                 return null;
             }
-            double maxRating = validImages.Select(pair => pair.Rating).Max();
+            double maxRating = showImages.Select(pair => pair.Rating).Max();
 
-            return validImages.First(pair => Math.Abs(pair.Rating - maxRating) < 0.001);
+            return showImages.First(pair => Math.Abs(pair.Rating - maxRating) < 0.001);
         }
 
         public ShowImage? GetImage(TVSettings.FolderJpgIsType type, Language lang)
         {
             return type switch
             {
-                TVSettings.FolderJpgIsType.Banner => GetShowImage(lang,MediaImage.ImageType.WideBanner),
-                TVSettings.FolderJpgIsType.FanArt => GetShowImage(lang,MediaImage.ImageType.Background),
-                TVSettings.FolderJpgIsType.SeasonPoster => GetShowImage(lang,MediaImage.ImageType.Poster),
-                _ => GetShowImage(lang,MediaImage.ImageType.Poster)
+                TVSettings.FolderJpgIsType.Banner => GetShowImage(lang, MediaImage.ImageType.wideBanner),
+                TVSettings.FolderJpgIsType.FanArt => GetShowImage(lang, MediaImage.ImageType.background),
+                TVSettings.FolderJpgIsType.SeasonPoster => GetShowImage(lang, MediaImage.ImageType.poster),
+                _ => GetShowImage(lang, MediaImage.ImageType.poster)
             };
         }
 
@@ -260,16 +265,17 @@ namespace TVRename
         {
             if (!this.Any())
             {
-                this.Clear();
-                this.AddRange(images);
+                Clear();
+                AddRange(images);
                 return;
             }
-            if (!images.Any())
+            foreach (ShowImage i in images)
             {
-                return;
+                if (this.All(si => si.Id != i.Id))
+                {
+                    Add(i);
+                }
             }
-            throw new NotImplementedException();
         }
     }
 }
-

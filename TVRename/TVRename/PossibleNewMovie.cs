@@ -11,7 +11,7 @@ namespace TVRename
 {
     // "PossibleNewMovie" represents a folder found by doing a Check in the 'Bulk Add Movie' dialog
 
-    public class PossibleNewMovie
+    public class PossibleNewMovie : ISeriesSpecifier
     {
         public readonly string MovieStub;
         public readonly DirectoryInfo Directory;
@@ -20,17 +20,17 @@ namespace TVRename
         public string RefinedHint;
 
         public int? PossibleYear;
-        public string? ImdbCode;
+        private string? imdbCodeInternal;
         internal int ProviderCode;
-        internal TVDoc.ProviderType Provider;
+        internal TVDoc.ProviderType SourceProvider;
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public CachedMovieInfo? CachedMovie => Provider == TVDoc.ProviderType.TMDB ? TMDB.LocalCache.Instance.GetMovie(ProviderCode) : TheTVDB.LocalCache.Instance.GetMovie(ProviderCode);
+        public CachedMovieInfo? CachedMovie => SourceProvider == TVDoc.ProviderType.TMDB ? TMDB.LocalCache.Instance.GetMovie(ProviderCode) : TheTVDB.LocalCache.Instance.GetMovie(ProviderCode);
         public bool CodeKnown => !CodeUnknown;
         public bool CodeUnknown => ProviderCode <= 0;
 
-        public string CodeString => (CodeUnknown) ? "<Unknown>" : $"{ProviderCode} ({Provider.PrettyPrint()})";
+        public string CodeString => (CodeUnknown) ? "<Unknown>" : $"{ProviderCode} ({SourceProvider.PrettyPrint()})";
 
         public PossibleNewMovie(FileInfo possibleMovieFile, bool andGuess, bool showErrorMsgBox)
         {
@@ -84,7 +84,7 @@ namespace TVRename
                 if (s != null)
                 {
                     SetId(s.TmdbCode, TVDoc.ProviderType.TMDB);
-                    ImdbCode = imdbToTest;
+                    imdbCodeInternal = imdbToTest;
                     return;
                 }
             }
@@ -117,7 +117,7 @@ namespace TVRename
                 else
                 {
                     //Find movie on TVDB based on Id
-                    CachedMovieInfo? s3 = TheTVDB.LocalCache.Instance.GetMovieAndDownload(tvdbId.Value, new Locale(), showErrorMsgBox);
+                    CachedMovieInfo? s3 = TheTVDB.LocalCache.Instance.GetMovieAndDownload(this, new Locale(), showErrorMsgBox);
                     if (s3 != null)
                     {
                         SetId(s3.TvdbCode, TVDoc.ProviderType.TheTVDB);
@@ -129,7 +129,7 @@ namespace TVRename
         public void SetId(int code, TVDoc.ProviderType provider)
         {
             ProviderCode = code;
-            Provider = provider;
+            SourceProvider = provider;
         }
 
         private CachedMovieInfo? ParseHints(bool showErrorMsgBox)
@@ -172,7 +172,10 @@ namespace TVRename
             {
                 try
                 {
-                    CachedMovieInfo series = TMDB.LocalCache.Instance.GetMovieAndDownload(tmdbId.Value, locale, showErrorMsgBox);
+                    ISeriesSpecifier ss = new SearchSpecifier(-1, -1, tmdbId.Value, locale, string.Empty,
+                        TVDoc.ProviderType.TMDB, null, MediaConfiguration.MediaType.movie);
+
+                    CachedMovieInfo series = TMDB.LocalCache.Instance.GetMovieAndDownload(ss, locale, showErrorMsgBox);
                     return series.TmdbCode;
                 }
                 catch (MediaNotFoundException)
@@ -326,6 +329,28 @@ namespace TVRename
             refinedHint = refinedHint.CompareName();
 
             return (refinedHint, possibleYear);
+        }
+
+        public TVDoc.ProviderType Provider => SourceProvider;
+
+        public int TvdbId => Provider == TVDoc.ProviderType.TheTVDB && CodeKnown ? ProviderCode : -1;
+
+        public string Name => RefinedHint;
+
+        public MediaConfiguration.MediaType Type => MediaConfiguration.MediaType.tv;
+
+        public int TvMazeId => Provider == TVDoc.ProviderType.TVmaze && CodeKnown ? ProviderCode : -1;
+
+        public int TmdbId => Provider == TVDoc.ProviderType.TMDB && CodeKnown ? ProviderCode : -1;
+
+        public string? ImdbCode => imdbCodeInternal;
+
+        public Locale TargetLocale => new Locale();
+
+        public void UpdateId(int id, TVDoc.ProviderType source)
+        {
+            SourceProvider = source;
+            ProviderCode = id;
         }
     }
 }

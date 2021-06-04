@@ -1387,7 +1387,8 @@ namespace TVRename
             else
             {
                 // no epnum specified, just show an overview
-                SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
+                //SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
+                SetHtmlBody(chrImages, si.GetShowImagesOverview());
                 SetHtmlBody(chrInformation, si.GetShowHtmlOverview(false));
                 SetHtmlBody(chrSummary, si.GetShowSummaryHtmlOverview(false));
                 UpdateTvTrailer(si);
@@ -3055,11 +3056,6 @@ namespace TVRename
             LessBusy();
         }
 
-        private void ShowAddedOrEdited(object hasChanged, bool v, ShowConfiguration si)
-        {
-            throw new NotImplementedException();
-        }
-
         internal void EditMovie([NotNull] MovieConfiguration si)
         {
             MoreBusy();
@@ -3519,35 +3515,72 @@ namespace TVRename
 
         private void AskUserAboutShowProblems(bool unattended)
         {
-            if (mDoc.ShowProblems.Any() && !unattended)
+            if (unattended)
             {
-                string message = mDoc.ShowProblems.Count > 1
-                    ? $"Shows with Id {string.Join(",", mDoc.ShowProblems.Select(exception => exception.ShowId))} are not found on TVDB, TMDB and TVMaze. Please update them"
-                    : $"Show with {StringFor(mDoc.ShowProblems.First().ShowIdProvider)} Id {mDoc.ShowProblems.First().ShowId} is not found on {StringFor(mDoc.ShowProblems.First().ErrorProvider)}. Please Update";
+                return;
+            }
 
-                DialogResult result = MessageBox.Show(message, "Series No Longer Found", MessageBoxButtons.OKCancel,
+            if (mDoc.ShowProblems.Any())
+            {
+                string message = mDoc.ShowProblems.Count() > 1
+                    ? $"Shows/Movies with Id {string.Join(",", mDoc.ShowProblems.Select(exception => exception.Media.ToString()))} are not found on TVDB, TMDB and TVMaze. Please update them"
+                    : $"Show/Movie with {StringFor(mDoc.ShowProblems.First().ShowIdProvider)} Id {mDoc.ShowProblems.First().Media.IdFor(mDoc.ShowProblems.First().Media.Provider)} is not found on {StringFor(mDoc.ShowProblems.First().ErrorProvider)}. Please Update";
+
+                DialogResult result = MessageBox.Show(message, "Series/Show No Longer Found", MessageBoxButtons.OKCancel,
                     MessageBoxIcon.Error);
 
-                if (result != DialogResult.Cancel)
+                if (result == DialogResult.Cancel)
                 {
-                    foreach (MediaNotFoundException problem in mDoc.ShowProblems)
-                    {
-                        if (mDoc.ShowProblems.Count > 1)
-                        {
-                            MessageBox.Show(problem.Message, "Issue With Series Setup", MessageBoxButtons.OK,
-                                MessageBoxIcon.Error);
-                        }
-
-                        ShowConfiguration problemShow = mDoc.TvLibrary.GetShowItem(problem.ShowId, problem.ShowIdProvider);
-                        if (problemShow != null)
-                        {
-                            EditShow(problemShow);
-                        }
-                    }
+                    return;
                 }
 
-                mDoc.ClearShowProblems();
+                foreach (MediaNotFoundException problem in mDoc.ShowProblems)
+                {
+                    if (mDoc.ShowProblems.Count() > 1)
+                    {
+                        MessageBox.Show(problem.Message, "Issue With Series Setup", MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
+
+                    ShowConfiguration problemShow = mDoc.TvLibrary.GetShowItem(problem.Media);
+                    if (problemShow != null)
+                    {
+                        EditShow(problemShow);
+                    }
+                }
             }
+
+            if (mDoc.MovieProblems.Any())
+            {
+                string message = mDoc.ShowProblems.Count() > 1
+                    ? $"Shows/Movies with Id {string.Join(",", mDoc.ShowProblems.Select(exception => exception.Media.ToString()))} are not found on TVDB, TMDB and TVMaze. Please update them"
+                    : $"Show/Movie with {StringFor(mDoc.ShowProblems.First().ShowIdProvider)} Id {mDoc.ShowProblems.First().Media} is not found on {StringFor(mDoc.ShowProblems.First().ErrorProvider)}. Please Update";
+
+                DialogResult result = MessageBox.Show(message, "Series/Show No Longer Found", MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Error);
+
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                foreach (MediaNotFoundException problem in mDoc.MovieProblems)
+                {
+                    if (mDoc.MovieProblems.Count() > 1)
+                    {
+                        MessageBox.Show(problem.Message, "Issue With Series Setup", MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
+
+                    MovieConfiguration problemMovie = mDoc.FilmLibrary.GetMovie(problem.Media);
+                    if (problemMovie != null)
+                    {
+                        EditMovie(problemMovie);
+                    }
+                }
+            }
+
+            mDoc.ClearShowProblems();
         }
 
         [NotNull]
@@ -4180,19 +4213,16 @@ namespace TVRename
             });
         }
 
-        private class TimeZoneTracker
+        private class TimeZoneTracker : Dictionary<string, Dictionary<string, List<string>>>
         {
-            private readonly Dictionary<string, Dictionary<string, List<string>>> tzt =
-                new Dictionary<string, Dictionary<string, List<string>>>();
-
             internal void Add([NotNull] string network, [NotNull] string timezone, string show)
             {
-                if (!tzt.ContainsKey(network))
+                if (!ContainsKey(network))
                 {
-                    tzt.Add(network, new Dictionary<string, List<string>>());
+                    Add(network, new Dictionary<string, List<string>>());
                 }
 
-                Dictionary<string, List<string>> snet = tzt[network];
+                Dictionary<string, List<string>> snet = this[network];
 
                 if (!snet.ContainsKey(timezone))
                 {
@@ -4211,7 +4241,7 @@ namespace TVRename
                 sb.AppendLine("***********************************");
                 sb.AppendLine("****Timezone Comparison       *****");
                 sb.AppendLine("***********************************");
-                foreach (KeyValuePair<string, Dictionary<string, List<string>>> kvp in tzt)
+                foreach (KeyValuePair<string, Dictionary<string, List<string>>> kvp in this)
                 {
                     foreach (KeyValuePair<string, List<string>> kvp2 in kvp.Value)
                     {
@@ -4973,7 +5003,7 @@ namespace TVRename
             ForceRefresh(new List<ShowConfiguration> { show }, unattended);
         }
 
-        internal void ForceRefresh(bool unattended)
+        private void ForceRefresh(bool unattended)
         {
             ForceRefresh((List<ShowConfiguration>)null, unattended);
         }

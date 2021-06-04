@@ -12,17 +12,17 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         private static class BTPrio
         {
-            public const int Skip = 0x80;
+            public const int SKIP = 0x80;
         }
 
-        private BTFile? ResumeDat; // resume file, if we're using it
-        private readonly string ResumeDatPath;
+        private BTFile? resumeDat; // resume file, if we're using it
+        private readonly string resumeDatPath;
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public BTResume(string resumeDatFile)
         {
-            ResumeDatPath = resumeDatFile;
+            resumeDatPath = resumeDatFile;
         }
 
         private static int PercentBitsOn(BTString s)
@@ -52,13 +52,13 @@ namespace TVRename
         {
             List<TorrentEntry> r = new List<TorrentEntry>();
 
-            if (ResumeDat is null)
+            if (resumeDat is null)
             {
                 return r;
             }
 
             BEncodeLoader bel = new BEncodeLoader();
-            foreach (BTDictionaryItem dictitem in ResumeDat.GetDict().Items)
+            foreach (BTDictionaryItem dictitem in resumeDat.GetDict().Items)
             {
                 if ((dictitem.Type != BTChunk.kDictionaryItem))
                 {
@@ -85,7 +85,7 @@ namespace TVRename
                 }
 
                 BTString prioString = (BTString)(p);
-                string directoryName = Path.GetDirectoryName(ResumeDatPath) + System.IO.Path.DirectorySeparatorChar;
+                string directoryName = Path.GetDirectoryName(resumeDatPath) + System.IO.Path.DirectorySeparatorChar;
 
                 string torrentFile = dictitem.Key;
                 if (!File.Exists(torrentFile)) // if the torrent file doesn't exist
@@ -127,7 +127,7 @@ namespace TVRename
 
                 foreach (string s in a)
                 {
-                    if ((c < prioString.Data.Length) && (prioString.Data[c] != BTPrio.Skip))
+                    if ((c < prioString.Data.Length) && (prioString.Data[c] != BTPrio.SKIP))
                     {
                         try
                         {
@@ -172,8 +172,8 @@ namespace TVRename
         public bool LoadResumeDat()
         {
             BEncodeLoader bel = new BEncodeLoader();
-            ResumeDat = bel.Load(ResumeDatPath);
-            return (ResumeDat != null);
+            resumeDat = bel.Load(resumeDatPath);
+            return (resumeDat != null);
         }
     }
 }

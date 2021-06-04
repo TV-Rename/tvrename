@@ -624,10 +624,5 @@ namespace TVRename
         {
             HasChanged = true;
         }
-
-        private void pnlCF_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
     }
 }

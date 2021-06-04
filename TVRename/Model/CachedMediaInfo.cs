@@ -47,7 +47,7 @@ namespace TVRename
         public long SrvLastUpdated;
 
         private protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
-        protected readonly TVDoc.ProviderType source;
+        protected readonly TVDoc.ProviderType Source;
 
         protected CachedMediaInfo(Locale locale, TVDoc.ProviderType source) : this(source)
         {
@@ -78,7 +78,7 @@ namespace TVRename
             TmdbCode = -1;
 
             Status = "Unknown";
-            this.source = source;
+            this.Source = source;
         }
 
         protected abstract MediaConfiguration.MediaType MediaType();
@@ -93,7 +93,7 @@ namespace TVRename
                 TVDoc.ProviderType.TVmaze => TvMazeCode,
                 TVDoc.ProviderType.TheTVDB => TvdbCode,
                 TVDoc.ProviderType.TMDB => TmdbCode,
-                _ => throw new ArgumentOutOfRangeException(nameof(source), selectedSource, null)
+                _ => throw new ArgumentOutOfRangeException(nameof(Source), selectedSource, null)
             };
         }
 
@@ -207,9 +207,12 @@ namespace TVRename
             : Imdb.StartsWith("tt", StringComparison.Ordinal) ? Imdb.RemoveFirst(2)
             : Imdb;
 
-        public void AddAlias(string s)
+        public void AddAlias(string? s)
         {
-            Aliases.Add(s);
+            if (s.HasValue())
+            {
+                Aliases.Add(s);
+            }
         }
 
         public override string ToString() => $"TMDB:{TmdbCode}/TVDB:{TvdbCode}/Maze:{TvMazeCode}/{Name}";
@@ -254,9 +257,9 @@ namespace TVRename
             return betterLanguage ? newValue.Trim() : encumbant.Trim();
         }
 
-        TVDoc.ProviderType ISeriesSpecifier.Provider => source;
+        TVDoc.ProviderType ISeriesSpecifier.Provider => Source;
 
-        public int TvdbId => TvMazeCode;
+        public int TvdbId => TvdbCode;
 
         string ISeriesSpecifier.Name => Name;
 
@@ -269,5 +272,26 @@ namespace TVRename
         public string? ImdbCode => Imdb;
 
         public Locale TargetLocale => ActualLocale ?? new Locale();
+
+        public void UpdateId(int id, TVDoc.ProviderType source)
+        {
+            switch (source)
+            {
+                case TVDoc.ProviderType.TVmaze:
+                    TvMazeCode = id;
+                    break;
+
+                case TVDoc.ProviderType.TheTVDB:
+                    TvdbCode = id;
+                    break;
+
+                case TVDoc.ProviderType.TMDB:
+                    TmdbCode = id;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(source), source, null);
+            }
+        }
     }
 }

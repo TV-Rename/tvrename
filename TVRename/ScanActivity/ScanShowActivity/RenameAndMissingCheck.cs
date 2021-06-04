@@ -198,29 +198,7 @@ namespace TVRename
             {
                 if (!localEps.ContainsKey(episode.AppropriateEpNum)) // not here locally
                 {
-                    // second part of missing check is to see what is missing!
-                    if (missCheck)
-                    {
-                        DateTime? dt = episode.GetAirDateDt(true);
-                        bool dtOk = dt != null;
-
-                        bool notFuture =
-                            dtOk && dt.Value.CompareTo(today) < 0; // isn't an episode yet to be aired
-
-                        // only add to the missing list if, either:
-                        // - force check is on
-                        // - there are no aired dates at all, for up to and including this season
-                        // - there is an aired date, and it isn't in the future
-                        bool noAirdatesUntilNow = si.NoAirdatesUntilNow(snum);
-                        bool siForceCheckFuture = (si.ForceCheckFuture || notFuture) && dtOk;
-                        bool siForceCheckNoAirdate = si.ForceCheckNoAirdate && !dtOk;
-
-                        if (noAirdatesUntilNow || siForceCheckFuture || siForceCheckNoAirdate)
-                        {
-                            // then add it as officially missing
-                            Doc.TheActionList.Add(new ShowItemMissing(episode, folder));
-                        }
-                    }// if doing missing check
+                    AddMissingIfNeeded(si, snum, folder, missCheck, episode, today);
                 }
                 else
                 {
@@ -230,12 +208,38 @@ namespace TVRename
                     }
 
                     // do NFO and thumbnail checks if required
-                    FileInfo
-                        filo = localEps[episode.AppropriateEpNum]; // filename (or future filename) of the file
-
+                    FileInfo filo = localEps[episode.AppropriateEpNum]; // filename (or future filename) of the file
                     Doc.TheActionList.Add(downloadIdentifiers.ProcessEpisode(episode, filo));
                 }
             } // up to date check, for each episode
+        }
+
+        private void AddMissingIfNeeded(ShowConfiguration si, int snum, string folder, bool missCheck, ProcessedEpisode episode,
+            DateTime today)
+        {
+            // second part of missing check is to see what is missing!
+            if (missCheck)
+            {
+                DateTime? dt = episode.GetAirDateDt(true);
+                bool dtOk = dt != null;
+
+                bool notFuture =
+                    dtOk && dt.Value.CompareTo(today) < 0; // isn't an episode yet to be aired
+
+                // only add to the missing list if, either:
+                // - force check is on
+                // - there are no aired dates at all, for up to and including this season
+                // - there is an aired date, and it isn't in the future
+                bool noAirdatesUntilNow = si.NoAirdatesUntilNow(snum);
+                bool siForceCheckFuture = (si.ForceCheckFuture || notFuture) && dtOk;
+                bool siForceCheckNoAirdate = si.ForceCheckNoAirdate && !dtOk;
+
+                if (noAirdatesUntilNow || siForceCheckFuture || siForceCheckNoAirdate)
+                {
+                    // then add it as officially missing
+                    Doc.TheActionList.Add(new ShowItemMissing(episode, folder));
+                }
+            } // if doing missing check
         }
 
         private FileInfo? CheckFile([NotNull] string folder, FileInfo fi, [NotNull] FileInfo actualFile, string newName, ProcessedEpisode ep, IEnumerable<FileInfo> files)

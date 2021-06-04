@@ -298,8 +298,8 @@ namespace TVRename
             {
                 int seriesId = bannersXml.ExtractInt("SeriesId") ?? -1;
 
-                localCache.GetSeries(seriesId).AddBanners(seriesId, bannersXml.Descendants("Banners").Descendants("Banner")
-                    .Select(banner => ShowImage.GenerateFromLegacyBannerXML(seriesId, banner,localCache.SourceProvider())));
+                localCache.GetSeries(seriesId)?.AddBanners(seriesId, bannersXml.Descendants("Banners").Descendants("Banner")
+                    .Select(banner => ShowImage.GenerateFromLegacyBannerXml(seriesId, banner, localCache.SourceProvider())));
             }
         }
     }

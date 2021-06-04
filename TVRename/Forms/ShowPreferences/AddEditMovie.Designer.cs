@@ -793,7 +793,6 @@ namespace TVRename
             this.pnlCF.Name = "pnlCF";
             this.pnlCF.Size = new System.Drawing.Size(444, 244);
             this.pnlCF.TabIndex = 0;
-            this.pnlCF.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlCF_Paint);
             // 
             // chkCustomShowName
             // 

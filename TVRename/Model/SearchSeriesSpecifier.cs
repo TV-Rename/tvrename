@@ -6,21 +6,44 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using System;
+
 namespace TVRename
 {
-    public class SearchSeriesSpecifier : ISeriesSpecifier
+    public class SearchSpecifier : ISeriesSpecifier
     {
-        public int TvdbId { get; }
-        public int TvMazeId { get; }
-        public int TmdbId { get; }
+        public int TvdbId { get; private set; }
+        public int TvMazeId { get; private set; }
+        public int TmdbId { get; private set; }
         public string Name { get; }
         public string? ImdbCode { get; }
         public Locale TargetLocale { get; }
 
+        public void UpdateId(int id, TVDoc.ProviderType source)
+        {
+            switch (source)
+            {
+                case TVDoc.ProviderType.TVmaze:
+                    TvMazeId = id;
+                    break;
+
+                case TVDoc.ProviderType.TheTVDB:
+                    TvdbId = id;
+                    break;
+
+                case TVDoc.ProviderType.TMDB:
+                    TmdbId = id;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(source), source, null);
+            }
+        }
+
         public TVDoc.ProviderType Provider { get; }
         public MediaConfiguration.MediaType Type { get; }
 
-        public SearchSeriesSpecifier(int tvdb, int tvmaze, int tmdb, Locale preferredLocale,
+        public SearchSpecifier(int tvdb, int tvmaze, int tmdb, Locale preferredLocale,
             string name, TVDoc.ProviderType p, string? imdb, MediaConfiguration.MediaType t)
         {
             TvdbId = tvdb;
@@ -31,6 +54,19 @@ namespace TVRename
             Type = t;
             TmdbId = tmdb;
             TargetLocale = preferredLocale;
+        }
+
+        public SearchSpecifier(int id, Locale preferredLocale, TVDoc.ProviderType source, MediaConfiguration.MediaType t)
+        {
+            TvdbId = -1;
+            TvMazeId = -1;
+            TmdbId = -1;
+
+            UpdateId(id, source);
+            Type = t;
+            TargetLocale = preferredLocale;
+
+            Name = string.Empty;
         }
 
         public override string ToString() => Type == MediaConfiguration.MediaType.tv

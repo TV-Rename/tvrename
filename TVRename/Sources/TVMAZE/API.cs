@@ -77,24 +77,25 @@ namespace TVRename.TVmaze
             return downloadedSi;
         }
 
-        private static int GetSeriesIdFromOtherCodes(int siTvdbCode, string? imdb)
+        private static void GetSeriesIdFromOtherCodes(ISeriesSpecifier source)
         {
             try
             {
-                JObject r = HttpHelper.HttpGetRequestWithRetry(APIRoot + "/lookup/shows?thetvdb=" + siTvdbCode, 3, 2);
+                JObject r = HttpHelper.HttpGetRequestWithRetry(APIRoot + "/lookup/shows?thetvdb=" + source.TvdbId, 3, 2);
                 int tvMazeId = (int)r["id"];
-                return tvMazeId;
+
+                source.UpdateId(tvMazeId, TVDoc.ProviderType.TVmaze);
             }
             catch (WebException wex)
             {
                 if (wex.Is404())
                 {
-                    string tvdBimbd = TheTVDB.LocalCache.Instance.GetSeries(siTvdbCode)?.Imdb;
-                    if (!imdb.HasValue() && !tvdBimbd.HasValue())
+                    string tvdBimbd = TheTVDB.LocalCache.Instance.GetSeries(source.TvdbId)?.Imdb;
+                    if (!source.ImdbCode.HasValue() && !tvdBimbd.HasValue())
                     {
-                        throw new MediaNotFoundException(siTvdbCode, $"Cant find a show with TVDB Id {siTvdbCode} on TV Maze, either add the show to TV Maze, find the show and update The TVDB Id or use TVDB for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze);
+                        throw new MediaNotFoundException(source, $"Cant find a show with TVDB Id {source.TvdbId} on TV Maze, either add the show to TV Maze, find the show and update The TVDB Id or use TVDB for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
                     }
-                    string imdbCode = imdb ?? tvdBimbd;
+                    string imdbCode = source.ImdbCode ?? tvdBimbd;
                     try
                     {
                         JObject r = HttpHelper.HttpGetRequestWithRetry(APIRoot + "/lookup/shows?imdb=" + imdbCode, 3, 2);
@@ -102,37 +103,21 @@ namespace TVRename.TVmaze
                         JToken externalsToken = GetChild(r, "externals");
                         JToken tvdbToken = GetChild(externalsToken, "thetvdb");
                         int tvdb = tvdbToken.Type == JTokenType.Null ? -1 : (int)tvdbToken;
-                        Logger.Error($"TVMaze Data issue: {tvMazeId} has the wrong TVDB Id based on {imdbCode}. Should be {siTvdbCode}, currently is {tvdb}.");
-                        return tvMazeId;
+                        Logger.Error($"TVMaze Data issue: {tvMazeId} has the wrong TVDB Id based on {imdbCode}. Should be {source}, currently is {tvdb}.");
+
+                        source.UpdateId(tvMazeId, TVDoc.ProviderType.TVmaze);
+                        return;
                     }
                     catch (WebException wex2)
                     {
                         if (wex2.Is404() && TvMazeIsUp())
                         {
-                            throw new MediaNotFoundException(siTvdbCode, $"Please add show with imdb={imdbCode} and tvdb={siTvdbCode} to tvMaze, or use TVDB as the source for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze);
+                            throw new MediaNotFoundException(source, $"Please add show with imdb={imdbCode} and tvdb={source.TvdbId} to tvMaze, or use TVDB as the source for that show.", TVDoc.ProviderType.TheTVDB, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
                         }
-                        throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for IMDB={imdbCode} and tvdb={siTvdbCode} {wex.Message}");
+                        throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for IMDB={imdbCode} and tvdb={source.TvdbId} {wex.Message}");
                     }
                 }
-                throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {siTvdbCode} {wex.Message}");
-            }
-        }
-
-        private static JObject GetSeriesDetails(int tvMazeId)
-        {
-            try
-            {
-                return HttpHelper.HttpGetRequestWithRetry($"{APIRoot}/shows/{tvMazeId}?specials=1&embed[]=cast&embed[]=episodes&embed[]=crew&embed[]=akas&embed[]=seasons&embed[]=images", 5, 2);
-            }
-            catch (WebException wex)
-            {
-                if (wex.Is404() && TvMazeIsUp())
-                {
-                    throw new MediaNotFoundException(tvMazeId, $"Please add show maze id {tvMazeId} to tvMaze", TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze);
-                }
-
-                Logger.LogWebException($"Could not get show with id {tvMazeId} from TV Maze due to", wex);
-                throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {tvMazeId} {wex.Message}");
+                throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {source} {wex.Message}");
             }
         }
 
@@ -148,12 +133,32 @@ namespace TVRename.TVmaze
             }
         }
 
+        private static JObject GetSeriesDetailsWithMazeId(ISeriesSpecifier tvMazeId)
+        {
+            try
+            {
+                return HttpHelper.HttpGetRequestWithRetry($"{APIRoot}/shows/{tvMazeId.TvMazeId}?specials=1&embed[]=cast&embed[]=episodes&embed[]=crew&embed[]=akas&embed[]=seasons&embed[]=images", 5, 2);
+            }
+            catch (WebException wex)
+            {
+                if (wex.Is404() && TvMazeIsUp())
+                {
+                    throw new MediaNotFoundException(tvMazeId, $"Please add show maze id {tvMazeId} to tvMaze", TVDoc.ProviderType.TVmaze, TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv);
+                }
+
+                Logger.LogWebException($"Could not get show with id {tvMazeId.TvMazeId} from TV Maze due to", wex);
+                throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId} {wex.Message}");
+            }
+        }
+
         [NotNull]
         public static CachedSeriesInfo GetSeriesDetails([NotNull] ISeriesSpecifier ss)
         {
-            JObject results = ss.TvMazeId > 0
-                ? GetSeriesDetails(ss.TvMazeId)
-                : GetSeriesDetails(GetSeriesIdFromOtherCodes(ss.TvdbId, ss.ImdbCode));
+            if (ss.TvMazeId <= 0)
+            {
+                GetSeriesIdFromOtherCodes(ss);
+            }
+            JObject results = GetSeriesDetailsWithMazeId(ss);
 
             CachedSeriesInfo downloadedSi = GenerateSeriesInfo(results);
             JToken jToken = GetChild(results, "_embedded");
@@ -239,7 +244,7 @@ namespace TVRename.TVmaze
                 SeriesId = seriesId,
                 ImageUrl = (string)GetChild(GetChild(GetChild(imageJson, "resolutions"), "original"), "url"),
                 Id = (int)imageJson["id"],
-                ImageStyle = MediaImage.ImageType.Background,
+                ImageStyle = MediaImage.ImageType.background,
                 Rating = (bool)imageJson["main"] ? 10 : 1,
                 RatingCount = 1,
                 SeriesSource = TVDoc.ProviderType.TVmaze,
@@ -255,12 +260,12 @@ namespace TVRename.TVmaze
             {
                 SeriesId = seriesId,
                 ImageUrl = url,
-                ImageStyle = MediaImage.ImageType.Poster,
-                Subject = MediaImage.ImageSubject.Season,
+                ImageStyle = MediaImage.ImageType.poster,
+                Subject = MediaImage.ImageSubject.season,
                 SeasonId = seasonNumber,
                 Rating = 10,
                 RatingCount = 1,
-                SeriesSource  = TVDoc.ProviderType.TVmaze,
+                SeriesSource = TVDoc.ProviderType.TVmaze,
             };
 
             return newBanner;

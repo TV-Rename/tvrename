@@ -36,7 +36,7 @@ namespace TVRename
         public readonly ShowConfiguration Show;
 
         // ReSharper disable once NotAccessedField.Local
-        public readonly SeasonType type;
+        public readonly SeasonType SeasonStyle;
 
         public ProcessedSeason(ShowConfiguration theShow, int number, int seasonId, SeasonType t)
         {
@@ -44,7 +44,7 @@ namespace TVRename
             SeasonNumber = number;
             SeasonId = seasonId;
             Episodes = new ConcurrentDictionary<int, Episode>();
-            type = t;
+            SeasonStyle = t;
         }
 
         // ReSharper disable once InconsistentNaming

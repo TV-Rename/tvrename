@@ -59,6 +59,7 @@ namespace TVRename
             } // for each season of this show
         }
 
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         private static void MergeShowEpisodes([NotNull] ShowConfiguration si, DirFilesCache dfc, CancellationToken token, int snum, IEnumerable<string> folders)
         {
             if (snum == 0 && si.CountSpecials)

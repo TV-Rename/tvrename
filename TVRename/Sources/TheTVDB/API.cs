@@ -475,5 +475,10 @@ namespace TVRename.TheTVDB
 
             throw new SourceConnectivityException($"Looking for {uri} images (in {requestedLanguageCode})");
         }
+
+        public static JObject ImageTypesV4()
+        {
+            return GetUrl("https://api4.thetvdb.com/v4/artwork-types", "en");
+        }
     }
 }

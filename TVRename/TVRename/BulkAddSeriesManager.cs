@@ -54,10 +54,10 @@ namespace TVRename
             {
                 try
                 {
-                    CachedSeriesInfo cachedSeries = TheTVDB.LocalCache.Instance.GetSeriesAndDownload(tvdbId, showErrorMsgBox);
+                    ai.UpdateId(tvdbId, TVDoc.ProviderType.TheTVDB);
+                    CachedSeriesInfo cachedSeries = TheTVDB.LocalCache.Instance.GetSeriesAndDownload(ai, showErrorMsgBox);
                     if (cachedSeries != null)
                     {
-                        ai.SetId(tvdbId, TVDoc.ProviderType.TheTVDB);
                         return;
                     }
                 }
@@ -70,7 +70,7 @@ namespace TVRename
             CachedSeriesInfo ser = TheTVDB.LocalCache.Instance.GetSeries(showName, showErrorMsgBox, localeToUse);
             if (ser != null)
             {
-                ai.SetId(tvdbId, TVDoc.ProviderType.TheTVDB);
+                ai.UpdateId(ser.TvdbId, TVDoc.ProviderType.TheTVDB);
                 return;
             }
 
@@ -91,7 +91,7 @@ namespace TVRename
             ai.RefinedHint = refinedHint;
             if (ser != null)
             {
-                ai.SetId(tvdbId, TVDoc.ProviderType.TheTVDB);
+                ai.UpdateId(tvdbId, TVDoc.ProviderType.TheTVDB);
             }
         }
 

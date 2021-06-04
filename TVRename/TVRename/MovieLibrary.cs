@@ -149,9 +149,9 @@ namespace TVRename
                 .OrderBy(s => s);
         }
 
-        public MovieConfiguration? GetMovie(PossibleNewMovie ai)
+        public MovieConfiguration? GetMovie(ISeriesSpecifier ai)
         {
-            return GetMovie(ai.ProviderCode, ai.Provider);
+            return GetMovie(ai.Id(), ai.Provider);
         }
     }
 }

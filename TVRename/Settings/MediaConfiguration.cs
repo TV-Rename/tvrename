@@ -40,6 +40,27 @@ namespace TVRename
             }
         }
 
+        public void UpdateId(int id, TVDoc.ProviderType source)
+        {
+            switch (source)
+            {
+                case TVDoc.ProviderType.TVmaze:
+                    TVmazeCode = id;
+                    break;
+
+                case TVDoc.ProviderType.TheTVDB:
+                    TvdbCode = id;
+                    break;
+
+                case TVDoc.ProviderType.TMDB:
+                    TmdbCode = id;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(source), source, null);
+            }
+        }
+
         public bool UseCustomShowName;
         public string CustomShowName;
         public string? LastName;

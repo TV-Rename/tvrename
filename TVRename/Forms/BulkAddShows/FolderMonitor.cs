@@ -590,7 +590,7 @@ namespace TVRename
                 return;
             }
 
-            fme.SetId(ed.Code, ed.ProviderType);
+            fme.UpdateId(ed.Code, ed.ProviderType);
         }
 
         private void lstFMMonitorFolders_SelectedIndexChanged(object sender, System.EventArgs e)

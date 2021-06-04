@@ -13,6 +13,8 @@ namespace TVRename
         string? ImdbCode { get; }
 
         Locale TargetLocale { get; }
+
+        void UpdateId(int id, TVDoc.ProviderType source);
     }
 
     public static class SeriesSpecifiedHelper
@@ -32,6 +34,8 @@ namespace TVRename
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
+
+        public static int Id(this ISeriesSpecifier ss) => ss.IdFor(ss.Provider);
 
         private static TVDoc.ProviderType DefaultProviderFor(MediaConfiguration.MediaType type)
         {

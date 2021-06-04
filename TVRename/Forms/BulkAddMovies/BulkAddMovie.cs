@@ -492,7 +492,7 @@ namespace TVRename
 
             if (fme.CodeKnown)
             {
-                switch (fme.Provider)
+                switch (fme.SourceProvider)
                 {
                     case TVDoc.ProviderType.TheTVDB:
                         Helpers.OpenUrl(TheTVDB.API.WebsiteShowUrl(fme.ProviderCode));

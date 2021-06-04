@@ -13,7 +13,6 @@ using JetBrains.Annotations;
 using NLog;
 using NodaTime.Extensions;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -715,7 +714,8 @@ namespace TVRename
             RunExporters();
         }
 
-        public ConcurrentBag<MediaNotFoundException> ShowProblems => cacheManager.Problems;
+        public IEnumerable<MediaNotFoundException> ShowProblems => cacheManager.Problems.Where(x => x.SourceType == MediaConfiguration.MediaType.tv);
+        public IEnumerable<MediaNotFoundException> MovieProblems => cacheManager.Problems.Where(x => x.SourceType == MediaConfiguration.MediaType.movie);
 
         public bool HasActiveLocalFinders => localFinders?.Active() ?? false;
 

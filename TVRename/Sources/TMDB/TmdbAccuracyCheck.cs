@@ -21,10 +21,9 @@ namespace TVRename.TMDB
 
         public void ServerAccuracyCheck([NotNull] CachedMovieInfo si)
         {
-            int tmdbId = si.TmdbCode;
             try
             {
-                CachedMovieInfo newSi = lc.DownloadMovieNow(tmdbId, si.ActualLocale ?? new Locale(), false);
+                CachedMovieInfo newSi = lc.DownloadMovieNow(si, si.ActualLocale ?? new Locale(), false);
 
                 if (!Match(newSi, si))
                 {

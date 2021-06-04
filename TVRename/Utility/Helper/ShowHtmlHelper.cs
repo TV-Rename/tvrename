@@ -45,6 +45,17 @@ namespace TVRename
             return sb.ToString();
         }
 
+        [NotNull]
+        public static string GetShowImagesOverview(this ShowConfiguration si)
+        {
+            Color col = Color.FromName("ButtonFace");
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(HTMLHeader(10, col));
+            sb.AppendShowImages(si, col);
+            sb.AppendLine(HTMLFooter());
+            return sb.ToString();
+        }
+
         public static string GetShowHtmlOverview(this CachedSeriesInfo series, RecommendationRow recommendation)
         {
             Color col = Color.FromName("ButtonFace");
@@ -185,6 +196,104 @@ namespace TVRename
                 return;
             }
             AppendShow(sb, si, ser, backgroundColour, includeDirectoryLinks);
+        }
+
+        private static void AppendShowImages(this StringBuilder sb, ShowConfiguration? si, Color backgroundColour)
+        {
+            CachedSeriesInfo ser = si?.CachedShow;
+
+            if (ser is null)
+            {
+                return;
+            }
+
+            string posterHtml = GenerateImageCarousel("Posters", ser.Images(MediaImage.ImageType.poster, MediaImage.ImageSubject.show).ToList(), "MyPosterCarousel", "w-50");
+            string bannerHtml = GenerateImageCarousel("Banners", ser.Images(MediaImage.ImageType.wideBanner, MediaImage.ImageSubject.show).ToList(), "MyBannerCarousel", "w-100");
+            string fanartHtml = GenerateImageCarousel("Backgrounds", ser.Images(MediaImage.ImageType.background).ToList(), "MyBackgroundCarousel", "w-100");
+
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                    {posterHtml}
+                  </div>
+
+                </div>");
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                    {bannerHtml}
+                  </div>
+
+                </div>");
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                    {fanartHtml}
+                  </div>
+
+                </div>");
+        }
+
+        private static string GenerateImageCarousel(string title, IReadOnlyCollection<MediaImage> images, string id, string imageTag)
+        {
+            return $@" <h2>{title}</h2>
+<div id=""{id}"" class=""carousel slide"" data-bs-ride=""carousel"">
+                <div class=""carousel-indicators"">
+{GenerateCarouselIndicators(images, id)}
+
+    </div>
+    <div class=""carousel-inner"">
+      {GenerateCarouselBlocks(images, imageTag)}
+    </div>
+    <button class=""carousel-control-prev"" type=""button"" data-bs-target=""#{id}"" data-bs-slide=""prev"">
+      <span class=""carousel-control-prev-icon"" aria-hidden=""true""></span>
+      <span class=""visually-hidden"">Previous</span>
+    </button>
+    <button class=""carousel-control-next"" type=""button"" data-bs-target=""#{id}"" data-bs-slide=""next"">
+      <span class=""carousel-control-next-icon"" aria-hidden=""true""></span>
+      <span class=""visually-hidden"">Next</span>
+    </button>
+  </div>";
+        }
+
+        private static string GenerateCarouselBlocks(IReadOnlyCollection<MediaImage> images, string imageTag)
+        {
+            StringBuilder sb = new StringBuilder();
+            bool isFirst = true;
+            foreach (var i in images)
+            {
+                if (isFirst)
+                {
+                    sb.Append("<div class=\"carousel-item active\">");
+                    isFirst = false;
+                }
+                else
+                {
+                    sb.Append("<div class=\"carousel-item\">");
+                }
+
+                sb.AppendLine(
+                    $"<div class=\"container\"><img class=\"show-poster rounded {imageTag}\" src=\"{i.ImageUrl}\"></div></div>");
+            }
+
+            return sb.ToString();
+        }
+
+        private static string GenerateCarouselIndicators(IReadOnlyCollection<MediaImage> images, string id)
+        {
+            StringBuilder sb = new StringBuilder();
+            bool isFirst = true;
+            int c = 0;
+            foreach (MediaImage? _ in images)
+            {
+                sb.Append($"<button type=\"button\" data-bs-target=\"#{id}\" data-bs-slide-to=\"{c++}\" ");
+                if (isFirst)
+                {
+                    sb.Append("class=\"active\" aria-current=\"true\" ");
+                    isFirst = false;
+                }
+
+                sb.AppendLine("aria-label=\"Slide {c}\"></button>");
+            }
+
+            return sb.ToString();
         }
 
         private static void AppendShow(this StringBuilder sb, ShowConfiguration? si, CachedSeriesInfo ser, Color backgroundColour, bool includeDirectoryLinks)
@@ -434,7 +543,7 @@ namespace TVRename
                 case TVDoc.ProviderType.TheTVDB:
                     if (si.CachedShow?.Slug.HasValue() ?? false)
                     {
-                        return $"https://thetvdb.com/series/{si.CachedShow.Slug}/seasons/{s.type.PrettyPrint()}/{s.SeasonNumber}/edit";
+                        return $"https://thetvdb.com/series/{si.CachedShow.Slug}/seasons/{s.SeasonStyle.PrettyPrint()}/{s.SeasonNumber}/edit";
                     }
 
                     return null;
@@ -649,8 +758,7 @@ namespace TVRename
             {
                 return TheTVDB.API.GetImageURL(url);
             }
-            string x = TheTVDB.API.GetImageURL(series.CachedShow?.GetImage(TVSettings.FolderJpgIsType.Poster)); //todo - make sure this works with  non tvdb shows
-            return string.Empty;
+            return url ?? string.Empty;
         }
 
         public static string? ThumbnailUrl(this ProcessedEpisode episode)
@@ -1241,7 +1349,7 @@ namespace TVRename
                 <meta charset=""utf-8"">
                 <meta name = ""viewport"" content = ""width=device-width, initial-scale=1.0"" >
                 <title> TV Rename - Show Summary</title>
-                <link rel = ""stylesheet"" href = ""http://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"" />
+                <link rel = ""stylesheet"" href = ""https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"" />
                 <link rel = ""stylesheet"" href = ""https://use.fontawesome.com/releases/v5.14.0/css/all.css"" />
                 </head >"
                 + $"<body style=\"background-color: {backgroundColour.HexColour()}\" ><div class=\"col-sm-{size} offset-sm-{(12 - size) / 2}\">";
@@ -1259,11 +1367,12 @@ namespace TVRename
         {
             return @"
                 </div>
-                <script src=""http://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js""></script>
-                <script src = ""http://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"" ></script>
-                <script src = ""http://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"" ></script>
-                <script >$(document).ready(function(){ })</script>
-                </body>
+                <script src=""https://code.jquery.com/jquery-3.6.0.min.js"" integrity=""sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="" crossorigin=""anonymous""></script>
+                <script src=""https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js""></script>
+                <script src=""https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js""></script>
+				<script src=""https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js""></script>
+                <script>$(document).ready(function(){ })</script>
+                     </ body>
                 </html>
                 ";
         }
@@ -1331,7 +1440,7 @@ namespace TVRename
             return body;
         }
 
-        public static string WideBannerUrl(this ShowConfiguration series)
+        private static string WideBannerUrl(this ShowConfiguration series)
         {
             string? url = series.CachedShow?.GetSeriesWideBannerPath();
 
@@ -1339,11 +1448,10 @@ namespace TVRename
             {
                 return TheTVDB.API.GetImageURL(url);
             }
-            string x = TheTVDB.API.GetImageURL(series.CachedShow?.GetImage(TVSettings.FolderJpgIsType.Banner)); //todo - make sure this works with  non tvdb shows
-            return string.Empty;
+            return url ?? string.Empty;
         }
 
-        public static string WideBannerUrl(this ProcessedSeason season)
+        private static string WideBannerUrl(this ProcessedSeason season)
         {
             string? url = season.GetWideBannerPath();
 
@@ -1351,7 +1459,7 @@ namespace TVRename
             {
                 return TheTVDB.API.GetImageURL(url);
             }
-            return string.Empty;
+            return url ?? string.Empty;
         }
 
         [NotNull]
@@ -1455,7 +1563,7 @@ namespace TVRename
             return string.Empty;
         }
 
-        public static string ProviderShowUrl(this ShowConfiguration show)
+        private static string ProviderShowUrl(this ShowConfiguration show)
         {
             return show.Provider switch
             {

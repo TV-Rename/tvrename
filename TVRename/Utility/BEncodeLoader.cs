@@ -4,18 +4,13 @@ namespace TVRename
 {
     public class BEncodeLoader
     {
-        public BTItem ReadString(System.IO.Stream sr, long length)
+        private BTItem ReadString(System.IO.Stream sr, long length)
         {
             System.IO.BinaryReader br = new System.IO.BinaryReader(sr);
-
-            byte[] c = br.ReadBytes((int)length);
-
-            BTString bts = new BTString();
-            bts.Data = c;
-            return bts;
+            return new BTString {Data = br.ReadBytes((int)length) };
         }
 
-        public static BTItem ReadInt(System.IO.FileStream sr)
+        private static BTItem ReadInt(System.IO.FileStream sr)
         {
             long r = 0;
             int c;
@@ -54,9 +49,7 @@ namespace TVRename
 
                 if (next.Type != BTChunk.kString)
                 {
-                    BTError e = new BTError();
-                    e.Message = "Didn't get string as first of pair in dictionary";
-                    return e;
+                    return new BTError {Message = "Didn't get string as first of pair in dictionary"};
                 }
 
                 BTDictionaryItem di = new BTDictionaryItem(((BTString)next).AsString(), ReadNext(sr));

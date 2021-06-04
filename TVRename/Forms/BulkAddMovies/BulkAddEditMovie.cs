@@ -36,7 +36,7 @@ namespace TVRename
 
             if (hint.CodeKnown)
             {
-                codeFinderControl.SetHint(hint.ProviderCode.ToString(), hint.Provider);
+                codeFinderControl.SetHint(hint.ProviderCode.ToString(), hint.SourceProvider);
             }
             else
             {

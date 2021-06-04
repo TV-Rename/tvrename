@@ -11,14 +11,14 @@ using Alphaleonis.Win32.Filesystem;
 namespace TVRename
 {
     // "PossibleNewTVShow" represents a folder found by doing a Check in the 'Bulk Add Shows' dialog
-    public class PossibleNewTvShow
+    public class PossibleNewTvShow : ISeriesSpecifier
     {
         public readonly DirectoryInfo Folder;
 
         // ReSharper disable once InconsistentNaming
         internal int ProviderCode;
 
-        internal TVDoc.ProviderType Provider;
+        internal TVDoc.ProviderType SourceProvider;
         public readonly bool HasSeasonFoldersGuess;
         public readonly string SeasonFolderFormat;
         public string? RefinedHint;
@@ -43,10 +43,26 @@ namespace TVRename
             SeasonFolderFormat = folderFormat;
         }
 
-        public void SetId(int code, TVDoc.ProviderType provider)
+        public void UpdateId(int id, TVDoc.ProviderType source)
         {
-            ProviderCode = code;
-            Provider = provider;
+            SourceProvider = source;
+            ProviderCode = id;
         }
+
+        public TVDoc.ProviderType Provider => SourceProvider;
+
+        public int TvdbId => Provider == TVDoc.ProviderType.TheTVDB && CodeKnown ? ProviderCode : -1;
+
+        public string Name => RefinedHint ?? string.Empty;
+
+        public MediaConfiguration.MediaType Type => MediaConfiguration.MediaType.tv;
+
+        public int TvMazeId => Provider == TVDoc.ProviderType.TVmaze && CodeKnown ? ProviderCode : -1;
+
+        public int TmdbId => Provider == TVDoc.ProviderType.TMDB && CodeKnown ? ProviderCode : -1;
+
+        public string? ImdbCode => null;
+
+        public Locale TargetLocale => new Locale();
     }
 }

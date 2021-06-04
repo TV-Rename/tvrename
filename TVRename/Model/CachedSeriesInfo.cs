@@ -24,7 +24,7 @@ namespace TVRename
         public string? Network;
         public string? Type;
         public string? BannerString;
-        
+
         private ConcurrentDictionary<int, Episode> sourceEpisodes;
 
         [NotNull]
@@ -334,7 +334,7 @@ namespace TVRename
 
         internal void AddBanners(int seriesId, IEnumerable<ShowImage> enumerable)
         {
-            foreach(ShowImage s in enumerable)
+            foreach (ShowImage s in enumerable)
             {
                 images.Add(s);
             }
@@ -535,19 +535,17 @@ namespace TVRename
             writer.WriteEndElement(); // cachedSeries
         }
 
-        [NotNull]
-        public string GetSeriesFanartPath() => images.GetShowImage(TargetLocale.LanguageToUse(source),MediaImage.ImageType.Background)?.ImageUrl;
+        public string? GetSeriesFanartPath() => images.GetShowImage(TargetLocale.LanguageToUse(Source), MediaImage.ImageType.background)?.ImageUrl;
 
-        [NotNull]
-        public string GetSeriesPosterPath() => images.GetShowImage(TargetLocale.LanguageToUse(source),MediaImage.ImageType.Poster)?.ImageUrl;
+        public string? GetSeriesPosterPath() => images.GetShowImage(TargetLocale.LanguageToUse(Source), MediaImage.ImageType.poster)?.ImageUrl;
 
-        public string? GetImage(TVSettings.FolderJpgIsType itemForFolderJpg) => images.GetImage(itemForFolderJpg, TargetLocale.LanguageToUse(source))?.ImageUrl;
+        public string? GetImage(TVSettings.FolderJpgIsType itemForFolderJpg) => images.GetImage(itemForFolderJpg, TargetLocale.LanguageToUse(Source))?.ImageUrl;
 
-        public string? GetSeasonBannerPath(int snum) => images.GetSeasonBanner(snum,TargetLocale.LanguageToUse(source))?.ImageUrl;
+        public string? GetSeasonBannerPath(int snum) => images.GetSeasonBanner(snum, TargetLocale.LanguageToUse(Source))?.ImageUrl;
 
-        public string? GetSeriesWideBannerPath() => images.GetShowImage(TargetLocale.LanguageToUse(source),MediaImage.ImageType.WideBanner)?.ImageUrl;
+        public string? GetSeriesWideBannerPath() => images.GetShowImage(TargetLocale.LanguageToUse(Source), MediaImage.ImageType.wideBanner)?.ImageUrl;
 
-        public string? GetSeasonWideBannerPath(int snum) => images.GetSeasonWideBanner(snum, TargetLocale.LanguageToUse(source))?.ImageUrl;
+        public string? GetSeasonWideBannerPath(int snum) => images.GetSeasonWideBanner(snum, TargetLocale.LanguageToUse(Source))?.ImageUrl;
 
         public void UpdateBanners(List<int> latestBannerIds)
         {
@@ -564,7 +562,7 @@ namespace TVRename
 
             foreach (int removeBanner in bannersToRemove)
             {
-                images.RemoveAll(x=>x.Id == removeBanner);
+                images.RemoveAll(x => x.Id == removeBanner);
             }
         }
 
@@ -601,6 +599,16 @@ namespace TVRename
         {
             images.RemoveAll(s => s.Id == showImage.Id);
             images.Add(showImage);
+        }
+
+        public IEnumerable<ShowImage> Images(MediaImage.ImageType type)
+        {
+            return images.Where(x => x.ImageStyle == type);
+        }
+
+        public IEnumerable<ShowImage> Images(MediaImage.ImageType type, MediaImage.ImageSubject subject)
+        {
+            return images.Where(x => x.ImageStyle == type && x.Subject == subject);
         }
     }
 }
