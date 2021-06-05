@@ -32,7 +32,7 @@ namespace TVRename.TMDB
         private static readonly TMDbClient Client = new TMDbClient("2dcfd2d08f80439d7ef5210f217b80b4");
 
         private UpdateTimeTracker latestMovieUpdateTime;
-        private UpdateTimeTracker latestTvUpdateTime; //TOD Use htis
+        private UpdateTimeTracker latestTvUpdateTime; //TODO Use htis
 
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
@@ -736,7 +736,7 @@ namespace TVRename.TMDB
         private DateTime? GetReleaseDateDetail(Movie downloadedMovie, string? country)
         {
             List<DateTime> dates = downloadedMovie.ReleaseDates?.Results
-                .Where(rel => rel.Iso_3166_1 == country)
+                .Where(rel => rel.Iso_3166_1.Equals(country,StringComparison.OrdinalIgnoreCase))
                 .SelectMany(rel => rel.ReleaseDates)
                 .Select(d => d.ReleaseDate)
                 .OrderBy(time => time).ToList();
@@ -1015,6 +1015,7 @@ namespace TVRename.TMDB
 
                 foreach (SearchMovie result in results.Results)
                 {
+                    //TODO - Reconside this as it's really slow.
                     LOGGER.Info($"   Movie: {result.Title}:{result.Id}   {result.Popularity}");
                     File(result);
                     try

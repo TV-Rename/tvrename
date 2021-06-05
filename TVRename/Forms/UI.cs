@@ -1433,9 +1433,17 @@ namespace TVRename
         public static void SetHtmlBody([NotNull] ChromiumWebBrowser web, string body)
         {
             web.Visible = true;
-            if (web.IsDisposed || !web.IsBrowserInitialized)
+            if (web.IsDisposed )
             {
                 return;
+            }
+
+            if (!web.IsBrowserInitialized)
+            {
+                web.IsBrowserInitializedChanged += (sender, args) =>
+                {
+                    web.BeginInvoke((MethodInvoker) delegate { SetHtmlBody(web, body); });
+                };
             }
 
             try
@@ -1460,10 +1468,15 @@ namespace TVRename
         private static void SetHtmlEmbed([NotNull] ChromiumWebBrowser web, string link)
         {
             web.Visible = true;
-            if (web.IsDisposed || !web.IsBrowserInitialized)
+            if (web.IsDisposed)
             {
                 return;
             }
+
+            web.IsBrowserInitializedChanged += (sender, args) =>
+            {
+                web.BeginInvoke((MethodInvoker) delegate { SetHtmlEmbed(web, link); });
+            };
 
             try
             {
@@ -2296,7 +2309,7 @@ namespace TVRename
             if (pref.ShowDialog(this) == DialogResult.OK)
             {
                 mDoc.SetDirty();
-                mDoc.Reconnect();
+                TVDoc.Reconnect();
                 ShowHideNotificationIcon();
                 FillWhenToWatchList();
                 ShowInTaskbar = TVSettings.Instance.ShowInTaskbar;
@@ -2819,7 +2832,7 @@ namespace TVRename
             DialogResult dr = aem.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
-                mDoc.FilmLibrary.Add(mov);
+                mDoc.Add(mov);
 
                 MovieAddedOrEdited(false, false, mov);
                 SelectMovie(mov);
@@ -3579,7 +3592,7 @@ namespace TVRename
                 }
             }
 
-            mDoc.ClearShowProblems();
+            mDoc.ClearCacheUpdateProblems();
         }
 
         [NotNull]
@@ -5049,7 +5062,34 @@ namespace TVRename
         {
             //Show Log Pane
             logToolStripMenuItem_Click(sender, e);
-            mDoc.MovieFolderScan(this);
+
+            string downloadFolder = AskUserForFolder();
+            if (!downloadFolder.HasValue())
+            {
+                return;
+            }
+
+            mDoc.MovieFolderScan(this, downloadFolder);
+
+            FillActionList(true);
+            FocusOnScanResults();
+
+            Logger.Info("Finished looking for new movies.");
+            }
+
+        // ReSharper disable once UnusedParameter.Local
+        private string AskUserForFolder()
+        {
+            using (FolderBrowserDialog fbd = new FolderBrowserDialog())
+            {
+                fbd.ShowDialog();
+                return fbd.SelectedPath;
+            }
+
+            /*            CommonOpenFileDialog dialog = new CommonOpenFileDialog {IsFolderPicker = true};
+                        ui.ShowChildDialog(dialog);
+                        return dialog.FileName;
+            */
         }
 
         public (DialogResult, ActionTDownload) AskAbout(ItemMissing epGroupKey, List<ActionTDownload> actions)

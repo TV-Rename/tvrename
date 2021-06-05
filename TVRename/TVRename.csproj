@@ -391,6 +391,10 @@
     <Compile Include="Model\CachedMediaInfo.cs" />
     <Compile Include="Model\Crew.cs" />
     <Compile Include="Model\ISeriesSpecifier.cs" />
+    <Compile Include="Model\MovieImage.cs" />
+    <Compile Include="Model\MovieImages.cs" />
+    <Compile Include="Model\ShowImage.cs" />
+    <Compile Include="Model\ShowImages.cs" />
     <Compile Include="ScanActivity\DownloadIdentifers\DownloadWdtvMetaData.cs" />
     <Compile Include="ScanActivity\DownloadIdentifers\IncorrectFileDates.cs" />
     <Compile Include="Exporter\ActionListExporter.cs" />
@@ -797,7 +801,7 @@
       <DependentUpon>UpcomingPopup.cs</DependentUpon>
     </Compile>
     <Compile Include="ItemsAndActions\ActionPyTivoMeta.cs" />
-    <Compile Include="Model\Banner.cs" />
+    <Compile Include="Model\MediaImage.cs" />
     <Compile Include="Model\Episode.cs" />
     <Compile Include="Model\ExtraEp.cs" />
     <Compile Include="Settings\ProcessedSeason.cs" />

@@ -269,7 +269,7 @@ namespace TVRename
             // need to add a new showitem
             MovieConfiguration found = new MovieConfiguration(ai);
 
-            mDoc.FilmLibrary.Add(found);
+            mDoc.Add(found);
 
             mDoc.Stats().AutoAddedMovies++;
 

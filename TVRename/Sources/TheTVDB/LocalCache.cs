@@ -43,7 +43,7 @@ namespace TVRename.TheTVDB
         private ConcurrentDictionary<int, int> forceReloadOn;
         private UpdateTimeTracker LatestUpdateTime;
 
-        private bool ShowConnectionIssues;
+        private bool showConnectionIssues;
 
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
@@ -78,7 +78,7 @@ namespace TVRename.TheTVDB
 
         public void Setup(FileInfo? loadFrom, FileInfo cache, bool showIssues)
         {
-            ShowConnectionIssues = showIssues;
+            showConnectionIssues = showIssues;
 
             System.Diagnostics.Debug.Assert(cache != null);
             CacheFile = cache;
@@ -152,7 +152,7 @@ namespace TVRename.TheTVDB
         }
 
         public CachedMovieInfo GetMovie(PossibleNewMovie show, Locale locale, bool showErrorMsgBox) =>
-            throw new NotImplementedException();
+            throw new NotImplementedException(); //TODO Get Bulk add workign for multi source
 
         public CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox, Locale preferredLocale)
         {
@@ -473,7 +473,7 @@ namespace TVRename.TheTVDB
                         $"We have run {MAX_NUMBER_OF_CALLS} weeks of updates and we are not up to date.  The system will need to check again once this set of updates have been processed.{Environment.NewLine}Last Updated time was {LatestUpdateTime.LastSuccessfulServerUpdateDateTime()}{Environment.NewLine}New Last Updated time is {LatestUpdateTime.ProposedServerUpdateDateTime()}{Environment.NewLine}{Environment.NewLine}If the dates keep getting more recent then let the system keep getting {MAX_NUMBER_OF_CALLS} week blocks of updates, otherwise consider a 'Force Refresh All'";
 
                     LOGGER.Error(errorMessage);
-                    if (ShowConnectionIssues && Environment.UserInteractive)
+                    if (showConnectionIssues && Environment.UserInteractive)
                     {
                         MessageBox.Show(errorMessage, "Long Running Update", MessageBoxButtons.OK,
                             MessageBoxIcon.Warning);
@@ -527,7 +527,7 @@ namespace TVRename.TheTVDB
 
                 LOGGER.Warn(ex, msg);
 
-                if (ShowConnectionIssues && Environment.UserInteractive)
+                if (showConnectionIssues && Environment.UserInteractive)
                 {
                     MessageBox.Show(msg, "Error obtaining updates from TVDB", MessageBoxButtons.OK,
                         MessageBoxIcon.Warning);
@@ -998,7 +998,6 @@ namespace TVRename.TheTVDB
                 {
                     JObject? jsonEpisodeResponse = API.GetSeriesEpisodes(id, languageToUse.Abbreviation, pageNumber);
 
-                    episodeResponses.Add(jsonEpisodeResponse);
                     try
                     {
                         JToken? jToken = jsonEpisodeResponse?["data"];
@@ -1008,6 +1007,8 @@ namespace TVRename.TheTVDB
                             throw new SourceConsistencyException($"Data element not found in {jsonEpisodeResponse}",
                                 TVDoc.ProviderType.TheTVDB);
                         }
+
+                        episodeResponses.Add(jsonEpisodeResponse);
 
                         int numberOfResponses = ((JArray)jToken).Count;
                         bool moreResponses;
@@ -1666,8 +1667,9 @@ namespace TVRename.TheTVDB
 
             CachedMovieInfo si = new CachedMovieInfo(locale, TVDoc.ProviderType.TheTVDB)
             {
-                FirstAired = GetReleaseDateV4(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation) ??
-                             GetReleaseDateV4(r, "global") ?? GetReleaseDateV4(r, null),
+                FirstAired = GetReleaseDateV4(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
+                                ?? GetReleaseDateV4(r, "global")
+                                ?? GetReleaseDateV4(r, null),
                 TvdbCode = (int)r["data"]["id"],
                 Slug = ((string)r["data"]["slug"])?.Trim(),
                 Imdb = GetExternalIdV4(r, "IMDB"),
@@ -1678,7 +1680,6 @@ namespace TVRename.TheTVDB
                 Dirty = false,
                 PosterUrl = "https://artworks.thetvdb.com" + GetArtworkV4(r, 14),
                 FanartUrl = "https://artworks.thetvdb.com" + GetArtworkV4(r, 15),
-                //todo BannerUrl = "https://artworks.thetvdb.com" + GetArtworkV4(r, 16),
                 OfficialUrl = GetExternalIdV4(r, "Official Website"),
                 FacebookId = GetExternalIdV4(r, "Facebook"),
                 InstagramId = GetExternalIdV4(r, "Instagram"),
@@ -1686,10 +1687,12 @@ namespace TVRename.TheTVDB
                 //Icon = "https://artworks.thetvdb.com" + GetArtwork(r, "Icon"), TODO - Other Image Downloads
                 Network = r["data"]["studios"]?.FirstOrDefault()?["name"]?.ToString(),
                 ShowLanguage = r["data"]["audioLanguages"]?.ToString(),
-                ContentRating = GetContentRatingV4(r, "aus") ?? GetContentRatingV4(r, "usa"),
+                ContentRating = GetContentRatingV4(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
+                                ?? GetContentRatingV4(r, Regions.Instance.FallbackRegion.ThreeAbbreviation)
+                                ?? GetContentRatingV4(r, "usa"), 
                 Status = r["data"]["status"]["name"]?.ToString(),
                 SrvLastUpdated = ((DateTime)r["data"]["lastUpdated"]).ToUnixTime(),
-                Genres = r["data"]["genres"]?.Select(x => x["name"].ToString()).ToList(),
+                Genres = GetGenresV4(r),
 
                 CollectionId = collectionNode?["id"].ToString().ToInt(),
                 //todo - get collection name translations
@@ -1757,6 +1760,7 @@ namespace TVRename.TheTVDB
         {
             CachedSeriesInfo si = new CachedSeriesInfo(locale, TVDoc.ProviderType.TheTVDB)
             {
+                Name = GetName(r),
                 AirsTime = GetAirsTimeV4(r),
                 TvdbCode = (int)r["data"]["id"],
                 Imdb = GetExternalIdV4(r, "IMDB"),
@@ -1770,34 +1774,39 @@ namespace TVRename.TheTVDB
                 IsSearchResultOnly = false,
                 Dirty = false,
                 Slug = ((string)r["data"]["slug"])?.Trim(),
-                Genres = r["data"]["genres"]?.Select(x => x["name"]?.ToString()).ToList() ?? new List<string>(),
+                Genres = GetGenresV4(r),
                 ShowLanguage = r["data"]["originalLanguage"]?.ToString(),
                 TrailerUrl = GetTrailerUrl(r, locale),
                 SrvLastUpdated = ((DateTime)r["data"]["lastUpdated"]).ToUnixTime(),
                 Status = (string)r["data"]["status"]["name"],
                 FirstAired = JsonHelper.ParseFirstAired((string)r["data"]["firstAired"]),
                 AirsDay = GetAirsDayV4(r),
-                Network = r["data"]["companies"]
-                    ?.FirstOrDefault(x => x["companyType"]["companyTypeName"]?.ToString() == "Network")?["name"]
-                    ?.ToString(),
+                Network = GetNetwork(r),
 
                 //todo load country?  "originalCountry": "usa",
                 //todo load multiple companies r.data.companies
             };
 
-            string s = (string)r["data"]["name"];
-            if (s != null)
-            {
-                si.Name = System.Web.HttpUtility.HtmlDecode(s).Trim();
-            }
-
             AddAliasesV4(r, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), si);
-
             AddCastAndCrewv4(r, si);
             AddShowImagesV4(r, si);
             AddSeasonsV4(r, seasonType, si);
 
             return (si, GetAppropriateLanguage(r["data"]["nameTranslations"], locale));
+        }
+
+        private static string GetName(JObject r) => System.Web.HttpUtility.HtmlDecode((string)r["data"]["name"]??string.Empty).Trim();
+
+        private static string? GetNetwork(JObject r)
+        {
+            return r["data"]["companies"]
+                ?.FirstOrDefault(x => x["companyType"]["companyTypeName"]?.ToString() == "Network")?["name"]
+                ?.ToString();
+        }
+
+        private static List<string> GetGenresV4(JObject r)
+        {
+            return r["data"]["genres"]?.Select(x => x["name"]?.ToString()).ToList() ?? new List<string>();
         }
 
         private static void AddCastAndCrewv4(JObject r, CachedSeriesInfo si)
@@ -3160,7 +3169,7 @@ namespace TVRename.TheTVDB
                 return null;
             }
 
-            bool forceReload = DoWeForceReloadFor(tvdbId.TvdbId);
+            bool forceReload = DoWeForceReloadFor(tvdbId.TvdbId); //TODO - Redefine this to make sure it works
 
             Say($"Movie with id {tvdbId} from TheTVDB");
 

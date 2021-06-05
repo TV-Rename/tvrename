@@ -346,12 +346,10 @@ namespace TVRename
             string episodeSummary = ser.Episodes.Count.ToString();
             string stars = StarRating(ser.SiteRating / 2);
             string genreIcons = string.Join("&nbsp;", ser.Genres.Select(GenreIconHtml));
-            string siteRating = ser.SiteRating > 0 ? ser.SiteRating + "/10" : "";
+            string siteRating = PrettyPrint(ser.SiteRating);
             string runTimeHtml = string.IsNullOrWhiteSpace(ser.Runtime) ? string.Empty : $"<br/> {ser.Runtime} min";
             string actorLinks = ser.GetActors().Select(ActorLinkHtml).ToCsv();
-            string airsTime = ParseAirsTime(ser);
-            string airsDay = ser.AirsDay;
-            string dayTime = $"{airsDay} {airsTime}";
+            string dayTime = $"{ser.AirsDay} {ParseAirsTime(ser)}";
 
             string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : $"http://www.tv.com/show/{ser.SeriesId}/summary.html";
             string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
@@ -404,6 +402,7 @@ namespace TVRename
                  </div>");
         }
 
+        private static string PrettyPrint(float? rating) => (rating ?? 0) > 0 ? rating.Value + "/10" : string.Empty;
         private static void AppendRecommendation(this StringBuilder sb, RecommendationRow recommendationRow, Color backgroundColour)
         {
             string top = recommendationRow.TopRated ? "TOP RATED" : string.Empty;
@@ -446,7 +445,7 @@ namespace TVRename
             string yearRange = ser.Year?.ToString() ?? "";
             string stars = StarRating(ser.SiteRating / 2);
             string genreIcons = string.Join("&nbsp;", ser.Genres.Select(GenreIconHtml));
-            string siteRating = ser.SiteRating > 0 ? ser.SiteRating + "/10" : "";
+            string siteRating = PrettyPrint(ser.SiteRating);
             string runTimeHtml = string.IsNullOrWhiteSpace(ser.Runtime) ? string.Empty : $"<br/> {ser.Runtime} min";
             string actorLinks = ser.GetActors().Select(ActorLinkHtml).ToCsv();
             string tvdbLink = ser.Slug.HasValue() ? $"https://www.thetvdb.com/movies/{ser.Slug}" : string.Empty;
@@ -1458,7 +1457,7 @@ namespace TVRename
 
             string yearRange = YearRange(ser);
 
-            string siteRating = (ser?.SiteRating ?? 0) > 0 ? ser.SiteRating + "/10" : string.Empty;
+            string siteRating = PrettyPrint(ser?.SiteRating);
             string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(si) : string.Empty;
 
             string tableHtml = string.Empty;
@@ -1635,7 +1634,7 @@ namespace TVRename
                 first = false;
             }
 
-            string siteRating = (ser?.SiteRating ?? 0) > 0 ? ser.SiteRating + "/10" : string.Empty;
+            string siteRating = PrettyPrint(ser?.SiteRating);
             string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(si.TvdbCode) : string.Empty;
             string tmdbLink = si.TmdbCode > 0 ? $"https://www.themoviedb.org/movie/{si.TmdbCode}" : string.Empty;
             string mazeLink = ser?.TvMazeCode > 0 ? ser.WebUrl : string.Empty;
