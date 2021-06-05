@@ -1599,7 +1599,11 @@ namespace TVRename
             {
                 return TheTVDB.API.WebsiteEpisodeUrl(ei);
             }
-
+            if (ei.Show.Provider == TVDoc.ProviderType.TMDB)
+            {
+                return $"https://www.themoviedb.org/tv/{ei.TheCachedSeries.TmdbId}/season/{ei.AppropriateSeasonNumber}/episode/{ei.AppropriateEpNum}";
+            }
+            
             //todo - make sure this works with  non tvdb shows
             return string.Empty;
         }
