@@ -3117,10 +3117,13 @@ namespace TVRename.TheTVDB
 
         public void SaveCache()
         {
-            lock (SERIES_LOCK)
+            lock (MOVIE_LOCK)
             {
-                CachePersistor.SaveCache(Series, Movies, CacheFile,
-                    LatestUpdateTime.LastSuccessfulServerUpdateTimecode());
+                lock (SERIES_LOCK)
+                {
+                    CachePersistor.SaveCache(Series, Movies, CacheFile,
+                        LatestUpdateTime.LastSuccessfulServerUpdateTimecode());
+                }
             }
         }
 

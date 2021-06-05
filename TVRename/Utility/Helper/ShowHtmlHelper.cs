@@ -56,6 +56,15 @@ namespace TVRename
             return sb.ToString();
         }
 
+        public static string GetMovieImagesOverview(this MovieConfiguration si)
+        {
+            Color col = Color.FromName("ButtonFace");
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(HTMLHeader(10, col));
+            sb.AppendMovieImages(si, col);
+            sb.AppendLine(HTMLFooter());
+            return sb.ToString();
+        }
         public static string GetShowHtmlOverview(this CachedSeriesInfo series, RecommendationRow recommendation)
         {
             Color col = Color.FromName("ButtonFace");
@@ -226,6 +235,39 @@ namespace TVRename
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                   <div class=""row"">
                     {fanartHtml}
+                  </div>
+
+                </div>");
+        }
+
+        private static void AppendMovieImages(this StringBuilder sb, MovieConfiguration? si, Color backgroundColour)
+        {
+            CachedMovieInfo ser = si?.CachedMovie;
+
+            if (ser is null)
+            {
+                return;
+            }
+
+            string posterHtml = GenerateImageCarousel("Posters", ser.Images(MediaImage.ImageType.poster, MediaImage.ImageSubject.movie).ToList(), "MyPosterCarousel", "w-50");
+            string bannerHtml = GenerateImageCarousel("Banners", ser.Images(MediaImage.ImageType.wideBanner, MediaImage.ImageSubject.show).ToList(), "MyBannerCarousel", "w-100");
+            string fanartHtml = GenerateImageCarousel("Backgrounds", ser.Images(MediaImage.ImageType.background).ToList(), "MyBackgroundCarousel", "w-100");
+
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                    {posterHtml}
+                  </div>
+
+                </div>");
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                    {fanartHtml}
+                  </div>
+
+                </div>");
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                    {bannerHtml}
                   </div>
 
                 </div>");

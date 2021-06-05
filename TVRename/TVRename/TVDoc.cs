@@ -2143,5 +2143,13 @@ namespace TVRename
             downloadFinders = new FindMissingEpisodesDownloading(this, settings);
             searchFinders = new FindMissingEpisodesSearch(this, settings);
         }
+
+        public void SaveCaches()
+        {
+            TidyCaches();
+            TheTVDB.LocalCache.Instance.SaveCache();
+            TVmaze.LocalCache.Instance.SaveCache();
+            TMDB.LocalCache.Instance.SaveCache();
+        }
     }
 }

@@ -92,7 +92,7 @@ namespace TVRename.Forms
             collectionMovies.Clear();
             foreach ((int collectionId, var collectionName) in collectionIds)
             {
-                Dictionary<int, CachedMovieInfo> shows = TMDB.LocalCache.Instance.GetMovieIdsFromCollection(collectionId, TVSettings.Instance.TMDBLanguage.ISODialectAbbreviation);
+                Dictionary<int, CachedMovieInfo> shows = TMDB.LocalCache.Instance.GetMovieIdsFromCollection(collectionId, TVSettings.Instance.TMDBLanguage.Abbreviation);
                 foreach (KeyValuePair<int, CachedMovieInfo> neededShow in shows)
                 {
                     CollectionMember c = new CollectionMember { CollectionName = collectionName, Movie = neededShow.Value };

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using System.Linq;
 using System.Xml;
@@ -161,6 +162,7 @@ namespace TVRename
             {
                 ActualLocale = o.ActualLocale;
             }
+            images.MergeImages(o.images);
 
             Dirty = o.Dirty;
             IsSearchResultOnly = o.IsSearchResultOnly;
@@ -231,12 +233,22 @@ namespace TVRename
                 LoadCrew(seriesXml);
                 LoadAliases(seriesXml);
                 LoadGenres(seriesXml);
+                LoadImages(seriesXml);
             }
             catch (SourceConsistencyException e)
             {
                 LOGGER.Error(e, GenerateErrorMessage());
                 // ReSharper disable once PossibleIntendedRethrow
                 throw e;
+            }
+        }
+
+        private void LoadImages([NotNull] XElement seriesXml)
+        {
+            images = new MovieImages();
+            foreach (MovieImage s in seriesXml.Descendants("Images").Descendants("MovieImage").Select(xml => new MovieImage(IdCode(Source), Source, xml)))
+            {
+                images.Add(s);
             }
         }
 
@@ -247,30 +259,30 @@ namespace TVRename
             writer.WriteElement("id", TvdbCode);
             writer.WriteElement("mazeid", TvMazeCode);
             writer.WriteElement("TMDBCode", TmdbCode);
-            writer.WriteElement("SeriesName", Name);
+            writer.WriteElement("SeriesName", Name, true);
             writer.WriteElement("lastupdated", SrvLastUpdated);
             writer.WriteElement("LanguageId", ActualLocale?.PreferredLanguage?.TvdbId);
             writer.WriteElement("RegionCode", ActualLocale?.PreferredRegion?.Abbreviation);
             writer.WriteElement("CollectionId", CollectionId);
-            writer.WriteElement("CollectionName", CollectionName);
-            writer.WriteElement("TwitterId", TwitterId);
-            writer.WriteElement("InstagramId", InstagramId);
-            writer.WriteElement("FacebookId", FacebookId);
-            writer.WriteElement("TagLine", TagLine);
+            writer.WriteElement("CollectionName", CollectionName, true);
+            writer.WriteElement("TwitterId", TwitterId, true);
+            writer.WriteElement("InstagramId", InstagramId, true);
+            writer.WriteElement("FacebookId", FacebookId, true);
+            writer.WriteElement("TagLine", TagLine, true);
             writer.WriteElement("posterURL", PosterUrl);
             writer.WriteElement("FanartUrl", FanartUrl);
-            writer.WriteElement("TrailerUrl", TrailerUrl);
-            writer.WriteElement("WebURL", WebUrl);
-            writer.WriteElement("OfficialUrl", OfficialUrl);
+            writer.WriteElement("TrailerUrl", TrailerUrl, true);
+            writer.WriteElement("WebURL", WebUrl, true);
+            writer.WriteElement("OfficialUrl", OfficialUrl, true);
             writer.WriteElement("ShowLanguage", ShowLanguage);
             writer.WriteElement("Type", Type);
-            writer.WriteElement("imdbId", Imdb);
-            writer.WriteElement("rageid", TvRageCode);
-            writer.WriteElement("network", Network);
-            writer.WriteElement("overview", Overview);
+            writer.WriteElement("imdbId", Imdb, true);
+            writer.WriteElement("rageid", TvRageCode, true);
+            writer.WriteElement("network", Network, true);
+            writer.WriteElement("overview", Overview, true);
             writer.WriteElement("rating", ContentRating);
-            writer.WriteElement("runtime", Runtime);
-            writer.WriteElement("seriesId", SeriesId);
+            writer.WriteElement("runtime", Runtime, true);
+            writer.WriteElement("seriesId", SeriesId, true);
             writer.WriteElement("status", Status);
             writer.WriteElement("siteRating", SiteRating, "0.##");
             writer.WriteElement("siteRatingCount", SiteRatingVotes);
@@ -308,6 +320,13 @@ namespace TVRename
             }
             writer.WriteEndElement(); //Genres
 
+            writer.WriteStartElement("Images");
+            foreach (MovieImage i in images)
+            {
+                i.WriteXml(writer);
+            }
+            writer.WriteEndElement(); //Images
+
             writer.WriteEndElement(); // cachedSeries
         }
 
@@ -315,6 +334,16 @@ namespace TVRename
         {
             images.RemoveAll(s => s.Id == image.Id);
             images.Add(image);
+        }
+
+        public IEnumerable<MovieImage> Images(MediaImage.ImageType type)
+        {
+            return images.Where(x => x.ImageStyle == type && (x.LanguageCode ?? TargetLocale.LanguageToUse(Source).Abbreviation) == TargetLocale.LanguageToUse(Source).Abbreviation);
+        }
+
+        public IEnumerable<MovieImage> Images(MediaImage.ImageType type, MediaImage.ImageSubject subject)
+        {
+            return images.Where(x => x.ImageStyle == type && x.Subject == subject && (x.LanguageCode ?? TargetLocale.LanguageToUse(Source).Abbreviation ) == TargetLocale.LanguageToUse(Source).Abbreviation);
         }
     }
 }

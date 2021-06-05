@@ -78,7 +78,7 @@ namespace TVRename
             TmdbCode = -1;
 
             Status = "Unknown";
-            this.Source = source;
+            Source = source;
         }
 
         protected abstract MediaConfiguration.MediaType MediaType();

@@ -127,7 +127,7 @@ namespace TVRename.Forms
 
         private void BwScan_DoWork(object sender, DoWorkEventArgs e)
         {
-            string languageCode = TVSettings.Instance.TMDBLanguage.ISODialectAbbreviation;
+            string languageCode = TVSettings.Instance.TMDBLanguage.Abbreviation;
             switch (media)
             {
                 case MediaConfiguration.MediaType.tv:

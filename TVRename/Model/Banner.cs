@@ -36,13 +36,13 @@ namespace TVRename
         protected MediaImage(XElement r)
         {
             Id = r.ExtractInt("Id") ?? -1;
-            LanguageCode = r.ExtractString("LanguageCode");
+            LanguageCode = r.ExtractStringOrNull("LanguageCode");
 
             ImageUrl = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("ImageUrl"));
             ImageStyle = r.ExtractEnum("ImageStyle", ImageType.poster);
             Subject = r.ExtractEnum("Subject", ImageSubject.show);
 
-            Resolution = r.ExtractString("Resolution");
+            Resolution = r.ExtractStringOrNull("Resolution");
             string sn = r.ExtractString("Rating");
             double.TryParse(sn, out Rating);
             RatingCount = r.ExtractInt("RatingCount", -1);
@@ -56,14 +56,14 @@ namespace TVRename
         protected void WriteCoreXml([NotNull] XmlWriter writer)
         {
             writer.WriteElement("id", Id);
-            writer.WriteElement("ImageUrl", ImageUrl);
+            writer.WriteElement("ImageUrl", ImageUrl, true);
             writer.WriteElement("ImageStyle", (int)ImageStyle);
             writer.WriteElement("Subject", (int)Subject);
-            writer.WriteElement("LanguageCode", LanguageCode);
-            writer.WriteElement("Resolution", Resolution);
+            writer.WriteElement("LanguageCode", LanguageCode, true);
+            writer.WriteElement("Resolution", Resolution, true);
             writer.WriteElement("Rating", Rating);
             writer.WriteElement("RatingCount", RatingCount);
-            writer.WriteElement("ThumbnailUrl", ThumbnailUrl);
+            writer.WriteElement("ThumbnailUrl", ThumbnailUrl, true);
         }
     }
 
@@ -83,7 +83,7 @@ namespace TVRename
             MovieSource = source;
         }
 
-        protected void WriteXml([NotNull] XmlWriter writer)
+        public void WriteXml([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("MovieImage");
             WriteCoreXml(writer);
@@ -182,6 +182,22 @@ namespace TVRename
 
     public class MovieImages : SafeList<MovieImage>
     {
+        public void MergeImages(MovieImages images)
+        {
+            if (!this.Any())
+            {
+                Clear();
+                AddRange(images);
+                return;
+            }
+            foreach (MovieImage i in images)
+            {
+                if (this.All(si => si.Id != i.Id))
+                {
+                    Add(i);
+                }
+            }
+        }
     }
 
     public class ShowImages : SafeList<ShowImage>

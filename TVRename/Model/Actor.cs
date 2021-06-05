@@ -59,10 +59,10 @@ namespace TVRename
         {
             writer.WriteStartElement("Actor");
             writer.WriteElement("Id", ActorId);
-            writer.WriteElement("Image", ActorImage);
-            writer.WriteElement("Name", ActorName);
-            writer.WriteElement("Role", ActorRole);
-            writer.WriteElement("SeriesId", ActorSeriesId);
+            writer.WriteElement("Image", ActorImage, true);
+            writer.WriteElement("Name", ActorName, true);
+            writer.WriteElement("Role", ActorRole, true);
+            writer.WriteElement("SeriesId", ActorSeriesId, true);
             writer.WriteElement("SortOrder", ActorSortOrder);
             writer.WriteEndElement();
         }

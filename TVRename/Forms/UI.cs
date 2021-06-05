@@ -1357,7 +1357,7 @@ namespace TVRename
             if (snum >= 0 && si.AppropriateSeasons().ContainsKey(snum))
             {
                 ProcessedSeason s = si.AppropriateSeasons()[snum];
-                SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
+                SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s))); //TODO - Add Season Images Carousel
                 SetHtmlBody(chrInformation, si.GetSeasonHtmlOverview(s, false));
                 SetHtmlBody(chrSummary, si.GetSeasonSummaryHtmlOverview(s, false));
                 UpdateTvTrailer(si);
@@ -2399,11 +2399,9 @@ namespace TVRename
             lastDlRemaining = n;
         }
 
-        private static void SaveCaches()
+        private void SaveCaches()
         {
-            TheTVDB.LocalCache.Instance.SaveCache();
-            TVmaze.LocalCache.Instance.SaveCache();
-            TMDB.LocalCache.Instance.SaveCache();
+            mDoc.SaveCaches();
         }
 
         private void backgroundDownloadToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3190,7 +3188,8 @@ namespace TVRename
                 SetHtmlBody(chrMovieTrailer, ShowHtmlHelper.CreateOldPage("Not available offline"));
                 return;
             }
-            SetHtmlBody(chrMovieImages, ShowHtmlHelper.CreateOldPage(si.GetMovieImagesHtmlOverview()));
+            //SetHtmlBody(chrMovieImages, ShowHtmlHelper.CreateOldPage(si.GetMovieImagesHtmlOverview()));
+            SetHtmlBody(chrMovieImages, si.GetMovieImagesOverview());
             SetHtmlBody(chrMovieInformation, si.GetMovieHtmlOverview(false));
             if (si.CachedMovie?.TrailerUrl?.HasValue() ?? false)
             {

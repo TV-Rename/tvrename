@@ -323,6 +323,7 @@ namespace TVRename
                 LoadAliases(seriesXml);
                 LoadGenres(seriesXml);
                 LoadSeasons(seriesXml);
+                LoadImages(seriesXml);
             }
             catch (SourceConsistencyException e)
             {
@@ -346,6 +347,15 @@ namespace TVRename
             foreach (Season s in seriesXml.Descendants("Seasons").Descendants("Season").Select(xml => new Season(xml)))
             {
                 seasons.Add(s);
+            }
+        }
+
+        private void LoadImages([NotNull] XElement seriesXml)
+        {
+            images = new ShowImages();
+            foreach (ShowImage s in seriesXml.Descendants("Images").Descendants("ShowImage").Select(xml => new ShowImage(IdCode(Source),Source, xml)))
+            {
+                images.Add(s);
             }
         }
 
@@ -454,29 +464,29 @@ namespace TVRename
             writer.WriteElement("RegionCode", ActualLocale?.PreferredRegion?.Abbreviation);
             writer.WriteElement("airsDayOfWeek", AirsDay);
             writer.WriteElement("Airs_Time", AirsTime?.ToString("HH:mm"), true);
-            writer.WriteElement("banner", BannerString);
-            writer.WriteElement("TwitterId", TwitterId);
-            writer.WriteElement("InstagramId", InstagramId);
-            writer.WriteElement("FacebookId", FacebookId);
-            writer.WriteElement("TagLine", TagLine);
+            writer.WriteElement("banner", BannerString, true);
+            writer.WriteElement("TwitterId", TwitterId, true);
+            writer.WriteElement("InstagramId", InstagramId, true);
+            writer.WriteElement("FacebookId", FacebookId, true);
+            writer.WriteElement("TagLine", TagLine, true);
             writer.WriteElement("posterURL", PosterUrl);
-            writer.WriteElement("TrailerUrl", TrailerUrl);
-            writer.WriteElement("WebURL", WebUrl);
-            writer.WriteElement("OfficialUrl", OfficialUrl);
+            writer.WriteElement("TrailerUrl", TrailerUrl, true);
+            writer.WriteElement("WebURL", WebUrl,true);
+            writer.WriteElement("OfficialUrl", OfficialUrl, true);
             writer.WriteElement("ShowLanguage", ShowLanguage);
-            writer.WriteElement("Type", Type);
-            writer.WriteElement("imdbId", Imdb);
-            writer.WriteElement("rageid", TvRageCode);
-            writer.WriteElement("network", Network);
-            writer.WriteElement("overview", Overview);
+            writer.WriteElement("Type", Type, true);
+            writer.WriteElement("imdbId", Imdb, true);
+            writer.WriteElement("rageid", TvRageCode, true);
+            writer.WriteElement("network", Network, true);
+            writer.WriteElement("overview", Overview, true);
             writer.WriteElement("rating", ContentRating);
-            writer.WriteElement("runtime", Runtime);
-            writer.WriteElement("seriesId", SeriesId);
-            writer.WriteElement("status", Status);
+            writer.WriteElement("runtime", Runtime, true);
+            writer.WriteElement("seriesId", SeriesId, true);
+            writer.WriteElement("status", Status, true);
             writer.WriteElement("siteRating", SiteRating, "0.##");
             writer.WriteElement("siteRatingCount", SiteRatingVotes);
             writer.WriteElement("Popularity", Popularity, "0.##");
-            writer.WriteElement("slug", Slug);
+            writer.WriteElement("slug", Slug, true);
 
             if (FirstAired != null)
             {
@@ -603,12 +613,12 @@ namespace TVRename
 
         public IEnumerable<ShowImage> Images(MediaImage.ImageType type)
         {
-            return images.Where(x => x.ImageStyle == type);
+            return images.Where(x => x.ImageStyle == type && (x.LanguageCode ?? TargetLocale.LanguageToUse(Source).Abbreviation) == TargetLocale.LanguageToUse(Source).Abbreviation);
         }
 
         public IEnumerable<ShowImage> Images(MediaImage.ImageType type, MediaImage.ImageSubject subject)
         {
-            return images.Where(x => x.ImageStyle == type && x.Subject == subject);
+            return images.Where(x => x.ImageStyle == type && x.Subject == subject && (x.LanguageCode ?? TargetLocale.LanguageToUse(Source).Abbreviation) == TargetLocale.LanguageToUse(Source).Abbreviation);
         }
     }
 }
