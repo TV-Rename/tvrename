@@ -37,22 +37,28 @@ namespace TVRename
                 UpdateRatings(root, showRating.Value.ToString(CultureInfo.InvariantCulture), cachedSeries.SiteRatingVotes);
             }
 
-            string lang = TVSettings.Instance.PreferredTVDBLanguage.Abbreviation;
-
-            if (SelectedShow.UseCustomLanguage && SelectedShow.PreferredLanguage != null)
+            if (SelectedShow?.Provider == TVDoc.ProviderType.TheTVDB)
             {
-                lang = SelectedShow.PreferredLanguage.Abbreviation;
+                //https://forum.kodi.tv/showthread.php?tid=323588
+                //says that we need a format like this:
+                //<episodeguide><url post="yes" cache="auth.json">https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json</url></episodeguide>
+
+                XElement episodeGuideNode = root.GetOrCreateElement("episodeguide");
+                XElement urlNode = episodeGuideNode.GetOrCreateElement("url");
+                urlNode.UpdateAttribute("post", "yes");
+                urlNode.UpdateAttribute("cache", "auth.json");
+                urlNode.SetValue(TheTVDB.API.BuildUrl(SelectedShow.TvdbCode, SelectedShow.LanguageToUse().Abbreviation)); 
             }
-
-            //https://forum.kodi.tv/showthread.php?tid=323588
-            //says that we need a format like this:
-            //<episodeguide><url post="yes" cache="auth.json">https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json</url></episodeguide>
-
-            XElement episodeGuideNode = root.GetOrCreateElement("episodeguide");
-            XElement urlNode = episodeGuideNode.GetOrCreateElement("url");
-            urlNode.UpdateAttribute("post", "yes");
-            urlNode.UpdateAttribute("cache", "auth.json");
-            urlNode.SetValue(TheTVDB.API.BuildUrl(SelectedShow.TvdbCode, lang)); //todo make work for all providers
+            else if (SelectedShow?.Provider == TVDoc.ProviderType.TMDB)
+            {
+                string tmdbUrl = TMDB.LocalCache.EpisodeGuideURL(SelectedShow);
+                XElement episodeGuideNode = root.GetOrCreateElement("episodeguide");
+                episodeGuideNode.UpdateElement("url",tmdbUrl);
+            }
+            else 
+            {
+                //todo make work for all providers
+            }
 
             if (!(cachedSeries is null))
             {

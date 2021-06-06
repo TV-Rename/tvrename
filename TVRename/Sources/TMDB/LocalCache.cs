@@ -29,10 +29,15 @@ namespace TVRename.TMDB
     // ReSharper disable once InconsistentNaming
     public class LocalCache : MediaCache, iMovieSource, iTVSource
     {
-        private static readonly TMDbClient Client = new TMDbClient("2dcfd2d08f80439d7ef5210f217b80b4");
+        private static readonly TMDbClient Client = new TMDbClient(KEY);
+        private static readonly string KEY = "2dcfd2d08f80439d7ef5210f217b80b4";
+        public static string EpisodeGuideURL(ShowConfiguration selectedShow)
+        {
+            return $"http://api.themoviedb.org/3/tv/{selectedShow.TmdbId}?api_key={KEY}&language={selectedShow.LanguageToUse().Abbreviation}";
+        }
 
         private UpdateTimeTracker latestMovieUpdateTime;
-        private UpdateTimeTracker latestTvUpdateTime; //TODO Use htis
+        private UpdateTimeTracker latestTvUpdateTime; //TODO understand the latest TV Update times
 
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
@@ -1367,16 +1372,22 @@ namespace TVRename.TMDB
                     Task<SearchContainer<SearchMovie>>? similar = Client.GetMovieSimilarAsync(arg.TmdbCode, languageCode);
 
                     Task.WaitAll(related, similar);
-                    foreach (SearchMovie? movie in related.Result.Results)
+                    if (related.Result != null)
                     {
-                        File(movie);
-                        returnValue.AddRelated(movie.Id, arg);
+                        foreach (SearchMovie? movie in related.Result.Results)
+                        {
+                            File(movie);
+                            returnValue.AddRelated(movie.Id, arg);
+                        }
                     }
 
-                    foreach (SearchMovie? movie in similar.Result.Results)
+                    if (similar.Result != null)
                     {
-                        File(movie);
-                        returnValue.AddSimilar(movie.Id, arg);
+                        foreach (SearchMovie? movie in similar.Result.Results)
+                        {
+                            File(movie);
+                            returnValue.AddSimilar(movie.Id, arg);
+                        }
                     }
 
                     sender.ReportProgress(100 * current++ / total, arg.CachedMovie?.Name);
