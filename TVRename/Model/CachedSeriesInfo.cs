@@ -547,7 +547,7 @@ namespace TVRename
 
         public string? GetSeriesFanartPath() => images.GetShowImage(TargetLocale.LanguageToUse(Source), MediaImage.ImageType.background)?.ImageUrl;
 
-        public string? GetSeriesPosterPath() => images.GetShowImage(TargetLocale.LanguageToUse(Source), MediaImage.ImageType.poster)?.ImageUrl;
+        public string? GetSeriesPosterPath() => PosterUrl.HasValue() ? PosterUrl :  images.GetShowImage(TargetLocale.LanguageToUse(Source), MediaImage.ImageType.poster)?.ImageUrl;
 
         public string? GetImage(TVSettings.FolderJpgIsType itemForFolderJpg) => images.GetImage(itemForFolderJpg, TargetLocale.LanguageToUse(Source))?.ImageUrl;
 

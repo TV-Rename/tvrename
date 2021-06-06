@@ -2832,11 +2832,12 @@ namespace TVRename
             DialogResult dr = aem.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
-                mDoc.Add(mov);
-
-                MovieAddedOrEdited(false, false, mov);
+                mDoc.Add(mov.AsList());
+                FillMyMovies();
                 SelectMovie(mov);
-                MovieAddedOrEdited(true, false, mov);
+
+                mDoc.MoviesAddedOrEdited(true, false, WindowState == FormWindowState.Minimized, this, mov);
+                FillMyMovies();
 
                 Logger.Info($"Added new movie called {mov.ShowName}");
             }
@@ -2861,7 +2862,7 @@ namespace TVRename
             DialogResult dr = aes.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
-                mDoc.Add(si);
+                mDoc.Add(si.AsList());
 
                 ShowAddedOrEdited(false, false, si);
                 SelectShow(si);
@@ -2882,13 +2883,6 @@ namespace TVRename
 
             FillMyShows();
             FillWhenToWatchList();
-        }
-
-        private void MovieAddedOrEdited(bool download, bool unattended, MovieConfiguration si)
-        {
-            mDoc.MoviesAddedOrEdited(download, unattended, WindowState == FormWindowState.Minimized, this, si);
-
-            FillMyMovies();
         }
 
         private void bnMyShowsDelete_Click(object sender, EventArgs e)
@@ -3000,7 +2994,9 @@ namespace TVRename
 
             Logger.Info($"User asked to remove {si.ShowName} - removing now");
             mDoc.FilmLibrary.Remove(si);
-            MovieAddedOrEdited(false, false, si);
+            mDoc.RunExporters();
+
+            FillMyMovies();
         }
 
         private void bnMyShowsEdit_Click(object sender, EventArgs e)
@@ -3077,7 +3073,9 @@ namespace TVRename
 
             if (dr == DialogResult.OK)
             {
-                MovieAddedOrEdited(aes.HasChanged, false, si);
+                mDoc.MoviesAddedOrEdited(aes.HasChanged, false, WindowState == FormWindowState.Minimized, this, si);
+
+                FillMyMovies();
                 SelectMovie(si);
 
                 Logger.Info("Modified movie called {0}", si.ShowName);
@@ -3741,7 +3739,7 @@ namespace TVRename
         private void folderMonitorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             BulkAddSeriesManager bam = new BulkAddSeriesManager(mDoc);
-            FolderMonitor fm = new FolderMonitor(mDoc, bam);
+            BulkAddShow fm = new BulkAddShow(mDoc, bam,this);
             fm.ShowDialog(this);
             FillMyShows();
         }
@@ -3753,7 +3751,7 @@ namespace TVRename
             ItemList lvr = GetSelectedItems();
 
             Item? action = olvAction.FocusedObject as Item;
-
+            
             if (action?.Episode != null && lvr.Count == 1)
             {
                 switchToWhenOpenMyShows = action.Episode;
@@ -4908,7 +4906,7 @@ namespace TVRename
         private void bulkAddMoviesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             BulkAddMovieManager bam = new BulkAddMovieManager(mDoc);
-            BulkAddMovie fm = new BulkAddMovie(mDoc, bam);
+            BulkAddMovie fm = new BulkAddMovie(mDoc, bam,this);
             fm.ShowDialog(this);
             FillMyMovies();
         }
@@ -4995,6 +4993,8 @@ namespace TVRename
             //RecommendationView form = new RecommendationView(mDoc, this, mDoc.TvLibrary.Shows.Take(20));
             RecommendationView form = new RecommendationView(mDoc, this, MediaConfiguration.MediaType.tv);
             form.ShowDialog(this);
+            FillMyShows();
+            FillWhenToWatchList();
         }
 
         private void duplicateMoviesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5008,6 +5008,7 @@ namespace TVRename
             //RecommendationView form = new RecommendationView(mDoc, this, mDoc.FilmLibrary.Movies.Take(20));
             RecommendationView form = new RecommendationView(mDoc, this, MediaConfiguration.MediaType.movie);
             form.ShowDialog(this);
+            FillMyMovies();
         }
 
         internal void ForceRefresh(ShowConfiguration show, bool unattended)

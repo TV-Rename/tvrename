@@ -29,9 +29,9 @@ namespace TVRename.TMDB
     // ReSharper disable once InconsistentNaming
     public class LocalCache : MediaCache, iMovieSource, iTVSource
     {
+        private const string KEY = "2dcfd2d08f80439d7ef5210f217b80b4";
         private static readonly TMDbClient Client = new TMDbClient(KEY);
-        private static readonly string KEY = "2dcfd2d08f80439d7ef5210f217b80b4";
-        public static string EpisodeGuideURL(ShowConfiguration selectedShow)
+        public static string EpisodeGuideUrl(ShowConfiguration selectedShow)
         {
             return $"http://api.themoviedb.org/3/tv/{selectedShow.TmdbId}?api_key={KEY}&language={selectedShow.LanguageToUse().Abbreviation}";
         }
@@ -322,8 +322,8 @@ namespace TVRename.TMDB
                     }
                     else
                     {
-                        CachedSeriesInfo? Show = GetSeries(downloadShow.TmdbId);
-                        Show?.UpgradeSearchResultToDirty();
+                        CachedSeriesInfo? show = GetSeries(downloadShow.TmdbId);
+                        show?.UpgradeSearchResultToDirty();
                     }
                 }
                 else

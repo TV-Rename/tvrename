@@ -129,7 +129,7 @@ namespace TVRename.Forms.Tools
 
                     if (bestShow != null)
                     {
-                        mDoc.Add(bestShow);
+                        mDoc.Add(bestShow.AsList());
                         mDoc.TvAddedOrEdited(true, false, false, parent, bestShow);
 
                         Logger.Info($"Added new show called: {bestShow.ShowName}");

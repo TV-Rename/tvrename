@@ -341,7 +341,7 @@ namespace TVRename
         private static void AppendShow(this StringBuilder sb, ShowConfiguration? si, CachedSeriesInfo ser, Color backgroundColour, bool includeDirectoryLinks)
         {
             string horizontalBanner = CreateHorizontalBannerHtml(si);
-            string poster = CreatePosterHtml(si);
+            string poster = CreatePosterHtml(ser);
             string yearRange = YearRange(ser);
             string episodeSummary = ser.Episodes.Count.ToString();
             string stars = StarRating(ser.SiteRating / 2);
@@ -821,6 +821,21 @@ namespace TVRename
         public static string CreatePosterHtml([NotNull] CachedMovieInfo ser)
         {
             string url = ser.PosterUrl;
+            if (url.HasValue() && !url!.IsWebLink() && TheTVDB.API.GetImageURL(url).HasValue())
+            {
+                url = TheTVDB.API.GetImageURL(url);
+            }
+            if (url.HasValue() && url!.IsWebLink())
+            {
+                return $"<img class=\"show-poster rounded w-100\" src=\"{url}\" alt=\"{ser.Name} Movie Poster\">";
+            }
+
+            return string.Empty;
+        }
+
+        public static string CreatePosterHtml([NotNull] CachedSeriesInfo ser) //todo merge with above
+        {
+            string url = ser.GetSeriesPosterPath();
             if (url.HasValue() && !url!.IsWebLink() && TheTVDB.API.GetImageURL(url).HasValue())
             {
                 url = TheTVDB.API.GetImageURL(url);

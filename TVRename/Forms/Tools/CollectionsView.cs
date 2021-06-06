@@ -13,11 +13,13 @@ namespace TVRename.Forms
         private readonly List<CollectionMember> collectionMovies;
         private readonly TVDoc mDoc;
         private readonly UI mainUi;
+        private readonly List<MovieConfiguration> allAdded;
 
         public CollectionsView([NotNull] TVDoc doc, UI main)
         {
             InitializeComponent();
             collectionMovies = new List<CollectionMember>();
+            allAdded = new List<MovieConfiguration>();
             mDoc = doc;
             mainUi = main;
             Scan();
@@ -194,9 +196,8 @@ namespace TVRename.Forms
                 found.UseAutomaticFolders = true;
             }
 
-            mDoc.Add(found);
-            mDoc.SetDirty();
-            mDoc.ExportMovieInfo();
+            mDoc.Add(found.AsList());
+            allAdded.Add(found);
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -207,6 +208,11 @@ namespace TVRename.Forms
         private void chkRemoveFuture_CheckedChanged(object sender, EventArgs e)
         {
             UpdateUI();
+        }
+
+        private void CollectionsView_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            mDoc.MoviesAddedOrEdited(true, false,false , mainUi, allAdded);
         }
     }
 }

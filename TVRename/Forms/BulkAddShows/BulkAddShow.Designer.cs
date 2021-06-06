@@ -9,7 +9,7 @@
 
 namespace TVRename
 {
-    partial class FolderMonitor
+    partial class BulkAddShow
     {
         /// <summary>
         /// Required designer variable.
@@ -38,7 +38,7 @@ namespace TVRename
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FolderMonitor));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BulkAddShow));
             this.bnCheck1 = new System.Windows.Forms.Button();
             this.bnOpenMonFolder = new System.Windows.Forms.Button();
             this.bnRemoveMonFolder = new System.Windows.Forms.Button();
@@ -492,7 +492,7 @@ namespace TVRename
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(750, 300);
-            this.Name = "FolderMonitor";
+            this.Name = "BulkAddShow";
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Bulk Add Shows";

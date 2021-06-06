@@ -48,26 +48,19 @@ namespace TVRename
             List<ShowConfiguration> addedTvShows = addedShows.OfType<ShowConfiguration>().ToList();
             if (addedTvShows.Any())
             {
-                MDoc.TvLibrary.AddNullableRange(addedTvShows);
+                MDoc.Add(addedTvShows);
                 MDoc.TvAddedOrEdited(true, false, false, Settings.Owner, addedTvShows);
                 //add each new show into the shows being scanned
-                foreach (ShowConfiguration si in addedTvShows)
-                {
-                    Settings.Shows.Add(si);
-                }
+                Settings.Shows.AddRange(addedTvShows);
                 LOGGER.Info("Added new shows called: {0}", addedTvShows.Select(s => s.ShowName).ToCsv());
             }
 
             List<MovieConfiguration> addedMovies = addedShows.OfType<MovieConfiguration>().ToList();
             if (addedMovies.Any())
             {
-                MDoc.FilmLibrary.AddNullableRange(addedMovies);
+                MDoc.Add(addedMovies);
                 MDoc.MoviesAddedOrEdited(true, false, false, Settings.Owner, addedMovies);
-
-                foreach (MovieConfiguration si in addedMovies)
-                {
-                    Settings.Movies.Add(si);
-                }
+                Settings.Movies.AddRange(addedMovies);
                 LOGGER.Info("Added new movies called: {0}", addedMovies.Select(s => s.ShowName).ToCsv());
             }
         }

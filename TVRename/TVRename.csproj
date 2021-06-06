@@ -761,8 +761,8 @@
     <Compile Include="Forms\ShowPreferences\EditSeason.Designer.cs">
       <DependentUpon>EditSeason.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\BulkAddShows\FolderMonitor.Designer.cs">
-      <DependentUpon>FolderMonitor.cs</DependentUpon>
+    <Compile Include="Forms\BulkAddShows\BulkAddShow.Designer.cs">
+      <DependentUpon>BulkAddShow.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\BulkAddShows\BulkAddEditShow.cs">
       <SubType>Form</SubType>
@@ -843,7 +843,7 @@
     <Compile Include="Forms\ShowPreferences\EditSeason.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\BulkAddShows\FolderMonitor.cs">
+    <Compile Include="Forms\BulkAddShows\BulkAddShow.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\BulkAddShows\FolderMonitorProgress.cs">
@@ -1038,8 +1038,8 @@
       <DependentUpon>Filters.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\BulkAddShows\FolderMonitor.resx">
-      <DependentUpon>FolderMonitor.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\BulkAddShows\BulkAddShow.resx">
+      <DependentUpon>BulkAddShow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\BulkAddShows\BulkAddEditShow.resx">

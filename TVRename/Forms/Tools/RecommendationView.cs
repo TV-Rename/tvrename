@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using TVRename.Forms.ShowPreferences;
 
 namespace TVRename.Forms
 {
@@ -16,6 +17,8 @@ namespace TVRename.Forms
         private readonly IEnumerable<ShowConfiguration> tvShows;
         private readonly IEnumerable<MovieConfiguration> movies;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private readonly List<ShowConfiguration> addedShows;
+        private readonly List<MovieConfiguration> addedMovies;
 
         private RecommendationView([NotNull] TVDoc doc, UI main)
         {
@@ -23,12 +26,16 @@ namespace TVRename.Forms
             recs = new Recomendations();
             tvShows = new List<ShowConfiguration>();
             movies = new List<MovieConfiguration>();
+            addedShows = new List<ShowConfiguration>();
+            addedMovies = new List<MovieConfiguration>();
+
             mDoc = doc;
             mainUi = main;
 
             olvScore.MakeGroupies(new[] { 5, 10, 20 }, new[] { "0-5", "5-10", "10-20", "20+" });
 
-            //olvRating.MakeGroupies(new[] { 2, 4, 6, 8 }, new[] { "*", "**", "***", "****","*****" });
+            olvRating.GroupKeyGetter = rowObject => (int) Math.Floor(((RecommendationRow) rowObject).StarScore);
+            olvRating.GroupKeyToTitleConverter = key => $"{(int)key}/10 Rating";
         }
 
         public RecommendationView([NotNull] TVDoc doc, UI main, MediaConfiguration.MediaType type) : this(doc, main)
@@ -94,18 +101,54 @@ namespace TVRename.Forms
             UpdateUI();
         }
 
-        private void AddToLibrary(int mlastSelectedKey, TVDoc tvDoc)
+        private void AddToLibrary(int id, string? name)
         {
+            QuickLocateForm f = new QuickLocateForm(name, media);
+
+            if (f.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
             switch (media)
             {
                 case MediaConfiguration.MediaType.tv:
-                    ShowConfiguration show = new ShowConfiguration(mlastSelectedKey, TVDoc.ProviderType.TMDB);
-                    tvDoc.Add(show);
+                    ShowConfiguration newShow = new ShowConfiguration(id, TVDoc.ProviderType.TMDB);
+
+                    if (newShow.ConfigurationProvider == TVSettings.Instance.DefaultProvider)
+                    {
+                        newShow.ConfigurationProvider = TVDoc.ProviderType.libraryDefault;
+                    }
+                    newShow.AutoAddFolderBase = f.DirectoryFullPath!;
+
+                    mDoc.Add(newShow.AsList());
+                    addedShows.Add(newShow);
                     break;
 
                 case MediaConfiguration.MediaType.movie:
-                    MovieConfiguration newMovie = new MovieConfiguration(mlastSelectedKey, TVDoc.ProviderType.TMDB);
-                    tvDoc.Add(newMovie);
+
+                    // need to add a new showitem
+                    MovieConfiguration found = new MovieConfiguration(id, TVDoc.ProviderType.TMDB);
+
+                    if (found.ConfigurationProvider == TVSettings.Instance.DefaultMovieProvider)
+                    {
+                        found.ConfigurationProvider = TVDoc.ProviderType.libraryDefault;
+                    }
+
+                    if (f.FolderNameChanged)
+                    {
+                        found.UseAutomaticFolders = false;
+                        found.UseManualLocations = true;
+                        found.ManualLocations.Add(f.DirectoryFullPath);
+                    }
+                    else if (f.RootDirectory.HasValue())
+                    {
+                        found.AutomaticFolderRoot = f.RootDirectory!;
+                        found.UseAutomaticFolders = true;
+                    }
+
+                    mDoc.Add(found.AsList());
+                    addedMovies.Add(found);
                     break;
 
                 default:
@@ -154,7 +197,7 @@ namespace TVRename.Forms
         private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage;
-            lblStatus.Text = e.UserState.ToString();
+            lblStatus.Text = e.UserState?.ToString();
         }
 
         private void BwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -194,7 +237,7 @@ namespace TVRename.Forms
 
             possibleMergedEpisodeRightClickMenu.Items.Clear();
 
-            AddRcMenuItem("Add to Library", (o, args) => AddToLibrary(mlastSelected.Key, mDoc));
+            AddRcMenuItem("Add to Library", (o, args) => AddToLibrary(mlastSelected.Key,mlastSelected.Name));
         }
 
         private void lvRecommendations_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
@@ -212,6 +255,11 @@ namespace TVRename.Forms
             {
                 UI.SetHtmlBody(chrRecommendationPreview, rr.Series.GetShowHtmlOverview(rr));
             }
+        }
+        private void this_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            mDoc.MoviesAddedOrEdited(true, false, false, mainUi, addedMovies);
+            mDoc.TvAddedOrEdited(true, false, false, mainUi, addedShows);
         }
     }
 }

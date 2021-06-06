@@ -26,7 +26,7 @@ namespace TVRename
     ///          the designers will not be able to interact properly with localized
     ///          resources associated with this form.
     /// </summary>
-    public partial class FolderMonitor : Form
+    public partial class BulkAddShow : Form
     {
         private FolderMonitorProgress? progressDialog;
         public int FmpPercent;
@@ -34,11 +34,13 @@ namespace TVRename
         public CancellationTokenSource TokenSource;
         private readonly TVDoc mDoc;
         private readonly BulkAddSeriesManager engine;
+        private readonly UI mainUi;
 
-        public FolderMonitor(TVDoc doc, BulkAddSeriesManager bam)
+        public BulkAddShow(TVDoc doc, BulkAddSeriesManager bam,UI mainUi)
         {
             mDoc = doc;
             engine = bam;
+            this.mainUi = mainUi;
 
             InitializeComponent();
 
@@ -514,7 +516,7 @@ namespace TVRename
                     return;
                 }
 
-                engine.AddAllToMyShows();
+                engine.AddAllToMyShows(mainUi);
             }
 
             Close();

@@ -34,15 +34,17 @@ namespace TVRename
         private readonly TVDoc mDoc;
 
         private readonly BulkAddMovieManager engine;
+        private readonly UI mainUi;
 
         //Thread safe counters to work out the progress
         //For auto id
         private static volatile int VolatileCounter;
 
-        public BulkAddMovie(TVDoc doc, BulkAddMovieManager bam)
+        public BulkAddMovie(TVDoc doc, BulkAddMovieManager bam, UI mainUi)
         {
             mDoc = doc;
             engine = bam;
+            this.mainUi = mainUi;
             InitializeComponent();
             FillFolderStringLists();
             tbResults.Parent = null;
@@ -472,7 +474,7 @@ namespace TVRename
                     return;
                 }
 
-                engine.AddAllToMyMovies();
+                engine.AddAllToMyMovies(mainUi);
             }
 
             Close();

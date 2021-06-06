@@ -422,46 +422,48 @@ namespace TVRename
             } // for each directory
         }
 
-        public void AddAllToMyShows()
+        public void AddAllToMyShows(UI ui)
         {
-            foreach (PossibleNewTvShow ai in AddItems.Where(ai => !ai.CodeUnknown))
-            {
-                AddToLibrary(ai);
-            }
+            List<ShowConfiguration> shows = AddToLibrary(AddItems.Where(ai => ai.CodeKnown));
 
-            mDoc.TvLibrary.GenDict();
-            mDoc.SetDirty();
+            mDoc.TvAddedOrEdited(true, false, false, ui, shows);
             AddItems.Clear();
-            mDoc.ExportShowInfo();
         }
 
-        private void AddToLibrary([NotNull] PossibleNewTvShow ai)
+        private List<ShowConfiguration> AddToLibrary([NotNull] IEnumerable<PossibleNewTvShow> ais)
         {
-            // see if there is a matching show item
-            ShowConfiguration found = mDoc.TvLibrary.GetShowItem(ai.ProviderCode, ai.Provider);
-            if (found is null)
+            List<ShowConfiguration> touchedShows = new List<ShowConfiguration>();
+            foreach (PossibleNewTvShow ai in ais)
             {
-                // need to add a new showitem
-                found = new ShowConfiguration(ai.ProviderCode, ai.Provider);
-                mDoc.Add(found);
+                // see if there is a matching show item
+                ShowConfiguration found = mDoc.TvLibrary.GetShowItem(ai.ProviderCode, ai.Provider);
+                if (found is null)
+                {
+                    // need to add a new showitem
+                    found = new ShowConfiguration(ai.ProviderCode, ai.Provider);
+                    mDoc.Add(found.AsList());
+                }
+
+                found.AutoAddFolderBase = ai.Folder.FullName;
+
+                if (ai.HasSeasonFoldersGuess)
+                {
+                    found.AutoAddType = ai.SeasonFolderFormat == TVSettings.Instance.SeasonFolderFormat
+                        ? ShowConfiguration.AutomaticFolderType.libraryDefault
+                        : ShowConfiguration.AutomaticFolderType.custom;
+
+                    found.AutoAddCustomFolderFormat = ai.SeasonFolderFormat;
+                }
+                else
+                {
+                    found.AutoAddType = ShowConfiguration.AutomaticFolderType.baseOnly;
+                }
+
+                touchedShows.Add(found);
+                mDoc.Stats().AutoAddedShows++;
             }
 
-            found.AutoAddFolderBase = ai.Folder.FullName;
-
-            if (ai.HasSeasonFoldersGuess)
-            {
-                found.AutoAddType = ai.SeasonFolderFormat == TVSettings.Instance.SeasonFolderFormat
-                    ? ShowConfiguration.AutomaticFolderType.libraryDefault
-                    : ShowConfiguration.AutomaticFolderType.custom;
-
-                found.AutoAddCustomFolderFormat = ai.SeasonFolderFormat;
-            }
-            else
-            {
-                found.AutoAddType = ShowConfiguration.AutomaticFolderType.baseOnly;
-            }
-
-            mDoc.Stats().AutoAddedShows++;
+            return touchedShows;
         }
 
         public void CheckFolders(CancellationToken token, [NotNull] SetProgressDelegate prog, bool detailedLogging, bool showErrorMsgBox)

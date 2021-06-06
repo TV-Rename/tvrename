@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 
-namespace TVRename.Utility.Helper
+namespace TVRename
 {
     internal static class LinqHelper
     {

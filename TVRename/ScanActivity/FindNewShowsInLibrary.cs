@@ -34,7 +34,7 @@ namespace TVRename
 
             var idsToAdd = bam.AddItems.Where(s => s.CodeKnown).Select(folder => new { Code = folder.ProviderCode, folder.Provider }).ToList();
 
-            bam.AddAllToMyShows();
+            bam.AddAllToMyShows(Settings.Owner);
             List<ShowConfiguration> addedShows = idsToAdd.Select(s => MDoc.TvLibrary.GetShowItem(s.Code, s.Provider)).ToList();
 
             //add each new show into the shows being scanned

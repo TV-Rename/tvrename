@@ -51,7 +51,7 @@ namespace TVRename
             }
             else if (SelectedShow?.Provider == TVDoc.ProviderType.TMDB)
             {
-                string tmdbUrl = TMDB.LocalCache.EpisodeGuideURL(SelectedShow);
+                string tmdbUrl = TMDB.LocalCache.EpisodeGuideUrl(SelectedShow);
                 XElement episodeGuideNode = root.GetOrCreateElement("episodeguide");
                 episodeGuideNode.UpdateElement("url",tmdbUrl);
             }

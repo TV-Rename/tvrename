@@ -167,7 +167,10 @@ namespace TVRename.Forms
             // olvId
             // 
             this.olvId.AspectName = "Key";
+            this.olvId.Groupable = false;
+            this.olvId.IsEditable = false;
             this.olvId.Text = "Id";
+            this.olvId.UseFiltering = false;
             // 
             // olvName
             // 
@@ -277,6 +280,7 @@ namespace TVRename.Forms
             this.Name = "RecommendationView";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Recommendations";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.this_FormClosing);
             this.possibleMergedEpisodeRightClickMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.lvRecommendations)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);

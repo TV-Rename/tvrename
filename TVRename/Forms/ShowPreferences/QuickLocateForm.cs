@@ -19,7 +19,7 @@ namespace TVRename.Forms.ShowPreferences
         public string? RootDirectory;
         private readonly string initialFolder;
 
-        public QuickLocateForm(string hint, MediaConfiguration.MediaType t)
+        public QuickLocateForm(string? hint, MediaConfiguration.MediaType t)
         {
             InitializeComponent();
 
@@ -30,7 +30,10 @@ namespace TVRename.Forms.ShowPreferences
             {
                 cbDirectory.Items.Add(folder.TrimEnd(Path.DirectorySeparatorChar.ToString()));
             }
-            cbDirectory.SelectedIndex = 0;
+            if (folders.Count>0)
+            {
+                cbDirectory.SelectedIndex = 0;
+            }
             cbDirectory.ResumeLayout();
 
             initialFolder = Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(hint));

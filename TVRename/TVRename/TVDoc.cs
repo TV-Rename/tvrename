@@ -22,7 +22,6 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using TVRename.Settings.AppState;
-using TVRename.Utility.Helper;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
@@ -667,20 +666,20 @@ namespace TVRename
             }
         }
 
-        internal void Add(ShowConfiguration newShow)
+        internal void Add(List<ShowConfiguration>? newShow)
         {
-            TvLibrary.Add(newShow);
-            forceShowsRefresh.Add(newShow);
-            forceShowsScan.Add(newShow);
+            TvLibrary.AddNullableRange(newShow);
+            forceShowsRefresh.AddNullableRange(newShow);
+            forceShowsScan.AddNullableRange(newShow);
             SetDirty();
             ExportShowInfo();
         }
 
-        public void Add(MovieConfiguration newMovie)
+        public void Add(List<MovieConfiguration>? newMovie)
         {
-            forceMoviesRefresh.Add(newMovie);
-            forceMoviesScan.Add(newMovie);
-            FilmLibrary.Add(newMovie);
+            forceMoviesRefresh.AddNullableRange(newMovie);
+            forceMoviesScan.AddNullableRange(newMovie);
+            FilmLibrary.AddNullableRange(newMovie);
             SetDirty();
             ExportMovieInfo();
         }
@@ -689,17 +688,16 @@ namespace TVRename
             ShowConfiguration show) =>
             TvAddedOrEdited(download, unattended, hidden, owner, show.AsList());
 
-        internal void TvAddedOrEdited(bool download, bool unattended, bool hidden, UI owner, IEnumerable<ShowConfiguration> shows)
+        internal void TvAddedOrEdited(bool download, bool unattended, bool hidden, UI owner, List<ShowConfiguration> shows)
         {
             SetDirty();
-            List<ShowConfiguration> showConfigurations = shows.ToList();
 
-            forceShowsRefresh.AddRange(showConfigurations);
-            forceShowsScan.AddRange(showConfigurations);
+            forceShowsRefresh.AddRange(shows);
+            forceShowsScan.AddRange(shows);
 
             if (download)
             {
-                if (!DoDownloadsFg(unattended, hidden, owner, showConfigurations))
+                if (!DoDownloadsFg(unattended, hidden, owner, shows))
                 {
                     return;
                 }
@@ -733,16 +731,15 @@ namespace TVRename
             MovieConfiguration movie) =>
             MoviesAddedOrEdited(download, unattended, hidden, owner, movie.AsList());
 
-        internal void MoviesAddedOrEdited(bool download, bool unattended, bool hidden, UI owner, IEnumerable<MovieConfiguration> movies)
+        internal void MoviesAddedOrEdited(bool download, bool unattended, bool hidden, UI owner, List<MovieConfiguration> movies)
         {
             SetDirty();
-            List<MovieConfiguration> movieConfigurations = movies.ToList();
-            forceMoviesRefresh.AddRange(movieConfigurations);
-            forceMoviesScan.AddRange(movieConfigurations);
+            forceMoviesRefresh.AddRange(movies);
+            forceMoviesScan.AddRange(movies);
 
             if (download)
             {
-                if (!DoDownloadsFg(unattended, hidden, owner, movieConfigurations))
+                if (!DoDownloadsFg(unattended, hidden, owner, movies))
                 {
                     return;
                 }
@@ -751,7 +748,6 @@ namespace TVRename
             {
                 UpdateDenormalisations();
             }
-
             RunExporters();
         }
 

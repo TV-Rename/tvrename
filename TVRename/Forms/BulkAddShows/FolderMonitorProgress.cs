@@ -12,9 +12,9 @@ namespace TVRename
     public partial class FolderMonitorProgress : Form
     {
         public bool Ready;
-        private readonly FolderMonitor mainForm;
+        private readonly BulkAddShow mainForm;
 
-        public FolderMonitorProgress(FolderMonitor thefm)
+        public FolderMonitorProgress(BulkAddShow thefm)
         {
             mainForm = thefm;
             InitializeComponent();

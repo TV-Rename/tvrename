@@ -222,6 +222,7 @@ namespace TVRename.Forms
             this.Name = "CollectionsView";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Movie Collections";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CollectionsView_FormClosing);
             this.possibleMergedEpisodeRightClickMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.olvCollections)).EndInit();
             this.ResumeLayout(false);
