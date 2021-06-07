@@ -4169,7 +4169,7 @@ namespace TVRename
 
         private void duplicateFinderLOGToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DuplicateMovieFinder form = new DuplicateMovieFinder(mDoc, this);
+            MergedEpisodeFinder form = new MergedEpisodeFinder(mDoc, this);
             form.ShowDialog(this);
         }
 
