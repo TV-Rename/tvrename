@@ -19,6 +19,7 @@ namespace TVRename.Forms
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly List<ShowConfiguration> addedShows;
         private readonly List<MovieConfiguration> addedMovies;
+        private readonly int trendingWeight=100, topWeight = 100, relatedWeight = 100, similarWeight = 100;
 
         private RecommendationView([NotNull] TVDoc doc, UI main)
         {
@@ -32,7 +33,7 @@ namespace TVRename.Forms
             mDoc = doc;
             mainUi = main;
 
-            olvScore.MakeGroupies(new[] { 5, 10, 20 }, new[] { "0-5", "5-10", "10-20", "20+" });
+            olvScore.MakeGroupies(new[] { 0.25, 0.5, 0.75 }, new[] { "0-25%", "25-50%", "50-75%", "75%+" });
 
             olvRating.GroupKeyGetter = rowObject => (int) Math.Floor(((RecommendationRow) rowObject).StarScore);
             olvRating.GroupKeyToTitleConverter = key => $"{(int)key}/10 Rating";
@@ -80,13 +81,16 @@ namespace TVRename.Forms
 
         private void PopulateGrid()
         {
-            IEnumerable<RecommendationResult> recommendationRows = chkRemoveExisting.Checked
+            List<RecommendationResult> recommendationRows = chkRemoveExisting.Checked
                 ? media == MediaConfiguration.MediaType.movie
-                    ? recs.Values.Where(x => mDoc.FilmLibrary.Movies.All(configuration => configuration.TmdbCode != x.Key))
-                    : recs.Values.Where(x => mDoc.TvLibrary.Shows.All(configuration => configuration.TmdbCode != x.Key))
-                : recs.Values;
+                    ? recs.Values.Where(x => mDoc.FilmLibrary.Movies.All(configuration => configuration.TmdbCode != x.Key)).ToList()
+                    : recs.Values.Where(x => mDoc.TvLibrary.Shows.All(configuration => configuration.TmdbCode != x.Key)).ToList()
+                : recs.Values.ToList();
 
-            lvRecommendations.SetObjects(recommendationRows.Select(x => new RecommendationRow(x, media)));
+            int maxRelated = recommendationRows.MaxOrDefault(x => x.Related.Count,0);
+            int maxSimilar = recommendationRows.MaxOrDefault(x => x.Similar.Count, 0);
+
+            lvRecommendations.SetObjects(recommendationRows.Select(x => new RecommendationRow(x, media, trendingWeight, topWeight, relatedWeight, similarWeight,maxRelated,maxSimilar)));
         }
 
         private void ClearGrid()

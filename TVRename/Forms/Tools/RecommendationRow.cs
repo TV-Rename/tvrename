@@ -12,8 +12,8 @@ namespace TVRename.Forms
         public readonly CachedSeriesInfo? Series;
         public readonly CachedMovieInfo? Movie;
         private readonly CachedMediaInfo? cachedMediaInfo;
-
-        public RecommendationRow(RecommendationResult x, MediaConfiguration.MediaType t)
+        private readonly int trendingWeight, topWeight, relatedWeight, similarWeight, maxRelated, maxSimilar;
+        public RecommendationRow(RecommendationResult x, MediaConfiguration.MediaType t, int trendingWeight, int topWeight, int relatedWeight, int similarWeight, int maxRelated, int maxSimilar)
         {
             result = x;
             type = t;
@@ -32,6 +32,13 @@ namespace TVRename.Forms
                 default:
                     throw new ArgumentOutOfRangeException(nameof(t), t, null);
             }
+
+            this.trendingWeight = trendingWeight;
+            this.topWeight = topWeight;
+            this.relatedWeight = relatedWeight;
+            this.similarWeight = similarWeight;
+            this.maxRelated = maxRelated;
+            this.maxSimilar = maxSimilar;
         }
 
         public int Key => result.Key;
@@ -51,7 +58,7 @@ namespace TVRename.Forms
         public float StarScore => (((cachedMediaInfo?.SiteRatingVotes ?? 1) * (cachedMediaInfo?.SiteRating ?? 5)) + 5) /
                                   ((cachedMediaInfo?.SiteRatingVotes ?? 1) + 1);
 
-        public int RecommendationScore => result.GetScore(20, 20, 2, 1);
+        public double RecommendationScore => result.GetScore(trendingWeight, topWeight, relatedWeight, similarWeight, maxRelated, maxSimilar);
 
         public string Reason => result.Similar.Select(configuration => configuration.ShowName).ToCsv() + "-" + result.Related.Select(configuration => configuration.ShowName).ToCsv();
         public string Similar => result.Similar.Select(configuration => configuration.ShowName).ToCsv();
