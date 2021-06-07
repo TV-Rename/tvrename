@@ -1357,7 +1357,7 @@ namespace TVRename
             if (snum >= 0 && si.AppropriateSeasons().ContainsKey(snum))
             {
                 ProcessedSeason s = si.AppropriateSeasons()[snum];
-                SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s))); //TODO - Add Season Images Carousel
+                SetHtmlBody(chrImages, si.GetSeasonImagesOverview(s));
                 SetHtmlBody(chrInformation, si.GetSeasonHtmlOverview(s, false));
                 SetHtmlBody(chrSummary, si.GetSeasonSummaryHtmlOverview(s, false));
                 UpdateTvTrailer(si);
@@ -1387,7 +1387,6 @@ namespace TVRename
             else
             {
                 // no epnum specified, just show an overview
-                //SetHtmlBody(chrImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
                 SetHtmlBody(chrImages, si.GetShowImagesOverview());
                 SetHtmlBody(chrInformation, si.GetShowHtmlOverview(false));
                 SetHtmlBody(chrSummary, si.GetShowSummaryHtmlOverview(false));

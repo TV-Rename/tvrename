@@ -860,18 +860,22 @@ namespace TVRename.TMDB
 
                 if (downloadedSeason.Images != null && downloadedSeason.Images.Posters.Count > 0)
                 {
-                    double bestRating = downloadedSeason.Images.Posters.Select(x => x.VoteAverage).Max();
-                    foreach (ImageData? image in downloadedSeason.Images.Posters.Where(x =>
-                        Math.Abs(x.VoteAverage - bestRating) < .01))
+                    int ImageId = snum * 1000;
+                    foreach (ImageData? image in downloadedSeason.Images.Posters)
                     {
-                        ShowImage newBanner = new ShowImage()
+                        ShowImage newBanner = new ShowImage
                         {
-                            Id = 10 + snum,
+                            Id = ImageId++,
                             ImageUrl = OriginalImageUrl(image.FilePath),
                             ImageStyle = MediaImage.ImageType.poster,
+                            Subject =  MediaImage.ImageSubject.season,
+                            SeasonNumber = snum,
                             Rating = image.VoteAverage,
                             RatingCount = image.VoteCount,
-                            SeasonId = downloadedSeason.Id ?? 0
+                            SeasonId = downloadedSeason.Id ?? 0,
+                            LanguageCode = image.Iso_639_1,
+                            SeriesId = downloadedSeries.Id,
+                            SeriesSource = TVDoc.ProviderType.TMDB,
                         };
 
                         m.AddOrUpdateImage(newBanner);

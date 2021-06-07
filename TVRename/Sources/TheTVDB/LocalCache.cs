@@ -1431,11 +1431,6 @@ namespace TVRename.TheTVDB
                 foreach (var imageJson in r["data"]["artworks"])
                 {
                     int imageCodeType = (int)imageJson["type"];
-                    if (imageCodeType == 13)
-                    {
-                        //Not an image we are interested in
-                        continue;
-                    }
 
                     MovieImage mi = new MovieImage
                     {
@@ -1463,11 +1458,6 @@ namespace TVRename.TheTVDB
                 foreach (var imageJson in r["data"]["artworks"])
                 {
                     int imageCodeType = (int)imageJson["type"];
-                    if (imageCodeType == 13 || imageCodeType == 5)
-                    {
-                        //Not an image we are interested in
-                        continue;
-                    }
 
                     ShowImage mi = new ShowImage
                     {
@@ -1499,9 +1489,9 @@ namespace TVRename.TheTVDB
                 7 => MediaImage.ImageType.poster,
                 3 => MediaImage.ImageType.background,
                 6 => MediaImage.ImageType.wideBanner,
+                5 => MediaImage.ImageType.icon,
                 _ => MediaImage.ImageType.poster
             };
-            //5 is icon
         }
 
         private MediaImage.ImageSubject MapSubjectTVDBV4APICode(int v)
@@ -2214,7 +2204,7 @@ namespace TVRename.TheTVDB
                 ImageStyle = MapBannerType((string)bannerData["keyType"]),
                 Subject = MapTypeToSubject((string)bannerData["keyType"]),
                 LanguageCode = Languages.Instance.GetLanguageFromCode((string)bannerData["language"])?.Abbreviation,
-                SeasonId = seasonId,
+                SeasonNumber = seasonId,
                 RatingCount = (int)bannerData["ratingsInfo"]?["count"],
                 Rating = rating,
                 Resolution = (string)bannerData["resolution"],

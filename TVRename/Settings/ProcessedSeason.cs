@@ -9,6 +9,7 @@ using JetBrains.Annotations;
 using NodaTime;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace TVRename
@@ -254,5 +255,9 @@ namespace TVRename
 
             return episodeNumber == maxEpNum + 1;
         }
+
+        public IEnumerable<ShowImage>? Images(MediaImage.ImageType t, MediaImage.ImageSubject s) => Show.CachedShow?.Images(t, s, SeasonNumber);
+
+        public IEnumerable<ShowImage>? Images(MediaImage.ImageType t) => Show.CachedShow?.Images(t);
     }
 }

@@ -45,6 +45,16 @@ namespace TVRename
             return sb.ToString();
         }
 
+        public static string GetSeasonImagesOverview(this ShowConfiguration si, ProcessedSeason season)
+        {
+            Color col = Color.FromName("ButtonFace");
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(HTMLHeader(10, col));
+            sb.AppendSeasonImages(col, season);
+            sb.AppendLine(HTMLFooter());
+            return sb.ToString();
+        }
+
         [NotNull]
         public static string GetShowImagesOverview(this ShowConfiguration si)
         {
@@ -219,6 +229,7 @@ namespace TVRename
             string posterHtml = GenerateImageCarousel("Posters", ser.Images(MediaImage.ImageType.poster, MediaImage.ImageSubject.show).ToList(), "MyPosterCarousel", "w-50");
             string bannerHtml = GenerateImageCarousel("Banners", ser.Images(MediaImage.ImageType.wideBanner, MediaImage.ImageSubject.show).ToList(), "MyBannerCarousel", "w-100");
             string fanartHtml = GenerateImageCarousel("Backgrounds", ser.Images(MediaImage.ImageType.background).ToList(), "MyBackgroundCarousel", "w-100");
+            string iconHtml = GenerateImageCarousel("Icons", ser.Images(MediaImage.ImageType.icon).ToList(), "MyIconCarousel", "w-100");
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                   <div class=""row"">
@@ -235,6 +246,52 @@ namespace TVRename
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                   <div class=""row"">
                     {fanartHtml}
+                  </div>
+
+                </div>");
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                    {iconHtml}
+                  </div>
+
+                </div>");
+        }
+
+        private static void AppendSeasonImages(this StringBuilder sb, Color backgroundColour,ProcessedSeason season)
+        {
+            CachedSeriesInfo? ser = season.Show.CachedShow;
+
+            if (ser is null)
+            {
+                return;
+            }
+
+            string posterHtml = GenerateImageCarousel("Posters", season.Images(MediaImage.ImageType.poster, MediaImage.ImageSubject.season)?.ToList(), "MyPosterCarousel", "w-50");
+            string bannerHtml = GenerateImageCarousel("Banners", season.Images(MediaImage.ImageType.wideBanner, MediaImage.ImageSubject.season)?.ToList(), "MyBannerCarousel", "w-100");
+            string fanartHtml = GenerateImageCarousel("Backgrounds", season.Images(MediaImage.ImageType.background)?.ToList(), "MyBackgroundCarousel", "w-100");
+            string iconHtml = GenerateImageCarousel("Icons", season.Images(MediaImage.ImageType.icon)?.ToList(), "MyIconCarousel", "w-100");
+
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                    {posterHtml}
+                  </div>
+
+                </div>");
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                    {bannerHtml}
+                  </div>
+
+                </div>");
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                    {fanartHtml}
+                  </div>
+
+                </div>");
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                    {iconHtml}
                   </div>
 
                 </div>");
@@ -252,6 +309,7 @@ namespace TVRename
             string posterHtml = GenerateImageCarousel("Posters", ser.Images(MediaImage.ImageType.poster, MediaImage.ImageSubject.movie).ToList(), "MyPosterCarousel", "w-50");
             string bannerHtml = GenerateImageCarousel("Banners", ser.Images(MediaImage.ImageType.wideBanner, MediaImage.ImageSubject.show).ToList(), "MyBannerCarousel", "w-100");
             string fanartHtml = GenerateImageCarousel("Backgrounds", ser.Images(MediaImage.ImageType.background).ToList(), "MyBackgroundCarousel", "w-100");
+            string iconHtml = GenerateImageCarousel("Icons", ser.Images(MediaImage.ImageType.icon).ToList(), "MyIconCarousel", "w-100");
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                   <div class=""row"">
@@ -271,10 +329,21 @@ namespace TVRename
                   </div>
 
                 </div>");
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                  <div class=""row"">
+                    {iconHtml}
+                  </div>
+
+                </div>");
         }
 
-        private static string GenerateImageCarousel(string title, IReadOnlyCollection<MediaImage> images, string id, string imageTag)
+        private static string GenerateImageCarousel(string title, IReadOnlyCollection<MediaImage>? images, string id, string imageTag)
         {
+            if (images is null || images.Count == 0)
+            {
+                return $@" <h2>{title}</h2><div>No Images Found</div>";
+            }
+
             return $@" <h2>{title}</h2>
 <div id=""{id}"" class=""carousel slide"" data-bs-ride=""carousel"">
                 <div class=""carousel-indicators"">

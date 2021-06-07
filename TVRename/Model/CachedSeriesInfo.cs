@@ -254,7 +254,6 @@ namespace TVRename
             Dirty = o.Dirty;
             IsSearchResultOnly = o.IsSearchResultOnly;
         }
-
         private void LoadXml([NotNull] XElement seriesXml)
         {
             //<Data>
@@ -619,6 +618,10 @@ namespace TVRename
         public IEnumerable<ShowImage> Images(MediaImage.ImageType type, MediaImage.ImageSubject subject)
         {
             return images.Where(x => x.ImageStyle == type && x.Subject == subject && (x.LanguageCode ?? TargetLocale.LanguageToUse(Source).Abbreviation) == TargetLocale.LanguageToUse(Source).Abbreviation);
+        }
+        internal IEnumerable<ShowImage> Images(MediaImage.ImageType type, MediaImage.ImageSubject subject, int seasonNumber)
+        {
+            return images.Where(x => x.ImageStyle == type && x.Subject == subject && (x.LanguageCode ?? TargetLocale.LanguageToUse(Source).Abbreviation) == TargetLocale.LanguageToUse(Source).Abbreviation && x.SeasonNumber == seasonNumber);
         }
     }
 }
