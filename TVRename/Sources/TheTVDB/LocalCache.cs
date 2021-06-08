@@ -1505,9 +1505,9 @@ namespace TVRename.TheTVDB
                 7 => MediaImage.ImageSubject.season,
                 3 => MediaImage.ImageSubject.show,
                 6 => MediaImage.ImageSubject.season,
+                5 => MediaImage.ImageSubject.show,
                 _ => MediaImage.ImageSubject.show
             };
-            //5 is icon
         }
 
         private static void AddCastCrew(JObject r, CachedMovieInfo si)

@@ -1820,6 +1820,7 @@ namespace TVRename
                         }
                     }
                 }
+                MoviesAddedOrEdited(true,false,false,ui,new List<MovieConfiguration>());
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -2023,6 +2024,7 @@ namespace TVRename
             if (newShow != null && newShow.Locations.Any())
             {
                 LinkFileToShow(fi, newShow, new DirectoryInfo(newShow.Locations.First()));
+                Add(newShow.AsList());
             }
             else if (selectedShow != null)
             {

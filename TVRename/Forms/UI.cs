@@ -5073,7 +5073,7 @@ namespace TVRename
 
             FillActionList(true);
             FocusOnScanResults();
-
+            FillMyMovies();//We may have updated movies
             Logger.Info("Finished looking for new movies.");
             }
 

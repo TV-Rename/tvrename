@@ -33,7 +33,7 @@ namespace TVRename.Forms
             mDoc = doc;
             mainUi = main;
 
-            olvScore.MakeGroupies(new[] { 0.25, 0.5, 0.75 }, new[] { "0-25%", "25-50%", "50-75%", "75%+" });
+            olvScore.MakeGroupies(new[] {0.1, 0.25, 0.5, 0.75 }, new[] { "-10%","10-25%", "25-50%", "50-75%", "75%+" });
 
             olvRating.GroupKeyGetter = rowObject => (int) Math.Floor(((RecommendationRow) rowObject).StarScore);
             olvRating.GroupKeyToTitleConverter = key => $"{(int)key}/10 Rating";
