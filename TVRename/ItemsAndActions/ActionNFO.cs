@@ -195,6 +195,64 @@ namespace TVRename
             }
         }
 
+        protected static void ReplaceThumbs(XElement root, string aspectAttributeName, IEnumerable<MediaImage> images)
+        {
+            {
+                List<MediaImage> newImages = images.ToList();
+                if (!newImages.Any())
+                {
+                    return;
+                }
+
+                List<XElement> elemsToRemove = root.Elements("thumb")
+                    .Where(x => x.Attribute("aspect")?.ToString().Equals(aspectAttributeName) ?? false).ToList();
+
+                foreach (XElement oldActor in elemsToRemove)
+                {
+                    oldActor.Remove();
+                }
+
+                foreach (MediaImage m in newImages.Where(i => i.ImageUrl.HasValue()))
+                {
+                    XElement tAdd = new XElement("thumb");
+                    tAdd.Add(new XAttribute("aspect", aspectAttributeName));
+                    tAdd.Add(new XAttribute("preview", m.ThumbnailUrl ?? string.Empty));
+                    tAdd.Value = m.ImageUrl!;
+                    root.Add(tAdd);
+                }
+            }
+        }
+
+        protected static void ReplaceFanart(XElement root, IEnumerable<MediaImage> images)
+        {
+            {
+                List<MediaImage> newImages = images.ToList();
+                if (!newImages.Any())
+                {
+                    return;
+                }
+
+                List<XElement> elemsToRemove = root.Elements("fanart").ToList();
+
+                foreach (XElement oldActor in elemsToRemove)
+                {
+                    oldActor.Remove();
+                }
+
+                XElement fanartElement = new XElement("fanart");
+                root.Add(fanartElement);
+
+                // actors...
+                foreach (MediaImage m in newImages.Where(i => i.ImageUrl.HasValue()))
+                {
+                    XElement tAdd = new XElement("thumb");
+                    tAdd.Add(new XAttribute("preview", m.ThumbnailUrl ?? string.Empty));
+                    tAdd.Value = m.ImageUrl!;
+                    fanartElement.Add(tAdd);
+                }
+            }
+        }
+
         protected static void UpdateId([NotNull] XElement root, [NotNull] string idType, [NotNull] string defaultState, int idValue)
         {
             UpdateId(root, idType, defaultState, idValue.ToString());

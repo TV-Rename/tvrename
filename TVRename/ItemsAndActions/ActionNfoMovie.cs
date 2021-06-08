@@ -1,6 +1,7 @@
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 using System.Globalization;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace TVRename
@@ -64,12 +65,20 @@ namespace TVRename
                 UpdateId(root, "tvdb", "false", cachedSeries.TvdbCode);
                 UpdateId(root, "imdb", "false", cachedSeries.Imdb);
                 UpdateId(root, "tmdb", "true", cachedSeries.TmdbCode);
+
+                root.ReplaceElements("genre", Movie.Genres);
+                root.ReplaceElements("credits", cachedSeries.GetCrew().Where(c=>c.Department=="Writing").Select(c=>c.Name));
+                root.ReplaceElements("director", cachedSeries.GetCrew().Where(c => c.Department == "Directing").Select(c => c.Name));
+
+                ReplaceActors(root, Movie.Actors);
+
+                ReplaceThumbs(root, "poster", cachedSeries.Images(MediaImage.ImageType.poster));
+                ReplaceThumbs(root, "banner", cachedSeries.Images(MediaImage.ImageType.wideBanner));
+                ReplaceThumbs(root, "keyart", cachedSeries.Images(MediaImage.ImageType.clearArt));
+                ReplaceThumbs(root, "clearlogo", cachedSeries.Images(MediaImage.ImageType.clearLogo));
+
+                ReplaceFanart(root, cachedSeries.Images(MediaImage.ImageType.background));
             }
-
-            root.ReplaceElements("genre", Movie.Genres);
-
-            ReplaceActors(root, Movie.Actors);
-
             doc.Save(Where.FullName);
             return ActionOutcome.Success();
         }

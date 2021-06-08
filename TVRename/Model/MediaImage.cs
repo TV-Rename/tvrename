@@ -16,7 +16,18 @@ namespace TVRename
 {
     public class MediaImage
     {
-        public enum ImageType { poster, background, wideBanner,icon }
+        //see https://fanart.tv/movie-fanart/ for some details
+        public enum ImageType
+        {
+            poster,
+            background, //or fanart
+            wideBanner,
+            icon,
+            clearLogo,
+            clearArt,
+            cdArt,
+            thumbs,
+        }
 
         public enum ImageSubject { show, season, episode, movie }
 

@@ -76,12 +76,18 @@ namespace TVRename
                 UpdateId(root, "tmdb", SelectedShow.Provider == TVDoc.ProviderType.TMDB ? "true" : "false", SelectedShow.TmdbCode);
                 UpdateId(root, "tvmaze", SelectedShow.Provider == TVDoc.ProviderType.TVmaze ? "true" : "false", SelectedShow.TvMazeId);
                 UpdateId(root, "imdb", "false", SelectedShow.ImdbCode);
+
+                root.ReplaceElements("genre", SelectedShow.Genres);
+
+                ReplaceActors(root, SelectedShow.Actors);
+
+                ReplaceThumbs(root, "poster", cachedSeries.Images(MediaImage.ImageType.poster));
+                ReplaceThumbs(root, "banner", cachedSeries.Images(MediaImage.ImageType.wideBanner));
+                ReplaceThumbs(root, "keyart", cachedSeries.Images(MediaImage.ImageType.clearArt));
+                ReplaceThumbs(root, "clearlogo", cachedSeries.Images(MediaImage.ImageType.clearLogo));
+
+                ReplaceFanart(root, cachedSeries.Images(MediaImage.ImageType.background));
             }
-
-            root.ReplaceElements("genre", SelectedShow.Genres);
-
-            ReplaceActors(root, SelectedShow.Actors);
-
             doc.Save(Where.FullName);
             return ActionOutcome.Success();
         }
