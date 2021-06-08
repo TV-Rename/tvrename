@@ -3532,8 +3532,8 @@ namespace TVRename
             if (mDoc.ShowProblems.Any())
             {
                 string message = mDoc.ShowProblems.Count() > 1
-                    ? $"Shows/Movies with Id {string.Join(",", mDoc.ShowProblems.Select(exception => exception.Media.ToString()))} are not found on TVDB, TMDB and TVMaze. Please update them"
-                    : $"Show/Movie with {StringFor(mDoc.ShowProblems.First().ShowIdProvider)} Id {mDoc.ShowProblems.First().Media.IdFor(mDoc.ShowProblems.First().Media.Provider)} is not found on {StringFor(mDoc.ShowProblems.First().ErrorProvider)}. Please Update";
+                    ? $"Shows with Id {string.Join(",", mDoc.ShowProblems.Select(exception => exception.Media.ToString()))} are not found on TVDB, TMDB and TVMaze. Please update them"
+                    : $"Show with {StringFor(mDoc.ShowProblems.First().ShowIdProvider)} Id {mDoc.ShowProblems.First().Media.IdFor(mDoc.ShowProblems.First().Media.Provider)} is not found on {StringFor(mDoc.ShowProblems.First().ErrorProvider)}. Please Update";
 
                 DialogResult result = MessageBox.Show(message, "Series/Show No Longer Found", MessageBoxButtons.OKCancel,
                     MessageBoxIcon.Error);
@@ -3561,11 +3561,11 @@ namespace TVRename
 
             if (mDoc.MovieProblems.Any())
             {
-                string message = mDoc.ShowProblems.Count() > 1
-                    ? $"Shows/Movies with Id {string.Join(",", mDoc.ShowProblems.Select(exception => exception.Media.ToString()))} are not found on TVDB, TMDB and TVMaze. Please update them"
-                    : $"Show/Movie with {StringFor(mDoc.ShowProblems.First().ShowIdProvider)} Id {mDoc.ShowProblems.First().Media} is not found on {StringFor(mDoc.ShowProblems.First().ErrorProvider)}. Please Update";
+                string message = mDoc.MovieProblems.Count() > 1
+                    ? $"Movies with Id {string.Join(",", mDoc.MovieProblems.Select(exception => exception.Media.ToString()))} are not found on TVDB, TMDB and TVMaze. Please update them"
+                    : $"Movie with {StringFor(mDoc.MovieProblems.First().ShowIdProvider)} Id {mDoc.MovieProblems.First().Media} is not found on {StringFor(mDoc.MovieProblems.First().ErrorProvider)}. Please Update";
 
-                DialogResult result = MessageBox.Show(message, "Series/Show No Longer Found", MessageBoxButtons.OKCancel,
+                DialogResult result = MessageBox.Show(message, "Movie No Longer Found", MessageBoxButtons.OKCancel,
                     MessageBoxIcon.Error);
 
                 if (result == DialogResult.Cancel)
@@ -3577,7 +3577,7 @@ namespace TVRename
                 {
                     if (mDoc.MovieProblems.Count() > 1)
                     {
-                        MessageBox.Show(problem.Message, "Issue With Series Setup", MessageBoxButtons.OK,
+                        MessageBox.Show(problem.Message, "Issue With Movie Setup", MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
                     }
 
