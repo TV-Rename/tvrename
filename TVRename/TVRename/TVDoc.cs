@@ -2150,7 +2150,6 @@ namespace TVRename
 
         public void SaveCaches()
         {
-            TidyCaches();
             TheTVDB.LocalCache.Instance.SaveCache();
             TVmaze.LocalCache.Instance.SaveCache();
             TMDB.LocalCache.Instance.SaveCache();
