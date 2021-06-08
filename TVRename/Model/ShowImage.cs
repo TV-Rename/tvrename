@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Xml;
 using System.Xml.Linq;
 using JetBrains.Annotations;
@@ -70,32 +71,32 @@ namespace TVRename
             legacy.ThumbnailUrl = r.ExtractString("ThumbnailPath");
 
             return legacy;
-        }
 
-        private static ImageSubject Convert2(string v)
-        {
-            return v switch
+            static ImageSubject Convert2(string v)
             {
-                "fanart" => ImageSubject.show,
-                "poster" => ImageSubject.show,
-                "season" => ImageSubject.season,
-                "series" => ImageSubject.season,
-                "seasonwide" => ImageSubject.show,
-                _ => throw new NotImplementedException()
-            };
-        }
+                return v switch
+                {
+                    "fanart" => ImageSubject.show,
+                    "poster" => ImageSubject.show,
+                    "season" => ImageSubject.season,
+                    "series" => ImageSubject.season,
+                    "seasonwide" => ImageSubject.show,
+                    _ => throw new ArgumentException()
+                };
+            }
 
-        private static ImageType Convert(string v)
-        {
-            return v switch
+            static ImageType Convert(string v)
             {
-                "fanart" => ImageType.background,
-                "poster" => ImageType.poster,
-                "season" => ImageType.poster,
-                "series" => ImageType.wideBanner,
-                "seasonwide" => ImageType.wideBanner,
-                _ => throw new NotImplementedException()
-            };
+                return v switch
+                {
+                    "fanart" => ImageType.background,
+                    "poster" => ImageType.poster,
+                    "season" => ImageType.poster,
+                    "series" => ImageType.wideBanner,
+                    "seasonwide" => ImageType.wideBanner,
+                    _ => throw new ArgumentException()
+                };
+            }
         }
     }
 }
