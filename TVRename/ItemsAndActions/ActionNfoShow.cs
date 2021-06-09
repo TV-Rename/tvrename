@@ -55,10 +55,6 @@ namespace TVRename
                 XElement episodeGuideNode = root.GetOrCreateElement("episodeguide");
                 episodeGuideNode.UpdateElement("url",tmdbUrl);
             }
-            else 
-            {
-                //todo make work for all providers
-            }
 
             if (!(cachedSeries is null))
             {

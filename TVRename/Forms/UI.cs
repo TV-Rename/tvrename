@@ -2378,7 +2378,8 @@ namespace TVRename
         {
             int n = mDoc.DownloadsRemaining();
             string? dlTask = TheTVDB.LocalCache.Instance.CurrentDLTask ??
-                             TVmaze.LocalCache.Instance.CurrentDLTask ?? TMDB.LocalCache.Instance.CurrentDLTask;
+                             TVmaze.LocalCache.Instance.CurrentDLTask ??
+                             TMDB.LocalCache.Instance.CurrentDLTask;
             bool somethingDownloading = dlTask.HasValue();
 
             txtDLStatusLabel.Visible = n != 0 || TVSettings.Instance.BGDownload || somethingDownloading;

@@ -902,7 +902,7 @@ namespace TVRename
             if (url.HasValue() && url!.IsWebLink())
             {
                 return url;
-            }            //todo - make sure this works with  non tvdb shows
+            }            
             return episode.Filename;
         }
 
@@ -922,7 +922,7 @@ namespace TVRename
             return string.Empty;
         }
 
-        public static string CreatePosterHtml([NotNull] CachedSeriesInfo ser) //todo merge with above
+        public static string CreatePosterHtml([NotNull] CachedSeriesInfo ser) 
         {
             string url = ser.GetSeriesPosterPath();
             if (url.HasValue() && !url!.IsWebLink() && TheTVDB.API.GetImageURL(url).HasValue())
@@ -931,7 +931,7 @@ namespace TVRename
             }
             if (url.HasValue() && url!.IsWebLink())
             {
-                return $"<img class=\"show-poster rounded w-100\" src=\"{url}\" alt=\"{ser.Name} Movie Poster\">";
+                return $"<img class=\"show-poster rounded w-100\" src=\"{url}\" alt=\"{ser.Name} Show Poster\">";
             }
 
             return string.Empty;

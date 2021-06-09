@@ -1657,9 +1657,7 @@ namespace TVRename.TheTVDB
 
             CachedMovieInfo si = new CachedMovieInfo(locale, TVDoc.ProviderType.TheTVDB)
             {
-                FirstAired = GetReleaseDateV4(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
-                                ?? GetReleaseDateV4(r, "global")
-                                ?? GetReleaseDateV4(r, null),
+                FirstAired = GetReleaseDateV4(r, locale),
                 TvdbCode = (int)r["data"]["id"],
                 Slug = ((string)r["data"]["slug"])?.Trim(),
                 Imdb = GetExternalIdV4(r, "IMDB"),
@@ -1677,9 +1675,7 @@ namespace TVRename.TheTVDB
                 //Icon = "https://artworks.thetvdb.com" + GetArtwork(r, "Icon"), TODO - Other Image Downloads
                 Network = r["data"]["studios"]?.FirstOrDefault()?["name"]?.ToString(),
                 ShowLanguage = r["data"]["audioLanguages"]?.ToString(),
-                ContentRating = GetContentRatingV4(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
-                                ?? GetContentRatingV4(r, Regions.Instance.FallbackRegion.ThreeAbbreviation)
-                                ?? GetContentRatingV4(r, "usa"), 
+                ContentRating = GetContentRatingV4(r, locale),
                 Status = r["data"]["status"]["name"]?.ToString(),
                 SrvLastUpdated = ((DateTime)r["data"]["lastUpdated"]).ToUnixTime(),
                 Genres = GetGenresV4(r),
@@ -1697,6 +1693,20 @@ namespace TVRename.TheTVDB
             AddMovieImagesV4(r, si);
 
             return (si, GetAppropriateLanguage(r["data"]["nameTranslations"], locale));
+        }
+
+        private DateTime? GetReleaseDateV4(JObject r, Locale locale)
+        {
+            return GetReleaseDateV4(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
+                                            ?? GetReleaseDateV4(r, "global")
+                                            ?? GetReleaseDateV4(r, (string?)null);
+        }
+
+        private string? GetContentRatingV4(JObject r, Locale locale)
+        {
+            return GetContentRatingV4(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
+                                            ?? GetContentRatingV4(r, Regions.Instance.FallbackRegion.ThreeAbbreviation)
+                                            ?? GetContentRatingV4(r, "usa");
         }
 
         private static string? GetTrailerUrl(JObject r, Locale locale)

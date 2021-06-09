@@ -8,6 +8,7 @@
 using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -62,7 +63,7 @@ namespace TVRename
 
                 if ((forceRefresh || !bannerJpg.Exists) && !doneBannerJpg.Contains(file.Directory.FullName))
                 {
-                    string path = string.Empty; //todo link up movir banner url movie.CachedMovie?.BannerUrl;
+                    string path = movie.CachedMovie?.Images(MediaImage.ImageType.wideBanner).FirstOrDefault()?.ImageUrl ?? string.Empty; //todo link up movir banner url movie.CachedMovie?.BannerUrl;
                     if (!string.IsNullOrEmpty(path))
                     {
                         theActionList.Add(new ActionDownloadImage(movie, null, bannerJpg, path, false));

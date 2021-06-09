@@ -26,14 +26,7 @@ namespace TVRename
         public bool CodeKnown => !CodeUnknown;
         public bool CodeUnknown => ProviderCode == -1;
 
-        public CachedSeriesInfo? CachedSeries =>
-            Provider switch
-            {
-                TVDoc.ProviderType.TMDB => TMDB.LocalCache.Instance.GetSeries(ProviderCode),
-                TVDoc.ProviderType.TheTVDB => TheTVDB.LocalCache.Instance.GetSeries(ProviderCode),
-                TVDoc.ProviderType.TVmaze => TVmaze.LocalCache.Instance.GetSeries(ProviderCode),
-                _ => null
-            };
+        public CachedSeriesInfo? CachedSeries => TVDoc.GetTVCache(Provider).GetSeries(ProviderCode);
 
         public PossibleNewTvShow(DirectoryInfo directory, bool seasonFolders, string folderFormat)
         {

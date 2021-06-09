@@ -211,16 +211,7 @@ namespace TVRename
 
         protected override TVDoc.ProviderType DefaultProvider() => TVSettings.Instance.DefaultMovieProvider;
 
-        private static MediaCache LocalCache(TVDoc.ProviderType t)
-        {
-            return t switch
-            {
-                TVDoc.ProviderType.TVmaze => TVmaze.LocalCache.Instance,
-                TVDoc.ProviderType.TheTVDB => TheTVDB.LocalCache.Instance,
-                TVDoc.ProviderType.TMDB => TMDB.LocalCache.Instance,
-                _ => throw new ArgumentOutOfRangeException()
-            };
-        }
+        private static MediaCache LocalCache(TVDoc.ProviderType provider) => TVDoc.GetMediaCache(provider);
 
         public CachedMovieInfo? CachedMovie => (CachedMovieInfo)CachedData;
 

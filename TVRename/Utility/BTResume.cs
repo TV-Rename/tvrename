@@ -25,8 +25,12 @@ namespace TVRename
             resumeDatPath = resumeDatFile;
         }
 
-        private static int PercentBitsOn(BTString s)
+        private static int PercentBitsOn(BTString? s)
         {
+            if (s == null)
+            {
+                return 0;
+            }
             int totalBits = 0;
             int bitsOn = 0;
 
@@ -106,10 +110,8 @@ namespace TVRename
                     continue;
                 }
 
-                int c = 0;
-
                 p = d2.GetItem("path");
-                if ((p is null) || (p.Type != BTChunk.kString))
+                if (p is null || p.Type != BTChunk.kString)
                 {
                     continue;
                 }
@@ -120,60 +122,67 @@ namespace TVRename
                 bool hasTargets = ((targets != null) && (targets.Type == BTChunk.kList));
                 BTList targetList = (BTList)(targets);
 
-                //foreach (var i in d2.Items)
-                //{
-                //logger.Info($"   {i.Key}  {i.Data.AsText()}");
-                //}
-
-                foreach (string s in a)
-                {
-                    if ((c < prioString.Data.Length) && (prioString.Data[c] != BTPrio.SKIP))
-                    {
-                        try
-                        {
-                            string saveTo = FileHelper
-                                .FileInFolder(defaultFolder, TVSettings.Instance.FilenameFriendly(s)).Name;
-
-                            if (hasTargets)
-                            {
-                                // see if there is a target for this (the c'th) file
-                                foreach (BTItem t in targetList.Items)
-                                {
-                                    BTList l = (BTList)(t);
-                                    BTInteger n = (BTInteger)(l.Items[0]);
-                                    BTString dest = (BTString)(l.Items[1]);
-                                    if (n.Value == c)
-                                    {
-                                        saveTo = dest.AsString();
-                                        break;
-                                    }
-                                }
-                            }
-
-                            int percent = (a.Count == 1) ? PercentBitsOn((BTString)(d2.GetItem("have"))) : -1;
-                            bool completed = ((BTInteger)d2.GetItem("order")).Value == -1;
-                            TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent, completed, torrentFile);
-                            r.Add(te);
-                        }
-                        catch (PathTooLongException ptle)
-                        {
-                            //this is not the file we are looking for
-                            Logger.Debug(ptle);
-                        }
-                    }
-
-                    c++;
-                }
+                ProcesdFiles(r, d2, prioString, torrentFile, a, defaultFolder, hasTargets, targetList!);
             }
 
             return r;
+        }
+
+        private static void ProcesdFiles(List<TorrentEntry> r, BTDictionary d2, BTString prioString, string torrentFile, List<string> a, string defaultFolder, bool hasTargets, BTList targetList)
+        {
+            int c = 0;
+            foreach (string s in a)
+            {
+                if ((c < prioString.Data.Length) && (prioString.Data[c] != BTPrio.SKIP))
+                {
+                    try
+                    {
+                        string saveTo = FileHelper
+                            .FileInFolder(defaultFolder, TVSettings.Instance.FilenameFriendly(s)).Name;
+
+                        if (hasTargets)
+                        {
+                            saveTo = GetTargetSaveLocation(targetList,c) ?? saveTo;
+                        }
+
+                        int percent = a.Count == 1 ? PercentBitsOn((BTString)d2.GetItem("have")) : -1;
+                        bool completed = ((BTInteger)d2.GetItem("order"))?.Value == -1;
+                        TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent, completed, torrentFile);
+                        r.Add(te);
+                    }
+                    catch (PathTooLongException ptle)
+                    {
+                        //this is not the file we are looking for
+                        Logger.Debug(ptle);
+                    }
+                }
+
+                c++;
+            }
+        }
+
+        private static string? GetTargetSaveLocation(BTList targetList, int c)
+        {
+            // see if there is a target for this (the c'th) file
+            foreach (BTItem t in targetList.Items)
+            {
+                BTList l = (BTList)t;
+                BTInteger n = (BTInteger)l.Items[0];
+                BTString dest = (BTString)l.Items[1];
+                if (n.Value == c)
+                {
+                    return dest.AsString();
+                }
+            }
+
+            return null;
         }
 
         public bool LoadResumeDat()
         {
             BEncodeLoader bel = new BEncodeLoader();
             resumeDat = bel.Load(resumeDatPath);
-            return (resumeDat != null);
+            return resumeDat != null;
         }
     }
 }

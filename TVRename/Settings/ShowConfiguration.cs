@@ -441,17 +441,7 @@ namespace TVRename
             return LocalCache(Provider == TVDoc.ProviderType.libraryDefault ? TVSettings.Instance.DefaultProvider : Provider);
         }
 
-        private static MediaCache LocalCache(TVDoc.ProviderType provider)
-        {
-            return provider switch
-            {
-                TVDoc.ProviderType.TVmaze => TVmaze.LocalCache.Instance,
-                TVDoc.ProviderType.TMDB => TMDB.LocalCache.Instance,
-                TVDoc.ProviderType.TheTVDB => TheTVDB.LocalCache.Instance,
-                TVDoc.ProviderType.libraryDefault => throw new ArgumentOutOfRangeException(nameof(provider), provider, null),
-                _ => throw new ArgumentOutOfRangeException(nameof(provider), provider, null)
-            };
-        }
+        private static MediaCache LocalCache(TVDoc.ProviderType provider) => TVDoc.GetMediaCache(provider);
 
         public enum ShowAirStatus
         {

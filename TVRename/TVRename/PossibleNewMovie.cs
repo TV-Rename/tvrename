@@ -26,7 +26,8 @@ namespace TVRename
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public CachedMovieInfo? CachedMovie => SourceProvider == TVDoc.ProviderType.TMDB ? TMDB.LocalCache.Instance.GetMovie(ProviderCode) : TheTVDB.LocalCache.Instance.GetMovie(ProviderCode);
+        public CachedMovieInfo? CachedMovie => TVDoc.GetMovieCache(SourceProvider).GetMovie(ProviderCode);
+            
         public bool CodeKnown => !CodeUnknown;
         public bool CodeUnknown => ProviderCode <= 0;
 
@@ -160,6 +161,7 @@ namespace TVRename
                 RefinedHint = refinedHint;
                 PossibleYear ??= newPossibleYear;
 
+                //todo -validate if this can work for multi-providers
                 return TMDB.LocalCache.Instance.GetMovie(this, new Locale(), showErrorMsgBox);
             }
 
