@@ -165,7 +165,7 @@ namespace TVRename.Forms
 
         private void AddRcMenuItem(string label, EventHandler command)
         {
-            ToolStripMenuItem tsi = new ToolStripMenuItem(label);
+            ToolStripMenuItem tsi = new ToolStripMenuItem(label.Replace("&", "&&"));
             tsi.Click += command;
             possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
         }

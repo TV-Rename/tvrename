@@ -1107,7 +1107,7 @@ namespace TVRename
 
         private static ToolStripItem CreateSearcherMenuItem(SearchEngine search)
         {
-            ToolStripMenuItem tsi = new ToolStripMenuItem(search.Name) { Tag = search };
+            ToolStripMenuItem tsi = new ToolStripMenuItem(search.Name.Replace("&", "&&")) { Tag = search };
             tsi.Font = new Font(tsi.Font.FontFamily, 9, FontStyle.Regular);
             return tsi;
         }
@@ -1996,7 +1996,7 @@ namespace TVRename
 
                 foreach (FileInfo fi in fl)
                 {
-                    ToolStripMenuItem tsi = new ToolStripMenuItem("Watch: " + fi.FullName);
+                    ToolStripMenuItem tsi = new ToolStripMenuItem("Watch: " + fi.FullName.Replace("&", "&&"));
                     tsi.Click += (sender, args) => { Helpers.OpenFile(fi.FullName); };
                     showRightClickMenu.Items.Add(tsi);
                 }
@@ -2018,7 +2018,7 @@ namespace TVRename
 
                         foreach (FileInfo fi in fl)
                         {
-                            ToolStripMenuItem tsisi = new ToolStripMenuItem("Watch: " + fi.FullName);
+                            ToolStripMenuItem tsisi = new ToolStripMenuItem("Watch: " + fi.FullName.Replace("&","&&"));
                             tsisi.Click += (s, ev) => { Helpers.OpenFile(fi.FullName); };
 
                             tsis.DropDownItems.Add(tsisi);
@@ -2091,7 +2091,7 @@ namespace TVRename
                     first = false;
                 }
 
-                ToolStripMenuItem tsi = new ToolStripMenuItem("Open: " + folder);
+                ToolStripMenuItem tsi = new ToolStripMenuItem("Open: " + folder.Replace("&", "&&"));
                 tsi.Click += (s, ev) =>
                 {
                     Helpers.OpenFolder(folder);
@@ -2109,7 +2109,7 @@ namespace TVRename
             {
                 alreadyAdded.Add(folder); // don't show the same folder more than once
 
-                ToolStripMenuItem tssi = new ToolStripMenuItem("Open: " + folder);
+                ToolStripMenuItem tssi = new ToolStripMenuItem("Open: " + folder.Replace("&", "&&"));
                 tssi.Click += (s, ev) =>
                 {
                     Helpers.OpenFolder(folder);
@@ -3898,7 +3898,7 @@ namespace TVRename
 
         private void AddRcMenuItem(string name, EventHandler command)
         {
-            ToolStripMenuItem tsi = new ToolStripMenuItem(name);
+            ToolStripMenuItem tsi = new ToolStripMenuItem(name.Replace("&","&&"));
             tsi.Click += command;
             showRightClickMenu.Items.Add(tsi);
         }

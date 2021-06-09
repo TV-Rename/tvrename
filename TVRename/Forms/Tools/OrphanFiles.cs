@@ -93,7 +93,7 @@ namespace TVRename.Forms.Tools
 
         private void AddRcMenuItem(string name, EventHandler command)
         {
-            ToolStripMenuItem tsi = new ToolStripMenuItem(name);
+            ToolStripMenuItem tsi = new ToolStripMenuItem(name.Replace("&", "&&"));
             tsi.Click += command;
             showRightClickMenu.Items.Add(tsi);
         }

@@ -510,7 +510,7 @@ namespace TVRename
 
                         foreach (FileInfo fi in fl)
                         {
-                            ToolStripMenuItem tsi = new ToolStripMenuItem("Watch: " + fi.FullName);
+                            ToolStripMenuItem tsi = new ToolStripMenuItem("Watch: " + fi.FullName.Replace("&", "&&"));
                             tsi.Click += (sender, args) => { Helpers.OpenFile(fi.FullName); };
                             gridSummary.showRightClickMenu.Items.Add(tsi);
                         }
@@ -520,7 +520,7 @@ namespace TVRename
 
             private void AddRcMenuItem([NotNull] ContextMenuStrip showRightClickMenu, string name, EventHandler command)
             {
-                ToolStripMenuItem tsi = new ToolStripMenuItem(name);
+                ToolStripMenuItem tsi = new ToolStripMenuItem(name.Replace("&", "&&"));
                 tsi.Click += command;
                 showRightClickMenu.Items.Add(tsi);
             }
