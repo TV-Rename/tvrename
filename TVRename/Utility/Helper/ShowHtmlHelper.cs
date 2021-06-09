@@ -447,7 +447,33 @@ namespace TVRename
                      <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6><small class=""text-muted"">{episodeSummary} Episodes{runTimeHtml}</small></div>
                     </div>
                     <div><p class=""lead"">{ser.Overview}</p></div>
-			        <div><blockquote>{actorLinks}</blockquote></div>
+<div class=""accordion accordion-flush"" id=""accordionCastCrew"">
+  <div class=""accordion-item"" style=""background-color:#F0F0F0"">
+    <h2 class=""accordion-header"" id=""flush-headingOne"" style=""background-color:#F0F0F0"">
+      <button class=""accordion-button collapsed"" type=""button"" data-bs-toggle=""collapse"" data-bs-target=""#flush-collapseOne"" aria-expanded=""false"" aria-controls=""flush-collapseOne"" style=""background-color:#F0F0F0"">
+        Cast
+      </button>
+    </h2>
+    <div id=""flush-collapseOne"" class=""accordion-collapse collapse"" aria-labelledby=""flush-headingOne"" data-bs-parent=""#accordionCastCrew"">
+	  <div class=""accordion-body"">
+	  <blockquote>{actorLinks}</blockquote>
+	  </div>
+    </div>
+  </div>
+  <div class=""accordion-item"" style=""background-color:#F0F0F0"">
+    <h2 class=""accordion-header"" id=""flush-headingTwo"" style=""background-color:#F0F0F0"">
+      <button class=""accordion-button collapsed"" type=""button"" data-bs-toggle=""collapse"" data-bs-target=""#flush-collapseTwo"" aria-expanded=""false"" aria-controls=""flush-collapseTwo"" style=""background-color:#F0F0F0"">
+        Crew
+      </button>
+    </h2>
+    <div id=""flush-collapseTwo"" class=""accordion-collapse collapse"" aria-labelledby=""flush-headingTwo"" data-bs-parent=""#accordionCastCrew"">
+      <div class=""accordion-body"">
+	  {ser.GetCrew().Select(c => $"{c.Name} as {c.Job}").ToCsv()}
+	  </div>
+    </div>
+  </div>
+</div>
+			        <div><br/></div>
 		            <div>
                     {CreateButton(EditTvSeriesUrl(ser), "<i class=\"far fa-edit\"></i>", "Edit")}
                      {explorerButton}
@@ -544,6 +570,33 @@ namespace TVRename
                     </div>
                     <div><p class=""lead"">{ser.Overview}</p></div>
 			        <div></div>
+<div class=""accordion accordion-flush"" id=""accordionCastCrew"">
+  <div class=""accordion-item"" style=""background-color:#F0F0F0"">
+    <h2 class=""accordion-header"" id=""flush-headingOne"" style=""background-color:#F0F0F0"">
+      <button class=""accordion-button collapsed"" type=""button"" data-bs-toggle=""collapse"" data-bs-target=""#flush-collapseOne"" aria-expanded=""false"" aria-controls=""flush-collapseOne"" style=""background-color:#F0F0F0"">
+        Cast
+      </button>
+    </h2>
+    <div id=""flush-collapseOne"" class=""accordion-collapse collapse"" aria-labelledby=""flush-headingOne"" data-bs-parent=""#accordionCastCrew"">
+	  <div class=""accordion-body"">
+	  <blockquote>{actorLinks}</blockquote>
+	  </div>
+    </div>
+  </div>
+  <div class=""accordion-item"" style=""background-color:#F0F0F0"">
+    <h2 class=""accordion-header"" id=""flush-headingTwo"" style=""background-color:#F0F0F0"">
+      <button class=""accordion-button collapsed"" type=""button"" data-bs-toggle=""collapse"" data-bs-target=""#flush-collapseTwo"" aria-expanded=""false"" aria-controls=""flush-collapseTwo"" style=""background-color:#F0F0F0"">
+        Crew
+      </button>
+    </h2>
+    <div id=""flush-collapseTwo"" class=""accordion-collapse collapse"" aria-labelledby=""flush-headingTwo"" data-bs-parent=""#accordionCastCrew"">
+      <div class=""accordion-body"">
+	  {ser.GetCrew().Select(c => $"{c.Name} as {c.Job}").ToCsv()}
+	  </div>
+    </div>
+  </div>
+</div>
+			        <div><br/></div>
 		            <div>
                     {CreateButton(EditMovieUrl(ser), "<i class=\"far fa-edit\"></i>", "Edit")}
                      {explorerButton}
@@ -557,40 +610,7 @@ namespace TVRename
                     {facebookButton}
                     {instaButton}
                     {twitterButton}
-
 			        </div>
-<div id=""accordion"">
-  <div class=""card"">
-    <div class=""card-header"" id=""headingOne"">
-      <h5 class=""mb-0"">
-        <button class=""btn btn-link"" data-toggle=""collapse"" data-target=""#collapseOne"" aria-expanded=""false"" aria-controls=""collapseOne"">
-          Cast
-        </button>
-      </h5>
-    </div>
-
-    <div id = ""collapseOne"" class=""collapse show"" aria-labelledby=""headingOne"" data-parent=""#accordion"">
-      <div class=""card-body"">
-        <blockquote>{actorLinks}</blockquote>
-
-      </div>
-    </div>
-  </div>
-  <div class=""card"">
-    <div class=""card-header"" id=""headingTwo"">
-      <h5 class=""mb-0"">
-        <button class=""btn btn-link collapsed"" data-toggle=""collapse"" data-target=""#collapseTwo"" aria-expanded=""false"" aria-controls=""collapseTwo"">
-          Crew
-        </button>
-      </h5>
-    </div>
-    <div id = ""collapseTwo"" class=""collapse"" aria-labelledby=""headingTwo"" data-parent=""#accordion"">
-      <div class=""card-body"">
-        {ser.GetCrew().Select(c => $"{c.Name} as {c.Job}").ToCsv()}
-      </div>
-    </div>
-  </div>
-</div>
 		            <div>
                         &nbsp;
 			        </div>
