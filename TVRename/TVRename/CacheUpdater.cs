@@ -276,7 +276,7 @@ namespace TVRename
                 int n = 0;
 
                 int numWorkers = TVSettings.Instance.ParallelDownloads;
-                Logger.Info($"Setting up {numWorkers} threads to download information from TheTVDB.com, TMDB and TVMaze.com");
+                Logger.Info($"Setting up {numWorkers} threads to download information from TheTVDB, TMDB and TVMaze");
                 Logger.Info($"Working on {CountIdsFrom(TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.tv)} TVDB, {CountIdsFrom(TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv)} TMDB and {CountIdsFrom(TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv)} TV Maze shows.");
                 Logger.Info($"Working on {CountIdsFrom(TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.movie)} TVDB and {CountIdsFrom(TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie)} TMDB Movies.");
                 Logger.Info($"Identified that {CountDirtyIdsFrom(TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.tv)} TVDB, {CountDirtyIdsFrom(TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv)} TMDB and {CountDirtyIdsFrom(TVDoc.ProviderType.TVmaze, MediaConfiguration.MediaType.tv)} TV Maze shows need to be updated");

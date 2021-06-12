@@ -98,6 +98,11 @@ namespace TVRename.TheTVDB
             return $"{WebsiteRoot}/?tab=series&id={seriesId}";
         }
 
+        public static string WebsiteMovieUrl(int id)
+        {
+            return $"{WebsiteRoot}/?tab=movie&id={id}";
+        }
+
         [NotNull]
         // ReSharper disable once MemberCanBePrivate.Global
         public static string WebsiteShowUrl(string slug)
@@ -479,6 +484,11 @@ namespace TVRename.TheTVDB
         public static JObject ImageTypesV4()
         {
             return GetUrl("https://api4.thetvdb.com/v4/artwork-types", "en");
+        }
+
+        public static string WebsiteMovieUrl(string? serSlug)
+        {
+            return $"https://www.thetvdb.com/movies/{serSlug}";
         }
     }
 }

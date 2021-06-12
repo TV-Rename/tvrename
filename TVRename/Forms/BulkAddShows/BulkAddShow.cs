@@ -550,7 +550,7 @@ namespace TVRename
                     break;
 
                 case TVDoc.ProviderType.TMDB:
-                    Helpers.OpenUrl($"https://www.themoviedb.org/tv/{fme.ProviderCode}");
+                    Helpers.OpenUrl(TMDB.API.WebsiteShowUrl(fme.ProviderCode));
                     break;
             }
         }

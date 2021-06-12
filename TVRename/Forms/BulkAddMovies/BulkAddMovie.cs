@@ -497,11 +497,11 @@ namespace TVRename
                 switch (fme.SourceProvider)
                 {
                     case TVDoc.ProviderType.TheTVDB:
-                        Helpers.OpenUrl(TheTVDB.API.WebsiteShowUrl(fme.ProviderCode));
+                        Helpers.OpenUrl(TheTVDB.API.WebsiteMovieUrl(fme.ProviderCode));
                         break;
 
                     case TVDoc.ProviderType.TMDB:
-                        Helpers.OpenUrl($"https://www.themoviedb.org/movie/{fme.ProviderCode}");
+                        Helpers.OpenUrl(TMDB.API.WebsiteMovieUrl(fme.ProviderCode));
                         break;
                 }
             }

@@ -577,6 +577,10 @@ namespace TVRename
                 {
                     return TheTVDB.API.WebsiteShowUrl(this);
                 }
+                if (Provider == TVDoc.ProviderType.TMDB)
+                {
+                    return TMDB.API.WebsiteShowUrl(this);
+                }
 
                 return CachedShow?.Slug;
             }

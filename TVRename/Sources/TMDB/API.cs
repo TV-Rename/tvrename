@@ -60,5 +60,24 @@ namespace TVRename.TMDB
         private class CancelledException : Exception
         {
         }
+
+        public static string WebsiteShowUrl(CachedSeriesInfo ser)
+        {
+            return WebsiteShowUrl(ser.TmdbCode);
+        }
+
+        public static string WebsiteShowUrl(ShowConfiguration si)
+        {
+            return WebsiteShowUrl(si.TmdbCode);
+        }
+
+        public static string WebsiteShowUrl(int seriesId)
+        {
+            return $"https://www.themoviedb.org/tv/{seriesId}";
+        }
+        public static string WebsiteMovieUrl(int seriesId)
+        {
+            return $"https://www.themoviedb.org/movie/{seriesId}";
+        }
     }
 }

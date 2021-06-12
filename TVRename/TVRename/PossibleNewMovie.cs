@@ -64,7 +64,7 @@ namespace TVRename
             }
 
             string? imdbToTest = null;
-            string? imdbId = FindShowCode("imdbid", "tmdb");
+            string? imdbId = FindShowCode("imdbid", "imdb");
 
             if (imdbId.HasValue())
             {

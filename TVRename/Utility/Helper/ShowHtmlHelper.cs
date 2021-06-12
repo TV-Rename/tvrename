@@ -423,7 +423,7 @@ namespace TVRename
             string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : $"http://www.tv.com/show/{ser.SeriesId}/summary.html";
             string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
             string mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
-            string tmdbLink = ser.TmdbCode > 0 ? $"https://www.themoviedb.org/tv/{ser.TmdbCode}" : string.Empty;
+            string tmdbLink = ser.TmdbCode > 0 ? TMDB.API.WebsiteShowUrl(ser) : string.Empty;
             string tvdbLink = ser.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(ser) : string.Empty;
 
             string urlFilename = includeDirectoryLinks
@@ -543,10 +543,10 @@ namespace TVRename
             string siteRating = PrettyPrint(ser.SiteRating);
             string runTimeHtml = string.IsNullOrWhiteSpace(ser.Runtime) ? string.Empty : $"<br/> {ser.Runtime} min";
             string actorLinks = ser.GetActors().Select(ActorLinkHtml).ToCsv();
-            string tvdbLink = ser.Slug.HasValue() ? $"https://www.thetvdb.com/movies/{ser.Slug}" : string.Empty;
+            string tvdbLink = ser.Slug.HasValue() ? TheTVDB.API.WebsiteMovieUrl(ser.Slug) : string.Empty;
             string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : $"http://www.tv.com/show/{ser.SeriesId}/summary.html";
             string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
-            string tmdbLink = ser.TmdbCode > 0 ? $"https://www.themoviedb.org/movie/{ser.TmdbCode}" : string.Empty;
+            string tmdbLink = ser.TmdbCode > 0 ? TMDB.API.WebsiteMovieUrl(ser.TmdbCode) : string.Empty;
             string mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
 
             string urlFilename = includeDirectoryLinks && si != null ? Uri.EscapeDataString(si.Locations.FirstOrDefault() ?? string.Empty) : string.Empty;
@@ -622,34 +622,6 @@ namespace TVRename
                    </div>
                   </div>
                  </div>");
-        }
-
-        private static string? EditMovieUrl(MovieConfiguration si)
-        {
-            switch (si.Provider)
-            {
-                case TVDoc.ProviderType.TheTVDB:
-                    //tofo reenable when TVDB has movies
-                    //if (si.TVDBSlug > 0)
-                    //{
-                    //return $"https://thetvdb.com/movies/{TVDBSlug}/edit";
-                    //}
-
-                    return null;
-
-                case TVDoc.ProviderType.TMDB:
-                    if (si.TmdbCode > 0)
-                    {
-                        return $"https://www.themoviedb.org/movie/{si.TmdbCode}/edit?active_nav_item=primary_facts";
-                    }
-
-                    return null;
-
-                case TVDoc.ProviderType.TVmaze:
-                case TVDoc.ProviderType.libraryDefault:
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
         }
 
         private static string? EditMovieUrl(CachedMovieInfo si)
@@ -771,20 +743,37 @@ namespace TVRename
 
         private static string? EditTvSeriesUrl(CachedSeriesInfo si)
         {
-            if (si.TmdbCode > 0)
+            switch (si.Source)
             {
-                return $"https://www.themoviedb.org/tv/{si.TmdbCode}/edit?active_nav_item=primary_facts";
-            }
-            if (si.Slug.HasValue())
-            {
-                return $"https://thetvdb.com/series/{si.Slug}/edit";
-            }
-            if (si.TvMazeCode > 0)
-            {
-                return $" https://www.tvmaze.com/show/update?id={si.TvMazeCode}";
-            }
+                case TVDoc.ProviderType.TheTVDB:
 
-            return null;
+                    if (si.Slug.HasValue())
+                    {
+                        return $"https://thetvdb.com/series/{si.Slug}/edit";
+                    }
+
+                    return null;
+
+                case TVDoc.ProviderType.TMDB:
+                    if (si.TmdbCode > 0)
+                    {
+                        return $"https://www.themoviedb.org/tv/{si.TmdbCode}/edit?active_nav_item=primary_facts";
+                    }
+
+                    return null;
+
+                case TVDoc.ProviderType.TVmaze:
+                    if (si.TvMazeCode > 0)
+                    {
+                        return $" https://www.tvmaze.com/show/update?id={si.TvMazeCode}";
+                    }
+
+                    return null;
+
+                case TVDoc.ProviderType.libraryDefault:
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         [NotNull]
@@ -1744,7 +1733,7 @@ namespace TVRename
 
             string siteRating = PrettyPrint(ser?.SiteRating);
             string tvdbLink = si.TvdbCode > 0 ? TheTVDB.API.WebsiteShowUrl(si.TvdbCode) : string.Empty;
-            string tmdbLink = si.TmdbCode > 0 ? $"https://www.themoviedb.org/movie/{si.TmdbCode}" : string.Empty;
+            string tmdbLink = si.TmdbCode > 0 ? TMDB.API.WebsiteMovieUrl(si.TmdbCode)   : string.Empty;
             string mazeLink = ser?.TvMazeCode > 0 ? ser.WebUrl : string.Empty;
             string facebookButton = ser?.FacebookId.HasValue() ?? false ? $"https://facebook.com/{ser.FacebookId}" : string.Empty;
             string instaButton = ser?.InstagramId.HasValue() ?? false ? $"https://instagram.com/{ser.InstagramId}" : string.Empty;

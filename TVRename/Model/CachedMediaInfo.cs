@@ -47,7 +47,7 @@ namespace TVRename
         public long SrvLastUpdated;
 
         private protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
-        protected readonly TVDoc.ProviderType Source;
+        protected internal readonly TVDoc.ProviderType Source;
 
         protected CachedMediaInfo(Locale locale, TVDoc.ProviderType source) : this(source)
         {
