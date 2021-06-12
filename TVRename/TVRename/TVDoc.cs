@@ -283,7 +283,27 @@ namespace TVRename
 
             if (currentValue > 0 && valueFromCache > 0 && currentValue != valueFromCache)
             {
-                Logger.Error($"Media:{type.PrettyPrint()}: {show.ShowName} has inconsistent {provider.PrettyPrint()} Id: {currentValue } {valueFromCache}, updating to {valueFromCache}, {basedOnInformation}.");
+                Logger.Error($"Media:{type.PrettyPrint()}: {show.ShowName} ({show}) has inconsistent {provider.PrettyPrint()} Id: {currentValue } {valueFromCache}, updating to {valueFromCache}, {basedOnInformation} (Cached Value is {cachedData}).");
+                Logger.Error($"    Config: {show}");
+                Logger.Error($"    Cache:  {cachedData}");
+                switch (show.Type)
+                {
+                    case MediaConfiguration.MediaType.tv:
+                        forceShowsRefresh.Add((ShowConfiguration)show);
+                        Logger.Error($"    TVDB:   {TheTVDB.LocalCache.Instance.GetSeries(show.TvdbId)}");
+                        Logger.Error($"    TMDB:   {TMDB.LocalCache.Instance.GetSeries(show.TmdbId)}");
+                        Logger.Error($"    TVMaze: {TVmaze.LocalCache.Instance.GetSeries(show.TvMazeId)}");
+
+                        break;
+                    case MediaConfiguration.MediaType.movie:
+                        forceMoviesRefresh.Add((MovieConfiguration)show);
+                        Logger.Error($"    TVDB:   {TheTVDB.LocalCache.Instance.GetMovie(show.TvdbId)}");
+                        Logger.Error($"    TMDB:   {TMDB.LocalCache.Instance.GetMovie(show.TmdbId)}");
+
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
                 return valueFromCache;
             }
 

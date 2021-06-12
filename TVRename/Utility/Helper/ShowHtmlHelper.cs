@@ -1699,17 +1699,15 @@ namespace TVRename
 
         public static string ProviderWebUrl(this ProcessedEpisode ei)
         {
-            if (ei.Show.Provider == TVDoc.ProviderType.TheTVDB)
+            return ei.Show.Provider switch
             {
-                return TheTVDB.API.WebsiteEpisodeUrl(ei);
-            }
-            if (ei.Show.Provider == TVDoc.ProviderType.TMDB)
-            {
-                return $"https://www.themoviedb.org/tv/{ei.TheCachedSeries.TmdbId}/season/{ei.AppropriateSeasonNumber}/episode/{ei.AppropriateEpNum}";
-            }
-            
+                TVDoc.ProviderType.TheTVDB => TheTVDB.API.WebsiteEpisodeUrl(ei),
+                TVDoc.ProviderType.TMDB =>
+                    $"https://www.themoviedb.org/tv/{ei.TheCachedSeries.TmdbId}/season/{ei.AppropriateSeasonNumber}/episode/{ei.AppropriateEpNum}",
+                _ => string.Empty
+            };
+
             //todo - make sure this works with  non tvdb shows
-            return string.Empty;
         }
 
         private static string ProviderShowUrl(this ShowConfiguration show)
