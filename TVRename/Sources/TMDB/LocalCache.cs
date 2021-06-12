@@ -841,6 +841,7 @@ namespace TVRename.TMDB
                         AiredSeasonNumber = downloadedEpisode.SeasonNumber,
                         ProductionCode = downloadedEpisode.ProductionCode,
                         EpisodeId = downloadedEpisode.Id,
+                        LinkUrl = $"https://www.themoviedb.org/tv/{downloadedSeries.Id}/season/{searchSeason.SeasonNumber}/episode/{downloadedEpisode.EpisodeNumber}",
                         SiteRatingCount = downloadedEpisode.VoteCount,
                         EpisodeRating =
                             downloadedEpisode.VoteAverage.ToString(System.Globalization.CultureInfo.InvariantCulture),

@@ -19,7 +19,7 @@ namespace TVRename
         protected override void DoCheck(SetProgressDelegate progress)
         {
             IEnumerable<ShowConfiguration> libraryShows = MDoc.TvLibrary.Shows.ToList();
-            int totalRecords = libraryShows.Count() + MDoc.FilmLibrary.Count;
+            int totalRecords = libraryShows.Count() + MDoc.FilmLibrary.Movies.Count();
             int n = 0;
 
             foreach (ShowConfiguration si in libraryShows)

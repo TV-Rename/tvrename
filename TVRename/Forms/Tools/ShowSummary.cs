@@ -44,7 +44,7 @@ namespace TVRename
 
         private void GenerateData(BackgroundWorker bw)
         {
-            int total = mDoc.TvLibrary.Count;
+            int total = mDoc.TvLibrary.Shows.Count();
             int current = 0;
             showList.Clear();
 

@@ -1165,7 +1165,7 @@ namespace TVRename.TheTVDB
                 }
             }
 
-            if (bannersToo || forceReload)
+            if (bannersToo && forceReload)
             {
                 if (si != null)
                 {
@@ -2721,7 +2721,7 @@ namespace TVRename.TheTVDB
 
             bool seriesNeedsUpdating = Series[code].Dirty;
 
-            if (seriesNeedsUpdating || bannersToo)
+            if (seriesNeedsUpdating)
             {
                 ok = DownloadSeriesNow(seriesd, false, bannersToo, showErrorMsgBox) != null;
             }

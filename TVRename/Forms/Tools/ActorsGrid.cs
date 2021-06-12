@@ -42,13 +42,13 @@ namespace TVRename
             BuildData();
             DoSort();
             Cursor.Current = Cursors.Default;
-            theData = new DataArr(mDoc.TvLibrary.Count);
+            theData = new DataArr(mDoc.TvLibrary.Shows.Count());
         }
 
         private void BuildData()
         {
             // find actors that have been in more than one thing
-            theData = new DataArr(mDoc.TvLibrary.Count);
+            theData = new DataArr(mDoc.TvLibrary.Shows.Count());
             foreach (ShowConfiguration ser in mDoc.TvLibrary.Shows)
             {
                 CachedSeriesInfo? si = ser.CachedShow;

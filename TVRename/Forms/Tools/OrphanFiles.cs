@@ -107,7 +107,7 @@ namespace TVRename.Forms.Tools
         private void UpdateIssues(BackgroundWorker bw)
         {
             List<string> doneFolders = new List<string>();
-            int total = mDoc.TvLibrary.Count;
+            int total = mDoc.TvLibrary.Shows.Count();
             int current = 0;
 
             foreach (ShowConfiguration show in mDoc.TvLibrary.Shows.OrderBy(item => item.ShowName))

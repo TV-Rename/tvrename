@@ -116,8 +116,8 @@ namespace TVRename
         [NotNull]
         public TVRenameStats Stats()
         {
-            CurrentStats.NsNumberOfShows = TvLibrary.Count;
-            CurrentStats.NsNumberOfMovies = FilmLibrary.Count;
+            CurrentStats.NsNumberOfShows = TvLibrary.Shows.Count();
+            CurrentStats.NsNumberOfMovies = FilmLibrary.Movies.Count();
             CurrentStats.NsNumberOfSeasons = 0;
             CurrentStats.NsNumberOfEpisodesExpected = 0;
 
@@ -293,7 +293,6 @@ namespace TVRename
                         Logger.Error($"    TVDB:   {TheTVDB.LocalCache.Instance.GetSeries(show.TvdbId)}");
                         Logger.Error($"    TMDB:   {TMDB.LocalCache.Instance.GetSeries(show.TmdbId)}");
                         Logger.Error($"    TVMaze: {TVmaze.LocalCache.Instance.GetSeries(show.TvMazeId)}");
-
                         break;
                     case MediaConfiguration.MediaType.movie:
                         forceMoviesRefresh.Add((MovieConfiguration)show);
@@ -348,7 +347,7 @@ namespace TVRename
         public bool DoDownloadsFg(bool unattended, bool tvrMinimised, UI owner)
         {
             List<ISeriesSpecifier> idsToDownload = new List<ISeriesSpecifier>(TvLibrary);
-            idsToDownload.AddRange(FilmLibrary);
+            idsToDownload.AddRange(FilmLibrary.Movies);
             return DoDownloadsFGNow(unattended, tvrMinimised, owner, idsToDownload);
         }
 
@@ -368,8 +367,8 @@ namespace TVRename
         public void DoDownloadsBG()
         {
             ForceRefreshIdentifiedMedia();
-            List<ISeriesSpecifier> idsToDownload = new List<ISeriesSpecifier>(TvLibrary);
-            idsToDownload.AddRange(FilmLibrary);
+            List<ISeriesSpecifier> idsToDownload = new List<ISeriesSpecifier>(TvLibrary.Shows);
+            idsToDownload.AddRange(FilmLibrary.Movies);
             cacheManager.StartBgDownloadThread(false, idsToDownload, false, CancellationToken.None);
         }
 
@@ -688,7 +687,7 @@ namespace TVRename
 
         internal void Add(List<ShowConfiguration>? newShow)
         {
-            TvLibrary.AddNullableRange(newShow);
+            TvLibrary.AddShows(newShow);
             forceShowsRefresh.AddNullableRange(newShow);
             forceShowsScan.AddNullableRange(newShow);
             SetDirty();
@@ -699,7 +698,7 @@ namespace TVRename
         {
             forceMoviesRefresh.AddNullableRange(newMovie);
             forceMoviesScan.AddNullableRange(newMovie);
-            FilmLibrary.AddNullableRange(newMovie);
+            FilmLibrary.AddMovies(newMovie);
             SetDirty();
             ExportMovieInfo();
         }

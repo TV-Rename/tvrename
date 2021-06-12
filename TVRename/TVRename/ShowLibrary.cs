@@ -39,14 +39,14 @@ namespace TVRename
             return results.Where(t => !string.IsNullOrWhiteSpace(t)).Select(s => s.Trim()).Distinct();
         }
 
-        new public void Add(ShowConfiguration newShow)
+        public void AddShow(ShowConfiguration newShow)
         {
             if (Contains(newShow))
             {
                 return;
             }
 
-            List<ShowConfiguration> matchingShows = this.Where(configuration => configuration.AnyIdsMatch(newShow)).ToList();
+            List<ShowConfiguration> matchingShows = this.Shows.Where(configuration => configuration.AnyIdsMatch(newShow)).ToList();
             if (matchingShows.Any())
             {
                 foreach (ShowConfiguration existingshow in matchingShows)
@@ -57,7 +57,19 @@ namespace TVRename
                 return;
             }
 
-            base.Add(newShow);
+            Add(newShow);
+        }
+        public void AddShows(List<ShowConfiguration>? newShow)
+        {
+            if (newShow is null)
+            {
+                return;
+            }
+
+            foreach (ShowConfiguration toAdd in newShow)
+            {
+                AddShow(toAdd);
+            }
         }
 
         [NotNull]
@@ -145,7 +157,7 @@ namespace TVRename
 
         public ShowConfiguration? GetShowItem(int id, TVDoc.ProviderType provider)
         {
-            List<ShowConfiguration> matching = this.Where(configuration => configuration.IdFor(provider) == id).ToList();
+            List<ShowConfiguration> matching = this.Shows.Where(configuration => configuration.IdFor(provider) == id).ToList();
 
             if (!matching.Any())
             {
@@ -831,7 +843,7 @@ namespace TVRename
                     }
                 }
 
-                Add(si);
+                AddShow(si);
             }
         }
 

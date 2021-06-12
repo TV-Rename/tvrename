@@ -1239,6 +1239,7 @@ namespace TVRename
             string tvMazeButton = CreateButton(ep.Show.Provider == TVDoc.ProviderType.TVmaze ? ep.LinkUrl : null, "TVmaze.com", "View on TV maze");
             string imdbButton = CreateButton(imdbLink, "IMDB.com", "View on IMDB");
             string tvButton = CreateButton(ep.ShowUrl, "TV.com", "View on TV.com");
+            string tmdbButton = ep.Show.Provider == TVDoc.ProviderType.TMDB ? CreateButton(ep.WebsiteUrl, "TMDB.com", "View on TMDB.com"):string.Empty;
 
             sb.AppendLine($@"
                 <div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
@@ -1263,6 +1264,7 @@ namespace TVRename
                     {viewButton}
                     {explorerButton}
                     {tvdbButton}
+                    {tmdbButton}
                     {tvMazeButton}
                     {imdbButton}
                     {tvButton}

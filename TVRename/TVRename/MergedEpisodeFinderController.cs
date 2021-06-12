@@ -15,7 +15,7 @@ namespace TVRename
         [NotNull]
         internal static List<PossibleMergedEpisode> FindDoubleEps(TVDoc doc, [NotNull] BackgroundWorker worker)
         {
-            int total = doc.TvLibrary.Count;
+            int total = doc.TvLibrary.Shows.Count();
             int current = 0;
 
             doc.PreventAutoScan("Find Double Episodes");

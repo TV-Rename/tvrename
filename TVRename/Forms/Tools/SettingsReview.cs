@@ -45,7 +45,7 @@ namespace TVRename.Forms
         private void BwScan_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker bw = (BackgroundWorker)sender;
-            int total = mDoc.FilmLibrary.Count + mDoc.TvLibrary.Count;
+            int total = mDoc.FilmLibrary.Movies.Count() + mDoc.TvLibrary.Shows.Count();
             int current = 0;
 
             set.Clear();

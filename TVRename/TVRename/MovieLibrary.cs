@@ -33,7 +33,7 @@ namespace TVRename
 
         public MovieConfiguration? GetMovie(int id, TVDoc.ProviderType provider)
         {
-            List<MovieConfiguration> matching = this.Where(configuration => configuration.IdFor(provider) == id).ToList();
+            List<MovieConfiguration> matching = Movies.Where(configuration => configuration.IdFor(provider) == id).ToList();
 
             if (!matching.Any())
             {
@@ -47,14 +47,14 @@ namespace TVRename
             return matching.First();
         }
 
-        new public void Add(MovieConfiguration newShow)
+        new public void AddMovie(MovieConfiguration newShow)
         {
             if (Contains(newShow))
             {
                 return;
             }
 
-            List<MovieConfiguration> matchingShows = this.Where(configuration => configuration.AnyIdsMatch(newShow)).ToList();
+            List<MovieConfiguration> matchingShows = Movies.Where(configuration => configuration.AnyIdsMatch(newShow)).ToList();
             if (matchingShows.Any())
             {
                 foreach (MovieConfiguration existingshow in matchingShows)
@@ -65,18 +65,20 @@ namespace TVRename
                 return;
             }
 
-            base.Add(newShow);
+            Add(newShow);
         }
-
-        /*
-        internal void Remove([NotNull] MovieConfiguration si)
+        public void AddMovies(List<MovieConfiguration>? newMovie)
         {
-            if (!TryRemove(si.TmdbCode, out _))
+            if (newMovie is null)
             {
-                Logger.Error($"Failed to remove {si.ShowName} from the library with TMDBCode={si.TmdbCode}");
+                return;
+            }
+
+            foreach (MovieConfiguration toAdd in newMovie)
+            {
+                AddMovie(toAdd);
             }
         }
-        */
 
         public void LoadFromXml(XElement? xmlSettings)
         {
@@ -95,7 +97,7 @@ namespace TVRename
                         }
                     }
 
-                    Add(si);
+                    AddMovie(si);
                 }
             }
         }
@@ -149,9 +151,6 @@ namespace TVRename
                 .OrderBy(s => s);
         }
 
-        public MovieConfiguration? GetMovie(ISeriesSpecifier ai)
-        {
-            return GetMovie(ai.Id(), ai.Provider);
-        }
+        public MovieConfiguration? GetMovie(ISeriesSpecifier ai) => GetMovie(ai.Id(), ai.Provider);
     }
 }
