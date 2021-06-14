@@ -499,6 +499,7 @@
     <Compile Include="Sources\SourceConsistencyException.cs" />
     <Compile Include="Sources\TheTVDB\ApiVersion.cs" />
     <Compile Include="Sources\TheTVDB\TvdbAccuracyCheck.cs" />
+    <Compile Include="Sources\CacheHelper.cs" />
     <Compile Include="Sources\TMDB\LocalCache.cs" />
     <Compile Include="Sources\TMDB\API.cs" />
     <Compile Include="Sources\MediaCache.cs" />

@@ -7,7 +7,6 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
-using System.Collections.Generic;
 
 namespace TVRename
 {
@@ -24,21 +23,11 @@ namespace TVRename
 
         void UpdatesDoneOk();
 
-        CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox, Locale preferredLocale);
-
         CachedSeriesInfo? GetSeries(int? id);
 
         bool HasSeries(int id);
 
-        void Tidy(IEnumerable<ShowConfiguration> libraryValues);
-
         void ForgetEverything();
-
-        void ForgetShow(int id);
-
-        void ForgetShow(ISeriesSpecifier ss);
-
-        void UpdateSeries(CachedSeriesInfo si);
 
         void AddOrUpdateEpisode(Episode episode);
 

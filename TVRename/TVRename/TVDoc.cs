@@ -289,16 +289,15 @@ namespace TVRename
                 switch (show.Type)
                 {
                     case MediaConfiguration.MediaType.tv:
-                        forceShowsRefresh.Add((ShowConfiguration)show);
                         Logger.Error($"    TVDB:   {TheTVDB.LocalCache.Instance.GetSeries(show.TvdbId)}");
                         Logger.Error($"    TMDB:   {TMDB.LocalCache.Instance.GetSeries(show.TmdbId)}");
                         Logger.Error($"    TVMaze: {TVmaze.LocalCache.Instance.GetSeries(show.TvMazeId)}");
+                        FullyRefresh((ShowConfiguration)show);
                         break;
                     case MediaConfiguration.MediaType.movie:
-                        forceMoviesRefresh.Add((MovieConfiguration)show);
                         Logger.Error($"    TVDB:   {TheTVDB.LocalCache.Instance.GetMovie(show.TvdbId)}");
                         Logger.Error($"    TMDB:   {TMDB.LocalCache.Instance.GetMovie(show.TmdbId)}");
-
+                        FullyRefresh((MovieConfiguration)show);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -307,6 +306,21 @@ namespace TVRename
             }
 
             return currentValue;
+        }
+
+        private void FullyRefresh(ShowConfiguration show)
+        {
+            forceShowsRefresh.Add(show);
+            TheTVDB.LocalCache.Instance.ForgetShow(show.TvdbId);
+            TMDB.LocalCache.Instance.ForgetShow(show.TmdbId);
+            TVmaze.LocalCache.Instance.ForgetShow(show.TvMazeId);
+        }
+
+        private void FullyRefresh(MovieConfiguration show)
+        {
+            forceMoviesRefresh.Add(show);
+            TheTVDB.LocalCache.Instance.ForgetMovie(show.TvdbId);
+            TMDB.LocalCache.Instance.ForgetMovie(show.TmdbId);
         }
 
         #endregion Denormalisations
@@ -376,14 +390,47 @@ namespace TVRename
         {
             foreach (ShowConfiguration si in forceShowsRefresh)
             {
-                GetTVCache(si.Provider).ForgetShow(si);
+                ForgetShow(si);
             }
             foreach (MovieConfiguration si in forceMoviesRefresh)
             {
-                GetMovieCache(si.Provider).ForgetMovie(si);
+                ForgetMovie(si);
             }
             forceMoviesRefresh.Clear();
             forceShowsRefresh.Clear();
+        }
+
+        private void ForgetMovie(MovieConfiguration si)
+        {
+            switch (si.Provider)
+            {
+                case ProviderType.TheTVDB:
+                    TheTVDB.LocalCache.Instance.ForgetMovie(si);
+                    break;
+                case ProviderType.TMDB:
+                    TMDB.LocalCache.Instance.ForgetMovie(si);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void ForgetShow(ShowConfiguration si)
+        {
+            switch (si.Provider)
+            {
+                case ProviderType.TVmaze:
+                    TVmaze.LocalCache.Instance.ForgetShow(si);
+                    break;
+                case ProviderType.TheTVDB:
+                    TheTVDB.LocalCache.Instance.ForgetShow(si);
+                    break;
+                case ProviderType.TMDB:
+                    TMDB.LocalCache.Instance.ForgetShow(si);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public int DownloadsRemaining() =>
@@ -1465,8 +1512,7 @@ namespace TVRename
 
             foreach (ShowConfiguration si in showConfigurations)
             {
-                iTVSource cache = GetTVCache(si.Provider);
-                cache.ForgetShow(si);
+                ForgetShow(si);
             }
             DoDownloadsFg(unattended, tvrMinimised, owner, showConfigurations);
             AllowAutoScan();
@@ -1517,8 +1563,7 @@ namespace TVRename
 
             foreach (MovieConfiguration si in movieConfigurations)
             {
-                iMovieSource cache = GetMovieCache(si.Provider);
-                cache.ForgetMovie(si);
+                ForgetMovie(si);
             }
             DoDownloadsFg(unattended, tvrMinimised, owner, movieConfigurations);
             AllowAutoScan();

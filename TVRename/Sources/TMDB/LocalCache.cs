@@ -65,6 +65,26 @@ namespace TVRename.TMDB
                 return InternalInstance;
             }
         }
+        public void ForgetEverything()
+        {
+            lock (MOVIE_LOCK)
+            {
+                Movies.Clear();
+            }
+            lock (SERIES_LOCK)
+            {
+                Series.Clear();
+            }
+
+            SaveCache();
+            //All cachedSeries will be forgotten and will be fully refreshed, so we'll only need updates after this point
+            latestMovieUpdateTime.Reset();
+            LOGGER.Info($"Forget everything, so we assume we have TMDB updates until {latestMovieUpdateTime}");
+        }
+
+        public override int PrimaryKey(ISeriesSpecifier ss) => ss.TmdbId;
+
+        public override string CacheSourceName() => "TMDB";
 
         public void Setup(FileInfo? loadFrom, FileInfo cache, bool showIssues)
         {
@@ -142,10 +162,7 @@ namespace TVRename.TMDB
                     }
                 }
 
-                lock (SERIES_LOCK)
-                {
-                    AddSeriesToCache(downloadedSi);
-                }
+                this.AddSeriesToCache(downloadedSi);
             }
             catch (SourceConnectivityException conex)
             {
@@ -189,10 +206,7 @@ namespace TVRename.TMDB
                     }
                 }
 
-                lock (MOVIE_LOCK)
-                {
-                    AddMovieToCache(downloadedSi);
-                }
+                this.AddMovieToCache(downloadedSi);
             }
             catch (SourceConnectivityException conex)
             {
@@ -213,42 +227,10 @@ namespace TVRename.TMDB
             return true;
         }
 
-        private void AddMovieToCache([NotNull] CachedMovieInfo si)
-        {
-            int id = si.TmdbCode;
-            lock (MOVIE_LOCK)
-            {
-                if (Movies.ContainsKey(id))
-                {
-                    Movies[id].Merge(si);
-                }
-                else
-                {
-                    Movies[id] = si;
-                }
-            }
-        }
-
-        private void AddSeriesToCache([NotNull] CachedSeriesInfo si)
-        {
-            int id = si.TmdbCode;
-            lock (SERIES_LOCK)
-            {
-                if (Series.ContainsKey(id))
-                {
-                    Series[id].Merge(si);
-                }
-                else
-                {
-                    Series[id] = si;
-                }
-            }
-        }
-
         public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, IEnumerable<ISeriesSpecifier> ss)
         {
             Say("Validating TMDB cache");
-            MarkPlaceHoldersDirty(ss);
+            this.MarkPlaceHoldersDirty(ss);
 
             try
             {
@@ -257,7 +239,7 @@ namespace TVRename.TMDB
                 long updateFromEpochTime = latestMovieUpdateTime.LastSuccessfulServerUpdateTimecode();
                 if (updateFromEpochTime == 0)
                 {
-                    MarkAllDirty();
+                    this.MarkAllDirty();
                     latestMovieUpdateTime.RegisterServerUpdate(DateTime.Now.ToUnixTime());
                     return true;
                 }
@@ -310,67 +292,6 @@ namespace TVRename.TMDB
             }
         }
 
-        private void MarkPlaceHoldersDirty(IEnumerable<ISeriesSpecifier> ss)
-        {
-            foreach (ISeriesSpecifier downloadShow in ss)
-            {
-                if (downloadShow.Type == MediaConfiguration.MediaType.tv)
-                {
-                    if (!HasSeries(downloadShow.TmdbId))
-                    {
-                        AddPlaceholderSeries(downloadShow);
-                    }
-                    else
-                    {
-                        CachedSeriesInfo? show = GetSeries(downloadShow.TmdbId);
-                        show?.UpgradeSearchResultToDirty();
-                    }
-                }
-                else
-                {
-                    if (!HasMovie(downloadShow.TmdbId))
-                    {
-                        AddPlaceholderMovie(downloadShow);
-                    }
-                    else
-                    {
-                        CachedMovieInfo? movie = GetMovie(downloadShow.TmdbId);
-                        movie?.UpgradeSearchResultToDirty();
-                    }
-                }
-            }
-        }
-
-        private void MarkAllDirty()
-        {
-            lock (MOVIE_LOCK)
-            {
-                foreach (CachedMovieInfo m in Movies.Values)
-                {
-                    m.Dirty = true;
-                }
-            }
-        }
-
-        private void MarkPlaceholdersDirty()
-        {
-            lock (MOVIE_LOCK)
-            {
-                // anything with a srv_lastupdated of 0 should be marked as dirty
-                // typically, this'll be placeholder cachedSeries
-                foreach (CachedMovieInfo ser in Movies.Values.Where(ser => ser.SrvLastUpdated == 0))
-                {
-                    ser.Dirty = true;
-                }
-            }
-        }
-
-        private void AddPlaceholderSeries([NotNull] ISeriesSpecifier ss)
-            => AddPlaceholderSeries(ss.TvdbId, ss.TvMazeId, ss.TmdbId, ss.TargetLocale);
-
-        private void AddPlaceholderMovie([NotNull] ISeriesSpecifier ss)
-            => AddPlaceholderMovie(ss.TvdbId, ss.TvMazeId, ss.TmdbId, ss.TargetLocale);
-
         public void UpdatesDoneOk()
         {
             // call when all downloading and updating is done.  updates local Srv_Time with the tentative
@@ -378,190 +299,7 @@ namespace TVRename.TMDB
             latestMovieUpdateTime.RecordSuccessfulUpdate();
         }
 
-        public CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox, Locale preferredLocale)
-        {
-            throw new NotImplementedException(); //todo - (BulkAdd Manager needs to work for new providers)
-        }
-
-        public CachedMovieInfo? GetMovie(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) => GetMovie(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
-
-        public CachedMovieInfo? GetMovie(string hint, int? possibleYear, Locale preferredLocale, bool showErrorMsgBox, bool useMostPopularMatch)
-        {
-            Search(hint, showErrorMsgBox, MediaConfiguration.MediaType.movie, preferredLocale);
-
-            string showName = hint;
-
-            if (string.IsNullOrEmpty(showName))
-            {
-                return null;
-            }
-
-            showName = showName.ToLower();
-
-            List<CachedMovieInfo> matchingShows = GetSeriesDictMatching(showName).Values.ToList();
-
-            if (matchingShows.Count == 0)
-            {
-                return null;
-            }
-
-            if (matchingShows.Count == 1)
-            {
-                return matchingShows.First();
-            }
-
-            List<CachedMovieInfo> exactMatchingShows = matchingShows
-                .Where(info => info.Name.CompareName().Equals(showName, StringComparison.InvariantCultureIgnoreCase)).ToList();
-
-            if (exactMatchingShows.Count == 0 && !useMostPopularMatch)
-            {
-                return null;
-            }
-
-            if (exactMatchingShows.Count == 1)
-            {
-                return exactMatchingShows.First();
-            }
-
-            if (possibleYear is null && !useMostPopularMatch)
-            {
-                return null;
-            }
-
-            if (possibleYear != null)
-            {
-                List<CachedMovieInfo> exactMatchingShowsWithYear = exactMatchingShows
-                    .Where(info => info.Year == possibleYear).ToList();
-
-                if (exactMatchingShowsWithYear.Count == 0 && !useMostPopularMatch)
-                {
-                    return null;
-                }
-
-                if (exactMatchingShowsWithYear.Count == 1)
-                {
-                    return exactMatchingShowsWithYear.First();
-                }
-            }
-            if (!useMostPopularMatch)
-            {
-                return null;
-            }
-
-            if (matchingShows.All(s => s.Popularity.HasValue))
-            {
-                return matchingShows.OrderByDescending(s => s.Popularity).First();
-            }
-            return null;
-        }
-
-        [NotNull]
-        private Dictionary<int, CachedMovieInfo> GetSeriesDictMatching(string testShowName)
-        {
-            Dictionary<int, CachedMovieInfo> matchingSeries = new Dictionary<int, CachedMovieInfo>();
-
-            testShowName = testShowName.CompareName();
-
-            if (string.IsNullOrEmpty(testShowName))
-            {
-                return matchingSeries;
-            }
-
-            lock (MOVIE_LOCK)
-            {
-                foreach (KeyValuePair<int, CachedMovieInfo> kvp in Movies)
-                {
-                    string show = kvp.Value.Name.CompareName();
-
-                    if (show.Contains(testShowName, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        //We have a match
-                        matchingSeries.Add(kvp.Key, kvp.Value);
-                    }
-                }
-            }
-            return matchingSeries;
-        }
-
-        public void Tidy(IEnumerable<MovieConfiguration> libraryValues)
-        {
-            // remove any shows from cache that aren't in My Movies
-            List<MovieConfiguration> movieConfigurations = libraryValues.ToList();
-
-            lock (MOVIE_LOCK)
-            {
-                List<int> removeList = Movies.Keys.Where(id => movieConfigurations.All(si => si.TmdbCode != id)).ToList();
-
-                foreach (int i in removeList)
-                {
-                    ForgetMovie(i);
-                }
-            }
-        }
-
-        public void Tidy(IEnumerable<ShowConfiguration> libraryValues)
-        {
-            // remove any shows from TMDB that aren't in My Shows
-            List<ShowConfiguration> showConfigurations = libraryValues.ToList();
-
-            lock (SERIES_LOCK)
-            {
-                List<int> removeList = Series.Keys.Where(id => showConfigurations.All(si => si.TmdbCode != id)).ToList();
-
-                foreach (int i in removeList)
-                {
-                    ForgetShow(i);
-                }
-            }
-        }
-
-        public void ForgetEverything()
-        {
-            lock (MOVIE_LOCK)
-            {
-                Movies.Clear();
-            }
-            lock (SERIES_LOCK)
-            {
-                Series.Clear();
-            }
-
-            SaveCache();
-            //All cachedSeries will be forgotten and will be fully refreshed, so we'll only need updates after this point
-            latestMovieUpdateTime.Reset();
-            LOGGER.Info($"Forget everything, so we assume we have TMDB updates until {latestMovieUpdateTime}");
-        }
-
-        public void ForgetShow(int id)
-        {
-            lock (SERIES_LOCK)
-            {
-                if (Series.ContainsKey(id))
-                {
-                    Series.TryRemove(id, out _);
-                }
-            }
-        }
-
-        public void ForgetShow(ISeriesSpecifier ss)
-        {
-            ForgetShow(ss.TmdbId);
-            lock (SERIES_LOCK)
-            {
-                if (ss.TmdbId > 0)
-                {
-                    AddPlaceholderSeries(ss);
-                }
-            }
-        }
-
-        public void UpdateSeries(CachedSeriesInfo si)
-        {
-            lock (SERIES_LOCK)
-            {
-                Series[si.TmdbCode] = si;
-            }
-        }
+        public CachedMovieInfo? GetMovie(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) => this.GetMovie(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
 
         public void AddOrUpdateEpisode(Episode e)
         {
@@ -576,53 +314,6 @@ namespace TVRename.TMDB
                 CachedSeriesInfo ser = Series[e.SeriesId];
 
                 ser.AddEpisode(e);
-            }
-        }
-
-        public void ForgetMovie(int id)
-        {
-            lock (MOVIE_LOCK)
-            {
-                if (Movies.ContainsKey(id))
-                {
-                    Movies.TryRemove(id, out _);
-                }
-            }
-        }
-
-        public void ForgetMovie(ISeriesSpecifier s)
-        {
-            ForgetMovie(s.TmdbId);
-            lock (MOVIE_LOCK)
-            {
-                if (s.TmdbId > 0)
-                {
-                    AddPlaceholderSeries(s);
-                }
-            }
-        }
-
-        private void AddPlaceholderSeries(int tvdb, int tvmaze, int tmdb, Locale locale)
-        {
-            lock (SERIES_LOCK)
-            {
-                Series[tmdb] = new CachedSeriesInfo(tvdb, tvmaze, tmdb, locale, TVDoc.ProviderType.TMDB) { Dirty = true };
-            }
-        }
-
-        private void AddPlaceholderMovie(int tvdb, int tvmaze, int tmdb, Locale locale)
-        {
-            lock (MOVIE_LOCK)
-            {
-                Movies[tmdb] = new CachedMovieInfo(tvdb, tvmaze, tmdb, locale, TVDoc.ProviderType.TMDB) { Dirty = true };
-            }
-        }
-
-        public void Update(CachedMovieInfo si)
-        {
-            lock (MOVIE_LOCK)
-            {
-                Movies[si.TmdbCode] = si;
             }
         }
 
@@ -689,7 +380,7 @@ namespace TVRename.TMDB
             }
             AddMovieImages(downloadedMovie,m);
 
-            File(m);
+            this.AddMovieToCache(m);
 
             return m;
         }
@@ -810,7 +501,7 @@ namespace TVRename.TMDB
 
             AddSeasons(ss, downloadedSeries, m);
 
-            File(m);
+            this.AddSeriesToCache(m);
 
             return m;
         }
@@ -1084,7 +775,7 @@ namespace TVRename.TMDB
                 //FanartUrl = OriginalImageUrl(result.BackdropPath),  //TODO **** on Website
             };
 
-            File(m);
+            this.AddSeriesToCache(m);
             return m;
         }
 
@@ -1106,11 +797,9 @@ namespace TVRename.TMDB
                 Dirty = false,
             };
 
-            File(m);
+            this.AddMovieToCache(m);
             return m;
         }
-
-        private static string? ImageUrl(string source) => ImageUrl(source, "w600_and_h900_bestv2");
 
         private static string? PosterImageUrl(string source) => ImageUrl(source, "w600_and_h900_bestv2");
 
@@ -1168,36 +857,6 @@ namespace TVRename.TMDB
             }
 
             return null;
-        }
-
-        private void File(CachedMovieInfo cachedMovie)
-        {
-            lock (MOVIE_LOCK)
-            {
-                if (Movies.ContainsKey(cachedMovie.TmdbCode))
-                {
-                    Movies[cachedMovie.TmdbCode].Merge(cachedMovie);
-                }
-                else
-                {
-                    Movies[cachedMovie.TmdbCode] = cachedMovie;
-                }
-            }
-        }
-
-        private void File(CachedSeriesInfo s)
-        {
-            lock (SERIES_LOCK)
-            {
-                if (Series.ContainsKey(s.TmdbCode))
-                {
-                    Series[s.TmdbCode].Merge(s);
-                }
-                else
-                {
-                    Series[s.TmdbCode] = s;
-                }
-            }
         }
 
         public Dictionary<int, CachedMovieInfo> GetMovieIdsFromCollection(int collectionId, string languageCode)

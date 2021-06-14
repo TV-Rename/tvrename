@@ -40,7 +40,6 @@ namespace TVRename.TheTVDB
 
         private ConcurrentDictionary<int, ExtraEp> removeEpisodeIds; // IDs of episodes that should be removed
 
-        private ConcurrentDictionary<int, int> forceReloadOn;
         private UpdateTimeTracker LatestUpdateTime;
 
         private bool showConnectionIssues;
@@ -95,8 +94,6 @@ namespace TVRename.TheTVDB
             LOGGER.Info($"Assumed we have updates until {LatestUpdateTime}");
 
             LoadOk = loadFrom is null || (CachePersistor.LoadMovieCache(loadFrom, this) && CachePersistor.LoadTvCache(loadFrom, this));
-
-            forceReloadOn = new ConcurrentDictionary<int, int>();
         }
 
         public byte[]? GetTvdbDownload(string url)
@@ -118,32 +115,6 @@ namespace TVRename.TheTVDB
             : DownloadSeriesNow(id, false, false, new Locale(TVSettings.Instance.PreferredTVDBLanguage),
                 showErrorMsgBox);
 
-        [NotNull]
-        private Dictionary<int, CachedSeriesInfo> GetSeriesDictMatching(string testShowName)
-        {
-            Dictionary<int, CachedSeriesInfo> matchingSeries = new Dictionary<int, CachedSeriesInfo>();
-
-            testShowName = testShowName.CompareName();
-
-            if (string.IsNullOrEmpty(testShowName))
-            {
-                return matchingSeries;
-            }
-
-            foreach (KeyValuePair<int, CachedSeriesInfo> kvp in Series)
-            {
-                string show = kvp.Value.Name.CompareName();
-
-                if (show.Contains(testShowName, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    //We have a match
-                    matchingSeries.Add(kvp.Key, kvp.Value);
-                }
-            }
-
-            return matchingSeries;
-        }
-
         public void UpdatesDoneOk()
         {
             // call when all downloading and updating is done.  updates local Srv_Time with the tentative
@@ -151,29 +122,7 @@ namespace TVRename.TheTVDB
             LatestUpdateTime.RecordSuccessfulUpdate();
         }
 
-        public CachedMovieInfo GetMovie(PossibleNewMovie show, Locale locale, bool showErrorMsgBox) =>
-            throw new NotImplementedException(); //TODO Get Bulk add workign for multi source
-
-        public CachedSeriesInfo? GetSeries(string showName, bool showErrorMsgBox, Locale preferredLocale)
-        {
-            Search(showName, showErrorMsgBox, MediaConfiguration.MediaType.tv, preferredLocale);
-
-            if (string.IsNullOrEmpty(showName))
-            {
-                return null;
-            }
-
-            showName = showName.ToLower();
-
-            List<CachedSeriesInfo> matchingShows = GetSeriesDictMatching(showName).Values.ToList();
-
-            return matchingShows.Count switch
-            {
-                0 => null,
-                1 => matchingShows.First(),
-                _ => null
-            };
-        }
+        public CachedMovieInfo? GetMovie(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) => this.GetMovie(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
 
         [NotNull]
         internal IEnumerable<CachedSeriesInfo> ServerAccuracyCheck()
@@ -215,21 +164,6 @@ namespace TVRename.TheTVDB
         }
 
         public bool Connect(bool showErrorMsgBox) => TVDBLogin(showErrorMsgBox);
-
-        public void Tidy(IEnumerable<MovieConfiguration> libraryValues)
-        {
-            // remove any shows from cache that aren't in My Movies
-            IEnumerable<MovieConfiguration> movieConfigurations = libraryValues.ToList();
-            lock (MOVIE_LOCK)
-            {
-                List<int> removeList = Movies.Keys.Where(id => movieConfigurations.All(si => si.TvdbCode != id)).ToList();
-
-                foreach (int i in removeList)
-                {
-                    ForgetMovie(i);
-                }
-            }
-        }
 
         public void ForgetEverything()
         {
@@ -274,31 +208,6 @@ namespace TVRename.TheTVDB
             lock (MOVIE_LOCK)
             {
                 Movies[si.TvdbCode] = si;
-            }
-        }
-
-        public void ForgetShow(ISeriesSpecifier ss)
-        {
-            ForgetShow(ss.TvdbId);
-            lock (SERIES_LOCK)
-            {
-                if (ss.TvdbId > 0)
-                {
-                    AddPlaceholderSeries(ss);
-
-                    forceReloadOn.TryAdd(ss.TvdbId, ss.TvdbId);
-                }
-            }
-        }
-
-        public void ForgetShow(int id)
-        {
-            lock (SERIES_LOCK)
-            {
-                if (Series.ContainsKey(id))
-                {
-                    Series.TryRemove(id, out _);
-                }
             }
         }
 
@@ -1105,11 +1014,6 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private bool DoWeForceReloadFor(int code)
-        {
-            return forceReloadOn.ContainsKey(code) || !Series.ContainsKey(code);
-        }
-
         private CachedSeriesInfo? DownloadSeriesNow([NotNull] ISeriesSpecifier deets, bool episodesToo, bool bannersToo,
             bool showErrorMsgBox) =>
             DownloadSeriesNow(deets, episodesToo, bannersToo, deets.TargetLocale, showErrorMsgBox);
@@ -1137,18 +1041,9 @@ namespace TVRename.TheTVDB
                 SayNothing();
                 return null;
             }
-
+            this.AddSeriesToCache(si);
             lock (SERIES_LOCK)
             {
-                if (Series.ContainsKey(si.TvdbCode))
-                {
-                    Series[si.TvdbCode].Merge(si);
-                }
-                else
-                {
-                    Series[si.TvdbCode] = si;
-                }
-
                 si = GetSeries(code.TvdbId);
             }
 
@@ -1173,7 +1068,7 @@ namespace TVRename.TheTVDB
                     {
                         DownloadSeriesBanners(code.TvdbId, si, locale);
                     }
-                    //TODO - somethign for TVDB V4 IMages
+                    //TODO - something for TVDB V4 Images
                 }
             }
 
@@ -1188,11 +1083,6 @@ namespace TVRename.TheTVDB
             Series.TryGetValue(code.TvdbId, out CachedSeriesInfo returnValue);
             SayNothing();
             return returnValue;
-        }
-
-        private void HaveReloaded(int code)
-        {
-            forceReloadOn.TryRemove(code, out _);
         }
 
         [NotNull]
@@ -1342,7 +1232,7 @@ namespace TVRename.TheTVDB
                     SayNothing();
 
                     if (API.TvdbIsUp() && !CanFindEpisodesFor(code, locale)
-                    ) //todo - CHeck whether this is right? willbe no episodes for a movie
+                    ) //todo - Check whether this is right? will be no episodes for a movie
                     {
                         LastErrorMessage = ex.LoggableDetails();
                         string msg = $"Movie with TVDB Id {code} is no longer found on TVDB. Please Update";
@@ -2662,10 +2552,7 @@ namespace TVRename.TheTVDB
                     }
                 }
 
-                lock (MOVIE_LOCK)
-                {
-                    AddMovieToCache(downloadedSi);
-                }
+                this.AddMovieToCache(downloadedSi);
 
                 return true;
             }
@@ -2683,22 +2570,6 @@ namespace TVRename.TheTVDB
             finally
             {
                 SayNothing();
-            }
-        }
-
-        private void AddMovieToCache([NotNull] CachedMovieInfo si)
-        {
-            int id = si.TvdbCode;
-            lock (MOVIE_LOCK)
-            {
-                if (Movies.ContainsKey(id))
-                {
-                    Movies[id].Merge(si);
-                }
-                else
-                {
-                    Movies[id] = si;
-                }
             }
         }
 
@@ -2884,6 +2755,10 @@ namespace TVRename.TheTVDB
             }
         }
 
+        public override int PrimaryKey(ISeriesSpecifier ss) => ss.TvdbId;
+
+        public override string CacheSourceName() => "TVDB";
+
         private void ProcessSearchResult([NotNull] JObject jsonResponse, Locale locale)
         {
             JToken? jToken = jsonResponse["data"];
@@ -2902,17 +2777,7 @@ namespace TVRename.TheTVDB
 
                 foreach (CachedSeriesInfo si in cachedSeriesInfos)
                 {
-                    lock (SERIES_LOCK)
-                    {
-                        if (Series.ContainsKey(si.TvdbCode))
-                        {
-                            Series[si.TvdbCode].Merge(si);
-                        }
-                        else
-                        {
-                            Series[si.TvdbCode] = si;
-                        }
-                    }
+                    this.AddSeriesToCache(si);
                 }
 
                 IEnumerable<CachedMovieInfo> cachedMovieInfos = (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
@@ -2921,17 +2786,7 @@ namespace TVRename.TheTVDB
 
                 foreach (CachedMovieInfo si in cachedMovieInfos)
                 {
-                    lock (MOVIE_LOCK)
-                    {
-                        if (Movies.ContainsKey(si.TvdbCode))
-                        {
-                            Movies[si.TvdbCode].Merge(si);
-                        }
-                        else
-                        {
-                            Movies[si.TvdbCode] = si;
-                        }
-                    }
+                    this.AddMovieToCache(si);
                 }
             }
             catch (InvalidCastException ex)
@@ -3100,30 +2955,6 @@ namespace TVRename.TheTVDB
                 }
         */
 
-        public void Tidy(IEnumerable<ShowConfiguration> libraryValues)
-        {
-            // remove any shows from thetvdb that aren't in My Shows
-            List<int> removeList = new List<int>();
-            List<ShowConfiguration> showConfigurations = libraryValues.ToList();
-
-            lock (SERIES_LOCK)
-            {
-                foreach (KeyValuePair<int, CachedSeriesInfo> kvp in Series)
-                {
-                    bool found = showConfigurations.Any(si => si.TvdbCode == kvp.Key);
-                    if (!found)
-                    {
-                        removeList.Add(kvp.Key);
-                    }
-                }
-
-                foreach (int i in removeList)
-                {
-                    ForgetShow(i);
-                }
-            }
-        }
-
         public void SaveCache()
         {
             lock (MOVIE_LOCK)
@@ -3132,21 +2963,6 @@ namespace TVRename.TheTVDB
                 {
                     CachePersistor.SaveCache(Series, Movies, CacheFile,
                         LatestUpdateTime.LastSuccessfulServerUpdateTimecode());
-                }
-            }
-        }
-
-        public void UpdateSeries(CachedSeriesInfo si)
-        {
-            lock (SERIES_LOCK)
-            {
-                if (Series.ContainsKey(si.TvdbCode))
-                {
-                    Series[si.TvdbCode].Merge(si);
-                }
-                else
-                {
-                    Series[si.TvdbCode] = si;
                 }
             }
         }
@@ -3183,18 +2999,7 @@ namespace TVRename.TheTVDB
                 SayNothing();
                 return null;
             }
-
-            lock (MOVIE_LOCK)
-            {
-                if (Movies.ContainsKey(si.TvdbCode))
-                {
-                    Movies[si.TvdbCode].Merge(si);
-                }
-                else
-                {
-                    Movies[si.TvdbCode] = si;
-                }
-            }
+            this.AddMovieToCache(si);
 
             //TODO Reinstate
             //DownloadMovieActors(tvdbId);

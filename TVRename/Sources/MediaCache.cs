@@ -29,6 +29,20 @@ namespace TVRename
 
         protected readonly ConcurrentDictionary<int, CachedSeriesInfo> Series = new ConcurrentDictionary<int, CachedSeriesInfo>();
 
+        private ConcurrentDictionary<int, int> forceReloadOn = new ConcurrentDictionary<int, int>();
+        protected bool DoWeForceReloadFor(int code)
+        {
+            return forceReloadOn.ContainsKey(code) || !Series.ContainsKey(code);
+        }
+
+        protected void HaveReloaded(int code)
+        {
+            forceReloadOn.TryRemove(code, out _);
+        }
+        public void NeedToReload(int code)
+        {
+            forceReloadOn.TryAdd(code, code);
+        }
         public abstract Language? PreferredLanguage();
 
         protected bool IsConnected { get; set; }
@@ -120,5 +134,7 @@ namespace TVRename
         }
 
         public abstract void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type, Locale locale);
+        public abstract int PrimaryKey(ISeriesSpecifier ss);
+        public abstract string CacheSourceName();
     }
 }

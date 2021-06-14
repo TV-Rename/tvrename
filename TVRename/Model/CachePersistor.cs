@@ -113,7 +113,7 @@ namespace TVRename
             }
         }
 
-        public static bool LoadTvCache([NotNull] FileInfo loadFrom, iTVSource cache)
+        public static bool LoadTvCache<T>([NotNull] FileInfo loadFrom, [NotNull] T cache) where T : MediaCache, iTVSource
         {
             Logger.Info("Loading Cache from: {0}", loadFrom.FullName);
             if (!loadFrom.Exists)
@@ -140,7 +140,7 @@ namespace TVRename
             }
         }
 
-        public static bool LoadMovieCache([NotNull] FileInfo loadFrom, iMovieSource cache)
+        public static bool LoadMovieCache<T>([NotNull] FileInfo loadFrom, T cache) where T : MediaCache, iMovieSource
         {
             Logger.Info("Loading Cache from: {0}", loadFrom.FullName);
             if (!loadFrom.Exists)
@@ -167,7 +167,7 @@ namespace TVRename
             }
         }
 
-        private static bool ProcessMovieXml(XElement x, iMovieSource cache)
+        private static bool ProcessMovieXml<T>(XElement x, T cache) where T:MediaCache, iMovieSource
         {
             try
             {
@@ -189,7 +189,7 @@ namespace TVRename
                     // in a <Series> if we already have some/all
                     // info on it (depending on which one came
                     // first).
-                    cache.Update(si);
+                    cache.AddMovieToCache(si);
                 }
             }
             catch (XmlException e)
@@ -205,7 +205,7 @@ namespace TVRename
             return true;
         }
 
-        private static bool ProcessSeriesXml([NotNull] XElement x, [NotNull] iTVSource cache)
+        private static bool ProcessSeriesXml<T>([NotNull] XElement x, [NotNull] T cache) where T:MediaCache,iTVSource
         {
             // Will have one or more cachedSeries, and episodes
             // all wrapped in <Data> </Data>
@@ -247,7 +247,7 @@ namespace TVRename
                     // in a <Series> if we already have some/all
                     // info on it (depending on which one came
                     // first).
-                    cache.UpdateSeries(si);
+                    cache.AddSeriesToCache(si);
                 }
 
                 foreach (XElement episodeXml in x.Descendants("Episode"))

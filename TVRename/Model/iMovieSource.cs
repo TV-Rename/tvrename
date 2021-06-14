@@ -1,5 +1,4 @@
 using Alphaleonis.Win32.Filesystem;
-using System.Collections.Generic;
 
 namespace TVRename
 {
@@ -22,15 +21,7 @@ namespace TVRename
 
         bool HasMovie(int id);
 
-        void Tidy(IEnumerable<MovieConfiguration> libraryValues);
-
         void ForgetEverything();
-
-        void ForgetMovie(int id);
-
-        void ForgetMovie(ISeriesSpecifier s);
-
-        void Update(CachedMovieInfo si);
 
         void LatestUpdateTimeIs(string time);
 

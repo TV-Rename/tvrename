@@ -239,7 +239,7 @@ namespace TVRename.TVmaze
         [NotNull]
         private static ShowImage GenerateImage(int seriesId, [NotNull] JToken imageJson)
         {
-            ShowImage newBanner = new ShowImage()
+            ShowImage newBanner = new ShowImage
             {
                 SeriesId = seriesId,
                 ImageUrl = (string)GetChild(GetChild(GetChild(imageJson, "resolutions"), "original"), "url"),
@@ -256,7 +256,7 @@ namespace TVRename.TVmaze
         [NotNull]
         private static ShowImage GenerateImage(int seriesId, int seasonNumber, [NotNull] string url)
         {
-            ShowImage newBanner = new ShowImage()
+            ShowImage newBanner = new ShowImage
             {
                 SeriesId = seriesId,
                 ImageUrl = url,
