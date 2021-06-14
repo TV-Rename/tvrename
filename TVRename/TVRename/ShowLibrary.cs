@@ -147,51 +147,28 @@ namespace TVRename
             return returnList;
         }
 
-        // internal void Remove([NotNull] ShowConfiguration si)
-        // {
-        //     if (!TryTake()(si.TvdbCode, out _))
-        //     {
-        //         Logger.Error($"Failed to remove {si.ShowName} from the library with TVDBId={si.TvdbCode}");
-        //     }
-        // }
-
         public ShowConfiguration? GetShowItem(int id, TVDoc.ProviderType provider)
         {
-            List<ShowConfiguration> matching = this.Shows.Where(configuration => configuration.IdFor(provider) == id).ToList();
+            if (id==0 || id==-1)
+            {
+                return null;
+            }
+            List<ShowConfiguration> matching =
+                this.Shows.Where(configuration => configuration.IdFor(provider) == id).ToList();
 
             if (!matching.Any())
             {
                 return null;
             }
+
             if (matching.Count == 1)
             {
                 return matching.First();
             }
-            Logger.Error($"TV Library has multiple: {matching.Select(x => x.ToString()).ToCsv()}");
-            return matching.First();
+
+            throw new InvalidOperationException(
+                $"Searched for {id} on {provider.PrettyPrint()} TV Library has multiple: {matching.Select(x => x.ToString()).ToCsv()}");
         }
-
-        /*internal void Add([NotNull] ShowConfiguration found)
-        {
-            if (found.TvdbCode == -1)
-            {
-                return;
-            }
-
-            if (TryAdd(found.TvdbCode, found))
-            {
-                return;
-            }
-
-            if (ContainsKey(found.TvdbCode))
-            {
-                Logger.Warn($"Failed to Add {found.ShowName} with TVDBId={found.TvdbCode} to library, but it's already present");
-            }
-            else
-            {
-                Logger.Error($"Failed to Add {found.ShowName} with TVDBId={found.TvdbCode} to library");
-            }
-        }*/
 
         public void GenDict()
         {

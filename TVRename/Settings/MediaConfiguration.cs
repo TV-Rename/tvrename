@@ -75,7 +75,7 @@ namespace TVRename
 
         protected abstract Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo, bool checkExist);
 
-        public override string ToString() => $"{GetMediaType()}: ({ConfigurationProvider.PrettyPrint()}) TVDB:{TvdbCode} TMDB:{TmdbCode} TVMaze:{TVmazeCode} ({CustomShowName},{CustomLanguageCode},{CustomRegionCode})";
+        public override string ToString() => $"{GetMediaType()}: ({ConfigurationProvider.PrettyPrint()}) TVDB:{TvdbCode} TMDB:{TmdbCode} TVMaze:{TVmazeCode} ({CustomShowName},{CustomLanguageCode},{CustomRegionCode}) [{LastName}]";
 
         [NotNull]
         public Dictionary<int, SafeList<string>> AllExistngFolderLocations() => AllFolderLocations(true, true);

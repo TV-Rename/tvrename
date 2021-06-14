@@ -743,7 +743,12 @@ namespace TVRename
 
         private static string? EditTvSeriesUrl(CachedSeriesInfo si)
         {
-            switch (si.Source)
+            return EditTvSeriesUrl(si, si.Source);
+        }
+
+        private static string? EditTvSeriesUrl(CachedSeriesInfo si,TVDoc.ProviderType source)
+        {
+            switch (source)
             {
                 case TVDoc.ProviderType.TheTVDB:
 
@@ -771,6 +776,7 @@ namespace TVRename
                     return null;
 
                 case TVDoc.ProviderType.libraryDefault:
+                    return EditTvSeriesUrl(si, TVSettings.Instance.DefaultProvider);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
