@@ -1,3 +1,4 @@
+using System;
 using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,10 @@ namespace TVRename
 
         public MovieConfiguration? GetMovie(int id, TVDoc.ProviderType provider)
         {
+            if (id == 0 || id == -1)
+            {
+                return null;
+            }
             List<MovieConfiguration> matching = Movies.Where(configuration => configuration.IdFor(provider) == id).ToList();
 
             if (!matching.Any())
@@ -43,11 +48,12 @@ namespace TVRename
             {
                 return matching.First();
             }
-            Logger.Error($"Movie Library has multiple: {matching.Select(x => x.ToString()).ToCsv()}");
-            return matching.First();
-        }
+            throw new InvalidOperationException(
+                $"Searched for {id} on {provider.PrettyPrint()} Movie Library has multiple: {matching.Select(x => x.ToString()).ToCsv()}");
+        
+    }
 
-        new public void AddMovie(MovieConfiguration newShow)
+    new public void AddMovie(MovieConfiguration newShow)
         {
             if (Contains(newShow))
             {
