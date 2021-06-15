@@ -2839,23 +2839,14 @@ namespace TVRename.TheTVDB
                 TvdbCode = (int)r["tvdb_id"],
                 Slug = ((string)r["id"])?.Trim(),
                 PosterUrl = (string)r["image_url"],
-                Overview = (string)r["overview"],
-                Network = (string)r["network"],
+                Overview = Decode(r, "overview") ?? FindTranslation(r, locale, "overview_translated") ?? string.Empty,
+                Network = (string)r["network"], //TODO wait for https://github.com/thetvdb/v4-api/issues/29 to be fixed
                 Status = (string)r["status"],
                 IsSearchResultOnly = searchResult,
                 ShowLanguage = (string)r["primary_language"],
+                FirstAired = GenerateFirstAiredDate(r),
+                Name = Decode(r,"name") ?? FindTranslation(r,locale, "name_translated")??string.Empty,
             };
-            int? year = r.Value<int?>("year");
-            if (year.HasValue)
-            {
-                si.FirstAired = new DateTime(year.Value, 1, 1);
-            }
-
-            string s = (string)r["name"];
-            if (s != null)
-            {
-                si.Name = System.Web.HttpUtility.HtmlDecode(s).Trim();
-            }
 
             if (string.IsNullOrEmpty(si.Name))
             {
@@ -2873,45 +2864,42 @@ namespace TVRename.TheTVDB
             return si;
         }
 
-        // Next episode to air of a given show
-        /*
-                public Episode? NextAiring(int code)
+        private string? FindTranslation(JObject r, Locale locale, string tag)
+        {
+            string langaugeCode = locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation;
+            JToken languagesArray = r?[tag];
+            if (languagesArray == null)
+            {
+                return null;
+            }
+            //TODO wait for https://github.com/thetvdb/v4-api/issues/4 to be fixed and interrogate overview and  name fields
+
+            return null;
+        }
+
+        private string? Decode(JObject r, string tag)
+        {
+            string s = (string)r[tag];
+            return s.HasValue() ? System.Web.HttpUtility.HtmlDecode(s)?.Trim() : null;
+        }
+
+        private DateTime? GenerateFirstAiredDate(JObject r)
+        { //TODO Check this once https://github.com/thetvdb/v4-api/issues/28 is fixed
+            int? year = r.Value<int?>("year");
+            if (year.HasValue)
+            {
+                try
                 {
-                    if (!cachedSeries.ContainsKey(code) || cachedSeries[code].AiredSeasons.Count == 0)
-                    {
-                        return null; // DownloadSeries(code, true);
-                    }
-
-                    Episode next = null;
-                    DateTime today = DateTime.Now;
-                    DateTime mostSoonAfterToday = new DateTime(0);
-
-                    CachedSeriesInfo ser = cachedSeries[code];
-                    foreach (KeyValuePair<int, Season> kvp2 in ser.AiredSeasons)
-                    {
-                        Season s = kvp2.Value;
-
-                        foreach (Episode e in s.Episodes.Values)
-                        {
-                            LocalDateTime? adt = e.GetAirDateDt();
-                            if (adt is null)
-                            {
-                                continue;
-                            }
-
-                            LocalDateTime dt = (LocalDateTime) adt;
-                            if (dt.CompareTo(today) > 0 && (mostSoonAfterToday.CompareTo(new DateTime(0)) == 0 ||
-                                                              dt.CompareTo(mostSoonAfterToday) < 0))
-                            {
-                                mostSoonAfterToday = dt;
-                                next = e;
-                            }
-                        }
-                    }
-
-                    return next;
+                    return new DateTime(year.Value, 1, 1);
                 }
-        */
+                catch (ArgumentOutOfRangeException ae)
+                {
+                    LOGGER.Error($"Could not parse TVDB Series year from {r}");
+                }
+            }
+
+            return null;
+        }
 
         public void SaveCache()
         {
