@@ -167,48 +167,21 @@ namespace TVRename.TheTVDB
 
         public void ForgetEverything()
         {
+            lock (MOVIE_LOCK)
+            {
+                Movies.Clear();
+            }
             lock (SERIES_LOCK)
             {
                 Series.Clear();
             }
-
+            
             IsConnected = false;
             SaveCache();
 
             //All cachedSeries will be forgotten and will be fully refreshed, so we'll only need updates after this point
             LatestUpdateTime.Reset();
             LOGGER.Info($"Forget everything, so we assume we have updates until {LatestUpdateTime}");
-        }
-
-        public void ForgetMovie(int id)
-        {
-            lock (MOVIE_LOCK)
-            {
-                if (Movies.ContainsKey(id))
-                {
-                    Movies.TryRemove(id, out _);
-                }
-            }
-        }
-
-        public void ForgetMovie(ISeriesSpecifier s)
-        {
-            ForgetMovie(s.TvdbId);
-            lock (MOVIE_LOCK)
-            {
-                if (s.TvdbId > 0)
-                {
-                    AddPlaceholderSeries(s);
-                }
-            }
-        }
-
-        public void Update(CachedMovieInfo si)
-        {
-            lock (MOVIE_LOCK)
-            {
-                Movies[si.TvdbCode] = si;
-            }
         }
 
         // ReSharper disable once InconsistentNaming
@@ -253,15 +226,12 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private void AddPlaceholderSeries([NotNull] ISeriesSpecifier ss)
-            => AddPlaceholderSeries(ss.TvdbId, ss.TvMazeId, ss.TmdbId, ss.TargetLocale);
-
         public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, IEnumerable<ISeriesSpecifier> ss)
         {
             Say("Validating TheTVDB cache");
             foreach (ISeriesSpecifier downloadShow in ss.Where(downloadShow => !HasSeries(downloadShow.TvdbId)))
             {
-                AddPlaceholderSeries(downloadShow);
+                this.AddPlaceholderSeries(downloadShow);
             }
 
             Say("Updates list from TVDB");
@@ -279,7 +249,7 @@ namespace TVRename.TheTVDB
                 updateFromEpochTime = GetUpdateTimeFromShows();
             }
 
-            MarkPlaceholdersDirty();
+            this.MarkPlaceholdersDirty();
 
             if (updateFromEpochTime == 0 && Series.Values.Any(info => !info.IsSearchResultOnly))
             {
@@ -714,6 +684,7 @@ namespace TVRename.TheTVDB
                 case "lists":
                 case "translatedlists":
                 case "translatedcompanies":
+                case "tags":
                     return;
 
                 default:
@@ -863,24 +834,6 @@ namespace TVRename.TheTVDB
             return Series.Values.Where(info => !info.IsSearchResultOnly).Select(info => info.SrvLastUpdated)
                 .Where(i => i > 0)
                 .DefaultIfEmpty(0).Min();
-        }
-
-        private void MarkPlaceholdersDirty()
-        {
-            // anything with a srv_lastupdated of 0 should be marked as dirty
-            // typically, this'll be placeholder cachedSeries
-            foreach (CachedSeriesInfo ser in Series.Select(kvp => kvp.Value))
-            {
-                if (ser.SrvLastUpdated == 0 || ser.Episodes.Count == 0)
-                {
-                    ser.Dirty = true;
-                }
-
-                foreach (Episode ep in ser.Episodes.Where(ep => ep.SrvLastUpdated == 0))
-                {
-                    ep.Dirty = true;
-                }
-            }
         }
 
         public enum PagingMethod
@@ -1320,9 +1273,12 @@ namespace TVRename.TheTVDB
             {
                 foreach (var imageJson in r["data"]["artworks"])
                 {
-                    int imageCodeType = (int)imageJson["type"];
-
-                    MovieImage mi = new MovieImage
+                    int imageCodeType = (int) imageJson["type"];
+                    if (imageCodeType == 13) //Person Snaphot
+                    {
+                        continue;
+                    }
+                MovieImage mi = new MovieImage
                     {
                         Id = (int)imageJson["id"],
                         ImageUrl = API.GetImageURL((string)imageJson["image"]),
@@ -1379,6 +1335,7 @@ namespace TVRename.TheTVDB
                 7 => MediaImage.ImageType.poster,
                 3 => MediaImage.ImageType.background,
                 6 => MediaImage.ImageType.wideBanner,
+                16 => MediaImage.ImageType.wideBanner,
                 5 => MediaImage.ImageType.icon,
                 _ => MediaImage.ImageType.poster
             };
@@ -1390,6 +1347,7 @@ namespace TVRename.TheTVDB
             {
                 14 => MediaImage.ImageSubject.movie,
                 15 => MediaImage.ImageSubject.movie,
+                16 => MediaImage.ImageSubject.movie,
                 1 => MediaImage.ImageSubject.show,
                 2 => MediaImage.ImageSubject.show,
                 7 => MediaImage.ImageSubject.season,
