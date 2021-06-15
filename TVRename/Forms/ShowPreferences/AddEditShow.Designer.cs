@@ -371,6 +371,7 @@ namespace TVRename
             // 
             // cbRegion
             // 
+            this.cbRegion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbRegion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbRegion.FormattingEnabled = true;
             this.cbRegion.Location = new System.Drawing.Point(134, 439);

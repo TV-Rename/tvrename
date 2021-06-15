@@ -116,7 +116,7 @@ namespace TVRename
             // 
             this.lblDirectoryName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblDirectoryName.AutoSize = true;
-            this.lblDirectoryName.Location = new System.Drawing.Point(338, 429);
+            this.lblDirectoryName.Location = new System.Drawing.Point(315, 376);
             this.lblDirectoryName.Name = "lblDirectoryName";
             this.lblDirectoryName.Size = new System.Drawing.Size(0, 13);
             this.lblDirectoryName.TabIndex = 5;
@@ -173,6 +173,7 @@ namespace TVRename
             this.tpTV.Controls.Add(this.label13);
             this.tpTV.Controls.Add(this.rdoTVTVMaze);
             this.tpTV.Controls.Add(this.rdoTVTVDB);
+            this.tpTV.Controls.Add(this.lblDirectoryName);
             this.tpTV.Controls.Add(this.rdoTVDefault);
             this.tpTV.Controls.Add(this.pnlCF);
             this.tpTV.Controls.Add(this.cbDirectory);
@@ -354,7 +355,6 @@ namespace TVRename
             this.Controls.Add(this.lblFileName);
             this.Controls.Add(this.btnSkipAutoAdd);
             this.Controls.Add(this.btnIgnoreFile);
-            this.Controls.Add(this.lblDirectoryName);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
