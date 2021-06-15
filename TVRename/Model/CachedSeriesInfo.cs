@@ -577,7 +577,7 @@ namespace TVRename
 
         public void AddEpisode([NotNull] Episode episode)
         {
-            sourceEpisodes.TryAdd(episode.EpisodeId, episode);
+            sourceEpisodes.AddOrUpdate(episode.EpisodeId, episode,(i, episode1) => episode);
             episode.SetSeriesSeason(this);
         }
 

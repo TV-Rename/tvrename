@@ -450,5 +450,11 @@ namespace TVRename
                 EpisodeDirector = string.Join("|", directors);
             }
         }
+
+        public bool HasAired()
+        {
+            LocalDateTime? dateTime = GetAirDateDt();
+            return dateTime.HasValue && dateTime.Value.InUtc().ToInstant().CompareTo(SystemClock.Instance.GetCurrentInstant()) < 0;
+        }
     }
 }

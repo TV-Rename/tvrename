@@ -204,9 +204,14 @@ namespace TVRename
             {
                 // anything with a srv_lastupdated of 0 should be marked as dirty
                 // typically, this'll be placeholder cachedSeries
-                foreach (CachedSeriesInfo? ser in cache.CachedShowData.Values.Where(ser => ser.SrvLastUpdated == 0 || ser.Episodes.Count == 0))
+                foreach (CachedSeriesInfo? ser in cache.CachedShowData.Values.Where(ser => ser.SrvLastUpdated == 0 || ser.Episodes.Count == 0 || ser.Episodes.Any(e=>e.Name=="TBA" && e.HasAired())))
                 {
                     ser.Dirty = true;
+
+                    foreach (Episode ep in ser.Episodes.Where(e => e.Name == "TBA" && e.HasAired()))
+                    {
+                        ep.Dirty = true;
+                    }
                 }
             }
         }

@@ -747,11 +747,11 @@ namespace TVRename
         }
 
         // see https://kodi.wiki/view/Naming_video_files/Movies#Split_Video_Files
-        private static List<string> ending = new List<string> { "part", "cd", "dvd", "pt", "disk", "disc" };
+        private static readonly List<string> Ending = new List<string> { "part", "cd", "dvd", "pt", "disk", "disc" };
 
         public static bool IsDoublePartMovie(FileInfo f1, FileInfo f2)
         {
-            return ending.Any(end => HasEnding(f1, f2, end));
+            return Ending.Any(end => HasEnding(f1, f2, end));
         }
 
         private static bool HasEnding(FileInfo f1, FileInfo f2, string part)
