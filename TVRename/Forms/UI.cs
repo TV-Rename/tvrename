@@ -5148,7 +5148,7 @@ namespace TVRename
             */
         }
 
-        public (DialogResult, ActionTDownload) AskAbout(ItemMissing epGroupKey, List<ActionTDownload> actions)
+        public (DialogResult, ActionTDownload?) AskAbout(ItemMissing epGroupKey, List<ActionTDownload> actions)
         {
             DialogResult dr = DialogResult.OK;
             ActionTDownload userChosenAction = null;

@@ -1196,7 +1196,7 @@ namespace TVRename
 
                     case TVSettings.DuplicateActionOutcome.Ask:
 
-                        (DialogResult dr, ActionTDownload userChosenAction) = owner.AskAbout(epGroup.Key, actions);
+                        (DialogResult dr, ActionTDownload? userChosenAction) = owner.AskAbout(epGroup.Key, actions);
 
                         if (dr == DialogResult.OK)
                         {
