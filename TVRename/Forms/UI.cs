@@ -183,8 +183,6 @@ namespace TVRename
 
         private static void InitialiseBrowserFramework()
         {
-            CheckForBroswerDependencies(false);
-
             CefSettings settings = new CefSettings
             {
                 CachePath = PathManager.CefCachePath,
@@ -192,7 +190,8 @@ namespace TVRename
                 LogFile = PathManager.CefLogFile,
             };
 
-            string architectureSpecificBrowserPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
+            string architectureSpecificBrowserPath = Path.Combine(
+                AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
                 Environment.Is64BitProcess ? "x64" : "x86",
                 "CefSharp.BrowserSubprocess.exe");
 
@@ -206,34 +205,40 @@ namespace TVRename
                 Logger.Error($"Could not update path for CEF BrowserSubprocess: {architectureSpecificBrowserPath}");
             }
 
-            string architectureSpecificLocalesDirPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
+            string architectureSpecificLocalesDirPath = Path.Combine(
+                AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
                 Environment.Is64BitProcess ? "x64" : "x86",
                 "locales");
 
-            if (File.Exists(architectureSpecificLocalesDirPath))
+            if (Directory.Exists(architectureSpecificLocalesDirPath))
             {
                 Logger.Info($"Updated path for LocalesDirPath: {architectureSpecificLocalesDirPath}");
                 settings.LocalesDirPath = architectureSpecificLocalesDirPath;
             }
             else
             {
-                Logger.Error($"Could not update path for CEF LocalesDirPath: {architectureSpecificBrowserPath}");
+                Logger.Error($"Could not update path for CEF LocalesDirPath: {architectureSpecificLocalesDirPath}");
             }
 
-            string architectureSpecificResourcesDirPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
+            string architectureSpecificResourcesDirPath = Path.Combine(
+                AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
                 Environment.Is64BitProcess ? "x64" : "x86");
 
-            if (File.Exists(architectureSpecificResourcesDirPath))
+            if (Directory.Exists(architectureSpecificResourcesDirPath))
             {
                 Logger.Info($"Updated path for ResourcesDirPath: {architectureSpecificResourcesDirPath}");
                 settings.ResourcesDirPath = architectureSpecificResourcesDirPath;
             }
             else
             {
-                Logger.Error($"Could not update path for CEF ResourcesDirPath: {architectureSpecificResourcesDirPath}");
+                Logger.Error(
+                    $"Could not update path for CEF ResourcesDirPath: {architectureSpecificResourcesDirPath}");
             }
 
             Cef.Initialize(settings);
+
+            CheckForBroswerDependencies(false,architectureSpecificBrowserPath,architectureSpecificLocalesDirPath,architectureSpecificResourcesDirPath);
+
             //Cef.EnableHighDPISupport(); todo - reinstate when we support high DPI
         }
 
@@ -5163,14 +5168,18 @@ namespace TVRename
 
         private void browserTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CheckForBroswerDependencies(true);
+            CheckForBroswerDependencies(true,null,null,null);
         }
 
-        private static void CheckForBroswerDependencies(bool showUi)
+        private static void CheckForBroswerDependencies(bool showUi, string? browserPath, string? localesDirPath, string? resourcesDirPath)
         {
             try
             {
-                DependencyChecker.AssertAllDependenciesPresent();
+                DependencyChecker.AssertAllDependenciesPresent(
+                    browserSubProcessPath:browserPath,
+                    localesDirPath:localesDirPath,
+                    resourcesDirPath:resourcesDirPath
+                    );
                 Logger.Info("Dependencies all found");
                 if (showUi)
                 {
