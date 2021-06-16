@@ -9,8 +9,10 @@
 using JetBrains.Annotations;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
 using TVRename.Ipc;
 
 namespace TVRename.App
@@ -36,7 +38,7 @@ namespace TVRename.App
 
             try
             {
-                //DependencyChecker.AssertAllDependenciesPresent();
+                AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
             }
             catch (Exception e)
             {
@@ -132,6 +134,28 @@ namespace TVRename.App
             Logger.Info("Application exiting");
         }
 
+        private static Assembly? OnAssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            if (args.Name.StartsWith("CefSharp", StringComparison.Ordinal))
+            {
+                string assemblyName = args.Name.Split(new[] { ',' }, 2)[0] + ".dll";
+                string architectureSpecificPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
+                    Environment.Is64BitProcess ? "x64" : "x86",
+                    assemblyName);
+
+                if (File.Exists(architectureSpecificPath))
+                {
+                    Logger.Warn($"Updated path for Assembly: {architectureSpecificPath}");
+                    return Assembly.LoadFile(architectureSpecificPath);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            return null;
+        }
         private static void GlobalExceptionHandler(object sender, UnhandledExceptionEventArgs args)
         {
             Exception e = (Exception)args.ExceptionObject;

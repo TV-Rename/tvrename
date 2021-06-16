@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
+using Alphaleonis.Win32.Filesystem;
 using TVRename.Forms;
 using TVRename.Forms.Supporting;
 using TVRename.Forms.Tools;
@@ -90,14 +91,7 @@ namespace TVRename
 
         public UI(TVDoc doc, [NotNull] TVRenameSplash splash, bool showUi)
         {
-            CheckForBroswerDependencies(false);
-            CefSettings settings = new CefSettings
-            {
-                CachePath = PathManager.CefCachePath,
-                LogFile = PathManager.CefLogFile
-            };
-            Cef.Initialize(settings);
-            //Cef.EnableHighDPISupport(); todo - reinstate when we support high DPI
+            InitialiseBrowserFramework();
 
             mDoc = doc;
             scanProgDlg = null;
@@ -185,6 +179,62 @@ namespace TVRename
             UpdateSplashStatus(splash, "Running Auto-scan");
 
             SetStartUpTab();
+        }
+
+        private static void InitialiseBrowserFramework()
+        {
+            CheckForBroswerDependencies(false);
+
+            CefSettings settings = new CefSettings
+            {
+                CachePath = PathManager.CefCachePath,
+                UserDataPath = PathManager.CefCachePath,
+                LogFile = PathManager.CefLogFile,
+            };
+
+            string architectureSpecificBrowserPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
+                Environment.Is64BitProcess ? "x64" : "x86",
+                "CefSharp.BrowserSubprocess.exe");
+
+            if (File.Exists(architectureSpecificBrowserPath))
+            {
+                Logger.Info($"Updated path for BrowserSubprocess: {architectureSpecificBrowserPath}");
+                settings.BrowserSubprocessPath = architectureSpecificBrowserPath;
+            }
+            else
+            {
+                Logger.Error($"Could not update path for CEF BrowserSubprocess: {architectureSpecificBrowserPath}");
+            }
+
+            string architectureSpecificLocalesDirPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
+                Environment.Is64BitProcess ? "x64" : "x86",
+                "locales");
+
+            if (File.Exists(architectureSpecificLocalesDirPath))
+            {
+                Logger.Info($"Updated path for LocalesDirPath: {architectureSpecificLocalesDirPath}");
+                settings.LocalesDirPath = architectureSpecificLocalesDirPath;
+            }
+            else
+            {
+                Logger.Error($"Could not update path for CEF LocalesDirPath: {architectureSpecificBrowserPath}");
+            }
+
+            string architectureSpecificResourcesDirPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
+                Environment.Is64BitProcess ? "x64" : "x86");
+
+            if (File.Exists(architectureSpecificResourcesDirPath))
+            {
+                Logger.Info($"Updated path for ResourcesDirPath: {architectureSpecificResourcesDirPath}");
+                settings.ResourcesDirPath = architectureSpecificResourcesDirPath;
+            }
+            else
+            {
+                Logger.Error($"Could not update path for CEF ResourcesDirPath: {architectureSpecificResourcesDirPath}");
+            }
+
+            Cef.Initialize(settings);
+            //Cef.EnableHighDPISupport(); todo - reinstate when we support high DPI
         }
 
         private void SetStartUpTab()
@@ -880,11 +930,6 @@ namespace TVRename
 
             SetWindowSize(x.Descendants("Layout").Descendants("Window").First());
 
-            foreach (XElement widthXmlElement in x.Descendants("Layout").Descendants("ColumnWidths"))
-            {
-                ok = LoadWidths(widthXmlElement) && ok;
-            }
-
             string actionLayout = x.Descendants("Layout").Descendants("ActionLayout").First().Attribute("State")?.Value;
             if (actionLayout != null)
             {
@@ -892,6 +937,11 @@ namespace TVRename
                 {
                     olvAction.RestoreState(Convert.FromBase64String(actionLayout));
                 }
+            }
+
+            foreach (XElement widthXmlElement in x.Descendants("Layout").Descendants("ColumnWidths"))
+            {
+                ok = LoadWidths(widthXmlElement) && ok;
             }
 
             SetSplitter(x.Descendants("Layout").Descendants("Splitter").First());
@@ -1026,7 +1076,7 @@ namespace TVRename
             }
 
             // ReSharper disable once CommentTypo
-            writer.WriteEndElement(); // columnwidths
+            writer.WriteEndElement(); // ColumnWidths
         }
 
         private void UI_FormClosing(object sender, FormClosingEventArgs e)
