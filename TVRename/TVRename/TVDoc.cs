@@ -928,7 +928,7 @@ namespace TVRename
             //Get the default set of shows defined by the specified type
             List<MovieConfiguration> movies = GetMovieList(settings.Type, settings.Media, settings.Movies).ToList();
 
-            settings.UpdateShowsAndMovies(shows.Union(forceShowsScan).ToList(), movies.Union(forceMoviesScan).ToList());
+            settings.UpdateShowsAndMovies(shows.Union(forceShowsScan.Where(m => TvLibrary.Contains(m))).ToList(), movies.Union(forceMoviesScan.Where(m=>FilmLibrary.Contains(m))).ToList());
         }
 
         public class ScanSettings : IEquatable<ScanSettings>

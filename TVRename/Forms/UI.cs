@@ -4942,6 +4942,7 @@ namespace TVRename
         {
             CollectionsView form = new CollectionsView(mDoc, this);
             form.ShowDialog(this);
+            FillMyMovies();
         }
 
         private void bulkAddMoviesToolStripMenuItem_Click(object sender, EventArgs e)
