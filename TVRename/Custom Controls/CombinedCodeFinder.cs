@@ -20,14 +20,15 @@ namespace TVRename
     {
         private MediaConfiguration.MediaType Type { get; }
         internal TVDoc.ProviderType Source { get; private set; }
+        private bool hasChanged;
         private bool mInternal;
         private readonly ListViewColumnSorter lvwCodeFinderColumnSorter;
+
+        private const string DEFAULT_MESSAGE = "Enter the show's name, and click \"Search\"";
 
         public CachedSeriesInfo? TvShowInitialFound { get; private set; }
         public CachedMovieInfo? MovieInitialFound { get; private set; }
         public int? TvShowInitialFoundCode => TvShowInitialFound?.IdCode(Source);
-
-        private const string DEFAULT_MESSAGE = "Enter the show's name, and click \"Search\"";
         public int? MovieInitialFoundCode => MovieInitialFound?.IdCode(Source);
 
         public CombinedCodeFinder(string? initialHint, MediaConfiguration.MediaType type, TVDoc.ProviderType source)
@@ -35,6 +36,7 @@ namespace TVRename
             Type = type;
             Source = source;
             mInternal = false;
+            hasChanged = false;
 
             InitializeComponent();
 
@@ -78,6 +80,10 @@ namespace TVRename
                 mInternal = false;
                 DoFind(true);
             }
+            else
+            {
+                DoFind(false);
+            }
         }
 
         private void UpdateSource(TVDoc.ProviderType source)
@@ -98,8 +104,7 @@ namespace TVRename
 
         private string GenerateNewHintForProvider(MediaConfiguration mi)
         {
-            if (mi.IdFor(Source) > 0) return mi.IdFor(Source).ToString();
-            return mi.ShowName;
+            return mi.IdFor(Source) > 0 ? mi.IdFor(Source).ToString() : mi.ShowName;
         }
 
         private void SetupColumns()
@@ -195,6 +200,7 @@ namespace TVRename
 
         private void txtFindThis_TextChanged(object sender, EventArgs e)
         {
+            hasChanged = true;
             if (!mInternal && txtFindThis.Text.Length > 2)
             {
                 DoFind(false);
@@ -401,13 +407,8 @@ namespace TVRename
 
         private void lvMatches_SelectedIndexChanged(object sender, EventArgs e)
         {
+            hasChanged = true;
             SelectionChanged?.Invoke(sender, e);
-        }
-
-        public void TakeFocus()
-        {
-            Focus();
-            txtFindThis.Focus();
         }
 
         private void txtFindThis_KeyDown(object sender, [NotNull] KeyEventArgs e)

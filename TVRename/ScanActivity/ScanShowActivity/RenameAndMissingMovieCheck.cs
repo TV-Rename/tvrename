@@ -58,7 +58,7 @@ namespace TVRename
 
             if (movieFiles.Length == 0)
             {
-                FileIsMissing(si, folder, missCheck);
+                FileIsMissing(si, folder);
                 return;
             }
 
@@ -165,13 +165,20 @@ namespace TVRename
             return fileInfo.MovieFileNameBase();
         }
 
-        private void FileIsMissing(MovieConfiguration si, string folder, bool missCheck)
+        private void FileIsMissing(MovieConfiguration si, string folder)
         {
             // second part of missing check is to see what is missing!
-            if (missCheck)
+            if (TVSettings.Instance.MissingCheck && si.DoMissingCheck)
             {
-                // then add it as officially missing
-                Doc.TheActionList.Add(new MovieItemMissing(si, folder));
+                DateTime? dt = si.CachedMovie?.FirstAired;
+
+                bool inPast = dt.HasValue && dt.Value.CompareTo(DateTime.Now) < 0;
+
+                if (inPast)
+                {
+                    // then add it as officially missing
+                    Doc.TheActionList.Add(new MovieItemMissing(si, folder));
+                }
             } // if doing missing check
         }
 
