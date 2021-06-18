@@ -7,7 +7,6 @@
 //
 
 using BrightIdeasSoftware;
-using CefSharp;
 using CefSharp.WinForms;
 using Humanizer;
 using JetBrains.Annotations;
@@ -18,6 +17,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -27,13 +27,13 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
-using Alphaleonis.Win32.Filesystem;
 using TVRename.Forms;
 using TVRename.Forms.Supporting;
 using TVRename.Forms.Tools;
 using TVRename.Forms.Utilities;
 using TVRename.Ipc;
 using TVRename.Properties;
+using Control = System.Windows.Forms.Control;
 using DataFormats = System.Windows.Forms.DataFormats;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
@@ -91,7 +91,7 @@ namespace TVRename
 
         public UI(TVDoc doc, [NotNull] TVRenameSplash splash, bool showUi)
         {
-            InitialiseBrowserFramework();
+            CefWrapper.Instance.InitialiseBrowserFramework();
 
             mDoc = doc;
             scanProgDlg = null;
@@ -179,67 +179,6 @@ namespace TVRename
             UpdateSplashStatus(splash, "Running Auto-scan");
 
             SetStartUpTab();
-        }
-
-        private static void InitialiseBrowserFramework()
-        {
-            CefSettings settings = new CefSettings
-            {
-                CachePath = PathManager.CefCachePath,
-                UserDataPath = PathManager.CefCachePath,
-                LogFile = PathManager.CefLogFile,
-            };
-
-            string architectureSpecificBrowserPath = Path.Combine(
-                AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
-                Environment.Is64BitProcess ? "x64" : "x86",
-                "CefSharp.BrowserSubprocess.exe");
-
-            if (File.Exists(architectureSpecificBrowserPath))
-            {
-                Logger.Info($"Updated path for BrowserSubprocess: {architectureSpecificBrowserPath}");
-                settings.BrowserSubprocessPath = architectureSpecificBrowserPath;
-            }
-            else
-            {
-                Logger.Error($"Could not update path for CEF BrowserSubprocess: {architectureSpecificBrowserPath}");
-            }
-
-            string architectureSpecificLocalesDirPath = Path.Combine(
-                AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
-                Environment.Is64BitProcess ? "x64" : "x86",
-                "locales");
-
-            if (Directory.Exists(architectureSpecificLocalesDirPath))
-            {
-                Logger.Info($"Updated path for LocalesDirPath: {architectureSpecificLocalesDirPath}");
-                settings.LocalesDirPath = architectureSpecificLocalesDirPath;
-            }
-            else
-            {
-                Logger.Error($"Could not update path for CEF LocalesDirPath: {architectureSpecificLocalesDirPath}");
-            }
-
-            string architectureSpecificResourcesDirPath = Path.Combine(
-                AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
-                Environment.Is64BitProcess ? "x64" : "x86");
-
-            if (Directory.Exists(architectureSpecificResourcesDirPath))
-            {
-                Logger.Info($"Updated path for ResourcesDirPath: {architectureSpecificResourcesDirPath}");
-                settings.ResourcesDirPath = architectureSpecificResourcesDirPath;
-            }
-            else
-            {
-                Logger.Error(
-                    $"Could not update path for CEF ResourcesDirPath: {architectureSpecificResourcesDirPath}");
-            }
-
-            Cef.Initialize(settings);
-
-            CheckForBroswerDependencies(false,architectureSpecificBrowserPath,architectureSpecificLocalesDirPath,architectureSpecificResourcesDirPath);
-
-            //Cef.EnableHighDPISupport(); todo - reinstate when we support high DPI
         }
 
         private void SetStartUpTab()
@@ -2963,34 +2902,14 @@ namespace TVRename
                 return;
             }
 
-            if (Directory.Exists(si.AutoAddFolderBase) && TVSettings.Instance.DeleteShowFromDisk)
+            if (TVSettings.Instance.DeleteShowFromDisk)
             {
-                DialogResult res3 = MessageBox.Show(
-                    $"Remove folder \"{si.AutoAddFolderBase}\" from disk?",
-                    "Confirmation",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
-
-                if (res3 == DialogResult.Yes)
+                RemoveFromDisk(si.AutoAddFolderBase, si);
+                if (si.UsesManualFolders())
                 {
-                    Logger.Info($"Recycling {si.AutoAddFolderBase} as part of the removal of {si.ShowName}");
-                    try
+                    foreach (string directory in si.ManualFolderLocations.Values.SelectMany(x => x))
                     {
-                        Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(si.AutoAddFolderBase,
-                            Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
-                            Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
-                    }
-                    catch (OperationCanceledException e)
-                    {
-                        Logger.Warn($"Failed to remove {si.AutoAddFolderBase} as operation was cancelled: {e.Message}");
-                    }
-                    catch (System.IO.DirectoryNotFoundException e)
-                    {
-                        Logger.Warn($"Failed to remove {si.AutoAddFolderBase} as it is not found: {e.Message}");
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Error(e, $"Failed to remove {si.AutoAddFolderBase} as operation failed");
+                        RemoveFromDisk(directory, si);
                     }
                 }
             }
@@ -2998,6 +2917,101 @@ namespace TVRename
             Logger.Info($"User asked to remove {si.ShowName} - removing now");
             mDoc.TvLibrary.Remove(si);
             ShowAddedOrEdited(false, false, si);
+        }
+
+        private void RemoveFromDisk(string folderName,MediaConfiguration si)
+        {
+            if (!Directory.Exists(folderName))
+            {
+                return;
+            }
+
+            if (TVSettings.Instance.LibraryFolders.Any(x=>x.IsSubfolderOf(folderName)))
+            {
+                Logger.Warn($"Did not remove {folderName} as it is a library folder");
+                return;
+            }
+            if (TVSettings.Instance.MovieLibraryFolders.Any(x => x.IsSubfolderOf(folderName)))
+            {
+                Logger.Warn($"Did not remove {folderName} as it is a movie library folder");
+                return;
+            }
+
+            DialogResult res3 = MessageBox.Show(
+                $"Remove folder \"{folderName}\" from disk?",
+                "Confirmation",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (res3 != DialogResult.Yes)
+            {
+                return;
+            }
+
+            IEnumerable<string> videofilesThatWouldBeDeleted = Directory
+                    .GetFiles(folderName, "*", SearchOption.AllDirectories)
+                    .Where(f => f.IsMovieFile())
+                    .Select(s=>s.TrimStartString(folderName));
+
+            List<ShowConfiguration> showsthatmatchanyfiles = mDoc.TvLibrary.Shows
+                .Where(show => show != si)
+                .Where(show => videofilesThatWouldBeDeleted.Any(show.NameMatch))
+                .ToList();
+
+            if (showsthatmatchanyfiles.Any())
+            {
+                DialogResult res1 = MessageBox.Show(
+                    $"Do you want to remove {folderName}?  It is matches other shows {showsthatmatchanyfiles.Select(m => m.Name).ToCsv()}",
+                    "Confirmation",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Hand);
+
+                if (res1 != DialogResult.Yes)
+                {
+                    Logger.Warn($"Did not remove {folderName} as it is matches other shows {showsthatmatchanyfiles.Select(m => m.Name).ToCsv()}");
+                    return;
+                }
+            }
+
+            List<MovieConfiguration> moviesthatmatchanyfiles = mDoc.FilmLibrary.Movies
+                .Where(show => show != si)
+                .Where(show => videofilesThatWouldBeDeleted.Any(show.NameMatch))
+                .ToList();
+
+            if (moviesthatmatchanyfiles.Any())
+            {
+                DialogResult res2 = MessageBox.Show(
+                    $"Do you want to remove {folderName}?  It is matches other movies {moviesthatmatchanyfiles.Select(m => m.Name).ToCsv()}",
+                    "Confirmation",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Hand);
+
+                if (res2 != DialogResult.Yes)
+                {
+                    Logger.Warn($"Did not remove {folderName} as it is matches other movies {moviesthatmatchanyfiles.Select(m => m.Name).ToCsv()}");
+                    return;
+                }
+            }
+
+            Logger.Info($"Recycling {folderName} as part of the removal of {si.Name}");
+            try
+            {
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName,
+                    Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                    Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+            }
+            catch (OperationCanceledException e)
+            {
+                Logger.Warn($"Failed to remove {folderName} as operation was cancelled: {e.Message}");
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                Logger.Warn($"Failed to remove {folderName} as it is not found: {e.Message}");
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Failed to remove {folderName} as operation failed");
+            }
         }
 
         private void DeleteMovie([NotNull] MovieConfiguration si)
@@ -3011,39 +3025,11 @@ namespace TVRename
                 return;
             }
 
-            foreach (string directory in si.Locations)
+            if (TVSettings.Instance.DeleteMovieFromDisk)
             {
-                if (Directory.Exists(directory) && TVSettings.Instance.DeleteMovieFromDisk)
+                foreach (string directory in si.Locations)
                 {
-                    DialogResult res3 = MessageBox.Show(
-                        $"Remove folder \"{directory}\" from disk?",
-                        "Confirmation",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Warning);
-
-                    if (res3 == DialogResult.Yes)
-                    {
-                        Logger.Info($"Recycling {directory} as part of the removal of {si.ShowName}");
-                        try
-                        {
-                            Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(directory,
-                                Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
-                                Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
-                        }
-                        catch (OperationCanceledException e)
-                        {
-                            Logger.Warn(
-                                $"Failed to remove {directory} as operation was cancelled: {e.Message}");
-                        }
-                        catch (System.IO.DirectoryNotFoundException e)
-                        {
-                            Logger.Warn($"Failed to remove {directory} as it is not found: {e.Message}");
-                        }
-                        catch (Exception e)
-                        {
-                            Logger.Error(e, $"Failed to remove {directory} as operation failed");
-                        }
-                    }
+                    RemoveFromDisk(directory, si);
                 }
             }
 
@@ -5168,32 +5154,7 @@ namespace TVRename
 
         private void browserTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CheckForBroswerDependencies(true,null,null,null);
-        }
-
-        private static void CheckForBroswerDependencies(bool showUi, string? browserPath, string? localesDirPath, string? resourcesDirPath)
-        {
-            try
-            {
-                DependencyChecker.AssertAllDependenciesPresent(
-                    browserSubProcessPath:browserPath,
-                    localesDirPath:localesDirPath,
-                    resourcesDirPath:resourcesDirPath
-                    );
-                Logger.Info("Dependencies all found");
-                if (showUi)
-                {
-                    MessageBox.Show("Dependencies all found", "Browser Capability Test");
-                }
-            }
-            catch (Exception a)
-            {
-                Logger.Error(a, "Missing Cef Dependencies");
-                if (showUi)
-                {
-                    MessageBox.Show("Dependencies missing - see log for more details", "Browser Capability Test");
-                }
-            }
+            CefWrapper.Instance.CheckForBroswerDependencies(true);
         }
     }
 }

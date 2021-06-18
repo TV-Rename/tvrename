@@ -41,7 +41,7 @@ namespace TVRename
             {
                 IsError = true;
                 ErrorText = exception.Message;
-                LOGGER.Error($"Error occurred fixing {Explain()}, for {MediaName}, error was {exception.Message}");
+                LOGGER.Error(exception,$"Error occurred fixing {Explain()}, for {MediaName}, error was {exception.Message}");
             }
         }
 

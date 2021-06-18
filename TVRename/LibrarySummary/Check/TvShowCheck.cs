@@ -14,6 +14,7 @@ namespace TVRename
             if (Show.CachedShow != null)
             {
                 Show.CachedShow.Dirty = true;
+                Doc.TvAddedOrEdited(false,true,true,null, Show);
             }
         }
 

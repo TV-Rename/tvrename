@@ -298,7 +298,7 @@ namespace TVRename
                     return (false, subDirectories);
                 }
 
-                if (TVSettings.Instance.BulkAddCompareNoVideoFolders && !HasFilmFiles(di2))
+                if (TVSettings.Instance.BulkAddCompareNoVideoFolders && !hasSeasonFolders && !HasFilmFiles(di2))
                 {
                     return (false, subDirectories);
                 }

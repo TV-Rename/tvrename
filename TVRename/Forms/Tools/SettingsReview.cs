@@ -91,6 +91,7 @@ namespace TVRename.Forms
                 set.Add(new TvShowProviderCheck(show, mDoc));
                 set.Add(new TvShowSeasonFormatCheck(show, mDoc));
                 set.Add(new FolderBaseTvCheck(show, mDoc));
+                set.Add(new FolderBaseLibraryDefaultTvCheck(show, mDoc));
 
                 bw.ReportProgress(100 * current++ / total, show.ShowName);
             }

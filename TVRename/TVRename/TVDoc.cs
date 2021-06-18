@@ -750,18 +750,18 @@ namespace TVRename
             ExportMovieInfo();
         }
 
-        internal void TvAddedOrEdited(bool download, bool unattended, bool hidden, UI owner,
+        internal void TvAddedOrEdited(bool download, bool unattended, bool hidden, UI? owner,
             ShowConfiguration show) =>
             TvAddedOrEdited(download, unattended, hidden, owner, show.AsList());
 
-        internal void TvAddedOrEdited(bool download, bool unattended, bool hidden, UI owner, List<ShowConfiguration> shows)
+        internal void TvAddedOrEdited(bool download, bool unattended, bool hidden, UI? owner, List<ShowConfiguration> shows)
         {
             SetDirty();
 
             forceShowsRefresh.AddRange(shows);
             forceShowsScan.AddRange(shows);
 
-            if (download)
+            if (download && owner != null)
             {
                 if (!DoDownloadsFg(unattended, hidden, owner, shows))
                 {
@@ -793,17 +793,17 @@ namespace TVRename
             RunExporters();
         }
 
-        internal void MoviesAddedOrEdited(bool download, bool unattended, bool hidden, UI owner,
+        internal void MoviesAddedOrEdited(bool download, bool unattended, bool hidden, UI? owner,
             MovieConfiguration movie) =>
             MoviesAddedOrEdited(download, unattended, hidden, owner, movie.AsList());
 
-        internal void MoviesAddedOrEdited(bool download, bool unattended, bool hidden, UI owner, List<MovieConfiguration> movies)
+        internal void MoviesAddedOrEdited(bool download, bool unattended, bool hidden, UI? owner, List<MovieConfiguration> movies)
         {
             SetDirty();
             forceMoviesRefresh.AddRange(movies);
             forceMoviesScan.AddRange(movies);
 
-            if (download)
+            if (download && owner!=null)
             {
                 if (!DoDownloadsFg(unattended, hidden, owner, movies))
                 {

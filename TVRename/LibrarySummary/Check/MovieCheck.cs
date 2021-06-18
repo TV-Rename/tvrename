@@ -14,6 +14,7 @@ namespace TVRename
             if (Movie.CachedMovie != null)
             {
                 Movie.CachedMovie.Dirty = true;
+                Doc.MoviesAddedOrEdited(false,true,true,null, Movie);
             }
         }
 
