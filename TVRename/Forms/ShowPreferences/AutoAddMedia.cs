@@ -7,8 +7,8 @@ namespace TVRename
 {
     public partial class AutoAddMedia : Form
     {
-        private readonly CombinedCodeFinder tvCodeFinder;
-        private readonly CombinedCodeFinder movieCodeFinder;
+        private readonly TvCodeFinder tvCodeFinder;
+        private readonly MovieCodeFinder movieCodeFinder;
         private readonly string originalHint;
         public readonly bool SingleTvShowFound;
         public readonly bool SingleMovieFound;
@@ -24,8 +24,8 @@ namespace TVRename
 
             lblFileName.Text = "Filename: " + file.FullName;
 
-            tvCodeFinder = new CombinedCodeFinder("", MediaConfiguration.MediaType.tv, TVDoc.ProviderType.libraryDefault) { Dock = DockStyle.Fill };
-            movieCodeFinder = new CombinedCodeFinder("", MediaConfiguration.MediaType.movie, TVDoc.ProviderType.libraryDefault) { Dock = DockStyle.Fill };
+            tvCodeFinder = new TvCodeFinder("", TVDoc.ProviderType.libraryDefault) { Dock = DockStyle.Fill };
+            movieCodeFinder = new MovieCodeFinder("", TVDoc.ProviderType.libraryDefault) { Dock = DockStyle.Fill };
 
             tvCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
             movieCodeFinder.SelectionChanged += MTCCF_SelectionChanged;
@@ -202,8 +202,8 @@ namespace TVRename
         private void AutoAddShow_Load(object sender, EventArgs e)
         {
             (assumeMovie ? tpMovie : tpTV).Visible = true;
-            ActiveControl = assumeMovie ? movieCodeFinder : tvCodeFinder; // set initial focus to the code entry/show finder control
-            tabControl1.SelectedTab = (assumeMovie ? tpMovie : tpTV);
+            ActiveControl = assumeMovie ? (Control) movieCodeFinder : tvCodeFinder; // set initial focus to the code entry/show finder control
+            tabControl1.SelectedTab = assumeMovie ? tpMovie : tpTV;
         }
 
         private void rdoMovieProvider_CheckedChanged(object sender, EventArgs e)

@@ -50,7 +50,7 @@ namespace TVRename
             lblSeasonWordPreview.ForeColor = Color.DarkGray;
 
             codeFinderForm =
-                new CombinedCodeFinder(si.TmdbCode != -1 ? si.TmdbCode.ToString() : "", MediaConfiguration.MediaType.movie, si.Provider) { Dock = DockStyle.Fill };
+                new MovieCodeFinder(si.TmdbCode != -1 ? si.TmdbCode.ToString() : "", si.Provider) { Dock = DockStyle.Fill };
 
             codeFinderForm.SelectionChanged += MTCCF_SelectionChanged;
 

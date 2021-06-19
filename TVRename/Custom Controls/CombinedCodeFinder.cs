@@ -7,8 +7,6 @@
 //
 using JetBrains.Annotations;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
 // Control for searching for a source provider code, checking against local cache and
@@ -16,7 +14,7 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
-    public partial class CombinedCodeFinder : UserControl
+    public abstract partial class CombinedCodeFinder : UserControl
     {
         private MediaConfiguration.MediaType Type { get; }
         internal TVDoc.ProviderType Source { get; private set; }
@@ -26,12 +24,7 @@ namespace TVRename
 
         private const string DEFAULT_MESSAGE = "Enter the show's name, and click \"Search\"";
 
-        public CachedSeriesInfo? TvShowInitialFound { get; private set; }
-        public CachedMovieInfo? MovieInitialFound { get; private set; }
-        public int? TvShowInitialFoundCode => TvShowInitialFound?.IdCode(Source);
-        public int? MovieInitialFoundCode => MovieInitialFound?.IdCode(Source);
-
-        public CombinedCodeFinder(string? initialHint, MediaConfiguration.MediaType type, TVDoc.ProviderType source)
+        protected CombinedCodeFinder(string? initialHint, MediaConfiguration.MediaType type, TVDoc.ProviderType source)
         {
             Type = type;
             Source = source;
@@ -107,49 +100,7 @@ namespace TVRename
             return mi.IdFor(Source) > 0 ? mi.IdFor(Source).ToString() : mi.ShowName;
         }
 
-        private void SetupColumns()
-        {
-            lvMatches.Columns.Clear();
-            (int width, string name)[] cols;
-            switch (Type)
-            {
-                case MediaConfiguration.MediaType.movie:
-                    cols = new (int width, string name)[]
-                    {
-                        (44, "Code"),
-                        (184, "Movie Name"),
-                        (39, "Year"),
-                        (45, "Rating"),
-                        (40, "Language"),
-                        (40, "Pop."),
-                    };
-
-                    break;
-
-                case MediaConfiguration.MediaType.tv:
-                    cols = new (int width, string name)[]
-                    {
-                        (44, "Code"),
-                        (188, "Show Name"),
-                        (39, "Year"),
-                        (52, "Network"),
-                        (58, "Status"),
-                        (40, "Pop."),
-                    };
-
-                    break;
-
-                case MediaConfiguration.MediaType.both:
-                    throw new ArgumentOutOfRangeException();
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            foreach ((int width, var name) in cols)
-            {
-                lvMatches.Columns.Add(new ColumnHeader { Text = name, Width = width });
-            }
-        }
+        protected abstract void SetupColumns();
 
         public event EventHandler<EventArgs>? SelectionChanged;
 
@@ -220,8 +171,7 @@ namespace TVRename
                 lvMatches.BeginUpdate();
 
                 string what = txtFindThis.Text.CompareName();
-                int matchedMovies = 0;
-                int matchedTvShows = 0;
+                int matchedMedia = 0;
 
                 if (!txtFindThis.Text.HasValue() && lvMatches.Items.Count == 1 && lvMatches.Items[0].SubItems[1].Text == DEFAULT_MESSAGE)
                 {
@@ -235,32 +185,7 @@ namespace TVRename
                     bool numeric = int.TryParse(what, out int matchnum);
                     MediaCache cache = TVDoc.GetMediaCache(Source);
 
-                    if (Type == MediaConfiguration.MediaType.tv)
-                    {
-                        lock (cache.SERIES_LOCK)
-                        {
-                            foreach (KeyValuePair<int, CachedSeriesInfo> kvp in cache.CachedShowData.Where(kvp => matches(kvp.Key, kvp.Value, numeric, what, matchnum)))
-                            {
-                                lvMatches.Items.Add(NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum));
-                                matchedTvShows++;
-                                TvShowInitialFound = kvp.Value;
-                            }
-                        }
-                        txtSearchStatus.Text = "Found " + matchedTvShows + " show" + (matchedTvShows != 1 ? "s" : "");
-                    }
-                    else if (Type == MediaConfiguration.MediaType.movie)
-                    {
-                        lock (cache.MOVIE_LOCK)
-                        {
-                            foreach (KeyValuePair<int, CachedMovieInfo> kvp in cache.CachedMovieData.Where(kvp => matches(kvp.Key, kvp.Value, numeric, what, matchnum)).OrderByDescending(m => m.Value.Popularity))
-                            {
-                                lvMatches.Items.Add(NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum));
-                                matchedMovies++;
-                                MovieInitialFound = kvp.Value;
-                            }
-                        }
-                        txtSearchStatus.Text = "Found " + matchedMovies + " movie" + (matchedMovies != 1 ? "s" : "");
-                    }
+                    matchedMedia = FindMedia(cache, numeric, matchnum, what);
 
                     if (lvMatches.Items.Count == 1 && numeric)
                     {
@@ -272,13 +197,7 @@ namespace TVRename
                     txtSearchStatus.Text = string.Empty;
                 }
 
-                if (matchedMovies == 1 && chooseOnlyMatch)
-                {
-                    lvMatches.Items[0].Selected = true;
-                    return true;
-                }
-
-                if (matchedTvShows == 1 && chooseOnlyMatch)
+                if (matchedMedia == 1 && chooseOnlyMatch)
                 {
                     lvMatches.Items[0].Selected = true;
                     return true;
@@ -293,7 +212,9 @@ namespace TVRename
             }
         }
 
-        private bool matches(int num, CachedMediaInfo kvp, bool numeric, string what, int matchnum)
+        protected abstract int FindMedia(MediaCache cache, bool numeric, int matchnum, string what);
+
+        protected bool Matches(int num, CachedMediaInfo kvp, bool numeric, string what, int matchnum)
         {
             string show = kvp.Name.CompareName();
 
@@ -305,44 +226,6 @@ namespace TVRename
             bool numberTextMatch = numeric && show.Contains(what);
 
             return (numberMatch || textMatch || numberTextMatch);
-        }
-
-        [NotNull]
-        private static ListViewItem NewLvi([NotNull] CachedSeriesInfo si, int num, bool numberMatch)
-        {
-            ListViewItem lvi = new ListViewItem { Text = num.ToString() };
-            lvi.SubItems.Add(si.Name);
-            lvi.SubItems.Add(si.Year);
-            lvi.SubItems.Add(si.Network ?? string.Empty);
-            lvi.SubItems.Add(si.Status);
-            lvi.SubItems.Add(si.Popularity.HasValue ? si.Popularity.Value.ToString("0.##") : string.Empty);
-
-            lvi.ToolTipText = si.Overview;
-            lvi.Tag = si;
-            if (numberMatch)
-            {
-                lvi.Selected = true;
-            }
-
-            return lvi;
-        }
-
-        [NotNull]
-        private static ListViewItem NewLvi([NotNull] CachedMovieInfo si, int num, bool numberMatch)
-        {
-            ListViewItem lvi = new ListViewItem { Text = num.ToString() };
-            lvi.SubItems.Add(si.Name);
-            lvi.SubItems.Add(si.FirstAired.HasValue ? si.FirstAired.Value.Year.ToString() : string.Empty);
-            lvi.SubItems.Add(si.ContentRating);
-            lvi.SubItems.Add(si.ShowLanguage);
-            lvi.SubItems.Add(si.Popularity.HasValue ? si.Popularity.Value.ToString("0.##") : string.Empty);
-            lvi.ToolTipText = si.Overview;
-            lvi.Tag = si;
-            if (numberMatch)
-            {
-                lvi.Selected = true;
-            }
-            return lvi;
         }
 
         private void bnGoSearch_Click(object sender, EventArgs e)

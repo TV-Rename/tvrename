@@ -290,10 +290,16 @@
     <Compile Include="Custom Controls\CodeFinder.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Custom Controls\MovieCodeFinder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Custom Controls\ObjectListViewFlickerFree.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Custom Controls\NativeMethods.cs" />
+    <Compile Include="Custom Controls\TvCodeFinder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Exporter\MissingMovieCSV.cs" />
     <Compile Include="Exporter\MissingMovieXML.cs" />
     <Compile Include="Exporter\MoviesExporter.cs" />

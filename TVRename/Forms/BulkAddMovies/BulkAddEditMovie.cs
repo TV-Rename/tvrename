@@ -24,7 +24,7 @@ namespace TVRename
         {
             InitializeComponent();
 
-            codeFinderControl = new CombinedCodeFinder("", MediaConfiguration.MediaType.movie, TVSettings.Instance.DefaultMovieProvider) { Dock = DockStyle.Fill };
+            codeFinderControl = new MovieCodeFinder("", TVSettings.Instance.DefaultMovieProvider) { Dock = DockStyle.Fill };
             codeFinderControl.SelectionChanged += CodeChanged;
             codeFinderControl.lvMatches.DoubleClick += MatchDoubleClick;
 
