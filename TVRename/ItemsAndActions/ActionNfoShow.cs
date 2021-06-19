@@ -7,6 +7,7 @@ namespace TVRename
 {
     internal class ActionNfoShow : ActionNfo
     {
+        // Produce a file based on specification at https://kodi.wiki/view/NFO_files/TV_shows
         public ActionNfoShow([NotNull] FileInfo where, [NotNull] ShowConfiguration mc) : base(where, mc)
         {
             Episode = null;
@@ -67,6 +68,7 @@ namespace TVRename
                 root.UpdateElement("year", cachedSeries.Year);
                 root.UpdateElement("status", cachedSeries.Status);
                 root.UpdateElement("plot", cachedSeries.Overview);
+                root.UpdateElement("trailer", cachedSeries.TrailerUrl);
 
                 UpdateId(root, "tvdb", SelectedShow.Provider == TVDoc.ProviderType.TheTVDB ? "true" : "false", SelectedShow.TvdbCode);
                 UpdateId(root, "tmdb", SelectedShow.Provider == TVDoc.ProviderType.TMDB ? "true" : "false", SelectedShow.TmdbCode);
