@@ -142,7 +142,11 @@ namespace TVRename
         [NotNull]
         public List<ShowConfiguration> GetSortedShowItems()
         {
-            List<ShowConfiguration> returnList = Shows.ToList();
+            List<ShowConfiguration> returnList;
+            lock (Shows)
+            {
+                returnList = Shows.ToList();
+            }
             returnList.Sort(MediaConfiguration.CompareNames);
             return returnList;
         }
