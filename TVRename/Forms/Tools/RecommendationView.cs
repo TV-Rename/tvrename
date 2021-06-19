@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using TVRename.Forms.ShowPreferences;
+using TVRename.Forms.Tools;
 
 namespace TVRename.Forms
 {
@@ -19,7 +20,10 @@ namespace TVRename.Forms
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly List<ShowConfiguration> addedShows;
         private readonly List<MovieConfiguration> addedMovies;
-        private readonly int trendingWeight=100, topWeight = 100, relatedWeight = 100, similarWeight = 100;
+        private int trendingWeight=100;
+        private int topWeight = 100;
+        private int relatedWeight = 100;
+        private int similarWeight = 100;
 
         private RecommendationView([NotNull] TVDoc doc, UI main)
         {
@@ -33,10 +37,14 @@ namespace TVRename.Forms
             mDoc = doc;
             mainUi = main;
 
-            olvScore.MakeGroupies(new[] {0.1, 0.25, 0.5, 0.75 }, new[] { "-10%","10-25%", "25-50%", "50-75%", "75%+" });
+            olvScore.MakeGroupies(new[] {0.1, 0.25, 0.5, 0.75 }, new[] { "0-10%","10-25%", "25-50%", "50-75%", "75%+" });
 
             olvRating.GroupKeyGetter = rowObject => (int) Math.Floor(((RecommendationRow) rowObject).StarScore);
             olvRating.GroupKeyToTitleConverter = key => $"{(int)key}/10 Rating";
+            olvRating.Text = "Star Rating";
+
+            olvScore.AspectToStringFormat = "P1";
+            olvScore.Text = "Recommendation %";
         }
 
         public RecommendationView([NotNull] TVDoc doc, UI main, MediaConfiguration.MediaType type) : this(doc, main)
@@ -264,6 +272,21 @@ namespace TVRename.Forms
         {
             mDoc.MoviesAddedOrEdited(true, false, false, mainUi, addedMovies);
             mDoc.TvAddedOrEdited(true, false, false, mainUi, addedShows);
+        }
+
+        private void btnPreferences_Click(object sender, EventArgs e)
+        {
+            RecommendationViewPreferences prefs = new RecommendationViewPreferences(trendingWeight, topWeight, relatedWeight, similarWeight);
+            DialogResult dalogShowDialog = prefs.ShowDialog(this);
+            if (dalogShowDialog == DialogResult.OK)
+            {
+                trendingWeight = prefs.TrendingWeight;
+                topWeight = prefs.TopWeight;
+                relatedWeight = prefs.RelatedWeight;
+                similarWeight = prefs.SimilarWeight;
+
+                PopulateGrid();
+            }
         }
     }
 }

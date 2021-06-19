@@ -35,8 +35,6 @@ namespace TVRename
 
             txtFindThis.Text = initialHint;
 
-            SetupColumns();
-
             if (!initialHint.HasValue())
             {
                 ListViewItem lvi = new ListViewItem(string.Empty);
@@ -99,8 +97,6 @@ namespace TVRename
         {
             return mi.IdFor(Source) > 0 ? mi.IdFor(Source).ToString() : mi.ShowName;
         }
-
-        protected abstract void SetupColumns();
 
         public event EventHandler<EventArgs>? SelectionChanged;
 

@@ -50,6 +50,7 @@ namespace TVRename.Forms
             this.chkRemoveExisting = new System.Windows.Forms.CheckBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.chrRecommendationPreview = new CefSharp.WinForms.ChromiumWebBrowser();
+            this.btnPreferences = new System.Windows.Forms.Button();
             this.possibleMergedEpisodeRightClickMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.lvRecommendations)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -260,6 +261,17 @@ namespace TVRename.Forms
             this.chrRecommendationPreview.Size = new System.Drawing.Size(477, 676);
             this.chrRecommendationPreview.TabIndex = 0;
             // 
+            // btnPreferences
+            // 
+            this.btnPreferences.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPreferences.Location = new System.Drawing.Point(1034, 1);
+            this.btnPreferences.Name = "btnPreferences";
+            this.btnPreferences.Size = new System.Drawing.Size(110, 22);
+            this.btnPreferences.TabIndex = 14;
+            this.btnPreferences.Text = "Preferences";
+            this.btnPreferences.UseVisualStyleBackColor = true;
+            this.btnPreferences.Click += new System.EventHandler(this.btnPreferences_Click);
+            // 
             // RecommendationView
             // 
             this.AcceptButton = this.btnClose;
@@ -267,6 +279,7 @@ namespace TVRename.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(1156, 737);
+            this.Controls.Add(this.btnPreferences);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.pbProgress);
@@ -313,5 +326,6 @@ namespace TVRename.Forms
         private BrightIdeasSoftware.OLVColumn olvId;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private CefSharp.WinForms.ChromiumWebBrowser chrRecommendationPreview;
+        private System.Windows.Forms.Button btnPreferences;
     }
 }

@@ -30,14 +30,12 @@ namespace TVRename
         private readonly CombinedCodeFinder codeFinderForm;
         private CustomNameTagsFloatingWindow? cntfw;
         internal bool HasChanged;
-        private readonly bool addingNewShow;
         private readonly TVDoc mDoc;
 
         public AddEditMovie([NotNull] MovieConfiguration si, TVDoc doc)
         {
             selectedShow = si;
             mDoc = doc;
-            addingNewShow = (si.TvdbCode == -1 && si.TmdbCode == -1 && si.TVmazeCode == -1);
             InitializeComponent();
             HasChanged = false;
 

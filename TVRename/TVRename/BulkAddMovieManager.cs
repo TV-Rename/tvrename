@@ -16,11 +16,11 @@ namespace TVRename
 
         //Thread safe counters to work out the progress
         //for scanning
-        private static volatile int CurrentPhaseDirectory;
+        private static int CurrentPhaseDirectory;
 
-        private static volatile int CurrentPhaseTotalDirectory;
-        private static volatile int CurrentPhase;
-        private static volatile int CurrentPhaseTotal;
+        private static int CurrentPhaseTotalDirectory;
+        private static int CurrentPhase;
+        private static int CurrentPhaseTotal;
 
         public BulkAddMovieManager(TVDoc doc)
         {

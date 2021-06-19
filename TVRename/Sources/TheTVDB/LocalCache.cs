@@ -633,24 +633,24 @@ namespace TVRename.TheTVDB
                 case "series":
                 case "translatedseries":
                     {
-                        if (Series.ContainsKey(id))
-                        {
-                            CachedSeriesInfo selectedCachedSeriesInfo = Series[id];
-                            ProcessUpdate(selectedCachedSeriesInfo, time, $"as it({id}) has been updated");
-                        }
-                        return;
+                    CachedSeriesInfo? selectedCachedSeriesInfo = this.GetSeries(id);
+                    if (selectedCachedSeriesInfo!=null)
+                    {
+                        ProcessUpdate(selectedCachedSeriesInfo, time, $"as it({id}) has been updated");
+                    }
+                    return;
                     }
                 case "movies":
                 case "translatedmovies":
                 case "movie-genres":
+                {
+                    CachedMovieInfo? selectedMovieCachedData = this.GetMovie(id);
+                    if (selectedMovieCachedData!=null)
                     {
-                        if (Movies.ContainsKey(id))
-                        {
-                            CachedMovieInfo selectedMovieCachedData = Movies[id];
-                            ProcessUpdate(selectedMovieCachedData, time, $"as it({id}) has been updated");
-                        }
+                        ProcessUpdate(selectedMovieCachedData, time, $"as it({id}) has been updated");
+                    }
 
-                        return;
+                    return;
                     }
                 case "episodes":
                 case "translatedepisodes":
@@ -1504,18 +1504,28 @@ namespace TVRename.TheTVDB
         private (CachedMovieInfo, Language) GenerateMovieInfoV4(JObject r, Locale locale)
         {
             Language lang = locale.LanguageToUse(TVDoc.ProviderType.TheTVDB);
-            JToken collectionNode = r["data"]["lists"]?.FirstOrDefault(x =>
-                x["isOfficial"].ToString() == "true" &&
-                ((JArray)x["nameTranslations"]).ContainsTyped(lang.ThreeAbbreviation));
+            JToken? collectionNode = GetCollectionNodeV4(r, lang);
 
+            CachedMovieInfo si = GenerateCoreMovieInfoV4(r, locale, collectionNode);
+
+            AddAliasesV4(r, lang, si);
+            AddCastAndCrew(r, si);
+            AddMovieImagesV4(r, si);
+
+            return (si, GetAppropriateLanguage(r["data"]["nameTranslations"], locale));
+        }
+
+        private CachedMovieInfo GenerateCoreMovieInfoV4(JObject r, Locale locale, JToken? collectionNode)
+        {
+            JToken dataNode = r["data"];
             CachedMovieInfo si = new CachedMovieInfo(locale, TVDoc.ProviderType.TheTVDB)
             {
                 FirstAired = GetReleaseDateV4(r, locale),
-                TvdbCode = (int)r["data"]["id"],
-                Slug = ((string)r["data"]["slug"])?.Trim(),
+                TvdbCode = (int) dataNode["id"],
+                Slug = ((string) dataNode["slug"])?.Trim(),
                 Imdb = GetExternalIdV4(r, "IMDB"),
-                Runtime = ((string)r["data"]["runtime"])?.Trim(),
-                Name = r["data"]["name"]?.ToString() ?? string.Empty,
+                Runtime = ((string) dataNode["runtime"])?.Trim(),
+                Name = dataNode["name"]?.ToString() ?? string.Empty,
                 TrailerUrl = GetTrailerUrl(r, locale),
                 IsSearchResultOnly = false,
                 Dirty = false,
@@ -1526,11 +1536,11 @@ namespace TVRename.TheTVDB
                 InstagramId = GetExternalIdV4(r, "Instagram"),
                 TwitterId = GetExternalIdV4(r, "Twitter"),
                 //Icon = "https://artworks.thetvdb.com" + GetArtwork(r, "Icon"), TODO - Other Image Downloads
-                Network = r["data"]["studios"]?.FirstOrDefault()?["name"]?.ToString(),
-                ShowLanguage = r["data"]["audioLanguages"]?.ToString(),
+                Network = dataNode["studios"]?.FirstOrDefault()?["name"]?.ToString(),
+                ShowLanguage = dataNode["audioLanguages"]?.ToString(),
                 ContentRating = GetContentRatingV4(r, locale),
-                Status = r["data"]["status"]["name"]?.ToString(),
-                SrvLastUpdated = ((DateTime)r["data"]["lastUpdated"]).ToUnixTime(),
+                Status = dataNode["status"]["name"]?.ToString(),
+                SrvLastUpdated = ((DateTime) dataNode["lastUpdated"]).ToUnixTime(),
                 Genres = GetGenresV4(r),
 
                 CollectionId = collectionNode?["id"].ToString().ToInt(),
@@ -1541,11 +1551,14 @@ namespace TVRename.TheTVDB
                 //todo load country?  "originalCountry": "usa",
             };
 
-            AddAliasesV4(r, lang, si);
-            AddCastAndCrew(r, si);
-            AddMovieImagesV4(r, si);
+            return si;
+        }
 
-            return (si, GetAppropriateLanguage(r["data"]["nameTranslations"], locale));
+        private static JToken? GetCollectionNodeV4(JObject r, Language lang)
+        {
+            return r["data"]["lists"]?.FirstOrDefault(x =>
+                x["isOfficial"].ToString() == "true" &&
+                ((JArray)x["nameTranslations"]).ContainsTyped(lang.ThreeAbbreviation));
         }
 
         private DateTime? GetReleaseDateV4(JObject r, Locale locale)
@@ -1721,8 +1734,13 @@ namespace TVRename.TheTVDB
             };
         }
 
-        private Language GetAppropriateLanguage(JToken languageOptions, Locale preferredLocale)
+        private Language GetAppropriateLanguage(JToken? languageOptions, Locale preferredLocale)
         {
+            if (languageOptions == null)
+            {
+                return Languages.Instance.FallbackLanguage;
+            }
+
             if (((JArray)languageOptions).ContainsTyped(preferredLocale.LanguageToUse(TVDoc.ProviderType.TheTVDB)
                 .ThreeAbbreviation))
             {

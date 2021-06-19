@@ -2009,26 +2009,22 @@ namespace TVRename
         #region HelpWindows
 
         private void pbGeneral_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-general-tab");
-
         private void pbDisplay_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-display-tab");
-
         private void pbSearchFolders_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-search-folders-tab");
-
         private void pbRSSJSONSearch_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-rss--json-search-tab");
-
-        private void pbFilesAndFolders_Click(object sender, EventArgs e) =>
-            OpenInfoWindow("/#the-files-and-folders-tab");
-
+        private void pbFilesAndFolders_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-files-and-folders-tab");
         private void pbFolderDeleting_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-folder-deleting-tab");
-
-        private void pictureBox7_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-media-center-tab");
-
-        private void pictureBox1_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-torrents--nzb-tab");
-
         private void pbLibraryFolders_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-library-folders-tab");
-
+        private void pictureBox1_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-torrents--nzb-tab");
         private void PictureBox1_Click_1(object sender, EventArgs e) => OpenInfoWindow("/#the-folder-defaults-tab");
-
+        private void pictureBox7_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-media-center-tab");
+        private void pbuUpdates_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-updates-tab");
+        private void pbuExportEpisodes_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-episode-exporters-tab");
+        private void pbuJackett_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-jackett-tab");
+        private void pbuShowExport_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-show-exporters-tab");
+        private void pbMovieDefaults_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-movie-defaults-tab");
+        private void pbSources_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-data-sources-tab");
+        private void pbScanOptions_Click(object sender, EventArgs e) => OpenInfoWindow("/#the-general-tab");
         private static void OpenInfoWindow(string page)
         {
             Helpers.OpenUrl($"https://www.tvrename.com/manual/options{page}");
@@ -2213,10 +2209,6 @@ namespace TVRename
         private void updateCheckOption_CheckedChanged(object sender, EventArgs e)
         {
             cboUpdateCheckInterval.Enabled = optUpdateCheckInterval.Checked;
-        }
-
-        private void label91_Click(object sender, EventArgs e)
-        {
         }
     }
 }

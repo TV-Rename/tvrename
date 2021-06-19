@@ -755,6 +755,7 @@ namespace TVRename.TMDB
             }
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private CachedSeriesInfo File(SearchTv result)
         {
             CachedSeriesInfo m = new CachedSeriesInfo(new Locale(), TVDoc.ProviderType.TMDB)

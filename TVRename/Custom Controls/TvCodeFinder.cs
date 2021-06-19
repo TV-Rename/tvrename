@@ -9,6 +9,12 @@ namespace TVRename
     {
         public TvCodeFinder([CanBeNull] string? initialHint, TVDoc.ProviderType source) : base(initialHint, MediaConfiguration.MediaType.tv, source)
         {
+            lvMatches.Columns.Add(new ColumnHeader { Text = "Code", Width = 44 });
+            lvMatches.Columns.Add(new ColumnHeader { Text = "Show Name", Width = 188 });
+            lvMatches.Columns.Add(new ColumnHeader { Text = "Year", Width = 39 });
+            lvMatches.Columns.Add(new ColumnHeader { Text = "Network", Width = 52 });
+            lvMatches.Columns.Add(new ColumnHeader { Text = "Status", Width = 58 });
+            lvMatches.Columns.Add(new ColumnHeader { Text = "Pop.", Width = 40 });
         }
         public CachedSeriesInfo? TvShowInitialFound { get; private set; }
         public int? TvShowInitialFoundCode => TvShowInitialFound?.IdCode(Source);
@@ -33,29 +39,22 @@ namespace TVRename
             return lvi;
         }
 
-        protected override void SetupColumns()
-        {
-            lvMatches.Columns.Clear();
-            lvMatches.Columns.Add(new ColumnHeader { Text = "Code", Width = 44 });
-            lvMatches.Columns.Add(new ColumnHeader { Text = "Show Name", Width = 188 });
-            lvMatches.Columns.Add(new ColumnHeader { Text = "Year", Width = 39 });
-            lvMatches.Columns.Add(new ColumnHeader { Text = "Network", Width = 52 });
-            lvMatches.Columns.Add(new ColumnHeader { Text = "Status", Width = 58 });
-            lvMatches.Columns.Add(new ColumnHeader { Text = "Pop.", Width = 40 });
-        }
-
         protected override int FindMedia(MediaCache cache, bool numeric, int matchnum, string what)
         {
-            int matchedTvShows = 0;
+            List<KeyValuePair<int, CachedSeriesInfo>> lvis;
             lock (cache.SERIES_LOCK)
             {
-                foreach (KeyValuePair<int, CachedSeriesInfo> kvp in cache.CachedShowData.Where(kvp => Matches(kvp.Key, kvp.Value, numeric, what, matchnum)))
-                {
-                    lvMatches.Items.Add(NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum));
-                    matchedTvShows++;
-                    TvShowInitialFound = kvp.Value;
-                }
+                lvis = cache.CachedShowData
+                    .Where(kvp => Matches(kvp.Key, kvp.Value, numeric, what, matchnum))
+                    .ToList();
             }
+            foreach (var lvi in lvis.Select(kvp => NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum)))
+            {
+                lvMatches.Items.Add(lvi);
+            }
+
+            int matchedTvShows = lvis.Count;
+            TvShowInitialFound = lvis.FirstOrDefault().Value;
             txtSearchStatus.Text = "Found " + matchedTvShows + " show" + (matchedTvShows != 1 ? "s" : "");
             return matchedTvShows;
         }
