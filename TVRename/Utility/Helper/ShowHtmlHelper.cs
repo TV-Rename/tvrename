@@ -412,7 +412,8 @@ namespace TVRename
             string horizontalBanner = CreateHorizontalBannerHtml(si);
             string poster = CreatePosterHtml(ser);
             string yearRange = YearRange(ser);
-            string episodeSummary = ser.Episodes.Count.ToString();
+            int episodeSummary = ser.Episodes.Count;
+            string episodeText = episodeSummary > 0 ? $"{episodeSummary} Episodes" : string.Empty;
             string stars = StarRating(ser.SiteRating / 2);
             string genreIcons = string.Join("&nbsp;", ser.Genres.Select(GenreIconHtml));
             string siteRating = PrettyPrint(ser.SiteRating);
@@ -444,10 +445,12 @@ namespace TVRename
                    <div class=""col-md-8 d-flex flex-column"">
                     <div class=""row"">
                      <div class=""col-md-8""><h1>{si?.ShowName ?? ser.Name}</h1><small class=""text-muted"">{ser.ShowLanguage} - {ser.Type}</small></div>
-                     <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6><small class=""text-muted"">{episodeSummary} Episodes{runTimeHtml}</small></div>
+                     <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6><small class=""text-muted"">{episodeText}{runTimeHtml}</small></div>
                     </div>
-                    <div><p class=""lead"">{ser.Overview}</p></div>
-<div class=""accordion accordion-flush"" id=""accordionCastCrew"">
+                    <div><p class=""lead"">{ser.Overview}</p></div>");
+            if(ser.GetCrew().Any() || ser.GetActors().Any() )
+            {
+                sb.AppendLine($@"<div class=""accordion accordion-flush"" id=""accordionCastCrew"">
   <div class=""accordion-item"" style=""background-color:#F0F0F0"">
     <h2 class=""accordion-header"" id=""flush-headingOne"" style=""background-color:#F0F0F0"">
       <button class=""accordion-button collapsed"" type=""button"" data-bs-toggle=""collapse"" data-bs-target=""#flush-collapseOne"" aria-expanded=""false"" aria-controls=""flush-collapseOne"" style=""background-color:#F0F0F0"">
@@ -472,8 +475,9 @@ namespace TVRename
 	  </div>
     </div>
   </div>
-</div>
-			        <div><br/></div>
+</div>");
+            }
+            sb.AppendLine($@"<div><br/></div>
 		            <div>
                     {CreateButton(EditTvSeriesUrl(ser), "<i class=\"far fa-edit\"></i>", "Edit")}
                      {explorerButton}
@@ -569,8 +573,10 @@ namespace TVRename
                         <small class=""text-muted"">{runTimeHtml}</small></div>
                     </div>
                     <div><p class=""lead"">{ser.Overview}</p></div>
-			        <div></div>
-<div class=""accordion accordion-flush"" id=""accordionCastCrew"">
+			        <div></div>");
+            if (ser.GetCrew().Any() || ser.GetActors().Any())
+            {
+                sb.AppendLine($@"<div class=""accordion accordion-flush"" id=""accordionCastCrew"">
   <div class=""accordion-item"" style=""background-color:#F0F0F0"">
     <h2 class=""accordion-header"" id=""flush-headingOne"" style=""background-color:#F0F0F0"">
       <button class=""accordion-button collapsed"" type=""button"" data-bs-toggle=""collapse"" data-bs-target=""#flush-collapseOne"" aria-expanded=""false"" aria-controls=""flush-collapseOne"" style=""background-color:#F0F0F0"">
@@ -595,8 +601,9 @@ namespace TVRename
 	  </div>
     </div>
   </div>
-</div>
-			        <div><br/></div>
+</div>");
+            }
+        sb.AppendLine($@"<div><br/></div>
 		            <div>
                     {CreateButton(EditMovieUrl(ser), "<i class=\"far fa-edit\"></i>", "Edit")}
                      {explorerButton}

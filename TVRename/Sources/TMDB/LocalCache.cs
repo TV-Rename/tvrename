@@ -879,9 +879,30 @@ namespace TVRename.TMDB
             return returnValue;
         }
 
-        public CachedMovieInfo? LookupMovieByTvdb(int tvdbId, bool showErrorMsgBox)
+        public CachedMovieInfo? LookupMovieByTvdb(int tvdbId, bool showErrorMsgBox,Locale locale)
         {
-            throw new NotImplementedException(); //TODO
+            FindContainer? results = Client.FindAsync(FindExternalSource.TvDb, tvdbId.ToString()).Result;
+            LOGGER.Info($"Got {results.MovieResults.Count:N0} results searching for {tvdbId}");
+            foreach (SearchMovie result in results.MovieResults)
+            {
+                SearchSpecifier ss = new SearchSpecifier(result.Id, locale, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
+                DownloadMovieNow(ss, locale, showErrorMsgBox);
+            }
+
+            if (results.MovieResults.Count == 0)
+            {
+                return null;
+            }
+
+            if (results.MovieResults.Count == 1)
+            {
+                lock (MOVIE_LOCK)
+                {
+                    return Movies[results.MovieResults.First().Id];
+                }
+            }
+
+            return null;
         }
 
         public IEnumerable<CachedMovieInfo> ServerAccuracyCheck()

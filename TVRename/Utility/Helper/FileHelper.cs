@@ -67,6 +67,7 @@ namespace TVRename
 
                 if (!okToDelete)
                 {
+                    Logger.Info($"Not Removing {di.FullName} as it contains {subdi.Name} which does not have {settings.EmptyIgnoreWordsArray.ToCsv()} in the directory name.");
                     return;
                 }
             }
@@ -101,27 +102,10 @@ namespace TVRename
                 return; // nope
             }
 
-            foreach (FileInfo fi in files)
+            foreach (FileInfo fi in files.Where(x=>!CanDelete(x,settings)))
             {
-                bool okToDelete = settings.EmptyIgnoreExtensions &&
-                                  settings.EmptyIgnoreExtensionsArray.Contains(fi.Extension);
-
-                if (okToDelete)
-                {
-                    continue; // onto the next file
-                }
-
-                // look in the filename
-                if (settings.EmptyIgnoreWordsArray.Any(word =>
-                    fi.Name.Contains(word, StringComparison.OrdinalIgnoreCase)))
-                {
-                    okToDelete = true;
-                }
-
-                if (!okToDelete)
-                {
-                    return;
-                }
+                Logger.Info($"Not Removing {di.FullName} as it contains {fi.Name} which does not have {settings.EmptyIgnoreExtensionsArray.ToCsv()} as extension or {settings.EmptyIgnoreWordsArray.ToCsv()} in the filename.");
+                return;
             }
 
             if (settings.EmptyMaxSizeCheck)
@@ -129,13 +113,27 @@ namespace TVRename
                 // how many MB are we deleting?
                 long totalBytes = files.Sum(fi => fi.Length);
 
-                if (totalBytes / (1024 * 1024) > settings.EmptyMaxSizeMB)
+                double mbytes = 1.0 * totalBytes / (1024 * 1024);
+                if (mbytes > settings.EmptyMaxSizeMB)
                 {
+                    Logger.Info(
+                        $"Not Removing {di.FullName} as it contains too much Mb of files [{mbytes} vs {settings.EmptyMaxSizeMB}]");
                     return; // too much
                 }
             }
 
             DeleteOrRecycleFolder(di, settings);
+        }
+
+        private static bool CanDelete(FileInfo fi, TVSettings.TidySettings settings)
+        {
+            bool extensionOkToRemove = settings.EmptyIgnoreExtensions &&
+                              settings.EmptyIgnoreExtensionsArray.Contains(fi.Extension);
+
+            bool fileOkToRemove = settings.EmptyIgnoreWordsArray
+                .Any(word => fi.Name.Contains(word, StringComparison.OrdinalIgnoreCase));
+
+            return extensionOkToRemove || fileOkToRemove;
         }
 
         public static int GetFrameWidth([NotNull] this FileInfo movieFile)

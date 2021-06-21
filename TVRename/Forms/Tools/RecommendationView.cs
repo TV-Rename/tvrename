@@ -41,10 +41,6 @@ namespace TVRename.Forms
 
             olvRating.GroupKeyGetter = rowObject => (int) Math.Floor(((RecommendationRow) rowObject).StarScore);
             olvRating.GroupKeyToTitleConverter = key => $"{(int)key}/10 Rating";
-            olvRating.Text = "Star Rating";
-
-            olvScore.AspectToStringFormat = "P1";
-            olvScore.Text = "Recommendation %";
         }
 
         public RecommendationView([NotNull] TVDoc doc, UI main, MediaConfiguration.MediaType type) : this(doc, main)

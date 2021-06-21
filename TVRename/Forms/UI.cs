@@ -221,7 +221,7 @@ namespace TVRename
             }
         }
 
-        public void ShowChild(Form childForm)
+        public void ShowChild(Form childForm) 
         {
             if (InvokeRequired)
             {
@@ -3661,17 +3661,20 @@ namespace TVRename
             internalCheckChange = true;
 
             olvAction.BeginUpdate();
-            if (2 * mDoc.TheActionList.Actions.Count > mDoc.TheActionList.Count)
+            if (mDoc.TheActionList.Actions.Count<1000)
             {
-                olvAction.CheckAll();
-                foreach (var i in mDoc.TheActionList.Where(i => !(i is Action)))
+                if (2 * mDoc.TheActionList.Actions.Count > mDoc.TheActionList.Count)
                 {
-                    olvAction.UncheckObject(i);
+                    olvAction.CheckAll();
+                    foreach (var i in mDoc.TheActionList.Where(i => !(i is Action)))
+                    {
+                        olvAction.UncheckObject(i);
+                    }
                 }
-            }
-            else
-            {
-                olvAction.CheckObjects(mDoc.TheActionList.Actions);
+                else
+                {
+                    olvAction.CheckObjects(mDoc.TheActionList.Actions);
+                }
             }
 
             internalCheckChange = false;

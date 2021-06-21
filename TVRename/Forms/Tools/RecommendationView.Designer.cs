@@ -183,7 +183,9 @@ namespace TVRename.Forms
             // olvScore
             // 
             this.olvScore.AspectName = "RecommendationScore";
-            this.olvScore.Text = "Score";
+            this.olvScore.AspectToStringFormat = "{0:p1}";
+            this.olvScore.Text = "Recommendation %";
+            this.olvScore.Width = 112;
             // 
             // olvYear
             // 
@@ -193,6 +195,7 @@ namespace TVRename.Forms
             // olvRating
             // 
             this.olvRating.AspectName = "StarScore";
+            this.olvRating.AspectToStringFormat = "{0:0.00}";
             this.olvRating.Text = "Quality Rating";
             this.olvRating.Width = 88;
             // 

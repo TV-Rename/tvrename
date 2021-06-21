@@ -184,7 +184,7 @@ namespace TVRename
             //OK, so we have a flurry of different Ids. There are 2 scenarios:
             // (1) Configuration has a cachedItem that has additional or different information to the main config. (This should be most)
             // (2) There is information in one of the caches that has information that could be useful (most should have been picked up in 1 above)
-            // We do them backwards as we previeve the (1) updates are better quality
+            // We do them backwards as we precieve the (1) updates are better quality
 
             CheckForUsefulTVIds(TVmaze.LocalCache.Instance, ProviderType.TheTVDB);
             CheckForUsefulTVIds(TVmaze.LocalCache.Instance, ProviderType.TMDB);

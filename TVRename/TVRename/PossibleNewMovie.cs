@@ -56,7 +56,9 @@ namespace TVRename
 
             //Lookup based on TMDB ID Being Present
             int? tmdbId = ConvertToInt(FindShowCode("tmdbid", "tmdb"));
-            int? tmdbCode = ValidateOnTMDB(tmdbId, new Locale(), showErrorMsgBox);
+            Locale preferredLocale = new Locale();
+
+            int? tmdbCode = ValidateOnTMDB(tmdbId, preferredLocale, showErrorMsgBox);
             if (tmdbCode.HasValue)
             {
                 SetId(tmdbCode.Value, TVDoc.ProviderType.TMDB);
@@ -81,7 +83,7 @@ namespace TVRename
 
             if (imdbToTest.HasValue())
             {
-                CachedMovieInfo? s = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbToTest!, new Locale(), showErrorMsgBox);
+                CachedMovieInfo? s = TMDB.LocalCache.Instance.LookupMovieByImdb(imdbToTest!, preferredLocale, showErrorMsgBox);
                 if (s != null)
                 {
                     SetId(s.TmdbCode, TVDoc.ProviderType.TMDB);
@@ -91,7 +93,7 @@ namespace TVRename
             }
 
             //Do a Search on TMDB
-            CachedMovieInfo? ser = TMDB.LocalCache.Instance.GetMovie(this, new Locale(), showErrorMsgBox);
+            CachedMovieInfo? ser = TMDB.LocalCache.Instance.GetMovie(this, preferredLocale, showErrorMsgBox);
             if (ser != null)
             {
                 SetId(ser.TmdbCode, TVDoc.ProviderType.TMDB);
@@ -110,7 +112,7 @@ namespace TVRename
             int? tvdbId = ConvertToInt(FindShowCode("tvdbid", "tvdb"));
             if (tvdbId.HasValue)
             {
-                CachedMovieInfo? s2 = TMDB.LocalCache.Instance.LookupMovieByTvdb(tvdbId.Value, showErrorMsgBox);
+                CachedMovieInfo? s2 = TMDB.LocalCache.Instance.LookupMovieByTvdb(tvdbId.Value, showErrorMsgBox, preferredLocale);
                 if (s2 != null)
                 {
                     SetId(s2.TmdbCode, TVDoc.ProviderType.TMDB);
@@ -118,7 +120,7 @@ namespace TVRename
                 else
                 {
                     //Find movie on TVDB based on Id
-                    CachedMovieInfo? s3 = TheTVDB.LocalCache.Instance.GetMovieAndDownload(this, new Locale(), showErrorMsgBox);
+                    CachedMovieInfo? s3 = TheTVDB.LocalCache.Instance.GetMovieAndDownload(this, preferredLocale, showErrorMsgBox);
                     if (s3 != null)
                     {
                         SetId(s3.TvdbCode, TVDoc.ProviderType.TheTVDB);

@@ -170,8 +170,10 @@ namespace TVRename
                 return matching.First();
             }
 
-            throw new InvalidOperationException(
-                $"Searched for {id} on {provider.PrettyPrint()} TV Library has multiple: {matching.Select(x => x.ToString()).ToCsv()}");
+            //OK we have multiple!!
+            Logger.Error($"Searched for {id} on {provider.PrettyPrint()} TV Library has multiple: {matching.Select(x => x.ToString()).ToCsv()}");
+            Logger.Error(Environment.StackTrace);
+            return matching.FirstOrDefault(x => x.Provider == provider) ?? matching.First();
         }
 
         public void GenDict()
