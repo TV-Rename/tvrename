@@ -315,5 +315,8 @@ namespace TVRename
         public override string DestinationFolder => To.DirectoryName;
         public override string DestinationFile => To.Name;
         public override string SourceDetails => From.FullName;
+
+        public DirectoryInfo SourceDirectory => From.Directory;
+        public string DestinationBaseName=> To.FileNameNoExt();
     }
 }

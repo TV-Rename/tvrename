@@ -1719,6 +1719,10 @@ namespace TVRename
             {
                 FileFinder.KeepTogether(TheActionList, false, true, this);
             }
+            if (TVSettings.Instance.CopySubsFolders)
+            {
+                FileFinder.CopySubsFolders(TheActionList, true, this);
+            }
         }
 
         public void IgnoreSeasonForItem(Item? er)

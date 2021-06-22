@@ -78,6 +78,10 @@ namespace TVRename
             {
                 KeepTogether(newList, false);
             }
+            if (TVSettings.Instance.CopySubsFolders)
+            {
+                CopySubsFolders(newList);
+            }
 
             if (!TVSettings.Instance.LeaveOriginals)
             {

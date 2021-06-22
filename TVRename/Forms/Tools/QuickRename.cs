@@ -179,6 +179,10 @@ namespace TVRename.Forms.Tools
                 {
                     FileFinder.KeepTogether(mDoc.TheActionList, false, true, mDoc);
                 }
+                if (TVSettings.Instance.CopySubsFolders)
+                {
+                    FileFinder.CopySubsFolders(mDoc.TheActionList, true, mDoc);
+                }
             }
             catch (ShowConfiguration.EpisodeNotFoundException)
             {

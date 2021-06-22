@@ -58,7 +58,7 @@ namespace TVRename
 
         private const string OtherExtensionsStringDEFAULT = ".srt;.nfo;.txt;.tbn";
         private const string keepTogetherExtensionsStringDEFAULT = ".srt;.nfo;.txt;.tbn";
-        private const string subtitleExtensionsStringDEFAULT = ".srt;.sub;.sbv;.idx";
+        private const string subtitleExtensionsStringDEFAULT = ".srt;.sub;.sbv;.idx;.ifo;.smi;.ass;.ssa;.smi;.rt;.aqt;.jss;.cvd;.dks;.ttxt;.mpl;.pjs;.psb;.ssf;.svcd;.usf";
 
         #region FolderJpgIsType enum
 
@@ -356,6 +356,11 @@ namespace TVRename
         public bool FileNameCaseSensitiveMatch => false; //todo persist and edit this
 
         public bool DeleteMovieFromDisk => false; //todo persist and edit this
+
+        public List<String> SubsFolderNames => new List<string> { "subs", "subtitles", "vobsubs", "sub", "vobsub", "subtitle" };
+        //todo persist and edit this
+
+        public bool CopySubsFolders => true; //todo persist and edit this
 
         public bool AutoSaveOnExit = false;
 

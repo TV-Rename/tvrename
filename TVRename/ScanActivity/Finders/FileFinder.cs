@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
 
@@ -303,6 +304,75 @@ namespace TVRename
             }
 
             return false;
+        }
+        protected void CopySubsFolders([NotNull] ItemList actionlist)
+        {
+            CopySubsFolders(actionlist,  !MDoc.Args.Unattended && !MDoc.Args.Hide, MDoc);
+        }
+
+        public static void CopySubsFolders([NotNull] ItemList actionlist, bool showErrors, TVDoc d)
+        {
+            // for each of the items in rcl, do the same copy/move if for other items with the same
+            // base name, but different extensions
+            ItemList extras = new ItemList();
+
+            foreach (ActionCopyMoveRename action in actionlist.CopyMoveRename)
+            {
+                IEnumerable<DirectoryInfo> suitableSubFolders = action.SourceDirectory.GetDirectories().Where(IsSubsFolder);
+                foreach (DirectoryInfo subtitleFolder in suitableSubFolders)
+                {
+                    if (action.Episode != null)
+                    {
+                        //Does not really make sense for shows (multiple episodes in one directory).
+                        //If we only have one file we can rename it
+                        List<FileInfo> subFiles = subtitleFolder.GetFiles().Where(IsSubTitleFile).ToList();
+                        if (subFiles.Count == 1)
+                        {
+                            FileInfo fi = subFiles.Single();
+                            string newName = action.DestinationBaseName + fi.Extension;
+                            ActionCopyMoveRename newitem =
+                                new ActionCopyMoveRename(action.Operation, fi,
+                                    FileHelper.FileInFolder(action.To.Directory, newName), action.SourceEpisode, false,
+                                    null, d); // tidy up on main action, not this
+
+                            extras.Add(newitem);
+                        }
+                    }
+                    else
+                    {
+                        bool hasSubtitleFiles = subtitleFolder.GetFiles().Any(IsSubTitleFile);
+
+                        if (!hasSubtitleFiles)
+                        {
+                            continue;
+                        }
+
+                        string newlocation = Path.Combine(action.DestinationFolder, subtitleFolder.Name);
+
+                        if (newlocation == subtitleFolder.FullName)
+                        {
+                            continue;
+                        }
+
+                        ActionMoveRenameDirectory newitem =
+                            new ActionMoveRenameDirectory(subtitleFolder.FullName, newlocation, action.Movie!);
+
+                        extras.Add(newitem);
+                    }
+                }
+            }
+
+            UpdateActionList(actionlist, extras);
+        }
+
+        private static bool IsSubTitleFile(FileInfo file)
+        {
+            return TVSettings.Instance.subtitleExtensionsArray.Contains(file.Extension);
+        }
+
+        private static bool IsSubsFolder(DirectoryInfo folder)
+        {
+            return TVSettings.Instance.SubsFolderNames.Any(x=>string.Equals(x,folder.Name,StringComparison.CurrentCultureIgnoreCase));
         }
 
         protected void KeepTogether([NotNull] ItemList actionlist, bool fromLibrary)

@@ -15,7 +15,12 @@ namespace TVRename
             this.targetFolder = targetFolder;
             Movie = movie;
         }
-
+        public ActionMoveRenameDirectory(string sourceFolder, string targetFolder, ProcessedEpisode episode)
+        {
+            this.sourceFolder = sourceFolder;
+            this.targetFolder = targetFolder;
+            Episode = episode;
+        }
         public override string TargetFolder => targetFolder;
 
         public override string ScanListViewGroup => "lvgActionRename";
