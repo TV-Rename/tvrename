@@ -332,8 +332,8 @@ namespace TVRename
                             string newName = action.DestinationBaseName + fi.Extension;
                             ActionCopyMoveRename newitem =
                                 new ActionCopyMoveRename(action.Operation, fi,
-                                    FileHelper.FileInFolder(action.To.Directory, newName), action.SourceEpisode, false,
-                                    null, d); // tidy up on main action, not this
+                                    FileHelper.FileInFolder(action.To.Directory, newName), action.SourceEpisode, true,
+                                    null, d);
 
                             extras.Add(newitem);
                         }
