@@ -843,6 +843,7 @@ namespace TVRename
                 PreventAutoScan("Scan " + scantype);
 
                 UpdateMediaToScan(settings);
+                TheActionList.Clear();
 
                 //If still null then return
                 if (!settings.AnyMediaToUpdate)
@@ -863,7 +864,6 @@ namespace TVRename
                 }
 
                 SetProgressDelegate noProgress = NoProgress;
-                TheActionList.Clear();
 
                 if (!settings.Unattended && settings.Type != TVSettings.ScanType.SingleShow)
                 {
