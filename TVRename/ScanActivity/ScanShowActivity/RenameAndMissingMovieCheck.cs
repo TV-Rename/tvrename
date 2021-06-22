@@ -173,8 +173,10 @@ namespace TVRename
                 DateTime? dt = si.CachedMovie?.FirstAired;
 
                 bool inPast = dt.HasValue && dt.Value.CompareTo(DateTime.Now) < 0;
+                bool shouldCheckFutureDated = TVSettings.Instance.CheckFutureDatedMovies && dt.HasValue;
+                bool shouldCheckNoDatedMovies = TVSettings.Instance.CheckNoDatedMovies && !dt.HasValue;
 
-                if (inPast)
+                if (inPast || shouldCheckFutureDated || shouldCheckNoDatedMovies)
                 {
                     // then add it as officially missing
                     Doc.TheActionList.Add(new MovieItemMissing(si, folder));

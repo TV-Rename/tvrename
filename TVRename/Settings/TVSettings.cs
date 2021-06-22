@@ -260,7 +260,7 @@ namespace TVRename
         public string keepTogetherExtensionsString;
 
         [NotNull]
-        public IEnumerable<string> keepTogetherExtensionsArray => Convert(keepTogetherExtensionsString);
+        private IEnumerable<string> keepTogetherExtensionsArray => Convert(keepTogetherExtensionsString);
 
         public string subtitleExtensionsString;
 
@@ -356,6 +356,8 @@ namespace TVRename
         public bool FileNameCaseSensitiveMatch => false; //todo persist and edit this
 
         public bool DeleteMovieFromDisk => false; //todo persist and edit this
+        public bool CheckFutureDatedMovies => false; //todo persist and edit this
+        public bool CheckNoDatedMovies => false; //todo persist and edit this
 
         public List<String> SubsFolderNames => new List<string> { "subs", "subtitles", "vobsubs", "sub", "vobsub", "subtitle" };
         //todo persist and edit this
