@@ -8,10 +8,6 @@
 
 using JetBrains.Annotations;
 
-// ReSharper disable All
-
-// Opens, understands, manipulates, and writes out BEncoded .torrent files, and uTorrent's resume.dat
-
 namespace TVRename
 {
     public class FutureTorrentEntry : TorrentEntry
@@ -20,8 +16,4 @@ namespace TVRename
         {
         }
     }
-
-    // btcore
-
-    // BTProcessor
 }

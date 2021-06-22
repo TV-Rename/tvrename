@@ -48,8 +48,9 @@ namespace TVRename
                     c >>= 1;
                 }
             }
+            if (totalBits == 0) { return 100; }
 
-            return (100 * bitsOn + totalBits / 2) / (totalBits==0?1:totalBits);
+            return (100 * bitsOn) / (totalBits);
         }
 
         public List<TorrentEntry> AllFilesBeingDownloaded()
@@ -145,8 +146,9 @@ namespace TVRename
                             saveTo = GetTargetSaveLocation(targetList,c) ?? saveTo;
                         }
 
-                        int percent = a.Count == 1 ? PercentBitsOn((BTString)d2.GetItem("have")) : -1;
                         bool completed = ((BTInteger)d2.GetItem("order"))?.Value == -1;
+                        int percent = completed ? 100 :
+                            PercentBitsOn((BTString)d2.GetItem("have"));
                         TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent, completed, torrentFile);
                         r.Add(te);
                     }
