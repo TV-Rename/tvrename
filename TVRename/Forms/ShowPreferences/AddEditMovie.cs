@@ -27,7 +27,7 @@ namespace TVRename
     public partial class AddEditMovie : Form
     {
         private readonly MovieConfiguration selectedShow;
-        private readonly CombinedCodeFinder codeFinderForm;
+        private readonly CodeFinder codeFinderForm;
         private CustomNameTagsFloatingWindow? cntfw;
         internal bool HasChanged;
         private readonly TVDoc mDoc;

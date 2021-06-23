@@ -5,10 +5,11 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    public class MovieCodeFinder : CombinedCodeFinder
+    public class MovieCodeFinder : CodeFinder
     {
         public MovieCodeFinder([CanBeNull] string? initialHint, TVDoc.ProviderType source) : base(initialHint, MediaConfiguration.MediaType.tv, source)
         {
+            lvMatches.Columns.Clear();
             lvMatches.Columns.Add(new ColumnHeader { Text = "Code", Width = 44 });
             lvMatches.Columns.Add(new ColumnHeader { Text = "Show Name", Width = 188 });
             lvMatches.Columns.Add(new ColumnHeader { Text = "Year", Width = 39 });

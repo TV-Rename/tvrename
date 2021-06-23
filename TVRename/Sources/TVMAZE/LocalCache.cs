@@ -212,6 +212,25 @@ namespace TVRename.TVmaze
         {
             if (type == MediaConfiguration.MediaType.tv)
             {
+                bool isNumber = System.Text.RegularExpressions.Regex.Match(text, "^[0-9]+$").Success;
+
+                if (isNumber)
+                {
+                    if (int.TryParse(text, out int textAsInt))
+                    {
+                        SearchSpecifier ss = new SearchSpecifier(-1, textAsInt, -1, preferredLocale, string.Empty,
+                            TVDoc.ProviderType.TVmaze, null, type);
+                        try
+                        {
+                            EnsureUpdated(ss, false, showErrorMsgBox);
+                        }
+                        catch (MediaNotFoundException)
+                        {
+                            //not really an issue so we can continue
+                        }
+                    }
+                }
+
                 List<CachedSeriesInfo> results = API.ShowSearch(text).ToList();
                 LOGGER.Info($"Got {results.Count:N0} results searching for {text} on TVMaze");
 

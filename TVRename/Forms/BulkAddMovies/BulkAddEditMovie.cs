@@ -18,7 +18,7 @@ namespace TVRename
         public int Code;
         public TVDoc.ProviderType Provider;
 
-        private readonly CombinedCodeFinder codeFinderControl;
+        private readonly CodeFinder codeFinderControl;
 
         public BulkAddEditMovie([NotNull] PossibleNewMovie hint)
         {

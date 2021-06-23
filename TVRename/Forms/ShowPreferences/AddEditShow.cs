@@ -30,7 +30,7 @@ namespace TVRename
     public partial class AddEditShow : Form
     {
         private readonly ShowConfiguration selectedShow;
-        private readonly CombinedCodeFinder codeFinderForm;
+        private readonly CodeFinder codeFinderForm;
         private CustomNameTagsFloatingWindow? cntfw;
         internal bool HasChanged;
         private readonly ProcessedSeason? sampleProcessedSeason;

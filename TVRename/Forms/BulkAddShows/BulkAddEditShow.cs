@@ -17,7 +17,7 @@ namespace TVRename
     {
         public int Code;
 
-        private readonly CombinedCodeFinder codeFinderControl;
+        private readonly CodeFinder codeFinderControl;
         public TVDoc.ProviderType ProviderType => codeFinderControl.Source;
 
         public BulkAddEditShow([NotNull] PossibleNewTvShow hint)
