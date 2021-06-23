@@ -401,7 +401,7 @@ namespace TVRename
                 string basename = action.From.RemoveExtension();
                 string toname = action.To.RemoveExtension();
 
-                //We have the arbitary >9 limit to make sure tyhat a file with a short name does not ddrag a whole load of other files with it
+                //We have the arbitary >9 limit to make sure that a file with a short name does not drag a whole load of other files with it
                 FileInfo[] flist = basename.Length >9
                     ? action.From.Directory.GetFiles(basename + "*.*")
                     : action.From.Directory.GetFiles(basename + ".*");

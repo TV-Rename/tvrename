@@ -685,16 +685,17 @@ namespace TVRename
 
         public void ExportShowInfo()
         {
+            List<ShowConfiguration> sortedShowItems = TvLibrary.GetSortedShowItems();
             new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
-                new ShowsTXT(TvLibrary.GetSortedShowItems()).Run();
+                new ShowsTXT(sortedShowItems).Run();
             }).Start();
 
             new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
-                new ShowsHTML(TvLibrary.GetSortedShowItems()).Run();
+                new ShowsHTML(sortedShowItems).Run();
             }).Start();
         }
 
