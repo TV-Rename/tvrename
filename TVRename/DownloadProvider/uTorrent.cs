@@ -56,8 +56,8 @@ namespace TVRename
 
         public void StartTorrentDownload(FileInfo torrentFile)
         {
-            string torrentFileName = torrentFile.Name;
-            System.Diagnostics.Process.Start(TVSettings.Instance.uTorrentPath, "/directory \"" + torrentFile.Directory.FullName + "\" \"" + torrentFileName + "\"");
+            //string arguments = $"/directory \"{torrentFile.Directory.FullName}\" \"{torrentFile.Name}\"";
+            System.Diagnostics.Process.Start(TVSettings.Instance.uTorrentPath, "\""+torrentFile.FullName+ "\"");
         }
     }
 }

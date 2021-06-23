@@ -122,7 +122,7 @@ namespace TVRename
             }
 
             string saveTemp = SaveDownloadedData(r, SourceName);
-            FileInfo downloadedFile = new FileInfo(theFileNoExt + saveTemp);
+            FileInfo downloadedFile = new FileInfo( saveTemp);
             return downloadedFile;
         }
 
