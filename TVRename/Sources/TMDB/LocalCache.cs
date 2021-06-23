@@ -735,6 +735,34 @@ namespace TVRename.TMDB
         public override void Search(string text, bool showErrorMsgBox, MediaConfiguration.MediaType type,
             Locale locale)
         {
+            bool isNumber = System.Text.RegularExpressions.Regex.Match(text, "^[0-9]+$").Success;
+
+            if (isNumber)
+            {
+                if (int.TryParse(text, out int textAsInt))
+                {
+                    SearchSpecifier ss = new SearchSpecifier(-1, -1, textAsInt, locale, text,
+                        TVDoc.ProviderType.TMDB, null, type);
+                    try
+                    {
+                        switch (type)
+                        {
+                            case MediaConfiguration.MediaType.tv:
+                                DownloadSeriesNow(ss, showErrorMsgBox);
+                                break;
+
+                            case MediaConfiguration.MediaType.movie:
+                                DownloadMovieNow(ss, locale, showErrorMsgBox);
+                                break;
+                        }
+                    }
+                    catch (MediaNotFoundException)
+                    {
+                        //not really an issue so we can continue
+                    }
+                }
+            }
+
             if (type == MediaConfiguration.MediaType.movie)
             {
                 SearchContainer<SearchMovie> results = Client.SearchMovieAsync(text, locale.LanguageToUse(TVDoc.ProviderType.TMDB).Abbreviation).Result;

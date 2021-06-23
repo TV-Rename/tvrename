@@ -63,7 +63,7 @@ namespace TVRename
 
             SetupDropDowns(si);
 
-            codeFinderForm = new TvCodeFinder(si.Code != -1 ? si.Code.ToString() : "", si.Provider) { Dock = DockStyle.Fill };
+            codeFinderForm = new TvCodeFinder(si.Code != -1 ? si.Code.ToString() : si.LastName, si.Provider) { Dock = DockStyle.Fill };
 
             codeFinderForm.SelectionChanged += MTCCF_SelectionChanged;
 
