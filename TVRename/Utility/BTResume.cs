@@ -50,7 +50,7 @@ namespace TVRename
             }
             if (totalBits == 0) { return 100; }
 
-            return (100 * bitsOn) / (totalBits);
+            return 100 * bitsOn / totalBits;
         }
 
         public List<TorrentEntry> AllFilesBeingDownloaded()
