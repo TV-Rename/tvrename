@@ -36,8 +36,7 @@ namespace TVRename.TMDB
             return $"http://api.themoviedb.org/3/tv/{selectedShow.TmdbId}?api_key={KEY}&language={selectedShow.LanguageToUse().Abbreviation}";
         }
 
-        private UpdateTimeTracker latestMovieUpdateTime;
-        private UpdateTimeTracker latestTvUpdateTime; //TODO understand the latest TV Update times
+        private UpdateTimeTracker latestUpdateTime;
 
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
@@ -78,8 +77,8 @@ namespace TVRename.TMDB
 
             SaveCache();
             //All cachedSeries will be forgotten and will be fully refreshed, so we'll only need updates after this point
-            latestMovieUpdateTime.Reset();
-            LOGGER.Info($"Forget everything, so we assume we have TMDB updates until {latestMovieUpdateTime}");
+            latestUpdateTime.Reset();
+            LOGGER.Info($"Forget everything, so we assume we have TMDB updates until {latestUpdateTime}");
         }
 
         public override int PrimaryKey(ISeriesSpecifier ss) => ss.TmdbId;
@@ -93,9 +92,8 @@ namespace TVRename.TMDB
 
             //assume that the data is up to date (this will be overridden by the value in the XML if we have a prior install)
             //If we have no prior install then the app has no shows and is by definition up-to-date
-            latestMovieUpdateTime = new UpdateTimeTracker();
-            latestTvUpdateTime = new UpdateTimeTracker();
-
+            latestUpdateTime = new UpdateTimeTracker();
+            
             LastErrorMessage = string.Empty;
 
             LoadOk = loadFrom is null || (CachePersistor.LoadMovieCache(loadFrom, this) && CachePersistor.LoadTvCache(loadFrom, this));
@@ -109,7 +107,7 @@ namespace TVRename.TMDB
             {
                 lock (SERIES_LOCK)
                 {
-                    CachePersistor.SaveCache(Series, Movies, CacheFile, latestMovieUpdateTime.LastSuccessfulServerUpdateTimecode());
+                    CachePersistor.SaveCache(Series, Movies, CacheFile, latestUpdateTime.LastSuccessfulServerUpdateTimecode());
                 }
             }
         }
@@ -234,45 +232,74 @@ namespace TVRename.TMDB
 
             try
             {
-                Say($"Updates list from TMDB since {latestMovieUpdateTime.LastSuccessfulServerUpdateDateTime()}");
+                Say($"Updates list from TMDB since {latestUpdateTime.LastSuccessfulServerUpdateDateTime()}");
 
-                long updateFromEpochTime = latestMovieUpdateTime.LastSuccessfulServerUpdateTimecode();
+                long updateFromEpochTime = latestUpdateTime.LastSuccessfulServerUpdateTimecode();
                 if (updateFromEpochTime == 0)
                 {
                     this.MarkAllDirty();
-                    latestMovieUpdateTime.RegisterServerUpdate(DateTime.Now.ToUnixTime());
+                    latestUpdateTime.RegisterServerUpdate(DateTime.Now.ToUnixTime());
                     return true;
                 }
 
-                List<int> updates = Client.GetChangesMovies(cts, latestMovieUpdateTime).Select(item => item.Id).Distinct().ToList();
+                latestUpdateTime.RegisterServerUpdate(DateTime.Now.ToUnixTime());
 
-                Say($"Processing {updates.Count} updates from TMDB. From between {latestMovieUpdateTime.LastSuccessfulServerUpdateDateTime()} and {latestMovieUpdateTime.ProposedServerUpdateDateTime()}");
-                foreach (int id in updates)
-                {
-                    if (!cts.IsCancellationRequested)
-                    {
-                        if (HasMovie(id))
-                        {
-                            CachedMovieInfo? x = GetMovie(id);
-                            if (!(x is null))
-                            {
-                                LOGGER.Info(
-                                    $"Identified that Movie with TMDB Id {id} {x.Name} should be updated.");
-
-                                x.Dirty = true;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
+                List<int> movieUpdates = Client.GetChangesMovies(cts, latestUpdateTime).Select(item => item.Id).Distinct().ToList();
+                Say($"Processing {movieUpdates.Count} movie updates from TMDB. From between {latestUpdateTime.LastSuccessfulServerUpdateDateTime()} and {latestUpdateTime.ProposedServerUpdateDateTime()}");
                 lock (MOVIE_LOCK)
                 {
+                    foreach (int id in movieUpdates)
+                    {
+                        if (!cts.IsCancellationRequested)
+                        {
+                            if (HasMovie(id))
+                            {
+                                CachedMovieInfo? x = GetMovie(id);
+                                if (!(x is null))
+                                {
+                                    LOGGER.Info(
+                                        $"Identified that Movie with TMDB Id {id} {x.Name} should be updated.");
+
+                                    x.Dirty = true;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
                     Say($"Identified {Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)} TMDB Movies need updating");
-                    LOGGER.Info(Movies.Values.Where(info => info.Dirty && !info.IsSearchResultOnly).Select(info => info.Name).ToCsv);
                 }
+
+                List<int> showUpdates = Client.GetChangesShows(cts, latestUpdateTime).Select(item => item.Id).Distinct().ToList();
+                Say($"Processing {showUpdates.Count} show updates from TMDB. From between {latestUpdateTime.LastSuccessfulServerUpdateDateTime()} and {latestUpdateTime.ProposedServerUpdateDateTime()}");
+                lock (SERIES_LOCK)
+                {
+                    foreach (int id in showUpdates)
+                    {
+                        if (!cts.IsCancellationRequested)
+                        {
+                            if (HasSeries(id))
+                            {
+                                CachedSeriesInfo? x = GetSeries(id);
+                                if (!(x is null))
+                                {
+                                    LOGGER.Info(
+                                        $"Identified that Show with TMDB Id {id} {x.Name} should be updated.");
+
+                                    x.Dirty = true;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                    Say($"Identified {Series.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)} TMDB Shows need updating");
+                }
+
                 return true;
             }
             catch (SourceConnectivityException conex)
@@ -296,7 +323,7 @@ namespace TVRename.TMDB
         {
             // call when all downloading and updating is done.  updates local Srv_Time with the tentative
             // new_srv_time value.
-            latestMovieUpdateTime.RecordSuccessfulUpdate();
+            latestUpdateTime.RecordSuccessfulUpdate();
         }
 
         public CachedMovieInfo? GetMovie(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) => this.GetMovie(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
@@ -319,8 +346,8 @@ namespace TVRename.TMDB
 
         public void LatestUpdateTimeIs(string time)
         {
-            latestMovieUpdateTime.Load(time);
-            LOGGER.Info($"Loaded file with updates until {latestMovieUpdateTime.LastSuccessfulServerUpdateDateTime()}");
+            latestUpdateTime.Load(time);
+            LOGGER.Info($"Loaded file with updates until {latestUpdateTime.LastSuccessfulServerUpdateDateTime()}");
         }
 
         public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TMDB;

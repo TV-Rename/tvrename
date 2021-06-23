@@ -31,7 +31,7 @@ namespace TVRename.TMDB
                 )
             {
                 int maxPage = 1;
-                for (int currentPage = 0; currentPage <= maxPage; currentPage++)
+                for (int currentPage = 0; currentPage < maxPage; currentPage++)
                 {
                     if (cts.IsCancellationRequested)
                     {
@@ -47,9 +47,40 @@ namespace TVRename.TMDB
                     }
                 }
             }
+            return updatesResponses;
+        }
 
-            latestUpdateTime.RegisterServerUpdate(DateTime.Now.ToUnixTime());
+        public static IEnumerable<ChangesListItem> GetChangesShows(this TMDbClient client, CancellationToken cts, UpdateTimeTracker latestUpdateTime)
+        {
+            //We need to ask for updates in blocks of 7 days
+            //We'll keep asking until we get to a date within 7 days of today
+            //(up to a maximum of 52 - if you are this far behind then you may need multiple refreshes)
 
+            List<ChangesListItem> updatesResponses = new List<ChangesListItem>();
+            int numberOfCallsMade = 0;
+
+            for (DateTime time = latestUpdateTime.LastSuccessfulServerUpdateDateTime();
+                time <= DateTime.Now;
+                time = time.AddDays(14)
+            )
+            {
+                int maxPage = 1;
+                for (int currentPage = 0; currentPage < maxPage; currentPage++)
+                {
+                    if (cts.IsCancellationRequested)
+                    {
+                        throw new CancelledException();
+                    }
+                    SearchContainer<ChangesListItem>? response = client.GetTvChangesAsync(page: currentPage, startDate: time, cancellationToken: cts).Result;
+                    numberOfCallsMade++;
+                    maxPage = response.TotalPages;
+                    updatesResponses.AddRange(response.Results);
+                    if (numberOfCallsMade > MAX_NUMBER_OF_CALLS)
+                    {
+                        throw new TooManyCallsException();
+                    }
+                }
+            }
             return updatesResponses;
         }
 
