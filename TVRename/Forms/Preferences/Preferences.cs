@@ -2145,7 +2145,7 @@ namespace TVRename
         {
             openFile.FileName = txt.Text;
             openFile.Filter = filter;
-            if (saveFile.ShowDialog(this) == DialogResult.OK)
+            if (openFile.ShowDialog(this) == DialogResult.OK)
             {
                 txt.Text = openFile.FileName;
             }
