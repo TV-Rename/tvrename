@@ -342,7 +342,7 @@ namespace TVRename
 
                 actionManager.DoActions(theList, !Args.Hide && Environment.UserInteractive, owner);
 
-                IEnumerable<Item?> enumerable = TheActionList.Actions.Where(a => a.Outcome.Done && a.Becomes() != null)
+                IEnumerable<Item?> enumerable = TheActionList.Actions.Where(a => a.Outcome.Done && !a.Outcome.Error && a.Becomes() != null)
                     .Select(a => a.Becomes());
 
                 TheActionList.AddNullableRange(enumerable);
