@@ -46,7 +46,7 @@ namespace TVRename
                 return;
             }
 
-            List<ShowConfiguration> matchingShows = this.Shows.Where(configuration => configuration.AnyIdsMatch(newShow)).ToList();
+            List<ShowConfiguration> matchingShows = Shows.Where(configuration => configuration.AnyIdsMatch(newShow)).ToList();
             if (matchingShows.Any())
             {
                 foreach (ShowConfiguration existingshow in matchingShows)
@@ -158,7 +158,7 @@ namespace TVRename
                 return null;
             }
             List<ShowConfiguration> matching =
-                this.Shows.Where(configuration => configuration.IdFor(provider) == id).ToList();
+                Shows.Where(configuration => configuration.IdFor(provider) == id).ToList();
 
             if (!matching.Any())
             {

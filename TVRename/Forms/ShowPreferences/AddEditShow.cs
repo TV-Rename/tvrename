@@ -44,7 +44,7 @@ namespace TVRename
             mDoc = doc;
             sampleProcessedSeason = si.GetFirstAvailableSeason();
             sampleEpisode = si.GetFirstAvailableEpisode();
-            addingNewShow = (si.TvdbCode == -1 && si.TmdbCode == -1 && si.TVmazeCode == -1);
+            addingNewShow = si.TvdbCode == -1 && si.TmdbCode == -1 && si.TVmazeCode == -1;
             InitializeComponent();
             HasChanged = false;
 

@@ -359,7 +359,7 @@ namespace TVRename
         public bool CheckFutureDatedMovies => false; //todo persist and edit this
         public bool CheckNoDatedMovies => false; //todo persist and edit this
 
-        public List<String> SubsFolderNames => new List<string> { "subs", "subtitles", "vobsubs", "sub", "vobsub", "subtitle" };
+        public List<string> SubsFolderNames => new List<string> { "subs", "subtitles", "vobsubs", "sub", "vobsub", "subtitle" };
         //todo persist and edit this
 
         public bool CopySubsFolders => true; //todo persist and edit this

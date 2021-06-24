@@ -93,7 +93,7 @@ namespace TVRename.TheTVDB
 
             LOGGER.Info($"Assumed we have updates until {LatestUpdateTime}");
 
-            LoadOk = loadFrom is null || (CachePersistor.LoadMovieCache(loadFrom, this) && CachePersistor.LoadTvCache(loadFrom, this));
+            LoadOk = loadFrom is null || CachePersistor.LoadMovieCache(loadFrom, this) && CachePersistor.LoadTvCache(loadFrom, this);
         }
 
         public byte[]? GetTvdbDownload(string url)
@@ -633,7 +633,7 @@ namespace TVRename.TheTVDB
                 case "series":
                 case "translatedseries":
                     {
-                    CachedSeriesInfo? selectedCachedSeriesInfo = this.GetSeries(id);
+                    CachedSeriesInfo? selectedCachedSeriesInfo = GetSeries(id);
                     if (selectedCachedSeriesInfo!=null)
                     {
                         ProcessUpdate(selectedCachedSeriesInfo, time, $"as it({id}) has been updated");
@@ -644,7 +644,7 @@ namespace TVRename.TheTVDB
                 case "translatedmovies":
                 case "movie-genres":
                 {
-                    CachedMovieInfo? selectedMovieCachedData = this.GetMovie(id);
+                    CachedMovieInfo? selectedMovieCachedData = GetMovie(id);
                     if (selectedMovieCachedData!=null)
                     {
                         ProcessUpdate(selectedMovieCachedData, time, $"as it({id}) has been updated");
@@ -1160,7 +1160,7 @@ namespace TVRename.TheTVDB
 
             if (locale.IsDifferentLanguageToDefaultFor(TVDoc.ProviderType.TheTVDB))
             {
-                jsonDefaultLangResponse = DownloadMovieJson(code, new Locale(this.PreferredLanguage()));
+                jsonDefaultLangResponse = DownloadMovieJson(code, new Locale(PreferredLanguage()));
             }
 
             if (jsonResponse is null)
@@ -1283,7 +1283,7 @@ namespace TVRename.TheTVDB
                     {
                         continue;
                     }
-                MovieImage mi = new MovieImage
+                    MovieImage mi = new MovieImage
                     {
                         Id = (int)imageJson["id"],
                         ImageUrl = API.GetImageURL((string)imageJson["image"]),
@@ -1424,7 +1424,7 @@ namespace TVRename.TheTVDB
 
         private string? GetArtworkV4(JObject json, int type)
         {
-            return json["data"]["artworks"]?.FirstOrDefault(x => ((int)x["type"]) == type)?["image"]
+            return json["data"]["artworks"]?.FirstOrDefault(x => (int)x["type"] == type)?["image"]
                 ?.ToString(); //TODO use max score to get preferred
         }
 
@@ -1747,7 +1747,7 @@ namespace TVRename.TheTVDB
                 return preferredLocale.LanguageToUse(TVDoc.ProviderType.TheTVDB);
             }
 
-            if ((((JArray)languageOptions).Count == 1))
+            if (((JArray)languageOptions).Count == 1)
             {
                 return Languages.Instance.GetLanguageFromThreeCode(((JArray)languageOptions).Single().ToString()) ?? Languages.Instance.FallbackLanguage;
             }
@@ -2095,21 +2095,27 @@ namespace TVRename.TheTVDB
 
         private MediaImage.ImageType MapBannerType(string? s)
         {
-            if (s == "fanart") return MediaImage.ImageType.background;
-            if (s == "season") return MediaImage.ImageType.poster;
-            if (s == "series") return MediaImage.ImageType.wideBanner;
-            if (s == "seasonwide") return MediaImage.ImageType.wideBanner;
-            if (s == "poster") return MediaImage.ImageType.poster;
-            return MediaImage.ImageType.poster;
+            return s switch
+            {
+                "fanart" => MediaImage.ImageType.background,
+                "season" => MediaImage.ImageType.poster,
+                "series" => MediaImage.ImageType.wideBanner,
+                "seasonwide" => MediaImage.ImageType.wideBanner,
+                "poster" => MediaImage.ImageType.poster,
+                _ => MediaImage.ImageType.poster
+            };
         }
         private MediaImage.ImageSubject MapTypeToSubject(string? s)
         {
-            if (s == "fanart") return MediaImage.ImageSubject.show;
-            if (s == "season") return MediaImage.ImageSubject.season;
-            if (s == "series") return MediaImage.ImageSubject.show;
-            if (s == "seasonwide") return MediaImage.ImageSubject.season;
-            if (s == "poster") return MediaImage.ImageSubject.show;
-            return MediaImage.ImageSubject.show;
+            return s switch
+            {
+                "fanart" => MediaImage.ImageSubject.show,
+                "season" => MediaImage.ImageSubject.season,
+                "series" => MediaImage.ImageSubject.show,
+                "seasonwide" => MediaImage.ImageSubject.season,
+                "poster" => MediaImage.ImageSubject.show,
+                _ => MediaImage.ImageSubject.show
+            };
         }
 
         private static (List<JObject> bannerDefaultLangResponses, List<JObject> bannerResponses) DownloadBanners(
@@ -2409,7 +2415,7 @@ namespace TVRename.TheTVDB
                 if (locale.IsDifferentLanguageToDefaultFor(TVDoc.ProviderType.TheTVDB))
                 {
                     jsonEpisodeDefaultLangResponse = API.GetEpisode(episodeId,
-                        (TVSettings.Instance.PreferredTVDBLanguage.Abbreviation)) ?? throw new SourceConnectivityException();
+                        TVSettings.Instance.PreferredTVDBLanguage.Abbreviation) ?? throw new SourceConnectivityException();
                 }
             }
             catch (WebException ex)
@@ -2772,7 +2778,7 @@ namespace TVRename.TheTVDB
 
             try
             {
-                IEnumerable<CachedSeriesInfo> cachedSeriesInfos = (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
+                IEnumerable<CachedSeriesInfo> cachedSeriesInfos = TVSettings.Instance.TvdbVersion == ApiVersion.v4
                     ? GetEnumSeriesV4(jToken, locale, true)
                     : jToken.Cast<JObject>()
                         .Select(seriesResponse => new CachedSeriesInfo(seriesResponse, locale, true, TVDoc.ProviderType.TheTVDB));
@@ -2782,7 +2788,7 @@ namespace TVRename.TheTVDB
                     this.AddSeriesToCache(si);
                 }
 
-                IEnumerable<CachedMovieInfo> cachedMovieInfos = (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
+                IEnumerable<CachedMovieInfo> cachedMovieInfos = TVSettings.Instance.TvdbVersion == ApiVersion.v4
                     ? GetEnumMoviesV4(jToken, locale, true)
                     : new List<CachedMovieInfo>();
 

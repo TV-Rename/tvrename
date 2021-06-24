@@ -18,19 +18,19 @@ namespace TVRename
             List<string> r = new List<string>();
 
             BTItem bti = GetItem("info");
-            if ((bti is null) || (bti.Type != BTChunk.kDictionary))
+            if (bti is null || bti.Type != BTChunk.kDictionary)
             {
                 return null;
             }
 
-            BTDictionary infoDict = (BTDictionary)(bti);
+            BTDictionary infoDict = (BTDictionary)bti;
 
             bti = infoDict.GetItem("files");
 
             if (bti is null) // single file torrent
             {
                 bti = infoDict.GetItem("name");
-                if ((bti is null) || (bti.Type != BTChunk.kString))
+                if (bti is null || bti.Type != BTChunk.kString)
                 {
                     return null;
                 }
@@ -40,11 +40,11 @@ namespace TVRename
             else
             {
                 // multiple file torrent
-                BTList fileList = (BTList)(bti);
+                BTList fileList = (BTList)bti;
 
                 foreach (BTItem it in fileList.Items)
                 {
-                    BTDictionary file = (BTDictionary)(it);
+                    BTDictionary file = (BTDictionary)it;
                     BTItem? thePath = file.GetItem("path");
                     if (thePath == null)
                     {
@@ -56,7 +56,7 @@ namespace TVRename
                         return null;
                     }
 
-                    BTList pathList = (BTList)(thePath);
+                    BTList pathList = (BTList)thePath;
                     // want the last of the items in the list, which is the filename itself
                     int n = pathList.Items.Count - 1;
                     if (n < 0)
@@ -64,7 +64,7 @@ namespace TVRename
                         return null;
                     }
 
-                    BTString fileName = (BTString)(pathList.Items[n]);
+                    BTString fileName = (BTString)pathList.Items[n];
                     r.Add(fileName.AsString());
                 }
             }
@@ -93,7 +93,7 @@ namespace TVRename
             System.Diagnostics.Debug.Assert(Items[0].Type == BTChunk.kDictionary);
 
             // our first (and only) Item will be a dictionary of stuff
-            return (BTDictionary)(Items[0]);
+            return (BTDictionary)Items[0];
         }
 
         public BTItem? GetItem(string key, bool ignoreCase)

@@ -51,7 +51,7 @@ namespace TVRename
         {
             foreach (BTDictionaryItem t in Items)
             {
-                if ((t.Key == key) || (ignoreCase && ((t.Key.ToLower() == key.ToLower()))))
+                if (t.Key == key || ignoreCase && t.Key.ToLower() == key.ToLower())
                 {
                     return t.Data;
                 }

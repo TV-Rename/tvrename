@@ -24,7 +24,7 @@ namespace TVRename
         protected ScanActivity(TVDoc doc, TVDoc.ScanSettings settings)
         {
             MDoc = doc;
-            this.Settings = settings;
+            Settings = settings;
         }
 
         protected abstract string CheckName();

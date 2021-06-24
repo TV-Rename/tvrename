@@ -40,7 +40,7 @@ namespace TVRename
         public byte[]? StringTwentyBytePiece(int pieceNum)
         {
             byte[] res = new byte[20];
-            if (((pieceNum * 20) + 20) > Data.Length)
+            if (pieceNum * 20 + 20 > Data.Length)
             {
                 return null;
             }

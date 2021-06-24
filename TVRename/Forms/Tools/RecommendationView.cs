@@ -250,8 +250,7 @@ namespace TVRename.Forms
 
         private void lvRecommendations_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
-            RecommendationRow? rr = (e.Item as BrightIdeasSoftware.OLVListItem)?.RowObject as RecommendationRow;
-            if (rr == null)
+            if (!((e.Item as BrightIdeasSoftware.OLVListItem)?.RowObject is RecommendationRow rr))
             {
                 return;
             }

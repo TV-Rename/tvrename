@@ -3486,7 +3486,7 @@ namespace TVRename
         {
             if (bwScan.IsBusy)
             {
-                Logger.Warn($"Can't start scan as it's already running");
+                Logger.Warn("Can't start scan as it's already running");
                 return;
             }
             CancellationTokenSource cts = new CancellationTokenSource();
@@ -4686,7 +4686,7 @@ namespace TVRename
             if (TVSettings.Instance.ShowAccessibilityOptions) targetWidth += 200;
             if (TVSettings.Instance.SearchJackettButton) targetWidth += 200;
 
-            bool isWide = Width > (targetWidth);
+            bool isWide = Width > targetWidth;
             tpRecentScan.Visible = isWide;
             tbQuickScan.Visible = isWide;
             tbFullScan.Visible = isWide;
@@ -5143,11 +5143,11 @@ namespace TVRename
             DialogResult dr = DialogResult.OK;
             ActionTDownload userChosenAction = null;
 
-            this.Invoke((MethodInvoker)delegate
+            Invoke((MethodInvoker)delegate
             {
                 // Running on the UI thread
                 ChooseDownload form = new ChooseDownload(epGroupKey, actions);
-                this.ShowChildDialog(form);
+                ShowChildDialog(form);
                 dr = form.DialogResult;
                 userChosenAction = form.UserChosenAction;
                 form.Dispose();

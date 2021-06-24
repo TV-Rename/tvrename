@@ -21,9 +21,9 @@ namespace TVRename
                 {
                     neg = true;
                 }
-                else if ((c >= '0') && (c <= '9'))
+                else if (c >= '0' && c <= '9')
                 {
-                    r = (r * 10) + c - '0';
+                    r = r * 10 + c - '0';
                 }
             }
 
@@ -42,7 +42,7 @@ namespace TVRename
             for (; ; )
             {
                 BTItem next = ReadNext(sr);
-                if ((next.Type == BTChunk.kListOrDictionaryEnd) || (next.Type == BTChunk.kBTEOF))
+                if (next.Type == BTChunk.kListOrDictionaryEnd || next.Type == BTChunk.kBTEOF)
                 {
                     return d;
                 }
@@ -102,7 +102,7 @@ namespace TVRename
                 return new BTListOrDictionaryEnd(); // end of list/dictionary/etc.
             }
 
-            if ((c >= '0') && (c <= '9')) // digits mean it is a string of the specified length
+            if (c >= '0' && c <= '9') // digits mean it is a string of the specified length
             {
                 string r = Convert.ToString(c - '0');
                 while ((c = sr.ReadByte()) != ':')

@@ -45,7 +45,7 @@ namespace TVRename
                     return 0;
                 }
 
-                return (xIsNull ? -1 : 1);
+                return xIsNull ? -1 : 1;
             }
 
             return new ActionItemSorter().Compare(x1, y1);

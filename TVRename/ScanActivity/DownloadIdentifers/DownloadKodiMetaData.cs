@@ -87,7 +87,7 @@ namespace TVRename
 
             FileInfo nfo = FileHelper.FileInFolder(file.Directory, file.MovieFileNameBase() + ".nfo");
 
-            if ((nfo.Exists && System.Math.Abs(mc.CachedMovie.SrvLastUpdated - TimeZoneHelper.Epoch(nfo.LastWriteTime)) < 1 && !forceRefresh))
+            if (nfo.Exists && System.Math.Abs(mc.CachedMovie.SrvLastUpdated - TimeZoneHelper.Epoch(nfo.LastWriteTime)) < 1 && !forceRefresh)
             {
                 return null;
             }

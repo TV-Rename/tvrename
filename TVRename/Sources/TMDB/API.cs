@@ -37,7 +37,7 @@ namespace TVRename.TMDB
                     {
                         throw new CancelledException();
                     }
-                    SearchContainer<ChangesListItem>? response = client.GetMoviesChangesAsync(page: currentPage, startDate: time, cancellationToken: cts).Result;
+                    SearchContainer<ChangesListItem>? response = client.GetMoviesChangesAsync(currentPage, time, cancellationToken: cts).Result;
                     numberOfCallsMade++;
                     maxPage = response.TotalPages;
                     updatesResponses.AddRange(response.Results);
@@ -71,7 +71,7 @@ namespace TVRename.TMDB
                     {
                         throw new CancelledException();
                     }
-                    SearchContainer<ChangesListItem>? response = client.GetTvChangesAsync(page: currentPage, startDate: time, cancellationToken: cts).Result;
+                    SearchContainer<ChangesListItem>? response = client.GetTvChangesAsync(currentPage, time, cancellationToken: cts).Result;
                     numberOfCallsMade++;
                     maxPage = response.TotalPages;
                     updatesResponses.AddRange(response.Results);

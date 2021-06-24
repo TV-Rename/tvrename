@@ -221,7 +221,7 @@ namespace TVRename
             bool numberMatch = numeric && num == matchnum;
             bool numberTextMatch = numeric && show.Contains(what);
 
-            return (numberMatch || textMatch || numberTextMatch);
+            return numberMatch || textMatch || numberTextMatch;
         }
 
         private void bnGoSearch_Click(object sender, EventArgs e)

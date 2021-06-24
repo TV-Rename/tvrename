@@ -65,12 +65,12 @@ namespace TVRename
             BEncodeLoader bel = new BEncodeLoader();
             foreach (BTDictionaryItem dictitem in resumeDat.GetDict().Items)
             {
-                if ((dictitem.Type != BTChunk.kDictionaryItem))
+                if (dictitem.Type != BTChunk.kDictionaryItem)
                 {
                     continue;
                 }
 
-                if ((dictitem.Key == ".fileguard") || (dictitem.Data.Type != BTChunk.kDictionary))
+                if (dictitem.Key == ".fileguard" || dictitem.Data.Type != BTChunk.kDictionary)
                 {
                     continue;
                 }
@@ -81,15 +81,15 @@ namespace TVRename
                     return r;
                 }
 
-                BTDictionary d2 = (BTDictionary)(dictitem.Data);
+                BTDictionary d2 = (BTDictionary)dictitem.Data;
 
                 BTItem p = d2.GetItem("prio");
-                if ((p is null) || (p.Type != BTChunk.kString))
+                if (p is null || p.Type != BTChunk.kString)
                 {
                     continue;
                 }
 
-                BTString prioString = (BTString)(p);
+                BTString prioString = (BTString)p;
                 string directoryName = Path.GetDirectoryName(resumeDatPath) + System.IO.Path.DirectorySeparatorChar;
 
                 string torrentFile = dictitem.Key;
@@ -120,8 +120,8 @@ namespace TVRename
                 string defaultFolder = ((BTString)p).AsString();
 
                 BTItem targets = d2.GetItem("targets");
-                bool hasTargets = ((targets != null) && (targets.Type == BTChunk.kList));
-                BTList targetList = (BTList)(targets);
+                bool hasTargets = targets != null && targets.Type == BTChunk.kList;
+                BTList targetList = (BTList)targets;
 
                 ProcesdFiles(r, d2, prioString, torrentFile, a, defaultFolder, hasTargets, targetList!);
             }
@@ -134,7 +134,7 @@ namespace TVRename
             int c = 0;
             foreach (string s in a)
             {
-                if ((c < prioString.Data.Length) && (prioString.Data[c] != BTPrio.SKIP))
+                if (c < prioString.Data.Length && prioString.Data[c] != BTPrio.SKIP)
                 {
                     try
                     {

@@ -573,16 +573,12 @@ namespace TVRename
         {
             get
             {
-                if (Provider == TVDoc.ProviderType.TheTVDB)
+                return Provider switch
                 {
-                    return TheTVDB.API.WebsiteShowUrl(this);
-                }
-                if (Provider == TVDoc.ProviderType.TMDB)
-                {
-                    return TMDB.API.WebsiteShowUrl(this);
-                }
-
-                return CachedShow?.Slug;
+                    TVDoc.ProviderType.TheTVDB => TheTVDB.API.WebsiteShowUrl(this),
+                    TVDoc.ProviderType.TMDB => TMDB.API.WebsiteShowUrl(this),
+                    _ => CachedShow?.Slug
+                };
             }
         }
 

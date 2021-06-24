@@ -89,7 +89,7 @@ namespace TVRename
 
             downloadIdentifiers = new DownloadIdentifiersController();
 
-            LoadOk = (settingsFile is null || LoadXMLSettings(settingsFile));
+            LoadOk = settingsFile is null || LoadXMLSettings(settingsFile);
 
             try
             {
@@ -957,7 +957,7 @@ namespace TVRename
                 UpdateUi = updateUi;
             }
 
-            public bool AnyMediaToUpdate => (Shows.Any()) || (Movies.Any());
+            public bool AnyMediaToUpdate => Shows.Any() || Movies.Any();
 
             public bool Equals(ScanSettings other) =>
                 Shows == other.Shows &&

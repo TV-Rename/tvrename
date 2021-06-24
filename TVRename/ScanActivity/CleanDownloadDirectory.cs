@@ -238,7 +238,9 @@ namespace TVRename
                 return;
             }
 
-            bool fileCanBeDeleted = (TVSettings.Instance.RemoveDownloadDirectoriesFiles && matchingShows.Any()) || (TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies && matchingMovies.Any());
+            bool fileCanBeDeleted = TVSettings.Instance.RemoveDownloadDirectoriesFiles && matchingShows.Any()
+                                    || TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies && matchingMovies.Any();
+
             ProcessedEpisode firstMatchingPep = null;
 
             foreach (ShowConfiguration si in matchingShows)
@@ -320,7 +322,7 @@ namespace TVRename
             }
             else
             {
-                if (TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck && matchingMovies.Any() && (matchingMovies.Max(c => c.ShowName.Length) <= TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength))
+                if (TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck && matchingMovies.Any() && matchingMovies.Max(c => c.ShowName.Length) <= TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength)
                 {
                     LOGGER.Info($"Not removing {fi.FullName} as it may be needed for {matchingMovies.Select(x => x.ShowName).ToCsv()} and they are all too short");
 

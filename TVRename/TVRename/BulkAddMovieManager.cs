@@ -153,7 +153,7 @@ namespace TVRename
 
         private void CheckFolderForShows([NotNull] DirectoryInfo di, CancellationToken token, BackgroundWorker bw, bool fullLogging, bool showErrorMsgBox)
         {
-            int percentComplete = (int)(100.0 / CurrentPhaseTotal * ((1.0 * CurrentPhase) + (1.0 * CurrentPhaseDirectory / CurrentPhaseTotalDirectory)));
+            int percentComplete = (int)(100.0 / CurrentPhaseTotal * (1.0 * CurrentPhase + 1.0 * CurrentPhaseDirectory / CurrentPhaseTotalDirectory));
             if (percentComplete > 100)
             {
                 percentComplete = 100;

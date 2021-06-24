@@ -586,9 +586,9 @@ namespace TVRename
 
         private static bool HaveSameNonZeroId(MediaConfiguration item, MediaConfiguration currentlyMatchedTvShow, TVDoc.ProviderType p)
         {
-            return (item.IdFor(p) == currentlyMatchedTvShow.IdFor(p))
-                   && (item.IdFor(p) > 0)
-                   && (currentlyMatchedTvShow.IdFor(p) > 0);
+            return item.IdFor(p) == currentlyMatchedTvShow.IdFor(p)
+                   && item.IdFor(p) > 0
+                   && currentlyMatchedTvShow.IdFor(p) > 0;
         }
 
         private static string RemoveSe(string hint)
@@ -887,10 +887,10 @@ namespace TVRename
         {
             if (mi.DoRename && TVSettings.Instance.RenameCheck)
             {
-                return new FileInfo(mi.TheFileNoExt + @from.Extension);
+                return new FileInfo(mi.TheFileNoExt + from.Extension);
             }
 
-            return new FileInfo(mi.DestinationFolder.EnsureEndsWithSeparator() + @from.Name);
+            return new FileInfo(mi.DestinationFolder.EnsureEndsWithSeparator() + from.Name);
         }
 
         public static FileInfo GenerateTargetName(string folder, ProcessedEpisode pep, FileInfo fi)

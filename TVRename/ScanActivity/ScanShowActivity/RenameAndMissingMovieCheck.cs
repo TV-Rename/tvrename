@@ -93,7 +93,7 @@ namespace TVRename
 
                     if (fi.Name.StartsWith(baseString, StringComparison.CurrentCultureIgnoreCase))
                     {
-                        string newName = (baseString.HasValue()) ? fi.Name.Replace(baseString, newBase) : newBase + fi.Extension;
+                        string newName = baseString.HasValue() ? fi.Name.Replace(baseString, newBase) : newBase + fi.Extension;
                         FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
 
                         if (newFile.IsMovieFile())

@@ -422,7 +422,7 @@ namespace TVRename
 
                     string newName = GetFilename(fi.Name, basename, toname);
 
-                    ActionCopyMoveRename newitem = (action.Episode is null) ?
+                    ActionCopyMoveRename newitem = action.Episode is null ?
                         new ActionCopyMoveRename(action.Operation, fi,
                             FileHelper.FileInFolder(action.To.Directory, newName), action.Movie!, false,
                             null, d)

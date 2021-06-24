@@ -39,9 +39,9 @@ namespace TVRename
 
             return TVSettings.Instance.mode switch
             {
-                TVSettings.BetaMode.ProductionOnly when (latestVersion?.NewerThan(currentVersion) ?? false) =>
+                TVSettings.BetaMode.ProductionOnly when latestVersion?.NewerThan(currentVersion) ?? false =>
                 latestVersion,
-                TVSettings.BetaMode.BetaToo when (latestBetaVersion?.NewerThan(currentVersion) ?? false) =>
+                TVSettings.BetaMode.BetaToo when latestBetaVersion?.NewerThan(currentVersion) ?? false =>
                 latestBetaVersion,
                 _ => null
             };

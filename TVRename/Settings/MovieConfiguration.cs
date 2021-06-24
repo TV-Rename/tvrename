@@ -60,7 +60,7 @@ namespace TVRename
             AutomaticFolderRoot = TVSettings.Instance.DefMovieUseDefaultLocation ? TVSettings.Instance.DefMovieDefaultLocation ?? string.Empty : string.Empty;
         }
 
-        public String ShowNameWithYear => $"{ShowName} ({CachedMovie?.Year})";
+        public string ShowNameWithYear => $"{ShowName} ({CachedMovie?.Year})";
 
         public MovieConfiguration(int code, TVDoc.ProviderType type) : this()
         {

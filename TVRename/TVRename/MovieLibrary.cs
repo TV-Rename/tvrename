@@ -52,7 +52,7 @@ namespace TVRename
                 $"Searched for {id} on {provider.PrettyPrint()} Movie Library has multiple: {matching.Select(x => x.ToString()).ToCsv()}");
     }
 
-    new public void AddMovie(MovieConfiguration newShow)
+    public new void AddMovie(MovieConfiguration newShow)
         {
             if (Contains(newShow))
             {

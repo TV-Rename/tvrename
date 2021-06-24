@@ -44,7 +44,7 @@ namespace TVRename
             return string.Compare(targetFolder, cmr.targetFolder, StringComparison.Ordinal);
         }
 
-        public override bool SameAs(Item o) => (o is ActionMoveRenameDirectory amd) && amd.targetFolder == targetFolder && amd.sourceFolder == sourceFolder;
+        public override bool SameAs(Item o) => o is ActionMoveRenameDirectory amd && amd.targetFolder == targetFolder && amd.sourceFolder == sourceFolder;
 
         public override string Name => "Rename Directory";
 

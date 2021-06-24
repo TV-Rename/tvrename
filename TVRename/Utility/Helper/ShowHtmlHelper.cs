@@ -603,7 +603,7 @@ namespace TVRename
   </div>
 </div>");
             }
-        sb.AppendLine($@"<div><br/></div>
+            sb.AppendLine($@"<div><br/></div>
 		            <div>
                     {CreateButton(EditMovieUrl(ser), "<i class=\"far fa-edit\"></i>", "Edit")}
                      {explorerButton}
