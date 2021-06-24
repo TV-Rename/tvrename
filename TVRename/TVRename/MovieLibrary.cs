@@ -66,6 +66,7 @@ namespace TVRename
                 {
                     //TODO Merge them in
                     Logger.Error($"Trying to add {newShow}, but we already have {existingshow}");
+                    Logger.Error(Environment.StackTrace);
                 }
                 return;
             }
