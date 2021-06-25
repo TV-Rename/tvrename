@@ -524,7 +524,7 @@ namespace TVRename
             // 
             this.quickRenameToolStripMenuItem.Name = "quickRenameToolStripMenuItem";
             this.quickRenameToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
-            this.quickRenameToolStripMenuItem.Text = "Quick Rename...";
+            this.quickRenameToolStripMenuItem.Text = "Quick Rename TV Files...";
             this.quickRenameToolStripMenuItem.Click += new System.EventHandler(this.QuickRenameToolStripMenuItem_Click);
             // 
             // tsmiOrphanFiles
@@ -976,7 +976,7 @@ namespace TVRename
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(477, 396);
+            this.tabPage1.Size = new System.Drawing.Size(483, 402);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Information";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -987,7 +987,7 @@ namespace TVRename
             this.chrMovieInformation.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chrMovieInformation.Location = new System.Drawing.Point(3, 3);
             this.chrMovieInformation.Name = "chrMovieInformation";
-            this.chrMovieInformation.Size = new System.Drawing.Size(471, 390);
+            this.chrMovieInformation.Size = new System.Drawing.Size(477, 396);
             this.chrMovieInformation.TabIndex = 1;
             this.chrMovieInformation.Visible = false;
             // 
@@ -997,7 +997,7 @@ namespace TVRename
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(477, 396);
+            this.tabPage2.Size = new System.Drawing.Size(483, 402);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Images";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -1008,7 +1008,7 @@ namespace TVRename
             this.chrMovieImages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chrMovieImages.Location = new System.Drawing.Point(3, 3);
             this.chrMovieImages.Name = "chrMovieImages";
-            this.chrMovieImages.Size = new System.Drawing.Size(471, 390);
+            this.chrMovieImages.Size = new System.Drawing.Size(477, 396);
             this.chrMovieImages.TabIndex = 1;
             this.chrMovieImages.Visible = false;
             // 
@@ -1230,7 +1230,7 @@ namespace TVRename
             this.tpInformation.Location = new System.Drawing.Point(4, 25);
             this.tpInformation.Name = "tpInformation";
             this.tpInformation.Padding = new System.Windows.Forms.Padding(3);
-            this.tpInformation.Size = new System.Drawing.Size(477, 396);
+            this.tpInformation.Size = new System.Drawing.Size(483, 402);
             this.tpInformation.TabIndex = 0;
             this.tpInformation.Text = "Information";
             this.tpInformation.UseVisualStyleBackColor = true;
@@ -1241,7 +1241,7 @@ namespace TVRename
             this.chrInformation.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chrInformation.Location = new System.Drawing.Point(3, 3);
             this.chrInformation.Name = "chrInformation";
-            this.chrInformation.Size = new System.Drawing.Size(471, 390);
+            this.chrInformation.Size = new System.Drawing.Size(477, 396);
             this.chrInformation.TabIndex = 1;
             this.chrInformation.Visible = false;
             // 
@@ -1272,7 +1272,7 @@ namespace TVRename
             this.tpSummary.Location = new System.Drawing.Point(4, 25);
             this.tpSummary.Name = "tpSummary";
             this.tpSummary.Padding = new System.Windows.Forms.Padding(3);
-            this.tpSummary.Size = new System.Drawing.Size(477, 396);
+            this.tpSummary.Size = new System.Drawing.Size(483, 402);
             this.tpSummary.TabIndex = 2;
             this.tpSummary.Text = "Summary";
             this.tpSummary.UseVisualStyleBackColor = true;
@@ -1283,7 +1283,7 @@ namespace TVRename
             this.chrSummary.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chrSummary.Location = new System.Drawing.Point(3, 3);
             this.chrSummary.Name = "chrSummary";
-            this.chrSummary.Size = new System.Drawing.Size(471, 390);
+            this.chrSummary.Size = new System.Drawing.Size(477, 396);
             this.chrSummary.TabIndex = 2;
             this.chrSummary.Visible = false;
             // 
@@ -1293,7 +1293,7 @@ namespace TVRename
             this.tabPage3.Location = new System.Drawing.Point(4, 25);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(477, 396);
+            this.tabPage3.Size = new System.Drawing.Size(483, 402);
             this.tabPage3.TabIndex = 3;
             this.tabPage3.Text = "Trailer";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1304,7 +1304,7 @@ namespace TVRename
             this.chrTvTrailer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chrTvTrailer.Location = new System.Drawing.Point(3, 3);
             this.chrTvTrailer.Name = "chrTvTrailer";
-            this.chrTvTrailer.Size = new System.Drawing.Size(471, 390);
+            this.chrTvTrailer.Size = new System.Drawing.Size(477, 396);
             this.chrTvTrailer.TabIndex = 2;
             this.chrTvTrailer.Visible = false;
             // 
