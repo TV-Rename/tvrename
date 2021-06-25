@@ -219,7 +219,7 @@ namespace TVRename
             {
                 return;
             }
-            if (e.Elements(elementName).Any())
+            if (e.Elements(elementName).Count()==1)
             {
                 try
                 {
@@ -230,9 +230,13 @@ namespace TVRename
                     Logger.Error($"Could not update element {elementName} in {e}");
                 }
             }
-            else
+            else if (!e.Elements(elementName).Any())
             {
                 e.Add(new XElement(elementName, value));
+            }
+            else
+            {
+                ReplaceElements(e,elementName,value.AsList());
             }
         }
 
