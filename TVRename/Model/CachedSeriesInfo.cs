@@ -612,16 +612,28 @@ namespace TVRename
 
         public IEnumerable<ShowImage> Images(MediaImage.ImageType type)
         {
-            return images.Where(x => x.ImageStyle == type && (x.LanguageCode ?? TargetLocale.LanguageToUse(Source).Abbreviation) == TargetLocale.LanguageToUse(Source).Abbreviation);
+            IEnumerable<ShowImage> y = images.Where(x => x.ImageStyle == type);
+            return FilterLanguages(y, TargetLocale.LanguageToUse(Source));
+        }
+
+        private IEnumerable<ShowImage> FilterLanguages(IEnumerable<ShowImage> showImages, Language languageToUse)
+        {
+            return showImages.Where(x =>
+                x.LanguageCode is null ||
+                x.LanguageCode.Equals(languageToUse.ThreeAbbreviation,StringComparison.CurrentCultureIgnoreCase) ||
+                x.LanguageCode.Equals(languageToUse.Abbreviation, StringComparison.CurrentCultureIgnoreCase)
+                );
         }
 
         public IEnumerable<ShowImage> Images(MediaImage.ImageType type, MediaImage.ImageSubject subject)
         {
-            return images.Where(x => x.ImageStyle == type && x.Subject == subject && (x.LanguageCode ?? TargetLocale.LanguageToUse(Source).Abbreviation) == TargetLocale.LanguageToUse(Source).Abbreviation);
+            IEnumerable<ShowImage> y = images.Where(x => x.ImageStyle == type && x.Subject == subject);
+            return FilterLanguages(y, TargetLocale.LanguageToUse(Source));
         }
         internal IEnumerable<ShowImage> Images(MediaImage.ImageType type, MediaImage.ImageSubject subject, int seasonNumber)
         {
-            return images.Where(x => x.ImageStyle == type && x.Subject == subject && (x.LanguageCode ?? TargetLocale.LanguageToUse(Source).Abbreviation) == TargetLocale.LanguageToUse(Source).Abbreviation && x.SeasonNumber == seasonNumber);
+            IEnumerable<ShowImage> y = images.Where(x => x.ImageStyle == type && x.Subject == subject && x.SeasonNumber == seasonNumber);
+            return FilterLanguages(y, TargetLocale.LanguageToUse(Source));
         }
     }
 }

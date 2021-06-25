@@ -71,5 +71,7 @@ namespace TVRename
             writer.WriteElement("RatingCount", RatingCount);
             writer.WriteElement("ThumbnailUrl", ThumbnailUrl, true);
         }
+
+        public override string ToString() => $"{ImageStyle} for {Subject} ({Id})";
     }
 }
