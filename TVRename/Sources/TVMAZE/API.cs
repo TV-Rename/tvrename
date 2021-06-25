@@ -244,13 +244,22 @@ namespace TVRename.TVmaze
                 SeriesId = seriesId,
                 ImageUrl = (string)GetChild(GetChild(GetChild(imageJson, "resolutions"), "original"), "url"),
                 Id = (int)imageJson["id"],
-                ImageStyle = MediaImage.ImageType.background,
+                ImageStyle = MapImageType((string)imageJson["type"]),
                 Rating = (bool)imageJson["main"] ? 10 : 1,
                 RatingCount = 1,
                 SeriesSource = TVDoc.ProviderType.TVmaze,
             };
 
             return newBanner;
+        }
+
+        private static MediaImage.ImageType MapImageType(string? s)
+        {
+            if (s is null) return MediaImage.ImageType.background;
+            if (s == "background") return MediaImage.ImageType.background;
+            if (s == "poster") return MediaImage.ImageType.poster;
+            if (s == "banner") return MediaImage.ImageType.wideBanner;
+            return MediaImage.ImageType.background;
         }
 
         [NotNull]

@@ -245,7 +245,7 @@ namespace TVRename
                     return TVDBWebsiteUrl;
                 }
 
-                return Show.CachedShow?.Season(SeasonNumber)?.Url; //TODO - IMPROVE HOW TO GET THE SEASON URL
+                return Show.CachedShow?.Season(SeasonNumber)?.Url; 
             }
         }
 
