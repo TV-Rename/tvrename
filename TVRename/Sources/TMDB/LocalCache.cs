@@ -112,8 +112,6 @@ namespace TVRename.TMDB
             }
         }
 
-        public override Language PreferredLanguage() => TVSettings.Instance.TMDBLanguage;
-
         public override bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
         {
             if (s.Provider != TVDoc.ProviderType.TMDB)
@@ -121,9 +119,9 @@ namespace TVRename.TMDB
                 throw new SourceConsistencyException($"Asked to update {s.Name} from TMDB, but the Id is not for TMDB.", TVDoc.ProviderType.TMDB);
             }
 
-            if (s.Type == MediaConfiguration.MediaType.movie)
+            if (s.Media == MediaConfiguration.MediaType.movie)
             {
-                return EnsureMovieUpdated(s, s.TargetLocale, s.Name, showErrorMsgBox);
+                return EnsureMovieUpdated(s, showErrorMsgBox);
             }
 
             return EnsureSeriesUpdated(s, showErrorMsgBox);
@@ -181,7 +179,7 @@ namespace TVRename.TMDB
             return true;
         }
 
-        private bool EnsureMovieUpdated(ISeriesSpecifier id, Locale locale, string name, bool showErrorMsgBox)
+        private bool EnsureMovieUpdated(ISeriesSpecifier id, bool showErrorMsgBox)
         {
             lock (MOVIE_LOCK)
             {
@@ -191,10 +189,10 @@ namespace TVRename.TMDB
                 }
             }
 
-            Say($"{name} from TMDB");
+            Say($"{id.Name} from TMDB");
             try
             {
-                CachedMovieInfo downloadedSi = DownloadMovieNow(id, locale, showErrorMsgBox);
+                CachedMovieInfo downloadedSi = DownloadMovieNow(id, showErrorMsgBox);
 
                 if (downloadedSi.TmdbCode != id.TmdbId && id.TmdbId == -1)
                 {
@@ -352,24 +350,25 @@ namespace TVRename.TMDB
 
         public override TVDoc.ProviderType Provider() => TVDoc.ProviderType.TMDB;
 
-        public CachedMovieInfo GetMovieAndDownload(ISeriesSpecifier id, Locale locale, bool showErrorMsgBox) => HasMovie(id.TmdbId)
+        public CachedMovieInfo GetMovieAndDownload(ISeriesSpecifier id, bool showErrorMsgBox) => HasMovie(id.TmdbId)
             ? CachedMovieData[id.TmdbId]
-            : DownloadMovieNow(id, locale, showErrorMsgBox);
+            : DownloadMovieNow(id, showErrorMsgBox);
 
-        internal CachedMovieInfo DownloadMovieNow(ISeriesSpecifier id, Locale locale, bool showErrorMsgBox)
+        internal CachedMovieInfo DownloadMovieNow(ISeriesSpecifier id, bool showErrorMsgBox)
         {
-            Movie downloadedMovie = Client.GetMovieAsync(id.TmdbId, null, null, MovieMethods.ExternalIds | MovieMethods.Images | MovieMethods.AlternativeTitles | MovieMethods.ReleaseDates | MovieMethods.Changes | MovieMethods.Videos | MovieMethods.Credits).Result;
+            string imageLanguage = $"{id.LanguageToUse().Abbreviation},null";
+            Movie downloadedMovie = Client.GetMovieAsync(id.TmdbId, id.LanguageToUse().Abbreviation, imageLanguage, MovieMethods.ExternalIds | MovieMethods.Images | MovieMethods.AlternativeTitles | MovieMethods.ReleaseDates | MovieMethods.Changes | MovieMethods.Videos | MovieMethods.Credits).Result;
             if (downloadedMovie is null)
             {
                 throw new MediaNotFoundException(id, "TMDB no longer has this movie", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
             }
-            CachedMovieInfo m = new CachedMovieInfo(locale, TVDoc.ProviderType.TMDB)
+            CachedMovieInfo m = new CachedMovieInfo(id.TargetLocale, TVDoc.ProviderType.TMDB)
             {
                 Imdb = downloadedMovie.ExternalIds.ImdbId,
                 TmdbCode = downloadedMovie.Id,
                 Name = downloadedMovie.Title,
                 Runtime = downloadedMovie.Runtime.ToString(),
-                FirstAired = GetReleaseDateDetail(downloadedMovie, locale.RegionToUse(TVDoc.ProviderType.TMDB).Abbreviation) ?? GetReleaseDateDetail(downloadedMovie, TVSettings.Instance.TMDBRegion.Abbreviation) ?? downloadedMovie.ReleaseDate,
+                FirstAired = GetReleaseDateDetail(downloadedMovie, id.RegionToUse().Abbreviation) ?? GetReleaseDateDetail(downloadedMovie, TVSettings.Instance.TMDBRegion.Abbreviation) ?? downloadedMovie.ReleaseDate,
                 Genres = downloadedMovie.Genres.Select(genre => genre.Name).ToList(),
                 Overview = downloadedMovie.Overview,
                 Network = downloadedMovie.ProductionCompanies.FirstOrDefault()?.Name, //TODO UPdate Movie to include multiple production companies
@@ -387,7 +386,7 @@ namespace TVRename.TMDB
                 InstagramId = downloadedMovie.ExternalIds.InstagramId,
                 FacebookId = downloadedMovie.ExternalIds.InstagramId,
                 FanartUrl = OriginalImageUrl(downloadedMovie.BackdropPath),
-                ContentRating = GetCertification(downloadedMovie, locale.RegionToUse(TVDoc.ProviderType.TMDB).Abbreviation) ?? GetCertification(downloadedMovie, TVSettings.Instance.TMDBRegion.Abbreviation) ?? GetCertification(downloadedMovie, Regions.Instance.FallbackRegion.Abbreviation) ?? string.Empty,
+                ContentRating = GetCertification(downloadedMovie, id.RegionToUse().Abbreviation) ?? GetCertification(downloadedMovie, TVSettings.Instance.TMDBRegion.Abbreviation) ?? GetCertification(downloadedMovie, Regions.Instance.FallbackRegion.Abbreviation) ?? string.Empty,
                 OfficialUrl = downloadedMovie.Homepage,
                 TrailerUrl = GetYouTubeUrl(downloadedMovie),
                 Dirty = false,
@@ -476,7 +475,8 @@ namespace TVRename.TMDB
         {
             int id = ss.TmdbId > 0 ? ss.TmdbId : GetSeriesIdFromOtherCodes(ss) ?? 0;
 
-            TvShow? downloadedSeries = Client.GetTvShowAsync(id, TvShowMethods.ExternalIds | TvShowMethods.Images | TvShowMethods.AlternativeTitles | TvShowMethods.ContentRatings | TvShowMethods.Changes | TvShowMethods.Videos | TvShowMethods.Credits).Result;
+            string imageLanguage = $"{ss.LanguageToUse().Abbreviation},null";
+            TvShow? downloadedSeries = Client.GetTvShowAsync(id, TvShowMethods.ExternalIds | TvShowMethods.Images | TvShowMethods.AlternativeTitles | TvShowMethods.ContentRatings | TvShowMethods.Changes | TvShowMethods.Videos | TvShowMethods.Credits, ss.LanguageToUse().Abbreviation,imageLanguage).Result;
             if (downloadedSeries is null)
             {
                 throw new MediaNotFoundException(ss, "TMDB no longer has this show", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv);
@@ -665,14 +665,14 @@ namespace TVRename.TMDB
             {
                 FindContainer? x = Client.FindAsync(FindExternalSource.Imdb, ss.ImdbCode).Result;
 
-                if (ss.Type == MediaConfiguration.MediaType.tv)
+                if (ss.Media == MediaConfiguration.MediaType.tv)
                 {
                     foreach (SearchTv? show in x.TvResults)
                     {
                         return show.Id;
                     }
                 }
-                else if (ss.Type == MediaConfiguration.MediaType.movie)
+                else if (ss.Media == MediaConfiguration.MediaType.movie)
                 {
                     foreach (SearchMovie? show in x.MovieResults)
                     {
@@ -685,14 +685,14 @@ namespace TVRename.TMDB
             {
                 FindContainer? x = Client.FindAsync(FindExternalSource.TvDb, ss.TvdbId.ToString()).Result;
 
-                if (ss.Type == MediaConfiguration.MediaType.tv)
+                if (ss.Media == MediaConfiguration.MediaType.tv)
                 {
                     foreach (SearchTv? show in x.TvResults)
                     {
                         return show.Id;
                     }
                 }
-                else if (ss.Type == MediaConfiguration.MediaType.movie)
+                else if (ss.Media == MediaConfiguration.MediaType.movie)
                 {
                     foreach (SearchMovie? show in x.MovieResults)
                     {
@@ -752,7 +752,7 @@ namespace TVRename.TMDB
                                 break;
 
                             case MediaConfiguration.MediaType.movie:
-                                DownloadMovieNow(ss, locale, showErrorMsgBox);
+                                DownloadMovieNow(ss, showErrorMsgBox);
                                 break;
                         }
                     }
@@ -778,7 +778,7 @@ namespace TVRename.TMDB
                     {
                         ISeriesSpecifier ss = new SearchSpecifier(-1, -1, result.Id, locale, result.Title,
                             TVDoc.ProviderType.TMDB, null, MediaConfiguration.MediaType.movie);
-                        DownloadMovieNow(ss, locale, showErrorMsgBox);
+                        DownloadMovieNow(ss, showErrorMsgBox);
                     }
                     catch (MediaNotFoundException sex)
                     {
@@ -878,7 +878,7 @@ namespace TVRename.TMDB
             foreach (SearchMovie result in results.MovieResults)
             {
                 SearchSpecifier ss = new SearchSpecifier(result.Id, locale, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
-                DownloadMovieNow(ss, locale, showErrorMsgBox);
+                DownloadMovieNow(ss, showErrorMsgBox);
             }
 
             if (results.MovieResults.Count == 0)
@@ -941,7 +941,7 @@ namespace TVRename.TMDB
             foreach (SearchMovie result in results.MovieResults)
             {
                 SearchSpecifier ss = new SearchSpecifier(result.Id, locale, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
-                DownloadMovieNow(ss, locale, showErrorMsgBox);
+                DownloadMovieNow(ss, showErrorMsgBox);
             }
 
             if (results.MovieResults.Count == 0)

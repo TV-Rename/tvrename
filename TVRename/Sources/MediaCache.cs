@@ -43,7 +43,6 @@ namespace TVRename
         {
             forceReloadOn.TryAdd(code, code);
         }
-        public abstract Language? PreferredLanguage();
 
         protected bool IsConnected { get; set; }
 

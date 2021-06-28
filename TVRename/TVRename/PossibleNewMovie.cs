@@ -176,10 +176,9 @@ namespace TVRename
             {
                 try
                 {
-                    ISeriesSpecifier ss = new SearchSpecifier(-1, -1, tmdbId.Value, locale, string.Empty,
-                        TVDoc.ProviderType.TMDB, null, MediaConfiguration.MediaType.movie);
+                    ISeriesSpecifier ss = new SearchSpecifier(tmdbId.Value, locale, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
 
-                    CachedMovieInfo series = TMDB.LocalCache.Instance.GetMovieAndDownload(ss, locale, showErrorMsgBox);
+                    CachedMovieInfo series = TMDB.LocalCache.Instance.GetMovieAndDownload(ss, showErrorMsgBox);
                     return series.TmdbCode;
                 }
                 catch (MediaNotFoundException)
@@ -341,7 +340,7 @@ namespace TVRename
 
         public string Name => RefinedHint;
 
-        public MediaConfiguration.MediaType Type => MediaConfiguration.MediaType.tv;
+        public MediaConfiguration.MediaType Media => MediaConfiguration.MediaType.tv;
 
         public int TvMazeId => Provider == TVDoc.ProviderType.TVmaze && CodeKnown ? ProviderCode : -1;
 

@@ -263,7 +263,7 @@ namespace TVRename
 
         string ISeriesSpecifier.Name => Name;
 
-        public MediaConfiguration.MediaType Type => MediaType();
+        public MediaConfiguration.MediaType Media => MediaType();
 
         public int TvMazeId => TvMazeCode;
 

@@ -3521,9 +3521,11 @@ namespace TVRename
             }
         }
 
+        private bool lastScanUnattended;
         private void bwScan_DoWork(object sender, DoWorkEventArgs e)
         {
             mDoc.Scan((TVDoc.ScanSettings)e.Argument);
+            lastScanUnattended = ((TVDoc.ScanSettings) e.Argument).Unattended;
         }
 
         private void bwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -3532,7 +3534,7 @@ namespace TVRename
 
         private void bwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            AskUserAboutShowProblems(false); // todo, reitroduce unattended);
+            AskUserAboutShowProblems(lastScanUnattended);
             LessBusy();
             scanProgDlg?.Close();
             FillMyShows(); // scanning can download more info to be displayed in my shows

@@ -144,7 +144,7 @@ namespace TVRename
         {
             foreach (ISeriesSpecifier downloadShow in ss)
             {
-                if (downloadShow.Type == MediaConfiguration.MediaType.tv)
+                if (downloadShow.Media == MediaConfiguration.MediaType.tv)
                 {
                     if (!cache.HasSeries(cache.PrimaryKey(downloadShow)))
                     {

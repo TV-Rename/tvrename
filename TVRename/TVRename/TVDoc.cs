@@ -286,7 +286,7 @@ namespace TVRename
                 Logger.Error($"Media:{type.PrettyPrint()}: {show.ShowName} ({show}) has inconsistent {provider.PrettyPrint()} Id: {currentValue } {valueFromCache}, updating to {valueFromCache}, {basedOnInformation} (Cached Value is {cachedData}).");
                 Logger.Error($"    Config: {show}");
                 Logger.Error($"    Cache:  {cachedData}");
-                switch (show.Type)
+                switch (show.Media)
                 {
                     case MediaConfiguration.MediaType.tv:
                         Logger.Error($"    TVDB:   {TheTVDB.LocalCache.Instance.GetSeries(show.TvdbId)}");

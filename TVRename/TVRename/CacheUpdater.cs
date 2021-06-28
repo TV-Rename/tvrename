@@ -350,14 +350,14 @@ namespace TVRename
 
         private int CountIdsFrom(TVDoc.ProviderType provider, MediaConfiguration.MediaType type)
         {
-            return downloadIds.Count(s => s.Provider == provider && s.Type == type);
+            return downloadIds.Count(s => s.Provider == provider && s.Media == type);
         }
 
         private int CountDirtyIdsFrom(TVDoc.ProviderType provider, MediaConfiguration.MediaType type)
         {
             return type == MediaConfiguration.MediaType.tv
-                ? downloadIds.Count(s => s.Provider == provider && s.Type == type && (TVDoc.GetMediaCache(provider).GetSeries(s.IdFor(provider))?.Dirty ?? true))
-                : downloadIds.Count(s => s.Provider == provider && s.Type == type && (TVDoc.GetMediaCache(provider).GetMovie(s.IdFor(provider))?.Dirty ?? true));
+                ? downloadIds.Count(s => s.Provider == provider && s.Media == type && (TVDoc.GetMediaCache(provider).GetSeries(s.IdFor(provider))?.Dirty ?? true))
+                : downloadIds.Count(s => s.Provider == provider && s.Media == type && (TVDoc.GetMediaCache(provider).GetMovie(s.IdFor(provider))?.Dirty ?? true));
         }
 
         private void WaitForBgDownloadDone()

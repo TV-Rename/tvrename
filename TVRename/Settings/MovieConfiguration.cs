@@ -73,6 +73,8 @@ namespace TVRename
             UseCustomShowName = xmlSettings.ExtractBool("UseCustomShowName", false);
             UseCustomLanguage = xmlSettings.ExtractBool("UseCustomLanguage", false);
             CustomLanguageCode = xmlSettings.ExtractString("CustomLanguageCode");
+            UseCustomRegion = xmlSettings.ExtractBool("UseCustomRegion", false);
+            CustomRegionCode = xmlSettings.ExtractString("CustomRegionCode");
             CustomShowName = xmlSettings.ExtractString("CustomShowName");
             TvdbCode = xmlSettings.ExtractInt("TVDBID", -1);
             TVmazeCode = xmlSettings.ExtractInt("TVMAZEID", -1);
@@ -241,6 +243,8 @@ namespace TVRename
             writer.WriteElement("CustomShowName", CustomShowName);
             writer.WriteElement("UseCustomLanguage", UseCustomLanguage);
             writer.WriteElement("CustomLanguageCode", CustomLanguageCode);
+            writer.WriteElement("UseCustomRegion", UseCustomRegion);
+            writer.WriteElement("CustomRegionCode", CustomRegionCode);
             writer.WriteElement("TVDBID", TvdbCode);
             writer.WriteElement("TVMAZEID", TVmazeCode);
             writer.WriteElement("TMDBID", TmdbCode);

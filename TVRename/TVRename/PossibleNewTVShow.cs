@@ -48,7 +48,7 @@ namespace TVRename
 
         public string Name => RefinedHint ?? string.Empty;
 
-        public MediaConfiguration.MediaType Type => MediaConfiguration.MediaType.tv;
+        public MediaConfiguration.MediaType Media => MediaConfiguration.MediaType.tv;
 
         public int TvMazeId => Provider == TVDoc.ProviderType.TVmaze && CodeKnown ? ProviderCode : -1;
 

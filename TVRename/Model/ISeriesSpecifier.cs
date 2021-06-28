@@ -7,7 +7,7 @@ namespace TVRename
         TVDoc.ProviderType Provider { get; }
         int TvdbId { get; }
         string Name { get; }
-        MediaConfiguration.MediaType Type { get; }
+        MediaConfiguration.MediaType Media { get; }
         int TvMazeId { get; }
         int TmdbId { get; }
         string? ImdbCode { get; }
@@ -27,7 +27,7 @@ namespace TVRename
         {
             return provider switch
             {
-                TVDoc.ProviderType.libraryDefault => ss.IdFor(DefaultProviderFor(ss.Type)),
+                TVDoc.ProviderType.libraryDefault => ss.IdFor(DefaultProviderFor(ss.Media)),
                 TVDoc.ProviderType.TVmaze => ss.TvMazeId,
                 TVDoc.ProviderType.TheTVDB => ss.TvdbId,
                 TVDoc.ProviderType.TMDB => ss.TmdbId,

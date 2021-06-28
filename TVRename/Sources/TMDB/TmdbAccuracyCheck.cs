@@ -23,7 +23,7 @@ namespace TVRename.TMDB
         {
             try
             {
-                CachedMovieInfo newSi = lc.DownloadMovieNow(si, si.ActualLocale ?? new Locale(), false);
+                CachedMovieInfo newSi = lc.DownloadMovieNow(si, false);
 
                 if (!Match(newSi, si))
                 {

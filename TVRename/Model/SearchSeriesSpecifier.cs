@@ -41,7 +41,7 @@ namespace TVRename
         }
 
         public TVDoc.ProviderType Provider { get; }
-        public MediaConfiguration.MediaType Type { get; }
+        public MediaConfiguration.MediaType Media { get; }
 
         public SearchSpecifier(int tvdb, int tvmaze, int tmdb, Locale preferredLocale,
             string name, TVDoc.ProviderType p, string? imdb, MediaConfiguration.MediaType t)
@@ -51,7 +51,7 @@ namespace TVRename
             Name = name;
             ImdbCode = imdb;
             Provider = p;
-            Type = t;
+            Media = t;
             TmdbId = tmdb;
             TargetLocale = preferredLocale;
         }
@@ -63,13 +63,13 @@ namespace TVRename
             TmdbId = -1;
 
             UpdateId(id, source);
-            Type = t;
+            Media = t;
             TargetLocale = preferredLocale;
 
             Name = string.Empty;
         }
 
-        public override string ToString() => Type == MediaConfiguration.MediaType.tv
+        public override string ToString() => Media == MediaConfiguration.MediaType.tv
             ? $"{Name}//tvdb={TvdbId}//tvmaze={TvMazeId}//TMDB={TmdbId} {Provider} and lang = {this.LanguageToUse().EnglishName}."
             : $"{Name}//tvdb={TvdbId}//TMDB={TmdbId} {Provider} and lang = {this.LanguageToUse().EnglishName}.";
     }

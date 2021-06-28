@@ -103,8 +103,6 @@ namespace TVRename
 
         public CachedMediaInfo? CachedData => Code > 0 ? LocalCache().GetMedia(Code, GetMediaType()) : null;
 
-        public Language? PreferredLanguage => UseCustomLanguage ? Languages.Instance.GetLanguageFromCode(CustomLanguageCode) : LocalCache().PreferredLanguage();
-
         protected abstract MediaCache LocalCache();
 
         public int Code
@@ -185,7 +183,7 @@ namespace TVRename
 
         public string? Name => LastName;
 
-        public MediaType Type => GetMediaType();
+        public MediaType Media => GetMediaType();
 
         public int TvMazeId => TVmazeCode;
 

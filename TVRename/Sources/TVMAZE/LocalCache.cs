@@ -7,7 +7,6 @@
 //
 
 using JetBrains.Annotations;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -71,8 +70,6 @@ namespace TVRename.TVmaze
                 CachePersistor.SaveCache(Series, Movies, CacheFile, 0);
             }
         }
-
-        public override Language PreferredLanguage() => throw new NotImplementedException();
 
         public override bool EnsureUpdated(ISeriesSpecifier s, bool bannersToo, bool showErrorMsgBox)
         {
@@ -218,8 +215,8 @@ namespace TVRename.TVmaze
                 {
                     if (int.TryParse(text, out int textAsInt))
                     {
-                        SearchSpecifier ss = new SearchSpecifier(-1, textAsInt, -1, preferredLocale, string.Empty,
-                            TVDoc.ProviderType.TVmaze, null, type);
+                        SearchSpecifier ss = new SearchSpecifier(textAsInt, preferredLocale,
+                            TVDoc.ProviderType.TVmaze, type);
                         try
                         {
                             EnsureUpdated(ss, false, showErrorMsgBox);

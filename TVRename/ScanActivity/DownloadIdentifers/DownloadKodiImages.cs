@@ -63,7 +63,8 @@ namespace TVRename
 
                 if ((forceRefresh || !bannerJpg.Exists) && !doneBannerJpg.Contains(file.Directory.FullName))
                 {
-                    string path = movie.CachedMovie?.Images(MediaImage.ImageType.wideBanner).FirstOrDefault()?.ImageUrl ?? string.Empty; //todo link up movir banner url movie.CachedMovie?.BannerUrl;
+                    string path = movie.CachedMovie?.Images(MediaImage.ImageType.wideBanner).FirstOrDefault()?.ImageUrl
+                                  ?? string.Empty;
                     if (!string.IsNullOrEmpty(path))
                     {
                         theActionList.Add(new ActionDownloadImage(movie, null, bannerJpg, path, false));
