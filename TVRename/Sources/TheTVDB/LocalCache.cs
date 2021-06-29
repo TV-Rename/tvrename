@@ -1571,22 +1571,49 @@ namespace TVRename.TheTVDB
 
         private static string? GetTrailerUrl(JObject r, Locale locale)
         {
-            //todo use lang code and backup to first in any language
-            return r["data"]["trailers"]
-                ?.FirstOrDefault(x => x["language"]?.ToString() == locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
+            JToken trailersNode = r["data"]["trailers"];
+            return
+                TrailerUrl(trailersNode, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB)) ??
+                TrailerUrl(trailersNode, TVSettings.Instance.PreferredTVDBLanguage)??
+                TrailerUrl(trailersNode, Languages.Instance.FallbackLanguage) ??
+                trailersNode?.FirstOrDefault()?["url"]?.ToString();
+        }
+
+        private static string? TrailerUrl(JToken? trailersNode, Language language)
+        {
+            return trailersNode
+                ?.FirstOrDefault(x =>
+                    x["language"]?.ToString() == language.ThreeAbbreviation)
                 ?["url"]
                 ?.ToString();
         }
 
         private static void AddAliasesV4(JObject r, Language lang, CachedMediaInfo si)
         {
-            //todo use lang code and backup to first in any language
-            if (!(r["data"]?["aliases"] is null))
+            JToken aliasNode = r["data"]?["aliases"];
+            if (aliasNode is null || !aliasNode.HasValues)
             {
-                foreach (var x in r["data"]["aliases"]?.Where(x => x["language"]?.ToString() == lang.ThreeAbbreviation))
+                return;
+            }
+
+            List<JToken> languageNodes = aliasNode.Where(x => x["language"]?.ToString() == lang.ThreeAbbreviation).ToList();
+            if (languageNodes.Any())
+            {
+                foreach (var x in languageNodes)
                 {
                     si.AddAlias(x["name"]?.ToString());
                 }
+                return;
+            }
+
+            languageNodes = aliasNode.Where(x => x["language"]?.ToString() == TVSettings.Instance.PreferredTVDBLanguage.ThreeAbbreviation).ToList();
+            if (languageNodes.Any())
+            {
+                foreach (var x in languageNodes)
+                {
+                    si.AddAlias(x["name"]?.ToString());
+                }
+                return;
             }
         }
 
