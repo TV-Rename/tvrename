@@ -325,7 +325,7 @@ namespace TVRename
                 return;
             }
 
-            for (int index = 0; index < lvSeenEpisodes.SelectedItems.Count; index++)
+            for (int index = lvSeenEpisodes.SelectedItems.Count-1; index >=0; index--)
             {
                 ProcessedEpisode pe = (ProcessedEpisode)lvSeenEpisodes.SelectedItems[index].Tag;
                 episodesToRemoveFromSeen.Add(pe);

@@ -44,6 +44,7 @@ namespace TVRename
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.bnDelRule = new System.Windows.Forms.Button();
             this.bnEdit = new System.Windows.Forms.Button();
             this.bnAddRule = new System.Windows.Forms.Button();
@@ -65,7 +66,6 @@ namespace TVRename
             this.EpisodeName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.bnRemoveSeen = new System.Windows.Forms.Button();
             this.bnAddSeen = new System.Windows.Forms.Button();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabControl1.SuspendLayout();
             this.Rules.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -129,6 +129,10 @@ namespace TVRename
             // 
             this.columnHeader6.Text = "Name";
             this.columnHeader6.Width = 150;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Reorder";
             // 
             // bnDelRule
             // 
@@ -323,7 +327,6 @@ namespace TVRename
             this.lvSeenEpisodes.FullRowSelect = true;
             this.lvSeenEpisodes.HideSelection = false;
             this.lvSeenEpisodes.Location = new System.Drawing.Point(6, 78);
-            this.lvSeenEpisodes.MultiSelect = false;
             this.lvSeenEpisodes.Name = "lvSeenEpisodes";
             this.lvSeenEpisodes.ShowGroups = false;
             this.lvSeenEpisodes.Size = new System.Drawing.Size(405, 377);
@@ -363,10 +366,6 @@ namespace TVRename
             this.bnAddSeen.Text = "&Add";
             this.bnAddSeen.UseVisualStyleBackColor = true;
             this.bnAddSeen.Click += new System.EventHandler(this.Button2_Click);
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Reorder";
             // 
             // EditSeason
             // 

@@ -690,6 +690,7 @@ namespace TVRename.TheTVDB
                 case "translatedlists":
                 case "translatedcompanies":
                 case "tags":
+                case "tag-options":
                     return;
 
                 default:
