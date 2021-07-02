@@ -1,10 +1,13 @@
 using System;
+using System.IO;
 using System.Windows.Forms;
-using Alphaleonis.Win32.Filesystem;
 using CefSharp;
 using CefSharp.WinForms;
 using JetBrains.Annotations;
 using NLog;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using File = Alphaleonis.Win32.Filesystem.File;
+using Path = Alphaleonis.Win32.Filesystem.Path;
 
 namespace TVRename
 {
@@ -41,18 +44,26 @@ namespace TVRename
         private string? architectureSpecificResourcesDirPath;
         public void InitialiseBrowserFramework()
         {
-            CefSettings settings = new CefSettings
+            try
             {
-                CachePath = PathManager.CefCachePath,
-                UserDataPath = PathManager.CefCachePath,
-                LogFile = PathManager.CefLogFile,
-            };
-            if (!Helpers.InDebug())
-            {
-                SetArchitecturePaths(settings);
-            }
+                CefSettings settings = new CefSettings
+                {
+                    CachePath = PathManager.CefCachePath,
+                    UserDataPath = PathManager.CefCachePath,
+                    LogFile = PathManager.CefLogFile,
+                };
 
-            Cef.Initialize(settings);
+                if (!Helpers.InDebug())
+                {
+                    SetArchitecturePaths(settings);
+                }
+
+                Cef.Initialize(settings);
+            }
+            catch (FileNotFoundException fex)
+            {
+                Logger.Fatal(fex,$"Can't initialise CEF {PathManager.CefCachePath}, {PathManager.CefLogFile}, {architectureSpecificBrowserPath}, {architectureSpecificLocalesDirPath}, {architectureSpecificResourcesDirPath}");
+            }
 
             CheckForBroswerDependencies(false);
 
