@@ -1333,34 +1333,57 @@ namespace TVRename.TheTVDB
 
         private MediaImage.ImageType MapBannerTVDBV4APICode(int v)
         {
+            // from call to API.ImageTypesV4()
             return v switch
             {
                 14 => MediaImage.ImageType.poster,
-                15 => MediaImage.ImageType.background,
-                1 => MediaImage.ImageType.wideBanner,
                 2 => MediaImage.ImageType.poster,
                 7 => MediaImage.ImageType.poster,
-                3 => MediaImage.ImageType.background,
+
+                1 => MediaImage.ImageType.wideBanner,
                 6 => MediaImage.ImageType.wideBanner,
                 16 => MediaImage.ImageType.wideBanner,
+
+                15 => MediaImage.ImageType.background,
+                3 => MediaImage.ImageType.background,
+                8 => MediaImage.ImageType.background,
+
                 5 => MediaImage.ImageType.icon,
+                10 => MediaImage.ImageType.icon,
+                18 => MediaImage.ImageType.icon,
+                19 => MediaImage.ImageType.icon,
+
+                11 => MediaImage.ImageType.thumbs,
+                12 => MediaImage.ImageType.thumbs,
+
                 _ => MediaImage.ImageType.poster
             };
         }
 
         private MediaImage.ImageSubject MapSubjectTVDBV4APICode(int v)
-        {
+        { // from call to API.ImageTypesV4()
             return v switch
             {
+                1 => MediaImage.ImageSubject.show,
+                2 => MediaImage.ImageSubject.show,
+                3 => MediaImage.ImageSubject.show,
+                5 => MediaImage.ImageSubject.show,
+                20 => MediaImage.ImageSubject.show,
+
+                6 => MediaImage.ImageSubject.season,
+                7 => MediaImage.ImageSubject.season,
+                8 => MediaImage.ImageSubject.season,
+                10 => MediaImage.ImageSubject.season,
+
+                11 => MediaImage.ImageSubject.episode,
+                12 => MediaImage.ImageSubject.episode,
+
                 14 => MediaImage.ImageSubject.movie,
                 15 => MediaImage.ImageSubject.movie,
                 16 => MediaImage.ImageSubject.movie,
-                1 => MediaImage.ImageSubject.show,
-                2 => MediaImage.ImageSubject.show,
-                7 => MediaImage.ImageSubject.season,
-                3 => MediaImage.ImageSubject.show,
-                6 => MediaImage.ImageSubject.season,
-                5 => MediaImage.ImageSubject.show,
+                18 => MediaImage.ImageSubject.movie,
+                21 => MediaImage.ImageSubject.movie,
+
                 _ => MediaImage.ImageSubject.show
             };
         }
@@ -1614,6 +1637,7 @@ namespace TVRename.TheTVDB
                 {
                     si.AddAlias(x["name"]?.ToString());
                 }
+                // ReSharper disable once RedundantJumpStatement
                 return;
             }
         }
@@ -3048,4 +3072,3 @@ namespace TVRename.TheTVDB
         }
     }
 }
-

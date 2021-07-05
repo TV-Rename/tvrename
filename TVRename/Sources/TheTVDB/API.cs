@@ -483,7 +483,7 @@ namespace TVRename.TheTVDB
 
         public static JObject ImageTypesV4()
         {
-            return GetUrl("https://api4.thetvdb.com/v4/artwork-types", "en");
+            return GetUrl("https://api4.thetvdb.com/v4/artwork/types", "en");
         }
 
         public static string WebsiteMovieUrl(string? serSlug)
