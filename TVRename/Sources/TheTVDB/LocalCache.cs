@@ -1027,7 +1027,10 @@ namespace TVRename.TheTVDB
                     {
                         DownloadSeriesBanners(code.TvdbId, si, locale);
                     }
-                    //TODO - something for TVDB V4 Images
+                    else
+                    {
+                        //TODO - something for TVDB V4 Images
+                    }
                 }
             }
 
@@ -1265,7 +1268,6 @@ namespace TVRename.TheTVDB
                 FacebookId = GetExternalId(r, "Facebook"),
                 InstagramId = GetExternalId(r, "Instagram"),
                 TwitterId = GetExternalId(r, "Twitter"),
-                //Icon = "https://artworks.thetvdb.com" + GetArtwork(r, "Icon"), TODO - Other Image Downloads
             };
 
             AddCastCrew(r, si);
