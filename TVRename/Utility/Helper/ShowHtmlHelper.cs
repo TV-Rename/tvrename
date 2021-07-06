@@ -1704,12 +1704,11 @@ namespace TVRename
             return ei.Show.Provider switch
             {
                 TVDoc.ProviderType.TheTVDB => TheTVDB.API.WebsiteEpisodeUrl(ei),
-                TVDoc.ProviderType.TMDB =>
+                TVDoc.ProviderType.TMDB => ei.LinkUrl ??
                     $"https://www.themoviedb.org/tv/{ei.TheCachedSeries.TmdbId}/season/{ei.AppropriateSeasonNumber}/episode/{ei.AppropriateEpNum}",
+                TVDoc.ProviderType.TVmaze => ei.LinkUrl ?? $"https://www.tvmaze.com/episodes/{ei.EpisodeId}",
                 _ => string.Empty
             };
-
-            //todo - make sure this works with  non tvdb shows
         }
 
         private static string ProviderShowUrl(this ShowConfiguration show)

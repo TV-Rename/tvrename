@@ -62,6 +62,7 @@ namespace TVRename
             TvMazeId = -1;
             TmdbId = -1;
 
+            Provider = source;
             UpdateId(id, source);
             Media = t;
             TargetLocale = preferredLocale;
