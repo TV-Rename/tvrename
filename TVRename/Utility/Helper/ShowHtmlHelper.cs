@@ -1701,14 +1701,14 @@ namespace TVRename
 
         public static string ProviderWebUrl(this ProcessedEpisode ei)
         {
-            return ei.Show.Provider switch
+            return (ei.Show.Provider switch
             {
                 TVDoc.ProviderType.TheTVDB => TheTVDB.API.WebsiteEpisodeUrl(ei),
-                TVDoc.ProviderType.TMDB => ei.LinkUrl ??
+                TVDoc.ProviderType.TMDB => ei.LinkUrl.HasValue() ? ei.LinkUrl! :
                     $"https://www.themoviedb.org/tv/{ei.TheCachedSeries.TmdbId}/season/{ei.AppropriateSeasonNumber}/episode/{ei.AppropriateEpNum}",
-                TVDoc.ProviderType.TVmaze => ei.LinkUrl ?? $"https://www.tvmaze.com/episodes/{ei.EpisodeId}",
+                TVDoc.ProviderType.TVmaze => ei.LinkUrl.HasValue() ? ei.LinkUrl! : $"https://www.tvmaze.com/episodes/{ei.EpisodeId}",
                 _ => string.Empty
-            };
+            })!;
         }
 
         private static string ProviderShowUrl(this ShowConfiguration show)

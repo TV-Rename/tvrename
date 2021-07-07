@@ -438,7 +438,7 @@ namespace TVRename.TheTVDB
             return GetUrl(uri, requestedLanguageCode);
         }
 
-        public static JObject GetSeasonEpisoedesV4(int showId, int seasonId, string requestedLanguageCode)
+        public static JObject GetSeasonEpisodesV4(int showId, int seasonId, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/seasons/{seasonId}/extended";
             return GetUrl(uri, requestedLanguageCode);

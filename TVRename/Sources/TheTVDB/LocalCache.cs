@@ -1029,7 +1029,7 @@ namespace TVRename.TheTVDB
                     }
                     else
                     {
-                        //TODO - something for TVDB V4 Images
+                        //No need to do anything, V4 images are in the main http request
                     }
                 }
             }
@@ -2233,13 +2233,16 @@ namespace TVRename.TheTVDB
             {
                 try
                 {
-                    JObject seasonInfo = API.GetSeasonEpisoedesV4(code, s.SeasonId,
+                    JObject seasonInfo = API.GetSeasonEpisodesV4(code, s.SeasonId,
                         locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
 
                     JToken episodeData = seasonInfo["data"]?["episodes"];
+
+                    int? seasonNumber = seasonInfo["data"]?["number"]?.ToObject<int>(); //todo remove this once https://github.com/thetvdb/v4-api/issues/20 is resolved
+
                     if (episodeData != null)
                     {
-                        Parallel.ForEach(episodeData, x => { GenerateAddEpisodeV4(code, locale, si, x); });
+                        Parallel.ForEach(episodeData, x => { GenerateAddEpisodeV4(code, locale, si, x,seasonNumber); });
                     }
                 }
                 catch (SourceConnectivityException sce)
@@ -2253,6 +2256,30 @@ namespace TVRename.TheTVDB
             });
         }
 
+        private void GenerateAddEpisodeV4(int code, Locale locale, CachedSeriesInfo si, JToken x, int? seasonNumber)
+        {
+            try
+            {
+                //TODO: Should not need to do this test - stop when https://github.com/thetvdb/v4-api/issues/20 is resolved
+                //Remove whole method and use below
+                if (seasonNumber.HasValue && seasonNumber.Value== x["seasonNumber"].ToObject<int>())
+                {
+                    (Episode newEp, Language bestLanguage) = GenerateCoreEpisodeV4(x, code, si, locale);
+                    AddTranslations(newEp,
+                        API.GetEpisodeTranslationsV4(newEp.EpisodeId, bestLanguage.ThreeAbbreviation));
+
+                    si.AddEpisode(newEp);
+                }
+            }
+            catch (SourceConnectivityException sce1)
+            {
+                LOGGER.Error(sce1);
+            }
+            catch (SourceConsistencyException sce1)
+            {
+                LOGGER.Error(sce1);
+            }
+        }
         private void GenerateAddEpisodeV4(int code, Locale locale, CachedSeriesInfo si, JToken x)
         {
             try
