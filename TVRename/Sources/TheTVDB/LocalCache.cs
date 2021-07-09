@@ -2311,10 +2311,20 @@ namespace TVRename.TheTVDB
 
         private string Translate(string? originalName, string? transName)
         {
+            //https://github.com/thetvdb/v4-api/issues/30
+
             if (transName.HasValue() && transName != "TBA")
+            {
                 return transName!;
+            } else if (transName.HasValue() && transName == "TBA" && originalName.HasValue() && originalName != "TBA")
+            {
+                ///issue
+            }
+
             if (originalName.HasValue() && originalName != "TBA")
+            {
                 return originalName!;
+            }
 
             return transName ?? originalName ?? string.Empty;
         }
