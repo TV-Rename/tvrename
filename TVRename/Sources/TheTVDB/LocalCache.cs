@@ -125,18 +125,16 @@ namespace TVRename.TheTVDB
         public CachedMovieInfo? GetMovie(PossibleNewMovie show, Locale preferredLocale, bool showErrorMsgBox) => this.GetMovie(show.RefinedHint, show.PossibleYear, preferredLocale, showErrorMsgBox, false);
 
         [NotNull]
-        internal IEnumerable<CachedSeriesInfo> ServerAccuracyCheck()
+        internal IEnumerable<CachedSeriesInfo> ServerTvAccuracyCheck()
         {
-            Say("TVDB Accuracy Check running");
             TvdbAccuracyCheck check = new TvdbAccuracyCheck(this);
-            lock (SERIES_LOCK)
-            {
-                foreach (CachedSeriesInfo si in Series.Values.Where(info => !info.IsSearchResultOnly)
-                    .OrderBy(s => s.Name).ToList())
-                {
-                    check.ServerAccuracyCheck(si);
-                }
-            }
+
+            Say($"TVDB Accuracy Check (TV) running for {FullShows().Count} shows.");
+
+            Parallel.ForEach(FullShows(), si => {
+                Thread.CurrentThread.Name ??= $"TVDB Consistency Check: {si.Name}"; // Can only set it once
+                check.ServerAccuracyCheck(si);
+            });
 
             foreach (string issue in check.Issues)
             {
@@ -145,6 +143,25 @@ namespace TVRename.TheTVDB
 
             SayNothing();
             return check.ShowsToUpdate;
+        }
+        internal IEnumerable<CachedMovieInfo> ServerMovieAccuracyCheck()
+        {
+            TvdbAccuracyCheck check = new TvdbAccuracyCheck(this);
+
+            Say($"TVDB Accuracy Check (Movies) running {FullMovies().Count} shows.");
+
+            Parallel.ForEach(FullMovies(), si => {
+                Thread.CurrentThread.Name ??= $"TVDB Consistency Check: {si.Name}"; // Can only set it once
+                check.ServerAccuracyCheck(si);
+            });
+
+            foreach (string issue in check.Issues)
+            {
+                LOGGER.Warn(issue);
+            }
+
+            SayNothing();
+            return check.MoviesToUpdate;
         }
 
         private Episode? FindEpisodeById(int id)
@@ -1558,7 +1575,6 @@ namespace TVRename.TheTVDB
                 FacebookId = GetExternalIdV4(r, "Facebook"),
                 InstagramId = GetExternalIdV4(r, "Instagram"),
                 TwitterId = GetExternalIdV4(r, "Twitter"),
-                //Icon = "https://artworks.thetvdb.com" + GetArtwork(r, "Icon"), TODO - Other Image Downloads
                 Dirty = false,
                 Network = dataNode["studios"]?.FirstOrDefault()?["name"]?.ToString(),
                 ShowLanguage = dataNode["audioLanguages"]?.ToString(),
@@ -1827,7 +1843,7 @@ namespace TVRename.TheTVDB
                 return Languages.Instance.GetLanguageFromThreeCode(code!) ?? Languages.Instance.FallbackLanguage;
             }
 
-            return Languages.Instance.FallbackLanguage; //todo make  use of the json to find the most appropriate language code
+            return Languages.Instance.FallbackLanguage;
         }
 
         private DateTime? GetAirsTimeV4(JObject r)
@@ -2227,10 +2243,11 @@ namespace TVRename.TheTVDB
             return txt;
         }
 
-        private void ReloadEpisodesV4(int code, Locale locale, CachedSeriesInfo si)
+        public void ReloadEpisodesV4(int code, Locale locale, CachedSeriesInfo si)
         {
             Parallel.ForEach(si.Seasons, s =>
             {
+                Thread.CurrentThread.Name ??= $"Download Seasons for {si.Name}"; // Can only set it once
                 try
                 {
                     JObject seasonInfo = API.GetSeasonEpisodesV4(code, s.SeasonId,
@@ -2242,7 +2259,11 @@ namespace TVRename.TheTVDB
 
                     if (episodeData != null)
                     {
-                        Parallel.ForEach(episodeData, x => { GenerateAddEpisodeV4(code, locale, si, x,seasonNumber); });
+                        Parallel.ForEach(episodeData, x =>
+                        {
+                            Thread.CurrentThread.Name ??= $"Download Season {seasonNumber} Episodes for {si.Name}"; // Can only set it once
+                            GenerateAddEpisodeV4(code, locale, si, x,seasonNumber);
+                        });
                     }
                 }
                 catch (SourceConnectivityException sce)
@@ -2268,7 +2289,18 @@ namespace TVRename.TheTVDB
                     AddTranslations(newEp,
                         API.GetEpisodeTranslationsV4(newEp.EpisodeId, bestLanguage.ThreeAbbreviation));
 
-                    si.AddEpisode(newEp);
+                    if (!si.Episodes.Any(e => e.EpisodeId == newEp.EpisodeId))
+                    {
+                        si.AddEpisode(newEp);
+                    }
+                    else if(si.Episodes.Count(e => e.EpisodeId == newEp.EpisodeId)==1 && si.GetEpisode(newEp.EpisodeId).AiredEpNum ==newEp.AiredEpNum)
+                    {
+                        si.AddEpisode(newEp);
+                    }
+                    else if (si.Episodes.Count(e => e.EpisodeId == newEp.EpisodeId) == 1 && si.GetEpisode(newEp.EpisodeId).AiredEpNum > newEp.AiredEpNum)
+                    {
+                        si.AddEpisode(newEp);
+                    }
                 }
             }
             catch (SourceConnectivityException sce1)
@@ -2341,10 +2373,30 @@ namespace TVRename.TheTVDB
                 AiredSeasonNumber = episodeJson["seasonNumber"].ToObject<int>(),
                 AiredEpNum = episodeJson["number"].ToObject<int>(),
                 Filename = episodeJson["image"].ToObject<string>(),
-                //todo srvlastupdated can be got from "lastUpdated": "2021-06-11 12:42:28",
+                SrvLastUpdated = GetUpdateTicks(episodeJson["lastUpdated"].ToObject<string>())
             };
 
             return (x, GetAppropriateLanguage(episodeJson["nameTranslations"], locale));
+        }
+
+        private long GetUpdateTicks(string? lastUpdateString)
+        {
+            const long DEFLT = 0; //equates to  1970/1/1
+
+            try
+            {
+                if (!lastUpdateString.HasValue())
+                {
+                    return DEFLT;
+                }
+                //"lastUpdated": "2021-06-11 12:42:28",
+                return DateTime.ParseExact(lastUpdateString, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture).ToUnixTime();
+            }
+            catch
+            {
+                LOGGER.Error($"Failed to parse Epsiode update date {lastUpdateString}");
+                return DEFLT;
+            }
         }
 
         private DateTime? GetEpisodeAiredDate(JToken episodeJson)
@@ -3050,7 +3102,7 @@ namespace TVRename.TheTVDB
             ? CachedMovieData[id.TvdbId]
             : DownloadMovieNow(id, locale, showErrorMsgBox);
 
-        private CachedMovieInfo? DownloadMovieNow(ISeriesSpecifier tvdbId, Locale locale, bool showErrorMsgBox)
+        internal CachedMovieInfo? DownloadMovieNow(ISeriesSpecifier tvdbId, Locale locale, bool showErrorMsgBox)
         {
             if (tvdbId.TvdbId == 0)
             {

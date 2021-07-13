@@ -13,6 +13,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.ExportWTWTXT;
 
         protected override string Location() => TVSettings.Instance.ExportWTWTXTTo;
+        protected override string Name() => "Upcoming TXT Exporter";
 
         protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode> elist)
         {

@@ -21,7 +21,7 @@ namespace TVRename
         }
 
         public override bool Active() => TVSettings.Instance.ExportWTWXML;
-
+        protected override string Name() => "Upcoming XML Exporter";
         protected override string Location() => TVSettings.Instance.ExportWTWXMLTo;
 
         protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode> elist)

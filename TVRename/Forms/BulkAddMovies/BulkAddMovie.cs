@@ -572,6 +572,8 @@ namespace TVRename
 
         private void bwRescan_DoWork(object sender, DoWorkEventArgs e)
         {
+            Thread.CurrentThread.Name ??= "BulkAddMovie Scan Thread"; // Can only set it once
+
             CancellationTokenSource cts = new CancellationTokenSource();
             engine.CheckFolders(cts.Token, (BackgroundWorker)sender, true, true);
             cts.Cancel();
@@ -579,6 +581,7 @@ namespace TVRename
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
+            Thread.CurrentThread.Name ??= "BulkAddMovie Identify Thread"; // Can only set it once
             IdentifyAll((BackgroundWorker)sender);
         }
 

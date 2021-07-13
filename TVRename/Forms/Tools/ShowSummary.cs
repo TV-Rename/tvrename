@@ -731,6 +731,7 @@ namespace TVRename
 
         private void BwRescan_DoWork(object sender, DoWorkEventArgs e)
         {
+            System.Threading.Thread.CurrentThread.Name ??= "ShowSummary Scan Thread"; // Can only set it once
             GenerateData((BackgroundWorker)sender);
         }
 

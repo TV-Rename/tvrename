@@ -11,6 +11,7 @@ namespace TVRename
         }
 
         public override bool Active() => TVSettings.Instance.ExportMissingMoviesXML;
+        protected override string Name() => "Missing Movie XML Exporter";
 
         protected override string Location() => TVSettings.Instance.ExportMissingMoviesXMLTo;
 

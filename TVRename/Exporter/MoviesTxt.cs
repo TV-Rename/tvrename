@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at https://github.com/TV-Rename/tvrename
@@ -17,6 +17,7 @@ namespace TVRename
         }
 
         public override bool Active() => TVSettings.Instance.ExportMoviesTXT;
+        protected override string Name() => "Movies TXT Exporter";
 
         protected override string Location() => TVSettings.Instance.ExportMoviesTXTTo;
 

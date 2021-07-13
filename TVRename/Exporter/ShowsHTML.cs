@@ -81,5 +81,7 @@ namespace TVRename
             </div>
             </div></div></div>";
         }
+
+        protected override string Name() => "Show HTML Exporter";
     }
 }

@@ -21,6 +21,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.ExportRecentXSPF;
 
         protected override string Location() => TVSettings.Instance.ExportRecentXSPFTo;
+        protected override string Name() => "Recent XSPF Exporter";
 
         protected override string GenerateHeader()
         {

@@ -20,6 +20,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.ExportRecentM3U;
 
         protected override string Location() => TVSettings.Instance.ExportRecentM3UTo;
+        protected override string Name() => "Recent M3U Exporter";
 
         protected override string GenerateHeader() => "#EXTM3U";
 

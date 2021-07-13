@@ -18,6 +18,7 @@ namespace TVRename
         }
 
         public override bool Active() => TVSettings.Instance.ExportRecentWPL;
+        protected override string Name() => "Recent WPL Exporter";
 
         protected override string Location() => TVSettings.Instance.ExportRecentWPLTo;
 

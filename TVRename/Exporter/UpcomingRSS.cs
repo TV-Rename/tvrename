@@ -22,6 +22,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.ExportWTWRSS;
 
         protected override string Location() => TVSettings.Instance.ExportWTWRSSTo;
+        protected override string Name() => "Upcoming RSS Exporter";
 
         protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode>? elist)
         {

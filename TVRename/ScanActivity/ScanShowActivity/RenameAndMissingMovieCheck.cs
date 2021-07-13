@@ -181,6 +181,10 @@ namespace TVRename
                     // then add it as officially missing
                     Doc.TheActionList.Add(new MovieItemMissing(si, folder));
                 }
+                else
+                {
+                    LOGGER.Info($"{si.Name} not considered missing as it {(dt.HasValue? $"is in the future ({dt.Value.ToString("d", System.Globalization.DateTimeFormatInfo.InvariantInfo)})": "has no airdate")} (and the settings)");
+                }
             } // if doing missing check
         }
 

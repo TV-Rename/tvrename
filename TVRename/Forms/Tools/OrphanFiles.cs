@@ -100,6 +100,7 @@ namespace TVRename.Forms.Tools
 
         private void BwRescan_DoWork(object sender, DoWorkEventArgs e)
         {
+            System.Threading.Thread.CurrentThread.Name ??= "OrphanFiles Scan Thread"; // Can only set it once
             issues.Clear();
             UpdateIssues((BackgroundWorker)sender);
         }

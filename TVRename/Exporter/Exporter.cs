@@ -8,6 +8,7 @@
 
 using Alphaleonis.Win32.Filesystem;
 using System;
+using TVRename.Utility.Helper;
 
 namespace TVRename
 {
@@ -74,6 +75,26 @@ namespace TVRename
 
         protected abstract string Location();
 
+        protected abstract string Name();
         protected abstract void Do();
+
+        public void RunAsThread()
+        {
+            if (Active())
+            {
+                TaskHelper.Run(Run, $"{Name()} Thread");
+            }
+
+/*            Thread t = new Thread(() =>
+                {
+                    Thread.CurrentThread.IsBackground = true;
+                    if (ue.Active())
+                    {
+                        ue.Run();
+                    }
+                })
+                { Name = $"{ue.Name()} Creator" }; t.Start();
+*/
+        }
     }
 }

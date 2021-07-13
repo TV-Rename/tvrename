@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TVRename.Utility.Helper
@@ -51,6 +52,12 @@ namespace TVRename.Utility.Helper
             {
                 throw new TimeoutException();
             }
+        }
+
+        public static void Run(System.Action action, string name)
+        {
+            Thread t = new Thread(() => action()) {Name = name, IsBackground = true};
+            t.Start();
         }
     }
 }

@@ -1,6 +1,8 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TVRename
 {
@@ -24,10 +26,26 @@ namespace TVRename
 
         protected readonly ConcurrentDictionary<int, CachedMovieInfo> Movies = new ConcurrentDictionary<int, CachedMovieInfo>();
 
+        protected List<CachedMovieInfo> FullMovies()
+        {
+            lock (MOVIE_LOCK)
+            {
+                return Movies.Values.Where(info => !info.IsSearchResultOnly).OrderBy(s => s.Name).ToList();
+            }
+        }
+
         // ReSharper disable once InconsistentNaming
         public readonly object SERIES_LOCK = new object();
 
         protected readonly ConcurrentDictionary<int, CachedSeriesInfo> Series = new ConcurrentDictionary<int, CachedSeriesInfo>();
+
+        protected List<CachedSeriesInfo> FullShows()
+        {
+            lock (SERIES_LOCK)
+            {
+                return Series.Values.Where(info => !info.IsSearchResultOnly).OrderBy(s => s.Name).ToList();
+            }
+        }
 
         private ConcurrentDictionary<int, int> forceReloadOn = new ConcurrentDictionary<int, int>();
         protected bool DoWeForceReloadFor(int code)

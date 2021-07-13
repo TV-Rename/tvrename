@@ -13,6 +13,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.ExportMissingCSV;
 
         protected override string Location() => TVSettings.Instance.ExportMissingCSVTo;
+        protected override string Name() => "Missing CSV Exporter";
 
         public override bool ApplicableFor(TVSettings.ScanType st) => st == TVSettings.ScanType.Full;
 
@@ -32,6 +33,4 @@ namespace TVRename
             }
         }
     }
-
-    // ReSharper disable once InconsistentNaming
 }

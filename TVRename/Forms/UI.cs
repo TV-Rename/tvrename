@@ -33,6 +33,7 @@ using TVRename.Forms.Tools;
 using TVRename.Forms.Utilities;
 using TVRename.Ipc;
 using TVRename.Properties;
+using TVRename.Utility.Helper;
 using Control = System.Windows.Forms.Control;
 using DataFormats = System.Windows.Forms.DataFormats;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
@@ -536,7 +537,7 @@ namespace TVRename
 
             if (a.ForceUpdate)
             {
-                UIAccuracyCheck(UNATTENDED);
+                UITVDBAccuracyCheck(UNATTENDED);
                 UITMDBAccuracyCheck(UNATTENDED);
             }
 
@@ -584,14 +585,11 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        private void UIAccuracyCheck(bool unattended)
+        private void UITVDBAccuracyCheck(bool unattended)
         {
             MoreBusy();
-            Task.Run(
-                () => mDoc.TVDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized, this)
-            );
-            Task.Run(
-                () => mDoc.TMDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized, this)
+            TaskHelper.Run(
+                () => mDoc.TVDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized, this), "TVDB Check"
             );
             LessBusy();
         }
@@ -3524,6 +3522,7 @@ namespace TVRename
         private bool lastScanUnattended;
         private void bwScan_DoWork(object sender, DoWorkEventArgs e)
         {
+            Thread.CurrentThread.Name ??= "Main Scan Thread"; // Can only set it once
             mDoc.Scan((TVDoc.ScanSettings)e.Argument);
             lastScanUnattended = ((TVDoc.ScanSettings) e.Argument).Unattended;
         }
@@ -4254,7 +4253,7 @@ namespace TVRename
             //Show Log Pane
             logToolStripMenuItem_Click(sender, e);
 
-            Task.Run(() =>
+            TaskHelper.Run(() =>
             {
                 TimeZoneTracker results = new TimeZoneTracker();
                 foreach (ShowConfiguration si in mDoc.TvLibrary.GetSortedShowItems())
@@ -4266,7 +4265,7 @@ namespace TVRename
                     }
                 }
                 Logger.Info(results.PrintVersion());
-            });
+            }, "Timezone Check");
         }
 
         private class TimeZoneTracker : Dictionary<string, Dictionary<string, List<string>>>
@@ -4325,10 +4324,10 @@ namespace TVRename
             //Show Log Pane
             logToolStripMenuItem_Click(sender, e);
 
-            Task.Run(() =>
+            TaskHelper.Run(() =>
             {
                 Beta.LogShowEpisodeSizes(mDoc);
-            });
+            }, "Episode File Quality Check");
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4355,7 +4354,7 @@ namespace TVRename
 
             Cursor.Current = Cursors.WaitCursor;
 
-            UIAccuracyCheck(false);
+            UITVDBAccuracyCheck(false);
 
             Cursor.Current = Cursors.Default;
         }
@@ -4530,6 +4529,7 @@ namespace TVRename
 
         private void BwSeasonHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
         {
+            Thread.CurrentThread.Name ??= "Season HTML Creation Thread"; // Can only set it once
             ProcessedSeason? s = e.Argument as ProcessedSeason;
             ShowConfiguration si = s?.Show;
 
@@ -4574,6 +4574,7 @@ namespace TVRename
 
         private void BwShowHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
         {
+            Thread.CurrentThread.Name ??= "Show HTML Creation Thread"; // Can only set it once
             ShowConfiguration si = e.Argument as ShowConfiguration;
 
             string html = string.Empty;
@@ -4590,6 +4591,7 @@ namespace TVRename
 
         private void BwUpdateSchedule_DoWork(object sender, [NotNull] DoWorkEventArgs e)
         {
+            Thread.CurrentThread.Name ??= "Update Schedule Thread"; // Can only set it once
             e.Result = GenerateNewScheduleItems();
         }
 
@@ -4757,6 +4759,7 @@ namespace TVRename
 
         private void BwShowSummaryHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
         {
+            Thread.CurrentThread.Name ??= "Show Summary HTML Creation Thread"; // Can only set it once
             ShowConfiguration si = e.Argument as ShowConfiguration;
             string html = string.Empty;
             try
@@ -4772,6 +4775,7 @@ namespace TVRename
 
         private void BwSeasonSummaryHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
         {
+            Thread.CurrentThread.Name ??= "Season Summary Creation Thread"; // Can only set it once
             ProcessedSeason s = e.Argument as ProcessedSeason;
             ShowConfiguration si = s?.Show;
             string html = string.Empty;
@@ -4929,6 +4933,7 @@ namespace TVRename
 
         private void bwMovieHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
         {
+            Thread.CurrentThread.Name ??= "Movie HTML Creation Thread"; // Can only set it once
             MovieConfiguration si = e.Argument as MovieConfiguration;
 
             string html = string.Empty;
@@ -4974,8 +4979,9 @@ namespace TVRename
         private void UITMDBAccuracyCheck(bool unattended)
         {
             MoreBusy();
-            Task.Run(
-                () => mDoc.TMDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized, this)
+            TaskHelper.Run(
+                () => mDoc.TMDBServerAccuracyCheck(unattended, WindowState == FormWindowState.Minimized, this),
+                "TMDB Accuracy Check"
             );
 
             LessBusy();

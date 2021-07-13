@@ -233,40 +233,46 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         private void CheckForUsefulTVIds(MediaCache cache, ProviderType provider)
         {
+            List<CachedSeriesInfo> x;
             lock (cache.SERIES_LOCK)
             {
-                foreach (CachedSeriesInfo cachedData in cache.CachedShowData.Values.Where(show => show.IdCode(provider) > 0))
-                {
-                    ShowConfiguration? showConfiguration = TvLibrary.GetShowItem(cachedData.IdCode(provider), provider);
-                    if (showConfiguration is null)
-                    {
-                        continue;
-                    }
+                x = cache.CachedShowData.Values.Where(show => show.IdCode(provider) > 0).ToList();
+            }
 
-                    string checkName = $"looked in the {cache.Provider().PrettyPrint()} cache based on {provider.PrettyPrint()} [{cachedData.IdCode(provider)}]";
-                    showConfiguration.TmdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TMDB, MediaConfiguration.MediaType.tv, checkName);
-                    showConfiguration.TvdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.tv, checkName);
-                    showConfiguration.TVmazeCode = GetBestValue(showConfiguration, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.tv, checkName);
+            foreach (CachedSeriesInfo cachedData in x)
+            {
+                ShowConfiguration? showConfiguration = TvLibrary.GetShowItem(cachedData.IdCode(provider), provider);
+                if (showConfiguration is null)
+                {
+                    continue;
                 }
+
+                string checkName = $"looked in the {cache.Provider().PrettyPrint()} cache based on {provider.PrettyPrint()} [{cachedData.IdCode(provider)}]";
+                showConfiguration.TmdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TMDB, MediaConfiguration.MediaType.tv, checkName);
+                showConfiguration.TvdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.tv, checkName);
+                showConfiguration.TVmazeCode = GetBestValue(showConfiguration, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.tv, checkName);
             }
         }
 
         private void CheckForUsefulMovieIds(MediaCache cache, ProviderType provider)
         {
+            IEnumerable<CachedMovieInfo> x;
             lock (cache.MOVIE_LOCK)
             {
-                foreach (CachedMovieInfo cachedData in cache.CachedMovieData.Values.Where(show => show.IdCode(provider) > 0))
+                x = cache.CachedMovieData.Values.Where(show => show.IdCode(provider) > 0).ToList();
+            }
+
+            foreach (CachedMovieInfo cachedData in x)
+            {
+                MovieConfiguration? showConfiguration = FilmLibrary.GetMovie(cachedData.IdCode(provider), provider);
+                if (showConfiguration is null)
                 {
-                    MovieConfiguration? showConfiguration = FilmLibrary.GetMovie(cachedData.IdCode(provider), provider);
-                    if (showConfiguration is null)
-                    {
-                        continue;
-                    }
-                    string checkName = $"looked in the {cache.Provider().PrettyPrint()} cache based on {provider.PrettyPrint()} [{cachedData.IdCode(provider)}]";
-                    showConfiguration.TmdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TMDB, MediaConfiguration.MediaType.movie, checkName);
-                    showConfiguration.TvdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.movie, checkName);
-                    showConfiguration.TVmazeCode = GetBestValue(showConfiguration, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.movie, checkName);
+                    continue;
                 }
+                string checkName = $"looked in the {cache.Provider().PrettyPrint()} cache based on {provider.PrettyPrint()} [{cachedData.IdCode(provider)}]";
+                showConfiguration.TmdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TMDB, MediaConfiguration.MediaType.movie, checkName);
+                showConfiguration.TvdbCode = GetBestValue(showConfiguration, cachedData, ProviderType.TheTVDB, MediaConfiguration.MediaType.movie, checkName);
+                showConfiguration.TVmazeCode = GetBestValue(showConfiguration, cachedData, ProviderType.TVmaze, MediaConfiguration.MediaType.movie, checkName);
             }
         }
 
@@ -663,40 +669,54 @@ namespace TVRename
             {
                 if (ue.Active() && ue.ApplicableFor(lastScanType))
                 {
-                    ue.Run();
+                    ue.RunAsThread();
                 }
             }
         }
 
         public void ExportMovieInfo()
         {
-            new Thread(() =>
+            new MoviesTxt(FilmLibrary.GetSortedMovies()).RunAsThread();
+            new MoviesHtml(FilmLibrary.GetSortedMovies()).RunAsThread();
+
+            /*
+            Thread t = new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
                 new MoviesTxt(FilmLibrary.GetSortedMovies()).Run();
-            }).Start();
+            }) {Name = "Movies TXT Creator"};
 
-            new Thread(() =>
+            t.Start();
+
+            Thread s = new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
                 new MoviesHtml(FilmLibrary.GetSortedMovies()).Run();
-            }).Start();
+            })  { Name = "Movies HTML Creator" };
+            s.Start();
+            */
         }
 
         public void ExportShowInfo()
         {
             List<ShowConfiguration> sortedShowItems = TvLibrary.GetSortedShowItems();
-            new Thread(() =>
+            new ShowsTXT(sortedShowItems).RunAsThread();
+            new ShowsHTML(sortedShowItems).RunAsThread();
+
+            /*Thread t = new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
                 new ShowsTXT(sortedShowItems).Run();
-            }).Start();
+            })
+                { Name = "Shows TXT Creator" }; t.Start();
 
-            new Thread(() =>
+            Thread s = new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
                 new ShowsHTML(sortedShowItems).Run();
-            }).Start();
+            })
+                { Name = "Shows HTML Creator" }; s.Start();
+            */
         }
 
         public void WriteUpcoming()
@@ -705,14 +725,7 @@ namespace TVRename
 
             foreach (UpcomingExporter ue in lup)
             {
-                new Thread(() =>
-                {
-                    Thread.CurrentThread.IsBackground = true;
-                    if (ue.Active())
-                    {
-                        ue.Run();
-                    }
-                }).Start();
+                ue.RunAsThread();
             }
         }
 
@@ -722,14 +735,7 @@ namespace TVRename
 
             foreach (RecentExporter ue in reps)
             {
-                new Thread(() =>
-                {
-                    Thread.CurrentThread.IsBackground = true;
-                    if (ue.Active())
-                    {
-                        ue.Run();
-                    }
-                }).Start();
+                ue.RunAsThread();
             }
         }
 
@@ -1579,9 +1585,14 @@ namespace TVRename
         internal void TVDBServerAccuracyCheck(bool unattended, bool hidden, UI owner)
         {
             PreventAutoScan("TVDB Accuracy Check");
-            IEnumerable<CachedSeriesInfo> seriesToUpdate = TheTVDB.LocalCache.Instance.ServerAccuracyCheck();
+            IEnumerable<CachedSeriesInfo> seriesToUpdate = TheTVDB.LocalCache.Instance.ServerTvAccuracyCheck();
             IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(info => TvLibrary.GetShowItem(info.TvdbCode, ProviderType.TheTVDB));
             ForceRefreshShows(showsToUpdate, unattended, hidden, owner);
+
+            IEnumerable<CachedMovieInfo> moviesToUpdate = TheTVDB.LocalCache.Instance.ServerMovieAccuracyCheck();
+            IEnumerable<MovieConfiguration> filmsToUpdate = moviesToUpdate.Select(mov => FilmLibrary.GetMovie(mov.TvdbCode, ProviderType.TheTVDB));
+            ForceRefreshMovies(filmsToUpdate, unattended, hidden, owner);
+
             DoDownloadsBG();
             AllowAutoScan();
         }
@@ -1615,11 +1626,11 @@ namespace TVRename
         {
             PreventAutoScan("TMDB Accuracy Check");
 
-            IEnumerable<CachedMovieInfo> moviesToUpdate = TMDB.LocalCache.Instance.ServerAccuracyCheck();
+            IEnumerable<CachedMovieInfo> moviesToUpdate = TMDB.LocalCache.Instance.ServerMovieAccuracyCheck();
             IEnumerable<MovieConfiguration> filmsToUpdate = moviesToUpdate.Select(mov => FilmLibrary.GetMovie(mov.TmdbCode, ProviderType.TMDB));
             ForceRefreshMovies(filmsToUpdate, unattended, hidden, owner);
 
-            IEnumerable<CachedSeriesInfo> seriesToUpdate = TMDB.LocalCache.Instance.ServerShowsAccuracyCheck();
+            IEnumerable<CachedSeriesInfo> seriesToUpdate = TMDB.LocalCache.Instance.ServerTvAccuracyCheck();
             IEnumerable<ShowConfiguration> showsToUpdate = seriesToUpdate.Select(mov => TvLibrary.GetShowItem(mov.TmdbCode, ProviderType.TMDB));
             ForceRefreshShows(showsToUpdate, unattended, hidden, owner);
 

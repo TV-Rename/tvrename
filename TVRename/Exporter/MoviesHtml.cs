@@ -15,7 +15,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.ExportMoviesHTML;
 
         protected override string Location() => TVSettings.Instance.ExportMoviesHTMLTo;
-
+        protected override string Name() => "Movies HTML Exporter";
         protected override void Do()
         {
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))

@@ -44,6 +44,7 @@ namespace TVRename.Forms
 
         private void BwScan_DoWork(object sender, DoWorkEventArgs e)
         {
+            System.Threading.Thread.CurrentThread.Name ??= "SettingsReview Scan Thread"; // Can only set it once
             BackgroundWorker bw = (BackgroundWorker)sender;
             int total = mDoc.FilmLibrary.Movies.Count() + mDoc.TvLibrary.Shows.Count();
             int current = 0;

@@ -31,5 +31,7 @@ namespace TVRename
                 }
             }
         }
+
+        protected override string Name() => "Show TXT Exporter";
     }
 }

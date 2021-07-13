@@ -20,6 +20,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.ExportRecentASX;
 
         protected override string Location() => TVSettings.Instance.ExportRecentASXTo;
+        protected override string Name() => "Recent ASX Exporter";
 
         protected override string GenerateHeader() => "<ASX version=\"3\">";
 

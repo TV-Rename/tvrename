@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace TVRename.Forms
@@ -44,6 +45,7 @@ namespace TVRename.Forms
 
         private void BwScan_DoWork(object sender, DoWorkEventArgs e)
         {
+            Thread.CurrentThread.Name ??= "DuplicateMovie Scan Thread"; // Can only set it once
             BackgroundWorker bw = (BackgroundWorker)sender;
             int total = mDoc.FilmLibrary.Movies.Count();
             int current = 0;

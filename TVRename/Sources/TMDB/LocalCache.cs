@@ -354,7 +354,7 @@ namespace TVRename.TMDB
             ? CachedMovieData[id.TmdbId]
             : DownloadMovieNow(id, showErrorMsgBox);
 
-        internal CachedMovieInfo DownloadMovieNow(ISeriesSpecifier id, bool showErrorMsgBox)
+        internal CachedMovieInfo DownloadMovieNow(ISeriesSpecifier id, bool showErrorMsgBox,bool saveToCache = true)
         {
             string imageLanguage = $"{id.LanguageToUse().Abbreviation},null";
             Movie downloadedMovie = Client.GetMovieAsync(id.TmdbId, id.LanguageToUse().Abbreviation, imageLanguage, MovieMethods.ExternalIds | MovieMethods.Images | MovieMethods.AlternativeTitles | MovieMethods.ReleaseDates | MovieMethods.Changes | MovieMethods.Videos | MovieMethods.Credits).Result;
@@ -406,7 +406,10 @@ namespace TVRename.TMDB
             }
             AddMovieImages(downloadedMovie,m);
 
-            this.AddMovieToCache(m);
+            if (saveToCache)
+            {
+                this.AddMovieToCache(m);
+            }
 
             return m;
         }
@@ -471,7 +474,7 @@ namespace TVRename.TMDB
             return null;
         }
 
-        internal CachedSeriesInfo DownloadSeriesNow(ISeriesSpecifier ss, bool showErrorMsgBox)
+        internal CachedSeriesInfo DownloadSeriesNow(ISeriesSpecifier ss, bool showErrorMsgBox, bool saveToCache = true)
         {
             int id = ss.TmdbId > 0 ? ss.TmdbId : GetSeriesIdFromOtherCodes(ss) ?? 0;
 
@@ -525,10 +528,12 @@ namespace TVRename.TMDB
                 m.AddCrew(new Crew(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Job, s.Department, s.CreditId));
             }
             AddShowImages(downloadedSeries, m);
-
             AddSeasons(ss, downloadedSeries, m);
 
-            this.AddSeriesToCache(m);
+            if (saveToCache)
+            {
+                this.AddSeriesToCache(m);
+            }
 
             return m;
         }
@@ -960,38 +965,16 @@ namespace TVRename.TMDB
             return null;
         }
 
-        public IEnumerable<CachedMovieInfo> ServerAccuracyCheck()
+        internal IEnumerable<CachedSeriesInfo> ServerTvAccuracyCheck()
         {
-            Say("TMDB Accuracy Check (Movies) running");
             TmdbAccuracyCheck check = new TmdbAccuracyCheck(this);
-            lock (MOVIE_LOCK)
-            {
-                foreach (CachedMovieInfo si in Movies.Values.Where(info => !info.IsSearchResultOnly).OrderBy(s => s.Name).ToList())
-                {
-                    check.ServerAccuracyCheck(si);
-                }
-            }
 
-            foreach (string issue in check.Issues)
-            {
-                LOGGER.Warn(issue);
-            }
+            Say($"TMDB Accuracy Check (TV) running for {FullShows().Count} shows.");
 
-            SayNothing();
-            return check.MoviesToUpdate;
-        }
-
-        public IEnumerable<CachedSeriesInfo> ServerShowsAccuracyCheck()
-        {
-            Say("TMDB Accuracy Check (TV) running");
-            TmdbAccuracyCheck check = new TmdbAccuracyCheck(this);
-            lock (SERIES_LOCK)
-            {
-                foreach (CachedSeriesInfo si in Series.Values.Where(info => !info.IsSearchResultOnly).OrderBy(s => s.Name).ToList())
-                {
-                    check.ServerAccuracyCheck(si);
-                }
-            }
+            Parallel.ForEach(FullShows(), si => {
+                Thread.CurrentThread.Name ??= $"TMDB Consistency Check: {si.Name}"; // Can only set it once
+                check.ServerAccuracyCheck(si);
+            });
 
             foreach (string issue in check.Issues)
             {
@@ -1000,6 +983,25 @@ namespace TVRename.TMDB
 
             SayNothing();
             return check.ShowsToUpdate;
+        }
+        internal IEnumerable<CachedMovieInfo> ServerMovieAccuracyCheck()
+        {
+            TmdbAccuracyCheck check = new TmdbAccuracyCheck(this);
+
+            Say($"TmDB Accuracy Check (Movies) running {FullMovies().Count} shows.");
+
+            Parallel.ForEach(FullMovies(), si => {
+                Thread.CurrentThread.Name ??= $"TMDB Consistency Check: {si.Name}"; // Can only set it once
+                check.ServerAccuracyCheck(si);
+            });
+
+            foreach (string issue in check.Issues)
+            {
+                LOGGER.Warn(issue);
+            }
+
+            SayNothing();
+            return check.MoviesToUpdate;
         }
 
         public async Task<Recomendations> GetRecommendations(TVDoc mDoc, BackgroundWorker sender, List<ShowConfiguration> shows, string languageCode)

@@ -178,6 +178,7 @@ namespace TVRename.Forms
 
         private void BwScan_DoWork(object sender, DoWorkEventArgs e)
         {
+            System.Threading.Thread.CurrentThread.Name ??= "Recommendations Scan Thread"; // Can only set it once
             string languageCode = TVSettings.Instance.TMDBLanguage.Abbreviation;
             switch (media)
             {

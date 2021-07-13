@@ -23,5 +23,7 @@ namespace TVRename
         protected override string Location() => TVSettings.Instance.ExportFOXMLTo;
 
         protected override string MainXmlElementName() => "FindingAndOrganising";
+
+        protected override string Name() => "CopyMove XML Exporter";
     }
 }

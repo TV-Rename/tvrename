@@ -9,6 +9,7 @@ namespace TVRename
         }
 
         public override bool Active() => TVSettings.Instance.ExportMissingMoviesCSV;
+        protected override string Name() => "Missing Movie CSV Exporter";
 
         protected override string Location() => TVSettings.Instance.ExportMissingMoviesCSVTo;
 

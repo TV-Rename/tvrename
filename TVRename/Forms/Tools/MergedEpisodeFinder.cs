@@ -204,6 +204,7 @@ namespace TVRename.Forms
 
         private void BwScan_DoWork(object sender, DoWorkEventArgs e)
         {
+            System.Threading.Thread.CurrentThread.Name ??= "MergedEpisode Scan Thread"; // Can only set it once
             dupEps = MergedEpisodeFinderController.FindDoubleEps(mDoc, (BackgroundWorker)sender);
         }
 

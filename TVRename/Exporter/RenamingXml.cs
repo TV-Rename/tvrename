@@ -23,5 +23,6 @@ namespace TVRename
         protected override string Location() => TVSettings.Instance.ExportRenamingXMLTo;
 
         protected override string MainXmlElementName() => "Renaming";
+        protected override string Name() => "Renaming XML Exporter";
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using TVRename.Forms.ShowPreferences;
 
@@ -84,6 +85,7 @@ namespace TVRename.Forms
 
         private void BwScan_DoWork(object sender, DoWorkEventArgs e)
         {
+            Thread.CurrentThread.Name ??= "CollectionView Scan Thread"; // Can only set it once
             BackgroundWorker bw = (BackgroundWorker)sender;
 
             List<(int, string)> collectionIds = mDoc.FilmLibrary.Collections;
