@@ -24,7 +24,7 @@ namespace TVRename
             foreach (string ss in strings)
             {
                 writer.WriteStartElement(elementName);
-                writer.WriteValue(ss);
+                writer.WriteValue(ss.ValidXml());
                 writer.WriteEndElement();
             }
         }
@@ -37,10 +37,7 @@ namespace TVRename
             res = res.Trim();
             return res;
         }
-        public static string ValidXml(this string content)
-        {
-            return new string(content.Where(ch => XmlConvert.IsXmlChar(ch)).ToArray());
-        }
+        public static string ValidXml(this string content) => new string(content.Where(XmlConvert.IsXmlChar).ToArray());
 
         public static void WriteElement(this XmlWriter writer, string elementName, string? value)
         {
@@ -128,7 +125,7 @@ namespace TVRename
         public static void WriteAttributeToXml([NotNull] this XmlWriter writer, [NotNull] string attributeName, [NotNull] string value)
         {
             writer.WriteStartAttribute(attributeName);
-            writer.WriteValue(value);
+            writer.WriteValue(value.ValidXml());
             writer.WriteEndAttribute();
         }
 
@@ -203,7 +200,7 @@ namespace TVRename
                 {
                     writer.WriteAttributeString(attribute!, attributeVal!);
                 }
-                writer.WriteValue(value!);
+                writer.WriteValue(value!.ValidXml());
                 writer.WriteEndElement();
             }
         }
