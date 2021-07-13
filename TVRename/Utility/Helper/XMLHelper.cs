@@ -37,6 +37,10 @@ namespace TVRename
             res = res.Trim();
             return res;
         }
+        public static string ValidXml(this string content)
+        {
+            return new string(content.Where(ch => XmlConvert.IsXmlChar(ch)).ToArray());
+        }
 
         public static void WriteElement(this XmlWriter writer, string elementName, string? value)
         {
@@ -53,7 +57,7 @@ namespace TVRename
             writer.WriteStartElement(elementName);
             try
             {
-                writer.WriteValue(value ?? string.Empty);
+                writer.WriteValue(value?.ValidXml() ?? string.Empty);
             }
             catch (ArgumentException e)
             {
