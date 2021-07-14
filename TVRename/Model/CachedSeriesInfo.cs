@@ -21,9 +21,7 @@ namespace TVRename
     {
         public DateTime? AirsTime;
         public string? AirsDay;
-        public string? Network;
         public string? Type;
-        public string? BannerString;
 
         private ConcurrentDictionary<int, Episode> sourceEpisodes;
 
@@ -172,6 +170,7 @@ namespace TVRename
             Overview = ChooseBetter(Overview, useNewDataOverOld, o.Overview);
             BannerString = ChooseBetter(BannerString, useNewDataOverOld, o.BannerString);
             PosterUrl = ChooseBetter(PosterUrl, useNewDataOverOld, o.PosterUrl);
+            FanartUrl = ChooseBetter(FanartUrl, useNewDataOverOld, o.FanartUrl);
             TrailerUrl = ChooseBetter(TrailerUrl, useNewDataOverOld, o.TrailerUrl);
             Network = ChooseBetter(Network, useNewDataOverOld, o.Network);
             Runtime = ChooseBetter(Runtime, useNewDataOverOld, o.Runtime);
@@ -183,6 +182,7 @@ namespace TVRename
             InstagramId = ChooseBetter(InstagramId, useNewDataOverOld, o.InstagramId);
             FacebookId = ChooseBetter(FacebookId, useNewDataOverOld, o.FacebookId);
             TagLine = ChooseBetter(TagLine, useNewDataOverOld, o.TagLine);
+            Country = ChooseBetter(Country, useNewDataOverOld, o.Country);
 
             if (o.FirstAired.HasValue && (useNewDataOverOld || !FirstAired.HasValue))
             {
@@ -295,9 +295,11 @@ namespace TVRename
                 InstagramId = seriesXml.ExtractStringOrNull("InstagramId");
                 FacebookId = seriesXml.ExtractStringOrNull("FacebookId");
                 TagLine = seriesXml.ExtractStringOrNull("TagLine");
+                Country = seriesXml.ExtractStringOrNull("Country");
 
                 PosterUrl = seriesXml.ExtractString("posterURL");
                 TrailerUrl = seriesXml.ExtractString("TrailerUrl");
+                FanartUrl = seriesXml.ExtractString("FanartUrl");
                 Imdb = seriesXml.ExtractStringOrNull("imdbId") ?? seriesXml.ExtractString("IMDB_ID");
                 WebUrl = seriesXml.ExtractString("WebURL");
                 OfficialUrl = seriesXml.ExtractString("OfficialUrl");
@@ -468,7 +470,9 @@ namespace TVRename
             writer.WriteElement("InstagramId", InstagramId, true);
             writer.WriteElement("FacebookId", FacebookId, true);
             writer.WriteElement("TagLine", TagLine, true);
+            writer.WriteElement("Country", Country, true);
             writer.WriteElement("posterURL", PosterUrl);
+            writer.WriteElement("FanartUrl", FanartUrl);
             writer.WriteElement("TrailerUrl", TrailerUrl, true);
             writer.WriteElement("WebURL", WebUrl,true);
             writer.WriteElement("OfficialUrl", OfficialUrl, true);
@@ -544,7 +548,7 @@ namespace TVRename
             writer.WriteEndElement(); // cachedSeries
         }
 
-        public string? GetSeriesFanartPath() => images.GetShowImage(TargetLocale.LanguageToUse(Source), MediaImage.ImageType.background)?.ImageUrl;
+        public string? GetSeriesFanartPath() => FanartUrl.HasValue() ? FanartUrl:  images.GetShowImage(TargetLocale.LanguageToUse(Source), MediaImage.ImageType.background)?.ImageUrl;
 
         public string? GetSeriesPosterPath() => PosterUrl.HasValue() ? PosterUrl :  images.GetShowImage(TargetLocale.LanguageToUse(Source), MediaImage.ImageType.poster)?.ImageUrl;
 

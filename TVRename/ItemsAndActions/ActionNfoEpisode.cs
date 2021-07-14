@@ -63,7 +63,7 @@ namespace TVRename
             root.UpdateElement("title", episode.Name, true);
             root.UpdateElement("id", episode.EpisodeId, true);
             root.UpdateElement("plot", episode.Overview, true);
-            UpdateAmongstElements(root, "studio", episode.TheCachedSeries.Network);
+            root.ReplaceElements("studio", episode.TheCachedSeries.Networks);
 
             UpdateId(root, "tvdb", "true", episode.EpisodeId);
             UpdateId(root, "imdb", "false", episode.ImdbCode);

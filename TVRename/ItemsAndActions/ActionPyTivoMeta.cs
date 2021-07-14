@@ -55,7 +55,7 @@ namespace TVRename
                         writer.WriteLine($"originalAirDate : {Episode.FirstAired.Value:yyyy-MM-dd}T00:00:00Z");
                     }
 
-                    writer.WriteLine($"callsign : {Episode.Show.CachedShow?.Network}");
+                    writer.WriteLine($"callsign : {Episode.Show.CachedShow?.Networks.ToCsv()}");
 
                     WriteEntries(writer, "vDirector", Episode.EpisodeDirector);
                     WriteEntries(writer, "vWriter", Episode.Writer);

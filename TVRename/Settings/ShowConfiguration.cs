@@ -32,8 +32,6 @@ namespace TVRename
 
         public bool CountSpecials;
         public bool DvdOrder; // sort by DVD order, not the default sort we get
-        public bool ForceCheckFuture;
-        public bool ForceCheckNoAirdate;
         public readonly List<int> IgnoreSeasons;
         public readonly ConcurrentDictionary<int, List<string>> ManualFolderLocations;
         public readonly ConcurrentDictionary<int, List<ProcessedEpisode>> SeasonEpisodes; // built up by applying rules.

@@ -125,7 +125,7 @@ namespace TVRename
 
                         writer.WriteElement("runtime", Episode.TheCachedSeries.Runtime, true);
                         writer.WriteElement("rating", Episode.EpisodeRating);
-                        writer.WriteElement("studio", Episode.TheCachedSeries.Network);
+                        writer.WriteElement("studio", Episode.TheCachedSeries.Networks.FirstOrDefault());
                         writer.WriteElement("plot", Episode.TheCachedSeries.Overview);
                         writer.WriteElement("overview", Episode.Overview);
                         foreach (string director in Episode.Directors)

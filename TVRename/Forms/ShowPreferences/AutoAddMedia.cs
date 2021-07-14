@@ -1,6 +1,7 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace TVRename
@@ -119,7 +120,7 @@ namespace TVRename
             ShowConfiguration.ConfigurationProvider = type == TVSettings.Instance.DefaultProvider ? TVDoc.ProviderType.libraryDefault : type;
 
             //Set Default Timezone and if not then set on Network
-            ShowConfiguration.ShowTimeZone = TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.TimeZoneForNetwork(tvCodeFinder.SelectedShow()?.Network, ShowConfiguration.ShowTimeZone);
+            ShowConfiguration.ShowTimeZone = TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.TimeZoneForNetwork(tvCodeFinder.SelectedShow()?.Networks.FirstOrDefault(), ShowConfiguration.ShowTimeZone);
 
             if (!originalHint.Contains(tvCodeFinder.SelectedShow()?.Name ?? string.Empty, StringComparison.OrdinalIgnoreCase))
             {

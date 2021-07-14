@@ -1581,7 +1581,7 @@ namespace TVRename
             lvi.SubItems.Add(dt.ToString("t"));
             lvi.SubItems.Add(dt.ToString("ddd"));
             lvi.SubItems.Add(pe.HowLong());
-            lvi.SubItems.Add(pe.TheCachedSeries.Network);
+            lvi.SubItems.Add(pe.TheCachedSeries.Networks.FirstOrDefault());
             lvi.SubItems.Add(pe.Name);
 
             // icon..
@@ -2621,25 +2621,9 @@ namespace TVRename
             return n;
         }
 
-        [NotNull]
-        // ReSharper disable once UnusedMethodReturnValue.Local
-        private TreeNode AddMovieToTree([NotNull] MovieConfiguration si)
+        private void AddMovieToTree([NotNull] MovieConfiguration si)
         {
-            CachedMovieInfo? ser = si.CachedMovie;
-
-            TreeNode n = new TreeNode(GenerateShowUiName(si)) { Tag = si };
-
-            if (ser != null)
-            {
-                //TODO Add Movie Colouring
-                //if (TVSettings.Instance.ShowStatusColors.AppliesTo(si))
-                //{
-                //n.ForeColor = TVSettings.Instance.ShowStatusColors.GetColour(si);
-                //}
-            }
-            movieTree.Nodes.Add(n);
-
-            return n;
+            movieTree.Nodes.Add(new TreeNode(GenerateShowUiName(si)) { Tag = si });
         }
 
         // ReSharper disable once InconsistentNaming
@@ -4261,7 +4245,7 @@ namespace TVRename
                     CachedSeriesInfo ser = si.CachedShow;
                     if (ser != null)
                     {
-                        results.Add(ser.Network ?? string.Empty, si.ShowTimeZone, si.ShowName);
+                        results.Add(ser.Networks.FirstOrDefault() ?? string.Empty, si.ShowTimeZone, si.ShowName);
                     }
                 }
                 Logger.Info(results.PrintVersion());

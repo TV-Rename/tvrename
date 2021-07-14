@@ -60,7 +60,7 @@ namespace TVRename
             if (!(cachedSeries is null))
             {
                 root.UpdateElement("originaltitle", SelectedShow.ShowName);
-                UpdateAmongstElements(root, "studio", cachedSeries.Network);
+                root.ReplaceElements("studio", cachedSeries.Networks);
                 root.UpdateElement("id", cachedSeries.TvdbCode);
                 root.UpdateElement("runtime", cachedSeries.Runtime, true);
                 root.UpdateElement("mpaa", cachedSeries.ContentRating, true);

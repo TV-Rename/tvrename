@@ -26,7 +26,7 @@ namespace TVRename
             ListViewItem lvi = new ListViewItem { Text = num.ToString() };
             lvi.SubItems.Add(si.Name);
             lvi.SubItems.Add(si.Year);
-            lvi.SubItems.Add(si.Network ?? string.Empty);
+            lvi.SubItems.Add(si.Networks.FirstOrDefault() ?? string.Empty);
             lvi.SubItems.Add(si.Status);
             lvi.SubItems.Add(si.Popularity.HasValue ? si.Popularity.Value.ToString("0.##") : string.Empty);
 

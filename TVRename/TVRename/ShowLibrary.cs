@@ -125,7 +125,7 @@ namespace TVRename
             return Shows
                 .Select(si => si.CachedShow)
                 .Where(seriesInfo => !string.IsNullOrWhiteSpace(seriesInfo?.Network))
-                .Select(seriesInfo => seriesInfo.Network)
+                .SelectMany(seriesInfo => seriesInfo.Networks)
                 .Distinct()
                 .OrderBy(s => s);
         }

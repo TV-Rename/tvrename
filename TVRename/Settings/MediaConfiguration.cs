@@ -13,6 +13,8 @@ namespace TVRename
         protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
         public bool DoMissingCheck;
         public bool DoRename;
+        public bool ForceCheckFuture; //TODO addedit for Movies
+        public bool ForceCheckNoAirdate; //TODO addedit for Movies
 
         public int TvdbCode;
 

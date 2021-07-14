@@ -50,7 +50,7 @@ namespace TVRename
                     bool doesntExist = !fi.Exists;
                     if ((forceRefresh || doesntExist) && !DoneFanartJpg.Contains(fi.FullName))
                     {
-                        string bannerPath = si.CachedMovie?.PosterUrl;
+                        string bannerPath = si.CachedMovie?.PosterUrl; //todo - check whether fanart better bere
 
                         if (!string.IsNullOrEmpty(bannerPath))
                         {

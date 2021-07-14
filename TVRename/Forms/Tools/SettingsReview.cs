@@ -60,6 +60,8 @@ namespace TVRename.Forms
 
                 set.Add(new DefaultDoMissingMovieCheck(movie, mDoc));
                 set.Add(new DefaultDoRenameMovieCheck(movie, mDoc));
+                set.Add(new DefaultFutureMovieCheck(movie, mDoc));
+                set.Add(new DefaultNoAirdateMovieCheck(movie, mDoc));
 
                 set.Add(new FilenameMovieCheck(movie, mDoc));
                 set.Add(new MovieProviderCheck(movie, mDoc));

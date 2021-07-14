@@ -76,7 +76,7 @@ namespace TVRename
             <div><blockquote>{cachedSeries.GetActorNames().ToCsv()}</blockquote></div>
             <div class=""row align-items-bottom flex-grow-1"">
                 <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}</div>
-                <div class=""col-md-4 align-self-end text-center"">{cachedSeries.ContentRating}<br>{cachedSeries.Network}</div>
+                <div class=""col-md-4 align-self-end text-center"">{cachedSeries.ContentRating}<br>{cachedSeries.Networks.ToCsv()}</div>
                 <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{cachedSeries.Genres.ToCsv()}</div>
             </div>
             </div></div></div>";

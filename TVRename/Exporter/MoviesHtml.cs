@@ -64,7 +64,7 @@ namespace TVRename
                 <div class=""row"">
                     <div class=""col-md-8""><h1>{si.ShowName}</h1><small class=""text-muted"">{cachedSeries.TagLine}</small></div>
                     <div class=""col-md-4 text-right""><h6>{yearRange} ({cachedSeries.Status})</h6>
-<small class=""text-muted"">{cachedSeries.ShowLanguage} - {cachedSeries.Type}</small>
+<small class=""text-muted"">{cachedSeries.ShowLanguage} - {cachedSeries.Type} - {cachedSeries.Country}</small>
                         <small class=""text-muted"">{runTimeHtml}</small></div>
 </div>
 
@@ -72,7 +72,7 @@ namespace TVRename
             <div><blockquote>{cachedSeries.GetActorNames().ToCsv()}</blockquote></div>
             <div class=""row align-items-bottom flex-grow-1"">
                 <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}{ShowHtmlHelper.AddRatingCount(cachedSeries.SiteRatingVotes)}</div>
-                <div class=""col-md-4 align-self-end text-center"">{cachedSeries.ContentRating}<br>{cachedSeries.Network}</div>
+                <div class=""col-md-4 align-self-end text-center"">{cachedSeries.ContentRating}<br>{cachedSeries.Networks.ToCsv()}</div>
                 <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{cachedSeries.Genres.ToCsv()}</div>
             </div>
             </div></div></div>";

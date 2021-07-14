@@ -8,15 +8,12 @@ namespace TVRename
 {
     public class CachedMovieInfo : CachedMediaInfo
     {
-        public string? Network;
         public string? Type;
         public int? CollectionId;
         public string? CollectionName;
         private MovieImages images = new MovieImages();
 
         public int? Year => FirstAired?.Year;
-
-        public string? FanartUrl;
 
         protected override MediaConfiguration.MediaType MediaType() => MediaConfiguration.MediaType.movie;
 
@@ -108,6 +105,7 @@ namespace TVRename
             InstagramId = ChooseBetter(InstagramId, useNewDataOverOld, o.InstagramId);
             FacebookId = ChooseBetter(FacebookId, useNewDataOverOld, o.FacebookId);
             TagLine = ChooseBetter(TagLine, useNewDataOverOld, o.TagLine);
+            Country = ChooseBetter(Country, useNewDataOverOld, o.Country);
 
             if (useNewDataOverOld && o.CollectionId.HasValue)
             {
@@ -207,7 +205,8 @@ namespace TVRename
                 InstagramId = seriesXml.ExtractStringOrNull("InstagramId");
                 FacebookId = seriesXml.ExtractStringOrNull("FacebookId");
                 TagLine = seriesXml.ExtractStringOrNull("TagLine");
-
+                Country = seriesXml.ExtractStringOrNull("Country");
+                
                 PosterUrl = seriesXml.ExtractString("posterURL");
                 TrailerUrl = seriesXml.ExtractString("TrailerUrl");
                 FanartUrl = seriesXml.ExtractString("FanartUrl");
@@ -269,6 +268,7 @@ namespace TVRename
             writer.WriteElement("InstagramId", InstagramId, true);
             writer.WriteElement("FacebookId", FacebookId, true);
             writer.WriteElement("TagLine", TagLine, true);
+            writer.WriteElement("Country", Country, true);
             writer.WriteElement("posterURL", PosterUrl);
             writer.WriteElement("FanartUrl", FanartUrl);
             writer.WriteElement("TrailerUrl", TrailerUrl, true);

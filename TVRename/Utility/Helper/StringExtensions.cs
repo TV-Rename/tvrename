@@ -284,7 +284,18 @@ namespace TVRename
             return string.Join("|", values);
         }
 
-        public static int? ToInt(this string value)
+        public static IEnumerable<string> FromPsv(this string aggregate) => aggregate.FromSepValues('|');
+        public static IEnumerable<string> FromCsv(this string aggregate) => aggregate.FromSepValues(',');
+        private static IEnumerable<string> FromSepValues(this string aggregate, char delimiter)
+        {
+            return string.IsNullOrEmpty(aggregate)
+                ? new string[] { }
+                : aggregate.Split(delimiter)
+                    .Where(s => s.HasValue())
+                    .Select(s => s.Trim());
+        }
+       
+    public static int? ToInt(this string value)
         {
             try
             {

@@ -371,7 +371,7 @@ namespace TVRename.TMDB
                 FirstAired = GetReleaseDateDetail(downloadedMovie, id.RegionToUse().Abbreviation) ?? GetReleaseDateDetail(downloadedMovie, TVSettings.Instance.TMDBRegion.Abbreviation) ?? downloadedMovie.ReleaseDate,
                 Genres = downloadedMovie.Genres.Select(genre => genre.Name).ToList(),
                 Overview = downloadedMovie.Overview,
-                Network = downloadedMovie.ProductionCompanies.FirstOrDefault()?.Name, //TODO UPdate Movie to include multiple production companies
+                Network = downloadedMovie.ProductionCompanies.Select(y=>y.Name).ToPsv(),
                 Status = downloadedMovie.Status,
                 ShowLanguage = downloadedMovie.OriginalLanguage,
                 SiteRating = (float)downloadedMovie.VoteAverage,
@@ -390,8 +390,9 @@ namespace TVRename.TMDB
                 OfficialUrl = downloadedMovie.Homepage,
                 TrailerUrl = GetYouTubeUrl(downloadedMovie),
                 Dirty = false,
+                Country = downloadedMovie.ProductionCountries.FirstOrDefault()?.Name,
             };
-
+            
             foreach (string? s in downloadedMovie.AlternativeTitles.Titles.Select(title => title.Title))
             {
                 m.AddAlias(s);
@@ -495,7 +496,7 @@ namespace TVRename.TMDB
                 FirstAired = downloadedSeries.FirstAirDate,
                 Genres = downloadedSeries.Genres.Select(genre => genre.Name).ToList(),
                 Overview = downloadedSeries.Overview,
-                Network = downloadedSeries.Networks.FirstOrDefault()?.Name, //TODO Utilise multiple networks
+                Network = downloadedSeries.Networks.Select(n=>n.Name).ToPsv(),
                 Status = MapStatus(downloadedSeries.Status),
                 ShowLanguage = downloadedSeries.OriginalLanguage,
                 SiteRating = (float)downloadedSeries.VoteAverage,
@@ -506,15 +507,16 @@ namespace TVRename.TMDB
                 TwitterId = downloadedSeries.ExternalIds.TwitterId,
                 InstagramId = downloadedSeries.ExternalIds.InstagramId,
                 FacebookId = downloadedSeries.ExternalIds.InstagramId,
-                //FanartUrl = OriginalImageUrl(downloadedSeries.BackdropPath),  //TODO **** on Website
+                FanartUrl = OriginalImageUrl(downloadedSeries.BackdropPath),
                 ContentRating = GetCertification(downloadedSeries, ss.TargetLocale.RegionToUse(TVDoc.ProviderType.TMDB).Abbreviation) ?? GetCertification(downloadedSeries, TVSettings.Instance.TMDBRegion.Abbreviation) ?? GetCertification(downloadedSeries, Regions.Instance.FallbackRegion.Abbreviation) ?? string.Empty,
                 OfficialUrl = downloadedSeries.Homepage,
                 Type = downloadedSeries.Type,
                 TrailerUrl = GetYouTubeUrl(downloadedSeries),
                 Popularity = downloadedSeries.Popularity,
+                Country = downloadedSeries.OriginCountry.FirstOrDefault(),
                 Dirty = false,
             };
-
+            
             foreach (string? s in downloadedSeries.AlternativeTitles.Results.Select(title => title.Title))
             {
                 m.AddAlias(s);
@@ -833,7 +835,7 @@ namespace TVRename.TMDB
                 IsSearchResultOnly = true,
                 Dirty = false,
                 SrvLastUpdated = DateTime.UtcNow.Date.ToUnixTime(),
-                //FanartUrl = OriginalImageUrl(result.BackdropPath),  //TODO **** on Website
+                FanartUrl = OriginalImageUrl(result.BackdropPath),
             };
 
             this.AddSeriesToCache(m);

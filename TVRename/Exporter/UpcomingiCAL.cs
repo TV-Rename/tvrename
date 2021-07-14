@@ -79,7 +79,7 @@ namespace TVRename
                     Description = ei.Overview,
                     Comments = new List<string> { ei.Overview },
                     Summary = niceName,
-                    Location = ei.TheCachedSeries.Network,
+                    Location = ei.TheCachedSeries.Networks.ToCsv(),
                     Url = new Uri(ei.ProviderWebUrl()),
                     Uid = ei.EpisodeId.ToString()
                 };

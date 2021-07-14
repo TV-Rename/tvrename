@@ -121,7 +121,7 @@ namespace TVRename
             return Movies
                 .Select(si => si.CachedMovie)
                 .Where(seriesInfo => !string.IsNullOrWhiteSpace(seriesInfo?.Network))
-                .Select(seriesInfo => seriesInfo.Network)
+                .SelectMany(seriesInfo => seriesInfo.Networks)
                 .Distinct()
                 .OrderBy(s => s);
         }

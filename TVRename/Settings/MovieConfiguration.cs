@@ -48,6 +48,8 @@ namespace TVRename
             CustomFolderNameFormat = string.Empty;
             CustomRegionCode = string.Empty;
             ConfigurationProvider = TVDoc.ProviderType.libraryDefault;
+            ForceCheckNoAirdate = TVSettings.Instance.CheckNoDatedMovies;
+            ForceCheckFuture = TVSettings.Instance.CheckFutureDatedMovies;
 
             TvdbCode = -1;
             TVmazeCode = -1;
@@ -91,6 +93,8 @@ namespace TVRename
             CustomFolderNameFormat = xmlSettings.ExtractString("CustomFolderNameFormat");
             CustomNamingFormat = xmlSettings.ExtractString("CustomNamingFormat");
             UseCustomNamingFormat = xmlSettings.ExtractBool("UseCustomNamingFormat", false);
+            ForceCheckFuture = xmlSettings.ExtractBoolBackupDefault("ForceCheckFuture", "ForceCheckAll", false);
+            ForceCheckNoAirdate = xmlSettings.ExtractBoolBackupDefault("ForceCheckNoAirdate", "ForceCheckAll", false);
 
             SetupAliases(xmlSettings);
             SetupLocations(xmlSettings);
@@ -253,6 +257,8 @@ namespace TVRename
             writer.WriteElement("LastName", LastName);
             writer.WriteElement("DoMissingCheck", DoMissingCheck);
             writer.WriteElement("ConfigurationProvider", (int)ConfigurationProvider);
+            writer.WriteElement("ForceCheckNoAirdate", ForceCheckNoAirdate);
+            writer.WriteElement("ForceCheckFuture", ForceCheckFuture);
 
             writer.WriteStartElement("Locations");
             foreach (string str in ManualLocations)

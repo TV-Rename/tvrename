@@ -124,7 +124,21 @@ namespace TVRename
                         break;
 
                     case FaResult.kfaIgnoreAlways:
-                        // si.IgnoreSeasons.Add(snum);  TODO What should we do here? Turn off auto / manual folders?
+                        if (si.AutomaticLocations().Contains(folder))
+                        {
+                            si.UseAutomaticFolders = false;
+                        }
+                        if (si.ManualLocations.Contains(folder))
+                        {
+                            if (si.ManualLocations.Count == 1)
+                            {
+                                si.UseManualLocations = false;
+                            }
+                            else
+                            {
+                                si.ManualLocations.Remove(folder);
+                            }
+                        }
                         Doc.SetDirty();
                         break;
 

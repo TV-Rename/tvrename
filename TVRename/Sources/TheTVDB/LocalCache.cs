@@ -1266,7 +1266,6 @@ namespace TVRename.TheTVDB
         {
             CachedMovieInfo si = new CachedMovieInfo(locale, TVDoc.ProviderType.TheTVDB)
             {
-                //BannerString = GetBannerV4(r),
                 FirstAired = GetReleaseDate(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation) ??
                              GetReleaseDate(r, "global"),
                 TvdbCode = (int)r["id"],
@@ -1286,7 +1285,6 @@ namespace TVRename.TheTVDB
                 InstagramId = GetExternalId(r, "Instagram"),
                 TwitterId = GetExternalId(r, "Twitter"),
             };
-
             AddCastCrew(r, si);
             AddMovieImagesV4(r, si);
 
@@ -1559,6 +1557,7 @@ namespace TVRename.TheTVDB
         {
             JToken dataNode = r["data"];
             JToken? collectionNode = GetCollectionNodeV4(dataNode);
+            
             return new CachedMovieInfo(locale, TVDoc.ProviderType.TheTVDB)
             {
                 FirstAired = GetReleaseDateV4(r, locale),
@@ -1576,8 +1575,9 @@ namespace TVRename.TheTVDB
                 InstagramId = GetExternalIdV4(r, "Instagram"),
                 TwitterId = GetExternalIdV4(r, "Twitter"),
                 Dirty = false,
-                Network = dataNode["studios"]?.FirstOrDefault()?["name"]?.ToString(),
+                Network = dataNode["studios"]?.Select(x=>x["name"].ToString()).ToPsv(),
                 ShowLanguage = dataNode["audioLanguages"]?.ToString(),
+                Country = dataNode["originalCountry"]?.ToString(),
                 ContentRating = GetContentRatingV4(r, locale),
                 Status = dataNode["status"]?["name"]?.ToString(),
                 SrvLastUpdated = ((DateTime) dataNode["lastUpdated"]).ToUnixTime(),
@@ -1586,9 +1586,6 @@ namespace TVRename.TheTVDB
                 CollectionId = collectionNode?["id"]?.ToString().ToInt(),
                 //todo - get collection name translations
                 CollectionName = collectionNode?["name"]?.ToString(),
-
-                //todo load multiple companies r.data.companies
-                //todo load country?  "originalCountry": "usa",
             };
         }
 
@@ -1710,12 +1707,13 @@ namespace TVRename.TheTVDB
                 Slug = ((string) r["data"]["slug"])?.Trim(),
                 Genres = GetGenresV4(r),
                 ShowLanguage = r["data"]["originalLanguage"]?.ToString(),
+                Country = r["data"]["originalCountry"]?.ToString(),
                 TrailerUrl = GetTrailerUrl(r, locale),
                 SrvLastUpdated = ((DateTime) r["data"]["lastUpdated"]).ToUnixTime(),
                 Status = (string) r["data"]["status"]?["name"],
                 FirstAired = JsonHelper.ParseFirstAired((string) r["data"]["firstAired"]),
                 AirsDay = GetAirsDayV4(r),
-                Network = GetNetwork(r),
+                Network = GetNetworks(r),
                 Imdb = GetExternalIdV4(r, "IMDB"),
                 OfficialUrl = GetExternalIdV4(r, "Official Website"),
                 FacebookId = GetExternalIdV4(r, "Facebook"),
@@ -1724,9 +1722,7 @@ namespace TVRename.TheTVDB
                 TmdbCode = GetExternalIdV4(r, "TheMovieDB.com")?.ToInt() ?? -1,
                 SeriesId = GetExternalIdV4(r, "TV.com"),
                 PosterUrl = GetArtworkV4(r, 2),
-
-                //todo load country?  "originalCountry": "usa",
-                //todo load multiple companies r.data.companies
+                FanartUrl = GetArtworkV4(r, 3),
             };
         }
 
@@ -1738,7 +1734,13 @@ namespace TVRename.TheTVDB
                 ?.FirstOrDefault(x => x["companyType"]["companyTypeName"]?.ToString() == "Network")?["name"]
                 ?.ToString();
         }
-
+        private static string? GetNetworks(JObject r)
+        {
+            return r["data"]["companies"]
+                ?.Where(x => x["companyType"]["companyTypeName"]?.ToString() == "Network")
+                .Select(x=>x["name"].ToString())
+                .ToPsv();
+        }
         private static List<string> GetGenresV4(JObject r)
         {
             return r["data"]["genres"]?.Select(x => x["name"]?.ToString()).ToList() ?? new List<string>();
@@ -2985,9 +2987,14 @@ namespace TVRename.TheTVDB
                 FirstAired = GenerateFirstAiredDate(r),
                 Name = FindTranslation(r, locale, "name_translated") ?? Decode(r, "name") ?? Decode(r, "extended_title") ?? string.Empty,
                 Overview = FindTranslation(r, locale, "overview_translated") ?? Decode(r, "overview") ?? string.Empty,
-                //TODO make use of country and Director? in the payload
+                Country = (string)r["country"],
             };
 
+            string? directorName = (string) r["director"];
+            if (directorName.HasValue())
+            {
+                si.AddCrew(new Crew(1, null, directorName!, "Director", "Directing", null));
+            }
             if (string.IsNullOrEmpty(si.Name))
             {
                 LOGGER.Warn("Issue with CachedMovieInfo " + si);
@@ -3125,9 +3132,6 @@ namespace TVRename.TheTVDB
                 return null;
             }
             this.AddMovieToCache(si);
-
-            //TODO Reinstate
-            //DownloadMovieActors(tvdbId);
 
             HaveReloaded(tvdbId.TvdbId);
 

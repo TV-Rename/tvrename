@@ -50,7 +50,7 @@ namespace TVRename
             string niceName = TVSettings.Instance.NamingStyle.NameFor(ei);
             DateTime startTime = stTime.Value;
 
-            return FormattedLine(niceName, ei.TheCachedSeries.Network ?? string.Empty, startTime.ToString("ddd, d MMM"), startTime.ToString("HH:mm"));
+            return FormattedLine(niceName, ei.TheCachedSeries.Networks.ToCsv(), startTime.ToString("ddd, d MMM"), startTime.ToString("HH:mm"));
         }
 
         private string FormattedLine(string niceName, string network, string day, string time)

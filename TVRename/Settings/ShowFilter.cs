@@ -28,15 +28,15 @@ namespace TVRename
         {
             bool IsNetworkOk(ShowConfiguration showItem)
             {
-                string? seriesInfoNetwork = showItem.CachedShow?.Network;
-                if (seriesInfoNetwork is null)
+                List<string>? seriesInfoNetwork = showItem.CachedShow?.Networks.ToList();
+                if (seriesInfoNetwork is null || !seriesInfoNetwork.Any())
                 {
                     return true;
                 }
 
                 return ShowNetworkInclude
-                    ? seriesInfoNetwork.Equals(ShowNetwork)
-                    : !seriesInfoNetwork.Equals(ShowNetwork);
+                    ? seriesInfoNetwork.Contains(ShowNetwork)
+                    : !seriesInfoNetwork.Contains(ShowNetwork);
             }
 
             bool IsRatingOk(ShowConfiguration showItem)

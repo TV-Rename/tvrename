@@ -29,11 +29,16 @@ namespace TVRename
         public string? InstagramId;
         public string? FacebookId;
         public string? TagLine;
+        public string? Country;
         public string? SeriesId;
         public string? Slug;
         public double? Popularity;
         public DateTime? FirstAired;
         public Locale? ActualLocale; //The actual language obtained
+        public string? BannerString;
+        public string? Network;
+        public string? FanartUrl;
+        public IEnumerable<string> Networks => Network!.FromPsv();
 
         public string? Status { get; set; }
         public bool IsSearchResultOnly; // set to true if local info is known to be just certain fields found from search results. Do not need to be saved

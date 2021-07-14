@@ -493,7 +493,7 @@ namespace TVRename
 			        </div>
 		            <div class=""row align-items-bottom flex-grow-1"">
                      <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}{AddRatingCount(ser.SiteRatingVotes)}</div>
-                     <div class=""col-md-4 align-self-end text-center"">{ser.ContentRating}<br>{ser.Network}, {dayTime}</div>
+                     <div class=""col-md-4 align-self-end text-center"">{ser.ContentRating}<br>{ser.Networks.ToCsv()}, {dayTime}</div>
                      <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{ser.Genres.ToCsv()}</div>
                     </div>
                    </div>
@@ -569,7 +569,7 @@ namespace TVRename
                     <div class=""row"">
                      <div class=""col-md-8""> <h1>{si?.ShowName ?? ser.Name}</h1><small class=""text-muted"">{ser.TagLine}</small></div>
                      <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6>
-                        <small class=""text-muted"">{ser.ShowLanguage} - {ser.Type}</small>
+                        <small class=""text-muted"">{ser.ShowLanguage} - {ser.Type} - {ser.Country}</small>
                         <small class=""text-muted"">{runTimeHtml}</small></div>
                     </div>
                     <div><p class=""lead"">{ser.Overview}</p></div>
@@ -623,7 +623,7 @@ namespace TVRename
 			        </div>
 		            <div class=""row align-items-bottom flex-grow-1"">
                      <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}{AddRatingCount(ser.SiteRatingVotes)}</div>
-                     <div class=""col-md-4 align-self-end text-center"">{ser.ContentRating}<br>{ser.Network}</div>
+                     <div class=""col-md-4 align-self-end text-center"">{ser.ContentRating}<br>{ser.Networks.ToCsv()}</div>
                      <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{ser.Genres.ToCsv()}</div>
                     </div>
                    </div>
@@ -1557,7 +1557,7 @@ namespace TVRename
                 string net = ser.Network;
                 if (!string.IsNullOrEmpty(net))
                 {
-                    body += ", " + net;
+                    body += ", " + ser.Networks.ToCsv();
                 }
             }
 
@@ -1783,11 +1783,12 @@ namespace TVRename
             tableHtml += GetOverviewPart("Aliases", si.AliasNames.ToCsv());
             tableHtml += GetOverviewPart("Genres", si.Genres.ToCsv());
             tableHtml += GetOverviewPart("Rating", ser?.ContentRating);
-            tableHtml += GetOverviewPart("Network", ser?.Network);
-            tableHtml += GetOverviewPart("Network", ser?.ContentRating);
+            tableHtml += GetOverviewPart("Network", ser?.Networks.ToCsv());
+            tableHtml += GetOverviewPart("Content Rating", ser?.ContentRating);
             tableHtml += GetOverviewPart("User Rating", $"{siteRating}{AddRatingCount(ser?.SiteRatingVotes ?? 0)}");
             tableHtml += GetOverviewPart("Released", ser?.Year?.ToString());
             tableHtml += GetOverviewPart("Tagline", ser?.TagLine);
+            tableHtml += GetOverviewPart("Country", ser?.Country);
             tableHtml += GetOverviewPart("Status", ser?.Status);
             tableHtml += GetOverviewPart("Type", ser?.Type);
 
