@@ -592,7 +592,11 @@ namespace TVRename
 
             VolatileCounter = 0;
 
-            Parallel.ForEach(engine.AddItems, movie => AutoMatchMovie(cts, movie, bw, engine.AddItems.Count));
+            Parallel.ForEach(engine.AddItems, movie =>
+            {
+                Thread.CurrentThread.Name ??= $" Identify {movie.Name}"; // Can only set it once
+                AutoMatchMovie(cts, movie, bw, engine.AddItems.Count);
+            });
 
             cts.Cancel();
         }

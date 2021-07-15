@@ -4427,7 +4427,7 @@ namespace TVRename
 
         private void McbAll_Click(object sender, EventArgs e)
         {
-            UpdateCheckboxGroup(mcbAll, item => true);
+            UpdateCheckboxGroup(mcbAll, item => item is Action);
         }
 
         private void McbRename_Click(object sender, EventArgs e)

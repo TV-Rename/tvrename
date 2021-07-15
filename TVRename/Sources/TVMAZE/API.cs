@@ -354,7 +354,7 @@ namespace TVRename.TVmaze
             JToken externalsToken = GetChild(r, "externals");
             int tvdb = GetChild(externalsToken, "thetvdb").Type == JTokenType.Null ? -1 : (int)externalsToken["thetvdb"];
             int rage = GetChild(externalsToken, "tvrage").Type == JTokenType.Null ? -1 : (int)externalsToken["tvrage"];
-            //TOO check for fanartURL
+            
             return new CachedSeriesInfo(new Locale(), TVDoc.ProviderType.TVmaze)
             {
                 IsSearchResultOnly = false,

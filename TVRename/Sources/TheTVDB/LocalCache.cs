@@ -391,7 +391,11 @@ namespace TVRename.TheTVDB
 
             Say("Processing Updates from TVDB");
 
-            Parallel.ForEach(updatesResponses, o => ProcessUpdate(o, cts));
+            Parallel.ForEach(updatesResponses, o =>
+            {
+                Thread.CurrentThread.Name ??= $"Recent Updates"; // Can only set it once
+                ProcessUpdate(o, cts);
+            });
 
             Say("Upgrading dirty locks");
 
@@ -1466,8 +1470,11 @@ namespace TVRename.TheTVDB
 
         private string? GetArtworkV4(JObject json, int type)
         {
-            return json["data"]["artworks"]?.FirstOrDefault(x => (int)x["type"] == type)?["image"]
-                ?.ToString(); //TODO use max score to get preferred
+            return json["data"]["artworks"]
+                ?.OrderByDescending(x=>x["score"].ToObject<int>())
+                .FirstOrDefault(x => (int)x["type"] == type)
+                ?["image"]
+                ?.ToString(); 
         }
 
         private string? GetExternalId(JObject json, string source)
@@ -1584,14 +1591,13 @@ namespace TVRename.TheTVDB
                 Genres = GetGenresV4(r),
 
                 CollectionId = collectionNode?["id"]?.ToString().ToInt(),
-                //todo - get collection name translations
                 CollectionName = collectionNode?["name"]?.ToString(),
             };
         }
 
         private static JToken? GetCollectionNodeV4(JToken r)
         {
-            return r["lists"]?.FirstOrDefault(x => x["isOfficial"].ToString() == "true");
+            return r["lists"]?.FirstOrDefault(x => x["isOfficial"].ToObject<bool>());
         }
 
         private DateTime? GetReleaseDateV4(JObject r, Locale locale)
@@ -2257,14 +2263,14 @@ namespace TVRename.TheTVDB
 
                     JToken episodeData = seasonInfo["data"]?["episodes"];
 
-                    int? seasonNumber = seasonInfo["data"]?["number"]?.ToObject<int>(); //todo remove this once https://github.com/thetvdb/v4-api/issues/20 is resolved
+                    int? seasonNumber = seasonInfo["data"]?["number"]?.ToObject<int>();
 
                     if (episodeData != null)
                     {
                         Parallel.ForEach(episodeData, x =>
                         {
                             Thread.CurrentThread.Name ??= $"Download Season {seasonNumber} Episodes for {si.Name}"; // Can only set it once
-                            GenerateAddEpisodeV4(code, locale, si, x,seasonNumber);
+                            GenerateAddEpisodeV4(code, locale, si, x);
                         });
                     }
                 }
@@ -2279,41 +2285,6 @@ namespace TVRename.TheTVDB
             });
         }
 
-        private void GenerateAddEpisodeV4(int code, Locale locale, CachedSeriesInfo si, JToken x, int? seasonNumber)
-        {
-            try
-            {
-                //TODO: Should not need to do this test - stop when https://github.com/thetvdb/v4-api/issues/20 is resolved
-                //Remove whole method and use below
-                if (seasonNumber.HasValue && seasonNumber.Value== x["seasonNumber"].ToObject<int>())
-                {
-                    (Episode newEp, Language bestLanguage) = GenerateCoreEpisodeV4(x, code, si, locale);
-                    AddTranslations(newEp,
-                        API.GetEpisodeTranslationsV4(newEp.EpisodeId, bestLanguage.ThreeAbbreviation));
-
-                    if (!si.Episodes.Any(e => e.EpisodeId == newEp.EpisodeId))
-                    {
-                        si.AddEpisode(newEp);
-                    }
-                    else if(si.Episodes.Count(e => e.EpisodeId == newEp.EpisodeId)==1 && si.GetEpisode(newEp.EpisodeId).AiredEpNum ==newEp.AiredEpNum)
-                    {
-                        si.AddEpisode(newEp);
-                    }
-                    else if (si.Episodes.Count(e => e.EpisodeId == newEp.EpisodeId) == 1 && si.GetEpisode(newEp.EpisodeId).AiredEpNum > newEp.AiredEpNum)
-                    {
-                        si.AddEpisode(newEp);
-                    }
-                }
-            }
-            catch (SourceConnectivityException sce1)
-            {
-                LOGGER.Error(sce1);
-            }
-            catch (SourceConsistencyException sce1)
-            {
-                LOGGER.Error(sce1);
-            }
-        }
         private void GenerateAddEpisodeV4(int code, Locale locale, CachedSeriesInfo si, JToken x)
         {
             try
@@ -2440,11 +2411,11 @@ namespace TVRename.TheTVDB
             Parallel.ForEach(episodeResponses, episodeData =>
             {
                 int episodeId = episodeData.Key;
+                Thread.CurrentThread.Name ??= $"Episode {episodeId} for {si.Name}"; // Can only set it once
                 JToken prefLangEpisode = episodeData.Value.Item1;
                 JToken defltLangEpisode = episodeData.Value.Item2;
                 try
                 {
-                    //TODO - Establish whether this has any value?
                     UpdateEpisodeNowv3(code, prefLangEpisode, defltLangEpisode, si);
                 }
                 catch (InvalidCastException ex)
@@ -2754,6 +2725,7 @@ namespace TVRename.TheTVDB
                 {
                     return;
                 }
+                Thread.CurrentThread.Name ??= $"Download Episode {ee.Value.EpisodeId}"; // Can only set it once
 
                 ok = DownloadEpisodeNow(ee.Value.SeriesId, ee.Key, seriesd.TargetLocale) && ok;
                 ee.Value.Done = true;

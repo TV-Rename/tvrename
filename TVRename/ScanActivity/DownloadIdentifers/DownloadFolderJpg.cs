@@ -39,7 +39,7 @@ namespace TVRename
 
             ItemList theActionList = new ItemList();
 
-            //default to poster when we want season posters for the season specific folders
+            //default to poster
             string downloadPath = cachedMovie.PosterUrl;
 
             if (!string.IsNullOrEmpty(downloadPath))

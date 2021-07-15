@@ -492,7 +492,7 @@ namespace TVRename.TMDB
                 TvdbCode = downloadedSeries.ExternalIds.TvdbId.ToInt(ss.TvdbId),
                 TvMazeCode = -1,
                 Name = downloadedSeries.Name,
-                Runtime = downloadedSeries.EpisodeRunTime.FirstOrDefault().ToString(System.Globalization.CultureInfo.CurrentCulture), //todo  use average?
+                Runtime = DecodeAverage(downloadedSeries.EpisodeRunTime),
                 FirstAired = downloadedSeries.FirstAirDate,
                 Genres = downloadedSeries.Genres.Select(genre => genre.Name).ToList(),
                 Overview = downloadedSeries.Overview,
@@ -538,6 +538,13 @@ namespace TVRename.TMDB
             }
 
             return m;
+        }
+
+        private string DecodeAverage(List<int> times)
+        {
+            return times.Any()
+                ? times.Average().ToString("F0",System.Globalization.CultureInfo.CurrentCulture)
+                : string.Empty; //todo shouelt be null
         }
 
         private static void AddSeasons(ISeriesSpecifier ss, TvShow downloadedSeries, CachedSeriesInfo m)
@@ -778,19 +785,8 @@ namespace TVRename.TMDB
 
                 foreach (SearchMovie result in results.Results)
                 {
-                    //TODO - Reconside this as it's really slow.
-                    LOGGER.Info($"   Movie: {result.Title}:{result.Id}   {result.Popularity}");
-                    File(result);
-                    try
-                    {
-                        ISeriesSpecifier ss = new SearchSpecifier(-1, -1, result.Id, locale, result.Title,
-                            TVDoc.ProviderType.TMDB, null, MediaConfiguration.MediaType.movie);
-                        DownloadMovieNow(ss, showErrorMsgBox);
-                    }
-                    catch (MediaNotFoundException sex)
-                    {
-                        LOGGER.Warn($"Could not get full details of {result.Id} while searching for '{text}'");
-                    }
+                    CachedMovieInfo filedResult = File(result);
+                    LOGGER.Info($"   Movie: {filedResult.Name}:{filedResult.Id()}   {filedResult.Popularity}");
                 }
             }
             else
@@ -801,23 +797,12 @@ namespace TVRename.TMDB
 
                 foreach (SearchTv result in results.Results)
                 {
-                    LOGGER.Info($"   TV Show: {result.Name}:{result.Id}   {result.Popularity}");
-                    File(result);
-                    try
-                    {
-                        ISeriesSpecifier ss = new SearchSpecifier(-1, -1, result.Id, locale, result.Name,
-                            TVDoc.ProviderType.TMDB, null, MediaConfiguration.MediaType.tv);
-                        DownloadSeriesNow(ss, showErrorMsgBox);
-                    }
-                    catch (MediaNotFoundException sex)
-                    {
-                        LOGGER.Warn($"Could not get full details of {result.Id} while searching for '{text}'");
-                    }
+                    CachedSeriesInfo filedResult = File(result);
+                    LOGGER.Info($"   TV Show: {filedResult.Name}:{filedResult.Id()}   {filedResult.Popularity}");
                 }
             }
         }
 
-        // ReSharper disable once UnusedMethodReturnValue.Local
         private CachedSeriesInfo File(SearchTv result)
         {
             CachedSeriesInfo m = new CachedSeriesInfo(new Locale(), TVDoc.ProviderType.TMDB)
@@ -826,7 +811,6 @@ namespace TVRename.TMDB
                 Name = result.Name,
                 FirstAired = result.FirstAirDate,
                 Overview = result.Overview,
-                //Status = result.Status,
                 ShowLanguage = result.OriginalLanguage,
                 SiteRating = (float)result.VoteAverage,
                 SiteRatingVotes = result.VoteCount,
@@ -836,6 +820,7 @@ namespace TVRename.TMDB
                 Dirty = false,
                 SrvLastUpdated = DateTime.UtcNow.Date.ToUnixTime(),
                 FanartUrl = OriginalImageUrl(result.BackdropPath),
+                Country = result.OriginCountry.FirstOrDefault(),
             };
 
             this.AddSeriesToCache(m);
@@ -859,7 +844,6 @@ namespace TVRename.TMDB
                 IsSearchResultOnly = true,
                 Dirty = false,
             };
-
             this.AddMovieToCache(m);
             return m;
         }
