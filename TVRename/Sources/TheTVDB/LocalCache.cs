@@ -1081,14 +1081,16 @@ namespace TVRename.TheTVDB
             CachedSeriesInfo si;
             if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
             {
-                Language languageCodeToUse;
+                Language? languageCodeToUse;
                 ProcessedSeason.SeasonType st = code is ShowConfiguration showConfig
                     ? showConfig.Order
                     : ProcessedSeason.SeasonType.aired;
 
                 (si, languageCodeToUse) = GenerateSeriesInfoV4(DownloadSeriesJson(code, locale), locale, st);
-
-                AddTranslations(si, DownloadSeriesTranslationsJsonV4(code, new Locale(languageCodeToUse)));
+                if (languageCodeToUse!=null)
+                {
+                    AddTranslations(si, DownloadSeriesTranslationsJsonV4(code, new Locale(languageCodeToUse)));
+                }
             }
             else
             {
@@ -1156,9 +1158,12 @@ namespace TVRename.TheTVDB
             CachedMovieInfo si;
             if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
             {
-                Language languageCode;
+                Language? languageCode;
                 (si, languageCode) = GenerateMovieInfoV4(DownloadMovieJson(code, locale), locale);
-                AddTranslations(si, DownloadMovieTranslationsJsonV4(code, new Locale(languageCode)));
+                if (languageCode!=null)
+                {
+                    AddTranslations(si, DownloadMovieTranslationsJsonV4(code, new Locale(languageCode)));
+                }
             }
             else
             {
@@ -1550,7 +1555,7 @@ namespace TVRename.TheTVDB
             return si;
         }
 
-        private (CachedMovieInfo, Language) GenerateMovieInfoV4(JObject r, Locale locale)
+        private (CachedMovieInfo, Language?) GenerateMovieInfoV4(JObject r, Locale locale)
         {
             CachedMovieInfo si = GenerateCoreMovieInfoV4(r, locale);
             AddAliasesV4(r, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), si);
@@ -1688,7 +1693,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private (CachedSeriesInfo, Language) GenerateSeriesInfoV4(JObject r, Locale locale,
+        private (CachedSeriesInfo, Language?) GenerateSeriesInfoV4(JObject r, Locale locale,
             ProcessedSeason.SeasonType seasonType)
         {
             CachedSeriesInfo si = GenerateCoreSeriesInfoV4(r, locale);
@@ -1811,7 +1816,7 @@ namespace TVRename.TheTVDB
             };
         }
 
-        private Language GetAppropriateLanguage(JToken? languageOptions, Locale preferredLocale)
+        private Language? GetAppropriateLanguage(JToken? languageOptions, Locale preferredLocale)
         {
             if (languageOptions == null)
             {
@@ -1836,7 +1841,7 @@ namespace TVRename.TheTVDB
 
             if (((JArray)languageOptions).Count == 0)
             {
-                throw new SourceConsistencyException("Element exists with no language", TVDoc.ProviderType.TheTVDB);
+                return null;
             }
 
             if (((JArray)languageOptions).ContainsTyped(Languages.Instance.FallbackLanguage.ThreeAbbreviation))
@@ -2255,7 +2260,7 @@ namespace TVRename.TheTVDB
         {
             Parallel.ForEach(si.Seasons, s =>
             {
-                Thread.CurrentThread.Name ??= $"Download Seasons for {si.Name}"; // Can only set it once
+                Thread.CurrentThread.Name ??= $"Download Season {s.SeasonNumber} for {si.Name}"; // Can only set it once
                 try
                 {
                     JObject seasonInfo = API.GetSeasonEpisodesV4(code, s.SeasonId,
@@ -2263,13 +2268,12 @@ namespace TVRename.TheTVDB
 
                     JToken episodeData = seasonInfo["data"]?["episodes"];
 
-                    int? seasonNumber = seasonInfo["data"]?["number"]?.ToObject<int>();
-
                     if (episodeData != null)
                     {
                         Parallel.ForEach(episodeData, x =>
                         {
-                            Thread.CurrentThread.Name ??= $"Download Season {seasonNumber} Episodes for {si.Name}"; // Can only set it once
+                            int? epNumber = x["number"]?.ToObject<int>();
+                            Thread.CurrentThread.Name ??= $"Creating S{s.SeasonNumber}E{epNumber} Episode for {si.Name}"; // Can only set it once
                             GenerateAddEpisodeV4(code, locale, si, x);
                         });
                     }
@@ -2289,9 +2293,12 @@ namespace TVRename.TheTVDB
         {
             try
             {
-                (Episode newEp, Language bestLanguage) = GenerateCoreEpisodeV4(x, code, si, locale);
-                AddTranslations(newEp,
-                    API.GetEpisodeTranslationsV4(newEp.EpisodeId, bestLanguage.ThreeAbbreviation));
+                (Episode newEp, Language? bestLanguage) = GenerateCoreEpisodeV4(x, code, si, locale);
+                if (bestLanguage !=null)
+                {
+                    AddTranslations(newEp,
+                        API.GetEpisodeTranslationsV4(newEp.EpisodeId, bestLanguage.ThreeAbbreviation));
+                }
 
                 si.AddEpisode(newEp);
             }
@@ -2334,7 +2341,7 @@ namespace TVRename.TheTVDB
             return transName ?? originalName ?? string.Empty;
         }
 
-        private (Episode, Language) GenerateCoreEpisodeV4(JToken episodeJson, int code, CachedSeriesInfo si, Locale locale)
+        private (Episode, Language?) GenerateCoreEpisodeV4(JToken episodeJson, int code, CachedSeriesInfo si, Locale locale)
         {
             Episode x = new Episode(code, si)
             {

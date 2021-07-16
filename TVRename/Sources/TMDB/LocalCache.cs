@@ -540,12 +540,10 @@ namespace TVRename.TMDB
             return m;
         }
 
-        private string DecodeAverage(List<int> times)
-        {
-            return times.Any()
+        private static string? DecodeAverage(IReadOnlyCollection<int> times) =>
+            times.Any()
                 ? times.Average().ToString("F0",System.Globalization.CultureInfo.CurrentCulture)
-                : string.Empty; //todo shouelt be null
-        }
+                : null;
 
         private static void AddSeasons(ISeriesSpecifier ss, TvShow downloadedSeries, CachedSeriesInfo m)
         {

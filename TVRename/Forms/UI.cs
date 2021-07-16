@@ -12,6 +12,7 @@ using Humanizer;
 using JetBrains.Annotations;
 using NLog;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -618,11 +619,16 @@ namespace TVRename
 
         private MediaConfiguration.MediaType GetSelectedObjectType(ObjectListView list)
         {
-            if (list.SelectedObjects.Count == list.SelectedObjects.OfType<MovieItemMissing>().Count())
+            IList listSelectedObjects = list.SelectedObjects;
+            if (listSelectedObjects.Count == listSelectedObjects.OfType<MovieItemMissing>().Count())
+            {
                 return MediaConfiguration.MediaType.movie;
+            }
 
-            if (list.SelectedObjects.Count == list.SelectedObjects.OfType<ShowItemMissing>().Count())
+            if (listSelectedObjects.Count == listSelectedObjects.OfType<ShowItemMissing>().Count())
+            {
                 return MediaConfiguration.MediaType.tv;
+            }
 
             return MediaConfiguration.MediaType.both;
         }
