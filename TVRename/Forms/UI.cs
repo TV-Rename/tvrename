@@ -3363,6 +3363,8 @@ namespace TVRename
 
         private void filenameTemplateEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            MoreBusy();
+            mDoc.PreventAutoScan("Filename Templates are open");
             CustomEpisodeName cn = new CustomEpisodeName(TVSettings.Instance.NamingStyle.StyleString);
             CustomNameDesigner cne = new CustomNameDesigner(CurrentlySelectedPel(), cn);
             DialogResult dr = cne.ShowDialog(this);
@@ -3371,6 +3373,8 @@ namespace TVRename
                 TVSettings.Instance.NamingStyle = cn;
                 mDoc.SetDirty();
             }
+            mDoc.AllowAutoScan();
+            LessBusy();
         }
 
         private void searchEnginesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3380,12 +3384,18 @@ namespace TVRename
             AddEditSearchEngine aese = new AddEditSearchEngine(TVDoc.GetSearchers(),
                 pel != null && pel.Count > 0 ? pel[0] : null);
 
+            MoreBusy();
+            mDoc.PreventAutoScan("Search Engines are open");
+
             DialogResult dr = aese.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
                 mDoc.SetDirty();
                 UpdateSearchButtons();
             }
+
+            mDoc.AllowAutoScan();
+            LessBusy();
         }
 
         private void filenameProcessorsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3398,6 +3408,9 @@ namespace TVRename
                 theFolder = TVSettings.Instance.DownloadFolders.First();
             }
 
+            MoreBusy();
+            mDoc.PreventAutoScan("Filename Processors are open");
+
             AddEditSeasEpFinders d = new AddEditSeasEpFinders(TVSettings.Instance.FNPRegexs, mDoc.TvLibrary.GetSortedShowItems(), currentShow, theFolder);
 
             DialogResult dr = d.ShowDialog(this);
@@ -3406,6 +3419,9 @@ namespace TVRename
                 mDoc.SetDirty();
                 TVSettings.Instance.FNPRegexs = d.OutputRegularExpressions;
             }
+
+            mDoc.AllowAutoScan();
+            LessBusy();
         }
 
         [NotNull]
@@ -3426,7 +3442,12 @@ namespace TVRename
 
         private void actorsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            MoreBusy();
+            mDoc.PreventAutoScan("Actors Grid is open");
             new ActorsGrid(mDoc).ShowDialog(this);
+
+            mDoc.AllowAutoScan();
+            LessBusy();
         }
 
         private void quickTimer_Tick(object sender, EventArgs e)
@@ -3773,10 +3794,16 @@ namespace TVRename
 
         private void folderMonitorToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            MoreBusy();
+            mDoc.PreventAutoScan("Bulk add shows is open");
+
             BulkAddSeriesManager bam = new BulkAddSeriesManager(mDoc);
             BulkAddShow fm = new BulkAddShow(mDoc, bam,this);
             fm.ShowDialog(this);
             FillMyShows();
+
+            mDoc.AllowAutoScan();
+            LessBusy();
         }
 
         private void lvAction_MouseClick([NotNull] object sender, [NotNull] MouseEventArgs e)
@@ -4940,17 +4967,27 @@ namespace TVRename
 
         private void movieCollectionSummaryLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            MoreBusy();
+            mDoc.PreventAutoScan("Movie Collections are open");
+
             CollectionsView form = new CollectionsView(mDoc, this);
             form.ShowDialog(this);
             FillMyMovies();
+
+            mDoc.AllowAutoScan();
+            LessBusy();
         }
 
         private void bulkAddMoviesToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            MoreBusy();
+            mDoc.PreventAutoScan("Bulk Add Shows");
             BulkAddMovieManager bam = new BulkAddMovieManager(mDoc);
             BulkAddMovie fm = new BulkAddMovie(mDoc, bam,this);
             fm.ShowDialog(this);
             FillMyMovies();
+            mDoc.AllowAutoScan();
+            LessBusy();
         }
 
         private void tMDBAccuracyCheckLogToolStripMenuItem_Click(object sender, EventArgs e)
@@ -5033,25 +5070,37 @@ namespace TVRename
 
         private void recommendationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            MoreBusy();
+            mDoc.PreventAutoScan("Recommendations Open");
             //RecommendationView form = new RecommendationView(mDoc, this, mDoc.TvLibrary.Shows.Take(20));
             RecommendationView form = new RecommendationView(mDoc, this, MediaConfiguration.MediaType.tv);
             form.ShowDialog(this);
+            mDoc.AllowAutoScan();
+            LessBusy();
             FillMyShows();
             FillWhenToWatchList();
         }
 
         private void duplicateMoviesToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            MoreBusy();
+            mDoc.PreventAutoScan("Duplicate Movies Open");
             DuplicateMovieFinder form = new DuplicateMovieFinder(mDoc, this);
             form.ShowDialog(this);
+            mDoc.AllowAutoScan();
+            LessBusy();
         }
 
         private void movieRecommendationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            MoreBusy();
+            mDoc.PreventAutoScan("Recommendations Open");
             //RecommendationView form = new RecommendationView(mDoc, this, mDoc.FilmLibrary.Movies.Take(20));
             RecommendationView form = new RecommendationView(mDoc, this, MediaConfiguration.MediaType.movie);
             form.ShowDialog(this);
             FillMyMovies();
+            mDoc.AllowAutoScan();
+            LessBusy();
         }
 
         internal void ForceRefresh(ShowConfiguration show, bool unattended)
@@ -5066,8 +5115,14 @@ namespace TVRename
 
         private void settingsCheckToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            MoreBusy();
+            mDoc.PreventAutoScan("Settings check is open");
+
             SettingsReview form = new SettingsReview(mDoc, this);
             form.ShowDialog(this);
+ 
+            mDoc.AllowAutoScan();
+            LessBusy();
         }
 
         private void toolStripButton1_Click_1(object sender, EventArgs e)
@@ -5081,6 +5136,8 @@ namespace TVRename
             MovieConfiguration? m = CurrentlySelectedMovie();
 
             AddEditSearchEngine aese = new AddEditSearchEngine(TVDoc.GetMovieSearchers(), m);
+            MoreBusy();
+            mDoc.PreventAutoScan("Search Engines are open");
 
             DialogResult dr = aese.ShowDialog(this);
             if (dr == DialogResult.OK)
@@ -5088,6 +5145,8 @@ namespace TVRename
                 mDoc.SetDirty();
                 UpdateSearchButtons();
             }
+            mDoc.AllowAutoScan();
+            LessBusy();
         }
 
         private MovieConfiguration? CurrentlySelectedMovie()
@@ -5119,7 +5178,7 @@ namespace TVRename
             FocusOnScanResults();
             FillMyMovies();//We may have updated movies
             Logger.Info("Finished looking for new movies.");
-            }
+        }
 
         // ReSharper disable once UnusedParameter.Local
         private string AskUserForFolder()

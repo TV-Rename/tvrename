@@ -701,7 +701,7 @@ namespace TVRename
         {
             List<ShowConfiguration> sortedShowItems = TvLibrary.GetSortedShowItems();
             new ShowsTXT(sortedShowItems).RunAsThread();
-            new ShowsHTML(sortedShowItems).RunAsThread();
+            new ShowsHtml(sortedShowItems).RunAsThread();
 
             /*Thread t = new Thread(() =>
             {
@@ -1878,27 +1878,37 @@ namespace TVRename
                     {
                         //ask user about which show
                         LinkMovie askUser = new LinkMovie(existingMatchingShows, fi);
-                        DialogResult descision = askUser.ShowDialog(ui);
+                        DialogResult decision = askUser.ShowDialog(ui);
 
                         //if user cancelled then move on
-                        if (descision == DialogResult.Abort)
+                        if (decision == DialogResult.Abort)
                         {
                             Logger.Info($"User chose to ignore {filePath}");
                             continue;
                         }
 
                         //if user selected a new show then
-                        if (descision == DialogResult.OK && askUser.ChosenShow == null)
+                        if (decision == DialogResult.OK && askUser.ChosenShow == null)
                         {
                             BonusAutoAdd(fi, ui);
                         }
 
                         //if user selected a show
-                        if (descision == DialogResult.OK && askUser.ChosenShow != null)
+                        if (decision == DialogResult.OK && askUser.ChosenShow != null)
                         {
                             MergeMovieFileIntoMovieConfig(fi, askUser.ChosenShow, ui);
                         }
                     }
+                }
+
+                //If keep together is active then we may want to copy over related files too
+                if (TVSettings.Instance.KeepTogether)
+                {
+                    FileFinder.KeepTogether(TheActionList, false, true, this);
+                }
+                if (TVSettings.Instance.CopySubsFolders)
+                {
+                    FileFinder.CopySubsFolders(TheActionList, true, this);
                 }
                 MoviesAddedOrEdited(true,false,false,ui,new List<MovieConfiguration>());
             }
@@ -1981,6 +1991,9 @@ namespace TVRename
             FileInfo newFile = FileHelper.FileInFolder(folder, newName);
 
             TheActionList.Add(new ActionCopyMoveRename(fi, newFile, chosenShow, this));
+
+            // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
+            TheActionList.AddNullableRange(new DownloadIdentifiersController().ProcessMovie(chosenShow,fi));
         }
 
         /// <summary>Asks user about whether to replace a file.</summary>

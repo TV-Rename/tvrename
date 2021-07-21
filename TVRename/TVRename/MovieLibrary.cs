@@ -65,6 +65,7 @@ namespace TVRename
                 foreach (MovieConfiguration existingshow in matchingShows)
                 {
                     //TODO Merge them in
+                    existingshow.AutomaticFolderRoot = newShow.AutomaticFolderRoot;
                     Logger.Error($"Trying to add {newShow}, but we already have {existingshow}");
                     Logger.Error(Environment.StackTrace);
                 }

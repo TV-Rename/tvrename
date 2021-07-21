@@ -5,8 +5,6 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -14,10 +12,9 @@ using System.Linq;
 
 namespace TVRename
 {
-    // ReSharper disable once InconsistentNaming
-    internal class ShowsHTML : ShowsExporter
+    internal class ShowsHtml : ShowsExporter
     {
-        public ShowsHTML(List<ShowConfiguration> shows) : base(shows)
+        public ShowsHtml(List<ShowConfiguration> shows) : base(shows)
         {
         }
 
@@ -36,7 +33,7 @@ namespace TVRename
                     {
                         file.WriteLine(CreateHtml(si));
                     }
-                    catch (Exception ex)
+                    catch (NullReferenceException ex)
                     {
                         LOGGER.Error(ex,
                             $"Skipped adding {si.ShowName} to the output HTML as it is missing some data. Please try checking the settings and doing a force refresh on the show.");
@@ -47,10 +44,9 @@ namespace TVRename
             }
         }
 
-        [NotNull]
-        private static string CreateHtml([NotNull] ShowConfiguration si)
+        private static string CreateHtml(ShowConfiguration si)
         {
-            CachedSeriesInfo cachedSeries = si.CachedShow;
+            CachedSeriesInfo? cachedSeries = si.CachedShow;
             if (cachedSeries is null)
             {
                 return string.Empty;

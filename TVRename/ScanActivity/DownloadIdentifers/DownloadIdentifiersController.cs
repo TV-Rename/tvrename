@@ -123,12 +123,9 @@ namespace TVRename
                 return theActionList;
             }
 
-            foreach (DownloadIdentifier di in identifiers)
+            foreach (DownloadIdentifier di in identifiers.Where(di => dt == di.GetDownloadType()))
             {
-                if (dt == di.GetDownloadType())
-                {
-                    theActionList.Add(di.ProcessMovie(si, filo, true));
-                }
+                theActionList.Add(di.ProcessMovie(si, filo, true));
             }
             return theActionList;
         }
@@ -142,12 +139,9 @@ namespace TVRename
                 return theActionList;
             }
 
-            foreach (DownloadIdentifier di in identifiers)
+            foreach (DownloadIdentifier di in identifiers.Where(di => dt == di.GetDownloadType()))
             {
-                if (dt == di.GetDownloadType())
-                {
-                    theActionList.Add(di.ProcessShow(si, true));
-                }
+                theActionList.Add(di.ProcessShow(si, true));
             }
             return theActionList;
         }
@@ -161,12 +155,9 @@ namespace TVRename
                 return theActionList;
             }
 
-            foreach (DownloadIdentifier di in identifiers)
+            foreach (DownloadIdentifier di in identifiers.Where(di => dt == di.GetDownloadType()))
             {
-                if (dt == di.GetDownloadType())
-                {
-                    theActionList.Add(di.ProcessSeason(si, folder, snum, true));
-                }
+                theActionList.Add(di.ProcessSeason(si, folder, snum, true));
             }
             return theActionList;
         }

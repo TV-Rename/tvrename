@@ -2998,7 +2998,7 @@ namespace TVRename.TheTVDB
                 Slug = ((string)r["id"])?.Trim(),
                 PosterUrl = (string)r["image_url"],
                 Overview = Decode(r, "overview") ?? FindTranslation(r, locale, "overview_translated") ?? string.Empty,
-                Network = (string)r["network"], //TODO wait for https://github.com/thetvdb/v4-api/issues/29 to be fixed
+                Network = r["companies"]?.Select(x=>x.ToObject<string>()).ToPsv(), 
                 Status = (string)r["status"],
                 IsSearchResultOnly = searchResult,
                 ShowLanguage = (string)r["primary_language"],

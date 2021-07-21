@@ -39,8 +39,8 @@ namespace TVRename
 
         public override ItemList? ProcessMovie(MovieConfiguration si, FileInfo filo, bool forceRefresh)
         {
-            //We only want to do something if the fanart option is enabled. If the KODI option is enabled then let it do the work.
-            if (TVSettings.Instance.FanArtJpg && !TVSettings.Instance.KODIImages)
+            //We only want to do something if the fanart option is enabled.
+            if (TVSettings.Instance.FanArtJpg)
             {
                 ItemList theActionList = new ItemList();
                 foreach (string location in si.Locations)
@@ -50,7 +50,7 @@ namespace TVRename
                     bool doesntExist = !fi.Exists;
                     if ((forceRefresh || doesntExist) && !DoneFanartJpg.Contains(fi.FullName))
                     {
-                        string bannerPath = si.CachedMovie?.PosterUrl; //todo - check whether fanart better bere
+                        string bannerPath = si.CachedMovie?.FanartUrl;
 
                         if (!string.IsNullOrEmpty(bannerPath))
                         {

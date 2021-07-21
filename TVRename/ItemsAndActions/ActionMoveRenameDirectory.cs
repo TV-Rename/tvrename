@@ -64,7 +64,7 @@ namespace TVRename
             if (target.Exists && source.Exists && !target.EnumerateFiles().Any())
             {
                 target.Delete();
-                source.MoveTo(targetFolder);
+                source.MoveTo(targetFolder,MoveOptions.CopyAllowed |MoveOptions.ReplaceExisting );
                 LOGGER.Info($"Moved whole directory {sourceFolder } to {targetFolder}");
                 return ActionOutcome.Success();
             }
@@ -82,7 +82,7 @@ namespace TVRename
                     string destFile = Path.Combine(targetFolder, file.Name);
                     if (!File.Exists(destFile))
                     {
-                        file.MoveTo(destFile);
+                        file.MoveTo(destFile, MoveOptions.CopyAllowed);
 
                         LOGGER.Info($"Moved {file.FullName} to {destFile}");
                     }
@@ -96,7 +96,7 @@ namespace TVRename
                 return ActionOutcome.Success();
             }
 
-            source.MoveTo(targetFolder);
+            source.MoveTo(targetFolder, MoveOptions.CopyAllowed);
             LOGGER.Info($"Moved whole directory {sourceFolder } to {targetFolder}");
             return ActionOutcome.Success();
         }

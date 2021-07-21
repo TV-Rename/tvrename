@@ -424,11 +424,11 @@ namespace TVRename
 
                     ActionCopyMoveRename newitem = action.Episode is null ?
                         new ActionCopyMoveRename(action.Operation, fi,
-                            FileHelper.FileInFolder(action.To.Directory, newName), action.Movie!, false,
+                            FileHelper.FileInFolder(action.To.Directory, newName), action.Movie!, true,
                             null, d)
                         : new ActionCopyMoveRename(action.Operation, fi,
-                        FileHelper.FileInFolder(action.To.Directory, newName), action.SourceEpisode, false,
-                        null, d); // tidy up on main action, not this
+                        FileHelper.FileInFolder(action.To.Directory, newName), action.SourceEpisode, true,
+                        null, d); 
 
                     // check this item isn't already in our to-do list
                     if (ActionListContains(actionlist, newitem))

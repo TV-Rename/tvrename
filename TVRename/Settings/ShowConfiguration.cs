@@ -851,7 +851,7 @@ namespace TVRename
 
         public bool NoAirdatesUntilNow(int maxSeasonNumber)
         {
-            int lastPossibleSeason = SeasonEpisodes.Keys.DefaultIfEmpty(0).Max();
+            int lastPossibleSeason = SeasonEpisodes.Keys.DefaultIfEmpty(1).Max();
 
             // for specials "season", see if any season has any aired dates
             // otherwise, check only up to the season we are considering
