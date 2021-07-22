@@ -1,4 +1,3 @@
-using System;
 using System.Windows.Forms;
 
 namespace TVRename
@@ -8,46 +7,19 @@ namespace TVRename
     {
         public byte[] Data;
 
-        public BTString(string s)
-            : base(BTChunk.kString)
-        {
-            Data = new byte[0];
-            SetString(s);
-        }
-
-        public BTString()
-            : base(BTChunk.kString)
-        {
-            Data = new byte[0];
-        }
-
-        public void SetString(string s)
+        public BTString(string s) : base(BTChunk.kString)
         {
             Data = System.Text.Encoding.UTF8.GetBytes(s);
         }
 
-        public override string AsText()
+        public BTString() : base(BTChunk.kString)
         {
-            return "String=" + AsString();
+            Data = new byte[0];
         }
 
-        public string AsString()
-        {
-            System.Text.Encoding enc = System.Text.Encoding.UTF8;
-            return enc.GetString(Data);
-        }
+        public override string AsText() => "String=" + AsString();
 
-        public byte[]? StringTwentyBytePiece(int pieceNum)
-        {
-            byte[] res = new byte[20];
-            if (pieceNum * 20 + 20 > Data.Length)
-            {
-                return null;
-            }
-
-            Array.Copy(Data, pieceNum * 20, res, 0, 20);
-            return res;
-        }
+        public string AsString() => System.Text.Encoding.UTF8.GetString(Data);
 
         public static string CharsToHex(byte[] data, int start, int n)
         {
@@ -60,10 +32,7 @@ namespace TVRename
             return r;
         }
 
-        public string PieceAsNiceString(int pieceNum)
-        {
-            return CharsToHex(Data, pieceNum * 20, 20);
-        }
+        public string PieceAsNiceString(int pieceNum) => CharsToHex(Data, pieceNum * 20, 20);
 
         public override void Tree(TreeNodeCollection tn)
         {

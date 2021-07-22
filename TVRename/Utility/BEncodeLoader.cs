@@ -23,7 +23,8 @@ namespace TVRename
                 }
                 else if (c >= '0' && c <= '9')
                 {
-                    r = r * 10 + c - '0';
+                    r *= 10;
+                    r += c - '0';
                 }
             }
 
@@ -39,7 +40,7 @@ namespace TVRename
         public BTItem ReadDictionary(System.IO.FileStream sr)
         {
             BTDictionary d = new BTDictionary();
-            for (; ; )
+            for (;;)
             {
                 BTItem next = ReadNext(sr);
                 if (next.Type == BTChunk.kListOrDictionaryEnd || next.Type == BTChunk.kBTEOF)
@@ -60,7 +61,7 @@ namespace TVRename
         public BTItem ReadList(System.IO.FileStream sr)
         {
             BTList ll = new BTList();
-            for (; ; )
+            for (;;)
             {
                 BTItem next = ReadNext(sr);
                 if (next.Type == BTChunk.kListOrDictionaryEnd)

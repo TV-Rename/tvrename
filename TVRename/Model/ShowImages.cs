@@ -24,8 +24,7 @@ namespace TVRename
         {
             return GetBestSeasonLanguage(snum, lang, type)
                    ?? GetBestSeason(snum, type)
-                   ?? GetShowImage(lang, type)
-                ;
+                   ?? GetShowImage(lang, type);
         }
 
         internal ShowImage? GetShowImage(Language lang, MediaImage.ImageType type)

@@ -8,7 +8,7 @@ namespace TVRename
 {
     public class CachedMovieInfo : CachedMediaInfo
     {
-        public string? Type;
+        public string? MovieType;
         public int? CollectionId;
         public string? CollectionName;
         private MovieImages images = new MovieImages();
@@ -89,7 +89,7 @@ namespace TVRename
             WebUrl = ChooseBetter(WebUrl, useNewDataOverOld, o.WebUrl);
             OfficialUrl = ChooseBetter(OfficialUrl, useNewDataOverOld, o.OfficialUrl);
             ShowLanguage = ChooseBetter(ShowLanguage, useNewDataOverOld, o.ShowLanguage);
-            Type = ChooseBetter(Type, useNewDataOverOld, o.Type);
+            MovieType = ChooseBetter(MovieType, useNewDataOverOld, o.MovieType);
             Overview = ChooseBetter(Overview, useNewDataOverOld, o.Overview);
             PosterUrl = ChooseBetter(PosterUrl, useNewDataOverOld, o.PosterUrl);
             FanartUrl = ChooseBetter(FanartUrl, useNewDataOverOld, o.FanartUrl);
@@ -168,70 +168,12 @@ namespace TVRename
 
         private void LoadXml([NotNull] XElement seriesXml)
         {
-            //<Data>
-            // <Series>
-            //  <id>...</id>
-            //  etc.
-            // </Series>
-            // <Episode>
-            //  <id>...</id>
-            //  blah blah
-            // </Episode>
-            // <Episode>
-            //  <id>...</id>
-            //  blah blah
-            // </Episode>
-            // ...
-            //</Data>
-
+            LoadCommonXml(seriesXml);
             try
             {
-                TvdbCode = seriesXml.ExtractInt("id") ?? throw new SourceConsistencyException("Error Extracting Id for Series", TVDoc.ProviderType.TheTVDB);
-                TvMazeCode = seriesXml.ExtractInt("mazeid") ?? -1;
-                TmdbCode = seriesXml.ExtractInt("TMDBCode") ?? -1;
-
-                Name = System.Web.HttpUtility.HtmlDecode(
-                    XmlHelper.ReadStringFixQuotesAndSpaces(seriesXml.ExtractStringOrNull("SeriesName") ?? seriesXml.ExtractString("seriesName")));
-
-                SrvLastUpdated = seriesXml.ExtractLong("lastupdated") ?? seriesXml.ExtractLong("lastUpdated", 0);
-                int? languageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId");
-                string regionCode = seriesXml.ExtractString("RegionCode");
-                ActualLocale = GetLocale(languageId, regionCode);
-
                 CollectionId = seriesXml.ExtractInt("CollectionId");
-                Popularity = seriesXml.ExtractDouble("Popularity") ?? 0;
                 CollectionName = seriesXml.ExtractStringOrNull("CollectionName");
-                TwitterId = seriesXml.ExtractStringOrNull("TwitterId");
-                InstagramId = seriesXml.ExtractStringOrNull("InstagramId");
-                FacebookId = seriesXml.ExtractStringOrNull("FacebookId");
-                TagLine = seriesXml.ExtractStringOrNull("TagLine");
-                Country = seriesXml.ExtractStringOrNull("Country");
-                
-                PosterUrl = seriesXml.ExtractString("posterURL");
-                TrailerUrl = seriesXml.ExtractString("TrailerUrl");
-                FanartUrl = seriesXml.ExtractString("FanartUrl");
-                Imdb = seriesXml.ExtractStringOrNull("imdbId") ?? seriesXml.ExtractString("IMDB_ID");
-                WebUrl = seriesXml.ExtractString("WebURL");
-                OfficialUrl = seriesXml.ExtractString("OfficialUrl");
-                Type = seriesXml.ExtractString("Type");
-                ShowLanguage = seriesXml.ExtractString("ShowLanguage");
-                TvRageCode = seriesXml.ExtractInt("rageid") ?? 0;
-                Network = seriesXml.ExtractStringOrNull("network") ?? seriesXml.ExtractString("Network");
-                Overview = seriesXml.ExtractStringOrNull("overview") ?? seriesXml.ExtractString("Overview");
-                ContentRating = seriesXml.ExtractStringOrNull("rating") ?? seriesXml.ExtractString("Rating");
-                Runtime = seriesXml.ExtractStringOrNull("runtime") ?? seriesXml.ExtractString("Runtime");
-                SeriesId = seriesXml.ExtractStringOrNull("seriesId") ?? seriesXml.ExtractString("SeriesID");
-                Status = seriesXml.ExtractStringOrNull("status") ?? seriesXml.ExtractString("Status");
-                SiteRatingVotes = seriesXml.ExtractInt("siteRatingCount") ?? seriesXml.ExtractInt("SiteRatingCount", 0);
-                Slug = seriesXml.ExtractString("slug");
-
-                SiteRating = GetSiteRating(seriesXml);
-                FirstAired = JsonHelper.ParseFirstAired(seriesXml.ExtractStringOrNull("FirstAired") ?? seriesXml.ExtractString("firstAired"));
-
-                LoadActors(seriesXml);
-                LoadCrew(seriesXml);
-                LoadAliases(seriesXml);
-                LoadGenres(seriesXml);
+                MovieType = seriesXml.ExtractString("Type");
                 LoadImages(seriesXml);
             }
             catch (SourceConsistencyException e)
@@ -254,71 +196,11 @@ namespace TVRename
         public void WriteXml([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("Movie");
+            WriteCommonFields(writer);
 
-            writer.WriteElement("id", TvdbCode);
-            writer.WriteElement("mazeid", TvMazeCode);
-            writer.WriteElement("TMDBCode", TmdbCode);
-            writer.WriteElement("SeriesName", Name, true);
-            writer.WriteElement("lastupdated", SrvLastUpdated);
-            writer.WriteElement("LanguageId", ActualLocale?.PreferredLanguage?.TvdbId);
-            writer.WriteElement("RegionCode", ActualLocale?.PreferredRegion?.Abbreviation);
             writer.WriteElement("CollectionId", CollectionId);
             writer.WriteElement("CollectionName", CollectionName, true);
-            writer.WriteElement("TwitterId", TwitterId, true);
-            writer.WriteElement("InstagramId", InstagramId, true);
-            writer.WriteElement("FacebookId", FacebookId, true);
-            writer.WriteElement("TagLine", TagLine, true);
-            writer.WriteElement("Country", Country, true);
-            writer.WriteElement("posterURL", PosterUrl);
-            writer.WriteElement("FanartUrl", FanartUrl);
-            writer.WriteElement("TrailerUrl", TrailerUrl, true);
-            writer.WriteElement("WebURL", WebUrl, true);
-            writer.WriteElement("OfficialUrl", OfficialUrl, true);
-            writer.WriteElement("ShowLanguage", ShowLanguage);
-            writer.WriteElement("Type", Type);
-            writer.WriteElement("imdbId", Imdb, true);
-            writer.WriteElement("rageid", TvRageCode, true);
-            writer.WriteElement("network", Network, true);
-            writer.WriteElement("overview", Overview, true);
-            writer.WriteElement("rating", ContentRating);
-            writer.WriteElement("runtime", Runtime, true);
-            writer.WriteElement("seriesId", SeriesId, true);
-            writer.WriteElement("status", Status);
-            writer.WriteElement("siteRating", SiteRating, "0.##");
-            writer.WriteElement("siteRatingCount", SiteRatingVotes);
-            writer.WriteElement("slug", Slug);
-            writer.WriteElement("Popularity", Popularity, "0.##");
-
-            if (FirstAired != null)
-            {
-                writer.WriteElement("FirstAired", FirstAired.Value.ToString("yyyy-MM-dd"));
-            }
-
-            writer.WriteStartElement("Actors");
-            foreach (Actor aa in GetActors())
-            {
-                aa.WriteXml(writer);
-            }
-            writer.WriteEndElement(); //Actors
-            writer.WriteStartElement("Crew");
-            foreach (Crew aa in Crew)
-            {
-                aa.WriteXml(writer);
-            }
-            writer.WriteEndElement(); //Crew
-            writer.WriteStartElement("Aliases");
-            foreach (string a in Aliases)
-            {
-                writer.WriteElement("Alias", a);
-            }
-            writer.WriteEndElement(); //Aliases
-
-            writer.WriteStartElement("Genres");
-            foreach (string a in Genres)
-            {
-                writer.WriteElement("Genre", a);
-            }
-            writer.WriteEndElement(); //Genres
+            writer.WriteElement("Type", MovieType);
 
             writer.WriteStartElement("Images");
             foreach (MovieImage i in images)

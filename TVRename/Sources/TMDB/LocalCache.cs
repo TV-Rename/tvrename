@@ -515,7 +515,7 @@ namespace TVRename.TMDB
                 FanartUrl = OriginalImageUrl(downloadedSeries.BackdropPath),
                 ContentRating = GetCertification(downloadedSeries, ss.TargetLocale.RegionToUse(TVDoc.ProviderType.TMDB).Abbreviation) ?? GetCertification(downloadedSeries, TVSettings.Instance.TMDBRegion.Abbreviation) ?? GetCertification(downloadedSeries, Regions.Instance.FallbackRegion.Abbreviation) ?? string.Empty,
                 OfficialUrl = downloadedSeries.Homepage,
-                Type = downloadedSeries.Type,
+                SeriesType = downloadedSeries.Type,
                 TrailerUrl = GetYouTubeUrl(downloadedSeries),
                 Popularity = downloadedSeries.Popularity,
                 Country = downloadedSeries.OriginCountry.FirstOrDefault(),

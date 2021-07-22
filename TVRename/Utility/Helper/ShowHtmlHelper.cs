@@ -143,7 +143,7 @@ namespace TVRename
 	             {horizontalBanner}
                 </div>
                     <div class=""row"">
-                     <div class=""col-md-8""><h1>{si.ShowName}</h1><small class=""text-muted"">{ser.ShowLanguage} - {ser.Type}</small></div>
+                     <div class=""col-md-8""><h1>{si.ShowName}</h1><small class=""text-muted"">{ser.ShowLanguage} - {ser.SeriesType}</small></div>
                      <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6><small class=""text-muted"">{episodeSummary} Episodes</small></div>
                     </div>
 		            <div class=""row"">
@@ -444,7 +444,7 @@ namespace TVRename
                    </div>
                    <div class=""col-md-8 d-flex flex-column"">
                     <div class=""row"">
-                     <div class=""col-md-8""><h1>{si?.ShowName ?? ser.Name}</h1><small class=""text-muted"">{ser.ShowLanguage} - {ser.Type}</small></div>
+                     <div class=""col-md-8""><h1>{si?.ShowName ?? ser.Name}</h1><small class=""text-muted"">{ser.ShowLanguage} - {ser.SeriesType}</small></div>
                      <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6><small class=""text-muted"">{episodeText}{runTimeHtml}</small></div>
                     </div>
                     <div><p class=""lead"">{ser.Overview}</p></div>");
@@ -569,7 +569,7 @@ namespace TVRename
                     <div class=""row"">
                      <div class=""col-md-8""> <h1>{si?.ShowName ?? ser.Name}</h1><small class=""text-muted"">{ser.TagLine}</small></div>
                      <div class=""col-md-4 text-right""><h6>{yearRange} ({ser.Status})</h6>
-                        <small class=""text-muted"">{ser.ShowLanguage} - {ser.Type} - {ser.Country}</small>
+                        <small class=""text-muted"">{ser.ShowLanguage} - {ser.MovieType} - {ser.Country}</small>
                         <small class=""text-muted"">{runTimeHtml}</small></div>
                     </div>
                     <div><p class=""lead"">{ser.Overview}</p></div>
@@ -1790,7 +1790,7 @@ namespace TVRename
             tableHtml += GetOverviewPart("Tagline", ser?.TagLine);
             tableHtml += GetOverviewPart("Country", ser?.Country);
             tableHtml += GetOverviewPart("Status", ser?.Status);
-            tableHtml += GetOverviewPart("Type", ser?.Type);
+            tableHtml += GetOverviewPart("Type", ser?.MovieType);
 
             if (!string.IsNullOrWhiteSpace(tableHtml))
             {

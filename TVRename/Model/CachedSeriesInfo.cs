@@ -21,7 +21,7 @@ namespace TVRename
     {
         public DateTime? AirsTime;
         public string? AirsDay;
-        public string? Type;
+        public string? SeriesType;
 
         private ConcurrentDictionary<int, Episode> sourceEpisodes;
 
@@ -166,7 +166,7 @@ namespace TVRename
             WebUrl = ChooseBetter(WebUrl, useNewDataOverOld, o.WebUrl);
             OfficialUrl = ChooseBetter(OfficialUrl, useNewDataOverOld, o.OfficialUrl);
             ShowLanguage = ChooseBetter(ShowLanguage, useNewDataOverOld, o.ShowLanguage);
-            Type = ChooseBetter(Type, useNewDataOverOld, o.Type);
+            SeriesType = ChooseBetter(SeriesType, useNewDataOverOld, o.SeriesType);
             Overview = ChooseBetter(Overview, useNewDataOverOld, o.Overview);
             BannerString = ChooseBetter(BannerString, useNewDataOverOld, o.BannerString);
             PosterUrl = ChooseBetter(PosterUrl, useNewDataOverOld, o.PosterUrl);
@@ -256,73 +256,16 @@ namespace TVRename
         }
         private void LoadXml([NotNull] XElement seriesXml)
         {
-            //<Data>
-            // <Series>
-            //  <id>...</id>
-            //  etc.
-            // </Series>
-            // <Episode>
-            //  <id>...</id>
-            //  blah blah
-            // </Episode>
-            // <Episode>
-            //  <id>...</id>
-            //  blah blah
-            // </Episode>
-            // ...
-            //</Data>
+            LoadCommonXml(seriesXml);
 
             try
             {
-                TvdbCode = seriesXml.ExtractInt("id") ?? throw new SourceConsistencyException("Error Extracting Id for Series", TVDoc.ProviderType.TheTVDB);
-                TvMazeCode = seriesXml.ExtractInt("mazeid") ?? -1;
-                TmdbCode = seriesXml.ExtractInt("TMDBCode") ?? -1;
-
-                Name = System.Web.HttpUtility.HtmlDecode(
-                    XmlHelper.ReadStringFixQuotesAndSpaces(seriesXml.ExtractStringOrNull("SeriesName") ?? seriesXml.ExtractString("seriesName")));
-
-                SrvLastUpdated = seriesXml.ExtractLong("lastupdated") ?? seriesXml.ExtractLong("lastUpdated", 0);
-                int? languageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId");
-                string regionCode = seriesXml.ExtractString("RegionCode");
-                ActualLocale = GetLocale(languageId, regionCode);
                 string airsTimeString = seriesXml.ExtractStringOrNull("Airs_Time") ?? seriesXml.ExtractString("airsTime");
                 AirsTime = JsonHelper.ParseAirTime(airsTimeString);
 
                 AirsDay = seriesXml.ExtractStringOrNull("airsDayOfWeek") ?? seriesXml.ExtractString("Airs_DayOfWeek");
                 BannerString = seriesXml.ExtractStringOrNull("banner") ?? seriesXml.ExtractString("Banner");
-                Popularity = seriesXml.ExtractDouble("Popularity") ?? 0;
-                TwitterId = seriesXml.ExtractStringOrNull("TwitterId");
-                InstagramId = seriesXml.ExtractStringOrNull("InstagramId");
-                FacebookId = seriesXml.ExtractStringOrNull("FacebookId");
-                TagLine = seriesXml.ExtractStringOrNull("TagLine");
-                Country = seriesXml.ExtractStringOrNull("Country");
-
-                PosterUrl = seriesXml.ExtractString("posterURL");
-                TrailerUrl = seriesXml.ExtractString("TrailerUrl");
-                FanartUrl = seriesXml.ExtractString("FanartUrl");
-                Imdb = seriesXml.ExtractStringOrNull("imdbId") ?? seriesXml.ExtractString("IMDB_ID");
-                WebUrl = seriesXml.ExtractString("WebURL");
-                OfficialUrl = seriesXml.ExtractString("OfficialUrl");
-                Type = seriesXml.ExtractString("Type");
-                ShowLanguage = seriesXml.ExtractString("ShowLanguage");
-                TvRageCode = seriesXml.ExtractInt("rageid") ?? 0;
-                Network = seriesXml.ExtractStringOrNull("network") ?? seriesXml.ExtractString("Network");
-                Overview = seriesXml.ExtractStringOrNull("overview") ?? seriesXml.ExtractString("Overview");
-                ContentRating = seriesXml.ExtractStringOrNull("rating") ?? seriesXml.ExtractString("Rating");
-                Runtime = seriesXml.ExtractStringOrNull("runtime") ?? seriesXml.ExtractString("Runtime");
-                SeriesId = seriesXml.ExtractStringOrNull("seriesId") ?? seriesXml.ExtractString("SeriesID");
-                Status = seriesXml.ExtractStringOrNull("status") ?? seriesXml.ExtractString("Status");
-                SiteRatingVotes = seriesXml.ExtractInt("siteRatingCount") ?? seriesXml.ExtractInt("SiteRatingCount", 0);
-                Slug = seriesXml.ExtractString("slug");
-                Popularity = seriesXml.ExtractDouble("Popularity") ?? 0;
-
-                SiteRating = GetSiteRating(seriesXml);
-                FirstAired = JsonHelper.ParseFirstAired(seriesXml.ExtractStringOrNull("FirstAired") ?? seriesXml.ExtractString("firstAired"));
-
-                LoadActors(seriesXml);
-                LoadCrew(seriesXml);
-                LoadAliases(seriesXml);
-                LoadGenres(seriesXml);
+                SeriesType = seriesXml.ExtractString("Type");
                 LoadSeasons(seriesXml);
                 LoadImages(seriesXml);
             }
@@ -455,81 +398,18 @@ namespace TVRename
         public void WriteXml([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("Series");
+            WriteCommonFields(writer);
 
-            writer.WriteElement("id", TvdbCode);
-            writer.WriteElement("mazeid", TvMazeCode);
-            writer.WriteElement("TMDBCode", TmdbCode);
-            writer.WriteElement("SeriesName", Name);
-            writer.WriteElement("lastupdated", SrvLastUpdated);
-            writer.WriteElement("LanguageId", ActualLocale?.PreferredLanguage?.TvdbId);
-            writer.WriteElement("RegionCode", ActualLocale?.PreferredRegion?.Abbreviation);
             writer.WriteElement("airsDayOfWeek", AirsDay);
             writer.WriteElement("Airs_Time", AirsTime?.ToString("HH:mm"), true);
-            writer.WriteElement("banner", BannerString, true);
-            writer.WriteElement("TwitterId", TwitterId, true);
-            writer.WriteElement("InstagramId", InstagramId, true);
-            writer.WriteElement("FacebookId", FacebookId, true);
-            writer.WriteElement("TagLine", TagLine, true);
-            writer.WriteElement("Country", Country, true);
-            writer.WriteElement("posterURL", PosterUrl);
-            writer.WriteElement("FanartUrl", FanartUrl);
-            writer.WriteElement("TrailerUrl", TrailerUrl, true);
-            writer.WriteElement("WebURL", WebUrl,true);
-            writer.WriteElement("OfficialUrl", OfficialUrl, true);
-            writer.WriteElement("ShowLanguage", ShowLanguage);
-            writer.WriteElement("Type", Type, true);
-            writer.WriteElement("imdbId", Imdb, true);
-            writer.WriteElement("rageid", TvRageCode, true);
-            writer.WriteElement("network", Network, true);
-            writer.WriteElement("overview", Overview, true);
-            writer.WriteElement("rating", ContentRating);
-            writer.WriteElement("runtime", Runtime, true);
-            writer.WriteElement("seriesId", SeriesId, true);
-            writer.WriteElement("status", Status, true);
-            writer.WriteElement("siteRating", SiteRating, "0.##");
-            writer.WriteElement("siteRatingCount", SiteRatingVotes);
-            writer.WriteElement("Popularity", Popularity, "0.##");
-            writer.WriteElement("slug", Slug, true);
-
-            if (FirstAired != null)
-            {
-                writer.WriteElement("FirstAired", FirstAired.Value.ToString("yyyy-MM-dd"));
-            }
-
-            writer.WriteStartElement("Actors");
-            foreach (Actor aa in GetActors())
-            {
-                aa.WriteXml(writer);
-            }
-            writer.WriteEndElement(); //Actors
-
-            writer.WriteStartElement("Crew");
-            foreach (Crew aa in Crew)
-            {
-                aa.WriteXml(writer);
-            }
-            writer.WriteEndElement(); //Crew
+            writer.WriteElement("Type", SeriesType, true);
 
             writer.WriteStartElement("Seasons");
             foreach (Season a in seasons)
             {
                 a.WriteXml(writer);
             }
-            writer.WriteEndElement(); //Actors
-
-            writer.WriteStartElement("Aliases");
-            foreach (string a in Aliases)
-            {
-                writer.WriteElement("Alias", a);
-            }
-            writer.WriteEndElement(); //Aliases
-
-            writer.WriteStartElement("Genres");
-            foreach (string a in Genres)
-            {
-                writer.WriteElement("Genre", a);
-            }
-            writer.WriteEndElement(); //Genres
+            writer.WriteEndElement(); //Seasons
 
             writer.WriteStartElement("Episodes");
             foreach (Episode e in Episodes)

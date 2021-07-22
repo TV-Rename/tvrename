@@ -113,7 +113,7 @@ namespace TVRename
         public IEnumerable<string> GetTypes()
         {
             return Shows
-                .Select(s => s.CachedShow?.Type)
+                .Select(s => s.CachedShow?.SeriesType)
                 .Distinct()
                 .Where(s => s.HasValue())
                 .OrderBy(s => s);

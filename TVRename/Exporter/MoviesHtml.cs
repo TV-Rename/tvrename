@@ -64,7 +64,7 @@ namespace TVRename
                 <div class=""row"">
                     <div class=""col-md-8""><h1>{si.ShowName}</h1><small class=""text-muted"">{cachedSeries.TagLine}</small></div>
                     <div class=""col-md-4 text-right""><h6>{yearRange} ({cachedSeries.Status})</h6>
-<small class=""text-muted"">{cachedSeries.ShowLanguage} - {cachedSeries.Type} - {cachedSeries.Country}</small>
+<small class=""text-muted"">{cachedSeries.ShowLanguage} - {cachedSeries.MovieType} - {cachedSeries.Country}</small>
                         <small class=""text-muted"">{runTimeHtml}</small></div>
 </div>
 

@@ -323,7 +323,7 @@ namespace TVRename.TVmaze
             }
 
             List<string> typesToTransferToGenres = new List<string> { "Animation", "Reality", "Documentary", "News", "Sports" };
-            foreach (string conversionType in typesToTransferToGenres.Where(s => s == returnValue.Type))
+            foreach (string conversionType in typesToTransferToGenres.Where(s => s == returnValue.SeriesType))
             {
                 returnValue.Genres.Add(conversionType);
             }
@@ -373,7 +373,7 @@ namespace TVRename.TVmaze
                 Overview = System.Web.HttpUtility.HtmlDecode((string)r["summary"])?.Trim(),
                 Runtime = ((string)r["runtime"])?.Trim(),
                 Status = MapStatus((string)r["status"] ?? throw new SourceConsistencyException("No Status", TVDoc.ProviderType.TVmaze)),
-                Type = (string)r["type"],
+                SeriesType = (string)r["type"],
                 SrvLastUpdated =
                     long.TryParse((string)r["updated"], out long updateTime)
                         ? updateTime
