@@ -238,8 +238,9 @@ namespace TVRename
                 return;
             }
 
-            bool fileCanBeDeleted = TVSettings.Instance.RemoveDownloadDirectoriesFiles && matchingShows.Any()
-                                    || TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies && matchingMovies.Any();
+            bool showCheck = TVSettings.Instance.RemoveDownloadDirectoriesFiles && matchingShows.Any();
+            bool movieCheck = TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies && matchingMovies.Any();
+            bool fileCanBeDeleted = showCheck || movieCheck;
 
             ProcessedEpisode firstMatchingPep = null;
 

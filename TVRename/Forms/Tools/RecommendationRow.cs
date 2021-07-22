@@ -55,8 +55,14 @@ namespace TVRename.Forms
 
         //Star score is out of 5 stars, we produce a 'normlised' result by adding a top mark 10/10 and a bottom mark 1/10 and recalculating
         //this is to stop a show with one 10/10 vote looking too good, this normalises it back if the number of votes is small
-        public float StarScore => ((cachedMediaInfo?.SiteRatingVotes ?? 1) * (cachedMediaInfo?.SiteRating ?? 5) + 5) /
-                                  ((cachedMediaInfo?.SiteRatingVotes ?? 1) + 1);
+        public float StarScore => NormalisedScore(cachedMediaInfo?.SiteRatingVotes, cachedMediaInfo?.SiteRating);
+
+        private static float NormalisedScore(int? votes, float? score)
+        {
+            float totalScore = ((votes ?? 1) * (score ?? 5)) + 10 + 1;
+            int totalVotes = (votes ?? 1) + 2;
+            return totalScore / totalVotes;
+        }
 
         public double RecommendationScore => result.GetScore(trendingWeight, topWeight, relatedWeight, similarWeight, maxRelated, maxSimilar);
 

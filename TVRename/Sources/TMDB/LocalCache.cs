@@ -96,7 +96,12 @@ namespace TVRename.TMDB
             
             LastErrorMessage = string.Empty;
 
-            LoadOk = loadFrom is null || CachePersistor.LoadMovieCache(loadFrom, this) && CachePersistor.LoadTvCache(loadFrom, this);
+            if (loadFrom is null)
+            {
+                LoadOk = true;
+                return;
+            }
+            LoadOk = CachePersistor.LoadMovieCache(loadFrom, this) & CachePersistor.LoadTvCache(loadFrom, this);
         }
 
         public bool Connect(bool showErrorMsgBox) => true;

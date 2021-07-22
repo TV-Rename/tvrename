@@ -14,8 +14,9 @@ namespace TVRename.Forms
         {
             return (  (Trending ? trendingWeight : 0)
                    + (TopRated ? topWeight : 0)
-                   + 1.0 * relatedWeight * Related.Count / maxRelated
-                   + 1.0 * similarWeight * Similar.Count / maxSimilar)/(trendingWeight+topWeight+similarWeight+relatedWeight);
+                   + (1.0 * relatedWeight * Related.Count / maxRelated)
+                   + (1.0 * similarWeight * Similar.Count / maxSimilar))
+                   /(trendingWeight+topWeight+similarWeight+relatedWeight);
         }
     }
 }

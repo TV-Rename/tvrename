@@ -93,7 +93,12 @@ namespace TVRename.TheTVDB
 
             LOGGER.Info($"Assumed we have updates until {LatestUpdateTime}");
 
-            LoadOk = loadFrom is null || CachePersistor.LoadMovieCache(loadFrom, this) && CachePersistor.LoadTvCache(loadFrom, this);
+            if (loadFrom is null)
+            {
+                LoadOk = true;
+                return;
+            }
+            LoadOk = CachePersistor.LoadMovieCache(loadFrom, this) & CachePersistor.LoadTvCache(loadFrom, this);
         }
 
         public byte[]? GetTvdbDownload(string url)

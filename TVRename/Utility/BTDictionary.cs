@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -51,7 +52,7 @@ namespace TVRename
         {
             foreach (BTDictionaryItem t in Items)
             {
-                if (t.Key == key || ignoreCase && t.Key.ToLower() == key.ToLower())
+                if (string.Equals(t.Key, key, ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture))
                 {
                     return t.Data;
                 }

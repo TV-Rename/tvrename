@@ -361,6 +361,8 @@
     <Compile Include="ItemsAndActions\ActionNfoShow.cs" />
     <Compile Include="ItemsAndActions\MovieItemMissing.cs" />
     <Compile Include="ItemsAndActions\ShowItemMissing.cs" />
+    <Compile Include="LibrarySummary\Check\DefaultFutureMovieCheck.cs" />
+    <Compile Include="LibrarySummary\Check\DefaultNoAirdateMovieCheck.cs" />
     <Compile Include="LibrarySummary\Check\FolderBaseLibraryDefaultTvCheck.cs" />
     <Compile Include="LibrarySummary\Check\FolderBaseMovieCheck.cs" />
     <Compile Include="LibrarySummary\Check\FolderBaseTvCheck.cs" />
@@ -404,6 +406,7 @@
     <Compile Include="Model\ISeriesSpecifier.cs" />
     <Compile Include="Model\MovieImage.cs" />
     <Compile Include="Model\MovieImages.cs" />
+    <Compile Include="Model\SeriesSpecifiedHelper.cs" />
     <Compile Include="Model\ShowImage.cs" />
     <Compile Include="Model\ShowImages.cs" />
     <Compile Include="ScanActivity\DownloadIdentifers\DownloadWdtvMetaData.cs" />
@@ -497,7 +500,7 @@
     <Compile Include="ScanActivity\ScanShowActivity\ScanMovieActivity.cs" />
     <Compile Include="Settings\AppState\UpdateCheck.cs" />
     <Compile Include="Settings\CustomMovieName.cs" />
-    <Compile Include="Settings\LocalPreferences.cs" />
+    <Compile Include="Settings\Locale.cs" />
     <Compile Include="Settings\MediaConfiguration.cs" />
     <Compile Include="Settings\MovieConfiguration.cs" />
     <Compile Include="Settings\MovieFilter.cs" />
@@ -699,7 +702,7 @@
     <Compile Include="Settings\ShowConfiguration.cs" />
     <Compile Include="Model\Actor.cs" />
     <Compile Include="Model\SeriesBanners.cs" />
-    <Compile Include="Model\SearchSeriesSpecifier.cs" />
+    <Compile Include="Model\SearchSpecifier.cs" />
     <Compile Include="Model\MediaNotFoundException.cs" />
     <Compile Include="Sources\SourceConnectivityException.cs" />
     <Compile Include="Model\iTVSource.cs" />
