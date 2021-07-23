@@ -223,6 +223,7 @@ namespace TVRename
             }
         }
 
+        // ReSharper disable once UnusedMember.Global
         public void ShowChild(Form childForm) 
         {
             if (InvokeRequired)
@@ -484,24 +485,28 @@ namespace TVRename
 
         private static void UpdateSplashStatus([NotNull] TVRenameSplash splashScreen, string text)
         {
-            if (splashScreen.IsHandleCreated)
+            if (!splashScreen.IsHandleCreated)
             {
-                Logger.Info($"Splash Screen Updated with: {text}");
-                splashScreen.Invoke((System.Action)delegate { splashScreen.UpdateStatus(text); });
+                return;
             }
+
+            Logger.Info($"Splash Screen Updated with: {text}");
+            splashScreen.Invoke((System.Action)delegate { splashScreen.UpdateStatus(text); });
         }
 
         private static void UpdateSplashPercent([NotNull] TVRenameSplash splashScreen, int num)
         {
-            if (splashScreen.IsHandleCreated)
+            if (!splashScreen.IsHandleCreated)
             {
-                splashScreen.Invoke((System.Action)delegate { splashScreen.UpdateProgress(num); });
+                return;
             }
+
+            splashScreen.Invoke((System.Action)delegate { splashScreen.UpdateProgress(num); });
         }
 
-        private void ClearInfoWindows() => ClearInfoWindows("");
+        private void ClearInfoWindows() => ClearInfoWindows(string.Empty);
 
-        private void ClearMovieInfoWindows() => ClearMovieInfoWindows("");
+        private void ClearMovieInfoWindows() => ClearMovieInfoWindows(string.Empty);
 
         private void ClearInfoWindows(string defaultText)
         {
@@ -1427,10 +1432,10 @@ namespace TVRename
             }
         }
 
-        public static void SetHtmlBody([NotNull] ChromiumWebBrowser web, string body)
+        private static void SetWeb([NotNull] ChromiumWebBrowser web, System.Action a)
         {
             web.Visible = true;
-            if (web.IsDisposed )
+            if (web.IsDisposed)
             {
                 return;
             }
@@ -1439,15 +1444,13 @@ namespace TVRename
             {
                 web.IsBrowserInitializedChanged += (sender, args) =>
                 {
-                    web.BeginInvoke((MethodInvoker) delegate { SetHtmlBody(web, body); });
+                    web.BeginInvoke((MethodInvoker)delegate { SetWeb(web, a); });
                 };
             }
 
             try
             {
-                string base64EncodedHtml = Convert.ToBase64String(Encoding.UTF8.GetBytes(body));
-                web.Load("data:text/html;base64," + base64EncodedHtml);
-                //web.LoadHtml(body);
+                a();
             }
             catch (COMException ex)
             {
@@ -1462,34 +1465,22 @@ namespace TVRename
             web.Update();
         }
 
+        public static void SetHtmlBody([NotNull] ChromiumWebBrowser web, string body)
+        {
+            SetWeb(web,
+                () =>
+                {
+                    web.Load("data:text/html;base64," + Convert.ToBase64String(Encoding.UTF8.GetBytes(body)));
+                });
+        }
+
         private static void SetHtmlEmbed([NotNull] ChromiumWebBrowser web, string link)
         {
-            web.Visible = true;
-            if (web.IsDisposed)
-            {
-                return;
-            }
-
-            web.IsBrowserInitializedChanged += (sender, args) =>
-            {
-                web.BeginInvoke((MethodInvoker) delegate { SetHtmlEmbed(web, link); });
-            };
-
-            try
-            {
-                web.Load(link);
-            }
-            catch (COMException ex)
-            {
-                //Fail gracefully - no RHS episode guide is not too big of a problem.
-                Logger.Warn(ex, "Could not update UI for the show/cachedSeries/movie information pane");
-            }
-            catch (Exception ex)
-            {
-                //Fail gracefully - no RHS episode guide is not too big of a problem.
-                Logger.Error(ex);
-            }
-            web.Update();
+            SetWeb(web,
+                () =>
+                {
+                    web.Load(link);
+                });
         }
 
         private static void TvSourceFor(ProcessedEpisode? e)

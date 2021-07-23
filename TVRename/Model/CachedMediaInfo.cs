@@ -44,8 +44,8 @@ namespace TVRename
         public string? Status { get; set; }
         public bool IsSearchResultOnly; // set to true if local info is known to be just certain fields found from search results. Do not need to be saved
 
-        private List<Actor> Actors;
-        private List<Crew> Crew;
+        public List<Actor> Actors;
+        public List<Crew> Crew;
         public List<string> Genres;
         protected List<string> Aliases;
 
