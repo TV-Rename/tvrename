@@ -11,7 +11,7 @@ namespace TVRename
         public string? MovieType;
         public int? CollectionId;
         public string? CollectionName;
-        private MovieImages images = new MovieImages();
+        private readonly MovieImages images = new MovieImages();
 
         public int? Year => FirstAired?.Year;
 
@@ -34,8 +34,25 @@ namespace TVRename
         public CachedMovieInfo([NotNull] XElement seriesXml, TVDoc.ProviderType source) : base(source)
         {
             DefaultValues();
-            LoadXml(seriesXml);
             IsSearchResultOnly = false;
+            LoadCommonXml(seriesXml);
+            try
+            {
+                CollectionId = seriesXml.ExtractInt("CollectionId");
+                CollectionName = seriesXml.ExtractStringOrNull("CollectionName");
+                MovieType = seriesXml.ExtractString("Type");
+
+                foreach (MovieImage s in seriesXml.Descendants("Images").Descendants("MovieImage").Select(xml => new MovieImage(IdCode(Source), Source, xml)))
+                {
+                    images.Add(s);
+                }
+            }
+            catch (SourceConsistencyException e)
+            {
+                LOGGER.Error(e, GenerateErrorMessage());
+                // ReSharper disable once PossibleIntendedRethrow
+                throw e;
+            }
         }
 
         // ReSharper disable once FunctionComplexityOverflow
@@ -82,115 +99,16 @@ namespace TVRename
 
             SrvLastUpdated = o.SrvLastUpdated;
 
-            // take the best bits of "o"
-            // "o" is always newer/better than us, if there is a choice
-            Name = ChooseBetter(Name, useNewDataOverOld, o.Name);
-            Imdb = ChooseBetter(Imdb, useNewDataOverOld, o.Imdb);
-            WebUrl = ChooseBetter(WebUrl, useNewDataOverOld, o.WebUrl);
-            OfficialUrl = ChooseBetter(OfficialUrl, useNewDataOverOld, o.OfficialUrl);
-            ShowLanguage = ChooseBetter(ShowLanguage, useNewDataOverOld, o.ShowLanguage);
+            MergeCommon(o,useNewDataOverOld);
             MovieType = ChooseBetter(MovieType, useNewDataOverOld, o.MovieType);
-            Overview = ChooseBetter(Overview, useNewDataOverOld, o.Overview);
-            PosterUrl = ChooseBetter(PosterUrl, useNewDataOverOld, o.PosterUrl);
-            FanartUrl = ChooseBetter(FanartUrl, useNewDataOverOld, o.FanartUrl);
-            TrailerUrl = ChooseBetter(TrailerUrl, useNewDataOverOld, o.TrailerUrl);
-            Network = ChooseBetter(Network, useNewDataOverOld, o.Network);
-            Runtime = ChooseBetter(Runtime, useNewDataOverOld, o.Runtime);
-            SeriesId = ChooseBetter(SeriesId, useNewDataOverOld, o.SeriesId);
-            Status = ChooseBetterStatus(Status, useNewDataOverOld, o.Status);
-            ContentRating = ChooseBetter(ContentRating, useNewDataOverOld, o.ContentRating);
-            Slug = ChooseBetter(Slug, useNewDataOverOld, o.Slug);
             CollectionName = ChooseBetter(CollectionName, useNewDataOverOld, o.CollectionName);
-            TwitterId = ChooseBetter(TwitterId, useNewDataOverOld, o.TwitterId);
-            InstagramId = ChooseBetter(InstagramId, useNewDataOverOld, o.InstagramId);
-            FacebookId = ChooseBetter(FacebookId, useNewDataOverOld, o.FacebookId);
-            TagLine = ChooseBetter(TagLine, useNewDataOverOld, o.TagLine);
-            Country = ChooseBetter(Country, useNewDataOverOld, o.Country);
 
             if (useNewDataOverOld && o.CollectionId.HasValue)
             {
                 CollectionId = o.CollectionId;
             }
 
-            if (o.FirstAired.HasValue && (useNewDataOverOld || !FirstAired.HasValue))
-            {
-                FirstAired = o.FirstAired;
-            }
-
-            if (useNewDataOverOld && o.SiteRating > 0)
-            {
-                SiteRating = o.SiteRating;
-            }
-
-            if (useNewDataOverOld && o.SiteRatingVotes > 0)
-            {
-                SiteRatingVotes = o.SiteRatingVotes;
-            }
-
-            if (useNewDataOverOld && o.Popularity > 0)
-            {
-                Popularity = o.Popularity;
-            }
-
-            bool useNewAliases = o.Aliases.Any() && useNewDataOverOld;
-            if (!Aliases.Any() || useNewAliases)
-            {
-                Aliases = o.Aliases;
-            }
-
-            bool useNewGenres = o.Genres.Any() && useNewDataOverOld;
-            if (!Genres.Any() || useNewGenres)
-            {
-                Genres = o.Genres;
-            }
-
-            bool useNewCrew = o.Crew.Any() && useNewDataOverOld;
-            if (!Crew.Any() || useNewCrew)
-            {
-                Crew = o.Crew;
-            }
-
-            bool useNewActors = o.Actors.Any() && useNewDataOverOld;
-            if (!Actors.Any() || useNewActors)
-            {
-                Actors = o.Actors;
-            }
-
-            if (useNewDataOverOld)
-            {
-                ActualLocale = o.ActualLocale;
-            }
             images.MergeImages(o.images);
-
-            Dirty = o.Dirty;
-            IsSearchResultOnly = o.IsSearchResultOnly;
-        }
-
-        private void LoadXml([NotNull] XElement seriesXml)
-        {
-            LoadCommonXml(seriesXml);
-            try
-            {
-                CollectionId = seriesXml.ExtractInt("CollectionId");
-                CollectionName = seriesXml.ExtractStringOrNull("CollectionName");
-                MovieType = seriesXml.ExtractString("Type");
-                LoadImages(seriesXml);
-            }
-            catch (SourceConsistencyException e)
-            {
-                LOGGER.Error(e, GenerateErrorMessage());
-                // ReSharper disable once PossibleIntendedRethrow
-                throw e;
-            }
-        }
-
-        private void LoadImages([NotNull] XElement seriesXml)
-        {
-            images = new MovieImages();
-            foreach (MovieImage s in seriesXml.Descendants("Images").Descendants("MovieImage").Select(xml => new MovieImage(IdCode(Source), Source, xml)))
-            {
-                images.Add(s);
-            }
         }
 
         public void WriteXml([NotNull] XmlWriter writer)

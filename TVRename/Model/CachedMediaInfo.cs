@@ -36,7 +36,7 @@ namespace TVRename
         public double? Popularity;
         public DateTime? FirstAired;
         public Locale? ActualLocale; //The actual language obtained
-        public string? BannerString;
+        protected string? BannerString;
         public string? Network;
         public string? FanartUrl;
         public IEnumerable<string> Networks => Network!.FromPsv();
@@ -44,8 +44,8 @@ namespace TVRename
         public string? Status { get; set; }
         public bool IsSearchResultOnly; // set to true if local info is known to be just certain fields found from search results. Do not need to be saved
 
-        protected List<Actor> Actors;
-        protected List<Crew> Crew;
+        private List<Actor> Actors;
+        private List<Crew> Crew;
         public List<string> Genres;
         protected List<string> Aliases;
 
@@ -103,7 +103,7 @@ namespace TVRename
             };
         }
 
-        protected static Locale GetLocale(int? languageId, string? regionCode)
+        private static Locale GetLocale(int? languageId, string? regionCode)
         {
             bool validLanguage = languageId.HasValue && Languages.Instance.GetLanguageFromId(languageId.Value) != null;
             bool validRegion = regionCode.HasValue() && Regions.Instance.RegionFromCode(regionCode!) != null;
@@ -158,7 +158,7 @@ namespace TVRename
             Crew.Add(crew);
         }
 
-        protected static float GetSiteRating([NotNull] XElement seriesXml)
+        private static float GetSiteRating([NotNull] XElement seriesXml)
         {
             string siteRatingString = seriesXml.ExtractStringOrNull("siteRating") ?? seriesXml.ExtractString("SiteRating");
             float.TryParse(siteRatingString,
@@ -171,7 +171,7 @@ namespace TVRename
         [NotNull]
         protected string GenerateErrorMessage() => "Error processing data for a show. " + this + "\r\nLanguage: \"" + ActualLocale?.PreferredLanguage?.EnglishName + "\"";
 
-        protected void LoadActors([NotNull] XElement seriesXml)
+        private void LoadActors([NotNull] XElement seriesXml)
         {
             ClearActors();
             foreach (Actor a in seriesXml.Descendants("Actors").Descendants("Actor").Select(actorXml => new Actor(actorXml)))
@@ -180,7 +180,7 @@ namespace TVRename
             }
         }
 
-        protected void LoadCrew([NotNull] XElement seriesXml)
+        private void LoadCrew([NotNull] XElement seriesXml)
         {
             ClearCrew();
             foreach (Crew c in seriesXml.Descendants("Crew").Descendants("CrewMember").Select(crewXml => new Crew(crewXml)))
@@ -189,7 +189,7 @@ namespace TVRename
             }
         }
 
-        protected void LoadAliases([NotNull] XElement seriesXml)
+        private void LoadAliases([NotNull] XElement seriesXml)
         {
             Aliases = new List<string>();
             foreach (XElement aliasXml in seriesXml.Descendants("Aliases").Descendants("Alias"))
@@ -198,7 +198,7 @@ namespace TVRename
             }
         }
 
-        protected void LoadGenres([NotNull] XElement seriesXml)
+        private void LoadGenres([NotNull] XElement seriesXml)
         {
             Genres = seriesXml
                 .Descendants("Genres")
@@ -248,7 +248,7 @@ namespace TVRename
         }
 
         [NotNull]
-        protected static string ChooseBetterStatus(string? encumbant, bool betterLanguage, string? newValue)
+        private static string ChooseBetterStatus(string? encumbant, bool betterLanguage, string? newValue)
         {
             if (string.IsNullOrEmpty(encumbant) || encumbant.Equals("Unknown"))
             {
@@ -430,6 +430,85 @@ namespace TVRename
                 // ReSharper disable once PossibleIntendedRethrow
                 throw e;
             }
+        }
+
+        protected void MergeCommon([NotNull] CachedMediaInfo o, bool useNewDataOverOld)
+        {
+            // take the best bits of "o"
+            // "o" is always newer/better than us, if there is a choice
+            Name = ChooseBetter(Name, useNewDataOverOld, o.Name);
+            Imdb = ChooseBetter(Imdb, useNewDataOverOld, o.Imdb);
+            WebUrl = ChooseBetter(WebUrl, useNewDataOverOld, o.WebUrl);
+            OfficialUrl = ChooseBetter(OfficialUrl, useNewDataOverOld, o.OfficialUrl);
+            ShowLanguage = ChooseBetter(ShowLanguage, useNewDataOverOld, o.ShowLanguage);
+            Overview = ChooseBetter(Overview, useNewDataOverOld, o.Overview);
+            BannerString = ChooseBetter(BannerString, useNewDataOverOld, o.BannerString);
+            PosterUrl = ChooseBetter(PosterUrl, useNewDataOverOld, o.PosterUrl);
+            FanartUrl = ChooseBetter(FanartUrl, useNewDataOverOld, o.FanartUrl);
+            TrailerUrl = ChooseBetter(TrailerUrl, useNewDataOverOld, o.TrailerUrl);
+            Network = ChooseBetter(Network, useNewDataOverOld, o.Network);
+            Runtime = ChooseBetter(Runtime, useNewDataOverOld, o.Runtime);
+            SeriesId = ChooseBetter(SeriesId, useNewDataOverOld, o.SeriesId);
+            Status = ChooseBetterStatus(Status, useNewDataOverOld, o.Status);
+            ContentRating = ChooseBetter(ContentRating, useNewDataOverOld, o.ContentRating);
+            Slug = ChooseBetter(Slug, useNewDataOverOld, o.Slug);
+            TwitterId = ChooseBetter(TwitterId, useNewDataOverOld, o.TwitterId);
+            InstagramId = ChooseBetter(InstagramId, useNewDataOverOld, o.InstagramId);
+            FacebookId = ChooseBetter(FacebookId, useNewDataOverOld, o.FacebookId);
+            TagLine = ChooseBetter(TagLine, useNewDataOverOld, o.TagLine);
+            Country = ChooseBetter(Country, useNewDataOverOld, o.Country);
+
+            if (o.FirstAired.HasValue && (useNewDataOverOld || !FirstAired.HasValue))
+            {
+                FirstAired = o.FirstAired;
+            }
+
+            if (useNewDataOverOld && o.SiteRating > 0)
+            {
+                SiteRating = o.SiteRating;
+            }
+
+            if (useNewDataOverOld && o.Popularity > 0)
+            {
+                Popularity = o.Popularity;
+            }
+
+            if (useNewDataOverOld && o.SiteRatingVotes > 0)
+            {
+                SiteRatingVotes = o.SiteRatingVotes;
+            }
+
+            bool useNewAliases = o.Aliases.Any() && useNewDataOverOld;
+            if (!Aliases.Any() || useNewAliases)
+            {
+                Aliases = o.Aliases;
+            }
+
+            bool useNewGenres = o.Genres.Any() && useNewDataOverOld;
+            if (!Genres.Any() || useNewGenres)
+            {
+                Genres = o.Genres;
+            }
+
+            bool useNewCrew = o.Crew.Any() && useNewDataOverOld;
+            if (!Crew.Any() || useNewCrew)
+            {
+                Crew = o.Crew;
+            }
+
+            bool useNewActors = o.Actors.Any() && useNewDataOverOld;
+            if (!Actors.Any() || useNewActors)
+            {
+                Actors = o.Actors;
+            }
+
+            if (useNewDataOverOld)
+            {
+                ActualLocale = o.ActualLocale;
+            }
+
+            Dirty = o.Dirty;
+            IsSearchResultOnly = o.IsSearchResultOnly;
         }
     }
 }

@@ -158,80 +158,15 @@ namespace TVRename
 
             SrvLastUpdated = o.SrvLastUpdated;
 
-            // take the best bits of "o"
-            // "o" is always newer/better than us, if there is a choice
-            Name = ChooseBetter(Name, useNewDataOverOld, o.Name);
+            MergeCommon(o, useNewDataOverOld);
+
             AirsDay = ChooseBetter(AirsDay, useNewDataOverOld, o.AirsDay);
-            Imdb = ChooseBetter(Imdb, useNewDataOverOld, o.Imdb);
-            WebUrl = ChooseBetter(WebUrl, useNewDataOverOld, o.WebUrl);
-            OfficialUrl = ChooseBetter(OfficialUrl, useNewDataOverOld, o.OfficialUrl);
-            ShowLanguage = ChooseBetter(ShowLanguage, useNewDataOverOld, o.ShowLanguage);
             SeriesType = ChooseBetter(SeriesType, useNewDataOverOld, o.SeriesType);
-            Overview = ChooseBetter(Overview, useNewDataOverOld, o.Overview);
-            BannerString = ChooseBetter(BannerString, useNewDataOverOld, o.BannerString);
-            PosterUrl = ChooseBetter(PosterUrl, useNewDataOverOld, o.PosterUrl);
-            FanartUrl = ChooseBetter(FanartUrl, useNewDataOverOld, o.FanartUrl);
-            TrailerUrl = ChooseBetter(TrailerUrl, useNewDataOverOld, o.TrailerUrl);
-            Network = ChooseBetter(Network, useNewDataOverOld, o.Network);
-            Runtime = ChooseBetter(Runtime, useNewDataOverOld, o.Runtime);
-            SeriesId = ChooseBetter(SeriesId, useNewDataOverOld, o.SeriesId);
-            Status = ChooseBetterStatus(Status, useNewDataOverOld, o.Status);
-            ContentRating = ChooseBetter(ContentRating, useNewDataOverOld, o.ContentRating);
-            Slug = ChooseBetter(Slug, useNewDataOverOld, o.Slug);
-            TwitterId = ChooseBetter(TwitterId, useNewDataOverOld, o.TwitterId);
-            InstagramId = ChooseBetter(InstagramId, useNewDataOverOld, o.InstagramId);
-            FacebookId = ChooseBetter(FacebookId, useNewDataOverOld, o.FacebookId);
-            TagLine = ChooseBetter(TagLine, useNewDataOverOld, o.TagLine);
-            Country = ChooseBetter(Country, useNewDataOverOld, o.Country);
-
-            if (o.FirstAired.HasValue && (useNewDataOverOld || !FirstAired.HasValue))
-            {
-                FirstAired = o.FirstAired;
-            }
-
-            if (useNewDataOverOld && o.SiteRating > 0)
-            {
-                SiteRating = o.SiteRating;
-            }
-
-            if (useNewDataOverOld && o.Popularity > 0)
-            {
-                Popularity = o.Popularity;
-            }
-
-            if (useNewDataOverOld && o.SiteRatingVotes > 0)
-            {
-                SiteRatingVotes = o.SiteRatingVotes;
-            }
-
-            bool useNewAliases = o.Aliases.Any() && useNewDataOverOld;
-            if (!Aliases.Any() || useNewAliases)
-            {
-                Aliases = o.Aliases;
-            }
-
-            bool useNewGenres = o.Genres.Any() && useNewDataOverOld;
-            if (!Genres.Any() || useNewGenres)
-            {
-                Genres = o.Genres;
-            }
-
+  
             bool useNewSeasons = o.seasons.Any() && useNewDataOverOld;
             if (!seasons.Any() || useNewSeasons)
             {
                 seasons = o.seasons;
-            }
-
-            bool useNewCrew = o.Crew.Any() && useNewDataOverOld;
-            if (!Crew.Any() || useNewCrew)
-            {
-                Crew = o.Crew;
-            }
-
-            bool useNewActors = o.Actors.Any() && useNewDataOverOld;
-            if (!Actors.Any() || useNewActors)
-            {
-                Actors = o.Actors;
             }
 
             if (o.AirsTime != null)
@@ -245,14 +180,6 @@ namespace TVRename
             }
 
             images.MergeImages(o.images);
-
-            if (useNewDataOverOld)
-            {
-                ActualLocale = o.ActualLocale;
-            }
-
-            Dirty = o.Dirty;
-            IsSearchResultOnly = o.IsSearchResultOnly;
         }
         private void LoadXml([NotNull] XElement seriesXml)
         {
