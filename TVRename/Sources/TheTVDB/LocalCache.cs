@@ -398,7 +398,7 @@ namespace TVRename.TheTVDB
 
             Parallel.ForEach(updatesResponses, o =>
             {
-                Thread.CurrentThread.Name ??= $"Recent Updates"; // Can only set it once
+                Thread.CurrentThread.Name ??= "Recent Updates"; // Can only set it once
                 ProcessUpdate(o, cts);
             });
 
@@ -1172,10 +1172,22 @@ namespace TVRename.TheTVDB
             }
             else
             {
-                (JObject jsonResponse, JObject jsonDefaultLangResponse) =
-                    DownloadMovieWithTranslationsJson(code, locale);
+                JObject jsonResponse = DownloadMovieJson(code, locale);
 
-                si = GenerateMovieInfo(jsonResponse, jsonDefaultLangResponse, locale);
+                if (jsonResponse is null)
+                {
+                    LOGGER.Error($"Error obtaining movie information - no response available {code}");
+                    SayNothing();
+                    throw new SourceConnectivityException();
+                }
+
+                JObject seriesData = (JObject)jsonResponse["data"];
+                if (seriesData is null)
+                {
+                    throw new SourceConsistencyException($"Data element not found in {jsonResponse}", TVDoc.ProviderType.TheTVDB);
+                }
+
+                si =  GenerateCachedMovieInfo(seriesData, locale);
             }
 
             if (si is null)
@@ -1186,27 +1198,6 @@ namespace TVRename.TheTVDB
             }
 
             return si;
-        }
-
-        private (JObject, JObject) DownloadMovieWithTranslationsJson(ISeriesSpecifier code, Locale locale)
-        {
-            JObject jsonDefaultLangResponse = new JObject();
-
-            JObject jsonResponse = DownloadMovieJson(code, locale);
-
-            if (locale.IsDifferentLanguageToDefaultFor(TVDoc.ProviderType.TheTVDB))
-            {
-                jsonDefaultLangResponse = DownloadMovieJson(code, new Locale(TVSettings.Instance.PreferredTVDBLanguage));
-            }
-
-            if (jsonResponse is null)
-            {
-                LOGGER.Error($"Error obtaining movie information - no response available {code}");
-                SayNothing();
-                throw new SourceConnectivityException();
-            }
-
-            return (jsonResponse, jsonDefaultLangResponse);
         }
 
         private JObject DownloadMovieJson(ISeriesSpecifier code, Locale locale)
@@ -1243,37 +1234,6 @@ namespace TVRename.TheTVDB
                 LastErrorMessage = ex.LoggableDetails();
                 throw new SourceConnectivityException();
             }
-        }
-
-        private CachedMovieInfo GenerateMovieInfo(JObject jsonResponse, JObject jsonDefaultLangResponse, Locale locale)
-        {
-            if (jsonResponse is null)
-            {
-                throw new ArgumentNullException(nameof(jsonResponse));
-            }
-
-            JObject seriesData = (JObject)jsonResponse["data"];
-            if (seriesData is null)
-            {
-                throw new SourceConsistencyException($"Data element not found in {jsonResponse}",
-                    TVDoc.ProviderType.TheTVDB);
-            }
-
-            CachedMovieInfo si;
-            if (locale.IsDifferentLanguageToDefaultFor(TVDoc.ProviderType.TheTVDB))
-            {
-                JObject seriesDataDefaultLang =
-                    (JObject)jsonDefaultLangResponse["data"] ?? throw new InvalidOperationException();
-
-                si = GenerateCachedMovieInfo(seriesData, seriesDataDefaultLang,
-                    new Locale(TVSettings.Instance.PreferredTVDBLanguage));
-            }
-            else
-            {
-                si = GenerateCachedMovieInfo(seriesData, locale);
-            }
-
-            return si;
         }
 
         private CachedMovieInfo GenerateCachedMovieInfo(JObject r, Locale locale)
@@ -1551,13 +1511,6 @@ namespace TVRename.TheTVDB
             return json["translations"]
                 ?.FirstOrDefault(x => x["language_code"].ToString() == preferredLanguage.ThreeAbbreviation)?[field]
                 ?.ToString();
-        }
-
-        private CachedMovieInfo GenerateCachedMovieInfo(JObject r, JObject seriesDataDefaultLang, Locale locale)
-        {
-            CachedMovieInfo si = GenerateCachedMovieInfo(r, locale);
-            //todo see if there is anything useful in the other json
-            return si;
         }
 
         private (CachedMovieInfo, Language?) GenerateMovieInfoV4(JObject r, Locale locale)
@@ -3101,8 +3054,6 @@ namespace TVRename.TheTVDB
                 return null;
             }
 
-            bool forceReload = DoWeForceReloadFor(tvdbId.TvdbId); //TODO - Redefine this to make sure it works
-
             Say($"Movie with id {tvdbId} from TheTVDB");
 
             CachedMovieInfo? si;
@@ -3116,8 +3067,6 @@ namespace TVRename.TheTVDB
                 return null;
             }
             this.AddMovieToCache(si);
-
-            HaveReloaded(tvdbId.TvdbId);
 
             lock (MOVIE_LOCK)
             {

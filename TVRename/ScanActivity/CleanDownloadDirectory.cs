@@ -205,15 +205,7 @@ namespace TVRename
                         continue;
                     }
 
-                    List<ShowConfiguration> matchingShows = showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
-                    List<ShowConfiguration> matchingShowsNoDupes = FinderHelper.RemoveShortShows(matchingShows);
-                    List<MovieConfiguration> matchingMovies = movieList.Where(mi => mi.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
-                    List<MovieConfiguration> matchingNoDupesMovies = FinderHelper.RemoveShortShows(matchingMovies);
-
-                    if (matchingShowsNoDupes.Any() || matchingNoDupesMovies.Any())
-                    {
-                        ReviewFileInDownloadDirectory(Settings.Unattended, fi, matchingShowsNoDupes, matchingNoDupesMovies, owner);
-                    }
+                    ReviewFileInDownloadDirectory(Settings.Unattended, fi, owner);
                 }
             }
             catch (UnauthorizedAccessException ex)
@@ -230,8 +222,13 @@ namespace TVRename
             }
         }
 
-        private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi, [NotNull] List<ShowConfiguration> matchingShows, [NotNull] List<MovieConfiguration> matchingMovies, IDialogParent owner)
+        private void ReviewFileInDownloadDirectory(bool unattended, FileInfo fi,  IDialogParent owner)
         {
+            List<ShowConfiguration> matchingShowsAll = showList.Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+            List<ShowConfiguration> matchingShows = FinderHelper.RemoveShortShows(matchingShowsAll);
+            List<MovieConfiguration> matchingMoviesAll = movieList.Where(mi => mi.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
+            List<MovieConfiguration> matchingMovies = FinderHelper.RemoveShortShows(matchingMoviesAll);
+
             if (!matchingMovies.Any() && !matchingShows.Any())
             {
                 // Some sort of random file - ignore
@@ -242,75 +239,18 @@ namespace TVRename
             bool movieCheck = TVSettings.Instance.RemoveDownloadDirectoriesFilesMatchMovies && matchingMovies.Any();
             bool fileCanBeDeleted = showCheck || movieCheck;
 
-            ProcessedEpisode firstMatchingPep = null;
+            ProcessedEpisode? firstMatchingPep = null;
 
             foreach (ShowConfiguration si in matchingShows)
             {
-                FinderHelper.FindSeasEp(fi, out int seasF, out int epF, out int _, si, out TVSettings.FilenameProcessorRE re);
-
-                if (!si.SeasonEpisodes.ContainsKey(seasF))
+                (bool? x,ProcessedEpisode? matchingEpisode) = CanFileBeDeletedForShow(unattended, fi, owner, si, matchingShows);
+                if (x.HasValue && x.Value == false)
                 {
-                    if (seasF == -1)
-                    {
-                        LOGGER.Info(
-                            $"Can't find the right season for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}' for show {si.ShowName}:{si.Code}");
-                    }
-                    else
-                    {
-                        LOGGER.Warn(
-                            $"Can't find the right season for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}' for show {si.ShowName}:{si.Code}");
-                    }
-
                     fileCanBeDeleted = false;
-                    continue;
                 }
-
-                ProcessedEpisode? pep = si.SeasonEpisodes[seasF].FirstOrDefault(ep => ep.AppropriateEpNum == epF);
-
-                if (pep == null)
+                else if (matchingEpisode != null)
                 {
-                    if (seasF == -1)
-                    {
-                        LOGGER.Info(
-                            $"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}' for show {si.ShowName}:{si.Code}");
-                    }
-                    else
-                    {
-                        LOGGER.Warn(
-                            $"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}' for show {si.ShowName}:{si.Code}");
-                    }
-
-                    fileCanBeDeleted = false;
-                    continue;
-                }
-
-                firstMatchingPep = pep;
-                List<FileInfo> encumbants = dfc.FindEpOnDisk(pep, false);
-
-                if (encumbants.Count == 0)
-                {
-                    //File is needed as there are no files for that cachedSeries/episode
-                    fileCanBeDeleted = false;
-
-                    CopyFutureDatedFile(fi, pep, MDoc);
-                }
-                else
-                {
-                    foreach (FileInfo existingFile in encumbants)
-                    {
-                        if (existingFile.FullName.Equals(fi.FullName, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            //the user has put the search folder and the download folder in the same place - DO NOT DELETE
-                            fileCanBeDeleted = false;
-                            continue;
-                        }
-
-                        bool? deleteFile = ReviewFile(unattended, fi, matchingShows, existingFile, pep, owner);
-                        if (deleteFile.HasValue && deleteFile.Value == false)
-                        {
-                            fileCanBeDeleted = false;
-                        }
-                    }
+                    firstMatchingPep = matchingEpisode;
                 }
             }
 
@@ -332,51 +272,135 @@ namespace TVRename
 
                 if (TVSettings.Instance.ReplaceMoviesWithBetterQuality)
                 {
-                    foreach (var testMovie in matchingMovies)
+                    bool? x = ReviewFileAgainstExistingMovies(unattended, fi, owner, matchingMovies);
+                    if (x.HasValue && x.Value == false)
                     {
-                        List<FileInfo> encumbants = dfc.FindMovieOnDisk(testMovie).ToList();
-
-                        foreach (FileInfo existingFile in encumbants)
-                        {
-                            if (existingFile.FullName.Equals(fi.FullName, StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                //the user has put the search folder and the download folder in the same place - DO NOT DELETE
-                                fileCanBeDeleted = false;
-                                continue;
-                            }
-
-                            bool? deleteFile = ReviewFile(unattended, fi, matchingMovies, existingFile, testMovie, owner);
-                            if (deleteFile.HasValue && deleteFile.Value == false)
-                            {
-                                fileCanBeDeleted = false;
-                            }
-                        }
+                        fileCanBeDeleted = false;
                     }
                 }
             }
 
             if (fileCanBeDeleted)
             {
-                if (matchingMovies.Any())
-                {
-                    LOGGER.Info(
-                        $"Removing {fi.FullName} as it matches {matchingMovies.Select(s => s.ShowName).ToCsv()} and no files are needed for those movies");
-                    returnActions.Add(new ActionDeleteFile(fi, matchingMovies.LongestShowName(), TVSettings.Instance.Tidyup));
-                }
-                if (matchingShows.Any())
-                {
-                    LOGGER.Info(
-                        $"Removing {fi.FullName} as it matches {matchingShows.Select(s => s.ShowName).ToCsv()} and no episodes are needed");
-
-                    if (!matchingShows.Any())
-                    {
-                        returnActions.Add(new ActionDeleteFile(fi, firstMatchingPep, TVSettings.Instance.Tidyup));
-                    }
-                }
+                RemoveFileAndReport(fi, matchingMovies, matchingShows, firstMatchingPep);
             }
             else
             {
                 filesThatMayBeNeeded.Add(fi);
+            }
+        }
+
+        private (bool?, ProcessedEpisode?) CanFileBeDeletedForShow(bool unattended, FileInfo fi, IDialogParent owner, ShowConfiguration si, 
+            List<ShowConfiguration> matchingShows)
+        {
+            FinderHelper.FindSeasEp(fi, out int seasF, out int epF, out int _, si, out TVSettings.FilenameProcessorRE re);
+
+            if (!si.SeasonEpisodes.ContainsKey(seasF))
+            {
+                LogError(fi, seasF, epF, re, si, "season");
+                return (false,null);
+            }
+
+            ProcessedEpisode? firstMatchingEpisode = si.SeasonEpisodes[seasF].FirstOrDefault(ep => ep.AppropriateEpNum == epF);
+
+            if (firstMatchingEpisode == null)
+            {
+                LogError(fi, seasF, epF, re, si, "episode");
+                return (false,null);
+            }
+
+            List<FileInfo> encumbants = dfc.FindEpOnDisk(firstMatchingEpisode, false);
+
+            if (encumbants.Count == 0)
+            {
+                //File is needed as there are no files for that cachedSeries/episode
+                CopyFutureDatedFile(fi, firstMatchingEpisode, MDoc);
+                return (false,firstMatchingEpisode);
+            }
+            else
+            {
+                bool? fileCanBeDeleted = null;
+                foreach (FileInfo existingFile in encumbants)
+                {
+                    if (existingFile.FullName.Equals(fi.FullName, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        //the user has put the search folder and the download folder in the same place - DO NOT DELETE
+                        fileCanBeDeleted = false;
+                        continue;
+                    }
+
+                    bool? deleteFile = ReviewFile(unattended, fi, matchingShows, existingFile, firstMatchingEpisode, owner);
+                    if (deleteFile.HasValue && deleteFile.Value == false)
+                    {
+                        fileCanBeDeleted = false;
+                    }
+                }
+                return (fileCanBeDeleted,firstMatchingEpisode);
+            }
+        }
+
+        private bool? ReviewFileAgainstExistingMovies(bool unattended, FileInfo fi, IDialogParent owner, List<MovieConfiguration> matchingMovies)
+        {
+            bool? fileCanBeDeleted = null;
+
+            foreach (var testMovie in matchingMovies)
+            {
+                List<FileInfo> encumbants = dfc.FindMovieOnDisk(testMovie).ToList();
+
+                foreach (FileInfo existingFile in encumbants)
+                {
+                    if (existingFile.FullName.Equals(fi.FullName, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        //the user has put the search folder and the download folder in the same place - DO NOT DELETE
+                        fileCanBeDeleted = false;
+                        continue;
+                    }
+
+                    bool? deleteFile = ReviewFile(unattended, fi, matchingMovies, existingFile, testMovie, owner);
+                    if (deleteFile.HasValue && deleteFile.Value == false)
+                    {
+                        fileCanBeDeleted = false;
+                    }
+                }
+            }
+
+            return fileCanBeDeleted;
+        }
+
+        private void RemoveFileAndReport(FileInfo fi, List<MovieConfiguration> matchingMovies, List<ShowConfiguration> matchingShows,
+            ProcessedEpisode? firstMatchingPep)
+        {
+            if (matchingMovies.Any())
+            {
+                LOGGER.Info(
+                    $"Removing {fi.FullName} as it matches {matchingMovies.Select(s => s.ShowName).ToCsv()} and no files are needed for those movies");
+
+                returnActions.Add(new ActionDeleteFile(fi, matchingMovies.LongestShowName(), TVSettings.Instance.Tidyup));
+            }
+
+            if (matchingShows.Any())
+            {
+                LOGGER.Info(
+                    $"Removing {fi.FullName} as it matches {matchingShows.Select(s => s.ShowName).ToCsv()} and no episodes are needed");
+
+                if (!matchingShows.Any())
+                {
+                    returnActions.Add(new ActionDeleteFile(fi, firstMatchingPep, TVSettings.Instance.Tidyup));
+                }
+            }
+        }
+
+        private static void LogError(FileInfo fi, int seasF, int epF, TVSettings.FilenameProcessorRE? re, ShowConfiguration si, string typeMissing)
+        {
+            if (seasF == -1)
+            {
+                LOGGER.Info(
+                    $"Can't find the right {typeMissing} for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}' for show {si.ShowName}:{si.Code}");
+            }
+            else
+            {
+                LOGGER.Warn(
+                    $"Can't find the right {typeMissing} for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}' for show {si.ShowName}:{si.Code}");
             }
         }
 
