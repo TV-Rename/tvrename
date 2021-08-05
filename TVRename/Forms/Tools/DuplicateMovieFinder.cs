@@ -275,6 +275,9 @@ namespace TVRename.Forms
             catch (System.IO.DirectoryNotFoundException)
             { //ignored}
             }
+            catch (UnauthorizedAccessException)
+            { //ignored}
+            }
             catch (System.IO.IOException)
             { //ignored}
             }

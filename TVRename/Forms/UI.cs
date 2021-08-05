@@ -1169,10 +1169,10 @@ namespace TVRename
 
             MyShowTree.EndUpdate();
         }
-
-        private void FillMyMovies()
+        private void FillMyMovies() => FillMyMovies(null);
+        private void FillMyMovies(MovieConfiguration? selectedMovie)
         {
-            MovieConfiguration currentMovie = TreeNodeToMovieItem(movieTree.SelectedNode);
+            selectedMovie ??= TreeNodeToMovieItem(movieTree.SelectedNode);
 
             movieTree.BeginUpdate();
 
@@ -1189,9 +1189,9 @@ namespace TVRename
                 }
             }
 
-            if (currentMovie != null)
+            if (selectedMovie != null)
             {
-                SelectMovie(currentMovie);
+                SelectMovie(selectedMovie);
             }
 
             movieTree.EndUpdate();
@@ -1204,8 +1204,6 @@ namespace TVRename
 
         private void ShowQuickStartGuide()
         {
-            tabControl1.SelectTab(tbMyShows);
-
             try
             {
                 SetHtmlEmbed(chrInformation, QuickStartGuide());
@@ -2789,8 +2787,6 @@ namespace TVRename
                 movieTree.SelectedNode = n;
                 return;
             }
-
-            //FillEpGuideHtml(null);
         }
 
         private void AddMovie_Click(object sender, EventArgs e)
@@ -2806,11 +2802,10 @@ namespace TVRename
             if (dr == DialogResult.OK)
             {
                 mDoc.Add(mov.AsList());
-                FillMyMovies();
-                SelectMovie(mov);
-
+                FillMyMovies(mov);
+                
                 mDoc.MoviesAddedOrEdited(true, false, WindowState == FormWindowState.Minimized, this, mov);
-                FillMyMovies();
+                FillMyMovies(mov);
 
                 Logger.Info($"Added new movie called {mov.ShowName}");
             }
@@ -2926,55 +2921,53 @@ namespace TVRename
             {
                 return;
             }
+            try { 
+                IEnumerable<string> videofilesThatWouldBeDeleted = Directory
+                        .GetFiles(folderName, "*", SearchOption.AllDirectories)
+                        .Where(f => f.IsMovieFile())
+                        .Select(s=>s.TrimStartString(folderName));
 
-            IEnumerable<string> videofilesThatWouldBeDeleted = Directory
-                    .GetFiles(folderName, "*", SearchOption.AllDirectories)
-                    .Where(f => f.IsMovieFile())
-                    .Select(s=>s.TrimStartString(folderName));
+                List<ShowConfiguration> showsthatmatchanyfiles = mDoc.TvLibrary.Shows
+                    .Where(show => show != si)
+                    .Where(show => videofilesThatWouldBeDeleted.Any(show.NameMatch))
+                    .ToList();
 
-            List<ShowConfiguration> showsthatmatchanyfiles = mDoc.TvLibrary.Shows
-                .Where(show => show != si)
-                .Where(show => videofilesThatWouldBeDeleted.Any(show.NameMatch))
-                .ToList();
-
-            if (showsthatmatchanyfiles.Any())
-            {
-                DialogResult res1 = MessageBox.Show(
-                    $"Do you want to remove {folderName}?  It is matches other shows {showsthatmatchanyfiles.Select(m => m.Name).ToCsv()}",
-                    "Confirmation",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Hand);
-
-                if (res1 != DialogResult.Yes)
+                if (showsthatmatchanyfiles.Any())
                 {
-                    Logger.Warn($"Did not remove {folderName} as it is matches other shows {showsthatmatchanyfiles.Select(m => m.Name).ToCsv()}");
-                    return;
+                    DialogResult res1 = MessageBox.Show(
+                        $"Do you want to remove {folderName}?  It is matches other shows {showsthatmatchanyfiles.Select(m => m.Name).ToCsv()}",
+                        "Confirmation",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Hand);
+
+                    if (res1 != DialogResult.Yes)
+                    {
+                        Logger.Warn($"Did not remove {folderName} as it is matches other shows {showsthatmatchanyfiles.Select(m => m.Name).ToCsv()}");
+                        return;
+                    }
                 }
-            }
 
-            List<MovieConfiguration> moviesthatmatchanyfiles = mDoc.FilmLibrary.Movies
-                .Where(show => show != si)
-                .Where(show => videofilesThatWouldBeDeleted.Any(show.NameMatch))
-                .ToList();
+                List<MovieConfiguration> moviesthatmatchanyfiles = mDoc.FilmLibrary.Movies
+                    .Where(show => show != si)
+                    .Where(show => videofilesThatWouldBeDeleted.Any(show.NameMatch))
+                    .ToList();
 
-            if (moviesthatmatchanyfiles.Any())
-            {
-                DialogResult res2 = MessageBox.Show(
-                    $"Do you want to remove {folderName}?  It is matches other movies {moviesthatmatchanyfiles.Select(m => m.Name).ToCsv()}",
-                    "Confirmation",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Hand);
-
-                if (res2 != DialogResult.Yes)
+                if (moviesthatmatchanyfiles.Any())
                 {
-                    Logger.Warn($"Did not remove {folderName} as it is matches other movies {moviesthatmatchanyfiles.Select(m => m.Name).ToCsv()}");
-                    return;
-                }
-            }
+                    DialogResult res2 = MessageBox.Show(
+                        $"Do you want to remove {folderName}?  It is matches other movies {moviesthatmatchanyfiles.Select(m => m.Name).ToCsv()}",
+                        "Confirmation",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Hand);
 
-            Logger.Info($"Recycling {folderName} as part of the removal of {si.Name}");
-            try
-            {
+                    if (res2 != DialogResult.Yes)
+                    {
+                        Logger.Warn($"Did not remove {folderName} as it is matches other movies {moviesthatmatchanyfiles.Select(m => m.Name).ToCsv()}");
+                        return;
+                    }
+                }
+
+                Logger.Info($"Recycling {folderName} as part of the removal of {si.Name}");
                 Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName,
                     Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
                     Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
@@ -2986,6 +2979,10 @@ namespace TVRename
             catch (DirectoryNotFoundException e)
             {
                 Logger.Warn($"Failed to remove {folderName} as it is not found: {e.Message}");
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                Logger.Warn($"Failed to remove {folderName} we could not access it (or a subfolder): {e.Message}");
             }
             catch (Exception e)
             {
@@ -3004,7 +3001,7 @@ namespace TVRename
                 return;
             }
 
-            if (TVSettings.Instance.DeleteMovieFromDisk)
+            if (TVSettings.Instance.DeleteMovieFromDisk && si.Format!= MovieConfiguration.MovieFolderFormat.multiPerDirectory)
             {
                 foreach (string directory in si.Locations)
                 {
@@ -3115,8 +3112,9 @@ namespace TVRename
 
         internal void ForceMovieRefresh(IEnumerable<MovieConfiguration>? sis, bool unattended)
         {
-            mDoc.ForceRefreshMovies(sis, unattended, WindowState == FormWindowState.Minimized, this);
-            FillMyMovies();
+            IEnumerable<MovieConfiguration>? movieConfigurations = sis?.ToList();
+            mDoc.ForceRefreshMovies(movieConfigurations, unattended, WindowState == FormWindowState.Minimized, this);
+            FillMyMovies(movieConfigurations?.FirstOrDefault());
             FillMovieGuideHtml();
             RefreshWTW(false, unattended);
         }
@@ -4941,8 +4939,8 @@ namespace TVRename
 
         private void bwMovieHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
         {
-            Thread.CurrentThread.Name ??= "Movie HTML Creation Thread"; // Can only set it once
             MovieConfiguration si = e.Argument as MovieConfiguration;
+            Thread.CurrentThread.Name ??= $"Movie '{si?.Name}' HTML Creation Thread"; // Can only set it once
 
             string html = string.Empty;
             try
