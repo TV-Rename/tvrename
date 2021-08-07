@@ -78,6 +78,7 @@ namespace TVRename
             chkManualFolders.Checked = selectedShow.UseManualLocations;
             chkAutoFolders.Checked = selectedShow.UseAutomaticFolders;
             PopulateRootDirectories(selectedShow.AutomaticFolderRoot);
+            PopulateFolderTypes(selectedShow.Format);
             txtFolderNameFormat.Text = selectedShow.CustomFolderNameFormat;
             txtCustomMovieFileNamingFormat.Text = selectedShow.CustomNamingFormat;
             cbUseCustomNamingFormat.Checked = selectedShow.UseCustomNamingFormat;
@@ -94,6 +95,24 @@ namespace TVRename
             EnableDisableCustomNaming();
             UpdateIgnore();
             SetMovieFolderType(si);
+        }
+
+        private void PopulateFolderTypes(MovieConfiguration.MovieFolderFormat selectedShowFormat)
+        {
+            cbFolderType.SuspendLayout();
+            cbFolderType.Items.Clear();
+            cbFolderType.Items.AddRange(Enum.GetValues(typeof(MovieConfiguration.MovieFolderFormat))
+                .OfType<MovieConfiguration.MovieFolderFormat>()
+                .Select(x => x.PrettyPrint())
+                .ToArray<object>());
+            cbFolderType.ResumeLayout();
+            cbFolderType.Text = selectedShowFormat.PrettyPrint();
+        }
+        private MovieConfiguration.MovieFolderFormat? GetFolderFormat()
+        {
+            return Enum.GetValues(typeof(MovieConfiguration.MovieFolderFormat))
+                .Cast<MovieConfiguration.MovieFolderFormat>()
+                .FirstOrDefault(format => format.PrettyPrint().Equals(cbFolderType.Text));
         }
 
         private void SetMovieFolderType([NotNull] MovieConfiguration si)
@@ -387,6 +406,7 @@ namespace TVRename
             selectedShow.CustomFolderNameFormat = txtFolderNameFormat.Text;
             selectedShow.CustomNamingFormat = txtCustomMovieFileNamingFormat.Text;
             selectedShow.UseCustomNamingFormat = cbUseCustomNamingFormat.Checked;
+            selectedShow.Format = GetFolderFormat() ?? MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile;
         }
 
         private IEnumerable<string> GetFolders()

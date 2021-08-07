@@ -110,6 +110,8 @@ namespace TVRename
             this.label19 = new System.Windows.Forms.Label();
             this.cbUseCustomNamingFormat = new System.Windows.Forms.CheckBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.cbFolderType = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbAdvanced)).BeginInit();
             this.tabPage3.SuspendLayout();
@@ -346,6 +348,8 @@ namespace TVRename
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.label2);
+            this.tabPage5.Controls.Add(this.cbFolderType);
             this.tabPage5.Controls.Add(this.txtIgnoreList);
             this.tabPage5.Controls.Add(this.btnIgnoreList);
             this.tabPage5.Controls.Add(this.groupBox1);
@@ -398,7 +402,7 @@ namespace TVRename
             this.groupBox1.Controls.Add(this.bnBrowseFolder);
             this.groupBox1.Controls.Add(this.txtFolder);
             this.groupBox1.Controls.Add(this.lvManualFolders);
-            this.groupBox1.Location = new System.Drawing.Point(3, 189);
+            this.groupBox1.Location = new System.Drawing.Point(6, 224);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(437, 173);
             this.groupBox1.TabIndex = 51;
@@ -409,7 +413,7 @@ namespace TVRename
             this.chkManualFolders.AutoSize = true;
             this.chkManualFolders.Checked = true;
             this.chkManualFolders.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkManualFolders.Location = new System.Drawing.Point(11, -1);
+            this.chkManualFolders.Location = new System.Drawing.Point(9, 0);
             this.chkManualFolders.Name = "chkManualFolders";
             this.chkManualFolders.Size = new System.Drawing.Size(149, 17);
             this.chkManualFolders.TabIndex = 54;
@@ -517,7 +521,7 @@ namespace TVRename
             this.chkAutoFolders.AutoSize = true;
             this.chkAutoFolders.Checked = true;
             this.chkAutoFolders.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAutoFolders.Location = new System.Drawing.Point(14, 50);
+            this.chkAutoFolders.Location = new System.Drawing.Point(14, 83);
             this.chkAutoFolders.Name = "chkAutoFolders";
             this.chkAutoFolders.Size = new System.Drawing.Size(110, 17);
             this.chkAutoFolders.TabIndex = 10;
@@ -537,7 +541,7 @@ namespace TVRename
             this.gbAutoFolders.Controls.Add(this.rdoFolderCustom);
             this.gbAutoFolders.Controls.Add(this.rdoFolderLibraryDefault);
             this.gbAutoFolders.Controls.Add(this.label3);
-            this.gbAutoFolders.Location = new System.Drawing.Point(3, 49);
+            this.gbAutoFolders.Location = new System.Drawing.Point(6, 84);
             this.gbAutoFolders.Name = "gbAutoFolders";
             this.gbAutoFolders.Size = new System.Drawing.Size(437, 134);
             this.gbAutoFolders.TabIndex = 11;
@@ -960,6 +964,28 @@ namespace TVRename
             this.pictureBox1.TabIndex = 53;
             this.pictureBox1.TabStop = false;
             // 
+            // cbFolderType
+            // 
+            this.cbFolderType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbFolderType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbFolderType.FormattingEnabled = true;
+            this.cbFolderType.Location = new System.Drawing.Point(111, 52);
+            this.cbFolderType.Name = "cbFolderType";
+            this.cbFolderType.Size = new System.Drawing.Size(331, 21);
+            this.cbFolderType.Sorted = true;
+            this.cbFolderType.TabIndex = 54;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 55);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(66, 13);
+            this.label2.TabIndex = 31;
+            this.label2.Text = "Folder Type:";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // AddEditMovie
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1074,5 +1100,7 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbUseCustomNamingFormat;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.ComboBox cbDirectory;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ComboBox cbFolderType;
     }
 }

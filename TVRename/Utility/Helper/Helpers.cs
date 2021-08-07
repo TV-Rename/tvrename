@@ -61,6 +61,18 @@ namespace TVRename
             };
         }
 
+        public static string PrettyPrint(this MovieConfiguration.MovieFolderFormat format)
+        {
+            return format switch
+            {
+                MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile => "Single Movie per Folder",
+                MovieConfiguration.MovieFolderFormat.multiPerDirectory => "Many Movies per Folder",
+                MovieConfiguration.MovieFolderFormat.bluray => "Bluray format",
+                MovieConfiguration.MovieFolderFormat.dvd => "DVD format",
+                _ => throw new ArgumentOutOfRangeException(nameof(format), format, null)
+            };
+        }
+
         public static string PrettyPrint(this MediaConfiguration.MediaType st)
         {
             return st switch

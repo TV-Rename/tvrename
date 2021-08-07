@@ -81,66 +81,44 @@ namespace TVRename
                 return;
             }
 
-            if (renCheck && bases.Count == 1 && !bases[0].Equals(newBase, StringComparison.CurrentCultureIgnoreCase))
+            if (si.Format==MovieConfiguration.MovieFolderFormat.multiPerDirectory)
             {
-                foreach (FileInfo fi in files)
+                //we have 3 options - matching file / close file that needs rename / else it's missing
+                if (bases.Any(x => x.Equals(newBase)))
                 {
-                    if (settings.Token.IsCancellationRequested)
+                    Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, movieFiles.First(m => m.Name.StartsWith(newBase, StringComparison.Ordinal))));
+
+                    return;
+                }
+
+                if (renCheck)
+                {
+                    List<string> matchingBases = bases.Where(x => IsClose(x, si)).ToList();
+                    if (matchingBases.Any())
                     {
+                        foreach (string baseString in matchingBases)
+                        {
+                            //rename all files with this base
+                            PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
+                        }
+
                         return;
                     }
-                    string baseString = bases[0];
+                }
 
-                    if (fi.Name.StartsWith(baseString, StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        string newName = baseString.HasValue() ? fi.Name.Replace(baseString, newBase) : newBase + fi.Extension;
-                        FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                if (missCheck)
+                {
+                    FileIsMissing(si, folder);
+                }
+                return;
+            }
 
-                        if (newFile.IsMovieFile())
-                        {
-                            //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
-                            //it has all the required files for that show
-                            Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, newFile));
-                        }
+            if (renCheck && bases.Count == 1 && !bases[0].Equals(newBase, StringComparison.CurrentCultureIgnoreCase))
+            {
+                string baseString = bases[0];
 
-                        if (newFile.FullName != fi.FullName)
-                        {
-                            //Check that the file does not already exist
-                            //if (FileHelper.FileExistsCaseSensitive(newFile.FullName))
-                            if (FileHelper.FileExistsCaseSensitive(files, newFile))
-                            {
-                                LOGGER.Warn(
-                                    $"Identified that {fi.FullName} should be renamed to {newName}, but it already exists.");
-                            }
-                            else
-                            {
-                                LOGGER.Info($"Identified that {fi.FullName} should be renamed to {newName}.");
-                                Doc.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
-                                    newFile, si, false, null, Doc));
-
-                                //The following section informs the DownloadIdentifers that we already plan to
-                                //copy a file in the appropriate place and they do not need to worry about downloading
-                                //one for that purpose
-                                downloadIdentifiers.NotifyComplete(newFile);
-                            }
-                        }
-                        else
-                        {
-                            if (fi.IsMovieFile())
-                            {
-                                //File is correct name
-                                LOGGER.Debug($"Identified that {fi.FullName} is in the right place. Marking it as 'seen'.");
-                                //Record this movie as seen
-
-                                TVSettings.Instance.PreviouslySeenMovies.EnsureAdded(si);
-                                if (TVSettings.Instance.IgnorePreviouslySeenMovies)
-                                {
-                                    Doc.SetDirty();
-                                }
-                            }
-                        }
-                    }
-                } // foreach file in folder
+                PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
             }
             else
             {
@@ -157,6 +135,74 @@ namespace TVRename
                     }
                 }
             }
+        }
+
+        private void PlanToRenameFilesInFolder(MovieConfiguration si, TVDoc.ScanSettings settings, string folder, FileInfo[] files,
+            string baseString, string newBase)
+        {
+            foreach (FileInfo fi in files)
+            {
+                if (settings.Token.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                if (fi.Name.StartsWith(baseString, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    string newName = baseString.HasValue() ? fi.Name.Replace(baseString, newBase) : newBase + fi.Extension;
+                    FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
+
+                    if (newFile.IsMovieFile())
+                    {
+                        //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
+                        //it has all the required files for that show
+                        Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, newFile));
+                    }
+
+                    if (newFile.FullName != fi.FullName)
+                    {
+                        //Check that the file does not already exist
+                        //if (FileHelper.FileExistsCaseSensitive(newFile.FullName))
+                        if (FileHelper.FileExistsCaseSensitive(files, newFile))
+                        {
+                            LOGGER.Warn(
+                                $"Identified that {fi.FullName} should be renamed to {newName}, but it already exists.");
+                        }
+                        else
+                        {
+                            LOGGER.Info($"Identified that {fi.FullName} should be renamed to {newName}.");
+                            Doc.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
+                                newFile, si, false, null, Doc));
+
+                            //The following section informs the DownloadIdentifers that we already plan to
+                            //copy a file in the appropriate place and they do not need to worry about downloading
+                            //one for that purpose
+                            downloadIdentifiers.NotifyComplete(newFile);
+                        }
+                    }
+                    else
+                    {
+                        if (fi.IsMovieFile())
+                        {
+                            //File is correct name
+                            LOGGER.Debug($"Identified that {fi.FullName} is in the right place. Marking it as 'seen'.");
+                            //Record this movie as seen
+
+                            TVSettings.Instance.PreviouslySeenMovies.EnsureAdded(si);
+                            if (TVSettings.Instance.IgnorePreviouslySeenMovies)
+                            {
+                                Doc.SetDirty();
+                            }
+                        }
+                    }
+                }
+            } // foreach file in folder
+        }
+
+        private bool IsClose(string baseFileName, MovieConfiguration config)
+        {
+            (string targetFolder, string targetFolderEarlier, string targetFolderLater) = config.NeighbouringFolderNames();
+            return baseFileName.Equals(targetFolderEarlier) || baseFileName.Equals(targetFolderLater) || baseFileName.Equals(targetFolder);
         }
 
         public static string GetBase(FileInfo fileInfo)

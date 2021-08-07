@@ -27,10 +27,9 @@ namespace TVRename
         public enum MovieFolderFormat
         {
             singleDirectorySingleFile,
-            singleDirectoryMultiFile,
             multiPerDirectory,
-            cd,
-            dvd
+            dvd,
+            bluray
         }
 
         public MovieConfiguration()
@@ -84,6 +83,7 @@ namespace TVRename
             DoRename = xmlSettings.ExtractBool("DoRename", true);
             DoMissingCheck = xmlSettings.ExtractBool("DoMissingCheck", true);
             ConfigurationProvider = GetConfigurationProviderType(xmlSettings.ExtractInt("ConfigurationProvider"));
+            Format = GetFormatEnum(xmlSettings.ExtractInt("Format"));
             LastName = xmlSettings.ExtractStringOrNull("LastName");
             ImdbCode = xmlSettings.ExtractStringOrNull("ImdbCode");
             UseManualLocations = xmlSettings.ExtractBool("UseManualLocations", false);
@@ -98,6 +98,11 @@ namespace TVRename
 
             SetupAliases(xmlSettings);
             SetupLocations(xmlSettings);
+        }
+
+        private static MovieFolderFormat GetFormatEnum(int? value)
+        {
+            return value is null ? TVSettings.Instance.DefMovieFolderFormat : (MovieFolderFormat)value;
         }
 
         public MovieConfiguration(PossibleNewMovie movie) : this()
@@ -164,6 +169,11 @@ namespace TVRename
                 return string.Empty;
             }
 
+            if (Format == MovieFolderFormat.multiPerDirectory)
+            {
+                return AutomaticFolderRoot.EnsureEndsWithSeparator();
+            }
+
             if (UseCustomFolderNameFormat)
             {
                 return AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.NameFor(this, CustomFolderNameFormat);
@@ -188,6 +198,11 @@ namespace TVRename
             if (string.IsNullOrEmpty(AutomaticFolderRoot))
             {
                 return string.Empty;
+            }
+
+            if (Format == MovieFolderFormat.multiPerDirectory)
+            {
+                return AutomaticFolderRoot.EnsureEndsWithSeparator();
             }
 
             if (UseCustomFolderNameFormat)
@@ -223,10 +238,24 @@ namespace TVRename
 
         public IEnumerable<string> Locations => AllFolderLocations(true, false).Values.SelectMany(x => x);
 
-        public string ProposedFilename =>
-            UseCustomNamingFormat
-                ? CustomMovieName.NameFor(this, CustomNamingFormat)
-                : CustomMovieName.NameFor(this, TVSettings.Instance.MovieFilenameFormat);
+        public string ProposedFilename
+        {//https://kodi.wiki/view/Naming_video_files/Movies
+            get
+            {
+                if (Format == MovieFolderFormat.dvd)
+                {
+                    return "VIDEO_TS.VOB";
+                }
+                if (Format == MovieFolderFormat.bluray)
+                {
+                    return "STREAM";
+                }
+
+                return UseCustomNamingFormat
+                    ? CustomMovieName.NameFor(this, CustomNamingFormat)
+                    : CustomMovieName.NameFor(this, TVSettings.Instance.MovieFilenameFormat);
+            }
+        }
 
         public void WriteXmlSettings([NotNull] XmlWriter writer)
         {
@@ -257,6 +286,7 @@ namespace TVRename
             writer.WriteElement("LastName", LastName);
             writer.WriteElement("DoMissingCheck", DoMissingCheck);
             writer.WriteElement("ConfigurationProvider", (int)ConfigurationProvider);
+            writer.WriteElement("Format", (int)Format);
             writer.WriteElement("ForceCheckNoAirdate", ForceCheckNoAirdate);
             writer.WriteElement("ForceCheckFuture", ForceCheckFuture);
 

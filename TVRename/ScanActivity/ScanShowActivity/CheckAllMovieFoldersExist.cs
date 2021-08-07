@@ -35,7 +35,23 @@ namespace TVRename
             foreach (string folderExists in folders)
             {
                 CreateFolder(movie, ignoredLocations, folderExists, settings.Owner);
+                if (movie.Format == MovieConfiguration.MovieFolderFormat.dvd)
+                {
+                    CreateFolder(movie, ignoredLocations, folderExists, "AUDIO_TS", settings.Owner);
+                    CreateFolder(movie, ignoredLocations, folderExists, "VIDEO_TS", settings.Owner);
+                }
+                if (movie.Format == MovieConfiguration.MovieFolderFormat.bluray)
+                {
+                    CreateFolder(movie, ignoredLocations, folderExists, "BDMV", settings.Owner);
+                    CreateFolder(movie, ignoredLocations, folderExists, "CERTIFICATE", settings.Owner);
+                }
             } // for each folder
+        }
+
+        private void CreateFolder(MovieConfiguration si, ICollection<string> ignoredLocations,
+            string proposedFolderName, string subFolder, IDialogParent owner)
+        {
+            CreateFolder(si,ignoredLocations,Path.Combine(proposedFolderName, subFolder),owner);
         }
 
         private void CreateFolder(MovieConfiguration si, ICollection<string> ignoredLocations, string proposedFolderName, IDialogParent owner)
