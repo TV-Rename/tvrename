@@ -11,6 +11,8 @@ namespace TVRename.TMDB
         [NotNull] internal readonly List<CachedMovieInfo> MoviesToUpdate;
         [NotNull] private readonly LocalCache lc;
 
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public TmdbAccuracyCheck(LocalCache localCache)
         {
             lc = localCache;
@@ -21,6 +23,7 @@ namespace TVRename.TMDB
 
         public void ServerAccuracyCheck([NotNull] CachedMovieInfo si)
         {
+            Logger.Info($"Accuracy Check for {si.Name} on TMDB");
             try
             {
                 CachedMovieInfo newSi = lc.DownloadMovieNow(si, false,false);
@@ -44,6 +47,7 @@ namespace TVRename.TMDB
 
         public void ServerAccuracyCheck([NotNull] CachedSeriesInfo si)
         {
+            Logger.Info($"Accuracy Check for {si.Name} on TMDB");
             try
             {
                 CachedSeriesInfo newSi = lc.DownloadSeriesNow(si, false,false);

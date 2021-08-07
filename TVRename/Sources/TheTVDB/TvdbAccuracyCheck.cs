@@ -13,6 +13,8 @@ namespace TVRename.TheTVDB
         [NotNull] internal readonly List<CachedMovieInfo> MoviesToUpdate;
         [NotNull] private readonly LocalCache lc;
 
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public TvdbAccuracyCheck(LocalCache localCache)
         {
             lc = localCache;
@@ -23,6 +25,7 @@ namespace TVRename.TheTVDB
 
         public void ServerAccuracyCheck([NotNull] CachedMovieInfo si)
         {
+            Logger.Info($"Checking Accuracy of {si.Name} on TVDB");
             try
             {
                 CachedMovieInfo newSi = lc.DownloadMovieNow(si,si.TargetLocale, false);
@@ -51,6 +54,7 @@ namespace TVRename.TheTVDB
         }
         public void ServerAccuracyCheck([NotNull] CachedSeriesInfo si)
         {
+            Logger.Info($"Checking Accuracy of {si.Name} on TVDB");
             if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
             {
                 ServerAccuracyCheckV4(si);
