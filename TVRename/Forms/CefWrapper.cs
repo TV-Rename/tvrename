@@ -27,6 +27,7 @@ namespace TVRename
                 {
                     lock (SyncRoot)
                     {
+                        // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
                         if (InternalInstance is null)
                         {
                             InternalInstance = new CefWrapper();

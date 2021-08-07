@@ -16,7 +16,7 @@ namespace TVRename
     {
         protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
-        public void Run()
+        private void Run()
         {
             if (!Active())
             {
@@ -72,9 +72,7 @@ namespace TVRename
         }
 
         public abstract bool Active();
-
         protected abstract string Location();
-
         protected abstract string Name();
         protected abstract void Do();
 
@@ -84,17 +82,6 @@ namespace TVRename
             {
                 TaskHelper.Run(Run, $"{Name()} Thread");
             }
-
-/*            Thread t = new Thread(() =>
-                {
-                    Thread.CurrentThread.IsBackground = true;
-                    if (ue.Active())
-                    {
-                        ue.Run();
-                    }
-                })
-                { Name = $"{ue.Name()} Creator" }; t.Start();
-*/
         }
     }
 }
