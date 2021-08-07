@@ -678,23 +678,6 @@ namespace TVRename
         {
             new MoviesTxt(FilmLibrary.GetSortedMovies()).RunAsThread();
             new MoviesHtml(FilmLibrary.GetSortedMovies()).RunAsThread();
-
-            /*
-            Thread t = new Thread(() =>
-            {
-                Thread.CurrentThread.IsBackground = true;
-                new MoviesTxt(FilmLibrary.GetSortedMovies()).Run();
-            }) {Name = "Movies TXT Creator"};
-
-            t.Start();
-
-            Thread s = new Thread(() =>
-            {
-                Thread.CurrentThread.IsBackground = true;
-                new MoviesHtml(FilmLibrary.GetSortedMovies()).Run();
-            })  { Name = "Movies HTML Creator" };
-            s.Start();
-            */
         }
 
         public void ExportShowInfo()
@@ -702,21 +685,6 @@ namespace TVRename
             List<ShowConfiguration> sortedShowItems = TvLibrary.GetSortedShowItems();
             new ShowsTXT(sortedShowItems).RunAsThread();
             new ShowsHtml(sortedShowItems).RunAsThread();
-
-            /*Thread t = new Thread(() =>
-            {
-                Thread.CurrentThread.IsBackground = true;
-                new ShowsTXT(sortedShowItems).Run();
-            })
-                { Name = "Shows TXT Creator" }; t.Start();
-
-            Thread s = new Thread(() =>
-            {
-                Thread.CurrentThread.IsBackground = true;
-                new ShowsHTML(sortedShowItems).Run();
-            })
-                { Name = "Shows HTML Creator" }; s.Start();
-            */
         }
 
         public void WriteUpcoming()
@@ -791,13 +759,12 @@ namespace TVRename
                 {
                     return;
                 }
+                RunExporters();
             }
             else
             {
                 UpdateDenormalisations();
             }
-
-            RunExporters();
         }
 
         internal void MoviesAddedOrEdited(bool download, bool unattended, bool hidden, UI? owner,
