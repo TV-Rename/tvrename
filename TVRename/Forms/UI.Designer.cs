@@ -50,10 +50,10 @@ namespace TVRename
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UI));
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -255,6 +255,7 @@ namespace TVRename
             this.bwSeasonSummaryHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.bwMovieHTMLGenerator = new System.ComponentModel.BackgroundWorker();
             this.bwScan = new System.ComponentModel.BackgroundWorker();
+            this.bwAction = new System.ComponentModel.BackgroundWorker();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyMovies.SuspendLayout();
@@ -1900,21 +1901,21 @@ namespace TVRename
             this.columnHeader1,
             this.columnHeader35});
             this.lvWhenToWatch.FullRowSelect = true;
-            listViewGroup1.Header = "Recently Aired";
-            listViewGroup1.Name = "justPassed";
-            listViewGroup2.Header = "Next 7 Days";
-            listViewGroup2.Name = "next7days";
-            listViewGroup2.Tag = "1";
-            listViewGroup3.Header = "Future Episodes";
-            listViewGroup3.Name = "futureEps";
-            listViewGroup4.Header = "Later";
-            listViewGroup4.Name = "later";
-            listViewGroup4.Tag = "2";
+            listViewGroup5.Header = "Recently Aired";
+            listViewGroup5.Name = "justPassed";
+            listViewGroup6.Header = "Next 7 Days";
+            listViewGroup6.Name = "next7days";
+            listViewGroup6.Tag = "1";
+            listViewGroup7.Header = "Future Episodes";
+            listViewGroup7.Name = "futureEps";
+            listViewGroup8.Header = "Later";
+            listViewGroup8.Name = "later";
+            listViewGroup8.Tag = "2";
             this.lvWhenToWatch.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2,
-            listViewGroup3,
-            listViewGroup4});
+            listViewGroup5,
+            listViewGroup6,
+            listViewGroup7,
+            listViewGroup8});
             this.lvWhenToWatch.HideSelection = false;
             this.lvWhenToWatch.Location = new System.Drawing.Point(0, 40);
             this.lvWhenToWatch.Name = "lvWhenToWatch";
@@ -2218,6 +2219,12 @@ namespace TVRename
             this.bwScan.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bwScan_ProgressChanged);
             this.bwScan.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwScan_RunWorkerCompleted);
             // 
+            // bwAction
+            // 
+            this.bwAction.WorkerSupportsCancellation = true;
+            this.bwAction.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bwAction_DoWork);
+            this.bwAction.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bwAction_RunWorkerCompleted);
+            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2491,5 +2498,6 @@ namespace TVRename
         private TabPage tabPage3;
         private CefSharp.WinForms.ChromiumWebBrowser chrTvTrailer;
         private ToolStripMenuItem browserTestToolStripMenuItem;
+        private System.ComponentModel.BackgroundWorker bwAction;
     }
 }

@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace TVRename
 {
@@ -33,6 +32,7 @@ namespace TVRename
         /// </summary>
         public void Pause()
         {
+            Logger.Info("Actions requested to be paused");
             actionPause = true;
         }
 
@@ -41,6 +41,7 @@ namespace TVRename
         /// </summary>
         public void Resume()
         {
+            Logger.Info("Actions requested to be resumed");
             actionPause = false;
         }
 
@@ -117,7 +118,7 @@ namespace TVRename
         /// </summary>
         /// <param name="theList">An ItemList to be processed.</param>
         /// <param name="showUi">Whether or not we should display a UI to inform the user about progress.</param>
-        public void DoActions(ItemList? theList, bool showUi, IDialogParent owner)
+        public void DoActions(ItemList? theList, CancellationToken token)
         {
             if (theList is null)
             {
@@ -130,59 +131,39 @@ namespace TVRename
 
             // Run tasks in parallel (as much as is sensible)
 
-            ActionQueue[] queues = ActionProcessorMakeQueues(theList);
             actionPause = false;
 
-            // If not /hide, show CopyMoveProgress dialog
-
-            CopyMoveProgress cmp = null;
-            if (showUi)
-            {
-                cmp = new CopyMoveProgress(this, queues);
-            }
+            ActionProcessorThreadArgs args = new ActionProcessorThreadArgs {TheList = theList, Token = token};
 
             Thread actionProcessorThread = new Thread(ActionProcessor)
             {
                 Name = "ActionProcessorThread"
             };
 
-            actionProcessorThread.Start(queues);
-
-            if (showUi)
-            {
-                owner.ShowChildDialog(cmp);
-
-                if (cmp.DialogResult == DialogResult.Cancel)
-                {
-                    actionProcessorThread.Abort();
-                }
-            }
-
+            actionProcessorThread.Start(args);
             actionProcessorThread.Join();
-
-            theList.RemoveAll(x => x is Action action && action.Outcome.Done && !action.Outcome.Error);
-
-            foreach (Action slia in theList.Actions)
-            {
-                Logger.Warn(slia.Outcome.LastError, $"Failed to complete the following action: {slia.Name}, doing {slia}. Error was {slia.Outcome.LastError?.Message}");
-            }
-
-            Logger.Info("Completed Selected Actions");
-            Logger.Info("**************************");
         }
 
-        private void ActionProcessor(object queuesIn)
+        private class ActionProcessorThreadArgs
+        {
+            public ItemList TheList;
+            public CancellationToken Token;
+        }
+
+        private void ActionProcessor(object argsIn)
         {
             try
             {
-                if (!(queuesIn is ActionQueue[] queues))
+                if (!(argsIn is ActionProcessorThreadArgs args))
                 {
                     string message =
-                        $"Action Processor called with object that is not a ActionQueue[], instead called with a {queuesIn.GetType().FullName}";
+                        $"Action Processor called with object that is not a ActionProcessorThreadArgs, instead called with a {argsIn.GetType().FullName}";
 
                     Logger.Fatal(message);
                     throw new ArgumentException(message);
                 }
+
+                ActionQueue[] queues = ActionProcessorMakeQueues(args.TheList);
 
                 foreach (ActionQueue queue in queues)
                 {
@@ -193,7 +174,7 @@ namespace TVRename
                 {
                     actionWorkers = new SafeList<Thread>();
 
-                    ExecuteQueues(queues);
+                    ExecuteQueues(queues,args.Token);
 
                     WaitForAllActionThreadsAndTidyUp();
                 }
@@ -209,6 +190,16 @@ namespace TVRename
 
                     WaitForAllActionThreadsAndTidyUp();
                 }
+                WaitForAllActionThreadsAndTidyUp();
+                args.TheList.RemoveAll(x => x is Action action && action.Outcome.Done && !action.Outcome.Error);
+
+                foreach (Action slia in args.TheList.Actions)
+                {
+                    Logger.Warn(slia.Outcome.LastError, $"Failed to complete the following action: {slia.Name}, doing {slia}. Error was {slia.Outcome.LastError?.Message}");
+                }
+
+                Logger.Info("Completed Selected Actions");
+                Logger.Info("**************************");
             }
             catch (ThreadAbortException)
             {
@@ -225,11 +216,9 @@ namespace TVRename
                     }
                 }
             }
-
-            WaitForAllActionThreadsAndTidyUp();
         }
 
-        private void ExecuteQueues(ActionQueue[] queues)
+        private void ExecuteQueues(ActionQueue[] queues, CancellationToken token)
         {
             while (true)
             {
@@ -241,6 +230,10 @@ namespace TVRename
                 if (ReviewQueues(queues))
                 {
                     break; // all done!
+                }
+                if (token.IsCancellationRequested)
+                {
+                    break; //We have been requested to finish
                 }
 
                 while (actionStarting) // wait for thread to get the semaphore

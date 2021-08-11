@@ -7,7 +7,6 @@
 //
 
 using System.IO;
-using System.Linq;
 
 namespace TVRename
 {
@@ -28,12 +27,14 @@ namespace TVRename
     {
         private const int MAX_PROGRESS_BAR = 1000;
         private readonly ActionEngine mDoc;
-        private readonly ActionQueue[] mToDo;
+        private readonly ItemList mToDo;
+        private readonly System.Action mDoOnClose;
 
-        public CopyMoveProgress(ActionEngine doc, ActionQueue[] todo)
+        public CopyMoveProgress(TVDoc engine, System.Action doOnClose)
         {
-            mDoc = doc;
-            mToDo = todo;
+            mDoc = engine.ActionManager;
+            mToDo = engine.TheActionList;
+            mDoOnClose = doOnClose;
             InitializeComponent();
             copyTimer.Start();
             diskSpaceTimer.Start();
@@ -82,7 +83,7 @@ namespace TVRename
             long totalWork = 0;
             lvProgress.Items.Clear();
 
-            foreach (Action action in mToDo.Where(aq => aq.Actions.Count != 0).SelectMany(aq => aq.Actions))
+            foreach (Action action in mToDo.Actions)
             {
                 if (!action.Outcome.Done)
                 {
@@ -223,7 +224,7 @@ namespace TVRename
 
         private ActionCopyMoveRename? GetActiveCmAction()
         {
-            foreach (Action action in mToDo.Where(aq => aq.Actions.Count != 0).SelectMany(aq => aq.Actions))
+            foreach (Action action in mToDo.Actions)
             {
                 if (!action.Outcome.Done && action.PercentDone > 0 && action is ActionCopyMoveRename cmAction)
                 {
@@ -238,6 +239,7 @@ namespace TVRename
         {
             DialogResult = DialogResult.Cancel;
             Close();
+            mDoOnClose();
         }
 
         private void cbPause_CheckedChanged(object sender, EventArgs e)
@@ -265,6 +267,20 @@ namespace TVRename
             label4.Enabled = en;
             label3.Enabled = en;
             txtFilename.Enabled = en;
+        }
+
+        private void CopyMoveProgress_SizeChanged(object sender, EventArgs e)
+        {
+            if (!(sender is Form {WindowState: FormWindowState.Minimized} childWindow))
+            {
+                return;
+            }
+
+            Form parentWindow = childWindow.Owner;
+            if (parentWindow != null)
+            {
+                parentWindow.WindowState = FormWindowState.Minimized;
+            }
         }
     }
 }

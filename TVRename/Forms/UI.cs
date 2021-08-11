@@ -3751,23 +3751,41 @@ namespace TVRename
 
         private void ActionAction(bool checkedNotSelected, bool unattended, bool doAll)
         {
-            mDoc.PreventAutoScan("Action Selected Items");
-            if (doAll)
-            {
-                mDoc.DoAllActions(this);
-            }
-            else
-            {
-                ItemList lvr = checkedNotSelected
-                    ? GetCheckedItems()
-                    : GetSelectedItems();
+            CancellationTokenSource actionCancellationToken = new CancellationTokenSource();
 
-                mDoc.DoActions(lvr, this);
-            }
+            TVDoc.ActionSettings sett = new TVDoc.ActionSettings
+            {
+                Unattended = unattended,
+                DoAll = doAll,
+                Lvr = checkedNotSelected ? GetCheckedItems() : GetSelectedItems(),
+                Token = actionCancellationToken
+            };
 
+            bool showUi = WindowState !=FormWindowState.Minimized && !mDoc.Args.Hide && Visible && Environment.UserInteractive; 
+            // If not /hide, show CopyMoveProgress dialog
+            if (showUi)
+            {
+                CopyMoveProgress cmp = new CopyMoveProgress(mDoc, () => actionCancellationToken.Cancel());
+                ShowChild(cmp);
+            }
+            
+            bwAction.RunWorkerAsync(sett);
+        }
+
+        private bool lastActionUnattended;
+        private void bwAction_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Thread.CurrentThread.Name ??= "Main Action Thread"; // Can only set it once
+
+            TVDoc.ActionSettings set = (TVDoc.ActionSettings)e.Argument;
+            mDoc.DoActions(set);
+            lastActionUnattended = set.Unattended;
+        }
+
+        private void bwAction_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
             FillActionList(true);
-            RefreshWTW(false, unattended);
-            mDoc.AllowAutoScan();
+            RefreshWTW(false, lastActionUnattended);
         }
 
         private void Revert()

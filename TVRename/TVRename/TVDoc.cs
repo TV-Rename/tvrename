@@ -55,7 +55,7 @@ namespace TVRename
         internal readonly State CurrentAppState;
         public readonly ItemList TheActionList;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private readonly ActionEngine actionManager;
+        internal readonly ActionEngine ActionManager;
         private readonly CacheUpdater cacheManager;
         private FindMissingEpisodes? localFinders;
         private FindMissingEpisodes? searchFinders;
@@ -110,7 +110,7 @@ namespace TVRename
                 Logger.Warn(ex, "Could not load app state file.");
                 CurrentAppState = new State();
             }
-            actionManager = new ActionEngine(CurrentStats);
+            ActionManager = new ActionEngine(CurrentStats);
         }
 
         [NotNull]
@@ -334,7 +334,7 @@ namespace TVRename
 
         public bool Dirty() => mDirty;
 
-        public void DoActions([NotNull] ItemList theList, IDialogParent owner)
+        public void DoActions([NotNull] ItemList theList, CancellationToken token)
         {
             try
             {
@@ -346,15 +346,14 @@ namespace TVRename
                     }
                 }
 
-                actionManager.DoActions(theList, !Args.Hide && Environment.UserInteractive, owner);
+                ActionManager.DoActions(theList, token);
+                List<Action> doneActions = TheActionList.Actions.Where(a => a.Outcome.Done && !a.Outcome.Error).ToList();
+                List<Item> subsequentItems = doneActions.Where(a => a.Becomes() != null).Select(a => a.Becomes()).ToList();
 
-                IEnumerable<Item?> enumerable = TheActionList.Actions.Where(a => a.Outcome.Done && !a.Outcome.Error && a.Becomes() != null)
-                    .Select(a => a.Becomes());
-
-                TheActionList.AddNullableRange(enumerable);
+                TheActionList.AddNullableRange(subsequentItems);
 
                 // remove items from master list, unless it had an error
-                TheActionList.RemoveAll(x => x is Action action && action.Outcome.Done && !action.Outcome.Error);
+                TheActionList.Remove(doneActions);
 
                 new CleanUpEmptyLibraryFolders(this).Check(null);
             }
@@ -904,7 +903,13 @@ namespace TVRename
 
             settings.UpdateShowsAndMovies(shows.Union(forceShowsScan.Where(m => TvLibrary.Contains(m))).ToList(), movies.Union(forceMoviesScan.Where(m=>FilmLibrary.Contains(m))).ToList());
         }
-
+        public class ActionSettings
+        {
+            public bool Unattended;
+            public bool DoAll;
+            public ItemList Lvr;
+            public CancellationTokenSource Token;
+        }
         public class ScanSettings : IEquatable<ScanSettings>
         {
             public readonly bool Unattended;
@@ -979,17 +984,6 @@ namespace TVRename
                 TVSettings.ScanType.SingleShow => passedShows ?? new List<MovieConfiguration>(),
                 _ => new List<MovieConfiguration>()
             };
-        }
-
-        public void DoAllActions(IDialogParent owner)
-        {
-            PreventAutoScan("Do all actions");
-            ItemList theList = new ItemList();
-
-            theList.AddRange(TheActionList.Actions);
-
-            DoActions(theList, owner);
-            AllowAutoScan();
         }
 
         [NotNull]
@@ -2213,6 +2207,21 @@ namespace TVRename
             TheTVDB.LocalCache.Instance.SaveCache();
             TVmaze.LocalCache.Instance.SaveCache();
             TMDB.LocalCache.Instance.SaveCache();
+        }
+
+        public void DoActions(ActionSettings set)
+        {
+            if (set.DoAll)
+            {
+                PreventAutoScan("Do all actions");
+                DoActions(TheActionList, set.Token.Token);
+            }
+            else
+            {
+                PreventAutoScan($"Do selected actions ({set.Lvr.Count})") ;
+                DoActions(set.Lvr, set.Token.Token);
+            }
+            AllowAutoScan();
         }
     }
 }

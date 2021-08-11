@@ -63,7 +63,7 @@ namespace TVRename
             this.txtFile = new System.Windows.Forms.Label();
             this.copyTimer = new System.Windows.Forms.Timer(this.components);
             this.cbPause = new System.Windows.Forms.CheckBox();
-            this.lvProgress = new ListViewFlickerFree();
+            this.lvProgress = new TVRename.ListViewFlickerFree();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.diskSpaceTimer = new System.Windows.Forms.Timer(this.components);
@@ -266,6 +266,7 @@ namespace TVRename
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Progress";
+            this.SizeChanged += new System.EventHandler(this.CopyMoveProgress_SizeChanged);
             this.ResumeLayout(false);
             this.PerformLayout();
 
