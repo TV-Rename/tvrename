@@ -54,6 +54,24 @@ namespace TVRename
                 return;
             }
 
+            if (si.IsDVDBluRay())
+            {
+                string targetFile = si.Format == MovieConfiguration.MovieFolderFormat.bluray
+                    ? Path.Combine(folder, "BDMV", "index.bdmv")
+                    : Path.Combine(folder, "VIDEO_TS", "VIDEO_TS.IFO");
+
+                if (File.Exists(targetFile))
+                {
+                    Doc.TheActionList.Add(downloadIdentifiers.ProcessMovie(si, new FileInfo(targetFile)));
+                    FileIsCorrect(si, targetFile);
+                }
+                else
+                {
+                    FileIsMissing(si, folder);
+                }
+                return;
+            }
+
             FileInfo[] movieFiles = files.Where(f => f.IsMovieFile()).ToArray();
 
             if (movieFiles.Length == 0)
@@ -124,15 +142,7 @@ namespace TVRename
             {
                 if (movieFiles.First().IsMovieFile())
                 {
-                    //File is correct name
-                    LOGGER.Debug($"Identified that {movieFiles.First().FullName} is in the right place. Marking it as 'seen'.");
-                    //Record this movie as seen
-
-                    TVSettings.Instance.PreviouslySeenMovies.EnsureAdded(si);
-                    if (TVSettings.Instance.IgnorePreviouslySeenMovies)
-                    {
-                        Doc.SetDirty();
-                    }
+                    FileIsCorrect(si, movieFiles.First().FullName);
                 }
             }
         }
@@ -184,19 +194,24 @@ namespace TVRename
                     {
                         if (fi.IsMovieFile())
                         {
-                            //File is correct name
-                            LOGGER.Debug($"Identified that {fi.FullName} is in the right place. Marking it as 'seen'.");
-                            //Record this movie as seen
-
-                            TVSettings.Instance.PreviouslySeenMovies.EnsureAdded(si);
-                            if (TVSettings.Instance.IgnorePreviouslySeenMovies)
-                            {
-                                Doc.SetDirty();
-                            }
+                            FileIsCorrect(si, fi.FullName);
                         }
                     }
                 }
             } // foreach file in folder
+        }
+
+        private void FileIsCorrect(MovieConfiguration si, string fi)
+        {
+            //File is correct name
+            LOGGER.Debug($"Identified that {fi} is in the right place. Marking it as 'seen'.");
+            //Record this movie as seen
+
+            TVSettings.Instance.PreviouslySeenMovies.EnsureAdded(si);
+            if (TVSettings.Instance.IgnorePreviouslySeenMovies)
+            {
+                Doc.SetDirty();
+            }
         }
 
         private bool IsClose(string baseFileName, MovieConfiguration config)

@@ -22,7 +22,10 @@ namespace TVRename
                 return new ItemList();
             }
 
-            FileInfo fi = FileHelper.FileInFolder(file.Directory, DEFAULT_FILE_NAME);
+            FileInfo fi = mc.IsDVDBluRay()
+                ? FileHelper.FileInFolder(file.Directory.Parent, DEFAULT_FILE_NAME)
+                : FileHelper.FileInFolder(file.Directory, DEFAULT_FILE_NAME);
+
             bool fileDoesntExist = !doneFolderJpg.Contains(fi.FullName) && !fi.Exists;
 
             if (!forceRefresh && !fileDoesntExist)

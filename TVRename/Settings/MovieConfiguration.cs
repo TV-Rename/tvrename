@@ -244,11 +244,11 @@ namespace TVRename
             {
                 if (Format == MovieFolderFormat.dvd)
                 {
-                    return "VIDEO_TS.VOB";
+                    return "VIDEO_TS.IFO";
                 }
                 if (Format == MovieFolderFormat.bluray)
                 {
-                    return "STREAM";
+                    return "index.bdmv";
                 }
 
                 return UseCustomNamingFormat
@@ -308,5 +308,10 @@ namespace TVRename
         }
 
         public IEnumerable<string> AutomaticLocations() => AllFolderLocations(false, false).Values.SelectMany(x => x);
+
+        public bool IsDVDBluRay()
+        {
+            return Format == MovieFolderFormat.bluray || Format == MovieFolderFormat.dvd;
+        }
     }
 }
