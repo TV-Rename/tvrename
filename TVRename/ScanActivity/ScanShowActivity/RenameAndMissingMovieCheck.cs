@@ -54,7 +54,7 @@ namespace TVRename
                 return;
             }
 
-            if (si.IsDVDBluRay())
+            if (si.IsDvdBluRay())
             {
                 string targetFile = si.Format == MovieConfiguration.MovieFolderFormat.bluray
                     ? Path.Combine(folder, "BDMV", "index.bdmv")

@@ -22,7 +22,7 @@ namespace TVRename
                 return new ItemList();
             }
 
-            FileInfo fi = mc.IsDVDBluRay()
+            FileInfo fi = mc.IsDvdBluRay()
                 ? FileHelper.FileInFolder(file.Directory.Parent, DEFAULT_FILE_NAME)
                 : FileHelper.FileInFolder(file.Directory, DEFAULT_FILE_NAME);
 

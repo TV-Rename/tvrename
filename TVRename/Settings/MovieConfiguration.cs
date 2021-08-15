@@ -309,7 +309,7 @@ namespace TVRename
 
         public IEnumerable<string> AutomaticLocations() => AllFolderLocations(false, false).Values.SelectMany(x => x);
 
-        public bool IsDVDBluRay()
+        public bool IsDvdBluRay()
         {
             return Format == MovieFolderFormat.bluray || Format == MovieFolderFormat.dvd;
         }

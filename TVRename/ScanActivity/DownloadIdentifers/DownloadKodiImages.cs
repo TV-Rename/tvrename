@@ -47,13 +47,13 @@ namespace TVRename
                 ItemList theActionList = new ItemList();
                 string baseFileName = file.MovieFileNameBase();
 
-                FileInfo posterJpg = movie.IsDVDBluRay()
+                FileInfo posterJpg = movie.IsDvdBluRay()
                     ? FileHelper.FileInFolder(file.Directory.Parent, "poster.jpg")
                     : FileHelper.FileInFolder(file.Directory, baseFileName + "-poster.jpg");
-                FileInfo bannerJpg = movie.IsDVDBluRay()
+                FileInfo bannerJpg = movie.IsDvdBluRay()
                     ? FileHelper.FileInFolder(file.Directory.Parent, "banner.jpg")
                     : FileHelper.FileInFolder(file.Directory, baseFileName + "-banner.jpg");
-                FileInfo fanartJpg = movie.IsDVDBluRay()
+                FileInfo fanartJpg = movie.IsDvdBluRay()
                     ? FileHelper.FileInFolder(file.Directory.Parent, "fanart.jpg")
                     : FileHelper.FileInFolder(file.Directory, baseFileName + "-fanart.jpg");
 
