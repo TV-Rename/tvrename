@@ -3765,7 +3765,7 @@ namespace TVRename
             // If not /hide, show CopyMoveProgress dialog
             if (showUi)
             {
-                CopyMoveProgress cmp = new CopyMoveProgress(mDoc, () => actionCancellationToken.Cancel());
+                CopyMoveProgress cmp = new CopyMoveProgress(mDoc,sett, () => actionCancellationToken.Cancel());
                 ShowChild(cmp);
             }
             

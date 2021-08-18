@@ -8,10 +8,7 @@ namespace TVRename
         private List<string> doneFolderJpg = new List<string>();
         private const string DEFAULT_FILE_NAME = "folder.jpg";
 
-        public DownloadFolderJpg()
-        {
-            Reset();
-        }
+        public DownloadFolderJpg() => Reset();
 
         public override DownloadType GetDownloadType() => DownloadType.downloadImage;
 

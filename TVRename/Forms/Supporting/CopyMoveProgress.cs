@@ -30,10 +30,10 @@ namespace TVRename
         private readonly ItemList mToDo;
         private readonly System.Action mDoOnClose;
 
-        public CopyMoveProgress(TVDoc engine, System.Action doOnClose)
+        public CopyMoveProgress(TVDoc engine, TVDoc.ActionSettings settings, System.Action doOnClose)
         {
             mDoc = engine.ActionManager;
-            mToDo = engine.TheActionList;
+            mToDo =settings.DoAll ? engine.TheActionList: settings.Lvr;
             mDoOnClose = doOnClose;
             InitializeComponent();
             copyTimer.Start();
