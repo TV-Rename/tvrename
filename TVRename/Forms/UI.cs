@@ -3752,6 +3752,11 @@ namespace TVRename
         private void ActionAction(bool checkedNotSelected, bool unattended, bool doAll)
         {
             CancellationTokenSource actionCancellationToken = new CancellationTokenSource();
+            if (bwAction.IsBusy)
+            {
+                Logger.Warn("Can't do actions as they are already processing");
+                return;
+            }
 
             TVDoc.ActionSettings sett = new TVDoc.ActionSettings
             {
