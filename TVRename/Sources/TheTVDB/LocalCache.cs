@@ -658,6 +658,7 @@ namespace TVRename.TheTVDB
             {
                 case "series":
                 case "translatedseries":
+                case "seriespeople":
                     {
                     CachedSeriesInfo? selectedCachedSeriesInfo = GetSeries(id);
                     if (selectedCachedSeriesInfo!=null)
@@ -708,18 +709,36 @@ namespace TVRename.TheTVDB
                         return;
                     }
                 case "artwork":
+                case "artworktypes":
                 case "people":
                 case "characters":
                 case "award-nominees":
+                case "award_categories":
                 case "companies":
+                case "awards":
+                case "company_types":
+                case "movie_status":
+                case "content_ratings":
+                case "countries":
+                case "entity_types":
+                case "genres":
+                case "languages":
+                case "peopletypes":
+                case "seasontypes":
+                case "sourcetypes":
+                case "translatedpeople":
+                case "translatedcharacters":
                 case "lists":
                 case "translatedlists":
                 case "translatedcompanies":
                 case "tags":
                 case "tag-options":
+                case "award-categories":
+
                     return;
 
                 default:
+                    LOGGER.Error($"Found update record for '{entityType}' = {id}");
                     return;
             }
         }
