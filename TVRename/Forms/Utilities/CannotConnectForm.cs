@@ -64,5 +64,11 @@ namespace TVRename.Forms.Utilities
             DialogResult = DialogResult.Ignore;
             Close();
         }
+
+        private void btnRelogin_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Retry;
+            Close();
+        }
     }
 }

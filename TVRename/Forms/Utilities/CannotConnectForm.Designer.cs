@@ -33,13 +33,14 @@
             this.label1 = new System.Windows.Forms.Label();
             this.bnTVDB = new System.Windows.Forms.Button();
             this.bnAPICheck = new System.Windows.Forms.Button();
+            this.btnRelogin = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // bnContinue
             // 
             this.bnContinue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnContinue.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnContinue.Location = new System.Drawing.Point(334, 107);
+            this.bnContinue.Location = new System.Drawing.Point(423, 105);
             this.bnContinue.Name = "bnContinue";
             this.bnContinue.Size = new System.Drawing.Size(75, 23);
             this.bnContinue.TabIndex = 0;
@@ -50,7 +51,7 @@
             // bnOffline
             // 
             this.bnOffline.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnOffline.Location = new System.Drawing.Point(253, 107);
+            this.bnOffline.Location = new System.Drawing.Point(342, 105);
             this.bnOffline.Name = "bnOffline";
             this.bnOffline.Size = new System.Drawing.Size(75, 23);
             this.bnOffline.TabIndex = 1;
@@ -87,13 +88,24 @@
             this.bnAPICheck.UseVisualStyleBackColor = true;
             this.bnAPICheck.Click += new System.EventHandler(this.bnAPICheck_Click);
             // 
+            // btnRelogin
+            // 
+            this.btnRelogin.Location = new System.Drawing.Point(177, 107);
+            this.btnRelogin.Name = "btnRelogin";
+            this.btnRelogin.Size = new System.Drawing.Size(75, 23);
+            this.btnRelogin.TabIndex = 5;
+            this.btnRelogin.Text = "Relogin & Retry";
+            this.btnRelogin.UseVisualStyleBackColor = true;
+            this.btnRelogin.Click += new System.EventHandler(this.btnRelogin_Click);
+            // 
             // CannotConnectForm
             // 
             this.AcceptButton = this.bnContinue;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnContinue;
-            this.ClientSize = new System.Drawing.Size(421, 142);
+            this.ClientSize = new System.Drawing.Size(510, 140);
+            this.Controls.Add(this.btnRelogin);
             this.Controls.Add(this.bnAPICheck);
             this.Controls.Add(this.bnTVDB);
             this.Controls.Add(this.label1);
@@ -119,5 +131,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button bnTVDB;
         private System.Windows.Forms.Button bnAPICheck;
+        private System.Windows.Forms.Button btnRelogin;
     }
 }

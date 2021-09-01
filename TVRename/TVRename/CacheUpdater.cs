@@ -106,6 +106,12 @@ namespace TVRename
                 owner.ShowChildDialog(ccform);
                 DialogResult ccresult = ccform.DialogResult;
                 ccform.Dispose();
+                if (ccresult == DialogResult.Retry)
+                {
+                    TheTVDB.LocalCache.Instance.ReConnect(false);
+                    TVmaze.LocalCache.Instance.ReConnect(false);
+                    TMDB.LocalCache.Instance.ReConnect(false);
+                }
 
                 if (ccresult == DialogResult.Abort)
                 {
