@@ -116,6 +116,7 @@ namespace TVRename
                 if (ccresult == DialogResult.Abort)
                 {
                     TVSettings.Instance.OfflineMode = true;
+                    downloadOk = true;
                 }
             }
 

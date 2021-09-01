@@ -2204,9 +2204,15 @@ namespace TVRename
 
         public void SaveCaches()
         {
-            TheTVDB.LocalCache.Instance.SaveCache();
-            TVmaze.LocalCache.Instance.SaveCache();
-            TMDB.LocalCache.Instance.SaveCache();
+            Utility.Helper.TaskHelper.Run(
+                () =>
+                {
+                    TheTVDB.LocalCache.Instance.SaveCache();
+                    TVmaze.LocalCache.Instance.SaveCache();
+                    TMDB.LocalCache.Instance.SaveCache();
+                },
+                "Save Cache Files",
+                false);
         }
 
         public void DoActions(ActionSettings set)

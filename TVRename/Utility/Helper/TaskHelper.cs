@@ -54,9 +54,11 @@ namespace TVRename.Utility.Helper
             }
         }
 
-        public static void Run(System.Action action, string name)
+        public static void Run(System.Action action, string name) => Run(action, name, true);
+
+        public static void Run(System.Action action, string name, bool isBackground)
         {
-            Thread t = new Thread(() => action()) {Name = name, IsBackground = true};
+            Thread t = new Thread(() => action()) { Name = name, IsBackground = isBackground };
             t.Start();
         }
     }

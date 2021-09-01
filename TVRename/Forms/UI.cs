@@ -2408,6 +2408,7 @@ namespace TVRename
         {
             TVSettings.Instance.BGDownload = !TVSettings.Instance.BGDownload;
             backgroundDownloadToolStripMenuItem.Checked = TVSettings.Instance.BGDownload;
+            offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
             statusTimer_Tick(null, null);
             mDoc.SetDirty();
 
@@ -3539,6 +3540,7 @@ namespace TVRename
             FillMyShows(); // scanning can download more info to be displayed in my shows
             FillMyMovies();
             FillActionList(false);
+            offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
         }
 
         private void SetupScanUi(bool hidden)
