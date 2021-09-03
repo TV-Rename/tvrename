@@ -2933,16 +2933,16 @@ namespace TVRename.TheTVDB
         {
             CachedMovieInfo si = new CachedMovieInfo(locale, TVDoc.ProviderType.TheTVDB)
             {
-                TvdbCode = (int)r["tvdb_id"],
-                Slug = ((string)r["id"])?.Trim(),
+                TvdbCode = ParseIdFromObjectID(r["objectID"]),
+                Slug = ((string)r["slug"])?.Trim(),
                 PosterUrl = (string)r["image_url"],
-                Network = (string)r["network"],
+                //Network = (string)r["network"],
                 Status = (string)r["status"],
                 IsSearchResultOnly = searchResult,
-                ShowLanguage = (string)r["primary_language"],
-                FirstAired = GenerateFirstAiredDate(r),
-                Name = FindTranslation(r, locale, "name_translated") ?? Decode(r, "name") ?? Decode(r, "extended_title") ?? string.Empty,
-                Overview = FindTranslation(r, locale, "overview_translated") ?? Decode(r, "overview") ?? string.Empty,
+                //ShowLanguage = (string)r["primary_language"],
+                //FirstAired = GenerateFirstAiredDate(r),
+                Name = FindTranslation(r, locale, "translations") ?? Decode(r, "name") ?? Decode(r, "extended_title") ?? string.Empty,
+                Overview = FindTranslation(r, locale, "overviews") ?? Decode(r, "overview") ?? string.Empty,
                 Country = (string)r["country"],
             };
 
@@ -2956,7 +2956,11 @@ namespace TVRename.TheTVDB
                 LOGGER.Warn("Issue with CachedMovieInfo " + si);
                 LOGGER.Warn(r.ToString());
             }
-
+            if (si.TvdbCode==0)
+            {
+                LOGGER.Error("Issue with CachedMovieInfo (No Id) " + si);
+                LOGGER.Error(r.ToString());
+            }
             if (si.SrvLastUpdated == 0 && !searchResult)
             {
                 LOGGER.Warn("Issue with CachedMovieInfo (update time is 0) " + si);
@@ -2967,20 +2971,36 @@ namespace TVRename.TheTVDB
             return si;
         }
 
+        private int ParseIdFromObjectID(JToken jToken)
+        {
+            string baseValue = jToken.ToString();
+            string[] splitString = baseValue.Split('-');
+            if (splitString.Length == 2)
+            {
+                int? i = splitString[1].ToInt();
+                if (i.HasValue)
+                {
+                    return i.Value;
+                }
+            }
+
+            return 0;
+        }
+
         private CachedSeriesInfo GenerateSeriesV4(JObject r, Locale locale, bool searchResult)
         {
             CachedSeriesInfo si = new CachedSeriesInfo(locale, TVDoc.ProviderType.TheTVDB)
             {
-                TvdbCode = (int)r["tvdb_id"],
-                Slug = ((string)r["id"])?.Trim(),
+                TvdbCode = ParseIdFromObjectID(r["objectID"]),
+                Slug = ((string)r["slug"])?.Trim(),
                 PosterUrl = (string)r["image_url"],
-                Overview = Decode(r, "overview") ?? FindTranslation(r, locale, "overview_translated") ?? string.Empty,
-                Network = r["companies"]?.Select(x=>x.ToObject<string>()).ToPsv(), 
+                Network = (string)r["network"],
                 Status = (string)r["status"],
                 IsSearchResultOnly = searchResult,
-                ShowLanguage = (string)r["primary_language"],
-                FirstAired = GenerateFirstAiredDate(r),
-                Name = Decode(r,"name") ?? FindTranslation(r,locale, "name_translated")??string.Empty,
+                //ShowLanguage = (string)r["primary_language"],
+                //FirstAired = GenerateFirstAiredDate(r),
+                Name = FindTranslation(r, locale, "translations") ?? Decode(r, "name") ?? Decode(r, "extended_title") ?? string.Empty,
+                Overview = FindTranslation(r, locale, "overviews") ?? Decode(r, "overview") ?? string.Empty,
             };
 
             if (string.IsNullOrEmpty(si.Name))
@@ -2988,7 +3008,11 @@ namespace TVRename.TheTVDB
                 LOGGER.Warn("Issue with cachedSeries " + si);
                 LOGGER.Warn(r.ToString());
             }
-
+            if (si.TvdbCode == 0)
+            {
+                LOGGER.Error("Issue with cachedSeries (No Id) " + si);
+                LOGGER.Error(r.ToString());
+            }
             if (si.SrvLastUpdated == 0 && !searchResult)
             {
                 LOGGER.Warn("Issue with cachedSeries (update time is 0) " + si);
@@ -3009,14 +3033,12 @@ namespace TVRename.TheTVDB
             }
 
             JToken? languageValue = languagesArray[langaugeCode];
-            if (languageValue == null || !languageValue.HasValues)
+            if (languageValue == null || languageValue.Type != JTokenType.String)
             {
                 return null;
             }
 
-            //TODO wait for https://github.com/thetvdb/v4-api/issues/4 to be fixed and interrogate overview and  name fields
-
-            return null;
+            return (string)languageValue;
         }
 
         private string? Decode(JObject r, string tag)
