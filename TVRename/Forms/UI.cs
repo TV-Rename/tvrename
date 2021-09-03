@@ -2750,7 +2750,7 @@ namespace TVRename
                 {
                     foreach (TreeNode n2 in n.Nodes)
                     {
-                        if (TreeNodeToSeason(n2)?.SeasonId == seas.SeasonId)
+                        if (TreeNodeToSeason(n2)?.SeasonNumber == seas.SeasonNumber)
                         {
                             n2.EnsureVisible();
                             MyShowTree.SelectedNode = n2;
