@@ -856,7 +856,11 @@ namespace TVRename
             // for specials "season", see if any season has any aired dates
             // otherwise, check only up to the season we are considering
             int maxSeasonToUse = maxSeasonNumber <= 0 ? lastPossibleSeason : maxSeasonNumber;
-
+            if (maxSeasonToUse < 1)
+            {
+                LOGGER.Error($"{Name} has a problem with series in {Order.PrettyPrint()} - max={maxSeasonToUse}");
+                maxSeasonToUse = 1;
+            }
             foreach (int snum in Enumerable.Range(1, maxSeasonToUse))
             {
                 if (HasAnyAirdates(snum))
