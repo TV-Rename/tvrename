@@ -6,9 +6,10 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
-using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 using System;
+using System.IO;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 namespace TVRename
 {
@@ -58,6 +59,11 @@ namespace TVRename
                         DoTidyUp(toRemove.Parent);
                     }
                 }
+                return ActionOutcome.Success();
+            }
+            catch (DirectoryNotFoundException dnfe)
+            {
+                LOGGER.Info($"Testing {toRemove.FullName} but it has already been removed - Job Done!");
                 return ActionOutcome.Success();
             }
             catch (Exception e)
