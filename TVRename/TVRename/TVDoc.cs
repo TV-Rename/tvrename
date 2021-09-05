@@ -420,8 +420,12 @@ namespace TVRename
             }
         }
 
-        private void ForgetShow(ShowConfiguration si)
+        private void ForgetShow(ISeriesSpecifier? si)
         {
+            if (si is null)
+            {
+                return;
+            }
             switch (si.Provider)
             {
                 case ProviderType.TVmaze:
