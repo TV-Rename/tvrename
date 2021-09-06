@@ -42,6 +42,8 @@ namespace TVRename
             }
         }
 
+        public abstract ProcessedSeason.SeasonType SeasonOrder { get; }
+
         public void UpdateId(int id, TVDoc.ProviderType source)
         {
             switch (source)

@@ -57,7 +57,7 @@ namespace TVRename.TheTVDB
             Logger.Info($"Checking Accuracy of {si.Name} on TVDB");
             if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
             {
-                ServerAccuracyCheckV4(si);
+                ServerAccuracyCheckV4(si,si.SeasonOrder);
                 return;
             }
             try
@@ -108,7 +108,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        public void ServerAccuracyCheckV4([NotNull] CachedSeriesInfo si)
+        public void ServerAccuracyCheckV4([NotNull] CachedSeriesInfo si, ProcessedSeason.SeasonType order)
         {
             try
             {
@@ -120,7 +120,7 @@ namespace TVRename.TheTVDB
 
                     EnsureUpdated(si);
                 }
-                lc.ReloadEpisodesV4(newSi.TvdbCode, new Locale(), newSi);
+                lc.ReloadEpisodesV4(newSi.TvdbCode, new Locale(), newSi, order);
 
                 foreach (Episode newEpisode in newSi.Episodes)
                 {

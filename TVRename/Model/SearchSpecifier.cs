@@ -19,6 +19,8 @@ namespace TVRename
         public string? ImdbCode { get; }
         public Locale TargetLocale { get; }
 
+        public ProcessedSeason.SeasonType SeasonOrder => ProcessedSeason.SeasonType.aired; //Assume so
+
         public void UpdateId(int id, TVDoc.ProviderType source)
         {
             switch (source)

@@ -36,6 +36,8 @@ namespace TVRename
             SeasonFolderFormat = folderFormat;
         }
 
+        public ProcessedSeason.SeasonType SeasonOrder => ProcessedSeason.SeasonType.aired; //Just assume for now
+
         public void UpdateId(int id, TVDoc.ProviderType source)
         {
             SourceProvider = source;

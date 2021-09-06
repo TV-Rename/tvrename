@@ -11,6 +11,7 @@ namespace TVRename
         string? ImdbCode { get; }
 
         Locale TargetLocale { get; }
+        ProcessedSeason.SeasonType SeasonOrder { get; }
 
         void UpdateId(int id, TVDoc.ProviderType source);
     }

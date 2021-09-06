@@ -130,6 +130,8 @@ namespace TVRename
                 : movie.SourceProvider;
         }
 
+        public override ProcessedSeason.SeasonType SeasonOrder => throw new NotImplementedException();
+
         protected override MediaType GetMediaType() => MediaType.movie;
 
         protected override Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo, bool checkExist)

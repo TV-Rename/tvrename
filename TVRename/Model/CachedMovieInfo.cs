@@ -17,6 +17,8 @@ namespace TVRename
 
         protected override MediaConfiguration.MediaType MediaType() => MediaConfiguration.MediaType.movie;
 
+        public override ProcessedSeason.SeasonType SeasonOrder => throw new System.NotImplementedException();
+
         private void DefaultValues()
         {
         }

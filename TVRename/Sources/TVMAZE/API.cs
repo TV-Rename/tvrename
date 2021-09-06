@@ -379,6 +379,7 @@ namespace TVRename.TVmaze
                         ? updateTime
                         : 0,
                 Dirty = false,
+                SeasonOrderType = ProcessedSeason.SeasonType.aired,
             };
         }
 

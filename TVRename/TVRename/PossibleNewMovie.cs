@@ -350,6 +350,8 @@ namespace TVRename
 
         public Locale TargetLocale => new Locale();
 
+        public ProcessedSeason.SeasonType SeasonOrder => throw new NotImplementedException();
+
         public void UpdateId(int id, TVDoc.ProviderType source)
         {
             SourceProvider = source;

@@ -313,14 +313,14 @@ namespace TVRename.TheTVDB
                 }
 
                 //If this date is in the last week then this needs to be the last call to the update
-                DateTime requestedTime = GetRequestedTime(updateFromEpochTime, numberofCallsMade);
+                DateTime requestedTime = GetRequestedTime(updateFromEpochTime - (24 * 60 * 60), numberofCallsMade);
 
                 if ((DateTime.UtcNow - requestedTime).TotalDays < 7)
                 {
                     moreUpdates = false;
                 }
 
-                JObject jsonUpdateResponse = GetUpdatesJson(updateFromEpochTime, requestedTime);
+                JObject jsonUpdateResponse = GetUpdatesJson(updateFromEpochTime - (24 * 60 * 60), requestedTime);
                 if (jsonUpdateResponse is null)
                 {
                     return false;
@@ -759,8 +759,7 @@ namespace TVRename.TheTVDB
             LOGGER.Info($"Updating {selectedCachedSeriesInfo.Name} {message}");
         }
 
-        private void ProcessEpisodes([NotNull] CachedSeriesInfo si,
-            [NotNull] Dictionary<int, Tuple<JToken, JToken>> episodesResponses)
+        private void ProcessEpisodes(CachedSeriesInfo si, Dictionary<int, Tuple<JToken, JToken>> episodesResponses)
         {
             int numberOfNewEpisodes = 0;
             int numberOfUpdatedEpisodes = 0;
@@ -773,7 +772,7 @@ namespace TVRename.TheTVDB
                 {
                     JToken episodeToUse = episodeData.Value.Item1 ?? episodeData.Value.Item2;
                     long serverUpdateTime = (long)episodeToUse["lastUpdated"];
-                    (int newEps, int updatedEps) = ProcessEpisode(serverUpdateTime, episodeData, si, oldEpisodeIds);
+                    (int newEps, int updatedEps) = ProcessEpisode(serverUpdateTime, episodeData, si, oldEpisodeIds,si.SeasonOrder);
                     numberOfNewEpisodes += newEps;
                     numberOfUpdatedEpisodes += updatedEps;
                 }
@@ -802,13 +801,13 @@ namespace TVRename.TheTVDB
 
             foreach (int episodeId in oldEpisodeIds)
             {
-                removeEpisodeIds.TryAdd(episodeId, new ExtraEp(si.TvdbCode, episodeId));
+                removeEpisodeIds.TryAdd(episodeId, new ExtraEp(si.TvdbCode, episodeId, si.SeasonOrder));
             }
         }
 
         private (int newEps, int updatedEps) ProcessEpisode(long serverUpdateTime,
             KeyValuePair<int, Tuple<JToken, JToken>> episodeData, [NotNull] CachedSeriesInfo si,
-            ICollection<int> oldEpisodeIds)
+            ICollection<int> oldEpisodeIds, ProcessedSeason.SeasonType st)
         {
             int newEpisodeCount = 0;
             int updatedEpisodeCount = 0;
@@ -832,7 +831,7 @@ namespace TVRename.TheTVDB
             if (!found)
             {
                 // must be a new episode
-                extraEpisodes.TryAdd(serverEpisodeId, new ExtraEp(si.TvdbCode, serverEpisodeId));
+                extraEpisodes.TryAdd(serverEpisodeId, new ExtraEp(si.TvdbCode, serverEpisodeId,st));
                 newEpisodeCount++;
             }
 
@@ -1060,7 +1059,10 @@ namespace TVRename.TheTVDB
             {
                 if (si != null)
                 {
-                    ReloadEpisodes(code.TvdbId, locale, si);
+                    ProcessedSeason.SeasonType st = code is ShowConfiguration sc
+                        ? sc.Order
+                        : ProcessedSeason.SeasonType.aired;
+                    ReloadEpisodes(code.TvdbId, locale, si,st);
                 }
             }
 
@@ -1366,12 +1368,16 @@ namespace TVRename.TheTVDB
                 11 => MediaImage.ImageType.thumbs,
                 12 => MediaImage.ImageType.thumbs,
 
+                25=>  MediaImage.ImageType.clearLogo,
+                24 => MediaImage.ImageType.clearArt,
+
                 _ => MediaImage.ImageType.poster
             };
         }
 
         private MediaImage.ImageSubject MapSubjectTVDBV4APICode(int v)
-        { // from call to API.ImageTypesV4()
+        {
+            // from call to API.ImageTypesV4()
             return v switch
             {
                 1 => MediaImage.ImageSubject.show,
@@ -1393,6 +1399,8 @@ namespace TVRename.TheTVDB
                 16 => MediaImage.ImageSubject.movie,
                 18 => MediaImage.ImageSubject.movie,
                 21 => MediaImage.ImageSubject.movie,
+                24 => MediaImage.ImageSubject.movie,
+                25 => MediaImage.ImageSubject.movie,
 
                 _ => MediaImage.ImageSubject.show
             };
@@ -1673,7 +1681,7 @@ namespace TVRename.TheTVDB
         private (CachedSeriesInfo, Language?) GenerateSeriesInfoV4(JObject r, Locale locale,
             ProcessedSeason.SeasonType seasonType)
         {
-            CachedSeriesInfo si = GenerateCoreSeriesInfoV4(r, locale);
+            CachedSeriesInfo si = GenerateCoreSeriesInfoV4(r, locale,seasonType);
 
             AddAliasesV4(r, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), si);
             AddCastAndCrewv4(r, si);
@@ -1683,7 +1691,7 @@ namespace TVRename.TheTVDB
             return (si, GetAppropriateLanguage(r["data"]["nameTranslations"], locale));
         }
 
-        private CachedSeriesInfo GenerateCoreSeriesInfoV4(JObject r, Locale locale)
+        private CachedSeriesInfo GenerateCoreSeriesInfoV4(JObject r, Locale locale, ProcessedSeason.SeasonType st)
         {
             return new CachedSeriesInfo(locale, TVDoc.ProviderType.TheTVDB)
             {
@@ -1711,6 +1719,7 @@ namespace TVRename.TheTVDB
                 SeriesId = GetExternalIdV4(r, "TV.com"),
                 PosterUrl = GetArtworkV4(r, 2),
                 FanartUrl = GetArtworkV4(r, 3),
+                SeasonOrderType = st,
             };
         }
 
@@ -2233,7 +2242,7 @@ namespace TVRename.TheTVDB
             return txt;
         }
 
-        public void ReloadEpisodesV4(int code, Locale locale, CachedSeriesInfo si)
+        public void ReloadEpisodesV4(int code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order)
         {
             Parallel.ForEach(si.Seasons, s =>
             {
@@ -2251,7 +2260,7 @@ namespace TVRename.TheTVDB
                         {
                             int? epNumber = x["number"]?.ToObject<int>();
                             Thread.CurrentThread.Name ??= $"Creating S{s.SeasonNumber}E{epNumber} Episode for {si.Name}"; // Can only set it once
-                            GenerateAddEpisodeV4(code, locale, si, x);
+                            GenerateAddEpisodeV4(code, locale, si, x,order);
                         });
                     }
                 }
@@ -2266,11 +2275,11 @@ namespace TVRename.TheTVDB
             });
         }
 
-        private void GenerateAddEpisodeV4(int code, Locale locale, CachedSeriesInfo si, JToken x)
+        private void GenerateAddEpisodeV4(int code, Locale locale, CachedSeriesInfo si, JToken x, ProcessedSeason.SeasonType order)
         {
             try
             {
-                (Episode newEp, Language? bestLanguage) = GenerateCoreEpisodeV4(x, code, si, locale);
+                (Episode newEp, Language? bestLanguage) = GenerateCoreEpisodeV4(x, code, si, locale,order);
                 if (bestLanguage !=null)
                 {
                     AddTranslations(newEp,
@@ -2318,7 +2327,7 @@ namespace TVRename.TheTVDB
             return transName ?? originalName ?? string.Empty;
         }
 
-        private (Episode, Language?) GenerateCoreEpisodeV4(JToken episodeJson, int code, CachedSeriesInfo si, Locale locale)
+        private (Episode, Language?) GenerateCoreEpisodeV4(JToken episodeJson, int code, CachedSeriesInfo si, Locale locale, ProcessedSeason.SeasonType order)
         {
             Episode x = new Episode(code, si)
             {
@@ -2327,11 +2336,20 @@ namespace TVRename.TheTVDB
                 Name = episodeJson["name"].ToObject<string>() ?? string.Empty,
                 FirstAired = GetEpisodeAiredDate(episodeJson),
                 Runtime = episodeJson["runtime"].ToObject<string>(),
-                AiredSeasonNumber = episodeJson["seasonNumber"].ToObject<int>(),
-                AiredEpNum = episodeJson["number"].ToObject<int>(),
                 Filename = episodeJson["image"].ToObject<string>(),
                 SrvLastUpdated = GetUpdateTicks(episodeJson["lastUpdated"].ToObject<string>())
             };
+
+            if (order == ProcessedSeason.SeasonType.dvd)
+            {
+                x.ReadDvdSeasonNum = episodeJson["seasonNumber"].ToObject<int>();
+                x.DvdEpNum = episodeJson["number"].ToObject<int>();
+            }
+            else
+            {
+                x.AiredSeasonNumber = episodeJson["seasonNumber"].ToObject<int>();
+                x.AiredEpNum = episodeJson["number"].ToObject<int>();
+            }
 
             return (x, GetAppropriateLanguage(episodeJson["nameTranslations"], locale));
         }
@@ -2374,11 +2392,11 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private void ReloadEpisodes(int code, Locale locale, CachedSeriesInfo si)
+        private void ReloadEpisodes(int code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order)
         {
             if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
             {
-                ReloadEpisodesV4(code, locale, si);
+                ReloadEpisodesV4(code, locale, si,order);
                 return;
             }
 
@@ -2483,7 +2501,7 @@ namespace TVRename.TheTVDB
             return episodeIds;
         }
 
-        private bool DownloadEpisodeNow(int seriesId, int episodeId, Locale locale, bool dvdOrder = false)
+        private bool DownloadEpisodeNow(int seriesId, int episodeId, Locale locale, ProcessedSeason.SeasonType order)
         {
             if (episodeId == 0)
             {
@@ -2498,7 +2516,7 @@ namespace TVRename.TheTVDB
             }
 
             Episode ep = FindEpisodeById(episodeId);
-            string eptxt = EpisodeDescription(dvdOrder, episodeId, ep);
+            string eptxt = EpisodeDescription(order, episodeId, ep);
 
             CachedSeriesInfo cachedSeriesInfo = Series[seriesId];
             Say($"{cachedSeriesInfo.Name} ({eptxt}) in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}");
@@ -2534,7 +2552,7 @@ namespace TVRename.TheTVDB
                                            TVDoc.ProviderType.TheTVDB);
             if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
             {
-                GenerateAddEpisodeV4(seriesId,locale,cachedSeriesInfo,jsonResponseData);
+                GenerateAddEpisodeV4(seriesId,locale,cachedSeriesInfo,jsonResponseData,order);
                 return true;
             }
             if (locale.IsDifferentLanguageToDefaultFor(TVDoc.ProviderType.TheTVDB))
@@ -2585,14 +2603,14 @@ namespace TVRename.TheTVDB
         }
 
         [NotNull]
-        private static string EpisodeDescription(bool dvdOrder, int episodeId, Episode? ep)
+        private static string EpisodeDescription(ProcessedSeason.SeasonType order, int episodeId, Episode? ep)
         {
             if (ep == null)
             {
                 return "New Episode Id = " + episodeId;
             }
 
-            return dvdOrder
+            return order ==ProcessedSeason.SeasonType.dvd
                 ? $"S{ep.DvdSeasonNumber:00}E{ep.DvdEpNum:00}"
                 : $"S{ep.AiredSeasonNumber:00}E{ep.AiredEpNum:00}";
         }
@@ -2698,7 +2716,7 @@ namespace TVRename.TheTVDB
             {
                 foreach (Episode e in collection.Where(e => e.Dirty && e.EpisodeId > 0))
                 {
-                    extraEpisodes.TryAdd(e.EpisodeId, new ExtraEp(e.SeriesId, e.EpisodeId));
+                    extraEpisodes.TryAdd(e.EpisodeId, new ExtraEp(e.SeriesId, e.EpisodeId,seriesd.SeasonOrder)); 
                     extraEpisodes[e.EpisodeId].Done = false;
                 }
             }
@@ -2711,7 +2729,7 @@ namespace TVRename.TheTVDB
                 }
                 Thread.CurrentThread.Name ??= $"Download Episode {ee.Value.EpisodeId}"; // Can only set it once
 
-                ok = DownloadEpisodeNow(ee.Value.SeriesId, ee.Key, seriesd.TargetLocale) && ok;
+                ok = DownloadEpisodeNow(ee.Value.SeriesId, ee.Key, seriesd.TargetLocale, ee.Value.Order) && ok;
                 ee.Value.Done = true;
             });
 
@@ -2906,7 +2924,7 @@ namespace TVRename.TheTVDB
                 {
                     continue;
                 }
-                ses.Add(GenerateSeriesV4(showJson, locale, b));
+                ses.Add(GenerateSeriesV4(showJson, locale, b,ProcessedSeason.SeasonType.aired)); //Assume Aired for Search Results
             }
 
             return ses;
@@ -2987,7 +3005,7 @@ namespace TVRename.TheTVDB
             return 0;
         }
 
-        private CachedSeriesInfo GenerateSeriesV4(JObject r, Locale locale, bool searchResult)
+        private CachedSeriesInfo GenerateSeriesV4(JObject r, Locale locale, bool searchResult, ProcessedSeason.SeasonType st)
         {
             CachedSeriesInfo si = new CachedSeriesInfo(locale, TVDoc.ProviderType.TheTVDB)
             {
@@ -2997,6 +3015,7 @@ namespace TVRename.TheTVDB
                 Network = (string)r["network"],
                 Status = (string)r["status"],
                 IsSearchResultOnly = searchResult,
+                SeasonOrderType = st,
                 //ShowLanguage = (string)r["primary_language"],
                 //FirstAired = GenerateFirstAiredDate(r),
                 Name = FindTranslation(r, locale, "translations") ?? Decode(r, "name") ?? Decode(r, "extended_title") ?? string.Empty,

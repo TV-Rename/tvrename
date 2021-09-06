@@ -22,6 +22,7 @@ namespace TVRename
         public DateTime? AirsTime;
         public string? AirsDay;
         public string? SeriesType;
+        public ProcessedSeason.SeasonType SeasonOrderType;
 
         private ConcurrentDictionary<int, Episode> sourceEpisodes;
 
@@ -162,6 +163,7 @@ namespace TVRename
 
             AirsDay = ChooseBetter(AirsDay, useNewDataOverOld, o.AirsDay);
             SeriesType = ChooseBetter(SeriesType, useNewDataOverOld, o.SeriesType);
+            SeasonOrderType = o.SeasonOrderType;
   
             bool useNewSeasons = o.seasons.Any() && useNewDataOverOld;
             if (!seasons.Any() || useNewSeasons)
@@ -193,6 +195,7 @@ namespace TVRename
                 AirsDay = seriesXml.ExtractStringOrNull("airsDayOfWeek") ?? seriesXml.ExtractString("Airs_DayOfWeek");
                 BannerString = seriesXml.ExtractStringOrNull("banner") ?? seriesXml.ExtractString("Banner");
                 SeriesType = seriesXml.ExtractString("Type");
+                SeasonOrderType = seriesXml.ExtractEnum("SeasonOrderType", ProcessedSeason.SeasonType.aired);
                 LoadSeasons(seriesXml);
                 LoadImages(seriesXml);
             }
@@ -330,6 +333,7 @@ namespace TVRename
             writer.WriteElement("airsDayOfWeek", AirsDay);
             writer.WriteElement("Airs_Time", AirsTime?.ToString("HH:mm"), true);
             writer.WriteElement("Type", SeriesType, true);
+            writer.WriteElement("SeasonOrderType", (int)SeasonOrderType);
 
             writer.WriteStartElement("Seasons");
             foreach (Season a in seasons)
@@ -400,6 +404,8 @@ namespace TVRename
         protected override MediaConfiguration.MediaType MediaType() => MediaConfiguration.MediaType.tv;
 
         public override string ToString() => $"TVDB:{TvdbCode}/Maze:{TvMazeCode}/TMDB:{TmdbCode}/{Name}";
+
+        public override ProcessedSeason.SeasonType SeasonOrder => SeasonOrderType;
 
         private List<Season> seasons = new List<Season>();
 

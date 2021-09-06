@@ -434,6 +434,8 @@ namespace TVRename
 
         internal bool UsesManualFolders() => ManualFolderLocations.Count > 0;
 
+        public override ProcessedSeason.SeasonType SeasonOrder => Order;
+
         protected override MediaType GetMediaType() => MediaType.tv;
 
         protected override MediaCache LocalCache()
