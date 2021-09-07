@@ -313,14 +313,16 @@ namespace TVRename.TheTVDB
                 }
 
                 //If this date is in the last week then this needs to be the last call to the update
-                DateTime requestedTime = GetRequestedTime(updateFromEpochTime - (24 * 60 * 60), numberofCallsMade);
+                const int OFFSET =(24 * 60 * 60); //TODO Revert to 0
+
+                DateTime requestedTime = GetRequestedTime(updateFromEpochTime - OFFSET, numberofCallsMade);
 
                 if ((DateTime.UtcNow - requestedTime).TotalDays < 7)
                 {
                     moreUpdates = false;
                 }
 
-                JObject jsonUpdateResponse = GetUpdatesJson(updateFromEpochTime - (24 * 60 * 60), requestedTime);
+                JObject jsonUpdateResponse = GetUpdatesJson(updateFromEpochTime - OFFSET, requestedTime);
                 if (jsonUpdateResponse is null)
                 {
                     return false;
@@ -772,7 +774,7 @@ namespace TVRename.TheTVDB
                 {
                     JToken episodeToUse = episodeData.Value.Item1 ?? episodeData.Value.Item2;
                     long serverUpdateTime = (long)episodeToUse["lastUpdated"];
-                    (int newEps, int updatedEps) = ProcessEpisode(serverUpdateTime, episodeData, si, oldEpisodeIds,si.SeasonOrder);
+                    (int newEps, int updatedEps) = ProcessEpisode(serverUpdateTime, episodeData, si, oldEpisodeIds);
                     numberOfNewEpisodes += newEps;
                     numberOfUpdatedEpisodes += updatedEps;
                 }
@@ -807,7 +809,7 @@ namespace TVRename.TheTVDB
 
         private (int newEps, int updatedEps) ProcessEpisode(long serverUpdateTime,
             KeyValuePair<int, Tuple<JToken, JToken>> episodeData, [NotNull] CachedSeriesInfo si,
-            ICollection<int> oldEpisodeIds, ProcessedSeason.SeasonType st)
+            ICollection<int> oldEpisodeIds)
         {
             int newEpisodeCount = 0;
             int updatedEpisodeCount = 0;
@@ -831,7 +833,7 @@ namespace TVRename.TheTVDB
             if (!found)
             {
                 // must be a new episode
-                extraEpisodes.TryAdd(serverEpisodeId, new ExtraEp(si.TvdbCode, serverEpisodeId,st));
+                extraEpisodes.TryAdd(serverEpisodeId, new ExtraEp(si.TvdbCode, serverEpisodeId,si.SeasonOrder));
                 newEpisodeCount++;
             }
 

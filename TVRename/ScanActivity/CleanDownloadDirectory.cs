@@ -229,6 +229,11 @@ namespace TVRename
             List<MovieConfiguration> matchingMoviesAll = movieList.Where(mi => mi.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)).ToList();
             List<MovieConfiguration> matchingMovies = FinderHelper.RemoveShortShows(matchingMoviesAll);
 
+            List<MovieConfiguration> matchingMoviesNoShows =
+                FinderHelper.RemoveShortMedia(matchingMovies, matchingShows);
+            List<ShowConfiguration> matchingShowsNoMovies =
+                FinderHelper.RemoveShortMedia(matchingShows, matchingMovies);
+
             if (!matchingMovies.Any() && !matchingShows.Any())
             {
                 // Some sort of random file - ignore
@@ -272,7 +277,7 @@ namespace TVRename
 
                 if (TVSettings.Instance.ReplaceMoviesWithBetterQuality)
                 {
-                    bool? x = ReviewFileAgainstExistingMovies(unattended, fi, owner, matchingMovies);
+                    bool? x = ReviewFileAgainstExistingMovies(unattended, fi, owner, matchingMoviesNoShows);
                     if (x.HasValue && x.Value == false)
                     {
                         fileCanBeDeleted = false;

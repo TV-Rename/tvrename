@@ -548,6 +548,11 @@ namespace TVRename
             return matchingShows.Where(testShow => !IsInferiorTo(testShow, matchingShows)).ToList();
         }
 
+        public static List<T> RemoveShortMedia<T>(IEnumerable<T> matchingMovies, IEnumerable<MediaConfiguration> matchingShows) where T : MediaConfiguration
+        {
+            return matchingMovies.Where(testShow => !IsContenedTo(testShow, matchingShows)).ToList();
+        }
+
         private static bool IsInferiorTo(MediaConfiguration testShow, [NotNull] IEnumerable<MediaConfiguration> matchingShows)
         {
             return matchingShows.Any(compareShow => IsInferiorTo(testShow, compareShow));
@@ -556,6 +561,16 @@ namespace TVRename
         private static bool IsInferiorTo([NotNull] MediaConfiguration testShow, [NotNull] MediaConfiguration compareShow)
         {
             return compareShow.ShowName.StartsWith(testShow.ShowName, StringComparison.Ordinal) && testShow.ShowName.Length < compareShow.ShowName.Length;
+        }
+
+        private static bool IsContenedTo(MediaConfiguration testShow, [NotNull] IEnumerable<MediaConfiguration> matchingShows)
+        {
+            return matchingShows.Any(compareShow => IsContenedTo(testShow, compareShow));
+        }
+
+        private static bool IsContenedTo([NotNull] MediaConfiguration testShow, [NotNull] MediaConfiguration compareShow)
+        {
+            return compareShow.ShowName.Contains(testShow.ShowName, StringComparison.Ordinal) && testShow.ShowName.Length < compareShow.ShowName.Length;
         }
 
         public static bool BetterShowsMatch(FileInfo matchedFile, MediaConfiguration currentlyMatchedShow,
