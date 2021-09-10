@@ -237,19 +237,20 @@ namespace TVRename.TheTVDB
             TokenProvider? authToken, string lang = "")
             => HttpHelper.HttpRequest(method, url, json, contentType, authToken?.GetToken(), lang);
 
-        public static JObject? GetShowUpdatesSince(long time, string lang)
+        public static JObject? GetShowUpdatesSince(long time, string lang, int page)
         {
-            string uri = TVSettings.Instance.TvdbVersion == ApiVersion.v4
-                ? TokenProvider.TVDB_API_URL + "/updates"
-                : TokenProvider.TVDB_API_URL + "/updated/query";
-
-            string keyName = TVSettings.Instance.TvdbVersion == ApiVersion.v4
-                ? "since"
-                : "fromTime";
-
-            return JsonHttpGetRequest(uri,
-                new Dictionary<string, string> { { keyName, time.ToString() } },
-                TokenProvider, lang, true);
+            if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
+            {
+                return JsonHttpGetRequest(TokenProvider.TVDB_API_URL + "/updates",
+                    new Dictionary<string, string> { { "since", time.ToString() }, { "page", page.ToString() } },
+                    TokenProvider, lang, true);
+            }
+            else
+            {
+                return JsonHttpGetRequest(TokenProvider.TVDB_API_URL + "/updated/query",
+                    new Dictionary<string, string> { { "fromTime", time.ToString() } },
+                    TokenProvider, lang, true);
+            }
         }
 
         public static JObject? GetSeriesEpisodes(int seriesId, string languageCode, int pageNumber = 0)

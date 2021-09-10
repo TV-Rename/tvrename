@@ -317,15 +317,20 @@ namespace TVRename.TheTVDB
 
                 DateTime requestedTime = GetRequestedTime(updateFromEpochTime - OFFSET, numberofCallsMade);
 
-                if ((DateTime.UtcNow - requestedTime).TotalDays < 7)
+                if (ApiVersion.v4 != TVSettings.Instance.TvdbVersion && (DateTime.UtcNow - requestedTime).TotalDays < 7)
                 {
                     moreUpdates = false;
                 }
 
-                JObject jsonUpdateResponse = GetUpdatesJson(updateFromEpochTime - OFFSET, requestedTime);
+                JObject jsonUpdateResponse = GetUpdatesJson(updateFromEpochTime - OFFSET, requestedTime, numberofCallsMade);
                 if (jsonUpdateResponse is null)
                 {
                     return false;
+                }
+
+                if (ApiVersion.v4 == TVSettings.Instance.TvdbVersion && !MoreFrom(jsonUpdateResponse))
+                {
+                    moreUpdates = false;
                 }
 
                 int? numberOfResponses = GetNumResponses(jsonUpdateResponse, requestedTime);
@@ -413,6 +418,12 @@ namespace TVRename.TheTVDB
             return true;
         }
 
+        private static bool MoreFrom(JObject jsonUpdateResponse)
+        {
+            JToken? x = jsonUpdateResponse["links"]["next"];
+            return x is { } && x.Type==JTokenType.String;
+        }
+
         private int? GetNumResponses(JObject jsonUpdateResponse, DateTime requestedTime)
         {
             try
@@ -449,11 +460,11 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private JObject? GetUpdatesJson(long updateFromEpochTime, DateTime requestedTime)
+        private JObject? GetUpdatesJson(long updateFromEpochTime, DateTime requestedTime, int page)
         {
             try
             {
-                return API.GetShowUpdatesSince(updateFromEpochTime, TVSettings.Instance.PreferredTVDBLanguage.Abbreviation);
+                return API.GetShowUpdatesSince(updateFromEpochTime, TVSettings.Instance.PreferredTVDBLanguage.Abbreviation,page);
             }
             catch (IOException iex)
             {
