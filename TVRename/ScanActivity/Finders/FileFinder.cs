@@ -560,7 +560,7 @@ namespace TVRename
             return actionlist.CopyMoveRename.Any(cmAction => cmAction.SameSource(newItem));
         }
 
-        protected void ProcessMissingItem(ItemList newList, ItemList toRemove, ItemMissing me, ItemList thisRound, [NotNull] List<FileInfo> matchedFiles, bool useFullPath)
+        protected void ProcessMissingItem(ItemList newList, ItemList toRemove, ItemMissing me, Dictionary<FileInfo, ItemList> thisRound, [NotNull] List<FileInfo> matchedFiles, bool useFullPath)
         {
             if (matchedFiles.Count == 1)
             {
@@ -569,7 +569,7 @@ namespace TVRename
                     if (!FinderHelper.BetterShowsMatch(matchedFiles[0], me.Show, useFullPath, MDoc))
                     {
                         toRemove.Add(me);
-                        newList.AddRange(thisRound);
+                        newList.AddRange(thisRound[matchedFiles[0]]);
                     }
                     else
                     {
@@ -594,7 +594,7 @@ namespace TVRename
                 {
                     //We have one file that is better, lets use it
                     toRemove.Add(me);
-                    newList.AddRange(thisRound);
+                    newList.AddRange(thisRound[bestMatchedFiles[0]]);
                 }
                 else
                 {

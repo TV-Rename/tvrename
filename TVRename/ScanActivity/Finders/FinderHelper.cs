@@ -769,7 +769,7 @@ namespace TVRename
                             AutomaticFolderRoot = TVSettings.Instance.DefMovieDefaultLocation ?? string.Empty,
                             Format = MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile,
                             UseCustomFolderNameFormat = false,
-                            ConfigurationProvider = TVDoc.ProviderType.TMDB
+                            ConfigurationProvider = foundMovie.Source
                         };
 
                         if (!hint.Contains(foundMovie.Name, StringComparison.OrdinalIgnoreCase))

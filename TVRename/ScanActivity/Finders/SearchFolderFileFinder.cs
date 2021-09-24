@@ -46,7 +46,7 @@ namespace TVRename
 
                 UpdateStatus(currentItem++, totalN, action.Filename);
 
-                ItemList thisRound = new ItemList();
+                Dictionary<FileInfo, ItemList> thisRound = new Dictionary<FileInfo, ItemList>();
 
                 if (action is ShowItemMissing showMissingAction)
                 {
@@ -57,17 +57,7 @@ namespace TVRename
                 }
                 else if (action is MovieItemMissing movieMissingAction)
                 {
-                    List<FileInfo> matchedFiles = new List<FileInfo>();
-
-                    foreach (DirCacheEntry dce in dirCache)
-                    {
-                        if (!ReviewFile(movieMissingAction, thisRound, dce.TheFile, TVSettings.Instance.PreventMove, true, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
-                        {
-                            continue;
-                        }
-
-                        matchedFiles.Add(dce.TheFile);
-                    }
+                    List<FileInfo> matchedFiles = FindMatchedFiles(dirCache, movieMissingAction, thisRound);
 
                     ProcessMissingItem(newList, toRemove, movieMissingAction, thisRound, matchedFiles,
                         TVSettings.Instance.UseFullPathNameToMatchSearchFolders);
@@ -91,19 +81,41 @@ namespace TVRename
             ActionList.Replace(toRemove, newList);
         }
 
-        [NotNull]
-        private List<FileInfo> FindMatchedFiles([NotNull] DirCache dirCache, ShowItemMissing me, ItemList thisRound)
+        private List<FileInfo> FindMatchedFiles(DirCache dirCache, MovieItemMissing movieMissingAction, Dictionary<FileInfo, ItemList> thisRound)
         {
             List<FileInfo> matchedFiles = new List<FileInfo>();
 
             foreach (DirCacheEntry dce in dirCache)
             {
-                if (!ReviewFile(me, thisRound, dce.TheFile, TVSettings.Instance.AutoMergeDownloadEpisodes, TVSettings.Instance.PreventMove, true, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
+                ItemList actionsForThisFile = new ItemList();
+                if (!ReviewFile(movieMissingAction, actionsForThisFile, dce.TheFile, TVSettings.Instance.PreventMove, true,
+                    TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
                 {
                     continue;
                 }
 
                 matchedFiles.Add(dce.TheFile);
+                thisRound.Add(dce.TheFile, actionsForThisFile);
+            }
+
+            return matchedFiles;
+        }
+
+        [NotNull]
+        private List<FileInfo> FindMatchedFiles([NotNull] DirCache dirCache, ShowItemMissing me, Dictionary<FileInfo,ItemList> thisRound)
+        {
+            List<FileInfo> matchedFiles = new List<FileInfo>();
+
+            foreach (DirCacheEntry dce in dirCache)
+            {
+                ItemList actionsForThisFile = new ItemList();
+                if (!ReviewFile(me, actionsForThisFile, dce.TheFile, TVSettings.Instance.AutoMergeDownloadEpisodes, TVSettings.Instance.PreventMove, true, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
+                {
+                    continue;
+                }
+
+                matchedFiles.Add(dce.TheFile);
+                thisRound.Add(dce.TheFile,actionsForThisFile);
             }
 
             return matchedFiles;

@@ -105,7 +105,7 @@ namespace TVRename
 
         private void FindEpisode(ShowItemMissing me, DirFilesCache dfc, ItemList newList, ItemList toRemove)
         {
-            ItemList thisRound = new ItemList();
+            Dictionary<FileInfo, ItemList> thisRound = new Dictionary<FileInfo, ItemList>();
             if (me.Episode == null)
             {
                 return;
@@ -131,33 +131,38 @@ namespace TVRename
         }
 
         [NotNull]
-        private List<FileInfo> GetMatchingFilesFromFolder(string? baseFolder, DirFilesCache dfc, ShowItemMissing me, ItemList thisRound)
+        private List<FileInfo> GetMatchingFilesFromFolder(string? baseFolder, DirFilesCache dfc, ShowItemMissing me, Dictionary<FileInfo, ItemList> thisRound)
         {
-            List<FileInfo> matchedFiles;
-
             if (string.IsNullOrWhiteSpace(baseFolder))
             {
-                matchedFiles = new List<FileInfo>();
+                return new List<FileInfo>();
             }
-            else
+
+            List<FileInfo> matchedFiles = new List<FileInfo>();
+            foreach (FileInfo testFile in dfc.GetFilesIncludeSubDirs(baseFolder))
             {
-                IEnumerable<FileInfo> testFiles = dfc.GetFilesIncludeSubDirs(baseFolder);
-                matchedFiles = testFiles.Where(testFile => ReviewFile(me, thisRound, testFile, false, false, false,
-                    TVSettings.Instance.UseFullPathNameToMatchLibraryFolders)).ToList();
+                ItemList actionsForThisFile = new ItemList();
+                if (ReviewFile(me, actionsForThisFile, testFile, false, false, false,
+                    TVSettings.Instance.UseFullPathNameToMatchLibraryFolders))
+                {
+                    matchedFiles.Add(testFile);
+                    thisRound.Add(testFile,actionsForThisFile);
+                }
             }
 
             return matchedFiles;
         }
 
         private void ProcessFolder([NotNull] ShowItemMissing me, [NotNull] string folderName, [NotNull] DirFilesCache dfc,
-            ItemList thisRound, [NotNull] List<FileInfo> matchedFiles)
+            Dictionary<FileInfo, ItemList> thisRound, [NotNull] List<FileInfo> matchedFiles)
         {
             LOGGER.Info($"Starting to look for {me.Filename} in the library folder: {folderName}");
             FileInfo[] files = dfc.GetFiles(folderName);
 
             foreach (FileInfo testFile in files)
             {
-                if (!ReviewFile(me, thisRound, testFile, false, false, false,
+                ItemList actionsForThisFile = new ItemList();
+                if (!ReviewFile(me, actionsForThisFile, testFile, false, false, false,
                     TVSettings.Instance.UseFullPathNameToMatchLibraryFolders))
                 {
                     continue;
@@ -169,6 +174,8 @@ namespace TVRename
                 }
 
                 matchedFiles.Add(testFile);
+                thisRound.Add(testFile,actionsForThisFile);
+
                 LOGGER.Info($"Found {me.Filename} at: {testFile}");
             }
         }
