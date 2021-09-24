@@ -140,7 +140,7 @@ namespace TVRename
             MovieConfiguration.SetId(type, code);
             MovieConfiguration.UseAutomaticFolders = true;
             MovieConfiguration.AutomaticFolderRoot = folderbase;
-            MovieConfiguration.Format = MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile;
+            MovieConfiguration.Format = MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile; //TODO - Set and use default setting here
             MovieConfiguration.UseCustomFolderNameFormat = false;
             MovieConfiguration.ConfigurationProvider = type == TVSettings.Instance.DefaultMovieProvider ? TVDoc.ProviderType.libraryDefault : type;
 

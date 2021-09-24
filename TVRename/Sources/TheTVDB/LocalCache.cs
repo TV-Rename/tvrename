@@ -373,7 +373,7 @@ namespace TVRename.TheTVDB
 
                 //As a safety measure we check that no more than 52 calls are made
                 const int MAX_NUMBER_OF_CALLS = 52;
-                if (numberofCallsMade > MAX_NUMBER_OF_CALLS)
+                if ( (numberofCallsMade > MAX_NUMBER_OF_CALLS && TVSettings.Instance.TvdbVersion!=ApiVersion.v4) ||(TVSettings.Instance.TvdbVersion == ApiVersion.v4 && numberofCallsMade > 1000))
                 {
                     if (cts.IsCancellationRequested)
                     {
@@ -3029,8 +3029,8 @@ namespace TVRename.TheTVDB
                 Status = (string)r["status"],
                 IsSearchResultOnly = searchResult,
                 SeasonOrderType = st,
-                //ShowLanguage = (string)r["primary_language"],
-                //FirstAired = GenerateFirstAiredDate(r),
+                ShowLanguage = (string)r["primary_language"],
+                FirstAired = GenerateFirstAiredDate(r),
                 Name = FindTranslation(r, locale, "translations") ?? Decode(r, "name") ?? Decode(r, "extended_title") ?? string.Empty,
                 Overview = FindTranslation(r, locale, "overviews") ?? Decode(r, "overview") ?? string.Empty,
             };
