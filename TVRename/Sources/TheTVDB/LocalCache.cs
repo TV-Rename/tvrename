@@ -3082,7 +3082,7 @@ namespace TVRename.TheTVDB
         private DateTime? GenerateFirstAiredDate(JObject r)
         { //TODO Check this once https://github.com/thetvdb/v4-api/issues/28 is fixed
             int? year = r.Value<int?>("year");
-            if (year.HasValue)
+            if (year.HasValue && year.Value>0)
             {
                 try
                 {
