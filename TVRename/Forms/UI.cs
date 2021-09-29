@@ -144,7 +144,7 @@ namespace TVRename
 
             UpdateSplashStatus(splash, "Filling Shows");
             mDoc.TvLibrary.GenDict();
-            FillMyShows();
+            FillMyShows(true);
             FillMyMovies();
             UpdateSearchButtons();
             SetScan(TVSettings.Instance.UIScanType);
@@ -792,7 +792,7 @@ namespace TVRename
             }
 
             UpdateImages(mDoc.TvLibrary.GetSortedShowItems());
-            FillMyShows();
+            FillMyShows(true);
             FillEpGuideHtml();
         }
 
@@ -816,7 +816,7 @@ namespace TVRename
                 TheTVDB.LocalCache.Instance.ForgetEverything();
                 TVmaze.LocalCache.Instance.ForgetEverything();
                 TMDB.LocalCache.Instance.ForgetEverything();
-                FillMyShows();
+                FillMyShows(true);
                 FillMyMovies();
                 FillEpGuideHtml();
                 FillWhenToWatchList();
@@ -1115,7 +1115,7 @@ namespace TVRename
             return tsi;
         }
 
-        private void FillMyShows()
+        private void FillMyShows(bool updateSelectedNode)
         {
             ProcessedSeason currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
             ShowConfiguration currentSi = TreeNodeToShowItem(MyShowTree.SelectedNode);
@@ -1158,13 +1158,16 @@ namespace TVRename
                 }
             }
 
-            if (currentSeas != null)
+            if (updateSelectedNode)
             {
-                SelectSeason(currentSeas);
-            }
-            else if (currentSi != null)
-            {
-                SelectShow(currentSi);
+                if (currentSeas != null)
+                {
+                    SelectSeason(currentSeas);
+                }
+                else if (currentSi != null)
+                {
+                    SelectShow(currentSi);
+                }
             }
 
             MyShowTree.EndUpdate();
@@ -1749,7 +1752,7 @@ namespace TVRename
         {
             UiDownload(doDownloads, unattended);
 
-            FillMyShows();
+            FillMyShows(true);
             FillMyMovies();
 
             FillWhenToWatchList();
@@ -2176,13 +2179,13 @@ namespace TVRename
         private void IncludeSeason([NotNull] ShowConfiguration si, int seasonNumber)
         {
             si.IgnoreSeasons.Remove(seasonNumber);
-            ShowAddedOrEdited(false, false, si);
+            ShowAddedOrEdited(false, false, si,true);
         }
 
         private void IgnoreSeason([NotNull] ShowConfiguration si, int seasonNumber)
         {
             si.IgnoreSeasons.Add(seasonNumber);
-            ShowAddedOrEdited(false, false, si);
+            ShowAddedOrEdited(false, false, si, true);
         }
 
         private void BrowseForMissingItem(ItemMissing? mi)
@@ -2224,7 +2227,7 @@ namespace TVRename
                 mDoc.IgnoreSeasonForItem(ai);
             }
 
-            FillMyShows();
+            FillMyShows(true);
             FillActionList(true);
         }
 
@@ -2833,9 +2836,9 @@ namespace TVRename
             {
                 mDoc.Add(si.AsList());
 
-                ShowAddedOrEdited(false, false, si);
+                ShowAddedOrEdited(false, false, si,false);
                 SelectShow(si);
-                ShowAddedOrEdited(true, false, si);
+                ShowAddedOrEdited(true, false, si, false);
                 Logger.Info("Added new show called {0}", si.ShowName);
             }
             else
@@ -2846,11 +2849,11 @@ namespace TVRename
             mDoc.AllowAutoScan();
         }
 
-        private void ShowAddedOrEdited(bool download, bool unattended, ShowConfiguration si)
+        private void ShowAddedOrEdited(bool download, bool unattended, ShowConfiguration si, bool updateSelectedNode)
         {
             mDoc.TvAddedOrEdited(download, unattended, WindowState == FormWindowState.Minimized, this, si);
 
-            FillMyShows();
+            FillMyShows(updateSelectedNode);
             FillWhenToWatchList();
         }
 
@@ -2891,7 +2894,7 @@ namespace TVRename
 
             Logger.Info($"User asked to remove {si.ShowName} - removing now");
             mDoc.TvLibrary.Remove(si);
-            ShowAddedOrEdited(false, false, si);
+            ShowAddedOrEdited(false, false, si, true);
         }
 
         private void RemoveFromDisk(string folderName,MediaConfiguration si)
@@ -3053,7 +3056,7 @@ namespace TVRename
             DialogResult dr = er.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
-                ShowAddedOrEdited(false, false, si);
+                ShowAddedOrEdited(false, false, si, true);
                 SelectSeason(si.AppropriateSeasons()[seasnum]);
             }
 
@@ -3071,7 +3074,7 @@ namespace TVRename
 
             if (dr == DialogResult.OK)
             {
-                ShowAddedOrEdited(aes.HasChanged, false, si);
+                ShowAddedOrEdited(aes.HasChanged, false, si, true);
                 SelectShow(si);
 
                 Logger.Info("Modified show called {0}", si.ShowName);
@@ -3106,7 +3109,7 @@ namespace TVRename
         internal void ForceRefresh(IEnumerable<ShowConfiguration>? sis, bool unattended)
         {
             mDoc.ForceRefreshShows(sis, unattended, WindowState == FormWindowState.Minimized, this);
-            FillMyShows();
+            FillMyShows(true);
             FillEpGuideHtml();
             RefreshWTW(false, unattended);
         }
@@ -3537,7 +3540,7 @@ namespace TVRename
             AskUserAboutShowProblems(lastScanUnattended);
             LessBusy();
             scanProgDlg?.Close();
-            FillMyShows(); // scanning can download more info to be displayed in my shows
+            FillMyShows(true); // scanning can download more info to be displayed in my shows
             FillMyMovies();
             FillActionList(false);
             offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
@@ -3814,7 +3817,7 @@ namespace TVRename
             BulkAddSeriesManager bam = new BulkAddSeriesManager(mDoc);
             BulkAddShow fm = new BulkAddShow(mDoc, bam,this);
             fm.ShowDialog(this);
-            FillMyShows();
+            FillMyShows(true);
 
             mDoc.AllowAutoScan();
             LessBusy();
@@ -4162,11 +4165,11 @@ namespace TVRename
             DialogResult res = filters.ShowDialog(this);
             if (res == DialogResult.OK)
             {
-                FillMyShows();
+                FillMyShows(true);
             }
         }
 
-        private void filterTextBox_TextChanged(object sender, EventArgs e) => FillMyShows();
+        private void filterTextBox_TextChanged(object sender, EventArgs e) => FillMyShows(true);
 
         private void filterMoviesTextBox_TextChanged(object sender, EventArgs e) => FillMyMovies();
 
@@ -5091,7 +5094,7 @@ namespace TVRename
             form.ShowDialog(this);
             mDoc.AllowAutoScan();
             LessBusy();
-            FillMyShows();
+            FillMyShows(true);
             FillWhenToWatchList();
         }
 
