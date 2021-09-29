@@ -122,7 +122,7 @@ namespace TVRename
             FileInfo? neededFile = filesThatMayBeNeeded.FirstOrDefault(info => info.DirectoryName.Contains(di.FullName));
             if (neededFile != null)
             {
-                LOGGER.Info($"Not removing {di.FullName} as it may be needed for {neededFile.FullName}");
+                LOGGER.Info($"Not removing {di.FullName} as it contains {neededFile.FullName} which may be needed.");
                 return;
             }
 
