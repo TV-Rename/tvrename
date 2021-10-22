@@ -1,3 +1,4 @@
+!include "common.nsh"
 !include "MUI.nsh"
 !include "FileFunc.nsh"
 !include "DotNetChecker.nsh" ; https://github.com/ReVolly/NsisDotNetChecker
