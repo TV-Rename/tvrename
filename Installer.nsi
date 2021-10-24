@@ -1,12 +1,12 @@
+Unicode true
+CRCCheck On
+SetCompressor /solid lzma
+
 !include "MUI.nsh"
 !include "FileFunc.nsh"
 !include "DotNetChecker.nsh" ; https://github.com/ReVolly/NsisDotNetChecker
 
 !define APPNAME "TV Rename"
-
-CRCCheck On
-Unicode true
-SetCompressor /solid lzma
 
 Name "${APPNAME}"
 Caption "${APPNAME} ${VERSION} Setup"
