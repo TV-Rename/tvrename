@@ -99,16 +99,12 @@ namespace TVRename
 
         private void WaitForAllActionThreadsAndTidyUp()
         {
-            if (actionWorkers != null)
-            {
-                foreach (Thread t in actionWorkers)
+            actionWorkers?.ForEach(t => {
+                if (t.IsAlive)
                 {
-                    if (t.IsAlive)
-                    {
-                        t.Join();
-                    }
+                    t.Join();
                 }
-            }
+            });
 
             actionWorkers = null;
         }
