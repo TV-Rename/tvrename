@@ -14,7 +14,7 @@ namespace TVRename
         protected readonly FileInfo WhereFile;
         public override string Produces => WhereFile.FullName;
         public override string ProgressText => WhereFile.Name;
-        public override IgnoreItem Ignore => new IgnoreItem(WhereFile.FullName);
+        public override IgnoreItem Ignore => new(WhereFile.FullName);
         public override string? DestinationFolder => WhereFile.DirectoryName;
         public override string? DestinationFile => WhereFile.Name;
         public override string? TargetFolder => WhereFile.DirectoryName;

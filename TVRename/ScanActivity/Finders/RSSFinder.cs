@@ -33,14 +33,14 @@ namespace TVRename
             UpdateStatus(n, c, "Searching on RSS Feed...");
 
             // ReSharper disable once InconsistentNaming
-            RssItemList RSSList = new RssItemList();
+            RssItemList RSSList = new();
             foreach (string s in TVSettings.Instance.RSSURLs)
             {
                 RSSList.DownloadRSS(s, TVSettings.Instance.RSSUseCloudflare, "RSS");
             }
 
-            ItemList newItems = new ItemList();
-            ItemList toRemove = new ItemList();
+            ItemList newItems = new();
+            ItemList toRemove = new();
 
             foreach (ShowItemMissing action in ActionList.MissingEpisodes.ToList())
             {
@@ -52,14 +52,14 @@ namespace TVRename
                 UpdateStatus(n++, c, action.Filename);
 
                 ProcessedEpisode pe = action.MissingEpisode;
-                ItemList newItemsForThisMissingEpisode = new ItemList();
+                ItemList newItemsForThisMissingEpisode = new();
 
                 foreach (RSSItem rss in RSSList.Where(rss => RssMatch(rss, pe)))
                 {
                     LOGGER.Info(
                         $"Adding {rss.URL} from RSS feed as it appears to be match for {pe.Show.ShowName} {pe}");
 
-                    ItemDownloading eventualItem = new ItemDownloading(new FutureTorrentEntry(rss.URL, action.TheFileNoExt), action.MissingEpisode, action.TheFileNoExt, DownloadingFinder.DownloadApp.qBitTorrent, action);
+                    ItemDownloading eventualItem = new(new FutureTorrentEntry(rss.URL, action.TheFileNoExt), action.MissingEpisode, action.TheFileNoExt, DownloadingFinder.DownloadApp.qBitTorrent, action);
                     newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action, eventualItem));
                     toRemove.Add(action);
                 }

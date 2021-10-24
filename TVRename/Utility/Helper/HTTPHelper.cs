@@ -26,7 +26,7 @@ namespace TVRename
         {
             FileStream stream = File.OpenRead(path);
             string fileName = Path.GetFileName(path);
-            StreamContent content = new StreamContent(stream)
+            StreamContent content = new(stream)
             {
                 Headers = { ContentType = new MediaTypeHeaderValue(contentType) }
             };
@@ -42,7 +42,7 @@ namespace TVRename
                 try
                 {
                     // Create a HttpClient that uses the handler to bypass CloudFlare's JavaScript challange.
-                    HttpClient client = new HttpClient(new ClearanceHandler());
+                    HttpClient client = new(new ClearanceHandler());
 
                     // Use the HttpClient as usual. Any JS challenge will be solved automatically for you.
                     Task<string> task = Task.Run(async () => await client.GetStringAsync(url));
@@ -60,7 +60,7 @@ namespace TVRename
             }
             else
             {
-                WebClient client = new WebClient();
+                WebClient client = new();
                 client.Headers.Add("user-agent", TVSettings.USER_AGENT);
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                 return client.DownloadString(url);
@@ -76,7 +76,7 @@ namespace TVRename
                 try
                 {
                     // Create a HttpClient that uses the handler to bypass CloudFlare's JavaScript challange.
-                    HttpClient client = new HttpClient(new ClearanceHandler());
+                    HttpClient client = new(new ClearanceHandler());
 
                     // Use the HttpClient as usual. Any JS challenge will be solved automatically for you.
                     Task<byte[]> task = Task.Run(async () => await client.GetByteArrayAsync(url));
@@ -94,7 +94,7 @@ namespace TVRename
             }
             else
             {
-                WebClient client = new WebClient();
+                WebClient client = new();
                 client.Headers.Add("user-agent", TVSettings.USER_AGENT);
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                 return client.DownloadData(url);
@@ -134,7 +134,7 @@ namespace TVRename
             if (method == "POST")
             {
                 using (StreamWriter streamWriter =
-                    new StreamWriter(httpWebRequest.GetRequestStream()))
+                    new(httpWebRequest.GetRequestStream()))
                 {
                     streamWriter.Write(postContent);
                     streamWriter.Flush();
@@ -143,7 +143,7 @@ namespace TVRename
 
             string result;
             HttpWebResponse httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            using (StreamReader streamReader = new StreamReader(httpResponse.GetResponseStream() ?? throw new InvalidOperationException()))
+            using (StreamReader streamReader = new(httpResponse.GetResponseStream() ?? throw new InvalidOperationException()))
             {
                 result = streamReader.ReadToEnd();
             }
@@ -164,7 +164,7 @@ namespace TVRename
                     return string.Empty;
                 }
 
-                using (StreamReader reader = new StreamReader(stream))
+                using (StreamReader reader = new(stream))
                 {
                     return reader.ReadToEnd();
                 }
@@ -248,7 +248,7 @@ namespace TVRename
 
         public static byte[] Download([NotNull] string url, bool forceReload)
         {
-            WebClient wc = new WebClient();
+            WebClient wc = new();
 
             if (forceReload)
             {
@@ -260,7 +260,7 @@ namespace TVRename
 
         public static string LoggableDetails([NotNull] this IOException ex)
         {
-            StringBuilder s = new StringBuilder();
+            StringBuilder s = new();
             s.Append($"IOException obtained. {ex.Message}");
             if (ex.InnerException != null)
             {
@@ -272,7 +272,7 @@ namespace TVRename
         [NotNull]
         public static string LoggableDetails([NotNull] this WebException ex)
         {
-            StringBuilder s = new StringBuilder();
+            StringBuilder s = new();
             s.Append($"WebException {ex.Status} obtained. {ex.Message}");
             if (ex.Response == null)
             {
@@ -296,7 +296,7 @@ namespace TVRename
         [NotNull]
         public static string LoggableDetails([NotNull] this HttpRequestException ex)
         {
-            StringBuilder s = new StringBuilder();
+            StringBuilder s = new();
             s.Append($"HttpRequestException obtained. {ex.Message}");
             {
                 s.Append($" from {ex.TargetSite}");
@@ -330,7 +330,7 @@ namespace TVRename
             string response = null;
             if (retry)
             {
-                RetryOnException(3, pauseBetweenFailures, url, exception => true,
+                RetryOnException(3, pauseBetweenFailures, url, _ => true,
                     () => { response = HttpRequest("POST", url, request.ToString(), "application/json", string.Empty); },
                     null);
             }
@@ -350,7 +350,7 @@ namespace TVRename
                 return string.Empty;
             }
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.Append("?");
 
             foreach (KeyValuePair<string, string> item in parameters)

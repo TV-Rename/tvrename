@@ -19,7 +19,7 @@ namespace TVRename
         {
             try
             {
-                using (System.IO.StreamWriter file = new System.IO.StreamWriter(str))
+                using (System.IO.StreamWriter file = new(str))
                 {
                     file.WriteLine(HeaderLine());
                     foreach (ProcessedEpisode processedEpisode in elist)

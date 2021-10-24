@@ -120,7 +120,7 @@ namespace TVRename
                 return;
             }
 
-            Dictionary<int, FileInfo> localEps = new Dictionary<int, FileInfo>();
+            Dictionary<int, FileInfo> localEps = new();
             int maxEpNumFound = 0;
 
             if (!si.SeasonEpisodes.ContainsKey(snum))

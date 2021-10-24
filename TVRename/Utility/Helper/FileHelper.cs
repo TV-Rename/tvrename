@@ -326,7 +326,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static FileInfo WithExtension([NotNull] this FileInfo baseFile, string extension) => new FileInfo(baseFile.RemoveExtension(true) + extension);
+        public static FileInfo WithExtension([NotNull] this FileInfo baseFile, string extension) => new(baseFile.RemoveExtension(true) + extension);
 
         private static int GetMetaDetails([NotNull] this FileInfo movieFile, Func<ShellObject, IShellProperty> extractMethod, Func<string, FileInfo, int> parseMethod, string operation, Func<MediaInfoWrapper, int> meExtractMethod, Func<int, int> meParseMethod)
         {
@@ -368,7 +368,7 @@ namespace TVRename
                     $"Unable to use shell to access file as part of {operation} for {movieFile.FullName}. Platform is not supported: {pe.Message}");
             }
 
-            MediaInfoWrapper mw = new MediaInfoWrapper(movieFile.FullName);
+            MediaInfoWrapper mw = new(movieFile.FullName);
             int returnVal = meExtractMethod(mw);
 
             if (returnVal != 0)
@@ -469,9 +469,9 @@ namespace TVRename
         [NotNull]
         public static string GetFilmDetails([NotNull] this FileInfo movieFile)
         {
-            using (ShellPropertyCollection properties = new ShellPropertyCollection(movieFile.FullName))
+            using (ShellPropertyCollection properties = new(movieFile.FullName))
             {
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new();
                 foreach (IShellProperty prop in properties)
                 {
                     string value = prop.ValueAsObject is null
@@ -599,7 +599,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static FileInfo FileInFolder([NotNull] string dir, string fn) => new FileInfo(dir.EnsureEndsWithSeparator() + fn);
+        public static FileInfo FileInFolder([NotNull] string dir, string fn) => new(dir.EnsureEndsWithSeparator() + fn);
 
         public static void RemoveDirectory([NotNull] string folderName)
         {
@@ -744,7 +744,7 @@ namespace TVRename
         }
 
         // see https://kodi.wiki/view/Naming_video_files/Movies#Split_Video_Files
-        private static readonly List<string> Ending = new List<string> { "part", "cd", "dvd", "pt", "disk", "disc" };
+        private static readonly List<string> Ending = new() { "part", "cd", "dvd", "pt", "disk", "disc" };
 
         public static bool IsDoublePartMovie(FileInfo f1, FileInfo f2)
         {
@@ -791,8 +791,8 @@ namespace TVRename
 
         private static readonly Regex[] MovieMultiPartRegex =
         {
-            new Regex(@"(?<base>.*)[ _.-]+(cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*(?<part>[0-9]|(A-D))$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
-            new Regex(@"(?<base>.*)[ ._-]*(?<part>|(A-D))$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+            new(@"(?<base>.*)[ _.-]+(cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*(?<part>[0-9]|(A-D))$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+            new(@"(?<base>.*)[ ._-]*(?<part>|(A-D))$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
         };
 
         public static string MovieFileNameBase(this FileInfo movieFile)

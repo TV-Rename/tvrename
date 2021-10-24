@@ -83,7 +83,7 @@ namespace TVRename
         [NotNull]
         public static string Helptext()
         {
-            StringBuilder output = new StringBuilder();
+            StringBuilder output = new();
             output.AppendLine();
             output.AppendLine("/forcerefresh will refresh all TVDB, TMDB and TV Maze information");
             output.AppendLine("/forceupdate will verify TVDB & TMDB information is up to date");

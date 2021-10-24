@@ -43,8 +43,8 @@ namespace TVRename
                 return;
             }
 
-            ItemList newList = new ItemList();
-            ItemList toRemove = new ItemList();
+            ItemList newList = new();
+            ItemList toRemove = new();
             int c = ActionList.Missing.Count + 1;
             int n = 0;
 
@@ -125,7 +125,7 @@ namespace TVRename
                 return null;
             }
 
-            FileInfo file = new FileInfo(filename);
+            FileInfo file = new(filename);
 
             if (!FileHelper.SimplifyAndCheckFilename(file.FullName, simpleShowName, true, false))
             {

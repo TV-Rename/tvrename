@@ -29,7 +29,7 @@ namespace TVRename.App
         {
             SplashScreen = new TVRenameSplash();
 
-            CommandLineArgs clargs = new CommandLineArgs(CommandLineArgs);
+            CommandLineArgs clargs = new(CommandLineArgs);
             if (clargs.Hide || !Environment.UserInteractive)
             {
                 SplashScreen.Visible = false;
@@ -42,7 +42,7 @@ namespace TVRename.App
         /// </summary>
         protected override void OnCreateMainForm()
         {
-            CommandLineArgs parameters = new CommandLineArgs(CommandLineArgs);
+            CommandLineArgs parameters = new(CommandLineArgs);
             if (parameters.Hide || !Environment.UserInteractive)
             {
                 SplashScreen.SafeInvoke(
@@ -64,7 +64,7 @@ namespace TVRename.App
             }
 
             // Show user interface
-            UI ui = new UI(doc, (TVRenameSplash)SplashScreen, !parameters.Unattended && !parameters.Hide && Environment.UserInteractive);
+            UI ui = new(doc, (TVRenameSplash)SplashScreen, !parameters.Unattended && !parameters.Hide && Environment.UserInteractive);
             ui.Text = ui.Text + " " + Helpers.DisplayVersion;
 
             // Bind IPC actions to the form, this allows another instance to trigger form actions
@@ -106,7 +106,7 @@ namespace TVRename.App
             {
                 if (recover) // Recovery required, prompt user
                 {
-                    RecoverXml recoveryForm = new RecoverXml(recoverText);
+                    RecoverXml recoveryForm = new(recoverText);
 
                     if (recoveryForm.ShowDialog() == DialogResult.OK)
                     {
@@ -204,7 +204,7 @@ namespace TVRename.App
             try
             {
                 LoggingConfiguration config = LogManager.Configuration;
-                SyslogTarget sematext = new SyslogTarget
+                SyslogTarget sematext = new()
                 {
                     MessageCreation =
                     {
@@ -221,7 +221,7 @@ namespace TVRename.App
                 };
 
                 config.AddTarget("sema", sematext);
-                JsonLayout jsonLayout = new JsonLayout
+                JsonLayout jsonLayout = new()
                 {
                     Attributes =
                     {
@@ -245,7 +245,7 @@ namespace TVRename.App
                 };
                 sematext.Layout = jsonLayout;
 
-                LoggingRule semaRule = new LoggingRule("*", LogLevel.Warn, sematext);
+                LoggingRule semaRule = new("*", LogLevel.Warn, sematext);
                 config.LoggingRules.Add(semaRule);
                 LogManager.Configuration = config;
             }
@@ -260,7 +260,7 @@ namespace TVRename.App
             try
             {
                 LoggingConfiguration config = LogManager.Configuration;
-                SyslogTarget papertrail = new SyslogTarget
+                SyslogTarget papertrail = new()
                 {
                     MessageCreation = { Facility = Facility.Local7 },
                     MessageSend =
@@ -275,7 +275,7 @@ namespace TVRename.App
                 papertrail.Layout = "| " + Helpers.DisplayVersion +
                                     " |${level:uppercase=true}| ${message} ${exception:format=toString,Data}";
 
-                LoggingRule rule = new LoggingRule("*", LogLevel.Error, papertrail);
+                LoggingRule rule = new("*", LogLevel.Error, papertrail);
                 config.LoggingRules.Add(rule);
                 LogManager.Configuration = config;
             }

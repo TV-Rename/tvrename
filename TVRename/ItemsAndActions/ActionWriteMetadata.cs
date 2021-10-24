@@ -35,7 +35,7 @@ namespace TVRename
 
         public override string TargetFolder => Where.DirectoryName;
 
-        public override IgnoreItem Ignore => new IgnoreItem(Where.FullName);
+        public override IgnoreItem Ignore => new(Where.FullName);
 
         public override string ScanListViewGroup => "lvgActionMeta";
 

@@ -34,7 +34,7 @@ namespace TVRename
                     return null;
                 }
 
-                BTResume btr = new BTResume(resDatFile);
+                BTResume btr = new(resDatFile);
                 if (!btr.LoadResumeDat())
                 {
                     return null;

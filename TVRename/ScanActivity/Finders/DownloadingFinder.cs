@@ -27,8 +27,8 @@ namespace TVRename
 
         protected void SearchForAppropriateDownloads(List<TorrentEntry> downloading, DownloadApp tApp)
         {
-            ItemList newList = new ItemList();
-            ItemList toRemove = new ItemList();
+            ItemList newList = new();
+            ItemList toRemove = new();
             int c = ActionList.Missing.Count + 2;
             int n = 1;
             UpdateStatus(n, c, "Searching torrent queue...");
@@ -43,7 +43,7 @@ namespace TVRename
 
                 foreach (TorrentEntry te in downloading)
                 {
-                    FileInfo file = new FileInfo(te.DownloadingTo);
+                    FileInfo file = new(te.DownloadingTo);
                     if (!file.IsMovieFile() && file.Extension != ".rar") // not a usefile file extension
                     {
                         continue;

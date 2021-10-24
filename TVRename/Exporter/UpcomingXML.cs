@@ -26,8 +26,8 @@ namespace TVRename
 
         protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode> elist)
         {
-            DirFilesCache dfc = new DirFilesCache();
-            XmlWriterSettings settings = new XmlWriterSettings
+            DirFilesCache dfc = new();
+            XmlWriterSettings settings = new()
             {
                 Indent = true,
                 NewLineOnAttributes = true,

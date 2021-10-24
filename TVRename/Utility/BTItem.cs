@@ -19,7 +19,7 @@ namespace TVRename
 
         public virtual void Tree(TreeNodeCollection tn)
         {
-            TreeNode n = new TreeNode("BTItem:" + Type);
+            TreeNode n = new("BTItem:" + Type);
             tn.Add(n);
         }
 

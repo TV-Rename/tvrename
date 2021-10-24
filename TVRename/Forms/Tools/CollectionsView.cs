@@ -73,7 +73,7 @@ namespace TVRename.Forms
 
         private void AddRcMenuItem(string label, EventHandler command)
         {
-            ToolStripMenuItem tsi = new ToolStripMenuItem(label.Replace("&", "&&"));
+            ToolStripMenuItem tsi = new(label.Replace("&", "&&"));
             tsi.Click += command;
             possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
         }
@@ -99,7 +99,7 @@ namespace TVRename.Forms
                 Dictionary<int, CachedMovieInfo> shows = TMDB.LocalCache.Instance.GetMovieIdsFromCollection(collectionId, TVSettings.Instance.TMDBLanguage.Abbreviation);
                 foreach (KeyValuePair<int, CachedMovieInfo> neededShow in shows)
                 {
-                    CollectionMember c = new CollectionMember { CollectionName = collectionName, Movie = neededShow.Value };
+                    CollectionMember c = new() { CollectionName = collectionName, Movie = neededShow.Value };
 
                     c.IsInLibrary = mDoc.FilmLibrary.Movies.Any(configuration => configuration.TmdbCode == c.TmdbCode);
                     collectionMovies.Add(c);
@@ -158,13 +158,13 @@ namespace TVRename.Forms
                 MovieConfiguration? si = mDoc.FilmLibrary.GetMovie(mlastSelected.TmdbCode, providerToUse);
                 if (si != null)
                 {
-                    AddRcMenuItem("Force Refresh", (o, args) => mainUi.ForceMovieRefresh(si, false));
-                    AddRcMenuItem("Edit Movie", (o, args) => mainUi.EditMovie(si));
+                    AddRcMenuItem("Force Refresh", (_, _) => mainUi.ForceMovieRefresh(si, false));
+                    AddRcMenuItem("Edit Movie", (_, _) => mainUi.EditMovie(si));
                 }
             }
             else
             {
-                AddRcMenuItem("Add to Library...", (o, args) => AddToLibrary(mlastSelected.Movie));
+                AddRcMenuItem("Add to Library...", (_, _) => AddToLibrary(mlastSelected.Movie));
             }
 
             //possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
@@ -173,8 +173,8 @@ namespace TVRename.Forms
         private void AddToLibrary(CachedMovieInfo si)
         {
             // need to add a new showitem
-            MovieConfiguration found = new MovieConfiguration(si.TmdbCode, TVDoc.ProviderType.TMDB);
-            QuickLocateForm f = new QuickLocateForm(si.Name, MediaConfiguration.MediaType.movie);
+            MovieConfiguration found = new(si.TmdbCode, TVDoc.ProviderType.TMDB);
+            QuickLocateForm f = new(si.Name, MediaConfiguration.MediaType.movie);
 
             if (f.ShowDialog(this) != DialogResult.OK)
             {

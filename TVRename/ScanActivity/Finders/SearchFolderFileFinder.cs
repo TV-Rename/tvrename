@@ -17,12 +17,12 @@ namespace TVRename
 
         protected override void DoCheck(SetProgressDelegate prog)
         {
-            ItemList newList = new ItemList();
-            ItemList toRemove = new ItemList();
+            ItemList newList = new();
+            ItemList toRemove = new();
 
             int fileCount = CountFilesInDownloadDirs();
 
-            DirCache dirCache = new DirCache();
+            DirCache dirCache = new();
             foreach (string s in TVSettings.Instance.DownloadFolders.ToList())
             {
                 if (Settings.Token.IsCancellationRequested)
@@ -46,7 +46,7 @@ namespace TVRename
 
                 UpdateStatus(currentItem++, totalN, action.Filename);
 
-                Dictionary<FileInfo, ItemList> thisRound = new Dictionary<FileInfo, ItemList>();
+                Dictionary<FileInfo, ItemList> thisRound = new();
 
                 if (action is ShowItemMissing showMissingAction)
                 {
@@ -83,11 +83,11 @@ namespace TVRename
 
         private List<FileInfo> FindMatchedFiles(DirCache dirCache, MovieItemMissing movieMissingAction, Dictionary<FileInfo, ItemList> thisRound)
         {
-            List<FileInfo> matchedFiles = new List<FileInfo>();
+            List<FileInfo> matchedFiles = new();
 
             foreach (DirCacheEntry dce in dirCache)
             {
-                ItemList actionsForThisFile = new ItemList();
+                ItemList actionsForThisFile = new();
                 if (!ReviewFile(movieMissingAction, actionsForThisFile, dce.TheFile, TVSettings.Instance.PreventMove, true,
                     TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
                 {
@@ -104,11 +104,11 @@ namespace TVRename
         [NotNull]
         private List<FileInfo> FindMatchedFiles([NotNull] DirCache dirCache, ShowItemMissing me, Dictionary<FileInfo,ItemList> thisRound)
         {
-            List<FileInfo> matchedFiles = new List<FileInfo>();
+            List<FileInfo> matchedFiles = new();
 
             foreach (DirCacheEntry dce in dirCache)
             {
-                ItemList actionsForThisFile = new ItemList();
+                ItemList actionsForThisFile = new();
                 if (!ReviewFile(me, actionsForThisFile, dce.TheFile, TVSettings.Instance.AutoMergeDownloadEpisodes, TVSettings.Instance.PreventMove, true, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
                 {
                     continue;

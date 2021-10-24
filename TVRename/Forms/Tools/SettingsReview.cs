@@ -32,7 +32,7 @@ namespace TVRename.Forms
 
         private void AddRcMenuItem(string label, EventHandler command)
         {
-            ToolStripMenuItem tsi = new ToolStripMenuItem(label.Replace("&", "&&"));
+            ToolStripMenuItem tsi = new(label.Replace("&", "&&"));
             tsi.Click += command;
             possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
         }
@@ -148,31 +148,31 @@ namespace TVRename.Forms
                 {
                     MovieConfiguration si = mcheck.Movie;
                     AddRcMenuItem("Force Refresh",
-                        (o, args) => mainUi.ForceMovieRefresh(new List<MovieConfiguration> { si }, false));
+                        (_, _) => mainUi.ForceMovieRefresh(new List<MovieConfiguration> { si }, false));
 
-                    AddRcMenuItem("Edit Movie", (o, args) => mainUi.EditMovie(si));
+                    AddRcMenuItem("Edit Movie", (_, _) => mainUi.EditMovie(si));
 
                     possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
                     foreach (string? f in si.Locations)
                     {
-                        AddRcMenuItem("Visit " + f, (o, args) => Helpers.OpenFolder(f));
+                        AddRcMenuItem("Visit " + f, (_, _) => Helpers.OpenFolder(f));
                     }
                 }
                 else if (mlastSelected is TvShowCheck tcheck)
                 {
                     ShowConfiguration si = tcheck.Show;
                     AddRcMenuItem("Force Refresh",
-                        (o, args) => mainUi.ForceRefresh(new List<ShowConfiguration> { si }, false));
+                        (_, _) => mainUi.ForceRefresh(new List<ShowConfiguration> { si }, false));
 
-                    AddRcMenuItem("Edit TV Show", (o, args) => mainUi.EditShow(si));
+                    AddRcMenuItem("Edit TV Show", (_, _) => mainUi.EditShow(si));
                 }
 
                 possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
-                AddRcMenuItem("Fix Issue", (o, args) => Remedy(mlastSelected));
+                AddRcMenuItem("Fix Issue", (_, _) => Remedy(mlastSelected));
             }
             else
             {
-                AddRcMenuItem("Fix Issues", (o, args) =>
+                AddRcMenuItem("Fix Issues", (_, _) =>
                 {
                     foreach (SettingsCheck? selected in olvDuplicates.SelectedObjects.OfType<SettingsCheck>())
                     {

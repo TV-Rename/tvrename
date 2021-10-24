@@ -23,7 +23,7 @@ namespace TVRename
 
         protected override void DoCheck(SetProgressDelegate prog)
         {
-            BulkAddSeriesManager bam = new BulkAddSeriesManager(MDoc);
+            BulkAddSeriesManager bam = new(MDoc);
             bam.CheckFolders(Settings.Token, prog, false, !Settings.Unattended);
             AskUserAboutShows(bam);
 
@@ -74,7 +74,7 @@ namespace TVRename
                 return;
             }
 
-            BulkAddEditShow ed = new BulkAddEditShow(folder);
+            BulkAddEditShow ed = new(folder);
 
             owner.ShowChildDialog(ed);
             DialogResult x = ed.DialogResult;

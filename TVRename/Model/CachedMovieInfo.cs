@@ -11,7 +11,7 @@ namespace TVRename
         public string? MovieType;
         public int? CollectionId;
         public string? CollectionName;
-        private readonly MovieImages images = new MovieImages();
+        private readonly MovieImages images = new();
 
         public int? Year => FirstAired?.Year;
 

@@ -31,7 +31,7 @@ namespace TVRename
 
         public void ClearEpisodes() => sourceEpisodes.Clear();
 
-        private ShowImages images = new ShowImages();
+        private ShowImages images = new();
 
         public int? MinYear =>
             Episodes.Select(e => e.GetAirDateDt())
@@ -373,7 +373,7 @@ namespace TVRename
 
         public void UpdateBanners(List<int> latestBannerIds)
         {
-            List<int> bannersToRemove = new List<int>();
+            List<int> bannersToRemove = new();
             foreach (ShowImage currentImage in images)
             {
                 if (latestBannerIds.Contains(currentImage.Id))
@@ -392,7 +392,7 @@ namespace TVRename
 
         public void AddEpisode([NotNull] Episode episode)
         {
-            sourceEpisodes.AddOrUpdate(episode.EpisodeId, episode,(i, episode1) => episode);
+            sourceEpisodes.AddOrUpdate(episode.EpisodeId, episode,(_, _) => episode);
             episode.SetSeriesSeason(this);
         }
 
@@ -407,7 +407,7 @@ namespace TVRename
 
         public override ProcessedSeason.SeasonType SeasonOrder => SeasonOrderType;
 
-        private List<Season> seasons = new List<Season>();
+        private List<Season> seasons = new();
 
         public void AddSeason(Season generateSeason)
         {

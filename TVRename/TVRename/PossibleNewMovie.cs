@@ -56,7 +56,7 @@ namespace TVRename
 
             //Lookup based on TMDB ID Being Present
             int? tmdbId = ConvertToInt(FindShowCode("tmdbid", "tmdb"));
-            Locale preferredLocale = new Locale();
+            Locale preferredLocale = new();
 
             int? tmdbCode = ValidateOnTMDB(tmdbId, preferredLocale, showErrorMsgBox);
             if (tmdbCode.HasValue)
@@ -205,7 +205,7 @@ namespace TVRename
 
         private string? FindShowCode(string simpleIdCode, string uniqueIdCode)
         {
-            List<string> possibleFilenames = new List<string> { $"{MovieStub}.nfo", $"{MovieStub}.xml" };
+            List<string> possibleFilenames = new() { $"{MovieStub}.nfo", $"{MovieStub}.xml" };
             foreach (string fileName in possibleFilenames)
             {
                 try
@@ -300,7 +300,7 @@ namespace TVRename
             int? possibleYear = null;
 
             List<string> removeCrapAfterTerms =
-                new List<string> { "1080p", "720p", "dvdrip", "webrip", "brrip", "r5", "BDrip", "limited", "dvdscr", "unrated", "tv", "bluray", "hdrip", "3d", "xvid", "r6rip" };
+                new() { "1080p", "720p", "dvdrip", "webrip", "brrip", "r5", "BDrip", "limited", "dvdscr", "unrated", "tv", "bluray", "hdrip", "3d", "xvid", "r6rip" };
 
             foreach (string? removeCrapAfterTerm in removeCrapAfterTerms)
             {
@@ -348,7 +348,7 @@ namespace TVRename
 
         public string? ImdbCode => imdbCodeInternal;
 
-        public Locale TargetLocale => new Locale();
+        public Locale TargetLocale => new();
 
         public ProcessedSeason.SeasonType SeasonOrder => throw new NotImplementedException();
 

@@ -55,14 +55,14 @@ namespace TVRename
 
         public List<TorrentEntry> AllFilesBeingDownloaded()
         {
-            List<TorrentEntry> r = new List<TorrentEntry>();
+            List<TorrentEntry> r = new();
 
             if (resumeDat is null)
             {
                 return r;
             }
 
-            BEncodeLoader bel = new BEncodeLoader();
+            BEncodeLoader bel = new();
             foreach (BTDictionaryItem dictitem in resumeDat.GetDict().Items)
             {
                 if (dictitem.Type != BTChunk.kDictionaryItem)
@@ -149,7 +149,7 @@ namespace TVRename
                         bool completed = ((BTInteger)d2.GetItem("order"))?.Value == -1;
                         int percent = completed ? 100 :
                             PercentBitsOn((BTString)d2.GetItem("have"));
-                        TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent, completed, torrentFile);
+                        TorrentEntry te = new(torrentFile, saveTo, percent, completed, torrentFile);
                         r.Add(te);
                     }
                     catch (PathTooLongException ptle)
@@ -182,7 +182,7 @@ namespace TVRename
 
         public bool LoadResumeDat()
         {
-            BEncodeLoader bel = new BEncodeLoader();
+            BEncodeLoader bel = new();
             resumeDat = bel.Load(resumeDatPath);
             return resumeDat != null;
         }

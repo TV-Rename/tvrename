@@ -159,7 +159,7 @@ namespace TVRename.Forms.Tools
                         droppedFile.DirectoryName.Length));
 
                 FileInfo targetFile =
-                    new FileInfo(droppedFile.DirectoryName.EnsureEndsWithSeparator() + filename);
+                    new(droppedFile.DirectoryName.EnsureEndsWithSeparator() + filename);
 
                 if (droppedFile.FullName == targetFile.FullName)
                 {

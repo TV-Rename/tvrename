@@ -15,7 +15,7 @@ namespace TVRename
 {
     public class ShowFilter
     {
-        public List<string> Genres { get; } = new List<string>();
+        public List<string> Genres { get; } = new();
         public string? ShowName { get; set; }
         public string? ShowStatus { get; set; }
         public bool ShowStatusInclude { get; set; }

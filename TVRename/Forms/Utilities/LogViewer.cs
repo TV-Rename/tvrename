@@ -24,7 +24,7 @@ namespace TVRename
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            RichTextBoxTarget target = new RichTextBoxTarget
+            RichTextBoxTarget target = new()
             {
                 Name = "UI Target",
                 Layout = "${date:format=HH\\:MM\\:ss} ${level:uppercase=true} ${message}",

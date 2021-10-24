@@ -13,7 +13,7 @@ namespace TVRename
 {
     internal class UrlCache
     {
-        private readonly ConcurrentDictionary<string, string> internalCache = new ConcurrentDictionary<string, string>();
+        private readonly ConcurrentDictionary<string, string> internalCache = new();
 
         public string GetUrl([NotNull] string s, bool instanceSearchJsonUseCloudflare)
         {

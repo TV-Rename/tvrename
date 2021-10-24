@@ -37,7 +37,7 @@ namespace TVRename
             res = res.Trim();
             return res;
         }
-        public static string ValidXml(this string content) => new string(content.Where(XmlConvert.IsXmlChar).ToArray());
+        public static string ValidXml(this string content) => new(content.Where(XmlConvert.IsXmlChar).ToArray());
 
         public static void WriteElement(this XmlWriter writer, string elementName, string? value)
         {
@@ -135,7 +135,7 @@ namespace TVRename
             {
                 return root.Elements(elementName).First();
             }
-            XElement e = new XElement(elementName);
+            XElement e = new(elementName);
             root.Add(e);
             return e;
         }
@@ -146,7 +146,7 @@ namespace TVRename
             {
                 return root.Elements(elementName).First(el => el.HasAttribute(name, value));
             }
-            XElement e = new XElement(elementName);
+            XElement e = new(elementName);
             root.Add(e);
             return e;
         }
@@ -384,26 +384,37 @@ namespace TVRename
             return defaultValue;
         }
 
-        public static int? ExtractInt([NotNull] this XElement xmlSettings, string elementName)
+        [CanBeNull]
+        public static T? ExtractNumber<T>([NotNull] this XElement xmlSettings, string elementName, Func<string,T> functionToExtract )
         {
-            if (xmlSettings.Descendants(elementName).Any() && !string.IsNullOrWhiteSpace((string)xmlSettings.Descendants(elementName).First()))
+            IEnumerable<XElement> xElements = xmlSettings.Descendants(elementName).ToList();
+
+            if (xElements.Any() && !string.IsNullOrWhiteSpace((string)xElements.First()))
             {
-                return XmlConvert.ToInt32((string)xmlSettings.Descendants(elementName).First());
+                try
+                {
+                    return functionToExtract((string)xElements.First());
+                }
+                catch (FormatException)
+                {
+                    Logger.Error($"Could not parse '{elementName}' from {xmlSettings}");
+                    return default(T);
+                }
             }
 
-            return null;
+            return default(T);
+        }
+
+        public static int? ExtractInt([NotNull] this XElement xmlSettings, string elementName)
+        {
+            return ExtractNumber(xmlSettings, elementName, XmlConvert.ToInt32);
         }
 
         public static int ExtractInt([NotNull] this XElement xmlSettings, string elementName, int defaultValue) => ExtractInt(xmlSettings, elementName) ?? defaultValue;
 
         public static long? ExtractLong([NotNull] this XElement xmlSettings, string elementName)
         {
-            if (xmlSettings.Descendants(elementName).Any())
-            {
-                return XmlConvert.ToInt64((string)xmlSettings.Descendants(elementName).First());
-            }
-
-            return null;
+            return ExtractNumber(xmlSettings, elementName, XmlConvert.ToInt64);
         }
 
         public static long ExtractLong([NotNull] this XElement xmlSettings, string elementName, int defaultValue) => ExtractLong(xmlSettings, elementName) ?? defaultValue;
@@ -434,22 +445,12 @@ namespace TVRename
 
         public static float? ExtractFloat([NotNull] this XElement xmlSettings, string elementName)
         {
-            if (xmlSettings.Descendants(elementName).Any())
-            {
-                return XmlConvert.ToSingle((string)xmlSettings.Descendants(elementName).First());
-            }
-
-            return null;
+            return ExtractNumber(xmlSettings, elementName, XmlConvert.ToSingle);
         }
 
         public static double? ExtractDouble([NotNull] this XElement xmlSettings, string elementName)
         {
-            if (xmlSettings.Descendants(elementName).Any())
-            {
-                return XmlConvert.ToDouble((string)xmlSettings.Descendants(elementName).First());
-            }
-
-            return null;
+            return ExtractNumber(xmlSettings, elementName, XmlConvert.ToDouble);
         }
 
         [NotNull]

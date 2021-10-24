@@ -34,7 +34,7 @@ namespace TVRename
             // for each tv show, optionally write a tvshow.nfo file
             if (TVSettings.Instance.NFOShows)
             {
-                ItemList theActionList = new ItemList();
+                ItemList theActionList = new();
                 FileInfo tvshownfo = FileHelper.FileInFolder(si.AutoAddFolderBase, "tvshow.nfo");
 
                 CachedSeriesInfo cachedSeriesInfo = si.CachedShow;

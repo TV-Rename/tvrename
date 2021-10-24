@@ -23,7 +23,7 @@ namespace TVRename
 
             Dictionary<int, SafeList<string>> flocs = si.AllProposedFolderLocations();
 
-            List<string> ignoredLocations = new List<string>();
+            List<string> ignoredLocations = new();
 
             foreach (int snum in si.GetSeasonKeys())
             {
@@ -45,7 +45,7 @@ namespace TVRename
                     continue;
                 }
 
-                SafeList<string> folders = new SafeList<string>();
+                SafeList<string> folders = new();
 
                 if (flocs.ContainsKey(snum))
                 {
@@ -157,7 +157,7 @@ namespace TVRename
                 if (whatToDo == FaResult.kfaNotSet)
                 {
                     // no command line guidance, so ask the user
-                    MissingFolderAction mfa = new MissingFolderAction(si.ShowName, snum + " of " + si.MaxSeason(), folder);
+                    MissingFolderAction mfa = new(si.ShowName, snum + " of " + si.MaxSeason(), folder);
 
                     owner.ShowChildDialog(mfa);
                     whatToDo = mfa.Result;
@@ -207,7 +207,7 @@ namespace TVRename
 
         private bool UpdateDirectory(ShowConfiguration si, int snum, string folder)
         {
-            DirectoryInfo di = new DirectoryInfo(folder);
+            DirectoryInfo di = new(folder);
             bool goAgain = !di.Exists;
             if (di.Exists &&
                 !string.Equals(si.AutoFolderNameForSeason(snum), folder, StringComparison.CurrentCultureIgnoreCase))

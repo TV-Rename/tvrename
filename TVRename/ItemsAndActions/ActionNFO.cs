@@ -74,7 +74,7 @@ namespace TVRename
 
         private void CreateBlankFile()
         {
-            XmlWriterSettings settings = new XmlWriterSettings
+            XmlWriterSettings settings = new()
             {
                 Indent = true,
                 IndentChars = "    ",
@@ -174,7 +174,7 @@ namespace TVRename
             // actors...
             foreach (Actor aa in showActors.Where(aa => !string.IsNullOrEmpty(aa.ActorName)))
             {
-                XElement tAdd = new XElement("actor", new XElement("name", aa.ActorName));
+                XElement tAdd = new("actor", new XElement("name", aa.ActorName));
 
                 if (!string.IsNullOrWhiteSpace(aa.ActorRole))
                 {
@@ -214,7 +214,7 @@ namespace TVRename
 
                 foreach (MediaImage m in newImages.Where(i => i.ImageUrl.HasValue()))
                 {
-                    XElement tAdd = new XElement("thumb");
+                    XElement tAdd = new("thumb");
                     tAdd.Add(new XAttribute("aspect", aspectAttributeName));
                     tAdd.Add(new XAttribute("preview", m.ThumbnailUrl ?? string.Empty));
                     tAdd.Value = m.ImageUrl!;
@@ -239,13 +239,13 @@ namespace TVRename
                     oldActor.Remove();
                 }
 
-                XElement fanartElement = new XElement("fanart");
+                XElement fanartElement = new("fanart");
                 root.Add(fanartElement);
 
                 // actors...
                 foreach (MediaImage m in newImages.Where(i => i.ImageUrl.HasValue()))
                 {
-                    XElement tAdd = new XElement("thumb");
+                    XElement tAdd = new("thumb");
                     tAdd.Add(new XAttribute("preview", m.ThumbnailUrl ?? string.Empty));
                     tAdd.Value = m.ImageUrl!;
                     fanartElement.Add(tAdd);

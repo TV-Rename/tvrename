@@ -72,7 +72,7 @@ namespace TVRename
         public bool UseCustomRegion;
         public string? CustomRegionCode;
 
-        public readonly List<string> AliasNames = new List<string>();
+        public readonly List<string> AliasNames = new();
         protected internal TVDoc.ProviderType ConfigurationProvider;
 
         protected abstract MediaType GetMediaType();
@@ -208,7 +208,7 @@ namespace TVRename
         [NotNull]
         protected IEnumerable<string> GetSimplifiedPossibleShowNames()
         {
-            List<string> possibles = new List<string>();
+            List<string> possibles = new();
 
             string simplifiedShowName = ShowName.CompareName();
             if (simplifiedShowName != "") { possibles.Add(simplifiedShowName); }

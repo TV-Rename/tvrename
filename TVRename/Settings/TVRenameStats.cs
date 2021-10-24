@@ -61,14 +61,14 @@ namespace TVRename
                 return null;
             }
 
-            XmlReaderSettings settings = new XmlReaderSettings { IgnoreComments = true, IgnoreWhitespace = true };
+            XmlReaderSettings settings = new() { IgnoreComments = true, IgnoreWhitespace = true };
             TVRenameStats sc;
 
             try
             {
                 using (XmlReader reader = XmlReader.Create(filename, settings))
                 {
-                    XmlSerializer xs = new XmlSerializer(typeof(TVRenameStats));
+                    XmlSerializer xs = new(typeof(TVRenameStats));
                     sc = (TVRenameStats)xs.Deserialize(reader);
                 }
 
@@ -96,10 +96,10 @@ namespace TVRename
                 di.Create();
             }
 
-            XmlWriterSettings settings = new XmlWriterSettings { Indent = true, NewLineOnAttributes = true };
+            XmlWriterSettings settings = new() { Indent = true, NewLineOnAttributes = true };
             using (XmlWriter writer = XmlWriter.Create(toFile, settings))
             {
-                XmlSerializer xs = new XmlSerializer(typeof(TVRenameStats));
+                XmlSerializer xs = new(typeof(TVRenameStats));
                 xs.Serialize(writer, this);
             }
         }

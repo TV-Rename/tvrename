@@ -83,7 +83,7 @@ namespace TVRename
 
                 if (doExtraFiles)
                 {
-                    DownloadIdentifiersController di = new DownloadIdentifiersController();
+                    DownloadIdentifiersController di = new();
 
                     // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
                     addTo.Add(di.ProcessEpisode(me.Episode, fi));
@@ -148,7 +148,7 @@ namespace TVRename
 
                 if (doExtraFiles)
                 {
-                    DownloadIdentifiersController di = new DownloadIdentifiersController();
+                    DownloadIdentifiersController di = new();
 
                     // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
                     addTo.Add(di.ProcessMovie(me.MovieConfig, fi));
@@ -261,7 +261,7 @@ namespace TVRename
         [NotNull]
         private static ShowItemMissing UpdateMissingItem([NotNull] ShowItemMissing me, [NotNull] FileInfo dce, int epF, int maxEp, int seasF)
         {
-            ShowRule sr = new ShowRule
+            ShowRule sr = new()
             {
                 DoWhatNow = RuleAction.kMerge,
                 First = epF,
@@ -314,7 +314,7 @@ namespace TVRename
         {
             // for each of the items in rcl, do the same copy/move if for other items with the same
             // base name, but different extensions
-            ItemList extras = new ItemList();
+            ItemList extras = new();
 
             foreach (ActionCopyMoveRename action in actionlist.CopyMoveRename)
             {
@@ -331,7 +331,7 @@ namespace TVRename
                             FileInfo fi = subFiles.Single();
                             string newName = action.DestinationBaseName + fi.Extension;
                             ActionCopyMoveRename newitem =
-                                new ActionCopyMoveRename(action.Operation, fi,
+                                new(action.Operation, fi,
                                     FileHelper.FileInFolder(action.To.Directory, newName), action.SourceEpisode, true,
                                     null, d);
 
@@ -355,7 +355,7 @@ namespace TVRename
                         }
 
                         ActionMoveRenameDirectory newitem =
-                            new ActionMoveRenameDirectory(subtitleFolder.FullName, newlocation, action.Movie!);
+                            new(subtitleFolder.FullName, newlocation, action.Movie!);
 
                         extras.Add(newitem);
                     }
@@ -384,7 +384,7 @@ namespace TVRename
         {
             // for each of the items in rcl, do the same copy/move if for other items with the same
             // base name, but different extensions
-            ItemList extras = new ItemList();
+            ItemList extras = new();
 
             foreach (ActionCopyMoveRename action in actionlist.CopyMoveRename)
             {
@@ -614,7 +614,7 @@ namespace TVRename
         private static List<FileInfo> IdentifyBestMatches([NotNull] List<FileInfo> matchedFiles)
         {
             //See whether there are any of the matched files that stand out
-            List<FileInfo> bestMatchedFiles = new List<FileInfo>();
+            List<FileInfo> bestMatchedFiles = new();
             foreach (FileInfo matchedFile in matchedFiles)
             {
                 //test first file against all the others

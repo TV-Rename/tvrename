@@ -136,7 +136,7 @@ namespace TVRename
 
         protected override Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo, bool checkExist)
         {
-            Dictionary<int, SafeList<string>> fld = new Dictionary<int, SafeList<string>>
+            Dictionary<int, SafeList<string>> fld = new()
             {
                 [0] = new SafeList<string>()
             };

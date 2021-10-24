@@ -74,7 +74,7 @@ namespace TVRename
 
             List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
 
-            List<ShowRule> rulesToAdd = new List<ShowRule>();
+            List<ShowRule> rulesToAdd = new();
 
             foreach (string folder in folders)
             {
@@ -126,7 +126,7 @@ namespace TVRename
                     LOGGER.Info(
                         $"Looking at {ep.Show.ShowName} and have identified that episode {epNum} and {maxEp} of season {seasNum} should be merged into one file {fi.FullName}");
 
-                    ShowRule sr = new ShowRule
+                    ShowRule sr = new()
                     {
                         DoWhatNow = RuleAction.kMerge,
                         First = epNum,

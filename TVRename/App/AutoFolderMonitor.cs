@@ -8,7 +8,7 @@ namespace TVRename
     {
         private readonly TVDoc mDoc;
         private readonly UI mainForm;
-        private readonly List<System.IO.FileSystemWatcher> watchers = new List<System.IO.FileSystemWatcher>();
+        private readonly List<System.IO.FileSystemWatcher> watchers = new();
         private readonly System.Timers.Timer mScanDelayTimer;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -59,7 +59,7 @@ namespace TVRename
                         continue;
                     }
 
-                    System.IO.FileSystemWatcher watcher = new System.IO.FileSystemWatcher(efi)
+                    System.IO.FileSystemWatcher watcher = new(efi)
                     {
                         IncludeSubdirectories = true,
                         EnableRaisingEvents = true

@@ -214,7 +214,7 @@ namespace TVRename
 
         public void AddUpdateEpisode([NotNull] Episode newEpisode)
         {
-            Episodes.AddOrUpdate(newEpisode.EpisodeId, newEpisode, (i, episode) => newEpisode);
+            Episodes.AddOrUpdate(newEpisode.EpisodeId, newEpisode, (_, _) => newEpisode);
         }
 
         public bool ContainsEpisode(int episodeNumber, SeasonType order)

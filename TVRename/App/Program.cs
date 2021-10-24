@@ -48,7 +48,7 @@ namespace TVRename.App
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Application.ThreadException += delegate (object sender, ThreadExceptionEventArgs eventArgs)
+            Application.ThreadException += delegate (object _, ThreadExceptionEventArgs eventArgs)
             {
                 Exception e = eventArgs.Exception;
                 Logger.Fatal(e, "UNHANDLED ERROR - Application.ThreadException");
@@ -75,7 +75,7 @@ namespace TVRename.App
                 return;
             }
             // Check if an application instance is already running
-            Mutex mutex = new Mutex(true, "TVRename", out bool newInstance);
+            Mutex mutex = new(true, "TVRename", out bool newInstance);
 
             if (!newInstance)
             {
@@ -86,7 +86,7 @@ namespace TVRename.App
                 RemoteClient.Proxy();
 
                 // Transparent proxy to the existing instance
-                RemoteClient ipc = new RemoteClient();
+                RemoteClient ipc = new();
 
                 // If already running and no command line arguments then bring instance to the foreground and quit
                 if (args.Length == 0)
@@ -106,7 +106,7 @@ namespace TVRename.App
             {
                 Logger.Info("Starting new instance");
 
-                ApplicationBase s = new ApplicationBase();
+                ApplicationBase s = new();
 
                 s.Run(args);
 

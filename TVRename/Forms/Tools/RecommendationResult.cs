@@ -7,8 +7,8 @@ namespace TVRename.Forms
         internal int Key;
         internal bool Trending;
         internal bool TopRated;
-        internal readonly List<MediaConfiguration> Related = new List<MediaConfiguration>();
-        internal readonly List<MediaConfiguration> Similar = new List<MediaConfiguration>();
+        internal readonly List<MediaConfiguration> Related = new();
+        internal readonly List<MediaConfiguration> Similar = new();
 
         public double GetScore(int trendingWeight, int topWeight, int relatedWeight, int similarWeight,int maxRelated, int maxSimilar)
         {

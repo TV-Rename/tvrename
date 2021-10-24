@@ -32,7 +32,7 @@ namespace TVRename
                 MDoc.Stats().MissingChecksDone++;
             }
 
-            DirFilesCache dfc = new DirFilesCache();
+            DirFilesCache dfc = new();
 
             List<ShowConfiguration> showList = Settings.Shows;
 

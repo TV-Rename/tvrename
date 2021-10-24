@@ -25,10 +25,10 @@ namespace TVRename
         protected override void Do()
         {
             IEnumerable<ProcessedEpisode> lpe = doc.TvLibrary.RecentEpisodes(TVSettings.Instance.WTWRecentDays).ToList();
-            DirFilesCache dfc = new DirFilesCache();
+            DirFilesCache dfc = new();
 
             //Write Contents to file
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
+            using (System.IO.StreamWriter file = new(Location()))
             {
                 file.WriteLine(GenerateHeader());
                 foreach (ProcessedEpisode episode in lpe)

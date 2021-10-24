@@ -76,7 +76,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> GetSeasonPatterns()
         {
-            List<string> results = new List<string> { TVSettings.Instance.SeasonFolderFormat };
+            List<string> results = new() { TVSettings.Instance.SeasonFolderFormat };
 
             IEnumerable<string> seasonWordsFromShows = Shows.Select(si => si.AutoAddCustomFolderFormat);
 
@@ -88,7 +88,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> GetGenres()
         {
-            List<string> allGenres = new List<string>();
+            List<string> allGenres = new();
             foreach (ShowConfiguration si in Shows)
             {
                 allGenres.AddRange(si.Genres);
@@ -351,7 +351,7 @@ namespace TVRename
             {
                 if (eis[i].AppropriateSeasonNumber == sease && eis[i].AppropriateEpNum == epnum)
                 {
-                    ProcessedEpisode pe = new ProcessedEpisode(ep, si)
+                    ProcessedEpisode pe = new(ep, si)
                     {
                         TheAiredProcessedSeason = eis[i].TheAiredProcessedSeason,
                         TheDvdProcessedSeason = eis[i].TheDvdProcessedSeason,
@@ -519,7 +519,7 @@ namespace TVRename
                 // make numberOfNewParts new parts
                 {
                     ProcessedEpisode pe2 =
-                        new ProcessedEpisode(ei, si, ProcessedEpisode.ProcessedEpisodeType.split)
+                        new(ei, si, ProcessedEpisode.ProcessedEpisodeType.split)
                         {
                             Name = $"{nameBase} (Part {i})",
                             AiredEpNum = -2,
@@ -538,10 +538,10 @@ namespace TVRename
             if (ValidIndex(fromIndex, ec) && ValidIndex(toIndex, ec) && fromIndex < toIndex)
             {
                 ProcessedEpisode oldFirstEi = eis[fromIndex];
-                List<string> episodeNames = new List<string> { eis[fromIndex].Name };
+                List<string> episodeNames = new() { eis[fromIndex].Name };
                 string defaultCombinedName = eis[fromIndex].Name + " + ";
                 string combinedSummary = eis[fromIndex].Overview + "<br/><br/>";
-                List<Episode> alleps = new List<Episode> { eis[fromIndex] };
+                List<Episode> alleps = new() { eis[fromIndex] };
                 for (int i = fromIndex + 1; i <= toIndex; i++)
                 {
                     episodeNames.Add(eis[i].Name);
@@ -561,7 +561,7 @@ namespace TVRename
 
                 string combinedName = GetBestNameFor(episodeNames, defaultCombinedName);
 
-                ProcessedEpisode pe2 = new ProcessedEpisode(oldFirstEi, si, alleps)
+                ProcessedEpisode pe2 = new(oldFirstEi, si, alleps)
                 {
                     Name = string.IsNullOrEmpty(newName) ? combinedName : newName,
                     AiredEpNum = oldFirstEi.AiredEpNum,
@@ -587,13 +587,13 @@ namespace TVRename
             if (ValidIndex(index, ec))
             {
                 ProcessedEpisode t = eis[index];
-                ProcessedEpisode n = new ProcessedEpisode(t, si, txt, t.AiredEpNum + 1, t.DvdEpNum + 1, t.EpNum2 + 1);
+                ProcessedEpisode n = new(t, si, txt, t.AiredEpNum + 1, t.DvdEpNum + 1, t.EpNum2 + 1);
                 eis.Insert(index, n);
             }
             else if (index == ec)
             {
                 ProcessedEpisode t = eis[index - 1];
-                ProcessedEpisode n = new ProcessedEpisode(t, si, txt, t.AiredEpNum + 1, t.DvdEpNum + 1, t.EpNum2 + 1);
+                ProcessedEpisode n = new(t, si, txt, t.AiredEpNum + 1, t.DvdEpNum + 1, t.EpNum2 + 1);
                 eis.Add(n);
             }
             else
@@ -674,7 +674,7 @@ namespace TVRename
         public List<ProcessedEpisode> NextNShows(int nShows, int nDaysPast, int nDaysFuture)
         {
             DateTime notBefore = DateTime.Now.AddDays(-nDaysPast);
-            List<ProcessedEpisode> found = new List<ProcessedEpisode>();
+            List<ProcessedEpisode> found = new();
 
             for (int i = 0; i < nShows; i++)
             {
@@ -771,7 +771,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<ProcessedEpisode> GetRecentAndFutureEps(int days)
         {
-            List<ProcessedEpisode> returnList = new List<ProcessedEpisode>();
+            List<ProcessedEpisode> returnList = new();
 
             foreach (ShowConfiguration si in Shows)
             {
@@ -834,7 +834,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<ProcessedEpisode> RecentEpisodes(int days)
         {
-            List<ProcessedEpisode> episodes = new List<ProcessedEpisode>();
+            List<ProcessedEpisode> episodes = new();
 
             // for each show, see if any episodes were aired in "recent" days...
             foreach (ShowConfiguration si in GetRecentShows())

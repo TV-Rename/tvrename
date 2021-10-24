@@ -50,7 +50,7 @@ namespace TVRename
             string sn = r.ExtractString("Rating");
             double.TryParse(sn, out double rating);
 
-            ShowImage legacy = new ShowImage
+            ShowImage legacy = new()
             {
                 Id = r.ExtractInt("id") ?? -1,
                 SeriesId = r.ExtractInt("seriesid") ?? seriesId,

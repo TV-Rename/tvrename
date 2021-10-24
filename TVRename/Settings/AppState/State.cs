@@ -9,7 +9,7 @@ namespace TVRename.Settings.AppState
     public class State
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        public UpdateCheck UpdateCheck { get; } = new UpdateCheck();
+        public UpdateCheck UpdateCheck { get; } = new();
 
         public static State LoadFromDefaultFile() => LoadFromFile(PathManager.StateFile.FullName);
 
@@ -19,7 +19,7 @@ namespace TVRename.Settings.AppState
             {
                 try
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(State));
+                    XmlSerializer serializer = new(typeof(State));
                     using (XmlReader reader = XmlReader.Create(path))
                     {
                         return (State)serializer.Deserialize(reader);
@@ -42,8 +42,8 @@ namespace TVRename.Settings.AppState
 
         private void SaveToFile(string path)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(State));
-            XmlWriterSettings xmlWriterSettings = new XmlWriterSettings { Indent = true };
+            XmlSerializer serializer = new(typeof(State));
+            XmlWriterSettings xmlWriterSettings = new() { Indent = true };
             using (XmlWriter xmlWriter = XmlWriter.Create(path, xmlWriterSettings))
             {
                 serializer.Serialize(xmlWriter, this);

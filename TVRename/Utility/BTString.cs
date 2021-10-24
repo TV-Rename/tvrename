@@ -36,7 +36,7 @@ namespace TVRename
 
         public override void Tree(TreeNodeCollection tn)
         {
-            TreeNode n = new TreeNode($"String:{AsString()}");
+            TreeNode n = new($"String:{AsString()}");
             tn.Add(n);
         }
 

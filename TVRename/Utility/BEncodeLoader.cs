@@ -6,7 +6,7 @@ namespace TVRename
     {
         private BTItem ReadString(System.IO.Stream sr, long length)
         {
-            System.IO.BinaryReader br = new System.IO.BinaryReader(sr);
+            System.IO.BinaryReader br = new(sr);
             return new BTString {Data = br.ReadBytes((int)length) };
         }
 
@@ -33,13 +33,13 @@ namespace TVRename
                 r = -r;
             }
 
-            BTInteger bti = new BTInteger { Value = r };
+            BTInteger bti = new() { Value = r };
             return bti;
         }
 
         public BTItem ReadDictionary(System.IO.FileStream sr)
         {
-            BTDictionary d = new BTDictionary();
+            BTDictionary d = new();
             for (;;)
             {
                 BTItem next = ReadNext(sr);
@@ -53,14 +53,14 @@ namespace TVRename
                     return new BTError {Message = "Didn't get string as first of pair in dictionary"};
                 }
 
-                BTDictionaryItem di = new BTDictionaryItem(((BTString)next).AsString(), ReadNext(sr));
+                BTDictionaryItem di = new(((BTString)next).AsString(), ReadNext(sr));
                 d.Items.Add(di);
             }
         }
 
         public BTItem ReadList(System.IO.FileStream sr)
         {
-            BTList ll = new BTList();
+            BTList ll = new();
             for (;;)
             {
                 BTItem next = ReadNext(sr);
@@ -114,7 +114,7 @@ namespace TVRename
                 return ReadString(sr, Convert.ToInt32(r));
             }
 
-            BTError e = new BTError
+            BTError e = new()
             {
                 Message = $"Error: unknown BEncode item type: {c}"
             };
@@ -124,7 +124,7 @@ namespace TVRename
 
         public BTFile? Load(string filename)
         {
-            BTFile f = new BTFile();
+            BTFile f = new();
 
             System.IO.FileStream sr;
             try

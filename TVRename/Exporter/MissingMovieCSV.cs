@@ -17,7 +17,7 @@ namespace TVRename
 
         protected override void Do()
         {
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
+            using (System.IO.StreamWriter file = new(Location()))
             {
                 file.WriteLine("Movie Name,Year,Folder,Nice Name");
 

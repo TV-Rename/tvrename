@@ -57,7 +57,7 @@ namespace TVRename
         protected static IEnumerable<ActionTDownload> FindDuplicates([NotNull] ItemList newItems)
         {
             //We now want to rationlise the newItems - just in case we've added duplicates
-            List<ActionTDownload> duplicateActionRss = new List<ActionTDownload>();
+            List<ActionTDownload> duplicateActionRss = new();
 
             foreach (Item x in newItems)
             {

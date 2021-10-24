@@ -42,8 +42,8 @@ namespace TVRename
             int n = 1;
             UpdateStatus(n, c, "Searching with Jackett...");
 
-            ItemList newItems = new ItemList();
-            ItemList toRemove = new ItemList();
+            ItemList newItems = new();
+            ItemList toRemove = new();
             try
             {
                 foreach (ItemMissing action in ActionList.Missing.ToList())
@@ -86,9 +86,9 @@ namespace TVRename
             ProcessedEpisode processedEpisode = action.MissingEpisode;
             string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(processedEpisode) : NormalJackettUrl(processedEpisode);
 
-            RssItemList rssList = new RssItemList();
+            RssItemList rssList = new();
             rssList.DownloadRSS(url, false, "Jackett");
-            ItemList newItemsForThisMissingEpisode = new ItemList();
+            ItemList newItemsForThisMissingEpisode = new();
 
             foreach (RSSItem rss in rssList.Where(rss => RssMatch(rss, processedEpisode)))
             {
@@ -98,7 +98,7 @@ namespace TVRename
                         $"Adding {rss.URL} from RSS feed as it appears to be match for {processedEpisode.Show.ShowName} S{processedEpisode.AppropriateSeasonNumber}E{processedEpisode.AppropriateEpNum}");
                 }
 
-                ItemDownloading becomes = new ItemDownloading(new FutureTorrentEntry(rss.URL, action.TheFileNoExt), action.MissingEpisode, action.TheFileNoExt, DownloadingFinder.DownloadApp.qBitTorrent, action);
+                ItemDownloading becomes = new(new FutureTorrentEntry(rss.URL, action.TheFileNoExt), action.MissingEpisode, action.TheFileNoExt, DownloadingFinder.DownloadApp.qBitTorrent, action);
                 newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action, becomes));
                 toRemove.Add(action);
             }
@@ -115,9 +115,9 @@ namespace TVRename
         {
             string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(action.MovieConfig) : NormalJackettUrl(action.MovieConfig);
 
-            RssItemList rssList = new RssItemList();
+            RssItemList rssList = new();
             rssList.DownloadRSS(url, false, "Jackett");
-            ItemList newItemsForThisMissingEpisode = new ItemList();
+            ItemList newItemsForThisMissingEpisode = new();
 
             foreach (RSSItem rss in rssList.Where(rss => RssMatch(rss, action.MovieConfig)))
             {
@@ -126,7 +126,7 @@ namespace TVRename
                     LOGGER.Info(
                         $"Adding {rss.URL} from RSS feed as it appears to be match for {action.MovieConfig.ShowName}");
                 }
-                ItemDownloading becomes = new ItemDownloading(new FutureTorrentEntry(rss.URL, action.TheFileNoExt), action.MovieConfig, action.TheFileNoExt, DownloadingFinder.DownloadApp.qBitTorrent, action);
+                ItemDownloading becomes = new(new FutureTorrentEntry(rss.URL, action.TheFileNoExt), action.MovieConfig, action.TheFileNoExt, DownloadingFinder.DownloadApp.qBitTorrent, action);
                 newItemsForThisMissingEpisode.Add(new ActionTDownload(rss, action, becomes));
                 toRemove.Add(action);
             }

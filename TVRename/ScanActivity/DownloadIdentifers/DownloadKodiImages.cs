@@ -15,10 +15,10 @@ namespace TVRename
 {
     internal class DownloadKodiImages : DownloadIdentifier
     {
-        private List<string> donePosterJpg = new List<string>();
-        private List<string> doneBannerJpg = new List<string>();
-        private List<string> doneFanartJpg = new List<string>();
-        private List<string> doneTbn = new List<string>();
+        private List<string> donePosterJpg = new();
+        private List<string> doneBannerJpg = new();
+        private List<string> doneFanartJpg = new();
+        private List<string> doneTbn = new();
 
         public DownloadKodiImages() => Reset();
 
@@ -44,7 +44,7 @@ namespace TVRename
 
             if (TVSettings.Instance.KODIImages)
             {
-                ItemList theActionList = new ItemList();
+                ItemList theActionList = new();
                 string baseFileName = file.MovieFileNameBase();
 
                 FileInfo posterJpg = movie.IsDvdBluRay()
@@ -104,7 +104,7 @@ namespace TVRename
 
             if (TVSettings.Instance.KODIImages)
             {
-                ItemList theActionList = new ItemList();
+                ItemList theActionList = new();
                 // base folder:
                 if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && si.AllFolderLocations(false).Count > 0)
                 {
@@ -151,7 +151,7 @@ namespace TVRename
         {
             if (TVSettings.Instance.KODIImages)
             {
-                ItemList theActionList = new ItemList();
+                ItemList theActionList = new();
                 //If we have KODI New style images being downloaded then we want to check that 3 files exist
                 //for the cachedSeries:
                 //http://wiki.xbmc.org/index.php?title=XBMC_v12_(Frodo)_FAQ#Local_images
@@ -210,7 +210,7 @@ namespace TVRename
         {
             if (TVSettings.Instance.EpTBNs)
             {
-                ItemList theActionList = new ItemList();
+                ItemList theActionList = new();
                 if (episode.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
                 {
                     //We have a merged episode, so we'll also download the images for the episodes had they been separate.

@@ -105,7 +105,7 @@ namespace TVRename
                 {
                     // ....its good!
                     Logger.Info("Adding {0} as a new Movie", newFilm.FullName);
-                    PossibleNewMovie ai = new PossibleNewMovie(newFilm, andGuess, showErrorMsgBox);
+                    PossibleNewMovie ai = new(newFilm, andGuess, showErrorMsgBox);
                     AddItems.AddIfNew(ai);
                 }
 
@@ -211,7 +211,7 @@ namespace TVRename
 
         private List<MovieConfiguration> AddToLibrary([NotNull] IEnumerable<PossibleNewMovie> ais)
         {
-            List<MovieConfiguration> movies = new List<MovieConfiguration>();
+            List<MovieConfiguration> movies = new();
             foreach (PossibleNewMovie ai in ais)
             {
                 if (ai.CodeUnknown)
@@ -270,7 +270,7 @@ namespace TVRename
         private MovieConfiguration AddNewMovieToLibrary(PossibleNewMovie ai, bool isInLibraryFolderFileFinder, string? matchingRoot)
         {
             // need to add a new showitem
-            MovieConfiguration found = new MovieConfiguration(ai);
+            MovieConfiguration found = new(ai);
 
             mDoc.Add(found.AsList());
 
@@ -326,7 +326,7 @@ namespace TVRename
                 CurrentPhaseDirectory = 0;
                 CurrentPhaseTotalDirectory = 1;
 
-                DirectoryInfo di = new DirectoryInfo(folder);
+                DirectoryInfo di = new(folder);
                 if (TVSettings.Instance.LibraryFolders.Contains(folder))
                 {
                     Logger.Warn($"Not loading {folder} as it is both a movie folder and a tv folder");

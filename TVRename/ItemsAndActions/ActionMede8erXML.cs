@@ -65,7 +65,7 @@ namespace TVRename
                 return;
             }
 
-            XmlWriterSettings settings = new XmlWriterSettings { Indent = true, NewLineOnAttributes = true };
+            XmlWriterSettings settings = new() { Indent = true, NewLineOnAttributes = true };
             using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
             {
                 // See: http://xbmc.org/wiki/?title=Import_-_Export_Library#TV_Episodes
@@ -160,7 +160,7 @@ namespace TVRename
 
         private void WriteSeriesXml()
         {
-            XmlWriterSettings settings = new XmlWriterSettings { Indent = true, NewLineOnAttributes = true };
+            XmlWriterSettings settings = new() { Indent = true, NewLineOnAttributes = true };
             using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
             {
                 // http://www.xbmc.org/wiki/?title=Import_-_Export_Library#TV_Shows

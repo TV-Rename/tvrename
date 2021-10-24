@@ -33,7 +33,7 @@ namespace TVRename
                 // windows explorer tends to lose explorer windows on shares when slept/resumed, too, so its not
                 // just me :P
 
-                using (MemoryStream ms = new MemoryStream())
+                using (MemoryStream ms = new())
                 {
                     List<ProcessedEpisode> lpe = doc.TvLibrary.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
                         TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
@@ -59,7 +59,7 @@ namespace TVRename
             string contents = Produce();
 
             //Write Contents to file
-            using (StreamWriter file = new StreamWriter(Location()))
+            using (StreamWriter file = new(Location()))
             {
                 file.Write(contents);
             }

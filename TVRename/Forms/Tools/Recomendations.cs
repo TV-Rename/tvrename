@@ -11,7 +11,7 @@ namespace TVRename.Forms
                 return movieRec;
             }
 
-            RecommendationResult x = new RecommendationResult { Key = key };
+            RecommendationResult x = new() { Key = key };
             TryAdd(key, x);
             return x;
         }

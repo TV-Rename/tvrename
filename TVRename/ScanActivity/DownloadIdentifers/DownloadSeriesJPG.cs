@@ -5,7 +5,7 @@ namespace TVRename
 {
     internal sealed class DownloadSeriesJpg : DownloadIdentifier
     {
-        private List<string> doneJpg = new List<string>();
+        private List<string> doneJpg = new();
         private const string DEFAULT_FILE_NAME = "series.jpg";
 
         public override DownloadType GetDownloadType() => DownloadType.downloadImage;
@@ -17,7 +17,7 @@ namespace TVRename
                 return null;
             }
 
-            ItemList theActionList = new ItemList();
+            ItemList theActionList = new();
             FileInfo fi = FileHelper.FileInFolder(folder, DEFAULT_FILE_NAME);
             bool fileWorthDownloading = !doneJpg.Contains(fi.FullName) && !fi.Exists;
             if (forceRefresh || fileWorthDownloading)

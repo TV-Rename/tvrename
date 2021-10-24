@@ -53,7 +53,7 @@ namespace TVRename
 
             foreach (ProcessedEpisode ei in mDoc.TvLibrary.NextNShows(N, 0, 9999))
             {
-                ListViewItem lvi = new ListViewItem { Text = ei.HowLong() };
+                ListViewItem lvi = new() { Text = ei.HowLong() };
                 lvi.SubItems.Add(ei.DayOfWeek());
                 lvi.SubItems.Add(ei.TimeOfDay());
                 lvi.SubItems.Add(TVSettings.Instance.NamingStyle.NameFor(ei));

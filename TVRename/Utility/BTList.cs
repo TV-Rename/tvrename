@@ -22,7 +22,7 @@ namespace TVRename
 
         public override void Tree(TreeNodeCollection tn)
         {
-            TreeNode n = new TreeNode("List");
+            TreeNode n = new("List");
             tn.Add(n);
             foreach (BTItem t in Items)
             {

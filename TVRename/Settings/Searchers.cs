@@ -27,7 +27,7 @@ namespace TVRename
             switch (t)
             {
                 case MediaConfiguration.MediaType.tv:
-                    SearchEngine google2 = new SearchEngine
+                    SearchEngine google2 = new()
                     {
                         Name = "Google",
                         Url = "https://www.google.com/search?q={ShowName}+S{Season:2}E{Episode}"
@@ -40,7 +40,7 @@ namespace TVRename
                     break;
 
                 case MediaConfiguration.MediaType.movie:
-                    SearchEngine google = new SearchEngine
+                    SearchEngine google = new()
                     {
                         Name = "Google",
                         Url = "https://www.google.com/search?q={ShowName}"

@@ -12,7 +12,7 @@ namespace TVRename
 {
     public class ActionQueue
     {
-        public readonly List<Action> Actions = new List<Action>(); // The contents of this queue
+        public readonly List<Action> Actions = new(); // The contents of this queue
         public readonly Semaphore Sem;
 
         private readonly int parallelThreadLimit; // Number of tasks in the queue than can be run at once

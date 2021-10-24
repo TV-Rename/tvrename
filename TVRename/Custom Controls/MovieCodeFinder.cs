@@ -22,7 +22,7 @@ namespace TVRename
         [NotNull]
         private static ListViewItem NewLvi([NotNull] CachedMovieInfo si, int num, bool numberMatch)
         {
-            ListViewItem lvi = new ListViewItem { Text = num.ToString() };
+            ListViewItem lvi = new() { Text = num.ToString() };
             lvi.SubItems.Add(si.Name);
             lvi.SubItems.Add(si.FirstAired.HasValue ? si.FirstAired.Value.Year.ToString() : string.Empty);
             lvi.SubItems.Add(si.ContentRating);

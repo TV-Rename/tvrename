@@ -178,7 +178,7 @@ namespace TVRename
 
         private void SetTagListText()
         {
-            StringBuilder tl = new StringBuilder();
+            StringBuilder tl = new();
 
             foreach (string s in CustomEpisodeName.TAGS)
             {
@@ -266,7 +266,7 @@ namespace TVRename
             {
                 foreach (string s in kvp.Value)
                 {
-                    ListViewItem lvi = new ListViewItem { Text = kvp.Key.ToString() };
+                    ListViewItem lvi = new() { Text = kvp.Key.ToString() };
                     lvi.SubItems.Add(s);
 
                     lvSeasonFolders.Items.Add(lvi);
@@ -582,7 +582,7 @@ namespace TVRename
 
         private void bnAdd_Click(object sender, EventArgs e)
         {
-            ListViewItem lvi = new ListViewItem { Text = txtSeasonNumber.Text };
+            ListViewItem lvi = new() { Text = txtSeasonNumber.Text };
             lvi.SubItems.Add(txtFolder.Text);
 
             lvSeasonFolders.Items.Add(lvi);
@@ -768,7 +768,7 @@ namespace TVRename
             }
 
             string showName = codeFinderForm.SelectedShow()?.Name ?? txtCustomShowName.Text ?? "New Folder";
-            QuickLocateForm f = new QuickLocateForm(showName, MediaConfiguration.MediaType.tv);
+            QuickLocateForm f = new(showName, MediaConfiguration.MediaType.tv);
 
             if (f.ShowDialog(this) == DialogResult.OK)
             {
@@ -802,7 +802,7 @@ namespace TVRename
 
         private void BtnIgnoreList_Click(object sender, EventArgs e)
         {
-            IgnoreEdit ie = new IgnoreEdit(mDoc, txtBaseFolder.Text);
+            IgnoreEdit ie = new(mDoc, txtBaseFolder.Text);
             ie.ShowDialog(this);
             UpdateIgnore();
         }

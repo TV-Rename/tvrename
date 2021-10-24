@@ -85,7 +85,7 @@ namespace TVRename
             lvTest.Items.Clear();
             foreach (ProcessedEpisode pe in eps)
             {
-                ListViewItem lvi = new ListViewItem();
+                ListViewItem lvi = new();
                 string fn = TVSettings.Instance.FilenameFriendly(cn.NameFor(pe));
                 lvi.Text = fn;
 

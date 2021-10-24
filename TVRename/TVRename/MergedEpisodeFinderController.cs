@@ -19,15 +19,15 @@ namespace TVRename
             int current = 0;
 
             doc.PreventAutoScan("Find Double Episodes");
-            StringBuilder output = new StringBuilder();
-            List<PossibleMergedEpisode> returnValue = new List<PossibleMergedEpisode>();
+            StringBuilder output = new();
+            List<PossibleMergedEpisode> returnValue = new();
 
             output.AppendLine("");
             output.AppendLine("##################################################");
             output.AppendLine("MERGED EPISODES FINDER - Start");
             output.AppendLine("##################################################");
 
-            DirFilesCache dfc = new DirFilesCache();
+            DirFilesCache dfc = new();
             foreach (ShowConfiguration si in doc.TvLibrary.GetSortedShowItems())
             {
                 worker.ReportProgress(100 * current++ / total, si.ShowName);
@@ -119,7 +119,7 @@ namespace TVRename
                 //More than 40% longer
                 FileInfo possibleDupFile = dfc.FindEpOnDisk(possibleDupEpisode)[0];
                 int dupMovieLength = possibleDupFile.GetFilmLength();
-                List<int> otherMovieLengths = new List<int>();
+                List<int> otherMovieLengths = new();
                 foreach (FileInfo file in possibleDupFile.Directory.EnumerateFiles())
                 {
                     if (file.IsMovieFile())

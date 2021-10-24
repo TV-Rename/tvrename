@@ -150,22 +150,22 @@ namespace TVRename.Forms
 
             possibleMergedEpisodeRightClickMenu.Items.Clear();
 
-            AddRcMenuItem("Episode Guide", (o, args) => GotoEpGuide(si, mlastSelected));
-            AddRcMenuItem("Force Refresh", (o, args) => mainUi.ForceRefresh(si, false));
-            AddRcMenuItem("Edit Show", (o, args) => mainUi.EditShow(si));
+            AddRcMenuItem("Episode Guide", (_, _) => GotoEpGuide(si, mlastSelected));
+            AddRcMenuItem("Force Refresh", (_, _) => mainUi.ForceRefresh(si, false));
+            AddRcMenuItem("Edit Show", (_, _) => mainUi.EditShow(si));
 
             AddRcMenuItem("Edit " + ProcessedSeason.UIFullSeasonWord(mlastSelected.SeasonNumber),
-                (o, args) => mainUi.EditSeason(si, mlastSelected.SeasonNumber));
+                (_, _) => mainUi.EditSeason(si, mlastSelected.SeasonNumber));
 
             possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
-            AddRcMenuItem("Add Rule", (o, args) => AddRule(mlastSelected, si, mlastClicked));
+            AddRcMenuItem("Add Rule", (_, _) => AddRule(mlastSelected, si, mlastClicked));
 
             possibleMergedEpisodeRightClickMenu.Show(pt);
         }
 
         private void AddRcMenuItem(string label, EventHandler command)
         {
-            ToolStripMenuItem tsi = new ToolStripMenuItem(label.Replace("&", "&&"));
+            ToolStripMenuItem tsi = new(label.Replace("&", "&&"));
             tsi.Click += command;
             possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
         }

@@ -22,7 +22,7 @@ namespace TVRename.TMDB
             //We'll keep asking until we get to a date within 7 days of today
             //(up to a maximum of 52 - if you are this far behind then you may need multiple refreshes)
 
-            List<ChangesListItem> updatesResponses = new List<ChangesListItem>();
+            List<ChangesListItem> updatesResponses = new();
             int numberOfCallsMade = 0;
 
             for (DateTime time = latestUpdateTime.LastSuccessfulServerUpdateDateTime();
@@ -56,7 +56,7 @@ namespace TVRename.TMDB
             //We'll keep asking until we get to a date within 7 days of today
             //(up to a maximum of 52 - if you are this far behind then you may need multiple refreshes)
 
-            List<ChangesListItem> updatesResponses = new List<ChangesListItem>();
+            List<ChangesListItem> updatesResponses = new();
             int numberOfCallsMade = 0;
 
             for (DateTime time = latestUpdateTime.LastSuccessfulServerUpdateDateTime();

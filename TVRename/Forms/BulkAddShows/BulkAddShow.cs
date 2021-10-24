@@ -125,7 +125,7 @@ namespace TVRename
 
         private void bnAddMonFolder_Click(object sender, System.EventArgs e)
         {
-            FolderBrowserDialogEx searchFolderBrowser = new FolderBrowserDialogEx
+            FolderBrowserDialogEx searchFolderBrowser = new()
             {
                 SelectedPath = "",
                 Title = "Add New Monitor Folder...",
@@ -152,7 +152,7 @@ namespace TVRename
 
         private void bnAddIgFolder_Click(object sender, System.EventArgs e)
         {
-            FolderBrowserDialogEx ignoreFolderBrowser = new FolderBrowserDialogEx
+            FolderBrowserDialogEx ignoreFolderBrowser = new()
             {
                 SelectedPath = "",
                 Title = "Add New Ignore Folder...",
@@ -211,13 +211,13 @@ namespace TVRename
             tabControl1.SelectedTab = tbResults;
             tabControl1.Update();
 
-            CancellationTokenSource cts = new CancellationTokenSource();
+            CancellationTokenSource cts = new();
             TokenSource = cts;
 
             FmpUpto = "Checking folders";
             FmpPercent = 0;
 
-            Thread fmpshower = new Thread(FmpShower) { Name = "'Bulk Add Shows' Progress (Folder Check)" };
+            Thread fmpshower = new(FmpShower) { Name = "'Bulk Add Shows' Progress (Folder Check)" };
             fmpshower.Start();
 
             while (progressDialog is null || !progressDialog.Ready)
@@ -257,7 +257,7 @@ namespace TVRename
             {
                 try
                 {
-                    DirectoryInfo di = new DirectoryInfo(path);
+                    DirectoryInfo di = new(path);
                     if (di.Exists)
                     {
                         engine.CheckFolderForShows(di, true, true, true);
@@ -283,7 +283,7 @@ namespace TVRename
             {
                 try
                 {
-                    DirectoryInfo di = new DirectoryInfo(path);
+                    DirectoryInfo di = new(path);
                     if (di.Exists)
                     {
                         strings.Add(path.ToLower());
@@ -321,13 +321,13 @@ namespace TVRename
                 return;
             }
 
-            CancellationTokenSource cts = new CancellationTokenSource();
+            CancellationTokenSource cts = new();
             TokenSource = cts;
 
             FmpUpto = "Identifying shows";
             FmpPercent = 0;
 
-            Thread fmpshower = new Thread(FmpShower) { Name = "Bulk Add Shows Progress (Full Auto)" };
+            Thread fmpshower = new(FmpShower) { Name = "Bulk Add Shows Progress (Full Auto)" };
             fmpshower.Start();
 
             while (progressDialog is null || !progressDialog.Ready)
@@ -435,7 +435,7 @@ namespace TVRename
 
         private void FillNewShowList(bool keepSel)
         {
-            List<int> sel = new List<int>();
+            List<int> sel = new();
             if (keepSel)
             {
                 foreach (int i in lvFMNewShows.SelectedIndices)
@@ -449,7 +449,7 @@ namespace TVRename
 
             foreach (PossibleNewTvShow ai in engine.AddItems)
             {
-                ListViewItem lvi = new ListViewItem();
+                ListViewItem lvi = new();
                 UpdateResultEntry(ai, lvi);
                 lvFMNewShows.Items.Add(lvi);
                 lvi.ImageIndex = 0;
@@ -586,7 +586,7 @@ namespace TVRename
 
         private void EditEntry([NotNull] PossibleNewTvShow fme)
         {
-            BulkAddEditShow ed = new BulkAddEditShow(fme);
+            BulkAddEditShow ed = new(fme);
             if (ed.ShowDialog(this) != DialogResult.OK || ed.Code == -1)
             {
                 return;

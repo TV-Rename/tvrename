@@ -70,7 +70,7 @@ namespace TVRename
 
                 string savePath = (string)settings["save_path"] ?? string.Empty;
 
-                List<TorrentEntry> ret = new List<TorrentEntry>();
+                List<TorrentEntry> ret = new();
                 foreach (JToken torrent in currentDownloads.Children())
                 {
                     AddFilesFromTorrent(ret, torrent, savePath);
@@ -224,9 +224,9 @@ namespace TVRename
         {
             try
             {
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = new())
                 {
-                    MultipartFormDataContent m = new MultipartFormDataContent();
+                    MultipartFormDataContent m = new();
                     m.AddFile("torrents", torrentName, "application/x-bittorrent");
                     HttpResponseMessage response = client.PostAsync(url, m).Result;
                     if (!response.IsSuccessStatusCode)
@@ -252,10 +252,10 @@ namespace TVRename
         {
             try
             {
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = new())
                 {
-                    Dictionary<string, string> values = new Dictionary<string, string> { { "urls", torrentUrl } };
-                    FormUrlEncodedContent content = new FormUrlEncodedContent(values);
+                    Dictionary<string, string> values = new() { { "urls", torrentUrl } };
+                    FormUrlEncodedContent content = new(values);
                     HttpResponseMessage response = client.PostAsync(url, content).Result;
                     if (!response.IsSuccessStatusCode)
                     {

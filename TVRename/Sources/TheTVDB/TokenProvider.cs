@@ -87,7 +87,7 @@ namespace TVRename.TheTVDB
         private void AcquireToken()
         {
             Logger.Info("Acquire a TheTVDB token... ");
-            JObject request = new JObject(new JProperty("apikey", TVDB_API_KEY), new JProperty("pin", "TVDB_API_KEY"));
+            JObject request = new(new JProperty("apikey", TVDB_API_KEY), new JProperty("pin", "TVDB_API_KEY"));
             JObject jsonResponse = HttpHelper.JsonHttpPostRequest($"{TVDB_API_URL}/login", request, true);
 
             string newToken = TVSettings.Instance.TvdbVersion == ApiVersion.v4 ? (string)jsonResponse["data"]?["token"] : (string)jsonResponse["token"];

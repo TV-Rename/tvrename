@@ -239,7 +239,7 @@ namespace TVRename.TVmaze
         [NotNull]
         private static ShowImage GenerateImage(int seriesId, [NotNull] JToken imageJson)
         {
-            ShowImage newBanner = new ShowImage
+            ShowImage newBanner = new()
             {
                 SeriesId = seriesId,
                 ImageUrl = (string)GetChild(GetChild(GetChild(imageJson, "resolutions"), "original"), "url"),
@@ -265,7 +265,7 @@ namespace TVRename.TVmaze
         [NotNull]
         private static ShowImage GenerateImage(int seriesId, int seasonNumber, [NotNull] string url)
         {
-            ShowImage newBanner = new ShowImage
+            ShowImage newBanner = new()
             {
                 SeriesId = seriesId,
                 ImageUrl = url,
@@ -322,7 +322,7 @@ namespace TVRename.TVmaze
                 returnValue.Genres = r["genres"]?.Select(x => x.Value<string>()?.Trim()).Distinct().ToList() ?? new List<string>();
             }
 
-            List<string> typesToTransferToGenres = new List<string> { "Animation", "Reality", "Documentary", "News", "Sports" };
+            List<string> typesToTransferToGenres = new() { "Animation", "Reality", "Documentary", "News", "Sports" };
             foreach (string conversionType in typesToTransferToGenres.Where(s => s == returnValue.SeriesType))
             {
                 returnValue.Genres.Add(conversionType);
@@ -443,7 +443,7 @@ namespace TVRename.TVmaze
 
             JToken airstampToken = GetChild(r, "airstamp");
 
-            Episode newEp = new Episode(seriesId, si)
+            Episode newEp = new(seriesId, si)
             {
                 FirstAired = ((string)r["airdate"]).HasValue() ? (DateTime?)r["airdate"] : null,
                 AirTime = JsonHelper.ParseAirTime((string)r["airtime"]),

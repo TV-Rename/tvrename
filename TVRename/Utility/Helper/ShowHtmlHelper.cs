@@ -38,7 +38,7 @@ namespace TVRename
         public static string GetShowHtmlOverview(this ShowConfiguration si, bool includeDirectoryLinks)
         {
             Color col = Color.FromName("ButtonFace");
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.AppendLine(HTMLHeader(10, col));
             sb.AppendShow(si, col, includeDirectoryLinks);
             sb.AppendLine(HTMLFooter());
@@ -48,7 +48,7 @@ namespace TVRename
         public static string GetSeasonImagesOverview(this ShowConfiguration si, ProcessedSeason season)
         {
             Color col = Color.FromName("ButtonFace");
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.AppendLine(HTMLHeader(10, col));
             sb.AppendSeasonImages(col, season);
             sb.AppendLine(HTMLFooter());
@@ -59,7 +59,7 @@ namespace TVRename
         public static string GetShowImagesOverview(this ShowConfiguration si)
         {
             Color col = Color.FromName("ButtonFace");
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.AppendLine(HTMLHeader(10, col));
             sb.AppendShowImages(si, col);
             sb.AppendLine(HTMLFooter());
@@ -69,7 +69,7 @@ namespace TVRename
         public static string GetMovieImagesOverview(this MovieConfiguration si)
         {
             Color col = Color.FromName("ButtonFace");
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.AppendLine(HTMLHeader(10, col));
             sb.AppendMovieImages(si, col);
             sb.AppendLine(HTMLFooter());
@@ -78,7 +78,7 @@ namespace TVRename
         public static string GetShowHtmlOverview(this CachedSeriesInfo series, RecommendationRow recommendation)
         {
             Color col = Color.FromName("ButtonFace");
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.AppendLine(HTMLHeader(10, col));
             sb.AppendShow(null, series, col, false);
             sb.AppendRecommendation(recommendation, col);
@@ -90,7 +90,7 @@ namespace TVRename
         public static string GetMovieHtmlOverview(this MovieConfiguration si, bool includeDirectoryLinks)
         {
             Color col = Color.FromName("ButtonFace");
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.AppendLine(HTMLHeader(10, col));
             sb.AppendMovie(si, col, includeDirectoryLinks);
             sb.AppendLine(HTMLFooter());
@@ -100,7 +100,7 @@ namespace TVRename
         public static string GetMovieHtmlOverview(this CachedMovieInfo movie, RecommendationRow? recommendation)
         {
             Color col = Color.FromName("ButtonFace");
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.AppendLine(HTMLHeader(10, col));
             sb.AppendMovie(null, movie, col, false);
             if (recommendation != null)
@@ -115,8 +115,8 @@ namespace TVRename
         public static string GetShowSummaryHtmlOverview([NotNull] this ShowConfiguration si, bool includeDirectoryLinks)
         {
             Color col = Color.FromName("ButtonFace");
-            DirFilesCache dfc = new DirFilesCache();
-            StringBuilder sb = new StringBuilder();
+            DirFilesCache dfc = new();
+            StringBuilder sb = new();
 
             sb.AppendLine(HTMLHeader(10, col));
             sb.AppendShowSummary(si, dfc, col, includeDirectoryLinks);
@@ -159,7 +159,7 @@ namespace TVRename
 
         private static string CreateTableRows(ShowConfiguration si, DirFilesCache dfc, bool includeDirectoryLinks)
         {
-            StringBuilder tableRows = new StringBuilder();
+            StringBuilder tableRows = new();
 
             foreach (ProcessedSeason season in si.AppropriateSeasons().OrderBy(pair => pair.Key).Select(pair => pair.Value))
             {
@@ -366,7 +366,7 @@ namespace TVRename
 
         private static string GenerateCarouselBlocks(IReadOnlyCollection<MediaImage> images, string imageTag)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             bool isFirst = true;
             foreach (var i in images)
             {
@@ -389,7 +389,7 @@ namespace TVRename
 
         private static string GenerateCarouselIndicators(IReadOnlyCollection<MediaImage> images, string id)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             bool isFirst = true;
             int c = 0;
             foreach (MediaImage? _ in images)
@@ -989,8 +989,8 @@ namespace TVRename
         [NotNull]
         public static string GetSeasonHtmlOverview([NotNull] this ShowConfiguration si, [NotNull] ProcessedSeason s, bool includeDirectoryLinks)
         {
-            StringBuilder sb = new StringBuilder();
-            DirFilesCache dfc = new DirFilesCache();
+            StringBuilder sb = new();
+            DirFilesCache dfc = new();
             Color col = Color.FromName("ButtonFace");
             sb.AppendLine(HTMLHeader(10, col));
             sb.AppendSeason(s, si, col, includeDirectoryLinks);
@@ -1011,7 +1011,7 @@ namespace TVRename
         [NotNull]
         public static string GetSeasonSummaryHtmlOverview([NotNull] this ShowConfiguration si, [NotNull] ProcessedSeason s, bool includeDirectoryLinks)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             Color col = Color.FromName("ButtonFace");
             sb.AppendLine(HTMLHeader(10, col));
             sb.AppendSeasonSummary(si, s, col, includeDirectoryLinks);
@@ -1080,7 +1080,7 @@ namespace TVRename
 
         private static void AppendSeasonSummary(this StringBuilder sb, ShowConfiguration? si, ProcessedSeason s, Color backgroundColour, bool includeDirectoryLinks)
         {
-            DirFilesCache dfc = new DirFilesCache();
+            DirFilesCache dfc = new();
             if (si is null)
             {
                 return;
@@ -1637,7 +1637,7 @@ namespace TVRename
             body += "<h1><A HREF=\"" + si.ProviderShowUrl() + "\">" + si.ShowName +
                     "</A>" + seasText + "</h1>";
 
-            DirFilesCache dfc = new DirFilesCache();
+            DirFilesCache dfc = new();
             foreach (ProcessedEpisode ei in eis)
             {
                 string epl = ei.EpNumsAsString();

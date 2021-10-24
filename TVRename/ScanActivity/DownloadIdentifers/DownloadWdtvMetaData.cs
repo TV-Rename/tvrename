@@ -13,7 +13,7 @@ namespace TVRename
 {
     internal class DownloadWdtvMetaData : DownloadIdentifier
     {
-        private List<string> doneFiles = new List<string>();
+        private List<string> doneFiles = new();
 
         public override DownloadType GetDownloadType() => DownloadType.downloadMetaData;
 
@@ -24,7 +24,7 @@ namespace TVRename
                 return null;
             }
 
-            ItemList theActionList = new ItemList();
+            ItemList theActionList = new();
             string fn = file.RemoveExtension() + ".xml";
             FileInfo nfo = FileHelper.FileInFolder(file.Directory, fn);
 
@@ -40,7 +40,7 @@ namespace TVRename
         {
             if (TVSettings.Instance.wdLiveTvMeta)
             {
-                ItemList theActionList = new ItemList();
+                ItemList theActionList = new();
                 FileInfo tvShowXml = FileHelper.FileInFolder(si.AutoAddFolderBase, "cachedSeries.xml");
 
                 CachedSeriesInfo cachedSeriesInfo = si.CachedShow;

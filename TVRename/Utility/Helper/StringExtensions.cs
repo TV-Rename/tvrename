@@ -103,7 +103,7 @@ namespace TVRename
             //We are going to need to do the replacement, so take the time to do the action
             string replacementValue = replacement.Value ?? string.Empty;
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             int previousIndex = 0;
 
             while (index != -1)
@@ -251,7 +251,7 @@ namespace TVRename
         [NotNull]
         public static string GetCommonStartString([NotNull] string first, [NotNull] string second)
         {
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new();
 
             int minLength = Math.Min(first.Length, second.Length);
             for (int i = 0; i < minLength; i++)

@@ -68,7 +68,7 @@ namespace TVRename
         [NotNull]
         private IEnumerable<FileInfo> GetPossibleShowNameStrings()
         {
-            List<FileInfo> possibleShowNames = new List<FileInfo>();
+            List<FileInfo> possibleShowNames = new();
 
             foreach (string dirPath in TVSettings.Instance.DownloadFolders.ToArray())
             {
@@ -89,7 +89,7 @@ namespace TVRename
                             continue;
                         }
 
-                        FileInfo fi = new FileInfo(filePath);
+                        FileInfo fi = new(filePath);
 
                         if (fi.IgnoreFile())
                         {

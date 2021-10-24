@@ -21,7 +21,7 @@ namespace TVRename
         }
 
         private List<FileInfo> filesThatMayBeNeeded;
-        private readonly DirFilesCache dfc = new DirFilesCache();
+        private readonly DirFilesCache dfc = new();
         private ICollection<ShowConfiguration> showList;
         private ICollection<MovieConfiguration> movieList;
         private readonly ItemList returnActions;
@@ -64,7 +64,7 @@ namespace TVRename
                 ReviewDirsInDownloadDirectory(dirPath);
             }
 
-            ItemList removeActions = new ItemList();
+            ItemList removeActions = new();
             //Remove any missing items we are planning to resolve
             foreach (ActionCopyMoveRename acmr in returnActions.OfType<ActionCopyMoveRename>())
             {
@@ -117,7 +117,7 @@ namespace TVRename
                 return;
             }
 
-            DirectoryInfo di = new DirectoryInfo(subDirPath);
+            DirectoryInfo di = new(subDirPath);
 
             FileInfo? neededFile = filesThatMayBeNeeded.FirstOrDefault(info => info.DirectoryName.Contains(di.FullName));
             if (neededFile != null)
@@ -198,7 +198,7 @@ namespace TVRename
                         return;
                     }
 
-                    FileInfo fi = new FileInfo(filePath);
+                    FileInfo fi = new(filePath);
 
                     if (fi.IgnoreFile())
                     {
@@ -564,7 +564,7 @@ namespace TVRename
         {
             try
             {
-                ChooseFile question = new ChooseFile(existingFile, newFile);
+                ChooseFile question = new(existingFile, newFile);
 
                 owner.ShowChildDialog(question);
                 ChooseFile.ChooseFileDialogResult result = question.Answer;
@@ -605,7 +605,7 @@ namespace TVRename
         {
             try
             {
-                ChooseFile question = new ChooseFile(existingFile, newFile);
+                ChooseFile question = new(existingFile, newFile);
 
                 owner.ShowChildDialog(question);
                 ChooseFile.ChooseFileDialogResult result = question.Answer;

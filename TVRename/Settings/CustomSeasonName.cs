@@ -19,8 +19,8 @@ namespace TVRename
     {
         public static string DefaultStyle() => Presets[0];
 
-        private static readonly List<string> Presets = new List<string>
-                                                        {
+        private static readonly List<string> Presets = new()
+        {
                                                             "Season {Season:2}",
                                                             "Season {Season}",
                                                             "S{Season}",
@@ -35,7 +35,7 @@ namespace TVRename
                                                             "Season {SeasonNumber:2} - {SeasonName}"
                                                         };
 
-        internal static readonly List<string> TAGS = new List<string>
+        internal static readonly List<string> TAGS = new()
         {
             "{ShowName}",
             "{ShowNameInitial}",

@@ -43,8 +43,8 @@ namespace TVRename
             return DefaultStyle();
         }
 
-        protected internal static readonly List<string> PRESETS = new List<string>
-                                                        {
+        protected internal static readonly List<string> PRESETS = new()
+        {
                                                             "{ShowName} - {Season}x{Episode}[-{Season}x{Episode2}] - {EpisodeName}",
                                                             "{ShowName} - S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
                                                             "{ShowName} S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
@@ -57,7 +57,7 @@ namespace TVRename
                                                             "{ShowName} - S{Season:2}{AllEpisodes} - {EpisodeName}"
                                                         };
 
-        protected internal static readonly List<string> TAGS = new List<string>
+        protected internal static readonly List<string> TAGS = new()
         {
             "{ShowName}",
             "{ShowNameInitial}",

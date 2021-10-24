@@ -83,14 +83,14 @@ namespace TVRename
 
             //////////////////////////////////////////////////////////////////////
             // header row
-            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
+            SourceGrid.Cells.Views.Cell titleModel = new()
             {
                 BackColor = Color.SteelBlue,
                 ForeColor = Color.White,
                 TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
             };
 
-            SourceGrid.Cells.Views.Cell titleModelC = new SourceGrid.Cells.Views.Cell
+            SourceGrid.Cells.Views.Cell titleModelC = new()
             {
                 BackColor = Color.SteelBlue,
                 ForeColor = Color.White,
@@ -140,7 +140,7 @@ namespace TVRename
             Grid1[r, 2] = new SourceGrid.Cells.CheckBox(null, false);
             Grid1[r, 3] = new SourceGrid.Cells.Cell("", typeof(string));
 
-            ChangedCont changed = new ChangedCont(this);
+            ChangedCont changed = new(this);
             for (int c = 0; c < 4; c++)
             {
                 Grid1[r, c].AddController(changed);
@@ -164,7 +164,7 @@ namespace TVRename
                 Grid1[i, 2] = new SourceGrid.Cells.CheckBox(null, re.UseFullPath);
                 Grid1[i, 3] = new SourceGrid.Cells.Cell(re.Notes, typeof(string));
 
-                ChangedCont changed = new ChangedCont(this);
+                ChangedCont changed = new(this);
 
                 for (int c = 0; c < 4; c++)
                 {
@@ -284,7 +284,7 @@ namespace TVRename
 
             lvPreview.Enabled = true;
 
-            List<TVSettings.FilenameProcessorRE> rel = new List<TVSettings.FilenameProcessorRE>();
+            List<TVSettings.FilenameProcessorRE> rel = new();
 
             if (chkTestAll.Checked)
             {
@@ -365,7 +365,7 @@ namespace TVRename
             string otherShowNames = matchingShows.Select(item => item.ShowName).Where(s => s != bestShowName).ToCsv();
             string showDisplayString = otherShowNames.Any() ? bestShowName + " - (" + otherShowNames + ")" : bestShowName;
 
-            ListViewItem lvi = new ListViewItem { Text = filename };
+            ListViewItem lvi = new() { Text = filename };
             lvi.SubItems.Add(showDisplayString);
             lvi.SubItems.Add(seas == -1 ? "-" : seas.ToString());
             lvi.SubItems.Add(ep == -1 ? "-" : ep + (maxEp != -1 ? "-" + maxEp : ""));
@@ -498,7 +498,7 @@ namespace TVRename
             lvPreview.Items.Clear();
             lvPreview.BeginUpdate();
 
-            ListViewItem lvi = new ListViewItem
+            ListViewItem lvi = new()
             {
                 Text = "Please wait as we download current torrent queue",
                 BackColor = Helpers.WarningColor()

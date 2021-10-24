@@ -13,7 +13,7 @@ namespace TVRename
                 return null;
             }
 
-            ItemList theActionList = new ItemList();
+            ItemList theActionList = new();
             string fn = file.Name + ".txt";
 
             string folder = file.DirectoryName;

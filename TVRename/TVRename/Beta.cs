@@ -21,7 +21,7 @@ namespace TVRename
         internal static void LogShowEpisodeSizes([NotNull] TVDoc doc)
         {
             doc.PreventAutoScan("Show File Sizes");
-            StringBuilder output = new StringBuilder();
+            StringBuilder output = new();
 
             output.AppendLine("");
             output.AppendLine("##################################################");
@@ -29,7 +29,7 @@ namespace TVRename
             output.AppendLine("##################################################");
             Logger.Info(output.ToString());
 
-            DirFilesCache dfc = new DirFilesCache();
+            DirFilesCache dfc = new();
             foreach (ShowConfiguration si in doc.TvLibrary.Shows)
             {
                 foreach (List<ProcessedEpisode> episodes in si.SeasonEpisodes.Values.ToList())

@@ -33,7 +33,7 @@ namespace TVRename.Forms
 
         private void AddRcMenuItem(string label, EventHandler command)
         {
-            ToolStripMenuItem tsi = new ToolStripMenuItem(label.Replace("&", "&&"));
+            ToolStripMenuItem tsi = new(label.Replace("&", "&&"));
             tsi.Click += command;
             possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
         }
@@ -71,7 +71,7 @@ namespace TVRename.Forms
 
             if (files.Count > 1)
             {
-                DuplicateMovie duplicateMovie = new DuplicateMovie { Movie = movie, Files = files };
+                DuplicateMovie duplicateMovie = new() { Movie = movie, Files = files };
                 dupMovies.Add(duplicateMovie);
 
                 duplicateMovie.IsSample = files.Any(f => f.IsSampleFile());
@@ -128,27 +128,27 @@ namespace TVRename.Forms
 
             possibleMergedEpisodeRightClickMenu.Items.Clear();
 
-            AddRcMenuItem("Force Refresh", (o, args) =>
+            AddRcMenuItem("Force Refresh", (_, _) =>
             {
                 mainUi.ForceMovieRefresh(new List<MovieConfiguration> { si }, false);
                 Update(mlastSelected);
             });
-            AddRcMenuItem("Update", (o, args) =>
+            AddRcMenuItem("Update", (_, _) =>
             {
                 Update(mlastSelected);
             });
-            AddRcMenuItem("Edit Movie", (o, args) =>
+            AddRcMenuItem("Edit Movie", (_, _) =>
             {
                 mainUi.EditMovie(si);
                 Update(mlastSelected);
             });
-            AddRcMenuItem("Choose Best", (o, args) => MergeItems(mlastSelected, mainUi));
+            AddRcMenuItem("Choose Best", (_, _) => MergeItems(mlastSelected, mainUi));
 
             possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
 
             foreach (FileInfo? f in mlastSelected.Files)
             {
-                AddRcMenuItem("Visit " + f.FullName, (o, args) =>
+                AddRcMenuItem("Visit " + f.FullName, (_, _) =>
                 {
                     Helpers.OpenFolderSelectFile(f.FullName);
                     Update(mlastSelected);
@@ -216,7 +216,7 @@ namespace TVRename.Forms
         {
             try
             {
-                ChooseFile question = new ChooseFile(file1, file2);
+                ChooseFile question = new(file1, file2);
 
                 owner.ShowChildDialog(question);
                 ChooseFile.ChooseFileDialogResult result = question.Answer;

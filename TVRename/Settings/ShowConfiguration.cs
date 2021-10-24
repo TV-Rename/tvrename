@@ -142,7 +142,7 @@ namespace TVRename
                 return airedSeasons[num];
             }
 
-            ProcessedSeason s = new ProcessedSeason(this, num, seasonId, ProcessedSeason.SeasonType.aired);
+            ProcessedSeason s = new(this, num, seasonId, ProcessedSeason.SeasonType.aired);
             airedSeasons[num] = s;
 
             return s;
@@ -155,7 +155,7 @@ namespace TVRename
                 return dvdSeasons[num];
             }
 
-            ProcessedSeason s = new ProcessedSeason(this, num, seasonId, ProcessedSeason.SeasonType.dvd);
+            ProcessedSeason s = new(this, num, seasonId, ProcessedSeason.SeasonType.dvd);
             dvdSeasons[num] = s;
 
             return s;
@@ -745,7 +745,7 @@ namespace TVRename
         public Dictionary<int, List<ProcessedEpisode>> GetDvdSeasons()
         {
             //We will create this on the fly
-            Dictionary<int, List<ProcessedEpisode>> returnValue = new Dictionary<int, List<ProcessedEpisode>>();
+            Dictionary<int, List<ProcessedEpisode>> returnValue = new();
             foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in SeasonEpisodes)
             {
                 foreach (ProcessedEpisode ep in kvp.Value)
@@ -763,7 +763,7 @@ namespace TVRename
 
         protected override Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo, bool checkExist)
         {
-            Dictionary<int, SafeList<string>> fld = new Dictionary<int, SafeList<string>>();
+            Dictionary<int, SafeList<string>> fld = new();
 
             if (manualToo)
             {
@@ -898,7 +898,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<Episode> EpisodesToUse()
         {
-            List<Episode> returnValue = new List<Episode>();
+            List<Episode> returnValue = new();
             ConcurrentDictionary<int, ProcessedSeason> seasonsToUse = AppropriateSeasons();
 
             foreach (KeyValuePair<int, ProcessedSeason> kvp in seasonsToUse)

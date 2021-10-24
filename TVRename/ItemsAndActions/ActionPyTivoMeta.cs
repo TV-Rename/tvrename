@@ -39,7 +39,7 @@ namespace TVRename
                 }
 
                 using (
-                    System.IO.StreamWriter writer = new System.IO.StreamWriter(Where.FullName, false,
+                    System.IO.StreamWriter writer = new(Where.FullName, false,
                         System.Text.Encoding.GetEncoding(1252)))
                 {
                     // See: http://pytivo.sourceforge.net/wiki/index.php/Metadata

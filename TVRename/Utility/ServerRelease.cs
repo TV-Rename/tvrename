@@ -24,7 +24,7 @@ namespace TVRename
 
         public string LogMessage()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.AppendLine("************************");
             sb.AppendLine("* New Update Available *");
             sb.AppendLine("************************");

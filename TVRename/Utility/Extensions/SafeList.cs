@@ -16,7 +16,7 @@ namespace TVRename
         private readonly List<T> inner;
 
         // this is the object we shall lock on.
-        private readonly object @lock = new object();
+        private readonly object @lock = new();
 
         public SafeList()
         {

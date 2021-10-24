@@ -38,7 +38,7 @@ namespace TVRename
             txtEmailText.Text = "Working... This may take a while.";
             txtEmailText.Update();
 
-            StringBuilder txt = new StringBuilder();
+            StringBuilder txt = new();
 
             if (cbSettings.Checked)
             {
@@ -102,7 +102,7 @@ namespace TVRename
                         txt.AppendLine(si + " : " + si.ShowName + " : S" + snum);
                         txt.AppendLine("Folder: " + folder);
 
-                        DirCache files = new DirCache();
+                        DirCache files = new();
                         if (Directory.Exists(folder))
                         {
                             files.AddFolder(null, 0, 0, folder, true);
@@ -126,7 +126,7 @@ namespace TVRename
 
         private static void ExtractDownloadFolders(StringBuilder txt)
         {
-            DirCache dirC = new DirCache();
+            DirCache dirC = new();
             foreach (string efi in TVSettings.Instance.DownloadFolders)
             {
                 dirC.AddFolder(null, 0, 0, efi, true);
@@ -154,7 +154,7 @@ namespace TVRename
         {
             try
             {
-                using (System.IO.StreamReader sr = new System.IO.StreamReader(PathManager.TVDocSettingsFile.FullName))
+                using (System.IO.StreamReader sr = new(PathManager.TVDocSettingsFile.FullName))
                 {
                     txt.AppendLine(sr.ReadToEnd());
                 }

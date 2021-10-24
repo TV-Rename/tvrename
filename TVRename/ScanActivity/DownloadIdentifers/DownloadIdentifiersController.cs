@@ -50,7 +50,7 @@ namespace TVRename
                 return new ItemList();
             }
 
-            ItemList theActionList = new ItemList();
+            ItemList theActionList = new();
 
             foreach (DownloadIdentifier di in identifiers)
             {
@@ -62,7 +62,7 @@ namespace TVRename
         [NotNull]
         public ItemList ProcessShow(ShowConfiguration? si)
         {
-            ItemList theActionList = new ItemList();
+            ItemList theActionList = new();
             if (si is null)
             {
                 return theActionList;
@@ -78,7 +78,7 @@ namespace TVRename
         [NotNull]
         public ItemList ProcessSeason(ShowConfiguration? si, string folder, int snum)
         {
-            ItemList theActionList = new ItemList();
+            ItemList theActionList = new();
             if (si is null)
             {
                 return theActionList;
@@ -98,7 +98,7 @@ namespace TVRename
                 return null;
             }
 
-            ItemList theActionList = new ItemList();
+            ItemList theActionList = new();
             foreach (DownloadIdentifier di in identifiers)
             {
                 theActionList.Add(di.ProcessEpisode(episode, filo));
@@ -117,7 +117,7 @@ namespace TVRename
         [NotNull]
         public ItemList ForceUpdateMovie(DownloadIdentifier.DownloadType dt, MovieConfiguration? si, FileInfo filo)
         {
-            ItemList theActionList = new ItemList();
+            ItemList theActionList = new();
             if (si is null)
             {
                 return theActionList;
@@ -133,7 +133,7 @@ namespace TVRename
         [NotNull]
         public ItemList ForceUpdateShow(DownloadIdentifier.DownloadType dt, ShowConfiguration? si)
         {
-            ItemList theActionList = new ItemList();
+            ItemList theActionList = new();
             if (si is null)
             {
                 return theActionList;
@@ -149,7 +149,7 @@ namespace TVRename
         [NotNull]
         public ItemList ForceUpdateSeason(DownloadIdentifier.DownloadType dt, ShowConfiguration? si, string folder, int snum)
         {
-            ItemList theActionList = new ItemList();
+            ItemList theActionList = new();
             if (si is null)
             {
                 return theActionList;
@@ -165,7 +165,7 @@ namespace TVRename
         [NotNull]
         public ItemList ForceUpdateEpisode(DownloadIdentifier.DownloadType dt, ProcessedEpisode episode, FileInfo filo)
         {
-            ItemList theActionList = new ItemList();
+            ItemList theActionList = new();
             foreach (DownloadIdentifier di in identifiers.Where(di => dt == di.GetDownloadType()))
             {
                 theActionList.Add(di.ProcessEpisode(episode, filo, true));

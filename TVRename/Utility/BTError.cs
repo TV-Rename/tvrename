@@ -16,7 +16,7 @@ namespace TVRename
 
         public override void Tree(TreeNodeCollection tn)
         {
-            TreeNode n = new TreeNode("BTError:" + Message);
+            TreeNode n = new("BTError:" + Message);
             tn.Add(n);
         }
 

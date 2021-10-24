@@ -38,7 +38,7 @@ namespace TVRename
         {
             get
             {
-                ListViewItem lvi = new ListViewItem
+                ListViewItem lvi = new()
                 {
                     Text = episodeOne.Show.ShowName
                 };
@@ -48,7 +48,7 @@ namespace TVRename
                 lvi.SubItems.Add(episodeOne.GetAirDateDt(true).PrettyPrint());
                 lvi.SubItems.Add(episodeOne.Name + " & " + episodeTwo.Name);
 
-                List<string> names = new List<string> { episodeOne.Name, episodeTwo.Name };
+                List<string> names = new() { episodeOne.Name, episodeTwo.Name };
                 string combinedName = ShowLibrary.GetBestNameFor(names, "");
                 lvi.SubItems.Add(combinedName);
 
@@ -64,7 +64,7 @@ namespace TVRename
         [NotNull]
         public ShowRule GenerateRule()
         {
-            return new ShowRule
+            return new()
             {
                 DoWhatNow = RuleAction.kMerge,
                 First = episodeOne.AppropriateEpNum,

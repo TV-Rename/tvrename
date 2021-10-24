@@ -21,7 +21,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> GetGenres()
         {
-            List<string> allGenres = new List<string>();
+            List<string> allGenres = new();
             foreach (MovieConfiguration si in Movies)
             {
                 allGenres.AddRange(si.Genres);

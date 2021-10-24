@@ -37,14 +37,14 @@ namespace TVRename
 
             try
             {
-                Calendar calendar = new Calendar { ProductId = "Upcoming Shows Exported by TV Rename http://www.tvrename.com" };
+                Calendar calendar = new() { ProductId = "Upcoming Shows Exported by TV Rename http://www.tvrename.com" };
 
                 foreach (CalendarEvent ev in episodes.Select(CreateEvent).Where(ev => !(ev is null)))
                 {
                     calendar.Events.Add(ev);
                 }
 
-                CalendarSerializer serializer = new CalendarSerializer();
+                CalendarSerializer serializer = new();
                 serializer.Serialize(calendar, str, Encoding.ASCII);
 
                 return true;

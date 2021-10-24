@@ -22,9 +22,9 @@ namespace TVRename
         protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
         // ReSharper disable once InconsistentNaming
-        public readonly object MOVIE_LOCK = new object();
+        public readonly object MOVIE_LOCK = new();
 
-        protected readonly ConcurrentDictionary<int, CachedMovieInfo> Movies = new ConcurrentDictionary<int, CachedMovieInfo>();
+        protected readonly ConcurrentDictionary<int, CachedMovieInfo> Movies = new();
 
         protected List<CachedMovieInfo> FullMovies()
         {
@@ -35,9 +35,9 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        public readonly object SERIES_LOCK = new object();
+        public readonly object SERIES_LOCK = new();
 
-        protected readonly ConcurrentDictionary<int, CachedSeriesInfo> Series = new ConcurrentDictionary<int, CachedSeriesInfo>();
+        protected readonly ConcurrentDictionary<int, CachedSeriesInfo> Series = new();
 
         protected List<CachedSeriesInfo> FullShows()
         {
@@ -47,7 +47,7 @@ namespace TVRename
             }
         }
 
-        private ConcurrentDictionary<int, int> forceReloadOn = new ConcurrentDictionary<int, int>();
+        private ConcurrentDictionary<int, int> forceReloadOn = new();
         protected bool DoWeForceReloadFor(int code)
         {
             return forceReloadOn.ContainsKey(code) || !HasSeries(code);

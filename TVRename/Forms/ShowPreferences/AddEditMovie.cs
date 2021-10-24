@@ -132,7 +132,7 @@ namespace TVRename
 
         private void SetTagListText()
         {
-            System.Text.StringBuilder tl = new System.Text.StringBuilder();
+            System.Text.StringBuilder tl = new();
 
             foreach (string s in CustomMovieName.TAGS)
             {
@@ -411,7 +411,7 @@ namespace TVRename
 
         private IEnumerable<string> GetFolders()
         {
-            List<string> folders = new List<string>();
+            List<string> folders = new();
             foreach (ListViewItem item in lvManualFolders.Items.OfType<ListViewItem>())
             {
                 folders.Add(item.Text);
@@ -544,7 +544,7 @@ namespace TVRename
 
         private void bnAdd_Click_1(object sender, EventArgs e)
         {
-            ListViewItem lvi = new ListViewItem { Text = txtFolder.Text };
+            ListViewItem lvi = new() { Text = txtFolder.Text };
 
             lvManualFolders.Items.Add(lvi);
 
@@ -577,7 +577,7 @@ namespace TVRename
 
         private void btnIgnoreList_Click_1(object sender, EventArgs e)
         {
-            IgnoreEdit ie = new IgnoreEdit(mDoc, cbDirectory.SelectedText);
+            IgnoreEdit ie = new(mDoc, cbDirectory.SelectedText);
             ie.ShowDialog(this);
             UpdateIgnore();
         }

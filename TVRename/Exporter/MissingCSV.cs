@@ -19,7 +19,7 @@ namespace TVRename
 
         protected override void Do()
         {
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
+            using (System.IO.StreamWriter file = new(Location()))
             {
                 file.WriteLine("Show Name,Season,Episode,Episode Name,Air Date,Folder,Nice Name,thetvdb.com Code");
 

@@ -25,7 +25,7 @@ namespace TVRename.TheTVDB
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         // ReSharper disable once InconsistentNaming
-        private static readonly TokenProvider TokenProvider = new TokenProvider();
+        private static readonly TokenProvider TokenProvider = new();
 
         // ReSharper disable once InconsistentNaming
         [NotNull]
@@ -60,7 +60,7 @@ namespace TVRename.TheTVDB
         {
             string theUrl = GetImageURL(url);
 
-            WebClient wc = new WebClient();
+            WebClient wc = new();
 
             if (forceReload)
             {
@@ -196,14 +196,14 @@ namespace TVRename.TheTVDB
                 if (authToken != null)
                 {
                     HttpHelper.RetryOnException(3, pauseBetweenFailures, fullUrl,
-                    exception => true,
+                    _ => true,
                     () => { response = HttpRequest("GET", fullUrl, null, "application/json", authToken, lang); },
                     authToken.EnsureValid);
                 }
                 else
                 {
                     HttpHelper.RetryOnException(3, pauseBetweenFailures, fullUrl,
-                        exception => true,
+                        _ => true,
                         () => { response = HttpRequest("GET", fullUrl, null, "application/json", null, lang); },
                         () => { });
                 }
@@ -294,7 +294,7 @@ namespace TVRename.TheTVDB
 
                 if (a != null)
                 {
-                    List<string> imageTypes = new List<string>();
+                    List<string> imageTypes = new();
                     foreach (KeyValuePair<string, JToken> imageType in a)
                     {
                         if ((int)imageType.Value > 0)
@@ -375,7 +375,7 @@ namespace TVRename.TheTVDB
         public static List<JObject> GetImages(int code, string languageCode, [NotNull] IEnumerable<string> imageTypes)
         {
             string uriImagesQuery = TokenProvider.TVDB_API_URL + "/series/" + code + "/images/query";
-            List<JObject> returnList = new List<JObject>();
+            List<JObject> returnList = new();
             foreach (string imageType in imageTypes)
             {
                 try

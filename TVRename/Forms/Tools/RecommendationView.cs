@@ -111,7 +111,7 @@ namespace TVRename.Forms
 
         private void AddToLibrary(int id, string? name)
         {
-            QuickLocateForm f = new QuickLocateForm(name, media);
+            QuickLocateForm f = new(name, media);
 
             if (f.ShowDialog(this) != DialogResult.OK)
             {
@@ -121,7 +121,7 @@ namespace TVRename.Forms
             switch (media)
             {
                 case MediaConfiguration.MediaType.tv:
-                    ShowConfiguration newShow = new ShowConfiguration(id, TVDoc.ProviderType.TMDB);
+                    ShowConfiguration newShow = new(id, TVDoc.ProviderType.TMDB);
 
                     if (newShow.ConfigurationProvider == TVSettings.Instance.DefaultProvider)
                     {
@@ -136,7 +136,7 @@ namespace TVRename.Forms
                 case MediaConfiguration.MediaType.movie:
 
                     // need to add a new showitem
-                    MovieConfiguration found = new MovieConfiguration(id, TVDoc.ProviderType.TMDB);
+                    MovieConfiguration found = new(id, TVDoc.ProviderType.TMDB);
 
                     if (found.ConfigurationProvider == TVSettings.Instance.DefaultMovieProvider)
                     {
@@ -166,7 +166,7 @@ namespace TVRename.Forms
 
         private void AddRcMenuItem(string label, EventHandler command)
         {
-            ToolStripMenuItem tsi = new ToolStripMenuItem(label.Replace("&", "&&"));
+            ToolStripMenuItem tsi = new(label.Replace("&", "&&"));
             tsi.Click += command;
             possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
         }
@@ -246,7 +246,7 @@ namespace TVRename.Forms
 
             possibleMergedEpisodeRightClickMenu.Items.Clear();
 
-            AddRcMenuItem("Add to Library", (o, args) => AddToLibrary(mlastSelected.Key,mlastSelected.Name));
+            AddRcMenuItem("Add to Library", (_, _) => AddToLibrary(mlastSelected.Key,mlastSelected.Name));
         }
 
         private void lvRecommendations_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
@@ -272,7 +272,7 @@ namespace TVRename.Forms
 
         private void btnPreferences_Click(object sender, EventArgs e)
         {
-            RecommendationViewPreferences prefs = new RecommendationViewPreferences(trendingWeight, topWeight, relatedWeight, similarWeight);
+            RecommendationViewPreferences prefs = new(trendingWeight, topWeight, relatedWeight, similarWeight);
             DialogResult dalogShowDialog = prefs.ShowDialog(this);
             if (dalogShowDialog == DialogResult.OK)
             {

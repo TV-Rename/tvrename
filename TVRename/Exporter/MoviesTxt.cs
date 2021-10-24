@@ -23,7 +23,7 @@ namespace TVRename
 
         protected override void Do()
         {
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
+            using (System.IO.StreamWriter file = new(Location()))
             {
                 foreach (MovieConfiguration si in Shows)
                 {

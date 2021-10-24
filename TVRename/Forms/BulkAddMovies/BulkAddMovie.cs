@@ -118,7 +118,7 @@ namespace TVRename
 
         private void bnAddMonFolder_Click(object sender, System.EventArgs e)
         {
-            FolderBrowserDialogEx searchFolderBrowser = new FolderBrowserDialogEx
+            FolderBrowserDialogEx searchFolderBrowser = new()
             {
                 SelectedPath = "",
                 Title = "Add New Movie Base Folder...",
@@ -145,7 +145,7 @@ namespace TVRename
 
         private void bnAddIgFolder_Click(object sender, System.EventArgs e)
         {
-            FolderBrowserDialogEx ignoreFolderBrowser = new FolderBrowserDialogEx
+            FolderBrowserDialogEx ignoreFolderBrowser = new()
             {
                 SelectedPath = "",
                 Title = "Add New Ignore Folder...",
@@ -233,7 +233,7 @@ namespace TVRename
             {
                 try
                 {
-                    DirectoryInfo di = new DirectoryInfo(path);
+                    DirectoryInfo di = new(path);
                     if (di.Exists)
                     {
                         engine.CheckFolderForMovies(di, true, true, true);
@@ -259,7 +259,7 @@ namespace TVRename
             {
                 try
                 {
-                    DirectoryInfo di = new DirectoryInfo(path);
+                    DirectoryInfo di = new(path);
                     if (di.Exists)
                     {
                         strings.Add(path.ToLower());
@@ -393,7 +393,7 @@ namespace TVRename
 
         private void FillNewShowList(bool keepSel)
         {
-            List<int> sel = new List<int>();
+            List<int> sel = new();
             if (keepSel)
             {
                 foreach (int i in lvFMNewShows.SelectedIndices)
@@ -407,7 +407,7 @@ namespace TVRename
 
             foreach (PossibleNewMovie ai in engine.AddItems)
             {
-                ListViewItem lvi = new ListViewItem();
+                ListViewItem lvi = new();
                 UpdateResultEntry(ai, lvi);
                 lvFMNewShows.Items.Add(lvi);
                 lvi.ImageIndex = 0;
@@ -539,7 +539,7 @@ namespace TVRename
 
         private void EditEntry([NotNull] PossibleNewMovie fme)
         {
-            BulkAddEditMovie ed = new BulkAddEditMovie(fme);
+            BulkAddEditMovie ed = new(fme);
             if (ed.ShowDialog(this) != DialogResult.OK || ed.Code == -1)
             {
                 return;
@@ -574,7 +574,7 @@ namespace TVRename
         {
             Thread.CurrentThread.Name ??= "BulkAddMovie Scan Thread"; // Can only set it once
 
-            CancellationTokenSource cts = new CancellationTokenSource();
+            CancellationTokenSource cts = new();
             engine.CheckFolders(cts.Token, (BackgroundWorker)sender, true, true);
             cts.Cancel();
         }
@@ -587,7 +587,7 @@ namespace TVRename
 
         private void IdentifyAll(BackgroundWorker bw)
         {
-            CancellationTokenSource cts = new CancellationTokenSource();
+            CancellationTokenSource cts = new();
             //TokenSource = cts;
 
             VolatileCounter = 0;

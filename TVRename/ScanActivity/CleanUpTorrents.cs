@@ -23,7 +23,7 @@ namespace TVRename
 
         protected override void DoCheck(SetProgressDelegate prog)
         {
-            DirFilesCache dfc = new DirFilesCache();
+            DirFilesCache dfc = new();
             foreach (IDownloadProvider source in sources)
             {
                 List<TorrentEntry>? downloads = source.GetTorrentDownloads();
@@ -65,7 +65,7 @@ namespace TVRename
             {
                 return false;
             }
-            FileInfo x = new FileInfo(download.DownloadingTo);
+            FileInfo x = new(download.DownloadingTo);
             if (!x.IsMovieFile())
             {
                 return false;

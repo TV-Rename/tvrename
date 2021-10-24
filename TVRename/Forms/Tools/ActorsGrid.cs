@@ -165,7 +165,7 @@ namespace TVRename
 
         private void FillGrid()
         {
-            SourceGrid.Cells.Views.Cell colTitleModel = new SourceGrid.Cells.Views.Cell
+            SourceGrid.Cells.Views.Cell colTitleModel = new()
             {
                 ElementText = new RotatedText(-90.0f),
                 BackColor = Color.SteelBlue,
@@ -173,21 +173,21 @@ namespace TVRename
                 TextAlignment = DevAge.Drawing.ContentAlignment.BottomCenter
             };
 
-            SourceGrid.Cells.Views.Cell topleftTitleModel = new SourceGrid.Cells.Views.Cell
+            SourceGrid.Cells.Views.Cell topleftTitleModel = new()
             {
                 BackColor = Color.SteelBlue,
                 ForeColor = Color.White,
                 TextAlignment = DevAge.Drawing.ContentAlignment.BottomLeft
             };
 
-            SourceGrid.Cells.Views.Cell isActorModel = new SourceGrid.Cells.Views.Cell
+            SourceGrid.Cells.Views.Cell isActorModel = new()
             {
                 BackColor = Color.Green,
                 ForeColor = Color.Green,
                 TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
             };
 
-            SourceGrid.Cells.Views.Cell isGuestModel = new SourceGrid.Cells.Views.Cell
+            SourceGrid.Cells.Views.Cell isGuestModel = new()
             {
                 BackColor = Color.LightGreen,
                 ForeColor = Color.LightGreen,
@@ -218,7 +218,7 @@ namespace TVRename
             grid1.Rows[0].AutoSizeMode = SourceGrid.AutoSizeMode.MinimumSize;
             grid1.Rows[0].Height = 100;
 
-            ColumnHeader h = new ColumnHeader("Show")
+            ColumnHeader h = new("Show")
             {
                 AutomaticSortEnabled = false,
                 ResizeEnabled = false
@@ -321,7 +321,7 @@ namespace TVRename
                 return;
             }
 
-            SourceGrid.Exporter.Image image = new SourceGrid.Exporter.Image();
+            SourceGrid.Exporter.Image image = new();
             Bitmap b = image.Export(grid1, grid1.CompleteRange);
             b.Save(saveFile.FileName, System.Drawing.Imaging.ImageFormat.Png);
         }

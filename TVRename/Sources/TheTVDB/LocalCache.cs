@@ -48,7 +48,7 @@ namespace TVRename.TheTVDB
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
         private static volatile LocalCache? InternalInstance;
-        private static readonly object SyncRoot = new object();
+        private static readonly object SyncRoot = new();
 
         [NotNull]
         public static LocalCache Instance
@@ -132,7 +132,7 @@ namespace TVRename.TheTVDB
         [NotNull]
         internal IEnumerable<CachedSeriesInfo> ServerTvAccuracyCheck()
         {
-            TvdbAccuracyCheck check = new TvdbAccuracyCheck(this);
+            TvdbAccuracyCheck check = new(this);
 
             Say($"TVDB Accuracy Check (TV) running for {FullShows().Count} shows.");
 
@@ -151,7 +151,7 @@ namespace TVRename.TheTVDB
         }
         internal IEnumerable<CachedMovieInfo> ServerMovieAccuracyCheck()
         {
-            TvdbAccuracyCheck check = new TvdbAccuracyCheck(this);
+            TvdbAccuracyCheck check = new(this);
 
             Say($"TVDB Accuracy Check (Movies) running {FullMovies().Count} shows.");
 
@@ -237,7 +237,7 @@ namespace TVRename.TheTVDB
             if (showErrorMsgBox)
             {
                 CannotConnectForm ccform =
-                    new CannotConnectForm("Error while obtaining token from TVDB", ex.LoggableDetails(), TVDoc.ProviderType.TheTVDB);
+                    new("Error while obtaining token from TVDB", ex.LoggableDetails(), TVDoc.ProviderType.TheTVDB);
 
                 DialogResult ccresult = ccform.ShowDialog();
                 if (ccresult == DialogResult.Abort)
@@ -299,7 +299,7 @@ namespace TVRename.TheTVDB
             //We'll keep asking until we get to a date within 7 days of today
             //(up to a maximum of 52 - if you are this far behind then you may need multiple refreshes)
 
-            List<JObject> updatesResponses = new List<JObject>();
+            List<JObject> updatesResponses = new();
 
             bool moreUpdates = true;
             int numberofCallsMade = 0;
@@ -911,7 +911,7 @@ namespace TVRename.TheTVDB
             //tvDB only gives us responses in blocks of 100, so we need to iterate over the pages until we get one with <100 rows
             //We push the results into a bag to use later
             //If there is a problem with the while method then we can be proactive by using /cachedSeries/{id}/episodes/summary to get the total
-            List<JObject> episodeResponses = new List<JObject>();
+            List<JObject> episodeResponses = new();
 
             int pageNumber = 1;
             bool morePages = true;
@@ -1272,7 +1272,7 @@ namespace TVRename.TheTVDB
 
         private CachedMovieInfo GenerateCachedMovieInfo(JObject r, Locale locale)
         {
-            CachedMovieInfo si = new CachedMovieInfo(locale, TVDoc.ProviderType.TheTVDB)
+            CachedMovieInfo si = new(locale, TVDoc.ProviderType.TheTVDB)
             {
                 FirstAired = GetReleaseDate(r, locale.RegionToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation) ??
                              GetReleaseDate(r, "global"),
@@ -1310,7 +1310,7 @@ namespace TVRename.TheTVDB
                     {
                         continue;
                     }
-                    MovieImage mi = new MovieImage
+                    MovieImage mi = new()
                     {
                         Id = (int)imageJson["id"],
                         ImageUrl = API.GetImageURL((string)imageJson["image"]),
@@ -1337,7 +1337,7 @@ namespace TVRename.TheTVDB
                 {
                     int imageCodeType = (int)imageJson["type"];
 
-                    ShowImage mi = new ShowImage
+                    ShowImage mi = new()
                     {
                         Id = (int)imageJson["id"],
                         ImageUrl = API.GetImageURL((string)imageJson["image"]),
@@ -1706,7 +1706,7 @@ namespace TVRename.TheTVDB
 
         private CachedSeriesInfo GenerateCoreSeriesInfoV4(JObject r, Locale locale, ProcessedSeason.SeasonType st)
         {
-            return new CachedSeriesInfo(locale, TVDoc.ProviderType.TheTVDB)
+            return new(locale, TVDoc.ProviderType.TheTVDB)
             {
                 Name = GetName(r),
                 AirsTime = GetAirsTimeV4(r),
@@ -1917,7 +1917,7 @@ namespace TVRename.TheTVDB
         private (JObject jsonResponse, JObject jsonDefaultLangResponse) DownloadSeriesJsonWithTranslations(ISeriesSpecifier code,
             Locale locale)
         {
-            JObject jsonDefaultLangResponse = new JObject();
+            JObject jsonDefaultLangResponse = new();
 
             JObject jsonResponse = DownloadSeriesJson(code, locale);
 
@@ -2095,7 +2095,7 @@ namespace TVRename.TheTVDB
         {
             (List<JObject> bannerDefaultLangResponses, List<JObject> bannerResponses) = DownloadBanners(code, locale);
 
-            List<int> latestBannerIds = new List<int>();
+            List<int> latestBannerIds = new();
 
             ProcessBannerResponses(code, si, locale, bannerResponses, latestBannerIds);
             ProcessBannerResponses(code, si, new Locale(TVSettings.Instance.PreferredTVDBLanguage),
@@ -2342,7 +2342,7 @@ namespace TVRename.TheTVDB
 
         private (Episode, Language?) GenerateCoreEpisodeV4(JToken episodeJson, int code, CachedSeriesInfo si, Locale locale, ProcessedSeason.SeasonType order)
         {
-            Episode x = new Episode(code, si)
+            Episode x = new(code, si)
             {
                 EpisodeId = episodeJson["id"].ToObject<int>(),
                 SeriesId = episodeJson["seriesId"].ToObject<int>(),
@@ -2450,7 +2450,7 @@ namespace TVRename.TheTVDB
         private static Dictionary<int, Tuple<JToken, JToken>> MergeEpisodeResponses(
             List<JObject>? episodeResponses, List<JObject>? episodeDefaultLangResponses)
         {
-            Dictionary<int, Tuple<JToken, JToken>> episodeIds = new Dictionary<int, Tuple<JToken, JToken>>();
+            Dictionary<int, Tuple<JToken, JToken>> episodeIds = new();
 
             if (episodeResponses != null)
             {
@@ -2535,7 +2535,7 @@ namespace TVRename.TheTVDB
             Say($"{cachedSeriesInfo.Name} ({eptxt}) in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}");
 
             JObject jsonEpisodeResponse;
-            JObject jsonEpisodeDefaultLangResponse = new JObject();
+            JObject jsonEpisodeDefaultLangResponse = new();
 
             try
             {
@@ -2780,7 +2780,7 @@ namespace TVRename.TheTVDB
             {
                 if (int.TryParse(text, out int textAsInt))
                 {
-                    SearchSpecifier ss = new SearchSpecifier(textAsInt, locale, TVDoc.ProviderType.TheTVDB, type);
+                    SearchSpecifier ss = new(textAsInt, locale, TVDoc.ProviderType.TheTVDB, type);
                     try
                     {
                         switch (type)
@@ -2928,7 +2928,7 @@ namespace TVRename.TheTVDB
         private IEnumerable<CachedSeriesInfo> GetEnumSeriesV4(JToken jToken, Locale locale, bool b)
         {
             JArray ja = (JArray)jToken;
-            List<CachedSeriesInfo> ses = new List<CachedSeriesInfo>();
+            List<CachedSeriesInfo> ses = new();
 
             foreach (JToken jt in ja.Children())
             {
@@ -2946,7 +2946,7 @@ namespace TVRename.TheTVDB
         private IEnumerable<CachedMovieInfo> GetEnumMoviesV4(JToken jToken, Locale locale, bool b)
         {
             JArray ja = (JArray)jToken;
-            List<CachedMovieInfo> ses = new List<CachedMovieInfo>();
+            List<CachedMovieInfo> ses = new();
 
             foreach (JToken jt in ja.Children())
             {
@@ -2962,7 +2962,7 @@ namespace TVRename.TheTVDB
 
         private CachedMovieInfo GenerateMovieV4(JObject r, Locale locale, bool searchResult)
         {
-            CachedMovieInfo si = new CachedMovieInfo(locale, TVDoc.ProviderType.TheTVDB)
+            CachedMovieInfo si = new(locale, TVDoc.ProviderType.TheTVDB)
             {
                 TvdbCode = ParseIdFromObjectID(r["objectID"]),
                 Slug = ((string)r["slug"])?.Trim(),
@@ -3020,7 +3020,7 @@ namespace TVRename.TheTVDB
 
         private CachedSeriesInfo GenerateSeriesV4(JObject r, Locale locale, bool searchResult, ProcessedSeason.SeasonType st)
         {
-            CachedSeriesInfo si = new CachedSeriesInfo(locale, TVDoc.ProviderType.TheTVDB)
+            CachedSeriesInfo si = new(locale, TVDoc.ProviderType.TheTVDB)
             {
                 TvdbCode = ParseIdFromObjectID(r["objectID"]),
                 Slug = ((string)r["slug"])?.Trim(),

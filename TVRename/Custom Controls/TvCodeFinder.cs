@@ -23,7 +23,7 @@ namespace TVRename
         [NotNull]
         private static ListViewItem NewLvi([NotNull] CachedSeriesInfo si, int num, bool numberMatch)
         {
-            ListViewItem lvi = new ListViewItem { Text = num.ToString() };
+            ListViewItem lvi = new() { Text = num.ToString() };
             lvi.SubItems.Add(si.Name);
             lvi.SubItems.Add(si.Year);
             lvi.SubItems.Add(si.Networks.FirstOrDefault() ?? string.Empty);

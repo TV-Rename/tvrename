@@ -66,7 +66,7 @@ namespace TVRename
 
                 // write ourselves to disc for next time.  use same structure as thetvdb.com (limited fields, though)
                 // to make loading easy
-                XmlWriterSettings settings = new XmlWriterSettings
+                XmlWriterSettings settings = new()
                 {
                     Indent = true,
                     NewLineOnAttributes = true
@@ -252,7 +252,7 @@ namespace TVRename
 
                 foreach (XElement episodeXml in x.Descendants("Episode"))
                 {
-                    Episode e = new Episode(episodeXml);
+                    Episode e = new(episodeXml);
                     if (e.Ok())
                     {
                         cache.AddOrUpdateEpisode(e);

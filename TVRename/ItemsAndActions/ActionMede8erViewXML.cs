@@ -33,7 +33,7 @@ namespace TVRename
 
         public override ActionOutcome Go(TVRenameStats stats)
         {
-            XmlWriterSettings settings = new XmlWriterSettings
+            XmlWriterSettings settings = new()
             {
                 Indent = true,
                 NewLineOnAttributes = true

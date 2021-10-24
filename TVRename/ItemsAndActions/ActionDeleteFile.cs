@@ -36,7 +36,7 @@ namespace TVRename
         public override string Produces => toRemove.FullName;
 
         [NotNull]
-        public override IgnoreItem Ignore => new IgnoreItem(toRemove.FullName);
+        public override IgnoreItem Ignore => new(toRemove.FullName);
 
         public override string TargetFolder => toRemove.DirectoryName;
 

@@ -64,7 +64,7 @@ namespace TVRename
 
         private void FillSeenEpisodes(bool keepSel)
         {
-            List<int> sel = new List<int>();
+            List<int> sel = new();
             if (keepSel)
             {
                 foreach (int i in lvSeenEpisodes.SelectedIndices)
@@ -78,7 +78,7 @@ namespace TVRename
             {
                 foreach (ProcessedEpisode ep in mOriginalEps.Where(ep => ep.PreviouslySeen))
                 {
-                    ListViewItem lvi = new ListViewItem { Text = ep.EpNumsAsString() };
+                    ListViewItem lvi = new() { Text = ep.EpNumsAsString() };
                     lvi.SubItems.Add(ep.Name);
                     lvi.Tag = ep;
                     lvSeenEpisodes.Items.Add(lvi);
@@ -103,8 +103,8 @@ namespace TVRename
 
         private void bnAddRule_Click(object sender, System.EventArgs e)
         {
-            ShowRule sr = new ShowRule();
-            AddModifyRule ar = new AddModifyRule(sr, show, ProcessedEpisodes());
+            ShowRule sr = new();
+            AddModifyRule ar = new(sr, show, ProcessedEpisodes());
 
             bool res = ar.ShowDialog(this) == DialogResult.OK;
             if (res)
@@ -117,7 +117,7 @@ namespace TVRename
 
         private void FillRuleList(bool keepSel, int adj)
         {
-            List<int> sel = new List<int>();
+            List<int> sel = new();
             if (keepSel)
             {
                 foreach (int i in lvRuleList.SelectedIndices)
@@ -129,7 +129,7 @@ namespace TVRename
             lvRuleList.Items.Clear();
             foreach (ShowRule sr in workingRuleSet)
             {
-                ListViewItem lvi = new ListViewItem { Text = sr.ActionInWords() };
+                ListViewItem lvi = new() { Text = sr.ActionInWords() };
 
                 lvi.SubItems.Add(sr.First == -1 ? string.Empty : sr.First.ToString());
                 lvi.SubItems.Add(sr.Second == -1 ? string.Empty : sr.Second.ToString());
@@ -170,7 +170,7 @@ namespace TVRename
             }
 
             ShowRule sr = (ShowRule)lvRuleList.SelectedItems[0].Tag;
-            AddModifyRule ar = new AddModifyRule(sr, show, ProcessedEpisodes());
+            AddModifyRule ar = new(sr, show, ProcessedEpisodes());
             ar.ShowDialog(this); // modifies rule in-place if OK'd
             FillRuleList(false, 0);
         }
@@ -273,7 +273,7 @@ namespace TVRename
 
         private IEnumerable<ProcessedEpisode> ProcessedEpisodes()
         {
-            List<ProcessedEpisode> pel = new List<ProcessedEpisode>();
+            List<ProcessedEpisode> pel = new();
 
             if (mOriginalEps != null)
             {
@@ -290,7 +290,7 @@ namespace TVRename
 
         private void Button2_Click(object sender, System.EventArgs e)
         {
-            List<ProcessedEpisode> possibleEpisodes = new List<ProcessedEpisode>();
+            List<ProcessedEpisode> possibleEpisodes = new();
             if (mOriginalEps != null)
             {
                 possibleEpisodes.AddRange(mOriginalEps.Where(testEp => !testEp.PreviouslySeen).Where(testEp => !episodesToAddToSeen.Contains(testEp)));
@@ -298,7 +298,7 @@ namespace TVRename
 
             possibleEpisodes.AddRange(episodesToRemoveFromSeen);
 
-            NewSeenEpisode nse = new NewSeenEpisode(possibleEpisodes);
+            NewSeenEpisode nse = new(possibleEpisodes);
             DialogResult dialogResult = nse.ShowDialog(this);
 
             if (dialogResult != DialogResult.OK)
@@ -312,7 +312,7 @@ namespace TVRename
 
             episodesToAddToSeen.Add(nse.ChosenEpisode);
 
-            ListViewItem lvi = new ListViewItem { Text = nse.ChosenEpisode.AppropriateEpNum.ToString() };
+            ListViewItem lvi = new() { Text = nse.ChosenEpisode.AppropriateEpNum.ToString() };
             lvi.SubItems.Add(nse.ChosenEpisode.Name);
             lvi.Tag = nse.ChosenEpisode;
             lvSeenEpisodes.Items.Add(lvi);

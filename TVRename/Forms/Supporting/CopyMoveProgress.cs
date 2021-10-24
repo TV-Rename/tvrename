@@ -96,7 +96,7 @@ namespace TVRename
 
                 if (!action.Outcome.Done)
                 {
-                    ListViewItem lvi = new ListViewItem(action.Name);
+                    ListViewItem lvi = new(action.Name);
                     lvi.SubItems.Add(action.ProgressText);
 
                     lvProgress.Items.Add(lvi);

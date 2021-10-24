@@ -28,13 +28,13 @@ namespace TVRename
 
             //We will replace the file as too difficult to update multiparts
             //We can't use XDocument as it's not fully valid XML
-            List<XElement> episodeXmLs = new List<XElement>();
+            List<XElement> episodeXmLs = new();
 
             if (Episode != null)
             {
                 foreach (Episode ep in Episode.SourceEpisodes)
                 {
-                    XElement epNode = new XElement("episodedetails");
+                    XElement epNode = new("episodedetails");
                     UpdateEpisodeFields(ep, si, epNode, true);
                     episodeXmLs.Add(epNode);
                 }

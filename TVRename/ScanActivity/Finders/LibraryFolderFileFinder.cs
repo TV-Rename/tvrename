@@ -17,9 +17,9 @@ namespace TVRename
 
         protected override void DoCheck(SetProgressDelegate prog)
         {
-            ItemList newList = new ItemList();
-            ItemList toRemove = new ItemList();
-            DirFilesCache dfc = new DirFilesCache();
+            ItemList newList = new();
+            ItemList toRemove = new();
+            DirFilesCache dfc = new();
 
             int currentItem = 0;
             int totalN = ActionList.Missing.Count + 1;
@@ -105,7 +105,7 @@ namespace TVRename
 
         private void FindEpisode(ShowItemMissing me, DirFilesCache dfc, ItemList newList, ItemList toRemove)
         {
-            Dictionary<FileInfo, ItemList> thisRound = new Dictionary<FileInfo, ItemList>();
+            Dictionary<FileInfo, ItemList> thisRound = new();
             if (me.Episode == null)
             {
                 return;
@@ -138,10 +138,10 @@ namespace TVRename
                 return new List<FileInfo>();
             }
 
-            List<FileInfo> matchedFiles = new List<FileInfo>();
+            List<FileInfo> matchedFiles = new();
             foreach (FileInfo testFile in dfc.GetFilesIncludeSubDirs(baseFolder))
             {
-                ItemList actionsForThisFile = new ItemList();
+                ItemList actionsForThisFile = new();
                 if (ReviewFile(me, actionsForThisFile, testFile, false, false, false,
                     TVSettings.Instance.UseFullPathNameToMatchLibraryFolders))
                 {
@@ -161,7 +161,7 @@ namespace TVRename
 
             foreach (FileInfo testFile in files)
             {
-                ItemList actionsForThisFile = new ItemList();
+                ItemList actionsForThisFile = new();
                 if (!ReviewFile(me, actionsForThisFile, testFile, false, false, false,
                     TVSettings.Instance.UseFullPathNameToMatchLibraryFolders))
                 {

@@ -10,7 +10,7 @@ namespace TVRename
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
         private static volatile Languages? InternalInstance;
-        private static readonly object SyncRoot = new object();
+        private static readonly object SyncRoot = new();
 
         public static Languages Instance
         {

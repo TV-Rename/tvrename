@@ -10,7 +10,7 @@ namespace TVRename
 
         protected override void Do()
         {
-            XmlWriterSettings settings = new XmlWriterSettings
+            XmlWriterSettings settings = new()
             {
                 Indent = true,
                 NewLineOnAttributes = true

@@ -219,7 +219,7 @@ namespace TVRename
         [NotNull]
         public static Dictionary<int, CachedSeriesInfo> GetSeriesDictMatching<T>(this T cache, string testShowName) where T : MediaCache, iTVSource
         {
-            Dictionary<int, CachedSeriesInfo> matchingSeries = new Dictionary<int, CachedSeriesInfo>();
+            Dictionary<int, CachedSeriesInfo> matchingSeries = new();
 
             testShowName = testShowName.CompareName();
 
@@ -245,7 +245,7 @@ namespace TVRename
         [NotNull]
         public static Dictionary<int, CachedMovieInfo> GetMoviesDictMatching<T>(this T cache, string testShowName) where T : MediaCache, iMovieSource
         {
-            Dictionary<int, CachedMovieInfo> matchingSeries = new Dictionary<int, CachedMovieInfo>();
+            Dictionary<int, CachedMovieInfo> matchingSeries = new();
 
             testShowName = testShowName.CompareName();
 

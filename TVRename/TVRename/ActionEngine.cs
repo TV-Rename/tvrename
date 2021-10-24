@@ -133,9 +133,9 @@ namespace TVRename
 
             actionPause = false;
 
-            ActionProcessorThreadArgs args = new ActionProcessorThreadArgs {TheList = theList, Token = token};
+            ActionProcessorThreadArgs args = new() {TheList = theList, Token = token};
 
-            Thread actionProcessorThread = new Thread(ActionProcessor)
+            Thread actionProcessorThread = new(ActionProcessor)
             {
                 Name = "ActionProcessorThread"
             };
@@ -277,7 +277,7 @@ namespace TVRename
         {
             try
             {
-                Thread t = new Thread(ProcessSingleAction)
+                Thread t = new(ProcessSingleAction)
                 {
                     Name = "ProcessSingleAction(" + pai.TheAction.Name + ":" + pai.TheAction.ProgressText + ")"
                 };

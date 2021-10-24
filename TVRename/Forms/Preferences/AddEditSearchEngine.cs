@@ -63,7 +63,7 @@ namespace TVRename
 
         private void SetupGrid()
         {
-            Cell titleModel = new Cell
+            Cell titleModel = new()
             {
                 BackColor = Color.SteelBlue,
                 ForeColor = Color.White,
@@ -89,7 +89,7 @@ namespace TVRename
             //////////////////////////////////////////////////////////////////////
             // header row
 
-            ColumnHeader h = new ColumnHeader("Name") { AutomaticSortEnabled = false };
+            ColumnHeader h = new("Name") { AutomaticSortEnabled = false };
             grid1[0, 0] = h;
             grid1[0, 0].View = titleModel;
 

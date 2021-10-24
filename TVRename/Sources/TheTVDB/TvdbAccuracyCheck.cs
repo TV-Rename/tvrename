@@ -72,7 +72,7 @@ namespace TVRename.TheTVDB
                 }
 
                 List<JObject> eps = lc.GetEpisodes(si.TvdbId, new Locale());
-                List<int> serverEpIds = new List<int>();
+                List<int> serverEpIds = new();
 
                 if (eps != null)
                 {

@@ -243,7 +243,7 @@ namespace TVRename
 
         #region Item Members
 
-        public override IgnoreItem Ignore => new IgnoreItem(To.FullName);
+        public override IgnoreItem Ignore => new(To.FullName);
 
         public override string ScanListViewGroup
         {

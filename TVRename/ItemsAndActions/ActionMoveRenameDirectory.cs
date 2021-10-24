@@ -58,8 +58,8 @@ namespace TVRename
 
         public override ActionOutcome Go(TVRenameStats stats)
         {
-            DirectoryInfo source = new DirectoryInfo(sourceFolder);
-            DirectoryInfo target = new DirectoryInfo(targetFolder);
+            DirectoryInfo source = new(sourceFolder);
+            DirectoryInfo target = new(targetFolder);
 
             if (target.Exists && source.Exists && !target.EnumerateFiles().Any())
             {

@@ -42,14 +42,14 @@ namespace TVRename.Forms
                     req.ContentType = "application/json";
                     req.UserAgent = TVSettings.USER_AGENT;
 
-                    JObject request = new JObject
+                    JObject request = new()
                     {
                         {"text", newVersion.ReleaseNotesText},
                         {"mode", "gfm"},
                         {"context", "TV-Rename/tvrename"}
                     };
 
-                    using (System.IO.StreamWriter writer = new System.IO.StreamWriter(req.GetRequestStream()))
+                    using (System.IO.StreamWriter writer = new(req.GetRequestStream()))
                     {
                         writer.Write(request.ToString());
                     }
@@ -60,8 +60,8 @@ namespace TVRename.Forms
                         if (resp != null)
                         {
                             System.IO.StreamReader reader =
-                                new System.IO.StreamReader(resp.GetResponseStream() ??
-                                                           throw new InvalidOperationException());
+                                new(resp.GetResponseStream() ??
+                                    throw new InvalidOperationException());
 
                             result = reader.ReadToEnd();
                         }

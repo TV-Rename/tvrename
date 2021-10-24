@@ -6,10 +6,10 @@ namespace TVRename
     public class ActionOutcome
     {
         [NotNull]
-        public static ActionOutcome NoOutcomeYet() => new ActionOutcome {Done = false, Error = false };
+        public static ActionOutcome NoOutcomeYet() => new() {Done = false, Error = false };
 
         [NotNull]
-        public static ActionOutcome Success() => new ActionOutcome {Done = true, Error = false };
+        public static ActionOutcome Success() => new() {Done = true, Error = false };
 
         private ActionOutcome()
         {
@@ -37,6 +37,6 @@ namespace TVRename
         public Exception? LastError { get; }
 
         [NotNull]
-        public static ActionOutcome CompleteFail() => new ActionOutcome("Complete Fail");
+        public static ActionOutcome CompleteFail() => new("Complete Fail");
     }
 }

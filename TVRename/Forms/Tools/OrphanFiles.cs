@@ -69,9 +69,9 @@ namespace TVRename.Forms.Tools
 
             showRightClickMenu.Items.Clear();
 
-            AddRcMenuItem("View on Source Provider...", (s, args) => TvSourceFor(iss.Show));
-            AddRcMenuItem("Open Folder", (s, args) => Helpers.OpenFolderSelectFile(iss.File.FullName));
-            AddRcMenuItem("Episode Guide", (s, args) => MainWindow.GotoEpguideFor(iss.Show, true));
+            AddRcMenuItem("View on Source Provider...", (_, _) => TvSourceFor(iss.Show));
+            AddRcMenuItem("Open Folder", (_, _) => Helpers.OpenFolderSelectFile(iss.File.FullName));
+            AddRcMenuItem("Episode Guide", (_, _) => MainWindow.GotoEpguideFor(iss.Show, true));
 
             showRightClickMenu.Show(pt);
         }
@@ -93,7 +93,7 @@ namespace TVRename.Forms.Tools
 
         private void AddRcMenuItem(string name, EventHandler command)
         {
-            ToolStripMenuItem tsi = new ToolStripMenuItem(name.Replace("&", "&&"));
+            ToolStripMenuItem tsi = new(name.Replace("&", "&&"));
             tsi.Click += command;
             showRightClickMenu.Items.Add(tsi);
         }
@@ -107,7 +107,7 @@ namespace TVRename.Forms.Tools
 
         private void UpdateIssues(BackgroundWorker bw)
         {
-            List<string> doneFolders = new List<string>();
+            List<string> doneFolders = new();
             int total = mDoc.TvLibrary.Shows.Count();
             int current = 0;
 

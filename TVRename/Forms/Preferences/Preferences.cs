@@ -580,7 +580,7 @@ namespace TVRename
         [NotNull]
         private TVSettings.ShowStatusColoringTypeList GetShowStatusColouring()
         {
-            TVSettings.ShowStatusColoringTypeList returnValue = new TVSettings.ShowStatusColoringTypeList();
+            TVSettings.ShowStatusColoringTypeList returnValue = new();
             foreach (ListViewItem item in lvwDefinedColors.Items)
             {
                 if (item.SubItems.Count > 1 && !string.IsNullOrEmpty(item.SubItems[1].Text) && item.Tag is TVSettings.ColouringRule type)
@@ -620,7 +620,7 @@ namespace TVRename
 
         private void SetupReplacementsGrid()
         {
-            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
+            SourceGrid.Cells.Views.Cell titleModel = new()
             {
                 BackColor = Color.SteelBlue,
                 ForeColor = Color.White,
@@ -655,7 +655,7 @@ namespace TVRename
             //////////////////////////////////////////////////////////////////////
             // header row
 
-            ColumnHeader h = new ColumnHeader("Search") { AutomaticSortEnabled = false };
+            ColumnHeader h = new("Search") { AutomaticSortEnabled = false };
             ReplacementsGrid[0, 0] = h;
             ReplacementsGrid[0, 0].View = titleModel;
 
@@ -670,7 +670,7 @@ namespace TVRename
 
         private void AddNewReplacementRow(string? from, string? to, bool ins)
         {
-            SourceGrid.Cells.Views.Cell roModel = new SourceGrid.Cells.Views.Cell { ForeColor = Color.Gray };
+            SourceGrid.Cells.Views.Cell roModel = new() { ForeColor = Color.Gray };
 
             int r = ReplacementsGrid.RowsCount;
             ReplacementsGrid.RowsCount = r + 1;
@@ -687,7 +687,7 @@ namespace TVRename
 
         private void SetupRssGrid()
         {
-            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
+            SourceGrid.Cells.Views.Cell titleModel = new()
             {
                 BackColor = Color.SteelBlue,
                 ForeColor = Color.White,
@@ -711,7 +711,7 @@ namespace TVRename
 
             //////////////////////////////////////////////////////////////////////
             // header row
-            ColumnHeader h = new ColumnHeader("URL") { AutomaticSortEnabled = false };
+            ColumnHeader h = new("URL") { AutomaticSortEnabled = false };
             RSSGrid[0, 0] = h;
             RSSGrid[0, 0].View = titleModel;
         }
@@ -1321,7 +1321,7 @@ namespace TVRename
                 KeyValuePair<TVSettings.ColouringRule, Color> showStatusColor in
                 s.ShowStatusColors)
             {
-                ListViewItem item = new ListViewItem
+                ListViewItem item = new()
                 {
                     Text = showStatusColor.Key.Text,
                     Tag = showStatusColor.Key,
@@ -1735,7 +1735,7 @@ namespace TVRename
             Rectangle tabBounds = tcTabs.GetTabRect(e.Index);
 
             // Draw string. Center the text.
-            StringFormat stringFlags = new StringFormat
+            StringFormat stringFlags = new()
             {
                 Alignment = StringAlignment.Near,
                 LineAlignment = StringAlignment.Center
@@ -1749,7 +1749,7 @@ namespace TVRename
         private void bnAddSearchFolder_Click(object sender, EventArgs e)
         {
             //Setup the UI
-            FolderBrowserDialogEx searchFolderBrowser = new FolderBrowserDialogEx
+            FolderBrowserDialogEx searchFolderBrowser = new()
             {
                 SelectedPath = "",
                 Title = "Add New Search Folder...",
@@ -1831,7 +1831,7 @@ namespace TVRename
             {
                 try
                 {
-                    DirectoryInfo di = new DirectoryInfo(path);
+                    DirectoryInfo di = new(path);
                     if (di.Exists)
                     {
                         TVSettings.Instance.DownloadFolders.Add(path.ToLower().Trim());
@@ -1880,7 +1880,7 @@ namespace TVRename
 
         private void bnAddMonFolder_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialogEx searchFolderBrowser = new FolderBrowserDialogEx
+            FolderBrowserDialogEx searchFolderBrowser = new()
             {
                 SelectedPath = "",
                 Title = "Add New Library Folder...",
@@ -1947,7 +1947,7 @@ namespace TVRename
             {
                 try
                 {
-                    DirectoryInfo di = new DirectoryInfo(path);
+                    DirectoryInfo di = new(path);
                     if (di.Exists)
                     {
                         TVSettings.Instance.MovieLibraryFolders.Add(path.ToLower());
@@ -1970,7 +1970,7 @@ namespace TVRename
             {
                 try
                 {
-                    DirectoryInfo di = new DirectoryInfo(path);
+                    DirectoryInfo di = new(path);
                     if (di.Exists)
                     {
                         TVSettings.Instance.LibraryFolders.Add(path.ToLower());
@@ -2155,7 +2155,7 @@ namespace TVRename
 
         private void bnAddMovieMonFolder_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialogEx searchFolderBrowser = new FolderBrowserDialogEx
+            FolderBrowserDialogEx searchFolderBrowser = new()
             {
                 SelectedPath = "",
                 Title = "Add New Library Folder...",

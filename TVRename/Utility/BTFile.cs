@@ -15,7 +15,7 @@ namespace TVRename
 
         public List<string>? AllFilesInTorrent()
         {
-            List<string> r = new List<string>();
+            List<string> r = new();
 
             BTItem bti = GetItem("info");
             if (bti is null || bti.Type != BTChunk.kDictionary)
@@ -74,7 +74,7 @@ namespace TVRename
 
         public void Tree(TreeNodeCollection tn)
         {
-            TreeNode n = new TreeNode("BT File");
+            TreeNode n = new("BT File");
             tn.Add(n);
             foreach (BTItem t in Items)
             {

@@ -40,9 +40,9 @@ namespace TVRename.Ipc
         {
             MainUi = form;
 
-            Hashtable channelProperties = new Hashtable { { "exclusiveAddressUse", false }, { "portName", IPC_CHANNEL } };
+            Hashtable channelProperties = new() { { "exclusiveAddressUse", false }, { "portName", IPC_CHANNEL } };
 
-            IpcServerChannel serverChannel = new IpcServerChannel(channelProperties, null);
+            IpcServerChannel serverChannel = new(channelProperties, null);
             ChannelServices.RegisterChannel(serverChannel, true);
 
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(RemoteClient), IPC_SERVICE, WellKnownObjectMode.Singleton);

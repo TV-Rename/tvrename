@@ -30,13 +30,13 @@ namespace TVRename
             if (Key == "pieces" && Data.Type == BTChunk.kString)
             {
                 // 20 byte chunks of SHA1 hash values
-                TreeNode n = new TreeNode("Key=" + Key);
+                TreeNode n = new("Key=" + Key);
                 tn.Add(n);
                 n.Nodes.Add(new TreeNode("<File hash data>" + ((BTString)Data).PieceAsNiceString(0)));
             }
             else
             {
-                TreeNode n = new TreeNode("Key=" + Key);
+                TreeNode n = new("Key=" + Key);
                 tn.Add(n);
                 Data.Tree(n.Nodes);
             }

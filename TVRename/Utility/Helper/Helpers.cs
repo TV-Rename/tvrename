@@ -199,8 +199,8 @@ namespace TVRename
 
         public static DateTime FromUnixTime(double unixTime) => Epoch.AddSeconds(unixTime);
 
-        private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        private static readonly DateTime WindowsStartDateTime = new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private static readonly DateTime Epoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private static readonly DateTime WindowsStartDateTime = new(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         public static bool OpenFolder(string folder)
         {
@@ -215,7 +215,7 @@ namespace TVRename
         {
             string args = $"/e, /select, \"{filename}\"";
 
-            ProcessStartInfo info = new ProcessStartInfo { FileName = "explorer", Arguments = args };
+            ProcessStartInfo info = new() { FileName = "explorer", Arguments = args };
             Process.Start(info);
         }
 
@@ -288,7 +288,7 @@ namespace TVRename
         {
             // From http://blogs.msdn.com/b/michkap/archive/2007/05/14/2629747.aspx
             string stFormD = stIn.Normalize(NormalizationForm.FormD);
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             foreach (char t in stFormD)
             {

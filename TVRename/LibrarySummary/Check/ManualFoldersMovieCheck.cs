@@ -32,7 +32,7 @@ namespace TVRename
 
             if (Movie.ManualLocations.Count == 1)
             {
-                DirectoryInfo source = new DirectoryInfo(Movie.ManualLocations.First());
+                DirectoryInfo source = new(Movie.ManualLocations.First());
                 if (!source.Exists)
                 {
                     Movie.UseManualLocations = false;
@@ -98,7 +98,7 @@ namespace TVRename
 
         private void CopyOrMove(DirectoryInfo fromDirectory, string toDirectory)
         {
-            DirectoryInfo target = new DirectoryInfo(toDirectory);
+            DirectoryInfo target = new(toDirectory);
 
             if (target.Exists)
             {

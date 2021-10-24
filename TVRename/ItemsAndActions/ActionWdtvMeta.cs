@@ -44,7 +44,7 @@ namespace TVRename
         {
             try
             {
-                XmlWriterSettings settings = new XmlWriterSettings
+                XmlWriterSettings settings = new()
                 {
                     Indent = true,
                     NewLineOnAttributes = true
@@ -103,7 +103,7 @@ namespace TVRename
                 // "try" and silently fail.  eg. when file is use by other...
                 try
                 {
-                    XmlWriterSettings settings = new XmlWriterSettings
+                    XmlWriterSettings settings = new()
                     {
                         Indent = true,
                         NewLineOnAttributes = true

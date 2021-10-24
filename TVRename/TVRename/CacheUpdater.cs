@@ -75,7 +75,7 @@ namespace TVRename
 
             Logger.Info("Doing downloads in the foreground...");
 
-            CancellationTokenSource cts = new CancellationTokenSource();
+            CancellationTokenSource cts = new();
             StartBgDownloadThread(true, shows, showMsgBox, cts.Token);
 
             const int DELAY_STEP = 100;
@@ -101,7 +101,7 @@ namespace TVRename
             Logger.Warn(message);
             if (showErrorMsgBox)
             {
-                CannotConnectForm ccform = new CannotConnectForm("Error while downloading", message, FindProviderWithError());
+                CannotConnectForm ccform = new("Error while downloading", message, FindProviderWithError());
 
                 owner.ShowChildDialog(ccform);
                 DialogResult ccresult = ccform.DialogResult;
@@ -290,7 +290,7 @@ namespace TVRename
                 Logger.Info($"Identified that {CountDirtyIdsFrom(TVDoc.ProviderType.TheTVDB, MediaConfiguration.MediaType.movie)} TVDB and {CountDirtyIdsFrom(TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie)} TMDB movies need to be updated");
                 workers = new List<Thread>();
 
-                Semaphore newSemaphore = new Semaphore(numWorkers, numWorkers); // allow up to numWorkers working at once
+                Semaphore newSemaphore = new(numWorkers, numWorkers); // allow up to numWorkers working at once
                 workerSemaphore = newSemaphore;
 
                 foreach (ISeriesSpecifier code in downloadIds)
@@ -304,7 +304,7 @@ namespace TVRename
                     n++;
 
                     newSemaphore.WaitOne(); // blocks until there is an available slot
-                    Thread t = new Thread(GetThread);
+                    Thread t = new(GetThread);
                     workers.Add(t);
                     t.Name = "GetThread:" + code.Name;
                     t.Start(code); // will grab the semaphore as soon as we make it available
@@ -399,7 +399,7 @@ namespace TVRename
 
         public void ClearProblems()
         {
-            List<ISeriesSpecifier> toRemove = new List<ISeriesSpecifier>();
+            List<ISeriesSpecifier> toRemove = new();
 
             foreach (MediaNotFoundException sid in Problems)
             {

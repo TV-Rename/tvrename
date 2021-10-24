@@ -30,7 +30,7 @@ namespace TVRename
 
             List<string> folders = movie.Locations.ToList();
 
-            List<string> ignoredLocations = new List<string>();
+            List<string> ignoredLocations = new();
 
             foreach (string folderExists in folders)
             {
@@ -102,7 +102,7 @@ namespace TVRename
                 if (whatToDo == FaResult.kfaNotSet)
                 {
                     // no command line guidance, so ask the user
-                    MissingFolderAction mfa = new MissingFolderAction(si.ShowName, "", folder);
+                    MissingFolderAction mfa = new(si.ShowName, "", folder);
 
                     owner.ShowChildDialog(mfa);
                     whatToDo = mfa.Result;
@@ -166,7 +166,7 @@ namespace TVRename
 
         private bool UpdateDirectory(MovieConfiguration si, string folder)
         {
-            DirectoryInfo di = new DirectoryInfo(folder);
+            DirectoryInfo di = new(folder);
             bool goAgain = !di.Exists;
 
             if (di.Exists)

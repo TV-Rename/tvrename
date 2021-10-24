@@ -87,7 +87,7 @@ namespace TVRename
             {
                 try
                 {
-                    DirectoryInfo di = new DirectoryInfo(path);
+                    DirectoryInfo di = new(path);
                     if (di.Exists)
                     {
                         FolderName = path;

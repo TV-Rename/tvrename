@@ -15,7 +15,7 @@ namespace TVRename
                 return null;
             }
 
-            ItemList theActionList = new ItemList();
+            ItemList theActionList = new();
 
             string ban = episode.Filename;
             if (string.IsNullOrEmpty(ban))

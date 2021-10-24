@@ -30,7 +30,7 @@ namespace TVRename
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
         private static volatile TVSettings? instance;
-        private static readonly object syncRoot = new object();
+        private static readonly object syncRoot = new();
 
         [NotNull]
         public static TVSettings Instance
@@ -208,7 +208,7 @@ namespace TVRename
         public bool pyTivoMeta = false;
         public bool wdLiveTvMeta = false;
         public bool pyTivoMetaSubFolder = false;
-        public CustomEpisodeName NamingStyle = new CustomEpisodeName();
+        public CustomEpisodeName NamingStyle = new();
         public bool NotificationAreaIcon = false;
         public bool OfflineMode = false;
         public bool DetailedRSSJSONLogging = false;
@@ -291,9 +291,9 @@ namespace TVRename
         internal bool IncludeBetaUpdates() => mode == BetaMode.BetaToo;
 
         public string defaultSeasonWord = "Season";
-        public ShowFilter Filter = new ShowFilter();
-        public MovieFilter MovieFilter = new MovieFilter();
-        public SeasonFilter SeasonFilter = new SeasonFilter();
+        public ShowFilter Filter = new();
+        public MovieFilter MovieFilter = new();
+        public SeasonFilter SeasonFilter = new();
         public int ParallelDownloads = 4;
         public List<string> RSSURLs = DefaultRSSURLList();
         public bool RenameCheck = true;
@@ -320,8 +320,8 @@ namespace TVRename
         public string MovieFolderFormat = CustomMovieName.DefaultStyle();
         public string MovieFilenameFormat = CustomMovieName.DefaultStyle();
         public int StartupTab;
-        public Searchers TheSearchers = new Searchers(MediaConfiguration.MediaType.tv);
-        public Searchers TheMovieSearchers = new Searchers(MediaConfiguration.MediaType.movie);
+        public Searchers TheSearchers = new(MediaConfiguration.MediaType.tv);
+        public Searchers TheMovieSearchers = new(MediaConfiguration.MediaType.movie);
 
         public string SearchJSONURL = "https://eztv.ag/api/get-torrents?imdb_id=";
         public string SearchJSONRootNode = "torrents";
@@ -359,7 +359,7 @@ namespace TVRename
         public bool CheckFutureDatedMovies => false; //todo persist and edit this
         public bool CheckNoDatedMovies => false; //todo persist and edit this
 
-        public List<string> SubsFolderNames => new List<string> { "subs", "subtitles", "vobsubs", "sub", "vobsub", "subtitle" };
+        public List<string> SubsFolderNames => new() { "subs", "subtitles", "vobsubs", "sub", "vobsub", "subtitle" };
         //todo persist and edit this
 
         public bool CopySubsFolders => true; //todo persist and edit this
@@ -401,7 +401,7 @@ namespace TVRename
         public int RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength = 8;
         public bool DeleteShowFromDisk = true;
 
-        public ShowStatusColoringTypeList ShowStatusColors = new ShowStatusColoringTypeList();
+        public ShowStatusColoringTypeList ShowStatusColors = new();
         public string SABHostPort = string.Empty;
         public string SABAPIKey = string.Empty;
         public bool CheckSABnzbd = false;
@@ -409,7 +409,7 @@ namespace TVRename
         public TheTVDB.ApiVersion TvdbVersion = TheTVDB.ApiVersion.v3;
         public WTWDoubleClickAction WTWDoubleClick = WTWDoubleClickAction.Scan;
 
-        public readonly TidySettings Tidyup = new TidySettings();
+        public readonly TidySettings Tidyup = new();
         public bool runPeriodicCheck = false;
         public int periodCheckHours = 1;
         public int periodUpdateCacheHours = 1;
@@ -486,7 +486,7 @@ namespace TVRename
 
             // ResumeDatPath
             FileInfo f2 =
-                new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                new(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                     @"uTorrent\resume.dat"));
 
             ResumeDatPath = f2.Exists ? f2.FullName : "";
@@ -923,7 +923,7 @@ namespace TVRename
         {
             // Default list of filename processors
 
-            List<FilenameProcessorRE> l = new List<FilenameProcessorRE>
+            List<FilenameProcessorRE> l = new()
             {
                 new FilenameProcessorRE(true,
                     "(^|[^a-z])s?(?<s>[0-9]+).?[ex](?<e>[0-9]{2,})(-?e[0-9]{2,})*-?[ex](?<f>[0-9]{2,})[^a-z]",
@@ -976,7 +976,7 @@ namespace TVRename
         [NotNull]
         private static List<Replacement> DefaultListRE()
         {
-            return new List<Replacement>
+            return new()
             {
                 new Replacement("*", "#", false),
                 new Replacement("?", "", false),
@@ -993,7 +993,7 @@ namespace TVRename
         [NotNull]
         private static List<string> DefaultRSSURLList()
         {
-            List<string> sl = new List<string>();
+            List<string> sl = new();
             return sl;
         }
 

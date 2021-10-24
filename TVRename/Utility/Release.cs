@@ -37,7 +37,7 @@ namespace TVRename
                 ? @"^v?(?<major>[0-9]+)((\.(?<minor>[0-9]+))(\.(?<patch>[0-9]+))?)?([ \-](?<pre>[0-9A-Za-z\- \.]+|[*]))?(\+(?<build>[0-9A-Za-z\-\.]+|[*]))?$"
                 : @"^v?(?<major>[0-9]+)((\.(?<minor>[0-9]+))(\.(?<patch>[0-9]+))?)?([ \-](?<pre>[0-9A-Za-z\- \.]+))?$";
 
-            Regex regex = new Regex(matchString, RegexOptions.ExplicitCapture);
+            Regex regex = new(matchString, RegexOptions.ExplicitCapture);
             Match match = regex.Match(version);
 
             if (!match.Success || !match.Groups["major"].Success || !match.Groups["minor"].Success)
@@ -105,7 +105,7 @@ namespace TVRename
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.Append(VersionNumber);
             if (!string.IsNullOrWhiteSpace(Prerelease))
             {

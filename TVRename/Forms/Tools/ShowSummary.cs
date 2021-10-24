@@ -62,7 +62,7 @@ namespace TVRename
                 return;
             }
 
-            Cell colTitleModel = new Cell
+            Cell colTitleModel = new()
             {
                 ElementText = new ActorsGrid.RotatedText(-90.0f),
                 BackColor = Color.SteelBlue,
@@ -70,7 +70,7 @@ namespace TVRename
                 TextAlignment = ContentAlignment.BottomCenter
             };
 
-            Cell topleftTitleModel = new Cell
+            Cell topleftTitleModel = new()
             {
                 BackColor = Color.SteelBlue,
                 ForeColor = Color.White,
@@ -95,7 +95,7 @@ namespace TVRename
             grid1.Rows[0].AutoSizeMode = SourceGrid.AutoSizeMode.MinimumSize;
             grid1.Rows[0].Height = 65;
 
-            ColumnHeader h = new ColumnHeader("Show")
+            ColumnHeader h = new("Show")
             {
                 AutomaticSortEnabled = false,
                 ResizeEnabled = false
@@ -104,7 +104,7 @@ namespace TVRename
             grid1[0, 0] = h;
             grid1[0, 0].View = topleftTitleModel;
 
-            ColumnHeader h2 = new ColumnHeader("Status")
+            ColumnHeader h2 = new("Status")
             {
                 AutomaticSortEnabled = false,
                 ResizeEnabled = false
@@ -164,7 +164,7 @@ namespace TVRename
                     continue;
                 }
 
-                RowHeader rh = new RowHeader(show.ShowName)
+                RowHeader rh = new(show.ShowName)
                 {
                     ResizeEnabled = false,
                     View = new Cell { ForeColor = show.ShowConfiguration.DoMissingCheck ? Color.Black : Color.Gray }
@@ -175,7 +175,7 @@ namespace TVRename
                 grid1[r + 1, 0] = rh;
                 grid1[r + 1, 0].AddController(new ShowClickEvent(this, show.ShowConfiguration));
 
-                RowHeader rh2 = new RowHeader(show.ShowConfiguration.ShowStatus)
+                RowHeader rh2 = new(show.ShowConfiguration.ShowStatus)
                 {
                     ResizeEnabled = false,
                     View = new Cell { ForeColor = show.ShowConfiguration.DoMissingCheck ? Color.Black : Color.Gray }
@@ -228,7 +228,7 @@ namespace TVRename
         [NotNull]
         private static ShowSummaryData AddShowDetails([NotNull] ShowConfiguration si)
         {
-            ShowSummaryData showSummary = new ShowSummaryData
+            ShowSummaryData showSummary = new()
             {
                 ShowName = si.ShowName,
                 ShowConfiguration = si
@@ -253,7 +253,7 @@ namespace TVRename
             int epCount = 0;
             int epGotCount = 0;
             int epAiredCount = 0;
-            DirFilesCache dfc = new DirFilesCache();
+            DirFilesCache dfc = new();
             ProcessedSeason processedSeason = null;
 
             if (snum >= 0 && si.AppropriateSeasons().TryGetValue(snum, out processedSeason))
@@ -360,7 +360,7 @@ namespace TVRename
                 {
                     if (processedSeason.Show.IgnoreSeasons.Contains(processedSeason.SeasonNumber))
                     {
-                        AddRcMenuItem(gridSummary.showRightClickMenu, "Stop Ignoring Season", (o, args) =>
+                        AddRcMenuItem(gridSummary.showRightClickMenu, "Stop Ignoring Season", (_, _) =>
                         {
                             processedSeason.Show.IgnoreSeasons.Remove(processedSeason.SeasonNumber);
                             gridSummary.PopulateGrid();
@@ -368,7 +368,7 @@ namespace TVRename
                     }
                     else
                     {
-                        AddRcMenuItem(gridSummary.showRightClickMenu, "Ignore Season", (o, args) =>
+                        AddRcMenuItem(gridSummary.showRightClickMenu, "Ignore Season", (_, _) =>
                         {
                             processedSeason.Show.IgnoreSeasons.Add(processedSeason.SeasonNumber);
                             gridSummary.PopulateGrid();
@@ -378,7 +378,7 @@ namespace TVRename
 
                 if (show.DoMissingCheck)
                 {
-                    AddRcMenuItem(gridSummary.showRightClickMenu, "Stop Checking Show", (o, args) =>
+                    AddRcMenuItem(gridSummary.showRightClickMenu, "Stop Checking Show", (_, _) =>
                     {
                         show.DoMissingCheck = false;
                         gridSummary.PopulateGrid();
@@ -386,7 +386,7 @@ namespace TVRename
                 }
                 else
                 {
-                    AddRcMenuItem(gridSummary.showRightClickMenu, "Start Checking Show", (o, args) =>
+                    AddRcMenuItem(gridSummary.showRightClickMenu, "Start Checking Show", (_, _) =>
                     {
                         show.DoMissingCheck = true;
                         gridSummary.PopulateGrid();
@@ -397,7 +397,7 @@ namespace TVRename
 
                 if (processedSeason is null)
                 {
-                    AddRcMenuItem(gridSummary.showRightClickMenu, "Force Refresh", (o, args) =>
+                    AddRcMenuItem(gridSummary.showRightClickMenu, "Force Refresh", (_, _) =>
                      {
                          gridSummary.MainWindow.ForceRefresh(show, false);
                      });
@@ -406,7 +406,7 @@ namespace TVRename
                 }
 
                 AddRcMenuItem(gridSummary.showRightClickMenu, "Visit Source",
-                    (o, args) =>
+                    (_, _) =>
                     {
                         if (processedSeason is null)
                         {
@@ -419,7 +419,7 @@ namespace TVRename
                     }
                 );
 
-                List<string> added = new List<string>();
+                List<string> added = new();
 
                 if (processedSeason != null)
                 {
@@ -433,7 +433,7 @@ namespace TVRename
                     GenerateRightClickWatchMenu(processedSeason);
                 }
 
-                Point pt = new Point(e.X, e.Y);
+                Point pt = new(e.X, e.Y);
                 gridSummary.showRightClickMenu.Show(sender.Grid.PointToScreen(pt));
             }
 
@@ -458,7 +458,7 @@ namespace TVRename
                             first = false;
                         }
 
-                        AddRcMenuItem(gridSummary.showRightClickMenu, "Open: " + folder, (sender, args) =>
+                        AddRcMenuItem(gridSummary.showRightClickMenu, "Open: " + folder, (_, _) =>
                         {
                             Helpers.OpenFolder(folder);
                         });
@@ -483,7 +483,7 @@ namespace TVRename
                                 first = false;
                             }
 
-                            AddRcMenuItem(gridSummary.showRightClickMenu, "Open: " + folder, (sender, args) =>
+                            AddRcMenuItem(gridSummary.showRightClickMenu, "Open: " + folder, (_, _) =>
                             {
                                 Helpers.OpenFolder(folder);
                             });
@@ -496,7 +496,7 @@ namespace TVRename
             {
                 // for each episode in season, find it on disk
                 bool first = true;
-                DirFilesCache dfc = new DirFilesCache();
+                DirFilesCache dfc = new();
                 foreach (ProcessedEpisode epds in show.SeasonEpisodes[seas.SeasonNumber])
                 {
                     List<FileInfo> fl = dfc.FindEpOnDisk(epds, false);
@@ -510,8 +510,8 @@ namespace TVRename
 
                         foreach (FileInfo fi in fl)
                         {
-                            ToolStripMenuItem tsi = new ToolStripMenuItem("Watch: " + fi.FullName.Replace("&", "&&"));
-                            tsi.Click += (sender, args) => { Helpers.OpenFile(fi.FullName); };
+                            ToolStripMenuItem tsi = new("Watch: " + fi.FullName.Replace("&", "&&"));
+                            tsi.Click += (_, _) => { Helpers.OpenFile(fi.FullName); };
                             gridSummary.showRightClickMenu.Items.Add(tsi);
                         }
                     }
@@ -520,14 +520,14 @@ namespace TVRename
 
             private void AddRcMenuItem([NotNull] ContextMenuStrip showRightClickMenu, string name, EventHandler command)
             {
-                ToolStripMenuItem tsi = new ToolStripMenuItem(name.Replace("&", "&&"));
+                ToolStripMenuItem tsi = new(name.Replace("&", "&&"));
                 tsi.Click += command;
                 showRightClickMenu.Items.Add(tsi);
             }
 
             private static void GenerateSeparator([NotNull] ContextMenuStrip showRightClickMenu)
             {
-                ToolStripSeparator tss = new ToolStripSeparator();
+                ToolStripSeparator tss = new();
                 showRightClickMenu.Items.Add(tss);
             }
         }
@@ -539,7 +539,7 @@ namespace TVRename
         public class ShowSummaryData
         {
             public int MaxSeason;
-            public readonly List<ShowSummarySeasonData> SeasonDataList = new List<ShowSummarySeasonData>();
+            public readonly List<ShowSummarySeasonData> SeasonDataList = new();
             public ShowConfiguration ShowConfiguration;
             public string ShowName;
 
@@ -579,7 +579,7 @@ namespace TVRename
                 [NotNull]
                 public SummaryOutput GetOuput()
                 {
-                    SummaryOutput output = new SummaryOutput
+                    SummaryOutput output = new()
                     {
                         Ignored = Ignored,
                         Special = IsSpecial

@@ -38,9 +38,9 @@ namespace TVRename
             int n = 0;
             UpdateStatus(n, c, "Searching on JSON Page...");
 
-            ItemList newItems = new ItemList();
-            ItemList toRemove = new ItemList();
-            UrlCache cache = new UrlCache();
+            ItemList newItems = new();
+            ItemList toRemove = new();
+            UrlCache cache = new();
             try
             {
                 foreach (ShowItemMissing action in ActionList.MissingEpisodes.ToList())
@@ -97,7 +97,7 @@ namespace TVRename
 
             string simpleShowName = pe.Show.ShowName.CompareName();
             string simpleSeriesName = pe.TheCachedSeries.Name.CompareName();
-            ItemList newItemsForThisMissingEpisode = new ItemList();
+            ItemList newItemsForThisMissingEpisode = new();
 
             string response = cache.GetUrl($"{TVSettings.Instance.SearchJSONURL}{imdbId}", TVSettings.Instance.SearchJSONUseCloudflare);
 
@@ -179,7 +179,7 @@ namespace TVRename
                         LOGGER.Info(
                             $"Adding {itemUrl} from JSON page as it appears to be match for {pe.Show.ShowName} S{pe.AppropriateSeasonNumber}E{pe.AppropriateEpNum}");
 
-                        ItemDownloading becomes = new ItemDownloading(new FutureTorrentEntry(itemUrl, action.TheFileNoExt), action.MissingEpisode, action.TheFileNoExt, DownloadingFinder.DownloadApp.qBitTorrent, action);
+                        ItemDownloading becomes = new(new FutureTorrentEntry(itemUrl, action.TheFileNoExt), action.MissingEpisode, action.TheFileNoExt, DownloadingFinder.DownloadApp.qBitTorrent, action);
 
                         newItemsForThisMissingEpisode.Add(new ActionTDownload(itemName, itemSizeBytes, seeders, itemUrl,
                             action.TheFileNoExt, pe, action, $"JSON WebPage: {TVSettings.Instance.SearchJSONURL}{imdbId}", becomes));

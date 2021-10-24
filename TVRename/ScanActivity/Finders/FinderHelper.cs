@@ -280,7 +280,7 @@ namespace TVRename
 
         public static IEnumerable<FileInfo> FindMovieOnDisk(this DirFilesCache cache, MovieConfiguration si)
         {
-            List<FileInfo> ret = new List<FileInfo>();
+            List<FileInfo> ret = new();
 
             foreach (FileInfo fiTemp in si.Locations
                 .Select(cache.GetFiles)
@@ -307,7 +307,7 @@ namespace TVRename
         {
             DirFilesCache cache = dfc ?? new DirFilesCache();
 
-            List<FileInfo> ret = new List<FileInfo>();
+            List<FileInfo> ret = new();
 
             int seasWanted = epi.AppropriateSeasonNumber;
             int epWanted = epi.AppropriateEpNum;
@@ -681,7 +681,7 @@ namespace TVRename
         [NotNull]
         public static List<MediaConfiguration> FindMedia([NotNull] IEnumerable<FileInfo> possibleShows, TVDoc doc, IDialogParent owner)
         {
-            List<MediaConfiguration> addedShows = new List<MediaConfiguration>();
+            List<MediaConfiguration> addedShows = new();
 
             foreach (FileInfo file in possibleShows)
             {
@@ -762,7 +762,7 @@ namespace TVRename
                         // no need to popup dialog
                         Logger.Info($"Auto Adding New Movie for '{refinedHint}' (directly) : {foundMovie.Name}");
 
-                        MovieConfiguration newMovie = new MovieConfiguration
+                        MovieConfiguration newMovie = new()
                         {
                             TmdbCode = foundMovie.TmdbCode,
                             UseAutomaticFolders = true,
@@ -783,7 +783,7 @@ namespace TVRename
                     }
                 }
                 //popup dialog
-                AutoAddMedia askForMatch = new AutoAddMedia(refinedHint, file, assumeMovie);
+                AutoAddMedia askForMatch = new(refinedHint, file, assumeMovie);
 
                 if (askForMatch.SingleTvShowFound && !askForMatch.SingleMovieFound && TVSettings.Instance.AutomateAutoAddWhenOneShowFound)
                 {

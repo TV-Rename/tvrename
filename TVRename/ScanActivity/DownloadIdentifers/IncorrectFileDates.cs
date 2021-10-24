@@ -32,7 +32,7 @@ namespace TVRename
 
             DateTime newUpdateTime = Helpers.GetMinWindowsTime(updateTime.Value);
 
-            DirectoryInfo di = new DirectoryInfo(si.AutoAddFolderBase);
+            DirectoryInfo di = new(si.AutoAddFolderBase);
             try
             {
                 if (di.LastWriteTimeUtc != newUpdateTime && !doneFilesAndFolders.Contains(di.FullName))
@@ -60,7 +60,7 @@ namespace TVRename
             DateTime newUpdateTime = Helpers.GetMinWindowsTime(updateTime.Value);
 
             DirectoryInfo di = file.Directory;
-            ItemList returnItems = new ItemList();
+            ItemList returnItems = new();
 
             try
             {
@@ -111,7 +111,7 @@ namespace TVRename
 
             DateTime newUpdateTime = Helpers.GetMinWindowsTime(updateTime.Value);
 
-            DirectoryInfo di = new DirectoryInfo(folder);
+            DirectoryInfo di = new(folder);
             try
             {
                 if (di.LastWriteTimeUtc != newUpdateTime && !doneFilesAndFolders.Contains(di.FullName))

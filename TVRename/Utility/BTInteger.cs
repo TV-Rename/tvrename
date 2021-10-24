@@ -26,7 +26,7 @@ namespace TVRename
 
         public override void Tree(TreeNodeCollection tn)
         {
-            TreeNode n = new TreeNode("Integer:" + Value);
+            TreeNode n = new("Integer:" + Value);
             tn.Add(n);
         }
 

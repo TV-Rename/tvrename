@@ -5,7 +5,7 @@ namespace TVRename
 {
     internal class DownloadFolderJpg : DownloadIdentifier
     {
-        private List<string> doneFolderJpg = new List<string>();
+        private List<string> doneFolderJpg = new();
         private const string DEFAULT_FILE_NAME = "folder.jpg";
 
         public DownloadFolderJpg() => Reset();
@@ -37,7 +37,7 @@ namespace TVRename
                 return new ItemList();
             }
 
-            ItemList theActionList = new ItemList();
+            ItemList theActionList = new();
 
             //default to poster
             string downloadPath = cachedMovie.PosterUrl;
@@ -53,7 +53,7 @@ namespace TVRename
 
         public override ItemList ProcessShow(ShowConfiguration si, bool forceRefresh)
         {
-            ItemList theActionList = new ItemList();
+            ItemList theActionList = new();
 
             if (!TVSettings.Instance.FolderJpg)
             {
@@ -95,7 +95,7 @@ namespace TVRename
             }
 
             // season folders JPGs
-            ItemList theActionList = new ItemList();
+            ItemList theActionList = new();
             FileInfo fi = FileHelper.FileInFolder(folder, DEFAULT_FILE_NAME);
 
             if (!doneFolderJpg.Contains(fi.FullName) && (!fi.Exists || forceRefresh))

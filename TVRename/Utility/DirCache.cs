@@ -35,7 +35,7 @@ namespace TVRename
                 return n;
             }
 
-            DirectoryInfo di = new DirectoryInfo(folder);
+            DirectoryInfo di = new(folder);
             try
             {
                 n = di.GetFiles().Length;
@@ -99,7 +99,7 @@ namespace TVRename
 
             try
             {
-                DirectoryInfo di = new DirectoryInfo(folder);
+                DirectoryInfo di = new(folder);
                 if (!di.Exists)
                 {
                     return;

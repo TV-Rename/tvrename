@@ -75,7 +75,7 @@ namespace TVRename
                 destWidth = width;
             }
 
-            Bitmap bmPhoto = new Bitmap(destWidth, destHeight, PixelFormat.Format24bppRgb);
+            Bitmap bmPhoto = new(destWidth, destHeight, PixelFormat.Format24bppRgb);
             bmPhoto.SetResolution(imgPhoto.HorizontalResolution, imgPhoto.VerticalResolution);
 
             Graphics grPhoto = Graphics.FromImage(bmPhoto);
@@ -109,7 +109,7 @@ namespace TVRename
                     theData = ConvertBytes(theData);
                 }
 
-                System.IO.FileStream fs = new System.IO.FileStream(destination.FullName, System.IO.FileMode.Create);
+                System.IO.FileStream fs = new(destination.FullName, System.IO.FileMode.Create);
                 fs.Write(theData, 0, theData.Length);
                 fs.Close();
             }
@@ -134,7 +134,7 @@ namespace TVRename
                     {
                         im = MaxSize(im, 156, 232);
 
-                        using (System.IO.MemoryStream m = new System.IO.MemoryStream())
+                        using (System.IO.MemoryStream m = new())
                         {
                             im.Save(m, ImageFormat.Jpeg);
                             theData = m.ToArray();
@@ -147,7 +147,7 @@ namespace TVRename
                     {
                         im = MaxSize(im, 232, 156);
 
-                        using (System.IO.MemoryStream m = new System.IO.MemoryStream())
+                        using (System.IO.MemoryStream m = new())
                         {
                             im.Save(m, ImageFormat.Jpeg);
                             theData = m.ToArray();

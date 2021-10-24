@@ -26,7 +26,7 @@ namespace TVRename.TVmaze
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
         private static volatile LocalCache? InternalInstance;
-        private static readonly object SyncRoot = new object();
+        private static readonly object SyncRoot = new();
 
         [NotNull]
         public static LocalCache Instance
@@ -215,7 +215,7 @@ namespace TVRename.TVmaze
                 {
                     if (int.TryParse(text, out int textAsInt))
                     {
-                        SearchSpecifier ss = new SearchSpecifier(textAsInt, preferredLocale,
+                        SearchSpecifier ss = new(textAsInt, preferredLocale,
                             TVDoc.ProviderType.TVmaze, type);
                         try
                         {

@@ -33,7 +33,7 @@ namespace TVRename
 
             try
             {
-                XmlWriterSettings settings = new XmlWriterSettings
+                XmlWriterSettings settings = new()
                 {
                     Indent = true,
                     NewLineOnAttributes = true,

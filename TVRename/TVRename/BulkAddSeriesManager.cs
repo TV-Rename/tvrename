@@ -39,7 +39,7 @@ namespace TVRename
                 ? TVSettings.Instance.TMDBLanguage
                 : TVSettings.Instance.PreferredTVDBLanguage;
 
-            Locale localeToUse = new Locale(languageToUse);
+            Locale localeToUse = new(languageToUse);
 
             string showName = GuessShowName(ai, library);
             //todo - (BulkAdd Manager needs to work for new providers)
@@ -97,7 +97,7 @@ namespace TVRename
 
         private static int FindTvdbShowCode(PossibleNewTvShow ai)
         {
-            List<string> possibleFilenames = new List<string> { "cachedSeries.xml", "tvshow.nfo" };
+            List<string> possibleFilenames = new() { "cachedSeries.xml", "tvshow.nfo" };
             foreach (string fileName in possibleFilenames)
             {
                 try
@@ -309,7 +309,7 @@ namespace TVRename
                 }
 
                 // ....its good!
-                PossibleNewTvShow ai = new PossibleNewTvShow(di2, hasSeasonFolders, folderFormat);
+                PossibleNewTvShow ai = new(di2, hasSeasonFolders, folderFormat);
 
                 AddItems.Add(ai);
                 Logger.Info("Adding {0} as a new folder", theFolder);
@@ -432,7 +432,7 @@ namespace TVRename
 
         private List<ShowConfiguration> AddToLibrary([NotNull] IEnumerable<PossibleNewTvShow> ais)
         {
-            List<ShowConfiguration> touchedShows = new List<ShowConfiguration>();
+            List<ShowConfiguration> touchedShows = new();
             foreach (PossibleNewTvShow ai in ais)
             {
                 // see if there is a matching show item
@@ -482,7 +482,7 @@ namespace TVRename
             foreach (string folder in TVSettings.Instance.LibraryFolders)
             {
                 prog.Invoke(100 * c2++ / c, folder);
-                DirectoryInfo di = new DirectoryInfo(folder);
+                DirectoryInfo di = new(folder);
                 if (TVSettings.Instance.MovieLibraryFolders.Contains(folder))
                 {
                     Logger.Warn($"Not loading {folder} as it is both a movie folder and a tv folder");

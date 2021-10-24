@@ -37,7 +37,7 @@ namespace TVRename
 
             if (!initialHint.HasValue())
             {
-                ListViewItem lvi = new ListViewItem(string.Empty);
+                ListViewItem lvi = new(string.Empty);
                 lvi.SubItems.Add(DEFAULT_MESSAGE);
                 lvMatches.Items.Add(lvi);
             }

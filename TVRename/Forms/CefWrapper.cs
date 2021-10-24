@@ -16,7 +16,7 @@ namespace TVRename
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
         private static volatile CefWrapper? InternalInstance;
-        private static readonly object SyncRoot = new object();
+        private static readonly object SyncRoot = new();
 
         [NotNull]
         public static CefWrapper Instance
@@ -47,7 +47,7 @@ namespace TVRename
         {
             try
             {
-                CefSettings settings = new CefSettings
+                CefSettings settings = new()
                 {
                     CachePath = PathManager.CefCachePath,
                     UserDataPath = PathManager.CefCachePath,
