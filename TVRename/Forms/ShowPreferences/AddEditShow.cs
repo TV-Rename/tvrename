@@ -426,8 +426,7 @@ namespace TVRename
 
         private void SetShow()
         {
-            int code = codeFinderForm.SelectedCode();
-
+            selectedShow.SetId(GetProviderTypeInUse(), codeFinderForm.SelectedCode());
             selectedShow.CustomShowName = txtCustomShowName.Text;
             selectedShow.UseCustomShowName = chkCustomShowName.Checked;
             selectedShow.UseCustomLanguage = chkCustomLanguage.Checked;
@@ -445,7 +444,6 @@ namespace TVRename
             selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.DefaultTimeZone();
             selectedShow.ShowNextAirdate = chkShowNextAirdate.Checked;
 
-            selectedShow.SetId(GetProviderTypeInUse(), code);
             selectedShow.CountSpecials = chkSpecialsCount.Checked;
             selectedShow.DoRename = cbDoRenaming.Checked;
             selectedShow.DoMissingCheck = cbDoMissingCheck.Checked;

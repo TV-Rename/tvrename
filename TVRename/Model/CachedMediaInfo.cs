@@ -330,10 +330,10 @@ namespace TVRename
             writer.WriteElement("runtime", Runtime, true);
             writer.WriteElement("seriesId", SeriesId, true);
             writer.WriteElement("status", Status);
-            writer.WriteElement("siteRating", SiteRating, "0.##");
+            writer.WriteElement("siteRating", SiteRating, "0.##",CultureInfo.CreateSpecificCulture("en-US"));
             writer.WriteElement("siteRatingCount", SiteRatingVotes);
             writer.WriteElement("slug", Slug,true);
-            writer.WriteElement("Popularity", Popularity, "0.##");
+            writer.WriteElement("Popularity", Popularity, "0.##", CultureInfo.CreateSpecificCulture("en-US"));
 
             if (FirstAired != null)
             {

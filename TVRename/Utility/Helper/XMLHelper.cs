@@ -66,23 +66,23 @@ namespace TVRename
 
         public static void WriteElement([NotNull] this XmlWriter writer, [NotNull] string elementName, double value)
         {
-            WriteElement(writer, elementName, value, null);
+            WriteElement(writer, elementName, value, null,null);
         }
 
-        public static void WriteElement([NotNull] this XmlWriter writer, [NotNull] string elementName, double? value, string? format)
+        public static void WriteElement([NotNull] this XmlWriter writer, [NotNull] string elementName, double? value, string? format,IFormatProvider? provider)
         {
             if (!value.HasValue)
             {
                 return;
             }
             writer.WriteStartElement(elementName);
-            if (format is null)
+            if (format is null || provider is null)
             {
                 writer.WriteValue(value);
             }
             else
             {
-                writer.WriteValue(value.Value.ToString(format));
+                writer.WriteValue(value.Value.ToString(format,provider));
             }
             writer.WriteEndElement();
         }
@@ -385,7 +385,7 @@ namespace TVRename
         }
 
         [CanBeNull]
-        public static T? ExtractNumber<T>([NotNull] this XElement xmlSettings, string elementName, Func<string,T> functionToExtract )
+        private static T? ExtractNumber<T>([NotNull] this XElement xmlSettings, string elementName, Func<string,T> functionToExtract )
         {
             IEnumerable<XElement> xElements = xmlSettings.Descendants(elementName).ToList();
 
@@ -398,11 +398,11 @@ namespace TVRename
                 catch (FormatException)
                 {
                     Logger.Error($"Could not parse '{elementName}' from {xmlSettings}");
-                    return default(T);
+                    return default;
                 }
             }
 
-            return default(T);
+            return default;
         }
 
         public static int? ExtractInt([NotNull] this XElement xmlSettings, string elementName)
