@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="16.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\CefSharp.Common.88.2.90\build\CefSharp.Common.props" Condition="Exists('..\packages\CefSharp.Common.88.2.90\build\CefSharp.Common.props')" />
   <Import Project="..\packages\cef.redist.x86.88.2.9\build\cef.redist.x86.props" Condition="Exists('..\packages\cef.redist.x86.88.2.9\build\cef.redist.x86.props')" />
   <Import Project="..\packages\cef.redist.x64.88.2.9\build\cef.redist.x64.props" Condition="Exists('..\packages\cef.redist.x64.88.2.9\build\cef.redist.x64.props')" />
@@ -27,9 +27,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <LangVersion>Latest</LangVersion>
-    <NullableContextOptions>enable</NullableContextOptions>
-	<Nullable>enable</Nullable>
+    <LangVersion>9.0</LangVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -51,26 +49,22 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <Nullable>enable</Nullable>
-	<ErrorReport>prompt</ErrorReport>
+    <ErrorReport>prompt</ErrorReport>
     <WarningLevel>0</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <Nullable>enable</Nullable>
-	<ErrorReport>prompt</ErrorReport>
+    <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>TVRename.App.Program</StartupObject>
