@@ -443,6 +443,7 @@ namespace TVRename
             s.DefShowDoMissingCheck = cbDefShowDoMissingCheck.Checked;
             s.DefShowDoRenaming = cbDefShowDoRenaming.Checked;
             s.DefShowDVDOrder = cbDefShowDVDOrder.Checked;
+            s.DefShowAlternateOrder = cbDefShowAlternateOrder.Checked;
             s.DefShowAutoFolders = cbDefShowAutoFolders.Checked;
             s.DefShowLocation = (string)cmbDefShowLocation.SelectedItem;
             s.DefaultShowTimezoneName = cbTimeZone.Text;
@@ -969,6 +970,7 @@ namespace TVRename
             cbDefShowDoMissingCheck.Checked = s.DefShowDoMissingCheck;
             cbDefShowDoRenaming.Checked = s.DefShowDoRenaming;
             cbDefShowDVDOrder.Checked = s.DefShowDVDOrder;
+            cbDefShowAlternateOrder.Checked = s.DefShowAlternateOrder;
             cbDefShowAutoFolders.Checked = s.DefShowAutoFolders;
             cbDefShowSequentialMatching.Checked = s.DefShowSequentialMatching;
             cbDefShowAirdateMatching.Checked = s.DefShowAirDateMatching;
@@ -2209,6 +2211,22 @@ namespace TVRename
         private void updateCheckOption_CheckedChanged(object sender, EventArgs e)
         {
             cboUpdateCheckInterval.Enabled = optUpdateCheckInterval.Checked;
+        }
+
+        private void cbDefShowDVDOrder_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbDefShowDVDOrder.Checked)
+            {
+                cbDefShowAlternateOrder.Checked = false;
+            }
+        }
+
+        private void cbDefShowAlternateOrder_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbDefShowAlternateOrder.Checked)
+            {
+                cbDefShowDVDOrder.Checked = false;
+            }
         }
     }
 }

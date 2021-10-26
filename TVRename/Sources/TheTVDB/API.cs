@@ -132,17 +132,13 @@ namespace TVRename.TheTVDB
         public static string WebsiteSeasonUrl(int seriesId, ProcessedSeason.SeasonType type, int seasonNumber)
         {
             //format: return $"{WebsiteRoot}/?tab=season&seriesid={seriesId}&seasonid={seasonId}";
-            switch (type)
+            return type switch
             {
-                case ProcessedSeason.SeasonType.dvd:
-                    return $"{WebsiteRoot}/series/{seriesId}/seasons/dvd/{seasonNumber}";
-
-                case ProcessedSeason.SeasonType.aired:
-                    return $"{WebsiteRoot}/series/{seriesId}/seasons/official/{seasonNumber}";
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
+                ProcessedSeason.SeasonType.dvd => $"{WebsiteRoot}/series/{seriesId}/seasons/dvd/{seasonNumber}",
+                ProcessedSeason.SeasonType.aired => $"{WebsiteRoot}/series/{seriesId}/seasons/official/{seasonNumber}",
+                ProcessedSeason.SeasonType.alternate => $"{WebsiteRoot}/series/{seriesId}/seasons/alternate/{seasonNumber}",
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
         }
 
         [NotNull]
@@ -150,17 +146,13 @@ namespace TVRename.TheTVDB
         public static string WebsiteSeasonUrl(string slug, ProcessedSeason.SeasonType type, int seasonNumber)
         {
             //format: https://thetvdb.com/series/the-terror/seasons/official/2
-            switch (type)
+            return type switch
             {
-                case ProcessedSeason.SeasonType.dvd:
-                    return $"{WebsiteRoot}/series/{slug}/seasons/dvd/{seasonNumber}";
-
-                case ProcessedSeason.SeasonType.aired:
-                    return $"{WebsiteRoot}/series/{slug}/seasons/official/{seasonNumber}";
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
+                ProcessedSeason.SeasonType.dvd => $"{WebsiteRoot}/series/{slug}/seasons/dvd/{seasonNumber}",
+                ProcessedSeason.SeasonType.aired => $"{WebsiteRoot}/series/{slug}/seasons/official/{seasonNumber}",
+                ProcessedSeason.SeasonType.alternate => $"{WebsiteRoot}/series/{slug}/seasons/alternate/{seasonNumber}",
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
         }
 
         [NotNull]

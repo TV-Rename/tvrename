@@ -1413,6 +1413,10 @@ namespace TVRename
                 case ProcessedSeason.SeasonType.aired:
                     return ProcessedSeason.UIFullSeasonWord(snum);
 
+                case ProcessedSeason.SeasonType.alternate:
+                    return snum == 0
+                        ? "Not in alternate season"
+                        : "Alternate " + ProcessedSeason.UISeasonWord(snum);
                 default:
                     throw new ArgumentOutOfRangeException();
             }

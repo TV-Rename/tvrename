@@ -89,6 +89,7 @@ namespace TVRename.Forms
                 set.Add(new DefaultShowAirDateTvCheck(show, mDoc));
                 set.Add(new DefaultSpecialsAsEpisodesTvCheck(show, mDoc));
                 set.Add(new DefaultUseDvdTvCheck(show, mDoc));
+                set.Add(new DefaultUseAlternateTvCheck(show, mDoc));
 
                 set.Add(new TvShowEpisodeNameCheck(show, mDoc));
                 set.Add(new TvShowProviderCheck(show, mDoc));

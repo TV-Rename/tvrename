@@ -493,6 +493,7 @@ namespace TVRename
             this.cboUpdateCheckInterval = new System.Windows.Forms.ComboBox();
             this.optUpdateCheckInterval = new System.Windows.Forms.RadioButton();
             this.optUpdateCheckAlways = new System.Windows.Forms.RadioButton();
+            this.cbDefShowAlternateOrder = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -4562,6 +4563,7 @@ namespace TVRename
             // 
             this.groupBox18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox18.Controls.Add(this.cbDefShowAlternateOrder);
             this.groupBox18.Controls.Add(this.cbDefShowEpNameMatching);
             this.groupBox18.Controls.Add(this.label68);
             this.groupBox18.Controls.Add(this.cbDefShowAirdateMatching);
@@ -4658,6 +4660,7 @@ namespace TVRename
             this.cbDefShowDVDOrder.TabIndex = 48;
             this.cbDefShowDVDOrder.Text = "&Use DVD Order";
             this.cbDefShowDVDOrder.UseVisualStyleBackColor = true;
+            this.cbDefShowDVDOrder.CheckedChanged += new System.EventHandler(this.cbDefShowDVDOrder_CheckedChanged);
             // 
             // cbDefShowIncludeFuture
             // 
@@ -5731,6 +5734,17 @@ namespace TVRename
             this.optUpdateCheckAlways.UseVisualStyleBackColor = true;
             this.optUpdateCheckAlways.CheckedChanged += new System.EventHandler(this.updateCheckOption_CheckedChanged);
             // 
+            // cbDefShowAlternateOrder
+            // 
+            this.cbDefShowAlternateOrder.AutoSize = true;
+            this.cbDefShowAlternateOrder.Location = new System.Drawing.Point(115, 28);
+            this.cbDefShowAlternateOrder.Name = "cbDefShowAlternateOrder";
+            this.cbDefShowAlternateOrder.Size = new System.Drawing.Size(119, 17);
+            this.cbDefShowAlternateOrder.TabIndex = 59;
+            this.cbDefShowAlternateOrder.Text = "Use Alternate Order";
+            this.cbDefShowAlternateOrder.UseVisualStyleBackColor = true;
+            this.cbDefShowAlternateOrder.CheckedChanged += new System.EventHandler(this.cbDefShowAlternateOrder_CheckedChanged);
+            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -6343,5 +6357,6 @@ namespace TVRename
         private System.Windows.Forms.ComboBox cbTVDBVersion;
         private System.Windows.Forms.PictureBox pbuUpdates;
         private System.Windows.Forms.Label label92;
+        private System.Windows.Forms.CheckBox cbDefShowAlternateOrder;
     }
 }

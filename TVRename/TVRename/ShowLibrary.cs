@@ -278,6 +278,10 @@ namespace TVRename
                     eis.Sort(ProcessedEpisode.EpNumberSorter);
                     break;
 
+                case ProcessedSeason.SeasonType.alternate:
+                    eis.Sort(ProcessedEpisode.EpNumberSorter);
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }

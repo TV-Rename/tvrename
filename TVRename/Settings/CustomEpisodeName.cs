@@ -134,13 +134,18 @@ namespace TVRename
             int seasonNumber;
             int episodeNumber;
             switch (show.Order)
-            {
+            {//todo - other SeasonTypes
                 case ProcessedSeason.SeasonType.dvd:
                     seasonNumber = ep.DvdSeasonNumber;
                     episodeNumber = ep.DvdEpNum;
                     break;
 
                 case ProcessedSeason.SeasonType.aired:
+                    seasonNumber = ep.AiredSeasonNumber;
+                    episodeNumber = ep.AiredEpNum;
+                    break;
+
+                case ProcessedSeason.SeasonType.alternate:
                     seasonNumber = ep.AiredSeasonNumber;
                     episodeNumber = ep.AiredEpNum;
                     break;

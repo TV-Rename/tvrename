@@ -28,7 +28,8 @@ namespace TVRename
         {
             dvd,
             aired,
-            absolute
+            absolute,
+            alternate
         }
 
         public readonly ConcurrentDictionary<int, Episode> Episodes;

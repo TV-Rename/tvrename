@@ -32,6 +32,7 @@ namespace TVRename
 
         public bool CountSpecials;
         public bool DvdOrder; // sort by DVD order, not the default sort we get
+        public bool AlternateOrder; 
         public readonly List<int> IgnoreSeasons;
         public readonly ConcurrentDictionary<int, List<string>> ManualFolderLocations;
         public readonly ConcurrentDictionary<int, List<ProcessedEpisode>> SeasonEpisodes; // built up by applying rules.
@@ -52,7 +53,10 @@ namespace TVRename
         private DateTimeZone? seriesTimeZone;
         private string lastFiguredTz;
         public DateTime? BannersLastUpdatedOnDisk { get; set; }
-        public ProcessedSeason.SeasonType Order => DvdOrder ? ProcessedSeason.SeasonType.dvd : ProcessedSeason.SeasonType.aired;
+        public ProcessedSeason.SeasonType Order =>
+            AlternateOrder? ProcessedSeason.SeasonType.alternate:
+            DvdOrder ? ProcessedSeason.SeasonType.dvd :
+            ProcessedSeason.SeasonType.aired;
 
         #region AutomaticFolderType enum
 
@@ -101,6 +105,7 @@ namespace TVRename
             DoMissingCheck = TVSettings.Instance.DefShowDoMissingCheck;
             CountSpecials = TVSettings.Instance.DefShowSpecialsCount;
             DvdOrder = TVSettings.Instance.DefShowDVDOrder;
+            AlternateOrder = TVSettings.Instance.DefShowAlternateOrder;
             ForceCheckNoAirdate = TVSettings.Instance.DefShowIncludeNoAirdate;
             ForceCheckFuture = TVSettings.Instance.DefShowIncludeFuture;
 
@@ -314,6 +319,7 @@ namespace TVRename
             DoRename = xmlSettings.ExtractBool("DoRename", true);
             DoMissingCheck = xmlSettings.ExtractBool("DoMissingCheck", true);
             DvdOrder = xmlSettings.ExtractBool("DVDOrder", false);
+            AlternateOrder = xmlSettings.ExtractBool("AlternateOrder", false);
             UseCustomSearchUrl = xmlSettings.ExtractBool("UseCustomSearchURL", false);
             CustomSearchUrl = xmlSettings.ExtractString("CustomSearchURL");
             UseCustomNamingFormat = xmlSettings.ExtractBool("UseCustomNamingFormat", false);
@@ -672,6 +678,7 @@ namespace TVRename
             writer.WriteElement("DoMissingCheck", DoMissingCheck);
             writer.WriteElement("CountSpecials", CountSpecials);
             writer.WriteElement("DVDOrder", DvdOrder);
+            writer.WriteElement("AlternateOrder", AlternateOrder);
             writer.WriteElement("ForceCheckNoAirdate", ForceCheckNoAirdate);
             writer.WriteElement("ForceCheckFuture", ForceCheckFuture);
             writer.WriteElement("UseSequentialMatch", UseSequentialMatch);

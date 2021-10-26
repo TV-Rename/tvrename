@@ -1811,6 +1811,7 @@ namespace TVRename.TheTVDB
                 "official" => ProcessedSeason.SeasonType.aired,
                 "dvd" => ProcessedSeason.SeasonType.dvd,
                 "absolute" => ProcessedSeason.SeasonType.absolute,
+                "alternate" => ProcessedSeason.SeasonType.alternate,
                 _ => ProcessedSeason.SeasonType.absolute
             };
         }
@@ -2358,8 +2359,14 @@ namespace TVRename.TheTVDB
                 x.ReadDvdSeasonNum = episodeJson["seasonNumber"].ToObject<int>();
                 x.DvdEpNum = episodeJson["number"].ToObject<int>();
             }
+            else if(order == ProcessedSeason.SeasonType.aired)
+            {
+                x.AiredSeasonNumber = episodeJson["seasonNumber"].ToObject<int>();
+                x.AiredEpNum = episodeJson["number"].ToObject<int>();
+            }
             else
             {
+                //todo - Other Season Types
                 x.AiredSeasonNumber = episodeJson["seasonNumber"].ToObject<int>();
                 x.AiredEpNum = episodeJson["number"].ToObject<int>();
             }
@@ -2622,7 +2629,7 @@ namespace TVRename.TheTVDB
             {
                 return "New Episode Id = " + episodeId;
             }
-
+            //todo - Other Season Types
             return order ==ProcessedSeason.SeasonType.dvd
                 ? $"S{ep.DvdSeasonNumber:00}E{ep.DvdEpNum:00}"
                 : $"S{ep.AiredSeasonNumber:00}E{ep.AiredEpNum:00}";

@@ -423,6 +423,7 @@ namespace TVRename
         public bool DefShowIncludeFuture = false;
         public bool DefShowNextAirdate = true;
         public bool DefShowDVDOrder = false;
+        public bool DefShowAlternateOrder = false;
         public bool DefShowDoRenaming = true;
         public bool DefShowDoMissingCheck = true;
         public bool DefShowSequentialMatching = false;
@@ -672,6 +673,7 @@ namespace TVRename
             writer.WriteElement("DefShowIncludeFuture", DefShowIncludeFuture);
             writer.WriteElement("DefShowNextAirdate", DefShowNextAirdate);
             writer.WriteElement("DefShowDVDOrder", DefShowDVDOrder);
+            writer.WriteElement("DefShowAlternateOrder", DefShowAlternateOrder);
             writer.WriteElement("DefShowDoRenaming", DefShowDoRenaming);
             writer.WriteElement("DefShowDoMissingCheck", DefShowDoMissingCheck);
             writer.WriteElement("DefShowSequentialMatching", DefShowSequentialMatching);
@@ -1553,6 +1555,7 @@ namespace TVRename
             DefShowIncludeFuture = xmlSettings.ExtractBool("DefShowIncludeFuture", false);
             DefShowNextAirdate = xmlSettings.ExtractBool("DefShowNextAirdate", true);
             DefShowDVDOrder = xmlSettings.ExtractBool("DefShowDVDOrder", false);
+            DefShowAlternateOrder = xmlSettings.ExtractBool("DefShowAlternateOrder", false);
             DefShowDoRenaming = xmlSettings.ExtractBool("DefShowDoRenaming", true);
             DefShowDoMissingCheck = xmlSettings.ExtractBool("DefShowDoMissingCheck", true);
 

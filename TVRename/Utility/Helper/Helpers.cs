@@ -91,6 +91,7 @@ namespace TVRename
                 ProcessedSeason.SeasonType.dvd => "dvd",
                 ProcessedSeason.SeasonType.aired => "official",
                 ProcessedSeason.SeasonType.absolute => "absolute",
+                ProcessedSeason.SeasonType.alternate => "alternate",
                 _ => throw new ArgumentOutOfRangeException(nameof(st), st, null)
             };
         }

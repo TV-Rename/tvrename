@@ -139,6 +139,7 @@ namespace TVRename
             this.cbIncludeNoAirdate = new System.Windows.Forms.CheckBox();
             this.cbIncludeFuture = new System.Windows.Forms.CheckBox();
             this.pbAdvanced = new System.Windows.Forms.PictureBox();
+            this.chkAlternateOrder = new System.Windows.Forms.CheckBox();
             this.Folders.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbBasics)).BeginInit();
@@ -288,6 +289,7 @@ namespace TVRename
             this.chkDVDOrder.TabIndex = 0;
             this.chkDVDOrder.Text = "&Use DVD Order";
             this.chkDVDOrder.UseVisualStyleBackColor = true;
+            this.chkDVDOrder.CheckedChanged += new System.EventHandler(this.chkDVDOrder_CheckedChanged);
             // 
             // cbSequentialMatching
             // 
@@ -1219,6 +1221,7 @@ namespace TVRename
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.chkAlternateOrder);
             this.tabPage2.Controls.Add(this.cbEpNameMatching);
             this.tabPage2.Controls.Add(this.label68);
             this.tabPage2.Controls.Add(this.cbAirdateMatching);
@@ -1314,6 +1317,17 @@ namespace TVRename
             this.pbAdvanced.TabIndex = 41;
             this.pbAdvanced.TabStop = false;
             this.pbAdvanced.Click += new System.EventHandler(this.pbAdvanced_Click);
+            // 
+            // chkAlternateOrder
+            // 
+            this.chkAlternateOrder.AutoSize = true;
+            this.chkAlternateOrder.Location = new System.Drawing.Point(114, 55);
+            this.chkAlternateOrder.Name = "chkAlternateOrder";
+            this.chkAlternateOrder.Size = new System.Drawing.Size(119, 17);
+            this.chkAlternateOrder.TabIndex = 63;
+            this.chkAlternateOrder.Text = "Use Alternate Order";
+            this.chkAlternateOrder.UseVisualStyleBackColor = true;
+            this.chkAlternateOrder.CheckedChanged += new System.EventHandler(this.chkAlternateOrder_CheckedChanged);
             // 
             // AddEditShow
             // 
@@ -1462,5 +1476,6 @@ namespace TVRename
         private System.Windows.Forms.RadioButton rdoTMDB;
         private System.Windows.Forms.CheckBox chkCustomRegion;
         private System.Windows.Forms.ComboBox cbRegion;
+        private System.Windows.Forms.CheckBox chkAlternateOrder;
     }
 }

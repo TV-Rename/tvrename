@@ -48,17 +48,7 @@ namespace TVRename
             InitializeComponent();
             HasChanged = false;
 
-            if (sampleProcessedSeason != null)
-            {
-                lblSeasonWordPreview.Text = TVSettings.Instance.SeasonFolderFormat + "-(" +
-                                            CustomSeasonName.NameFor(sampleProcessedSeason,
-                                                TVSettings.Instance.SeasonFolderFormat) + ")";
-            }
-            else
-            {
-                lblSeasonWordPreview.Text = TVSettings.Instance.SeasonFolderFormat;
-            }
-
+            lblSeasonWordPreview.Text = SeasonPreviewText();
             lblSeasonWordPreview.ForeColor = Color.DarkGray;
 
             SetupDropDowns(si);
@@ -101,6 +91,7 @@ namespace TVRename
             txtSeasonFormat.Text = si.AutoAddCustomFolderFormat;
 
             chkDVDOrder.Checked = si.DvdOrder;
+            chkAlternateOrder.Checked = si.AlternateOrder;
             cbIncludeFuture.Checked = si.ForceCheckFuture;
             cbIncludeNoAirdate.Checked = si.ForceCheckNoAirdate;
             chkReplaceAutoFolders.Checked = si.ManualFoldersReplaceAutomatic;
@@ -126,6 +117,16 @@ namespace TVRename
             EnableDisableCustomSearch();
             EnableDisableCustomNaming();
             UpdateIgnore();
+        }
+
+        private string SeasonPreviewText()
+        {
+            if (sampleProcessedSeason == null)
+            {
+                return TVSettings.Instance.SeasonFolderFormat;
+            }
+            return
+                $"{TVSettings.Instance.SeasonFolderFormat}-({CustomSeasonName.NameFor(sampleProcessedSeason, TVSettings.Instance.SeasonFolderFormat)})";
         }
 
         private void PopulateAliasses()
@@ -455,6 +456,7 @@ namespace TVRename
             selectedShow.ConfigurationProvider = GetConfigurationProviderType();
 
             selectedShow.DvdOrder = chkDVDOrder.Checked;
+            selectedShow.AlternateOrder = chkAlternateOrder.Checked;
             selectedShow.ForceCheckFuture = cbIncludeFuture.Checked;
             selectedShow.ForceCheckNoAirdate = cbIncludeNoAirdate.Checked;
             selectedShow.UseCustomSearchUrl = cbUseCustomSearch.Checked;
@@ -860,6 +862,22 @@ namespace TVRename
         private void cbRegion_SelectedIndexChanged(object sender, EventArgs e)
         {
             HasChanged = true;
+        }
+
+        private void chkDVDOrder_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkDVDOrder.Checked)
+            {
+                chkAlternateOrder.Checked = false;
+            }
+        }
+
+        private void chkAlternateOrder_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkAlternateOrder.Checked)
+            {
+                chkDVDOrder.Checked = false;
+            }
         }
     }
 }
