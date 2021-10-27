@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using JetBrains.Annotations;
 
 namespace TVRename.Settings.AppState
 {
@@ -40,7 +41,7 @@ namespace TVRename.Settings.AppState
             SaveToFile(PathManager.StateFile.FullName);
         }
 
-        private void SaveToFile(string path)
+        private void SaveToFile([NotNull] string path)
         {
             XmlSerializer serializer = new(typeof(State));
             XmlWriterSettings xmlWriterSettings = new() { Indent = true };

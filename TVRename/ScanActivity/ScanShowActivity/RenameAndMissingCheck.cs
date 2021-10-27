@@ -10,14 +10,15 @@ namespace TVRename
     {
         private readonly DownloadIdentifiersController downloadIdentifiers;
 
+        [NotNull]
         protected override string ActivityName() => "Rename & Missing Check";
 
-        public RenameAndMissingCheck(TVDoc doc) : base(doc)
+        public RenameAndMissingCheck([NotNull] TVDoc doc) : base(doc)
         {
             downloadIdentifiers = new DownloadIdentifiersController();
         }
 
-        protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+        protected override void Check([NotNull] ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
             Dictionary<int, SafeList<string>> allFolders = si.AllExistngFolderLocations();
             if (allFolders.Count == 0) // no folders defined for this show
@@ -88,7 +89,7 @@ namespace TVRename
             } // for each folder for this season of this show
         }
 
-        private void CheckSeasonFolder(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, int snum,
+        private void CheckSeasonFolder(ShowConfiguration si, DirFilesCache dfc, [NotNull] TVDoc.ScanSettings settings, int snum,
             bool timeForBannerUpdate, string folder)
         {
             if (settings.Token.IsCancellationRequested)

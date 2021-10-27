@@ -35,7 +35,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string GetShowHtmlOverview(this ShowConfiguration si, bool includeDirectoryLinks)
+        public static string GetShowHtmlOverview([NotNull] this ShowConfiguration si, bool includeDirectoryLinks)
         {
             Color col = Color.FromName("ButtonFace");
             StringBuilder sb = new();
@@ -45,7 +45,8 @@ namespace TVRename
             return sb.ToString();
         }
 
-        public static string GetSeasonImagesOverview(this ShowConfiguration si, ProcessedSeason season)
+        [NotNull]
+        public static string GetSeasonImagesOverview(this ShowConfiguration si, [NotNull] ProcessedSeason season)
         {
             Color col = Color.FromName("ButtonFace");
             StringBuilder sb = new();
@@ -66,6 +67,7 @@ namespace TVRename
             return sb.ToString();
         }
 
+        [NotNull]
         public static string GetMovieImagesOverview(this MovieConfiguration si)
         {
             Color col = Color.FromName("ButtonFace");
@@ -75,7 +77,8 @@ namespace TVRename
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
         }
-        public static string GetShowHtmlOverview(this CachedSeriesInfo series, RecommendationRow recommendation)
+        [NotNull]
+        public static string GetShowHtmlOverview([NotNull] this CachedSeriesInfo series, [NotNull] RecommendationRow recommendation)
         {
             Color col = Color.FromName("ButtonFace");
             StringBuilder sb = new();
@@ -97,6 +100,7 @@ namespace TVRename
             return sb.ToString();
         }
 
+        [NotNull]
         public static string GetMovieHtmlOverview(this CachedMovieInfo movie, RecommendationRow? recommendation)
         {
             Color col = Color.FromName("ButtonFace");
@@ -157,7 +161,8 @@ namespace TVRename
                 </div>");
         }
 
-        private static string CreateTableRows(ShowConfiguration si, DirFilesCache dfc, bool includeDirectoryLinks)
+        [NotNull]
+        private static string CreateTableRows([NotNull] ShowConfiguration si, DirFilesCache dfc, bool includeDirectoryLinks)
         {
             StringBuilder tableRows = new();
 
@@ -172,7 +177,7 @@ namespace TVRename
             return tableRows.ToString();
         }
 
-        private static void AppendSeasonShowSummary([NotNull] this StringBuilder sb, DirFilesCache dfc, [NotNull] ShowConfiguration si, [NotNull] ProcessedSeason s, bool includeDirectoryLinks, IEnumerable<ProcessedEpisode> seasonEpisodes)
+        private static void AppendSeasonShowSummary([NotNull] this StringBuilder sb, DirFilesCache dfc, [NotNull] ShowConfiguration si, [NotNull] ProcessedSeason s, bool includeDirectoryLinks, [NotNull] IEnumerable<ProcessedEpisode> seasonEpisodes)
         {
             string explorerButton = string.Empty;
             if (includeDirectoryLinks)
@@ -205,7 +210,7 @@ namespace TVRename
 {tableRows}");
         }
 
-        private static void AppendShow(this StringBuilder sb, ShowConfiguration si, Color backgroundColour,
+        private static void AppendShow(this StringBuilder sb, [NotNull] ShowConfiguration si, Color backgroundColour,
             bool includeDirectoryLinks)
         {
             CachedSeriesInfo ser = si.CachedShow;
@@ -257,7 +262,7 @@ namespace TVRename
                 </div>");
         }
 
-        private static void AppendSeasonImages(this StringBuilder sb, Color backgroundColour,ProcessedSeason season)
+        private static void AppendSeasonImages(this StringBuilder sb, Color backgroundColour,[NotNull] ProcessedSeason season)
         {
             CachedSeriesInfo? ser = season.Show.CachedShow;
 
@@ -337,6 +342,7 @@ namespace TVRename
                 </div>");
         }
 
+        [NotNull]
         private static string GenerateImageCarousel(string title, IReadOnlyCollection<MediaImage>? images, string id, string imageTag)
         {
             if (images is null || images.Count == 0)
@@ -364,11 +370,12 @@ namespace TVRename
   </div>";
         }
 
-        private static string GenerateCarouselBlocks(IReadOnlyCollection<MediaImage> images, string imageTag)
+        [NotNull]
+        private static string GenerateCarouselBlocks([NotNull] IReadOnlyCollection<MediaImage> images, string imageTag)
         {
             StringBuilder sb = new();
             bool isFirst = true;
-            foreach (var i in images)
+            foreach (MediaImage i in images)
             {
                 if (isFirst)
                 {
@@ -387,7 +394,8 @@ namespace TVRename
             return sb.ToString();
         }
 
-        private static string GenerateCarouselIndicators(IReadOnlyCollection<MediaImage> images, string id)
+        [NotNull]
+        private static string GenerateCarouselIndicators([NotNull] IReadOnlyCollection<MediaImage> images, string id)
         {
             StringBuilder sb = new();
             bool isFirst = true;
@@ -407,7 +415,7 @@ namespace TVRename
             return sb.ToString();
         }
 
-        private static void AppendShow(this StringBuilder sb, ShowConfiguration? si, CachedSeriesInfo ser, Color backgroundColour, bool includeDirectoryLinks)
+        private static void AppendShow([NotNull] this StringBuilder sb, ShowConfiguration? si, [NotNull] CachedSeriesInfo ser, Color backgroundColour, bool includeDirectoryLinks)
         {
             string horizontalBanner = CreateHorizontalBannerHtml(si);
             string poster = CreatePosterHtml(ser);
@@ -501,8 +509,9 @@ namespace TVRename
                  </div>");
         }
 
+        [NotNull]
         private static string PrettyPrint(float? rating) => (rating ?? 0) > 0 ? rating.Value + "/10" : string.Empty;
-        private static void AppendRecommendation(this StringBuilder sb, RecommendationRow recommendationRow, Color backgroundColour)
+        private static void AppendRecommendation([NotNull] this StringBuilder sb, [NotNull] RecommendationRow recommendationRow, Color backgroundColour)
         {
             string top = recommendationRow.TopRated ? "TOP RATED" : string.Empty;
             string trending = recommendationRow.Trending ? "TRENDING" : string.Empty;
@@ -631,7 +640,7 @@ namespace TVRename
                  </div>");
         }
 
-        private static string? EditMovieUrl(CachedMovieInfo si)
+        private static string? EditMovieUrl([NotNull] CachedMovieInfo si)
         {
             if (si.TmdbCode > 0)
             {
@@ -645,7 +654,7 @@ namespace TVRename
             return null;
         }
 
-        private static string? EditSeasonUrl(ShowConfiguration si, ProcessedSeason s)
+        private static string? EditSeasonUrl([NotNull] ShowConfiguration si, ProcessedSeason s)
         {
             switch (si.Provider)
             {
@@ -679,7 +688,7 @@ namespace TVRename
             }
         }
 
-        private static string? EditTvEpisodeUrl(ProcessedEpisode ep)
+        private static string? EditTvEpisodeUrl([NotNull] ProcessedEpisode ep)
         {
             switch (ep.Show.Provider)
             {
@@ -713,7 +722,7 @@ namespace TVRename
             }
         }
 
-        private static string? EditTvSeriesUrl(ShowConfiguration si)
+        private static string? EditTvSeriesUrl([NotNull] ShowConfiguration si)
         {
             switch (si.Provider)
             {
@@ -748,7 +757,7 @@ namespace TVRename
             }
         }
 
-        private static string? EditTvSeriesUrl(CachedSeriesInfo si)
+        private static string? EditTvSeriesUrl([NotNull] CachedSeriesInfo si)
         {
             return EditTvSeriesUrl(si, si.Source);
         }
@@ -882,7 +891,8 @@ namespace TVRename
             return string.Empty;
         }
 
-        public static string PosterUrl(this ShowConfiguration series)
+        [NotNull]
+        public static string PosterUrl([NotNull] this ShowConfiguration series)
         {
             string? url = series.CachedShow?.GetSeriesPosterPath();
 
@@ -893,7 +903,7 @@ namespace TVRename
             return url ?? string.Empty;
         }
 
-        public static string? ThumbnailUrl(this ProcessedEpisode episode)
+        public static string? ThumbnailUrl([NotNull] this ProcessedEpisode episode)
         {
             string? url = episode.Filename;
 
@@ -924,6 +934,7 @@ namespace TVRename
             return string.Empty;
         }
 
+        [NotNull]
         public static string CreatePosterHtml([NotNull] CachedSeriesInfo ser) 
         {
             string url = ser.GetSeriesPosterPath();
@@ -1591,7 +1602,8 @@ namespace TVRename
             return body;
         }
 
-        private static string WideBannerUrl(this ShowConfiguration series)
+        [NotNull]
+        private static string WideBannerUrl([NotNull] this ShowConfiguration series)
         {
             string? url = series.CachedShow?.GetSeriesWideBannerPath();
 
@@ -1602,7 +1614,8 @@ namespace TVRename
             return url ?? string.Empty;
         }
 
-        private static string WideBannerUrl(this ProcessedSeason season)
+        [NotNull]
+        private static string WideBannerUrl([NotNull] this ProcessedSeason season)
         {
             string? url = season.GetWideBannerPath();
 
@@ -1703,7 +1716,8 @@ namespace TVRename
             return body;
         }
 
-        public static string ProviderWebUrl(this ProcessedEpisode ei)
+        [NotNull]
+        public static string ProviderWebUrl([NotNull] this ProcessedEpisode ei)
         {
             return (ei.Show.Provider switch
             {
@@ -1715,7 +1729,8 @@ namespace TVRename
             })!;
         }
 
-        private static string ProviderShowUrl(this ShowConfiguration show)
+        [NotNull]
+        private static string ProviderShowUrl([NotNull] this ShowConfiguration show)
         {
             return show.Provider switch
             {
@@ -1727,6 +1742,7 @@ namespace TVRename
             };
         }
 
+        [NotNull]
         public static string GetMovieHtmlOverviewOffline([NotNull] this MovieConfiguration si)
         {
             string body = string.Empty;

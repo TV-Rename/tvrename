@@ -13,7 +13,7 @@ namespace TVRename
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         [NotNull]
-        internal static List<PossibleMergedEpisode> FindDoubleEps(TVDoc doc, [NotNull] BackgroundWorker worker)
+        internal static List<PossibleMergedEpisode> FindDoubleEps([NotNull] TVDoc doc, [NotNull] BackgroundWorker worker)
         {
             int total = doc.TvLibrary.Shows.Count();
             int current = 0;

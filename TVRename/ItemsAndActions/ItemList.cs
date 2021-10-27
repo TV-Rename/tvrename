@@ -35,9 +35,12 @@ namespace TVRename
         [NotNull]
         public List<ItemMissing> Missing => this.OfType<ItemMissing>().ToList();
 
+        [NotNull]
         public List<ShowItemMissing> MissingEpisodes => this.OfType<ShowItemMissing>().ToList();
+        [NotNull]
         public List<MovieItemMissing> MissingMovies => this.OfType<MovieItemMissing>().ToList();
 
+        [NotNull]
         public List<ActionMoveRenameDirectory> MoveRenameDirectories => this.OfType<ActionMoveRenameDirectory>().ToList();
 
         [NotNull]
@@ -52,6 +55,7 @@ namespace TVRename
         [NotNull]
         public List<ActionCopyMoveRename> CopyMoveRename => this.OfType<ActionCopyMoveRename>().ToList();
 
+        [NotNull]
         public List<ItemDownloading> Downloading => this.OfType<ItemDownloading>().ToList();
 
         public void Replace(IEnumerable<Item>? toRemove, IEnumerable<Item>? newList)
@@ -60,6 +64,7 @@ namespace TVRename
             Add(newList);
         }
 
+        [NotNull]
         public List<Action> TorrentActions => this.Where(a => a is ActionTRemove || a is ActionTDownload).OfType<Action>().ToList();
 
         internal void Remove(IEnumerable<Item>? toRemove)

@@ -73,6 +73,8 @@ namespace TVRename
 
             cbDoRenaming.Checked = si.DoRename;
             cbDoMissingCheck.Checked = si.DoMissingCheck;
+            cbIncludeFuture.Checked = si.ForceCheckFuture;
+            cbIncludeNoAirdate.Checked = si.ForceCheckNoAirdate;
 
             SetProvider(si);
             chkManualFolders.Checked = selectedShow.UseManualLocations;
@@ -142,7 +144,7 @@ namespace TVRename
             txtTagList2.Text = tl.ToString();
         }
 
-        private void PopulateRootDirectories(string chosenValue)
+        private void PopulateRootDirectories([NotNull] string chosenValue)
         {
             cbDirectory.SuspendLayout();
             cbDirectory.Items.Clear();
@@ -392,6 +394,8 @@ namespace TVRename
             selectedShow.SetId(GetProviderTypeInUse(), code);
             selectedShow.DoRename = cbDoRenaming.Checked;
             selectedShow.DoMissingCheck = cbDoMissingCheck.Checked;
+            selectedShow.ForceCheckFuture = cbIncludeFuture.Checked;
+            selectedShow.ForceCheckNoAirdate = cbIncludeNoAirdate.Checked;
             selectedShow.ConfigurationProvider = GetProviderType();
             selectedShow.AliasNames.Clear();
             selectedShow.AliasNames.AddRange(lbShowAlias.Items.OfType<string>().Distinct());
@@ -409,6 +413,7 @@ namespace TVRename
             selectedShow.Format = GetFolderFormat() ?? MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile;
         }
 
+        [NotNull]
         private IEnumerable<string> GetFolders()
         {
             List<string> folders = new();
@@ -641,6 +646,12 @@ namespace TVRename
         private void cbRegion_SelectedIndexChanged(object sender, EventArgs e)
         {
             HasChanged = true;
+        }
+
+        private void cbDoMissingCheck_CheckedChanged(object? sender, EventArgs? e)
+        {
+            cbIncludeNoAirdate.Enabled = cbDoMissingCheck.Checked;
+            cbIncludeFuture.Enabled = cbDoMissingCheck.Checked;
         }
     }
 }

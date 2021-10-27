@@ -13,6 +13,7 @@ namespace TVRename
             Show.UseCustomSearchUrl = false;
         }
 
+        [NotNull]
         protected override string FieldName => "Use Custom Search";
 
         protected override bool Field => Show.UseCustomSearchUrl;

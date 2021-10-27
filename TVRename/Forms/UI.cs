@@ -622,7 +622,7 @@ namespace TVRename
             return searchers;
         }
 
-        private MediaConfiguration.MediaType GetSelectedObjectType(ObjectListView list)
+        private MediaConfiguration.MediaType GetSelectedObjectType([NotNull] ObjectListView list)
         {
             IList listSelectedObjects = list.SelectedObjects;
             if (listSelectedObjects.Count == listSelectedObjects.OfType<MovieItemMissing>().Count())
@@ -731,7 +731,7 @@ namespace TVRename
             }
         }
 
-        private static void SetupFilterButton(TextBox textBox, EventHandler handler)
+        private static void SetupFilterButton([NotNull] TextBox textBox, EventHandler handler)
         {
             // MAH: Create a "Clear" button in the Filter Text Box
             Button filterButton = new()
@@ -1017,7 +1017,7 @@ namespace TVRename
             return true;
         }
 
-        private void WriteColWidthsXml([NotNull] string thingName, XmlWriter writer)
+        private void WriteColWidthsXml([NotNull] string thingName, [NotNull] XmlWriter writer)
         {
             ListView lv = ListViewByName(thingName);
 
@@ -1108,6 +1108,7 @@ namespace TVRename
             btn.DropDownItems.AddRange(GetUsedSearchers().Where(engine => engine.Name.HasValue()).Select(CreateSearcherMenuItem).ToArray());
         }
 
+        [NotNull]
         private static ToolStripItem CreateSearcherMenuItem(SearchEngine search)
         {
             ToolStripMenuItem tsi = new(search.Name.Replace("&", "&&")) { Tag = search };
@@ -1200,7 +1201,7 @@ namespace TVRename
             movieTree.EndUpdate();
         }
 
-        internal static string GenerateShowUiName(MovieConfiguration show) => PostpendTheIfNeeded(show.ShowName);
+        internal static string GenerateShowUiName([NotNull] MovieConfiguration show) => PostpendTheIfNeeded(show.ShowName);
 
         [NotNull]
         public static string QuickStartGuide() => "https://www.tvrename.com/manual/quickstart/";
@@ -1932,7 +1933,7 @@ namespace TVRename
             }
         }
 
-        private void MenuShowAndEpisodes(List<ShowConfiguration> sil, ProcessedSeason? seas, ProcessedEpisode? ep)
+        private void MenuShowAndEpisodes([NotNull] List<ShowConfiguration> sil, ProcessedSeason? seas, ProcessedEpisode? ep)
         {
             ShowConfiguration si = sil.Count >= 1 ? sil[0] : null;
 
@@ -2114,7 +2115,7 @@ namespace TVRename
             }
         }
 
-        private void RightClickOnMyMovies(MovieConfiguration si, Point pt)
+        private void RightClickOnMyMovies([NotNull] MovieConfiguration si, Point pt)
         {
             showRightClickMenu.Items.Clear();
 
@@ -2146,7 +2147,7 @@ namespace TVRename
             showRightClickMenu.Show(pt);
         }
 
-        private void BuildRightClickMenu(Point pt, ProcessedEpisode? ep, List<ShowConfiguration> sis, ProcessedSeason? seas)
+        private void BuildRightClickMenu(Point pt, ProcessedEpisode? ep, [NotNull] List<ShowConfiguration> sis, ProcessedSeason? seas)
         {
             showRightClickMenu.Items.Clear();
 
@@ -3524,7 +3525,7 @@ namespace TVRename
         }
 
         private bool lastScanUnattended;
-        private void bwScan_DoWork(object sender, DoWorkEventArgs e)
+        private void bwScan_DoWork(object sender, [NotNull] DoWorkEventArgs e)
         {
             Thread.CurrentThread.Name ??= "Main Scan Thread"; // Can only set it once
             mDoc.Scan((TVDoc.ScanSettings)e.Argument);
@@ -3672,7 +3673,7 @@ namespace TVRename
                 if (2 * mDoc.TheActionList.Actions.Count > mDoc.TheActionList.Count)
                 {
                     olvAction.CheckAll();
-                    foreach (var i in mDoc.TheActionList.Where(i => !(i is Action)))
+                    foreach (Item i in mDoc.TheActionList.Where(i => !(i is Action)))
                     {
                         olvAction.UncheckObject(i);
                     }
@@ -3783,7 +3784,7 @@ namespace TVRename
         }
 
         private bool lastActionUnattended;
-        private void bwAction_DoWork(object sender, DoWorkEventArgs e)
+        private void bwAction_DoWork(object sender, [NotNull] DoWorkEventArgs e)
         {
             Thread.CurrentThread.Name ??= "Main Action Thread"; // Can only set it once
 
@@ -3975,7 +3976,7 @@ namespace TVRename
             showRightClickMenu.Items.Add(tsi);
         }
 
-        private void AddRcMenuItem(string name, EventHandler command)
+        private void AddRcMenuItem([NotNull] string name, EventHandler command)
         {
             ToolStripMenuItem tsi = new(name.Replace("&","&&"));
             tsi.Click += command;
@@ -4039,7 +4040,8 @@ namespace TVRename
             SetCheckbox(mcbAll, all.Actions, chk.OfType<Action>());
         }
 
-        private static IEnumerable<Item> RenameActions(IEnumerable<Item> all)
+        [NotNull]
+        private static IEnumerable<Item> RenameActions([NotNull] IEnumerable<Item> all)
         {
             return all.Where(a =>
                 a is ActionCopyMoveRename { Operation: ActionCopyMoveRename.Op.rename } ||
@@ -4183,7 +4185,7 @@ namespace TVRename
             TextBoxSizeChanged(filterMoviesTextbox);
         }
 
-        private static void TextBoxSizeChanged(TextBox tb)
+        private static void TextBoxSizeChanged([NotNull] TextBox tb)
         {
             // MAH: move the "Clear" button in the Filter Text Box
             if (tb.Controls.ContainsKey("Clear"))
@@ -4928,7 +4930,7 @@ namespace TVRename
             }
         }
 
-        private void olvAction_BeforeCreatingGroups(object sender, CreateGroupsEventArgs e)
+        private void olvAction_BeforeCreatingGroups(object sender, [NotNull] CreateGroupsEventArgs e)
         {
             e.Parameters.ItemComparer = new ListViewActionItemSorter();
         }
@@ -4965,7 +4967,7 @@ namespace TVRename
             DeleteMovie(si);
         }
 
-        private void bwMovieHTMLGenerator_DoWork(object sender, DoWorkEventArgs e)
+        private void bwMovieHTMLGenerator_DoWork(object sender, [NotNull] DoWorkEventArgs e)
         {
             MovieConfiguration si = e.Argument as MovieConfiguration;
             Thread.CurrentThread.Name ??= $"Movie '{si?.Name}' HTML Creation Thread"; // Can only set it once

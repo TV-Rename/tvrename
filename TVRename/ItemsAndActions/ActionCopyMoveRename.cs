@@ -59,6 +59,7 @@ namespace TVRename
 
         #region Action Members
 
+        [NotNull]
         public override string Name => Operation == Op.rename ? "Rename" : IsMoveRename() ? "Move" : "Copy";
 
         public override string ProgressText => To.Name;
@@ -66,6 +67,7 @@ namespace TVRename
         // 0.0 to 100.0
         public override long SizeOfWork => QuickOperation() ? 10000 : SourceFileSize();
 
+        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             // read NTFS permissions (if any)
@@ -239,12 +241,15 @@ namespace TVRename
 
         #endregion Action Members
 
+        [NotNull]
         public ProcessedEpisode SourceEpisode => Episode ?? throw new InvalidOperationException();
 
         #region Item Members
 
+        [NotNull]
         public override IgnoreItem Ignore => new(To.FullName);
 
+        [NotNull]
         public override string ScanListViewGroup
         {
             get
@@ -317,6 +322,7 @@ namespace TVRename
         public override string SourceDetails => From.FullName;
 
         public DirectoryInfo SourceDirectory => From.Directory;
+        [NotNull]
         public string DestinationBaseName=> To.FileNameNoExt();
     }
 }

@@ -8,6 +8,7 @@ namespace TVRename
         {
         }
 
+        [NotNull]
         protected override string FieldName => "Do Missing Check";
 
         protected override bool Field => Show.DoMissingCheck;

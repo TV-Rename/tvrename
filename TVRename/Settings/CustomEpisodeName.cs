@@ -134,7 +134,7 @@ namespace TVRename
             int seasonNumber;
             int episodeNumber;
             switch (show.Order)
-            {//todo - other SeasonTypes
+            {
                 case ProcessedSeason.SeasonType.dvd:
                     seasonNumber = ep.DvdSeasonNumber;
                     episodeNumber = ep.DvdEpNum;

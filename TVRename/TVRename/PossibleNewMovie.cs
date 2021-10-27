@@ -31,9 +31,10 @@ namespace TVRename
         public bool CodeKnown => !CodeUnknown;
         public bool CodeUnknown => ProviderCode <= 0;
 
+        [NotNull]
         public string CodeString => CodeUnknown ? "<Unknown>" : $"{ProviderCode} ({SourceProvider.PrettyPrint()})";
 
-        public PossibleNewMovie(FileInfo possibleMovieFile, bool andGuess, bool showErrorMsgBox)
+        public PossibleNewMovie([NotNull] FileInfo possibleMovieFile, bool andGuess, bool showErrorMsgBox)
         {
             MovieStub = possibleMovieFile.MovieFileNameBase();
             Directory = possibleMovieFile.Directory;
@@ -242,7 +243,7 @@ namespace TVRename
             return null;
         }
 
-        private static string? FindShowCode([NotNull] FileInfo file, string simpleIdCode, string uniqueIdCode)
+        private static string? FindShowCode([NotNull] FileInfo file, string simpleIdCode, [CanBeNull] string uniqueIdCode)
         {
             try
             {
@@ -348,9 +349,10 @@ namespace TVRename
 
         public string? ImdbCode => imdbCodeInternal;
 
+        [NotNull]
         public Locale TargetLocale => new();
 
-        public ProcessedSeason.SeasonType SeasonOrder => throw new NotImplementedException();
+        public ProcessedSeason.SeasonType SeasonOrder => throw new InvalidOperationException();
 
         public void UpdateId(int id, TVDoc.ProviderType source)
         {

@@ -167,7 +167,7 @@ namespace TVRename
             }
         }
 
-        private static bool ProcessMovieXml<T>(XElement x, T cache) where T:MediaCache, iMovieSource
+        private static bool ProcessMovieXml<T>([NotNull] XElement x, T cache) where T:MediaCache, iMovieSource
         {
             try
             {

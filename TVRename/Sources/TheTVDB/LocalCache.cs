@@ -313,7 +313,7 @@ namespace TVRename.TheTVDB
                 }
 
                 //If this date is in the last week then this needs to be the last call to the update
-                const int OFFSET =(24 * 60 * 60); //TODO Revert to 0
+                const int OFFSET =(24 * 60 * 60); //todo NOW Revert to 0
 
                 DateTime requestedTime = GetRequestedTime(updateFromEpochTime - OFFSET, numberofCallsMade);
 
@@ -2354,21 +2354,24 @@ namespace TVRename.TheTVDB
                 SrvLastUpdated = GetUpdateTicks(episodeJson["lastUpdated"].ToObject<string>())
             };
 
-            if (order == ProcessedSeason.SeasonType.dvd)
+            switch (order)
             {
-                x.ReadDvdSeasonNum = episodeJson["seasonNumber"].ToObject<int>();
-                x.DvdEpNum = episodeJson["number"].ToObject<int>();
-            }
-            else if(order == ProcessedSeason.SeasonType.aired)
-            {
-                x.AiredSeasonNumber = episodeJson["seasonNumber"].ToObject<int>();
-                x.AiredEpNum = episodeJson["number"].ToObject<int>();
-            }
-            else
-            {
-                //todo - Other Season Types
-                x.AiredSeasonNumber = episodeJson["seasonNumber"].ToObject<int>();
-                x.AiredEpNum = episodeJson["number"].ToObject<int>();
+                case ProcessedSeason.SeasonType.dvd:
+                    x.ReadDvdSeasonNum = episodeJson["seasonNumber"].ToObject<int>();
+                    x.DvdEpNum = episodeJson["number"].ToObject<int>();
+                    break;
+                case ProcessedSeason.SeasonType.aired:
+                    x.AiredSeasonNumber = episodeJson["seasonNumber"].ToObject<int>();
+                    x.AiredEpNum = episodeJson["number"].ToObject<int>();
+                    break;
+                case ProcessedSeason.SeasonType.alternate:
+                    x.AiredSeasonNumber = episodeJson["seasonNumber"].ToObject<int>();
+                    x.AiredEpNum = episodeJson["number"].ToObject<int>();
+                    break;
+                default:
+                    x.AiredSeasonNumber = episodeJson["seasonNumber"].ToObject<int>();
+                    x.AiredEpNum = episodeJson["number"].ToObject<int>();
+                    break;
             }
 
             return (x, GetAppropriateLanguage(episodeJson["nameTranslations"], locale));
@@ -2629,7 +2632,7 @@ namespace TVRename.TheTVDB
             {
                 return "New Episode Id = " + episodeId;
             }
-            //todo - Other Season Types
+            
             return order ==ProcessedSeason.SeasonType.dvd
                 ? $"S{ep.DvdSeasonNumber:00}E{ep.DvdEpNum:00}"
                 : $"S{ep.AiredSeasonNumber:00}E{ep.AiredEpNum:00}";
@@ -3080,16 +3083,16 @@ namespace TVRename.TheTVDB
             return (string)languageValue;
         }
 
-        private string? Decode(JObject r, string tag)
+        private static string? Decode(JObject r, string tag)
         {
             string s = (string)r[tag];
             return s.HasValue() ? System.Web.HttpUtility.HtmlDecode(s)?.Trim() : null;
         }
 
         private DateTime? GenerateFirstAiredDate(JObject r)
-        { //TODO Check this once https://github.com/thetvdb/v4-api/issues/28 is fixed
+        { //todo NOW Check this once https://github.com/thetvdb/v4-api/issues/28 is fixed
             int? year = r.Value<int?>("year");
-            if (year.HasValue && year.Value>0)
+            if (year>0)
             {
                 try
                 {

@@ -28,6 +28,7 @@ namespace TVRename.TheTVDB
         }
 
         // ReSharper disable once InconsistentNaming
+        [NotNull]
         public static string TVDB_API_KEY
         {
             get

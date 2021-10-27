@@ -7,6 +7,7 @@
 //
 
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -32,6 +33,7 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         protected override string Name() => "Show TXT Exporter";
     }
 }

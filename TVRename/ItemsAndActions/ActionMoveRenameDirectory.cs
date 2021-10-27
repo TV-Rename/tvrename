@@ -1,6 +1,7 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -23,6 +24,7 @@ namespace TVRename
         }
         public override string TargetFolder => targetFolder;
 
+        [NotNull]
         public override string ScanListViewGroup => "lvgActionRename";
 
         public override int IconNumber => 4;
@@ -46,6 +48,7 @@ namespace TVRename
 
         public override bool SameAs(Item o) => o is ActionMoveRenameDirectory amd && amd.targetFolder == targetFolder && amd.sourceFolder == sourceFolder;
 
+        [NotNull]
         public override string Name => "Rename Directory";
 
         public override string DestinationFolder => targetFolder;
@@ -56,6 +59,7 @@ namespace TVRename
 
         public override long SizeOfWork => 10;
 
+        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             DirectoryInfo source = new(sourceFolder);

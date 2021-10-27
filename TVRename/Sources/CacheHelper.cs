@@ -7,7 +7,7 @@ namespace TVRename
 {
     public static class CacheHelper
     {
-        public static void Tidy<T>(this T cache,IEnumerable<ShowConfiguration> libraryValues) where T:MediaCache,iTVSource
+        public static void Tidy<T>([NotNull] this T cache,[NotNull] IEnumerable<ShowConfiguration> libraryValues) where T:MediaCache,iTVSource
         {
             // remove any shows from cache that aren't in My Shows
             List<ShowConfiguration> showConfigurations = libraryValues.ToList();
@@ -23,7 +23,7 @@ namespace TVRename
             }
         }
 
-        public static void Tidy<T>(this T cache, IEnumerable<MediaConfiguration> libraryValues) where T : MediaCache, iMovieSource
+        public static void Tidy<T>([NotNull] this T cache, [NotNull] IEnumerable<MediaConfiguration> libraryValues) where T : MediaCache, iMovieSource
         {
             // remove any shows from cache that aren't in My Movies
             List<MediaConfiguration> movieConfigurations = libraryValues.ToList();
@@ -39,7 +39,7 @@ namespace TVRename
             }
         }
 
-        public static void ForgetShow<T>(this T cache, ISeriesSpecifier ss) where T : MediaCache,iTVSource
+        public static void ForgetShow<T>([NotNull] this T cache, ISeriesSpecifier ss) where T : MediaCache,iTVSource
         {
             cache.ForgetShow(cache.PrimaryKey(ss));
             if (cache.PrimaryKey(ss) <= 0)
@@ -54,7 +54,7 @@ namespace TVRename
             }
         }
 
-        public static void ForgetShow<T>(this T cache, int id) where T : MediaCache, iTVSource
+        public static void ForgetShow<T>([NotNull] this T cache, int id) where T : MediaCache, iTVSource
         {
             lock (cache.SERIES_LOCK)
             {
@@ -65,7 +65,7 @@ namespace TVRename
             }
         }
 
-        public static void AddPlaceholderSeries<T>(this T cache, ISeriesSpecifier ss) where T : MediaCache, iTVSource
+        public static void AddPlaceholderSeries<T>([NotNull] this T cache, [NotNull] ISeriesSpecifier ss) where T : MediaCache, iTVSource
         {
             lock (cache.SERIES_LOCK)
             {
@@ -75,7 +75,7 @@ namespace TVRename
             }
         }
 
-        public static void AddPlaceholderMovie<T>(this T cache, ISeriesSpecifier ss) where T : MediaCache, iMovieSource
+        public static void AddPlaceholderMovie<T>([NotNull] this T cache, [NotNull] ISeriesSpecifier ss) where T : MediaCache, iMovieSource
         {
             lock (cache.MOVIE_LOCK)
             {
@@ -85,7 +85,7 @@ namespace TVRename
             }
         }
 
-        public static void AddMovieToCache<T>(this T cache, [NotNull] CachedMovieInfo si) where T : MediaCache, iMovieSource
+        public static void AddMovieToCache<T>([NotNull] this T cache, [NotNull] CachedMovieInfo si) where T : MediaCache, iMovieSource
         {
             int id = cache.PrimaryKey(si);
             lock (cache.MOVIE_LOCK)
@@ -101,7 +101,7 @@ namespace TVRename
             }
         }
 
-        public static void AddSeriesToCache<T>(this T cache, [NotNull] CachedSeriesInfo si) where T : MediaCache, iTVSource
+        public static void AddSeriesToCache<T>([NotNull] this T cache, [NotNull] CachedSeriesInfo si) where T : MediaCache, iTVSource
         {
             int id = cache.PrimaryKey(si);
             lock (cache.SERIES_LOCK)
@@ -117,7 +117,7 @@ namespace TVRename
             }
         }
 
-        public static void ForgetMovie<T>(this T cache, int id) where T : MediaCache, iMovieSource
+        public static void ForgetMovie<T>([NotNull] this T cache, int id) where T : MediaCache, iMovieSource
         {
             lock (cache.MOVIE_LOCK)
             {
@@ -128,7 +128,7 @@ namespace TVRename
             }
         }
 
-        public static void ForgetMovie<T>(this T cache, ISeriesSpecifier si) where T : MediaCache, iMovieSource
+        public static void ForgetMovie<T>([NotNull] this T cache, ISeriesSpecifier si) where T : MediaCache, iMovieSource
         {
             cache.ForgetMovie(cache.PrimaryKey(si));
             lock (cache.MOVIE_LOCK)
@@ -140,7 +140,7 @@ namespace TVRename
             }
         }
 
-        public static void MarkPlaceHoldersDirty<T>(this T cache, IEnumerable<ISeriesSpecifier> ss) where T : MediaCache, iMovieSource,iTVSource
+        public static void MarkPlaceHoldersDirty<T>(this T cache, [NotNull] IEnumerable<ISeriesSpecifier> ss) where T : MediaCache, iMovieSource,iTVSource
         {
             foreach (ISeriesSpecifier downloadShow in ss)
             {
@@ -171,7 +171,7 @@ namespace TVRename
             }
         }
 
-        public static void MarkAllDirty(this MediaCache cache)
+        public static void MarkAllDirty([NotNull] this MediaCache cache)
         {
             lock (cache.MOVIE_LOCK)
             {
@@ -189,7 +189,7 @@ namespace TVRename
             }
         }
 
-        public static void MarkPlaceholdersDirty(this MediaCache cache) 
+        public static void MarkPlaceholdersDirty([NotNull] this MediaCache cache) 
         {
             lock (cache.MOVIE_LOCK)
             {
@@ -270,7 +270,7 @@ namespace TVRename
             return matchingSeries;
         }
 
-        public static CachedSeriesInfo? GetSeries<T>(this T cache, string showName, bool showErrorMsgBox, Locale preferredLocale) where T : MediaCache, iTVSource
+        public static CachedSeriesInfo? GetSeries<T>([NotNull] this T cache, string showName, bool showErrorMsgBox, Locale preferredLocale) where T : MediaCache, iTVSource
         {
             cache.Search(showName, showErrorMsgBox, MediaConfiguration.MediaType.tv, preferredLocale);
 
@@ -290,7 +290,7 @@ namespace TVRename
                 _ => null
             };
         }
-        public static CachedMovieInfo? GetMovie<T>(this T cache, string hint, int? possibleYear, Locale preferredLocale, bool showErrorMsgBox, bool useMostPopularMatch) where T:MediaCache,iMovieSource
+        public static CachedMovieInfo? GetMovie<T>([NotNull] this T cache, string hint, int? possibleYear, Locale preferredLocale, bool showErrorMsgBox, bool useMostPopularMatch) where T:MediaCache,iMovieSource
         {
             cache.Search(hint, showErrorMsgBox, MediaConfiguration.MediaType.movie, preferredLocale);
 

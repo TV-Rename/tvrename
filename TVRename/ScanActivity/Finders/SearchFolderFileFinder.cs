@@ -13,6 +13,7 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.SearchLocally;
 
+        [NotNull]
         protected override string CheckName() => "Looked in the search folders for the missing files";
 
         protected override void DoCheck(SetProgressDelegate prog)
@@ -81,7 +82,8 @@ namespace TVRename
             ActionList.Replace(toRemove, newList);
         }
 
-        private List<FileInfo> FindMatchedFiles(DirCache dirCache, MovieItemMissing movieMissingAction, Dictionary<FileInfo, ItemList> thisRound)
+        [NotNull]
+        private List<FileInfo> FindMatchedFiles([NotNull] DirCache dirCache, MovieItemMissing movieMissingAction, Dictionary<FileInfo, ItemList> thisRound)
         {
             List<FileInfo> matchedFiles = new();
 

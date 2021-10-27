@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable MemberCanBePrivate.Global
@@ -353,7 +354,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             public FormStartPosition StartPosition;
             public IntPtr hParent;
 
-            public InitData(FolderBrowserDialogEx dlg, IntPtr hParent)
+            public InitData([NotNull] FolderBrowserDialogEx dlg, IntPtr hParent)
             {
                 // We need to make copies of these values from the dialog.
                 // I tried passing the dlg obj itself in this struct, but Windows will barf after repeated invocations.
@@ -376,7 +377,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             StartPosition = FormStartPosition.WindowsDefaultLocation;
         }
 
-        public DialogResult ShowDialog(IWin32Window owner)
+        public DialogResult ShowDialog([NotNull] IWin32Window owner)
         {
             InitData initdata = new InitData(this, owner.Handle);
 

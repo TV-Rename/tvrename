@@ -2,6 +2,7 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -9,14 +10,15 @@ namespace TVRename
     {
         private readonly DownloadIdentifiersController downloadIdentifiers;
 
+        [NotNull]
         protected override string ActivityName() => "Rename & Missing Movie Check";
 
-        public RenameAndMissingMovieCheck(TVDoc doc) : base(doc)
+        public RenameAndMissingMovieCheck([NotNull] TVDoc doc) : base(doc)
         {
             downloadIdentifiers = new DownloadIdentifiersController();
         }
 
-        protected override void Check(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+        protected override void Check([NotNull] MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
             List<string> allFolders = si.Locations.ToList();
             if (allFolders.Count == 0) // no folders defined for this show
@@ -36,7 +38,7 @@ namespace TVRename
             }
         }
 
-        private void CheckMovieFolder(MovieConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings, string folder)
+        private void CheckMovieFolder(MovieConfiguration si, DirFilesCache dfc, [NotNull] TVDoc.ScanSettings settings, string folder)
         {
             if (settings.Token.IsCancellationRequested)
             {
@@ -147,7 +149,7 @@ namespace TVRename
             }
         }
 
-        private void PlanToRenameFilesInFolder(MovieConfiguration si, TVDoc.ScanSettings settings, string folder, FileInfo[] files,
+        private void PlanToRenameFilesInFolder(MovieConfiguration si, TVDoc.ScanSettings settings, string folder, [NotNull] FileInfo[] files,
             string baseString, string newBase)
         {
             foreach (FileInfo fi in files)
@@ -201,7 +203,7 @@ namespace TVRename
             } // foreach file in folder
         }
 
-        private void FileIsCorrect(MovieConfiguration si, string fi)
+        private void FileIsCorrect([NotNull] MovieConfiguration si, string fi)
         {
             //File is correct name
             LOGGER.Debug($"Identified that {fi} is in the right place. Marking it as 'seen'.");
@@ -214,13 +216,14 @@ namespace TVRename
             }
         }
 
-        private bool IsClose(string baseFileName, MovieConfiguration config)
+        private bool IsClose([NotNull] string baseFileName, [NotNull] MovieConfiguration config)
         {
             (string targetFolder, string targetFolderEarlier, string targetFolderLater) = config.NeighbouringFolderNames();
             return baseFileName.Equals(targetFolderEarlier) || baseFileName.Equals(targetFolderLater) || baseFileName.Equals(targetFolder);
         }
 
-        public static string GetBase(FileInfo fileInfo)
+        [NotNull]
+        public static string GetBase([NotNull] FileInfo fileInfo)
         {
             //The base is the filename with no multipart extensions
             return fileInfo.MovieFileNameBase();

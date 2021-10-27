@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace TVRename
 
         protected override MediaConfiguration.MediaType MediaType() => MediaConfiguration.MediaType.movie;
 
-        public override ProcessedSeason.SeasonType SeasonOrder => throw new System.NotImplementedException();
+        public override ProcessedSeason.SeasonType SeasonOrder => throw new InvalidOperationException();
 
         private void DefaultValues()
         {
@@ -138,11 +139,13 @@ namespace TVRename
             images.Add(image);
         }
 
+        [NotNull]
         public IEnumerable<MovieImage> Images(MediaImage.ImageType type)
         {
             return images.Where(x => x.ImageStyle == type && (x.LanguageCode ?? TargetLocale.LanguageToUse(Source).Abbreviation) == TargetLocale.LanguageToUse(Source).Abbreviation);
         }
 
+        [NotNull]
         public IEnumerable<MovieImage> Images(MediaImage.ImageType type, MediaImage.ImageSubject subject)
         {
             return images.Where(x => x.ImageStyle == type && x.Subject == subject && (x.LanguageCode ?? TargetLocale.LanguageToUse(Source).Abbreviation ) == TargetLocale.LanguageToUse(Source).Abbreviation);

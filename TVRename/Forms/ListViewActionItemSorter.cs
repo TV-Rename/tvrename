@@ -32,8 +32,8 @@ namespace TVRename
         /// <returns>An ordering indication: -1, 0, 1</returns>
         public int Compare(OLVListItem x, OLVListItem y)
         {
-            Item x1 = x.RowObject as Item;
-            Item y1 = y.RowObject as Item;
+            Item x1 = x?.RowObject as Item;
+            Item y1 = y?.RowObject as Item;
 
             // Handle nulls. Null values come last
             bool xIsNull = x1 == null;

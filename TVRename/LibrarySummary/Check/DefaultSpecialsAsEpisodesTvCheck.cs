@@ -8,6 +8,7 @@ namespace TVRename
         {
         }
 
+        [NotNull]
         protected override string FieldName => "Count Specials As Episodes Check";
 
         protected override bool Field => Show.CountSpecials;

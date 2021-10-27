@@ -166,7 +166,7 @@ namespace TVRename
             return intValue;
         }
 
-        public Episode(int seriesId, JObject? bestLanguageR, JObject jsonInDefaultLang, CachedSeriesInfo si) : this(seriesId, si)
+        public Episode(int seriesId, JObject? bestLanguageR, [NotNull] JObject jsonInDefaultLang, CachedSeriesInfo si) : this(seriesId, si)
         {
             if (bestLanguageR is null)
             {
@@ -328,6 +328,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> Directors => string.IsNullOrEmpty(EpisodeDirector) ? new string[] { } : EpisodeDirector.Split('|').Where(s => s.HasValue());
 
+        [NotNull]
         public CachedSeriesInfo TheCachedSeries
         {
             get
@@ -401,7 +402,7 @@ namespace TVRename
         }
 
         public int GetSeasonNumber(ProcessedSeason.SeasonType order)
-        {//todo - other SeasonTypes
+        {
             return order switch
             {
                 ProcessedSeason.SeasonType.dvd => DvdSeasonNumber,
@@ -412,7 +413,7 @@ namespace TVRename
         }
 
         public int GetEpisodeNumber(ProcessedSeason.SeasonType order)
-        {//todo - other SeasonTypes
+        {
             return order switch
             {
                 ProcessedSeason.SeasonType.dvd => DvdEpNum,

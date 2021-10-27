@@ -1,5 +1,6 @@
 using System.Xml;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -13,7 +14,7 @@ namespace TVRename
         public string? Url { get; }
         public string? ImageUrl { get; }
 
-        public Season(XElement r)
+        public Season([NotNull] XElement r)
         {
             SeasonId = r.ExtractInt("Id") ?? -1;
             SeasonName = r.ExtractString("Name");
@@ -34,7 +35,7 @@ namespace TVRename
             Url = url;
         }
 
-        public void WriteXml(XmlWriter writer)
+        public void WriteXml([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("Season");
             writer.WriteElement("Id", SeasonId);

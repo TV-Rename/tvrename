@@ -13,6 +13,7 @@ namespace TVRename
             Show.UseCustomShowName = false;
         }
 
+        [NotNull]
         protected override string FieldName => "Use Custom TV Show Name";
         protected override bool Field => Show.UseCustomShowName;
     }

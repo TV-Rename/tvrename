@@ -8,13 +8,14 @@ namespace TVRename
 {
     internal class CheckAllFoldersExist : ScanShowActivity
     {
-        public CheckAllFoldersExist(TVDoc doc) : base(doc)
+        public CheckAllFoldersExist([NotNull] TVDoc doc) : base(doc)
         {
         }
 
+        [NotNull]
         protected override string ActivityName() => "Checked All Folders Exist";
 
-        protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+        protected override void Check([NotNull] ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
         {
             if (!si.DoMissingCheck && !si.DoRename)
             {

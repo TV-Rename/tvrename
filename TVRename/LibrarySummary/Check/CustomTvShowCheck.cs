@@ -8,6 +8,7 @@ namespace TVRename
         {
         }
 
+        [NotNull]
         public override string CheckName => "[TV] " + FieldName;
         protected abstract string FieldName { get; }
         protected abstract bool Field { get; }
@@ -17,6 +18,7 @@ namespace TVRename
             return Field;
         }
 
+        [NotNull]
         public override string Explain()
         {
             return $"{FieldName} is enabled for this TV Show, by default is is not.";

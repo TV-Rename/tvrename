@@ -58,7 +58,7 @@ namespace TVRename
             Setup(lbTMDB, "No Cache", availableTmdbFiles);
         }
 
-        private static void Setup(ListBox lb, string defaultValue, IReadOnlyCollection<FileInfo> files)
+        private static void Setup([NotNull] ListBox lb, [NotNull] string defaultValue, [NotNull] IReadOnlyCollection<FileInfo> files)
         {
             lb.Items.Add(defaultValue);
             if (files.Count > 0)

@@ -41,7 +41,7 @@ namespace TVRename
             startPosition = startpct;
             endPosition = totPct;
             progressDelegate = prog;
-            progressDelegate.Invoke(startPosition, string.Empty);
+            progressDelegate?.Invoke(startPosition, string.Empty);
             try
             {
                 if (Settings.Token.IsCancellationRequested)

@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace TVRename.Forms.Supporting
 {
     public partial class ChooseDownload : Form
     {
-        public ChooseDownload(ItemMissing im, IEnumerable<ActionTDownload> options)
+        public ChooseDownload([NotNull] ItemMissing im, IEnumerable<ActionTDownload> options)
         {
             InitializeComponent();
             lblEpisodeName.Text = $"{im.Show.ShowName} - {im}";

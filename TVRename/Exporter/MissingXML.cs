@@ -10,6 +10,7 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -21,6 +22,7 @@ namespace TVRename
         }
 
         public override bool Active() => TVSettings.Instance.ExportMissingXML;
+        [NotNull]
         protected override string Name() => "Missing XML Exporter";
 
         protected override string Location() => TVSettings.Instance.ExportMissingXMLTo;

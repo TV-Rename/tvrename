@@ -71,7 +71,7 @@ namespace TVRename.Forms
             }
         }
 
-        private void AddRcMenuItem(string label, EventHandler command)
+        private void AddRcMenuItem([NotNull] string label, EventHandler command)
         {
             ToolStripMenuItem tsi = new(label.Replace("&", "&&"));
             tsi.Click += command;
@@ -94,7 +94,7 @@ namespace TVRename.Forms
             int current = 0;
 
             collectionMovies.Clear();
-            foreach ((int collectionId, var collectionName) in collectionIds)
+            foreach ((int collectionId, string collectionName) in collectionIds)
             {
                 Dictionary<int, CachedMovieInfo> shows = TMDB.LocalCache.Instance.GetMovieIdsFromCollection(collectionId, TVSettings.Instance.TMDBLanguage.Abbreviation);
                 foreach (KeyValuePair<int, CachedMovieInfo> neededShow in shows)
@@ -109,7 +109,7 @@ namespace TVRename.Forms
             }
         }
 
-        private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void BwScan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage;
             lblStatus.Text = e.UserState.ToString();
@@ -141,7 +141,7 @@ namespace TVRename.Forms
             bwScan.RunWorkerAsync();
         }
 
-        private void olvDuplicates_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
+        private void olvDuplicates_CellRightClick(object sender, [NotNull] BrightIdeasSoftware.CellRightClickEventArgs e)
         {
             if (e.Model is null)
             {
@@ -170,7 +170,7 @@ namespace TVRename.Forms
             //possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
         }
 
-        private void AddToLibrary(CachedMovieInfo si)
+        private void AddToLibrary([NotNull] CachedMovieInfo si)
         {
             // need to add a new showitem
             MovieConfiguration found = new(si.TmdbCode, TVDoc.ProviderType.TMDB);

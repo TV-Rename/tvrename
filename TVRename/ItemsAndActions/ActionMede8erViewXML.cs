@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using JetBrains.Annotations;
+
 namespace TVRename
 {
     using Alphaleonis.Win32.Filesystem;
@@ -29,8 +31,10 @@ namespace TVRename
 
         #region Action Members
 
+        [NotNull]
         public override string Name => "Write Mede8er View Data";
 
+        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             XmlWriterSettings settings = new()

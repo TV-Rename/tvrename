@@ -10,6 +10,7 @@ namespace TVRename
 
         public override bool Check() => Show.ConfigurationProvider != TVDoc.ProviderType.libraryDefault;
 
+        [NotNull]
         public override string Explain() => $"TV Show does not use the library default, ({TVSettings.Instance.DefaultProvider.PrettyPrint()}), it uses {Show.ConfigurationProvider.PrettyPrint()} (Hardcoded)";
 
         protected override void FixInternal()
@@ -24,6 +25,7 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         public override string CheckName => "[TV] Use default source provider";
     }
 }

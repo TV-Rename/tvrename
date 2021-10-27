@@ -13,6 +13,7 @@ namespace TVRename
             Movie.UseCustomLanguage = false;
         }
 
+        [NotNull]
         protected override string FieldName => "Use Custom Language";
 
         protected override bool Field => Movie.UseCustomLanguage;

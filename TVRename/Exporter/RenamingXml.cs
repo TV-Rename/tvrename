@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using JetBrains.Annotations;
+
 namespace TVRename
 {
     internal class RenamingXml : ActionListXml
@@ -22,7 +24,9 @@ namespace TVRename
 
         protected override string Location() => TVSettings.Instance.ExportRenamingXMLTo;
 
+        [NotNull]
         protected override string MainXmlElementName() => "Renaming";
+        [NotNull]
         protected override string Name() => "Renaming XML Exporter";
     }
 }

@@ -13,6 +13,7 @@ namespace TVRename
         [NotNull]
         public IEnumerable<MovieConfiguration> Movies => this;
 
+        [NotNull]
         public List<(int, string)> Collections => Movies
             .Select(c => (c.CachedMovie?.CollectionId, c.CachedMovie?.CollectionName))
             .Where(a => a.CollectionId.HasValue && a.CollectionName.HasValue())
@@ -109,6 +110,7 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         public List<MovieConfiguration> GetSortedMovies()
         {
             List<MovieConfiguration> returnList = Movies.ToList();
@@ -158,6 +160,6 @@ namespace TVRename
                 .OrderBy(s => s);
         }
 
-        public MovieConfiguration? GetMovie(ISeriesSpecifier ai) => GetMovie(ai.Id(), ai.Provider);
+        public MovieConfiguration? GetMovie([NotNull] ISeriesSpecifier ai) => GetMovie(ai.Id(), ai.Provider);
     }
 }

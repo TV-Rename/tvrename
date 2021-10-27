@@ -10,6 +10,7 @@ namespace TVRename
 
         public override bool Check() => Show.AutoAddType != ShowConfiguration.AutomaticFolderType.libraryDefault;
 
+        [NotNull]
         public override string Explain() => $"TV Show does not use the library default for AutomaticFolder creation, it uses {Show.AutoAddType}{(Show.AutoAddType == ShowConfiguration.AutomaticFolderType.custom ? $" {Show.AutoAddCustomFolderFormat}" : "")}";
 
         protected override void FixInternal()
@@ -17,6 +18,7 @@ namespace TVRename
             Show.AutoAddType = ShowConfiguration.AutomaticFolderType.libraryDefault;
         }
 
+        [NotNull]
         public override string CheckName => "[TV] Use Custom season Folder Name Format";
     }
 }

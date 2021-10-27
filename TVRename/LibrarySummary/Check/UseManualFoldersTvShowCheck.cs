@@ -8,6 +8,7 @@ namespace TVRename
         {
         }
 
+        [NotNull]
         protected override string FieldName => "Use Manual Folders for TV Show";
         protected override bool Field => Show.UsesManualFolders();
 

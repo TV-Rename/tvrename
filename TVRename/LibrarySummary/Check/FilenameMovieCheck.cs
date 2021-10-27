@@ -10,6 +10,7 @@ namespace TVRename
 
         public override bool Check() => Movie.UseCustomNamingFormat;
 
+        [NotNull]
         public override string Explain() => $"This movie does not use the standard file naming format '{TVSettings.Instance.MovieFilenameFormat}', it uses '{Movie.CustomNamingFormat}'";
 
         protected override void FixInternal()
@@ -17,6 +18,7 @@ namespace TVRename
             Movie.UseCustomNamingFormat = false;
         }
 
+        [NotNull]
         public override string CheckName => "[Movie] Use Custom File Name Format";
     }
 }

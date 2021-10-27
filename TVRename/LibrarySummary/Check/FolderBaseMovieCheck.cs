@@ -11,6 +11,7 @@ namespace TVRename
 
         public override bool Check() => Movie.UseAutomaticFolders && !Movie.AutomaticFolderRoot.HasValue();
 
+        [NotNull]
         public override string Explain() => "This Movie does not have an automatic folder base specified.";
 
         protected override void FixInternal()
@@ -28,6 +29,7 @@ namespace TVRename
             Movie.AutomaticFolderRoot = TVSettings.Instance.MovieLibraryFolders.First();
         }
 
+        [NotNull]
         public override string CheckName => "[Movie] Use Default folder supplied";
     }
 }

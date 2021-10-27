@@ -13,6 +13,7 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.RenameCheck && TVSettings.Instance.MissingCheck && TVSettings.Instance.MoveLibraryFiles;
 
+        [NotNull]
         protected override string CheckName() => "Looked in the library for the missing files";
 
         protected override void DoCheck(SetProgressDelegate prog)
@@ -68,7 +69,7 @@ namespace TVRename
             ActionList.Replace(toRemove, newList);
         }
 
-        private void FindMovie(MovieItemMissing mim, DirFilesCache dfc, ItemList newList, ItemList toRemove)
+        private void FindMovie([NotNull] MovieItemMissing mim, DirFilesCache dfc, ItemList newList, ItemList toRemove)
         {
             if (!mim.MovieConfig.UseAutomaticFolders)
             {
@@ -103,7 +104,7 @@ namespace TVRename
             newList.Add(new ActionMoveRenameDirectory(sourceFolder, targetFolder, mim.MovieConfig));
         }
 
-        private void FindEpisode(ShowItemMissing me, DirFilesCache dfc, ItemList newList, ItemList toRemove)
+        private void FindEpisode([NotNull] ShowItemMissing me, DirFilesCache dfc, ItemList newList, ItemList toRemove)
         {
             Dictionary<FileInfo, ItemList> thisRound = new();
             if (me.Episode == null)

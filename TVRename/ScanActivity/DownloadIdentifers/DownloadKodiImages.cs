@@ -24,7 +24,7 @@ namespace TVRename
 
         public override DownloadType GetDownloadType() => DownloadType.downloadImage;
 
-        public override void NotifyComplete(FileInfo file)
+        public override void NotifyComplete([NotNull] FileInfo file)
         {
             if (file.Name.EndsWith(".tbn", true, new CultureInfo("en")))
             {

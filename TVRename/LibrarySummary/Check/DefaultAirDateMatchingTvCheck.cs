@@ -8,6 +8,7 @@ namespace TVRename
         {
         }
 
+        [NotNull]
         protected override string FieldName => "Do Airdate matching Check";
 
         protected override bool Field => Show.UseAirDateMatch;

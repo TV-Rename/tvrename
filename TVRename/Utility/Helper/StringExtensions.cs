@@ -75,6 +75,7 @@ namespace TVRename
                 RegexOptions.IgnoreCase);
         }
 
+        [NotNull]
         public static string ReplaceInsensitiveLazy(this string? source, [NotNull] string search, Lazy<string?> replacement, StringComparison comparison)
         {
             if (source == null)
@@ -129,7 +130,8 @@ namespace TVRename
             return ContainsAnyCharactersFrom(source, possibleChars.ToCharArray());
         }
 
-        public static string UppercaseFirst(this string str)
+        [NotNull]
+        public static string UppercaseFirst([CanBeNull] this string str)
         {
             if (string.IsNullOrEmpty(str))
             {
@@ -147,6 +149,7 @@ namespace TVRename
             return instr.Substring(0, instr.Length - 1);
         }
 
+        [NotNull]
         public static string First(this string s, int charsToDisplay)
         {
             if (s.HasValue())
@@ -279,14 +282,18 @@ namespace TVRename
             return string.Join(", ", values);
         }
 
+        [NotNull]
         public static string ToPsv([NotNull] this IEnumerable<string> values)
         {
             return string.Join("|", values);
         }
 
+        [NotNull]
         public static IEnumerable<string> FromPsv(this string aggregate) => aggregate.FromSepValues('|');
+        [NotNull]
         public static IEnumerable<string> FromCsv(this string aggregate) => aggregate.FromSepValues(',');
-        private static IEnumerable<string> FromSepValues(this string aggregate, char delimiter)
+        [NotNull]
+        private static IEnumerable<string> FromSepValues([CanBeNull] this string aggregate, char delimiter)
         {
             return string.IsNullOrEmpty(aggregate)
                 ? new string[] { }

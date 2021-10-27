@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -15,7 +16,7 @@ namespace TVRename
         public readonly bool SingleMovieFound;
         private readonly bool assumeMovie;
 
-        public AutoAddMedia(string hint, FileInfo file, bool assumeMovie)
+        public AutoAddMedia(string hint, [NotNull] FileInfo file, bool assumeMovie)
         {
             InitializeComponent();
             ShowConfiguration = new ShowConfiguration();
@@ -66,7 +67,7 @@ namespace TVRename
             UpdateDirectoryDropDown(cbMovieDirectory, TVSettings.Instance.MovieLibraryFolders, TVSettings.Instance.DefMovieDefaultLocation, true, tpMovie);
         }
 
-        private static void UpdateDirectoryDropDown(ComboBox comboBox, List<string> folders, string? defaultValue, bool useDefaultValue, TabPage tabToDisable)
+        private static void UpdateDirectoryDropDown([NotNull] ComboBox comboBox, [NotNull] List<string> folders, string? defaultValue, bool useDefaultValue, TabPage tabToDisable)
         {
             comboBox.SuspendLayout();
             comboBox.Items.Clear();
@@ -140,7 +141,8 @@ namespace TVRename
             MovieConfiguration.SetId(type, code);
             MovieConfiguration.UseAutomaticFolders = true;
             MovieConfiguration.AutomaticFolderRoot = folderbase;
-            MovieConfiguration.Format = MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile; //TODO - Set and use default setting here
+            MovieConfiguration.Format = TVSettings.Instance.DefMovieFolderFormat;
+                
             MovieConfiguration.UseCustomFolderNameFormat = false;
             MovieConfiguration.ConfigurationProvider = type == TVSettings.Instance.DefaultMovieProvider ? TVDoc.ProviderType.libraryDefault : type;
 

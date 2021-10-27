@@ -858,6 +858,6 @@ namespace TVRename
             return episodes;
         }
 
-        public ShowConfiguration? GetShowItem(ISeriesSpecifier ai) => GetShowItem(ai.Id(), ai.Provider);
+        public ShowConfiguration? GetShowItem([NotNull] ISeriesSpecifier ai) => GetShowItem(ai.Id(), ai.Provider);
     }
 }

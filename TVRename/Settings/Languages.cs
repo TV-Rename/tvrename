@@ -1,4 +1,5 @@
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -12,6 +13,7 @@ namespace TVRename
         private static volatile Languages? InternalInstance;
         private static readonly object SyncRoot = new();
 
+        [NotNull]
         public static Languages Instance
         {
             get
@@ -32,6 +34,7 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         public Language FallbackLanguage => GetLanguageFromCode("en")!;
 
         private Languages()

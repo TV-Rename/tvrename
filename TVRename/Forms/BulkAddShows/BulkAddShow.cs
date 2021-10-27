@@ -106,7 +106,7 @@ namespace TVRename
             DeleteSelectedFolder(lstFMMonitorFolders, TVSettings.Instance.LibraryFolders);
         }
 
-        private void DeleteSelectedFolder(ListBox lb, List<string> folders)
+        private void DeleteSelectedFolder([NotNull] ListBox lb, List<string> folders)
         {
             for (int i = lb.SelectedIndices.Count - 1; i >= 0; i--)
             {

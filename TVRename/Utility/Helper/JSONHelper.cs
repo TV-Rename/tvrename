@@ -42,7 +42,7 @@ namespace TVRename
             return DateTime.Parse("20:00");
         }
 
-        public static bool ContainsTyped<T>(this JArray arr, [CanBeNull] T item)
+        public static bool ContainsTyped<T>([NotNull] this JArray arr, [CanBeNull] T item)
         {
             return System.Linq.Enumerable.Any(arr, it =>
              {

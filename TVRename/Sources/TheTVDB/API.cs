@@ -98,6 +98,7 @@ namespace TVRename.TheTVDB
             return $"{WebsiteRoot}/?tab=series&id={seriesId}";
         }
 
+        [NotNull]
         public static string WebsiteMovieUrl(int id)
         {
             return $"{WebsiteRoot}/?tab=movie&id={id}";
@@ -398,6 +399,7 @@ namespace TVRename.TheTVDB
             return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
         }
 
+        [NotNull]
         public static JObject GetSeriesV4(int code, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/series/{code}/extended";
@@ -425,36 +427,42 @@ namespace TVRename.TheTVDB
             return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true);
         }
 
+        [NotNull]
         public static JObject GetMovieV4(int code, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code}/extended";
             return GetUrl(uri, requestedLanguageCode);
         }
 
+        [NotNull]
         public static JObject GetSeasonEpisodesV4(int showId, int seasonId, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/seasons/{seasonId}/extended";
             return GetUrl(uri, requestedLanguageCode);
         }
 
+        [NotNull]
         public static JObject GetSeriesTranslationsV4(int code, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/series/{code}/translations/{requestedLanguageCode}";
             return GetUrl(uri, requestedLanguageCode);
         }
 
+        [NotNull]
         public static JObject GetEpisodeTranslationsV4(int code, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/episodes/{code}/translations/{requestedLanguageCode}";
             return GetUrl(uri, requestedLanguageCode);
         }
 
+        [NotNull]
         public static JObject GetMovieTranslationsV4(int code, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code}/translations/{requestedLanguageCode}";
             return GetUrl(uri, requestedLanguageCode);
         }
 
+        [NotNull]
         private static JObject GetUrl(string uri, string requestedLanguageCode)
         {
             try
@@ -474,11 +482,13 @@ namespace TVRename.TheTVDB
             throw new SourceConnectivityException($"Looking for {uri} images (in {requestedLanguageCode})");
         }
 
+        [NotNull]
         public static JObject ImageTypesV4()
         {
             return GetUrl("https://api4.thetvdb.com/v4/artwork/types", "en");
         }
 
+        [NotNull]
         public static string WebsiteMovieUrl(string? serSlug)
         {
             return $"https://www.thetvdb.com/movies/{serSlug}";

@@ -21,6 +21,7 @@ namespace TVRename
             return o is MovieItemMissing missing && string.CompareOrdinal(missing.TheFileNoExt, TheFileNoExt) == 0;
         }
 
+        [NotNull]
         public override string Name => "Missing Movie";
 
         public override int CompareTo(Item o)
@@ -33,11 +34,13 @@ namespace TVRename
             return string.Compare(TheFileNoExt, miss.TheFileNoExt, StringComparison.Ordinal);
         }
 
+        [NotNull]
         public MovieConfiguration MovieConfig => Movie ?? throw new InvalidOperationException();
 
         #endregion Item Members
 
         public override bool DoRename => MovieConfig.DoRename;
+        [NotNull]
         public override MediaConfiguration Show => MovieConfig;
 
         public override string ToString() => $"{MovieConfig.ShowName}";

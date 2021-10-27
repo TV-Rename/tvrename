@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -11,6 +12,7 @@ namespace TVRename
             this.source = source;
         }
 
+        [NotNull]
         protected override string CheckName() => $"Looked in {source.Name()} for the missing files to see if they are being downloaded";
 
         protected override void DoCheck(SetProgressDelegate prog)

@@ -304,7 +304,7 @@ namespace TVRename
         public int SampleFileMaxSizeMB = 50; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
         public bool IgnorePreviouslySeen = false;
-        public bool IgnorePreviouslySeenMovies = false; //todo persist and edit this
+        public bool IgnorePreviouslySeenMovies = false; //todo NOW persist and edit this
         public bool SearchRSS = false;
         public bool SearchRSSManualScanOnly = true;
         public bool SearchJSON = false;
@@ -343,26 +343,27 @@ namespace TVRename
         public static string SpecialsListViewName => "Special";
 
         public MovieConfiguration.MovieFolderFormat DefMovieFolderFormat =>
-            MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile; //TODO - Support Alternate movie storage formats
+            MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile; //todo NOW - Support Alternate movie storage formats
+        
+        public bool AutomateAutoAddWhenOneMovieFound => true; //todo NOW persist and edit this
 
-        public bool AutomateAutoAddWhenOneMovieFound => true; //todo persist and edit this
-
-        public bool AutomateAutoAddWhenOneShowFound => true; //todo persist and edit this
+        public bool AutomateAutoAddWhenOneShowFound => true; //todo NOW persist and edit this
 
         public StringComparison FileNameComparisonType => FileNameCaseSensitiveMatch
             ? StringComparison.CurrentCulture
             : StringComparison.CurrentCultureIgnoreCase;
 
-        public bool FileNameCaseSensitiveMatch => false; //todo persist and edit this
+        public bool FileNameCaseSensitiveMatch => false; //todo NOW persist and edit this
 
-        public bool DeleteMovieFromDisk => false; //todo persist and edit this
-        public bool CheckFutureDatedMovies => false; //todo persist and edit this
-        public bool CheckNoDatedMovies => false; //todo persist and edit this
+        public bool DeleteMovieFromDisk => false; //todo NOW persist and edit this
+        public bool CheckFutureDatedMovies => false; //todo NOW persist and edit this
+        public bool CheckNoDatedMovies => false; //todo NOW persist and edit this
 
+        [NotNull]
         public List<string> SubsFolderNames => new() { "subs", "subtitles", "vobsubs", "sub", "vobsub", "subtitle" };
-        //todo persist and edit this
+        //todo NOW persist and edit this
 
-        public bool CopySubsFolders => true; //todo persist and edit this
+        public bool CopySubsFolders => true; //todo NOW persist and edit this
 
         public bool AutoSaveOnExit = false;
 
@@ -728,7 +729,7 @@ namespace TVRename
             writer.WriteEndElement(); // settings
         }
 
-        private void WriteAppUpdateElement(XmlWriter writer)
+        private void WriteAppUpdateElement([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("AppUpdate");
             writer.WriteElement("Mode", (int)UpdateCheckType);
@@ -768,7 +769,7 @@ namespace TVRename
             writer.WriteEndElement(); // FNPRegexs
         }
 
-        private void WriteFilters(XmlWriter writer)
+        private void WriteFilters([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("ShowFilters");
 
@@ -813,7 +814,7 @@ namespace TVRename
             writer.WriteEndElement(); //SeasonFilters
         }
 
-        private void WriteShowStatusColours(XmlWriter writer)
+        private void WriteShowStatusColours([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("ShowStatusTVWColors");
             foreach (KeyValuePair<ColouringRule, System.Drawing.Color> e in ShowStatusColors)
@@ -1079,6 +1080,7 @@ namespace TVRename
             return !url.HasValue() ? string.Empty : CustomEpisodeName.NameForNoExt(epi, url, true);
         }
 
+        [NotNull]
         public string BTMovieSearchURL(MovieConfiguration? mov)
         {
             if (mov is null)
@@ -1300,11 +1302,12 @@ namespace TVRename
             }
 
             public readonly string status;
+            [NotNull]
             public override string Text => "Show Status: " + status;
 
             public override bool appliesTo(ProcessedSeason s) => false;
 
-            public override bool appliesTo(ShowConfiguration s) => status == s.ShowStatus;
+            public override bool appliesTo([NotNull] ShowConfiguration s) => status == s.ShowStatus;
         }
 
         public class ShowAirStatusColouringRule : ColouringRule
@@ -1337,11 +1340,12 @@ namespace TVRename
                 }
             }
 
+            [NotNull]
             public override string Text => ToString();
 
             public override bool appliesTo(ProcessedSeason s) => false;
 
-            public override bool appliesTo(ShowConfiguration s) => status == s.SeasonsAirStatus;
+            public override bool appliesTo([NotNull] ShowConfiguration s) => status == s.SeasonsAirStatus;
         }
 
         public class SeasonStatusColouringRule : ColouringRule
@@ -1353,6 +1357,7 @@ namespace TVRename
 
             public readonly ProcessedSeason.SeasonStatus status;
 
+            [NotNull]
             public override string Text => ToString();
 
             public override string ToString()
@@ -1376,7 +1381,7 @@ namespace TVRename
                 }
             }
 
-            public override bool appliesTo(ProcessedSeason s) => status == s.Status(s.Show.GetTimeZone());
+            public override bool appliesTo([NotNull] ProcessedSeason s) => status == s.Status(s.Show.GetTimeZone());
 
             public override bool appliesTo(ShowConfiguration s) => false;
         }
@@ -1611,7 +1616,7 @@ namespace TVRename
             UpdateFiters(xmlSettings);
         }
 
-        private void UpdateAppUpdateSettings(XElement xmlSettings)
+        private void UpdateAppUpdateSettings([NotNull] XElement xmlSettings)
         {
             XElement? subElement = xmlSettings.Element("AppUpdate");
             if (subElement != null)
@@ -1762,7 +1767,7 @@ namespace TVRename
 
         [NotNull]
         // ReSharper disable once AnnotateNotNullParameter
-        private static T ExtractEnum<T>(string value)
+        private static T ExtractEnum<T>([NotNull] string value)
         {
             if (!typeof(T).IsEnum)
             {

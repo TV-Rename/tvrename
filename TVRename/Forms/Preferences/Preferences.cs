@@ -470,7 +470,7 @@ namespace TVRename
             UpdateAppUpdateSettings(s);
         }
 
-        private void UpdateAppUpdateSettings(TVSettings s)
+        private void UpdateAppUpdateSettings([NotNull] TVSettings s)
         {
             s.UpdateCheckType = GetUpdateCheckTypeFromUi();
             if (cboUpdateCheckInterval.SelectedValue != null)
@@ -1015,7 +1015,7 @@ namespace TVRename
             EnableDisable();
         }
 
-        private void SetupAppUpdateTabPageContent(TVSettings settings)
+        private void SetupAppUpdateTabPageContent([NotNull] TVSettings settings)
         {
             FillUpdateIntervals();
             TriggerControlEventsForInitialState();
@@ -1173,6 +1173,7 @@ namespace TVRename
             };
         }
 
+        [NotNull]
         private static string ConvertEnum(TheTVDB.ApiVersion mode)
         {
             return mode switch

@@ -77,7 +77,7 @@ namespace TVRename
             }
         }
 
-        private SearchEngine? GenerateSearchEngine(XElement x)
+        private SearchEngine? GenerateSearchEngine([NotNull] XElement x)
         {
             string? url = x.Attribute("URL")?.Value.Replace("!", "{ShowName}+S{Season:2}E{Episode}");
             string? url2 = x.Attribute("URL2")?.Value;
@@ -96,7 +96,7 @@ namespace TVRename
             CurrentSearch = s;
         }
 
-        public void WriteXml([NotNull] XmlWriter writer, string startElementName)
+        public void WriteXml([NotNull] XmlWriter writer, [NotNull] string startElementName)
         {
             writer.WriteStartElement(startElementName);
             writer.WriteElement("Current", CurrentSearch.Name);

@@ -34,6 +34,7 @@ namespace TVRename
         [NotNull]
         public static string NameFor(MovieConfiguration? m, string styleString) => NameFor(m, styleString, false, true);
 
+        [NotNull]
         public static string NameFor(MovieConfiguration m, string styleString, string? extension)
         {
             string r = NameFor(m, styleString);
@@ -94,7 +95,8 @@ namespace TVRename
             return name.Trim();
         }
 
-        public static string NameFor(MovieConfiguration m, string styleString, int year)
+        [NotNull]
+        public static string NameFor(MovieConfiguration m, [NotNull] string styleString, int year)
         {
             string styleStringNewYear = styleString.ReplaceInsensitive("{Year}", year.ToString());
 

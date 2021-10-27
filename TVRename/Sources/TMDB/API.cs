@@ -2,6 +2,7 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using JetBrains.Annotations;
 using TMDbLib.Client;
 using TMDbLib.Objects.Changes;
 using TMDbLib.Objects.General;
@@ -16,7 +17,8 @@ namespace TVRename.TMDB
         //As a safety measure we check that no more than 52 calls are made
         private const int MAX_NUMBER_OF_CALLS = 50;
 
-        public static IEnumerable<ChangesListItem> GetChangesMovies(this TMDbClient client, CancellationToken cts, UpdateTimeTracker latestUpdateTime)
+        [NotNull]
+        public static IEnumerable<ChangesListItem> GetChangesMovies(this TMDbClient client, CancellationToken cts, [NotNull] UpdateTimeTracker latestUpdateTime)
         {
             //We need to ask for updates in blocks of 7 days
             //We'll keep asking until we get to a date within 7 days of today
@@ -50,7 +52,8 @@ namespace TVRename.TMDB
             return updatesResponses;
         }
 
-        public static IEnumerable<ChangesListItem> GetChangesShows(this TMDbClient client, CancellationToken cts, UpdateTimeTracker latestUpdateTime)
+        [NotNull]
+        public static IEnumerable<ChangesListItem> GetChangesShows(this TMDbClient client, CancellationToken cts, [NotNull] UpdateTimeTracker latestUpdateTime)
         {
             //We need to ask for updates in blocks of 7 days
             //We'll keep asking until we get to a date within 7 days of today
@@ -92,20 +95,24 @@ namespace TVRename.TMDB
         {
         }
 
-        public static string WebsiteShowUrl(CachedSeriesInfo ser)
+        [NotNull]
+        public static string WebsiteShowUrl([NotNull] CachedSeriesInfo ser)
         {
             return WebsiteShowUrl(ser.TmdbCode);
         }
 
-        public static string WebsiteShowUrl(ShowConfiguration si)
+        [NotNull]
+        public static string WebsiteShowUrl([NotNull] ShowConfiguration si)
         {
             return WebsiteShowUrl(si.TmdbCode);
         }
 
+        [NotNull]
         public static string WebsiteShowUrl(int seriesId)
         {
             return $"https://www.themoviedb.org/tv/{seriesId}";
         }
+        [NotNull]
         public static string WebsiteMovieUrl(int seriesId)
         {
             return $"https://www.themoviedb.org/movie/{seriesId}";

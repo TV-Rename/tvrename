@@ -163,14 +163,14 @@ namespace TVRename.Forms
             possibleMergedEpisodeRightClickMenu.Show(pt);
         }
 
-        private void AddRcMenuItem(string label, EventHandler command)
+        private void AddRcMenuItem([NotNull] string label, EventHandler command)
         {
             ToolStripMenuItem tsi = new(label.Replace("&", "&&"));
             tsi.Click += command;
             possibleMergedEpisodeRightClickMenu.Items.Add(tsi);
         }
 
-        private void AddRule(PossibleMergedEpisode selected, ShowConfiguration si, ListViewItem lastClicked)
+        private void AddRule([NotNull] PossibleMergedEpisode selected, [NotNull] ShowConfiguration si, [NotNull] ListViewItem lastClicked)
         {
             ShowRule sr = selected.GenerateRule();
 
@@ -202,13 +202,13 @@ namespace TVRename.Forms
             possibleMergedEpisodeRightClickMenu.Close();
         }
 
-        private void BwScan_DoWork(object sender, DoWorkEventArgs e)
+        private void BwScan_DoWork([NotNull] object sender, DoWorkEventArgs e)
         {
             System.Threading.Thread.CurrentThread.Name ??= "MergedEpisode Scan Thread"; // Can only set it once
             dupEps = MergedEpisodeFinderController.FindDoubleEps(mDoc, (BackgroundWorker)sender);
         }
 
-        private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void BwScan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage;
             lblStatus.Text = e.UserState.ToString();

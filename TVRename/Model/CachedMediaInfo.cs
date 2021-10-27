@@ -39,6 +39,8 @@ namespace TVRename
         protected string? BannerString;
         public string? Network;
         public string? FanartUrl;
+
+        [NotNull]
         public IEnumerable<string> Networks => Network!.FromPsv();
 
         public string? Status { get; set; }
@@ -103,6 +105,7 @@ namespace TVRename
             };
         }
 
+        [NotNull]
         private static Locale GetLocale(int? languageId, string? regionCode)
         {
             bool validLanguage = languageId.HasValue && Languages.Instance.GetLanguageFromId(languageId.Value) != null;
@@ -232,6 +235,7 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         protected static string ChooseBetter(string? encumbant, bool betterLanguage, string? newValue)
         {
             if (string.IsNullOrEmpty(encumbant))
@@ -277,6 +281,7 @@ namespace TVRename
 
         public string? ImdbCode => Imdb;
 
+        [NotNull]
         public Locale TargetLocale => ActualLocale ?? new Locale();
         public abstract ProcessedSeason.SeasonType SeasonOrder { get; }
 

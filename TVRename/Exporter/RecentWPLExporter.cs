@@ -7,6 +7,7 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -18,18 +19,22 @@ namespace TVRename
         }
 
         public override bool Active() => TVSettings.Instance.ExportRecentWPL;
+        [NotNull]
         protected override string Name() => "Recent WPL Exporter";
 
         protected override string Location() => TVSettings.Instance.ExportRecentWPLTo;
 
+        [NotNull]
         protected override string GenerateHeader() => $"<?wpl version=\"1.0\"?>\r\n<smil>\r\n    <head>\r\n        <meta name=\"Generator\" content=\"TV Rename -- {Helpers.DisplayVersion}\"/>\r\n        <title>Recent ASX Export</title>\r\n    </head>\r\n    <body>\r\n        <seq>";
 
-        protected override string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, int length)
+        [NotNull]
+        protected override string GenerateRecord(ProcessedEpisode ep, [NotNull] FileInfo file, string name, int length)
         {
             string? filen = System.Security.SecurityElement.Escape(file.UrlPathFullName());
             return $"             <media src=\"{filen}\"/>";
         }
 
+        [NotNull]
         protected override string GenerateFooter() => "         </seq>\r\n    </body>\r\n</smil>";
     }
 }

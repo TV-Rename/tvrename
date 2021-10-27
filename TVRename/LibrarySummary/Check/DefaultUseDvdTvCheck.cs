@@ -8,6 +8,7 @@ namespace TVRename
         {
         }
 
+        [NotNull]
         protected override string FieldName => "Use DVD Order Check";
 
         protected override bool Field => Show.DvdOrder;
@@ -26,6 +27,7 @@ namespace TVRename
         {
         }
 
+        [NotNull]
         protected override string FieldName => "Use Alternate Order Check";
 
         protected override bool Field => Show.AlternateOrder;

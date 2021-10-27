@@ -7,6 +7,7 @@
 //
 
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -35,8 +36,10 @@ namespace TVRename
 
         public override string TargetFolder => Where.DirectoryName;
 
+        [NotNull]
         public override IgnoreItem Ignore => new(Where.FullName);
 
+        [NotNull]
         public override string ScanListViewGroup => "lvgActionMeta";
 
         public override int IconNumber => 7;

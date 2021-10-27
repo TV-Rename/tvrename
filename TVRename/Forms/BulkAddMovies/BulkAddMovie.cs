@@ -99,7 +99,7 @@ namespace TVRename
             DeleteSelectedFolder(lstFMMonitorFolders, TVSettings.Instance.MovieLibraryFolders);
         }
 
-        private void DeleteSelectedFolder(ListBox lb, List<string> folders)
+        private void DeleteSelectedFolder([NotNull] ListBox lb, List<string> folders)
         {
             for (int i = lb.SelectedIndices.Count - 1; i >= 0; i--)
             {
@@ -303,7 +303,7 @@ namespace TVRename
             bwIdentify.RunWorkerAsync();
         }
 
-        private void AutoMatchMovie(CancellationTokenSource cts, PossibleNewMovie ai, BackgroundWorker bw, int total)
+        private void AutoMatchMovie([NotNull] CancellationTokenSource cts, PossibleNewMovie ai, BackgroundWorker bw, int total)
         {
             if (cts.IsCancellationRequested)
             {
@@ -601,7 +601,7 @@ namespace TVRename
             cts.Cancel();
         }
 
-        private void bwIdentify_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void bwIdentify_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
         {
             lvFMNewShows.Update();
 
@@ -617,7 +617,7 @@ namespace TVRename
             lblStatusLabel.Visible = false;
         }
 
-        private void bwRescan_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void bwRescan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage;
             lblStatusLabel.Text = e.UserState.ToString();

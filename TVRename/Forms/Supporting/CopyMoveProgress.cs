@@ -7,6 +7,7 @@
 //
 
 using System.IO;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -30,7 +31,7 @@ namespace TVRename
         private readonly ItemList mToDo;
         private readonly System.Action mDoOnClose;
 
-        public CopyMoveProgress(TVDoc engine, TVDoc.ActionSettings settings, System.Action doOnClose)
+        public CopyMoveProgress([NotNull] TVDoc engine, [NotNull] TVDoc.ActionSettings settings, System.Action doOnClose)
         {
             mDoc = engine.ActionManager;
             mToDo =settings.DoAll ? engine.TheActionList: settings.Lvr;

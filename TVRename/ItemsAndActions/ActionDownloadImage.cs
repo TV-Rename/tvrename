@@ -43,6 +43,7 @@ namespace TVRename
 
         #region Action Members
 
+        [NotNull]
         public override string Name => "Download";
 
         public override string ProgressText => destination.Name;
@@ -91,6 +92,7 @@ namespace TVRename
             return bmPhoto;
         }
 
+        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             try
@@ -182,6 +184,7 @@ namespace TVRename
         public override string DestinationFolder => TargetFolder;
         public override string DestinationFile => destination.Name;
         public override string SourceDetails => path;
+        [NotNull]
         public override string ScanListViewGroup => "lvgActionDownload";
         public override string TargetFolder => destination.DirectoryName;
 

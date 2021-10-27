@@ -10,15 +10,17 @@ namespace TVRename
 {
     internal class ActionNfoEpisode : ActionNfo
     {
-        public ActionNfoEpisode(FileInfo nfo, [NotNull] ProcessedEpisode pe) : base(nfo, pe.Show)
+        public ActionNfoEpisode([NotNull] FileInfo nfo, [NotNull] ProcessedEpisode pe) : base(nfo, pe.Show)
         {
             Episode = pe;
         }
 
+        [NotNull]
         public override string Name => "Write KODI Metadata (Episode)";
 
         protected override long? UpdateTime() => Episode?.SrvLastUpdated;
 
+        [NotNull]
         protected override string RootName() => "episodedetails";
 
         [NotNull]

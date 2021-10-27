@@ -365,7 +365,7 @@ namespace TVRename
             UpdateActionList(actionlist, extras);
         }
 
-        private static bool IsSubTitleFile(FileInfo file)
+        private static bool IsSubTitleFile([NotNull] FileInfo file)
         {
             return TVSettings.Instance.subtitleExtensionsArray.Contains(file.Extension);
         }

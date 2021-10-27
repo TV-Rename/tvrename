@@ -1,4 +1,5 @@
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -12,12 +13,13 @@ namespace TVRename
             Type = type;
         }
 
+        [NotNull]
         public virtual string AsText()
         {
             return $"Type ={Type}";
         }
 
-        public virtual void Tree(TreeNodeCollection tn)
+        public virtual void Tree([NotNull] TreeNodeCollection tn)
         {
             TreeNode n = new("BTItem:" + Type);
             tn.Add(n);

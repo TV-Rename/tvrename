@@ -271,6 +271,7 @@ namespace TVRename
             lbEpsPreview.EndUpdate();
         }
 
+        [NotNull]
         private IEnumerable<ProcessedEpisode> ProcessedEpisodes()
         {
             List<ProcessedEpisode> pel = new();

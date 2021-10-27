@@ -10,6 +10,7 @@ namespace TVRename
 
         public override bool Check() => Show.UseCustomNamingFormat;
 
+        [NotNull]
         public override string Explain() => $"TV Show does not use the standard episode naming format {TVSettings.Instance.NamingStyle.StyleString}, it uses {Show.CustomNamingFormat}";
 
         protected override void FixInternal()
@@ -17,6 +18,7 @@ namespace TVRename
             Show.UseCustomNamingFormat = false;
         }
 
+        [NotNull]
         public override string CheckName => "[TV] Use Custom Folder Name Format";
     }
 }

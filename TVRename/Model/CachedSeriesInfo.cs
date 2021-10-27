@@ -96,7 +96,7 @@ namespace TVRename
             }
         }
 
-        public CachedSeriesInfo([NotNull] JObject json, JObject jsonInDefaultLang, Locale locale, TVDoc.ProviderType source) : this(locale, source)
+        public CachedSeriesInfo([NotNull] JObject json, [NotNull] JObject jsonInDefaultLang, Locale locale, TVDoc.ProviderType source) : this(locale, source)
         {
             LoadJson(json, jsonInDefaultLang);
             IsSearchResultOnly = false;
@@ -207,7 +207,7 @@ namespace TVRename
             }
         }
 
-        internal void AddBanners(int seriesId, IEnumerable<ShowImage> enumerable)
+        internal void AddBanners(int seriesId, [NotNull] IEnumerable<ShowImage> enumerable)
         {
             foreach (ShowImage s in enumerable)
             {
@@ -281,7 +281,7 @@ namespace TVRename
             throw new ShowConfiguration.EpisodeNotFoundException();
         }
 
-        private void LoadJson([NotNull] JObject bestLanguageR, JObject backupLanguageR)
+        private void LoadJson([NotNull] JObject bestLanguageR, [NotNull] JObject backupLanguageR)
         {
             //Here we have two pieces of JSON. One in local language and one in the default language (English).
             //We will populate with the best language frst and then fill in any gaps with the backup Language
@@ -419,7 +419,7 @@ namespace TVRename
             return seasons.FirstOrDefault(season => season.SeasonNumber == sSeasonNumber);
         }
 
-        public bool IsCacheFor(ShowConfiguration show) => show.TmdbCode == TmdbCode || show.TvdbId == TvdbCode || show.TvMazeId == TvMazeCode;
+        public bool IsCacheFor([NotNull] ShowConfiguration show) => show.TmdbCode == TmdbCode || show.TvdbId == TvdbCode || show.TvMazeId == TvMazeCode;
 
         public void AddOrUpdateImage(ShowImage showImage)
         {
@@ -427,13 +427,15 @@ namespace TVRename
             images.Add(showImage);
         }
 
+        [NotNull]
         public IEnumerable<ShowImage> Images(MediaImage.ImageType type)
         {
             IEnumerable<ShowImage> y = images.Where(x => x.ImageStyle == type);
             return FilterLanguages(y, TargetLocale.LanguageToUse(Source));
         }
 
-        private IEnumerable<ShowImage> FilterLanguages(IEnumerable<ShowImage> showImages, Language languageToUse)
+        [NotNull]
+        private IEnumerable<ShowImage> FilterLanguages([NotNull] IEnumerable<ShowImage> showImages, Language languageToUse)
         {
             return showImages.Where(x =>
                 x.LanguageCode is null ||
@@ -442,11 +444,13 @@ namespace TVRename
                 );
         }
 
+        [NotNull]
         public IEnumerable<ShowImage> Images(MediaImage.ImageType type, MediaImage.ImageSubject subject)
         {
             IEnumerable<ShowImage> y = images.Where(x => x.ImageStyle == type && x.Subject == subject);
             return FilterLanguages(y, TargetLocale.LanguageToUse(Source));
         }
+        [NotNull]
         internal IEnumerable<ShowImage> Images(MediaImage.ImageType type, MediaImage.ImageSubject subject, int seasonNumber)
         {
             IEnumerable<ShowImage> y = images.Where(x => x.ImageStyle == type && x.Subject == subject && x.SeasonNumber == seasonNumber);

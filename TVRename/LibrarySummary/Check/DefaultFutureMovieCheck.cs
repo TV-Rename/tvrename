@@ -8,6 +8,7 @@ namespace TVRename
         {
         }
 
+        [NotNull]
         protected override string FieldName => "Do Future Movies Check";
 
         protected override bool Field => Movie.ForceCheckFuture;

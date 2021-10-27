@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+
 namespace TVRename
 {
     public class TorrentEntry : IDownloadInformation // represents a torrent downloading in a doewloader(Torrent)
@@ -21,6 +23,7 @@ namespace TVRename
 
         string IDownloadInformation.Destination => DownloadingTo;
 
+        [NotNull]
         string IDownloadInformation.RemainingText
         {
             get

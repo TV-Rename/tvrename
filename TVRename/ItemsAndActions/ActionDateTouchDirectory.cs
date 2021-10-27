@@ -1,5 +1,6 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -20,6 +21,7 @@ namespace TVRename
             return o is ActionDateTouchDirectory touch && touch.whereDirectory == whereDirectory;
         }
 
+        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             try

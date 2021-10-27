@@ -125,7 +125,7 @@ namespace TVRename
             DeleteOrRecycleFolder(di, settings);
         }
 
-        private static bool CanDelete(FileInfo fi, TVSettings.TidySettings settings)
+        private static bool CanDelete(FileInfo fi, [NotNull] TVSettings.TidySettings settings)
         {
             bool extensionOkToRemove = settings.EmptyIgnoreExtensions &&
                               settings.EmptyIgnoreExtensionsArray.Contains(fi.Extension);
@@ -246,7 +246,7 @@ namespace TVRename
             return -1;
         }
 
-        public static bool IsImportant(this DirectoryInfo info)
+        public static bool IsImportant([NotNull] this DirectoryInfo info)
         {
             if (info.Name.Equals("subs", StringComparison.OrdinalIgnoreCase))
             {
@@ -751,7 +751,7 @@ namespace TVRename
             return Ending.Any(end => HasEnding(f1, f2, end));
         }
 
-        private static bool HasEnding(FileInfo f1, FileInfo f2, string part)
+        private static bool HasEnding([NotNull] FileInfo f1, FileInfo f2, string part)
         {
             if (f1.FileNameNoExt().EndsWith(part + "1", true, CultureInfo.CurrentCulture) &&
                 f2.FileNameNoExt().EndsWith(part + "2", true, CultureInfo.CurrentCulture))
@@ -787,7 +787,8 @@ namespace TVRename
             return false;
         }
 
-        public static string FileNameNoExt(this FileInfo f) => f.Name.RemoveAfter(f.Extension);
+        [NotNull]
+        public static string FileNameNoExt([NotNull] this FileInfo f) => f.Name.RemoveAfter(f.Extension);
 
         private static readonly Regex[] MovieMultiPartRegex =
         {
@@ -795,7 +796,8 @@ namespace TVRename
             new(@"(?<base>.*)[ ._-]*(?<part>|(A-D))$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
         };
 
-        public static string MovieFileNameBase(this FileInfo movieFile)
+        [NotNull]
+        public static string MovieFileNameBase([NotNull] this FileInfo movieFile)
         {
             string longbase = movieFile.FileNameNoExt();
             foreach (Match x in MovieMultiPartRegex.Select(tets => tets.Match(longbase)).Where(x => x.Success))

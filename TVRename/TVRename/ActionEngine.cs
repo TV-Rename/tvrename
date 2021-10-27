@@ -320,7 +320,7 @@ namespace TVRename
             // tidy up any finished workers
             for (int i = actionWorkers.Count - 1; i >= 0; i--)
             {
-                if (!actionWorkers[i].IsAlive)
+                if (!actionWorkers[i]?.IsAlive  ?? true)
                 {
                     actionWorkers.RemoveAt(i); // remove dead worker
                 }

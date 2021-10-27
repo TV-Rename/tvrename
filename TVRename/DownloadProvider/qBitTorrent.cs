@@ -204,7 +204,7 @@ namespace TVRename
             DownloadUrl(torrentUrl, GetApiUrl(qBitTorrentAPIPath.addUrl));
         }
 
-        public void StartTorrentDownload(FileInfo torrentFile)
+        public void StartTorrentDownload([NotNull] FileInfo torrentFile)
         {
             StartTorrent(torrentFile.FullName);
         }
@@ -279,7 +279,7 @@ namespace TVRename
             }
         }
 
-        public void RemoveCompletedDownload(TorrentEntry name)
+        public void RemoveCompletedDownload([NotNull] TorrentEntry name)
         {
             if (string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentHost) || string.IsNullOrEmpty(TVSettings.Instance.qBitTorrentPort))
             {
@@ -310,6 +310,7 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         public string Name() => "qBitTorrent";
     }
 }

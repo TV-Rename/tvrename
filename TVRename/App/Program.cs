@@ -134,7 +134,7 @@ namespace TVRename.App
             Logger.Info("Application exiting");
         }
 
-        private static Assembly? OnAssemblyResolve(object sender, ResolveEventArgs args)
+        private static Assembly? OnAssemblyResolve(object sender, [NotNull] ResolveEventArgs args)
         {
             if (args.Name.StartsWith("CefSharp", StringComparison.Ordinal))
             {

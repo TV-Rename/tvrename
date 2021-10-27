@@ -518,7 +518,7 @@ namespace TVRename
                 }
             }
 
-            private void AddRcMenuItem([NotNull] ContextMenuStrip showRightClickMenu, string name, EventHandler command)
+            private void AddRcMenuItem([NotNull] ContextMenuStrip showRightClickMenu, [NotNull] string name, EventHandler command)
             {
                 ToolStripMenuItem tsi = new(name.Replace("&", "&&"));
                 tsi.Click += command;

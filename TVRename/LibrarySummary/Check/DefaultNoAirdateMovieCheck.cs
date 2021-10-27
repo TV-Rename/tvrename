@@ -8,6 +8,7 @@ namespace TVRename
         {
         }
 
+        [NotNull]
         protected override string FieldName => "No Airdate Movie Check";
 
         protected override bool Field => Movie.ForceCheckNoAirdate;

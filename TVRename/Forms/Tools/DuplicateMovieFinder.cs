@@ -31,7 +31,7 @@ namespace TVRename.Forms
             olvDuplicates.SetObjects(dupMovies);
         }
 
-        private void AddRcMenuItem(string label, EventHandler command)
+        private void AddRcMenuItem([NotNull] string label, EventHandler command)
         {
             ToolStripMenuItem tsi = new(label.Replace("&", "&&"));
             tsi.Click += command;
@@ -59,7 +59,7 @@ namespace TVRename.Forms
             }
         }
 
-        private void ProcessMovie(MovieConfiguration movie)
+        private void ProcessMovie([NotNull] MovieConfiguration movie)
         {
             List<FileInfo> files = movie.Locations
                                 .Select(s => new DirectoryInfo(s))
@@ -84,7 +84,7 @@ namespace TVRename.Forms
             }
         }
 
-        private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void BwScan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage;
             lblStatus.Text = e.UserState.ToString();
@@ -116,7 +116,7 @@ namespace TVRename.Forms
             bwScan.RunWorkerAsync();
         }
 
-        private void olvDuplicates_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
+        private void olvDuplicates_CellRightClick(object sender, [NotNull] BrightIdeasSoftware.CellRightClickEventArgs e)
         {
             if (e.Model is null)
             {
@@ -156,7 +156,7 @@ namespace TVRename.Forms
             }
         }
 
-        private void Update(DuplicateMovie duplicate)
+        private void Update([NotNull] DuplicateMovie duplicate)
         {
             if (dupMovies.Contains(duplicate))
             {
@@ -166,9 +166,9 @@ namespace TVRename.Forms
             UpdateUI();
         }
 
-        private void MergeItems(DuplicateMovie mlastSelected, UI ui)
+        private void MergeItems([NotNull] DuplicateMovie mlastSelected, UI ui)
         {
-            foreach (var file1 in mlastSelected.Files)
+            foreach (FileInfo file1 in mlastSelected.Files)
             {
                 foreach (FileInfo file2 in mlastSelected.Files)
                 {
@@ -181,7 +181,7 @@ namespace TVRename.Forms
             Update(mlastSelected);
         }
 
-        private void MergeConfigurationAndFiles(MovieConfiguration mlastSelectedMovie, FileInfo file1, FileInfo file2, UI ui)
+        private void MergeConfigurationAndFiles(MovieConfiguration mlastSelectedMovie, FileInfo file1, [NotNull] FileInfo file2, UI ui)
         {
             FileHelper.VideoComparison result = FileHelper.BetterQualityFile(file1, file2);
 
@@ -245,7 +245,7 @@ namespace TVRename.Forms
             }
         }
 
-        private static void UpgradeFile(string message, FileInfo keepFile, MovieConfiguration movie, FileInfo removeFile)
+        private static void UpgradeFile(string message, [NotNull] FileInfo keepFile, MovieConfiguration movie, [NotNull] FileInfo removeFile)
         {
             Logger.Info($"{message} remove {removeFile.FullName} as it is not as good quality than {keepFile.FullName}");
             try

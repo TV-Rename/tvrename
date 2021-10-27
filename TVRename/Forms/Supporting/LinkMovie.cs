@@ -27,7 +27,7 @@ namespace TVRename
             lblSourceFileName.Text = file.FullName;
             chosenFile = file;
             DialogResult = DialogResult.Abort;
-            foreach (var movie in matchingShows)
+            foreach (MovieConfiguration movie in matchingShows)
             {
                 cbShows.Items.Add(movie);
             }

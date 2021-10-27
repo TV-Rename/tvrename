@@ -41,7 +41,7 @@ namespace TVRename
         public int RatingCount;
         public string? ThumbnailUrl;
 
-        protected MediaImage(XElement r)
+        protected MediaImage([NotNull] XElement r)
         {
             Id = r.ExtractInt("Id") ?? -1;
             ImageUrl = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("ImageUrl"));

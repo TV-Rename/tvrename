@@ -17,6 +17,7 @@ namespace TVRename
             sources = new List<IDownloadProvider> { new qBitTorrent(), new uTorrent() };
         }
 
+        [NotNull]
         protected override string CheckName() => "Cleaned up completed TV Torrents";
 
         public override bool Active() => TVSettings.Instance.RemoveCompletedTorrents;
@@ -55,7 +56,7 @@ namespace TVRename
             }
         }
 
-        private bool CanRemove(TorrentEntry download, DirFilesCache dfc)
+        private bool CanRemove([NotNull] TorrentEntry download, DirFilesCache dfc)
         {
             if (download.PercentDone < 100)
             {
@@ -110,7 +111,7 @@ namespace TVRename
             return true;
         }
 
-        private List<MovieConfiguration>? MatchMovies(FileInfo droppedFile)
+        private List<MovieConfiguration>? MatchMovies([NotNull] FileInfo droppedFile)
         {
             MovieConfiguration? bestShow = FinderHelper.FindBestMatchingMovie(droppedFile, MDoc.FilmLibrary.Movies);
 
@@ -122,15 +123,15 @@ namespace TVRename
             return new List<MovieConfiguration> { bestShow };
         }
 
-        private static bool IsFound(DirFilesCache dfc, ProcessedEpisode episode)
+        private static bool IsFound(DirFilesCache dfc, [NotNull] ProcessedEpisode episode)
         {
             List<FileInfo> fl = dfc.FindEpOnDisk(episode);
             return fl.Any();
         }
 
-        private static bool IsFound(DirFilesCache dfc, MovieConfiguration movie) => dfc.FindMovieOnDisk(movie).Any();
+        private static bool IsFound([NotNull] DirFilesCache dfc, [NotNull] MovieConfiguration movie) => dfc.FindMovieOnDisk(movie).Any();
 
-        private List<ProcessedEpisode>? MatchEpisodes(FileInfo droppedFile)
+        private List<ProcessedEpisode>? MatchEpisodes([NotNull] FileInfo droppedFile)
         {
             ShowConfiguration? bestShow = FinderHelper.FindBestMatchingShow(droppedFile, MDoc.TvLibrary.Shows);
 

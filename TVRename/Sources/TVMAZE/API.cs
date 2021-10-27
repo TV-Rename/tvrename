@@ -46,6 +46,7 @@ namespace TVRename.TVmaze
             }
         }
 
+        [NotNull]
         public static IEnumerable<CachedSeriesInfo> ShowSearch(string searchText)
         {
             JArray response;
@@ -63,7 +64,7 @@ namespace TVRename.TVmaze
             return response.Children().Select(ConvertSearchResult);
         }
 
-        private static CachedSeriesInfo? ConvertSearchResult(JToken token)
+        private static CachedSeriesInfo? ConvertSearchResult([NotNull] JToken token)
         {
             double score = token["score"].Value<double>();
             JObject show = token["show"].Value<JObject>();
@@ -77,7 +78,7 @@ namespace TVRename.TVmaze
             return downloadedSi;
         }
 
-        private static void GetSeriesIdFromOtherCodes(ISeriesSpecifier source)
+        private static void GetSeriesIdFromOtherCodes([NotNull] ISeriesSpecifier source)
         {
             try
             {
@@ -133,7 +134,7 @@ namespace TVRename.TVmaze
             }
         }
 
-        private static JObject GetSeriesDetailsWithMazeId(ISeriesSpecifier tvMazeId)
+        private static JObject GetSeriesDetailsWithMazeId([NotNull] ISeriesSpecifier tvMazeId)
         {
             try
             {

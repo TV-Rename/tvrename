@@ -16,13 +16,14 @@ namespace TVRename
 {
     internal class MergeLibraryEpisodes : ScanShowActivity
     {
-        public MergeLibraryEpisodes(TVDoc doc) : base(doc)
+        public MergeLibraryEpisodes([NotNull] TVDoc doc) : base(doc)
         {
         }
 
+        [NotNull]
         protected override string ActivityName() => "Created Merge Rules for episodes in the library";
 
-        protected override void Check(ShowConfiguration si, DirFilesCache dfc, TVDoc.ScanSettings settings)
+        protected override void Check(ShowConfiguration si, DirFilesCache dfc, [NotNull] TVDoc.ScanSettings settings)
         {
             if (settings.Token.IsCancellationRequested)
             {

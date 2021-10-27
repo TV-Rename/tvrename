@@ -34,7 +34,8 @@ namespace TVRename
             writer.WriteEndElement(); //ShowImage
         }
 
-        internal static ShowImage GenerateFromLegacyBannerXml(int seriesId, XElement r, TVDoc.ProviderType source)
+        [NotNull]
+        internal static ShowImage GenerateFromLegacyBannerXml(int seriesId, [NotNull] XElement r, TVDoc.ProviderType source)
         {
             // <Banner>
             //        <id>708811</id>

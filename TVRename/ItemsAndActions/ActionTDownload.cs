@@ -41,7 +41,7 @@ namespace TVRename
             this.becomes = becomes;
         }
 
-        public ActionTDownload([NotNull] RSSItem rss, ItemMissing me, ItemDownloading becomes)
+        public ActionTDownload([NotNull] RSSItem rss, [NotNull] ItemMissing me, ItemDownloading becomes)
         {
             SourceName = rss.Title;
             url = rss.URL;
@@ -59,12 +59,14 @@ namespace TVRename
         #region Action Members
 
         public override string ProgressText => SourceName;
+        [NotNull]
         public override string Name => "Get Torrent";
         public override long SizeOfWork => 1000000;
         public override string Produces => url;
 
         public override Item Becomes() => becomes;
 
+        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             bool isDownloadable = url.IsWebLink();
@@ -112,6 +114,7 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         private FileInfo DownloadFile()
         {
             byte[] r = HttpHelper.GetUrlBytes(url, true);
@@ -168,6 +171,7 @@ namespace TVRename
 
         private string? TargetFilename => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).Name;
 
+        [NotNull]
         public override string ScanListViewGroup => "lvgActionDownloadRSS";
 
         public override int IconNumber => 6;

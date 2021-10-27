@@ -13,8 +13,8 @@ namespace TVRename
         protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
         public bool DoMissingCheck;
         public bool DoRename;
-        public bool ForceCheckFuture; //TODO addedit for Movies
-        public bool ForceCheckNoAirdate; //TODO addedit for Movies
+        public bool ForceCheckFuture;
+        public bool ForceCheckNoAirdate;
 
         public int TvdbCode;
 
@@ -24,6 +24,7 @@ namespace TVRename
         public int TmdbCode;
         public string? ImdbCode { get; set; }
 
+        [NotNull]
         public Locale TargetLocale
         {
             get
@@ -143,14 +144,14 @@ namespace TVRename
             }
         }
 
-        public bool AnyIdsMatch(MediaConfiguration newShow) =>
+        public bool AnyIdsMatch([NotNull] MediaConfiguration newShow) =>
             IdsMatch(TvdbCode, newShow.TvdbCode) ||
             IdsMatch(TVmazeCode, newShow.TVmazeCode) ||
             IdsMatch(TmdbCode, newShow.TmdbCode);
 
         private static bool IdsMatch(int code1, int code2) => code1 == code2 && code1 > 0;
 
-        public static int CompareNames(MediaConfiguration x, MediaConfiguration y)
+        public static int CompareNames([NotNull] MediaConfiguration x, [NotNull] MediaConfiguration y)
         {
             string ones = x.ShowName;
             string twos = y.ShowName;
@@ -272,7 +273,7 @@ namespace TVRename
             return GetSimplifiedPossibleShowNames().Any(name => name.Contains(text.CompareName(), StringComparison.OrdinalIgnoreCase));
         }
 
-        public int LengthNameMatch(FileInfo file, bool useFullPath)
+        public int LengthNameMatch([NotNull] FileInfo file, bool useFullPath)
         {
             string filename = useFullPath ? file.FullName : file.Name;
             return GetSimplifiedPossibleShowNames().Select(name => FileHelper.SimplifyAndCheckFilenameLength(filename.CompareName(), name, false, false)).Max();

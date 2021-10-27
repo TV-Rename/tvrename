@@ -7,6 +7,7 @@
 //
 
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -17,6 +18,7 @@ namespace TVRename
         }
 
         public override bool Active() => TVSettings.Instance.ExportMoviesTXT;
+        [NotNull]
         protected override string Name() => "Movies TXT Exporter";
 
         protected override string Location() => TVSettings.Instance.ExportMoviesTXTTo;

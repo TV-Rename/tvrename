@@ -59,6 +59,8 @@ namespace TVRename
             this.pbAliases = new System.Windows.Forms.PictureBox();
             this.lbShowAlias = new System.Windows.Forms.ListBox();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
+            this.cbFolderType = new System.Windows.Forms.ComboBox();
             this.txtIgnoreList = new System.Windows.Forms.Label();
             this.btnIgnoreList = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -110,8 +112,8 @@ namespace TVRename
             this.label19 = new System.Windows.Forms.Label();
             this.cbUseCustomNamingFormat = new System.Windows.Forms.CheckBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.cbFolderType = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.cbIncludeNoAirdate = new System.Windows.Forms.CheckBox();
+            this.cbIncludeFuture = new System.Windows.Forms.CheckBox();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbAdvanced)).BeginInit();
             this.tabPage3.SuspendLayout();
@@ -153,6 +155,8 @@ namespace TVRename
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.cbIncludeNoAirdate);
+            this.tabPage2.Controls.Add(this.cbIncludeFuture);
             this.tabPage2.Controls.Add(this.label9);
             this.tabPage2.Controls.Add(this.cbDoRenaming);
             this.tabPage2.Controls.Add(this.cbDoMissingCheck);
@@ -196,6 +200,7 @@ namespace TVRename
             this.cbDoMissingCheck.TabIndex = 4;
             this.cbDoMissingCheck.Text = "Do &missing check";
             this.cbDoMissingCheck.UseVisualStyleBackColor = true;
+            this.cbDoMissingCheck.CheckedChanged += new System.EventHandler(this.cbDoMissingCheck_CheckedChanged);
             // 
             // pbAdvanced
             // 
@@ -364,6 +369,28 @@ namespace TVRename
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Folders";
             this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 55);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(66, 13);
+            this.label2.TabIndex = 31;
+            this.label2.Text = "Folder Type:";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // cbFolderType
+            // 
+            this.cbFolderType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbFolderType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbFolderType.FormattingEnabled = true;
+            this.cbFolderType.Location = new System.Drawing.Point(111, 52);
+            this.cbFolderType.Name = "cbFolderType";
+            this.cbFolderType.Size = new System.Drawing.Size(331, 21);
+            this.cbFolderType.Sorted = true;
+            this.cbFolderType.TabIndex = 54;
             // 
             // txtIgnoreList
             // 
@@ -964,27 +991,25 @@ namespace TVRename
             this.pictureBox1.TabIndex = 53;
             this.pictureBox1.TabStop = false;
             // 
-            // cbFolderType
+            // cbIncludeNoAirdate
             // 
-            this.cbFolderType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbFolderType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbFolderType.FormattingEnabled = true;
-            this.cbFolderType.Location = new System.Drawing.Point(111, 52);
-            this.cbFolderType.Name = "cbFolderType";
-            this.cbFolderType.Size = new System.Drawing.Size(331, 21);
-            this.cbFolderType.Sorted = true;
-            this.cbFolderType.TabIndex = 54;
+            this.cbIncludeNoAirdate.AutoSize = true;
+            this.cbIncludeNoAirdate.Location = new System.Drawing.Point(27, 112);
+            this.cbIncludeNoAirdate.Name = "cbIncludeNoAirdate";
+            this.cbIncludeNoAirdate.Size = new System.Drawing.Size(250, 17);
+            this.cbIncludeNoAirdate.TabIndex = 43;
+            this.cbIncludeNoAirdate.Text = "Include check when movie has no release date";
+            this.cbIncludeNoAirdate.UseVisualStyleBackColor = true;
             // 
-            // label2
+            // cbIncludeFuture
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 55);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(66, 13);
-            this.label2.TabIndex = 31;
-            this.label2.Text = "Folder Type:";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.cbIncludeFuture.AutoSize = true;
+            this.cbIncludeFuture.Location = new System.Drawing.Point(27, 89);
+            this.cbIncludeFuture.Name = "cbIncludeFuture";
+            this.cbIncludeFuture.Size = new System.Drawing.Size(274, 17);
+            this.cbIncludeFuture.TabIndex = 44;
+            this.cbIncludeFuture.Text = "Include check when movie has a future release date";
+            this.cbIncludeFuture.UseVisualStyleBackColor = true;
             // 
             // AddEditMovie
             // 
@@ -1102,5 +1127,7 @@ namespace TVRename
         private System.Windows.Forms.ComboBox cbDirectory;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox cbFolderType;
+        private System.Windows.Forms.CheckBox cbIncludeNoAirdate;
+        private System.Windows.Forms.CheckBox cbIncludeFuture;
     }
 }

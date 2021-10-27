@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -23,6 +24,7 @@ namespace TVRename
 
         public override string TargetFolder => client.Name();
 
+        [NotNull]
         public override string ScanListViewGroup => "lvgActionDownloadRSS";
         public override int IconNumber => 6;
 
@@ -35,6 +37,7 @@ namespace TVRename
             return !(o is ActionTRemove rss) ? -1 : string.Compare(name.TorrentFile, rss.name.TorrentFile, StringComparison.Ordinal);
         }
 
+        [NotNull]
         public override string Name => "Remove Completed Torrent";
 
         public override string DestinationFolder => name.DownloadingTo;
@@ -45,6 +48,7 @@ namespace TVRename
 
         public override long SizeOfWork => 1000000;
 
+        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             try

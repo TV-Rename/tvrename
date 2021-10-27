@@ -241,6 +241,7 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         private DateTimeZone FigureOutTimeZone()
         {
             string tzstr = ShowTimeZone;
@@ -289,6 +290,7 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         public DateTimeZone GetTimeZone()
         {
             if (seriesTimeZone is null || lastFiguredTz != ShowTimeZone)
@@ -444,11 +446,13 @@ namespace TVRename
 
         protected override MediaType GetMediaType() => MediaType.tv;
 
+        [NotNull]
         protected override MediaCache LocalCache()
         {
             return LocalCache(Provider == TVDoc.ProviderType.libraryDefault ? TVSettings.Instance.DefaultProvider : Provider);
         }
 
+        [NotNull]
         private static MediaCache LocalCache(TVDoc.ProviderType provider) => TVDoc.GetMediaCache(provider);
 
         public enum ShowAirStatus
@@ -768,6 +772,7 @@ namespace TVRename
             return returnValue;
         }
 
+        [NotNull]
         protected override Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo, bool checkExist)
         {
             Dictionary<int, SafeList<string>> fld = new();

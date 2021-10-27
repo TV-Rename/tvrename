@@ -1,4 +1,5 @@
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -42,7 +43,7 @@ namespace TVRename
             }
         }
 
-        public override void Write(System.IO.Stream sw)
+        public override void Write([NotNull] System.IO.Stream sw)
         {
             new BTString(Key).Write(sw);
             Data.Write(sw);

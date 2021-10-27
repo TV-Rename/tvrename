@@ -40,6 +40,7 @@ namespace TVRename
 
         public override string TargetFolder => toRemove.DirectoryName;
 
+        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             try

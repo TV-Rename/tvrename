@@ -15,7 +15,7 @@ namespace TVRename.TheTVDB
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public TvdbAccuracyCheck(LocalCache localCache)
+        public TvdbAccuracyCheck([NotNull] LocalCache localCache)
         {
             lc = localCache;
             Issues = new List<string>();
@@ -140,7 +140,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private void FindOrphanEpisodes(CachedSeriesInfo si, List<int> serverEpIds)
+        private void FindOrphanEpisodes([NotNull] CachedSeriesInfo si, List<int> serverEpIds)
         {
             foreach (Episode localEp in si.Episodes)
             {
@@ -154,7 +154,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private void EnsureUpdated(CachedSeriesInfo si)
+        private void EnsureUpdated([NotNull] CachedSeriesInfo si)
         {
             si.Dirty = true;
             if (!ShowsToUpdate.Contains(si))
@@ -192,7 +192,7 @@ namespace TVRename.TheTVDB
             return epId;
         }
 
-        private void EpisodeAccuracyCheck([NotNull] CachedSeriesInfo si, Episode t)
+        private void EpisodeAccuracyCheck([NotNull] CachedSeriesInfo si, [NotNull] Episode t)
         {
             long serverUpdateTime = t.SrvLastUpdated;
             int epId = t.EpisodeId;
@@ -219,7 +219,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private bool Match(CachedMovieInfo newSi, CachedMovieInfo si)
+        private bool Match([NotNull] CachedMovieInfo newSi, [NotNull] CachedMovieInfo si)
         {
             if (newSi.CollectionName != si.CollectionName) return false;
             if (newSi.Overview != si.Overview) return false;

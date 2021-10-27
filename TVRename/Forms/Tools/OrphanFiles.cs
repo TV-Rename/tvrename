@@ -91,7 +91,7 @@ namespace TVRename.Forms.Tools
             }
         }
 
-        private void AddRcMenuItem(string name, EventHandler command)
+        private void AddRcMenuItem([NotNull] string name, EventHandler command)
         {
             ToolStripMenuItem tsi = new(name.Replace("&", "&&"));
             tsi.Click += command;

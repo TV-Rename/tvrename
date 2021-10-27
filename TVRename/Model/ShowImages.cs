@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -57,7 +58,7 @@ namespace TVRename
             return BestFrom(validImages);
         }
 
-        private static ShowImage? BestFrom(IEnumerable<ShowImage> validImages)
+        private static ShowImage? BestFrom([NotNull] IEnumerable<ShowImage> validImages)
         {
             List<ShowImage> showImages = validImages.ToList();
             if (!showImages.Any())
@@ -80,7 +81,7 @@ namespace TVRename
             };
         }
 
-        internal void MergeImages(ShowImages images)
+        internal void MergeImages([NotNull] ShowImages images)
         {
             if (!this.Any())
             {

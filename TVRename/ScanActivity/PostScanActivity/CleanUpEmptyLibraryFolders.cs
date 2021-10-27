@@ -2,6 +2,7 @@ using Alphaleonis.Win32.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 
 namespace TVRename
@@ -12,6 +13,7 @@ namespace TVRename
         {
         }
 
+        [NotNull]
         protected override string ActivityName() => "Cleaned up empty library folders";
 
         protected override bool Active() => TVSettings.Instance.CleanLibraryAfterActions;

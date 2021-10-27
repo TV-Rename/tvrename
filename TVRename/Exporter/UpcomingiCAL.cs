@@ -27,6 +27,7 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.ExportWTWICAL;
 
         protected override string Location() => TVSettings.Instance.ExportWTWICALTo;
+        [NotNull]
         protected override string Name() => "Upcoming iCal Exporter";
         protected override bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode>? episodes)
         {

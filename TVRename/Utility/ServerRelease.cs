@@ -22,6 +22,7 @@ namespace TVRename
             ReleaseDate = releaseDate;
         }
 
+        [NotNull]
         public string LogMessage()
         {
             StringBuilder sb = new();

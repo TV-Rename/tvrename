@@ -146,12 +146,13 @@ namespace TVRename
             return false;
         }
 
+        [NotNull]
         private static List<FileInfo> FilmFiles([NotNull] DirectoryInfo directory)
         {
             return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Where(file => file.IsMovieFile()).ToList();
         }
 
-        private void CheckFolderForShows([NotNull] DirectoryInfo di, CancellationToken token, BackgroundWorker bw, bool fullLogging, bool showErrorMsgBox)
+        private void CheckFolderForShows([NotNull] DirectoryInfo di, CancellationToken token, [NotNull] BackgroundWorker bw, bool fullLogging, bool showErrorMsgBox)
         {
             int percentComplete = (int)(100.0 / CurrentPhaseTotal * (1.0 * CurrentPhase + 1.0 * CurrentPhaseDirectory / CurrentPhaseTotalDirectory));
             if (percentComplete > 100)
@@ -209,6 +210,7 @@ namespace TVRename
             AddItems.Clear();
         }
 
+        [NotNull]
         private List<MovieConfiguration> AddToLibrary([NotNull] IEnumerable<PossibleNewMovie> ais)
         {
             List<MovieConfiguration> movies = new();
@@ -267,7 +269,8 @@ namespace TVRename
             return movies;
         }
 
-        private MovieConfiguration AddNewMovieToLibrary(PossibleNewMovie ai, bool isInLibraryFolderFileFinder, string? matchingRoot)
+        [NotNull]
+        private MovieConfiguration AddNewMovieToLibrary([NotNull] PossibleNewMovie ai, bool isInLibraryFolderFileFinder, string? matchingRoot)
         {
             // need to add a new showitem
             MovieConfiguration found = new(ai);

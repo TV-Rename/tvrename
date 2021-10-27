@@ -40,7 +40,7 @@ namespace TVRename
             return lvi;
         }
 
-        protected override int FindMedia(MediaCache cache, bool numeric, int matchnum, string what)
+        protected override int FindMedia([NotNull] MediaCache cache, bool numeric, int matchnum, string what)
         {
             List<KeyValuePair<int, CachedSeriesInfo>> lvis;
             lock (cache.SERIES_LOCK)
@@ -49,7 +49,7 @@ namespace TVRename
                     .Where(kvp => Matches(kvp.Key, kvp.Value, numeric, what, matchnum))
                     .ToList();
             }
-            foreach (var lvi in lvis.Select(kvp => NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum)))
+            foreach (ListViewItem lvi in lvis.Select(kvp => NewLvi(kvp.Value, kvp.Key, numeric && kvp.Key == matchnum)))
             {
                 lvMatches.Items.Add(lvi);
             }

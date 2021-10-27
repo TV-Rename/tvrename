@@ -8,6 +8,7 @@ namespace TVRename
         {
         }
 
+        [NotNull]
         protected override string FieldName => "Show Next AirDate Check";
 
         protected override bool Field => Show.ShowNextAirdate;

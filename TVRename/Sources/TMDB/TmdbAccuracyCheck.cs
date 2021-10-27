@@ -13,7 +13,7 @@ namespace TVRename.TMDB
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public TmdbAccuracyCheck(LocalCache localCache)
+        public TmdbAccuracyCheck([NotNull] LocalCache localCache)
         {
             lc = localCache;
             Issues = new List<string>();
@@ -69,7 +69,7 @@ namespace TVRename.TMDB
             }
         }
 
-        private bool Match(CachedMovieInfo newSi, CachedMovieInfo si)
+        private bool Match([NotNull] CachedMovieInfo newSi, [NotNull] CachedMovieInfo si)
         {
             if (newSi.CollectionName != si.CollectionName) return false;
             if (newSi.Overview != si.Overview) return false;
@@ -81,7 +81,7 @@ namespace TVRename.TMDB
             return true;
         }
 
-        private bool Match(CachedSeriesInfo newSi, CachedSeriesInfo si)
+        private bool Match([NotNull] CachedSeriesInfo newSi, [NotNull] CachedSeriesInfo si)
         {
             if (newSi.Name != si.Name) return false;
             if (newSi.Overview != si.Overview) return false;

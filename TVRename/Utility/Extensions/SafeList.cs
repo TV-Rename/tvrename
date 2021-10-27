@@ -76,7 +76,7 @@ namespace TVRename
             }
         }
 
-        public void RemoveAll(Predicate<T> item)
+        public void RemoveAll([NotNull] Predicate<T> item)
         {
             lock (@lock)
             {
@@ -92,7 +92,7 @@ namespace TVRename
             }
         }
 
-        public void AddRange(IEnumerable<T> item)
+        public void AddRange([NotNull] IEnumerable<T> item)
         {
             lock (@lock)
             {
@@ -172,6 +172,7 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         public ReadOnlyCollection<T> AsReadOnly()
         {
             lock (@lock)

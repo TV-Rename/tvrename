@@ -22,6 +22,7 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.SearchJackett;
 
+        [NotNull]
         protected override string CheckName() => "Asked Jackett for download links for the missing files";
 
         protected override void DoCheck(SetProgressDelegate prog)
@@ -81,7 +82,7 @@ namespace TVRename
             ActionList.Replace(toRemove, newItems);
         }
 
-        private static void FindMissingEpisode([NotNull] ShowItemMissing action, ItemList toRemove, ItemList newItems)
+        private static void FindMissingEpisode([NotNull] ShowItemMissing action, ItemList toRemove, [NotNull] ItemList newItems)
         {
             ProcessedEpisode processedEpisode = action.MissingEpisode;
             string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(processedEpisode) : NormalJackettUrl(processedEpisode);
@@ -111,7 +112,7 @@ namespace TVRename
             newItems.AddNullableRange(newItemsForThisMissingEpisode);
         }
 
-        private static void FindMissingEpisode([NotNull] MovieItemMissing action, ItemList toRemove, ItemList newItems)
+        private static void FindMissingEpisode([NotNull] MovieItemMissing action, ItemList toRemove, [NotNull] ItemList newItems)
         {
             string url = TVSettings.Instance.UseJackettTextSearch ? TextJackettUrl(action.MovieConfig) : NormalJackettUrl(action.MovieConfig);
 
@@ -139,6 +140,7 @@ namespace TVRename
             newItems.AddNullableRange(newItemsForThisMissingEpisode);
         }
 
+        [NotNull]
         private static string TextJackettUrl(MovieConfiguration actionMovieConfig)
         {
             string serverName = TVSettings.Instance.JackettServer;
@@ -151,7 +153,8 @@ namespace TVRename
                 $"http://{serverName}:{serverPort}{allIndexer}/api?t=movie&q={text}&apikey={apikey}";
         }
 
-        private static string NormalJackettUrl(MovieConfiguration actionMovieConfig)
+        [NotNull]
+        private static string NormalJackettUrl([NotNull] MovieConfiguration actionMovieConfig)
         {
             string serverName = TVSettings.Instance.JackettServer;
             string serverPort = TVSettings.Instance.JackettPort;
@@ -161,7 +164,8 @@ namespace TVRename
                 $"http://{serverName}:{serverPort}{allIndexer}/api?t=movie&apikey={apikey}&tmdbid={actionMovieConfig.TmdbCode}";
         }
 
-        private static string NormalJackettUrl(ProcessedEpisode processedEpisode)
+        [NotNull]
+        private static string NormalJackettUrl([NotNull] ProcessedEpisode processedEpisode)
         {
             string serverName = TVSettings.Instance.JackettServer;
             string serverPort = TVSettings.Instance.JackettPort;
@@ -173,7 +177,8 @@ namespace TVRename
                 $"http://{serverName}:{serverPort}{allIndexer}/api?t=tvsearch&q={simpleShowName}&tvdbid={processedEpisode.Show.TvdbCode}&season={processedEpisode.AppropriateSeasonNumber}&ep={processedEpisode.AppropriateEpNum}&apikey={apikey}";
         }
 
-        private static string TextJackettUrl(ProcessedEpisode episode)
+        [NotNull]
+        private static string TextJackettUrl([NotNull] ProcessedEpisode episode)
         {
             string serverName = TVSettings.Instance.JackettServer;
             string serverPort = TVSettings.Instance.JackettPort;
@@ -185,7 +190,7 @@ namespace TVRename
                 $"http://{serverName}:{serverPort}{allIndexer}/api?t=tvsearch&q={text}&apikey={apikey}";
         }
 
-        public static void SearchForEpisode(ProcessedEpisode episode)
+        public static void SearchForEpisode([NotNull] ProcessedEpisode episode)
         {
             string serverName = TVSettings.Instance.JackettServer;
             string serverPort = TVSettings.Instance.JackettPort;

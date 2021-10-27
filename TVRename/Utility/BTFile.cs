@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -72,7 +73,7 @@ namespace TVRename
             return r;
         }
 
-        public void Tree(TreeNodeCollection tn)
+        public void Tree([NotNull] TreeNodeCollection tn)
         {
             TreeNode n = new("BT File");
             tn.Add(n);

@@ -430,16 +430,8 @@ namespace TVRename
             selectedShow.CustomShowName = txtCustomShowName.Text;
             selectedShow.UseCustomShowName = chkCustomShowName.Checked;
             selectedShow.UseCustomLanguage = chkCustomLanguage.Checked;
-            if (selectedShow.UseCustomLanguage)
-            {
-                selectedShow.CustomLanguageCode = (Languages.Instance.GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString()) ?? TVSettings.Instance.PreferredTVDBLanguage).Abbreviation;
-            }
-
             selectedShow.UseCustomRegion = chkCustomRegion.Checked;
-            if (selectedShow.UseCustomRegion)
-            {
-                selectedShow.CustomRegionCode = Regions.Instance.RegionFromName(cbLanguage.SelectedItem?.ToString())?.ThreeAbbreviation ?? TVSettings.Instance.TMDBRegion.ThreeAbbreviation;
-            }
+            SetupOverrides();
 
             selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TVSettings.Instance.DefaultShowTimezoneName ?? TimeZoneHelper.DefaultTimeZone();
             selectedShow.ShowNextAirdate = chkShowNextAirdate.Checked;
@@ -468,6 +460,19 @@ namespace TVRename
             selectedShow.UseEpNameMatch = cbEpNameMatching.Checked;
 
             SetupDropDowns();
+        }
+
+        private void SetupOverrides()
+        {
+            if (selectedShow.UseCustomLanguage)
+            {
+                selectedShow.CustomLanguageCode = (Languages.Instance.GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString()) ?? TVSettings.Instance.PreferredTVDBLanguage).Abbreviation;
+            }
+
+            if (selectedShow.UseCustomRegion)
+            {
+                selectedShow.CustomRegionCode = Regions.Instance.RegionFromName(cbLanguage.SelectedItem?.ToString())?.ThreeAbbreviation ?? TVSettings.Instance.TMDBRegion.ThreeAbbreviation;
+            }
         }
 
         private void SetupDropDowns()

@@ -126,14 +126,16 @@ namespace TVRename
                 if (Helpers.InDebug())
                 {
                     DependencyChecker.AssertAllDependenciesPresent();
-                } else
+                }
+                else
                 {
                     DependencyChecker.AssertAllDependenciesPresent(
                         browserSubProcessPath: architectureSpecificBrowserPath,
                         localesDirPath: architectureSpecificLocalesDirPath,
                         resourcesDirPath: architectureSpecificResourcesDirPath
                     );
-                }                Logger.Info("Dependencies all found");
+                }
+                Logger.Info("Dependencies all found");
                 if (showUi)
                 {
                     MessageBox.Show("Dependencies all found", "Browser Capability Test");

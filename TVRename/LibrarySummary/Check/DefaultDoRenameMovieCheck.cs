@@ -8,6 +8,7 @@ namespace TVRename
         {
         }
 
+        [NotNull]
         protected override string FieldName => "Rename Check";
 
         protected override bool Field => Movie.DoRename;

@@ -13,10 +13,12 @@ namespace TVRename
             Episode = null;
         }
 
+        [NotNull]
         public override string Name => "Write KODI Metadata (Show)";
 
         protected override long? UpdateTime() => SelectedShow?.CachedShow?.SrvLastUpdated;
 
+        [NotNull]
         protected override string RootName() => "tvshow";
 
         protected override ActionOutcome UpdateFile()

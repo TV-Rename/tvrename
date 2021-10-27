@@ -430,6 +430,7 @@ namespace TVRename
             AddItems.Clear();
         }
 
+        [NotNull]
         private List<ShowConfiguration> AddToLibrary([NotNull] IEnumerable<PossibleNewTvShow> ais)
         {
             List<ShowConfiguration> touchedShows = new();

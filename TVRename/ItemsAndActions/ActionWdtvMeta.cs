@@ -17,7 +17,7 @@ namespace TVRename
 
     public class ActionWdtvMeta : ActionWriteMetadata
     {
-        public ActionWdtvMeta(FileInfo where, ProcessedEpisode pe) : base(where, pe.Show)
+        public ActionWdtvMeta(FileInfo where, [NotNull] ProcessedEpisode pe) : base(where, pe.Show)
         {
             Episode = pe;
         }
@@ -29,8 +29,10 @@ namespace TVRename
 
         #region Action Members
 
+        [NotNull]
         public override string Name => "Write WD TV Live Hub Meta";
 
+        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             return Episode != null ? WriteEpisodeMetaDataFile() :

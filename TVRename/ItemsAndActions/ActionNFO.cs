@@ -195,7 +195,7 @@ namespace TVRename
             }
         }
 
-        protected static void ReplaceThumbs(XElement root, string aspectAttributeName, IEnumerable<MediaImage> images)
+        protected static void ReplaceThumbs(XElement root, string aspectAttributeName, [NotNull] IEnumerable<MediaImage> images)
         {
             {
                 List<MediaImage> newImages = images.ToList();
@@ -223,7 +223,7 @@ namespace TVRename
             }
         }
 
-        protected static void ReplaceFanart(XElement root, IEnumerable<MediaImage> images)
+        protected static void ReplaceFanart(XElement root, [NotNull] IEnumerable<MediaImage> images)
         {
             {
                 List<MediaImage> newImages = images.ToList();

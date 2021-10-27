@@ -25,6 +25,7 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.CheckSABnzbd;
 
+        [NotNull]
         protected override string CheckName() => "Looked in the listed SABnz queue to see if the episode is already being downloaded";
 
         protected override void DoCheck(SetProgressDelegate prog)

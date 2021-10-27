@@ -258,6 +258,7 @@ namespace TVRename
             return wc.DownloadData(url);
         }
 
+        [NotNull]
         public static string LoggableDetails([NotNull] this IOException ex)
         {
             StringBuilder s = new();
@@ -319,6 +320,7 @@ namespace TVRename
         public static JObject JsonHttpGetRequest([NotNull] string url, string? authToken) =>
             JObject.Parse(HttpRequest("GET", url, null, "application/json", authToken, string.Empty));
 
+        [NotNull]
         public static JArray JsonListHttpGetRequest([NotNull] string url, string? authToken) =>
             JArray.Parse(HttpRequest("GET", url, null, "application/json", authToken, string.Empty));
 

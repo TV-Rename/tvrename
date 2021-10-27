@@ -93,7 +93,7 @@ namespace TVRename
             label3.Text = GetPromptLabel(Source);
         }
 
-        private string GenerateNewHintForProvider(MediaConfiguration mi)
+        private string GenerateNewHintForProvider([NotNull] MediaConfiguration mi)
         {
             return mi.IdFor(Source) > 0 ? mi.IdFor(Source).ToString() : mi.ShowName;
         }
@@ -210,7 +210,7 @@ namespace TVRename
 
         protected abstract int FindMedia(MediaCache cache, bool numeric, int matchnum, string what);
 
-        protected bool Matches(int num, CachedMediaInfo kvp, bool numeric, string what, int matchnum)
+        protected bool Matches(int num, [NotNull] CachedMediaInfo kvp, bool numeric, string what, int matchnum)
         {
             string show = kvp.Name.CompareName();
 

@@ -28,7 +28,7 @@ namespace TVRename
             return FindSeasEp(fi, out seas, out ep, out maxEp, si, TVSettings.Instance.FNPRegexs, out re);
         }
 
-        public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowConfiguration? si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? re)
+        public static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowConfiguration? si, [NotNull] IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? re)
         {
             return FindSeasEp(string.Empty, itemName, out seas, out ep, out maxEp, si, rexps, out re);
         }
@@ -200,12 +200,12 @@ namespace TVRename
             return true;
         }
 
-        public static bool FileNeeded(FileInfo fi, MovieConfiguration si, DirFilesCache dfc)
+        public static bool FileNeeded([NotNull] FileInfo fi, [NotNull] MovieConfiguration si, [NotNull] DirFilesCache dfc)
         {
             return MovieNeeded(si, dfc, fi);
         }
 
-        private static bool MovieNeeded(MovieConfiguration si, DirFilesCache dfc, FileInfo fi)
+        private static bool MovieNeeded([NotNull] MovieConfiguration si, [NotNull] DirFilesCache dfc, [NotNull] FileInfo fi)
         {
             if (fi is null)
             {
@@ -252,7 +252,7 @@ namespace TVRename
             return true;
         }
 
-        public static bool FileNeeded(DirectoryInfo? di, MovieConfiguration? si, DirFilesCache dfc)
+        public static bool FileNeeded(DirectoryInfo? di, MovieConfiguration? si, [NotNull] DirFilesCache dfc)
         {
             if (di is null)
             {
@@ -278,7 +278,8 @@ namespace TVRename
             return true;
         }
 
-        public static IEnumerable<FileInfo> FindMovieOnDisk(this DirFilesCache cache, MovieConfiguration si)
+        [NotNull]
+        public static IEnumerable<FileInfo> FindMovieOnDisk([NotNull] this DirFilesCache cache, [NotNull] MovieConfiguration si)
         {
             List<FileInfo> ret = new();
 
@@ -295,14 +296,14 @@ namespace TVRename
         }
 
         [NotNull]
-        public static List<FileInfo> FindEpOnDisk(this DirFilesCache? dfc, ProcessedEpisode pe,
+        public static List<FileInfo> FindEpOnDisk(this DirFilesCache? dfc, [NotNull] ProcessedEpisode pe,
             bool checkDirectoryExist = true)
         {
             return FindEpOnDisk(dfc, pe.Show, pe, checkDirectoryExist);
         }
 
         [NotNull]
-        private static List<FileInfo> FindEpOnDisk(DirFilesCache? dfc, ShowConfiguration si, ProcessedEpisode epi,
+        private static List<FileInfo> FindEpOnDisk(DirFilesCache? dfc, [NotNull] ShowConfiguration si, [NotNull] ProcessedEpisode epi,
             bool checkDirectoryExist = true)
         {
             DirFilesCache cache = dfc ?? new DirFilesCache();
@@ -441,7 +442,7 @@ namespace TVRename
         }
 
         public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, out int maxEp,
-            ShowConfiguration? si, IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? rex)
+            ShowConfiguration? si, [NotNull] IEnumerable<TVSettings.FilenameProcessorRE> rexps, out TVSettings.FilenameProcessorRE? rex)
         {
             string showNameHint = si != null ? si.ShowName : string.Empty;
             maxEp = -1;
@@ -548,7 +549,8 @@ namespace TVRename
             return matchingShows.Where(testShow => !IsInferiorTo(testShow, matchingShows)).ToList();
         }
 
-        public static List<T> RemoveShortMedia<T>(IEnumerable<T> matchingMovies, IEnumerable<MediaConfiguration> matchingShows) where T : MediaConfiguration
+        [NotNull]
+        public static List<T> RemoveShortMedia<T>([NotNull] IEnumerable<T> matchingMovies, IEnumerable<MediaConfiguration> matchingShows) where T : MediaConfiguration
         {
             return matchingMovies.Where(testShow => !IsContenedTo(testShow, matchingShows)).ToList();
         }
@@ -592,14 +594,14 @@ namespace TVRename
                 .Any(testShow => testShow.ShowName.Contains(currentlyMatchedShow.ShowName));
         }
 
-        private static bool HaveACommonId(MediaConfiguration item, MediaConfiguration currentlyMatchedTvShow)
+        private static bool HaveACommonId([NotNull] MediaConfiguration item, [NotNull] MediaConfiguration currentlyMatchedTvShow)
         {
             return HaveSameNonZeroId(item, currentlyMatchedTvShow, TVDoc.ProviderType.TheTVDB)
                 || HaveSameNonZeroId(item, currentlyMatchedTvShow, TVDoc.ProviderType.TMDB)
                 || HaveSameNonZeroId(item, currentlyMatchedTvShow, TVDoc.ProviderType.TVmaze);
         }
 
-        private static bool HaveSameNonZeroId(MediaConfiguration item, MediaConfiguration currentlyMatchedTvShow, TVDoc.ProviderType p)
+        private static bool HaveSameNonZeroId([NotNull] MediaConfiguration item, [NotNull] MediaConfiguration currentlyMatchedTvShow, TVDoc.ProviderType p)
         {
             return item.IdFor(p) == currentlyMatchedTvShow.IdFor(p)
                    && item.IdFor(p) > 0
@@ -688,7 +690,7 @@ namespace TVRename
                 string hint = file.RemoveExtension(TVSettings.Instance.UseFullPathNameToMatchSearchFolders) + ".";
 
                 //remove any search folders  from the hint. They are probbably useless at helping specify the showname
-                foreach (var path in TVSettings.Instance.DownloadFolders)
+                foreach (string path in TVSettings.Instance.DownloadFolders)
                 {
                     if (hint.StartsWith(path, StringComparison.OrdinalIgnoreCase))
                     {
@@ -893,12 +895,14 @@ namespace TVRename
             return sil.Where(item => item.NameMatch(filename));
         }
 
+        [NotNull]
         public static IEnumerable<MovieConfiguration> FindMatchingShows(string filename, [NotNull] IEnumerable<MovieConfiguration> sil)
         {
             return sil.Where(item => item.NameMatch(filename));
         }
 
-        public static FileInfo GenerateTargetName(ItemMissing mi, FileInfo from)
+        [NotNull]
+        public static FileInfo GenerateTargetName([NotNull] ItemMissing mi, [NotNull] FileInfo from)
         {
             if (mi.DoRename && TVSettings.Instance.RenameCheck)
             {
@@ -908,7 +912,8 @@ namespace TVRename
             return new FileInfo(mi.DestinationFolder.EnsureEndsWithSeparator() + from.Name);
         }
 
-        public static FileInfo GenerateTargetName(string folder, ProcessedEpisode pep, FileInfo fi)
+        [NotNull]
+        public static FileInfo GenerateTargetName([NotNull] string folder, [NotNull] ProcessedEpisode pep, [NotNull] FileInfo fi)
         {
             string filename = fi.Name;
 

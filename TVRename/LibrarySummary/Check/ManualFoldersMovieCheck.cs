@@ -87,7 +87,7 @@ namespace TVRename
             }
         }
 
-        private void MoveFiles(IEnumerable<FileInfo> where, string destination)
+        private void MoveFiles([NotNull] IEnumerable<FileInfo> where, string destination)
         {
             Directory.CreateDirectory(destination);
             foreach (FileInfo? f in where)
@@ -96,7 +96,7 @@ namespace TVRename
             }
         }
 
-        private void CopyOrMove(DirectoryInfo fromDirectory, string toDirectory)
+        private void CopyOrMove([NotNull] DirectoryInfo fromDirectory, string toDirectory)
         {
             DirectoryInfo target = new(toDirectory);
 
@@ -133,6 +133,7 @@ namespace TVRename
             LOGGER.Info($"Moved whole directory {fromDirectory.FullName } to {toDirectory}");
         }
 
+        [NotNull]
         protected override string FieldName => "Use manual folders";
 
         protected override bool Field => Movie.UseManualLocations;

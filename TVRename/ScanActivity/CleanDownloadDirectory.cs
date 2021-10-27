@@ -32,6 +32,7 @@ namespace TVRename
                                          TVSettings.Instance.ReplaceMoviesWithBetterQuality ||
                                          TVSettings.Instance.CopyFutureDatedEpsFromSearchFolders;
 
+        [NotNull]
         protected override string CheckName() => "Cleaned up and files in download directory that are not needed";
 
         protected override void DoCheck(SetProgressDelegate prog)
@@ -178,6 +179,7 @@ namespace TVRename
             return new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup);
         }
 
+        [NotNull]
         private static Action SetupDirectoryRemoval([NotNull] DirectoryInfo di,
             [NotNull] IReadOnlyList<MovieConfiguration> matchingMovies)
         {
@@ -295,7 +297,7 @@ namespace TVRename
             }
         }
 
-        private (bool?, ProcessedEpisode?) CanFileBeDeletedForShow(bool unattended, FileInfo fi, IDialogParent owner, ShowConfiguration si, 
+        private (bool?, ProcessedEpisode?) CanFileBeDeletedForShow(bool unattended, FileInfo fi, IDialogParent owner, [NotNull] ShowConfiguration si, 
             List<ShowConfiguration> matchingShows)
         {
             FinderHelper.FindSeasEp(fi, out int seasF, out int epF, out int _, si, out TVSettings.FilenameProcessorRE re);
@@ -344,11 +346,11 @@ namespace TVRename
             }
         }
 
-        private bool? ReviewFileAgainstExistingMovies(bool unattended, FileInfo fi, IDialogParent owner, List<MovieConfiguration> matchingMovies)
+        private bool? ReviewFileAgainstExistingMovies(bool unattended, FileInfo fi, IDialogParent owner, [NotNull] List<MovieConfiguration> matchingMovies)
         {
             bool? fileCanBeDeleted = null;
 
-            foreach (var testMovie in matchingMovies)
+            foreach (MovieConfiguration testMovie in matchingMovies)
             {
                 List<FileInfo> encumbants = dfc.FindMovieOnDisk(testMovie).ToList();
 
@@ -372,7 +374,7 @@ namespace TVRename
             return fileCanBeDeleted;
         }
 
-        private void RemoveFileAndReport(FileInfo fi, List<MovieConfiguration> matchingMovies, List<ShowConfiguration> matchingShows,
+        private void RemoveFileAndReport(FileInfo fi, [NotNull] List<MovieConfiguration> matchingMovies, [NotNull] List<ShowConfiguration> matchingShows,
             ProcessedEpisode? firstMatchingPep)
         {
             if (matchingMovies.Any())
@@ -395,7 +397,7 @@ namespace TVRename
             }
         }
 
-        private static void LogError(FileInfo fi, int seasF, int epF, TVSettings.FilenameProcessorRE? re, ShowConfiguration si, string typeMissing)
+        private static void LogError([NotNull] FileInfo fi, int seasF, int epF, TVSettings.FilenameProcessorRE? re, [NotNull] ShowConfiguration si, string typeMissing)
         {
             if (seasF == -1)
             {
@@ -716,7 +718,7 @@ namespace TVRename
                 $"Using {fi.FullName} to replace {existingFile.FullName} as it is better quality");
         }
 
-        public static void UpgradeFile([NotNull] FileInfo fi, MovieConfiguration pep, [NotNull] FileInfo existingFile, TVDoc doc, ItemList actions)
+        public static void UpgradeFile([NotNull] FileInfo fi, MovieConfiguration pep, [NotNull] FileInfo existingFile, TVDoc doc, [NotNull] ItemList actions)
         {
             if (existingFile.Extension != fi.Extension)
             {

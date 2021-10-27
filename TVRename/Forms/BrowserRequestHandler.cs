@@ -2,12 +2,13 @@ using CefSharp;
 using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Web;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
     public class BrowserRequestHandler : IRequestHandler
     {
-        public bool OnBeforeBrowse(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect)
+        public bool OnBeforeBrowse(IWebBrowser browserControl, IBrowser browser, IFrame frame, [NotNull] IRequest request, bool userGesture, bool isRedirect)
         {
             if (request.Url is null)
             {
@@ -71,14 +72,14 @@ namespace TVRename
             IRequest request, bool isNavigation, bool isDownload, string requestInitiator, ref bool disableDefaultHandling) => null;
 
         public bool GetAuthCredentials(IWebBrowser chromiumWebBrowser, IBrowser browser, string originUrl, bool isProxy, string host,
-            int port, string realm, string scheme, IAuthCallback callback)
+            int port, string realm, string scheme, [NotNull] IAuthCallback callback)
         {
             callback.Dispose();
             return false;
         }
 
         public bool OnCertificateError(IWebBrowser browserControl, IBrowser browser, CefErrorCode errorCode, string requestUrl,
-            ISslInfo sslInfo, IRequestCallback callback)
+            ISslInfo sslInfo, [NotNull] IRequestCallback callback)
         {
             callback.Dispose();
             return false;
@@ -104,7 +105,7 @@ namespace TVRename
         }
 
         public bool OnQuotaRequest(IWebBrowser browserControl, IBrowser browser, string originUrl, long newSize,
-            IRequestCallback callback)
+            [NotNull] IRequestCallback callback)
         {
             callback.Dispose();
             return false;

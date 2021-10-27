@@ -25,6 +25,7 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.SearchJSON;
 
+        [NotNull]
         protected override string CheckName() => "Check JSON links for the missing files";
 
         protected override void DoCheck(SetProgressDelegate prog)

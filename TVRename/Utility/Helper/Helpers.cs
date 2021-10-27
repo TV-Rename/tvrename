@@ -61,6 +61,7 @@ namespace TVRename
             };
         }
 
+        [NotNull]
         public static string PrettyPrint(this MovieConfiguration.MovieFolderFormat format)
         {
             return format switch
@@ -73,6 +74,7 @@ namespace TVRename
             };
         }
 
+        [NotNull]
         public static string PrettyPrint(this MediaConfiguration.MediaType st)
         {
             return st switch
@@ -84,6 +86,7 @@ namespace TVRename
             };
         }
 
+        [NotNull]
         public static string PrettyPrint(this ProcessedSeason.SeasonType st)
         {
             return st switch
@@ -96,6 +99,7 @@ namespace TVRename
             };
         }
 
+        [NotNull]
         public static string PrettyPrint(this TVDoc.ProviderType type)
         {
             return type switch
@@ -257,7 +261,7 @@ namespace TVRename
 
         public static Color WarningColor() => Color.FromArgb(255, 210, 210);
 
-        public static T LongestShowName<T>(this IEnumerable<T> media) where T : MediaConfiguration
+        public static T LongestShowName<T>([NotNull] this IEnumerable<T> media) where T : MediaConfiguration
         {
             IEnumerable<T> mediaConfigurations = media as T[] ?? media.ToArray();
             int longestName = mediaConfigurations.Select(configuration => configuration.ShowName.Length).Max();

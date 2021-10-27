@@ -8,6 +8,7 @@
 
 using System;
 using System.Windows.Forms;
+using JetBrains.Annotations;
 
 // Sorting IComparer classes used by the ListViews in UI.cs
 
@@ -19,7 +20,7 @@ namespace TVRename
         {
         }
 
-        protected override int CompareListViewItem(ListViewItem x, ListViewItem y) =>
+        protected override int CompareListViewItem([NotNull] ListViewItem x, [NotNull] ListViewItem y) =>
             string.Compare(x.SubItems[Col].Text, y.SubItems[Col].Text, StringComparison.OrdinalIgnoreCase);
     }
 }

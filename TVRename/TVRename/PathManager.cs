@@ -62,6 +62,7 @@ namespace TVRename
             return new FileInfo(System.IO.Path.Combine(path, file));
         }
 
+        [NotNull]
         public static FileInfo StateFile => GetFileInfo(STATE_FILE_NAME);
 
         [NotNull]
@@ -79,6 +80,7 @@ namespace TVRename
         [NotNull]
         public static FileInfo TVmazeFile => GetFileInfo(TVMAZE_FILE_NAME);
 
+        [NotNull]
         public static FileInfo TmdbFile => GetFileInfo(TMDB_FILE_NAME);
 
         // ReSharper disable once InconsistentNaming

@@ -13,6 +13,7 @@ namespace TVRename
             Movie.UseCustomRegion = false;
         }
 
+        [NotNull]
         protected override string FieldName => "Use Custom Region";
 
         protected override bool Field => Movie.UseCustomRegion;

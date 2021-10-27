@@ -11,6 +11,7 @@ namespace TVRename
 
         public override bool Check() => !Show.AutoAddFolderBase.HasValue() && Show.AutoAddNewSeasons();
 
+        [NotNull]
         public override string Explain() => "This TV show does not have an automatic folder base specified.";
 
         protected override void FixInternal()
@@ -38,6 +39,7 @@ namespace TVRename
                                      + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(Show.ShowName));
         }
 
+        [NotNull]
         public override string CheckName => "[TV] Has an automatic base folder supplied";
     }
 }

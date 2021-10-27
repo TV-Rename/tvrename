@@ -17,7 +17,7 @@ namespace TVRename
         {
         }
 
-        protected override int CompareListViewItem(ListViewItem x, ListViewItem y) => ParseAsInt(x) - ParseAsInt(y);
+        protected override int CompareListViewItem([NotNull] ListViewItem x, [NotNull] ListViewItem y) => ParseAsInt(x) - ParseAsInt(y);
 
         private int ParseAsInt([NotNull] ListViewItem cellItem)
         {

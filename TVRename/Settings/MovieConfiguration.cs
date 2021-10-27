@@ -47,8 +47,6 @@ namespace TVRename
             CustomFolderNameFormat = string.Empty;
             CustomRegionCode = string.Empty;
             ConfigurationProvider = TVDoc.ProviderType.libraryDefault;
-            ForceCheckNoAirdate = TVSettings.Instance.CheckNoDatedMovies;
-            ForceCheckFuture = TVSettings.Instance.CheckFutureDatedMovies;
 
             TvdbCode = -1;
             TVmazeCode = -1;
@@ -57,10 +55,14 @@ namespace TVRename
             Format = TVSettings.Instance.DefMovieFolderFormat;
             DoRename = TVSettings.Instance.DefMovieDoRenaming;
             DoMissingCheck = TVSettings.Instance.DefMovieDoMissingCheck;
+            ForceCheckFuture = TVSettings.Instance.CheckFutureDatedMovies;
+            ForceCheckNoAirdate = TVSettings.Instance.CheckNoDatedMovies;
+
             UseAutomaticFolders = TVSettings.Instance.DefMovieUseutomaticFolders;
             AutomaticFolderRoot = TVSettings.Instance.DefMovieUseDefaultLocation ? TVSettings.Instance.DefMovieDefaultLocation ?? string.Empty : string.Empty;
         }
 
+        [NotNull]
         public string ShowNameWithYear => $"{ShowName} ({CachedMovie?.Year})";
 
         public MovieConfiguration(int code, TVDoc.ProviderType type) : this()
@@ -105,7 +107,7 @@ namespace TVRename
             return value is null ? TVSettings.Instance.DefMovieFolderFormat : (MovieFolderFormat)value;
         }
 
-        public MovieConfiguration(PossibleNewMovie movie) : this()
+        public MovieConfiguration([NotNull] PossibleNewMovie movie) : this()
         {
             if (movie.CodeUnknown)
             {
@@ -130,10 +132,11 @@ namespace TVRename
                 : movie.SourceProvider;
         }
 
-        public override ProcessedSeason.SeasonType SeasonOrder => throw new NotImplementedException();
+        public override ProcessedSeason.SeasonType SeasonOrder => throw new InvalidOperationException();
 
         protected override MediaType GetMediaType() => MediaType.movie;
 
+        [NotNull]
         protected override Dictionary<int, SafeList<string>> AllFolderLocations(bool manualToo, bool checkExist)
         {
             Dictionary<int, SafeList<string>> fld = new()
@@ -164,6 +167,7 @@ namespace TVRename
             return fld;
         }
 
+        [NotNull]
         private string AutoFolderNameForMovie()
         {
             if (string.IsNullOrEmpty(AutomaticFolderRoot))
@@ -195,6 +199,7 @@ namespace TVRename
             return (AutoFolderNameForMovie(), AutoFolderNameForMovie(year.Value - 1), AutoFolderNameForMovie(year.Value + 1));
         }
 
+        [NotNull]
         private string AutoFolderNameForMovie(int year)
         {
             if (string.IsNullOrEmpty(AutomaticFolderRoot))
@@ -223,6 +228,7 @@ namespace TVRename
             }
         }
 
+        [NotNull]
         protected override MediaCache LocalCache()
         {
             return Provider switch
@@ -234,12 +240,15 @@ namespace TVRename
 
         protected override TVDoc.ProviderType DefaultProvider() => TVSettings.Instance.DefaultMovieProvider;
 
+        [NotNull]
         private static MediaCache LocalCache(TVDoc.ProviderType provider) => TVDoc.GetMediaCache(provider);
 
         public CachedMovieInfo? CachedMovie => (CachedMovieInfo)CachedData;
 
+        [NotNull]
         public IEnumerable<string> Locations => AllFolderLocations(true, false).Values.SelectMany(x => x);
 
+        [NotNull]
         public string ProposedFilename
         {//https://kodi.wiki/view/Naming_video_files/Movies
             get
@@ -309,6 +318,7 @@ namespace TVRename
             writer.WriteEndElement(); // ShowItem
         }
 
+        [NotNull]
         public IEnumerable<string> AutomaticLocations() => AllFolderLocations(false, false).Values.SelectMany(x => x);
 
         public bool IsDvdBluRay()

@@ -164,7 +164,7 @@ namespace TVRename.Forms
             }
         }
 
-        private void AddRcMenuItem(string label, EventHandler command)
+        private void AddRcMenuItem([NotNull] string label, EventHandler command)
         {
             ToolStripMenuItem tsi = new(label.Replace("&", "&&"));
             tsi.Click += command;
@@ -203,7 +203,7 @@ namespace TVRename.Forms
             }
         }
 
-        private void BwScan_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void BwScan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
         {
             pbProgress.Value = e.ProgressPercentage;
             lblStatus.Text = e.UserState?.ToString();
@@ -235,7 +235,7 @@ namespace TVRename.Forms
             bwScan.RunWorkerAsync();
         }
 
-        private void lvRecommendations_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
+        private void lvRecommendations_CellRightClick(object sender, [NotNull] BrightIdeasSoftware.CellRightClickEventArgs e)
         {
             if (e.Model is null)
             {
@@ -249,7 +249,7 @@ namespace TVRename.Forms
             AddRcMenuItem("Add to Library", (_, _) => AddToLibrary(mlastSelected.Key,mlastSelected.Name));
         }
 
-        private void lvRecommendations_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        private void lvRecommendations_ItemSelectionChanged(object sender, [NotNull] ListViewItemSelectionChangedEventArgs e)
         {
             if (!((e.Item as BrightIdeasSoftware.OLVListItem)?.RowObject is RecommendationRow rr))
             {

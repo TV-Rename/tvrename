@@ -9,9 +9,11 @@ namespace TVRename
 {
     internal static class LinqHelper
     {
+        [NotNull]
         public static List<T> AsList<T>([CanBeNull] this T item) => new() { item };
 
-        public static Task ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> funcBody, int maxDoP = 4)
+        [NotNull]
+        public static Task ParallelForEachAsync<T>([NotNull] this IEnumerable<T> source, Func<T, Task> funcBody, int maxDoP = 4)
         {
             async Task AwaitPartition(IEnumerator<T> partition)
             {
