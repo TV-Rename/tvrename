@@ -942,15 +942,12 @@ namespace TVRename
             chkUseLibraryFullPathWhenMatchingShows.Checked = s.UseFullPathNameToMatchLibraryFolders;
             chkUseSearchFullPathWhenMatchingShows.Checked = s.UseFullPathNameToMatchSearchFolders;
             chkAutoAddAsPartOfQuickRename.Checked = s.AutoAddAsPartOfQuickRename;
-            s.AutoAddAsPartOfQuickRename = chkAutoAddAsPartOfQuickRename.Checked;
             cbAutomateAutoAddWhenOneMovieFound.Checked = s.AutomateAutoAddWhenOneMovieFound;
             cbAutomateAutoAddWhenOneShowFound.Checked = s.AutomateAutoAddWhenOneShowFound;
             chkCleanLibraryAfterActions.Checked = s.CleanLibraryAfterActions;
-
             cmbUnattendedDuplicateAction.Text = ConvertEnum(s.UnattendedMultiActionOutcome);
             cmbSupervisedDuplicateAction.Text = ConvertEnum(s.UserMultiActionOutcome);
             cmbDefMovieFolderFormat.Text = ConvertEnum(s.DefMovieFolderFormat);
-
             cbSearchJackett.Checked = s.SearchJackett;
             chkUseJackettTextSearch.Checked = s.UseJackettTextSearch;
             cbSearchJackettOnManualScansOnly.Checked = s.SearchJackettManualScanOnly;
@@ -960,7 +957,6 @@ namespace TVRename
             txtJackettPort.Text = s.JackettPort;
             txtJackettIndexer.Text = s.JackettIndexer;
             txtJackettAPIKey.Text = s.JackettAPIKey;
-
             cbMissing.Checked = s.MissingCheck;
             chkMoveLibraryFiles.Checked = s.MoveLibraryFiles;
             cbxUpdateAirDate.Checked = s.CorrectFileDates;
@@ -972,13 +968,11 @@ namespace TVRename
             cbTVDBLanguages.Text = s.PreferredTVDBLanguage.LocalName;
             cbScanIncludesBulkAdd.Checked = s.DoBulkAddInScan;
             chkIgnoreAllSpecials.Checked = s.IgnoreAllSpecials;
-
             cbEpThumbJpg.Checked = s.EpJPGs;
             cbSeriesJpg.Checked = s.SeriesJpg;
             cbXMLFiles.Checked = s.Mede8erXML;
             cbShrinkLarge.Checked = s.ShrinkLargeMede8erImages;
             cbFantArtJpg.Checked = s.FanArtJpg;
-
             cbDeleteEmpty.Checked = s.Tidyup.DeleteEmpty;
             cbRecycleNotDelete.Checked = s.Tidyup.DeleteEmptyIsRecycle;
             cbEmptyIgnoreWords.Checked = s.Tidyup.EmptyIgnoreWords;
