@@ -13,7 +13,7 @@ namespace TVRename
 
         protected override bool Field => Movie.ForceCheckFuture;
 
-        protected override bool Default => TVSettings.Instance.CheckFutureDatedMovies;
+        protected override bool Default => TVSettings.Instance.DefMovieCheckFutureDatedMovies;
 
         protected override void FixInternal()
         {

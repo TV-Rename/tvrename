@@ -237,8 +237,8 @@ namespace TVRename
                 DateTime? dt = si.CachedMovie?.FirstAired;
 
                 bool inPast = dt.HasValue && dt.Value.CompareTo(DateTime.Now) < 0;
-                bool shouldCheckFutureDated = (TVSettings.Instance.CheckFutureDatedMovies || si.ForceCheckFuture) && dt.HasValue;
-                bool shouldCheckNoDatedMovies = (TVSettings.Instance.CheckNoDatedMovies || si.ForceCheckNoAirdate) && !dt.HasValue;
+                bool shouldCheckFutureDated = si.ForceCheckFuture && dt.HasValue;
+                bool shouldCheckNoDatedMovies = si.ForceCheckNoAirdate && !dt.HasValue;
 
                 if (inPast || shouldCheckFutureDated || shouldCheckNoDatedMovies)
                 {

@@ -13,7 +13,7 @@ namespace TVRename
 
         protected override bool Field => Movie.ForceCheckNoAirdate;
 
-        protected override bool Default => TVSettings.Instance.CheckNoDatedMovies;
+        protected override bool Default => TVSettings.Instance.DefMovieCheckNoDatedMovies;
 
         protected override void FixInternal()
         {

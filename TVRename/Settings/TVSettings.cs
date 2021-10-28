@@ -304,7 +304,7 @@ namespace TVRename
         public int SampleFileMaxSizeMB = 50; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
         public bool IgnorePreviouslySeen = false;
-        public bool IgnorePreviouslySeenMovies = false; //todo NOW persist and edit this
+        public bool IgnorePreviouslySeenMovies = false;
         public bool SearchRSS = false;
         public bool SearchRSSManualScanOnly = true;
         public bool SearchJSON = false;
@@ -342,28 +342,25 @@ namespace TVRename
         [NotNull]
         public static string SpecialsListViewName => "Special";
 
-        public MovieConfiguration.MovieFolderFormat DefMovieFolderFormat =>
-            MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile; //todo NOW - Support Alternate movie storage formats
+        public MovieConfiguration.MovieFolderFormat DefMovieFolderFormat =
+            MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile;
         
-        public bool AutomateAutoAddWhenOneMovieFound => true; //todo NOW persist and edit this
-
-        public bool AutomateAutoAddWhenOneShowFound => true; //todo NOW persist and edit this
+        public bool AutomateAutoAddWhenOneMovieFound = true;
+        public bool AutomateAutoAddWhenOneShowFound = true;
 
         public StringComparison FileNameComparisonType => FileNameCaseSensitiveMatch
             ? StringComparison.CurrentCulture
             : StringComparison.CurrentCultureIgnoreCase;
 
-        public bool FileNameCaseSensitiveMatch => false; //todo NOW persist and edit this
+        public bool FileNameCaseSensitiveMatch = false;
+        public bool CopySubsFolders = true; 
 
-        public bool DeleteMovieFromDisk => false; //todo NOW persist and edit this
-        public bool CheckFutureDatedMovies => false; //todo NOW persist and edit this
-        public bool CheckNoDatedMovies => false; //todo NOW persist and edit this
+        public bool DeleteMovieFromDisk = false;
 
         [NotNull]
-        public List<string> SubsFolderNames => new() { "subs", "subtitles", "vobsubs", "sub", "vobsub", "subtitle" };
-        //todo NOW persist and edit this
+        public IEnumerable<string> SubsFolderNames => Convert(SubsFolderNamesString);
 
-        public bool CopySubsFolders => true; //todo NOW persist and edit this
+        public string SubsFolderNamesString = "subs;subtitle;vobsubs;sub;vobsub;subtitle";
 
         public bool AutoSaveOnExit = false;
 
@@ -442,6 +439,9 @@ namespace TVRename
         public bool DefMovieDoMissingCheck = true;
         public bool DefMovieUseutomaticFolders = true;
         public bool DefMovieUseDefaultLocation = true;
+        public bool DefMovieCheckFutureDatedMovies = false; 
+        public bool DefMovieCheckNoDatedMovies = false; 
+
         public bool SuppressUpdateAvailablePopup = false;
         public UpdateCheckMode UpdateCheckType = UpdateCheckMode.Everytime;
         internal TimeSpan UpdateCheckInterval = TimeSpan.FromDays(1);
@@ -609,6 +609,7 @@ namespace TVRename
             writer.WriteElement("UpdateFileDates", CorrectFileDates);
             writer.WriteElement("SearchLocally", SearchLocally);
             writer.WriteElement("IgnorePreviouslySeen", IgnorePreviouslySeen);
+            writer.WriteElement("IgnorePreviouslySeenMovies", IgnorePreviouslySeenMovies);
             writer.WriteElement("LeaveOriginals", LeaveOriginals);
             writer.WriteElement("RetainLanguageSpecificSubtitles", RetainLanguageSpecificSubtitles);
             writer.WriteElement("ForceBulkAddToUseSettingsOnly", ForceBulkAddToUseSettingsOnly);
@@ -625,6 +626,9 @@ namespace TVRename
             writer.WriteElement("RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength", RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength);
             writer.WriteElement("DoBulkAddInScan", DoBulkAddInScan);
             writer.WriteElement("DeleteShowFromDisk", DeleteShowFromDisk);
+            writer.WriteElement("DeleteMovieFromDisk", DeleteMovieFromDisk);
+            writer.WriteElement("FileNameCaseSensitiveMatch", FileNameCaseSensitiveMatch);
+            writer.WriteElement("CopySubsFolders", CopySubsFolders);
             writer.WriteElement("SABAPIKey", SABAPIKey);
             writer.WriteElement("CheckSABnzbd", CheckSABnzbd);
             writer.WriteElement("SABHostPort", SABHostPort);
@@ -668,6 +672,10 @@ namespace TVRename
             writer.WriteElement("UseFullPathNameToMatchLibraryFolders", UseFullPathNameToMatchLibraryFolders);
             writer.WriteElement("UseFullPathNameToMatchSearchFolders", UseFullPathNameToMatchSearchFolders);
             writer.WriteElement("AutoAddAsPartOfQuickRename", AutoAddAsPartOfQuickRename);
+            writer.WriteElement("AutomateAutoAddWhenOneShowFound", AutomateAutoAddWhenOneShowFound);
+            writer.WriteElement("AutomateAutoAddWhenOneMovieFound", AutomateAutoAddWhenOneMovieFound);
+            writer.WriteElement("SubsFolderNamesString", SubsFolderNamesString);
+
             writer.WriteElement("CleanLibraryAfterActions", CleanLibraryAfterActions);
 
             writer.WriteElement("DefShowIncludeNoAirdate", DefShowIncludeNoAirdate);
@@ -695,9 +703,12 @@ namespace TVRename
             writer.WriteElement("DefMovieUseDefaultLocation", DefMovieUseDefaultLocation);
             writer.WriteElement("DefMovieDefaultLocation", DefMovieDefaultLocation);
             writer.WriteElement("DefaultMovieProvider", (int)DefaultMovieProvider);
+            writer.WriteElement("DefMovieCheckFutureDatedMovies", DefMovieCheckFutureDatedMovies);
+            writer.WriteElement("DefMovieCheckNoDatedMovies", DefMovieCheckNoDatedMovies);
 
             writer.WriteElement("UnattendedMultiActionOutcome", (int)UnattendedMultiActionOutcome);
             writer.WriteElement("UserMultiActionOutcome", (int)UserMultiActionOutcome);
+            writer.WriteElement("DefMovieFolderFormat",(int)DefMovieFolderFormat);
 
             writer.WriteElement("SearchJackett", SearchJackett);
             writer.WriteElement("UseJackettTextSearch", UseJackettTextSearch);
@@ -1509,6 +1520,7 @@ namespace TVRename
             CorrectFileDates = xmlSettings.ExtractBool("UpdateFileDates", false);
             SearchLocally = xmlSettings.ExtractBool("SearchLocally", true);
             IgnorePreviouslySeen = xmlSettings.ExtractBool("IgnorePreviouslySeen", false);
+            IgnorePreviouslySeenMovies = xmlSettings.ExtractBool("IgnorePreviouslySeenMovies", false);
             LeaveOriginals = xmlSettings.ExtractBool("LeaveOriginals", false);
             AutoSearchForDownloadedFiles = xmlSettings.ExtractBool("AutoSearchForDownloadedFiles", false);
             AutoMergeDownloadEpisodes = xmlSettings.ExtractBool("AutoMergeEpisodes", false);
@@ -1526,6 +1538,9 @@ namespace TVRename
             RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength = xmlSettings.ExtractInt("RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength", 8);
             DoBulkAddInScan = xmlSettings.ExtractBool("DoBulkAddInScan", false);
             DeleteShowFromDisk = xmlSettings.ExtractBool("DeleteShowFromDisk", true);
+            FileNameCaseSensitiveMatch = xmlSettings.ExtractBool("FileNameCaseSensitiveMatch", false);
+            CopySubsFolders = xmlSettings.ExtractBool("CopySubsFolders", true);
+            DeleteMovieFromDisk = xmlSettings.ExtractBool("DeleteMovieFromDisk", false);
             EpJPGs = xmlSettings.ExtractBool("EpJPGs", false);
             SeriesJpg = xmlSettings.ExtractBool("SeriesJpg", false);
             Mede8erXML = xmlSettings.ExtractBool("Mede8erXML", false);
@@ -1542,6 +1557,8 @@ namespace TVRename
             replaceMargin = xmlSettings.ExtractFloat("PercentBetter", 10);
             defaultSeasonWord = xmlSettings.ExtractString("BaseSeasonName", "Season");
             searchSeasonWordsString = xmlSettings.ExtractString("SearchSeasonNames", "Season;Series;Saison;Temporada;Seizoen");
+            SubsFolderNamesString =
+                xmlSettings.ExtractString("SubsFolderNamesString", "subs;subtitle;vobsubs;sub;vobsub;subtitle");
             preferredRSSSearchTermsString = xmlSettings.ExtractString("PreferredRSSSearchTerms", "720p;1080p");
             keepTogetherMode = xmlSettings.ExtractEnum("KeepTogetherType", KeepTogetherModes.All);
             UIScanType = xmlSettings.ExtractEnum("UIScanType", ScanType.Full);
@@ -1554,6 +1571,8 @@ namespace TVRename
             UseFullPathNameToMatchLibraryFolders = xmlSettings.ExtractBool("UseFullPathNameToMatchLibraryFolders", false);
             UseFullPathNameToMatchSearchFolders = xmlSettings.ExtractBool("UseFullPathNameToMatchSearchFolders", false);
             AutoAddAsPartOfQuickRename = xmlSettings.ExtractBool("AutoAddAsPartOfQuickRename", true);
+            AutomateAutoAddWhenOneMovieFound = xmlSettings.ExtractBool("AutomateAutoAddWhenOneMovieFound", true);
+            AutomateAutoAddWhenOneShowFound = xmlSettings.ExtractBool("AutomateAutoAddWhenOneShowFound", true);
             CleanLibraryAfterActions = xmlSettings.ExtractBool("CleanLibraryAfterActions", false);
 
             DefShowIncludeNoAirdate = xmlSettings.ExtractBool("DefShowIncludeNoAirdate", false);
@@ -1582,9 +1601,12 @@ namespace TVRename
             DefMovieUseDefaultLocation = xmlSettings.ExtractBool("DefMovieUseDefaultLocation", true);
             DefMovieDefaultLocation = xmlSettings.ExtractStringOrNull("DefMovieDefaultLocation");
             DefaultMovieProvider = xmlSettings.ExtractEnum("DefaultMovieProvider", TVDoc.ProviderType.TMDB);
+            DefMovieCheckFutureDatedMovies = xmlSettings.ExtractBool("DefMovieCheckFutureDatedMovies", false);
+            DefMovieCheckNoDatedMovies = xmlSettings.ExtractBool("DefMovieCheckNoDatedMovies", false);
 
             UnattendedMultiActionOutcome = xmlSettings.ExtractEnum("UnattendedMultiActionOutcome", DuplicateActionOutcome.IgnoreAll);
             UserMultiActionOutcome = xmlSettings.ExtractEnum("UserMultiActionOutcome", DuplicateActionOutcome.MostSeeders);
+            DefMovieFolderFormat = xmlSettings.ExtractEnum("DefMovieFolderFormat", MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile);
 
             SearchJackett = xmlSettings.ExtractBool("SearchJackett", false);
             UseJackettTextSearch = xmlSettings.ExtractBool("UseJackettTextSearch", false);

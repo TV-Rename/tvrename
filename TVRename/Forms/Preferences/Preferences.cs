@@ -53,7 +53,7 @@ namespace TVRename
             SetupReplacementsGrid();
             FillFolderStringLists();
             FillMovieFolderStringLists();
-
+            PopulateFolderTypes(MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile);
             mDoc = doc;
             cntfw = null;
 
@@ -308,6 +308,7 @@ namespace TVRename
             s.MovieFolderFormat = txtMovieFolderFormat.Text;
             s.MovieFilenameFormat = txtMovieFilenameFormat.Text;
             s.searchSeasonWordsString = tbSeasonSearchTerms.Text;
+            s.SubsFolderNamesString = txtSubtitleFolderNames.Text;
             s.preferredRSSSearchTermsString = tbPreferredRSSTerms.Text;
             s.defaultSeasonWord = txtSeasonFolderName.Text;
             s.keepTogetherExtensionsString = txtKeepTogether.Text;
@@ -339,6 +340,7 @@ namespace TVRename
             s.CorrectFileDates = cbxUpdateAirDate.Checked;
             s.SearchLocally = cbSearchLocally.Checked;
             s.IgnorePreviouslySeen = cbIgnorePreviouslySeen.Checked;
+            s.IgnorePreviouslySeenMovies = cbIgnorePreviouslySeenMovies.Checked;
             s.AutoSearchForDownloadedFiles = chkAutoSearchForDownloadedFiles.Checked;
             s.LeaveOriginals = cbLeaveOriginals.Checked;
             s.CheckuTorrent = cbCheckuTorrent.Checked;
@@ -352,6 +354,8 @@ namespace TVRename
             s.UseFullPathNameToMatchLibraryFolders = chkUseLibraryFullPathWhenMatchingShows.Checked;
             s.UseFullPathNameToMatchSearchFolders = chkUseSearchFullPathWhenMatchingShows.Checked;
             s.AutoAddAsPartOfQuickRename = chkAutoAddAsPartOfQuickRename.Checked;
+            s.AutomateAutoAddWhenOneMovieFound = cbAutomateAutoAddWhenOneMovieFound.Checked;
+            s.AutomateAutoAddWhenOneShowFound = cbAutomateAutoAddWhenOneShowFound.Checked;
             s.CleanLibraryAfterActions = chkCleanLibraryAfterActions.Checked;
 
             s.SearchJSON = cbSearchJSON.Checked;
@@ -371,6 +375,7 @@ namespace TVRename
 
             s.UnattendedMultiActionOutcome = ConvertToDupActEnum(cmbUnattendedDuplicateAction);
             s.UserMultiActionOutcome = ConvertToDupActEnum(cmbSupervisedDuplicateAction);
+            s.DefMovieFolderFormat = ConvertToMovieFormat(cmbDefMovieFolderFormat);
 
             s.SearchJackett = cbSearchJackett.Checked;
             s.UseJackettTextSearch = chkUseJackettTextSearch.Checked;
@@ -388,8 +393,11 @@ namespace TVRename
             int.TryParse(tbCleanUpDownloadDirMoviesLength.Text, out s.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength);
 
             s.DeleteShowFromDisk = cbDeleteShowFromDisk.Checked;
+            s.DeleteMovieFromDisk = cbDeleteMovieFromDisk.Checked;
             s.DoBulkAddInScan = cbScanIncludesBulkAdd.Checked;
             s.IgnoreAllSpecials = chkIgnoreAllSpecials.Checked;
+            s.FileNameCaseSensitiveMatch = cbFileNameCaseSensitiveMatch.Checked;
+            s.CopySubsFolders = cbCopySubsFolders.Checked;
 
             s.EpJPGs = cbEpThumbJpg.Checked;
             s.SeriesJpg = cbSeriesJpg.Checked;
@@ -457,6 +465,8 @@ namespace TVRename
 
             s.DefMovieDoRenaming = cbDefMovieDoRenaming.Checked;
             s.DefMovieDoMissingCheck = cbDefMovieDoMissing.Checked;
+            s.DefMovieCheckFutureDatedMovies = cbDefMovieIncludeFuture.Checked;
+            s.DefMovieCheckNoDatedMovies = cbDefMovieIncludeNoAirdate.Checked;
             s.DefMovieUseutomaticFolders = cbDefMovieAutoFolders.Checked;
             s.DefMovieUseDefaultLocation = cbDefMovieUseDefLocation.Checked;
             s.DefMovieDefaultLocation = (string)cmbDefMovieLocation.SelectedItem;
@@ -502,6 +512,18 @@ namespace TVRename
                 "Download All" => TVSettings.DuplicateActionOutcome.DoAll,
                 "Ignore" => TVSettings.DuplicateActionOutcome.IgnoreAll,
                 "Choose Most Popular" => TVSettings.DuplicateActionOutcome.MostSeeders,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
+
+        private static MovieConfiguration.MovieFolderFormat ConvertToMovieFormat([NotNull] ComboBox p0)
+        {
+            return p0.Text switch
+            {
+                "Single Movie per Folder" => MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile,
+                "Many Movies per Folder" => MovieConfiguration.MovieFolderFormat.multiPerDirectory,
+                "Bluray format" => MovieConfiguration.MovieFolderFormat.bluray,
+                "DVD format" => MovieConfiguration.MovieFolderFormat.dvd ,
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
@@ -839,6 +861,7 @@ namespace TVRename
             txtSubtitleExtensions.Text = s.subtitleExtensionsString;
             txtKeepTogether.Text = s.GetKeepTogetherString();
             tbSeasonSearchTerms.Text = s.GetSeasonSearchTermsString();
+            txtSubtitleFolderNames.Text = s.SubsFolderNamesString;
             tbPreferredRSSTerms.Text = s.GetPreferredRSSSearchTermsString();
 
             cbKeepTogether.Checked = s.KeepTogether;
@@ -909,18 +932,24 @@ namespace TVRename
             cbCleanUpDownloadDirMovies.Checked = s.RemoveDownloadDirectoriesFilesMatchMovies;
             cbCleanUpDownloadDirMoviesLength.Checked = s.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheck;
             tbCleanUpDownloadDirMoviesLength.Text = s.RemoveDownloadDirectoriesFilesMatchMoviesLengthCheckLength.ToString();
-
             cbDeleteShowFromDisk.Checked = s.DeleteShowFromDisk;
+            cbDeleteMovieFromDisk.Checked = s.DeleteMovieFromDisk;
+            cbFileNameCaseSensitiveMatch.Checked = s.FileNameCaseSensitiveMatch;
+            cbCopySubsFolders.Checked = s.CopySubsFolders;
             cbCopyFutureDatedEps.Checked = s.CopyFutureDatedEpsFromSearchFolders;
             chkShareCriticalLogs.Checked = s.ShareLogs;
             chkPostpendThe.Checked = s.PostpendThe;
             chkUseLibraryFullPathWhenMatchingShows.Checked = s.UseFullPathNameToMatchLibraryFolders;
             chkUseSearchFullPathWhenMatchingShows.Checked = s.UseFullPathNameToMatchSearchFolders;
             chkAutoAddAsPartOfQuickRename.Checked = s.AutoAddAsPartOfQuickRename;
+            s.AutoAddAsPartOfQuickRename = chkAutoAddAsPartOfQuickRename.Checked;
+            cbAutomateAutoAddWhenOneMovieFound.Checked = s.AutomateAutoAddWhenOneMovieFound;
+            cbAutomateAutoAddWhenOneShowFound.Checked = s.AutomateAutoAddWhenOneShowFound;
             chkCleanLibraryAfterActions.Checked = s.CleanLibraryAfterActions;
 
             cmbUnattendedDuplicateAction.Text = ConvertEnum(s.UnattendedMultiActionOutcome);
             cmbSupervisedDuplicateAction.Text = ConvertEnum(s.UserMultiActionOutcome);
+            cmbDefMovieFolderFormat.Text = ConvertEnum(s.DefMovieFolderFormat);
 
             cbSearchJackett.Checked = s.SearchJackett;
             chkUseJackettTextSearch.Checked = s.UseJackettTextSearch;
@@ -938,6 +967,7 @@ namespace TVRename
             chkAutoSearchForDownloadedFiles.Checked = s.AutoSearchForDownloadedFiles;
             cbSearchLocally.Checked = s.SearchLocally;
             cbIgnorePreviouslySeen.Checked = s.IgnorePreviouslySeen;
+            cbIgnorePreviouslySeenMovies.Checked = s.IgnorePreviouslySeenMovies;
             cbLeaveOriginals.Checked = s.LeaveOriginals;
             cbTVDBLanguages.Text = s.PreferredTVDBLanguage.LocalName;
             cbScanIncludesBulkAdd.Checked = s.DoBulkAddInScan;
@@ -984,6 +1014,8 @@ namespace TVRename
             cbDefMovieDoMissing.Checked = s.DefMovieDoMissingCheck;
             cbDefMovieAutoFolders.Checked = s.DefMovieUseutomaticFolders;
             cbDefMovieUseDefLocation.Checked = s.DefMovieUseDefaultLocation;
+            cbDefMovieIncludeFuture.Checked = s.DefMovieCheckFutureDatedMovies;
+            cbDefMovieIncludeNoAirdate.Checked = s.DefMovieCheckNoDatedMovies;
 
             cbTMDBLanguages.Text = s.TMDBLanguage.LocalName;
             cbTMDBRegions.Text = s.TMDBRegion.EnglishName ?? Regions.Instance.FallbackRegion.EnglishName;
@@ -1212,6 +1244,9 @@ namespace TVRename
             };
         }
 
+        [NotNull]
+        private static string ConvertEnum(MovieConfiguration.MovieFolderFormat outcome) => outcome.PrettyPrint();
+
         private void FillSearchFolderList()
         {
             lbSearchFolders.Items.Clear();
@@ -1235,6 +1270,18 @@ namespace TVRename
             }
 
             lstMovieMonitorFolders.EndUpdate();
+        }
+
+        private void PopulateFolderTypes(MovieConfiguration.MovieFolderFormat selectedShowFormat)
+        {
+            cmbDefMovieFolderFormat.SuspendLayout();
+            cmbDefMovieFolderFormat.Items.Clear();
+            cmbDefMovieFolderFormat.Items.AddRange(Enum.GetValues(typeof(MovieConfiguration.MovieFolderFormat))
+                .OfType<MovieConfiguration.MovieFolderFormat>()
+                .Select(x => x.PrettyPrint())
+                .ToArray<object>());
+            cmbDefMovieFolderFormat.ResumeLayout();
+            cmbDefMovieFolderFormat.Text = selectedShowFormat.PrettyPrint();
         }
 
         private void FillFolderStringLists()

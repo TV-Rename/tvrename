@@ -245,6 +245,7 @@ namespace TVRename
             this.bnMCPresets = new System.Windows.Forms.Button();
             this.pbMediaCenter = new System.Windows.Forms.PictureBox();
             this.tbFolderDeleting = new System.Windows.Forms.TabPage();
+            this.cbDeleteMovieFromDisk = new System.Windows.Forms.CheckBox();
             this.groupBox28 = new System.Windows.Forms.GroupBox();
             this.cbCleanUpDownloadDirMoviesLength = new System.Windows.Forms.CheckBox();
             this.cbCleanUpDownloadDirMovies = new System.Windows.Forms.CheckBox();
@@ -307,11 +308,6 @@ namespace TVRename
             this.txtExportRSSMaxShows = new System.Windows.Forms.TextBox();
             this.tbFilesAndFolders = new System.Windows.Forms.TabPage();
             this.chkUseLibraryFullPathWhenMatchingShows = new System.Windows.Forms.CheckBox();
-            this.groupBox9 = new System.Windows.Forms.GroupBox();
-            this.cbTxtToSub = new System.Windows.Forms.CheckBox();
-            this.label46 = new System.Windows.Forms.Label();
-            this.txtSubtitleExtensions = new System.Windows.Forms.TextBox();
-            this.chkRetainLanguageSpecificSubtitles = new System.Windows.Forms.CheckBox();
             this.label66 = new System.Windows.Forms.Label();
             this.txtMaxSampleSize = new System.Windows.Forms.TextBox();
             this.txtVideoExtensions = new System.Windows.Forms.TextBox();
@@ -378,6 +374,8 @@ namespace TVRename
             this.cbDefMovieUseDefLocation = new System.Windows.Forms.CheckBox();
             this.cbDefMovieAutoFolders = new System.Windows.Forms.CheckBox();
             this.groupBox25 = new System.Windows.Forms.GroupBox();
+            this.cbDefMovieIncludeNoAirdate = new System.Windows.Forms.CheckBox();
+            this.cbDefMovieIncludeFuture = new System.Windows.Forms.CheckBox();
             this.cbDefMovieDoMissing = new System.Windows.Forms.CheckBox();
             this.cbDefMovieDoRenaming = new System.Windows.Forms.CheckBox();
             this.pbMovieDefaults = new System.Windows.Forms.PictureBox();
@@ -393,6 +391,7 @@ namespace TVRename
             this.cbDefShowUseDefLocation = new System.Windows.Forms.CheckBox();
             this.cbDefShowAutoFolders = new System.Windows.Forms.CheckBox();
             this.groupBox18 = new System.Windows.Forms.GroupBox();
+            this.cbDefShowAlternateOrder = new System.Windows.Forms.CheckBox();
             this.cbDefShowEpNameMatching = new System.Windows.Forms.CheckBox();
             this.label68 = new System.Windows.Forms.Label();
             this.cbDefShowAirdateMatching = new System.Windows.Forms.CheckBox();
@@ -407,6 +406,7 @@ namespace TVRename
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.tpScanSettings = new System.Windows.Forms.TabPage();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
+            this.cbIgnorePreviouslySeenMovies = new System.Windows.Forms.CheckBox();
             this.chkMoveLibraryFiles = new System.Windows.Forms.CheckBox();
             this.lblScanAction = new System.Windows.Forms.Label();
             this.rdoQuickScan = new System.Windows.Forms.RadioButton();
@@ -493,7 +493,23 @@ namespace TVRename
             this.cboUpdateCheckInterval = new System.Windows.Forms.ComboBox();
             this.optUpdateCheckInterval = new System.Windows.Forms.RadioButton();
             this.optUpdateCheckAlways = new System.Windows.Forms.RadioButton();
-            this.cbDefShowAlternateOrder = new System.Windows.Forms.CheckBox();
+            this.tpSubtitles = new System.Windows.Forms.TabPage();
+            this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.cbTxtToSub = new System.Windows.Forms.CheckBox();
+            this.label46 = new System.Windows.Forms.Label();
+            this.txtSubtitleExtensions = new System.Windows.Forms.TextBox();
+            this.chkRetainLanguageSpecificSubtitles = new System.Windows.Forms.CheckBox();
+            this.label93 = new System.Windows.Forms.Label();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.groupBox29 = new System.Windows.Forms.GroupBox();
+            this.label94 = new System.Windows.Forms.Label();
+            this.txtSubtitleFolderNames = new System.Windows.Forms.TextBox();
+            this.cbCopySubsFolders = new System.Windows.Forms.CheckBox();
+            this.cbFileNameCaseSensitiveMatch = new System.Windows.Forms.CheckBox();
+            this.cbAutomateAutoAddWhenOneShowFound = new System.Windows.Forms.CheckBox();
+            this.cbAutomateAutoAddWhenOneMovieFound = new System.Windows.Forms.CheckBox();
+            this.label95 = new System.Windows.Forms.Label();
+            this.cmbDefMovieFolderFormat = new System.Windows.Forms.ComboBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -533,7 +549,6 @@ namespace TVRename
             this.groupBox4.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tbFilesAndFolders.SuspendLayout();
-            this.groupBox9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbFilesAndFolders)).BeginInit();
             this.tbGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbGeneral)).BeginInit();
@@ -569,6 +584,10 @@ namespace TVRename
             this.tbAppUpdate.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbuUpdates)).BeginInit();
             this.grpUpdateIntervalOption.SuspendLayout();
+            this.tpSubtitles.SuspendLayout();
+            this.groupBox9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            this.groupBox29.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKButton
@@ -648,7 +667,7 @@ namespace TVRename
             this.lbSearchFolders.Location = new System.Drawing.Point(5, 207);
             this.lbSearchFolders.Name = "lbSearchFolders";
             this.lbSearchFolders.ScrollAlwaysVisible = true;
-            this.lbSearchFolders.Size = new System.Drawing.Size(405, 95);
+            this.lbSearchFolders.Size = new System.Drawing.Size(405, 69);
             this.lbSearchFolders.TabIndex = 1;
             this.toolTip1.SetToolTip(this.lbSearchFolders, resources.GetString("lbSearchFolders.ToolTip"));
             this.lbSearchFolders.SelectedIndexChanged += new System.EventHandler(this.lbSearchFolders_SelectedIndexChanged);
@@ -680,7 +699,7 @@ namespace TVRename
             // 
             this.tbIgnoreSuffixes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbIgnoreSuffixes.Location = new System.Drawing.Point(99, 66);
+            this.tbIgnoreSuffixes.Location = new System.Drawing.Point(100, 101);
             this.tbIgnoreSuffixes.Name = "tbIgnoreSuffixes";
             this.tbIgnoreSuffixes.Size = new System.Drawing.Size(305, 20);
             this.tbIgnoreSuffixes.TabIndex = 15;
@@ -691,7 +710,7 @@ namespace TVRename
             // 
             this.tbMovieTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbMovieTerms.Location = new System.Drawing.Point(99, 40);
+            this.tbMovieTerms.Location = new System.Drawing.Point(100, 75);
             this.tbMovieTerms.Name = "tbMovieTerms";
             this.tbMovieTerms.Size = new System.Drawing.Size(305, 20);
             this.tbMovieTerms.TabIndex = 13;
@@ -2409,14 +2428,16 @@ namespace TVRename
             // 
             this.gbAutoAdd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbAutoAdd.Controls.Add(this.cbAutomateAutoAddWhenOneMovieFound);
+            this.gbAutoAdd.Controls.Add(this.cbAutomateAutoAddWhenOneShowFound);
             this.gbAutoAdd.Controls.Add(this.chkAutoSearchForDownloadedFiles);
             this.gbAutoAdd.Controls.Add(this.label43);
             this.gbAutoAdd.Controls.Add(this.label44);
             this.gbAutoAdd.Controls.Add(this.tbIgnoreSuffixes);
             this.gbAutoAdd.Controls.Add(this.tbMovieTerms);
-            this.gbAutoAdd.Location = new System.Drawing.Point(6, 344);
+            this.gbAutoAdd.Location = new System.Drawing.Point(6, 311);
             this.gbAutoAdd.Name = "gbAutoAdd";
-            this.gbAutoAdd.Size = new System.Drawing.Size(407, 92);
+            this.gbAutoAdd.Size = new System.Drawing.Size(407, 125);
             this.gbAutoAdd.TabIndex = 36;
             this.gbAutoAdd.TabStop = false;
             this.gbAutoAdd.Text = "Auto Add Shows from Search Folders";
@@ -2434,7 +2455,7 @@ namespace TVRename
             // label43
             // 
             this.label43.AutoSize = true;
-            this.label43.Location = new System.Drawing.Point(3, 69);
+            this.label43.Location = new System.Drawing.Point(4, 104);
             this.label43.Name = "label43";
             this.label43.Size = new System.Drawing.Size(78, 13);
             this.label43.TabIndex = 14;
@@ -2443,7 +2464,7 @@ namespace TVRename
             // label44
             // 
             this.label44.AutoSize = true;
-            this.label44.Location = new System.Drawing.Point(3, 43);
+            this.label44.Location = new System.Drawing.Point(4, 78);
             this.label44.Name = "label44";
             this.label44.Size = new System.Drawing.Size(71, 13);
             this.label44.TabIndex = 12;
@@ -2486,7 +2507,7 @@ namespace TVRename
             // 
             this.bnOpenSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnOpenSearchFolder.Enabled = false;
-            this.bnOpenSearchFolder.Location = new System.Drawing.Point(166, 308);
+            this.bnOpenSearchFolder.Location = new System.Drawing.Point(168, 282);
             this.bnOpenSearchFolder.Name = "bnOpenSearchFolder";
             this.bnOpenSearchFolder.Size = new System.Drawing.Size(75, 23);
             this.bnOpenSearchFolder.TabIndex = 4;
@@ -2498,7 +2519,7 @@ namespace TVRename
             // 
             this.bnRemoveSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnRemoveSearchFolder.Enabled = false;
-            this.bnRemoveSearchFolder.Location = new System.Drawing.Point(85, 308);
+            this.bnRemoveSearchFolder.Location = new System.Drawing.Point(87, 282);
             this.bnRemoveSearchFolder.Name = "bnRemoveSearchFolder";
             this.bnRemoveSearchFolder.Size = new System.Drawing.Size(75, 23);
             this.bnRemoveSearchFolder.TabIndex = 3;
@@ -2509,7 +2530,7 @@ namespace TVRename
             // bnAddSearchFolder
             // 
             this.bnAddSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnAddSearchFolder.Location = new System.Drawing.Point(6, 308);
+            this.bnAddSearchFolder.Location = new System.Drawing.Point(6, 282);
             this.bnAddSearchFolder.Name = "bnAddSearchFolder";
             this.bnAddSearchFolder.Size = new System.Drawing.Size(75, 23);
             this.bnAddSearchFolder.TabIndex = 2;
@@ -2862,6 +2883,7 @@ namespace TVRename
             // 
             // tbFolderDeleting
             // 
+            this.tbFolderDeleting.Controls.Add(this.cbDeleteMovieFromDisk);
             this.tbFolderDeleting.Controls.Add(this.groupBox28);
             this.tbFolderDeleting.Controls.Add(this.label69);
             this.tbFolderDeleting.Controls.Add(this.cbDeleteShowFromDisk);
@@ -2884,6 +2906,16 @@ namespace TVRename
             this.tbFolderDeleting.TabIndex = 9;
             this.tbFolderDeleting.Text = "Folder Deleting";
             this.tbFolderDeleting.UseVisualStyleBackColor = true;
+            // 
+            // cbDeleteMovieFromDisk
+            // 
+            this.cbDeleteMovieFromDisk.AutoSize = true;
+            this.cbDeleteMovieFromDisk.Location = new System.Drawing.Point(16, 371);
+            this.cbDeleteMovieFromDisk.Name = "cbDeleteMovieFromDisk";
+            this.cbDeleteMovieFromDisk.Size = new System.Drawing.Size(303, 17);
+            this.cbDeleteMovieFromDisk.TabIndex = 42;
+            this.cbDeleteMovieFromDisk.Text = "Ask to delete from disk when deleting movie from database";
+            this.cbDeleteMovieFromDisk.UseVisualStyleBackColor = true;
             // 
             // groupBox28
             // 
@@ -3538,8 +3570,8 @@ namespace TVRename
             // 
             // tbFilesAndFolders
             // 
+            this.tbFilesAndFolders.Controls.Add(this.cbFileNameCaseSensitiveMatch);
             this.tbFilesAndFolders.Controls.Add(this.chkUseLibraryFullPathWhenMatchingShows);
-            this.tbFilesAndFolders.Controls.Add(this.groupBox9);
             this.tbFilesAndFolders.Controls.Add(this.label66);
             this.tbFilesAndFolders.Controls.Add(this.txtKeepTogether);
             this.tbFilesAndFolders.Controls.Add(this.txtMaxSampleSize);
@@ -3571,65 +3603,12 @@ namespace TVRename
             // 
             this.chkUseLibraryFullPathWhenMatchingShows.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkUseLibraryFullPathWhenMatchingShows.AutoSize = true;
-            this.chkUseLibraryFullPathWhenMatchingShows.Location = new System.Drawing.Point(2, 394);
+            this.chkUseLibraryFullPathWhenMatchingShows.Location = new System.Drawing.Point(3, 394);
             this.chkUseLibraryFullPathWhenMatchingShows.Name = "chkUseLibraryFullPathWhenMatchingShows";
             this.chkUseLibraryFullPathWhenMatchingShows.Size = new System.Drawing.Size(413, 17);
             this.chkUseLibraryFullPathWhenMatchingShows.TabIndex = 41;
             this.chkUseLibraryFullPathWhenMatchingShows.Text = "Use name of Library Folder when searching for a match between a file and a show";
             this.chkUseLibraryFullPathWhenMatchingShows.UseVisualStyleBackColor = true;
-            // 
-            // groupBox9
-            // 
-            this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox9.Controls.Add(this.cbTxtToSub);
-            this.groupBox9.Controls.Add(this.label46);
-            this.groupBox9.Controls.Add(this.txtSubtitleExtensions);
-            this.groupBox9.Controls.Add(this.chkRetainLanguageSpecificSubtitles);
-            this.groupBox9.Location = new System.Drawing.Point(6, 422);
-            this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(408, 100);
-            this.groupBox9.TabIndex = 40;
-            this.groupBox9.TabStop = false;
-            this.groupBox9.Text = "Subtitles";
-            // 
-            // cbTxtToSub
-            // 
-            this.cbTxtToSub.AutoSize = true;
-            this.cbTxtToSub.Location = new System.Drawing.Point(6, 42);
-            this.cbTxtToSub.Name = "cbTxtToSub";
-            this.cbTxtToSub.Size = new System.Drawing.Size(118, 17);
-            this.cbTxtToSub.TabIndex = 32;
-            this.cbTxtToSub.Text = "&Rename .txt to .sub";
-            this.cbTxtToSub.UseVisualStyleBackColor = true;
-            // 
-            // label46
-            // 
-            this.label46.AutoSize = true;
-            this.label46.Location = new System.Drawing.Point(3, 70);
-            this.label46.Name = "label46";
-            this.label46.Size = new System.Drawing.Size(98, 13);
-            this.label46.TabIndex = 30;
-            this.label46.Text = "&Subtitle extensions:";
-            // 
-            // txtSubtitleExtensions
-            // 
-            this.txtSubtitleExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSubtitleExtensions.Location = new System.Drawing.Point(107, 67);
-            this.txtSubtitleExtensions.Name = "txtSubtitleExtensions";
-            this.txtSubtitleExtensions.Size = new System.Drawing.Size(295, 20);
-            this.txtSubtitleExtensions.TabIndex = 31;
-            // 
-            // chkRetainLanguageSpecificSubtitles
-            // 
-            this.chkRetainLanguageSpecificSubtitles.AutoSize = true;
-            this.chkRetainLanguageSpecificSubtitles.Location = new System.Drawing.Point(6, 19);
-            this.chkRetainLanguageSpecificSubtitles.Name = "chkRetainLanguageSpecificSubtitles";
-            this.chkRetainLanguageSpecificSubtitles.Size = new System.Drawing.Size(192, 17);
-            this.chkRetainLanguageSpecificSubtitles.TabIndex = 29;
-            this.chkRetainLanguageSpecificSubtitles.Text = "Retain &Language Specific Subtitles";
-            this.chkRetainLanguageSpecificSubtitles.UseVisualStyleBackColor = true;
             // 
             // label66
             // 
@@ -3941,6 +3920,7 @@ namespace TVRename
             this.tcTabs.Controls.Add(this.tpShowDefaults);
             this.tcTabs.Controls.Add(this.tpScanSettings);
             this.tcTabs.Controls.Add(this.tbFilesAndFolders);
+            this.tcTabs.Controls.Add(this.tpSubtitles);
             this.tcTabs.Controls.Add(this.tbSearchFolders);
             this.tcTabs.Controls.Add(this.tbFolderDeleting);
             this.tcTabs.Controls.Add(this.tbMediaCenter);
@@ -4343,12 +4323,14 @@ namespace TVRename
             // 
             this.groupBox24.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox24.Controls.Add(this.cmbDefMovieFolderFormat);
+            this.groupBox24.Controls.Add(this.label95);
             this.groupBox24.Controls.Add(this.cmbDefMovieLocation);
             this.groupBox24.Controls.Add(this.cbDefMovieUseDefLocation);
             this.groupBox24.Controls.Add(this.cbDefMovieAutoFolders);
             this.groupBox24.Location = new System.Drawing.Point(6, 59);
             this.groupBox24.Name = "groupBox24";
-            this.groupBox24.Size = new System.Drawing.Size(401, 100);
+            this.groupBox24.Size = new System.Drawing.Size(401, 134);
             this.groupBox24.TabIndex = 61;
             this.groupBox24.TabStop = false;
             this.groupBox24.Text = "Default Show Settings";
@@ -4387,14 +4369,36 @@ namespace TVRename
             // 
             this.groupBox25.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox25.Controls.Add(this.cbDefMovieIncludeNoAirdate);
+            this.groupBox25.Controls.Add(this.cbDefMovieIncludeFuture);
             this.groupBox25.Controls.Add(this.cbDefMovieDoMissing);
             this.groupBox25.Controls.Add(this.cbDefMovieDoRenaming);
-            this.groupBox25.Location = new System.Drawing.Point(10, 165);
+            this.groupBox25.Location = new System.Drawing.Point(6, 199);
             this.groupBox25.Name = "groupBox25";
-            this.groupBox25.Size = new System.Drawing.Size(401, 69);
+            this.groupBox25.Size = new System.Drawing.Size(401, 116);
             this.groupBox25.TabIndex = 60;
             this.groupBox25.TabStop = false;
             this.groupBox25.Text = "Default Advanced Settings";
+            // 
+            // cbDefMovieIncludeNoAirdate
+            // 
+            this.cbDefMovieIncludeNoAirdate.AutoSize = true;
+            this.cbDefMovieIncludeNoAirdate.Location = new System.Drawing.Point(25, 88);
+            this.cbDefMovieIncludeNoAirdate.Name = "cbDefMovieIncludeNoAirdate";
+            this.cbDefMovieIncludeNoAirdate.Size = new System.Drawing.Size(250, 17);
+            this.cbDefMovieIncludeNoAirdate.TabIndex = 53;
+            this.cbDefMovieIncludeNoAirdate.Text = "Include check when movie has no release date";
+            this.cbDefMovieIncludeNoAirdate.UseVisualStyleBackColor = true;
+            // 
+            // cbDefMovieIncludeFuture
+            // 
+            this.cbDefMovieIncludeFuture.AutoSize = true;
+            this.cbDefMovieIncludeFuture.Location = new System.Drawing.Point(25, 65);
+            this.cbDefMovieIncludeFuture.Name = "cbDefMovieIncludeFuture";
+            this.cbDefMovieIncludeFuture.Size = new System.Drawing.Size(274, 17);
+            this.cbDefMovieIncludeFuture.TabIndex = 54;
+            this.cbDefMovieIncludeFuture.Text = "Include check when movie has a future release date";
+            this.cbDefMovieIncludeFuture.UseVisualStyleBackColor = true;
             // 
             // cbDefMovieDoMissing
             // 
@@ -4582,6 +4586,17 @@ namespace TVRename
             this.groupBox18.TabStop = false;
             this.groupBox18.Text = "Default Advanced Settings";
             // 
+            // cbDefShowAlternateOrder
+            // 
+            this.cbDefShowAlternateOrder.AutoSize = true;
+            this.cbDefShowAlternateOrder.Location = new System.Drawing.Point(115, 28);
+            this.cbDefShowAlternateOrder.Name = "cbDefShowAlternateOrder";
+            this.cbDefShowAlternateOrder.Size = new System.Drawing.Size(119, 17);
+            this.cbDefShowAlternateOrder.TabIndex = 59;
+            this.cbDefShowAlternateOrder.Text = "Use Alternate Order";
+            this.cbDefShowAlternateOrder.UseVisualStyleBackColor = true;
+            this.cbDefShowAlternateOrder.CheckedChanged += new System.EventHandler(this.cbDefShowAlternateOrder_CheckedChanged);
+            // 
             // cbDefShowEpNameMatching
             // 
             this.cbDefShowEpNameMatching.AutoSize = true;
@@ -4727,6 +4742,7 @@ namespace TVRename
             this.groupBox17.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox17.Controls.Add(this.cbIgnorePreviouslySeenMovies);
             this.groupBox17.Controls.Add(this.chkIncludeMoviesQuickRecent);
             this.groupBox17.Controls.Add(this.chkIgnoreAllSpecials);
             this.groupBox17.Controls.Add(this.chkMoveLibraryFiles);
@@ -4749,6 +4765,16 @@ namespace TVRename
             this.groupBox17.TabIndex = 49;
             this.groupBox17.TabStop = false;
             this.groupBox17.Text = "Scan Options";
+            // 
+            // cbIgnorePreviouslySeenMovies
+            // 
+            this.cbIgnorePreviouslySeenMovies.AutoSize = true;
+            this.cbIgnorePreviouslySeenMovies.Location = new System.Drawing.Point(213, 187);
+            this.cbIgnorePreviouslySeenMovies.Name = "cbIgnorePreviouslySeenMovies";
+            this.cbIgnorePreviouslySeenMovies.Size = new System.Drawing.Size(172, 17);
+            this.cbIgnorePreviouslySeenMovies.TabIndex = 51;
+            this.cbIgnorePreviouslySeenMovies.Text = "Ignore Movies Previously Seen";
+            this.cbIgnorePreviouslySeenMovies.UseVisualStyleBackColor = true;
             // 
             // chkMoveLibraryFiles
             // 
@@ -5734,16 +5760,189 @@ namespace TVRename
             this.optUpdateCheckAlways.UseVisualStyleBackColor = true;
             this.optUpdateCheckAlways.CheckedChanged += new System.EventHandler(this.updateCheckOption_CheckedChanged);
             // 
-            // cbDefShowAlternateOrder
+            // tpSubtitles
             // 
-            this.cbDefShowAlternateOrder.AutoSize = true;
-            this.cbDefShowAlternateOrder.Location = new System.Drawing.Point(115, 28);
-            this.cbDefShowAlternateOrder.Name = "cbDefShowAlternateOrder";
-            this.cbDefShowAlternateOrder.Size = new System.Drawing.Size(119, 17);
-            this.cbDefShowAlternateOrder.TabIndex = 59;
-            this.cbDefShowAlternateOrder.Text = "Use Alternate Order";
-            this.cbDefShowAlternateOrder.UseVisualStyleBackColor = true;
-            this.cbDefShowAlternateOrder.CheckedChanged += new System.EventHandler(this.cbDefShowAlternateOrder_CheckedChanged);
+            this.tpSubtitles.Controls.Add(this.groupBox29);
+            this.tpSubtitles.Controls.Add(this.label93);
+            this.tpSubtitles.Controls.Add(this.pictureBox2);
+            this.tpSubtitles.Controls.Add(this.groupBox9);
+            this.tpSubtitles.Location = new System.Drawing.Point(139, 4);
+            this.tpSubtitles.Name = "tpSubtitles";
+            this.tpSubtitles.Padding = new System.Windows.Forms.Padding(3);
+            this.tpSubtitles.Size = new System.Drawing.Size(417, 561);
+            this.tpSubtitles.TabIndex = 21;
+            this.tpSubtitles.Text = "Subtitles";
+            this.tpSubtitles.UseVisualStyleBackColor = true;
+            // 
+            // groupBox9
+            // 
+            this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox9.Controls.Add(this.cbTxtToSub);
+            this.groupBox9.Controls.Add(this.label46);
+            this.groupBox9.Controls.Add(this.txtSubtitleExtensions);
+            this.groupBox9.Controls.Add(this.chkRetainLanguageSpecificSubtitles);
+            this.groupBox9.Location = new System.Drawing.Point(6, 48);
+            this.groupBox9.Name = "groupBox9";
+            this.groupBox9.Size = new System.Drawing.Size(408, 106);
+            this.groupBox9.TabIndex = 41;
+            this.groupBox9.TabStop = false;
+            this.groupBox9.Text = "Subtitles";
+            // 
+            // cbTxtToSub
+            // 
+            this.cbTxtToSub.AutoSize = true;
+            this.cbTxtToSub.Location = new System.Drawing.Point(6, 42);
+            this.cbTxtToSub.Name = "cbTxtToSub";
+            this.cbTxtToSub.Size = new System.Drawing.Size(118, 17);
+            this.cbTxtToSub.TabIndex = 32;
+            this.cbTxtToSub.Text = "&Rename .txt to .sub";
+            this.cbTxtToSub.UseVisualStyleBackColor = true;
+            // 
+            // label46
+            // 
+            this.label46.AutoSize = true;
+            this.label46.Location = new System.Drawing.Point(3, 70);
+            this.label46.Name = "label46";
+            this.label46.Size = new System.Drawing.Size(98, 13);
+            this.label46.TabIndex = 30;
+            this.label46.Text = "&Subtitle extensions:";
+            // 
+            // txtSubtitleExtensions
+            // 
+            this.txtSubtitleExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSubtitleExtensions.Location = new System.Drawing.Point(107, 67);
+            this.txtSubtitleExtensions.Name = "txtSubtitleExtensions";
+            this.txtSubtitleExtensions.Size = new System.Drawing.Size(295, 20);
+            this.txtSubtitleExtensions.TabIndex = 31;
+            // 
+            // chkRetainLanguageSpecificSubtitles
+            // 
+            this.chkRetainLanguageSpecificSubtitles.AutoSize = true;
+            this.chkRetainLanguageSpecificSubtitles.Location = new System.Drawing.Point(6, 19);
+            this.chkRetainLanguageSpecificSubtitles.Name = "chkRetainLanguageSpecificSubtitles";
+            this.chkRetainLanguageSpecificSubtitles.Size = new System.Drawing.Size(192, 17);
+            this.chkRetainLanguageSpecificSubtitles.TabIndex = 29;
+            this.chkRetainLanguageSpecificSubtitles.Text = "Retain &Language Specific Subtitles";
+            this.chkRetainLanguageSpecificSubtitles.UseVisualStyleBackColor = true;
+            // 
+            // label93
+            // 
+            this.label93.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label93.AutoSize = true;
+            this.label93.Location = new System.Drawing.Point(3, 3);
+            this.label93.Name = "label93";
+            this.label93.Size = new System.Drawing.Size(294, 26);
+            this.label93.TabIndex = 43;
+            this.label93.Text = "These preferences control how TV Rename finds and retains\r\nsubtitles and subtitle" +
+    " files.";
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox2.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pictureBox2.Image = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pictureBox2.InitialImage = global::TVRename.Properties.Resources.iconfinder_Info_Circle_Symbol_Information_Letter_1396823;
+            this.pictureBox2.Location = new System.Drawing.Point(365, 2);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(43, 40);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox2.TabIndex = 42;
+            this.pictureBox2.TabStop = false;
+            // 
+            // groupBox29
+            // 
+            this.groupBox29.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox29.Controls.Add(this.label94);
+            this.groupBox29.Controls.Add(this.txtSubtitleFolderNames);
+            this.groupBox29.Controls.Add(this.cbCopySubsFolders);
+            this.groupBox29.Location = new System.Drawing.Point(6, 160);
+            this.groupBox29.Name = "groupBox29";
+            this.groupBox29.Size = new System.Drawing.Size(408, 78);
+            this.groupBox29.TabIndex = 44;
+            this.groupBox29.TabStop = false;
+            this.groupBox29.Text = "Subtitle Folders";
+            // 
+            // label94
+            // 
+            this.label94.AutoSize = true;
+            this.label94.Location = new System.Drawing.Point(3, 45);
+            this.label94.Name = "label94";
+            this.label94.Size = new System.Drawing.Size(113, 13);
+            this.label94.TabIndex = 30;
+            this.label94.Text = "&Subtitle Folder Names:";
+            // 
+            // txtSubtitleFolderNames
+            // 
+            this.txtSubtitleFolderNames.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSubtitleFolderNames.Location = new System.Drawing.Point(122, 42);
+            this.txtSubtitleFolderNames.Name = "txtSubtitleFolderNames";
+            this.txtSubtitleFolderNames.Size = new System.Drawing.Size(280, 20);
+            this.txtSubtitleFolderNames.TabIndex = 31;
+            // 
+            // cbCopySubsFolders
+            // 
+            this.cbCopySubsFolders.AutoSize = true;
+            this.cbCopySubsFolders.Location = new System.Drawing.Point(6, 19);
+            this.cbCopySubsFolders.Name = "cbCopySubsFolders";
+            this.cbCopySubsFolders.Size = new System.Drawing.Size(120, 17);
+            this.cbCopySubsFolders.TabIndex = 29;
+            this.cbCopySubsFolders.Text = "Copy subtitle folders";
+            this.cbCopySubsFolders.UseVisualStyleBackColor = true;
+            // 
+            // cbFileNameCaseSensitiveMatch
+            // 
+            this.cbFileNameCaseSensitiveMatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbFileNameCaseSensitiveMatch.AutoSize = true;
+            this.cbFileNameCaseSensitiveMatch.Location = new System.Drawing.Point(3, 417);
+            this.cbFileNameCaseSensitiveMatch.Name = "cbFileNameCaseSensitiveMatch";
+            this.cbFileNameCaseSensitiveMatch.Size = new System.Drawing.Size(194, 17);
+            this.cbFileNameCaseSensitiveMatch.TabIndex = 42;
+            this.cbFileNameCaseSensitiveMatch.Text = "Case Sensitive Match for Filenames";
+            this.cbFileNameCaseSensitiveMatch.UseVisualStyleBackColor = true;
+            // 
+            // cbAutomateAutoAddWhenOneShowFound
+            // 
+            this.cbAutomateAutoAddWhenOneShowFound.AutoSize = true;
+            this.cbAutomateAutoAddWhenOneShowFound.Location = new System.Drawing.Point(20, 39);
+            this.cbAutomateAutoAddWhenOneShowFound.Name = "cbAutomateAutoAddWhenOneShowFound";
+            this.cbAutomateAutoAddWhenOneShowFound.Size = new System.Drawing.Size(200, 17);
+            this.cbAutomateAutoAddWhenOneShowFound.TabIndex = 17;
+            this.cbAutomateAutoAddWhenOneShowFound.Text = "Auto Add when only one show found";
+            this.cbAutomateAutoAddWhenOneShowFound.UseVisualStyleBackColor = true;
+            // 
+            // cbAutomateAutoAddWhenOneMovieFound
+            // 
+            this.cbAutomateAutoAddWhenOneMovieFound.AutoSize = true;
+            this.cbAutomateAutoAddWhenOneMovieFound.Location = new System.Drawing.Point(20, 58);
+            this.cbAutomateAutoAddWhenOneMovieFound.Name = "cbAutomateAutoAddWhenOneMovieFound";
+            this.cbAutomateAutoAddWhenOneMovieFound.Size = new System.Drawing.Size(203, 17);
+            this.cbAutomateAutoAddWhenOneMovieFound.TabIndex = 18;
+            this.cbAutomateAutoAddWhenOneMovieFound.Text = "Auto Add when only one movie found";
+            this.cbAutomateAutoAddWhenOneMovieFound.UseVisualStyleBackColor = true;
+            // 
+            // label95
+            // 
+            this.label95.AutoSize = true;
+            this.label95.Location = new System.Drawing.Point(6, 102);
+            this.label95.Name = "label95";
+            this.label95.Size = new System.Drawing.Size(127, 13);
+            this.label95.TabIndex = 6;
+            this.label95.Text = "Default movie folder type:";
+            // 
+            // cmbDefMovieFolderFormat
+            // 
+            this.cmbDefMovieFolderFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbDefMovieFolderFormat.FormattingEnabled = true;
+            this.cmbDefMovieFolderFormat.Location = new System.Drawing.Point(139, 99);
+            this.cmbDefMovieFolderFormat.Name = "cmbDefMovieFolderFormat";
+            this.cmbDefMovieFolderFormat.Size = new System.Drawing.Size(256, 21);
+            this.cmbDefMovieFolderFormat.TabIndex = 7;
             // 
             // Preferences
             // 
@@ -5836,8 +6035,6 @@ namespace TVRename
             this.groupBox2.PerformLayout();
             this.tbFilesAndFolders.ResumeLayout(false);
             this.tbFilesAndFolders.PerformLayout();
-            this.groupBox9.ResumeLayout(false);
-            this.groupBox9.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbFilesAndFolders)).EndInit();
             this.tbGeneral.ResumeLayout(false);
             this.tbGeneral.PerformLayout();
@@ -5898,6 +6095,13 @@ namespace TVRename
             ((System.ComponentModel.ISupportInitialize)(this.pbuUpdates)).EndInit();
             this.grpUpdateIntervalOption.ResumeLayout(false);
             this.grpUpdateIntervalOption.PerformLayout();
+            this.tpSubtitles.ResumeLayout(false);
+            this.tpSubtitles.PerformLayout();
+            this.groupBox9.ResumeLayout(false);
+            this.groupBox9.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            this.groupBox29.ResumeLayout(false);
+            this.groupBox29.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -6118,11 +6322,6 @@ namespace TVRename
         private System.Windows.Forms.TextBox tbPercentBetter;
         private System.Windows.Forms.TextBox tbPriorityOverrideTerms;
         private System.Windows.Forms.Label label52;
-        private System.Windows.Forms.GroupBox groupBox9;
-        private System.Windows.Forms.CheckBox cbTxtToSub;
-        private System.Windows.Forms.Label label46;
-        private System.Windows.Forms.TextBox txtSubtitleExtensions;
-        private System.Windows.Forms.CheckBox chkRetainLanguageSpecificSubtitles;
         private System.Windows.Forms.GroupBox groupBox11;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox cboShowStatus;
@@ -6358,5 +6557,26 @@ namespace TVRename
         private System.Windows.Forms.PictureBox pbuUpdates;
         private System.Windows.Forms.Label label92;
         private System.Windows.Forms.CheckBox cbDefShowAlternateOrder;
+        private System.Windows.Forms.CheckBox cbDeleteMovieFromDisk;
+        private System.Windows.Forms.CheckBox cbIgnorePreviouslySeenMovies;
+        private System.Windows.Forms.CheckBox cbDefMovieIncludeNoAirdate;
+        private System.Windows.Forms.CheckBox cbDefMovieIncludeFuture;
+        private System.Windows.Forms.CheckBox cbFileNameCaseSensitiveMatch;
+        private System.Windows.Forms.TabPage tpSubtitles;
+        private System.Windows.Forms.GroupBox groupBox29;
+        private System.Windows.Forms.Label label94;
+        private System.Windows.Forms.TextBox txtSubtitleFolderNames;
+        private System.Windows.Forms.CheckBox cbCopySubsFolders;
+        private System.Windows.Forms.Label label93;
+        private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.GroupBox groupBox9;
+        private System.Windows.Forms.CheckBox cbTxtToSub;
+        private System.Windows.Forms.Label label46;
+        private System.Windows.Forms.TextBox txtSubtitleExtensions;
+        private System.Windows.Forms.CheckBox chkRetainLanguageSpecificSubtitles;
+        private System.Windows.Forms.CheckBox cbAutomateAutoAddWhenOneMovieFound;
+        private System.Windows.Forms.CheckBox cbAutomateAutoAddWhenOneShowFound;
+        private System.Windows.Forms.Label label95;
+        private System.Windows.Forms.ComboBox cmbDefMovieFolderFormat;
     }
 }
