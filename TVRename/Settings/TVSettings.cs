@@ -1636,6 +1636,13 @@ namespace TVRename
             UpdateRegExs(xmlSettings);
             UpdateShowStatus(xmlSettings);
             UpdateFiters(xmlSettings);
+
+            //todo - See whether we need this??
+            if (DefaultMovieProvider == TVDoc.ProviderType.libraryDefault)
+            {
+                DefaultMovieProvider = TVDoc.ProviderType.TMDB;
+                Logger.Error($"Has to update default movie provider");
+            }
         }
 
         private void UpdateAppUpdateSettings([NotNull] XElement xmlSettings)
