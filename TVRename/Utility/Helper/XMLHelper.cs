@@ -386,7 +386,7 @@ namespace TVRename
         }
 
         [CanBeNull]
-        private static T? ExtractNumber<T>([NotNull] this XElement xmlSettings, string elementName, Func<string,T> functionToExtract )
+        private static Nullable<T> ExtractNumber<T>([NotNull] this XElement xmlSettings, string elementName, Func<string,T> functionToExtract) where T:struct
         {
             IEnumerable<XElement> xElements = xmlSettings.Descendants(elementName).ToList();
 
@@ -399,11 +399,11 @@ namespace TVRename
                 catch (FormatException)
                 {
                     Logger.Error($"Could not parse '{elementName}' from {xmlSettings}");
-                    return default;
+                    return null;
                 }
             }
 
-            return default;
+            return null;
         }
 
         public static int? ExtractInt([NotNull] this XElement xmlSettings, string elementName)
