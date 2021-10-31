@@ -249,8 +249,12 @@ namespace TVRename.TMDB
 
                 latestUpdateTime.RegisterServerUpdate(DateTime.Now.ToUnixTime());
 
-                List<int> movieUpdates = Client.GetChangesMovies(cts, latestUpdateTime).Select(item => item.Id).Distinct().ToList();
-                Say($"Processing {movieUpdates.Count} movie updates from TMDB. From between {latestUpdateTime.LastSuccessfulServerUpdateDateTime()} and {latestUpdateTime.ProposedServerUpdateDateTime()}");
+                List<int> movieUpdates = Client.GetChangesMovies(cts, latestUpdateTime).Select(item => item.Id)
+                    .Distinct().ToList();
+
+                Say(
+                    $"Processing {movieUpdates.Count} movie updates from TMDB. From between {latestUpdateTime.LastSuccessfulServerUpdateDateTime()} and {latestUpdateTime.ProposedServerUpdateDateTime()}");
+
                 lock (MOVIE_LOCK)
                 {
                     foreach (int id in movieUpdates)
@@ -274,11 +278,17 @@ namespace TVRename.TMDB
                             return true;
                         }
                     }
-                    Say($"Identified {Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)} TMDB Movies need updating");
+
+                    Say(
+                        $"Identified {Movies.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)} TMDB Movies need updating");
                 }
 
-                List<int> showUpdates = Client.GetChangesShows(cts, latestUpdateTime).Select(item => item.Id).Distinct().ToList();
-                Say($"Processing {showUpdates.Count} show updates from TMDB. From between {latestUpdateTime.LastSuccessfulServerUpdateDateTime()} and {latestUpdateTime.ProposedServerUpdateDateTime()}");
+                List<int> showUpdates = Client.GetChangesShows(cts, latestUpdateTime).Select(item => item.Id).Distinct()
+                    .ToList();
+
+                Say(
+                    $"Processing {showUpdates.Count} show updates from TMDB. From between {latestUpdateTime.LastSuccessfulServerUpdateDateTime()} and {latestUpdateTime.ProposedServerUpdateDateTime()}");
+
                 lock (SERIES_LOCK)
                 {
                     foreach (int id in showUpdates)
@@ -302,7 +312,9 @@ namespace TVRename.TMDB
                             return true;
                         }
                     }
-                    Say($"Identified {Series.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)} TMDB Shows need updating");
+
+                    Say(
+                        $"Identified {Series.Values.Count(info => info.Dirty && !info.IsSearchResultOnly)} TMDB Shows need updating");
                 }
 
                 return true;
@@ -316,6 +328,12 @@ namespace TVRename.TMDB
             {
                 LOGGER.Error(sce.Message);
                 LastErrorMessage = sce.Message;
+                return false;
+            }
+            catch (TaskCanceledException tce)
+            {
+                LastErrorMessage = "Request to get updates Cancelled";
+                LOGGER.Warn(LastErrorMessage);
                 return false;
             }
             finally
