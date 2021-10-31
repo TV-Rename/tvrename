@@ -128,12 +128,12 @@ namespace TVRename
             Interval
         }
 
-        public List<string> LibraryFolders;
-        public List<string> MovieLibraryFolders;
-        public List<string> IgnoreFolders;
-        public List<string> DownloadFolders;
-        public List<string> IgnoredAutoAddHints;
-        public List<IgnoreItem> Ignore;
+        public SafeList<string> LibraryFolders;
+        public SafeList<string> MovieLibraryFolders;
+        public SafeList<string> IgnoreFolders;
+        public SafeList<string> DownloadFolders;
+        public SafeList<string> IgnoredAutoAddHints;
+        public SafeList<IgnoreItem> Ignore;
         public bool AutoSelectShowInMyShows = true;
         public bool AutoCreateFolders = false;
         public bool BGDownload = false;
@@ -452,15 +452,15 @@ namespace TVRename
         private TVSettings()
         {
             // defaults that aren't handled with default initialisers
-            Ignore = new List<IgnoreItem>();
+            Ignore = new SafeList<IgnoreItem>();
             PreviouslySeenEpisodes = new PreviouslySeenEpisodes();
             PreviouslySeenMovies = new PreviouslySeenMovies();
-            DownloadFolders = new List<string>();
-            MovieLibraryFolders = new List<string>();
-            IgnoreFolders = new List<string>();
-            LibraryFolders = new List<string>();
-            MovieLibraryFolders = new List<string>();
-            IgnoredAutoAddHints = new List<string>();
+            DownloadFolders = new SafeList<string>();
+            MovieLibraryFolders = new SafeList<string>();
+            IgnoreFolders = new SafeList<string>();
+            LibraryFolders = new SafeList<string>();
+            MovieLibraryFolders = new SafeList<string>();
+            IgnoredAutoAddHints = new SafeList<string>();
 
             VideoExtensionsString = VideoExtensionsStringDEFAULT;
             OtherExtensionsString = OtherExtensionsStringDEFAULT;
@@ -974,7 +974,7 @@ namespace TVRename
                     false,
                     "like '13 - Showname - 2 - Episode Title.avi'"),
                 new FilenameProcessorRE(true,
-                    "\\b(episode|ep|e) ?(?<e>[0-9]{2,}) ?- ?(cachedSeries|season) ?(?<s>[0-9]+)",
+                    "\\b(episode|ep|e) ?(?<e>[0-9]{2,}) ?- ?(series|season) ?(?<s>[0-9]+)",
                     false, "episode 3 - season 4"),
                 new FilenameProcessorRE(true,
                     "season (?<s>[0-9]+)\\\\e?(?<e>[0-9]{1,3}) ?-",

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace TVRename
 {
-    public class PossibleNewMovies : System.Collections.Generic.List<PossibleNewMovie>
+    public class PossibleNewMovies : SafeList<PossibleNewMovie>
     {
         public void AddIfNew(PossibleNewMovie ai)
         {

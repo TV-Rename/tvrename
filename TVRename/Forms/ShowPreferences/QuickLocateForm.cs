@@ -8,7 +8,6 @@
 
 using Alphaleonis.Win32.Filesystem;
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace TVRename.Forms.ShowPreferences
@@ -25,7 +24,7 @@ namespace TVRename.Forms.ShowPreferences
 
             cbDirectory.SuspendLayout();
             cbDirectory.Items.Clear();
-            List<string> folders = t == MediaConfiguration.MediaType.tv ? TVSettings.Instance.LibraryFolders : TVSettings.Instance.MovieLibraryFolders;
+            SafeList<string> folders = t == MediaConfiguration.MediaType.tv ? TVSettings.Instance.LibraryFolders : TVSettings.Instance.MovieLibraryFolders;
             foreach (string folder in folders)
             {
                 cbDirectory.Items.Add(folder.TrimEnd(Path.DirectorySeparatorChar.ToString()));

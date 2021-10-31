@@ -22,13 +22,13 @@ namespace TVRename
     /// </summary>
     public partial class IgnoreEdit : Form
     {
-        private readonly System.Collections.Generic.List<IgnoreItem> ignore;
+        private readonly SafeList<IgnoreItem> ignore;
         private readonly TVDoc mDoc;
 
         public IgnoreEdit(TVDoc doc, string defaultFilter)
         {
             mDoc = doc;
-            ignore = new System.Collections.Generic.List<IgnoreItem>();
+            ignore = new SafeList<IgnoreItem>();
 
             foreach (IgnoreItem ii in TVSettings.Instance.Ignore)
             {

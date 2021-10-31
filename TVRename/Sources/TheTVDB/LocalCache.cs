@@ -655,7 +655,7 @@ namespace TVRename.TheTVDB
             }
             catch (KeyNotFoundException kex)
             {
-                //We assue this is due to the update being for a recently removed show.
+                //We assume this is due to the update being for a recently removed show.
                 LOGGER.Error(kex);
             }
         }
@@ -2852,6 +2852,14 @@ namespace TVRename.TheTVDB
                 {
                     jsonSearchDefaultLangResponse =
                         API.SearchTvShow(text, TVSettings.Instance.PreferredTVDBLanguage.Abbreviation);
+                }
+                catch (IOException ex)
+                {
+                    LOGGER.Error(ex, 
+                        $"Error obntaining search term '{text}' in {TVSettings.Instance.PreferredTVDBLanguage.EnglishName}: {ex.LoggableDetails()}");
+
+                    LastErrorMessage = ex.LoggableDetails();
+                    SayNothing();
                 }
                 catch (WebException ex)
                 {

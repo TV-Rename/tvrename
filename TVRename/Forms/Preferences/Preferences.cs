@@ -1852,7 +1852,7 @@ namespace TVRename
                 return;
             }
 
-            Helpers.OpenFolder(TVSettings.Instance.DownloadFolders[n].Trim());
+            Helpers.OpenFolder(TVSettings.Instance.DownloadFolders[n]?.Trim());
         }
 
         private void lbSearchFolders_KeyDown(object sender, [NotNull] KeyEventArgs e)

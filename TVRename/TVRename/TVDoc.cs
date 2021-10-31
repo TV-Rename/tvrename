@@ -620,13 +620,13 @@ namespace TVRename
                 TvLibrary.LoadFromXml(x.Descendants("MyShows").First());
                 FilmLibrary.LoadFromXml(x.Descendants("MyMovies").FirstOrDefault());
                 TVSettings.Instance.IgnoreFolders =
-                    x.Descendants("IgnoreFolders").FirstOrDefault()?.ReadStringsFromXml("Folder") ?? new List<string>();
+                    x.Descendants("IgnoreFolders").FirstOrDefault()?.ReadStringsFromXml("Folder").ToSafeList() ?? new SafeList<string>();
                 TVSettings.Instance.DownloadFolders =
-                    x.Descendants("FinderSearchFolders").FirstOrDefault()?.ReadStringsFromXml("Folder") ?? new List<string>();
+                    x.Descendants("FinderSearchFolders").FirstOrDefault()?.ReadStringsFromXml("Folder").ToSafeList() ?? new SafeList<string>();
                 TVSettings.Instance.IgnoredAutoAddHints =
-                    x.Descendants("IgnoredAutoAddHints").FirstOrDefault()?.ReadStringsFromXml("Hint") ?? new List<string>();
+                    x.Descendants("IgnoredAutoAddHints").FirstOrDefault()?.ReadStringsFromXml("Hint").ToSafeList() ?? new SafeList<string>();
                 TVSettings.Instance.Ignore =
-                    x.Descendants("IgnoreItems").FirstOrDefault()?.ReadIiFromXml("Ignore") ?? new List<IgnoreItem>();
+                    x.Descendants("IgnoreItems").FirstOrDefault()?.ReadIiFromXml("Ignore").ToSafeList() ?? new SafeList<IgnoreItem>();
                 TVSettings.Instance.PreviouslySeenEpisodes = new PreviouslySeenEpisodes(x.Descendants("PreviouslySeenEpisodes").FirstOrDefault());
                 TVSettings.Instance.PreviouslySeenMovies = new PreviouslySeenMovies(x.Descendants("PreviouslySeenMovies").FirstOrDefault());
 
@@ -634,11 +634,11 @@ namespace TVRename
                 IEnumerable<XElement> mfs = x.Descendants("MonitorFolders");
                 foreach (XElement mf in mfs.Where(mf => mf.Descendants("Folder").Any()))
                 {
-                    TVSettings.Instance.LibraryFolders = mf.ReadStringsFromXml("Folder");
+                    TVSettings.Instance.LibraryFolders = mf.ReadStringsFromXml("Folder").ToSafeList();
                 }
 
                 TVSettings.Instance.MovieLibraryFolders =
-                    x.Descendants("MovieLibraryFolders").FirstOrDefault()?.ReadStringsFromXml("Folder") ?? new List<string>();
+                    x.Descendants("MovieLibraryFolders").FirstOrDefault()?.ReadStringsFromXml("Folder").ToSafeList() ?? new SafeList<string>();
             }
             catch (Exception e)
             {
@@ -1412,7 +1412,8 @@ namespace TVRename
 
                         foreach (MovieConfiguration si in FilmLibrary.Movies
                             .Where(si => !showsToScan.Contains(si))
-                            .Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders)))
+                            .Where(si => si.NameMatch(fi, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
+                            .ToList())
                         {
                             showsToScan.Add(si);
                         }

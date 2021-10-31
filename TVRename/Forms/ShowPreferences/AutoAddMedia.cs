@@ -1,6 +1,5 @@
 using Alphaleonis.Win32.Filesystem;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using JetBrains.Annotations;
@@ -67,7 +66,7 @@ namespace TVRename
             UpdateDirectoryDropDown(cbMovieDirectory, TVSettings.Instance.MovieLibraryFolders, TVSettings.Instance.DefMovieDefaultLocation, true, tpMovie);
         }
 
-        private static void UpdateDirectoryDropDown([NotNull] ComboBox comboBox, [NotNull] List<string> folders, string? defaultValue, bool useDefaultValue, TabPage tabToDisable)
+        private static void UpdateDirectoryDropDown([NotNull] ComboBox comboBox, [NotNull] SafeList<string> folders, string? defaultValue, bool useDefaultValue, TabPage tabToDisable)
         {
             comboBox.SuspendLayout();
             comboBox.Items.Clear();

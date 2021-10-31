@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using TMDbLib.Client;
@@ -383,65 +384,81 @@ namespace TVRename.TMDB
         internal CachedMovieInfo DownloadMovieNow([NotNull] ISeriesSpecifier id, bool showErrorMsgBox,bool saveToCache = true)
         {
             string imageLanguage = $"{id.LanguageToUse().Abbreviation},null";
-            Movie downloadedMovie = Client.GetMovieAsync(id.TmdbId, id.LanguageToUse().Abbreviation, imageLanguage, MovieMethods.ExternalIds | MovieMethods.Images | MovieMethods.AlternativeTitles | MovieMethods.ReleaseDates | MovieMethods.Changes | MovieMethods.Videos | MovieMethods.Credits).Result;
-            if (downloadedMovie is null)
+            try
             {
-                throw new MediaNotFoundException(id, "TMDB no longer has this movie", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
-            }
-            CachedMovieInfo m = new(id.TargetLocale, TVDoc.ProviderType.TMDB)
-            {
-                Imdb = downloadedMovie.ExternalIds.ImdbId,
-                TmdbCode = downloadedMovie.Id,
-                Name = downloadedMovie.Title,
-                Runtime = downloadedMovie.Runtime.ToString(),
-                FirstAired = GetReleaseDateDetail(downloadedMovie, id.RegionToUse().Abbreviation) ?? GetReleaseDateDetail(downloadedMovie, TVSettings.Instance.TMDBRegion.Abbreviation) ?? downloadedMovie.ReleaseDate,
-                Genres = downloadedMovie.Genres.Select(genre => genre.Name).ToList(),
-                Overview = downloadedMovie.Overview,
-                Network = downloadedMovie.ProductionCompanies.Select(y=>y.Name).ToPsv(),
-                Status = downloadedMovie.Status,
-                ShowLanguage = downloadedMovie.OriginalLanguage,
-                SiteRating = (float)downloadedMovie.VoteAverage,
-                SiteRatingVotes = downloadedMovie.VoteCount,
-                PosterUrl = PosterImageUrl(downloadedMovie.PosterPath),
-                SrvLastUpdated = DateTime.UtcNow.Date.ToUnixTime(),
-                CollectionName = downloadedMovie.BelongsToCollection?.Name,
-                CollectionId = downloadedMovie.BelongsToCollection?.Id,
-                TagLine = downloadedMovie.Tagline,
-                Popularity = downloadedMovie.Popularity,
-                TwitterId = downloadedMovie.ExternalIds.TwitterId,
-                InstagramId = downloadedMovie.ExternalIds.InstagramId,
-                FacebookId = downloadedMovie.ExternalIds.InstagramId,
-                FanartUrl = OriginalImageUrl(downloadedMovie.BackdropPath),
-                ContentRating = GetCertification(downloadedMovie, id.RegionToUse().Abbreviation) ?? GetCertification(downloadedMovie, TVSettings.Instance.TMDBRegion.Abbreviation) ?? GetCertification(downloadedMovie, Regions.Instance.FallbackRegion.Abbreviation) ?? string.Empty,
-                OfficialUrl = downloadedMovie.Homepage,
-                TrailerUrl = GetYouTubeUrl(downloadedMovie),
-                Dirty = false,
-                Country = downloadedMovie.ProductionCountries.FirstOrDefault()?.Name,
-            };
-            
-            foreach (string? s in downloadedMovie.AlternativeTitles.Titles.Select(title => title.Title))
-            {
-                m.AddAlias(s);
-            }
-            foreach (Cast? s in downloadedMovie.Credits.Cast)
-            {
-                m.AddActor(new Actor(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Character, s.CastId, s.Order));
-            }
-            foreach (TMDbLib.Objects.General.Crew? s in downloadedMovie.Credits.Crew)
-            {
-                m.AddCrew(new Crew(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Job, s.Department, s.CreditId));
-            }
-            AddMovieImages(downloadedMovie,m);
+                Movie downloadedMovie = Client.GetMovieAsync(id.TmdbId, id.LanguageToUse().Abbreviation, imageLanguage,
+                        MovieMethods.ExternalIds | MovieMethods.Images | MovieMethods.AlternativeTitles |
+                        MovieMethods.ReleaseDates | MovieMethods.Changes | MovieMethods.Videos | MovieMethods.Credits)
+                    .Result;
+                if (downloadedMovie is null)
+                {
+                    throw new MediaNotFoundException(id, "TMDB no longer has this movie", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.movie);
+                }
+                CachedMovieInfo m = new(id.TargetLocale, TVDoc.ProviderType.TMDB)
+                {
+                    Imdb = downloadedMovie.ExternalIds.ImdbId,
+                    TmdbCode = downloadedMovie.Id,
+                    Name = downloadedMovie.Title,
+                    Runtime = downloadedMovie.Runtime.ToString(),
+                    FirstAired = GetReleaseDateDetail(downloadedMovie, id.RegionToUse().Abbreviation) ?? GetReleaseDateDetail(downloadedMovie, TVSettings.Instance.TMDBRegion.Abbreviation) ?? downloadedMovie.ReleaseDate,
+                    Genres = downloadedMovie.Genres.Select(genre => genre.Name).ToList(),
+                    Overview = downloadedMovie.Overview,
+                    Network = downloadedMovie.ProductionCompanies.Select(y=>y.Name).ToPsv(),
+                    Status = downloadedMovie.Status,
+                    ShowLanguage = downloadedMovie.OriginalLanguage,
+                    SiteRating = (float)downloadedMovie.VoteAverage,
+                    SiteRatingVotes = downloadedMovie.VoteCount,
+                    PosterUrl = PosterImageUrl(downloadedMovie.PosterPath),
+                    SrvLastUpdated = DateTime.UtcNow.Date.ToUnixTime(),
+                    CollectionName = downloadedMovie.BelongsToCollection?.Name,
+                    CollectionId = downloadedMovie.BelongsToCollection?.Id,
+                    TagLine = downloadedMovie.Tagline,
+                    Popularity = downloadedMovie.Popularity,
+                    TwitterId = downloadedMovie.ExternalIds.TwitterId,
+                    InstagramId = downloadedMovie.ExternalIds.InstagramId,
+                    FacebookId = downloadedMovie.ExternalIds.InstagramId,
+                    FanartUrl = OriginalImageUrl(downloadedMovie.BackdropPath),
+                    ContentRating = GetCertification(downloadedMovie, id.RegionToUse().Abbreviation) ?? GetCertification(downloadedMovie, TVSettings.Instance.TMDBRegion.Abbreviation) ?? GetCertification(downloadedMovie, Regions.Instance.FallbackRegion.Abbreviation) ?? string.Empty,
+                    OfficialUrl = downloadedMovie.Homepage,
+                    TrailerUrl = GetYouTubeUrl(downloadedMovie),
+                    Dirty = false,
+                    Country = downloadedMovie.ProductionCountries.FirstOrDefault()?.Name,
+                };
+                
+                foreach (string? s in downloadedMovie.AlternativeTitles.Titles.Select(title => title.Title))
+                {
+                    m.AddAlias(s);
+                }
+                foreach (Cast? s in downloadedMovie.Credits.Cast)
+                {
+                    m.AddActor(new Actor(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Character, s.CastId, s.Order));
+                }
+                foreach (TMDbLib.Objects.General.Crew? s in downloadedMovie.Credits.Crew)
+                {
+                    m.AddCrew(new Crew(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Job, s.Department, s.CreditId));
+                }
+                AddMovieImages(downloadedMovie,m);
 
-            if (saveToCache)
-            {
-                this.AddMovieToCache(m);
-            }
+                if (saveToCache)
+                {
+                    this.AddMovieToCache(m);
+                }
 
-            return m;
+                return m;
+            }
+            catch (HttpRequestException ex)
+            {
+                LOGGER.Error(
+                    $"Error obtaining TMDB Movie for {id} in {id.TargetLocale.LanguageToUse(TVDoc.ProviderType.TMDB).EnglishName}:",
+                    ex);
+
+                SayNothing();
+                LastErrorMessage = ex.LoggableDetails();
+                throw new SourceConnectivityException();
+            }
         }
 
-        private void AddMovieImages([NotNull] Movie downloadedMovie, CachedMovieInfo m)
+    private void AddMovieImages([NotNull] Movie downloadedMovie, CachedMovieInfo m)
         {
             int imageId = 1; //TODO See https://www.themoviedb.org/talk/60ba61a4cb9f4b006f30f82b for  why we need this
             if (downloadedMovie.Images.Backdrops.Any())
@@ -805,29 +822,41 @@ namespace TVRename.TMDB
                 }
             }
 
-            if (type == MediaConfiguration.MediaType.movie)
+            try
             {
-                SearchContainer<SearchMovie> results = Client.SearchMovieAsync(text, locale.LanguageToUse(TVDoc.ProviderType.TMDB).Abbreviation).Result;
-                LOGGER.Info(
-                    $"Got {results.Results.Count:N0} of {results.TotalResults:N0} results searching for {text}");
-
-                foreach (SearchMovie result in results.Results)
+                if (type == MediaConfiguration.MediaType.movie)
                 {
-                    CachedMovieInfo filedResult = File(result);
-                    LOGGER.Info($"   Movie: {filedResult.Name}:{filedResult.Id()}   {filedResult.Popularity}");
+                    SearchContainer<SearchMovie> results = Client
+                        .SearchMovieAsync(text, locale.LanguageToUse(TVDoc.ProviderType.TMDB).Abbreviation).Result;
+
+                    LOGGER.Info(
+                        $"Got {results.Results.Count:N0} of {results.TotalResults:N0} results searching for {text}");
+
+                    foreach (SearchMovie result in results.Results)
+                    {
+                        CachedMovieInfo filedResult = File(result);
+                        LOGGER.Info($"   Movie: {filedResult.Name}:{filedResult.Id()}   {filedResult.Popularity}");
+                    }
+                }
+                else
+                {
+                    SearchContainer<SearchTv>? results = Client.SearchTvShowAsync(text).Result;
+                    LOGGER.Info(
+                        $"Got {results.Results.Count:N0} of {results.TotalResults:N0} results searching for {text}");
+
+                    foreach (SearchTv result in results.Results)
+                    {
+                        CachedSeriesInfo filedResult = File(result);
+                        LOGGER.Info($"   TV Show: {filedResult.Name}:{filedResult.Id()}   {filedResult.Popularity}");
+                    }
                 }
             }
-            else
+            catch (HttpRequestException ex)
             {
-                SearchContainer<SearchTv>? results = Client.SearchTvShowAsync(text).Result;
-                LOGGER.Info(
-                    $"Got {results.Results.Count:N0} of {results.TotalResults:N0} results searching for {text}");
-
-                foreach (SearchTv result in results.Results)
-                {
-                    CachedSeriesInfo filedResult = File(result);
-                    LOGGER.Info($"   TV Show: {filedResult.Name}:{filedResult.Id()}   {filedResult.Popularity}");
-                }
+                LOGGER.Error($"Error searching on TMDB:", ex);
+                SayNothing();
+                LastErrorMessage = ex.LoggableDetails();
+                throw new SourceConnectivityException();
             }
         }
 
@@ -1055,6 +1084,16 @@ namespace TVRename.TMDB
 
                     sender.ReportProgress(100 * current++ / total, arg.CachedShow?.Name);
                 }
+                catch (HttpRequestException ex)
+                {
+                    LOGGER.Error(
+                        $"Error obtaining TMDB Reccomendations:",
+                        ex);
+
+                    SayNothing();
+                    LastErrorMessage = ex.LoggableDetails();
+                    throw new SourceConnectivityException();
+                }
                 catch
                 {
                     //todo record and resolve /retry errors
@@ -1157,6 +1196,16 @@ namespace TVRename.TMDB
 
                     sender.ReportProgress(100 * current++ / total, arg.CachedMovie?.Name);
                 }
+                catch (HttpRequestException ex)
+                {
+                    LOGGER.Error(
+                        $"Error obtaining TMDB Recommendations:",
+                        ex);
+
+                    SayNothing();
+                    LastErrorMessage = ex.LoggableDetails();
+                    throw new SourceConnectivityException();
+                }
                 catch
                 {
                     //todo - record error, retry etc
@@ -1171,7 +1220,7 @@ namespace TVRename.TMDB
             return returnValue;
         }
 
-        public void ReConnect(bool b)
+        public void ReConnect(bool _)
         {
             //nothing to be done here
         }

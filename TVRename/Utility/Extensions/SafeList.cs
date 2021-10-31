@@ -206,5 +206,23 @@ namespace TVRename
             }
             return false;
         }
+
+        public void Sort()
+        {
+            lock (@lock)
+            {
+                inner.Sort();
+            }
+        }
+    }
+    public static class SafeListExtensions
+    {
+        [NotNull]
+        public static SafeList<T> ToSafeList<T>(this IEnumerable<T> source)
+        {
+            SafeList<T> retValue = new();
+            retValue.AddNullableRange(source);
+            return retValue;
+        }
     }
 }

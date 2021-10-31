@@ -41,7 +41,7 @@ namespace TVRename
             if (TVSettings.Instance.wdLiveTvMeta)
             {
                 ItemList theActionList = new();
-                FileInfo tvShowXml = FileHelper.FileInFolder(si.AutoAddFolderBase, "cachedSeries.xml");
+                FileInfo tvShowXml = FileHelper.FileInFolder(si.AutoAddFolderBase, "series.xml");
 
                 CachedSeriesInfo cachedSeriesInfo = si.CachedShow;
                 bool needUpdate = !tvShowXml.Exists ||

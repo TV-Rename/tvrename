@@ -99,7 +99,7 @@ namespace TVRename
             DeleteSelectedFolder(lstFMMonitorFolders, TVSettings.Instance.MovieLibraryFolders);
         }
 
-        private void DeleteSelectedFolder([NotNull] ListBox lb, List<string> folders)
+        private void DeleteSelectedFolder([NotNull] ListBox lb, SafeList<string> folders)
         {
             for (int i = lb.SelectedIndices.Count - 1; i >= 0; i--)
             {
@@ -252,7 +252,7 @@ namespace TVRename
             AddDraggedFiles(e, TVSettings.Instance.IgnoreFolders);
         }
 
-        private void AddDraggedFiles([NotNull] DragEventArgs e, List<string> strings)
+        private void AddDraggedFiles([NotNull] DragEventArgs e, SafeList<string> strings)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)

@@ -97,7 +97,7 @@ namespace TVRename
 
         private static int FindTvdbShowCode(PossibleNewTvShow ai)
         {
-            List<string> possibleFilenames = new() { "cachedSeries.xml", "tvshow.nfo" };
+            List<string> possibleFilenames = new() { "series.xml", "tvshow.nfo" };
             foreach (string fileName in possibleFilenames)
             {
                 try

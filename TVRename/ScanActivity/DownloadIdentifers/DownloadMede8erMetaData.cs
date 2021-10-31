@@ -18,7 +18,7 @@ namespace TVRename
             {
                 ItemList theActionList = new();
 
-                FileInfo tvshowxml = FileHelper.FileInFolder(si.AutoAddFolderBase, "cachedSeries.xml");
+                FileInfo tvshowxml = FileHelper.FileInFolder(si.AutoAddFolderBase, "series.xml");
 
                 CachedSeriesInfo cachedSeriesInfo = si.CachedShow;
                 bool needUpdate = !tvshowxml.Exists ||

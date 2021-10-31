@@ -872,7 +872,7 @@ namespace TVRename
             int maxSeasonToUse = maxSeasonNumber <= 0 ? lastPossibleSeason : maxSeasonNumber;
             if (maxSeasonToUse < 1)
             {
-                LOGGER.Error($"{Name} has a problem with series in {Order.PrettyPrint()} - max={maxSeasonToUse}");
+                LOGGER.Error($"{Name} has a problem with series in {Order.PrettyPrint()} order - max={maxSeasonToUse}");
                 maxSeasonToUse = 1;
             }
             foreach (int snum in Enumerable.Range(1, maxSeasonToUse))
