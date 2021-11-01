@@ -48,23 +48,25 @@ namespace TVRename
             CefSettings settings = null;
             try
             {
-                settings = new CefSettings
-                {
-                    CachePath = PathManager.CefCachePath,
-                    UserDataPath = PathManager.CefCachePath,
-                    LogFile = PathManager.CefLogFile,
-                };
+                settings = new CefSettings();
             }
             catch (FileNotFoundException fex)
             {
-                Logger.Error(fex,$"Can't initialise CEF Settings {PathManager.CefCachePath}, {PathManager.CefLogFile}, {architectureSpecificBrowserPath}, {architectureSpecificLocalesDirPath}, {architectureSpecificResourcesDirPath}");
+                Logger.Error(fex,$"Can't initialise CEF Settings {PathManager.CefCachePath}, {PathManager.CefLogFile}");
             }
 
             try
             {
-                if (!Helpers.InDebug() && settings != null)
+                if (settings!= null)
                 {
-                    SetArchitecturePaths(settings);
+                    settings.CachePath = PathManager.CefCachePath;
+                    settings.UserDataPath = PathManager.CefCachePath;
+                    settings.LogFile = PathManager.CefLogFile;
+
+                    if (!Helpers.InDebug())
+                    {
+                        SetArchitecturePaths(settings);
+                    }
                 }
             }
             catch (FileNotFoundException fex)
