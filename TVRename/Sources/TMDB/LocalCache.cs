@@ -446,6 +446,15 @@ namespace TVRename.TMDB
 
                 return m;
             }
+            catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
+            {
+                LOGGER.LogHttpRequestException(
+                    $"Error obtaining TMDB Movie for {id} in {id.TargetLocale.LanguageToUse(TVDoc.ProviderType.TMDB).EnglishName}:", ex);
+
+                SayNothing();
+                LastErrorMessage = ex.LoggableDetails();
+                return null;
+            }
             catch (HttpRequestException ex)
             {
                 LOGGER.Error(
@@ -851,6 +860,15 @@ namespace TVRename.TMDB
                     }
                 }
             }
+            catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
+            {
+                LOGGER.LogHttpRequestException(
+                    $"Error searching on TMDB:", ex);
+
+                SayNothing();
+                LastErrorMessage = ex.LoggableDetails();
+                throw new SourceConnectivityException();
+            }
             catch (HttpRequestException ex)
             {
                 LOGGER.Error($"Error searching on TMDB:", ex);
@@ -1084,7 +1102,7 @@ namespace TVRename.TMDB
 
                     sender.ReportProgress(100 * current++ / total, arg.CachedShow?.Name);
                 }
-                catch (HttpRequestException ex)
+                catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
                 {
                     LOGGER.Error(
                         $"Error obtaining TMDB Reccomendations:",
@@ -1096,7 +1114,10 @@ namespace TVRename.TMDB
                 }
                 catch
                 {
-                    //todo record and resolve /retry errors
+                    LOGGER.Error($"Error obtaining TMDB Reccomendations:");
+
+                    SayNothing();
+                    throw new SourceConnectivityException();
                 }
             }
 
