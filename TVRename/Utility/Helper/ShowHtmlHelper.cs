@@ -429,7 +429,6 @@ namespace TVRename
             string actorLinks = ser.GetActors().Select(ActorLinkHtml).ToCsv();
             string dayTime = $"{ser.AirsDay} {ParseAirsTime(ser)}";
 
-            string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : $"http://www.tv.com/show/{ser.SeriesId}/summary.html";
             string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
             string mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
             string tmdbLink = ser.TmdbCode > 0 ? TMDB.API.WebsiteShowUrl(ser) : string.Empty;
@@ -493,7 +492,6 @@ namespace TVRename
 			         {CreateButton(imdbLink, "IMDB.com", "View on IMDB")}
                      {CreateButton(mazeLink, "TVmaze.com", "View on TVmaze")}
                      {CreateButton(tmdbLink, "TMDB.com", "View on TMDB")}
-			         {CreateButton(tvLink, "TV.com", "View on TV.com")}
 			         {CreateButton(ser.OfficialUrl, "Official Site", "View on Official Site")}
 			        </div>
 		            <div>
@@ -557,7 +555,6 @@ namespace TVRename
             string runTimeHtml = string.IsNullOrWhiteSpace(ser.Runtime) ? string.Empty : $"<br/> {ser.Runtime} min";
             string actorLinks = ser.GetActors().Select(ActorLinkHtml).ToCsv();
             string tvdbLink = ser.Slug.HasValue() ? TheTVDB.API.WebsiteMovieUrl(ser.Slug) : string.Empty;
-            string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : $"http://www.tv.com/show/{ser.SeriesId}/summary.html";
             string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : $"http://www.imdb.com/title/{ser.Imdb}";
             string tmdbLink = ser.TmdbCode > 0 ? TMDB.API.WebsiteMovieUrl(ser.TmdbCode) : string.Empty;
             string mazeLink = ser.TvMazeCode <= 0 ? string.Empty : ser.WebUrl;
@@ -621,7 +618,6 @@ namespace TVRename
 			         {CreateButton(tvdbLink, "TVDB.com", "View on TVDB")}
 			         {CreateButton(imdbLink, "IMDB.com", "View on IMDB")}
                      {CreateButton(mazeLink, "TVmaze.com", "View on TVmaze")}
-			         {CreateButton(tvLink, "TV.com", "View on TV.com")}
 			         {CreateButton(ser.OfficialUrl, "Official Site", "View on Official Site")}
                     {facebookButton}
                     {instaButton}
@@ -1251,7 +1247,6 @@ namespace TVRename
             string tvdbButton = CreateButton(tvdbEpisodeUrl, "TVDB.com", "View on TVDB");
             string tvMazeButton = CreateButton(ep.Show.Provider == TVDoc.ProviderType.TVmaze ? ep.LinkUrl : null, "TVmaze.com", "View on TV maze");
             string imdbButton = CreateButton(imdbLink, "IMDB.com", "View on IMDB");
-            string tvButton = CreateButton(ep.ShowUrl, "TV.com", "View on TV.com");
             string tmdbButton = ep.Show.Provider == TVDoc.ProviderType.TMDB ? CreateButton(ep.WebsiteUrl, "TMDB.com", "View on TMDB.com"):string.Empty;
 
             sb.AppendLine($@"
@@ -1280,7 +1275,6 @@ namespace TVRename
                     {tmdbButton}
                     {tvMazeButton}
                     {imdbButton}
-                    {tvButton}
                    </div>
 		           <div class=""row align-items-bottom flex-grow-1"">
                     <div class=""col-md-6 align-self-end"">{stars}<br>{siteRating}</div>
@@ -1585,7 +1579,6 @@ namespace TVRename
 
             tableHtml += GetOverviewPart("thetvdb.com", $"<A HREF=\"{tvdbLink}\">Visit</a>");
             tableHtml += GetOverviewPart("imdb.com", "<A HREF=\"http://www.imdb.com/title/" + ser?.Imdb + "\">Visit</a>");
-            tableHtml += GetOverviewPart("tv.com", "<A HREF=\"http://www.tv.com/show/" + ser?.SeriesId + "/summary.html\">Visit</a>");
             tableHtml += GetOverviewPart("Runtime", ser?.Runtime);
             tableHtml += GetOverviewPart("Aliases", si.AliasNames.ToCsv());
             tableHtml += GetOverviewPart("Genres", si.Genres.ToCsv());
@@ -1773,7 +1766,6 @@ namespace TVRename
 
             tableHtml += GetOverviewPart("thetvdb.com", $"<A HREF=\"{tvdbLink}\">Visit</a>");
             tableHtml += GetOverviewPart("imdb.com", "<A HREF=\"http://www.imdb.com/title/" + ser?.Imdb + "\">Visit</a>");
-            tableHtml += GetOverviewPart("tv.com", "<A HREF=\"http://www.tv.com/show/" + ser?.SeriesId + "/summary.html\">Visit</a>");
             if (tmdbLink.HasValue())
             {
                 tableHtml += GetOverviewPart("MovieDB", $"<A HREF=\"{tmdbLink}\">Visit</a>");
