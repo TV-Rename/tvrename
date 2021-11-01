@@ -61,16 +61,6 @@ Section "Install"
     File "TVRename\bin\Release\NLog.config"
     File "TVRename\bin\Release\TVRename.exe.config"
 
-    File "TVRename\bin\Release\x64\libcrypto-3.dll"
-    File "TVRename\bin\Release\x64\libcurl.dll"
-    File "TVRename\bin\Release\x64\libssl-3.dll"
-    File "TVRename\bin\Release\x64\MediaInfo.dll"
-    
-    File "TVRename\bin\Release\x86\libcrypto-3.dll"
-    File "TVRename\bin\Release\x86\libcurl.dll"
-    File "TVRename\bin\Release\x86\libssl-3.dll"
-    File "TVRename\bin\Release\x86\MediaInfo.dll"
-
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 
     SetOutPath "$INSTDIR\x64"
