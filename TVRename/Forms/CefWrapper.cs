@@ -45,25 +45,41 @@ namespace TVRename
         private string? architectureSpecificResourcesDirPath;
         public void InitialiseBrowserFramework()
         {
+            CefSettings settings = null;
             try
             {
-                CefSettings settings = new()
+                settings = new CefSettings
                 {
                     CachePath = PathManager.CefCachePath,
                     UserDataPath = PathManager.CefCachePath,
                     LogFile = PathManager.CefLogFile,
                 };
+            }
+            catch (FileNotFoundException fex)
+            {
+                Logger.Error(fex,$"Can't initialise CEF Settings {PathManager.CefCachePath}, {PathManager.CefLogFile}, {architectureSpecificBrowserPath}, {architectureSpecificLocalesDirPath}, {architectureSpecificResourcesDirPath}");
+            }
 
-                if (!Helpers.InDebug())
+            try
+            {
+                if (!Helpers.InDebug() && settings != null)
                 {
                     SetArchitecturePaths(settings);
                 }
+            }
+            catch (FileNotFoundException fex)
+            {
+                Logger.Error(fex, $"Can't set arch paths for CEF {PathManager.CefCachePath}, {PathManager.CefLogFile}, {architectureSpecificBrowserPath}, {architectureSpecificLocalesDirPath}, {architectureSpecificResourcesDirPath}");
+            }
 
+            try
+            {
                 Cef.Initialize(settings);
             }
             catch (FileNotFoundException fex)
             {
-                Logger.Fatal(fex,$"Can't initialise CEF {PathManager.CefCachePath}, {PathManager.CefLogFile}, {architectureSpecificBrowserPath}, {architectureSpecificLocalesDirPath}, {architectureSpecificResourcesDirPath}");
+                Logger.Error(fex,
+                    $"Can't initialise CEF with settings {PathManager.CefCachePath}, {PathManager.CefLogFile}, {architectureSpecificBrowserPath}, {architectureSpecificLocalesDirPath}, {architectureSpecificResourcesDirPath}");
             }
 
             CheckForBroswerDependencies(false);
