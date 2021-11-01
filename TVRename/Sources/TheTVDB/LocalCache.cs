@@ -313,7 +313,7 @@ namespace TVRename.TheTVDB
                 }
 
                 //If this date is in the last week then this needs to be the last call to the update
-                const int OFFSET =(24 * 60 * 60); //todo NOW Revert to 0
+                const int OFFSET =(0);
 
                 DateTime requestedTime = GetRequestedTime(updateFromEpochTime - OFFSET, numberofCallsMade);
 
@@ -1335,22 +1335,8 @@ namespace TVRename.TheTVDB
             {
                 foreach (var imageJson in r["data"]["artworks"])
                 {
-                    int imageCodeType = (int)imageJson["type"];
-
-                    ShowImage mi = new()
-                    {
-                        Id = (int)imageJson["id"],
-                        ImageUrl = API.GetImageURL((string)imageJson["image"]),
-                        ThumbnailUrl = API.GetImageURL((string)imageJson["thumbnail"]),
-                        LanguageCode = (string)imageJson["language"],
-                        Rating = (int)imageJson["score"],
-                        SeriesId = si.TvdbCode,
-                        ImageStyle = MapBannerTVDBV4APICode(imageCodeType),
-                        Subject = MapSubjectTVDBV4APICode(imageCodeType),
-                        SeriesSource = TVDoc.ProviderType.TheTVDB,
-                        RatingCount = 1
-                    };
-
+                    ShowImage mi = ConvertJsonToImage(imageJson, si);
+                    
                     si.AddOrUpdateImage(mi);
                 }
             }
@@ -2263,7 +2249,7 @@ namespace TVRename.TheTVDB
                 Thread.CurrentThread.Name ??= $"Download Season {s.SeasonNumber} for {si.Name}"; // Can only set it once
                 try
                 {
-                    JObject seasonInfo = API.GetSeasonEpisodesV4(code, s.SeasonId,
+                    JObject seasonInfo = API.GetSeasonEpisodesV4(s.SeasonId,
                         locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
 
                     JToken episodeData = seasonInfo["data"]?["episodes"];
@@ -2277,6 +2263,17 @@ namespace TVRename.TheTVDB
                             GenerateAddEpisodeV4(code, locale, si, x,order);
                         });
                     }
+
+                    JToken imageData = seasonInfo["data"]?["artwork"];
+                    if (imageData != null)
+                    {
+                        foreach (ShowImage newImage in imageData.Select(im => ConvertJsonToImage(im,si)))
+                        {
+                            newImage.SeasonId = s.SeasonId;
+                            newImage.SeasonNumber = s.SeasonNumber;
+                            si.AddOrUpdateImage(newImage);
+                        }
+                    }
                 }
                 catch (SourceConnectivityException sce)
                 {
@@ -2287,6 +2284,25 @@ namespace TVRename.TheTVDB
                     LOGGER.Error(sce);
                 }
             });
+        }
+
+        private ShowImage ConvertJsonToImage(JToken imageJson,CachedSeriesInfo si)
+        {
+            int imageCodeType = (int)imageJson["type"];
+
+            return new ShowImage
+            {
+                Id = (int)imageJson["id"],
+                ImageUrl = API.GetImageURL((string)imageJson["image"]),
+                ThumbnailUrl = API.GetImageURL((string)imageJson["thumbnail"]),
+                LanguageCode = (string)imageJson["language"],
+                Rating = (int)imageJson["score"],
+                SeriesId = si.TvdbCode,
+                ImageStyle = MapBannerTVDBV4APICode(imageCodeType),
+                Subject = MapSubjectTVDBV4APICode(imageCodeType),
+                SeriesSource = TVDoc.ProviderType.TheTVDB,
+                RatingCount = 1
+            };
         }
 
         private void GenerateAddEpisodeV4(int code, Locale locale, CachedSeriesInfo si, JToken x, ProcessedSeason.SeasonType order)
