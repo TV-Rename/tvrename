@@ -71,14 +71,22 @@ namespace TVRename
                 return string.Empty;
             }
 
-            JArray ja2 = (JArray)ja;
-            string[] values = ja2.ToObject<string[]>();
-            if (values != null)
+            if (!(ja is JArray ja2))
             {
-                return string.Join(delimiter, values);
+                return string.Empty;
+            }
+            if (ja2.Count == 0)
+            {
+                return string.Empty;
             }
 
-            return string.Empty;
+            string[] values = ja2.ToObject<string[]>();
+            if (values is null)
+            {
+                return string.Empty;
+            }
+
+            return string.Join(delimiter, values);
         }
 
         public static int ExtractStringToInt([NotNull] this JObject r, [NotNull] string key)
