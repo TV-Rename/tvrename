@@ -1130,6 +1130,7 @@ namespace TVRename
 
             // process each folder for each movie...
             foreach (FileInfo? file in si.Locations
+                .Where(s=>s.HasValue())
                 .Select(s => new DirectoryInfo(s))
                 .Where(info => info.Exists)
                 .SelectMany(d => d.GetFiles())
