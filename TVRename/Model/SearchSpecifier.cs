@@ -7,6 +7,7 @@
 //
 
 using System;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -45,7 +46,7 @@ namespace TVRename
         public TVDoc.ProviderType Provider { get; }
         public MediaConfiguration.MediaType Media { get; }
 
-        public SearchSpecifier(int tvdb, int tvmaze, int tmdb, Locale preferredLocale,
+        public SearchSpecifier(int tvdb, int tvmaze, int tmdb, [NotNull] Locale preferredLocale,
             string name, TVDoc.ProviderType p, string? imdb, MediaConfiguration.MediaType t)
         {
             TvdbId = tvdb;
@@ -58,7 +59,7 @@ namespace TVRename
             TargetLocale = preferredLocale;
         }
 
-        public SearchSpecifier(int id, Locale preferredLocale, TVDoc.ProviderType source, MediaConfiguration.MediaType t)
+        public SearchSpecifier(int id, [NotNull] Locale preferredLocale, TVDoc.ProviderType source, MediaConfiguration.MediaType t)
         {
             TvdbId = -1;
             TvMazeId = -1;

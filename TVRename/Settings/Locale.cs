@@ -49,6 +49,7 @@ namespace TVRename
             return provider == TVDoc.ProviderType.TMDB ? TVSettings.Instance.TMDBLanguage : TVSettings.Instance.PreferredTVDBLanguage;
         }
 
+        [NotNull]
         public Region RegionToUse(TVDoc.ProviderType provider)
         {
             return PreferredRegion ?? DefaultRegion(provider);
