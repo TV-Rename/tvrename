@@ -4533,7 +4533,12 @@ namespace TVRename
             g.FillRectangle(e.State == DrawItemState.Selected ? Brushes.White : new SolidBrush(BackColor), e.Bounds);
 
             // Get the item from the collection.
-            TabPage tabPage = tabCtrl.TabPages[e.Index];
+            TabPage tabPage = tabCtrl?.TabPages[e.Index];
+
+            if (tabPage is null)
+            {
+                return;
+            }
 
             // Get the real bounds for the tab rectangle.
             Rectangle tabBounds = tabCtrl.GetTabRect(e.Index);
