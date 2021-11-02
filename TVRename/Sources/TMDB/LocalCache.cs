@@ -867,14 +867,12 @@ namespace TVRename.TMDB
 
                 SayNothing();
                 LastErrorMessage = ex.LoggableDetails();
-                throw new SourceConnectivityException();
             }
             catch (HttpRequestException ex)
             {
                 LOGGER.Error($"Error searching on TMDB:", ex);
                 SayNothing();
                 LastErrorMessage = ex.LoggableDetails();
-                throw new SourceConnectivityException();
             }
         }
 

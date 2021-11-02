@@ -8,6 +8,7 @@
 using JetBrains.Annotations;
 using System;
 using System.Windows.Forms;
+using NLog;
 
 // Control for searching for a source provider code, checking against local cache and
 // searching on various providers
@@ -23,7 +24,7 @@ namespace TVRename
         private readonly ListViewColumnSorter lvwCodeFinderColumnSorter;
 
         private const string DEFAULT_MESSAGE = "Enter the show's name, and click \"Search\"";
-
+        protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
         protected CodeFinder(string? initialHint, MediaConfiguration.MediaType type, TVDoc.ProviderType source)
         {
             Type = type;
@@ -235,11 +236,18 @@ namespace TVRename
             txtSearchStatus.Text = GetLabel(Source);
             txtSearchStatus.Update();
 
-            //TODO - make search multi language and use custom language specified
-
             if (!string.IsNullOrEmpty(txtFindThis.Text))
             {
-                GetSourceInstance(Source).Search(txtFindThis.Text, showErrorMsgBox, Type, new Locale());
+                try
+                {
+                    //TODO - make search multi language and use custom language specified
+
+                    GetSourceInstance(Source).Search(txtFindThis.Text, showErrorMsgBox, Type, new Locale());
+                }
+                catch (SourceConnectivityException scx)
+                {
+                    LOGGER.Warn(scx);
+                }
                 DoFind(true);
             }
         }
