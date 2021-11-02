@@ -7,6 +7,7 @@ namespace TVRename
     {
         public static Language LanguageToUse([NotNull] this ISeriesSpecifier ss) => ss.TargetLocale.LanguageToUse(ss.Provider);
 
+        [NotNull]
         public static Region RegionToUse([NotNull] this ISeriesSpecifier ss) => ss.TargetLocale.RegionToUse(ss.Provider);
 
         public static int IdFor([NotNull] this ISeriesSpecifier ss, TVDoc.ProviderType provider)

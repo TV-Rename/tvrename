@@ -6,6 +6,8 @@
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
+using JetBrains.Annotations;
+
 namespace TVRename
 {
     public class Locale
@@ -53,6 +55,7 @@ namespace TVRename
         }
 
         // ReSharper disable once UnusedParameter.Local
+        [NotNull]
         private Region DefaultRegion(TVDoc.ProviderType provider) => TVSettings.Instance.TMDBRegion;
 
         public bool IsDifferentLanguageToDefaultFor(TVDoc.ProviderType provider)

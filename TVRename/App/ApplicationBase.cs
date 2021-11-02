@@ -7,9 +7,14 @@ using NLog.Layouts;
 using NLog.Targets.Syslog;
 using NLog.Targets.Syslog.Settings;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Microsoft.Win32;
+using MscVersion;
 using TVRename.Ipc;
 
 namespace TVRename.App
@@ -63,6 +68,9 @@ namespace TVRename.App
                 SetupLogging();
             }
 
+            Logger.Error("C++ Version (Installers): " + Vc2015Installed().ToCsv());
+            Logger.Error("C++ Version (Git Library): " + VcRuntime.GetInstalled(_ => true).Select(VersionToString).ToCsv());
+
             // Show user interface
             UI ui = new(doc, (TVRenameSplash)SplashScreen, !parameters.Unattended && !parameters.Hide && Environment.UserInteractive);
             ui.Text = ui.Text + " " + Helpers.DisplayVersion;
@@ -80,6 +88,9 @@ namespace TVRename.App
 
             MainForm = ui;
         }
+
+        [NotNull]
+        private static string VersionToString([NotNull] VcRuntimeVersion arg) => $"{arg.MscVer}-{arg.Architecture}-{arg.Version}";
 
         [NotNull]
         private static TVDoc LoadSettings([NotNull] CommandLineArgs clargs)
@@ -161,6 +172,35 @@ namespace TVRename.App
             } while (recover);
 
             return doc;
+        }
+
+        [NotNull]
+        private static IEnumerable<string> Vc2015Installed()
+        {
+            const string DEPENDENCIES_PATH = @"SOFTWARE\Classes\Installer\Dependencies";
+            List<string> returnValue = new();
+
+            using (RegistryKey dependencies = Registry.LocalMachine.OpenSubKey(DEPENDENCIES_PATH))
+            {
+                if (dependencies == null) return returnValue;
+
+                foreach (string subKeyName in dependencies.GetSubKeyNames().Where(n => !n.ToLower().Contains("dotnet") && !n.ToLower().Contains("microsoft")))
+                {
+                    using (RegistryKey subDir = Registry.LocalMachine.OpenSubKey(DEPENDENCIES_PATH + "\\" + subKeyName))
+                    {
+                        string value = subDir?.GetValue("DisplayName")?.ToString();
+                        if (string.IsNullOrEmpty(value))
+                        {
+                            continue;
+                        }
+                        if (Regex.IsMatch(value, @"C\+\+"))
+                        {
+                            returnValue.Add(value);
+                        }
+                    }
+                }
+            }
+            return returnValue;
         }
 
         private static void SetupCustomSettings([NotNull] CommandLineArgs clargs)
