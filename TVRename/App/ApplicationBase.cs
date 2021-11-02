@@ -70,6 +70,7 @@ namespace TVRename.App
 
             Logger.Error("C++ Version (Installers): " + Vc2015Installed().ToCsv());
             Logger.Error("C++ Version (Git Library): " + VcRuntime.GetInstalled(_ => true).Select(VersionToString).ToCsv());
+            Logger.Warn($"If C++ 2019 is not installed visit: https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-160 and install the latest appropriate version");
 
             // Show user interface
             UI ui = new(doc, (TVRenameSplash)SplashScreen, !parameters.Unattended && !parameters.Hide && Environment.UserInteractive);
