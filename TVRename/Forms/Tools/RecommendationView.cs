@@ -129,7 +129,7 @@ namespace TVRename.Forms
                     }
                     newShow.AutoAddFolderBase = f.DirectoryFullPath!;
 
-                    mDoc.Add(newShow.AsList());
+                    mDoc.Add(newShow.AsList(), true);
                     addedShows.Add(newShow);
                     break;
 
@@ -155,7 +155,7 @@ namespace TVRename.Forms
                         found.UseAutomaticFolders = true;
                     }
 
-                    mDoc.Add(found.AsList());
+                    mDoc.Add(found.AsList(), true);
                     addedMovies.Add(found);
                     break;
 

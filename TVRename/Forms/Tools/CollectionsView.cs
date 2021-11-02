@@ -198,7 +198,7 @@ namespace TVRename.Forms
                 found.UseAutomaticFolders = true;
             }
 
-            mDoc.Add(found.AsList());
+            mDoc.Add(found.AsList(), true);
             allAdded.Add(found);
         }
 
