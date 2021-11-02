@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using NLog.Targets.Syslog.Settings;
 
 namespace TVRename
 {
@@ -53,7 +54,7 @@ namespace TVRename
                 $"Searched for {id} on {provider.PrettyPrint()} Movie Library has multiple: {matching.Select(x => x.ToString()).ToCsv()}");
     }
 
-    public new void AddMovie(MovieConfiguration newShow)
+    public new void AddMovie(MovieConfiguration newShow,bool showErrors)
         {
             if (Contains(newShow))
             {
@@ -67,15 +68,23 @@ namespace TVRename
                 {
                     //TODO Merge them in
                     existingshow.AutomaticFolderRoot = newShow.AutomaticFolderRoot;
-                    Logger.Error($"Trying to add {newShow}, but we already have {existingshow}");
-                    Logger.Error(Environment.StackTrace);
+
+                    if (showErrors)
+                    {
+                        Logger.Error($"Trying to add {newShow}, but we already have {existingshow}");
+                        Logger.Error(Environment.StackTrace);
+                    }
+                    else
+                    {
+                        Logger.Warn($"Trying to add {newShow}, but we already have {existingshow}");
+                    }
                 }
                 return;
             }
 
             Add(newShow);
         }
-        public void AddMovies(List<MovieConfiguration>? newMovie)
+        public void AddMovies(List<MovieConfiguration>? newMovie, bool showErrors)
         {
             if (newMovie is null)
             {
@@ -84,7 +93,7 @@ namespace TVRename
 
             foreach (MovieConfiguration toAdd in newMovie)
             {
-                AddMovie(toAdd);
+                AddMovie(toAdd,showErrors);
             }
         }
 
@@ -105,7 +114,7 @@ namespace TVRename
                         }
                     }
 
-                    AddMovie(si);
+                    AddMovie(si,false);
                 }
             }
         }

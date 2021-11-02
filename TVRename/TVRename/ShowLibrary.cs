@@ -39,7 +39,7 @@ namespace TVRename
             return results.Where(t => !string.IsNullOrWhiteSpace(t)).Select(s => s.Trim()).Distinct();
         }
 
-        public void AddShow(ShowConfiguration newShow)
+        public void AddShow(ShowConfiguration newShow, bool showErrors)
         {
             if (Contains(newShow))
             {
@@ -51,16 +51,23 @@ namespace TVRename
             {
                 foreach (ShowConfiguration existingshow in matchingShows)
                 {
-                    //TODO Merge them in
-                    Logger.Error($"Trying to add {newShow}, but we already have {existingshow}");
-                    Logger.Error(Environment.StackTrace);
+                    if (showErrors)
+                    {
+                        //TODO Merge them in
+                        Logger.Error($"Trying to add {newShow}, but we already have {existingshow}");
+                        Logger.Error(Environment.StackTrace);
+                    }
+                    else
+                    {
+                        Logger.Warn($"Trying to add {newShow}, but we already have {existingshow}");
+                    }
                 }
                 return;
             }
 
             Add(newShow);
         }
-        public void AddShows(List<ShowConfiguration>? newShow)
+        public void AddShows(List<ShowConfiguration>? newShow, bool showErrors)
         {
             if (newShow is null)
             {
@@ -69,7 +76,7 @@ namespace TVRename
 
             foreach (ShowConfiguration toAdd in newShow)
             {
-                AddShow(toAdd);
+                AddShow(toAdd,showErrors);
             }
         }
 
@@ -831,7 +838,7 @@ namespace TVRename
                     }
                 }
 
-                AddShow(si);
+                AddShow(si,false);
             }
         }
 

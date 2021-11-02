@@ -2806,7 +2806,7 @@ namespace TVRename
             DialogResult dr = aem.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
-                mDoc.Add(mov.AsList());
+                mDoc.Add(mov.AsList(),false);
                 FillMyMovies(mov);
                 
                 mDoc.MoviesAddedOrEdited(true, false, WindowState == FormWindowState.Minimized, this, mov);
@@ -2835,7 +2835,7 @@ namespace TVRename
             DialogResult dr = aes.ShowDialog(this);
             if (dr == DialogResult.OK)
             {
-                mDoc.Add(si.AsList());
+                mDoc.Add(si.AsList(),false);
 
                 ShowAddedOrEdited(false, false, si,false);
                 SelectShow(si);

@@ -710,20 +710,20 @@ namespace TVRename
             }
         }
 
-        internal void Add(List<ShowConfiguration>? newShow)
+        internal void Add(List<ShowConfiguration>? newShow, bool showErrors)
         {
-            TvLibrary.AddShows(newShow);
+            TvLibrary.AddShows(newShow, showErrors);
             forceShowsRefresh.AddNullableRange(newShow);
             forceShowsScan.AddNullableRange(newShow);
             SetDirty();
             ExportShowInfo();
         }
 
-        public void Add(List<MovieConfiguration>? newMovie)
+        public void Add(List<MovieConfiguration>? newMovie, bool showErrors)
         {
             forceMoviesRefresh.AddNullableRange(newMovie);
             forceMoviesScan.AddNullableRange(newMovie);
-            FilmLibrary.AddMovies(newMovie);
+            FilmLibrary.AddMovies(newMovie, showErrors);
             SetDirty();
             ExportMovieInfo();
         }
@@ -2094,7 +2094,7 @@ namespace TVRename
             if (newShow != null && newShow.Locations.Any())
             {
                 LinkFileToShow(fi, newShow, new DirectoryInfo(newShow.Locations.First()));
-                Add(newShow.AsList());
+                Add(newShow.AsList(),true);
             }
             else if (selectedShow != null)
             {
