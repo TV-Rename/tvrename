@@ -4528,6 +4528,12 @@ namespace TVRename
             //Follow this advice https://docs.microsoft.com/en-us/dotnet/framework/winforms/controls/how-to-display-side-aligned-tabs-with-tabcontrol
 
             Graphics g = e.Graphics;
+
+            if (g is null)
+            {
+                return;
+            }
+
             TabControl tabCtrl = (TabControl)sender;
 
             g.FillRectangle(e.State == DrawItemState.Selected ? Brushes.White : new SolidBrush(BackColor), e.Bounds);
@@ -4561,7 +4567,7 @@ namespace TVRename
             float xIndent = (tabBounds.Width - icon.Width) / 2.0f;
             float x = tabBounds.X + xIndent;
             float y = tabBounds.Y + INDENT;
-            e.Graphics.DrawImage(icon, x, y);
+            g.DrawImage(icon, x, y);
             Font labelFont = new("Segoe UI Semibold", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
 
             Rectangle textarea = new(tabBounds.X, tabBounds.Y + INDENT + icon.Height, tabBounds.Width, tabBounds.Height - (INDENT + icon.Height));
