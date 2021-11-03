@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using MscVersion;
 using TVRename.Ipc;
+using System.Net;
 
 namespace TVRename.App
 {
@@ -47,6 +48,8 @@ namespace TVRename.App
         /// </summary>
         protected override void OnCreateMainForm()
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
             CommandLineArgs parameters = new(CommandLineArgs);
             if (parameters.Hide || !Environment.UserInteractive)
             {
