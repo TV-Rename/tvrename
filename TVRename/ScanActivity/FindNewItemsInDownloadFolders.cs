@@ -46,7 +46,7 @@ namespace TVRename
             IEnumerable<FileInfo> possibleShowNames = GetPossibleShowNameStrings();
             List<MediaConfiguration> addedShows = FinderHelper.FindMedia(possibleShowNames, MDoc, Settings.Owner);
 
-            List<ShowConfiguration> addedTvShows = addedShows.OfType<ShowConfiguration>().ToList();
+            List<ShowConfiguration> addedTvShows = addedShows.OfType<ShowConfiguration>().Distinct().ToList();
             if (addedTvShows.Any())
             {
                 MDoc.Add(addedTvShows, true);
@@ -56,7 +56,7 @@ namespace TVRename
                 LOGGER.Info("Added new shows called: {0}", addedTvShows.Select(s => s.ShowName).ToCsv());
             }
 
-            List<MovieConfiguration> addedMovies = addedShows.OfType<MovieConfiguration>().ToList();
+            List<MovieConfiguration> addedMovies = addedShows.OfType<MovieConfiguration>().Distinct().ToList();
             if (addedMovies.Any())
             {
                 MDoc.Add(addedMovies, true);
