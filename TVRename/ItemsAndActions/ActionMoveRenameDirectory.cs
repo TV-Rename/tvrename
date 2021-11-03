@@ -67,42 +67,69 @@ namespace TVRename
 
             if (target.Exists && source.Exists && !target.EnumerateFiles().Any())
             {
-                target.Delete();
-                source.MoveTo(targetFolder,MoveOptions.CopyAllowed |MoveOptions.ReplaceExisting );
+                try
+                {
+                    target.Delete();
+                }
+                catch (System.IO.DirectoryNotFoundException dnfe)
+                {
+                    LOGGER.Info($"Testing {target.FullName} but it has already been removed - Job Done!");
+                }
+                catch (Exception e)
+                {
+                    return new ActionOutcome(e);
+                }
+
+                try {
+                    source.MoveTo(targetFolder, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting);
+                    LOGGER.Info($"Moved whole directory {sourceFolder } to {targetFolder}");
+
+                    return ActionOutcome.Success();
+                }
+                catch (Exception e)
+                {
+                    return new ActionOutcome(e);
+                }
+
+            }
+
+            try
+            {
+                if (target.Exists)
+                {
+                    if (target.GetFiles().Any(x => x.IsMovieFile()))
+                    {
+                        throw new ActionFailedException("Target location has movie files - not copying just in case");
+                    }
+
+                    //Copy files
+                    foreach (FileInfo file in source.EnumerateFiles())
+                    {
+                        string destFile = Path.Combine(targetFolder, file.Name);
+                        if (!File.Exists(destFile))
+                        {
+                            file.MoveTo(destFile, MoveOptions.CopyAllowed);
+
+                            LOGGER.Info($"Moved {file.FullName} to {destFile}");
+                        }
+                    }
+
+                    if (Directory.IsEmpty(source.FullName))
+                    {
+                        source.Delete(false);
+                        LOGGER.Info($"Deleted empty directory {source.FullName}");
+                    }
+                    return ActionOutcome.Success();
+                }
+
+                source.MoveTo(targetFolder, MoveOptions.CopyAllowed);
                 LOGGER.Info($"Moved whole directory {sourceFolder } to {targetFolder}");
                 return ActionOutcome.Success();
             }
-
-            if (target.Exists)
+            catch (Exception e)
             {
-                if (target.GetFiles().Any(x => x.IsMovieFile()))
-                {
-                    throw new ActionFailedException("Target location has movie files - not copying just in case");
-                }
-
-                //Copy files
-                foreach (FileInfo file in source.EnumerateFiles())
-                {
-                    string destFile = Path.Combine(targetFolder, file.Name);
-                    if (!File.Exists(destFile))
-                    {
-                        file.MoveTo(destFile, MoveOptions.CopyAllowed);
-
-                        LOGGER.Info($"Moved {file.FullName} to {destFile}");
-                    }
-                }
-
-                if (Directory.IsEmpty(source.FullName))
-                {
-                    source.Delete(false);
-                    LOGGER.Info($"Deleted empty directory {source.FullName}");
-                }
-                return ActionOutcome.Success();
+                return new ActionOutcome(e);
             }
-
-            source.MoveTo(targetFolder, MoveOptions.CopyAllowed);
-            LOGGER.Info($"Moved whole directory {sourceFolder } to {targetFolder}");
-            return ActionOutcome.Success();
         }
 
         public override string Produces => targetFolder;
