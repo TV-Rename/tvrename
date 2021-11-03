@@ -318,47 +318,58 @@ namespace TVRename
 
             foreach (ActionCopyMoveRename action in actionlist.CopyMoveRename)
             {
-                IEnumerable<DirectoryInfo> suitableSubFolders = action.SourceDirectory.GetDirectories().Where(IsSubsFolder);
-                foreach (DirectoryInfo subtitleFolder in suitableSubFolders)
+                try
                 {
-                    if (action.Episode != null)
+                    IEnumerable<DirectoryInfo> suitableSubFolders = action.SourceDirectory.GetDirectories().Where(IsSubsFolder);
+                    foreach (DirectoryInfo subtitleFolder in suitableSubFolders)
                     {
-                        //Does not really make sense for shows (multiple episodes in one directory).
-                        //If we only have one file we can rename it
-                        List<FileInfo> subFiles = subtitleFolder.GetFiles().Where(IsSubTitleFile).ToList();
-                        if (subFiles.Count == 1)
+                        if (action.Episode != null)
                         {
-                            FileInfo fi = subFiles.Single();
-                            string newName = action.DestinationBaseName + fi.Extension;
-                            ActionCopyMoveRename newitem =
-                                new(action.Operation, fi,
-                                    FileHelper.FileInFolder(action.To.Directory, newName), action.SourceEpisode, true,
-                                    null, d);
+                            //Does not really make sense for shows (multiple episodes in one directory).
+                            //If we only have one file we can rename it
+                            List<FileInfo> subFiles = subtitleFolder.GetFiles().Where(IsSubTitleFile).ToList();
+                            if (subFiles.Count == 1)
+                            {
+                                FileInfo fi = subFiles.Single();
+                                string newName = action.DestinationBaseName + fi.Extension;
+                                ActionCopyMoveRename newitem =
+                                    new(action.Operation, fi,
+                                        FileHelper.FileInFolder(action.To.Directory, newName), action.SourceEpisode, true,
+                                        null, d);
+
+                                extras.Add(newitem);
+                            }
+                        }
+                        else
+                        {
+                            bool hasSubtitleFiles = subtitleFolder.GetFiles().Any(IsSubTitleFile);
+
+                            if (!hasSubtitleFiles)
+                            {
+                                continue;
+                            }
+
+                            string newlocation = Path.Combine(action.DestinationFolder, subtitleFolder.Name);
+
+                            if (newlocation == subtitleFolder.FullName)
+                            {
+                                continue;
+                            }
+
+                            ActionMoveRenameDirectory newitem =
+                                new(subtitleFolder.FullName, newlocation, action.Movie!);
 
                             extras.Add(newitem);
                         }
                     }
-                    else
-                    {
-                        bool hasSubtitleFiles = subtitleFolder.GetFiles().Any(IsSubTitleFile);
-
-                        if (!hasSubtitleFiles)
-                        {
-                            continue;
-                        }
-
-                        string newlocation = Path.Combine(action.DestinationFolder, subtitleFolder.Name);
-
-                        if (newlocation == subtitleFolder.FullName)
-                        {
-                            continue;
-                        }
-
-                        ActionMoveRenameDirectory newitem =
-                            new(subtitleFolder.FullName, newlocation, action.Movie!);
-
-                        extras.Add(newitem);
-                    }
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    LOGGER.Warn($"Could not find {action.SourceDirectory}, so not copying any subtitles from it.");
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    LOGGER.Warn($"Could not access {action.SourceDirectory}, so not copying any subtitles from it.");
                 }
             }
 
