@@ -283,6 +283,12 @@ namespace TVRename
         }
 
         [NotNull]
+        public static string ToCsv([NotNull] this ICollection<int> values)
+        {
+            return string.Join(",", values);
+        }
+
+        [NotNull]
         public static string ToPsv([NotNull] this IEnumerable<string> values)
         {
             return string.Join("|", values);
