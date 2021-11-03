@@ -1,9 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CefSharp;
 using CefSharp.WinForms;
 using JetBrains.Annotations;
+using Microsoft.Win32;
+using MscVersion;
 using NLog;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using File = Alphaleonis.Win32.Filesystem.File;
@@ -45,47 +50,37 @@ namespace TVRename
         private string? architectureSpecificResourcesDirPath;
         public void InitialiseBrowserFramework()
         {
-            CefSettings settings = null;
             try
             {
-                settings = new CefSettings();
-            }
-            catch (FileNotFoundException fex)
-            {
-                Logger.Error(fex,$"Can't initialise CEF Settings {PathManager.CefCachePath}, {PathManager.CefLogFile}");
-            }
-
-            try
-            {
-                if (settings!= null)
+                CefSettings settings = new()
                 {
-                    settings.CachePath = PathManager.CefCachePath;
-                    settings.UserDataPath = PathManager.CefCachePath;
-                    settings.LogFile = PathManager.CefLogFile;
+                    CachePath = PathManager.CefCachePath,
+                    UserDataPath = PathManager.CefCachePath,
+                    LogFile = PathManager.CefLogFile
+                };
 
-                    if (!Helpers.InDebug())
-                    {
-                        SetArchitecturePaths(settings);
-                    }
+                if (!Helpers.InDebug())
+                {
+                    SetArchitecturePaths(settings);
                 }
-            }
-            catch (FileNotFoundException fex)
-            {
-                Logger.Error(fex, $"Can't set arch paths for CEF {PathManager.CefCachePath}, {PathManager.CefLogFile}, {architectureSpecificBrowserPath}, {architectureSpecificLocalesDirPath}, {architectureSpecificResourcesDirPath}");
-            }
-
-            try
-            {
                 Cef.Initialize(settings);
             }
             catch (FileNotFoundException fex)
             {
                 Logger.Error(fex,
                     $"Can't initialise CEF with settings {PathManager.CefCachePath}, {PathManager.CefLogFile}, {architectureSpecificBrowserPath}, {architectureSpecificLocalesDirPath}, {architectureSpecificResourcesDirPath}");
+
+                Logger.Error("C++ Version (Installers): " + Vc2015Installed().ToCsv());
+                Logger.Error("C++ Version (Git Library): " + VcRuntime.GetInstalled(_ => true).Select(VersionToString).ToCsv());
+                Logger.Warn($"If C++ 2019 is not installed visit: https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-160 and install the latest appropriate version");
+
+                MessageBox.Show("TV Rename needs Microsoft Visual C++ 2015-2019 Redistributable to be present. Beginnign install now.", "Missing Dependencies");
+                string urlToDownload = Environment.Is64BitProcess ? "vc_redist.x64.exe" : "vc_redist.x86.exe";
+                Helpers.OpenUrl($"https://aka.ms/vs/16/release/{urlToDownload}");
+
             }
-
             CheckForBroswerDependencies(false);
-
+    
             //Cef.EnableHighDPISupport(); todo - reinstate when we support high DPI
         }
 
@@ -167,6 +162,37 @@ namespace TVRename
                     MessageBox.Show("Dependencies missing - see log for more details", "Browser Capability Test");
                 }
             }
+        }
+
+        [NotNull]
+        private static string VersionToString([NotNull] VcRuntimeVersion arg) => $"{arg.MscVer}-{arg.Architecture}-{arg.Version}";
+        [NotNull]
+        private static IEnumerable<string> Vc2015Installed()
+        {
+            const string DEPENDENCIES_PATH = @"SOFTWARE\Classes\Installer\Dependencies";
+            List<string> returnValue = new();
+
+            using (RegistryKey dependencies = Registry.LocalMachine.OpenSubKey(DEPENDENCIES_PATH))
+            {
+                if (dependencies == null) return returnValue;
+
+                foreach (string subKeyName in dependencies.GetSubKeyNames().Where(n => !n.ToLower().Contains("dotnet") && !n.ToLower().Contains("microsoft")))
+                {
+                    using (RegistryKey subDir = Registry.LocalMachine.OpenSubKey(DEPENDENCIES_PATH + "\\" + subKeyName))
+                    {
+                        string value = subDir?.GetValue("DisplayName")?.ToString();
+                        if (string.IsNullOrEmpty(value))
+                        {
+                            continue;
+                        }
+                        if (Regex.IsMatch(value, @"C\+\+"))
+                        {
+                            returnValue.Add(value);
+                        }
+                    }
+                }
+            }
+            return returnValue;
         }
     }
 }
