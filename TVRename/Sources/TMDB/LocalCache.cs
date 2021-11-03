@@ -197,10 +197,15 @@ namespace TVRename.TMDB
                 }
             }
 
-            Say($"{id.Name} from TMDB");
+            Say($"Movie: {id.Name} from TMDB");
             try
             {
                 CachedMovieInfo downloadedSi = DownloadMovieNow(id, showErrorMsgBox);
+
+                if (downloadedSi is null)
+                {
+                    return false;
+                }
 
                 if (downloadedSi.TmdbCode != id.TmdbId && id.TmdbId == -1)
                 {
@@ -211,24 +216,23 @@ namespace TVRename.TMDB
                 }
 
                 this.AddMovieToCache(downloadedSi);
+                return true;
             }
             catch (SourceConnectivityException conex)
             {
                 LastErrorMessage = conex.Message;
-                return true;
+                return false;
             }
             catch (SourceConsistencyException sce)
             {
                 LOGGER.Error(sce.Message);
                 LastErrorMessage = sce.Message;
-                return true;
+                return false;
             }
             finally
             {
                 SayNothing();
             }
-
-            return true;
         }
 
         public bool GetUpdates(bool showErrorMsgBox, CancellationToken cts, [NotNull] IEnumerable<ISeriesSpecifier> ss)
@@ -380,8 +384,8 @@ namespace TVRename.TMDB
             ? CachedMovieData[id.TmdbId]
             : DownloadMovieNow(id, showErrorMsgBox);
 
-        [NotNull]
-        internal CachedMovieInfo DownloadMovieNow([NotNull] ISeriesSpecifier id, bool showErrorMsgBox,bool saveToCache = true)
+        [CanBeNull]
+        internal CachedMovieInfo? DownloadMovieNow([NotNull] ISeriesSpecifier id, bool showErrorMsgBox,bool saveToCache = true)
         {
             string imageLanguage = $"{id.LanguageToUse().Abbreviation},null";
             try

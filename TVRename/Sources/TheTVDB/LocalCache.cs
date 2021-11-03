@@ -2671,7 +2671,7 @@ namespace TVRename.TheTVDB
             return EnsureSeriesUpdated(s, bannersToo, showErrorMsgBox);
         }
 
-        private bool EnsureMovieUpdated(ISeriesSpecifier id, bool showErrorMsgBox)
+        private bool EnsureMovieUpdated([NotNull] ISeriesSpecifier id, bool showErrorMsgBox)
         {
             lock (MOVIE_LOCK)
             {
