@@ -1443,8 +1443,8 @@ namespace TVRename
             AutoSelectShowInMyShows = xmlSettings.ExtractBool("AutoSelectShowInMyShows", true);
             SpecialsFolderName = xmlSettings.ExtractString("SpecialsFolderName", "Specials");
             SeasonFolderFormat = xmlSettings.ExtractString("SeasonFolderFormat");
-            MovieFolderFormat = xmlSettings.ExtractString("MovieFolderFormat");
-            MovieFilenameFormat = xmlSettings.ExtractString("MovieFilenameFormat");
+            MovieFolderFormat = xmlSettings.ExtractString("MovieFolderFormat", "{ShowName} ({Year})");
+            MovieFilenameFormat = xmlSettings.ExtractString("MovieFilenameFormat", "{ShowName} ({Year})");
             SearchJSONURL = xmlSettings.ExtractString("SearchJSONURL", "https://eztv.ag/api/get-torrents?imdb_id=");
             SearchJSONRootNode = xmlSettings.ExtractString("SearchJSONRootNode", "torrents");
             SearchJSONFilenameToken = xmlSettings.ExtractString("SearchJSONFilenameToken", "filename");
@@ -1642,6 +1642,15 @@ namespace TVRename
             {
                 DefaultMovieProvider = TVDoc.ProviderType.TMDB;
                 Logger.Error($"Has to update default movie provider");
+            }
+            //todo - See whether we need still need this - was just in place to try and remedy issues with 4.4 conversion
+            if (!MovieFolderFormat.HasValue())
+            {
+                MovieFolderFormat = "{ShowName} ({Year})";
+            }
+            if (!MovieFilenameFormat.HasValue())
+            {
+                MovieFilenameFormat = "{ShowName} ({Year})";
             }
         }
 
