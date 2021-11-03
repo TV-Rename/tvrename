@@ -42,19 +42,19 @@ namespace TVRename
 
         private ShowImage? GetSeriesLangImage(Language l, MediaImage.ImageType type)
         {
-            IEnumerable<ShowImage> validImages = this.Where(i => i.ImageStyle == type && i.LanguageCode == l.ThreeAbbreviation);
+            IEnumerable<ShowImage> validImages = this.Where(i => i.ImageStyle == type && i.Subject == MediaImage.ImageSubject.show && (i.LanguageCode == l.ThreeAbbreviation || i.LanguageCode ==l.Abbreviation));
             return BestFrom(validImages);
         }
 
         private ShowImage? GetBestSeasonLanguage(int snum, Language l, MediaImage.ImageType type)
         {
-            IEnumerable<ShowImage> validImages = this.Where(i => i.ImageStyle == type && i.SeasonNumber == snum && i.LanguageCode == l.Abbreviation);
+            IEnumerable<ShowImage> validImages = this.Where(i => i.ImageStyle == type && i.SeasonNumber == snum && (i.LanguageCode == l.ThreeAbbreviation || i.LanguageCode == l.Abbreviation));
             return BestFrom(validImages);
         }
 
         private ShowImage? GetSeriesImage(MediaImage.ImageType type)
         {
-            IEnumerable<ShowImage> validImages = this.Where(i => i.ImageStyle == type);
+            IEnumerable<ShowImage> validImages = this.Where(i => i.ImageStyle == type && i.Subject == MediaImage.ImageSubject.show);
             return BestFrom(validImages);
         }
 
