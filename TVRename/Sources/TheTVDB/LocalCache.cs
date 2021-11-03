@@ -1484,6 +1484,12 @@ namespace TVRename.TheTVDB
                 ?.ToString();
         }
 
+        private string? GetExternalIdSearchResultV4(JObject json, string source)
+        {
+            return json["remote_ids"]?.FirstOrDefault(x => x["sourceName"].ToString() == source)?["id"]
+                ?.ToString();
+        }
+
         private string? GetContentRatingV4(JObject json, string country)
         {
             return json["data"]["contentRatings"]?.FirstOrDefault(x => x["country"].ToString() == country)?["name"]
@@ -1495,7 +1501,11 @@ namespace TVRename.TheTVDB
             string date =
                 json["release_dates"]?.FirstOrDefault(x =>
                     x["country"].ToString() == region && x["type"].ToString() == "release_date")?["date"]?.ToString();
+            return ParseDate(date);
+        }
 
+        private DateTime? ParseDate(string? date)
+        {
             try
             {
                 if (!date.HasValue())
@@ -3001,21 +3011,37 @@ namespace TVRename.TheTVDB
                 TvdbCode = ParseIdFromObjectID(r["objectID"]),
                 Slug = ((string)r["slug"])?.Trim(),
                 PosterUrl = (string)r["image_url"],
-                //Network = (string)r["network"],
                 Status = (string)r["status"],
                 IsSearchResultOnly = searchResult,
-                //ShowLanguage = (string)r["primary_language"],
-                //FirstAired = GenerateFirstAiredDate(r),
+                ShowLanguage = (string)r["primary_language"],
+                FirstAired = ParseDate((string)r["first_air_time"]) ?? GenerateFirstAiredDate(r),
                 Name = FindTranslation(r, locale, "translations") ?? Decode(r, "name") ?? Decode(r, "extended_title") ?? string.Empty,
                 Overview = FindTranslation(r, locale, "overviews") ?? Decode(r, "overview") ?? string.Empty,
                 Country = (string)r["country"],
+                Imdb = GetExternalIdSearchResultV4(r, "IMDB"),
+                OfficialUrl = GetExternalIdSearchResultV4(r, "Official Website"),
+                FacebookId = GetExternalIdSearchResultV4(r, "Facebook"),
+                InstagramId = GetExternalIdSearchResultV4(r, "Instagram"),
+                TwitterId = GetExternalIdSearchResultV4(r, "Twitter"),
+                TmdbCode = GetExternalIdSearchResultV4(r, "TheMovieDB.com")?.ToInt() ?? -1,
+                Genres = r["genres"]?.ToObject<string[]>().ToList(),
+                Network = r["studios"]?.ToObject<string[]>().ToPsv(),
             };
 
-            string? directorName = (string) r["director"];
+            string? directorName = (string)r["director"];
             if (directorName.HasValue())
             {
                 si.AddCrew(new Crew(1, null, directorName!, "Director", "Directing", null));
             }
+            var al = r["aliases"];
+            if (al != null)
+            { 
+                foreach (JValue a in ((JArray)al))
+                {
+                    si.AddAlias(a.ToObject<string>());
+                }
+            }
+
             if (string.IsNullOrEmpty(si.Name))
             {
                 LOGGER.Warn("Issue with CachedMovieInfo " + si);
@@ -3064,10 +3090,27 @@ namespace TVRename.TheTVDB
                 IsSearchResultOnly = searchResult,
                 SeasonOrderType = st,
                 ShowLanguage = (string)r["primary_language"],
-                FirstAired = GenerateFirstAiredDate(r),
+                Country = (string)r["country"],
+                FirstAired = ParseDate((string)r["first_air_time"]) ?? GenerateFirstAiredDate(r),
                 Name = FindTranslation(r, locale, "translations") ?? Decode(r, "name") ?? Decode(r, "extended_title") ?? string.Empty,
                 Overview = FindTranslation(r, locale, "overviews") ?? Decode(r, "overview") ?? string.Empty,
+
+                Imdb = GetExternalIdSearchResultV4(r, "IMDB"),
+                OfficialUrl = GetExternalIdSearchResultV4(r, "Official Website"),
+                FacebookId = GetExternalIdSearchResultV4(r, "Facebook"),
+                InstagramId = GetExternalIdSearchResultV4(r, "Instagram"),
+                TwitterId = GetExternalIdSearchResultV4(r, "Twitter"),
+                TmdbCode = GetExternalIdSearchResultV4(r, "TheMovieDB.com")?.ToInt() ?? -1,
+                SeriesId = GetExternalIdSearchResultV4(r, "TV.com"),
             };
+            var al = r["aliases"];
+            if (al != null)
+            {
+                foreach (JValue a in ((JArray)al))
+                {
+                    si.AddAlias(a.ToObject<string>());
+                }
+            }
 
             if (string.IsNullOrEmpty(si.Name))
             {
