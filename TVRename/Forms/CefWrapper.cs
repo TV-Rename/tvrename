@@ -135,11 +135,7 @@ namespace TVRename
         {
             try
             {
-                if (Helpers.InDebug())
-                {
-                    DependencyChecker.AssertAllDependenciesPresent();
-                }
-                else
+                if (!Helpers.InDebug())
                 {
                     DependencyChecker.AssertAllDependenciesPresent(
                         browserSubProcessPath: architectureSpecificBrowserPath,
