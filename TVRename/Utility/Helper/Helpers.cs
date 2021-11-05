@@ -38,6 +38,20 @@ namespace TVRename
 
         public static bool InDebug() => Debugger.IsAttached;
 
+
+        public static int Between(this int value, int min, int max)
+        {
+            if (value < min)
+            {
+                return min;
+            }
+            if (value > max)
+            {
+                return max;
+            }
+            return value;
+        }
+
         public static bool In<T>([CanBeNull] this T item, [NotNull] params T[] items)
         {
             if (items == null)

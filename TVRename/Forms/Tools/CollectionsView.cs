@@ -111,7 +111,7 @@ namespace TVRename.Forms
 
         private void BwScan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
         {
-            pbProgress.Value = e.ProgressPercentage;
+            pbProgress.Value = e.ProgressPercentage.Between(0, 100); 
             lblStatus.Text = e.UserState.ToString();
         }
 

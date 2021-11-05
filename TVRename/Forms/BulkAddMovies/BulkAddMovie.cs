@@ -605,7 +605,7 @@ namespace TVRename
         {
             lvFMNewShows.Update();
 
-            pbProgress.Value = e.ProgressPercentage;
+            pbProgress.Value = e.ProgressPercentage.Between(0,100); 
             lblStatusLabel.Text = ((PossibleNewMovie)e.UserState).RefinedHint;
             UpdateListItem((PossibleNewMovie)e.UserState, false);
         }
@@ -619,7 +619,7 @@ namespace TVRename
 
         private void bwRescan_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)
         {
-            pbProgress.Value = e.ProgressPercentage;
+            pbProgress.Value = e.ProgressPercentage.Between(0, 100);
             lblStatusLabel.Text = e.UserState.ToString();
         }
 
