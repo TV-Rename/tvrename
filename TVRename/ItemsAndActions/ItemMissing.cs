@@ -11,6 +11,7 @@ using JetBrains.Annotations;
 namespace TVRename
 {
     using Alphaleonis.Win32.Filesystem;
+    using System;
 
     public abstract class ItemMissing : Item
     {
@@ -22,7 +23,14 @@ namespace TVRename
         [NotNull]
         public override string ScanListViewGroup => "lvgActionMissing";
         public override string DestinationFolder => Folder;
-        public override string TargetFolder => new FileInfo(TheFileNoExt).DirectoryName;
+        public override string TargetFolder
+        {
+            get
+            {
+                try { return new FileInfo(TheFileNoExt).DirectoryName; }
+                catch (NotSupportedException nse) { return string.Empty; }
+            }
+        }
         public override int IconNumber => 1;
         public abstract bool DoRename { get; }
         public abstract MediaConfiguration Show { get; }

@@ -22,6 +22,7 @@ using TMDbLib.Objects.Search;
 using TMDbLib.Objects.Trending;
 using TMDbLib.Objects.TvShows;
 using TVRename.Forms;
+using static TVRename.TMDB.API;
 using Cast = TMDbLib.Objects.Movies.Cast;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
@@ -338,6 +339,12 @@ namespace TVRename.TMDB
             catch (TaskCanceledException tce)
             {
                 LastErrorMessage = "Request to get updates Cancelled";
+                LOGGER.Warn(LastErrorMessage);
+                return false;
+            }
+            catch (TooManyCallsException tce)
+            {
+                LastErrorMessage = "Too Many Calls Made - cancelled";
                 LOGGER.Warn(LastErrorMessage);
                 return false;
             }
