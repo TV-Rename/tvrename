@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at https://github.com/TV-Rename/tvrename
@@ -158,7 +158,7 @@ namespace TVRename
             this.linkForum.Size = new System.Drawing.Size(135, 13);
             this.linkForum.TabIndex = 21;
             this.linkForum.TabStop = true;
-            this.linkForum.Text = "TVRename Google Groups";
+            this.linkForum.Text = "TV Rename Google Groups";
             this.linkForum.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkForum_LinkClicked);
             // 
             // BugReport

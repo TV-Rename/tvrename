@@ -183,7 +183,7 @@ namespace TVRename
                 return true;
             }
 
-            DialogResult dr = MessageBox.Show("Code unknown, close anyway?", "TVRename Auto Add Media",
+            DialogResult dr = MessageBox.Show("Code unknown, close anyway?", "TV Rename Auto Add Media",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             return dr != DialogResult.No;

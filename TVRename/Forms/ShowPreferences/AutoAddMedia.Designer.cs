@@ -183,7 +183,7 @@ namespace TVRename
             this.tpTV.Padding = new System.Windows.Forms.Padding(3);
             this.tpTV.Size = new System.Drawing.Size(472, 400);
             this.tpTV.TabIndex = 0;
-            this.tpTV.Text = "TV";
+            this.tpTV.Text = "TV Shows";
             this.tpTV.UseVisualStyleBackColor = true;
             // 
             // rdoTVTMDB

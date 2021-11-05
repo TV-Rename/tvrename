@@ -426,7 +426,7 @@ namespace TVRename
             this.searchEnginesToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("searchEnginesToolStripMenuItem.Image")));
             this.searchEnginesToolStripMenuItem.Name = "searchEnginesToolStripMenuItem";
             this.searchEnginesToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
-            this.searchEnginesToolStripMenuItem.Text = "TV &Search Engines";
+            this.searchEnginesToolStripMenuItem.Text = "TV Show &Search Engines";
             this.searchEnginesToolStripMenuItem.Click += new System.EventHandler(this.searchEnginesToolStripMenuItem_Click);
             // 
             // filenameProcessorsToolStripMenuItem
@@ -586,7 +586,7 @@ namespace TVRename
             this.actorsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("actorsToolStripMenuItem.Image")));
             this.actorsToolStripMenuItem.Name = "actorsToolStripMenuItem";
             this.actorsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
-            this.actorsToolStripMenuItem.Text = "TV &Actors Grid...";
+            this.actorsToolStripMenuItem.Text = "TV Show &Actors Grid...";
             this.actorsToolStripMenuItem.Click += new System.EventHandler(this.actorsToolStripMenuItem_Click);
             // 
             // betaToolsToolStripMenuItem
@@ -654,7 +654,7 @@ namespace TVRename
             // 
             this.tvRecommendationsToolStripMenuItem.Name = "tvRecommendationsToolStripMenuItem";
             this.tvRecommendationsToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
-            this.tvRecommendationsToolStripMenuItem.Text = "TV Recommendations...";
+            this.tvRecommendationsToolStripMenuItem.Text = "TV Show Recommendations...";
             this.tvRecommendationsToolStripMenuItem.Click += new System.EventHandler(this.recommendationsToolStripMenuItem_Click);
             // 
             // scanMovieFolderToolStripMenuItem

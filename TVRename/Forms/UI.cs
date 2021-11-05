@@ -2544,7 +2544,7 @@ namespace TVRename
         {
             if (!TVSettings.Instance.OfflineMode)
             {
-                if (MessageBox.Show("Are you sure you wish to go offline?", "TVRename", MessageBoxButtons.YesNo,
+                if (MessageBox.Show("Are you sure you wish to go offline?", "TV Rename", MessageBoxButtons.YesNo,
                         MessageBoxIcon.Warning) == DialogResult.No)
                 {
                     return;

@@ -286,7 +286,7 @@ namespace TVRename
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "RecoverXml";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "TVRename Recover";
+            this.Text = "TV Rename Recover";
             this.Load += new System.EventHandler(this.RecoverXML_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel3.ResumeLayout(false);

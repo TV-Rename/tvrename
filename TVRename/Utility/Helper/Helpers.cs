@@ -93,9 +93,9 @@ namespace TVRename
         {
             return st switch
             {
-                MediaConfiguration.MediaType.tv => "TV",
+                MediaConfiguration.MediaType.tv => "TV Shows",
                 MediaConfiguration.MediaType.movie => "Movies",
-                MediaConfiguration.MediaType.both => "TV and Movies",
+                MediaConfiguration.MediaType.both => "TV Shows and Movies",
                 _ => throw new ArgumentOutOfRangeException(nameof(st), st, null)
             };
         }
