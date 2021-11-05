@@ -93,10 +93,10 @@ namespace TVRename.Forms
             MovieFilter filter = TVSettings.Instance.MovieFilter;
 
             filter.ShowName = string.IsNullOrEmpty(tbShowName.Text) ? null : tbShowName.Text;
-            filter.ShowStatus = string.IsNullOrEmpty(cmbShowStatus.Text) ? null : cmbShowStatus.SelectedItem.ToString();
-            filter.ShowNetwork = string.IsNullOrEmpty(cmbNetwork.Text) ? null : cmbNetwork.SelectedItem.ToString();
-            filter.ShowRating = string.IsNullOrEmpty(cmbRating.Text) ? null : cmbRating.SelectedItem.ToString();
-            filter.ShowYear = string.IsNullOrEmpty(cmbYear.Text) ? null : cmbYear.SelectedItem.ToString();
+            filter.ShowStatus = string.IsNullOrEmpty(cmbShowStatus.Text) ? null : cmbShowStatus.SelectedItem?.ToString();
+            filter.ShowNetwork = string.IsNullOrEmpty(cmbNetwork.Text) ? null : cmbNetwork.SelectedItem?.ToString();
+            filter.ShowRating = string.IsNullOrEmpty(cmbRating.Text) ? null : cmbRating.SelectedItem?.ToString();
+            filter.ShowYear = string.IsNullOrEmpty(cmbYear.Text) ? null : cmbYear.SelectedItem?.ToString();
 
             filter.ShowStatusInclude = GetIncludeStatus(cmbShowStatusType);
             filter.ShowNetworkInclude = GetIncludeStatus(cmbNetworkType);
