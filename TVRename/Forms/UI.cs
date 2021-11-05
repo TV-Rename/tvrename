@@ -179,14 +179,51 @@ namespace TVRename
             SetupObjectListForScanResults();
 
             UpdateSplashStatus(splash, "Running Auto-scan");
-
+            
             SetStartUpTab();
+        }
+
+        private void WaitForCEFInitialised()
+        {
+            const int max_NUMBER_TRIES = 100; //Ten Seconds
+            int numberOfWaits = 0;
+            while (!CefSharp.Cef.IsInitialized)
+            {
+                wait(100);
+                numberOfWaits++;
+                Logger.Error($"Waiting for browser to initialise {numberOfWaits}/{max_NUMBER_TRIES}");
+            }
+        }
+
+        public void wait(int milliseconds)
+        {
+            var timer1 = new System.Windows.Forms.Timer();
+            if (milliseconds == 0 || milliseconds < 0) return;
+
+            // Console.WriteLine("start wait timer");
+            timer1.Interval = milliseconds;
+            timer1.Enabled = true;
+            timer1.Start();
+
+            timer1.Tick += (s, e) =>
+            {
+                timer1.Enabled = false;
+                timer1.Stop();
+                // Console.WriteLine("stop wait timer");
+            };
+
+            while (timer1.Enabled)
+            {
+                Application.DoEvents();
+            }
         }
 
         private void SetStartUpTab()
         {
             try
             {
+                WaitForCEFInitialised();
+
                 int t = TVSettings.Instance.StartupTab;
                 if (t < tabControl1.TabCount)
                 {
