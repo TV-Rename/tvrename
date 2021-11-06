@@ -33,7 +33,6 @@ namespace TVRename
 
                 dirCache.AddFolder(prog, 0, fileCount, s, true);
             }
-
             int currentItem = 0;
             int totalN = ActionList.Missing.Count + 1;
             UpdateStatus(currentItem, totalN, "Starting searching through files");
@@ -90,6 +89,11 @@ namespace TVRename
             foreach (DirCacheEntry dce in dirCache)
             {
                 ItemList actionsForThisFile = new();
+
+                if (thisRound.ContainsKey(dce.TheFile))
+                {
+                    continue;
+                }
                 if (!ReviewFile(movieMissingAction, actionsForThisFile, dce.TheFile, TVSettings.Instance.PreventMove, true,
                     TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
                 {
@@ -110,6 +114,10 @@ namespace TVRename
 
             foreach (DirCacheEntry dce in dirCache)
             {
+                if (thisRound.ContainsKey(dce.TheFile))
+                {
+                    continue;
+                }
                 ItemList actionsForThisFile = new();
                 if (!ReviewFile(me, actionsForThisFile, dce.TheFile, TVSettings.Instance.AutoMergeDownloadEpisodes, TVSettings.Instance.PreventMove, true, TVSettings.Instance.UseFullPathNameToMatchSearchFolders))
                 {
