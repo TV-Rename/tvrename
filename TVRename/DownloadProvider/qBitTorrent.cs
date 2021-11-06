@@ -87,6 +87,10 @@ namespace TVRename
                 Logger.Warn(ex,
                     $"Could not parse data recieved from {settingsString} {downloadsString}");
             }
+            catch (NotSupportedException nex)
+            {
+                Logger.Warn(nex, $"Could not get data from {settingsString} {downloadsString}");
+            }
 
             return null;
         }
