@@ -23,6 +23,8 @@ namespace TVRename
             "{Year}",
             "{ContentRating}",
             "{Imdb}",
+            "{CollectionName}",
+            "{MovieType}",
         };
 
         [NotNull]
@@ -76,6 +78,8 @@ namespace TVRename
             name = name.ReplaceInsensitive("{ContentRating}", m.CachedMovie?.ContentRating);
             name = name.ReplaceInsensitive("{Year}", m.CachedMovie?.Year.ToString());
             name = name.ReplaceInsensitive("{Imdb}", m.CachedMovie?.Imdb);
+            name = name.ReplaceInsensitive("{CollectionName}", m.CachedMovie?.CollectionName);
+            name = name.ReplaceInsensitive("{MovieType}", m.CachedMovie?.MovieType);
 
             return isfilename ? TVSettings.DirectoryFriendly(name.Trim()) : name.Trim();
         }
