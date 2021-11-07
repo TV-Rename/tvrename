@@ -152,7 +152,7 @@ namespace TVRename.Forms
 
             AddRcMenuItem("Episode Guide", (_, _) => GotoEpGuide(si, mlastSelected));
             AddRcMenuItem("Force Refresh", (_, _) => mainUi.ForceRefresh(si, false));
-            AddRcMenuItem("Edit Show", (_, _) => mainUi.EditShow(si));
+            AddRcMenuItem("Edit TV Show", (_, _) => mainUi.EditShow(si));
 
             AddRcMenuItem("Edit " + ProcessedSeason.UIFullSeasonWord(mlastSelected.SeasonNumber),
                 (_, _) => mainUi.EditSeason(si, mlastSelected.SeasonNumber));

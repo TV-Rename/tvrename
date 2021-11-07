@@ -378,7 +378,7 @@ namespace TVRename
 
                 if (show.DoMissingCheck)
                 {
-                    AddRcMenuItem(gridSummary.showRightClickMenu, "Stop Checking Show", (_, _) =>
+                    AddRcMenuItem(gridSummary.showRightClickMenu, "Stop Checking TV Show", (_, _) =>
                     {
                         show.DoMissingCheck = false;
                         gridSummary.PopulateGrid();
@@ -386,7 +386,7 @@ namespace TVRename
                 }
                 else
                 {
-                    AddRcMenuItem(gridSummary.showRightClickMenu, "Start Checking Show", (_, _) =>
+                    AddRcMenuItem(gridSummary.showRightClickMenu, "Start Checking TV Show", (_, _) =>
                     {
                         show.DoMissingCheck = true;
                         gridSummary.PopulateGrid();

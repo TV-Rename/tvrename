@@ -1346,7 +1346,7 @@ namespace TVRename
             this.Name = "AddEditShow";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Add/Edit Show";
+            this.Text = "Add/Edit TV Show";
             this.Folders.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();

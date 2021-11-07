@@ -348,7 +348,7 @@ namespace TVRename
             if (chkAutoFolders.Checked && rdoFolderCustom.Checked && !txtFolderNameFormat.Text.IsValidDirectory())
             {
                 MessageBox.Show("Please check the custom subdirectory is a valid one and has no invalid characters"
-                    , "TV Rename Add/Edit Show",
+                    , "TV Rename Add/Edit Movie",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 Folders.SelectedTab = tabPage5;

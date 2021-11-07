@@ -92,7 +92,7 @@ namespace TVRename
             this.Name = "BulkAddEditShow";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Bulk Add - Edit Show";
+            this.Text = "Bulk Add - Edit TV Show";
             this.ResumeLayout(false);
             this.PerformLayout();
 

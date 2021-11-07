@@ -1995,8 +1995,8 @@ namespace TVRename
                 if (sil.Count == 1)
                 {
                     AddRcMenuItem("Schedule", (_, _) => GotoWtwFor(si));
-                    AddRcMenuItem("Edit Show", (_, _) => EditShow(si));
-                    AddRcMenuItem("Delete Show", (_, _) => DeleteShow(si));
+                    AddRcMenuItem("Edit TV Show", (_, _) => EditShow(si));
+                    AddRcMenuItem("Delete TV Show", (_, _) => DeleteShow(si));
                 }
             }
 
@@ -2864,9 +2864,9 @@ namespace TVRename
         private void bnMyShowsAdd_Click(object sender, EventArgs e)
         {
             Logger.Info("****************");
-            Logger.Info("Adding New Show");
+            Logger.Info("Adding New TV Show");
             MoreBusy();
-            mDoc.PreventAutoScan("Add Show");
+            mDoc.PreventAutoScan("Add TV Show");
             ShowConfiguration si = new();
 
             AddEditShow aes = new(si, mDoc);
@@ -2882,7 +2882,7 @@ namespace TVRename
             }
             else
             {
-                Logger.Info("Cancelled adding new show");
+                Logger.Info("Cancelled adding new tv show");
             }
             LessBusy();
             mDoc.AllowAutoScan();
@@ -3106,7 +3106,7 @@ namespace TVRename
         internal void EditShow([NotNull] ShowConfiguration si)
         {
             MoreBusy();
-            mDoc.PreventAutoScan("Edit Show");
+            mDoc.PreventAutoScan("Edit TV Show");
 
             AddEditShow aes = new(si, mDoc);
             DialogResult dr = aes.ShowDialog(this);

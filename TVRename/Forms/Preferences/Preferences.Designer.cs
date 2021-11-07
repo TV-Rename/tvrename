@@ -3607,7 +3607,7 @@ namespace TVRename
             this.chkUseLibraryFullPathWhenMatchingShows.Name = "chkUseLibraryFullPathWhenMatchingShows";
             this.chkUseLibraryFullPathWhenMatchingShows.Size = new System.Drawing.Size(413, 17);
             this.chkUseLibraryFullPathWhenMatchingShows.TabIndex = 41;
-            this.chkUseLibraryFullPathWhenMatchingShows.Text = "Use name of Library Folder when searching for a match between a file and a show";
+            this.chkUseLibraryFullPathWhenMatchingShows.Text = "Use name of Library Folder when searching for a match between a file and a tv show";
             this.chkUseLibraryFullPathWhenMatchingShows.UseVisualStyleBackColor = true;
             // 
             // label66

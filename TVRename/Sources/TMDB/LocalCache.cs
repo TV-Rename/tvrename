@@ -542,7 +542,7 @@ namespace TVRename.TMDB
             TvShow? downloadedSeries = Client.GetTvShowAsync(id, TvShowMethods.ExternalIds | TvShowMethods.Images | TvShowMethods.AlternativeTitles | TvShowMethods.ContentRatings | TvShowMethods.Changes | TvShowMethods.Videos | TvShowMethods.Credits, ss.LanguageToUse().Abbreviation,imageLanguage).Result;
             if (downloadedSeries is null)
             {
-                throw new MediaNotFoundException(ss, "TMDB no longer has this show", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv);
+                throw new MediaNotFoundException(ss, "TMDB no longer has this tv show", TVDoc.ProviderType.TMDB, TVDoc.ProviderType.TMDB, MediaConfiguration.MediaType.tv);
             }
             CachedSeriesInfo m = new(ss.TargetLocale, TVDoc.ProviderType.TMDB)
             {
