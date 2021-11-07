@@ -468,18 +468,18 @@ namespace TVRename.TheTVDB
             try
             {
                 Logger.Trace($"   Downloading {uri}");
-                return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true) ?? throw new SourceConnectivityException($"Looking for {uri} images (in {requestedLanguageCode})");
+                return JsonHttpGetRequest(uri, null, TokenProvider, requestedLanguageCode, true) ?? throw new SourceConnectivityException($"Looking for {uri} (in {requestedLanguageCode})");
             }
             catch (WebException webEx)
             {
-                Logger.LogWebException($"Looking for {uri} images (in {requestedLanguageCode}), but got WebException:", webEx);
+                Logger.LogWebException($"Looking for {uri} (in {requestedLanguageCode}), but got WebException:", webEx);
             }
             catch (IOException ioe)
             {
-                Logger.Warn($"Looking for {uri} images (in {requestedLanguageCode}), but got: {ioe.LoggableDetails()}");
+                Logger.Warn($"Looking for {uri} (in {requestedLanguageCode}), but got: {ioe.LoggableDetails()}");
             }
 
-            throw new SourceConnectivityException($"Looking for {uri} images (in {requestedLanguageCode})");
+            throw new SourceConnectivityException($"Looking for {uri} (in {requestedLanguageCode})");
         }
 
         [NotNull]
