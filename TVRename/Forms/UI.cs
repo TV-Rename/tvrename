@@ -43,6 +43,7 @@ using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using MessageBox = System.Windows.Forms.MessageBox;
 using SystemColors = System.Drawing.SystemColors;
+using Timer = System.Windows.Forms.Timer;
 
 namespace TVRename
 {
@@ -183,21 +184,21 @@ namespace TVRename
             SetStartUpTab();
         }
 
-        private void WaitForCEFInitialised()
+        private void WaitForCefInitialised()
         {
-            const int max_NUMBER_TRIES = 100; //Ten Seconds
+            const int MAX_NUMBER_TRIES = 100; //Ten Seconds
             int numberOfWaits = 0;
             while (!CefSharp.Cef.IsInitialized)
             {
-                wait(100);
+                Wait(100);
                 numberOfWaits++;
-                Logger.Error($"Waiting for browser to initialise {numberOfWaits}/{max_NUMBER_TRIES}");
+                Logger.Error($"Waiting for browser to initialise {numberOfWaits}/{MAX_NUMBER_TRIES}");
             }
         }
 
-        public void wait(int milliseconds)
+        public void Wait(int milliseconds)
         {
-            var timer1 = new System.Windows.Forms.Timer();
+            Timer timer1 = new System.Windows.Forms.Timer();
             if (milliseconds == 0 || milliseconds < 0) return;
 
             // Console.WriteLine("start wait timer");
@@ -205,7 +206,7 @@ namespace TVRename
             timer1.Enabled = true;
             timer1.Start();
 
-            timer1.Tick += (s, e) =>
+            timer1.Tick += (_, _) =>
             {
                 timer1.Enabled = false;
                 timer1.Stop();
@@ -222,7 +223,7 @@ namespace TVRename
         {
             try
             {
-                WaitForCEFInitialised();
+                WaitForCefInitialised();
 
                 int t = TVSettings.Instance.StartupTab;
                 if (t < tabControl1.TabCount)

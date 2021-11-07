@@ -20,18 +20,15 @@ namespace TVRename.TMDB
         private const int MAX_NUMBER_OF_CALLS = 50;
 
         [NotNull]
-        public static IEnumerable<ChangesListItem> GetChangesMovies(this TMDbClient client, CancellationToken cts, [NotNull] UpdateTimeTracker latestUpdateTime)
-        {
-            return GetChanges(client, cts, latestUpdateTime, client.GetMoviesChangesAsync);
-        }
+        public static IEnumerable<ChangesListItem> GetChangesMovies([NotNull] this TMDbClient client, CancellationToken cts, [NotNull] UpdateTimeTracker latestUpdateTime)
+            => GetChanges(cts, latestUpdateTime, client.GetMoviesChangesAsync);
 
         [NotNull]
-        public static IEnumerable<ChangesListItem> GetChangesShows(this TMDbClient client, CancellationToken cts, [NotNull] UpdateTimeTracker latestUpdateTime)
-        {
-            return GetChanges(client,cts,latestUpdateTime, client.GetTvChangesAsync);
-        }
+        public static IEnumerable<ChangesListItem> GetChangesShows([NotNull] this TMDbClient client, CancellationToken cts, [NotNull] UpdateTimeTracker latestUpdateTime)
+            => GetChanges(cts,latestUpdateTime, client.GetTvChangesAsync);
 
-        private static IEnumerable<ChangesListItem> GetChanges(this TMDbClient client, CancellationToken cts, UpdateTimeTracker latestUpdateTime, Func<int, DateTime?, DateTime?, CancellationToken, Task<SearchContainer<ChangesListItem>>> changeMethod)
+        [NotNull]
+        private static IEnumerable<ChangesListItem> GetChanges(CancellationToken cts, [NotNull] UpdateTimeTracker latestUpdateTime, Func<int, DateTime?, DateTime?, CancellationToken, Task<SearchContainer<ChangesListItem>>> changeMethod)
         {
             //We need to ask for updates in blocks of 14 days
             //We'll keep asking until we get to a date within 14 days of today
@@ -78,7 +75,6 @@ namespace TVRename.TMDB
                 throw new SourceConnectivityException(e.Message);
             }
         }
-
 
         public class TooManyCallsException : Exception
         {

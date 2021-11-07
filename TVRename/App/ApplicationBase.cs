@@ -7,14 +7,9 @@ using NLog.Layouts;
 using NLog.Targets.Syslog;
 using NLog.Targets.Syslog.Settings;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Microsoft.Win32;
-using MscVersion;
 using TVRename.Ipc;
 using System.Net;
 

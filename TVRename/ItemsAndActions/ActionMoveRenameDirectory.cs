@@ -90,7 +90,6 @@ namespace TVRename
                 {
                     return new ActionOutcome(e);
                 }
-
             }
 
             try

@@ -31,7 +31,7 @@ namespace TVRename.TMDB
                 if (!Match(newSi, si))
                 {
                     Issues.Add(
-                        $"{si.Name} is not up to date: Local is { DateTimeOffset.FromUnixTimeSeconds(si.SrvLastUpdated)} ({si.SrvLastUpdated}) server is { DateTimeOffset.FromUnixTimeSeconds(newSi.SrvLastUpdated)} ({newSi.SrvLastUpdated})");
+                        $"{si.Name} is not up to date: Local is {DateTimeOffset.FromUnixTimeSeconds(si.SrvLastUpdated)} ({si.SrvLastUpdated}) server is {DateTimeOffset.FromUnixTimeSeconds(newSi.SrvLastUpdated)} ({newSi.SrvLastUpdated})");
                     si.Dirty = true;
                     if (!MoviesToUpdate.Contains(si))
                     {
@@ -71,12 +71,35 @@ namespace TVRename.TMDB
 
         private bool Match([NotNull] CachedMovieInfo newSi, [NotNull] CachedMovieInfo si)
         {
-            if (newSi.CollectionName != si.CollectionName) return false;
-            if (newSi.Overview != si.Overview) return false;
-            if (newSi.ContentRating != si.ContentRating) return false;
-            if (newSi.Name != si.Name) return false;
-            if (newSi.TagLine != si.TagLine) return false;
-            if (newSi.Network != si.Network) return false;
+            if (newSi.CollectionName != si.CollectionName)
+            {
+                return false;
+            }
+
+            if (newSi.Overview != si.Overview)
+            {
+                return false;
+            }
+
+            if (newSi.ContentRating != si.ContentRating)
+            {
+                return false;
+            }
+
+            if (newSi.Name != si.Name)
+            {
+                return false;
+            }
+
+            if (newSi.TagLine != si.TagLine)
+            {
+                return false;
+            }
+
+            if (newSi.Network != si.Network)
+            {
+                return false;
+            }
 
             return true;
         }

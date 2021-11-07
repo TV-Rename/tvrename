@@ -3,7 +3,6 @@ using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using NLog.Targets.Syslog.Settings;
 
 namespace TVRename
 {

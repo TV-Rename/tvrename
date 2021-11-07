@@ -24,7 +24,6 @@ namespace TVRename
         public int TmdbCode;
         public string? ImdbCode { get; set; }
 
-        [NotNull]
         public Locale TargetLocale
         {
             get

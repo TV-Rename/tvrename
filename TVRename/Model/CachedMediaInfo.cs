@@ -281,7 +281,6 @@ namespace TVRename
 
         public string? ImdbCode => Imdb;
 
-        [NotNull]
         public Locale TargetLocale => ActualLocale ?? new Locale();
         public abstract ProcessedSeason.SeasonType SeasonOrder { get; }
 

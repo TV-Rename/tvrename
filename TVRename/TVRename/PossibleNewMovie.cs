@@ -349,7 +349,6 @@ namespace TVRename
 
         public string? ImdbCode => imdbCodeInternal;
 
-        [NotNull]
         public Locale TargetLocale => new();
 
         public ProcessedSeason.SeasonType SeasonOrder => throw new InvalidOperationException();

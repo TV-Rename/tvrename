@@ -3024,8 +3024,8 @@ namespace TVRename.TheTVDB
                 InstagramId = GetExternalIdSearchResultV4(r, "Instagram"),
                 TwitterId = GetExternalIdSearchResultV4(r, "Twitter"),
                 TmdbCode = GetExternalIdSearchResultV4(r, "TheMovieDB.com")?.ToInt() ?? -1,
-                Genres = r["genres"]?.ToObject<string[]>().ToList(),
-                Network = r["studios"]?.ToObject<string[]>().ToPsv(),
+                Genres = r["genres"]?.ToObject<string[]>()?.ToList() ?? new(),
+                Network = r["studios"]?.ToObject<string[]>()?.ToPsv() ?? string.Empty,
             };
 
             string? directorName = (string)r["director"];
@@ -3033,10 +3033,10 @@ namespace TVRename.TheTVDB
             {
                 si.AddCrew(new Crew(1, null, directorName!, "Director", "Directing", null));
             }
-            var al = r["aliases"];
+            JToken? al = r["aliases"];
             if (al != null)
-            { 
-                foreach (JValue a in ((JArray)al))
+            {
+                foreach (JValue a in ((JArray)al).Cast<JValue>())
                 {
                     si.AddAlias(a.ToObject<string>());
                 }
@@ -3103,10 +3103,10 @@ namespace TVRename.TheTVDB
                 TmdbCode = GetExternalIdSearchResultV4(r, "TheMovieDB.com")?.ToInt() ?? -1,
                 SeriesId = GetExternalIdSearchResultV4(r, "TV.com"),
             };
-            var al = r["aliases"];
+            JToken? al = r["aliases"];
             if (al != null)
             {
-                foreach (JValue a in ((JArray)al))
+                foreach (JValue a in ((JArray)al).Cast<JValue>())
                 {
                     si.AddAlias(a.ToObject<string>());
                 }

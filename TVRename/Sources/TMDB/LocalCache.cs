@@ -203,11 +203,6 @@ namespace TVRename.TMDB
             {
                 CachedMovieInfo downloadedSi = DownloadMovieNow(id, showErrorMsgBox);
 
-                if (downloadedSi is null)
-                {
-                    return false;
-                }
-
                 if (downloadedSi.TmdbCode != id.TmdbId && id.TmdbId == -1)
                 {
                     lock (MOVIE_LOCK)
@@ -391,8 +386,8 @@ namespace TVRename.TMDB
             ? CachedMovieData[id.TmdbId]
             : DownloadMovieNow(id, showErrorMsgBox);
 
-        [CanBeNull]
-        internal CachedMovieInfo? DownloadMovieNow([NotNull] ISeriesSpecifier id, bool showErrorMsgBox,bool saveToCache = true)
+        [NotNull]
+        internal CachedMovieInfo DownloadMovieNow([NotNull] ISeriesSpecifier id, bool showErrorMsgBox,bool saveToCache = true)
         {
             string imageLanguage = $"{id.LanguageToUse().Abbreviation},null";
             try
@@ -436,7 +431,7 @@ namespace TVRename.TMDB
                     Country = downloadedMovie.ProductionCountries.FirstOrDefault()?.Name,
                 };
                 
-                foreach (string? s in downloadedMovie.AlternativeTitles.Titles.Select(title => title.Title))
+                foreach (string? s in downloadedMovie.AlternativeTitles.Titles.Where(t=>t.Iso_3166_1==id.RegionToUse().Abbreviation).Select(title => title.Title))
                 {
                     m.AddAlias(s);
                 }
@@ -464,7 +459,7 @@ namespace TVRename.TMDB
 
                 SayNothing();
                 LastErrorMessage = ex.LoggableDetails();
-                return null;
+                throw new SourceConnectivityException();
             }
             catch (HttpRequestException ex)
             {

@@ -572,7 +572,7 @@ namespace TVRename
 
         private static bool IsContenedTo([NotNull] MediaConfiguration testShow, [NotNull] MediaConfiguration compareShow)
         {
-            return compareShow.ShowName.Contains(testShow.ShowName, StringComparison.Ordinal) && testShow.ShowName.Length < compareShow.ShowName.Length;
+            return compareShow.ShowName.CompareName().Contains(testShow.ShowName.CompareName(), StringComparison.Ordinal) && testShow.ShowName.Length < compareShow.ShowName.Length;
         }
 
         public static bool BetterShowsMatch(FileInfo matchedFile, MediaConfiguration currentlyMatchedShow,

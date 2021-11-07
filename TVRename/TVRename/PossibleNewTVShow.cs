@@ -60,7 +60,6 @@ namespace TVRename
 
         public string? ImdbCode => null;
 
-        [NotNull]
         public Locale TargetLocale => new();
     }
 }

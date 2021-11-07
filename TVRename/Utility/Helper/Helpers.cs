@@ -38,7 +38,6 @@ namespace TVRename
 
         public static bool InDebug() => Debugger.IsAttached;
 
-
         public static int Between(this int value, int min, int max)
         {
             if (value < min)
