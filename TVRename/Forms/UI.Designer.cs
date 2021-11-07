@@ -1524,7 +1524,7 @@ namespace TVRename
             this.btnFullScan.ShowShortcutKeys = false;
             this.btnFullScan.Size = new System.Drawing.Size(116, 22);
             this.btnFullScan.Text = "&Full";
-            this.btnFullScan.ToolTipText = "Scan all shows";
+            this.btnFullScan.ToolTipText = "Scan all Movies and TV Shows";
             this.btnFullScan.Click += new System.EventHandler(this.FullToolStripMenuItem_Click);
             // 
             // recentToolStripMenuItem
@@ -1533,7 +1533,7 @@ namespace TVRename
             this.recentToolStripMenuItem.Name = "recentToolStripMenuItem";
             this.recentToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.recentToolStripMenuItem.Text = "Recent";
-            this.recentToolStripMenuItem.ToolTipText = "Scan shows with recent aired episodes";
+            this.recentToolStripMenuItem.ToolTipText = "Scan TV Shows with recent aired episodes";
             this.recentToolStripMenuItem.Click += new System.EventHandler(this.RecentToolStripMenuItem_Click);
             // 
             // quickToolStripMenuItem

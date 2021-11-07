@@ -27,12 +27,12 @@ namespace TVRename
 
             if (TVSettings.Instance.LibraryFolders.Count > 1)
             {
-                throw new FixCheckException("Can't fix movie as multiple TV Library Folders are specified");
+                throw new FixCheckException("Can't fix movie as multiple TV Show Library Folders are specified");
             }
 
             if (TVSettings.Instance.LibraryFolders.Count == 0)
             {
-                throw new FixCheckException("Can't fix movie as no TV Library Folders are specified");
+                throw new FixCheckException("Can't fix movie as no TV Show Library Folders are specified");
             }
 
             Show.AutoAddFolderBase = TVSettings.Instance.MovieLibraryFolders.First().EnsureEndsWithSeparator()

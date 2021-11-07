@@ -846,7 +846,7 @@ namespace TVRename
                 "Are you sure you want to remove all " +
                 "locally stored TheTVDB, TMDB and TV Maze information?  This information will have to be downloaded again.  You " +
                 "can force the refresh of a single show by holding down the \"Control\" key while clicking on " +
-                "the \"Refresh\" button in the \"My Shows\" tab.",
+                "the \"Refresh\" button in the \"TV Shows\" tab.",
                 "Force Refresh All", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (res == DialogResult.Yes)

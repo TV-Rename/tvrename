@@ -893,8 +893,8 @@ namespace TVRename
             this.chkIgnoreAllSpecials.Name = "chkIgnoreAllSpecials";
             this.chkIgnoreAllSpecials.Size = new System.Drawing.Size(165, 17);
             this.chkIgnoreAllSpecials.TabIndex = 49;
-            this.chkIgnoreAllSpecials.Text = "Ignore Specials  for all Shows";
-            this.toolTip1.SetToolTip(this.chkIgnoreAllSpecials, "Ignores \'specials\' season for all shows");
+            this.chkIgnoreAllSpecials.Text = "Ignore Specials for all TV Shows";
+            this.toolTip1.SetToolTip(this.chkIgnoreAllSpecials, "Ignores \'specials\' season for all TV shows");
             this.chkIgnoreAllSpecials.UseVisualStyleBackColor = true;
             // 
             // cbAutoSaveOnExit
@@ -1063,7 +1063,7 @@ namespace TVRename
             this.chkPostpendThe.Name = "chkPostpendThe";
             this.chkPostpendThe.Size = new System.Drawing.Size(237, 17);
             this.chkPostpendThe.TabIndex = 42;
-            this.chkPostpendThe.Text = "Move \'The\' to the end of show/movie names";
+            this.chkPostpendThe.Text = "Move \'The\' to the end of tv show/movie names";
             this.chkPostpendThe.UseVisualStyleBackColor = true;
             // 
             // groupBox11
@@ -1246,7 +1246,7 @@ namespace TVRename
             this.chkHideMyShowsSpoilers.Name = "chkHideMyShowsSpoilers";
             this.chkHideMyShowsSpoilers.Size = new System.Drawing.Size(151, 17);
             this.chkHideMyShowsSpoilers.TabIndex = 34;
-            this.chkHideMyShowsSpoilers.Text = "Hide Spoilers in My Shows";
+            this.chkHideMyShowsSpoilers.Text = "Hide Spoilers in 'TV Shows'";
             this.chkHideMyShowsSpoilers.UseVisualStyleBackColor = true;
             // 
             // rbWTWScan
@@ -1292,7 +1292,7 @@ namespace TVRename
             this.cbAutoSelInMyShows.Name = "cbAutoSelInMyShows";
             this.cbAutoSelInMyShows.Size = new System.Drawing.Size(268, 17);
             this.cbAutoSelInMyShows.TabIndex = 33;
-            this.cbAutoSelInMyShows.Text = "&Automatically select show and season in My Shows";
+            this.cbAutoSelInMyShows.Text = "&Automatically select show and season in 'TV Shows'";
             this.cbAutoSelInMyShows.UseVisualStyleBackColor = true;
             // 
             // cbShowEpisodePictures
@@ -1833,7 +1833,7 @@ namespace TVRename
             this.groupBox6.Size = new System.Drawing.Size(401, 100);
             this.groupBox6.TabIndex = 48;
             this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Default TV Library Folder Format";
+            this.groupBox6.Text = "Default TV Show Library Folder Format";
             // 
             // button1
             // 
@@ -2327,7 +2327,7 @@ namespace TVRename
             this.chkUseSearchFullPathWhenMatchingShows.Name = "chkUseSearchFullPathWhenMatchingShows";
             this.chkUseSearchFullPathWhenMatchingShows.Size = new System.Drawing.Size(416, 17);
             this.chkUseSearchFullPathWhenMatchingShows.TabIndex = 42;
-            this.chkUseSearchFullPathWhenMatchingShows.Text = "Use name of Search Folder when searching for a match between a file and a show";
+            this.chkUseSearchFullPathWhenMatchingShows.Text = "Use name of Search Folder when searching for a match between a file and media";
             this.chkUseSearchFullPathWhenMatchingShows.UseVisualStyleBackColor = true;
             // 
             // groupBox8
@@ -2346,7 +2346,7 @@ namespace TVRename
             this.groupBox8.Size = new System.Drawing.Size(406, 115);
             this.groupBox8.TabIndex = 40;
             this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "Upgrade Shows when better quality files found";
+            this.groupBox8.Text = "Upgrade media when better quality files are found";
             // 
             // cbMovieHigherQuality
             // 
@@ -2440,7 +2440,7 @@ namespace TVRename
             this.gbAutoAdd.Size = new System.Drawing.Size(407, 125);
             this.gbAutoAdd.TabIndex = 36;
             this.gbAutoAdd.TabStop = false;
-            this.gbAutoAdd.Text = "Auto Add Shows from Search Folders";
+            this.gbAutoAdd.Text = "Auto Add TV Shows from Search Folders";
             // 
             // chkAutoSearchForDownloadedFiles
             // 
@@ -2449,7 +2449,7 @@ namespace TVRename
             this.chkAutoSearchForDownloadedFiles.Name = "chkAutoSearchForDownloadedFiles";
             this.chkAutoSearchForDownloadedFiles.Size = new System.Drawing.Size(186, 17);
             this.chkAutoSearchForDownloadedFiles.TabIndex = 16;
-            this.chkAutoSearchForDownloadedFiles.Text = "Notify when new shows are found";
+            this.chkAutoSearchForDownloadedFiles.Text = "Notify when new media is found";
             this.chkAutoSearchForDownloadedFiles.UseVisualStyleBackColor = true;
             // 
             // label43
@@ -2979,7 +2979,7 @@ namespace TVRename
             this.cbDeleteShowFromDisk.Name = "cbDeleteShowFromDisk";
             this.cbDeleteShowFromDisk.Size = new System.Drawing.Size(300, 17);
             this.cbDeleteShowFromDisk.TabIndex = 13;
-            this.cbDeleteShowFromDisk.Text = "Ask to delete from disk when deleting show from database";
+            this.cbDeleteShowFromDisk.Text = "Ask to delete from disk when deleting tv show from database";
             this.cbDeleteShowFromDisk.UseVisualStyleBackColor = true;
             // 
             // label32
@@ -4275,7 +4275,7 @@ namespace TVRename
             this.label33.Name = "label33";
             this.label33.Size = new System.Drawing.Size(98, 13);
             this.label33.TabIndex = 47;
-            this.label33.Text = "Default TV Source:";
+            this.label33.Text = "Default TV Show Source:";
             this.label33.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // pbSources
@@ -4333,7 +4333,7 @@ namespace TVRename
             this.groupBox24.Size = new System.Drawing.Size(401, 134);
             this.groupBox24.TabIndex = 61;
             this.groupBox24.TabStop = false;
-            this.groupBox24.Text = "Default Show Settings";
+            this.groupBox24.Text = "Default Movie Settings";
             // 
             // cmbDefMovieLocation
             // 
@@ -4445,7 +4445,7 @@ namespace TVRename
             this.tpShowDefaults.Padding = new System.Windows.Forms.Padding(3);
             this.tpShowDefaults.Size = new System.Drawing.Size(417, 561);
             this.tpShowDefaults.TabIndex = 14;
-            this.tpShowDefaults.Text = "Show Defaults";
+            this.tpShowDefaults.Text = "TV Show Defaults";
             this.tpShowDefaults.UseVisualStyleBackColor = true;
             // 
             // label18
@@ -4477,7 +4477,7 @@ namespace TVRename
             this.groupBox19.Size = new System.Drawing.Size(401, 176);
             this.groupBox19.TabIndex = 57;
             this.groupBox19.TabStop = false;
-            this.groupBox19.Text = "Default Show Settings";
+            this.groupBox19.Text = "Default TV Show Settings";
             // 
             // label24
             // 
@@ -4965,7 +4965,7 @@ namespace TVRename
             this.gbBulkAdd.Size = new System.Drawing.Size(404, 111);
             this.gbBulkAdd.TabIndex = 46;
             this.gbBulkAdd.TabStop = false;
-            this.gbBulkAdd.Text = "Bulk Add Shows from Library Folders";
+            this.gbBulkAdd.Text = "Bulk Add TV Shows from Library Folders";
             // 
             // label36
             // 
@@ -5435,7 +5435,7 @@ namespace TVRename
             this.groupBox7.Size = new System.Drawing.Size(404, 72);
             this.groupBox7.TabIndex = 6;
             this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "All Shows";
+            this.groupBox7.Text = "All TV Shows";
             // 
             // bnBrowseShowsHTML
             // 
@@ -5912,7 +5912,7 @@ namespace TVRename
             this.cbAutomateAutoAddWhenOneShowFound.Name = "cbAutomateAutoAddWhenOneShowFound";
             this.cbAutomateAutoAddWhenOneShowFound.Size = new System.Drawing.Size(200, 17);
             this.cbAutomateAutoAddWhenOneShowFound.TabIndex = 17;
-            this.cbAutomateAutoAddWhenOneShowFound.Text = "Auto Add when only one show found";
+            this.cbAutomateAutoAddWhenOneShowFound.Text = "Auto Add when only one tv show found";
             this.cbAutomateAutoAddWhenOneShowFound.UseVisualStyleBackColor = true;
             // 
             // cbAutomateAutoAddWhenOneMovieFound

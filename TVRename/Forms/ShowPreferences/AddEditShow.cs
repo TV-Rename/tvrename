@@ -767,7 +767,7 @@ namespace TVRename
             {
                 MessageBox.Show(
                     "Please add some library folders in the Preferences to use this.",
-                    "Can't Auto Add Show", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    "Can't Auto Add TV Show", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return;
             }
