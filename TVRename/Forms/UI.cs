@@ -4596,7 +4596,7 @@ namespace TVRename
             const int INDENT = 15;
 
             //GetIcon
-            Image? icon = tabCtrl.ImageList.Images[tabPage.ImageKey];
+            Image? icon = tabCtrl.ImageList?.Images[tabPage.ImageKey];
             if (icon is null)
             {
                 return;
