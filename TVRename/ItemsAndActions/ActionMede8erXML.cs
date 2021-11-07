@@ -86,9 +86,7 @@ namespace TVRename
 
                 writer.WriteEndElement();
 
-                //Mede8er Ratings are on a 100 point scale; TVDB are on a 10 point scale
-                float siteRating = float.Parse(Episode.EpisodeRating ?? string.Empty, new CultureInfo("en-US")) * 10;
-                int intSiteRating = (int)siteRating;
+                int intSiteRating = GetSiteRating(Episode);
                 if (intSiteRating > 0)
                 {
                     writer.WriteElement("rating", intSiteRating);
@@ -159,6 +157,18 @@ namespace TVRename
                 writer.WriteEndElement(); // movie
                 writer.WriteEndElement(); // details
             }
+        }
+
+        private static int GetSiteRating(Episode ep)
+        {
+            if (!ep.EpisodeRating.HasValue())
+            {
+                return 0;
+            }
+
+            //Mede8er Ratings are on a 100 point scale; TVDB are on a 10 point scale
+            float siteRating = float.Parse(ep.EpisodeRating ?? string.Empty, new CultureInfo("en-US")) * 10;
+            return (int)siteRating;
         }
 
         private void WriteSeriesXml()
