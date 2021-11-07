@@ -367,6 +367,10 @@ namespace TVRename
                 {
                     LOGGER.Warn($"Could not find {action.SourceDirectory}, so not copying any subtitles from it.");
                 }
+                catch (IOException io)
+                {
+                    LOGGER.Warn(io,$"Could not access {action.SourceDirectory}, so not copying any subtitles from it.");
+                }
                 catch (UnauthorizedAccessException)
                 {
                     LOGGER.Warn($"Could not access {action.SourceDirectory}, so not copying any subtitles from it.");
