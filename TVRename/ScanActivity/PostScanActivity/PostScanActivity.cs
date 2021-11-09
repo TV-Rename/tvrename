@@ -8,6 +8,7 @@
 
 using NLog;
 using System;
+using System.Threading.Tasks;
 
 namespace TVRename
 {
@@ -54,6 +55,10 @@ namespace TVRename
             catch (TVRenameOperationInterruptedException)
             {
                 throw;
+            }
+            catch (TaskCanceledException sce)
+            {
+                LOGGER.Warn(sce, $"Failed to run Scan for {ActivityName()} : {sce.Message}");
             }
             catch (Exception e)
             {

@@ -197,6 +197,10 @@ namespace TVRename
             {
                 Logger.Error(sce.Message);
             }
+            catch (TaskCanceledException sce)
+            {
+                Logger.Warn(sce.Message);
+            }
             catch (Exception e)
             {
                 Logger.Fatal(e, $"Unhandled Exception in GetThread for {series}");
