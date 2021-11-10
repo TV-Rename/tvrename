@@ -2259,7 +2259,7 @@ namespace TVRename.TheTVDB
                 Thread.CurrentThread.Name ??= $"Download Season {s.SeasonNumber} for {si.Name}"; // Can only set it once
                 try
                 {
-                    JObject seasonInfo = API.GetSeasonEpisodesV4(s.SeasonId,
+                    JObject seasonInfo = API.GetSeasonEpisodesV4(si.TvdbId ,s.SeasonId,
                         locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
 
                     JToken episodeData = seasonInfo["data"]?["episodes"];
@@ -2323,7 +2323,7 @@ namespace TVRename.TheTVDB
                 if (bestLanguage !=null)
                 {
                     AddTranslations(newEp,
-                        API.GetEpisodeTranslationsV4(newEp.EpisodeId, bestLanguage.ThreeAbbreviation));
+                        API.GetEpisodeTranslationsV4(code  ,newEp.EpisodeId, bestLanguage.ThreeAbbreviation));
                 }
 
                 si.AddEpisode(newEp);
