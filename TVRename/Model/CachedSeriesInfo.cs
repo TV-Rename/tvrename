@@ -165,8 +165,8 @@ namespace TVRename
             SeriesType = ChooseBetter(SeriesType, useNewDataOverOld, o.SeriesType);
             SeasonOrderType = o.SeasonOrderType;
   
-            bool useNewSeasons = o.seasons.Any() && useNewDataOverOld;
-            if (!seasons.Any() || useNewSeasons)
+            bool useNewSeasons = o.seasons.HasAny() && useNewDataOverOld;
+            if (!seasons.HasAny() || useNewSeasons)
             {
                 seasons = o.seasons;
             }
@@ -304,7 +304,7 @@ namespace TVRename
 
             //Looking at the data then the aliases, banner and runtime are also different by language
 
-            if (!Aliases.Any())
+            if (!Aliases.HasAny())
             {
                 JToken? aliasesToken = backupLanguageR["aliases"];
                 if (aliasesToken is null)

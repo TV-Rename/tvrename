@@ -440,7 +440,7 @@ namespace TVRename
 
         public void SetWriters([NotNull] List<string> writers)
         {
-            if (writers.Any())
+            if (writers.HasAny())
             {
                 Writer = string.Join("|", writers);
             }
@@ -448,7 +448,7 @@ namespace TVRename
 
         public void SetDirectors([NotNull] List<string> directors)
         {
-            if (directors.Any())
+            if (directors.HasAny())
             {
                 EpisodeDirector = string.Join("|", directors);
             }

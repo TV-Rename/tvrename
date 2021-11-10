@@ -34,5 +34,8 @@ namespace TVRename
                     .AsParallel()
                     .Select(AwaitPartition));
         }
+
+        public static bool HasAny<T>([CanBeNull] this IEnumerable<T> source)
+            => source is not null && source.Any();
     }
 }

@@ -363,7 +363,7 @@ namespace TVRename
             string bestShowName = FinderHelper.FindBestMatchingShow(filename, shows)?.ShowName;
 
             string otherShowNames = matchingShows.Select(item => item.ShowName).Where(s => s != bestShowName).ToCsv();
-            string showDisplayString = otherShowNames.Any() ? bestShowName + " - (" + otherShowNames + ")" : bestShowName;
+            string showDisplayString = otherShowNames.HasAny() ? bestShowName + " - (" + otherShowNames + ")" : bestShowName;
 
             ListViewItem lvi = new() { Text = filename };
             lvi.SubItems.Add(showDisplayString);

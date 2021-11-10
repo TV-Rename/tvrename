@@ -29,7 +29,7 @@ namespace TVRename
             bool IsNetworkOk(ShowConfiguration showItem)
             {
                 List<string>? seriesInfoNetwork = showItem.CachedShow?.Networks.ToList();
-                if (seriesInfoNetwork is null || !seriesInfoNetwork.Any())
+                if (seriesInfoNetwork is null || !seriesInfoNetwork.HasAny())
                 {
                     return true;
                 }

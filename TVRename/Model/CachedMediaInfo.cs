@@ -483,26 +483,26 @@ namespace TVRename
                 SiteRatingVotes = o.SiteRatingVotes;
             }
 
-            bool useNewAliases = o.Aliases.Any() && useNewDataOverOld;
-            if (!Aliases.Any() || useNewAliases)
+            bool useNewAliases = o.Aliases.HasAny() && useNewDataOverOld;
+            if (!Aliases.HasAny() || useNewAliases)
             {
                 Aliases = o.Aliases;
             }
 
-            bool useNewGenres = o.Genres.Any() && useNewDataOverOld;
-            if (!Genres.Any() || useNewGenres)
+            bool useNewGenres = o.Genres.HasAny() && useNewDataOverOld;
+            if (!Genres.HasAny() || useNewGenres)
             {
                 Genres = o.Genres;
             }
 
-            bool useNewCrew = o.Crew.Any() && useNewDataOverOld;
-            if (!Crew.Any() || useNewCrew)
+            bool useNewCrew = o.Crew.HasAny() && useNewDataOverOld;
+            if (!Crew.HasAny() || useNewCrew)
             {
                 Crew = o.Crew;
             }
 
-            bool useNewActors = o.Actors.Any() && useNewDataOverOld;
-            if (!Actors.Any() || useNewActors)
+            bool useNewActors = o.Actors.HasAny() && useNewDataOverOld;
+            if (!Actors.HasAny() || useNewActors)
             {
                 Actors = o.Actors;
             }

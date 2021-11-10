@@ -153,7 +153,7 @@ namespace TVRename
                 cbDirectory.Items.Add(folder.EnsureEndsWithSeparator());
             }
 
-            if (TVSettings.Instance.MovieLibraryFolders.Any())
+            if (TVSettings.Instance.MovieLibraryFolders.HasAny())
             {
                 cbDirectory.SelectedIndex = 0;
             }
