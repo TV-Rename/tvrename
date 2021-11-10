@@ -4986,7 +4986,10 @@ namespace TVRename
 
         public void ShowFgDownloadProgress(CacheUpdater cu, CancellationTokenSource cts)
         {
-            Invoke((MethodInvoker)delegate { new DownloadProgress(cu, cts).Show(this); });
+            if (!IsDisposed)
+            {
+                Invoke((MethodInvoker)delegate { new DownloadProgress(cu, cts).Show(this); });
+            }
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
