@@ -159,7 +159,7 @@ namespace TVRename
             }
         }
 
-        private static int GetSiteRating(Episode ep)
+        private static int GetSiteRating([NotNull] Episode ep)
         {
             if (!ep.EpisodeRating.HasValue())
             {

@@ -70,6 +70,10 @@ namespace TVRename
         /// </remarks>
         public void Add(T item)
         {
+            if (item is null)
+            {
+                return;
+            }
             lock (@lock)
             {
                 inner.Add(item);

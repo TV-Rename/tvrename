@@ -11,7 +11,6 @@ using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CefSharp.DevTools.Audits;
 
 namespace TVRename
 {
@@ -92,7 +91,7 @@ namespace TVRename
             return returnList;
         }
 
-        private bool ContainsMedia(IEnumerable<MediaConfiguration> media, MediaConfiguration testMedia)
+        private bool ContainsMedia([NotNull] IEnumerable<MediaConfiguration> media, MediaConfiguration testMedia)
         {
             foreach (MediaConfiguration testMedium in media)
             {

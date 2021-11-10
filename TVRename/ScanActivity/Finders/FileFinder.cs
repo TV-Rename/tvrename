@@ -323,44 +323,7 @@ namespace TVRename
                     IEnumerable<DirectoryInfo> suitableSubFolders = action.SourceDirectory.GetDirectories().Where(IsSubsFolder);
                     foreach (DirectoryInfo subtitleFolder in suitableSubFolders)
                     {
-                        if (action.Episode != null)
-                        {
-                            //Does not really make sense for shows (multiple episodes in one directory).
-                            //If we only have one file we can rename it
-                            List<FileInfo> subFiles = subtitleFolder.GetFiles().Where(IsSubTitleFile).ToList();
-                            if (subFiles.Count == 1)
-                            {
-                                FileInfo fi = subFiles.Single();
-                                string newName = action.DestinationBaseName + fi.Extension;
-                                ActionCopyMoveRename newitem =
-                                    new(action.Operation, fi,
-                                        FileHelper.FileInFolder(action.To.Directory, newName), action.SourceEpisode, true,
-                                        null, d);
-
-                                extras.Add(newitem);
-                            }
-                        }
-                        else
-                        {
-                            bool hasSubtitleFiles = subtitleFolder.GetFiles().Any(IsSubTitleFile);
-
-                            if (!hasSubtitleFiles)
-                            {
-                                continue;
-                            }
-
-                            string newlocation = Path.Combine(action.DestinationFolder, subtitleFolder.Name);
-
-                            if (newlocation == subtitleFolder.FullName)
-                            {
-                                continue;
-                            }
-
-                            ActionMoveRenameDirectory newitem =
-                                new(subtitleFolder.FullName, newlocation, action.Movie!);
-
-                            extras.Add(newitem);
-                        }
+                        extras.Add(CopySubFolderForAction(d, action, subtitleFolder));
                     }
                 }
                 catch (DirectoryNotFoundException)
@@ -378,6 +341,44 @@ namespace TVRename
             }
 
             UpdateActionList(actionlist, extras);
+        }
+
+        [CanBeNull]
+        private static Item CopySubFolderForAction(TVDoc doc, [NotNull] ActionCopyMoveRename action, [NotNull] DirectoryInfo subtitleFolder)
+        {
+            if (action.Episode != null)
+            {
+                //Does not really make sense for shows (multiple episodes in one directory).
+                //If we only have one file we can rename it
+                List<FileInfo> subFiles = subtitleFolder.GetFiles().Where(IsSubTitleFile).ToList();
+                if (subFiles.Count == 1)
+                {
+                    FileInfo fi = subFiles.Single();
+                    string newName = action.DestinationBaseName + fi.Extension;
+                    return new ActionCopyMoveRename(action.Operation, fi, FileHelper.FileInFolder(action.To.Directory, newName),
+                        action.SourceEpisode, true, null, doc);
+                }
+            }
+            else
+            {
+                bool hasSubtitleFiles = subtitleFolder.GetFiles().Any(IsSubTitleFile);
+
+                if (!hasSubtitleFiles)
+                {
+                    return null;
+                }
+
+                string newlocation = Path.Combine(action.DestinationFolder, subtitleFolder.Name);
+
+                if (newlocation == subtitleFolder.FullName)
+                {
+                    return null;
+                }
+
+                return new ActionMoveRenameDirectory(subtitleFolder.FullName, newlocation, action.Movie!);
+            }
+
+            return null;
         }
 
         private static bool IsSubTitleFile([NotNull] FileInfo file)
