@@ -11,6 +11,7 @@ using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CefSharp.DevTools.Audits;
 
 namespace TVRename
 {
@@ -43,10 +44,11 @@ namespace TVRename
                 return;
             }
 
-            IEnumerable<FileInfo> possibleShowNames = GetPossibleShowNameStrings();
+            IEnumerable<FileInfo> possibleShowNames = GetPossibleFiles();
             List<MediaConfiguration> addedShows = FinderHelper.FindMedia(possibleShowNames, MDoc, Settings.Owner);
+            List<MediaConfiguration> addedShowsUnique = RemoveExistingAndDups(addedShows);
 
-            List<ShowConfiguration> addedTvShows = addedShows.OfType<ShowConfiguration>().Distinct().ToList();
+            List<ShowConfiguration> addedTvShows = addedShowsUnique.OfType<ShowConfiguration>().Distinct().ToList();
             if (addedTvShows.Any())
             {
                 MDoc.Add(addedTvShows, true);
@@ -56,7 +58,7 @@ namespace TVRename
                 LOGGER.Info("Added new shows called: {0}", addedTvShows.Select(s => s.ShowName).ToCsv());
             }
 
-            List<MovieConfiguration> addedMovies = addedShows.OfType<MovieConfiguration>().Distinct().ToList();
+            List<MovieConfiguration> addedMovies = addedShowsUnique.OfType<MovieConfiguration>().Distinct().ToList();
             if (addedMovies.Any())
             {
                 MDoc.Add(addedMovies, true);
@@ -67,7 +69,44 @@ namespace TVRename
         }
 
         [NotNull]
-        private IEnumerable<FileInfo> GetPossibleShowNameStrings()
+        private List<MediaConfiguration> RemoveExistingAndDups([NotNull] IEnumerable<MediaConfiguration> addedShows)
+        {
+            List<MediaConfiguration> returnList = new();
+            foreach (MediaConfiguration testMedia in addedShows)
+            {
+                if (ContainsMedia(MDoc.FilmLibrary.Movies.Select(x => (MediaConfiguration)x), testMedia))
+                {
+                    continue;
+                }
+                if (ContainsMedia(MDoc.TvLibrary.Shows.Select(x => (MediaConfiguration)x), testMedia))
+                {
+                    continue;
+                }
+                if (ContainsMedia(returnList, testMedia))
+                {
+                    continue;
+                }
+                returnList.Add(testMedia);
+            }
+
+            return returnList;
+        }
+
+        private bool ContainsMedia(IEnumerable<MediaConfiguration> media, MediaConfiguration testMedia)
+        {
+            foreach (MediaConfiguration testMedium in media)
+            {
+                if (testMedium.AnyIdsMatch(testMedia))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        [NotNull]
+        private IEnumerable<FileInfo> GetPossibleFiles()
         {
             List<FileInfo> possibleShowNames = new();
 

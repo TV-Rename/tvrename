@@ -4558,7 +4558,7 @@ namespace TVRename
         private void ThanksToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ThanksForm form = new();
-            form.ShowDialog(this);
+            form.ShowDialog(this); 
         }
 
         private void TabControl1_DrawItem(object sender, [NotNull] DrawItemEventArgs e)

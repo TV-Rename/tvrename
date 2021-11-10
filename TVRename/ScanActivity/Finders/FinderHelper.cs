@@ -722,24 +722,24 @@ namespace TVRename
                 //if hint doesn't match existing added shows
                 if (LookForSeries(refinedHint, addedShows))
                 {
-                    Logger.Info($"Ignoring {hint} as it matches shows already being added.");
+                    Logger.Info($"Ignoring {hint}({refinedHint}) as it matches shows already being added.");
                     continue;
                 }
                 if (LookForMovies(refinedHint, addedShows))
                 {
-                    Logger.Info($"Ignoring {hint} as it matches existing movies already being added: {addedShows.Where(si => si.NameMatch(refinedHint)).Select(s => s.ShowName).ToCsv()}");
+                    Logger.Info($"Ignoring {hint}({refinedHint}) as it matches existing movies already being added: {addedShows.Where(si => si.NameMatch(refinedHint)).Select(s => s.ShowName).ToCsv()}");
                     continue;
                 }
 
                 //if hint doesn't match existing added shows
                 if (LookForSeries(refinedHint, doc.TvLibrary.Shows))
                 {
-                    Logger.Info($"Ignoring {hint} as it matches shows already in the library.");
+                    Logger.Info($"Ignoring {hint}({refinedHint}) as it matches shows already in the library.");
                     continue;
                 }
                 if (LookForMovies(refinedHint, doc.FilmLibrary.Movies))
                 {
-                    Logger.Info($"Ignoring {hint} as it matches existing movies already in the library: {doc.FilmLibrary.Movies.Where(si => si.NameMatch(refinedHint)).Select(s => s.ShowName).ToCsv()}");
+                    Logger.Info($"Ignoring {hint}({refinedHint}) as it matches existing movies already in the library: {doc.FilmLibrary.Movies.Where(si => si.NameMatch(refinedHint)).Select(s => s.ShowName).ToCsv()}");
                     continue;
                 }
 
@@ -753,7 +753,11 @@ namespace TVRename
                     continue;
                 }
 
-                bool assumeMovie = IgnoreHint(hint) || !file.FileNameNoExt().ContainsAnyCharactersFrom("0123456789");
+                bool assumeMovie = IgnoreHint(refinedHint) || refinedHint.ContainsAnyCharactersFrom("0123456789");
+
+                Logger.Info($"Assuming {file.Name} ({refinedHint}) is a " + (assumeMovie
+                    ? "movie."
+                    : "TV Series."));
 
                 if (assumeMovie && TVSettings.Instance.DefMovieDefaultLocation.HasValue() && TVSettings.Instance.DefMovieUseDefaultLocation && TVSettings.Instance.AutomateAutoAddWhenOneMovieFound)
                 {
