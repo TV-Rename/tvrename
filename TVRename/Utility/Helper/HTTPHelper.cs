@@ -62,7 +62,6 @@ namespace TVRename
             {
                 WebClient client = new();
                 client.Headers.Add("user-agent", TVSettings.USER_AGENT);
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                 return client.DownloadString(url);
             }
 
@@ -96,7 +95,6 @@ namespace TVRename
             {
                 WebClient client = new();
                 client.Headers.Add("user-agent", TVSettings.USER_AGENT);
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                 return client.DownloadData(url);
             }
 
@@ -113,9 +111,6 @@ namespace TVRename
         public static string HttpRequest([NotNull] string method, [NotNull] string url, string? postContent,
             string? contentType, string? token, string? lang)
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            ServicePointManager.Expect100Continue = true;
-
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             if (!contentType.IsNullOrWhitespace())
             {
@@ -331,7 +326,6 @@ namespace TVRename
         public static JObject JsonHttpPostRequest(string url, JObject request, bool retry)
         {
             TimeSpan pauseBetweenFailures = TimeSpan.FromSeconds(2);
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             string response = null;
             if (retry)

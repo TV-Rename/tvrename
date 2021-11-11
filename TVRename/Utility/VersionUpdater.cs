@@ -22,7 +22,6 @@ namespace TVRename
         [ItemCanBeNull]
         public static async Task<ServerRelease?> CheckForUpdatesAsync()
         {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             Release currentVersion;
 
             try
