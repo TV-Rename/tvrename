@@ -136,6 +136,7 @@ namespace TVRename
 
             if (mDoc.Args.Hide || !showUi)
             {
+                WaitForCefInitialised();
                 WindowState = FormWindowState.Minimized;
                 Visible = false;
                 Hide();
