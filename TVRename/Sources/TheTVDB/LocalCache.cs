@@ -1742,7 +1742,7 @@ namespace TVRename.TheTVDB
         }
         private static string? GetNetworks(JObject r)
         {
-            return r["data"]["companies"]?["network"]
+            return r["data"]["companies"]
                 ?.Where(x => x["companyType"]["companyTypeName"]?.ToString().Equals("Network", StringComparison.OrdinalIgnoreCase) ?? false)
                 .Select(x=>x["name"].ToString())
                 .ToPsv();
