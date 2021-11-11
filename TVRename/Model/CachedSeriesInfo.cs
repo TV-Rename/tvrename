@@ -46,7 +46,7 @@ namespace TVRename
                 .Max(airDateTime => (int?)airDateTime.Year);
 
         [NotNull]
-        public string Year => FirstAired?.ToString("yyyy") ?? $"{MinYear}";
+        public string Year => FirstAired?.Year.ToString() ?? $"{MinYear}";
 
         public IEnumerable<Season> Seasons => seasons;
 
