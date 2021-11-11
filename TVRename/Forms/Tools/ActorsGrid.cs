@@ -30,6 +30,7 @@ namespace TVRename
         private int @internal;
         private DataArr theData;
         private readonly TVDoc mDoc;
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public ActorsGrid(TVDoc doc)
         {
@@ -323,7 +324,14 @@ namespace TVRename
 
             SourceGrid.Exporter.Image image = new();
             Bitmap b = image.Export(grid1, grid1.CompleteRange);
-            b.Save(saveFile.FileName, System.Drawing.Imaging.ImageFormat.Png);
+            try
+            {
+                b.Save(saveFile.FileName, System.Drawing.Imaging.ImageFormat.Png);
+            }
+            catch (System.Runtime.InteropServices.ExternalException ex)
+            {
+                Logger.Warn($"Failed to save {saveFile.FileName}.");
+            }
         }
 
         private void DoSort()
