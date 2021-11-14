@@ -189,6 +189,12 @@ namespace TVRename
         [NotNull]
         private static string ReplaceDates(bool urlEncode, string name, DateTime? airdt)
         {
+            if (!name.Contains("{ShortDate}") && !name.Contains("{LongDate}") && !name.Contains("{YMDDate}"))
+            {
+                //No date to replace
+                return name;
+            }
+
             try
             {
                 string ymd;
@@ -217,11 +223,6 @@ namespace TVRename
             }
             catch (ArgumentOutOfRangeException)
             {
-                if (name.Contains("{ShortDate}") || name.Contains("{LongDate}") || name.Contains("{YMDDate}"))
-                {
-                    //We don't care that the date can't be parsed
-                    return name;
-                }
                 throw;
             }
         }
