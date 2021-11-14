@@ -1736,9 +1736,7 @@ namespace TVRename.TheTVDB
 
         private static string? GetNetwork(JObject r)
         {
-            return r["data"]["companies"]
-                ?.FirstOrDefault(x => x["companyType"]["companyTypeName"]?.ToString() == "Network")?["name"]
-                ?.ToString();
+            return r["data"]?["originalNetwork"]?["name"]?.ToString();
         }
         private static string? GetNetworks(JObject r)
         {
