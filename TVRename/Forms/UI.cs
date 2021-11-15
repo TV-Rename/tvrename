@@ -562,9 +562,24 @@ namespace TVRename
             SetHtmlBody(chrMovieTrailer, ShowHtmlHelper.CreateOldPage(defaultText));
         }
 
-        private void MoreBusy() => Interlocked.Increment(ref busy);
+        private void MoreBusy() {
+            btnFullScan.Enabled = false;
+            btnScan.Enabled = false;
+            tbQuickScan.Enabled = false;
+            tpRecentScan.Enabled = false;
 
-        private void LessBusy() => Interlocked.Decrement(ref busy);
+            Interlocked.Increment(ref busy);
+        }
+
+        private void LessBusy()
+        {
+            btnFullScan.Enabled = true;
+            btnScan.Enabled = true;
+            tbQuickScan.Enabled = true;
+            tpRecentScan.Enabled = true;
+
+            Interlocked.Decrement(ref busy);
+        }
 
         private void ProcessArgs([NotNull] CommandLineArgs a)
         {
@@ -3531,6 +3546,8 @@ namespace TVRename
                 Logger.Warn("Can't start scan as it's already running");
                 return;
             }
+            MoreBusy(); // cancelled in bwScan_RunWorkerCompleted
+
             CancellationTokenSource cts = new();
             bool hidden = WindowState == FormWindowState.Minimized;
 
@@ -3539,7 +3556,6 @@ namespace TVRename
             mDoc.SetScanSettings(initialSettings);
             SetupScanUi(hidden);
 
-            MoreBusy();
             TVDoc.ScanSettings scanSettings = new(shows ?? new List<ShowConfiguration>(),
                 movies ?? new List<MovieConfiguration>(), unattended, hidden, st, cts.Token, media, this, scanProgDlg);
             mDoc.SetScanSettings(scanSettings);
@@ -3578,7 +3594,7 @@ namespace TVRename
         private void bwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             AskUserAboutShowProblems(lastScanUnattended);
-            LessBusy();
+            LessBusy(); //Note this is set in UiScan()
             scanProgDlg?.Close();
             FillMyShows(true); // scanning can download more info to be displayed in my shows
             FillMyMovies();
