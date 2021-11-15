@@ -298,15 +298,15 @@ namespace TVRename.TheTVDB
                     return imageTypes;
                 }
             }
-            catch (WebException)
+            catch (WebException wex)
             {
                 //no images for chosen language
-                Logger.Warn($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}");
+                Logger.LogWebException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}",wex);
             }
-            catch (IOException)
+            catch (IOException iox)
             {
                 //no images for chosen language
-                Logger.Warn($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}");
+                Logger.LogIoException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}",iox);
             }
             return new List<string>();
         }
@@ -386,7 +386,7 @@ namespace TVRename.TheTVDB
                 }
                 catch (IOException ioe)
                 {
-                    Logger.Warn($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}: {ioe.LoggableDetails()}");
+                    Logger.LogIoException($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}: {ioe.LoggableDetails()}",ioe);
                 }
             }
 
@@ -476,7 +476,7 @@ namespace TVRename.TheTVDB
             }
             catch (IOException ioe)
             {
-                Logger.Warn($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got: {ioe.LoggableDetails()}");
+                Logger.LogIoException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got: {ioe.LoggableDetails()}",ioe);
             }
 
             throw new SourceConnectivityException($"Id={code} Looking for {uri} (in {requestedLanguageCode})");

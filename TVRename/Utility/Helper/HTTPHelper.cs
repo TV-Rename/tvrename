@@ -440,7 +440,7 @@ namespace TVRename
             JObject response = null;
             TimeSpan gap = TimeSpan.FromSeconds(secondsGap);
             RetryOnException(times, gap, fullUrl,
-                exception => exception is WebException wex && !wex.Is404()
+                exception => (exception is WebException wex && !wex.Is404()) || exception is IOException
                     , () => { response = JsonHttpGetRequest(fullUrl, null); }
                     , null);
 
@@ -452,7 +452,7 @@ namespace TVRename
             JArray response = null;
             TimeSpan gap = TimeSpan.FromSeconds(secondsGap);
             RetryOnException(times, gap, fullUrl,
-                exception => exception is WebException wex && !wex.Is404()
+                exception => (exception is WebException wex && !wex.Is404()) || exception is IOException
                 , () => { response = JsonListHttpGetRequest(fullUrl, null); }
                 , null);
 

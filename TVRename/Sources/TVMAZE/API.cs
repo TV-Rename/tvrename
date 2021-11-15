@@ -5,6 +5,7 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 
@@ -60,7 +61,11 @@ namespace TVRename.TVmaze
                 Logger.LogWebException($"Could not search for show '{searchText}' from TV Maze due to", wex);
                 throw new SourceConnectivityException($"Can't search TVmaze  for {searchText} {wex.Message}");
             }
-
+            catch (IOException wex)
+            {
+                Logger.LogIoException($"Could not search for show '{searchText}' from TV Maze due to", wex);
+                throw new SourceConnectivityException($"Can't search TVmaze  for {searchText} {wex.Message}");
+            }
             return response.Children().Select(ConvertSearchResult);
         }
 
@@ -86,6 +91,10 @@ namespace TVRename.TVmaze
                 int tvMazeId = (int)r["id"];
 
                 source.UpdateId(tvMazeId, TVDoc.ProviderType.TVmaze);
+            }
+            catch (IOException wex)
+            {
+                throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {source} {wex.Message}");
             }
             catch (WebException wex)
             {
@@ -132,6 +141,10 @@ namespace TVRename.TVmaze
             {
                 return false;
             }
+            catch (IOException)
+            {
+                return false;
+            }
         }
 
         private static JObject GetSeriesDetailsWithMazeId([NotNull] ISeriesSpecifier tvMazeId)
@@ -149,6 +162,11 @@ namespace TVRename.TVmaze
 
                 Logger.LogWebException($"Could not get show with id {tvMazeId.TvMazeId} from TV Maze due to", wex);
                 throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId} {wex.Message}");
+            }
+            catch (System.IO.IOException ioe)
+            {
+                Logger.LogIoException($"Could not get show with id {tvMazeId.TvMazeId} from TV Maze due to", ioe);
+                throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId} {ioe.Message}");
             }
         }
 
