@@ -98,6 +98,11 @@ namespace TVRename
                 return true;
             }
 
+            if (cts.IsCancellationRequested)
+            {
+                return false;
+            }
+
             string message = TheTVDB.LocalCache.Instance.LastErrorMessage + " " + TVmaze.LocalCache.Instance.LastErrorMessage + " " + TMDB.LocalCache.Instance.LastErrorMessage;
             Logger.Warn(message);
             if (showErrorMsgBox)
@@ -340,7 +345,7 @@ namespace TVRename
                     TVmaze.LocalCache.Instance.UpdatesDoneOk();
                     TMDB.LocalCache.Instance.UpdatesDoneOk();
                 }
-                downloadOk = true;
+                downloadOk = !cts.IsCancellationRequested;
             }
             catch (ThreadAbortException taa)
             {

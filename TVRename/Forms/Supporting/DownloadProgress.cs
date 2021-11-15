@@ -62,6 +62,7 @@ namespace TVRename
             newTimer.Stop();
             DialogResult = DialogResult.Abort;
             token.Cancel();
+            Close();
         }
 
         private void tmrUpdate_Tick(object sender, System.EventArgs e)
