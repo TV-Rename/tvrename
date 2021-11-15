@@ -567,6 +567,7 @@ namespace TVRename
             btnScan.Enabled = false;
             tbQuickScan.Enabled = false;
             tpRecentScan.Enabled = false;
+            tbFullScan.Enabled = false;
 
             Interlocked.Increment(ref busy);
         }
@@ -577,6 +578,7 @@ namespace TVRename
             btnScan.Enabled = true;
             tbQuickScan.Enabled = true;
             tpRecentScan.Enabled = true;
+            tbFullScan.Enabled = true;
 
             Interlocked.Decrement(ref busy);
         }
