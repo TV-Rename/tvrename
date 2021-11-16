@@ -260,8 +260,11 @@ namespace TVRename.TheTVDB
 
             if (showErrorMsgBox)
             {
-                CannotConnectForm ccform =
-                    new("Error while obtaining token from TVDB", ex.LoggableDetails(), TVDoc.ProviderType.TheTVDB);
+                CannotConnectForm ccform = (ex is WebException wexy)
+                    ? new("Error while obtaining token from TVDB", wexy.LoggableDetails(), TVDoc.ProviderType.TheTVDB)
+                    : new("Error while obtaining token from TVDB", ex.Message, TVDoc.ProviderType.TheTVDB)
+                    ;
+
 
                 DialogResult ccresult = ccform.ShowDialog();
                 if (ccresult == DialogResult.Abort)
