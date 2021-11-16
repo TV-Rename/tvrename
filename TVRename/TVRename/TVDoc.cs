@@ -12,6 +12,7 @@
 using JetBrains.Annotations;
 using NLog;
 using NodaTime.Extensions;
+using Polly;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -528,6 +529,20 @@ namespace TVRename
 
         // ReSharper disable once InconsistentNaming
         public void WriteXMLSettings()
+        {
+            Policy retryPolicy = Policy
+                .Handle<Exception>()
+                .Retry(3, onRetry: (exception, retryCount) =>
+                {
+                    Logger.Warn($"Retry {retryCount} to save {PathManager.TVDocSettingsFile.FullName}.", exception);
+                });
+
+            retryPolicy.Execute(() =>
+                {
+                    WriteXMLSettingsInternal();
+                });
+        }
+        private void WriteXMLSettingsInternal()
         {
             DirectoryInfo di = PathManager.TVDocSettingsFile.Directory;
             if (!di.Exists)

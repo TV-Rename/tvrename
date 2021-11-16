@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using NLog;
+using Polly;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -50,8 +51,21 @@ namespace TVRename
                 }
             }
         }
-
         public static void SaveCache(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, [NotNull] FileInfo cacheFile, long timestamp)
+        {
+            Policy retryPolicy = Policy
+                .Handle<Exception>()
+                .Retry(3, onRetry: (exception, retryCount) =>
+                {
+                    Logger.Warn($"Retry {retryCount} to save {cacheFile.FullName}.", exception);
+                });
+
+            retryPolicy.Execute(() =>
+            {
+                SaveCacheInternal(series, movies, cacheFile, timestamp);
+            });
+        }
+        private static void SaveCacheInternal(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, [NotNull] FileInfo cacheFile, long timestamp)
         {
             DirectoryInfo di = cacheFile.Directory;
             if (!di.Exists)
