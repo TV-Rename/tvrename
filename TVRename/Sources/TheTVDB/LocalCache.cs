@@ -257,7 +257,7 @@ namespace TVRename.TheTVDB
             }
             else
             {
-                LOGGER.Error("Error obtaining token from TVDB", ex);
+                LOGGER.Error(ex, "Error obtaining token from TVDB");
                 LastErrorMessage = ex.Message;
             }
 
@@ -2086,7 +2086,7 @@ namespace TVRename.TheTVDB
             {
                 API.GetSeriesEpisodes(code.TvdbId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation);
             }
-            catch (IOException ioex)
+            catch (IOException)
             {
                 return true;
             }
