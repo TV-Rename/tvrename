@@ -1,10 +1,9 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JetBrains.Annotations;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
@@ -16,6 +15,7 @@ namespace TVRename
         { }
 
         public override bool Active() => TVSettings.Instance.UnArchiveFilesInDownloadDirectory;
+        [NotNull]
         protected override string CheckName() => "Unarchived files in download directory";
 
         protected override void DoCheck(SetProgressDelegate prog)
@@ -32,11 +32,11 @@ namespace TVRename
                     continue;
                 }
 
-                ReviewFilesInDownloadDirectory(dirPath, Settings.Owner);
+                ReviewFilesInDownloadDirectory(dirPath);
             }
         }
 
-        private void ReviewFilesInDownloadDirectory(string dirPath, IDialogParent owner)
+        private void ReviewFilesInDownloadDirectory(string dirPath)
         {
             try
             {
@@ -95,14 +95,6 @@ namespace TVRename
             }
         }
 
-        private void PlanUnarchive(FileInfo fi)
-        {
-            throw new NotImplementedException();
-        }
-
-        private bool HasMissing(MovieConfiguration x, FileInfo fi)
-        {
-            return FinderHelper.FileNeeded(fi,x,new DirFilesCache());
-        }
+        private bool HasMissing([NotNull] MovieConfiguration x, [NotNull] FileInfo fi) => FinderHelper.FileNeeded(fi,x,new DirFilesCache());
     }
 }

@@ -283,6 +283,7 @@ namespace TVRename
                        StringComparison.InvariantCultureIgnoreCase); // same device ... TODO: UNC paths?
         }
 
+        // ReSharper disable once UnusedMember.Local
         private static void KeepTimestamps([NotNull] FileSystemInfo from, [NotNull] FileSystemInfo to)
         {
             to.CreationTime = from.CreationTime;

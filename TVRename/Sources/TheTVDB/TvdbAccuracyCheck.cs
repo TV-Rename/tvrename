@@ -221,9 +221,21 @@ namespace TVRename.TheTVDB
 
         private bool Match([NotNull] CachedMovieInfo newSi, [NotNull] CachedMovieInfo si)
         {
-            if (newSi.CollectionName != si.CollectionName) return false;
-            if (newSi.Overview != si.Overview) return false;
-            if (newSi.FirstAired != si.FirstAired) return false;
+            if (newSi.CollectionName != si.CollectionName)
+            {
+                return false;
+            }
+
+            if (newSi.Overview != si.Overview)
+            {
+                return false;
+            }
+
+            if (newSi.FirstAired != si.FirstAired)
+            {
+                return false;
+            }
+
             //TODO - Check More fields
             return true;
         }

@@ -1,3 +1,4 @@
+using System;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 
@@ -15,7 +16,7 @@ namespace TVRename
 
         public BTString() : base(BTChunk.kString)
         {
-            Data = new byte[0];
+            Data = Array.Empty<byte>();
         }
 
         public override string AsText() => "String=" + AsString();

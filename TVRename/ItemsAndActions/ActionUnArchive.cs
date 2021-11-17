@@ -16,6 +16,7 @@ using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
 using System;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -29,15 +30,15 @@ namespace TVRename
 
         public ActionUnArchive(FileInfo fi, ShowConfiguration showConfiguration)
         {
-            this.archiveFile = fi;
-            this.show = showConfiguration;
+            archiveFile = fi;
+            show = showConfiguration;
         }
 
         public ActionUnArchive(FileInfo fi, MovieConfiguration movieConfiguration)
         {
-            this.archiveFile = fi;
-            this.Movie = movieConfiguration;
-            this.show = movieConfiguration;
+            archiveFile = fi;
+            Movie = movieConfiguration;
+            show = movieConfiguration;
         }
 
         public override string ProgressText => archiveFile.Name;
@@ -48,11 +49,13 @@ namespace TVRename
 
         public override string TargetFolder => archiveFile.DirectoryName;
 
+        [NotNull]
         public override string ScanListViewGroup => "lvgActionUnpack";
 
         public override int IconNumber => 11; 
         public override IgnoreItem Ignore => null;
 
+        [NotNull]
         public override string Name => "Unpack";
 
         public override string DestinationFolder => TargetFolder;
@@ -71,6 +74,7 @@ namespace TVRename
             return string.Compare(archiveFile.FullName, nfo.archiveFile.FullName, StringComparison.Ordinal);
         }
 
+        [NotNull]
         public override ActionOutcome Go(TVRenameStats stats)
         {
             if (archiveFile is null)
@@ -93,25 +97,25 @@ namespace TVRename
             DeleteOrRecycleFile(archiveFile);
             return ActionOutcome.Success();
         }
-        private IArchive GetArchive(FileInfo archive)
+        private static IArchive GetArchive([NotNull] FileInfo archive)
         {
-            if (archiveFile.Name.EndsWith(".rar", StringComparison.OrdinalIgnoreCase))
+            if (archive.Name.EndsWith(".rar", StringComparison.OrdinalIgnoreCase))
             {
-                return RarArchive.Open(archiveFile.FullName);
+                return RarArchive.Open(archive.FullName);
             }
-            if (archiveFile.Name.EndsWith(".7z", StringComparison.OrdinalIgnoreCase))
+            if (archive.Name.EndsWith(".7z", StringComparison.OrdinalIgnoreCase))
             {
-                return SevenZipArchive.Open(archiveFile.FullName);
+                return SevenZipArchive.Open(archive.FullName);
             }
-            if (archiveFile.Name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+            if (archive.Name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
             {
-                return ZipArchive.Open(archiveFile.FullName);
+                return ZipArchive.Open(archive.FullName);
             }
-            if (archiveFile.Name.EndsWith(".gzip", StringComparison.OrdinalIgnoreCase))
+            if (archive.Name.EndsWith(".gzip", StringComparison.OrdinalIgnoreCase))
             {
-                return GZipArchive.Open(archiveFile.FullName);
+                return GZipArchive.Open(archive.FullName);
             }
-            return TarArchive.Open(archiveFile.FullName);
+            return TarArchive.Open(archive.FullName);
         }
 
         public override bool SameAs(Item o)

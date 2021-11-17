@@ -10,14 +10,12 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using JetBrains.Annotations;
-using NLog;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
     public partial class LinkMovie : Form
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly FileInfo chosenFile;
         public MovieConfiguration? ChosenShow;
 

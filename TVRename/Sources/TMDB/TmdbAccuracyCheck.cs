@@ -106,8 +106,16 @@ namespace TVRename.TMDB
 
         private bool Match([NotNull] CachedSeriesInfo newSi, [NotNull] CachedSeriesInfo si)
         {
-            if (newSi.Name != si.Name) return false;
-            if (newSi.Overview != si.Overview) return false;
+            if (newSi.Name != si.Name)
+            {
+                return false;
+            }
+
+            if (newSi.Overview != si.Overview)
+            {
+                return false;
+            }
+
             //TODO - Check More fields
             return true;
         }

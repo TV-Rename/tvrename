@@ -221,8 +221,9 @@ namespace TVRename
 
                 return name;
             }
-            catch (ArgumentOutOfRangeException)
+            catch (ArgumentOutOfRangeException ex)
             {
+                Logger.Error($"Parsing date {airdt} into {name}: {ex.Message}");
                 throw;
             }
         }

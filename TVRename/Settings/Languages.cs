@@ -5,8 +5,6 @@ namespace TVRename
 {
     public class Languages : SafeList<Language>
     {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 

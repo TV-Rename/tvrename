@@ -204,7 +204,7 @@ namespace TVRename
         private void AutoAddShow_Load(object sender, EventArgs e)
         {
             (assumeMovie ? tpMovie : tpTV).Visible = true;
-            ActiveControl = assumeMovie ? (Control) movieCodeFinder : tvCodeFinder; // set initial focus to the code entry/show finder control
+            ActiveControl = assumeMovie ? movieCodeFinder : tvCodeFinder; // set initial focus to the code entry/show finder control
             tabControl1.SelectedTab = assumeMovie ? tpMovie : tpTV;
         }
 

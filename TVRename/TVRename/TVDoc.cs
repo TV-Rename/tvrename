@@ -551,17 +551,17 @@ namespace TVRename
         {
             Policy retryPolicy = Policy
                 .Handle<Exception>()
-                .Retry(3, onRetry: (exception, retryCount) =>
+                .Retry(3, (exception, retryCount) =>
                 {
                     Logger.Warn(exception, $"Retry {retryCount} to save {PathManager.TVDocSettingsFile.FullName}.");
                 });
 
             retryPolicy.Execute(() =>
                 {
-                    WriteXMLSettingsInternal();
+                    WriteXmlSettingsInternal();
                 });
         }
-        private void WriteXMLSettingsInternal()
+        private void WriteXmlSettingsInternal()
         {
             DirectoryInfo di = PathManager.TVDocSettingsFile.Directory;
             if (!di.Exists)
@@ -1608,6 +1608,7 @@ namespace TVRename
             AllowAutoScan();
         }
 
+        // ReSharper disable once UnusedMember.Local
         private void ReviewAliases()
         {
             foreach (MovieConfiguration? mov in FilmLibrary.Movies)
@@ -1831,7 +1832,7 @@ namespace TVRename
                             break;
                         }
 
-                    case Item ad:
+                    case { } ad:
                         {
                             if (ad.Episode?.AppropriateEpNum == i2.Episode?.AppropriateEpNum &&
                                 ad.Episode?.AppropriateSeasonNumber == i2.Episode?.AppropriateSeasonNumber)

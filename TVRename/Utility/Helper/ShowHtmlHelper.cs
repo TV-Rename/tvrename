@@ -371,7 +371,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string GenerateCarouselBlocks([NotNull] IReadOnlyCollection<MediaImage> images, string imageTag)
+        private static string GenerateCarouselBlocks([NotNull] IEnumerable<MediaImage> images, string imageTag)
         {
             StringBuilder sb = new();
             bool isFirst = true;
@@ -395,7 +395,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string GenerateCarouselIndicators([NotNull] IReadOnlyCollection<MediaImage> images, string id)
+        private static string GenerateCarouselIndicators([NotNull] IEnumerable<MediaImage> images, string id)
         {
             StringBuilder sb = new();
             bool isFirst = true;
@@ -717,42 +717,6 @@ namespace TVRename
                     return null;
             }
         }
-
-        private static string? EditTvSeriesUrl([NotNull] ShowConfiguration si)
-        {
-            switch (si.Provider)
-            {
-                case TVDoc.ProviderType.TheTVDB:
-
-                    if (si.CachedShow?.Slug.HasValue() ?? false)
-                    {
-                        return $"https://thetvdb.com/series/{si.CachedShow.Slug}/edit";
-                    }
-
-                    return null;
-
-                case TVDoc.ProviderType.TMDB:
-                    if (si.TmdbCode > 0)
-                    {
-                        return $"https://www.themoviedb.org/tv/{si.TmdbCode}/edit?active_nav_item=primary_facts";
-                    }
-
-                    return null;
-
-                case TVDoc.ProviderType.TVmaze:
-                    if (si.TVmazeCode > 0)
-                    {
-                        return $" https://www.tvmaze.com/show/update?id={si.TVmazeCode}";
-                    }
-
-                    return null;
-
-                case TVDoc.ProviderType.libraryDefault:
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
         private static string? EditTvSeriesUrl([NotNull] CachedSeriesInfo si)
         {
             return EditTvSeriesUrl(si, si.Source);
@@ -871,23 +835,6 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string CreatePosterHtml([NotNull] ShowConfiguration? series)
-        {
-            if (series is null)
-            {
-                return string.Empty;
-            }
-
-            string url = series.PosterUrl();
-            if (url.HasValue() && url!.IsWebLink())
-            {
-                return $"<img class=\"show-poster rounded w-100\" src=\"{url}\" alt=\"{series.ShowName} Show Poster\">";
-            }
-
-            return string.Empty;
-        }
-
-        [NotNull]
         public static string PosterUrl([NotNull] this ShowConfiguration series)
         {
             string? url = series.CachedShow?.GetSeriesPosterPath();
@@ -931,7 +878,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string CreatePosterHtml([NotNull] CachedSeriesInfo ser) 
+        private static string CreatePosterHtml([NotNull] CachedSeriesInfo ser) 
         {
             string url = ser.GetSeriesPosterPath();
             if (url.HasValue() && !url!.IsWebLink() && TheTVDB.API.GetImageURL(url).HasValue())
@@ -941,26 +888,6 @@ namespace TVRename
             if (url.HasValue() && url!.IsWebLink())
             {
                 return $"<img class=\"show-poster rounded w-100\" src=\"{url}\" alt=\"{ser.Name} Show Poster\">";
-            }
-
-            return string.Empty;
-        }
-
-        [NotNull]
-        private static string CreateSeasonPosterHtml([NotNull] ShowConfiguration si, int snum)
-        {
-            string url = si.CachedShow?.GetSeasonBannerPath(snum);
-            if (url is null)
-            {
-                return string.Empty;
-            }
-            if (url.HasValue() && !url.IsWebLink() && TheTVDB.API.GetImageURL(url).HasValue())
-            {
-                url = TheTVDB.API.GetImageURL(url);
-            }
-            if (url.HasValue() && url.IsWebLink())
-            {
-                return $"<img class=\"show-poster rounded w-100\" src=\"{url}\" alt=\"{si.ShowName} Show Poster\">";
             }
 
             return string.Empty;

@@ -63,31 +63,6 @@ namespace TVRename.Forms
             UpdateUI();
         }
 
-        private void UpdateCheckboxes()
-        {
-            if (chkFilesizeTest.Checked)
-            {
-                chkMIssingTest.Checked = true;
-            }
-
-            if (chkMIssingTest.Checked)
-            {
-                chkNameTest.Checked = true;
-            }
-
-            if (chkNameTest.Checked == false)
-            {
-                chkMIssingTest.Checked = false;
-            }
-
-            if (chkMIssingTest.Checked == false)
-            {
-                chkFilesizeTest.Checked = false;
-            }
-
-            UpdateUI();
-        }
-
         private void chkNameTest_CheckedChanged(object sender, EventArgs e)
         {
             if (!chkNameTest.Checked)

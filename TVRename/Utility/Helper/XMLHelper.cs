@@ -130,6 +130,7 @@ namespace TVRename
             writer.WriteEndAttribute();
         }
 
+        [NotNull]
         public static XElement GetOrCreateElement([NotNull] this XElement root, string elementName)
         {
             if (root.Elements(elementName).Any())
@@ -141,6 +142,7 @@ namespace TVRename
             return e;
         }
 
+        [NotNull]
         public static XElement GetOrCreateElement([NotNull] this XElement root, string elementName, string name, string value)
         {
             if (root.Elements(elementName).Any(el => el.HasAttribute(name, value)))
@@ -386,7 +388,7 @@ namespace TVRename
         }
 
         [CanBeNull]
-        private static Nullable<T> ExtractNumber<T>([NotNull] this XElement xmlSettings, string elementName, Func<string,T> functionToExtract) where T:struct
+        private static T? ExtractNumber<T>([NotNull] this XElement xmlSettings, string elementName, Func<string,T> functionToExtract) where T:struct
         {
             IEnumerable<XElement> xElements = xmlSettings.Descendants(elementName).ToList();
 

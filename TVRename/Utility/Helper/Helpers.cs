@@ -274,6 +274,7 @@ namespace TVRename
 
         public static Color WarningColor() => Color.FromArgb(255, 210, 210);
 
+        [NotNull]
         public static T LongestShowName<T>([NotNull] this IEnumerable<T> media) where T : MediaConfiguration
         {
             IEnumerable<T> mediaConfigurations = media as T[] ?? media.ToArray();

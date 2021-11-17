@@ -57,15 +57,14 @@ namespace TVRename
 
         public override bool Equals(object obj)
         {
-            Item other = obj as Item; //avoid double casting
-            if (other is null)
+            if (obj is not Item other)
             {
                 return false;
             }
-            return this.CompareTo(other) == 0;
+            return CompareTo(other) == 0;
         }
 
-        public static bool operator ==(Item left, Item right)
+        public static bool operator ==([CanBeNull] Item left, [CanBeNull] Item right)
         {
             if (left is null)
             {
@@ -73,7 +72,7 @@ namespace TVRename
             }
             return left.Equals(right);
         }
-        public static bool operator !=(Item left, Item right)
+        public static bool operator !=([CanBeNull] Item left, [CanBeNull] Item right)
         {
             return !(left == right);
         }
@@ -87,7 +86,7 @@ namespace TVRename
         }
         public static int Compare(Item left, Item right)
         {
-            if (object.ReferenceEquals(left, right))
+            if (ReferenceEquals(left, right))
             {
                 return 0;
             }

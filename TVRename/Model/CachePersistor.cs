@@ -55,7 +55,7 @@ namespace TVRename
         {
             Policy retryPolicy = Policy
                 .Handle<Exception>()
-                .Retry(3, onRetry: (exception, retryCount) =>
+                .Retry(3, (exception, retryCount) =>
                 {
                     Logger.Warn(exception, $"Retry {retryCount} to save {cacheFile.FullName}.");
                 });

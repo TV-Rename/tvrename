@@ -16,17 +16,12 @@ namespace TVRename
 
         protected override void FixInternal()
         {
-            if (TVSettings.Instance.MovieLibraryFolders.Count > 1)
+            Movie.AutomaticFolderRoot = TVSettings.Instance.MovieLibraryFolders.Count switch
             {
-                throw new FixCheckException("Can't fix movie as multiple Movie Library Folders are specified");
-            }
-
-            if (TVSettings.Instance.MovieLibraryFolders.Count == 0)
-            {
-                throw new FixCheckException("Can't fix movie as no Movie Library Folders are specified");
-            }
-
-            Movie.AutomaticFolderRoot = TVSettings.Instance.MovieLibraryFolders.First();
+                > 1 => throw new FixCheckException("Can't fix movie as multiple Movie Library Folders are specified"),
+                0 => throw new FixCheckException("Can't fix movie as no Movie Library Folders are specified"),
+                _ => TVSettings.Instance.MovieLibraryFolders.First()
+            };
         }
 
         [NotNull]

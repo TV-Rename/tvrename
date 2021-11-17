@@ -199,8 +199,11 @@ namespace TVRename
 
         public void Wait(int milliseconds)
         {
-            Timer timer1 = new System.Windows.Forms.Timer();
-            if (milliseconds == 0 || milliseconds < 0) return;
+            Timer timer1 = new();
+            if (milliseconds == 0 || milliseconds < 0)
+            {
+                return;
+            }
 
             // Console.WriteLine("start wait timer");
             timer1.Interval = milliseconds;
@@ -4131,7 +4134,7 @@ namespace TVRename
         {
             if (e.Index % 100 == 0)
             {
-                Logger.Info($"Updated {e.Index} from {mDoc.TheActionList.Count} records = {(double)e.Index / (double)mDoc.TheActionList.Count:P2}");
+                Logger.Info($"Updated {e.Index} from {mDoc.TheActionList.Count} records = {e.Index / (double)mDoc.TheActionList.Count:P2}");
             }
             if (internalCheckChange)
             {
@@ -4795,8 +4798,15 @@ namespace TVRename
         private void UI_Resize(object sender, EventArgs e)
         {
             int targetWidth = 1100;
-            if (TVSettings.Instance.ShowAccessibilityOptions) targetWidth += 200;
-            if (TVSettings.Instance.SearchJackettButton) targetWidth += 200;
+            if (TVSettings.Instance.ShowAccessibilityOptions)
+            {
+                targetWidth += 200;
+            }
+
+            if (TVSettings.Instance.SearchJackettButton)
+            {
+                targetWidth += 200;
+            }
 
             bool isWide = Width > targetWidth;
             tpRecentScan.Visible = isWide;

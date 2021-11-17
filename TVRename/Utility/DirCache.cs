@@ -58,7 +58,7 @@ namespace TVRename
                 return n;
             }
 
-            DirectoryInfo[] dirs = new DirectoryInfo[0];
+            DirectoryInfo[] dirs = Array.Empty<DirectoryInfo>();
             try
             {
                 dirs = di.GetDirectories();
@@ -130,7 +130,7 @@ namespace TVRename
 
         private static IEnumerable<DirectoryInfo> GetDirectoryInfo(DirectoryInfo di)
         {
-            DirectoryInfo[] dirs = new DirectoryInfo[0];
+            DirectoryInfo[] dirs = Array.Empty<DirectoryInfo>();
             try
             {
                 dirs = di.GetDirectories();
@@ -157,7 +157,7 @@ namespace TVRename
 
         private static IEnumerable<FileInfo> GetFiles(DirectoryInfo di)
         {
-            FileInfo[] f2 = new FileInfo[0];
+            FileInfo[] f2 = Array.Empty<FileInfo>();
             try
             {
                 f2 = di.GetFiles();

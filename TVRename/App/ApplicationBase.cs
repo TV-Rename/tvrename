@@ -11,7 +11,6 @@ using System.Reflection;
 using System.Runtime.Remoting;
 using System.Windows.Forms;
 using TVRename.Ipc;
-using System.Net;
 
 namespace TVRename.App
 {

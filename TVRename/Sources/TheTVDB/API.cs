@@ -400,7 +400,7 @@ namespace TVRename.TheTVDB
         }
 
         [NotNull]
-        public static JObject GetSeriesV4(ISeriesSpecifier code, string requestedLanguageCode)
+        public static JObject GetSeriesV4([NotNull] ISeriesSpecifier code, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/extended";
             return GetUrl(code, uri, requestedLanguageCode,MediaConfiguration.MediaType.tv);
@@ -428,7 +428,7 @@ namespace TVRename.TheTVDB
         }
 
         [NotNull]
-        public static JObject GetMovieV4(ISeriesSpecifier code, string requestedLanguageCode)
+        public static JObject GetMovieV4([NotNull] ISeriesSpecifier code, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code.TvdbId}/extended";
             return GetUrl(code, uri, requestedLanguageCode, MediaConfiguration.MediaType.movie);
@@ -442,7 +442,7 @@ namespace TVRename.TheTVDB
         }
 
         [NotNull]
-        public static JObject GetSeriesTranslationsV4(ISeriesSpecifier code, string requestedLanguageCode)
+        public static JObject GetSeriesTranslationsV4([NotNull] ISeriesSpecifier code, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/series/{code.TvdbId}/translations/{requestedLanguageCode}";
             return GetUrl(code, uri, requestedLanguageCode, MediaConfiguration.MediaType.tv);
@@ -456,14 +456,14 @@ namespace TVRename.TheTVDB
         }
 
         [NotNull]
-        public static JObject GetMovieTranslationsV4(ISeriesSpecifier code, string requestedLanguageCode)
+        public static JObject GetMovieTranslationsV4([NotNull] ISeriesSpecifier code, string requestedLanguageCode)
         {
             string uri = $"{TokenProvider.TVDB_API_URL}/movies/{code.TvdbId}/translations/{requestedLanguageCode}";
             return GetUrl(code, uri, requestedLanguageCode, MediaConfiguration.MediaType.movie);
         }
 
         [NotNull]
-        private static JObject GetUrl(ISeriesSpecifier? code, string uri, string requestedLanguageCode, MediaConfiguration.MediaType type)
+        private static JObject GetUrl(ISeriesSpecifier code, string uri, string requestedLanguageCode, MediaConfiguration.MediaType type)
         {
             try
             {
@@ -477,7 +477,7 @@ namespace TVRename.TheTVDB
                 {
                     Logger.Warn($"Show with Id {code.TvdbId} is no longer available from TVDB (got a 404).");
 
-                    if (API.TvdbIsUp())
+                    if (TvdbIsUp())
                     {
                         string msg = $"Show with TVDB Id {code.TvdbId} is no longer found on TVDB. Please Update";
                         throw new MediaNotFoundException(code, msg, TVDoc.ProviderType.TheTVDB,
@@ -493,8 +493,6 @@ namespace TVRename.TheTVDB
                 Logger.LogIoException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got: {ioe.LoggableDetails()}",ioe);
                 throw new SourceConnectivityException($"Id={code.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {ioe.Message}");
             }
-
-            throw new SourceConnectivityException($"Id={code.TvdbId} Looking for {uri} (in {requestedLanguageCode})");
         }
 
         [NotNull]

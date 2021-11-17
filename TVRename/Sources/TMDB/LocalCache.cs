@@ -659,12 +659,12 @@ namespace TVRename.TMDB
 
                 if (downloadedSeason.Images != null && downloadedSeason.Images.Posters.Count > 0)
                 {
-                    int ImageId = snum * 1000;
+                    int imageId = snum * 1000;
                     foreach (ImageData? image in downloadedSeason.Images.Posters)
                     {
                         ShowImage newBanner = new()
                         {
-                            Id = ImageId++,
+                            Id = imageId++,
                             ImageUrl = OriginalImageUrl(image.FilePath),
                             ImageStyle = MediaImage.ImageType.poster,
                             Subject =  MediaImage.ImageSubject.season,

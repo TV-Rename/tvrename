@@ -50,7 +50,7 @@ namespace TVRename
             }
         }
 
-        private ConcurrentDictionary<int, int> forceReloadOn = new();
+        private readonly ConcurrentDictionary<int, int> forceReloadOn = new();
         protected bool DoWeForceReloadFor(int code)
         {
             return forceReloadOn.ContainsKey(code) || !HasSeries(code);

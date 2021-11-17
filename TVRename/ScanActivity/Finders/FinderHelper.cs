@@ -664,11 +664,13 @@ namespace TVRename
             return shows.Any(si => si.NameMatch(test));
         }
 
+        // ReSharper disable once UnusedMember.Local
         private static bool LookForMovie(FileSystemInfo test, [NotNull] IEnumerable<MovieConfiguration> shows)
         {
             return shows.Any(si => si.NameMatch(test, TVSettings.Instance.UseFullPathNameToMatchSearchFolders));
         }
 
+        // ReSharper disable once UnusedMember.Local
         private static bool LookForSeries(FileSystemInfo test, [NotNull] IEnumerable<ShowConfiguration> shows)
         {
             return shows.Any(si => si.NameMatch(test, TVSettings.Instance.UseFullPathNameToMatchSearchFolders));

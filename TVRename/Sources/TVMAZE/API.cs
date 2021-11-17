@@ -35,7 +35,7 @@ namespace TVRename.TVmaze
                 Logger.LogWebException("Could not get updates from TV Maze due to", ex);
                 throw new SourceConnectivityException(ex.Message);
             }
-            catch (System.IO.IOException iex)
+            catch (IOException iex)
             {
                 Logger.Error($"Could not get updates from TV Maze due to {iex.Message}");
                 throw new SourceConnectivityException(iex.Message);
@@ -163,7 +163,7 @@ namespace TVRename.TVmaze
                 Logger.LogWebException($"Could not get show with id {tvMazeId.TvMazeId} from TV Maze due to", wex);
                 throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId} {wex.Message}");
             }
-            catch (System.IO.IOException ioe)
+            catch (IOException ioe)
             {
                 Logger.LogIoException($"Could not get show with id {tvMazeId.TvMazeId} from TV Maze due to", ioe);
                 throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId} {ioe.Message}");
@@ -274,11 +274,18 @@ namespace TVRename.TVmaze
 
         private static MediaImage.ImageType MapImageType(string? s)
         {
-            if (s is null) return MediaImage.ImageType.background;
-            if (s == "background") return MediaImage.ImageType.background;
-            if (s == "poster") return MediaImage.ImageType.poster;
-            if (s == "banner") return MediaImage.ImageType.wideBanner;
-            return MediaImage.ImageType.background;
+            switch (s)
+            {
+                case null:
+                case "background":
+                    return MediaImage.ImageType.background;
+                case "poster":
+                    return MediaImage.ImageType.poster;
+                case "banner":
+                    return MediaImage.ImageType.wideBanner;
+                default:
+                    return MediaImage.ImageType.background;
+            }
         }
 
         [NotNull]

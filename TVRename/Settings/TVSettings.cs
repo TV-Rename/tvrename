@@ -285,7 +285,7 @@ namespace TVRename
         [NotNull]
         private static string[] Convert(string? propertyString)
         {
-            return string.IsNullOrWhiteSpace(propertyString) ? new string[0] : propertyString.Split(';');
+            return string.IsNullOrWhiteSpace(propertyString) ? Array.Empty<string>() : propertyString.Split(';');
         }
 
         internal bool IncludeBetaUpdates() => mode == BetaMode.BetaToo;
