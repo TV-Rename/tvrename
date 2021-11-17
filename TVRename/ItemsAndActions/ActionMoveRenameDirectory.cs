@@ -71,7 +71,7 @@ namespace TVRename
                 {
                     target.Delete();
                 }
-                catch (System.IO.DirectoryNotFoundException dnfe)
+                catch (System.IO.DirectoryNotFoundException)
                 {
                     LOGGER.Info($"Testing {target.FullName} but it has already been removed - Job Done!");
                 }

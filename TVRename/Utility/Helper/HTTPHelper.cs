@@ -93,9 +93,11 @@ namespace TVRename
             }
             else
             {
-                WebClient client = new();
-                client.Headers.Add("user-agent", TVSettings.USER_AGENT);
-                return client.DownloadData(url);
+                using (WebClient client = new())
+                {
+                    client.Headers.Add("user-agent", TVSettings.USER_AGENT);
+                    return client.DownloadData(url);
+                }
             }
 
             return new byte[] { };

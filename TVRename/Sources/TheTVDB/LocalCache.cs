@@ -3241,7 +3241,7 @@ namespace TVRename.TheTVDB
                 {
                     return new DateTime(year.Value, 1, 1);
                 }
-                catch (ArgumentOutOfRangeException ae)
+                catch (ArgumentOutOfRangeException)
                 {
                     LOGGER.Error($"Could not parse TVDB Series year from {r}");
                 }

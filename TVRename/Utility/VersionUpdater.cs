@@ -58,11 +58,12 @@ namespace TVRename
                 await HttpHelper.RetryOnExceptionAsync<Exception>
                 (3, TimeSpan.FromSeconds(2), GITHUB_RELEASES_API_URL, async () =>
                 {
-                    WebClient client = new();
-                    client.Headers.Add("user-agent", TVSettings.USER_AGENT);
-                    Task<string> response = client.DownloadStringTaskAsync(GITHUB_RELEASES_API_URL);
-                    gitHubInfo = JArray.Parse(await response.ConfigureAwait(false));
-                }).ConfigureAwait(false);
+                    using (WebClient client = new())
+                    {
+                        client.Headers.Add("user-agent", TVSettings.USER_AGENT);
+                        Task<string> response = client.DownloadStringTaskAsync(GITHUB_RELEASES_API_URL);
+                        gitHubInfo = JArray.Parse(await response.ConfigureAwait(false));
+                    }                }).ConfigureAwait(false);
 
                 if (gitHubInfo is null)
                 {

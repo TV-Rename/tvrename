@@ -55,7 +55,7 @@ namespace TVRename
                 if (toRemove.Exists)
                 {
                     DeleteOrRecycleFolder(toRemove);
-                    if (Tidyup != null && Tidyup.DeleteEmpty)
+                    if (Tidyup is { DeleteEmpty: true })
                     {
                         LOGGER.Info($"Testing {toRemove.Parent.FullName } to see whether it should be tidied up");
                         DoTidyUp(toRemove.Parent);
@@ -63,7 +63,7 @@ namespace TVRename
                 }
                 return ActionOutcome.Success();
             }
-            catch (DirectoryNotFoundException dnfe)
+            catch (DirectoryNotFoundException)
             {
                 LOGGER.Info($"Testing {toRemove.FullName} but it has already been removed - Job Done!");
                 return ActionOutcome.Success();
