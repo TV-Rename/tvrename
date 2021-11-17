@@ -437,11 +437,17 @@ namespace TVRename.TMDB
                 }
                 foreach (Cast? s in downloadedMovie.Credits.Cast)
                 {
-                    m.AddActor(new Actor(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Character, s.CastId, s.Order));
+                    if (s is not null)
+                    {
+                        m.AddActor(new Actor(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Character, s.CastId, s.Order));
+                    }
                 }
                 foreach (TMDbLib.Objects.General.Crew? s in downloadedMovie.Credits.Crew)
                 {
-                    m.AddCrew(new Crew(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Job, s.Department, s.CreditId));
+                    if (s is not null)
+                    {
+                        m.AddCrew(new Crew(s.Id, OriginalImageUrl(s.ProfilePath), s.Name, s.Job, s.Department, s.CreditId));
+                    }
                 }
                 AddMovieImages(downloadedMovie,m);
 
