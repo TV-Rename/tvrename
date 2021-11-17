@@ -1200,7 +1200,7 @@ namespace TVRename
             foreach (ShowConfiguration si in sil)
             {
                 if (filter.Filter(si)
-                    & (string.IsNullOrEmpty(filterTextBox.Text) || si.NameMatchFilters(filterTextBox.Text)))
+                    && (string.IsNullOrEmpty(filterTextBox.Text) || si.NameMatchFilters(filterTextBox.Text)))
                 {
                     TreeNode tvn = AddShowItemToTree(si);
                     if (expanded.Contains(si))
@@ -1247,7 +1247,7 @@ namespace TVRename
             MovieFilter filter = TVSettings.Instance.MovieFilter;
             foreach (MovieConfiguration si in sil)
             {
-                if (filter.Filter(si) & (string.IsNullOrEmpty(filterMoviesTextbox.Text) || si.NameMatchFilters(filterMoviesTextbox.Text)))
+                if (filter.Filter(si) && (string.IsNullOrEmpty(filterMoviesTextbox.Text) || si.NameMatchFilters(filterMoviesTextbox.Text)))
                 {
                     AddMovieToTree(si);
                 }

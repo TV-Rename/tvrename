@@ -98,7 +98,10 @@ namespace TVRename.TheTVDB
                 LoadOk = true;
                 return;
             }
-            LoadOk = CachePersistor.LoadMovieCache(loadFrom, this) & CachePersistor.LoadTvCache(loadFrom, this);
+
+            bool mOK = CachePersistor.LoadMovieCache(loadFrom, this);
+            bool tvOk = CachePersistor.LoadTvCache(loadFrom, this);
+            LoadOk = mOK && tvOk;
         }
 
         public byte[]? GetTvdbDownload(string url)
