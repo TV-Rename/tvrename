@@ -308,7 +308,7 @@ namespace TVRename
                 }
                 catch (WebException wex)
                 {
-                    Logger.Warn($"Could not connect to {wex.Response.ResponseUri} to remove {name}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.LoggableDetails()}");
+                    Logger.Warn($"Could not connect to {wex.Response.ResponseUri} to remove {name.TorrentFile}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections : {wex.LoggableDetails()}");
                     throw;
                 }
             }

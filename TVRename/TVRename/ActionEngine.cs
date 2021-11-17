@@ -63,7 +63,7 @@ namespace TVRename
 
             try
             {
-                info.Sem.WaitOne(); // don't start until we're allowed to
+                info.actionQueue.Sem.WaitOne(); // don't start until we're allowed to
                 actionStarting = false; // let our creator know we're started ok
 
                 Action action = info.TheAction;
@@ -93,7 +93,7 @@ namespace TVRename
             }
             finally
             {
-                info.Sem.Release();
+                info.actionQueue.Sem.Release();
             }
         }
 
@@ -261,7 +261,7 @@ namespace TVRename
 
                     if (!act.Outcome.Done)
                     {
-                        StartThread(new ProcessActionInfo(currentQueue.Sem, act));
+                        StartThread(new ProcessActionInfo(currentQueue, act));
                     }
                 }
             }
@@ -292,8 +292,8 @@ namespace TVRename
             }
             finally
             {
-                int nfr = pai.Sem.Release(); // release our hold on the semaphore, so that worker can grab it
-                ThreadsLogger.Trace("ActionProcessor[" + pai.Sem + "] pool has " + nfr + " free");
+                int nfr = pai.actionQueue.Sem.Release(); // release our hold on the semaphore, so that worker can grab it
+                ThreadsLogger.Trace("ActionProcessor[" + pai.actionQueue + "] pool has " + nfr + " free");
             }
         }
 
@@ -396,12 +396,12 @@ namespace TVRename
 
         private class ProcessActionInfo
         {
-            public readonly Semaphore Sem;
+            public readonly ActionQueue actionQueue;
             public readonly Action TheAction;
 
-            public ProcessActionInfo(Semaphore s, Action a)
+            public ProcessActionInfo(ActionQueue q, Action a)
             {
-                Sem = s;
+                actionQueue = q;
                 TheAction = a;
             }
         }
