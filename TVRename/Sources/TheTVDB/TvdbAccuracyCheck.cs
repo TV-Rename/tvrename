@@ -120,7 +120,7 @@ namespace TVRename.TheTVDB
 
                     EnsureUpdated(si);
                 }
-                lc.ReloadEpisodesV4(newSi.TvdbCode, si.ActualLocale??new Locale(), newSi, si.SeasonOrder);
+                lc.ReloadEpisodesV4(newSi, si.ActualLocale??new Locale(), newSi, si.SeasonOrder);
 
                 foreach (Episode newEpisode in newSi.Episodes)
                 {

@@ -1102,7 +1102,7 @@ namespace TVRename.TheTVDB
                     ProcessedSeason.SeasonType st = code is ShowConfiguration sc
                         ? sc.Order
                         : ProcessedSeason.SeasonType.aired;
-                    ReloadEpisodes(code.TvdbId, locale, si,st);
+                    ReloadEpisodes(code, locale, si,st);
                 }
             }
 
@@ -1266,7 +1266,7 @@ namespace TVRename.TheTVDB
             try
             {
                 return TVSettings.Instance.TvdbVersion == ApiVersion.v4
-                    ? API.GetMovieV4(code.TvdbId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
+                    ? API.GetMovieV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
                     : API.GetMovie(code.TvdbId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation) ?? throw new SourceConnectivityException();
             }
             catch (IOException ioex)
@@ -1975,7 +1975,7 @@ namespace TVRename.TheTVDB
             try
             {
                 jsonResponse = TVSettings.Instance.TvdbVersion == ApiVersion.v4
-                    ? API.GetSeriesV4(code.TvdbId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
+                    ? API.GetSeriesV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
                     : API.GetSeries(code.TvdbId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation);
             }
             catch (IOException ioex)
@@ -2022,7 +2022,7 @@ namespace TVRename.TheTVDB
         {
             try
             {
-                return API.GetMovieTranslationsV4(code.TvdbId,
+                return API.GetMovieTranslationsV4(code,
                     locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
             }
             catch (IOException ioex)
@@ -2052,7 +2052,7 @@ namespace TVRename.TheTVDB
         {
             try
             {
-                return API.GetSeriesTranslationsV4(code.TvdbId,
+                return API.GetSeriesTranslationsV4(code,
                     locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
             }
             catch (IOException ioex)
@@ -2326,14 +2326,14 @@ namespace TVRename.TheTVDB
             return txt;
         }
 
-        public void ReloadEpisodesV4(int code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order)
+        public void ReloadEpisodesV4(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order)
         {
             Parallel.ForEach(si.Seasons, s =>
             {
                 Thread.CurrentThread.Name ??= $"Download Season {s.SeasonNumber} for {si.Name}"; // Can only set it once
                 try
                 {
-                    JObject seasonInfo = API.GetSeasonEpisodesV4(si.TvdbId ,s.SeasonId,
+                    JObject seasonInfo = API.GetSeasonEpisodesV4(si ,s.SeasonId,
                         locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
 
                     JToken episodeData = seasonInfo["data"]?["episodes"];
@@ -2389,11 +2389,11 @@ namespace TVRename.TheTVDB
             };
         }
 
-        private void GenerateAddEpisodeV4(int code, Locale locale, CachedSeriesInfo si, JToken x, ProcessedSeason.SeasonType order)
+        private void GenerateAddEpisodeV4(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, JToken x, ProcessedSeason.SeasonType order)
         {
             try
             {
-                (Episode newEp, Language? bestLanguage) = GenerateCoreEpisodeV4(x, code, si, locale,order);
+                (Episode newEp, Language? bestLanguage) = GenerateCoreEpisodeV4(x, code.TvdbId, si, locale,order);
                 if (bestLanguage !=null)
                 {
                     AddTranslations(newEp,
@@ -2401,6 +2401,10 @@ namespace TVRename.TheTVDB
                 }
 
                 si.AddEpisode(newEp);
+            }
+            catch (MediaNotFoundException mnfe)
+            {
+                LOGGER.Error(mnfe, $"Episode (+ Translations) claimed to exist, but got a 404 when searching for them. Ignoring Episode, but might be worth a full refresh of the show and contacting TVDB if it does not get resolved");
             }
             catch (SourceConnectivityException sce1)
             {
@@ -2515,7 +2519,7 @@ namespace TVRename.TheTVDB
             }
         }
 
-        private void ReloadEpisodes(int code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order)
+        private void ReloadEpisodes(ISeriesSpecifier code, Locale locale, CachedSeriesInfo si, ProcessedSeason.SeasonType order)
         {
             if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
             {
@@ -2523,11 +2527,11 @@ namespace TVRename.TheTVDB
                 return;
             }
 
-            List<JObject> episodePrefLangResponses = GetEpisodes(code, locale);
+            List<JObject> episodePrefLangResponses = GetEpisodes(code.TvdbId, locale);
             List<JObject> episodeDefaultLangResponses = null;
             if (locale.IsDifferentLanguageToDefaultFor(TVDoc.ProviderType.TheTVDB))
             {
-                episodeDefaultLangResponses = GetEpisodes(code, new Locale(TVSettings.Instance.PreferredTVDBLanguage));
+                episodeDefaultLangResponses = GetEpisodes(code.TvdbId, new Locale(TVSettings.Instance.PreferredTVDBLanguage));
             }
 
             Dictionary<int, Tuple<JToken, JToken>> episodeResponses =
@@ -2541,7 +2545,7 @@ namespace TVRename.TheTVDB
                 JToken defltLangEpisode = episodeData.Value.Item2;
                 try
                 {
-                    UpdateEpisodeNowv3(code, prefLangEpisode, defltLangEpisode, si);
+                    UpdateEpisodeNowv3(code.TvdbId, prefLangEpisode, defltLangEpisode, si);
                 }
                 catch (InvalidCastException ex)
                 {
@@ -2682,7 +2686,7 @@ namespace TVRename.TheTVDB
                                            TVDoc.ProviderType.TheTVDB);
             if (TVSettings.Instance.TvdbVersion == ApiVersion.v4)
             {
-                GenerateAddEpisodeV4(seriesId,locale,cachedSeriesInfo,jsonResponseData,order);
+                GenerateAddEpisodeV4(cachedSeriesInfo, locale,cachedSeriesInfo,jsonResponseData,order);
                 return true;
             }
             if (locale.IsDifferentLanguageToDefaultFor(TVDoc.ProviderType.TheTVDB))
