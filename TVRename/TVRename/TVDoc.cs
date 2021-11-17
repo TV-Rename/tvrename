@@ -135,6 +135,25 @@ namespace TVRename
             return CurrentStats;
         }
 
+        internal bool AlreadyContains(MediaConfiguration show)
+        {
+            return ContainsMedia(FilmLibrary.Movies.Select(x => (MediaConfiguration)x), show)
+                && ContainsMedia(TvLibrary.Shows.Select(x => (MediaConfiguration)x), show);
+        }
+
+        public static bool ContainsMedia([NotNull] IEnumerable<MediaConfiguration> media, MediaConfiguration testMedia)
+        {
+            foreach (MediaConfiguration testMedium in media)
+            {
+                if (testMedium.AnyIdsMatch(testMedia))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         #region Denormalisations
         public void UpdateDenormalisations()
         {

@@ -127,7 +127,7 @@ namespace TVRename.Forms.Tools
                     List<MediaConfiguration> addedShows = FinderHelper.FindMedia(new List<FileInfo> { droppedFile }, mDoc, owner);
                     bestShow = addedShows.OfType<ShowConfiguration>().FirstOrDefault();
 
-                    if (bestShow != null)
+                    if (bestShow != null && !mDoc.AlreadyContains(bestShow))
                     {
                         mDoc.Add(bestShow.AsList(),true);
                         mDoc.TvAddedOrEdited(true, false, false, parent, bestShow);

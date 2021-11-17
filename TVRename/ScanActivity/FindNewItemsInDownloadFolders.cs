@@ -73,15 +73,11 @@ namespace TVRename
             List<MediaConfiguration> returnList = new();
             foreach (MediaConfiguration testMedia in addedShows)
             {
-                if (ContainsMedia(MDoc.FilmLibrary.Movies.Select(x => (MediaConfiguration)x), testMedia))
+                if (MDoc.AlreadyContains(testMedia))
                 {
                     continue;
                 }
-                if (ContainsMedia(MDoc.TvLibrary.Shows.Select(x => (MediaConfiguration)x), testMedia))
-                {
-                    continue;
-                }
-                if (ContainsMedia(returnList, testMedia))
+                if (TVDoc.ContainsMedia(returnList, testMedia))
                 {
                     continue;
                 }
@@ -89,19 +85,6 @@ namespace TVRename
             }
 
             return returnList;
-        }
-
-        private bool ContainsMedia([NotNull] IEnumerable<MediaConfiguration> media, MediaConfiguration testMedia)
-        {
-            foreach (MediaConfiguration testMedium in media)
-            {
-                if (testMedium.AnyIdsMatch(testMedia))
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         [NotNull]
