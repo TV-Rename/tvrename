@@ -96,7 +96,7 @@ namespace TVRename
                         }
                     }
                 }
-                catch (DownloadFailedException e)
+                catch (DownloadFailedException)
                 {
                     //Don't worry about this error, we'll retry below
                 }

@@ -21,7 +21,7 @@ namespace TVRename
 {
     public class ActionUnArchive : ActionFileOperation
     {
-        private FileInfo archiveFile;
+        private readonly FileInfo archiveFile;
         private readonly MediaConfiguration show; // if for an entire show, rather than specific episode
 
         public override string SeriesName => show.ShowName;

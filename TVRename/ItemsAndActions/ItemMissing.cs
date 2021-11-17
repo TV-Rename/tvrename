@@ -27,8 +27,14 @@ namespace TVRename
         {
             get
             {
-                try { return new FileInfo(TheFileNoExt).DirectoryName; }
-                catch (NotSupportedException nse) { return string.Empty; }
+                try
+                {
+                    return new FileInfo(TheFileNoExt).DirectoryName;
+                }
+                catch (NotSupportedException)
+                {
+                    return string.Empty;
+                }
             }
         }
         public override int IconNumber => 1;

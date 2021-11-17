@@ -54,5 +54,48 @@ namespace TVRename
         public string ErrorText { get; protected internal set; } // Human-readable error message, for when Error is true
 
         public int CompareTo(object obj) => CompareTo((Item)obj);
+
+        public override bool Equals(object obj)
+        {
+            Item other = obj as Item; //avoid double casting
+            if (other is null)
+            {
+                return false;
+            }
+            return this.CompareTo(other) == 0;
+        }
+
+        public static bool operator ==(Item left, Item right)
+        {
+            if (left is null)
+            {
+                return right is null;
+            }
+            return left.Equals(right);
+        }
+        public static bool operator !=(Item left, Item right)
+        {
+            return !(left == right);
+        }
+        public static bool operator <(Item left, Item right)
+        {
+            return (Compare(left, right) < 0);
+        }
+        public static bool operator >(Item left, Item right)
+        {
+            return (Compare(left, right) > 0);
+        }
+        public static int Compare(Item left, Item right)
+        {
+            if (object.ReferenceEquals(left, right))
+            {
+                return 0;
+            }
+            if (left is null)
+            {
+                return -1;
+            }
+            return left.CompareTo(right);
+        }
     }
 }

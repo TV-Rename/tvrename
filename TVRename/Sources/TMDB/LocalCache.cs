@@ -333,13 +333,13 @@ namespace TVRename.TMDB
                 LastErrorMessage = sce.Message;
                 return false;
             }
-            catch (TaskCanceledException tce)
+            catch (TaskCanceledException)
             {
                 LastErrorMessage = "Request to get updates Cancelled";
                 LOGGER.Warn(LastErrorMessage);
                 return false;
             }
-            catch (TooManyCallsException tce)
+            catch (TooManyCallsException)
             {
                 LastErrorMessage = "Too Many Calls Made - cancelled";
                 LOGGER.Warn(LastErrorMessage);
