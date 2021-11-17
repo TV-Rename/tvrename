@@ -55,6 +55,7 @@ namespace TVRename
                 ActionDateTouchMedia => 17,
                 ActionDateTouchMovie => 18,
                 ActionTRemove => 19,
+                ActionUnArchive =>20,
                 _ => throw new NotSupportedException()
             };
         }

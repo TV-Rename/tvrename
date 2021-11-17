@@ -299,6 +299,15 @@ namespace TVRename
 
         public static bool IsMovieFile([NotNull] this FileInfo file) => TVSettings.Instance.FileHasUsefulExtension(file, false);
 
+        public static bool IsArchiveFile([NotNull] this FileInfo file)
+        {
+            string archiveExtensions = ".zip;.rar;.tar;.tar.gz;.gz;.7z";
+            return archiveExtensions.Split(';')
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Any(s => file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+
         public static bool IsMovieFile([NotNull] this string filename) => TVSettings.Instance.FileHasUsefulExtension(filename, false);
 
         public static (bool found, string extension) IsLanguageSpecificSubtitle(this FileInfo file)
@@ -789,6 +798,7 @@ namespace TVRename
 
         [NotNull]
         public static string FileNameNoExt([NotNull] this FileInfo f) => f.Name.RemoveAfter(f.Extension);
+        public static string FileFullNameNoExt([NotNull] this FileInfo f) => f.FullName.RemoveAfter(f.Extension);
 
         private static readonly Regex[] MovieMultiPartRegex =
         {

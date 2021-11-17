@@ -868,6 +868,7 @@ namespace TVRename
                 }
 
                 new CheckShows(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.MediaLibProg);
+                new UnArchiveDownloadDirectory(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadFolderProg);
                 new CleanDownloadDirectory(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadFolderProg);
 
                 localFinders?.Check(scanProgDlg is null ? noProgress : scanProgDlg.LocalSearchProg);

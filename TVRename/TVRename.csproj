@@ -383,6 +383,7 @@
     <Compile Include="ItemsAndActions\ActionNfoEpisode.cs" />
     <Compile Include="ItemsAndActions\ActionNfoMovie.cs" />
     <Compile Include="ItemsAndActions\ActionNfoShow.cs" />
+    <Compile Include="ItemsAndActions\ActionUnArchive.cs" />
     <Compile Include="ItemsAndActions\MovieItemMissing.cs" />
     <Compile Include="ItemsAndActions\ShowItemMissing.cs" />
     <Compile Include="LibrarySummary\Check\DefaultFutureMovieCheck.cs" />
@@ -522,6 +523,7 @@
     <Compile Include="ScanActivity\ScanShowActivity\RenameAndMissingMovieCheck.cs" />
     <Compile Include="ScanActivity\ScanShowActivity\ScanMediaActivity.cs" />
     <Compile Include="ScanActivity\ScanShowActivity\ScanMovieActivity.cs" />
+    <Compile Include="ScanActivity\UnArchiveDownloadDirectory.cs" />
     <Compile Include="Settings\AppState\UpdateCheck.cs" />
     <Compile Include="Settings\CustomMovieName.cs" />
     <Compile Include="Settings\Locale.cs" />

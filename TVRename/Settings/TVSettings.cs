@@ -448,6 +448,7 @@ namespace TVRename
 
         public string? DefMovieDefaultLocation;
         public TVDoc.ProviderType DefaultMovieProvider = TVDoc.ProviderType.TMDB;
+        internal bool UnArchiveFilesInDownloadDirectory = true; //TODO put in settings and preferences
 
         private TVSettings()
         {
@@ -709,6 +710,7 @@ namespace TVRename
             writer.WriteElement("UnattendedMultiActionOutcome", (int)UnattendedMultiActionOutcome);
             writer.WriteElement("UserMultiActionOutcome", (int)UserMultiActionOutcome);
             writer.WriteElement("DefMovieFolderFormat",(int)DefMovieFolderFormat);
+            writer.WriteElement("UnArchiveFilesInDownloadDirectory", UnArchiveFilesInDownloadDirectory);
 
             writer.WriteElement("SearchJackett", SearchJackett);
             writer.WriteElement("UseJackettTextSearch", UseJackettTextSearch);
@@ -1619,6 +1621,7 @@ namespace TVRename
             SearchJackettButton = xmlSettings.ExtractBool("SearchJackettButton", true);
             StopJackettSearchOnFullScan = xmlSettings.ExtractBool("StopJackettSearchOnFullScan", true);
             AutoSaveOnExit = xmlSettings.ExtractBool("AutoSaveOnExit", false);
+            UnArchiveFilesInDownloadDirectory = xmlSettings.ExtractBool("UnArchiveFilesInDownloadDirectory", false);
 
             TMDBLanguage = Languages.Instance.LanguageFromDialectCode(xmlSettings.ExtractString("TMDBLanguage")) ?? Languages.Instance.FallbackLanguage;
             TMDBRegion = Regions.Instance.RegionFromCode(xmlSettings.ExtractString("TMDBRegion")) ?? Regions.Instance.FallbackRegion;

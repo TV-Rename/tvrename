@@ -124,7 +124,6 @@ namespace TVRename
 
                 if (me.Show.LengthNameMatch(dce, useFullPath) != MDoc.FilmLibrary.Movies.MaxOrDefault(m => m.LengthNameMatch(dce, useFullPath), 0))
                 {
-                    int c = 1;
                     return false;
                 }
 

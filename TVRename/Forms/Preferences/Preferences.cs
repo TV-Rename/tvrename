@@ -476,6 +476,7 @@ namespace TVRename
             s.TMDBRegion = Regions.Instance.RegionFromName(cbTMDBRegions.SelectedItem?.ToString()) ?? s.TMDBRegion;
             s.TMDBPercentDirty = tbTMDBPercentDirty.Text.ToPercent(20);
             s.IncludeMoviesQuickRecent = chkIncludeMoviesQuickRecent.Checked;
+            s.UnArchiveFilesInDownloadDirectory = chkUnArchiveFilesInDownloadDirectory.Checked;
 
             UpdateAppUpdateSettings(s);
         }
@@ -1016,6 +1017,7 @@ namespace TVRename
 
             tbTMDBPercentDirty.Text = s.upgradeDirtyPercent.ToString(CultureInfo.InvariantCulture);
             chkIncludeMoviesQuickRecent.Checked = s.IncludeMoviesQuickRecent;
+            chkUnArchiveFilesInDownloadDirectory.Checked = s.UnArchiveFilesInDownloadDirectory;
 
             tbPriorityOverrideTerms.Text = s.PriorityReplaceTerms;
 

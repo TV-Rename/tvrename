@@ -381,6 +381,7 @@ namespace TVRename
                     return 1;
 
                 case ActionDateTouch _:
+                case ActionUnArchive _:
                     // add them after the slow move/renames (ie last)
                     return 0;
 

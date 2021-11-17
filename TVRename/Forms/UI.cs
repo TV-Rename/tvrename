@@ -427,6 +427,9 @@ namespace TVRename
                 case "G-DownloadImage":
                     return HeaderName("Download", mDoc.TheActionList.SaveImages.Count);
 
+                case "K-Unpack":
+                    return HeaderName("Unpack", mDoc.TheActionList.Count(action => action is ActionUnArchive));
+
                 case "F-DownloadTorrent":
                     return HeaderName("Start/Stop Download", mDoc.TheActionList.Count(action => action is ActionTDownload || action is ActionTRemove));
 
@@ -475,6 +478,7 @@ namespace TVRename
                 "lvgActionRename" => "B-Rename",
                 "lvgActionCopy" => "C-Copy",
                 "lvgActionMove" => "D-Move",
+                "lvgActionUnpack" => "K-Unpack",
                 _ => "UNKNOWN"
             };
         }
