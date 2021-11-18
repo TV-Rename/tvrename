@@ -447,7 +447,7 @@ namespace TVRename.TheTVDB
         private static bool MoreFrom(JObject jsonUpdateResponse)
         {
             JToken? x = jsonUpdateResponse["links"]["next"];
-            return x is { } && x.Type==JTokenType.String;
+            return x is { Type: JTokenType.String };
         }
 
         private int? GetNumResponses(JObject jsonUpdateResponse, DateTime requestedTime)
@@ -3104,11 +3104,38 @@ namespace TVRename.TheTVDB
                 Network = r["studios"]?.ToObject<string[]>()?.ToPsv() ?? string.Empty,
             };
 
-            string? directorName = (string)r["director"];
-            if (directorName.HasValue())
+            AddDirector(r, si);
+            AddAliases(r, si);
+
+            ValidateNewMedia(r, searchResult, si,"Movie");
+
+            return si;
+        }
+
+        private static void ValidateNewMedia(JObject r, bool searchResult, CachedMediaInfo si, string type)
+        {
+            if (string.IsNullOrEmpty(si.Name))
             {
-                si.AddCrew(new Crew(1, null, directorName!, "Director", "Directing", null));
+                LOGGER.Warn($"Issue with {type} {si}");
+                LOGGER.Warn(r.ToString());
             }
+
+            if (si.TvdbCode == 0)
+            {
+                LOGGER.Error($"Issue with {type} (No Id) {si}");
+                LOGGER.Error(r.ToString());
+            }
+
+            if (si.SrvLastUpdated == 0 && !searchResult)
+            {
+                LOGGER.Warn($"Issue with {type} (update time is 0) {si}");
+                LOGGER.Warn(r.ToString());
+                si.SrvLastUpdated = 100;
+            }
+        }
+
+        private static void AddAliases(JObject r, CachedMediaInfo si)
+        {
             JToken? al = r["aliases"];
             if (al != null)
             {
@@ -3117,25 +3144,15 @@ namespace TVRename.TheTVDB
                     si.AddAlias(a.ToObject<string>());
                 }
             }
+        }
 
-            if (string.IsNullOrEmpty(si.Name))
+        private static void AddDirector(JObject r, CachedMovieInfo si)
+        {
+            string? directorName = (string)r["director"];
+            if (directorName.HasValue())
             {
-                LOGGER.Warn("Issue with CachedMovieInfo " + si);
-                LOGGER.Warn(r.ToString());
+                si.AddCrew(new Crew(1, null, directorName!, "Director", "Directing", null));
             }
-            if (si.TvdbCode==0)
-            {
-                LOGGER.Error("Issue with CachedMovieInfo (No Id) " + si);
-                LOGGER.Error(r.ToString());
-            }
-            if (si.SrvLastUpdated == 0 && !searchResult)
-            {
-                LOGGER.Warn("Issue with CachedMovieInfo (update time is 0) " + si);
-                LOGGER.Warn(r.ToString());
-                si.SrvLastUpdated = 100;
-            }
-
-            return si;
         }
 
         private int ParseIdFromObjectID(JToken jToken)
@@ -3179,31 +3196,9 @@ namespace TVRename.TheTVDB
                 TmdbCode = GetExternalIdSearchResultV4(r, "TheMovieDB.com")?.ToInt() ?? -1,
                 SeriesId = GetExternalIdSearchResultV4(r, "TV.com"),
             };
-            JToken? al = r["aliases"];
-            if (al != null)
-            {
-                foreach (JValue a in ((JArray)al).Cast<JValue>())
-                {
-                    si.AddAlias(a.ToObject<string>());
-                }
-            }
+            AddAliases(r,si); //todo check whether this needs to be V4 version?
 
-            if (string.IsNullOrEmpty(si.Name))
-            {
-                LOGGER.Warn("Issue with cachedSeries " + si);
-                LOGGER.Warn(r.ToString());
-            }
-            if (si.TvdbCode == 0)
-            {
-                LOGGER.Error("Issue with cachedSeries (No Id) " + si);
-                LOGGER.Error(r.ToString());
-            }
-            if (si.SrvLastUpdated == 0 && !searchResult)
-            {
-                LOGGER.Warn("Issue with cachedSeries (update time is 0) " + si);
-                LOGGER.Warn(r.ToString());
-                si.SrvLastUpdated = 100;
-            }
+            ValidateNewMedia(r,searchResult,si,"Series");
 
             return si;
         }

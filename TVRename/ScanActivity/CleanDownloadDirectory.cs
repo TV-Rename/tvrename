@@ -233,8 +233,7 @@ namespace TVRename
 
             List<MovieConfiguration> matchingMoviesNoShows =
                 FinderHelper.RemoveShortMedia(matchingMovies, matchingShows);
-            List<ShowConfiguration> matchingShowsNoMovies =
-                FinderHelper.RemoveShortMedia(matchingShows, matchingMovies);
+            //List<ShowConfiguration> matchingShowsNoMovies = FinderHelper.RemoveShortMedia(matchingShows, matchingMovies);
 
             if (!matchingMovies.Any() && !matchingShows.Any())
             {

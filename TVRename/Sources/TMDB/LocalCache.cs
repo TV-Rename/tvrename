@@ -876,15 +876,14 @@ namespace TVRename.TMDB
             }
             catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
             {
-                LOGGER.LogHttpRequestException(
-                    $"Error searching on TMDB:", ex);
+                LOGGER.LogHttpRequestException("Error searching on TMDB:", ex);
 
                 SayNothing();
                 LastErrorMessage = ex.LoggableDetails();
             }
             catch (HttpRequestException ex)
             {
-                LOGGER.Error($"Error searching on TMDB:", ex);
+                LOGGER.LogHttpRequestException("Error searching on TMDB:",ex);
                 SayNothing();
                 LastErrorMessage = ex.LoggableDetails();
             }
@@ -1116,17 +1115,17 @@ namespace TVRename.TMDB
                 }
                 catch (AggregateException aex) when (aex.InnerException is HttpRequestException ex)
                 {
-                    LOGGER.Error(
-                        $"Error obtaining TMDB Reccomendations:",
+                    LOGGER.LogHttpRequestException(
+                        "Error obtaining TMDB Reccomendations:",
                         ex);
 
                     SayNothing();
                     LastErrorMessage = ex.LoggableDetails();
                     throw new SourceConnectivityException();
                 }
-                catch
+                catch (Exception e)
                 {
-                    LOGGER.Error($"Error obtaining TMDB Reccomendations:");
+                    LOGGER.Error(e,"Error obtaining TMDB Reccomendations:");
 
                     SayNothing();
                     throw new SourceConnectivityException();

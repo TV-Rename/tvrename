@@ -53,7 +53,7 @@ namespace TVRename
         public override string ScanListViewGroup => "lvgActionUnpack";
 
         public override int IconNumber => 11; 
-        public override IgnoreItem Ignore => null;
+        public override IgnoreItem? Ignore => null;
 
         [NotNull]
         public override string Name => "Unpack";

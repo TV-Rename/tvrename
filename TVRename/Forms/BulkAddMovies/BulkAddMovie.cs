@@ -577,7 +577,6 @@ namespace TVRename
             CancellationTokenSource cts = new();
             engine.CheckFolders(cts.Token, (BackgroundWorker)sender, true, true);
             cts.Cancel();
-            cts.Dispose();
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
@@ -600,7 +599,6 @@ namespace TVRename
             });
 
             cts.Cancel();
-            cts.Dispose();
         }
 
         private void bwIdentify_ProgressChanged(object sender, [NotNull] ProgressChangedEventArgs e)

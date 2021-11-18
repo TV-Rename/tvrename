@@ -1,4 +1,3 @@
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -14,8 +13,6 @@ namespace TVRename.TMDB
     // ReSharper disable once InconsistentNaming
     internal static class API
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         //As a safety measure we check that no more than 52 calls are made
         private const int MAX_NUMBER_OF_CALLS = 50;
 
