@@ -266,7 +266,7 @@ namespace TVRename
 
                 foreach (XElement episodeXml in x.Descendants("Episode"))
                 {
-                    Episode e = new(episodeXml);
+                    Episode e = episodeXml.CreateEpisode();
                     if (e.Ok())
                     {
                         cache.AddOrUpdateEpisode(e);

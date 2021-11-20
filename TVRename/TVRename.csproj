@@ -427,6 +427,7 @@
     <Compile Include="LibrarySummary\Check\TvShowSeasonFormatCheck.cs" />
     <Compile Include="LibrarySummary\Check\UseManualFoldersTvShowCheck.cs" />
     <Compile Include="Model\CachedMediaInfo.cs" />
+    <Compile Include="Model\CachePersistorMapping.cs" />
     <Compile Include="Model\Crew.cs" />
     <Compile Include="Model\ISeriesSpecifier.cs" />
     <Compile Include="Model\MovieImage.cs" />

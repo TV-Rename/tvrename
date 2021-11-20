@@ -345,7 +345,7 @@ namespace TVRename
             writer.WriteStartElement("Episodes");
             foreach (Episode e in Episodes)
             {
-                e.WriteXml(writer);
+                CachePersistorMapping.WriteEpisodeXml(writer,e);
             }
             writer.WriteEndElement(); //Episodes
 

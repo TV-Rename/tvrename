@@ -12,8 +12,6 @@ using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
-using System.Xml.Linq;
 
 namespace TVRename
 {
@@ -44,7 +42,7 @@ namespace TVRename
         public string? ShowUrl;
         public string? Filename;
 
-        protected int ReadAiredSeasonNum; // only use after loading to attach to the correct season!
+        protected internal int ReadAiredSeasonNum; // only use after loading to attach to the correct season!
         public int ReadDvdSeasonNum; // only use after loading to attach to the correct season!
         public int SeasonId;
         public int SeriesId;
@@ -52,7 +50,7 @@ namespace TVRename
 
         private CachedSeriesInfo? internalSeries;
 
-        private string? mName;
+        internal string? MName;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         public DateTime? AirStamp;
         public DateTime? AirTime;
@@ -72,7 +70,7 @@ namespace TVRename
             EpisodeGuestStars = o.EpisodeGuestStars;
             EpisodeDirector = o.EpisodeDirector;
             Writer = o.Writer;
-            mName = o.mName;
+            MName = o.MName;
             internalSeries = o.TheCachedSeries;
             SeasonId = o.SeasonId;
             Dirty = o.Dirty;
@@ -117,55 +115,6 @@ namespace TVRename
             return TimeZoneHelper.AdjustTzTimeToLocalTime(dt.Value, tz);
         }
 
-        public Episode([NotNull] XElement r)
-        {
-            // <Episode>
-            //  <id>...</id>
-            //  blah blah
-            // </Episode>
-            SeriesId = r.ExtractInt("seriesid", -1); // key to the cachedSeries
-
-            EpisodeId = r.ExtractInt("id", -1);
-            SeasonId = r.ExtractInt("airedSeasonID") ?? r.ExtractInt("seasonid", -1);
-            AiredEpNum = r.ExtractInt("airedEpisodeNumber") ?? r.ExtractInt("EpisodeNumber", -1);
-            DvdEpNum = ExtractAndParse(r, "dvdEpisodeNumber");
-            ReadAiredSeasonNum = ExtractAndParse(r, "SeasonNumber");
-            ReadDvdSeasonNum = ExtractAndParse(r, "dvdSeason");
-            SrvLastUpdated = r.ExtractLong("lastupdated", -1);
-            Overview = System.Web.HttpUtility.HtmlDecode(XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("Overview")));
-            LinkUrl = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("LinkURL"));
-            Runtime = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("Runtime"));
-            EpisodeRating = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("Rating"));
-            EpisodeGuestStars = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("GuestStars"));
-            EpisodeDirector = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("EpisodeDirector"));
-            Writer = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("Writer"));
-            mName = System.Web.HttpUtility.HtmlDecode(XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("EpisodeName")));
-
-            AirStamp = r.ExtractDateTime("AirStamp");
-            AirTime = JsonHelper.ParseAirTime(r.ExtractString("Airs_Time"));
-
-            DvdDiscId = r.ExtractString("DvdDiscId");
-            Filename = r.ExtractStringOrNull("Filename") ?? r.ExtractString("filename");
-            ShowUrl = r.ExtractStringOrNull("ShowUrl") ?? r.ExtractString("showUrl");
-            ImdbCode = r.ExtractStringOrNull("ImdbCode") ?? r.ExtractStringOrNull("IMDB_ID") ?? r.ExtractString("imdbId");
-            ProductionCode = r.ExtractStringOrNull("ProductionCode") ?? r.ExtractString("productionCode");
-
-            DvdChapter = r.ExtractInt("DvdChapter") ?? r.ExtractInt("dvdChapter");
-            AirsBeforeSeason = r.ExtractInt("AirsBeforeSeason") ?? r.ExtractInt("airsBeforeSeason") ?? r.ExtractInt("airsbefore_season");
-            AirsBeforeEpisode = r.ExtractInt("AirsBeforeEpisode") ?? r.ExtractInt("airsBeforeEpisode") ?? r.ExtractInt("airsbefore_episode");
-            AirsAfterSeason = r.ExtractInt("AirsAfterSeason");
-            SiteRatingCount = r.ExtractInt("SiteRatingCount") ?? r.ExtractInt("siteRatingCount");
-            AbsoluteNumber = r.ExtractInt("AbsoluteNumber");
-            FirstAired = JsonHelper.ParseFirstAired(r.ExtractString("FirstAired"));
-        }
-
-        private static int ExtractAndParse([NotNull] XElement r, string key)
-        {
-            string value = r.ExtractString(key);
-            int.TryParse(value, out int intValue);
-            return intValue;
-        }
-
         public Episode(int seriesId, JObject? bestLanguageR, [NotNull] JObject jsonInDefaultLang, CachedSeriesInfo si) : this(seriesId, si)
         {
             if (bestLanguageR is null)
@@ -182,9 +131,9 @@ namespace TVRename
                 //TVDB asserts that name and overview are the fields that are localised
 
                 string? epName = (string)jsonInDefaultLang["episodeName"];
-                if (string.IsNullOrWhiteSpace(mName) && epName != null)
+                if (string.IsNullOrWhiteSpace(MName) && epName != null)
                 {
-                    mName = System.Web.HttpUtility.HtmlDecode(epName).Trim();
+                    MName = System.Web.HttpUtility.HtmlDecode(epName).Trim();
                 }
 
                 string overviewFromJson = (string)jsonInDefaultLang["overview"];
@@ -205,17 +154,20 @@ namespace TVRename
             LoadJson(r);
         }
 
-        public Episode(int seriesId, CachedSeriesInfo si)
+        public Episode(int seriesId, CachedSeriesInfo si) :this()
         {
             internalSeries = si;
             SeriesId = seriesId;
+        }
 
+        public Episode()
+        {
             Overview = string.Empty;
             EpisodeRating = string.Empty;
             EpisodeGuestStars = string.Empty;
             EpisodeDirector = string.Empty;
             Writer = string.Empty;
-            mName = string.Empty;
+            MName = string.Empty;
             EpisodeId = -1;
             ReadAiredSeasonNum = -1;
             ReadDvdSeasonNum = -1;
@@ -252,7 +204,7 @@ namespace TVRename
                 SrvLastUpdated = (long)r["lastUpdated"];
                 Overview = System.Web.HttpUtility.HtmlDecode((string)r["overview"])?.Trim();
                 EpisodeRating = GetString(r, "siteRating");
-                mName = System.Web.HttpUtility.HtmlDecode((string)r["episodeName"]);
+                MName = System.Web.HttpUtility.HtmlDecode((string)r["episodeName"]);
 
                 AirsBeforeEpisode = (int?)r["airsBeforeEpisode"];
                 AirsBeforeSeason = (int?)r["airsBeforeSeason"];
@@ -299,14 +251,14 @@ namespace TVRename
         {
             get
             {
-                if (string.IsNullOrEmpty(mName))
+                if (string.IsNullOrEmpty(MName))
                 {
                     return "Aired Episode " + AiredEpNum;
                 }
 
-                return mName;
+                return MName;
             }
-            set => mName = System.Web.HttpUtility.HtmlDecode(value);
+            set => MName = System.Web.HttpUtility.HtmlDecode(value);
         }
 
         public int AiredSeasonNumber
@@ -359,46 +311,6 @@ namespace TVRename
         public void SetSeriesSeason(CachedSeriesInfo ser)
         {
             internalSeries = ser;
-        }
-
-        public void WriteXml([NotNull] XmlWriter writer)
-        {
-            writer.WriteStartElement("Episode");
-
-            writer.WriteElement("id", EpisodeId);
-            writer.WriteElement("seriesid", SeriesId);
-            writer.WriteElement("airedSeasonID", SeasonId);
-            writer.WriteElement("airedEpisodeNumber", AiredEpNum);
-            writer.WriteElement("SeasonNumber", AiredSeasonNumber);
-            writer.WriteElement("dvdEpisodeNumber", DvdEpNum, true);
-            writer.WriteElement("dvdSeason", DvdSeasonNumber, true);
-            writer.WriteElement("lastupdated", SrvLastUpdated);
-            writer.WriteElement("Overview", Overview?.Trim());
-            writer.WriteElement("LinkURL", LinkUrl?.Trim());
-            writer.WriteElement("Runtime", Runtime?.Trim());
-            writer.WriteElement("Rating", EpisodeRating);
-            writer.WriteElement("GuestStars", EpisodeGuestStars, true);
-            writer.WriteElement("EpisodeDirector", EpisodeDirector, true);
-            writer.WriteElement("Writer", Writer, true);
-            writer.WriteElement("EpisodeName", mName, true);
-
-            writer.WriteElement("FirstAired", FirstAired?.ToString("yyyy-MM-dd"), true);
-            writer.WriteElement("AirTime", AirTime?.ToString("HH:mm"), true);
-            writer.WriteElement("AirTime", AirStamp);
-
-            writer.WriteElement("DvdChapter", DvdChapter);
-            writer.WriteElement("DvdDiscId", DvdDiscId, true);
-            writer.WriteElement("AirsBeforeSeason", AirsBeforeSeason);
-            writer.WriteElement("AirsBeforeEpisode", AirsBeforeEpisode);
-            writer.WriteElement("AirsAfterSeason", AirsAfterSeason);
-            writer.WriteElement("SiteRatingCount", SiteRatingCount);
-            writer.WriteElement("AbsoluteNumber", AbsoluteNumber);
-            writer.WriteElement("ProductionCode", ProductionCode, true);
-            writer.WriteElement("ImdbCode", ImdbCode, true);
-            writer.WriteElement("ShowUrl", ShowUrl, true);
-            writer.WriteElement("Filename", Filename, true);
-
-            writer.WriteEndElement(); //Episode
         }
 
         public int GetSeasonNumber(ProcessedSeason.SeasonType order)
