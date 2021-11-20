@@ -912,10 +912,11 @@ namespace TVRename
                 downloadIdentifiers.Reset();
                 forceMoviesScan.Clear();
                 forceShowsScan.Clear();
-                OutputActionFiles(); //Save missing shows to XML (and others)
 
                 lastScanType = settings.Type;
                 LastScanComplete = true;
+
+                OutputActionFiles(); //Save missing shows to XML (and others)
             }
             catch (TVRenameOperationInterruptedException)
             {
