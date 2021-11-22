@@ -187,13 +187,20 @@ namespace TVRename
 
         private void WaitForCefInitialised()
         {
-            const int MAX_NUMBER_TRIES = 100; //Ten Seconds
+            WaitFor(() => CefSharp.Cef.IsInitialized, 10, "browser to initialise",true);
+        }
+
+        private void WaitFor([NotNull] Func<bool> func, int maxSeconds, string textMessage, bool doLogging)
+        {
             int numberOfWaits = 0;
-            while (!CefSharp.Cef.IsInitialized)
+            while (!func())
             {
                 Wait(100);
                 numberOfWaits++;
-                Logger.Error($"Waiting for browser to initialise {numberOfWaits}/{MAX_NUMBER_TRIES}");
+                if (doLogging)
+                {
+                    Logger.Error($"Waiting for {textMessage} {numberOfWaits}/{maxSeconds}");
+                }
             }
         }
 
@@ -619,21 +626,25 @@ namespace TVRename
             if (a.Scan)
             {
                 UiScan(null, null, UNATTENDED, TVSettings.ScanType.Full, MediaConfiguration.MediaType.both);
+                WaitForScanToComplete();
             }
 
             if (a.QuickScan)
             {
                 UiScan(null, null, UNATTENDED, TVSettings.ScanType.Quick, MediaConfiguration.MediaType.both);
+                WaitForScanToComplete();
             }
 
             if (a.RecentScan)
             {
                 UiScan(null, null, UNATTENDED, TVSettings.ScanType.Recent, MediaConfiguration.MediaType.both);
+                WaitForScanToComplete();
             }
 
             if (a.DoAll)
             {
                 ActionAction(true, UNATTENDED, true);
+                WaitFor(() => bwAction.IsBusy == false,10000,"actions to execute", false);
             }
 
             if (a.Save)
@@ -651,6 +662,11 @@ namespace TVRename
             {
                 Close();
             }
+        }
+
+        private void WaitForScanToComplete()
+        {
+            WaitFor(()=> bwScan.IsBusy == false, 10000, "scan to complete",false);
         }
 
         // ReSharper disable once InconsistentNaming

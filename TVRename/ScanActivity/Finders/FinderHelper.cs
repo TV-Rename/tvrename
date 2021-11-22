@@ -755,7 +755,7 @@ namespace TVRename
                     continue;
                 }
 
-                bool assumeMovie = IgnoreHint(refinedHint) || refinedHint.ContainsAnyCharactersFrom("0123456789");
+                bool assumeMovie = IgnoreHint(hint) || hint.ContainsAnyCharactersFrom("0123456789");
 
                 Logger.Info($"Assuming {file.Name} ({refinedHint}) is a " + (assumeMovie
                     ? "movie."
