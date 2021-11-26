@@ -80,13 +80,21 @@ namespace TVRename
                 return string.Empty;
             }
 
-            string[] values = ja2.ToObject<string[]>();
-            if (values is null)
+            try
             {
+                string[] values = ja2.ToObject<string[]>();
+                if (values is null)
+                {
+                    return string.Empty;
+                }
+
+                return string.Join(delimiter, values);
+            }
+            catch (NullReferenceException nre)
+            {
+                Logger.Error(nre,$"Problem flattening {ja}");
                 return string.Empty;
             }
-
-            return string.Join(delimiter, values);
         }
 
         public static int ExtractStringToInt([NotNull] this JObject r, [NotNull] string key)
