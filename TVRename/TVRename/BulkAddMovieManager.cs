@@ -235,7 +235,7 @@ namespace TVRename
 
                 //We are updating an existing record
                 movies.Add(found);
-                string targetDirectoryName = CustomMovieName.NameFor(found, TVSettings.Instance.MovieFolderFormat);
+                string targetDirectoryName = CustomMovieName.DirectoryNameFor(found, TVSettings.Instance.MovieFolderFormat);
                 bool inDefaultPath = ai.Directory.Name.Equals(
                     targetDirectoryName,
                     StringComparison.CurrentCultureIgnoreCase);
@@ -280,7 +280,7 @@ namespace TVRename
             mDoc.Stats().AutoAddedMovies++;
 
             bool inDefaultPath = ai.Directory.Name.Equals(
-                CustomMovieName.NameFor(found, TVSettings.Instance.MovieFolderFormat),
+                CustomMovieName.DirectoryNameFor(found, TVSettings.Instance.MovieFolderFormat),
                 StringComparison.CurrentCultureIgnoreCase);
 
             if (inDefaultPath && isInLibraryFolderFileFinder)

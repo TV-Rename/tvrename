@@ -20,6 +20,8 @@ namespace TVRename
 
         public override ProcessedSeason.SeasonType SeasonOrder => throw new InvalidOperationException();
 
+        public bool InCollection => CollectionId.HasValue && CollectionName.HasValue();
+
         private void DefaultValues()
         {
         }

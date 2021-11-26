@@ -25,6 +25,7 @@ namespace TVRename
             "{Imdb}",
             "{CollectionName}",
             "{MovieType}",
+            "{CollectionFolder}",
         };
 
         [NotNull]
@@ -36,6 +37,8 @@ namespace TVRename
         [NotNull]
         public static string NameFor(MovieConfiguration? m, string styleString) => NameFor(m, styleString, false, true);
 
+        [NotNull]
+        public static string DirectoryNameFor(MovieConfiguration? m, string styleString) => NameFor(m, styleString, false, false);
         [NotNull]
         public static string NameFor(MovieConfiguration m, string styleString, string? extension)
         {
@@ -72,6 +75,7 @@ namespace TVRename
                 showname = Uri.EscapeDataString(showname);
             }
 
+            name = name.ReplaceInsensitive("{CollectionFolder}", m.InCollection ? "{collectionName}\\" : string.Empty);
             name = name.ReplaceInsensitive("{ShowName}", showname);
             name = name.ReplaceInsensitive("{ShowNameInitial}", showname.Initial().ToLower());
             name = name.ReplaceInsensitive("{ShowNameLower}", showname.ToLower().Replace(' ', '-').RemoveCharactersFrom("()[]{}&$:"));
@@ -80,7 +84,6 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Imdb}", m.CachedMovie?.Imdb);
             name = name.ReplaceInsensitive("{CollectionName}", m.CachedMovie?.CollectionName);
             name = name.ReplaceInsensitive("{MovieType}", m.CachedMovie?.MovieType);
-
             return isfilename ? TVSettings.DirectoryFriendly(name.Trim()) : name.Trim();
         }
 

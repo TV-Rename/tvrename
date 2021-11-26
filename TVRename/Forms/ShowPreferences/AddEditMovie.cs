@@ -42,7 +42,7 @@ namespace TVRename
             SetupDropDowns(si);
 
             lblSeasonWordPreview.Text = TVSettings.Instance.MovieFolderFormat + "-(" +
-                                        CustomMovieName.NameFor(si,
+                                        CustomMovieName.DirectoryNameFor(si,
                                             TVSettings.Instance.MovieFolderFormat) + ")";
 
             lblSeasonWordPreview.ForeColor = Color.DarkGray;

@@ -182,10 +182,10 @@ namespace TVRename
 
             if (UseCustomFolderNameFormat)
             {
-                return AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.NameFor(this, CustomFolderNameFormat);
+                return AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.DirectoryNameFor(this, CustomFolderNameFormat);
             }
 
-            return AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.NameFor(this, TVSettings.Instance.MovieFolderFormat);
+            return AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.DirectoryNameFor(this, TVSettings.Instance.MovieFolderFormat);
         }
 
         public (string, string, string) NeighbouringFolderNames()
@@ -268,6 +268,7 @@ namespace TVRename
             }
         }
 
+        public bool InCollection => CachedMovie?.InCollection ?? false;
         public void WriteXmlSettings([NotNull] XmlWriter writer)
         {
             writer.WriteStartElement("MovieItem");

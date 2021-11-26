@@ -21,7 +21,7 @@ namespace TVRename
         protected override void FixInternal()
         {
             List<string> currentLocations = Movie.AutomaticLocations().ToList();
-            string newLocation = Movie.AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.NameFor(Movie, TVSettings.Instance.MovieFolderFormat);
+            string newLocation = Movie.AutomaticFolderRoot.EnsureEndsWithSeparator() + CustomMovieName.DirectoryNameFor(Movie, TVSettings.Instance.MovieFolderFormat);
 
             Movie.UseCustomFolderNameFormat = false;
 
