@@ -107,7 +107,8 @@ namespace TVRename
 
         internal int MinYear()
         {
-            return Episodes.Values.Select(e => e.GetAirDateDt())
+            return Episodes.Values
+                .Select(e => e.GetAirDateDt())
                 .Where(adt => adt.HasValue)
                 .Select(adt => adt.Value)
                 .MinOrDefault(airDateTime => airDateTime.Year, 9999);
@@ -115,7 +116,8 @@ namespace TVRename
 
         internal int MaxYear()
         {
-            return Episodes.Values.Select(e => e.GetAirDateDt())
+            return Episodes.Values
+                .Select(e => e.GetAirDateDt())
                 .Where(adt => adt.HasValue)
                 .Select(adt => adt.Value)
                 .MaxOrDefault(airDateTime => airDateTime.Year, 0);

@@ -34,13 +34,17 @@ namespace TVRename
         private ShowImages images = new();
 
         public int? MinYear =>
-            Episodes.Select(e => e.GetAirDateDt())
+            Episodes
+                .Where(e=>!e.IsSpecial(SeasonOrderType))
+                .Select(e => e.GetAirDateDt())
                 .Where(adt => adt.HasValue)
                 .Select(adt => adt.Value)
                 .Min(airDateTime => (int?)airDateTime.Year);
 
         public int? MaxYear =>
-            Episodes.Select(e => e.GetAirDateDt())
+            Episodes
+                .Where(e => !e.IsSpecial(SeasonOrderType))
+                .Select(e => e.GetAirDateDt())
                 .Where(adt => adt.HasValue)
                 .Select(adt => adt.Value)
                 .Max(airDateTime => (int?)airDateTime.Year);

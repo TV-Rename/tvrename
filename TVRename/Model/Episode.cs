@@ -371,5 +371,20 @@ namespace TVRename
             LocalDateTime? dateTime = GetAirDateDt();
             return dateTime.HasValue && dateTime.Value.InUtc().ToInstant().CompareTo(SystemClock.Instance.GetCurrentInstant()) < 0;
         }
+
+        public bool IsSpecial(ProcessedSeason.SeasonType seasonOrderType)
+        {
+            switch (seasonOrderType)
+            {
+                case ProcessedSeason.SeasonType.dvd:
+                    return 0 == DvdSeasonNumber;
+                case ProcessedSeason.SeasonType.aired:
+                case ProcessedSeason.SeasonType.absolute:
+                case ProcessedSeason.SeasonType.alternate:
+                    return 0 == AiredSeasonNumber;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(seasonOrderType), seasonOrderType, null);
+            }
+        }
     }
 }
