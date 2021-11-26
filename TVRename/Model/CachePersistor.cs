@@ -57,7 +57,7 @@ namespace TVRename
                 .Handle<Exception>()
                 .Retry(3, (exception, retryCount) =>
                 {
-                    Logger.Warn(exception, $"Retry {retryCount} to save {cacheFile.FullName}.");
+                    Logger.Error(exception, $"Retry {retryCount}/3 to save {cacheFile.FullName}.");
                 });
 
             retryPolicy.Execute(() =>
@@ -65,7 +65,7 @@ namespace TVRename
                 SaveCacheInternal(series, movies, cacheFile, timestamp);
             });
         }
-        private static void SaveCacheInternal(ConcurrentDictionary<int, CachedSeriesInfo> series, ConcurrentDictionary<int, CachedMovieInfo> movies, [NotNull] FileInfo cacheFile, long timestamp)
+        private static void SaveCacheInternal([NotNull] ConcurrentDictionary<int, CachedSeriesInfo> series, [NotNull] ConcurrentDictionary<int, CachedMovieInfo> movies, [NotNull] FileInfo cacheFile, long timestamp)
         {
             DirectoryInfo di = cacheFile.Directory;
             if (!di.Exists)
@@ -124,6 +124,7 @@ namespace TVRename
             catch (Exception e)
             {
                 Logger.Error(e, $"Failed to save Cache to {cacheFile.FullName}");
+                throw;
             }
         }
 

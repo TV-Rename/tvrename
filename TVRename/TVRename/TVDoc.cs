@@ -553,13 +553,10 @@ namespace TVRename
                 .Handle<Exception>()
                 .Retry(3, (exception, retryCount) =>
                 {
-                    Logger.Warn(exception, $"Retry {retryCount} to save {PathManager.TVDocSettingsFile.FullName}.");
+                    Logger.Error(exception, $"Retry {retryCount}/3 to save {PathManager.TVDocSettingsFile.FullName}.");
                 });
 
-            retryPolicy.Execute(() =>
-                {
-                    WriteXmlSettingsInternal();
-                });
+            retryPolicy.Execute(WriteXmlSettingsInternal);
         }
         private void WriteXmlSettingsInternal()
         {

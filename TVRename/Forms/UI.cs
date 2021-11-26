@@ -2412,7 +2412,7 @@ namespace TVRename
                     e2 = e2.InnerException;
                 }
 
-                Logger.Error(e2, "Failed to Save Configuration Files");
+                Logger.Error(e2, "Failed to Save Layout Configuration Files");
                 string m2 = e2.Message;
                 MessageBox.Show(this,
                     ex.Message + "\r\n\r\n" +
