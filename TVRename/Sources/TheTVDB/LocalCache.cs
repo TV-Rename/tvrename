@@ -2326,7 +2326,7 @@ namespace TVRename.TheTVDB
                 Thread.CurrentThread.Name ??= $"Download Season {s.SeasonNumber} for {si.Name}"; // Can only set it once
                 try
                 {
-                    JObject seasonInfo = API.GetSeasonEpisodesV4(si ,s.SeasonId,
+                    JObject seasonInfo = API.GetSeasonEpisodesV4(si, s.SeasonId,
                         locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
 
                     JToken episodeData = seasonInfo["data"]?["episodes"];
@@ -2336,15 +2336,17 @@ namespace TVRename.TheTVDB
                         Parallel.ForEach(episodeData, x =>
                         {
                             int? epNumber = x["number"]?.ToObject<int>();
-                            Thread.CurrentThread.Name ??= $"Creating S{s.SeasonNumber}E{epNumber} Episode for {si.Name}"; // Can only set it once
-                            GenerateAddEpisodeV4(code, locale, si, x,order);
+                            Thread.CurrentThread.Name ??=
+                                $"Creating S{s.SeasonNumber}E{epNumber} Episode for {si.Name}"; // Can only set it once
+
+                            GenerateAddEpisodeV4(code, locale, si, x, order);
                         });
                     }
 
                     JToken imageData = seasonInfo["data"]?["artwork"];
                     if (imageData != null)
                     {
-                        foreach (ShowImage newImage in imageData.Select(im => ConvertJsonToImage(im,si)))
+                        foreach (ShowImage newImage in imageData.Select(im => ConvertJsonToImage(im, si)))
                         {
                             newImage.SeasonId = s.SeasonId;
                             newImage.SeasonNumber = s.SeasonNumber;
@@ -2359,6 +2361,10 @@ namespace TVRename.TheTVDB
                 catch (SourceConsistencyException sce)
                 {
                     LOGGER.Error(sce);
+                }
+                catch (MediaNotFoundException mnfe)
+                {
+                    LOGGER.Error($"Season Issue: " + mnfe.Message);
                 }
             });
         }
