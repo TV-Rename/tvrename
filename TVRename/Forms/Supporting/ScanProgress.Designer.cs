@@ -112,7 +112,7 @@ namespace TVRename
             this.lbSearchRSS.Name = "lbSearchRSS";
             this.lbSearchRSS.Size = new System.Drawing.Size(66, 13);
             this.lbSearchRSS.TabIndex = 1;
-            this.lbSearchRSS.Text = "Search RSS";
+            this.lbSearchRSS.Text = "Search Web";
             // 
             // pbRSS
             // 
