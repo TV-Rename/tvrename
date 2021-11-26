@@ -242,13 +242,13 @@ namespace TVRename
             AirsDay = ((string)r["airsDayOfWeek"])?.Trim();
             string airsTimeString = (string)r["airsTime"];
             AirsTime = JsonHelper.ParseAirTime(airsTimeString);
-            Aliases = (r["aliases"] ?? throw new SourceConsistencyException($"Can't find aliases in Series JSON: {r}", TVDoc.ProviderType.TheTVDB)).Select(x => x.Value<string>()).ToList();
+            Aliases = (r["aliases"] ?? throw new SourceConsistencyException($"Can't find aliases in Series JSON: {r}", TVDoc.ProviderType.TheTVDB)).Select(x => x.Value<string>()).ToSafeList();
             BannerString = (string)r["banner"];
             FirstAired = JsonHelper.ParseFirstAired((string)r["firstAired"]);
 
             if (r.ContainsKey("genre"))
             {
-                Genres = r["genre"]?.Select(x => x.Value<string>()?.Trim()).Distinct().ToList() ?? new List<string>();
+                Genres = r["genre"]?.Select(x => x.Value<string>()?.Trim()).Distinct().ToSafeList() ?? new SafeList<string>();
             }
 
             TvdbCode = (int)r["id"];
@@ -315,7 +315,7 @@ namespace TVRename
                 {
                     throw new SourceConsistencyException($"Can not find aliases in {backupLanguageR}", TVDoc.ProviderType.TheTVDB);
                 }
-                Aliases = aliasesToken.Select(x => x.Value<string>()).ToList();
+                Aliases = aliasesToken.Select(x => x.Value<string>()).ToSafeList();
             }
 
             if (string.IsNullOrWhiteSpace(Runtime))

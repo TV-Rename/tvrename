@@ -1317,7 +1317,7 @@ namespace TVRename.TheTVDB
                 TagLine = GetTranslation(locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), "tagline", r),
                 Overview = GetTranslation(locale.LanguageToUse(TVDoc.ProviderType.TheTVDB), "overview", r),
                 TrailerUrl = r["trailers"]?.FirstOrDefault()?["url"]?.ToString(),
-                Genres = r["genres"]?.Select(x => x["name"].ToString()).ToList() ?? new List<string>(),
+                Genres = r["genres"]?.Select(x => x["name"].ToString()).ToSafeList() ?? new SafeList<string>(),
                 IsSearchResultOnly = false,
                 Dirty = false,
                 PosterUrl = "https://artworks.thetvdb.com" + GetArtwork(r, "Poster"),
@@ -1780,9 +1780,9 @@ namespace TVRename.TheTVDB
                 .Select(x=>x["name"]?.ToString())
                 .ToPsv();
         }
-        private static List<string> GetGenresV4(JObject r)
+        private static SafeList<string> GetGenresV4(JObject r)
         {
-            return r["data"]["genres"]?.Select(x => x["name"]?.ToString()).ToList() ?? new List<string>();
+            return r["data"]["genres"]?.Select(x => x["name"]?.ToString()).ToSafeList() ?? new SafeList<string>();
         }
 
         private static void AddCastAndCrewv4(JObject r, CachedSeriesInfo si)
@@ -3106,7 +3106,7 @@ namespace TVRename.TheTVDB
                 InstagramId = GetExternalIdSearchResultV4(r, "Instagram"),
                 TwitterId = GetExternalIdSearchResultV4(r, "Twitter"),
                 TmdbCode = GetExternalIdSearchResultV4(r, "TheMovieDB.com")?.ToInt() ?? -1,
-                Genres = r["genres"]?.ToObject<string[]>()?.ToList() ?? new(),
+                Genres = r["genres"]?.ToObject<string[]>()?.ToSafeList() ?? new(),
                 Network = r["studios"]?.ToObject<string[]>()?.ToPsv() ?? string.Empty,
             };
 

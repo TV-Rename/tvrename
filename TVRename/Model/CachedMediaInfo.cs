@@ -46,10 +46,10 @@ namespace TVRename
         public string? Status { get; set; }
         public bool IsSearchResultOnly; // set to true if local info is known to be just certain fields found from search results. Do not need to be saved
 
-        public List<Actor> Actors;
-        public List<Crew> Crew;
-        public List<string> Genres;
-        protected List<string> Aliases;
+        public SafeList<Actor> Actors;
+        public SafeList<Crew> Crew;
+        public SafeList<string> Genres;
+        protected SafeList<string> Aliases;
 
         public bool Dirty; // set to true if local info is known to be older than whats on the server
         public long SrvLastUpdated;
@@ -72,10 +72,10 @@ namespace TVRename
 
         protected CachedMediaInfo(TVDoc.ProviderType source)
         {
-            Actors = new List<Actor>();
-            Crew = new List<Crew>();
-            Aliases = new List<string>();
-            Genres = new List<string>();
+            Actors = new SafeList<Actor>();
+            Crew = new SafeList<Crew>();
+            Aliases = new SafeList<string>();
+            Genres = new SafeList<string>();
 
             Dirty = false;
             Name = string.Empty;
@@ -138,7 +138,7 @@ namespace TVRename
 
         public void ClearActors()
         {
-            Actors = new List<Actor>();
+            Actors = new SafeList<Actor>();
         }
 
         public void AddActor(Actor actor)
@@ -153,7 +153,7 @@ namespace TVRename
 
         public void ClearCrew()
         {
-            Crew = new List<Crew>();
+            Crew = new SafeList<Crew>();
         }
 
         public void AddCrew(Crew crew)
@@ -194,7 +194,7 @@ namespace TVRename
 
         private void LoadAliases([NotNull] XElement seriesXml)
         {
-            Aliases = new List<string>();
+            Aliases = new SafeList<string>();
             foreach (XElement aliasXml in seriesXml.Descendants("Aliases").Descendants("Alias"))
             {
                 Aliases.Add(aliasXml.Value);
@@ -207,7 +207,7 @@ namespace TVRename
                 .Descendants("Genres")
                 .Descendants("Genre")
                 .Select(g => g.Value.Trim()).Distinct()
-                .ToList();
+                .ToSafeList();
         }
 
         [NotNull]

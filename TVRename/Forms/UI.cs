@@ -5337,5 +5337,11 @@ namespace TVRename
         {
             CefWrapper.Instance.CheckForBroswerDependencies(true);
         }
+
+        private void tsbScanTV_Click(object sender, EventArgs e)
+        {
+            UiScan(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.tv);
+            tabControl1.SelectTab(tbAllInOne);
+        }
     }
 }

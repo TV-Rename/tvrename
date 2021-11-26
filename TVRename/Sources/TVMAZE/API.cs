@@ -345,7 +345,7 @@ namespace TVRename.TVmaze
 
             if (r.ContainsKey("genres"))
             {
-                returnValue.Genres = r["genres"]?.Select(x => x.Value<string>()?.Trim()).Distinct().ToList() ?? new List<string>();
+                returnValue.Genres = r["genres"]?.Select(x => x.Value<string>()?.Trim()).Distinct().ToSafeList() ?? new SafeList<string>();
             }
 
             List<string> typesToTransferToGenres = new() { "Animation", "Reality", "Documentary", "News", "Sports" };

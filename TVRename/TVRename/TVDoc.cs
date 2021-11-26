@@ -138,7 +138,7 @@ namespace TVRename
         internal bool AlreadyContains(MediaConfiguration show)
         {
             return ContainsMedia(FilmLibrary.Movies.Select(x => (MediaConfiguration)x), show)
-                && ContainsMedia(TvLibrary.Shows.Select(x => (MediaConfiguration)x), show);
+                || ContainsMedia(TvLibrary.Shows.Select(x => (MediaConfiguration)x), show);
         }
 
         public static bool ContainsMedia([NotNull] IEnumerable<MediaConfiguration> media, MediaConfiguration testMedia)
