@@ -1320,8 +1320,8 @@ namespace TVRename.TheTVDB
                 Genres = r["genres"]?.Select(x => x["name"].ToString()).ToSafeList() ?? new SafeList<string>(),
                 IsSearchResultOnly = false,
                 Dirty = false,
-                PosterUrl = "https://artworks.thetvdb.com" + GetArtwork(r, "Poster"),
-                FanartUrl = "https://artworks.thetvdb.com" + GetArtwork(r, "Background"),
+                PosterUrl = API.GetImageURL(GetArtwork(r, "Poster")),
+                FanartUrl = API.GetImageURL(GetArtwork(r, "Background")),
                 OfficialUrl = GetExternalId(r, "Official Website"),
                 FacebookId = GetExternalId(r, "Facebook"),
                 InstagramId = GetExternalId(r, "Instagram"),
@@ -1447,7 +1447,7 @@ namespace TVRename.TheTVDB
                 {
                     int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                     string name = actorJson["name"]?.ToString() ?? string.Empty;
-                    string image = "https://artworks.thetvdb.com" + actorJson["people_image"];
+                    string image = API.GetImageURL(actorJson["people_image"]?.ToObject<string?>());
                     string role = actorJson["role"]?.ToString();
                     si.AddActor(new Actor(id, image, name, role, 0, id));
                 }
@@ -1460,7 +1460,7 @@ namespace TVRename.TheTVDB
                 {
                     int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                     string name = actorJson["name"]?.ToString() ?? string.Empty;
-                    string image = "https://artworks.thetvdb.com" + actorJson["people_image"];
+                    string image = API.GetImageURL(actorJson["people_image"]?.ToObject<string?>());
                     string role = actorJson["role"]?.ToString();
                     si.AddCrew(
                         new Crew(id, image, name, role.HasValue() ? role : "Director", "Directing", string.Empty));
@@ -1473,7 +1473,7 @@ namespace TVRename.TheTVDB
                 {
                     int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                     string name = actorJson["name"]?.ToString() ?? string.Empty;
-                    string image = "https://artworks.thetvdb.com" + actorJson["people_image"];
+                    string image = API.GetImageURL(actorJson["people_image"]?.ToObject<string?>());
                     string role = actorJson["role"]?.ToString();
                     si.AddCrew(new Crew(id, image, name, role.HasValue() ? role : "Producer", "Production",
                         string.Empty));
@@ -1486,13 +1486,13 @@ namespace TVRename.TheTVDB
                 {
                     int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                     string name = actorJson["name"]?.ToString() ?? string.Empty;
-                    string image = "https://artworks.thetvdb.com" + actorJson["people_image"];
+                    string image = API.GetImageURL(actorJson["people_image"]?.ToObject<string?>());
                     string role = actorJson["role"]?.ToString();
                     si.AddCrew(new Crew(id, image, name, role.HasValue() ? role : "Writer", "Writing", string.Empty));
                 }
             }
         }
-
+   
         private string? GetArtwork(JObject json, string type)
         {
             return json["artworks"]?.FirstOrDefault(x => x["artwork_type"].ToString() == type)?["url"]?.ToString();
@@ -1608,8 +1608,8 @@ namespace TVRename.TheTVDB
                 Name = dataNode["name"]?.ToString() ?? string.Empty,
                 TrailerUrl = GetTrailerUrl(r, locale),
                 IsSearchResultOnly = false,
-                PosterUrl = "https://artworks.thetvdb.com" + GetArtworkV4(r, 14),
-                FanartUrl = "https://artworks.thetvdb.com" + GetArtworkV4(r, 15),
+                PosterUrl = API.GetImageURL(GetArtworkV4(r, 14)),
+                FanartUrl = API.GetImageURL(GetArtworkV4(r, 15)),
                 OfficialUrl = GetExternalIdV4(r, "Official Website"),
                 FacebookId = GetExternalIdV4(r, "Facebook"),
                 InstagramId = GetExternalIdV4(r, "Instagram"),
@@ -1704,7 +1704,7 @@ namespace TVRename.TheTVDB
                 {
                     int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                     string name = actorJson["personName"]?.ToString() ?? string.Empty;
-                    string image = "https://artworks.thetvdb.com" + actorJson["image"];
+                    string image = API.GetImageURL(actorJson["image"]?.ToObject<string?>());
                     string role = actorJson["name"]?.ToString();
                     int? sort = actorJson["sort"]?.ToString().ToInt();
                     si.AddActor(new Actor(id, image, name, role, 0, sort));
@@ -1793,7 +1793,7 @@ namespace TVRename.TheTVDB
                 {
                     int id = int.Parse(actorJson["id"]?.ToString() ?? "0");
                     string name = actorJson["personName"]?.ToString() ?? string.Empty;
-                    string image = "https://artworks.thetvdb.com" + actorJson["image"];
+                    string image = API.GetImageURL(actorJson["image"]?.ToObject<string?>());
                     string role = actorJson["name"]?.ToString();
                     int? sort = actorJson["sort"]?.ToString().ToInt();
                     si.AddActor(new Actor(id, image, name, role, 0, sort));
@@ -2449,7 +2449,7 @@ namespace TVRename.TheTVDB
             Episode x = new(code, si)
             {
                 EpisodeId = episodeJson["id"].ToObject<int>(),
-                SeriesId = episodeJson["seriesId"].ToObject<int>(),
+                SeriesId = episodeJson["seriesId"].ToObject<int?>() ?? -1,
                 Name = episodeJson["name"].ToObject<string>() ?? string.Empty,
                 FirstAired = GetEpisodeAiredDate(episodeJson),
                 Runtime = episodeJson["runtime"].ToObject<string>(),
