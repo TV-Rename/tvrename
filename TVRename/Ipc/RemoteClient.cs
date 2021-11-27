@@ -53,7 +53,10 @@ namespace TVRename.Ipc
         /// </summary>
         public void FocusWindow()
         {
-            MainUi.BeginInvoke((MethodInvoker)MainUi.FocusWindow);
+            if (MainUi.IsHandleCreated)
+            {
+                MainUi.BeginInvoke((MethodInvoker)MainUi.FocusWindow);
+            }
         }
 
         /// <summary>

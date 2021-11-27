@@ -38,7 +38,7 @@ namespace TVRename
         public static string NameFor(MovieConfiguration? m, string styleString) => NameFor(m, styleString, false, true);
 
         [NotNull]
-        public static string DirectoryNameFor(MovieConfiguration? m, string styleString)
+        public static string DirectoryNameFor(MovieConfiguration? m, [NotNull] string styleString)
         {
             if (styleString.StartsWith("{collectionFolder}", StringComparison.OrdinalIgnoreCase))
             {
