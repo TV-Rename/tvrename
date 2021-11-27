@@ -1446,27 +1446,8 @@ namespace TVRename
                 SetHtmlBody(chrSummary, si.GetSeasonSummaryHtmlOverview(s, false));
                 UpdateTvTrailer(si);
 
-                if (bwSeasonHTMLGenerator.WorkerSupportsCancellation)
-                {
-                    // Cancel the asynchronous operation.
-                    bwSeasonHTMLGenerator.CancelAsync();
-                }
-
-                if (!bwSeasonHTMLGenerator.IsBusy)
-                {
-                    bwSeasonHTMLGenerator.RunWorkerAsync(s);
-                }
-
-                if (bwSeasonSummaryHTMLGenerator.WorkerSupportsCancellation)
-                {
-                    // Cancel the asynchronous operation.
-                    bwSeasonSummaryHTMLGenerator.CancelAsync();
-                }
-
-                if (!bwSeasonSummaryHTMLGenerator.IsBusy)
-                {
-                    bwSeasonSummaryHTMLGenerator.RunWorkerAsync(s);
-                }
+                ResetRunBackGroundWorker(bwSeasonHTMLGenerator, s);
+                ResetRunBackGroundWorker(bwSeasonSummaryHTMLGenerator, s);
             }
             else
             {
@@ -1476,27 +1457,22 @@ namespace TVRename
                 SetHtmlBody(chrSummary, si.GetShowSummaryHtmlOverview(false));
                 UpdateTvTrailer(si);
 
-                if (bwShowHTMLGenerator.WorkerSupportsCancellation)
-                {
-                    // Cancel the asynchronous operation.
-                    bwShowHTMLGenerator.CancelAsync();
-                }
+                ResetRunBackGroundWorker(bwShowHTMLGenerator, si);
+                ResetRunBackGroundWorker(bwShowSummaryHTMLGenerator, si);
+            }
+        }
 
-                if (!bwShowHTMLGenerator.IsBusy)
-                {
-                    bwShowHTMLGenerator.RunWorkerAsync(si);
-                }
+        private void ResetRunBackGroundWorker([NotNull] BackgroundWorker worker, object s)
+        {
+            if (worker.WorkerSupportsCancellation)
+            {
+                // Cancel the asynchronous operation.
+                worker.CancelAsync();
+            }
 
-                if (bwShowSummaryHTMLGenerator.WorkerSupportsCancellation)
-                {
-                    // Cancel the asynchronous operation.
-                    bwShowSummaryHTMLGenerator.CancelAsync();
-                }
-
-                if (!bwShowSummaryHTMLGenerator.IsBusy)
-                {
-                    bwShowSummaryHTMLGenerator.RunWorkerAsync(si);
-                }
+            if (!worker.IsBusy)
+            {
+                worker.RunWorkerAsync(s);
             }
         }
 
@@ -3314,16 +3290,7 @@ namespace TVRename
                 SetHtmlBody(chrMovieTrailer, ShowHtmlHelper.CreateOldPage("Not available for this Movie"));
             }
 
-            if (bwMovieHTMLGenerator.WorkerSupportsCancellation)
-            {
-                // Cancel the asynchronous operation.
-                bwMovieHTMLGenerator.CancelAsync();
-            }
-
-            if (!bwMovieHTMLGenerator.IsBusy)
-            {
-                bwMovieHTMLGenerator.RunWorkerAsync(si);
-            }
+            ResetRunBackGroundWorker(bwMovieHTMLGenerator,si);
         }
 
         private void MyMoviesTree_MouseClick(object sender, [NotNull] MouseEventArgs e)
