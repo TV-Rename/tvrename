@@ -10,7 +10,6 @@ using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 
@@ -44,7 +43,7 @@ namespace TVRename
             UrlCache cache = new();
             try
             {
-                foreach (ShowItemMissing action in ActionList.MissingEpisodes.ToList())
+                foreach (ShowItemMissing action in ActionList.MissingEpisodes)
                 {
                     if (Settings.Token.IsCancellationRequested)
                     {

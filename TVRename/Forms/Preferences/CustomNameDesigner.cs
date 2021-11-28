@@ -51,7 +51,7 @@ namespace TVRename
             ProcessedEpisode pe;
             if (lvTest.SelectedItems.Count == 0)
             {
-                pe = eps != null && eps.Count > 0 ? eps[0] : null;
+                pe = eps is { Count: > 0 } ? eps[0] : null;
             }
             else
             {

@@ -1669,7 +1669,7 @@ namespace TVRename
 
         private void cmDefaults_ItemClicked(object sender, [NotNull] ToolStripItemClickedEventArgs e)
         {
-            if (!(e.ClickedItem?.Tag is string) || !int.TryParse((string)e.ClickedItem.Tag, out int v))
+            if (e.ClickedItem?.Tag is not string tag || !int.TryParse(tag, out int v))
             {
                 return;
             }

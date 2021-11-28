@@ -6,7 +6,7 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     public class BTDictionaryItem : BTItem
     {
-        public BTItem Data;
+        public readonly BTItem Data;
         public string Key;
 
         public BTDictionaryItem(string k, BTItem d)

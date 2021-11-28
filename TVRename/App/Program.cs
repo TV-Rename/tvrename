@@ -148,10 +148,6 @@ namespace TVRename.App
                     Logger.Warn($"Updated path for Assembly: {architectureSpecificPath}");
                     return Assembly.LoadFile(architectureSpecificPath);
                 }
-                else
-                {
-                    return null;
-                }
             }
 
             return null;

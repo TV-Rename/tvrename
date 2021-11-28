@@ -49,7 +49,7 @@ namespace TVRename
             int c = ActionList.Missing.Count + 1;
             int n = 0;
 
-            foreach (ShowItemMissing action in ActionList.MissingEpisodes.ToList())
+            foreach (ShowItemMissing action in ActionList.MissingEpisodes)
             {
                 if (Settings.Token.IsCancellationRequested)
                 {

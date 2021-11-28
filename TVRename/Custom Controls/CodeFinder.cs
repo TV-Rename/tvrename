@@ -310,17 +310,20 @@ namespace TVRename
         {
             lvwCodeFinderColumnSorter.ClickedOn(e.Column);
 
-            if (e.Column == 0 || e.Column == 2) // code or year
+            switch (e.Column)
             {
-                lvwCodeFinderColumnSorter.ListViewItemSorter = new NumberAsTextSorter(e.Column);
-            }
-            else if (e.Column == 5) //  popularity
-            {
-                lvwCodeFinderColumnSorter.ListViewItemSorter = new DoubleAsTextSorter(e.Column);
-            }
-            else
-            {
-                lvwCodeFinderColumnSorter.ListViewItemSorter = new TextSorter(e.Column);
+                case 0:
+                // code or year
+                case 2:
+                    lvwCodeFinderColumnSorter.ListViewItemSorter = new NumberAsTextSorter(e.Column);
+                    break;
+                //  popularity
+                case 5:
+                    lvwCodeFinderColumnSorter.ListViewItemSorter = new DoubleAsTextSorter(e.Column);
+                    break;
+                default:
+                    lvwCodeFinderColumnSorter.ListViewItemSorter = new TextSorter(e.Column);
+                    break;
             }
 
             lvMatches.Sort();

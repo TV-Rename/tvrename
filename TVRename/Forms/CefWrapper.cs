@@ -72,7 +72,7 @@ namespace TVRename
 
                 Logger.Error("C++ Version (Installers): " + Vc2015Installed().ToCsv());
                 Logger.Error("C++ Version (Git Library): " + VcRuntime.GetInstalled(_ => true).Select(VersionToString).ToCsv());
-                Logger.Warn($"If C++ 2019 is not installed visit: https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-160 and install the latest appropriate version");
+                Logger.Warn("If C++ 2019 is not installed visit: https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-160 and install the latest appropriate version");
 
                 MessageBox.Show("TV Rename needs Microsoft Visual C++ 2015-2019 Redistributable to be present. Downloading installer now.", "Missing Dependencies");
                 string urlToDownload = Environment.Is64BitProcess ? "vc_redist.x64.exe" : "vc_redist.x86.exe";
@@ -169,7 +169,10 @@ namespace TVRename
 
             using (RegistryKey dependencies = Registry.LocalMachine.OpenSubKey(DEPENDENCIES_PATH))
             {
-                if (dependencies == null) return returnValue;
+                if (dependencies == null)
+                {
+                    return returnValue;
+                }
 
                 foreach (string subKeyName in dependencies.GetSubKeyNames().Where(n => !n.ToLower().Contains("dotnet") && !n.ToLower().Contains("microsoft")))
                 {

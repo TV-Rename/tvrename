@@ -659,7 +659,7 @@ namespace TVRename
         private bool OtherActionsMatch(FileInfo matchedFile, Item me, bool useFullPath)
         //This is used to check whether the selected file may match any other files we are looking for
         {
-            foreach (ShowItemMissing testMissingAction in ActionList.MissingEpisodes.ToList())
+            foreach (ShowItemMissing testMissingAction in ActionList.MissingEpisodes)
             {
                 if (testMissingAction.SameAs(me))
                 {

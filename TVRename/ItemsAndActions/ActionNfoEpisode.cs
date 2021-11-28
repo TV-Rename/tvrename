@@ -143,7 +143,7 @@ namespace TVRename
         {
             //We will replace the file as too difficult to update multiparts
             //We can't use XDocument as it's not fully valid XML
-            if (Episode != null && Episode.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
+            if (Episode is { Type: ProcessedEpisode.ProcessedEpisodeType.merged })
             {
                 return ReplaceMultipartFile();
             }

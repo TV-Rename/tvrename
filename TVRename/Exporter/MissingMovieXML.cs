@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Text;
 using System.Xml;
 using JetBrains.Annotations;
@@ -36,7 +35,7 @@ namespace TVRename
                 writer.WriteAttributeToXml("Version", "2.1");
                 writer.WriteStartElement("MissingMovieItems");
 
-                foreach (MovieItemMissing missing in TheActionList.MissingMovies.ToList())
+                foreach (MovieItemMissing missing in TheActionList.MissingMovies)
                 {
                     writer.WriteStartElement("MissingMovieItem");
 

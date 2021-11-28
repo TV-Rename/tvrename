@@ -364,24 +364,24 @@ namespace TVRename
             switch (action)
             {
                 // base interface that all metadata actions are derived from
-                case ActionWriteMetadata _:
+                case ActionWriteMetadata:
                     return 2;
 
-                case ActionDownloadImage _:
-                case ActionTDownload _:
-                case ActionTRemove _:
+                case ActionDownloadImage:
+                case ActionTDownload:
+                case ActionTRemove:
                     return 3;
 
                 case ActionCopyMoveRename rename:
                     return rename.QuickOperation() ? 1 : 0;
 
-                case ActionDeleteFile _:
-                case ActionDeleteDirectory _:
-                case ActionMoveRenameDirectory _:
+                case ActionDeleteFile:
+                case ActionDeleteDirectory:
+                case ActionMoveRenameDirectory:
                     return 1;
 
-                case ActionDateTouch _:
-                case ActionUnArchive _:
+                case ActionDateTouch:
+                case ActionUnArchive:
                     // add them after the slow move/renames (ie last)
                     return 0;
 

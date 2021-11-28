@@ -533,7 +533,7 @@ namespace TVRename
                 return;
             }
 
-            if (!(lvFMNewShows.SelectedItems[0].Tag is PossibleNewTvShow fme))
+            if (lvFMNewShows.SelectedItems[0].Tag is not PossibleNewTvShow fme)
             {
                 return;
             }

@@ -97,7 +97,7 @@ namespace TVRename
                 string torrentFile = dictitem.Key;
                 if (!File.Exists(torrentFile)) // if the torrent file doesn't exist
                 {
-                    torrentFile = directoryName + torrentFile; // ..try prepending the resume.dat folder's path to it.
+                    torrentFile = directoryName + torrentFile; // ..try pre-pending the resume.dat folder's path to it.
                 }
 
                 if (!File.Exists(torrentFile))
@@ -122,7 +122,7 @@ namespace TVRename
                 string defaultFolder = ((BTString)p).AsString();
 
                 BTItem targets = d2.GetItem("targets");
-                bool hasTargets = targets != null && targets.Type == BTChunk.kList;
+                bool hasTargets = targets is { Type: BTChunk.kList };
                 BTList targetList = (BTList)targets;
 
                 ProcesdFiles(r, d2, prioString, torrentFile, a, defaultFolder, hasTargets, targetList!);

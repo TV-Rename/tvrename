@@ -20,14 +20,15 @@ namespace TVRename
             bool neg = false;
             while ((c = sr.ReadByte()) != 'e')
             {
-                if (c == '-')
+                switch (c)
                 {
-                    neg = true;
-                }
-                else if (c >= '0' && c <= '9')
-                {
-                    r *= 10;
-                    r += c - '0';
+                    case '-':
+                        neg = true;
+                        break;
+                    case >= '0' and <= '9':
+                        r *= 10;
+                        r += c - '0';
+                        break;
                 }
             }
 

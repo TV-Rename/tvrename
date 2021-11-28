@@ -30,7 +30,7 @@ namespace TVRename
             {
                 MediaConfiguration.MediaType.tv => TVSettings.Instance.DefaultProvider,
                 MediaConfiguration.MediaType.movie => TVSettings.Instance.DefaultMovieProvider,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
         }
     }

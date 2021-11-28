@@ -34,7 +34,7 @@ namespace TVRename
 
         public void EnsureAdded([NotNull] MovieConfiguration m) => EnsureAdded(m.Code);
 
-        public bool Includes(MovieConfiguration? m) => m != null && m.Code > 0 && Contains(m.Code);
+        public bool Includes(MovieConfiguration? m) => m is { Code: > 0 } && Contains(m.Code);
 
         public bool Includes([NotNull] Item item) => Includes(item.Movie);
 

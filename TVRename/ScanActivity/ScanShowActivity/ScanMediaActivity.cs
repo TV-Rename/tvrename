@@ -20,7 +20,7 @@ namespace TVRename
             }
             catch (System.InvalidOperationException)
             {
-                //someties get this if enumeration updates
+                //sometimes get this if enumeration updates
             }
         }
 

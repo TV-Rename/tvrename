@@ -45,7 +45,7 @@ namespace TVRename.TMDB
                     {
                         if (cts.IsCancellationRequested)
                         {
-                            throw new TaskCanceledException($"Manual Cancellation");
+                            throw new TaskCanceledException("Manual Cancellation");
                         }
                         SearchContainer<ChangesListItem>? response = changeMethod(currentPage, time, null, cts).Result;
                         numberOfCallsMade++;

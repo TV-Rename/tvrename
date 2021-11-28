@@ -1230,9 +1230,7 @@ namespace TVRename.TMDB
                 }
                 catch (HttpRequestException ex)
                 {
-                    LOGGER.Error(
-                        $"Error obtaining TMDB Recommendations:",
-                        ex);
+                    LOGGER.Error(ex,"Error obtaining TMDB Recommendations:");
 
                     SayNothing();
                     LastErrorMessage = ex.LoggableDetails();

@@ -44,7 +44,7 @@ namespace TVRename
             ItemList newItems = new();
             ItemList toRemove = new();
 
-            foreach (ShowItemMissing action in ActionList.MissingEpisodes.ToList())
+            foreach (ShowItemMissing action in ActionList.MissingEpisodes)
             {
                 if (Settings.Token.IsCancellationRequested)
                 {

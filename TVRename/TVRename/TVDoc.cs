@@ -1540,7 +1540,7 @@ namespace TVRename
                 ProviderType.TVmaze => TVmaze.LocalCache.Instance,
                 ProviderType.TheTVDB => TheTVDB.LocalCache.Instance,
                 ProviderType.TMDB => TMDB.LocalCache.Instance,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(nameof(p), p, null)
             };
         }
 
@@ -1551,7 +1551,7 @@ namespace TVRename
             {
                 ProviderType.TheTVDB => TheTVDB.LocalCache.Instance,
                 ProviderType.TMDB => TMDB.LocalCache.Instance,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(nameof(p), p, null)
             };
         }
 
@@ -1563,7 +1563,7 @@ namespace TVRename
                 ProviderType.TVmaze => TVmaze.LocalCache.Instance,
                 ProviderType.TheTVDB => TheTVDB.LocalCache.Instance,
                 ProviderType.TMDB => TMDB.LocalCache.Instance,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(nameof(p), p, null)
             };
         }
 
@@ -1817,7 +1817,7 @@ namespace TVRename
             {
                 switch (a)
                 {
-                    case ItemMissing _:
+                    case ItemMissing:
                         continue;
 
                     case ActionCopyMoveRename i1:
@@ -2153,7 +2153,7 @@ namespace TVRename
 
                 return (null, null);
             }
-            //remove any search folders  from the hint. They are probbably useless at helping specify the showname
+            //remove any search folders  from the hint. They are probably useless at helping specify the showname
             foreach (string path in TVSettings.Instance.DownloadFolders)
             {
                 if (hint.StartsWith(path, StringComparison.OrdinalIgnoreCase))

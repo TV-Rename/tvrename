@@ -16,7 +16,7 @@ namespace TVRename
         {
         }
 
-        protected override bool IsOutput(Item a) => a is ActionCopyMoveRename cmr && cmr.Operation == ActionCopyMoveRename.Op.rename && cmr.Episode != null;
+        protected override bool IsOutput(Item a) => a is ActionCopyMoveRename { Operation: ActionCopyMoveRename.Op.rename, Episode: { } };
 
         public override bool ApplicableFor(TVSettings.ScanType st) => true;
 

@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using JetBrains.Annotations;
 
 namespace TVRename
@@ -25,7 +24,7 @@ namespace TVRename
             {
                 file.WriteLine("Show Name,Season,Episode,Episode Name,Air Date,Folder,Nice Name,thetvdb.com Code");
 
-                foreach (ShowItemMissing? im in TheActionList.MissingEpisodes.ToList())
+                foreach (ShowItemMissing? im in TheActionList.MissingEpisodes)
                 {
                     ProcessedEpisode pe = im.MissingEpisode;
                     DateTime? dt = pe.GetAirDateDt(true);

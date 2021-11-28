@@ -3422,7 +3422,7 @@ namespace TVRename
             List<ProcessedEpisode>? pel = CurrentlySelectedPel();
 
             AddEditSearchEngine aese = new(TVDoc.GetSearchers(),
-                pel != null && pel.Count > 0 ? pel[0] : null);
+                pel is { Count: > 0 } ? pel[0] : null);
 
             MoreBusy();
             mDoc.PreventAutoScan("Search Engines are open");

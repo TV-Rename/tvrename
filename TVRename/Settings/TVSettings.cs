@@ -1639,22 +1639,6 @@ namespace TVRename
             UpdateRegExs(xmlSettings);
             UpdateShowStatus(xmlSettings);
             UpdateFiters(xmlSettings);
-
-            //todo - See whether we need this??
-            if (DefaultMovieProvider == TVDoc.ProviderType.libraryDefault)
-            {
-                DefaultMovieProvider = TVDoc.ProviderType.TMDB;
-                Logger.Error($"Has to update default movie provider");
-            }
-            //todo - See whether we need still need this - was just in place to try and remedy issues with 4.4 conversion
-            if (!MovieFolderFormat.HasValue())
-            {
-                MovieFolderFormat = "{ShowName} ({Year})";
-            }
-            if (!MovieFilenameFormat.HasValue())
-            {
-                MovieFilenameFormat = "{ShowName} ({Year})";
-            }
         }
 
         private void UpdateAppUpdateSettings([NotNull] XElement xmlSettings)

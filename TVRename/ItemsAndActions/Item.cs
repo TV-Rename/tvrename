@@ -78,11 +78,11 @@ namespace TVRename
         }
         public static bool operator <(Item left, Item right)
         {
-            return (Compare(left, right) < 0);
+            return Compare(left, right) < 0;
         }
         public static bool operator >(Item left, Item right)
         {
-            return (Compare(left, right) > 0);
+            return Compare(left, right) > 0;
         }
         public static int Compare(Item left, Item right)
         {

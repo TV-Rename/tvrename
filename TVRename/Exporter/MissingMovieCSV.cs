@@ -1,4 +1,3 @@
-using System.Linq;
 using JetBrains.Annotations;
 
 namespace TVRename
@@ -23,7 +22,7 @@ namespace TVRename
             {
                 file.WriteLine("Movie Name,Year,Folder,Nice Name");
 
-                foreach (MovieItemMissing im in TheActionList.MissingMovies.ToList())
+                foreach (MovieItemMissing im in TheActionList.MissingMovies)
                 {
                     MovieConfiguration pe = im.MovieConfig;
                     file.WriteLine(

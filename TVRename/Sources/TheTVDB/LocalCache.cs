@@ -260,7 +260,7 @@ namespace TVRename.TheTVDB
 
             if (showErrorMsgBox)
             {
-                CannotConnectForm ccform = (ex is WebException wexy)
+                CannotConnectForm ccform = ex is WebException wexy
                     ? new("Error while obtaining token from TVDB", wexy.LoggableDetails(), TVDoc.ProviderType.TheTVDB)
                     : new("Error while obtaining token from TVDB", ex.Message, TVDoc.ProviderType.TheTVDB)
                     ;
@@ -339,7 +339,7 @@ namespace TVRename.TheTVDB
                 }
 
                 //If this date is in the last week then this needs to be the last call to the update
-                const int OFFSET =(0);
+                const int OFFSET =0;
 
                 DateTime requestedTime = GetRequestedTime(updateFromEpochTime - OFFSET, numberofCallsMade);
 
@@ -399,7 +399,7 @@ namespace TVRename.TheTVDB
 
                 //As a safety measure we check that no more than 52 calls are made
                 const int MAX_NUMBER_OF_CALLS = 52;
-                if ( (numberofCallsMade > MAX_NUMBER_OF_CALLS && TVSettings.Instance.TvdbVersion!=ApiVersion.v4) ||(TVSettings.Instance.TvdbVersion == ApiVersion.v4 && numberofCallsMade > 1000))
+                if ( numberofCallsMade > MAX_NUMBER_OF_CALLS && TVSettings.Instance.TvdbVersion!=ApiVersion.v4 ||(TVSettings.Instance.TvdbVersion == ApiVersion.v4 && numberofCallsMade > 1000))
                 {
                     if (cts.IsCancellationRequested)
                     {
@@ -2364,7 +2364,7 @@ namespace TVRename.TheTVDB
                 }
                 catch (MediaNotFoundException mnfe)
                 {
-                    LOGGER.Error($"Season Issue: " + mnfe.Message);
+                    LOGGER.Error($"Season Issue: {mnfe.Message}");
                 }
             });
         }
@@ -2424,14 +2424,16 @@ namespace TVRename.TheTVDB
             //Set a language code on the SI?? si.lan ==downloadSeriesTranslationsJsonV4["data"]["language"].ToString();
         }
 
-        private string Translate(string? originalName, string? transName)
+        private static string Translate(string? originalName, string? transName)
         {
             //https://github.com/thetvdb/v4-api/issues/30
 
             if (transName.HasValue() && transName != "TBA")
             {
                 return transName!;
-            } else if (transName.HasValue() && transName == "TBA" && originalName.HasValue() && originalName != "TBA")
+            }
+
+            if (transName.HasValue() && transName == "TBA" && originalName.HasValue() && originalName != "TBA")
             {
                 ///issue
             }

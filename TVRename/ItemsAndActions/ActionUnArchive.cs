@@ -87,7 +87,7 @@ namespace TVRename
             {
                 foreach (IArchiveEntry entry in archive.Entries.Where(entry => !entry.IsDirectory))
                 {
-                    entry.WriteToDirectory(archiveFile.FileFullNameNoExt(), new ExtractionOptions()
+                    entry.WriteToDirectory(archiveFile.FileFullNameNoExt(), new ExtractionOptions
                     {
                         ExtractFullPath = true,
                         Overwrite = true,

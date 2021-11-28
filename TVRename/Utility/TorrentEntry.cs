@@ -2,7 +2,7 @@ using JetBrains.Annotations;
 
 namespace TVRename
 {
-    public class TorrentEntry : IDownloadInformation // represents a torrent downloading in a doewloader(Torrent)
+    public class TorrentEntry : IDownloadInformation // represents a torrent downloading in a downloader(Torrent)
     {
         public readonly string DownloadingTo;
         public readonly int PercentDone;

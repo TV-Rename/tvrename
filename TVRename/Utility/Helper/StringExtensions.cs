@@ -271,28 +271,16 @@ namespace TVRename
             return builder.ToString();
         }
 
-        public static bool ContainsOneOf([NotNull] this string source, [NotNull] IEnumerable<string> terms)
-        {
-            return terms.Any(source.Contains);
-        }
+        public static bool ContainsOneOf([NotNull] this string source, [NotNull] IEnumerable<string> terms) => terms.Any(source.Contains);
 
         [NotNull]
-        public static string ToCsv([NotNull] this IEnumerable<string> values)
-        {
-            return string.Join(", ", values);
-        }
+        public static string ToCsv([NotNull] this IEnumerable<string> values) => string.Join(", ", values);
 
         [NotNull]
-        public static string ToCsv([NotNull] this ICollection<int> values)
-        {
-            return string.Join(",", values);
-        }
+        public static string ToCsv([NotNull] this IEnumerable<int> values) => string.Join(",", values);
 
         [NotNull]
-        public static string ToPsv([NotNull] this IEnumerable<string> values)
-        {
-            return string.Join("|", values);
-        }
+        public static string ToPsv([NotNull] this IEnumerable<string> values) => string.Join("|", values);
 
         [NotNull]
         public static IEnumerable<string> FromPsv(this string aggregate) => aggregate.FromSepValues('|');
@@ -321,9 +309,6 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string Concat([NotNull] this IEnumerable<string> values)
-        {
-            return string.Join(string.Empty, values);
-        }
+        public static string Concat([NotNull] this IEnumerable<string> values) => string.Join(string.Empty, values);
     }
 }
