@@ -158,30 +158,10 @@ namespace TVRename
                 //poster
                 //banner
                 //fanart - we do not have the option in TVDB to get season specific fanart, so we'll leave that
+                //UPDATE - see https://kodi.wiki/view/Artwork/Season
 
-                string filenamePrefix = string.Empty;
+                string filenamePrefix = $"season{SeasonLabel(snum)}-";
 
-                if (si.InOneFolder())
-                {   // We have multiple seasons in the same folder
-                    // We need to do slightly more work to come up with the filenamePrefix
-
-                    filenamePrefix = "season";
-
-                    if (snum == 0)
-                    {
-                        filenamePrefix += "-specials";
-                    }
-                    else if (snum < 10)
-                    {
-                        filenamePrefix += "0" + snum;
-                    }
-                    else
-                    {
-                        filenamePrefix += snum;
-                    }
-
-                    filenamePrefix += "-";
-                }
                 FileInfo posterJpg = FileHelper.FileInFolder(folder, filenamePrefix + "poster.jpg");
                 if (forceRefresh || !posterJpg.Exists)
                 {
@@ -204,6 +184,17 @@ namespace TVRename
                 return theActionList;
             }
             return base.ProcessSeason(si, folder, snum, forceRefresh);
+        }
+
+        [NotNull]
+        private static string SeasonLabel(int snum)
+        {
+            return snum switch
+            {
+                0 => "-specials",
+                < 10 => "0" + snum,
+                _ => snum.ToString()
+            };
         }
 
         public override ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file, bool forceRefresh)
