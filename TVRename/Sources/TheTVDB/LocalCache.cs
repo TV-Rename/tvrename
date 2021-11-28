@@ -2119,7 +2119,7 @@ namespace TVRename.TheTVDB
                 foreach (JToken jsonActor in jsonActors)
                 {
                     int actorId = (int)jsonActor["id"];
-                    string actorImage = (string)jsonActor["image"];
+                    string actorImage = API.GetImageURL((string)jsonActor["image"]);
                     string actorName = (string)jsonActor["name"] ??
                                        throw new SourceConsistencyException("No Actor", TVDoc.ProviderType.TheTVDB);
 
