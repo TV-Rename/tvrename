@@ -9,6 +9,7 @@ using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Alphaleonis.Win32.Filesystem;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -161,8 +162,9 @@ namespace TVRename
                 //UPDATE - see https://kodi.wiki/view/Artwork/Season
 
                 string filenamePrefix = $"season{SeasonLabel(snum)}-";
+                string folderToUse = si.InOneFolder() ? folder : GetParentFolder(folder);
 
-                FileInfo posterJpg = FileHelper.FileInFolder(folder, filenamePrefix + "poster.jpg");
+                FileInfo posterJpg = FileHelper.FileInFolder(folderToUse, filenamePrefix + "poster.jpg");
                 if (forceRefresh || !posterJpg.Exists)
                 {
                     string path = si.CachedShow?.GetSeasonBannerPath(snum);
@@ -172,7 +174,7 @@ namespace TVRename
                     }
                 }
 
-                FileInfo bannerJpg = FileHelper.FileInFolder(folder, filenamePrefix + "banner.jpg");
+                FileInfo bannerJpg = FileHelper.FileInFolder(folderToUse, filenamePrefix + "banner.jpg");
                 if (forceRefresh || !bannerJpg.Exists)
                 {
                     string path = si.CachedShow?.GetSeasonWideBannerPath(snum);
@@ -184,6 +186,12 @@ namespace TVRename
                 return theActionList;
             }
             return base.ProcessSeason(si, folder, snum, forceRefresh);
+        }
+
+        private string GetParentFolder(string folder)
+        {
+            DirectoryInfo child = new(folder);
+            return child.Parent.FullName;
         }
 
         [NotNull]
