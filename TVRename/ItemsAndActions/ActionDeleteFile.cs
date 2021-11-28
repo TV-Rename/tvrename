@@ -69,7 +69,7 @@ namespace TVRename
 
         public override int CompareTo(Item o)
         {
-            if (!(o is ActionDeleteFile cmr) || toRemove.Directory is null || cmr.toRemove.Directory is null)
+            if (o is not ActionDeleteFile cmr || toRemove.Directory is null || cmr.toRemove.Directory is null)
             {
                 return -1;
             }

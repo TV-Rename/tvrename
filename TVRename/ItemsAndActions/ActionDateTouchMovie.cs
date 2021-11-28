@@ -17,7 +17,7 @@ namespace TVRename
 
         public override int CompareTo(Item? o)
         {
-            if (o is null || !(o is ActionDateTouchMovie nfo))
+            if (o is not ActionDateTouchMovie nfo)
             {
                 return -1;
             }

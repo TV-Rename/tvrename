@@ -65,9 +65,9 @@ namespace TVRename
 
         public override int CompareTo(Item o)
         {
-            if (!(o is ItemDownloading ut))
+            if (o is not ItemDownloading ut)
             {
-                return 0;
+                return -1;
             }
 
             if (Episode is null)
