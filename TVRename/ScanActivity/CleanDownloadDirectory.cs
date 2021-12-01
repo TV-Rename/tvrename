@@ -279,7 +279,7 @@ namespace TVRename
                 if (TVSettings.Instance.ReplaceMoviesWithBetterQuality)
                 {
                     bool? x = ReviewFileAgainstExistingMovies(unattended, fi, owner, matchingMoviesNoShows);
-                    if (x.HasValue && x.Value == false)
+                    if (x is false)
                     {
                         fileCanBeDeleted = false;
                     }

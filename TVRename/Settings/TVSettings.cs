@@ -1334,23 +1334,15 @@ namespace TVRename
 
             public override string ToString()
             {
-                switch (status)
+                return status switch
                 {
-                    case ShowConfiguration.ShowAirStatus.aired:
-                        return "Show Season Status: All aired";
-
-                    case ShowConfiguration.ShowAirStatus.noEpisodesOrSeasons:
-                        return "Show Season Status: No Seasons or Episodes in Seasons";
-
-                    case ShowConfiguration.ShowAirStatus.noneAired:
-                        return "Show Season Status: None aired";
-
-                    case ShowConfiguration.ShowAirStatus.partiallyAired:
-                        return "Show Season Status: Partially aired";
-
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                    ShowConfiguration.ShowAirStatus.aired => "Show Season Status: All aired",
+                    ShowConfiguration.ShowAirStatus.noEpisodesOrSeasons =>
+                        "Show Season Status: No Seasons or Episodes in Seasons",
+                    ShowConfiguration.ShowAirStatus.noneAired => "Show Season Status: None aired",
+                    ShowConfiguration.ShowAirStatus.partiallyAired => "Show Season Status: Partially aired",
+                    _ => throw new ArgumentOutOfRangeException()
+                };
             }
 
             [NotNull]

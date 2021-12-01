@@ -217,20 +217,12 @@ namespace TVRename
                     {
                         string foldername = file.DirectoryName;
                         string filename = TVSettings.Instance.FilenameFriendly(episode.Show, sourceEp);
-                        ActionDownloadImage b = DoEpisode(episode.Show, sourceEp, new FileInfo(foldername + "/" + filename), ".jpg", forceRefresh);
-                        if (b != null)
-                        {
-                            theActionList.Add(b);
-                        }
+                        theActionList.Add(DoEpisode(episode.Show, sourceEp, new FileInfo(foldername + "/" + filename + ".jpg"), "-thumb.jpg", forceRefresh));
                     }
                 }
                 else
                 {
-                    ActionDownloadImage a = DoEpisode(episode.Show, episode, file, ".tbn", forceRefresh);
-                    if (a != null)
-                    {
-                        theActionList.Add(a);
-                    }
+                    theActionList.Add(DoEpisode(episode.Show, episode, file, "-thumb.jpg", forceRefresh));
                 }
                 return theActionList;
             }
