@@ -131,7 +131,7 @@ namespace TVRename
             this.lbCheckDownloading.Name = "lbCheckDownloading";
             this.lbCheckDownloading.Size = new System.Drawing.Size(103, 13);
             this.lbCheckDownloading.TabIndex = 1;
-            this.lbCheckDownloading.Text = "Check Downloading";
+            this.lbCheckDownloading.Text = "Search Downloading";
             // 
             // pbDownloading
             // 
