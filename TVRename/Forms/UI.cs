@@ -2960,6 +2960,12 @@ namespace TVRename
                 return;
             }
 
+            if (Path.IsPathRooted(folderName))
+            {
+                Logger.Warn($"Did not remove {folderName} as it is a root folder");
+                return;
+            }
+
             if (TVSettings.Instance.LibraryFolders.Any(x=>x.IsSubfolderOf(folderName)))
             {
                 Logger.Warn($"Did not remove {folderName} as it is a library folder");
