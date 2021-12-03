@@ -220,10 +220,7 @@ namespace TVRename
                         theActionList.Add(DoEpisode(episode.Show, sourceEp, new FileInfo(foldername + "/" + filename + ".jpg"), "-thumb.jpg", forceRefresh));
                     }
                 }
-                else
-                {
-                    theActionList.Add(DoEpisode(episode.Show, episode, file, "-thumb.jpg", forceRefresh));
-                }
+                theActionList.Add(DoEpisode(episode.Show, episode, file, "-thumb.jpg", forceRefresh));
                 return theActionList;
             }
             return base.ProcessEpisode(episode, file, forceRefresh);
