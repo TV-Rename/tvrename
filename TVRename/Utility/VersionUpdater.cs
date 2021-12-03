@@ -30,7 +30,7 @@ namespace TVRename
             }
             catch (ArgumentException e)
             {
-                Logger.Error("Failed to establish if there are any new releases as could not parse internal version: " + Helpers.DisplayVersion, e);
+                Logger.Error(e,"Failed to establish if there are any new releases as could not parse internal version: " + Helpers.DisplayVersion);
                 return null;
             }
 
@@ -104,13 +104,13 @@ namespace TVRename
 
                 if (latestVersion is null)
                 {
-                    Logger.Error("Could not find latest version information from GitHub: {0}", gitHubInfo.ToString());
+                    Logger.Error("Could not find latest version information from GitHub: " + gitHubInfo);
                     return (null, latestBetaVersion);
                 }
 
                 if (latestBetaVersion is null)
                 {
-                    Logger.Error("Could not find latest beta version information from GitHub: {0}", gitHubInfo.ToString());
+                    Logger.Error("Could not find latest beta version information from GitHub: " +  gitHubInfo);
                     return (latestVersion, null);
                 }
             }

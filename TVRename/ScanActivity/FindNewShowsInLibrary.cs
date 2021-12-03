@@ -43,7 +43,7 @@ namespace TVRename
             {
                 Settings.Shows.Add(si);
             }
-            LOGGER.Info("Added new shows called: {0}", addedShows.Select(si => si.ShowName).ToCsv());
+            LOGGER.Info($"Added new shows called: {addedShows.Select(si => si.ShowName).ToCsv()}");
 
             MDoc.TvAddedOrEdited(true, Settings.Unattended, Settings.Hidden, Settings.Owner, addedShows);
         }

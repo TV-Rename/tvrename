@@ -28,7 +28,7 @@ namespace TVRename.Settings.AppState
                 }
                 catch (Exception ex)
                 {
-                    Logger.Warn(ex, "Could not load app state file {0}", path);
+                    Logger.Warn(ex, $"Could not load app state file {path}" );
                     return new State();
                 }
             }

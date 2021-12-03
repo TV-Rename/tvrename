@@ -235,7 +235,7 @@ namespace TVRename
             {
                 try
                 {
-                    LOGGER.Info("Creating directory as it is missing: {0}", folder);
+                    LOGGER.Info($"Creating directory as it is missing: {folder}");
                     Directory.CreateDirectory(folder);
                 }
                 catch (Exception ioe)

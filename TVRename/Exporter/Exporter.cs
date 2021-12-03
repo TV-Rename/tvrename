@@ -20,7 +20,7 @@ namespace TVRename
         {
             if (!Active())
             {
-                LOGGER.Trace("Skipped (Disabled) Output File to: {0}", Location());
+                LOGGER.Trace($"Skipped (Disabled) Output File to: {Location()}");
                 return;
             }
             if (Location().IsNullOrWhitespace())
@@ -47,7 +47,7 @@ namespace TVRename
                 //Create the directory if needed
                 Directory.CreateDirectory(dir);
                 Do();
-                LOGGER.Info("Output File to: {0}", Location());
+                LOGGER.Info($"Output File to: {Location()}");
             }
             catch (NotSupportedException e)
             {
@@ -67,7 +67,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                LOGGER.Error(e, "Failed to Output File to: {0}", Location());
+                LOGGER.Error(e, $"Failed to Output File to: {Location()}");
             }
         }
 

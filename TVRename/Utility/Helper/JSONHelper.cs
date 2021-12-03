@@ -37,7 +37,7 @@ namespace TVRename
             }
             catch (FormatException)
             {
-                Logger.Error("Failed to parse time: {0} ", theTime);
+                Logger.Error($"Failed to parse time: {theTime}");
             }
             return DateTime.Parse("20:00");
         }

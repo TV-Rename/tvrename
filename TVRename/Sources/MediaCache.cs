@@ -76,7 +76,7 @@ namespace TVRename
             CurrentDLTask = s;
             if (s.HasValue())
             {
-                LOGGER.Info("Status on screen updated: {0}", s);
+                LOGGER.Info($"Status on screen updated: {s}");
             }
         }
 

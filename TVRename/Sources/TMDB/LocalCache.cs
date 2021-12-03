@@ -97,7 +97,7 @@ namespace TVRename.TMDB
             //assume that the data is up to date (this will be overridden by the value in the XML if we have a prior install)
             //If we have no prior install then the app has no shows and is by definition up-to-date
             latestUpdateTime = new UpdateTimeTracker();
-            
+
             LastErrorMessage = string.Empty;
 
             if (loadFrom is null)
@@ -432,7 +432,7 @@ namespace TVRename.TMDB
                     Dirty = false,
                     Country = downloadedMovie.ProductionCountries.FirstOrDefault()?.Name,
                 };
-                
+
                 foreach (string? s in downloadedMovie.AlternativeTitles.Titles.Where(t=>t.Iso_3166_1==id.RegionToUse().Abbreviation).Select(title => title.Title))
                 {
                     m.AddAlias(s);
@@ -471,9 +471,7 @@ namespace TVRename.TMDB
             }
             catch (HttpRequestException ex)
             {
-                LOGGER.Error(
-                    $"Error obtaining TMDB Movie for {id} in {id.TargetLocale.LanguageToUse(TVDoc.ProviderType.TMDB).EnglishName}:",
-                    ex);
+                LOGGER.Error(ex, $"Error obtaining TMDB Movie for {id} in {id.TargetLocale.LanguageToUse(TVDoc.ProviderType.TMDB).EnglishName}:");
 
                 SayNothing();
                 LastErrorMessage = ex.LoggableDetails();
@@ -584,7 +582,7 @@ namespace TVRename.TMDB
                 Country = downloadedSeries.OriginCountry.FirstOrDefault(),
                 Dirty = false,
             };
-            
+
             foreach (string? s in downloadedSeries.AlternativeTitles.Results.Select(title => title.Title))
             {
                 m.AddAlias(s);

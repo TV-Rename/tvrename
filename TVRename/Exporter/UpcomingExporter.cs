@@ -44,11 +44,11 @@ namespace TVRename
                     }
                 }
 
-                LOGGER.Error("Failed to generate records to put into Export file at: {0}", Location());
+                LOGGER.Error($"Failed to generate records to put into Export file at: {Location()}");
             }
             catch (Exception e)
             {
-                LOGGER.Error(e, "Failed to produce records to put into Export file at: {0}", Location());
+                LOGGER.Error(e, $"Failed to produce records to put into Export file at: {Location()}");
             }
 
             return string.Empty;
@@ -64,7 +64,7 @@ namespace TVRename
                 file.Write(contents);
             }
 
-            LOGGER.Trace("contents of File are: {0}", contents);
+            LOGGER.Trace($"Contents of File are: {contents}");
         }
 
         protected abstract bool Generate(Stream str, IEnumerable<ProcessedEpisode> elist);
