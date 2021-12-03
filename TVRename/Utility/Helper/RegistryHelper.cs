@@ -120,13 +120,13 @@ namespace TVRename
                     {
                         // if it's a valid value, update or create the value
                         key.SetValue(programName, (int)browserEmulationVersion, RegistryValueKind.DWord);
-                        Logger.Warn("SETTING REGISTRY:{0}-{1}-{2}-{3}", key.Name, programName, (int)browserEmulationVersion, RegistryValueKind.DWord.ToString());
+                        Logger.Warn($"SETTING REGISTRY:{key.Name}-{programName}-{(int)browserEmulationVersion}-{RegistryValueKind.DWord}");
                     }
                     else
                     {
                         // otherwise, remove the existing value
                         key.DeleteValue(programName, false);
-                        Logger.Warn("DELETING REGISTRY KEY:{0}-{1}", key.Name, programName);
+                        Logger.Warn($"DELETING REGISTRY KEY:{key.Name}-{programName}");
                     }
 
                     return true;
@@ -153,7 +153,7 @@ namespace TVRename
         private static BrowserEmulationVersion GetInternetExplorerVersion()
         {
             int ieVersion = GetInternetExplorerMajorVersion();
-            Logger.Info("IE Version {0} is identified", ieVersion);
+            Logger.Info($"IE Version {ieVersion} is identified");
 
             if (ieVersion >= 11)
             {

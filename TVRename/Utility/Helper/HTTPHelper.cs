@@ -129,7 +129,7 @@ namespace TVRename
                 httpWebRequest.Headers.Add("Accept-Language", lang);
             }
 
-            Logger.Trace("Obtaining {0}", url);
+            Logger.Trace($"Obtaining {url}" );
 
             if (method == "POST")
             {
@@ -147,7 +147,7 @@ namespace TVRename
             {
                 result = streamReader.ReadToEnd();
             }
-            Logger.Trace("Returned {0}", result);
+            Logger.Trace($"Returned {result}" );
             return result;
         }
 

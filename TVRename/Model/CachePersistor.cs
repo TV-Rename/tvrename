@@ -73,7 +73,7 @@ namespace TVRename
                 di.Create();
             }
 
-            Logger.Info("Saving Cache to: {0}", cacheFile.FullName);
+            Logger.Info($"Saving Cache to: {cacheFile.FullName}" );
             try
             {
                 RotateCacheFiles(cacheFile);
@@ -130,7 +130,7 @@ namespace TVRename
 
         public static bool LoadTvCache<T>([NotNull] FileInfo loadFrom, [NotNull] T cache) where T : MediaCache, iTVSource
         {
-            Logger.Info("Loading Cache from: {0}", loadFrom.FullName);
+            Logger.Info($"Loading Cache from: {loadFrom.FullName}" );
             if (!loadFrom.Exists)
             {
                 return true; // that's ok
@@ -157,7 +157,7 @@ namespace TVRename
 
         public static bool LoadMovieCache<T>([NotNull] FileInfo loadFrom, T cache) where T : MediaCache, iMovieSource
         {
-            Logger.Info("Loading Cache from: {0}", loadFrom.FullName);
+            Logger.Info($"Loading Cache from: {loadFrom.FullName}" );
             if (!loadFrom.Exists)
             {
                 return true; // that's ok

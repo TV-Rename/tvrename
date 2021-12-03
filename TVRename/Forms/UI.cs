@@ -181,7 +181,7 @@ namespace TVRename
             SetupObjectListForScanResults();
 
             UpdateSplashStatus(splash, "Running Auto-scan");
-            
+
             SetStartUpTab();
         }
 
@@ -273,7 +273,7 @@ namespace TVRename
         }
 
         // ReSharper disable once UnusedMember.Global
-        public void ShowChild(Form childForm) 
+        public void ShowChild(Form childForm)
         {
             if (InvokeRequired)
             {
@@ -2863,7 +2863,7 @@ namespace TVRename
             {
                 mDoc.Add(mov.AsList(),false);
                 FillMyMovies(mov);
-                
+
                 mDoc.MoviesAddedOrEdited(true, false, WindowState == FormWindowState.Minimized, this, mov);
                 FillMyMovies(mov);
 
@@ -2895,7 +2895,7 @@ namespace TVRename
                 ShowAddedOrEdited(false, false, si,false);
                 SelectShow(si);
                 ShowAddedOrEdited(true, false, si, false);
-                Logger.Info("Added new show called {0}", si.ShowName);
+                Logger.Info($"Added new show called {si.ShowName}" );
             }
             else
             {
@@ -2987,7 +2987,7 @@ namespace TVRename
             {
                 return;
             }
-            try { 
+            try {
                 IEnumerable<string> videofilesThatWouldBeDeleted = Directory
                         .GetFiles(folderName, "*", SearchOption.AllDirectories)
                         .Where(f => f.IsMovieFile())
@@ -3139,7 +3139,7 @@ namespace TVRename
                 ShowAddedOrEdited(aes.HasChanged, false, si, true);
                 SelectShow(si);
 
-                Logger.Info("Modified show called {0}", si.ShowName);
+                Logger.Info($"Modified show called {si.ShowName}");
             }
 
             mDoc.AllowAutoScan();
@@ -3161,7 +3161,7 @@ namespace TVRename
                 FillMyMovies();
                 SelectMovie(si);
 
-                Logger.Info("Modified movie called {0}", si.ShowName);
+                Logger.Info($"Modified movie called {si.ShowName}" );
             }
 
             mDoc.AllowAutoScan();
@@ -3825,14 +3825,14 @@ namespace TVRename
                 Token = actionCancellationToken
             };
 
-            bool showUi = WindowState !=FormWindowState.Minimized && !mDoc.Args.Hide && Visible && Environment.UserInteractive; 
+            bool showUi = WindowState !=FormWindowState.Minimized && !mDoc.Args.Hide && Visible && Environment.UserInteractive;
             // If not /hide, show CopyMoveProgress dialog
             if (showUi)
             {
                 CopyMoveProgress cmp = new(mDoc,sett, () => actionCancellationToken.Cancel());
                 ShowChild(cmp);
             }
-            
+
             bwAction.RunWorkerAsync(sett);
         }
 
@@ -3884,7 +3884,7 @@ namespace TVRename
             ItemList lvr = GetSelectedItems();
 
             Item? action = olvAction.FocusedObject as Item;
-            
+
             if (action?.Episode != null && lvr.Count == 1)
             {
                 switchToWhenOpenMyShows = action.Episode;
@@ -4573,7 +4573,7 @@ namespace TVRename
         private void ThanksToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ThanksForm form = new();
-            form.ShowDialog(this); 
+            form.ShowDialog(this);
         }
 
         private void TabControl1_DrawItem(object sender, [NotNull] DrawItemEventArgs e)
@@ -5213,7 +5213,7 @@ namespace TVRename
 
             SettingsReview form = new(mDoc, this);
             form.ShowDialog(this);
- 
+
             mDoc.AllowAutoScan();
             LessBusy();
         }

@@ -567,7 +567,7 @@ namespace TVRename
             }
             // backup old settings before writing new ones
             FileHelper.Rotate(PathManager.TVDocSettingsFile.FullName);
-            Logger.Info("Saving Settings to {0}", PathManager.TVDocSettingsFile.FullName);
+            Logger.Info($"Saving Settings to {PathManager.TVDocSettingsFile.FullName}" );
 
             XmlWriterSettings settings = new()
             {
@@ -620,7 +620,7 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         private bool LoadXMLSettings(FileInfo? from)
         {
-            Logger.Info("Loading Settings from {0}", from?.FullName);
+            Logger.Info($"Loading Settings from {from?.FullName}" );
             if (from is null)
             {
                 return true;

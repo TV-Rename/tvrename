@@ -312,7 +312,7 @@ namespace TVRename
                 PossibleNewTvShow ai = new(di2, hasSeasonFolders, folderFormat);
 
                 AddItems.Add(ai);
-                Logger.Info("Adding {0} as a new folder", theFolder);
+                Logger.Info($"Adding {theFolder} as a new folder");
                 if (andGuess)
                 {
                     GuessShowItem(ai, mDoc.TvLibrary, showErrorMsgBox);
@@ -321,7 +321,7 @@ namespace TVRename
             }
             catch (UnauthorizedAccessException)
             {
-                Logger.Info("Can't access {0}, so ignoring it", di2.FullName);
+                Logger.Info($"Can't access {di2.FullName}, so ignoring it" );
                 return (true, null);
             }
         }
@@ -396,7 +396,7 @@ namespace TVRename
             {
                 if (fullLogging)
                 {
-                    Logger.Info("Rejecting {0} as it's on the ignore list.", di.FullName);
+                    Logger.Info($"Rejecting {di.FullName} as it's on the ignore list.");
                 }
 
                 return;

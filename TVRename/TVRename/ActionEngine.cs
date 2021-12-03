@@ -68,7 +68,7 @@ namespace TVRename
 
                 Action action = info.TheAction;
 
-                Logger.Trace("Triggering Action: {0} - {1} - {2}", action.Name, action.Produces, action.ToString());
+                Logger.Trace($"Triggering Action: {action.Name} - {action.Produces} - {action}" );
                 action.Outcome = action.Go(mStats);
                 if (action.Outcome.Error)
                 {
@@ -386,7 +386,7 @@ namespace TVRename
                     return 0;
 
                 default:
-                    Logger.Fatal("No action type found for {0}, Please follow up with a developer.", action.GetType());
+                    Logger.Fatal($"No action type found for {action.GetType()}, Please follow up with a developer." );
                     // put it in this queue by default
                     return 3;
             }

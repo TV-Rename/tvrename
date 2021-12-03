@@ -54,7 +54,7 @@ namespace TVRename
                 MDoc.TvAddedOrEdited(true, false, false, Settings.Owner, addedTvShows);
                 //add each new show into the shows being scanned
                 Settings.Shows.AddRange(addedTvShows);
-                LOGGER.Info("Added new shows called: {0}", addedTvShows.Select(s => s.ShowName).ToCsv());
+                LOGGER.Info($"Added new shows called: {addedTvShows.Select(s => s.ShowName).ToCsv()}" );
             }
 
             List<MovieConfiguration> addedMovies = addedShowsUnique.OfType<MovieConfiguration>().Distinct().ToList();
@@ -63,7 +63,7 @@ namespace TVRename
                 MDoc.Add(addedMovies, true);
                 MDoc.MoviesAddedOrEdited(true, false, false, Settings.Owner, addedMovies);
                 Settings.Movies.AddRange(addedMovies);
-                LOGGER.Info("Added new movies called: {0}", addedMovies.Select(s => s.ShowName).ToCsv());
+                LOGGER.Info($"Added new movies called: {addedMovies.Select(s => s.ShowName).ToCsv()}");
             }
         }
 
@@ -94,7 +94,7 @@ namespace TVRename
 
             foreach (string dirPath in TVSettings.Instance.DownloadFolders.ToArray())
             {
-                LOGGER.Info("Parsing {0} for new shows", dirPath);
+                LOGGER.Info($"Parsing {dirPath} for new shows" );
                 if (!Directory.Exists(dirPath))
                 {
                     continue;
