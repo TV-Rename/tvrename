@@ -6,7 +6,7 @@ namespace TVRename
     public class BEncodeLoader
     {
         [NotNull]
-        private BTItem ReadString([NotNull] System.IO.Stream sr, long length)
+        private static BTItem ReadString([NotNull] System.IO.Stream sr, long length)
         {
             System.IO.BinaryReader br = new(sr);
             return new BTString {Data = br.ReadBytes((int)length) };
@@ -42,7 +42,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public BTItem ReadDictionary([NotNull] System.IO.FileStream sr)
+        private BTItem ReadDictionary([NotNull] System.IO.FileStream sr)
         {
             BTDictionary d = new();
             for (;;)
@@ -64,7 +64,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public BTItem ReadList([NotNull] System.IO.FileStream sr)
+        private BTItem ReadList([NotNull] System.IO.FileStream sr)
         {
             BTList ll = new();
             for (;;)
@@ -80,7 +80,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public BTItem ReadNext([NotNull] System.IO.FileStream sr)
+        private BTItem ReadNext([NotNull] System.IO.FileStream sr)
         {
             if (sr.Length == sr.Position)
             {
@@ -90,43 +90,37 @@ namespace TVRename
             // Read the next character from the stream to see what is next
 
             int c = sr.ReadByte();
-            if (c == 'd')
+            switch (c)
             {
-                return ReadDictionary(sr); // dictionary
-            }
-
-            if (c == 'l')
-            {
-                return ReadList(sr); // list
-            }
-
-            if (c == 'i')
-            {
-                return ReadInt(sr); // integer
-            }
-
-            if (c == 'e')
-            {
-                return new BTListOrDictionaryEnd(); // end of list/dictionary/etc.
-            }
-
-            if (c >= '0' && c <= '9') // digits mean it is a string of the specified length
-            {
-                string r = Convert.ToString(c - '0');
-                while ((c = sr.ReadByte()) != ':')
+                case 'd':
+                    return ReadDictionary(sr); // dictionary
+                case 'l':
+                    return ReadList(sr); // list
+                case 'i':
+                    return ReadInt(sr); // integer
+                case 'e':
+                    return new BTListOrDictionaryEnd(); // end of list/dictionary/etc.
+                // digits mean it is a string of the specified length
+                case >= '0' and <= '9':
                 {
-                    r += Convert.ToString(c - '0');
+                    string r = Convert.ToString(c - '0');
+                    while ((c = sr.ReadByte()) != ':')
+                    {
+                        r += Convert.ToString(c - '0');
+                    }
+
+                    return ReadString(sr, Convert.ToInt32(r));
                 }
+                default:
+                {
+                    BTError e = new()
+                    {
+                        Message = $"Error: unknown BEncode item type: {c}"
+                    };
 
-                return ReadString(sr, Convert.ToInt32(r));
+                    return e;
+                }
             }
-
-            BTError e = new()
-            {
-                Message = $"Error: unknown BEncode item type: {c}"
-            };
-
-            return e;
         }
 
         public BTFile? Load(string filename)

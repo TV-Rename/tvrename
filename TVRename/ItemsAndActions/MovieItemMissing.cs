@@ -26,7 +26,7 @@ namespace TVRename
 
         public override int CompareTo(Item o)
         {
-            if (!(o is MovieItemMissing miss))
+            if (o is not MovieItemMissing miss)
             {
                 return -1;
             }

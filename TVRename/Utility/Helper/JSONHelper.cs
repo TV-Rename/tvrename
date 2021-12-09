@@ -71,7 +71,7 @@ namespace TVRename
                 return string.Empty;
             }
 
-            if (!(ja is JArray ja2))
+            if (ja is not JArray ja2)
             {
                 return string.Empty;
             }

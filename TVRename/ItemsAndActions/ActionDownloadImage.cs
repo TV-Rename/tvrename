@@ -175,7 +175,7 @@ namespace TVRename
 
         public override int CompareTo(Item o)
         {
-            return !(o is ActionDownloadImage dl) ? -1 : string.Compare(destination.FullName, dl.destination.FullName, StringComparison.Ordinal);
+            return o is not ActionDownloadImage dl ? -1 : string.Compare(destination.FullName, dl.destination.FullName, StringComparison.Ordinal);
         }
 
         public override int IconNumber => 5;

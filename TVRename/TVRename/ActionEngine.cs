@@ -56,7 +56,7 @@ namespace TVRename
         /// <param name="infoIn">A ProcessActionInfo to be processed. It will contain the Action to be processed</param>
         private void ProcessSingleAction(object infoIn)
         {
-            if (!(infoIn is ProcessActionInfo info))
+            if (infoIn is not ProcessActionInfo info)
             {
                 return;
             }
@@ -150,7 +150,7 @@ namespace TVRename
         {
             try
             {
-                if (!(argsIn is ActionProcessorThreadArgs args))
+                if (argsIn is not ActionProcessorThreadArgs args)
                 {
                     string message =
                         $"Action Processor called with object that is not a ActionProcessorThreadArgs, instead called with a {argsIn.GetType().FullName}";
@@ -176,7 +176,7 @@ namespace TVRename
                 }
                 catch (ThreadAbortException)
                 {
-                    if (!(actionWorkers is null))
+                    if (actionWorkers is not null)
                     {
                         foreach (Thread t in actionWorkers)
                         {
@@ -204,7 +204,7 @@ namespace TVRename
             catch (Exception e)
             {
                 Logger.Fatal(e, "Unhandled Exception in ActionProcessor");
-                if (!(actionWorkers is null))
+                if (actionWorkers is not null)
                 {
                     foreach (Thread t in actionWorkers)
                     {
@@ -349,7 +349,7 @@ namespace TVRename
 
             foreach (Item sli in theList)
             {
-                if (!(sli is Action action))
+                if (sli is not Action action)
                 {
                     continue; // skip non-actions
                 }

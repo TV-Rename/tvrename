@@ -141,7 +141,7 @@ namespace TVRename.Forms
             this.chkMIssingTest.TabIndex = 3;
             this.chkMIssingTest.Text = "One is missing";
             this.chkMIssingTest.UseVisualStyleBackColor = true;
-            this.chkMIssingTest.CheckedChanged += new System.EventHandler(this.chkMIssingTest_CheckedChanged);
+            this.chkMIssingTest.CheckedChanged += new System.EventHandler(this.chkMissingTest_CheckedChanged);
             // 
             // chkFilesizeTest
             // 

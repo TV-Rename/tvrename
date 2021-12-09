@@ -120,7 +120,7 @@ namespace TVRename
                 }
                 foreach (JToken item in x)
                 {
-                    if (item is null || !(item is JObject episodeResponse))
+                    if (item is null || item is not JObject episodeResponse)
                     {
                         continue;
                     }

@@ -44,7 +44,7 @@ namespace TVRename
             //says that we need a format like this:
             //<episodeguide><url post="yes" cache="auth.json">https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;((API-KEY))&quot;,&quot;id&quot;:((ID))}|Content-Type=application/json</url></episodeguide>
 
-            if (!(cachedSeries is null))
+            if (cachedSeries is not null)
             {
                 root.UpdateElement("originaltitle", Movie.ShowName);
                 root.UpdateElement("sorttitle", UI.GenerateShowUiName(Movie));

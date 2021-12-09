@@ -142,7 +142,7 @@ namespace TVRename.TVmaze
                         if (showId > 0 && HasSeries(showId))
                         {
                             CachedSeriesInfo x = GetSeries(showId);
-                            if (!(x is null))
+                            if (x is not null)
                             {
                                 if (x.SrvLastUpdated < showUpdateTime.Value)
                                 {

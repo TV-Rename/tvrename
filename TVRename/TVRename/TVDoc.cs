@@ -1806,7 +1806,7 @@ namespace TVRename
             TheActionList.Remove(item);
 
             //We can remove any CopyMoveActions that are closely related too
-            if (!(item is ActionCopyMoveRename i2))
+            if (item is not ActionCopyMoveRename i2)
             {
                 return;
             }

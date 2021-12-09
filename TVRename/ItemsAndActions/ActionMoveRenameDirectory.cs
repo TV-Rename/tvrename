@@ -33,7 +33,7 @@ namespace TVRename
 
         public override int CompareTo(Item o)
         {
-            if (!(o is ActionMoveRenameDirectory cmr))
+            if (o is not ActionMoveRenameDirectory cmr)
             {
                 return -1;
             }

@@ -14,10 +14,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public virtual string AsText()
-        {
-            return $"Type ={Type}";
-        }
+        public virtual string AsText() => $"Type ={Type}";
 
         public virtual void Tree([NotNull] TreeNodeCollection tn)
         {

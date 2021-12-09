@@ -34,7 +34,7 @@ namespace TVRename
 
         public override int CompareTo(Item o)
         {
-            return !(o is ActionTRemove rss) ? -1 : string.Compare(name.TorrentFile, rss.name.TorrentFile, StringComparison.Ordinal);
+            return o is not ActionTRemove rss ? -1 : string.Compare(name.TorrentFile, rss.name.TorrentFile, StringComparison.Ordinal);
         }
 
         [NotNull]

@@ -67,7 +67,7 @@ namespace TVRename
                 return 1;
             }
 
-            if (!(obj is Release otherUpdateVersion))
+            if (obj is not Release otherUpdateVersion)
             {
                 throw new ArgumentException("Object is not a UpdateVersion");
             }

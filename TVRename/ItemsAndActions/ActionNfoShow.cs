@@ -59,7 +59,7 @@ namespace TVRename
                 episodeGuideNode.UpdateElement("url",tmdbUrl);
             }
 
-            if (!(cachedSeries is null))
+            if (cachedSeries is not null)
             {
                 root.UpdateElement("originaltitle", SelectedShow.ShowName);
                 root.ReplaceElements("studio", cachedSeries.Networks);

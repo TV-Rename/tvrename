@@ -238,7 +238,7 @@ namespace TVRename
                 return false;
             }
 
-            if (!(ex.Response is HttpWebResponse resp))
+            if (ex.Response is not HttpWebResponse resp)
             {
                 return false;
             }

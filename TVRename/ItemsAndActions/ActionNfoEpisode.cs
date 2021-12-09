@@ -76,7 +76,7 @@ namespace TVRename
                 UpdateRatings(root, showRating, episode.SiteRatingCount ?? 0);
             }
 
-            if (!(show is null))
+            if (show is not null)
             {
                 root.UpdateElement("originaltitle", show.ShowName, true);
                 root.UpdateElement("showtitle", show.ShowName, true);

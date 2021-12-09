@@ -1873,8 +1873,8 @@ namespace TVRename
                 string? useFullPathValue = rep.Attribute("UseFullPath")?.Value;
                 string? notesValue = rep.Attribute("Notes")?.Value;
 
-                bool enabled = !(enabledValue is null) && XmlConvert.ToBoolean(enabledValue);
-                bool useFullPath = !(useFullPathValue is null) && XmlConvert.ToBoolean(useFullPathValue);
+                bool enabled = enabledValue is not null && XmlConvert.ToBoolean(enabledValue);
+                bool useFullPath = useFullPathValue is not null && XmlConvert.ToBoolean(useFullPathValue);
 
                 if (reValue != null && notesValue != null)
                 {

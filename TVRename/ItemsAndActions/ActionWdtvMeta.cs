@@ -189,7 +189,7 @@ namespace TVRename
 
         public override int CompareTo(Item o)
         {
-            if (!(o is ActionWdtvMeta nfo))
+            if (o is not ActionWdtvMeta nfo)
             {
                 return -1;
             }

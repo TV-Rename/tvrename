@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Windows.Forms;
-using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -73,20 +71,7 @@ namespace TVRename
             return r;
         }
 
-        public void Tree([NotNull] TreeNodeCollection tn)
-        {
-            TreeNode n = new("BT File");
-            tn.Add(n);
-            foreach (BTItem t in Items)
-            {
-                t.Tree(n.Nodes);
-            }
-        }
-
-        public BTItem? GetItem(string key)
-        {
-            return GetItem(key, false);
-        }
+        public BTItem? GetItem(string key) => GetItem(key, false);
 
         public BTDictionary GetDict()
         {
@@ -97,7 +82,7 @@ namespace TVRename
             return (BTDictionary)Items[0];
         }
 
-        public BTItem? GetItem(string key, bool ignoreCase)
+        private BTItem? GetItem(string key, bool ignoreCase)
         {
             if (Items.Count == 0)
             {
@@ -106,14 +91,6 @@ namespace TVRename
 
             BTDictionary btd = GetDict();
             return btd.GetItem(key, ignoreCase);
-        }
-
-        public void Write(System.IO.Stream sw)
-        {
-            foreach (BTItem i in Items)
-            {
-                i.Write(sw);
-            }
         }
     }
 }

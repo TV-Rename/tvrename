@@ -732,7 +732,7 @@ namespace TVRename
         {
             foreach (ListViewItem lvi in view.SelectedItems)
             {
-                if (!(lvi.Tag is ProcessedEpisode pe))
+                if (lvi.Tag is not ProcessedEpisode pe)
                 {
                     continue;
                 }
@@ -3726,7 +3726,7 @@ namespace TVRename
                 if (2 * mDoc.TheActionList.Actions.Count > mDoc.TheActionList.Count)
                 {
                     olvAction.CheckAll();
-                    foreach (Item i in mDoc.TheActionList.Where(i => !(i is Action)))
+                    foreach (Item i in mDoc.TheActionList.Where(i => i is not Action))
                     {
                         olvAction.UncheckObject(i);
                     }
@@ -4131,7 +4131,7 @@ namespace TVRename
             }
 
             //Needed to de-select any un action able items
-            if (olvAction.GetModelObject(e.Index) is Item action && !(action is Action))
+            if (olvAction.GetModelObject(e.Index) is Item action && action is not Action)
             {
                 e.NewValue = CheckState.Unchecked;
             }
@@ -4697,7 +4697,7 @@ namespace TVRename
 
         private void BwUpdateSchedule_RunWorkerCompleted(object sender, [NotNull] RunWorkerCompletedEventArgs e)
         {
-            if (!(e.Result is List<ListViewItem> newContents))
+            if (e.Result is not List<ListViewItem> newContents)
             {
                 return;
             }
@@ -4726,7 +4726,7 @@ namespace TVRename
 
             foreach (ListViewItem lvi in newContents)
             {
-                if (!(lvi.Tag is ProcessedEpisode ei))
+                if (lvi.Tag is not ProcessedEpisode ei)
                 {
                     continue;
                 }
@@ -4827,7 +4827,7 @@ namespace TVRename
 
             // Establish item in list being dragged to, and exit if no item matched
             // Check at least one file was being dragged, and that dragged-to item is a "Missing Item" item.
-            if (files.Length <= 0 || !(e.DropTargetItem.RowObject is ItemMissing mi))
+            if (files.Length <= 0 || e.DropTargetItem.RowObject is not ItemMissing mi)
             {
                 return;
             }
@@ -4838,7 +4838,7 @@ namespace TVRename
 
         private void OlvAction_CanDrop(object sender, [NotNull] OlvDropEventArgs e)
         {
-            if (!(e.DropSink?.DropTargetItem?.RowObject is Item item))
+            if (e.DropSink?.DropTargetItem?.RowObject is not Item item)
             {
                 e.Effect = DragDropEffects.None;
             }

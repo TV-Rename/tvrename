@@ -91,10 +91,9 @@ namespace TVRename
                 {
                     if (i < lvSeenEpisodes.Items.Count)
                     {
-                        int n = i;
-                        if (n >= 0 && n < lvSeenEpisodes.Items.Count)
+                        if (i >= 0 && i < lvSeenEpisodes.Items.Count)
                         {
-                            lvSeenEpisodes.Items[n].Selected = true;
+                            lvSeenEpisodes.Items[i].Selected = true;
                         }
                     }
                 }

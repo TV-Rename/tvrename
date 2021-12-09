@@ -1335,7 +1335,7 @@ namespace TVRename.TheTVDB
 
         private void AddMovieImagesV4(JObject r, CachedMovieInfo si)
         {
-            if (!(r["data"]?["artworks"] is null))
+            if (r["data"]?["artworks"] is not null)
             {
                 foreach (JToken? imageJson in r["data"]["artworks"])
                 {
@@ -1365,7 +1365,7 @@ namespace TVRename.TheTVDB
         private void AddShowImagesV4(JObject r, CachedSeriesInfo si)
         {
             //JObject x = API.ImageTypesV4();
-            if (!(r["data"]?["artworks"] is null))
+            if (r["data"]?["artworks"] is not null)
             {
                 foreach (JToken? imageJson in r["data"]["artworks"])
                 {
@@ -1441,7 +1441,7 @@ namespace TVRename.TheTVDB
 
         private static void AddCastCrew(JObject r, CachedMovieInfo si)
         {
-            if (!(r["people"]?["actors"] is null))
+            if (r["people"]?["actors"] is not null)
             {
                 foreach (JToken? actorJson in r["people"]["actors"])
                 {
@@ -1454,7 +1454,7 @@ namespace TVRename.TheTVDB
             }
 
             si.ClearCrew();
-            if (!(r["people"]?["directors"] is null))
+            if (r["people"]?["directors"] is not null)
             {
                 foreach (JToken? actorJson in r["people"]["directors"])
                 {
@@ -1467,7 +1467,7 @@ namespace TVRename.TheTVDB
                 }
             }
 
-            if (!(r["people"]?["producers"] is null))
+            if (r["people"]?["producers"] is not null)
             {
                 foreach (JToken? actorJson in r["people"]["producers"])
                 {
@@ -1480,7 +1480,7 @@ namespace TVRename.TheTVDB
                 }
             }
 
-            if (!(r["people"]?["writers"] is null))
+            if (r["people"]?["writers"] is not null)
             {
                 foreach (JToken? actorJson in r["people"]["writers"])
                 {
@@ -1698,7 +1698,7 @@ namespace TVRename.TheTVDB
 
         private static void AddCastAndCrew(JObject r, CachedMovieInfo si)
         {
-            if (!(r["data"]?["characters"] is null))
+            if (r["data"]?["characters"] is not null)
             {
                 foreach (JToken? actorJson in r["data"]["characters"]?.Where(x => x["peopleType"]?.ToString() == "Actor"))
                 {
@@ -1787,7 +1787,7 @@ namespace TVRename.TheTVDB
 
         private static void AddCastAndCrewv4(JObject r, CachedSeriesInfo si)
         {
-            if (!(r["data"]?["characters"] is null))
+            if (r["data"]?["characters"] is not null)
             {
                 foreach (JToken? actorJson in r["data"]["characters"]?.Where(x => x["peopleType"]?.ToString() == "Actor"))
                 {
@@ -1812,7 +1812,7 @@ namespace TVRename.TheTVDB
 
         private void AddSeasonsV4(JObject r, ProcessedSeason.SeasonType seasonType, CachedSeriesInfo si)
         {
-            if (!(r["data"]?["seasons"] is null))
+            if (r["data"]?["seasons"] is not null)
             {
                 foreach (JToken? seasonJson in r["data"]["seasons"])
                 {
@@ -3215,7 +3215,7 @@ namespace TVRename.TheTVDB
         {
             string langaugeCode = locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation;
             JToken languagesArray = r[tag];
-            if (languagesArray == null ||!languagesArray.HasValues || !(languagesArray is JObject))
+            if (languagesArray == null ||!languagesArray.HasValues || languagesArray is not JObject)
             {
                 return null;
             }

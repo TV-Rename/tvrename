@@ -272,7 +272,7 @@ namespace TVRename
 
         private void CopyMoveProgress_SizeChanged(object sender, EventArgs e)
         {
-            if (!(sender is Form {WindowState: FormWindowState.Minimized} childWindow))
+            if (sender is not Form {WindowState: FormWindowState.Minimized} childWindow)
             {
                 return;
             }

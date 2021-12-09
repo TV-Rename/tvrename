@@ -46,12 +46,7 @@ namespace TVRename.Forms.Tools
         private static object GroupSeasonKeyDelegate(object rowObject)
         {
             FileIssue ep = (FileIssue)rowObject;
-            if (ep.SeasonNumber.HasValue)
-            {
-                return $"{ep.Showname} - Season {ep.SeasonNumber}";
-            }
-
-            return ep.Showname;
+            return ep.SeasonNumber.HasValue ? $"{ep.Showname} - Season {ep.SeasonNumber}" : ep.Showname;
         }
 
         private void OlvFileIssues_MouseClick(object sender, [NotNull] MouseEventArgs e)
@@ -62,7 +57,7 @@ namespace TVRename.Forms.Tools
             }
 
             Point pt = ((ListView)sender).PointToScreen(new Point(e.X, e.Y));
-            if (!(olvFileIssues.FocusedObject is FileIssue iss))
+            if (olvFileIssues.FocusedObject is not FileIssue iss)
             {
                 return;
             }
@@ -120,14 +115,14 @@ namespace TVRename.Forms.Tools
 
                 foreach (KeyValuePair<int, SafeList<string>> showfolders in folders)
                 {
-                    foreach (string showfolder in showfolders.Value)
+                    foreach (string showFolder in showfolders.Value)
                     {
-                        if (doneFolders.Contains(showfolder))
+                        if (doneFolders.Contains(showFolder))
                         {
                             continue;
                         }
-                        doneFolders.Add(showfolder);
-                        foreach (FileInfo file in new DirectoryInfo(showfolder).GetFiles()
+                        doneFolders.Add(showFolder);
+                        foreach (FileInfo file in new DirectoryInfo(showFolder).GetFiles()
                             .Where(file => file.IsMovieFile()))
                         {
                             FinderHelper.FindSeasEp(file, out int seasonNumber, out int episodeNumber, out int _, show);
@@ -136,7 +131,7 @@ namespace TVRename.Forms.Tools
                             {
                                 issues.Add(new FileIssue(show, file, "File does not match a Filename Processor"));
                             }
-                            else if (folders.ContainsKey(seasonNumber) && !folders[seasonNumber].Contains(showfolder))
+                            else if (folders.ContainsKey(seasonNumber) && !folders[seasonNumber].Contains(showFolder))
                             {
                                 issues.Add(new FileIssue(show, file, "File is in the wrong cachedSeries folder", seasonNumber, episodeNumber));
                             }

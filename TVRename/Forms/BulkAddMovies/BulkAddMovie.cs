@@ -99,7 +99,7 @@ namespace TVRename
             DeleteSelectedFolder(lstFMMonitorFolders, TVSettings.Instance.MovieLibraryFolders);
         }
 
-        private void DeleteSelectedFolder([NotNull] ListBox lb, SafeList<string> folders)
+        private void DeleteSelectedFolder([NotNull] ListBox lb, IList<string> folders)
         {
             for (int i = lb.SelectedIndices.Count - 1; i >= 0; i--)
             {
@@ -252,7 +252,7 @@ namespace TVRename
             AddDraggedFiles(e, TVSettings.Instance.IgnoreFolders);
         }
 
-        private void AddDraggedFiles([NotNull] DragEventArgs e, SafeList<string> strings)
+        private void AddDraggedFiles([NotNull] DragEventArgs e, ICollection<string> strings)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string path in files)
@@ -303,7 +303,7 @@ namespace TVRename
             bwIdentify.RunWorkerAsync();
         }
 
-        private void AutoMatchMovie([NotNull] CancellationTokenSource cts, PossibleNewMovie ai, BackgroundWorker bw, int total)
+        private static void AutoMatchMovie([NotNull] CancellationTokenSource cts, PossibleNewMovie ai, BackgroundWorker bw, int total)
         {
             if (cts.IsCancellationRequested)
             {
@@ -605,7 +605,7 @@ namespace TVRename
         {
             lvFMNewShows.Update();
 
-            pbProgress.Value = e.ProgressPercentage.Between(0,100); 
+            pbProgress.Value = e.ProgressPercentage.Between(0,100);
             lblStatusLabel.Text = ((PossibleNewMovie)e.UserState).RefinedHint;
             UpdateListItem((PossibleNewMovie)e.UserState, false);
         }

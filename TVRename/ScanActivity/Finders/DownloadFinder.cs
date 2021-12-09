@@ -61,14 +61,14 @@ namespace TVRename
 
             foreach (Item x in newItems)
             {
-                if (!(x is ActionTDownload testActionRssOne))
+                if (x is not ActionTDownload testActionRssOne)
                 {
                     continue;
                 }
 
                 foreach (Item y in newItems)
                 {
-                    if (!(y is ActionTDownload testActionRssTwo))
+                    if (y is not ActionTDownload testActionRssTwo)
                     {
                         continue;
                     }

@@ -22,12 +22,12 @@ namespace TVRename
 
         public int Compare(object x, object y)
         {
-            if (!(x is ListViewItem lvix))
+            if (x is not ListViewItem lvix)
             {
                 throw new InvalidOperationException();
             }
 
-            if (!(y is ListViewItem lviy))
+            if (y is not ListViewItem lviy)
             {
                 throw new InvalidOperationException();
             }

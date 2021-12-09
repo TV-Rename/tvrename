@@ -14,16 +14,7 @@ namespace TVRename
             Value = 0;
         }
 
-        public BTInteger(long n)
-            : base(BTChunk.kInteger)
-        {
-            Value = n;
-        }
-
-        public override string AsText()
-        {
-            return "Integer=" + Value;
-        }
+        public override string AsText() => "Integer=" + Value;
 
         public override void Tree(TreeNodeCollection tn)
         {

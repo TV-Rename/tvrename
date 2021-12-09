@@ -74,16 +74,16 @@ namespace TVRename.Forms
             UpdateUI();
         }
 
-        private void chkMIssingTest_CheckedChanged(object sender, EventArgs e)
+        private void chkMissingTest_CheckedChanged(object sender, EventArgs e)
         {
-            if (!chkMIssingTest.Checked)
+            switch (chkMIssingTest.Checked)
             {
-                chkFilesizeTest.Checked = false;
-            }
-
-            if (chkMIssingTest.Checked)
-            {
-                chkNameTest.Checked = true;
+                case false:
+                    chkFilesizeTest.Checked = false;
+                    break;
+                case true:
+                    chkNameTest.Checked = true;
+                    break;
             }
 
             UpdateUI();
@@ -113,7 +113,7 @@ namespace TVRename.Forms
             }
 
             PossibleMergedEpisode? mlastSelected = (PossibleMergedEpisode)lvMergedEpisodes.SelectedItems[0].Tag;
-            ListViewItem? mlastClicked = lvMergedEpisodes.SelectedItems[0];
+            ListViewItem? mLastClicked = lvMergedEpisodes.SelectedItems[0];
             ShowConfiguration? si = mlastSelected?.ShowConfiguration;
 
             if (si == null)
@@ -133,7 +133,7 @@ namespace TVRename.Forms
                 (_, _) => mainUi.EditSeason(si, mlastSelected.SeasonNumber));
 
             possibleMergedEpisodeRightClickMenu.Items.Add(new ToolStripSeparator());
-            AddRcMenuItem("Add Rule", (_, _) => AddRule(mlastSelected, si, mlastClicked));
+            AddRcMenuItem("Add Rule", (_, _) => AddRule(mlastSelected, si, mLastClicked));
 
             possibleMergedEpisodeRightClickMenu.Show(pt);
         }
@@ -155,11 +155,11 @@ namespace TVRename.Forms
             dupEps.Remove(selected);
         }
 
-        private void GotoEpGuide(ShowConfiguration? si, PossibleMergedEpisode? mlastSelected)
+        private void GotoEpGuide(ShowConfiguration? si, PossibleMergedEpisode? mLastSelected)
         {
-            if (mlastSelected != null)
+            if (mLastSelected != null)
             {
-                mainUi.GotoEpguideFor(mlastSelected.Episode, true);
+                mainUi.GotoEpguideFor(mLastSelected.Episode, true);
             }
             else
             {

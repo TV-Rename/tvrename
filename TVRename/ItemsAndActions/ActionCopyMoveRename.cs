@@ -217,7 +217,7 @@ namespace TVRename
 
         public override int CompareTo(Item o)
         {
-            if (!(o is ActionCopyMoveRename cmr))
+            if (o is not ActionCopyMoveRename cmr)
             {
                 return -1;
             }
