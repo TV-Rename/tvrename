@@ -22,6 +22,21 @@ namespace TVRename
                 source.AddRange(items);
             }
         }
+        public static void RemoveNullableRange<T>(this List<T> source, IEnumerable<T>? items)
+        {
+            if (items != null)
+            {
+                source.RemoveRange(items);
+            }
+        }
+
+        public static void RemoveRange<T>(this List<T> source, [NotNull] IEnumerable<T> items)
+        {
+            foreach (T item in items)
+            {
+                source.Remove(item);
+            }
+        }
 
         [NotNull]
         public static IList<T> DeepClone<T>([NotNull] this IEnumerable<T> listToClone) where T : ICloneable

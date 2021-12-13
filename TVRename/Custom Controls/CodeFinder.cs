@@ -118,12 +118,7 @@ namespace TVRename
         {
             try
             {
-                if (lvMatches.SelectedItems.Count == 0)
-                {
-                    return null;
-                }
-
-                return lvMatches.SelectedItems[0].Tag;
+                return lvMatches.SelectedItems.Count == 0 ? null : lvMatches.SelectedItems[0].Tag;
             }
             catch
             {
@@ -235,20 +230,22 @@ namespace TVRename
             txtSearchStatus.Text = GetLabel(Source);
             txtSearchStatus.Update();
 
-            if (!string.IsNullOrEmpty(txtFindThis.Text))
+            if (string.IsNullOrEmpty(txtFindThis.Text))
             {
-                try
-                {
-                    //TODO - make search multi language and use custom language specified
-
-                    GetSourceInstance(Source).Search(txtFindThis.Text, showErrorMsgBox, Type, new Locale());
-                }
-                catch (SourceConnectivityException scx)
-                {
-                    Logger.Warn(scx);
-                }
-                DoFind(true);
+                return;
             }
+
+            try
+            {
+                //TODO - make search multi language and use custom language specified
+
+                GetSourceInstance(Source).Search(txtFindThis.Text, showErrorMsgBox, Type, new Locale());
+            }
+            catch (SourceConnectivityException scx)
+            {
+                Logger.Warn(scx);
+            }
+            DoFind(true);
         }
 
         private string GetLabel(TVDoc.ProviderType source)
@@ -299,7 +296,7 @@ namespace TVRename
 
         private void txtFindThis_KeyDown(object sender, [NotNull] KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return)
+            if (e.KeyCode is Keys.Enter or Keys.Return)
             {
                 Search(true);
                 e.Handled = true;
@@ -309,24 +306,18 @@ namespace TVRename
         private void lvMatches_ColumnClick(object sender, [NotNull] ColumnClickEventArgs e)
         {
             lvwCodeFinderColumnSorter.ClickedOn(e.Column);
-
-            switch (e.Column)
-            {
-                case 0:
-                // code or year
-                case 2:
-                    lvwCodeFinderColumnSorter.ListViewItemSorter = new NumberAsTextSorter(e.Column);
-                    break;
-                //  popularity
-                case 5:
-                    lvwCodeFinderColumnSorter.ListViewItemSorter = new DoubleAsTextSorter(e.Column);
-                    break;
-                default:
-                    lvwCodeFinderColumnSorter.ListViewItemSorter = new TextSorter(e.Column);
-                    break;
-            }
-
+            lvwCodeFinderColumnSorter.ListViewItemSorter = GetSorter(e.Column);
             lvMatches.Sort();
         }
+
+        [NotNull]
+        private static ListViewItemSorter GetSorter(int eColumn) =>
+            eColumn switch
+            {
+                0 => new NumberAsTextSorter(eColumn), // code
+                2 => new NumberAsTextSorter(eColumn), // year
+                5 => new DoubleAsTextSorter(eColumn), //  popularity
+                _ => new TextSorter(eColumn)
+            };
     }
 }

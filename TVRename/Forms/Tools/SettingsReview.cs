@@ -57,6 +57,8 @@ namespace TVRename.Forms
                 set.Add(new CustomNameMovieCheck(movie, mDoc));
                 set.Add(new CustomRegionMovieCheck(movie, mDoc));
                 set.Add(new ManualFoldersMovieCheck(movie, mDoc));
+                set.Add(new MovieCheckEmptyManualFolders(movie, mDoc));
+                set.Add(new MovieManualFoldersMirrorAutomaticCheck(movie, mDoc));
 
                 set.Add(new DefaultDoMissingMovieCheck(movie, mDoc));
                 set.Add(new DefaultDoRenameMovieCheck(movie, mDoc));

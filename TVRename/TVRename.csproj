@@ -397,6 +397,8 @@
     <Compile Include="LibrarySummary\Check\FolderBaseLibraryDefaultTvCheck.cs" />
     <Compile Include="LibrarySummary\Check\FolderBaseMovieCheck.cs" />
     <Compile Include="LibrarySummary\Check\FolderBaseTvCheck.cs" />
+    <Compile Include="LibrarySummary\Check\MovieCheckEmptyManualFolders.cs" />
+    <Compile Include="LibrarySummary\Check\MovieManualFoldersMirrorAutomaticCheck.cs" />
     <Compile Include="LibrarySummary\Check\SettingsCheck.cs" />
     <Compile Include="LibrarySummary\Check\CustomLanguageMovieCheck.cs" />
     <Compile Include="LibrarySummary\Check\CustomLanguageTvShowCheck.cs" />
