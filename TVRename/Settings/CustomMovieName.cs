@@ -96,6 +96,10 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Imdb}", m.CachedMovie?.Imdb);
             name = name.ReplaceInsensitive("{CollectionName}", m.CachedMovie?.CollectionName);
             name = name.ReplaceInsensitive("{MovieType}", m.CachedMovie?.MovieType);
+            if (urlEncode)
+            {
+                return name.Trim();
+            }
             return isfilename ? TVSettings.Instance.FilenameFriendly(name.Trim()) : TVSettings.DirectoryFriendly(name.Trim());
         }
 
