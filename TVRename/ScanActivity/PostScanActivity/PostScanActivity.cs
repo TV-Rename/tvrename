@@ -56,9 +56,9 @@ namespace TVRename
             {
                 throw;
             }
-            catch (TaskCanceledException sce)
+            catch (TaskCanceledException)
             {
-                LOGGER.Warn(sce, $"Failed to run Scan for {ActivityName()} : {sce.Message}");
+                LOGGER.Warn($"Failed to run Scan for {ActivityName()} : {sce.Message}");
             }
             catch (Exception e)
             {
