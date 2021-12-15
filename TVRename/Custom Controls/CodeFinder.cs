@@ -299,6 +299,7 @@ namespace TVRename
             if (e.KeyCode is Keys.Enter or Keys.Return)
             {
                 Search(true);
+
                 e.Handled = true;
             }
         }

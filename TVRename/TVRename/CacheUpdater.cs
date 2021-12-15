@@ -247,14 +247,14 @@ namespace TVRename
             CancellationToken cts = (CancellationToken)token;
             try
             {
-                if (downloadIds.Count == 0)
+                if (downloadIds is null || downloadIds.Count == 0)
                 {
                     DownloadDone = true;
                     downloadOk = true;
                     return;
                 }
 
-                if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TVmaze))
+                if (downloadIds.Any(s => s?.Provider == TVDoc.ProviderType.TVmaze))
                 {
                     if (!TVmaze.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
                         downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TVmaze)))
@@ -265,7 +265,7 @@ namespace TVRename
                     }
                 }
 
-                if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TheTVDB))
+                if (downloadIds.Any(s => s?.Provider == TVDoc.ProviderType.TheTVDB))
                 {
                     if (!TheTVDB.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
                         downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TheTVDB)))
@@ -276,7 +276,7 @@ namespace TVRename
                     }
                 }
 
-                if (downloadIds.Any(s => s.Provider == TVDoc.ProviderType.TMDB))
+                if (downloadIds.Any(s => s?.Provider == TVDoc.ProviderType.TMDB))
                 {
                     if (!TMDB.LocalCache.Instance.GetUpdates(showErrorMsgBox, cts,
                         downloadIds.Where(specifier => specifier.Provider == TVDoc.ProviderType.TMDB)))
