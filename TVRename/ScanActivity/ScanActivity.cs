@@ -64,7 +64,7 @@ namespace TVRename
             }
             catch (TaskCanceledException sce)
             {
-                LOGGER.Warn($"Failed to run Scan for {CheckName()} : {sce.Message}");
+                LOGGER.Error(sce,$"Failed to run Scan for {CheckName()} : {sce.Message}");
             }
             catch (Exception e)
             {

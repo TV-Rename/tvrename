@@ -200,11 +200,11 @@ namespace TVRename
             }
             catch (SourceConsistencyException sce)
             {
-                Logger.Error(sce.Message);
+                Logger.Error(sce, sce.Message);
             }
             catch (TaskCanceledException sce)
             {
-                Logger.Warn(sce.Message);
+                Logger.Error(sce, sce.Message);
             }
             catch (Exception e)
             {
