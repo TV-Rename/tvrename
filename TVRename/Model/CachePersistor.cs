@@ -77,54 +77,68 @@ namespace TVRename
             try
             {
                 RotateCacheFiles(cacheFile);
-
-                // write ourselves to disc for next time.  use same structure as thetvdb.com (limited fields, though)
-                // to make loading easy
-                XmlWriterSettings settings = new()
-                {
-                    Indent = true,
-                    NewLineOnAttributes = true
-                };
-
-                using (XmlWriter writer = XmlWriter.Create(cacheFile.FullName, settings))
-                {
-                    writer.WriteStartDocument();
-                    writer.WriteStartElement("Data");
-                    writer.WriteAttributeToXml("time", timestamp);
-
-                    foreach (KeyValuePair<int, CachedSeriesInfo> kvp in series)
-                    {
-                        if (kvp.Value.SrvLastUpdated != 0)
-                        {
-                            kvp.Value.WriteXml(writer);
-                        }
-                        else
-                        {
-                            Logger.Info($"Cannot save TV {kvp.Key} ({kvp.Value.Name}) to {cacheFile.Name} as it has not been updated at all.");
-                        }
-                    }
-
-                    foreach (KeyValuePair<int, CachedMovieInfo> kvp in movies)
-                    {
-                        if (!kvp.Value.IsSearchResultOnly)
-                        {
-                            kvp.Value.WriteXml(writer);
-                        }
-                        else
-                        {
-                            Logger.Info($"Cannot save Movie {kvp.Key} ({kvp.Value.Name}) to {cacheFile.Name} as it is a search result that has not been used.");
-                        }
-                    }
-
-                    writer.WriteEndElement(); // data
-
-                    writer.WriteEndDocument();
-                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Failed to rotate files for Cache to {cacheFile.FullName}");
+            }
+            try
+            {
+                SaveCacheFileInternal(series, movies, cacheFile, timestamp);
             }
             catch (Exception e)
             {
                 Logger.Error(e, $"Failed to save Cache to {cacheFile.FullName}");
                 throw;
+            }
+        }
+
+        private static void SaveCacheFileInternal([NotNull] ConcurrentDictionary<int, CachedSeriesInfo> series, [NotNull] ConcurrentDictionary<int, CachedMovieInfo> movies, [NotNull] FileInfo cacheFile,
+            long timestamp)
+        {
+            // write ourselves to disc for next time.  use same structure as thetvdb.com (limited fields, though)
+            // to make loading easy
+            XmlWriterSettings settings = new()
+            {
+                Indent = true,
+                NewLineOnAttributes = true
+            };
+
+            using (XmlWriter writer = XmlWriter.Create(cacheFile.FullName, settings))
+            {
+                writer.WriteStartDocument();
+                writer.WriteStartElement("Data");
+                writer.WriteAttributeToXml("time", timestamp);
+
+                foreach (KeyValuePair<int, CachedSeriesInfo> kvp in series)
+                {
+                    if (kvp.Value.SrvLastUpdated != 0)
+                    {
+                        kvp.Value.WriteXml(writer);
+                    }
+                    else
+                    {
+                        Logger.Info(
+                            $"Cannot save TV {kvp.Key} ({kvp.Value.Name}) to {cacheFile.Name} as it has not been updated at all.");
+                    }
+                }
+
+                foreach (KeyValuePair<int, CachedMovieInfo> kvp in movies)
+                {
+                    if (!kvp.Value.IsSearchResultOnly)
+                    {
+                        kvp.Value.WriteXml(writer);
+                    }
+                    else
+                    {
+                        Logger.Info(
+                            $"Cannot save Movie {kvp.Key} ({kvp.Value.Name}) to {cacheFile.Name} as it is a search result that has not been used.");
+                    }
+                }
+
+                writer.WriteEndElement(); // data
+
+                writer.WriteEndDocument();
             }
         }
 
