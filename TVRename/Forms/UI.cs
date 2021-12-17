@@ -1172,6 +1172,7 @@ namespace TVRename
                     quickTimer.Dispose();
                     refreshWTWTimer.Dispose();
                     statusTimer.Dispose();
+                    CefWrapper.Instance.Shutdown();
                 }
             }
             catch (Exception ex)

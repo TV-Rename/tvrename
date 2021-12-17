@@ -79,8 +79,13 @@ namespace TVRename
                 Helpers.OpenUrl($"https://aka.ms/vs/16/release/{urlToDownload}");
             }
             CheckForBroswerDependencies(false);
-    
+
             //Cef.EnableHighDPISupport(); todo - reinstate when we support high DPI
+        }
+
+        public void Shutdown()
+        {
+            Cef.Shutdown();
         }
 
         private void SetArchitecturePaths(CefSettings settings)
