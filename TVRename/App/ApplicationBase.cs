@@ -192,7 +192,7 @@ namespace TVRename.App
             ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.Load("Timber.io.NLog"));
 
             SetupPapertrailLogging();
-            SetupSemaTextLogging();
+            //SetupSemaTextLogging();
 
             Logger.Fatal($"TV Rename {Helpers.DisplayVersion} logging started on {Environment.OSVersion}, {(Environment.Is64BitOperatingSystem ? "64 Bit OS" : "")}, {(Environment.Is64BitProcess ? "64 Bit Process" : "")} {Environment.Version} {(Environment.UserInteractive ? "Interactive" : "")} with args: {string.Join(" ", CommandLineArgs)}");
             Logger.Info($"Copyright (C) {DateTime.Now.Year} TV Rename");
