@@ -2012,6 +2012,12 @@ namespace TVRename
 
                 if (sil.Count == 1)
                 {
+                    AddRcMenuItem($"Quick Scan {si.ShowName}", (_, _) =>
+                        {
+                            UiScan(sil, null, false, TVSettings.ScanType.FastSingleShow, MediaConfiguration.MediaType.tv);
+                            tabControl1.SelectTab(tbAllInOne);
+                        }
+                    );
                     AddRcMenuItem("Schedule", (_, _) => GotoWtwFor(si));
                     AddRcMenuItem("Edit TV Show", (_, _) => EditShow(si));
                     AddRcMenuItem("Delete TV Show", (_, _) => DeleteShow(si));
@@ -2190,6 +2196,14 @@ namespace TVRename
             AddRcMenuItem($"Scan \"{si.ShowName}\"", (_, _) =>
             {
                 UiScan(null, new List<MovieConfiguration> { si }, false, TVSettings.ScanType.SingleShow,
+                    MediaConfiguration.MediaType.movie);
+
+                tabControl1.SelectTab(tbAllInOne);
+            });
+
+            AddRcMenuItem($"Quick Scan \"{si.ShowName}\"", (_, _) =>
+            {
+                UiScan(null, new List<MovieConfiguration> { si }, false, TVSettings.ScanType.FastSingleShow,
                     MediaConfiguration.MediaType.movie);
 
                 tabControl1.SelectTab(tbAllInOne);

@@ -862,10 +862,13 @@ namespace TVRename
                     return;
                 }
 
-                if (!DoDownloadsFg(settings.Unattended, settings.Hidden, settings.Owner))
+                if (settings.Type != TVSettings.ScanType.FastSingleShow)
                 {
-                    Logger.Warn("Scan stopped as updates failed");
-                    return;
+                    if (!DoDownloadsFg(settings.Unattended, settings.Hidden, settings.Owner))
+                    {
+                        Logger.Warn("Scan stopped as updates failed");
+                        return;
+                    }
                 }
 
                 while (!Args.Hide && Environment.UserInteractive && (scanProgDlg is null || !scanProgDlg.Ready))
@@ -875,7 +878,7 @@ namespace TVRename
 
                 SetProgressDelegate noProgress = NoProgress;
 
-                if (!settings.Unattended && settings.Type != TVSettings.ScanType.SingleShow)
+                if (!settings.Unattended && settings.Type != TVSettings.ScanType.SingleShow && settings.Type != TVSettings.ScanType.FastSingleShow)
                 {
                     new FindNewItemsInDownloadFolders(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 0, 50);
                     new FindNewShowsInLibrary(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 50, 100);
@@ -884,13 +887,21 @@ namespace TVRename
                 }
 
                 new CheckShows(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.MediaLibProg);
-                new UnArchiveDownloadDirectory(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadFolderProg);
-                new CleanDownloadDirectory(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadFolderProg);
+
+                if (settings.Type != TVSettings.ScanType.FastSingleShow)
+                {
+                    new UnArchiveDownloadDirectory(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadFolderProg);
+                    new CleanDownloadDirectory(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadFolderProg);
+                }
 
                 localFinders?.Check(scanProgDlg is null ? noProgress : scanProgDlg.LocalSearchProg);
                 downloadFinders?.Check(scanProgDlg is null ? noProgress : scanProgDlg.DownloadingProg);
                 searchFinders?.Check(scanProgDlg is null ? noProgress : scanProgDlg.ToBeDownloadedProg);
-                new CleanUpTorrents(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.ToBeDownloadedProg);
+
+                if (settings.Type != TVSettings.ScanType.FastSingleShow)
+                {
+                    new CleanUpTorrents(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.ToBeDownloadedProg);
+                }
 
                 if (settings.Token.IsCancellationRequested)
                 {
@@ -907,8 +918,11 @@ namespace TVRename
                 RemoveDuplicateDownloads(settings.Unattended, settings.Owner);
 
                 downloadIdentifiers.Reset();
-                forceMoviesScan.Clear();
-                forceShowsScan.Clear();
+                if (settings.Type != TVSettings.ScanType.FastSingleShow)
+                {
+                    forceMoviesScan.Clear();
+                    forceShowsScan.Clear();
+                }
 
                 lastScanType = settings.Type;
                 LastScanComplete = true;
@@ -940,7 +954,10 @@ namespace TVRename
             //Get the default set of shows defined by the specified type
             List<MovieConfiguration> movies = GetMovieList(settings.Type, settings.Media, settings.Movies).ToList();
 
-            settings.UpdateShowsAndMovies(shows.Union(forceShowsScan.Where(m => TvLibrary.Contains(m))).ToList(), movies.Union(forceMoviesScan.Where(m=>FilmLibrary.Contains(m))).ToList());
+            if (settings.Type != TVSettings.ScanType.FastSingleShow)
+            {
+                settings.UpdateShowsAndMovies(shows.Union(forceShowsScan.Where(m => TvLibrary.Contains(m))).ToList(), movies.Union(forceMoviesScan.Where(m => FilmLibrary.Contains(m))).ToList());
+            }
         }
         public class ActionSettings
         {
@@ -1007,6 +1024,7 @@ namespace TVRename
                 TVSettings.ScanType.Quick => GetQuickShowsToScan(true, true),
                 TVSettings.ScanType.Recent => TvLibrary.GetRecentShows(),
                 TVSettings.ScanType.SingleShow => passedShows ?? new List<ShowConfiguration>(),
+                TVSettings.ScanType.FastSingleShow => passedShows ?? new List<ShowConfiguration>(),
                 _ => new List<ShowConfiguration>()
             };
         }
@@ -1024,6 +1042,7 @@ namespace TVRename
                 TVSettings.ScanType.Quick => GetQuickMoviesToScan(true),
                 TVSettings.ScanType.Recent => TVSettings.Instance.IncludeMoviesQuickRecent ? FilmLibrary.GetSortedMovies() : passedShows ?? new List<MovieConfiguration>(),
                 TVSettings.ScanType.SingleShow => passedShows ?? new List<MovieConfiguration>(),
+                TVSettings.ScanType.FastSingleShow => passedShows ?? new List<MovieConfiguration>(),
                 _ => new List<MovieConfiguration>()
             };
         }

@@ -89,7 +89,8 @@ namespace TVRename
             Full,
             Recent,
             Quick,
-            SingleShow
+            SingleShow,
+            FastSingleShow
         }
 
         #endregion ScanType enum

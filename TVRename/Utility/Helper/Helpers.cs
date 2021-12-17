@@ -70,6 +70,7 @@ namespace TVRename
                 TVSettings.ScanType.Full => "Full",
                 TVSettings.ScanType.Recent => "Recent",
                 TVSettings.ScanType.SingleShow => "Single",
+                TVSettings.ScanType.FastSingleShow => "Single (Fast)",
                 _ => throw new ArgumentOutOfRangeException(nameof(st), st, null)
             };
         }
