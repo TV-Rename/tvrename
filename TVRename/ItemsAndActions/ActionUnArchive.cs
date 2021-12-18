@@ -81,21 +81,33 @@ namespace TVRename
             {
                 return ActionOutcome.CompleteFail();
             }
-            Directory.CreateDirectory(archiveFile.FileFullNameNoExt());
 
-            using (IArchive archive = GetArchive(archiveFile))
+            try
             {
-                foreach (IArchiveEntry entry in archive.Entries.Where(entry => !entry.IsDirectory))
+                Directory.CreateDirectory(archiveFile.FileFullNameNoExt());
+
+                using (IArchive archive = GetArchive(archiveFile))
                 {
-                    entry.WriteToDirectory(archiveFile.FileFullNameNoExt(), new ExtractionOptions
+                    foreach (IArchiveEntry entry in archive.Entries)
                     {
-                        ExtractFullPath = true,
-                        Overwrite = true,
-                    });
+                        entry.WriteToDirectory(archiveFile.FileFullNameNoExt(), new ExtractionOptions
+                        {
+                            ExtractFullPath = true,
+                            Overwrite = true,
+                        });
+                    }
                 }
+                DeleteOrRecycleFile(archiveFile);
+                return ActionOutcome.Success();
             }
-            DeleteOrRecycleFile(archiveFile);
-            return ActionOutcome.Success();
+            catch (System.IO.DirectoryNotFoundException dnfe)
+            {
+                return new ActionOutcome(dnfe);
+            }
+            catch (System.IO.IOException dnfe)
+            {
+                return new ActionOutcome(dnfe);
+            }
         }
         private static IArchive GetArchive([NotNull] FileInfo archive)
         {
