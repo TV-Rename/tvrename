@@ -357,6 +357,30 @@ namespace TVRename
                 return false;
             }
 
+            if (chkManualFolders.Checked && lvManualFolders.Items.Count==0)
+            {
+                MessageBox.Show("Please add manual folders or disable manual/additional Folders"
+                    , "TV Rename Add/Edit Movie",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                Folders.SelectedTab = tabPage5;
+                chkManualFolders.Focus();
+
+                return false;
+            }
+
+            if (!chkManualFolders.Checked && !chkAutoFolders.Checked)
+            {
+                MessageBox.Show("Please enable either automatic or manual folders"
+                    , "TV Rename Add/Edit Movie",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                Folders.SelectedTab = tabPage5;
+                chkManualFolders.Focus();
+
+                return false;
+            }
+
             return true;
         }
 
