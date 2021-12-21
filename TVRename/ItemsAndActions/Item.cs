@@ -31,9 +31,9 @@ namespace TVRename
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        // This method is called by the Set accessor of each property.  
-        // The CallerMemberName attribute that is applied to the optional propertyName  
-        // parameter causes the property name of the caller to be substituted as an argument.  
+        // This method is called by the Set accessor of each property.
+        // The CallerMemberName attribute that is applied to the optional propertyName
+        // parameter causes the property name of the caller to be substituted as an argument.
         protected void NotifyPropertyChanged(String propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -62,11 +62,11 @@ namespace TVRename
         [NotNull]
         public virtual string SourceDetails => string.Empty;
 
-        private string ErrorTextValue;
+        private string errorTextValue;
         public string ErrorText {
-            get { return ErrorTextValue; }
+            get => errorTextValue;
             protected internal set {
-                this.ErrorTextValue = value;
+                this.errorTextValue = value;
                 NotifyPropertyChanged("ErrorText");
             } } // Human-readable error message, for when Error is true
 
@@ -113,7 +113,7 @@ namespace TVRename
             }
             return left.CompareTo(right);
         }
-        public abstract bool checkedItem
+        public abstract bool CheckedItem
         {
             get;
             set;

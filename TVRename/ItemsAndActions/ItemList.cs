@@ -8,9 +8,7 @@
 
 using JetBrains.Annotations;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace TVRename
 {
@@ -32,7 +30,7 @@ namespace TVRename
         [NotNull]
         public List<Action> Actions => this.OfType<Action>().ToList();
 
-        public List<Item> Checked => this.Where(i=>i.checkedItem).ToList();
+        public List<Item> Checked => this.Where(i=>i.CheckedItem).ToList();
 
         [NotNull]
         public List<ItemMissing> Missing => this.OfType<ItemMissing>().ToList();

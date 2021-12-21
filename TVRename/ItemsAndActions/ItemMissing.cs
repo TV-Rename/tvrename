@@ -38,7 +38,7 @@ namespace TVRename
             }
         }
         
-        public override bool checkedItem { get => false; set { } }
+        public override bool CheckedItem { get => false; set { } }
         public override int IconNumber => 1;
         public abstract bool DoRename { get; }
         public abstract MediaConfiguration Show { get; }

@@ -63,7 +63,7 @@ namespace TVRename
         [NotNull]
         public override string Name => "Already Downloading";
 
-        public override bool checkedItem { get => false; set { }  }
+        public override bool CheckedItem { get => false; set { }  }
 
         public override int CompareTo(Item o)
         {

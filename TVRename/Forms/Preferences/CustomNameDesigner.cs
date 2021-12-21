@@ -8,7 +8,6 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {

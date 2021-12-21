@@ -199,6 +199,7 @@ namespace TVRename.App
             Logger.Info("This program comes with ABSOLUTELY NO WARRANTY; This is free software, and you are welcome to redistribute it under certain conditions");
         }
 
+        // ReSharper disable once UnusedMember.Local
         private static void SetupSemaTextLogging()
         {
             try

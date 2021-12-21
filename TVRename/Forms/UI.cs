@@ -2285,7 +2285,7 @@ namespace TVRename
         private void ManuallyAddFileForItem([NotNull] ItemMissing mi, string fileName)
         {
             mDoc.UpdateMissingAction(mi, fileName);
-            FillActionList(true);
+            FillActionList();
         }
 
         private void IgnoreSelectedSeasons(IEnumerable<Item>? actions)
@@ -2301,7 +2301,7 @@ namespace TVRename
             }
 
             FillMyShows(true);
-            FillActionList(true);
+            FillActionList();
         }
 
         private void GotoWtwFor(ShowConfiguration show)
@@ -3216,7 +3216,7 @@ namespace TVRename
             }
 
             tabControl1.SelectTab(tbAllInOne);
-            FillActionList(false);
+            FillActionList();
         }
 
         private void UpdateImages(IReadOnlyCollection<MovieConfiguration>? sis)
@@ -3233,7 +3233,7 @@ namespace TVRename
             }
 
             tabControl1.SelectTab(tbAllInOne);
-            FillActionList(false);
+            FillActionList();
         }
 
         private void bnMyShowsRefresh_Click(object? sender, EventArgs? e)
@@ -3613,7 +3613,7 @@ namespace TVRename
             scanProgDlg?.Close();
             FillMyShows(true); // scanning can download more info to be displayed in my shows
             FillMyMovies();
-            FillActionList(false);
+            FillActionList();
             offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
         }
 
@@ -3731,7 +3731,7 @@ namespace TVRename
             return s.IconNumber;
         }
 
-        public void FillActionList(bool preserveExistingCheckboxes)
+        public void FillActionList()
         {
             if (olvAction.IsDisposed)
             {
@@ -3749,11 +3749,6 @@ namespace TVRename
 
             UpdateActionCheckboxes();
             internalCheckChange = false;
-        }
-
-        private void FillNewActionList(bool preserveExistingCheckboxes)
-        {
-
         }
 
         [NotNull]
@@ -3807,7 +3802,7 @@ namespace TVRename
 
         private void bwAction_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            FillActionList(true);
+            FillActionList();
             RefreshWTW(false, lastActionUnattended);
         }
 
@@ -3818,7 +3813,7 @@ namespace TVRename
                 mDoc.RevertAction(item);
             }
 
-            FillActionList(true);
+            FillActionList();
             RefreshWTW(false, false);
         }
 
@@ -4019,7 +4014,7 @@ namespace TVRename
         private void ActionDeleteSelected()
         {
             mDoc.TheActionList.Remove(GetSelectedItems());
-            FillActionList(true); //TODO - optimise this so we just remove the selected items
+            FillActionList(); //TODO - optimise this so we just remove the selected items
         }
 
         private void lvAction_KeyDown(object sender, [NotNull] KeyEventArgs e)
@@ -4142,7 +4137,7 @@ namespace TVRename
             {
                 mDoc.SetDirty();
                 mDoc.RemoveIgnored();
-                FillActionList(true); //TODO - Optimise this so that we just update selected
+                FillActionList(); //TODO - Optimise this so that we just update selected
             }
         }
 
@@ -4465,7 +4460,7 @@ namespace TVRename
 
             foreach(Item x in mDoc.TheActionList.Where(isValid))
             {
-                x.checkedItem = checkedStatus;
+                x.CheckedItem = checkedStatus;
             }
 
             internalCheckChange = false;
@@ -5209,7 +5204,7 @@ namespace TVRename
 
             mDoc.MovieFolderScan(this, downloadFolder);
 
-            FillActionList(true);
+            FillActionList();
             FocusOnScanResults();
             FillMyMovies(); //We may have updated movies
             Logger.Info("Finished looking for new movies.");

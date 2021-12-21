@@ -12,19 +12,19 @@ namespace TVRename
 {
     public abstract class Action : Item // Something we can do
     {
-        protected bool checkedItemValue;
-        public override bool checkedItem
+        private bool checkedItemValue;
+        public sealed override bool CheckedItem
         {
-            get { return checkedItemValue; }
+            get => checkedItemValue;
             set
             {
-                this.checkedItemValue = value;
-                NotifyPropertyChanged("checkedItem");
+                checkedItemValue = value;
+                NotifyPropertyChanged("CheckedItem");
             }
         }
         protected Action()
         {
-            checkedItem = true;
+            CheckedItem = true;
         }
         public abstract string ProgressText { get; } // shortish text to display to user while task is running
 

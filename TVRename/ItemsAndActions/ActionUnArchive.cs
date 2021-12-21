@@ -15,7 +15,6 @@ using SharpCompress.Archives.Tar;
 using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
 using System;
-using System.Linq;
 using JetBrains.Annotations;
 
 namespace TVRename
@@ -52,7 +51,7 @@ namespace TVRename
         [NotNull]
         public override string ScanListViewGroup => "lvgActionUnpack";
 
-        public override int IconNumber => 11; 
+        public override int IconNumber => 11;
         public override IgnoreItem? Ignore => null;
 
         [NotNull]
