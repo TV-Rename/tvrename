@@ -14,7 +14,7 @@ using System.Runtime.CompilerServices;
 
 namespace TVRename
 {
-    public sealed class ItemList : SafeList<Item>, INotifyPropertyChanged
+    public sealed class ItemList : SafeList<Item>
     {
         public void Add(IEnumerable<Item>? slil)
         {
@@ -31,6 +31,8 @@ namespace TVRename
 
         [NotNull]
         public List<Action> Actions => this.OfType<Action>().ToList();
+
+        public List<Item> Checked => this.Where(i=>i.checkedItem).ToList();
 
         [NotNull]
         public List<ItemMissing> Missing => this.OfType<ItemMissing>().ToList();
@@ -78,20 +80,6 @@ namespace TVRename
             {
                 Remove(sli);
             }
-        }
-
-        public void NotifyUpdated()
-        {
-            OnPropertyChanged();
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            // ReSharper disable once ConstantConditionalAccessQualifier
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public void Replace(IEnumerable<Item>? toRemove, Item? newItem)

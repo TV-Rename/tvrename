@@ -12,6 +12,20 @@ namespace TVRename
 {
     public abstract class Action : Item // Something we can do
     {
+        protected bool checkedItemValue;
+        public override bool checkedItem
+        {
+            get { return checkedItemValue; }
+            set
+            {
+                this.checkedItemValue = value;
+                NotifyPropertyChanged("checkedItem");
+            }
+        }
+        protected Action()
+        {
+            checkedItem = true;
+        }
         public abstract string ProgressText { get; } // shortish text to display to user while task is running
 
         private double percent;

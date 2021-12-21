@@ -8,10 +8,11 @@
 
 using JetBrains.Annotations;
 using System;
+using System.ComponentModel;
 
 namespace TVRename
 {
-    public abstract class Item : IComparable // something shown in the list on the Scan tab (not always an Action)
+    public abstract class Item : IComparable, INotifyPropertyChanged // something shown in the list on the Scan tab (not always an Action)
     {
         public abstract string TargetFolder { get; } // return a list of folders for right-click menu
         public abstract string ScanListViewGroup { get; } // which group name for the listview
@@ -27,6 +28,16 @@ namespace TVRename
         public abstract string Name { get; } // Name of this action, e.g. "Copy", "Move", "Download"
 
         public ItemMissing? UndoItemMissing; //Item to revert to if we have to cancel this action
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // This method is called by the Set accessor of each property.  
+        // The CallerMemberName attribute that is applied to the optional propertyName  
+        // parameter causes the property name of the caller to be substituted as an argument.  
+        protected void NotifyPropertyChanged(String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         protected static IgnoreItem? GenerateIgnore(string? file) => string.IsNullOrEmpty(file) ? null : new IgnoreItem(file);
 
@@ -51,7 +62,13 @@ namespace TVRename
         [NotNull]
         public virtual string SourceDetails => string.Empty;
 
-        public string ErrorText { get; protected internal set; } // Human-readable error message, for when Error is true
+        private string ErrorTextValue;
+        public string ErrorText {
+            get { return ErrorTextValue; }
+            protected internal set {
+                this.ErrorTextValue = value;
+                NotifyPropertyChanged("ErrorText");
+            } } // Human-readable error message, for when Error is true
 
         public int CompareTo(object obj) => CompareTo((Item)obj);
 
@@ -95,6 +112,11 @@ namespace TVRename
                 return -1;
             }
             return left.CompareTo(right);
+        }
+        public abstract bool checkedItem
+        {
+            get;
+            set;
         }
     }
 }

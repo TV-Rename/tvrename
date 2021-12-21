@@ -15,9 +15,9 @@ namespace TVRename
     public class ItemDownloading : Item
     {
         private readonly IDownloadInformation entry;
-        public readonly string DesiredLocationNoExt;
+        private readonly string desiredLocationNoExt;
 
-        public override IgnoreItem? Ignore => GenerateIgnore(DesiredLocationNoExt);
+        public override IgnoreItem? Ignore => GenerateIgnore(desiredLocationNoExt);
         [NotNull]
         public override string ScanListViewGroup => "lvgDownloading";
 
@@ -30,7 +30,7 @@ namespace TVRename
 
         private ItemDownloading(IDownloadInformation dl, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp, ItemMissing undoItem)
         {
-            DesiredLocationNoExt = desiredLocationNoExt;
+            this.desiredLocationNoExt = desiredLocationNoExt;
             entry = dl;
             UndoItemMissing = undoItem;
             IconNumber = tApp switch
@@ -63,6 +63,8 @@ namespace TVRename
         [NotNull]
         public override string Name => "Already Downloading";
 
+        public override bool checkedItem { get => false; set { }  }
+
         public override int CompareTo(Item o)
         {
             if (o is not ItemDownloading ut)
@@ -80,7 +82,7 @@ namespace TVRename
                 return -1;
             }
 
-            return string.Compare(DesiredLocationNoExt, ut.DesiredLocationNoExt, StringComparison.Ordinal);
+            return string.Compare(desiredLocationNoExt, ut.desiredLocationNoExt, StringComparison.Ordinal);
         }
 
         #endregion Item Members

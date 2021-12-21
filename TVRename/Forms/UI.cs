@@ -724,12 +724,14 @@ namespace TVRename
 
         private static bool UseCustomObject([NotNull] ObjectListView view)
         {
+            //TODO - get working for movies
             return view.SelectedObjects.OfType<ProcessedEpisode>().Any(episode =>
                 episode.Show.UseCustomSearchUrl && episode.Show.CustomSearchUrl.HasValue());
         }
 
         private static bool UseCustom([NotNull] ListView view)
         {
+            //TODO - get working for movies
             foreach (ListViewItem lvi in view.SelectedItems)
             {
                 if (lvi.Tag is not ProcessedEpisode pe)
@@ -2245,7 +2247,7 @@ namespace TVRename
         private ItemList GetSelectedItems() => new() { olvAction.SelectedObjects.OfType<Item>() };
 
         [NotNull]
-        private ItemList GetCheckedItems() => new() { olvAction.CheckedObjects.OfType<Item>() };
+        private ItemList GetCheckedItems() => new() { mDoc.TheActionList.Checked };
 
         private void IncludeSeason([NotNull] ShowConfiguration si, int seasonNumber)
         {
@@ -3729,87 +3731,29 @@ namespace TVRename
             return s.IconNumber;
         }
 
-        private void SetCheckboxes()
-        {
-            olvAction.ItemChecked -= lvAction_ItemChecked;
-            olvAction.ItemCheck -= olvAction_ItemCheck;
-            internalCheckChange = true;
-
-            olvAction.BeginUpdate();
-            if (mDoc.TheActionList.Actions.Count<1000)
-            {
-                if (2 * mDoc.TheActionList.Actions.Count > mDoc.TheActionList.Count)
-                {
-                    olvAction.CheckAll();
-                    foreach (Item i in mDoc.TheActionList.Where(i => i is not Action))
-                    {
-                        olvAction.UncheckObject(i);
-                    }
-                }
-                else
-                {
-                    olvAction.CheckObjects(mDoc.TheActionList.Actions);
-                }
-            }
-
-            internalCheckChange = false;
-
-            olvAction.ItemChecked += lvAction_ItemChecked;
-            olvAction.ItemCheck += olvAction_ItemCheck;
-
-            olvAction.EndUpdate();
-            UpdateActionCheckboxes();
-        }
-
         public void FillActionList(bool preserveExistingCheckboxes)
-        {
-            internalCheckChange = true;
-            FillNewActionList(preserveExistingCheckboxes);
-            internalCheckChange = false;
-            UpdateActionCheckboxes();
-        }
-
-        private void FillNewActionList(bool preserveExistingCheckboxes)
         {
             if (olvAction.IsDisposed)
             {
                 return;
             }
 
+            internalCheckChange = true;
+
             byte[] oldState = olvAction.SaveState();
             olvAction.BeginUpdate();
-
-            if (preserveExistingCheckboxes)
-            {
-                List<Item> oldItems = olvAction.Items.OfType<OLVListItem>().Select(lvi => (Item)lvi.RowObject).ToList();
-
-                mDoc.TheActionList.NotifyUpdated();
-                olvAction.RebuildColumns();
-
-                List<Item> newItems = olvAction.Items.OfType<OLVListItem>().Select(lvi => (Item)lvi.RowObject).ToList();
-
-                //We have a new addition - check its checkbox
-                internalCheckChange = true;
-                olvAction.ItemCheck -= olvAction_ItemCheck;
-                olvAction.ItemChecked -= lvAction_ItemChecked;
-
-                olvAction.CheckObjects(newItems.Where(newRow => !oldItems.Contains(newRow)).Where(newAction => newAction is Action));
-
-                internalCheckChange = false;
-                olvAction.ItemCheck += olvAction_ItemCheck;
-                olvAction.ItemChecked += lvAction_ItemChecked;
-            }
-            else
-            {
-                mDoc.TheActionList.NotifyUpdated();
-
-                olvAction.RebuildColumns();
-
-                SetCheckboxes();
-            }
+            olvAction.SetObjects(mDoc.TheActionList);
+            olvAction.RebuildColumns();
             olvAction.RestoreState(oldState);
             olvAction.EndUpdate();
+
             UpdateActionCheckboxes();
+            internalCheckChange = false;
+        }
+
+        private void FillNewActionList(bool preserveExistingCheckboxes)
+        {
+
         }
 
         [NotNull]
@@ -4065,8 +4009,9 @@ namespace TVRename
                 return;
             }
 
-            btnActionBTSearch.Enabled = lvr.Missing.Any();
-            tbActionJackettSearch.Enabled = lvr.Missing.Any();
+            bool anyMissing = lvr.Missing.Any();
+            btnActionBTSearch.Enabled = anyMissing;
+            tbActionJackettSearch.Enabled = anyMissing;
 
             showRightClickMenu.Items.Clear();
         }
@@ -4074,7 +4019,7 @@ namespace TVRename
         private void ActionDeleteSelected()
         {
             mDoc.TheActionList.Remove(GetSelectedItems());
-            FillActionList(true);
+            FillActionList(true); //TODO - optimise this so we just remove the selected items
         }
 
         private void lvAction_KeyDown(object sender, [NotNull] KeyEventArgs e)
@@ -4095,7 +4040,7 @@ namespace TVRename
             }
 
             ItemList all = mDoc.TheActionList;
-            List<Item> chk = olvAction.CheckedObjects.OfType<Item>().ToList();
+            List<Item> chk = mDoc.TheActionList.Checked;
 
             SetCheckbox(mcbRename, RenameActions(all), RenameActions(chk));
             SetCheckbox(mcbCopyMove, all.OfType<ActionCopyMoveRename>().Where(a => a.Operation != ActionCopyMoveRename.Op.rename), chk.OfType<ActionCopyMoveRename>().Where(a => a.Operation != ActionCopyMoveRename.Op.rename));
@@ -4136,20 +4081,6 @@ namespace TVRename
 
         private void olvAction_ItemCheck(object sender, [NotNull] ItemCheckEventArgs e)
         {
-            if (e.Index % 100 == 0)
-            {
-                Logger.Info($"Updated {e.Index} from {mDoc.TheActionList.Count} records = {e.Index / (double)mDoc.TheActionList.Count:P2}");
-            }
-            if (internalCheckChange)
-            {
-                return;
-            }
-
-            //Needed to de-select any un action able items
-            if (olvAction.GetModelObject(e.Index) is Item action && action is not Action)
-            {
-                e.NewValue = CheckState.Unchecked;
-            }
         }
 
         private void bnActionOptions_Click(object sender, EventArgs e) => DoPrefs(true);
@@ -4211,7 +4142,7 @@ namespace TVRename
             {
                 mDoc.SetDirty();
                 mDoc.RemoveIgnored();
-                FillActionList(true);
+                FillActionList(true); //TODO - Optimise this so that we just update selected
             }
         }
 
@@ -4528,17 +4459,13 @@ namespace TVRename
                 _ => throw new ArgumentOutOfRangeException()
             };
 
-            CheckState cs = menuItem.CheckState;
+            bool checkedStatus = menuItem.CheckState == CheckState.Checked;
 
             internalCheckChange = true;
 
-            if (cs == CheckState.Checked)
+            foreach(Item x in mDoc.TheActionList.Where(isValid))
             {
-                olvAction.CheckObjects(olvAction.Objects.OfType<Item>().Where(isValid).ToList());
-            }
-            else
-            {
-                olvAction.UncheckObjects(olvAction.Objects.OfType<Item>().Where(isValid).ToList());
+                x.checkedItem = checkedStatus;
             }
 
             internalCheckChange = false;

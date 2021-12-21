@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 
 namespace TVRename
 {
@@ -10,7 +12,7 @@ namespace TVRename
     /// A thread-safe IList implementation using the custom SafeEnumerator class
     /// See: http://www.codeproject.com/KB/cs/safe_enumerable.aspx
     /// </summary>
-    public class SafeList<T> : IList<T>
+    public class SafeList<T> : IList<T>, System.Collections.Specialized.INotifyCollectionChanged
     {
         // the (thread-unsafe) collection that actually stores everything
         private readonly List<T> inner;
@@ -21,6 +23,19 @@ namespace TVRename
         public SafeList()
         {
             inner = new List<T>();
+        }
+
+        public event NotifyCollectionChangedEventHandler CollectionChanged
+        {
+            add
+            {
+                ((INotifyCollectionChanged)inner).CollectionChanged += value;
+            }
+
+            remove
+            {
+                ((INotifyCollectionChanged)inner).CollectionChanged -= value;
+            }
         }
 
         public int Count
