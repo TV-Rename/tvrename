@@ -28,7 +28,7 @@ namespace TVRename.Forms
         // ReSharper disable once InconsistentNaming
         private void UpdateUI()
         {
-            olvDuplicates.SetObjects(dupMovies);
+            olvDuplicates.SetObjects(dupMovies, true);
         }
 
         private void AddRcMenuItem([NotNull] string label, EventHandler command)

@@ -7,8 +7,8 @@ namespace TVRename.SAB
         public string? Status { get; set; }
         public string? Mb { get; set; }
         public string? Filename { get; set; }
-        public string? Sizeleft { get; set; }
-        public string? Timeleft { get; set; }
+        public string? SizeLeft { get; set; }
+        public string? TimeLeft { get; set; }
 
         string? IDownloadInformation.FileIdentifier => Filename;
         string? IDownloadInformation.Destination => Filename;
@@ -18,10 +18,10 @@ namespace TVRename.SAB
         {
             get
             {
-                string txt = $"{Status}, {Sizeleft}% Complete";
+                string txt = $"{Status}, {SizeLeft}% Complete";
                 if (Status == "Downloading")
                 {
-                    txt += $", {Timeleft} left";
+                    txt += $", {TimeLeft} left";
                 }
                 return txt;
             }

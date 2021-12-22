@@ -24,13 +24,6 @@ namespace TVRename
         string IDownloadInformation.Destination => DownloadingTo;
 
         [NotNull]
-        string IDownloadInformation.RemainingText
-        {
-            get
-            {
-                int p = PercentDone;
-                return p == -1 ? "" : PercentDone + "% Complete";
-            }
-        }
+        string IDownloadInformation.RemainingText => PercentDone == -1 ? "" : PercentDone + "% Complete";
     }
 }

@@ -103,6 +103,7 @@ namespace TVRename.Forms
         {
             string url = e.Url.AbsoluteUri;
 
+            // ReSharper disable once StringLiteralTypo
             if (url.Contains(@"ieframe.dll"))
             {
                 url = e.Url.Fragment.Substring(1);

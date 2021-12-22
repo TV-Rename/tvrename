@@ -168,15 +168,9 @@ namespace TVRename
 
         #region Item Members
 
-        public override bool SameAs(Item o)
-        {
-            return o is ActionDownloadImage image && image.destination == destination;
-        }
+        public override bool SameAs(Item o) => o is ActionDownloadImage image && image.destination == destination;
 
-        public override int CompareTo(Item o)
-        {
-            return o is not ActionDownloadImage dl ? -1 : string.Compare(destination.FullName, dl.destination.FullName, StringComparison.Ordinal);
-        }
+        public override int CompareTo(Item o) => o is not ActionDownloadImage dl ? -1 : string.Compare(destination.FullName, dl.destination.FullName, StringComparison.Ordinal);
 
         public override int IconNumber => 5;
         public override IgnoreItem? Ignore => GenerateIgnore(destination.FullName);

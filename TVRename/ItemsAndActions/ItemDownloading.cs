@@ -55,10 +55,7 @@ namespace TVRename
 
         #region Item Members
 
-        public override bool SameAs(Item o)
-        {
-            return o is ItemDownloading torrenting && entry == torrenting.entry;
-        }
+        public override bool SameAs(Item o) => o is ItemDownloading torrent && entry == torrent.entry;
 
         [NotNull]
         public override string Name => "Already Downloading";
@@ -72,17 +69,7 @@ namespace TVRename
                 return -1;
             }
 
-            if (Episode is null)
-            {
-                return 1;
-            }
-
-            if (ut.Episode is null)
-            {
-                return -1;
-            }
-
-            return string.Compare(desiredLocationNoExt, ut.desiredLocationNoExt, StringComparison.Ordinal);
+            return string.Compare(DestinationFile, ut.DestinationFile, StringComparison.Ordinal);
         }
 
         #endregion Item Members

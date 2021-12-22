@@ -112,17 +112,17 @@ namespace TVRename
                 owner.ShowChildDialog(ccform);
                 DialogResult ccresult = ccform.DialogResult;
                 ccform.Dispose();
-                if (ccresult == DialogResult.Retry)
+                switch (ccresult)
                 {
-                    TheTVDB.LocalCache.Instance.ReConnect(false);
-                    TVmaze.LocalCache.Instance.ReConnect(false);
-                    TMDB.LocalCache.Instance.ReConnect(false);
-                }
-
-                if (ccresult == DialogResult.Abort)
-                {
-                    TVSettings.Instance.OfflineMode = true;
-                    downloadOk = true;
+                    case DialogResult.Retry:
+                        TheTVDB.LocalCache.Instance.ReConnect(false);
+                        TVmaze.LocalCache.Instance.ReConnect(false);
+                        TMDB.LocalCache.Instance.ReConnect(false);
+                        break;
+                    case DialogResult.Abort:
+                        TVSettings.Instance.OfflineMode = true;
+                        downloadOk = true;
+                        break;
                 }
             }
 
@@ -384,7 +384,7 @@ namespace TVRename
 
         private void WaitForBgDownloadDone()
         {
-            if (mDownloaderThread != null && mDownloaderThread.IsAlive)
+            if (mDownloaderThread is { IsAlive: true })
             {
                 mDownloaderThread.Join();
             }

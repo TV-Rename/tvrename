@@ -94,7 +94,7 @@ namespace TVRename.Forms
             int maxRelated = recommendationRows.MaxOrDefault(x => x.Related.Count,0);
             int maxSimilar = recommendationRows.MaxOrDefault(x => x.Similar.Count, 0);
 
-            lvRecommendations.SetObjects(recommendationRows.Select(x => new RecommendationRow(x, media, trendingWeight, topWeight, relatedWeight, similarWeight,maxRelated,maxSimilar)));
+            lvRecommendations.SetObjects(recommendationRows.Select(x => new RecommendationRow(x, media, trendingWeight, topWeight, relatedWeight, similarWeight,maxRelated,maxSimilar)),true);
         }
 
         private void ClearGrid()

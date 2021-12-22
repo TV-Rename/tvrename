@@ -34,7 +34,7 @@ namespace TVRename
         // This method is called by the Set accessor of each property.
         // The CallerMemberName attribute that is applied to the optional propertyName
         // parameter causes the property name of the caller to be substituted as an argument.
-        protected void NotifyPropertyChanged(String propertyName = "")
+        protected void NotifyPropertyChanged(string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -42,7 +42,7 @@ namespace TVRename
         protected static IgnoreItem? GenerateIgnore(string? file) => string.IsNullOrEmpty(file) ? null : new IgnoreItem(file);
 
         [NotNull]
-        public virtual string SeriesName => Episode is null ? Movie?.ShowName ?? string.Empty : UI.GenerateShowUIName(Episode); //UI.GenerateShowUiName(Movie!):UI.GenerateShowUIName(Episode);
+        public virtual string SeriesName => Movie?.ShowName ?? Episode.Show.ShowName;
 
         [NotNull]
         public virtual string SeasonNumber => Episode?.SeasonNumberAsText ?? string.Empty;
@@ -50,6 +50,7 @@ namespace TVRename
         [NotNull]
         public virtual string EpisodeString => Episode?.EpNumsAsString() ?? string.Empty;
 
+        // ReSharper disable once UnusedMember.Global
         public int? EpisodeNumber => Episode?.AppropriateEpNum;
 
         [NotNull]
@@ -66,7 +67,7 @@ namespace TVRename
         public string ErrorText {
             get => errorTextValue;
             protected internal set {
-                this.errorTextValue = value;
+                errorTextValue = value;
                 NotifyPropertyChanged("ErrorText");
             } } // Human-readable error message, for when Error is true
 
@@ -89,18 +90,12 @@ namespace TVRename
             }
             return left.Equals(right);
         }
-        public static bool operator !=([CanBeNull] Item left, [CanBeNull] Item right)
-        {
-            return !(left == right);
-        }
-        public static bool operator <(Item left, Item right)
-        {
-            return Compare(left, right) < 0;
-        }
-        public static bool operator >(Item left, Item right)
-        {
-            return Compare(left, right) > 0;
-        }
+        public static bool operator !=([CanBeNull] Item left, [CanBeNull] Item right) => !(left == right);
+
+        public static bool operator <(Item left, Item right) => Compare(left, right) < 0;
+
+        public static bool operator >(Item left, Item right) => Compare(left, right) > 0;
+
         public static int Compare(Item left, Item right)
         {
             if (ReferenceEquals(left, right))

@@ -25,7 +25,7 @@ namespace TVRename
         public override string TargetFolder => targetFolder;
 
         [NotNull]
-        public override string ScanListViewGroup => "lvgActionRename";
+        public override string ScanListViewGroup => "lvgActionMove";
 
         public override int IconNumber => 4;
 

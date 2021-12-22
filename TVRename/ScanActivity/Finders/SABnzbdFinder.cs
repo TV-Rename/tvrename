@@ -145,9 +145,9 @@ namespace TVRename
             {
                 Filename = filename,
                 Mb = slot.Attribute("mb")?.Value,
-                Sizeleft = slot.Attribute("sizeleft")?.Value,
+                SizeLeft = slot.Attribute("sizeleft")?.Value,
                 Status = slot.Attribute("status")?.Value,
-                Timeleft = slot.Attribute("timeleft")?.Value
+                TimeLeft = slot.Attribute("timeleft")?.Value
             };
         }
     }

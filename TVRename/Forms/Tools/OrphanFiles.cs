@@ -133,7 +133,7 @@ namespace TVRename.Forms.Tools
                             }
                             else if (folders.ContainsKey(seasonNumber) && !folders[seasonNumber].Contains(showFolder))
                             {
-                                issues.Add(new FileIssue(show, file, "File is in the wrong cachedSeries folder", seasonNumber, episodeNumber));
+                                issues.Add(new FileIssue(show, file, "File is in the wrong series folder", seasonNumber, episodeNumber));
                             }
                             else
                             {

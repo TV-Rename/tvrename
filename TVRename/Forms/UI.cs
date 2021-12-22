@@ -342,10 +342,10 @@ namespace TVRename
 
             if (ep.SeasonNumber.HasValue())
             {
-                return $"{ep.SeriesName} - Season {ep.SeasonNumber}";
+                return $"{PostpendTheIfNeeded(ep.SeriesName)} - Season {ep.SeasonNumber}";
             }
 
-            return ep.SeriesName;
+            return PostpendTheIfNeeded(ep.SeriesName);
         }
 
         [NotNull]
@@ -464,8 +464,10 @@ namespace TVRename
                         .Where(cmr => cmr.Operation == ActionCopyMoveRename.Op.move)
                         .ToList();
 
+                    List<ActionMoveRenameDirectory> x = mDoc.TheActionList.OfType<ActionMoveRenameDirectory>().ToList();
+
                     long moveSize = moveActions.Where(item => item.From.Exists).Sum(copy => copy.From.Length);
-                    return HeaderName("Move", moveActions.Count, moveSize);
+                    return HeaderName("Move", moveActions.Count + x.Count, moveSize);
 
                 default:
                     return "UNKNOWN";

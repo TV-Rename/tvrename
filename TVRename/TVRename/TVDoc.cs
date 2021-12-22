@@ -215,7 +215,7 @@ namespace TVRename
             CheckForUsefulTVIds(TheTVDB.LocalCache.Instance, ProviderType.TVmaze);
             CheckForUsefulTVIds(TheTVDB.LocalCache.Instance, ProviderType.TMDB);
 
-            //We don't bother checking a non-existant TVMaze movie cache
+            //We don't bother checking a non-existent TVMaze movie cache
 
             CheckForUsefulMovieIds(TMDB.LocalCache.Instance, ProviderType.TheTVDB);
             CheckForUsefulMovieIds(TMDB.LocalCache.Instance, ProviderType.TVmaze);
@@ -689,7 +689,7 @@ namespace TVRename
             }
 
             // ReSharper disable once InconsistentNaming
-            List<ActionListExporter> ALExpoters = new()
+            List<ActionListExporter> ALExporters = new()
             {
                 new MissingXML(TheActionList),
                 new MissingCSV(TheActionList),
@@ -699,12 +699,9 @@ namespace TVRename
                 new RenamingXml(TheActionList)
             };
 
-            foreach (ActionListExporter ue in ALExpoters)
+            foreach (ActionListExporter ue in ALExporters.Where(ue => ue.Active() && ue.ApplicableFor(lastScanType)))
             {
-                if (ue.Active() && ue.ApplicableFor(lastScanType))
-                {
-                    ue.RunAsThread();
-                }
+                ue.RunAsThread();
             }
         }
 
@@ -855,14 +852,7 @@ namespace TVRename
                 UpdateMediaToScan(settings);
                 TheActionList.Clear();
 
-                //If still null then return
-                if (!settings.AnyMediaToUpdate)
-                {
-                    Logger.Warn("No Shows/Movies Provided to Scan");
-                    return;
-                }
-
-                if (settings.Type != TVSettings.ScanType.FastSingleShow)
+                if (settings.Type != TVSettings.ScanType.FastSingleShow && settings.AnyMediaToUpdate)
                 {
                     if (!DoDownloadsFg(settings.Unattended, settings.Hidden, settings.Owner))
                     {
@@ -884,6 +874,13 @@ namespace TVRename
                     new FindNewShowsInLibrary(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.AddNewProg, 50, 100);
 
                     UpdateMediaToScan(settings);
+                }
+
+                //If still null then return
+                if (!settings.AnyMediaToUpdate)
+                {
+                    Logger.Warn("No Shows/Movies Provided to Scan");
+                    return;
                 }
 
                 new CheckShows(this, settings).Check(scanProgDlg is null ? noProgress : scanProgDlg.MediaLibProg);

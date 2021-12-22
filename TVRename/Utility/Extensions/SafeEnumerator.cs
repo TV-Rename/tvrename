@@ -42,14 +42,8 @@ namespace TVRename
         /// to the inner enumerator, that actually iterates
         /// over some collection
         /// </remarks>
-        public bool MoveNext()
-        {
-            return inner.MoveNext();
-        }
+        public bool MoveNext() => inner.MoveNext();
 
-        public void Reset()
-        {
-            inner.Reset();
-        }
+        public void Reset() => inner.Reset();
     }
 }

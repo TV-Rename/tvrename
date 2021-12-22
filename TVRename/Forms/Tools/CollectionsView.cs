@@ -36,14 +36,14 @@ namespace TVRename.Forms
 
                 List<CollectionMember> incompleteCollectionMovies =
                     collectionMovies.Where(member => incompleteCollections.Contains(member.CollectionName)).ToList();
-                olvCollections.SetObjects(incompleteCollectionMovies);
+                olvCollections.SetObjects(incompleteCollectionMovies,true);
 
                 return;
             }
 
             if (!chkRemoveCompleted.Checked && !chkRemoveFuture.Checked)
             {
-                olvCollections.SetObjects(collectionMovies);
+                olvCollections.SetObjects(collectionMovies, true);
                 return;
             }
 
@@ -54,7 +54,7 @@ namespace TVRename.Forms
 
                 if (!chkRemoveCompleted.Checked)
                 {
-                    olvCollections.SetObjects(historicCollectionMovies);
+                    olvCollections.SetObjects(historicCollectionMovies, true);
                     return;
                 }
 
@@ -67,7 +67,7 @@ namespace TVRename.Forms
                         .Where(m => m.ReleaseDate.HasValue && m.ReleaseDate.Value < DateTime.Now && m.MovieYear.HasValue)
                         .ToList();
 
-                olvCollections.SetObjects(incompleteHistCollectionMovies);
+                olvCollections.SetObjects(incompleteHistCollectionMovies, true);
             }
         }
 

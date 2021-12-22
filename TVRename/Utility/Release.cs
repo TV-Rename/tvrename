@@ -85,7 +85,7 @@ namespace TVRename
                 return 0;
             }
 
-            //If either are not present then you can assume they are FINAL versions and trump any rx1 verisons
+            //If either are not present then you can assume they are FINAL versions and trump any rx1 versions
             if (string.IsNullOrWhiteSpace(Prerelease))
             {
                 return 1;

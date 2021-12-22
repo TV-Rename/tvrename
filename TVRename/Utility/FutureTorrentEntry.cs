@@ -12,7 +12,7 @@ namespace TVRename
 {
     public class FutureTorrentEntry : TorrentEntry
     {
-        public FutureTorrentEntry([NotNull] string torrentfile, [NotNull] string to) : base(torrentfile, to, 0, false, string.Empty)
+        public FutureTorrentEntry([NotNull] string torrentFile, [NotNull] string to) : base(torrentFile, to, 0, false, string.Empty)
         {
         }
     }

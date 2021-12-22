@@ -71,7 +71,7 @@ namespace TVRename
             return r;
         }
 
-        public BTItem? GetItem(string key) => GetItem(key, false);
+        private BTItem? GetItem(string key) => GetItem(key, false);
 
         public BTDictionary GetDict()
         {
