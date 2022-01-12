@@ -42,7 +42,19 @@ namespace TVRename
 
         public override string ProgressText => archiveFile.Name;
 
-        public override long SizeOfWork => archiveFile.Length;
+        public override long SizeOfWork => ArchiveFileSize();
+
+        private long ArchiveFileSize()
+        {
+            try
+            {
+                return archiveFile.Length;
+            }
+            catch
+            {
+                return 1;
+            }
+        }
 
         public override string Produces => archiveFile.FullName;
 
