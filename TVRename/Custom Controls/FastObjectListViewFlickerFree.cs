@@ -1,21 +1,11 @@
-//
-// Main website for TVRename is http://tvrename.com
-//
-// Source code available at https://github.com/TV-Rename/tvrename
-//
-// Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
-//
-
+﻿using System.Windows.Forms;
 using BrightIdeasSoftware;
 
 namespace TVRename
 {
-    using System.Windows.Forms;
-
-    // Thanks to http://stackoverflow.com/questions/442817/c-flickering-listview-on-update
-    public class ObjectListViewFlickerFree : ObjectListView
+    public class FastObjectListViewFlickerFree : FastObjectListView
     {
-        public ObjectListViewFlickerFree()
+        public FastObjectListViewFlickerFree()
         {
             //Activate double buffering
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);

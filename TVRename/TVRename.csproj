@@ -320,6 +320,7 @@
     <Compile Include="App\ApplicationBase.cs" />
     <Compile Include="App\CommandLineArgs.cs" />
     <Compile Include="App\AutoFolderMonitor.cs" />
+    <Compile Include="Custom Controls\FastObjectListViewFlickerFree.cs" />
     <Compile Include="Custom Controls\MovieCodeFinder.cs">
       <SubType>UserControl</SubType>
     </Compile>
