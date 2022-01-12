@@ -195,8 +195,9 @@ namespace TVRename
             string tvMazeButton = CreateButton(s.Show.Provider != TVDoc.ProviderType.TVmaze ? string.Empty : s.WebsiteUrl, "TVmaze.com", "View on TV Maze");
             string episodeText = s.Episodes.Count > 0 ? $"<br/><small class=\"text-muted\">{s.Episodes.Count} Episodes</small>" : string.Empty;
 
-            string seasonOverViewHtml = si.CachedShow?.Season(s.SeasonNumber)?.SeasonName.HasValue() ?? false
-                ? $"<h4>{SeasonName(si, s.SeasonNumber)} - {si.CachedShow?.Season(s.SeasonNumber)?.SeasonName}</h4>{si.CachedShow?.Season(s.SeasonNumber)?.SeasonDescription}"
+            Season? season = si.CachedShow?.Season(s.SeasonNumber);
+            string seasonOverViewHtml = HasCustomNameOrDescription(season)
+                ? $"<h4>{SeasonName(si, s.SeasonNumber)} - {season?.SeasonName}</h4>{season?.SeasonDescription}"
                 : SeasonName(si, s.SeasonNumber);
 
             sb.AppendLine($@"     <tr class=""table-secondary"">
@@ -208,6 +209,26 @@ namespace TVRename
             {tvMazeButton}</td>
     </tr>
 {tableRows}");
+        }
+
+        private static bool HasCustomNameOrDescription([CanBeNull] Season season)
+        {
+            if (season is null)
+            {
+                return false;
+            }
+
+            if (season.SeasonDescription.HasValue())
+            {
+                return true;
+            }
+
+            if (season.SeasonName.IsNullOrWhitespace())
+            {
+                return false;
+            }
+
+            return season.SeasonName is null || season.SeasonName.Trim().ToInt() != season.SeasonNumber;
         }
 
         private static void AppendShow(this StringBuilder sb, [NotNull] ShowConfiguration si, Color backgroundColour,
@@ -857,7 +878,7 @@ namespace TVRename
             if (url.HasValue() && url!.IsWebLink())
             {
                 return url;
-            }            
+            }
             return episode.Filename;
         }
 
@@ -878,7 +899,7 @@ namespace TVRename
         }
 
         [NotNull]
-        private static string CreatePosterHtml([NotNull] CachedSeriesInfo ser) 
+        private static string CreatePosterHtml([NotNull] CachedSeriesInfo ser)
         {
             string url = ser.GetSeriesPosterPath();
             if (url.HasValue() && !url!.IsWebLink() && TheTVDB.API.GetImageURL(url).HasValue())
@@ -1069,13 +1090,15 @@ namespace TVRename
 
             string episodeText = s.Episodes.Count > 0 ? $"<br/><small class=\"text-muted\">{s.Episodes.Count} Episodes</small>" : string.Empty;
 
-            string seasonOverViewHtml = si.CachedShow?.Season(s.SeasonNumber)?.SeasonName.HasValue() ?? false
-                ? $"<h2>{si.CachedShow?.Season(s.SeasonNumber)?.SeasonName}</h3><p>{si.CachedShow?.Season(s.SeasonNumber)?.SeasonDescription}</p>"
+            Season? season = si.CachedShow?.Season(s.SeasonNumber);
+            string seasonOverViewHtml = HasCustomNameOrDescription(season)
+                ? $"<h3>{season?.SeasonName}</h3><p>{season?.SeasonDescription}</p>"
                 : string.Empty;
 
             return $@"<div class=""row"">
-                    <div class=""col-8""><h1>{si.ShowName} - {SeasonName(si, s.SeasonNumber)}</h1>
-                    {seasonOverViewHtml}
+                    <div class=""col-8"">
+                        <h1>{si.ShowName} - {SeasonName(si, s.SeasonNumber)}</h1>
+                        {seasonOverViewHtml}
                     </div>
                     <div class=""col-4 text-right"">
                         {CreateButton(EditSeasonUrl(si, s), "<i class=\"far fa-edit\"></i>", "Edit")}
