@@ -802,8 +802,8 @@ namespace TVRename
 
         private static readonly Regex[] MovieMultiPartRegex =
         {
-            new(@"(?<base>.*)[ _.-]+(cd|dvd|p(?:ar)?t|dis[ck])[ _.-]*(?<part>[0-9]|(A-D))$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
-            new(@"(?<base>.*)[ ._-]*(?<part>|(A-D))$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+            new(@"(?<base>.*)[ _.-]+(cd|dvd|pt|part|disc|disk)[ _.-]*(?<part>[0-9]|[A-D])$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
+            new(@"(?<base>.*)[ ._-]+(?<part>[A-D])$", RegexOptions.Compiled | RegexOptions.IgnoreCase),
         };
 
         [NotNull]

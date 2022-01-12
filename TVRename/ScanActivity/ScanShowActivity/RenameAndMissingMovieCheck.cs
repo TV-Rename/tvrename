@@ -113,10 +113,23 @@ namespace TVRename
 
                 if (renCheck)
                 {
+                    //This section deals with files that have had a 1 year rename
                     List<string> matchingBases = bases.Where(x => IsClose(x, si)).ToList();
                     if (matchingBases.Any())
                     {
                         foreach (string baseString in matchingBases)
+                        {
+                            //rename all files with this base
+                            PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
+                        }
+
+                        return;
+                    }
+
+                    List<string> matchingBases2 = bases.Where(x => MatchesBase(x, newBase, si)).ToList();
+                    if (matchingBases2.Any())
+                    {
+                        foreach (string baseString in matchingBases2)
                         {
                             //rename all files with this base
                             PlanToRenameFilesInFolder(si, settings, folder, files, baseString, newBase);
@@ -147,6 +160,16 @@ namespace TVRename
                     FileIsCorrect(si, movieFiles.First().FullName);
                 }
             }
+        }
+
+        private bool MatchesBase(string baseFileName, string newBase, MovieConfiguration config)
+        {
+            if (baseFileName.CompareName().StartsWith(newBase.CompareName(),StringComparison.CurrentCultureIgnoreCase))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private void PlanToRenameFilesInFolder(MovieConfiguration si, TVDoc.ScanSettings settings, string folder, [NotNull] FileInfo[] files,
@@ -247,7 +270,7 @@ namespace TVRename
                 }
                 else
                 {
-                    LOGGER.Info($"{si.Name} not considered missing as it {(dt.HasValue? $"is in the future ({dt.Value.ToString("d", System.Globalization.DateTimeFormatInfo.InvariantInfo)})": "has no airdate")} (and the settings)");
+                    LOGGER.Info($"{si.Name} not considered missing as it {(dt.HasValue? $"is in the future ({dt.Value.ToString("d", System.Globalization.DateTimeFormatInfo.CurrentInfo)})": "has no airdate")} (and the settings)");
                 }
             } // if doing missing check
         }
