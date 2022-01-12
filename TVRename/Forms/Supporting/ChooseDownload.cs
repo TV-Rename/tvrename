@@ -21,7 +21,7 @@ namespace TVRename.Forms.Supporting
                 return $"{(sizeBytes < 0 ? "N/A" : sizeBytes.GBMB())}";
             };
             olvChooseDownload.SetObjects(options);
-            SetButtonVisiblity();
+            SetButtonVisibility();
             olvChooseDownload.Sort(olvSeeders, SortOrder.Descending);
         }
 
@@ -33,10 +33,10 @@ namespace TVRename.Forms.Supporting
 
         private void OlvChooseDownload_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            SetButtonVisiblity();
+            SetButtonVisibility();
         }
 
-        private void SetButtonVisiblity()
+        private void SetButtonVisibility()
         {
             btnOK.Enabled = olvChooseDownload.SelectedObject != null;
         }

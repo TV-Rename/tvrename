@@ -324,7 +324,7 @@ namespace TVRename
 
         public bool IsDvdBluRay()
         {
-            return Format == MovieFolderFormat.bluray || Format == MovieFolderFormat.dvd;
+            return Format is MovieFolderFormat.bluray or MovieFolderFormat.dvd;
         }
     }
 }

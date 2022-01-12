@@ -130,10 +130,9 @@ namespace TVRename
 
         private static IEnumerable<DirectoryInfo> GetDirectoryInfo(DirectoryInfo di)
         {
-            DirectoryInfo[] dirs = Array.Empty<DirectoryInfo>();
             try
             {
-                dirs = di.GetDirectories();
+                return di.GetDirectories();
             }
             catch (NotSupportedException e)
             {
@@ -152,7 +151,7 @@ namespace TVRename
                 Logger.Info(e);
             }
 
-            return dirs;
+            return Array.Empty<DirectoryInfo>();
         }
 
         private static IEnumerable<FileInfo> GetFiles(DirectoryInfo di)
