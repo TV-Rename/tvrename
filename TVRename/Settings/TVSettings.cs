@@ -796,6 +796,8 @@ namespace TVRename
             writer.WriteInfo("ShowNetworkFilter", "ShowNetworkInclude", Filter.ShowNetworkInclude);
             writer.WriteInfo("ShowRatingFilter", "ShowRatingInclude", Filter.ShowRatingInclude);
 
+            writer.WriteInfo("IncludeBlankFields", "IncludeBlankFields", Filter.IncludeBlankFields);
+            
             foreach (string genre in Filter.Genres)
             {
                 writer.WriteInfo("GenreFilter", "Genre", genre);
@@ -815,6 +817,7 @@ namespace TVRename
             writer.WriteInfo("ShowNetworkFilter", "ShowNetworkInclude", MovieFilter.ShowNetworkInclude);
             writer.WriteInfo("ShowRatingFilter", "ShowRatingInclude", MovieFilter.ShowRatingInclude);
             writer.WriteInfo("ShowYearFilter", "ShowYearInclude", MovieFilter.ShowYearInclude);
+            writer.WriteInfo("IncludeBlankFields", "IncludeBlankFields", MovieFilter.IncludeBlankFields);
 
             foreach (string genre in MovieFilter.Genres)
             {
@@ -1671,7 +1674,11 @@ namespace TVRename
                 ShowRatingInclude = (bool?)xmlSettings.Descendants("ShowFilters").Descendants("ShowRatingFilter").Attributes("ShowRatingInclude")
                                         .FirstOrDefault() ?? true,
                 ShowNetworkInclude = (bool?)xmlSettings.Descendants("ShowFilters").Descendants("ShowNetworkFilter").Attributes("ShowNetworkInclude")
-                                         .FirstOrDefault() ?? true
+                                         .FirstOrDefault() ?? true,
+
+                IncludeBlankFields = (bool?)xmlSettings.Descendants("ShowFilters").Descendants("IncludeBlankFields").Attributes("IncludeBlankFields")
+                                         .FirstOrDefault() ?? true,
+
             };
 
             foreach (XAttribute rep in xmlSettings.Descendants("ShowFilters").Descendants("GenreFilter").Attributes("Genre"))
@@ -1700,7 +1707,9 @@ namespace TVRename
                 ShowNetworkInclude = (bool?)xmlSettings.Descendants("MovieFilter").Descendants("ShowNetworkFilter").Attributes("ShowNetworkInclude")
                     .FirstOrDefault() ?? true,
                 ShowYearInclude = (bool?)xmlSettings.Descendants("MovieFilter").Descendants("ShowYearFilter").Attributes("ShowYearInclude")
-                .FirstOrDefault() ?? true
+                    .FirstOrDefault() ?? true,
+                IncludeBlankFields = (bool?)xmlSettings.Descendants("MovieFilter").Descendants("IncludeBlankFields").Attributes("IncludeBlankFields")
+                    .FirstOrDefault() ?? true
             };
 
             foreach (XAttribute rep in xmlSettings.Descendants("MovieFilter").Descendants("GenreFilter").Attributes("Genre"))

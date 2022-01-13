@@ -48,6 +48,7 @@ namespace TVRename.Forms
             this.cmbShowStatusType = new System.Windows.Forms.ComboBox();
             this.cmbNetworkType = new System.Windows.Forms.ComboBox();
             this.cmbRatingType = new System.Windows.Forms.ComboBox();
+            this.chkIncludeBlanks = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // tbShowName
@@ -168,7 +169,7 @@ namespace TVRename.Forms
             // 
             this.chkHideIgnoredSeasons.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkHideIgnoredSeasons.AutoSize = true;
-            this.chkHideIgnoredSeasons.Location = new System.Drawing.Point(15, 366);
+            this.chkHideIgnoredSeasons.Location = new System.Drawing.Point(236, 375);
             this.chkHideIgnoredSeasons.Name = "chkHideIgnoredSeasons";
             this.chkHideIgnoredSeasons.Size = new System.Drawing.Size(151, 17);
             this.chkHideIgnoredSeasons.TabIndex = 15;
@@ -217,11 +218,22 @@ namespace TVRename.Forms
             this.cmbRatingType.Size = new System.Drawing.Size(74, 21);
             this.cmbRatingType.TabIndex = 19;
             // 
+            // chkIncludeBlanks
+            // 
+            this.chkIncludeBlanks.AutoSize = true;
+            this.chkIncludeBlanks.Location = new System.Drawing.Point(12, 375);
+            this.chkIncludeBlanks.Name = "chkIncludeBlanks";
+            this.chkIncludeBlanks.Size = new System.Drawing.Size(96, 17);
+            this.chkIncludeBlanks.TabIndex = 24;
+            this.chkIncludeBlanks.Text = "Include Blanks";
+            this.chkIncludeBlanks.UseVisualStyleBackColor = true;
+            // 
             // Filters
             // 
             this.AcceptButton = this.btnOk;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(404, 433);
+            this.Controls.Add(this.chkIncludeBlanks);
             this.Controls.Add(this.cmbRatingType);
             this.Controls.Add(this.cmbNetworkType);
             this.Controls.Add(this.cmbShowStatusType);
@@ -270,5 +282,6 @@ namespace TVRename.Forms
         private System.Windows.Forms.ComboBox cmbShowStatusType;
         private System.Windows.Forms.ComboBox cmbNetworkType;
         private System.Windows.Forms.ComboBox cmbRatingType;
+        private System.Windows.Forms.CheckBox chkIncludeBlanks;
     }
 }

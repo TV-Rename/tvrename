@@ -25,6 +25,7 @@ namespace TVRename
         public bool ShowRatingInclude { get; set; }
         public string? ShowYear { get; set; }
         public bool ShowYearInclude { get; set; }
+        public bool IncludeBlankFields { get; set; }
         public bool IsEnabled =>
             ShowName.HasValue() ||
             ShowStatus.HasValue() ||
@@ -40,7 +41,7 @@ namespace TVRename
                 List<string>? seriesInfoNetwork = showItem.CachedMovie?.Networks.ToList();
                 if (seriesInfoNetwork is null || !seriesInfoNetwork.Any())
                 {
-                    return true;
+                    return IncludeBlankFields;
                 }
 
                 return ShowNetworkInclude
@@ -53,7 +54,7 @@ namespace TVRename
                 string? seriesInfoContentRating = showItem.CachedMovie?.ContentRating;
                 if (seriesInfoContentRating is null)
                 {
-                    return true;
+                    return IncludeBlankFields;
                 }
 
                 return ShowRatingInclude

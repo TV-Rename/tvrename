@@ -76,6 +76,8 @@ namespace TVRename.Forms
                 //Filter By Show Network
                 cmbYearType.SelectedItem = filter.ShowYearInclude ? IS : IS_NOT;
 
+                chkIncludeBlanks.Checked = filter.IncludeBlankFields;
+
                 //Filter By Genre
                 foreach (string genre in filter.Genres)
                 {
@@ -102,6 +104,8 @@ namespace TVRename.Forms
             filter.ShowNetworkInclude = GetIncludeStatus(cmbNetworkType);
             filter.ShowRatingInclude = GetIncludeStatus(cmbRatingType);
             filter.ShowYearInclude = GetIncludeStatus(cmbYearType);
+
+            filter.IncludeBlankFields = chkIncludeBlanks.Checked;
 
             filter.Genres.Clear();
             foreach (string genre in clbGenre.CheckedItems)

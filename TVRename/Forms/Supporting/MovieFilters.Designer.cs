@@ -50,6 +50,7 @@ namespace TVRename.Forms
             this.cmbYearType = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
             this.cmbYear = new System.Windows.Forms.ComboBox();
+            this.chkIncludeBlanks = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // tbShowName
@@ -236,11 +237,22 @@ namespace TVRename.Forms
             this.cmbYear.Size = new System.Drawing.Size(172, 21);
             this.cmbYear.TabIndex = 20;
             // 
+            // chkIncludeBlanks
+            // 
+            this.chkIncludeBlanks.AutoSize = true;
+            this.chkIncludeBlanks.Location = new System.Drawing.Point(12, 375);
+            this.chkIncludeBlanks.Name = "chkIncludeBlanks";
+            this.chkIncludeBlanks.Size = new System.Drawing.Size(96, 17);
+            this.chkIncludeBlanks.TabIndex = 23;
+            this.chkIncludeBlanks.Text = "Include Blanks";
+            this.chkIncludeBlanks.UseVisualStyleBackColor = true;
+            // 
             // MovieFilters
             // 
             this.AcceptButton = this.btnOk;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(404, 433);
+            this.Controls.Add(this.chkIncludeBlanks);
             this.Controls.Add(this.cmbYearType);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.cmbYear);
@@ -293,5 +305,6 @@ namespace TVRename.Forms
         private System.Windows.Forms.ComboBox cmbYearType;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox cmbYear;
+        private System.Windows.Forms.CheckBox chkIncludeBlanks;
     }
 }

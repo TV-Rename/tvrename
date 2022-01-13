@@ -23,6 +23,7 @@ namespace TVRename
         public bool ShowNetworkInclude { get; set; }
         public string? ShowRating { get; set; }
         public bool ShowRatingInclude { get; set; }
+        public bool IncludeBlankFields { get; set; }
         public bool IsEnabled =>
             ShowName.HasValue() ||
             ShowStatus.HasValue() ||
@@ -37,7 +38,7 @@ namespace TVRename
                 List<string>? seriesInfoNetwork = showItem.CachedShow?.Networks.ToList();
                 if (seriesInfoNetwork is null || !seriesInfoNetwork.HasAny())
                 {
-                    return true;
+                    return IncludeBlankFields;
                 }
 
                 return ShowNetworkInclude
@@ -50,7 +51,7 @@ namespace TVRename
                 string? seriesInfoContentRating = showItem.CachedShow?.ContentRating;
                 if (seriesInfoContentRating is null)
                 {
-                    return true;
+                    return IncludeBlankFields;
                 }
 
                 return ShowRatingInclude
@@ -60,6 +61,12 @@ namespace TVRename
 
             bool IsStatusOk(ShowConfiguration showItem)
             {
+                string? seriesInfoStatus = showItem.CachedShow?.Status;
+                if (seriesInfoStatus is null)
+                {
+                    return IncludeBlankFields;
+                }
+
                 return ShowStatusInclude
                     ? showItem.ShowStatus.Equals(ShowStatus)
                     : !showItem.ShowStatus.Equals(ShowStatus);

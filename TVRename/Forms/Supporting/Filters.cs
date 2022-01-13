@@ -75,6 +75,8 @@ namespace TVRename.Forms
                         clbGenre.SetItemChecked(genreIndex, true);
                     }
                 }
+
+                chkIncludeBlanks.Checked = filter.IncludeBlankFields;
             }
 
             SeasonFilter sFilter = TVSettings.Instance.SeasonFilter;
@@ -93,6 +95,8 @@ namespace TVRename.Forms
             filter.ShowStatusInclude = GetIncludeStatus(cmbShowStatusType);
             filter.ShowNetworkInclude = GetIncludeStatus(cmbNetworkType);
             filter.ShowRatingInclude = GetIncludeStatus(cmbRatingType);
+
+            filter.IncludeBlankFields = chkIncludeBlanks.Checked;
 
             filter.Genres.Clear();
             foreach (string genre in clbGenre.CheckedItems)
