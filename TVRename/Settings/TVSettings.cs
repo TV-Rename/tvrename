@@ -1426,9 +1426,9 @@ namespace TVRename
                                     xmlSettings.ExtractString("GoodExtensions", VideoExtensionsStringDEFAULT));
             OtherExtensionsString = xmlSettings.ExtractString("OtherExtensions", OtherExtensionsStringDEFAULT);
             subtitleExtensionsString = xmlSettings.ExtractString("SubtitleExtensions", subtitleExtensionsStringDEFAULT);
-            ExportRSSMaxDays = xmlSettings.ExtractInt("ExportRSSMaxDays", 7);
-            ExportRSSMaxShows = xmlSettings.ExtractInt("ExportRSSMaxShows", 10);
-            ExportRSSDaysPast = xmlSettings.ExtractInt("ExportRSSDaysPast", 0);
+            ExportRSSMaxDays = xmlSettings.ExtractInt("ExportRSSMaxDays", 7).Between(0, 365);
+            ExportRSSMaxShows = xmlSettings.ExtractInt("ExportRSSMaxShows", 10).Between(0,10000);
+            ExportRSSDaysPast = xmlSettings.ExtractInt("ExportRSSDaysPast", 0).Between(0, 365);
             KeepTogether = xmlSettings.ExtractBool("KeepTogether", true);
             LeadingZeroOnSeason = xmlSettings.ExtractBool("LeadingZeroOnSeason", false);
             ShowAccessibilityOptions = xmlSettings.ExtractBool("ShowAccessibilityOptions", false);
