@@ -23,6 +23,12 @@ namespace TVRename
         public bool ShowNetworkInclude { get; set; }
         public string? ShowRating { get; set; }
         public bool ShowRatingInclude { get; set; }
+        public bool IsEnabled =>
+            ShowName.HasValue() ||
+            ShowStatus.HasValue() ||
+            ShowNetwork.HasValue() ||
+            ShowRating.HasValue() ||
+            Genres.Count() > 0;
 
         public bool Filter([NotNull] ShowConfiguration show)
         {

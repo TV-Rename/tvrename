@@ -25,6 +25,13 @@ namespace TVRename
         public bool ShowRatingInclude { get; set; }
         public string? ShowYear { get; set; }
         public bool ShowYearInclude { get; set; }
+        public bool IsEnabled =>
+            ShowName.HasValue() ||
+            ShowStatus.HasValue() ||
+            ShowNetwork.HasValue() ||
+            ShowRating.HasValue() ||
+            ShowYear.HasValue() ||
+            Genres.Count() > 0;
 
         public bool Filter([NotNull] MovieConfiguration show)
         {

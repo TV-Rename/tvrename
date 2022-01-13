@@ -1258,6 +1258,10 @@ namespace TVRename
             }
 
             MyShowTree.EndUpdate();
+            btnFilterMyShows.BackColor =
+                filter.IsEnabled
+                ? Color.LightGray
+                : Color.Transparent;
         }
         private void FillMyMovies() => FillMyMovies(null);
         private void FillMyMovies(MovieConfiguration? selectedMovie)
@@ -1285,6 +1289,10 @@ namespace TVRename
             }
 
             movieTree.EndUpdate();
+            btnMovieFilter.BackColor =
+                filter.IsEnabled
+                ?Color.LightGray
+                : Color.Transparent;
         }
 
         internal static string GenerateShowUiName([NotNull] MovieConfiguration show) => PostpendTheIfNeeded(show.ShowName);
