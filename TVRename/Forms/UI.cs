@@ -844,11 +844,13 @@ namespace TVRename
         private void EnableDisableAccessibilty()
         {
             tsbMyShowsContextMenu.Visible = TVSettings.Instance.ShowAccessibilityOptions;
+            tsbMyMoviesContextMenu.Visible = TVSettings.Instance.ShowAccessibilityOptions;
             tsbScanContextMenu.Visible = TVSettings.Instance.ShowAccessibilityOptions;
             btnScheduleRightClick.Visible = TVSettings.Instance.ShowAccessibilityOptions;
             toolStripSeparator12.Visible = TVSettings.Instance.ShowAccessibilityOptions;
             toolStripSeparator13.Visible = TVSettings.Instance.ShowAccessibilityOptions;
             toolStripSeparator14.Visible = TVSettings.Instance.ShowAccessibilityOptions;
+            toolStripSeparator16.Visible = TVSettings.Instance.ShowAccessibilityOptions;
         }
 
         // MAH: Added in support of the Filter TextBox Button
