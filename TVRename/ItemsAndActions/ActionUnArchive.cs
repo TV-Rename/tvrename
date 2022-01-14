@@ -115,9 +115,13 @@ namespace TVRename
             {
                 return new ActionOutcome(dnfe);
             }
-            catch (System.IO.IOException dnfe)
+            catch (System.IO.IOException ioe)
             {
-                return new ActionOutcome(dnfe);
+                return new ActionOutcome(ioe);
+            }
+            catch (InvalidFormatException ife)
+            {
+                return new ActionOutcome(ife);
             }
         }
         private static IArchive GetArchive([NotNull] FileInfo archive)

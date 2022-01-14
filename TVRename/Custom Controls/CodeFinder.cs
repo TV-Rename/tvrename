@@ -249,18 +249,16 @@ namespace TVRename
             DoFind(true);
         }
 
-        private string RemoveTrailingYear(string baseText)
+        [NotNull]
+        private static string RemoveTrailingYear([NotNull] string baseText)
         {
-            string PATTERN = @"\s(\d{4})$";
+            const string PATTERN = @"\s(\d{4})$";
             System.Text.RegularExpressions.Match mat = System.Text.RegularExpressions.Regex.Match(baseText.Trim(), PATTERN);
 
             if (mat.Success)
             {
-                int newPossibleYear = mat.Groups[1].Value.ToInt(0);
-
                 //Try removing any year
                 return System.Text.RegularExpressions.Regex.Replace(baseText.Trim(), PATTERN, string.Empty).Trim();
-
             }
             return baseText.Trim();
         }
