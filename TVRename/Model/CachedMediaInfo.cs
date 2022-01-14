@@ -339,7 +339,7 @@ namespace TVRename
             writer.WriteElement("slug", Slug,true);
             writer.WriteElement("Popularity", Popularity, "0.##", CultureInfo.CreateSpecificCulture("en-US"));
 
-            if (FirstAired != null)
+            if (FirstAired != null && FirstAired > DateTime.Parse("1000-01-01"))
             {
                 writer.WriteElement("FirstAired", FirstAired.Value.ToString("yyyy-MM-dd"));
             }
