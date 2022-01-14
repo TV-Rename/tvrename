@@ -85,7 +85,7 @@ namespace TVRename.Forms
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            ShowFilter filter = TVSettings.Instance.Filter;
+            ShowFilter filter = TVSettings.Instance.Filter ?? new ShowFilter();
 
             filter.ShowName = string.IsNullOrEmpty(tbShowName.Text) ? null : tbShowName.Text;
             filter.ShowStatus = string.IsNullOrEmpty(cmbShowStatus.Text) ? null : cmbShowStatus.SelectedItem.ToString();
@@ -107,7 +107,7 @@ namespace TVRename.Forms
             SeasonFilter sFilter = TVSettings.Instance.SeasonFilter;
             sFilter.HideIgnoredSeasons = chkHideIgnoredSeasons.Checked;
 
-            doc.SetDirty();
+            doc?.SetDirty();
             DialogResult = DialogResult.OK;
             Close();
         }
