@@ -10,6 +10,7 @@ using System;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using TVRename.Ipc;
 
 namespace TVRename.App
@@ -21,6 +22,7 @@ namespace TVRename.App
     internal class ApplicationBase : WindowsFormsApplicationBase
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private TVDoc doc;
 
         /// <summary>
         /// Initializes the splash screen.
@@ -29,8 +31,8 @@ namespace TVRename.App
         {
             SplashScreen = new TVRenameSplash();
 
-            CommandLineArgs clargs = new(CommandLineArgs);
-            if (clargs.Hide || !Environment.UserInteractive)
+            CommandLineArgs commandLineArgs = new(CommandLineArgs);
+            if (commandLineArgs.Hide || !Environment.UserInteractive)
             {
                 SplashScreen.Visible = false;
             }
@@ -56,12 +58,14 @@ namespace TVRename.App
             // Update RegVersion to bring the WebBrowser up to speed
             RegistryHelper.UpdateBrowserEmulationVersion();
 
-            TVDoc doc = LoadSettings(parameters);
+            doc = LoadSettings(parameters);
 
             if (TVSettings.Instance.mode == TVSettings.BetaMode.BetaToo || TVSettings.Instance.ShareLogs)
             {
                 SetupLogging();
             }
+
+            RegisterForSystemEvents();
 
             // Show user interface
             UI ui = new(doc, (TVRenameSplash)SplashScreen, !parameters.Unattended && !parameters.Hide && Environment.UserInteractive);
@@ -81,23 +85,57 @@ namespace TVRename.App
             MainForm = ui;
         }
 
+        private void RegisterForSystemEvents()
+        {
+            //Always get the final notification when the event thread is shutting down
+            //so we can unregister.
+
+            SystemEvents.EventsThreadShutdown += OnEventsThreadShutdown;
+            SystemEvents.SessionEnded += OnSessionEnded;
+        }
+        private void UnregisterFromSystemEvents()
+        {
+            SystemEvents.EventsThreadShutdown -= OnEventsThreadShutdown;
+            SystemEvents.SessionEnded -= OnSessionEnded;
+        }
+        /* Notifies you when the thread that is distributing the events from the SystemEvents class is
+         * shutting down so that we can unregister events on the SystemEvents class
+         */
+        private void OnEventsThreadShutdown(object sender, EventArgs e)
+        {
+            //Unregister all our events as the notification thread is going away
+            UnregisterFromSystemEvents();
+        }
+
+        /*  Triggered when the user is actually logging off or shutting down the system
+         */
+        private void OnSessionEnded(object sender, [NotNull] SessionEndedEventArgs e )
+        {
+            if (doc?.Dirty() ?? false)
+            {
+                doc?.WriteXMLSettings();
+            }
+
+            doc?.Closing();
+        }
+
         [NotNull]
-        private static TVDoc LoadSettings([NotNull] CommandLineArgs clargs)
+        private static TVDoc LoadSettings([NotNull] CommandLineArgs commandLineArgs)
         {
             bool recover = false;
             string recoverText = string.Empty;
 
             // Check arguments for forced recover
-            if (clargs.ForceRecover)
+            if (commandLineArgs.ForceRecover)
             {
                 recover = true;
                 recoverText = "Recover manually requested.";
             }
 
-            SetupCustomSettings(clargs);
+            SetupCustomSettings(commandLineArgs);
 
             FileInfo tvdbFile = PathManager.TVDBFile;
-            FileInfo tvmazeFile = PathManager.TVmazeFile;
+            FileInfo tvMazeFile = PathManager.TVmazeFile;
             FileInfo tmdbFile = PathManager.TmdbFile;
             FileInfo settingsFile = PathManager.TVDocSettingsFile;
             TVDoc doc;
@@ -111,7 +149,7 @@ namespace TVRename.App
                     if (recoveryForm.ShowDialog() == DialogResult.OK)
                     {
                         tvdbFile = recoveryForm.TvDbFile;
-                        tvmazeFile = recoveryForm.TvMazeFile;
+                        tvMazeFile = recoveryForm.TvMazeFile;
                         tmdbFile = recoveryForm.TmdbFile;
                         settingsFile = recoveryForm.SettingsFile;
                     }
@@ -123,12 +161,12 @@ namespace TVRename.App
                 }
 
                 // Try loading settings file
-                doc = new TVDoc(settingsFile, clargs);
+                doc = new TVDoc(settingsFile, commandLineArgs);
 
                 // Try loading TheTVDB cache file
-                bool showIssues = !clargs.Unattended && !clargs.Hide;
+                bool showIssues = !commandLineArgs.Unattended && !commandLineArgs.Hide;
                 TheTVDB.LocalCache.Instance.Setup(tvdbFile, PathManager.TVDBFile, showIssues);
-                TVmaze.LocalCache.Instance.Setup(tvmazeFile, PathManager.TVmazeFile, showIssues);
+                TVmaze.LocalCache.Instance.Setup(tvMazeFile, PathManager.TVmazeFile, showIssues);
                 TMDB.LocalCache.Instance.Setup(tmdbFile, PathManager.TmdbFile, showIssues);
 
                 if (recover)
@@ -163,23 +201,23 @@ namespace TVRename.App
             return doc;
         }
 
-        private static void SetupCustomSettings([NotNull] CommandLineArgs clargs)
+        private static void SetupCustomSettings([NotNull] CommandLineArgs commandLineArgs)
         {
             // Check arguments for custom settings path
-            if (!string.IsNullOrEmpty(clargs.UserFilePath))
+            if (!string.IsNullOrEmpty(commandLineArgs.UserFilePath))
             {
                 try
                 {
-                    PathManager.SetUserDefinedBasePath(clargs.UserFilePath);
+                    PathManager.SetUserDefinedBasePath(commandLineArgs.UserFilePath);
                 }
                 catch (Exception ex)
                 {
-                    if (!clargs.Unattended && !clargs.Hide && Environment.UserInteractive)
+                    if (!commandLineArgs.Unattended && !commandLineArgs.Hide && Environment.UserInteractive)
                     {
                         MessageBox.Show($"Error while setting the User-Defined File Path:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
 
-                    Logger.Error(ex, $"Error while setting the User-Defined File Path - EXITING: {clargs.UserFilePath}");
+                    Logger.Error(ex, $"Error while setting the User-Defined File Path - EXITING: {commandLineArgs.UserFilePath}");
 
                     Environment.Exit(1);
                 }
@@ -205,7 +243,7 @@ namespace TVRename.App
             try
             {
                 LoggingConfiguration config = LogManager.Configuration;
-                SyslogTarget sematext = new()
+                SyslogTarget semaText = new()
                 {
                     MessageCreation =
                     {
@@ -221,7 +259,7 @@ namespace TVRename.App
                     }
                 };
 
-                config.AddTarget("sema", sematext);
+                config.AddTarget("sema", semaText);
                 JsonLayout jsonLayout = new()
                 {
                     Attributes =
@@ -244,9 +282,9 @@ namespace TVRename.App
                             false)
                     }
                 };
-                sematext.Layout = jsonLayout;
+                semaText.Layout = jsonLayout;
 
-                LoggingRule semaRule = new("*", LogLevel.Warn, sematext);
+                LoggingRule semaRule = new("*", LogLevel.Warn, semaText);
                 config.LoggingRules.Add(semaRule);
                 LogManager.Configuration = config;
             }
