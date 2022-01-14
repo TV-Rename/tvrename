@@ -161,7 +161,8 @@ namespace TVRename
                 mInternal = true;
                 lvMatches.BeginUpdate();
 
-                string what = txtFindThis.Text.CompareName();
+                string what = RemoveTrailingYear(txtFindThis.Text.CompareName());
+
                 int matchedMedia = 0;
 
                 if (!txtFindThis.Text.HasValue() && lvMatches.Items.Count == 1 && lvMatches.Items[0].SubItems[1].Text == DEFAULT_MESSAGE)
@@ -246,6 +247,22 @@ namespace TVRename
                 Logger.Warn(scx);
             }
             DoFind(true);
+        }
+
+        private string RemoveTrailingYear(string baseText)
+        {
+            string PATTERN = @"\s(\d{4})$";
+            System.Text.RegularExpressions.Match mat = System.Text.RegularExpressions.Regex.Match(baseText.Trim(), PATTERN);
+
+            if (mat.Success)
+            {
+                int newPossibleYear = mat.Groups[1].Value.ToInt(0);
+
+                //Try removing any year
+                return System.Text.RegularExpressions.Regex.Replace(baseText.Trim(), PATTERN, string.Empty).Trim();
+
+            }
+            return baseText.Trim();
         }
 
         private string GetLabel(TVDoc.ProviderType source)
