@@ -327,6 +327,13 @@ namespace TVRename
                     return folder;
                 }
             }
+            foreach (string folder in TVSettings.Instance.MovieLibraryFolders)
+            {
+                if (ep.DestinationFolder.StartsWith(folder, StringComparison.OrdinalIgnoreCase))
+                {
+                    return folder;
+                }
+            }
 
             return ep.DestinationFolder;
         }
@@ -386,6 +393,7 @@ namespace TVRename
         private static object? GroupDateKeyDelegate(object rowObject)
         {
             DateTime? episodeTime = ((Item)rowObject).AirDate;
+            DateTime now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
             if (!episodeTime.HasValue)
             {
@@ -394,19 +402,19 @@ namespace TVRename
 
             if (episodeTime.Value > DateTime.Now)
             {
-                return DateTime.Now.AddDays(1);
+                return now.AddDays(1);
             }
 
             TimeSpan timeSince = DateTime.Now - episodeTime.Value;
 
             if (timeSince < 7.Days())
             {
-                return DateTime.Now.AddDays(-1);
+                return now.AddDays(-1);
             }
 
             if (DateTime.Now.Year == episodeTime.Value.Year && DateTime.Now.Month == episodeTime.Value.Month)
             {
-                return DateTime.Now.AddDays(-8);
+                return now.AddDays(-8);
             }
 
             if (DateTime.Now.Year == episodeTime.Value.Year)
@@ -726,14 +734,24 @@ namespace TVRename
 
         private static bool UseCustomObject([NotNull] ObjectListView view)
         {
-            //TODO - get working for movies
-            return view.SelectedObjects.OfType<ProcessedEpisode>().Any(episode =>
-                episode.Show.UseCustomSearchUrl && episode.Show.CustomSearchUrl.HasValue());
+            foreach (Object o in view.SelectedObjects)
+            {
+                if (o is Item i)
+                {
+                    if (i.Episode != null)
+                    {
+                        if  (i.Episode.Show.UseCustomSearchUrl && i.Episode.Show.CustomSearchUrl.HasValue())
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         private static bool UseCustom([NotNull] ListView view)
         {
-            //TODO - get working for movies
             foreach (ListViewItem lvi in view.SelectedItems)
             {
                 if (lvi.Tag is not ProcessedEpisode pe)
