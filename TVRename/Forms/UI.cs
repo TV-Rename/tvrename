@@ -3758,14 +3758,14 @@ namespace TVRename
 
             internalCheckChange = true;
 
-            //byte[] oldState = olvAction.SaveState();
+            byte[] oldState = olvAction.SaveState();
             olvAction.BeginUpdate();
             Logger.Info("UI: Updating Actions: Adding Data");
             olvAction.SetObjects(mDoc.TheActionList,true);
             Logger.Info("UI: Updating Actions: Rebuilding Columns");
             olvAction.RebuildColumns();
-            //Logger.Info("UI: Updating Actions: Restoring State");
-            //olvAction.RestoreState(oldState);
+            Logger.Info("UI: Updating Actions: Restoring State");
+            olvAction.RestoreState(oldState);
             olvAction.EndUpdate();
             Logger.Info("UI: Updating Actions: Updating CheckBoxes after action list update");
             UpdateActionCheckboxes();
