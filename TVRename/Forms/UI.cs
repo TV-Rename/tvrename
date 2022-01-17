@@ -165,10 +165,10 @@ namespace TVRename
             UpdateSplashStatus(splash, "Setting Notifications");
             ShowHideNotificationIcon();
 
+            UpdateSplashStatus(splash, "Creating Monitors");
+            mAutoFolderMonitor = new AutoFolderMonitor(mDoc, this);
             if (TVSettings.Instance.MonitorFolders)
             {
-                UpdateSplashStatus(splash, "Creating Monitors");
-                mAutoFolderMonitor = new AutoFolderMonitor(mDoc, this);
                 UpdateSplashStatus(splash, "Starting Monitor");
                 mAutoFolderMonitor.Start();
             }
@@ -1177,7 +1177,7 @@ namespace TVRename
                     mDoc.TidyCaches();
                     SaveCaches();
                     mDoc.Closing();
-                    mAutoFolderMonitor.Dispose();
+                    mAutoFolderMonitor?.Dispose();
                     BGDownloadTimer.Dispose();
                     UpdateTimer.Dispose();
                     quickTimer.Dispose();
@@ -2395,7 +2395,7 @@ namespace TVRename
                 ShowInTaskbar = TVSettings.Instance.ShowInTaskbar;
                 EnableDisableAccessibilty();
                 FillEpGuideHtml();
-                mAutoFolderMonitor.SettingsChanged(TVSettings.Instance.MonitorFolders);
+                mAutoFolderMonitor?.SettingsChanged(TVSettings.Instance.MonitorFolders);
                 UpdateVisibilityFromSettings();
                 ForceRefresh(false);
             }
