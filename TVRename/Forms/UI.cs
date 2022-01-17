@@ -164,23 +164,23 @@ namespace TVRename
             mDoc.WriteRecent();
             UpdateSplashStatus(splash, "Setting Notifications");
             ShowHideNotificationIcon();
-            UpdateSplashStatus(splash, "Creating Monitors");
 
-            mAutoFolderMonitor = new AutoFolderMonitor(mDoc, this);
-
-            tmrPeriodicScan.Interval = TVSettings.Instance.PeriodicCheckPeriod();
-
-            UpdateSplashStatus(splash, "Starting Monitor");
             if (TVSettings.Instance.MonitorFolders)
             {
+                UpdateSplashStatus(splash, "Creating Monitors");
+                mAutoFolderMonitor = new AutoFolderMonitor(mDoc, this);
+                UpdateSplashStatus(splash, "Starting Monitor");
                 mAutoFolderMonitor.Start();
             }
 
+            tmrPeriodicScan.Interval = TVSettings.Instance.PeriodicCheckPeriod();
             tmrPeriodicScan.Enabled = TVSettings.Instance.RunPeriodicCheck();
 
             SetupObjectListForScanResults();
 
-            UpdateSplashStatus(splash, "Running Auto-scan");
+            if (TVSettings.Instance.RunOnStartUp()) {
+                UpdateSplashStatus(splash, "Running Auto-scan");
+            }
 
             SetStartUpTab();
         }
@@ -728,26 +728,13 @@ namespace TVRename
         }
 
         private void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs eventArgs) =>
-            Helpers.OpenUrl("http://tvrename.com");
+            Helpers.OpenUrl("https://tvrename.com");
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Close();
 
         private static bool UseCustomObject([NotNull] ObjectListView view)
         {
-            foreach (Object o in view.SelectedObjects)
-            {
-                if (o is Item i)
-                {
-                    if (i.Episode != null)
-                    {
-                        if  (i.Episode.Show.UseCustomSearchUrl && i.Episode.Show.CustomSearchUrl.HasValue())
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
+            return view.SelectedObjects.OfType<Item>().Any(i => i.Episode?.Show.UseCustomSearchUrl == true && i.Episode.Show.CustomSearchUrl.HasValue());
         }
 
         private static bool UseCustom([NotNull] ListView view)
@@ -1233,7 +1220,7 @@ namespace TVRename
                     expanded.Add(TreeNodeToShowItem(n));
                 }
             }
-
+            Logger.Info("UI: Updating MyShows");
             MyShowTree.BeginUpdate();
 
             MyShowTree.Nodes.Clear();
@@ -1286,6 +1273,7 @@ namespace TVRename
         {
             selectedMovie ??= TreeNodeToMovieItem(movieTree.SelectedNode);
 
+            Logger.Info("UI: Updating MyMovies");
             movieTree.BeginUpdate();
 
             movieTree.Nodes.Clear();
@@ -1821,7 +1809,7 @@ namespace TVRename
                 if (dt2 != null)
                 {
                     double h = dt2.Value.Subtract(dt).TotalHours;
-                    if (h >= 0 && h < 24.0)
+                    if (h is >= 0 and < 24.0)
                     {
                         lvi.Selected = true;
                         if (first)
@@ -3770,13 +3758,16 @@ namespace TVRename
 
             internalCheckChange = true;
 
-            byte[] oldState = olvAction.SaveState();
+            //byte[] oldState = olvAction.SaveState();
             olvAction.BeginUpdate();
-            olvAction.SetObjects(mDoc.TheActionList);
+            Logger.Info("UI: Updating Actions: Adding Data");
+            olvAction.SetObjects(mDoc.TheActionList,true);
+            Logger.Info("UI: Updating Actions: Rebuilding Columns");
             olvAction.RebuildColumns();
-            olvAction.RestoreState(oldState);
+            //Logger.Info("UI: Updating Actions: Restoring State");
+            //olvAction.RestoreState(oldState);
             olvAction.EndUpdate();
-
+            Logger.Info("UI: Updating Actions: Updating CheckBoxes after action list update");
             UpdateActionCheckboxes();
             internalCheckChange = false;
         }
@@ -4782,7 +4773,7 @@ namespace TVRename
             olvAction.ShowGroups = true;
             olvAction.AlwaysGroupByColumn = null;
             olvAction.Sort(olvType, SortOrder.Ascending);
-            olvAction.BuildGroups(olvType, SortOrder.Ascending); //,olvShowColumn,SortOrder.Ascending,olvSeason,SortOrder.Ascending);
+            olvAction.BuildGroups(olvType, SortOrder.Ascending,olvShowColumn,SortOrder.Ascending,olvSeason,SortOrder.Ascending);
             olvAction.CustomSorter = delegate { olvAction.ListViewItemSorter = new ListViewActionItemSorter(); };
             olvAction.EndUpdate();
         }

@@ -162,7 +162,7 @@ namespace TVRename
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.chrTvTrailer = new CefSharp.WinForms.ChromiumWebBrowser();
             this.tbAllInOne = new System.Windows.Forms.TabPage();
-            this.olvAction = new TVRename.FastObjectListViewFlickerFree();
+            this.olvAction = new TVRename.ObjectListViewFlickerFree();
             this.olvShowColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSeason = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvEpisode = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -1393,7 +1393,6 @@ namespace TVRename
             this.olvAction.UseFilterIndicator = true;
             this.olvAction.UseFiltering = true;
             this.olvAction.View = System.Windows.Forms.View.Details;
-            this.olvAction.VirtualMode = true;
             this.olvAction.BeforeCreatingGroups += new System.EventHandler<BrightIdeasSoftware.CreateGroupsEventArgs>(this.olvAction_BeforeCreatingGroups);
             this.olvAction.CanDrop += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.OlvAction_CanDrop);
             this.olvAction.Dropped += new System.EventHandler<BrightIdeasSoftware.OlvDropEventArgs>(this.OlvAction_Dropped);
@@ -2488,7 +2487,7 @@ namespace TVRename
         private ToolStripSeparator toolStripSeparator14;
         private ToolStripButton tsbScanContextMenu;
         private ToolStripMenuItem tsmiOrphanFiles;
-        private FastObjectListViewFlickerFree olvAction;
+        private ObjectListViewFlickerFree olvAction;
         private ToolStripButton tbActionJackettSearch;
         private ToolStripButton tsbScheduleJackettSearch;
         private TabPage tbMyMovies;

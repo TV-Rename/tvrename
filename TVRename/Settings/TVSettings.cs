@@ -345,7 +345,7 @@ namespace TVRename
 
         public MovieConfiguration.MovieFolderFormat DefMovieFolderFormat =
             MovieConfiguration.MovieFolderFormat.singleDirectorySingleFile;
-        
+
         public bool AutomateAutoAddWhenOneMovieFound = true;
         public bool AutomateAutoAddWhenOneShowFound = true;
 
@@ -354,7 +354,7 @@ namespace TVRename
             : StringComparison.CurrentCultureIgnoreCase;
 
         public bool FileNameCaseSensitiveMatch = false;
-        public bool CopySubsFolders = true; 
+        public bool CopySubsFolders = true;
 
         public bool DeleteMovieFromDisk = false;
 
@@ -440,8 +440,8 @@ namespace TVRename
         public bool DefMovieDoMissingCheck = true;
         public bool DefMovieUseutomaticFolders = true;
         public bool DefMovieUseDefaultLocation = true;
-        public bool DefMovieCheckFutureDatedMovies = false; 
-        public bool DefMovieCheckNoDatedMovies = false; 
+        public bool DefMovieCheckFutureDatedMovies = false;
+        public bool DefMovieCheckNoDatedMovies = false;
 
         public bool SuppressUpdateAvailablePopup = false;
         public UpdateCheckMode UpdateCheckType = UpdateCheckMode.Everytime;
@@ -797,7 +797,7 @@ namespace TVRename
             writer.WriteInfo("ShowRatingFilter", "ShowRatingInclude", Filter.ShowRatingInclude);
 
             writer.WriteInfo("IncludeBlankFields", "IncludeBlankFields", Filter.IncludeBlankFields);
-            
+
             foreach (string genre in Filter.Genres)
             {
                 writer.WriteInfo("GenreFilter", "Genre", genre);
@@ -1678,7 +1678,6 @@ namespace TVRename
 
                 IncludeBlankFields = (bool?)xmlSettings.Descendants("ShowFilters").Descendants("IncludeBlankFields").Attributes("IncludeBlankFields")
                                          .FirstOrDefault() ?? true,
-
             };
 
             foreach (XAttribute rep in xmlSettings.Descendants("ShowFilters").Descendants("GenreFilter").Attributes("Genre"))
