@@ -266,11 +266,14 @@ namespace TVRename
                 {
                     LOGGER.Warn(
                         $"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
-
-                    bool? result = ScanHelper.AskUserAboutFileReplacement(actualFile,newFile, ep, settings.Owner, Doc, Doc.TheActionList);
-                    if (result is true)
+                    if (!settings.Unattended)
                     {
-                        Doc.TheActionList.Add(new ActionDeleteFile(actualFile, ep, TVSettings.Instance.Tidyup));
+                        bool? result = ScanHelper.AskUserAboutFileReplacement(actualFile, newFile, ep, settings.Owner, Doc, Doc.TheActionList);
+
+                        if (result is true)
+                        {
+                            Doc.TheActionList.Add(new ActionDeleteFile(actualFile, ep, TVSettings.Instance.Tidyup));
+                        }
                     }
                 }
                 else
