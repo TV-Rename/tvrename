@@ -167,7 +167,7 @@ namespace TVRename
                     string newName = TVSettings.Instance.FilenameFriendly(
                         TVSettings.Instance.NamingStyle.NameFor(ep, otherExtension, folder.Length));
 
-                    FileInfo fileWorthAdding = CheckFile(folder, fi, actualFile, newName, ep, files);
+                    FileInfo fileWorthAdding = CheckFile(folder, fi, actualFile, newName, ep, files,settings);
 
                     if (fileWorthAdding != null)
                     {
@@ -243,7 +243,7 @@ namespace TVRename
             } // if doing missing check
         }
 
-        private FileInfo? CheckFile([NotNull] string folder, FileInfo fi, [NotNull] FileInfo actualFile, string newName, ProcessedEpisode ep, IEnumerable<FileInfo> files)
+        private FileInfo? CheckFile([NotNull] string folder, FileInfo fi, [NotNull] FileInfo actualFile, string newName, ProcessedEpisode ep, IEnumerable<FileInfo> files, TVDoc.ScanSettings settings)
         {
             if (TVSettings.Instance.RetainLanguageSpecificSubtitles)
             {
@@ -266,6 +266,12 @@ namespace TVRename
                 {
                     LOGGER.Warn(
                         $"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
+
+                    bool? result = ScanHelper.AskUserAboutFileReplacement(actualFile,newFile, ep, settings.Owner, Doc, Doc.TheActionList);
+                    if (result is true)
+                    {
+                        Doc.TheActionList.Add(new ActionDeleteFile(actualFile, ep, TVSettings.Instance.Tidyup));
+                    }
                 }
                 else
                 {

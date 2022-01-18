@@ -1978,7 +1978,7 @@ namespace TVRename
                 {
                     FileInfo encumbant = GetExistingFile(chosenShow, folder);
                     bool? deleteFile = AskForBetter(fi, encumbant, chosenShow, owner);
-                    if (deleteFile.HasValue && deleteFile.Value == false)
+                    if (deleteFile is false)
                     {
                         fileCanBeDeleted = false;
                     }
@@ -2034,13 +2034,13 @@ namespace TVRename
             switch (newResult)
             {
                 case FileHelper.VideoComparison.secondFileBetter:
-                    CleanDownloadDirectory.UpgradeFile(newFile, chosenShow, existingFile, this, TheActionList);
+                    ScanHelper.UpgradeFile(newFile, chosenShow, existingFile, this, TheActionList);
                     return false;
 
                 case FileHelper.VideoComparison.cantTell:
                 case FileHelper.VideoComparison.similar:
                     {
-                        return CleanDownloadDirectory.AskUserAboutFileReplacement(newFile, existingFile, chosenShow, owner, this, TheActionList);
+                        return ScanHelper.AskUserAboutFileReplacement(newFile, existingFile, chosenShow, owner, this, TheActionList);
                     }
                 //the other cases of the files being the same or the existing file being better are not enough to save the file
                 case FileHelper.VideoComparison.firstFileBetter:

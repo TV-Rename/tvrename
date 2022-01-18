@@ -35,7 +35,7 @@ namespace TVRename
         [NotNull]
         protected override string CheckName() => "Cleaned up and files in download directory that are not needed";
 
-        protected override void DoCheck(SetProgressDelegate prog)
+        protected override void DoCheck(SetProgressDelegate progress)
         {
             returnActions.Clear();
             showList = MDoc.TvLibrary.GetSortedShowItems(); //We ignore the current set of shows being scanned to be secrure that no files are deleted for unscanned shows
@@ -250,7 +250,7 @@ namespace TVRename
             foreach (ShowConfiguration si in matchingShows)
             {
                 (bool? x,ProcessedEpisode? matchingEpisode) = CanFileBeDeletedForShow(unattended, fi, owner, si, matchingShows);
-                if (x.HasValue && x.Value == false)
+                if (x is false)
                 {
                     fileCanBeDeleted = false;
                 }
@@ -336,7 +336,7 @@ namespace TVRename
                     }
 
                     bool? deleteFile = ReviewFile(unattended, fi, matchingShows, existingFile, firstMatchingEpisode, owner);
-                    if (deleteFile.HasValue && deleteFile.Value == false)
+                    if (deleteFile is false)
                     {
                         fileCanBeDeleted = false;
                     }
@@ -363,7 +363,7 @@ namespace TVRename
                     }
 
                     bool? deleteFile = ReviewFile(unattended, fi, matchingMovies, existingFile, testMovie, owner);
-                    if (deleteFile.HasValue && deleteFile.Value == false)
+                    if (deleteFile is false)
                     {
                         fileCanBeDeleted = false;
                     }
@@ -434,7 +434,7 @@ namespace TVRename
                         }
                         else
                         {
-                            UpgradeFile(newFile, pep, existingFile);
+                            ScanHelper.UpgradeFile(newFile, pep, existingFile,MDoc,returnActions);
                         }
                     }
                     else
@@ -457,7 +457,7 @@ namespace TVRename
                     {
                         if (matchingShows.Count <= 1)
                         {
-                            return AskUserAboutFileReplacement(newFile, existingFile, pep, owner);
+                            return ScanHelper.AskUserAboutFileReplacement(newFile, existingFile, pep, owner,MDoc,returnActions);
                         }
 
                         LOGGER.Warn(
@@ -503,7 +503,7 @@ namespace TVRename
                         }
                         else
                         {
-                            UpgradeFile(newFile, pep, existingFile, MDoc, returnActions);
+                            ScanHelper.UpgradeFile(newFile, pep, existingFile, MDoc, returnActions);
                         }
                     }
                     else
@@ -526,7 +526,7 @@ namespace TVRename
                     {
                         if (matchingShows.Count <= 1)
                         {
-                            return AskUserAboutFileReplacement(newFile, existingFile, pep, owner, MDoc, returnActions);
+                            return ScanHelper.AskUserAboutFileReplacement(newFile, existingFile, pep, owner, MDoc, returnActions);
                         }
 
                         LOGGER.Warn(
@@ -559,86 +559,6 @@ namespace TVRename
                 FileHelper.VideoComparison.secondFileBetter => false,
                 _ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
             };
-        }
-
-        private bool? AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] ProcessedEpisode pep, IDialogParent owner)
-        {
-            try
-            {
-                ChooseFile question = new(existingFile, newFile);
-
-                owner.ShowChildDialog(question);
-                ChooseFile.ChooseFileDialogResult result = question.Answer;
-                question.Dispose();
-
-                switch (result)
-                {
-                    case ChooseFile.ChooseFileDialogResult.ignore:
-                        LOGGER.Info(
-                            $"Keeping {newFile.FullName} as it might be better quality than {existingFile.FullName}");
-                        return false;
-
-                    case ChooseFile.ChooseFileDialogResult.left:
-                        LOGGER.Info(
-                            $"User has elected to remove {newFile.FullName} as it is not as good quality than {existingFile.FullName}");
-
-                        break;
-
-                    case ChooseFile.ChooseFileDialogResult.right:
-                        UpgradeFile(newFile, pep, existingFile);
-                        return false;
-
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                return null;
-            }
-            catch (FileNotFoundException)
-            {
-                return false;
-            }
-        }
-
-        /// <summary>Asks user about whether to replace a file.</summary>
-        /// <returns>false if the newFile is needed.</returns>
-        public static bool? AskUserAboutFileReplacement([NotNull] FileInfo newFile, [NotNull] FileInfo existingFile, [NotNull] MovieConfiguration pep, IDialogParent owner, TVDoc doc, ItemList returnActions)
-        {
-            try
-            {
-                ChooseFile question = new(existingFile, newFile);
-
-                owner.ShowChildDialog(question);
-                ChooseFile.ChooseFileDialogResult result = question.Answer;
-                question.Dispose();
-
-                switch (result)
-                {
-                    case ChooseFile.ChooseFileDialogResult.ignore:
-                        LOGGER.Info(
-                            $"Keeping {newFile.FullName} as it might be better quality than {existingFile.FullName}");
-                        return false;
-
-                    case ChooseFile.ChooseFileDialogResult.left:
-                        LOGGER.Info(
-                            $"User has elected to remove {newFile.FullName} as it is not as good quality than {existingFile.FullName}");
-
-                        break;
-
-                    case ChooseFile.ChooseFileDialogResult.right:
-                        UpgradeFile(newFile, pep, existingFile, doc, returnActions);
-                        return false;
-
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                return null;
-            }
-            catch (FileNotFoundException)
-            {
-                return false;
-            }
         }
 
         private void CopyFutureDatedFile(FileInfo fi, [NotNull] ProcessedEpisode pep, TVDoc d)
@@ -699,38 +619,6 @@ namespace TVRename
                 // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
                 returnActions.AddNullableRange(new DownloadIdentifiersController().ProcessEpisode(pep, targetFile));
             }
-        }
-
-        private void UpgradeFile([NotNull] FileInfo fi, ProcessedEpisode pep, [NotNull] FileInfo existingFile)
-        {
-            if (existingFile.Extension != fi.Extension)
-            {
-                returnActions.Add(new ActionDeleteFile(existingFile, pep, null));
-                returnActions.Add(new ActionCopyMoveRename(fi, existingFile.WithExtension(fi.Extension), pep, MDoc));
-            }
-            else
-            {
-                returnActions.Add(new ActionCopyMoveRename(fi, existingFile, pep, MDoc));
-            }
-
-            LOGGER.Info(
-                $"Using {fi.FullName} to replace {existingFile.FullName} as it is better quality");
-        }
-
-        public static void UpgradeFile([NotNull] FileInfo fi, MovieConfiguration pep, [NotNull] FileInfo existingFile, TVDoc doc, [NotNull] ItemList actions)
-        {
-            if (existingFile.Extension != fi.Extension)
-            {
-                actions.Add(new ActionDeleteFile(existingFile, pep, null));
-                actions.Add(new ActionCopyMoveRename(fi, existingFile.WithExtension(fi.Extension), pep, doc));
-            }
-            else
-            {
-                actions.Add(new ActionCopyMoveRename(fi, existingFile, pep, doc));
-            }
-
-            LOGGER.Info(
-                $"Using {fi.FullName} to replace {existingFile.FullName} as it is better quality");
         }
     }
 }

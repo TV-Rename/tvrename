@@ -535,6 +535,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ScanActivity\ScanHelper.cs" />
     <Compile Include="ScanActivity\ScanShowActivity\CheckAllMovieFoldersExist.cs" />
     <Compile Include="ScanActivity\ScanShowActivity\RenameAndMissingMovieCheck.cs" />
     <Compile Include="ScanActivity\ScanShowActivity\ScanMediaActivity.cs" />

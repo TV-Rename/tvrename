@@ -3203,7 +3203,7 @@ namespace TVRename.TheTVDB
             return si;
         }
 
-        private string? FindTranslation(JObject r, Locale locale, string tag)
+        private static string? FindTranslation(JObject r, Locale locale, string tag)
         {
             string langaugeCode = locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation;
             JToken languagesArray = r[tag];
