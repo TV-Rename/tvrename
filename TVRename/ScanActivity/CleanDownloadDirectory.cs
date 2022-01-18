@@ -296,7 +296,7 @@ namespace TVRename
             }
         }
 
-        private (bool?, ProcessedEpisode?) CanFileBeDeletedForShow(bool unattended, FileInfo fi, IDialogParent owner, [NotNull] ShowConfiguration si, 
+        private (bool?, ProcessedEpisode?) CanFileBeDeletedForShow(bool unattended, FileInfo fi, IDialogParent owner, [NotNull] ShowConfiguration si,
             List<ShowConfiguration> matchingShows)
         {
             FinderHelper.FindSeasEp(fi, out int seasF, out int epF, out int _, si, out TVSettings.FilenameProcessorRE re);
@@ -389,7 +389,7 @@ namespace TVRename
                 LOGGER.Info(
                     $"Removing {fi.FullName} as it matches {matchingShows.Select(s => s.ShowName).ToCsv()} and no episodes are needed");
 
-                if (!matchingShows.Any())
+                if (!matchingMovies.Any())
                 {
                     returnActions.Add(new ActionDeleteFile(fi, firstMatchingPep, TVSettings.Instance.Tidyup));
                 }
