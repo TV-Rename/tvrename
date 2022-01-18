@@ -53,9 +53,18 @@ namespace TVRename
 
         private static void RemoveEmptyDirectory(string directory)
         {
-            if (DirectoryIsMissingEmpty(directory))
+            if (!directory.HasValue() || !DirectoryIsMissingEmpty(directory))
+            {
+                return;
+            }
+
+            try
             {
                 Directory.Delete(directory);
+            }
+            catch (DirectoryNotEmptyException)
+            {
+                //Suppressed - we want it to be removed anyway
             }
         }
 
