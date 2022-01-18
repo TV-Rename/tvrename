@@ -817,5 +817,11 @@ namespace TVRename
 
             return longbase;
         }
+
+        public static bool IsRootDirectory(string folderName)
+        {
+            DirectoryInfo d = new DirectoryInfo(folderName);
+            return d.Parent == null;
+        }
     }
 }

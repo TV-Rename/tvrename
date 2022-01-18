@@ -2995,7 +2995,7 @@ namespace TVRename
                 return;
             }
 
-            if (Path.IsPathRooted(folderName))
+            if (FileHelper.IsRootDirectory(folderName))
             {
                 Logger.Warn($"Did not remove {folderName} as it is a root folder");
                 return;
