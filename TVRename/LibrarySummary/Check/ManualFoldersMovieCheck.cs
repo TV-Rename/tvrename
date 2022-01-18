@@ -1,8 +1,13 @@
-using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Path = Alphaleonis.Win32.Filesystem.Path;
 
 namespace TVRename
 {
@@ -73,14 +78,23 @@ namespace TVRename
                 //we have one location to copy to
 
                 bool manualLocationOnlyHasOneMovie = source.EnumerateFiles().Where(f => f.IsMovieFile()).All(file => Movie.NameMatch(file, false));
-
-                if (manualLocationOnlyHasOneMovie)
+                try
                 {
-                    CopyOrMove(source, automaticLocations.First());
+                    if (manualLocationOnlyHasOneMovie)
+                    {
+                        CopyOrMove(source, automaticLocations.First());
+                    }
+                    else
+                    {
+                        MoveFiles(
+                            source.EnumerateFiles().Where(f => f.IsMovieFile())
+                                .Where(file => Movie.NameMatch(file, false)),
+                            automaticLocations.First());
+                    }
                 }
-                else
+                catch (IOException ioe)
                 {
-                    MoveFiles(source.EnumerateFiles().Where(f => f.IsMovieFile()).Where(file => Movie.NameMatch(file, false)), automaticLocations.First());
+                    throw new FixCheckException(ioe.Message);
                 }
 
                 Movie.UseManualLocations = false;
