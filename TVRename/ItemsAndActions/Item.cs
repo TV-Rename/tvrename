@@ -42,7 +42,7 @@ namespace TVRename
         protected static IgnoreItem? GenerateIgnore(string? file) => string.IsNullOrEmpty(file) ? null : new IgnoreItem(file);
 
         [NotNull]
-        public virtual string SeriesName => Movie?.ShowName ?? Episode.Show.ShowName;
+        public virtual string SeriesName => Movie?.ShowName ?? Episode?.Show.ShowName ?? string.Empty;
 
         [NotNull]
         public virtual string SeasonNumber => Episode?.SeasonNumberAsText ?? string.Empty;

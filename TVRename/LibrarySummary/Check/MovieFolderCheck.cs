@@ -1,4 +1,4 @@
-﻿using JetBrains.Annotations;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -6,7 +6,8 @@ namespace TVRename
     {
         public MovieFolderCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc) {}
 
-        public override string CheckName => "[Movie] Use either manual or automatec folders";
+        [NotNull]
+        public override string CheckName => "[Movie] Use either manual or automatic folders";
 
         public override bool Check() => !Movie.UseAutomaticFolders && !Movie.UseManualLocations;
 

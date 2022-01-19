@@ -125,13 +125,13 @@ namespace TVRename
                 bool hasTargets = targets is { Type: BTChunk.kList };
                 BTList targetList = (BTList)targets;
 
-                ProcesdFiles(r, d2, prioString, torrentFile, a, defaultFolder, hasTargets, targetList!);
+                ProcessFiles(r, d2, prioString, torrentFile, a, defaultFolder, hasTargets, targetList!);
             }
 
             return r;
         }
 
-        private static void ProcesdFiles(List<TorrentEntry> r, BTDictionary d2, BTString prioString, string torrentFile, [NotNull] List<string> a, string defaultFolder, bool hasTargets, BTList targetList)
+        private static void ProcessFiles(List<TorrentEntry> r, BTDictionary d2, BTString prioString, string torrentFile, [NotNull] List<string> a, string defaultFolder, bool hasTargets, BTList targetList)
         {
             int c = 0;
             foreach (string s in a)

@@ -30,6 +30,7 @@ namespace TVRename
         [NotNull]
         public List<Action> Actions => this.OfType<Action>().ToList();
 
+        [NotNull]
         public List<Item> Checked => this.Where(i=>i.CheckedItem).ToList();
 
         [NotNull]
