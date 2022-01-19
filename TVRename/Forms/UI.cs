@@ -393,7 +393,7 @@ namespace TVRename
         private static object? GroupDateKeyDelegate(object rowObject)
         {
             DateTime? episodeTime = ((Item)rowObject).AirDate;
-            DateTime now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            DateTime now = new(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
             if (!episodeTime.HasValue)
             {

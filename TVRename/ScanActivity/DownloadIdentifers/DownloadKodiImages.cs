@@ -188,7 +188,7 @@ namespace TVRename
             return base.ProcessSeason(si, folder, snum, forceRefresh);
         }
 
-        private string GetParentFolder(string folder)
+        private static string GetParentFolder(string folder)
         {
             DirectoryInfo child = new(folder);
             return child.Parent.FullName;

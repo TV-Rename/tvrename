@@ -29,7 +29,7 @@ namespace TVRename
             ShowStatus.HasValue() ||
             ShowNetwork.HasValue() ||
             ShowRating.HasValue() ||
-            Genres.Count() > 0;
+            Genres.Any();
 
         public bool Filter([NotNull] ShowConfiguration show)
         {

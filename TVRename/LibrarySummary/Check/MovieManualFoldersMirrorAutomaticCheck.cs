@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 
 namespace TVRename
 {
-    class MovieManualFoldersMirrorAutomaticCheck : MovieCheck
+    internal class MovieManualFoldersMirrorAutomaticCheck : MovieCheck
     {
         public MovieManualFoldersMirrorAutomaticCheck(MovieConfiguration movie, TVDoc doc) : base(movie, doc)
         {

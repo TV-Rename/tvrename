@@ -419,26 +419,18 @@ namespace TVRename
             {
                 for (int r = 0; r < DataR; r++)
                 {
-                    bool? t = Data[r][c2];
-                    Data[r][c2] = Data[r][c1];
-                    Data[r][c1] = t;
+                    (Data[r][c2], Data[r][c1]) = (Data[r][c1], Data[r][c2]);
                 }
-                string t2 = Cols[c1];
-                Cols[c1] = Cols[c2];
-                Cols[c2] = t2;
+                (Cols[c1], Cols[c2]) = (Cols[c2], Cols[c1]);
             }
 
             private void SwapRows(int r1, int r2)
             {
                 for (int c = 0; c < DataC; c++)
                 {
-                    bool? t = Data[r2][c];
-                    Data[r2][c] = Data[r1][c];
-                    Data[r1][c] = t;
+                    (Data[r2][c], Data[r1][c]) = (Data[r1][c], Data[r2][c]);
                 }
-                string t2 = Rows[r1];
-                Rows[r1] = Rows[r2];
-                Rows[r2] = t2;
+                (Rows[r1], Rows[r2]) = (Rows[r2], Rows[r1]);
             }
 
             public int RowScore(int r, IReadOnlyList<bool>? onlyCols)

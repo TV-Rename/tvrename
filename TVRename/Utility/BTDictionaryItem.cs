@@ -7,7 +7,7 @@ namespace TVRename
     public class BTDictionaryItem : BTItem
     {
         public readonly BTItem Data;
-        public string Key;
+        public readonly string Key;
 
         public BTDictionaryItem(string k, BTItem d)
             : base(BTChunk.kDictionaryItem)

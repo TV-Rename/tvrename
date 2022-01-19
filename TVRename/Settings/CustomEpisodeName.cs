@@ -35,7 +35,7 @@ namespace TVRename
         public static string OldNStyle(int n)
         {
             // for now, this maps onto the presets
-            if (n >= 0 && n < 9)
+            if (n is >= 0 and < 9)
             {
                 return PRESETS[n];
             }

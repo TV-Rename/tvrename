@@ -820,7 +820,7 @@ namespace TVRename
 
         public static bool IsRootDirectory(string folderName)
         {
-            DirectoryInfo d = new DirectoryInfo(folderName);
+            DirectoryInfo d = new(folderName);
             return d.Parent == null;
         }
     }

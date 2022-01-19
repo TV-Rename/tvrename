@@ -44,7 +44,7 @@ namespace TVRename
             return PreferredLanguage ?? DefaultLanguage(provider);
         }
 
-        private Language DefaultLanguage(TVDoc.ProviderType provider)
+        private static Language DefaultLanguage(TVDoc.ProviderType provider)
         {
             return provider == TVDoc.ProviderType.TMDB ? TVSettings.Instance.TMDBLanguage : TVSettings.Instance.PreferredTVDBLanguage;
         }

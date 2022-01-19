@@ -66,7 +66,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public List<Action> TorrentActions => this.Where(a => a is ActionTRemove || a is ActionTDownload).OfType<Action>().ToList();
+        public List<Action> TorrentActions => this.Where(a => a is ActionTRemove or ActionTDownload).OfType<Action>().ToList();
 
         internal void Remove(IEnumerable<Item>? toRemove)
         {

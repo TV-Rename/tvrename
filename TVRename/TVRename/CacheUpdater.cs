@@ -133,7 +133,7 @@ namespace TVRename
             return downloadOk;
         }
 
-        private TVDoc.ProviderType FindProviderWithError()
+        private static TVDoc.ProviderType FindProviderWithError()
         {
             if (TheTVDB.LocalCache.Instance.LastErrorMessage.HasValue())
             {

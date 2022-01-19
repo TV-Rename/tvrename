@@ -425,7 +425,7 @@ namespace TVRename
             forceShowsRefresh.Clear();
         }
 
-        private void ForgetMovie([NotNull] MovieConfiguration si)
+        private static void ForgetMovie([NotNull] MovieConfiguration si)
         {
             switch (si.Provider)
             {

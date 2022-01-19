@@ -32,7 +32,7 @@ namespace TVRename
             ShowNetwork.HasValue() ||
             ShowRating.HasValue() ||
             ShowYear.HasValue() ||
-            Genres.Count() > 0;
+            Genres.Any();
 
         public bool Filter([NotNull] MovieConfiguration show)
         {
