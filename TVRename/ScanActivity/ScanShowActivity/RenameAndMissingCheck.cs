@@ -12,7 +12,7 @@ namespace TVRename
 
         [NotNull]
         protected override string ActivityName() => "Rename & Missing Check";
-
+        protected override bool Active() => true;
         public RenameAndMissingCheck([NotNull] TVDoc doc) : base(doc)
         {
             downloadIdentifiers = new DownloadIdentifiersController();
@@ -214,35 +214,6 @@ namespace TVRename
                 }
             } // up to date check, for each episode
         }
-
-        private void AddMissingIfNeeded(ShowConfiguration si, int snum, string folder, bool missCheck, ProcessedEpisode episode,
-            DateTime today)
-        {
-            // second part of missing check is to see what is missing!
-            if (missCheck)
-            {
-                DateTime? dt = episode.GetAirDateDt(true);
-                bool dtOk = dt != null;
-
-                bool notFuture =
-                    dtOk && dt.Value.CompareTo(today) < 0; // isn't an episode yet to be aired
-
-                // only add to the missing list if, either:
-                // - force check is on
-                // - there are no aired dates at all, for up to and including this season
-                // - there is an aired date, and it isn't in the future
-                bool noAirdatesUntilNow = si.NoAirdatesUntilNow(snum);
-                bool siForceCheckFuture = (si.ForceCheckFuture || notFuture) && dtOk;
-                bool siForceCheckNoAirdate = si.ForceCheckNoAirdate && !dtOk;
-
-                if (noAirdatesUntilNow || siForceCheckFuture || siForceCheckNoAirdate)
-                {
-                    // then add it as officially missing
-                    Doc.TheActionList.Add(new ShowItemMissing(episode, folder));
-                }
-            } // if doing missing check
-        }
-
         private FileInfo? CheckFile([NotNull] string folder, FileInfo fi, [NotNull] FileInfo actualFile, string newName, ProcessedEpisode ep, IEnumerable<FileInfo> files, TVDoc.ScanSettings settings)
         {
             if (TVSettings.Instance.RetainLanguageSpecificSubtitles)
@@ -266,7 +237,7 @@ namespace TVRename
                 {
                     LOGGER.Warn(
                         $"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
-                    if (!settings.Unattended)
+                    if (!settings.Unattended && TVSettings.Instance.RemoveDupliatesFromibrary)
                     {
                         bool? result = ScanHelper.AskUserAboutFileReplacement(actualFile, newFile, ep, settings.Owner, Doc, Doc.TheActionList);
 
@@ -312,6 +283,32 @@ namespace TVRename
             return null;
         }
 
-        protected override bool Active() => true;
+        private void AddMissingIfNeeded(ShowConfiguration si, int snum, string folder, bool missCheck, ProcessedEpisode episode,
+            DateTime today)
+        {
+            // second part of missing check is to see what is missing!
+            if (missCheck)
+            {
+                DateTime? dt = episode.GetAirDateDt(true);
+                bool dtOk = dt != null;
+
+                bool notFuture =
+                    dtOk && dt.Value.CompareTo(today) < 0; // isn't an episode yet to be aired
+
+                // only add to the missing list if, either:
+                // - force check is on
+                // - there are no aired dates at all, for up to and including this season
+                // - there is an aired date, and it isn't in the future
+                bool noAirdatesUntilNow = si.NoAirdatesUntilNow(snum);
+                bool siForceCheckFuture = (si.ForceCheckFuture || notFuture) && dtOk;
+                bool siForceCheckNoAirdate = si.ForceCheckNoAirdate && !dtOk;
+
+                if (noAirdatesUntilNow || siForceCheckFuture || siForceCheckNoAirdate)
+                {
+                    // then add it as officially missing
+                    Doc.TheActionList.Add(new ShowItemMissing(episode, folder));
+                }
+            } // if doing missing check
+        }
     }
 }

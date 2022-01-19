@@ -361,6 +361,8 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> SubsFolderNames => Convert(SubsFolderNamesString);
 
+        public bool RemoveDupliatesFromibrary => true; //TODO - Put this in settings and have UI parameter
+
         public string SubsFolderNamesString = "subs;subtitle;vobsubs;sub;vobsub;subtitle";
 
         public bool AutoSaveOnExit = false;
@@ -438,7 +440,7 @@ namespace TVRename
 
         public bool DefMovieDoRenaming = true;
         public bool DefMovieDoMissingCheck = true;
-        public bool DefMovieUseutomaticFolders = true;
+        public bool DefMovieUseAutomaticFolders = true;
         public bool DefMovieUseDefaultLocation = true;
         public bool DefMovieCheckFutureDatedMovies = false;
         public bool DefMovieCheckNoDatedMovies = false;
@@ -701,7 +703,7 @@ namespace TVRename
 
             writer.WriteElement("DefMovieDoRenaming", DefMovieDoRenaming);
             writer.WriteElement("DefMovieDoMissingCheck", DefMovieDoMissingCheck);
-            writer.WriteElement("DefMovieUseutomaticFolders", DefMovieUseutomaticFolders);
+            writer.WriteElement("DefMovieUseutomaticFolders", DefMovieUseAutomaticFolders);
             writer.WriteElement("DefMovieUseDefaultLocation", DefMovieUseDefaultLocation);
             writer.WriteElement("DefMovieDefaultLocation", DefMovieDefaultLocation);
             writer.WriteElement("DefaultMovieProvider", (int)DefaultMovieProvider);
@@ -1595,7 +1597,7 @@ namespace TVRename
 
             DefMovieDoRenaming = xmlSettings.ExtractBool("DefMovieDoRenaming", true);
             DefMovieDoMissingCheck = xmlSettings.ExtractBool("DefMovieDoMissingCheck", true);
-            DefMovieUseutomaticFolders = xmlSettings.ExtractBool("DefMovieUseutomaticFolders", true);
+            DefMovieUseAutomaticFolders = xmlSettings.ExtractBool("DefMovieUseutomaticFolders", true);
             DefMovieUseDefaultLocation = xmlSettings.ExtractBool("DefMovieUseDefaultLocation", true);
             DefMovieDefaultLocation = xmlSettings.ExtractStringOrNull("DefMovieDefaultLocation");
             DefaultMovieProvider = xmlSettings.ExtractEnum("DefaultMovieProvider", TVDoc.ProviderType.TMDB);

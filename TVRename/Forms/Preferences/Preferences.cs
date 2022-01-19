@@ -467,7 +467,7 @@ namespace TVRename
             s.DefMovieDoMissingCheck = cbDefMovieDoMissing.Checked;
             s.DefMovieCheckFutureDatedMovies = cbDefMovieIncludeFuture.Checked;
             s.DefMovieCheckNoDatedMovies = cbDefMovieIncludeNoAirdate.Checked;
-            s.DefMovieUseutomaticFolders = cbDefMovieAutoFolders.Checked;
+            s.DefMovieUseAutomaticFolders = cbDefMovieAutoFolders.Checked;
             s.DefMovieUseDefaultLocation = cbDefMovieUseDefLocation.Checked;
             s.DefMovieDefaultLocation = (string)cmbDefMovieLocation.SelectedItem;
             s.DefaultMovieProvider = MovieProviderMode();
@@ -1007,7 +1007,7 @@ namespace TVRename
 
             cbDefMovieDoRenaming.Checked = s.DefMovieDoRenaming;
             cbDefMovieDoMissing.Checked = s.DefMovieDoMissingCheck;
-            cbDefMovieAutoFolders.Checked = s.DefMovieUseutomaticFolders;
+            cbDefMovieAutoFolders.Checked = s.DefMovieUseAutomaticFolders;
             cbDefMovieUseDefLocation.Checked = s.DefMovieUseDefaultLocation;
             cbDefMovieIncludeFuture.Checked = s.DefMovieCheckFutureDatedMovies;
             cbDefMovieIncludeNoAirdate.Checked = s.DefMovieCheckNoDatedMovies;

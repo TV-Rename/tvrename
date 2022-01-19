@@ -58,7 +58,7 @@ namespace TVRename
             ForceCheckFuture = TVSettings.Instance.DefMovieCheckFutureDatedMovies;
             ForceCheckNoAirdate = TVSettings.Instance.DefMovieCheckNoDatedMovies;
 
-            UseAutomaticFolders = TVSettings.Instance.DefMovieUseutomaticFolders;
+            UseAutomaticFolders = TVSettings.Instance.DefMovieUseAutomaticFolders;
             AutomaticFolderRoot = TVSettings.Instance.DefMovieUseDefaultLocation ? TVSettings.Instance.DefMovieDefaultLocation ?? string.Empty : string.Empty;
         }
 

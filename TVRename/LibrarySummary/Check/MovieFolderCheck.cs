@@ -15,7 +15,7 @@ namespace TVRename
 
         protected override void FixInternal()
         {
-            if (!TVSettings.Instance.DefMovieUseutomaticFolders)
+            if (!TVSettings.Instance.DefMovieUseAutomaticFolders)
             {
                 throw new FixCheckException($"Please manually assign automatic/manual directory for {Movie.Name}");
             }
