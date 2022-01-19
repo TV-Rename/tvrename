@@ -59,7 +59,7 @@ namespace TVRename
 
             if (goToScanOpts)
             {
-                tcTabs.SelectedTab = tbGeneral;
+                tcTabs.SelectedTab = tpScanSettings;
             }
         }
 
