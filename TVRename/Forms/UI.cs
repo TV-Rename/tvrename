@@ -3768,8 +3768,10 @@ namespace TVRename
             olvAction.RestoreState(oldState);
             olvAction.EndUpdate();
             Logger.Info("UI: Updating Actions: Updating CheckBoxes after action list update");
-            UpdateActionCheckboxes();
+
             internalCheckChange = false;
+
+            UpdateActionCheckboxes();
         }
 
         [NotNull]
