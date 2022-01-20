@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
 
 namespace TVRename
 {
@@ -63,14 +62,15 @@ namespace TVRename
             try
             {
                 //nothing at all
-                if (Directory.GetFiles(folderName).Length == 0 && Directory.GetDirectories(folderName).Length == 0)
+                bool noSubFolders = Directory.GetDirectories(folderName).Length == 0;
+                if (Directory.GetFiles(folderName).Length == 0 && noSubFolders)
                 {
                     return true;
                 }
 
-                bool containsMovieFiles = Directory.GetFiles(folderName).Any(s => s.IsMovieFile());
+                bool containsMovieFiles = Directory.GetFiles(folderName,"*",System.IO.SearchOption.AllDirectories).Any(s => s.IsMovieFile());
 
-                if (!containsMovieFiles)
+                if (!containsMovieFiles && noSubFolders)
                 {
                     return true;
                 }

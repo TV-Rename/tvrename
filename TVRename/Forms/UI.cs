@@ -2542,9 +2542,9 @@ namespace TVRename
         {
             if (IsBusy)
             {
-                BGDownloadTimer.Interval = 10000; // come back in 10 seconds
+                BGDownloadTimer.Interval = 60000; // come back in 60 seconds
                 BGDownloadTimer.Start();
-                Logger.Info("BG Download is busy - try again in 10 seconds");
+                Logger.Info("BG Download is busy - try again in 60 seconds");
                 return;
             }
 
@@ -3069,7 +3069,7 @@ namespace TVRename
                 }
 
                 Logger.Info($"Recycling {folderName} as part of the removal of {si.Name}");
-                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName,
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName, //TODO make all one use of the folder removal
                     Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
                     Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
             }

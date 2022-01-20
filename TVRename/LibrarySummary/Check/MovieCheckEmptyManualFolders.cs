@@ -60,9 +60,9 @@ namespace TVRename
 
             try
             {
-                Directory.Delete(directory);
+                Directory.Delete(directory); //TODO Should use a safer version in FileHelper
             }
-            catch (DirectoryNotEmptyException)
+            catch (System.IO.DirectoryNotFoundException)
             {
                 //Suppressed - we want it to be removed anyway
             }

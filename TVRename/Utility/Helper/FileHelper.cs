@@ -14,9 +14,15 @@ using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Path = Alphaleonis.Win32.Filesystem.Path;
 
 namespace TVRename
 {
@@ -33,6 +39,7 @@ namespace TVRename
 
             if (tidyup == null || tidyup.DeleteEmptyIsRecycle)
             {
+                //TODO make all one use of the folder removal
                 Logger.Info($"Recycling {di.FullName}");
                 Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName,
                     Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
@@ -614,11 +621,16 @@ namespace TVRename
             try
             {
                 Logger.Info($"Removing {folderName} as part of the library clean up");
-                foreach (string file in Directory.GetFiles(folderName))
+                foreach (string file in Directory.GetFiles(folderName,"*",SearchOption.AllDirectories))
                 {
                     Logger.Info($"    Folder contains {file}");
                 }
+                foreach (string file in Directory.GetDirectories(folderName))
+                {
+                    Logger.Info($"    Folder contains folder {file}");
+                }
 
+                //TODO make all one use of the folder removal
                 Logger.Info($"Recycling {folderName}");
                 Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(folderName,
                     Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
