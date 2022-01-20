@@ -126,7 +126,7 @@ namespace TVRename
                         return;
                     }
 
-                    List<string> matchingBases2 = bases.Where(x => MatchesBase(x, newBase, si)).ToList();
+                    List<string> matchingBases2 = bases.Where(x => MatchesBase(x, newBase)).ToList();
                     if (matchingBases2.Any())
                     {
                         foreach (string baseString in matchingBases2)
@@ -162,7 +162,7 @@ namespace TVRename
             }
         }
 
-        private bool MatchesBase(string baseFileName, string newBase, MovieConfiguration config)
+        private bool MatchesBase(string baseFileName, string newBase)
         {
             if (baseFileName.CompareName().StartsWith(newBase.CompareName(),StringComparison.CurrentCultureIgnoreCase))
             {

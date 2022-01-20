@@ -370,7 +370,9 @@ namespace TVRename
                 // remove items from master list, unless it had an error
                 TheActionList.Remove(doneActions);
 
-                new CleanUpEmptyLibraryFolders(this).Check(null);
+                //Logger.Info("Starting Post Scan activities");
+                //new CleanUpEmptyLibraryFolders(this).Check(null);
+                //Logger.Info("Completed Post Scan activities");
             }
             catch (Exception e)
             {
