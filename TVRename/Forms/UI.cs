@@ -18,7 +18,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -37,10 +36,8 @@ using TVRename.Properties;
 using TVRename.Utility.Helper;
 using Control = System.Windows.Forms.Control;
 using DataFormats = System.Windows.Forms.DataFormats;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using Alphaleonis.Win32.Filesystem;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
-using File = Alphaleonis.Win32.Filesystem.File;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using MessageBox = System.Windows.Forms.MessageBox;
 using SystemColors = System.Drawing.SystemColors;
 using Timer = System.Windows.Forms.Timer;
@@ -3024,7 +3021,7 @@ namespace TVRename
             }
             try {
                 IEnumerable<string> videofilesThatWouldBeDeleted = Directory
-                        .GetFiles(folderName, "*", SearchOption.AllDirectories)
+                        .GetFiles(folderName, "*", System.IO.SearchOption.AllDirectories)
                         .Where(f => f.IsMovieFile())
                         .Select(s=>s.TrimStartString(folderName));
 
@@ -3077,7 +3074,7 @@ namespace TVRename
             {
                 Logger.Warn($"Failed to remove {folderName} as operation was cancelled: {e.Message}");
             }
-            catch (DirectoryNotFoundException e)
+            catch (System.IO.DirectoryNotFoundException e)
             {
                 Logger.Warn($"Failed to remove {folderName} as it is not found: {e.Message}");
             }

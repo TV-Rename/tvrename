@@ -1,9 +1,9 @@
 using NLog;
 using System;
-using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using JetBrains.Annotations;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename.Settings.AppState
 {

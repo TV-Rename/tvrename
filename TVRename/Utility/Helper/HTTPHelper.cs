@@ -4,7 +4,6 @@ using Newtonsoft.Json.Linq;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Cache;
 using System.Net.Http;
@@ -24,8 +23,8 @@ namespace TVRename
             [NotNull] string path,
             string contentType = "application/octet-stream")
         {
-            FileStream stream = File.OpenRead(path);
-            string fileName = Path.GetFileName(path);
+            System.IO.FileStream stream = System.IO.File.OpenRead(path);
+            string fileName = System.IO.Path.GetFileName(path);
             StreamContent content = new(stream)
             {
                 Headers = { ContentType = new MediaTypeHeaderValue(contentType) }
@@ -133,7 +132,7 @@ namespace TVRename
 
             if (method == "POST")
             {
-                using (StreamWriter streamWriter =
+                using (System.IO.StreamWriter streamWriter =
                     new(httpWebRequest.GetRequestStream()))
                 {
                     streamWriter.Write(postContent);
@@ -143,7 +142,7 @@ namespace TVRename
 
             string result;
             HttpWebResponse httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            using (StreamReader streamReader = new(httpResponse.GetResponseStream() ?? throw new InvalidOperationException()))
+            using (System.IO.StreamReader streamReader = new(httpResponse.GetResponseStream() ?? throw new InvalidOperationException()))
             {
                 result = streamReader.ReadToEnd();
             }
@@ -157,14 +156,14 @@ namespace TVRename
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            using (Stream? stream = response.GetResponseStream())
+            using (System.IO.Stream? stream = response.GetResponseStream())
             {
                 if (stream == null)
                 {
                     return string.Empty;
                 }
 
-                using (StreamReader reader = new(stream))
+                using (System.IO.StreamReader reader = new(stream))
                 {
                     return reader.ReadToEnd();
                 }
@@ -183,7 +182,7 @@ namespace TVRename
             }
         }
 
-        public static void LogIoException([NotNull] this Logger l, string message, [NotNull] IOException wex)
+        public static void LogIoException([NotNull] this Logger l, string message, [NotNull] System.IO.IOException wex)
         {
             l.Warn(message + " " + wex.LoggableDetails());
         }
@@ -259,7 +258,7 @@ namespace TVRename
         }
 
         [NotNull]
-        public static string LoggableDetails([NotNull] this IOException ex)
+        public static string LoggableDetails([NotNull] this System.IO.IOException ex)
         {
             StringBuilder s = new();
             s.Append($"IOException obtained. {ex.Message}");
@@ -442,7 +441,7 @@ namespace TVRename
             JObject response = null;
             TimeSpan gap = TimeSpan.FromSeconds(secondsGap);
             RetryOnException(times, gap, fullUrl,
-                exception => (exception is WebException wex && !wex.Is404()) || exception is IOException
+                exception => (exception is WebException wex && !wex.Is404()) || exception is System.IO.IOException
                     , () => { response = JsonHttpGetRequest(fullUrl, null); }
                     , null);
 
@@ -454,7 +453,7 @@ namespace TVRename
             JArray response = null;
             TimeSpan gap = TimeSpan.FromSeconds(secondsGap);
             RetryOnException(times, gap, fullUrl,
-                exception => (exception is WebException wex && !wex.Is404()) || exception is IOException
+                exception => (exception is WebException wex && !wex.Is404()) || exception is System.IO.IOException
                 , () => { response = JsonListHttpGetRequest(fullUrl, null); }
                 , null);
 

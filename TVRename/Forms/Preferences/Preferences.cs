@@ -17,7 +17,6 @@ using System.Windows.Forms;
 using TimeZoneConverter;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 using Control = System.Windows.Forms.Control;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 namespace TVRename
 {

@@ -9,7 +9,6 @@
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 
 namespace TVRename
@@ -33,7 +32,7 @@ namespace TVRename
                 // windows explorer tends to lose explorer windows on shares when slept/resumed, too, so its not
                 // just me :P
 
-                using (MemoryStream ms = new())
+                using (System.IO.MemoryStream ms = new())
                 {
                     List<ProcessedEpisode> lpe = doc.TvLibrary.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
                         TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
@@ -59,7 +58,7 @@ namespace TVRename
             string contents = Produce();
 
             //Write Contents to file
-            using (StreamWriter file = new(Location()))
+            using (System.IO.StreamWriter file = new(Location()))
             {
                 file.Write(contents);
             }
@@ -67,6 +66,6 @@ namespace TVRename
             LOGGER.Trace($"Contents of File are: {contents}");
         }
 
-        protected abstract bool Generate(Stream str, IEnumerable<ProcessedEpisode> elist);
+        protected abstract bool Generate(System.IO.Stream str, IEnumerable<ProcessedEpisode> elist);
     }
 }

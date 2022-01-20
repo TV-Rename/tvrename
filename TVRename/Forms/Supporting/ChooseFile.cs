@@ -8,12 +8,11 @@
 
 using System;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 using Humanizer;
 using JetBrains.Annotations;
 using NLog;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -98,7 +97,7 @@ namespace TVRename
                     lblSizeRight.Font = new Font(lblSizeRight.Font.Name, lblSizeRight.Font.Size, FontStyle.Regular);
                 }
             }
-            catch (IOException)
+            catch (System.IO.IOException)
             {
                 Logger.Warn($"Can't find File in ChooseFile called {left.Name} or {right.Name}");
             }

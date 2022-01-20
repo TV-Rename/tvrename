@@ -14,15 +14,9 @@ using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using File = Alphaleonis.Win32.Filesystem.File;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using Path = Alphaleonis.Win32.Filesystem.Path;
 
 namespace TVRename
 {
@@ -621,7 +615,7 @@ namespace TVRename
             try
             {
                 Logger.Info($"Removing {folderName} as part of the library clean up");
-                foreach (string file in Directory.GetFiles(folderName,"*",SearchOption.AllDirectories))
+                foreach (string file in Directory.GetFiles(folderName,"*",System.IO.SearchOption.AllDirectories))
                 {
                     Logger.Info($"    Folder contains {file}");
                 }

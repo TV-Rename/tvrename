@@ -1,9 +1,8 @@
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -60,11 +59,11 @@ namespace TVRename
             {
                 throw new FixCheckException(message + ": " + uae.Message);
             }
-            catch (DirectoryNotFoundException)
+            catch (System.IO.DirectoryNotFoundException)
             {
                 //the source was not present anyway, so do nothing
             }
-            catch (PathTooLongException ptle)
+            catch (System.IO.PathTooLongException ptle)
             {
                 throw new FixCheckException(message + ": " + ptle.Message);
             }

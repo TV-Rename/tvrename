@@ -13,12 +13,12 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
 
 // Helpful functions and classes
 
@@ -261,7 +261,7 @@ namespace TVRename
                 Logger.Warn(e, $"Could not open {what}");
                 return false;
             }
-            catch (FileNotFoundException e)
+            catch (System.IO.FileNotFoundException e)
             {
                 Logger.Warn(e, $"Could not open {what}");
                 return false;

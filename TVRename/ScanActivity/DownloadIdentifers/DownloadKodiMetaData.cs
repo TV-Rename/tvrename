@@ -9,7 +9,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using JetBrains.Annotations;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {

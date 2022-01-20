@@ -15,7 +15,7 @@ namespace TVRename
 {
     using System;
     using System.Xml;
-    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+    using Alphaleonis.Win32.Filesystem;
 
     // ReSharper disable once InconsistentNaming
     public class ActionMede8erXML : ActionWriteMetadata

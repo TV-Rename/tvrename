@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -10,9 +9,7 @@ using JetBrains.Annotations;
 using Microsoft.Win32;
 using MscVersion;
 using NLog;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using File = Alphaleonis.Win32.Filesystem.File;
-using Path = Alphaleonis.Win32.Filesystem.Path;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -65,7 +62,7 @@ namespace TVRename
                 }
                 Cef.Initialize(settings);
             }
-            catch (FileNotFoundException fex)
+            catch (System.IO.FileNotFoundException fex)
             {
                 Logger.Error(fex,
                     $"Can't initialise CEF with settings {PathManager.CefCachePath}, {PathManager.CefLogFile}, {architectureSpecificBrowserPath}, {architectureSpecificLocalesDirPath}, {architectureSpecificResourcesDirPath}");

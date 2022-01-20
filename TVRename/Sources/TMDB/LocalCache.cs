@@ -24,7 +24,7 @@ using TMDbLib.Objects.TvShows;
 using TVRename.Forms;
 using static TVRename.TMDB.API;
 using Cast = TMDbLib.Objects.Movies.Cast;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename.TMDB
 {

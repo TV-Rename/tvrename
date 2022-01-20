@@ -9,12 +9,9 @@
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -91,7 +88,7 @@ namespace TVRename
 
                 return true;
             }
-            catch (PathTooLongException e)
+            catch (System.IO.PathTooLongException e)
             {
                 WarnPathTooLong(me, dce, e, matched);
             }
@@ -155,7 +152,7 @@ namespace TVRename
 
                 return true;
             }
-            catch (PathTooLongException e)
+            catch (System.IO.PathTooLongException e)
             {
                 WarnPathTooLong(me, dce, e, matched);
             }
@@ -325,11 +322,11 @@ namespace TVRename
                         extras.Add(CopySubFolderForAction(d, action, subtitleFolder));
                     }
                 }
-                catch (DirectoryNotFoundException)
+                catch (System.IO.DirectoryNotFoundException)
                 {
                     LOGGER.Warn($"Could not find {action.SourceDirectory}, so not copying any subtitles from it.");
                 }
-                catch (IOException io)
+                catch (System.IO.IOException io)
                 {
                     LOGGER.Warn(io,$"Could not access {action.SourceDirectory}, so not copying any subtitles from it.");
                 }
@@ -443,7 +440,7 @@ namespace TVRename
                             null, d)
                         : new ActionCopyMoveRename(action.Operation, fi,
                         FileHelper.FileInFolder(action.To.Directory, newName), action.SourceEpisode, true,
-                        null, d); 
+                        null, d);
 
                     // check this item isn't already in our to-do list
                     if (ActionListContains(actionlist, newitem))
@@ -461,11 +458,11 @@ namespace TVRename
             {
                 LOGGER.Warn("Could not access: " + action.From.FullName);
             }
-            catch (DirectoryNotFoundException)
+            catch (System.IO.DirectoryNotFoundException)
             {
                 LOGGER.Warn("Could not find: " + action.From.FullName);
             }
-            catch (PathTooLongException e)
+            catch (System.IO.PathTooLongException e)
             {
                 string t = "Path or filename too long. " + action.From.FullName + ", " + e.Message;
                 LOGGER.Warn(e, "Path or filename too long. " + action.From.FullName);
@@ -475,7 +472,7 @@ namespace TVRename
                     MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
             }
-            catch (IOException ioe)
+            catch (System.IO.IOException ioe)
             {
                 LOGGER.Warn($"IOException Occured accessing: {action.From.FullName} nessage:{ioe.Message}");
             }

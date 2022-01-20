@@ -13,7 +13,7 @@ namespace TVRename
 {
     using System;
     using System.Xml;
-    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+    using Alphaleonis.Win32.Filesystem;
 
     public class ActionWdtvMeta : ActionWriteMetadata
     {

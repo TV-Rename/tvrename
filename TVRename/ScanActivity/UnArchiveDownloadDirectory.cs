@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using File = Alphaleonis.Win32.Filesystem.File;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -40,7 +37,7 @@ namespace TVRename
         {
             try
             {
-                foreach (string filePath in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories).Where(File.Exists))
+                foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories).Where(File.Exists))
                 {
                     if (Settings.Token.IsCancellationRequested)
                     {
@@ -61,11 +58,11 @@ namespace TVRename
             {
                 LOGGER.Warn(ex, $"Could not access files in {dirPath}");
             }
-            catch (DirectoryNotFoundException ex)
+            catch (System.IO.DirectoryNotFoundException ex)
             {
                 LOGGER.Warn(ex, $"Could not access files in {dirPath}");
             }
-            catch (IOException ex)
+            catch (System.IO.IOException ex)
             {
                 LOGGER.Warn(ex, $"Could not access files in {dirPath}");
             }

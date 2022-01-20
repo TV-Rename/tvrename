@@ -9,12 +9,11 @@
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -43,7 +42,7 @@ namespace TVRename
                 Where.LastWriteTime = DateTimeOffset.FromUnixTimeSeconds(UpdateTime() ?? 0).UtcDateTime;
                 return actionOutcome;
             }
-            catch (IOException ex)
+            catch (System.IO.IOException ex)
             {
                 return new ActionOutcome(ex);
             }
@@ -59,7 +58,7 @@ namespace TVRename
                     Where.Delete(true);
                     return Go(stats);
                 }
-                catch (IOException ex)
+                catch (System.IO.IOException ex)
                 {
                     return new ActionOutcome(ex);
                 }

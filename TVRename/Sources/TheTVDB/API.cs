@@ -4,7 +4,6 @@ using Newtonsoft.Json.Linq;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Cache;
 
@@ -303,7 +302,7 @@ namespace TVRename.TheTVDB
                 //no images for chosen language
                 Logger.LogWebException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}",wex);
             }
-            catch (IOException iox)
+            catch (System.IO.IOException iox)
             {
                 //no images for chosen language
                 Logger.LogIoException($"Looking for images, but none found for seriesId {code} via {uriImages} in language {requestedLanguageCode}",iox);
@@ -384,7 +383,7 @@ namespace TVRename.TheTVDB
                 {
                     Logger.LogWebException($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}:", webEx);
                 }
-                catch (IOException ioe)
+                catch (System.IO.IOException ioe)
                 {
                     Logger.LogIoException($"Looking for {imageType} images (in {languageCode}), but none found for seriesId {code}: {ioe.LoggableDetails()}",ioe);
                 }
@@ -488,7 +487,7 @@ namespace TVRename.TheTVDB
                 Logger.LogWebException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got WebException:", webEx);
                 throw new SourceConnectivityException($"Id={code.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {webEx.Message}");
             }
-            catch (IOException ioe)
+            catch (System.IO.IOException ioe)
             {
                 Logger.LogIoException($"Id={code} Looking for {uri} (in {requestedLanguageCode}), but got: {ioe.LoggableDetails()}",ioe);
                 throw new SourceConnectivityException($"Id={code.TvdbId} Looking for {uri} (in {requestedLanguageCode}) {ioe.Message}");

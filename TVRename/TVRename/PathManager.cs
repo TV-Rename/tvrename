@@ -8,7 +8,6 @@
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 using System;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {

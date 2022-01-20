@@ -1,10 +1,8 @@
 using JetBrains.Annotations;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename.Forms.Tools
 {
@@ -70,7 +68,7 @@ namespace TVRename.Forms.Tools
 
         private void ProcessDirectory([NotNull] DirectoryInfo droppedDir)
         {
-            if ((droppedDir.Attributes & FileAttributes.Directory) != FileAttributes.Directory)
+            if ((droppedDir.Attributes & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)
             {
                 Logger.Error($"{droppedDir.FullName} is not a directory, CONTACT DEV TEAM.");
                 return;
@@ -89,7 +87,7 @@ namespace TVRename.Forms.Tools
 
         private void ProcessUnknown([NotNull] FileInfo droppedFile, IDialogParent owner)
         {
-            if ((droppedFile.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
+            if ((droppedFile.Attributes & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory)
             {
                 ProcessDirectory(new DirectoryInfo(droppedFile.FullName));
             }
@@ -101,7 +99,7 @@ namespace TVRename.Forms.Tools
 
         private void ProcessFile([NotNull] FileInfo droppedFile, IDialogParent owner)
         {
-            if ((droppedFile.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
+            if ((droppedFile.Attributes & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory)
             {
                 Logger.Error($"{droppedFile.FullName} is a directory, ignoring.");
                 return;

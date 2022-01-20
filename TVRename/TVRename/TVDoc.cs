@@ -15,7 +15,6 @@ using NodaTime.Extensions;
 using Polly;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -23,11 +22,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using TVRename.Settings.AppState;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using File = Alphaleonis.Win32.Filesystem.File;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -1334,7 +1329,7 @@ namespace TVRename
 
                 try
                 {
-                    string[] x = Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories);
+                    string[] x = Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories);
                     Logger.Info($"Processing {x.Length} files for shows that need to be scanned");
 
                     foreach (string filePath in x)
@@ -1365,11 +1360,11 @@ namespace TVRename
                 {
                     Logger.Warn($"Could not access files in {dirPath} {ex.Message}");
                 }
-                catch (DirectoryNotFoundException ex)
+                catch (System.IO.DirectoryNotFoundException ex)
                 {
                     Logger.Warn($"Could not access files in {dirPath} {ex.Message}");
                 }
-                catch (IOException ex)
+                catch (System.IO.IOException ex)
                 {
                     Logger.Warn($"Could not access files in {dirPath} {ex.Message}");
                 }
@@ -1379,7 +1374,7 @@ namespace TVRename
                 }
                 try
                 {
-                    string[] directories = Directory.GetDirectories(dirPath, "*", SearchOption.AllDirectories);
+                    string[] directories = Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories);
                     Logger.Info($"Processing {directories.Length} directories for shows that need to be scanned");
 
                     foreach (string subDirPath in directories)
@@ -1405,11 +1400,11 @@ namespace TVRename
                 {
                     Logger.Warn($"Could not access sub-directories in {dirPath} {ex.Message}");
                 }
-                catch (DirectoryNotFoundException ex)
+                catch (System.IO.DirectoryNotFoundException ex)
                 {
                     Logger.Warn($"Could not access sub-directories in {dirPath} {ex.Message}");
                 }
-                catch (IOException ex)
+                catch (System.IO.IOException ex)
                 {
                     Logger.Warn($"Could not access sub-directories in {dirPath} {ex.Message}");
                 }
@@ -1441,7 +1436,7 @@ namespace TVRename
 
                 try
                 {
-                    string[] x = Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories);
+                    string[] x = Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories);
                     Logger.Info($"Processing {x.Length} files for shows that need to be scanned");
 
                     foreach (string filePath in x)
@@ -1473,11 +1468,11 @@ namespace TVRename
                 {
                     Logger.Warn($"Could not access files in {dirPath} {ex.Message}");
                 }
-                catch (DirectoryNotFoundException ex)
+                catch (System.IO.DirectoryNotFoundException ex)
                 {
                     Logger.Warn($"Could not access files in {dirPath} {ex.Message}");
                 }
-                catch (IOException ex)
+                catch (System.IO.IOException ex)
                 {
                     Logger.Warn($"Could not access files in {dirPath} {ex.Message}");
                 }
@@ -1487,7 +1482,7 @@ namespace TVRename
                 }
                 try
                 {
-                    string[] directories = Directory.GetDirectories(dirPath, "*", SearchOption.AllDirectories);
+                    string[] directories = Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories);
                     Logger.Info($"Processing {directories.Length} directories for shows that need to be scanned");
 
                     foreach (string subDirPath in directories)
@@ -1513,11 +1508,11 @@ namespace TVRename
                 {
                     Logger.Warn($"Could not access sub-directories in {dirPath} {ex.Message}");
                 }
-                catch (DirectoryNotFoundException ex)
+                catch (System.IO.DirectoryNotFoundException ex)
                 {
                     Logger.Warn($"Could not access sub-directories in {dirPath} {ex.Message}");
                 }
-                catch (IOException ex)
+                catch (System.IO.IOException ex)
                 {
                     Logger.Warn($"Could not access sub-directories in {dirPath} {ex.Message}");
                 }
@@ -1874,7 +1869,7 @@ namespace TVRename
 
             try
             {
-                IEnumerable<string> x = Directory.GetFiles(downloadFolder, "*", SearchOption.AllDirectories).OrderBy(s => s).ToList();
+                IEnumerable<string> x = Directory.GetFiles(downloadFolder, "*", System.IO.SearchOption.AllDirectories).OrderBy(s => s).ToList();
                 Logger.Info($"Processing {x.Count()} files for shows that need to be scanned");
 
                 foreach (string filePath in x)
@@ -1942,11 +1937,11 @@ namespace TVRename
             {
                 Logger.Warn($"Could not access files in {downloadFolder} {ex.Message}");
             }
-            catch (DirectoryNotFoundException ex)
+            catch (System.IO.DirectoryNotFoundException ex)
             {
                 Logger.Warn($"Could not access files in {downloadFolder} {ex.Message}");
             }
-            catch (IOException ex)
+            catch (System.IO.IOException ex)
             {
                 Logger.Warn($"Could not access files in {downloadFolder} {ex.Message}");
             }
@@ -2000,7 +1995,7 @@ namespace TVRename
 
             if (videofiles is null)
             {
-                throw new FileNotFoundException();
+                throw new System.IO.FileNotFoundException();
             }
 
             if (videofiles.Count != 1)

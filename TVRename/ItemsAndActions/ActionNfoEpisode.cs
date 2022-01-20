@@ -1,10 +1,8 @@
 using JetBrains.Annotations;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using File = Alphaleonis.Win32.Filesystem.File;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -44,7 +42,7 @@ namespace TVRename
 
             try
             {
-                using (StreamWriter writer = File.CreateText(Where.FullName))
+                using (System.IO.StreamWriter writer = File.CreateText(Where.FullName))
                 {
                     foreach (XElement ep in episodeXmLs)
                     {
@@ -52,7 +50,7 @@ namespace TVRename
                     }
                 }
             }
-            catch (IOException e)
+            catch (System.IO.IOException e)
             {
                 return new ActionOutcome(e);
             }

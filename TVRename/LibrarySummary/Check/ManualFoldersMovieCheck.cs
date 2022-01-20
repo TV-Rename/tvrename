@@ -1,13 +1,8 @@
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using File = Alphaleonis.Win32.Filesystem.File;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using Path = Alphaleonis.Win32.Filesystem.Path;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -92,7 +87,7 @@ namespace TVRename
                             automaticLocations.First());
                     }
                 }
-                catch (IOException ioe)
+                catch (System.IO.IOException ioe)
                 {
                     throw new FixCheckException(ioe.Message);
                 }

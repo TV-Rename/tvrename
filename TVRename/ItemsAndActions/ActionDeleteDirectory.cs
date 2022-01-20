@@ -8,8 +8,7 @@
 
 using JetBrains.Annotations;
 using System;
-using System.IO;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -63,7 +62,7 @@ namespace TVRename
                 }
                 return ActionOutcome.Success();
             }
-            catch (DirectoryNotFoundException)
+            catch (System.IO.DirectoryNotFoundException)
             {
                 LOGGER.Info($"Testing {toRemove.FullName} but it has already been removed - Job Done!");
                 return ActionOutcome.Success();

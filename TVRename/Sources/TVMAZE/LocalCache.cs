@@ -10,7 +10,7 @@ using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 // Talk to the TVmaze web API, and get tv cachedSeries info
 

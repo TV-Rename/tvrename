@@ -1,9 +1,7 @@
 using System.Collections.Generic;
-using System.IO;
 using JetBrains.Annotations;
 using NLog;
-using File = Alphaleonis.Win32.Filesystem.File;
-using Path = Alphaleonis.Win32.Filesystem.Path;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -154,7 +152,7 @@ namespace TVRename
                         TorrentEntry te = new(torrentFile, saveTo, percent, completed, torrentFile);
                         r.Add(te);
                     }
-                    catch (PathTooLongException ptle)
+                    catch (System.IO.PathTooLongException ptle)
                     {
                         //this is not the file we are looking for
                         Logger.Debug(ptle);

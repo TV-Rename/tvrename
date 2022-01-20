@@ -1,8 +1,7 @@
 ﻿using System;
-using System.IO;
 using JetBrains.Annotations;
 using NLog;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -40,7 +39,7 @@ namespace TVRename
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            catch (FileNotFoundException)
+            catch (System.IO.FileNotFoundException)
             {
                 return false;
             }
@@ -78,7 +77,7 @@ namespace TVRename
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            catch (FileNotFoundException)
+            catch (System.IO.FileNotFoundException)
             {
                 return false;
             }

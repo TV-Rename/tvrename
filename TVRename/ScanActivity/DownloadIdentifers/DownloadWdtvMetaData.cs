@@ -7,7 +7,7 @@
 //
 
 using System.Collections.Generic;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {

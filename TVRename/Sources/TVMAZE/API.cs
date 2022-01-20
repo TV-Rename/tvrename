@@ -5,7 +5,6 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
 
@@ -35,7 +34,7 @@ namespace TVRename.TVmaze
                 Logger.LogWebException("Could not get updates from TV Maze due to", ex);
                 throw new SourceConnectivityException(ex.Message);
             }
-            catch (IOException iex)
+            catch (System.IO.IOException iex)
             {
                 Logger.Error($"Could not get updates from TV Maze due to {iex.Message}");
                 throw new SourceConnectivityException(iex.Message);
@@ -61,7 +60,7 @@ namespace TVRename.TVmaze
                 Logger.LogWebException($"Could not search for show '{searchText}' from TV Maze due to", wex);
                 throw new SourceConnectivityException($"Can't search TVmaze  for {searchText} {wex.Message}");
             }
-            catch (IOException wex)
+            catch (System.IO.IOException wex)
             {
                 Logger.LogIoException($"Could not search for show '{searchText}' from TV Maze due to", wex);
                 throw new SourceConnectivityException($"Can't search TVmaze  for {searchText} {wex.Message}");
@@ -92,7 +91,7 @@ namespace TVRename.TVmaze
 
                 source.UpdateId(tvMazeId, TVDoc.ProviderType.TVmaze);
             }
-            catch (IOException wex)
+            catch (System.IO.IOException wex)
             {
                 throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {source} {wex.Message}");
             }
@@ -141,7 +140,7 @@ namespace TVRename.TVmaze
             {
                 return false;
             }
-            catch (IOException)
+            catch (System.IO.IOException)
             {
                 return false;
             }
@@ -163,7 +162,7 @@ namespace TVRename.TVmaze
                 Logger.LogWebException($"Could not get show with id {tvMazeId.TvMazeId} from TV Maze due to", wex);
                 throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId} {wex.Message}");
             }
-            catch (IOException ioe)
+            catch (System.IO.IOException ioe)
             {
                 Logger.LogIoException($"Could not get show with id {tvMazeId.TvMazeId} from TV Maze due to", ioe);
                 throw new SourceConnectivityException($"Can't find TVmaze cachedSeries for {tvMazeId.TvMazeId} {ioe.Message}");
@@ -380,7 +379,7 @@ namespace TVRename.TVmaze
             JToken externalsToken = GetChild(r, "externals");
             int tvdb = GetChild(externalsToken, "thetvdb").Type == JTokenType.Null ? -1 : (int)externalsToken["thetvdb"];
             int rage = GetChild(externalsToken, "tvrage").Type == JTokenType.Null ? -1 : (int)externalsToken["tvrage"];
-            
+
             return new CachedSeriesInfo(new Locale(), TVDoc.ProviderType.TVmaze)
             {
                 IsSearchResultOnly = false,

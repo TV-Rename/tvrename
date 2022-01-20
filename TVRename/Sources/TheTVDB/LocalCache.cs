@@ -12,7 +12,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -20,7 +19,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TVRename.Forms.Utilities;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 // Talk to the TheTVDB web API, and get tv cachedSeries info
 
@@ -114,7 +113,7 @@ namespace TVRename.TheTVDB
                 LastErrorMessage = CurrentDLTask + " : " + e.LoggableDetails();
                 return null;
             }
-            catch (IOException e)
+            catch (System.IO.IOException e)
             {
                 LOGGER.Warn(CurrentDLTask + " : " + e.LoggableDetails() + " : " + url);
                 LastErrorMessage = CurrentDLTask + " : " + e.LoggableDetails();
@@ -227,7 +226,7 @@ namespace TVRename.TheTVDB
                 HandleConnectionProblem(showErrorMsgBox, ex);
                 return false;
             }
-            catch (IOException ex)
+            catch (System.IO.IOException ex)
             {
                 HandleConnectionProblem(showErrorMsgBox, ex);
                 return false;
@@ -247,7 +246,7 @@ namespace TVRename.TheTVDB
                 LOGGER.LogWebException("Error obtaining token from TVDB", wex);
                 LastErrorMessage = wex.LoggableDetails();
             }
-            else if (ex is IOException iex)
+            else if (ex is System.IO.IOException iex)
             {
                 LOGGER.LogIoException("Error obtaining token from TVDB", iex);
                 LastErrorMessage = iex.LoggableDetails();
@@ -492,7 +491,7 @@ namespace TVRename.TheTVDB
             {
                 return API.GetShowUpdatesSince(updateFromEpochTime, TVSettings.Instance.PreferredTVDBLanguage.Abbreviation,page);
             }
-            catch (IOException iex)
+            catch (System.IO.IOException iex)
             {
                 LOGGER.LogIoException(
                     $"Error obtaining lastupdated query since (local) {requestedTime.ToLocalTime()}: Message is", iex);
@@ -1028,7 +1027,7 @@ namespace TVRename.TheTVDB
                         return null;
                     }
                 }
-                catch (IOException ex)
+                catch (System.IO.IOException ex)
                 {
                     LOGGER.Warn(ex, $"Connection to TVDB Failed whilst loading episode with Id {id}.");
                     return null;
@@ -1266,7 +1265,7 @@ namespace TVRename.TheTVDB
                     ? API.GetMovieV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
                     : API.GetMovie(code.TvdbId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation) ?? throw new SourceConnectivityException();
             }
-            catch (IOException ioex)
+            catch (System.IO.IOException ioex)
             {
                 LOGGER.LogIoException(
                     $"Error obtaining movie {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
@@ -1975,7 +1974,7 @@ namespace TVRename.TheTVDB
                     ? API.GetSeriesV4(code, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation)
                     : API.GetSeries(code.TvdbId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation);
             }
-            catch (IOException ioex)
+            catch (System.IO.IOException ioex)
             {
                 LOGGER.LogIoException(
                     $"Error obtaining cachedSeries {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
@@ -2021,7 +2020,7 @@ namespace TVRename.TheTVDB
                 return API.GetMovieTranslationsV4(code,
                     locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
             }
-            catch (IOException ioex)
+            catch (System.IO.IOException ioex)
             {
                 LOGGER.LogIoException(
                     $"Error obtaining translations for {code} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
@@ -2050,7 +2049,7 @@ namespace TVRename.TheTVDB
                 return API.GetSeriesTranslationsV4(code,
                     locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).ThreeAbbreviation);
             }
-            catch (IOException ioex)
+            catch (System.IO.IOException ioex)
             {
                 LOGGER.LogIoException(
                     $"Error obtaining translations for {code.TvdbId} in {locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).EnglishName}:",
@@ -2078,7 +2077,7 @@ namespace TVRename.TheTVDB
             {
                 API.GetSeriesEpisodes(code.TvdbId, locale.LanguageToUse(TVDoc.ProviderType.TheTVDB).Abbreviation);
             }
-            catch (IOException)
+            catch (System.IO.IOException)
             {
                 return true;
             }
@@ -2132,7 +2131,7 @@ namespace TVRename.TheTVDB
                         actorSortOrder));
                 }
             }
-            catch (IOException ex)
+            catch (System.IO.IOException ex)
             {
                 LOGGER.LogIoException($"Unble to obtain actors for {Series[code].Name}", ex);
                 LastErrorMessage = ex.LoggableDetails();
@@ -2654,7 +2653,7 @@ namespace TVRename.TheTVDB
                         TVSettings.Instance.PreferredTVDBLanguage.Abbreviation) ?? throw new SourceConnectivityException();
                 }
             }
-            catch (IOException ex)
+            catch (System.IO.IOException ex)
             {
                 LOGGER.LogIoException($"Error obtaining episode[{episodeId}]:", ex);
 
@@ -2955,7 +2954,7 @@ namespace TVRename.TheTVDB
                     jsonSearchDefaultLangResponse =
                         API.SearchTvShow(text, TVSettings.Instance.PreferredTVDBLanguage.Abbreviation);
                 }
-                catch (IOException ex)
+                catch (System.IO.IOException ex)
                 {
                     LOGGER.Error(ex,
                         $"Error obntaining search term '{text}' in {TVSettings.Instance.PreferredTVDBLanguage.EnglishName}: {ex.LoggableDetails()}");
@@ -3305,7 +3304,7 @@ namespace TVRename.TheTVDB
                 API.Login(true);
                 IsConnected = true;
             }
-            catch (IOException ex)
+            catch (System.IO.IOException ex)
             {
                 HandleConnectionProblem(showErrorMsgBox, ex);
             }

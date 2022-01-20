@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using JetBrains.Annotations;
-using File = Alphaleonis.Win32.Filesystem.File;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -44,7 +42,7 @@ namespace TVRename
 
                 return btr.AllFilesBeingDownloaded();
             }
-            catch (IOException i)
+            catch (System.IO.IOException i)
             {
                 Logger.Warn($"Could not get downloads from uTorrent: {i.Message}");
                 return null;

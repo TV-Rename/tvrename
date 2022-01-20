@@ -5,16 +5,13 @@
 //
 // Copyright (c) TV Rename. This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
-
-using System.IO;
 using JetBrains.Annotations;
+using Alphaleonis.Win32.Filesystem;
+using System;
+using System.Windows.Forms;
 
 namespace TVRename
 {
-    using Alphaleonis.Win32.Filesystem;
-    using System;
-    using System.Windows.Forms;
-
     /// <summary>
     /// Summary for CopyMoveProgress
     ///
@@ -194,7 +191,7 @@ namespace TVRename
                 catch (UnauthorizedAccessException)
                 {
                 }
-                catch (IOException)
+                catch (System.IO.IOException)
                 {
                 }
             }
