@@ -31,7 +31,7 @@ namespace TVRename
         {
             IEnumerable<string> matchingLocations =
                 Movie.ManualLocations.Where(loc => Movie.AutomaticLocations().Any(aloc => LocationsMatch(aloc, loc))).ToList();
-            
+
             Movie.ManualLocations.RemoveNullableRange(matchingLocations);
 
             if (!Movie.ManualLocations.Any())
@@ -41,6 +41,6 @@ namespace TVRename
         }
 
         [NotNull]
-        public override string CheckName => "[Movie] Manual Folders Mirror Automatic";
+        public override string CheckName => "[Movie] Manual Season Folders Mirror Automatic";
     }
 }

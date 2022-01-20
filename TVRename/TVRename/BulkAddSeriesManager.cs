@@ -450,8 +450,8 @@ namespace TVRename
                 if (ai.HasSeasonFoldersGuess)
                 {
                     found.AutoAddType = ai.SeasonFolderFormat == TVSettings.Instance.SeasonFolderFormat
-                        ? ShowConfiguration.AutomaticFolderType.libraryDefault
-                        : ShowConfiguration.AutomaticFolderType.custom;
+                        ? ShowConfiguration.AutomaticFolderType.libraryDefaultFolderFormat
+                        : ShowConfiguration.AutomaticFolderType.customFolderFormat;
 
                     found.AutoAddCustomFolderFormat = ai.SeasonFolderFormat;
                 }

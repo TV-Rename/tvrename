@@ -359,7 +359,7 @@ namespace TVRename
 
             if (chkManualFolders.Checked && lvManualFolders.Items.Count==0)
             {
-                MessageBox.Show("Please add manual folders or disable manual/additional Folders"
+                MessageBox.Show("Please add manual season folders or disable manual/additional Folders"
                     , "TV Rename Add/Edit Movie",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
 

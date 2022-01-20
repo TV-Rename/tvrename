@@ -221,12 +221,12 @@ namespace TVRename
                     rdoFolderBaseOnly.Checked = true;
                     break;
 
-                case ShowConfiguration.AutomaticFolderType.custom:
+                case ShowConfiguration.AutomaticFolderType.customFolderFormat:
                     chkAutoFolders.Checked = true;
                     rdoFolderCustom.Checked = true;
                     break;
 
-                case ShowConfiguration.AutomaticFolderType.libraryDefault:
+                case ShowConfiguration.AutomaticFolderType.libraryDefaultFolderFormat:
                     chkAutoFolders.Checked = true;
                     rdoFolderLibraryDefault.Checked = true;
                     break;
@@ -370,7 +370,7 @@ namespace TVRename
             }
             if (chkAutoFolders.Checked && string.IsNullOrWhiteSpace(txtBaseFolder.Text))
             {
-                MessageBox.Show("Please enter base folder for this show or turn off automatic folders", "TV Rename Add/Edit TV Show",
+                MessageBox.Show("Please enter base folder for this show or turn off automatic season folders", "TV Rename Add/Edit TV Show",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 Folders.SelectedTab = tabPage5;
@@ -511,13 +511,13 @@ namespace TVRename
             }
             if (rdoFolderCustom.Checked)
             {
-                return ShowConfiguration.AutomaticFolderType.custom;
+                return ShowConfiguration.AutomaticFolderType.customFolderFormat;
             }
             if (rdoFolderBaseOnly.Checked)
             {
                 return ShowConfiguration.AutomaticFolderType.baseOnly;
             }
-            return ShowConfiguration.AutomaticFolderType.libraryDefault;
+            return ShowConfiguration.AutomaticFolderType.libraryDefaultFolderFormat;
         }
 
         private TVDoc.ProviderType GetConfigurationProviderType()

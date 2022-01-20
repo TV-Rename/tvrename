@@ -9,13 +9,13 @@ namespace TVRename
         }
 
         [NotNull]
-        protected override string FieldName => "Use Manual Folders for TV Show";
+        protected override string FieldName => "[TV] Use Manual season Folders for TV Show";
         protected override bool Field => Show.UsesManualFolders();
 
         protected override void FixInternal()
         {
             Show.ManualFolderLocations.Clear();
-            Show.AutoAddType = ShowConfiguration.AutomaticFolderType.libraryDefault;
+            Show.AutoAddType = ShowConfiguration.AutomaticFolderType.libraryDefaultFolderFormat;
         }
     }
 }

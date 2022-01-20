@@ -8,14 +8,15 @@ namespace TVRename
         {
         }
 
-        public override bool Check() => Show.AutoAddType != ShowConfiguration.AutomaticFolderType.libraryDefault;
+        public override bool Check() => Show.AutoAddType == ShowConfiguration.AutomaticFolderType.customFolderFormat && TVSettings.Instance.DefShowUseSubFolders;
 
         [NotNull]
-        public override string Explain() => $"TV Show does not use the library default for AutomaticFolder creation, it uses {Show.AutoAddType}{(Show.AutoAddType == ShowConfiguration.AutomaticFolderType.custom ? $" {Show.AutoAddCustomFolderFormat}" : "")}";
+        public override string Explain() => $"TV Show does not use the library default for AutomaticFolder creation ({TVSettings.Instance.SeasonFolderFormat}), it uses {Show.AutoAddType}{(Show.AutoAddType == ShowConfiguration.AutomaticFolderType.customFolderFormat ? $" {Show.AutoAddCustomFolderFormat}" : "")}";
 
         protected override void FixInternal()
         {
-            Show.AutoAddType = ShowConfiguration.AutomaticFolderType.libraryDefault;
+            Show.AutoAddType = ShowConfiguration.AutomaticFolderType.libraryDefaultFolderFormat;
+            //TODO Should move files from the old location to the new one!!
         }
 
         [NotNull]

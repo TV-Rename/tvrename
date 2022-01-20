@@ -32,7 +32,7 @@ namespace TVRename
 
         public bool CountSpecials;
         public bool DvdOrder; // sort by DVD order, not the default sort we get
-        public bool AlternateOrder; 
+        public bool AlternateOrder;
         public readonly List<int> IgnoreSeasons;
         public readonly ConcurrentDictionary<int, List<string>> ManualFolderLocations;
         public readonly ConcurrentDictionary<int, List<ProcessedEpisode>> SeasonEpisodes; // built up by applying rules.
@@ -64,8 +64,8 @@ namespace TVRename
         {
             none,
             baseOnly,
-            libraryDefault,
-            custom
+            libraryDefaultFolderFormat,
+            customFolderFormat
         }
 
         #endregion AutomaticFolderType enum
@@ -119,7 +119,7 @@ namespace TVRename
             AutoAddType =
                 !TVSettings.Instance.DefShowAutoFolders ? AutomaticFolderType.none
                 : TVSettings.Instance.DefShowUseBase ? AutomaticFolderType.baseOnly
-                : AutomaticFolderType.libraryDefault;
+                : AutomaticFolderType.libraryDefaultFolderFormat;
         }
 
         public ShowConfiguration(int code, TVDoc.ProviderType type) : this()
@@ -348,7 +348,7 @@ namespace TVRename
 
         private static AutomaticFolderType GetAutoAddType(int? value)
         {
-            return value is null ? AutomaticFolderType.libraryDefault : (AutomaticFolderType)value;
+            return value is null ? AutomaticFolderType.libraryDefaultFolderFormat : (AutomaticFolderType)value;
         }
 
         private void UpgradeFromOldSeasonFormat([NotNull] XElement xmlSettings)
@@ -371,8 +371,8 @@ namespace TVRename
                     {
                         AutoAddCustomFolderFormat = tempAutoAddSeasonFolderName + (tempPadSeasonToTwoDigits || TVSettings.Instance.LeadingZeroOnSeason ? "{Season:2}" : "{Season}");
                         AutoAddType = AutoAddCustomFolderFormat == TVSettings.Instance.SeasonFolderFormat
-                            ? AutomaticFolderType.libraryDefault
-                            : AutomaticFolderType.custom;
+                            ? AutomaticFolderType.libraryDefaultFolderFormat
+                            : AutomaticFolderType.customFolderFormat;
                     }
                     else
                     {
@@ -635,12 +635,12 @@ namespace TVRename
                 return r + TVSettings.Instance.SpecialsFolderName;
             }
 
-            if (AutoAddType == AutomaticFolderType.libraryDefault)
+            if (AutoAddType == AutomaticFolderType.libraryDefaultFolderFormat)
             {
                 return r + CustomSeasonName.NameFor(s, TVSettings.Instance.SeasonFolderFormat);
             }
 
-            if (AutoAddType == AutomaticFolderType.custom)
+            if (AutoAddType == AutomaticFolderType.customFolderFormat)
             {
                 return r + CustomSeasonName.NameFor(s, AutoAddCustomFolderFormat);
             }
