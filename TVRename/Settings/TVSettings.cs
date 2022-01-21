@@ -361,8 +361,6 @@ namespace TVRename
         [NotNull]
         public IEnumerable<string> SubsFolderNames => Convert(SubsFolderNamesString);
 
-        public bool RemoveDupliatesFromibrary => true; //TODO - Put this in settings and have UI parameter
-
         public string SubsFolderNamesString = "subs;subtitle;vobsubs;sub;vobsub;subtitle";
 
         public bool AutoSaveOnExit = false;
@@ -380,7 +378,7 @@ namespace TVRename
         public string JackettIndexer = "/api/v2.0/indexers/all/results/torznab";
         public string JackettAPIKey = string.Empty;
 
-        public bool CleanLibraryAfterActions = false;
+        public bool ChooseWhenMultipleEpisodesMatch = false;
         public bool AutoAddAsPartOfQuickRename = true;
         public bool UseFullPathNameToMatchSearchFolders = false;
         public bool UseFullPathNameToMatchLibraryFolders = false;
@@ -680,7 +678,7 @@ namespace TVRename
             writer.WriteElement("AutomateAutoAddWhenOneMovieFound", AutomateAutoAddWhenOneMovieFound);
             writer.WriteElement("SubsFolderNamesString", SubsFolderNamesString);
 
-            writer.WriteElement("CleanLibraryAfterActions", CleanLibraryAfterActions);
+            writer.WriteElement("ChooseWhenMultipleEpisodesMatch", ChooseWhenMultipleEpisodesMatch);
 
             writer.WriteElement("DefShowIncludeNoAirdate", DefShowIncludeNoAirdate);
             writer.WriteElement("DefShowIncludeFuture", DefShowIncludeFuture);
@@ -1573,7 +1571,7 @@ namespace TVRename
             AutoAddAsPartOfQuickRename = xmlSettings.ExtractBool("AutoAddAsPartOfQuickRename", true);
             AutomateAutoAddWhenOneMovieFound = xmlSettings.ExtractBool("AutomateAutoAddWhenOneMovieFound", true);
             AutomateAutoAddWhenOneShowFound = xmlSettings.ExtractBool("AutomateAutoAddWhenOneShowFound", true);
-            CleanLibraryAfterActions = xmlSettings.ExtractBool("CleanLibraryAfterActions", false);
+            ChooseWhenMultipleEpisodesMatch = xmlSettings.ExtractBool("ChooseWhenMultipleEpisodesMatch", false);
 
             DefShowIncludeNoAirdate = xmlSettings.ExtractBool("DefShowIncludeNoAirdate", false);
             DefShowIncludeFuture = xmlSettings.ExtractBool("DefShowIncludeFuture", false);

@@ -92,8 +92,8 @@ namespace TVRename
             this.bnRemoveDefinedColor = new System.Windows.Forms.Button();
             this.btnAddShowStatusColoring = new System.Windows.Forms.Button();
             this.lvwDefinedColors = new System.Windows.Forms.ListView();
-            this.colShowStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.colColor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colShowStatus = new System.Windows.Forms.ColumnHeader();
+            this.colColor = new System.Windows.Forms.ColumnHeader();
             this.label61 = new System.Windows.Forms.Label();
             this.cbLeadingZero = new System.Windows.Forms.CheckBox();
             this.txtSeasonFolderName = new System.Windows.Forms.TextBox();
@@ -309,6 +309,7 @@ namespace TVRename
             this.txtExportRSSMaxDays = new System.Windows.Forms.TextBox();
             this.txtExportRSSMaxShows = new System.Windows.Forms.TextBox();
             this.tbFilesAndFolders = new System.Windows.Forms.TabPage();
+            this.chkUnArchiveFilesInDownloadDirectory = new System.Windows.Forms.CheckBox();
             this.cbFileNameCaseSensitiveMatch = new System.Windows.Forms.CheckBox();
             this.chkUseLibraryFullPathWhenMatchingShows = new System.Windows.Forms.CheckBox();
             this.label66 = new System.Windows.Forms.Label();
@@ -423,7 +424,7 @@ namespace TVRename
             this.cbRenameCheck = new System.Windows.Forms.CheckBox();
             this.cbMissing = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.chkCleanLibraryAfterActions = new System.Windows.Forms.CheckBox();
+            this.chkChooseWhenMultipleEpisodesMatch = new System.Windows.Forms.CheckBox();
             this.cbxUpdateAirDate = new System.Windows.Forms.CheckBox();
             this.cbAutoCreateFolders = new System.Windows.Forms.CheckBox();
             this.chkAutoMergeLibraryEpisodes = new System.Windows.Forms.CheckBox();
@@ -510,7 +511,6 @@ namespace TVRename
             this.cboUpdateCheckInterval = new System.Windows.Forms.ComboBox();
             this.optUpdateCheckInterval = new System.Windows.Forms.RadioButton();
             this.optUpdateCheckAlways = new System.Windows.Forms.RadioButton();
-            this.chkUnArchiveFilesInDownloadDirectory = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.groupBox11.SuspendLayout();
@@ -634,14 +634,12 @@ namespace TVRename
             this.cbMonitorFolder.Size = new System.Drawing.Size(342, 17);
             this.cbMonitorFolder.TabIndex = 5;
             this.cbMonitorFolder.Text = "&Monitor Search Folders for changes (run a scan when files change)";
-            this.toolTip1.SetToolTip(this.cbMonitorFolder, "If the contents of any of these folder change, then automatically do a \"Scan\" and" +
-        " \"Do\".");
+            this.toolTip1.SetToolTip(this.cbMonitorFolder, "If the contents of any of these folder change, then automatically do a \"Scan\" and" + " \"Do\".");
             this.cbMonitorFolder.UseVisualStyleBackColor = true;
             //
             // txtEmptyIgnoreExtensions
             //
-            this.txtEmptyIgnoreExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtEmptyIgnoreExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtEmptyIgnoreExtensions.Location = new System.Drawing.Point(95, 161);
             this.txtEmptyIgnoreExtensions.Name = "txtEmptyIgnoreExtensions";
             this.txtEmptyIgnoreExtensions.Size = new System.Drawing.Size(318, 20);
@@ -650,8 +648,7 @@ namespace TVRename
             //
             // txtEmptyIgnoreWords
             //
-            this.txtEmptyIgnoreWords.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtEmptyIgnoreWords.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtEmptyIgnoreWords.Location = new System.Drawing.Point(95, 111);
             this.txtEmptyIgnoreWords.Name = "txtEmptyIgnoreWords";
             this.txtEmptyIgnoreWords.Size = new System.Drawing.Size(318, 20);
@@ -661,9 +658,7 @@ namespace TVRename
             // lbSearchFolders
             //
             this.lbSearchFolders.AllowDrop = true;
-            this.lbSearchFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbSearchFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.lbSearchFolders.FormattingEnabled = true;
             this.lbSearchFolders.Location = new System.Drawing.Point(5, 207);
             this.lbSearchFolders.Name = "lbSearchFolders";
@@ -679,9 +674,7 @@ namespace TVRename
             // lstFMMonitorFolders
             //
             this.lstFMMonitorFolders.AllowDrop = true;
-            this.lstFMMonitorFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstFMMonitorFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.lstFMMonitorFolders.FormattingEnabled = true;
             this.lstFMMonitorFolders.IntegralHeight = false;
             this.lstFMMonitorFolders.Location = new System.Drawing.Point(6, 69);
@@ -698,47 +691,39 @@ namespace TVRename
             //
             // tbIgnoreSuffixes
             //
-            this.tbIgnoreSuffixes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbIgnoreSuffixes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbIgnoreSuffixes.Location = new System.Drawing.Point(100, 101);
             this.tbIgnoreSuffixes.Name = "tbIgnoreSuffixes";
             this.tbIgnoreSuffixes.Size = new System.Drawing.Size(305, 20);
             this.tbIgnoreSuffixes.TabIndex = 15;
-            this.toolTip1.SetToolTip(this.tbIgnoreSuffixes, "These terms and any text after them will be ignored when\r\nsearching on TVDB for t" +
-        "he show title based on the filename.");
+            this.toolTip1.SetToolTip(this.tbIgnoreSuffixes, "These terms and any text after them will be ignored when\r\nsearching on TVDB for t" + "he show title based on the filename.");
             //
             // tbMovieTerms
             //
-            this.tbMovieTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbMovieTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbMovieTerms.Location = new System.Drawing.Point(100, 75);
             this.tbMovieTerms.Name = "tbMovieTerms";
             this.tbMovieTerms.Size = new System.Drawing.Size(305, 20);
             this.tbMovieTerms.TabIndex = 13;
-            this.toolTip1.SetToolTip(this.tbMovieTerms, "If a filename contains any of these terms then it is assumed\r\nthat it is a Film a" +
-        "nd not a TV Show. Hence \'Auto Add\' is not\r\ninvoked for this file.");
+            this.toolTip1.SetToolTip(this.tbMovieTerms, "If a filename contains any of these terms then it is assumed\r\nthat it is a Film a" + "nd not a TV Show. Hence \'Auto Add\' is not\r\ninvoked for this file.");
             //
             // txtKeepTogether
             //
-            this.txtKeepTogether.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtKeepTogether.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtKeepTogether.Location = new System.Drawing.Point(204, 311);
             this.txtKeepTogether.Name = "txtKeepTogether";
             this.txtKeepTogether.Size = new System.Drawing.Size(204, 20);
             this.txtKeepTogether.TabIndex = 23;
-            this.toolTip1.SetToolTip(this.txtKeepTogether, "Which file extensions should be copied from the Search\r\nFolders into the library?" +
-        "");
+            this.toolTip1.SetToolTip(this.txtKeepTogether, "Which file extensions should be copied from the Search\r\nFolders into the library?" + "");
             //
             // txtOtherExtensions
             //
-            this.txtOtherExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtOtherExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOtherExtensions.Location = new System.Drawing.Point(99, 259);
             this.txtOtherExtensions.Name = "txtOtherExtensions";
             this.txtOtherExtensions.Size = new System.Drawing.Size(309, 20);
             this.txtOtherExtensions.TabIndex = 7;
-            this.toolTip1.SetToolTip(this.txtOtherExtensions, "Which file extensions in the library should be renamed along\r\nwith the video file" +
-        "s?");
+            this.toolTip1.SetToolTip(this.txtOtherExtensions, "Which file extensions in the library should be renamed along\r\nwith the video file" + "s?");
             //
             // cbCopyFutureDatedEps
             //
@@ -748,8 +733,7 @@ namespace TVRename
             this.cbCopyFutureDatedEps.Size = new System.Drawing.Size(270, 17);
             this.cbCopyFutureDatedEps.TabIndex = 41;
             this.cbCopyFutureDatedEps.Text = "Copy future dated episodes found in Search Folders";
-            this.toolTip1.SetToolTip(this.cbCopyFutureDatedEps, "If set then any episodes in the search folders will be copied into the library, e" +
-        "ven if they are yet to officially air.");
+            this.toolTip1.SetToolTip(this.cbCopyFutureDatedEps, "If set then any episodes in the search folders will be copied into the library, e" + "ven if they are yet to officially air.");
             this.cbCopyFutureDatedEps.UseVisualStyleBackColor = true;
             //
             // label40
@@ -760,8 +744,7 @@ namespace TVRename
             this.label40.Size = new System.Drawing.Size(33, 13);
             this.label40.TabIndex = 54;
             this.label40.Text = "hours";
-            this.toolTip1.SetToolTip(this.label40, "If checked the system will automatically scan and complete actions on a periodic " +
-        "schedule");
+            this.toolTip1.SetToolTip(this.label40, "If checked the system will automatically scan and complete actions on a periodic " + "schedule");
             //
             // domainUpDown2
             //
@@ -786,15 +769,12 @@ namespace TVRename
             //
             // tbSeasonSearchTerms
             //
-            this.tbSeasonSearchTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbSeasonSearchTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbSeasonSearchTerms.Location = new System.Drawing.Point(126, 85);
             this.tbSeasonSearchTerms.Name = "tbSeasonSearchTerms";
             this.tbSeasonSearchTerms.Size = new System.Drawing.Size(268, 20);
             this.tbSeasonSearchTerms.TabIndex = 22;
-            this.toolTip1.SetToolTip(this.tbSeasonSearchTerms, "Which terms should the system look for in directory\r\nnames that indicate that the" +
-        " folder contains a season\'s\r\nworth of episodes for a show.\r\nThey should be separ" +
-        "ated by a semi-colon - ; ");
+            this.toolTip1.SetToolTip(this.tbSeasonSearchTerms, "Which terms should the system look for in directory\r\nnames that indicate that the" + " folder contains a season\'s\r\nworth of episodes for a show.\r\nThey should be separ" + "ated by a semi-colon - ; ");
             //
             // chkForceBulkAddToUseSettingsOnly
             //
@@ -804,9 +784,7 @@ namespace TVRename
             this.chkForceBulkAddToUseSettingsOnly.Size = new System.Drawing.Size(248, 17);
             this.chkForceBulkAddToUseSettingsOnly.TabIndex = 15;
             this.chkForceBulkAddToUseSettingsOnly.Text = "Force to Use Season Words from Settings Only";
-            this.toolTip1.SetToolTip(this.chkForceBulkAddToUseSettingsOnly, "If set then Bulk Add just uses the season words from settings. If not set (recomm" +
-        "ended) then Bulk Add finds addition season words from each show\'s configuration." +
-        "");
+            this.toolTip1.SetToolTip(this.chkForceBulkAddToUseSettingsOnly, "If set then Bulk Add just uses the season words from settings. If not set (recomm" + "ended) then Bulk Add finds addition season words from each show\'s configuration." + "");
             this.chkForceBulkAddToUseSettingsOnly.UseVisualStyleBackColor = true;
             //
             // cbIgnoreRecycleBin
@@ -828,8 +806,7 @@ namespace TVRename
             this.cbIgnoreNoVideoFolders.Size = new System.Drawing.Size(225, 17);
             this.cbIgnoreNoVideoFolders.TabIndex = 13;
             this.cbIgnoreNoVideoFolders.Text = "&Only Include Folders containing Video files";
-            this.toolTip1.SetToolTip(this.cbIgnoreNoVideoFolders, "If set then only folders that contain video files are considered for the \'Bulk Ad" +
-        "d\' feature");
+            this.toolTip1.SetToolTip(this.cbIgnoreNoVideoFolders, "If set then only folders that contain video files are considered for the \'Bulk Ad" + "d\' feature");
             this.cbIgnoreNoVideoFolders.UseVisualStyleBackColor = true;
             //
             // label1
@@ -840,8 +817,7 @@ namespace TVRename
             this.label1.Size = new System.Drawing.Size(33, 13);
             this.label1.TabIndex = 47;
             this.label1.Text = "hours";
-            this.toolTip1.SetToolTip(this.label1, "If checked the system will automatically scan and complete actions on a periodic " +
-        "schedule");
+            this.toolTip1.SetToolTip(this.label1, "If checked the system will automatically scan and complete actions on a periodic " + "schedule");
             //
             // domainUpDown1
             //
@@ -861,8 +837,7 @@ namespace TVRename
             this.domainUpDown1.Size = new System.Drawing.Size(40, 20);
             this.domainUpDown1.TabIndex = 46;
             this.domainUpDown1.Text = "1";
-            this.toolTip1.SetToolTip(this.domainUpDown1, "If checked the system will automatically scan and complete actions on a periodic " +
-        "schedule");
+            this.toolTip1.SetToolTip(this.domainUpDown1, "If checked the system will automatically scan and complete actions on a periodic " + "schedule");
             //
             // chkScheduledScan
             //
@@ -872,8 +847,7 @@ namespace TVRename
             this.chkScheduledScan.Size = new System.Drawing.Size(135, 17);
             this.chkScheduledScan.TabIndex = 45;
             this.chkScheduledScan.Text = "Sc&heduled scan every ";
-            this.toolTip1.SetToolTip(this.chkScheduledScan, "If checked the system will automatically scan and complete actions on a periodic " +
-        "schedule");
+            this.toolTip1.SetToolTip(this.chkScheduledScan, "If checked the system will automatically scan and complete actions on a periodic " + "schedule");
             this.chkScheduledScan.UseVisualStyleBackColor = true;
             //
             // chkScanOnStartup
@@ -922,8 +896,7 @@ namespace TVRename
             // lstMovieMonitorFolders
             //
             this.lstMovieMonitorFolders.AllowDrop = true;
-            this.lstMovieMonitorFolders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstMovieMonitorFolders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.lstMovieMonitorFolders.FormattingEnabled = true;
             this.lstMovieMonitorFolders.IntegralHeight = false;
             this.lstMovieMonitorFolders.Location = new System.Drawing.Point(6, 323);
@@ -959,11 +932,7 @@ namespace TVRename
             //
             // cmDefaults
             //
-            this.cmDefaults.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.KODIToolStripMenuItem,
-            this.pyTivoToolStripMenuItem,
-            this.mede8erToolStripMenuItem,
-            this.noneToolStripMenuItem});
+            this.cmDefaults.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.KODIToolStripMenuItem, this.pyTivoToolStripMenuItem, this.mede8erToolStripMenuItem, this.noneToolStripMenuItem });
             this.cmDefaults.Name = "cmDefaults";
             this.cmDefaults.Size = new System.Drawing.Size(121, 92);
             this.cmDefaults.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.cmDefaults_ItemClicked);
@@ -1069,9 +1038,7 @@ namespace TVRename
             //
             // groupBox11
             //
-            this.groupBox11.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox11.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox11.Controls.Add(this.label7);
             this.groupBox11.Controls.Add(this.cboShowStatus);
             this.groupBox11.Controls.Add(this.label5);
@@ -1162,12 +1129,8 @@ namespace TVRename
             //
             // lvwDefinedColors
             //
-            this.lvwDefinedColors.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvwDefinedColors.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.colShowStatus,
-            this.colColor});
+            this.lvwDefinedColors.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvwDefinedColors.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.colShowStatus, this.colColor });
             this.lvwDefinedColors.GridLines = true;
             this.lvwDefinedColors.HideSelection = false;
             this.lvwDefinedColors.Location = new System.Drawing.Point(6, 19);
@@ -1192,15 +1155,13 @@ namespace TVRename
             //
             // label61
             //
-            this.label61.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label61.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.label61.AutoSize = true;
             this.label61.Location = new System.Drawing.Point(7, 7);
             this.label61.Name = "label61";
             this.label61.Size = new System.Drawing.Size(298, 39);
             this.label61.TabIndex = 40;
-            this.label61.Text = "Settings that contol the way that TV Rename looks. These do\r\nnot have any impact " +
-    "on the main scanning, just on the way \r\nthe interface looks.";
+            this.label61.Text = "Settings that contol the way that TV Rename looks. These do\r\nnot have any impact " + "on the main scanning, just on the way \r\nthe interface looks.";
             //
             // cbLeadingZero
             //
@@ -1214,8 +1175,7 @@ namespace TVRename
             //
             // txtSeasonFolderName
             //
-            this.txtSeasonFolderName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSeasonFolderName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSeasonFolderName.Location = new System.Drawing.Point(114, 262);
             this.txtSeasonFolderName.Name = "txtSeasonFolderName";
             this.txtSeasonFolderName.Size = new System.Drawing.Size(294, 20);
@@ -1276,11 +1236,7 @@ namespace TVRename
             //
             this.cbStartupTab.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbStartupTab.FormattingEnabled = true;
-            this.cbStartupTab.Items.AddRange(new object[] {
-            "Movies",
-            "TV Shows",
-            "Scan",
-            "Schedule"});
+            this.cbStartupTab.Items.AddRange(new object[] { "Movies", "TV Shows", "Scan", "Schedule" });
             this.cbStartupTab.Location = new System.Drawing.Point(75, 120);
             this.cbStartupTab.Name = "cbStartupTab";
             this.cbStartupTab.Size = new System.Drawing.Size(135, 21);
@@ -1397,9 +1353,7 @@ namespace TVRename
             this.label59.Name = "label59";
             this.label59.Size = new System.Drawing.Size(334, 39);
             this.label59.TabIndex = 37;
-            this.label59.Text = "If an episode is missing from your library, TV Rename will look in the \r\nfollowin" +
-    "g URLs for appropriate files to download. It will use the torrent \r\nhandlers to " +
-    "download the file(s)";
+            this.label59.Text = "If an episode is missing from your library, TV Rename will look in the \r\nfollowin" + "g URLs for appropriate files to download. It will use the torrent \r\nhandlers to " + "download the file(s)";
             //
             // cbSearchJSON
             //
@@ -1426,8 +1380,7 @@ namespace TVRename
             //
             // gbJSON
             //
-            this.gbJSON.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbJSON.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.gbJSON.Controls.Add(this.label78);
             this.gbJSON.Controls.Add(this.tbJSONSeedersToken);
             this.gbJSON.Controls.Add(this.cbJSONCloudflareProtection);
@@ -1460,8 +1413,7 @@ namespace TVRename
             //
             // tbJSONSeedersToken
             //
-            this.tbJSONSeedersToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbJSONSeedersToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbJSONSeedersToken.Location = new System.Drawing.Point(98, 172);
             this.tbJSONSeedersToken.Name = "tbJSONSeedersToken";
             this.tbJSONSeedersToken.Size = new System.Drawing.Size(305, 20);
@@ -1499,8 +1451,7 @@ namespace TVRename
             //
             // tbJSONFilesizeToken
             //
-            this.tbJSONFilesizeToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbJSONFilesizeToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbJSONFilesizeToken.Location = new System.Drawing.Point(97, 146);
             this.tbJSONFilesizeToken.Name = "tbJSONFilesizeToken";
             this.tbJSONFilesizeToken.Size = new System.Drawing.Size(305, 20);
@@ -1517,8 +1468,7 @@ namespace TVRename
             //
             // tbJSONFilenameToken
             //
-            this.tbJSONFilenameToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbJSONFilenameToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbJSONFilenameToken.Location = new System.Drawing.Point(98, 94);
             this.tbJSONFilenameToken.Name = "tbJSONFilenameToken";
             this.tbJSONFilenameToken.Size = new System.Drawing.Size(305, 20);
@@ -1535,8 +1485,7 @@ namespace TVRename
             //
             // tbJSONURLToken
             //
-            this.tbJSONURLToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbJSONURLToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbJSONURLToken.Location = new System.Drawing.Point(98, 120);
             this.tbJSONURLToken.Name = "tbJSONURLToken";
             this.tbJSONURLToken.Size = new System.Drawing.Size(305, 20);
@@ -1553,8 +1502,7 @@ namespace TVRename
             //
             // tbJSONRootNode
             //
-            this.tbJSONRootNode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbJSONRootNode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbJSONRootNode.Location = new System.Drawing.Point(98, 68);
             this.tbJSONRootNode.Name = "tbJSONRootNode";
             this.tbJSONRootNode.Size = new System.Drawing.Size(305, 20);
@@ -1571,8 +1519,7 @@ namespace TVRename
             //
             // tbJSONURL
             //
-            this.tbJSONURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbJSONURL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbJSONURL.Location = new System.Drawing.Point(97, 42);
             this.tbJSONURL.Name = "tbJSONURL";
             this.tbJSONURL.Size = new System.Drawing.Size(305, 20);
@@ -1580,9 +1527,7 @@ namespace TVRename
             //
             // gbRSS
             //
-            this.gbRSS.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbRSS.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.gbRSS.Controls.Add(this.cbRSSCloudflareProtection);
             this.gbRSS.Controls.Add(this.cbSearchRSSManualScanOnly);
             this.gbRSS.Controls.Add(this.RSSGrid);
@@ -1620,9 +1565,7 @@ namespace TVRename
             //
             // RSSGrid
             //
-            this.RSSGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.RSSGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.RSSGrid.BackColor = System.Drawing.SystemColors.Window;
             this.RSSGrid.EnableSort = true;
             this.RSSGrid.Location = new System.Drawing.Point(6, 55);
@@ -1702,8 +1645,7 @@ namespace TVRename
             //
             // groupBox23
             //
-            this.groupBox23.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox23.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox23.Controls.Add(this.button3);
             this.groupBox23.Controls.Add(this.txtMovieFilenameFormat);
             this.groupBox23.Controls.Add(this.label90);
@@ -1730,8 +1672,7 @@ namespace TVRename
             //
             // txtMovieFilenameFormat
             //
-            this.txtMovieFilenameFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMovieFilenameFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMovieFilenameFormat.Location = new System.Drawing.Point(124, 52);
             this.txtMovieFilenameFormat.Name = "txtMovieFilenameFormat";
             this.txtMovieFilenameFormat.Size = new System.Drawing.Size(203, 20);
@@ -1759,8 +1700,7 @@ namespace TVRename
             //
             // txtMovieFolderFormat
             //
-            this.txtMovieFolderFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMovieFolderFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMovieFolderFormat.Location = new System.Drawing.Point(124, 23);
             this.txtMovieFolderFormat.Name = "txtMovieFolderFormat";
             this.txtMovieFolderFormat.Size = new System.Drawing.Size(203, 20);
@@ -1822,8 +1762,7 @@ namespace TVRename
             //
             // groupBox6
             //
-            this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox6.Controls.Add(this.button1);
             this.groupBox6.Controls.Add(this.txtSeasonFormat);
             this.groupBox6.Controls.Add(this.txtSpecialsFolderName);
@@ -1849,8 +1788,7 @@ namespace TVRename
             //
             // txtSeasonFormat
             //
-            this.txtSeasonFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSeasonFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSeasonFormat.Location = new System.Drawing.Point(124, 53);
             this.txtSeasonFormat.Name = "txtSeasonFormat";
             this.txtSeasonFormat.Size = new System.Drawing.Size(203, 20);
@@ -1858,8 +1796,7 @@ namespace TVRename
             //
             // txtSpecialsFolderName
             //
-            this.txtSpecialsFolderName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSpecialsFolderName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSpecialsFolderName.Location = new System.Drawing.Point(124, 27);
             this.txtSpecialsFolderName.Name = "txtSpecialsFolderName";
             this.txtSpecialsFolderName.Size = new System.Drawing.Size(271, 20);
@@ -1885,15 +1822,13 @@ namespace TVRename
             //
             // label65
             //
-            this.label65.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label65.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.label65.AutoSize = true;
             this.label65.Location = new System.Drawing.Point(6, 6);
             this.label65.Name = "label65";
             this.label65.Size = new System.Drawing.Size(299, 26);
             this.label65.TabIndex = 44;
-            this.label65.Text = "TV Rename considers 2 sets of folders. Library Folders are the\r\nbase folders for " +
-    "a sorted collection of files";
+            this.label65.Text = "TV Rename considers 2 sets of folders. Library Folders are the\r\nbase folders for " + "a sorted collection of files";
             //
             // label56
             //
@@ -1992,8 +1927,7 @@ namespace TVRename
             this.label58.Name = "label58";
             this.label58.Size = new System.Drawing.Size(326, 26);
             this.label58.TabIndex = 20;
-            this.label58.Text = "If an episode is missing from your library, TV Rename will look in the \r\nfollowin" +
-    "g locations to see whether it is already being downloaded.";
+            this.label58.Text = "If an episode is missing from your library, TV Rename will look in the \r\nfollowin" + "g locations to see whether it is already being downloaded.";
             //
             // cbCheckqBitTorrent
             //
@@ -2030,8 +1964,7 @@ namespace TVRename
             //
             // qBitTorrent
             //
-            this.qBitTorrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.qBitTorrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.qBitTorrent.Controls.Add(this.chkRemoveCompletedTorrents);
             this.qBitTorrent.Controls.Add(this.llqBitTorrentLink);
             this.qBitTorrent.Controls.Add(this.label79);
@@ -2135,8 +2068,7 @@ namespace TVRename
             //
             // tbqBitTorrentHost
             //
-            this.tbqBitTorrentHost.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbqBitTorrentHost.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbqBitTorrentHost.Location = new System.Drawing.Point(75, 19);
             this.tbqBitTorrentHost.Name = "tbqBitTorrentHost";
             this.tbqBitTorrentHost.Size = new System.Drawing.Size(324, 20);
@@ -2145,8 +2077,7 @@ namespace TVRename
             //
             // tbqBitTorrentPort
             //
-            this.tbqBitTorrentPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbqBitTorrentPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbqBitTorrentPort.Location = new System.Drawing.Point(75, 48);
             this.tbqBitTorrentPort.Name = "tbqBitTorrentPort";
             this.tbqBitTorrentPort.Size = new System.Drawing.Size(324, 20);
@@ -2173,8 +2104,7 @@ namespace TVRename
             //
             // gbSAB
             //
-            this.gbSAB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbSAB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.gbSAB.Controls.Add(this.txtSABHostPort);
             this.gbSAB.Controls.Add(this.txtSABAPIKey);
             this.gbSAB.Controls.Add(this.label8);
@@ -2188,8 +2118,7 @@ namespace TVRename
             //
             // txtSABHostPort
             //
-            this.txtSABHostPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSABHostPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSABHostPort.Location = new System.Drawing.Point(75, 19);
             this.txtSABHostPort.Name = "txtSABHostPort";
             this.txtSABHostPort.Size = new System.Drawing.Size(324, 20);
@@ -2197,8 +2126,7 @@ namespace TVRename
             //
             // txtSABAPIKey
             //
-            this.txtSABAPIKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSABAPIKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSABAPIKey.Location = new System.Drawing.Point(75, 48);
             this.txtSABAPIKey.Name = "txtSABAPIKey";
             this.txtSABAPIKey.Size = new System.Drawing.Size(324, 20);
@@ -2224,8 +2152,7 @@ namespace TVRename
             //
             // gbuTorrent
             //
-            this.gbuTorrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbuTorrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.gbuTorrent.Controls.Add(this.bnUTBrowseResumeDat);
             this.gbuTorrent.Controls.Add(this.txtUTResumeDatPath);
             this.gbuTorrent.Controls.Add(this.bnRSSBrowseuTorrent);
@@ -2252,8 +2179,7 @@ namespace TVRename
             //
             // txtUTResumeDatPath
             //
-            this.txtUTResumeDatPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtUTResumeDatPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtUTResumeDatPath.Location = new System.Drawing.Point(75, 48);
             this.txtUTResumeDatPath.Name = "txtUTResumeDatPath";
             this.txtUTResumeDatPath.Size = new System.Drawing.Size(243, 20);
@@ -2290,8 +2216,7 @@ namespace TVRename
             //
             // txtRSSuTorrentPath
             //
-            this.txtRSSuTorrentPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtRSSuTorrentPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtRSSuTorrentPath.Location = new System.Drawing.Point(75, 19);
             this.txtRSSuTorrentPath.Name = "txtRSSuTorrentPath";
             this.txtRSSuTorrentPath.Size = new System.Drawing.Size(243, 20);
@@ -2333,8 +2258,7 @@ namespace TVRename
             //
             // groupBox8
             //
-            this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox8.Controls.Add(this.cbMovieHigherQuality);
             this.groupBox8.Controls.Add(this.label53);
             this.groupBox8.Controls.Add(this.label54);
@@ -2387,8 +2311,7 @@ namespace TVRename
             //
             // tbPriorityOverrideTerms
             //
-            this.tbPriorityOverrideTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbPriorityOverrideTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbPriorityOverrideTerms.Location = new System.Drawing.Point(141, 59);
             this.tbPriorityOverrideTerms.Name = "tbPriorityOverrideTerms";
             this.tbPriorityOverrideTerms.Size = new System.Drawing.Size(263, 20);
@@ -2415,8 +2338,7 @@ namespace TVRename
             //
             // label67
             //
-            this.label67.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label67.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.label67.AutoEllipsis = true;
             this.label67.AutoSize = true;
             this.label67.Location = new System.Drawing.Point(6, 6);
@@ -2427,8 +2349,7 @@ namespace TVRename
             //
             // gbAutoAdd
             //
-            this.gbAutoAdd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbAutoAdd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.gbAutoAdd.Controls.Add(this.cbAutomateAutoAddWhenOneMovieFound);
             this.gbAutoAdd.Controls.Add(this.cbAutomateAutoAddWhenOneShowFound);
             this.gbAutoAdd.Controls.Add(this.chkAutoSearchForDownloadedFiles);
@@ -2602,8 +2523,7 @@ namespace TVRename
             //
             // groupBox16
             //
-            this.groupBox16.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox16.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox16.Controls.Add(this.cbWDLiveEpisodeFiles);
             this.groupBox16.Location = new System.Drawing.Point(9, 355);
             this.groupBox16.Name = "groupBox16";
@@ -2624,8 +2544,7 @@ namespace TVRename
             //
             // groupBox13
             //
-            this.groupBox13.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox13.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox13.Controls.Add(this.cbXMLFiles);
             this.groupBox13.Controls.Add(this.cbSeriesJpg);
             this.groupBox13.Controls.Add(this.cbShrinkLarge);
@@ -2668,8 +2587,7 @@ namespace TVRename
             //
             // groupBox14
             //
-            this.groupBox14.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox14.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox14.Controls.Add(this.cbMeta);
             this.groupBox14.Controls.Add(this.cbMetaSubfolder);
             this.groupBox14.Location = new System.Drawing.Point(9, 178);
@@ -2702,8 +2620,7 @@ namespace TVRename
             //
             // groupBox15
             //
-            this.groupBox15.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox15.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox15.Controls.Add(this.cbNFOMovies);
             this.groupBox15.Controls.Add(this.cbEpTBNs);
             this.groupBox15.Controls.Add(this.cbNFOShows);
@@ -2768,8 +2685,7 @@ namespace TVRename
             //
             // groupBox12
             //
-            this.groupBox12.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox12.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox12.Controls.Add(this.cbFantArtJpg);
             this.groupBox12.Controls.Add(this.cbFolderJpg);
             this.groupBox12.Controls.Add(this.cbEpThumbJpg);
@@ -2873,9 +2789,7 @@ namespace TVRename
             this.label64.Name = "label64";
             this.label64.Size = new System.Drawing.Size(302, 39);
             this.label64.TabIndex = 38;
-            this.label64.Text = "While scanning your library folders TV Rename can create and\r\ndownload additional" +
-    " files to help video playing applications to\r\nunderstand what is in your library" +
-    " and display it in a nicer way.";
+            this.label64.Text = "While scanning your library folders TV Rename can create and\r\ndownload additional" + " files to help video playing applications to\r\nunderstand what is in your library" + " and display it in a nicer way.";
             //
             // bnMCPresets
             //
@@ -2940,8 +2854,7 @@ namespace TVRename
             //
             // groupBox28
             //
-            this.groupBox28.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox28.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox28.Controls.Add(this.tbCleanUpDownloadDirMoviesLength);
             this.groupBox28.Controls.Add(this.cbCleanUpDownloadDirMoviesLength);
             this.groupBox28.Controls.Add(this.cbCleanUpDownloadDirMovies);
@@ -2990,8 +2903,7 @@ namespace TVRename
             this.label69.Name = "label69";
             this.label69.Size = new System.Drawing.Size(281, 26);
             this.label69.TabIndex = 40;
-            this.label69.Text = "TV Rename can clean up the search folders to keep them\r\nclear of unused files and" +
-    " duplicate downloads.";
+            this.label69.Text = "TV Rename can clean up the search folders to keep them\r\nclear of unused files and" + " duplicate downloads.";
             //
             // cbDeleteShowFromDisk
             //
@@ -3135,13 +3047,11 @@ namespace TVRename
             this.label88.Name = "label88";
             this.label88.Size = new System.Drawing.Size(260, 39);
             this.label88.TabIndex = 43;
-            this.label88.Text = "TV Rename can export information about episodes\r\nin various formats. Some focus o" +
-    "n upcoming episodes\r\nand others are based on recently aired.";
+            this.label88.Text = "TV Rename can export information about episodes\r\nin various formats. Some focus o" + "n upcoming episodes\r\nand others are based on recently aired.";
             //
             // groupBox10
             //
-            this.groupBox10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox10.Controls.Add(this.bnBrowseWPL);
             this.groupBox10.Controls.Add(this.txtWPL);
             this.groupBox10.Controls.Add(this.cbWPL);
@@ -3174,8 +3084,7 @@ namespace TVRename
             //
             // txtWPL
             //
-            this.txtWPL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtWPL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWPL.Location = new System.Drawing.Point(65, 106);
             this.txtWPL.Name = "txtWPL";
             this.txtWPL.Size = new System.Drawing.Size(250, 20);
@@ -3205,8 +3114,7 @@ namespace TVRename
             //
             // txtASX
             //
-            this.txtASX.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtASX.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtASX.Location = new System.Drawing.Point(65, 78);
             this.txtASX.Name = "txtASX";
             this.txtASX.Size = new System.Drawing.Size(250, 20);
@@ -3236,8 +3144,7 @@ namespace TVRename
             //
             // txtM3U
             //
-            this.txtM3U.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtM3U.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtM3U.Location = new System.Drawing.Point(65, 49);
             this.txtM3U.Name = "txtM3U";
             this.txtM3U.Size = new System.Drawing.Size(250, 20);
@@ -3267,8 +3174,7 @@ namespace TVRename
             //
             // txtXSPF
             //
-            this.txtXSPF.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtXSPF.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtXSPF.Location = new System.Drawing.Point(64, 20);
             this.txtXSPF.Name = "txtXSPF";
             this.txtXSPF.Size = new System.Drawing.Size(252, 20);
@@ -3287,8 +3193,7 @@ namespace TVRename
             //
             // groupBox5
             //
-            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox5.Controls.Add(this.bnBrowseFOXML);
             this.groupBox5.Controls.Add(this.cbFOXML);
             this.groupBox5.Controls.Add(this.txtFOXML);
@@ -3323,8 +3228,7 @@ namespace TVRename
             //
             // txtFOXML
             //
-            this.txtFOXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFOXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFOXML.Location = new System.Drawing.Point(64, 21);
             this.txtFOXML.Name = "txtFOXML";
             this.txtFOXML.Size = new System.Drawing.Size(251, 20);
@@ -3332,8 +3236,7 @@ namespace TVRename
             //
             // groupBox4
             //
-            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox4.Controls.Add(this.bnBrowseRenamingXML);
             this.groupBox4.Controls.Add(this.cbRenamingXML);
             this.groupBox4.Controls.Add(this.txtRenamingXML);
@@ -3368,8 +3271,7 @@ namespace TVRename
             //
             // txtRenamingXML
             //
-            this.txtRenamingXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtRenamingXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtRenamingXML.Location = new System.Drawing.Point(64, 21);
             this.txtRenamingXML.Name = "txtRenamingXML";
             this.txtRenamingXML.Size = new System.Drawing.Size(251, 20);
@@ -3377,8 +3279,7 @@ namespace TVRename
             //
             // groupBox2
             //
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.bnBrowseWTWTXT);
             this.groupBox2.Controls.Add(this.txtWTWTXT);
             this.groupBox2.Controls.Add(this.cbWTWTXT);
@@ -3418,8 +3319,7 @@ namespace TVRename
             //
             // txtWTWTXT
             //
-            this.txtWTWTXT.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtWTWTXT.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWTWTXT.Location = new System.Drawing.Point(65, 104);
             this.txtWTWTXT.Name = "txtWTWTXT";
             this.txtWTWTXT.Size = new System.Drawing.Size(250, 20);
@@ -3449,8 +3349,7 @@ namespace TVRename
             //
             // txtWTWICAL
             //
-            this.txtWTWICAL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtWTWICAL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWTWICAL.Location = new System.Drawing.Point(65, 78);
             this.txtWTWICAL.Name = "txtWTWICAL";
             this.txtWTWICAL.Size = new System.Drawing.Size(250, 20);
@@ -3497,8 +3396,7 @@ namespace TVRename
             //
             // txtWTWXML
             //
-            this.txtWTWXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtWTWXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWTWXML.Location = new System.Drawing.Point(65, 49);
             this.txtWTWXML.Name = "txtWTWXML";
             this.txtWTWXML.Size = new System.Drawing.Size(250, 20);
@@ -3528,8 +3426,7 @@ namespace TVRename
             //
             // txtWTWRSS
             //
-            this.txtWTWRSS.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtWTWRSS.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWTWRSS.Location = new System.Drawing.Point(64, 20);
             this.txtWTWRSS.Name = "txtWTWRSS";
             this.txtWTWRSS.Size = new System.Drawing.Size(252, 20);
@@ -3621,6 +3518,17 @@ namespace TVRename
             this.tbFilesAndFolders.Text = "Files and Folders";
             this.tbFilesAndFolders.UseVisualStyleBackColor = true;
             //
+            // chkUnArchiveFilesInDownloadDirectory
+            //
+            this.chkUnArchiveFilesInDownloadDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkUnArchiveFilesInDownloadDirectory.AutoSize = true;
+            this.chkUnArchiveFilesInDownloadDirectory.Location = new System.Drawing.Point(3, 440);
+            this.chkUnArchiveFilesInDownloadDirectory.Name = "chkUnArchiveFilesInDownloadDirectory";
+            this.chkUnArchiveFilesInDownloadDirectory.Size = new System.Drawing.Size(218, 17);
+            this.chkUnArchiveFilesInDownloadDirectory.TabIndex = 43;
+            this.chkUnArchiveFilesInDownloadDirectory.Text = "Extract Archives found in Search Folders";
+            this.chkUnArchiveFilesInDownloadDirectory.UseVisualStyleBackColor = true;
+            //
             // cbFileNameCaseSensitiveMatch
             //
             this.cbFileNameCaseSensitiveMatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -3640,22 +3548,18 @@ namespace TVRename
             this.chkUseLibraryFullPathWhenMatchingShows.Name = "chkUseLibraryFullPathWhenMatchingShows";
             this.chkUseLibraryFullPathWhenMatchingShows.Size = new System.Drawing.Size(425, 17);
             this.chkUseLibraryFullPathWhenMatchingShows.TabIndex = 41;
-            this.chkUseLibraryFullPathWhenMatchingShows.Text = "Use name of Library Folder when searching for a match between a file and a tv sho" +
-    "w";
+            this.chkUseLibraryFullPathWhenMatchingShows.Text = "Use name of Library Folder when searching for a match between a file and a tv sho" + "w";
             this.chkUseLibraryFullPathWhenMatchingShows.UseVisualStyleBackColor = true;
             //
             // label66
             //
-            this.label66.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label66.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.label66.AutoSize = true;
             this.label66.Location = new System.Drawing.Point(6, 7);
             this.label66.Name = "label66";
             this.label66.Size = new System.Drawing.Size(326, 39);
             this.label66.TabIndex = 39;
-            this.label66.Text = "These preferences control how TV Rename copies files across from\r\nyour search fol" +
-    "ders to your library. Often there are other files that\r\nyou\'d like copied as wel" +
-    "l.";
+            this.label66.Text = "These preferences control how TV Rename copies files across from\r\nyour search fol" + "ders to your library. Often there are other files that\r\nyou\'d like copied as wel" + "l.";
             //
             // txtMaxSampleSize
             //
@@ -3668,8 +3572,7 @@ namespace TVRename
             //
             // txtVideoExtensions
             //
-            this.txtVideoExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtVideoExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtVideoExtensions.Location = new System.Drawing.Point(99, 233);
             this.txtVideoExtensions.Name = "txtVideoExtensions";
             this.txtVideoExtensions.Size = new System.Drawing.Size(309, 20);
@@ -3701,10 +3604,7 @@ namespace TVRename
             this.cbKeepTogetherMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbKeepTogetherMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbKeepTogetherMode.FormattingEnabled = true;
-            this.cbKeepTogetherMode.Items.AddRange(new object[] {
-            "All",
-            "All but these",
-            "Just"});
+            this.cbKeepTogetherMode.Items.AddRange(new object[] { "All", "All but these", "Just" });
             this.cbKeepTogetherMode.Location = new System.Drawing.Point(52, 312);
             this.cbKeepTogetherMode.Name = "cbKeepTogetherMode";
             this.cbKeepTogetherMode.Size = new System.Drawing.Size(146, 21);
@@ -3745,9 +3645,7 @@ namespace TVRename
             //
             // ReplacementsGrid
             //
-            this.ReplacementsGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ReplacementsGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.ReplacementsGrid.BackColor = System.Drawing.SystemColors.Window;
             this.ReplacementsGrid.EnableSort = true;
             this.ReplacementsGrid.Location = new System.Drawing.Point(6, 76);
@@ -3878,8 +3776,7 @@ namespace TVRename
             //
             // label60
             //
-            this.label60.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label60.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.label60.AutoSize = true;
             this.label60.Location = new System.Drawing.Point(6, 6);
             this.label60.Name = "label60";
@@ -3913,9 +3810,7 @@ namespace TVRename
             //
             this.cbMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbMode.FormattingEnabled = true;
-            this.cbMode.Items.AddRange(new object[] {
-            "Beta",
-            "Production"});
+            this.cbMode.Items.AddRange(new object[] { "Beta", "Production" });
             this.cbMode.Location = new System.Drawing.Point(117, 77);
             this.cbMode.Name = "cbMode";
             this.cbMode.Size = new System.Drawing.Size(146, 21);
@@ -3943,9 +3838,7 @@ namespace TVRename
             // tcTabs
             //
             this.tcTabs.Alignment = System.Windows.Forms.TabAlignment.Left;
-            this.tcTabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tcTabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tcTabs.Controls.Add(this.tbGeneral);
             this.tcTabs.Controls.Add(this.tpDisplay);
             this.tcTabs.Controls.Add(this.tpDataSources);
@@ -4085,8 +3978,7 @@ namespace TVRename
             //
             // gbTMDB
             //
-            this.gbTMDB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbTMDB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.gbTMDB.Controls.Add(this.label84);
             this.gbTMDB.Controls.Add(this.cbTMDBRegions);
             this.gbTMDB.Controls.Add(this.label80);
@@ -4157,15 +4049,13 @@ namespace TVRename
             //
             // label63
             //
-            this.label63.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label63.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.label63.AutoSize = true;
             this.label63.Location = new System.Drawing.Point(9, 3);
             this.label63.Name = "label63";
             this.label63.Size = new System.Drawing.Size(349, 26);
             this.label63.TabIndex = 57;
-            this.label63.Text = "TV Rename downloads information from upstream sources to understand\r\nwhich shows " +
-    "have epiosdes";
+            this.label63.Text = "TV Rename downloads information from upstream sources to understand\r\nwhich shows " + "have epiosdes";
             //
             // label57
             //
@@ -4204,8 +4094,7 @@ namespace TVRename
             //
             // groupBox21
             //
-            this.groupBox21.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox21.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox21.Location = new System.Drawing.Point(12, 290);
             this.groupBox21.Name = "groupBox21";
             this.groupBox21.Size = new System.Drawing.Size(394, 100);
@@ -4215,8 +4104,7 @@ namespace TVRename
             //
             // groupBox20
             //
-            this.groupBox20.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox20.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox20.Controls.Add(this.label91);
             this.groupBox20.Controls.Add(this.cbTVDBVersion);
             this.groupBox20.Controls.Add(this.label37);
@@ -4244,9 +4132,7 @@ namespace TVRename
             //
             this.cbTVDBVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTVDBVersion.FormattingEnabled = true;
-            this.cbTVDBVersion.Items.AddRange(new object[] {
-            "v3",
-            "v4"});
+            this.cbTVDBVersion.Items.AddRange(new object[] { "v3", "v4" });
             this.cbTVDBVersion.Location = new System.Drawing.Point(116, 72);
             this.cbTVDBVersion.Name = "cbTVDBVersion";
             this.cbTVDBVersion.Size = new System.Drawing.Size(146, 21);
@@ -4292,10 +4178,7 @@ namespace TVRename
             //
             this.cbTVDBLanguages.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTVDBLanguages.FormattingEnabled = true;
-            this.cbTVDBLanguages.Items.AddRange(new object[] {
-            "My Shows",
-            "Scan",
-            "Schedule"});
+            this.cbTVDBLanguages.Items.AddRange(new object[] { "My Shows", "Scan", "Schedule" });
             this.cbTVDBLanguages.Location = new System.Drawing.Point(117, 19);
             this.cbTVDBLanguages.Name = "cbTVDBLanguages";
             this.cbTVDBLanguages.Size = new System.Drawing.Size(146, 21);
@@ -4342,21 +4225,17 @@ namespace TVRename
             //
             // label86
             //
-            this.label86.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label86.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.label86.AutoSize = true;
             this.label86.Location = new System.Drawing.Point(7, 11);
             this.label86.Name = "label86";
             this.label86.Size = new System.Drawing.Size(324, 39);
             this.label86.TabIndex = 63;
-            this.label86.Text = "These settings control the defaults used to add a new movie to the \r\nsystem. Once" +
-    " the show has been created, you will need to modify\r\nits configuration directly." +
-    "";
+            this.label86.Text = "These settings control the defaults used to add a new movie to the \r\nsystem. Once" + " the show has been created, you will need to modify\r\nits configuration directly." + "";
             //
             // groupBox24
             //
-            this.groupBox24.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox24.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox24.Controls.Add(this.cmbDefMovieFolderFormat);
             this.groupBox24.Controls.Add(this.label95);
             this.groupBox24.Controls.Add(this.cmbDefMovieLocation);
@@ -4371,8 +4250,7 @@ namespace TVRename
             //
             // cmbDefMovieFolderFormat
             //
-            this.cmbDefMovieFolderFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbDefMovieFolderFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbDefMovieFolderFormat.FormattingEnabled = true;
             this.cmbDefMovieFolderFormat.Location = new System.Drawing.Point(139, 99);
             this.cmbDefMovieFolderFormat.Name = "cmbDefMovieFolderFormat";
@@ -4390,8 +4268,7 @@ namespace TVRename
             //
             // cmbDefMovieLocation
             //
-            this.cmbDefMovieLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbDefMovieLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbDefMovieLocation.FormattingEnabled = true;
             this.cmbDefMovieLocation.Location = new System.Drawing.Point(29, 68);
             this.cmbDefMovieLocation.Name = "cmbDefMovieLocation";
@@ -4420,8 +4297,7 @@ namespace TVRename
             //
             // groupBox25
             //
-            this.groupBox25.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox25.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox25.Controls.Add(this.cbDefMovieIncludeNoAirdate);
             this.groupBox25.Controls.Add(this.cbDefMovieIncludeFuture);
             this.groupBox25.Controls.Add(this.cbDefMovieDoMissing);
@@ -4503,20 +4379,17 @@ namespace TVRename
             //
             // label18
             //
-            this.label18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.label18.AutoSize = true;
             this.label18.Location = new System.Drawing.Point(7, 7);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(321, 39);
             this.label18.TabIndex = 59;
-            this.label18.Text = "These settings control the defaults used to add a new show to the \r\nsystem. Once " +
-    "the show has been created, you will need to modify\r\nits configuration directly.";
+            this.label18.Text = "These settings control the defaults used to add a new show to the \r\nsystem. Once " + "the show has been created, you will need to modify\r\nits configuration directly.";
             //
             // groupBox19
             //
-            this.groupBox19.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox19.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox19.Controls.Add(this.label24);
             this.groupBox19.Controls.Add(this.cbTimeZone);
             this.groupBox19.Controls.Add(this.rbDefShowUseSubFolders);
@@ -4545,8 +4418,7 @@ namespace TVRename
             //
             // cbTimeZone
             //
-            this.cbTimeZone.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbTimeZone.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.cbTimeZone.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTimeZone.FormattingEnabled = true;
             this.cbTimeZone.Location = new System.Drawing.Point(102, 141);
@@ -4587,8 +4459,7 @@ namespace TVRename
             //
             // cmbDefShowLocation
             //
-            this.cmbDefShowLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbDefShowLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbDefShowLocation.FormattingEnabled = true;
             this.cmbDefShowLocation.Location = new System.Drawing.Point(29, 68);
             this.cmbDefShowLocation.Name = "cmbDefShowLocation";
@@ -4611,15 +4482,14 @@ namespace TVRename
             this.cbDefShowAutoFolders.AutoSize = true;
             this.cbDefShowAutoFolders.Location = new System.Drawing.Point(9, 20);
             this.cbDefShowAutoFolders.Name = "cbDefShowAutoFolders";
-            this.cbDefShowAutoFolders.Size = new System.Drawing.Size(132, 17);
+            this.cbDefShowAutoFolders.Size = new System.Drawing.Size(171, 17);
             this.cbDefShowAutoFolders.TabIndex = 0;
             this.cbDefShowAutoFolders.Text = "Use Automatic Season Folders";
             this.cbDefShowAutoFolders.UseVisualStyleBackColor = true;
             //
             // groupBox18
             //
-            this.groupBox18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox18.Controls.Add(this.cbDefShowAlternateOrder);
             this.groupBox18.Controls.Add(this.cbDefShowEpNameMatching);
             this.groupBox18.Controls.Add(this.label68);
@@ -4792,9 +4662,7 @@ namespace TVRename
             //
             // groupBox17
             //
-            this.groupBox17.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox17.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox17.Controls.Add(this.cbIgnorePreviouslySeenMovies);
             this.groupBox17.Controls.Add(this.chkIncludeMoviesQuickRecent);
             this.groupBox17.Controls.Add(this.chkIgnoreAllSpecials);
@@ -4939,9 +4807,8 @@ namespace TVRename
             //
             // groupBox1
             //
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.chkCleanLibraryAfterActions);
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.chkChooseWhenMultipleEpisodesMatch);
             this.groupBox1.Controls.Add(this.cbxUpdateAirDate);
             this.groupBox1.Controls.Add(this.cbAutoCreateFolders);
             this.groupBox1.Controls.Add(this.chkAutoMergeLibraryEpisodes);
@@ -4952,15 +4819,15 @@ namespace TVRename
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Additional Scan Options";
             //
-            // chkCleanLibraryAfterActions
+            // chkChooseWhenMultipleEpisodesMatch
             //
-            this.chkCleanLibraryAfterActions.AutoSize = true;
-            this.chkCleanLibraryAfterActions.Location = new System.Drawing.Point(6, 88);
-            this.chkCleanLibraryAfterActions.Name = "chkCleanLibraryAfterActions";
-            this.chkCleanLibraryAfterActions.Size = new System.Drawing.Size(182, 17);
-            this.chkCleanLibraryAfterActions.TabIndex = 42;
-            this.chkCleanLibraryAfterActions.Text = "&Remove Unused Season Folders";
-            this.chkCleanLibraryAfterActions.UseVisualStyleBackColor = true;
+            this.chkChooseWhenMultipleEpisodesMatch.AutoSize = true;
+            this.chkChooseWhenMultipleEpisodesMatch.Location = new System.Drawing.Point(6, 88);
+            this.chkChooseWhenMultipleEpisodesMatch.Name = "chkChooseWhenMultipleEpisodesMatch";
+            this.chkChooseWhenMultipleEpisodesMatch.Size = new System.Drawing.Size(291, 17);
+            this.chkChooseWhenMultipleEpisodesMatch.TabIndex = 42;
+            this.chkChooseWhenMultipleEpisodesMatch.Text = "Choose between episodes in library when multiple match";
+            this.chkChooseWhenMultipleEpisodesMatch.UseVisualStyleBackColor = true;
             //
             // cbxUpdateAirDate
             //
@@ -4994,8 +4861,7 @@ namespace TVRename
             //
             // cbScanIncludesBulkAdd
             //
-            this.cbScanIncludesBulkAdd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbScanIncludesBulkAdd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.cbScanIncludesBulkAdd.AutoSize = true;
             this.cbScanIncludesBulkAdd.Location = new System.Drawing.Point(7, 422);
             this.cbScanIncludesBulkAdd.Name = "cbScanIncludesBulkAdd";
@@ -5006,8 +4872,7 @@ namespace TVRename
             //
             // gbBulkAdd
             //
-            this.gbBulkAdd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbBulkAdd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.gbBulkAdd.Controls.Add(this.tbSeasonSearchTerms);
             this.gbBulkAdd.Controls.Add(this.label36);
             this.gbBulkAdd.Controls.Add(this.chkForceBulkAddToUseSettingsOnly);
@@ -5031,8 +4896,7 @@ namespace TVRename
             //
             // label62
             //
-            this.label62.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label62.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.label62.AutoSize = true;
             this.label62.Location = new System.Drawing.Point(6, 3);
             this.label62.Name = "label62";
@@ -5070,8 +4934,7 @@ namespace TVRename
             //
             // groupBox29
             //
-            this.groupBox29.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox29.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox29.Controls.Add(this.label94);
             this.groupBox29.Controls.Add(this.txtSubtitleFolderNames);
             this.groupBox29.Controls.Add(this.cbCopySubsFolders);
@@ -5093,8 +4956,7 @@ namespace TVRename
             //
             // txtSubtitleFolderNames
             //
-            this.txtSubtitleFolderNames.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSubtitleFolderNames.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSubtitleFolderNames.Location = new System.Drawing.Point(122, 42);
             this.txtSubtitleFolderNames.Name = "txtSubtitleFolderNames";
             this.txtSubtitleFolderNames.Size = new System.Drawing.Size(280, 20);
@@ -5112,15 +4974,13 @@ namespace TVRename
             //
             // label93
             //
-            this.label93.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label93.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.label93.AutoSize = true;
             this.label93.Location = new System.Drawing.Point(3, 3);
             this.label93.Name = "label93";
             this.label93.Size = new System.Drawing.Size(294, 26);
             this.label93.TabIndex = 43;
-            this.label93.Text = "These preferences control how TV Rename finds and retains\r\nsubtitles and subtitle" +
-    " files.";
+            this.label93.Text = "These preferences control how TV Rename finds and retains\r\nsubtitles and subtitle" + " files.";
             //
             // pictureBox2
             //
@@ -5137,8 +4997,7 @@ namespace TVRename
             //
             // groupBox9
             //
-            this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox9.Controls.Add(this.cbTxtToSub);
             this.groupBox9.Controls.Add(this.label46);
             this.groupBox9.Controls.Add(this.txtSubtitleExtensions);
@@ -5171,8 +5030,7 @@ namespace TVRename
             //
             // txtSubtitleExtensions
             //
-            this.txtSubtitleExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSubtitleExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSubtitleExtensions.Location = new System.Drawing.Point(107, 67);
             this.txtSubtitleExtensions.Name = "txtSubtitleExtensions";
             this.txtSubtitleExtensions.Size = new System.Drawing.Size(295, 20);
@@ -5222,17 +5080,10 @@ namespace TVRename
             //
             // cmbSupervisedDuplicateAction
             //
-            this.cmbSupervisedDuplicateAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbSupervisedDuplicateAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbSupervisedDuplicateAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSupervisedDuplicateAction.FormattingEnabled = true;
-            this.cmbSupervisedDuplicateAction.Items.AddRange(new object[] {
-            "Ask User",
-            "Choose Largest File",
-            "Choose Most Popular",
-            "Download All",
-            "Ignore",
-            "Use First"});
+            this.cmbSupervisedDuplicateAction.Items.AddRange(new object[] { "Ask User", "Choose Largest File", "Choose Most Popular", "Download All", "Ignore", "Use First" });
             this.cmbSupervisedDuplicateAction.Location = new System.Drawing.Point(163, 151);
             this.cmbSupervisedDuplicateAction.Name = "cmbSupervisedDuplicateAction";
             this.cmbSupervisedDuplicateAction.Size = new System.Drawing.Size(235, 21);
@@ -5250,17 +5101,10 @@ namespace TVRename
             //
             // cmbUnattendedDuplicateAction
             //
-            this.cmbUnattendedDuplicateAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbUnattendedDuplicateAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbUnattendedDuplicateAction.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbUnattendedDuplicateAction.FormattingEnabled = true;
-            this.cmbUnattendedDuplicateAction.Items.AddRange(new object[] {
-            "Ask User",
-            "Choose Largest File",
-            "Choose Most Popular",
-            "Download All",
-            "Ignore",
-            "Use First"});
+            this.cmbUnattendedDuplicateAction.Items.AddRange(new object[] { "Ask User", "Choose Largest File", "Choose Most Popular", "Download All", "Ignore", "Use First" });
             this.cmbUnattendedDuplicateAction.Location = new System.Drawing.Point(163, 124);
             this.cmbUnattendedDuplicateAction.Name = "cmbUnattendedDuplicateAction";
             this.cmbUnattendedDuplicateAction.Size = new System.Drawing.Size(235, 21);
@@ -5307,9 +5151,7 @@ namespace TVRename
             this.label70.Name = "label70";
             this.label70.Size = new System.Drawing.Size(312, 39);
             this.label70.TabIndex = 41;
-            this.label70.Text = "If an episode is missing from your library, TV Rename will talk to a\r\nrunning Jac" +
-    "kett instance for appropriate files to download. It will \r\nuse the torrent handl" +
-    "ers to download the file(s)";
+            this.label70.Text = "If an episode is missing from your library, TV Rename will talk to a\r\nrunning Jac" + "kett instance for appropriate files to download. It will \r\nuse the torrent handl" + "ers to download the file(s)";
             //
             // cbSearchJackett
             //
@@ -5324,8 +5166,7 @@ namespace TVRename
             //
             // groupBox22
             //
-            this.groupBox22.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox22.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox22.Controls.Add(this.chkUseJackettTextSearch);
             this.groupBox22.Controls.Add(this.chkSkipJackettFullScans);
             this.groupBox22.Controls.Add(this.llJackettLink);
@@ -5407,8 +5248,7 @@ namespace TVRename
             //
             // txtJackettIndexer
             //
-            this.txtJackettIndexer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtJackettIndexer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtJackettIndexer.Location = new System.Drawing.Point(98, 94);
             this.txtJackettIndexer.Name = "txtJackettIndexer";
             this.txtJackettIndexer.Size = new System.Drawing.Size(305, 20);
@@ -5425,8 +5265,7 @@ namespace TVRename
             //
             // txtJackettAPIKey
             //
-            this.txtJackettAPIKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtJackettAPIKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtJackettAPIKey.Location = new System.Drawing.Point(98, 120);
             this.txtJackettAPIKey.Name = "txtJackettAPIKey";
             this.txtJackettAPIKey.Size = new System.Drawing.Size(305, 20);
@@ -5443,8 +5282,7 @@ namespace TVRename
             //
             // txtJackettPort
             //
-            this.txtJackettPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtJackettPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtJackettPort.Location = new System.Drawing.Point(98, 68);
             this.txtJackettPort.Name = "txtJackettPort";
             this.txtJackettPort.Size = new System.Drawing.Size(305, 20);
@@ -5462,8 +5300,7 @@ namespace TVRename
             //
             // txtJackettServer
             //
-            this.txtJackettServer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtJackettServer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtJackettServer.Location = new System.Drawing.Point(97, 42);
             this.txtJackettServer.Name = "txtJackettServer";
             this.txtJackettServer.Size = new System.Drawing.Size(305, 20);
@@ -5481,8 +5318,7 @@ namespace TVRename
             //
             // tbPreferredRSSTerms
             //
-            this.tbPreferredRSSTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbPreferredRSSTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.tbPreferredRSSTerms.Location = new System.Drawing.Point(94, 98);
             this.tbPreferredRSSTerms.Name = "tbPreferredRSSTerms";
             this.tbPreferredRSSTerms.Size = new System.Drawing.Size(304, 20);
@@ -5525,13 +5361,11 @@ namespace TVRename
             this.label89.Name = "label89";
             this.label89.Size = new System.Drawing.Size(230, 26);
             this.label89.TabIndex = 43;
-            this.label89.Text = "TV Rename can export information about\r\nshows, movies and episodes in various for" +
-    "mats.";
+            this.label89.Text = "TV Rename can export information about\r\nshows, movies and episodes in various for" + "mats.";
             //
             // groupBox26
             //
-            this.groupBox26.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox26.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox26.Controls.Add(this.bnBrowseMoviesHTML);
             this.groupBox26.Controls.Add(this.cbMoviesHTML);
             this.groupBox26.Controls.Add(this.txtMoviesHTMLTo);
@@ -5569,8 +5403,7 @@ namespace TVRename
             //
             // txtMoviesHTMLTo
             //
-            this.txtMoviesHTMLTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMoviesHTMLTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMoviesHTMLTo.Location = new System.Drawing.Point(64, 47);
             this.txtMoviesHTMLTo.Name = "txtMoviesHTMLTo";
             this.txtMoviesHTMLTo.Size = new System.Drawing.Size(251, 20);
@@ -5600,8 +5433,7 @@ namespace TVRename
             //
             // txtMoviesTXTTo
             //
-            this.txtMoviesTXTTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMoviesTXTTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMoviesTXTTo.Location = new System.Drawing.Point(64, 23);
             this.txtMoviesTXTTo.Name = "txtMoviesTXTTo";
             this.txtMoviesTXTTo.Size = new System.Drawing.Size(250, 20);
@@ -5609,8 +5441,7 @@ namespace TVRename
             //
             // groupBox7
             //
-            this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox7.Controls.Add(this.bnBrowseShowsHTML);
             this.groupBox7.Controls.Add(this.cbShowsHTML);
             this.groupBox7.Controls.Add(this.txtShowsHTMLTo);
@@ -5648,8 +5479,7 @@ namespace TVRename
             //
             // txtShowsHTMLTo
             //
-            this.txtShowsHTMLTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtShowsHTMLTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtShowsHTMLTo.Location = new System.Drawing.Point(64, 47);
             this.txtShowsHTMLTo.Name = "txtShowsHTMLTo";
             this.txtShowsHTMLTo.Size = new System.Drawing.Size(251, 20);
@@ -5679,8 +5509,7 @@ namespace TVRename
             //
             // txtShowsTXTTo
             //
-            this.txtShowsTXTTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtShowsTXTTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtShowsTXTTo.Location = new System.Drawing.Point(64, 23);
             this.txtShowsTXTTo.Name = "txtShowsTXTTo";
             this.txtShowsTXTTo.Size = new System.Drawing.Size(250, 20);
@@ -5688,8 +5517,7 @@ namespace TVRename
             //
             // groupBox27
             //
-            this.groupBox27.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox27.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox27.Controls.Add(this.bnBrowseMissingMoviesCSV);
             this.groupBox27.Controls.Add(this.bnBrowseMissingMoviesXML);
             this.groupBox27.Controls.Add(this.txtMissingMoviesCSV);
@@ -5727,8 +5555,7 @@ namespace TVRename
             //
             // txtMissingMoviesCSV
             //
-            this.txtMissingMoviesCSV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMissingMoviesCSV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMissingMoviesCSV.Location = new System.Drawing.Point(64, 48);
             this.txtMissingMoviesCSV.Name = "txtMissingMoviesCSV";
             this.txtMissingMoviesCSV.Size = new System.Drawing.Size(251, 20);
@@ -5758,8 +5585,7 @@ namespace TVRename
             //
             // txtMissingMoviesXML
             //
-            this.txtMissingMoviesXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMissingMoviesXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMissingMoviesXML.Location = new System.Drawing.Point(64, 21);
             this.txtMissingMoviesXML.Name = "txtMissingMoviesXML";
             this.txtMissingMoviesXML.Size = new System.Drawing.Size(251, 20);
@@ -5767,8 +5593,7 @@ namespace TVRename
             //
             // groupBox3
             //
-            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox3.Controls.Add(this.bnBrowseMissingCSV);
             this.groupBox3.Controls.Add(this.bnBrowseMissingXML);
             this.groupBox3.Controls.Add(this.txtMissingCSV);
@@ -5806,8 +5631,7 @@ namespace TVRename
             //
             // txtMissingCSV
             //
-            this.txtMissingCSV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMissingCSV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMissingCSV.Location = new System.Drawing.Point(64, 48);
             this.txtMissingCSV.Name = "txtMissingCSV";
             this.txtMissingCSV.Size = new System.Drawing.Size(251, 20);
@@ -5837,8 +5661,7 @@ namespace TVRename
             //
             // txtMissingXML
             //
-            this.txtMissingXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMissingXML.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMissingXML.Location = new System.Drawing.Point(64, 21);
             this.txtMissingXML.Name = "txtMissingXML";
             this.txtMissingXML.Size = new System.Drawing.Size(251, 20);
@@ -5946,17 +5769,6 @@ namespace TVRename
             this.optUpdateCheckAlways.Text = "on every start";
             this.optUpdateCheckAlways.UseVisualStyleBackColor = true;
             this.optUpdateCheckAlways.CheckedChanged += new System.EventHandler(this.updateCheckOption_CheckedChanged);
-            //
-            // chkUnArchiveFilesInDownloadDirectory
-            //
-            this.chkUnArchiveFilesInDownloadDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.chkUnArchiveFilesInDownloadDirectory.AutoSize = true;
-            this.chkUnArchiveFilesInDownloadDirectory.Location = new System.Drawing.Point(3, 440);
-            this.chkUnArchiveFilesInDownloadDirectory.Name = "chkUnArchiveFilesInDownloadDirectory";
-            this.chkUnArchiveFilesInDownloadDirectory.Size = new System.Drawing.Size(218, 17);
-            this.chkUnArchiveFilesInDownloadDirectory.TabIndex = 43;
-            this.chkUnArchiveFilesInDownloadDirectory.Text = "Extract Archives found in Search Folders";
-            this.chkUnArchiveFilesInDownloadDirectory.UseVisualStyleBackColor = true;
             //
             // Preferences
             //
@@ -6117,7 +5929,6 @@ namespace TVRename
             this.grpUpdateIntervalOption.ResumeLayout(false);
             this.grpUpdateIntervalOption.PerformLayout();
             this.ResumeLayout(false);
-
         }
 
         #endregion
@@ -6431,7 +6242,7 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbRenameCheck;
         private System.Windows.Forms.CheckBox cbMissing;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.CheckBox chkCleanLibraryAfterActions;
+        private System.Windows.Forms.CheckBox chkChooseWhenMultipleEpisodesMatch;
         private System.Windows.Forms.CheckBox cbxUpdateAirDate;
         private System.Windows.Forms.CheckBox cbAutoCreateFolders;
         private System.Windows.Forms.CheckBox chkAutoMergeLibraryEpisodes;

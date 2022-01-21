@@ -15,7 +15,7 @@ namespace TVRename
         [NotNull]
         protected override string ActivityName() => "Cleaned up empty library folders";
 
-        protected override bool Active() => TVSettings.Instance.CleanLibraryAfterActions;
+        protected override bool Active() => false;
 
         protected override void DoCheck(SetProgressDelegate progress)
         {

@@ -33,7 +33,7 @@ namespace TVRename
                 Doc.TheActionList.Add(downloadIdentifiers.ProcessShow(si));
             }
 
-            //MS_TODO Put the banner refresh period into the settings file, we'll default to 3 months
+            //TODO Put the banner refresh period into the settings file, we'll default to 3 months
             DateTime cutOff = DateTime.Now.AddMonths(-3);
             DateTime lastUpdate = si.BannersLastUpdatedOnDisk ?? DateTime.Now.AddMonths(-4);
             bool timeForBannerUpdate = cutOff.CompareTo(lastUpdate) == 1;
@@ -237,7 +237,7 @@ namespace TVRename
                 {
                     LOGGER.Warn(
                         $"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
-                    if (!settings.Unattended && TVSettings.Instance.RemoveDupliatesFromibrary)
+                    if (!settings.Unattended && TVSettings.Instance.ChooseWhenMultipleEpisodesMatch)
                     {
                         bool? result = ScanHelper.AskUserAboutFileReplacement(actualFile, newFile, ep, settings.Owner, Doc, Doc.TheActionList);
 

@@ -355,7 +355,7 @@ namespace TVRename
             s.AutoAddAsPartOfQuickRename = chkAutoAddAsPartOfQuickRename.Checked;
             s.AutomateAutoAddWhenOneMovieFound = cbAutomateAutoAddWhenOneMovieFound.Checked;
             s.AutomateAutoAddWhenOneShowFound = cbAutomateAutoAddWhenOneShowFound.Checked;
-            s.CleanLibraryAfterActions = chkCleanLibraryAfterActions.Checked;
+            s.ChooseWhenMultipleEpisodesMatch = chkChooseWhenMultipleEpisodesMatch.Checked;
 
             s.SearchJSON = cbSearchJSON.Checked;
             s.SearchJSONManualScanOnly = cbSearchJSONManualScanOnly.Checked;
@@ -944,7 +944,7 @@ namespace TVRename
             chkAutoAddAsPartOfQuickRename.Checked = s.AutoAddAsPartOfQuickRename;
             cbAutomateAutoAddWhenOneMovieFound.Checked = s.AutomateAutoAddWhenOneMovieFound;
             cbAutomateAutoAddWhenOneShowFound.Checked = s.AutomateAutoAddWhenOneShowFound;
-            chkCleanLibraryAfterActions.Checked = s.CleanLibraryAfterActions;
+            chkChooseWhenMultipleEpisodesMatch.Checked = s.ChooseWhenMultipleEpisodesMatch;
             cmbUnattendedDuplicateAction.Text = ConvertEnum(s.UnattendedMultiActionOutcome);
             cmbSupervisedDuplicateAction.Text = ConvertEnum(s.UserMultiActionOutcome);
             cmbDefMovieFolderFormat.Text = ConvertEnum(s.DefMovieFolderFormat);
