@@ -108,20 +108,25 @@ namespace TVRename
                         });
                     }
                 }
+
                 DeleteOrRecycleFile(archiveFile);
                 return ActionOutcome.Success();
             }
-            catch (System.IO.DirectoryNotFoundException dnfe)
+            catch (System.IO.DirectoryNotFoundException e)
             {
-                return new ActionOutcome(dnfe);
+                return new ActionOutcome(e);
             }
-            catch (System.IO.IOException ioe)
+            catch (System.IO.IOException e)
             {
-                return new ActionOutcome(ioe);
+                return new ActionOutcome(e);
             }
-            catch (InvalidFormatException ife)
+            catch (InvalidFormatException e)
             {
-                return new ActionOutcome(ife);
+                return new ActionOutcome(e);
+            }
+            catch (ArgumentException e)
+            {
+                return new ActionOutcome(e);
             }
         }
         private static IArchive GetArchive([NotNull] FileInfo archive)
@@ -145,9 +150,6 @@ namespace TVRename
             return TarArchive.Open(archive.FullName);
         }
 
-        public override bool SameAs(Item o)
-        {
-            return o is ActionUnArchive touch && touch.archiveFile == archiveFile;
-        }
+        public override bool SameAs(Item o) => o is ActionUnArchive touch && touch.archiveFile == archiveFile;
     }
 }
