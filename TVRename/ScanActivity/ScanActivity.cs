@@ -42,7 +42,8 @@ namespace TVRename
             startPosition = startpct;
             endPosition = totPct;
             progressDelegate = prog;
-            progressDelegate?.Invoke(startPosition, string.Empty);
+            progressDelegate?.Invoke(startPosition, string.Empty, string.Empty);
+
             try
             {
                 if (Settings.Token.IsCancellationRequested)
@@ -72,14 +73,14 @@ namespace TVRename
             }
             finally
             {
-                progressDelegate?.Invoke(endPosition, string.Empty);
+                progressDelegate?.Invoke(endPosition, string.Empty, string.Empty);
             }
         }
 
         protected void UpdateStatus(int recordNumber, int totalRecords, string message)
         {
             int position = (endPosition - startPosition) * recordNumber / (totalRecords + 1);
-            progressDelegate?.Invoke(startPosition + position, message);
+            progressDelegate?.Invoke(startPosition + position, message, string.Empty);
         }
 
         private void LogActionListSummary()

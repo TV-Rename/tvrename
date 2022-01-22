@@ -5273,5 +5273,11 @@ namespace TVRename
             UiScan(null, null, false, TVSettings.ScanType.Full, MediaConfiguration.MediaType.tv);
             tabControl1.SelectTab(tbAllInOne);
         }
+
+        private void cleanLibraryFoldersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DoScanPartNotifier f = new(new CleanUpEmptyLibraryFolders(mDoc));
+            f.ShowDialog();
+        }
     }
 }

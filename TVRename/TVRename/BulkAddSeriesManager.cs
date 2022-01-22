@@ -482,7 +482,7 @@ namespace TVRename
             int c2 = 0;
             foreach (string folder in TVSettings.Instance.LibraryFolders)
             {
-                prog.Invoke(100 * c2++ / c, folder);
+                prog.Invoke(100 * c2++ / c, folder, string.Empty);
                 DirectoryInfo di = new(folder);
                 if (TVSettings.Instance.MovieLibraryFolders.Contains(folder))
                 {
@@ -497,7 +497,7 @@ namespace TVRename
                     break;
                 }
             }
-            prog.Invoke(100, string.Empty);
+            prog.Invoke(100, string.Empty, string.Empty);
         }
     }
 }

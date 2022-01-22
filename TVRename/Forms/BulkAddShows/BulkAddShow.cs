@@ -233,7 +233,7 @@ namespace TVRename
             FillNewShowList(false);
         }
 
-        private void UpdateProgress(int percent, string message)
+        private void UpdateProgress(int percent, string message, string lastUpdated)
         {
             FmpPercent = percent;
         }

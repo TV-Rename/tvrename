@@ -30,6 +30,7 @@ namespace TVRename
         private int pctDownloading;
         private int pctuTorrent;
         private string? msg;
+        private string? lastUpdate;
 
         public ScanProgress(bool autoBulkAdd, bool mediaLib, bool downloadFolder, bool searchLocal, bool downloading, bool rss)
         {
@@ -60,36 +61,42 @@ namespace TVRename
             pbDownloading.Value = pctuTorrent < 0 ? 0 : pctuTorrent > 100 ? 100 : pctuTorrent;
             pbDownloading.Update();
             lblMessage.Text = msg;
+            lblDetail.Text = lastUpdate;
         }
 
-        public void MediaLibProg(int p, string message)
+        public void MediaLibProg(int p, string message, string lastUpdated)
         {
             pctMediaLib = p;
             msg = message;
+            lastUpdate = lastUpdated;
         }
 
-        public void DownloadFolderProg(int p, string message)
+        public void DownloadFolderProg(int p, string message, string lastUpdated)
         {
             pctDownloadFolder = p;
             msg = message;
+            lastUpdate = lastUpdated;
         }
 
-        public void LocalSearchProg(int p, string message)
+        public void LocalSearchProg(int p, string message, string lastUpdated)
         {
             pctLocalSearch = p;
             msg = message;
+            lastUpdate = lastUpdated;
         }
 
-        public void ToBeDownloadedProg(int p, string message)
+        public void ToBeDownloadedProg(int p, string message, string lastUpdated)
         {
             pctDownloading = p;
             msg = message;
+            lastUpdate = lastUpdated;
         }
 
-        public void DownloadingProg(int p, string message)
+        public void DownloadingProg(int p, string message, string lastUpdated)
         {
             pctuTorrent = p;
             msg = message;
+            lastUpdate = lastUpdated;
         }
 
         private void ScanProgress_Load(object sender, System.EventArgs e)
@@ -113,10 +120,11 @@ namespace TVRename
             finished = true;
         }
 
-        public void AddNewProg(int p, string message)
+        public void AddNewProg(int p, string message, string lastUpdated)
         {
             pctAutoBulkAdd = p;
             msg = message;
+            lastUpdate = lastUpdated;
         }
     }
 }

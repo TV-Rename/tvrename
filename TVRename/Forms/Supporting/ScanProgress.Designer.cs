@@ -54,6 +54,7 @@ namespace TVRename
             this.lblMessage = new System.Windows.Forms.Label();
             this.pbBulkAutoAdd = new System.Windows.Forms.ProgressBar();
             this.lbBulkAutoAdd = new System.Windows.Forms.Label();
+            this.lblDetail = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // bnCancel
@@ -110,7 +111,7 @@ namespace TVRename
             this.lbSearchRSS.AutoSize = true;
             this.lbSearchRSS.Location = new System.Drawing.Point(12, 104);
             this.lbSearchRSS.Name = "lbSearchRSS";
-            this.lbSearchRSS.Size = new System.Drawing.Size(66, 13);
+            this.lbSearchRSS.Size = new System.Drawing.Size(67, 13);
             this.lbSearchRSS.TabIndex = 1;
             this.lbSearchRSS.Text = "Search Web";
             // 
@@ -129,7 +130,7 @@ namespace TVRename
             this.lbCheckDownloading.AutoSize = true;
             this.lbCheckDownloading.Location = new System.Drawing.Point(12, 85);
             this.lbCheckDownloading.Name = "lbCheckDownloading";
-            this.lbCheckDownloading.Size = new System.Drawing.Size(103, 13);
+            this.lbCheckDownloading.Size = new System.Drawing.Size(106, 13);
             this.lbCheckDownloading.TabIndex = 1;
             this.lbCheckDownloading.Text = "Search Downloading";
             // 
@@ -195,12 +196,23 @@ namespace TVRename
             this.lbBulkAutoAdd.TabIndex = 6;
             this.lbBulkAutoAdd.Text = "Scan Library for New";
             // 
+            // lblDetail
+            // 
+            this.lblDetail.AutoSize = true;
+            this.lblDetail.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.lblDetail.Location = new System.Drawing.Point(18, 155);
+            this.lblDetail.Name = "lblDetail";
+            this.lblDetail.Size = new System.Drawing.Size(0, 13);
+            this.lblDetail.TabIndex = 8;
+            this.lblDetail.UseMnemonic = false;
+            // 
             // ScanProgress
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
             this.ClientSize = new System.Drawing.Size(372, 190);
+            this.Controls.Add(this.lblDetail);
             this.Controls.Add(this.pbBulkAutoAdd);
             this.Controls.Add(this.lbBulkAutoAdd);
             this.Controls.Add(this.lblMessage);
@@ -248,5 +260,6 @@ namespace TVRename
         private System.Windows.Forms.Label lblMessage;
         private System.Windows.Forms.ProgressBar pbBulkAutoAdd;
         private System.Windows.Forms.Label lbBulkAutoAdd;
+        private System.Windows.Forms.Label lblDetail;
     }
 }

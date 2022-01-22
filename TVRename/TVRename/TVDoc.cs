@@ -1267,7 +1267,7 @@ namespace TVRename
                 : TVSettings.Instance.UserMultiActionOutcome;
         }
 
-        private static void NoProgress(int pct, string message)
+        private static void NoProgress(int pct, string message, string lastUpdated)
         {
             //Nothing to do - Method is called if we have no UI
         }

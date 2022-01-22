@@ -13,43 +13,67 @@ namespace TVRename
         }
 
         [NotNull]
-        protected override string ActivityName() => "Cleaned up empty library folders";
+        public override string ActivityName() => "Clean up empty library folders";
 
-        protected override bool Active() => false;
+        protected override bool Active() => true;
 
-        protected override void DoCheck(SetProgressDelegate progress)
+        protected override void DoCheck(System.Threading.CancellationToken token, PostScanProgressDelegate progress)
         {
-            IEnumerable<ShowConfiguration> libraryShows = MDoc.TvLibrary.Shows.ToList();
-            int totalRecords = libraryShows.Count() + MDoc.FilmLibrary.Movies.Count();
+            List<ShowConfiguration> libraryShows = MDoc.TvLibrary.GetSortedShowItems();
+            List<MovieConfiguration> movieConfigurations = MDoc.FilmLibrary.GetSortedMovies();
+            int totalRecords = libraryShows.Count + movieConfigurations.Count;
             int n = 0;
+            string lastUpdate = string.Empty;
 
             foreach (ShowConfiguration si in libraryShows)
             {
-                UpdateStatus(n++, totalRecords, si.ShowName);
+                progress(n++, totalRecords, si.ShowName,lastUpdate);
 
                 foreach (string folderName in si.AllProposedFolderLocations().SelectMany(folderLocation => folderLocation.Value))
                 {
-                    RemoveIfEmpty(folderName);
+                    string action = RemoveIfEmpty(folderName);
+                    if (action.HasValue())
+                    {
+                        lastUpdate = action;
+                    }
+
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
                 }
             }
 
-            foreach (MovieConfiguration mi in MDoc.FilmLibrary.Movies)
+            foreach (MovieConfiguration mi in movieConfigurations)
             {
-                UpdateStatus(n++, totalRecords, mi.ShowName);
+                progress(n++, totalRecords, mi.ShowName, lastUpdate);
 
                 foreach (string folderName in mi.Locations)
                 {
-                    RemoveIfEmpty(folderName);
+                    string action = RemoveIfEmpty(folderName);
+                    if (action.HasValue())
+                    {
+                        lastUpdate = action;
+                    }
+
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
                 }
             }
         }
 
-        private static void RemoveIfEmpty(string folderName)
+        [CanBeNull]
+        private static string RemoveIfEmpty(string folderName)
         {
             if (CanRemove(folderName))
             {
                 FileHelper.RemoveDirectory(folderName);
+                return $"Removed {folderName}";
             }
+
+            return null;
         }
 
         private static bool CanRemove(string folderName)

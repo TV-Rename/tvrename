@@ -20,6 +20,7 @@ namespace TVRename
         private int startPosition;
         private int endPosition;
 
+        protected delegate void PostScanProgressDelegate(int percent,int total, string message,string lastUpdate);
         protected PostScanActivity(TVDoc doc)
         {
             MDoc = doc;
@@ -27,21 +28,21 @@ namespace TVRename
             endPosition = 100;
         }
 
-        protected abstract string ActivityName();
+        public abstract string ActivityName();
 
         protected abstract bool Active();
 
-        protected abstract void DoCheck(SetProgressDelegate? progress);
+        protected abstract void DoCheck(System.Threading.CancellationToken token, PostScanProgressDelegate progress);
 
-        public void Check(SetProgressDelegate? progress) =>
-            Check(progress, 0, 100);
+        public void Check(System.Threading.CancellationToken token, SetProgressDelegate? progress) =>
+            Check(token, progress, 0, 100);
 
-        private void Check(SetProgressDelegate? progress, int startpct, int totPct)
+        private void Check(System.Threading.CancellationToken token, SetProgressDelegate? progress, int startpct, int totPct)
         {
             startPosition = startpct;
             endPosition = totPct;
             progressDelegate = progress;
-            progressDelegate?.Invoke(startpct, string.Empty);
+            progressDelegate?.Invoke(startpct, string.Empty,string.Empty);
             try
             {
                 if (!Active())
@@ -49,7 +50,7 @@ namespace TVRename
                     return;
                 }
 
-                DoCheck(progress);
+                DoCheck(token, UpdateStatus);
                 LogActionListSummary();
             }
             catch (TVRenameOperationInterruptedException)
@@ -66,14 +67,14 @@ namespace TVRename
             }
             finally
             {
-                progressDelegate?.Invoke(totPct, string.Empty);
+                progressDelegate?.Invoke(totPct, string.Empty, string.Empty);
             }
         }
 
-        protected void UpdateStatus(int recordNumber, int totalRecords, string message)
+        private void UpdateStatus(int recordNumber, int totalRecords, string message,string lastAction)
         {
             int position = (endPosition - startPosition) * recordNumber / (totalRecords + 1);
-            progressDelegate?.Invoke(startPosition + position, message);
+            progressDelegate?.Invoke(startPosition + position, message, lastAction);
         }
 
         private void LogActionListSummary()

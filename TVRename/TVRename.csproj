@@ -361,6 +361,12 @@
     <Compile Include="Forms\Tools\CollectionsView.Designer.cs">
       <DependentUpon>CollectionsView.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Tools\DoScanPartNotifier.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Tools\DoScanPartNotifier.Designer.cs">
+      <DependentUpon>DoScanPartNotifier.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Tools\DuplicateMovie.cs" />
     <Compile Include="Forms\Tools\DuplicateMovieFinder.cs">
       <SubType>Form</SubType>
@@ -1045,6 +1051,9 @@
     <EmbeddedResource Include="Forms\Tools\CollectionsView.resx">
       <DependentUpon>CollectionsView.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Tools\DoScanPartNotifier.resx">
+      <DependentUpon>DoScanPartNotifier.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Tools\DuplicateMovieFinder.resx">
       <DependentUpon>DuplicateMovieFinder.cs</DependentUpon>
