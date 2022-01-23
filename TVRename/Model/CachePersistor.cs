@@ -76,6 +76,10 @@ namespace TVRename
             {
                 RotateCacheFiles(cacheFile);
             }
+            catch (System.IO.FileNotFoundException e)
+            {
+                Logger.Warn(e, $"Failed to rotate files for Cache to {cacheFile.FullName}");
+            }
             catch (Exception e)
             {
                 Logger.Error(e, $"Failed to rotate files for Cache to {cacheFile.FullName}");

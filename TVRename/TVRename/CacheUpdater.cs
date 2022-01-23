@@ -204,7 +204,7 @@ namespace TVRename
             }
             catch (TaskCanceledException sce)
             {
-                Logger.Error(sce, sce.Message);
+                Logger.Warn(sce, sce.Message);
             }
             catch (Exception e)
             {
