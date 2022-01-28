@@ -128,6 +128,10 @@ namespace TVRename
             {
                 return new ActionOutcome(e);
             }
+            catch (IncompleteArchiveException e)
+            {
+                return new ActionOutcome(e);
+            }
         }
         private static IArchive GetArchive([NotNull] FileInfo archive)
         {

@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Alphaleonis.Win32.Filesystem;
 using JetBrains.Annotations;
 
@@ -39,7 +39,7 @@ namespace TVRename
 
         protected override void FixInternal()
         {
-            foreach (string directory in Movie.ManualLocations.Where(DirectoryIsMissingEmpty))
+            foreach (string directory in Movie.ManualLocations.Where(DirectoryIsMissingEmpty).ToList())
             {
                 Movie.ManualLocations.Remove(directory);
                 RemoveEmptyDirectory(directory);
