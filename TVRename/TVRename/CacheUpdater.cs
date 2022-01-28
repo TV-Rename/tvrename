@@ -226,12 +226,9 @@ namespace TVRename
 
         private void WaitForAllThreadsAndTidyUp()
         {
-            foreach (Thread t in workers)
+            foreach (Thread t in workers.Where(t => t.IsAlive))
             {
-                if (t.IsAlive)
-                {
-                    t.Join();
-                }
+                t.Join();
             }
 
             workers.Clear();

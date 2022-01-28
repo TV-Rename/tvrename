@@ -158,7 +158,7 @@ namespace TVRename
         [NotNull]
         private static string GetApiUrl(qBitTorrentAPIPath path)
         {
-            string url = $"http://{TVSettings.Instance.qBitTorrentHost}:{TVSettings.Instance.qBitTorrentPort}/";
+            string url = $"{TVSettings.Instance.qBitTorrentProtocol}://{TVSettings.Instance.qBitTorrentHost}:{TVSettings.Instance.qBitTorrentPort}/";
 
             switch (TVSettings.Instance.qBitTorrentAPIVersion)
             {

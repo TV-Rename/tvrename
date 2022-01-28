@@ -320,6 +320,7 @@ namespace TVRename
             s.CheckSABnzbd = cbCheckSABnzbd.Checked;
             s.qBitTorrentHost = tbqBitTorrentHost.Text;
             s.qBitTorrentPort = tbqBitTorrentPort.Text;
+            s.qBitTorrentUseHTTPS = chkBitTorrentUseHTTPS.Checked;
             s.CheckqBitTorrent = cbCheckqBitTorrent.Checked;
             s.RemoveCompletedTorrents = chkRemoveCompletedTorrents.Checked;
             s.SearchRSS = cbSearchRSS.Checked;
@@ -886,6 +887,7 @@ namespace TVRename
             txtSABAPIKey.Text = s.SABAPIKey;
             tbqBitTorrentHost.Text = s.qBitTorrentHost;
             tbqBitTorrentPort.Text = s.qBitTorrentPort;
+            chkBitTorrentUseHTTPS.Checked = s.qBitTorrentUseHTTPS;
             cbCheckqBitTorrent.Checked = s.CheckqBitTorrent;
             chkRemoveCompletedTorrents.Checked = s.RemoveCompletedTorrents;
             cbCheckSABnzbd.Checked = s.CheckSABnzbd;
@@ -2123,7 +2125,8 @@ namespace TVRename
 
         private void UpdateQBitTorrentLink()
         {
-            llqBitTorrentLink.Text = $"http://{tbqBitTorrentHost.Text}:{tbqBitTorrentPort.Text}/";
+            string protocol = chkBitTorrentUseHTTPS.Checked ? "https" : "http";
+            llqBitTorrentLink.Text = $"{protocol}://{tbqBitTorrentHost.Text}:{tbqBitTorrentPort.Text}/";
         }
 
         #region PopupBrowseDialog
@@ -2270,6 +2273,11 @@ namespace TVRename
             {
                 cbDefShowDVDOrder.Checked = false;
             }
+        }
+
+        private void chkBitTorrentUseHTTPS_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateQBitTorrentLink();
         }
     }
 }

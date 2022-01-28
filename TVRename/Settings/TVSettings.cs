@@ -143,6 +143,7 @@ namespace TVRename
         public bool RemoveCompletedTorrents = false;
         public string qBitTorrentHost = "localhost";
         public string qBitTorrentPort = "8080";
+        public bool qBitTorrentUseHTTPS = false;
         public qBitTorrent.qBitTorrentAPIVersion qBitTorrentAPIVersion = qBitTorrent.qBitTorrentAPIVersion.v2;
         public bool EpTBNs = false;
         public bool EpJPGs = false;
@@ -360,6 +361,8 @@ namespace TVRename
 
         [NotNull]
         public IEnumerable<string> SubsFolderNames => Convert(SubsFolderNamesString);
+
+        public string qBitTorrentProtocol => qBitTorrentUseHTTPS ? "https" : "http";
 
         public string SubsFolderNamesString = "subs;subtitle;vobsubs;sub;vobsub;subtitle";
 
@@ -602,6 +605,7 @@ namespace TVRename
             writer.WriteElement("CheckqBitTorrent", CheckqBitTorrent);
             writer.WriteElement("qBitTorrentHost", qBitTorrentHost);
             writer.WriteElement("qBitTorrentPort", qBitTorrentPort);
+            writer.WriteElement("qBitTorrentUseHTTPS", qBitTorrentUseHTTPS);
             writer.WriteElement("qBitTorrentAPIVersion", (int)qBitTorrentAPIVersion);
             writer.WriteElement("RenameCheck", RenameCheck);
             writer.WriteElement("PreventMove", PreventMove);
@@ -1512,6 +1516,7 @@ namespace TVRename
             RemoveCompletedTorrents = xmlSettings.ExtractBool("RemoveCompletedTorrents", false);
             qBitTorrentHost = xmlSettings.ExtractString("qBitTorrentHost", "localhost");
             qBitTorrentPort = xmlSettings.ExtractString("qBitTorrentPort", "8080");
+            qBitTorrentUseHTTPS = xmlSettings.ExtractBool("qBitTorrentUseHTTPS", false);
             qBitTorrentAPIVersion = xmlSettings.ExtractEnum("qBitTorrentAPIVersion", qBitTorrent.qBitTorrentAPIVersion.v2);
             MissingCheck = xmlSettings.ExtractBool("MissingCheck", true);
             MoveLibraryFiles = xmlSettings.ExtractBool("MoveLibraryFiles", true);
