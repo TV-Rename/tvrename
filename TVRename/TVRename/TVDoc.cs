@@ -1864,7 +1864,7 @@ namespace TVRename
         {
             if (!Directory.Exists(downloadFolder))
             {
-                Logger.Error($"Please update 'Download Folders' '{downloadFolder}' does not exist");
+                Logger.Error($"Stopping 'Scan Movie Folder' '{downloadFolder}' does not exist");
                 return;
             }
             TheActionList.Clear();
@@ -1872,7 +1872,7 @@ namespace TVRename
             try
             {
                 IEnumerable<string> x = Directory.GetFiles(downloadFolder, "*", System.IO.SearchOption.AllDirectories).OrderBy(s => s).ToList();
-                Logger.Info($"Processing {x.Count()} files for shows that need to be scanned");
+                Logger.Info($"Processing {x.Count()} files for movies in '{downloadFolder}' that need to be analysed.");
 
                 foreach (string filePath in x)
                 {
@@ -1889,7 +1889,7 @@ namespace TVRename
                         continue;
                     }
 
-                    Logger.Info($"Checking to see whether {filePath} is a file for a show that needs to be scanned");
+                    Logger.Info($"Checking to see whether {filePath} is a file for a movie that needs to be added or updated");
 
                     List<MovieConfiguration> existingMatchingShows = GetMatchingMovies(fi);
 
@@ -1904,21 +1904,20 @@ namespace TVRename
                         DialogResult decision = askUser.ShowDialog(ui);
 
                         //if user cancelled then move on
-                        if (decision == DialogResult.Abort)
+                        if (decision != DialogResult.OK)
                         {
                             Logger.Info($"User chose to ignore {filePath}");
                             continue;
                         }
 
-                        //if user selected a new show then
-                        if (decision == DialogResult.OK && askUser.ChosenShow == null)
+                        if (askUser.ChosenShow == null)
                         {
+                            //if user selected a new show then
                             BonusAutoAdd(fi, ui);
                         }
-
-                        //if user selected a show
-                        if (decision == DialogResult.OK && askUser.ChosenShow != null)
+                        else
                         {
+                            //if user selected a show
                             MergeMovieFileIntoMovieConfig(fi, askUser.ChosenShow, ui);
                         }
                     }

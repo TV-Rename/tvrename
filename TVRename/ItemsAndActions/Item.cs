@@ -9,6 +9,7 @@
 using JetBrains.Annotations;
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace TVRename
 {
@@ -34,7 +35,7 @@ namespace TVRename
         // This method is called by the Set accessor of each property.
         // The CallerMemberName attribute that is applied to the optional propertyName
         // parameter causes the property name of the caller to be substituted as an argument.
-        protected void NotifyPropertyChanged(string propertyName = "")
+        protected void NotifyPropertyChanged([CallerMemberName] [CanBeNull] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -68,7 +69,7 @@ namespace TVRename
             get => errorTextValue;
             protected internal set {
                 errorTextValue = value;
-                NotifyPropertyChanged("ErrorText");
+                NotifyPropertyChanged();
             } } // Human-readable error message, for when Error is true
 
         public int CompareTo(object obj) => CompareTo((Item)obj);

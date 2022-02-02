@@ -19,7 +19,7 @@ namespace TVRename
             set
             {
                 checkedItemValue = value;
-                NotifyPropertyChanged("CheckedItem");
+                NotifyPropertyChanged();
             }
         }
         protected Action()
@@ -45,8 +45,7 @@ namespace TVRename
             protected set => percent = value;
         }
 
-        public abstract long
-            SizeOfWork
+        public abstract long SizeOfWork
         {
             get;
         } // for file copy/move, number of bytes in file.  for simple tasks, 1, or something proportional to how slow it is to copy files around.

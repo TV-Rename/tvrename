@@ -55,8 +55,8 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     public partial class UI : Form, IRemoteActions, IDialogParent
     {
-        public const string EXPLORE_PROXY = "http://www.tvrename.com/EXPLOREPROXY";
-        public const string WATCH_PROXY = "http://www.tvrename.com/WATCHPROXY";
+        public const string EXPLORE_PROXY = "https://www.tvrename.com/EXPLOREPROXY";
+        public const string WATCH_PROXY = "https://www.tvrename.com/WATCHPROXY";
 
         #region Delegates
 
@@ -201,7 +201,7 @@ namespace TVRename
             }
         }
 
-        public void Wait(int milliseconds)
+        private void Wait(int milliseconds)
         {
             Timer timer1 = new();
             if (milliseconds == 0 || milliseconds < 0)
@@ -269,8 +269,7 @@ namespace TVRename
             }
         }
 
-        // ReSharper disable once UnusedMember.Global
-        public void ShowChild(Form childForm)
+        private void ShowChild(Form childForm)
         {
             if (InvokeRequired)
             {
@@ -2714,7 +2713,7 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        public static string GenerateShowUIName(ProcessedEpisode? episode) => GenerateShowUIName(episode?.TheCachedSeries, episode?.Show);
+        private static string GenerateShowUIName(ProcessedEpisode? episode) => GenerateShowUIName(episode?.TheCachedSeries, episode?.Show);
 
         // ReSharper disable once InconsistentNaming
         private static string GenerateShowUIName([NotNull] ShowConfiguration si)
@@ -4057,8 +4056,8 @@ namespace TVRename
             ItemList all = mDoc.TheActionList;
             List<Item> chk = mDoc.TheActionList.Checked;
 
-            SetCheckbox(mcbRename, RenameActions(all), RenameActions(chk));
-            SetCheckbox(mcbCopyMove, all.OfType<ActionCopyMoveRename>().Where(a => a.Operation != ActionCopyMoveRename.Op.rename), chk.OfType<ActionCopyMoveRename>().Where(a => a.Operation != ActionCopyMoveRename.Op.rename));
+            SetCheckbox(mcbRename, all.Where(IsRenameAction), chk.Where(IsRenameAction));
+            SetCheckbox(mcbCopyMove, all.Where(IsCopyMoveAction), chk.Where(IsCopyMoveAction));
             SetCheckbox(mcbDeleteFiles, all.OfType<ActionDelete>(), chk.OfType<ActionDelete>());
             SetCheckbox(mcbSaveImages, all.OfType<ActionDownloadImage>(), chk.OfType<ActionDownloadImage>());
             SetCheckbox(mcbWriteMetadata, all.OfType<ActionWriteMetadata>(), chk.OfType<ActionWriteMetadata>());
@@ -4068,13 +4067,11 @@ namespace TVRename
             SetCheckbox(mcbAll, all.Actions, chk.OfType<Action>());
         }
 
-        [NotNull]
-        private static IEnumerable<Item> RenameActions([NotNull] IEnumerable<Item> all)
-        {
-            return all.Where(a =>
-                a is ActionCopyMoveRename { Operation: ActionCopyMoveRename.Op.rename } ||
-                a is ActionMoveRenameDirectory);
-        }
+        private static bool IsCopyMoveAction(Item i) =>
+            i is ActionCopyMoveRename a && a.Operation != ActionCopyMoveRename.Op.rename
+            || i is ActionMoveRenameDirectory;
+
+        private static bool IsRenameAction(Item a) => a is ActionCopyMoveRename { Operation: ActionCopyMoveRename.Op.rename };
 
         private static void SetCheckbox([NotNull] ToolStripMenuItem box, [NotNull] IEnumerable<Item> all, [NotNull] IEnumerable<Item> chk)
         {
@@ -4092,10 +4089,6 @@ namespace TVRename
             }
 
             box.Enabled = btn.Any();
-        }
-
-        private void olvAction_ItemCheck(object sender, [NotNull] ItemCheckEventArgs e)
-        {
         }
 
         private void bnActionOptions_Click(object sender, EventArgs e) => DoPrefs(true);
@@ -4494,12 +4487,12 @@ namespace TVRename
 
         private void McbRename_Click(object sender, EventArgs e)
         {
-            UpdateCheckboxGroup(mcbRename, i => i is ActionCopyMoveRename { Operation: ActionCopyMoveRename.Op.rename } || i is ActionMoveRenameDirectory);
+            UpdateCheckboxGroup(mcbRename, IsRenameAction);
         }
 
         private void McbCopyMove_Click(object sender, EventArgs e)
         {
-            UpdateCheckboxGroup(mcbCopyMove, i => i is ActionCopyMoveRename copymove && copymove.Operation != ActionCopyMoveRename.Op.rename);
+            UpdateCheckboxGroup(mcbCopyMove, IsCopyMoveAction);
         }
 
         private void McbDeleteFiles_Click(object sender, EventArgs e)
@@ -5108,7 +5101,7 @@ namespace TVRename
             }
         }
 
-        internal void ForceMovieRefresh(bool unattended)
+        private void ForceMovieRefresh(bool unattended)
         {
             ForceMovieRefresh((List<MovieConfiguration>)null, unattended);
         }
@@ -5199,17 +5192,9 @@ namespace TVRename
             LessBusy();
         }
 
-        private MovieConfiguration? CurrentlySelectedMovie()
-        {
-            MovieConfiguration currentMovie = TreeNodeToMovieItem(movieTree.SelectedNode);
-
-            if (currentMovie != null)
-            {
-                return currentMovie;
-            }
-
-            return mDoc.FilmLibrary.Movies.FirstOrDefault();
-        }
+        private MovieConfiguration? CurrentlySelectedMovie() =>
+            TreeNodeToMovieItem(movieTree.SelectedNode)
+            ?? mDoc.FilmLibrary.Movies.FirstOrDefault();
 
         private void scanMovieFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -5230,8 +5215,7 @@ namespace TVRename
             Logger.Info("Finished looking for new movies.");
         }
 
-        // ReSharper disable once UnusedParameter.Local
-        private string AskUserForFolder()
+        private static string AskUserForFolder()
         {
             using (FolderBrowserDialog fbd = new())
             {
