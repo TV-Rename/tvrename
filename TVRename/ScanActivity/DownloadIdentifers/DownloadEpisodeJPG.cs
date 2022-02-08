@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using Alphaleonis.Win32.Filesystem;
+using JetBrains.Annotations;
 
 namespace TVRename
 {
@@ -7,15 +9,19 @@ namespace TVRename
         private const string DEFAULT_EXTENSION = ".jpg";
 
         public override DownloadType GetDownloadType() => DownloadType.downloadImage;
+        private List<string> doneTbn = new();
 
+        public override void NotifyComplete([NotNull] FileInfo file)
+        {
+            doneTbn.Add(file.FullName);
+            base.NotifyComplete(file);
+        }
         public override ItemList? ProcessEpisode(ProcessedEpisode episode, FileInfo file, bool forceRefresh)
         {
             if (!TVSettings.Instance.EpJPGs)
             {
                 return null;
             }
-
-            ItemList theActionList = new();
 
             string ban = episode.Filename;
             if (string.IsNullOrEmpty(ban))
@@ -27,12 +33,22 @@ namespace TVRename
 
             FileInfo imgjpg = FileHelper.FileInFolder(file.Directory, basefn + DEFAULT_EXTENSION);
 
-            if (forceRefresh || !imgjpg.Exists)
+            if (doneTbn.Contains(imgjpg.FullName))
             {
-                theActionList.Add(new ActionDownloadImage(episode.Show, episode, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8erImages));
+                return null;
             }
 
-            return theActionList;
+            if (!forceRefresh && imgjpg.Exists)
+            {
+                return null;
+            }
+
+            return new ItemList { new ActionDownloadImage(episode.Show, episode, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8erImages) };
+        }
+
+        public sealed override void Reset()
+        {
+            doneTbn = new List<string>();
         }
     }
 }

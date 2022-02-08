@@ -26,10 +26,7 @@ namespace TVRename
 
         public override void NotifyComplete([NotNull] FileInfo file)
         {
-            if (file.Name.EndsWith(".tbn", true, new CultureInfo("en")))
-            {
-                doneTbn.Add(file.FullName);
-            }
+            doneTbn.Add(file.FullName);
             base.NotifyComplete(file);
         }
 

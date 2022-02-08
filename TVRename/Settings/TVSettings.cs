@@ -909,6 +909,25 @@ namespace TVRename
             return true;
         }
 
+        public static bool OKExtensionsStringNoDotCheck(string? s)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                return true;
+            }
+
+            string[] t = s.Split(';');
+            foreach (string s2 in t)
+            {
+                if (string.IsNullOrEmpty(s2) || s2.ContainsAnyCharactersFrom(CompulsoryReplacements()) || s2.ContainsAnyCharactersFrom(Path.GetInvalidFileNameChars()))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public static bool OKExporterLocation(string? s)
         {
             if (string.IsNullOrEmpty(s))
@@ -1067,7 +1086,8 @@ namespace TVRename
         {
             foreach (string s in VideoExtensionsArray
                 .Where(s => !string.IsNullOrWhiteSpace(s))
-                .Where(s => file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase)))
+                .Where(s => file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase))
+                .OrderByDescending(s=>s.Length))
             {
                 return s;
             }
@@ -1076,7 +1096,8 @@ namespace TVRename
             {
                 foreach (string s in OtherExtensionsArray
                     .Where(s => !string.IsNullOrWhiteSpace(s))
-                    .Where(s => file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase)))
+                    .Where(s => file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase))
+                    .OrderByDescending(s=>s.Length))
                 {
                     return s;
                 }

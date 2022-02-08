@@ -156,7 +156,7 @@ namespace TVRename
             ValidateExtensions(txtEmptyIgnoreExtensions, tbFolderDeleting);
             ValidateExtensions(txtVideoExtensions, tbFilesAndFolders);
             ValidateExtensions(txtSubtitleExtensions, tbFilesAndFolders);
-            ValidateExtensions(txtOtherExtensions, tbFilesAndFolders);
+            ValidateExtensionsWithoutDot(txtOtherExtensions, tbFilesAndFolders);
             ValidateExtensions(txtKeepTogether, tbFilesAndFolders);
         }
 
@@ -218,6 +218,22 @@ namespace TVRename
 
             MessageBox.Show(
                 "Extensions list must be separated by semicolons, and each extension must start with a dot.",
+                "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            tcTabs.SelectedTab = focusTabPage;
+            validateField.Focus();
+            throw new FailedValidationException();
+        }
+
+        private void ValidateExtensionsWithoutDot([NotNull] Control validateField, TabPage focusTabPage)
+        {
+            if (TVSettings.OKExtensionsStringNoDotCheck(validateField.Text))
+            {
+                return;
+            }
+
+            MessageBox.Show(
+                "Extensions list must be separated by semicolons.",
                 "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             tcTabs.SelectedTab = focusTabPage;

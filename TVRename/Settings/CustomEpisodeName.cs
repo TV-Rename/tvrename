@@ -105,13 +105,6 @@ namespace TVRename
                 return r.Substring(0, Math.Min(maxFilenameLength, r.Length));
             }
 
-            bool needsSpacer = !extension.StartsWith(".", StringComparison.Ordinal);
-
-            if (needsSpacer)
-            {
-                return r.Substring(0, Math.Min(r.Length, maxFilenameLength)) + "." + extension;
-            }
-
             return r.Substring(0, Math.Min(r.Length, maxFilenameLength)) + extension;
         }
 
